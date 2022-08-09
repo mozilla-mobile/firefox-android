@@ -137,7 +137,7 @@ def loader(kind, path, config, params, loaded_tasks):
             logger.info("head_ref is refs/heads/main. Building every component...")
         else:
             logger.info("Processing push for commit range {} -> {}".format(params["base_rev"], params["head_rev"]))
-            files_changed = get_files_changed_push(params["base_repository"], params["base_rev"], params["head_rev"])
+            files_changed = get_files_changed_push(params["base_rev"], params["head_rev"])
             affected_components = get_affected_components(files_changed, config.get("files-affecting-components"), upstream_component_dependencies, downstream_component_dependencies)
 
     logger.info("Files changed: %s" % " ".join(files_changed))
