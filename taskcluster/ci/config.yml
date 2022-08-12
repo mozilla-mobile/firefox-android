@@ -150,7 +150,7 @@ taskgraph:
     repositories:
         mobile:
             name: firefox-android
-            ssh-secret-name: changeme
+            ssh-secret-name: project/mobile/firefox-android/github-clone-ssh
     cached-task-prefix: mobile.v2.firefox-android
 
 workers:
