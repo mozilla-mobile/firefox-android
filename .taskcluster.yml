@@ -56,7 +56,7 @@ tasks:
               then: '${event.repository.name}'
               else:
                   $if: 'tasks_for == "github-pull-request"'
-                  then: '${event.pull_request.head.repo.name[:-4]}'
+                  then: '${event.pull_request.head.repo.name}'
                   else:
                       $if: 'tasks_for in ["cron", "action"]'
                       then: '${repository.project}'
