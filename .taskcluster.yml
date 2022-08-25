@@ -238,7 +238,6 @@ tasks:
                                       MOBILE_SSH_SECRET_NAME: project/mobile/firefox-android/github-clone-ssh
                                       MOZ_AUTOMATION: "1"
                                       REPOSITORIES: {$json: {mobile: "firefox-android"}}
-                                      ANDROID_SDK_ROOT: /builds/worker/android-sdk
                                     - $if: 'tasks_for in ["github-pull-request"]'
                                       then:
                                           MOBILE_PULL_REQUEST_NUMBER: '${event.pull_request.number}'
@@ -273,14 +272,12 @@ tasks:
                                           cd /builds/worker/checkouts/vcs &&
                                           git submodule init &&
                                           git submodule update &&
-                                          taskcluster/scripts/decision-install-sdk.sh &&
                                           ln -s /builds/worker/artifacts artifacts &&
                                           ~/.local/bin/taskgraph action-callback
                                       else: >
                                           cd /builds/worker/checkouts/vcs &&
                                           git submodule init &&
                                           git submodule update &&
-                                          taskcluster/scripts/decision-install-sdk.sh &&
                                           ln -s /builds/worker/artifacts artifacts &&
                                           ~/.local/bin/taskgraph decision
                                           --pushlog-id='0'
@@ -345,3 +342,7 @@ tasks:
                                   then:
                                       cron: {$json: {$eval: 'cron'}}
                                 - tasks_for: '${tasks_for}'
+                                - xx-routes: '${routes}'
+                                - xx-scopes: '${scopes}'
+                                - xx-project: ${project}
+                                - xx-head_sha: ${head_sha}
