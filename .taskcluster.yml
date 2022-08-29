@@ -342,5 +342,3 @@ tasks:
                                   then:
                                       cron: {$json: {$eval: 'cron'}}
                                 - tasks_for: '${tasks_for}'
-                                - xx-project: ${project}
-                                - xx-head_sha: ${head_sha}
