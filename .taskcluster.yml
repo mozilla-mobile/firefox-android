@@ -6,7 +6,6 @@ policy:
 tasks:
     - $let:
           trustDomain: mobile
-          canonicalRepo: git@github.com:mozilla-mobile/firefox-android.git
           # Github events have this stuff in different places...
           ownerEmail:
               $if: 'tasks_for in ["cron", "action"]'
@@ -123,7 +122,7 @@ tasks:
           then:
               $let:
                   level:
-                      $if: 'tasks_for in ["github-push", "action", "cron"] && repoUrl == canonicalRepo'
+                      $if: 'tasks_for in ["github-push", "action", "cron"] && repoUrl == "git@github.com:mozilla-mobile/firefox-android.git"'
                       then: '3'
                       else: '1'
 
