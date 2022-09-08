@@ -127,6 +127,11 @@ tasks:
                       then: '3'
                       else: '1'
 
+                  level_extra:
+                      $if: 'tasks_for in ["github-pull-request", "action", "cron"] && repoUrl == "git@github.com:mozilla-mobile/firefox-android.git"'
+                      then: '3'
+                      else: '1'
+
                   short_base_ref:
                       $if: 'base_ref[:11] == "refs/heads/"'
                       then: {$eval: 'base_ref[11:]'}
@@ -343,5 +348,6 @@ tasks:
                                       cron: {$json: {$eval: 'cron'}}
                                 - tasks_for: '${tasks_for}'
                                 - xx-level: ${level}
+                                - xx-level-extra: ${level_extra}
                                 - xx-canon: ${canonicalRepo}
                                 - xx-repourl: ${repoUrl}
