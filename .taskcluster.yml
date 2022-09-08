@@ -123,7 +123,7 @@ tasks:
           then:
               $let:
                   level:
-                      $if: 'tasks_for in ["github-push", "action", "cron"] && repoUrl == canonicalRepo'
+                      $if: 'tasks_for in ["github-push", "action", "cron"] && repoUrl == ${canonicalRepo}'
                       then: '3'
                       else: '1'
 
