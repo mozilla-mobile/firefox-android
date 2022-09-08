@@ -342,3 +342,6 @@ tasks:
                                   then:
                                       cron: {$json: {$eval: 'cron'}}
                                 - tasks_for: '${tasks_for}'
+                                - xx-level: level
+                                - xx-canon: canonicalRepo
+                                - xx-repourl: repoUrl
