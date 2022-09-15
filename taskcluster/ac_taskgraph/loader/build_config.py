@@ -66,7 +66,7 @@ def get_upstream_deps_for_components(components):
         if "dependencies for" in line:
             current_configuration = line.split(" ")[0]
 
-        if current_configuration in cfgs and current_component:
+        if current_configuration in CONFIGURATIONS_WITH_DEPENDENCIES and current_component:
             # If we find a new local dependency, add it.
             if line.startswith("+--- project") or line.startswith(r"\--- project"):
                 proj = line.split(" ")[2]
