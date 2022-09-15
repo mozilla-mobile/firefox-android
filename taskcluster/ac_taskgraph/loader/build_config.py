@@ -46,27 +46,32 @@ def get_upstream_deps_for_components(components):
     """Return the full list of local upstream dependencies of a component."""
     component_dependencies = defaultdict(set)
 
-    for configuration in CONFIGURATIONS_WITH_DEPENDENCIES:
-        logger.info("Looking for dependencies in '%s' configuration" % configuration)
+    cmd = ["./gradlew"]
+    # This is eventually going to fail if there's ever enough components to make the command line
+    # too long. If that happens, we'll need to split this list up and run gradle more than once.
+    for c in sorted(components):
+        cmd.extend(["%s:dependencies" % c])
+    # Parsing output like this is not ideal but bhearsum couldn't find a way
+    # to get the dependencies printed in a better format. If we could convince
+    # gradle to spit out JSON that would be much better.
+    # This is filed as https://github.com/mozilla-mobile/android-components/issues/7814
+    current_component = None
+    current_configuration = None
+    for line in subprocess.check_output(cmd, universal_newlines=True, cwd=ANDROID_COMPONENTS_DIR).splitlines():
+        # If we find the start of a new component section, update our tracking variable
+        if line.startswith("Project"):
+            current_component = line.split(":")[1].strip("'")
+            current_configuration = None
 
-        cmd = ["./gradlew"]
-        # This is eventually going to fail if there's ever enough components to make the command line
-        # too long. If that happens, we'll need to split this list up and run gradle more than once.
-        for c in sorted(components):
-            cmd.extend(["%s:dependencies" % c, "--configuration", configuration])
-        # Parsing output like this is not ideal but bhearsum couldn't find a way
-        # to get the dependencies printed in a better format. If we could convince
-        # gradle to spit out JSON that would be much better.
-        # This is filed as https://github.com/mozilla-mobile/android-components/issues/7814
-        current_component = None
-        for line in subprocess.check_output(cmd, universal_newlines=True, cwd=ANDROID_COMPONENTS_DIR).splitlines():
-            # If we find the start of a new component section, update our tracking variable
-            if line.startswith("Project"):
-                current_component = line.split(":")[1].strip("'")
+        if "dependencies for" in line:
+            current_configuration = line.split(" ")[0]
 
+        if current_configuration in cfgs and current_component:
             # If we find a new local dependency, add it.
             if line.startswith("+--- project") or line.startswith(r"\--- project"):
-                component_dependencies[current_component].add(line.split(" ")[2])
+                proj = line.split(" ")[2]
+                if proj[0] != ':':
+                    component_dependencies[current_component].add(proj)
 
     return [(k, sorted(component_dependencies[k])) for k in sorted(component_dependencies)]
 
