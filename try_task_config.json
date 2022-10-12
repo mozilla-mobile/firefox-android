@@ -3,5 +3,5 @@
         "optimize_target_tasks": true,
         "target_tasks_method": "nightly"
     },
-    "version": 2
+    "version": 2,
 }
