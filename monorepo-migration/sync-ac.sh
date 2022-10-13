@@ -9,6 +9,7 @@ REPO_PATH="/tmp/git/$REPO_NAME_TO_SYNC"
 REPO_BRANCH_NAME='firefox-android'
 TAG_PREFIX='components-'
 MONOREPO_URL='git@github.com:mozilla-mobile/firefox-android.git'
+MONOREPO_TARGET_BRANCH='ac-prep'
 MERGE_COMMIT_MESSAGE=$(cat <<EOF
 Merge https://github.com/mozilla-mobile/$REPO_NAME_TO_SYNC repository
 
@@ -77,6 +78,7 @@ function _remove_old_tags() {
 
 function _merge_histories() {
     cd "$SCRIPT_DIR"
+    git pull --no-edit "$MONOREPO_URL" "$MONOREPO_TARGET_BRANCH"
     git pull --no-edit --tags --allow-unrelated-histories --no-rebase --force "$REPO_PATH"
     git commit --amend --message "$MERGE_COMMIT_MESSAGE"
 }
