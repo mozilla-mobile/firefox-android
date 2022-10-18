@@ -85,7 +85,7 @@ function _merge_histories() {
 function _move_files_into_subfolder() {
     cd "$CURRENT_REPO_PATH"
     git mv --force 'l10n.toml' "$REPO_NAME_TO_SYNC/l10n.toml"
-    git commit --message 'Fix l10n.toml file location'
+    git commit --message 'Move l10n.toml into android-components subfolder'
 }
 
 function _clean_up_temporary_repo() {
