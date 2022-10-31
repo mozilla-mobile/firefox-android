@@ -77,9 +77,9 @@ tasks:
                       else:
                           $if: 'tasks_for in ["cron", "action"]'
                           then:
-                            $if: '${push.branch}[:11] == "refs/heads/"'
+                            $if: 'push.branch[:11] == "refs/heads/"'
                             then: {$eval: 'push.branch[11:]'}
-                            else: '${push.branch}'
+                            else: ${push.branch}
           head_ref:
               $if: 'tasks_for == "github-pull-request"'
               then: ${event.pull_request.head.ref}
