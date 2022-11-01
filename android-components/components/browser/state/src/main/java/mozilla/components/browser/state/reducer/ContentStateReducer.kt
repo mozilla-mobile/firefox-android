@@ -308,6 +308,15 @@ internal object ContentStateReducer {
             -> {
                 throw IllegalStateException("You need to add SessionPrioritizationMiddleware. ($action)")
             }
+            is ContentAction.AddSlowScriptRequest -> updateContentState(state, action.sessionId) {
+                it.copy(slowScriptRequest = action.slowScriptRequest)
+            }
+            is ContentAction.RemoveSlowScriptRequest -> updateContentState(
+                state,
+                action.sessionId,
+            ) {
+                it.copy(slowScriptRequest = null)
+            }
         }
     }
     private fun consumeDownload(state: BrowserState, sessionId: String, downloadId: String): BrowserState {

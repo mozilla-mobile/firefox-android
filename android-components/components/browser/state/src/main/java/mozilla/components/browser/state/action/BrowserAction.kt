@@ -43,6 +43,7 @@ import mozilla.components.concept.engine.media.RecordingDevice
 import mozilla.components.concept.engine.mediasession.MediaSession
 import mozilla.components.concept.engine.permission.PermissionRequest
 import mozilla.components.concept.engine.prompt.PromptRequest
+import mozilla.components.concept.engine.script.SlowScriptRequest
 import mozilla.components.concept.engine.search.SearchRequest
 import mozilla.components.concept.engine.webextension.WebExtensionBrowserAction
 import mozilla.components.concept.engine.webextension.WebExtensionPageAction
@@ -807,6 +808,19 @@ sealed class ContentAction : BrowserAction() {
      * Indicates the given [tabId] was unable to be checked for form data.
      */
     data class CheckForFormDataExceptionAction(val tabId: String, val throwable: Throwable) : ContentAction()
+
+    /**
+     * Adds the [SlowScriptRequest] to the [ContentState] with the given [sessionId].
+     */
+    data class AddSlowScriptRequest(
+        val sessionId: String,
+        val slowScriptRequest: SlowScriptRequest,
+    ) : ContentAction()
+
+    /**
+     * Removes the [SlowScriptRequest] from the [ContentState] with the given [sessionId].
+     */
+    data class RemoveSlowScriptRequest(val sessionId: String) : ContentAction()
 }
 
 /**
