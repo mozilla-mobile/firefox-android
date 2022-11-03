@@ -39,6 +39,7 @@ import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.ktx.android.content.appName
 import mozilla.components.support.ktx.android.content.res.resolveAttribute
 import java.io.IOException
+import mozilla.components.ui.icons.R as iconsR
 
 @VisibleForTesting internal const val KEY_INSTALLED_ADDON = "KEY_ADDON"
 private const val KEY_DIALOG_GRAVITY = "KEY_DIALOG_GRAVITY"
@@ -225,7 +226,10 @@ class AddonInstallationDialogFragment : AppCompatDialogFragment() {
                     val att = context.theme.resolveAttribute(android.R.attr.textColorPrimary)
                     iconView.setColorFilter(ContextCompat.getColor(context, att))
                     iconView.setImageDrawable(
-                        ContextCompat.getDrawable(context, R.drawable.mozac_ic_extensions),
+                        ContextCompat.getDrawable(
+                            context,
+                            iconsR.drawable.mozac_ic_extensions,
+                        ),
                     )
                 }
                 logger.error("Attempt to fetch the ${addon.id} icon failed", e)
