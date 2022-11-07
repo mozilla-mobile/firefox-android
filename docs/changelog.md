@@ -44,6 +44,9 @@ permalink: /changelog/
 * **service-glean**
   * Re-export TextMetricType, RateMetricType, DenominatorMetricType, NumeratorMetricType to make them usable by applications [#13010](https://github.com/mozilla-mobile/android-components/pull/13010)
 
+* **browser-menu**:
+  * Fixed an issue with overlapping of checkbox and text in menu items (BrowserMenuImageTextCheckboxButton)
+
 # 107.0.0
 * [Commits](https://github.com/mozilla-mobile/android-components/compare/v106.0.0..v107.0.0)
 * [Milestone](https://github.com/mozilla-mobile/android-components/milestone/154?closed=1)
