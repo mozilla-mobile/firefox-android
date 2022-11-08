@@ -15,6 +15,7 @@ permalink: /changelog/
 
 * **concept-engine**
   * [bug #1798359](https://bugzilla.mozilla.org/show_bug.cgi?id=1798359) Set Total Cookie Protection as the default cookie policy for all Tracking Protection modes. Read more about Total Cookie Protection [here](https://blog.mozilla.org/en/mozilla/firefox-rolls-out-total-cookie-protection-by-default-to-all-users-worldwide/).
+  * Renamed `EngineSession.onSaveToPdfError` to `EngineSession.onSaveToPdfException`.
 
 * **browser-engine-gecko**
   * 🆕 A new action `SaveToPdfExceptionAction` was added to the `EngineAction` to allow for notifying consumers on unsuccessful Save to PDF requests. For more references see [bug #1796482](https://bugzilla.mozilla.org/show_bug.cgi?id=1796482).
@@ -28,7 +29,7 @@ permalink: /changelog/
 
 * **concept-engine**:
   * Added support for changing the cookie banner handling setting in regular and private browsing. [Bugzilla](https://bugzilla.mozilla.org/show_bug.cgi?id=1796144)
-  
+
 * **concept-storage**:
   * 🆕 New API: `StorageMaintenanceRegistry` in `concept-storage` that deals with registering/unregistering storage maintenance workers.
   * ⚠️ **This is a breaking change**: Added a new parameter `dbSizeLimit` to `Storage.runMaintenance` API to indicate Maximum DB size to aim for, in bytes.
@@ -44,6 +45,14 @@ permalink: /changelog/
 * **service-glean**
   * Re-export TextMetricType, RateMetricType, DenominatorMetricType, NumeratorMetricType to make them usable by applications [#13010](https://github.com/mozilla-mobile/android-components/pull/13010)
 
+* **browser-state**:
+  * `UpdateThumbnailAction` and `RemoveThumbnailAction` now throw an exception if those actions are not handled with a middleware.
+  * See `BrowserThumbnails` and `ThumbnailsMiddleware` for example usages within other features.
+  * Removed handling of `LowMemoryAction` in `SystemReducer` on in-memory thumbnails.
+
+* **browser-tabstray**:
+  * `TabViewHolder` no longer checks if a thumbnail is in memory before retrieving a thumbnail from the `ImageLoader`.
+
 # 107.0.0
 * [Commits](https://github.com/mozilla-mobile/android-components/compare/v106.0.0..v107.0.0)
 * [Milestone](https://github.com/mozilla-mobile/android-components/milestone/154?closed=1)
@@ -52,7 +61,7 @@ permalink: /changelog/
 * [Configuration](https://github.com/mozilla-mobile/android-components/blob/v107.0.0/.config.yml)
 
 * **feature-syncedtabs**
-  * 🚒 Bug fixed [issue #12930](https://github.com/mozilla-mobile/android-components/issues/12930) Ensure `DefaultPresenter` will unregister it's `FxaAccountManager` observers when it's `lifecycleOwner` is stopped to prevent memory leaks. 
+  * 🚒 Bug fixed [issue #12930](https://github.com/mozilla-mobile/android-components/issues/12930) Ensure `DefaultPresenter` will unregister it's `FxaAccountManager` observers when it's `lifecycleOwner` is stopped to prevent memory leaks.
 
 * **feature-app-links**
   * 🚒 Bug fixed [issue #12804](https://github.com/mozilla-mobile/android-components/issues/12804) Speculative fix for a TransactionTooLargeException or RuntimeException when querying activities.

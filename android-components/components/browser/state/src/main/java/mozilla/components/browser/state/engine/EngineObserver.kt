@@ -5,7 +5,6 @@
 package mozilla.components.browser.state.engine
 
 import android.content.Intent
-import android.graphics.Bitmap
 import android.os.Environment
 import mozilla.components.browser.state.action.BrowserAction
 import mozilla.components.browser.state.action.ContentAction
@@ -217,16 +216,6 @@ internal class EngineObserver(
         )
     }
 
-    override fun onThumbnailChange(bitmap: Bitmap?) {
-        store.dispatch(
-            if (bitmap == null) {
-                ContentAction.RemoveThumbnailAction(tabId)
-            } else {
-                ContentAction.UpdateThumbnailAction(tabId, bitmap)
-            },
-        )
-    }
-
     override fun onContentPermissionRequest(permissionRequest: PermissionRequest) {
         store.dispatch(
             ContentAction.UpdatePermissionsRequest(
@@ -412,7 +401,7 @@ internal class EngineObserver(
         )
     }
 
-    override fun onSaveToPdfError(throwable: Throwable) {
+    override fun onSaveToPdfException(throwable: Throwable) {
         store.dispatch(EngineAction.SaveToPdfExceptionAction(tabId, throwable))
     }
 }
