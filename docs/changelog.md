@@ -45,6 +45,14 @@ permalink: /changelog/
 * **service-glean**
   * Re-export TextMetricType, RateMetricType, DenominatorMetricType, NumeratorMetricType to make them usable by applications [#13010](https://github.com/mozilla-mobile/android-components/pull/13010)
 
+* **browser-state**:
+  * `UpdateThumbnailAction` and `RemoveThumbnailAction` now throw an exception if those actions are not handled with a middleware.
+  * See `BrowserThumbnails` and `ThumbnailsMiddleware` for example usages within other features.
+  * Removed handling of `LowMemoryAction` in `SystemReducer` on in-memory thumbnails.
+
+* **browser-tabstray**:
+  * `TabViewHolder` no longer checks if a thumbnail is in memory before retrieving a thumbnail from the `ImageLoader`.
+
 # 107.0.0
 * [Commits](https://github.com/mozilla-mobile/android-components/compare/v106.0.0..v107.0.0)
 * [Milestone](https://github.com/mozilla-mobile/android-components/milestone/154?closed=1)
