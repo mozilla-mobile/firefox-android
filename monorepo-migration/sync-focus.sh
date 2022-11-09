@@ -7,10 +7,16 @@ CURRENT_REPO_PATH="$(dirname -- "$SCRIPT_DIR")"
 
 REPO_NAME_TO_SYNC='focus-android'
 MAIN_BRANCH_NAME='main'
-PREP_BRANCH_NAME='focus-prep'
+
+CURRENT_MAJOR_VERSION="$(git show "$MAIN_BRANCH_NAME":version.txt | cut -d'.' -f1)"
+CURRENT_BETA_VERSION="$(( CURRENT_MAJOR_VERSION - 1 ))"
+CURRENT_RELEASE_VERSION="$(( CURRENT_BETA_VERSION - 1 ))"
+BRANCHES_TO_SYNC_ON_CURRENT_REPO=("$MAIN_BRANCH_NAME" "releases_v$CURRENT_BETA_VERSION" "releases_v$CURRENT_RELEASE_VERSION")
+BRANCHES_TO_SYNC_ON_TMP_REPO=("$MAIN_BRANCH_NAME" "releases_v$CURRENT_BETA_VERSION.0" "releases_v$CURRENT_RELEASE_VERSION.0")
+PREP_BRANCHES=('focus-prep' "focus-prep-$CURRENT_BETA_VERSION" "focus-prep-$CURRENT_RELEASE_VERSION")
+
 TMP_REPO_PATH="/tmp/git/$REPO_NAME_TO_SYNC"
 TMP_REPO_BRANCH_NAME='firefox-android'
-TAG_PREFIX='focus-'
 MONOREPO_URL='git@github.com:mozilla-mobile/firefox-android.git'
 MERGE_COMMIT_MESSAGE=$(cat <<EOF
 Merge https://github.com/mozilla-mobile/$REPO_NAME_TO_SYNC repository
@@ -19,12 +25,12 @@ The history was slightly altered before merging it:
   * All files from $REPO_NAME_TO_SYNC are now under its own subdirectory
   * All commits messages were rewritten to link issues and pull requests to the former repository
   * All commits messages were prefixed with [focus]
-  * All tags were were prefixed with $TAG_PREFIX
 EOF
 )
 
 EXPRESSIONS_FILE_PATH="$SCRIPT_DIR/data/message-expressions.txt"
 UTC_NOW="$(date -u '+%Y%m%d%H%M%S')"
+PREP_BRANCH_BACKUP_SUFFIX="backup-$UTC_NOW"
 
 
 function _is_github_authenticated() {
@@ -74,40 +80,49 @@ function _rewrite_git_history() {
     git filter-repo \
         --to-subdirectory-filter "$REPO_NAME_TO_SYNC/" \
         --replace-message "$EXPRESSIONS_FILE_PATH" \
-        --tag-rename '':"$TAG_PREFIX" \
         --force
 }
 
-function _remove_old_tags() {
-    cd "$CURRENT_REPO_PATH"
-    set +e
-    git tag | grep "$TAG_PREFIX" | xargs -L 1 | xargs git push "$MONOREPO_URL" --delete
-    set -e
-}
-
 function _back_up_prep_branch() {
+    local prep_branch="$1"
+
     cd "$CURRENT_REPO_PATH"
-    if git rev-parse --quiet --verify "$PREP_BRANCH_NAME" > /dev/null; then
-        git branch --move "$PREP_BRANCH_NAME" "$PREP_BRANCH_NAME-backup-$UTC_NOW"
+    if git rev-parse --quiet --verify "$prep_branch" > /dev/null; then
+        git branch --move "$prep_branch" "$prep_branch-$PREP_BRANCH_BACKUP_SUFFIX"
     fi
 }
 
 function _reset_prep_branch() {
-    _back_up_prep_branch
+    local branch_on_current_repo="$1"
+    local prep_branch="$2"
+
+    _back_up_prep_branch "$prep_branch"
     cd "$CURRENT_REPO_PATH"
-    git checkout "$MAIN_BRANCH_NAME"
+    git checkout "$branch_on_current_repo"
     git pull
-    git checkout -b "$PREP_BRANCH_NAME"
+    git checkout -b "$prep_branch"
 }
 
 function _merge_histories() {
+    cd "$TMP_REPO_PATH"
+    git checkout "$branch_on_tmp_repo"
+
     cd "$CURRENT_REPO_PATH"
-    git pull --no-edit --tags --allow-unrelated-histories --no-rebase --force "$TMP_REPO_PATH"
+    git pull --no-edit --allow-unrelated-histories --no-rebase --force "$TMP_REPO_PATH"
     git commit --amend --message "$MERGE_COMMIT_MESSAGE"
 }
 
-function _clean_up_temporary_repo() {
-    rm -rf "$TMP_REPO_PATH"
+function _update_prep_branches() {
+    for i in "${!BRANCHES_TO_SYNC_ON_CURRENT_REPO[@]}"; do
+        branch_on_current_repo="${BRANCHES_TO_SYNC_ON_CURRENT_REPO[i]}"
+        branch_on_tmp_repo="${BRANCHES_TO_SYNC_ON_TMP_REPO[i]}"
+        prep_branch="${PREP_BRANCHES[i]}"
+
+        echo "Processing $branch_on_current_repo + $branch_on_tmp_repo => $prep_branch"
+
+        _reset_prep_branch "$branch_on_current_repo" "$prep_branch"
+        _merge_histories "$branch_on_tmp_repo"
+    done
 }
 
 
@@ -116,16 +131,18 @@ _setup_temporary_repo
 _update_repo_branch
 _update_repo_numbers
 _rewrite_git_history
-_remove_old_tags
-_reset_prep_branch
-_merge_histories
-_clean_up_temporary_repo
+_update_prep_branches
 
+git checkout "${PREP_BRANCHES[0]}"
 
 cat <<EOF
-$REPO_NAME_TO_SYNC has been sync'd and merged to the current branch.
-You can now inspect the changes and push them once ready:
+$REPO_NAME_TO_SYNC has been sync'd and merged to the following branches:
+    ${PREP_BRANCHES[@]}
 
-git push
-git push --tags
+You are currently on ${PREP_BRANCHES[0]}.
+You can now inspect the changes and push them once ready.
+
+If something went wrong, you still have a copy of the former branches.
+They're suffixed by '$PREP_BRANCH_BACKUP_SUFFIX'
+
 EOF
