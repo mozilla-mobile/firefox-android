@@ -217,4 +217,60 @@ class HistoryMetadataSuggestionProviderTest {
         assertEquals(historyEntry.title, suggestions[0].title)
         assertNull(suggestions[0].editSuggestion)
     }
+
+    @Test
+    fun `GIVEN no external filter WHEN querying history THEN query a low number of results`() = runTest {
+        val storage: HistoryMetadataStorage = mock()
+        doReturn(emptyList<HistoryMetadata>()).`when`(storage).queryHistoryMetadata(anyString(), anyInt())
+        val provider = HistoryMetadataSuggestionProvider(storage, mock())
+
+        provider.onInputChanged("moz")
+
+        verify(storage).queryHistoryMetadata("moz", DEFAULT_METADATA_SUGGESTION_LIMIT)
+    }
+
+    @Test
+    fun `GIVEN an external filter WHEN querying history THEN query more than the usual default`() = runTest {
+        val storage: HistoryMetadataStorage = mock()
+        doReturn(emptyList<HistoryMetadata>()).`when`(storage).queryHistoryMetadata(anyString(), anyInt())
+        val expectedQueryCount = 2 * HISTORY_METADATA_RESULTS_TO_FILTER_SCALE_FACTOR
+
+        val provider = HistoryMetadataSuggestionProvider(
+            historyStorage = storage,
+            loadUrlUseCase = mock(),
+            maxNumberOfSuggestions = 2,
+            externalUrlFilter = { false },
+        )
+
+        provider.onInputChanged("moz")
+
+        verify(storage).queryHistoryMetadata("moz", expectedQueryCount)
+    }
+
+    @Test
+    fun `GIVEN an external filter WHEN querying history THEN return only the results that pass through the filter`() = runTest {
+        val storage: HistoryMetadataStorage = mock()
+        val metadataKey2 = HistoryMetadataKey("https://mozilla.com/firefox", null, null)
+        val historyEntry2 = HistoryMetadata(
+            key = metadataKey2,
+            title = "mozilla",
+            createdAt = System.currentTimeMillis(),
+            updatedAt = System.currentTimeMillis(),
+            totalViewTime = 10,
+            documentType = DocumentType.Regular,
+            previewImageUrl = null,
+        )
+        doReturn(listOf(historyEntry, historyEntry2)).`when`(storage).queryHistoryMetadata(eq("moz"), anyInt())
+
+        val provider = HistoryMetadataSuggestionProvider(
+            historyStorage = storage,
+            loadUrlUseCase = mock(),
+            externalUrlFilter = { url -> url?.startsWith("https://mozilla.com") ?: false },
+        )
+
+        val suggestions = provider.onInputChanged("moz")
+
+        assertEquals(1, suggestions.size)
+        assertTrue(suggestions.map { it.description }.contains("https://mozilla.com/firefox"))
+    }
 }

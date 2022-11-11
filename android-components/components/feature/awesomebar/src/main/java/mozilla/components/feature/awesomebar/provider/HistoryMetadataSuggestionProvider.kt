@@ -22,6 +22,12 @@ import java.util.UUID
 const val DEFAULT_METADATA_SUGGESTION_LIMIT = 5
 
 /**
+ * Default suggestions limit multiplier when needing to filter results by an external url filter.
+ */
+@VisibleForTesting
+internal const val HISTORY_METADATA_RESULTS_TO_FILTER_SCALE_FACTOR = 10
+
+/**
  * A [AwesomeBar.SuggestionProvider] implementation that provides suggestions based on [HistoryMetadata].
  *
  * @param historyStorage an instance of the [HistoryStorage] used
@@ -36,6 +42,7 @@ const val DEFAULT_METADATA_SUGGESTION_LIMIT = 5
  * defaults to [DEFAULT_METADATA_SUGGESTION_LIMIT].
  * @param showEditSuggestion optional parameter to specify if the suggestion should show the edit button
  * @param suggestionsHeader optional parameter to specify if the suggestion should have a header
+ * @param externalUrlFilter Optional suggestions url filter.
  */
 class HistoryMetadataSuggestionProvider(
     @get:VisibleForTesting internal val historyStorage: HistoryMetadataStorage,
@@ -45,8 +52,13 @@ class HistoryMetadataSuggestionProvider(
     @get:VisibleForTesting internal val maxNumberOfSuggestions: Int = DEFAULT_METADATA_SUGGESTION_LIMIT,
     private val showEditSuggestion: Boolean = true,
     private val suggestionsHeader: String? = null,
+    @get:VisibleForTesting val externalUrlFilter: ((String?) -> Boolean)? = null,
 ) : AwesomeBar.SuggestionProvider {
     override val id: String = UUID.randomUUID().toString()
+    private val queryLimit = when (externalUrlFilter != null) {
+        true -> maxNumberOfSuggestions * HISTORY_METADATA_RESULTS_TO_FILTER_SCALE_FACTOR
+        false -> maxNumberOfSuggestions
+    }
 
     override fun groupTitle(): String? {
         return suggestionsHeader
@@ -60,8 +72,9 @@ class HistoryMetadataSuggestionProvider(
         }
 
         val suggestions = historyStorage
-            .queryHistoryMetadata(text, maxNumberOfSuggestions)
-            .filter { it.totalViewTime > 0 }
+            .queryHistoryMetadata(text, queryLimit)
+            .filter { it.totalViewTime > 0 && externalUrlFilter?.invoke(it.key.url) ?: true }
+            .take(maxNumberOfSuggestions)
 
         suggestions.firstOrNull()?.key?.url?.let { url -> engine?.speculativeConnect(url) }
         return suggestions.into(this, icons, loadUrlUseCase, showEditSuggestion)

@@ -21,6 +21,12 @@ import java.util.UUID
 const val DEFAULT_HISTORY_SUGGESTION_LIMIT = 20
 
 /**
+ * Default suggestions limit multiplier when needing to filter results by an external url filter.
+ */
+@VisibleForTesting
+internal const val HISTORY_RESULTS_TO_FILTER_SCALE_FACTOR = 10
+
+/**
  * A [AwesomeBar.SuggestionProvider] implementation that provides suggestions based on the browsing
  * history stored in the [HistoryStorage].
  *
@@ -36,6 +42,7 @@ const val DEFAULT_HISTORY_SUGGESTION_LIMIT = 20
  * defaults to [DEFAULT_HISTORY_SUGGESTION_LIMIT]
  * @param showEditSuggestion optional parameter to specify if the suggestion should show the edit button
  * @param suggestionsHeader optional parameter to specify if the suggestion should have a header
+ * @param externalUrlFilter Optional suggestions url filter.
  */
 class HistoryStorageSuggestionProvider(
     @get:VisibleForTesting internal val historyStorage: HistoryStorage,
@@ -45,9 +52,14 @@ class HistoryStorageSuggestionProvider(
     @get:VisibleForTesting internal var maxNumberOfSuggestions: Int = DEFAULT_HISTORY_SUGGESTION_LIMIT,
     private val showEditSuggestion: Boolean = true,
     private val suggestionsHeader: String? = null,
+    @get:VisibleForTesting val externalUrlFilter: ((String?) -> Boolean)? = null,
 ) : AwesomeBar.SuggestionProvider {
 
     override val id: String = UUID.randomUUID().toString()
+    private val queryLimit = when (externalUrlFilter != null) {
+        true -> maxNumberOfSuggestions * HISTORY_RESULTS_TO_FILTER_SCALE_FACTOR
+        false -> maxNumberOfSuggestions
+    }
 
     override fun groupTitle(): String? {
         return suggestionsHeader
@@ -62,9 +74,10 @@ class HistoryStorageSuggestionProvider(
 
         // In case of duplicates we want to pick the suggestion with the highest score.
         // See: https://github.com/mozilla/application-services/issues/970
-        val suggestions = historyStorage.getSuggestions(text, maxNumberOfSuggestions)
+        val suggestions = historyStorage.getSuggestions(text, queryLimit)
             .sortedByDescending { it.score }
             .distinctBy { it.id }
+            .filter { externalUrlFilter?.invoke(it.url) ?: true }
             .take(maxNumberOfSuggestions)
 
         suggestions.firstOrNull()?.url?.let { url -> engine?.speculativeConnect(url) }
@@ -82,6 +95,12 @@ class HistoryStorageSuggestionProvider(
 
         maxNumberOfSuggestions = maxNumber
     }
+
+    /**
+     * Get the maximum number of suggestions that will be provided.
+     */
+    @VisibleForTesting
+    fun getMaxNumberOfSuggestions() = maxNumberOfSuggestions
 
     /**
      * Reset maximum number of suggestions to default.

@@ -4,6 +4,7 @@
 
 package mozilla.components.feature.awesomebar.provider
 
+import androidx.annotation.VisibleForTesting
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import mozilla.components.browser.icons.BrowserIcons
@@ -19,6 +20,12 @@ import java.util.UUID
  * Return 5 history suggestions by default.
  */
 const val DEFAULT_COMBINED_SUGGESTION_LIMIT = 5
+
+/**
+ * Default suggestions limit multiplier when needing to filter results by an external url filter.
+ */
+@VisibleForTesting
+internal const val COMBINED_HISTORY_RESULTS_TO_FILTER_SCALE_FACTOR = 10
 
 /**
  * A [AwesomeBar.SuggestionProvider] implementation that combines suggestions from
@@ -41,6 +48,7 @@ const val DEFAULT_COMBINED_SUGGESTION_LIMIT = 5
  * defaults to [DEFAULT_COMBINED_SUGGESTION_LIMIT].
  * @param showEditSuggestion optional parameter to specify if the suggestion should show the edit button
  * @param suggestionsHeader optional parameter to specify if the suggestion should have a header
+ * @param externalUrlFilter Optional suggestions url filter.
  */
 @Suppress("LongParameterList")
 class CombinedHistorySuggestionProvider(
@@ -52,8 +60,13 @@ class CombinedHistorySuggestionProvider(
     internal var maxNumberOfSuggestions: Int = DEFAULT_COMBINED_SUGGESTION_LIMIT,
     private val showEditSuggestion: Boolean = true,
     private val suggestionsHeader: String? = null,
+    @get:VisibleForTesting val externalUrlFilter: ((String?) -> Boolean)? = null,
 ) : AwesomeBar.SuggestionProvider {
     override val id: String = UUID.randomUUID().toString()
+    private val queryLimit = when (externalUrlFilter != null) {
+        true -> maxNumberOfSuggestions * COMBINED_HISTORY_RESULTS_TO_FILTER_SCALE_FACTOR
+        false -> maxNumberOfSuggestions
+    }
 
     override fun groupTitle(): String? {
         return suggestionsHeader
@@ -69,14 +82,17 @@ class CombinedHistorySuggestionProvider(
 
         val metadataSuggestionsAsync = async {
             historyMetadataStorage
-                .queryHistoryMetadata(text, maxNumberOfSuggestions)
-                .filter { it.totalViewTime > 0 }
+                .queryHistoryMetadata(text, queryLimit)
+                .filter { it.totalViewTime > 0 && externalUrlFilter?.invoke(it.key.url) ?: true }
+                .take(maxNumberOfSuggestions)
                 .into(this@CombinedHistorySuggestionProvider, icons, loadUrlUseCase, showEditSuggestion)
         }
         val historySuggestionsAsync = async {
-            historyStorage.getSuggestions(text, maxNumberOfSuggestions)
-                .sortedByDescending { it.score }
+            historyStorage.getSuggestions(text, queryLimit)
                 .distinctBy { it.id }
+                .sortedByDescending { it.score }
+                .filter { externalUrlFilter?.invoke(it.url) ?: true }
+                .take(maxNumberOfSuggestions)
                 .into(this@CombinedHistorySuggestionProvider, icons, loadUrlUseCase, showEditSuggestion)
         }
 
@@ -113,6 +129,12 @@ class CombinedHistorySuggestionProvider(
 
         maxNumberOfSuggestions = maxNumber
     }
+
+    /**
+     * Get the maximum number of suggestions that will be provided.
+     */
+    @VisibleForTesting
+    fun getMaxNumberOfSuggestions() = maxNumberOfSuggestions
 
     /**
      * Reset maximum number of suggestions to default.

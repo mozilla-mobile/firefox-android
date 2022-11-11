@@ -4,6 +4,7 @@
 
 package mozilla.components.feature.awesomebar.provider
 
+import android.net.Uri
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -12,6 +13,7 @@ import mozilla.components.concept.storage.BookmarkInfo
 import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.concept.storage.BookmarkNodeType
 import mozilla.components.concept.storage.BookmarksStorage
+import mozilla.components.support.ktx.android.net.sameOriginAs
 import mozilla.components.support.test.eq
 import mozilla.components.support.test.mock
 import mozilla.components.support.utils.StorageUtils.levenshteinDistance
@@ -155,6 +157,56 @@ class BookmarksStorageSuggestionProviderTest {
         assertNull(suggestions[0].editSuggestion)
         assertEquals("http://www.mozilla.org", suggestions[0].description)
         verify(engine, times(1)).speculativeConnect(eq(suggestions[0].description!!))
+    }
+
+    @Test
+    fun `GIVEN no external filter WHEN querying bookmarks THEN query a low number of results`() = runTest {
+        val bookmarksSpy = spy(bookmarks)
+        val provider = BookmarksStorageSuggestionProvider(
+            bookmarksStorage = bookmarksSpy,
+            loadUrlUseCase = mock(),
+        )
+
+        provider.onInputChanged("moz")
+
+        verify(bookmarksSpy).searchBookmarks("moz", BOOKMARKS_SUGGESTION_LIMIT)
+    }
+
+    @Test
+    fun `GIVEN an external filter WHEN querying bookmarks THEN query more than the usual default`() = runTest {
+        val bookmarksSpy = spy(bookmarks)
+        val provider = BookmarksStorageSuggestionProvider(
+            bookmarksStorage = bookmarksSpy,
+            loadUrlUseCase = mock(),
+            externalUrlFilter = { false },
+        )
+
+        provider.onInputChanged("moz")
+
+        verify(bookmarksSpy).searchBookmarks(
+            "moz",
+            BOOKMARKS_SUGGESTION_LIMIT * BOOKMARKS_RESULTS_TO_FILTER_SCALE_FACTOR,
+        )
+    }
+
+    @Test
+    fun `GIVEN an external filter WHEN querying bookmarks THEN return only the results that pass through the filter`() = runTest {
+        val bookmarksSpy = spy(bookmarks)
+        val provider = BookmarksStorageSuggestionProvider(
+            bookmarksStorage = bookmarksSpy,
+            loadUrlUseCase = mock(),
+            externalUrlFilter = { url -> Uri.parse("https://mozilla.com").sameOriginAs(Uri.parse(url)) },
+        )
+
+        bookmarks.addItem("Other", "https://mozilla.com/firefox", newItem.title!!, null)
+        bookmarks.addItem("Test", "https://mozilla.com/focus", newItem.title!!, null)
+        bookmarks.addItem("Mozilla", "https://mozilla.org/firefox", newItem.title!!, null)
+
+        val suggestions = provider.onInputChanged("moz")
+
+        assertEquals(2, suggestions.size)
+        assertTrue(suggestions.map { it.description }.contains("https://mozilla.com/firefox"))
+        assertTrue(suggestions.map { it.description }.contains("https://mozilla.com/focus"))
     }
 
     @SuppressWarnings

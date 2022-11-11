@@ -4,6 +4,7 @@
 package mozilla.components.feature.syncedtabs
 
 import android.graphics.drawable.Drawable
+import androidx.annotation.VisibleForTesting
 import mozilla.components.browser.icons.BrowserIcons
 import mozilla.components.browser.icons.IconRequest
 import mozilla.components.browser.storage.sync.TabEntry
@@ -25,8 +26,10 @@ class SyncedTabsStorageSuggestionProvider(
     private val icons: BrowserIcons? = null,
     private val deviceIndicators: DeviceIndicators = DeviceIndicators(),
     private val suggestionsHeader: String? = null,
+    @get:VisibleForTesting val externalUrlFilter: ((String?) -> Boolean)? = null,
 ) : AwesomeBar.SuggestionProvider {
     override val id: String = UUID.randomUUID().toString()
+    private val filter: (String?) -> Boolean = externalUrlFilter ?: { true }
 
     override fun groupTitle(): String? {
         return suggestionsHeader
@@ -42,9 +45,9 @@ class SyncedTabsStorageSuggestionProvider(
             for (tab in tabs) {
                 val activeTabEntry = tab.active()
                 // This is a fairly naive match implementation, but this is what we do on Desktop 🤷.
-                if (activeTabEntry.url.contains(text, ignoreCase = true) ||
+                val isTabMatching = activeTabEntry.url.contains(text, ignoreCase = true) ||
                     activeTabEntry.title.contains(text, ignoreCase = true)
-                ) {
+                if (filter(activeTabEntry.url) && isTabMatching) {
                     results.add(
                         ClientTabPair(
                             clientName = client.displayName,
