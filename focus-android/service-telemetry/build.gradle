@@ -32,5 +32,5 @@ dependencies {
     implementation project(':support-base')
     implementation project(':concept-fetch')
 
-    implementation Dependencies.androidx_annotation
+    implementation FocusDependencies.androidx_annotation
 }
