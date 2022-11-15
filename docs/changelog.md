@@ -3,12 +3,34 @@ layout: page
 title: Changelog
 permalink: /changelog/
 ---
+<<<<<<< HEAD
 # 108.0.0 (In Development)
 * [Commits](https://github.com/mozilla-mobile/android-components/compare/v107.0.0...main)
 * [Milestone](https://github.com/mozilla-mobile/android-components/milestone/155?closed=1)
 * [Dependencies](https://github.com/mozilla-mobile/android-components/blob/main/buildSrc/src/main/java/Dependencies.kt)
 * [Gecko](https://github.com/mozilla-mobile/android-components/blob/main/buildSrc/src/main/java/Gecko.kt)
 * [Configuration](https://github.com/mozilla-mobile/android-components/blob/main/.config.yml)
+=======
+# 109.0.0 (In Development)
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/v108.0.0...main)
+* [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
+* [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/Gecko.kt)
+* [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/.config.yml)
+
+* **All components**
+  * ⚠️Increased `compileSdkVersion` to 33 (Android 13)
+* **feature-awesomebar**
+  * `SearchSuggestionProvider` and `SearchActionProvider` now have a new parameter `suggestionsHeader`, to add title to suggestions.
+
+# 108.0.0
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/v107.0.0...v108.0.0)
+* [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/v108.0.0/android-components/buildSrc/src/main/java/Dependencies.kt)
+* [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/v108.0.0/android-components/buildSrc/src/main/java/Gecko.kt)
+* [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/v108.0.0/android-components/.config.yml)
+
+* **feature-search**
+  * 🆕 A new action `RefreshSearchEnginesAction` was added to the `BrowserAction` to allow for refreshing search engines when app locale is changed. For more references see [bug #1800209](https://bugzilla.mozilla.org/show_bug.cgi?id=1800209).
+>>>>>>> 83d78588b3 (Bug 1800700 - Add default search suggest header)
 
 * **ui-autocomplete**
   * 🚒 Bug fixed [bug #1794933](https://bugzilla.mozilla.org/show_bug.cgi?id=1794933) Immediately remove autocomplete when not applicable anymore.
