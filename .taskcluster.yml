@@ -29,7 +29,10 @@ tasks:
                       then: 'skaspari+mozlando@mozilla.com'   # It must match what's in bors.toml
                       else:
                           $if: 'tasks_for == "github-push"'
-                          then: '${event.pusher.email}'
+                          then:
+                              $if: 'event.pusher.email'
+                              then: '${event.pusher.email}'
+                              else: '${event.pusher.name}@users.noreply.github.com'
                           else:
                               $if: 'isPullRequest'
                               then: '${event.pull_request.user.login}@users.noreply.github.com'
@@ -180,7 +183,7 @@ tasks:
                                               name: "Decision Task for cron job ${cron.job_name}"
                                               description: 'Created by a [cron task](https://firefox-ci-tc.services.mozilla.com/tasks/${cron.task_id})'
                             provisionerId: "mobile-${level}"
-                            workerType: "decision"
+                            workerType: "decision-gcp"
                             tags:
                                 $if: 'isPullRequest || tasks_for == "github-push"'
                                 then:
