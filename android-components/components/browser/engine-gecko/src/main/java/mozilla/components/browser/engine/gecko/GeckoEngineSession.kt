@@ -1200,6 +1200,10 @@ class GeckoEngineSession(
         defaultSettings?.testingModeEnabled?.let {
             geckoSession.settings.fullAccessibilityTree = it
         }
+        if (defaultSettings?.initialDesktopMode == true) {
+            geckoSession.settings.viewportMode = GeckoSessionSettings.VIEWPORT_MODE_DESKTOP
+            geckoSession.settings.userAgentMode = GeckoSessionSettings.USER_AGENT_MODE_DESKTOP
+        }
         defaultSettings?.userAgentString?.let { geckoSession.settings.userAgentOverride = it }
         defaultSettings?.suspendMediaWhenInactive?.let {
             geckoSession.settings.suspendMediaWhenInactive = it

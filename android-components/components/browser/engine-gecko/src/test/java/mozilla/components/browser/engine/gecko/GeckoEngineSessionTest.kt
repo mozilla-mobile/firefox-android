@@ -2256,6 +2256,30 @@ class GeckoEngineSessionTest {
     }
 
     @Test
+    fun `GIVEN initialDesktopMode flag is true WHEN creating GeckoEngineSession THEN set desktop mode`() {
+        GeckoEngineSession(
+            runtime,
+            geckoSessionProvider = geckoSessionProvider,
+            defaultSettings = DefaultSettings(initialDesktopMode = true),
+        )
+
+        verify(geckoSession.settings).viewportMode = GeckoSessionSettings.VIEWPORT_MODE_DESKTOP
+        verify(geckoSession.settings).userAgentMode = GeckoSessionSettings.USER_AGENT_MODE_DESKTOP
+    }
+
+    @Test
+    fun `GIVEN initialDesktopMode flag is false WHEN creating GeckoEngineSession THEN desktop mode is not set`() {
+        GeckoEngineSession(
+            runtime,
+            geckoSessionProvider = geckoSessionProvider,
+            defaultSettings = DefaultSettings(initialDesktopMode = false),
+        )
+
+        verify(geckoSession.settings, never()).viewportMode = anyInt()
+        verify(geckoSession.settings, never()).userAgentMode = anyInt()
+    }
+
+    @Test
     fun checkForMobileSite() {
         val mUrl = "https://m.example.com"
         val mobileUrl = "https://mobile.example.com"
