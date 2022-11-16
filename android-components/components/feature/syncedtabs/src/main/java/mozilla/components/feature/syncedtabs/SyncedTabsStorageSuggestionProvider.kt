@@ -12,6 +12,7 @@ import mozilla.components.concept.awesomebar.AwesomeBar
 import mozilla.components.concept.awesomebar.AwesomeBar.Suggestion.Flag
 import mozilla.components.concept.sync.DeviceType
 import mozilla.components.feature.session.SessionUseCases
+import mozilla.components.feature.syncedtabs.ext.getActiveDeviceTabs
 import mozilla.components.feature.syncedtabs.facts.emitSyncedTabSuggestionClickedFact
 import mozilla.components.feature.syncedtabs.storage.SyncedTabsStorage
 import java.util.UUID
@@ -29,36 +30,21 @@ class SyncedTabsStorageSuggestionProvider(
     @get:VisibleForTesting val externalUrlFilter: ((String?) -> Boolean)? = null,
 ) : AwesomeBar.SuggestionProvider {
     override val id: String = UUID.randomUUID().toString()
-    private val filter: (String?) -> Boolean = externalUrlFilter ?: { true }
 
     override fun groupTitle(): String? {
         return suggestionsHeader
     }
 
     override suspend fun onInputChanged(text: String): List<AwesomeBar.Suggestion> {
-        if (text.isEmpty()) {
-            return emptyList()
+        val isTabMatching: (TabEntry) -> Boolean = { tab ->
+            // This is a fairly naive match implementation, but this is what we do on Desktop 🤷.
+            tab.url.contains(text, ignoreCase = true) ||
+                tab.title.contains(text, ignoreCase = true)
+        }
+        val results = syncedTabs.getActiveDeviceTabs { tab ->
+            externalUrlFilter?.invoke(tab.url) ?: true && isTabMatching(tab)
         }
 
-        val results = mutableListOf<ClientTabPair>()
-        for ((client, tabs) in syncedTabs.getSyncedDeviceTabs()) {
-            for (tab in tabs) {
-                val activeTabEntry = tab.active()
-                // This is a fairly naive match implementation, but this is what we do on Desktop 🤷.
-                val isTabMatching = activeTabEntry.url.contains(text, ignoreCase = true) ||
-                    activeTabEntry.title.contains(text, ignoreCase = true)
-                if (filter(activeTabEntry.url) && isTabMatching) {
-                    results.add(
-                        ClientTabPair(
-                            clientName = client.displayName,
-                            tab = activeTabEntry,
-                            lastUsed = tab.lastUsed,
-                            deviceType = client.deviceType,
-                        ),
-                    )
-                }
-            }
-        }
         return results.sortedByDescending { it.lastUsed }.into()
     }
 
@@ -103,11 +89,4 @@ data class DeviceIndicators(
     val desktop: Drawable? = null,
     val mobile: Drawable? = null,
     val tablet: Drawable? = null,
-)
-
-private data class ClientTabPair(
-    val clientName: String,
-    val tab: TabEntry,
-    val lastUsed: Long,
-    val deviceType: DeviceType,
 )

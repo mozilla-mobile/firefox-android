@@ -8,12 +8,9 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.test.runTest
-import mozilla.components.browser.storage.sync.SyncedDeviceTabs
-import mozilla.components.browser.storage.sync.Tab
-import mozilla.components.browser.storage.sync.TabEntry
 import mozilla.components.concept.awesomebar.AwesomeBar.Suggestion.Flag
-import mozilla.components.concept.sync.Device
-import mozilla.components.concept.sync.DeviceType
+import mozilla.components.feature.syncedtabs.helper.getDevice1Tabs
+import mozilla.components.feature.syncedtabs.helper.getDevice2Tabs
 import mozilla.components.feature.syncedtabs.storage.SyncedTabsStorage
 import mozilla.components.support.ktx.android.net.sameOriginAs
 import mozilla.components.support.test.mock
@@ -91,64 +88,3 @@ class SyncedTabsStorageSuggestionProviderTest {
         assertEquals(2, suggestions.map { it.description }.filter { it == "Foo Client" }.size)
     }
 }
-
-private fun getDevice1Tabs() = SyncedDeviceTabs(
-    Device(
-        id = "client1",
-        displayName = "Foo Client",
-        deviceType = DeviceType.DESKTOP,
-        isCurrentDevice = false,
-        lastAccessTime = null,
-        capabilities = listOf(),
-        subscriptionExpired = false,
-        subscription = null,
-    ),
-    listOf(
-        Tab(
-            listOf(
-                TabEntry("Foo", "https://foo.bar", null), /* active tab */
-                TabEntry("Bobo", "https://foo.bar", null),
-                TabEntry("Foo", "https://bobo.bar", null),
-            ),
-            0,
-            1,
-        ),
-        Tab(
-            listOf(
-                TabEntry("Hello Bobo", "https://foo.bar", null), /* active tab */
-            ),
-            0,
-            5,
-        ),
-        Tab(
-            listOf(
-                TabEntry("In URL", "https://bobo.bar", null), /* active tab */
-            ),
-            0,
-            2,
-        ),
-    ),
-)
-
-private fun getDevice2Tabs() = SyncedDeviceTabs(
-    Device(
-        id = "client2",
-        displayName = "Bar Client",
-        deviceType = DeviceType.MOBILE,
-        isCurrentDevice = false,
-        lastAccessTime = null,
-        capabilities = listOf(),
-        subscriptionExpired = false,
-        subscription = null,
-    ),
-    listOf(
-        Tab(
-            listOf(
-                TabEntry("Bar", "https://bar.bar", null),
-                TabEntry("BOBO in CAPS", "https://obob.bar", null), /* active tab */
-            ),
-            1,
-            1,
-        ),
-    ),
-)
