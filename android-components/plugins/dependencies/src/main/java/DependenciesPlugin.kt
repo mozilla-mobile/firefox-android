@@ -2,8 +2,15 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+import org.gradle.api.Plugin
+import org.gradle.api.initialization.Settings
+
 // If you ever need to force a toolchain rebuild (taskcluster) then edit the following comment.
 // FORCE REBUILD 2022-11-14
+
+class DependenciesPlugin : Plugin<Settings> {
+    override fun apply(settings: Settings) = Unit
+}
 
 // Synchronized version numbers for dependencies used by (some) modules
 object Versions {
@@ -33,10 +40,10 @@ object Versions {
     const val disklrucache = "2.0.2"
     const val leakcanary = "2.10"
 
-    const val mozilla_appservices = "95.0.1"
+    const val mozilla_appservices = "96.0.1"
 
     // DO NOT MODIFY MANUALLY. This is auto-updated along with GeckoView.
-    const val mozilla_glean = "51.8.0"
+    const val mozilla_glean = "51.8.2"
 
     const val material = "1.2.1"
 

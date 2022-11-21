@@ -33,6 +33,7 @@ dependencies {
     implementation project(":concept-engine")
     implementation project(":browser-state")
     implementation project(":feature-session")
+    implementation project(":ui-icons")
     implementation Dependencies.androidx_compose_ui
     implementation Dependencies.androidx_compose_ui_tooling
     implementation Dependencies.androidx_compose_foundation
@@ -46,5 +47,6 @@ dependencies {
     testImplementation Dependencies.testing_mockito
 }
 
+apply from: '../../../android-lint.gradle'
 apply from: '../../../publish.gradle'
 ext.configurePublish(config.componentsGroupId, archivesBaseName, project.ext.description)

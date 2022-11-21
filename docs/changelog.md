@@ -5,8 +5,8 @@ permalink: /changelog/
 ---
 # 109.0.0 (In Development)
 * [Commits](https://github.com/mozilla-mobile/firefox-android/compare/v108.0.0...main)
-* [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/buildSrc/src/main/java/Dependencies.kt)
-* [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/buildSrc/src/main/java/Gecko.kt)
+* [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
+* [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/Gecko.kt)
 * [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/.config.yml)
 
 * **browser-menu**:
@@ -14,12 +14,25 @@ permalink: /changelog/
   
 * **All components**
   * ⚠️Increased `compileSdkVersion` to 33 (Android 13)
+* **feature-awesomebar**
+  * `SearchSuggestionProvider` and `SearchActionProvider` now have a new parameter `suggestionsHeader`, to add title to suggestions.
+
+* **lib-crash**
+  * 🚒 Bug fixed [bug #1801349](https://bugzilla.mozilla.org/show_bug.cgi?id=1801349).  Execute `recordCrashBreadcrumb()` inside our coroutine scope to avoid issues with mutating the array from multiple threads at once.
+* **lib-crash-sentry**
+  * 🚒 Bug fixed [bug #1801349](https://bugzilla.mozilla.org/show_bug.cgi?id=1801349).  Copy the breadcrumb date to the Sentry breadcrumb.
+
+* **support-ktx**:
+  * Added `String.toShortUrl` extension that allows making URLs more user friendly [#1796379](https://bugzilla.mozilla.org/show_bug.cgi?id=1796379)
 
 # 108.0.0
 * [Commits](https://github.com/mozilla-mobile/firefox-android/compare/v107.0.0...v108.0.0)
 * [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/v108.0.0/android-components/buildSrc/src/main/java/Dependencies.kt)
 * [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/v108.0.0/android-components/buildSrc/src/main/java/Gecko.kt)
 * [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/v108.0.0/android-components/.config.yml)
+
+* **feature-search**
+  * 🆕 A new action `RefreshSearchEnginesAction` was added to the `BrowserAction` to allow for refreshing search engines when app locale is changed. For more references see [bug #1800209](https://bugzilla.mozilla.org/show_bug.cgi?id=1800209).
 
 * **ui-autocomplete**
   * 🚒 Bug fixed [bug #1794933](https://bugzilla.mozilla.org/show_bug.cgi?id=1794933) Immediately remove autocomplete when not applicable anymore.

@@ -35,7 +35,7 @@ android {
 dependencies {
     implementation Dependencies.kotlin_stdlib
     implementation Dependencies.kotlin_coroutines
-    implementation project(':support-ktx')
+    implementation Dependencies.androidx_annotation
 
     testImplementation project(':support-test')
     testImplementation Dependencies.androidx_test_core
@@ -45,5 +45,6 @@ dependencies {
     testImplementation Dependencies.testing_coroutines
 }
 
+apply from: '../../../android-lint.gradle'
 apply from: '../../../publish.gradle'
 ext.configurePublish(config.componentsGroupId, archivesBaseName, project.ext.description)
