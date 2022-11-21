@@ -53,9 +53,6 @@ permalink: /changelog/
 * **browser-tabstray**:
   * `TabViewHolder` no longer checks if a thumbnail is in memory before retrieving a thumbnail from the `ImageLoader`.
 
-* **feature-awesomebar**
-  * `SearchSuggestionProvider` and `SearchActionProvider` now have a new parameter `suggestionsHeader`, to add title to suggestions.
-
 # 107.0.0
 * [Commits](https://github.com/mozilla-mobile/android-components/compare/v106.0.0..v107.0.0)
 * [Milestone](https://github.com/mozilla-mobile/android-components/milestone/154?closed=1)
