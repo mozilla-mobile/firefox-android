@@ -91,6 +91,14 @@ gradle.projectsLoaded { ->
             configData.targetSdkVersion
     )
     gradle.rootProject.ext.buildConfig = buildconfig
+
+    gradle.allprojects { project ->
+        if (project.projectDir.absolutePath.contains("/android-components/")) {
+            project.tasks.withType(Test) {
+                enabled = false
+            }
+        }
+    }
 }
 
 def log(message) {
