@@ -9,8 +9,24 @@ permalink: /changelog/
 * [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/Gecko.kt)
 * [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/.config.yml)
 
+* **browser-menu**:
+  * 🚒 Bug Fixed [bug #1800885](https://bugzilla.mozilla.org/show_bug.cgi?id=1800885) Increase touch target of Add/Edit checkbox from `mozac_browser_menu_item_image_text_checkbox_button.xml` to improve accessibility.
+  
 * **All components**
   * ⚠️Increased `compileSdkVersion` to 33 (Android 13)
+* **feature-awesomebar**
+  * `SearchSuggestionProvider` and `SearchActionProvider` now have a new parameter `suggestionsHeader`, to add title to suggestions.
+
+* **lib-crash**
+  * 🚒 Bug fixed [bug #1801349](https://bugzilla.mozilla.org/show_bug.cgi?id=1801349).  Execute `recordCrashBreadcrumb()` inside our coroutine scope to avoid issues with mutating the array from multiple threads at once.
+* **lib-crash-sentry**
+  * 🚒 Bug fixed [bug #1801349](https://bugzilla.mozilla.org/show_bug.cgi?id=1801349).  Copy the breadcrumb date to the Sentry breadcrumb.
+
+* **support-ktx**:
+  * Added `String.toShortUrl` extension that allows making URLs more user friendly [#1796379](https://bugzilla.mozilla.org/show_bug.cgi?id=1796379)
+
+* **browser-engine-gecko**
+  * 🆕 Added `GeckoCookieBannersStorage.kt` to manage cookie banner exceptions [bug #1797605](https://bugzilla.mozilla.org/show_bug.cgi?id=1797605).
 
 # 108.0.0
 * [Commits](https://github.com/mozilla-mobile/firefox-android/compare/v107.0.0...v108.0.0)
