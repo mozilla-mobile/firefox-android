@@ -45,6 +45,7 @@ import org.mozilla.focus.navigation.MainActivityNavigation
 import org.mozilla.focus.navigation.Navigator
 import org.mozilla.focus.searchwidget.ExternalIntentNavigation
 import org.mozilla.focus.session.IntentProcessor
+import org.mozilla.focus.session.PrivateNotificationFeature
 import org.mozilla.focus.shortcut.HomeScreen
 import org.mozilla.focus.state.AppAction
 import org.mozilla.focus.state.Screen
@@ -71,7 +72,7 @@ open class MainActivity : LocaleAwareAppCompatActivity() {
     private lateinit var startupTypeTelemetry: StartupTypeTelemetry
     private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!
-
+    private lateinit var privateNotificationObserver: PrivateNotificationFeature
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
 
@@ -135,6 +136,14 @@ open class MainActivity : LocaleAwareAppCompatActivity() {
             .apply()
 
         AppReviewUtils.showAppReview(this)
+
+        privateNotificationObserver = PrivateNotificationFeature(
+            context = applicationContext,
+            browserStore = components.store,
+            permissionRequestHandler = { requestNotificationPermission() },
+        ).also {
+            it.start()
+        }
     }
 
     private fun setSplashScreenPreDrawListener(safeIntent: SafeIntent) {
@@ -409,6 +418,7 @@ open class MainActivity : LocaleAwareAppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+        privateNotificationObserver.stop()
     }
 
     enum class AppOpenType(val type: String) {
