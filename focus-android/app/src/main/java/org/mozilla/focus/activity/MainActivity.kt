@@ -4,6 +4,7 @@
 
 package org.mozilla.focus.activity
 
+import android.Manifest.permission.POST_NOTIFICATIONS
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
@@ -14,6 +15,7 @@ import android.util.AttributeSet
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewTreeObserver
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
@@ -73,6 +75,15 @@ open class MainActivity : LocaleAwareAppCompatActivity() {
     private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!
     private lateinit var privateNotificationObserver: PrivateNotificationFeature
+    private val notificationPermission =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            when {
+                granted -> {
+                    privateNotificationObserver.start()
+                }
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
 
@@ -143,6 +154,14 @@ open class MainActivity : LocaleAwareAppCompatActivity() {
             permissionRequestHandler = { requestNotificationPermission() },
         ).also {
             it.start()
+        }
+    }
+
+    private fun requestNotificationPermission() {
+        privateNotificationObserver.stop()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            notificationPermission.launch(POST_NOTIFICATIONS)
         }
     }
 
