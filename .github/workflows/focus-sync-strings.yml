@@ -15,7 +15,9 @@ jobs:
     steps:
       - name: "Discover Focus Beta Version"
         id: focus-android-beta-version
-        uses: mozilla-mobile/fenix-beta-version@4.1.0
+        uses: mozilla-mobile/fenix-beta-version@5.0.0
+        with:
+          project: focus-android
       - name: "Skip non-beta versions"
         uses: andymckay/cancel-action@0.2
         if: ${{ steps.focus-android-beta-version.outputs.beta_version == '' }}
@@ -30,8 +32,9 @@ jobs:
           path: beta
           ref: "releases_v${{ steps.focus-android-beta-version.outputs.beta_version }}.0"
       - name: "Sync Strings"
-        uses: mozilla-mobile/sync-strings-action@1.0.1
+        uses: mozilla-mobile/sync-strings-action@2.0.0
         with:
+          project: focus-android
           src: main
           dst: beta
       - name: Create Pull Request

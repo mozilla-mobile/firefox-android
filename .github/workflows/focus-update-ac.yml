@@ -14,8 +14,8 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: "Update Android-Components"
-        uses: mozilla-mobile/relbot@1.0.0
-        if: github.repository == 'mozilla-mobile/focus-android'
+        uses: mozilla-mobile/relbot@4.0.3
+        if: github.repository == 'mozilla-mobile/firefox-android'
         with:
           project: focus-android
           command: update-android-components
