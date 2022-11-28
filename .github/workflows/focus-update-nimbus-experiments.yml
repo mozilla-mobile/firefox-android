@@ -25,7 +25,7 @@ jobs:
         uses: mozilla-mobile/update-experiments@v2
         with:
           repo-path: focus-android
-          output-path: app/src/main/res/raw/initial_experiments.json
+          output-path: focus-android/app/src/main/res/raw/initial_experiments.json
           experimenter-url: https://experimenter.services.mozilla.com/api/v6/experiments-first-run/
           app-name: focus_android
           branch: automation/update-nimbus-experiments
