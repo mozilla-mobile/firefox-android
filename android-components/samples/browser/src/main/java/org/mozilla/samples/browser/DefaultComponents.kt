@@ -49,6 +49,7 @@ import mozilla.components.feature.customtabs.store.CustomTabsServiceStore
 import mozilla.components.feature.downloads.DownloadMiddleware
 import mozilla.components.feature.downloads.DownloadsUseCases
 import mozilla.components.feature.intent.processing.TabIntentProcessor
+import mozilla.components.feature.media.MediaSessionFeature
 import mozilla.components.feature.media.middleware.RecordingDevicesMiddleware
 import mozilla.components.feature.prompts.PromptMiddleware
 import mozilla.components.feature.pwa.ManifestStorage
@@ -67,6 +68,7 @@ import mozilla.components.feature.session.middleware.undo.UndoMiddleware
 import mozilla.components.feature.sitepermissions.OnDiskSitePermissionsStorage
 import mozilla.components.feature.tabs.CustomTabsUseCases
 import mozilla.components.feature.tabs.TabsUseCases
+import mozilla.components.feature.webnotifications.WebNotificationFeature
 import mozilla.components.lib.crash.Crash
 import mozilla.components.lib.crash.CrashReporter
 import mozilla.components.lib.crash.service.CrashReporterService
@@ -85,6 +87,7 @@ import org.mozilla.samples.browser.autofill.AutofillUnlockActivity
 import org.mozilla.samples.browser.downloads.DownloadService
 import org.mozilla.samples.browser.ext.components
 import org.mozilla.samples.browser.integration.FindInPageIntegration
+import org.mozilla.samples.browser.media.MediaSessionService
 import org.mozilla.samples.browser.request.SampleUrlEncodedRequestInterceptor
 import java.util.concurrent.TimeUnit
 import mozilla.components.ui.colors.R.color as photonColors
@@ -170,7 +173,18 @@ open class DefaultComponents(private val applicationContext: Context) {
                 PromptMiddleware(),
                 SessionPrioritizationMiddleware(),
             ) + EngineMiddleware.create(engine),
-        )
+        ).apply {
+            WebNotificationFeature(
+                applicationContext,
+                engine,
+                icons,
+                R.mipmap.ic_launcher_foreground,
+                permissionStorage,
+                IntentReceiverActivity::class.java,
+            )
+
+            MediaSessionFeature(applicationContext, MediaSessionService::class.java, this).start()
+        }
     }
 
     val customTabsStore by lazy { CustomTabsServiceStore() }
