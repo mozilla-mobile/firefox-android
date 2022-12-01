@@ -35,6 +35,7 @@ dependencies {
     implementation project(':feature-tabs')
     implementation project(':feature-app-links')
     implementation project(':browser-state')
+    implementation project(':support-base')
     implementation project(':support-utils')
     implementation project(':support-ktx')
     implementation project(':feature-search')

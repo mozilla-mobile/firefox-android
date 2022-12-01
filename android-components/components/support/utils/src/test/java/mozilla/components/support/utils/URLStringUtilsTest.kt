@@ -7,6 +7,7 @@ package mozilla.components.support.utils
 import androidx.core.text.TextDirectionHeuristicCompat
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import mozilla.components.support.ktx.util.URLStringUtils
+import mozilla.components.support.ktx.util.URLStringUtils.decodeUrlForDisplay
 import mozilla.components.support.ktx.util.URLStringUtils.isSearchTerm
 import mozilla.components.support.ktx.util.URLStringUtils.isURLLike
 import mozilla.components.support.ktx.util.URLStringUtils.toNormalizedURL
@@ -26,6 +27,15 @@ class URLStringUtilsTest {
     @Before
     fun configurePatternFlags() {
         URLStringUtils.flags = URLStringUtils.UNICODE_CHARACTER_CLASS
+    }
+
+    @Test
+    fun decodeUrlForDisplay() {
+        assertEquals("http://mozilla.org/測試", decodeUrlForDisplay("http://mozilla.org/%E6%B8%AC%E8%A9%A6"))
+        assertEquals("http://mozilla.org/%20", decodeUrlForDisplay("http://mozilla.org/%20"))
+        assertEquals("http://mozilla.org/hello 測試", decodeUrlForDisplay("http://mozilla.org/hello%20%E6%B8%AC%E8%A9%A6"))
+        assertEquals("http://mozilla.org/%2520", decodeUrlForDisplay("http://mozilla.org/%2520"))
+        assertEquals("http://mozilla.org/%25", decodeUrlForDisplay("http://mozilla.org/%25"))
     }
 
     @Test

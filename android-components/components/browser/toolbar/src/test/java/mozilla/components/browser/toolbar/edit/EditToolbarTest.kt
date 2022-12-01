@@ -270,4 +270,13 @@ class EditToolbarTest {
         assertEquals("firefox".length, url.selectionStart)
         assertTrue(url.hasFocus())
     }
+
+    @Test
+    fun `updateUrl updates the decoded version`() {
+        val (_, editToolbar) = createEditToolbar()
+        val url = editToolbar.views.url
+
+        editToolbar.updateUrl("%E6%B8%AC%E8%A9%A6", false)
+        assertEquals("測試", url.text.toString())
+    }
 }
