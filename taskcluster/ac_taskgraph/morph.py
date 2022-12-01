@@ -128,6 +128,7 @@ def _build_complete_task(taskgraph, parameters, task_label, dependencies):
         ],
         "extra": {},
     }
+    inject_geckoview_email_notification(parameters, complete_task_def)
     task = Task(
         kind="complete",
         label=task_label,
@@ -155,3 +156,26 @@ def _find_task_id(taskgraph, label):
     for task in taskgraph.tasks.values():
         if task.label == label:
             return task.task_id
+
+
+def inject_geckoview_email_notification(parameters, task_def):
+    if all(
+        (
+            task_def["metadata"]["name"].endswith("pr"),  # Filter out complete-pr-N and complete-push
+            parameters["owner"] == "github-actions[bot]@users.noreply.github.com",
+            parameters["head_repository"] == parameters["base_repository"],
+            parameters["tasks_for"] == "github-pull-request-untrusted",
+            parameters["head_ref"] == "relbot/upgrade-geckoview-ac-main",
+        )
+    ):
+        extra = task_def.setdefault("extra", {})
+        notify = extra.setdefault("notify", {})
+        email = notify.setdefault("email", {})
+        email["subject"] = f"[Android-Components] Failed to update geckoview nightly PR#{parameters['pull_request_number']}"
+        email["content"] = f"Please check {parameters['head_repository']}/pull/{parameters['pull_request_number']}"
+
+        routes = task_def.setdefault("routes", {})
+        routes.extend([
+            "notify.email.android-components-team@mozilla.com.on-failed",
+            "notify.email.geckoview-core@mozilla.com.on-failed",
+        ])
