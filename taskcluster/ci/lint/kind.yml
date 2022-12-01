@@ -35,6 +35,9 @@ task-defaults:
     worker:
         docker-image: {in-tree: base}
         max-run-time: 600
+    optimization:
+        skip-unless-changed:
+            - "android-components/**"
 
 tasks-from:
     - compare-locales.yml
