@@ -238,28 +238,6 @@ open class PlacesBookmarksStorage(context: Context) : PlacesStorage(context), Bo
         }
     }
 
-    /**
-     * Import bookmarks data from Fennec's browser.db file.
-     * Before running this, first run [PlacesHistoryStorage.importFromFennec] to import history and visits data.
-     *
-     * @param dbPath Absolute path to Fennec's browser.db file.
-     * @return Migration metrics wrapped in a JSON object. See libplaces for schema details.
-     */
-    @Throws(PlacesApiException::class)
-    fun importFromFennec(dbPath: String): JSONObject {
-        return places.importBookmarksFromFennec(dbPath)
-    }
-
-    /**
-     * Read pinned sites from Fennec's browser.db file.
-     *
-     * @param dbPath Absolute path to Fennec's browser.db file.
-     * @return A list of [BookmarkNode] which represent pinned sites.
-     */
-    fun readPinnedSitesFromFennec(dbPath: String): List<BookmarkNode> {
-        return places.readPinnedSitesFromFennec(dbPath)
-    }
-
     override fun registerWithSyncManager() {
         places.registerWithSyncManager()
     }

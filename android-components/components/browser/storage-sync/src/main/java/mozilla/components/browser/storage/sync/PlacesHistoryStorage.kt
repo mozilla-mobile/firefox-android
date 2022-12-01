@@ -285,17 +285,6 @@ open class PlacesHistoryStorage(
         }
     }
 
-    /**
-     * Import history and visits data from Fennec's browser.db file.
-     *
-     * @param dbPath Absolute path to Fennec's browser.db file.
-     * @return Migration metrics wrapped in a JSON object. See libplaces for schema details.
-     */
-    @Throws(PlacesApiException::class)
-    fun importFromFennec(dbPath: String): JSONObject {
-        return places.importVisitsFromFennec(dbPath)
-    }
-
     override fun registerWithSyncManager() {
         return places.registerWithSyncManager()
     }
