@@ -22,6 +22,7 @@ def resolve_keys(config, tasks):
             'attributes.code-review',
             'expose-artifacts',
             'include-coverage',
+            'optimization',
             'run-on-tasks-for',
             'run.gradlew',
             'treeherder.symbol',
