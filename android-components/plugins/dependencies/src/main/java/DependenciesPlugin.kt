@@ -40,7 +40,7 @@ object Versions {
     const val disklrucache = "2.0.2"
     const val leakcanary = "2.10"
 
-    const val mozilla_appservices = "96.1.0"
+    const val mozilla_appservices = "96.1.1"
 
     // DO NOT MODIFY MANUALLY. This is auto-updated along with GeckoView.
     const val mozilla_glean = "51.8.2"
@@ -49,7 +49,7 @@ object Versions {
 
     // see https://android-developers.googleblog.com/2022/06/independent-versioning-of-Jetpack-Compose-libraries.html
     // for Jetpack Compose libraries versioning
-    const val compose_version = "1.3.1"
+    const val compose_version = "1.2.1"
     const val compose_compiler = "1.3.2"
 
     object AndroidX {
