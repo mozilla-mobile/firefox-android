@@ -45,19 +45,36 @@ def target_tasks_nightly(full_task_graph, parameters, graph_config):
     return [l for l, t in full_task_graph.tasks.items() if filter(t, parameters)]
 
 
-@_target_task("release")
-def target_tasks_release(full_task_graph, parameters, graph_config):
+@_target_task("promote")
+def target_tasks_promote(full_task_graph, parameters, graph_config):
     def filter(task, parameters):
-        # Mark-as-shipped is always red on github-release and it confuses people.
-        # This task cannot be green if we kick off a release through github-releases, so
-        # let's exlude that task there.
         if (
-            task.kind == "mark-as-shipped"
-            and parameters["tasks_for"] == "github-release"
+            task.attributes.get("build-type") == parameters["release_type"]
+            and task.attributes.get("shipping_phase") == "promote"
         ):
-            return False
+            return True
 
-        return task.attributes.get("build-type", "") == "release"
+    return [l for l, t in full_task_graph.tasks.items() if filter(t, parameters)]
+
+
+@_target_task("ship")
+def target_tasks_ship(full_task_graph, parameters, graph_config):
+    filtered_for_candidates = target_tasks_promote(
+        full_task_graph,
+        parameters,
+        graph_config,
+    )
+
+    def filter(task, parameters):
+        # Include promotion tasks; these will be optimized out
+        if task.label in filtered_for_candidates:
+            return True
+
+        if (
+            task.attributes.get("build-type") == parameters["release_type"]
+            and task.attributes.get("shipping_phase") == "ship"
+        ):
+            return True
 
     return [l for l, t in full_task_graph.tasks.items() if filter(t, parameters)]
 
