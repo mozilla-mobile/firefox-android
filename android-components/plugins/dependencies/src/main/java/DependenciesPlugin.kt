@@ -34,13 +34,13 @@ object Versions {
     const val detekt = "1.19.0"
 
     const val sentry_legacy = "1.7.30"
-    const val sentry_latest = "6.6.0"
+    const val sentry_latest = "6.8.0"
     const val zxing = "3.5.0"
     const val jna = "5.12.1"
     const val disklrucache = "2.0.2"
     const val leakcanary = "2.10"
 
-    const val mozilla_appservices = "96.0.1"
+    const val mozilla_appservices = "96.1.1"
 
     // DO NOT MODIFY MANUALLY. This is auto-updated along with GeckoView.
     const val mozilla_glean = "51.8.2"
