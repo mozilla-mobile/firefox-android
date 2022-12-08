@@ -106,7 +106,11 @@ class AboutFragment : BaseSettingsLikeFragment() {
 
     private fun getAboutHeader(): String {
         val gecko = if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) " \uD83E\uDD8E " else " GV: "
+<<<<<<< HEAD
         val engineIndicator = gecko + GeckoViewBuildConfig.MOZ_APP_VERSION + "-" + GeckoViewBuildConfig.MOZ_APP_BUILDID
+=======
+        val engineIndicator = gecko + BuildConfig.MOZ_APP_VERSION + "-" + BuildConfig.MOZ_APP_BUILDID
+>>>>>>> 3efeffde87 (Bug 1804598 - Remove the AC build configuration indicator in the About Fragment)
         val servicesAbbreviation = getString(R.string.services_abbreviation)
         val servicesIndicator = mozilla.components.Build.applicationServicesVersion
         val packageInfo = requireContext().packageManager.getPackageInfoCompat(requireContext().packageName, 0)
@@ -115,10 +119,16 @@ class AboutFragment : BaseSettingsLikeFragment() {
 
         @Suppress("ImplicitDefaultLocale") // We want LTR in all cases as the version is not translatable.
         return String.format(
+<<<<<<< HEAD
             "%s (Build #%s)%s\n%s: %s",
             packageInfo.versionName,
             versionCode + engineIndicator,
             gitHash,
+=======
+            "%s (Build #%s)\n%s: %s",
+            packageInfo.versionName,
+            versionCode + engineIndicator,
+>>>>>>> 3efeffde87 (Bug 1804598 - Remove the AC build configuration indicator in the About Fragment)
             servicesAbbreviation,
             servicesIndicator,
         )
