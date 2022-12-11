@@ -161,7 +161,7 @@
     "de": {
       "default": {
         "visibleDefaultEngines": [
-          "google-b-m", "bing", "amazon-de", "ddg", "ecosia", "qwant", "wikipedia-de", "ebay-de"
+          "google-b-m", "amazon-de", "bing", "ddg", "ecosia", "qwant", "ebay-de", "wikipedia-de"
         ]
       }
     },
@@ -210,7 +210,7 @@
     "en-GB": {
       "default": {
         "visibleDefaultEngines": [
-          "google-b-m", "bing", "amazon-co-uk", "ddg", "qwant", "wikipedia", "ebay-co-uk"
+          "google-b-m", "amazon-co-uk", "bing", "ddg", "qwant", "ebay-co-uk", "wikipedia"
         ]
       },
       "BY": {
@@ -237,27 +237,27 @@
     "en-US": {
       "default": {
         "visibleDefaultEngines": [
-          "google-b-m", "bing", "amazondotcom", "ddg", "ebay", "wikipedia"
+          "google-b-m", "amazondotcom", "bing", "ddg", "ebay", "wikipedia"
         ]
       },
       "BY": {
         "visibleDefaultEngines": [
-          "google-com-nocodes", "bing", "amazondotcom", "ddg", "wikipedia"
+          "google-com-nocodes", "amazondotcom", "bing", "ddg", "wikipedia"
         ]
       },
       "KZ": {
         "visibleDefaultEngines": [
-          "google-com-nocodes", "bing", "amazondotcom", "ddg", "wikipedia"
+          "google-com-nocodes", "amazondotcom", "bing", "ddg", "wikipedia"
         ]
       },
       "RU": {
         "visibleDefaultEngines": [
-          "google-com-nocodes", "bing", "amazondotcom", "ddg", "wikipedia"
+          "google-com-nocodes", "amazondotcom", "bing", "ddg", "wikipedia"
         ]
       },
       "TR": {
         "visibleDefaultEngines": [
-          "google-com-nocodes", "bing", "amazondotcom", "ddg", "wikipedia"
+          "google-com-nocodes", "amazondotcom", "bing", "ddg", "wikipedia"
         ]
       }
     },
@@ -292,7 +292,7 @@
     "es-ES": {
       "default": {
         "visibleDefaultEngines": [
-          "google-b-m", "bing", "ddg", "wikipedia-es", "amazon-es", "ebay-es"
+          "google-b-m", "amazon-es", "bing", "ddg", "ebay-es", "wikipedia-es"
         ]
       }
     },
@@ -355,7 +355,7 @@
     "fr-FR": {
       "default": {
         "visibleDefaultEngines": [
-          "google-b-m", "bing", "ddg", "qwant", "wikipedia-fr", "amazon-fr", "ebay-fr"
+          "google-b-m", "amazon-fr", "bing", "ddg", "qwant", "ebay-fr", "wikipedia-fr"
         ]
       }
     },
@@ -474,7 +474,7 @@
     "it": {
       "default": {
         "visibleDefaultEngines": [
-          "google-b-m", "bing", "ddg", "wikipedia-it", "amazon-it", "ebay-it"
+          "google-b-m", "amazon-it", "bing", "ddg", "ebay-it", "wikipedia-it"
         ]
       }
     },
