@@ -5,6 +5,7 @@
 package mozilla.components.service.fxa.manager
 
 import mozilla.components.concept.sync.AuthType
+import mozilla.components.concept.sync.FxAEntrypoint
 import mozilla.components.service.fxa.FxaAuthData
 import mozilla.components.service.fxa.sharing.ShareableAccount
 
@@ -71,8 +72,8 @@ internal enum class ProgressState {
 internal sealed class Event {
     internal sealed class Account : Event() {
         internal object Start : Account()
-        object BeginEmailFlow : Account()
-        data class BeginPairingFlow(val pairingUrl: String?) : Account()
+        data class BeginEmailFlow(val entrypoint: FxAEntrypoint) : Account()
+        data class BeginPairingFlow(val pairingUrl: String?, val entrypoint: FxAEntrypoint) : Account()
         data class AuthenticationError(val operation: String, val errorCountWithinTheTimeWindow: Int = 1) : Account() {
             override fun toString(): String {
                 return "${this.javaClass.simpleName} - $operation"
@@ -125,7 +126,7 @@ internal fun State.next(event: Event): State? = when (this) {
     is State.Idle -> when (this.accountState) {
         AccountState.NotAuthenticated -> when (event) {
             Event.Account.Start -> State.Active(ProgressState.Initializing)
-            Event.Account.BeginEmailFlow -> State.Active(ProgressState.BeginningAuthentication)
+            is Event.Account.BeginEmailFlow -> State.Active(ProgressState.BeginningAuthentication)
             is Event.Account.BeginPairingFlow -> State.Active(ProgressState.BeginningAuthentication)
             is Event.Account.MigrateFromAccount -> State.Active(ProgressState.MigratingAccount)
             else -> null

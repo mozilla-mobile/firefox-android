@@ -7,6 +7,7 @@ package mozilla.components.service.fxa
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import mozilla.components.concept.sync.AuthFlowUrl
+import mozilla.components.concept.sync.FxAEntrypoint
 import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.concept.sync.ServiceResult
 import mozilla.components.service.fxa.manager.FxaAccountManager
@@ -386,18 +387,18 @@ class UtilsKtTest {
     fun `as auth flow pairing`() = runTest {
         val account: OAuthAccount = mock()
         val authFlowUrl: AuthFlowUrl = mock()
-        `when`(account.beginPairingFlow(eq("http://pairing.url"), eq(emptySet()), anyString())).thenReturn(authFlowUrl)
-        verify(account, never()).beginOAuthFlow(eq(emptySet()), anyString())
-        assertEquals(authFlowUrl, "http://pairing.url".asAuthFlowUrl(account, emptySet()))
+        `when`(account.beginPairingFlow(eq("http://pairing.url"), eq(emptySet()), FxAEntrypoint.HomeMenu)).thenReturn(authFlowUrl)
+        verify(account, never()).beginOAuthFlow(eq(emptySet()), FxAEntrypoint.HomeMenu)
+        assertEquals(authFlowUrl, "http://pairing.url".asAuthFlowUrl(account, emptySet(), FxAEntrypoint.HomeMenu))
     }
 
     @Test
     fun `as auth flow regular`() = runTest {
         val account: OAuthAccount = mock()
         val authFlowUrl: AuthFlowUrl = mock()
-        `when`(account.beginOAuthFlow(eq(emptySet()), anyString())).thenReturn(authFlowUrl)
-        verify(account, never()).beginPairingFlow(anyString(), eq(emptySet()), anyString())
-        assertEquals(authFlowUrl, null.asAuthFlowUrl(account, emptySet()))
+        `when`(account.beginOAuthFlow(eq(emptySet()), FxAEntrypoint.HomeMenu)).thenReturn(authFlowUrl)
+        verify(account, never()).beginPairingFlow(anyString(), eq(emptySet()), FxAEntrypoint.HomeMenu)
+        assertEquals(authFlowUrl, null.asAuthFlowUrl(account, emptySet(), FxAEntrypoint.HomeMenu))
     }
 
     private class SucceedOn<S>(private val successOn: Int, private val succeedWith: S, private val failWith: S? = null) {

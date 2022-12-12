@@ -4,6 +4,7 @@
 
 package mozilla.components.service.fxa.manager
 
+import mozilla.components.concept.sync.FxAEntrypoint
 import mozilla.components.support.test.mock
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -14,7 +15,7 @@ class StateKtTest {
             is State.Idle -> when (state.accountState) {
                 AccountState.NotAuthenticated -> when (event) {
                     Event.Account.Start -> State.Active(ProgressState.Initializing)
-                    Event.Account.BeginEmailFlow -> State.Active(ProgressState.BeginningAuthentication)
+                    is Event.Account.BeginEmailFlow -> State.Active(ProgressState.BeginningAuthentication)
                     is Event.Account.BeginPairingFlow -> State.Active(ProgressState.BeginningAuthentication)
                     is Event.Account.MigrateFromAccount -> State.Active(ProgressState.MigratingAccount)
                     else -> null
@@ -31,7 +32,7 @@ class StateKtTest {
                     else -> null
                 }
                 AccountState.AuthenticationProblem -> when (event) {
-                    Event.Account.BeginEmailFlow -> State.Active(ProgressState.BeginningAuthentication)
+                    is Event.Account.BeginEmailFlow -> State.Active(ProgressState.BeginningAuthentication)
                     Event.Account.Logout -> State.Active(ProgressState.LoggingOut)
                     else -> null
                 }
@@ -79,8 +80,8 @@ class StateKtTest {
     private fun instantiateEvent(eventClassSimpleName: String): Event {
         return when (eventClassSimpleName) {
             "Start" -> Event.Account.Start
-            "BeginPairingFlow" -> Event.Account.BeginPairingFlow("http://some.pairing.url.com")
-            "BeginEmailFlow" -> Event.Account.BeginEmailFlow
+            "BeginPairingFlow" -> Event.Account.BeginPairingFlow("http://some.pairing.url.com", FxAEntrypoint.HomeMenu)
+            "BeginEmailFlow" -> Event.Account.BeginEmailFlow(FxAEntrypoint.HomeMenu)
             "CancelAuth" -> Event.Progress.CancelAuth
             "AuthenticationError" -> Event.Account.AuthenticationError("fxa op")
             "AccessTokenKeyError" -> Event.Account.AccessTokenKeyError
