@@ -3,11 +3,17 @@ layout: page
 title: Changelog
 permalink: /changelog/
 ---
-# 109.0.0 (In Development)
-* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/v108.0.0...main)
+# 110.0.0 (In Development)
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/v109.0.0...main)
 * [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
 * [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/Gecko.kt)
 * [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/.config.yml)
+
+# 109.0.0
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/v108.0.0...v109.0.0)
+* [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/v109.0.0/android-components/buildSrc/src/main/java/Dependencies.kt)
+* [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/v109.0.0/android-components/buildSrc/src/main/java/Gecko.kt)
+* [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/v109.0.0/android-components/.config.yml)
 
 * **support-ktx, feature-contextmenu**
   * 🚒 Bug fixed [bug #1798873](https://bugzilla.mozilla.org/show_bug.cgi?id=1798873) Added a way to exclude current app from share targets. Used when sharing text.
@@ -23,11 +29,6 @@ permalink: /changelog/
 * **feature-awesomebar**
   * `SearchSuggestionProvider` and `SearchActionProvider` now have a new parameter `suggestionsHeader`, to add title to suggestions.
 
-* **lib-crash**
-  * 🚒 Bug fixed [bug #1801349](https://bugzilla.mozilla.org/show_bug.cgi?id=1801349).  Execute `recordCrashBreadcrumb()` inside our coroutine scope to avoid issues with mutating the array from multiple threads at once.
-* **lib-crash-sentry**
-  * 🚒 Bug fixed [bug #1801349](https://bugzilla.mozilla.org/show_bug.cgi?id=1801349).  Copy the breadcrumb date to the Sentry breadcrumb.
-
 * **support-ktx**:
   * Added `String.toShortUrl` extension that allows making URLs more user friendly [#1796379](https://bugzilla.mozilla.org/show_bug.cgi?id=1796379)
 
@@ -42,6 +43,9 @@ permalink: /changelog/
 
 * **service-sync-logins**
   * Removed Fennec to Fenix migration code. Deleted `importLoginsAsync` function. [bug #1803632](https://bugzilla.mozilla.org/show_bug.cgi?id=1803632)
+
+* **lib-crash-sentry**
+  * 🚒 Bug fixed [bug #1801349](https://bugzilla.mozilla.org/show_bug.cgi?id=1801349).  Copy the breadcrumb date to the Sentry breadcrumb.
 
 # 108.0.0
 * [Commits](https://github.com/mozilla-mobile/firefox-android/compare/v107.0.0...v108.0.0)
