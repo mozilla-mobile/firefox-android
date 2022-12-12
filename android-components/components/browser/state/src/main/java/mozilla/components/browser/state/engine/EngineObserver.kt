@@ -425,4 +425,12 @@ internal class EngineObserver(
     override fun onSaveToPdfException(throwable: Throwable) {
         store.dispatch(EngineAction.SaveToPdfExceptionAction(tabId, throwable))
     }
+
+    override fun onCheckForFormData(containsFormData: Boolean) {
+        store.dispatch(ContentAction.CheckForFormDataAction(tabId, containsFormData))
+    }
+
+    override fun onCheckForFormDataException(throwable: Throwable) {
+        store.dispatch(ContentAction.CheckForFormDataExceptionAction(tabId, throwable))
+    }
 }
