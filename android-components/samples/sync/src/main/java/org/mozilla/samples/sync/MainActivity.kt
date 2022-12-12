@@ -31,6 +31,7 @@ import mozilla.components.concept.sync.DeviceCommandOutgoing
 import mozilla.components.concept.sync.DeviceConfig
 import mozilla.components.concept.sync.DeviceConstellationObserver
 import mozilla.components.concept.sync.DeviceType
+import mozilla.components.concept.sync.FxAEntrypoint
 import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.concept.sync.Profile
 import mozilla.components.lib.dataprotect.SecureAbove22Preferences
@@ -132,7 +133,7 @@ class MainActivity :
 
         findViewById<View>(R.id.buttonSignIn).setOnClickListener {
             launch {
-                accountManager.beginAuthentication()?.let { openWebView(it) }
+                accountManager.beginAuthentication(entrypoint = FxAEntrypoint.HomeMenu)?.let { openWebView(it) }
             }
         }
 

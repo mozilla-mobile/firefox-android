@@ -18,6 +18,7 @@ import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.DeviceConfig
 import mozilla.components.concept.sync.DeviceType
+import mozilla.components.concept.sync.FxAEntrypoint
 import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.concept.sync.Profile
 import mozilla.components.lib.dataprotect.SecureAbove22Preferences
@@ -104,7 +105,7 @@ class MainActivity : AppCompatActivity(), LoginFragment.OnLoginCompleteListener,
 
         findViewById<View>(R.id.buttonWebView).setOnClickListener {
             launch {
-                val authUrl = accountManager.beginAuthentication()
+                val authUrl = accountManager.beginAuthentication(entrypoint = FxAEntrypoint.HomeMenu)
                 if (authUrl == null) {
                     Toast.makeText(this@MainActivity, "Account auth error", Toast.LENGTH_LONG).show()
                     return@launch
