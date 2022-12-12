@@ -18,6 +18,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import mozilla.components.concept.sync.FxAEntrypoint
 import mozilla.components.concept.sync.Profile
 import mozilla.components.feature.qr.QrFeature
 import mozilla.components.lib.fetch.httpurlconnection.HttpURLConnectionClient
@@ -71,7 +72,7 @@ open class MainActivity : AppCompatActivity(), LoginFragment.OnLoginCompleteList
             },
             onScanResult = { pairingUrl ->
                 launch {
-                    val url = account.beginPairingFlow(pairingUrl, scopes)
+                    val url = account.beginPairingFlow(pairingUrl, scopes, FxAEntrypoint.HomeMenu)
                     if (url == null) {
                         Log.log(
                             Log.Priority.ERROR,
@@ -90,7 +91,7 @@ open class MainActivity : AppCompatActivity(), LoginFragment.OnLoginCompleteList
 
         findViewById<View>(R.id.buttonCustomTabs).setOnClickListener {
             launch {
-                account.beginOAuthFlow(scopes)?.let {
+                account.beginOAuthFlow(scopes, FxAEntrypoint.HomeMenu)?.let {
                     openTab(it.url)
                 }
             }
@@ -98,7 +99,7 @@ open class MainActivity : AppCompatActivity(), LoginFragment.OnLoginCompleteList
 
         findViewById<View>(R.id.buttonWebView).setOnClickListener {
             launch {
-                account.beginOAuthFlow(scopes)?.let {
+                account.beginOAuthFlow(scopes, FxAEntrypoint.HomeMenu)?.let {
                     openWebView(it.url)
                 }
             }

@@ -9,6 +9,9 @@ permalink: /changelog/
 * [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/Gecko.kt)
 * [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/.config.yml)
 
+* **concept-sync**
+  *  ⚠️ **This is a breaking change**: Adds a required `FxAEntrypoint` parameter for `beginAuthentication`. The entrypoint is enum that represents all the contexts which the app launches the Firefox Accounts web channel.
+
 # 109.0.0
 * [Commits](https://github.com/mozilla-mobile/firefox-android/compare/v108.0.0...v109.0.0)
 * [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/v109.0.0/android-components/buildSrc/src/main/java/Dependencies.kt)

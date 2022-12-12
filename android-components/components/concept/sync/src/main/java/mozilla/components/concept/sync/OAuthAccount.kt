@@ -41,6 +41,81 @@ data class MigratingAccountInfo(
 )
 
 /**
+ * Enum representing all the possible entrypoints into FxA
+ *
+ * These entry points will be reflected in the authentication URL and will be tracked
+ * in server telemetry to allow studying authentication entrypoints independently.
+ *
+ * If you are introducing a new path to the firefox accounts sign in please add a new entrypoint
+ * here.
+ */
+enum class FxAEntrypoint(val entrypointName: String) {
+
+    /**
+     * Manual sign in from the onboarding menu
+     */
+    OnboardingManualSignIn("onboarding-manual-sign-in"),
+
+    /**
+     * User used a deep link to get to firefox accounts authentication
+     */
+    DeepLink("deep-link"),
+
+    /**
+     * Authenticating from the browser's toolbar
+     */
+    BrowserToolbar("browser-toolbar"),
+
+    /**
+     * Authenticating from the home menu (the hamburger menu)
+     */
+    HomeMenu("home-menu"),
+
+    /**
+     * Authenticating in the bookmark view, when getting attempting to get synced
+     * bookmarks
+     */
+    BookmarkView("bookmark-view"),
+
+    /**
+     * Authenticating from the homepage onboarding dialog
+     */
+    HomeOnboardingDialog("home-onboarding-dialog"),
+
+    /**
+     * Authenticating from the settings menu
+     */
+    SettingsMenu("settings-menu"),
+
+    /**
+     * Authenticating from the autofill settings to enable synced
+     * credit cards/addresses
+     */
+    AutofillSetting("autofill-setting"),
+
+    /**
+     * Authenticating from the saved logins menu to enable synced
+     * logins
+     */
+    SavedLogins("saved-logins"),
+
+    /**
+     * Authenticating from the Share menu to enable send tab
+     */
+    ShareMenu("share-menu"),
+
+    /**
+     * Authenticating as a navigation interaction
+     */
+    NavigationInteraction("navigation-interaction"),
+
+    /**
+     * Authenticating from the synced tabs menu to enable synced tabs
+     */
+    SyncedTabsMenu("synced-tabs-menu"),
+}
+
+/**
  * Facilitates testing consumers of FirefoxAccount.
  */
 interface OAuthAccount : AutoCloseable {
@@ -56,7 +131,7 @@ interface OAuthAccount : AutoCloseable {
      */
     suspend fun beginOAuthFlow(
         scopes: Set<String>,
-        entryPoint: String = "android-components",
+        entryPoint: FxAEntrypoint,
     ): AuthFlowUrl?
 
     /**
@@ -72,7 +147,7 @@ interface OAuthAccount : AutoCloseable {
     suspend fun beginPairingFlow(
         pairingUrl: String,
         scopes: Set<String>,
-        entryPoint: String = "android-components",
+        entryPoint: FxAEntrypoint,
     ): AuthFlowUrl?
 
     /**
