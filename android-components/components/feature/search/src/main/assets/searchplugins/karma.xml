@@ -1,0 +1,16 @@
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+
+<SearchPlugin xmlns="http://www.mozilla.org/2006/browser/search/">
+  <ShortName>karma</ShortName>
+  <Image width="27" height="27">data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABsAAAAbCAYAAACN1PRVAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAMbSURBVHgBrVbNTxNBFH8zu8VgADegJsrBGiUSFISQQjxJOMkJziZGjIkHVKhnD2z/AoooXkxsYrzTk54QjrYx1BCxBKIl4cOYlFQ+49Kd8c2WbXaX3bZr+ksmne17837z3rx5bwiUQedCWDli+jBObwKQPgJc4QCKISQkxTnP4Cxeo0lzqVvRTClbpBSJBmyMMh4uGi+PWECTIl6krmQ3FkbHgHHVB4kVGVwXWeqeijkF1IVonDMe/U8igSB68LYN7TgFxIVIhSqBU6Iudb2InCBr+/J0WOwIqgwG8Ox791S0SIbJEDxi7BPuJejDDtRLtTDU1Au7+iEkdldgU9t2U8sFqHQ51RXNyeLrSM+rmMbBUF0LNNc02jSFoR0c6cN1Y25C6E5eeQgNSCiwgUSvtz4i6SqSZq0mFC3PwvirkoJX+k/x78iFARx3PD1ZPtwwjAqPQnVXbbLZ3CLMZD8bGxLyBvk06mYhieSmd7LG9D7z4Ka3PkDzqUYYbOxxJbtW22wMK4TXcSSZRq+snjug/M3rw9K5R70qIdBq3WEaPTgbaDgRUjfcXZ6A+HYCNJ4vrUjgl0wouQSc2/4XhGIMNfVA/5kO6FfaXdcn91aN0FYCjF4fRaJOL4WZbAJGf7yBd7/nXeUifD6gyF4SccgjFwfQs3bPcCYKh++LLAcupUkcdnJnBZb316FexuyrbzGITcTRa4975QkkI0jGXevg7J/F4jx9sGkje772HnwB2xF2EDZfia7wzopWxxUoB6y5a5RykqpEeTdvv0P9Sgf4AoEZGpClGBTOrSR29APb973zt40kqhQMOzkVBZIwMllO2VkdROXwEcpYGru30TxlmYoWUNK7HsxGK5HIRnGpywHLRUbHp4KYF/vZ9eTjMFA64bVIhEyETixJYjuphOiY7IH5RLB36uQTFbvrOFQJmIGRpdBL1fw+8eCpFqGTyJVMQDwRUDROfHbuY+SAsci30KuoU+D5bmzFpioVOvh9qJCEMD65J8vRDGa4mwIpZ0GQUmywlMMgBxIEUuwSueNSN4fzr/tUinmRmPgH6AldLDqCjhUAAAAASUVORK5CYII=</Image>
+  <Url type="application/x-suggestions+json" method="GET" template="https://api.karmasearch.org/search/autosuggest">
+    <Param name="q" value="{searchTerms}"/>
+  </Url>
+  <Url type="text/html" method="GET" template="https://karmasearch.org/search">
+    <Param name="q" value="{searchTerms}"/>
+    <Param name="origin" value="firefoxandroid"/>
+  </Url>
+  <SearchForm>https://karmasearch.org</SearchForm>
+</SearchPlugin>
