@@ -6,10 +6,15 @@ package mozilla.components.support.utils
 
 import androidx.core.text.TextDirectionHeuristicCompat
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
+import mozilla.components.lib.publicsuffixlist.PublicSuffixList
 import mozilla.components.support.ktx.util.URLStringUtils
 import mozilla.components.support.ktx.util.URLStringUtils.isSearchTerm
 import mozilla.components.support.ktx.util.URLStringUtils.isURLLike
 import mozilla.components.support.ktx.util.URLStringUtils.toNormalizedURL
+import mozilla.components.support.ktx.util.URLStringUtils.urlHasPublicSuffix
+import mozilla.components.support.test.robolectric.testContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -20,6 +25,11 @@ import org.mockito.Mockito.spy
 import org.mockito.Mockito.verify
 import kotlin.random.Random
 
+private const val HTTP = "http://"
+private const val HTTPS = "https://"
+private const val WWW = "www."
+
+@ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
 class URLStringUtilsTest {
 
@@ -198,6 +208,137 @@ class URLStringUtilsTest {
 
         assertEquals("  ", URLStringUtils.toDisplayUrl("  "))
     }
+
+    @Test
+    fun toDisplayUrlStripsTrailingSuffixData() {
+        val url = "mozilla.org/en-GB/firefox/browsers"
+
+        assertEquals(
+            "mozilla.org",
+            URLStringUtils.toDisplayUrl(
+                originalUrl = "$HTTP$WWW$url/",
+                stripTrailingData = true,
+            ),
+        )
+
+        assertEquals(
+            "mozilla.org",
+            URLStringUtils.toDisplayUrl(
+                originalUrl = "$HTTPS$WWW$url/",
+                stripTrailingData = true,
+            ),
+        )
+
+        assertEquals(
+            "mozilla.org",
+            URLStringUtils.toDisplayUrl(
+                originalUrl = "$HTTP$WWW$url",
+                stripTrailingData = true,
+            ),
+        )
+
+        assertEquals(
+            "mozilla.org",
+            URLStringUtils.toDisplayUrl(
+                originalUrl = "$HTTPS$WWW$url",
+                stripTrailingData = true,
+            ),
+        )
+
+        assertEquals(
+            "mozilla.org",
+            URLStringUtils.toDisplayUrl(originalUrl = "$HTTP$url", stripTrailingData = true),
+        )
+
+        assertEquals(
+            "mozilla.org",
+            URLStringUtils.toDisplayUrl(originalUrl = "$HTTPS$url", stripTrailingData = true),
+        )
+
+        assertEquals(
+            "mozilla.org",
+            URLStringUtils.toDisplayUrl(originalUrl = url, stripTrailingData = true),
+        )
+    }
+
+    @Test
+    fun urlHasPublicSuffix() = runTest {
+        val publicSuffixList = PublicSuffixList(testContext)
+
+        testURLSFromIsLikeAndIsSearchTermTests(publicSuffixList)
+
+        // Invalid URL structures. These examples are not exhaustive, see [Patterns.Pattern.WEB_URL] for full details.
+        assertFalse("org.mozilla.www".urlHasPublicSuffix(publicSuffixList))
+        assertFalse("mozilla.https".urlHasPublicSuffix(publicSuffixList))
+        assertFalse("www.mozilla.https".urlHasPublicSuffix(publicSuffixList))
+        assertFalse("www.mozilla/firefox.org".urlHasPublicSuffix(publicSuffixList))
+
+        // Valid URL structure
+        // Known/valid suffixes
+        assertTrue("org".asSuffixForUrl().urlHasPublicSuffix(publicSuffixList))
+        assertTrue("com".asSuffixForUrl().urlHasPublicSuffix(publicSuffixList))
+        assertTrue("gov".asSuffixForUrl().urlHasPublicSuffix(publicSuffixList))
+
+        // Unknown/invalid suffixes
+        assertFalse("gro".asSuffixForUrl().urlHasPublicSuffix(publicSuffixList))
+        assertFalse("moc".asSuffixForUrl().urlHasPublicSuffix(publicSuffixList))
+        assertFalse("vog".asSuffixForUrl().urlHasPublicSuffix(publicSuffixList))
+    }
+
+    /**
+     * Test [urlHasPublicSuffix] with the URLs used in tests for [isSearchTerm] and [isSearchTerm].
+     */
+    private suspend fun testURLSFromIsLikeAndIsSearchTermTests(publicSuffixList: PublicSuffixList) {
+        assertFalse("inurl:mozilla.org advanced search".urlHasPublicSuffix(publicSuffixList))
+        assertFalse("sf: help".urlHasPublicSuffix(publicSuffixList))
+        assertFalse("mozilla./~".urlHasPublicSuffix(publicSuffixList))
+        assertFalse("cnn.com politics".urlHasPublicSuffix(publicSuffixList))
+
+        assertFalse("about:config".urlHasPublicSuffix(publicSuffixList))
+        assertFalse("about:config:8000".urlHasPublicSuffix(publicSuffixList))
+        assertFalse("file:///home/user/myfile.html".urlHasPublicSuffix(publicSuffixList))
+        assertFalse("file://////////////home//user/myfile.html".urlHasPublicSuffix(publicSuffixList))
+        assertFalse("file://C:\\Users\\user\\myfile.html".urlHasPublicSuffix(publicSuffixList))
+        assertFalse("http://192.168.255.255".urlHasPublicSuffix(publicSuffixList))
+        assertFalse("link.unknown".urlHasPublicSuffix(publicSuffixList))
+        assertFalse("3.14.2019".urlHasPublicSuffix(publicSuffixList))
+        assertFalse("3-four.14.2019".urlHasPublicSuffix(publicSuffixList))
+
+        assertTrue(" cnn.com ".urlHasPublicSuffix(publicSuffixList))
+        assertTrue(" cnn.com".urlHasPublicSuffix(publicSuffixList))
+        assertTrue("cnn.com ".urlHasPublicSuffix(publicSuffixList))
+        assertTrue("mozilla.com/~userdir".urlHasPublicSuffix(publicSuffixList))
+        assertTrue("my-domain.com".urlHasPublicSuffix(publicSuffixList))
+        assertTrue("http://faß.de//".urlHasPublicSuffix(publicSuffixList))
+
+        assertFalse("cnn.cơḿ".urlHasPublicSuffix(publicSuffixList))
+        assertFalse("cnn.çơḿ".urlHasPublicSuffix(publicSuffixList))
+
+        // Examples from the code comments:
+        assertTrue("c-c.com".urlHasPublicSuffix(publicSuffixList))
+        assertFalse("c-c-c-c.c-c-c".urlHasPublicSuffix(publicSuffixList))
+        assertFalse("c-http://c.com".urlHasPublicSuffix(publicSuffixList))
+        assertFalse("about-mozilla:mozilla".urlHasPublicSuffix(publicSuffixList))
+        assertFalse("c-http.d-x".urlHasPublicSuffix(publicSuffixList))
+        assertFalse("www.c.-".urlHasPublicSuffix(publicSuffixList))
+        assertFalse("3-3.3".urlHasPublicSuffix(publicSuffixList))
+        assertFalse("www.c-c.-".urlHasPublicSuffix(publicSuffixList))
+
+        assertFalse(" -://x.com ".urlHasPublicSuffix(publicSuffixList))
+        assertFalse("  -x.com".urlHasPublicSuffix(publicSuffixList))
+        assertFalse("http://www-.com".urlHasPublicSuffix(publicSuffixList))
+        assertFalse("www.c-c-  ".urlHasPublicSuffix(publicSuffixList))
+        assertFalse("3-3 ".urlHasPublicSuffix(publicSuffixList))
+
+        // Examples from issues
+        assertTrue("https://abc--cba.com/".urlHasPublicSuffix(publicSuffixList)) // #7096
+    }
+
+    /**
+     * Gets a URL using the provided string as a suffix.
+     */
+    private fun String.asSuffixForUrl() =
+        "https://www.mozilla.$this/test/data/not/included/in/check/"
 }
 
 /**

@@ -6,9 +6,13 @@ package mozilla.components.support.ktx.util
 
 import android.net.Uri
 import android.text.TextUtils
+import android.util.Patterns
 import androidx.annotation.VisibleForTesting
 import androidx.core.text.TextDirectionHeuristicCompat
 import androidx.core.text.TextDirectionHeuristicsCompat
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import mozilla.components.lib.publicsuffixlist.PublicSuffixList
 import java.util.regex.Pattern
 
 object URLStringUtils {
@@ -101,16 +105,22 @@ object URLStringUtils {
 
     /**
      * Generates a shorter version of the provided URL for display purposes by stripping it of
-     * https/http and/or WWW prefixes and/or trailing slash when applicable.
+     * https/http and/or WWW prefixes and/or trailing slash or trailing slash and data when applicable.
      *
      * The returned text will always be displayed from left to right.
      * If the directionality would otherwise be RTL "\u200E" will be prepended to the result to force LTR.
+     *
+     * @param stripTrailingData true if data following a TLD suffix should be stripped.
      */
     fun toDisplayUrl(
         originalUrl: CharSequence,
         textDirectionHeuristic: TextDirectionHeuristicCompat = TextDirectionHeuristicsCompat.FIRSTSTRONG_LTR,
+        stripTrailingData: Boolean = false,
     ): CharSequence {
-        val strippedText = maybeStripTrailingSlash(maybeStripUrlProtocol(originalUrl))
+        val strippedText = maybeStripURLTrailingData(
+            maybeStripUrlProtocol(originalUrl),
+            stripTrailingData,
+        )
 
         return if (
             strippedText.isNotBlank() &&
@@ -140,7 +150,78 @@ object URLStringUtils {
         }
     }
 
-    private fun maybeStripTrailingSlash(url: CharSequence): CharSequence {
-        return url.trimEnd('/')
+    /**
+     * Will attempt to strip a URL of data after a TLD suffix.
+     *
+     * @param stripAllDataAfterTLD flag to indicate whether the data after a TLD suffix should be stripped.
+     * True to strip trailing '/' with data, false to strip only a trailing '/' .
+     *
+     * @return the stripped URL.
+     */
+    private fun maybeStripURLTrailingData(
+        url: CharSequence,
+        stripAllDataAfterTLD: Boolean,
+    ): CharSequence {
+        return if (stripAllDataAfterTLD) {
+            url.maybeStripURLTrailingSlashWithData()
+        } else {
+            url.maybeStripURLTrailingSlash()
+        }
     }
+
+    /**
+     * Will attempt to remove a trailing '/' with data after a TLD suffix.
+     *
+     * E.g. 'mozilla.org/en-GB/firefox/browsers/mobile/android/' will return 'mozilla.org'
+     *
+     * @return the processed URL.
+     */
+    private fun CharSequence.maybeStripURLTrailingSlashWithData(): CharSequence {
+        // If the first '/' is not following the TLD suffix then the URL has not been processed correctly.
+        val firstSlash = indexOfFirst { it == '/' }.takeIf { it > -1 }
+
+        return if (firstSlash != null) {
+            subSequence(0, firstSlash)
+        } else {
+            this
+        }
+    }
+
+    /**
+     * Will attempt to strip a trailing '/' after a TLD suffix.
+     */
+    private fun CharSequence.maybeStripURLTrailingSlash() = trimEnd('/')
+
+    /**
+     * Check whether the provided URL is a valid format and has a known public suffix.
+     * [PublicSuffixList] determines the validity of the suffix.
+     * **Note:** The provided string URL must conform to [android.util.Patterns.WEB_URL].
+     */
+    suspend fun String.urlHasPublicSuffix(publicSuffixList: PublicSuffixList): Boolean {
+        // Remove any surrounding whitespace from the potential URL.
+        val strippedUrl = this.trim()
+        if (!strippedUrl.isValidWebURL()) {
+            return false
+        }
+
+        // Before checking the suffix format the URL display the domain and TLD only.
+        val url = toDisplayUrl(originalUrl = strippedUrl, stripTrailingData = true).toString()
+
+        val getSuffix = withContext(Dispatchers.IO) {
+            publicSuffixList.getPublicSuffix(url).await()
+        }
+
+        return if (getSuffix != null) {
+            withContext(Dispatchers.IO) {
+                publicSuffixList.isPublicSuffix(getSuffix).await()
+            }
+        } else {
+            false
+        }
+    }
+
+    /**
+     * Check whether the provided URL conforms to [android.util.Patterns.WEB_URL].
+     */
+    fun String.isValidWebURL() = Patterns.WEB_URL.matcher(this).matches()
 }
