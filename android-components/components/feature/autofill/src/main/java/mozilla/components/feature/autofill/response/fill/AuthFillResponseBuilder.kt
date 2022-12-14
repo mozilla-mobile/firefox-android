@@ -14,6 +14,7 @@ import android.os.Build
 import android.os.Parcel
 import android.service.autofill.FillResponse
 import android.service.autofill.InlinePresentation
+import android.service.autofill.Presentations
 import android.view.autofill.AutofillId
 import android.widget.RemoteViews
 import android.widget.inline.InlinePresentationSpec
@@ -23,6 +24,7 @@ import mozilla.components.feature.autofill.R
 import mozilla.components.feature.autofill.response.dataset.createInlinePresentation
 import mozilla.components.feature.autofill.structure.ParsedStructure
 import mozilla.components.feature.autofill.ui.AbstractAutofillUnlockActivity
+import androidx.biometric.R as biometricR
 
 internal data class AuthFillResponseBuilder(
     private val parsedStructure: ParsedStructure,
@@ -81,7 +83,10 @@ internal data class AuthFillResponseBuilder(
         )
         val intentSender: IntentSender = authPendingIntent.intentSender
 
-        val icon: Icon = Icon.createWithResource(context, R.drawable.fingerprint_dialog_fp_icon)
+        val icon: Icon = Icon.createWithResource(
+            context,
+            biometricR.drawable.fingerprint_dialog_fp_icon,
+        )
         val authInlinePresentation = createInlinePresentation(authPendingIntent, imeSpec, title, icon)
         builder.setAuthentication(
             autofillIds.toTypedArray(),
@@ -101,9 +106,20 @@ internal fun FillResponse.Builder.setAuthentication(
     inlinePresentation: InlinePresentation? = null,
     presentation: RemoteViews,
 ): FillResponse.Builder {
-    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && inlinePresentation != null) {
-        this.setAuthentication(ids, authentication, presentation, inlinePresentation)
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        val presentations: Presentations.Builder = Presentations.Builder()
+        presentations.apply {
+            inlinePresentation?.let {
+                setInlinePresentation(it)
+            }
+            setMenuPresentation(presentation)
+        }
+        setAuthentication(ids, authentication, presentations.build())
+    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        @Suppress("DEPRECATION")
+        setAuthentication(ids, authentication, presentation, inlinePresentation)
     } else {
-        this.setAuthentication(ids, authentication, presentation)
+        @Suppress("DEPRECATION")
+        setAuthentication(ids, authentication, presentation)
     }
 }

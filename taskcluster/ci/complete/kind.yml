@@ -5,14 +5,17 @@
 loader: taskgraph.loader.transform:loader
 
 kind-dependencies:
-    - build
+    - test-focus
+    - ui-test-focus
+    - build-apk
+    - build-components
     - build-samples-browser
     - lint
 
 transforms:
     - taskgraph.transforms.code_review:transforms
-    - ac_taskgraph.transforms.chunk:transforms
-    - ac_taskgraph.transforms.complete:transforms
+    - android_taskgraph.transforms.chunk:transforms
+    - android_taskgraph.transforms.complete:transforms
     - taskgraph.transforms.job:transforms
     - taskgraph.transforms.task:transforms
 
@@ -27,7 +30,7 @@ task-defaults:
     run:
         command:
             task-reference:
-                /builds/worker/checkouts/vcs/taskcluster/scripts/are_dependencies_completed.py {dependencies}
+                /builds/worker/checkouts/vcs/taskcluster/scripts/are_dependencies_completed.py <self>
         use-caches: false
         using: run-task
     notifications:
@@ -36,7 +39,7 @@ task-defaults:
                 subject: "[Android-Components] Failed to update geckoview nightly PR#{pull_request_number}"
                 message: "Please check {repository}/pull/{pull_request_number}"
                 emails:
-                    - android-components-team@mozilla.com
+                    - fenix-eng-notifications@mozilla.com
                     - geckoview-core@mozilla.com
             default: {}
 

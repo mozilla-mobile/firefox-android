@@ -32,6 +32,7 @@ RUN apt-get update -qq \
     && apt-get install -y tzdata \
     && apt-get install -y openjdk-8-jdk \
                           openjdk-11-jdk \
+                          wget \
                           expect \
                           git \
                           curl \
@@ -39,6 +40,7 @@ RUN apt-get update -qq \
                           python-pip \
                           python3 \
                           python3-pip \
+                          python3-yaml \
                           locales \
                           unzip \
 			  mercurial \

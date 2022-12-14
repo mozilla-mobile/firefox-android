@@ -38,6 +38,7 @@ dependencies {
     implementation project(':concept-engine')
     implementation project(':support-base')
     implementation project(':support-ktx')
+    implementation project(':support-utils')
     implementation project(':feature-session')
 
     implementation Dependencies.kotlin_stdlib
@@ -52,5 +53,6 @@ dependencies {
     testImplementation Dependencies.testing_robolectric
 }
 
+apply from: '../../../android-lint.gradle'
 apply from: '../../../publish.gradle'
 ext.configurePublish(config.componentsGroupId, archivesBaseName, project.ext.description)

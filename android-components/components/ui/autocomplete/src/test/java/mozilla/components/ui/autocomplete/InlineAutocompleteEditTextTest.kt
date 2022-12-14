@@ -77,7 +77,7 @@ class InlineAutocompleteEditTextTest {
 
     @Test
     fun onFocusChange() {
-        val et = InlineAutocompleteEditText(testContext, attributes, R.attr.editTextStyle)
+        val et = InlineAutocompleteEditText(testContext, attributes)
         val searchStates = mutableListOf<Boolean>()
 
         et.setOnSearchStateChangeListener { b: Boolean -> searchStates.add(searchStates.size, b) }
@@ -101,7 +101,7 @@ class InlineAutocompleteEditTextTest {
         doReturn(false).`when`(et).isShown
         doReturn(mock(ViewParent::class.java)).`when`(et).parent
 
-        val event = AccessibilityEvent.obtain()
+        val event = AccessibilityEvent()
         event.eventType = AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED
         et.sendAccessibilityEventUnchecked(event)
 

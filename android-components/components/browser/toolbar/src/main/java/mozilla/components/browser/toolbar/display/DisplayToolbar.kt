@@ -27,6 +27,7 @@ import mozilla.components.browser.toolbar.internal.ActionContainer
 import mozilla.components.concept.menu.MenuController
 import mozilla.components.concept.toolbar.Toolbar
 import mozilla.components.support.ktx.android.content.isScreenReaderEnabled
+import mozilla.components.ui.colors.R.color as photonColors
 
 /**
  * Sub-component of the browser toolbar responsible for displaying the URL and related controls ("display mode").
@@ -164,15 +165,15 @@ class DisplayToolbar internal constructor(
      * Customizable colors in "display mode".
      */
     var colors: Colors = Colors(
-        securityIconSecure = ContextCompat.getColor(context, R.color.photonWhite),
-        securityIconInsecure = ContextCompat.getColor(context, R.color.photonWhite),
-        emptyIcon = ContextCompat.getColor(context, R.color.photonWhite),
-        menu = ContextCompat.getColor(context, R.color.photonWhite),
+        securityIconSecure = ContextCompat.getColor(context, photonColors.photonWhite),
+        securityIconInsecure = ContextCompat.getColor(context, photonColors.photonWhite),
+        emptyIcon = ContextCompat.getColor(context, photonColors.photonWhite),
+        menu = ContextCompat.getColor(context, photonColors.photonWhite),
         hint = views.origin.hintColor,
         title = views.origin.titleColor,
         text = views.origin.textColor,
         trackingProtection = null,
-        separator = ContextCompat.getColor(context, R.color.photonGrey80),
+        separator = ContextCompat.getColor(context, photonColors.photonGrey80),
         highlight = null,
     )
         set(value) {
@@ -554,7 +555,12 @@ class DisplayToolbar internal constructor(
         }
 
         views.progress.progress = progress
-        val event = AccessibilityEvent.obtain(AccessibilityEvent.TYPE_VIEW_SCROLLED).apply {
+        val event = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            AccessibilityEvent(AccessibilityEvent.TYPE_VIEW_SCROLLED)
+        } else {
+            @Suppress("DEPRECATION")
+            AccessibilityEvent.obtain(AccessibilityEvent.TYPE_VIEW_SCROLLED)
+        }.apply {
             scrollY = progress
             maxScrollY = views.progress.max
         }

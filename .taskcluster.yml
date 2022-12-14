@@ -29,7 +29,10 @@ tasks:
                       then: 'skaspari+mozlando@mozilla.com'   # It must match what's in bors.toml
                       else:
                           $if: 'tasks_for == "github-push"'
-                          then: '${event.pusher.email}'
+                          then:
+                              $if: 'event.pusher.email'
+                              then: '${event.pusher.email}'
+                              else: '${event.pusher.name}@users.noreply.github.com'
                           else:
                               $if: 'isPullRequest'
                               then: '${event.pull_request.user.login}@users.noreply.github.com'
@@ -163,7 +166,7 @@ tasks:
                             metadata:
                                 $merge:
                                     - owner: "${ownerEmail}"
-                                      source: 'https://github.com/${repoFullName}/raw/${head_sha}/.taskcluster.yml'
+                                      source: '${repoUrl}/raw/${head_sha}/.taskcluster.yml'
                                     - $if: 'isPullRequest || tasks_for == "github-push"'
                                       then:
                                           name: "Decision Task"
@@ -180,7 +183,7 @@ tasks:
                                               name: "Decision Task for cron job ${cron.job_name}"
                                               description: 'Created by a [cron task](https://firefox-ci-tc.services.mozilla.com/tasks/${cron.task_id})'
                             provisionerId: "mobile-${level}"
-                            workerType: "decision"
+                            workerType: "decision-gcp"
                             tags:
                                 $if: 'isPullRequest || tasks_for == "github-push"'
                                 then:
@@ -231,6 +234,8 @@ tasks:
                             retries: 5
 
                             payload:
+                                cache:
+                                    "${trustDomain}-level-${level}-gradle-decision-cache": /builds/worker/.gradle
                                 env:
                                     # run-task uses these to check out the source; the inputs
                                     # to `mach taskgraph decision` are all on the command line.
@@ -245,6 +250,7 @@ tasks:
                                           MOBILE_REPOSITORY_TYPE: git
                                           MOZ_AUTOMATION: "1"
                                           REPOSITORIES: {$json: {mobile: "firefox-android"}}
+                                          TASKCLUSTER_CACHES: /builds/worker/.gradle
                                         - $if: 'isPullRequest'
                                           then:
                                               MOBILE_PULL_REQUEST_NUMBER: '${event.pull_request.number}'
@@ -260,7 +266,7 @@ tasks:
                                 # Note: This task is built server side without the context or tooling that
                                 # exist in tree so we must hard code the hash
                                 image:
-                                    mozillareleases/taskgraph:decision-mobile-0f66ff9a7aef437051e84d1202c1ac341b23a5cdd797a0989ccd4ea3fd93c1d5@sha256:71a50e8c6de8ac394093cda3815ea2d19c0e67b025053b5c47c2364bd895903f
+                                    mozillareleases/taskgraph:decision-mobile-c0fca789e58f5458999ac9780a45897340f96f2a273c3c5ea1d2be438ab5223b@sha256:e9f387c9049db80281eaed73c7173b653be195423cdd58300f71d9796d8f1ac7
 
                                 maxRunTime: 1800
 
