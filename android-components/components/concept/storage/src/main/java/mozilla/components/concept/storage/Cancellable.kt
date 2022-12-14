@@ -28,4 +28,13 @@ interface Cancellable {
     fun cancelReads() {
         // no-op
     }
+
+    /**
+     * Cleans up pending read operations.
+     *
+     * @param queryToCancel Query to cancel reads for.
+     */
+    fun cancelReadsOfQuery(queryToCancel: String) {
+        // no-op
+    }
 }

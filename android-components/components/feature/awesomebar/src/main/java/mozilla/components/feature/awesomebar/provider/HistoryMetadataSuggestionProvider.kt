@@ -53,7 +53,7 @@ class HistoryMetadataSuggestionProvider(
     }
 
     override suspend fun onInputChanged(text: String): List<AwesomeBar.Suggestion> {
-        historyStorage.cancelReads()
+        historyStorage.cancelReadsOfQuery(text)
 
         if (text.isNullOrBlank()) {
             return emptyList()
