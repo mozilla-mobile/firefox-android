@@ -295,12 +295,12 @@ class SelectorsKtTest {
         val privateTab2 = createTab("https://mozilla.org", private = true)
         val state = BrowserState(tabs = listOf(tab1, privateTab1, tab2, privateTab2))
 
-        assertEquals(tab1, state.findNormalOrPrivateTabByUrlIgnoringFragment("https://www.firefox.com/query?isMorning=yes", false))
-        assertEquals(tab1, state.findNormalOrPrivateTabByUrlIgnoringFragment("https://www.firefox.com/query?isMorning=yes#bye", false))
-        assertEquals(tab2, state.findNormalOrPrivateTabByUrlIgnoringFragment("moz-extension://4d1a24b3-bdd1-4763-a766-b5a8c1a0012c/dashboard.html", false))
-        assertEquals(privateTab2, state.findNormalOrPrivateTabByUrlIgnoringFragment("https://mozilla.org/", true))
-        assertNull(state.findNormalOrPrivateTabByUrlIgnoringFragment("https://firefox.com/query?isMorning=yes", false))
+        assertEquals(tab1, state.findNormalOrPrivateTabByUrlIgnoringFragment("https://www.firefox.com/query?isMorning=yes", private = false))
+        assertEquals(tab1, state.findNormalOrPrivateTabByUrlIgnoringFragment("https://www.firefox.com/query?isMorning=yes#bye", private = false))
+        assertEquals(tab2, state.findNormalOrPrivateTabByUrlIgnoringFragment("moz-extension://4d1a24b3-bdd1-4763-a766-b5a8c1a0012c/dashboard.html", private = false))
+        assertEquals(privateTab2, state.findNormalOrPrivateTabByUrlIgnoringFragment("https://mozilla.org/", private = true))
+        assertNull(state.findNormalOrPrivateTabByUrlIgnoringFragment("https://firefox.com/query?isMorning=yes", private = false))
         // This asserts that the function doesn't throw if an illegal url is checked
-        assertNull(state.findNormalOrPrivateTabByUrlIgnoringFragment("https://getpocket.com/#/private#now", true))
+        assertNull(state.findNormalOrPrivateTabByUrlIgnoringFragment("https://getpocket.com/#/private#now", private = true))
     }
 }

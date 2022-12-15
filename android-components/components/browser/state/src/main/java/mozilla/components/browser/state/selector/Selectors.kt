@@ -110,7 +110,7 @@ fun BrowserState.findNormalOrPrivateTabByUrl(url: String, private: Boolean): Tab
 }
 
 /**
- * Finds and returns the tab with the given url ignoring the fragment/reference part of the url.
+ * Finds and returns the tab with the given url ignoring the fragment identifier part of the url.
  * Returns null if no matching tab could be found.
  *
  * @param url A mandatory url of the searched tab.
@@ -154,7 +154,8 @@ val BrowserState.allTabs: List<SessionState>
     get() = tabs + customTabs
 
 /**
- * Returns true if the two urls are the same ignoring the fragment - the part after #.
+ * Returns true if the two urls are the same ignoring the fragment identifier - the string after
+ * the # in a url (eg, http://foo/bar#buzz).
  *
  * @param tabUrl A mandatory url of the tab.
  * @param url A mandatory url that's being checked.
@@ -169,14 +170,15 @@ private fun isSameUrlIgnoringFragment(tabUrl: String, url: String): Boolean {
     } catch (e: URISyntaxException) {
         Logger.error("Unable to compare urls", e)
         false
-    } catch (e: IllegalArgumentException){
+    } catch (e: IllegalArgumentException) {
         Logger.error("Unable to compare urls", e)
         false
     }
 }
 
 /**
- * Removes trailing slash on the URI if present
+ * Removes trailing slash on the URI if present.
+ *
  * @return String with trailing slash removed if it's the last character,
  * otherwise the original string.
  */

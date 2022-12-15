@@ -439,8 +439,8 @@ class TabsUseCases(
          * @param private Whether or not this session should use private mode.
          * @param source The origin of a session to describe how and why it was created.
          * @param flags The [LoadUrlFlags] to use when loading the provided URL.
-         * @param ignoreFragment Whether to ignore the fragment/anchor of the url while comparing
-         * with existing tabs.
+         * @param ignoreFragment Whether to ignore the fragment identifier of the url while
+         * comparing with existing tabs.
          * @return The ID of the selected or created tab.
          */
         operator fun invoke(
