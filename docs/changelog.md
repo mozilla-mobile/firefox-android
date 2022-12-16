@@ -12,8 +12,20 @@ permalink: /changelog/
 * **browser-state**, **feature-search**
   * Added a new parameter `isGeneral` to `SearchEngine` to specify whether or not the search engine is a general search engine (eg, provides broad search results). Search engines read from storage will now have this parameter set based on a list of general search engines. [bug #1804594](https://bugzilla.mozilla.org/show_bug.cgi?id=1804594)
 
+* **lib-crash-sentry**
+  * 🚒 Bug fixed [bug #1801349](https://bugzilla.mozilla.org/show_bug.cgi?id=1801349).  Properly synchronize access to the crash reporter breadcrumb list.
+
 * **feature-prompts**:
   * Added permission requests for accessing media files (`READ_MEDIA_AUDIO`, `READ_MEDIA_AUDIO`, `READ_MEDIA_AUDIO`) when uploading files on devices with Android 13 and later.
+
+* **feature-awesomebar**
+  * `SuggestionProviderGroup` now has a new parameter `priority` that decides the order of this group in the AwesomeBar suggestions. Priority is same as the `score` of `AwesomeBar.Suggestions`. Group having the highest integer value will have the highest priority.
+
+* **concept-toolbar**
+  * Added optional parameter `cursorPlacement` to `editMode` which allows cursor placement to be specified when switching to edit mode.
+
+* **feature-toolbar**
+  * 🆕 Added a new parameter `shouldDisplaySearchTerms` to `ToolbarFeature` which allows clients to specify if the search terms should be shown instead of the URL when the toolbar is in display mode. [Bug 1805164](https://bugzilla.mozilla.org/show_bug.cgi?id=1805164)
 
 # 109.0.0
 * [Commits](https://github.com/mozilla-mobile/firefox-android/compare/v108.0.0...v109.0.0)
