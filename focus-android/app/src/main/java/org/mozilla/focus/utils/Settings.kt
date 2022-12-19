@@ -466,7 +466,7 @@ class Settings(
     fun getCurrentCookieBannerOptionFromSharePref(): CookieBannerOption {
         val optionValue = preferences.getString(
             context.getString(R.string.pref_key_cookie_banner_settings),
-            context.getString(CookieBannerOption.CookieBannerDisabled().prefKeyId),
+            context.getString(CookieBannerOption.CookieBannerRejectAll().prefKeyId),
         )
         return when (optionValue) {
             context.getString(CookieBannerOption.CookieBannerDisabled().prefKeyId) ->

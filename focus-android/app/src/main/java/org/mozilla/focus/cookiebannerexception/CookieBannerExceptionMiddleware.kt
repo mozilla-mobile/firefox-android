@@ -5,8 +5,13 @@
 package org.mozilla.focus.cookiebannerexception
 
 import android.content.Context
+import androidx.core.net.toUri
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import mozilla.components.browser.state.state.SessionState
+import mozilla.components.concept.engine.Engine
 import mozilla.components.concept.engine.cookiehandling.CookieBannersStorage
 import mozilla.components.lib.state.Middleware
 import mozilla.components.lib.state.MiddlewareContext
@@ -20,7 +25,7 @@ class CookieBannerExceptionMiddleware(
     private val ioScope: CoroutineScope,
     private val cookieBannersStorage: CookieBannersStorage,
     private val appContext: Context,
-    val uri: String,
+    private val currentTab: SessionState,
 ) :
     Middleware<CookieBannerExceptionState, CookieBannerExceptionAction> {
 
@@ -30,39 +35,45 @@ class CookieBannerExceptionMiddleware(
         action: CookieBannerExceptionAction,
     ) {
         when (action) {
+            is CookieBannerExceptionAction.CookieBannerDetected -> {
+                if (!action.isCookieBannerDetected) {
+                    context.store.dispatch(
+                        CookieBannerExceptionAction.UpdateCookieBannerExceptionStatus(
+                            CookieBannerExceptionStatus.NoCookieBannerDetected,
+                        ),
+                    )
+                } else {
+                    showExceptionStatus(context)
+                }
+            }
+
             is CookieBannerExceptionAction.InitCookieBannerException -> {
                 /**
                  * The initial CookieBannerExceptionState when the user enters first in the screen
                  */
-                val shouldShowCookieBannerItem = shouldShowCookieBannerExceptionItem()
-                context.store.dispatch(
-                    CookieBannerExceptionAction.UpdateCookieBannerExceptionExceptionVisibility(
-                        shouldShowCookieBannerItem = shouldShowCookieBannerItem,
-                    ),
-                )
-                if (shouldShowCookieBannerExceptionItem()) {
-                    ioScope.launch {
-                        val hasException = cookieBannersStorage.hasException(uri, true)
-                        context.store.dispatch(
-                            CookieBannerExceptionAction.UpdateCookieBannerExceptionException(hasException),
-                        )
-                    }
-                }
+                showExceptionStatus(context)
             }
-            is CookieBannerExceptionAction.ToggleCookieBannerExceptionException -> {
+
+            is CookieBannerExceptionAction.ToggleCookieBannerException -> {
                 ioScope.launch {
                     if (action.isCookieBannerHandlingExceptionEnabled) {
-                        cookieBannersStorage.removeException(uri, true)
+                        cookieBannersStorage.removeException(currentTab.content.url, true)
                         CookieBanner.exceptionRemoved.record(NoExtras())
+                        context.store.dispatch(
+                            CookieBannerExceptionAction.UpdateCookieBannerExceptionStatus(
+                                CookieBannerExceptionStatus.NoException,
+                            ),
+                        )
                     } else {
-                        cookieBannersStorage.addException(uri, true)
+                        clearSiteData()
+                        cookieBannersStorage.addPersistentExceptionInPrivateMode(currentTab.content.url)
                         CookieBanner.exceptionAdded.record(NoExtras())
+                        context.store.dispatch(
+                            CookieBannerExceptionAction.UpdateCookieBannerExceptionStatus(
+                                CookieBannerExceptionStatus.HasException,
+                            ),
+                        )
                     }
-                    context.store.dispatch(
-                        CookieBannerExceptionAction.UpdateCookieBannerExceptionException(
-                            !action.isCookieBannerHandlingExceptionEnabled,
-                        ),
-                    )
                     appContext.components.sessionUseCases.reload()
                 }
                 next(action)
@@ -73,12 +84,60 @@ class CookieBannerExceptionMiddleware(
         }
     }
 
+    private fun showExceptionStatus(
+        context: MiddlewareContext<CookieBannerExceptionState, CookieBannerExceptionAction>,
+    ) {
+        val shouldShowCookieBannerItem = shouldShowCookieBannerExceptionItem()
+        context.store.dispatch(
+            CookieBannerExceptionAction.UpdateCookieBannerExceptionVisibility(
+                shouldShowCookieBannerItem = shouldShowCookieBannerItem,
+            ),
+        )
+
+        if (!shouldShowCookieBannerItem) {
+            return
+        }
+
+        ioScope.launch {
+            val hasException =
+                cookieBannersStorage.hasException(currentTab.content.url, true)
+            if (hasException) {
+                context.store.dispatch(
+                    CookieBannerExceptionAction.UpdateCookieBannerExceptionStatus(
+                        CookieBannerExceptionStatus.HasException,
+                    ),
+                )
+            } else {
+                context.store.dispatch(
+                    CookieBannerExceptionAction.UpdateCookieBannerExceptionStatus(
+                        CookieBannerExceptionStatus.NoException,
+                    ),
+                )
+            }
+        }
+    }
+
     /**
      * It returns the cookie banner exception item visibility from tracking protection panel .
      * If the item is invisible item details should also be invisible.
      */
     private fun shouldShowCookieBannerExceptionItem(): Boolean {
         return appContext.settings.isCookieBannerEnable &&
-            appContext.settings.getCurrentCookieBannerOptionFromSharePref() != CookieBannerOption.CookieBannerDisabled()
+            appContext.settings.getCurrentCookieBannerOptionFromSharePref() !=
+            CookieBannerOption.CookieBannerDisabled()
+    }
+
+    private suspend fun clearSiteData() {
+        val host = currentTab.content.url.toUri().host.orEmpty()
+        val domain = appContext.components.publicSuffixList.getPublicSuffixPlusOne(host).await()
+        withContext(Dispatchers.Main) {
+            appContext.components.engine.clearData(
+                host = domain,
+                data = Engine.BrowsingData.select(
+                    Engine.BrowsingData.AUTH_SESSIONS,
+                    Engine.BrowsingData.ALL_SITE_DATA,
+                ),
+            )
+        }
     }
 }

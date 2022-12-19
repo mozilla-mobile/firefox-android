@@ -31,9 +31,18 @@ import org.mozilla.focus.ui.theme.focusColors
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_NO)
+private fun CookieBannerExceptionItemPreviewNoCookieBannerDetected() {
+    FocusTheme {
+        CookieBannerExceptionItem(cookieBannerExceptionStatus = CookieBannerExceptionStatus.NoCookieBannerDetected) {}
+    }
+}
+
+@Composable
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_NO)
 private fun CookieBannerExceptionItemPreviewHasException() {
     FocusTheme {
-        CookieBannerExceptionItem(true) {}
+        CookieBannerExceptionItem(cookieBannerExceptionStatus = CookieBannerExceptionStatus.HasException) {}
     }
 }
 
@@ -42,33 +51,42 @@ private fun CookieBannerExceptionItemPreviewHasException() {
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_NO)
 private fun CookieBannerExceptionItemPreviewHasNotException() {
     FocusTheme {
-        CookieBannerExceptionItem(false) {}
+        CookieBannerExceptionItem(cookieBannerExceptionStatus = CookieBannerExceptionStatus.NoException) {}
     }
 }
 
 /**
  * Displays the cookie banner exception item from Tracking Protection panel.
  *
- * @param hasException if the site hasException
+ * @param cookieBannerExceptionStatus if the site has a cookie banner or an exception
  * @param preferenceOnClickListener Callback that will redirect the user to cookie banner item details.
  */
 @Composable
-fun CookieBannerExceptionItem(hasException: Boolean, preferenceOnClickListener: () -> Unit) {
+fun CookieBannerExceptionItem(
+    cookieBannerExceptionStatus: CookieBannerExceptionStatus,
+    preferenceOnClickListener: (() -> Unit)? = null,
+) {
+    var rowModifier = Modifier
+        .defaultMinSize(minHeight = 48.dp)
+        .background(
+            colorResource(R.color.settings_background),
+            shape = RectangleShape,
+        )
+
+    if (cookieBannerExceptionStatus !is CookieBannerExceptionStatus.NoCookieBannerDetected) {
+        rowModifier = rowModifier.then(Modifier.clickable { preferenceOnClickListener?.invoke() })
+    }
+
     Row(
-        modifier = Modifier
-            .clickable { preferenceOnClickListener() }
-            .defaultMinSize(minHeight = 48.dp)
-            .background(
-                colorResource(R.color.settings_background),
-                shape = RectangleShape,
-            ),
+        modifier = rowModifier,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        val painter = if (hasException) {
-            painterResource(id = R.drawable.ic_cookies_disable)
-        } else {
-            painterResource(id = R.drawable.mozac_ic_cookies)
-        }
+        val painter =
+            if (cookieBannerExceptionStatus !is CookieBannerExceptionStatus.NoException) {
+                painterResource(id = R.drawable.ic_cookies_disable)
+            } else {
+                painterResource(id = R.drawable.mozac_ic_cookies)
+            }
         Icon(
             painter = painter,
             contentDescription = null,
@@ -86,10 +104,13 @@ fun CookieBannerExceptionItem(hasException: Boolean, preferenceOnClickListener: 
                 fontSize = 14.sp,
                 lineHeight = 20.sp,
             )
-            val summary = if (hasException) {
-                stringResource(id = R.string.cookie_banner_exception_item_description_state_off)
-            } else {
-                stringResource(id = R.string.cookie_banner_exception_item_description_state_on)
+            val summary = when (cookieBannerExceptionStatus) {
+                CookieBannerExceptionStatus.NoCookieBannerDetected ->
+                    stringResource(id = R.string.cookie_banner_exception_no_cookie_banner_detected)
+                CookieBannerExceptionStatus.HasException ->
+                    stringResource(id = R.string.cookie_banner_exception_item_description_state_off)
+                CookieBannerExceptionStatus.NoException ->
+                    stringResource(id = R.string.cookie_banner_exception_item_description_state_on)
             }
             Text(
                 text = summary,
@@ -99,13 +120,15 @@ fun CookieBannerExceptionItem(hasException: Boolean, preferenceOnClickListener: 
                 lineHeight = 16.sp,
             )
         }
-        Icon(
-            modifier = Modifier
-                .padding(end = 0.dp)
-                .size(24.dp),
-            tint = focusColors.onPrimary,
-            painter = painterResource(id = R.drawable.mozac_ic_arrowhead_right),
-            contentDescription = null,
-        )
+        if (cookieBannerExceptionStatus !is CookieBannerExceptionStatus.NoCookieBannerDetected) {
+            Icon(
+                modifier = Modifier
+                    .padding(end = 0.dp)
+                    .size(24.dp),
+                tint = focusColors.onPrimary,
+                painter = painterResource(id = R.drawable.mozac_ic_arrowhead_right),
+                contentDescription = null,
+            )
+        }
     }
 }

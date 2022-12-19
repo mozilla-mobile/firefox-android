@@ -63,7 +63,12 @@ open class MainActivityFirstrunTestRule(
 }
 
 // Test rule that allows usage of Espresso Intents
-open class MainActivityIntentsTestRule(launchActivity: Boolean = true, private val showFirstRun: Boolean, private val showStartBrowsingCfrVisibility: Boolean = false) :
+open class MainActivityIntentsTestRule(
+    launchActivity: Boolean = true,
+    private val showFirstRun: Boolean,
+    private val showStartBrowsingCfrVisibility: Boolean = false,
+    private val cookieBannerReductionVisibility: Boolean = false,
+) :
     IntentsTestRule<MainActivity>(MainActivity::class.java, launchActivity) {
     private val longTapUserPreference = getLongPressTimeout()
     private val featureSettingsHelper = FeatureSettingsHelper()
@@ -74,6 +79,7 @@ open class MainActivityIntentsTestRule(launchActivity: Boolean = true, private v
 
         updateFirstRun(showFirstRun)
         featureSettingsHelper.setShowStartBrowsingCfrEnabled(showStartBrowsingCfrVisibility)
+        featureSettingsHelper.setCookieBannerReductionEnabled(cookieBannerReductionVisibility)
         setLongTapTimeout(3000)
     }
 
