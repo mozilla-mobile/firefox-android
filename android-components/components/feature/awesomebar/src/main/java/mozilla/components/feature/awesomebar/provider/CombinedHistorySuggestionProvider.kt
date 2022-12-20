@@ -60,8 +60,8 @@ class CombinedHistorySuggestionProvider(
     }
 
     override suspend fun onInputChanged(text: String): List<AwesomeBar.Suggestion> = coroutineScope {
-        historyStorage.cancelReads()
-        historyMetadataStorage.cancelReads()
+        historyStorage.cancelReadsOfQuery(text)
+        historyMetadataStorage.cancelReadsOfQuery(text)
 
         if (text.isBlank()) {
             return@coroutineScope emptyList()
