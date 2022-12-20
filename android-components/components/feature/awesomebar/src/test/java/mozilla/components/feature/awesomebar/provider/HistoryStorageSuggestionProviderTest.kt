@@ -4,6 +4,7 @@
 
 package mozilla.components.feature.awesomebar.provider
 
+import android.net.Uri
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -16,6 +17,7 @@ import mozilla.components.support.base.facts.Action
 import mozilla.components.support.base.facts.Fact
 import mozilla.components.support.base.facts.FactProcessor
 import mozilla.components.support.base.facts.Facts
+import mozilla.components.support.ktx.android.net.sameOriginAs
 import mozilla.components.support.test.eq
 import mozilla.components.support.test.mock
 import org.junit.Assert.assertEquals
@@ -300,5 +302,61 @@ class HistoryStorageSuggestionProviderTest {
             ),
             emittedFacts.first(),
         )
+    }
+
+    @Test
+    fun `GIVEN no external filter WHEN querying history THEN query the provided number of max results`() = runTest {
+        val history: HistoryStorage = mock()
+        val provider = HistoryStorageSuggestionProvider(
+            historyStorage = history,
+            loadUrlUseCase = mock(),
+            maxNumberOfSuggestions = 13,
+        )
+
+        provider.onInputChanged("moz")
+
+        verify(history).getSuggestions("moz", 13)
+    }
+
+    @Test
+    fun `GIVEN an external filter WHEN querying history THEN query more than the usual default`() = runTest {
+        val history: HistoryStorage = mock()
+        val provider = HistoryStorageSuggestionProvider(
+            historyStorage = history,
+            loadUrlUseCase = mock(),
+            maxNumberOfSuggestions = 13,
+            externalUrlFilter = { true },
+        )
+        val expectedQueryCount = 13 * HISTORY_RESULTS_TO_FILTER_SCALE_FACTOR
+
+        provider.onInputChanged("moz")
+
+        verify(history).getSuggestions("moz", expectedQueryCount)
+    }
+
+    @Test
+    fun `GIVEN an external filter WHEN querying history THEN return only the results that pass through the filter`() = runTest {
+        val history: HistoryStorage = mock()
+        doReturn(
+            listOf(
+                SearchResult("3", "https://mozilla.com/firefox", 10),
+                SearchResult("5", "http://firefox.com/mozilla", 10),
+                SearchResult("2", "http://allizom.com/focus/", 10),
+                SearchResult("4", "https://mozilla.com/thunderbird", 10),
+                SearchResult("16", "http://www.mozilla.com/firefox", 22),
+            ),
+        ).`when`(history).getSuggestions(eq("moz"), anyInt())
+
+        val provider = HistoryStorageSuggestionProvider(
+            historyStorage = history,
+            loadUrlUseCase = mock(),
+            externalUrlFilter = { url -> Uri.parse("https://mozilla.com").sameOriginAs(Uri.parse(url)) },
+        )
+
+        val suggestions = provider.onInputChanged("moz")
+
+        assertEquals(2, suggestions.size)
+        assertTrue(suggestions.map { it.description }.contains("https://mozilla.com/firefox"))
+        assertTrue(suggestions.map { it.description }.contains("https://mozilla.com/thunderbird"))
     }
 }

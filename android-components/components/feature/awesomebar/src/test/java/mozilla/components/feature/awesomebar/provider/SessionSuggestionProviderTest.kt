@@ -246,4 +246,33 @@ class SessionSuggestionProviderTest {
         assertEquals("Wikipedia", suggestions.first().title)
         assertEquals("Switch to tab", suggestions.first().description)
     }
+
+    @Test
+    fun `GIVEN an external filter WHEN querying tabs THEN return only the results that pass through the filter`() = runTest {
+        val store = BrowserStore(
+            BrowserState(
+                tabs = listOf(
+                    createTab(id = "a", url = "https://wikipedia.org"),
+                    createTab(id = "b", url = "https://mozilla.org/firefox"),
+                    createTab(id = "c", url = "https://mozilla.org/focus"),
+                    createTab(id = "d", url = "https://www.mozilla.org/vpn"),
+                ),
+                selectedTabId = "d",
+            ),
+        )
+        val resources: Resources = mock()
+        `when`(resources.getString(anyInt())).thenReturn("Switch to tab")
+        val provider = SessionSuggestionProvider(
+            resources = resources,
+            store = store,
+            selectTabUseCase = mock(),
+            externalUrlFilter = { url -> url?.startsWith("https://mozilla.org") ?: false },
+        )
+
+        val suggestions = provider.onInputChanged("moz")
+
+        assertEquals(2, suggestions.size)
+        assertTrue(suggestions.map { it.title }.contains("https://mozilla.org/firefox"))
+        assertTrue(suggestions.map { it.title }.contains("https://mozilla.org/focus"))
+    }
 }

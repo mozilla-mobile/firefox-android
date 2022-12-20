@@ -4,6 +4,7 @@
 
 package mozilla.components.feature.awesomebar.provider
 
+import android.net.Uri
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -13,6 +14,7 @@ import mozilla.components.concept.storage.HistoryMetadataKey
 import mozilla.components.concept.storage.HistoryMetadataStorage
 import mozilla.components.concept.storage.HistoryStorage
 import mozilla.components.concept.storage.SearchResult
+import mozilla.components.support.ktx.android.net.sameOriginAs
 import mozilla.components.support.test.eq
 import mozilla.components.support.test.mock
 import org.junit.Assert.assertEquals
@@ -261,5 +263,72 @@ class CombinedHistorySuggestionProviderTest {
         provider.resetToDefaultMaxSuggestions()
         suggestions = provider.onInputChanged("moz")
         assertEquals(5, suggestions.size)
+    }
+
+    @Test
+    fun `GIVEN no external filter WHEN querying history THEN query a low number of results`() = runTest {
+        val history: HistoryStorage = mock()
+        val metadata: HistoryMetadataStorage = mock()
+        doReturn(emptyList<HistoryMetadata>()).`when`(metadata).queryHistoryMetadata(eq("moz"), anyInt())
+        doReturn(emptyList<SearchResult>()).`when`(history).getSuggestions(eq("moz"), anyInt())
+
+        val provider = CombinedHistorySuggestionProvider(history, metadata, mock(), showEditSuggestion = false)
+
+        provider.onInputChanged("moz")
+
+        verify(history).getSuggestions("moz", DEFAULT_COMBINED_SUGGESTION_LIMIT)
+        verify(metadata).queryHistoryMetadata("moz", DEFAULT_COMBINED_SUGGESTION_LIMIT)
+    }
+
+    @Test
+    fun `GIVEN an external filter WHEN querying history THEN query more than the usual default`() = runTest {
+        val history: HistoryStorage = mock()
+        val metadata: HistoryMetadataStorage = mock()
+        doReturn(emptyList<HistoryMetadata>()).`when`(metadata).queryHistoryMetadata(eq("moz"), anyInt())
+        doReturn(emptyList<SearchResult>()).`when`(history).getSuggestions(eq("moz"), anyInt())
+        val expectedQueryCount = DEFAULT_COMBINED_SUGGESTION_LIMIT * COMBINED_HISTORY_RESULTS_TO_FILTER_SCALE_FACTOR
+
+        val provider = CombinedHistorySuggestionProvider(
+            historyStorage = history,
+            historyMetadataStorage = metadata,
+            loadUrlUseCase = mock(),
+            showEditSuggestion = false,
+            externalUrlFilter = { true },
+        )
+
+        provider.onInputChanged("moz")
+
+        verify(history).getSuggestions("moz", expectedQueryCount)
+        verify(metadata).queryHistoryMetadata("moz", expectedQueryCount)
+    }
+
+    @Test
+    fun `GIVEN an external filter WHEN querying history THEN return only the results that pass through the filter`() = runTest {
+        val history: HistoryStorage = mock()
+        val metadata: HistoryMetadataStorage = mock()
+        doReturn(emptyList<HistoryMetadata>()).`when`(metadata).queryHistoryMetadata(eq("moz"), anyInt())
+        doReturn(
+            listOf(
+                SearchResult("3", "https://mozilla.com/firefox", 10),
+                SearchResult("5", "http://firefox.com/mozilla", 10),
+                SearchResult("2", "http://allizom.com/focus/", 10),
+                SearchResult("4", "https://mozilla.com/thunderbird", 10),
+                SearchResult("16", "http://www.mozilla.com/firefox", 22),
+            ),
+        ).`when`(history).getSuggestions(eq("moz"), anyInt())
+
+        val provider = CombinedHistorySuggestionProvider(
+            historyStorage = history,
+            historyMetadataStorage = metadata,
+            loadUrlUseCase = mock(),
+            showEditSuggestion = false,
+            externalUrlFilter = { url -> Uri.parse("https://mozilla.com").sameOriginAs(Uri.parse(url)) },
+        )
+
+        val suggestions = provider.onInputChanged("moz")
+
+        assertEquals(2, suggestions.size)
+        assertTrue(suggestions.map { it.description }.contains("https://mozilla.com/firefox"))
+        assertTrue(suggestions.map { it.description }.contains("https://mozilla.com/thunderbird"))
     }
 }

@@ -6,6 +6,7 @@ package mozilla.components.feature.awesomebar.provider
 
 import android.content.res.Resources
 import android.graphics.drawable.Drawable
+import androidx.annotation.VisibleForTesting
 import kotlinx.coroutines.Deferred
 import mozilla.components.browser.icons.BrowserIcons
 import mozilla.components.browser.icons.Icon
@@ -32,8 +33,10 @@ class SessionSuggestionProvider(
     private val indicatorIcon: Drawable? = null,
     private val excludeSelectedSession: Boolean = false,
     private val suggestionsHeader: String? = null,
+    @get:VisibleForTesting val externalUrlFilter: ((String?) -> Boolean)? = null,
 ) : AwesomeBar.SuggestionProvider {
     override val id: String = UUID.randomUUID().toString()
+    private val filter: (String?) -> Boolean = externalUrlFilter ?: { true }
 
     override fun groupTitle(): String? {
         return suggestionsHeader
@@ -45,7 +48,7 @@ class SessionSuggestionProvider(
         }
 
         val state = store.state
-        val tabs = state.tabs
+        val tabs = state.tabs.filter { filter(it.content.url) }
 
         val suggestions = mutableListOf<AwesomeBar.Suggestion>()
         val iconRequests: List<Deferred<Icon>?> = tabs.map {

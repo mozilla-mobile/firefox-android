@@ -17,7 +17,17 @@ import mozilla.components.feature.awesomebar.facts.emitBookmarkSuggestionClicked
 import mozilla.components.feature.session.SessionUseCases
 import java.util.UUID
 
-private const val BOOKMARKS_SUGGESTION_LIMIT = 20
+/**
+ * Return up to 20 bookmarks suggestions by default.
+ */
+@VisibleForTesting
+internal const val BOOKMARKS_SUGGESTION_LIMIT = 20
+
+/**
+ * Default suggestions limit multiplier when needing to filter results by an external url filter.
+ */
+@VisibleForTesting
+internal const val BOOKMARKS_RESULTS_TO_FILTER_SCALE_FACTOR = 10
 
 /**
  * A [AwesomeBar.SuggestionProvider] implementation that provides suggestions based on the bookmarks
@@ -33,6 +43,7 @@ private const val BOOKMARKS_SUGGESTION_LIMIT = 20
  * highest scored suggestion URL.
  * @param showEditSuggestion optional parameter to specify if the suggestion should show the edit button
  * @param suggestionsHeader optional parameter to specify if the suggestion should have a header
+ * @param externalUrlFilter Optional suggestions url filter.
  */
 class BookmarksStorageSuggestionProvider(
     @get:VisibleForTesting internal val bookmarksStorage: BookmarksStorage,
@@ -42,8 +53,14 @@ class BookmarksStorageSuggestionProvider(
     private val engine: Engine? = null,
     private val showEditSuggestion: Boolean = true,
     private val suggestionsHeader: String? = null,
+    @get:VisibleForTesting val externalUrlFilter: ((String?) -> Boolean)? = null,
 ) : AwesomeBar.SuggestionProvider {
     override val id: String = UUID.randomUUID().toString()
+    private val filter: (String?) -> Boolean = externalUrlFilter ?: { url -> url != null }
+    private val queryLimit = when (externalUrlFilter != null) {
+        true -> BOOKMARKS_SUGGESTION_LIMIT * BOOKMARKS_RESULTS_TO_FILTER_SCALE_FACTOR
+        false -> BOOKMARKS_SUGGESTION_LIMIT
+    }
 
     override fun groupTitle(): String? {
         return suggestionsHeader
@@ -56,10 +73,11 @@ class BookmarksStorageSuggestionProvider(
             return emptyList()
         }
 
-        val suggestions = bookmarksStorage.searchBookmarks(text, BOOKMARKS_SUGGESTION_LIMIT)
-            .filter { it.url != null }
+        val suggestions = bookmarksStorage.searchBookmarks(text, queryLimit)
+            .filter { filter.invoke(it.url) }
             .distinctBy { it.url }
             .sortedBy { it.guid }
+            .take(BOOKMARKS_SUGGESTION_LIMIT)
 
         suggestions.firstOrNull()?.url?.let { url -> engine?.speculativeConnect(url) }
 
