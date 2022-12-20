@@ -22,7 +22,6 @@ def resolve_keys(config, tasks):
             'attributes.code-review',
             'expose-artifacts',
             'include-coverage',
-            'optimization',
             'shipping-phase',
             'run-on-tasks-for',
             'run.gradlew',
