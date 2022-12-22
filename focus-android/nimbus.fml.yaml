@@ -38,10 +38,15 @@ features:
         description: If 'true' , the app will show the settings part for cookie banner handling
         type: Boolean
         default: false
+      cookie-banner-dialog-version:
+        description: The version of cookie banner dialog. This can be 1,2 or 3.
+        type: Int
+        default: 1
     defaults:
       - channel: debug
         value: {
-          "is-cookie-handling-enabled": true
+          "is-cookie-handling-enabled": true,
+          "cookie-banner-dialog-version": 4
         }
 types:
   objects: { }

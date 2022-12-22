@@ -30,6 +30,7 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import mozilla.components.browser.state.selector.findTabOrCustomTab
@@ -38,6 +39,7 @@ import mozilla.components.browser.state.state.CustomTabConfig
 import mozilla.components.browser.state.state.SessionState
 import mozilla.components.browser.state.state.content.DownloadState
 import mozilla.components.browser.state.state.createTab
+import mozilla.components.concept.engine.EngineSession
 import mozilla.components.concept.engine.HitResult
 import mozilla.components.feature.app.links.AppLinksFeature
 import mozilla.components.feature.contextmenu.ContextMenuFeature
@@ -54,10 +56,12 @@ import mozilla.components.feature.tabs.WindowFeature
 import mozilla.components.feature.top.sites.TopSitesConfig
 import mozilla.components.feature.top.sites.TopSitesFeature
 import mozilla.components.lib.crash.Crash
+import mozilla.components.lib.state.ext.consumeFlow
 import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.ktx.android.view.exitImmersiveMode
+import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifAnyChanged
 import mozilla.components.support.utils.Browsers
 import org.mozilla.focus.GleanMetrics.Browser
 import org.mozilla.focus.GleanMetrics.CookieBanner
@@ -73,6 +77,9 @@ import org.mozilla.focus.browser.integration.BrowserToolbarIntegration
 import org.mozilla.focus.browser.integration.FindInPageIntegration
 import org.mozilla.focus.browser.integration.FullScreenIntegration
 import org.mozilla.focus.contextmenu.ContextMenuCandidates
+import org.mozilla.focus.cookiebanner.CookieBannerDialog
+import org.mozilla.focus.cookiebanner.CookieBannerDialogUtils
+import org.mozilla.focus.cookiebanner.CookieBannerOption
 import org.mozilla.focus.cookiebannerexception.CookieBannerExceptionDetailsPanel
 import org.mozilla.focus.cookiebannerexception.CookieBannerExceptionMiddleware
 import org.mozilla.focus.cookiebannerexception.CookieBannerExceptionState
@@ -92,6 +99,7 @@ import org.mozilla.focus.ext.settings
 import org.mozilla.focus.ext.showAsFixed
 import org.mozilla.focus.ext.titleOrDomain
 import org.mozilla.focus.menu.browser.DefaultBrowserMenu
+import org.mozilla.focus.nimbus.FocusNimbus
 import org.mozilla.focus.open.OpenWithFragment
 import org.mozilla.focus.session.ui.TabsPopup
 import org.mozilla.focus.settings.permissions.permissionoptions.SitePermissionOptionsStorage
@@ -401,6 +409,51 @@ class BrowserFragment :
         )
 
         setSitePermissions(view)
+
+        if (shouldShowCookieBannerDialog()) {
+            observeCookieBannerHandlingState()
+        }
+    }
+
+    private fun shouldShowCookieBannerDialog(): Boolean {
+        return (
+            FocusNimbus.features.cookieBanner.value(requireContext()).isCookieHandlingEnabled &&
+                CookieBannerDialogUtils.shouldShowCookieBannerDialog(
+                    CookieBannerDialogUtils.getCookieBannerSelectedVariant(
+                        requireContext(),
+                    ).reEngagementTime,
+                    requireContext(),
+                ) &&
+                requireContext().settings.getCurrentCookieBannerOptionFromSharePref() ==
+                CookieBannerOption.CookieBannerRejectAll()
+            )
+    }
+
+    private fun observeCookieBannerHandlingState() {
+        consumeFlow(requireContext().components.store) { flow ->
+            flow.mapNotNull {
+                tab
+            }.ifAnyChanged { tab ->
+                arrayOf(
+                    tab.cookieBanner,
+                )
+            }.collect {
+                showCookieBannerDialog(it.cookieBanner)
+            }
+        }
+    }
+
+    private fun showCookieBannerDialog(cookieBannerHandlingStatus: EngineSession.CookieBannerHandlingStatus) {
+        if (cookieBannerHandlingStatus == EngineSession.CookieBannerHandlingStatus.DETECTED &&
+            requireActivity().supportFragmentManager.findFragmentByTag(CookieBannerDialog.FRAGMENT_TAG) == null
+        ) {
+            CookieBanner.dialogShown.record(NoExtras())
+            val cookieBannerDialog = CookieBannerDialog()
+            cookieBannerDialog.show(
+                requireActivity().supportFragmentManager,
+                CookieBannerDialog.FRAGMENT_TAG,
+            )
+        }
     }
 
     private fun setSitePermissions(rootView: View) {

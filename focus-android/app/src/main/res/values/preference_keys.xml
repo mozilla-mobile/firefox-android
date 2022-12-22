@@ -113,4 +113,6 @@
     <string name="pref_key_cookie_banner_reject_all" translatable="false">pref_key_cookie_banner_reject_all</string>
     <string name="pref_key_cookie_banner_reject_or_accept" translatable="false">pref_key_cookie_banner_reject_or_accept</string>
     <string name="pref_key_cookie_banner_disabled" translatable="false">pref_key_cookie_banner_disabled</string>
+    <string name="pref_key_cookie_banner_dialog_enabled" translatable="false">pref_key_cookie_banner_dialog_enabled</string>
+    <string name="pref_key_cookie_banner_dialog_last_dismissed_time" translatable="false">pref_key_cookie_banner_dialog_last_dismissed_time</string>
 </resources>
