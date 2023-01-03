@@ -25,6 +25,7 @@ def resolve_keys(config, tasks):
                 **{
                     'build-type': task["attributes"]["build-type"],
                     'level': config.params["level"],
+                    'release-type': config.params["release_type"],
                 }
             )
         yield task
@@ -33,14 +34,14 @@ def resolve_keys(config, tasks):
 @transforms.add
 def build_worker_definition(config, tasks):
     for task in tasks:
-        worker_definition = {
-            "artifact-map": _build_artifact_map(task),
-            "git-tag": config.params["head_tag"],
-            "git-revision": config.params["head_rev"],
-            "release-name": task["worker"]["release-name"].format(version=config.params["version"]),
-        }
-
-        task["worker"].update(worker_definition)
+        worker = task.setdefault("worker", {})
+        worker["artifact-map"] = _build_artifact_map(task)
+        worker["git-tag"] = worker["git-tag"].format(
+            focus_flavor=task["attributes"]["build-type"].split("-")[0],
+            head_tag=config.params["head_tag"],
+        )
+        worker["git-revision"] = config.params["head_rev"]
+        worker["release-name"] = task["worker"]["release-name"].format(version=config.params["version"])
 
         yield task
 

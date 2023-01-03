@@ -14,6 +14,7 @@ import mozilla.components.browser.state.action.RestoreCompleteAction
 import mozilla.components.browser.state.action.TabListAction
 import mozilla.components.browser.state.action.UndoAction
 import mozilla.components.browser.state.selector.findNormalOrPrivateTabByUrl
+import mozilla.components.browser.state.selector.findNormalOrPrivateTabByUrlIgnoringFragment
 import mozilla.components.browser.state.selector.findTab
 import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.browser.state.state.SessionState
@@ -122,7 +123,11 @@ class TabsUseCases(
          * @param url The URL to be loaded in the new tab.
          * @param flags the [LoadUrlFlags] to use when loading the provided URL.
          */
-        override fun invoke(url: String, flags: LoadUrlFlags, additionalHeaders: Map<String, String>?) {
+        override fun invoke(
+            url: String,
+            flags: LoadUrlFlags,
+            additionalHeaders: Map<String, String>?,
+        ) {
             this.invoke(url, selectTab = true, startLoading = true, parentId = null, flags = flags)
         }
 
@@ -203,7 +208,11 @@ class TabsUseCases(
          * @param url The URL to be loaded in the new private tab.
          * @param flags the [LoadUrlFlags] to use when loading the provided URL.
          */
-        override fun invoke(url: String, flags: LoadUrlFlags, additionalHeaders: Map<String, String>?) {
+        override fun invoke(
+            url: String,
+            flags: LoadUrlFlags,
+            additionalHeaders: Map<String, String>?,
+        ) {
             this.invoke(url, selectTab = true, startLoading = true, parentId = null, flags = flags)
         }
 
@@ -338,7 +347,11 @@ class TabsUseCases(
          */
         operator fun invoke(tabs: List<RecoverableTab>, selectTabId: String? = null) {
             store.dispatch(
-                TabListAction.RestoreAction(tabs, selectTabId, TabListAction.RestoreAction.RestoreLocation.BEGINNING),
+                TabListAction.RestoreAction(
+                    tabs,
+                    selectTabId,
+                    TabListAction.RestoreAction.RestoreLocation.BEGINNING,
+                ),
             )
         }
 
@@ -431,6 +444,8 @@ class TabsUseCases(
          * @param private Whether or not this session should use private mode.
          * @param source The origin of a session to describe how and why it was created.
          * @param flags The [LoadUrlFlags] to use when loading the provided URL.
+         * @param ignoreFragment Whether to ignore the fragment identifier of the url while
+         * comparing with existing tabs.
          * @return The ID of the selected or created tab.
          */
         operator fun invoke(
@@ -438,8 +453,13 @@ class TabsUseCases(
             private: Boolean = false,
             source: SessionState.Source = SessionState.Source.Internal.NewTab,
             flags: LoadUrlFlags = LoadUrlFlags.none(),
+            ignoreFragment: Boolean = false,
         ): String {
-            val existingTab = store.state.findNormalOrPrivateTabByUrl(url, private)
+            val existingTab = if (ignoreFragment) {
+                store.state.findNormalOrPrivateTabByUrlIgnoringFragment(url, private)
+            } else {
+                store.state.findNormalOrPrivateTabByUrl(url, private)
+            }
 
             return if (existingTab != null) {
                 store.dispatch(TabListAction.SelectTabAction(existingTab.id))

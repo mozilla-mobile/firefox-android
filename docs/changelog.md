@@ -9,8 +9,18 @@ permalink: /changelog/
 * [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/Gecko.kt)
 * [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/.config.yml)
 
+* **feature-share**
+  * 🚒 Bug fixed [bug #1806411](https://bugzilla.mozilla.org/show_bug.cgi?id=1806411). Remove image link from share message when sharing an image.
+
+* **concept-engine**
+* 🆕 Added `CookieBannerMode.MODE_DETECT_ONLY`, this help to dected cookie banner events without handle the banners see [bug #1806435](https://bugzilla.mozilla.org/show_bug.cgi?id=1804594)
+
 * **browser-state**, **feature-search**
   * Added a new parameter `isGeneral` to `SearchEngine` to specify whether or not the search engine is a general search engine (eg, provides broad search results). Search engines read from storage will now have this parameter set based on a list of general search engines. [bug #1804594](https://bugzilla.mozilla.org/show_bug.cgi?id=1804594)
+  * Added Selector `BrowserState.findNormalOrPrivateTabByUrlIgnoringFragment` to match urls ignoring the fragment/anchor of the url, allowing `SelectorAddUseCase` to use this functionality.
+
+* **feature-tabs**
+  * Added `ignoreFragment` param in `SelectOrAddUseCase` to match urls ignoring the anchor/fragment. This sets the the foundation to fix [bug 1796319](https://bugzilla.mozilla.org/show_bug.cgi?id=1796319).
 
 * **lib-crash-sentry**
   * 🚒 Bug fixed [bug #1801349](https://bugzilla.mozilla.org/show_bug.cgi?id=1801349).  Properly synchronize access to the crash reporter breadcrumb list.
@@ -20,7 +30,13 @@ permalink: /changelog/
 
 * **feature-awesomebar**
   * `SuggestionProviderGroup` now has a new parameter `priority` that decides the order of this group in the AwesomeBar suggestions. Priority is same as the `score` of `AwesomeBar.Suggestions`. Group having the highest integer value will have the highest priority.
-  
+
+* **concept-toolbar**
+  * Added optional parameter `cursorPlacement` to `editMode` which allows cursor placement to be specified when switching to edit mode.
+
+* **feature-toolbar**
+  * 🆕 Added a new parameter `shouldDisplaySearchTerms` to `ToolbarFeature` which allows clients to specify if the search terms should be shown instead of the URL when the toolbar is in display mode. [Bug 1805164](https://bugzilla.mozilla.org/show_bug.cgi?id=1805164)
+
 # 109.0.0
 * [Commits](https://github.com/mozilla-mobile/firefox-android/compare/v108.0.0...v109.0.0)
 * [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/v109.0.0/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
