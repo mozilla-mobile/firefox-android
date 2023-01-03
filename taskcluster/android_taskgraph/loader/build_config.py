@@ -10,6 +10,7 @@ from ..build_config import get_components, get_apk_based_projects
 
 
 def components_loader(kind, path, config, params, loaded_tasks):
+<<<<<<< HEAD
     """Loader that yields one task per android-component.
 
     Android-components are read from android-component/.buildconfig.yml
@@ -34,6 +35,8 @@ def components_and_apks_loader(kind, path, config, params, loaded_tasks):
 
 
 def _get_components_tasks(config, for_build_type=None):
+=======
+>>>>>>> 4983e9ff87 (Bug 1807237 - part 4: Rename `build_config:loader` into `build_config:components_loader`)
     not_for_components = config.get("not-for-components", [])
     tasks = {
         '{}{}'.format(
