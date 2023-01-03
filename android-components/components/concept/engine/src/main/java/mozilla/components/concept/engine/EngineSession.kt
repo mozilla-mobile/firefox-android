@@ -53,6 +53,26 @@ abstract class EngineSession(
         fun onNavigateBack() = Unit
 
         /**
+         * Event to indicate that a url was loaded to this session.
+         */
+        fun onLoadUrl() = Unit
+
+        /**
+         * Event to indicate that the session was requested to navigate to a specified index.
+         */
+        fun onGotoHistoryIndex() = Unit
+
+        /**
+         * Event to indicate that the session was requested to render data.
+         */
+        fun onLoadData() = Unit
+
+        /**
+         * Event to indicate that the session was requested to navigate forward in history
+         */
+        fun onNavigateForward() = Unit
+
+        /**
          * Event to indicate whether or not this [EngineSession] should be [excluded] from tracking protection.
          */
         fun onExcludedOnTrackingProtectionChange(excluded: Boolean) = Unit
@@ -494,6 +514,7 @@ abstract class EngineSession(
     /**
      * Represents settings options for cookie banner handling.
      */
+    @Suppress("MagicNumber")
     enum class CookieBannerHandlingMode(val mode: Int) {
         /**
          * The feature is turned off and cookie banners are not handled
@@ -509,6 +530,11 @@ abstract class EngineSession(
          * Reject cookies if possible. If rejecting is not possible, accept cookies
          */
         REJECT_OR_ACCEPT_ALL(2),
+
+        /**
+         * Detect cookie banners but do not handle them.
+         */
+        DETECT_ONLY(3),
     }
 
     /**

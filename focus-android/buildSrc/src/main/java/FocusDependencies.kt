@@ -10,7 +10,7 @@ object FocusVersions {
 
     object AndroidX {
         const val annotation = "1.5.0"
-        const val appcompat = "1.5.1"
+        const val appcompat = "1.4.2"
         const val arch = "2.1.0"
         const val browser = "1.4.0"
         const val cardview = "1.0.0"
@@ -32,7 +32,7 @@ object FocusVersions {
     object Google {
         const val accompanist = "0.16.1"
         const val compose_compiler = "1.3.2"
-        const val material = "1.7.0"
+        const val material = "1.6.1"
         const val play = "1.10.3"
     }
 
@@ -64,7 +64,7 @@ object FocusVersions {
     object ThirdParty {
         const val jna = "5.12.1"
         const val leakcanary = "2.10"
-        const val sentry = "6.8.0"
+        const val sentry = "6.10.0"
     }
 
     // Workaround for a Gradle parsing bug that prevents using nested objects directly in Gradle files.
