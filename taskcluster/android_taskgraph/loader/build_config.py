@@ -4,12 +4,16 @@
 
 
 from taskgraph.loader.transform import loader as base_loader
+from taskgraph.util.templates import merge
 
 from ..build_config import get_components, get_apk_based_projects
 
 
 def components_loader(kind, path, config, params, loaded_tasks):
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 366d63a612 (Bug 1807237 - part 9: Split `external-gradle-dependencies` task per component)
     """Loader that yields one task per android-component.
 
     Android-components are read from android-component/.buildconfig.yml
@@ -34,8 +38,11 @@ def components_and_apks_loader(kind, path, config, params, loaded_tasks):
 
 
 def _get_components_tasks(config, for_build_type=None):
+<<<<<<< HEAD
 =======
 >>>>>>> 4983e9ff87 (Bug 1807237 - part 4: Rename `build_config:loader` into `build_config:components_loader`)
+=======
+>>>>>>> 366d63a612 (Bug 1807237 - part 9: Split `external-gradle-dependencies` task per component)
     not_for_components = config.get("not-for-components", [])
     tasks = {
         '{}{}'.format(
@@ -58,11 +65,16 @@ def _get_components_tasks(config, for_build_type=None):
         )
     }
 <<<<<<< HEAD
+<<<<<<< HEAD
 
     return tasks
 =======
     config['tasks'] = tasks
 >>>>>>> 2eec195dba (Bug 1807237 - part 5: Move too long treeherder group in `build_config` loader)
+=======
+
+    return tasks
+>>>>>>> 366d63a612 (Bug 1807237 - part 9: Split `external-gradle-dependencies` task per component)
 
 
 def _get_apks_tasks(config):

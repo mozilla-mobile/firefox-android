@@ -22,20 +22,30 @@ task-defaults:
         component: samples-browser
         treeherder-group: samples-browser
 <<<<<<< HEAD
+<<<<<<< HEAD
     dependencies:
         external-gradle-dependencies: external-gradle-dependencies-samples-browser
 =======
 >>>>>>> 2eec195dba (Bug 1807237 - part 5: Move too long treeherder group in `build_config` loader)
+=======
+    dependencies:
+        external-gradle-dependencies: external-gradle-dependencies-samples-browser
+>>>>>>> 366d63a612 (Bug 1807237 - part 9: Split `external-gradle-dependencies` task per component)
     description: Execute Gradle tasks for component "{component}"
     fetches:
         toolchain:
             - android-sdk-linux
+<<<<<<< HEAD
 <<<<<<< HEAD
         external-gradle-dependencies:
             - external-gradle-dependencies.tar.xz
 =======
             - external-gradle-dependencies
 >>>>>>> c16d759241 (Bug 1807237 - part 8: Rename `android-gradle-dependencies` into `external-gradle-dependencies`)
+=======
+        external-gradle-dependencies:
+            - external-gradle-dependencies.tar.xz
+>>>>>>> 366d63a612 (Bug 1807237 - part 9: Split `external-gradle-dependencies` task per component)
     include-coverage: true
     run:
         pre-gradlew:

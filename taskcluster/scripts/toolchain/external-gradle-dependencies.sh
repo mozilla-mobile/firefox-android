@@ -15,6 +15,7 @@ CURRENT_DIR="$(get_abs_path $0)"
 REPO_ROOT_DIR="$(get_abs_path $CURRENT_DIR/../../../..)"
 ANDROID_COMPONENTS_DIR="$REPO_ROOT_DIR/android-components"
 <<<<<<< HEAD
+<<<<<<< HEAD
 WORKING_DIR="$REPO_ROOT_DIR/$1"
 shift
 GRADLE_COMMANDS="$@"
@@ -35,18 +36,29 @@ ASSEMBLE_TEST_COMMANDS=$(echo "$FIRST_PASS_COMPONENTS" | sed "s/$/:assembleAndro
 TEST_COMMANDS=$(echo "$FIRST_PASS_COMPONENTS" | sed "s/$/:test/g")
 LINT_COMMANDS=$(echo "$FIRST_PASS_COMPONENTS" | sed "s/$/:lintRelease/g")
 >>>>>>> c16d759241 (Bug 1807237 - part 8: Rename `android-gradle-dependencies` into `external-gradle-dependencies`)
+=======
+WORKING_DIR="$REPO_ROOT_DIR/$1"
+shift
+GRADLE_COMMANDS="$@"
+>>>>>>> 366d63a612 (Bug 1807237 - part 9: Split `external-gradle-dependencies` task per component)
 
 NEXUS_PREFIX='http://localhost:8081/nexus/content/repositories'
 REPOS="-PgoogleRepo=$NEXUS_PREFIX/google/ -PcentralRepo=$NEXUS_PREFIX/central/"
 GRADLE_ARGS="--parallel $REPOS"
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 366d63a612 (Bug 1807237 - part 9: Split `external-gradle-dependencies` task per component)
 pushd "$WORKING_DIR"
 
 . "$REPO_ROOT_DIR/taskcluster/scripts/toolchain/external-gradle-dependencies/before.sh"
 
+<<<<<<< HEAD
 =======
 >>>>>>> c16d759241 (Bug 1807237 - part 8: Rename `android-gradle-dependencies` into `external-gradle-dependencies`)
+=======
+>>>>>>> 366d63a612 (Bug 1807237 - part 9: Split `external-gradle-dependencies` task per component)
 # Before building anything we explicitly build one component that contains Glean and initializes
 # the Miniconda Python environment and doesn't have (almost) any other transitive dependencies.
 # If that happens concurrently with other tasks then this seems to fail quite often. So let's do it
@@ -54,6 +66,9 @@ pushd "$WORKING_DIR"
 ./gradlew $REPOS support-sync-telemetry:assemble
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 366d63a612 (Bug 1807237 - part 9: Split `external-gradle-dependencies` task per component)
 # Plugins aren't automatically built. That's why we build them one by one here
 if [[ $WORKING_DIR == ${ANDROID_COMPONENTS_DIR}* ]]; then
   for plugin_dir in $(find "$ANDROID_COMPONENTS_DIR/plugins" -mindepth 1 -maxdepth 1 -type d); do
@@ -62,6 +77,7 @@ if [[ $WORKING_DIR == ${ANDROID_COMPONENTS_DIR}* ]]; then
     popd
   done
 fi
+<<<<<<< HEAD
 
 ./gradlew $GRADLE_ARGS $GRADLE_COMMANDS
 =======
@@ -95,11 +111,18 @@ set +e; ./gradlew $GRADLE_ARGS test; set -e
 # we're lucky and the dependencies it fetches are found elsewhere.
 
 >>>>>>> c16d759241 (Bug 1807237 - part 8: Rename `android-gradle-dependencies` into `external-gradle-dependencies`)
+=======
+
+./gradlew $GRADLE_ARGS $GRADLE_COMMANDS
+>>>>>>> 366d63a612 (Bug 1807237 - part 9: Split `external-gradle-dependencies` task per component)
 
 . "$REPO_ROOT_DIR/taskcluster/scripts/toolchain/external-gradle-dependencies/after.sh"
 
 popd
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 popd
 >>>>>>> c16d759241 (Bug 1807237 - part 8: Rename `android-gradle-dependencies` into `external-gradle-dependencies`)
+=======
+>>>>>>> 366d63a612 (Bug 1807237 - part 9: Split `external-gradle-dependencies` task per component)
