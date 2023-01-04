@@ -9,6 +9,9 @@ permalink: /changelog/
 * [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/Gecko.kt)
 * [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/.config.yml)
 
+* **concept-engine**
+  * 🌟️️ Add `CookieBannerHandlingStatus` to `SessionState` instance to indicate the status of the given session state see more on [bug #1797568](https://bugzilla.mozilla.org/show_bug.cgi?id=1797568).
+
 * **feature-share**
   * 🚒 Bug fixed [bug #1806411](https://bugzilla.mozilla.org/show_bug.cgi?id=1806411). Remove image link from share message when sharing an image.
 
@@ -36,6 +39,9 @@ permalink: /changelog/
 
 * **feature-toolbar**
   * 🆕 Added a new parameter `shouldDisplaySearchTerms` to `ToolbarFeature` which allows clients to specify if the search terms should be shown instead of the URL when the toolbar is in display mode. [Bug 1805164](https://bugzilla.mozilla.org/show_bug.cgi?id=1805164)
+
+* **browser-engine-gecko**
+  * 🆕 Added `GeckoCookieBannersStorage.addPersistentExceptionInPrivateMode` to allow to add persistent cookie banner exceptions in private browsing [bug #1797605](https://bugzilla.mozilla.org/show_bug.cgi?id=1806924).
 
 # 109.0.0
 * [Commits](https://github.com/mozilla-mobile/firefox-android/compare/v108.0.0...v109.0.0)
