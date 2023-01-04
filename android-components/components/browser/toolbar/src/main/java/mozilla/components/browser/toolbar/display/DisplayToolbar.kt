@@ -8,6 +8,7 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Build
 import android.util.TypedValue
 import android.view.View
@@ -470,8 +471,9 @@ class DisplayToolbar internal constructor(
      */
     internal var url: CharSequence = ""
         set(value) {
-            field = value
-            views.origin.url = urlFormatter?.invoke(value) ?: value
+            var decodedUrl: String = Uri.decode(value.toString()) ?: value.toString()
+            field = decodedUrl
+            views.origin.url = urlFormatter?.invoke(decodedUrl) ?: decodedUrl
             updateIndicatorVisibility()
         }
 

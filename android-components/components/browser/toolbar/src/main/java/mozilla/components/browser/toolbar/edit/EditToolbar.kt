@@ -7,6 +7,7 @@ package mozilla.components.browser.toolbar.edit
 import android.content.Context
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.view.KeyEvent
 import android.view.View
 import android.widget.ImageView
@@ -258,11 +259,12 @@ class EditToolbar internal constructor(
      * and is only a visual change
      */
     fun updateUrl(url: String, shouldAutoComplete: Boolean = false, shouldHighlight: Boolean = false) {
-        views.url.setText(url, shouldAutoComplete)
-        views.clear.isVisible = url.isNotBlank()
+        var decodedUrl: String = Uri.decode(url) ?: url
+        views.url.setText(decodedUrl, shouldAutoComplete)
+        views.clear.isVisible = decodedUrl.isNotBlank()
 
         if (shouldHighlight) {
-            views.url.setSelection(0, url.length)
+            views.url.setSelection(0, decodedUrl.length)
         }
     }
 

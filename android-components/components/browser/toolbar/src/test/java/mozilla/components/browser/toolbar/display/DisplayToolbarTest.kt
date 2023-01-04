@@ -812,6 +812,13 @@ class DisplayToolbarTest {
     }
 
     @Test
+    fun `url displayes percent-decoded string`() {
+        val (_, displayToolbar) = createDisplayToolbar()
+        displayToolbar.url = "https://mozilla.org/%E6%B8%AC%E8%A9%A6"
+        assertEquals("https://mozilla.org/測試", displayToolbar.views.origin.url)
+    }
+
+    @Test
     fun `url formatter used if provided`() {
         val (_, displayToolbar) = createDisplayToolbar()
         displayToolbar.url = "https://mozilla.org"

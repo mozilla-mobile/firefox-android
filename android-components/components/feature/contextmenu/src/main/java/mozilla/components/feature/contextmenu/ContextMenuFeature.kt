@@ -4,6 +4,7 @@
 
 package mozilla.components.feature.contextmenu
 
+import android.net.Uri
 import android.view.HapticFeedbackConstants
 import androidx.annotation.VisibleForTesting
 import androidx.annotation.VisibleForTesting.Companion.PRIVATE
@@ -107,7 +108,9 @@ class ContextMenuFeature(
         // We know that we are going to show a context menu. Now is the time to perform the haptic feedback.
         engineView.asView().performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
 
-        val fragment = ContextMenuFragment.create(tab, hitResult.getLink(), ids, labels, additionalNote(hitResult))
+        var link = hitResult.getLink()
+        var decodedUrl: String = Uri.decode(link) ?: link
+        val fragment = ContextMenuFragment.create(tab, decodedUrl, ids, labels, additionalNote(hitResult))
         fragment.feature = this
         fragment.show(fragmentManager, FRAGMENT_TAG)
     }
