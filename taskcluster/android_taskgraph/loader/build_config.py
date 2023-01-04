@@ -4,9 +4,15 @@
 
 
 from taskgraph.loader.transform import loader as base_loader
-from taskgraph.util.templates import merge
 
 from ..build_config import get_components
+
+
+# Treeherder group are capped at 25 chars
+TREEHERDER_GROUPS_PER_TOO_LONG_COMPONENT_NAME = {
+    "lib-fetch-httpurlconnection": "lib-fetch-httpurlconnect",
+    "feature-webcompat-reporter": "feature-webcompat-report",
+}
 
 
 def components_loader(kind, path, config, params, loaded_tasks):
@@ -19,6 +25,9 @@ def components_loader(kind, path, config, params, loaded_tasks):
             'attributes': {
                 'build-type': build_type,
                 'component': component['name'],
+                'treeherder-group': TREEHERDER_GROUPS_PER_TOO_LONG_COMPONENT_NAME.get(
+                    component['name'], component['name']
+                ),
             }
         }
         for component in get_components()
@@ -28,9 +37,6 @@ def components_loader(kind, path, config, params, loaded_tasks):
             and (component['shouldPublish'] or build_type == 'regular')
         )
     }
-    overridden_tasks = config.pop('overriden-tasks', {})
-    tasks = merge(tasks, overridden_tasks)
-
     config['tasks'] = tasks
 
     return base_loader(kind, path, config, params, loaded_tasks)
