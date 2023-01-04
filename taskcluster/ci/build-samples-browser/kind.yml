@@ -21,8 +21,11 @@ task-defaults:
         code-review: true
         component: samples-browser
         treeherder-group: samples-browser
+<<<<<<< HEAD
     dependencies:
         external-gradle-dependencies: external-gradle-dependencies-samples-browser
+=======
+>>>>>>> 2eec195dba (Bug 1807237 - part 5: Move too long treeherder group in `build_config` loader)
     description: Execute Gradle tasks for component "{component}"
     fetches:
         toolchain:

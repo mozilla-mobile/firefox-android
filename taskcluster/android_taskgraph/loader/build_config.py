@@ -4,7 +4,6 @@
 
 
 from taskgraph.loader.transform import loader as base_loader
-from taskgraph.util.templates import merge
 
 from ..build_config import get_components, get_apk_based_projects
 
@@ -58,8 +57,12 @@ def _get_components_tasks(config, for_build_type=None):
             and (for_build_type is None or build_type == for_build_type)
         )
     }
+<<<<<<< HEAD
 
     return tasks
+=======
+    config['tasks'] = tasks
+>>>>>>> 2eec195dba (Bug 1807237 - part 5: Move too long treeherder group in `build_config` loader)
 
 
 def _get_apks_tasks(config):
