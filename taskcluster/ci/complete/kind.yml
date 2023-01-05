@@ -9,7 +9,10 @@ kind-dependencies:
     - build-components
     - build-samples-browser
     - docker-image
+<<<<<<< HEAD
     - external-gradle-dependencies
+=======
+>>>>>>> ccccec66ef (Bug 1807237 - part 3: Make `complete` depend on docker-images tasks)
     - lint
     - test-focus
     - ui-test-focus
