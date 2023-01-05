@@ -10,6 +10,7 @@ import android.animation.ValueAnimator;
 import android.content.res.TypedArray;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import androidx.annotation.NonNull;
@@ -116,6 +117,11 @@ import org.mozilla.focus.R;
 
         decorView.getWindowVisibleDisplayFrame(rect);
 
-        return delegateView.getResources().getDisplayMetrics().heightPixels - rect.bottom;
+        if (rect.height() >= rect.width()) {
+            return delegateView.getResources().getDisplayMetrics().heightPixels - rect.bottom;
+        } else {
+            Log.e("mcarare", "nice");
+            return delegateView.getResources().getDisplayMetrics().widthPixels - rect.right;
+        }
     }
 }
