@@ -378,9 +378,15 @@ class BrowserRobot {
     }
 
     fun verifyCookiesEnabled(areCookiesEnabled: String) {
-        mDevice.findObject(UiSelector().resourceId("detected_value")).waitForExists(waitingTime)
         assertTrue(
-            webPageItemContainingText(areCookiesEnabled).waitForExists(waitingTime),
+            mDevice.findObject(
+                UiSelector()
+                    .resourceId("cookie_message")
+                    .childSelector(
+                        UiSelector().textContains(areCookiesEnabled)
+                    )
+            ).waitForExists(waitingTime)
+                    //webPageItemContainingText(areCookiesEnabled).waitForExists(waitingTime),
         )
     }
 

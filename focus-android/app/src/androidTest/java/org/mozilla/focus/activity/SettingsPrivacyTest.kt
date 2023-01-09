@@ -3,17 +3,22 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package org.mozilla.focus.activity
 
-import androidx.core.net.toUri
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
+import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.focus.activity.robots.homeScreen
+import org.mozilla.focus.activity.robots.searchScreen
 import org.mozilla.focus.helpers.FeatureSettingsHelper
 import org.mozilla.focus.helpers.MainActivityFirstrunTestRule
+import org.mozilla.focus.helpers.MockWebServerHelper
 import org.mozilla.focus.helpers.RetryTestRule
+import org.mozilla.focus.helpers.TestAssetHelper.getStorageTestAsset
+import org.mozilla.focus.helpers.TestHelper.exitToTop
+import org.mozilla.focus.helpers.TestHelper.progressBar
 import org.mozilla.focus.helpers.TestHelper.waitingTime
 import org.mozilla.focus.testAnnotations.SmokeTest
 
@@ -21,6 +26,7 @@ import org.mozilla.focus.testAnnotations.SmokeTest
 @RunWith(AndroidJUnit4ClassRunner::class)
 class SettingsPrivacyTest {
     private val featureSettingsHelper = FeatureSettingsHelper()
+    private lateinit var webServer: MockWebServer
 
     @get: Rule
     var mActivityTestRule = MainActivityFirstrunTestRule(showFirstRun = false)
@@ -32,11 +38,16 @@ class SettingsPrivacyTest {
     @Before
     fun setup() {
         featureSettingsHelper.setCfrForTrackingProtectionEnabled(false)
+        webServer = MockWebServer().apply {
+            dispatcher = MockWebServerHelper.AndroidAssetDispatcher()
+            start()
+        }
     }
 
     @After
     fun tearDown() {
         featureSettingsHelper.resetAllFeatureFlags()
+        webServer.shutdown()
     }
 
     @SmokeTest
@@ -55,8 +66,9 @@ class SettingsPrivacyTest {
 
     @SmokeTest
     @Test
-    fun verifyCookiesEnabledTest() {
-        val cookiesEnabledURL = "https://www.whatismybrowser.com/detect/are-cookies-enabled"
+    fun verifyAllCookiesBlockedTest() {
+        val sameSiteCookies = getStorageTestAsset(webServer, "same-site-cookies.html").url
+        val thirdPartyCookies = getStorageTestAsset(webServer, "cross-site-cookies.html").url
 
         homeScreen {
         }.openMainMenu {
@@ -64,30 +76,54 @@ class SettingsPrivacyTest {
         }.openPrivacySettingsMenu {
             clickBlockCookies()
             clickYesPleaseOption()
-        }.goBackToSettings {
-        }.goBackToHomeScreen {
-        }.loadPage(cookiesEnabledURL.toUri().toString()) {
+            exitToTop()
+        }
+        searchScreen {
+        }.loadPage(sameSiteCookies) {
             progressBar.waitUntilGone(waitingTime)
-            verifyCookiesEnabled("No")
+            verifyCookiesEnabled("BLOCKED")
+        }.clearBrowsingData {
+        }.openSearchBar {
+        }.loadPage(thirdPartyCookies) {
+            progressBar.waitUntilGone(waitingTime)
+            verifyCookiesEnabled("BLOCKED")
         }
     }
 
     @SmokeTest
     @Test
-    fun verify3rdPartyCookiesEnabledTest() {
-        val cookiesEnabledURL = "https://www.whatismybrowser.com/detect/are-third-party-cookies-enabled"
+    fun verify3rdPartyCookiesBlockedTest() {
+        val thirdPartyCookiesURL = getStorageTestAsset(webServer, "cross-site-cookies.html").url
 
         homeScreen {
         }.openMainMenu {
         }.openSettings {
         }.openPrivacySettingsMenu {
             clickBlockCookies()
-            clickYesPleaseOption()
+            clickBlockThirdPartyCookiesOnly()
         }.goBackToSettings {
         }.goBackToHomeScreen {
-        }.loadPage(cookiesEnabledURL.toUri().toString()) {
+        }.loadPage(thirdPartyCookiesURL) {
             progressBar.waitUntilGone(waitingTime)
-            verifyCookiesEnabled("No")
+            verifyCookiesEnabled("BLOCKED")
+        }
+    }
+
+    @Test
+    fun verify3rdPartyTrackersCookiesBlockedTest() {
+        val thirdPartyCookiesURL = getStorageTestAsset(webServer, "cross-site-cookies.html").url
+
+        homeScreen {
+        }.openMainMenu {
+        }.openSettings {
+        }.openPrivacySettingsMenu {
+            clickBlockCookies()
+            clickBlockThirdPartyTrackersCookies()
+        }.goBackToSettings {
+        }.goBackToHomeScreen {
+        }.loadPage(thirdPartyCookiesURL) {
+            progressBar.waitUntilGone(waitingTime)
+            verifyCookiesEnabled("BLOCKED")
         }
     }
 }
