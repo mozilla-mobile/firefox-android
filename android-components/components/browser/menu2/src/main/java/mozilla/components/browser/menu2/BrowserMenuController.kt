@@ -59,7 +59,7 @@ class BrowserMenuController(
             view.onDismiss = ::dismiss
             view.onReopenMenu = ::reopenMenu
             setOnDismissListener(menuDismissListener)
-            displayPopup(view, anchor, orientation, forceOrientation)
+            displayPopup(view, anchor, orientation, forceOrientation, style)
         }.also {
             currentPopupInfo = PopupMenuInfo(
                 window = it,
@@ -88,7 +88,7 @@ class BrowserMenuController(
             view.submitList(nested?.subMenuItems ?: menuCandidates)
 
             // Reopen the menu
-            displayPopup(view, info.anchor, info.orientation)
+            displayPopup(view, info.anchor, info.orientation, style = style)
         }
         currentPopupInfo = info.copy(nested = nested)
     }
