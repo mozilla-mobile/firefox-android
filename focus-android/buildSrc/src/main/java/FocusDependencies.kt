@@ -10,7 +10,7 @@ object FocusVersions {
 
     object AndroidX {
         const val annotation = "1.5.0"
-        const val appcompat = "1.5.1"
+        const val appcompat = "1.4.2"
         const val arch = "2.1.0"
         const val browser = "1.4.0"
         const val cardview = "1.0.0"
@@ -32,7 +32,7 @@ object FocusVersions {
     object Google {
         const val accompanist = "0.16.1"
         const val compose_compiler = "1.3.2"
-        const val material = "1.7.0"
+        const val material = "1.6.1"
         const val play = "1.10.3"
     }
 
@@ -48,9 +48,10 @@ object FocusVersions {
 
     object Testing {
         const val androidx_core = "1.5.0"
-        const val androidx_espresso = "3.5.0"
-        const val androidx_ext_junit = "1.1.4"
+        const val androidx_espresso = "3.5.1"
+        const val androidx_ext_junit = "1.1.5"
         const val androidx_orchestrator = "1.4.2"
+        const val androidx_runner = "1.5.2"
         const val androidx_uiautomator = "2.2.0"
         const val falcon = "2.2.0"
         const val fastlane = "2.1.1"
@@ -64,7 +65,7 @@ object FocusVersions {
     object ThirdParty {
         const val jna = "5.12.1"
         const val leakcanary = "2.10"
-        const val sentry = "6.10.0"
+        const val sentry = "6.11.0"
     }
 
     // Workaround for a Gradle parsing bug that prevents using nested objects directly in Gradle files.
@@ -124,7 +125,7 @@ object FocusDependencies {
     const val androidx_test_core = "androidx.test:core:${FocusVersions.Testing.androidx_core}"
     const val androidx_test_core_ktx = "androidx.test:core-ktx:${FocusVersions.Testing.androidx_core}"
     const val androidx_test_rules = "androidx.test:rules:${FocusVersions.Testing.androidx_core}"
-    const val androidx_test_runner = "androidx.test:runner:${FocusVersions.Testing.androidx_core}"
+    const val androidx_test_runner = "androidx.test:runner:${FocusVersions.Testing.androidx_runner}"
     const val androidx_uiautomator = "androidx.test.uiautomator:uiautomator:${FocusVersions.Testing.androidx_uiautomator}"
     const val espresso_contrib = "androidx.test.espresso:espresso-contrib:${FocusVersions.Testing.androidx_espresso}"
     const val espresso_core = "androidx.test.espresso:espresso-core:${FocusVersions.Testing.androidx_espresso}"

@@ -18,6 +18,7 @@ import mozilla.components.browser.engine.gecko.permission.geckoContentPermission
 import mozilla.components.browser.errorpages.ErrorType
 import mozilla.components.concept.engine.DefaultSettings
 import mozilla.components.concept.engine.EngineSession
+import mozilla.components.concept.engine.EngineSession.CookieBannerHandlingStatus
 import mozilla.components.concept.engine.EngineSession.LoadUrlFlags
 import mozilla.components.concept.engine.EngineSession.SafeBrowsingPolicy
 import mozilla.components.concept.engine.EngineSession.TrackingProtectionPolicy
@@ -284,12 +285,16 @@ class GeckoEngineSessionTest {
         var observedUrl = ""
         var observedCanGoBack = false
         var observedCanGoForward = false
+        var cookieBanner = CookieBannerHandlingStatus.HANDLED
         engineSession.register(
             object : EngineSession.Observer {
                 override fun onLocationChange(url: String) { observedUrl = url }
                 override fun onNavigationStateChange(canGoBack: Boolean?, canGoForward: Boolean?) {
                     canGoBack?.let { observedCanGoBack = canGoBack }
                     canGoForward?.let { observedCanGoForward = canGoForward }
+                }
+                override fun onCookieBannerChange(status: CookieBannerHandlingStatus) {
+                    cookieBanner = status
                 }
             },
         )
@@ -298,6 +303,7 @@ class GeckoEngineSessionTest {
 
         navigationDelegate.value.onLocationChange(mock(), "http://mozilla.org", emptyList())
         assertEquals("http://mozilla.org", observedUrl)
+        assertEquals(CookieBannerHandlingStatus.NO_DETECTED, cookieBanner)
 
         navigationDelegate.value.onCanGoBack(mock(), true)
         assertEquals(true, observedCanGoBack)
@@ -2160,6 +2166,36 @@ class GeckoEngineSessionTest {
     }
 
     @Test
+    fun contentDelegateCookieBanner() {
+        val engineSession = GeckoEngineSession(
+            mock(),
+            geckoSessionProvider = geckoSessionProvider,
+        )
+        val delegate = engineSession.createContentDelegate()
+
+        var cookieBannerStatus: CookieBannerHandlingStatus? = null
+        engineSession.register(
+            object : EngineSession.Observer {
+                override fun onCookieBannerChange(status: CookieBannerHandlingStatus) {
+                    cookieBannerStatus = status
+                }
+            },
+        )
+
+        delegate.onCookieBannerDetected(geckoSession)
+
+        assertNotNull(cookieBannerStatus)
+        assertEquals(CookieBannerHandlingStatus.DETECTED, cookieBannerStatus)
+
+        cookieBannerStatus = null
+
+        delegate.onCookieBannerHandled(geckoSession)
+
+        assertNotNull(cookieBannerStatus)
+        assertEquals(CookieBannerHandlingStatus.HANDLED, cookieBannerStatus)
+    }
+
+    @Test
     fun handleLongClick() {
         val engineSession = GeckoEngineSession(
             mock(),
@@ -3462,6 +3498,108 @@ class GeckoEngineSessionTest {
         navigationDelegate.value.onCanGoBack(mock(), false)
         engineSession.goBack()
         assertFalse(observedOnNavigateBack)
+    }
+
+    @Test
+    fun `GIVEN forward navigation is possible WHEN navigating forward THEN observers are notified`() {
+        var observedOnNavigateForward = false
+        val engineSession = GeckoEngineSession(
+            mock(),
+            geckoSessionProvider = geckoSessionProvider,
+        )
+        engineSession.register(
+            object : EngineSession.Observer {
+                override fun onNavigateForward() {
+                    observedOnNavigateForward = true
+                }
+            },
+        )
+
+        captureDelegates()
+        navigationDelegate.value.onCanGoForward(mock(), true)
+        engineSession.goForward()
+        assertTrue(observedOnNavigateForward)
+    }
+
+    @Test
+    fun `GIVEN forward navigation is not possible WHEN navigating forward THEN forward navigation observers are not notified`() {
+        var observedOnNavigateForward = false
+        val engineSession = GeckoEngineSession(
+            mock(),
+            geckoSessionProvider = geckoSessionProvider,
+        )
+        engineSession.register(
+            object : EngineSession.Observer {
+                override fun onNavigateBack() {
+                    observedOnNavigateForward = true
+                }
+            },
+        )
+
+        captureDelegates()
+        navigationDelegate.value.onCanGoForward(mock(), false)
+        engineSession.goForward()
+        assertFalse(observedOnNavigateForward)
+    }
+
+    @Test
+    fun `WHEN URL is loaded THEN URL load observer is notified`() {
+        var onLoadUrlTriggered = false
+        val engineSession = GeckoEngineSession(
+            mock(),
+            geckoSessionProvider = geckoSessionProvider,
+        )
+        engineSession.register(
+            object : EngineSession.Observer {
+                override fun onLoadUrl() {
+                    onLoadUrlTriggered = true
+                }
+            },
+        )
+
+        captureDelegates()
+        engineSession.loadUrl("http://mozilla.org")
+        assertTrue(onLoadUrlTriggered)
+    }
+
+    @Test
+    fun `WHEN data is loaded THEN data load observer is notified`() {
+        var onLoadDataTriggered = false
+        val engineSession = GeckoEngineSession(
+            mock(),
+            geckoSessionProvider = geckoSessionProvider,
+        )
+        engineSession.register(
+            object : EngineSession.Observer {
+                override fun onLoadData() {
+                    onLoadDataTriggered = true
+                }
+            },
+        )
+
+        captureDelegates()
+        engineSession.loadData("<html><body/></html>")
+        assertTrue(onLoadDataTriggered)
+    }
+
+    @Test
+    fun `WHEN navigating to history index THEN the observer is notified`() {
+        var onGotoHistoryIndexTriggered = false
+        val engineSession = GeckoEngineSession(
+            mock(),
+            geckoSessionProvider = geckoSessionProvider,
+        )
+        engineSession.register(
+            object : EngineSession.Observer {
+                override fun onGotoHistoryIndex() {
+                    onGotoHistoryIndexTriggered = true
+                }
+            },
+        )
+
+        captureDelegates()
+        engineSession.goToHistoryIndex(0)
+        assertTrue(onGotoHistoryIndexTriggered)
     }
 
     @Test

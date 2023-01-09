@@ -34,7 +34,7 @@ object Versions {
     const val detekt = "1.19.0"
 
     const val sentry_legacy = "1.7.30"
-    const val sentry_latest = "6.10.0"
+    const val sentry_latest = "6.11.0"
 
     // zxing 3.4+ requires a minimum API of 24 or higher
     const val zxing = "3.3.3"
@@ -43,7 +43,7 @@ object Versions {
     const val disklrucache = "2.0.2"
     const val leakcanary = "2.10"
 
-    const val mozilla_appservices = "96.1.3"
+    const val mozilla_appservices = "96.2.1"
 
     // DO NOT MODIFY MANUALLY. This is auto-updated along with GeckoView.
     const val mozilla_glean = "51.8.2"
@@ -69,9 +69,10 @@ object Versions {
         const val core = "1.8.0"
         const val fragment = "1.5.1"
         const val recyclerview = "1.2.0"
-        const val test = "1.4.0"
-        const val test_ext = "1.1.3"
-        const val espresso = "3.3.0"
+        const val test = "1.5.0"
+        const val test_ext = "1.1.5"
+        const val test_runner = "1.5.2"
+        const val espresso = "3.5.1"
         const val room = "2.4.3"
         const val savedstate = "1.2.0"
         const val paging = "2.1.2"
@@ -147,7 +148,7 @@ object Dependencies {
     const val androidx_savedstate = "androidx.savedstate:savedstate:${Versions.AndroidX.savedstate}"
     const val androidx_test_core = "androidx.test:core-ktx:${Versions.AndroidX.test}"
     const val androidx_test_junit = "androidx.test.ext:junit-ktx:${Versions.AndroidX.test_ext}"
-    const val androidx_test_runner = "androidx.test:runner:${Versions.AndroidX.test}"
+    const val androidx_test_runner = "androidx.test:runner:${Versions.AndroidX.test_runner}"
     const val androidx_test_rules = "androidx.test:rules:${Versions.AndroidX.test}"
     const val androidx_test_uiautomator = "androidx.test.uiautomator:uiautomator:${Versions.AndroidX.uiautomator}"
     const val androidx_work_runtime = "androidx.work:work-runtime-ktx:${Versions.AndroidX.work}"
