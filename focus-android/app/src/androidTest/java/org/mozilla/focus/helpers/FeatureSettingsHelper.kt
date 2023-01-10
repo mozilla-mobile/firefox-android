@@ -13,7 +13,8 @@ class FeatureSettingsHelper {
     private val settings = context.settings
 
     // saving default values of feature flags
-    private var shouldShowCfrForTrackingProtection: Boolean = settings.shouldShowCfrForTrackingProtection
+    private var shouldShowCfrForTrackingProtection: Boolean =
+        settings.shouldShowCfrForTrackingProtection
 
     fun setCfrForTrackingProtectionEnabled(enabled: Boolean) {
         settings.shouldShowCfrForTrackingProtection = enabled
@@ -21,6 +22,10 @@ class FeatureSettingsHelper {
 
     fun setShowStartBrowsingCfrEnabled(enabled: Boolean) {
         settings.shouldShowStartBrowsingCfr = enabled
+    }
+
+    fun setCookieBannerReductionEnabled(enabled: Boolean) {
+        settings.isCookieBannerEnable = enabled
     }
 
     fun setSearchWidgetDialogEnabled(enabled: Boolean) {

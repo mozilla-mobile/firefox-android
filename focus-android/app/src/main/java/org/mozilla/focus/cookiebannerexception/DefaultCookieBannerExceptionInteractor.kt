@@ -8,7 +8,7 @@ class DefaultCookieBannerExceptionInteractor(val store: CookieBannerExceptionSto
 
     fun handleToggleCookieBannerException(isCookieBannerHandlingExceptionEnabled: Boolean) {
         store.dispatch(
-            CookieBannerExceptionAction.ToggleCookieBannerExceptionException(
+            CookieBannerExceptionAction.ToggleCookieBannerException(
                 isCookieBannerHandlingExceptionEnabled,
             ),
         )

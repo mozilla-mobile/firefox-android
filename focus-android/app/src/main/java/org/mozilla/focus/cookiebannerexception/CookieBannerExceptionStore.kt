@@ -9,6 +9,12 @@ import mozilla.components.lib.state.Middleware
 import mozilla.components.lib.state.State
 import mozilla.components.lib.state.Store
 
+/**
+ * The [CookieBannerExceptionStore] holds the [CookieBannerExceptionState] (state tree).
+ *
+ * The only way to change the [CookieBannerExceptionState] inside
+ * [CookieBannerExceptionStore] is to dispatch an [CookieBannerExceptionAction] on it.
+ */
 class CookieBannerExceptionStore(
     initialState: CookieBannerExceptionState,
     middlewares: List<Middleware<CookieBannerExceptionState, CookieBannerExceptionAction>> = emptyList(),
@@ -26,31 +32,40 @@ class CookieBannerExceptionStore(
  * The state of the language selection
  *
  * @property isCookieBannerToggleEnabled Current status of cookie banner toggle from details exception
- * @property hasException The current status of cookie banner exception from a site
  * @property shouldShowCookieBannerItem Visibility of cookie banner exception item
+ * @property cookieBannerExceptionStatus Current status of the site, if it has or doesn't have a cookie banner .
+ * If the site has a cookie banner ,current status of cookie banner exception.
  */
 data class CookieBannerExceptionState(
     val isCookieBannerToggleEnabled: Boolean = false,
-    val hasException: Boolean = false,
     val shouldShowCookieBannerItem: Boolean = false,
+    val isCookieBannerDetected: Boolean = false,
+    val cookieBannerExceptionStatus: CookieBannerExceptionStatus = CookieBannerExceptionStatus.NoCookieBannerDetected,
 ) : State
 
 /**
  * Action to dispatch through the `CookieBannerExceptionStore` to modify cookie banner exception item and item details
  * from Tracking protection panel through the reducer.
  */
+@Suppress("UndocumentedPublicClass")
 sealed class CookieBannerExceptionAction : Action {
     object InitCookieBannerException : CookieBannerExceptionAction()
 
-    data class ToggleCookieBannerExceptionException(
+    data class ToggleCookieBannerException(
         val isCookieBannerHandlingExceptionEnabled: Boolean,
     ) : CookieBannerExceptionAction()
 
-    data class UpdateCookieBannerExceptionExceptionVisibility(
+    data class UpdateCookieBannerExceptionVisibility(
         val shouldShowCookieBannerItem: Boolean,
     ) : CookieBannerExceptionAction()
 
-    data class UpdateCookieBannerExceptionException(val hasException: Boolean) : CookieBannerExceptionAction()
+    data class CookieBannerDetected(
+        val isCookieBannerDetected: Boolean,
+    ) : CookieBannerExceptionAction()
+
+    data class UpdateCookieBannerExceptionStatus(
+        val cookieBannerExceptionStatus: CookieBannerExceptionStatus,
+    ) : CookieBannerExceptionAction()
 }
 
 /**
@@ -65,14 +80,17 @@ private fun cookieBannerExceptionStateReducer(
     action: CookieBannerExceptionAction,
 ): CookieBannerExceptionState {
     return when (action) {
-        is CookieBannerExceptionAction.ToggleCookieBannerExceptionException -> {
+        is CookieBannerExceptionAction.ToggleCookieBannerException -> {
             state.copy(isCookieBannerToggleEnabled = action.isCookieBannerHandlingExceptionEnabled)
         }
-        is CookieBannerExceptionAction.UpdateCookieBannerExceptionExceptionVisibility -> {
+        is CookieBannerExceptionAction.UpdateCookieBannerExceptionVisibility -> {
             state.copy(shouldShowCookieBannerItem = action.shouldShowCookieBannerItem)
         }
-        is CookieBannerExceptionAction.UpdateCookieBannerExceptionException -> {
-            state.copy(hasException = action.hasException)
+        is CookieBannerExceptionAction.UpdateCookieBannerExceptionStatus -> {
+            state.copy(cookieBannerExceptionStatus = action.cookieBannerExceptionStatus)
+        }
+        is CookieBannerExceptionAction.CookieBannerDetected -> {
+            state.copy(isCookieBannerDetected = action.isCookieBannerDetected)
         }
         CookieBannerExceptionAction.InitCookieBannerException -> {
             throw IllegalStateException(

@@ -77,6 +77,7 @@ import org.mozilla.focus.cookiebannerexception.CookieBannerExceptionDetailsPanel
 import org.mozilla.focus.cookiebannerexception.CookieBannerExceptionMiddleware
 import org.mozilla.focus.cookiebannerexception.CookieBannerExceptionState
 import org.mozilla.focus.cookiebannerexception.CookieBannerExceptionStore
+import org.mozilla.focus.cookiebannerexception.CookieBannerIntegration
 import org.mozilla.focus.cookiebannerexception.DefaultCookieBannerExceptionInteractor
 import org.mozilla.focus.databinding.FragmentBrowserBinding
 import org.mozilla.focus.downloads.DownloadService
@@ -133,6 +134,7 @@ class BrowserFragment :
     private val topSitesFeature = ViewBoundFeatureWrapper<TopSitesFeature>()
     private var sitePermissionsFeature = ViewBoundFeatureWrapper<SitePermissionsFeature>()
     private var fullScreenMediaSessionFeature = ViewBoundFeatureWrapper<MediaSessionFullscreenFeature>()
+    private var cookieBannerFeature = ViewBoundFeatureWrapper<CookieBannerIntegration>()
 
     private val toolbarIntegration = ViewBoundFeatureWrapper<BrowserToolbarIntegration>()
 
@@ -185,7 +187,7 @@ class BrowserFragment :
                     ioScope = this.lifecycleScope + Dispatchers.IO,
                     cookieBannersStorage = requireContext().components.cookieBannerStorage,
                     appContext = requireContext(),
-                    uri = tab.content.url,
+                    currentTab = tab,
                 ),
             ),
         )
@@ -401,6 +403,16 @@ class BrowserFragment :
         )
 
         setSitePermissions(view)
+
+        cookieBannerFeature.set(
+            feature = CookieBannerIntegration(
+                store = components.store,
+                cookieBannerExceptionStore = cookieBannerExceptionStore,
+                sessionId = tabId,
+            ),
+            owner = this,
+            view = view,
+        )
     }
 
     private fun setSitePermissions(rootView: View) {

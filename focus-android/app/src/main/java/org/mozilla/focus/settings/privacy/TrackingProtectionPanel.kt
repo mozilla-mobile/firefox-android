@@ -20,6 +20,7 @@ import mozilla.components.support.ktx.android.view.putCompoundDrawablesRelativeW
 import mozilla.components.support.ktx.kotlin.tryGetHostFromUrl
 import org.mozilla.focus.R
 import org.mozilla.focus.cookiebannerexception.CookieBannerExceptionItem
+import org.mozilla.focus.cookiebannerexception.CookieBannerExceptionStatus
 import org.mozilla.focus.cookiebannerexception.CookieBannerExceptionStore
 import org.mozilla.focus.databinding.DialogTrackingProtectionSheetBinding
 import org.mozilla.focus.engine.EngineSharedPreferencesListener.TrackerChanged
@@ -86,22 +87,32 @@ class TrackingProtectionPanel(
         binding.cookieBannerException.apply {
             setContent {
                 FocusTheme {
-                    val hasException = cookieBannerExceptionStore.observeAsComposableState { state ->
-                        state.hasException
-                    }.value
-                    val shouldShowCookieBannerItem = cookieBannerExceptionStore.observeAsComposableState { state ->
-                        state.shouldShowCookieBannerItem
-                    }.value
+                    val cookieBannerExceptionStatus =
+                        cookieBannerExceptionStore.observeAsComposableState { state ->
+                            state.cookieBannerExceptionStatus
+                        }.value
+                    val shouldShowCookieBannerItem =
+                        cookieBannerExceptionStore.observeAsComposableState { state ->
+                            state.shouldShowCookieBannerItem
+                        }.value
+
                     if (shouldShowCookieBannerItem == true) {
                         binding.cookieBannerException.visibility = View.VISIBLE
                     } else {
                         binding.cookieBannerException.visibility = View.GONE
                     }
-                    if (hasException != null) {
-                        CookieBannerExceptionItem(
-                            hasException = hasException,
-                            preferenceOnClickListener = ::showCookieBannerExceptionsDetailsPanel.invoke(),
-                        )
+
+                    if (cookieBannerExceptionStatus != null) {
+                        if (cookieBannerExceptionStatus is CookieBannerExceptionStatus.NoCookieBannerDetected) {
+                            CookieBannerExceptionItem(
+                                cookieBannerExceptionStatus = cookieBannerExceptionStatus,
+                            )
+                        } else {
+                            CookieBannerExceptionItem(
+                                cookieBannerExceptionStatus = cookieBannerExceptionStatus,
+                                preferenceOnClickListener = ::showCookieBannerExceptionsDetailsPanel.invoke(),
+                            )
+                        }
                     }
                 }
             }
