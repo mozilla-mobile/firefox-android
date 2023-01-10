@@ -166,6 +166,7 @@
             android:exported="false" />
 
         <service android:name=".media.MediaSessionService"
+            android:foregroundServiceType="mediaPlayback"
             android:exported="false" />
 
         <service android:name=".session.SessionNotificationService"

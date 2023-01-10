@@ -18,6 +18,11 @@ permalink: /changelog/
 * **concept-engine**
   * 🌟️️ Add `CookieBannerHandlingStatus` to `SessionState` instance to indicate the status of the given session state see more on [bug #1797568](https://bugzilla.mozilla.org/show_bug.cgi?id=1797568).
 
+* **feature-media**
+  * 🚒 Bug fixed [bug #1802620](https://bugzilla.mozilla.org/show_bug.cgi?id=1802620). Handles `ForegroundServiceStartNotAllowedException`.
+  * ⚠️ **This is a breaking change**: Added a new required property `crashReporter` to `AbstractMediaSessionService` to allow the `MediaSessionServiceDelegate` to send instances of `ForegroundServiceStartNotAllowedException` to the crash reporter.
+
+
 * **feature-share**
   * 🚒 Bug fixed [bug #1806411](https://bugzilla.mozilla.org/show_bug.cgi?id=1806411). Remove image link from share message when sharing an image.
 
