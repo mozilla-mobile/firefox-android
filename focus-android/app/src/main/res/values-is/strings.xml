@@ -138,6 +138,19 @@
           Do not translate or transliterate Focus Nightly.-->
     <string name="text_selection_search_action_focus_nightly">Leita í Focus næturútgáfunni</string>
 
+    <!-- Content of about focus. Argument 1 is the app name (Firefox Focus/Firefox Klar/etc).
+         Argument 2 is the url for the learn-more link. -->
+    <string name="about_content"><![CDATA[<p>%1$s setur þig við stjórnvölinn.</p>
+<p>Notaðu það sem huliðsvafra:
+  <ul>
+    <li>Leitaðu og flettu beint í forritinu</li>
+    <li>Lokaðu á rekjara (eða uppfærðu stillingar til að leyfa rekjara)</li>
+    <li>Hreinsaðu til að eyða vefkökum sem og leitar- og vafraferli</li>
+  </ul>
+</p>
+<p>%1$s er framleitt af Mozilla. Markmið okkar er að hlúa að heilbrigðu, opnu interneti.<br/>
+<a href="%2$s">Frekari upplýsingar</a></p>]]></string>
+
     <!-- Header for the Privacy and Security settings menu -->
     <string name="preference_privacy_and_security_header">Friðhelgi og öryggi</string>
 
@@ -158,6 +171,9 @@
 
     <!-- Preference category for settings related to controlling web content -->
     <string name="preference_category_web_content">Vefefni</string>
+
+    <!-- Preference category: stealth settings for while switching apps -->
+    <string name="preference_category_switching_apps">Skipta um forrit</string>
 
     <!-- Preference category for General Settings -->
     <string name="preference_category_general">Almennt</string>
@@ -191,9 +207,19 @@
     <!-- Item in settings that will open a new preference screen for configuring the URL autocomplete behavior. -->
     <string name="preference_subitem_autocomplete">Sjálfvirk leiðrétting á slóðum</string>
 
+    <!-- Title of "switch" preference that enables/disables autocomplete for the default list -->
+    <string name="preference_switch_autocomplete_topsites">Fyrir vinsælustu vefsvæðin</string>
+
     <!-- Summary for the toggle to enable autocomplete for the topsites list
     %s is a placeholder for the app name (e.g. Firefox Focus)-->
     <string name="preference_autocomplete_topsite_summary2">Virkja sjálfvirka útfyllingu í staðsetningarslá %s á rúmlega 450 vinsælum slóðum.</string>
+
+    <!-- Title of "switch" preference that enables/disables autocomplete for the user-defined list -->
+    <string name="preference_switch_autocomplete_user_list">Fyrir vefsvæði sem þú bætir við</string>
+
+    <!-- Summary for the toggle to enable autocomplete for the user-defined list
+     %s is a placeholder for the app name (e.g. Firefox Focus)-->
+    <string name="preference_autocomplete_user_list_summary2">Virkja til að leyfa %s að klára uppáhaldsvefslóðirnar þínar.</string>
 
     <!-- Preference category: Manage (user-defined) sites -->
     <string name="preference_category_autocomplete_manage_sites">Sýsla með vefsvæði</string>
@@ -285,6 +311,21 @@
     <!-- Preference Title: Biometrics can be used to unlock Focus if the previous session's data was not erased by the user. -->
     <string name="preference_security_biometric">Nota fingrafar til að aflæsa smáforriti</string>
 
+    <!-- Preference Summary: Biometrics (iris scan, fingerprint, or facial scan) can be used to unlock Focus if the app had a URL
+        open when the app was last run to ensure that only the phone's owner can view a previous session.
+        %s will be replaced by the app name (e.g. Firefox Focus)
+        Shortcuts is a feature that allows the user to pin his favorite websites to Focus home screen so he can quickly access them-->
+    <string name="preference_security_biometric_summary2">Aflæstu með fingrafari ef þú hefur bætt við flýtileiðum eða þegar vefsvæði er þegar opið í %s.</string>
+
+    <!-- Preference Title: Secure Mode is a setting that prevents the app's content to show up in the "recent apps" screen
+         and prevents the user from taking screenshots or casting the app to other displays. -->
+    <string name="preference_privacy_secure_mode">Laumuspil</string>
+    <!-- Preference Summary: Stealth mode (previously "Secure mode") is a setting that prevents the
+     app's content (in our case especially the content of webpages) to show up in the "recent apps"
+     screen. Additionally Android will prevent the user from taking screenshots or casting the app
+     to other displays. -->
+    <string name="preference_privacy_stealth_summary">Fela vefsíður þegar skipt er um forrit og loka á skjámyndatöku.</string>
+
     <string name="preference_category_security">Öryggi</string>
 
     <string name="preference_category_performance">Afköst</string>
@@ -294,6 +335,9 @@
     <string name="preference_performance_block_webfonts_summary">Getur valdið því að tákn eða myndir vantar</string>
 
     <string name="preference_performance_block_javascript">Loka á JavaScript</string>
+
+    <!-- This text is shown below setting for disabling JavaScript. Some websites may not work correctly when JavaScript is disabled -->
+    <string name="preference_performance_block_javascript_summary">Síður kunna að hlaðast hraðar inn en geta líka hegðað sér á óvænta vegu</string>
 
     <!-- This preference does not set Focus as the default browser but instead links to Android's
      "default apps" settings screen or if not supported by this Android version to a SUMO page describing
@@ -386,6 +430,10 @@
     <!-- Content description (not visible, for screen readers etc.): "Three dot" menu button. -->
     <string name="content_description_menu">Fleiri valkostir</string>
 
+    <!-- Content description (not visible, for screen readers etc.): "Three dot" menu button used
+    on home screen-->
+    <string name="indicator_content_description_menu">Hnappur fyrir fleiri valkosti</string>
+
     <!-- Content description (not visible, for screen readers etc.): Navigate forward (browsing history) -->
     <string name="content_description_forward">Fara áfram</string>
 
@@ -413,8 +461,17 @@
 
     <string name="external_app_prompt_title">Opna tengil með öðru smáforriti</string>
 
+    <!-- This string is shown when the user has clicked a link that needs to be opened in a different app.
+         Argument 2 is the external app name, argument 1 is our name (i.e. Firefox Focus, or Firefox Klar). -->
+    <string name="external_app_prompt">Þú getur farið af %1$s til að opna þennan tengil í %2$s.</string>
     <!-- This text is the title of a dialog shown if no app could be found for a custom link protocol. -->
     <string name="external_app_prompt_no_app_title">Finndu forrit sem getur opnað tengil</string>
+
+    <!-- This text is shown in a dialog if no app could be found for a custom link protocol. %1$s is the name of the app (i.e. Firefox Focus) and %2$s is the name of
+         the app store installed on the device (usually that's Google Play). -->
+    <string name="external_app_prompt_no_app">Ekkert af forritunum í tækinu þínu getur opnað þennan tengil. Þú getur farið úr %1$s til að leita í %2$s að forriti sem getur það.</string>
+    <!-- This label is shown above a list of apps that can be used to open a given link -->
+    <string name="external_multiple_apps_matched_exit">Hætta í huliðsvafri?</string>
 
     <!-- Snackbar that will be displayed after a download has completed. %1$s will be replaced with the file name. -->
     <string name="download_snackbar_finished">%1$s lokið</string>
@@ -454,8 +511,27 @@
     <!-- New Onboarding flow second screen skip onboarding button label-->
     <string name="onboarding_second_screen_skip_button_text">Sleppa</string>
 
+    <!-- First run tour (Default browser): Title -->
+    <string name="firstrun_defaultbrowser_title">Auktu friðhelgi þína</string>
+    <!-- First run tour (Default browser): Text. -->
+    <string name="firstrun_defaultbrowser_text2">Taktu huliðsvafur upp á næsta stig. Lokaðu fyrir auglýsingar og annað efni sem getur fylgst með þér á milli vefsvæða og eykur hleðslutíma á vefsíðum.</string>
+
+    <!-- First run tour (Search): Title -->
+    <string name="firstrun_search_title">Leitin þín, á þinn hátt</string>
+
+    <!-- First run tour (Search): Text -->
+    <string name="firstrun_search_text">Ertu að leita að einhverju öðru? Veldu aðra sjálfgefna leitarvél í stillingunum.</string>
+
     <!-- First run tour (Shortcut): Title -->
     <string name="firstrun_shortcut_title">Bættu flýtileiðum við upphafsskjáinn þinn</string>
+
+    <!-- First run tour (Shortcut): Text. %1$s will be replaced with the name of the app (e.g. Firefox Focus) -->
+    <string name="firstrun_shortcut_text">Farðu fljótt aftur á uppáhaldsvefsvæðin þín í %1$s. Veldu bara \&quot;Bæta við upphafsskjá\&quot; í %1$s valmyndinni.</string>
+
+    <!-- First run tour (Privacy): Title -->
+    <string name="firstrun_privacy_title">Gerðu gagnaleynd að vana</string>
+    <!-- First run tour (Privacy): Text. %1$s will be replaced with the name of the app (e.g. Firefox Focus) -->
+    <string name="firstrun_privacy_text">Stilltu %1$s sem sjálfgefinn vafra og fáðu ávinninginn af huliðsvafri þegar þú opnar vefsíður úr öðrum forritum.</string>
 
     <string name="firstrun_close_button">Í lagi, ég skil!</string>
     <string name="firstrun_skip_button">Sleppa</string>
@@ -474,13 +550,25 @@
     <!-- Label of the action that will close the dialog and not add anything to the home screen (shown in the confirmation dialog). -->
     <string name="dialog_addtohomescreen_action_no">NEI</string>
 
+    <!-- When enhanced tracking protection is disabled for the current session then we will show this warning in the "Add to home screen" dialog to
+         let the user know that the shortcut will always be opened with enhanced tracking protection disabled. -->
+    <string name="dialog_addtohomescreen_tracking_protection2">Flýtileið mun opnast þegar aukin rakningarvernd er óvirk</string>
+
     <!-- The user visible name of the "notification channel" (Android 8+ feature) for the ongoing notification shown while a browsing session is active.
     The recommended maximum length is 40 characters; the value may be truncated if it is too long.
 
     * To understand what notification channels are, see: https://www.androidcentral.com/notification-channels
     * To see how this string will look like in Android's UI, see: https://github.com/mozilla-mobile/focus-android/issues/863#issuecomment-324105723
     -->
-    <string name="notification_browsing_session_channel_name">Huliðslota</string>
+    <string name="notification_browsing_session_channel_name">Huliðsvafurlota</string>
+
+    <!-- The user visible description of the "notification channel" (Android 8+ feature) for the ongoing notification shown while a browsing session is active.
+    The recommended maximum length is 300 characters; the value may be truncated if it is too long. %1$s will be replaced with the name of the app (e.g. Firefox Focus).
+
+    * To understand what notification channels are, see: https://www.androidcentral.com/notification-channels
+    * To see how this string will look like in Android's UI, see: https://github.com/mozilla-mobile/focus-android/issues/863#issuecomment-324105723
+    -->
+    <string name="notification_browsing_session_channel_description">Tilkynningar gera þér kleift að eyða %1$s-lotunni með einni snertingu. Þú þarft ekki að opna forritið eða sjá hvað er í gangi í vafranum þínum.</string>
 
     <!-- Label for a button in the "tabs tray" to erase the browsing history (closes all tabs and removes associated data). -->
     <string name="tabs_tray_action_erase">Eyða vafurferli</string>
@@ -488,6 +576,31 @@
     <!-- If the user decides to open the current page in another browser and if Firefox is not installed then we show this
       item in the list of browsers. Clicking it will open the app store installed on the device (usually that's Google Play). -->
     <string name="download_firefox">Sækja Firefox</string>
+
+    <!-- Text shown in the "Your rights" screen.
+    %1$s will be replaced with the name of the app (e.g. Firefox Focus)-->
+    <string name="your_rights_content1"><![CDATA[%1$s er frjáls og opinn hugbúnaður gerður af Mozilla og öðrum þátttakendum.]]></string>
+
+    <!-- Text shown in the "Your rights" screen.
+    %1$s will be replaced with the name of the app (e.g. Firefox Focus)
+    %2$s will be replaced with a URL linking to the MPL (e.g. https://www.mozilla.org/en-US/MPL/) -->
+    <string name="your_rights_content2"><![CDATA[%1$s er þér aðgengilegt samkvæmt skilmálum <a href="%2$s">Mozilla Public License</a> og annarra notkunarleyfa opins hugbúnaðar.]]></string>
+
+    <!-- Text shown in the "Your rights" screen.
+    %1$s will be replaced with the name of the app (e.g. Firefox Focus)
+    %2$s will be replaced with a URL linking to the trademark policy (e.g. https://www.mozilla.org/foundation/trademarks/policy/) -->
+    <string name="your_rights_content3"><![CDATA[Þú hefur ekki réttindi á eða leyfi til að nota vörumerki eða hefur leyfi fyrir vörumerkjum frá Mozilla-stofnunni eða öðrum aðilum, innifelur það í sér án allra takmarkana nönf eða fyrirtækismerki Mozilla, Firefox eða %1$s . Meiri upplýsingar fást <a href="%2$s">hér</a>.]]></string>
+
+    <!-- Text shown in the "Your rights" screen.
+    %1$s will be replaced with the name of the app (e.g. Firefox Focus)
+    %2$s will be replaced with a URL linking to the list of licenses used by the dependencies.-->
+    <string name="your_rights_content4"><![CDATA[Viðbótargrunnkóði fyrir %1$s er tiltækur með ýmsum öðrum ókeypis og opnum <a href="%2$s">hugbúnaðarleyfum</a>.]]></string>
+
+    <!-- Text shown in the "Your rights" screen.
+    %1$s will be replaced with the name of the app (e.g. Firefox Focus)
+    %2$s will be replaced with a URL linking to the GPL
+    %3$s will be replaced with a URL linking to the tracking protection wiki page (e.g. https://wiki.mozilla.org/Security/Tracking_protection#Lists) -->
+    <string name="your_rights_content5"><![CDATA[%1$s notar einnig útilokunarlista frá Disconnect, Inc. sem aðskilin og sjálfstæð verk samkvæmt <a href="%2$s">almenna GNU General Public notkunarleyfinu útg.3</a> og er tiltækt <a href="%3$s">hér</a>.]]></string>
 
     <!-- Text shown in prompts for GeckoView -->
     <string name="gv_prompt_username_hint">Notandanafn</string>
@@ -557,6 +670,15 @@
 
     <!--  Title preference inside Cookie banner reduction screen. Here you can set the cookie banner option to disabled or reject_all. -->
     <string name="cookie_banner_reject_all_option_title">Fækkun vefkökuborða</string>
+
+    <!--  Preference summary inside Cookie banner reduction screen. Here you can set the cookie banner option to disabled or reject_all. -->
+    <string name="cookie_banner_reject_all_option_summary">Sjáðu færri borða með því að hafna sjálfkrafa beiðnum um vefkökur, þegar mögulegt er.</string>
+
+    <!--  Checkbox Preference title inside Cookie banner reduction screen. Here you can set the cookie banner option to reject_or_accept_all or reject_all. -->
+    <string name="cookie_banner_further_reduce_option_title">Fækka vefkökuborðum enn frekar</string>
+
+    <!--  Checkbox Preference summary inside Cookie banner reduction screen. Here you can set the cookie banner option to reject_or_accept_all or reject_all. -->
+    <string name="cookie_banner_further_reduce_option_summary">Tekið verður við beiðnum um vefkökuborða til að hafna fleiri borðum.</string>
 
     <!-- Preference for removing cookie/consent banners from sites automatically, this is shown as part of the protections panel with the tracking protection toggle. -->--&gt;
     <string name="cookie_banner_exception_item_title">Fækkun vefkökuborða</string>
@@ -675,6 +797,31 @@
     <!-- Title text for biometric prompt pop-up -->
     <string name="biometric_prompt_title">Staðfestu með því að nota fingrafar</string>
 
+    <!-- Subtitle text for biometric prompt pop-up -->
+    <string name="biometric_prompt_subtitle">Þú getur notað fingrafarið þitt til að halda áfram núverandi forritslotu.</string>
+
+    <!-- Button for the fingerprint authentication dialog box that is shown to the user when sharing a link to the app
+    while the user has biometric authentication enabled. When pressed, the user's previous session is cleared, and the shared link is opened. -->
+    <string name="biometric_auth_open_link_new_session">Opna tengil í nýrri lotu</string>
+
+    <!-- Description for the fingerprint authentication image. Used for accessibility purposes. -->
+    <string name="biometric_auth_image_description">Fingrafarstákn</string>
+
+    <!-- Error text displayed when the user's fingerprint cannot be recognized upon re-entering the app.
+     This is displayed during the authentication flow as the app launches. -->
+    <string name="biometric_auth_not_recognized_error">Fingrafar ekki þekkt. Reyndu aftur.</string>
+
+    <!-- Error text displayed when the user's fingerprint moved too quickly upon re-entering the app
+    This is displayed during the authentication flow as the app launches.-->
+    <string name="biometric_auth_moved_too_quickly">Fingurinn hreyfðist of hratt. Reyndu aftur.</string>
+
+    <!-- Title for the prompt to enable search suggestions -->
+    <string name="enable_search_suggestion_title2">Sýna leitartillögur?</string>
+
+    <!-- Description for the prompt to enable search suggestions
+        %1$s will be replaced by the app name (e.g. Firefox Focus) -->
+    <string name="enable_search_suggestion_description">Til að fá tillögur, þarf %1$s að senda það sem þú skrifar í slóðina til leitarvélarinnar.</string>
+
     <!-- Label used for the "NO button" for the prompt to enable search suggestions -->
     <string name="enable_search_suggestions_no">Nei</string>
 
@@ -694,12 +841,45 @@
     <string name="tip_disable_tracking_protection">Vefsvæði hagar sér óvænt?\n
     Prófaðu að slökkva á rakningarvörn</string>
 
+    <!-- Tip displayed on home view explaining how to add sites to homescreen
+    Argument 1 will be replaced with a line break in the application.-->
+    <string name="tip_add_to_homescreen"><![CDATA[Fáðu flýtiaðgang að þeim vefsvæðum sem þú notar mest%1$s Valmynd > Bæta við upphafsskjá]]></string>
+
+    <!-- Tip displayed on home view explaining how to make Focus the default browser
+    Argument 1 is the app name (Firefox Focus/Firefox Klar/etc).
+    The new line here must be kept as the second half of the string is clickable for the user. -->
+    <string name="tip_set_default_browser">Opnaðu alla tengla í %1$s\n
+        Stilltu %1$s sem sjálfgefinn vafra
+    </string>
+
+    <!-- Tip displayed on home view explaining how to add a custom autocomplete URL
+    The new line here must be kept as the second half of the string is clickable for the user. -->
+    <string name="tip_autocomplete_url">Sjálfvirk útfylling vefslóða fyrir vefsvæði sem þú notar mest\n
+        Ýttu lengi á hvaða vefslóð sem er í veffangastikunni
+    </string>
+
+    <!-- Tip displayed on home view explaining how to add a custom autocomplete URL
+    The new line here must be kept as the second half of the string is clickable for the user. -->
+    <string name="tip_open_in_new_tab">Opnaðu tengil í nýjum flipa\n
+        Ýttu lengi á hvaða tengil sem er á síðu
+    </string>
+
+    <!-- Tip displayed on home view explaining how to add a custom autocomplete URL -->
+    <string name="tip_disable_tips2">Slökkva á ábendingum á upphafsskjánum</string>
+
     <!-- Label for the snackbar when a user opens a new tab -->
     <string name="new_tab_opened_snackbar">Nýr flipi opnaður</string>
 
     <!-- Label for the button in the snackbar that switches to the newly opened tab -->
     <string name="open_new_tab_snackbar">Skipta</string>
 
+    <!-- Preference for switching to a new tab immediately after opening -->
+    <string name="preference_open_new_tab">Skipta strax yfir í tengil í nýjum flipa</string>
+
+    <!-- Preference title for safe browsing which when enabled, blocks dangerous or deceptive webpages that may include phishing or malware -->
+    <string name="preference_safe_browsing_title">Loka á hugsanlega hættuleg og villandi vefsvæði</string>
+    <!-- Preference summary for safe browsing which when enabled, blocks dangerous or deceptive webpages that may include phishing or malware -->
+    <string name="preference_safe_browsing_summary">Lokaðu fyrir tilkynnt vefsvæði með villandi efni og árásum, spilliforrit og vefsvæði með óæskilegum hugbúnaði.</string>
     <!-- Title of the preference to enable "HTTPS-Only" mode -->
     <string name="preference_https_only_title">Einungis-HTTPS-hamur</string>
     <!-- Description of the preference to enable "HTTPS-Only" mode. -->
@@ -707,6 +887,8 @@
 
     <!-- Preference for exceptions tracking protection -->
     <string name="preference_exceptions">Undantekningar</string>
+    <!-- Description for the exceptions preference screen-->
+    <string name="preference_exceptions_description">Þú hefur gert útilokun efnis óvirka á þessum vefvæðum.</string>
     <!-- Menu item to remove existing exceptions. -->
     <string name="preference_exceptions_menu_remove">Fjarlægja</string>
     <!-- Button to remove all websites from the exception list -->
@@ -722,6 +904,8 @@
     <string name="tab_crash_report_title">Flipi hrundi</string>
     <!-- Headline for the tab crash report screen -->
     <string name="tab_crash_report_headline">Því miður. Við erum í vandræðum með þennan flipa.</string>
+    <!-- Subtitle for the tab crash report screen -->
+    <string name="tab_crash_report_description">Þar sem þetta er huliðsvafri, vistum við aldrei og getum ekki endurheimt þennan flipa.</string>
     <!-- Label for button to close the tab-->
     <string name="tab_crash_report_close_tab_button_label">Loka flipa</string>
 
@@ -766,6 +950,10 @@
     <!-- Placeholder text for the input field of rename top site-->
     <string name="placeholder_rename_top_site">Nafn flýtileiðar</string>
 
+    <!-- Text for context menu additional note.
+    %1$s is a placeholder for the app name. -->
+    <string name="contextmenu_erased_images_note2">Vistuðum og deildum myndum &lt;b&gt;verður ekki&lt;/b&gt; eytt þegar þú eyðir ferli %1$s</string>
+
     <!-- Theme Preferences -->
     <!-- Preference category for changing default theme to dark or light mode -->
     <string name="preferences_theme">Þema</string>
@@ -773,6 +961,17 @@
     <string name="preference_light_theme">Ljóst</string>
     <!-- Preference for using dark theme -->
     <string name="preference_dark_theme">Dökkt</string>
+
+    <!-- Preference for using using dark or light theme automatically set by battery -->
+    <string name="preference_auto_battery_theme">Stillt af rafhlöðusparnaðarkerfi</string>
+    <!-- Preference for using following device theme -->
+    <string name="preference_follow_device_theme">Fylgja þema tækisins</string>
+
+    <!-- The title of the error page for websites that do not support HTTPS when HTTPS-Only is turned on  -->
+    <string name="errorpage_httpsonly_title">Vefsvæðið sem þú baðst um styður ekki HTTPS</string>
+
+    <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will get replaced with the name of the app (e.g. "Firefox Focus") -->
+    <string name="errorpage_httpsonly_message">Sjálfgefið er að %1$s reynir að tengjast með HTTPS til að auka öryggi. Til að breyta þessari stillingu eða til að læra meira, farðu í Stillingar &gt; Friðhelgi og öryggi &gt; Öryggi.</string>
 
     <!-- Sessions List -->
     <!-- Content description (not visible, for screen readers etc.): Button that closes a tab n the sessions list -->
@@ -810,11 +1009,11 @@
     <string name="promote_search_widget_dialog_title">Vafurferill hreinsaður 🎉</string>
 
     <!-- Banner Info Message than will appear when user first enters in the app. The location is at the toolbar. -->
-    <string name="cfr_for_start_browsing">Byrjaðu einkavafralotuna þína og við lokum á rakningar og annað vont dót á meðan þú vafrar.</string>
+    <string name="cfr_for_start_browsing">Byrjaðu huliðsvafralotuna þína og við lokum á rakningar og annað vont dót á meðan þú vafrar.</string>
 
     !-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
     of the app (e.g. &quot;Focus&quot;) --&gt;
-    <string name="promote_search_widget_dialog_subtitle">Við látum þig vera í einkavafrinu þínu, en byrjum hraðar næst með %1$s-viðmótshlutanum á upphafsskjánum þínum.</string>
+    <string name="promote_search_widget_dialog_subtitle">Við látum þig vera í huliðsvafrinu þínu, en byrjum hraðar næst með %1$s-viðmótshlutanum á upphafsskjánum þínum.</string>
 
     !-- This is te text from add search widget to home screen button .The button is located on
     promote search widget dialog. --&gt;
