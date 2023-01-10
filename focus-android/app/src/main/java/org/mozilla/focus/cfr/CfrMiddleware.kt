@@ -10,9 +10,14 @@ import mozilla.components.browser.state.action.ContentAction
 import mozilla.components.browser.state.action.TrackingProtectionAction
 import mozilla.components.browser.state.selector.findTabOrCustomTabOrSelectedTab
 import mozilla.components.browser.state.state.BrowserState
+import mozilla.components.concept.engine.EngineSession
 import mozilla.components.lib.state.Middleware
 import mozilla.components.lib.state.MiddlewareContext
+import mozilla.components.service.glean.private.NoExtras
+import org.mozilla.focus.GleanMetrics.CookieBanner
+import org.mozilla.focus.cookiebanner.CookieBannerOption
 import org.mozilla.focus.ext.components
+import org.mozilla.focus.ext.settings
 import org.mozilla.focus.ext.truncatedHost
 import org.mozilla.focus.nimbus.FocusNimbus
 import org.mozilla.focus.nimbus.Onboarding
@@ -40,10 +45,24 @@ class CfrMiddleware(private val appContext: Context) : Middleware<BrowserState, 
             }
 
             next(action)
-
+            showCookieBannerCfr(context)
             showTrackingProtectionCfr(action, context)
         } else {
             next(action)
+        }
+    }
+
+    private fun showCookieBannerCfr(
+        context: MiddlewareContext<BrowserState, BrowserAction>,
+    ) {
+        if (shouldShowCookieBannerCfr(context) &&
+            !appContext.settings.isFirstRun &&
+            otherCfrHasBeenShown()
+        ) {
+            CookieBanner.cookieBannerCfrShown.record(NoExtras())
+            components.appStore.dispatch(
+                AppAction.ShowCookieBannerCfrChange(true),
+            )
         }
     }
 
@@ -83,4 +102,22 @@ class CfrMiddleware(private val appContext: Context) : Middleware<BrowserState, 
             components.settings.shouldShowCfrForTrackingProtection &&
             !components.appStore.state.showEraseTabsCfr
         )
+
+    private fun otherCfrHasBeenShown(): Boolean {
+        return (
+            !appContext.settings.shouldShowCfrForTrackingProtection &&
+                !components.appStore.state.showEraseTabsCfr
+            )
+    }
+
+    private fun shouldShowCookieBannerCfr(context: MiddlewareContext<BrowserState, BrowserAction>): Boolean {
+        return (
+            appContext.settings.shouldShowCookieBannerCfr &&
+                appContext.settings.isCookieBannerEnable &&
+                appContext.settings.getCurrentCookieBannerOptionFromSharePref() ==
+                CookieBannerOption.CookieBannerRejectAll() &&
+                context.state.findTabOrCustomTabOrSelectedTab(context.state.selectedTabId)?.cookieBanner ==
+                EngineSession.CookieBannerHandlingStatus.HANDLED
+            )
+    }
 }

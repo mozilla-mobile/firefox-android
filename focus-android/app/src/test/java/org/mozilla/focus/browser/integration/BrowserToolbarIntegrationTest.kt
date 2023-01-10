@@ -123,12 +123,30 @@ class BrowserToolbarIntegrationTest {
     }
 
     @Test
+    fun `WHEN start method is called THEN observe cookie banner CFR changes`() {
+        doNothing().`when`(browserToolbarIntegration).observeCookieBannerCfr()
+
+        browserToolbarIntegration.start()
+
+        verify(browserToolbarIntegration).observeCookieBannerCfr()
+    }
+
+    @Test
     fun `WHEN stopping THEN stop tracking protection CFR changes`() {
         doNothing().`when`(browserToolbarIntegration).stopObserverTrackingProtectionCfrChanges()
 
         browserToolbarIntegration.stop()
 
         verify(browserToolbarIntegration).stopObserverTrackingProtectionCfrChanges()
+    }
+
+    @Test
+    fun `WHEN stopping THEN stop cookie banner CFR changes`() {
+        doNothing().`when`(browserToolbarIntegration).stopObserverCookieBannerCfrChanges()
+
+        browserToolbarIntegration.stop()
+
+        verify(browserToolbarIntegration).stopObserverCookieBannerCfrChanges()
     }
 
     @Test
