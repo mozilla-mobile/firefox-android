@@ -25,8 +25,12 @@ task-defaults:
     fetches:
         toolchain:
             - android-sdk-linux
+<<<<<<< HEAD
         external-gradle-dependencies:
             - external-gradle-dependencies.tar.xz
+=======
+            - external-gradle-dependencies
+>>>>>>> c16d759241 (Bug 1807237 - part 8: Rename `android-gradle-dependencies` into `external-gradle-dependencies`)
     optimization:
         by-tasks-for:
             github-pu(sh|ll-request.*):
