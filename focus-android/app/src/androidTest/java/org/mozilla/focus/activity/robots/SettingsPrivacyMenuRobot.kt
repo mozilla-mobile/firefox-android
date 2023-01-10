@@ -217,6 +217,8 @@ class SettingsPrivacyMenuRobot {
     }
 
     fun clickYesPleaseOption() = blockCookiesYesPleaseOption.click()
+    fun clickBlockThirdPartyCookiesOnly() = block3rdPartyCookiesOnlyOption.click()
+    fun clickBlockThirdPartyTrackersCookies() = block3rdPartyTrackerCookiesOnlyOption.click()
 
     fun switchSafeBrowsingToggle(): ViewInteraction = safeBrowsingSwitch().perform(click())
 
