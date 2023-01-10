@@ -81,6 +81,11 @@ abstract class Settings {
     open var userAgentString: String? by UnsupportedSetting()
 
     /**
+     * Setting to control whether or not desktop mode is initially enabled.
+     */
+    open var initialDesktopMode: Boolean by UnsupportedSetting()
+
+    /**
      * Setting to control whether or not a user gesture is required to play media.
      */
     open var mediaPlaybackRequiresUserGesture: Boolean by UnsupportedSetting()
@@ -216,6 +221,7 @@ data class DefaultSettings(
     override var requestInterceptor: RequestInterceptor? = null,
     override var historyTrackingDelegate: HistoryTrackingDelegate? = null,
     override var userAgentString: String? = null,
+    override var initialDesktopMode: Boolean = false,
     override var javaScriptCanOpenWindowsAutomatically: Boolean = false,
     override var displayZoomControls: Boolean = true,
     override var loadWithOverviewMode: Boolean = false,
