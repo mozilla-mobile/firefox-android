@@ -4,6 +4,9 @@ cookie-banner:
   hasExposure: true
   exposureDescription: ""
   variables:
+    cookie-banner-dialog-version:
+      type: int
+      description: "The version of cookie banner dialog. This can be 1,2 or 3."
     is-cookie-handling-enabled:
       type: boolean
       description: "If 'true' , the app will show the settings part for cookie banner handling"
