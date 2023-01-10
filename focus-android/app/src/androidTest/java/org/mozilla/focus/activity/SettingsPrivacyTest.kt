@@ -16,6 +16,7 @@ import org.mozilla.focus.helpers.FeatureSettingsHelper
 import org.mozilla.focus.helpers.MainActivityFirstrunTestRule
 import org.mozilla.focus.helpers.MockWebServerHelper
 import org.mozilla.focus.helpers.RetryTestRule
+import org.mozilla.focus.helpers.TestAssetHelper.getGenericAsset
 import org.mozilla.focus.helpers.TestAssetHelper.getStorageTestAsset
 import org.mozilla.focus.helpers.TestHelper.exitToTop
 import org.mozilla.focus.helpers.TestHelper.progressBar
@@ -67,8 +68,9 @@ class SettingsPrivacyTest {
     @SmokeTest
     @Test
     fun verifyAllCookiesBlockedTest() {
-        val sameSiteCookies = getStorageTestAsset(webServer, "same-site-cookies.html").url
-        val thirdPartyCookies = getStorageTestAsset(webServer, "cross-site-cookies.html").url
+        val genericPage = getGenericAsset(webServer)
+        val sameSiteCookiesUrl = getStorageTestAsset(webServer, "same-site-cookies.html").url
+        val thirdPartyCookiesUrl = getStorageTestAsset(webServer, "cross-site-cookies.html").url
 
         homeScreen {
         }.openMainMenu {
@@ -79,12 +81,17 @@ class SettingsPrivacyTest {
             exitToTop()
         }
         searchScreen {
-        }.loadPage(sameSiteCookies) {
+        }.loadPage(genericPage.url) {
+            progressBar.waitUntilGone(waitingTime)
+        }.clearBrowsingData {}
+
+        searchScreen {
+        }.loadPage(sameSiteCookiesUrl) {
             progressBar.waitUntilGone(waitingTime)
             verifyCookiesEnabled("BLOCKED")
         }.clearBrowsingData {
         }.openSearchBar {
-        }.loadPage(thirdPartyCookies) {
+        }.loadPage(thirdPartyCookiesUrl) {
             progressBar.waitUntilGone(waitingTime)
             verifyCookiesEnabled("BLOCKED")
         }
@@ -93,7 +100,13 @@ class SettingsPrivacyTest {
     @SmokeTest
     @Test
     fun verify3rdPartyCookiesBlockedTest() {
+        val genericPage = getGenericAsset(webServer)
         val thirdPartyCookiesURL = getStorageTestAsset(webServer, "cross-site-cookies.html").url
+
+        searchScreen {
+        }.loadPage(genericPage.url) {
+            progressBar.waitUntilGone(waitingTime)
+        }.clearBrowsingData {}
 
         homeScreen {
         }.openMainMenu {
@@ -111,7 +124,13 @@ class SettingsPrivacyTest {
 
     @Test
     fun verify3rdPartyTrackersCookiesBlockedTest() {
+        val genericPage = getGenericAsset(webServer)
         val thirdPartyCookiesURL = getStorageTestAsset(webServer, "cross-site-cookies.html").url
+
+        searchScreen {
+        }.loadPage(genericPage.url) {
+            progressBar.waitUntilGone(waitingTime)
+        }.clearBrowsingData {}
 
         homeScreen {
         }.openMainMenu {
