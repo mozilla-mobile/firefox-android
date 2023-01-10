@@ -15,6 +15,8 @@ import androidx.core.net.toUri
 import mozilla.components.lib.publicsuffixlist.PublicSuffixList
 import mozilla.components.support.ktx.android.net.hostWithoutCommonPrefixes
 import mozilla.components.support.ktx.util.URLStringUtils
+import mozilla.components.support.ktx.util.URLStringUtils.isValidWebURL
+import mozilla.components.support.ktx.util.URLStringUtils.urlHasPublicSuffix
 import java.io.File
 import java.net.IDN
 import java.net.MalformedURLException
@@ -130,6 +132,17 @@ fun String.isIpv4OrIpv6(): Boolean {
  * Checks if this String is a URL.
  */
 fun String.isUrl() = URLStringUtils.isURLLike(this)
+
+/**
+ * Checks whether the provided String conforms to [android.util.Patterns.WEB_URL].
+ */
+fun String.isValidWebURL() = isValidWebURL()
+
+/**
+ * Checks if this URL has a known public suffix.
+ * Note: The provided URL must conform to [isValidWebURL].
+ */
+suspend fun String.hasPublicSuffix(publicSuffixList: PublicSuffixList) = urlHasPublicSuffix(publicSuffixList)
 
 /**
  * Checks if this String is a URL of an extension page.
