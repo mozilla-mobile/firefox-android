@@ -4,8 +4,123 @@
   <CurrentIssues>
     <ID>AbsentOrWrongFileLicense:AutoFitTextureView.kt$mozilla.components.feature.qr.views.AutoFitTextureView.kt</ID>
     <ID>AbsentOrWrongFileLicense:QrFragment.kt$mozilla.components.feature.qr.QrFragment.kt</ID>
+    <ID>DestructuringDeclarationWithTooManyEntries:AndroidImageDecoder.kt$AndroidImageDecoder$val (_, minSize, maxSize, maxScaleFactor) = desiredSize</ID>
+    <ID>DestructuringDeclarationWithTooManyEntries:ICOIconDecoder.kt$ICOIconDecoder$val (targetSize, _, maxSize, maxScaleFactor) = desiredSize</ID>
+    <ID>DestructuringDeclarationWithTooManyEntries:ResizingProcessor.kt$ResizingProcessor$val (targetSize, _, _, maxScaleFactor) = desiredSize</ID>
+    <ID>ExplicitItLambdaParameter:ReaderViewFeature.kt$ReaderViewFeature${ it -&gt; if (!it.readerState.active) { extensionController.sendContentMessage( createShowReaderMessage(config), it.engineState.engineSession, READER_VIEW_CONTENT_PORT, ) store.dispatch(ReaderAction.UpdateReaderActiveAction(it.id, true)) } }</ID>
+    <ID>ExplicitItLambdaParameter:ReaderViewFeature.kt$ReaderViewFeature${ it -&gt; if (it.readerState.active) { store.dispatch(ReaderAction.UpdateReaderActiveAction(it.id, false)) store.dispatch(ReaderAction.UpdateReaderableAction(it.id, false)) store.dispatch(ReaderAction.ClearReaderActiveUrlAction(it.id)) if (it.content.canGoBack) { it.engineState.engineSession?.goBack(false) } else { extensionController.sendContentMessage( createHideReaderMessage(), it.engineState.engineSession, READER_VIEW_ACTIVE_CONTENT_PORT, ) } } }</ID>
+    <ID>FunctionParameterNaming:InlineAutocompleteEditText.kt$InlineAutocompleteEditText$_: View</ID>
+    <ID>ImplicitDefaultLocale:ColorPickerDialogFragment.kt$String.format("#%06x", RGB_BIT_MASK and this)</ID>
+    <ID>ImplicitDefaultLocale:DownloadDialogFragment.kt$String.format("%.2f KB", this / KILOBYTE)</ID>
+    <ID>ImplicitDefaultLocale:DownloadDialogFragment.kt$String.format("%.2f MB", this / MEGABYTE)</ID>
+    <ID>ImplicitDefaultLocale:MozillaSocorroService.kt$MozillaSocorroService$String.format("---------------------------%08X%08X", r0, r1)</ID>
+    <ID>ImplicitDefaultLocale:WebAppManifestParser.kt$String.format("#%06X", 0xFFFFFF and color)</ID>
+    <ID>InvalidPackageDeclaration:GleanGradlePlugin.kt$package mozilla.components.tooling.glean.gradle</ID>
+    <ID>InvalidPackageDeclaration:ProjectLicenseRuleTest.kt$package mozilla.components.tooling.detekt</ID>
+    <ID>LoopWithTooManyJumpStatements:AbstractFetchDownloadService.kt$AbstractFetchDownloadService$while (getDownloadJobStatus(downloadJobState) == DOWNLOADING) { var bytesRead: Int try { bytesRead = inStream.read(data) } catch (e: IOException) { if (downloadWithHttpClient) { throw e } isInStreamClosed = true break } // If bytesRead is -1, there's no data left to read from the stream if (bytesRead == -1) { break } downloadJobState.currentBytesCopied += bytesRead throttleUpdateDownload(downloadJobState.currentBytesCopied) outStream.write(data, 0, bytesRead) }</ID>
+    <ID>LoopWithTooManyJumpStatements:Addon.kt$Addon.Companion$for ((permission, stringId) in permissionsToTranslations) { var host = permission.toUri().host ?: "" when { stringId.isDomainAccessPermission() -&gt; { ++domainCount host = host.removePrefix("*.") if (domainCount &gt; maxShownPermissionsEntries) continue@loop } stringId.isSiteAccessPermission() -&gt; { ++siteCount if (siteCount &gt; maxShownPermissionsEntries) continue@loop } } localizedSiteAccessPermissions.add(context.getString(stringId, host)) }</ID>
+    <ID>LoopWithTooManyJumpStatements:Browsers.kt$Browsers$for (browser in KnownBrowser.values()) { if (browsers.containsKey(browser.packageName)) { continue } // resolveActivity() can be slow if the package isn't installed (e.g. 200ms on an N6 with a bad WiFi // connection). Hence we query if the package is installed first, and only call resolveActivity for // installed packages. getPackageInfo() is fast regardless of a package being installed try { // We don't need the result, we only need to detect when the package doesn't exist packageManager.getPackageInfoCompat(browser.packageName, 0) } catch (e: PackageManager.NameNotFoundException) { continue } val intent = Intent(Intent.ACTION_VIEW) intent.data = uri intent.setPackage(browser.packageName) intent.addCategory(Intent.CATEGORY_BROWSABLE) val info = packageManager.resolveActivityCompat(intent, PackageManager.MATCH_DEFAULT_ONLY) ?: continue if (info.activityInfo == null || !info.activityInfo.exported) { continue } browsers[info.activityInfo.packageName] = info.activityInfo }</ID>
+    <ID>LoopWithTooManyJumpStatements:ByteArray.kt$while (true) { val byte0 = if (expectDot) { expectDot = false '.'.code.toByte() } else { labels[currentLabelIndex][currentLabelByteIndex] and BITMASK } val byte1 = this[start + publicSuffixByteIndex] and BITMASK // Compare the bytes. Note that the file stores UTF-8 encoded bytes, so we must compare the // unsigned bytes. @Suppress("EXPERIMENTAL_API_USAGE") compareResult = (byte0.toUByte() - byte1.toUByte()).toInt() if (compareResult != 0) { break } publicSuffixByteIndex++ currentLabelByteIndex++ if (publicSuffixByteIndex == publicSuffixLength) { break } if (labels[currentLabelIndex].size == currentLabelByteIndex) { // We've exhausted our current label. Either there are more labels to compare, in which // case we expect a dot as the next character. Otherwise, we've checked all our labels. if (currentLabelIndex == labels.size - 1) { break } else { currentLabelIndex++ currentLabelByteIndex = -1 expectDot = true } } }</ID>
+    <ID>LoopWithTooManyJumpStatements:CreditCardUtils.kt$CreditCardUtils$for (issuer in creditCardIINs) { if (issuer.cardNumberMaxLength.size == 1 &amp;&amp; issuer.cardNumberMaxLength[0] != safeCardNumber.length ) { continue } else if (issuer.cardNumberMaxLength.size &gt; 1 &amp;&amp; ( safeCardNumber.length &lt; issuer.cardNumberMaxLength[0] || safeCardNumber.length &gt; issuer.cardNumberMaxLength[1] ) ) { continue } val prefixLength = floor(log10(issuer.startRange.toDouble())) + 1 val prefix = safeCardNumber.substring(0, prefixLength.toInt()).toInt() if (prefix &gt;= issuer.startRange &amp;&amp; prefix &lt;= issuer.endRange) { return issuer } }</ID>
+    <ID>LoopWithTooManyJumpStatements:IconDirectoryEntry.kt$while (i &lt; numEncodedImages) { // Decode the Icon Directory Entry at this offset. val newEntry = createIconDirectoryEntry(data, bufferIndex, i) if (newEntry == null) { i++ bufferIndex += ICON_DIRECTORY_ENTRY_LENGTH_BYTES continue } if (newEntry.width &gt; maxSize) { // If we already have a smaller image larger than the maximum size of interest, we // don't care about the new one which is larger than the smallest image larger than // the maximum size. if (newEntry.width &gt;= minimumMaximum) { i++ bufferIndex += ICON_DIRECTORY_ENTRY_LENGTH_BYTES continue } // Remove the previous minimum-maximum. iconMap.remove(minimumMaximum) minimumMaximum = newEntry.width } val oldEntry = iconMap[newEntry.width] if (oldEntry == null) { iconMap[newEntry.width] = newEntry i++ bufferIndex += ICON_DIRECTORY_ENTRY_LENGTH_BYTES continue } if (oldEntry &lt; newEntry) { iconMap[newEntry.width] = newEntry } i++ bufferIndex += ICON_DIRECTORY_ENTRY_LENGTH_BYTES }</ID>
+    <ID>LoopWithTooManyJumpStatements:Lexer.kt$Lexer$while (!input.end()) { if (!input.character().isDigit() &amp;&amp; input.character() != '.') { break } else if (input.character() == '.' &amp;&amp; readDot) { break } else if (input.character() == '.') { readDot = true } input.proceed() }</ID>
+    <ID>LoopWithTooManyJumpStatements:QrFragment.kt$QrFragment$for (cameraId in manager.cameraIdList) { val characteristics = manager.getCameraCharacteristics(cameraId) val facing = characteristics.get(CameraCharacteristics.LENS_FACING) if (facing == CameraCharacteristics.LENS_FACING_FRONT) { continue } val map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP) ?: continue val largest = Collections.max(map.getOutputSizes(ImageFormat.YUV_420_888).asList(), CompareSizesByArea()) imageReader = ImageReader.newInstance(MAX_PREVIEW_WIDTH, MAX_PREVIEW_HEIGHT, ImageFormat.YUV_420_888, 2) .apply { setOnImageAvailableListener(imageAvailableListener, backgroundHandler) } // Find out if we need to swap dimension to get the preview size relative to sensor coordinate. sensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION) as Int @Suppress("MagicNumber") val swappedDimensions = when (displayRotation) { Surface.ROTATION_0, Surface.ROTATION_180 -&gt; sensorOrientation == 90 || sensorOrientation == 270 Surface.ROTATION_90, Surface.ROTATION_270 -&gt; sensorOrientation == 0 || sensorOrientation == 180 else -&gt; false } val displaySize = activity?.windowManager?.getDisplaySize() ?: Point() var rotatedPreviewWidth = width var rotatedPreviewHeight = height var maxPreviewWidth = displaySize.x var maxPreviewHeight = displaySize.y if (swappedDimensions) { rotatedPreviewWidth = height rotatedPreviewHeight = width maxPreviewWidth = displaySize.y maxPreviewHeight = displaySize.x } maxPreviewWidth = min(maxPreviewWidth, MAX_PREVIEW_WIDTH) maxPreviewHeight = min(maxPreviewHeight, MAX_PREVIEW_HEIGHT) val optimalSize = chooseOptimalSize( map.getOutputSizes(SurfaceTexture::class.java), rotatedPreviewWidth, rotatedPreviewHeight, maxPreviewWidth, maxPreviewHeight, largest, ) adjustPreviewSize(optimalSize) this.cameraId = cameraId return }</ID>
+    <ID>LoopWithTooManyJumpStatements:WebURLFinder.kt$WebURLFinder.Companion$while (matcher.find()) { // Remove URLs with bad schemes. if (!isWebURL(matcher.group())) { continue } // Remove parts of email addresses. if (matcher.start() &gt; 0 &amp;&amp; string[matcher.start() - 1] == '@') { continue } matches.add(matcher.group()) }</ID>
     <ID>MaxLineLength:WebExtensionSupport.kt$WebExtensionSupport.&lt;no name provided&gt;$override</ID>
     <ID>MaxLineLength:WebExtensionSupport.kt$WebExtensionSupport.&lt;no name provided&gt;$val sessionId = openTab(store, onNewTabOverride, onSelectTabOverride, extension, engineSession)</ID>
+    <ID>MemberNameEqualsClassName:Browsers.kt$Browsers$private val browsers: Map&lt;String, ActivityInfo&gt; = { val packageManager = context.packageManager val browsers = resolveBrowsers(context, packageManager, uri) // If there's a default browser set then modern Android systems won't return other browsers // anymore when using queryIntentActivities(). That's annoying and our only option is // to go through a list of known browsers and see if anyone of them is installed and // wants to handle our URL. findKnownBrowsers(packageManager, browsers, uri) browsers }()</ID>
+    <ID>MemberNameEqualsClassName:Log.kt$Log$fun log( priority: Priority = Priority.DEBUG, tag: String? = null, throwable: Throwable? = null, message: String? = null, )</ID>
+    <ID>SwallowedException:AbstractFetchDownloadService.kt$AbstractFetchDownloadService.Companion$error: ActivityNotFoundException</ID>
+    <ID>SwallowedException:AccountSharing.kt$AccountSharing$e: PackageManager.NameNotFoundException</ID>
+    <ID>SwallowedException:AccountStorage.kt$StorageWrapper$e: FxaException</ID>
+    <ID>SwallowedException:AddonsFragment.kt$AddonsFragment$e: AddonManagerException</ID>
+    <ID>SwallowedException:AndroidAssetFinder.kt$AndroidAssetFinder$e: CertificateEncodingException</ID>
+    <ID>SwallowedException:AndroidAssetFinder.kt$AndroidAssetFinder$e: PackageManager.NameNotFoundException</ID>
+    <ID>SwallowedException:AndroidImageDecoder.kt$AndroidImageDecoder$e: OutOfMemoryError</ID>
+    <ID>SwallowedException:AtomicFile.kt$e: IOException</ID>
+    <ID>SwallowedException:AutofillCreditCardsAddressesStorage.kt$AutofillCreditCardsAddressesStorage$e: NoSuchRecord</ID>
+    <ID>SwallowedException:AutofillCrypto.kt$AutofillCrypto$e: AutofillApiException</ID>
+    <ID>SwallowedException:BrowserIcons.kt$BrowserIcons$e: CancellationException</ID>
+    <ID>SwallowedException:BrowserMenuAdapter.kt$BrowserMenuAdapter$e: IndexOutOfBoundsException</ID>
+    <ID>SwallowedException:Browsers.kt$Browsers$e: PackageManager.NameNotFoundException</ID>
+    <ID>SwallowedException:Client.kt$Client$e: Exception</ID>
+    <ID>SwallowedException:Client.kt$e: IOException</ID>
+    <ID>SwallowedException:ClipboardSuggestionProvider.kt$e: IllegalStateException</ID>
+    <ID>SwallowedException:Clock.kt$e: ClassNotFoundException</ID>
+    <ID>SwallowedException:Clock.kt$e: RuntimeException</ID>
+    <ID>SwallowedException:ColorPickerDialogFragment.kt$e: IllegalArgumentException</ID>
+    <ID>SwallowedException:Connection.kt$RustPushConnection$e: GeneralException</ID>
+    <ID>SwallowedException:ContileTopSitesProvider.kt$e: JSONException</ID>
+    <ID>SwallowedException:CrashListFragment.kt$CrashListFragment$e: SQLiteBlobTooBigException</ID>
+    <ID>SwallowedException:CustomTabConfigHelper.kt$e: ClassCastException</ID>
+    <ID>SwallowedException:CustomTabWindowFeature.kt$CustomTabWindowFeature$e: ActivityNotFoundException</ID>
+    <ID>SwallowedException:DataUriIconLoader.kt$DataUriIconLoader$e: Exception</ID>
+    <ID>SwallowedException:Domains.kt$Domains$e: IOException</ID>
+    <ID>SwallowedException:DownloadUtils.kt$DownloadUtils$ex: IllegalStateException</ID>
+    <ID>SwallowedException:DownloadUtils.kt$DownloadUtils$ex: UnsupportedEncodingException</ID>
+    <ID>SwallowedException:DownloadsFeature.kt$DownloadsFeature$error: ActivityNotFoundException</ID>
+    <ID>SwallowedException:FirefoxAccount.kt$FirefoxAccount$e: FxaException</ID>
+    <ID>SwallowedException:FirefoxAccount.kt$FirefoxAccount$e: FxaUnauthorizedException</ID>
+    <ID>SwallowedException:FxaAccountManager.kt$FxaAccountManager$e: AccessTokenUnexpectedlyWithoutKey</ID>
+    <ID>SwallowedException:FxaDeviceConstellation.kt$FxaDeviceConstellation$e: FxaException</ID>
+    <ID>SwallowedException:FxaDeviceConstellation.kt$FxaDeviceConstellation$e: FxaUnauthorizedException</ID>
+    <ID>SwallowedException:FxaWebChannelFeature.kt$FxaWebChannelFeature.WebChannelViewContentMessageHandler$e: ClassCastException</ID>
+    <ID>SwallowedException:GeckoEngineSessionState.kt$GeckoEngineSessionState.Companion$e: IOException</ID>
+    <ID>SwallowedException:GeckoEngineSessionState.kt$GeckoEngineSessionState.Companion$e: JSONException</ID>
+    <ID>SwallowedException:GeckoEngineView.kt$GeckoEngineView$e: Exception</ID>
+    <ID>SwallowedException:GeckoMediaSessionDelegate.kt$GeckoMediaSessionDelegate$e: ImageProcessingException</ID>
+    <ID>SwallowedException:GeckoSelectionActionDelegate.kt$GeckoSelectionActionDelegate$e: SecurityException</ID>
+    <ID>SwallowedException:GeckoViewFetchClient.kt$GeckoViewFetchClient$e: TimeoutException</ID>
+    <ID>SwallowedException:GitHubClient.kt$GitHubClient$e: Exception</ID>
+    <ID>SwallowedException:HttpURLConnectionClient.kt$e: FileNotFoundException</ID>
+    <ID>SwallowedException:IconDiskCache.kt$IconDiskCache$e: IOException</ID>
+    <ID>SwallowedException:IconDiskCache.kt$IconDiskCache$e: JSONException</ID>
+    <ID>SwallowedException:ImageLoader.kt$e: IOException</ID>
+    <ID>SwallowedException:InstalledAddonDetailsActivity.kt$InstalledAddonDetailsActivity$e: AddonManagerException</ID>
+    <ID>SwallowedException:IntentExtensions.kt$e: BadParcelableException</ID>
+    <ID>SwallowedException:JSONArray.kt$e: JSONException</ID>
+    <ID>SwallowedException:LoginsCrypto.kt$LoginsCrypto$e: IncorrectKey</ID>
+    <ID>SwallowedException:MainActivity.kt$MainActivity$e: FxaException</ID>
+    <ID>SwallowedException:MimeType.kt$MimeType.Image$e: IOException</ID>
+    <ID>SwallowedException:MozillaSocorroService.kt$MozillaSocorroService$e: IOException</ID>
+    <ID>SwallowedException:MozillaSocorroService.kt$MozillaSocorroService$e: IllegalStateException</ID>
+    <ID>SwallowedException:MozillaSocorroService.kt$MozillaSocorroService$e: JSONException</ID>
+    <ID>SwallowedException:MozillaSocorroService.kt$MozillaSocorroService$e: PackageManager.NameNotFoundException</ID>
+    <ID>SwallowedException:PackageManager.kt$e: PackageManager.NameNotFoundException</ID>
+    <ID>SwallowedException:PocketJSONParser.kt$PocketJSONParser$e: JSONException</ID>
+    <ID>SwallowedException:QrFragment.kt$QrFragment$e: Exception</ID>
+    <ID>SwallowedException:Request.kt$Request.Body$e: IOException</ID>
+    <ID>SwallowedException:ResizingProcessor.kt$ResizingProcessor$e: OutOfMemoryError</ID>
+    <ID>SwallowedException:Response.kt$Response.Body$e: Exception</ID>
+    <ID>SwallowedException:Response.kt$Response.Body$e: IOException</ID>
+    <ID>SwallowedException:Response.kt$e: JSONException</ID>
+    <ID>SwallowedException:SafeBundle.kt$SafeBundle$e: OutOfMemoryError</ID>
+    <ID>SwallowedException:SafeIntent.kt$SafeIntent$e: OutOfMemoryError</ID>
+    <ID>SwallowedException:SearchEngine.kt$SearchEngine$e: UnsupportedOperationException</ID>
+    <ID>SwallowedException:SearchEngine.kt$e: UnsupportedOperationException</ID>
+    <ID>SwallowedException:SearchEngineWriter.kt$SearchEngineWriter$e: DOMException</ID>
+    <ID>SwallowedException:SearchEngineWriter.kt$SearchEngineWriter$e: ParserConfigurationException</ID>
+    <ID>SwallowedException:SearchEngineWriter.kt$SearchEngineWriter$e: TransformerConfigurationException</ID>
+    <ID>SwallowedException:SearchEngineWriter.kt$SearchEngineWriter$e: TransformerException</ID>
+    <ID>SwallowedException:SearchSuggestionProvider.kt$SearchSuggestionProvider.Companion$e: ArrayIndexOutOfBoundsException</ID>
+    <ID>SwallowedException:SearchSuggestionProvider.kt$SearchSuggestionProvider.Companion$e: IOException</ID>
+    <ID>SwallowedException:ShareTargetParser.kt$ShareTargetParser$e: IllegalArgumentException</ID>
+    <ID>SwallowedException:SpocsJSONParser.kt$SpocsJSONParser$e: JSONException</ID>
+    <ID>SwallowedException:StatementApi.kt$StatementApi$e: JSONException</ID>
+    <ID>SwallowedException:StoreExtensions.kt$e: CancellationException</ID>
+    <ID>SwallowedException:SystemEngine.kt$SystemEngine$e: IllegalStateException</ID>
+    <ID>SwallowedException:SystemEngine.kt$SystemEngine$e: IndexOutOfBoundsException</ID>
+    <ID>SwallowedException:ThumbnailDiskCache.kt$ThumbnailDiskCache$e: IOException</ID>
+    <ID>SwallowedException:ThumbnailLoader.kt$ThumbnailLoader$e: CancellationException</ID>
+    <ID>SwallowedException:Uri.kt$e: IOException</ID>
+    <ID>SwallowedException:WebAppLauncherActivity.kt$WebAppLauncherActivity$e: ActivityNotFoundException</ID>
+    <ID>SwallowedException:WebAppManifestParser.kt$e: IllegalArgumentException</ID>
+    <ID>SwallowedException:WebURLFinder.kt$WebURLFinder$e: URISyntaxException</ID>
+    <ID>SwallowedException:WebURLFinder.kt$WebURLFinder.Companion$e: Exception</ID>
+    <ID>ThrowingExceptionsWithoutMessageOrCause:Domain.kt$Domain.Companion$IllegalStateException()</ID>
+    <ID>ThrowingExceptionsWithoutMessageOrCause:KeyManager.kt$KeyManager$IllegalStateException()</ID>
+    <ID>ThrowingExceptionsWithoutMessageOrCause:SearchEngineReader.kt$SearchEngineReader$IllegalStateException()</ID>
+    <ID>ThrowingExceptionsWithoutMessageOrCause:TimePickerDialogFragment.kt$TimePickerDialogFragment$IllegalArgumentException()</ID>
     <ID>UndocumentedPublicClass:AutoSave.kt$AutoSave</ID>
     <ID>UndocumentedPublicClass:AutoSave.kt$AutoSave$Storage</ID>
     <ID>UndocumentedPublicClass:Base64.kt$Base64</ID>
@@ -25,10 +140,6 @@
     <ID>UndocumentedPublicClass:CustomTabsService.kt$CustomTabsService : AbstractCustomTabsService</ID>
     <ID>UndocumentedPublicClass:CustomTabsServiceStore.kt$CustomTabsServiceStore : Store</ID>
     <ID>UndocumentedPublicClass:DefaultComponents.kt$DefaultComponents</ID>
-    <ID>UndocumentedPublicClass:Dependencies.kt$Dependencies</ID>
-    <ID>UndocumentedPublicClass:Dependencies.kt$Versions</ID>
-    <ID>UndocumentedPublicClass:Dependencies.kt$Versions$AndroidX</ID>
-    <ID>UndocumentedPublicClass:Dependencies.kt$Versions$Firebase</ID>
     <ID>UndocumentedPublicClass:DeviceRecyclerViewAdapter.kt$DeviceRecyclerViewAdapter$ViewHolder : ViewHolder</ID>
     <ID>UndocumentedPublicClass:DiskIconLoader.kt$DiskIconLoader$LoaderDiskCache</ID>
     <ID>UndocumentedPublicClass:DiskIconPreparer.kt$DiskIconPreparer$PreparerDiskCache</ID>
@@ -83,7 +194,6 @@
     <ID>UndocumentedPublicClass:ProtectedDataAdapter.kt$ProtectedDataAdapter$Holder : ViewHolder</ID>
     <ID>UndocumentedPublicClass:Providers.kt$DomainAutocompleteProvider</ID>
     <ID>UndocumentedPublicClass:Providers.kt$DomainList</ID>
-    <ID>UndocumentedPublicClass:PublicSuffixListPlugin.kt$PublicSuffixListData</ID>
     <ID>UndocumentedPublicClass:PushProcessor.kt$PushError$MalformedMessage : PushError</ID>
     <ID>UndocumentedPublicClass:PushProcessor.kt$PushError$Network : PushError</ID>
     <ID>UndocumentedPublicClass:PushProcessor.kt$PushError$Registration : PushError</ID>
@@ -164,10 +274,10 @@
     <ID>UndocumentedPublicFunction:DiskIconLoader.kt$DiskIconLoader.LoaderDiskCache$fun getIconData(context: Context, resource: IconRequest.Resource): ByteArray?</ID>
     <ID>UndocumentedPublicFunction:DiskIconPreparer.kt$DiskIconPreparer.PreparerDiskCache$fun getResources(context: Context, request: IconRequest): List&lt;IconRequest.Resource&gt;</ID>
     <ID>UndocumentedPublicFunction:Domain.kt$Domain.Companion$fun create(url: String): Domain</ID>
-    <ID>UndocumentedPublicFunction:DomainMatcher.kt$// FIXME implement Fennec-style segment matching logic // See https://github.com/mozilla-mobile/android-components/issues/1279 fun segmentAwareDomainMatch(query: String, urls: Iterable&lt;String&gt;): DomainMatch?</ID>
+    <ID>UndocumentedPublicFunction:DomainMatcher.kt$fun segmentAwareDomainMatch(query: String, urls: Iterable&lt;String&gt;): DomainMatch?</ID>
     <ID>UndocumentedPublicFunction:DownloadManager.kt$DownloadManager$fun unregisterListeners()</ID>
     <ID>UndocumentedPublicFunction:DownloadManager.kt$fun DownloadManager.validatePermissionGranted(context: Context)</ID>
-    <ID>UndocumentedPublicFunction:DownloadUtils.kt$DownloadUtils$// Some site add extra information after the mimetype, for example 'application/pdf; qs=0.001' // we just want to extract the mimeType and ignore the rest. fun sanitizeMimeType(mimeType: String?): String?</ID>
+    <ID>UndocumentedPublicFunction:DownloadUtils.kt$DownloadUtils$fun sanitizeMimeType(mimeType: String?): String?</ID>
     <ID>UndocumentedPublicFunction:Engine.kt$Engine.BrowsingData$fun contains(type: Int)</ID>
     <ID>UndocumentedPublicFunction:Engine.kt$Engine.BrowsingData.Companion$fun all()</ID>
     <ID>UndocumentedPublicFunction:Engine.kt$Engine.BrowsingData.Companion$fun allCaches()</ID>
@@ -197,7 +307,6 @@
     <ID>UndocumentedPublicFunction:EngineSession.kt$EngineSession.Observer$fun onPromptRequest(promptRequest: PromptRequest)</ID>
     <ID>UndocumentedPublicFunction:EngineSession.kt$EngineSession.Observer$fun onRecordingStateChanged(devices: List&lt;RecordingDevice&gt;)</ID>
     <ID>UndocumentedPublicFunction:EngineSession.kt$EngineSession.Observer$fun onSecurityChange(secure: Boolean, host: String? = null, issuer: String? = null)</ID>
-    <ID>UndocumentedPublicFunction:EngineSession.kt$EngineSession.Observer$fun onThumbnailChange(bitmap: Bitmap?)</ID>
     <ID>UndocumentedPublicFunction:EngineSession.kt$EngineSession.Observer$fun onTitleChange(title: String)</ID>
     <ID>UndocumentedPublicFunction:EngineSession.kt$EngineSession.Observer$fun onTrackerBlocked(tracker: Tracker)</ID>
     <ID>UndocumentedPublicFunction:EngineSession.kt$EngineSession.Observer$fun onTrackerBlockingEnabledChange(enabled: Boolean)</ID>
@@ -253,7 +362,7 @@
     <ID>UndocumentedPublicFunction:JexlValue.kt$JexlValue$abstract operator fun div(other: JexlValue): JexlValue</ID>
     <ID>UndocumentedPublicFunction:JexlValue.kt$JexlValue$abstract operator fun plus(other: JexlValue): JexlValue</ID>
     <ID>UndocumentedPublicFunction:JexlValue.kt$JexlValue$abstract operator fun times(other: JexlValue): JexlValue</ID>
-    <ID>UndocumentedPublicFunction:Log.kt$Log$// Only for testing @VisibleForTesting fun reset()</ID>
+    <ID>UndocumentedPublicFunction:Log.kt$Log$@VisibleForTesting fun reset()</ID>
     <ID>UndocumentedPublicFunction:LogSink.kt$LogSink$fun log( priority: Log.Priority = Log.Priority.DEBUG, tag: String? = null, throwable: Throwable? = null, message: String? = null, )</ID>
     <ID>UndocumentedPublicFunction:LoginFragment.kt$LoginFragment.Companion$fun create(authUrl: String, redirectUrl: String): LoginFragment</ID>
     <ID>UndocumentedPublicFunction:LoginFragment.kt$LoginFragment.OnLoginCompleteListener$fun onLoginComplete(code: String, state: String, action: String, fragment: LoginFragment)</ID>
@@ -275,12 +384,9 @@
     <ID>UndocumentedPublicFunction:ReversibleString.kt$ReversibleString$abstract fun substring(startIndex: Int): ReversibleString</ID>
     <ID>UndocumentedPublicFunction:ReversibleString.kt$fun String.reverse(): ReversibleString</ID>
     <ID>UndocumentedPublicFunction:ReversibleString.kt$fun String.reversible(): ReversibleString</ID>
-    <ID>UndocumentedPublicFunction:SafeBundle.kt$SafeBundle$fun &lt;T : Parcelable&gt; getParcelable(name: String): T?</ID>
     <ID>UndocumentedPublicFunction:SafeBundle.kt$SafeBundle$fun getInt(name: String, defaultValue: Int = 0): Int</ID>
     <ID>UndocumentedPublicFunction:SafeBundle.kt$SafeBundle$fun getString(name: String): String?</ID>
     <ID>UndocumentedPublicFunction:SafeBundle.kt$SafeBundle$fun keySet(): Set&lt;String&gt;?</ID>
-    <ID>UndocumentedPublicFunction:SafeIntent.kt$SafeIntent$fun &lt;T : Parcelable&gt; getParcelableArrayListExtra(name: String): ArrayList&lt;T&gt;?</ID>
-    <ID>UndocumentedPublicFunction:SafeIntent.kt$SafeIntent$fun &lt;T : Parcelable&gt; getParcelableExtra(name: String): T?</ID>
     <ID>UndocumentedPublicFunction:SafeIntent.kt$SafeIntent$fun getBooleanExtra(name: String, defaultValue: Boolean): Boolean</ID>
     <ID>UndocumentedPublicFunction:SafeIntent.kt$SafeIntent$fun getBundleExtra(name: String): SafeBundle?</ID>
     <ID>UndocumentedPublicFunction:SafeIntent.kt$SafeIntent$fun getCharSequenceExtra(name: String): CharSequence?</ID>
@@ -297,7 +403,7 @@
     <ID>UndocumentedPublicFunction:SitePermissions.kt$SitePermissions.Status$fun isAllowed()</ID>
     <ID>UndocumentedPublicFunction:SitePermissions.kt$SitePermissions.Status$fun toggle(): Status</ID>
     <ID>UndocumentedPublicFunction:SitePermissionsRules.kt$SitePermissionsRules.Action$fun toStatus(): SitePermissions.Status</ID>
-    <ID>UndocumentedPublicFunction:StorageUtils.kt$StorageUtils$// Borrowed from https://gist.github.com/ademar111190/34d3de41308389a0d0d8 fun levenshteinDistance(a: String, b: String): Int</ID>
+    <ID>UndocumentedPublicFunction:StorageUtils.kt$StorageUtils$fun levenshteinDistance(a: String, b: String): Int</ID>
     <ID>UndocumentedPublicFunction:Store.kt$Store.Subscription.Binding$fun unbind()</ID>
     <ID>UndocumentedPublicFunction:String.kt$fun String.isEmail()</ID>
     <ID>UndocumentedPublicFunction:String.kt$fun String.isGeoLocation()</ID>
@@ -333,9 +439,65 @@
     <ID>UndocumentedPublicFunction:Types.kt$fun mozilla.components.concept.sync.Device.into(): Device</ID>
     <ID>UndocumentedPublicFunction:Types.kt$fun mozilla.components.concept.sync.TabData.into(): TabHistoryEntry</ID>
     <ID>UndocumentedPublicFunction:WebAppManifestParser.kt$WebAppManifestParser$fun serialize(manifest: WebAppManifest)</ID>
-    <ID>UndocumentedPublicFunction:WebserverRule.kt$WebserverRule$fun url(path: String = ""): String</ID>
     <ID>UndocumentedPublicFunction:WorkManagerSyncManager.kt$fun getLastSynced(context: Context): Long</ID>
     <ID>UndocumentedPublicFunction:nodes.kt$AstNode$open fun toString(level: Int, isTopLevel: Boolean = true): String</ID>
-    <ID>UnusedPrivateMember:GeckoPromptDelegate.kt$GeckoPromptDelegate$private operator fun Int.contains(mask: Int): Boolean</ID>
+    <ID>UnnecessaryAbstractClass:AccountStorage.kt$AbnormalAccountStorageEvent$AbnormalAccountStorageEvent</ID>
+    <ID>UnnecessaryAbstractClass:CrashReporter.kt$CrashReporterException$CrashReporterException</ID>
+    <ID>UseCheckOrError:AbstractFetchDownloadService.kt$AbstractFetchDownloadService$throw IllegalStateException("A fileName for a download is required")</ID>
+    <ID>UseCheckOrError:AddonUpdater.kt$DefaultAddonUpdater$throw IllegalStateException("Package has no launcher intent")</ID>
+    <ID>UseCheckOrError:AudioFocus.kt$AudioFocus$throw IllegalStateException("Unknown audio focus request response: $result")</ID>
+    <ID>UseCheckOrError:BaseSearchTelemetry.kt$BaseSearchTelemetry.SearchTelemetryMessageHandler$throw IllegalStateException("Received unexpected message: $message")</ID>
+    <ID>UseCheckOrError:BundledSearchEnginesStorage.kt$BundledSearchEnginesStorage$throw IllegalStateException("No default engine for configuration: locale=$locale, region=$region")</ID>
+    <ID>UseCheckOrError:BundledSearchEnginesStorage.kt$throw IllegalStateException("No visibleDefaultEngines using region $region and locale $locale")</ID>
+    <ID>UseCheckOrError:ContentStateReducer.kt$ContentStateReducer$throw IllegalStateException("You need to add ThumbnailsMiddleware to your BrowserStore. ($action)")</ID>
+    <ID>UseCheckOrError:CrashReporter.kt$CrashReporter.Companion$throw IllegalStateException( "You need to call install() on your CrashReporter instance from Application.onCreate().", )</ID>
+    <ID>UseCheckOrError:Domain.kt$Domain.Companion$throw IllegalStateException()</ID>
+    <ID>UseCheckOrError:EngineStateReducer.kt$EngineStateReducer$throw IllegalStateException( "You need to add a middleware to handle this action in your BrowserStore. ($action)", )</ID>
+    <ID>UseCheckOrError:EngineStateReducer.kt$EngineStateReducer$throw IllegalStateException("You need to add EngineMiddleware to your BrowserStore. ($action)")</ID>
+    <ID>UseCheckOrError:FxaAccountManager.kt$FxaAccountManager$throw IllegalStateException("Unexpected finishAuthentication state")</ID>
+    <ID>UseCheckOrError:FxaDeviceSettingsCache.kt$FxaDeviceSettingsCache$throw IllegalStateException("Trying to update cached value in an empty cache")</ID>
+    <ID>UseCheckOrError:GeckoEngine.kt$GeckoEngine$throw IllegalStateException("Could not determine engine version")</ID>
+    <ID>UseCheckOrError:GeckoEngine.kt$GeckoEngine.&lt;no name provided&gt;$throw java.lang.IllegalStateException("Unknown HTTPS-Only mode returned by GeckoView")</ID>
+    <ID>UseCheckOrError:GeckoEngineSession.kt$GeckoEngineSession$throw IllegalStateException("Can only restore from GeckoEngineSessionState")</ID>
+    <ID>UseCheckOrError:IconMessageHandler.kt$IconMessageHandler$throw IllegalStateException("Received unexpected message: $message")</ID>
+    <ID>UseCheckOrError:KeyManager.kt$KeyManager$throw IllegalStateException()</ID>
+    <ID>UseCheckOrError:LoginFragment.kt$LoginFragment$throw IllegalStateException("$context must implement OnLoginCompleteListener")</ID>
+    <ID>UseCheckOrError:PushProcessor.kt$PushProcessor.Companion$throw IllegalStateException( "You need to call PushProcessor.install() on your Push instance from Application.onCreate().", )</ID>
+    <ID>UseCheckOrError:QrFragment.kt$QrFragment$throw IllegalStateException("No camera found on device")</ID>
+    <ID>UseCheckOrError:QrFragment.kt$QrFragment$throw IllegalStateException("Time out waiting to lock camera opening.")</ID>
+    <ID>UseCheckOrError:RecordingDevicesMiddleware.kt$RecordingDevicesMiddleware$throw IllegalStateException("Package has no launcher intent")</ID>
+    <ID>UseCheckOrError:Safelist.kt$SafelistTrie$throw IllegalStateException("Safelist already set for node $string")</ID>
+    <ID>UseCheckOrError:SearchEngineReader.kt$SearchEngineReader$throw IllegalStateException()</ID>
+    <ID>UseCheckOrError:SharedPreferencesCache.kt$SharedPreferencesCache$throw IllegalStateException("Failed to stringify")</ID>
+    <ID>UseCheckOrError:SimpleDownloadDialogFragment.kt$SimpleDownloadDialogFragment$throw IllegalStateException("Fragment $this arguments is not set.")</ID>
+    <ID>UseCheckOrError:SimpleRedirectDialogFragment.kt$SimpleRedirectDialogFragment$throw IllegalStateException("Fragment $this arguments is not set.")</ID>
+    <ID>UseCheckOrError:SitePermissionsFeature.kt$SitePermissionsFeature$throw IllegalStateException("Unable to find session for $sessionId or selected session")</ID>
+    <ID>UseCheckOrError:SystemEngine.kt$SystemEngine$throw IllegalStateException("Could not determine engine version: $version")</ID>
+    <ID>UseCheckOrError:SystemEngine.kt$SystemEngine$throw IllegalStateException("Could not get version from user agent: $userAgent")</ID>
+    <ID>UseCheckOrError:SystemEngineView.kt$SystemEngineView.ImageHandler$throw IllegalStateException("WebView did not supply url or src for image link")</ID>
+    <ID>UseCheckOrError:Types.kt$throw IllegalStateException("Invalid SyncReason: $this")</ID>
+    <ID>UseCheckOrError:UrlMatcher.kt$UrlMatcher.Companion$throw IllegalStateException("Cannot add override items to nonexistent category")</ID>
+    <ID>UseCheckOrError:UrlMatcher.kt$UrlMatcher.Companion$throw IllegalStateException("Cannot insert already loaded category")</ID>
+    <ID>UseCheckOrError:UrlMatcher.kt$UrlMatcher.Companion$throw IllegalStateException("Expected social list to exist")</ID>
+    <ID>UseCheckOrError:WorkManagerSyncManager.kt$WorkManagerSyncWorker$throw IllegalStateException("Invalid syncable store: $it")</ID>
+    <ID>UseRequire:AutoFitTextureView.kt$AutoFitTextureView$throw IllegalArgumentException("Size cannot be negative.")</ID>
+    <ID>UseRequire:BrowserStore.kt$BrowserStore$throw IllegalArgumentException("Duplicate tabs found")</ID>
+    <ID>UseRequire:BrowserStore.kt$BrowserStore$throw IllegalArgumentException("Selected tab does not exist")</ID>
+    <ID>UseRequire:CrashReporter.kt$CrashReporter$throw IllegalArgumentException("No crash reporter services defined")</ID>
+    <ID>UseRequire:CustomTabIntentProcessor.kt$CustomTabIntentProcessor$throw IllegalArgumentException("getAdditionalHeaders() intent bundle contains wrong key value pair")</ID>
+    <ID>UseRequire:DeviceFragment.kt$DeviceFragment$throw IllegalArgumentException("$context must implement OnDeviceListInteractionListener")</ID>
+    <ID>UseRequire:FxaAccountManager.kt$FxaAccountManager$throw IllegalArgumentException("Set of supported engines can't be empty")</ID>
+    <ID>UseRequire:Headers.kt$Header$throw IllegalArgumentException("Header name cannot be empty")</ID>
+    <ID>UseRequire:HttpURLConnectionClient.kt$HttpURLConnectionClient$throw IllegalArgumentException("Client doesn't support private request")</ID>
+    <ID>UseRequire:LinkingMiddleware.kt$LinkingMiddleware$throw IllegalArgumentException("AddMultipleTabsAction does not support tabs with engine sessions")</ID>
+    <ID>UseRequire:OkHttpClient.kt$OkHttpClient$throw IllegalArgumentException("Client doesn't support private request")</ID>
+    <ID>UseRequire:SearchEngine.kt$throw IllegalArgumentException("URL does not contain search terms placeholder")</ID>
+    <ID>UseRequire:StoreExtensions.kt$throw IllegalArgumentException("Lifecycle is already DESTROYED")</ID>
+    <ID>UseRequire:SystemEngineSession.kt$SystemEngineSession$throw IllegalArgumentException("Can only restore from SystemEngineSessionState")</ID>
+    <ID>UseRequire:TabGroupReducer.kt$throw IllegalArgumentException("Tab group with same ID already exists")</ID>
+    <ID>UseRequire:TabListReducer.kt$TabListReducer$throw IllegalArgumentException("The parent does not exist")</ID>
+    <ID>UseRequire:UrlMatcher.kt$UrlMatcher$throw IllegalArgumentException("$key categoryMap contains undeclared category")</ID>
+    <ID>UseRequire:WebURLFinder.kt$WebURLFinder$throw IllegalArgumentException("string must not be null")</ID>
+    <ID>UseRequire:WebURLFinder.kt$WebURLFinder$throw IllegalArgumentException("strings must not be null")</ID>
   </CurrentIssues>
 </SmellBaseline>
