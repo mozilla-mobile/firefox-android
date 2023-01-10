@@ -179,6 +179,10 @@ class ReaderView {
           readingTimeString = `${readingTimeMinsFast} - ${readingTimeString}`;
         }
         return readingTimeString;
+      } else {
+        // This block handles the case when `parts` array does not have length 3,
+        // For some languages parts may not have length 3.
+        return parts.map(e => e.value).join(" ");
       }
     }
     catch(error) {
