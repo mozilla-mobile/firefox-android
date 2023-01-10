@@ -71,6 +71,15 @@ def get_upstream_deps_for_all_gradle_projects():
     return all_deps
 
 
+def get_apks():
+    # TODO: Support Fenix
+    build_config = _read_build_config(FOCUS_DIR)
+    return [{
+        "name": name,
+        "path": FOCUS_DIR,
+    } for name in build_config["projects"].keys()]
+
+
 def get_variant(build_type, build_name):
     # TODO: Support Fenix
     all_variants = _read_build_config(FOCUS_DIR)["variants"]
