@@ -10,7 +10,7 @@ transforms = TransformSequence()
 def add_components_optimization(config, tasks):
     for task in tasks:
         attributes = task.get("attributes", {})
-        # TODO bug 1806454 - Use a single attribute instead of 2. This is an historical
+        # TODO bug 1806454 - Use a single attribute instead of 2. This is a historical
         # discrepancy where A-C are labeled by build-types but APKs by release ones.
         #
         # The monorepo migration made this discrepancy more obvious compared to when
@@ -19,10 +19,10 @@ def add_components_optimization(config, tasks):
         release_type = attributes.get("release-type", "")
 
         # We want to optimize away tasks on all android-components and APKs as long as
-        # these tasks are not labeled nightly, beta, or releases.
+        # these tasks are not labeled nightly, beta, or release.
         #
-        # Any change in that impact all a-c (e.g. a change in the a-c gradle config)
-        # should trigger also APKs builds and tests.
+        # Any change that impacts all a-c (e.g. a change in the a-c gradle config)
+        # should also trigger APK builds and tests.
         if all(type_ not in ("nightly", "beta", "release") for type_ in (build_type, release_type)):
             optimization = task.setdefault("optimization", {})
             skip_unless_changed = optimization.setdefault("skip-unless-changed", [])
