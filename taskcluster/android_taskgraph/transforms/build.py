@@ -57,7 +57,12 @@ def interpolate_missing_values(config, tasks):
         for field in ('description', 'run.gradlew', 'treeherder.symbol'):
             component = task["attributes"]["component"]
             _deep_format(
-                task, field, component=component, timestamp=timestamp, nightlyVersion=nightly_version
+                task,
+                field,
+                component=component,
+                nightlyVersion=nightly_version,
+                timestamp=timestamp,
+                treeherder_group=task["attributes"]["treeherder-group"],
             )
 
         yield task
@@ -104,6 +109,17 @@ def _deep_format(object, field, **format_kwargs):
         one_before_last_object[last_key] = [item.format(**format_kwargs) for item in object]
     else:
         raise ValueError(f'Unsupported type for object: {object}')
+
+
+@transforms.add
+def set_external_gradle_dependencies(config, tasks):
+    for task in tasks:
+        component = task["attributes"]["component"]
+
+        dependencies = task.setdefault("dependencies", {})
+        dependencies["external-gradle-dependencies"] = f"external-gradle-dependencies-{component}"
+
+        yield task
 
 
 @transforms.add
