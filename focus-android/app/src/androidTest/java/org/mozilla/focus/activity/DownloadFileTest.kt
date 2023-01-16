@@ -7,6 +7,7 @@ import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -140,6 +141,7 @@ class DownloadFileTest {
 
     @SmokeTest
     @Test
+    @Ignore("Disabled: Feature not yet available on Beta")
     fun openPdfFileTest() {
         downloadFileName = "washington.pdf"
         val pdfFileURL = "https://storage.googleapis.com/mobile_test_assets/public/washington.pdf"
