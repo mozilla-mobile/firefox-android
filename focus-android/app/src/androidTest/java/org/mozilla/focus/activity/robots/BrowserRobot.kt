@@ -555,6 +555,18 @@ class BrowserRobot {
             DownloadRobot().interact()
             return DownloadRobot.Transition()
         }
+
+        fun clickDownloadItem(title: String, interact: DownloadRobot.() -> Unit): DownloadRobot.Transition {
+            val sessionLoadedIdlingResource = SessionLoadedIdlingResource()
+
+            runWithIdleRes(sessionLoadedIdlingResource) {
+                webPageItemContainingText(title).waitForExists(pageLoadingTime)
+                webPageItemContainingText(title).click()
+            }
+
+            DownloadRobot().interact()
+            return DownloadRobot.Transition()
+        }
     }
 }
 

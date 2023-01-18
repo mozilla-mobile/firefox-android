@@ -5,16 +5,21 @@
 package org.mozilla.focus.activity.robots
 
 import android.os.Build
+import androidx.test.espresso.action.ViewActions.click
 import androidx.test.uiautomator.By
+import androidx.test.uiautomator.By.text
 import androidx.test.uiautomator.UiScrollable
 import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
+import java.lang.AssertionError
+import java.nio.file.Files.exists
 import org.junit.Assert.assertTrue
 import org.mozilla.focus.R
 import org.mozilla.focus.helpers.TestHelper.appName
 import org.mozilla.focus.helpers.TestHelper.getStringResource
 import org.mozilla.focus.helpers.TestHelper.mDevice
 import org.mozilla.focus.helpers.TestHelper.waitingTime
+import org.mozilla.focus.helpers.TestHelper.waitingTimeShort
 
 class NotificationRobot {
 
@@ -74,11 +79,11 @@ class NotificationRobot {
     }
 
     fun clickMediaNotificationControlButton(action: String) {
-        mediaNotificationControlButton(action).click()
+        notificationControlButton(action).click()
     }
 
     fun verifyMediaNotificationButtonState(action: String) {
-        mediaNotificationControlButton(action).waitForExists(waitingTime)
+        notificationControlButton(action).waitForExists(waitingTime)
     }
 
     fun verifyDownloadNotification(notificationMessage: String, fileName: String) {
@@ -93,6 +98,19 @@ class NotificationRobot {
 
         assertTrue(notificationFound)
         assertTrue(downloadFilename.exists())
+    }
+
+    fun clickDownloadNotificationControlButton(action: String) {
+        if (!notificationControlButton(action).waitForExists(waitingTimeShort)) {
+            mDevice.findObject(UiSelector().text("now")).getFromParent(UiSelector().textContains(appName)).click()
+        }
+        notificationControlButton(action).click()
+        // API 30 Bug? Sometimes a click doesn't register, try again
+        try {
+            assertTrue(notificationControlButton(action).waitUntilGone(waitingTimeShort))
+        } catch (e: AssertionError) {
+            notificationControlButton(action).click()
+        }
     }
 
     class Transition {
@@ -155,5 +173,5 @@ private val notificationHeader = mDevice.findObject(
 private val clearButton =
     mDevice.findObject(UiSelector().resourceId("com.android.systemui:id/btn_clear_all"))
 
-private fun mediaNotificationControlButton(action: String) =
+private fun notificationControlButton(action: String) =
     mDevice.findObject(UiSelector().description(action))

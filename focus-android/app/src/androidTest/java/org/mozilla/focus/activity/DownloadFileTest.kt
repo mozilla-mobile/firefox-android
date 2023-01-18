@@ -3,6 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package org.mozilla.focus.activity
 
+import androidx.core.net.toUri
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
@@ -29,6 +30,8 @@ import org.mozilla.focus.helpers.TestHelper.verifySnackBarText
 import org.mozilla.focus.helpers.TestHelper.waitingTime
 import org.mozilla.focus.testAnnotations.SmokeTest
 import java.io.IOException
+import org.mozilla.focus.activity.robots.browserScreen
+import org.mozilla.focus.helpers.TestHelper.appName
 
 @RunWith(AndroidJUnit4ClassRunner::class)
 class DownloadFileTest {
@@ -40,9 +43,9 @@ class DownloadFileTest {
     @get:Rule
     var mActivityTestRule = MainActivityIntentsTestRule(showFirstRun = false)
 
-    @Rule
-    @JvmField
-    val retryTestRule = RetryTestRule(3)
+//    @Rule
+//    @JvmField
+//    val retryTestRule = RetryTestRule(3)
 
     @Before
     fun setUp() {
@@ -66,7 +69,7 @@ class DownloadFileTest {
 
     @SmokeTest
     @Test
-    fun downloadNotificationTest() {
+    fun completeDownloadNotificationTest() {
         val downloadPageUrl = getImageTestAsset(webServer).url
         downloadFileName = "download.jpg"
 
@@ -77,10 +80,8 @@ class DownloadFileTest {
 
         // Load website with service worker
         searchScreen {
-        }.loadPage(downloadPageUrl) { }
-
-        downloadRobot {
-            clickDownloadIconAsset()
+        }.loadPage(downloadPageUrl) {
+        }.clickDownloadItem(downloadFileName) {
             // If permission dialog appears, grant it
             if (permAllowBtn.waitForExists(waitingTime)) {
                 permAllowBtn.click()
@@ -97,14 +98,38 @@ class DownloadFileTest {
 
     @SmokeTest
     @Test
-    fun cancelDownloadTest() {
-        val downloadPageUrl = getImageTestAsset(webServer).url
+    fun pauseResumeCancelDownloadTest() {
+        val downloadFileName = "1GB.zip"
 
         searchScreen {
-        }.loadPage(downloadPageUrl) { }
+        }.loadPage(downloadTestPage) {
+        }.clickDownloadItem(downloadFileName) {
+            // If permission dialog appears, grant it
+            if (permAllowBtn.waitForExists(waitingTime)) {
+                permAllowBtn.click()
+            }
+            verifyDownloadDialog(downloadFileName)
+            clickDownloadButton()
+            mDevice.openNotification()
+        }
+        notificationTray {
+            verifyDownloadNotification(appName, downloadFileName)
+            clickDownloadNotificationControlButton("Pause")
+            clickDownloadNotificationControlButton("Resume")
+            clickDownloadNotificationControlButton("Cancel")
+            mDevice.pressBack()
+        }
+    }
 
-        downloadRobot {
-            clickDownloadIconAsset()
+    @SmokeTest
+    @Test
+    fun cancelDownloadTest() {
+        val downloadPageUrl = getImageTestAsset(webServer).url
+        downloadFileName = "download.jpg"
+
+        searchScreen {
+        }.loadPage(downloadPageUrl) {
+        }.clickDownloadItem(downloadFileName) {
             // If permission dialog appears, grant it
             if (permAllowBtn.waitForExists(waitingTime)) {
                 permAllowBtn.click()
@@ -122,10 +147,8 @@ class DownloadFileTest {
 
         // Load website with service worker
         searchScreen {
-        }.loadPage(downloadPageUrl) { }
-
-        downloadRobot {
-            clickDownloadIconAsset()
+        }.loadPage(downloadPageUrl) {
+        }.clickDownloadItem(downloadFileName) {
             // If permission dialog appears on devices with API<30, grant it
             if (permAllowBtn.waitForExists(waitingTime)) {
                 permAllowBtn.click()

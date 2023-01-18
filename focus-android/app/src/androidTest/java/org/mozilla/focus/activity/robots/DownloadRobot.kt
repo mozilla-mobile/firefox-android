@@ -24,14 +24,6 @@ class DownloadRobot {
 
     fun verifyDownloadDialogGone() = assertTrue(downloadDialogTitle.waitUntilGone(waitingTime))
 
-    fun clickDownloadIconAsset() {
-        val sessionLoadedIdlingResource = SessionLoadedIdlingResource()
-        runWithIdleRes(sessionLoadedIdlingResource) {
-            downloadIconAsset.waitForExists(waitingTime)
-            downloadIconAsset.click()
-        }
-    }
-
     fun clickDownloadButton() {
         downloadBtn.waitForExists(waitingTime)
         downloadBtn.click()
@@ -67,11 +59,6 @@ fun downloadRobot(interact: DownloadRobot.() -> Unit): DownloadRobot.Transition 
     DownloadRobot().interact()
     return DownloadRobot.Transition()
 }
-
-val downloadIconAsset: UiObject = mDevice.findObject(
-    UiSelector()
-        .resourceId("download"),
-)
 
 private val downloadDialogTitle = mDevice.findObject(
     UiSelector()

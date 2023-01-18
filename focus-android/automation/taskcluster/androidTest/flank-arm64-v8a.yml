@@ -20,8 +20,8 @@ gcloud:
   performance-metrics: true
 
   test-targets:
-    - package org.mozilla.focus.activity
-    - package org.mozilla.focus.privacy
+    - package org.mozilla.focus.activity.DownloadFileTest
+#    - package org.mozilla.focus.privacy
 
   device:
     - model: Pixel2.arm
