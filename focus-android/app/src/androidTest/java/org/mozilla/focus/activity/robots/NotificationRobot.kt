@@ -103,6 +103,10 @@ class NotificationRobot {
     fun clickDownloadNotificationControlButton(action: String) {
         if (!notificationControlButton(action).waitForExists(waitingTimeShort)) {
             mDevice.findObject(UiSelector().text("now")).getFromParent(UiSelector().textContains(appName)).click()
+            // double check if notification actions are viewable by checking for action existence; otherwise scroll again
+            while (!notificationControlButton(action).exists()) {
+                notificationTray.scrollToEnd(1)
+            }
         }
         notificationControlButton(action).click()
         // API 30 Bug? Sometimes a click doesn't register, try again
@@ -174,4 +178,4 @@ private val clearButton =
     mDevice.findObject(UiSelector().resourceId("com.android.systemui:id/btn_clear_all"))
 
 private fun notificationControlButton(action: String) =
-    mDevice.findObject(UiSelector().description(action))
+    mDevice.findObject(UiSelector().descriptionContains(action))

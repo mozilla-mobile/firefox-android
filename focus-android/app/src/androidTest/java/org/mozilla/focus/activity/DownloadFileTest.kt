@@ -114,9 +114,9 @@ class DownloadFileTest {
         }
         notificationTray {
             verifyDownloadNotification(appName, downloadFileName)
-            clickDownloadNotificationControlButton("Pause")
-            clickDownloadNotificationControlButton("Resume")
-            clickDownloadNotificationControlButton("Cancel")
+            clickDownloadNotificationControlButton("PAUSE")
+            clickDownloadNotificationControlButton("RESUME")
+            clickDownloadNotificationControlButton("CANCEL")
             mDevice.pressBack()
         }
     }
