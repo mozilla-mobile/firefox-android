@@ -107,7 +107,7 @@ class NotificationRobot {
             // double check if notification actions are viewable by checking for action existence; otherwise scroll again
             var i =0
             while (i in 0..RETRY_COUNT && !notificationControlButton(action).exists()) {
-                notificationTray.flingToEnd(1)
+                notificationTray.swipeUp(1)
                 i++
             }
         }

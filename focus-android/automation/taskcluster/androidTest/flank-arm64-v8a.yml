@@ -20,7 +20,7 @@ gcloud:
   performance-metrics: true
 
   test-targets:
-    - package org.mozilla.focus.activity.DownloadFileTest
+    - package org.mozilla.focus.activity.DownloadFileTest#pauseResumeCancelDownloadTest
 #    - package org.mozilla.focus.privacy
 
   device:
@@ -31,6 +31,6 @@ gcloud:
 flank:
   project: GOOGLE_PROJECT
   max-test-shards: 50
-  num-test-runs: 10
+  num-test-runs: 3
   output-style: compact
   full-junit-result: true
