@@ -15,6 +15,7 @@ import java.lang.AssertionError
 import java.nio.file.Files.exists
 import org.junit.Assert.assertTrue
 import org.mozilla.focus.R
+import org.mozilla.focus.helpers.Constants.RETRY_COUNT
 import org.mozilla.focus.helpers.TestHelper.appName
 import org.mozilla.focus.helpers.TestHelper.getStringResource
 import org.mozilla.focus.helpers.TestHelper.mDevice
@@ -104,8 +105,10 @@ class NotificationRobot {
         if (!notificationControlButton(action).waitForExists(waitingTimeShort)) {
             mDevice.findObject(UiSelector().text("now")).getFromParent(UiSelector().textContains(appName)).click()
             // double check if notification actions are viewable by checking for action existence; otherwise scroll again
-            while (!notificationControlButton(action).exists()) {
-                notificationTray.scrollToEnd(1)
+            var i =0
+            while (i in 0..RETRY_COUNT && !notificationControlButton(action).exists()) {
+                notificationTray.flingToEnd(1)
+                i++
             }
         }
         notificationControlButton(action).click()
