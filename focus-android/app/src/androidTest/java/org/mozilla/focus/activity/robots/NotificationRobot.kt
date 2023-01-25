@@ -5,14 +5,10 @@
 package org.mozilla.focus.activity.robots
 
 import android.os.Build
-import androidx.test.espresso.action.ViewActions.click
 import androidx.test.uiautomator.By
-import androidx.test.uiautomator.By.text
 import androidx.test.uiautomator.UiScrollable
 import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
-import java.lang.AssertionError
-import java.nio.file.Files.exists
 import org.junit.Assert.assertTrue
 import org.mozilla.focus.R
 import org.mozilla.focus.helpers.Constants.RETRY_COUNT
@@ -103,15 +99,19 @@ class NotificationRobot {
 
     fun clickDownloadNotificationControlButton(action: String) {
         if (!notificationControlButton(action).waitForExists(waitingTimeShort)) {
-            mDevice.findObject(UiSelector().text("now")).getFromParent(UiSelector().textContains(appName)).click()
+            // expand the notification
+            mDevice.findObject(UiSelector().text("now"))
+                .getFromParent(UiSelector().textContains(appName)).click()
+        }
             // double check if notification actions are viewable by checking for action existence; otherwise scroll again
-            var i =0
-            while (i in 0..RETRY_COUNT && !notificationControlButton(action).exists()) {
-                notificationTray.swipeUp(2)
-                i++
+            for (i in 0..RETRY_COUNT) {
+                try {
+                    assertTrue(notificationControlButton(action).exists())
+                    notificationControlButton(action).click()
+                } catch (e: AssertionError) {
+                    notificationTray.swipeUp(2)
             }
         }
-        notificationControlButton(action).click()
         // API 30 Bug? Sometimes a click doesn't register, try again
         try {
             assertTrue(notificationControlButton(action).waitUntilGone(waitingTimeShort))
