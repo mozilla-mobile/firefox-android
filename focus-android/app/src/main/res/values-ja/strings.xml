@@ -701,12 +701,6 @@
     <!--  Preference summary inside Cookie banner reduction screen. Here you can set the cookie banner option to disabled or reject_all. -->
     <string name="cookie_banner_reject_all_option_summary">Cookie リクエストを自動的に拒否することで、表示されるバナーを可能な限り減らします。</string>
 
-    <!--  Checkbox Preference title inside Cookie banner reduction screen. Here you can set the cookie banner option to reject_or_accept_all or reject_all. -->
-    <string name="cookie_banner_further_reduce_option_title">Cookie バナーをさらに削減する</string>
-
-    <!--  Checkbox Preference summary inside Cookie banner reduction screen. Here you can set the cookie banner option to reject_or_accept_all or reject_all. -->
-    <string name="cookie_banner_further_reduce_option_summary">Cookie バナーリクエストを受け入れて、さらに多くのバナーを閉じます。</string>
-
     <!-- Preference for removing cookie/consent banners from sites automatically, this is shown as part of the protections panel with the tracking protection toggle. -->--&gt;
     <string name="cookie_banner_exception_item_title">Cookie バナーの削減</string>
 
@@ -736,6 +730,18 @@
 
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The placeholder will be updated with the app name. -->
     <string name="cookie_banner_exception_panel_description_state_off_for_site">%1$s が自動的に Cookie 要求を拒否しようとします。拒否オプションが利用できない場合、%1$s がすべての Cookie を受け入れてバナーを閉じることがあります。</string>
+
+    <!-- Contextual Feature Recommendation Popups -->
+    <!-- CFR for Cookie Banner (Banner Info Message). The placeholder will be updated with the app name. -->
+    <string name="cfr_for_cookie_banner" moz:RemovedIn="111" tools:ignore="UnusedResources">%1$s は、迷惑な Cookie バナーを閉じるために Cookie リクエストを拒否しようとします。\n\n設定で Cookie バナーの動作を管理します。</string>
+
+    <!-- CFR for Cookie Banner (Banner Info Message). %1$s will be replaced by the app name, %2$s will be an active link using the string cfr_cookie_banner_link as text. -->
+    <string name="cfr_cookie_banner">%1$s は、迷惑な Cookie バナーを閉じるために Cookie リクエストを拒否しようとします。\n\n%2$sで Cookie バナーの動作を管理します。</string>
+    <!-- CFR for Cookie Banner (Banner Info Message). This text should be the same as the settings text from "cfr_for_cookie_banner". The text should be underlined and should redirect the user to the cookie banner settings screen. -->
+    <string name="cfr_for_cookie_banner_underline_settings" moz:RemovedIn="111" tools:ignore="UnusedResources">設定</string>
+
+    <!-- CFR for Cookie Banner (Banner Info Message). This string is used as text for a link in cfr_cookie_banner and takes the user to the app settings. -->
+    <string name="cfr_cookie_banner_link">設定</string>
 
     <!-- Preference for autoplay -->
     <string name="preference_autoplay">自動再生</string>
@@ -1025,13 +1031,18 @@
 
     !-- Content description (not visible, for screen readers etc.): This is the description for the
     close button from promote search widget dialog. --&gt;
+    <!-- Content description (not visible, for screen readers etc.): This is the description for the
+    close button from promote search widget dialog. -->
     <string name="promote_search_widget_dialog_content_description">閉じる</string>
 
     !-- Content description (not visible, for screen readers etc.): This is the description for
     picture of search widget from promote search widget dialog. --&gt;
+    <!-- Content description (not visible, for screen readers etc.): This is the description for
+    picture of search widget from promote search widget dialog. -->
     <string name="promote_search_widget_dialog_picture_content_description">検索ウィジェット</string>
 
     !-- This is the title of promote search widget dialog. --&gt;
+    <!-- This is the title of promote search widget dialog. -->
     <string name="promote_search_widget_dialog_title">ブラウジング履歴を消去しました🎉</string>
 
     !-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
@@ -1041,13 +1052,19 @@
 
     !-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
     of the app (e.g. &quot;Focus&quot;) --&gt;
+    <!-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
+    of the app (e.g. "Focus") -->
     <string name="promote_search_widget_dialog_subtitle">プライベート ブラウジングはお任せしますが、次回はホーム画面の %1$s ウィジェットですばやく開始できます。</string>
 
     !-- This is te text from add search widget to home screen button .The button is located on
     promote search widget dialog. --&gt;
+    <!-- This is te text from add search widget to home screen button .The button is located on
+    promote search widget dialog. -->
     <string name="promote_search_widget_button_text">ホーム画面にウィジェットを追加</string>
 
     !-- This is te text of the snackbar that appears after the search widget was added successfully
     to the home screen. --&gt;
+    <!-- This is te text of the snackbar that appears after the search widget was added successfully
+    to the home screen. -->
     <string name="promote_search_widget_snackbar_message">ホーム画面にウィジェットを追加しました</string>
 </resources>

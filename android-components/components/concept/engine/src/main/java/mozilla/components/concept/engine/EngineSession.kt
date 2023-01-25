@@ -277,6 +277,20 @@ abstract class EngineSession(
          * @param throwable The throwable from the exception.
          */
         fun onSaveToPdfException(throwable: Throwable) = Unit
+
+        /**
+         * Event to indicate that this session needs to be checked for form data.
+         *
+         * @param containsFormData Indicates if the session has form data.
+         */
+        fun onCheckForFormData(containsFormData: Boolean) = Unit
+
+        /**
+         * Event to indicate that an exception was thrown while checking for form data.
+         *
+         * @param throwable The throwable from the exception.
+         */
+        fun onCheckForFormDataException(throwable: Throwable) = Unit
     }
 
     /**
@@ -535,11 +549,6 @@ abstract class EngineSession(
          * Reject cookies if possible. If rejecting is not possible, accept cookies
          */
         REJECT_OR_ACCEPT_ALL(2),
-
-        /**
-         * Detect cookie banners but do not handle them.
-         */
-        DETECT_ONLY(3),
     }
 
     /**
@@ -809,6 +818,11 @@ abstract class EngineSession(
      * @param priority the new priority for this session.
      */
     open fun updateSessionPriority(priority: SessionPriority) = Unit
+
+    /**
+     * Checks this session for existing user form data.
+     */
+    open fun checkForFormData() = Unit
 
     /**
      * Purges the history for the session (back and forward history).
