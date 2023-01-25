@@ -9,12 +9,12 @@ permalink: /changelog/
 * [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/Gecko.kt)
 * [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/.config.yml)
 
-* **browser-toolbar**
-  * ⚠️ **This is a breaking change**: `BrowserToolbarBehavior` will not position the `Snackbar.SnackbarLayout` anymore. The ownership for the positioning behavior should be reversed with the snackbar choosing whether it want to be shown above the toolbar and exactly how.
+* **concept-engine**
+  * 🆕 Added `Settings.cookieBannerHandlingDetectOnlyMode` which helps to detect cookie banner events without handle the banners + indicating the mode of the events, see [bug 1810743](https://bugzilla.mozilla.org/show_bug.cgi?id=1810743)
+  * ⚠️ **This is a breaking change**: Removed `CookieBannerMode.MODE_DETECT_ONLY` use `Settings.cookieBannerHandlingDetectOnlyMode` instead.
 
-* **feature-downloads**:
-  * 🌟️ `DownloadsFeature` now allows passing a download dialog delegate for 1st party downloads through a new `customDownloadDialog` parameter.
-  * 🌟 `DownloadsFeature` now allows passing a download dialog delegate for 3rd party downloads through a new `customThirdPartyDownloadDialog` parameter.
+* **feature-webnotifications**
+  * 🌟 Added support for silent web notifications. Default importance level for web notifications was set to `IMPORTANCE_DEFAULT`.[bug #1796766](https://bugzilla.mozilla.org/show_bug.cgi?id=1796766).
 
 * **feature-media**
   * 🚒 Bug fixed [bug #1802620](https://bugzilla.mozilla.org/show_bug.cgi?id=1802620). Handles `ForegroundServiceStartNotAllowedException`.

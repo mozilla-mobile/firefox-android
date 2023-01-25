@@ -310,6 +310,7 @@ class GeckoEngineTest {
 
         assertEquals(contentBlockingSettings.cookieBannerMode, EngineSession.CookieBannerHandlingMode.DISABLED.mode)
         assertEquals(contentBlockingSettings.cookieBannerModePrivateBrowsing, EngineSession.CookieBannerHandlingMode.DISABLED.mode)
+        assertEquals(contentBlockingSettings.cookieBannerDetectOnlyMode, engine.settings.cookieBannerHandlingDetectOnlyMode)
 
         try {
             engine.settings.domStorageEnabled
@@ -539,11 +540,30 @@ class GeckoEngineTest {
     }
 
     @Test
+    fun `setCookieBannerHandlingDetectOnlyMode is only invoked when the value is changed`() {
+        val mockRuntime = mock<GeckoRuntime>()
+        val settings = spy(ContentBlocking.Settings.Builder().build())
+        whenever(mockRuntime.settings).thenReturn(mock())
+        whenever(mockRuntime.settings.contentBlocking).thenReturn(settings)
+
+        val engine = GeckoEngine(testContext, runtime = mockRuntime)
+
+        engine.settings.cookieBannerHandlingDetectOnlyMode = true
+
+        verify(mockRuntime.settings.contentBlocking).setCookieBannerDetectOnlyMode(true)
+
+        reset(settings)
+
+        engine.settings.cookieBannerHandlingDetectOnlyMode = true
+
+        verify(mockRuntime.settings.contentBlocking, never()).setCookieBannerDetectOnlyMode(true)
+    }
+
+    @Test
     fun `Cookie banner handling settings are aligned`() {
         assertEquals(ContentBlocking.CookieBannerMode.COOKIE_BANNER_MODE_DISABLED, EngineSession.CookieBannerHandlingMode.DISABLED.mode)
         assertEquals(ContentBlocking.CookieBannerMode.COOKIE_BANNER_MODE_REJECT, EngineSession.CookieBannerHandlingMode.REJECT_ALL.mode)
         assertEquals(ContentBlocking.CookieBannerMode.COOKIE_BANNER_MODE_REJECT_OR_ACCEPT, EngineSession.CookieBannerHandlingMode.REJECT_OR_ACCEPT_ALL.mode)
-        assertEquals(ContentBlocking.CookieBannerMode.COOKIE_BANNER_MODE_DETECT_ONLY, EngineSession.CookieBannerHandlingMode.DETECT_ONLY.mode)
     }
 
     @Test

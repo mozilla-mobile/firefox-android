@@ -666,6 +666,16 @@ class GeckoEngine(
                 field = value
             }
 
+        override var cookieBannerHandlingDetectOnlyMode: Boolean = false
+            set(value) {
+                with(runtime.settings.contentBlocking) {
+                    if (this.cookieBannerDetectOnlyMode != value) {
+                        this.cookieBannerDetectOnlyMode = value
+                    }
+                }
+                field = value
+            }
+
         override var remoteDebuggingEnabled: Boolean
             get() = runtime.settings.remoteDebuggingEnabled
             set(value) { runtime.settings.remoteDebuggingEnabled = value }
@@ -768,6 +778,7 @@ class GeckoEngine(
             this.httpsOnlyMode = it.httpsOnlyMode
             this.cookieBannerHandlingMode = it.cookieBannerHandlingMode
             this.cookieBannerHandlingModePrivateBrowsing = it.cookieBannerHandlingModePrivateBrowsing
+            this.cookieBannerHandlingDetectOnlyMode = it.cookieBannerHandlingDetectOnlyMode
         }
     }
 
