@@ -33,6 +33,7 @@ import mozilla.components.browser.state.state.recover.RecoverableTab
 import mozilla.components.browser.state.state.recover.TabState
 import mozilla.components.concept.engine.Engine
 import mozilla.components.concept.engine.EngineSession
+import mozilla.components.concept.engine.EngineSession.CookieBannerHandlingStatus
 import mozilla.components.concept.engine.EngineSessionState
 import mozilla.components.concept.engine.HitResult
 import mozilla.components.concept.engine.content.blocking.Tracker
@@ -540,6 +541,12 @@ sealed class ContentAction : BrowserAction() {
         ContentAction()
 
     /**
+     * Updates the isSearch state of the [ContentState] with the given [sessionId].
+     */
+    data class UpdateIsSearchAction(val sessionId: String, val isSearch: Boolean) :
+        ContentAction()
+
+    /**
      * Updates the [SecurityInfoState] of the [ContentState] with the given [sessionId].
      */
     data class UpdateSecurityInfoAction(
@@ -784,6 +791,22 @@ sealed class ContentAction : BrowserAction() {
      * Updates whether the toolbar should be forced to expand or have it follow the default behavior.
      */
     data class UpdateExpandedToolbarStateAction(val sessionId: String, val expanded: Boolean) : ContentAction()
+
+    /**
+     * Updates the [ContentState] with the provided [tabId] to the appropriate priority based on any
+     * existing form data.
+     */
+    data class CheckForFormDataAction(val tabId: String, val containsFormData: Boolean) : ContentAction()
+
+    /**
+     * Lowers priority of the [tabId] to default after certain period of time
+     */
+    data class UpdatePriorityToDefaultAfterTimeoutAction(val tabId: String) : ContentAction()
+
+    /**
+     * Indicates the given [tabId] was unable to be checked for form data.
+     */
+    data class CheckForFormDataExceptionAction(val tabId: String, val throwable: Throwable) : ContentAction()
 }
 
 /**
@@ -818,6 +841,18 @@ sealed class TrackingProtectionAction : BrowserAction() {
      * Clears the [TrackingProtectionState.blockedTrackers] and [TrackingProtectionState.blockedTrackers] lists.
      */
     data class ClearTrackersAction(val tabId: String) : TrackingProtectionAction()
+}
+
+/**
+ * [BrowserAction] implementations related to updating the [SessionState.cookieBanner] of a single [SessionState] inside
+ * [BrowserState].
+ */
+sealed class CookieBannerAction : BrowserAction() {
+    /**
+     * Updates the [SessionState.cookieBanner] state or a a single [SessionState].
+     */
+    data class UpdateStatusAction(val tabId: String, val status: CookieBannerHandlingStatus) :
+        CookieBannerAction()
 }
 
 /**
@@ -1334,6 +1369,11 @@ sealed class HistoryMetadataAction : BrowserAction() {
  * [BrowserAction] implementations related to updating search engines in [SearchState].
  */
 sealed class SearchAction : BrowserAction() {
+    /**
+     * Refreshes the list of search engines.
+     */
+    object RefreshSearchEnginesAction : SearchAction()
+
     /**
      * Sets the [RegionState] (region of the user).
      */

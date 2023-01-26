@@ -38,7 +38,9 @@ import mozilla.components.feature.addons.databinding.MozacFeatureAddonsFragmentD
 import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.ktx.android.content.appName
 import mozilla.components.support.ktx.android.content.res.resolveAttribute
+import mozilla.components.support.utils.ext.getParcelableCompat
 import java.io.IOException
+import mozilla.components.ui.icons.R as iconsR
 
 @VisibleForTesting internal const val KEY_INSTALLED_ADDON = "KEY_ADDON"
 private const val KEY_DIALOG_GRAVITY = "KEY_DIALOG_GRAVITY"
@@ -72,7 +74,7 @@ class AddonInstallationDialogFragment : AppCompatDialogFragment() {
 
     private val safeArguments get() = requireNotNull(arguments)
 
-    internal val addon get() = requireNotNull(safeArguments.getParcelable<Addon>(KEY_ADDON))
+    internal val addon get() = requireNotNull(safeArguments.getParcelableCompat(KEY_ADDON, Addon::class.java))
     private var allowPrivateBrowsing: Boolean = false
 
     internal val confirmButtonRadius
@@ -163,7 +165,7 @@ class AddonInstallationDialogFragment : AppCompatDialogFragment() {
                 requireContext().appName,
             )
 
-        val icon = safeArguments.getParcelable<Bitmap>(KEY_ICON)
+        val icon = safeArguments.getParcelableCompat(KEY_ICON, Bitmap::class.java)
         if (icon != null) {
             binding.icon.setImageDrawable(BitmapDrawable(resources, icon))
         } else {
@@ -225,7 +227,10 @@ class AddonInstallationDialogFragment : AppCompatDialogFragment() {
                     val att = context.theme.resolveAttribute(android.R.attr.textColorPrimary)
                     iconView.setColorFilter(ContextCompat.getColor(context, att))
                     iconView.setImageDrawable(
-                        ContextCompat.getDrawable(context, R.drawable.mozac_ic_extensions),
+                        ContextCompat.getDrawable(
+                            context,
+                            iconsR.drawable.mozac_ic_extensions,
+                        ),
                     )
                 }
                 logger.error("Attempt to fetch the ${addon.id} icon failed", e)

@@ -5,14 +5,19 @@
 loader: taskgraph.loader.transform:loader
 
 kind-dependencies:
-    - build
+    - build-apk
+    - build-components
     - build-samples-browser
+    - docker-image
+    - external-gradle-dependencies
     - lint
+    - test-focus
+    - ui-test-focus
 
 transforms:
     - taskgraph.transforms.code_review:transforms
-    - ac_taskgraph.transforms.chunk:transforms
-    - ac_taskgraph.transforms.complete:transforms
+    - android_taskgraph.transforms.chunk:transforms
+    - android_taskgraph.transforms.complete:transforms
     - taskgraph.transforms.job:transforms
     - taskgraph.transforms.task:transforms
 
@@ -27,23 +32,25 @@ task-defaults:
     run:
         command:
             task-reference:
-                /builds/worker/checkouts/vcs/taskcluster/scripts/are_dependencies_completed.py {dependencies}
+                /builds/worker/checkouts/vcs/taskcluster/scripts/are_dependencies_completed.py <self>
         use-caches: false
         using: run-task
     notifications:
         by-geckoview-bump:
             nightly:
-                subject: "[Android-Components] Failed to update to geckoview nightly {geckoview_timestamp}"
-                message: "Please check https://github.com/mozilla-mobile/android-components/pull/{pull_request_number}"
+                subject: "[Android-Components] Failed to update geckoview nightly PR#{pull_request_number}"
+                message: "Please check {repository}/pull/{pull_request_number}"
                 emails:
-                    - android-components-team@mozilla.com
+                    - fenix-eng-notifications@mozilla.com
                     - geckoview-core@mozilla.com
             default: {}
 
 tasks:
     pr:
         description: PR Summary Task
-        run-on-tasks-for: [github-pull-request]
+        run-on-tasks-for:
+            - github-pull-request
+            - github-pull-request-untrusted
 
     push:
         description: Push Summary Task

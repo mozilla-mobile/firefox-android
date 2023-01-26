@@ -38,6 +38,8 @@ dependencies {
     implementation project(':support-ktx')
     implementation project(':support-utils')
 
+    implementation project(':ui-icons')
+
     implementation Dependencies.androidx_core_ktx
     implementation Dependencies.kotlin_stdlib
 
@@ -52,5 +54,6 @@ dependencies {
     testImplementation Dependencies.testing_coroutines
 }
 
+apply from: '../../../android-lint.gradle'
 apply from: '../../../publish.gradle'
 ext.configurePublish(config.componentsGroupId, archivesBaseName, project.ext.description)

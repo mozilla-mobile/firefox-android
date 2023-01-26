@@ -5,7 +5,6 @@
 package mozilla.components.concept.engine
 
 import android.content.Intent
-import android.graphics.Bitmap
 import androidx.annotation.CallSuper
 import mozilla.components.concept.engine.EngineSession.TrackingProtectionPolicy.CookiePolicy.ACCEPT_ALL
 import mozilla.components.concept.engine.EngineSession.TrackingProtectionPolicy.CookiePolicy.ACCEPT_FIRST_PARTY_AND_ISOLATE_OTHERS
@@ -49,9 +48,34 @@ abstract class EngineSession(
         fun onNavigationStateChange(canGoBack: Boolean? = null, canGoForward: Boolean? = null) = Unit
         fun onSecurityChange(secure: Boolean, host: String? = null, issuer: String? = null) = Unit
         fun onTrackerBlockingEnabledChange(enabled: Boolean) = Unit
+
+        /**
+         * Event to indicate a new [CookieBannerHandlingStatus] is available.
+         */
+        fun onCookieBannerChange(status: CookieBannerHandlingStatus) = Unit
         fun onTrackerBlocked(tracker: Tracker) = Unit
         fun onTrackerLoaded(tracker: Tracker) = Unit
         fun onNavigateBack() = Unit
+
+        /**
+         * Event to indicate that a url was loaded to this session.
+         */
+        fun onLoadUrl() = Unit
+
+        /**
+         * Event to indicate that the session was requested to navigate to a specified index.
+         */
+        fun onGotoHistoryIndex() = Unit
+
+        /**
+         * Event to indicate that the session was requested to render data.
+         */
+        fun onLoadData() = Unit
+
+        /**
+         * Event to indicate that the session was requested to navigate forward in history
+         */
+        fun onNavigateForward() = Unit
 
         /**
          * Event to indicate whether or not this [EngineSession] should be [excluded] from tracking protection.
@@ -77,7 +101,6 @@ abstract class EngineSession(
          * @param layoutInDisplayCutoutMode value of defined in https://developer.android.com/reference/android/view/WindowManager.LayoutParams#layoutInDisplayCutoutMode
          */
         fun onMetaViewportFitChanged(layoutInDisplayCutoutMode: Int) = Unit
-        fun onThumbnailChange(bitmap: Bitmap?) = Unit
         fun onAppPermissionRequest(permissionRequest: PermissionRequest) = permissionRequest.reject()
         fun onContentPermissionRequest(permissionRequest: PermissionRequest) = permissionRequest.reject()
         fun onCancelContentPermissionRequest(permissionRequest: PermissionRequest) = Unit
@@ -249,11 +272,25 @@ abstract class EngineSession(
         fun onHistoryStateChanged(historyList: List<HistoryItem>, currentIndex: Int) = Unit
 
         /**
-         * Event to indicate that an issue happened while generating a PDF.
+         * Event to indicate that an exception was thrown while generating a PDF.
          *
-         * @param throwable The list of items in the session history.
+         * @param throwable The throwable from the exception.
          */
-        fun onSaveToPdfError(throwable: Throwable) = Unit
+        fun onSaveToPdfException(throwable: Throwable) = Unit
+
+        /**
+         * Event to indicate that this session needs to be checked for form data.
+         *
+         * @param containsFormData Indicates if the session has form data.
+         */
+        fun onCheckForFormData(containsFormData: Boolean) = Unit
+
+        /**
+         * Event to indicate that an exception was thrown while checking for form data.
+         *
+         * @param throwable The throwable from the exception.
+         */
+        fun onCheckForFormDataException(throwable: Throwable) = Unit
     }
 
     /**
@@ -496,6 +533,7 @@ abstract class EngineSession(
     /**
      * Represents settings options for cookie banner handling.
      */
+    @Suppress("MagicNumber")
     enum class CookieBannerHandlingMode(val mode: Int) {
         /**
          * The feature is turned off and cookie banners are not handled
@@ -511,6 +549,26 @@ abstract class EngineSession(
          * Reject cookies if possible. If rejecting is not possible, accept cookies
          */
         REJECT_OR_ACCEPT_ALL(2),
+    }
+
+    /**
+     * Represents a status for cookie banner handling.
+     */
+    enum class CookieBannerHandlingStatus {
+        /**
+         * Indicates a cookie banner was detected.
+         */
+        DETECTED,
+
+        /**
+         * Indicates a cookie banner was handled.
+         */
+        HANDLED,
+
+        /**
+         * Indicates a cookie banner has not been detected yet.
+         */
+        NO_DETECTED,
     }
 
     /**
@@ -760,6 +818,11 @@ abstract class EngineSession(
      * @param priority the new priority for this session.
      */
     open fun updateSessionPriority(priority: SessionPriority) = Unit
+
+    /**
+     * Checks this session for existing user form data.
+     */
+    open fun checkForFormData() = Unit
 
     /**
      * Purges the history for the session (back and forward history).

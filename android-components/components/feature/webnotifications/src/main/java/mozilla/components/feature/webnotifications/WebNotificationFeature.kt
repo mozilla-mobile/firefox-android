@@ -77,7 +77,10 @@ class WebNotificationFeature(
             // upon installation.
             if (!webNotification.triggeredByWebExtension) {
                 val origin = webNotification.sourceUrl?.getOrigin() ?: return@launch
-                val permissions = sitePermissionsStorage.findSitePermissionsBy(origin)
+                val permissions = sitePermissionsStorage.findSitePermissionsBy(
+                    origin,
+                    private = webNotification.privateBrowsing,
+                )
                     ?: return@launch
 
                 if (!permissions.notification.isAllowed()) {
@@ -108,7 +111,7 @@ class WebNotificationFeature(
             val channel = NotificationChannel(
                 NOTIFICATION_CHANNEL_ID,
                 context.getString(R.string.mozac_feature_notification_channel_name),
-                NotificationManager.IMPORTANCE_LOW,
+                NotificationManager.IMPORTANCE_DEFAULT,
             )
             channel.setShowBadge(true)
             channel.lockscreenVisibility = NotificationCompat.VISIBILITY_PRIVATE

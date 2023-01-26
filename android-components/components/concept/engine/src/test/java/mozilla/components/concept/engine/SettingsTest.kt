@@ -129,7 +129,7 @@ class SettingsTest {
         assertNull(settings.clearColor)
         assertFalse(settings.enterpriseRootsEnabled)
         assertEquals(EngineSession.CookieBannerHandlingMode.DISABLED, settings.cookieBannerHandlingMode)
-        assertEquals(EngineSession.CookieBannerHandlingMode.REJECT_ALL, settings.cookieBannerHandlingModePrivateBrowsing)
+        assertEquals(EngineSession.CookieBannerHandlingMode.DISABLED, settings.cookieBannerHandlingModePrivateBrowsing)
 
         val interceptor: RequestInterceptor = mock()
         val historyTrackingDelegate: HistoryTrackingDelegate = mock()
@@ -168,6 +168,7 @@ class SettingsTest {
             enterpriseRootsEnabled = true,
             cookieBannerHandlingMode = EngineSession.CookieBannerHandlingMode.DISABLED,
             cookieBannerHandlingModePrivateBrowsing = EngineSession.CookieBannerHandlingMode.REJECT_ALL,
+            cookieBannerHandlingDetectOnlyMode = true,
         )
 
         assertFalse(defaultSettings.domStorageEnabled)
@@ -198,10 +199,10 @@ class SettingsTest {
         assertFalse(defaultSettings.fontInflationEnabled!!)
         assertEquals(2.0F, defaultSettings.fontSizeFactor)
         assertTrue(defaultSettings.forceUserScalableContent)
-        assertTrue(defaultSettings.loginAutofillEnabled)
         assertEquals(Color.BLUE, defaultSettings.clearColor)
         assertTrue(defaultSettings.enterpriseRootsEnabled)
         assertEquals(EngineSession.CookieBannerHandlingMode.DISABLED, defaultSettings.cookieBannerHandlingMode)
         assertEquals(EngineSession.CookieBannerHandlingMode.REJECT_ALL, defaultSettings.cookieBannerHandlingModePrivateBrowsing)
+        assertTrue(defaultSettings.cookieBannerHandlingDetectOnlyMode)
     }
 }

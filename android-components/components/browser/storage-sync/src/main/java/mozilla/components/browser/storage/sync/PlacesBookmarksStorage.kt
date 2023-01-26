@@ -8,7 +8,7 @@ import android.content.Context
 import androidx.annotation.VisibleForTesting
 import kotlinx.coroutines.withContext
 import mozilla.appservices.places.PlacesApi
-import mozilla.appservices.places.uniffi.PlacesException
+import mozilla.appservices.places.uniffi.PlacesApiException
 import mozilla.components.concept.storage.BookmarkInfo
 import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.concept.storage.BookmarksStorage
@@ -16,7 +16,6 @@ import mozilla.components.concept.sync.SyncAuthInfo
 import mozilla.components.concept.sync.SyncStatus
 import mozilla.components.concept.sync.SyncableStore
 import mozilla.components.support.base.log.logger.Logger
-import org.json.JSONObject
 
 /**
  * Implementation of the [BookmarksStorage] which is backed by a Rust Places lib via [PlacesApi].
@@ -125,15 +124,15 @@ open class PlacesBookmarksStorage(context: Context) : PlacesStorage(context), Bo
         return withContext(writeScope.coroutineContext) {
             try {
                 writer.createBookmarkItem(parentGuid, url, title, position)
-            } catch (e: PlacesException.UrlParseFailed) {
+            } catch (e: PlacesApiException.UrlParseFailed) {
                 // We re-throw this exception, it should be handled by the caller
                 throw e
-            } catch (e: PlacesException.UnexpectedPlacesException) {
+            } catch (e: PlacesApiException.UnexpectedPlacesException) {
                 // this is a fatal error, and should be rethrown
                 throw e
-            } catch (e: PlacesException) {
+            } catch (e: PlacesApiException) {
                 crashReporter?.submitCaughtException(e)
-                logger.warn("Ignoring PlacesException while running addItem", e)
+                logger.warn("Ignoring PlacesApiException while running addItem", e)
                 // Should not return an empty string here. The function should be nullable
                 // however, it is better than the app crashing.
                 ""
@@ -188,15 +187,15 @@ open class PlacesBookmarksStorage(context: Context) : PlacesStorage(context), Bo
         return withContext(writeScope.coroutineContext) {
             try {
                 writer.updateBookmark(guid, info.parentGuid, info.position, info.title, info.url)
-            } catch (e: PlacesException.CannotUpdateRoot) {
+            } catch (e: PlacesApiException.InvalidBookmarkOperation) {
                 // We re-throw this exception, it should be handled by the caller
                 throw e
-            } catch (e: PlacesException.UnexpectedPlacesException) {
+            } catch (e: PlacesApiException.UnexpectedPlacesException) {
                 // this is a fatal error, and should be rethrown
                 throw e
-            } catch (e: PlacesException) {
+            } catch (e: PlacesApiException) {
                 crashReporter?.submitCaughtException(e)
-                logger.warn("Ignoring PlacesException while running updateNode", e)
+                logger.warn("Ignoring PlacesApiException while running updateNode", e)
             }
         }
     }
@@ -211,15 +210,15 @@ open class PlacesBookmarksStorage(context: Context) : PlacesStorage(context), Bo
     override suspend fun deleteNode(guid: String): Boolean = withContext(writeScope.coroutineContext) {
         try {
             writer.deleteBookmarkNode(guid)
-        } catch (e: PlacesException.CannotUpdateRoot) {
+        } catch (e: PlacesApiException.InvalidBookmarkOperation) {
             // We re-throw this exception, it should be handled by the caller
             throw e
-        } catch (e: PlacesException.UnexpectedPlacesException) {
+        } catch (e: PlacesApiException.UnexpectedPlacesException) {
             // this is a fatal error, and should be rethrown
             throw e
-        } catch (e: PlacesException) {
+        } catch (e: PlacesApiException) {
             crashReporter?.submitCaughtException(e)
-            logger.warn("Ignoring PlacesException while running deleteNode", e)
+            logger.warn("Ignoring PlacesApiException while running deleteNode", e)
             false
         }
     }
@@ -236,28 +235,6 @@ open class PlacesBookmarksStorage(context: Context) : PlacesStorage(context), Bo
                 places.syncBookmarks(authInfo)
             }
         }
-    }
-
-    /**
-     * Import bookmarks data from Fennec's browser.db file.
-     * Before running this, first run [PlacesHistoryStorage.importFromFennec] to import history and visits data.
-     *
-     * @param dbPath Absolute path to Fennec's browser.db file.
-     * @return Migration metrics wrapped in a JSON object. See libplaces for schema details.
-     */
-    @Throws(PlacesException::class)
-    fun importFromFennec(dbPath: String): JSONObject {
-        return places.importBookmarksFromFennec(dbPath)
-    }
-
-    /**
-     * Read pinned sites from Fennec's browser.db file.
-     *
-     * @param dbPath Absolute path to Fennec's browser.db file.
-     * @return A list of [BookmarkNode] which represent pinned sites.
-     */
-    fun readPinnedSitesFromFennec(dbPath: String): List<BookmarkNode> {
-        return places.readPinnedSitesFromFennec(dbPath)
     }
 
     override fun registerWithSyncManager() {

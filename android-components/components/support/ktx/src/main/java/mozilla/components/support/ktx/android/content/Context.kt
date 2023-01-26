@@ -39,14 +39,15 @@ import mozilla.components.support.base.log.Log
 import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.ktx.R
 import mozilla.components.support.ktx.android.content.res.resolveAttribute
+import mozilla.components.support.utils.ext.getPackageInfoCompat
 import java.io.File
 
 /**
  * The (visible) version name of the application, as specified by the <manifest> tag's versionName
  * attribute. E.g. "2.0".
  */
-val Context.appVersionName: String?
-    get() = packageManager.getPackageInfo(packageName, 0).versionName
+val Context.appVersionName: String
+    get() = packageManager.getPackageInfoCompat(packageName, 0).versionName
 
 /**
  * Returns the name (label) of the application or the package name as a fallback.
@@ -106,11 +107,12 @@ fun Context.share(text: String, subject: String = getString(R.string.mozac_suppo
             flags = FLAG_ACTIVITY_NEW_TASK
         }
 
-        val shareIntent = Intent.createChooser(intent, getString(R.string.mozac_support_ktx_menu_share_with)).apply {
-            flags = FLAG_ACTIVITY_NEW_TASK
-        }
-
-        startActivity(shareIntent)
+        startActivity(
+            intent.createChooserExcludingCurrentApp(
+                this,
+                getString(R.string.mozac_support_ktx_menu_share_with),
+            ),
+        )
         true
     } catch (e: ActivityNotFoundException) {
         Log.log(Log.Priority.WARN, message = "No activity to share to found", throwable = e, tag = "Reference-Browser")

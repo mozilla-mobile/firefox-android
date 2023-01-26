@@ -35,6 +35,7 @@ dependencies {
     implementation project(':concept-menu')
     implementation project(':browser-menu2')
     implementation project(':support-base')
+    implementation project(':ui-icons')
 
     testImplementation project(":support-test")
 
@@ -43,5 +44,6 @@ dependencies {
     testImplementation Dependencies.testing_mockito
 }
 
+apply from: '../../../android-lint.gradle'
 apply from: '../../../publish.gradle'
 ext.configurePublish(config.componentsGroupId, archivesBaseName, project.ext.description)

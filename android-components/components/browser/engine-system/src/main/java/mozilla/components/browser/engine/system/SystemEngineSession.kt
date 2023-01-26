@@ -8,6 +8,7 @@ import android.content.Context
 import android.webkit.CookieManager
 import android.webkit.WebChromeClient
 import android.webkit.WebSettings
+import android.webkit.WebSettings.LOAD_NO_CACHE
 import android.webkit.WebStorage
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -78,6 +79,8 @@ class SystemEngineSession(
         flags: LoadUrlFlags,
         additionalHeaders: Map<String, String>?,
     ) {
+        notifyObservers { onLoadUrl() }
+
         val headers =
             if (additionalHeaders == null) {
                 xRequestHeader
@@ -96,6 +99,7 @@ class SystemEngineSession(
      */
     override fun loadData(data: String, mimeType: String, encoding: String) {
         webView.loadData(data, mimeType, encoding)
+        notifyObservers { onLoadData() }
     }
 
     override fun requestPdfToDownload() {
@@ -132,6 +136,9 @@ class SystemEngineSession(
      */
     override fun goForward(userInteraction: Boolean) {
         webView.goForward()
+        if (webView.canGoForward()) {
+            notifyObservers { onNavigateForward() }
+        }
     }
 
     /**
@@ -140,6 +147,7 @@ class SystemEngineSession(
     override fun goToHistoryIndex(index: Int) {
         val historyList = webView.copyBackForwardList()
         webView.goBackOrForward(index - historyList.currentIndex)
+        notifyObservers { onGotoHistoryIndex() }
     }
 
     /**
@@ -264,9 +272,7 @@ class SystemEngineSession(
         webView.settings.apply {
             // Explicitly set global defaults.
 
-            @Suppress("DEPRECATION")
-            // Deprecation will be handled in https://github.com/mozilla-mobile/android-components/issues/8512
-            setAppCacheEnabled(false)
+            cacheMode = LOAD_NO_CACHE
             databaseEnabled = false
 
             setDeprecatedWebSettings(this)

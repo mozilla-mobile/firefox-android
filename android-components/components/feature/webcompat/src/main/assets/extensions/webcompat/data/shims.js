@@ -189,7 +189,7 @@ const AVAILABLE_SHIMS = [
     onlyIfBlockedByETP: true,
   },
   {
-    id: "AdvertisingDotCom",
+    id: "AdvertisingCom",
     platform: "all",
     name: "advertising.com",
     bug: "1701685",
@@ -213,7 +213,7 @@ const AVAILABLE_SHIMS = [
         onlyIfBlockedByETP: true,
       },
       {
-        patterns: ["https://redirect.firefox.etp/adsafeprotected_pixel"],
+        patterns: ["https://redirect.firefox.etp/advertisingdotcom_pixel"],
         target: "tracking-pixel.png",
         types: ["image", "imageset", "xmlhttprequest"],
       },
@@ -703,6 +703,20 @@ const AVAILABLE_SHIMS = [
       },
     ],
     onlyIfDFPIActive: true,
+  },
+  {
+    id: "MicrosoftVirtualAssistant",
+    platform: "all",
+    name: "Microsoft Virtual Assistant",
+    bug: "1801277",
+    contentScripts: [
+      {
+        js: "microsoftVirtualAssistant.js",
+        matches: ["*://publisher.liveperson.net/*"],
+        runAt: "document_start",
+        allFrames: true,
+      },
+    ],
   },
   {
     id: "History",

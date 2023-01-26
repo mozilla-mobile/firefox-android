@@ -34,7 +34,7 @@ buildscript {
 }
 
 plugins {
-    id("io.gitlab.arturbosch.detekt").version("1.19.0")  // Check version number in `Versions.detekt` (Dependencies.kt)
+    id("io.gitlab.arturbosch.detekt").version("1.19.0")  // Check version number in `Versions.detekt` (DependenciesPlugin.kt)
 }
 
 allprojects {
@@ -213,24 +213,6 @@ subprojects {
                     unitTests {
                         includeAndroidResources = true
                     }
-                }
-
-                lintOptions {
-                    warningsAsErrors true
-                    abortOnError (project.name != "support-test")
-
-                            // With our L10N process its totally possible to have missing or (temporarily) extra translations.
-                    disable 'MissingTranslation',
-                            'ExtraTranslation',
-                            // We do not want to enforce this as a generic rule for all languages (see #6117, #6056, #6118)
-                            'TypographyEllipsis',
-                            // https://github.com/mozilla-mobile/android-components/issues/10641
-                            'UnspecifiedImmutableFlag',
-                            // https://github.com/mozilla-mobile/android-components/issues/10643
-                            'UnusedResources',
-                            // "We do not impose rules on locales"
-                            // https://github.com/mozilla-mobile/android-components/pull/11069
-                            'TypographyDashes'
                 }
 
                 packagingOptions {
@@ -432,9 +414,11 @@ tasks.register("githubBuildDetails", GithubDetailsTask) {
 }
 
 tasks.register("githubLintDetektDetails", GithubDetailsTask) {
-    text = """### Test result files
+    text = "### [Detekt Results Android-Components]({reportsUrl}/detekt.html)"
+}
 
-- [Detekt Results]({reportsUrl}/detekt.html)"""
+tasks.register("githubLintAndroidDetails", GithubDetailsTask) {
+    text = "### [Android Lint Results Android-Components]({reportsUrl}/lint-results-debug.html)"
 }
 
 tasks.register("testToolsDir", Exec) {

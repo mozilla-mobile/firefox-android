@@ -3,12 +3,127 @@ layout: page
 title: Changelog
 permalink: /changelog/
 ---
-# 108.0.0 (In Development)
-* [Commits](https://github.com/mozilla-mobile/android-components/compare/v107.0.0...main)
-* [Milestone](https://github.com/mozilla-mobile/android-components/milestone/155?closed=1)
-* [Dependencies](https://github.com/mozilla-mobile/android-components/blob/main/buildSrc/src/main/java/Dependencies.kt)
-* [Gecko](https://github.com/mozilla-mobile/android-components/blob/main/buildSrc/src/main/java/Gecko.kt)
-* [Configuration](https://github.com/mozilla-mobile/android-components/blob/main/.config.yml)
+# 111.0.0 (In Development)
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/v110.0.0...main)
+* [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
+* [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/Gecko.kt)
+* [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/.config.yml)
+
+* **feature-downloads**:
+  * 🌟️ `DownloadsFeature` now allows passing a download dialog delegate for 1st party downloads through a new `customDownloadDialog` parameter. [Bug 1812518](https://bugzilla.mozilla.org/show_bug.cgi?id=1812518)
+  * 🌟 `DownloadsFeature` now allows passing a download dialog delegate for 3rd party downloads through a new `customThirdPartyDownloadDialog` parameter. [Bug 1812518](https://bugzilla.mozilla.org/show_bug.cgi?id=1812518)
+
+* **browser-toolbar**
+  * ⚠️ **This is a breaking change**: `BrowserToolbarBehavior` will not position the `Snackbar.SnackbarLayout` anymore. The ownership for the positioning behavior should be reversed with the snackbar choosing whether it want to be shown above the toolbar and exactly how. [Bug 1812518](https://bugzilla.mozilla.org/show_bug.cgi?id=1812518)
+
+* **browser-engine-gecko**
+  * 🚒 Bug fixed [bug 1811183](https://bugzilla.mozilla.org/show_bug.cgi?id=1811183). Handles non-digit values for `DateTimePrompt.stepValue`.
+
+* **concept-engine**
+  * 🌟 Expose the release channel of GeckoView through a new `releaseChannel` property of `EngineVersion`. [bug #1811448](https://bugzilla.mozilla.org/show_bug.cgi?id=1811448).
+
+* **concept-engine**
+  * 🆕 Added `Settings.cookieBannerHandlingDetectOnlyMode` which helps to detect cookie banner events without handle the banners + indicating the mode of the events, see [bug 1810743](https://bugzilla.mozilla.org/show_bug.cgi?id=1810743)
+  * ⚠️ **This is a breaking change**: Removed `CookieBannerMode.MODE_DETECT_ONLY` use `Settings.cookieBannerHandlingDetectOnlyMode` instead.
+
+* **feature-webnotifications**
+  * 🌟 Added support for silent web notifications. Default importance level for web notifications was set to `IMPORTANCE_DEFAULT`.[bug #1796766](https://bugzilla.mozilla.org/show_bug.cgi?id=1796766).
+
+* **feature-media**
+  * 🚒 Bug fixed [bug #1802620](https://bugzilla.mozilla.org/show_bug.cgi?id=1802620). Handles `ForegroundServiceStartNotAllowedException`.
+
+# 110.0.0
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/v109.0.0...v110.0.0)
+* [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/v110.0.0/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
+* [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/v110.0.0/android-components/plugins/dependencies/src/main/java/Gecko.kt)
+* [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/v110.0.0/android-components/.config.yml)
+
+* **support-telemetry-sync**
+  * 🚒 Bug fixed [bug #1804996](https://bugzilla.mozilla.org/show_bug.cgi?id=1804996). Removed fpsa, ftas, ftsa and ffos DDG type tags and replaced them with fpas.
+
+* **lib-crash**
+  * 🚒 Bug fixed [bug 1802975](https://bugzilla.mozilla.org/show_bug.cgi?id=1802975). Allow crash dumps to be shared using a11y services.
+
+* **concept-engine**
+  * 🌟️️ Add `CookieBannerHandlingStatus` to `SessionState` instance to indicate the status of the given session state see more on [bug #1797568](https://bugzilla.mozilla.org/show_bug.cgi?id=1797568).
+
+* **feature-share**
+  * 🚒 Bug fixed [bug #1806411](https://bugzilla.mozilla.org/show_bug.cgi?id=1806411). Remove image link from share message when sharing an image.
+
+* **concept-engine**
+* 🆕 Added `CookieBannerMode.MODE_DETECT_ONLY`, this help to dected cookie banner events without handle the banners see [bug #1806435](https://bugzilla.mozilla.org/show_bug.cgi?id=1804594)
+
+* **browser-state**, **feature-search**
+  * Added a new parameter `isGeneral` to `SearchEngine` to specify whether or not the search engine is a general search engine (eg, provides broad search results). Search engines read from storage will now have this parameter set based on a list of general search engines. [bug #1804594](https://bugzilla.mozilla.org/show_bug.cgi?id=1804594)
+  * Added Selector `BrowserState.findNormalOrPrivateTabByUrlIgnoringFragment` to match urls ignoring the fragment/anchor of the url, allowing `SelectorAddUseCase` to use this functionality.
+
+* **feature-tabs**
+  * Added `ignoreFragment` param in `SelectOrAddUseCase` to match urls ignoring the anchor/fragment. This sets the the foundation to fix [bug 1796319](https://bugzilla.mozilla.org/show_bug.cgi?id=1796319).
+
+* **lib-crash-sentry**
+  * 🚒 Bug fixed [bug #1801349](https://bugzilla.mozilla.org/show_bug.cgi?id=1801349).  Properly synchronize access to the crash reporter breadcrumb list.
+
+* **feature-prompts**:
+  * Added permission requests for accessing media files (`READ_MEDIA_AUDIO`, `READ_MEDIA_AUDIO`, `READ_MEDIA_AUDIO`) when uploading files on devices with Android 13 and later.
+
+* **feature-awesomebar**
+  * `SuggestionProviderGroup` now has a new parameter `priority` that decides the order of this group in the AwesomeBar suggestions. Priority is same as the `score` of `AwesomeBar.Suggestions`. Group having the highest integer value will have the highest priority.
+
+* **concept-toolbar**
+  * Added optional parameter `cursorPlacement` to `editMode` which allows cursor placement to be specified when switching to edit mode.
+
+* **feature-toolbar**
+  * 🆕 Added a new parameter `shouldDisplaySearchTerms` to `ToolbarFeature` which allows clients to specify if the search terms should be shown instead of the URL when the toolbar is in display mode. [Bug 1805164](https://bugzilla.mozilla.org/show_bug.cgi?id=1805164)
+
+* **browser-engine-gecko**
+  * 🆕 Added `GeckoCookieBannersStorage.addPersistentExceptionInPrivateMode` to allow to add persistent cookie banner exceptions in private browsing [bug #1797605](https://bugzilla.mozilla.org/show_bug.cgi?id=1806924).
+
+# 109.0.0
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/v108.0.0...v109.0.0)
+* [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/v109.0.0/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
+* [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/v109.0.0/android-components/plugins/dependencies/src/main/java/Gecko.kt)
+* [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/v109.0.0/android-components/.config.yml)
+
+* **support-ktx, feature-contextmenu**
+  * 🚒 Bug fixed [bug #1798873](https://bugzilla.mozilla.org/show_bug.cgi?id=1798873) Added a way to exclude current app from share targets. Used when sharing text.
+
+* **feature-top-sites**
+  * 🆕 A new filter `hasHost` was added when getting top frecent sites in order to remove duplicate frecent top sites that have same host/domain as provided top sites. For more references see [bug #1801285](https://bugzilla.mozilla.org/show_bug.cgi?id=1801285).
+
+* **browser-menu**:
+  * 🚒 Bug Fixed [bug #1800885](https://bugzilla.mozilla.org/show_bug.cgi?id=1800885) Increase touch target of Add/Edit checkbox from `mozac_browser_menu_item_image_text_checkbox_button.xml` to improve accessibility.
+
+* **All components**
+  * ⚠️Increased `compileSdkVersion` to 33 (Android 13)
+* **feature-awesomebar**
+  * `SearchSuggestionProvider` and `SearchActionProvider` now have a new parameter `suggestionsHeader`, to add title to suggestions.
+
+* **support-ktx**:
+  * Added `String.toShortUrl` extension that allows making URLs more user friendly [#1796379](https://bugzilla.mozilla.org/show_bug.cgi?id=1796379)
+
+* **browser-engine-gecko**
+  * 🆕 Added `GeckoCookieBannersStorage.kt` to manage cookie banner exceptions [bug #1797605](https://bugzilla.mozilla.org/show_bug.cgi?id=1797605).
+
+* **concept-engine**
+  * 🚒 Bug fixed [bug #1801648](https://bugzilla.mozilla.org/show_bug.cgi?id=1801648). Fix autoplay settings are not getting updated in private mode.
+
+* **browser-storage-sync**
+  * Removed Fennec to Fenix migration code. Deleted the `importVisitsFromFennec`, `importBookmarksFromFennec` and `readPinnedSitesFromFennec` functions. [bug #1803632](https://bugzilla.mozilla.org/show_bug.cgi?id=1803632)
+
+* **service-sync-logins**
+  * Removed Fennec to Fenix migration code. Deleted `importLoginsAsync` function. [bug #1803632](https://bugzilla.mozilla.org/show_bug.cgi?id=1803632)
+
+* **lib-crash-sentry**
+  * 🚒 Bug fixed [bug #1801349](https://bugzilla.mozilla.org/show_bug.cgi?id=1801349).  Copy the breadcrumb date to the Sentry breadcrumb.
+
+# 108.0.0
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/v107.0.0...v108.0.0)
+* [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/v108.0.0/android-components/buildSrc/src/main/java/Dependencies.kt)
+* [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/v108.0.0/android-components/buildSrc/src/main/java/Gecko.kt)
+* [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/v108.0.0/android-components/.config.yml)
+
+* **feature-search**
+  * 🆕 A new action `RefreshSearchEnginesAction` was added to the `BrowserAction` to allow for refreshing search engines when app locale is changed. For more references see [bug #1800209](https://bugzilla.mozilla.org/show_bug.cgi?id=1800209).
 
 * **feature-readerview**:
   * [bug #1798672](https://bugzilla.mozilla.org/show_bug.cgi?id=1798672) Reader view font controls have adaptive font sizes to support smaller width devices.
@@ -18,6 +133,7 @@ permalink: /changelog/
 
 * **concept-engine**
   * [bug #1798359](https://bugzilla.mozilla.org/show_bug.cgi?id=1798359) Set Total Cookie Protection as the default cookie policy for all Tracking Protection modes. Read more about Total Cookie Protection [here](https://blog.mozilla.org/en/mozilla/firefox-rolls-out-total-cookie-protection-by-default-to-all-users-worldwide/).
+  * Renamed `EngineSession.onSaveToPdfError` to `EngineSession.onSaveToPdfException`.
 
 * **browser-engine-gecko**
   * 🆕 A new action `SaveToPdfExceptionAction` was added to the `EngineAction` to allow for notifying consumers on unsuccessful Save to PDF requests. For more references see [bug #1796482](https://bugzilla.mozilla.org/show_bug.cgi?id=1796482).
@@ -31,7 +147,7 @@ permalink: /changelog/
 
 * **concept-engine**:
   * Added support for changing the cookie banner handling setting in regular and private browsing. [Bugzilla](https://bugzilla.mozilla.org/show_bug.cgi?id=1796144)
-  
+
 * **concept-storage**:
   * 🆕 New API: `StorageMaintenanceRegistry` in `concept-storage` that deals with registering/unregistering storage maintenance workers.
   * ⚠️ **This is a breaking change**: Added a new parameter `dbSizeLimit` to `Storage.runMaintenance` API to indicate Maximum DB size to aim for, in bytes.
@@ -47,6 +163,14 @@ permalink: /changelog/
 * **service-glean**
   * Re-export TextMetricType, RateMetricType, DenominatorMetricType, NumeratorMetricType to make them usable by applications [#13010](https://github.com/mozilla-mobile/android-components/pull/13010)
 
+* **browser-state**:
+  * `UpdateThumbnailAction` and `RemoveThumbnailAction` now throw an exception if those actions are not handled with a middleware.
+  * See `BrowserThumbnails` and `ThumbnailsMiddleware` for example usages within other features.
+  * Removed handling of `LowMemoryAction` in `SystemReducer` on in-memory thumbnails.
+
+* **browser-tabstray**:
+  * `TabViewHolder` no longer checks if a thumbnail is in memory before retrieving a thumbnail from the `ImageLoader`.
+
 # 107.0.0
 * [Commits](https://github.com/mozilla-mobile/android-components/compare/v106.0.0..v107.0.0)
 * [Milestone](https://github.com/mozilla-mobile/android-components/milestone/154?closed=1)
@@ -55,7 +179,7 @@ permalink: /changelog/
 * [Configuration](https://github.com/mozilla-mobile/android-components/blob/v107.0.0/.config.yml)
 
 * **feature-syncedtabs**
-  * 🚒 Bug fixed [issue #12930](https://github.com/mozilla-mobile/android-components/issues/12930) Ensure `DefaultPresenter` will unregister it's `FxaAccountManager` observers when it's `lifecycleOwner` is stopped to prevent memory leaks. 
+  * 🚒 Bug fixed [issue #12930](https://github.com/mozilla-mobile/android-components/issues/12930) Ensure `DefaultPresenter` will unregister it's `FxaAccountManager` observers when it's `lifecycleOwner` is stopped to prevent memory leaks.
 
 * **feature-app-links**
   * 🚒 Bug fixed [issue #12804](https://github.com/mozilla-mobile/android-components/issues/12804) Speculative fix for a TransactionTooLargeException or RuntimeException when querying activities.

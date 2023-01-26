@@ -110,6 +110,7 @@ class GeckoEngineSession(
 
     internal var job: Job = Job()
     private var canGoBack: Boolean = false
+    private var canGoForward: Boolean = false
 
     /**
      * See [EngineSession.settings]
@@ -166,6 +167,8 @@ class GeckoEngineSession(
         flags: LoadUrlFlags,
         additionalHeaders: Map<String, String>?,
     ) {
+        notifyObservers { onLoadUrl() }
+
         val scheme = Uri.parse(url).normalizeScheme().scheme
         if (BLOCKED_SCHEMES.contains(scheme) && !shouldLoadJSSchemes(scheme, flags)) {
             logger.error("URL scheme not allowed. Aborting load.")
@@ -210,6 +213,7 @@ class GeckoEngineSession(
             "base64" -> geckoSession.load(GeckoSession.Loader().data(data.toByteArray(), mimeType))
             else -> geckoSession.load(GeckoSession.Loader().data(data, mimeType))
         }
+        notifyObservers { onLoadData() }
     }
 
     /**
@@ -263,7 +267,7 @@ class GeckoEngineSession(
                 // Log the error. There is nothing we can do otherwise.
                 logger.error("Save to PDF failed.", throwable)
                 notifyObservers {
-                    onSaveToPdfError(throwable)
+                    onSaveToPdfException(throwable)
                 }
                 GeckoResult()
             },
@@ -304,6 +308,9 @@ class GeckoEngineSession(
      */
     override fun goForward(userInteraction: Boolean) {
         geckoSession.goForward(userInteraction)
+        if (canGoForward) {
+            notifyObservers { onNavigateForward() }
+        }
     }
 
     /**
@@ -311,6 +318,7 @@ class GeckoEngineSession(
      */
     override fun goToHistoryIndex(index: Int) {
         geckoSession.gotoHistoryIndex(index)
+        notifyObservers { onGotoHistoryIndex() }
     }
 
     /**
@@ -514,6 +522,28 @@ class GeckoEngineSession(
     }
 
     /**
+     * See [EngineSession.checkForFormData].
+     */
+    override fun checkForFormData() {
+        geckoSession.containsFormData().then(
+            { result ->
+                if (result == null) {
+                    logger.error("No result from GeckoView containsFormData.")
+                    return@then GeckoResult<Boolean>()
+                }
+                notifyObservers { onCheckForFormData(result) }
+                GeckoResult<Boolean>()
+            },
+            { throwable ->
+                notifyObservers {
+                    onCheckForFormDataException(throwable)
+                }
+                GeckoResult<Boolean>()
+            },
+        )
+    }
+
+    /**
      * Purges the history for the session (back and forward history).
      */
     override fun purgeHistory() {
@@ -569,6 +599,10 @@ class GeckoEngineSession(
             notifyObservers {
                 onExcludedOnTrackingProtectionChange(isIgnoredForTrackingProtection())
             }
+            // Re-set the status of cookie banner handling when the user navigates to another site.
+            notifyObservers {
+                onCookieBannerChange(CookieBannerHandlingStatus.NO_DETECTED)
+            }
             notifyObservers { onLocationChange(url) }
         }
 
@@ -623,6 +657,7 @@ class GeckoEngineSession(
 
         override fun onCanGoForward(session: GeckoSession, canGoForward: Boolean) {
             notifyObservers { onNavigationStateChange(canGoForward = canGoForward) }
+            this@GeckoEngineSession.canGoForward = canGoForward
         }
 
         override fun onCanGoBack(session: GeckoSession, canGoBack: Boolean) {
@@ -884,6 +919,14 @@ class GeckoEngineSession(
 
     @Suppress("ComplexMethod", "NestedBlockDepth")
     internal fun createContentDelegate() = object : GeckoSession.ContentDelegate {
+        override fun onCookieBannerDetected(session: GeckoSession) {
+            notifyObservers { onCookieBannerChange(CookieBannerHandlingStatus.DETECTED) }
+        }
+
+        override fun onCookieBannerHandled(session: GeckoSession) {
+            notifyObservers { onCookieBannerChange(CookieBannerHandlingStatus.HANDLED) }
+        }
+
         override fun onFirstComposite(session: GeckoSession) = Unit
 
         override fun onFirstContentfulPaint(session: GeckoSession) {

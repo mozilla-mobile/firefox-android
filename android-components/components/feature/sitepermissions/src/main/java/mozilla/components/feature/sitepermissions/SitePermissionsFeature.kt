@@ -68,6 +68,7 @@ import mozilla.components.support.ktx.kotlin.stripDefaultPort
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.filterChanged
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import java.security.InvalidParameterException
+import mozilla.components.ui.icons.R as iconsR
 
 internal const val FRAGMENT_TAG = "mozac_feature_sitepermissions_prompt_dialog"
 
@@ -230,6 +231,7 @@ class SitePermissionsFeature(
         sitePermissionScope?.cancel()
         appPermissionScope?.cancel()
         loadingScope?.cancel()
+        storage.clearTemporaryPermissions()
     }
 
     /**
@@ -380,7 +382,7 @@ class SitePermissionsFeature(
         coroutineScope.launch {
             request.uri?.getOrigin()?.let { origin ->
                 var sitePermissions =
-                    storage.findSitePermissionsBy(origin)
+                    storage.findSitePermissionsBy(origin, private = false)
 
                 if (sitePermissions == null) {
                     sitePermissions =
@@ -389,10 +391,10 @@ class SitePermissionsFeature(
                             status = status,
                             permissions = request.permissions,
                         )
-                    storage.save(sitePermissions, request)
+                    storage.save(sitePermissions, request, private = false)
                 } else {
                     sitePermissions = request.toSitePermissions(origin, status, sitePermissions)
-                    storage.update(sitePermissions)
+                    storage.update(sitePermissions = sitePermissions, private = false)
                 }
             }
         }
@@ -425,8 +427,11 @@ class SitePermissionsFeature(
             return null
         }
 
+        val private: Boolean = store.state.findTabOrCustomTabOrSelectedTab(sessionId)?.content?.private
+            ?: throw IllegalStateException("Unable to find session for $sessionId or selected session")
+
         val permissionFromStorage = withContext(coroutineScope.coroutineContext) {
-            storage.findSitePermissionsBy(origin)
+            storage.findSitePermissionsBy(origin, private = private)
         }
 
         val prompt = if (shouldApplyRules(permissionFromStorage)) {
@@ -729,7 +734,7 @@ class SitePermissionsFeature(
                 host,
                 permissionRequest,
                 R.string.mozac_feature_sitepermissions_camera_and_microphone,
-                R.drawable.mozac_ic_microphone,
+                iconsR.drawable.mozac_ic_microphone,
                 showDoNotAskAgainCheckBox = shouldShowDoNotAskAgainCheckBox,
                 shouldSelectRememberChoice = dialogConfig?.shouldPreselectDoNotAskAgain
                     ?: DialogConfig.DEFAULT_PRESELECT_DO_NOT_ASK_AGAIN,
@@ -753,7 +758,7 @@ class SitePermissionsFeature(
                     host,
                     permissionRequest,
                     R.string.mozac_feature_sitepermissions_location_title,
-                    R.drawable.mozac_ic_location,
+                    iconsR.drawable.mozac_ic_location,
                     showDoNotAskAgainCheckBox = shouldShowDoNotAskAgainCheckBox,
                     shouldSelectRememberChoice = dialogConfig?.shouldPreselectDoNotAskAgain
                         ?: DialogConfig.DEFAULT_PRESELECT_DO_NOT_ASK_AGAIN,
@@ -765,7 +770,7 @@ class SitePermissionsFeature(
                     host,
                     permissionRequest,
                     R.string.mozac_feature_sitepermissions_notification_title,
-                    R.drawable.mozac_ic_notification,
+                    iconsR.drawable.mozac_ic_notification,
                     showDoNotAskAgainCheckBox = false,
                     shouldSelectRememberChoice = false,
                     isNotificationRequest = true,
@@ -777,7 +782,7 @@ class SitePermissionsFeature(
                     host,
                     permissionRequest,
                     R.string.mozac_feature_sitepermissions_microfone_title,
-                    R.drawable.mozac_ic_microphone,
+                    iconsR.drawable.mozac_ic_microphone,
                     showDoNotAskAgainCheckBox = shouldShowDoNotAskAgainCheckBox,
                     shouldSelectRememberChoice = dialogConfig?.shouldPreselectDoNotAskAgain
                         ?: DialogConfig.DEFAULT_PRESELECT_DO_NOT_ASK_AGAIN,
@@ -789,7 +794,7 @@ class SitePermissionsFeature(
                     host,
                     permissionRequest,
                     R.string.mozac_feature_sitepermissions_camera_title,
-                    R.drawable.mozac_ic_video,
+                    iconsR.drawable.mozac_ic_video,
                     showDoNotAskAgainCheckBox = shouldShowDoNotAskAgainCheckBox,
                     shouldSelectRememberChoice = dialogConfig?.shouldPreselectDoNotAskAgain
                         ?: DialogConfig.DEFAULT_PRESELECT_DO_NOT_ASK_AGAIN,
@@ -801,7 +806,7 @@ class SitePermissionsFeature(
                     host,
                     permissionRequest,
                     R.string.mozac_feature_sitepermissions_persistent_storage_title,
-                    R.drawable.mozac_ic_storage,
+                    iconsR.drawable.mozac_ic_storage,
                     showDoNotAskAgainCheckBox = false,
                     shouldSelectRememberChoice = true,
                 )
@@ -812,7 +817,7 @@ class SitePermissionsFeature(
                     host,
                     permissionRequest,
                     R.string.mozac_feature_sitepermissions_media_key_system_access_title,
-                    R.drawable.mozac_ic_link,
+                    iconsR.drawable.mozac_ic_link,
                     showDoNotAskAgainCheckBox = false,
                     shouldSelectRememberChoice = true,
                 )
@@ -885,7 +890,7 @@ class SitePermissionsFeature(
         return SitePermissionsDialogFragment.newInstance(
             sessionId = currentSession.id,
             title = title,
-            titleIcon = R.drawable.mozac_ic_cookies,
+            titleIcon = iconsR.drawable.mozac_ic_cookies,
             message = message,
             negativeButtonText = negativeButtonText,
             permissionRequestId = permissionRequest.id,

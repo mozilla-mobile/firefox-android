@@ -5,6 +5,17 @@ treeherder:
         Fetch: Fetch and store content
         I: Docker Image Builds
         TL: Toolchain builds for Linux 64-bits
+        buildconfig: Make sure the content of .buildconfig.yml matches what gradle knows about its projects
+        compare-locales: Validate strings.xml with compare-locales
+        detekt: detekt linter
+        ktlint: ktlint linter
+        lint: gradle lint linter
+
+        focus: Focus general tasks no matter the variant
+        focus-beta: Focus beta-related tasks
+        focus-debug: Focus builds made for testing
+        focus-nightly: Focus nightly-related tasks
+        focus-release: Focus production-related tasks
 
         # This list is based on .buildconfig.yml except the exceptions down below
         browser-domains: browser-domains
@@ -128,8 +139,8 @@ treeherder:
         ui-widgets: ui-widgets
 
         # These ones are too long to fit in 25 chars
-        lib-fetch-httpurlconnect: lib-fetch-httpurlconnection
-        feature-webcompat-report: feature-webcompat-reporter
+        lib-fetch-httpurlconnecti: lib-fetch-httpurlconnection
+        feature-webcompat-reporte: feature-webcompat-reporter
 
         # Groups aren't generated off buildconfig.yml:
         samples-browser: samples-browser
@@ -148,12 +159,12 @@ task-priority:
         default: low
 
 taskgraph:
-    register: ac_taskgraph:register
+    register: android_taskgraph:register
     repositories:
         mobile:
             name: firefox-android
     cached-task-prefix: mobile.v2.firefox-android
-    decision-parameters: 'ac_taskgraph:get_decision_parameters'
+    decision-parameters: 'android_taskgraph:get_decision_parameters'
 
 workers:
     aliases:
@@ -161,7 +172,12 @@ workers:
             provisioner: 'mobile-{level}'
             implementation: docker-worker
             os: linux
-            worker-type: b-linux-large
+            worker-type: b-linux-gcp
+        b-android-large:
+            provisioner: 'mobile-{level}'
+            implementation: docker-worker
+            os: linux
+            worker-type: b-linux-large-gcp
         beetmover:
             provisioner: scriptworker-k8s
             implementation: scriptworker-beetmover
@@ -181,7 +197,18 @@ workers:
             provisioner: 'mobile-{level}'
             implementation: docker-worker
             os: linux
-            worker-type: images
+            worker-type: images-gcp
+        # misc is used by taskgraph to generate tasks with more than 10 routes
+        misc:
+            provisioner: 'mobile-{level}'
+            implementation: docker-worker
+            os: linux
+            worker-type: 'b-linux-gcp'
+        push-apk:
+            provisioner: scriptworker-k8s
+            implementation: scriptworker-pushapk
+            os: scriptworker
+            worker-type: 'mobile-{level}-pushapk'
         ship-it:
             provisioner: scriptworker-k8s
             implementation: scriptworker-shipit
@@ -206,5 +233,9 @@ scriptworker:
 
 release-promotion:
     flavors:
+        promote:
+            target-tasks-method: promote
+        push:
+            target-tasks-method: push
         ship:
-            target-tasks-method: release
+            target-tasks-method: ship

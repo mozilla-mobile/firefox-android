@@ -24,6 +24,8 @@ import mozilla.components.concept.engine.Engine
  * @property timestamp Time when the notification was created.
  * @property triggeredByWebExtension True if this notification was triggered by a
  * web extension, otherwise false.
+ * @property privateBrowsing indicates if the [WebNotification] belongs to a private session.
+ * @property silent Whether or not the notification should be silent.
  */
 data class WebNotification(
     val title: String?,
@@ -37,4 +39,6 @@ data class WebNotification(
     val engineNotification: Parcelable,
     val timestamp: Long = System.currentTimeMillis(),
     val triggeredByWebExtension: Boolean = false,
+    val privateBrowsing: Boolean,
+    val silent: Boolean = true,
 )

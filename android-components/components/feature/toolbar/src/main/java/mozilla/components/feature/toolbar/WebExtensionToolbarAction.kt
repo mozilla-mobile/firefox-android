@@ -21,6 +21,7 @@ import mozilla.components.support.base.android.Padding
 import mozilla.components.support.base.log.Log
 import mozilla.components.support.ktx.android.content.res.resolveAttribute
 import mozilla.components.support.ktx.android.view.setPadding
+import mozilla.components.ui.icons.R as iconsR
 
 /**
  * An action button that represents an web extension item to be added to the toolbar.
@@ -51,11 +52,11 @@ open class WebExtensionToolbarAction(
 
         parent.addOnAttachStateChangeListener(
             object : View.OnAttachStateChangeListener {
-                override fun onViewDetachedFromWindow(view: View?) {
+                override fun onViewDetachedFromWindow(view: View) {
                     iconJob?.cancel()
                 }
 
-                override fun onViewAttachedToWindow(view: View?) = Unit
+                override fun onViewAttachedToWindow(view: View) = Unit
             },
         )
         return rootView
@@ -76,7 +77,9 @@ open class WebExtensionToolbarAction(
                 }
             } catch (throwable: Throwable) {
                 MainScope().launch {
-                    imageView.setImageResource(R.drawable.mozac_ic_web_extension_default_icon)
+                    imageView.setImageResource(
+                        iconsR.drawable.mozac_ic_web_extension_default_icon,
+                    )
                 }
                 Log.log(
                     Log.Priority.ERROR,
