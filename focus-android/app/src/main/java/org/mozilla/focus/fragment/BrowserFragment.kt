@@ -4,12 +4,14 @@
 
 package org.mozilla.focus.fragment
 
+import android.Manifest.permission.POST_NOTIFICATIONS
 import android.annotation.SuppressLint
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -44,6 +46,8 @@ import mozilla.components.feature.contextmenu.ContextMenuFeature
 import mozilla.components.feature.downloads.AbstractFetchDownloadService
 import mozilla.components.feature.downloads.DownloadsFeature
 import mozilla.components.feature.downloads.manager.FetchDownloadManager
+import mozilla.components.feature.downloads.manager.OnPermissionGranted
+import mozilla.components.feature.downloads.manager.OnPermissionRejected
 import mozilla.components.feature.downloads.share.ShareDownloadFeature
 import mozilla.components.feature.media.fullscreen.MediaSessionFullscreenFeature
 import mozilla.components.feature.prompts.PromptFeature
@@ -309,6 +313,7 @@ class BrowserFragment :
                     requireContext().applicationContext,
                     components.store,
                     DownloadService::class,
+                    onNeedToRequestNotificationPermission = ::onNeedToRequestNotificationPermission,
                 ),
                 onNeedToRequestPermissions = { permissions ->
                     requestInPlacePermissions(REQUEST_KEY_DOWNLOAD_PERMISSIONS, permissions) { result ->
@@ -989,6 +994,25 @@ class BrowserFragment :
         showCrashReporter(crash)
     }
 
+    private fun onNeedToRequestNotificationPermission(
+        onGranted: OnPermissionGranted,
+        onRejected: OnPermissionRejected,
+    ) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestInPlacePermissions(
+                REQUEST_KEY_NOTIFICATION_PERMISSION,
+                arrayOf(POST_NOTIFICATIONS),
+            ) { result ->
+                result.values.map {
+                    when (it) {
+                        true -> onGranted.invoke()
+                        false -> onRejected.invoke()
+                    }
+                }
+            }
+        }
+    }
+
     companion object {
         const val FRAGMENT_TAG = "browser"
 
@@ -996,6 +1020,8 @@ class BrowserFragment :
 
         private const val REQUEST_KEY_DOWNLOAD_PERMISSIONS = "downloadFeature"
         private const val REQUEST_KEY_PROMPT_PERMISSIONS = "promptFeature"
+        private const val REQUEST_KEY_NOTIFICATION_PERMISSION = "downloadFeature"
+
         fun createForTab(tabId: String): BrowserFragment {
             val fragment = BrowserFragment()
             fragment.arguments = Bundle().apply {

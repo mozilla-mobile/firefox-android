@@ -18,6 +18,7 @@ import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES.P
 import androidx.annotation.VisibleForTesting
+import androidx.core.app.NotificationManagerCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import mozilla.components.browser.state.action.DownloadAction
 import mozilla.components.browser.state.state.content.DownloadState
@@ -29,17 +30,23 @@ import mozilla.components.feature.downloads.ext.isScheme
 import mozilla.components.support.utils.ext.getSerializableExtraCompat
 import kotlin.reflect.KClass
 
+typealias OnPermissionGranted = () -> Unit
+typealias OnPermissionRejected = () -> Unit
+
 /**
  * Handles the interactions with [AbstractFetchDownloadService].
  *
  * @property applicationContext a reference to [Context] applicationContext.
  * @property service The subclass of [AbstractFetchDownloadService] to use.
+ * @property onNeedToRequestNotificationPermission optional callback to be invoked
+ * when requesting notification permission is needed.
  */
 class FetchDownloadManager<T : AbstractFetchDownloadService>(
     private val applicationContext: Context,
     private val store: BrowserStore,
     private val service: KClass<T>,
     private val broadcastManager: LocalBroadcastManager = LocalBroadcastManager.getInstance(applicationContext),
+    private val onNeedToRequestNotificationPermission: ((OnPermissionGranted, OnPermissionRejected) -> Unit)? = null,
     override var onDownloadStopped: onDownloadStopped = noop,
 ) : BroadcastReceiver(), DownloadManager {
 
@@ -59,6 +66,8 @@ class FetchDownloadManager<T : AbstractFetchDownloadService>(
     @VisibleForTesting
     internal fun getSDKVersion() = SDK_INT
 
+    internal fun getTargetSDKVersion() = applicationContext.applicationInfo.targetSdkVersion
+
     /**
      * Schedules a download through the [AbstractFetchDownloadService].
      * @param download metadata related to the download.
@@ -71,12 +80,31 @@ class FetchDownloadManager<T : AbstractFetchDownloadService>(
         }
         validatePermissionGranted(applicationContext)
 
+        if (getSDKVersion() >= Build.VERSION_CODES.TIRAMISU &&
+            getTargetSDKVersion() >= Build.VERSION_CODES.TIRAMISU &&
+            !NotificationManagerCompat.from(applicationContext).areNotificationsEnabled()
+        ) {
+            onNeedToRequestNotificationPermission?.invoke(
+                { onNotificationPermissionGranted() },
+                { onNotificationPermissionRejected() },
+            )
+        }
+
         // The middleware will notify the service to start the download
         // once this action is processed.
         store.dispatch(DownloadAction.AddDownloadAction(download))
 
         registerBroadcastReceiver()
         return download.id
+    }
+
+    private fun onNotificationPermissionGranted() {
+        // this means we can show standard notifications
+    }
+
+    private fun onNotificationPermissionRejected() {
+        // this means we cannot show standard notifications
+        // maybe show in-app notifications? See https://bugzilla.mozilla.org/show_bug.cgi?id=1814863
     }
 
     override fun tryAgain(downloadId: String) {
