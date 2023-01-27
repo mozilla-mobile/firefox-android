@@ -577,8 +577,10 @@ class GeckoEngine(
 
     override fun name(): String = "Gecko"
 
-    override val version: EngineVersion = EngineVersion.parse(org.mozilla.geckoview.BuildConfig.MOZILLA_VERSION)
-        ?: throw IllegalStateException("Could not determine engine version")
+    override val version: EngineVersion = EngineVersion.parse(
+        org.mozilla.geckoview.BuildConfig.MOZILLA_VERSION,
+        org.mozilla.geckoview.BuildConfig.MOZ_UPDATE_CHANNEL,
+    ) ?: throw IllegalStateException("Could not determine engine version")
 
     /**
      * See [Engine.settings]
@@ -661,6 +663,16 @@ class GeckoEngine(
                 with(runtime.settings.contentBlocking) {
                     if (this.cookieBannerModePrivateBrowsing != value.mode) {
                         this.cookieBannerModePrivateBrowsing = value.mode
+                    }
+                }
+                field = value
+            }
+
+        override var cookieBannerHandlingDetectOnlyMode: Boolean = false
+            set(value) {
+                with(runtime.settings.contentBlocking) {
+                    if (this.cookieBannerDetectOnlyMode != value) {
+                        this.cookieBannerDetectOnlyMode = value
                     }
                 }
                 field = value
@@ -768,6 +780,7 @@ class GeckoEngine(
             this.httpsOnlyMode = it.httpsOnlyMode
             this.cookieBannerHandlingMode = it.cookieBannerHandlingMode
             this.cookieBannerHandlingModePrivateBrowsing = it.cookieBannerHandlingModePrivateBrowsing
+            this.cookieBannerHandlingDetectOnlyMode = it.cookieBannerHandlingDetectOnlyMode
         }
     }
 

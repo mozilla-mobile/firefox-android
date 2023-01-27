@@ -3,11 +3,43 @@ layout: page
 title: Changelog
 permalink: /changelog/
 ---
-# 110.0.0 (In Development)
-* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/v109.0.0...main)
+# 111.0.0 (In Development)
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/v110.0.0...main)
 * [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
 * [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/Gecko.kt)
 * [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/.config.yml)
+
+* **feature-downloads**:
+  * 🌟️ `DownloadsFeature` now allows passing a download dialog delegate for 1st party downloads through a new `customDownloadDialog` parameter. [Bug 1812518](https://bugzilla.mozilla.org/show_bug.cgi?id=1812518)
+  * 🌟 `DownloadsFeature` now allows passing a download dialog delegate for 3rd party downloads through a new `customThirdPartyDownloadDialog` parameter. [Bug 1812518](https://bugzilla.mozilla.org/show_bug.cgi?id=1812518)
+
+* **browser-toolbar**
+  * ⚠️ **This is a breaking change**: `BrowserToolbarBehavior` will not position the `Snackbar.SnackbarLayout` anymore. The ownership for the positioning behavior should be reversed with the snackbar choosing whether it want to be shown above the toolbar and exactly how. [Bug 1812518](https://bugzilla.mozilla.org/show_bug.cgi?id=1812518)
+
+* **browser-engine-gecko**
+  * 🚒 Bug fixed [bug 1811183](https://bugzilla.mozilla.org/show_bug.cgi?id=1811183). Handles non-digit values for `DateTimePrompt.stepValue`.
+
+* **concept-engine**
+  * 🌟 Expose the release channel of GeckoView through a new `releaseChannel` property of `EngineVersion`. [bug #1811448](https://bugzilla.mozilla.org/show_bug.cgi?id=1811448).
+
+* **concept-engine**
+  * 🆕 Added `Settings.cookieBannerHandlingDetectOnlyMode` which helps to detect cookie banner events without handle the banners + indicating the mode of the events, see [bug 1810743](https://bugzilla.mozilla.org/show_bug.cgi?id=1810743)
+  * ⚠️ **This is a breaking change**: Removed `CookieBannerMode.MODE_DETECT_ONLY` use `Settings.cookieBannerHandlingDetectOnlyMode` instead.
+
+* **feature-webnotifications**
+  * 🌟 Added support for silent web notifications. Default importance level for web notifications was set to `IMPORTANCE_DEFAULT`.[bug #1796766](https://bugzilla.mozilla.org/show_bug.cgi?id=1796766).
+
+* **feature-media**
+  * 🚒 Bug fixed [bug #1802620](https://bugzilla.mozilla.org/show_bug.cgi?id=1802620). Handles `ForegroundServiceStartNotAllowedException`.
+
+# 110.0.0
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/v109.0.0...v110.0.0)
+* [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/v110.0.0/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
+* [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/v110.0.0/android-components/plugins/dependencies/src/main/java/Gecko.kt)
+* [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/v110.0.0/android-components/.config.yml)
+
+* **support-telemetry-sync**
+  * 🚒 Bug fixed [bug #1804996](https://bugzilla.mozilla.org/show_bug.cgi?id=1804996). Removed fpsa, ftas, ftsa and ffos DDG type tags and replaced them with fpas.
 
 * **lib-crash**
   * 🚒 Bug fixed [bug 1802975](https://bugzilla.mozilla.org/show_bug.cgi?id=1802975). Allow crash dumps to be shared using a11y services.
@@ -92,6 +124,9 @@ permalink: /changelog/
 
 * **feature-search**
   * 🆕 A new action `RefreshSearchEnginesAction` was added to the `BrowserAction` to allow for refreshing search engines when app locale is changed. For more references see [bug #1800209](https://bugzilla.mozilla.org/show_bug.cgi?id=1800209).
+
+* **feature-readerview**:
+  * [bug #1798672](https://bugzilla.mozilla.org/show_bug.cgi?id=1798672) Reader view font controls have adaptive font sizes to support smaller width devices.
 
 * **ui-autocomplete**
   * 🚒 Bug fixed [bug #1794933](https://bugzilla.mozilla.org/show_bug.cgi?id=1794933) Immediately remove autocomplete when not applicable anymore.

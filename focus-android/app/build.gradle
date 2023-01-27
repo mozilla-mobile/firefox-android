@@ -23,7 +23,7 @@ android {
     defaultConfig {
         applicationId "org.mozilla"
         minSdkVersion 21
-        targetSdkVersion 32
+        targetSdkVersion 33
         versionCode 11 // This versionCode is "frozen" for local builds. For "release" builds we
                        // override this with a generated versionCode at build time.
         // The versionName is dynamically overridden for all the build variants at build time.
@@ -346,7 +346,7 @@ dependencies {
     testImplementation project(':lib-fetch-okhttp')
 
     androidTestImplementation FocusDependencies.fastlane
-    implementation FocusDependencies.falcon // Required by fastlane
+    androidTestImplementation FocusDependencies.falcon // Required by fastlane
 
     androidTestImplementation FocusDependencies.espresso_contrib, {
         exclude module: 'appcompat-v7'
@@ -610,11 +610,11 @@ if (project.hasProperty("coverage")) {
             def javaTree = fileTree(dir: "$project.buildDir/intermediates/classes/${variant.flavorName}/${variant.buildType.name}",
                     excludes: fileFilter)
             def mainSrc = "$project.projectDir/src/main/java"
-            sourceDirectories = files([mainSrc])
-            classDirectories = files([kotlinTree, javaTree])
-            executionData = fileTree(dir: project.buildDir, includes: [
+            sourceDirectories.setFrom(files([mainSrc]))
+            classDirectories.setFrom(files([kotlinTree, javaTree]))
+            executionData.setFrom(fileTree(dir: project.buildDir, includes: [
                     "jacoco/test${variant.name.capitalize()}UnitTest.exec", 'outputs/code-coverage/connected/*coverage.ec'
-            ])
+            ]))
         }
     }
 
