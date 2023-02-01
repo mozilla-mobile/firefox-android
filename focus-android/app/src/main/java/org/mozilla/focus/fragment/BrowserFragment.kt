@@ -59,6 +59,7 @@ import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.ktx.android.view.exitImmersiveMode
 import mozilla.components.support.utils.Browsers
+import mozilla.components.support.utils.ext.requestInPlacePermissions
 import org.mozilla.focus.GleanMetrics.Browser
 import org.mozilla.focus.GleanMetrics.CookieBanner
 import org.mozilla.focus.GleanMetrics.Downloads
@@ -280,7 +281,7 @@ class BrowserFragment :
                 customTabId = tryGetCustomTabId(),
                 fragmentManager = parentFragmentManager,
                 onNeedToRequestPermissions = { permissions ->
-                    requestInPlacePermissions(permissions) { result ->
+                    requestInPlacePermissions(REQUEST_KEY_PROMPT_PERMISSIONS, permissions) { result ->
                         promptFeature.get()?.onPermissionsResult(
                             result.keys.toTypedArray(),
                             result.values.map {
@@ -310,7 +311,7 @@ class BrowserFragment :
                     DownloadService::class,
                 ),
                 onNeedToRequestPermissions = { permissions ->
-                    requestInPlacePermissions(permissions) { result ->
+                    requestInPlacePermissions(REQUEST_KEY_DOWNLOAD_PERMISSIONS, permissions) { result ->
                         downloadsFeature.get()?.onPermissionsResult(
                             result.keys.toTypedArray(),
                             result.values.map {
@@ -993,6 +994,8 @@ class BrowserFragment :
 
         private const val ARGUMENT_SESSION_UUID = "sessionUUID"
 
+        private const val REQUEST_KEY_DOWNLOAD_PERMISSIONS = "downloadFeature"
+        private const val REQUEST_KEY_PROMPT_PERMISSIONS = "promptFeature"
         fun createForTab(tabId: String): BrowserFragment {
             val fragment = BrowserFragment()
             fragment.arguments = Bundle().apply {
