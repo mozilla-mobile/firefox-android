@@ -176,8 +176,9 @@ open class MainActivity : LocaleAwareAppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-
-        TelemetryWrapper.startSession()
+        if (TelemetryWrapper.isTelemetryEnabled(this)) {
+            TelemetryWrapper.startSession()
+        }
         checkBiometricStillValid()
     }
 
@@ -192,8 +193,9 @@ open class MainActivity : LocaleAwareAppCompatActivity() {
         urlInputFragment?.cancelAnimation()
 
         super.onPause()
-
-        TelemetryWrapper.stopSession()
+        if (TelemetryWrapper.isTelemetryEnabled(this)) {
+            TelemetryWrapper.stopSession()
+        }
     }
 
     override fun onStop() {
