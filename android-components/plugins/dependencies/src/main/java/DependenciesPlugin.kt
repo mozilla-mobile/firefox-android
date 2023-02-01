@@ -49,6 +49,7 @@ object Versions {
     const val mozilla_glean = "52.2.0"
 
     const val material = "1.2.1"
+    const val ksp = "1.0.8"
 
     // see https://android-developers.googleblog.com/2022/06/independent-versioning-of-Jetpack-Compose-libraries.html
     // for Jetpack Compose libraries versioning
@@ -158,6 +159,8 @@ object Dependencies {
     const val androidx_swiperefreshlayout = "androidx.swiperefreshlayout:swiperefreshlayout:${Versions.AndroidX.swiperefreshlayout}"
 
     const val google_material = "com.google.android.material:material:${Versions.material}"
+
+    const val plugin_ksp = "com.google.devtools.ksp:symbol-processing-gradle-plugin:${Versions.kotlin}-${Versions.ksp}"
 
     const val leakcanary = "com.squareup.leakcanary:leakcanary-android:${Versions.leakcanary}"
 
