@@ -237,7 +237,7 @@ open class MainActivity : LocaleAwareAppCompatActivity() {
         startupPathProvider.onIntentReceived(intent)
         val intent = SafeIntent(unsafeIntent)
 
-        handleAppNavigation(intent)
+        handleAppRestoreFromBackground(intent)
 
         if (intent.dataString.equals(SupportUtils.OPEN_WITH_DEFAULT_BROWSER_URL)) {
             components.appStore.dispatch(
@@ -272,6 +272,26 @@ open class MainActivity : LocaleAwareAppCompatActivity() {
         }
 
         super.onNewIntent(unsafeIntent)
+    }
+
+    private fun handleAppRestoreFromBackground(intent: SafeIntent) {
+        when (components.appStore.state.screen) {
+            is Screen.Settings -> components.appStore.dispatch(
+                AppAction.OpenSettings(
+                    page =
+                    (components.appStore.state.screen as Screen.Settings).page,
+                ),
+            )
+            is Screen.SitePermissionOptionsScreen -> components.appStore.dispatch(
+                AppAction.OpenSitePermissionOptionsScreen(
+                    sitePermission =
+                    (components.appStore.state.screen as Screen.SitePermissionOptionsScreen).sitePermission,
+                ),
+            )
+            else -> {
+                handleAppNavigation(intent)
+            }
+        }
     }
 
     private fun handleAppNavigation(intent: SafeIntent) {
