@@ -11,6 +11,7 @@ import android.content.Context
 import android.os.Build
 import androidx.annotation.DrawableRes
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.getSystemService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -23,7 +24,6 @@ import mozilla.components.concept.engine.webnotifications.WebNotificationDelegat
 import mozilla.components.support.base.ids.SharedIdsHelper
 import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.ktx.kotlin.getOrigin
-import java.lang.UnsupportedOperationException
 import kotlin.coroutines.CoroutineContext
 
 private const val NOTIFICATION_CHANNEL_ID = "mozac.feature.webnotifications.generic.channel"
@@ -57,10 +57,12 @@ class WebNotificationFeature(
     private val sitePermissionsStorage: SitePermissionsStorage,
     private val activityClass: Class<out Activity>?,
     private val coroutineContext: CoroutineContext = Dispatchers.IO,
+    private val onNeedToRequestNotificationPermission: ((() -> Unit, () -> Unit) -> Unit)? = null,
 ) : WebNotificationDelegate {
     private val logger = Logger("WebNotificationFeature")
     private val notificationManager = context.getSystemService<NotificationManager>()
     private val nativeNotificationBridge = NativeNotificationBridge(browserIcons, smallIcon)
+    private fun getTargetSDKVersion() = context.applicationInfo.targetSdkVersion
 
     init {
         try {
@@ -71,6 +73,31 @@ class WebNotificationFeature(
     }
 
     override fun onShowNotification(webNotification: WebNotification) {
+        ensureNotificationGroupAndChannelExists()
+
+        if (getTargetSDKVersion() >= Build.VERSION_CODES.TIRAMISU &&
+            getTargetSDKVersion() >= Build.VERSION_CODES.TIRAMISU &&
+            !NotificationManagerCompat.from(context).areNotificationsEnabled()
+        ) {
+            onNeedToRequestNotificationPermission?.invoke(
+                { onNotificationPermissionGranted(webNotification) },
+                { onNotificationPermissionRejected() },
+            )
+        } else {
+            if (NotificationManagerCompat.from(context).areNotificationsEnabled()) {
+                onNotificationPermissionGranted(webNotification)
+            } else {
+                // this means that notifications are disabled from OS settings,
+                // for devices with Android 12 and below.
+            }
+        }
+    }
+
+    private fun onNotificationPermissionRejected() {
+        TODO("Not yet implemented")
+    }
+
+    private fun onNotificationPermissionGranted(webNotification: WebNotification) {
         CoroutineScope(coroutineContext).launch {
             // Only need to check permissions for notifications from web pages. Permissions for
             // web extensions are managed via the extension's manifest and approved by the user
@@ -88,7 +115,6 @@ class WebNotificationFeature(
                 }
             }
 
-            ensureNotificationGroupAndChannelExists()
             notificationManager?.cancel(webNotification.tag, NOTIFICATION_ID)
 
             val notification = nativeNotificationBridge.convertToAndroidNotification(
