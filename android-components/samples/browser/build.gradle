@@ -11,7 +11,7 @@ android {
     defaultConfig {
         applicationId "org.mozilla.samples.browser"
         minSdkVersion config.minSdkVersion
-        targetSdkVersion config.targetSdkVersion
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0"
 

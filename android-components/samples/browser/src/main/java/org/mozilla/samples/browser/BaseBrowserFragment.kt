@@ -4,8 +4,10 @@
 
 package org.mozilla.samples.browser
 
+import android.Manifest.permission.POST_NOTIFICATIONS
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -27,6 +29,7 @@ import mozilla.components.feature.sitepermissions.SitePermissionsFeature
 import mozilla.components.feature.sitepermissions.SitePermissionsRules
 import mozilla.components.feature.sitepermissions.SitePermissionsRules.AutoplayAction
 import mozilla.components.feature.toolbar.ToolbarFeature
+import mozilla.components.feature.webnotifications.WebNotificationFeature
 import mozilla.components.lib.state.ext.consumeFlow
 import mozilla.components.support.base.feature.ActivityResultHandler
 import mozilla.components.support.base.feature.UserInteractionHandler
@@ -57,6 +60,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
     private val findInPageIntegration = ViewBoundFeatureWrapper<FindInPageIntegration>()
     private val sitePermissionsFeature = ViewBoundFeatureWrapper<SitePermissionsFeature>()
     private val swipeRefreshFeature = ViewBoundFeatureWrapper<SwipeRefreshFeature>()
+    private lateinit var webNotificationFeature: WebNotificationFeature
 
     protected val sessionId: String?
         get() = arguments?.getString(SESSION_ID_KEY)
@@ -254,6 +258,16 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
             secureWindowFeature,
         )
 
+        webNotificationFeature = WebNotificationFeature(
+            requireContext(),
+            components.engine,
+            components.icons,
+            R.mipmap.ic_launcher_foreground,
+            components.permissionStorage,
+            IntentReceiverActivity::class.java,
+            onNeedToRequestNotificationPermission = ::onNeedToRequestNotificationPermission,
+        )
+
         return binding.root
     }
 
@@ -288,6 +302,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
         private const val REQUEST_KEY_DOWNLOAD_PERMISSIONS = "downloadFeature"
         private const val REQUEST_KEY_PROMPT_PERMISSIONS = "promptFeature"
         private const val REQUEST_KEY_SITE_PERMISSIONS = "sitePermissionsFeature"
+        private const val REQUEST_KEY_NOTIFICATION_PERMISSION = "webNotificationFeature"
 
         @JvmStatic
         protected fun Bundle.putSessionId(sessionId: String?) {
@@ -297,5 +312,18 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun onNeedToRequestNotificationPermission(onGranted: () -> Unit, onRejected: () -> Unit) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestInPlacePermissions(REQUEST_KEY_NOTIFICATION_PERMISSION, arrayOf(POST_NOTIFICATIONS)) { result ->
+                result.values.map {
+                    when (it) {
+                        true -> onGranted.invoke()
+                        false -> onRejected.invoke()
+                    }
+                }
+            }
+        }
     }
 }
