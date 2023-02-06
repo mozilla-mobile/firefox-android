@@ -4,6 +4,8 @@
     <string name="mozac_feature_prompts_ok">YAQSHI</string>
     <!-- Text for confirmation for a negative action in dialog.  -->
     <string name="mozac_feature_prompts_cancel">Biykarlaw</string>
+    <!-- When a page shows many dialogs, this checkbox will appear for letting the user choose to prevent showing more dialogs. -->
+    <string name="mozac_feature_prompts_no_more_dialogs">Bul bette qosımsha dialog aynalar jaratılıwına tıyım salıw</string>
     <!-- Text for a positive button, when an user selects a date in date/time picker. -->
     <string name="mozac_feature_prompts_set_date">Ornatıw</string>
     <!-- Text for a button that clears the selected input in the date/time picker. -->
@@ -38,7 +40,7 @@
     <string name="mozac_feature_prompt_login_add_username_headline">Saqlaǵan parolge paydalanıwshı atı qosılsın ba?</string>
     <!-- Text for a label for the field when prompt requesting a text is shown. -->
     <!-- For more info take a look here https://developer.mozilla.org/en-US/docs/Web/API/Window/prompt -->
-    <string name="mozac_feature_prompts_content_description_input_label">Tekst kiritiw maydanı ushın belgi</string>
+    <string name="mozac_feature_prompts_content_description_input_label">Tekst kirgiziw maydanı ushın belgi</string>
     <!-- Title of a color picker dialog, this text is shown above a color picker. -->
     <string name="mozac_feature_prompts_choose_a_color">Reńdi tańlań</string>
     <!-- Text of a confirm button in dialog requesting to open a new window. -->
@@ -96,6 +98,7 @@
 
     <!-- Strings shown in a dialog that appear when users try to refresh a certain kind of webpages -->
     <string name="mozac_feature_prompt_repost_title">Bul saytqa maǵlıwmatlar qayta jiberilsin be?</string>
+    <string name="mozac_feature_prompt_repost_message">Bul betti jańalaw nátiyjesinde pikir jazıw yamasa tólemdi jiberiw sıyaqlı sóńǵı háreketler qaytalanıwı múmkin.</string>
     <!-- Pressing this will dismiss the dialog and reload the page sending again the previous data -->
     <string name="mozac_feature_prompt_repost_positive_button_text">Maǵlıwmatlardı qayta jiberiw</string>
     <!-- Pressing this will dismiss the dialog and not refresh the webpage -->
@@ -114,6 +117,9 @@
     <string name="mozac_feature_prompts_save_credit_card_prompt_title">Bul karta qáwipsiz saqlansın ba?</string>
     <!-- Text for the title of an update credit card dialog. -->
     <string name="mozac_feature_prompts_update_credit_card_prompt_title">Karta ámel qılıw múddeti jańalansın ba?</string>
+
+    <!-- Subtitle text displayed under the title of the save credit card dialog. -->
+    <string name="mozac_feature_prompts_save_credit_card_prompt_body">Karta nomeri shifrlenedi. Qupıyalıq kodı saqlanbaydı.</string>
 
     <!-- Address Autofill -->
     <!-- Header for the select address prompt to allow users to fill a form with a saved address. -->
