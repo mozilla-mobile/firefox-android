@@ -235,10 +235,14 @@ object DownloadUtils {
      * This is primarily useful for connecting the "Save to PDF" feature response to downloads.
      */
     fun makePdfContentDisposition(filename: String): String {
-        return filename
-            .take(MAX_FILE_NAME_LENGTH)
+        val pdfExtension = ".pdf"
+        return if (filename.endsWith(pdfExtension)) {
+            filename.substringBeforeLast('.')
+        } else {
+            filename
+        }.take(MAX_FILE_NAME_LENGTH - pdfExtension.length)
             .run {
-                "attachment; filename=$this.pdf;"
+                "attachment; filename=$this$pdfExtension;"
             }
     }
 
@@ -251,7 +255,7 @@ object DownloadUtils {
         }
 
         // If all the other http-related approaches failed, use the plain uri
-        if (filename == null) {
+        if (filename.isNullOrEmpty()) {
             // If there is a query string strip it, same as desktop browsers
             val decodedUrl: String? = Uri.decode(url)?.substringBefore('?')
             if (decodedUrl?.endsWith('/') == false) {

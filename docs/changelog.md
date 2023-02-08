@@ -9,6 +9,15 @@ permalink: /changelog/
 * [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/Gecko.kt)
 * [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/.config.yml)
 
+* **compose-cfr**
+  * 🚒 Bug fixed [bug #1809592](https://bugzilla.mozilla.org/show_bug.cgi?id=1809592). Improve screen alignment for Contextual Feature Recommendation popups.
+
+* **service-pocket**
+  * 🌟 Added `country` and `city` parameters to Pocket sponsored stories fetch request. These can be overwritten using `PocketStoriesConfig`, allowing clients to specify a location and receive sponsored stories when outside countries where Pocket is enabled based on IP location. [Bug 1811537](https://bugzilla.mozilla.org/show_bug.cgi?id=1811537).
+
+* **service-pocket**
+  * 🌟 Added `site` parameter to Pocket sponsored stories requests. It can be overwritten using `PocketStoriesConfig`, allowing clients to customize spoc content. [Bug 1811531](https://bugzilla.mozilla.org/show_bug.cgi?id=1811531).
+
 * **browser-storage-sync**:
 * **feature-awesomebar**
 * **feature-syncedtabs**
@@ -45,6 +54,7 @@ permalink: /changelog/
 
 * **feature-media**
   * 🚒 Bug fixed [Bug 1802620](https://bugzilla.mozilla.org/show_bug.cgi?id=1802620). Handles `ForegroundServiceStartNotAllowedException`.
+  * 🚒 Bug fixed [Bug 1813416](https://bugzilla.mozilla.org/show_bug.cgi?id=1813416). Clear `FLAG_KEEP_SCREEN_ON` when playing media is finished.
 
 # 110.0.0
 * [Commits](https://github.com/mozilla-mobile/firefox-android/compare/v109.0.0...v110.0.0)

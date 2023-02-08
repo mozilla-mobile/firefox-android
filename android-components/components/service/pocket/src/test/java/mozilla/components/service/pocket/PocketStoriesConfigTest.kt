@@ -53,4 +53,13 @@ class PocketStoriesConfigTest {
     fun `GIVEN a Frequency THEN its visibility is internal`() {
         assertClassVisibility(Frequency::class, KVisibility.PUBLIC)
     }
+
+    @Test
+    fun `WHEN instantiating a PocketStoriesConfig THEN sponsoredStoriesParams default value is used`() {
+        val config = PocketStoriesConfig(mock())
+
+        assertEquals(DEFAULT_SPONSORED_STORIES_SITE_ID, config.sponsoredStoriesParams.siteId)
+        assertEquals("", config.sponsoredStoriesParams.country)
+        assertEquals("", config.sponsoredStoriesParams.city)
+    }
 }
