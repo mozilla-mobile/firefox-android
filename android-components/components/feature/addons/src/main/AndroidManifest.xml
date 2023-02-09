@@ -3,6 +3,8 @@
    - You can obtain one at http://mozilla.org/MPL/2.0/.  -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="mozilla.components.feature.addons">
+
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <application>
         <service android:name=".update.DefaultAddonUpdater$NotificationHandlerService"
              android:exported="false" />
