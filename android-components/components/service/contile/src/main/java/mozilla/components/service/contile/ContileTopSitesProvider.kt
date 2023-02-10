@@ -41,17 +41,20 @@ internal const val CACHE_TOP_SITES_KEY = "tiles"
  * @property maxCacheAgeInSeconds Maximum time (in seconds) the cache should remain valid
  * before a refresh is attempted. Defaults to -1, meaning the max age defined by the server
  * will be used.
+ * @param hasExclusions Whether or not the JSON response has a list of hosts to exclude to parse.
  */
 class ContileTopSitesProvider(
     context: Context,
     private val client: Client,
     private val endPointURL: String = CONTILE_ENDPOINT_URL,
     private val maxCacheAgeInSeconds: Long = -1,
+    val hasExclusions: Boolean = false,
 ) : TopSitesProvider {
 
     private val applicationContext = context.applicationContext
     private val logger = Logger("ContileTopSitesProvider")
     private val diskCacheLock = Any()
+    private var pinnedExclusions: List<String> = emptyList()
 
     // Current state of the cache.
     @VisibleForTesting
@@ -74,6 +77,11 @@ class ContileTopSitesProvider(
         } else {
             null
         }
+
+        if (allowCache && !isCacheExpired(shouldUseServerMaxAge = false) && hasExclusions) {
+            pinnedExclusions = readExclusionsFromDiskCache()!!
+        }
+
         if (!cachedTopSites.isNullOrEmpty()) {
             return cachedTopSites
         }
@@ -85,6 +93,8 @@ class ContileTopSitesProvider(
             throw e
         }
     }
+
+    override fun getPinnedExclusions(): List<String> = pinnedExclusions
 
     /**
      * Refreshes the cache with the latest top sites response from [endPointURL]
@@ -108,6 +118,10 @@ class ContileTopSitesProvider(
                     cacheState = cacheState.invalidate()
                     getCacheFile().delete()
                     return listOf()
+                }
+
+                if (hasExclusions) {
+                    pinnedExclusions = JSONObject(responseBody).getPinnedExclusions()
                 }
 
                 return try {
@@ -143,6 +157,14 @@ class ContileTopSitesProvider(
                 JSONObject(it).let { cachedObject ->
                     CachedData(cachedObject.validFor, cachedObject.getTopSites())
                 }
+            }
+        }
+    }
+
+    private fun readExclusionsFromDiskCache(): List<String>? {
+        synchronized(diskCacheLock) {
+            return getCacheFile().readAndDeserialize {
+                JSONObject(it).getPinnedExclusions()
             }
         }
     }
@@ -285,6 +307,12 @@ internal fun JSONObject.getTopSites(): List<TopSite.Provided> =
     getJSONArray(CACHE_TOP_SITES_KEY)
         .asSequence { i -> getJSONObject(i) }
         .mapNotNull { it.toTopSite() }
+        .toList()
+
+internal fun JSONObject.getPinnedExclusions(): List<String> =
+    getJSONArray("exclusions")
+        .asSequence { i -> getJSONObject(i) }
+        .mapNotNull { it.getString("host") }
         .toList()
 
 private fun JSONObject.toTopSite(): TopSite.Provided? {

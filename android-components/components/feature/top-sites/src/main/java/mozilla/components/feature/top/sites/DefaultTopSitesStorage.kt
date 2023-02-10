@@ -15,6 +15,7 @@ import mozilla.components.feature.top.sites.facts.emitTopSitesCountFact
 import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.base.observer.Observable
 import mozilla.components.support.base.observer.ObserverRegistry
+import mozilla.components.support.ktx.kotlin.getRepresentativeSnippet
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -92,6 +93,7 @@ class DefaultTopSitesStorage(
         val topSites = ArrayList<TopSite>()
         val pinnedSites = pinnedSitesStorage.getPinnedSites().take(totalSites)
         var providerTopSites = emptyList<TopSite>()
+        var pinnedExclusions = emptyList<String>()
         var numSitesRequired = totalSites - pinnedSites.size
 
         if (topSitesProvider != null &&
@@ -105,6 +107,7 @@ class DefaultTopSitesStorage(
                     .filter { providerConfig.providerFilter?.invoke(it) ?: true }
                     .take(numSitesRequired)
                     .take(providerConfig.maxThreshold - pinnedSites.size)
+                pinnedExclusions = topSitesProvider.getPinnedExclusions()
                 topSites.addAll(providerTopSites)
                 numSitesRequired -= providerTopSites.size
             } catch (e: Exception) {
@@ -112,7 +115,10 @@ class DefaultTopSitesStorage(
             }
         }
 
-        topSites.addAll(pinnedSites)
+        val filteredPinnedTopSites = pinnedSites
+            .filter { !pinnedExclusions.contains(it.url.getRepresentativeSnippet()) }
+        topSites.addAll(filteredPinnedTopSites)
+        numSitesRequired = numSitesRequired + pinnedSites.size - filteredPinnedTopSites.size
 
         if (frecencyConfig?.frecencyTresholdOption != null && numSitesRequired > 0) {
             // Get 'totalSites' sites for duplicate entries with

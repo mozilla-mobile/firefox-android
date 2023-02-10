@@ -17,4 +17,11 @@ interface TopSitesProvider {
      * @return a list of top sites from the provider.
      */
     suspend fun getTopSites(allowCache: Boolean = true): List<TopSite>
+
+    /**
+     * Provides a list of hosts of top sites that should be excluded from default top sites.
+     *
+     * @return a list of hosts from the provider.
+     */
+    fun getPinnedExclusions(): List<String>
 }
