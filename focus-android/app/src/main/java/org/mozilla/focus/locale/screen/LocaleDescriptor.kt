@@ -18,43 +18,43 @@ class LocaleDescriptor(private val localeTag: String) : Comparable<LocaleDescrip
     init {
         fillLanguageCodeAndNameMap()
         setupLocaleDescriptor()
-    }
+   }
 
-    private fun fillLanguageCodeAndNameMap() {
-        // Only ICU 57 actually contains the Asturian name for Asturian, even Android 7.1 is still
-        // shipping with ICU 56, so we need to override the Asturian name (otherwise displayName will
-        // be the current locales version of Asturian, see:
-        // https://github.com/mozilla-mobile/focus-android/issues/634#issuecomment-303886118
-        languageCodeAndNameMap["ast"] = "Asturianu"
-        // On an Android 8.0 device those languages are not known and we need to add the names
-        // manually. Loading the resources at runtime works without problems though.
-        languageCodeAndNameMap["cak"] = "Kaqchikel"
-        languageCodeAndNameMap["ia"] = "Interlingua"
-        languageCodeAndNameMap["meh"] = "Tu´un savi ñuu Yasi'í Yuku Iti"
-        languageCodeAndNameMap["mix"] = "Tu'un savi"
-        languageCodeAndNameMap["trs"] = "Triqui"
-        languageCodeAndNameMap["zam"] = "DíɁztè"
-        languageCodeAndNameMap["oc"] = "occitan"
-        languageCodeAndNameMap["an"] = "Aragonés"
-        languageCodeAndNameMap["tt"] = "татарча"
-        languageCodeAndNameMap["wo"] = "Wolof"
-        languageCodeAndNameMap["anp"] = "अंगिका"
-        languageCodeAndNameMap["ixl"] = "Ixil"
-        languageCodeAndNameMap["pai"] = "Paa ipai"
-        languageCodeAndNameMap["quy"] = "Chanka Qhichwa"
-        languageCodeAndNameMap["ay"] = "Aimara"
-        languageCodeAndNameMap["quc"] = "K'iche'"
-        languageCodeAndNameMap["tsz"] = "P'urhepecha"
-        languageCodeAndNameMap["jv"] = "Basa Jawa"
-        languageCodeAndNameMap["ppl"] = "Náhuat Pipil"
-        languageCodeAndNameMap["su"] = "Basa Sunda"
-        languageCodeAndNameMap["hus"] = "Tének"
-        languageCodeAndNameMap["co"] = "Corsu"
-        languageCodeAndNameMap["sn"] = "ChiShona"
-        languageCodeAndNameMap["zh-CN"] = "中文 (中国大陆)"
-        languageCodeAndNameMap["nv"] = "Navajo"
-        languageCodeAndNameMap["skr"] = "سرائیکی"
-    }
+private fun fillLanguageCodeAndNameMap() {
+    // Only ICU 57 actually contains the Asturian name for Asturian, even Android 7.1 is still
+    // shipping with ICU 56, so we need to override the Asturian name (otherwise displayName will
+    // be the current locales version of Asturian, see:
+    // https://github.com/mozilla-mobile/focus-android/issues/634#issuecomment-303886118
+    languageCodeAndNameMap["ast"] = "Asturianu"
+    // On an Android 8.0 device those languages are not known and we need to add the names
+    // manually. Loading the resources at runtime works without problems though.
+    languageCodeAndNameMap["an"] = "Aragonés"
+    languageCodeAndNameMap["anp"] = "अंगिका"
+    languageCodeAndNameMap["ay"] = "Aimara"
+    languageCodeAndNameMap["cak"] = "Kaqchikel"
+    languageCodeAndNameMap["co"] = "Corsu"
+    languageCodeAndNameMap["hus"] = "Tének"
+    languageCodeAndNameMap["ia"] = "Interlingua"
+    languageCodeAndNameMap["ixl"] = "Ixil"
+    languageCodeAndNameMap["jv"] = "Basa Jawa"
+    languageCodeAndNameMap["meh"] = "Tu´un savi ñuu Yasi'í Yuku Iti"
+    languageCodeAndNameMap["mix"] = "Tu'un savi"
+    languageCodeAndNameMap["nv"] = "Navajo"
+    languageCodeAndNameMap["oc"] = "occitan"
+    languageCodeAndNameMap["pai"] = "Paa ipai"
+    languageCodeAndNameMap["ppl"] = "Náhuat Pipil"
+    languageCodeAndNameMap["quc"] = "K'iche'"
+    languageCodeAndNameMap["quy"] = "Chanka Qhichwa"
+    languageCodeAndNameMap["skr"] = "سرائیکی"
+    languageCodeAndNameMap["sn"] = "ChiShona"
+    languageCodeAndNameMap["su"] = "Basa Sunda"
+    languageCodeAndNameMap["trs"] = "Triqui"
+    languageCodeAndNameMap["tsz"] = "P'urhepecha"
+    languageCodeAndNameMap["tt"] = "татарча"
+    languageCodeAndNameMap["wo"] = "Wolof"
+    languageCodeAndNameMap["zam"] = "DíɁztè"
+    languageCodeAndNameMap["zh-CN"] = "中文 (中国大陆)"
+}
 
     private fun setupLocaleDescriptor() {
         val locale = Locales.parseLocaleCode(localeTag)
