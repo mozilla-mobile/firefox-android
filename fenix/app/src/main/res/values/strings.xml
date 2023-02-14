@@ -1829,7 +1829,7 @@
     <!--  The error message in add/edit login view when password field is blank. -->
     <string name="saved_login_password_required">Password required</string>
     <!--  The error message in add login view when username field is blank. -->
-    <string name="saved_login_username_required">Username required</string>
+    <string name="saved_login_username_required" moz:removedIn="111" tools:ignore="UnusedResources">Username required</string>
     <!--  The error message in add login view when hostname field is blank. -->
     <string name="saved_login_hostname_required" tools:ignore="UnusedResources">Hostname required</string>
     <!-- Voice search button content description  -->

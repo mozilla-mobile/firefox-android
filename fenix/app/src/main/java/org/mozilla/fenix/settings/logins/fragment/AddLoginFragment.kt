@@ -50,9 +50,7 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login), MenuProvider {
     private var duplicateLogin: SavedLogin? = null
 
     private var validPassword = false
-    private var validUsername = true
     private var validHostname = false
-    private var usernameChanged = false
 
     private var _binding: FragmentAddLoginBinding? = null
     private val binding get() = _binding!!
@@ -198,9 +196,6 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login), MenuProvider {
         binding.usernameText.addTextChangedListener(
             object : TextWatcher {
                 override fun afterTextChanged(editable: Editable?) {
-                    // update usernameChanged to true when the text is not empty,
-                    // otherwise it is not changed, as this screen starts with an empty username.
-                    usernameChanged = editable.toString().isNotEmpty()
                     updateUsernameField()
                     setSaveButtonState()
                     findDuplicate()
@@ -267,25 +262,12 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login), MenuProvider {
     private fun updateUsernameField() {
         val currentValue = binding.usernameText.text.toString()
         val layout = binding.inputLayoutUsername
-        val clearButton = binding.clearUsernameTextButton
         when {
-            currentValue.isEmpty() && usernameChanged -> {
-                // Invalid username because it's empty (although this is not true when editing logins)
-                validUsername = false
-                layout.error = context?.getString(R.string.saved_login_username_required)
-                layout.setErrorIconDrawable(R.drawable.mozac_ic_warning_with_bottom_padding)
-                layout.setErrorIconTintList(
-                    ColorStateList.valueOf(
-                        ContextCompat.getColor(
-                            requireContext(),
-                            R.color.fx_mobile_text_color_warning,
-                        ),
-                    ),
-                )
+            currentValue.isEmpty() -> {
+                setClearButtonState(false)
             }
             duplicateLogin != null -> {
                 // Invalid username because it's a dupe of another login
-                validUsername = false
                 layout.error = context?.getString(R.string.saved_login_duplicate)
                 layout.setErrorIconDrawable(R.drawable.mozac_ic_warning_with_bottom_padding)
                 layout.setErrorIconTintList(
@@ -296,17 +278,22 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login), MenuProvider {
                         ),
                     ),
                 )
+                setClearButtonState(false)
             }
             else -> {
                 // Valid username
-                validUsername = true
                 layout.error = null
                 layout.errorIconDrawable = null
+                setClearButtonState(true)
             }
         }
-        clearButton.isVisible = validUsername
-        clearButton.isEnabled = validUsername
         setSaveButtonState()
+    }
+
+    private fun setClearButtonState(state: Boolean) {
+        val clearButton = binding.clearUsernameTextButton
+        clearButton.isEnabled = state
+        clearButton.isVisible = state
     }
 
     private fun setPasswordError() {
@@ -347,7 +334,7 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login), MenuProvider {
         super.onPrepareMenu(menu)
 
         val saveButton = menu.findItem(R.id.save_login_button)
-        val changesMadeWithNoErrors = validHostname && validUsername && validPassword
+        val changesMadeWithNoErrors = validHostname && duplicateLogin == null && validPassword
         saveButton.isEnabled = changesMadeWithNoErrors
     }
 
