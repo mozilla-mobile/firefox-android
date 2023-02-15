@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.ui
 
+import android.util.Log
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
@@ -102,44 +103,76 @@ class CollectionTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(webPage.url) {
+            Log.i("Andi", "Loaded ${webPage.title}")
         }.openTabDrawer {
+            Log.i("Andi", "Opened tab drawer")
             createCollection(webPage.title, collectionName = collectionName)
             snackBarButtonClick("VIEW")
+            Log.i("Andi", "Clicked snack bar VIEW button")
         }
 
         homeScreen {
             verifyCollectionIsDisplayed(collectionName)
+            Log.i("Andi", "Verified collection is displayed on the home screen")
         }.expandCollection(collectionName, composeTestRule) {
+            Log.i("Andi", "Expanded collection")
             verifyTabSavedInCollection(webPage.title)
+            Log.i("Andi", "Verified tab: ${webPage.title} is displayed in collection")
             verifyCollectionTabUrl(true, webPageUrl)
+            Log.i("Andi", "Verified tab url: $webPageUrl is displayed in collection")
             verifyShareCollectionButtonIsVisible(true)
+            Log.i("Andi", "Verified collection share button")
             verifyCollectionMenuIsVisible(true, composeTestRule)
+            Log.i("Andi", "Verified collection menu is visible")
             verifyCollectionItemRemoveButtonIsVisible(webPage.title, true)
-        }.collapseCollection(collectionName) {}
+            Log.i("Andi", "Verified collection remove button is visible")
+        }.collapseCollection(collectionName) {
+            Log.i("Andi", "Collapsed collection")
+        }
 
         collectionRobot {
             verifyTabSavedInCollection(webPage.title, false)
+            Log.i("Andi", "Verified tab: ${webPage.title} is NOT displayed in collection")
             verifyShareCollectionButtonIsVisible(false)
+            Log.i("Andi", "Verified collection share button is NOT displayed")
             verifyCollectionMenuIsVisible(false, composeTestRule)
+            Log.i("Andi", "Verified collection menu is NOT displayed")
             verifyCollectionTabUrl(false, webPageUrl)
+            Log.i("Andi", "Verified tab url: $webPageUrl is NOT displayed in collection")
             verifyCollectionItemRemoveButtonIsVisible(webPage.title, false)
+            Log.i("Andi", "Verified collection remove button is NOT visible")
         }
 
         homeScreen {
+            verifyCollectionIsDisplayed(collectionName)
+            Log.i("Andi", "Verified collection is displayed on the home screen")
         }.expandCollection(collectionName, composeTestRule) {
+            Log.i("Andi", "Expanded again the collection")
             verifyTabSavedInCollection(webPage.title)
+            Log.i("Andi", "Verified tab: ${webPage.title} is displayed in collection")
             verifyCollectionTabUrl(true, webPageUrl)
+            Log.i("Andi", "Verified tab url: $webPageUrl is displayed in collection")
             verifyShareCollectionButtonIsVisible(true)
+            Log.i("Andi", "Verified collection share button")
             verifyCollectionMenuIsVisible(true, composeTestRule)
+            Log.i("Andi", "Verified collection menu is visible")
             verifyCollectionItemRemoveButtonIsVisible(webPage.title, true)
-        }.collapseCollection(collectionName) {}
+            Log.i("Andi", "Verified collection remove button is visible")
+        }.collapseCollection(collectionName) {
+            Log.i("Andi", "Collapsed again the collection")
+        }
 
         collectionRobot {
             verifyTabSavedInCollection(webPage.title, false)
+            Log.i("Andi", "Verified tab: ${webPage.title} is NOT displayed in collection")
             verifyShareCollectionButtonIsVisible(false)
+            Log.i("Andi", "Verified collection share button is NOT displayed")
             verifyCollectionMenuIsVisible(false, composeTestRule)
+            Log.i("Andi", "Verified collection menu is NOT displayed")
             verifyCollectionTabUrl(false, webPageUrl)
+            Log.i("Andi", "Verified tab url: $webPageUrl is NOT displayed in collection")
             verifyCollectionItemRemoveButtonIsVisible(webPage.title, false)
+            Log.i("Andi", "Verified collection remove button is NOT visible")
         }
     }
 
@@ -286,17 +319,30 @@ class CollectionTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(webPage.url) {
+            Log.i("Andi", "Loaded ${webPage.title}")
         }.openTabDrawer {
+            Log.i("Andi", "Opened tab drawer")
             createCollection(webPage.title, collectionName = firstCollectionName)
             verifySnackBarText("Collection saved!")
+            Log.i("Andi", "Verified Collection saved! snackbar")
         }.closeTabDrawer {
+            Log.i("Andi", "Closed tabs tray")
         }.goToHomescreen {
+            Log.i("Andi", "Clicked go to home toolbar button")
+            verifyCollectionIsDisplayed(firstCollectionName)
+            Log.i("Andi", "Verified collection: $firstCollectionName is displayed on the home screen")
         }.expandCollection(firstCollectionName, composeTestRule) {
+            Log.i("Andi", "Expanded collection")
             clickCollectionThreeDotButton(composeTestRule)
+            Log.i("Andi", "Clicked collection 3 dot button")
             selectRenameCollection(composeTestRule)
-        }.typeCollectionNameAndSave(secondCollectionName) {}
+            Log.i("Andi", "Clicked rename button")
+        }.typeCollectionNameAndSave(secondCollectionName) {
+            Log.i("Andi", "Typed collection name: $secondCollectionName, and save")
+        }
         homeScreen {
             verifyCollectionIsDisplayed(secondCollectionName)
+            Log.i("Andi", "Verified collection: $secondCollectionName is displayed on the home screen")
         }
     }
 

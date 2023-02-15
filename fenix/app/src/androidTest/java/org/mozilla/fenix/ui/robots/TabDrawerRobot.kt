@@ -7,6 +7,7 @@
 package org.mozilla.fenix.ui.robots
 
 import android.content.Context
+import android.util.Log
 import android.view.View
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso
@@ -194,14 +195,18 @@ class TabDrawerRobot {
     ) {
         tabDrawer {
             clickSelectTabsOption()
+            Log.i("Andi", "Clicked select tabs option")
             for (tab in tabTitles) {
                 selectTab(tab, tabTitles.indexOf(tab) + 1)
+                Log.i("Andi", "Selected $tab")
             }
         }.clickSaveCollection {
             if (!firstCollection) {
                 clickAddNewCollection()
+                Log.i("Andi", "Clicked add new collection button")
             }
             typeCollectionNameAndSave(collectionName)
+            Log.i("Andi", "Typed collection name: $collectionName and saved it")
         }
     }
 
