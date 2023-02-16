@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.ui.robots
 
+import android.util.Log
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
@@ -14,7 +15,6 @@ import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeLeft
 import androidx.compose.ui.test.swipeRight
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.NoMatchingViewException
 import androidx.test.espresso.action.ViewActions.pressImeActionButton
 import androidx.test.espresso.matcher.RootMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withId
@@ -25,8 +25,14 @@ import androidx.test.uiautomator.Until
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
+import org.mozilla.fenix.helpers.MatcherHelper.assertItemContainingTextExists
+import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithDescriptionExists
+import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithDescription
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
+import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
+import org.mozilla.fenix.helpers.TestHelper.getStringResource
 import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.TestHelper.scrollToElementByText
@@ -197,13 +203,12 @@ class CollectionRobot {
             title: String,
             interact: HomeScreenRobot.() -> Unit,
         ): HomeScreenRobot.Transition {
-            try {
-                collectionTitle(title).waitForExists(waitingTime)
-                collectionTitle(title).click()
-            } catch (e: NoMatchingViewException) {
-                scrollToElementByText(title)
-                collectionTitle(title).click()
-            }
+            assertItemContainingTextExists(itemContainingText(title))
+            Log.i("Andi", "collapseCollection: Asserted collection $title")
+            itemContainingText(title).clickAndWaitForNewWindow(waitingTimeShort)
+            Log.i("Andi", "collapseCollection: Clicked $title and waiting for a new window for $waitingTimeShort")
+            assertItemWithDescriptionExists(itemWithDescription(getStringResource(R.string.remove_tab_from_collection)), exists = false)
+            Log.i("Andi", "collapseCollection: Asserted remove tab button does NOT exist")
 
             HomeScreenRobot().interact()
             return HomeScreenRobot.Transition()

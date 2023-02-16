@@ -60,9 +60,15 @@ object MatcherHelper {
         }
     }
 
-    fun assertItemWithDescriptionExists(vararg appItems: UiObject) {
-        for (appItem in appItems) {
-            assertTrue(appItem.waitForExists(waitingTime))
+    fun assertItemWithDescriptionExists(vararg appItems: UiObject, exists: Boolean = true) {
+        if (exists) {
+            for (appItem in appItems) {
+                assertTrue(appItem.waitForExists(waitingTime))
+            }
+        } else {
+            for (appItem in appItems) {
+                assertFalse(appItem.waitForExists(waitingTime))
+            }
         }
     }
 

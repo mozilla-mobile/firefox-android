@@ -7,6 +7,7 @@
 package org.mozilla.fenix.ui.robots
 
 import android.graphics.Bitmap
+import android.util.Log
 import android.widget.EditText
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
@@ -55,11 +56,13 @@ import org.mozilla.fenix.helpers.Constants.LISTS_MAXSWIPES
 import org.mozilla.fenix.helpers.Constants.LONG_CLICK_DURATION
 import org.mozilla.fenix.helpers.MatcherHelper.assertCheckedItemWithResIdExists
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemContainingTextExists
+import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithDescriptionExists
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithResIdAndDescriptionExists
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithResIdAndTextExists
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithResIdExists
 import org.mozilla.fenix.helpers.MatcherHelper.checkedItemWithResId
 import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithDescription
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdAndDescription
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdAndText
@@ -322,10 +325,8 @@ class HomeScreenRobot {
     // Collections elements
     fun verifyCollectionIsDisplayed(title: String, collectionExists: Boolean = true) {
         if (collectionExists) {
-            scrollToElementByText(title)
             assertTrue(mDevice.findObject(UiSelector().text(title)).waitForExists(waitingTime))
         } else {
-            scrollToElementByText("Collections")
             assertTrue(mDevice.findObject(UiSelector().text(title)).waitUntilGone(waitingTime))
         }
     }
@@ -721,13 +722,13 @@ class HomeScreenRobot {
             return TabDrawerRobot.Transition()
         }
 
-        fun expandCollection(title: String, rule: ComposeTestRule, interact: CollectionRobot.() -> Unit): CollectionRobot.Transition {
-            homeScreenList().waitForExists(waitingTime)
-            homeScreenList().scrollToEnd(LISTS_MAXSWIPES)
-
-            collectionTitle(title, rule)
-                .assertIsDisplayed()
-                .performClick()
+        fun expandCollection(title: String, interact: CollectionRobot.() -> Unit): CollectionRobot.Transition {
+            assertItemContainingTextExists(itemContainingText(title))
+            Log.i("Andi", "expandCollection: Asserted collection $title")
+            itemContainingText(title).clickAndWaitForNewWindow(waitingTimeShort)
+            Log.i("Andi", "expandCollection: Clicked $title and waiting for a new window for $waitingTimeShort")
+            assertItemWithDescriptionExists(itemWithDescription(getStringResource(R.string.remove_tab_from_collection)))
+            Log.i("Andi", "expandCollection: Asserted remove tab button exists")
 
             CollectionRobot().interact()
             return CollectionRobot.Transition()
