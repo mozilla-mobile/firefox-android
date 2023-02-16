@@ -53,49 +53,6 @@ class TopSiteItemViewHolder(
     private val binding = TopSiteItemBinding.bind(view)
 
     init {
-        itemView.setOnLongClickListener {
-            TopSites.longPress.record(TopSites.LongPressExtra(topSite.name()))
-
-            val topSiteMenu = TopSiteItemMenu(
-                context = view.context,
-                topSite = topSite,
-            ) { item ->
-                when (item) {
-                    is TopSiteItemMenu.Item.OpenInPrivateTab -> interactor.onOpenInPrivateTabClicked(
-                        topSite,
-                    )
-                    is TopSiteItemMenu.Item.RenameTopSite -> interactor.onRenameTopSiteClicked(
-                        topSite,
-                    )
-                    is TopSiteItemMenu.Item.RemoveTopSite -> {
-                        interactor.onRemoveTopSiteClicked(topSite)
-                        FenixSnackbar.make(
-                            view = it,
-                            duration = FenixSnackbar.LENGTH_LONG,
-                            isDisplayedWithBrowserToolbar = false,
-                        )
-                            .setText(it.context.getString(R.string.snackbar_top_site_removed))
-                            .setAction(it.context.getString(R.string.snackbar_deleted_undo)) {
-                                it.context.components.useCases.topSitesUseCase.addPinnedSites(
-                                    topSite.title.toString(),
-                                    topSite.url,
-                                )
-                            }
-                            .show()
-                    }
-                    is TopSiteItemMenu.Item.Settings -> interactor.onSettingsClicked()
-                    is TopSiteItemMenu.Item.SponsorPrivacy -> interactor.onSponsorPrivacyClicked()
-                }
-            }
-            val menu = topSiteMenu.menuBuilder.build(view.context).show(anchor = it)
-
-            it.setOnTouchListener { v, event ->
-                onTouchEvent(v, event, menu)
-            }
-
-            true
-        }
-
         appStore.flowScoped(viewLifecycleOwner) { flow ->
             flow.map { state -> state.wallpaperState }
                 .ifChanged()
@@ -132,9 +89,63 @@ class TopSiteItemViewHolder(
         }
     }
 
+    /**
+     * Binds a top site to the view. This will set the title, url, and image.
+     * setOnClickListener and setOnLongClickListener are also set here.
+     * @param topSite The top site to bind.
+     * @param position The position of the top site in the list.
+     */
+    @Suppress("LongMethod", "ComplexMethod")
     fun bind(topSite: TopSite, position: Int) {
         itemView.setOnClickListener {
             interactor.onSelectTopSite(topSite, position)
+        }
+
+        itemView.setOnLongClickListener {
+            TopSites.longPress.record(TopSites.LongPressExtra(topSite.name()))
+
+            val topSiteMenu = TopSiteItemMenu(
+                context = itemView.context,
+                topSite = topSite,
+            ) { item ->
+                when (item) {
+                    is TopSiteItemMenu.Item.OpenInBackgroundTab -> interactor.onOpenInBackgroundTabClicked(
+                        topSite,
+                        position,
+                    )
+                    is TopSiteItemMenu.Item.OpenInPrivateTab -> interactor.onOpenInPrivateTabClicked(
+                        topSite,
+                    )
+                    is TopSiteItemMenu.Item.RenameTopSite -> interactor.onRenameTopSiteClicked(
+                        topSite,
+                    )
+                    is TopSiteItemMenu.Item.RemoveTopSite -> {
+                        interactor.onRemoveTopSiteClicked(topSite)
+                        FenixSnackbar.make(
+                            view = it,
+                            duration = FenixSnackbar.LENGTH_LONG,
+                            isDisplayedWithBrowserToolbar = false,
+                        )
+                            .setText(it.context.getString(R.string.snackbar_top_site_removed))
+                            .setAction(it.context.getString(R.string.snackbar_deleted_undo)) {
+                                it.context.components.useCases.topSitesUseCase.addPinnedSites(
+                                    topSite.title.toString(),
+                                    topSite.url,
+                                )
+                            }
+                            .show()
+                    }
+                    is TopSiteItemMenu.Item.Settings -> interactor.onSettingsClicked()
+                    is TopSiteItemMenu.Item.SponsorPrivacy -> interactor.onSponsorPrivacyClicked()
+                }
+            }
+            val menu = topSiteMenu.menuBuilder.build(itemView.context).show(anchor = it)
+
+            it.setOnTouchListener { v, event ->
+                onTouchEvent(v, event, menu)
+            }
+
+            true
         }
 
         binding.topSiteTitle.text = topSite.title

@@ -473,6 +473,7 @@
     <ID>UndocumentedPublicClass:ToolbarMenu.kt$ToolbarMenu.Item$SyncAccount : Item</ID>
     <ID>UndocumentedPublicClass:ToolbarPopupWindow.kt$ToolbarPopupWindow</ID>
     <ID>UndocumentedPublicClass:TopSiteItemMenu.kt$TopSiteItemMenu$Item</ID>
+    <ID>UndocumentedPublicClass:TopSiteItemMenu.kt$TopSiteItemMenu.Item$OpenInBackgroundTab : Item</ID>
     <ID>UndocumentedPublicClass:TopSiteItemMenu.kt$TopSiteItemMenu.Item$OpenInPrivateTab : Item</ID>
     <ID>UndocumentedPublicClass:TopSiteItemMenu.kt$TopSiteItemMenu.Item$RemoveTopSite : Item</ID>
     <ID>UndocumentedPublicClass:TopSiteItemMenu.kt$TopSiteItemMenu.Item$RenameTopSite : Item</ID>

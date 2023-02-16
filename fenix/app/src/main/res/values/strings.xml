@@ -1964,4 +1964,5 @@
     <string name="a11y_action_label_wallpaper_collection_learn_more">open link to learn more about this collection</string>
     <!-- Action label for links that point to an article. Talkback will append this to say "Double tap to read the article". -->
     <string name="a11y_action_label_read_article">read the article</string>
+    <string name="open_in_backgroud_tab">Open in background tab</string>
 </resources>

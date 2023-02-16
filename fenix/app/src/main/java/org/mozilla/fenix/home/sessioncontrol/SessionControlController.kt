@@ -108,6 +108,11 @@ interface SessionControlController {
     fun handleOpenInPrivateTabClicked(topSite: TopSite)
 
     /**
+     * @see [TopSiteInteractor.onOpenInBackgroundTabClicked]
+     */
+    fun handleOpenInBackgroundTabClicked(topSite: TopSite, position: Int)
+
+    /**
      * @see [TabSessionInteractor.onPrivateBrowsingLearnMoreClicked]
      */
     fun handlePrivateBrowsingLearnMoreClicked()
@@ -321,6 +326,49 @@ class DefaultSessionControlController(
                 from = BrowserDirection.FromHome,
             )
         }
+    }
+
+    override fun handleOpenInBackgroundTabClicked(topSite: TopSite, position: Int) {
+        TopSites.openInNewTab.record(NoExtras())
+
+        when (topSite) {
+            is TopSite.Default -> TopSites.openDefault.record(NoExtras())
+            is TopSite.Frecent -> TopSites.openFrecency.record(NoExtras())
+            is TopSite.Pinned -> TopSites.openPinned.record(NoExtras())
+            is TopSite.Provided -> TopSites.openContileTopSite.record(NoExtras()).also {
+                submitTopSitesImpressionPing(topSite, position)
+            }
+        }
+
+        when (topSite.url) {
+            SupportUtils.GOOGLE_URL -> TopSites.openGoogleSearchAttribution.record(NoExtras())
+            SupportUtils.BAIDU_URL -> TopSites.openBaiduSearchAttribution.record(NoExtras())
+            SupportUtils.POCKET_TRENDING_URL -> Pocket.pocketTopSiteClicked.record(NoExtras())
+        }
+
+        val availableEngines: List<SearchEngine> = getAvailableSearchEngines()
+        val searchAccessPoint = MetricsUtils.Source.TOPSITE
+
+        availableEngines.firstOrNull { engine ->
+            engine.resultUrls.firstOrNull { it.contains(topSite.url) } != null
+        }?.let { searchEngine ->
+            MetricsUtils.recordSearchMetrics(
+                searchEngine,
+                searchEngine == store.state.search.selectedOrDefaultSearchEngine,
+                searchAccessPoint,
+            )
+        }
+
+        val tabId = addTabUseCase.invoke(
+            url = appendSearchAttributionToUrlIfNeeded(topSite.url),
+            selectTab = false,
+            startLoading = true,
+        )
+
+        if (settings.openNextTabInDesktopMode) {
+            activity.handleRequestDesktopMode(tabId)
+        }
+        activity.openToBrowser(BrowserDirection.FromTabsTray)
     }
 
     override fun handlePrivateBrowsingLearnMoreClicked() {

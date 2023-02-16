@@ -23,6 +23,7 @@ class TopSiteItemMenu(
     private val onItemTapped: (Item) -> Unit = {},
 ) {
     sealed class Item {
+        object OpenInBackgroundTab : Item()
         object OpenInPrivateTab : Item()
         object RenameTopSite : Item()
         object RemoveTopSite : Item()
@@ -37,6 +38,11 @@ class TopSiteItemMenu(
         val isProvidedSite = topSite is TopSite.Provided
 
         listOfNotNull(
+            SimpleBrowserMenuItem(
+                context.getString(R.string.open_in_backgroud_tab),
+            ) {
+                onItemTapped.invoke(Item.OpenInBackgroundTab)
+            },
             SimpleBrowserMenuItem(
                 context.getString(R.string.bookmark_menu_open_in_private_tab_button),
             ) {

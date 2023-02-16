@@ -182,6 +182,14 @@ interface CustomizeHomeIteractor {
  * Interface for top site related actions in the [SessionControlInteractor].
  */
 interface TopSiteInteractor {
+
+    /**
+     * Opens the given top site in a new tab. Called when an user clicks on a top site.
+     *
+     * @param topSite The top site that will be open in a new tab.
+     */
+    fun onOpenInBackgroundTabClicked(topSite: TopSite, position: Int)
+
     /**
      * Opens the given top site in private mode. Called when an user clicks on the "Open in private
      * tab" top site menu item.
@@ -287,6 +295,10 @@ class SessionControlInteractor(
 
     override fun onDeleteCollectionTapped(collection: TabCollection) {
         controller.handleDeleteCollectionTapped(collection)
+    }
+
+    override fun onOpenInBackgroundTabClicked(topSite: TopSite, position: Int) {
+        controller.handleOpenInBackgroundTabClicked(topSite, position = position)
     }
 
     override fun onOpenInPrivateTabClicked(topSite: TopSite) {
