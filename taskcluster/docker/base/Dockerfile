@@ -18,41 +18,45 @@ WORKDIR /builds/worker/
 #----------------------------------------------------------------------------------------------------------------------
 
 ENV CURL='curl --location --retry 5' \
-    GRADLE_OPTS='-Xmx4096m -Dorg.gradle.daemon=false' \
+    GRADLE_OPTS='-Xmx4096m -Dorg.gradle.daemon=false -Dorg.gradle.parallel=false' \
     LANG='en_US.UTF-8' \
-    TERM='dumb' \
-    DEBIAN_FRONTEND=noninteractive
+    TERM='dumb'
 
 #----------------------------------------------------------------------------------------------------------------------
 #-- System ------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------
 
 RUN apt-get update -qq \
+    # We need to install tzdata before all of the other packages. Otherwise it will show an interactive dialog
+    # which we cannot navigate while building the Docker image.
+    && apt-get install -y tzdata \
     && apt-get install -y openjdk-8-jdk \
                           openjdk-11-jdk \
                           wget \
                           expect \
                           git \
                           curl \
+                          python \
+                          python-pip \
                           python3 \
                           python3-pip \
                           python3-yaml \
                           locales \
-                          tzdata \
                           unzip \
 			  mercurial \
     && apt-get clean
 
 RUN pip3 install --upgrade pip
-RUN pip install taskcluster
+RUN pip3 install taskcluster
 
 RUN locale-gen "$LANG"
+
 
 # %include-run-task
 
 ENV SHELL=/bin/bash \
     HOME=/builds/worker \
-    PATH="/builds/worker/.local/bin:$PATH"
+    PATH=/builds/worker/.local/bin:$PATH
 
 
 VOLUME /builds/worker/checkouts

@@ -5,29 +5,21 @@
 loader: taskgraph.loader.transform:loader
 
 transforms:
-    - fenix_taskgraph.transforms.release_deps:transforms
-    - taskgraph.transforms.release_notifications:transforms
+    - android_taskgraph.transforms.release_deps:transforms
+    - taskgraph.transforms.notify:transforms
     - taskgraph.transforms.task:transforms
 
 kind-dependencies:
     - push-apk
-    - github-release
+    - github-release-components
+    - github-release-apks
     - version-bump
     - mark-as-shipped
 
-primary-dependency: push-apk
-
-group-by: build-type
-
-only-for-build-types:
-    - beta
-    - release
-
 task-defaults:
-    attributes:
-        shipping_phase: ship
     name: notify-release-drivers-ship
     description: Sends email to release-drivers telling release was shipped.
+    shipping-phase: ship
     worker-type: succeed
     worker:
         implementation: succeed

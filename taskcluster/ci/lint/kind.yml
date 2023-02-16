@@ -11,19 +11,26 @@ transforms:
 
 kind-dependencies:
     - toolchain
+    - external-gradle-dependencies
 
 
 task-defaults:
     attributes:
         code-review: true
         retrigger: true
+    dependencies:
+        external-gradle-dependencies: external-gradle-dependencies-lint-components
     fetches:
         toolchain:
             - android-sdk-linux
-            - android-gradle-dependencies
+        external-gradle-dependencies:
+            - external-gradle-dependencies.tar.xz
     run:
         use-caches: false
-    run-on-tasks-for: [github-pull-request, github-push]
+    run-on-tasks-for:
+        - github-pull-request
+        - github-pull-request-untrusted
+        - github-push
     treeherder:
         kind: test
         platform: 'lint/opt'
@@ -31,52 +38,14 @@ task-defaults:
     worker-type: b-android
     worker:
         docker-image: {in-tree: base}
-        max-run-time: 7200
+        max-run-time: 1200
+    optimization:
+        skip-unless-changed:
+            - "android-components/**"
 
-tasks:
-    compare-locales:
-        description: 'Validate strings.xml with compare-locales'
-        run:
-            using: run-task
-            cwd: '{checkout}'
-            command: 'pip install --user "compare-locales>=5.0.2,<6.0" && compare-locales --validate l10n.toml .'
-        treeherder:
-            symbol: compare-locale
-            tier: 2
-    detekt:
-        description: 'Running detekt over all modules'
-        run:
-            using: gradlew
-            gradlew: [detekt, githubLintDetektDetails, 'mozilla-detekt-rules:test']
-        treeherder:
-            symbol: detekt
-        worker:
-            artifacts:
-                - name: public/reports
-                  path: /builds/worker/checkouts/vcs/build/reports
-                  type: directory
-                - name: public/github
-                  path: /builds/worker/github
-                  type: directory
-    ktlint:
-        description: 'Running ktlint over all modules'
-        run:
-            using: gradlew
-            gradlew: [ktlint]
-        treeherder:
-            symbol: ktlint
-    lint:
-        description: 'Running lint over all modules'
-        run:
-            using: gradlew
-            gradlew: ['lintDebug', 'githubLintAndroidDetails', 'mozilla-lint-rules:test']
-        treeherder:
-            symbol: lint
-        worker:
-            artifacts:
-                - name: public/reports
-                  path: /builds/worker/checkouts/vcs/app/build/reports
-                  type: directory
-                - name: public/github
-                  path: /builds/worker/github
-                  type: directory
+tasks-from:
+    - buildconfig.yml
+    - compare-locales.yml
+    - detekt.yml
+    - ktlint.yml
+    - lint.yml

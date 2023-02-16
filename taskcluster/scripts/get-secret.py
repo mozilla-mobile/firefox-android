@@ -4,7 +4,6 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-from __future__ import absolute_import, print_function, unicode_literals
 
 import argparse
 import base64
@@ -15,13 +14,13 @@ import taskcluster
 
 
 def write_secret_to_file(path, data, key, base64decode=False, json_secret=False, append=False, prefix=''):
-    path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../' + path))
+    path = os.path.abspath(os.path.join(os.getcwd(), path))
     try:
         os.makedirs(os.path.dirname(path))
     except OSError as error:
         if error.errno != errno.EEXIST:
             raise
-    print("Outputting secret to: {}".format(path))
+    print(f"Outputting secret to: {path}")
 
     with open(path, 'a' if append else 'w') as f:
         value = data['secret'][key]
@@ -29,6 +28,9 @@ def write_secret_to_file(path, data, key, base64decode=False, json_secret=False,
             value = base64.b64decode(value)
         if json_secret:
             value = json.dumps(value)
+
+        if isinstance(value, bytes):
+            value = value.decode("utf-8")
         f.write(prefix + value)
 
 

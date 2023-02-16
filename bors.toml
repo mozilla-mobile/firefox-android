@@ -1,11 +1,12 @@
-status = []
-block_labels = [
-  "needs:data-review",
-  "do not land",
-  "pr:work-in-progress",
-  "pr:needs-changes"
+status = [
+  "complete-push"
 ]
-required_approvals = 0
+block_labels = [
+  "blocked",
+  "work in progress"
+]
+required_approvals = 1
+use_codeowners = true
 delete_merged_branches = true
 cut_body_after = "---"
 [committer]

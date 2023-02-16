@@ -1,10 +1,9 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-from __future__ import absolute_import, print_function, unicode_literals
 
 import argparse
 import errno
@@ -12,13 +11,14 @@ import os
 
 
 def write_secret_to_file(path, secret):
-    path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../' + path))
+    path = os.path.abspath(os.path.join(os.getcwd(), path))
     try:
         os.makedirs(os.path.dirname(path))
     except OSError as error:
         if error.errno != errno.EEXIST:
             raise
-    print("Outputting secret to: {}".format(path))
+
+    print(f"Outputting secret to: {path}")
 
     with open(path, 'w') as f:
         f.write(secret)

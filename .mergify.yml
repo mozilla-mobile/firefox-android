@@ -1,9 +1,7 @@
 queue_rules:
   - name: default
     conditions:
-      - or:
-        - status-success=complete-pr
-        - status-success=complete-push
+      - status-success=complete-pr
 pull_request_rules:
   - name: Resolve conflict
     conditions:
@@ -11,20 +9,38 @@ pull_request_rules:
     actions:
         comment:
           message: This pull request has conflicts when rebasing. Could you fix it @{{author}}? 🙏
-  - name: Android-Components bump - Auto Merge
+  - name: MickeyMoz - Auto Merge
     conditions:
-      - and:
-        - files=buildSrc/src/main/java/AndroidComponents.kt
-        - -files~=^(?!buildSrc/src/main/java/AndroidComponents.kt).+$
-        - author=github-actions[bot]
-        - status-success=complete-push
-        - or:
-          - and:
-            - base=main
-            - head~=^relbot/AC-Nightly-.+
-          - and:
-            - base~=^releases[_/].*
-            - head~=^relbot/fenix-\d+
+      - author=MickeyMoz
+      - status-success=complete-pr
+      - files~=^android-components/(Gecko\.kt|components/lib/publicsuffixlist/src/main/assets/publicsuffixes)
+      - -files~=^(?!android-components/(Gecko\.kt|components/lib/publicsuffixlist/src/main/assets/publicsuffixes)).+$
+    actions:
+      review:
+        type: APPROVE
+        message: MickeyMoz 💪
+      queue:
+        method: rebase
+        name: default
+  - name: L10N - Auto Merge
+    conditions:
+      - author=github-actions[bot]
+      - status-success=complete-pr
+      - files~=^(android-components|fenix|focus-android)/(.+/strings\.xml|l10n\.toml)
+      - -files~=^(?!(android-components|fenix|focus-android)/(.+/strings\.xml|l10n\.toml)).+$
+    actions:
+      review:
+        type: APPROVE
+        message: LGTM 😎
+      queue:
+        method: rebase
+        name: default
+  - name: Release automation
+    conditions:
+      - author=github-actions[bot]
+      - status-success=complete-pr
+      - files~=^android-components/(\.buildconfig\.yml|.+/NimbusGradlePlugin\.groovy|plugins/dependencies/src/main/java/(Gecko|DependenciesPlugin)\.kt|buildSrc/src/main/java/Gecko\.kt)
+      - -files~=^(?!android-components/(\.buildconfig\.yml|.+/NimbusGradlePlugin\.groovy|plugins/dependencies/src/main/java/(Gecko|DependenciesPlugin)\.kt|buildSrc/src/main/java/Gecko\.kt)).+$
     actions:
       review:
         type: APPROVE
@@ -32,60 +48,28 @@ pull_request_rules:
       queue:
         method: rebase
         name: default
-  - name: L10N - Auto Merge
-    conditions:
-      - and:
-        - files~=^(l10n.toml|app/src/main/res/values[A-Za-z-]*/strings\.xml)$
-        # /!\ The line above doesn't prevent random files to be changed alongside
-        # l10n ones. That's why the additional condition exists below. For more
-        # information: https://docs.mergify.com/conditions/#how-to-match-lists
-        - -files~=^(?!(l10n.toml|app/src/main/res/values[A-Za-z-]*/strings\.xml)).+$
-        - or:
-          - and:
-            - author=mozilla-l10n-automation-bot
-            - base=main
-            - head=import-l10n
-            - status-success=complete-pr
-          - and:
-            - author=github-actions[bot]
-            - base~=^releases[_/].*
-            - head~=^automation/sync-strings-\d+
-            - status-success=complete-push
-            # Taskcluster only runs on git-push events because github-actions[bot] is not considered
-            # a collaborator, so pull request events are triggered. That said, github-actions[bot]
-            # doesn't create the PR on a separate fork (unlike mozilla-l10n-automation-bot). That's
-            # why git-push events are taken into account
-    actions:
-      review:
-        type: APPROVE
-        message: LGTM 😎
-      queue:
-        method: squash
-        name: default
+      delete_head_branch:
+        force: false
   - name: Needs landing - Rebase
     conditions:
-      - or:
-        - check-success=complete-pr
-        - check-success=complete-push
-      - label=pr:needs-landing
+      - status-success=complete-pr
+      - label=🛬 needs landing
       - "#approved-reviews-by>=1"
       - -draft
-      - label!=pr:work-in-progress
-      - label!=pr:do-not-land
+      - label!=work in progress
+      - label!=do not land
     actions:
       queue:
         method: rebase
         name: default
   - name: Needs landing - Squash
     conditions:
-      - or:
-        - check-success=complete-pr
-        - check-success=complete-push
-      - label=pr:needs-landing-squashed
+      - status-success=complete-pr
+      - label=🛬 needs landing (squash)
       - "#approved-reviews-by>=1"
       - -draft
-      - label!=pr:work-in-progress
-      - label!=pr:do-not-land
+      - label!=work in progress
+      - label!=do not land
     actions:
       queue:
         method: squash

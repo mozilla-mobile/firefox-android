@@ -2,51 +2,67 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 ---
-loader: fenix_taskgraph.loader.multi_dep:loader
+loader: android_taskgraph.loader.multi_dep:loader
 
 transforms:
-    - fenix_taskgraph.transforms.multi_dep:transforms
-    - fenix_taskgraph.transforms.push_apk:transforms
+    - android_taskgraph.transforms.multi_dep:transforms
+    - android_taskgraph.transforms.push_apk:transforms
+    - android_taskgraph.transforms.treeherder:transforms
+    - android_taskgraph.transforms.clean_multi_dep:transforms
     - taskgraph.transforms.task:transforms
 
 kind-dependencies:
-    - signing
+    - signing-apk
 
-primary-dependency: signing
+primary-dependency: signing-apk
 
 group-by: build-type
 
 only-for-build-types:
-    - beta
-    - release
-    - nightly
+    - focus-nightly
+    - focus-release
+    - klar-release
+    - focus-beta
+    - fenix-nightly
+    - fenix-release
+    - fenix-beta
 
-job-template:
-    attributes:
-        shipping_phase: promote     # APKs are sent to testing tracks
-    description: Publish Fenix
+task-template:
+    description: Publish Focus and Fenix APKs
     worker-type: push-apk
+    run-on-tasks-for: []
     worker:
         certificate-alias:
-            # TODO rename these values to use non-legacy terms.
             by-build-type:
-                nightly: fenix-production
-                beta: fennec-beta
-                release: fennec-production
+                fenix-nightly: fenix-production
+                fenix-beta: fennec-beta
+                fenix-release: fennec-production
+                default: focus
         commit: true
         channel:
             by-build-type:
-                beta: fennec-beta
-                release: fennec-production
-                nightly: production
+                focus-nightly: nightly
+                focus-release: focus-release
+                klar-release: klar-release
+                focus-beta: beta
+                fenix-nightly: production
+                fenix-release: fennec-production
+                fenix-beta: fennec-beta
         dep:
             by-level:
                 '3': false
                 default: true
-        product: fenix
-
+        product:
+            by-build-type:
+                (fenix-nightly|fenix-release|fenix-beta): fenix
+                default: focus-android
+    shipping-phase: push     # APKs are sent to testing tracks
     treeherder:
-        job-symbol: gp
+        job-symbol:
+            by-build-type:
+                default: gp
+                focus-release: gpf
+                klar-release: gpkl
         kind: build
     routes:
         by-level:
