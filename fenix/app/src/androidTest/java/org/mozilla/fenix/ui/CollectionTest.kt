@@ -431,23 +431,32 @@ class CollectionTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(testPage.url) {
+            Log.i("Andi", "Loaded ${testPage.title}")
             waitForPageToLoad()
+            Log.i("Andi", "Waited for page load")
         }.openTabDrawer {
+            Log.i("Andi", "Opened tab drawer")
             createCollection(
                 testPage.title,
                 collectionName = collectionName,
             )
             closeTab()
+            Log.i("Andi", "Closed the tab")
         }
 
         homeScreen {
+            verifyCollectionIsDisplayed(collectionName)
+            Log.i("Andi", "Verified collection: $collectionName is displayed on the home screen")
         }.expandCollection(collectionName) {
-            swipeToBottom()
+            Log.i("Andi", "Expanded collection")
             swipeTabRight(testPage.title, composeTestRule)
+            Log.i("Andi", "Swiped tab right")
             verifyTabSavedInCollection(testPage.title, false)
+            Log.i("Andi", "Verified tab: ${testPage.title} is NOT displayed in collection")
         }
         homeScreen {
             verifyCollectionIsDisplayed(collectionName, false)
+            Log.i("Andi", "Verified collection: $collectionName is NOT displayed on the home screen")
         }
     }
 
