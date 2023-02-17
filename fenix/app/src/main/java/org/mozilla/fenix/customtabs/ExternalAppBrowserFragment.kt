@@ -33,7 +33,6 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BaseBrowserFragment
 import org.mozilla.fenix.browser.CustomTabContextMenuCandidate
 import org.mozilla.fenix.browser.FenixSnackbarDelegate
-import org.mozilla.fenix.components.components
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
@@ -146,6 +145,7 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
                         customTabSessionId,
                         manifest,
                     ),
+                    notificationsDelegate = requireComponents.notificationsDelegate,
                 ),
             )
         } else {
