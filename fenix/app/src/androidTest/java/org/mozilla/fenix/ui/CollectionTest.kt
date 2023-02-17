@@ -268,22 +268,39 @@ class CollectionTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(firstWebPage.url) {
+            Log.i("Andi", "Loaded ${firstWebPage.title}")
         }.openTabDrawer {
+            Log.i("Andi", "Opened tab drawer")
             createCollection(firstWebPage.title, collectionName = collectionName)
             verifySnackBarText("Collection saved!")
-        }.closeTabDrawer {}
+            Log.i("Andi", "Verified Collection saved! snackbar")
+        }.closeTabDrawer {
+            Log.i("Andi", "Closed tabs tray")
+        }
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(secondWebPage.url) {
+            Log.i("Andi", "Loaded ${secondWebPage.title}")
             verifyPageContent(secondWebPage.content)
+            Log.i("Andi", "Verified page content: ${secondWebPage.content}")
         }.openThreeDotMenu {
+            Log.i("Andi", "Opened 3 dot menu")
         }.openSaveToCollection {
+            Log.i("Andi", "Open save to collection")
         }.selectExistingCollection(collectionName) {
+            Log.i("Andi", "Selected existing collection $collectionName")
             verifySnackBarText("Tab saved!")
+            Log.i("Andi", "Verified Tab saved! snackbar")
         }.goToHomescreen {
+            Log.i("Andi", "Clicked go to home toolbar button")
+            verifyCollectionIsDisplayed(collectionName)
+            Log.i("Andi", "Verified collection: $firstCollectionName is displayed on the home screen")
         }.expandCollection(collectionName) {
+            Log.i("Andi", "Expanded collection")
             verifyTabSavedInCollection(firstWebPage.title)
+            Log.i("Andi", "Verified tab ${firstWebPage.title} is displayed in collection")
             verifyTabSavedInCollection(secondWebPage.title)
+            Log.i("Andi", "Verified tab ${secondWebPage.title} is displayed in collection")
         }
     }
 
