@@ -285,6 +285,7 @@ events:
     send_in_pings:
       - metrics
       - baseline
+      - client-deduplication
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/17089
     data_reviews:
@@ -1486,6 +1487,7 @@ metrics:
     send_in_pings:
       - metrics
       - baseline
+      - client-deduplication
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/1158
       - https://github.com/mozilla-mobile/fenix/issues/6556
@@ -1781,6 +1783,7 @@ metrics:
       please see `has_open_tabs`.
     send_in_pings:
       - metrics
+      - client-deduplication
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/11479
     data_reviews:
@@ -2580,6 +2583,7 @@ search.default_engine:
     send_in_pings:
       - metrics
       - baseline
+      - client-deduplication
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/800
     data_reviews:
@@ -2609,6 +2613,7 @@ search.default_engine:
     send_in_pings:
       - metrics
       - baseline
+      - client-deduplication
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/800
     data_reviews:
@@ -3012,6 +3017,7 @@ activation:
       This will never be sent in a ping that also contains the client_id.
     send_in_pings:
       - activation
+      - client-deduplication
     bugs:
       - https://bugzilla.mozilla.org/1538011
       - https://bugzilla.mozilla.org/1501822
@@ -3194,6 +3200,8 @@ sync_auth:
     notification_emails:
       - android-probes@mozilla.com
       - kbrosnan@mozilla.com
+    send_in_pings:
+      - client-deduplication
     expires: never
     metadata:
       tags:
@@ -6452,6 +6460,7 @@ browser.search:
     send_in_pings:
       - metrics
       - baseline
+      - client-deduplication
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/6558
       - https://github.com/mozilla-mobile/fenix/issues/28010
@@ -6486,6 +6495,7 @@ browser.search:
     send_in_pings:
       - metrics
       - baseline
+      - client-deduplication
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/6558
       - https://github.com/mozilla-mobile/fenix/issues/28010
@@ -6511,6 +6521,7 @@ browser.search:
     send_in_pings:
       - metrics
       - baseline
+      - client-deduplication
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/6557
     data_reviews:
