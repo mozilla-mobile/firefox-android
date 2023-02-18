@@ -21,7 +21,6 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.mozilla.fenix.home.recentbookmarks.RecentBookmark
-import java.util.concurrent.TimeUnit
 
 class BookmarksUseCaseTest {
 
@@ -94,7 +93,7 @@ class BookmarksUseCaseTest {
             )
         }.coAnswers { listOf(bookmarkNode) }
 
-        val result = useCase.retrieveRecentBookmarks(BookmarksUseCase.DEFAULT_BOOKMARKS_TO_RETRIEVE, 22)
+        val result = useCase.retrieveRecentBookmarks(BookmarksUseCase.DEFAULT_BOOKMARKS_TO_RETRIEVE)
 
         assertEquals(
             listOf(
@@ -110,7 +109,7 @@ class BookmarksUseCaseTest {
         coVerify {
             bookmarksStorage.getRecentBookmarks(
                 BookmarksUseCase.DEFAULT_BOOKMARKS_TO_RETRIEVE,
-                22,
+                null,
                 any(),
             )
         }
@@ -131,7 +130,7 @@ class BookmarksUseCaseTest {
         coVerify {
             bookmarksStorage.getRecentBookmarks(
                 BookmarksUseCase.DEFAULT_BOOKMARKS_TO_RETRIEVE,
-                TimeUnit.DAYS.toMillis(BookmarksUseCase.DEFAULT_BOOKMARKS_DAYS_AGE_TO_RETRIEVE),
+                null,
                 any(),
             )
         }
