@@ -146,7 +146,8 @@
     <ImageButton
         android:id="@+id/clearUsernameTextButton"
         android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_height="@dimen/accessibility_min_height"
+        app:layout_goneMarginBottom="18dp"
         android:background="@null"
         android:contentDescription="@string/saved_login_clear_username"
         android:visibility="invisible"
@@ -181,7 +182,6 @@
         android:colorControlActivated="?attr/textPrimary"
         android:colorControlHighlight="?attr/textPrimary"
         android:contentDescription="@string/saved_login_password_description"
-        android:paddingBottom="11dp"
         android:textColor="?attr/textPrimary"
         app:hintEnabled="false"
         app:layout_constraintEnd_toEndOf="parent"
@@ -217,7 +217,8 @@
     <ImageButton
         android:id="@+id/clearPasswordTextButton"
         android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_height="@dimen/accessibility_min_height"
+        android:layout_marginBottom="18dp"
         android:background="@null"
         android:contentDescription="@string/saved_logins_clear_password"
         android:visibility="invisible"
