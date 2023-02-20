@@ -1212,7 +1212,8 @@ abstract class BaseBrowserFragment :
     }
 
     override fun onBackLongPressed(): Boolean {
-        findNavController().navigate(
+        findNavController().nav(
+            R.id.browserFragment,
             NavGraphDirections.actionGlobalTabHistoryDialogFragment(
                 activeSessionId = customTabSessionId,
             ),
