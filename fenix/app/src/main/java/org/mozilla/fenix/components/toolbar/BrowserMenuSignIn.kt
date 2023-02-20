@@ -45,7 +45,7 @@ class BrowserMenuSignIn(
      * Return the proper label for the sign in button.
      *
      * There are 3 states that the account state could be in:
-     * 1) If the user is signed in and the account information is known, display the account email.
+     * 1) If the user is signed in and the account information is known, display the account display name.
      * 2) The user is not signed in.
      * 3) Display an account info placeholder string if the user is signed in, but the account state
      * is unknown or being checked. Could by improved by using:
@@ -54,10 +54,10 @@ class BrowserMenuSignIn(
     @VisibleForTesting
     internal fun getLabel(context: Context): String = with(context) {
         val isSignedIn = components.settings.signedInFxaAccount
-        val email = components.backgroundServices.syncStore.state.account?.email
+        val displayName = components.backgroundServices.syncStore.state.account?.displayName
 
         if (isSignedIn) {
-            email ?: resources.getString(R.string.browser_menu_account_settings)
+            displayName ?: resources.getString(R.string.browser_menu_account_settings)
         } else {
             resources.getString(R.string.sync_menu_sync_and_save_data)
         }

@@ -24,7 +24,7 @@ class BrowserMenuSignInTest {
     private lateinit var context: Context
     private lateinit var components: Components
     private val account: Account = mockk {
-        every { email } returns "bugzilla@mozilla.com"
+        every { displayName } returns "bugzilla"
     }
 
     @Before
@@ -37,11 +37,11 @@ class BrowserMenuSignInTest {
     }
 
     @Test
-    fun `WHEN signed in and has profile data, THEN show email`() {
+    fun `WHEN signed in and has profile data, THEN show display name`() {
         every { components.backgroundServices.syncStore.state.account } returns account
         every { components.settings.signedInFxaAccount } returns true
 
-        assertEquals(account.email, BrowserMenuSignIn(R.color.black).getLabel(context))
+        assertEquals(account.displayName, BrowserMenuSignIn(R.color.black).getLabel(context))
     }
 
     @Test
