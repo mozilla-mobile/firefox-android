@@ -438,11 +438,21 @@ class Core(
     val pocketStoriesService by lazyMonitored { PocketStoriesService(context, pocketStoriesConfig) }
 
     val contileTopSitesProvider by lazyMonitored {
-        ContileTopSitesProvider(
-            context = context,
-            client = client,
-            maxCacheAgeInSeconds = CONTILE_MAX_CACHE_AGE,
-        )
+        if (Config.channel.isMozillaOnline) {
+            ContileTopSitesProvider(
+                context = context,
+                client = client,
+                endPointURL = "https://download-ssl.firefox.com.cn/fenix-contile/d3.json ",
+                maxCacheAgeInSeconds = CONTILE_MAX_CACHE_AGE,
+                hasExclusions = true,
+            )
+        } else {
+            ContileTopSitesProvider(
+                context = context,
+                client = client,
+                maxCacheAgeInSeconds = CONTILE_MAX_CACHE_AGE,
+            )
+        }
     }
 
     @Suppress("MagicNumber")
