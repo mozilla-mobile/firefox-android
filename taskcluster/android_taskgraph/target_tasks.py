@@ -30,7 +30,7 @@ def index_exists(index_path, reason=""):
 def target_tasks_nightly(full_task_graph, parameters, graph_config):
     def filter(task, parameters):
         build_type = task.attributes.get("build-type", "")
-        return build_type == "nightly" or build_type == "focus-nightly"
+        return build_type in ("nightly", "focus-nightly", "fenix-nightly")
 
     index_path = (
         f"{graph_config['trust-domain']}.v2.{parameters['project']}.branch."
@@ -45,6 +45,13 @@ def target_tasks_nightly(full_task_graph, parameters, graph_config):
     ):
         return []
 
+    return [l for l, t in full_task_graph.tasks.items() if filter(t, parameters)]
+
+
+@_target_task("nightly-test")
+def target_tasks_nightly_test(full_task_graph, parameters, graph_config):
+    def filter(task, parameters):
+        return task.attributes.get("nightly-test", False)
     return [l for l, t in full_task_graph.tasks.items() if filter(t, parameters)]
 
 
@@ -141,3 +148,23 @@ def get_gecko_kt_path(repo, revision):
         return "android-components/plugins/dependencies/src/main/java/Gecko.kt"
     except CalledProcessError:
         return "android-components/buildSrc/src/main/java/Gecko.kt"
+
+
+@_target_task("screenshots")
+def target_tasks_screnshots(full_task_graph, parameters, graph_config):
+    """Select the set of tasks required to generate screenshots on a real device."""
+
+    def filter(task, parameters):
+        return task.attributes.get("screenshots", False)
+
+    return [l for l, t in full_task_graph.tasks.items() if filter(t, parameters)]
+
+
+@_target_task("legacy_api_ui_tests")
+def target_tasks_legacy_api_ui_tests(full_task_graph, parameters, graph_config):
+    """Select the set of tasks required to run select UI tests on other API."""
+
+    def filter(task, parameters):
+        return task.attributes.get("legacy", False)
+
+    return [l for l, t in full_task_graph.tasks.items() if filter(t, parameters)]

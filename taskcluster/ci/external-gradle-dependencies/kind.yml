@@ -30,7 +30,6 @@ task-defaults:
             - android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt
             - android-components/build.gradle
             - android-components/gradle/wrapper/gradle-wrapper.properties
-            - focus-android/buildSrc/src/main/java/FocusDependencies.kt
         toolchain-artifact: public/build/external-gradle-dependencies.tar.xz
         using: toolchain-script
     treeherder:
@@ -52,8 +51,8 @@ task-defaults:
 
 tasks:
     lint-components:
-        attributes:
-            treeherder-group: lint
+        treeherder:
+            symbol: lint(egd-components)
         run:
             arguments:
                 - android-components/
@@ -62,6 +61,25 @@ tasks:
                 - ktlint
                 - detekt
                 - githubLintDetektDetails
+            resources:
+                # TODO: Make focus lint tasks use their own gradle deps tasks
+                - focus-android/buildSrc/src/main/java/FocusDependencies.kt
+
+    lint-fenix:
+        treeherder:
+            symbol: lint(egd-fenix)
+        run:
+            arguments:
+                - fenix/
+                - lint
+                - githubLintAndroidDetails
+                - ktlint
+                - detekt
+                - githubLintDetektDetails
+                - mozilla-detekt-rules:test
+                - mozilla-lint-rules:test
+            resources:
+                - fenix/buildSrc/src/main/java/Dependencies.kt
 
     test-components:
         attributes:

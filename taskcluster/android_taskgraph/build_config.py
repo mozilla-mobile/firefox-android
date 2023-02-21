@@ -8,7 +8,7 @@ import yaml
 
 from taskgraph.util.memoize import memoize
 
-from android_taskgraph import PROJECT_DIR, ANDROID_COMPONENTS_DIR, FOCUS_DIR
+from android_taskgraph import PROJECT_DIR, ANDROID_COMPONENTS_DIR, FOCUS_DIR, FENIX_DIR
 
 
 EXTENSIONS = {
@@ -61,27 +61,40 @@ def _read_build_config(root_dir):
 @memoize
 def get_upstream_deps_for_all_gradle_projects():
     all_deps = {}
-    for root_dir in (ANDROID_COMPONENTS_DIR, FOCUS_DIR):
+    for root_dir in (ANDROID_COMPONENTS_DIR, FOCUS_DIR, FENIX_DIR):
         build_config = _read_build_config(root_dir)
-        all_deps.update({
+        new_deps = {
             project: project_config["upstream_dependencies"]
             for project, project_config in build_config["projects"].items()
-        })
+        }
+
+        app_config = new_deps.pop("app", None)
+        if app_config:
+            if root_dir == FOCUS_DIR:
+                gradle_project = "focus"
+            elif root_dir == FENIX_DIR:
+                gradle_project = "fenix"
+            else:
+                raise NotImplementedError(f"Unsupported root_dir {root_dir}")
+            new_deps[gradle_project] = app_config
+
+        all_deps.update(new_deps)
 
     return all_deps
 
 
 def get_apk_based_projects():
-    # TODO: Support Fenix
     return [{
         "name": "focus",
         "path": FOCUS_DIR,
+    }, {
+        "name": "fenix",
+        "path": FENIX_DIR,
     }]
 
 
 def get_variant(build_type, build_name):
-    # TODO: Support Fenix
-    all_variants = _read_build_config(FOCUS_DIR)["variants"]
+    all_variants = _get_all_variants()
     matching_variants = [
         variant for variant in all_variants
         if variant["build_type"] == build_type and variant["name"] == build_name
@@ -97,3 +110,19 @@ def get_variant(build_type, build_name):
         ))
 
     return matching_variants.pop()
+
+
+def _get_all_variants():
+    all_variants_including_duplicates = _read_build_config(FOCUS_DIR)["variants"] + _read_build_config(FENIX_DIR)["variants"]
+    all_unique_variants = []
+    for variant in all_variants_including_duplicates:
+        if (
+            # androidTest is a special case that can't be prefixed with fenix or focus.
+            # Hence, this variant exist in both build_config and we need to expose it
+            # once only.
+            (variant["build_type"] != "androidTest" and variant["name"] != "androidTest")
+            or variant not in all_unique_variants
+        ):
+            all_unique_variants.append(variant)
+
+    return all_unique_variants
