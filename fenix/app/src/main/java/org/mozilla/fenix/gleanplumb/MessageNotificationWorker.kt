@@ -14,6 +14,8 @@ import android.os.Bundle
 import android.os.IBinder
 import androidx.core.app.NotificationManagerCompat
 import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequest
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
 import androidx.work.Worker
@@ -154,21 +156,37 @@ class MessageNotificationWorker(
             val notificationConfig = featureConfig.notificationConfig
             val pollingInterval = notificationConfig.refreshInterval.toLong()
 
-            val messageWorkRequest = PeriodicWorkRequest.Builder(
-                MessageNotificationWorker::class.java,
-                pollingInterval,
-                TimeUnit.MINUTES,
-            ) // Only start polling after the given interval.
-                .setInitialDelay(pollingInterval, TimeUnit.MINUTES)
-                .build()
-
             val instanceWorkManager = WorkManager.getInstance(context)
-            instanceWorkManager.enqueueUniquePeriodicWork(
-                MESSAGE_WORK_NAME,
-                // We want to keep any existing scheduled work.
-                ExistingPeriodicWorkPolicy.KEEP,
-                messageWorkRequest,
-            )
+            if (pollingInterval > 0) {
+                val messageWorkRequest = PeriodicWorkRequest.Builder(
+                    MessageNotificationWorker::class.java,
+                    pollingInterval,
+                    TimeUnit.MINUTES,
+                ) // Only start polling after the given interval.
+                    .setInitialDelay(pollingInterval, TimeUnit.MINUTES)
+                    .build()
+
+                instanceWorkManager.enqueueUniquePeriodicWork(
+                    MESSAGE_WORK_NAME,
+                    // We want to keep any existing scheduled work.
+                    ExistingPeriodicWorkPolicy.KEEP,
+                    messageWorkRequest,
+                )
+            } else {
+                // This is useful for UI testing.
+                val messageWorkRequest = OneTimeWorkRequest.Builder(
+                    MessageNotificationWorker::class.java,
+                ) // Only start polling after the given interval.
+                    .setInitialDelay(0, TimeUnit.MINUTES)
+                    .build()
+
+
+                instanceWorkManager.enqueueUniqueWork(
+                    MESSAGE_WORK_NAME,
+                    ExistingWorkPolicy.REPLACE,
+                    messageWorkRequest,
+                )
+            }
         }
     }
 }
