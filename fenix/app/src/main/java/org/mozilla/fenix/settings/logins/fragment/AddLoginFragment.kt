@@ -200,10 +200,20 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login), MenuProvider {
                 override fun afterTextChanged(editable: Editable?) {
                     // update usernameChanged to true when the text is not empty,
                     // otherwise it is not changed, as this screen starts with an empty username.
-                    usernameChanged = editable.toString().isNotEmpty()
-                    updateUsernameField()
-                    setSaveButtonState()
-                    findDuplicate()
+                    when {
+                        editable.toString().isEmpty() -> {
+                            validUsername = false
+                            binding.clearUsernameTextButton.isVisible = false
+                        }
+                        else -> {
+                            usernameChanged = editable.toString().isNotEmpty()
+                            binding.clearUsernameTextButton.isVisible = !editable.isNullOrBlank()
+                            updateUsernameField()
+                            setSaveButtonState()
+                            findDuplicate()
+                        }
+                    }
+
                 }
 
                 override fun beforeTextChanged(
@@ -304,7 +314,6 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login), MenuProvider {
                 layout.errorIconDrawable = null
             }
         }
-        clearButton.isVisible = validUsername
         clearButton.isEnabled = validUsername
         setSaveButtonState()
     }
