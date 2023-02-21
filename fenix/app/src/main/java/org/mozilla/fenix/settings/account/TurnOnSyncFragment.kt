@@ -27,6 +27,7 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.databinding.FragmentTurnOnSyncBinding
+import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
@@ -38,6 +39,8 @@ class TurnOnSyncFragment : Fragment(), AccountObserver {
 
     private var shouldLoginJustWithEmail = false
     private var pairWithEmailStarted = false
+
+    private val extraDips = 16
 
     private val signInClickListener = View.OnClickListener {
         navigateToPairWithEmail()
@@ -131,6 +134,7 @@ class TurnOnSyncFragment : Fragment(), AccountObserver {
             DefaultSyncController(activity = activity as HomeActivity),
         )
 
+        binding.createAccount.increaseTapArea(extraDips)
         binding.createAccount.apply {
             text = HtmlCompat.fromHtml(
                 getString(R.string.sign_in_create_account_text),
