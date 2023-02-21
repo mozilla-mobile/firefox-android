@@ -45,6 +45,7 @@ class LibrarySiteItemView @JvmOverloads constructor(
     init {
 
         overflowView.increaseTapArea(OVERFLOW_EXTRA_DIPS)
+        iconView.increaseTapArea(OVERFLOW_EXTRA_DIPS)
     }
 
     /**
