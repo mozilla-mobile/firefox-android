@@ -4,16 +4,15 @@
 
 package org.mozilla.fenix.settings.logins.view
 
-import android.content.res.Resources
 import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
-import mozilla.components.support.ktx.android.util.dpToPx
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.ComponentSavedLoginsBinding
 import org.mozilla.fenix.ext.addUnderline
+import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.settings.logins.LoginsListState
 import org.mozilla.fenix.settings.logins.interactor.SavedLoginsInteractor
 
@@ -40,7 +39,7 @@ class SavedLoginsListView(
         }
 
         with(binding.savedPasswordsEmptyLearnMore) {
-            height = 48.dpToPx(Resources.getSystem().displayMetrics)
+            increaseTapArea(LEARN_MORE_EXTRA_DIPS)
             movementMethod = LinkMovementMethod.getInstance()
             addUnderline()
             setOnClickListener { interactor.onLearnMoreClicked() }
@@ -71,5 +70,9 @@ class SavedLoginsListView(
             // Reset scroll position to the first item after submitted list was committed.
             binding.savedLoginsList.scrollToPosition(0)
         }
+    }
+
+    companion object {
+        private const val LEARN_MORE_EXTRA_DIPS = 24
     }
 }
