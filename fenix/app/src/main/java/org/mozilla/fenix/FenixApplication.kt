@@ -19,7 +19,13 @@ import androidx.core.content.getSystemService
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.work.Configuration.Builder
 import androidx.work.Configuration.Provider
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import mozilla.appservices.Megazord
 import mozilla.components.browser.state.action.SystemAction
 import mozilla.components.browser.state.selector.selectedTab
@@ -182,18 +188,15 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         GlobalScope.launch(Dispatchers.IO) {
             setStartupMetrics(store, settings())
         }
-        
-        // TODO: Make use of Nimbus value once feature is picked up.
-        // if (FxNimbus.features.clientDeduplication.value().enabled) {
-            val applicationContext = this.applicationContext
-            MainScope().launch {
-                ProcessLifecycleOwner.get().lifecycle.addObserver(
-                    ClientDeduplicationLifecycleObserver(
-                        applicationContext,
-                    ),
-                )
-            }
-        // }
+
+        val applicationContext = this.applicationContext
+        MainScope().launch {
+            ProcessLifecycleOwner.get().lifecycle.addObserver(
+                ClientDeduplicationLifecycleObserver(
+                    applicationContext,
+                ),
+            )
+        }
     }
 
     @CallSuper
