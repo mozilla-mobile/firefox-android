@@ -4,18 +4,28 @@
 
 package org.mozilla.fenix.components.metrics.clientdeduplication
 
-import io.mockk.mockk
-import io.mockk.spyk
-import io.mockk.verify
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
+import org.mozilla.fenix.GleanMetrics.ClientDeduplication
+import org.mozilla.fenix.GleanMetrics.Pings
 
 internal class ClientDeduplicationPingTest {
     @Test
-    fun `checkAndSend() triggers the ping`() {
-        val mockCdp = spyk(ClientDeduplicationPing(mockk()), recordPrivateCalls = true)
+    fun `The clientDeduplication ping is sent`() {
+        // Record test data.
+        ClientDeduplication.validAdvertisingId.set(true)
 
-        mockCdp.checkAndSend()
+        // Instruct the ping API to validate the ping data.
+        var validatorRun = false
+        Pings.clientDeduplication.testBeforeNextSubmit { reason ->
+            assertEquals(Pings.clientDeduplicationReasonCodes.active, reason)
+            assertEquals(true, ClientDeduplication.validAdvertisingId.testGetValue())
+            validatorRun = true
+        }
+        Pings.clientDeduplication.submit(Pings.clientDeduplicationReasonCodes.active)
 
-        verify(exactly = 1) { mockCdp.triggerPing() }
+        // Verify that the validator run.
+        assertTrue(validatorRun)
     }
 }
