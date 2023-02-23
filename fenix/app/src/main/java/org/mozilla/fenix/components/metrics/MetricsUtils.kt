@@ -61,7 +61,7 @@ object MetricsUtils {
     }
 
     /**
-     * Get the salt to use for hashing. This is a convenience
+     * Get the default salt to use for hashing. This is a convenience
      * function to help with unit tests.
      */
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
@@ -113,10 +113,10 @@ object MetricsUtils {
     suspend fun getHashedIdentifier(context: Context, customSalt: String? = null): String? =
         withContext(Dispatchers.Default) {
             getAdvertisingID(context)?.let { unhashedID ->
-                // Add some salt to the ID, before hashing. For this specific use-case, it's ok
-                // to use the same salt value for all the hashes. We want hashes to be stable
-                // within a single product, but we don't want hashes to be the same across different
-                // products (e.g. Fennec vs Fenix).
+                // Add some salt to the ID, before hashing. We have a default salt that is used for
+                // all the hashes unless you specifically provide something different. This is done
+                // to stabalize all hashing within a single product. The customSalt allows for tweaking
+                // in case there are specific use-cases that require something custom.
                 val salt = customSalt ?: getHashingSalt()
 
                 // Apply hashing.
