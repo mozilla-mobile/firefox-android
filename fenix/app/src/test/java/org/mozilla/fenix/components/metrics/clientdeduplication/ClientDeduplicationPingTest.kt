@@ -35,7 +35,7 @@ internal class ClientDeduplicationPingTest {
         }
         Pings.clientDeduplication.submit(Pings.clientDeduplicationReasonCodes.active)
 
-        // Verify that the validator run.
+        // Verify that the validator ran.
         assertTrue(validatorRun)
     }
 }
