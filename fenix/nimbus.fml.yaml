@@ -143,7 +143,7 @@ features:
     description: A feature to control the sending of the client-deduplication ping.
     variables:
       enabled:
-        description: If true, the ping will be sent on a similar schedule as the baseline ping.
+        description: If true, the ping will be sent.
         type: Boolean
         default: false
     defaults:

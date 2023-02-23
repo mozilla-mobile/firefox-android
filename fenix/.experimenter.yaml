@@ -6,7 +6,7 @@ client-deduplication:
   variables:
     enabled:
       type: boolean
-      description: "If true, the ping will be sent on a similar schedule as the baseline ping."
+      description: "If true, the ping will be sent."
 cookie-banners:
   description: Features for cookie banner handling.
   hasExposure: true
