@@ -593,6 +593,7 @@ clean.doLast {
 if (project.hasProperty("coverage")) {
     tasks.withType(Test) {
         jacoco.includeNoLocationClasses = true
+        jacoco.excludes = ['jdk.internal.*']
     }
 
     android.applicationVariants.all { variant ->
@@ -626,11 +627,6 @@ if (project.hasProperty("coverage")) {
             }
         }
     }
-}
-
-if (gradle.hasProperty('localProperties.autoPublish.android-components.dir')) {
-    ext.acSrcDir = gradle."localProperties.autoPublish.android-components.dir"
-    apply from: "../${acSrcDir}/substitute-local-ac.gradle"
 }
 
 if (gradle.hasProperty('localProperties.autoPublish.application-services.dir')) {
