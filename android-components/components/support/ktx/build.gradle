@@ -39,6 +39,7 @@ dependencies {
     implementation Dependencies.androidx_core_ktx
     implementation Dependencies.kotlin_stdlib
     implementation Dependencies.kotlin_coroutines
+    implementation Dependencies.google_material
 
     testImplementation project(':support-test')
     testImplementation project(':support-test-fakes')
@@ -59,6 +60,7 @@ dependencies {
     androidTestImplementation Dependencies.androidx_test_runner
     androidTestImplementation Dependencies.androidx_test_rules
     androidTestImplementation Dependencies.androidx_test_junit
+    androidTestImplementation Dependencies.google_material
 }
 
 apply from: '../../../android-lint.gradle'
