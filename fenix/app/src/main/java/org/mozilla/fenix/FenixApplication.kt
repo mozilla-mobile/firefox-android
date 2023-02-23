@@ -23,7 +23,6 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import mozilla.appservices.Megazord
@@ -189,14 +188,11 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             setStartupMetrics(store, settings())
         }
 
-        val applicationContext = this.applicationContext
-        MainScope().launch {
-            ProcessLifecycleOwner.get().lifecycle.addObserver(
-                ClientDeduplicationLifecycleObserver(
-                    applicationContext,
-                ),
-            )
-        }
+        ProcessLifecycleOwner.get().lifecycle.addObserver(
+            ClientDeduplicationLifecycleObserver(
+                this.applicationContext,
+            ),
+        )
     }
 
     @CallSuper
