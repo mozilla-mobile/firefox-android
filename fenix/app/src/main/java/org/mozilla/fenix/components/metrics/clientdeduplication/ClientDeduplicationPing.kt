@@ -5,7 +5,6 @@
 package org.mozilla.fenix.components.metrics.clientdeduplication
 
 import android.content.Context
-import androidx.annotation.VisibleForTesting
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -22,9 +21,7 @@ class ClientDeduplicationPing(private val context: Context) {
 
     /**
      * Fills the metrics and triggers the 'clientDeduplication' ping.
-     * This is a separate function to simplify unit-testing.
      */
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     internal fun triggerPing(active: Boolean) {
         CoroutineScope(Dispatchers.IO).launch {
             val hashedId = getHashedIdentifier(context, customHashingSalt)
@@ -49,12 +46,5 @@ class ClientDeduplicationPing(private val context: Context) {
             // Submit the ping.
             Pings.clientDeduplication.submit(reason)
         }
-    }
-
-    /**
-     * Trigger sending the `clientDeduplication` ping.
-     */
-    fun checkAndSend(active: Boolean) {
-        triggerPing(active)
     }
 }
