@@ -110,7 +110,6 @@ object MetricsUtils {
      * @return an hashed and salted Google Advertising ID or null if it was not possible
      *         to get the Google Advertising ID.
      */
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     suspend fun getHashedIdentifier(context: Context, customSalt: String? = null): String? =
         withContext(Dispatchers.Default) {
             getAdvertisingID(context)?.let { unhashedID ->

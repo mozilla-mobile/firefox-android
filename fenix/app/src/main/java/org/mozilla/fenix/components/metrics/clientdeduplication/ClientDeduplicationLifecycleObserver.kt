@@ -22,7 +22,7 @@ class ClientDeduplicationLifecycleObserver(context: Context) : LifecycleEventObs
         if (FxNimbus.features.clientDeduplication.value().enabled) {
             when (event) {
                 Lifecycle.Event.ON_STOP -> {
-                    clientDeduplicationPing.checkAndSend(active = false)
+                    clientDeduplicationPing.triggerPing(active = false)
                 }
                 Lifecycle.Event.ON_START -> {
                     // We use ON_START here because we don't want to incorrectly count metrics in
@@ -32,7 +32,7 @@ class ClientDeduplicationLifecycleObserver(context: Context) : LifecycleEventObs
                     //
                     // https://developer.android.com/reference/android/app/Activity.html#onStart()
 
-                    clientDeduplicationPing.checkAndSend(active = true)
+                    clientDeduplicationPing.triggerPing(active = true)
                 }
                 else -> {
                     // For other lifecycle events, do nothing
