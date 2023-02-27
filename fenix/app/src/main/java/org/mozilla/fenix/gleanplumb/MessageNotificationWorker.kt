@@ -180,7 +180,6 @@ class MessageNotificationWorker(
                     .setInitialDelay(0, TimeUnit.MINUTES)
                     .build()
 
-
                 instanceWorkManager.enqueueUniqueWork(
                     MESSAGE_WORK_NAME,
                     ExistingWorkPolicy.REPLACE,
