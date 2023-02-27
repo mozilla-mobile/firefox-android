@@ -177,6 +177,7 @@ tasks:
             external-gradle-dependencies: external-gradle-dependencies-focus
         run-on-tasks-for: []
         include-shippable-secrets: true
+        include-nightly-version: true
         run:
             gradle-build-type: nightly
             gradle-build-name: focusNightly
@@ -196,6 +197,7 @@ tasks:
             external-gradle-dependencies: external-gradle-dependencies-fenix
         run-on-tasks-for: []
         include-shippable-secrets: true
+        include-nightly-version: true
         source-project-name: "fenix"
         run:
             gradle-build-type: nightly
@@ -529,7 +531,6 @@ tasks:
             shipping-product: fenix
         include-release-version: true
         include-shippable-secrets: true
-        filter-incomplete-translations: true
         run:
             gradle-build-type: beta
             gradle-build-name: fenixBeta
@@ -553,7 +554,6 @@ tasks:
             shipping-product: fenix
         include-release-version: true
         include-shippable-secrets: true
-        filter-incomplete-translations: true
         run:
             gradle-build-type: release
             gradle-build-name: fenixRelease
