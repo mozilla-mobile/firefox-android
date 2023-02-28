@@ -84,9 +84,7 @@ fun createNimbus(context: Context, urlString: String?): NimbusApi {
  */
 fun NimbusException.isReportableError(): Boolean {
     return when (this) {
-        is NimbusException.RequestException,
-        is NimbusException.ResponseException,
-        -> false
+        is NimbusException.ClientException -> false
         else -> true
     }
 }
@@ -102,8 +100,13 @@ fun NimbusInterface.maybeFetchExperiments(
     feature: NimbusSystem = FxNimbus.features.nimbusSystem.value(),
     currentTimeMillis: Long = System.currentTimeMillis(),
 ) {
+    val minimumPeriodMinutes = if (!context.settings().nimbusUsePreview) {
+        feature.refreshIntervalForeground
+    } else {
+        0
+    }
+
     val lastFetchTimeMillis = context.settings().nimbusLastFetchTime
-    val minimumPeriodMinutes = feature.refreshIntervalForeground
     val minimumPeriodMillis = minimumPeriodMinutes * Settings.ONE_MINUTE_MS
 
     if (currentTimeMillis - lastFetchTimeMillis >= minimumPeriodMillis) {

@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:moz="http://mozac.org/tools" xmlns:tools="http://schemas.android.com/tools">
+    <!-- ####################################################################################### -->
+    <!-- ## Put only strings into this file that should be translated. Move all other strings ## -->
+    <!-- ## into a separate file like strings_references.xml                                  ## -->
+    <!-- ####################################################################################### -->
+
+    <!-- Label used for buttons, e.g. in dialogs -->
+    <string name="action_cancel">Скасаваць</string>
+    <!-- Label used for buttons, e.g. in dialogs -->
+    <string name="action_ok">OK</string>
+
+    <string name="action_save">Захаваць</string>
+
+    <!-- This text is shown in the URL bar when it's empty -->
+    <string name="urlbar_hint">Шукаць ці ўвесці адрас</string>
+
+    <!-- "Snackbar" shown after the user has pressed the 'erase' button at the end of a browsing session -->
+    <string name="feedback_erase">Ваша гісторыя прагляду была сцёрта.</string>
+    <string name="feedback_erase2">Гісторыя аглядання выдалена</string>
+
+    <!-- This label is shown below the URL bar as soon as the user enters text. Clicking the label will perform a search -->
+    <string name="search_hint">Шукаць %1$s</string>
+
+    <!-- Menu item: Share the currently visible page -->
+    <string name="menu_share">Падзяліцца…</string>
+
+    <!-- Menu item: Report an issue on the current site -->
+    <string name="menu_report_site_issue">Паведаміць аб праблеме з сайтам</string>
+
+    <!-- Menu item: Switch to another browser to open the currently visible page. %1$s will be
+      replaced with the name of the browser like: "Open in Firefox" or "Open in Chrome". Some
+      links can be opened by native apps that aren't a browser, e.g. "Open in YouTube" -->
+    <string name="menu_open_with_default_browser2">Адкрыць у %1$s</string>
+
+    <!-- Menu item: Switch to another browser to open the currently visible page. This menu item
+      will be shown if there are multiple browsers and we do not know which one is the default
+      browser or in case Focus is actually the default browser. Clicking this menu item will show
+      a screen with multiple browsers (or other apps that can open the current URL) to choose from. -->
+    <string name="menu_open_with_a_browser2">Адкрыць у…</string>
+
+    <!-- Menu item: Add the current page as a shortcut to the device's home screen (launcher). -->
+    <string name="menu_add_to_home_screen">Дадаць на хатні экран</string>
+
+    <!-- Menu item: Add the current site as a shortcut on the Home screen -->
+    <string name="menu_add_to_shortcuts">Дадаць у цэтлікі</string>
+    <!-- Menu item: Remove the current site as a shortcut from the Home screen -->
+    <string name="menu_remove_from_shortcuts">Выдаліць з цэтлікаў</string>
+
+    <!-- Menu item: Shows information about features and changes that are new to this version -->
+    <string name="menu_whats_new">Што новага</string>
+    <string name="menu_settings">Налады</string>
+
+
+    <string name="menu_about">Пра нас</string>
+    <string name="menu_help">Даведка</string>
+    <string name="menu_rights">Вашы правы</string>
+
+    <!-- Menu item: This is the label for a menu entry that shows how many trackers have been blocked
+         for the currently loaded website. The number of blocked trackers is shown below this label.
+         Next to this label is a switch that allows the user to temporarily enable / disable the
+         blocking of trackers for the current browsing session - for example if the current website
+         doesn't work correctly with blocked content. -->
+    <string name="menu_trackers_blocked_title">Трэкераў заблакавана</string>
+
+    <!-- Menu item: This is the label for turning off content blocking for the current website. -->
+    <string name="menu_content_blocking">Блакаванне змесціва</string>
+
+    <!-- This is a small text at the bottom of the menu shown in a "custom tab" for branding purposes.
+     See https://github.com/mozilla-mobile/focus-android/issues/2106
+      %1$s will be replaced by the app name (e.g. Firefox Focus) -->
+    <string name="menu_custom_tab_branding">Пры падтрымцы %1$s</string>
+
+    <!-- This is the title of a dialog that shows all the share targets (apps or contacts) when
+         sharing an URL. -->
+    <string name="share_dialog_title">Падзяліцца праз</string>
+
+    <!-- Notification action to open Focus and resume the current browsing session. -->
+    <string name="notification_action_open">Адкрыць</string>
+
+    <!-- Notification action to erase the current browsing session AND switch to Focus (bring it
+         to the foreground) -->
+    <string name="notification_action_erase_and_open">Сцерці і адкрыць</string>
+
+    <!-- On Android 7+ users can add a shortcut for erasing the browsing history to the home screen.
+         This is the label for this shortcut. Android recommends a maximum length of 10 characters. -->
+    <string name="shortcut_erase_short_label">Сцерці</string>
+
+
+    <!-- On Android 7+ users can add a shortcut for erasing the browsing history to the home screen.
+         This is the label for this shortcut. Android recommends a maximum length of 10 characters. -->
+    <string name="shortcut_erase_and_open_short_label">Сцерці і адкрыць</string>
+
+    <!-- The same as 'shortcut_erase_short_label' but more descriptive. The launcher shows this
+         instead of the short title when it has enough space. Android recommends a maximum length
+         of 25 characters.
+         %1$s will be replaced by the app name (e.g. Firefox Focus) -->
+    <string name="shortcut_erase_and_open_long_label">Сцерці і адкрыць %1$s</string>
+
+    <!-- This is the label of an action we offer when the user selects text in other third-party apps.
+         Focus is hard coded since we can't use variables in this context.
+         Do not translate or transliterate Focus.-->
+    <string name="text_selection_search_action_focus">Шукаць у Focus</string>
+    <!-- This is the label of an action we offer when the user selects text in other third-party apps.
+             Klar is hard coded since we can't use variables in this context.
+             Do not translate or transliterate Klar.-->
+    <string name="text_selection_search_action_klar">Шукаць у Klar</string>
+    <!-- This is the label of an action we offer when the user selects text in other third-party apps.
+            Focus Beta is hard coded since we can't use variables in this context.
+            Do not translate or transliterate Focus Beta.-->
+    <string name="text_selection_search_action_focus_beta">Шукаць у Focus Beta</string>
+    <!-- This is the label of an action we offer when the user selects text in other third-party apps.
+          Focus Nightly is hard coded since we can't use variables in this context.
+          Do not translate or transliterate Focus Nightly.-->
+    <string name="text_selection_search_action_focus_nightly">Шукаць у Focus Nightly</string>
+
+    <!-- Header for the Privacy and Security settings menu -->
+    <string name="preference_privacy_and_security_header">Прыватнасць і бяспека</string>
+
+    <!-- Preference category for ad blocking and enhanced tracking protection settings -->
+    <string name="preference_category_tracking_protection3">Узмоцненая ахова ад сачэння</string>
+
+    <!-- Preference category for settings related to controlling web content -->
+    <string name="preference_category_web_content">Сеціўнае змесціва</string>
+
+    <!-- Preference category: stealth settings for while switching apps -->
+    <string name="preference_category_switching_apps">Пераключэнне праграм</string>
+
+    <!-- Preference category for General Settings -->
+    <string name="preference_category_general">Агульныя</string>
+
+    <!-- Preference summary for General Settings category; the two things users can find in this category -->
+    <string name="preference_general_summary2">Прадвызначаны браўзер, мова</string>
+
+    <string name="preference_category_search">Пошук</string>
+
+    <!-- This label is shown below the name of the default search engine in settings -->
+    <string name="preference_search_engine_default">Прадвызначана</string>
+
+    <!-- This label is shown above the currently selected search engine in settings -->
+    <string name="preference_search_engine_label">Пашукавік</string>
+
+    <!-- Text that is shown below a "switch" preference that is enabled. -->
+    <string name="preference_state_on">Укл.</string>
+
+    <!-- Text that is shown below a "switch" preference that is disabled. -->
+    <string name="preference_state_off">Выкл.</string>
+
+    <!-- Item in settings that will open a new preference screen for configuring the URL autocomplete behavior. -->
+    <string name="preference_subitem_autocomplete">Аўтадапаўненне URL</string>
+
+    <!-- Preference category: Manage (user-defined) sites -->
+    <string name="preference_category_autocomplete_manage_sites">Кіраванне сайтамі</string>
+
+    <!-- Item in autocomplete settings that will open a new preference screen for adding and removing URLs to the user-defined list-->
+    <string name="preference_autocomplete_subitem_manage_sites">Кіраванне сайтамі</string>
+
+    <!-- Action at the bottom of the list of custom autocomplete URLs that will open a new screen to add a new URL to the list. -->
+    <string name="preference_autocomplete_action_add2">Дадаць URL</string>
+
+    <!-- Title of the screen for adding custom autocomplete URLs. -->
+    <string name="preference_autocomplete_title_add">Дадаць уласны URL-адрас</string>
+
+    <!-- Label for the button to quick add custom autocomplete URLs. -->
+    <string name="custom_autocomplete_quick_add">Дадаць уласны URL-адрас</string>
+
+    <!-- Label for the button to quick add the current URL to the custom autocomplete list -->
+    <string name="add_custom_autocomplete_label">Дадаць спасылку для аўтадапаўнення</string>
+
+    <!-- Preference category for settings about cookies and site data -->
+    <string name="preference_category_cookies">Кукі і даныя сайтаў</string>
+
+    <!-- Preference category for settings about data choices -->
+    <string name="preference_category_data_choices">Выбар даных</string>
+
+    <!-- Title of the screen for removing custom autocomplete URLs. -->
+    <string name="preference_autocomplete_title_remove">Выдаліць уласныя URL-адрасы</string>
+
+    <!-- A link to SUMO at autocomplete settings. -->
+    <string name="preference_autocomplete_learn_more">Падрабязней</string>
+
+    <!-- Menu item to remove existing autocomplete URLs. -->
+    <string name="preference_autocomplete_menu_remove">Выдаліць</string>
+
+    <!-- Content description (not visible, for screen readers etc.): Button that will delete all selected custom autocomplete URLs. -->
+    <string name="preference_autocomplete_action_remove_content_description">Выдаліць</string>
+
+    <!-- Error message shown if the entered custom autocomplete URL is not valid or empty. -->
+    <string name="preference_autocomplete_add_error">Уважліва праверце ўведзены URL-адрас.</string>
+
+    <string name="preference_language">Мова</string>
+    <!-- This is shown when the user hasn't set a focus specific language, i.e. when Focus
+         is using the system default language. -->
+    <string name="preference_language_systemdefault">Прадвызначаная сістэмы</string>
+
+    <string name="preference_category_privacy">Прыватнасць</string>
+    <string name="preference_privacy_block_ads">Блакаванне рэкламнага сачэння</string>
+
+    <!-- Three options for Cookie blocking. Yes (All cookies Blocked), Block 3rd-party cookies
+    only (Only 3rd-party Cookies Blocked), No (No cookies blocked) -->
+    <string name="preference_privacy_should_block_cookies_no_option2">Не, дзякуй</string>
+
+    <!-- Preference Title: Biometrics can be used to unlock Focus if the previous session's data was not erased by the user. -->
+    <string name="preference_security_biometric">Выкарыстоўвайце адбіткі пальцаў для разблакіравання праграмы</string>
+
+    <!-- Tips displayed on the home view -->
+
+    <!-- Tracking protection bottom sheet -->
+
+     <!-- Promote SearchWidget Dialog -->
+
+    </resources>
