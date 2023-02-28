@@ -170,16 +170,6 @@ features:
               max-display-count: 1
           notification-config:
             refresh-interval: 120 # minutes (2 hours)
-          messages:
-            default-browser-notification:
-              title: preferences_set_as_default_browser
-              text: default_browser_experiment_card_text
-              surface: notification
-              style: NOTIFICATION
-              action: MAKE_DEFAULT_BROWSER
-              trigger:
-                - I_AM_NOT_DEFAULT_BROWSER
-                - INACTIVE_2_DAYS
 
 objects:
   MessageData:
