@@ -101,6 +101,7 @@ tasks:
             gradle-build-type: debug
             gradle-build-name: fenixDebug
             gradle-build: fenix
+            track-apk-size: true
         source-project-name: "fenix"
         treeherder:
             symbol: fenix-debug(Bf)
@@ -160,6 +161,7 @@ tasks:
             gradle-build-type: release
             gradle-build-name: fenixRelease
             gradle-build: fenix
+            track-apk-size: true
         shipping-phase: promote
         source-project-name: "fenix"
         treeherder:
@@ -177,6 +179,7 @@ tasks:
             external-gradle-dependencies: external-gradle-dependencies-focus
         run-on-tasks-for: []
         include-shippable-secrets: true
+        include-nightly-version: true
         run:
             gradle-build-type: nightly
             gradle-build-name: focusNightly
@@ -196,11 +199,13 @@ tasks:
             external-gradle-dependencies: external-gradle-dependencies-fenix
         run-on-tasks-for: []
         include-shippable-secrets: true
+        include-nightly-version: true
         source-project-name: "fenix"
         run:
             gradle-build-type: nightly
             gradle-build-name: fenixNightly
             gradle-build: fenix
+            track-apk-size: true
         treeherder:
             symbol: fenix-nightly(B)
             platform: fenix-android-all/opt
@@ -238,6 +243,7 @@ tasks:
             gradle-build-type: beta
             gradle-build-name: fenixBeta
             gradle-build: fenix
+            track-apk-size: true
         shipping-phase: promote
         source-project-name: "fenix"
         treeherder:
@@ -529,7 +535,6 @@ tasks:
             shipping-product: fenix
         include-release-version: true
         include-shippable-secrets: true
-        filter-incomplete-translations: true
         run:
             gradle-build-type: beta
             gradle-build-name: fenixBeta
@@ -553,7 +558,6 @@ tasks:
             shipping-product: fenix
         include-release-version: true
         include-shippable-secrets: true
-        filter-incomplete-translations: true
         run:
             gradle-build-type: release
             gradle-build-name: fenixRelease
