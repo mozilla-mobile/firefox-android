@@ -25,6 +25,12 @@ class BrowserMenuSignInTest {
     private lateinit var components: Components
     private val account: Account = mockk {
         every { displayName } returns "bugzilla"
+        every { email } returns "bugzilla@mozilla.com"
+    }
+
+    private val accountWithNoDisplayName: Account = mockk {
+        every { displayName } returns null
+        every { email } returns "bugzilla@mozilla.com"
     }
 
     @Before
@@ -42,6 +48,14 @@ class BrowserMenuSignInTest {
         every { components.settings.signedInFxaAccount } returns true
 
         assertEquals(account.displayName, BrowserMenuSignIn(R.color.black).getLabel(context))
+    }
+
+    @Test
+    fun `WHEN signed in and has profile data but the display name is not set, THEN show email`() {
+        every { components.backgroundServices.syncStore.state.account } returns accountWithNoDisplayName
+        every { components.settings.signedInFxaAccount } returns true
+
+        assertEquals(accountWithNoDisplayName.email, BrowserMenuSignIn(R.color.black).getLabel(context))
     }
 
     @Test
