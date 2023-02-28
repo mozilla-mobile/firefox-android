@@ -875,6 +875,7 @@ projects:
     - service-sync-logins
     - support-base
     - support-ktx
+    - support-locale
     - support-rustlog
     - support-utils
     - support-webextensions
