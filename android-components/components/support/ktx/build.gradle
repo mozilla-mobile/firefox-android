@@ -60,7 +60,6 @@ dependencies {
     androidTestImplementation Dependencies.androidx_test_runner
     androidTestImplementation Dependencies.androidx_test_rules
     androidTestImplementation Dependencies.androidx_test_junit
-    androidTestImplementation Dependencies.google_material
 }
 
 apply from: '../../../android-lint.gradle'
