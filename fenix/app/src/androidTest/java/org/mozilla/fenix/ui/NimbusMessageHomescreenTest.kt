@@ -15,7 +15,13 @@ import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.RetryTestRule
 import org.mozilla.fenix.helpers.TestHelper.appContext
-import org.mozilla.fenix.nimbus.*
+import org.mozilla.fenix.nimbus.FxNimbus
+import org.mozilla.fenix.nimbus.HomeScreenSection
+import org.mozilla.fenix.nimbus.Homescreen
+import org.mozilla.fenix.nimbus.MessageData
+import org.mozilla.fenix.nimbus.MessageSurfaceId
+import org.mozilla.fenix.nimbus.Messaging
+import org.mozilla.fenix.nimbus.StyleData
 import org.mozilla.fenix.ui.robots.homeScreen
 
 class NimbusMessageHomescreenTest {
@@ -28,7 +34,7 @@ class NimbusMessageHomescreenTest {
 
     @get:Rule
     val homeActivityTestRule = HomeActivityIntentTestRule.withDefaultSettingsOverrides(
-        skipOnboarding = true
+        skipOnboarding = true,
     ).withIntent(
         Intent().apply {
             action = Intent.ACTION_VIEW
@@ -89,12 +95,12 @@ class NimbusMessageHomescreenTest {
         }
         // refresh message store
         appContext.components.appStore.dispatch(
-            AppAction.MessagingAction.Restore
+            AppAction.MessagingAction.Restore,
         )
         appContext.components.appStore.dispatch(
             AppAction.MessagingAction.Evaluate(
-                MessageSurfaceId.HOMESCREEN
-            )
+                MessageSurfaceId.HOMESCREEN,
+            ),
         )
     }
 
@@ -109,6 +115,5 @@ class NimbusMessageHomescreenTest {
         homeScreen {
             verifyNimbusMessageCard(messageTitle, messageText, messageButtonLabel)
         }
-
     }
 }
