@@ -36,7 +36,7 @@ import kotlin.random.Random
  * Default mime type for base64 images data URLs not containing the media type.
  */
 @VisibleForTesting
-const val DEFAULT_IMAGE_EXTENSION = "jpg"
+internal const val DEFAULT_IMAGE_EXTENSION = "jpg"
 
 /**
  * Subdirectory of Context.getCacheDir() where the resources to be shared are stored.
@@ -60,7 +60,7 @@ abstract class TemporaryDownloadFeature(
     cleanupCacheCoroutineDispatcher: CoroutineDispatcher = IO,
 ) : LifecycleAwareFeature {
 
-    val logger = Logger("TemporaryDownloadMiddleware")
+    val logger = Logger("TemporaryDownloadFeature")
 
     @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
     var scope: CoroutineScope? = null

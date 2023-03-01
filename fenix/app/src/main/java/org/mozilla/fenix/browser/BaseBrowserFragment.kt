@@ -495,7 +495,7 @@ abstract class BaseBrowserFragment :
             store = store,
             tabId = customTabSessionId,
             snackbarParent = binding.dynamicSnackbarContainer,
-            snackbarDelegate = FenixSnackbarDelegate(view),
+            snackbarDelegate = FenixSnackbarDelegate(binding.dynamicSnackbarContainer),
         )
 
         val downloadFeature = DownloadsFeature(
