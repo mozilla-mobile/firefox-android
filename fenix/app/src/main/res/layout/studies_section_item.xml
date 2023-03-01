@@ -27,7 +27,8 @@
         android:textColor="?preferenceSectionHeader"
         android:background="?android:attr/selectableItemBackground"
         android:orientation="horizontal"
-        android:paddingVertical="12dp"
-        android:textStyle="bold"
-        tools:text="Active" />
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="14dp"
+        style="@style/StudiesItemTitleTextStyle"
+        tools:text="Active"/>
 </LinearLayout>
