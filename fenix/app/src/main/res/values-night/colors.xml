@@ -26,7 +26,7 @@
 
     <!-- Action -->
     <!-- Primary button, Snackbar, Floating action button, Chip selected -->
-    <color name="fx_mobile_action_color_primary">@color/photonViolet50</color>
+    <color name="fx_mobile_action_color_primary">@color/photonViolet60</color>
     <!-- Secondary button -->
     <color name="fx_mobile_action_color_secondary">@color/photonLightGrey30</color>
     <!-- Filter -->
@@ -86,7 +86,7 @@
     <!-- Secondary icon -->
     <color name="fx_mobile_icon_color_secondary">@color/photonLightGrey40</color>
     <!-- Active tab -->
-    <color name="fx_mobile_icon_color_active">@color/photonViolet30</color>
+    <color name="fx_mobile_icon_color_active">@color/photonViolet40</color>
     <!-- Disabled icon -->
     <color name="fx_mobile_icon_color_disabled" tools:ignore="UnusedResources">@color/photonLightGrey05A40</color>
     <!-- Icon inverted (on color) -->
