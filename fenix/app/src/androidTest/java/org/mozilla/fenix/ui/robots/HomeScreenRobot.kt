@@ -509,6 +509,62 @@ class HomeScreenRobot {
                 },
             )
     }
+    fun verifyNimbusMessageCard(title: String, text: String, action: String) {
+        // Checks message Title
+        assertTrue(
+            mDevice.findObject(
+                UiSelector().className(
+                    "androidx.compose.ui.platform.ComposeView"
+                ).className(
+                    "android.view.View"
+                ).className(
+                    "android.widget.TextView"
+                ).textContains(
+                    title
+                )
+            ).waitForExists(waitingTime)
+        )
+        // Checks main message text
+        assertTrue(
+            mDevice.findObject(
+                UiSelector().className(
+                    "androidx.compose.ui.platform.ComposeView"
+                ).className(
+                    "android.view.View"
+                ).className(
+                    "android.widget.TextView"
+                ).textContains(
+                    text
+                )
+            ).waitForExists(waitingTime)
+        )
+        // Checks button text
+        assertTrue(
+            mDevice.findObject(
+                UiSelector().className(
+                    "androidx.compose.ui.platform.ComposeView"
+                ).className(
+                    "android.view.View"
+                ).className(
+                    "android.widget.TextView"
+                ).textContains(
+                    action
+                )
+            ).waitForExists(waitingTime)
+        )
+        // Checks for close button
+        assertTrue(
+            mDevice.findObject(
+                UiSelector().className(
+                    "androidx.compose.ui.platform.ComposeView"
+                ).className(
+                    "android.view.View"
+                ).description(
+                    "Close"
+                )
+            ).waitForExists(waitingTime)
+        )
+    }
 
     class Transition {
 
