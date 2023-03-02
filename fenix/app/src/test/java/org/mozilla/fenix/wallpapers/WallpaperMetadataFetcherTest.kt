@@ -279,6 +279,104 @@ class WallpaperMetadataFetcherTest {
     }
 
     @Test
+    fun `GIVEN collection with specified start date but no end date WHEN parsed THEN wallpapers includes date`() = runTest {
+        val calendar = Calendar.getInstance()
+        val startDate = calendar.run {
+            set(2022, Calendar.JUNE, 27)
+            time
+        }
+        val json = """
+            {
+                "last-updated-date": "2022-01-01",
+                "collections": [
+                    {
+                        "id": "classic-firefox",
+                        "available-locales": null,
+                        "availability-range": {
+                            "start": "2022-06-27"
+                        },
+                        "wallpapers": [
+                            {
+                                "id": "beach-vibes",
+                                "text-color": "FBFBFE",
+                                "card-color-light": "FFFFFF",
+                                "card-color-dark": "000000"
+                            },
+                            {
+                                "id": "sunrise",
+                                "text-color": "15141A",
+                                "card-color-light": "FFFFFF",
+                                "card-color-dark": "000000"
+                            }
+                        ]
+                    }
+                ]
+            }
+        """.trimIndent()
+        every { mockResponse.body } returns Response.Body(json.byteInputStream())
+
+        val wallpapers = metadataFetcher.downloadWallpaperList()
+
+        assertTrue(wallpapers.isNotEmpty())
+        assertTrue(
+            wallpapers.all {
+                val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+                formatter.format(startDate) == formatter.format(it.collection.startDate!!) &&
+                    it.collection.endDate == null
+            },
+        )
+    }
+
+    @Test
+    fun `GIVEN collection with specified end date but no start date WHEN parsed THEN wallpapers includes date`() = runTest {
+        val calendar = Calendar.getInstance()
+        val endDate = calendar.run {
+            set(2022, Calendar.SEPTEMBER, 30)
+            time
+        }
+        val json = """
+            {
+                "last-updated-date": "2022-01-01",
+                "collections": [
+                    {
+                        "id": "classic-firefox",
+                        "available-locales": null,
+                        "availability-range": {
+                            "end": "2022-09-30"
+                        },
+                        "wallpapers": [
+                            {
+                                "id": "beach-vibes",
+                                "text-color": "FBFBFE",
+                                "card-color-light": "FFFFFF",
+                                "card-color-dark": "000000"
+                            },
+                            {
+                                "id": "sunrise",
+                                "text-color": "15141A",
+                                "card-color-light": "FFFFFF",
+                                "card-color-dark": "000000"
+                            }
+                        ]
+                    }
+                ]
+            }
+        """.trimIndent()
+        every { mockResponse.body } returns Response.Body(json.byteInputStream())
+
+        val wallpapers = metadataFetcher.downloadWallpaperList()
+
+        assertTrue(wallpapers.isNotEmpty())
+        assertTrue(
+            wallpapers.all {
+                val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+                it.collection.startDate == null &&
+                    formatter.format(endDate) == formatter.format(it.collection.endDate!!)
+            },
+        )
+    }
+
+    @Test
     fun `GIVEN collection with specified learn more url WHEN parsed THEN wallpapers includes url`() = runTest {
         val json = """
             {

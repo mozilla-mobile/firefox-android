@@ -77,7 +77,7 @@ class WallpapersUseCases(
     val loadBitmap: LoadBitmapUseCase by lazy {
         if (FeatureFlags.wallpaperV2Enabled) {
             DefaultLoadBitmapUseCase(
-                filesDir = context.filesDir,
+                getFilesDir = { context.filesDir },
                 getOrientation = { context.resources.configuration.orientation },
             )
         } else {
@@ -376,7 +376,7 @@ class WallpapersUseCases(
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     internal class DefaultLoadBitmapUseCase(
-        private val filesDir: File,
+        private val getFilesDir: suspend () -> File,
         private val getOrientation: () -> Int,
     ) : LoadBitmapUseCase {
         override suspend fun invoke(wallpaper: Wallpaper): Bitmap? =
@@ -387,8 +387,9 @@ class WallpapersUseCases(
         ): Bitmap? = Result.runCatching {
             val path = wallpaper.getLocalPathFromContext()
             withContext(Dispatchers.IO) {
-                val file = File(filesDir, path)
-                BitmapFactory.decodeStream(file.inputStream())
+                File(getFilesDir(), path).inputStream().use {
+                    BitmapFactory.decodeStream(it)
+                }
             }
         }.getOrNull()
 

@@ -70,11 +70,11 @@ class WallpaperMetadataFetcher(
     private fun JSONArray.getAvailableLocales(): List<String>? =
         (0 until length()).map { getString(it) }
 
-    private fun JSONObject.getAvailabilityRange(): Pair<Date, Date>? {
+    private fun JSONObject.getAvailabilityRange(): Pair<Date?, Date?> {
         val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.US)
-        return Result.runCatching {
-            formatter.parse(getString("start"))!! to formatter.parse(getString("end"))!!
-        }.getOrNull()
+        val start = Result.runCatching { formatter.parse(getString("start")) }.getOrNull()
+        val end = Result.runCatching { formatter.parse(getString("end")) }.getOrNull()
+        return start to end
     }
 
     private fun JSONArray.toWallpaperList(collection: Wallpaper.Collection): List<Wallpaper> =
