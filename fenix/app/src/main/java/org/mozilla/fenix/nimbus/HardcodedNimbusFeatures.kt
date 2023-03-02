@@ -36,7 +36,7 @@ class HardcodedNimbusFeatures(
         features[featureId]?.let { json -> JSONVariables(context, json) } ?: NullVariables.instance
 
     override fun recordExposureEvent(featureId: String) {
-        if (features[featureId] == null) {
+        if (features[featureId] != null) {
             exposureCounts[featureId] = getExposureCount(featureId) + 1
         }
     }
