@@ -6,7 +6,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.initialization.Settings
 
 // If you ever need to force a toolchain rebuild (taskcluster) then edit the following comment.
-// FORCE REBUILD 2022-11-14
+// FORCE REBUILD 2023-03-01
 
 class DependenciesPlugin : Plugin<Settings> {
     override fun apply(settings: Settings) = Unit
@@ -46,7 +46,7 @@ object Versions {
     const val mozilla_appservices = "97.1.0"
 
     // DO NOT MODIFY MANUALLY. This is auto-updated along with GeckoView.
-    const val mozilla_glean = "52.2.0"
+    const val mozilla_glean = "52.3.0"
 
     const val material = "1.2.1"
 
