@@ -38,7 +38,7 @@ object FocusVersions {
     }
 
     object Gradle {
-        const val android_plugin = "7.3.0"
+        const val android_plugin = "7.4.1"
         const val kotlin_plugin = Kotlin.compiler
     }
 
@@ -60,7 +60,7 @@ object FocusVersions {
         const val ktlint = "0.47.1"
         const val mockito = "4.8.1"
         const val mockwebserver = "4.10.0"
-        const val robolectric = "4.9"
+        const val robolectric = "4.9.2"
     }
 
     object ThirdParty {

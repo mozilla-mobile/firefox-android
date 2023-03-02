@@ -11,8 +11,8 @@ object FenixVersions {
 
     // These versions are linked: lint should be X+23.Y.Z of gradle_plugin version, according to:
     // https://github.com/alexjlockwood/android-lint-checks-demo/blob/0245fc027463137b1b4afb97c5295d60dce998b6/dependencies.gradle#L3
-    const val android_gradle_plugin = "7.3.0"
-    const val android_lint_api = "30.3.0"
+    const val android_gradle_plugin = "7.4.1"
+    const val android_lint_api = "30.4.1"
 
     const val sentry = "6.13.1"
     const val leakcanary = "2.10"
@@ -52,7 +52,7 @@ object FenixVersions {
 
     const val mockwebserver = "4.10.0"
     const val uiautomator = "2.2.0"
-    const val robolectric = "4.9"
+    const val robolectric = "4.9.2"
 
     const val google_ads_id_version = "16.0.0"
 
