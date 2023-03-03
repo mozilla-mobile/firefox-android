@@ -12,7 +12,7 @@ android {
         targetSdkVersion config.targetSdkVersion
     }
 
-    lintOptions {
+    lint {
         // All icons are unused in this module.
         disable 'UnusedResources'
     }
@@ -23,6 +23,8 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    namespace 'mozilla.components.ui.icons'
 }
 
 dependencies {
