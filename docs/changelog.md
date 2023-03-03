@@ -9,8 +9,15 @@ permalink: /changelog/
 * [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/Gecko.kt)
 * [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/.config.yml)
 
+* **service-contile**
+  * ⚠️ **This is a breaking change**: Added support for sponsored tiles maximum age specified by the server. `maxCacheAgeInMinutes` changed to `maxCacheAgeInSeconds`, not specifying it leads to using the value provided by the server. [Bug 1811175](https://bugzilla.mozilla.org/show_bug.cgi?id=1811175)
+
 * **tooling-glean-gradle:**
   * ⚠️ **This is a breaking change**: This wrapper of the Glean plugin is no longer needed and has been removed. Consuming applications can directly depend on the [Glean Gradle plugin](https://github.com/mozilla/glean/tree/main/gradle-plugin/).
+
+* **lib-crash-sentry-legacy**
+  * ⚠️ **This is a breaking change**: This component has been removed. Consumers should use the newer `lib-crash-sentry` component instead.
+
 
 # 111.0.0
 * [Commits](https://github.com/mozilla-mobile/firefox-android/compare/v110.0.0...v111.0.0)
