@@ -295,8 +295,10 @@ class HomeScreenRobot {
         assertTrue(jumpBackInSection().waitForExists(waitingTime))
     }
     fun verifyJumpBackInSectionIsNotDisplayed() = assertJumpBackInSectionIsNotDisplayed()
-    fun verifyJumpBackInItemTitle(itemTitle: String) = assertJumpBackInItemTitle(itemTitle)
-    fun verifyJumpBackInItemWithUrl(itemUrl: String) = assertJumpBackInItemWithUrl(itemUrl)
+    fun verifyJumpBackInItemTitle(testRule: ComposeTestRule, itemTitle: String) =
+        assertJumpBackInItemTitle(testRule, itemTitle)
+    fun verifyJumpBackInItemWithUrl(testRule: ComposeTestRule, itemUrl: String) =
+        assertJumpBackInItemWithUrl(testRule, itemUrl)
     fun verifyJumpBackInShowAllButton() = assertJumpBackInShowAllButton()
     fun verifyRecentlyVisitedSectionIsDisplayed() = assertRecentlyVisitedSectionIsDisplayed()
     fun verifyRecentlyVisitedSectionIsNotDisplayed() = assertRecentlyVisitedSectionIsNotDisplayed()
@@ -819,11 +821,11 @@ class HomeScreenRobot {
             return SyncSignInRobot.Transition()
         }
 
-        fun clickPrivacyNoticeButton(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
+        fun clickPrivacyNoticeButton(interact: CustomTabRobot.() -> Unit): CustomTabRobot.Transition {
             privacyNoticeButton.clickAndWaitForNewWindow(waitingTimeShort)
 
-            BrowserRobot().interact()
-            return BrowserRobot.Transition()
+            CustomTabRobot().interact()
+            return CustomTabRobot.Transition()
         }
     }
 }
@@ -990,25 +992,11 @@ private fun assertTopSiteContextMenuItems() {
 
 private fun assertJumpBackInSectionIsNotDisplayed() = assertFalse(jumpBackInSection().waitForExists(waitingTimeShort))
 
-private fun assertJumpBackInItemTitle(itemTitle: String) =
-    assertTrue(
-        mDevice
-            .findObject(
-                UiSelector()
-                    .resourceId("recent.tab.title")
-                    .textContains(itemTitle),
-            ).waitForExists(waitingTime),
-    )
+private fun assertJumpBackInItemTitle(testRule: ComposeTestRule, itemTitle: String) =
+    testRule.onNodeWithTag("recent.tab.title", useUnmergedTree = true).assert(hasText(itemTitle))
 
-private fun assertJumpBackInItemWithUrl(itemUrl: String) =
-    assertTrue(
-        mDevice
-            .findObject(
-                UiSelector()
-                    .resourceId("recent.tab.url")
-                    .textContains(itemUrl),
-            ).waitForExists(waitingTime),
-    )
+private fun assertJumpBackInItemWithUrl(testRule: ComposeTestRule, itemUrl: String) =
+    testRule.onNodeWithTag("recent.tab.url", useUnmergedTree = true).assert(hasText(itemUrl))
 
 private fun assertJumpBackInShowAllButton() =
     assertTrue(
