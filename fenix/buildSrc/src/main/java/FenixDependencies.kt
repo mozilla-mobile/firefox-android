@@ -11,8 +11,8 @@ object FenixVersions {
 
     // These versions are linked: lint should be X+23.Y.Z of gradle_plugin version, according to:
     // https://github.com/alexjlockwood/android-lint-checks-demo/blob/0245fc027463137b1b4afb97c5295d60dce998b6/dependencies.gradle#L3
-    const val android_gradle_plugin = "7.3.0"
-    const val android_lint_api = "30.3.0"
+    const val android_gradle_plugin = "7.4.1"
+    const val android_lint_api = "30.4.1"
 
     const val sentry = "6.15.0"
     const val leakcanary = "2.10"
@@ -36,6 +36,7 @@ object FenixVersions {
     const val androidx_recyclerview = "1.2.1"
     const val androidx_core = "1.8.0"
     const val androidx_paging = "3.1.1"
+    const val androidx_tracing = "1.0.0"
     const val androidx_transition = "1.4.0"
     const val androidx_work = "2.7.1"
     const val androidx_datastore = "1.0.0"
@@ -51,7 +52,7 @@ object FenixVersions {
 
     const val mockwebserver = "4.10.0"
     const val uiautomator = "2.2.0"
-    const val robolectric = "4.9"
+    const val robolectric = "4.9.2"
 
     const val google_ads_id_version = "16.0.0"
 
@@ -104,6 +105,7 @@ object FenixDependencies {
     const val androidx_recyclerview = "androidx.recyclerview:recyclerview:${FenixVersions.androidx_recyclerview}"
     const val androidx_core = "androidx.core:core:${FenixVersions.androidx_core}"
     const val androidx_core_ktx = "androidx.core:core-ktx:${FenixVersions.androidx_core}"
+    const val androidx_tracing = "androidx.tracing:tracing:${FenixVersions.androidx_tracing}"
     const val androidx_transition = "androidx.transition:transition:${FenixVersions.androidx_transition}"
     const val androidx_work_ktx = "androidx.work:work-runtime-ktx:${FenixVersions.androidx_work}"
     const val androidx_work_testing = "androidx.work:work-testing:${FenixVersions.androidx_work}"
