@@ -40,8 +40,6 @@ class TurnOnSyncFragment : Fragment(), AccountObserver {
     private var shouldLoginJustWithEmail = false
     private var pairWithEmailStarted = false
 
-    private val extraDips = 16
-
     private val signInClickListener = View.OnClickListener {
         navigateToPairWithEmail()
     }
@@ -134,7 +132,7 @@ class TurnOnSyncFragment : Fragment(), AccountObserver {
             DefaultSyncController(activity = activity as HomeActivity),
         )
 
-        binding.createAccount.increaseTapArea(extraDips)
+        binding.createAccount.increaseTapArea(CREATE_ACCOUNT_EXTRA_DIPS)
         binding.createAccount.apply {
             text = HtmlCompat.fromHtml(
                 getString(R.string.sign_in_create_account_text),
@@ -179,5 +177,9 @@ class TurnOnSyncFragment : Fragment(), AccountObserver {
         // session history stack.
         // We could auto-close this tab once we get to the end of the authentication process?
         // Via an interceptor, perhaps.
+    }
+
+    companion object {
+        private const val CREATE_ACCOUNT_EXTRA_DIPS = 16
     }
 }
