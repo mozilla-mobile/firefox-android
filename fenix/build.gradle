@@ -146,7 +146,7 @@ allprojects {
     }
 
     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
-        kotlinOptions.jvmTarget = "1.8"
+        kotlinOptions.jvmTarget = "11"
         kotlinOptions.allWarningsAsErrors = true
         kotlinOptions.freeCompilerArgs += [
             "-opt-in=kotlin.RequiresOptIn", "-Xjvm-default=all"
@@ -219,7 +219,7 @@ configurations {
 }
 
 dependencies {
-    ktlint("com.pinterest:ktlint:0.47.0") {
+    ktlint("com.pinterest:ktlint:0.48.2") {
         attributes {
             attribute(Bundling.BUNDLING_ATTRIBUTE, getObjects().named(Bundling, Bundling.EXTERNAL))
         }
@@ -240,7 +240,7 @@ tasks.register('ktlint', JavaExec) {
 task ktlintFormat(type: JavaExec, group: "formatting") {
     description = "Fix Kotlin code style deviations."
     classpath = configurations.ktlint
-    main = "com.pinterest.ktlint.Main"
+    mainClass.set("com.pinterest.ktlint.Main")
     args "-F", "app/src/**/*.kt", "!**/build/**/*.kt", "--baseline=ktlint-baseline.xml"
 }
 
@@ -257,7 +257,7 @@ tasks.register("listRepositories") {
 }
 
 tasks.register("githubTestDetails", GithubDetailsTask) {
-    text = "### [Unit Test Results Fenix]({reportsUrl}/test/testDebugUnitTest/index.html)"
+    text = "### [Unit Test Results Fenix]({reportsUrl}/test/testFenixDebugUnitTest/index.html)"
 }
 
 tasks.register("githubLintDetektDetails", GithubDetailsTask) {

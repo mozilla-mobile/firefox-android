@@ -113,7 +113,7 @@ object TestHelper {
 
     fun getPermissionAllowID(): String {
         return when
-        (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
+            (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
             true -> "com.android.permissioncontroller"
             false -> "com.android.packageinstaller"
         }
@@ -475,5 +475,15 @@ object TestHelper {
         if (condition) {
             testBlock()
         }
+    }
+
+    fun putAppToBackground() {
+        mDevice.pressRecentApps()
+        mDevice.findObject(UiSelector().resourceId("$packageName:id/container")).waitUntilGone(waitingTime)
+    }
+
+    fun bringAppToForeground() {
+        mDevice.pressRecentApps()
+        mDevice.findObject(UiSelector().resourceId("$packageName:id/container")).waitForExists(waitingTime)
     }
 }
