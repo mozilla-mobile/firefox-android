@@ -39,11 +39,11 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 
-    lintOptions {
+    lint {
         lintConfig file("lint.xml")
     }
 
@@ -158,11 +158,14 @@ android {
         focusNightly.root = 'src/focusNightly'
         klarNightly.root = 'src/klarNightly'
     }
-
     packagingOptions {
-        pickFirst 'META-INF/atomicfu.kotlin_module'
-        pickFirst 'META-INF/proguard/coroutines.pro'
+        resources {
+            pickFirsts += ['META-INF/atomicfu.kotlin_module', 'META-INF/proguard/coroutines.pro']
+        }
     }
+
+
+    namespace 'org.mozilla.focus'
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
@@ -171,7 +174,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
             freeCompilerArgs += "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
             freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
             freeCompilerArgs += "-Xjvm-default=all"
-            jvmTarget = '1.8'
+            jvmTarget = '11'
         }
 }
 
@@ -361,6 +364,7 @@ dependencies {
     testImplementation FocusDependencies.androidx_test_rules
 
     androidTestImplementation FocusDependencies.androidx_test_core_ktx
+    androidTestImplementation FocusDependencies.androidx_tracing
     androidTestImplementation FocusDependencies.androidx_junit_ktx
     androidTestImplementation FocusDependencies.androidx_uiautomator
     androidTestImplementation FocusDependencies.androidx_test_runner

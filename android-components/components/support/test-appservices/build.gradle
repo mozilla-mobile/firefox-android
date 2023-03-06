@@ -20,14 +20,16 @@ android {
         }
     }
 
-    lintOptions {
+    lint {
         warningsAsErrors true
         abortOnError true
     }
+
+    namespace 'mozilla.components.support.test.appservices'
 }
 
 dependencies {
-    api Dependencies.mozilla_full_megazord_forUnitTests
+    api ComponentsDependencies.mozilla_full_megazord_forUnitTests
 }
 
 apply from: '../../../android-lint.gradle'
