@@ -498,8 +498,13 @@ abstract class BaseBrowserFragment :
             httpClient = context.components.core.client,
             store = store,
             tabId = customTabSessionId,
-            snackbarParent = binding.dynamicSnackbarContainer,
-            snackbarDelegate = FenixSnackbarDelegate(binding.dynamicSnackbarContainer),
+            onCopyConfirmation = {
+                FenixSnackbarDelegate(binding.dynamicSnackbarContainer).show(
+                    snackBarParentView = binding.dynamicSnackbarContainer,
+                    text = R.string.snackbar_copy_image_to_clipboard_confirmation,
+                    duration = Snackbar.LENGTH_LONG,
+                )
+            },
         )
 
         val downloadFeature = DownloadsFeature(
