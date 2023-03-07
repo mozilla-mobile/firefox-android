@@ -9,6 +9,9 @@ permalink: /changelog/
 * [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/Gecko.kt)
 * [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/.config.yml)
 
+* **feature-prompts**:
+  * 🚒 Bug fixed [Bug 1819254](https://bugzilla.mozilla.org/show_bug.cgi?id=1819254). Don't exit fullscreen for user input prompts.
+
 * **compose-cfr**
   * 🚒 Bug fixed [bug #1809592](https://bugzilla.mozilla.org/show_bug.cgi?id=1809592). Improve screen alignment for Contextual Feature Recommendation popups.
 
