@@ -13,7 +13,7 @@ android {
         targetSdkVersion config.targetSdkVersion
     }
 
-    lintOptions {
+    lint {
         warningsAsErrors true
         abortOnError true
     }
@@ -25,21 +25,17 @@ android {
             consumerProguardFiles 'proguard-rules-consumer.pro'
         }
     }
+
+    namespace 'mozilla.components.support.rusthttp'
 }
 
 dependencies {
-    implementation(Dependencies.mozilla_httpconfig) {
+    implementation (ComponentsDependencies.mozilla_httpconfig) {
         // Override the version of concept-fetch that A-S depends on,
         // since we want to replace it with our own.
         exclude group: 'org.mozilla.components', module: 'concept-fetch'
     }
     api project(':concept-fetch')
-
-    implementation Dependencies.kotlin_stdlib
-
-    testImplementation Dependencies.testing_junit
-    testImplementation Dependencies.testing_robolectric
-    testImplementation Dependencies.testing_mockito
 }
 
 apply from: '../../../android-lint.gradle'

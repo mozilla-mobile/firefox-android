@@ -22,21 +22,23 @@ android {
         }
     }
 
-    lintOptions {
+    lint {
         // Disabled since this caused issues with Android Gradle Plugin 3.2.1+ (NullPointerException:InvalidPackageDetector)
         tasks.lint.enabled = false
 
         lintConfig file("lint.xml")
     }
+
+    namespace 'mozilla.components.support.android.test'
+
 }
 
 dependencies {
-    implementation Dependencies.kotlin_stdlib
-    implementation Dependencies.androidx_arch_core_common
-    implementation Dependencies.androidx_espresso_core
-    implementation Dependencies.androidx_test_core
-    implementation Dependencies.testing_leakcanary
-    implementation Dependencies.testing_mockwebserver
+    implementation ComponentsDependencies.androidx_arch_core_common
+    implementation ComponentsDependencies.androidx_espresso_core
+    implementation ComponentsDependencies.androidx_test_core
+    implementation ComponentsDependencies.testing_leakcanary
+    implementation ComponentsDependencies.testing_mockwebserver
 }
 
 apply from: '../../../android-lint.gradle'

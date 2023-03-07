@@ -38,8 +38,6 @@ android {
 }
 
 dependencies {
-    implementation Dependencies.kotlin_stdlib
-
     implementation project(':service-glean')
 }
 

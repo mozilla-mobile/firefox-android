@@ -41,6 +41,7 @@ import org.mozilla.fenix.components.settings.lazyFeatureFlagPreference
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getPreferenceKey
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.nimbus.CookieBannersSection
 import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.nimbus.HomeScreenSection
@@ -518,6 +519,22 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         }
     }
 
+    /**
+     * Get the display string for the current open links in apps setting
+     */
+    fun getOpenLinksInAppsString(): String =
+        when (appContext.settings().openLinksInExternalApp) {
+            appContext.getString(R.string.pref_key_open_links_in_apps_always) -> {
+                appContext.getString(R.string.preferences_open_links_in_apps_always)
+            }
+            appContext.getString(R.string.pref_key_open_links_in_apps_ask) -> {
+                appContext.getString(R.string.preferences_open_links_in_apps_ask)
+            }
+            else -> {
+                appContext.getString(R.string.preferences_open_links_in_apps_never)
+            }
+        }
+
     var shouldUseDarkTheme by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_dark_theme),
         default = false,
@@ -621,15 +638,6 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         return browsers.isDefaultBrowser
     }
 
-    var defaultBrowserNotificationDisplayed by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_should_show_default_browser_notification),
-        default = false,
-    )
-
-    fun shouldShowDefaultBrowserNotification(): Boolean {
-        return !defaultBrowserNotificationDisplayed && !isDefaultBrowserBlocking()
-    }
-
     var reEngagementNotificationShown by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_re_engagement_notification_shown),
         default = false,
@@ -702,13 +710,13 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     val enabledTotalCookieProtection: Boolean
-        get() = Config.channel.isNightlyOrDebug || mr2022Sections[Mr2022Section.TCP_FEATURE] == true
+        get() = mr2022Sections[Mr2022Section.TCP_FEATURE] == true
 
     /**
      * Indicates if the total cookie protection CRF feature is enabled.
      */
     val enabledTotalCookieProtectionCFR: Boolean
-        get() = Config.channel.isNightlyOrDebug || mr2022Sections[Mr2022Section.TCP_CFR] == true
+        get() = mr2022Sections[Mr2022Section.TCP_CFR] == true
 
     /**
      * Indicates if the total cookie protection CRF should be shown.
@@ -1175,9 +1183,41 @@ class Settings(private val appContext: Context) : PreferencesHolder {
             return false
         }
 
-    var openLinksInExternalApp by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_open_links_in_external_app),
+    var openLinksInExternalAppOld by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_open_links_in_external_app_old),
         default = false,
+    )
+
+    /**
+     * Check to see if we should open the link in an external app
+     */
+    fun shouldOpenLinksInApp(): Boolean {
+        return when (openLinksInExternalApp) {
+            appContext.getString(R.string.pref_key_open_links_in_apps_always) -> true
+            appContext.getString(R.string.pref_key_open_links_in_apps_ask) -> true
+            appContext.getString(R.string.pref_key_open_links_in_apps_never) -> false
+            else -> false
+        }
+    }
+
+    /**
+     * Check to see if we need to prompt the user if the link can be opened in an external app
+     */
+    fun shouldPromptOpenLinksInApp(): Boolean {
+        return when (openLinksInExternalApp) {
+            appContext.getString(R.string.pref_key_open_links_in_apps_always) -> false
+            appContext.getString(R.string.pref_key_open_links_in_apps_ask) -> true
+            appContext.getString(R.string.pref_key_open_links_in_apps_never) -> true
+            else -> true
+        }
+    }
+
+    var openLinksInExternalApp by stringPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_open_links_in_apps),
+        default = when (openLinksInExternalAppOld) {
+            true -> appContext.getString(R.string.pref_key_open_links_in_apps_ask)
+            false -> appContext.getString(R.string.pref_key_open_links_in_apps_never)
+        },
     )
 
     var allowDomesticChinaFxaServer by booleanPreference(

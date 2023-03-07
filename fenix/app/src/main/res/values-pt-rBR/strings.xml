@@ -64,14 +64,10 @@
     </string>
 
     <!-- Private mode shortcut "contextual feature recommendation" (CFR) -->
-    <!-- Text for the main message -->
-    <string name="cfr_message" moz:removedIn="109" tools:ignore="UnusedResources">Adicione um atalho na tela inicial do dispositivo para abrir abas privativas.</string>
     <!-- Text for the Private mode shortcut CFR message for adding a private mode shortcut to open private tabs from the Home screen -->
     <string name="private_mode_cfr_message" moz:removedIn="111" tools:ignore="UnusedResources">Aba a próxima aba privativa com apenas um toque.</string>
     <!-- Text for the Private mode shortcut CFR message for adding a private mode shortcut to open private tabs from the Home screen -->
     <string name="private_mode_cfr_message_2">Aba a próxima aba privativa com apenas um toque.</string>
-    <!-- Text for the positive button -->
-    <string name="cfr_pos_button_text" moz:removedIn="109" tools:ignore="UnusedResources">Adicionar atalho</string>
     <!-- Text for the positive button to accept adding a Private Browsing shortcut to the Home screen -->
     <string name="private_mode_cfr_pos_button_text">Adicionar à tela inicial do dispositivo</string>
     <!-- Text for the negative button to decline adding a Private Browsing shortcut to the Home screen -->
@@ -447,11 +443,11 @@
     <!-- Preference for accessibility -->
     <string name="preferences_accessibility">Acessibilidade</string>
     <!-- Preference to override the Firefox Account server -->
-    <string name="preferences_override_fxa_server">Servidor personalizado de Conta Firefox</string>
+    <string name="preferences_override_fxa_server">Servidor personalizado de conta Firefox</string>
     <!-- Preference to override the Sync token server -->
     <string name="preferences_override_sync_tokenserver">Servidor personalizado de sincronização</string>
     <!-- Toast shown after updating the FxA/Sync server override preferences -->
-    <string name="toast_override_fxa_sync_server_done">Servidor de Conta Firefox/Sync alterado. Saindo do aplicativo para aplicar as mudanças…</string>
+    <string name="toast_override_fxa_sync_server_done">Modificado o servidor de conta/sincronização Firefox. Saindo do aplicativo para aplicar as mudanças…</string>
     <!-- Preference category for account information -->
     <string name="preferences_category_account">Conta</string>
     <!-- Preference for changing where the toolbar is positioned -->
@@ -1211,12 +1207,11 @@
     <string name="notification_marketing_channel_name">Marketing</string>
 
     <!-- Title shown in the notification that pops up to remind the user to set fenix as default browser.
-    %1$s is a placeholder that will be replaced by the app name (Fenix). -->
-    <string name="notification_default_browser_title">%1$s é rápido e privativo</string>
+    The app name is in the text, due to limitations with localizing Nimbus experiments -->
+    <string name="nimbus_notification_default_browser_title" tools:ignore="UnusedResources">Firefox é rápido e privativo</string>
     <!-- Text shown in the notification that pops up to remind the user to set fenix as default browser.
-    %1$s is a placeholder that will be replaced by the app name (Fenix). -->
-    <string name="notification_default_browser_text">Defina o %1$s como navegador padrão</string>
-
+    The app name is in the text, due to limitations with localizing Nimbus experiments -->
+    <string name="nimbus_notification_default_browser_text" tools:ignore="UnusedResources">Torne o Firefox seu navegador padrão</string>
     <!-- Title shown in the notification that pops up to re-engage the user -->
     <string name="notification_re_engagement_title">Experimente a navegação privativa</string>
     <!-- Text shown in the notification that pops up to re-engage the user.
@@ -1360,6 +1355,8 @@
     <string name="onboarding_firefox_account_sync_is_on">A sincronização está ativada</string>
     <!-- Text for the tracking protection onboarding card header -->
     <string name="onboarding_tracking_protection_header">Proteção de privacidade por padrão</string>
+    <!-- Text for the tracking protection card description. The first parameter is the name of the application.-->
+    <string name="onboarding_tracking_protection_description_old">O %1$s impede automaticamente que empresas sigam você secretamente pela web.</string>
     <!-- Text for the tracking protection card description. -->
     <string name="onboarding_tracking_protection_description">Apresentamos a proteção total contra cookies para impedir que rastreadores usem cookies para te perseguir de um site para outro.</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
@@ -2051,4 +2048,6 @@
     <string name="a11y_action_label_wallpaper_collection_learn_more">abrir link para saber mais sobre esta coleção</string>
     <!-- Action label for links that point to an article. Talkback will append this to say "Double tap to read the article". -->
     <string name="a11y_action_label_read_article">ler o artigo</string>
+    <!-- Action label for links to the Firefox Pocket website. Talkback will append this to say "Double tap to open link to learn more". -->
+    <string name="a11y_action_label_pocket_learn_more">abrir o link para saber mais</string>
 </resources>

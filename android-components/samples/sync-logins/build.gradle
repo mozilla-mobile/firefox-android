@@ -32,6 +32,8 @@ android {
             include 'x86', 'arm64-v8a', 'armeabi-v7a'
         }
     }
+
+    namespace 'org.mozilla.samples.sync.logins'
 }
 
 dependencies {
@@ -43,9 +45,7 @@ dependencies {
     implementation project(':lib-dataprotect')
     implementation project(':lib-fetch-httpurlconnection')
 
-    implementation Dependencies.kotlin_stdlib
-
-    implementation Dependencies.androidx_appcompat
-    implementation Dependencies.androidx_browser
-    implementation Dependencies.androidx_recyclerview
+    implementation ComponentsDependencies.androidx_appcompat
+    implementation ComponentsDependencies.androidx_browser
+    implementation ComponentsDependencies.androidx_recyclerview
 }
