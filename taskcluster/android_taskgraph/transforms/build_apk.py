@@ -46,30 +46,67 @@ def add_shippable_secrets(config, tasks):
         secrets = task["run"].setdefault("secrets", [])
         dummy_secrets = task["run"].setdefault("dummy-secrets", [])
 
-        if task.pop("include-shippable-secrets", False) and config.params["level"] == "3":
-            gradle_build_type = task["run"]["gradle-build-type"]
-            secret_index = f'project/mobile/focus-android/{gradle_build_type}'
-            secrets.extend([{
-                "key": key,
-                "name": secret_index,
-                "path": target_file,
-            } for key, target_file in (
-                ('adjust', '.adjust_token'),
-                ('sentry_dsn', '.sentry_token'),
-                ('mls', '.mls_token'),
-                ('nimbus_url', '.nimbus'),
-            )])
+        if (
+            task.pop("include-shippable-secrets", False)
+            and config.params["level"] == "3"
+        ):
+            secrets.extend(
+                [
+                    {
+                        "key": key,
+                        "name": _get_secret_index(task["name"]),
+                        "path": target_file,
+                    }
+                    for key, target_file in _get_secrets_keys_and_target_files(task)
+                ]
+            )
         else:
-            dummy_secrets.extend([{
-                "content": fake_value,
-                "path": target_file,
-            } for fake_value, target_file in (
-                ("faketoken", ".adjust_token"),
-                ("faketoken", ".mls_token"),
-                ("https://fake@sentry.prod.mozaws.net/368", ".sentry_token"),
-            )])
+            dummy_secrets.extend(
+                [
+                    {
+                        "content": fake_value,
+                        "path": target_file,
+                    }
+                    for fake_value, target_file in (
+                        ("faketoken", ".adjust_token"),
+                        ("faketoken", ".mls_token"),
+                        ("https://fake@sentry.prod.mozaws.net/368", ".sentry_token"),
+                    )
+                ]
+            )
 
         yield task
+
+
+def _get_secrets_keys_and_target_files(task):
+    secrets = [
+        ('adjust', '.adjust_token'),
+        ('sentry_dsn', '.sentry_token'),
+        ('mls', '.mls_token'),
+        ('nimbus_url', '.nimbus'),
+    ]
+
+    if task["name"].startswith("fenix-"):
+        gradle_build_type = task["run"]["gradle-build-type"]
+        secrets.extend([
+            (
+                "firebase",
+                "app/src/{}/res/values/firebase.xml".format(
+                    gradle_build_type
+                ),
+            ),
+            ("wallpaper_url", ".wallpaper_url"),
+            ("pocket_consumer_key", ".pocket_consumer_key"),
+        ])
+
+    return secrets
+
+
+def _get_secret_index(task_name):
+    product_name = task_name.split("-")[0]
+    secret_name = task_name[len(product_name) + 1:]
+    secret_project_name = "focus-android" if product_name in ("focus", "klar") else product_name
+    return f'project/mobile/firefox-android/{secret_project_name}/{secret_name}'
 
 
 @transforms.add
@@ -90,11 +127,17 @@ def build_gradle_command(config, tasks):
         variant_config = get_variant(gradle_build_type, gradle_build_name)
         variant_name = variant_config["name"][0].upper() + variant_config["name"][1:]
 
-        task["run"]["gradlew"] = [
+        gradle_command = [
             "clean",
             f"assemble{variant_name}",
         ]
+
+        if task["run"].pop("track-apk-size", False):
+            gradle_command.append(f"apkSize{variant_name}")
+
+        task["run"]["gradlew"] = gradle_command
         yield task
+
 
 @transforms.add
 def extra_gradle_options(config, tasks):
@@ -185,14 +228,4 @@ def add_artifacts(config, tasks):
                     )
                 }
 
-        yield task
-
-
-@transforms.add
-def filter_incomplete_translation(config, tasks):
-    for task in tasks:
-        if task.pop("filter-incomplete-translations", False):
-            # filter-release-translations modifies source, which could cause problems if we ever start caching source
-            pre_gradlew = task["run"].setdefault("pre-gradlew", [])
-            pre_gradlew.append(["python", "automation/taskcluster/l10n/filter-release-translations.py"])
         yield task

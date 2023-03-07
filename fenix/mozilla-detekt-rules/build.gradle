@@ -1,0 +1,16 @@
+apply plugin: 'kotlin'
+
+dependencies {
+  compileOnly FenixDependencies.detektApi
+  implementation FenixDependencies.androidx_annotation
+
+  testImplementation FenixDependencies.detektApi
+  testImplementation FenixDependencies.detektTest
+  testImplementation FenixDependencies.junitApi
+  testImplementation FenixDependencies.junitParams
+  testRuntimeOnly FenixDependencies.junitEngine
+}
+
+test {
+  useJUnitPlatform {}
+}

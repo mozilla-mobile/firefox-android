@@ -82,7 +82,7 @@ subprojects {
             rename { 'manifest.json' }
             into extDir
 
-            def values = ['version': rootProject.ext.config.componentsVersion + "." + new Date().format('MMddHHmmss')]
+            def values = ['version': rootProject.ext.config.componentsVersion.split("a|b")[0] + "." + new Date().format('MMddHHmmss')]
             inputs.properties(values)
             expand(values)
         }
@@ -117,7 +117,7 @@ task ktlint(type: JavaExec, group: "verification") {
 task ktlintFormat(type: JavaExec, group: "formatting") {
     description = "Fix Kotlin code style deviations."
     classpath = configurations.ktlint
-    main = "com.pinterest.ktlint.Main"
+    mainClass.set("com.pinterest.ktlint.Main")
     args "-F", "app/**/*.kt", "!**/build/**/*.kt", "buildSrc/**/*.kt"
 }
 

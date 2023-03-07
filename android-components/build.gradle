@@ -28,8 +28,8 @@ buildscript {
     }
 
     dependencies {
-        classpath Dependencies.tools_androidgradle
-        classpath Dependencies.tools_kotlingradle
+        classpath ComponentsDependencies.tools_androidgradle
+        classpath ComponentsDependencies.tools_kotlingradle
     }
 }
 
@@ -149,7 +149,7 @@ subprojects {
             rename { 'manifest.json' }
             into extDir
 
-            def values = ['version': rootProject.ext.config.componentsVersion + "." + new Date().format('MMddHHmmss')]
+            def values = ['version': rootProject.ext.config.componentsVersion.split("a|b")[0] + "." + new Date().format('MMddHHmmss')]
             inputs.properties(values)
             expand(values)
         }
@@ -216,29 +216,28 @@ subprojects {
                 }
 
                 packagingOptions {
-                    exclude 'META-INF/atomicfu.kotlin_module'
-                    exclude 'META-INF/AL2.0'
-                    exclude 'META-INF/LGPL2.1'
+                    resources {
+                        excludes += ['META-INF/atomicfu.kotlin_module', 'META-INF/AL2.0', 'META-INF/LGPL2.1']
+                        // Required dependencies using byte-buddy; remove after this is
+                        // fixed by: https://issuetracker.google.com/issues/170131605
+                        excludes.add("META-INF/licenses/ASM")
 
-                    // Required dependencies using byte-buddy; remove after this is
-                    // fixed by: https://issuetracker.google.com/issues/170131605
-                    exclude "META-INF/licenses/ASM"
-                    pickFirst "win32-x86-64/attach_hotspot_windows.dll"
-                    pickFirst "win32-x86/attach_hotspot_windows.dll"
+                        pickFirsts += ['win32-x86-64/attach_hotspot_windows.dll', 'win32-x86/attach_hotspot_windows.dll']
+                    }
                 }
 
-                aaptOptions {
+                androidResources {
                     ignoreAssetsPattern "manifest.template.json"
                 }
 
                 compileOptions {
-                    sourceCompatibility 1.8
-                    targetCompatibility 1.8
+                    sourceCompatibility JavaVersion.VERSION_11
+                    targetCompatibility JavaVersion.VERSION_11
                 }
 
                 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
                     kotlinOptions {
-                        jvmTarget = "1.8"
+                        jvmTarget = "11"
                         freeCompilerArgs += [
                             "-opt-in=kotlin.RequiresOptIn"
                         ]
@@ -264,7 +263,7 @@ subprojects {
             }
 
             dependencies {
-                jnaForTest Dependencies.thirdparty_jna
+                jnaForTest ComponentsDependencies.thirdparty_jna
                 testImplementation files(configurations.jnaForTest.copyRecursive().files)
             }
 
@@ -372,7 +371,7 @@ configurations {
 }
 
 dependencies {
-    ktlint("com.pinterest:ktlint:0.47.0") {
+    ktlint("com.pinterest:ktlint:0.48.2") {
         attributes {
             attribute(Bundling.BUNDLING_ATTRIBUTE, getObjects().named(Bundling, Bundling.EXTERNAL))
         }

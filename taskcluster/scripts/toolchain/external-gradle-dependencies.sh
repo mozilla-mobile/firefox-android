@@ -20,7 +20,7 @@ GRADLE_COMMANDS="$@"
 
 NEXUS_PREFIX='http://localhost:8081/nexus/content/repositories'
 REPOS="-PgoogleRepo=$NEXUS_PREFIX/google/ -PcentralRepo=$NEXUS_PREFIX/central/"
-GRADLE_ARGS="--parallel $REPOS"
+GRADLE_ARGS="--parallel $REPOS -Pcoverage"
 
 pushd "$WORKING_DIR"
 
