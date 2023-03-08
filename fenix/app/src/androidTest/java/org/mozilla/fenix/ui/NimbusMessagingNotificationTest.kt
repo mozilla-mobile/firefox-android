@@ -67,9 +67,6 @@ class NimbusMessagingNotificationTest {
             "messaging" to JSONObject(
                 """
                 {
-                  "notification-config": {
-                    "refresh-interval": 0
-                  },
                   "message-under-experiment": "test-default-browser-notification",
                   "messages": {
                     "test-default-browser-notification": {

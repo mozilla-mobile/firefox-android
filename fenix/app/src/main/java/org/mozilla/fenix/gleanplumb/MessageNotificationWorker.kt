@@ -21,9 +21,9 @@ import androidx.work.WorkManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import mozilla.components.support.base.ids.SharedIdsHelper
 import org.mozilla.fenix.ext.areNotificationsEnabledSafe
 import org.mozilla.fenix.ext.components
@@ -48,46 +48,46 @@ class MessageNotificationWorker(
     workerParameters: WorkerParameters,
 ) : Worker(context, workerParameters) {
 
-    @OptIn(DelicateCoroutinesApi::class) // GlobalScope usage.
     override fun doWork(): Result {
-        GlobalScope.launch(Dispatchers.IO) {
-            val context = applicationContext
-            val nm = NotificationManagerCompat.from(context)
-            if (!nm.areNotificationsEnabledSafe()) {
-                return@launch
-            }
+        val context = applicationContext
+        val nm = NotificationManagerCompat.from(context)
+        if (!nm.areNotificationsEnabledSafe()) {
+            return Result.success()
+        }
 
-            val messagingStorage = context.components.analytics.messagingStorage
-            val messages = messagingStorage.getMessages()
-            val nextMessage =
-                messagingStorage.getNextMessage(MessageSurfaceId.NOTIFICATION, messages)
-                    ?: return@launch
+        val messagingStorage = context.components.analytics.messagingStorage
+        val messages = runBlocking { messagingStorage.getMessages() }
+        val nextMessage =
+            messagingStorage.getNextMessage(MessageSurfaceId.NOTIFICATION, messages)
+                ?: return Result.success()
 
-            val currentBootUniqueIdentifier = BootUtils.getBootIdentifier(context)
-            val messageMetadata = nextMessage.metadata
-            //  Device has NOT been power cycled.
-            if (messageMetadata.latestBootIdentifier == currentBootUniqueIdentifier) {
-                return@launch
-            }
+        val currentBootUniqueIdentifier = BootUtils.getBootIdentifier(context)
+        val messageMetadata = nextMessage.metadata
+        //  Device has NOT been power cycled.
+        if (messageMetadata.latestBootIdentifier == currentBootUniqueIdentifier) {
+            return Result.success()
+        }
 
-            val nimbusMessagingController = NimbusMessagingController(messagingStorage)
+        val nimbusMessagingController = NimbusMessagingController(messagingStorage)
 
-            // Update message as displayed.
-            val updatedMessage =
-                nimbusMessagingController.updateMessageAsDisplayed(
-                    nextMessage,
-                    currentBootUniqueIdentifier,
-                )
-            nimbusMessagingController.onMessageDisplayed(updatedMessage)
-
-            nm.notify(
-                MESSAGE_TAG,
-                SharedIdsHelper.getIdForTag(context, updatedMessage.id),
-                buildNotification(
-                    context,
-                    updatedMessage,
-                ),
+        // Update message as displayed.
+        val updatedMessage =
+            nimbusMessagingController.updateMessageAsDisplayed(
+                nextMessage,
+                currentBootUniqueIdentifier,
             )
+
+        nm.notify(
+            MESSAGE_TAG,
+            SharedIdsHelper.getIdForTag(context, updatedMessage.id),
+            buildNotification(
+                context,
+                updatedMessage,
+            ),
+        )
+
+        runBlocking {
+            nimbusMessagingController.onMessageDisplayed(updatedMessage)
         }
 
         return Result.success()
@@ -157,35 +157,19 @@ class MessageNotificationWorker(
             val pollingInterval = notificationConfig.refreshInterval.toLong()
 
             val instanceWorkManager = WorkManager.getInstance(context)
-            if (pollingInterval > 0) {
-                val messageWorkRequest = PeriodicWorkRequest.Builder(
-                    MessageNotificationWorker::class.java,
-                    pollingInterval,
-                    TimeUnit.MINUTES,
-                ) // Only start polling after the given interval.
-                    .setInitialDelay(pollingInterval, TimeUnit.MINUTES)
-                    .build()
+            val messageWorkRequest = PeriodicWorkRequest.Builder(
+                MessageNotificationWorker::class.java,
+                pollingInterval,
+                TimeUnit.MINUTES,
+            )
+            .build()
 
-                instanceWorkManager.enqueueUniquePeriodicWork(
-                    MESSAGE_WORK_NAME,
-                    // We want to keep any existing scheduled work.
-                    ExistingPeriodicWorkPolicy.KEEP,
-                    messageWorkRequest,
-                )
-            } else {
-                // This is useful for UI testing.
-                val messageWorkRequest = OneTimeWorkRequest.Builder(
-                    MessageNotificationWorker::class.java,
-                ) // Only start polling after the given interval.
-                    .setInitialDelay(0, TimeUnit.MINUTES)
-                    .build()
-
-                instanceWorkManager.enqueueUniqueWork(
-                    MESSAGE_WORK_NAME,
-                    ExistingWorkPolicy.REPLACE,
-                    messageWorkRequest,
-                )
-            }
+            instanceWorkManager.enqueueUniquePeriodicWork(
+                MESSAGE_WORK_NAME,
+                // We want to keep any existing scheduled work.
+                ExistingPeriodicWorkPolicy.REPLACE,
+                messageWorkRequest,
+            )
         }
     }
 }
