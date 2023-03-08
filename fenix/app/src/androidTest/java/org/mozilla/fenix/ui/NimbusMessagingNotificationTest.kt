@@ -10,22 +10,15 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
 import androidx.test.rule.GrantPermissionRule.grant
 import androidx.test.uiautomator.UiDevice
-import kotlinx.coroutines.test.runTest
 import org.json.JSONObject
-import org.junit.After
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.gleanplumb.CustomAttributeProvider
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.nimbus.HardcodedNimbusFeatures
-import org.mozilla.fenix.nimbus.MessageSurfaceId
 import org.mozilla.fenix.ui.robots.notificationShade
 
 /**

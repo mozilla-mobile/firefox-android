@@ -14,8 +14,6 @@ import android.os.Bundle
 import android.os.IBinder
 import androidx.core.app.NotificationManagerCompat
 import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.ExistingWorkPolicy
-import androidx.work.OneTimeWorkRequest
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
 import androidx.work.Worker
@@ -23,13 +21,13 @@ import androidx.work.WorkerParameters
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import mozilla.components.support.base.ids.SharedIdsHelper
 import org.mozilla.fenix.ext.areNotificationsEnabledSafe
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.nimbus.MessageSurfaceId
 import org.mozilla.fenix.onboarding.ensureMarketingChannelExists
+import org.mozilla.fenix.perf.runBlockingIncrement
 import org.mozilla.fenix.utils.BootUtils
 import org.mozilla.fenix.utils.IntentUtils
 import org.mozilla.fenix.utils.createBaseNotification
@@ -48,6 +46,7 @@ class MessageNotificationWorker(
     workerParameters: WorkerParameters,
 ) : Worker(context, workerParameters) {
 
+    @Suppress("ReturnCount")
     override fun doWork(): Result {
         val context = applicationContext
         val nm = NotificationManagerCompat.from(context)
@@ -56,7 +55,7 @@ class MessageNotificationWorker(
         }
 
         val messagingStorage = context.components.analytics.messagingStorage
-        val messages = runBlocking { messagingStorage.getMessages() }
+        val messages = runBlockingIncrement { messagingStorage.getMessages() }
         val nextMessage =
             messagingStorage.getNextMessage(MessageSurfaceId.NOTIFICATION, messages)
                 ?: return Result.success()
@@ -86,7 +85,7 @@ class MessageNotificationWorker(
             ),
         )
 
-        runBlocking {
+        runBlockingIncrement {
             nimbusMessagingController.onMessageDisplayed(updatedMessage)
         }
 
@@ -162,7 +161,7 @@ class MessageNotificationWorker(
                 pollingInterval,
                 TimeUnit.MINUTES,
             )
-            .build()
+                .build()
 
             instanceWorkManager.enqueueUniquePeriodicWork(
                 MESSAGE_WORK_NAME,
