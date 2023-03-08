@@ -34,6 +34,7 @@ class FeatureSettingsHelperDelegate : FeatureSettingsHelper {
         isWallpaperOnboardingEnabled = settings.showWallpaperOnboarding,
         isDeleteSitePermissionsEnabled = settings.deleteSitePermissions,
         isCookieBannerReductionDialogEnabled = !settings.userOptOutOfReEngageCookieBannerDialog,
+        isOpenInAppBannerEnabled = settings.shouldShowOpenInAppBanner,
         etpPolicy = getETPPolicy(settings),
     )
 
@@ -60,6 +61,7 @@ class FeatureSettingsHelperDelegate : FeatureSettingsHelper {
     override var isPWAsPromptEnabled: Boolean by updatedFeatureFlags::isPWAsPromptEnabled
     override var isTCPCFREnabled: Boolean by updatedFeatureFlags::isTCPCFREnabled
     override var isCookieBannerReductionDialogEnabled: Boolean by updatedFeatureFlags::isCookieBannerReductionDialogEnabled
+    override var isOpenInAppBannerEnabled: Boolean by updatedFeatureFlags::isOpenInAppBannerEnabled
     override var etpPolicy: ETPPolicy by updatedFeatureFlags::etpPolicy
 
     override fun applyFlagUpdates() {
@@ -84,6 +86,7 @@ class FeatureSettingsHelperDelegate : FeatureSettingsHelper {
         settings.showWallpaperOnboarding = featureFlags.isWallpaperOnboardingEnabled
         settings.deleteSitePermissions = featureFlags.isDeleteSitePermissionsEnabled
         settings.userOptOutOfReEngageCookieBannerDialog = !featureFlags.isCookieBannerReductionDialogEnabled
+        settings.shouldShowOpenInAppBanner = featureFlags.isOpenInAppBannerEnabled
         setETPPolicy(featureFlags.etpPolicy)
     }
 }
@@ -100,6 +103,7 @@ private data class FeatureFlags(
     var isWallpaperOnboardingEnabled: Boolean,
     var isDeleteSitePermissionsEnabled: Boolean,
     var isCookieBannerReductionDialogEnabled: Boolean,
+    var isOpenInAppBannerEnabled: Boolean,
     var etpPolicy: ETPPolicy,
 )
 
