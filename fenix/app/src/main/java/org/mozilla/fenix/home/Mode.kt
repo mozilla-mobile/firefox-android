@@ -31,17 +31,6 @@ sealed class Mode {
     }
 }
 
-/**
- * Describes various onboarding states.
- */
-sealed class OnboardingState {
-    // Signed out, without an option to auto-login using a shared FxA account.
-    object SignedOutNoAutoSignIn : OnboardingState()
-
-    // Signed in.
-    object SignedIn : OnboardingState()
-}
-
 class CurrentMode(
     private val context: Context,
     private val onboarding: FenixOnboarding,
