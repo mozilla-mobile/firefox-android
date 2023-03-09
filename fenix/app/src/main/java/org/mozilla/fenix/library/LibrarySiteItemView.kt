@@ -16,7 +16,6 @@ import mozilla.components.concept.menu.MenuController
 import mozilla.components.concept.menu.Orientation
 import org.mozilla.fenix.databinding.LibrarySiteItemBinding
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.ext.loadIntoView
 import org.mozilla.fenix.selection.SelectionHolder
 import org.mozilla.fenix.selection.SelectionInteractor
