@@ -17,6 +17,7 @@ import mozilla.components.feature.toolbar.ToolbarAutocompleteFeature
 import mozilla.components.support.ktx.android.content.getColorFromAttr
 import mozilla.components.support.ktx.android.content.res.resolveAttribute
 import mozilla.components.support.ktx.android.view.hideKeyboard
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.components.Core
@@ -148,7 +149,7 @@ class ToolbarView(
             interactor.onTextChanged(view.url.toString())
 
             // If search terms are displayed, move the cursor to the end instead of selecting all text.
-            if (settings.showUnifiedSearchFeature && searchState.searchTerms.isNotBlank()) {
+            if (FeatureFlags.unifiedSearchFeature && searchState.searchTerms.isNotBlank()) {
                 view.editMode(cursorPlacement = Toolbar.CursorPlacement.END)
             } else {
                 view.editMode()
@@ -182,7 +183,7 @@ class ToolbarView(
             }
         }
 
-        if (!settings.showUnifiedSearchFeature && searchEngine != null) {
+        if (!FeatureFlags.unifiedSearchFeature && searchEngine != null) {
             val iconSize =
                 context.resources.getDimensionPixelSize(R.dimen.preference_icon_drawable_size)
 
@@ -200,7 +201,7 @@ class ToolbarView(
     }
 
     private fun configureAutocomplete(searchEngineSource: SearchEngineSource) {
-        when (settings.showUnifiedSearchFeature) {
+        when (FeatureFlags.unifiedSearchFeature) {
             true -> configureAutocompleteWithUnifiedSearch(searchEngineSource)
             else -> configureAutocompleteWithoutUnifiedSearch(searchEngineSource)
         }

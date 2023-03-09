@@ -33,6 +33,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.Core.Companion
@@ -54,6 +55,7 @@ class AwesomeBarViewTest {
         mockkStatic("org.mozilla.fenix.ext.ContextKt")
         mockkStatic("mozilla.components.support.ktx.android.content.ContextKt")
         mockkObject(AwesomeBarView.Companion)
+        mockkObject(FeatureFlags)
         every { any<Activity>().components.core.engine } returns mockk()
         every { any<Activity>().components.core.icons } returns mockk()
         every { any<Activity>().components.core.store } returns mockk()
@@ -408,9 +410,7 @@ class AwesomeBarViewTest {
 
     @Test
     fun `GIVEN unified search feature is enabled WHEN configuring providers THEN don't add the engine suggestions provider`() {
-        val settings: Settings = mockk(relaxed = true) {
-            every { showUnifiedSearchFeature } returns true
-        }
+        val settings: Settings = mockk(relaxed = true)
         every { activity.settings() } returns settings
         val state = getSearchProviderState(
             searchEngineSource = SearchEngineSource.Default(mockk(relaxed = true)),
@@ -423,10 +423,9 @@ class AwesomeBarViewTest {
 
     @Test
     fun `GIVEN unified search feature is disabled WHEN configuring providers THEN add the engine suggestions provider`() {
-        val settings: Settings = mockk(relaxed = true) {
-            every { showUnifiedSearchFeature } returns false
-        }
+        val settings: Settings = mockk(relaxed = true)
         every { activity.settings() } returns settings
+        every { FeatureFlags.unifiedSearchFeature } returns false
         val state = getSearchProviderState(
             searchEngineSource = SearchEngineSource.Default(mockk(relaxed = true)),
         )
@@ -438,11 +437,10 @@ class AwesomeBarViewTest {
 
     @Test
     fun `GIVEN a search from the default engine with all suggestions asked WHEN configuring providers THEN add them all`() {
-        val settings: Settings = mockk(relaxed = true) {
-            every { showUnifiedSearchFeature } returns false
-        }
+        val settings: Settings = mockk(relaxed = true)
         every { activity.settings() } returns settings
         every { activity.browsingModeManager.mode } returns BrowsingMode.Normal
+        every { FeatureFlags.unifiedSearchFeature } returns false
         val state = getSearchProviderState(
             searchEngineSource = SearchEngineSource.Default(
                 mockk(relaxed = true) {
@@ -476,9 +474,7 @@ class AwesomeBarViewTest {
 
     @Test
     fun `GIVEN a search from the default engine with no suggestions asked WHEN configuring providers THEN don't add any provider`() {
-        val settings: Settings = mockk(relaxed = true) {
-            every { showUnifiedSearchFeature } returns true
-        }
+        val settings: Settings = mockk(relaxed = true)
         every { activity.settings() } returns settings
         every { activity.browsingModeManager.mode } returns BrowsingMode.Normal
         val state = getSearchProviderState(

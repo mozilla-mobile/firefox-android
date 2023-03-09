@@ -18,6 +18,7 @@ import mozilla.components.feature.toolbar.ToolbarFeature
 import mozilla.components.feature.toolbar.ToolbarPresenter
 import mozilla.components.support.base.feature.LifecycleAwareFeature
 import mozilla.components.support.ktx.android.view.hideKeyboard
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.toolbar.interactor.BrowserToolbarInteractor
 import org.mozilla.fenix.ext.components
@@ -41,7 +42,7 @@ abstract class ToolbarIntegration(
         toolbar,
         store,
         sessionId,
-        context.settings().showUnifiedSearchFeature,
+        FeatureFlags.unifiedSearchFeature,
         ToolbarFeature.UrlRenderConfiguration(
             context.components.publicSuffixList,
             ThemeManager.resolveAttribute(R.attr.textPrimary, context),

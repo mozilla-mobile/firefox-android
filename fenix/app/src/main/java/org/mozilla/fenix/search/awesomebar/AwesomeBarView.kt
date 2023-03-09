@@ -31,6 +31,7 @@ import mozilla.components.feature.syncedtabs.DeviceIndicators
 import mozilla.components.feature.syncedtabs.SyncedTabsStorageSuggestionProvider
 import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.support.ktx.android.content.getColorFromAttr
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
@@ -316,7 +317,7 @@ class AwesomeBarView(
             providersToAdd.add(getLocalTabsProvider(state.searchEngineSource, true))
         }
 
-        if (!activity.settings().showUnifiedSearchFeature) {
+        if (!FeatureFlags.unifiedSearchFeature) {
             providersToAdd.add(searchEngineSuggestionProvider)
         }
 
@@ -424,7 +425,7 @@ class AwesomeBarView(
                     engine,
                     shortcutSearchUseCase,
                     components.core.client,
-                    limit = if (activity.settings().showUnifiedSearchFeature) {
+                    limit = if (FeatureFlags.unifiedSearchFeature) {
                         METADATA_SHORTCUT_SUGGESTION_LIMIT
                     } else {
                         METADATA_SUGGESTION_LIMIT

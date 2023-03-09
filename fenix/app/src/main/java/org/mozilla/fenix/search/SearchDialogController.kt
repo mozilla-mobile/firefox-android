@@ -19,6 +19,7 @@ import mozilla.components.concept.engine.EngineSession.LoadUrlFlags
 import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.support.ktx.kotlin.isUrl
 import org.mozilla.fenix.BrowserDirection
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.SearchShortcuts
 import org.mozilla.fenix.GleanMetrics.UnifiedSearch
@@ -149,7 +150,7 @@ class SearchDialogController(
         fragmentStore.dispatch(SearchFragmentAction.UpdateQuery(text))
         fragmentStore.dispatch(
             SearchFragmentAction.ShowSearchShortcutEnginePicker(
-                !settings.showUnifiedSearchFeature &&
+                !FeatureFlags.unifiedSearchFeature &&
                     (textMatchesCurrentUrl || textMatchesCurrentSearch || text.isEmpty()) &&
                     settings.shouldShowSearchShortcuts,
             ),
@@ -250,7 +251,7 @@ class SearchDialogController(
             else -> searchEngine.name
         }
 
-        if (settings.showUnifiedSearchFeature) {
+        if (FeatureFlags.unifiedSearchFeature) {
             UnifiedSearch.engineSelected.record(UnifiedSearch.EngineSelectedExtra(engine))
         } else {
             SearchShortcuts.selected.record(SearchShortcuts.SelectedExtra(engine))

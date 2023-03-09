@@ -72,6 +72,7 @@ import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifAnyChanged
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import mozilla.components.ui.autocomplete.InlineAutocompleteEditText
 import org.mozilla.fenix.BrowserDirection
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.GleanMetrics.Awesomebar
 import org.mozilla.fenix.GleanMetrics.VoiceSearch
 import org.mozilla.fenix.HomeActivity
@@ -314,7 +315,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val showUnifiedSearchFeature = requireContext().settings().showUnifiedSearchFeature
+        val showUnifiedSearchFeature = FeatureFlags.unifiedSearchFeature
 
         consumeFlow(requireComponents.core.store) { flow ->
             flow.map { state -> state.search }
@@ -946,7 +947,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
         areShortcutsAvailable: Boolean,
         showShortcuts: Boolean,
     ) {
-        val showUnifiedSearchFeature = requireContext().settings().showUnifiedSearchFeature
+        val showUnifiedSearchFeature = FeatureFlags.unifiedSearchFeature
 
         view?.apply {
             binding.searchEnginesShortcutButton.isVisible =

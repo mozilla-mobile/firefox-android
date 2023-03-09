@@ -30,11 +30,11 @@ import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.lib.state.ext.flow
 import mozilla.components.support.ktx.android.view.toScope
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.SearchEngineRadioButtonBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getRootView
-import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.utils.allowUndo
 
 class RadioSearchEngineListPreference @JvmOverloads constructor(
@@ -88,7 +88,7 @@ class RadioSearchEngineListPreference @JvmOverloads constructor(
                 engine = engine,
                 layoutInflater = layoutInflater,
                 res = context.resources,
-                allowDeletion = if (context.settings().showUnifiedSearchFeature) {
+                allowDeletion = if (FeatureFlags.unifiedSearchFeature) {
                     isLastSearchEngineAvailable && !(engine.isGeneral && isLastGeneralOrCustomSearchEngine)
                 } else {
                     isLastSearchEngineAvailable
@@ -113,7 +113,7 @@ class RadioSearchEngineListPreference @JvmOverloads constructor(
 
         val binding = SearchEngineRadioButtonBinding.bind(wrapper)
 
-        if (context.settings().showUnifiedSearchFeature && !engine.isGeneral) {
+        if (FeatureFlags.unifiedSearchFeature && !engine.isGeneral) {
             binding.radioButton.isEnabled = false
             wrapper.isEnabled = false
         } else {
@@ -171,7 +171,7 @@ class RadioSearchEngineListPreference @JvmOverloads constructor(
     ) {
         val selectedOrDefaultSearchEngine = context.components.core.store.state.search.selectedOrDefaultSearchEngine
         if (selectedOrDefaultSearchEngine == engine) {
-            val nextSearchEngine = if (context.settings().showUnifiedSearchFeature) {
+            val nextSearchEngine = if (FeatureFlags.unifiedSearchFeature) {
                 context.components.core.store.state.search.searchEngines.first {
                     it.id != engine.id && (it.isGeneral || it.type == SearchEngine.Type.CUSTOM)
                 }

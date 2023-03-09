@@ -106,7 +106,6 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
                 deleteBookmarkFolder = ::showRemoveFolderDialog,
                 showTabTray = ::showTabTray,
                 warnLargeOpenAll = ::warnLargeOpenAll,
-                settings = requireComponents.settings,
             ),
         )
 

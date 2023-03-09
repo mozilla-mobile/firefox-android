@@ -8,6 +8,7 @@ import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
+import io.mockk.mockkObject
 import io.mockk.mockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.test.runTest
@@ -27,6 +28,7 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
@@ -49,6 +51,7 @@ class SearchFragmentStoreTest {
     @Before
     fun setup() {
         MockKAnnotations.init(this)
+        mockkObject(FeatureFlags)
         every { activity.browsingModeManager } returns object : BrowsingModeManager {
             override var mode: BrowsingMode = BrowsingMode.Normal
         }
@@ -60,7 +63,6 @@ class SearchFragmentStoreTest {
         activity.browsingModeManager.mode = BrowsingMode.Normal
         every { components.core.store.state } returns BrowserState()
         every { settings.shouldShowSearchShortcuts } returns true
-        every { settings.showUnifiedSearchFeature } returns true
         every { settings.shouldShowHistorySuggestions } returns true
 
         mockkStatic("org.mozilla.fenix.search.SearchFragmentStoreKt") {
@@ -189,6 +191,7 @@ class SearchFragmentStoreTest {
         every { settings.shouldShowSyncedTabsSuggestions } returns false
         every { settings.shouldShowSearchSuggestions } returns true
         every { settings.shouldShowSearchSuggestionsInPrivate } returns true
+        every { FeatureFlags.unifiedSearchFeature } returns false
 
         mockkStatic("org.mozilla.fenix.search.SearchFragmentStoreKt") {
             store.dispatch(
@@ -222,7 +225,6 @@ class SearchFragmentStoreTest {
         val topicSpecificEngine: SearchEngine = mockk {
             every { isGeneral } returns false
         }
-        every { settings.showUnifiedSearchFeature } returns true
         every { settings.shouldShowSearchShortcuts } returns true
         every { settings.shouldShowClipboardSuggestions } returns true
         every { settings.shouldShowHistorySuggestions } returns true
@@ -285,7 +287,6 @@ class SearchFragmentStoreTest {
         val initialState = emptyDefaultState(showHistorySuggestionsForCurrentEngine = false)
         val store = SearchFragmentStore(initialState)
         every { searchEngine.isGeneral } returns false
-        every { settings.showUnifiedSearchFeature } returns true
         every { settings.shouldShowSearchSuggestions } returns false
         every { settings.shouldShowSearchShortcuts } returns false
         every { settings.shouldShowClipboardSuggestions } returns false
@@ -321,7 +322,7 @@ class SearchFragmentStoreTest {
     fun `GIVEN unified search is disabled WHEN the search engine is updated to a shortcut THEN search suggestions providers are updated`() = runTest {
         val initialState = emptyDefaultState(showHistorySuggestionsForCurrentEngine = false)
         val store = SearchFragmentStore(initialState)
-        every { settings.showUnifiedSearchFeature } returns false
+        every { FeatureFlags.unifiedSearchFeature } returns false
         every { settings.shouldShowSearchShortcuts } returns true
         every { settings.shouldShowClipboardSuggestions } returns false
         every { settings.shouldShowHistorySuggestions } returns true
@@ -359,7 +360,6 @@ class SearchFragmentStoreTest {
             every { name } returns "1"
             every { isGeneral } returns false
         }
-        every { settings.showUnifiedSearchFeature } returns true
 
         every { settings.shouldShowBookmarkSuggestions } returns false
         every { settings.shouldShowSyncedTabsSuggestions } returns false
@@ -409,7 +409,6 @@ class SearchFragmentStoreTest {
             every { id } returns "1"
             every { isGeneral } returns false
         }
-        every { settings.showUnifiedSearchFeature } returns true
 
         every { settings.shouldShowBookmarkSuggestions } returns false
         every { settings.shouldShowSyncedTabsSuggestions } returns true

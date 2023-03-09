@@ -40,6 +40,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.BrowserDirection
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.SearchShortcuts
 import org.mozilla.fenix.GleanMetrics.UnifiedSearch
@@ -82,6 +83,7 @@ class SearchDialogControllerTest {
     fun setUp() {
         MockKAnnotations.init(this)
         mockkObject(MetricsUtils)
+        mockkObject(FeatureFlags)
         middleware = CaptureActionsMiddleware()
         browserStore = BrowserStore(
             middleware = listOf(middleware),
@@ -291,6 +293,7 @@ class SearchDialogControllerTest {
     fun `show search shortcuts when setting enabled AND query empty`() {
         val text = ""
         every { settings.shouldShowSearchShortcuts } returns true
+        every { FeatureFlags.unifiedSearchFeature } returns false
 
         createController().handleTextChanged(text)
 
@@ -302,6 +305,7 @@ class SearchDialogControllerTest {
         val text = "mozilla.org"
         every { store.state.url } returns "mozilla.org"
         every { settings.shouldShowSearchShortcuts } returns true
+        every { FeatureFlags.unifiedSearchFeature } returns false
 
         createController().handleTextChanged(text)
 
@@ -312,7 +316,6 @@ class SearchDialogControllerTest {
     fun `GIVEN show search shortcuts setting is enabled AND unified search is enabled WHEN query is empty THEN do not show search shortcuts`() {
         val text = ""
         every { settings.shouldShowSearchShortcuts } returns true
-        every { settings.showUnifiedSearchFeature } returns true
 
         createController().handleTextChanged(text)
 
@@ -324,7 +327,6 @@ class SearchDialogControllerTest {
         val text = "mozilla.org"
         every { store.state.url } returns "mozilla.org"
         every { settings.shouldShowSearchShortcuts } returns true
-        every { settings.showUnifiedSearchFeature } returns true
 
         createController().handleTextChanged(text)
 
@@ -409,6 +411,7 @@ class SearchDialogControllerTest {
         val searchEngine: SearchEngine = mockk(relaxed = true)
         val browsingMode = BrowsingMode.Private
         every { activity.browsingModeManager.mode } returns browsingMode
+        every { FeatureFlags.unifiedSearchFeature } returns false
 
         var focusToolbarInvoked = false
         createController(
@@ -434,7 +437,6 @@ class SearchDialogControllerTest {
         val searchEngine: SearchEngine = mockk(relaxed = true)
         every { searchEngine.type } returns SearchEngine.Type.APPLICATION
         every { searchEngine.id } returns Core.HISTORY_SEARCH_ENGINE_ID
-        every { settings.showUnifiedSearchFeature } returns true
 
         assertNull(UnifiedSearch.engineSelected.testGetValue())
 
@@ -462,7 +464,6 @@ class SearchDialogControllerTest {
         val searchEngine: SearchEngine = mockk(relaxed = true)
         every { searchEngine.type } returns SearchEngine.Type.APPLICATION
         every { searchEngine.id } returns Core.BOOKMARKS_SEARCH_ENGINE_ID
-        every { settings.showUnifiedSearchFeature } returns true
 
         assertNull(UnifiedSearch.engineSelected.testGetValue())
 
@@ -490,7 +491,6 @@ class SearchDialogControllerTest {
         val searchEngine: SearchEngine = mockk(relaxed = true)
         every { searchEngine.type } returns SearchEngine.Type.APPLICATION
         every { searchEngine.id } returns Core.TABS_SEARCH_ENGINE_ID
-        every { settings.showUnifiedSearchFeature } returns true
 
         assertNull(UnifiedSearch.engineSelected.testGetValue())
 

@@ -79,6 +79,7 @@ import mozilla.components.support.ktx.android.content.getColorFromAttr
 import mozilla.components.support.ktx.android.content.res.resolveAttribute
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import org.mozilla.fenix.Config
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.HomeScreen
 import org.mozilla.fenix.GleanMetrics.PrivateBrowsingShortcutCfr
@@ -350,7 +351,7 @@ class HomeFragment : Fragment() {
             )
         }
 
-        requireContext().settings().showUnifiedSearchFeature.let {
+        FeatureFlags.unifiedSearchFeature.let {
             binding.searchSelectorButton.isVisible = it
             binding.searchEngineIcon.isGone = it
         }
@@ -686,7 +687,7 @@ class HomeFragment : Fragment() {
                         }
                     }
 
-                    if (requireContext().settings().showUnifiedSearchFeature) {
+                    if (FeatureFlags.unifiedSearchFeature) {
                         binding.searchSelectorButton.setIcon(icon, name)
                     } else {
                         binding.searchEngineIcon.setImageDrawable(icon)

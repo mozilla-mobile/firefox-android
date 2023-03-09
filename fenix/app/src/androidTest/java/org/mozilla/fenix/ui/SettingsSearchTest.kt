@@ -7,9 +7,9 @@ import org.junit.Before
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.customannotations.SmokeTest
-import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.RecyclerViewIdlingResource
@@ -385,7 +385,7 @@ class SettingsSearchTest {
         }.openThreeDotMenu {
         }.openSettings {
         }.openSearchSubMenu {
-            runWithCondition(!appContext.settings().showUnifiedSearchFeature) {
+            runWithCondition(!FeatureFlags.unifiedSearchFeature) {
                 // If the feature is disabled run old steps.
                 deleteMultipleSearchEngines(
                     "Google",
@@ -405,7 +405,7 @@ class SettingsSearchTest {
                     "eBay",
                 )
             }
-            runWithCondition(appContext.settings().showUnifiedSearchFeature) {
+            runWithCondition(FeatureFlags.unifiedSearchFeature) {
                 // Run steps suitable for the enabled unified search feature.
                 deleteMultipleSearchEngines(
                     "Google",

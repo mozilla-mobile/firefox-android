@@ -576,7 +576,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
      */
     @Suppress("NestedBlockDepth")
     private fun migrateTopicSpecificSearchEngines() {
-        if (settings().showUnifiedSearchFeature) {
+        if (FeatureFlags.unifiedSearchFeature) {
             components.core.store.state.search.selectedOrDefaultSearchEngine.let { currentSearchEngine ->
                 if (currentSearchEngine?.isGeneral == false) {
                     components.core.store.state.search.searchEngines.firstOrNull() { nextSearchEngine ->

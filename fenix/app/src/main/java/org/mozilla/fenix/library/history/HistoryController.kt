@@ -16,6 +16,7 @@ import mozilla.components.browser.state.action.RecentlyClosedAction
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.browser.storage.sync.PlacesHistoryStorage
 import mozilla.components.service.glean.private.NoExtras
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.AppStore
@@ -24,7 +25,6 @@ import org.mozilla.fenix.components.history.DefaultPagedHistoryProvider
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.navigateSafe
 import org.mozilla.fenix.library.history.HistoryFragment.DeleteConfirmationDialogFragment
-import org.mozilla.fenix.utils.Settings
 import org.mozilla.fenix.GleanMetrics.History as GleanHistory
 
 @Suppress("TooManyFunctions")
@@ -71,7 +71,6 @@ class DefaultHistoryController(
         delete: (Set<History>) -> suspend (context: Context) -> Unit,
     ) -> Unit,
     private val syncHistory: suspend () -> Unit,
-    private val settings: Settings,
 ) : HistoryController {
 
     override fun handleOpen(item: History) {
@@ -117,7 +116,7 @@ class DefaultHistoryController(
     }
 
     override fun handleSearch() {
-        val directions = if (settings.showUnifiedSearchFeature) {
+        val directions = if (FeatureFlags.unifiedSearchFeature) {
             HistoryFragmentDirections.actionGlobalSearchDialog(null)
         } else {
             HistoryFragmentDirections.actionGlobalHistorySearchDialog()

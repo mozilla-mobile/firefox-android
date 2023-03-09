@@ -21,6 +21,7 @@ import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.service.fxa.SyncEngine
 import mozilla.components.service.fxa.sync.SyncReason
 import org.mozilla.fenix.BrowserDirection
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
@@ -28,7 +29,6 @@ import org.mozilla.fenix.ext.bookmarkStorage
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.navigateSafe
-import org.mozilla.fenix.utils.Settings
 
 @VisibleForTesting
 internal const val WARN_OPEN_ALL_SIZE = 15
@@ -86,7 +86,6 @@ class DefaultBookmarkController(
     private val deleteBookmarkFolder: (Set<BookmarkNode>) -> Unit,
     private val showTabTray: () -> Unit,
     private val warnLargeOpenAll: (Int, () -> Unit) -> Unit,
-    private val settings: Settings,
 ) : BookmarkController {
 
     private val resources: Resources = activity.resources
@@ -256,7 +255,7 @@ class DefaultBookmarkController(
     }
 
     override fun handleSearch() {
-        val directions = if (settings.showUnifiedSearchFeature) {
+        val directions = if (FeatureFlags.unifiedSearchFeature) {
             BookmarkFragmentDirections.actionGlobalSearchDialog(sessionId = null)
         } else {
             BookmarkFragmentDirections.actionBookmarkFragmentToBookmarkSearchDialogFragment()

@@ -12,6 +12,7 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
 import mozilla.components.support.ktx.android.view.hideKeyboard
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.settings
@@ -50,7 +51,7 @@ class SearchEngineFragment : PreferenceFragmentCompat() {
         val showSearchShortcuts =
             requirePreference<SwitchPreference>(R.string.pref_key_show_search_engine_shortcuts).apply {
                 isChecked = context.settings().shouldShowSearchShortcuts
-                isVisible = !context.settings().showUnifiedSearchFeature
+                isVisible = !FeatureFlags.unifiedSearchFeature
             }
 
         val showHistorySuggestions =

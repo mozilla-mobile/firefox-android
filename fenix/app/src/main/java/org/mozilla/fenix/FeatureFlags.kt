@@ -7,6 +7,7 @@ package org.mozilla.fenix
 import android.content.Context
 import mozilla.components.support.locale.LocaleManager
 import mozilla.components.support.locale.LocaleManager.getSystemDefault
+import org.mozilla.fenix.nimbus.FxNimbus
 
 /**
  * A single source for setting feature flags that are mostly based on build type.
@@ -50,7 +51,11 @@ object FeatureFlags {
     /**
      * Enables the Unified Search feature.
      */
-    val unifiedSearchFeature = Config.channel.isNightlyOrDebug
+    val unifiedSearchFeature = if (Config.channel.isNightlyOrDebug) {
+        true
+    } else {
+        FxNimbus.features.unifiedSearch.value().enabled
+    }
 
     /**
      * Enables compose on the tabs tray items.

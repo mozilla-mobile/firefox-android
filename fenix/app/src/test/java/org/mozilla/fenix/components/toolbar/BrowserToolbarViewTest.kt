@@ -42,7 +42,6 @@ class BrowserToolbarViewTest {
         every { testContext.components.useCases } returns mockk(relaxed = true)
         every { testContext.components.core } returns mockk(relaxed = true)
         every { testContext.components.publicSuffixList } returns PublicSuffixList(testContext)
-        every { testContext.settings().showUnifiedSearchFeature } returns false
 
         toolbarView = BrowserToolbarView(
             context = testContext,

@@ -94,6 +94,7 @@ class ToolbarViewTest {
         context = ContextThemeWrapper(testContext, R.style.NormalTheme)
         every { context.settings() } returns mockk(relaxed = true)
         toolbar = spyk(BrowserToolbar(context))
+        mockkObject(FeatureFlags)
     }
 
     @Test
@@ -139,7 +140,6 @@ class ToolbarViewTest {
 
     @Test
     fun `GIVEN search term is set WHEN switching to edit mode THEN the cursor is set at the end of the search term`() {
-        every { context.settings().showUnifiedSearchFeature } returns true
         every { context.settings().shouldShowHistorySuggestions } returns true
         val view = buildToolbarView(false)
         mockkObject(FeatureFlags)
@@ -153,7 +153,6 @@ class ToolbarViewTest {
 
     @Test
     fun `GIVEN no search term is set WHEN switching to edit mode THEN the cursor is set at the end of the search term`() {
-        every { context.settings().showUnifiedSearchFeature } returns true
         every { context.settings().shouldShowHistorySuggestions } returns true
         val view = buildToolbarView(false)
         mockkObject(FeatureFlags)
@@ -202,6 +201,7 @@ class ToolbarViewTest {
     fun `searchEngine name and icon get set on update`() {
         val editToolbar: EditToolbar = mockk(relaxed = true)
         every { toolbar.edit } returns editToolbar
+        every { FeatureFlags.unifiedSearchFeature } returns false
 
         val toolbarView = buildToolbarView(false)
         toolbarView.update(defaultState)
@@ -404,9 +404,9 @@ class ToolbarViewTest {
             }
 
             val settings: Settings = mockk(relaxed = true) {
-                every { showUnifiedSearchFeature } returns false
                 every { shouldShowHistorySuggestions } returns true
             }
+            every { FeatureFlags.unifiedSearchFeature } returns false
             val toolbarView = buildToolbarView(
                 isPrivate = false,
                 settings = settings,
@@ -435,9 +435,9 @@ class ToolbarViewTest {
             }
 
             val settings: Settings = mockk(relaxed = true) {
-                every { showUnifiedSearchFeature } returns false
                 every { shouldShowHistorySuggestions } returns false
             }
+            every { FeatureFlags.unifiedSearchFeature } returns false
             val toolbarView = buildToolbarView(
                 isPrivate = false,
                 settings = settings,
@@ -466,9 +466,9 @@ class ToolbarViewTest {
             }
 
             val settings: Settings = mockk(relaxed = true) {
-                every { showUnifiedSearchFeature } returns false
                 every { shouldShowHistorySuggestions } returns true
             }
+            every { FeatureFlags.unifiedSearchFeature } returns false
             val toolbarView = buildToolbarView(
                 isPrivate = false,
                 settings = settings,
@@ -528,7 +528,6 @@ class ToolbarViewTest {
             }
 
             val settings: Settings = mockk(relaxed = true) {
-                every { showUnifiedSearchFeature } returns true
                 every { shouldShowHistorySuggestions } returns true
             }
             val toolbarView = buildToolbarView(
@@ -558,7 +557,6 @@ class ToolbarViewTest {
                 every { core.domainsAutocompleteProvider } returns domainsProvider
             }
             val settings: Settings = mockk(relaxed = true) {
-                every { showUnifiedSearchFeature } returns true
                 every { shouldShowHistorySuggestions } returns false
             }
             val toolbarView = buildToolbarView(
@@ -587,9 +585,7 @@ class ToolbarViewTest {
                 every { core.sessionAutocompleteProvider } returns localSessionProvider
                 every { backgroundServices.syncedTabsAutocompleteProvider } returns syncedSessionsProvider
             }
-            val settings: Settings = mockk(relaxed = true) {
-                every { showUnifiedSearchFeature } returns true
-            }
+            val settings: Settings = mockk(relaxed = true)
             val toolbarView = buildToolbarView(
                 isPrivate = false,
                 settings = settings,
@@ -614,9 +610,7 @@ class ToolbarViewTest {
             val components: Components = mockk(relaxed = true) {
                 every { core.bookmarksStorage } returns bookmarksProvider
             }
-            val settings: Settings = mockk(relaxed = true) {
-                every { showUnifiedSearchFeature } returns true
-            }
+            val settings: Settings = mockk(relaxed = true)
             val toolbarView = buildToolbarView(
                 isPrivate = false,
                 settings = settings,
@@ -641,9 +635,7 @@ class ToolbarViewTest {
             val components: Components = mockk(relaxed = true) {
                 every { core.historyStorage } returns historyProvider
             }
-            val settings: Settings = mockk(relaxed = true) {
-                every { showUnifiedSearchFeature } returns true
-            }
+            val settings: Settings = mockk(relaxed = true)
             val toolbarView = buildToolbarView(
                 isPrivate = false,
                 settings = settings,
@@ -664,9 +656,7 @@ class ToolbarViewTest {
     @Test
     fun `GIVEN a new search state with no engine source selected WHEN updating the toolbar THEN reconfigure autocomplete suggestions`() {
         mockkConstructor(ToolbarAutocompleteFeature::class) {
-            val settings: Settings = mockk(relaxed = true) {
-                every { showUnifiedSearchFeature } returns true
-            }
+            val settings: Settings = mockk(relaxed = true)
             val toolbarView = buildToolbarView(
                 false,
                 settings = settings,
@@ -686,9 +676,7 @@ class ToolbarViewTest {
     @Test
     fun `GIVEN a new search state with a shortcut engine source selected WHEN updating the toolbar THEN reconfigure autocomplete suggestions`() {
         mockkConstructor(ToolbarAutocompleteFeature::class) {
-            val settings: Settings = mockk(relaxed = true) {
-                every { showUnifiedSearchFeature } returns true
-            }
+            val settings: Settings = mockk(relaxed = true)
             val toolbarView = buildToolbarView(
                 isPrivate = false,
                 settings = settings,

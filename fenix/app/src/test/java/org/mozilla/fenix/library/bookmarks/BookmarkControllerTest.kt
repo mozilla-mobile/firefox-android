@@ -18,6 +18,7 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkConstructor
+import io.mockk.mockkObject
 import io.mockk.runs
 import io.mockk.slot
 import io.mockk.spyk
@@ -37,13 +38,13 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.BrowserDirection
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.Services
 import org.mozilla.fenix.ext.bookmarkStorage
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.utils.Settings
 
 @Suppress("TooManyFunctions", "LargeClass")
 class BookmarkControllerTest {
@@ -63,7 +64,6 @@ class BookmarkControllerTest {
     private val addNewTabUseCase: TabsUseCases.AddNewTabUseCase = mockk(relaxed = true)
     private val navBackStackEntry: NavBackStackEntry = mockk(relaxed = true)
     private val navDestination: NavDestination = mockk(relaxed = true)
-    private val settings: Settings = mockk(relaxed = true)
 
     private val item =
         BookmarkNode(BookmarkNodeType.ITEM, "456", "123", 0u, "Mozilla", "http://mozilla.org", 0, null)
@@ -122,6 +122,7 @@ class BookmarkControllerTest {
         every { bookmarkStore.dispatch(any()) } returns mockk()
         every { sharedViewModel.selectedFolder = any() } just runs
         every { tabsUseCases.addTab } returns addNewTabUseCase
+        mockkObject(FeatureFlags)
     }
 
     @Test
@@ -243,6 +244,7 @@ class BookmarkControllerTest {
 
     @Test
     fun `WHEN handling search THEN navigate to the search dialog fragment`() {
+        every { FeatureFlags.unifiedSearchFeature } returns false
         createController().handleSearch()
 
         verify {
@@ -544,7 +546,6 @@ class BookmarkControllerTest {
             deleteBookmarkFolder = deleteBookmarkFolder,
             showTabTray = showTabTray,
             warnLargeOpenAll = warnLargeOpenAll,
-            settings = settings,
         )
     }
 }

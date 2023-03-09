@@ -13,6 +13,7 @@ import mozilla.components.browser.state.state.selectedOrDefaultSearchEngine
 import mozilla.components.lib.state.Action
 import mozilla.components.lib.state.State
 import mozilla.components.lib.state.Store
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.Components
@@ -167,7 +168,7 @@ fun createInitialSearchFragmentState(
         areShortcutsAvailable = false,
         showSearchShortcutsSetting = settings.shouldShowSearchShortcuts,
         showClipboardSuggestions = settings.shouldShowClipboardSuggestions,
-        showSearchTermHistory = settings.showUnifiedSearchFeature && settings.shouldShowHistorySuggestions,
+        showSearchTermHistory = FeatureFlags.unifiedSearchFeature && settings.shouldShowHistorySuggestions,
         showHistorySuggestionsForCurrentEngine = false,
         showAllHistorySuggestions = settings.shouldShowHistorySuggestions,
         showBookmarksSuggestionsForCurrentEngine = false,
@@ -263,7 +264,7 @@ private fun searchStateReducer(state: SearchFragmentState, action: SearchFragmen
                 showSearchSuggestions = shouldShowSearchSuggestions(action.browsingMode, action.settings),
                 showSearchShortcuts = action.settings.shouldShowSearchShortcuts,
                 showClipboardSuggestions = action.settings.shouldShowClipboardSuggestions,
-                showSearchTermHistory = action.settings.showUnifiedSearchFeature &&
+                showSearchTermHistory = FeatureFlags.unifiedSearchFeature &&
                     action.settings.shouldShowHistorySuggestions,
                 showHistorySuggestionsForCurrentEngine = false, // we'll show all history
                 showAllHistorySuggestions = action.settings.shouldShowHistorySuggestions,
@@ -278,34 +279,34 @@ private fun searchStateReducer(state: SearchFragmentState, action: SearchFragmen
             state.copy(
                 searchEngineSource = SearchEngineSource.Shortcut(action.engine),
                 showSearchSuggestions = shouldShowSearchSuggestions(action.browsingMode, action.settings),
-                showSearchShortcuts = when (action.settings.showUnifiedSearchFeature) {
+                showSearchShortcuts = when (FeatureFlags.unifiedSearchFeature) {
                     true -> false
                     false -> action.settings.shouldShowSearchShortcuts
                 },
                 showClipboardSuggestions = action.settings.shouldShowClipboardSuggestions,
-                showSearchTermHistory = action.settings.showUnifiedSearchFeature &&
+                showSearchTermHistory = FeatureFlags.unifiedSearchFeature &&
                     action.settings.shouldShowHistorySuggestions,
-                showHistorySuggestionsForCurrentEngine = action.settings.showUnifiedSearchFeature &&
+                showHistorySuggestionsForCurrentEngine = FeatureFlags.unifiedSearchFeature &&
                     action.settings.shouldShowHistorySuggestions && !action.engine.isGeneral,
-                showAllHistorySuggestions = when (action.settings.showUnifiedSearchFeature) {
+                showAllHistorySuggestions = when (FeatureFlags.unifiedSearchFeature) {
                     true -> false
                     false -> action.settings.shouldShowHistorySuggestions
                 },
-                showBookmarksSuggestionsForCurrentEngine = action.settings.showUnifiedSearchFeature &&
+                showBookmarksSuggestionsForCurrentEngine = FeatureFlags.unifiedSearchFeature &&
                     action.settings.shouldShowBookmarkSuggestions && !action.engine.isGeneral,
-                showAllBookmarkSuggestions = when (action.settings.showUnifiedSearchFeature) {
+                showAllBookmarkSuggestions = when (FeatureFlags.unifiedSearchFeature) {
                     true -> false
                     false -> action.settings.shouldShowBookmarkSuggestions
                 },
-                showSyncedTabsSuggestionsForCurrentEngine = action.settings.showUnifiedSearchFeature &&
+                showSyncedTabsSuggestionsForCurrentEngine = FeatureFlags.unifiedSearchFeature &&
                     action.settings.shouldShowSyncedTabsSuggestions && !action.engine.isGeneral,
-                showAllSyncedTabsSuggestions = when (action.settings.showUnifiedSearchFeature) {
+                showAllSyncedTabsSuggestions = when (FeatureFlags.unifiedSearchFeature) {
                     true -> false
                     false -> action.settings.shouldShowSyncedTabsSuggestions
                 },
-                showSessionSuggestionsForCurrentEngine = action.settings.showUnifiedSearchFeature &&
+                showSessionSuggestionsForCurrentEngine = FeatureFlags.unifiedSearchFeature &&
                     !action.engine.isGeneral,
-                showAllSessionSuggestions = when (action.settings.showUnifiedSearchFeature) {
+                showAllSessionSuggestions = when (FeatureFlags.unifiedSearchFeature) {
                     true -> false
                     false -> true
                 },

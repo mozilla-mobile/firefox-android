@@ -82,6 +82,7 @@ import mozilla.components.support.locale.LocaleManager
 import org.mozilla.fenix.AppRequestInterceptor
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.IntentReceiverActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.search.SearchMigration
@@ -262,7 +263,7 @@ class Core(
         BrowserStore(
             initialState = BrowserState(
                 search = SearchState(
-                    applicationSearchEngines = if (context.settings().showUnifiedSearchFeature) {
+                    applicationSearchEngines = if (FeatureFlags.unifiedSearchFeature) {
                         applicationSearchEngines
                     } else {
                         emptyList()
