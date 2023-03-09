@@ -190,6 +190,7 @@ projects:
     upstream_dependencies:
     - browser-state
     - concept-engine
+    - support-ktx
     - support-test
   compose-tabstray:
     description: A customizable tabs tray using Jetpack Compose.
@@ -769,16 +770,6 @@ projects:
     - support-ktx
     - support-test
     - support-utils
-  lib-crash-sentry-legacy:
-    description: A crash reporter for a hosted version of Sentry that uses lib-crash.
-    path: components/lib/crash-sentry-legacy
-    publish: true
-    upstream_dependencies:
-    - lib-crash
-    - support-base
-    - support-ktx
-    - support-test
-    - support-utils
   lib-dataprotect:
     description: A component using AndroidKeyStore to protect user data.
     path: components/lib/dataprotect
@@ -1230,12 +1221,6 @@ projects:
     publish: false
     upstream_dependencies:
     - concept-fetch
-  tooling-glean-gradle:
-    artifact-type: jar
-    description: A Gradle plugin to generate code for Glean metrics.
-    path: components/tooling/glean-gradle-plugin
-    publish: true
-    upstream_dependencies: []
   tooling-lint:
     description: Custom Lint checks for using and writing components.
     path: components/tooling/lint

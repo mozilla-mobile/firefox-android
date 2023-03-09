@@ -89,14 +89,10 @@ object CookieBannerReEngagementDialogUtils {
         status: CookieBannerHandlingStatus,
         navController: NavController,
     ) {
-        val tcpCFRAlreadyShown = if (settings.enabledTotalCookieProtectionCFR) {
-            !settings.shouldShowTotalCookieProtectionCFR
-        } else {
-            true
-        }
-        if (tcpCFRAlreadyShown && status == CookieBannerHandlingStatus.DETECTED &&
+        if (status == CookieBannerHandlingStatus.DETECTED &&
             settings.shouldShowCookieBannerReEngagementDialog()
         ) {
+            settings.cookieBannerReEngagementDialogShowsCount.increment()
             settings.lastInteractionWithReEngageCookieBannerDialogInMs = System.currentTimeMillis()
             settings.cookieBannerDetectedPreviously = true
             val directions =

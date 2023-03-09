@@ -43,7 +43,6 @@ class LibrarySiteItemView @JvmOverloads constructor(
     val overflowView: ImageButton get() = binding.overflowMenu
 
     init {
-
         overflowView.increaseTapArea(OVERFLOW_EXTRA_DIPS)
         iconView.increaseTapArea(OVERFLOW_EXTRA_DIPS)
     }
@@ -104,7 +103,7 @@ class LibrarySiteItemView @JvmOverloads constructor(
     }
 
     enum class ItemType {
-        SITE, FOLDER;
+        SITE, FOLDER
     }
 
     companion object {

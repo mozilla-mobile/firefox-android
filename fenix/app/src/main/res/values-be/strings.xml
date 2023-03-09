@@ -63,14 +63,10 @@
     <string name="private_browsing_common_myths">Шырокавядомыя забабоны пра прыватнае агляданне</string>
 
     <!-- Private mode shortcut "contextual feature recommendation" (CFR) -->
-    <!-- Text for the main message -->
-    <string name="cfr_message" moz:removedIn="109" tools:ignore="UnusedResources">Дадайце цэтлік, каб адкрываць прыватныя карткі з хатняга экрана.</string>
     <!-- Text for the Private mode shortcut CFR message for adding a private mode shortcut to open private tabs from the Home screen -->
     <string name="private_mode_cfr_message" moz:removedIn="111" tools:ignore="UnusedResources">Запусціце наступную прыватную картку адным націскам.</string>
     <!-- Text for the Private mode shortcut CFR message for adding a private mode shortcut to open private tabs from the Home screen -->
     <string name="private_mode_cfr_message_2">Запусціце сваю наступную прыватную картку адным націскам.</string>
-    <!-- Text for the positive button -->
-    <string name="cfr_pos_button_text" moz:removedIn="109" tools:ignore="UnusedResources">Дадаць цэтлік</string>
     <!-- Text for the positive button to accept adding a Private Browsing shortcut to the Home screen -->
     <string name="private_mode_cfr_pos_button_text">Дадаць на хатні экран</string>
     <!-- Text for the negative button to decline adding a Private Browsing shortcut to the Home screen -->
@@ -497,6 +493,12 @@
     <string name="preferences_enable_autocomplete_urls">Аўтазапаўненне URL-адрасоў</string>
     <!-- Preference for open links in third party apps -->
     <string name="preferences_open_links_in_apps">Адкрываць спасылкі ў праграмах</string>
+    <!-- Preference for open links in third party apps always open in apps option -->
+    <string name="preferences_open_links_in_apps_always">Заўсёды</string>
+    <!-- Preference for open links in third party apps ask before opening option -->
+    <string name="preferences_open_links_in_apps_ask">Спытаць перад адкрыццём</string>
+    <!-- Preference for open links in third party apps never open in apps option -->
+    <string name="preferences_open_links_in_apps_never">Ніколі</string>
     <!-- Preference for open download with an external download manager app -->
     <string name="preferences_external_download_manager">Вонкавы менеджар сцягванняў</string>
     <!-- Preference for add_ons -->
@@ -1214,13 +1216,13 @@
 
     <!-- Name of the marketing notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="notification_marketing_channel_name">Маркетынг</string>
-    <!-- Title shown in the notification that pops up to remind the user to set fenix as default browser.
-    %1$s is a placeholder that will be replaced by the app name (Fenix). -->
-    <string name="notification_default_browser_title">%1$s хуткі і прыватны</string>
-    <!-- Text shown in the notification that pops up to remind the user to set fenix as default browser.
-    %1$s is a placeholder that will be replaced by the app name (Fenix). -->
-    <string name="notification_default_browser_text">Зрабіце %1$s сваім прадвызначаным браўзерам</string>
 
+    <!-- Title shown in the notification that pops up to remind the user to set fenix as default browser.
+    The app name is in the text, due to limitations with localizing Nimbus experiments -->
+    <string name="nimbus_notification_default_browser_title" tools:ignore="UnusedResources">Firefox хуткі і прыватны</string>
+    <!-- Text shown in the notification that pops up to remind the user to set fenix as default browser.
+    The app name is in the text, due to limitations with localizing Nimbus experiments -->
+    <string name="nimbus_notification_default_browser_text" tools:ignore="UnusedResources">Зрабіце Firefox вашым прадвызначаным браўзерам</string>
     <!-- Title shown in the notification that pops up to re-engage the user -->
     <string name="notification_re_engagement_title">Паспрабуйце Прыватнае агляданне</string>
 
@@ -1368,6 +1370,8 @@
     <string name="onboarding_firefox_account_sync_is_on">Сінхранізацыя ўключана</string>
     <!-- Text for the tracking protection onboarding card header -->
     <string name="onboarding_tracking_protection_header">Прадвызначаная ахова прыватнасці</string>
+    <!-- Text for the tracking protection card description. The first parameter is the name of the application.-->
+    <string name="onboarding_tracking_protection_description_old">%1$s аўтаматычна спыняе таемнае сачэнне кампаній за вамі ў Інтэрнэце.</string>
     <!-- Text for the tracking protection card description. -->
     <string name="onboarding_tracking_protection_description">Поўная ахова кукаў перашкаджае трэкерам выкарыстоўваць файлы кукі для сачэння за вамі на розных сайтах.</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
@@ -2071,4 +2075,6 @@
     <string name="a11y_action_label_wallpaper_collection_learn_more">адкрыйце спасылку, каб даведацца больш аб гэтай калекцыі</string>
     <!-- Action label for links that point to an article. Talkback will append this to say "Double tap to read the article". -->
     <string name="a11y_action_label_read_article">прачытаць артыкул</string>
+    <!-- Action label for links to the Firefox Pocket website. Talkback will append this to say "Double tap to open link to learn more". -->
+    <string name="a11y_action_label_pocket_learn_more">адкрыйце спасылку, каб даведацца больш</string>
 </resources>

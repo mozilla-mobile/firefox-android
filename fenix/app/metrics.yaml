@@ -184,33 +184,6 @@ events:
     metadata:
       tags:
         - Toolbar
-  default_browser_notif_tapped:
-    type: event
-    description: |
-      User tapped on the default browser notification
-    bugs:
-      - https://github.com/mozilla-mobile/fenix/issues/19847
-    data_reviews:
-      - https://github.com/mozilla-mobile/fenix/pull/20311
-    data_sensitivity:
-      - interaction
-    notification_emails:
-      - android-probes@mozilla.com
-      - kbrosnan@mozilla.com
-    expires: never
-  default_browser_notif_shown:
-    type: event
-    description: |
-      Default browser notification was shown to the user
-    bugs:
-      - https://github.com/mozilla-mobile/fenix/issues/27779
-    data_reviews:
-      - https://github.com/mozilla-mobile/fenix/pull/27780
-    data_sensitivity:
-      - interaction
-    notification_emails:
-      - android-probes@mozilla.com
-    expires: 122
   re_engagement_notif_tapped:
     type: event
     description: |
@@ -285,6 +258,7 @@ events:
     send_in_pings:
       - metrics
       - baseline
+      - client-deduplication
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/17089
     data_reviews:
@@ -1486,6 +1460,7 @@ metrics:
     send_in_pings:
       - metrics
       - baseline
+      - client-deduplication
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/1158
       - https://github.com/mozilla-mobile/fenix/issues/6556
@@ -1781,6 +1756,7 @@ metrics:
       please see `has_open_tabs`.
     send_in_pings:
       - metrics
+      - client-deduplication
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/11479
     data_reviews:
@@ -1913,11 +1889,12 @@ metrics:
       - https://github.com/mozilla-mobile/fenix/issues/25538
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/25539#issuecomment-1163393066
+      - https://github.com/mozilla-mobile/firefox-android/pull/1101
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 114
+    expires: 126
     metadata:
       tags:
         - Wallpapers
@@ -2502,20 +2479,17 @@ preferences:
       tags:
         - Settings
   open_links_in_app_enabled:
-    type: boolean
+    type: string
     description: |
-      Whether or not the user has the open links in apps feature enabled.
-      default: false
+      The user has the open links in apps feature enabled.
+      "ask_before_opening", "always" or "never".
+      default: "never"
     send_in_pings:
       - metrics
     bugs:
-      - https://github.com/mozilla-mobile/fenix/issues/11118
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1818085
     data_reviews:
-      - https://github.com/mozilla-mobile/fenix/pull/11446
-      - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
-      - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
-      - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
-      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
+      - https://github.com/mozilla-mobile/firefox-android/pull/1054
     data_sensitivity:
       - interaction
     notification_emails:
@@ -2580,6 +2554,7 @@ search.default_engine:
     send_in_pings:
       - metrics
       - baseline
+      - client-deduplication
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/800
     data_reviews:
@@ -2609,6 +2584,7 @@ search.default_engine:
     send_in_pings:
       - metrics
       - baseline
+      - client-deduplication
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/800
     data_reviews:
@@ -3012,6 +2988,7 @@ activation:
       This will never be sent in a ping that also contains the client_id.
     send_in_pings:
       - activation
+      - client-deduplication
     bugs:
       - https://bugzilla.mozilla.org/1538011
       - https://bugzilla.mozilla.org/1501822
@@ -3194,6 +3171,8 @@ sync_auth:
     notification_emails:
       - android-probes@mozilla.com
       - kbrosnan@mozilla.com
+    send_in_pings:
+      - client-deduplication
     expires: never
     metadata:
       tags:
@@ -4590,11 +4569,13 @@ tabs_tray:
       - https://github.com/mozilla-mobile/fenix/issues/24549
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/24671
+      - https://github.com/mozilla-mobile/firefox-android/pull/1101
     notification_emails:
       - android-probes@mozilla.com
+      - kbrosnan@mozilla.com
     data_sensitivity:
       - interaction
-    expires: 114
+    expires: never
 
 
 collections:
@@ -6148,6 +6129,10 @@ pocket:
         type: string
         description: |
           Id of the shown sponsored story.
+          Until version 112 this will be the `flight_id` allowing to
+          identify stories across different campaigns.
+          From version 112 this will be the story `id` identifying a
+          specific story irrespective of the campaign it is part of.
       times_shown:
         type: string
         description: |
@@ -6204,6 +6189,10 @@ pocket:
         type: string
         description: |
           Id of the shown sponsored story.
+          Until version 112 this will be the `flight_id` allowing to
+          identify stories across different campaigns.
+          From version 112 this will be the story `id` identifying a
+          specific story irrespective of the campaign it is part of.
       times_shown:
         type: string
         description: |
@@ -6452,6 +6441,7 @@ browser.search:
     send_in_pings:
       - metrics
       - baseline
+      - client-deduplication
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/6558
       - https://github.com/mozilla-mobile/fenix/issues/28010
@@ -6486,6 +6476,7 @@ browser.search:
     send_in_pings:
       - metrics
       - baseline
+      - client-deduplication
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/6558
       - https://github.com/mozilla-mobile/fenix/issues/28010
@@ -6511,6 +6502,7 @@ browser.search:
     send_in_pings:
       - metrics
       - baseline
+      - client-deduplication
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/6557
     data_reviews:
@@ -8053,11 +8045,13 @@ start_on_home:
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/19885
       - https://github.com/mozilla-mobile/fenix/pull/24982
+      - https://github.com/mozilla-mobile/firefox-android/pull/1101
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 114
+      - kbrosnan@mozilla.com
+    expires: never
     metadata:
       tags:
         - HomeScreen
@@ -8070,11 +8064,13 @@ start_on_home:
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/19885
       - https://github.com/mozilla-mobile/fenix/pull/24982
+      - https://github.com/mozilla-mobile/firefox-android/pull/1101
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 114
+      - kbrosnan@mozilla.com
+    expires: never
     metadata:
       tags:
         - HomeScreen
@@ -8089,11 +8085,12 @@ recent_tabs:
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/20138
       - https://github.com/mozilla-mobile/fenix/pull/24982
+      - https://github.com/mozilla-mobile/firefox-android/pull/1101
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 114
+    expires: 126
     metadata:
       tags:
         - RecentTabs
@@ -8106,28 +8103,13 @@ recent_tabs:
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/20138
       - https://github.com/mozilla-mobile/fenix/pull/24982
+      - https://github.com/mozilla-mobile/firefox-android/pull/1101
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 114
-    metadata:
-      tags:
-        - RecentTabs
-  in_progress_media_tab_opened:
-    type: event
-    description: |
-      User has opened a recent media tab from homescreen.
-    bugs:
-      - https://github.com/mozilla-mobile/fenix/issues/20393
-    data_reviews:
-      - https://github.com/mozilla-mobile/fenix/pull/20138
-      - https://github.com/mozilla-mobile/fenix/pull/24982
-    data_sensitivity:
-      - interaction
-    notification_emails:
-      - android-probes@mozilla.com
-    expires: 114
+      - kbrosnan@mozilla.com
+    expires: never
     metadata:
       tags:
         - RecentTabs
@@ -8690,12 +8672,14 @@ messaging:
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/24224
     data_reviews:
-      - https://github.com/mozilla-mobile/fenix/issues/24224
+      - https://github.com/mozilla-mobile/fenix/pull/24426
+      - https://github.com/mozilla-mobile/firefox-android/pull/1101
     notification_emails:
       - android-probes@mozilla.com
+      - kbrosnan@mozilla.com
     data_sensitivity:
       - interaction
-    expires: 114
+    expires: never
   message_dismissed:
     type: event
     description: |
@@ -8708,11 +8692,13 @@ messaging:
       - https://github.com/mozilla-mobile/fenix/issues/24224
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/issues/24224
+      - https://github.com/mozilla-mobile/firefox-android/pull/1101
     notification_emails:
       - android-probes@mozilla.com
+      - kbrosnan@mozilla.com
     data_sensitivity:
       - interaction
-    expires: 114
+    expires: never
   message_clicked:
     type: event
     description: |
@@ -8728,11 +8714,13 @@ messaging:
       - https://github.com/mozilla-mobile/fenix/issues/24224
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/issues/24224
+      - https://github.com/mozilla-mobile/firefox-android/pull/1101
     notification_emails:
       - android-probes@mozilla.com
+      - kbrosnan@mozilla.com
     data_sensitivity:
       - interaction
-    expires: 114
+    expires: never
   message_expired:
     type: event
     description: |
@@ -8745,11 +8733,13 @@ messaging:
       - https://github.com/mozilla-mobile/fenix/issues/24224
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/issues/24224
+      - https://github.com/mozilla-mobile/firefox-android/pull/1101
     notification_emails:
       - android-probes@mozilla.com
+      - kbrosnan@mozilla.com
     data_sensitivity:
       - interaction
-    expires: 114
+    expires: never
   malformed:
     type: event
     description: |
@@ -8762,11 +8752,13 @@ messaging:
       - https://github.com/mozilla-mobile/fenix/issues/24224
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/issues/24224
+      - https://github.com/mozilla-mobile/firefox-android/pull/1101
     notification_emails:
       - android-probes@mozilla.com
+      - kbrosnan@mozilla.com
     data_sensitivity:
       - interaction
-    expires: 114
+    expires: never
 
 wallpapers:
   wallpaper_settings_opened:
@@ -8777,11 +8769,12 @@ wallpapers:
       - https://github.com/mozilla-mobile/fenix/issues/23381
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/23382
+      - https://github.com/mozilla-mobile/firefox-android/pull/1101
     notification_emails:
       - android-probes@mozilla.com
     data_sensitivity:
       - interaction
-    expires: 114
+    expires: 126
     no_lint:
       - COMMON_PREFIX
     metadata:
@@ -8903,11 +8896,12 @@ recently_visited_homepage:
       - https://github.com/mozilla-mobile/fenix/issues/23821
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/23909
+      - https://github.com/mozilla-mobile/firefox-android/pull/1101
     notification_emails:
       - android-probes@mozilla.com
     data_sensitivity:
       - interaction
-    expires: 114
+    expires: 126
   search_group_opened:
     type: event
     description: |
@@ -8916,11 +8910,12 @@ recently_visited_homepage:
       - https://github.com/mozilla-mobile/fenix/issues/23821
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/23909
+      - https://github.com/mozilla-mobile/firefox-android/pull/1101
     notification_emails:
       - android-probes@mozilla.com
     data_sensitivity:
       - interaction
-    expires: 114
+    expires: 126
 
 recent_synced_tabs:
   recent_synced_tab_shown:
@@ -8932,11 +8927,12 @@ recent_synced_tabs:
       - https://github.com/mozilla-mobile/fenix/issues/24549
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/24671
+      - https://github.com/mozilla-mobile/firefox-android/pull/1101
     notification_emails:
       - android-probes@mozilla.com
     data_sensitivity:
       - interaction
-    expires: 114
+    expires: 126
   recent_synced_tab_time_to_load:
     type: timing_distribution
     time_unit: millisecond
@@ -8946,11 +8942,12 @@ recent_synced_tabs:
       - https://github.com/mozilla-mobile/fenix/issues/24549
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/24671
+      - https://github.com/mozilla-mobile/firefox-android/pull/1101
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 114
+    expires: 126
   recent_synced_tab_opened:
     type: labeled_counter
     description: |
@@ -8960,11 +8957,12 @@ recent_synced_tabs:
       - https://github.com/mozilla-mobile/fenix/issues/24549
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/24671
+      - https://github.com/mozilla-mobile/firefox-android/pull/1101
     notification_emails:
       - android-probes@mozilla.com
     data_sensitivity:
       - interaction
-    expires: 114
+    expires: 126
   show_all_synced_tabs_clicked:
     type: counter
     description: |
@@ -8973,11 +8971,12 @@ recent_synced_tabs:
       - https://github.com/mozilla-mobile/fenix/issues/24549
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/24671
+      - https://github.com/mozilla-mobile/firefox-android/pull/1101
     notification_emails:
       - android-probes@mozilla.com
     data_sensitivity:
       - interaction
-    expires: 114
+    expires: 126
   latest_synced_tab_is_stale:
     type: counter
     description: |
@@ -8987,11 +8986,12 @@ recent_synced_tabs:
       - https://github.com/mozilla-mobile/fenix/issues/24549
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/24671
+      - https://github.com/mozilla-mobile/firefox-android/pull/1101
     notification_emails:
       - android-probes@mozilla.com
     data_sensitivity:
       - interaction
-    expires: 114
+    expires: 126
 review_prompt:
   prompt_attempt:
     type: event
@@ -9020,3 +9020,62 @@ review_prompt:
     data_sensitivity:
       - interaction
     expires: 121
+client_deduplication:
+  valid_advertising_id:
+    type: boolean
+    description: |
+      Whether or not we get a valid advertising ID from the device.
+    send_in_pings:
+      - client-deduplication
+    bugs:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1817029
+    data_reviews:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1813195#c11
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+      - fbertsch@mozilla.com
+    expires: 122
+  experiment_timeframe:
+    type: string
+    description: |
+      A string we use to identify which run of the experiment this is.
+    send_in_pings:
+      - client-deduplication
+    bugs:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1817029
+    data_reviews:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1813195#c11
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+      - fbertsch@mozilla.com
+    expires: 122
+
+private_browsing_shortcut_cfr:
+  add_shortcut:
+    type: event
+    description: |
+      Pivate browsing CFR "Add shortcut" button pressed.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/4658
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1819909
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-android/pull/1139
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: 122
+  cancel:
+    type: event
+    description: |
+      Pivate browsing CFR "No thanks" button pressed.
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/4658
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1819909
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-android/pull/1139
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: 122

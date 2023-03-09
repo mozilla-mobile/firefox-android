@@ -231,8 +231,8 @@ class OnboardingTest {
         homeScreen {
             verifyPrivacyNoticeCard()
         }.clickPrivacyNoticeButton {
-            verifyUrl(privacyNoticeLink)
-        }.goBack {
+            verifyCustomTabToolbarTitle("Firefox Privacy Notice")
+        }.goBackToOnboardingScreen {
             verifyPrivacyNoticeCard()
         }
     }

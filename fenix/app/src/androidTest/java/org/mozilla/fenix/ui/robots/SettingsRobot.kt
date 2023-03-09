@@ -22,11 +22,8 @@ import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.Visibility
 import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
 import androidx.test.espresso.matcher.ViewMatchers.hasSibling
-import androidx.test.espresso.matcher.ViewMatchers.isChecked
 import androidx.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
-import androidx.test.espresso.matcher.ViewMatchers.isNotChecked
-import androidx.test.espresso.matcher.ViewMatchers.withClassName
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
@@ -39,7 +36,6 @@ import androidx.test.uiautomator.Until
 import junit.framework.AssertionFailedError
 import org.hamcrest.CoreMatchers
 import org.hamcrest.Matchers.allOf
-import org.hamcrest.Matchers.endsWith
 import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.Constants.LISTS_MAXSWIPES
@@ -49,12 +45,12 @@ import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestHelper.appName
 import org.mozilla.fenix.helpers.TestHelper.getStringResource
-import org.mozilla.fenix.helpers.TestHelper.hasCousin
 import org.mozilla.fenix.helpers.TestHelper.isPackageInstalled
 import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.TestHelper.scrollToElementByText
 import org.mozilla.fenix.helpers.click
+import org.mozilla.fenix.helpers.ext.waitNotNull
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.ui.robots.SettingsRobot.Companion.DEFAULT_APPS_SETTINGS_ACTION
 
@@ -97,8 +93,7 @@ class SettingsRobot {
     fun verifyNotificationsButton() = assertNotificationsButton()
     fun verifyDataCollectionButton() = assertDataCollectionButton()
     fun verifyOpenLinksInAppsButton() = assertOpenLinksInAppsButton()
-    fun verifyOpenLinksInAppsSwitchState(enabled: Boolean) = assertOpenLinksInAppsSwitchState(enabled)
-    fun clickOpenLinksInAppsSwitch() = openLinksInAppsButton().click()
+    fun verifyOpenLinksInAppsState(state: String) = assertOpenLinksInAppsSwitchState(state)
     fun verifySettingsView() = assertSettingsView()
     fun verifySettingsToolbar() = assertSettingsToolbar()
 
@@ -173,8 +168,11 @@ class SettingsRobot {
         }
 
         fun openAutofillSubMenu(interact: SettingsSubMenuAutofillRobot.() -> Unit): SettingsSubMenuAutofillRobot.Transition {
-            mDevice.findObject(UiSelector().textContains(getStringResource(R.string.preferences_autofill))).waitForExists(waitingTime)
-            onView(withText(R.string.preferences_autofill)).click()
+            mDevice.findObject(UiSelector().textContains(getStringResource(R.string.preferences_autofill)))
+                .also {
+                    it.waitForExists(waitingTime)
+                    it.click()
+                }
 
             SettingsSubMenuAutofillRobot().interact()
             return SettingsSubMenuAutofillRobot.Transition()
@@ -313,6 +311,25 @@ class SettingsRobot {
 
             SettingsSubMenuAddonsManagerRobot().interact()
             return SettingsSubMenuAddonsManagerRobot.Transition()
+        }
+
+        fun openOpenLinksInAppsMenu(interact: SettingsSubMenuOpenLinksInAppsRobot.() -> Unit): SettingsSubMenuOpenLinksInAppsRobot.Transition {
+            openLinksInAppsButton().click()
+
+            SettingsSubMenuOpenLinksInAppsRobot().interact()
+            return SettingsSubMenuOpenLinksInAppsRobot.Transition()
+        }
+
+        fun openHttpsOnlyModeMenu(interact: SettingsSubMenuHttpsOnlyModeRobot.() -> Unit): SettingsSubMenuHttpsOnlyModeRobot.Transition {
+            scrollToElementByText("HTTPS-Only Mode")
+            onView(withText(getStringResource(R.string.preferences_https_only_title))).click()
+            mDevice.waitNotNull(
+                Until.findObjects(By.res("$packageName:id/https_only_switch")),
+                waitingTime,
+            )
+
+            SettingsSubMenuHttpsOnlyModeRobot().interact()
+            return SettingsSubMenuHttpsOnlyModeRobot.Transition()
         }
     }
 
@@ -501,33 +518,13 @@ private fun assertOpenLinksInAppsButton() {
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
-fun assertOpenLinksInAppsSwitchState(enabled: Boolean) {
-    scrollToElementByText("Open links in apps")
-    if (enabled) {
-        openLinksInAppsButton()
-            .check(
-                matches(
-                    hasCousin(
-                        allOf(
-                            withClassName(endsWith("Switch")),
-                            isChecked(),
-                        ),
-                    ),
-                ),
-            )
-    } else {
-        openLinksInAppsButton()
-            .check(
-                matches(
-                    hasCousin(
-                        allOf(
-                            withClassName(endsWith("Switch")),
-                            isNotChecked(),
-                        ),
-                    ),
-                ),
-            )
-    }
+fun assertOpenLinksInAppsSwitchState(state: String) {
+    onView(
+        allOf(
+            withText(R.string.preferences_open_links_in_apps),
+            hasSibling(withText(state)),
+        ),
+    ).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
 // DEVELOPER TOOLS SECTION
