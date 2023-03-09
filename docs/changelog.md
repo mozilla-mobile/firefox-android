@@ -9,6 +9,12 @@ permalink: /changelog/
 * [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/Gecko.kt)
 * [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/.config.yml)
 
+* **service-pocket**
+  * 🌟 ⚠️ **This is a breaking change**: Use `id` instead of `flight_id` to identify a Pocket sponsored story. [Bug 1820967](https://bugzilla.mozilla.org/show_bug.cgi?id=1820967).
+
+* **feature-prompts**:
+  * 🚒 Bug fixed [Bug 1819254](https://bugzilla.mozilla.org/show_bug.cgi?id=1819254). Don't exit fullscreen for user input prompts.
+
 * **service-contile**
   * ⚠️ **This is a breaking change**: Added support for sponsored tiles maximum age specified by the server. `maxCacheAgeInMinutes` changed to `maxCacheAgeInSeconds`, not specifying it leads to using the value provided by the server. [Bug 1811175](https://bugzilla.mozilla.org/show_bug.cgi?id=1811175)
 
@@ -17,6 +23,12 @@ permalink: /changelog/
 
 * **lib-crash-sentry-legacy**
   * ⚠️ **This is a breaking change**: This component has been removed. Consumers should use the newer `lib-crash-sentry` component instead.
+
+* **browser-engine-gecko**:
+  * Add support for `hasCookieBannerRuleForSession` API for checking whether a cookie banner from the current website in the session can be handled.
+
+* **concept-engine**:
+  * Add new `hasCookieBannerRuleForSession` API in `Engine`. This is currently only supported in the Gecko Engine.
 
 
 # 111.0.0
@@ -71,6 +83,9 @@ permalink: /changelog/
 * **feature-media**
   * 🚒 Bug fixed [Bug 1802620](https://bugzilla.mozilla.org/show_bug.cgi?id=1802620). Handles `ForegroundServiceStartNotAllowedException`.
   * 🚒 Bug fixed [Bug 1813416](https://bugzilla.mozilla.org/show_bug.cgi?id=1813416). Clear `FLAG_KEEP_SCREEN_ON` when playing media is finished.
+
+* **lib-crash**
+  * 🌟 Added support for Glean crash pings in the `GleanCrashReporterService`. [Bug 1810951](https://bugzilla.mozilla.org/show_bug.cgi?id=1810951)
 
 # 110.0.0
 * [Commits](https://github.com/mozilla-mobile/firefox-android/compare/v109.0.0...v110.0.0)

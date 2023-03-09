@@ -32,7 +32,7 @@ object FocusVersions {
 
     object Google {
         const val accompanist = "0.16.1"
-        const val compose_compiler = "1.3.2"
+        const val compose_compiler = "1.4.3"
         const val material = "1.7.0"
         const val play = "1.10.3"
     }
@@ -43,7 +43,7 @@ object FocusVersions {
     }
 
     object Kotlin {
-        const val compiler = "1.7.20"
+        const val compiler = "1.8.10"
         const val coroutines = "1.6.4"
     }
 
@@ -57,7 +57,7 @@ object FocusVersions {
         const val falcon = "2.2.0"
         const val fastlane = "2.1.1"
         const val junit = "5.9.1"
-        const val ktlint = "0.47.1"
+        const val ktlint = "0.48.2"
         const val mockito = "4.8.1"
         const val mockwebserver = "4.10.0"
         const val robolectric = "4.9.2"
@@ -66,7 +66,7 @@ object FocusVersions {
     object ThirdParty {
         const val jna = "5.12.1"
         const val leakcanary = "2.10"
-        const val sentry = "6.13.1"
+        const val sentry = "6.15.0"
     }
 
     // Workaround for a Gradle parsing bug that prevents using nested objects directly in Gradle files.

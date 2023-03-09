@@ -132,7 +132,7 @@
     <!-- Header text for jumping back into the recent tab in the home screen -->
     <string name="recent_tabs_header">Návrat späť</string>
     <!-- Button text for showing all the tabs in the tabs tray -->
-    <string name="recent_tabs_show_all">Zobraziť všetko</string>
+    <string name="recent_tabs_show_all">Zobraziť všetky</string>
 
     <!-- Content description for the button which navigates the user to show all recent tabs in the tabs tray. -->
     <string name="recent_tabs_show_all_content_description_2">Tlačidlo Zobraziť všetky nedávne karty</string>
@@ -296,7 +296,7 @@
     <!-- Notification pre-permission dialog -->
     <!-- Enable notification pre permission dialog title
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="onboarding_home_enable_notifications_title">Upozornenia vám pomôžu vyťažiť a aplikácie %s ešte viac</string>
+    <string name="onboarding_home_enable_notifications_title">Upozornenia vám pomôžu vyťažiť z prehliadača %s ešte viac</string>
     <!-- Enable notification pre permission dialog description with rationale
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
     <string name="onboarding_home_enable_notifications_description">Synchronizujte svoje karty medzi zariadeniami, spravujte sťahovanie, získajte tipy, ako čo najlepšie využiť ochranu súkromia prehliadača %s a ďalšie.</string>
@@ -501,6 +501,12 @@
     <!-- Preference for open links in third party apps -->
     <string name="preferences_open_links_in_apps">Otvárať odkazy v aplikáciách</string>
 
+    <!-- Preference for open links in third party apps always open in apps option -->
+    <string name="preferences_open_links_in_apps_always">Vždy</string>
+    <!-- Preference for open links in third party apps ask before opening option -->
+    <string name="preferences_open_links_in_apps_ask">Pred otvorením sa opýtať</string>
+    <!-- Preference for open links in third party apps never open in apps option -->
+    <string name="preferences_open_links_in_apps_never">Nikdy</string>
     <!-- Preference for open download with an external download manager app -->
     <string name="preferences_external_download_manager">Externý správca sťahovania</string>
     <!-- Preference for add_ons -->
@@ -1213,13 +1219,13 @@
     <string name="notification_pbm_delete_text_2">Zavrieť súkromné karty</string>
     <!-- Name of the marketing notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="notification_marketing_channel_name">Marketing</string>
-    <!-- Title shown in the notification that pops up to remind the user to set fenix as default browser.
-    %1$s is a placeholder that will be replaced by the app name (Fenix). -->
-    <string name="notification_default_browser_title">%1$s je rýchly a bezpečný</string>
-    <!-- Text shown in the notification that pops up to remind the user to set fenix as default browser.
-    %1$s is a placeholder that will be replaced by the app name (Fenix). -->
-    <string name="notification_default_browser_text">Nastaviť %1$s ako predvolený prehliadač</string>
 
+    <!-- Title shown in the notification that pops up to remind the user to set fenix as default browser.
+    The app name is in the text, due to limitations with localizing Nimbus experiments -->
+    <string name="nimbus_notification_default_browser_title" tools:ignore="UnusedResources">Firefox je rýchly a bezpečný</string>
+    <!-- Text shown in the notification that pops up to remind the user to set fenix as default browser.
+    The app name is in the text, due to limitations with localizing Nimbus experiments -->
+    <string name="nimbus_notification_default_browser_text" tools:ignore="UnusedResources">Nastavte si Firefox ako predvolený prehliadač</string>
     <!-- Title shown in the notification that pops up to re-engage the user -->
     <string name="notification_re_engagement_title">Vyskúšajte súkromné prehliadanie</string>
     <!-- Text shown in the notification that pops up to re-engage the user.

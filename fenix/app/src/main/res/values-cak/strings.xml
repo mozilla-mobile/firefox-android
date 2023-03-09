@@ -108,10 +108,21 @@
     <!-- Text for the negative action button to dismiss the Close Tabs Banner. -->
     <string name="tab_tray_close_tabs_banner_negative_button_text">Tewäx</string>
 
+    <!-- Text for the banner message to tell users about our inactive tabs feature. -->
+    <string name="tab_tray_inactive_onboarding_message">Ri taq ruwi\' man e\'atz\'eton ta pa ka\'i\' kan wuqq\'ij, wawe\' yesilöx pe.</string>
+    <!-- Text for the action link to go to Settings for inactive tabs. -->
+    <string name="tab_tray_inactive_onboarding_button_text">Tichup pa runuk\'ulem</string>
     <!-- Text for title for the auto-close dialog of the inactive tabs. -->
     <string name="tab_tray_inactive_auto_close_title">¿La ruyonil nitz\'apïx chi rij jun ik\'?</string>
+    <!-- Text for the body for the auto-close dialog of the inactive tabs.
+        The first parameter is the name of the application.-->
+    <string name="tab_tray_inactive_auto_close_body_2">%1$s nitikïr yerutz\'apij taq ruwi\', ri man xe\'ajäq ta ri ruk\'isib\'äl ik\'.</string>
     <!-- Content description for close button in the auto-close dialog of the inactive tabs. -->
     <string name="tab_tray_inactive_auto_close_button_content_description">Titz\'apïx</string>
+
+
+    <!-- Text for turn on auto close tabs button in the auto-close dialog of the inactive tabs. -->
+    <string name="tab_tray_inactive_turn_on_auto_close_button_2">Titzij ruyonil tz\'apinïk</string>
 
 
     <!-- Home screen icons - Long press shortcuts -->
@@ -126,6 +137,8 @@
     <!-- Button text for showing all the tabs in the tabs tray -->
     <string name="recent_tabs_show_all">Tik\'ut ronojel</string>
 
+    <!-- Content description for the button which navigates the user to show all recent tabs in the tabs tray. -->
+    <string name="recent_tabs_show_all_content_description_2">Pitz\'b\'äl kek\'ut pe ri k\'ak\'a\' taq ruwi\'</string>
     <!-- Text for button in synced tab card that opens synced tabs tray -->
     <string name="recent_tabs_see_all_synced_tabs_button_text">Ketz\'et ri taq ruwi\' eximon</string>
     <!-- Accessibility description for device icon used for recent synced tab -->
@@ -257,15 +270,26 @@
     <!-- Header text for the search selector menu -->
     <string name="search_header_menu_item_2">Wakami tikanöx pa:</string>
 
+    <!-- Home onboarding -->
+    <!-- Onboarding home screen popup dialog, shown on top of the Jump back in section. -->
+    <string name="onboarding_home_screen_jump_back_contextual_hint_2">Tawetamaj ruwäch ri ichinan ruxaq tikirib\'äl. Ri k\'ak\'a\' taq ruwi\', taq yaketal chuqa\' retal taq kanoxïk wawe\' xkeq\'alajin.</string>
+    <!-- Home onboarding dialog welcome screen title text. -->
+    <string name="onboarding_home_welcome_title_2">Ütz apetik pa jun k\'amaya\'l awichin</string>
+    <!-- Home onboarding dialog welcome screen description text. -->
+    <string name="onboarding_home_welcome_description">K\'ïy b\'onil. Ütz ichinanem. Nuya\' rutzij chi kiwäch ri winäq stape\' janipe\' na ri ch\'akoj.</string>
     <!-- Home onboarding dialog sign into sync screen title text. -->
     <string name="onboarding_home_sync_title_3">Najäl ruwäch wakami man k\'ayew ta</string>
 
+    <!-- Home onboarding dialog sign into sync screen description text. -->
+    <string name="onboarding_home_sync_description">Tasamajij chik el akuchi\' xya\' wi kan pa jun chik ruwi\' jun okisaxel, wakami ruxaq atikirib\'al.</string>
     <!-- Text for the button to continue the onboarding on the home onboarding dialog. -->
     <string name="onboarding_home_get_started_button">Titikirisäx</string>
     <!-- Text for the button to navigate to the sync sign in screen on the home onboarding dialog. -->
     <string name="onboarding_home_sign_in_button">Titikirisäx molojri\'ïl</string>
     <!-- Text for the button to skip the onboarding on the home onboarding dialog. -->
     <string name="onboarding_home_skip_button">Tik\'o</string>
+    <!-- Onboarding home screen sync popup dialog message, shown on top of Recent Synced Tabs in the Jump back in section. -->
+    <string name="sync_cfr_message">¡Najin yexim ri taq ruwi\'! Kasamäj chik el akuchi\' xaya\' wi kan pa jun chik okisaxel.</string>
     <!-- Content description (not visible, for screen readers etc.): Close button for the home onboarding dialog -->
     <string name="onboarding_home_content_description_close_button">Titz\'apïx</string>
 
@@ -273,6 +297,9 @@
     <!-- Enable notification pre permission dialog title
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
     <string name="onboarding_home_enable_notifications_title">Ri taq rutzijol yatkito\' richin nasamajij  ch\'aqa\' chik pa %s</string>
+    <!-- Enable notification pre permission dialog description with rationale
+        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
+    <string name="onboarding_home_enable_notifications_description">Ke\'axima\' ri taq ruwi\' chi kikojol ri taq okisaxel, ke\'anuk\'samajij taq qasanïk, ke\'ak\'ulu\' taq na\'oj chi rij rub\'eyal nawïl ri rutzil ruchajixik richinanem %s chuqa\' ch\'aqa\' chik.</string>
     <!-- Text for the button to request notification permission on the device -->
     <string name="onboarding_home_enable_notifications_positive_button">Titikïr chik el</string>
     <!-- Text for the button to not request notification permission on the device and dismiss the dialog -->
