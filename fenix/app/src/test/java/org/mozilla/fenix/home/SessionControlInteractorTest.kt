@@ -138,6 +138,12 @@ class SessionControlInteractorTest {
     }
 
     @Test
+    fun onNavigateSearch() {
+        interactor.onNavigateSearch()
+        verify { controller.handleNavigateSearch() }
+    }
+
+    @Test
     fun onRemoveCollectionsPlaceholder() {
         interactor.onRemoveCollectionsPlaceholder()
         verify { controller.handleRemoveCollectionsPlaceholder() }

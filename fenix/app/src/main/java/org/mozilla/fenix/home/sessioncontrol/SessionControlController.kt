@@ -169,6 +169,11 @@ interface SessionControlController {
     fun handlePaste(clipboardText: String)
 
     /**
+     * @see [ToolbarInteractor.onNavigateSearch]
+     */
+    fun handleNavigateSearch()
+
+    /**
      * @see [CollectionInteractor.onAddTabsToCollectionTapped]
      */
     fun handleCreateCollection()
@@ -607,6 +612,21 @@ class DefaultSessionControlController(
             pastedText = clipboardText,
         )
         navController.nav(R.id.homeFragment, directions)
+    }
+
+    override fun handleNavigateSearch() {
+        val directions =
+            HomeFragmentDirections.actionGlobalSearchDialog(
+                sessionId = null,
+            )
+
+        navController.nav(
+            R.id.homeFragment,
+            directions,
+            BrowserAnimator.getToolbarNavOptions(activity),
+        )
+
+        Events.searchBarTapped.record(Events.SearchBarTappedExtra("HOME"))
     }
 
     override fun handleMessageClicked(message: Message) {

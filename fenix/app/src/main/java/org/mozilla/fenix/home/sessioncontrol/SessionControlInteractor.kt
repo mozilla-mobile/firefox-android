@@ -146,6 +146,11 @@ interface ToolbarInteractor {
      * Navigates to search with clipboard text.
      */
     fun onPaste(clipboardText: String)
+
+    /**
+     * Navigates to the search dialog.
+     */
+    fun onNavigateSearch()
 }
 
 interface CustomizeHomeIteractor {
@@ -343,6 +348,10 @@ class SessionControlInteractor(
 
     override fun onPaste(clipboardText: String) {
         controller.handlePaste(clipboardText)
+    }
+
+    override fun onNavigateSearch() {
+        controller.handleNavigateSearch()
     }
 
     override fun onRemoveCollectionsPlaceholder() {
