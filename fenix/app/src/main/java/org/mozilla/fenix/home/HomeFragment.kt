@@ -188,7 +188,9 @@ class HomeFragment : Fragment() {
         get() = _sessionControlInteractor!!
 
     private var sessionControlView: SessionControlView? = null
+    private var tabCounterView: TabCounterView? = null
     private var appBarLayout: AppBarLayout? = null
+
     private lateinit var currentMode: CurrentMode
 
     private var lastAppliedWallpaperName: String = Wallpaper.defaultName
@@ -580,7 +582,7 @@ class HomeFragment : Fragment() {
             hideOnboardingIfNeeded = ::hideOnboardingIfNeeded,
         ).build()
 
-        TabCounterView(
+        tabCounterView = TabCounterView(
             context = requireContext(),
             browsingModeManager = browsingModeManager,
             navController = findNavController(),
@@ -611,7 +613,8 @@ class HomeFragment : Fragment() {
         }
 
         consumeFrom(requireComponents.core.store) {
-            updateTabCounter(it)
+            tabCounterView?.update(it)
+            showCollectionsPlaceholder(it)
         }
 
         homeViewModel.sessionToDelete?.also {
@@ -624,7 +627,7 @@ class HomeFragment : Fragment() {
 
         homeViewModel.sessionToDelete = null
 
-        updateTabCounter(requireComponents.core.store.state)
+        tabCounterView?.update(requireComponents.core.store.state)
 
         if (bundleArgs.getBoolean(FOCUS_ON_ADDRESS_BAR)) {
             navigateToSearch()
@@ -789,8 +792,10 @@ class HomeFragment : Fragment() {
 
         _sessionControlInteractor = null
         sessionControlView = null
+        tabCounterView = null
         appBarLayout = null
         _binding = null
+
         bundleArgs.clear()
         lastAppliedWallpaperName = Wallpaper.defaultName
     }
@@ -1020,16 +1025,13 @@ class HomeFragment : Fragment() {
         )
     }
 
-    // TODO use [FenixTabCounterToolbarButton] instead of [TabCounter]:
-    // https://github.com/mozilla-mobile/fenix/issues/16792
-    private fun updateTabCounter(browserState: BrowserState) {
+    private fun showCollectionsPlaceholder(browserState: BrowserState) {
         val tabCount = if (browsingModeManager.mode.isPrivate) {
             browserState.privateTabs.size
         } else {
             browserState.normalTabs.size
         }
 
-        binding.tabButton.setCountWithAnimation(tabCount)
         // The add_tabs_to_collections_button is added at runtime. We need to search for it in the same way.
         sessionControlView?.view?.findViewById<MaterialButton>(R.id.add_tabs_to_collections_button)
             ?.isVisible = tabCount > 0
