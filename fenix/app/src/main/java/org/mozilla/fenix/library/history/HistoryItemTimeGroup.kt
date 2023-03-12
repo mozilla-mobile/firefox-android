@@ -6,8 +6,10 @@ package org.mozilla.fenix.library.history
 
 import android.content.Context
 import org.mozilla.fenix.R
-import java.util.Calendar
-import java.util.Date
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneId
 
 enum class HistoryItemTimeGroup {
     Today, Yesterday, ThisWeek, ThisMonth, Older;
@@ -21,35 +23,21 @@ enum class HistoryItemTimeGroup {
     }
 
     companion object {
-        private const val zeroDays = 0
-        private const val oneDay = 1
-        private const val sevenDays = 7
-        private const val thirtyDays = 30
-        private val today = getDaysAgo(zeroDays).time
-        private val yesterday = getDaysAgo(oneDay).time
-        private val sevenDaysAgo = getDaysAgo(sevenDays).time
-        private val thirtyDaysAgo = getDaysAgo(thirtyDays).time
-        private val todayRange = LongRange(today, Long.MAX_VALUE) // all future time is considered today
-        private val yesterdayRange = LongRange(yesterday, today)
-        private val lastWeekRange = LongRange(sevenDaysAgo, yesterday)
-        private val lastMonthRange = LongRange(thirtyDaysAgo, sevenDaysAgo)
-
-        private fun getDaysAgo(daysAgo: Int): Date {
-            return Calendar.getInstance().apply {
-                set(Calendar.HOUR_OF_DAY, 0)
-                set(Calendar.MINUTE, 0)
-                set(Calendar.SECOND, 0)
-                set(Calendar.MILLISECOND, 0)
-                add(Calendar.DAY_OF_YEAR, -daysAgo)
-            }.time
-        }
+        private val today = LocalDate.now()
+        private val yesterday = today.minusDays(1)
+        private val weekAgo = today.minusWeeks(1)
+        private val monthAgo = today.minusMonths(1)
+        private val lastWeekRange = weekAgo..yesterday.minusDays(1)
+        private val lastMonthRange = monthAgo..weekAgo.minusDays(1)
 
         internal fun timeGroupForTimestamp(timestamp: Long): HistoryItemTimeGroup {
+            val localDate = LocalDateTime
+                .ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault()).toLocalDate()
             return when {
-                todayRange.contains(timestamp) -> Today
-                yesterdayRange.contains(timestamp) -> Yesterday
-                lastWeekRange.contains(timestamp) -> ThisWeek
-                lastMonthRange.contains(timestamp) -> ThisMonth
+                localDate >= today -> Today // all future time is considered today
+                localDate == yesterday -> Yesterday
+                localDate in lastWeekRange -> ThisWeek
+                localDate in lastMonthRange -> ThisMonth
                 else -> Older
             }
         }
