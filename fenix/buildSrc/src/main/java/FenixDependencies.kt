@@ -6,6 +6,8 @@
 // FORCE REBUILD 2022-12-11
 
 object FenixVersions {
+    const val desugar = "2.0.2"
+
     const val kotlin = "1.8.10"
     const val coroutines = "1.6.4"
 
@@ -63,6 +65,8 @@ object FenixVersions {
 
 @Suppress("unused")
 object FenixDependencies {
+    const val desugar_jdk_libs = "com.android.tools:desugar_jdk_libs:${FenixVersions.desugar}"
+
     const val tools_androidgradle = "com.android.tools.build:gradle:${FenixVersions.android_gradle_plugin}"
     const val tools_kotlingradle = "org.jetbrains.kotlin:kotlin-gradle-plugin:${FenixVersions.kotlin}"
     const val tools_benchmarkgradle = "androidx.benchmark:benchmark-gradle-plugin:${FenixVersions.androidx_benchmark}"
