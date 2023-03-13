@@ -42,7 +42,6 @@ import org.junit.runner.RunWith
 import org.mockito.Mockito.doReturn
 import org.mockito.Mockito.spy
 import org.mockito.Mockito.verify
-import org.mockito.Mockito.verifyNoInteractions
 import org.robolectric.Robolectric
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
@@ -184,10 +183,12 @@ class ContextTest {
     }
 
     @Test
-    @Config(shadows = [ShadowFileProvider::class], sdk = [Build.VERSION_CODES.TIRAMISU])
-    fun `copyImage will copy the file URI to the clipboard`() {
+    @Config(shadows = [ShadowFileProvider::class])
+    fun `copyImage will copy the file URI to the clipboard & invoke the confirmation action`() {
         val context = spy(testContext)
-        context.copyImage("filePath", mock())
+        val confirmationAction = mock<() -> Unit>()
+
+        context.copyImage("filePath", confirmationAction)
 
         val clipboardManager =
             testContext.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
@@ -195,25 +196,6 @@ class ContextTest {
             ShadowFileProvider.FAKE_URI_RESULT,
             clipboardManager.primaryClip!!.getItemAt(0).uri,
         )
-    }
-
-    @Test
-    @Config(shadows = [ShadowFileProvider::class], sdk = [Build.VERSION_CODES.TIRAMISU])
-    fun `copyImage will not show a Snackbar for Android 13`() {
-        val context = spy(testContext)
-        val confirmationAction = mock<() -> Unit>()
-        context.copyImage("filePath", confirmationAction)
-
-        verifyNoInteractions(confirmationAction)
-    }
-
-    @Test
-    @Config(shadows = [ShadowFileProvider::class], sdk = [Build.VERSION_CODES.S_V2])
-    fun `copyImage will show a Snackbar for Android 12`() {
-        val context = spy(testContext)
-        val confirmationAction = mock<() -> Unit>()
-        context.copyImage("filePath", confirmationAction)
-
         verify(confirmationAction).invoke()
     }
 

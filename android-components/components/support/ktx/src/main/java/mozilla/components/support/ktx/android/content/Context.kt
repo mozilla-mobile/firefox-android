@@ -187,11 +187,7 @@ fun Context.copyImage(
     val clipData = ClipData.newUri(contentResolver, "Copied media URI", contentUri)
     getClipboardManager().setPrimaryClip(clipData)
 
-    // Only show a Snackbar for Android 12 and lower.
-    // See developer.android.com/develop/ui/views/touch-and-input/copy-paste .
-    if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
-        onCopyConfirmation.invoke()
-    }
+    onCopyConfirmation.invoke()
 }
 
 private fun Context.getContentUriForFile(filePath: String) = FileProvider.getUriForFile(
