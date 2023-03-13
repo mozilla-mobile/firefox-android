@@ -326,7 +326,6 @@ tasks:
         worker:
             env:
                 GOOGLE_PROJECT: moz-fenix
-
     fenix-robo-arm-debug:
         attributes:
             shipping-product: fenix
@@ -353,3 +352,81 @@ tasks:
         worker:
             env:
                 GOOGLE_PROJECT: moz-fenix
+    fenix-arm-push-beta:
+        shipping-phase: push
+        attributes:
+            build-type: beta-firebase
+            release-type: beta
+            shipping-product: fenix
+        description: Select tests that run on release push phase for Fenix
+        run-on-tasks-for: []
+        run-on-git-branches: ["^releases[/_].+$"]
+        dependencies:
+            signed-apk-debug-apk: signing-apk-fenix-beta-firebase
+            signed-apk-android-test: signing-apk-fenix-android-test-beta
+        extra:
+            notify:
+                email:
+                    content: ui-test-apk-fenix-arm-push-beta job results
+                    link: 
+                        text: Taskcluster Task
+                        href: 'https://firefox-ci-tc.services.mozilla.com/tasks/${status.taskId}'
+                    subject: ui-test-apk-fenix-arm-push-beta job results
+                    address: mozilla-mobile-qa@softvision.com
+        run:
+            secrets:
+                - name: project/mobile/firefox-android/fenix/firebase
+                  key: firebaseToken
+                  path: .firebase_token.json
+                  json: true
+            pre-commands:
+                - ["cd", "fenix"]
+            commands:
+                - [wget, {artifact-reference: '<signed-apk-debug-apk/public/build/fenix/arm64-v8a/target.apk>'}, '-O', app.apk]
+                - [wget, {artifact-reference: '<signed-apk-android-test/public/build/fenix/noarch/target.apk>'}, '-O', android-test.apk]
+                - [automation/taskcluster/androidTest/ui-test.sh, arm-release-tests, app.apk, android-test.apk, '100']
+        treeherder:
+            platform: 'fenix-ui-test/opt'
+            symbol: fenix-release(ui-test-arm-release)
+        worker:
+            env:
+                GOOGLE_PROJECT: moz-fenix
+    focus-arm-push-beta:
+        shipping-phase: push       
+        attributes:
+            build-type: beta-firebase
+            release-type: beta
+            shipping-product: focus
+        description: Select tests that run on release push phase for Focus
+        run-on-tasks-for: []
+        run-on-git-branches: ["^releases[/_].+$"]
+        dependencies:
+            signed-apk-debug-apk: signing-apk-focus-beta-firebase
+            signed-apk-android-test: signing-apk-focus-android-test-beta
+        extra:
+            notify:
+                email:
+                    content: ui-test-apk-focus-arm-push-beta job results
+                    link: 
+                        text: Taskcluster Task
+                        href: 'https://firefox-ci-tc.services.mozilla.com/tasks/${status.taskId}'
+                    subject: ui-test-apk-focus-arm-push-beta job results
+                    address: mozilla-mobile-qa@softvision.com
+        run:
+            secrets:
+                - name: project/mobile/firefox-android/focus-android/firebase
+                  key: firebaseToken
+                  path: .firebase_token.json
+                  json: true
+            pre-commands:
+                - ["cd", "focus-android"]
+            commands:
+                - [wget, {artifact-reference: '<signed-apk-debug-apk/public/build/focus/arm64-v8a/target.apk>'}, '-O', app.apk]
+                - [wget, {artifact-reference: '<signed-apk-android-test/public/build/app-focus-androidTest.apk>'}, '-O', android-test.apk]
+                - [automation/taskcluster/androidTest/ui-test.sh, arm-release-tests, app.apk, android-test.apk, '100']
+        treeherder:
+            platform: 'focus-ui-test/opt'
+            symbol: focus-release(ui-test-arm-release)
+        worker:
+            env:
+                GOOGLE_PROJECT: 'moz-focus-android'
