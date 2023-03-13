@@ -8,6 +8,7 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Build
 import android.util.TypedValue
 import android.view.View
@@ -27,6 +28,7 @@ import mozilla.components.browser.toolbar.internal.ActionContainer
 import mozilla.components.concept.menu.MenuController
 import mozilla.components.concept.toolbar.Toolbar
 import mozilla.components.support.ktx.android.content.isScreenReaderEnabled
+import mozilla.components.support.ktx.util.URLStringUtils
 import mozilla.components.ui.colors.R.color as photonColors
 
 /**
@@ -470,8 +472,9 @@ class DisplayToolbar internal constructor(
      */
     internal var url: CharSequence = ""
         set(value) {
-            field = value
-            views.origin.url = urlFormatter?.invoke(value) ?: value
+            var decodedUrl = URLStringUtils.decodeUrlForDisplay(value.toString())
+            field = decodedUrl
+            views.origin.url = urlFormatter?.invoke(decodedUrl) ?: decodedUrl
             updateIndicatorVisibility()
         }
 

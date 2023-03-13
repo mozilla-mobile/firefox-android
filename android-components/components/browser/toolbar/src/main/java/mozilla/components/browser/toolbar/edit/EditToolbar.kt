@@ -31,6 +31,7 @@ import mozilla.components.concept.toolbar.Toolbar
 import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.base.utils.NamedThreadFactory
 import mozilla.components.support.ktx.android.view.showKeyboard
+import mozilla.components.support.ktx.util.URLStringUtils
 import mozilla.components.ui.autocomplete.InlineAutocompleteEditText
 import java.util.concurrent.Executors
 import mozilla.components.ui.colors.R as colorsR
@@ -265,11 +266,12 @@ class EditToolbar internal constructor(
      * and is only a visual change
      */
     fun updateUrl(url: String, shouldAutoComplete: Boolean = false, shouldHighlight: Boolean = false) {
-        views.url.setText(url, shouldAutoComplete)
-        views.clear.isVisible = url.isNotBlank()
+        var decodedUrl = URLStringUtils.decodeUrlForDisplay(url)
+        views.url.setText(decodedUrl, shouldAutoComplete)
+        views.clear.isVisible = decodedUrl.isNotBlank()
 
         if (shouldHighlight) {
-            views.url.setSelection(0, url.length)
+            views.url.setSelection(0, decodedUrl.length)
         }
     }
 
