@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.ui
 
 import android.content.Intent
@@ -20,6 +24,12 @@ import org.mozilla.fenix.nimbus.MessageData
 import org.mozilla.fenix.nimbus.Messaging
 import org.mozilla.fenix.nimbus.StyleData
 import org.mozilla.fenix.ui.robots.homeScreen
+
+/**
+ *  Tests for verifying basic functionality of the Nimbus Home Screen message
+ *
+ *  Verifies a message can be displayed with all of the correct components
+**/
 
 class NimbusMessagingHomescreenTest {
     private lateinit var mDevice: UiDevice
