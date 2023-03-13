@@ -9,22 +9,19 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.experiments.nimbus.Res
-import org.mozilla.fenix.components.appstate.AppAction
-import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.FenixApplication
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.RetryTestRule
-import org.mozilla.fenix.helpers.TestHelper.appContext
 import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.nimbus.HomeScreenSection
 import org.mozilla.fenix.nimbus.Homescreen
 import org.mozilla.fenix.nimbus.MessageData
-import org.mozilla.fenix.nimbus.MessageSurfaceId
 import org.mozilla.fenix.nimbus.Messaging
 import org.mozilla.fenix.nimbus.StyleData
 import org.mozilla.fenix.ui.robots.homeScreen
 
-class NimbusMessageHomescreenTest {
+class NimbusMessagingHomescreenTest {
     private lateinit var mDevice: UiDevice
     private lateinit var mockWebServer: MockWebServer
 
@@ -54,7 +51,7 @@ class NimbusMessageHomescreenTest {
                 messages = mapOf(
                     "test-message" to MessageData(
                         action = Res.string("TEST ACTION"),
-                        style = "URGENT",
+                        style = "TEST STYLE",
                         buttonLabel = Res.string(messageButtonLabel),
                         text = Res.string(messageText),
                         title = Res.string(messageTitle),
@@ -94,14 +91,8 @@ class NimbusMessageHomescreenTest {
             start()
         }
         // refresh message store
-        appContext.components.appStore.dispatch(
-            AppAction.MessagingAction.Restore,
-        )
-        appContext.components.appStore.dispatch(
-            AppAction.MessagingAction.Evaluate(
-                MessageSurfaceId.HOMESCREEN,
-            ),
-        )
+        val application = (homeActivityTestRule.activity.application as FenixApplication)
+        application.restoreMessaging()
     }
 
     @After

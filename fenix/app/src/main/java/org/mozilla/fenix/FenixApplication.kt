@@ -491,7 +491,8 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         }
     }
 
-    private fun restoreMessaging() {
+    @VisibleForTesting
+    internal fun restoreMessaging() {
         if (settings().isExperimentationEnabled) {
             components.appStore.dispatch(AppAction.MessagingAction.Restore)
         }

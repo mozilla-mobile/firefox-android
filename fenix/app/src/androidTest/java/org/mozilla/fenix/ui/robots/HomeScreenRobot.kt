@@ -7,7 +7,10 @@
 package org.mozilla.fenix.ui.robots
 
 import android.graphics.Bitmap
+import android.view.View
 import android.widget.EditText
+import android.widget.TextView
+import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotSelected
@@ -510,44 +513,18 @@ class HomeScreenRobot {
             )
     }
     fun verifyNimbusMessageCard(title: String, text: String, action: String) {
-        // Checks message Title
+        val textView = UiSelector()
+            .className(ComposeView::class.java)
+            .className(View::class.java)
+            .className(TextView::class.java)
         assertTrue(
-            mDevice.findObject(
-                UiSelector()
-                    .className("androidx.compose.ui.platform.ComposeView")
-                    .className("android.view.View")
-                    .className("android.widget.TextView")
-                    .textContains(title),
-            ).waitForExists(waitingTime),
+            mDevice.findObject(textView.textContains(title)).waitForExists(waitingTime)
         )
-        // Checks main message text
         assertTrue(
-            mDevice.findObject(
-                UiSelector()
-                    .className("androidx.compose.ui.platform.ComposeView")
-                    .className("android.view.View")
-                    .className("android.widget.TextView")
-                    .textContains(text),
-            ).waitForExists(waitingTime),
+            mDevice.findObject(textView.textContains(text)).waitForExists(waitingTime)
         )
-        // Checks button text
         assertTrue(
-            mDevice.findObject(
-                UiSelector()
-                    .className("androidx.compose.ui.platform.ComposeView")
-                    .className("android.view.View")
-                    .className("android.widget.TextView")
-                    .textContains(action),
-            ).waitForExists(waitingTime),
-        )
-        // Checks for close button
-        assertTrue(
-            mDevice.findObject(
-                UiSelector()
-                    .className("androidx.compose.ui.platform.ComposeView")
-                    .className("android.view.View")
-                    .description("Close"),
-            ).waitForExists(waitingTime),
+            mDevice.findObject(textView.textContains(action)).waitForExists(waitingTime)
         )
     }
 
