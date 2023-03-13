@@ -9,6 +9,9 @@ permalink: /changelog/
 * [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/Gecko.kt)
 * [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/.config.yml)
 
+* **service-pocket**
+  * 🌟 ⚠️ **This is a breaking change**: Use `id` instead of `flight_id` to identify a Pocket sponsored story. [Bug 1820967](https://bugzilla.mozilla.org/show_bug.cgi?id=1820967).
+
 * **feature-prompts**:
   * 🚒 Bug fixed [Bug 1819254](https://bugzilla.mozilla.org/show_bug.cgi?id=1819254). Don't exit fullscreen for user input prompts.
 
@@ -20,6 +23,12 @@ permalink: /changelog/
 
 * **lib-crash-sentry-legacy**
   * ⚠️ **This is a breaking change**: This component has been removed. Consumers should use the newer `lib-crash-sentry` component instead.
+
+* **browser-engine-gecko**:
+  * Add support for `hasCookieBannerRuleForSession` API for checking whether a cookie banner from the current website in the session can be handled.
+
+* **concept-engine**:
+  * Add new `hasCookieBannerRuleForSession` API in `Engine`. This is currently only supported in the Gecko Engine.
 
 
 # 111.0.0

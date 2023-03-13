@@ -1008,6 +1008,12 @@ class BrowserRobot {
                 it.click()
             }
 
+    fun verifyFindInPageBar(exists: Boolean) =
+        assertItemWithResIdExists(
+            itemWithResId("$packageName:id/findInPageView"),
+            exists = exists,
+        )
+
     class Transition {
         private fun threeDotButton() = onView(
             allOf(
@@ -1026,9 +1032,10 @@ class BrowserRobot {
         }
 
         fun openNavigationToolbar(interact: NavigationToolbarRobot.() -> Unit): NavigationToolbarRobot.Transition {
-            mDevice.findObject(UiSelector().resourceId("$packageName:id/toolbar"))
-                .waitForExists(waitingTime)
+            navURLBar().waitForExists(waitingTime)
             navURLBar().click()
+            mDevice.findObject(UiSelector().resourceId("$packageName:id/mozac_browser_toolbar_url_view"))
+                .waitForExists(waitingTime)
 
             NavigationToolbarRobot().interact()
             return NavigationToolbarRobot.Transition()

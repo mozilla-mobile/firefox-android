@@ -605,7 +605,8 @@ class Settings(private val appContext: Context) : PreferencesHolder {
      */
     fun shouldShowCookieBannerReEngagementDialog(): Boolean {
         val shouldShowDialog =
-            shouldShowCookieBannerUI && !userOptOutOfReEngageCookieBannerDialog && !shouldUseCookieBanner
+            shouldShowCookieBannerUI && cookieBannerReEngagementDialogShowsCount.underMaxCount() &&
+                !userOptOutOfReEngageCookieBannerDialog && !shouldUseCookieBanner
         return if (shouldShowDialog) {
             !cookieBannerDetectedPreviously ||
                 timeNowInMillis() - lastInteractionWithReEngageCookieBannerDialogInMs >= timerForCookieBannerDialog
@@ -665,6 +666,13 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = { FxNimbus.features.reEngagementNotification.value().enabled },
         featureFlag = true,
     )
+
+    /**
+     * Indicates if the re-engagement notification feature is enabled
+     */
+    public val reEngagementNotificationType: Int
+        get() =
+            FxNimbus.features.reEngagementNotification.value().type
 
     val shouldUseAutoBatteryTheme by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_auto_battery_theme),
@@ -1607,6 +1615,14 @@ class Settings(private val appContext: Context) : PreferencesHolder {
             }
         }
     }
+
+    /**
+     *  Times that the cookie banner re-engagement dialog has been shown.
+     */
+    val cookieBannerReEngagementDialogShowsCount = counterPreference(
+        appContext.getPreferenceKey(R.string.pref_key_cookie_banner_re_engagement_dialog_shows_counter),
+        maxCount = 2,
+    )
 
     var setAsDefaultGrowthSent by booleanPreference(
         key = appContext.getPreferenceKey(R.string.pref_key_growth_set_as_default),
