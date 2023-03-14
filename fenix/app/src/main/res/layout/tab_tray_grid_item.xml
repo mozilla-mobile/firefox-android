@@ -15,7 +15,7 @@ A FrameLayout here is an efficient way of having a views stack while allowing:
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/tab_tray_grid_item"
     android:layout_width="match_parent"
-    android:layout_height="202dp"
+    android:layout_height="wrap_content"
     android:clipChildren="false"
     android:clipToPadding="false"
     android:padding="8dp">
@@ -55,7 +55,8 @@ A FrameLayout here is an efficient way of having a views stack while allowing:
                 android:layout_alignParentTop="true"
                 android:ellipsize="none"
                 android:fadingEdgeLength="25dp"
-                android:minHeight="30dp"
+                android:minHeight="48dp"
+                android:gravity="start|center"
                 android:paddingHorizontal="7dp"
                 android:paddingVertical="5dp"
                 android:requiresFadingEdge="horizontal"
@@ -70,8 +71,8 @@ A FrameLayout here is an efficient way of having a views stack while allowing:
 
             <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/mozac_browser_tabstray_close"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/close_tab"
                 app:layout_constraintBottom_toTopOf="@+id/horizonatal_divider"
