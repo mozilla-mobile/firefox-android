@@ -50,7 +50,7 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login), MenuProvider {
     private var duplicateLogin: SavedLogin? = null
 
     private var validPassword = false
-    private var validUsername = true
+    private var validUsername = false
     private var validHostname = false
     private var usernameChanged = false
 
@@ -200,19 +200,10 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login), MenuProvider {
                 override fun afterTextChanged(editable: Editable?) {
                     // update usernameChanged to true when the text is not empty,
                     // otherwise it is not changed, as this screen starts with an empty username.
+                    checkUserNameFieldState(editable)
                     updateUsernameField()
-                    binding.clearUsernameTextButton.isVisible = !editable.isNullOrBlank()
                     setSaveButtonState()
-                    usernameChanged = true
-                    when {
-                        editable?.isEmpty() == true -> {
-                            validUsername = false
-                            binding.clearUsernameTextButton.isVisible = false
-                        }
-                        else -> {
-                            findDuplicate()
-                        }
-                    }
+                    findDuplicate()
                 }
 
                 override fun beforeTextChanged(
@@ -265,6 +256,21 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login), MenuProvider {
         )
     }
 
+    private fun checkUserNameFieldState(editable: Editable?) {
+        usernameChanged = true
+        val clearButton = binding.clearUsernameTextButton
+
+        if (editable.toString().isNullOrBlank()) {
+            usernameChanged = false
+            clearButton.isVisible = false
+            clearButton.isEnabled = false
+        } else {
+            usernameChanged = true
+            clearButton.isVisible = true
+            clearButton.isEnabled = true
+        }
+    }
+
     private fun findDuplicate() {
         interactor.findDuplicate(
             binding.hostnameText.text.toString(),
@@ -276,7 +282,6 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login), MenuProvider {
     private fun updateUsernameField() {
         val currentValue = binding.usernameText.text.toString()
         val layout = binding.inputLayoutUsername
-        val clearButton = binding.clearUsernameTextButton
         when {
             currentValue.isEmpty() && usernameChanged -> {
                 // Invalid username because it's empty (although this is not true when editing logins)
@@ -306,14 +311,13 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login), MenuProvider {
                     ),
                 )
             }
-            else -> {
+            usernameChanged -> {
                 // Valid username
                 validUsername = true
                 layout.error = null
                 layout.errorIconDrawable = null
             }
         }
-        clearButton.isEnabled = validUsername
         setSaveButtonState()
     }
 
