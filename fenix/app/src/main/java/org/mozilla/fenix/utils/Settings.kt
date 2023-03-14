@@ -667,6 +667,13 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         featureFlag = true,
     )
 
+    /**
+     * Indicates if the re-engagement notification feature is enabled
+     */
+    public val reEngagementNotificationType: Int
+        get() =
+            FxNimbus.features.reEngagementNotification.value().type
+
     val shouldUseAutoBatteryTheme by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_auto_battery_theme),
         default = false,
@@ -1552,7 +1559,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
      * Indicates if the Unified Search feature should be visible.
      */
     var showUnifiedSearchFeature by lazyFeatureFlagPreference(
-        key = appContext.getPreferenceKey(R.string.pref_key_show_unified_search),
+        key = appContext.getPreferenceKey(R.string.pref_key_show_unified_search_2),
         default = { FxNimbus.features.unifiedSearch.value().enabled },
         featureFlag = FeatureFlags.unifiedSearchFeature,
     )
