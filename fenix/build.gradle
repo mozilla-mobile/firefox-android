@@ -65,20 +65,7 @@ buildscript {
         classpath FenixDependencies.androidx_safeargs
         classpath FenixDependencies.osslicenses_plugin
         classpath "org.mozilla.telemetry:glean-gradle-plugin:${Versions.mozilla_glean}"
-        // NOTE: The Nimbus plugin needs to be refactored into a top-level plugin
-        // and consumed via includeBuild (using composite builds). This is a short-term
-        // workaround to consume the latest version of the Nimbus plugin matching the Focus version.
-        if (Config.readVersionFromFile().contains("a")) {
-            // Use the latest version of the plugin on the main branch (nightly).
-            classpath("org.mozilla.components:tooling-nimbus-gradle:latest.release")
-        } else {
-            // Use the latest version matching the major version of the branch (beta/release).
-            classpath("org.mozilla.components:tooling-nimbus-gradle") {
-                version {
-                    strictly("${Config.majorVersion()}.+")
-                }
-            }
-        }
+        classpath "org.mozilla.appservices:tooling-nimbus-gradle:${Versions.mozilla_appservices}"
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -146,7 +133,7 @@ allprojects {
     }
 
     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
-        kotlinOptions.jvmTarget = "1.8"
+        kotlinOptions.jvmTarget = "11"
         kotlinOptions.allWarningsAsErrors = true
         kotlinOptions.freeCompilerArgs += [
             "-opt-in=kotlin.RequiresOptIn", "-Xjvm-default=all"
@@ -219,7 +206,7 @@ configurations {
 }
 
 dependencies {
-    ktlint("com.pinterest:ktlint:0.47.0") {
+    ktlint("com.pinterest:ktlint:0.48.2") {
         attributes {
             attribute(Bundling.BUNDLING_ATTRIBUTE, getObjects().named(Bundling, Bundling.EXTERNAL))
         }
@@ -240,7 +227,7 @@ tasks.register('ktlint', JavaExec) {
 task ktlintFormat(type: JavaExec, group: "formatting") {
     description = "Fix Kotlin code style deviations."
     classpath = configurations.ktlint
-    main = "com.pinterest.ktlint.Main"
+    mainClass.set("com.pinterest.ktlint.Main")
     args "-F", "app/src/**/*.kt", "!**/build/**/*.kt", "--baseline=ktlint-baseline.xml"
 }
 
@@ -257,7 +244,7 @@ tasks.register("listRepositories") {
 }
 
 tasks.register("githubTestDetails", GithubDetailsTask) {
-    text = "### [Unit Test Results Fenix]({reportsUrl}/test/testDebugUnitTest/index.html)"
+    text = "### [Unit Test Results Fenix]({reportsUrl}/test/testFenixDebugUnitTest/index.html)"
 }
 
 tasks.register("githubLintDetektDetails", GithubDetailsTask) {

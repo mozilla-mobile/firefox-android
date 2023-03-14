@@ -41,6 +41,7 @@ import org.mozilla.fenix.components.settings.lazyFeatureFlagPreference
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getPreferenceKey
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.nimbus.CookieBannersSection
 import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.nimbus.HomeScreenSection
@@ -518,6 +519,22 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         }
     }
 
+    /**
+     * Get the display string for the current open links in apps setting
+     */
+    fun getOpenLinksInAppsString(): String =
+        when (appContext.settings().openLinksInExternalApp) {
+            appContext.getString(R.string.pref_key_open_links_in_apps_always) -> {
+                appContext.getString(R.string.preferences_open_links_in_apps_always)
+            }
+            appContext.getString(R.string.pref_key_open_links_in_apps_ask) -> {
+                appContext.getString(R.string.preferences_open_links_in_apps_ask)
+            }
+            else -> {
+                appContext.getString(R.string.preferences_open_links_in_apps_never)
+            }
+        }
+
     var shouldUseDarkTheme by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_dark_theme),
         default = false,
@@ -588,7 +605,8 @@ class Settings(private val appContext: Context) : PreferencesHolder {
      */
     fun shouldShowCookieBannerReEngagementDialog(): Boolean {
         val shouldShowDialog =
-            shouldShowCookieBannerUI && !userOptOutOfReEngageCookieBannerDialog && !shouldUseCookieBanner
+            shouldShowCookieBannerUI && cookieBannerReEngagementDialogShowsCount.underMaxCount() &&
+                !userOptOutOfReEngageCookieBannerDialog && !shouldUseCookieBanner
         return if (shouldShowDialog) {
             !cookieBannerDetectedPreviously ||
                 timeNowInMillis() - lastInteractionWithReEngageCookieBannerDialogInMs >= timerForCookieBannerDialog
@@ -621,15 +639,6 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         return browsers.isDefaultBrowser
     }
 
-    var defaultBrowserNotificationDisplayed by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_should_show_default_browser_notification),
-        default = false,
-    )
-
-    fun shouldShowDefaultBrowserNotification(): Boolean {
-        return !defaultBrowserNotificationDisplayed && !isDefaultBrowserBlocking()
-    }
-
     var reEngagementNotificationShown by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_re_engagement_notification_shown),
         default = false,
@@ -657,6 +666,13 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = { FxNimbus.features.reEngagementNotification.value().enabled },
         featureFlag = true,
     )
+
+    /**
+     * Indicates if the re-engagement notification feature is enabled
+     */
+    public val reEngagementNotificationType: Int
+        get() =
+            FxNimbus.features.reEngagementNotification.value().type
 
     val shouldUseAutoBatteryTheme by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_auto_battery_theme),
@@ -702,13 +718,13 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     val enabledTotalCookieProtection: Boolean
-        get() = Config.channel.isNightlyOrDebug || mr2022Sections[Mr2022Section.TCP_FEATURE] == true
+        get() = mr2022Sections[Mr2022Section.TCP_FEATURE] == true
 
     /**
      * Indicates if the total cookie protection CRF feature is enabled.
      */
     val enabledTotalCookieProtectionCFR: Boolean
-        get() = Config.channel.isNightlyOrDebug || mr2022Sections[Mr2022Section.TCP_CFR] == true
+        get() = mr2022Sections[Mr2022Section.TCP_CFR] == true
 
     /**
      * Indicates if the total cookie protection CRF should be shown.
@@ -1175,9 +1191,41 @@ class Settings(private val appContext: Context) : PreferencesHolder {
             return false
         }
 
-    var openLinksInExternalApp by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_open_links_in_external_app),
+    var openLinksInExternalAppOld by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_open_links_in_external_app_old),
         default = false,
+    )
+
+    /**
+     * Check to see if we should open the link in an external app
+     */
+    fun shouldOpenLinksInApp(): Boolean {
+        return when (openLinksInExternalApp) {
+            appContext.getString(R.string.pref_key_open_links_in_apps_always) -> true
+            appContext.getString(R.string.pref_key_open_links_in_apps_ask) -> true
+            appContext.getString(R.string.pref_key_open_links_in_apps_never) -> false
+            else -> false
+        }
+    }
+
+    /**
+     * Check to see if we need to prompt the user if the link can be opened in an external app
+     */
+    fun shouldPromptOpenLinksInApp(): Boolean {
+        return when (openLinksInExternalApp) {
+            appContext.getString(R.string.pref_key_open_links_in_apps_always) -> false
+            appContext.getString(R.string.pref_key_open_links_in_apps_ask) -> true
+            appContext.getString(R.string.pref_key_open_links_in_apps_never) -> true
+            else -> true
+        }
+    }
+
+    var openLinksInExternalApp by stringPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_open_links_in_apps),
+        default = when (openLinksInExternalAppOld) {
+            true -> appContext.getString(R.string.pref_key_open_links_in_apps_ask)
+            false -> appContext.getString(R.string.pref_key_open_links_in_apps_never)
+        },
     )
 
     var allowDomesticChinaFxaServer by booleanPreference(
@@ -1511,7 +1559,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
      * Indicates if the Unified Search feature should be visible.
      */
     var showUnifiedSearchFeature by lazyFeatureFlagPreference(
-        key = appContext.getPreferenceKey(R.string.pref_key_show_unified_search),
+        key = appContext.getPreferenceKey(R.string.pref_key_show_unified_search_2),
         default = { FxNimbus.features.unifiedSearch.value().enabled },
         featureFlag = FeatureFlags.unifiedSearchFeature,
     )
@@ -1567,6 +1615,14 @@ class Settings(private val appContext: Context) : PreferencesHolder {
             }
         }
     }
+
+    /**
+     *  Times that the cookie banner re-engagement dialog has been shown.
+     */
+    val cookieBannerReEngagementDialogShowsCount = counterPreference(
+        appContext.getPreferenceKey(R.string.pref_key_cookie_banner_re_engagement_dialog_shows_counter),
+        maxCount = 2,
+    )
 
     var setAsDefaultGrowthSent by booleanPreference(
         key = appContext.getPreferenceKey(R.string.pref_key_growth_set_as_default),

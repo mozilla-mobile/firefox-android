@@ -12,9 +12,11 @@
     <string name="content_description_private_browsing_button">Activar la navegacion privada</string>
     <!-- Content description (not visible, for screen readers etc.): "Private Browsing" menu button. -->
     <string name="content_description_disable_private_browsing_button">Desactivar la navigacion privada.</string>
-    <!-- Placeholder text shown in the search bar before a user enters text -->
+    <!-- Placeholder text shown in the search bar before a user enters text for the default engine -->
     <string name="search_hint">Recèrca o adreça</string>
 
+    <!-- Placeholder text shown in the search bar before a user enters text for a general engine -->
+    <string name="search_hint_general_engine">Recercar sul web</string>
     <!-- Placeholder text shown in search bar when using history search -->
     <string name="history_search_hint">Cercar dins l’istoric</string>
     <!-- Placeholder text shown in search bar when using bookmarks search -->
@@ -63,12 +65,10 @@
     <string name="private_browsing_common_myths">Mites màgers de la navegacion privada</string>
 
     <!-- Private mode shortcut "contextual feature recommendation" (CFR) -->
-    <!-- Text for the main message -->
-    <string name="cfr_message" moz:removedIn="109" tools:ignore="UnusedResources">Apondre un acorchi per dobrir d’onglets privats de l’ecran d’acuèlh estant.</string>
     <!-- Text for the Private mode shortcut CFR message for adding a private mode shortcut to open private tabs from the Home screen -->
-    <string name="private_mode_cfr_message">Lançar un onglet privat d’una tòca.</string>
-    <!-- Text for the positive button -->
-    <string name="cfr_pos_button_text" moz:removedIn="109" tools:ignore="UnusedResources">Apondre un acorchi</string>
+    <string name="private_mode_cfr_message" moz:removedIn="111" tools:ignore="UnusedResources">Lançar un onglet privat d’una tòca.</string>
+    <!-- Text for the Private mode shortcut CFR message for adding a private mode shortcut to open private tabs from the Home screen -->
+    <string name="private_mode_cfr_message_2">Lançar vòstre onglet privat venent d’una tòca.</string>
     <!-- Text for the positive button to accept adding a Private Browsing shortcut to the Home screen -->
     <string name="private_mode_cfr_pos_button_text">Apondre a l’ecran d’acuèlh</string>
     <!-- Text for the negative button to decline adding a Private Browsing shortcut to the Home screen -->
@@ -388,36 +388,41 @@
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
     <string name="reduce_cookie_banner_details_panel_description_on_for_site_2">%1$s ensaja de regetar automaticament totas las demandas de cookies suls sites compatibles.</string>
     <!-- Title text for the dialog use on the control branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_control_experiment_dialog_title">Fòra las bandièras de cookies !</string>
+    <string name="reduce_cookie_banner_control_experiment_dialog_title" moz:RemovedIn="112" tools:ignore="UnusedResources">Fòra las bandièras de cookies !</string>
     <!-- Body text for the dialog use on the control branch of the experiment to determine which context users engaged the most -->
     <string name="reduce_cookie_banner_control_experiment_dialog_body" moz:RemovedIn="110" tools:ignore="UnusedResources">Regèta automaticament las demandas de cookies, quand es possible. Autrament, accèpta totes los cookies per suprimir las bandièras de cookies.</string>
 
     <!-- Body text for the dialog use on the control branch of the experiment to determine which context users engaged the most -->
     <string name="reduce_cookie_banner_control_experiment_dialog_body_1" moz:RemovedIn="111" tools:ignore="UnusedResources">Regèta automaticament las demandas de cookies, quand es possible.</string>
     <!-- Body text for the dialog use on the control branch of the experiment to determine which context users engaged the most.The first parameter is the application name -->
-    <string name="reduce_cookie_banner_control_experiment_dialog_body_2">Autorizar %1$s a regetar automaticament las demandas de cookies, quand es possible ?</string>
+    <string name="reduce_cookie_banner_control_experiment_dialog_body_2" moz:RemovedIn="112" tools:ignore="UnusedResources">Autorizar %1$s a regetar automaticament las demandas de cookies, quand es possible ?</string>
+    <!-- Body text for the cookie banner re-engagement dialog use. The first parameter is the application name. -->
+    <string name="reduce_cookie_banner_dialog_body">%1$s pòt refusar automaticament nombrosas demandas de cookies.</string>
     <!-- Remind me later text button for the onboarding dialog -->
     <string name="reduce_cookie_banner_dialog_not_now_button">Mai tard</string>
     <!-- Change setting text button, for the dialog use on the control branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_control_experiment_dialog_change_setting_button">Tampar las bandièras</string>
+    <string name="reduce_cookie_banner_control_experiment_dialog_change_setting_button" moz:RemovedIn="112" tools:ignore="UnusedResources">Tampar las bandièras</string>
     <!-- Snack text for the cookie banner dialog, after user hit the dismiss banner button -->
     <string name="reduce_cookie_banner_dialog_snackbar_text">Veiretz mens de demandas de cookies</string>
     <!-- Title text for the dialog use on the variant 1 branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_variant_1_experiment_dialog_title">Veire mens de fenèstras sorgissentas de cookies</string>
+    <string name="reduce_cookie_banner_variant_1_experiment_dialog_title" moz:RemovedIn="112" tools:ignore="UnusedResources">Veire mens de fenèstras sorgissentas de cookies</string>
     <!-- Body text for the dialog use on the variant 1 branch of the experiment to determine which context users engaged the most. The first parameter is the application name. -->
     <string name="reduce_cookie_banner_variant_1_experiment_dialog_body" moz:RemovedIn="110" tools:ignore="UnusedResources">Respondre automaticament als cookies de fenèstras sorgissentas per una navegacion sens distraccion. %1$s regetarà totas las demandas se possible, o las acceptarà totas dins lo cas contrari.</string>
     <!-- Body text for the dialog use on the variant 1 branch of the experiment to determine which context users engaged the most. The first parameter is the application name. -->
-    <string name="reduce_cookie_banner_variant_1_experiment_dialog_body_1">Respondre automaticament als cookies de fenèstras sorgissentas per una navegacion sens distraccion. %1$s regetarà totas las demandas se possible.</string>
+    <string name="reduce_cookie_banner_variant_1_experiment_dialog_body_1" moz:RemovedIn="112" tools:ignore="UnusedResources">Respondre automaticament als cookies de fenèstras sorgissentas per una navegacion sens distraccion. %1$s regetarà totas las demandas se possible.</string>
     <!-- Change setting text button, for the onboarding dialog use on the variant 1 branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_variant_1_experiment_dialog_change_setting_button">Regetar las fenèstras sorgissentas</string>
+    <string name="reduce_cookie_banner_variant_1_experiment_dialog_change_setting_button" moz:RemovedIn="112" tools:ignore="UnusedResources">Regetar las fenèstras sorgissentas</string>
     <!-- Title text for the dialog use on the variant 2 branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_variant_2_experiment_dialog_title">Reduccion de las bandièras de cookies</string>
+    <string name="reduce_cookie_banner_variant_2_experiment_dialog_title" moz:RemovedIn="112" tools:ignore="UnusedResources">Reduccion de las bandièras de cookies</string>
     <!-- Body text for the dialog use on the variant 2 branch of the experiment to determine which context users engaged the most. The first parameter is the application name. -->
     <string name="reduce_cookie_banner_variant_2_experiment_dialog_body" moz:RemovedIn="110" tools:ignore="UnusedResources">Permetre a %1$s de refusar la demanda de consentiment als cookies d’un site se possible o acceptar l’accès als cookies quand es pas possible ?</string>
     <!-- Body text for the dialog use on the variant 2 branch of the experiment to determine which context users engaged the most. The first parameter is the application name. -->
-    <string name="reduce_cookie_banner_variant_2_experiment_dialog_body_1">Autorizar %1$s a regetar la demanda de consentiment pels cookies d’un site s’es possible ?</string>
+    <string name="reduce_cookie_banner_variant_2_experiment_dialog_body_1" moz:RemovedIn="112" tools:ignore="UnusedResources">Autorizar %1$s a regetar la demanda de consentiment pels cookies d’un site s’es possible ?</string>
     <!-- Change setting text button, for the dialog use on the variant 2 branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_variant_2_experiment_dialog_change_setting_button">Autorizar</string>
+    <string name="reduce_cookie_banner_variant_2_experiment_dialog_change_setting_button" moz:RemovedIn="112" tools:ignore="UnusedResources">Autorizar</string>
+
+    <!-- Change setting text button, for the cookie banner re-engagement dialog -->
+    <string name="reduce_cookie_banner_dialog_change_setting_button">Autorizar</string>
 
     <!-- Description of the preference to enable "HTTPS-Only" mode. -->
     <string name="preferences_https_only_summary">Ensaja automaticament de se connectar als sites amb lo chiframent HTTPS per una seguretat melhorada.</string>
@@ -498,6 +503,12 @@
     <string name="preferences_enable_autocomplete_urls">Autocomplecion URL</string>
     <!-- Preference for open links in third party apps -->
     <string name="preferences_open_links_in_apps">Dobrir los ligams dins las aplicacions</string>
+    <!-- Preference for open links in third party apps always open in apps option -->
+    <string name="preferences_open_links_in_apps_always">Totjorn</string>
+    <!-- Preference for open links in third party apps ask before opening option -->
+    <string name="preferences_open_links_in_apps_ask">Demandar avant dobertura</string>
+    <!-- Preference for open links in third party apps never open in apps option -->
+    <string name="preferences_open_links_in_apps_never">Pas jamai</string>
     <!-- Preference for open download with an external download manager app -->
     <string name="preferences_external_download_manager">Gestionari de telecargament extèrn</string>
     <!-- Preference for add_ons -->
@@ -1221,19 +1232,29 @@
     <string name="notification_pbm_delete_text_2">Tampar los onglets privats</string>
     <!-- Name of the marketing notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="notification_marketing_channel_name">Marketing</string>
-    <!-- Title shown in the notification that pops up to remind the user to set fenix as default browser.
-    %1$s is a placeholder that will be replaced by the app name (Fenix). -->
-    <string name="notification_default_browser_title">%1$s es rapid e privat</string>
-    <!-- Text shown in the notification that pops up to remind the user to set fenix as default browser.
-    %1$s is a placeholder that will be replaced by the app name (Fenix). -->
-    <string name="notification_default_browser_text">Far que %1$s siá lo navegador per defaut</string>
 
+    <!-- Title shown in the notification that pops up to remind the user to set fenix as default browser.
+    The app name is in the text, due to limitations with localizing Nimbus experiments -->
+    <string name="nimbus_notification_default_browser_title" tools:ignore="UnusedResources">Firefox es rapid e privat</string>
+    <!-- Text shown in the notification that pops up to remind the user to set fenix as default browser.
+    The app name is in the text, due to limitations with localizing Nimbus experiments -->
+    <string name="nimbus_notification_default_browser_text" tools:ignore="UnusedResources">Far que Firefox siá lo navegador per defaut</string>
     <!-- Title shown in the notification that pops up to re-engage the user -->
     <string name="notification_re_engagement_title">Ensajatz la navegacion privada</string>
 
     <!-- Text shown in the notification that pops up to re-engage the user.
     %1$s is a placeholder that will be replaced by the app name. -->
     <string name="notification_re_engagement_text">Navegatz sens cap de cookies o d’istoric dins %1$s</string>
+
+    <!-- Title A shown in the notification that pops up to re-engage the user -->
+    <string name="notification_re_engagement_A_title">Navegar sens traças</string>
+    <!-- Text A shown in the notification that pops up to re-engage the user.
+    %1$s is a placeholder that will be replaced by the app name. -->
+    <string name="notification_re_engagement_A_text">La navegacion privada de %1$s salva pas vòstras informacions.</string>
+    <!-- Title B shown in the notification that pops up to re-engage the user -->
+    <string name="notification_re_engagement_B_title">Realizatz vòstra primièra recèrca</string>
+    <!-- Text B shown in the notification that pops up to re-engage the user -->
+    <string name="notification_re_engagement_B_text">Trapatz quicòm a proximitat. O descobrissètz quicòm de risolièr.</string>
 
     <!-- Snackbar -->
     <!-- Text shown in snackbar when user deletes a collection -->
@@ -1374,6 +1395,8 @@
     <string name="onboarding_firefox_account_sync_is_on">Sincro. activada</string>
     <!-- Text for the tracking protection onboarding card header -->
     <string name="onboarding_tracking_protection_header">Proteccion de la vida privada per defaut</string>
+    <!-- Text for the tracking protection card description. The first parameter is the name of the application.-->
+    <string name="onboarding_tracking_protection_description_old">%1$s empacha automaticament las entrepresas de vos pistar secrètement pel web.</string>
     <!-- Text for the tracking protection card description. -->
     <string name="onboarding_tracking_protection_description">Embarcant una proteccion totala contra los cookies per empachar los traçadors d’utilizar de cookies per vos pistar de site en site.</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
@@ -2073,4 +2096,6 @@
     <string name="a11y_action_label_wallpaper_collection_learn_more">dobrir lo ligam per ne saber mai tocant aquesta colleccion</string>
     <!-- Action label for links that point to an article. Talkback will append this to say "Double tap to read the article". -->
     <string name="a11y_action_label_read_article">legir l’article</string>
+    <!-- Action label for links to the Firefox Pocket website. Talkback will append this to say "Double tap to open link to learn more". -->
+    <string name="a11y_action_label_pocket_learn_more">dobrissètz lo ligam per ne saber mai</string>
 </resources>

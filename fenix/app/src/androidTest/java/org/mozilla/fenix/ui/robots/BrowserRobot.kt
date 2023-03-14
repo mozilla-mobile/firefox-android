@@ -45,6 +45,7 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.Constants.LONG_CLICK_DURATION
 import org.mozilla.fenix.helpers.Constants.RETRY_COUNT
 import org.mozilla.fenix.helpers.MatcherHelper
+import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithResIdAndTextExists
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithResIdExists
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdAndText
@@ -413,6 +414,7 @@ class BrowserRobot {
             mDevice.findObject(
                 UiSelector().resourceId("$packageName:id/feature_prompt_login_fragment"),
             ),
+            waitingTime,
         )
         mDevice.findObject(text(optionToSaveLogin)).click()
     }
@@ -493,7 +495,7 @@ class BrowserRobot {
         setPageObjectText(webPageItemWithResourceId("password"), password)
         clickPageObject(webPageItemWithResourceId("submit"))
 
-        mDevice.waitForObjects(mDevice.findObject(UiSelector().resourceId("$packageName:id/save_confirm")))
+        mDevice.waitForObjects(mDevice.findObject(UiSelector().resourceId("$packageName:id/save_confirm")), waitingTime)
     }
 
     fun clearUserNameLoginCredential() {
@@ -543,12 +545,46 @@ class BrowserRobot {
 
     fun verifySelectAddressButtonExists(exists: Boolean) = assertItemWithResIdExists(selectAddressButton, exists = exists)
 
-    fun clickCardNumberTextBox() = clickPageObject(webPageItemWithResourceId("cardNumber"))
+    fun clickCreditCardNumberTextBox() = clickPageObject(webPageItemWithResourceId("cardNumber"))
+
+    fun changeCreditCardExpiryDate(expiryDate: String) =
+        webPageItemWithResourceId("expiryMonthAndYear").setText(expiryDate)
+
+    fun clickCreditCardFormSubmitButton() =
+        webPageItemWithResourceId("submit").clickAndWaitForNewWindow(waitingTime)
+
+    fun fillAndSaveCreditCard(cardNumber: String, cardName: String, expiryMonthAndYear: String) {
+        webPageItemWithResourceId("cardNumber").setText(cardNumber)
+        webPageItemWithResourceId("nameOnCard").setText(cardName)
+        webPageItemWithResourceId("expiryMonthAndYear").setText(expiryMonthAndYear)
+        webPageItemWithResourceId("submit").clickAndWaitForNewWindow(waitingTime)
+    }
+
+    fun clickCancelCreditCardPromptButton() =
+        itemWithResId("$packageName:id/save_cancel").also {
+            it.waitForExists(waitingTime)
+            it.click()
+        }
+
+    fun clickUpdateOrSaveCreditCardPromptButton() =
+        itemWithResId("$packageName:id/save_confirm").also {
+            it.waitForExists(waitingTime)
+            it.click()
+        }
+
+    fun verifyUpdateOrSaveCreditCardPromptExists(exists: Boolean) =
+        assertItemWithResIdAndTextExists(
+            itemWithResId("$packageName:id/save_credit_card_header"),
+            exists = exists,
+        )
 
     fun clickSelectCreditCardButton() {
         selectCreditCardButton.waitForExists(waitingTime)
         selectCreditCardButton.clickAndWaitForNewWindow(waitingTime)
     }
+
+    fun verifySelectCreditCardPromptExists(exists: Boolean) =
+        assertItemWithResIdExists(selectCreditCardButton, exists = exists)
 
     fun clickLoginSuggestion(userName: String) {
         val loginSuggestion =
@@ -569,6 +605,12 @@ class BrowserRobot {
     fun clickCreditCardSuggestion(creditCardNumber: String) {
         creditCardSuggestion(creditCardNumber).waitForExists(waitingTime)
         creditCardSuggestion(creditCardNumber).click()
+    }
+
+    fun verifyCreditCardSuggestion(vararg creditCardNumbers: String) {
+        for (creditCardNumber in creditCardNumbers) {
+            assertTrue(creditCardSuggestion(creditCardNumber).waitForExists(waitingTime))
+        }
     }
 
     fun verifySuggestedUserName(userName: String) {
@@ -966,6 +1008,12 @@ class BrowserRobot {
                 it.click()
             }
 
+    fun verifyFindInPageBar(exists: Boolean) =
+        assertItemWithResIdExists(
+            itemWithResId("$packageName:id/findInPageView"),
+            exists = exists,
+        )
+
     class Transition {
         private fun threeDotButton() = onView(
             allOf(
@@ -984,9 +1032,10 @@ class BrowserRobot {
         }
 
         fun openNavigationToolbar(interact: NavigationToolbarRobot.() -> Unit): NavigationToolbarRobot.Transition {
-            mDevice.findObject(UiSelector().resourceId("$packageName:id/toolbar"))
-                .waitForExists(waitingTime)
+            navURLBar().waitForExists(waitingTime)
             navURLBar().click()
+            mDevice.findObject(UiSelector().resourceId("$packageName:id/mozac_browser_toolbar_url_view"))
+                .waitForExists(waitingTime)
 
             NavigationToolbarRobot().interact()
             return NavigationToolbarRobot.Transition()
@@ -1167,6 +1216,13 @@ class BrowserRobot {
             SettingsSubMenuAutofillRobot().interact()
             return SettingsSubMenuAutofillRobot.Transition()
         }
+
+        fun clickManageCreditCardsButton(interact: SettingsSubMenuAutofillRobot.() -> Unit): SettingsSubMenuAutofillRobot.Transition {
+            itemWithResId("$packageName:id/manage_credit_cards").clickAndWaitForNewWindow(waitingTime)
+
+            SettingsSubMenuAutofillRobot().interact()
+            return SettingsSubMenuAutofillRobot.Transition()
+        }
     }
 }
 
@@ -1298,7 +1354,8 @@ private fun setPageObjectText(webPageItem: UiObject, text: String) {
         try {
             webPageItem.also {
                 it.waitForExists(waitingTime)
-                it.setText(text)
+                it.clearTextField()
+                it.text = text
             }
 
             break

@@ -86,6 +86,7 @@ import org.mozilla.fenix.ext.getRectWithScreenLocation
 import org.mozilla.fenix.ext.increaseTapArea
 import org.mozilla.fenix.ext.registerForActivityResult
 import org.mozilla.fenix.ext.requireComponents
+import org.mozilla.fenix.ext.secure
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.search.awesomebar.AwesomeBarView
 import org.mozilla.fenix.search.awesomebar.toSearchProviderState
@@ -156,8 +157,8 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
 
         startForResult = registerForActivityResult { result ->
             result.data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)?.first()?.also {
-                toolbarView.view.edit.updateUrl(url = it, shouldHighlight = true)
-                interactor.onTextChanged(it)
+                val updatedUrl = toolbarView.view.edit.updateUrl(url = it, shouldHighlight = true, shouldAppend = true)
+                interactor.onTextChanged(updatedUrl)
                 toolbarView.view.edit.focus()
             }
         }
@@ -168,6 +169,10 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             @Deprecated("Deprecated in Java")
             override fun onBackPressed() {
                 this@SearchDialogFragment.onBackPressed()
+            }
+        }.apply {
+            if ((requireActivity() as HomeActivity).browsingModeManager.mode.isPrivate) {
+                this.secure(requireActivity())
             }
         }
     }
@@ -771,6 +776,11 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                     text = it.name,
                     start = DrawableMenuIcon(
                         drawable = it.icon.toDrawable(resources),
+                        tint = if (it.type == SearchEngine.Type.APPLICATION) {
+                            requireContext().getColorFromAttr(R.attr.textPrimary)
+                        } else {
+                            null
+                        },
                     ),
                 ) {
                     interactor.onMenuItemTapped(SearchSelectorMenu.Item.SearchEngine(it))

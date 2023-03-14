@@ -4,11 +4,13 @@
 
 package org.mozilla.fenix
 
+import android.app.assist.AssistContent
 import android.content.Context
 import android.content.Intent
 import android.content.Intent.ACTION_MAIN
 import android.content.Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
 import android.content.res.Configuration
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.StrictMode
@@ -25,6 +27,7 @@ import android.view.ViewConfiguration
 import android.view.WindowManager.LayoutParams.FLAG_SECURE
 import androidx.annotation.CallSuper
 import androidx.annotation.IdRes
+import androidx.annotation.RequiresApi
 import androidx.annotation.VisibleForTesting
 import androidx.annotation.VisibleForTesting.Companion.PROTECTED
 import androidx.appcompat.app.ActionBar
@@ -46,6 +49,7 @@ import mozilla.components.browser.state.action.ContentAction
 import mozilla.components.browser.state.action.SearchAction
 import mozilla.components.browser.state.search.SearchEngine
 import mozilla.components.browser.state.selector.getNormalOrPrivateTabs
+import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.browser.state.state.SessionState
 import mozilla.components.browser.state.state.WebExtensionState
 import mozilla.components.concept.engine.EngineSession
@@ -90,7 +94,6 @@ import org.mozilla.fenix.ext.areNotificationsEnabledSafe
 import org.mozilla.fenix.ext.breadcrumb
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.hasTopDestination
-import org.mozilla.fenix.ext.isNotificationChannelEnabled
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.setNavigationIcon
 import org.mozilla.fenix.ext.settings
@@ -98,10 +101,10 @@ import org.mozilla.fenix.gleanplumb.MessageNotificationWorker
 import org.mozilla.fenix.home.HomeFragmentDirections
 import org.mozilla.fenix.home.intent.AssistIntentProcessor
 import org.mozilla.fenix.home.intent.CrashReporterIntentProcessor
-import org.mozilla.fenix.home.intent.DefaultBrowserIntentProcessor
 import org.mozilla.fenix.home.intent.HomeDeepLinkIntentProcessor
 import org.mozilla.fenix.home.intent.OpenBrowserIntentProcessor
 import org.mozilla.fenix.home.intent.OpenSpecificTabIntentProcessor
+import org.mozilla.fenix.home.intent.ReEngagementIntentProcessor
 import org.mozilla.fenix.home.intent.SpeechProcessingIntentProcessor
 import org.mozilla.fenix.home.intent.StartSearchIntentProcessor
 import org.mozilla.fenix.library.bookmarks.BookmarkFragmentDirections
@@ -110,9 +113,7 @@ import org.mozilla.fenix.library.history.HistoryFragmentDirections
 import org.mozilla.fenix.library.historymetadata.HistoryMetadataGroupFragmentDirections
 import org.mozilla.fenix.library.recentlyclosed.RecentlyClosedFragmentDirections
 import org.mozilla.fenix.nimbus.FxNimbus
-import org.mozilla.fenix.onboarding.DefaultBrowserNotificationWorker
 import org.mozilla.fenix.onboarding.FenixOnboarding
-import org.mozilla.fenix.onboarding.MARKETING_CHANNEL_ID
 import org.mozilla.fenix.onboarding.ReEngagementNotificationWorker
 import org.mozilla.fenix.onboarding.ensureMarketingChannelExists
 import org.mozilla.fenix.perf.MarkersActivityLifecycleCallbacks
@@ -198,7 +199,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             StartSearchIntentProcessor(),
             OpenBrowserIntentProcessor(this, ::getIntentSessionId),
             OpenSpecificTabIntentProcessor(this),
-            DefaultBrowserIntentProcessor(this),
+            ReEngagementIntentProcessor(this, settings()),
         )
     }
 
@@ -431,15 +432,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             // that we should not rely on the application being killed between user sessions.
             components.appStore.dispatch(AppAction.ResumedMetricsAction)
 
-            with(applicationContext) {
-                // Only set up Workers if notifications are enabled
-                val notificationManagerCompat = NotificationManagerCompat.from(this)
-                if (notificationManagerCompat.isNotificationChannelEnabled(MARKETING_CHANNEL_ID)) {
-                    DefaultBrowserNotificationWorker.setDefaultBrowserNotificationIfNeeded(this)
-                    ReEngagementNotificationWorker.setReEngagementNotificationIfNeeded(this)
-                    MessageNotificationWorker.setMessageNotificationWorker(this)
-                }
-            }
+            ReEngagementNotificationWorker.setReEngagementNotificationIfNeeded(applicationContext)
+            MessageNotificationWorker.setMessageNotificationWorker(applicationContext)
         }
 
         // This was done in order to refresh search engines when app is running in background
@@ -521,6 +515,13 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         //
         // NB: There are ways for the user to install new products without leaving the browser.
         BrowsersCache.resetAll()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    override fun onProvideAssistContent(outContent: AssistContent?) {
+        super.onProvideAssistContent(outContent)
+        val currentTabUrl = components.core.store.state.selectedTab?.content?.url
+        outContent?.webUri = currentTabUrl?.let { Uri.parse(it) }
     }
 
     private fun getBookmarkCount(node: BookmarkNode): Int {

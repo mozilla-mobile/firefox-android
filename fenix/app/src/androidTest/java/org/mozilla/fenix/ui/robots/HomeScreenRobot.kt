@@ -37,6 +37,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withHint
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.uiautomator.By
+import androidx.test.uiautomator.UiObject
 import androidx.test.uiautomator.UiScrollable
 import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
@@ -55,11 +56,13 @@ import org.mozilla.fenix.helpers.Constants.LISTS_MAXSWIPES
 import org.mozilla.fenix.helpers.Constants.LONG_CLICK_DURATION
 import org.mozilla.fenix.helpers.MatcherHelper.assertCheckedItemWithResIdExists
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemContainingTextExists
+import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithDescriptionExists
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithResIdAndDescriptionExists
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithResIdAndTextExists
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithResIdExists
 import org.mozilla.fenix.helpers.MatcherHelper.checkedItemWithResId
 import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithDescription
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdAndDescription
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdAndText
@@ -74,6 +77,7 @@ import org.mozilla.fenix.helpers.TestHelper.scrollToElementByText
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
 import org.mozilla.fenix.helpers.withBitmapDrawable
+import org.mozilla.fenix.utils.Settings
 
 /**
  * Implementation of Robot Pattern for the home screen menu.
@@ -88,6 +92,13 @@ class HomeScreenRobot {
     fun verifyNavigationToolbar() = assertItemWithResIdExists(navigationToolbar)
     fun verifyFocusedNavigationToolbar() = assertFocusedNavigationToolbar()
     fun verifyHomeScreen() = assertItemWithResIdExists(homeScreen)
+
+    fun verifyPrivateBrowsingHomeScreen() {
+        verifyHomeScreenAppBarItems()
+        assertItemContainingTextExists(itemContainingText(privateSessionMessage))
+        verifyCommonMythsLink()
+        verifyNavigationToolbarItems()
+    }
 
     fun verifyHomeScreenAppBarItems() =
         assertItemWithResIdExists(homeScreen, privateBrowsingButton, homepageWordmark)
@@ -151,9 +162,9 @@ class HomeScreenRobot {
         assertItemWithResIdExists(signInButton)
     }
 
-    fun verifyPrivacyProtectionCard(isStandardChecked: Boolean, isStrictChecked: Boolean) {
+    fun verifyPrivacyProtectionCard(settings: Settings, isStandardChecked: Boolean, isStrictChecked: Boolean) {
         scrollToElementByText(getStringResource(R.string.onboarding_privacy_notice_header_1))
-        assertItemContainingTextExists(privacyProtectionHeader, privacyProtectionDescription)
+        assertItemContainingTextExists(privacyProtectionHeader, privacyProtectionDescription(settings))
         assertCheckedItemWithResIdExists(
             standardTrackingProtectionToggle(isStandardChecked),
             strictTrackingProtectionToggle(isStrictChecked),
@@ -178,7 +189,7 @@ class HomeScreenRobot {
         assertItemContainingTextExists(conclusionHeader)
     }
 
-    fun verifyNavigationToolbarItems(numberOfOpenTabs: String) {
+    fun verifyNavigationToolbarItems(numberOfOpenTabs: String = "0") {
         assertItemWithResIdExists(navigationToolbar, menuButton)
         assertItemWithResIdAndTextExists(tabCounter(numberOfOpenTabs))
     }
@@ -262,7 +273,8 @@ class HomeScreenRobot {
             .onNodeWithText(getStringResource(R.string.onboarding_home_skip_button))
             .performClick()
 
-    fun verifyPrivateSessionMessage() = assertPrivateSessionMessage()
+    fun verifyCommonMythsLink() =
+        assertItemContainingTextExists(itemContainingText(getStringResource(R.string.private_browsing_common_myths)))
 
     fun verifyExistingTopSitesList() = assertExistingTopSitesList()
     fun verifyNotExistingTopSitesList(title: String) = assertNotExistingTopSitesList(title)
@@ -291,8 +303,10 @@ class HomeScreenRobot {
         assertTrue(jumpBackInSection().waitForExists(waitingTime))
     }
     fun verifyJumpBackInSectionIsNotDisplayed() = assertJumpBackInSectionIsNotDisplayed()
-    fun verifyJumpBackInItemTitle(itemTitle: String) = assertJumpBackInItemTitle(itemTitle)
-    fun verifyJumpBackInItemWithUrl(itemUrl: String) = assertJumpBackInItemWithUrl(itemUrl)
+    fun verifyJumpBackInItemTitle(testRule: ComposeTestRule, itemTitle: String) =
+        assertJumpBackInItemTitle(testRule, itemTitle)
+    fun verifyJumpBackInItemWithUrl(testRule: ComposeTestRule, itemUrl: String) =
+        assertJumpBackInItemWithUrl(testRule, itemUrl)
     fun verifyJumpBackInShowAllButton() = assertJumpBackInShowAllButton()
     fun verifyRecentlyVisitedSectionIsDisplayed() = assertRecentlyVisitedSectionIsDisplayed()
     fun verifyRecentlyVisitedSectionIsNotDisplayed() = assertRecentlyVisitedSectionIsNotDisplayed()
@@ -322,10 +336,8 @@ class HomeScreenRobot {
     // Collections elements
     fun verifyCollectionIsDisplayed(title: String, collectionExists: Boolean = true) {
         if (collectionExists) {
-            scrollToElementByText(title)
             assertTrue(mDevice.findObject(UiSelector().text(title)).waitForExists(waitingTime))
         } else {
-            scrollToElementByText("Collections")
             assertTrue(mDevice.findObject(UiSelector().text(title)).waitUntilGone(waitingTime))
         }
     }
@@ -721,13 +733,10 @@ class HomeScreenRobot {
             return TabDrawerRobot.Transition()
         }
 
-        fun expandCollection(title: String, rule: ComposeTestRule, interact: CollectionRobot.() -> Unit): CollectionRobot.Transition {
-            homeScreenList().waitForExists(waitingTime)
-            homeScreenList().scrollToEnd(LISTS_MAXSWIPES)
-
-            collectionTitle(title, rule)
-                .assertIsDisplayed()
-                .performClick()
+        fun expandCollection(title: String, interact: CollectionRobot.() -> Unit): CollectionRobot.Transition {
+            assertItemContainingTextExists(itemContainingText(title))
+            itemContainingText(title).clickAndWaitForNewWindow(waitingTimeShort)
+            assertItemWithDescriptionExists(itemWithDescription(getStringResource(R.string.remove_tab_from_collection)))
 
             CollectionRobot().interact()
             return CollectionRobot.Transition()
@@ -820,11 +829,11 @@ class HomeScreenRobot {
             return SyncSignInRobot.Transition()
         }
 
-        fun clickPrivacyNoticeButton(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
+        fun clickPrivacyNoticeButton(interact: CustomTabRobot.() -> Unit): CustomTabRobot.Transition {
             privacyNoticeButton.clickAndWaitForNewWindow(waitingTimeShort)
 
-            BrowserRobot().interact()
-            return BrowserRobot.Transition()
+            CustomTabRobot().interact()
+            return CustomTabRobot.Transition()
         }
     }
 }
@@ -890,16 +899,6 @@ private fun verifySearchEngineIcon(searchEngineName: String) {
         ?: throw AssertionError("No search engine with name $searchEngineName")
     verifySearchEngineIcon(defaultSearchEngine.icon, defaultSearchEngine.name)
 }
-
-private fun assertPrivateSessionMessage() =
-    assertTrue(
-        mDevice.findObject(
-            UiSelector()
-                .textContains(
-                    getStringResource(R.string.private_browsing_common_myths),
-                ),
-        ).waitForExists(waitingTime),
-    )
 
 private fun collectionTitle(title: String, rule: ComposeTestRule) =
     rule.onNode(hasText(title))
@@ -991,25 +990,11 @@ private fun assertTopSiteContextMenuItems() {
 
 private fun assertJumpBackInSectionIsNotDisplayed() = assertFalse(jumpBackInSection().waitForExists(waitingTimeShort))
 
-private fun assertJumpBackInItemTitle(itemTitle: String) =
-    assertTrue(
-        mDevice
-            .findObject(
-                UiSelector()
-                    .resourceId("recent.tab.title")
-                    .textContains(itemTitle),
-            ).waitForExists(waitingTime),
-    )
+private fun assertJumpBackInItemTitle(testRule: ComposeTestRule, itemTitle: String) =
+    testRule.onNodeWithTag("recent.tab.title", useUnmergedTree = true).assert(hasText(itemTitle))
 
-private fun assertJumpBackInItemWithUrl(itemUrl: String) =
-    assertTrue(
-        mDevice
-            .findObject(
-                UiSelector()
-                    .resourceId("recent.tab.url")
-                    .textContains(itemUrl),
-            ).waitForExists(waitingTime),
-    )
+private fun assertJumpBackInItemWithUrl(testRule: ComposeTestRule, itemUrl: String) =
+    testRule.onNodeWithTag("recent.tab.url", useUnmergedTree = true).assert(hasText(itemUrl))
 
 private fun assertJumpBackInShowAllButton() =
     assertTrue(
@@ -1059,6 +1044,16 @@ private fun sponsoredShortcut(sponsoredShortcutTitle: String) =
 
 private fun storyByTopicItem(composeTestRule: ComposeTestRule, position: Int) =
     composeTestRule.onNodeWithTag("pocket.categories").onChildAt(position - 1)
+
+private fun privacyProtectionDescription(settings: Settings): UiObject {
+    val isTCPPublic = settings.enabledTotalCookieProtectionCFR
+    val descriptionText = when (isTCPPublic) {
+        true -> R.string.onboarding_tracking_protection_description
+        false -> R.string.onboarding_tracking_protection_description_old
+    }
+
+    return itemContainingText(getStringResource(descriptionText))
+}
 
 private val homeScreen =
     itemWithResId("$packageName:id/homeLayout")
@@ -1112,8 +1107,6 @@ private val signInButton =
     itemWithResId("$packageName:id/fxa_sign_in_button")
 private val privacyProtectionHeader =
     itemContainingText(getStringResource(R.string.onboarding_tracking_protection_header))
-private val privacyProtectionDescription =
-    itemContainingText(getStringResource(R.string.onboarding_tracking_protection_description))
 private fun standardTrackingProtectionToggle(isChecked: Boolean) =
     checkedItemWithResId("$packageName:id/tracking_protection_standard_option", isChecked)
 private fun strictTrackingProtectionToggle(isChecked: Boolean) =

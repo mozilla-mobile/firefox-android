@@ -11,8 +11,11 @@ import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
+import io.mockk.mockkObject
 import io.mockk.mockkStatic
+import io.mockk.slot
 import io.mockk.spyk
+import io.mockk.unmockkObject
 import io.mockk.unmockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -56,6 +59,7 @@ import org.mozilla.fenix.GleanMetrics.RecentTabs
 import org.mozilla.fenix.GleanMetrics.TopSites
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.browser.BrowserFragmentDirections
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.Analytics
 import org.mozilla.fenix.components.AppStore
@@ -400,7 +404,7 @@ class DefaultSessionControlControllerTest {
         verify {
             activity.openToBrowserAndLoad(
                 searchTermOrURL = SupportUtils.getGenericSumoURLForTopic
-                (SupportUtils.SumoTopic.PRIVATE_BROWSING_MYTHS),
+                    (SupportUtils.SumoTopic.PRIVATE_BROWSING_MYTHS),
                 newTab = true,
                 from = BrowserDirection.FromHome,
             )
@@ -963,14 +967,22 @@ class DefaultSessionControlControllerTest {
 
     @Test
     fun handleReadPrivacyNoticeClicked() {
+        mockkObject(SupportUtils)
+        val urlCaptor = slot<String>()
+        every { SupportUtils.createCustomTabIntent(any(), capture(urlCaptor)) } returns mockk()
+
         createController().handleReadPrivacyNoticeClicked()
+
         verify {
-            activity.openToBrowserAndLoad(
-                searchTermOrURL = SupportUtils.getMozillaPageUrl(SupportUtils.MozillaPage.PRIVATE_NOTICE),
-                newTab = true,
-                from = BrowserDirection.FromHome,
+            activity.startActivity(
+                any(),
             )
         }
+        assertEquals(
+            SupportUtils.getMozillaPageUrl(SupportUtils.MozillaPage.PRIVATE_NOTICE),
+            urlCaptor.captured,
+        )
+        unmockkObject(SupportUtils)
     }
 
     @Test
@@ -1038,6 +1050,9 @@ class DefaultSessionControlControllerTest {
     fun handleRemoveCollectionsPlaceholder() {
         createController().handleRemoveCollectionsPlaceholder()
 
+        val recordedEvents = Collections.placeholderCancel.testGetValue()!!
+        assertEquals(1, recordedEvents.size)
+        assertEquals(null, recordedEvents.single().extra)
         verify {
             settings.showCollectionsPlaceholderOnHome = false
             appStore.dispatch(AppAction.RemoveCollectionsPlaceholder)
@@ -1088,6 +1103,11 @@ class DefaultSessionControlControllerTest {
         verify {
             settings.incrementNumTimesPrivateModeOpened()
             AppAction.ModeChange(Mode.fromBrowsingMode(newMode))
+            navController.navigate(
+                BrowserFragmentDirections.actionGlobalSearchDialog(
+                    sessionId = null,
+                ),
+            )
         }
     }
 
@@ -1117,6 +1137,11 @@ class DefaultSessionControlControllerTest {
         verify {
             appStore.dispatch(
                 AppAction.ModeChange(Mode.fromBrowsingMode(newMode)),
+            )
+            navController.navigate(
+                BrowserFragmentDirections.actionGlobalSearchDialog(
+                    sessionId = null,
+                ),
             )
         }
     }

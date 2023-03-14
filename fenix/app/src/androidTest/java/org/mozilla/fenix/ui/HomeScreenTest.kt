@@ -6,9 +6,7 @@ package org.mozilla.fenix.ui
 
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
-import androidx.test.uiautomator.Until
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
@@ -20,8 +18,6 @@ import org.mozilla.fenix.helpers.Constants.POCKET_RECOMMENDED_STORIES_UTM_PARAM
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.RetryTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
-import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
-import org.mozilla.fenix.helpers.ext.waitNotNull
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
 
@@ -97,33 +93,9 @@ class HomeScreenTest {
         homeScreen { }.togglePrivateBrowsingMode()
 
         homeScreen {
-            verifyHomeScreen()
-            verifyNavigationToolbar()
-            verifyHomePrivateBrowsingButton()
-            verifyHomeMenuButton()
-            verifyHomeWordmark()
-            verifyTabButton()
-            verifyPrivateSessionMessage()
-            verifyNavigationToolbar()
-            verifyHomeComponent()
+            verifyPrivateBrowsingHomeScreen()
         }.openCommonMythsLink {
             verifyUrl("common-myths-about-private-browsing")
-            mDevice.pressBack()
-        }
-
-        homeScreen {
-            // To deal with the race condition where multiple "add tab" buttons are present,
-            // we need to wait until previous HomeFragment View objects are gone.
-            mDevice.waitNotNull(Until.gone(By.text(privateSessionMessage)), waitingTime)
-            verifyHomeScreen()
-            verifyNavigationToolbar()
-            verifyHomePrivateBrowsingButton()
-            verifyHomeMenuButton()
-            verifyHomeWordmark()
-            verifyTabButton()
-            verifyPrivateSessionMessage()
-            verifyNavigationToolbar()
-            verifyHomeComponent()
         }
     }
 
@@ -134,27 +106,39 @@ class HomeScreenTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(firstWebPage.url) {
+            verifyPageContent(firstWebPage.content)
+            verifyUrl(firstWebPage.url.toString())
         }.goToHomescreen {
             verifyJumpBackInSectionIsDisplayed()
-            verifyJumpBackInItemTitle(firstWebPage.title)
-            verifyJumpBackInItemWithUrl(firstWebPage.url.toString())
+            verifyJumpBackInItemTitle(activityTestRule, firstWebPage.title)
+            verifyJumpBackInItemWithUrl(activityTestRule, firstWebPage.url.toString())
             verifyJumpBackInShowAllButton()
         }.clickJumpBackInShowAllButton {
             verifyExistingOpenTabs(firstWebPage.title)
         }.closeTabDrawer {
         }
-        homeScreen {
-        }.clickJumpBackInItemWithTitle(firstWebPage.title) {
-            verifyUrl(firstWebPage.url.toString())
-            clickLinkMatchingText("Link 1")
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(secondWebPage.url) {
             verifyPageContent(secondWebPage.content)
+            verifyUrl(secondWebPage.url.toString())
         }.goToHomescreen {
             verifyJumpBackInSectionIsDisplayed()
-            verifyJumpBackInItemTitle(secondWebPage.title)
-            verifyJumpBackInItemWithUrl(secondWebPage.url.toString())
+            verifyJumpBackInItemTitle(activityTestRule, secondWebPage.title)
+            verifyJumpBackInItemWithUrl(activityTestRule, secondWebPage.url.toString())
+        }.openTabDrawer {
+            closeTabWithTitle(secondWebPage.title)
+        }.closeTabDrawer {
+        }
+
+        homeScreen {
+            verifyJumpBackInSectionIsDisplayed()
+            verifyJumpBackInItemTitle(activityTestRule, firstWebPage.title)
+            verifyJumpBackInItemWithUrl(activityTestRule, firstWebPage.url.toString())
         }.openTabDrawer {
             closeTab()
         }
+
         homeScreen {
             verifyJumpBackInSectionIsNotDisplayed()
         }
@@ -227,7 +211,6 @@ class HomeScreenTest {
         }
     }
 
-    @Ignore("failing after a design refactor, see https://github.com/mozilla-mobile/fenix/issues/28472")
     @Test
     fun selectStoriesByTopicItemTest() {
         activityTestRule.activityRule.applySettingsExceptions {

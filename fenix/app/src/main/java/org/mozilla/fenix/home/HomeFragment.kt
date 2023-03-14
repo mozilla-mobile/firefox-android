@@ -75,11 +75,13 @@ import mozilla.components.lib.state.ext.consumeFlow
 import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
+import mozilla.components.support.ktx.android.content.getColorFromAttr
 import mozilla.components.support.ktx.android.content.res.resolveAttribute
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.HomeScreen
+import org.mozilla.fenix.GleanMetrics.PrivateBrowsingShortcutCfr
 import org.mozilla.fenix.GleanMetrics.UnifiedSearch
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
@@ -396,7 +398,6 @@ class HomeFragment : Fragment() {
             recentTabController = DefaultRecentTabsController(
                 selectTabUseCase = components.useCases.tabsUseCases.selectTab,
                 navController = findNavController(),
-                store = components.core.store,
                 appStore = components.appStore,
             ),
             recentSyncedTabController = DefaultRecentSyncedTabController(
@@ -434,6 +435,8 @@ class HomeFragment : Fragment() {
         updateSessionControlView()
 
         appBarLayout = binding.homeAppBar
+
+        disableAppBarDragging()
 
         activity.themeManager.applyStatusBarTheme(activity)
 
@@ -503,6 +506,22 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private fun disableAppBarDragging() {
+        if (binding.homeAppBar.layoutParams != null) {
+            val appBarLayoutParams = binding.homeAppBar.layoutParams as CoordinatorLayout.LayoutParams
+            val appBarBehavior = AppBarLayout.Behavior()
+            appBarBehavior.setDragCallback(
+                object : AppBarLayout.Behavior.DragCallback() {
+                    override fun canDrag(appBarLayout: AppBarLayout): Boolean {
+                        return false
+                    }
+                },
+            )
+            appBarLayoutParams.behavior = appBarBehavior
+        }
+        binding.homeAppBar.setExpanded(true)
+    }
+
     private fun updateLayout(view: View) {
         when (requireContext().settings().toolbarPosition) {
             ToolbarPosition.TOP -> {
@@ -551,7 +570,7 @@ class HomeFragment : Fragment() {
         observeSearchEngineNameChanges()
         observeWallpaperUpdates()
 
-        HomeMenuBuilder(
+        HomeMenuView(
             view = view,
             context = view.context,
             lifecycleOwner = viewLifecycleOwner,
@@ -561,12 +580,12 @@ class HomeFragment : Fragment() {
             hideOnboardingIfNeeded = ::hideOnboardingIfNeeded,
         ).build()
 
-        TabCounterBuilder(
+        TabCounterView(
             context = requireContext(),
             browsingModeManager = browsingModeManager,
             navController = findNavController(),
             tabCounter = binding.tabButton,
-        ).build()
+        )
 
         binding.toolbar.compoundDrawablePadding =
             view.resources.getDimensionPixelSize(R.dimen.search_bar_search_engine_icon_padding)
@@ -624,7 +643,6 @@ class HomeFragment : Fragment() {
                     adapter.getItemViewType(it) == CollectionHeaderViewHolder.LAYOUT_ID
                 }
                 collectionPosition?.run {
-                    appBarLayout?.setExpanded(false)
                     val linearLayoutManager = recyclerView.layoutManager as LinearLayoutManager
                     smoothScroller.targetPosition = this
                     linearLayoutManager.startSmoothScroll(smoothScroller)
@@ -655,6 +673,11 @@ class HomeFragment : Fragment() {
                     text = it.name,
                     start = DrawableMenuIcon(
                         drawable = it.icon.toDrawable(resources),
+                        tint = if (it.type == SearchEngine.Type.APPLICATION) {
+                            requireContext().getColorFromAttr(R.attr.textPrimary)
+                        } else {
+                            null
+                        },
                     ),
                 ) {
                     sessionControlInteractor.onMenuItemTapped(SearchSelectorMenu.Item.SearchEngine(it))
@@ -906,12 +929,14 @@ class HomeFragment : Fragment() {
                 this.increaseTapArea(CFR_TAP_INCREASE_DPS)
 
                 setOnClickListener {
+                    PrivateBrowsingShortcutCfr.addShortcut.record(NoExtras())
                     PrivateShortcutCreateManager.createPrivateShortcut(context)
                     privateBrowsingRecommend.dismiss()
                 }
             }
             layout.findViewById<Button>(R.id.cfr_neg_button).apply {
                 setOnClickListener {
+                    PrivateBrowsingShortcutCfr.cancel.record()
                     privateBrowsingRecommend.dismiss()
                 }
             }

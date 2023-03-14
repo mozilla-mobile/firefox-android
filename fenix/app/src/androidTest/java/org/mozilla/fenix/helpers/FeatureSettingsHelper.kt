@@ -72,6 +72,11 @@ interface FeatureSettingsHelper {
      */
     var isCookieBannerReductionDialogEnabled: Boolean
 
+    /**
+     * Enable or disable open in app banner.
+     */
+    var isOpenInAppBannerEnabled: Boolean
+
     fun applyFlagUpdates()
 
     fun resetAllFeatureFlags()
@@ -88,5 +93,4 @@ enum class ETPPolicy {
     STANDARD,
     STRICT,
     CUSTOM,
-    ;
 }

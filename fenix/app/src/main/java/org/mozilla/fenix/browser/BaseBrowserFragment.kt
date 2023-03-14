@@ -63,7 +63,8 @@ import mozilla.components.feature.contextmenu.ContextMenuCandidate
 import mozilla.components.feature.contextmenu.ContextMenuFeature
 import mozilla.components.feature.downloads.DownloadsFeature
 import mozilla.components.feature.downloads.manager.FetchDownloadManager
-import mozilla.components.feature.downloads.share.ShareDownloadFeature
+import mozilla.components.feature.downloads.temporary.CopyDownloadFeature
+import mozilla.components.feature.downloads.temporary.ShareDownloadFeature
 import mozilla.components.feature.intent.ext.EXTRA_SESSION_ID
 import mozilla.components.feature.media.fullscreen.MediaSessionFullscreenFeature
 import mozilla.components.feature.privatemode.feature.SecureWindowFeature
@@ -143,6 +144,7 @@ import org.mozilla.fenix.onboarding.FenixOnboarding
 import org.mozilla.fenix.perf.MarkersFragmentLifecycleCallbacks
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.settings.biometric.BiometricPromptFeature
+import org.mozilla.fenix.tabstray.ext.toDisplayTitle
 import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.utils.allowUndo
 import org.mozilla.fenix.wifi.SitePermissionsWifiIntegration
@@ -188,6 +190,7 @@ abstract class BaseBrowserFragment :
     private val contextMenuFeature = ViewBoundFeatureWrapper<ContextMenuFeature>()
     private val downloadsFeature = ViewBoundFeatureWrapper<DownloadsFeature>()
     private val shareDownloadsFeature = ViewBoundFeatureWrapper<ShareDownloadFeature>()
+    private val copyDownloadsFeature = ViewBoundFeatureWrapper<CopyDownloadFeature>()
     private val appLinksFeature = ViewBoundFeatureWrapper<AppLinksFeature>()
     private val promptsFeature = ViewBoundFeatureWrapper<PromptFeature>()
     private val findInPageIntegration = ViewBoundFeatureWrapper<FindInPageIntegration>()
@@ -387,7 +390,7 @@ abstract class BaseBrowserFragment :
             readerModeController = readerMenuController,
             sessionFeature = sessionFeature,
             findInPageLauncher = { findInPageIntegration.withFeature { it.launch() } },
-            swipeRefresh = binding.swipeRefresh,
+            snackbarParent = binding.dynamicSnackbarContainer,
             browserAnimator = browserAnimator,
             customTabSessionId = customTabSessionId,
             openInFenixIntent = openInFenixIntent,
@@ -484,6 +487,15 @@ abstract class BaseBrowserFragment :
             httpClient = context.components.core.client,
             store = store,
             tabId = customTabSessionId,
+        )
+
+        val copyDownloadFeature = CopyDownloadFeature(
+            context = context.applicationContext,
+            httpClient = context.components.core.client,
+            store = store,
+            tabId = customTabSessionId,
+            snackbarParent = binding.dynamicSnackbarContainer,
+            snackbarDelegate = FenixSnackbarDelegate(binding.dynamicSnackbarContainer),
         )
 
         val downloadFeature = DownloadsFeature(
@@ -594,6 +606,12 @@ abstract class BaseBrowserFragment :
             view = view,
         )
 
+        copyDownloadsFeature.set(
+            copyDownloadFeature,
+            owner = this,
+            view = view,
+        )
+
         downloadsFeature.set(
             downloadFeature,
             owner = this,
@@ -613,8 +631,9 @@ abstract class BaseBrowserFragment :
                 store = store,
                 sessionId = customTabSessionId,
                 fragmentManager = parentFragmentManager,
-                launchInApp = { context.settings().openLinksInExternalApp },
+                launchInApp = { context.settings().shouldOpenLinksInApp() },
                 loadUrlUseCase = context.components.useCases.sessionUseCases.loadUrl,
+                shouldPrompt = { context.settings().shouldPromptOpenLinksInApp() },
             ),
             owner = this,
             view = view,
@@ -1143,6 +1162,7 @@ abstract class BaseBrowserFragment :
                 val toolbarHeight = resources.getDimensionPixelSize(R.dimen.browser_toolbar_height)
                 val context = requireContext()
                 resumeDownloadDialogState(selectedTab.id, context.components.core.store, context, toolbarHeight)
+                it.announceForAccessibility(selectedTab.toDisplayTitle())
             }
         } else {
             view?.let { view -> initializeUI(view) }

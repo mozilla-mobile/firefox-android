@@ -24,7 +24,7 @@ object FeatureFlags {
      * Pull-to-refresh allows you to pull the web content down far enough to have the page to
      * reload.
      */
-    val pullToRefreshEnabled = Config.channel.isNightlyOrDebug
+    val pullToRefreshEnabled = Config.channel.isNightlyOrDebug || Config.channel.isBeta
 
     /**
      * Enables the Sync Addresses feature.
@@ -71,11 +71,4 @@ object FeatureFlags {
      * Enables the notification pre permission prompt.
      */
     const val notificationPrePermissionPromptEnabled = true
-
-    /**
-     * Enables storage maintenance feature.
-     *
-     * Feature flag tracking: https://github.com/mozilla-mobile/fenix/issues/27759
-     * */
-    val storageMaintenanceFeature = Config.channel.isNightlyOrDebug || Config.channel.isBeta
 }
