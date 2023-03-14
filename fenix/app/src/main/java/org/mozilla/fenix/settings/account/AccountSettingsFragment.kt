@@ -34,6 +34,7 @@ import mozilla.components.service.fxa.sync.SyncReason
 import mozilla.components.service.fxa.sync.SyncStatusObserver
 import mozilla.components.service.fxa.sync.getLastSynced
 import mozilla.components.support.ktx.android.content.getColorFromAttr
+import mozilla.components.ui.widgets.withCenterAlignedButtons
 import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.FeatureFlags
@@ -293,7 +294,7 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
                     )
                     startActivity(intent)
                 }
-                create()
+                create().withCenterAlignedButtons()
             }.show().secure(activity)
             it.settings().incrementShowLoginsSecureWarningSyncCount()
         }
