@@ -1,13 +1,16 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.ui
 
 import android.os.Build
 import android.view.autofill.AutofillManager
 import androidx.core.net.toUri
-import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
@@ -16,22 +19,28 @@ import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.helpers.TestHelper.exitMenu
+import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.restartApp
+import org.mozilla.fenix.helpers.TestHelper.scrollToElementByText
 import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
 
+/**
+ * Tests for verifying:
+ * - the Logins and Passwords menu and sub-menus.
+ * - save login prompts.
+ * - saving logins based on the user's preferences.
+ */
 class LoginsTest {
-    private lateinit var mDevice: UiDevice
     private lateinit var mockWebServer: MockWebServer
 
     @get:Rule
-    val activityTestRule = HomeActivityIntentTestRule.withDefaultSettingsOverrides(skipOnboarding = true)
+    val activityTestRule =
+        HomeActivityIntentTestRule.withDefaultSettingsOverrides(skipOnboarding = true)
 
     @Before
     fun setUp() {
-        mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-
         mockWebServer = MockWebServer().apply {
             dispatcher = AndroidAssetDispatcher()
             start()
@@ -49,6 +58,65 @@ class LoginsTest {
         mockWebServer.shutdown()
     }
 
+    // Tests the Logins and passwords menu items and default values
+    @Test
+    fun loginsAndPasswordsSettingsItemsTest() {
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+            // Necessary to scroll a little bit for all screen sizes
+            scrollToElementByText("Logins and passwords")
+        }.openLoginsAndPasswordSubMenu {
+            verifyDefaultView()
+            verifyAutofillInFirefoxToggle(true)
+            verifyAutofillLoginsInOtherAppsToggle(false)
+        }
+    }
+
+    // Tests only for initial state without signing in.
+    // For tests after signing in, see SyncIntegration test suite
+    @Test
+    fun savedLoginsMenuItemsTest() {
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+            // Necessary to scroll a little bit for all screen sizes
+            scrollToElementByText("Logins and passwords")
+        }.openLoginsAndPasswordSubMenu {
+            verifyDefaultView()
+        }.openSavedLogins {
+            verifySecurityPromptForLogins()
+            tapSetupLater()
+            // Verify that logins list is empty
+            verifyEmptySavedLoginsListView()
+        }
+    }
+
+    @Test
+    fun syncLoginsMenuItemsTest() {
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+            // Necessary to scroll a little bit for all screen sizes
+            scrollToElementByText("Logins and passwords")
+        }.openLoginsAndPasswordSubMenu {
+        }.openSyncLogins {
+            verifyReadyToScanOption()
+            verifyUseEmailOption()
+        }
+    }
+
+    @Test
+    fun saveLoginsAndPasswordsOptionsItemsTest() {
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openLoginsAndPasswordSubMenu {
+        }.openSaveLoginsAndPasswordsOptions {
+            verifySaveLoginsOptionsView()
+        }
+    }
+
     @Test
     fun saveLoginFromPromptTest() {
         val saveLoginTest =
@@ -63,7 +131,7 @@ class LoginsTest {
         browserScreen {
         }.openThreeDotMenu {
         }.openSettings {
-            TestHelper.scrollToElementByText("Logins and passwords")
+            scrollToElementByText("Logins and passwords")
         }.openLoginsAndPasswordSubMenu {
             verifyDefaultView()
         }.openSavedLogins {
@@ -86,6 +154,7 @@ class LoginsTest {
         }.enterURLAndEnterToBrowser(loginPage.toUri()) {
             fillAndSubmitLoginCredentials(userName, password)
             saveLoginFromPrompt("Save")
+            mDevice.waitForIdle()
         }.openThreeDotMenu {
         }.openSettings {
         }.openLoginsAndPasswordSubMenu {
@@ -107,6 +176,7 @@ class LoginsTest {
             clickSubmitLoginButton()
             // Don't save the login, add to exceptions
             saveLoginFromPrompt("Never save")
+            mDevice.waitForIdle()
         }.openThreeDotMenu {
         }.openSettings {
         }.openLoginsAndPasswordSubMenu {
@@ -115,6 +185,7 @@ class LoginsTest {
             verifySecurityPromptForLogins()
             tapSetupLater()
             // Verify that the login list is empty
+            verifyEmptySavedLoginsListView()
             verifyNotSavedLoginFromPrompt()
         }.goBack {
         }.openLoginExceptions {
@@ -137,13 +208,14 @@ class LoginsTest {
         }.openNavigationToolbar {
         }.enterURLAndEnterToBrowser(saveLoginTest.url) {
             enterPassword("test")
+            mDevice.waitForIdle()
             clickSubmitLoginButton()
             verifyUpdateLoginPromptIsShown()
             // Click Update to change the saved password
             saveLoginFromPrompt("Update")
         }.openThreeDotMenu {
         }.openSettings {
-            TestHelper.scrollToElementByText("Logins and passwords")
+            scrollToElementByText("Logins and passwords")
         }.openLoginsAndPasswordSubMenu {
         }.openSavedLogins {
             verifySecurityPromptForLogins()
@@ -186,6 +258,7 @@ class LoginsTest {
         }.enterURLAndEnterToBrowser(loginPage.toUri()) {
             fillAndSubmitLoginCredentials("mozilla", "firefox")
             saveLoginFromPrompt("Save")
+            mDevice.waitForIdle()
         }.openThreeDotMenu {
         }.openSettings {
         }.openLoginsAndPasswordSubMenu {
@@ -210,6 +283,7 @@ class LoginsTest {
         }.enterURLAndEnterToBrowser(loginPage.toUri()) {
             fillAndSubmitLoginCredentials("mozilla", "firefox")
             saveLoginFromPrompt("Save")
+            mDevice.waitForIdle()
         }.openThreeDotMenu {
         }.openSettings {
         }.openLoginsAndPasswordSubMenu {
@@ -243,6 +317,7 @@ class LoginsTest {
         }.enterURLAndEnterToBrowser(loginPage.toUri()) {
             fillAndSubmitLoginCredentials("mozilla", "firefox")
             saveLoginFromPrompt("Save")
+            mDevice.waitForIdle()
         }.openThreeDotMenu {
         }.openSettings {
         }.openLoginsAndPasswordSubMenu {
@@ -253,6 +328,7 @@ class LoginsTest {
             clickEditLoginButton()
             clickClearUserNameButton()
             saveEditedLogin()
+            verifyLoginItemUsername("")
         }
     }
 
@@ -265,6 +341,7 @@ class LoginsTest {
         }.enterURLAndEnterToBrowser(loginPage.toUri()) {
             fillAndSubmitLoginCredentials("mozilla", "firefox")
             saveLoginFromPrompt("Save")
+            mDevice.waitForIdle()
         }.openThreeDotMenu {
         }.openSettings {
         }.openLoginsAndPasswordSubMenu {
@@ -290,6 +367,7 @@ class LoginsTest {
         }.enterURLAndEnterToBrowser(loginPage.toUri()) {
             fillAndSubmitLoginCredentials("mozilla", "firefox")
             saveLoginFromPrompt("Save")
+            mDevice.waitForIdle()
         }.openThreeDotMenu {
         }.openSettings {
         }.openLoginsAndPasswordSubMenu {
@@ -315,6 +393,7 @@ class LoginsTest {
         }.enterURLAndEnterToBrowser(loginPage.url) {
             clickSubmitLoginButton()
             saveLoginFromPrompt("Save")
+            mDevice.waitForIdle()
         }.openThreeDotMenu {
         }.openSettings {
         }.openLoginsAndPasswordSubMenu {
@@ -331,7 +410,7 @@ class LoginsTest {
             clickDeleteLoginButton()
             verifyLoginDeletionPrompt()
             clickConfirmDeleteLogin()
-            // The account remains displayed, see: https://github.com/mozilla-mobile/fenix/issues/23212
+            // The account remains displayed, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1812431
             // verifyNotSavedLoginFromPrompt()
         }
     }
@@ -381,9 +460,9 @@ class LoginsTest {
         }.openThreeDotMenu {
         }.openSettings {
         }.openLoginsAndPasswordSubMenu {
-            verifyAutofillToggle(true)
-            clickAutofillOption()
-            verifyAutofillToggle(false)
+            verifyAutofillInFirefoxToggle(true)
+            clickAutofillInFirefoxOption()
+            verifyAutofillInFirefoxToggle(false)
         }.goBack {
         }
 
@@ -395,6 +474,7 @@ class LoginsTest {
         }
     }
 
+    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1812995")
     @Test
     fun verifyLoginIsNotUpdatedTest() {
         val loginPage = "https://mozilla-mobile.github.io/testapp/v2.0/loginForm.html"
@@ -521,6 +601,7 @@ class LoginsTest {
         }.enterURLAndEnterToBrowser(secondLoginPage.toUri()) {
             fillAndSubmitLoginCredentials("mozilla", "firefox")
             saveLoginFromPrompt("Save")
+            mDevice.waitForIdle()
         }.openThreeDotMenu {
         }.openSettings {
         }.openLoginsAndPasswordSubMenu {

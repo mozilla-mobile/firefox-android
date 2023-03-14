@@ -88,19 +88,14 @@ class SettingsSubMenuAutofillRobot {
         }
     }
 
-    fun verifySavedCreditCardsSection(vararg savedCreditCardsLastDigits: String) {
+    fun verifySavedCreditCardsSection(creditCardLastDigits: String, creditCardExpiryDate: String) {
         assertItemWithDescriptionExists(navigateBackButton)
         assertItemContainingTextExists(
             savedCreditCardsToolbarTitle,
             addCreditCardButton,
+            itemContainingText(creditCardLastDigits),
+            itemContainingText(creditCardExpiryDate),
         )
-        for (creditCardLastDigits in savedCreditCardsLastDigits) {
-            assertTrue(
-                mDevice.findObject(
-                    UiSelector().textContains(creditCardLastDigits),
-                ).waitForExists(waitingTime),
-            )
-        }
     }
 
     fun verifyAddressesAutofillToggle(enabled: Boolean) =
@@ -282,13 +277,19 @@ class SettingsSubMenuAutofillRobot {
     fun clickManageSavedCreditCardsButton() = manageSavedCreditCardsButton.click()
     fun clickSecuredCreditCardsLaterButton() = securedCreditCardsLaterButton.click()
     fun clickSavedCreditCard() = savedCreditCardNumber.clickAndWaitForNewWindow(waitingTime)
-    fun clickDeleteCreditCardButton() {
-        toolbarDeleteCreditCardButton.waitForExists(waitingTime)
-        toolbarDeleteCreditCardButton.click()
+    fun clickDeleteCreditCardToolbarButton() {
+        deleteCreditCardToolbarButton.waitForExists(waitingTime)
+        deleteCreditCardToolbarButton.click()
+    }
+    fun clickDeleteCreditCardMenuButton() {
+        deleteCreditCardMenuButton.waitForExists(waitingTime)
+        deleteCreditCardMenuButton.click()
     }
     fun clickSaveAndAutofillCreditCardsOption() = saveAndAutofillCreditCardsOption.click()
 
     fun clickConfirmDeleteCreditCardButton() = confirmDeleteCreditCardButton.click()
+
+    fun clickCancelDeleteCreditCardButton() = cancelDeleteCreditCardButton.click()
 
     fun clickExpiryMonthOption(expiryMonth: String) {
         expiryMonthOption(expiryMonth).waitForExists(waitingTime)
@@ -315,6 +316,20 @@ class SettingsSubMenuAutofillRobot {
         manageSavedCreditCardsButton.waitForExists(waitingTime)
     }
 
+    fun clearCreditCardNumber() =
+        creditCardNumberTextInput.also {
+            it.waitForExists(waitingTime)
+            it.clearTextField()
+        }
+
+    fun clearNameOnCreditCard() =
+        nameOnCreditCardTextInput.also {
+            it.waitForExists(waitingTime)
+            it.clearTextField()
+        }
+
+    fun clickSaveCreditCardToolbarButton() = saveCreditCardToolbarButton.click()
+
     fun verifyEditCreditCardView(
         cardNumber: String,
         cardName: String,
@@ -325,8 +340,8 @@ class SettingsSubMenuAutofillRobot {
         assertItemWithDescriptionExists(navigateBackButton)
 
         assertItemWithResIdExists(
-            toolbarDeleteCreditCardButton,
-            toolbarSaveCreditCardButton,
+            deleteCreditCardToolbarButton,
+            saveCreditCardToolbarButton,
         )
 
         assertEquals(cardNumber, creditCardNumberTextInput.text)
@@ -348,8 +363,16 @@ class SettingsSubMenuAutofillRobot {
             cancelButton,
         )
 
-        assertItemContainingTextExists(deleteCreditCardButton)
+        assertItemContainingTextExists(deleteCreditCardMenuButton)
     }
+
+    fun verifyEditCreditCardToolbarTitle() = assertItemContainingTextExists(editCreditCardToolbarTitle)
+
+    fun verifyCreditCardNumberErrorMessage() =
+        assertItemContainingTextExists(itemContainingText(getStringResource(R.string.credit_cards_number_validation_error_message)))
+
+    fun verifyNameOnCreditCardErrorMessage() =
+        assertItemContainingTextExists(itemContainingText(getStringResource(R.string.credit_cards_name_on_card_validation_error_message)))
 
     class Transition {
         fun goBack(interact: SettingsRobot.() -> Unit): SettingsRobot.Transition {
@@ -423,10 +446,11 @@ private val nameOnCreditCardTextInput = mDevice.findObject(UiSelector().resource
 private val expiryMonthDropDown = mDevice.findObject(UiSelector().resourceId("$packageName:id/expiry_month_drop_down"))
 private val expiryYearDropDown = mDevice.findObject(UiSelector().resourceId("$packageName:id/expiry_year_drop_down"))
 private val savedCreditCardNumber = mDevice.findObject(UiSelector().resourceId("$packageName:id/credit_card_logo"))
-private val toolbarDeleteCreditCardButton = mDevice.findObject(UiSelector().resourceId("$packageName:id/delete_credit_card_button"))
-private val toolbarSaveCreditCardButton = itemWithResId("$packageName:id/save_credit_card_button")
-private val deleteCreditCardButton = itemContainingText(getStringResource(R.string.credit_cards_delete_card_button))
+private val deleteCreditCardToolbarButton = mDevice.findObject(UiSelector().resourceId("$packageName:id/delete_credit_card_button"))
+private val saveCreditCardToolbarButton = itemWithResId("$packageName:id/save_credit_card_button")
+private val deleteCreditCardMenuButton = itemContainingText(getStringResource(R.string.credit_cards_delete_card_button))
 private val confirmDeleteCreditCardButton = onView(withId(android.R.id.button1)).inRoot(RootMatchers.isDialog())
+private val cancelDeleteCreditCardButton = onView(withId(android.R.id.button2)).inRoot(RootMatchers.isDialog())
 private val securedCreditCardsLaterButton = onView(withId(android.R.id.button2)).inRoot(RootMatchers.isDialog())
 
 private fun savedAddress(firstName: String) = mDevice.findObject(UiSelector().textContains(firstName))

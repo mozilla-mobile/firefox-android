@@ -6,6 +6,7 @@ loader: taskgraph.loader.transform:loader
 
 transforms:
     - android_taskgraph.transforms.gradle_optimization:transforms
+    - android_taskgraph.transforms.test:transforms
     - taskgraph.transforms.job:transforms
     - taskgraph.transforms.task:transforms
 
@@ -18,6 +19,7 @@ task-defaults:
         build-type: debug
         code-review: true
         retrigger: true
+    include-pull-request-number: true
     optimization:
         skip-unless-changed: [] # Paths are dynamically added by transforms
     worker-type: b-android
@@ -103,7 +105,7 @@ tasks:
         run-on-tasks-for: [github-pull-request, github-push]
         run:
             secrets:
-                - name: project/mobile/focus-android/firebase
+                - name: project/mobile/firefox-android/focus-android/firebase
                   key: firebaseToken
                   path: .firebase_token.json
                   json: true
@@ -136,7 +138,7 @@ tasks:
             signed-apk-android-test: signing-apk-focus-android-test-nightly
         run:
             secrets:
-                - name: project/mobile/focus-android/firebase
+                - name: project/mobile/firefox-android/focus-android/firebase
                   key: firebaseToken
                   path: .firebase_token.json
                   json: true
@@ -165,7 +167,7 @@ tasks:
             signed-apk-android-test: signing-apk-focus-android-test-beta
         run:
             secrets:
-                - name: project/mobile/focus-android/firebase
+                - name: project/mobile/firefox-android/focus-android/firebase
                   key: firebaseToken
                   path: .firebase_token.json
                   json: true
@@ -193,7 +195,7 @@ tasks:
             signed-apk-android-test: signing-apk-fenix-android-test-debug
         run:
             secrets:
-                - name: project/mobile/fenix/firebase
+                - name: project/mobile/firefox-android/fenix/firebase
                   key: firebaseToken
                   path: .firebase_token.json
                   json: true
@@ -222,7 +224,7 @@ tasks:
             signed-apk-android-test: signing-apk-fenix-android-test-debug
         run:
             secrets:
-                - name: project/mobile/fenix/firebase
+                - name: project/mobile/firefox-android/fenix/firebase
                   key: firebaseToken
                   path: .firebase_token.json
                   json: true
@@ -250,7 +252,7 @@ tasks:
             signed-apk-android-test: signing-apk-fenix-android-test-beta
         run:
             secrets:
-                - name: project/mobile/fenix/firebase
+                - name: project/mobile/firefox-android/fenix/firebase
                   key: firebaseToken
                   path: .firebase_token.json
                   json: true
@@ -277,7 +279,7 @@ tasks:
             signed-apk-android-test: signing-apk-fenix-android-test-nightly
         run:
             secrets:
-                - name: project/mobile/fenix/firebase
+                - name: project/mobile/firefox-android/fenix/firebase
                   key: firebaseToken
                   path: .firebase_token.json
                   json: true
@@ -306,7 +308,7 @@ tasks:
             signed-apk-android-test: signing-apk-fenix-android-test-debug
         run:
             secrets:
-                - name: project/mobile/fenix/firebase
+                - name: project/mobile/firefox-android/fenix/firebase
                   key: firebaseToken
                   path: .firebase_token.json
                   json: true
@@ -319,6 +321,33 @@ tasks:
         treeherder:
             platform: 'fenix-ui-test/opt'
             symbol: fenix-debug(legacy-arm)
+        worker:
+            env:
+                GOOGLE_PROJECT: moz-fenix
+
+    fenix-robo-arm-debug:
+        attributes:
+            shipping-product: fenix
+            code-review: false
+        description: Run Robo test on ARM devices
+        run-on-tasks-for: [github-push]
+        run-on-git-branches: [main]
+        dependencies:
+            signed-apk-debug-apk: signing-apk-fenix-debug
+        run:
+            secrets:
+                - name: project/mobile/firefox-android/fenix/firebase
+                  key: firebaseToken
+                  path: .firebase_token.json
+                  json: true
+            pre-commands:
+                - ["cd", "fenix"]
+            commands:
+                - [wget, {artifact-reference: '<signed-apk-debug-apk/public/build/fenix/arm64-v8a/target.apk>'}, '-O', app.apk]
+                - [automation/taskcluster/androidTest/robo-test.sh, arm-robo-test, app.apk]
+        treeherder:
+            platform: 'fenix-ui-test/opt'
+            symbol: fenix-debug(robo-arm)
         worker:
             env:
                 GOOGLE_PROJECT: moz-fenix

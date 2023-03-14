@@ -14,7 +14,7 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    lintOptions {
+    lint {
         warningsAsErrors true
         abortOnError true
     }
@@ -25,6 +25,8 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    namespace 'mozilla.components.browser.engine.system'
 }
 
 dependencies {
@@ -32,21 +34,20 @@ dependencies {
     implementation project(':support-ktx')
     implementation project(':support-utils')
 
-    implementation Dependencies.androidx_core_ktx
-    implementation Dependencies.kotlin_stdlib
-    implementation Dependencies.kotlin_coroutines
+    implementation ComponentsDependencies.androidx_core_ktx
+    implementation ComponentsDependencies.kotlin_coroutines
 
     testImplementation project(':support-test')
 
-    testImplementation Dependencies.androidx_test_core
-    testImplementation Dependencies.androidx_test_junit
-    testImplementation Dependencies.testing_robolectric
-    testImplementation Dependencies.testing_mockito
-    testImplementation Dependencies.testing_coroutines
+    testImplementation ComponentsDependencies.androidx_test_core
+    testImplementation ComponentsDependencies.androidx_test_junit
+    testImplementation ComponentsDependencies.testing_robolectric
+    testImplementation ComponentsDependencies.testing_mockito
+    testImplementation ComponentsDependencies.testing_coroutines
 
-    androidTestImplementation Dependencies.androidx_test_core
-    androidTestImplementation Dependencies.androidx_test_runner
-    androidTestImplementation Dependencies.androidx_test_rules
+    androidTestImplementation ComponentsDependencies.androidx_test_core
+    androidTestImplementation ComponentsDependencies.androidx_test_runner
+    androidTestImplementation ComponentsDependencies.androidx_test_rules
 
 }
 

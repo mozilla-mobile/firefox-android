@@ -157,8 +157,8 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
 
         startForResult = registerForActivityResult { result ->
             result.data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)?.first()?.also {
-                toolbarView.view.edit.updateUrl(url = it, shouldHighlight = true)
-                interactor.onTextChanged(it)
+                val updatedUrl = toolbarView.view.edit.updateUrl(url = it, shouldHighlight = true, shouldAppend = true)
+                interactor.onTextChanged(updatedUrl)
                 toolbarView.view.edit.focus()
             }
         }
@@ -776,6 +776,11 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                     text = it.name,
                     start = DrawableMenuIcon(
                         drawable = it.icon.toDrawable(resources),
+                        tint = if (it.type == SearchEngine.Type.APPLICATION) {
+                            requireContext().getColorFromAttr(R.attr.textPrimary)
+                        } else {
+                            null
+                        },
                     ),
                 ) {
                     interactor.onMenuItemTapped(SearchSelectorMenu.Item.SearchEngine(it))

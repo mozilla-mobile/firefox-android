@@ -25,24 +25,25 @@ object FocusVersions {
         const val recyclerview = "1.2.1"
         const val savedstate = "1.2.0"
         const val splashscreen = "1.0.0"
+        const val tracing = "1.0.0"
         const val transition = "1.4.1"
         const val work = "2.7.1"
     }
 
     object Google {
         const val accompanist = "0.16.1"
-        const val compose_compiler = "1.3.2"
+        const val compose_compiler = "1.4.3"
         const val material = "1.7.0"
         const val play = "1.10.3"
     }
 
     object Gradle {
-        const val android_plugin = "7.3.0"
+        const val android_plugin = "7.4.1"
         const val kotlin_plugin = Kotlin.compiler
     }
 
     object Kotlin {
-        const val compiler = "1.7.20"
+        const val compiler = "1.8.10"
         const val coroutines = "1.6.4"
     }
 
@@ -56,16 +57,16 @@ object FocusVersions {
         const val falcon = "2.2.0"
         const val fastlane = "2.1.1"
         const val junit = "5.9.1"
-        const val ktlint = "0.47.1"
+        const val ktlint = "0.48.2"
         const val mockito = "4.8.1"
         const val mockwebserver = "4.10.0"
-        const val robolectric = "4.9"
+        const val robolectric = "4.9.2"
     }
 
     object ThirdParty {
         const val jna = "5.12.1"
         const val leakcanary = "2.10"
-        const val sentry = "6.13.1"
+        const val sentry = "6.15.0"
     }
 
     // Workaround for a Gradle parsing bug that prevents using nested objects directly in Gradle files.
@@ -101,6 +102,7 @@ object FocusDependencies {
     const val androidx_lifecycle_viewmodel = "androidx.lifecycle:lifecycle-viewmodel-ktx:${FocusVersions.AndroidX.lifecycle}"
     const val androidx_splashscreen = "androidx.core:core-splashscreen:${FocusVersions.AndroidX.splashscreen}"
     const val androidx_savedstate = "androidx.savedstate:savedstate-ktx:${FocusVersions.AndroidX.savedstate}"
+    const val androidx_tracing = "androidx.tracing:tracing:${FocusVersions.AndroidX.tracing}"
     const val androidx_transition = "androidx.transition:transition:${FocusVersions.AndroidX.transition}"
     const val androidx_work_ktx = "androidx.work:work-runtime-ktx:${FocusVersions.AndroidX.work}"
     const val androidx_work_testing = "androidx.work:work-testing:${FocusVersions.AndroidX.work}"
