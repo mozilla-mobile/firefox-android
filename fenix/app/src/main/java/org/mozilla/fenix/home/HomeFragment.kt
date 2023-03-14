@@ -570,7 +570,7 @@ class HomeFragment : Fragment() {
         observeSearchEngineNameChanges()
         observeWallpaperUpdates()
 
-        HomeMenuBuilder(
+        HomeMenuView(
             view = view,
             context = view.context,
             lifecycleOwner = viewLifecycleOwner,
@@ -580,12 +580,12 @@ class HomeFragment : Fragment() {
             hideOnboardingIfNeeded = ::hideOnboardingIfNeeded,
         ).build()
 
-        TabCounterBuilder(
+        TabCounterView(
             context = requireContext(),
             browsingModeManager = browsingModeManager,
             navController = findNavController(),
             tabCounter = binding.tabButton,
-        ).build()
+        )
 
         binding.toolbar.compoundDrawablePadding =
             view.resources.getDimensionPixelSize(R.dimen.search_bar_search_engine_icon_padding)
