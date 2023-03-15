@@ -6,8 +6,8 @@ package mozilla.components.feature.session
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
+import mozilla.components.browser.state.selector.findCustomTab
 import mozilla.components.browser.state.selector.findTabOrCustomTabOrSelectedTab
 import mozilla.components.browser.state.state.SessionState
 import mozilla.components.browser.state.store.BrowserStore
@@ -27,17 +27,23 @@ open class FullScreenFeature(
     private val fullScreenChanged: (Boolean) -> Unit,
 ) : LifecycleAwareFeature, UserInteractionHandler {
     private var scope: CoroutineScope? = null
+    private var isFullscreenCustomTab: Boolean = false
     private var observation: Observation = createDefaultObservation()
 
     /**
      * Starts the feature and a observer to listen for fullscreen changes.
      */
     override fun start() {
-        scope = store.flowScoped { flow ->
-            flow.map { state -> state.findTabOrCustomTabOrSelectedTab(tabId) }
-                .map { tab -> tab.toObservation() }
-                .ifChanged()
-                .collect { observation -> onChange(observation) }
+        if (tabId != null && store.state.findCustomTab(tabId)?.content?.fullScreen == true) {
+            isFullscreenCustomTab = true
+            fullScreenChanged(true)
+        } else {
+            scope = store.flowScoped { flow ->
+                flow.map { state -> state.findTabOrCustomTabOrSelectedTab(tabId) }
+                    .map { tab -> tab.toObservation() }
+                    .ifChanged()
+                    .collect { observation -> onChange(observation) }
+            }
         }
     }
 
@@ -65,12 +71,21 @@ open class FullScreenFeature(
     override fun onBackPressed(): Boolean {
         val observation = observation
 
-        if (observation.inFullScreen && observation.tabId != null) {
+        if (!isFullscreenCustomTab && observation.inFullScreen && observation.tabId != null) {
             sessionUseCases.exitFullscreen(observation.tabId)
             return true
         }
 
         return false
+    }
+
+    /**
+     * Method used to exit fullscreen mode, allowing fullscreen custom tabs to remain fullscreen.
+     */
+    fun exitFullscreenMode() {
+        if (!isFullscreenCustomTab) {
+            fullScreenChanged(false)
+        }
     }
 }
 

@@ -38,11 +38,13 @@ class CustomTabsUseCases(
             private: Boolean = false,
             additionalHeaders: Map<String, String>? = null,
             source: SessionState.Source,
+            fullscreen: Boolean = false,
         ): String {
             val loadUrlFlags = EngineSession.LoadUrlFlags.external()
             val tab = createCustomTab(
                 url = url,
                 private = private,
+                fullscreen = fullscreen,
                 source = source,
                 config = customTabConfig,
                 initialLoadFlags = loadUrlFlags,

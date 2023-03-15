@@ -8,6 +8,7 @@ import android.view.WindowManager
 import mozilla.components.browser.state.action.ContentAction
 import mozilla.components.browser.state.action.TabListAction
 import mozilla.components.browser.state.state.BrowserState
+import mozilla.components.browser.state.state.createCustomTab
 import mozilla.components.browser.state.state.createTab
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.support.test.ext.joinBlocking
@@ -461,5 +462,115 @@ class FullScreenFeatureTest {
         assertFalse(feature.onBackPressed())
 
         verify(exitUseCase, never()).invoke(ArgumentMatchers.anyString())
+    }
+
+    @Test
+    fun `WHEN the selected tab is custom and fullscreen THEN enter fullscreen mode on start`() {
+        var fullscreen: Boolean? = null
+        var tab = createCustomTab("https://www.mozilla.org", id = "A")
+        tab = tab.copy(content = tab.content.copy(fullScreen = true))
+
+        val store = BrowserStore(
+            BrowserState(
+                customTabs = listOf(tab),
+            ),
+        )
+
+        val feature = FullScreenFeature(
+            store = store,
+            sessionUseCases = mock(),
+            tabId = tab.id,
+            viewportFitChanged = {},
+            fullScreenChanged = { value -> fullscreen = value },
+        )
+
+        feature.start()
+        store.waitUntilIdle()
+
+        assertEquals(true, fullscreen)
+    }
+
+    @Test
+    fun `GIVEN the selected tab is custom and fullscreen WHEN back is pressed THEN the tab remains fullscreen`() {
+        var tab = createCustomTab("https://www.mozilla.org", id = "A")
+        tab = tab.copy(content = tab.content.copy(fullScreen = true))
+
+        val store = BrowserStore(
+            BrowserState(
+                customTabs = listOf(tab),
+            ),
+        )
+
+        val feature = FullScreenFeature(
+            store = store,
+            sessionUseCases = mock(),
+            tabId = tab.id,
+            viewportFitChanged = {},
+            fullScreenChanged = {},
+        )
+
+        feature.start()
+        feature.onBackPressed()
+        store.waitUntilIdle()
+
+        assertEquals(true, store.state.customTabs.single().content.fullScreen)
+    }
+
+    @Test
+    fun `GIVEN the selected tab is custom and fullscreen WHEN exiting fullscreen mode THEN the tab remains fullscreen`() {
+        var tab = createCustomTab("https://www.mozilla.org", id = "A")
+        tab = tab.copy(content = tab.content.copy(fullScreen = true))
+        var fullscreen = true
+
+        val store = BrowserStore(
+            BrowserState(
+                customTabs = listOf(tab),
+            ),
+        )
+
+        val feature = FullScreenFeature(
+            store = store,
+            sessionUseCases = mock(),
+            tabId = tab.id,
+            viewportFitChanged = {},
+            fullScreenChanged = { value -> fullscreen = value },
+        )
+
+        feature.start()
+        feature.exitFullscreenMode()
+        store.waitUntilIdle()
+
+        assertEquals(true, fullscreen)
+    }
+
+    @Test
+    fun `GIVEN the selected tab is NOT custom and fullscreen WHEN exiting fullscreen mode THEN the tab remains fullscreen`() {
+        val tab = createCustomTab("https://www.mozilla.org", id = "A")
+        var fullscreen = true
+        val store = BrowserStore(
+            BrowserState(
+                customTabs = listOf(tab),
+            ),
+        )
+
+        val feature = FullScreenFeature(
+            store = store,
+            sessionUseCases = mock(),
+            tabId = tab.id,
+            viewportFitChanged = {},
+            fullScreenChanged = { value -> fullscreen = value },
+        )
+
+        feature.start()
+        store.dispatch(
+            ContentAction.FullScreenChangedAction(
+                "A",
+                true,
+            ),
+        ).joinBlocking()
+        feature.exitFullscreenMode()
+        store.waitUntilIdle()
+
+        assertFalse(fullscreen)
     }
 }

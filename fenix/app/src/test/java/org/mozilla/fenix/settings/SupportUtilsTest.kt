@@ -9,8 +9,14 @@ import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
+import mozilla.components.browser.state.state.SessionState
+import mozilla.components.feature.tabs.CustomTabsUseCases
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import org.mozilla.fenix.BrowserDirection
+import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.ext.components
 import java.util.Locale
 
 class SupportUtilsTest {
@@ -41,6 +47,27 @@ class SupportUtilsTest {
             "https://support.mozilla.org/de/kb/your-rights",
             SupportUtils.getGenericSumoURLForTopic(SupportUtils.SumoTopic.YOUR_RIGHTS, Locale("de")),
         )
+    }
+
+    @Test
+    fun `WHEN startCustomFullscreenTab is called THEN open a custom fullscreen tab`() {
+        val activity = mockk<HomeActivity>(relaxed = true)
+        val url = "www.mozilla.org"
+        val addUseCase = mockk<CustomTabsUseCases>(relaxed = true)
+        every { activity.components.useCases.customTabsUseCases } returns addUseCase
+
+        SupportUtils.startCustomFullscreenTab(activity, BrowserDirection.FromHome, url, false)
+
+        verify {
+            addUseCase.add(
+                url,
+                any(),
+                fullscreen = true,
+                private = false,
+                source = SessionState.Source.Internal.CustomTab,
+            )
+            activity.openToBrowser(BrowserDirection.FromHome, any())
+        }
     }
 
     @Test

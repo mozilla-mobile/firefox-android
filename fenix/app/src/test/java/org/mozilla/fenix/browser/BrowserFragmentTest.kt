@@ -27,6 +27,7 @@ import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.state.state.createTab
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.browser.toolbar.BrowserToolbar
+import mozilla.components.feature.session.FullScreenFeature
 import mozilla.components.support.test.ext.joinBlocking
 import mozilla.components.support.test.rule.MainCoroutineRule
 import org.junit.After
@@ -148,10 +149,15 @@ class BrowserFragmentTest {
     fun `GIVEN browser UI is initialized WHEN selected tab changes THEN full screen mode is exited`() {
         browserFragment.browserInitialized = true
         browserFragment.observeTabSelection(store)
+        val fullscreenFeature: FullScreenFeature = mockk(relaxed = true)
+        browserFragment.fullScreenFeature = mockk {
+            every { get() } returns fullscreenFeature
+        }
 
         val newSelectedTab = createTab("https://firefox.com")
         addAndSelectTab(newSelectedTab)
-        verify(exactly = 1) { browserFragment.fullScreenChanged(false) }
+
+        verify(exactly = 1) { fullscreenFeature.exitFullscreenMode() }
     }
 
     @Test

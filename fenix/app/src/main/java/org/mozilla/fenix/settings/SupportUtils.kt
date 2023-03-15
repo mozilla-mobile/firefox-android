@@ -9,11 +9,16 @@ import android.content.Intent
 import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.net.toUri
+import mozilla.components.browser.state.state.CustomTabConfig
+import mozilla.components.browser.state.state.SessionState
 import mozilla.components.support.ktx.android.content.appVersionName
 import mozilla.components.support.ktx.android.content.getColorFromAttr
+import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.BuildConfig
+import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.IntentReceiverActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.settings.account.AuthIntentReceiverActivity
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
@@ -110,6 +115,26 @@ object SupportUtils {
         .setData(url.toUri())
         .setClassName(context, IntentReceiverActivity::class.java.name)
         .setPackage(context.packageName)
+
+    /**
+     * Opens a custom fullscreen tab.
+     */
+    fun startCustomFullscreenTab(
+        activity: HomeActivity,
+        from: BrowserDirection,
+        url: String,
+        isPrivate: Boolean,
+        config: CustomTabConfig = CustomTabConfig(),
+    ) {
+        val sessionId = activity.components.useCases.customTabsUseCases.add(
+            url,
+            config,
+            fullscreen = true,
+            private = isPrivate,
+            source = SessionState.Source.Internal.CustomTab,
+        )
+        activity.openToBrowser(from, sessionId)
+    }
 
     fun createAuthCustomTabIntent(context: Context, url: String): Intent =
         createCustomTabIntent(context, url).setClassName(context, AuthIntentReceiverActivity::class.java.name)

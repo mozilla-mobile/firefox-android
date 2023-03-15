@@ -73,12 +73,14 @@ fun createCustomTab(
     private: Boolean = false,
     webAppManifest: WebAppManifest? = null,
     initialLoadFlags: EngineSession.LoadUrlFlags = EngineSession.LoadUrlFlags.none(),
+    fullscreen: Boolean = false,
 ): CustomTabSessionState {
     return CustomTabSessionState(
         id = id,
         source = source,
         content = ContentState(
             url = url,
+            fullScreen = fullscreen,
             title = title,
             private = private,
             webAppManifest = webAppManifest,

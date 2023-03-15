@@ -198,7 +198,6 @@ abstract class BaseBrowserFragment :
     private val findInPageIntegration = ViewBoundFeatureWrapper<FindInPageIntegration>()
     private val toolbarIntegration = ViewBoundFeatureWrapper<ToolbarIntegration>()
     private val sitePermissionsFeature = ViewBoundFeatureWrapper<SitePermissionsFeature>()
-    private val fullScreenFeature = ViewBoundFeatureWrapper<FullScreenFeature>()
     private val swipeRefreshFeature = ViewBoundFeatureWrapper<SwipeRefreshFeature>()
     private val webchannelIntegration = ViewBoundFeatureWrapper<FxaWebChannelFeature>()
     private val sitePermissionWifiIntegration =
@@ -212,6 +211,9 @@ abstract class BaseBrowserFragment :
     private val biometricPromptFeature = ViewBoundFeatureWrapper<BiometricPromptFeature>()
     private val crashContentIntegration = ViewBoundFeatureWrapper<CrashContentIntegration>()
     private var pipFeature: PictureInPictureFeature? = null
+
+    @VisibleForTesting
+    internal var fullScreenFeature = ViewBoundFeatureWrapper<FullScreenFeature>()
 
     var customTabSessionId: String? = null
 
@@ -1160,7 +1162,7 @@ abstract class BaseBrowserFragment :
 
         if (browserInitialized) {
             view?.let {
-                fullScreenChanged(false)
+                fullScreenFeature.get()?.exitFullscreenMode()
                 browserToolbarView.expand()
 
                 val toolbarHeight = resources.getDimensionPixelSize(R.dimen.browser_toolbar_height)
@@ -1204,7 +1206,7 @@ abstract class BaseBrowserFragment :
             ?.let { session ->
                 // If we didn't enter PiP, exit full screen on stop
                 if (!session.content.pictureInPictureEnabled && fullScreenFeature.onBackPressed()) {
-                    fullScreenChanged(false)
+                    fullScreenFeature.get()?.exitFullscreenMode()
                 }
             }
     }
@@ -1421,7 +1423,7 @@ abstract class BaseBrowserFragment :
     private fun pipModeChanged(session: SessionState) {
         if (!session.content.pictureInPictureEnabled && session.content.fullScreen && isAdded) {
             onBackPressed()
-            fullScreenChanged(false)
+            fullScreenFeature.get()?.exitFullscreenMode()
         }
     }
 
@@ -1486,6 +1488,7 @@ abstract class BaseBrowserFragment :
      * Dereference these views when the fragment view is destroyed to prevent memory leaks
      */
     override fun onDestroyView() {
+        fullScreenChanged(false)
         super.onDestroyView()
 
         // Diagnostic breadcrumb for "Display already aquired" crash:
