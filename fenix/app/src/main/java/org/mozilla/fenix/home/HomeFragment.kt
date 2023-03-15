@@ -79,14 +79,12 @@ import mozilla.components.support.ktx.android.content.getColorFromAttr
 import mozilla.components.support.ktx.android.content.res.resolveAttribute
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import org.mozilla.fenix.Config
-import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.HomeScreen
 import org.mozilla.fenix.GleanMetrics.PrivateBrowsingShortcutCfr
 import org.mozilla.fenix.GleanMetrics.UnifiedSearch
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.addons.showSnackBar
-import org.mozilla.fenix.browser.BrowserAnimator.Companion.getToolbarNavOptions
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.PrivateShortcutCreateManager
@@ -124,6 +122,7 @@ import org.mozilla.fenix.home.sessioncontrol.viewholders.CollectionHeaderViewHol
 import org.mozilla.fenix.home.topsites.DefaultTopSitesView
 import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.onboarding.FenixOnboarding
+import org.mozilla.fenix.onboarding.controller.DefaultOnboardingController
 import org.mozilla.fenix.perf.MarkersFragmentLifecycleCallbacks
 import org.mozilla.fenix.perf.runBlockingIncrement
 import org.mozilla.fenix.search.toolbar.SearchSelectorMenu
@@ -390,7 +389,6 @@ class HomeFragment : Fragment() {
                 appStore = components.appStore,
                 navController = findNavController(),
                 viewLifecycleScope = viewLifecycleOwner.lifecycleScope,
-                hideOnboarding = ::hideOnboardingAndOpenSearch,
                 registerCollectionStorageObserver = ::registerCollectionStorageObserver,
                 removeCollectionWithUndo = ::removeCollectionWithUndo,
                 showTabTray = ::openTabsTray,
@@ -422,6 +420,10 @@ class HomeFragment : Fragment() {
             pocketStoriesController = DefaultPocketStoriesController(
                 homeActivity = activity,
                 appStore = components.appStore,
+            ),
+            onboardingController = DefaultOnboardingController(
+                activity = activity,
+                hideOnboarding = ::hideOnboardingAndOpenSearch,
             ),
         )
 
@@ -590,7 +592,7 @@ class HomeFragment : Fragment() {
         binding.toolbar.compoundDrawablePadding =
             view.resources.getDimensionPixelSize(R.dimen.search_bar_search_engine_icon_padding)
         binding.toolbarWrapper.setOnClickListener {
-            navigateToSearch()
+            sessionControlInteractor.onNavigateSearch()
         }
 
         binding.toolbarWrapper.setOnLongClickListener {
@@ -627,7 +629,7 @@ class HomeFragment : Fragment() {
         updateTabCounter(requireComponents.core.store.state)
 
         if (bundleArgs.getBoolean(FOCUS_ON_ADDRESS_BAR)) {
-            navigateToSearch()
+            sessionControlInteractor.onNavigateSearch()
         } else if (bundleArgs.getBoolean(SCROLL_TO_COLLECTION)) {
             MainScope().launch {
                 delay(ANIM_SCROLL_DELAY)
@@ -971,19 +973,7 @@ class HomeFragment : Fragment() {
     private fun hideOnboardingAndOpenSearch() {
         hideOnboardingIfNeeded()
         appBarLayout?.setExpanded(true, true)
-        navigateToSearch()
-    }
-
-    @VisibleForTesting
-    internal fun navigateToSearch() {
-        val directions =
-            HomeFragmentDirections.actionGlobalSearchDialog(
-                sessionId = null,
-            )
-
-        nav(R.id.homeFragment, directions, getToolbarNavOptions(requireContext()))
-
-        Events.searchBarTapped.record(Events.SearchBarTappedExtra("HOME"))
+        sessionControlInteractor.onNavigateSearch()
     }
 
     private fun subscribeToTabCollections(): Observer<List<TabCollection>> {
