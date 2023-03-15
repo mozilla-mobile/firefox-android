@@ -16,7 +16,7 @@ class DependenciesPlugin : Plugin<Settings> {
 object Versions {
     const val kotlin = "1.8.10"
     const val coroutines = "1.6.4"
-    const val serialization = "1.4.1"
+    const val serialization = "1.5.0"
 
     const val junit = "4.13.2"
     const val robolectric = "4.9.2"
@@ -43,7 +43,7 @@ object Versions {
     const val disklrucache = "2.0.2"
     const val leakcanary = "2.10"
 
-    const val mozilla_appservices = "97.1.0"
+    const val mozilla_appservices = "97.2.0"
 
     // DO NOT MODIFY MANUALLY. This is auto-updated along with GeckoView.
     const val mozilla_glean = "52.3.0"

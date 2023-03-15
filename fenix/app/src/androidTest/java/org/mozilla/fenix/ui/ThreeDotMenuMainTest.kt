@@ -82,7 +82,7 @@ class ThreeDotMenuMainTest {
         }.openThreeDotMenu {
         }.openCustomizeHome {
             verifyHomePageView()
-        }.goBack {
+        }.goBackToHomeScreen {
         }.openThreeDotMenu {
         }.openSettings {
             verifySettingsView()
@@ -133,7 +133,7 @@ class ThreeDotMenuMainTest {
         }.openThreeDotMenu {
         }.openCustomizeHome {
             verifyHomePageView()
-        }.goBack {
+        }.goBackToHomeScreen {
         }.openThreeDotMenu {
         }.openSettings {
             verifySettingsView()
@@ -161,7 +161,7 @@ class ThreeDotMenuMainTest {
         }.enterURLAndEnterToBrowser(webPage.url) {
             longClickLink("Link 2")
             clickContextOpenLinkInNewTab()
-            snackBarButtonClick()
+            clickSnackbarButton("SWITCH")
         }.openThreeDotMenu {
             verifyDesktopSiteModeEnabled(false)
         }
@@ -191,7 +191,7 @@ class ThreeDotMenuMainTest {
         }.enterURLAndEnterToBrowser(webPage.url) {
             longClickLink("Link 2")
             clickContextOpenLinkInPrivateTab()
-            snackBarButtonClick()
+            clickSnackbarButton("SWITCH")
         }.openThreeDotMenu {
             verifyDesktopSiteModeEnabled(false)
         }

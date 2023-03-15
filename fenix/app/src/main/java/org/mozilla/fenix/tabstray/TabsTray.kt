@@ -7,37 +7,49 @@ package org.mozilla.fenix.tabstray
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.launch
+import mozilla.components.browser.state.state.ContentState
+import mozilla.components.browser.state.state.TabSessionState
+import mozilla.components.lib.state.ext.observeAsComposableState
 import org.mozilla.fenix.compose.Divider
 import org.mozilla.fenix.compose.annotation.LightDarkPreview
-import org.mozilla.fenix.compose.button.PrimaryButton
 import org.mozilla.fenix.theme.FirefoxTheme
+import org.mozilla.fenix.theme.Theme
 
 /**
  * Top-level UI for displaying the Tabs Tray feature.
+ *
+ * @param tabsTrayStore [TabsTrayStore] used to listen for changes to [TabsTrayState].
+ * @param displayTabsInGrid Whether the normal and private tabs should be displayed in a grid.
  */
-@OptIn(ExperimentalPagerApi::class)
-@Suppress("LongMethod")
+@OptIn(ExperimentalPagerApi::class, ExperimentalComposeUiApi::class)
 @Composable
-fun TabsTray() {
+fun TabsTray(
+    tabsTrayStore: TabsTrayStore,
+    displayTabsInGrid: Boolean,
+) {
+    val multiselectMode = tabsTrayStore
+        .observeAsComposableState { state -> state.mode }.value ?: TabsTrayState.Mode.Normal
+    val normalTabs = tabsTrayStore
+        .observeAsComposableState { state -> state.normalTabs }.value ?: emptyList()
     val pagerState = rememberPagerState(initialPage = 0)
     val scope = rememberCoroutineScope()
-    val animateScrollToPage: ((Int) -> Unit) = { pagePosition ->
+    val animateScrollToPage: ((Page) -> Unit) = { page ->
         scope.launch {
-            pagerState.animateScrollToPage(pagePosition)
+            pagerState.animateScrollToPage(page.ordinal)
         }
     }
 
@@ -46,34 +58,11 @@ fun TabsTray() {
             .fillMaxSize()
             .background(FirefoxTheme.colors.layer1),
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(all = 16.dp),
-        ) {
-            Text(
-                text = "Temporary tab switchers",
-                color = FirefoxTheme.colors.textPrimary,
-                style = FirefoxTheme.typography.body1,
+        Box(modifier = Modifier.nestedScroll(rememberNestedScrollInteropConnection())) {
+            TabsTrayBanner(
+                isInMultiSelectMode = multiselectMode is TabsTrayState.Mode.Select,
+                onTabPageIndicatorClicked = animateScrollToPage,
             )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            PrimaryButton(text = "Normal tabs") {
-                animateScrollToPage(Page.NormalTabs.ordinal)
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            PrimaryButton(text = "Private tabs") {
-                animateScrollToPage(Page.PrivateTabs.ordinal)
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            PrimaryButton(text = "Synced tabs") {
-                animateScrollToPage(Page.SyncedTabs.ordinal)
-            }
         }
 
         Divider()
@@ -87,12 +76,17 @@ fun TabsTray() {
             ) { position ->
                 when (Page.positionToPage(position)) {
                     Page.NormalTabs -> {
-                        Text(
-                            text = "Normal tabs",
-                            modifier = Modifier.padding(all = 16.dp),
-                            color = FirefoxTheme.colors.textPrimary,
-                            style = FirefoxTheme.typography.body1,
-                        )
+                        FirefoxTheme(theme = Theme.getTheme(allowPrivateTheme = false)) {
+                            if (displayTabsInGrid) {
+                                TabGrid(
+                                    tabs = normalTabs,
+                                )
+                            } else {
+                                TabList(
+                                    tabs = normalTabs,
+                                )
+                            }
+                        }
                     }
                     Page.PrivateTabs -> {
                         Text(
@@ -119,7 +113,45 @@ fun TabsTray() {
 @LightDarkPreview
 @Composable
 private fun TabsTrayPreview() {
+    val store = TabsTrayStore(
+        initialState = TabsTrayState(
+            normalTabs = generateFakeTabsList(),
+        ),
+    )
+
     FirefoxTheme {
-        TabsTray()
+        TabsTray(
+            tabsTrayStore = store,
+            displayTabsInGrid = false,
+        )
     }
+}
+
+@LightDarkPreview
+@Composable
+private fun TabsTrayMultiSelectPreview() {
+    val store = TabsTrayStore(
+        initialState = TabsTrayState(
+            mode = TabsTrayState.Mode.Select(setOf()),
+            normalTabs = generateFakeTabsList(),
+        ),
+    )
+
+    FirefoxTheme {
+        TabsTray(
+            tabsTrayStore = store,
+            displayTabsInGrid = true,
+        )
+    }
+}
+
+private fun generateFakeTabsList(tabCount: Int = 10): List<TabSessionState> {
+    val fakeTab = TabSessionState(
+        id = "tabId",
+        content = ContentState(
+            url = "www.mozilla.com",
+        ),
+    )
+
+    return List(tabCount) { fakeTab }
 }

@@ -321,7 +321,7 @@
     <string name="pref_key_nimbus_experiments" translatable="false">pref_key_nimbus_experiments</string>
     <string name="pref_key_nimbus_use_preview" translatable="false">pref_key_nimbus_use_preview</string>
     <string name="pref_key_history_metadata_feature" translatable="false">pref_key_history_metadata_feature</string>
-    <string name="pref_key_show_unified_search" translatable="false">pref_key_show_unified_search</string>
+    <string name="pref_key_show_unified_search_2" translatable="false">pref_key_show_unified_search_2</string>
     <string name="pref_key_custom_glean_server_url" translatable="false">pref_key_custom_glean_server_url</string>
     <string name="pref_key_custom_sponsored_stories_parameters" translatable="false">pref_key_custom_sponsored_stories_parameters</string>
     <string name="pref_key_custom_sponsored_stories_parameters_enabled" translatable="false">pref_key_custom_sponsored_stories_parameters_enabled</string>
@@ -342,4 +342,8 @@
     <!-- Notification Pre Permission Prompt -->
     <string name="pref_key_notification_pre_permission_prompt_enabled">pref_key_notification_pre_permission_prompt_enabled</string>
     <string name="pref_key_is_notification_pre_permission_prompt_shown">pref_key_is_notification_pre_permission_prompt_shown</string>
+
+    <!-- Juno Onboarding -->
+    <string name="pref_key_juno_onboarding_enabled">pref_key_juno_onboarding_enabled</string>
+    <string name="pref_key_is_juno_onboarding_shown">pref_key_is_juno_onboarding_shown</string>
 </resources>

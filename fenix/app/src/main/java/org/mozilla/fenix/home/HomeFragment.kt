@@ -124,6 +124,7 @@ import org.mozilla.fenix.home.sessioncontrol.viewholders.CollectionHeaderViewHol
 import org.mozilla.fenix.home.topsites.DefaultTopSitesView
 import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.onboarding.FenixOnboarding
+import org.mozilla.fenix.onboarding.controller.DefaultOnboardingController
 import org.mozilla.fenix.perf.MarkersFragmentLifecycleCallbacks
 import org.mozilla.fenix.perf.runBlockingIncrement
 import org.mozilla.fenix.search.toolbar.SearchSelectorMenu
@@ -390,7 +391,6 @@ class HomeFragment : Fragment() {
                 appStore = components.appStore,
                 navController = findNavController(),
                 viewLifecycleScope = viewLifecycleOwner.lifecycleScope,
-                hideOnboarding = ::hideOnboardingAndOpenSearch,
                 registerCollectionStorageObserver = ::registerCollectionStorageObserver,
                 removeCollectionWithUndo = ::removeCollectionWithUndo,
                 showTabTray = ::openTabsTray,
@@ -423,6 +423,10 @@ class HomeFragment : Fragment() {
                 homeActivity = activity,
                 appStore = components.appStore,
             ),
+            onboardingController = DefaultOnboardingController(
+                activity = activity,
+                hideOnboarding = ::hideOnboardingAndOpenSearch,
+            ),
         )
 
         updateLayout(binding.root)
@@ -435,6 +439,8 @@ class HomeFragment : Fragment() {
         updateSessionControlView()
 
         appBarLayout = binding.homeAppBar
+
+        disableAppBarDragging()
 
         activity.themeManager.applyStatusBarTheme(activity)
 
@@ -504,6 +510,22 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private fun disableAppBarDragging() {
+        if (binding.homeAppBar.layoutParams != null) {
+            val appBarLayoutParams = binding.homeAppBar.layoutParams as CoordinatorLayout.LayoutParams
+            val appBarBehavior = AppBarLayout.Behavior()
+            appBarBehavior.setDragCallback(
+                object : AppBarLayout.Behavior.DragCallback() {
+                    override fun canDrag(appBarLayout: AppBarLayout): Boolean {
+                        return false
+                    }
+                },
+            )
+            appBarLayoutParams.behavior = appBarBehavior
+        }
+        binding.homeAppBar.setExpanded(true)
+    }
+
     private fun updateLayout(view: View) {
         when (requireContext().settings().toolbarPosition) {
             ToolbarPosition.TOP -> {
@@ -552,7 +574,7 @@ class HomeFragment : Fragment() {
         observeSearchEngineNameChanges()
         observeWallpaperUpdates()
 
-        HomeMenuBuilder(
+        HomeMenuView(
             view = view,
             context = view.context,
             lifecycleOwner = viewLifecycleOwner,
@@ -562,12 +584,12 @@ class HomeFragment : Fragment() {
             hideOnboardingIfNeeded = ::hideOnboardingIfNeeded,
         ).build()
 
-        TabCounterBuilder(
+        TabCounterView(
             context = requireContext(),
             browsingModeManager = browsingModeManager,
             navController = findNavController(),
             tabCounter = binding.tabButton,
-        ).build()
+        )
 
         binding.toolbar.compoundDrawablePadding =
             view.resources.getDimensionPixelSize(R.dimen.search_bar_search_engine_icon_padding)
@@ -625,7 +647,6 @@ class HomeFragment : Fragment() {
                     adapter.getItemViewType(it) == CollectionHeaderViewHolder.LAYOUT_ID
                 }
                 collectionPosition?.run {
-                    appBarLayout?.setExpanded(false)
                     val linearLayoutManager = recyclerView.layoutManager as LinearLayoutManager
                     smoothScroller.targetPosition = this
                     linearLayoutManager.startSmoothScroll(smoothScroller)
