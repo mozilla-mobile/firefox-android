@@ -144,16 +144,6 @@ interface SessionControlController {
     fun handleSponsorPrivacyClicked()
 
     /**
-     * @see [OnboardingInteractor.onStartBrowsingClicked]
-     */
-    fun handleStartBrowsingClicked()
-
-    /**
-     * @see [OnboardingInteractor.onReadPrivacyNoticeClicked]
-     */
-    fun handleReadPrivacyNoticeClicked()
-
-    /**
      * @see [CollectionInteractor.onToggleCollectionExpanded]
      */
     fun handleToggleCollectionExpanded(collection: TabCollection, expand: Boolean)
@@ -167,6 +157,11 @@ interface SessionControlController {
      * @see [ToolbarInteractor.onPaste]
      */
     fun handlePaste(clipboardText: String)
+
+    /**
+     * @see [ToolbarInteractor.onNavigateSearch]
+     */
+    fun handleNavigateSearch()
 
     /**
      * @see [CollectionInteractor.onAddTabsToCollectionTapped]
@@ -199,7 +194,7 @@ interface SessionControlController {
     fun handleCustomizeHomeTapped()
 
     /**
-     * @see [OnboardingInteractor.showWallpapersOnboardingDialog]
+     * @see [WallpaperInteractor.showWallpapersOnboardingDialog]
      */
     fun handleShowWallpapersOnboardingDialog(state: WallpaperState): Boolean
 
@@ -229,7 +224,6 @@ class DefaultSessionControlController(
     private val appStore: AppStore,
     private val navController: NavController,
     private val viewLifecycleScope: CoroutineScope,
-    private val hideOnboarding: () -> Unit,
     private val registerCollectionStorageObserver: () -> Unit,
     private val removeCollectionWithUndo: (tabCollection: TabCollection) -> Unit,
     private val showTabTray: () -> Unit,
@@ -486,10 +480,6 @@ class DefaultSessionControlController(
         return url
     }
 
-    override fun handleStartBrowsingClicked() {
-        hideOnboarding()
-    }
-
     override fun handleCustomizeHomeTapped() {
         val directions = HomeFragmentDirections.actionGlobalHomeSettingsFragment()
         navController.nav(navController.currentDestination?.id, directions)
@@ -515,16 +505,6 @@ class DefaultSessionControlController(
             }
         }
     }
-
-    override fun handleReadPrivacyNoticeClicked() {
-        activity.startActivity(
-            SupportUtils.createCustomTabIntent(
-                activity,
-                SupportUtils.getMozillaPageUrl(SupportUtils.MozillaPage.PRIVATE_NOTICE),
-            ),
-        )
-    }
-
     override fun handleToggleCollectionExpanded(collection: TabCollection, expand: Boolean) {
         appStore.dispatch(AppAction.CollectionExpanded(collection, expand))
     }
@@ -607,6 +587,21 @@ class DefaultSessionControlController(
             pastedText = clipboardText,
         )
         navController.nav(R.id.homeFragment, directions)
+    }
+
+    override fun handleNavigateSearch() {
+        val directions =
+            HomeFragmentDirections.actionGlobalSearchDialog(
+                sessionId = null,
+            )
+
+        navController.nav(
+            R.id.homeFragment,
+            directions,
+            BrowserAnimator.getToolbarNavOptions(activity),
+        )
+
+        Events.searchBarTapped.record(Events.SearchBarTappedExtra("HOME"))
     }
 
     override fun handleMessageClicked(message: Message) {

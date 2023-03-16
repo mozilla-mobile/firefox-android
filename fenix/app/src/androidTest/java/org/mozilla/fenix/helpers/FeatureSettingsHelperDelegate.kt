@@ -31,9 +31,11 @@ class FeatureSettingsHelperDelegate : FeatureSettingsHelper {
         isRecentlyVisitedFeatureEnabled = settings.historyMetadataUIFeature,
         isPWAsPromptEnabled = !settings.userKnowsAboutPwas,
         isTCPCFREnabled = settings.shouldShowTotalCookieProtectionCFR,
+        isUnifiedSearchEnabled = false,
         isWallpaperOnboardingEnabled = settings.showWallpaperOnboarding,
         isDeleteSitePermissionsEnabled = settings.deleteSitePermissions,
         isCookieBannerReductionDialogEnabled = !settings.userOptOutOfReEngageCookieBannerDialog,
+        isOpenInAppBannerEnabled = settings.shouldShowOpenInAppBanner,
         etpPolicy = getETPPolicy(settings),
     )
 
@@ -60,6 +62,7 @@ class FeatureSettingsHelperDelegate : FeatureSettingsHelper {
     override var isPWAsPromptEnabled: Boolean by updatedFeatureFlags::isPWAsPromptEnabled
     override var isTCPCFREnabled: Boolean by updatedFeatureFlags::isTCPCFREnabled
     override var isCookieBannerReductionDialogEnabled: Boolean by updatedFeatureFlags::isCookieBannerReductionDialogEnabled
+    override var isOpenInAppBannerEnabled: Boolean by updatedFeatureFlags::isOpenInAppBannerEnabled
     override var etpPolicy: ETPPolicy by updatedFeatureFlags::etpPolicy
 
     override fun applyFlagUpdates() {
@@ -81,9 +84,11 @@ class FeatureSettingsHelperDelegate : FeatureSettingsHelper {
         settings.historyMetadataUIFeature = featureFlags.isRecentlyVisitedFeatureEnabled
         settings.userKnowsAboutPwas = !featureFlags.isPWAsPromptEnabled
         settings.shouldShowTotalCookieProtectionCFR = featureFlags.isTCPCFREnabled
+        settings.showUnifiedSearchFeature = featureFlags.isUnifiedSearchEnabled
         settings.showWallpaperOnboarding = featureFlags.isWallpaperOnboardingEnabled
         settings.deleteSitePermissions = featureFlags.isDeleteSitePermissionsEnabled
         settings.userOptOutOfReEngageCookieBannerDialog = !featureFlags.isCookieBannerReductionDialogEnabled
+        settings.shouldShowOpenInAppBanner = featureFlags.isOpenInAppBannerEnabled
         setETPPolicy(featureFlags.etpPolicy)
     }
 }
@@ -97,9 +102,11 @@ private data class FeatureFlags(
     var isRecentlyVisitedFeatureEnabled: Boolean,
     var isPWAsPromptEnabled: Boolean,
     var isTCPCFREnabled: Boolean,
+    val isUnifiedSearchEnabled: Boolean,
     var isWallpaperOnboardingEnabled: Boolean,
     var isDeleteSitePermissionsEnabled: Boolean,
     var isCookieBannerReductionDialogEnabled: Boolean,
+    var isOpenInAppBannerEnabled: Boolean,
     var etpPolicy: ETPPolicy,
 )
 

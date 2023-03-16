@@ -7,6 +7,9 @@ package org.mozilla.fenix.home
 import android.content.Context
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
+import mozilla.components.browser.state.selector.normalTabs
+import mozilla.components.browser.state.selector.privateTabs
+import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.ui.tabcounter.TabCounter
 import mozilla.components.ui.tabcounter.TabCounterMenu
 import mozilla.telemetry.glean.private.NoExtras
@@ -25,17 +28,14 @@ import org.mozilla.fenix.ext.nav
  * @property navController [NavController] used for navigation.
  * @property tabCounter The [TabCounter] that will be setup with event handlers.
  */
-class TabCounterBuilder(
+class TabCounterView(
     private val context: Context,
     private val browsingModeManager: BrowsingModeManager,
     private val navController: NavController,
     private val tabCounter: TabCounter,
 ) {
 
-    /**
-     * Builds the [FenixTabCounterMenu].
-     */
-    fun build() {
+    init {
         val tabCounterMenu = FenixTabCounterMenu(
             context = context,
             onItemTapped = ::onItemTapped,
@@ -66,6 +66,22 @@ class TabCounterBuilder(
                 HomeFragmentDirections.actionGlobalTabsTrayFragment(),
             )
         }
+    }
+
+    /**
+     * Updates the tab counter count based on the current browser state.
+     *
+     * @param browserState [BrowserState] used to get the current tab count for the current
+     * browsing mode.
+     */
+    fun update(browserState: BrowserState) {
+        val tabCount = if (browsingModeManager.mode.isPrivate) {
+            browserState.privateTabs.size
+        } else {
+            browserState.normalTabs.size
+        }
+
+        tabCounter.setCountWithAnimation(tabCount)
     }
 
     /**

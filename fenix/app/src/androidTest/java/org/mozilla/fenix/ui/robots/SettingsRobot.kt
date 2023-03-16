@@ -41,8 +41,11 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.Constants.LISTS_MAXSWIPES
 import org.mozilla.fenix.helpers.Constants.PackageName.GOOGLE_PLAY_SERVICES
 import org.mozilla.fenix.helpers.Constants.RETRY_COUNT
+import org.mozilla.fenix.helpers.MatcherHelper.assertItemContainingTextExists
 import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithText
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
+import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
 import org.mozilla.fenix.helpers.TestHelper.appName
 import org.mozilla.fenix.helpers.TestHelper.getStringResource
 import org.mozilla.fenix.helpers.TestHelper.isPackageInstalled
@@ -67,8 +70,13 @@ class SettingsRobot {
     fun verifyThemeSelected() = assertThemeSelected()
     fun verifyAccessibilityButton() = assertAccessibilityButton()
     fun verifySetAsDefaultBrowserButton() = assertSetAsDefaultBrowserButton()
-    fun verifyTabsButton() = assertTabsButton()
+    fun verifyTabsButton() =
+        assertItemContainingTextExists(itemContainingText(getStringResource(R.string.preferences_tabs)))
+    fun verifyTabsButtonSummary(summary: String) =
+        assertItemContainingTextExists(itemContainingText(summary))
     fun verifyHomepageButton() = assertHomepageButton()
+    fun verifyHomepageButtonSummary(summary: String) =
+        assertItemContainingTextExists(itemContainingText(summary))
     fun verifyAutofillButton() = assertAutofillButton()
     fun verifyLanguageButton() = assertLanguageButton()
     fun verifyDefaultBrowserIsDisabled() = assertDefaultBrowserIsDisabled()
@@ -79,7 +87,25 @@ class SettingsRobot {
     fun verifyPrivacyHeading() = assertPrivacyHeading()
 
     fun verifyHTTPSOnlyModeButton() = assertHTTPSOnlyModeButton()
-    fun verifyHTTPSOnlyModeState(state: String) = assertHTTPSOnlyModeState(state)
+    fun verifyHTTPSOnlyModeSummary(HTTPSOnlyModeSummary: String) =
+        onView(
+            allOf(
+                withText(R.string.preferences_https_only_title),
+                hasSibling(withText(HTTPSOnlyModeSummary)),
+            ),
+        ).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+
+    fun verifyCookieBannerReductionSummary(cookieBannerReductionSummary: String) {
+        scrollToElementByText(getStringResource(R.string.preferences_cookie_banner_reduction))
+
+        onView(
+            allOf(
+                withText(R.string.preferences_cookie_banner_reduction),
+                hasSibling(withText(cookieBannerReductionSummary)),
+            ),
+        ).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+    }
+
     fun verifyEnhancedTrackingProtectionButton() = assertEnhancedTrackingProtectionButton()
     fun verifyLoginsAndPasswordsButton() = assertLoginsAndPasswordsButton()
     fun verifyEnhancedTrackingProtectionState(option: String) =
@@ -152,8 +178,11 @@ class SettingsRobot {
         }
 
         fun openTabsSubMenu(interact: SettingsSubMenuTabsRobot.() -> Unit): SettingsSubMenuTabsRobot.Transition {
-            fun tabsButton() = onView(withText("Tabs"))
-            tabsButton().click()
+            itemWithText(getStringResource(R.string.preferences_tabs))
+                .also {
+                    it.waitForExists(waitingTime)
+                    it.clickAndWaitForNewWindow(waitingTimeShort)
+                }
 
             SettingsSubMenuTabsRobot().interact()
             return SettingsSubMenuTabsRobot.Transition()
@@ -415,12 +444,6 @@ private fun assertAndroidDefaultAppsMenuAppears() {
     intended(IntentMatchers.hasAction(DEFAULT_APPS_SETTINGS_ACTION))
 }
 
-private fun assertTabsButton() {
-    mDevice.wait(Until.findObject(By.text("Tabs")), waitingTime)
-    onView(withText(R.string.preferences_tabs))
-        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-}
-
 // PRIVACY SECTION
 private fun assertPrivacyHeading() {
     scrollToElementByText("Privacy and security")
@@ -432,15 +455,6 @@ private fun assertHTTPSOnlyModeButton() {
     scrollToElementByText(getStringResource(R.string.preferences_https_only_title))
     onView(
         withText(R.string.preferences_https_only_title),
-    ).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-}
-
-private fun assertHTTPSOnlyModeState(state: String) {
-    onView(
-        allOf(
-            withText(R.string.preferences_https_only_title),
-            hasSibling(withText(state)),
-        ),
     ).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 

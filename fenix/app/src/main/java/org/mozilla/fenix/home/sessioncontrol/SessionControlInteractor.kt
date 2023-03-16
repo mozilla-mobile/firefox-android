@@ -27,6 +27,8 @@ import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItem.RecentHistoryGrou
 import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItem.RecentHistoryHighlight
 import org.mozilla.fenix.home.recentvisits.controller.RecentVisitsController
 import org.mozilla.fenix.home.recentvisits.interactor.RecentVisitsInteractor
+import org.mozilla.fenix.onboarding.controller.OnboardingController
+import org.mozilla.fenix.onboarding.interactor.OnboardingInteractor
 import org.mozilla.fenix.search.toolbar.SearchSelectorInteractor
 import org.mozilla.fenix.search.toolbar.SearchSelectorMenu
 import org.mozilla.fenix.wallpapers.WallpaperState
@@ -145,30 +147,11 @@ interface ToolbarInteractor {
      * Navigates to search with clipboard text.
      */
     fun onPaste(clipboardText: String)
-}
-
-/**
- * Interface for onboarding related actions in the [SessionControlInteractor].
- */
-interface OnboardingInteractor {
-    /**
-     * Hides the onboarding and navigates to Search. Called when a user clicks on the "Start Browsing" button.
-     */
-    fun onStartBrowsingClicked()
 
     /**
-     * Opens a custom tab to privacy notice url. Called when a user clicks on the "read our privacy notice" button.
+     * Navigates to the search dialog.
      */
-    fun onReadPrivacyNoticeClicked()
-
-    /**
-     * Show Wallpapers onboarding dialog to onboard users about the feature if conditions are met.
-     * Returns true if the call has been passed down to the controller.
-     *
-     * @param state The wallpaper state.
-     * @return Whether the onboarding dialog is currently shown.
-     */
-    fun showWallpapersOnboardingDialog(state: WallpaperState): Boolean
+    fun onNavigateSearch()
 }
 
 interface CustomizeHomeIteractor {
@@ -238,12 +221,26 @@ interface MessageCardInteractor {
 }
 
 /**
+ * Interface for wallpaper related actions.
+ */
+interface WallpaperInteractor {
+    /**
+     * Show Wallpapers onboarding dialog to onboard users about the feature if conditions are met.
+     * Returns true if the call has been passed down to the controller.
+     *
+     * @param state The wallpaper state.
+     * @return Whether the onboarding dialog is currently shown.
+     */
+    fun showWallpapersOnboardingDialog(state: WallpaperState): Boolean
+}
+
+/**
  * Interactor for the Home screen. Provides implementations for the CollectionInteractor,
  * OnboardingInteractor, TopSiteInteractor, TabSessionInteractor, ToolbarInteractor,
  * ExperimentCardInteractor, RecentTabInteractor, RecentBookmarksInteractor
  * and others.
  */
-@SuppressWarnings("TooManyFunctions")
+@SuppressWarnings("TooManyFunctions", "LongParameterList")
 class SessionControlInteractor(
     private val controller: SessionControlController,
     private val recentTabController: RecentTabController,
@@ -251,6 +248,7 @@ class SessionControlInteractor(
     private val recentBookmarksController: RecentBookmarksController,
     private val recentVisitsController: RecentVisitsController,
     private val pocketStoriesController: PocketStoriesController,
+    private val onboardingController: OnboardingController,
 ) : CollectionInteractor,
     OnboardingInteractor,
     TopSiteInteractor,
@@ -263,7 +261,8 @@ class SessionControlInteractor(
     RecentVisitsInteractor,
     CustomizeHomeIteractor,
     PocketStoriesInteractor,
-    SearchSelectorInteractor {
+    SearchSelectorInteractor,
+    WallpaperInteractor {
 
     override fun onCollectionAddTabTapped(collection: TabCollection) {
         controller.handleCollectionAddTabTapped(collection)
@@ -318,11 +317,11 @@ class SessionControlInteractor(
     }
 
     override fun onStartBrowsingClicked() {
-        controller.handleStartBrowsingClicked()
+        onboardingController.handleStartBrowsingClicked()
     }
 
     override fun onReadPrivacyNoticeClicked() {
-        controller.handleReadPrivacyNoticeClicked()
+        onboardingController.handleReadPrivacyNoticeClicked()
     }
 
     override fun showWallpapersOnboardingDialog(state: WallpaperState): Boolean {
@@ -351,6 +350,10 @@ class SessionControlInteractor(
 
     override fun onPaste(clipboardText: String) {
         controller.handlePaste(clipboardText)
+    }
+
+    override fun onNavigateSearch() {
+        controller.handleNavigateSearch()
     }
 
     override fun onRemoveCollectionsPlaceholder() {
