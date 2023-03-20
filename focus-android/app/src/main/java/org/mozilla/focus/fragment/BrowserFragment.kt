@@ -654,9 +654,9 @@ class BrowserFragment :
             ),
         )
 
-        snackbar.setAction(getString(R.string.download_snackbar_open)) {
+        snackbar.setAction(getString(R.string.download_snackbar_open)) { context ->
             val opened = AbstractFetchDownloadService.openFile(
-                applicationContext = requireContext().applicationContext,
+                applicationContext = context.applicationContext,
                 download = state,
             )
 
@@ -926,7 +926,7 @@ class BrowserFragment :
             },
             showConnectionInfo = ::showConnectionInfo,
             showCookieBannerExceptionsDetailsPanel = ::showCookieBannerExceptionDetailsPanel,
-        ).also { currentEtp -> currentEtp.show() }
+        ).also { currentEtp -> context?.let { currentEtp.show() } }
     }
 
     private fun reloadCurrentTab() {
