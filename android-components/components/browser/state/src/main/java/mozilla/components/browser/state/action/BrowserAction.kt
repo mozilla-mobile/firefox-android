@@ -1478,3 +1478,19 @@ sealed class DebugAction : BrowserAction() {
     @DelicateAction
     data class UpdateCreatedAtAction(val tabId: String, val createdAt: Long) : DebugAction()
 }
+
+/**
+ * [BrowserAction] implementations related to the application lifecycle.
+ */
+sealed class AppLifecycleAction : BrowserAction() {
+
+    /**
+     * The application has received an ON_RESUME event.
+     */
+    object ResumeAction : AppLifecycleAction()
+
+    /**
+     * The application has received an ON_PAUSE event.
+     */
+    object PauseAction : AppLifecycleAction()
+}

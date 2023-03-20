@@ -24,6 +24,7 @@ import mozilla.components.support.utils.SafeIntent
  * contextual identity to use for the session's cookie store.
  * https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Work_with_contextual_identities
  * @property restored Indicates if this session was restored from a hydrated state.
+ * @property hasFormData Indicates if the session has form data
  */
 interface SessionState {
     val id: String

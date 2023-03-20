@@ -5,6 +5,7 @@
 package org.mozilla.fenix.telemetry
 
 import androidx.test.core.app.ApplicationProvider
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import mozilla.components.browser.state.action.ContentAction
@@ -35,6 +36,7 @@ import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.Metrics
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.utils.Settings
 import org.robolectric.shadows.ShadowLooper
@@ -59,9 +61,9 @@ class TelemetryMiddlewareTest {
     @Before
     fun setUp() {
         Clock.delegate = clock
-
+        every { testContext.components.appStore.state.isForeground } returns true
         settings = Settings(testContext)
-        telemetryMiddleware = TelemetryMiddleware(settings, metrics)
+        telemetryMiddleware = TelemetryMiddleware(testContext, settings, metrics)
         store = BrowserStore(
             middleware = listOf(telemetryMiddleware) + EngineMiddleware.create(engine = mockk()),
             initialState = BrowserState(),
@@ -232,6 +234,7 @@ class TelemetryMiddlewareTest {
             TabListAction.RestoreAction(
                 listOf(
                     RecoverableTab(null, TabState(url = "https://www.mozilla.org", id = "foreground")),
+                    RecoverableTab(null, TabState(url = "https://developer.mozilla.org", id = "foreground_form_data", hasFormData = true)),
                     RecoverableTab(null, TabState(url = "https://getpocket.com", id = "background_pocket")),
                     RecoverableTab(null, TabState(url = "https://theverge.com", id = "background_verge")),
                 ),
@@ -241,13 +244,18 @@ class TelemetryMiddlewareTest {
         ).joinBlocking()
 
         assertNull(EngineMetrics.kills["foreground"].testGetValue())
+        assertNull(EngineMetrics.kills["foreground-has-form-data"].testGetValue())
         assertNull(EngineMetrics.kills["background"].testGetValue())
 
         store.dispatch(
             EngineAction.KillEngineSessionAction("foreground"),
         ).joinBlocking()
 
-        assertNotNull(EngineMetrics.kills["foreground"].testGetValue())
+        store.dispatch(
+            EngineAction.KillEngineSessionAction("foreground_form_data"),
+        ).joinBlocking()
+
+        assertEquals(1, EngineMetrics.kills["foreground"].testGetValue())
     }
 
     @Test

@@ -65,7 +65,6 @@ class SessionPrioritizationMiddleware(
                     tab?.engineState?.engineSession?.updateSessionPriority(DEFAULT)
                     logger.info("Update the tab ${tab?.id} priority to ${DEFAULT.name}")
                 }
-                return // Do not let the action continue through to the reducer
             }
             is ContentAction.UpdatePriorityToDefaultAfterTimeoutAction -> {
                 // remove finished job from map
