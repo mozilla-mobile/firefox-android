@@ -28,6 +28,10 @@ object MetricsUtils {
     private const val PBKDF2_ITERATIONS = 1000
     private const val PBKDF2_KEY_LEN_BITS = 256
 
+    // The default string returned by the device if the user has opted out of
+    // having an advertising ID.
+    private const val OPT_OUT_DEFAULT_AD_ID = "00000000-0000-0000-0000-000000000000"
+
     /**
      * Possible sources for a performed search.
      */
@@ -79,7 +83,18 @@ object MetricsUtils {
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     internal fun getAdvertisingID(context: Context): String? {
         return try {
-            AdvertisingIdClient.getAdvertisingIdInfo(context).id
+            val adId = AdvertisingIdClient.getAdvertisingIdInfo(context).id
+
+            // As of early 2022 (Android 12) the user can opt out of an
+            // advertising ID. If the user has opted out the ID returned
+            // will be an ID of all 0s.
+            //
+            // https://developers.google.com/android/reference/com/google/android/gms/ads/identifier/AdvertisingIdClient.Info
+            if (adId == OPT_OUT_DEFAULT_AD_ID) {
+                return null
+            }
+
+            return adId
         } catch (e: GooglePlayServicesNotAvailableException) {
             Logger.debug("getAdvertisingID() - Google Play not installed on the device")
             null
