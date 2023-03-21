@@ -7770,9 +7770,9 @@ engine_tab:
           Whether or not the tab had unsubmitted form data when it was killed.
         type: boolean
     bugs:
-      - na
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1820211
     data_reviews:
-      - na
+      - https://github.com/mozilla-mobile/firefox-android/pull/1343#issuecomment-1478535296
     notification_emails:
       - android-probes@mozilla.com
     expires: never
