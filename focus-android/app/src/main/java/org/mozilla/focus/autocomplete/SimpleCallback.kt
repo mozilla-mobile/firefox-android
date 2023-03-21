@@ -3,6 +3,9 @@ package org.mozilla.focus.autocomplete
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 
+/**
+ *  Callback Object defining the configuration of the interactions types that are enabled for the ItemTouchHelper}
+ */
 object SimpleCallback :
     ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0) {
     override fun onMove(
@@ -18,7 +21,9 @@ object SimpleCallback :
         return true
     }
 
-    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {}
+    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+        return
+    }
 
     override fun getMovementFlags(
         recyclerView: RecyclerView,

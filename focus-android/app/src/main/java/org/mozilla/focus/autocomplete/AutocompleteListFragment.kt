@@ -231,6 +231,7 @@ open class AutocompleteListFragment : BaseSettingsLikeFragment(), CoroutineScope
             const val LAYOUT_ID = R.layout.item_custom_domain
         }
 
+        /** defines the views interaction within the holder view */
         fun bind(
             domain: String,
             isSelectionMode: Boolean,
@@ -267,10 +268,13 @@ open class AutocompleteListFragment : BaseSettingsLikeFragment(), CoroutineScope
             }
         }
 
+        /** defines the behavior of the itemView when selected */
         fun onSelected() {
             itemView.setBackgroundColor(ContextCompat.getColor(itemView.context, R.color.disabled))
         }
 
+
+        /** defines the behavior of the itemView when cleared */
         fun onCleared() {
             itemView.setBackgroundColor(0)
         }
