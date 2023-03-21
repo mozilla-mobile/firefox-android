@@ -172,7 +172,15 @@ features:
       enabled:
         description: If true, the re-engagement notification is shown to the inactive user.
         type: Boolean
+<<<<<<< HEAD:fenix/nimbus.fml.yaml
         default: true
+=======
+        default: false
+      type:
+        description: The type of re-engagement notification that is shown to the inactive user.
+        type: Int
+        default: 0
+>>>>>>> bf1bb4b14f (Bug 1823794 - Disable re-engagement notification by default):fenix/app/nimbus.fml.yaml
 
   pre-permission-notification-prompt:
     description: A feature that shows the pre-permission notification prompt.
