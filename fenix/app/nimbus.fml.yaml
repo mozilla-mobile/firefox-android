@@ -134,8 +134,11 @@ features:
     defaults:
       - channel: nightly
         value:
-          enabled: false
-  
+          enabled: true
+      - channel: developer
+        value:
+          enabled: true
+
   client-deduplication:
     description: A feature to control the sending of the client-deduplication ping.
     variables:
@@ -182,6 +185,14 @@ features:
         description: if true, the pre-permission notification prompt is shown to the user.
         type: Boolean
         default: true
+
+  juno-onboarding:
+    description: A feature that shows juno onboarding flow.
+    variables:
+      enabled:
+        description: if true, juno onboarding is shown to the user.
+        type: Boolean
+        default: false
 
   onboarding:
     description: "A feature that configures the new user onboarding page.

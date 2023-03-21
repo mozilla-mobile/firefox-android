@@ -16,7 +16,7 @@ class DependenciesPlugin : Plugin<Settings> {
 object Versions {
     const val kotlin = "1.8.10"
     const val coroutines = "1.6.4"
-    const val serialization = "1.4.1"
+    const val serialization = "1.5.0"
 
     const val junit = "4.13.2"
     const val robolectric = "4.9.2"
@@ -39,14 +39,13 @@ object Versions {
     // zxing 3.4+ requires a minimum API of 24 or higher
     const val zxing = "3.3.3"
 
-    const val jna = "5.12.1"
     const val disklrucache = "2.0.2"
     const val leakcanary = "2.10"
 
     const val mozilla_appservices = "97.2.0"
 
     // DO NOT MODIFY MANUALLY. This is auto-updated along with GeckoView.
-    const val mozilla_glean = "52.3.0"
+    const val mozilla_glean = "52.4.2"
 
     const val material = "1.2.1"
     const val ksp = "1.0.9"
@@ -197,7 +196,6 @@ object ComponentsDependencies {
     const val thirdparty_okhttp_urlconnection = "com.squareup.okhttp3:okhttp-urlconnection:${Versions.okhttp}"
     const val thirdparty_sentry_latest = "io.sentry:sentry-android:${Versions.sentry_latest}"
     const val thirdparty_zxing = "com.google.zxing:core:${Versions.zxing}"
-    const val thirdparty_jna = "net.java.dev.jna:jna:${Versions.jna}@jar"
     const val thirdparty_disklrucache = "com.jakewharton:disklrucache:${Versions.disklrucache}"
 
     const val firebase_messaging = "com.google.firebase:firebase-messaging:${Versions.Firebase.messaging}"

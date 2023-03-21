@@ -2,6 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-object AndroidComponents {
-    const val VERSION = "111.0.20230213143237"
-}
+package org.mozilla.fenix.benchmark.utils
+
+const val TARGET_PACKAGE = "org.mozilla.fenix"
+const val DEFAULT_ITERATIONS = 5

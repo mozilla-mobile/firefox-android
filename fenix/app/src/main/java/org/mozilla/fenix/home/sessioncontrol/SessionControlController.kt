@@ -27,11 +27,9 @@ import mozilla.components.feature.tab.collections.ext.invoke
 import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.support.ktx.android.view.showKeyboard
-import mozilla.components.support.ktx.kotlin.isUrl
 import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.GleanMetrics.Collections
-import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.HomeScreen
 import org.mozilla.fenix.GleanMetrics.Pings
 import org.mozilla.fenix.GleanMetrics.Pocket
@@ -144,29 +142,9 @@ interface SessionControlController {
     fun handleSponsorPrivacyClicked()
 
     /**
-     * @see [OnboardingInteractor.onStartBrowsingClicked]
-     */
-    fun handleStartBrowsingClicked()
-
-    /**
-     * @see [OnboardingInteractor.onReadPrivacyNoticeClicked]
-     */
-    fun handleReadPrivacyNoticeClicked()
-
-    /**
      * @see [CollectionInteractor.onToggleCollectionExpanded]
      */
     fun handleToggleCollectionExpanded(collection: TabCollection, expand: Boolean)
-
-    /**
-     * @see [ToolbarInteractor.onPasteAndGo]
-     */
-    fun handlePasteAndGo(clipboardText: String)
-
-    /**
-     * @see [ToolbarInteractor.onPaste]
-     */
-    fun handlePaste(clipboardText: String)
 
     /**
      * @see [CollectionInteractor.onAddTabsToCollectionTapped]
@@ -199,7 +177,7 @@ interface SessionControlController {
     fun handleCustomizeHomeTapped()
 
     /**
-     * @see [OnboardingInteractor.showWallpapersOnboardingDialog]
+     * @see [WallpaperInteractor.showWallpapersOnboardingDialog]
      */
     fun handleShowWallpapersOnboardingDialog(state: WallpaperState): Boolean
 
@@ -229,7 +207,6 @@ class DefaultSessionControlController(
     private val appStore: AppStore,
     private val navController: NavController,
     private val viewLifecycleScope: CoroutineScope,
-    private val hideOnboarding: () -> Unit,
     private val registerCollectionStorageObserver: () -> Unit,
     private val removeCollectionWithUndo: (tabCollection: TabCollection) -> Unit,
     private val showTabTray: () -> Unit,
@@ -486,10 +463,6 @@ class DefaultSessionControlController(
         return url
     }
 
-    override fun handleStartBrowsingClicked() {
-        hideOnboarding()
-    }
-
     override fun handleCustomizeHomeTapped() {
         val directions = HomeFragmentDirections.actionGlobalHomeSettingsFragment()
         navController.nav(navController.currentDestination?.id, directions)
@@ -515,16 +488,6 @@ class DefaultSessionControlController(
             }
         }
     }
-
-    override fun handleReadPrivacyNoticeClicked() {
-        activity.startActivity(
-            SupportUtils.createCustomTabIntent(
-                activity,
-                SupportUtils.getMozillaPageUrl(SupportUtils.MozillaPage.PRIVATE_NOTICE),
-            ),
-        )
-    }
-
     override fun handleToggleCollectionExpanded(collection: TabCollection, expand: Boolean) {
         appStore.dispatch(AppAction.CollectionExpanded(collection, expand))
     }
@@ -575,36 +538,6 @@ class DefaultSessionControlController(
             sessionId = store.state.selectedTabId,
             shareSubject = shareSubject,
             data = data.toTypedArray(),
-        )
-        navController.nav(R.id.homeFragment, directions)
-    }
-
-    override fun handlePasteAndGo(clipboardText: String) {
-        val searchEngine = store.state.search.selectedOrDefaultSearchEngine
-
-        activity.openToBrowserAndLoad(
-            searchTermOrURL = clipboardText,
-            newTab = true,
-            from = BrowserDirection.FromHome,
-            engine = searchEngine,
-        )
-
-        if (clipboardText.isUrl() || searchEngine == null) {
-            Events.enteredUrl.record(Events.EnteredUrlExtra(autocomplete = false))
-        } else {
-            val searchAccessPoint = MetricsUtils.Source.ACTION
-            MetricsUtils.recordSearchMetrics(
-                searchEngine,
-                searchEngine == store.state.search.selectedOrDefaultSearchEngine,
-                searchAccessPoint,
-            )
-        }
-    }
-
-    override fun handlePaste(clipboardText: String) {
-        val directions = HomeFragmentDirections.actionGlobalSearchDialog(
-            sessionId = null,
-            pastedText = clipboardText,
         )
         navController.nav(R.id.homeFragment, directions)
     }

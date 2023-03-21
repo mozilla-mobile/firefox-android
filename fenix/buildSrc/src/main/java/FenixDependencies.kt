@@ -18,16 +18,17 @@ object FenixVersions {
     const val leakcanary = "2.10"
     const val osslicenses_plugin = "0.10.4"
     const val detekt = "1.19.0"
-    const val jna = "5.12.1"
 
+    const val androidx_activity = "1.6.1"
     const val androidx_compose = "1.3.1"
     const val androidx_compose_compiler = "1.4.3"
     const val androidx_appcompat = "1.3.0"
-    const val androidx_benchmark = "1.0.0"
+    const val androidx_benchmark = "1.1.1"
     const val androidx_biometric = "1.1.0"
     const val androidx_coordinator_layout = "1.1.0"
     const val androidx_constraint_layout = "2.0.4"
     const val androidx_preference = "1.1.1"
+    const val androidx_profileinstaller = "1.2.2"
     const val androidx_legacy = "1.0.0"
     const val androidx_annotation = "1.5.0"
     const val androidx_lifecycle = "2.5.1"
@@ -41,8 +42,7 @@ object FenixVersions {
     const val androidx_work = "2.7.1"
     const val androidx_datastore = "1.0.0"
     const val google_material = "1.2.1"
-    const val accompanist_drawablepainter = "0.23.1"
-    const val accompanist_pager = "0.28.0"
+    const val google_accompanist = "0.28.0"
 
     const val adjust = "4.33.0"
     const val installreferrer = "2.2"
@@ -84,8 +84,12 @@ object FenixDependencies {
     const val androidx_compose_material = "androidx.compose.material:material:${FenixVersions.androidx_compose}"
     const val androidx_annotation = "androidx.annotation:annotation:${FenixVersions.androidx_annotation}"
     const val androidx_benchmark_junit4 = "androidx.benchmark:benchmark-junit4:${FenixVersions.androidx_benchmark}"
+    const val androidx_benchmark_macro_junit4 = "androidx.benchmark:benchmark-macro-junit4:${FenixVersions.androidx_benchmark}"
+    const val androidx_profileinstaller = "androidx.profileinstaller:profileinstaller:${FenixVersions.androidx_profileinstaller}"
     const val androidx_biometric = "androidx.biometric:biometric:${FenixVersions.androidx_biometric}"
     const val androidx_fragment = "androidx.fragment:fragment-ktx:${FenixVersions.androidx_fragment}"
+    const val androidx_activity_compose = "androidx.activity:activity-compose:${FenixVersions.androidx_activity}"
+    const val androidx_activity_ktx = "androidx.activity:activity-ktx:${FenixVersions.androidx_activity}"
     const val androidx_appcompat = "androidx.appcompat:appcompat:${FenixVersions.androidx_appcompat}"
     const val androidx_coordinatorlayout = "androidx.coordinatorlayout:coordinatorlayout:${FenixVersions.androidx_coordinator_layout}"
     const val androidx_constraintlayout = "androidx.constraintlayout:constraintlayout:${FenixVersions.androidx_constraint_layout}"
@@ -109,18 +113,14 @@ object FenixDependencies {
     const val androidx_work_testing = "androidx.work:work-testing:${FenixVersions.androidx_work}"
     const val androidx_datastore = "androidx.datastore:datastore:${FenixVersions.androidx_datastore}"
     const val google_material = "com.google.android.material:material:${FenixVersions.google_material}"
-    const val google_accompanist_drawablepainter =
-        "com.google.accompanist:accompanist-drawablepainter:${FenixVersions.accompanist_drawablepainter}"
-    const val google_accompanist_pager =
-        "com.google.accompanist:accompanist-pager:${FenixVersions.accompanist_pager}"
+    const val google_accompanist_drawablepainter = "com.google.accompanist:accompanist-drawablepainter:${FenixVersions.google_accompanist}"
+    const val google_accompanist_pager = "com.google.accompanist:accompanist-pager:${FenixVersions.google_accompanist}"
 
     const val protobuf_javalite = "com.google.protobuf:protobuf-javalite:${FenixVersions.protobuf}"
     const val protobuf_compiler = "com.google.protobuf:protoc:${FenixVersions.protobuf}"
 
     const val adjust = "com.adjust.sdk:adjust-android:${FenixVersions.adjust}"
     const val installreferrer = "com.android.installreferrer:installreferrer:${FenixVersions.installreferrer}"
-
-    const val jna = "net.java.dev.jna:jna:${FenixVersions.jna}@jar"
 
     const val junit = "junit:junit:${FenixVersions.junit}"
     const val mockk = "io.mockk:mockk:${FenixVersions.mockk}"
