@@ -172,7 +172,7 @@ features:
       enabled:
         description: If true, the re-engagement notification is shown to the inactive user.
         type: Boolean
-        default: true
+        default: false
 
   pre-permission-notification-prompt:
     description: A feature that shows the pre-permission notification prompt.
