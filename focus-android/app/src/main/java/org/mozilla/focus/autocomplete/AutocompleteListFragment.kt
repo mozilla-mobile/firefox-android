@@ -273,7 +273,6 @@ open class AutocompleteListFragment : BaseSettingsLikeFragment(), CoroutineScope
             itemView.setBackgroundColor(ContextCompat.getColor(itemView.context, R.color.disabled))
         }
 
-
         /** defines the behavior of the itemView when cleared */
         fun onCleared() {
             itemView.setBackgroundColor(0)
