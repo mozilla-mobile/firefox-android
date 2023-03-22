@@ -840,6 +840,8 @@
     <string name="open_tabs_menu">Open tabs menu</string>
     <!-- Open tabs menu item to save tabs to collection -->
     <string name="tabs_menu_save_to_collection1">Save tabs to collection</string>
+    <!-- Content description (not visible, for screen readers etc.): Open tabs drawer background -->
+    <string name="background_image_for_tab_drawer_background">background image for tab drawer background</string>
     <!-- Text for the menu button to delete a collection -->
     <string name="collection_delete">Delete collection</string>
     <!-- Text for the menu button to rename a collection -->

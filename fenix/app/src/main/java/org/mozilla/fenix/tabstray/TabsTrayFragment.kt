@@ -253,6 +253,7 @@ class TabsTrayFragment : AppCompatDialogFragment() {
         } else {
             tabsTrayBinding.tabWrapper
         }
+
         trayBehaviorManager = TabSheetBehaviorManager(
             behavior = BottomSheetBehavior.from(rootView),
             orientation = resources.configuration.orientation,
@@ -267,6 +268,7 @@ class TabsTrayFragment : AppCompatDialogFragment() {
             },
             navigationInteractor = navigationInteractor,
             displayMetrics = requireContext().resources.displayMetrics,
+            tabsTrayDialogBinding.tabDrawerHolderBackground,
         )
 
         if (!requireContext().settings().enableTabsTrayToCompose) {

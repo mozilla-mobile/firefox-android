@@ -7,14 +7,21 @@ package org.mozilla.fenix.tabstray
 import android.content.res.Configuration
 import android.util.DisplayMetrics
 import android.view.View
+import android.widget.ImageView
 import androidx.annotation.VisibleForTesting
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_DRAGGING
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HIDDEN
+import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_SETTLING
+import mozilla.components.support.base.log.Log
 import mozilla.components.support.ktx.android.util.dpToPx
 
-@VisibleForTesting internal const val EXPANDED_OFFSET_IN_LANDSCAPE_DP = 0
 
-@VisibleForTesting internal const val EXPANDED_OFFSET_IN_PORTRAIT_DP = 40
+@VisibleForTesting
+internal const val EXPANDED_OFFSET_IN_LANDSCAPE_DP = 0
+
+@VisibleForTesting
+internal const val EXPANDED_OFFSET_IN_PORTRAIT_DP = 40
 
 /**
  * Helper class for updating how the tray looks and behaves depending on app state / internal tray state.
@@ -33,6 +40,7 @@ internal class TabSheetBehaviorManager(
     private val numberForExpandingTray: Int,
     navigationInteractor: NavigationInteractor,
     private val displayMetrics: DisplayMetrics,
+    tabDrawerHolderBackground: ImageView,
 ) {
     @VisibleForTesting
     internal var currentOrientation = orientation
@@ -40,7 +48,7 @@ internal class TabSheetBehaviorManager(
     init {
         behavior.skipCollapsed = true
         behavior.addBottomSheetCallback(
-            TraySheetBehaviorCallback(behavior, navigationInteractor),
+            TraySheetBehaviorCallback(behavior, navigationInteractor, tabDrawerHolderBackground),
         )
 
         val isInLandscape = isLandscape(orientation)
@@ -87,17 +95,30 @@ internal class TabSheetBehaviorManager(
 internal class TraySheetBehaviorCallback(
     @get:VisibleForTesting internal val behavior: BottomSheetBehavior<out View>,
     @get:VisibleForTesting internal val trayInteractor: NavigationInteractor,
+    @get:VisibleForTesting internal val tabDrawerHolder: ImageView,
 ) : BottomSheetBehavior.BottomSheetCallback() {
 
     override fun onStateChanged(bottomSheet: View, newState: Int) {
         if (newState == STATE_HIDDEN) {
             trayInteractor.onTabTrayDismissed()
+            Log.log(tag = "zzz", message = "STATE_HIDDEN")
         } else if (newState == BottomSheetBehavior.STATE_HALF_EXPANDED) {
+            Log.log(tag = "zzz", message = "STATE_HALF_EXPANDED")
             // We only support expanded and collapsed states.
             // Otherwise the tray may be left in an unusable state. See #14980.
             behavior.state = STATE_HIDDEN
+        } else if (newState == STATE_DRAGGING) {
+            Log.log(tag = "zzz", message = "STATE_DRAGGING")
+        } else if (newState == STATE_SETTLING) {
+            Log.log(tag = "zzz", message = "STATE_SETTLING")
+        } else if (newState == BottomSheetBehavior.STATE_EXPANDED) {
+            Log.log(tag = "zzz", message = "STATE_EXPANDED")
+        } else if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+            Log.log(tag = "zzz", message = "STATE_COLLAPSED")
         }
     }
 
-    override fun onSlide(bottomSheet: View, slideOffset: Float) = Unit
+    override fun onSlide(bottomSheet: View, slideOffset: Float) {
+        tabDrawerHolder.alpha = slideOffset + 1
+    }
 }

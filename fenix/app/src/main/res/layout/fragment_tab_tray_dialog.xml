@@ -7,4 +7,13 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/tabLayout"
     android:layout_height="match_parent"
-    android:layout_width="match_parent" />
+    android:layout_width="match_parent">
+
+    <ImageView
+        android:id="@+id/tab_drawer_holder_background"
+        android:background="@color/accent_high_contrast_private_theme"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@string/background_image_for_tab_drawer_background" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
