@@ -19,6 +19,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.ItemTouchHelper.SimpleCallback
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.CoroutineScope
@@ -54,10 +55,63 @@ open class AutocompleteListFragment : BaseSettingsLikeFragment(), CoroutineScope
     private var _binding: FragmentAutocompleteCustomdomainsBinding? = null
     protected val binding get() = _binding!!
 
+    private val simpleCallback = object : SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0) {
+        override fun onMove(
+            recyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder,
+            target: RecyclerView.ViewHolder,
+        ): Boolean {
+            val from = viewHolder.bindingAdapterPosition
+            val to = target.bindingAdapterPosition
+
+            (recyclerView.adapter as DomainListAdapter).move(from, to)
+
+            return true
+        }
+
+        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {}
+
+        override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
+            if (viewHolder is AddActionViewHolder) {
+                return ItemTouchHelper.Callback.makeMovementFlags(0, 0)
+            }
+
+            return super.getMovementFlags(recyclerView, viewHolder)
+        }
+
+        override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
+            super.onSelectedChanged(viewHolder, actionState)
+
+            if (viewHolder is DomainViewHolder) {
+                viewHolder.onSelected()
+            }
+        }
+
+        override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+            super.clearView(recyclerView, viewHolder)
+
+            if (viewHolder is DomainViewHolder) {
+                viewHolder.onCleared()
+            }
+        }
+
+        override fun canDropOver(
+            recyclerView: RecyclerView,
+            current: RecyclerView.ViewHolder,
+            target: RecyclerView.ViewHolder,
+        ): Boolean {
+            if (target is AddActionViewHolder) {
+                return false
+            }
+
+            return super.canDropOver(recyclerView, current, target)
+        }
+    }
+
     /**
      * ItemTouchHelper for reordering items in the domain list.
      */
-    private var itemTouchHelper: ItemTouchHelper? = null
+    var itemTouchHelper: ItemTouchHelper? = null
 
     /**
      * In selection mode the user can select and remove items. In non-selection mode the list can
@@ -83,7 +137,7 @@ open class AutocompleteListFragment : BaseSettingsLikeFragment(), CoroutineScope
             setHasFixedSize(true)
 
             if (!isSelectionMode()) {
-                itemTouchHelper = ItemTouchHelper(SimpleCallback)
+                itemTouchHelper = ItemTouchHelper(simpleCallback)
                 itemTouchHelper?.attachToRecyclerView(this)
             }
         }
@@ -219,19 +273,18 @@ open class AutocompleteListFragment : BaseSettingsLikeFragment(), CoroutineScope
     /**
      * ViewHolder implementation for a domain item in the list.
      */
-    class DomainViewHolder(
+    private class DomainViewHolder(
         itemView: View,
-        private val domainFormatter: DomainFormatter? = null,
+        val domainFormatter: DomainFormatter? = null,
     ) : RecyclerView.ViewHolder(itemView) {
-        private val domainView: TextView = itemView.findViewById(R.id.domainView)
+        val domainView: TextView = itemView.findViewById(R.id.domainView)
         val checkBoxView: CheckBox = itemView.findViewById(R.id.checkbox)
-        private val handleView: View = itemView.findViewById(R.id.handleView)
+        val handleView: View = itemView.findViewById(R.id.handleView)
 
         companion object {
-            const val LAYOUT_ID = R.layout.item_custom_domain
+            val LAYOUT_ID = R.layout.item_custom_domain
         }
 
-        /** defines the views interaction within the holder view */
         fun bind(
             domain: String,
             isSelectionMode: Boolean,
@@ -268,12 +321,10 @@ open class AutocompleteListFragment : BaseSettingsLikeFragment(), CoroutineScope
             }
         }
 
-        /** defines the behavior of the itemView when selected */
         fun onSelected() {
             itemView.setBackgroundColor(ContextCompat.getColor(itemView.context, R.color.disabled))
         }
 
-        /** defines the behavior of the itemView when cleared */
         fun onCleared() {
             itemView.setBackgroundColor(0)
         }
@@ -282,7 +333,7 @@ open class AutocompleteListFragment : BaseSettingsLikeFragment(), CoroutineScope
     /**
      * ViewHolder implementation for a "Add custom domain" item at the bottom of the list.
      */
-    class AddActionViewHolder(
+    private class AddActionViewHolder(
         val fragment: AutocompleteListFragment,
         itemView: View,
     ) : RecyclerView.ViewHolder(itemView) {
@@ -295,7 +346,7 @@ open class AutocompleteListFragment : BaseSettingsLikeFragment(), CoroutineScope
         }
 
         companion object {
-            const val LAYOUT_ID = R.layout.item_add_custom_domain
+            val LAYOUT_ID = R.layout.item_add_custom_domain
         }
     }
 }
