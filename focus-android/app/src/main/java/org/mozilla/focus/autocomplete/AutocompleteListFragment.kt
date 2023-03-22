@@ -55,63 +55,63 @@ open class AutocompleteListFragment : BaseSettingsLikeFragment(), CoroutineScope
     private var _binding: FragmentAutocompleteCustomdomainsBinding? = null
     protected val binding get() = _binding!!
 
+    private val simpleCallback = object : SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0) {
+        override fun onMove(
+            recyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder,
+            target: RecyclerView.ViewHolder,
+        ): Boolean {
+            val from = viewHolder.bindingAdapterPosition
+            val to = target.bindingAdapterPosition
+
+            (recyclerView.adapter as DomainListAdapter).move(from, to)
+
+            return true
+        }
+
+        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {}
+
+        override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
+            if (viewHolder is AddActionViewHolder) {
+                return ItemTouchHelper.Callback.makeMovementFlags(0, 0)
+            }
+
+            return super.getMovementFlags(recyclerView, viewHolder)
+        }
+
+        override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
+            super.onSelectedChanged(viewHolder, actionState)
+
+            if (viewHolder is DomainViewHolder) {
+                viewHolder.onSelected()
+            }
+        }
+
+        override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+            super.clearView(recyclerView, viewHolder)
+
+            if (viewHolder is DomainViewHolder) {
+                viewHolder.onCleared()
+            }
+        }
+
+        override fun canDropOver(
+            recyclerView: RecyclerView,
+            current: RecyclerView.ViewHolder,
+            target: RecyclerView.ViewHolder,
+        ): Boolean {
+            if (target is AddActionViewHolder) {
+                return false
+            }
+
+            return super.canDropOver(recyclerView, current, target)
+        }
+    }
+
     /**
      * ItemTouchHelper for reordering items in the domain list.
      */
-    val itemTouchHelper: ItemTouchHelper = ItemTouchHelper(
-        object : SimpleCallback(ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0) {
-            override fun onMove(
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
-                target: RecyclerView.ViewHolder,
-            ): Boolean {
-                val from = viewHolder.bindingAdapterPosition
-                val to = target.bindingAdapterPosition
-
-                (recyclerView.adapter as DomainListAdapter).move(from, to)
-
-                return true
-            }
-
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {}
-
-            override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
-                if (viewHolder is AddActionViewHolder) {
-                    return ItemTouchHelper.Callback.makeMovementFlags(0, 0)
-                }
-
-                return super.getMovementFlags(recyclerView, viewHolder)
-            }
-
-            override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
-                super.onSelectedChanged(viewHolder, actionState)
-
-                if (viewHolder is DomainViewHolder) {
-                    viewHolder.onSelected()
-                }
-            }
-
-            override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
-                super.clearView(recyclerView, viewHolder)
-
-                if (viewHolder is DomainViewHolder) {
-                    viewHolder.onCleared()
-                }
-            }
-
-            override fun canDropOver(
-                recyclerView: RecyclerView,
-                current: RecyclerView.ViewHolder,
-                target: RecyclerView.ViewHolder,
-            ): Boolean {
-                if (target is AddActionViewHolder) {
-                    return false
-                }
-
-                return super.canDropOver(recyclerView, current, target)
-            }
-        },
-    )
+    var itemTouchHelper: ItemTouchHelper? = null
 
     /**
      * In selection mode the user can select and remove items. In non-selection mode the list can
@@ -136,7 +136,10 @@ open class AutocompleteListFragment : BaseSettingsLikeFragment(), CoroutineScope
             adapter = DomainListAdapter()
             setHasFixedSize(true)
 
-            itemTouchHelper.attachToRecyclerView(this)
+            if (!isSelectionMode()) {
+                itemTouchHelper = ItemTouchHelper(simpleCallback)
+                itemTouchHelper?.attachToRecyclerView(this)
+            }
         }
     }
 
@@ -286,7 +289,7 @@ open class AutocompleteListFragment : BaseSettingsLikeFragment(), CoroutineScope
             domain: String,
             isSelectionMode: Boolean,
             selectedDomains: MutableList<String>,
-            itemTouchHelper: ItemTouchHelper,
+            itemTouchHelper: ItemTouchHelper?,
             fragment: AutocompleteListFragment,
         ) {
             domainView.text = domainFormatter?.invoke(domain) ?: domain
@@ -306,7 +309,7 @@ open class AutocompleteListFragment : BaseSettingsLikeFragment(), CoroutineScope
             handleView.isVisible = isSelectionMode
             handleView.setOnTouchListener { _, event ->
                 if (event.actionMasked == MotionEvent.ACTION_DOWN) {
-                    itemTouchHelper.startDrag(this)
+                    itemTouchHelper?.startDrag(this)
                 }
                 false
             }
