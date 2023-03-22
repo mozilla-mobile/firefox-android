@@ -53,6 +53,7 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login), MenuProvider {
     private var validUsername = true
     private var validHostname = false
     private var usernameChanged = false
+    private var isErrorLayoutShowing = false
 
     private var _binding: FragmentAddLoginBinding? = null
     private val binding get() = _binding!!
@@ -117,6 +118,7 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login), MenuProvider {
             binding.hostnameText.isCursorVisible = true
             binding.hostnameText.hasFocus()
             binding.inputLayoutHostname.hasFocus()
+            validHostname = false
             it.isEnabled = false
         }
 
@@ -152,32 +154,23 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login), MenuProvider {
             }
         }
 
+        var hostnameTextHasFocus = false
+        var hostnameText = ""
+
+        binding.hostnameText.onFocusChangeListener = View.OnFocusChangeListener { _, hasfocus ->
+            hostnameTextHasFocus = hasfocus
+            checkHostNameState(hostnameText, hostnameTextHasFocus)
+        }
+
         binding.hostnameText.addTextChangedListener(
             object : TextWatcher {
                 override fun afterTextChanged(h: Editable?) {
-                    val hostnameText = h.toString()
-
-                    when {
-                        hostnameText.isEmpty() -> {
-                            setHostnameError()
-                            binding.clearHostnameTextButton.isEnabled = false
-                            binding.clearHostnameTextButton.isVisible = false
-                        }
-                        !Patterns.WEB_URL.matcher(hostnameText).matches() -> {
-                            setHostnameError()
-                            binding.clearHostnameTextButton.isEnabled = true
-                            binding.clearHostnameTextButton.isVisible = false
-                        }
-                        else -> {
-                            validHostname = true
-                            binding.clearHostnameTextButton.isEnabled = true
-                            binding.inputLayoutHostname.error = null
-                            binding.inputLayoutHostname.errorIconDrawable = null
-                            binding.clearHostnameTextButton.isVisible = true
-                            findDuplicate()
-                        }
+                    hostnameText = h.toString()
+                    if (hostnameText.isNotEmpty() && !isErrorLayoutShowing) {
+                        binding.clearHostnameTextButton.isEnabled = true
+                        binding.clearHostnameTextButton.isVisible = true
                     }
-                    setSaveButtonState()
+                    checkHostNameState(hostnameText, hostnameTextHasFocus)
                 }
 
                 override fun beforeTextChanged(
@@ -255,6 +248,47 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login), MenuProvider {
             },
         )
     }
+    private fun checkHostNameState(hostnameText: String, hasfocus: Boolean) {
+        if (hasfocus) {
+            if (hostnameText.isEmpty()) {
+                hideClearIcon()
+            }
+            if (Patterns.WEB_URL.matcher(hostnameText).matches()) {
+                isErrorLayoutShowing = false
+                validHostName()
+            } else {
+                validHostname = false
+            }
+        } else {
+            when {
+                hostnameText.isEmpty() -> {
+                    hideClearIcon()
+                }
+                !Patterns.WEB_URL.matcher(hostnameText).matches() -> {
+                    hideClearIcon()
+                    setHostnameError()
+                }
+                Patterns.WEB_URL.matcher(hostnameText).matches() -> {
+                    validHostName()
+                }
+            }
+        }
+        setSaveButtonState()
+    }
+
+    private fun hideClearIcon() {
+        binding.clearHostnameTextButton.isEnabled = false
+        binding.clearHostnameTextButton.isVisible = false
+    }
+
+    private fun validHostName() {
+        validHostname = true
+        binding.clearHostnameTextButton.isEnabled = true
+        binding.inputLayoutHostname.error = null
+        binding.inputLayoutHostname.errorIconDrawable = null
+        binding.clearHostnameTextButton.isVisible = true
+        findDuplicate()
+    }
 
     private fun findDuplicate() {
         interactor.findDuplicate(
@@ -325,6 +359,7 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login), MenuProvider {
     private fun setHostnameError() {
         binding.inputLayoutHostname.let { layout ->
             validHostname = false
+            isErrorLayoutShowing = true
             layout.error = context?.getString(R.string.add_login_hostname_invalid_text_2)
             layout.setErrorIconDrawable(R.drawable.mozac_ic_warning_with_bottom_padding)
             layout.setErrorIconTintList(
