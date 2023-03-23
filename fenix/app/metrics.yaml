@@ -7775,6 +7775,7 @@ engine_tab:
       - https://github.com/mozilla-mobile/firefox-android/pull/1343#issuecomment-1478535296
     notification_emails:
       - android-probes@mozilla.com
+      - kbrosnan@mozilla.com
     expires: never
 
 synced_tabs:

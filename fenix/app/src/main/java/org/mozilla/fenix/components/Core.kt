@@ -21,7 +21,6 @@ import mozilla.components.browser.icons.BrowserIcons
 import mozilla.components.browser.session.storage.SessionStorage
 import mozilla.components.browser.state.engine.EngineMiddleware
 import mozilla.components.browser.state.engine.middleware.SessionPrioritizationMiddleware
-import mozilla.components.browser.state.engine.middleware.TabContentMiddleware
 import mozilla.components.browser.state.search.SearchEngine
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.SearchState
@@ -257,7 +256,6 @@ class Core(
                 LastMediaAccessMiddleware(),
                 HistoryMetadataMiddleware(historyMetadataService),
                 SessionPrioritizationMiddleware(),
-                TabContentMiddleware(),
                 SaveToPDFMiddleware(context),
             )
 

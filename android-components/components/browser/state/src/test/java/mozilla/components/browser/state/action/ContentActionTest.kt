@@ -858,13 +858,13 @@ class ContentActionTest {
         assertFalse(tab.content.hasFormData)
 
         store.dispatch(
-            ContentAction.CheckForFormDataAction(tab.id, true),
+            ContentAction.UpdateHasFormDataAction(tab.id, true),
         ).joinBlocking()
 
         assertTrue(tab.content.hasFormData)
 
         store.dispatch(
-            ContentAction.CheckForFormDataAction(tab.id, false),
+            ContentAction.UpdateHasFormDataAction(tab.id, false),
         ).joinBlocking()
 
         assertFalse(tab.content.hasFormData)

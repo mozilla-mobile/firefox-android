@@ -301,7 +301,6 @@ class TelemetryMiddlewareTest {
                 listOf(
                     RecoverableTab(null, TabState(url = "https://www.mozilla.org", id = "foreground")),
                     RecoverableTab(null, TabState(url = "https://getpocket.com", id = "background_pocket", hasFormData = true)),
-                    RecoverableTab(null, TabState(url = "https://theverge.com", id = "background_verge")),
                 ),
                 selectedTabId = "foreground",
                 restoreLocation = TabListAction.RestoreAction.RestoreLocation.BEGINNING,
