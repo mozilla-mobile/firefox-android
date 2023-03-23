@@ -136,9 +136,7 @@ open class AutocompleteListFragment : BaseSettingsLikeFragment(), CoroutineScope
             adapter = DomainListAdapter()
             setHasFixedSize(true)
 
-            if (!isSelectionMode()) {
-                itemTouchHelper.attachToRecyclerView(this)
-            }
+            itemTouchHelper.attachToRecyclerView(this)
         }
     }
 
@@ -305,7 +303,7 @@ open class AutocompleteListFragment : BaseSettingsLikeFragment(), CoroutineScope
                 fragment.activity?.invalidateOptionsMenu()
             }
 
-            handleView.isVisible = !isSelectionMode
+            handleView.isVisible = isSelectionMode
             handleView.setOnTouchListener { _, event ->
                 if (event.actionMasked == MotionEvent.ACTION_DOWN) {
                     itemTouchHelper.startDrag(this)
