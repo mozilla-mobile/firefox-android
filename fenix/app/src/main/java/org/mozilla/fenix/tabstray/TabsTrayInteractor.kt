@@ -188,8 +188,8 @@ class DefaultTabsTrayInteractor(
     /**
      * See [InactiveTabsInteractor.onInactiveTabsHeaderClicked].
      */
-    override fun onInactiveTabsHeaderClicked(expanded: Boolean) {
-        controller.handleInactiveTabsHeaderClicked(expanded)
+    override fun onInactiveTabsHeaderClicked() {
+        controller.handleInactiveTabsHeaderClicked()
     }
 
     /**

@@ -60,9 +60,9 @@ class DefaultTabsTrayInteractorTest {
 
     @Test
     fun `WHEN the inactive tabs header is clicked THEN update the expansion state of the inactive tabs card`() {
-        interactor.onInactiveTabsHeaderClicked(true)
+        interactor.onInactiveTabsHeaderClicked()
 
-        verify { controller.handleInactiveTabsHeaderClicked(true) }
+        verify { controller.handleInactiveTabsHeaderClicked() }
     }
 
     @Test

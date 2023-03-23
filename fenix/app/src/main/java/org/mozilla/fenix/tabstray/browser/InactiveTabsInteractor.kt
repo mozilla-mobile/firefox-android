@@ -12,10 +12,8 @@ import mozilla.components.browser.state.state.TabSessionState
 interface InactiveTabsInteractor {
     /**
      * Invoked when the inactive tabs header is clicked.
-     *
-     * @param expanded true when the tap should expand the inactive section.
      */
-    fun onInactiveTabsHeaderClicked(expanded: Boolean)
+    fun onInactiveTabsHeaderClicked()
 
     /**
      * Invoked when an inactive tab is clicked.

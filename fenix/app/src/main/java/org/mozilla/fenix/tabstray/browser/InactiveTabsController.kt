@@ -27,10 +27,8 @@ interface InactiveTabsController {
 
     /**
      * Expands or collapses the inactive tabs section.
-     *
-     * @param expanded true when the tap should expand the inactive section.
      */
-    fun handleInactiveTabsHeaderClicked(expanded: Boolean)
+    fun handleInactiveTabsHeaderClicked()
 
     /**
      * Dismisses the inactive tabs auto-close dialog.

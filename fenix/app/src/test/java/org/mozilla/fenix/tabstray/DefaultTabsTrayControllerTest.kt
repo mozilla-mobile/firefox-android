@@ -687,26 +687,28 @@ class DefaultTabsTrayControllerTest {
         }
     }
 
-    fun `WHEN the inactive tabs section is expanded THEN the expanded telemetry event should be reported`() {
+    fun `GIVEN the inactive tabs section is collapsed WHEN the header is clicked THEN the expanded telemetry event should be reported`() {
         val controller = createController()
+        every { appStore.state.inactiveTabsExpanded } returns false
 
         assertNull(TabsTray.inactiveTabsExpanded.testGetValue())
         assertNull(TabsTray.inactiveTabsCollapsed.testGetValue())
 
-        controller.handleInactiveTabsHeaderClicked(expanded = true)
+        controller.handleInactiveTabsHeaderClicked()
 
         assertNotNull(TabsTray.inactiveTabsExpanded.testGetValue())
         assertNull(TabsTray.inactiveTabsCollapsed.testGetValue())
     }
 
     @Test
-    fun `WHEN the inactive tabs section is collapsed THEN the collapsed telemetry event should be reported`() {
+    fun `GIVEN the inactive tabs inactive tabs section is expanded WHEN the header is clicked THEN the collapsed telemetry event should be reported`() {
         val controller = createController()
+        every { appStore.state.inactiveTabsExpanded } returns true
 
         assertNull(TabsTray.inactiveTabsExpanded.testGetValue())
         assertNull(TabsTray.inactiveTabsCollapsed.testGetValue())
 
-        controller.handleInactiveTabsHeaderClicked(expanded = false)
+        controller.handleInactiveTabsHeaderClicked()
 
         assertNull(TabsTray.inactiveTabsExpanded.testGetValue())
         assertNotNull(TabsTray.inactiveTabsCollapsed.testGetValue())

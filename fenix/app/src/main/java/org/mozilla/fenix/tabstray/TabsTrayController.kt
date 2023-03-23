@@ -442,7 +442,8 @@ class DefaultTabsTrayController(
         handleTabDeletion(tab.id, TrayPagerAdapter.INACTIVE_TABS_FEATURE_NAME)
     }
 
-    override fun handleInactiveTabsHeaderClicked(expanded: Boolean) {
+    override fun handleInactiveTabsHeaderClicked() {
+        val expanded = !appStore.state.inactiveTabsExpanded
         appStore.dispatch(AppAction.UpdateInactiveExpanded(expanded))
 
         when (expanded) {
