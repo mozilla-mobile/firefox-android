@@ -136,7 +136,9 @@ open class AutocompleteListFragment : BaseSettingsLikeFragment(), CoroutineScope
             adapter = DomainListAdapter()
             setHasFixedSize(true)
 
-            itemTouchHelper.attachToRecyclerView(this)
+            if (!isSelectionMode()) {
+                itemTouchHelper.attachToRecyclerView(this)
+            }
         }
     }
 
