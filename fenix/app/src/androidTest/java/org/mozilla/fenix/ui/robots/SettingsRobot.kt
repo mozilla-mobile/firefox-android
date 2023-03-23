@@ -22,8 +22,10 @@ import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.Visibility
 import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
 import androidx.test.espresso.matcher.ViewMatchers.hasSibling
+import androidx.test.espresso.matcher.ViewMatchers.isChecked
 import androidx.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
+import androidx.test.espresso.matcher.ViewMatchers.isNotChecked
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
@@ -41,15 +43,20 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.Constants.LISTS_MAXSWIPES
 import org.mozilla.fenix.helpers.Constants.PackageName.GOOGLE_PLAY_SERVICES
 import org.mozilla.fenix.helpers.Constants.RETRY_COUNT
+import org.mozilla.fenix.helpers.MatcherHelper.assertItemContainingTextExists
 import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithText
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
+import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
 import org.mozilla.fenix.helpers.TestHelper.appName
 import org.mozilla.fenix.helpers.TestHelper.getStringResource
+import org.mozilla.fenix.helpers.TestHelper.hasCousin
 import org.mozilla.fenix.helpers.TestHelper.isPackageInstalled
 import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.TestHelper.scrollToElementByText
 import org.mozilla.fenix.helpers.click
+import org.mozilla.fenix.helpers.ext.waitNotNull
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.ui.robots.SettingsRobot.Companion.DEFAULT_APPS_SETTINGS_ACTION
 
@@ -66,11 +73,34 @@ class SettingsRobot {
     fun verifyThemeSelected() = assertThemeSelected()
     fun verifyAccessibilityButton() = assertAccessibilityButton()
     fun verifySetAsDefaultBrowserButton() = assertSetAsDefaultBrowserButton()
-    fun verifyTabsButton() = assertTabsButton()
+    fun verifyTabsButton() =
+        assertItemContainingTextExists(itemContainingText(getStringResource(R.string.preferences_tabs)))
+    fun verifyTabsButtonSummary(summary: String) =
+        assertItemContainingTextExists(itemContainingText(summary))
     fun verifyHomepageButton() = assertHomepageButton()
+    fun verifyHomepageButtonSummary(summary: String) =
+        assertItemContainingTextExists(itemContainingText(summary))
     fun verifyAutofillButton() = assertAutofillButton()
     fun verifyLanguageButton() = assertLanguageButton()
-    fun verifyDefaultBrowserIsDisabled() = assertDefaultBrowserIsDisabled()
+    fun verifyDefaultBrowserToggle(isEnabled: Boolean) {
+        scrollToElementByText(getStringResource(R.string.preferences_set_as_default_browser))
+        onView(withText(R.string.preferences_set_as_default_browser))
+            .check(
+                matches(
+                    hasCousin(
+                        allOf(
+                            withId(R.id.switch_widget),
+                            if (isEnabled) {
+                                isChecked()
+                            } else {
+                                isNotChecked()
+                            },
+                        ),
+                    ),
+                ),
+            )
+    }
+
     fun clickDefaultBrowserSwitch() = toggleDefaultBrowserSwitch()
     fun verifyAndroidDefaultAppsMenuAppears() = assertAndroidDefaultAppsMenuAppears()
 
@@ -78,7 +108,25 @@ class SettingsRobot {
     fun verifyPrivacyHeading() = assertPrivacyHeading()
 
     fun verifyHTTPSOnlyModeButton() = assertHTTPSOnlyModeButton()
-    fun verifyHTTPSOnlyModeState(state: String) = assertHTTPSOnlyModeState(state)
+    fun verifyHTTPSOnlyModeSummary(HTTPSOnlyModeSummary: String) =
+        onView(
+            allOf(
+                withText(R.string.preferences_https_only_title),
+                hasSibling(withText(HTTPSOnlyModeSummary)),
+            ),
+        ).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+
+    fun verifyCookieBannerReductionSummary(cookieBannerReductionSummary: String) {
+        scrollToElementByText(getStringResource(R.string.preferences_cookie_banner_reduction))
+
+        onView(
+            allOf(
+                withText(R.string.preferences_cookie_banner_reduction),
+                hasSibling(withText(cookieBannerReductionSummary)),
+            ),
+        ).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+    }
+
     fun verifyEnhancedTrackingProtectionButton() = assertEnhancedTrackingProtectionButton()
     fun verifyLoginsAndPasswordsButton() = assertLoginsAndPasswordsButton()
     fun verifyEnhancedTrackingProtectionState(option: String) =
@@ -110,6 +158,8 @@ class SettingsRobot {
     fun verifyRateOnGooglePlay() = assertTrue(rateOnGooglePlayHeading().waitForExists(waitingTime))
     fun verifyAboutFirefoxPreview() = assertTrue(aboutFirefoxHeading().waitForExists(waitingTime))
     fun verifyGooglePlayRedirect() = assertGooglePlayRedirect()
+
+    fun verifySettingsOptionSummary(summary: String) = itemContainingText(summary)
 
     class Transition {
         fun goBack(interact: HomeScreenRobot.() -> Unit): HomeScreenRobot.Transition {
@@ -151,8 +201,11 @@ class SettingsRobot {
         }
 
         fun openTabsSubMenu(interact: SettingsSubMenuTabsRobot.() -> Unit): SettingsSubMenuTabsRobot.Transition {
-            fun tabsButton() = onView(withText("Tabs"))
-            tabsButton().click()
+            itemWithText(getStringResource(R.string.preferences_tabs))
+                .also {
+                    it.waitForExists(waitingTime)
+                    it.clickAndWaitForNewWindow(waitingTimeShort)
+                }
 
             SettingsSubMenuTabsRobot().interact()
             return SettingsSubMenuTabsRobot.Transition()
@@ -318,6 +371,18 @@ class SettingsRobot {
             SettingsSubMenuOpenLinksInAppsRobot().interact()
             return SettingsSubMenuOpenLinksInAppsRobot.Transition()
         }
+
+        fun openHttpsOnlyModeMenu(interact: SettingsSubMenuHttpsOnlyModeRobot.() -> Unit): SettingsSubMenuHttpsOnlyModeRobot.Transition {
+            scrollToElementByText("HTTPS-Only Mode")
+            onView(withText(getStringResource(R.string.preferences_https_only_title))).click()
+            mDevice.waitNotNull(
+                Until.findObjects(By.res("$packageName:id/https_only_switch")),
+                waitingTime,
+            )
+
+            SettingsSubMenuHttpsOnlyModeRobot().interact()
+            return SettingsSubMenuHttpsOnlyModeRobot.Transition()
+        }
     }
 
     companion object {
@@ -387,12 +452,6 @@ private fun assertSetAsDefaultBrowserButton() {
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
-private fun assertDefaultBrowserIsDisabled() {
-    scrollToElementByText("Set as default browser")
-    onView(withId(R.id.switch_widget))
-        .check(matches(ViewMatchers.isNotChecked()))
-}
-
 private fun toggleDefaultBrowserSwitch() {
     scrollToElementByText("Privacy and security")
     onView(withText("Set as default browser")).perform(ViewActions.click())
@@ -400,12 +459,6 @@ private fun toggleDefaultBrowserSwitch() {
 
 private fun assertAndroidDefaultAppsMenuAppears() {
     intended(IntentMatchers.hasAction(DEFAULT_APPS_SETTINGS_ACTION))
-}
-
-private fun assertTabsButton() {
-    mDevice.wait(Until.findObject(By.text("Tabs")), waitingTime)
-    onView(withText(R.string.preferences_tabs))
-        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
 // PRIVACY SECTION
@@ -419,15 +472,6 @@ private fun assertHTTPSOnlyModeButton() {
     scrollToElementByText(getStringResource(R.string.preferences_https_only_title))
     onView(
         withText(R.string.preferences_https_only_title),
-    ).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-}
-
-private fun assertHTTPSOnlyModeState(state: String) {
-    onView(
-        allOf(
-            withText(R.string.preferences_https_only_title),
-            hasSibling(withText(state)),
-        ),
     ).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 

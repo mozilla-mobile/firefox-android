@@ -18,7 +18,6 @@ import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.RetryTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.ui.robots.downloadRobot
-import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
 
 /**
@@ -76,7 +75,7 @@ class ContextMenusTest {
             verifyLinkContextMenuItems(genericURL.url)
             clickContextOpenLinkInNewTab()
             verifySnackBarText("New tab opened")
-            snackBarButtonClick()
+            clickSnackbarButton("SWITCH")
             verifyUrl(genericURL.url.toString())
         }.openTabDrawer {
             verifyNormalModeSelected()
@@ -100,7 +99,7 @@ class ContextMenusTest {
             verifyLinkContextMenuItems(genericURL.url)
             clickContextOpenLinkInPrivateTab()
             verifySnackBarText("New private tab opened")
-            snackBarButtonClick()
+            clickSnackbarButton("SWITCH")
             verifyUrl(genericURL.url.toString())
         }.openTabDrawer {
             verifyPrivateModeSelected()
@@ -180,7 +179,7 @@ class ContextMenusTest {
             verifyLinkImageContextMenuItems(imageResource.url)
             clickContextOpenImageNewTab()
             verifySnackBarText("New tab opened")
-            snackBarButtonClick()
+            clickSnackbarButton("SWITCH")
             verifyUrl(imageResource.url.toString())
         }
     }
@@ -248,50 +247,6 @@ class ContextMenusTest {
             dismissContentContextMenu(imageResource.url)
             longClickLink("test_no_link_image")
             verifyNoLinkImageContextMenuItems(imageResource.url)
-        }
-    }
-
-    @SmokeTest
-    @Test
-    fun shareSelectedTextTest() {
-        val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(genericURL.url) {
-            longClickLink(genericURL.content)
-        }.clickShareSelectedText {
-            verifyAndroidShareLayout()
-        }
-    }
-
-    @SmokeTest
-    @Test
-    fun selectAndSearchTextTest() {
-        val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(genericURL.url) {
-            longClickAndSearchText("Search", "content")
-            mDevice.waitForIdle()
-            verifyTabCounter("2")
-            verifyUrl("google")
-        }
-    }
-
-    @SmokeTest
-    @Test
-    fun privateSelectAndSearchTextTest() {
-        val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        homeScreen {
-        }.togglePrivateBrowsingMode()
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(genericURL.url) {
-            longClickAndSearchText("Private Search", "content")
-            mDevice.waitForIdle()
-            verifyTabCounter("2")
-            verifyUrl("google")
         }
     }
 }

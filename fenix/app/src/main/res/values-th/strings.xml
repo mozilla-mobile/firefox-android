@@ -12,8 +12,10 @@
     <string name="content_description_private_browsing_button">เปิดใช้งานการเรียกดูแบบส่วนตัว</string>
     <!-- Content description (not visible, for screen readers etc.): "Private Browsing" menu button. -->
     <string name="content_description_disable_private_browsing_button">ปิดใช้งานการเรียกดูแบบส่วนตัว</string>
-    <!-- Placeholder text shown in the search bar before a user enters text -->
+    <!-- Placeholder text shown in the search bar before a user enters text for the default engine -->
     <string name="search_hint">ค้นหาหรือป้อนที่อยู่</string>
+    <!-- Placeholder text shown in the search bar before a user enters text for a general engine -->
+    <string name="search_hint_general_engine">ค้นหาเว็บ</string>
     <!-- Placeholder text shown in search bar when using history search -->
     <string name="history_search_hint">ค้นหาประวัติ</string>
     <!-- Placeholder text shown in search bar when using bookmarks search -->
@@ -62,14 +64,10 @@
     <string name="private_browsing_common_myths">ความเข้าใจผิดที่พบบ่อยเกี่ยวกับการท่องเว็บแบบส่วนตัว</string>
 
     <!-- Private mode shortcut "contextual feature recommendation" (CFR) -->
-    <!-- Text for the main message -->
-    <string name="cfr_message" moz:removedIn="109" tools:ignore="UnusedResources">เพิ่มทางลัดเพื่อเปิดแท็บส่วนตัวจากหน้าจอหลักของคุณ</string>
     <!-- Text for the Private mode shortcut CFR message for adding a private mode shortcut to open private tabs from the Home screen -->
     <string name="private_mode_cfr_message" moz:removedIn="111" tools:ignore="UnusedResources">เปิดแท็บส่วนตัวถัดไปโดยแตะเพียงครั้งเดียว</string>
     <!-- Text for the Private mode shortcut CFR message for adding a private mode shortcut to open private tabs from the Home screen -->
     <string name="private_mode_cfr_message_2">เปิดแท็บส่วนตัวถัดไปของคุณโดยแตะเพียงครั้งเดียว</string>
-    <!-- Text for the positive button -->
-    <string name="cfr_pos_button_text" moz:removedIn="109" tools:ignore="UnusedResources">เพิ่มทางลัด</string>
     <!-- Text for the positive button to accept adding a Private Browsing shortcut to the Home screen -->
     <string name="private_mode_cfr_pos_button_text">เพิ่มไปยังหน้าจอหลัก</string>
     <!-- Text for the negative button to decline adding a Private Browsing shortcut to the Home screen -->
@@ -82,9 +80,6 @@
     <string name="open_in_app_cfr_positive_button_text">ไปยังการตั้งค่า</string>
     <!-- Text for the negative action button -->
     <string name="open_in_app_cfr_negative_button_text">ยกเลิก</string>
-
-    <!-- Content description for close button used in "contextual feature recommendation" (CFR) popups -->
-    <string name="cfr_dismiss_button_default_content_description" moz:removedIn="110" tools:ignore="UnusedResources">ยกเลิก</string>
 
     <!-- Total cookie protection "contextual feature recommendation" (CFR) -->
     <!-- Text for the message displayed in the contextual feature recommendation popup promoting the total cookie protection feature. -->
@@ -362,8 +357,6 @@
     <string name="reduce_cookie_banner_option_off">ปิด</string>
     <!-- Summary of cookie banner handling preference if the setting enabled is set to on -->
     <string name="reduce_cookie_banner_option_on">เปิด</string>
-    <!-- Summary for the preference for rejecting all cookies whenever possible. -->
-    <string name="reduce_cookie_banner_summary" moz:RemovedIn="110" tools:ignore="UnusedResources">Firefox จะพยายามปฏิเสธคำขอคุกกี้บนแบนเนอร์คุกกี้โดยอัตโนมัติ หากไม่มีตัวเลือกปฏิเสธ Firefox อาจยอมรับคุกกี้ทั้งหมดเพื่อปิดแบนเนอร์</string>
 
     <!-- Summary for the preference for rejecting all cookies whenever possible. The first parameter is the application name -->
     <string name="reduce_cookie_banner_summary_1">%1$s จะพยายามปฏิเสธคำขอคุกกี้บนแบนเนอร์คุกกี้โดยอัตโนมัติ</string>
@@ -380,44 +373,43 @@
     <string name="reduce_cookie_banner_details_panel_title_off_for_site">ต้องการปิดการลดแบนเนอร์คุกกี้สำหรับ %1$s หรือไม่?</string>
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
     <string name="reduce_cookie_banner_details_panel_description_off_for_site">%1$s จะล้างคุกกี้ของไซต์นี้และรีเฟรชหน้า การล้างคุกกี้ทั้งหมดอาจนำคุณออกจากระบบหรือล้างรถเข็นช็อปปิ้ง</string>
-    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first and second parameter are the application name -->
-    <string name="reduce_cookie_banner_details_panel_description_on_for_site" moz:RemovedIn="110" tools:ignore="UnusedResources">%1$s สามารถพยายามปฏิเสธคำขอคุกกี้โดยอัตโนมัติได้ หากไม่มีตัวเลือกปฏิเสธ %2$s อาจยอมรับคุกกี้ทั้งหมดเพื่อปิดแบนเนอร์</string>
 
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter are the application name -->
     <string name="reduce_cookie_banner_details_panel_description_on_for_site_1" moz:RemovedIn="111" tools:ignore="UnusedResources">%1$s สามารถพยายามปฏิเสธคำขอคุกกี้โดยอัตโนมัติได้</string>
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
     <string name="reduce_cookie_banner_details_panel_description_on_for_site_2">%1$s จะพยายามปฏิเสธคำขอคุกกี้ทั้งหมดบนไซต์ที่รองรับโดยอัตโนมัติ</string>
     <!-- Title text for the dialog use on the control branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_control_experiment_dialog_title">เอาแบนเนอร์คุกกี้ออกไปให้พ้น!</string>
-    <!-- Body text for the dialog use on the control branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_control_experiment_dialog_body" moz:RemovedIn="110" tools:ignore="UnusedResources">ปฏิเสธคำขอคุกกี้โดยอัตโนมัติเมื่อเป็นไปได้ หรือไม่ก็ยอมรับคุกกี้ทั้งหมดเพื่อปิดแบนเนอร์คุกกี้</string>
+    <string name="reduce_cookie_banner_control_experiment_dialog_title" moz:RemovedIn="112" tools:ignore="UnusedResources">เอาแบนเนอร์คุกกี้ออกไปให้พ้น!</string>
+    <!-- Title text for the cookie banner re-engagement dialog. The first parameter is the application name. -->
+    <string name="reduce_cookie_banner_dialog_title">อนุญาตให้ %1$s ปฏิเสธแบนเนอร์คุกกี้หรือไม่?</string>
     <!-- Body text for the dialog use on the control branch of the experiment to determine which context users engaged the most -->
     <string name="reduce_cookie_banner_control_experiment_dialog_body_1" moz:RemovedIn="111" tools:ignore="UnusedResources">ปฏิเสธคำขอคุกกี้โดยอัตโนมัติเมื่อเป็นไปได้</string>
     <!-- Body text for the dialog use on the control branch of the experiment to determine which context users engaged the most.The first parameter is the application name -->
-    <string name="reduce_cookie_banner_control_experiment_dialog_body_2">อนุญาตให้ %1$s ปฏิเสธคำขอคุกกี้โดยอัตโนมัติเมื่อเป็นไปได้หรือไม่?</string>
+    <string name="reduce_cookie_banner_control_experiment_dialog_body_2" moz:RemovedIn="112" tools:ignore="UnusedResources">อนุญาตให้ %1$s ปฏิเสธคำขอคุกกี้โดยอัตโนมัติเมื่อเป็นไปได้หรือไม่?</string>
+    <!-- Body text for the cookie banner re-engagement dialog use. The first parameter is the application name. -->
+    <string name="reduce_cookie_banner_dialog_body">%1$s สามารถปฏิเสธคำขอคุกกี้จำนวนมากได้โดยอัตโนมัติ</string>
     <!-- Remind me later text button for the onboarding dialog -->
     <string name="reduce_cookie_banner_dialog_not_now_button">ไม่ใช่ตอนนี้</string>
     <!-- Change setting text button, for the dialog use on the control branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_control_experiment_dialog_change_setting_button">ปิดแบนเนอร์</string>
+    <string name="reduce_cookie_banner_control_experiment_dialog_change_setting_button" moz:RemovedIn="112" tools:ignore="UnusedResources">ปิดแบนเนอร์</string>
 
     <!-- Snack text for the cookie banner dialog, after user hit the dismiss banner button -->
     <string name="reduce_cookie_banner_dialog_snackbar_text">คุณจะเห็นคำขอคุกกี้น้อยลง</string>
     <!-- Title text for the dialog use on the variant 1 branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_variant_1_experiment_dialog_title">เห็นป๊อปอัปคุกกี้น้อยลง</string>
+    <string name="reduce_cookie_banner_variant_1_experiment_dialog_title" moz:RemovedIn="112" tools:ignore="UnusedResources">เห็นป๊อปอัปคุกกี้น้อยลง</string>
     <!-- Body text for the dialog use on the variant 1 branch of the experiment to determine which context users engaged the most. The first parameter is the application name. -->
-    <string name="reduce_cookie_banner_variant_1_experiment_dialog_body" moz:RemovedIn="110" tools:ignore="UnusedResources">ตอบป๊อปอัปคุกกี้โดยอัตโนมัติเพื่อให้คุณท่องเว็บโดยปราศจากสิ่งรบกวน %1$s จะปฏิเสธคำขอทั้งหมดเมื่อเป็นไปได้ หรือยอมรับทั้งหมดเมื่อเป็นไปไม่ได้</string>
-    <!-- Body text for the dialog use on the variant 1 branch of the experiment to determine which context users engaged the most. The first parameter is the application name. -->
-    <string name="reduce_cookie_banner_variant_1_experiment_dialog_body_1">ตอบป๊อปอัปคุกกี้โดยอัตโนมัติเพื่อให้คุณท่องเว็บโดยปราศจากสิ่งรบกวน %1$s จะปฏิเสธคำขอทั้งหมดเมื่อเป็นไปได้</string>
+    <string name="reduce_cookie_banner_variant_1_experiment_dialog_body_1" moz:RemovedIn="112" tools:ignore="UnusedResources">ตอบป๊อปอัปคุกกี้โดยอัตโนมัติเพื่อให้คุณท่องเว็บโดยปราศจากสิ่งรบกวน %1$s จะปฏิเสธคำขอทั้งหมดเมื่อเป็นไปได้</string>
     <!-- Change setting text button, for the onboarding dialog use on the variant 1 branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_variant_1_experiment_dialog_change_setting_button">ปิดป๊อปอัป</string>
+    <string name="reduce_cookie_banner_variant_1_experiment_dialog_change_setting_button" moz:RemovedIn="112" tools:ignore="UnusedResources">ปิดป๊อปอัป</string>
     <!-- Title text for the dialog use on the variant 2 branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_variant_2_experiment_dialog_title">การลดแบนเนอร์คุกกี้</string>
+    <string name="reduce_cookie_banner_variant_2_experiment_dialog_title" moz:RemovedIn="112" tools:ignore="UnusedResources">การลดแบนเนอร์คุกกี้</string>
     <!-- Body text for the dialog use on the variant 2 branch of the experiment to determine which context users engaged the most. The first parameter is the application name. -->
-    <string name="reduce_cookie_banner_variant_2_experiment_dialog_body" moz:RemovedIn="110" tools:ignore="UnusedResources">อนุญาตให้ %1$s ปฏิเสธคำขอยินยอมคุกกี้ของไซต์เมื่อเป็นไปได้ หรือยอมรับการเข้าถึงคุกกี้เมื่อเป็นไปไม่ได้หรือไม่?</string>
-    <!-- Body text for the dialog use on the variant 2 branch of the experiment to determine which context users engaged the most. The first parameter is the application name. -->
-    <string name="reduce_cookie_banner_variant_2_experiment_dialog_body_1">อนุญาตให้ %1$s ปฏิเสธคำขอยินยอมคุกกี้ของไซต์เมื่อเป็นไปได้หรือไม่?</string>
+    <string name="reduce_cookie_banner_variant_2_experiment_dialog_body_1" moz:RemovedIn="112" tools:ignore="UnusedResources">อนุญาตให้ %1$s ปฏิเสธคำขอยินยอมคุกกี้ของไซต์เมื่อเป็นไปได้หรือไม่?</string>
     <!-- Change setting text button, for the dialog use on the variant 2 branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_variant_2_experiment_dialog_change_setting_button">อนุญาต</string>
+    <string name="reduce_cookie_banner_variant_2_experiment_dialog_change_setting_button" moz:RemovedIn="112" tools:ignore="UnusedResources">อนุญาต</string>
+
+    <!-- Change setting text button, for the cookie banner re-engagement dialog -->
+    <string name="reduce_cookie_banner_dialog_change_setting_button">อนุญาต</string>
 
     <!-- Description of the preference to enable "HTTPS-Only" mode. -->
     <string name="preferences_https_only_summary">พยายามเชื่อมต่อกับเว็บไซต์โดยใช้โปรโตคอลการเข้ารหัส HTTPS โดยอัตโนมัติเพื่อเพิ่มความปลอดภัย</string>
@@ -498,6 +490,12 @@
     <!-- Preference for open links in third party apps -->
     <string name="preferences_open_links_in_apps">เปิดลิงก์ในแอป</string>
 
+    <!-- Preference for open links in third party apps always open in apps option -->
+    <string name="preferences_open_links_in_apps_always">ทุกครั้ง</string>
+    <!-- Preference for open links in third party apps ask before opening option -->
+    <string name="preferences_open_links_in_apps_ask">ถามก่อนเปิด</string>
+    <!-- Preference for open links in third party apps never open in apps option -->
+    <string name="preferences_open_links_in_apps_never">ไม่เลย</string>
     <!-- Preference for open download with an external download manager app -->
     <string name="preferences_external_download_manager">ตัวจัดการการดาวน์โหลดภายนอก</string>
     <!-- Preference for add_ons -->
@@ -1205,18 +1203,37 @@
     <string name="notification_pbm_delete_text_2">ปิดแท็บส่วนตัว</string>
     <!-- Name of the marketing notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="notification_marketing_channel_name">การตลาด</string>
-    <!-- Title shown in the notification that pops up to remind the user to set fenix as default browser.
-    %1$s is a placeholder that will be replaced by the app name (Fenix). -->
-    <string name="notification_default_browser_title">%1$s รวดเร็วและเป็นส่วนตัว</string>
-    <!-- Text shown in the notification that pops up to remind the user to set fenix as default browser.
-    %1$s is a placeholder that will be replaced by the app name (Fenix). -->
-    <string name="notification_default_browser_text">ทำให้ %1$s เป็นเบราว์เซอร์เริ่มต้นของคุณ</string>
 
+    <!-- Title shown in the notification that pops up to remind the user to set fenix as default browser.
+    The app name is in the text, due to limitations with localizing Nimbus experiments -->
+    <string name="nimbus_notification_default_browser_title" tools:ignore="UnusedResources">Firefox นั้นรวดเร็วและเป็นส่วนตัว</string>
+    <!-- Text shown in the notification that pops up to remind the user to set fenix as default browser.
+    The app name is in the text, due to limitations with localizing Nimbus experiments -->
+    <string name="nimbus_notification_default_browser_text" tools:ignore="UnusedResources">ทำให้ Firefox เป็นเบราว์เซอร์เริ่มต้นของคุณ</string>
     <!-- Title shown in the notification that pops up to re-engage the user -->
     <string name="notification_re_engagement_title">ลองการท่องเว็บแบบส่วนตัว</string>
     <!-- Text shown in the notification that pops up to re-engage the user.
     %1$s is a placeholder that will be replaced by the app name. -->
     <string name="notification_re_engagement_text">เรียกดูโดยไม่มีคุกกี้หรือประวัติที่บันทึกไว้ใน %1$s</string>
+
+    <!-- Title A shown in the notification that pops up to re-engage the user -->
+    <string name="notification_re_engagement_A_title">ท่องเว็บโดยไร้ร่องรอย</string>
+    <!-- Text A shown in the notification that pops up to re-engage the user.
+    %1$s is a placeholder that will be replaced by the app name. -->
+    <string name="notification_re_engagement_A_text">การเรียกดูแบบส่วนตัวใน %1$s จะไม่บันทึกข้อมูลของคุณ</string>
+    <!-- Title B shown in the notification that pops up to re-engage the user -->
+    <string name="notification_re_engagement_B_title">เริ่มการค้นหาครั้งแรกของคุณ</string>
+    <!-- Text B shown in the notification that pops up to re-engage the user -->
+    <string name="notification_re_engagement_B_text">ค้นหาสิ่งที่อยู่ใกล้ๆ หรือค้นพบอะไรสนุกๆ</string>
+
+    <!-- Survey -->
+    <!-- Text shown in the fullscreen message that pops up to ask user to take a short survey.
+    The app name is in the text, due to limitations with localizing Nimbus experiments -->
+    <string name="nimbus_survey_message_text" tools:ignore="UnusedResources">โปรดช่วยทำให้ Firefox ดีขึ้นโดยการทำแบบสำรวจสั้นๆ</string>
+    <!-- Preference for taking the short survey. -->
+    <string name="preferences_take_survey" tools:ignore="UnusedResources">ทำแบบสำรวจ</string>
+    <!-- Preference for not taking the short survey. -->
+    <string name="preferences_not_take_survey" tools:ignore="UnusedResources">ไม่ ขอบคุณ</string>
 
     <!-- Snackbar -->
     <!-- Text shown in snackbar when user deletes a collection -->
@@ -1350,11 +1367,13 @@
     <!-- Text for the button to learn more about signing in to your Firefox account. -->
     <string name="onboarding_manual_sign_in_description">ซิงค์แท็บและรหัสผ่านระหว่างอุปกรณ์เพื่อการสลับหน้าจอที่ราบรื่น</string>
     <!-- Text for the button to manually sign into Firefox account. -->
-    <string name="onboarding_firefox_account_sign_in">เข้าสู่ระบบ</string>
+    <string name="onboarding_firefox_account_sign_in">ลงชื่อเข้า</string>
     <!-- text to display in the snackbar once account is signed-in -->
     <string name="onboarding_firefox_account_sync_is_on">Sync เปิดอยู่</string>
     <!-- Text for the tracking protection onboarding card header -->
     <string name="onboarding_tracking_protection_header">การปกป้องความเป็นส่วนตัวตามค่าเริ่มต้น</string>
+    <!-- Text for the tracking protection card description. The first parameter is the name of the application.-->
+    <string name="onboarding_tracking_protection_description_old">%1$s จะหยุดบริษัทต่าง ๆ ไม่ให้ติดตามคุณอย่างลับ ๆ ขณะที่คุณท่องเว็บโดยอัตโนมัติ</string>
     <!-- Text for the tracking protection card description. -->
     <string name="onboarding_tracking_protection_description">มีการป้องกันคุกกี้ทั้งหมดเพื่อหยุดตัวติดตามไม่ให้ใช้คุกกี้ตามรอยคุณในไซต์ต่าง ๆ</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
@@ -1429,23 +1448,31 @@
     <!-- Link displayed in enhanced tracking protection panel to access tracking protection settings -->
     <string name="etp_settings">การตั้งค่าการป้องกัน</string>
     <!-- Preference title for enhanced tracking protection settings -->
-    <string name="preference_enhanced_tracking_protection">การป้องกันการติดตามที่มากขึ้น</string>
+    <string name="preference_enhanced_tracking_protection">การป้องกันการติดตามแบบพิเศษ</string>
     <!-- Title for the description of enhanced tracking protection -->
     <string name="preference_enhanced_tracking_protection_explanation_title">เรียกดูโดยไม่ต้องมีใครมาติดตาม</string>
+    <!-- Preference summary for enhanced tracking protection settings on/off switch -->
+    <string name="preference_enhanced_tracking_protection_summary" tools:ignore="UnusedResources">ตอนนี้มีการป้องกันคุกกี้แบบทั้งหมด ซึ่งเป็นอุปสรรคต่อตัวติดตามข้ามไซต์ที่ทรงพลังที่สุดของเรา</string>
     <!-- Description of enhanced tracking protection. The first parameter is the name of the application (For example: Fenix) -->
     <string name="preference_enhanced_tracking_protection_explanation">เก็บข้อมูลของคุณไว้กับตัวคุณเอง %s ปกป้องคุณจากตัวติดตามที่พบบ่อยที่สุดซึ่งติดตามสิ่งที่คุณทำทางออนไลน์</string>
+    <!-- Description of enhanced tracking protection. The parameter is the name of the application (For example: Firefox Fenix) -->
+    <string name="preference_enhanced_tracking_protection_explanation_2" tools:ignore="UnusedResources">%s ปกป้องคุณจากตัวติดตามที่พบบ่อยที่สุดซึ่งติดตามสิ่งที่คุณทำทางออนไลน์</string>
     <!-- Text displayed that links to website about enhanced tracking protection -->
     <string name="preference_enhanced_tracking_protection_explanation_learn_more">เรียนรู้เพิ่มเติม</string>
     <!-- Preference for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_standard_default_1">มาตรฐาน (ค่าเริ่มต้น)</string>
     <!-- Preference description for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_standard_description_4">ความเป็นส่วนตัวและประสิทธิภาพแบบสมดุล หน้าเว็บจะโหลดเป็นปกติ</string>
+    <!-- Preference description for enhanced tracking protection for the standard protection settings -->
+    <string name="preference_enhanced_tracking_protection_standard_description_5" tools:ignore="UnusedResources">หน้าเว็บต่างๆ จะโหลดตามปกติ แต่จะปิดกั้นตัวติดตามน้อยลง</string>
     <!--  Accessibility text for the Standard protection information icon  -->
     <string name="preference_enhanced_tracking_protection_standard_info_button">สิ่งที่ถูกปิดกั้นโดยการป้องกันการติดตามแบบมาตรฐาน</string>
     <!-- Preference for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict">เข้มงวด</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict_description_3">ปิดกั้นตัวติดตามเพิ่มเติมเพื่อให้โหลดหน้าเว็บได้เร็วขึ้น แต่การทำงานบางอย่างในหน้าเว็บอาจพัง</string>
+    <!-- Preference description for enhanced tracking protection for the strict protection settings -->
+    <string name="preference_enhanced_tracking_protection_strict_description_4" tools:ignore="UnusedResources">การป้องกันการติดตามที่แข็งแกร่งขึ้นและประสิทธิภาพที่เร็วขึ้น แต่บางไซต์อาจทำงานไม่ถูกต้อง</string>
     <!--  Accessibility text for the Strict protection information icon  -->
     <string name="preference_enhanced_tracking_protection_strict_info_button">สิ่งที่ถูกปิดกั้นโดยการป้องกันการติดตามแบบเข้มงวด</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
@@ -1509,11 +1536,11 @@
     <string name="etp_tracking_content_description">หยุดไม่ให้โหลดโฆษณาภายนอก, วิดีโอ, และเนื้อหาอื่น ๆ ที่มีรหัสการติดตาม อาจส่งผลต่อฟังก์ชันการทำงานของบางเว็บไซต์</string>
 
     <!-- Enhanced Tracking Protection message that protection is currently on for this site -->
-    <string name="etp_panel_on">การป้องกันถูก เปิด สำหรับไซต์นี้</string>
+    <string name="etp_panel_on">การป้องกันเปิดอยู่สำหรับไซต์นี้</string>
     <!-- Enhanced Tracking Protection message that protection is currently off for this site -->
-    <string name="etp_panel_off">การป้องกันถูก ปิด สำหรับไซต์นี้</string>
+    <string name="etp_panel_off">การป้องกันปิดอยู่สำหรับไซต์นี้</string>
     <!-- Header for exceptions list for which sites enhanced tracking protection is always off -->
-    <string name="enhanced_tracking_protection_exceptions">การป้องกันการติดตามที่มากขึ้นถูกปิดสำหรับเว็บไซต์เหล่านี้</string>
+    <string name="enhanced_tracking_protection_exceptions">การป้องกันการติดตามแบบพิเศษปิดอยู่สำหรับเว็บไซต์เหล่านี้</string>
     <!-- Content description (not visible, for screen readers etc.): Navigate
     back from ETP details (Ex: Tracking content) -->
     <string name="etp_back_button_content_description">นำทางย้อนกลับ</string>
@@ -2041,4 +2068,6 @@
     <string name="a11y_action_label_wallpaper_collection_learn_more">เปิดลิงก์เพื่อเรียนรู้เพิ่มเติมเกี่ยวกับคอลเลกชันนี้</string>
     <!-- Action label for links that point to an article. Talkback will append this to say "Double tap to read the article". -->
     <string name="a11y_action_label_read_article">อ่านบทความ</string>
+    <!-- Action label for links to the Firefox Pocket website. Talkback will append this to say "Double tap to open link to learn more". -->
+    <string name="a11y_action_label_pocket_learn_more">เปิดลิงก์เพื่อเรียนรู้เพิ่มเติม</string>
 </resources>

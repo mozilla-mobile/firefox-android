@@ -15,8 +15,10 @@
     <string name="content_description_private_browsing_button">Activar le navigation private</string>
     <!-- Content description (not visible, for screen readers etc.): "Private Browsing" menu button. -->
     <string name="content_description_disable_private_browsing_button">Disactivar le navigation private.</string>
-    <!-- Placeholder text shown in the search bar before a user enters text -->
+    <!-- Placeholder text shown in the search bar before a user enters text for the default engine -->
     <string name="search_hint">Insere un adresse o face un recerca</string>
+    <!-- Placeholder text shown in the search bar before a user enters text for a general engine -->
+    <string name="search_hint_general_engine">Cercar in le Web</string>
     <!-- Placeholder text shown in search bar when using history search -->
     <string name="history_search_hint">Cercar in le chronologia</string>
     <!-- Placeholder text shown in search bar when using bookmarks search -->
@@ -81,9 +83,6 @@
     <string name="open_in_app_cfr_positive_button_text">Ir a parametros</string>
     <!-- Text for the negative action button -->
     <string name="open_in_app_cfr_negative_button_text">Dimitter</string>
-
-    <!-- Content description for close button used in "contextual feature recommendation" (CFR) popups -->
-    <string name="cfr_dismiss_button_default_content_description" moz:removedIn="110" tools:ignore="UnusedResources">Dimitter</string>
 
     <!-- Total cookie protection "contextual feature recommendation" (CFR) -->
     <!-- Text for the message displayed in the contextual feature recommendation popup promoting the total cookie protection feature. -->
@@ -364,8 +363,6 @@
     <string name="reduce_cookie_banner_option_off">Disactivar</string>
     <!-- Summary of cookie banner handling preference if the setting enabled is set to on -->
     <string name="reduce_cookie_banner_option_on">Activar</string>
-    <!-- Summary for the preference for rejecting all cookies whenever possible. -->
-    <string name="reduce_cookie_banner_summary" moz:RemovedIn="110" tools:ignore="UnusedResources">Firefox automaticamente proba a rejectar requestas de cookies sur banners pro cookies. Si un option pro rejectar non es disponibile, Firefox pote acceptar tote le cookies pro dimitter le banner.</string>
 
     <!-- Summary for the preference for rejecting all cookies whenever possible. The first parameter is the application name -->
     <string name="reduce_cookie_banner_summary_1">%1$s automaticamente prova a rejectar le requestas de cookies sur banners pro cookies.</string>
@@ -381,44 +378,43 @@
     <string name="reduce_cookie_banner_details_panel_title_off_for_site">Disactivar le reduction de banner pro cookie pro %1$s?</string>
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
     <string name="reduce_cookie_banner_details_panel_description_off_for_site">%1$s clarara le cookies de iste sito e actualisara le pagina. Clarar tote le cookies pote clauder tu connexion o vacuar tu carrettos de compras.</string>
-    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first and second parameter are the application name -->
-    <string name="reduce_cookie_banner_details_panel_description_on_for_site" moz:RemovedIn="110" tools:ignore="UnusedResources">%1$s pote probar automaticamente a rejectar requestas de cookies. Si un option pro rejectar non es disponibile, %2$s pote acceptar tote le cookies pro dimitter le banner.</string>
 
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter are the application name -->
     <string name="reduce_cookie_banner_details_panel_description_on_for_site_1" moz:RemovedIn="111" tools:ignore="UnusedResources">%1$s pote tentar de rejectar automaticamente le requestas de cookies.</string>
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
     <string name="reduce_cookie_banner_details_panel_description_on_for_site_2">%1$s tenta rejectar automaticamente tote le requestas de cookies sur le sitos supportate.</string>
     <!-- Title text for the dialog use on the control branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_control_experiment_dialog_title">Bandieras pro cookies adeo!</string>
-    <!-- Body text for the dialog use on the control branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_control_experiment_dialog_body" moz:RemovedIn="110" tools:ignore="UnusedResources">Rejectar automaticamente requestas de cookies, quando possibile. Alteremente, acceptar tote le cookies pro dimitter le bandieras pro cookies.</string>
+    <string name="reduce_cookie_banner_control_experiment_dialog_title" moz:RemovedIn="112" tools:ignore="UnusedResources">Bandieras pro cookies adeo!</string>
+    <!-- Title text for the cookie banner re-engagement dialog. The first parameter is the application name. -->
+    <string name="reduce_cookie_banner_dialog_title">Permitter a %1$s de rejectar bandieras pro cookies?</string>
     <!-- Body text for the dialog use on the control branch of the experiment to determine which context users engaged the most -->
     <string name="reduce_cookie_banner_control_experiment_dialog_body_1" moz:RemovedIn="111" tools:ignore="UnusedResources">Rejectar automaticamente requestas de cookies, quando possibile.</string>
     <!-- Body text for the dialog use on the control branch of the experiment to determine which context users engaged the most.The first parameter is the application name -->
-    <string name="reduce_cookie_banner_control_experiment_dialog_body_2">Permitter a %1$s de rejectar automaticamente requestas de cookies, quando possibile?</string>
+    <string name="reduce_cookie_banner_control_experiment_dialog_body_2" moz:RemovedIn="112" tools:ignore="UnusedResources">Permitter a %1$s de rejectar automaticamente requestas de cookies, quando possibile?</string>
+    <!-- Body text for the cookie banner re-engagement dialog use. The first parameter is the application name. -->
+    <string name="reduce_cookie_banner_dialog_body">%1$s pote rejectar automaticamente multe requestas de bandieras pro cookie.</string>
     <!-- Remind me later text button for the onboarding dialog -->
     <string name="reduce_cookie_banner_dialog_not_now_button">Non ora</string>
 
     <!-- Change setting text button, for the dialog use on the control branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_control_experiment_dialog_change_setting_button">Dimitter le bandieras</string>
+    <string name="reduce_cookie_banner_control_experiment_dialog_change_setting_button" moz:RemovedIn="112" tools:ignore="UnusedResources">Dimitter le bandieras</string>
     <!-- Snack text for the cookie banner dialog, after user hit the dismiss banner button -->
     <string name="reduce_cookie_banner_dialog_snackbar_text">Tu videra minus requestas de cookies</string>
     <!-- Title text for the dialog use on the variant 1 branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_variant_1_experiment_dialog_title">Vider minus quadros resaltante de cookies</string>
+    <string name="reduce_cookie_banner_variant_1_experiment_dialog_title" moz:RemovedIn="112" tools:ignore="UnusedResources">Vider minus quadros resaltante de cookies</string>
     <!-- Body text for the dialog use on the variant 1 branch of the experiment to determine which context users engaged the most. The first parameter is the application name. -->
-    <string name="reduce_cookie_banner_variant_1_experiment_dialog_body" moz:RemovedIn="110" tools:ignore="UnusedResources">Responde automaticamente al quadros resaltante de cookies pro navigar libere de distractiones. %1$s rejectara tote le requestas si possibile, o acceptara tote si non.</string>
-    <!-- Body text for the dialog use on the variant 1 branch of the experiment to determine which context users engaged the most. The first parameter is the application name. -->
-    <string name="reduce_cookie_banner_variant_1_experiment_dialog_body_1">Responder automaticamente al quadros resaltante de cookies pro navigar libere de distractiones. %1$s rejectara tote le requestas si possibile, o los acceptara tote si non.</string>
+    <string name="reduce_cookie_banner_variant_1_experiment_dialog_body_1" moz:RemovedIn="112" tools:ignore="UnusedResources">Responder automaticamente al quadros resaltante de cookies pro navigar libere de distractiones. %1$s rejectara tote le requestas si possibile, o los acceptara tote si non.</string>
     <!-- Change setting text button, for the onboarding dialog use on the variant 1 branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_variant_1_experiment_dialog_change_setting_button">Dimitter le quadros resaltante</string>
+    <string name="reduce_cookie_banner_variant_1_experiment_dialog_change_setting_button" moz:RemovedIn="112" tools:ignore="UnusedResources">Dimitter le quadros resaltante</string>
     <!-- Title text for the dialog use on the variant 2 branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_variant_2_experiment_dialog_title">Reduction de banner pro le cookie</string>
+    <string name="reduce_cookie_banner_variant_2_experiment_dialog_title" moz:RemovedIn="112" tools:ignore="UnusedResources">Reduction de banner pro le cookie</string>
     <!-- Body text for the dialog use on the variant 2 branch of the experiment to determine which context users engaged the most. The first parameter is the application name. -->
-    <string name="reduce_cookie_banner_variant_2_experiment_dialog_body" moz:RemovedIn="110" tools:ignore="UnusedResources">Permitter a %1$s de refusar le requesta de consenso al cookies de un sito si possibile o acceptar le accesso de cookies quando impossibile?</string>
-    <!-- Body text for the dialog use on the variant 2 branch of the experiment to determine which context users engaged the most. The first parameter is the application name. -->
-    <string name="reduce_cookie_banner_variant_2_experiment_dialog_body_1">Permitter a  %1$s de declinar le requesta de consenso de cookie del sito si possibile?</string>
+    <string name="reduce_cookie_banner_variant_2_experiment_dialog_body_1" moz:RemovedIn="112" tools:ignore="UnusedResources">Permitter a  %1$s de declinar le requesta de consenso de cookie del sito si possibile?</string>
     <!-- Change setting text button, for the dialog use on the variant 2 branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_variant_2_experiment_dialog_change_setting_button">Permitter</string>
+    <string name="reduce_cookie_banner_variant_2_experiment_dialog_change_setting_button" moz:RemovedIn="112" tools:ignore="UnusedResources">Permitter</string>
+
+    <!-- Change setting text button, for the cookie banner re-engagement dialog -->
+    <string name="reduce_cookie_banner_dialog_change_setting_button">Permitter</string>
 
     <!-- Description of the preference to enable "HTTPS-Only" mode. -->
     <string name="preferences_https_only_summary">Automaticamente tenta de connecter se al sitos per le protocollo de cryptation HTTPS pro major securitate.</string>
@@ -500,6 +496,12 @@
     <string name="preferences_enable_autocomplete_urls">Auto-completar URLs</string>
     <!-- Preference for open links in third party apps -->
     <string name="preferences_open_links_in_apps">Aperir ligamines in apps</string>
+    <!-- Preference for open links in third party apps always open in apps option -->
+    <string name="preferences_open_links_in_apps_always">Sempre</string>
+    <!-- Preference for open links in third party apps ask before opening option -->
+    <string name="preferences_open_links_in_apps_ask">Demandar ante aperir</string>
+    <!-- Preference for open links in third party apps never open in apps option -->
+    <string name="preferences_open_links_in_apps_never">Jammais</string>
     <!-- Preference for open download with an external download manager app -->
     <string name="preferences_external_download_manager">Gestor de discargamento externe</string>
     <!-- Preference for add_ons -->
@@ -684,7 +686,7 @@
 
     <!-- Toolbar Preferences -->
     <!-- Preference for using top toolbar -->
-    <string name="preference_top_toolbar">Apice</string>
+    <string name="preference_top_toolbar">Alto</string>
     <!-- Preference for using bottom toolbar -->
     <string name="preference_bottom_toolbar">Basso</string>
 
@@ -703,7 +705,7 @@
     <!-- Preferences for using pull to refresh in a webpage -->
     <string name="preference_gestures_website_pull_to_refresh">Tirar pro actualisar</string>
     <!-- Preference for using the dynamic toolbar -->
-    <string name="preference_gestures_dynamic_toolbar">Rolar pro celar le barra del instrumentos</string>
+    <string name="preference_gestures_dynamic_toolbar">Rolar pro celar le barra de instrumentos</string>
 
 
     <!-- Preference for switching tabs by swiping horizontally on the toolbar -->
@@ -1254,6 +1256,25 @@
     %1$s is a placeholder that will be replaced by the app name. -->
     <string name="notification_re_engagement_text">Navigar sin cookies o chronologia salvate in %1$s</string>
 
+    <!-- Title A shown in the notification that pops up to re-engage the user -->
+    <string name="notification_re_engagement_A_title">Naviga sin lassar un tracia</string>
+    <!-- Text A shown in the notification that pops up to re-engage the user.
+    %1$s is a placeholder that will be replaced by the app name. -->
+    <string name="notification_re_engagement_A_text">Le navigation private in %1$s non reserva tu info.</string>
+    <!-- Title B shown in the notification that pops up to re-engage the user -->
+    <string name="notification_re_engagement_B_title">Comencia tu prime recerca</string>
+    <!-- Text B shown in the notification that pops up to re-engage the user -->
+    <string name="notification_re_engagement_B_text">Trova alco in proximitate. O discoperi alco amusante.</string>
+
+    <!-- Survey -->
+    <!-- Text shown in the fullscreen message that pops up to ask user to take a short survey.
+    The app name is in the text, due to limitations with localizing Nimbus experiments -->
+    <string name="nimbus_survey_message_text" tools:ignore="UnusedResources">Per favor adjuta a render Firefox melior redigente un breve questionario.</string>
+    <!-- Preference for taking the short survey. -->
+    <string name="preferences_take_survey" tools:ignore="UnusedResources">Participar al questionario</string>
+    <!-- Preference for not taking the short survey. -->
+    <string name="preferences_not_take_survey" tools:ignore="UnusedResources">No, gratias</string>
+
     <!-- Snackbar -->
     <!-- Text shown in snackbar when user deletes a collection -->
     <string name="snackbar_collection_deleted">Collection delite</string>
@@ -1475,8 +1496,13 @@
     <string name="preference_enhanced_tracking_protection">Protection antitraciamento reinfortiate</string>
     <!-- Title for the description of enhanced tracking protection -->
     <string name="preference_enhanced_tracking_protection_explanation_title">Naviga sin lassar te sequer</string>
+    <!-- Preference summary for enhanced tracking protection settings on/off switch -->
+    <string name="preference_enhanced_tracking_protection_summary" tools:ignore="UnusedResources">Ora con le Protection total del cookies, nostre ancora plus potente barriera contra traciatores inter-sitos.</string>
     <!-- Description of enhanced tracking protection. The first parameter is the name of the application (For example: Fenix) -->
     <string name="preference_enhanced_tracking_protection_explanation">Mantene tu datos pro te mesme. %s te protege contra le majoritate del traciatores commun que seque lo que tu face in linea.
+</string>
+    <!-- Description of enhanced tracking protection. The parameter is the name of the application (For example: Firefox Fenix) -->
+    <string name="preference_enhanced_tracking_protection_explanation_2" tools:ignore="UnusedResources">%s te protege contra multe del traciatores commun que seque lo que tu face in linea.
 </string>
     <!-- Text displayed that links to website about enhanced tracking protection -->
     <string name="preference_enhanced_tracking_protection_explanation_learn_more">Saper plus</string>
@@ -1484,6 +1510,8 @@
     <string name="preference_enhanced_tracking_protection_standard_default_1">Standard (predefinite)</string>
     <!-- Preference description for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_standard_description_4">Equilibrio inter confidentialitate e prestation. Le paginas carga normalmente.</string>
+    <!-- Preference description for enhanced tracking protection for the standard protection settings -->
+    <string name="preference_enhanced_tracking_protection_standard_description_5" tools:ignore="UnusedResources">Le paginas cargara normalmente, ma blocara minus traciatores.</string>
     <!--  Accessibility text for the Standard protection information icon  -->
     <string name="preference_enhanced_tracking_protection_standard_info_button">Lo que es blocate per standard protection de traciamento</string>
     <!-- Preference for enhanced tracking protection for the strict protection settings -->
@@ -1491,6 +1519,8 @@
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict_description_3">Bloca plus traciatores assi que le paginas se carga plus veloce, ma alcun functionalitate sur le pagina pote corrumper se.</string>
 
+    <!-- Preference description for enhanced tracking protection for the strict protection settings -->
+    <string name="preference_enhanced_tracking_protection_strict_description_4" tools:ignore="UnusedResources">Plus forte protection de traciamento e prestation plus veloce, ma alcun sitos pote non functionar correctemente.</string>
     <!--  Accessibility text for the Strict protection information icon  -->
     <string name="preference_enhanced_tracking_protection_strict_info_button">Lo que es blocate per standard protection de traciamento</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings -->

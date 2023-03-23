@@ -6,7 +6,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.initialization.Settings
 
 // If you ever need to force a toolchain rebuild (taskcluster) then edit the following comment.
-// FORCE REBUILD 2023-03-01
+// FORCE REBUILD 2023-03-06
 
 class DependenciesPlugin : Plugin<Settings> {
     override fun apply(settings: Settings) = Unit
@@ -14,8 +14,9 @@ class DependenciesPlugin : Plugin<Settings> {
 
 // Synchronized version numbers for dependencies used by (some) modules
 object Versions {
-    const val kotlin = "1.7.20"
+    const val kotlin = "1.8.10"
     const val coroutines = "1.6.4"
+    const val serialization = "1.5.0"
 
     const val junit = "4.13.2"
     const val robolectric = "4.9.2"
@@ -38,21 +39,21 @@ object Versions {
     // zxing 3.4+ requires a minimum API of 24 or higher
     const val zxing = "3.3.3"
 
-    const val jna = "5.12.1"
     const val disklrucache = "2.0.2"
     const val leakcanary = "2.10"
 
-    const val mozilla_appservices = "97.1.0"
+    const val mozilla_appservices = "97.2.0"
 
     // DO NOT MODIFY MANUALLY. This is auto-updated along with GeckoView.
-    const val mozilla_glean = "52.3.0"
+    const val mozilla_glean = "52.4.2"
 
     const val material = "1.2.1"
+    const val ksp = "1.0.9"
 
     // see https://android-developers.googleblog.com/2022/06/independent-versioning-of-Jetpack-Compose-libraries.html
     // for Jetpack Compose libraries versioning
     const val compose_version = "1.3.1"
-    const val compose_compiler = "1.3.2"
+    const val compose_compiler = "1.4.3"
 
     object AndroidX {
         const val activityCompose = "1.4.0"
@@ -95,9 +96,9 @@ object Versions {
 // Synchronized dependencies used by (some) modules
 @Suppress("Unused", "MaxLineLength")
 object ComponentsDependencies {
-    const val kotlin_stdlib = "org.jetbrains.kotlin:kotlin-stdlib:${Versions.kotlin}"
     const val kotlin_coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.coroutines}"
     const val kotlin_reflect = "org.jetbrains.kotlin:kotlin-reflect:${Versions.kotlin}"
+    const val kotlin_json = "org.jetbrains.kotlinx:kotlinx-serialization-json:${Versions.serialization}"
 
     const val testing_junit = "junit:junit:${Versions.junit}"
     const val testing_robolectric = "org.robolectric:robolectric:${Versions.robolectric}"
@@ -157,6 +158,9 @@ object ComponentsDependencies {
 
     const val google_material = "com.google.android.material:material:${Versions.material}"
 
+    const val plugin_ksp = "com.google.devtools.ksp:symbol-processing-gradle-plugin:${Versions.kotlin}-${Versions.ksp}"
+    const val plugin_serialization = "org.jetbrains.kotlin.plugin.serialization:org.jetbrains.kotlin.plugin.serialization.gradle.plugin:${Versions.kotlin}"
+
     const val leakcanary = "com.squareup.leakcanary:leakcanary-android:${Versions.leakcanary}"
 
     const val tools_androidgradle = "com.android.tools.build:gradle:${Versions.android_gradle_plugin}"
@@ -192,7 +196,6 @@ object ComponentsDependencies {
     const val thirdparty_okhttp_urlconnection = "com.squareup.okhttp3:okhttp-urlconnection:${Versions.okhttp}"
     const val thirdparty_sentry_latest = "io.sentry:sentry-android:${Versions.sentry_latest}"
     const val thirdparty_zxing = "com.google.zxing:core:${Versions.zxing}"
-    const val thirdparty_jna = "net.java.dev.jna:jna:${Versions.jna}@jar"
     const val thirdparty_disklrucache = "com.jakewharton:disklrucache:${Versions.disklrucache}"
 
     const val firebase_messaging = "com.google.firebase:firebase-messaging:${Versions.Firebase.messaging}"

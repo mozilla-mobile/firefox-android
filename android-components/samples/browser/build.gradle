@@ -130,6 +130,7 @@ dependencies {
     implementation project(':service-sync-logins')
 
     implementation project(':support-base')
+    implementation project(':support-locale')
     implementation project(':support-utils')
     implementation project(':support-ktx')
     implementation project(':support-webextensions')
@@ -138,8 +139,6 @@ dependencies {
     geckoImplementation project(':browser-engine-gecko')
 
     implementation ComponentsDependencies.google_material
-
-    implementation ComponentsDependencies.kotlin_stdlib
 
     implementation ComponentsDependencies.androidx_appcompat
     implementation ComponentsDependencies.androidx_compose_ui_tooling

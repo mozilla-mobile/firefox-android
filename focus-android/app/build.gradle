@@ -182,14 +182,11 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 // Generate Kotlin code for the Focus Glean metrics.
 // -------------------------------------------------------------------------------------------------
 apply plugin: "org.mozilla.telemetry.glean-gradle-plugin"
-apply plugin: "org.mozilla.components.nimbus-gradle-plugin"
+apply plugin: "org.mozilla.appservices.nimbus-gradle-plugin"
 
 nimbus {
     // The path to the Nimbus feature manifest file
     manifestFile = "nimbus.fml.yaml"
-    // The fully qualified class name for the generated features.
-    // If the classname begins with a '.' this is taken as a suffix to the app's package name
-    destinationClass = ".nimbus.FocusNimbus"
     // Map from the variant name to the channel as experimenter and nimbus understand it.
     // If nimbus's channels were accurately set up well for this project, then this
     // shouldn't be needed.
@@ -207,23 +204,6 @@ nimbus {
     // It will be fetched by Experimenter (the Nimbus experiment website)
     // and used to inform experiment configuration.
     experimenterManifest = ".experimenter.yaml"
-}
-
-configurations {
-    // There's an interaction between Gradle's resolution of dependencies with different types
-    // (@jar, @aar) for `implementation` and `testImplementation` and with Android Studio's built-in
-    // JUnit test runner.  The runtime classpath in the built-in JUnit test runner gets the
-    // dependency from the `implementation`, which is type @aar, and therefore the JNA dependency
-    // doesn't provide the JNI dispatch libraries in the correct Java resource directories.  I think
-    // what's happening is that @aar type in `implementation` resolves to the @jar type in
-    // `testImplementation`, and that it wins the dependency resolution battle.
-    //
-    // A workaround is to add a new configuration which depends on the @jar type and to reference
-    // the underlying JAR file directly in `testImplementation`.  This JAR file doesn't resolve to
-    // the @aar type in `implementation`.  This works when invoked via `gradle`, but also sets the
-    // correct runtime classpath when invoked with Android Studio's built-in JUnit test runner.
-    // Success!
-    jnaForTest
 }
 
 dependencies {
@@ -321,8 +301,6 @@ dependencies {
     focusImplementation FocusDependencies.adjust
     focusImplementation FocusDependencies.install_referrer // Required by Adjust
 
-    jnaForTest FocusDependencies.jna
-    testImplementation files(configurations.jnaForTest.copyRecursive().files)
     testImplementation "org.mozilla.telemetry:glean-native-forUnitTests:${project.ext.glean_version}"
 
     testImplementation FocusDependencies.testing_junit_api
@@ -364,7 +342,6 @@ dependencies {
     testImplementation FocusDependencies.androidx_test_rules
 
     androidTestImplementation FocusDependencies.androidx_test_core_ktx
-    androidTestImplementation FocusDependencies.androidx_tracing
     androidTestImplementation FocusDependencies.androidx_junit_ktx
     androidTestImplementation FocusDependencies.androidx_uiautomator
     androidTestImplementation FocusDependencies.androidx_test_runner
