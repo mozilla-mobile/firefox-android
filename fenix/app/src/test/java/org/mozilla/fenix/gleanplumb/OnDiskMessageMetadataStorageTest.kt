@@ -91,11 +91,10 @@ class OnDiskMessageMetadataStorageTest {
             pressed = false,
             dismissed = false,
             lastTimeShown = 0L,
-            latestBootIdentifier = "9",
         )
 
         val expected =
-            """{"id":"id","displayCount":1,"pressed":false,"dismissed":false,"lastTimeShown":0,"latestBootIdentifier":"9"}"""
+            """{"id":"id","displayCount":1,"pressed":false,"dismissed":false,"lastTimeShown":0}"""
 
         assertEquals(expected, metadata.toJson())
     }
@@ -103,7 +102,7 @@ class OnDiskMessageMetadataStorageTest {
     @Test
     fun `WHEN calling toMetadata THEN return Metadata representation`() {
         val json =
-            """{"id":"id","displayCount":1,"pressed":false,"dismissed":false,"lastTimeShown":0,"latestBootIdentifier":"9"}"""
+            """{"id":"id","displayCount":1,"pressed":false,"dismissed":false,"lastTimeShown":0}"""
 
         val jsonObject = JSONObject(json)
 
@@ -113,7 +112,6 @@ class OnDiskMessageMetadataStorageTest {
             pressed = false,
             dismissed = false,
             lastTimeShown = 0L,
-            latestBootIdentifier = "9",
         )
 
         assertEquals(metadata, jsonObject.toMetadata())
@@ -122,7 +120,7 @@ class OnDiskMessageMetadataStorageTest {
     @Test
     fun `WHEN calling toMetadataMap THEN return map representation`() {
         val json =
-            """[{"id":"id","displayCount":1,"pressed":false,"dismissed":false,"lastTimeShown":0,"latestBootIdentifier":"9"}]"""
+            """[{"id":"id","displayCount":1,"pressed":false,"dismissed":false,"lastTimeShown":0}]"""
 
         val jsonArray = JSONArray(json)
 
@@ -132,7 +130,6 @@ class OnDiskMessageMetadataStorageTest {
             pressed = false,
             dismissed = false,
             lastTimeShown = 0L,
-            latestBootIdentifier = "9",
         )
 
         assertEquals(metadata, jsonArray.toMetadataMap()[metadata.id])

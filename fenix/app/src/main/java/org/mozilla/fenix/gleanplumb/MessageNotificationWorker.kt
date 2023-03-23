@@ -25,7 +25,6 @@ import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.nimbus.MessageSurfaceId
 import org.mozilla.fenix.onboarding.ensureMarketingChannelExists
 import org.mozilla.fenix.perf.runBlockingIncrement
-import org.mozilla.fenix.utils.BootUtils
 import org.mozilla.fenix.utils.IntentUtils
 import org.mozilla.fenix.utils.createBaseNotification
 import java.util.concurrent.TimeUnit
@@ -58,21 +57,10 @@ class MessageNotificationWorker(
             messagingStorage.getNextMessage(MessageSurfaceId.NOTIFICATION, messages)
                 ?: return Result.success()
 
-        val currentBootUniqueIdentifier = BootUtils.getBootIdentifier(context)
-        val messageMetadata = nextMessage.metadata
-        //  Device has NOT been power cycled.
-        if (messageMetadata.latestBootIdentifier == currentBootUniqueIdentifier) {
-            return Result.success()
-        }
-
         val nimbusMessagingController = NimbusMessagingController(messagingStorage)
 
         // Update message as displayed.
-        val updatedMessage =
-            nimbusMessagingController.updateMessageAsDisplayed(
-                nextMessage,
-                currentBootUniqueIdentifier,
-            )
+        val updatedMessage = nimbusMessagingController.updateMessageAsDisplayed(nextMessage)
 
         runBlockingIncrement { nimbusMessagingController.onMessageDisplayed(updatedMessage) }
 

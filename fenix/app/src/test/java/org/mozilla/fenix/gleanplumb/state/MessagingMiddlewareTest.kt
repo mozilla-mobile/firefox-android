@@ -334,12 +334,10 @@ private fun createMetadata(
     pressed: Boolean = false,
     dismissed: Boolean = false,
     lastTimeShown: Long = 0L,
-    latestBootIdentifier: String? = null,
 ) = Message.Metadata(
     id,
     displayCount,
     pressed,
     dismissed,
     lastTimeShown,
-    latestBootIdentifier,
 )
