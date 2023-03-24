@@ -78,7 +78,7 @@ class NimbusMessagingStorage(
                         ?: return@mapNotNull null,
                 )
             }.filter {
-                !it.isExpired &&
+                it.maxDisplayCount >= it.metadata.displayCount &&
                     !it.metadata.dismissed &&
                     !it.metadata.pressed
             }.sortedByDescending {
