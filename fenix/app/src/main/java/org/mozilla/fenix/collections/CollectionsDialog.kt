@@ -18,6 +18,7 @@ import mozilla.components.support.ktx.android.view.showKeyboard
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.ext.getDefaultCollectionNumber
+import org.mozilla.fenix.ext.increaseTapArea
 
 /**
  * A lambda that is invoked when a confirmation button in a [CollectionsDialog] is clicked.
@@ -107,6 +108,7 @@ internal fun CollectionsDialog.showAddNewDialog(
             collectionsStorage.cachedTabCollections.getDefaultCollectionNumber(),
         ),
     )
+    collectionNameEditText.increaseTapArea(context.resources.getDimension(R.dimen.tap_increase_2).toInt())
 
     AlertDialog.Builder(context)
         .setTitle(R.string.tab_tray_add_new_collection)
