@@ -60,19 +60,19 @@ class SettingsTest {
         }.goBack {
             // HTTPS-Only Mode
             verifyHTTPSOnlyModeButton()
-            verifyHTTPSOnlyModeSummary("Off")
+            verifySettingsOptionSummary("HTTPS-Only Mode", "Off")
 
             // ENHANCED TRACKING PROTECTION
             verifyEnhancedTrackingProtectionButton()
-            verifyEnhancedTrackingProtectionState("Standard")
+            verifySettingsOptionSummary("Enhanced Tracking Protection", "Standard")
         }.openEnhancedTrackingProtectionSubMenu {
             verifyNavigationToolBarHeader()
-            verifyEnhancedTrackingProtectionProtectionSubMenuItems()
+            verifyEnhancedTrackingProtectionOptionsEnabled()
 
             // ENHANCED TRACKING PROTECTION EXCEPTION
         }.openExceptions {
             verifyNavigationToolBarHeader()
-            verifyEnhancedTrackingProtectionProtectionExceptionsSubMenuItems()
+            verifyTPExceptionsDefaultView()
         }.goBack {
         }.goBack {
             // SITE PERMISSIONS
@@ -128,7 +128,7 @@ class SettingsTest {
         }.goBack {
             // DELETE BROWSING DATA ON QUIT
             verifyDeleteBrowsingDataOnQuitButton()
-            verifyDeleteBrowsingDataOnQuitState("Off")
+            verifySettingsOptionSummary("Delete browsing data on quit", "Off")
         }.openSettingsSubMenuDeleteBrowsingDataOnQuit {
             verifyNavigationToolBarHeader()
             verifyDeleteBrowsingDataOnQuitSubMenuItems()
