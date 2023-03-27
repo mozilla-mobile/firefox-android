@@ -171,16 +171,30 @@ class RadioSearchEngineListPreference @JvmOverloads constructor(
     ) {
         val selectedOrDefaultSearchEngine = context.components.core.store.state.search.selectedOrDefaultSearchEngine
         if (selectedOrDefaultSearchEngine == engine) {
-            val nextSearchEngine = if (context.settings().showUnifiedSearchFeature) {
-                context.components.core.store.state.search.searchEngines.first {
-                    it.id != engine.id && (it.isGeneral || it.type == SearchEngine.Type.CUSTOM)
+            val nextSearchEngine = try {
+                if (context.settings().showUnifiedSearchFeature) {
+                    context.components.core.store.state.search.searchEngines.first {
+                        it.id != engine.id && (it.isGeneral || it.type == SearchEngine.Type.CUSTOM)
+                    }
+                } else {
+                    context.components.core.store.state.search.searchEngines.first {
+                        it.id != engine.id
+                    }
                 }
-            } else {
-                context.components.core.store.state.search.searchEngines.first {
-                    it.id != engine.id
+            } catch (ex: NoSuchElementException) {
+                try {
+                    context.components.core.store.state.search.searchEngines.first {
+                        it.id != engine.id
+                    }
+                } catch (ex: NoSuchElementException) {
+                    null
                 }
             }
-            context.components.useCases.searchUseCases.selectSearchEngine(nextSearchEngine)
+            nextSearchEngine?.let {
+                context.components.useCases.searchUseCases.selectSearchEngine(
+                    nextSearchEngine,
+                )
+            }
         }
         context.components.useCases.searchUseCases.removeSearchEngine(engine)
 
