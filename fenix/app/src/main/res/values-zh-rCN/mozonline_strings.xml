@@ -44,5 +44,7 @@
     <!-- Homescreen menu button -->
     <!-- Browser menu button that opens the account setting page -->
     <string name="browser_menu_manage_account_and_devices">管理账户和设备</string>
+
+    <string name="preferences_report">用户权益投诉举报</string>
 </resources>
 

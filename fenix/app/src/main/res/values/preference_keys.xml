@@ -41,6 +41,7 @@
     <string name="pref_key_help" translatable="false">pref_key_help</string>
     <string name="pref_key_rate" translatable="false">pref_key_rate</string>
     <string name="pref_key_about" translatable="false">pref_key_about</string>
+    <string name="pref_key_report" translatable="false">pref_key_report</string>
     <string name="pref_key_your_rights" translatable="false">pref_key_your_rights</string>
     <string name="pref_key_account" translatable="false">pref_key_account</string>
     <string name="pref_key_sign_in" translatable="false">pref_key_sign_in</string>

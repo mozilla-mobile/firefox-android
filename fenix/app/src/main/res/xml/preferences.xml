@@ -194,6 +194,11 @@
             android:title="@string/preferences_about" />
 
         <androidx.preference.Preference
+            android:key="@string/pref_key_report"
+            app:iconSpaceReserved="false"
+            android:title="@string/preferences_report" />
+
+        <androidx.preference.Preference
             android:key="@string/pref_key_debug_settings"
             app:iconSpaceReserved="false"
             android:title="@string/preferences_debug_settings"

@@ -211,6 +211,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val appName = getString(R.string.app_name)
         aboutPreference.title = getString(R.string.preferences_about, appName)
 
+        val reportPreference = requirePreference<Preference>(R.string.pref_key_report)
+        reportPreference.isVisible = Config.channel.isMozillaOnline
+        reportPreference.title = getString(R.string.preferences_report)
+
         val deleteBrowsingDataPreference =
             requirePreference<Preference>(R.string.pref_key_delete_browsing_data_on_quit_preference)
         deleteBrowsingDataPreference.summary = if (settings.shouldDeleteBrowsingDataOnQuit) {
@@ -334,6 +338,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
             }
             resources.getString(R.string.pref_key_about) -> {
                 SettingsFragmentDirections.actionSettingsFragmentToAboutFragment()
+            }
+            resources.getString(R.string.pref_key_report) -> {
+                (activity as HomeActivity).openToBrowserAndLoad(
+                    searchTermOrURL = "https://account.firefoxchina.cn/mfeedback.php",
+                    newTab = true,
+                    from = BrowserDirection.FromSettings,
+                )
+                null
             }
             resources.getString(R.string.pref_key_account) -> {
                 SettingsFragmentDirections.actionSettingsFragmentToAccountSettingsFragment()

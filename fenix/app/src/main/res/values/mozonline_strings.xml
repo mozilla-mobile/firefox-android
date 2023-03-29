@@ -43,4 +43,6 @@
     <!-- Homescreen menu button -->
     <!-- Browser menu button that opens the account setting page -->
     <string name="browser_menu_manage_account_and_devices">Manage Account and Devices</string>
+
+    <string name="preferences_report">Report</string>
 </resources>
