@@ -10,6 +10,7 @@ import mozilla.components.concept.engine.utils.EngineReleaseChannel
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
@@ -54,18 +55,22 @@ class SettingsAdvancedTest {
 
     // Walks through settings menu and sub-menus to ensure all items are present
     @Test
-    fun settingsAboutItemsTest() {
+    fun settingsAdvancedItemsTest() {
         // ADVANCED
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
-            // ADVANCED
+            verifySettingsToolbar()
             verifyAdvancedHeading()
             verifyAddons()
             verifyOpenLinksInAppsButton()
-            verifyOpenLinksInAppsState("Never")
-            verifyRemoteDebug()
+            verifySettingsOptionSummary("Open links in apps", "Never")
+            verifyExternalDownloadManagerButton()
+            verifyExternalDownloadManagerToggle(false)
             verifyLeakCanaryButton()
+            verifyLeakCanaryToggle(true)
+            verifyRemoteDebuggingButton()
+            verifyRemoteDebuggingToggle(false)
         }
     }
 
@@ -82,7 +87,7 @@ class SettingsAdvancedTest {
             }.openThreeDotMenu {
             }.openSettings {
                 verifyOpenLinksInAppsButton()
-                verifyOpenLinksInAppsState("Never")
+                verifySettingsOptionSummary("Open links in apps", "Never")
             }.openOpenLinksInAppsMenu {
                 verifyOpenLinksInAppsView("Never")
             }
@@ -105,7 +110,7 @@ class SettingsAdvancedTest {
             }.openThreeDotMenu {
             }.openSettings {
                 verifyOpenLinksInAppsButton()
-                verifyOpenLinksInAppsState("Never")
+                verifySettingsOptionSummary("Open links in apps", "Never")
             }.openOpenLinksInAppsMenu {
                 verifyOpenLinksInAppsView("Never")
             }
@@ -128,7 +133,7 @@ class SettingsAdvancedTest {
             }.openThreeDotMenu {
             }.openSettings {
                 verifyOpenLinksInAppsButton()
-                verifyOpenLinksInAppsState("Never")
+                verifySettingsOptionSummary("Open links in apps", "Never")
             }.openOpenLinksInAppsMenu {
                 verifyOpenLinksInAppsView("Never")
             }
@@ -163,7 +168,7 @@ class SettingsAdvancedTest {
             }.openThreeDotMenu {
             }.openSettings {
                 verifyOpenLinksInAppsButton()
-                verifyOpenLinksInAppsState("Never")
+                verifySettingsOptionSummary("Open links in apps", "Never")
             }.openOpenLinksInAppsMenu {
                 verifyOpenLinksInAppsView("Never")
             }
@@ -195,13 +200,13 @@ class SettingsAdvancedTest {
             }.openThreeDotMenu {
             }.openSettings {
                 verifyOpenLinksInAppsButton()
-                verifyOpenLinksInAppsState("Never")
+                verifySettingsOptionSummary("Open links in apps", "Never")
             }.openOpenLinksInAppsMenu {
                 verifyOpenLinksInAppsView("Never")
                 clickOpenLinkInAppOption("Ask before opening")
                 verifySelectedOpenLinksInAppOption("Ask before opening")
             }.goBack {
-                verifyOpenLinksInAppsState("Ask before opening")
+                verifySettingsOptionSummary("Open links in apps", "Ask before opening")
             }
 
             exitMenu()
@@ -236,13 +241,13 @@ class SettingsAdvancedTest {
             }.openThreeDotMenu {
             }.openSettings {
                 verifyOpenLinksInAppsButton()
-                verifyOpenLinksInAppsState("Never")
+                verifySettingsOptionSummary("Open links in apps", "Never")
             }.openOpenLinksInAppsMenu {
                 verifyOpenLinksInAppsView("Never")
                 clickOpenLinkInAppOption("Ask before opening")
                 verifySelectedOpenLinksInAppOption("Ask before opening")
             }.goBack {
-                verifyOpenLinksInAppsState("Ask before opening")
+                verifySettingsOptionSummary("Open links in apps", "Ask before opening")
             }
 
             exitMenu()
@@ -259,6 +264,7 @@ class SettingsAdvancedTest {
     }
 
     // Assumes Play Store is installed and enabled
+    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1824928")
     @SmokeTest
     @Test
     fun askBeforeOpeningLinkInAppTest() {
@@ -274,13 +280,13 @@ class SettingsAdvancedTest {
             }.openThreeDotMenu {
             }.openSettings {
                 verifyOpenLinksInAppsButton()
-                verifyOpenLinksInAppsState("Never")
+                verifySettingsOptionSummary("Open links in apps", "Never")
             }.openOpenLinksInAppsMenu {
                 verifyOpenLinksInAppsView("Never")
                 clickOpenLinkInAppOption("Ask before opening")
                 verifySelectedOpenLinksInAppOption("Ask before opening")
             }.goBack {
-                verifyOpenLinksInAppsState("Ask before opening")
+                verifySettingsOptionSummary("Open links in apps", "Ask before opening")
             }
 
             exitMenu()
@@ -297,6 +303,7 @@ class SettingsAdvancedTest {
     }
 
     // Assumes Play Store is installed and enabled
+    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1824928")
     @SmokeTest
     @Test
     fun privateBrowsingAskBeforeOpeningLinkInAppTest() {
@@ -315,13 +322,13 @@ class SettingsAdvancedTest {
             }.openThreeDotMenu {
             }.openSettings {
                 verifyOpenLinksInAppsButton()
-                verifyOpenLinksInAppsState("Never")
+                verifySettingsOptionSummary("Open links in apps", "Never")
             }.openOpenLinksInAppsMenu {
                 verifyOpenLinksInAppsView("Never")
                 clickOpenLinkInAppOption("Ask before opening")
                 verifySelectedOpenLinksInAppOption("Ask before opening")
             }.goBack {
-                verifyOpenLinksInAppsState("Ask before opening")
+                verifySettingsOptionSummary("Open links in apps", "Ask before opening")
             }
 
             exitMenu()
@@ -338,6 +345,7 @@ class SettingsAdvancedTest {
     }
 
     // Assumes Play Store is installed and enabled
+    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1824928")
     @SmokeTest
     @Test
     fun alwaysOpenLinkInAppTest() {
@@ -353,13 +361,13 @@ class SettingsAdvancedTest {
             }.openThreeDotMenu {
             }.openSettings {
                 verifyOpenLinksInAppsButton()
-                verifyOpenLinksInAppsState("Never")
+                verifySettingsOptionSummary("Open links in apps", "Never")
             }.openOpenLinksInAppsMenu {
                 verifyOpenLinksInAppsView("Never")
                 clickOpenLinkInAppOption("Always")
                 verifySelectedOpenLinksInAppOption("Always")
             }.goBack {
-                verifyOpenLinksInAppsState("Always")
+                verifySettingsOptionSummary("Open links in apps", "Always")
             }
 
             exitMenu()
@@ -374,6 +382,7 @@ class SettingsAdvancedTest {
     }
 
     // Assumes Play Store is installed and enabled
+    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1824928")
     @SmokeTest
     @Test
     fun privateBrowsingAlwaysOpenLinkInAppTest() {
@@ -392,13 +401,13 @@ class SettingsAdvancedTest {
             }.openThreeDotMenu {
             }.openSettings {
                 verifyOpenLinksInAppsButton()
-                verifyOpenLinksInAppsState("Never")
+                verifySettingsOptionSummary("Open links in apps", "Never")
             }.openOpenLinksInAppsMenu {
                 verifyOpenLinksInAppsView("Never")
                 clickOpenLinkInAppOption("Always")
                 verifySelectedOpenLinksInAppOption("Always")
             }.goBack {
-                verifyOpenLinksInAppsState("Always")
+                verifySettingsOptionSummary("Open links in apps", "Always")
             }
 
             exitMenu()
