@@ -518,13 +518,13 @@ class HomeScreenRobot {
             .className(View::class.java)
             .className(TextView::class.java)
         assertTrue(
-            mDevice.findObject(textView.textContains(title)).waitForExists(waitingTime)
+            mDevice.findObject(textView.textContains(title)).waitForExists(waitingTime),
         )
         assertTrue(
-            mDevice.findObject(textView.textContains(text)).waitForExists(waitingTime)
+            mDevice.findObject(textView.textContains(text)).waitForExists(waitingTime),
         )
         assertTrue(
-            mDevice.findObject(textView.textContains(action)).waitForExists(waitingTime)
+            mDevice.findObject(textView.textContains(action)).waitForExists(waitingTime),
         )
     }
 
