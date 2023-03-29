@@ -88,6 +88,7 @@ import org.mozilla.fenix.gleanplumb.MessagingFeature
 import org.mozilla.fenix.gleanplumb.NimbusMessagingController
 import org.mozilla.fenix.home.pocket.DefaultPocketStoriesController
 import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesCategory
+import org.mozilla.fenix.home.privatebrowsing.controller.DefaultPrivateBrowsingController
 import org.mozilla.fenix.home.recentbookmarks.RecentBookmarksFeature
 import org.mozilla.fenix.home.recentbookmarks.controller.DefaultRecentBookmarksController
 import org.mozilla.fenix.home.recentsyncedtabs.RecentSyncedTabFeature
@@ -398,6 +399,11 @@ class HomeFragment : Fragment() {
             pocketStoriesController = DefaultPocketStoriesController(
                 homeActivity = activity,
                 appStore = components.appStore,
+            ),
+            privateBrowsingController = DefaultPrivateBrowsingController(
+                activity = activity,
+                appStore = components.appStore,
+                navController = findNavController(),
             ),
             onboardingController = DefaultOnboardingController(
                 activity = activity,
