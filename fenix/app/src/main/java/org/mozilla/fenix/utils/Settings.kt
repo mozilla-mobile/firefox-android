@@ -1688,4 +1688,12 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         key = appContext.getPreferenceKey(R.string.pref_key_enable_tabs_tray_to_compose),
         default = FeatureFlags.composeTabsTray,
     )
+
+    /**
+     * Indicates if swipe is enabled
+     */
+    var isSwipeEnabled by booleanPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_is_swipe_enabled),
+        default = true,
+    )
 }

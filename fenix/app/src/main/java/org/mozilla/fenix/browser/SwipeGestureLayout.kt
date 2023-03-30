@@ -11,6 +11,7 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.widget.FrameLayout
 import androidx.core.view.GestureDetectorCompat
+import org.mozilla.fenix.ext.settings
 
 /**
  * Interface that allows intercepting and handling swipe gestures received in a [SwipeGestureLayout].
@@ -55,11 +56,6 @@ class SwipeGestureLayout @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
 ) : FrameLayout(context, attrs, defStyleAttr) {
-
-    /**
-     * Controls whether the swiping functionality is active or not.
-     */
-    var isSwipeEnabled = true
 
     private val gestureListener = object : GestureDetector.SimpleOnGestureListener() {
         override fun onDown(e: MotionEvent): Boolean {
@@ -112,7 +108,7 @@ class SwipeGestureLayout @JvmOverloads constructor(
     }
 
     override fun onInterceptTouchEvent(event: MotionEvent): Boolean {
-        if (!isSwipeEnabled) {
+        if (!context.settings().isSwipeEnabled) {
             return false
         }
 
