@@ -250,7 +250,7 @@ class Core(
                     additionalBundledSearchEngineIds = listOf("reddit", "youtube"),
                     migration = SearchMigration(context),
                 ),
-                RecordingDevicesMiddleware(context),
+                RecordingDevicesMiddleware(context, context.components.notificationsDelegate),
                 PromptMiddleware(),
                 AdsTelemetryMiddleware(adsTelemetry),
                 LastMediaAccessMiddleware(),
@@ -297,6 +297,7 @@ class Core(
                 R.drawable.ic_status_logo,
                 permissionStorage.permissionsStorage,
                 IntentReceiverActivity::class.java,
+                notificationsDelegate = context.components.notificationsDelegate,
             )
 
             MediaSessionFeature(context, MediaSessionService::class.java, this).start()
