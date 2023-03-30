@@ -38,15 +38,18 @@ import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
 import junit.framework.AssertionFailedError
 import org.hamcrest.CoreMatchers
+import org.hamcrest.CoreMatchers.endsWith
 import org.hamcrest.Matchers.allOf
-import org.hamcrest.Matchers.endsWith
 import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.Constants.LISTS_MAXSWIPES
 import org.mozilla.fenix.helpers.Constants.PackageName.GOOGLE_PLAY_SERVICES
 import org.mozilla.fenix.helpers.Constants.RETRY_COUNT
+import org.mozilla.fenix.helpers.MatcherHelper.assertItemContainingTextExists
 import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithText
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
+import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
 import org.mozilla.fenix.helpers.TestHelper.appName
 import org.mozilla.fenix.helpers.TestHelper.getStringResource
 import org.mozilla.fenix.helpers.TestHelper.hasCousin
@@ -55,6 +58,7 @@ import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.TestHelper.scrollToElementByText
 import org.mozilla.fenix.helpers.click
+import org.mozilla.fenix.helpers.ext.waitNotNull
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.ui.robots.SettingsRobot.Companion.DEFAULT_APPS_SETTINGS_ACTION
 
@@ -71,11 +75,30 @@ class SettingsRobot {
     fun verifyThemeSelected() = assertThemeSelected()
     fun verifyAccessibilityButton() = assertAccessibilityButton()
     fun verifySetAsDefaultBrowserButton() = assertSetAsDefaultBrowserButton()
-    fun verifyTabsButton() = assertTabsButton()
+    fun verifyTabsButton() =
+        assertItemContainingTextExists(itemContainingText(getStringResource(R.string.preferences_tabs)))
     fun verifyHomepageButton() = assertHomepageButton()
     fun verifyAutofillButton() = assertAutofillButton()
     fun verifyLanguageButton() = assertLanguageButton()
-    fun verifyDefaultBrowserIsDisabled() = assertDefaultBrowserIsDisabled()
+    fun verifyDefaultBrowserToggle(isEnabled: Boolean) {
+        scrollToElementByText(getStringResource(R.string.preferences_set_as_default_browser))
+        onView(withText(R.string.preferences_set_as_default_browser))
+            .check(
+                matches(
+                    hasCousin(
+                        allOf(
+                            withId(R.id.switch_widget),
+                            if (isEnabled) {
+                                isChecked()
+                            } else {
+                                isNotChecked()
+                            },
+                        ),
+                    ),
+                ),
+            )
+    }
+
     fun clickDefaultBrowserSwitch() = toggleDefaultBrowserSwitch()
     fun verifyAndroidDefaultAppsMenuAppears() = assertAndroidDefaultAppsMenuAppears()
 
@@ -83,22 +106,18 @@ class SettingsRobot {
     fun verifyPrivacyHeading() = assertPrivacyHeading()
 
     fun verifyHTTPSOnlyModeButton() = assertHTTPSOnlyModeButton()
-    fun verifyHTTPSOnlyModeState(state: String) = assertHTTPSOnlyModeState(state)
+    fun verifyCookieBannerReductionButton() =
+        onView(withText(R.string.preferences_cookie_banner_reduction)).check(matches(isDisplayed()))
+
     fun verifyEnhancedTrackingProtectionButton() = assertEnhancedTrackingProtectionButton()
     fun verifyLoginsAndPasswordsButton() = assertLoginsAndPasswordsButton()
-    fun verifyEnhancedTrackingProtectionState(option: String) =
-        assertEnhancedTrackingProtectionState(option)
     fun verifyPrivateBrowsingButton() = assertPrivateBrowsingButton()
     fun verifySitePermissionsButton() = assertSitePermissionsButton()
     fun verifyDeleteBrowsingDataButton() = assertDeleteBrowsingDataButton()
     fun verifyDeleteBrowsingDataOnQuitButton() = assertDeleteBrowsingDataOnQuitButton()
-    fun verifyDeleteBrowsingDataOnQuitState(state: String) =
-        assertDeleteBrowsingDataState(state)
     fun verifyNotificationsButton() = assertNotificationsButton()
     fun verifyDataCollectionButton() = assertDataCollectionButton()
     fun verifyOpenLinksInAppsButton() = assertOpenLinksInAppsButton()
-    fun verifyOpenLinksInAppsSwitchState(enabled: Boolean) = assertOpenLinksInAppsSwitchState(enabled)
-    fun clickOpenLinksInAppsSwitch() = openLinksInAppsButton().click()
     fun verifySettingsView() = assertSettingsView()
     fun verifySettingsToolbar() = assertSettingsToolbar()
 
@@ -106,8 +125,64 @@ class SettingsRobot {
     fun verifyAdvancedHeading() = assertAdvancedHeading()
     fun verifyAddons() = assertAddonsButton()
 
+    fun verifyExternalDownloadManagerButton() =
+        onView(
+            withText(R.string.preferences_external_download_manager),
+        ).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+
+    fun verifyExternalDownloadManagerToggle(enabled: Boolean) =
+        onView(withText(R.string.preferences_external_download_manager))
+            .check(
+                matches(
+                    hasCousin(
+                        allOf(
+                            withClassName(endsWith("Switch")),
+                            if (enabled) {
+                                isChecked()
+                            } else {
+                                isNotChecked()
+                            },
+                        ),
+                    ),
+                ),
+            )
+
+    fun verifyLeakCanaryToggle(enabled: Boolean) =
+        onView(withText(R.string.preference_leakcanary))
+            .check(
+                matches(
+                    hasCousin(
+                        allOf(
+                            withClassName(endsWith("Switch")),
+                            if (enabled) {
+                                isChecked()
+                            } else {
+                                isNotChecked()
+                            },
+                        ),
+                    ),
+                ),
+            )
+
+    fun verifyRemoteDebuggingToggle(enabled: Boolean) =
+        onView(withText(R.string.preferences_remote_debugging))
+            .check(
+                matches(
+                    hasCousin(
+                        allOf(
+                            withClassName(endsWith("Switch")),
+                            if (enabled) {
+                                isChecked()
+                            } else {
+                                isNotChecked()
+                            },
+                        ),
+                    ),
+                ),
+            )
+
     // DEVELOPER TOOLS SECTION
-    fun verifyRemoteDebug() = assertRemoteDebug()
+    fun verifyRemoteDebuggingButton() = assertRemoteDebuggingButton()
     fun verifyLeakCanaryButton() = assertLeakCanaryButton()
 
     // ABOUT SECTION
@@ -116,6 +191,16 @@ class SettingsRobot {
     fun verifyRateOnGooglePlay() = assertTrue(rateOnGooglePlayHeading().waitForExists(waitingTime))
     fun verifyAboutFirefoxPreview() = assertTrue(aboutFirefoxHeading().waitForExists(waitingTime))
     fun verifyGooglePlayRedirect() = assertGooglePlayRedirect()
+
+    fun verifySettingsOptionSummary(setting: String, summary: String) {
+        scrollToElementByText(setting)
+        onView(
+            allOf(
+                withText(setting),
+                hasSibling(withText(summary)),
+            ),
+        ).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+    }
 
     class Transition {
         fun goBack(interact: HomeScreenRobot.() -> Unit): HomeScreenRobot.Transition {
@@ -157,8 +242,11 @@ class SettingsRobot {
         }
 
         fun openTabsSubMenu(interact: SettingsSubMenuTabsRobot.() -> Unit): SettingsSubMenuTabsRobot.Transition {
-            fun tabsButton() = onView(withText("Tabs"))
-            tabsButton().click()
+            itemWithText(getStringResource(R.string.preferences_tabs))
+                .also {
+                    it.waitForExists(waitingTime)
+                    it.clickAndWaitForNewWindow(waitingTimeShort)
+                }
 
             SettingsSubMenuTabsRobot().interact()
             return SettingsSubMenuTabsRobot.Transition()
@@ -317,6 +405,25 @@ class SettingsRobot {
             SettingsSubMenuAddonsManagerRobot().interact()
             return SettingsSubMenuAddonsManagerRobot.Transition()
         }
+
+        fun openOpenLinksInAppsMenu(interact: SettingsSubMenuOpenLinksInAppsRobot.() -> Unit): SettingsSubMenuOpenLinksInAppsRobot.Transition {
+            openLinksInAppsButton().click()
+
+            SettingsSubMenuOpenLinksInAppsRobot().interact()
+            return SettingsSubMenuOpenLinksInAppsRobot.Transition()
+        }
+
+        fun openHttpsOnlyModeMenu(interact: SettingsSubMenuHttpsOnlyModeRobot.() -> Unit): SettingsSubMenuHttpsOnlyModeRobot.Transition {
+            scrollToElementByText("HTTPS-Only Mode")
+            onView(withText(getStringResource(R.string.preferences_https_only_title))).click()
+            mDevice.waitNotNull(
+                Until.findObjects(By.res("$packageName:id/https_only_switch")),
+                waitingTime,
+            )
+
+            SettingsSubMenuHttpsOnlyModeRobot().interact()
+            return SettingsSubMenuHttpsOnlyModeRobot.Transition()
+        }
     }
 
     companion object {
@@ -386,12 +493,6 @@ private fun assertSetAsDefaultBrowserButton() {
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
-private fun assertDefaultBrowserIsDisabled() {
-    scrollToElementByText("Set as default browser")
-    onView(withId(R.id.switch_widget))
-        .check(matches(ViewMatchers.isNotChecked()))
-}
-
 private fun toggleDefaultBrowserSwitch() {
     scrollToElementByText("Privacy and security")
     onView(withText("Set as default browser")).perform(ViewActions.click())
@@ -399,12 +500,6 @@ private fun toggleDefaultBrowserSwitch() {
 
 private fun assertAndroidDefaultAppsMenuAppears() {
     intended(IntentMatchers.hasAction(DEFAULT_APPS_SETTINGS_ACTION))
-}
-
-private fun assertTabsButton() {
-    mDevice.wait(Until.findObject(By.text("Tabs")), waitingTime)
-    onView(withText(R.string.preferences_tabs))
-        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
 // PRIVACY SECTION
@@ -421,15 +516,6 @@ private fun assertHTTPSOnlyModeButton() {
     ).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
-private fun assertHTTPSOnlyModeState(state: String) {
-    onView(
-        allOf(
-            withText(R.string.preferences_https_only_title),
-            hasSibling(withText(state)),
-        ),
-    ).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-}
-
 private fun assertEnhancedTrackingProtectionButton() {
     mDevice.wait(Until.findObject(By.text("Privacy and Security")), waitingTime)
     onView(withId(R.id.recycler_view)).perform(
@@ -437,11 +523,6 @@ private fun assertEnhancedTrackingProtectionButton() {
             hasDescendant(withText("Enhanced Tracking Protection")),
         ),
     ).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-}
-
-private fun assertEnhancedTrackingProtectionState(state: String) {
-    mDevice.wait(Until.findObject(By.text("Enhanced Tracking Protection")), waitingTime)
-    onView(withText(state)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
 private fun assertLoginsAndPasswordsButton() {
@@ -475,15 +556,6 @@ private fun assertDeleteBrowsingDataOnQuitButton() {
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 
-private fun assertDeleteBrowsingDataState(state: String) {
-    onView(
-        allOf(
-            withText(R.string.preferences_delete_browsing_data_on_quit),
-            hasSibling(withText(state)),
-        ),
-    ).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-}
-
 private fun assertNotificationsButton() {
     scrollToElementByText("Notifications")
     onView(withText("Notifications"))
@@ -502,41 +574,6 @@ private fun assertOpenLinksInAppsButton() {
     scrollToElementByText("Open links in apps")
     openLinksInAppsButton()
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-}
-
-fun assertOpenLinksInAppsSwitchState(enabled: Boolean) {
-    scrollToElementByText("Open links in apps")
-    if (enabled) {
-        openLinksInAppsButton()
-            .check(
-                matches(
-                    hasCousin(
-                        allOf(
-                            withClassName(endsWith("Switch")),
-                            isChecked(),
-                        ),
-                    ),
-                ),
-            )
-    } else {
-        openLinksInAppsButton()
-            .check(
-                matches(
-                    hasCousin(
-                        allOf(
-                            withClassName(endsWith("Switch")),
-                            isNotChecked(),
-                        ),
-                    ),
-                ),
-            )
-    }
-}
-
-// DEVELOPER TOOLS SECTION
-private fun assertDeveloperToolsHeading() {
-    scrollToElementByText("Developer tools")
-    onView(withText("Developer tools"))
 }
 
 // ADVANCED SECTION
@@ -562,7 +599,7 @@ private fun assertAddonsButton() {
         .check(matches(isCompletelyDisplayed()))
 }
 
-private fun assertRemoteDebug() {
+private fun assertRemoteDebuggingButton() {
     scrollToElementByText("Remote debugging via USB")
     onView(withText("Remote debugging via USB"))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))

@@ -4,11 +4,11 @@
 
 package org.mozilla.fenix.onboarding.view
 
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import com.google.accompanist.insets.navigationBarsPadding
-import com.google.accompanist.insets.statusBarsPadding
 import mozilla.components.service.glean.private.NoExtras
 import org.mozilla.fenix.GleanMetrics.Onboarding
 import org.mozilla.fenix.R
@@ -37,21 +37,25 @@ fun NotificationPermissionDialogScreen(
                 id = R.string.onboarding_home_enable_notifications_description,
                 formatArgs = arrayOf(stringResource(R.string.app_name)),
             ),
-            primaryButtonText = stringResource(id = R.string.onboarding_home_enable_notifications_positive_button),
-            secondaryButtonText = stringResource(id = R.string.onboarding_home_enable_notifications_negative_button),
+            primaryButton = Action(
+                text = stringResource(id = R.string.onboarding_home_enable_notifications_positive_button),
+                onClick = {
+                    grantNotificationPermission()
+                    Onboarding.notifPppPositiveBtnClick.record(NoExtras())
+                },
+            ),
+            secondaryButton = Action(
+                text = stringResource(id = R.string.onboarding_home_enable_notifications_negative_button),
+                onClick = {
+                    onDismiss()
+                    Onboarding.notifPppNegativeBtnClick.record(NoExtras())
+                },
+            ),
             onRecordImpressionEvent = { Onboarding.notifPppImpression.record(NoExtras()) },
         ),
         onDismiss = {
             onDismiss()
             Onboarding.notifPppCloseClick.record(NoExtras())
-        },
-        onPrimaryButtonClick = {
-            grantNotificationPermission()
-            Onboarding.notifPppPositiveBtnClick.record(NoExtras())
-        },
-        onSecondaryButtonClick = {
-            onDismiss()
-            Onboarding.notifPppNegativeBtnClick.record(NoExtras())
         },
         modifier = Modifier
             .statusBarsPadding()

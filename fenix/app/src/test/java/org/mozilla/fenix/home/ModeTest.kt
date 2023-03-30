@@ -17,6 +17,7 @@ import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.onboarding.FenixOnboarding
+import org.mozilla.fenix.onboarding.OnboardingState
 
 class ModeTest {
 
@@ -78,7 +79,6 @@ class ModeTest {
     fun `get current onboarding mode when signed out`() {
         every { onboarding.userHasBeenOnboarded() } returns false
         every { accountManager.authenticatedAccount() } returns null
-        every { accountManager.shareableAccounts(context) } returns emptyList()
 
         assertEquals(Mode.Onboarding(OnboardingState.SignedOutNoAutoSignIn, onboarding.config), currentMode.getCurrentMode())
     }

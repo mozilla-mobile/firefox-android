@@ -731,6 +731,12 @@
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The placeholder will be updated with the app name. -->
     <string name="cookie_banner_exception_panel_description_state_off_for_site2">%1$s puede intentar rechazar automáticamente las solicitudes de cookies.</string>
 
+    <!-- Long text for a detail explanation indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_description_site_is_not_supported">Actualmente, este sitio no es compatible con la reducción de banner de cookies. ¿Te gustaría solicitar a nuestro equipo que revise este sitio web y agregue soporte en el futuro?</string>
+
+    <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_site_is_not_supported_cancel_button">Cancelar</string>
+
     <!-- Contextual Feature Recommendation Popups -->
     <!-- CFR for Cookie Banner (Banner Info Message). The placeholder will be updated with the app name. -->
     <string name="cfr_for_cookie_banner" moz:RemovedIn="111" tools:ignore="UnusedResources">%1$s intenta rechazar las solicitudes de cookies para descartar los molestos banners de cookies.\n
@@ -1013,6 +1019,12 @@
 
     <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will get replaced with the name of the app (e.g. "Firefox Focus") -->
     <string name="errorpage_httpsonly_message" moz:RemovedIn="111" tools:ignore="UnusedResources">De forma predeterminada, %1$s intenta conectarse mediante HTTPS para aumentar la seguridad. Para cambiar esta configuración u obtener más información, ve a Configuración &gt; Privacidad y seguridad &gt; Seguridad.</string>
+
+    <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will get replaced with the name of the app (e.g. "Firefox Focus").
+        Contains a button that will redirect the user to Privacy & Security Screen-->
+    <string name="errorpage_httpsonly_message2"><![CDATA[%1$s intenta usar una conexión HTTPS siempre que sea posible para mayor seguridad.
+     <a href="%2$s">Saber más</a> <br/><br/>
+     Cambia esta configuración en Ajustes > Privacidad &amp; Seguridad > Seguridad.]]></string>
 
     <!-- The document title and heading of the error page shown when a website has an invalid or expired SSL certificate. -->
     <string name="mozac_browser_errorpages_security_bad_cert_title">Conexión no segura</string>

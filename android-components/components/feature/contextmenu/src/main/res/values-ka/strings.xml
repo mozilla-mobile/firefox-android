@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Text for context menu item to open the link in a new tab. -->
-    <string name="mozac_feature_contextmenu_open_link_in_new_tab">ბმულის ახალ ჩანართში გახსნა</string>
+    <string name="mozac_feature_contextmenu_open_link_in_new_tab">ბმულის გახსნა ახალ ჩანართში</string>
     <!-- Text for context menu item to open the link in a private tab. -->
     <string name="mozac_feature_contextmenu_open_link_in_private_tab">ბმულის პირად ჩანართში გახსნა</string>
     <!-- Text for context menu item to open the image in a new tab. -->
@@ -18,6 +18,8 @@
     <string name="mozac_feature_contextmenu_copy_image_location">სურათის მისამართის ასლი</string>
     <!-- Text for context menu item to save / download the image. -->
     <string name="mozac_feature_contextmenu_save_image">სურათის შენახვა</string>
+    <!-- Text for context menu item to copy the image to the clipboard. -->
+    <string name="mozac_feature_contextmenu_copy_image">სურათის ასლი</string>
     <!-- Text for context menu item to save / download the file. -->
     <string name="mozac_feature_contextmenu_save_file_to_device">შენახვა მოწყობილობაში</string>
     <!-- Text for confirmation "snackbar" shown after opening a link in a new tab.  -->

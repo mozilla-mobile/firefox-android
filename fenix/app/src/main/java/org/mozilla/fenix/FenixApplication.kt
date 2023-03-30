@@ -11,7 +11,6 @@ import android.os.Build.VERSION.SDK_INT
 import android.os.StrictMode
 import android.os.SystemClock
 import android.util.Log.INFO
-import androidx.annotation.CallSuper
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.NotificationManagerCompat
@@ -75,6 +74,7 @@ import org.mozilla.fenix.components.Core
 import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.metrics.MetricServiceType
 import org.mozilla.fenix.components.metrics.MozillaProductDetector
+import org.mozilla.fenix.components.metrics.clientdeduplication.ClientDeduplicationLifecycleObserver
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.experiments.maybeFetchExperiments
 import org.mozilla.fenix.ext.areNotificationsEnabledSafe
@@ -86,6 +86,7 @@ import org.mozilla.fenix.ext.isNotificationChannelEnabled
 import org.mozilla.fenix.ext.setCustomEndpointIfAvailable
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.nimbus.FxNimbus
+import org.mozilla.fenix.onboarding.FenixOnboarding
 import org.mozilla.fenix.onboarding.MARKETING_CHANNEL_ID
 import org.mozilla.fenix.perf.MarkersActivityLifecycleCallbacks
 import org.mozilla.fenix.perf.ProfilerMarkerFactProcessor
@@ -123,10 +124,23 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         private set
 
     override fun onCreate() {
+        super.onCreate()
+
+        if (shouldShowPrivacyNotice()) {
+            // For Mozilla Online build: Delay initialization on first run until privacy notice
+            // is accepted by the user.
+            return
+        }
+
+        initialize()
+    }
+
+    /**
+     * Initializes Fenix and all required subsystems such as Nimbus, Glean and Gecko.
+     */
+    fun initialize() {
         // We measure ourselves to avoid a call into Glean before its loaded.
         val start = SystemClock.elapsedRealtimeNanos()
-
-        super.onCreate()
 
         setupInAllProcesses()
 
@@ -154,6 +168,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
     }
 
     @OptIn(DelicateCoroutinesApi::class) // GlobalScope usage
+    @VisibleForTesting
     protected open fun initializeGlean() {
         val telemetryEnabled = settings().isTelemetryEnabled
 
@@ -186,18 +201,24 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         GlobalScope.launch(Dispatchers.IO) {
             setStartupMetrics(store, settings())
         }
+
+        ProcessLifecycleOwner.get().lifecycle.addObserver(
+            ClientDeduplicationLifecycleObserver(
+                this.applicationContext,
+            ),
+        )
     }
 
-    @CallSuper
-    open fun setupInAllProcesses() {
+    @VisibleForTesting
+    protected open fun setupInAllProcesses() {
         setupCrashReporting()
 
         // We want the log messages of all builds to go to Android logcat
         Log.addSink(FenixLogSink(logsDebug = Config.channel.isDebug))
     }
 
-    @CallSuper
-    open fun setupInMainProcessOnly() {
+    @VisibleForTesting
+    protected open fun setupInMainProcessOnly() {
         // ⚠️ DO NOT ADD ANYTHING ABOVE THIS LINE.
         // Especially references to the engine/BrowserStore which can alter the app initialization.
         // See: https://github.com/mozilla-mobile/fenix/issues/26320
@@ -225,14 +246,14 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             warmBrowsersCache()
 
             initializeWebExtensionSupport()
-            if (FeatureFlags.storageMaintenanceFeature) {
-                // Make sure to call this function before registering a storage worker
-                // (e.g. components.core.historyStorage.registerStorageMaintenanceWorker())
-                // as the storage maintenance worker needs a places storage globally when
-                // it is needed while the app is not running and WorkManager wakes up the app
-                // for the periodic task.
-                GlobalPlacesDependencyProvider.initialize(components.core.historyStorage)
-            }
+
+            // Make sure to call this function before registering a storage worker
+            // (e.g. components.core.historyStorage.registerStorageMaintenanceWorker())
+            // as the storage maintenance worker needs a places storage globally when
+            // it is needed while the app is not running and WorkManager wakes up the app
+            // for the periodic task.
+            GlobalPlacesDependencyProvider.initialize(components.core.historyStorage)
+
             restoreBrowserState()
             restoreDownloads()
             restoreMessaging()
@@ -366,14 +387,12 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         }
 
         fun queueStorageMaintenance() {
-            if (FeatureFlags.storageMaintenanceFeature) {
-                queue.runIfReadyOrQueue {
-                    // Make sure GlobalPlacesDependencyProvider.initialize(components.core.historyStorage)
-                    // is called before this call. When app is not running and WorkManager wakes up
-                    // the app for the periodic task, it will require a globally provided places storage
-                    // to run the maintenance on.
-                    components.core.historyStorage.registerStorageMaintenanceWorker()
-                }
+            queue.runIfReadyOrQueue {
+                // Make sure GlobalPlacesDependencyProvider.initialize(components.core.historyStorage)
+                // is called before this call. When app is not running and WorkManager wakes up
+                // the app for the periodic task, it will require a globally provided places storage
+                // to run the maintenance on.
+                components.core.historyStorage.registerStorageMaintenanceWorker()
             }
         }
 
@@ -928,5 +947,15 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         GlobalScope.launch {
             components.useCases.wallpaperUseCases.initialize()
         }
+    }
+
+    /**
+     * Checks whether or not a privacy notice needs to be displayed before
+     * the application can continue to initialize.
+     */
+    internal fun shouldShowPrivacyNotice(): Boolean {
+        return Config.channel.isMozillaOnline &&
+            settings().shouldShowPrivacyPopWindow &&
+            !FenixOnboarding(this).userHasBeenOnboarded()
     }
 }

@@ -12,15 +12,34 @@ import androidx.annotation.DrawableRes
  * @param image [DrawableRes] displayed on the page.
  * @param title [String] title of the page.
  * @param description [String] description of the page.
- * @param primaryButtonText [String] text for the primary button.
- * @param secondaryButtonText [String] text for the secondary button.
+ * @param linkTextState [LinkTextState] part of description text with a link.
+ * @param primaryButton [Action] action for the primary button.
+ * @param secondaryButton [Action] action for the secondary button.
  * @param onRecordImpressionEvent Callback for recording impression event.
  */
 data class OnboardingPageState(
     @DrawableRes val image: Int,
     val title: String,
     val description: String,
-    val primaryButtonText: String,
-    val secondaryButtonText: String? = null,
+    val linkTextState: LinkTextState? = null,
+    val primaryButton: Action,
+    val secondaryButton: Action? = null,
     val onRecordImpressionEvent: () -> Unit,
+)
+
+/**
+ * Model containing link text, url and action.
+ */
+data class LinkTextState(
+    val text: String,
+    val url: String,
+    val onClick: (String) -> Unit,
+)
+
+/**
+ * Model containing text and action for a button.
+ */
+data class Action(
+    val text: String,
+    val onClick: () -> Unit,
 )

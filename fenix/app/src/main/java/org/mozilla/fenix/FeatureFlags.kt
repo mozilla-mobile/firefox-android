@@ -73,9 +73,7 @@ object FeatureFlags {
     const val notificationPrePermissionPromptEnabled = true
 
     /**
-     * Enables storage maintenance feature.
-     *
-     * Feature flag tracking: https://github.com/mozilla-mobile/fenix/issues/27759
-     * */
-    val storageMaintenanceFeature = Config.channel.isNightlyOrDebug || Config.channel.isBeta
+     * Enables the redesigned onboarding.
+     */
+    const val junoOnboardingEnabled = false
 }

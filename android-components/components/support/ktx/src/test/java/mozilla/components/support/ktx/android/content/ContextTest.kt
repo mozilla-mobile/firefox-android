@@ -8,6 +8,7 @@ import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.app.Activity
 import android.app.ActivityManager
 import android.content.ActivityNotFoundException
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.Intent.ACTION_SEND
@@ -179,6 +180,23 @@ class ContextTest {
         // verify all the properties we set for the share Intent
         val chooserIntent = argCaptor.value
         assertNull(chooserIntent.clipData)
+    }
+
+    @Test
+    @Config(shadows = [ShadowFileProvider::class])
+    fun `copyImage will copy the file URI to the clipboard & invoke the confirmation action`() {
+        val context = spy(testContext)
+        val confirmationAction = mock<() -> Unit>()
+
+        context.copyImage("filePath", confirmationAction)
+
+        val clipboardManager =
+            testContext.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        assertEquals(
+            ShadowFileProvider.FAKE_URI_RESULT,
+            clipboardManager.primaryClip!!.getItemAt(0).uri,
+        )
+        verify(confirmationAction).invoke()
     }
 
     @Test

@@ -473,6 +473,12 @@
             app:popUpTo="@id/editLoginFragment"
             app:popUpToInclusive="true" />
     </fragment>
+    
+    <action
+            android:id="@+id/action_loginDetailFragment_to_savedLoginsFragment"
+            app:destination="@id/savedLoginsFragment"
+            app:popUpTo="@id/savedLoginsFragment"
+            app:popUpToInclusive="true"/>
 
     <fragment
         android:id="@+id/editLoginFragment"
@@ -496,10 +502,10 @@
         android:label="@string/add_login"
         tools:layout="@layout/fragment_add_login">
         <action
-            android:id="@+id/action_addLoginFragment_to_savedLoginsFragment"
-            app:destination="@id/savedLoginsFragment"
+            android:id="@+id/action_addLoginFragment_to_loginDetailFragment"
+            app:destination="@id/loginDetailFragment"
             app:popUpTo="@id/savedLoginsFragment"
-            app:popUpToInclusive="true" />
+            app:popUpToInclusive="false" />
     </fragment>
 
     <fragment
@@ -662,6 +668,13 @@
         <action
             android:id="@+id/action_settingsFragment_to_addonsFragment"
             app:destination="@id/addons_management_graph"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_settingsFragment_to_openLinksInAppsFragment"
+            app:destination="@id/openLinksInAppsFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
@@ -873,6 +886,9 @@
             app:popExitAnim="@anim/slide_out_right" />
     </fragment>
     <fragment
+        android:id="@+id/openLinksInAppsFragment"
+        android:name="org.mozilla.fenix.settings.OpenLinksInAppsFragment" />
+    <fragment
         android:id="@+id/deleteBrowsingDataFragment"
         android:name="org.mozilla.fenix.settings.deletebrowsingdata.DeleteBrowsingDataFragment"
         android:label="@string/preferences_delete_browsing_data"
@@ -980,8 +996,8 @@
             android:name="isTrackingProtectionEnabled"
             app:argType="boolean" />
         <argument
-            android:name="isCookieHandlingEnabled"
-            app:argType="boolean" />
+            android:name="cookieBannerUIMode"
+            app:argType="org.mozilla.fenix.trackingprotection.CookieBannerUIMode" />
     </dialog>
     <dialog
         android:id="@+id/cookieBannerDialogFragment"
@@ -1011,8 +1027,8 @@
             android:name="trackingProtectionEnabled"
             app:argType="boolean" />
         <argument
-            android:name="cookieBannerHandlingEnabled"
-            app:argType="boolean" />
+            android:name="cookieBannerUIMode"
+            app:argType="org.mozilla.fenix.trackingprotection.CookieBannerUIMode" />
         <argument
             android:name="gravity"
             android:defaultValue="80"
@@ -1066,8 +1082,8 @@
             android:name="trackingProtectionEnabled"
             app:argType="boolean" />
         <argument
-            android:name="cookieBannerHandlingEnabled"
-            app:argType="boolean" />
+            android:name="cookieBannerUIMode"
+            app:argType="org.mozilla.fenix.trackingprotection.CookieBannerUIMode" />
         <argument
             android:name="gravity"
             android:defaultValue="80"

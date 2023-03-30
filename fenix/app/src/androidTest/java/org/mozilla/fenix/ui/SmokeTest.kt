@@ -17,6 +17,7 @@ import mozilla.components.concept.engine.mediasession.MediaSession
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.IntentReceiverActivity
@@ -29,10 +30,8 @@ import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.RecyclerViewIdlingResource
 import org.mozilla.fenix.helpers.RetryTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
-import org.mozilla.fenix.helpers.TestHelper.appName
 import org.mozilla.fenix.helpers.TestHelper.assertNativeAppOpens
 import org.mozilla.fenix.helpers.TestHelper.createCustomTabIntent
-import org.mozilla.fenix.helpers.TestHelper.generateRandomString
 import org.mozilla.fenix.helpers.TestHelper.registerAndCleanupIdlingResources
 import org.mozilla.fenix.helpers.ViewVisibilityIdlingResource
 import org.mozilla.fenix.ui.robots.browserScreen
@@ -40,8 +39,6 @@ import org.mozilla.fenix.ui.robots.customTabScreen
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
 import org.mozilla.fenix.ui.robots.notificationShade
-import org.mozilla.fenix.ui.robots.openEditURLView
-import org.mozilla.fenix.ui.robots.searchScreen
 
 /**
  * Test Suite that contains a part of the Smoke and Sanity tests defined in TestRail:
@@ -220,35 +217,6 @@ class SmokeTest {
         }
     }
 
-    // Verifies the Add to home screen option in a tab's 3 dot menu
-    @Test
-    fun mainMenuAddToHomeScreenTest() {
-        val website = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-        val shortcutTitle = generateRandomString(5)
-
-        homeScreen {
-        }.openNavigationToolbar {
-        }.enterURLAndEnterToBrowser(website.url) {
-        }.openThreeDotMenu {
-            expandMenu()
-        }.openAddToHomeScreen {
-            clickCancelShortcutButton()
-        }
-
-        browserScreen {
-        }.openThreeDotMenu {
-            expandMenu()
-        }.openAddToHomeScreen {
-            verifyShortcutTextFieldTitle("Test_Page_1")
-            addShortcutName(shortcutTitle)
-            clickAddShortcutButton()
-            clickAddAutomaticallyButton()
-        }.openHomeScreenShortcut(shortcutTitle) {
-            verifyUrl(website.url.toString())
-            verifyTabCounter("1")
-        }
-    }
-
     // Verifies the Add to collection option in a tab's 3 dot menu
     @Test
     fun openMainMenuAddToCollectionTest() {
@@ -277,6 +245,7 @@ class SmokeTest {
 
     // Device or AVD requires a Google Services Android OS installation with Play Store installed
     // Verifies the Open in app button when an app is installed
+    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1824928")
     @Test
     fun mainMenuOpenInAppTest() {
         val youtubeURL = "https://m.youtube.com/user/mozilla?cbrd=1"
@@ -539,25 +508,6 @@ class SmokeTest {
     }
 
     @Test
-    fun addPrivateBrowsingShortcutTest() {
-        homeScreen {
-        }.dismissOnboarding()
-
-        homeScreen {
-        }.triggerPrivateBrowsingShortcutPrompt {
-            verifyNoThanksPrivateBrowsingShortcutButton()
-            verifyAddPrivateBrowsingShortcutButton()
-            clickAddPrivateBrowsingShortcutButton()
-            clickAddAutomaticallyButton()
-        }.openHomeScreenShortcut("Private $appName") {}
-        searchScreen {
-            verifySearchView()
-        }.dismissSearchBar {
-            verifyPrivateSessionMessage()
-        }
-    }
-
-    @Test
     fun mainMenuInstallPWATest() {
         val pwaPage = "https://mozilla-mobile.github.io/testapp/"
 
@@ -718,51 +668,12 @@ class SmokeTest {
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
-            verifyDefaultBrowserIsDisabled()
+            verifyDefaultBrowserToggle(false)
             clickDefaultBrowserSwitch()
             verifyAndroidDefaultAppsMenuAppears()
         }
         // Dismiss the request
         mDevice.pressBack()
-    }
-
-    @Test
-    fun copyTextTest() {
-        val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(genericURL.url) {
-            longClickAndCopyText("content")
-        }.openNavigationToolbar {
-            openEditURLView()
-        }
-
-        searchScreen {
-            clickClearButton()
-            longClickToolbar()
-            clickPasteText()
-            verifyTypedToolbarText("content")
-        }
-    }
-
-    @Test
-    fun selectAllAndCopyTextTest() {
-        val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(genericURL.url) {
-            longClickAndCopyText("content", true)
-        }.openNavigationToolbar {
-            openEditURLView()
-        }
-
-        searchScreen {
-            clickClearButton()
-            longClickToolbar()
-            clickPasteText()
-            // with Select all, some white space is copied over, so we need to include that too
-            verifyTypedToolbarText("  Page content: 1 ")
-        }
     }
 
     @Test

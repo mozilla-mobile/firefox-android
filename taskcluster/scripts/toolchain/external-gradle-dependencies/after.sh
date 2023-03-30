@@ -8,21 +8,43 @@
 # https://searchfox.org/mozilla-central/rev/2cd2d511c0d94a34fb7fa3b746f54170ee759e35/taskcluster/scripts/misc/android-gradle-dependencies/after.sh.
 # gradle-plugins was removed because it's not used in this project.
 
-set -x -e
+set -x -e -v
 
-echo "running as" $(id)
+echo "running as $(id)"
 
-: WORKSPACE ${WORKSPACE:=/builds/worker/workspace}
+: WORKSPACE "${WORKSPACE:=/builds/worker/workspace}"
+ARTIFACTS_TARGET_DIR='/builds/worker/artifacts'
+EXTERNAL_DEPS='external-gradle-dependencies'
+NEXUS_STORAGE_DIR="$NEXUS_WORK/storage"
+NEXUS_DIRS="$NEXUS_STORAGE_DIR/google $NEXUS_STORAGE_DIR/central"
+BAD_DOWNLOADS_FILE="$WORKSPACE/bad_downloads.txt"
+BAD_DOWNLOADS_EXIT_CODE=17
 
-set -v
 
-# Package everything up.
-pushd $WORKSPACE
-mkdir -p external-gradle-dependencies /builds/worker/artifacts
+function _package_artifacts_downloaded_by_nexus() {
+    pushd "$WORKSPACE"
 
-cp -R ${NEXUS_WORK}/storage/google external-gradle-dependencies
-cp -R ${NEXUS_WORK}/storage/central external-gradle-dependencies
+    mkdir -p "$WORKSPACE/$EXTERNAL_DEPS" "$ARTIFACTS_TARGET_DIR"
+    for nexus_dir in $NEXUS_DIRS; do
+        cp -R "$nexus_dir" "$EXTERNAL_DEPS"
+    done
 
-tar cf - external-gradle-dependencies | xz > /builds/worker/artifacts/external-gradle-dependencies.tar.xz
+    tar cf - "$EXTERNAL_DEPS" | xz > "$ARTIFACTS_TARGET_DIR/$EXTERNAL_DEPS.tar.xz"
+    popd
+}
 
-popd
+
+function _ensure_artifacts_are_sane() {
+    # Let's find empty files or unfinished downloads
+    find "$WORKSPACE/$EXTERNAL_DEPS" -size 0 -o -name '*.part' > "$BAD_DOWNLOADS_FILE"
+
+    if [ -s "$BAD_DOWNLOADS_FILE" ]; then
+        echo "ERROR: Some artifacts were not correctly downloaded! Please look at:"
+        cat "$BAD_DOWNLOADS_FILE"
+        exit $BAD_DOWNLOADS_EXIT_CODE
+    fi
+}
+
+
+_package_artifacts_downloaded_by_nexus
+_ensure_artifacts_are_sane

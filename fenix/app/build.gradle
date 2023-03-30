@@ -11,8 +11,6 @@ apply plugin: 'kotlin-parcelize'
 apply plugin: 'jacoco'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
 apply plugin: 'com.google.android.gms.oss-licenses-plugin'
-apply plugin: 'androidx.benchmark'
-
 
 import com.android.build.OutputFile
 import groovy.json.JsonOutput
@@ -32,6 +30,11 @@ android {
         // in order to run UI tests against other build variants than debug in automation.
         testBuildType project.property("testBuildType")
     }
+
+    // This allows overriding the target activity for MozillaOnline builds, which happens
+    // as part of the defaultConfig below, and applies to all other configurations (Nightly,
+    // Beta, and Release.)
+    def targetActivity = "HomeActivity"
 
     defaultConfig {
         applicationId "org.mozilla"
@@ -66,16 +69,18 @@ android {
         buildConfigField "String", "AMO_SERVER_URL", "\"https://services.addons.mozilla.org\""
         def deepLinkSchemeValue = "fenix-dev"
         buildConfigField "String", "DEEP_LINK_SCHEME", "\"$deepLinkSchemeValue\""
-        manifestPlaceholders = [
-                "deepLinkScheme": deepLinkSchemeValue
-        ]
 
         // Build flag for "Mozilla Online" variants. See `Config.isMozillaOnline`.
         if (project.hasProperty("mozillaOnline") || gradle.hasProperty("localProperties.mozillaOnline")) {
             buildConfigField "boolean", "MOZILLA_ONLINE", "true"
+            targetActivity = "MozillaOnlineHomeActivity"
         } else {
             buildConfigField "boolean", "MOZILLA_ONLINE", "false"
         }
+        manifestPlaceholders = [
+                "targetActivity": targetActivity,
+                "deepLinkScheme": deepLinkSchemeValue
+        ]
     }
 
     def releaseTemplate = {
@@ -112,7 +117,10 @@ android {
             buildConfigField "boolean", "USE_RELEASE_VERSIONING", "true"
             def deepLinkSchemeValue = "fenix-nightly"
             buildConfigField "String", "DEEP_LINK_SCHEME", "\"$deepLinkSchemeValue\""
-            manifestPlaceholders = ["deepLinkScheme": deepLinkSchemeValue]
+            manifestPlaceholders = [
+                    "deepLinkScheme": deepLinkSchemeValue,
+                    "targetActivity": targetActivity
+            ]
         }
         beta releaseTemplate >> {
             buildConfigField "boolean", "USE_RELEASE_VERSIONING", "true"
@@ -128,7 +136,8 @@ android {
                     //  - https://issuetracker.google.com/issues/36924841
                     //  - https://issuetracker.google.com/issues/36905922
                     "sharedUserId": "org.mozilla.firefox.sharedID",
-                    "deepLinkScheme": deepLinkSchemeValue
+                    "deepLinkScheme": deepLinkSchemeValue,
+                    "targetActivity": targetActivity
             ]
         }
         release releaseTemplate >> {
@@ -145,8 +154,14 @@ android {
                     //  - https://issuetracker.google.com/issues/36924841
                     //  - https://issuetracker.google.com/issues/36905922
                     "sharedUserId": "org.mozilla.firefox.sharedID",
-                    "deepLinkScheme": deepLinkSchemeValue
+                    "deepLinkScheme": deepLinkSchemeValue,
+                    "targetActivity": targetActivity,
             ]
+        }
+        benchmark releaseTemplate >> {
+            initWith buildTypes.nightly
+            applicationIdSuffix ".fenix"
+            debuggable false
         }
     }
 
@@ -154,7 +169,7 @@ android {
         viewBinding true
     }
 
-    aaptOptions {
+    androidResources {
         // All JavaScript code used internally by GeckoView is packaged in a
         // file called omni.ja. If this file is compressed in the APK,
         // GeckoView must uncompress it before it can do anything else which
@@ -199,20 +214,20 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 
-    lintOptions {
+    lint {
         lintConfig file("lint.xml")
         baseline file("lint-baseline.xml")
     }
-
     packagingOptions {
-        exclude 'META-INF/atomicfu.kotlin_module'
-        exclude 'META-INF/AL2.0'
-        exclude 'META-INF/LGPL2.1'
+        resources {
+            excludes += ['META-INF/atomicfu.kotlin_module', 'META-INF/AL2.0', 'META-INF/LGPL2.1']
+        }
     }
+
 
     testOptions {
         unitTests.returnDefaultValues = true
@@ -236,6 +251,7 @@ android {
         kotlinCompilerExtensionVersion = FenixVersions.androidx_compose_compiler
     }
 
+    namespace 'org.mozilla.fenix'
 }
 
 android.applicationVariants.all { variant ->
@@ -249,7 +265,7 @@ android.applicationVariants.all { variant ->
 
     println("----------------------------------------------")
     println("Variant name:      " + variant.name)
-    println("Application ID:    " + [variant.mergedFlavor.applicationId, variant.buildType.applicationIdSuffix].findAll().join())
+    println("Application ID:    " + [variant.applicationId, variant.buildType.applicationIdSuffix].findAll().join())
     println("Build type:        " + variant.buildType.name)
     println("Flavor:            " + variant.flavorName)
     println("Telemetry enabled: " + !isDebug)
@@ -432,14 +448,12 @@ android.applicationVariants.all { variant ->
 
 // Generate Kotlin code for the Fenix Glean metrics.
 apply plugin: "org.mozilla.telemetry.glean-gradle-plugin"
-apply plugin: "org.mozilla.components.nimbus-gradle-plugin"
+apply plugin: "org.mozilla.appservices.nimbus-gradle-plugin"
 
 nimbus {
     // The path to the Nimbus feature manifest file
     manifestFile = "nimbus.fml.yaml"
     // The fully qualified class name for the generated features.
-    // If the classname begins with a '.' this is taken as a suffix to the app's package name
-    destinationClass = ".nimbus.FxNimbus"
     // Map from the variant name to the channel as experimenter and nimbus understand it.
     // If nimbus's channels were accurately set up well for this project, then this
     // shouldn't be needed.
@@ -448,42 +462,26 @@ nimbus {
             fenixNightly: "nightly",
             fenixBeta: "beta",
             fenixRelease: "release",
+            fenixBenchmark: "developer",
     ]
     // This is generated by the FML and should be checked into git.
     // It will be fetched by Experimenter (the Nimbus experiment website)
     // and used to inform experiment configuration.
     experimenterManifest = ".experimenter.yaml"
 }
-configurations {
-    // There's an interaction between Gradle's resolution of dependencies with different types
-    // (@jar, @aar) for `implementation` and `testImplementation` and with Android Studio's built-in
-    // JUnit test runner.  The runtime classpath in the built-in JUnit test runner gets the
-    // dependency from the `implementation`, which is type @aar, and therefore the JNA dependency
-    // doesn't provide the JNI dispatch libraries in the correct Java resource directories.  I think
-    // what's happening is that @aar type in `implementation` resolves to the @jar type in
-    // `testImplementation`, and that it wins the dependency resolution battle.
-    //
-    // A workaround is to add a new configuration which depends on the @jar type and to reference
-    // the underlying JAR file directly in `testImplementation`.  This JAR file doesn't resolve to
-    // the @aar type in `implementation`.  This works when invoked via `gradle`, but also sets the
-    // correct runtime classpath when invoked with Android Studio's built-in JUnit test runner.
-    // Success!
-    jnaForTest
-}
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
     kotlinOptions {
-        freeCompilerArgs += "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
+        freeCompilerArgs += [
+                "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+                "-opt-in=com.google.accompanist.pager.ExperimentalPagerApi",
+        ]
     }
 }
 
 dependencies {
-    jnaForTest FenixDependencies.jna
-    testImplementation files(configurations.jnaForTest.copyRecursive().files)
-
     implementation project(':browser-engine-gecko')
 
-    implementation FenixDependencies.kotlin_stdlib
     implementation FenixDependencies.kotlin_coroutines
     implementation FenixDependencies.kotlin_coroutines_android
     testImplementation FenixDependencies.kotlin_coroutines_test
@@ -491,7 +489,7 @@ dependencies {
     implementation FenixDependencies.androidx_constraintlayout
     implementation FenixDependencies.androidx_coordinatorlayout
     implementation FenixDependencies.google_accompanist_drawablepainter
-    implementation FenixDependencies.google_accompanist_insets
+    implementation FenixDependencies.google_accompanist_pager
 
     implementation FenixDependencies.sentry
 
@@ -586,6 +584,8 @@ dependencies {
 
     debugImplementation FenixDependencies.leakcanary
 
+    implementation FenixDependencies.androidx_activity_compose
+    implementation FenixDependencies.androidx_activity_ktx
     implementation FenixDependencies.androidx_annotation
     implementation FenixDependencies.androidx_compose_ui
     implementation FenixDependencies.androidx_compose_ui_tooling
@@ -603,6 +603,7 @@ dependencies {
     implementation FenixDependencies.androidx_lifecycle_livedata
     implementation FenixDependencies.androidx_lifecycle_process
     implementation FenixDependencies.androidx_lifecycle_runtime
+    
     implementation FenixDependencies.androidx_lifecycle_viewmodel
     implementation FenixDependencies.androidx_core
     implementation FenixDependencies.androidx_core_ktx
@@ -620,6 +621,8 @@ dependencies {
     // Required for in-app reviews
     implementation FenixDependencies.google_play_review
     implementation FenixDependencies.google_play_review_ktx
+
+    implementation FenixDependencies.androidx_profileinstaller
 
     androidTestImplementation FenixDependencies.uiautomator
     androidTestImplementation "tools.fastlane:screengrab:2.0.0"

@@ -26,12 +26,11 @@ import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.tab.collections.ext.invoke
 import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.feature.top.sites.TopSite
+import mozilla.components.service.nimbus.messaging.Message
 import mozilla.components.support.ktx.android.view.showKeyboard
-import mozilla.components.support.ktx.kotlin.isUrl
 import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.GleanMetrics.Collections
-import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.HomeScreen
 import org.mozilla.fenix.GleanMetrics.Pings
 import org.mozilla.fenix.GleanMetrics.Pocket
@@ -41,7 +40,6 @@ import org.mozilla.fenix.GleanMetrics.TopSites
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BrowserAnimator
-import org.mozilla.fenix.browser.BrowserFragmentDirections
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.collections.SaveCollectionStep
 import org.mozilla.fenix.components.AppStore
@@ -51,17 +49,13 @@ import org.mozilla.fenix.components.appstate.AppState
 import org.mozilla.fenix.components.metrics.MetricsUtils
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
-import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.gleanplumb.Message
-import org.mozilla.fenix.gleanplumb.MessageController
 import org.mozilla.fenix.home.HomeFragment
 import org.mozilla.fenix.home.HomeFragmentDirections
-import org.mozilla.fenix.home.Mode
+import org.mozilla.fenix.messaging.MessageController
 import org.mozilla.fenix.onboarding.WallpaperOnboardingDialogFragment.Companion.THUMBNAILS_SELECTION_COUNT
 import org.mozilla.fenix.search.toolbar.SearchSelectorInteractor
 import org.mozilla.fenix.search.toolbar.SearchSelectorMenu
 import org.mozilla.fenix.settings.SupportUtils
-import org.mozilla.fenix.settings.SupportUtils.SumoTopic.PRIVATE_BROWSING_MYTHS
 import org.mozilla.fenix.utils.Settings
 import org.mozilla.fenix.wallpapers.Wallpaper
 import org.mozilla.fenix.wallpapers.WallpaperState
@@ -109,11 +103,6 @@ interface SessionControlController {
     fun handleOpenInPrivateTabClicked(topSite: TopSite)
 
     /**
-     * @see [TabSessionInteractor.onPrivateBrowsingLearnMoreClicked]
-     */
-    fun handlePrivateBrowsingLearnMoreClicked()
-
-    /**
      * @see [TopSiteInteractor.onRenameTopSiteClicked]
      */
     fun handleRenameTopSiteClicked(topSite: TopSite)
@@ -144,29 +133,9 @@ interface SessionControlController {
     fun handleSponsorPrivacyClicked()
 
     /**
-     * @see [OnboardingInteractor.onStartBrowsingClicked]
-     */
-    fun handleStartBrowsingClicked()
-
-    /**
-     * @see [OnboardingInteractor.onReadPrivacyNoticeClicked]
-     */
-    fun handleReadPrivacyNoticeClicked()
-
-    /**
      * @see [CollectionInteractor.onToggleCollectionExpanded]
      */
     fun handleToggleCollectionExpanded(collection: TabCollection, expand: Boolean)
-
-    /**
-     * @see [ToolbarInteractor.onPasteAndGo]
-     */
-    fun handlePasteAndGo(clipboardText: String)
-
-    /**
-     * @see [ToolbarInteractor.onPaste]
-     */
-    fun handlePaste(clipboardText: String)
 
     /**
      * @see [CollectionInteractor.onAddTabsToCollectionTapped]
@@ -189,17 +158,12 @@ interface SessionControlController {
     fun handleMessageClosed(message: Message)
 
     /**
-     * @see [TabSessionInteractor.onPrivateModeButtonClicked]
-     */
-    fun handlePrivateModeButtonClicked(newMode: BrowsingMode, userHasBeenOnboarded: Boolean)
-
-    /**
      * @see [CustomizeHomeIteractor.openCustomizeHomePage]
      */
     fun handleCustomizeHomeTapped()
 
     /**
-     * @see [OnboardingInteractor.showWallpapersOnboardingDialog]
+     * @see [WallpaperInteractor.showWallpapersOnboardingDialog]
      */
     fun handleShowWallpapersOnboardingDialog(state: WallpaperState): Boolean
 
@@ -229,7 +193,6 @@ class DefaultSessionControlController(
     private val appStore: AppStore,
     private val navController: NavController,
     private val viewLifecycleScope: CoroutineScope,
-    private val hideOnboarding: () -> Unit,
     private val registerCollectionStorageObserver: () -> Unit,
     private val removeCollectionWithUndo: (tabCollection: TabCollection) -> Unit,
     private val showTabTray: () -> Unit,
@@ -322,14 +285,6 @@ class DefaultSessionControlController(
                 from = BrowserDirection.FromHome,
             )
         }
-    }
-
-    override fun handlePrivateBrowsingLearnMoreClicked() {
-        activity.openToBrowserAndLoad(
-            searchTermOrURL = SupportUtils.getGenericSumoURLForTopic(PRIVATE_BROWSING_MYTHS),
-            newTab = true,
-            from = BrowserDirection.FromHome,
-        )
     }
 
     @SuppressLint("InflateParams")
@@ -486,10 +441,6 @@ class DefaultSessionControlController(
         return url
     }
 
-    override fun handleStartBrowsingClicked() {
-        hideOnboarding()
-    }
-
     override fun handleCustomizeHomeTapped() {
         val directions = HomeFragmentDirections.actionGlobalHomeSettingsFragment()
         navController.nav(navController.currentDestination?.id, directions)
@@ -515,16 +466,6 @@ class DefaultSessionControlController(
             }
         }
     }
-
-    override fun handleReadPrivacyNoticeClicked() {
-        activity.startActivity(
-            SupportUtils.createCustomTabIntent(
-                activity,
-                SupportUtils.getMozillaPageUrl(SupportUtils.MozillaPage.PRIVATE_NOTICE),
-            ),
-        )
-    }
-
     override fun handleToggleCollectionExpanded(collection: TabCollection, expand: Boolean) {
         appStore.dispatch(AppAction.CollectionExpanded(collection, expand))
     }
@@ -566,6 +507,7 @@ class DefaultSessionControlController(
 
     override fun handleRemoveCollectionsPlaceholder() {
         settings.showCollectionsPlaceholderOnHome = false
+        Collections.placeholderCancel.record()
         appStore.dispatch(AppAction.RemoveCollectionsPlaceholder)
     }
 
@@ -578,65 +520,12 @@ class DefaultSessionControlController(
         navController.nav(R.id.homeFragment, directions)
     }
 
-    override fun handlePasteAndGo(clipboardText: String) {
-        val searchEngine = store.state.search.selectedOrDefaultSearchEngine
-
-        activity.openToBrowserAndLoad(
-            searchTermOrURL = clipboardText,
-            newTab = true,
-            from = BrowserDirection.FromHome,
-            engine = searchEngine,
-        )
-
-        if (clipboardText.isUrl() || searchEngine == null) {
-            Events.enteredUrl.record(Events.EnteredUrlExtra(autocomplete = false))
-        } else {
-            val searchAccessPoint = MetricsUtils.Source.ACTION
-            MetricsUtils.recordSearchMetrics(
-                searchEngine,
-                searchEngine == store.state.search.selectedOrDefaultSearchEngine,
-                searchAccessPoint,
-            )
-        }
-    }
-
-    override fun handlePaste(clipboardText: String) {
-        val directions = HomeFragmentDirections.actionGlobalSearchDialog(
-            sessionId = null,
-            pastedText = clipboardText,
-        )
-        navController.nav(R.id.homeFragment, directions)
-    }
-
     override fun handleMessageClicked(message: Message) {
         messageController.onMessagePressed(message)
     }
 
     override fun handleMessageClosed(message: Message) {
         messageController.onMessageDismissed(message)
-    }
-
-    override fun handlePrivateModeButtonClicked(
-        newMode: BrowsingMode,
-        userHasBeenOnboarded: Boolean,
-    ) {
-        if (newMode == BrowsingMode.Private) {
-            activity.settings().incrementNumTimesPrivateModeOpened()
-        }
-
-        if (userHasBeenOnboarded) {
-            appStore.dispatch(
-                AppAction.ModeChange(Mode.fromBrowsingMode(newMode)),
-            )
-
-            if (navController.currentDestination?.id == R.id.searchDialogFragment) {
-                navController.navigate(
-                    BrowserFragmentDirections.actionGlobalSearchDialog(
-                        sessionId = null,
-                    ),
-                )
-            }
-        }
     }
 
     override fun handleReportSessionMetrics(state: AppState) {
