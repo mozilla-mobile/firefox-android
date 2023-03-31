@@ -78,7 +78,6 @@ import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.ktx.android.content.getColorFromAttr
 import mozilla.components.support.ktx.android.content.res.resolveAttribute
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
-import org.mozilla.fenix.Config
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.HomeScreen
 import org.mozilla.fenix.GleanMetrics.PrivateBrowsingShortcutCfr
@@ -106,7 +105,6 @@ import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.gleanplumb.DefaultMessageController
 import org.mozilla.fenix.gleanplumb.MessagingFeature
 import org.mozilla.fenix.gleanplumb.NimbusMessagingController
-import org.mozilla.fenix.home.mozonline.showPrivacyPopWindow
 import org.mozilla.fenix.home.pocket.DefaultPocketStoriesController
 import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesCategory
 import org.mozilla.fenix.home.recentbookmarks.RecentBookmarksFeature
@@ -210,13 +208,6 @@ class HomeFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         bundleArgs = args.toBundle()
-
-        if (!onboarding.userHasBeenOnboarded() &&
-            requireContext().settings().shouldShowPrivacyPopWindow &&
-            Config.channel.isMozillaOnline
-        ) {
-            showPrivacyPopWindow(requireContext(), requireActivity())
-        }
 
         // DO NOT MOVE ANYTHING BELOW THIS addMarker CALL!
         requireComponents.core.engine.profiler?.addMarker(
