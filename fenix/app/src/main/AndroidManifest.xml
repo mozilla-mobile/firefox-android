@@ -62,7 +62,7 @@
         <activity-alias
             android:name="${applicationId}.App"
             android:exported="true"
-            android:targetActivity=".HomeActivity">
+            android:targetActivity=".${targetActivity}">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -143,6 +143,9 @@
                     android:host="urls_history"/>
             </intent-filter>
         </activity>
+
+        <activity android:name=".MozillaOnlineHomeActivity"
+                android:exported="false"/>
 
         <activity android:name=".home.mozonline.PrivacyContentDisplayActivity"
                 android:exported="false"/>
@@ -284,7 +287,7 @@
             android:theme="@style/DialogActivityTheme" />
 
         <activity
-            android:name=".gleanplumb.NotificationClickedReceiverActivity"
+            android:name=".messaging.NotificationClickedReceiverActivity"
             android:exported="false" />
 
         <service
@@ -333,7 +336,7 @@
                 android:exported="false" />
 
         <service
-            android:name=".gleanplumb.NotificationDismissedService"
+            android:name=".messaging.NotificationDismissedService"
             android:exported="false" />
 
         <service
