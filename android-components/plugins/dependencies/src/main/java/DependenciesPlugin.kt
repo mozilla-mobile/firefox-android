@@ -6,7 +6,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.initialization.Settings
 
 // If you ever need to force a toolchain rebuild (taskcluster) then edit the following comment.
-// FORCE REBUILD 2023-03-06
+// FORCE REBUILD 2023-03-16
 
 class DependenciesPlugin : Plugin<Settings> {
     override fun apply(settings: Settings) = Unit
@@ -66,7 +66,7 @@ object Versions {
         const val compose = compose_version
         const val constraintlayout = "2.0.4"
         const val coordinatorlayout = "1.1.0"
-        const val core = "1.8.0"
+        const val core = "1.9.0"
         const val fragment = "1.5.1"
         const val recyclerview = "1.2.0"
         const val test = "1.5.0"
