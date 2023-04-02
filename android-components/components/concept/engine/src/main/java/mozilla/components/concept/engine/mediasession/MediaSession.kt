@@ -123,6 +123,14 @@ class MediaSession {
          * This [MediaSession] is currently playing.
          */
         PLAYING,
+        /**
+         * This [MediaSession] is next
+         */
+        NEXT,
+        /**
+         * This [MediaSession] is Previous
+         */
+        PREVIOUS,
     }
 
     /**
