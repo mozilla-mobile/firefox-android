@@ -156,6 +156,8 @@ abstract class AbstractBrowserTabViewHolder(
     private fun updateMediaState(tab: TabSessionState) {
         // Media state
         playPauseButtonView.increaseTapArea(PLAY_PAUSE_BUTTON_EXTRA_DPS)
+        nextButtonView.increaseTapArea(NEXT_BUTTON_EXTRA_DPS)
+        previousButtonView.increaseTapArea(PREVIOUS_BUTTON_EXTRA_DPS)
 
         with(playPauseButtonView) {
             invalidate()
@@ -176,6 +178,24 @@ abstract class AbstractBrowserTabViewHolder(
                         context.getString(R.string.mozac_feature_media_notification_action_pause)
                     setImageDrawable(
                         AppCompatResources.getDrawable(context, R.drawable.media_state_pause),
+                    )
+                }
+
+                MediaSession.PlaybackState.NEXT -> {
+                    showAndEnable()
+                    contentDescription =
+                        context.getString(R.string.mozac_feature_media_notification_action_next)
+                    setImageDrawable(
+                        AppCompatResources.getDrawable(context, R.drawable.media_state_next),
+                    )
+                }
+
+                MediaSession.PlaybackState.PREVIOUS ->{
+                    showAndEnable()
+                    contentDescription =
+                        context.getString(R.string.mozac_feature_media_notification_action_previous)
+                    setImageDrawable(
+                        AppCompatResources.getDrawable(context, R.drawable.media_state_previous),
                     )
                 }
 
@@ -268,6 +288,8 @@ abstract class AbstractBrowserTabViewHolder(
 
     companion object {
         internal const val PLAY_PAUSE_BUTTON_EXTRA_DPS = 24
+        internal const val NEXT_BUTTON_EXTRA_DPS = 24
+        internal const val PREVIOUS_BUTTON_EXTRA_DPS = 24
         internal const val GRID_ITEM_CLOSE_BUTTON_EXTRA_DPS = 24
     }
 }
