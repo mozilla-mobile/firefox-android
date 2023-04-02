@@ -139,7 +139,7 @@ A FrameLayout here is an efficient way of having a views stack while allowing:
                     android:importantForAccessibility="yes"
                     android:translationX="-8dp"
                     android:translationY="-8dp"
-                    android:visibility="visible"
+                    android:visibility="gone"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/media_state_previous" />
@@ -156,7 +156,7 @@ A FrameLayout here is an efficient way of having a views stack while allowing:
                     android:importantForAccessibility="yes"
                     android:translationX="-8dp"
                     android:translationY="-8dp"
-                    android:visibility="visible"
+                    android:visibility="gone"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/media_state_play" />
@@ -173,7 +173,7 @@ A FrameLayout here is an efficient way of having a views stack while allowing:
                     android:importantForAccessibility="yes"
                     android:translationX="-8dp"
                     android:translationY="-8dp"
-                    android:visibility="visible"
+                    android:visibility="gone"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/media_state_next" />
