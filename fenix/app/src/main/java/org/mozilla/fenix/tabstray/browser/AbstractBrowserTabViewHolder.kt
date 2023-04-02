@@ -74,6 +74,8 @@ abstract class AbstractBrowserTabViewHolder(
     @VisibleForTesting
     internal val urlView: TextView? = itemView.findViewById(R.id.mozac_browser_tabstray_url)
     private val playPauseButtonView: ImageButton = itemView.findViewById(R.id.play_pause_button)
+    private val previousButtonView : ImageButton = itemView.findViewById(R.id.previous_button)
+    private val nextButtonView : ImageButton = itemView.findViewById(R.id.next_button)
 
     abstract val interactor: TabsTrayInteractor
     abstract val thumbnailSize: Int
@@ -150,6 +152,7 @@ abstract class AbstractBrowserTabViewHolder(
             closeView.context.getString(R.string.close_tab_title, title)
     }
 
+    //checkpoint
     private fun updateMediaState(tab: TabSessionState) {
         // Media state
         playPauseButtonView.increaseTapArea(PLAY_PAUSE_BUTTON_EXTRA_DPS)
