@@ -3,11 +3,12 @@ layout: page
 title: Changelog
 permalink: /changelog/
 ---
-# 112.0.0 (In Development)
-* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/v111.0.0...main)
-* [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
-* [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/Gecko.kt)
-* [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/.config.yml)
+
+# 112.0.0
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v111...releases_v112)
+* [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/releases_v112/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
+* [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/releases_v112/android-components/plugins/dependencies/src/main/java/Gecko.kt)
+* [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/releases_v112/android-components/.config.yml)
 
 * **service-pocket**
   * 🌟 ⚠️ **This is a breaking change**: Use `id` instead of `flight_id` to identify a Pocket sponsored story. [Bug 1820967](https://bugzilla.mozilla.org/show_bug.cgi?id=1820967).
@@ -30,6 +31,8 @@ permalink: /changelog/
 * **concept-engine**:
   * Add new `hasCookieBannerRuleForSession` API in `Engine`. This is currently only supported in the Gecko Engine.
 
+* **support-license**
+  * 🆕 New component to display generated license information.
 
 # 111.0.0
 * [Commits](https://github.com/mozilla-mobile/firefox-android/compare/v110.0.0...v111.0.0)
