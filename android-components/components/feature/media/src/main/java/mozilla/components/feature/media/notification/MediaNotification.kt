@@ -92,6 +92,38 @@ private suspend fun SessionState.toNotificationData(
     }
 
     return when (mediaSessionState?.playbackState) {
+        MediaSession.PlaybackState.PREVIOUS_TRACK -> NotificationData(
+            title = getTitleOrUrl(context,mediaSessionState?.metadata?.title),
+            description = nonPrivateUrl,
+            icon = R.drawable.mozac_feature_media_playing,
+            largeIcon = getNonPrivateIcon(mediaSessionState?.metadata?.getArtwork),
+            action = NotificationCompat.Action.Builder(
+                R.drawable.mozac_feature_media_playing,
+                context.getString(R.string.mozac_feature_media_notification_action_previous),
+                PendingIntent.getService(
+                    context,
+                    0,
+                    AbstractMediaSessionService.previousIntent(context,cls),
+                    getNotificationFlag()
+                ),
+            ).build()
+        )
+        MediaSession.PlaybackState.NEXT_TRACK -> NotificationData(
+            title = getTitleOrUrl(context,mediaSessionState?.metadata?.title),
+            description = nonPrivateUrl,
+            icon = R.drawable.mozac_feature_media_playing,
+            largeIcon = getNonPrivateIcon(mediaSessionState?.metadata?.getArtwork),
+            action = NotificationCompat.Action.Builder(
+                R.drawable.mozac_feature_media_playing,
+                context.getString(R.string.mozac_feature_media_notification_action_next),
+                PendingIntent.getService(
+                    context,
+                    0,
+                    AbstractMediaSessionService.nextIntent(context, cls),
+                    getNotificationFlag(),
+                ),
+            ).build()
+        )
         MediaSession.PlaybackState.PLAYING -> NotificationData(
             title = getTitleOrUrl(context, mediaSessionState?.metadata?.title),
             description = nonPrivateUrl,
