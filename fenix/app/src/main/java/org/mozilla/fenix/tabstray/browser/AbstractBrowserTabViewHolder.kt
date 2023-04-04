@@ -152,7 +152,6 @@ abstract class AbstractBrowserTabViewHolder(
             closeView.context.getString(R.string.close_tab_title, title)
     }
 
-    //checkpoint
     private fun updateMediaState(tab: TabSessionState) {
         // Media state
         playPauseButtonView.increaseTapArea(PLAY_PAUSE_BUTTON_EXTRA_DPS)
