@@ -216,6 +216,14 @@ abstract class AbstractBrowserTabViewHolder(
                         Tab.mediaPlay.record(NoExtras())
                         sessionState.mediaSessionState?.controller?.play()
                     }
+                    MediaSession.PlaybackState.NEXT -> {
+                        Tab.mediaPlay.record(NoExtras())
+                        sessionState.mediaSessionState?.controller?.nextTrack()
+                    }
+                    MediaSession.PlaybackState.PREVIOUS -> {
+                        Tab.mediaPlay.record(NoExtras())
+                        sessionState.mediaSessionState?.controller?.previousTrack()
+                    }
                     else -> throw AssertionError(
                         "Play/Pause button clicked without play/pause state.",
                     )
