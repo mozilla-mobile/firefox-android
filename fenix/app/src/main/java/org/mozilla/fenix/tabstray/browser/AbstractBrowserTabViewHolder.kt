@@ -158,7 +158,42 @@ abstract class AbstractBrowserTabViewHolder(
         playPauseButtonView.increaseTapArea(PLAY_PAUSE_BUTTON_EXTRA_DPS)
         nextButtonView.increaseTapArea(NEXT_BUTTON_EXTRA_DPS)
         previousButtonView.increaseTapArea(PREVIOUS_BUTTON_EXTRA_DPS)
-
+        with(previousButtonView){
+            invalidate()
+            val sessionState = store.state.findTabOrCustomTab(tab.id)
+            when(sessionState?.mediaSessionState?.playbackState){
+                MediaSession.PlaybackState.PREVIOUS_TRACK ->{
+                    showAndEnable()
+                    contentDescription =
+                        context.getString(R.string.mozac_feature_media_notification_action_previous)
+                    setImageDrawable(
+                        AppCompatResources.getDrawable(context, R.drawable.media_state_previous),
+                    )
+                }
+                else -> {
+                    removeTouchDelegate()
+                    removeAndDisable()
+                }
+            }
+        }
+        with(nextButtonView){
+            invalidate()
+            val sessionState = store.state.findTabOrCustomTab(tab.id)
+            when(sessionState?.mediaSessionState?.playbackState){
+                MediaSession.PlaybackState.NEXT_TRACK -> {
+                    showAndEnable()
+                    contentDescription =
+                        context.getString(R.string.mozac_feature_media_notification_action_next)
+                    setImageDrawable(
+                        AppCompatResources.getDrawable(context, R.drawable.media_state_next),
+                    )
+                }
+                else -> {
+                    removeTouchDelegate()
+                    removeAndDisable()
+                }
+            }
+        }
         with(playPauseButtonView) {
             invalidate()
             val sessionState = store.state.findTabOrCustomTab(tab.id)
@@ -180,25 +215,6 @@ abstract class AbstractBrowserTabViewHolder(
                         AppCompatResources.getDrawable(context, R.drawable.media_state_pause),
                     )
                 }
-
-                MediaSession.PlaybackState.NEXT -> {
-                    showAndEnable()
-                    contentDescription =
-                        context.getString(R.string.mozac_feature_media_notification_action_next)
-                    setImageDrawable(
-                        AppCompatResources.getDrawable(context, R.drawable.media_state_next),
-                    )
-                }
-
-                MediaSession.PlaybackState.PREVIOUS ->{
-                    showAndEnable()
-                    contentDescription =
-                        context.getString(R.string.mozac_feature_media_notification_action_previous)
-                    setImageDrawable(
-                        AppCompatResources.getDrawable(context, R.drawable.media_state_previous),
-                    )
-                }
-
                 else -> {
                     removeTouchDelegate()
                     removeAndDisable()
@@ -216,11 +232,11 @@ abstract class AbstractBrowserTabViewHolder(
                         Tab.mediaPlay.record(NoExtras())
                         sessionState.mediaSessionState?.controller?.play()
                     }
-                    MediaSession.PlaybackState.NEXT -> {
+                    MediaSession.PlaybackState.NEXT_TRACK -> {
                         Tab.mediaPlay.record(NoExtras())
                         sessionState.mediaSessionState?.controller?.nextTrack()
                     }
-                    MediaSession.PlaybackState.PREVIOUS -> {
+                    MediaSession.PlaybackState.PREVIOUS_TRACK -> {
                         Tab.mediaPlay.record(NoExtras())
                         sessionState.mediaSessionState?.controller?.previousTrack()
                     }
