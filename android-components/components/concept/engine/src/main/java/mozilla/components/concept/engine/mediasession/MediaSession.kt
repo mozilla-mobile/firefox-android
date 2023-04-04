@@ -126,11 +126,11 @@ class MediaSession {
         /**
          * This [MediaSession] is next
          */
-        NEXT,
+        NEXT_TRACK,
         /**
          * This [MediaSession] is Previous
          */
-        PREVIOUS,
+        PREVIOUS_TRACK,
     }
 
     /**
