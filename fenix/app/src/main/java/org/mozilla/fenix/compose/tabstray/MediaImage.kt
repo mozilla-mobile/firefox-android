@@ -42,12 +42,6 @@ fun MediaImage(
         PlaybackState.PLAYING -> {
             R.drawable.media_state_pause to R.string.mozac_feature_media_notification_action_pause
         }
-        PlaybackState.NEXT -> {
-            R.drawable.media_state_next to R.string.mozac_feature_media_notification_action_next
-        }
-        PlaybackState.PREVIOUS -> {
-            R.drawable.media_state_previous to R.string.mozac_feature_media_notification_action_previous
-        }
         else -> return
     }
     val drawable = AppCompatResources.getDrawable(LocalContext.current, icon)
