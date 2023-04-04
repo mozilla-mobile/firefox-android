@@ -17,14 +17,16 @@ transforms = TransformSequence()
 @transforms.add
 def resolve_keys(config, tasks):
     for task in tasks:
-        resolve_keyed_by(
-            task,
-            'scopes',
-            item_name=task["name"],
-            **{
-                'level': config.params["level"],
-            }
-        )
+        for key in ("scopes", "treeherder.symbol"):
+            resolve_keyed_by(
+                task,
+                key,
+                item_name=task["name"],
+                **{
+                    'build-type': task["attributes"]["build-type"],
+                    'level': config.params["level"],
+                }
+            )
         yield task
 
 

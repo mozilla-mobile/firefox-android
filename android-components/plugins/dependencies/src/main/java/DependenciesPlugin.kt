@@ -6,7 +6,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.initialization.Settings
 
 // If you ever need to force a toolchain rebuild (taskcluster) then edit the following comment.
-// FORCE REBUILD 2023-03-06
+// FORCE REBUILD 2023-03-16
 
 class DependenciesPlugin : Plugin<Settings> {
     override fun apply(settings: Settings) = Unit
@@ -39,14 +39,13 @@ object Versions {
     // zxing 3.4+ requires a minimum API of 24 or higher
     const val zxing = "3.3.3"
 
-    const val jna = "5.13.0"
     const val disklrucache = "2.0.2"
     const val leakcanary = "2.10"
 
-    const val mozilla_appservices = "97.2.0"
+    const val mozilla_appservices = "97.4.0"
 
     // DO NOT MODIFY MANUALLY. This is auto-updated along with GeckoView.
-    const val mozilla_glean = "52.3.0"
+    const val mozilla_glean = "52.4.2"
 
     const val material = "1.2.1"
     const val ksp = "1.0.9"
@@ -67,7 +66,7 @@ object Versions {
         const val compose = compose_version
         const val constraintlayout = "2.0.4"
         const val coordinatorlayout = "1.1.0"
-        const val core = "1.8.0"
+        const val core = "1.9.0"
         const val fragment = "1.5.1"
         const val recyclerview = "1.2.0"
         const val test = "1.5.0"
@@ -197,7 +196,6 @@ object ComponentsDependencies {
     const val thirdparty_okhttp_urlconnection = "com.squareup.okhttp3:okhttp-urlconnection:${Versions.okhttp}"
     const val thirdparty_sentry_latest = "io.sentry:sentry-android:${Versions.sentry_latest}"
     const val thirdparty_zxing = "com.google.zxing:core:${Versions.zxing}"
-    const val thirdparty_jna = "net.java.dev.jna:jna:${Versions.jna}@jar"
     const val thirdparty_disklrucache = "com.jakewharton:disklrucache:${Versions.disklrucache}"
 
     const val firebase_messaging = "com.google.firebase:firebase-messaging:${Versions.Firebase.messaging}"

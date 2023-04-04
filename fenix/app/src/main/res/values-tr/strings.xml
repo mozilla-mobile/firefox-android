@@ -84,14 +84,11 @@
     <!-- Text for the negative action button -->
     <string name="open_in_app_cfr_negative_button_text">Kapat</string>
 
-    <!-- Content description for close button used in "contextual feature recommendation" (CFR) popups -->
-    <string name="cfr_dismiss_button_default_content_description" moz:removedIn="110" tools:ignore="UnusedResources">Kapat</string>
-
     <!-- Total cookie protection "contextual feature recommendation" (CFR) -->
     <!-- Text for the message displayed in the contextual feature recommendation popup promoting the total cookie protection feature. -->
     <string name="tcp_cfr_message">Şimdiye kadarki en güçlü gizlilik özelliğimiz, siteler arası takip kodlarını izole ediyor.</string>
     <!-- Text displayed that links to website containing documentation about the "Total cookie protection" feature. -->
-    <string name="tcp_cfr_learn_more">Komple çerez koruması hakkında bilgi al</string>
+    <string name="tcp_cfr_learn_more">Komple Çerez Koruması hakkında bilgi al</string>
 
     <!-- Text for the info dialog when camera permissions have been denied but user tries to access a camera feature. -->
     <string name="camera_permissions_needed_message">Kamera erişimi gerekiyor. Android ayarlarına gidin, izinlere girin ve izin verin.</string>
@@ -263,10 +260,10 @@
     <string name="search_settings_menu_item">Arama ayarları</string>
 
     <!-- Header text for the search selector menu -->
-    <string name="search_header_menu_item" moz:RemovedIn="109" tools:ignore="UnusedResources">Bununla ara:</string>
+    <string name="search_header_menu_item" moz:RemovedIn="109" tools:ignore="UnusedResources">Burada ara:</string>
 
     <!-- Header text for the search selector menu -->
-    <string name="search_header_menu_item_2">Bununla ara:</string>
+    <string name="search_header_menu_item_2">Burada ara:</string>
 
     <!-- Home onboarding -->
     <!-- Onboarding home screen popup dialog, shown on top of the Jump back in section. -->
@@ -302,7 +299,42 @@
     <!-- Text for the button to request notification permission on the device -->
     <string name="onboarding_home_enable_notifications_positive_button">Devam et</string>
     <!-- Text for the button to not request notification permission on the device and dismiss the dialog -->
-    <string name="onboarding_home_enable_notifications_negative_button">Daha sonra</string>
+    <string name="onboarding_home_enable_notifications_negative_button">Şimdi değil</string>
+
+    <!-- Juno first user onboarding flow experiment -->
+    <!-- Title for set firefox as default browser screen.
+        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
+    <string name="juno_onboarding_default_browser_title" tools:ignore="UnusedResources">%s varsayılan tarayıcınız olsun</string>
+    <!-- Description for set firefox as default browser screen.
+        The first parameter is the Firefox brand name.
+        The second parameter is the string with key "juno_onboarding_default_browser_description_link_text". -->
+    <string name="juno_onboarding_default_browser_description" tools:ignore="UnusedResources">%1$s için paradan önce insanlık gelir. Siteler arası takip kodlarını engelleyerek gizliliğinizi koruyoruz.\n\nAyrıntıları %2$s bulabilirsiniz.</string>
+    <!-- Text for the link to the privacy notice webpage for set as firefox default browser screen.
+    This is part of the string with the key "juno_onboarding_default_browser_description". -->
+    <string name="juno_onboarding_default_browser_description_link_text" tools:ignore="UnusedResources">gizlilik bildirimimizde</string>
+    <!-- Text for the button to set firefox as default browser on the device -->
+    <string name="juno_onboarding_default_browser_positive_button" tools:ignore="UnusedResources">Varsayılan tarayıcı yap</string>
+    <!-- Text for the button dismiss the screen and move on with the flow -->
+    <string name="juno_onboarding_default_browser_negative_button" tools:ignore="UnusedResources">Şimdi değil</string>
+    <!-- Title for sign in to sync screen. -->
+    <string name="juno_onboarding_sign_in_title" tools:ignore="UnusedResources">Telefondan bilgisayara, bilgisayardan telefona geçin</string>
+    <!-- Description for sign in to sync screen. -->
+    <string name="juno_onboarding_sign_in_description" tools:ignore="UnusedResources">Diğer cihazlarınızdaki sekmeleri ve parolaları alın, kaldığınız yerden devam edin.</string>
+    <!-- Text for the button to sign in to sync on the device -->
+    <string name="juno_onboarding_sign_in_positive_button" tools:ignore="UnusedResources">Giriş yap</string>
+    <!-- Text for the button dismiss the screen and move on with the flow -->
+    <string name="juno_onboarding_sign_in_negative_button" tools:ignore="UnusedResources">Şimdi değil</string>
+    <!-- Title for enable notification permission screen.
+        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
+    <string name="juno_onboarding_enable_notifications_title" tools:ignore="UnusedResources">Bildirimler sayesinde %s ile daha fazlasını yapın</string>
+    <!-- Description for enable notification permission screen.
+        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
+    <string name="juno_onboarding_enable_notifications_description" tools:ignore="UnusedResources">Sekmelerinizi cihazdan cihaza gönderin, indirmelerinizi yönetin ve %s ile ilgili ipuçları alın.</string>
+    <!-- Text for the button to request notification permission on the device -->
+    <string name="juno_onboarding_enable_notifications_positive_button" tools:ignore="UnusedResources">Bildirimleri aç</string>
+
+    <!-- Text for the button dismiss the screen and move on with the flow -->
+    <string name="juno_onboarding_enable_notifications_negative_button" tools:ignore="UnusedResources">Şimdi değil</string>
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. The first parameter is the name of the application.-->
@@ -362,8 +394,6 @@
     <string name="reduce_cookie_banner_option_off">Kapalı</string>
     <!-- Summary of cookie banner handling preference if the setting enabled is set to on -->
     <string name="reduce_cookie_banner_option_on">Açık</string>
-    <!-- Summary for the preference for rejecting all cookies whenever possible. -->
-    <string name="reduce_cookie_banner_summary" moz:RemovedIn="110" tools:ignore="UnusedResources">Firefox, çerez bildirimlerindeki çerez isteklerini otomatik olarak reddetmeye çalışır. Reddetme seçeneği yoksa Firefox, bildirimi kapatmak için tüm çerezleri kabul edebilir.</string>
 
     <!-- Summary for the preference for rejecting all cookies whenever possible. The first parameter is the application name -->
     <string name="reduce_cookie_banner_summary_1">%1$s, çerez bildirimlerindeki çerez isteklerini otomatik olarak reddetmeye çalışır.</string>
@@ -379,8 +409,6 @@
     <string name="reduce_cookie_banner_details_panel_title_off_for_site">%1$s için çerez bildirimlerini azaltma kapatılsın mı?</string>
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
     <string name="reduce_cookie_banner_details_panel_description_off_for_site">%1$s bu sitenin çerezlerini temizleyip sayfayı tazeleyecek. Tüm çerezlerin temizlenmesi oturumunuzu kapatabilir veya alışveriş sepetlerinizi boşaltabilir.</string>
-    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first and second parameter are the application name -->
-    <string name="reduce_cookie_banner_details_panel_description_on_for_site" moz:RemovedIn="110" tools:ignore="UnusedResources">%1$s, çerez bildirimlerindeki çerez isteklerini otomatik olarak reddetmeye çalışır. Reddetme seçeneği yoksa %2$s, bildirimi kapatmak için tüm çerezleri kabul edebilir.</string>
 
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter are the application name -->
     <string name="reduce_cookie_banner_details_panel_description_on_for_site_1" moz:RemovedIn="111" tools:ignore="UnusedResources">%1$s çerez isteklerini otomatik olarak reddetmeyi deneyebilir.</string>
@@ -391,15 +419,13 @@
     <!-- Title text for the cookie banner re-engagement dialog. The first parameter is the application name. -->
     <string name="reduce_cookie_banner_dialog_title">%1$s çerez bildirimlerini reddedebilsin mi?</string>
     <!-- Body text for the dialog use on the control branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_control_experiment_dialog_body" moz:RemovedIn="110" tools:ignore="UnusedResources">Mümkün olduğunda çerez isteklerini otomatik olarak reddedin, mümkün değilse çerez bildirimlerini kapatmak için tüm çerezleri kabul edin.</string>
-    <!-- Body text for the dialog use on the control branch of the experiment to determine which context users engaged the most -->
     <string name="reduce_cookie_banner_control_experiment_dialog_body_1" moz:RemovedIn="111" tools:ignore="UnusedResources">Mümkün olduğunda çerez isteklerini otomatik olarak reddedin.</string>
     <!-- Body text for the dialog use on the control branch of the experiment to determine which context users engaged the most.The first parameter is the application name -->
     <string name="reduce_cookie_banner_control_experiment_dialog_body_2" moz:RemovedIn="112" tools:ignore="UnusedResources">Mümkün olduğunda %1$s çerez isteklerini otomatik olarak reddetsin mi?</string>
     <!-- Body text for the cookie banner re-engagement dialog use. The first parameter is the application name. -->
     <string name="reduce_cookie_banner_dialog_body">%1$s birçok çerez bildirimini otomatik olarak reddedebilir.</string>
     <!-- Remind me later text button for the onboarding dialog -->
-    <string name="reduce_cookie_banner_dialog_not_now_button">Daha sonra</string>
+    <string name="reduce_cookie_banner_dialog_not_now_button">Şimdi değil</string>
     <!-- Change setting text button, for the dialog use on the control branch of the experiment to determine which context users engaged the most -->
     <string name="reduce_cookie_banner_control_experiment_dialog_change_setting_button" moz:RemovedIn="112" tools:ignore="UnusedResources">Bildirimleri kapat</string>
     <!-- Snack text for the cookie banner dialog, after user hit the dismiss banner button -->
@@ -407,15 +433,11 @@
     <!-- Title text for the dialog use on the variant 1 branch of the experiment to determine which context users engaged the most -->
     <string name="reduce_cookie_banner_variant_1_experiment_dialog_title" moz:RemovedIn="112" tools:ignore="UnusedResources">Daha az çerez bildirimi görün</string>
     <!-- Body text for the dialog use on the variant 1 branch of the experiment to determine which context users engaged the most. The first parameter is the application name. -->
-    <string name="reduce_cookie_banner_variant_1_experiment_dialog_body" moz:RemovedIn="110" tools:ignore="UnusedResources">Dikkat dağıtan çerez bildirimlerini otomatik olarak kapatın. %1$s mümkünse tüm istekleri reddedecek, mümkün değilse kabul edecektir.</string>
-    <!-- Body text for the dialog use on the variant 1 branch of the experiment to determine which context users engaged the most. The first parameter is the application name. -->
     <string name="reduce_cookie_banner_variant_1_experiment_dialog_body_1" moz:RemovedIn="112" tools:ignore="UnusedResources">Dikkat dağıtan çerez bildirimlerini otomatik olarak kapatın. %1$s mümkünse tüm istekleri reddedecektir.</string>
     <!-- Change setting text button, for the onboarding dialog use on the variant 1 branch of the experiment to determine which context users engaged the most -->
     <string name="reduce_cookie_banner_variant_1_experiment_dialog_change_setting_button" moz:RemovedIn="112" tools:ignore="UnusedResources">Bildirimleri kapat</string>
     <!-- Title text for the dialog use on the variant 2 branch of the experiment to determine which context users engaged the most -->
     <string name="reduce_cookie_banner_variant_2_experiment_dialog_title" moz:RemovedIn="112" tools:ignore="UnusedResources">Çerez bildirimlerini azaltın</string>
-    <!-- Body text for the dialog use on the variant 2 branch of the experiment to determine which context users engaged the most. The first parameter is the application name. -->
-    <string name="reduce_cookie_banner_variant_2_experiment_dialog_body" moz:RemovedIn="110" tools:ignore="UnusedResources">%1$s mümkün olduğunda sitelerin çerez onayı taleplerini reddetsin, mümkün olmadığında çerezlere izin versin mi?</string>
     <!-- Body text for the dialog use on the variant 2 branch of the experiment to determine which context users engaged the most. The first parameter is the application name. -->
     <string name="reduce_cookie_banner_variant_2_experiment_dialog_body_1" moz:RemovedIn="112" tools:ignore="UnusedResources">%1$s sitelerin çerez isteklerini reddedebilsin mi?</string>
     <!-- Change setting text button, for the dialog use on the variant 2 branch of the experiment to determine which context users engaged the most -->
@@ -1240,6 +1262,18 @@
     <!-- Title B shown in the notification that pops up to re-engage the user -->
     <string name="notification_re_engagement_B_title">Aramaya başlayın</string>
 
+    <!-- Text B shown in the notification that pops up to re-engage the user -->
+    <string name="notification_re_engagement_B_text">İster yakınınızdaki restoranları bulun, ister eğlenceli bir şeyler keşfedin.</string>
+
+    <!-- Survey -->
+    <!-- Text shown in the fullscreen message that pops up to ask user to take a short survey.
+    The app name is in the text, due to limitations with localizing Nimbus experiments -->
+    <string name="nimbus_survey_message_text" tools:ignore="UnusedResources">Kısa bir ankete katılarak Firefox’u iyileştirmemize yardımcı olabilirsiniz.</string>
+    <!-- Preference for taking the short survey. -->
+    <string name="preferences_take_survey" tools:ignore="UnusedResources">Ankete katıl</string>
+    <!-- Preference for not taking the short survey. -->
+    <string name="preferences_not_take_survey" tools:ignore="UnusedResources">Hayır</string>
+
     <!-- Snackbar -->
     <!-- Text shown in snackbar when user deletes a collection -->
     <string name="snackbar_collection_deleted">Koleksiyon silindi</string>
@@ -1379,7 +1413,7 @@
     <!-- Text for the tracking protection card description. The first parameter is the name of the application.-->
     <string name="onboarding_tracking_protection_description_old">%1$s şirketlerin sizi web’de gizlice takip etmesini otomatik olarak engeller.</string>
     <!-- Text for the tracking protection card description. -->
-    <string name="onboarding_tracking_protection_description">Komple çerez koruması, takip kodlarının sizi web’de takip etmek için çerezleri kullanmasını engeller.</string>
+    <string name="onboarding_tracking_protection_description">Komple Çerez Koruması, takip kodlarının sizi web’de takip etmek için çerezleri kullanmasını engeller.</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
     <string name="onboarding_tracking_protection_standard_button_2">Standart (varsayılan)</string>
     <!-- text for standard blocking option button description -->
@@ -1455,6 +1489,8 @@
     <string name="preference_enhanced_tracking_protection">Gelişmiş izlenme koruması</string>
     <!-- Title for the description of enhanced tracking protection -->
     <string name="preference_enhanced_tracking_protection_explanation_title">Takip edilmeden gezinin</string>
+    <!-- Preference summary for enhanced tracking protection settings on/off switch -->
+    <string name="preference_enhanced_tracking_protection_summary" tools:ignore="UnusedResources">Siteler arası takip kodlarına karşı en güçlü korumamız olan Komple Çerez Koruması da içinde.</string>
     <!-- Description of enhanced tracking protection. The first parameter is the name of the application (For example: Fenix) -->
     <string name="preference_enhanced_tracking_protection_explanation">Verileriniz sizde kalsın. %s, internette ne yaptığınızı öğrenmeye çalışan takipçilerin çoğundan sizi korur.</string>
     <!-- Description of enhanced tracking protection. The parameter is the name of the application (For example: Firefox Fenix) -->
@@ -1523,7 +1559,7 @@
     <!-- Description of cross-site tracking cookies that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_cookies_description">Reklam ağlarının ve analitik şirketlerinin farklı siteler arasındaki gezintilerinizi izlemek için kullandığı çerezleri engeller.</string>
     <!-- Description of cross-site tracking cookies that can be blocked by Enhanced Tracking Protection -->
-    <string name="etp_cookies_description_2">Komple çerez koruması, çerezleri sadece bulunduğunuz sitenin kullanabileceği şekilde izole eder. Bu sayede, reklam ağları hangi sitelerde gezindiğinizi izlemek için çerezleri kullanamaz.</string>
+    <string name="etp_cookies_description_2">Komple Çerez Koruması, çerezleri sadece bulunduğunuz sitenin kullanabileceği şekilde izole eder. Bu sayede, reklam ağları hangi sitelerde gezindiğinizi izlemek için çerezleri kullanamaz.</string>
     <!-- Category of trackers (cryptominers) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_cryptominers_title">Kripto madencileri</string>
     <!-- Description of cryptominers that can be blocked by Enhanced Tracking Protection -->

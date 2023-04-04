@@ -127,6 +127,7 @@ treeherder:
         support-base: support-base
         support-images: support-images
         support-ktx: support-ktx
+        support-license: support-license
         support-locale: support-locale
         support-migration: support-migration
         support-rusthttp: support-rusthttp
@@ -189,6 +190,11 @@ workers:
             implementation: docker-worker
             os: linux
             worker-type: b-linux-large-gcp
+        b-android-xlarge:
+            provisioner: 'mobile-{level}'
+            implementation: docker-worker
+            os: linux
+            worker-type: b-linux-xlarge-gcp
         beetmover:
             provisioner: scriptworker-k8s
             implementation: scriptworker-beetmover

@@ -45,8 +45,10 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.Constants.LONG_CLICK_DURATION
 import org.mozilla.fenix.helpers.Constants.RETRY_COUNT
 import org.mozilla.fenix.helpers.MatcherHelper
+import org.mozilla.fenix.helpers.MatcherHelper.assertItemContainingTextExists
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithResIdAndTextExists
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithResIdExists
+import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdAndText
 import org.mozilla.fenix.helpers.SessionLoadedIdlingResource
@@ -89,7 +91,7 @@ class BrowserRobot {
     }
 
     fun verifyWhatsNewURL() {
-        verifyUrl("support.mozilla.org/")
+        verifyUrl("mozilla.org/")
     }
 
     fun verifyRateOnGooglePlayURL() {
@@ -1013,8 +1015,35 @@ class BrowserRobot {
             it.click()
         }
 
-    fun clickOpenInAppPromptButton() =
+    fun verifyOpenLinkInAnotherAppPrompt() {
+        assertItemWithResIdExists(itemWithResId("$packageName:id/parentPanel"))
+        assertItemContainingTextExists(
+            itemContainingText(
+                getStringResource(R.string.mozac_feature_applinks_normal_confirm_dialog_title),
+            ),
+            itemContainingText(
+                getStringResource(R.string.mozac_feature_applinks_normal_confirm_dialog_message),
+            ),
+        )
+    }
+
+    fun verifyPrivateBrowsingOpenLinkInAnotherAppPrompt(url: String) =
+        assertItemContainingTextExists(
+            itemContainingText(
+                getStringResource(R.string.mozac_feature_applinks_confirm_dialog_title),
+            ),
+            itemContainingText(url),
+        )
+
+    fun confirmOpenLinkInAnotherApp() =
         itemWithResIdAndText("android:id/button1", "OPEN")
+            .also {
+                it.waitForExists(waitingTime)
+                it.click()
+            }
+
+    fun cancelOpenLinkInAnotherApp() =
+        itemWithResIdAndText("android:id/button2", "CANCEL")
             .also {
                 it.waitForExists(waitingTime)
                 it.click()
@@ -1208,6 +1237,7 @@ class BrowserRobot {
         }
 
         fun clickRequestStorageAccessButton(interact: SitePermissionsRobot.() -> Unit): SitePermissionsRobot.Transition {
+            webPageItemContainingText("requestStorageAccess()").waitForExists(waitingTime)
             clickPageObject(webPageItemContainingText("requestStorageAccess()"))
 
             SitePermissionsRobot().interact()

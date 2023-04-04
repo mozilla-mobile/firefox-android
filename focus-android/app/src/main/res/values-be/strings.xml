@@ -15,9 +15,14 @@
     <!-- This text is shown in the URL bar when it's empty -->
     <string name="urlbar_hint">Шукаць ці ўвесці адрас</string>
 
+    <string name="teaser">Аўтаматычны прыватнае агляданне.\Паглядзець. Сцерці. Паўтарыць.</string>
+
     <!-- "Snackbar" shown after the user has pressed the 'erase' button at the end of a browsing session -->
     <string name="feedback_erase">Ваша гісторыя прагляду была сцёрта.</string>
     <string name="feedback_erase2">Гісторыя аглядання выдалена</string>
+
+    <!-- "Snackbar" shown after the user has pressed the 'erase' button at the end of a custom tab browsing session -->
+    <string name="feedback_erase_custom_tab">Гісторыя прагляду карткі была сцёрта.</string>
 
     <!-- This label is shown below the URL bar as soon as the user enters text. Clicking the label will perform a search -->
     <string name="search_hint">Шукаць %1$s</string>
@@ -132,6 +137,18 @@
     <!-- Header for the Privacy and Security settings menu -->
     <string name="preference_privacy_and_security_header">Прыватнасць і бяспека</string>
 
+    <!-- Preference summary for settings related to privacy and security -->
+    <string name="preference_privacy_and_security_summary">Асочванне, кукі, выбар даных</string>
+
+    <!-- Preference category description for settings related to search, set default
+    and autocomplete are settings a user can find and change inside the "search" settings screen -->
+    <string name="preference_search_summary">Зрабіць прадвызначаным, аўтазапаўненне</string>
+
+    <!-- Preference category description for settings screen for settings related to Mozilla -->
+    <!-- About the app and help are links that are inside this menu -->
+    <!-- %1$s will be replaced by the app name (e.g. Firefox Focus) -->
+    <string name="preference_mozilla_summary">Аб %1$s, дапамога</string>
+
     <!-- Preference category for ad blocking and enhanced tracking protection settings -->
     <string name="preference_category_tracking_protection3">Узмоцненая ахова ад сачэння</string>
 
@@ -147,10 +164,17 @@
     <!-- Preference summary for General Settings category; the two things users can find in this category -->
     <string name="preference_general_summary2">Прадвызначаны браўзер, мова</string>
 
+    <!-- Preference category for settings about sending usage data -->
+    <string name="preference_category_data_collection_use">Збор і выкарыстанне даных</string>
+
     <string name="preference_category_search">Пошук</string>
 
     <!-- Title of "switch" preference that enables/disables search suggestions -->
     <string name="preference_show_search_suggestions">Атрымліваць пошукавыя прапановы</string>
+
+    <!-- Description of the preference that enables/disables search suggestions
+        %1$s will be replaced by the app name (e.g. Firefox Focus) -->
+    <string name="preference_show_search_suggestions_summary">%1$s будзе адпраўляць правайдару пошуку тэкст, які вы ўводзіце ў адрасны радок</string>
 
     <!-- This label is shown below the name of the default search engine in settings -->
     <string name="preference_search_engine_default">Прадвызначана</string>
@@ -167,11 +191,25 @@
     <!-- Item in settings that will open a new preference screen for configuring the URL autocomplete behavior. -->
     <string name="preference_subitem_autocomplete">Аўтадапаўненне URL</string>
 
+    <!-- Title of "switch" preference that enables/disables autocomplete for the default list -->
+    <string name="preference_switch_autocomplete_topsites">Для папулярных сайтаў</string>
+
+    <!-- Summary for the toggle to enable autocomplete for the topsites list
+    %s is a placeholder for the app name (e.g. Firefox Focus)-->
+    <string name="preference_autocomplete_topsite_summary2">Уключыць аўтадапаўненне ў %s для больш чым 450 папулярных сайтаў у адрасным радку.</string>
+
+    <!-- Summary for the toggle to enable autocomplete for the user-defined list
+     %s is a placeholder for the app name (e.g. Firefox Focus)-->
+    <string name="preference_autocomplete_user_list_summary2">Уключыце, каб %s аўтаматычна завяршаў URL-адрасы вашых улюбёных сайтаў.</string>
+
     <!-- Preference category: Manage (user-defined) sites -->
     <string name="preference_category_autocomplete_manage_sites">Кіраванне сайтамі</string>
 
     <!-- Item in autocomplete settings that will open a new preference screen for adding and removing URLs to the user-defined list-->
     <string name="preference_autocomplete_subitem_manage_sites">Кіраванне сайтамі</string>
+
+    <!-- Action at the bottom of the list of custom autocomplete URLs that will open a new screen to add a new URL to the list. -->
+    <string name="preference_autocomplete_action_add">+ Дадаць уласны URL-адрас</string>
 
     <!-- Action at the bottom of the list of custom autocomplete URLs that will open a new screen to add a new URL to the list. -->
     <string name="preference_autocomplete_action_add2">Дадаць URL</string>
@@ -230,6 +268,7 @@
     <string name="preference_privacy_block_ads">Блакіраваць рэкламнае сачэнне</string>
 
     <string name="preference_privacy_block_analytics">Блакіраваць трэкеры аналітыкі</string>
+    <string name="preference_privacy_block_social">Блакіраваць трэкеры сацыяльных сетак</string>
     <string name="preference_privacy_block_content">Блакіраваць іншыя трэкеры змесціва</string>
     <string name="preference_privacy_category_cookies">Блакіраваць кукі</string>
 
@@ -274,6 +313,9 @@
 
     <!-- A link to SUMO at the end of the summary (preference_mozilla_telemetry_summary2) of the "Send anonymous usage data" setting. -->
     <string name="preference_mozilla_telemetry_summary">Падрабязней</string>
+
+    <!-- %1$s will be replaced with the name of the app (e.g. Firefox Focus) -->
+    <string name="preference_mozilla_telemetry_summary2">Mozilla імкнецца збіраць толькі тыя звесткі, якія патрэбны для работы і паляпшэння %1$s для ўсіх.</string>
 
     <!-- In-app link (in settings) to Focus privacy notice. -->
     <string name="preference_privacy_notice">Паведамленне аб прыватнасці</string>
@@ -363,6 +405,12 @@
     <!-- Content description (not visible, for screen readers etc.): Navigate back (browsing history) -->
     <string name="content_description_back">Перайсці назад</string>
 
+    <!-- Content description (not visible, for screen readers etc.): Stop loading the current website. This button will turn into the refresh button once loading has been completed (see content_description_reload) -->
+    <string name="content_description_stop">Спыніць загрузку сайта</string>
+
+    <!-- Content description (not visible, for screen readers etc.): Custom Tab exit button - closes the custom tab and returns to the previous app. -->
+    <string name="content_description_customtab_exit">Вярнуцца ў папярэднюю праграму</string>
+
     <!-- Content description (not visible, for screen readers etc.): This is the description for the switch in the menu that temporarily disables/enables
          content blocking for the current session -->
     <string name="content_description_blocking_switch">Блакіраваць трэкеры</string>
@@ -391,8 +439,16 @@
     <!-- New Onboarding flow first screen button label-->
     <string name="onboarding_first_screen_button_text">Пачаць</string>
 
+    <!-- Onboarding second screen: Title -->
+    <!-- %1$s will be replaced by the app short name(Focus) -->
+    <string name="onboarding_second_screen_title">%1$s не падобны на іншыя браўзеры</string>
+
     <!-- New Onboarding flow second screen subtitle the one that appears under title -->
     <string name="onboarding_second_screen_subtitle_one">Для павышэння прыватнасці мы выдаляем вашу гісторыю, калі вы закрываеце праграму.</string>
+
+    <!-- New Onboarding flow second screen subtitle two the one that appears under subtitle one -->
+    <!-- %1$s will be replaced by the app short name(Focus) -->
+    <string name="onboarding_second_screen_subtitle_two">Зрабіце %1$s прадвызначаным браўзерам, каб абараніць вашы даныя пры адкрыцці кожнай спасылцы.</string>
 
     <!-- New Onboarding flow second screen make Focus default browser button label-->
     <string name="onboarding_second_screen_default_browser_button_text">Зрабіць прадвызначаным браўзерам</string>
@@ -407,6 +463,9 @@
 
     <!-- First run tour (Search): Title -->
     <string name="firstrun_search_title">Шукайце па-свойму</string>
+
+    <!-- First run tour (Search): Text -->
+    <string name="firstrun_search_text">Шукаеце нешта іншае? Выберыце іншы прадвызначаны пашукавік у наладах.</string>
 
     <!-- First run tour (Shortcut): Title -->
     <string name="firstrun_shortcut_title">Дадайце цэтлікі на хатні экран</string>
@@ -521,6 +580,9 @@
     <!-- Text for indicating cookie banner handling is on this site, this is shown as part of the protections panel with the tracking protection toggle. -->
     <string name="cookie_banner_exception_item_description_state_on">УКЛЮЧАНА для гэтага сайта</string>
 
+    <!-- Text for indicating cookie reducer is not supported on the current site, this is shown as part of the protections panel with the tracking protection toggle. -->
+    <string name="cookie_banner_exception_site_not_supported">Сайт зараз не падтрымліваецца</string>
+
     <!-- Text for indicating cookie banner handling is off this site, this is shown as part of the protections panel with the tracking protection toggle. -->
     <string name="cookie_banner_exception_item_description_state_off">ВЫКЛЮЧАНА для гэтага сайта</string>
 
@@ -543,8 +605,19 @@
     <string name="cookie_banner_exception_panel_description_state_on_for_site">%1$s выдаліць файлы кукі гэтага сайта і абновіць старонку. Выдаленне ўсіх файлаў кукі можа прывесці да выхаду з сістэмы або ачышчэння кошыка для пакупак.</string>
 
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The placeholder will be updated with the app name. -->
+    <string name="cookie_banner_exception_panel_description_state_off_for_site" moz:RemovedIn="111" tools:ignore="UnusedResources">%1$s можа паспрабаваць аўтаматычна адхіліць запыты на файлы кукі. Калі варыянт адхілення недаступны, %1$s можа прыняць усе файлы кукі, каб закрыць банер.</string>
+
+    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The placeholder will be updated with the app name. -->
     <string name="cookie_banner_exception_panel_description_state_off_for_site2">%1$s можа паспрабаваць аўтаматычна адхіляць запыты на файлы кукі.</string>
 
+    <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_site_is_not_supported_cancel_button">Скасаваць</string>
+
+    <!-- Contextual Feature Recommendation Popups -->
+    <!-- CFR for Cookie Banner (Banner Info Message). The placeholder will be updated with the app name. -->
+    <string name="cfr_for_cookie_banner" moz:RemovedIn="111" tools:ignore="UnusedResources">%1$s спрабуе адхіліць запыты кукі, каб выдаліць раздражняльныя банеры кукі.\n\nКіруйце параметрамі банераў кукі ў наладах.</string>
+    <!-- CFR for Cookie Banner (Banner Info Message). %1$s will be replaced by the app name, %2$s will be an active link using the string cfr_cookie_banner_link as text. -->
+    <string name="cfr_cookie_banner">%1$s спрабуе адхіліць запыты кукі, каб выдаліць раздражняльныя банеры кукі.\n\nКіруйце параметрамі банераў кукі ў %2$s.</string>
     <!-- CFR for Cookie Banner (Banner Info Message). This text should be the same as the settings text from "cfr_for_cookie_banner". The text should be underlined and should redirect the user to the cookie banner settings screen. -->
     <string name="cfr_for_cookie_banner_underline_settings" moz:RemovedIn="111" tools:ignore="UnusedResources">налады</string>
     <!-- CFR for Cookie Banner (Banner Info Message). This string is used as text for a link in cfr_cookie_banner and takes the user to the app settings. -->
@@ -634,6 +707,9 @@
     <!-- Text Button for show biometric prompt -->
     <string name="show_biometric_button_text">Разблакіраваць</string>
 
+    <!-- Title text for biometric prompt pop-up -->
+    <string name="biometric_prompt_title">Пацвердзіце з дапамогай адбітка пальца</string>
+
     <!-- Button for the fingerprint authentication dialog box that is shown to the user when sharing a link to the app
     while the user has biometric authentication enabled. When pressed, the user's previous session is cleared, and the shared link is opened. -->
     <string name="biometric_auth_open_link_new_session">Адкрыць спасылку ў новым сеансе</string>
@@ -648,11 +724,18 @@
     <!-- Title for the prompt to enable search suggestions -->
     <string name="enable_search_suggestion_title2">Паказваць пошукавыя прапановы?</string>
 
+    <!-- Description for the prompt to enable search suggestions
+        %1$s will be replaced by the app name (e.g. Firefox Focus) -->
+    <string name="enable_search_suggestion_description"> Для атрымання прапаноў %1$s павінен адпраўляць тое, што вы ўводзіце ў адрасны радок, у пошукавую сістэму.</string>
+
     <!-- Label used for the "NO button" for the prompt to enable search suggestions -->
     <string name="enable_search_suggestions_no">Не</string>
 
     <!-- Label used for the "YES button" for the prompt to enable search suggestions -->
     <string name="enable_search_suggestions_yes">Так</string>
+
+    <!-- Message displayed when using a search engine that doesn't provide suggestions -->
+    <string name="no_suggestions_message">Некаторыя пошукавыя сістэмы не могуць паказваць прапановы.</string>
 
     <!-- Button to dismiss the message displayed  when using a search engine that doesn't provide suggestions-->
     <string name="dismiss_no_suggestions_prompt_button">Адхіліць</string>
@@ -678,10 +761,18 @@
     <!-- Title of the preference to enable "HTTPS-Only" mode -->
     <string name="preference_https_only_title">Рэжым «Толькі HTTPS»</string>
 
+    <!-- Description of the preference to enable "HTTPS-Only" mode. -->
+    <string name="preference_https_only_summary3">Аўтаматычна спрабуе падключацца да сайтаў з выкарыстаннем пратаколу шыфравання HTTPS для павышэння бяспекі.</string>
+
     <!-- Preference for exceptions tracking protection -->
     <string name="preference_exceptions">Выключэнні</string>
+    <!-- Description for the exceptions preference screen-->
+    <string name="preference_exceptions_description">Вы адключылі блакіроўку змесціва для гэтых сайтах.</string>
     <!-- Menu item to remove existing exceptions. -->
     <string name="preference_exceptions_menu_remove">Выдаліць</string>
+
+    <!-- Button to remove all websites from the exception list -->
+    <string name="preference_exceptions_remove_all_button_label">Выдаліць усе вэб-сайты</string>
 
     <!-- Title for Preference screen for cookie blocking for exceptions tracking protection -->
     <string name="preference_block_cookies_title">Блакіраваць кукі</string>
@@ -691,6 +782,8 @@
 
     <!-- Title for the tab crash report screen-->
     <string name="tab_crash_report_title">Збой карткі</string>
+    <!-- Headline for the tab crash report screen -->
+    <string name="tab_crash_report_headline">Прабачце. З гэтай карткай узніклі праблемы.</string>
     <!-- Label for button to close the tab-->
     <string name="tab_crash_report_close_tab_button_label">Закрыць картку</string>
 
@@ -745,6 +838,9 @@
     <!-- Preference for using following device theme -->
     <string name="preference_follow_device_theme">Тэма прылады</string>
 
+    <!-- The title of the error page for websites that do not support HTTPS when HTTPS-Only is turned on  -->
+    <string name="errorpage_httpsonly_title2">Гэты сайт не падтрымлівае HTTPS</string>
+
     <!-- The document title and heading of the error page shown when a website has an invalid or expired SSL certificate. -->
     <string name="mozac_browser_errorpages_security_bad_cert_title">Злучэнне не бяспечнае</string>
 
@@ -756,6 +852,12 @@
     <!-- CFR for Toolbar Shield Icon (Banner Info Message) -->
     <string name="cfr_for_toolbar_shield_icon2">Папаўся! Мы не дазволілі гэтаму сайту шпіёніць за вамі. Націсніце на шчыт, каб даведацца, што мы блакіруем.</string>
 
+    <!-- Content description (not visible, for screen readers etc.): Button that closes the CFR popup -->
+    <string name="cfr_close_button_description">Закрыць усплывальнае акно</string>
+
+    <!-- Tool Tip for: Privacy and Security Settings Screen  task : https://github.com/mozilla-mobile/focus-android/issues/6211 -->
+    <!-- Tool Tip Title -->
+    <string name="tool_tip_title">Вы абаронены!</string>
     <!-- Tool Tip Message -->
     <string name="tool_tip_message">Гэтыя прадвызначаныя налады забяспечваюць надзейную абарону. Але вы лёгка можаце змяніць іх у адпаведнасці з вашымі патрэбамі.</string>
     <!-- Tool Tip "X" button Content description (not visible, for screen readers etc.) :Button that closes the tool tip -->
@@ -770,11 +872,19 @@
     close button from promote search widget dialog. -->
     <string name="promote_search_widget_dialog_content_description">Закрыць</string>
 
+    <!-- Content description (not visible, for screen readers etc.): This is the description for
+    picture of search widget from promote search widget dialog. -->
+    <string name="promote_search_widget_dialog_picture_content_description">Віджэт пошуку</string>
+
     <!-- This is the title of promote search widget dialog. -->
     <string name="promote_search_widget_dialog_title">Гісторыя аглядання выдалена! 🎉</string>
 
     <!-- Banner Info Message than will appear when user first enters in the app. The location is at the toolbar. -->
     <string name="cfr_for_start_browsing">Пачніце сеанс прыватнага аглядання і мы будзем блакіраваць трэкеры і іншыя непажаданыя элементы.</string>
+
+    <!-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
+    of the app (e.g. "Focus") -->
+    <string name="promote_search_widget_dialog_subtitle">Мы пакінем вас у рэжыме прыватнага аглядання, але ў наступны раз пачніце хутчэй з дапамогай віджэта %1$s на галоўным экране.</string>
 
     <!-- This is te text from add search widget to home screen button .The button is located on
     promote search widget dialog. -->

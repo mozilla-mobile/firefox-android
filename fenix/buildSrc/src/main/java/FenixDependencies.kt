@@ -18,8 +18,8 @@ object FenixVersions {
     const val leakcanary = "2.10"
     const val osslicenses_plugin = "0.10.4"
     const val detekt = "1.19.0"
-    const val jna = "5.13.0"
 
+    const val androidx_activity = "1.6.1"
     const val androidx_compose = "1.3.1"
     const val androidx_compose_compiler = "1.4.3"
     const val androidx_appcompat = "1.3.0"
@@ -35,9 +35,8 @@ object FenixVersions {
     const val androidx_fragment = "1.5.1"
     const val androidx_navigation = "2.5.1"
     const val androidx_recyclerview = "1.2.1"
-    const val androidx_core = "1.8.0"
+    const val androidx_core = "1.9.0"
     const val androidx_paging = "3.1.1"
-    const val androidx_tracing = "1.0.0"
     const val androidx_transition = "1.4.0"
     const val androidx_work = "2.7.1"
     const val androidx_datastore = "1.0.0"
@@ -88,6 +87,8 @@ object FenixDependencies {
     const val androidx_profileinstaller = "androidx.profileinstaller:profileinstaller:${FenixVersions.androidx_profileinstaller}"
     const val androidx_biometric = "androidx.biometric:biometric:${FenixVersions.androidx_biometric}"
     const val androidx_fragment = "androidx.fragment:fragment-ktx:${FenixVersions.androidx_fragment}"
+    const val androidx_activity_compose = "androidx.activity:activity-compose:${FenixVersions.androidx_activity}"
+    const val androidx_activity_ktx = "androidx.activity:activity-ktx:${FenixVersions.androidx_activity}"
     const val androidx_appcompat = "androidx.appcompat:appcompat:${FenixVersions.androidx_appcompat}"
     const val androidx_coordinatorlayout = "androidx.coordinatorlayout:coordinatorlayout:${FenixVersions.androidx_coordinator_layout}"
     const val androidx_constraintlayout = "androidx.constraintlayout:constraintlayout:${FenixVersions.androidx_constraint_layout}"
@@ -105,7 +106,6 @@ object FenixDependencies {
     const val androidx_recyclerview = "androidx.recyclerview:recyclerview:${FenixVersions.androidx_recyclerview}"
     const val androidx_core = "androidx.core:core:${FenixVersions.androidx_core}"
     const val androidx_core_ktx = "androidx.core:core-ktx:${FenixVersions.androidx_core}"
-    const val androidx_tracing = "androidx.tracing:tracing:${FenixVersions.androidx_tracing}"
     const val androidx_transition = "androidx.transition:transition:${FenixVersions.androidx_transition}"
     const val androidx_work_ktx = "androidx.work:work-runtime-ktx:${FenixVersions.androidx_work}"
     const val androidx_work_testing = "androidx.work:work-testing:${FenixVersions.androidx_work}"
@@ -119,8 +119,6 @@ object FenixDependencies {
 
     const val adjust = "com.adjust.sdk:adjust-android:${FenixVersions.adjust}"
     const val installreferrer = "com.android.installreferrer:installreferrer:${FenixVersions.installreferrer}"
-
-    const val jna = "net.java.dev.jna:jna:${FenixVersions.jna}@jar"
 
     const val junit = "junit:junit:${FenixVersions.junit}"
     const val mockk = "io.mockk:mockk:${FenixVersions.mockk}"

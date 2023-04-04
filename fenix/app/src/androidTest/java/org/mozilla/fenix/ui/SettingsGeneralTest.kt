@@ -62,14 +62,18 @@ class SettingsGeneralTest {
             verifySettingsToolbar()
             verifyGeneralHeading()
             verifySearchButton()
+            verifySettingsOptionSummary("Search", "Google")
             verifyTabsButton()
+            verifySettingsOptionSummary("Tabs", "Close manually")
             verifyHomepageButton()
+            verifySettingsOptionSummary("Homepage", "Open on homepage after four hours")
             verifyCustomizeButton()
             verifyLoginsAndPasswordsButton()
             verifyAutofillButton()
             verifyAccessibilityButton()
             verifyLanguageButton()
             verifySetAsDefaultBrowserButton()
+            verifyDefaultBrowserToggle(false)
         }
     }
 
@@ -174,18 +178,18 @@ class SettingsGeneralTest {
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
-            verifyHomepageButtonSummary("Open on homepage after four hours")
+            verifySettingsOptionSummary("Homepage", "Open on homepage after four hours")
         }.openHomepageSubMenu {
             verifySelectedOpeningScreenOption("Homepage after four hours of inactivity")
             clickOpeningScreenOption("Homepage")
             verifySelectedOpeningScreenOption("Homepage")
         }.goBack {
-            verifyHomepageButtonSummary("Open on homepage")
+            verifySettingsOptionSummary("Homepage", "Open on homepage")
         }.openHomepageSubMenu {
             clickOpeningScreenOption("Last tab")
             verifySelectedOpeningScreenOption("Last tab")
         }.goBack {
-            verifyHomepageButtonSummary("Open on last tab")
+            verifySettingsOptionSummary("Homepage", "Open on last tab")
         }
     }
 
@@ -195,23 +199,23 @@ class SettingsGeneralTest {
         }.openThreeDotMenu {
         }.openSettings {
             verifyTabsButton()
-            verifyTabsButtonSummary("Close manually")
+            verifySettingsOptionSummary("Tabs", "Close manually")
         }.openTabsSubMenu {
             verifySelectedCloseTabsOption("Never")
             clickClosedTabsOption("After one day")
             verifySelectedCloseTabsOption("After one day")
         }.goBack {
-            verifyTabsButtonSummary("Close after one day")
+            verifySettingsOptionSummary("Tabs", "Close after one day")
         }.openTabsSubMenu {
             clickClosedTabsOption("After one week")
             verifySelectedCloseTabsOption("After one week")
         }.goBack {
-            verifyTabsButtonSummary("Close after one week")
+            verifySettingsOptionSummary("Tabs", "Close after one week")
         }.openTabsSubMenu {
             clickClosedTabsOption("After one month")
             verifySelectedCloseTabsOption("After one month")
         }.goBack {
-            verifyTabsButtonSummary("Close after one month")
+            verifySettingsOptionSummary("Tabs", "Close after one month")
         }
     }
 }
