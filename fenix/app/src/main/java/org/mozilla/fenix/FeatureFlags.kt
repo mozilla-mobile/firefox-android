@@ -50,7 +50,7 @@ object FeatureFlags {
     /**
      * Enables the Unified Search feature.
      */
-    val unifiedSearchFeature = Config.channel.isNightlyOrDebug
+    const val unifiedSearchFeature = true
 
     /**
      * Enables compose on the tabs tray items.
@@ -71,9 +71,4 @@ object FeatureFlags {
      * Enables the notification pre permission prompt.
      */
     const val notificationPrePermissionPromptEnabled = true
-
-    /**
-     * Enables the redesigned onboarding.
-     */
-    const val junoOnboardingEnabled = false
 }
