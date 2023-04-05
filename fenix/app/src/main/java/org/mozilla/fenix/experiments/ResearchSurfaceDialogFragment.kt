@@ -14,6 +14,8 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.navArgs
+import mozilla.components.service.glean.private.NoExtras
+import org.mozilla.fenix.GleanMetrics.ResearchSurface
 import org.mozilla.fenix.R
 import org.mozilla.fenix.experiments.view.ResearchSurfaceSurvey
 import org.mozilla.fenix.theme.FirefoxTheme
@@ -71,13 +73,17 @@ class ResearchSurfaceDialogFragment : DialogFragment() {
                     onDismissButtonText = dismissButtonText,
                     onDismiss = {
                         onDismiss()
+                        ResearchSurface.dismiss.record(NoExtras())
                         dismiss()
                     },
                     onAccept = {
                         onAccept()
+                        ResearchSurface.accept.record(NoExtras())
                         dismiss()
                     },
-                )
+                ).run {
+                    ResearchSurface.fullscreenMessageShown.record(NoExtras())
+                }
             }
         }
     }

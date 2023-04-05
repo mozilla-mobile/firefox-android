@@ -9105,3 +9105,38 @@ private_browsing_shortcut_cfr:
     notification_emails:
       - android-probes@mozilla.com
     expires: 122
+
+research_surface:
+  fullscreen_message_shown:
+    type: event
+    description: |
+      Fullscreen message shown to the user.
+    bugs:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1821481
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-android/pull/1550
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: 122
+  accept:
+    type: event
+    description: |
+      Research surface "Take Survey" button pressed.
+    bugs:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1821481
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-android/pull/1550
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: 122
+  dismiss:
+    type: event
+    description: |
+      Research surface "No Thanks" button pressed.
+    bugs:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1821481
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-android/pull/1550
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: 122
