@@ -18,6 +18,7 @@ buildscript {
     dependencies {
         classpath FocusDependencies.android_gradle_plugin
         classpath FocusDependencies.kotlin_gradle_plugin
+        classpath FocusDependencies.osslicenses_plugin
         classpath "org.mozilla.telemetry:glean-gradle-plugin:${Versions.mozilla_glean}"
         classpath "org.mozilla.appservices:tooling-nimbus-gradle:${Versions.mozilla_appservices}"
 
@@ -53,25 +54,6 @@ allprojects {
         }
         maven {
             url "https://maven.mozilla.org/maven2"
-        }
-    }
-}
-
-subprojects {
-    // Define a reusable task for updating the version in manifest.json for modules that package
-    // a web extension. We automate this to make sure we never forget to update the version, either
-    // in local development or for releases. In both cases, we want to make sure the latest version
-    // of all extensions (including their latest changes) are installed on first start-up.
-    ext.updateExtensionVersion = { task, extDir ->
-        configure(task) {
-            from extDir
-            include 'manifest.template.json'
-            rename { 'manifest.json' }
-            into extDir
-
-            def values = ['version': rootProject.ext.config.componentsVersion.split("a|b")[0] + "." + new Date().format('MMddHHmmss')]
-            inputs.properties(values)
-            expand(values)
         }
     }
 }
