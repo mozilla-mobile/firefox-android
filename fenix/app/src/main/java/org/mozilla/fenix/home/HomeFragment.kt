@@ -691,6 +691,12 @@ class HomeFragment : Fragment() {
                             requireContext().resources.getDimensionPixelSize(R.dimen.preference_icon_drawable_size)
                         BitmapDrawable(requireContext().resources, searchEngine.icon).apply {
                             setBounds(0, 0, iconSize, iconSize)
+                            // Setting tint manually for icons that were converted from Drawable
+                            // to Bitmap. Search Engine icons are stored as Bitmaps, hence
+                            // theming/attribute mechanism won't work.
+                            if (searchEngine.type == SearchEngine.Type.APPLICATION) {
+                                setTint(requireContext().getColorFromAttr(R.attr.textPrimary))
+                            }
                         }
                     }
 
