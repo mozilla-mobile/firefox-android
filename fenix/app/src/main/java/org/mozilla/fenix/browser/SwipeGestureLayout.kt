@@ -7,7 +7,6 @@ package org.mozilla.fenix.browser
 import android.content.Context
 import android.graphics.PointF
 import android.util.AttributeSet
-import android.view.GestureDetector
 import android.view.MotionEvent
 import android.widget.FrameLayout
 import androidx.core.view.GestureDetectorCompat
@@ -61,19 +60,19 @@ class SwipeGestureLayout @JvmOverloads constructor(
      */
     var isSwipeEnabled = true
 
-    private val gestureListener = object : GestureDetector.SimpleOnGestureListener() {
-        override fun onDown(e: MotionEvent): Boolean {
+    private val gestureListener = object : SimpleOnGestureListenerCompat() {
+        override fun onDown(e: MotionEvent?): Boolean {
             return true
         }
 
         override fun onScroll(
-            e1: MotionEvent,
-            e2: MotionEvent,
+            e1: MotionEvent?,
+            e2: MotionEvent?,
             distanceX: Float,
             distanceY: Float,
         ): Boolean {
-            val start = e1.let { event -> PointF(event.rawX, event.rawY) }
-            val next = e2.let { event -> PointF(event.rawX, event.rawY) }
+            val start = e1?.let { event -> PointF(event.rawX, event.rawY) } ?: return false
+            val next = e2?.let { event -> PointF(event.rawX, event.rawY) } ?: return false
 
             if (activeListener == null && !handledInitialScroll) {
                 activeListener = listeners.firstOrNull { listener ->
@@ -86,8 +85,8 @@ class SwipeGestureLayout @JvmOverloads constructor(
         }
 
         override fun onFling(
-            e1: MotionEvent,
-            e2: MotionEvent,
+            e1: MotionEvent?,
+            e2: MotionEvent?,
             velocityX: Float,
             velocityY: Float,
         ): Boolean {
