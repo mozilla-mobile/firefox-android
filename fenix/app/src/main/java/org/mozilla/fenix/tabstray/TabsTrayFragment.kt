@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.tabstray
 
+import android.app.Dialog
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Build
@@ -80,6 +81,7 @@ enum class TabsTrayAccessPoint {
 class TabsTrayFragment : AppCompatDialogFragment() {
 
     @VisibleForTesting internal lateinit var tabsTrayStore: TabsTrayStore
+    private lateinit var tabsTrayDialog: TabsTrayDialog
     private lateinit var tabsTrayInteractor: TabsTrayInteractor
     private lateinit var tabsTrayController: DefaultTabsTrayController
     private lateinit var navigationInteractor: DefaultNavigationInteractor
@@ -126,15 +128,7 @@ class TabsTrayFragment : AppCompatDialogFragment() {
         setStyle(STYLE_NO_TITLE, R.style.TabTrayDialogStyle)
     }
 
-    override fun onCreateDialog(savedInstanceState: Bundle?) =
-        TabsTrayDialog(requireContext(), theme) { tabsTrayInteractor }
-
-    @Suppress("LongMethod")
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View {
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val args by navArgs<TabsTrayFragmentArgs>()
         args.accessPoint.takeIf { it != TabsTrayAccessPoint.None }?.let {
             TabsTray.accessPoint[it.name.lowercase()].add()
@@ -198,6 +192,16 @@ class TabsTrayFragment : AppCompatDialogFragment() {
             controller = tabsTrayController,
         )
 
+        tabsTrayDialog = TabsTrayDialog(requireContext(), theme) { tabsTrayInteractor }
+        return tabsTrayDialog
+    }
+
+    @Suppress("LongMethod")
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ): View {
         _tabsTrayDialogBinding = FragmentTabTrayDialogBinding.inflate(
             inflater,
             container,
@@ -277,7 +281,7 @@ class TabsTrayFragment : AppCompatDialogFragment() {
                 true,
             )
             _fabButtonBinding = ComponentTabstrayFabBinding.inflate(
-                LayoutInflater.from(tabsTrayDialogBinding.root.context),
+                inflater,
                 tabsTrayDialogBinding.root,
                 true,
             )
@@ -312,8 +316,27 @@ class TabsTrayFragment : AppCompatDialogFragment() {
         } else {
             tabsTrayBinding.tabWrapper
         }
+
+        val newTabFab = if (requireContext().settings().enableTabsTrayToCompose) {
+            fabButtonComposeBinding.root
+        } else {
+            fabButtonBinding.newTabButton
+        }
+
+        val behavior = BottomSheetBehavior.from(rootView).apply {
+            addBottomSheetCallback(
+                TraySheetBehaviorCallback(
+                    this,
+                    navigationInteractor,
+                    tabsTrayDialog,
+                    newTabFab,
+                ),
+            )
+            skipCollapsed = true
+        }
+
         trayBehaviorManager = TabSheetBehaviorManager(
-            behavior = BottomSheetBehavior.from(rootView),
+            behavior = behavior,
             orientation = resources.configuration.orientation,
             maxNumberOfTabs = max(
                 requireContext().components.core.store.state.normalTabs.size,
@@ -324,7 +347,6 @@ class TabsTrayFragment : AppCompatDialogFragment() {
             } else {
                 EXPAND_AT_LIST_SIZE
             },
-            navigationInteractor = navigationInteractor,
             displayMetrics = requireContext().resources.displayMetrics,
         )
 
