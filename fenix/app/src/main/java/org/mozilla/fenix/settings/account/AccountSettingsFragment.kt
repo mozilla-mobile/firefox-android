@@ -357,6 +357,7 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
                     ?.deviceConstellation()
                     ?.setDeviceName(newDeviceName, it)
             }
+            accountSettingsStore.dispatch(AccountSettingsFragmentAction.UpdateDeviceName(newDeviceName))
         }
         return true
     }
