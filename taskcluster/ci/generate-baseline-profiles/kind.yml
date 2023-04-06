@@ -1,0 +1,54 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+---
+loader: taskgraph.loader.transform:loader
+
+transforms:
+    - android_taskgraph.transforms.gradle_optimization:transforms
+    - taskgraph.transforms.job:transforms
+    - taskgraph.transforms.task:transforms
+
+kind-dependencies:
+    - toolchain
+    - external-gradle-dependencies
+
+task-defaults:
+    attributes:
+        retrigger: true
+    fetches:
+        toolchain:
+            - android-sdk-linux
+        external-gradle-dependencies:
+            - external-gradle-dependencies.tar.xz
+    optimization:
+        skip-unless-changed: [] # Paths are dynamically added by transforms
+    run-on-tasks-for: []
+    run:
+        using: gradlew
+        use-caches: false
+    treeherder:
+        kind: test
+        tier: 1
+    worker-type: b-android-large
+    worker:
+        docker-image: {in-tree: base}
+        max-run-time: 7200
+
+tasks:
+    fenix:
+        description: 'Generate baseline profile for fenix.'
+        dependencies:
+            external-gradle-dependencies: external-gradle-dependencies-fenix
+        attributes:
+            build-type: nightly
+            shipping-product: fenix
+        run:
+            pre-gradlew:
+                - ["cd", "fenix"]
+                - ['java', '-version']
+            gradlew: ['setupEmulator', 'generateBaselineProfile', 'copyBaselineProfile']
+        run-on-tasks-for: []
+        treeherder:
+            symbol: fenix-baseline-profile
+            platform: fenix-android-all/opt

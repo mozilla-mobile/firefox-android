@@ -2,6 +2,11 @@
 
 import org.mozilla.fenix.gradle.tasks.GithubDetailsTask
 
+import java.nio.file.CopyOption
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.nio.file.StandardCopyOption
+
 buildscript {
     // This logic is duplicated in the allprojects block: I don't know how to fix that.
     repositories {
@@ -264,4 +269,76 @@ tasks.register("githubLintDetektDetails", GithubDetailsTask) {
 
 tasks.register("githubLintAndroidDetails", GithubDetailsTask) {
     text = "### [Android Lint Results Fenix]({reportsUrl}/lint-results-debug.html)"
+}
+
+// Task to copy generated baseline profile to the app module
+// to be used in the nightly release pipeline only.
+tasks.register("copyBaselineProfile", DefaultTask) {
+    doLast {
+        File profileFile = fileTree('benchmark/build/outputs') {
+            include '**/*baseline-prof.txt'
+        }.getSingleFile()
+        def destinationPath = Paths.get("app", "src", "main", "baseline-prof.txt")
+        Files.copy(profileFile.toPath(), destinationPath, StandardCopyOption.REPLACE_EXISTING)
+    }
+}
+
+def gmd = "dev31_default_x86_64_Pixel_3"
+def emulator = "pixel5_api31"
+def system_image = "system-images';'android-31';'google_apis';'x86_64"
+
+// Task to generate baseline profile for fenix on the defined gradle managed device.
+tasks.register('generateBaselineProfileAlt', DefaultTask) {
+    doLast {
+        exec {
+            commandLine 'sh', '-c', "./gradlew :benchmark:pixel3Api31BenchmarkAndroidTest -Pandroid.testoptions.manageddevices.emulator.gpu=swiftshader_indirect -P android.testInstrumentationRunnerArguments.class=org.mozilla.fenix.benchmark.baselineprofile.StartupOnlyBaselineProfileGenerator -P baselineProfileGeneration"
+        }
+    }
+}
+
+// Task to generate baseline profile for fenix on the defined gradle managed device.
+tasks.register('generateBaselineProfile', DefaultTask) {
+    doLast {
+        def sdkRoot = System.getenv('ANDROID_SDK_ROOT')
+        exec {
+            commandLine 'sh', '-c', """
+                ${sdkRoot}/emulator/emulator -avd ${emulator} -no-accel -no-snapstorage -no-snapshot -no-window -no-audio & 
+                (adb wait-for-device && ./gradlew :benchmark:connectedBenchmarkAndroidTest -P android.testInstrumentationRunnerArguments.class=org.mozilla.fenix.benchmark.baselineprofile.StartupOnlyBaselineProfileGenerator -P baselineProfileGeneration && adb emu kill)
+            """
+        }
+    }
+}
+
+// Task to setup the emulator
+tasks.register("setupEmulator", DefaultTask) {
+    doLast {
+        def sdkRoot = System.getenv('ANDROID_SDK_ROOT')
+        exec {
+            commandLine 'sh', '-c', """
+                $sdkRoot/cmdline-tools/latest/bin/sdkmanager --install ${system_image} &&
+                $sdkRoot/cmdline-tools/latest/bin/sdkmanager "platforms;android-31" "platform-tools" &&
+                $sdkRoot/cmdline-tools/latest/bin/avdmanager create avd --force --name ${emulator} --package ${system_image} --device "pixel_5" -c 2000M
+            """
+        }
+    }
+}
+
+// Task to setup the gradle managed device and copy the emulator to the parent directory so
+// it can be ran using command line emulator tool.
+tasks.register("setupGradleManagedDevice", DefaultTask) {
+    doLast {
+        def home = System.getProperty('user.home')
+        def sourceDirectory = "${home}/.android/avd/gradle-managed"
+        def targetDirectory = "${home}/.android/avd"
+        def iniFilePath = "${targetDirectory}/${gmd}.ini"
+
+        exec {
+            commandLine 'sh', '-c', """
+                ./gradlew :benchmark:pixel3Api31Setup &&
+                cp -R ${sourceDirectory}/${gmd}.avd ${targetDirectory} &&
+                cp ${sourceDirectory}/${gmd}.ini ${targetDirectory} &&
+                sed -i '' "s|/gradle-managed||g" ${iniFilePath}
+            """
+        }
+    }
 }

@@ -160,6 +160,7 @@ android {
         benchmark releaseTemplate >> {
             initWith buildTypes.nightly
             applicationIdSuffix ".fenix"
+            signingConfig signingConfigs.debug
             debuggable false
         }
     }
@@ -208,7 +209,11 @@ android {
 
             reset()
 
-            include "x86", "armeabi-v7a", "arm64-v8a", "x86_64"
+            if (project.hasProperty("baselineProfileGeneration")) {
+                include "x86_64"
+            } else {
+                include "x86", "armeabi-v7a", "arm64-v8a", "x86_64"
+            }
         }
     }
 

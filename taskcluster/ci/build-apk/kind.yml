@@ -13,6 +13,7 @@ transforms:
 kind-dependencies:
     - toolchain
     - external-gradle-dependencies
+    - generate-baseline-profiles
 
 task-defaults:
     apk-artifact-template:
@@ -197,6 +198,7 @@ tasks:
             shipping-product: fenix
         dependencies:
             external-gradle-dependencies: external-gradle-dependencies-fenix
+            generate-baseline-profiles: generate-baseline-profiles-fenix
         run-on-tasks-for: []
         include-shippable-secrets: true
         include-nightly-version: true
