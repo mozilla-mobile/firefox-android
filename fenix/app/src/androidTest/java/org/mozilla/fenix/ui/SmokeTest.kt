@@ -17,7 +17,6 @@ import mozilla.components.concept.engine.mediasession.MediaSession
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.IntentReceiverActivity
@@ -25,12 +24,11 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
-import org.mozilla.fenix.helpers.Constants.PackageName.YOUTUBE_APP
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.RecyclerViewIdlingResource
 import org.mozilla.fenix.helpers.RetryTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
-import org.mozilla.fenix.helpers.TestHelper.assertNativeAppOpens
+import org.mozilla.fenix.helpers.TestHelper.assertYoutubeAppOpens
 import org.mozilla.fenix.helpers.TestHelper.createCustomTabIntent
 import org.mozilla.fenix.helpers.TestHelper.registerAndCleanupIdlingResources
 import org.mozilla.fenix.helpers.ViewVisibilityIdlingResource
@@ -38,7 +36,6 @@ import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.customTabScreen
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
-import org.mozilla.fenix.ui.robots.notificationShade
 
 /**
  * Test Suite that contains a part of the Smoke and Sanity tests defined in TestRail:
@@ -245,7 +242,6 @@ class SmokeTest {
 
     // Device or AVD requires a Google Services Android OS installation with Play Store installed
     // Verifies the Open in app button when an app is installed
-    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1824928")
     @Test
     fun mainMenuOpenInAppTest() {
         val youtubeURL = "https://m.youtube.com/user/mozilla?cbrd=1"
@@ -255,7 +251,7 @@ class SmokeTest {
             verifyNotificationDotOnMainMenu()
         }.openThreeDotMenu {
         }.clickOpenInApp {
-            assertNativeAppOpens(YOUTUBE_APP, youtubeURL)
+            assertYoutubeAppOpens()
         }
     }
 
@@ -608,39 +604,6 @@ class SmokeTest {
         }.clickOpenInBrowserButton {
             verifyTabCounter("1")
         }
-    }
-
-    @Test
-    fun audioPlaybackSystemNotificationTest() {
-        val audioTestPage = TestAssetHelper.getAudioPageAsset(mockWebServer)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(audioTestPage.url) {
-            mDevice.waitForIdle()
-            clickMediaPlayerPlayButton()
-            assertPlaybackState(browserStore, MediaSession.PlaybackState.PLAYING)
-        }.openNotificationShade {
-            verifySystemNotificationExists(audioTestPage.title)
-            clickMediaNotificationControlButton("Pause")
-            verifyMediaSystemNotificationButtonState("Play")
-        }
-
-        mDevice.pressBack()
-
-        browserScreen {
-            assertPlaybackState(browserStore, MediaSession.PlaybackState.PAUSED)
-        }.openTabDrawer {
-            closeTab()
-        }
-
-        mDevice.openNotification()
-
-        notificationShade {
-            verifySystemNotificationGone(audioTestPage.title)
-        }
-
-        // close notification shade before the next test
-        mDevice.pressBack()
     }
 
     @Test

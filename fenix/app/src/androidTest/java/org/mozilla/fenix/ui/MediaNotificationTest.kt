@@ -13,6 +13,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityTestRule
@@ -61,6 +62,7 @@ class MediaNotificationTest {
         mockWebServer.shutdown()
     }
 
+    @SmokeTest
     @Test
     fun videoPlaybackSystemNotificationTest() {
         val videoTestPage = TestAssetHelper.getVideoPageAsset(mockWebServer)
@@ -88,6 +90,40 @@ class MediaNotificationTest {
 
         notificationShade {
             verifySystemNotificationGone(videoTestPage.title)
+        }
+
+        // close notification shade before the next test
+        mDevice.pressBack()
+    }
+
+    @SmokeTest
+    @Test
+    fun audioPlaybackSystemNotificationTest() {
+        val audioTestPage = TestAssetHelper.getAudioPageAsset(mockWebServer)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(audioTestPage.url) {
+            mDevice.waitForIdle()
+            clickMediaPlayerPlayButton()
+            assertPlaybackState(browserStore, MediaSession.PlaybackState.PLAYING)
+        }.openNotificationShade {
+            verifySystemNotificationExists(audioTestPage.title)
+            clickMediaNotificationControlButton("Pause")
+            verifyMediaSystemNotificationButtonState("Play")
+        }
+
+        mDevice.pressBack()
+
+        browserScreen {
+            assertPlaybackState(browserStore, MediaSession.PlaybackState.PAUSED)
+        }.openTabDrawer {
+            closeTab()
+        }
+
+        mDevice.openNotification()
+
+        notificationShade {
+            verifySystemNotificationGone(audioTestPage.title)
         }
 
         // close notification shade before the next test
