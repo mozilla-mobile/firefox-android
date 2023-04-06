@@ -224,6 +224,9 @@ class TabsTrayFragment : AppCompatDialogFragment() {
                         displayTabsInGrid = requireContext().settings().gridTabView,
                         shouldShowInactiveTabsAutoCloseDialog =
                         requireContext().settings()::shouldShowInactiveTabsAutoCloseDialog,
+                        onTabPageClick = { page ->
+                            tabsTrayInteractor.onTrayPositionSelected(page.ordinal, false)
+                        },
                         onTabClose = { tab ->
                             tabsTrayInteractor.onTabClosed(tab, TABS_TRAY_FEATURE_NAME)
                         },
@@ -313,6 +316,11 @@ class TabsTrayFragment : AppCompatDialogFragment() {
             displayMetrics = requireContext().resources.displayMetrics,
         )
 
+        setupBackgroundDismissalListener {
+            TabsTray.closed.record(NoExtras())
+            dismissAllowingStateLoss()
+        }
+
         if (!requireContext().settings().enableTabsTrayToCompose) {
             val activity = activity as HomeActivity
 
@@ -328,11 +336,6 @@ class TabsTrayFragment : AppCompatDialogFragment() {
                 store = tabsTrayStore,
                 trayInteractor = tabsTrayInteractor,
             )
-
-            setupBackgroundDismissalListener {
-                TabsTray.closed.record(NoExtras())
-                dismissAllowingStateLoss()
-            }
 
             tabsTrayCtaBinding.set(
                 feature = TabsTrayInfoBannerBinding(
@@ -599,7 +602,9 @@ class TabsTrayFragment : AppCompatDialogFragment() {
     @VisibleForTesting
     internal fun setupBackgroundDismissalListener(block: (View) -> Unit) {
         tabsTrayDialogBinding.tabLayout.setOnClickListener(block)
-        tabsTrayBinding.handle.setOnClickListener(block)
+        if (!requireContext().settings().enableTabsTrayToCompose) {
+            tabsTrayBinding.handle.setOnClickListener(block)
+        }
     }
 
     @VisibleForTesting
@@ -619,8 +624,10 @@ class TabsTrayFragment : AppCompatDialogFragment() {
 
     @VisibleForTesting
     internal fun selectTabPosition(position: Int, smoothScroll: Boolean) {
-        tabsTrayBinding.tabsTray.setCurrentItem(position, smoothScroll)
-        tabsTrayBinding.tabLayout.getTabAt(position)?.select()
+        if (!requireContext().settings().enableTabsTrayToCompose) {
+            tabsTrayBinding.tabsTray.setCurrentItem(position, smoothScroll)
+            tabsTrayBinding.tabLayout.getTabAt(position)?.select()
+        }
     }
 
     @VisibleForTesting
