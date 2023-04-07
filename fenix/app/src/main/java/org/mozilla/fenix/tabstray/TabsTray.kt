@@ -9,23 +9,24 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
-import kotlinx.coroutines.launch
 import mozilla.components.browser.state.state.ContentState
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.lib.state.ext.observeAsComposableState
@@ -66,6 +67,7 @@ fun TabsTray(
     tabsTrayStore: TabsTrayStore,
     displayTabsInGrid: Boolean,
     shouldShowInactiveTabsAutoCloseDialog: (Int) -> Boolean,
+    onTabPageClick: (Page) -> Unit,
     onTabClose: (TabSessionState) -> Unit,
     onTabMediaClick: (TabSessionState) -> Unit,
     onTabClick: (TabSessionState) -> Unit,
@@ -81,6 +83,8 @@ fun TabsTray(
 ) {
     val multiselectMode = tabsTrayStore
         .observeAsComposableState { state -> state.mode }.value ?: TabsTrayState.Mode.Normal
+    val selectedPage = tabsTrayStore
+        .observeAsComposableState { state -> state.selectedPage }.value ?: Page.NormalTabs
     val normalTabs = tabsTrayStore
         .observeAsComposableState { state -> state.normalTabs }.value ?: emptyList()
     val privateTabs = tabsTrayStore
@@ -89,15 +93,9 @@ fun TabsTray(
         .observeAsComposableState { state -> state.inactiveTabsExpanded }.value ?: false
     val inactiveTabs = tabsTrayStore
         .observeAsComposableState { state -> state.inactiveTabs }.value ?: emptyList()
-    val pagerState = rememberPagerState(initialPage = 0)
-    val scope = rememberCoroutineScope()
+    val pagerState = rememberPagerState(initialPage = selectedPage.ordinal)
     val isInMultiSelectMode = multiselectMode is TabsTrayState.Mode.Select
 
-    val animateScrollToPage: ((Page) -> Unit) = { page ->
-        scope.launch {
-            pagerState.animateScrollToPage(page.ordinal)
-        }
-    }
     val handleTabClick: ((TabSessionState) -> Unit) = { tab ->
         if (isInMultiSelectMode) {
             onTabMultiSelectClick(tab)
@@ -106,15 +104,22 @@ fun TabsTray(
         }
     }
 
+    LaunchedEffect(selectedPage) {
+        pagerState.animateScrollToPage(selectedPage.ordinal)
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
             .background(FirefoxTheme.colors.layer1),
     ) {
         Box(modifier = Modifier.nestedScroll(rememberNestedScrollInteropConnection())) {
             TabsTrayBanner(
                 isInMultiSelectMode = isInMultiSelectMode,
-                onTabPageIndicatorClicked = animateScrollToPage,
+                selectedPage = selectedPage,
+                normalTabCount = normalTabs.size + inactiveTabs.size,
+                onTabPageIndicatorClicked = onTabPageClick,
             )
         }
 
@@ -227,9 +232,27 @@ private fun TabsTrayInactiveTabsPreview() {
     )
 }
 
+@LightDarkPreview
+@Composable
+private fun TabsTrayPrivateTabsPreview() {
+    TabsTrayPreviewRoot(
+        selectedPage = Page.PrivateTabs,
+        privateTabs = generateFakeTabsList(),
+    )
+}
+
+@LightDarkPreview
+@Composable
+private fun TabsTraySyncedTabsPreview() {
+    TabsTrayPreviewRoot(
+        selectedPage = Page.SyncedTabs,
+    )
+}
+
 @Composable
 private fun TabsTrayPreviewRoot(
     displayTabsInGrid: Boolean = true,
+    selectedPage: Page = Page.NormalTabs,
     mode: TabsTrayState.Mode = TabsTrayState.Mode.Normal,
     normalTabs: List<TabSessionState> = emptyList(),
     inactiveTabs: List<TabSessionState> = emptyList(),
@@ -237,6 +260,7 @@ private fun TabsTrayPreviewRoot(
     inactiveTabsExpanded: Boolean = false,
     showInactiveTabsAutoCloseDialog: Boolean = false,
 ) {
+    var selectedPageState by remember { mutableStateOf(selectedPage) }
     val normalTabsState = remember { normalTabs.toMutableStateList() }
     val inactiveTabsState = remember { inactiveTabs.toMutableStateList() }
     val privateTabsState = remember { privateTabs.toMutableStateList() }
@@ -250,6 +274,7 @@ private fun TabsTrayPreviewRoot(
     )
     val tabsTrayStore = TabsTrayStore(
         initialState = TabsTrayState(
+            selectedPage = selectedPageState,
             mode = mode,
             inactiveTabs = inactiveTabsState,
             normalTabs = normalTabsState,
@@ -263,6 +288,9 @@ private fun TabsTrayPreviewRoot(
             tabsTrayStore = tabsTrayStore,
             displayTabsInGrid = displayTabsInGrid,
             shouldShowInactiveTabsAutoCloseDialog = { true },
+            onTabPageClick = { page ->
+                selectedPageState = page
+            },
             onTabClose = { tab ->
                 if (tab.isNormalTab()) {
                     normalTabsState.remove(tab)

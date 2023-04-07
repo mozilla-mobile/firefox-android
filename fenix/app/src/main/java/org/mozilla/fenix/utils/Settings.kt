@@ -670,7 +670,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     /**
      * Indicates if the re-engagement notification feature is enabled
      */
-    public val reEngagementNotificationType: Int
+    val reEngagementNotificationType: Int
         get() =
             FxNimbus.features.reEngagementNotification.value().type
 
@@ -1592,11 +1592,8 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     /**
      * Indicates if juno onboarding feature is enabled.
      */
-    var junoOnboardingEnabled by lazyFeatureFlagPreference(
-        key = appContext.getPreferenceKey(R.string.pref_key_juno_onboarding_enabled),
-        default = { FxNimbus.features.junoOnboarding.value().enabled },
-        featureFlag = FeatureFlags.junoOnboardingEnabled,
-    )
+    val junoOnboardingEnabled: Boolean
+        get() = FxNimbus.features.junoOnboarding.value().enabled
 
     /**
      * Indicates if the juno onboarding has been shown to the user.
@@ -1605,6 +1602,20 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         key = appContext.getPreferenceKey(R.string.pref_key_is_juno_onboarding_shown),
         default = false,
     )
+
+    /**
+     * Returns whether juno onboarding should be shown to the user.
+     * @param isLauncherIntent Boolean to indicate whether the app was launched on tapping on the
+     * app icon.
+     */
+    fun shouldShowJunoOnboarding(isLauncherIntent: Boolean): Boolean {
+        return if (!isJunoOnboardingShown && isLauncherIntent) {
+            FxNimbus.features.junoOnboarding.recordExposure()
+            junoOnboardingEnabled
+        } else {
+            false
+        }
+    }
 
     /**
      * Get the current mode for how https-only is enabled.
