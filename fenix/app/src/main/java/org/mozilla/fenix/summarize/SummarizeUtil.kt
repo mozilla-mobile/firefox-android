@@ -7,7 +7,7 @@ import com.aallam.openai.client.OpenAI
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.mapNotNull
 
-private const val OPENAI_API_KEY = "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"
+private const val OPENAI_API_KEY = "API_KEY_HERE"
 private const val OPENAI_API_MODEL = "gpt-3.5-turbo"
 
 class SummarizeUtil {
