@@ -262,6 +262,9 @@
             android:id="@+id/action_browserFragment_to_createShortcutFragment"
             app:destination="@id/createShortcutFragment" />
         <action
+            android:id="@+id/action_browserFragment_to_summarizeFragment"
+            app:destination="@id/summarizeFragment" />
+        <action
             android:id="@+id/action_browserFragment_to_pwaOnboardingDialogFragment"
             app:destination="@id/pwaOnboardingDialogFragment" />
         <action
@@ -934,6 +937,11 @@
         android:id="@+id/createShortcutFragment"
         android:name="org.mozilla.fenix.shortcut.CreateShortcutFragment"
         tools:layout="@layout/fragment_create_shortcut" />
+
+    <dialog
+        android:id="@+id/summarizeFragment"
+        android:name="org.mozilla.fenix.summarize.SummarizeFragment"
+        tools:layout="@layout/fragment_summarize" />
     <dialog
         android:id="@+id/pwaOnboardingDialogFragment"
         android:name="org.mozilla.fenix.shortcut.PwaOnboardingDialogFragment"

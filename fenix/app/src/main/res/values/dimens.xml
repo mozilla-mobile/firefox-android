@@ -190,4 +190,8 @@
     <dimen name="accessibility_min_height">48dp</dimen>
 
     <dimen name="tap_increase_16">16dp</dimen>
+
+    <!-- Summarize -->
+    <dimen name="summarize_header_text_size">24sp</dimen>
+    <dimen name="summarize_scroll_view_min_height">300dp</dimen>
 </resources>

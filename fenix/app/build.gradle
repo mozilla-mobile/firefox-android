@@ -481,6 +481,8 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
 
 dependencies {
     implementation project(':browser-engine-gecko')
+    implementation "com.aallam.openai:openai-client:3.2.0"
+    implementation("io.ktor:ktor-client-android:2.2.4")
 
     implementation FenixDependencies.kotlin_coroutines
     implementation FenixDependencies.kotlin_coroutines_android

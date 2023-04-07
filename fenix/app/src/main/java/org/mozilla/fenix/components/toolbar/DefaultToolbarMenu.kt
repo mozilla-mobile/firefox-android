@@ -342,6 +342,14 @@ open class DefaultToolbarMenu(
         handleBookmarkItemTapped()
     }
 
+    val summarizeItem = BrowserMenuImageText(
+        context.getString(R.string.library_summarize),
+        R.drawable.ic_readermode,
+        primaryTextColor(),
+    ) {
+        onItemTapped.invoke(ToolbarMenu.Item.Summarize)
+    }
+
     private val deleteDataOnQuit = BrowserMenuImageText(
         label = context.getString(R.string.delete_browsing_data_on_quit_action),
         imageResource = R.drawable.mozac_ic_quit,
@@ -376,6 +384,7 @@ open class DefaultToolbarMenu(
                 customizeReaderView.apply { visible = ::shouldShowReaderViewCustomization },
                 openInApp.apply { visible = ::shouldShowOpenInApp },
                 reportSiteIssuePlaceholder,
+                summarizeItem,
                 BrowserMenuDivider(),
                 addToHomeScreenItem.apply { visible = ::canAddToHomescreen },
                 installToHomescreen.apply { visible = ::canInstall },

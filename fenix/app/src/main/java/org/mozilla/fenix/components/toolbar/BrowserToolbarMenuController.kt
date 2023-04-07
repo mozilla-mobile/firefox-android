@@ -347,6 +347,18 @@ class DefaultBrowserToolbarMenuController(
                 )
             }
 
+            is ToolbarMenu.Item.Summarize -> browserAnimator.captureEngineViewAndDrawStatically {
+                settings.installPwaOpened = true
+                MainScope().launch {
+                    with(activity.components.useCases.webAppUseCases) {
+                            val directions =
+                                BrowserFragmentDirections.actionBrowserFragmentToSummarizeFragment()
+                            navController.navigateSafe(R.id.browserFragment, directions)
+
+                    }
+                }
+            }
+
             is ToolbarMenu.Item.Downloads -> browserAnimator.captureEngineViewAndDrawStatically {
                 navController.nav(
                     R.id.browserFragment,
@@ -459,6 +471,8 @@ class DefaultBrowserToolbarMenuController(
                 Events.browserMenuAction.record(Events.BrowserMenuActionExtra("set_default_browser"))
             is ToolbarMenu.Item.RemoveFromTopSites ->
                 Events.browserMenuAction.record(Events.BrowserMenuActionExtra("remove_from_top_sites"))
+            is ToolbarMenu.Item.Summarize ->
+                Events.browserMenuAction.record(Events.BrowserMenuActionExtra("summarize"))
         }
     }
 
