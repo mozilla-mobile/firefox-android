@@ -193,5 +193,8 @@
 
     <!-- Summarize -->
     <dimen name="summarize_header_text_size">24sp</dimen>
+    <dimen name="summarize_summary_text_size">16sp</dimen>
     <dimen name="summarize_scroll_view_min_height">300dp</dimen>
+    <dimen name="summarize_text_padding">8dp</dimen>
+    <dimen name="summarize_done_button_margin">16dp</dimen>
 </resources>

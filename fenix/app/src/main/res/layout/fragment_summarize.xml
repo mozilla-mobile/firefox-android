@@ -24,9 +24,11 @@
 
         <TextView
             android:id="@+id/dialog_title"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
+            android:paddingStart="@dimen/summarize_text_padding"
+            android:paddingEnd="@dimen/summarize_text_padding"
             android:text="@string/library_summarize"
             android:textAppearance="@style/HeaderTextStyle"
             android:textSize="@dimen/summarize_header_text_size"
@@ -55,9 +57,9 @@
                 android:id="@+id/summary_text_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
+                android:padding="@dimen/summarize_text_padding"
                 android:textAlignment="center"
-                android:textSize="16sp" />
+                android:textSize="@dimen/summarize_summary_text_size" />
 
         </ScrollView>
 
@@ -65,8 +67,8 @@
         <Button
             android:id="@+id/done_button"
             style="@style/CreateShortcutDialogButton"
-            android:layout_marginEnd="16dp"
-            android:layout_marginTop="26dp"
+            android:layout_marginEnd="@dimen/summarize_done_button_margin"
+            android:layout_marginTop="@dimen/summarize_done_button_margin"
             android:background="?selectableItemBackground"
             android:text="@string/summarize_done_button"
             app:layout_constraintBottom_toBottomOf="parent"
