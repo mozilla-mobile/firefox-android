@@ -425,7 +425,7 @@
     <string name="reduce_cookie_banner_details_panel_description_off_for_site">%1$s кукиҳои ин сомонаро тоза мекунад ва саҳифаро аз нав бор мекунад. Амали тозакунии ҳамаи кукиҳо метавонад шуморо аз сомона хориҷ кунад ва сабадҳои харидории шуморо холӣ намояд.</string>
 
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter are the application name -->
-    <string name="reduce_cookie_banner_details_panel_description_on_for_site_1" moz:RemovedIn="111" tools:ignore="UnusedResources">«%1$s» метавонад кӯшиш кунад, ки дархостҳои кукиҳоро батаври худкор рад кунад.</string>
+    <string name="reduce_cookie_banner_details_panel_description_on_for_site_1" moz:RemovedIn="111" tools:ignore="UnusedResources">«%1$s» метавонад кӯшиш кунад, ки дархостҳои кукиҳоро ба таври худкор рад кунад.</string>
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
     <string name="reduce_cookie_banner_details_panel_description_on_for_site_2">«%1$s» кӯшиш мекунад, ки ҳамаи дархостҳои кукиҳоро дар сомонаҳои дастгиришаванда ба таври худкор рад кунад.</string>
     <!-- Title text for the dialog use on the control branch of the experiment to determine which context users engaged the most -->
@@ -1333,7 +1333,7 @@
     <!-- Text displayed in a notification when the user enters full screen mode -->
     <string name="full_screen_notification">Ба реҷаи экрани пурра ворид шуда истодааст</string>
     <!-- Message for copying the URL via long press on the toolbar -->
-    <string name="url_copied">URL нусха бардошта шуд</string>
+    <string name="url_copied">Нишонии URL нусха бардошта шуд</string>
     <!-- Sample text for accessibility font size -->
     <string name="accessibility_text_size_sample_text_1">Ин матни намунавӣ мебошад. Дар ин ҷо матни намунавӣ нишон медиҳад, ки чӣ тавр он ҳангоми калон ва хурд кардани андозаи ҳуруф бо танзими ҷорӣ нишон дода мешавад.</string>
     <!-- Summary for Accessibility Text Size Scaling Preference -->
@@ -1647,7 +1647,7 @@
     <!-- Paste the text in the clipboard -->
     <string name="browser_toolbar_long_press_popup_paste">Гузоштан</string>
     <!-- Snackbar message shown after an URL has been copied to clipboard. -->
-    <string name="browser_toolbar_url_copied_to_clipboard_snackbar">URL ба ҳофизаи муваққатӣ нусха бардошта шуд</string>
+    <string name="browser_toolbar_url_copied_to_clipboard_snackbar">Нишонии URL ба ҳофизаи муваққатӣ нусха бардошта шуд</string>
 
     <!-- Title text for the Add To Homescreen dialog -->
     <string name="add_to_homescreen_title">Илова кардан ба экрани асосӣ</string>
