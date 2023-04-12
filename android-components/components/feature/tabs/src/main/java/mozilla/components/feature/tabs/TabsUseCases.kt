@@ -189,6 +189,7 @@ class TabsUseCases(
                         tab.id,
                         url,
                         flags,
+                        loadInBackground = !selectTab,
                     ),
                 )
             }

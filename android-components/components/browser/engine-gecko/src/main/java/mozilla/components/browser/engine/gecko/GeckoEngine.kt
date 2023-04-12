@@ -172,10 +172,16 @@ class GeckoEngine(
     /**
      * See [Engine.createSession].
      */
-    override fun createSession(private: Boolean, contextId: String?): EngineSession {
+    override fun createSession(private: Boolean, contextId: String?, isBackground: Boolean): EngineSession {
         ThreadUtils.assertOnUiThread()
         val speculativeSession = speculativeConnectionFactory.get(private, contextId)
-        return speculativeSession ?: GeckoEngineSession(runtime, private, defaultSettings, contextId)
+        return speculativeSession ?: GeckoEngineSession(
+            runtime,
+            private,
+            defaultSettings,
+            contextId,
+            isBackground = isBackground,
+        )
     }
 
     /**

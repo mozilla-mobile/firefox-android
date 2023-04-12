@@ -158,7 +158,11 @@ class EngineDelegateMiddlewareTest {
         dispatcher.scheduler.advanceUntilIdle()
         store.waitUntilIdle()
 
-        verify(engine, never()).createSession(ArgumentMatchers.anyBoolean(), ArgumentMatchers.anyString())
+        verify(engine, never()).createSession(
+            ArgumentMatchers.anyBoolean(),
+            ArgumentMatchers.anyString(),
+            ArgumentMatchers.anyBoolean(),
+        )
         verify(engineSession, times(1)).loadUrl("https://www.firefox.com")
         assertEquals(engineSession, store.state.tabs[0].engineState.engineSession)
     }
@@ -192,7 +196,11 @@ class EngineDelegateMiddlewareTest {
         dispatcher.scheduler.advanceUntilIdle()
         store.waitUntilIdle()
 
-        verify(engine, never()).createSession(ArgumentMatchers.anyBoolean(), ArgumentMatchers.anyString())
+        verify(engine, never()).createSession(
+            ArgumentMatchers.anyBoolean(),
+            ArgumentMatchers.anyString(),
+            ArgumentMatchers.anyBoolean(),
+        )
         verify(engineSession, times(1)).loadUrl("https://www.firefox.com")
         assertEquals(engineSession, store.state.tabs[0].engineState.engineSession)
     }
@@ -209,7 +217,11 @@ class EngineDelegateMiddlewareTest {
             ),
             initialState = BrowserState(
                 tabs = listOf(
-                    createTab("https://www.mozilla.org", id = "test-tab", contextId = "test-container").copy(
+                    createTab(
+                        "https://www.mozilla.org",
+                        id = "test-tab",
+                        contextId = "test-container",
+                    ).copy(
                         engineState = EngineState(engineSession),
                     ),
                 ),
@@ -226,7 +238,11 @@ class EngineDelegateMiddlewareTest {
         dispatcher.scheduler.advanceUntilIdle()
         store.waitUntilIdle()
 
-        verify(engine, never()).createSession(ArgumentMatchers.anyBoolean(), ArgumentMatchers.anyString())
+        verify(engine, never()).createSession(
+            ArgumentMatchers.anyBoolean(),
+            ArgumentMatchers.anyString(),
+            ArgumentMatchers.anyBoolean(),
+        )
         verify(engineSession, times(1)).loadUrl("https://www.firefox.com")
         assertEquals(engineSession, store.state.tabs[0].engineState.engineSession)
     }
@@ -408,7 +424,11 @@ class EngineDelegateMiddlewareTest {
         dispatcher.scheduler.advanceUntilIdle()
         store.waitUntilIdle()
 
-        verify(engine, never()).createSession(ArgumentMatchers.anyBoolean(), ArgumentMatchers.anyString())
+        verify(engine, never()).createSession(
+            ArgumentMatchers.anyBoolean(),
+            ArgumentMatchers.anyString(),
+            ArgumentMatchers.anyBoolean(),
+        )
         assertNull(store.state.tabs[0].engineState.engineSession)
     }
 

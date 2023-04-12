@@ -43,7 +43,7 @@ class CreateEngineSessionMiddlewareTest {
     fun `creates engine session if needed`() = runTestOnMain {
         val engine: Engine = mock()
         val engineSession: EngineSession = mock()
-        whenever(engine.createSession(anyBoolean(), any())).thenReturn(engineSession)
+        whenever(engine.createSession(anyBoolean(), any(), anyBoolean())).thenReturn(engineSession)
 
         val middleware = CreateEngineSessionMiddleware(engine, scope)
         val tab = createTab("https://www.mozilla.org", id = "1")
@@ -70,7 +70,7 @@ class CreateEngineSessionMiddlewareTest {
     fun `restores engine session state if available`() = runTestOnMain {
         val engine: Engine = mock()
         val engineSession: EngineSession = mock()
-        whenever(engine.createSession(anyBoolean(), any())).thenReturn(engineSession)
+        whenever(engine.createSession(anyBoolean(), any(), anyBoolean())).thenReturn(engineSession)
         val engineSessionState: EngineSessionState = mock()
 
         val middleware = CreateEngineSessionMiddleware(engine, scope)
@@ -93,7 +93,7 @@ class CreateEngineSessionMiddlewareTest {
     @Test
     fun `creates no engine session if tab does not exist`() = runTestOnMain {
         val engine: Engine = mock()
-        `when`(engine.createSession(anyBoolean(), anyString())).thenReturn(mock())
+        `when`(engine.createSession(anyBoolean(), anyString(), anyBoolean())).thenReturn(mock())
 
         val middleware = CreateEngineSessionMiddleware(engine, scope)
         val store = BrowserStore(
@@ -105,14 +105,14 @@ class CreateEngineSessionMiddlewareTest {
         store.waitUntilIdle()
         dispatcher.scheduler.advanceUntilIdle()
 
-        verify(engine, never()).createSession(anyBoolean(), any())
+        verify(engine, never()).createSession(anyBoolean(), any(), anyBoolean())
         Unit
     }
 
     @Test
     fun `creates no engine session if session does not exist`() = runTestOnMain {
         val engine: Engine = mock()
-        `when`(engine.createSession(anyBoolean(), anyString())).thenReturn(mock())
+        `when`(engine.createSession(anyBoolean(), anyString(), anyBoolean())).thenReturn(mock())
 
         val middleware = CreateEngineSessionMiddleware(engine, scope)
         val tab = createTab("https://www.mozilla.org", id = "1")
@@ -129,7 +129,7 @@ class CreateEngineSessionMiddlewareTest {
         store.waitUntilIdle()
         dispatcher.scheduler.advanceUntilIdle()
 
-        verify(engine, never()).createSession(anyBoolean(), any())
+        verify(engine, never()).createSession(anyBoolean(), any(), anyBoolean())
         Unit
     }
 
@@ -137,7 +137,7 @@ class CreateEngineSessionMiddlewareTest {
     fun `dispatches follow-up action after engine session is created`() = runTestOnMain {
         val engine: Engine = mock()
         val engineSession: EngineSession = mock()
-        whenever(engine.createSession(anyBoolean(), any())).thenReturn(engineSession)
+        whenever(engine.createSession(anyBoolean(), any(), anyBoolean())).thenReturn(engineSession)
 
         val middleware = CreateEngineSessionMiddleware(engine, scope)
         val tab = createTab("https://www.mozilla.org", id = "1")
@@ -162,7 +162,7 @@ class CreateEngineSessionMiddlewareTest {
     fun `dispatches follow-up action once engine session is created by pending action`() = runTestOnMain {
         val engine: Engine = mock()
         val engineSession: EngineSession = mock()
-        whenever(engine.createSession(anyBoolean(), any())).thenReturn(engineSession)
+        whenever(engine.createSession(anyBoolean(), any(), anyBoolean())).thenReturn(engineSession)
 
         val middleware = CreateEngineSessionMiddleware(engine, scope)
         val tab = createTab("https://www.mozilla.org", id = "1")
@@ -190,7 +190,7 @@ class CreateEngineSessionMiddlewareTest {
     fun `creating engine session for custom tab`() {
         val engine: Engine = mock()
         val engineSession: EngineSession = mock()
-        whenever(engine.createSession(anyBoolean(), any())).thenReturn(engineSession)
+        whenever(engine.createSession(anyBoolean(), any(), anyBoolean())).thenReturn(engineSession)
 
         val middleware = CreateEngineSessionMiddleware(engine, scope)
         val customTab = createCustomTab("https://www.mozilla.org", id = "1")

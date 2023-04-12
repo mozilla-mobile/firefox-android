@@ -28,7 +28,7 @@ class EngineTest {
             throw NotImplementedError("Not needed for test")
         }
 
-        override fun createSession(private: Boolean, contextId: String?): EngineSession {
+        override fun createSession(private: Boolean, contextId: String?, isBackground: Boolean): EngineSession {
             throw NotImplementedError("Not needed for test")
         }
 

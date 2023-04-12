@@ -53,7 +53,7 @@ class FakeEngine : Engine {
     override fun createView(context: Context, attrs: AttributeSet?): EngineView =
         throw UnsupportedOperationException()
 
-    override fun createSession(private: Boolean, contextId: String?): EngineSession =
+    override fun createSession(private: Boolean, contextId: String?, isBackground: Boolean): EngineSession =
         throw UnsupportedOperationException()
 
     override fun createSessionState(json: JSONObject) = FakeEngineSessionState()

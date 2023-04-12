@@ -73,7 +73,7 @@ class TabIntentProcessorTest {
 
         engine = mock()
         engineSession = mock()
-        doReturn(engineSession).`when`(engine).createSession(anyBoolean(), anyString())
+        doReturn(engineSession).`when`(engine).createSession(anyBoolean(), anyString(), anyBoolean())
 
         middleware = CaptureActionsMiddleware()
 

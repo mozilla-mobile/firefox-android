@@ -47,7 +47,7 @@ class TabsUseCasesKtTest {
         filesDir = mock()
         whenever(filesDir.path).thenReturn("/test")
 
-        whenever(engine.createSession(anyBoolean(), any())).thenReturn(engineSession)
+        whenever(engine.createSession(anyBoolean(), any(), anyBoolean())).thenReturn(engineSession)
         store = BrowserStore(
             middleware = EngineMiddleware.create(
                 engine = engine,

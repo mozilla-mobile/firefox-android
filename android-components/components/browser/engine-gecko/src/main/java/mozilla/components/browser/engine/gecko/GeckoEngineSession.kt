@@ -90,6 +90,7 @@ class GeckoEngineSession(
     },
     private val context: CoroutineContext = Dispatchers.IO,
     openGeckoSession: Boolean = true,
+    isBackground: Boolean = false,
 ) : CoroutineScope, EngineSession() {
 
     // This logger is temporary and parsed by FNPRMS for performance measurements. It can be
@@ -138,7 +139,7 @@ class GeckoEngineSession(
         get() = context + job
 
     init {
-        createGeckoSession(shouldOpen = openGeckoSession)
+        createGeckoSession(shouldOpen = openGeckoSession, isBackground = isBackground)
     }
 
     /**
@@ -1269,7 +1270,7 @@ class GeckoEngineSession(
         }
     }
 
-    private fun createGeckoSession(shouldOpen: Boolean = true) {
+    private fun createGeckoSession(shouldOpen: Boolean = true, isBackground: Boolean = false) {
         this.geckoSession = geckoSessionProvider()
 
         defaultSettings?.trackingProtectionPolicy?.let { updateTrackingProtection(it) }
@@ -1298,6 +1299,7 @@ class GeckoEngineSession(
         geckoSession.historyDelegate = createHistoryDelegate()
         geckoSession.mediaSessionDelegate = GeckoMediaSessionDelegate(this)
         geckoSession.scrollDelegate = createScrollDelegate()
+        geckoSession.setActive(!isBackground)
     }
 
     companion object {

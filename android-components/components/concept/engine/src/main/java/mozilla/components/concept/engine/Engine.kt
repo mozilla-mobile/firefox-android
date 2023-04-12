@@ -110,11 +110,12 @@ interface Engine : WebExtensionRuntime, DataCleanable {
      *
      * @param private whether or not this session should use private mode.
      * @param contextId the session context ID for this session.
+     * @param isBackground whether or not this session is created in the background
      *
      * @return the newly created [EngineSession].
      */
     @MainThread
-    fun createSession(private: Boolean = false, contextId: String? = null): EngineSession
+    fun createSession(private: Boolean = false, contextId: String? = null, isBackground: Boolean = false): EngineSession
 
     /**
      * Create a new [EngineSessionState] instance from the serialized JSON representation.

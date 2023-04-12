@@ -205,6 +205,8 @@ abstract class Settings {
      * Setting the HTTPS-Only mode for upgrading connections to HTTPS.
      */
     open var httpsOnlyMode: Engine.HttpsOnlyMode by UnsupportedSetting()
+
+    open var isBackground: Boolean by UnsupportedSetting()
 }
 
 /**
@@ -247,6 +249,7 @@ data class DefaultSettings(
     override var cookieBannerHandlingModePrivateBrowsing: CookieBannerHandlingMode =
         CookieBannerHandlingMode.DISABLED,
     override var cookieBannerHandlingDetectOnlyMode: Boolean = false,
+    override var isBackground: Boolean = false,
 ) : Settings()
 
 class UnsupportedSetting<T> {
