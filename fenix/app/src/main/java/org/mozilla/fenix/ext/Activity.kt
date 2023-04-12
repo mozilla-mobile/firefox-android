@@ -94,19 +94,13 @@ fun Activity.openSetDefaultBrowserOption(
             navigateToDefaultBrowserAppsSettings()
         }
         else -> {
-<<<<<<< HEAD
             (this as HomeActivity).openToBrowserAndLoad(
-                searchTermOrURL = SupportUtils.getSumoURLForTopic(
-                    this,
-                    SupportUtils.SumoTopic.SET_AS_DEFAULT_BROWSER,
+                searchTermOrURL = SupportUtils.getGenericSumoURLForTopic(
+                    topic = SupportUtils.SumoTopic.SET_AS_DEFAULT_BROWSER,
                 ),
                 newTab = true,
                 from = from,
                 flags = flags,
-=======
-            val sumoDefaultBrowserUrl = SupportUtils.getGenericSumoURLForTopic(
-                topic = SupportUtils.SumoTopic.SET_AS_DEFAULT_BROWSER,
->>>>>>> 79d1e43dc2 (Bug 1825020 - Update the SET_AS_DEFAULT_BROWSER breadcrumb and use getGenericSumoURLForTopic for Android <= M)
             )
         }
     }
