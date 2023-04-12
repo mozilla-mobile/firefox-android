@@ -34,7 +34,7 @@ object Versions {
     const val lint = "30.4.1"
     const val detekt = "1.19.0"
 
-    const val sentry_latest = "6.15.0"
+    const val sentry_latest = "6.17.0"
 
     // zxing 3.4+ requires a minimum API of 24 or higher
     const val zxing = "3.3.3"
@@ -42,7 +42,7 @@ object Versions {
     const val disklrucache = "2.0.2"
     const val leakcanary = "2.10"
 
-    const val mozilla_appservices = "97.3.0"
+    const val mozilla_appservices = "97.4.1"
 
     // DO NOT MODIFY MANUALLY. This is auto-updated along with GeckoView.
     const val mozilla_glean = "52.4.2"
@@ -86,6 +86,7 @@ object Versions {
         const val uiautomator = "2.2.0"
         const val localbroadcastmanager = "1.0.0"
         const val swiperefreshlayout = "1.1.0"
+        const val data_store_preferences="1.0.0"
     }
 
     object Firebase {
@@ -155,6 +156,7 @@ object ComponentsDependencies {
     const val androidx_espresso_core = "androidx.test.espresso:espresso-core:${Versions.AndroidX.espresso}"
     const val androidx_localbroadcastmanager = "androidx.localbroadcastmanager:localbroadcastmanager:${Versions.AndroidX.localbroadcastmanager}"
     const val androidx_swiperefreshlayout = "androidx.swiperefreshlayout:swiperefreshlayout:${Versions.AndroidX.swiperefreshlayout}"
+    const val androidx_data_store_preferences = "androidx.datastore:datastore-preferences:${Versions.AndroidX.data_store_preferences}"
 
     const val google_material = "com.google.android.material:material:${Versions.material}"
 
