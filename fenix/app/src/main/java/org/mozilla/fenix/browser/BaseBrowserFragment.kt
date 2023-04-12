@@ -547,6 +547,9 @@ abstract class BaseBrowserFragment :
                             positiveButtonAction = positiveAction.value,
                             negativeButtonAction = negativeAction.value,
                         ).onDismiss {
+                            (activity as? HomeActivity)?.let { activity ->
+                                activity.themeManager.applyStatusBarTheme(activity)
+                            }
                             currentStartDownloadDialog = null
                         }.show(binding.startDownloadDialogContainer)
                             .also {
