@@ -4,17 +4,13 @@
     <!-- Privacy Notice title-->
     <string name="privacy_notice_title">About your rights</string>
     <!-- Privacy Notice content-->
-    <string name="privacy_notice_content">Mozilla Firefox is free and open source software, built by a community of thousands from all over the world. There are a few things you should know:
-    \n\n•Firefox is made available to you under the terms of the Mozilla Public License. This means you may use, copy and distribute Firefox to others. You are also welcome to modify the source code of Firefox as you want to meet your needs. The Mozilla Public License also gives you the right to distribute your modified versions.
-    \n•You are not granted any trademark rights or licenses to the trademarks of the Mozilla Foundation or any party, including without limitation the Firefox name or logo. Additional information on trademarks may be found here.
-    \n•Some features in Firefox, such as the Crash Reporter, give you the option to provide feedback to Mozilla. By choosing to submit feedback, you give Mozilla permission to use the feedback to improve its products, to publish the feedback on its websites, and to distribute the feedback.
-    \n•How we use your personal information and feedback submitted to Mozilla through Firefox is described in the Firefox Privacy Policy.</string>
+    <string name="privacy_notice_content">Before using this application, please carefully read our Personal Information Protection Policy. This policy helps you understand why and how we collect, store, use, and protect your personal information. You can click on Read Full Content for further information.
+    \nAccording to the "Regulations on the Scope of Necessary Personal Information for Common Types of Mobile Internet Applications," the Chinese version of Firefox browser belongs to the "browser category," with its basic function being "browsing Internet information resources." No personal information is required to use the basic functions.
+    \nBy agreeing to the Personal Information Protection Policy, you acknowledge that you understand the functions provided by the application and the necessary personal information required for the functioning, but this does not mean you agree to our collection of non-essential personal information. For non-essential personal information processing, we will seek your consent separately during your use of the service. Refusing to provide non-essential personal information will not affect your use of basic functions.
+    \nWhen you agree to the Personal Information Protection Policy, the related permissions will not be enabled by default. We will enable these permissions after obtaining your consent through a separate pop-up when you use the corresponding functions. You can also close the permissions at any time through device settings. If you disagree with enabling permissions, it will not affect the normal use of other unrelated functions.
+    \nClicking "agree" indicates that you have read and agreed to our Personal Information Protection Policy.</string>
     <!-- Privacy Notice clickable-->
-    <string name="privacy_notice_clickable1">Mozilla Public License</string>
-    <!-- Privacy Notice clickable-->
-    <string name="privacy_notice_clickable2">found here</string>
-    <!-- Privacy Notice clickable-->
-    <string name="privacy_notice_clickable3">Firefox Privacy Policy</string>
+    <string name="privacy_notice_clickable1">Read Full Content</string>
     <!-- Privacy Notice positive button-->
     <string name="privacy_notice_positive_button">Agree and Continue</string>
     <!-- Privacy Notice neutral button-->

@@ -4,17 +4,13 @@
     <!-- Privacy Notice title-->
     <string name="privacy_notice_title">关于您的权利</string>
     <!-- Privacy Notice content-->
-    <string name="privacy_notice_content">Mozilla Firefox 是一款自由开源软件，由来自世界各地成千上万的社区志愿者共同完成。以下几点您应该了解：
-    \n\n•Firefox 提供给您时依照的条款为 Mozilla 公共许可证（MPL）。这表示您可以使用、复制和向他人分发 Firefox。我们也非常欢迎您按自己的需要修改 Firefox 的源代码。Mozilla 公共许可证还授予您分发您自己修改过的软件版本的权利。
-    \n•您没有获得 Mozilla 基金会或其他任何一方的商标权利或许可，这包括但不限于 Firefox 的名称或标志。有关商标的其他信息在：这里。
-    \n•Firefox 的一些功能（例如崩溃报告器）使您可以向 Mozilla 提供反馈。提交反馈的同时，您授权 Mozilla 使用反馈信息改进产品、在其网站上发布反馈信息，以及分发反馈内容。
-    \n•关于我们如何使用您通过 Firefox 提交给 Mozilla 的个人信息和反馈，请参见 Firefox 隐私权政策。</string>
+    <string name="privacy_notice_content">在使用本应用前，请仔细阅读我们的个人信息保护政策。本政策帮助您了解我们为什么，以及如何收集、存储、使用、保护您的个人信息，您可以点击阅读完整内容，以便进一步了解。
+    \n根据《常⻅类型移动互联网应用程序必要个人信息范围规定》，火狐浏览器中国版属于“浏览器类”，基本功能服务为“浏览互联网信息资源”，无须个人信息，即可使用基本功能服务。
+    \n您同意个人信息保护政策，仅代表您已了解本应用提供的功能，以及功能运行所需的必要个人信息，并不代表您已同意我们收集非必要个人信息。对于非必要的个人信息处理，会在您使用服务的过程中单独征求您的同意。如果您拒绝我们收集非必要个人信息，并不会影响您使用基本功能服务。
+    \n您同意个人信息保护政策，个人信息相关权限并不会默认开启，我们会在您使用到相应功能时，另行弹窗再次征得您的同意后开启。权限开启后您还可以随时通过设备设置关闭权限。您不同意开启权限，不会影响其他非相关功能的正常使用。
+    \n点击同意即代表您已阅读并同意我们的个人信息保护政策。</string>
     <!-- Privacy Notice clickable-->
-    <string name="privacy_notice_clickable1">Mozilla 公共许可证（MPL）</string>
-    <!-- Privacy Notice clickable-->
-    <string name="privacy_notice_clickable2">这里</string>
-    <!-- Privacy Notice clickable-->
-    <string name="privacy_notice_clickable3">Firefox 隐私权政策</string>
+    <string name="privacy_notice_clickable1">阅读完整内容</string>
     <!-- Privacy Notice positive button-->
     <string name="privacy_notice_positive_button">同意并继续</string>
     <!-- Privacy Notice neutral button-->
