@@ -6,7 +6,8 @@ loader: android_taskgraph.loader.multi_dep:loader
 
 transforms:
     - android_taskgraph.transforms.multi_dep:transforms
-    - android_taskgraph.transforms.signing:transforms
+    - android_taskgraph.transforms.resolve_keys:transforms
+    - mozilla_taskgraph.transforms.scriptworker.signing:transforms
     - android_taskgraph.transforms.treeherder:transforms
     - android_taskgraph.transforms.clean_multi_dep:transforms
     - taskgraph.transforms.task:transforms
@@ -31,6 +32,10 @@ task-template:
                 type: signing
             default: {}
     run-on-tasks-for: []
+    signing:
+        format: autograph_gpg
+        ignore-artifacts:
+            - "(.md5|.sha1)$"
     treeherder:
         job-symbol:
             by-build-type:
@@ -39,12 +44,3 @@ task-template:
                 nightly: BNs
                 default: Bs
         kind: build
-    worker-type:
-        by-level:
-            '3': signing
-            default: dep-signing
-    worker:
-        signing-type:
-            by-level:
-                '3': release-signing
-                default: dep-signing
