@@ -2,6 +2,7 @@ package org.mozilla.fenix.ui
 
 import androidx.core.net.toUri
 import org.junit.Rule
+import org.junit.Ignore
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
@@ -15,6 +16,7 @@ class CookieBannerReductionTest {
     @get:Rule
     val activityTestRule = HomeActivityIntentTestRule.withDefaultSettingsOverrides(skipOnboarding = true)
 
+    @Ignore("Failing: Bug https://bugzilla.mozilla.org/show_bug.cgi?id=1815426")
     @SmokeTest
     @Test
     fun verifyCookieBannerReductionTest() {
@@ -62,6 +64,7 @@ class CookieBannerReductionTest {
         }
     }
 
+    @Ignore("Failing: Bug https://bugzilla.mozilla.org/show_bug.cgi?id=1814030")
     @SmokeTest
     @Test
     fun verifyCookieBannerReductionInPrivateBrowsingTest() {
