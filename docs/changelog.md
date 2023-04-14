@@ -4,11 +4,17 @@ title: Changelog
 permalink: /changelog/
 ---
 
-# 113.0.0 (In Development)
-* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v112..main)
+# 114.0.0 (In Development)
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v113..main)
 * [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
 * [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/Gecko.kt)
 * [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/.config.yml)
+
+# 113.0.0
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v112..releases_v113)
+* [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/releases_v113/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
+* [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/releases_v113/android-components/plugins/dependencies/src/main/java/Gecko.kt)
+* [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/releases_v113/android-components/.config.yml)
 
 * **compose-cfr**
   * 🚒 Bug fixed [bug #1819950](https://bugzilla.mozilla.org/show_bug.cgi?id=1819950). Ensure CFRs are automatically dismissed on screen rotation on all Android versions.
@@ -476,7 +482,7 @@ permalink: /changelog/
 
 * **browser-storage-sync**
   * ⚠️ **This is a breaking change**: When constructing a `RemoteTabsStorage` object you must now a `Context` which is used to determine the location of the sqlite database which is used to persist the remote tabs [#11799](https://github.com/mozilla-mobile/android-components/pull/11799).
-  * Fixed a low frequency crasher that might occur when the app attempts to delete all history. [#12112](https://github.com/mozilla-mobile/android-components/pull/12112)
+  * Fixed a low frequency crash that might occur when the app attempts to delete all history. [#12112](https://github.com/mozilla-mobile/android-components/pull/12112)
 
 * **feature-syncedtabs**
   * ⚠️ **This is a breaking change**: When constructing a `SyncedTabsStorage`, the `tabsStorage: RemoteTabsStorage` parameter is no longer optional so must be supplied [#11799](https://github.com/mozilla-mobile/android-components/pull/11799).
@@ -2370,7 +2376,7 @@ permalink: /changelog/
   *  ⚠️ **This is a breaking change**: Refactored component to use `browser-state` instead of `browser-session`. The `FxaWebChannelFeature`  now requires a `BrowserStore` instance instead of a `SessionManager`.
 
 * **lib-push-fcm**, **lib-push-adm**, **concept-push**
-  * Allow nullable encoding values in push messsages. If they are null, we attempt to use `aes128gcm` for encoding.
+  * Allow nullable encoding values in push messages. If they are null, we attempt to use `aes128gcm` for encoding.
 
 * **browser-toolbar**
   * It will only be animated for vertical scrolls inside the EngineView. Not for horizontal scrolls. Not for zoom gestures.
@@ -4314,7 +4320,7 @@ permalink: /changelog/
   * Added custom notification icon for `FetchDownloadManager`.
 
 * **feature-app-links**
-  * Added whitelist for schemes of URLs to open with an external app. This defaults to `mailto`, `market`, `sms` and `tel`.
+  * Added allow-list for schemes of URLs to open with an external app. This defaults to `mailto`, `market`, `sms` and `tel`.
 
 * **feature-accounts**
   * ⚠️ **This is a breaking change**: Public API for interacting with `FxaAccountManager` and sync changes
