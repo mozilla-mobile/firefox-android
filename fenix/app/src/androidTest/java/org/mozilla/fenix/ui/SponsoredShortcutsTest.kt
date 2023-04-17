@@ -68,6 +68,7 @@ class SponsoredShortcutsTest {
         }
     }
 
+    @Ignore("Failing: https://bugzilla.mozilla.org/show_bug.cgi?id=1828437")
     @Test
     fun openSponsoredShortcutTest() {
         homeScreen {
@@ -77,6 +78,7 @@ class SponsoredShortcutsTest {
         }
     }
 
+    @Ignore("Failing: https://bugzilla.mozilla.org/show_bug.cgi?id=1828437")
     @Test
     fun openSponsoredShortcutInPrivateBrowsingTest() {
         homeScreen {
@@ -109,6 +111,7 @@ class SponsoredShortcutsTest {
         }
     }
 
+    @Ignore("Failing: https://bugzilla.mozilla.org/show_bug.cgi?id=1828437")
     @Test
     fun verifySponsoredShortcutsDetailsTest() {
         homeScreen {
@@ -141,6 +144,7 @@ class SponsoredShortcutsTest {
     }
 
     // 1 sponsored shortcut should be displayed if there are 7 pinned top sites
+    @Ignore("Failing: https://bugzilla.mozilla.org/show_bug.cgi?id=1828437")
     @Test
     fun verifySponsoredShortcutsListWithSevenPinnedSitesTest() {
         val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -191,6 +195,7 @@ class SponsoredShortcutsTest {
     }
 
     // No sponsored shortcuts should be displayed if there are 8 pinned top sites
+    @Ignore("Failing: https://bugzilla.mozilla.org/show_bug.cgi?id=1828437")
     @Test
     fun verifySponsoredShortcutsListWithEightPinnedSitesTest() {
         val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
