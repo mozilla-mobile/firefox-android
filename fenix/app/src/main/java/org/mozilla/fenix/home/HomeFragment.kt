@@ -442,6 +442,8 @@ class HomeFragment : Fragment() {
 
         FxNimbus.features.homescreen.recordExposure()
 
+        binding.toolbarWrapper.increaseTapArea(TOOLBAR_TAP_INCREASE_DPS)
+
         // DO NOT MOVE ANYTHING BELOW THIS addMarker CALL!
         requireComponents.core.engine.profiler?.addMarker(
             MarkersFragmentLifecycleCallbacks.MARKER_NAME,
@@ -1021,6 +1023,7 @@ class HomeFragment : Fragment() {
         private const val CFR_Y_OFFSET = -20
 
         private const val CFR_TAP_INCREASE_DPS = 6
+        private const val TOOLBAR_TAP_INCREASE_DPS = 4
 
         // Sponsored top sites titles and search engine names used for filtering
         const val AMAZON_SPONSORED_TITLE = "Amazon"
