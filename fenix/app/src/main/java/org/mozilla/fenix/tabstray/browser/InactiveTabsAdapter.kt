@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
+import org.mozilla.fenix.tabstray.NavigationInteractor
 import org.mozilla.fenix.tabstray.TabsTrayState
 import org.mozilla.fenix.tabstray.TabsTrayStore
 
@@ -25,6 +26,7 @@ class InactiveTabsAdapter(
     private val lifecycleOwner: LifecycleOwner,
     private val tabsTrayStore: TabsTrayStore,
     private val interactor: InactiveTabsInteractor,
+    private val navigationInteractor: NavigationInteractor,
     override val featureName: String,
 ) : RecyclerView.Adapter<InactiveTabViewHolder>(), FeatureNameHolder {
 
@@ -36,6 +38,7 @@ class InactiveTabsAdapter(
             lifecycleOwner = lifecycleOwner,
             tabsTrayStore = tabsTrayStore,
             interactor = interactor,
+            navigationInteractor = navigationInteractor,
         )
     }
 

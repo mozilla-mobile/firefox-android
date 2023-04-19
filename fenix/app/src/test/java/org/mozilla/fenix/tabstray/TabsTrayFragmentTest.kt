@@ -225,6 +225,7 @@ class TabsTrayFragmentTest {
         val lifecycleOwner = mockk<LifecycleOwner>(relaxed = true)
         val trayInteractor: TabsTrayInteractor = mockk()
         val browserStore: BrowserStore = mockk()
+        val navigationInteractor: NavigationInteractor = mockk()
         every { context.components.core.store } returns browserStore
 
         fragment.setupPager(
@@ -232,6 +233,7 @@ class TabsTrayFragmentTest {
             lifecycleOwner = lifecycleOwner,
             store = store,
             trayInteractor = trayInteractor,
+            navigationInteractor = navigationInteractor,
         )
 
         val adapter = (tabsTrayBinding.tabsTray.adapter as TrayPagerAdapter)
