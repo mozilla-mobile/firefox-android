@@ -26,7 +26,6 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.By.text
 import androidx.test.uiautomator.UiObject
@@ -180,21 +179,55 @@ class BrowserRobot {
         )
     }
 
-    fun verifyLinkContextMenuItems(containsURL: Uri) {
-        mDevice.waitNotNull(
-            Until.findObject(By.textContains(containsURL.toString())),
-            waitingTime,
-        )
-        mDevice.waitNotNull(
-            Until.findObject(text("Open link in new tab")),
-            waitingTime,
-        )
-        mDevice.waitNotNull(
-            Until.findObject(text("Open link in private tab")),
-            waitingTime,
-        )
-        mDevice.waitNotNull(Until.findObject(text("Copy link")), waitingTime)
-        mDevice.waitNotNull(Until.findObject(text("Share link")), waitingTime)
+    fun verifyLinkContextMenuItems(containsURL: Uri, isTheLinkLocal: Boolean = true) {
+        // If the link is directing to another local asset the "Download link" option is not available
+        if (isTheLinkLocal) {
+            mDevice.waitNotNull(
+                Until.findObject(By.textContains(containsURL.toString())),
+                waitingTime,
+            )
+            mDevice.waitNotNull(
+                Until.findObject(text(getStringResource(R.string.mozac_feature_contextmenu_open_link_in_new_tab))),
+                waitingTime,
+            )
+            mDevice.waitNotNull(
+                Until.findObject(text(getStringResource(R.string.mozac_feature_contextmenu_open_link_in_private_tab))),
+                waitingTime,
+            )
+            mDevice.waitNotNull(
+                Until.findObject(text(getStringResource(R.string.mozac_feature_contextmenu_copy_link))),
+                waitingTime,
+            )
+            mDevice.waitNotNull(
+                Until.findObject(text(getStringResource(R.string.mozac_feature_contextmenu_share_link))),
+                waitingTime,
+            )
+        } else {
+            mDevice.waitNotNull(
+                Until.findObject(By.textContains(containsURL.toString())),
+                waitingTime,
+            )
+            mDevice.waitNotNull(
+                Until.findObject(text(getStringResource(R.string.mozac_feature_contextmenu_open_link_in_new_tab))),
+                waitingTime,
+            )
+            mDevice.waitNotNull(
+                Until.findObject(text(getStringResource(R.string.mozac_feature_contextmenu_open_link_in_private_tab))),
+                waitingTime,
+            )
+            mDevice.waitNotNull(
+                Until.findObject(text(getStringResource(R.string.mozac_feature_contextmenu_copy_link))),
+                waitingTime,
+            )
+            mDevice.waitNotNull(
+                Until.findObject(text(getStringResource(R.string.mozac_feature_contextmenu_download_link))),
+                waitingTime,
+            )
+            mDevice.waitNotNull(
+                Until.findObject(text(getStringResource(R.string.mozac_feature_contextmenu_share_link))),
+                waitingTime,
+            )
+        }
     }
 
     fun verifyLinkImageContextMenuItems(containsURL: Uri) {
@@ -259,11 +292,9 @@ class BrowserRobot {
 
     fun verifySearchBar() = assertSearchBar()
 
-    fun dismissContentContextMenu(containsURL: Uri) {
-        onView(withText(containsURL.toString()))
-            .inRoot(isDialog())
-            .check(matches(isDisplayed()))
-            .perform(ViewActions.pressBack())
+    fun dismissContentContextMenu() {
+        mDevice.pressBack()
+        assertItemWithResIdExists(itemWithResId("$packageName:id/engineView"))
     }
 
     fun clickContextOpenLinkInNewTab() {
@@ -374,6 +405,8 @@ class BrowserRobot {
     fun longClickMatchingText(expectedText: String) =
         longClickPageObject(webPageItemContainingText(expectedText))
 
+    fun longClickPDFImage() = longClickPageObject(itemWithResId("pdfjs_internal_id_8R"))
+
     fun longClickAndCopyText(expectedText: String, selectAll: Boolean = false) {
         longClickPageObject(webPageItemContainingText(expectedText))
 
@@ -410,6 +443,10 @@ class BrowserRobot {
         clickPageObject(webPageItemWithResourceId("submit"))
         webPageItemWithResourceId("submit").waitUntilGone(waitingTime)
         mDevice.waitForIdle(waitingTimeLong)
+    }
+
+    fun clickUploadButton() {
+        clickPageObject(webPageItemWithResourceId("upload_file"))
     }
 
     fun verifyUpdateLoginPromptIsShown() = mDevice.waitNotNull(Until.findObjects(text("Update")))
@@ -1080,6 +1117,15 @@ class BrowserRobot {
             exists = exists,
         )
 
+    fun verifyConnectionErrorMessage() {
+        assertItemContainingTextExists(
+            itemContainingText(getStringResource(R.string.mozac_browser_errorpages_connection_failure_title)),
+            itemContainingText("The site could be temporarily unavailable or too busy. Try again in a few moments."),
+            itemContainingText("If you are unable to load any pages, check your device’s data or Wi-Fi connection."),
+        )
+        assertItemWithResIdExists(itemWithResId("errorTryAgain"))
+    }
+
     class Transition {
         private fun threeDotButton() = onView(
             allOf(
@@ -1262,8 +1308,28 @@ class BrowserRobot {
         }
 
         fun clickRequestStorageAccessButton(interact: SitePermissionsRobot.() -> Unit): SitePermissionsRobot.Transition {
+            // Clicks the "request storage access" button from the "cross-site-cookies.html" local asset
             webPageItemContainingText("requestStorageAccess()").waitForExists(waitingTime)
             clickPageObject(webPageItemContainingText("requestStorageAccess()"))
+
+            SitePermissionsRobot().interact()
+            return SitePermissionsRobot.Transition()
+        }
+
+        fun clickRequestPersistentStorageAccessButton(interact: SitePermissionsRobot.() -> Unit): SitePermissionsRobot.Transition {
+            // Clicks the "Persistent storage" button from "https://mozilla-mobile.github.io/testapp/permissions"
+            webPageItemWithResourceId("persistentStorageButton").waitForExists(waitingTime)
+            clickPageObject(webPageItemWithResourceId("persistentStorageButton"))
+
+            SitePermissionsRobot().interact()
+            return SitePermissionsRobot.Transition()
+        }
+
+        fun clickRequestDRMControlledContentAccessButton(interact: SitePermissionsRobot.() -> Unit): SitePermissionsRobot.Transition {
+            // Clicks the "DRM-controlled content" button from "https://mozilla-mobile.github.io/testapp/permissions"
+
+            webPageItemWithResourceId("drmPermissionButton").waitForExists(waitingTime)
+            clickPageObject(webPageItemWithResourceId("drmPermissionButton"))
 
             SitePermissionsRobot().interact()
             return SitePermissionsRobot.Transition()

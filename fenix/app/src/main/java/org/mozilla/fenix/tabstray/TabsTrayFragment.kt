@@ -220,6 +220,7 @@ class TabsTrayFragment : AppCompatDialogFragment() {
                 FirefoxTheme(theme = Theme.getTheme(allowPrivateTheme = false)) {
                     TabsTray(
                         appStore = requireComponents.appStore,
+                        browserStore = requireComponents.core.store,
                         tabsTrayStore = tabsTrayStore,
                         displayTabsInGrid = requireContext().settings().gridTabView,
                         shouldShowInactiveTabsAutoCloseDialog =
@@ -251,6 +252,7 @@ class TabsTrayFragment : AppCompatDialogFragment() {
                         },
                         onInactiveTabClick = tabsTrayInteractor::onInactiveTabClicked,
                         onInactiveTabClose = tabsTrayInteractor::onInactiveTabClosed,
+                        onSyncedTabClick = tabsTrayInteractor::onSyncedTabClicked,
                     )
                 }
             }
