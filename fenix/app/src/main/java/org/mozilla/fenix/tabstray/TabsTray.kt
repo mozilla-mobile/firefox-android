@@ -8,9 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -27,8 +25,11 @@ import androidx.compose.ui.unit.dp
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
+import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.ContentState
 import mozilla.components.browser.state.state.TabSessionState
+import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.browser.storage.sync.TabEntry
 import mozilla.components.lib.state.ext.observeAsComposableState
 import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.appstate.AppState
@@ -36,11 +37,16 @@ import org.mozilla.fenix.compose.Divider
 import org.mozilla.fenix.compose.annotation.LightDarkPreview
 import org.mozilla.fenix.tabstray.ext.isNormalTab
 import org.mozilla.fenix.tabstray.inactivetabs.InactiveTabsList
+import org.mozilla.fenix.tabstray.syncedtabs.SyncedTabsList
+import org.mozilla.fenix.tabstray.syncedtabs.SyncedTabsListItem
 import org.mozilla.fenix.theme.FirefoxTheme
+import mozilla.components.browser.storage.sync.Tab as SyncTab
 
 /**
  * Top-level UI for displaying the Tabs Tray feature.
  *
+ * @param appStore [AppStore] used to listen for changes to [AppState].
+ * @param browserStore [BrowserStore] used to listen for changes to [BrowserState].
  * @param tabsTrayStore [TabsTrayStore] used to listen for changes to [TabsTrayState].
  * @param displayTabsInGrid Whether the normal and private tabs should be displayed in a grid.
  * @param onTabClose Invoked when the user clicks to close a tab.
@@ -58,12 +64,14 @@ import org.mozilla.fenix.theme.FirefoxTheme
  * close dialog's enable button.
  * @param onInactiveTabClick Invoked when the user clicks on an inactive tab.
  * @param onInactiveTabClose Invoked when the user clicks on an inactive tab's close button.
+ * @param onSyncedTabClick Invoked when the user clicks on a synced tab.
  */
 @OptIn(ExperimentalPagerApi::class, ExperimentalComposeUiApi::class)
 @Suppress("LongMethod", "LongParameterList")
 @Composable
 fun TabsTray(
     appStore: AppStore,
+    browserStore: BrowserStore,
     tabsTrayStore: TabsTrayStore,
     displayTabsInGrid: Boolean,
     shouldShowInactiveTabsAutoCloseDialog: (Int) -> Boolean,
@@ -80,7 +88,10 @@ fun TabsTray(
     onEnableInactiveTabAutoCloseClick: () -> Unit,
     onInactiveTabClick: (TabSessionState) -> Unit,
     onInactiveTabClose: (TabSessionState) -> Unit,
+    onSyncedTabClick: (SyncTab) -> Unit,
 ) {
+    val selectedTabId = browserStore
+        .observeAsComposableState { state -> state.selectedTabId }.value
     val multiselectMode = tabsTrayStore
         .observeAsComposableState { state -> state.mode }.value ?: TabsTrayState.Mode.Normal
     val selectedPage = tabsTrayStore
@@ -168,6 +179,8 @@ fun TabsTray(
                         TabLayout(
                             tabs = normalTabs,
                             displayTabsInGrid = displayTabsInGrid,
+                            selectedTabId = selectedTabId,
+                            selectionMode = multiselectMode,
                             onTabClose = onTabClose,
                             onTabMediaClick = onTabMediaClick,
                             onTabClick = handleTabClick,
@@ -179,6 +192,8 @@ fun TabsTray(
                         TabLayout(
                             tabs = privateTabs,
                             displayTabsInGrid = displayTabsInGrid,
+                            selectedTabId = selectedTabId,
+                            selectionMode = multiselectMode,
                             onTabClose = onTabClose,
                             onTabMediaClick = onTabMediaClick,
                             onTabClick = handleTabClick,
@@ -186,11 +201,13 @@ fun TabsTray(
                         )
                     }
                     Page.SyncedTabs -> {
-                        Text(
-                            text = "Synced tabs",
-                            modifier = Modifier.padding(all = 16.dp),
-                            color = FirefoxTheme.colors.textPrimary,
-                            style = FirefoxTheme.typography.body1,
+                        val syncedTabs = tabsTrayStore
+                            .observeAsComposableState { state -> state.syncedTabs }.value ?: emptyList()
+
+                        SyncedTabsList(
+                            syncedTabs = syncedTabs,
+                            taskContinuityEnabled = true,
+                            onTabClick = onSyncedTabClick,
                         )
                     }
                 }
@@ -202,22 +219,28 @@ fun TabsTray(
 @LightDarkPreview
 @Composable
 private fun TabsTrayPreview() {
+    val tabs = generateFakeTabsList()
     TabsTrayPreviewRoot(
         displayTabsInGrid = false,
-        normalTabs = generateFakeTabsList(),
+        selectedTabId = tabs[0].id,
+        normalTabs = tabs,
         privateTabs = generateFakeTabsList(
             tabCount = 7,
             isPrivate = true,
         ),
+        syncedTabs = generateFakeSyncedTabsList(),
     )
 }
 
+@Suppress("MagicNumber")
 @LightDarkPreview
 @Composable
 private fun TabsTrayMultiSelectPreview() {
+    val tabs = generateFakeTabsList()
     TabsTrayPreviewRoot(
-        mode = TabsTrayState.Mode.Select(setOf()),
-        normalTabs = generateFakeTabsList(),
+        selectedTabId = tabs[0].id,
+        mode = TabsTrayState.Mode.Select(tabs.take(4).toSet()),
+        normalTabs = tabs,
     )
 }
 
@@ -237,7 +260,7 @@ private fun TabsTrayInactiveTabsPreview() {
 private fun TabsTrayPrivateTabsPreview() {
     TabsTrayPreviewRoot(
         selectedPage = Page.PrivateTabs,
-        privateTabs = generateFakeTabsList(),
+        privateTabs = generateFakeTabsList(isPrivate = true),
     )
 }
 
@@ -246,17 +269,21 @@ private fun TabsTrayPrivateTabsPreview() {
 private fun TabsTraySyncedTabsPreview() {
     TabsTrayPreviewRoot(
         selectedPage = Page.SyncedTabs,
+        syncedTabs = generateFakeSyncedTabsList(deviceCount = 3),
     )
 }
 
+@Suppress("LongMethod", "LongParameterList")
 @Composable
 private fun TabsTrayPreviewRoot(
     displayTabsInGrid: Boolean = true,
     selectedPage: Page = Page.NormalTabs,
+    selectedTabId: String? = null,
     mode: TabsTrayState.Mode = TabsTrayState.Mode.Normal,
     normalTabs: List<TabSessionState> = emptyList(),
     inactiveTabs: List<TabSessionState> = emptyList(),
     privateTabs: List<TabSessionState> = emptyList(),
+    syncedTabs: List<SyncedTabsListItem> = emptyList(),
     inactiveTabsExpanded: Boolean = false,
     showInactiveTabsAutoCloseDialog: Boolean = false,
 ) {
@@ -264,6 +291,7 @@ private fun TabsTrayPreviewRoot(
     val normalTabsState = remember { normalTabs.toMutableStateList() }
     val inactiveTabsState = remember { inactiveTabs.toMutableStateList() }
     val privateTabsState = remember { privateTabs.toMutableStateList() }
+    val syncedTabsState = remember { syncedTabs.toMutableStateList() }
     var inactiveTabsExpandedState by remember { mutableStateOf(inactiveTabsExpanded) }
     var showInactiveTabsAutoCloseDialogState by remember { mutableStateOf(showInactiveTabsAutoCloseDialog) }
 
@@ -272,19 +300,27 @@ private fun TabsTrayPreviewRoot(
             inactiveTabsExpanded = inactiveTabsExpandedState,
         ),
     )
+    val browserStore = BrowserStore(
+        initialState = BrowserState(
+            tabs = normalTabs + privateTabs,
+            selectedTabId = selectedTabId,
+        ),
+    )
     val tabsTrayStore = TabsTrayStore(
         initialState = TabsTrayState(
             selectedPage = selectedPageState,
             mode = mode,
             inactiveTabs = inactiveTabsState,
             normalTabs = normalTabsState,
-            privateTabs = privateTabs,
+            privateTabs = privateTabsState,
+            syncedTabs = syncedTabsState,
         ),
     )
 
     FirefoxTheme {
         TabsTray(
             appStore = appStore,
+            browserStore = browserStore,
             tabsTrayStore = tabsTrayStore,
             displayTabsInGrid = displayTabsInGrid,
             shouldShowInactiveTabsAutoCloseDialog = { true },
@@ -300,8 +336,16 @@ private fun TabsTrayPreviewRoot(
             },
             onTabMediaClick = {},
             onTabClick = {},
-            onTabMultiSelectClick = {},
-            onTabLongClick = {},
+            onTabMultiSelectClick = { tab ->
+                if (tabsTrayStore.state.mode.selectedTabs.contains(tab)) {
+                    tabsTrayStore.dispatch(TabsTrayAction.RemoveSelectTab(tab))
+                } else {
+                    tabsTrayStore.dispatch(TabsTrayAction.AddSelectTab(tab))
+                }
+            },
+            onTabLongClick = { tab ->
+                tabsTrayStore.dispatch(TabsTrayAction.AddSelectTab(tab))
+            },
             onInactiveTabsHeaderClick = {
                 inactiveTabsExpandedState = !inactiveTabsExpandedState
             },
@@ -315,6 +359,7 @@ private fun TabsTrayPreviewRoot(
             },
             onInactiveTabClick = {},
             onInactiveTabClose = inactiveTabsState::remove,
+            onSyncedTabClick = {},
         )
     }
 }
@@ -329,3 +374,26 @@ private fun generateFakeTabsList(tabCount: Int = 10, isPrivate: Boolean = false)
             ),
         )
     }
+
+private fun generateFakeSyncedTabsList(deviceCount: Int = 1): List<SyncedTabsListItem> =
+    List(deviceCount) { index ->
+        SyncedTabsListItem.DeviceSection(
+            displayName = "Device $index",
+            tabs = listOf(
+                generateFakeSyncedTab("Mozilla", "www.mozilla.org"),
+                generateFakeSyncedTab("Google", "www.google.com"),
+                generateFakeSyncedTab("", "www.google.com"),
+            ),
+        )
+    }
+
+private fun generateFakeSyncedTab(tabName: String, tabUrl: String): SyncedTabsListItem.Tab =
+    SyncedTabsListItem.Tab(
+        tabName.ifEmpty { tabUrl },
+        tabUrl,
+        SyncTab(
+            history = listOf(TabEntry(tabName, tabUrl, null)),
+            active = 0,
+            lastUsed = 0L,
+        ),
+    )

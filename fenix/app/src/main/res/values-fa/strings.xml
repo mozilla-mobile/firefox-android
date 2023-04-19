@@ -48,7 +48,7 @@
     <!-- Private Browsing -->
     <!-- Explanation for private browsing displayed to users on home view when they first enable private mode
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="private_browsing_placeholder_description_2">%1$s جست‌وجوها و تاریخچه مرور شما را هنگام خروج از برنامه یا بستن زبانه‌های خصوصی پاک می‌کند. در حالی که اینکار شما را برای وب‌سایت‌ها یا خدمات دهنده اینترنت ناشناس نمی‌کند، این کار مخفی کردن فعالیت‌های آنلاین شما را برای هرکس دیگری که از این دستگاه استفاده می‌کند را ساده‌تر می‌کند.</string>
+    <string name="private_browsing_placeholder_description_2">%1$s جست‌وجوها و تاریخچهٔ مرور شما را هنگام خروج از برنامه یا بستن زبانه‌های خصوصی پاک می‌کند. در حالی که این کار شما را برای وبگاه‌ها یا فراهم‌کنندگان اینترنت ناشناس نمی‌کند، این کار مخفی کردن فعالیت‌های برخط شما را برای هرکس دیگری که از این افزاره استفاده می‌کند را ساده‌تر می‌کند.</string>
     <string name="private_browsing_common_myths">
        باورهای غلط و رایج در مورد مرور خصوصی
     </string>
@@ -64,6 +64,10 @@
 
     <!-- Text for the negative action button -->
     <string name="open_in_app_cfr_negative_button_text">رد کردن</string>
+
+    <!-- Total cookie protection "contextual feature recommendation" (CFR) -->
+    <!-- Text for the message displayed in the contextual feature recommendation popup promoting the total cookie protection feature. -->
+    <string name="tcp_cfr_message">قوی‌ترین قابلیت حفظ حریم خصوصی ما هم‌اکنون، ردیاب‌های میان‌پایگاهی را منزوی می‌کند.</string>
 
     <!-- Text for the info dialog when camera permissions have been denied but user tries to access a camera feature. -->
     <string name="camera_permissions_needed_message">دسترسی به دوربین مورد نیاز است. به تنظیمات اندروید بروید، روی مجوزها ضربه بزنید و بعد روی اجازه ضربه بزنید.</string>
@@ -284,8 +288,6 @@
 
     <!-- Description of the preference to enable "HTTPS-Only" mode. -->
     <string name="preferences_https_only_summary">به طور خودکار برای افزایش امنیت تلاش می کند با استفاده از پروتکل رمزگذاری HTTPS به سایت ها متصل شود.</string>
-    <!-- Summary of tracking protection preference if tracking protection is set to on -->
-    <string name="preferences_https_only_on" moz:removedIn="111" tools:ignore="UnusedResources">روشن</string>
     <!-- Summary of https only preference if https only is set to off -->
     <string name="preferences_https_only_off">خاموش</string>
     <!-- Text displayed that links to website containing documentation about "HTTPS-Only" mode -->
@@ -301,11 +303,11 @@
     <!-- Preference for accessibility -->
     <string name="preferences_accessibility">دسترسی‌پذیری</string>
     <!-- Preference to override the Firefox Account server -->
-    <string name="preferences_override_fxa_server">سرور مخصوص حساب کاربری فایرفاکس</string>
+    <string name="preferences_override_fxa_server">کارساز سفارشی حساب فایرفاکس</string>
     <!-- Preference to override the Sync token server -->
-    <string name="preferences_override_sync_tokenserver">سرورِ همگام‌سازی سفارشی</string>
+    <string name="preferences_override_sync_tokenserver">کارساز همگام‌سازی سفارشی</string>
     <!-- Toast shown after updating the FxA/Sync server override preferences -->
-    <string name="toast_override_fxa_sync_server_done">سرور حساب/همگام‌سازی فایرفاکس اصلاح شده است. ترک برنامه موجب اعمال تغییرات خواهد شد…</string>
+    <string name="toast_override_fxa_sync_server_done">کارساز حساب/همگام‌سازی فایرفاکس اصلاح شده است. ترک برنامه موجب اعمال تغییرات خواهد شد…</string>
     <!-- Preference category for account information -->
     <string name="preferences_category_account">حساب کاربری</string>
     <!-- Preference for changing where the toolbar is positioned -->
@@ -514,13 +516,6 @@
     <string name="settings_title">تنظیمات</string>
     <!-- Content description (not visible, for screen readers etc.): "Close button for library settings" -->
     <string name="content_description_close_button">بستن</string>
-
-    <!-- Text to show users they have one site in the history group section of the History fragment.
-    %d is a placeholder for the number of sites in the group. -->
-    <string name="history_search_group_site" moz:RemovedIn="111" tools:ignore="UnusedResources">%d سایت</string>
-    <!-- Text to show users they have multiple sites in the history group section of the History fragment.
-    %d is a placeholder for the number of sites in the group. -->
-    <string name="history_search_group_sites" moz:RemovedIn="111" tools:ignore="UnusedResources">%d سایت</string>
 
     <!-- Option in library for Recently Closed Tabs -->
     <string name="library_recently_closed_tabs">زبانه‌های تازه بسته شده</string>
@@ -802,8 +797,6 @@
     <string name="phone_feature_blocked_by_android">مسدود شده توسط اندروید</string>
     <!-- Preference for showing a list of websites that the default configurations won't apply to them -->
     <string name="preference_exceptions">استثناها</string>
-    <!-- Summary of tracking protection preference if tracking protection is set to on -->
-    <string name="tracking_protection_on" moz:removedIn="111" tools:ignore="UnusedResources">روشن</string>
     <!-- Summary of tracking protection preference if tracking protection is set to off -->
     <string name="tracking_protection_off">خاموش</string>
     <!-- Label for global setting that indicates that all video and audio autoplay is allowed -->
@@ -1086,21 +1079,21 @@
     <!-- Preference title for enhanced tracking protection settings -->
     <string name="preference_enhanced_tracking_protection">محافظت پیشرفته در برابر ردیابی</string>
     <!-- Title for the description of enhanced tracking protection -->
-    <string name="preference_enhanced_tracking_protection_explanation_title">بدون دنبال شدن مرور کنید</string>
+    <string name="preference_enhanced_tracking_protection_explanation_title" moz:removedIn="114" tools:ignore="UnusedResources">بدون دنبال شدن مرور کنید</string>
     <!-- Description of enhanced tracking protection. The first parameter is the name of the application (For example: Fenix) -->
-    <string name="preference_enhanced_tracking_protection_explanation">داده‌های خود را نزد خود نگه دارید.%s شما را از بسیاری از متداول‌ ترین ردیاب‌هایی که شما را به صورت آنلاین دنبال می‌کنند محافظت می‌کند.</string>
+    <string name="preference_enhanced_tracking_protection_explanation" moz:removedIn="114" tools:ignore="UnusedResources">داده‌های خود را نزد خود نگه دارید.%s شما را از بسیاری از متداول‌ترین ردیاب‌هایی که شما را به صورت برخط دنبال می‌کنند محافظت می‌کند.</string>
     <!-- Text displayed that links to website about enhanced tracking protection -->
     <string name="preference_enhanced_tracking_protection_explanation_learn_more">بیشتر بدانید</string>
     <!-- Preference for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_standard_default_1">استاندارد (پیش فرض)</string>
     <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description_4">تعادل بین کارآیی و حریم‌خصوصی. بارگیری صفحات با سرعتی عادی.</string>
+    <string name="preference_enhanced_tracking_protection_standard_description_4" moz:removedIn="114" tools:ignore="UnusedResources">تعادل بین کارآیی و حریم‌خصوصی. بارگیری صفحات با سرعتی عادی.</string>
     <!--  Accessibility text for the Standard protection information icon  -->
     <string name="preference_enhanced_tracking_protection_standard_info_button">آنچه توسط حفاظت ردیابی استاندارد مسدود شده است</string>
     <!-- Preference for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict">سخت گیرانه</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_description_3">مسدودسازی ردیاب‌های بیشتر، اما برخی امکانات داخل صفحات ممکن است از کار بیافتند.</string>
+    <string name="preference_enhanced_tracking_protection_strict_description_3" moz:removedIn="114" tools:ignore="UnusedResources">مسدودسازی ردیاب‌های بیشتر، اما برخی امکانات داخل صفحات ممکن است از کار بیافتند.</string>
     <!--  Accessibility text for the Strict protection information icon  -->
     <string name="preference_enhanced_tracking_protection_strict_info_button">آنچه توسط حفاظت ردیابی سخت‌گیرانه مسدود شده است</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
@@ -1122,7 +1115,7 @@
     <!-- Option for enhanced tracking protection for the custom protection settings for cookies-->
     <string name="preference_enhanced_tracking_protection_custom_cookies_4">تمام کلوچک‌ها (باعث خرابی وبگاه‌ها خواهد شد)</string>
     <!-- Option for enhanced tracking protection for the custom protection settings for cookies-->
-    <string name="preference_enhanced_tracking_protection_custom_cookies_5">قرنطینهٔ کلوچک‌های میان‌پایگاهی</string>
+    <string name="preference_enhanced_tracking_protection_custom_cookies_5">منزوی کردن کلوچک‌های میان‌پایگاهی</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings for tracking content -->
     <string name="preference_enhanced_tracking_protection_custom_tracking_content">محتوای ردیابی</string>
     <!-- Option for enhanced tracking protection for the custom protection settings for tracking content-->
@@ -1149,6 +1142,8 @@
     <string name="etp_cookies_title_2">کلوچک‌های میان‌پایگاهی</string>
     <!-- Description of cross-site tracking cookies that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_cookies_description">کلوچک‌هایی را که شبکه‌های تبلیغاتی و شرکت‌های تحلیلی از آن‌ها استفاده می‌کنند، برای گردآوری داده‌های مرور شما در بسیاری از پایگاه‌ها مسدود می‌کند.</string>
+    <!-- Description of cross-site tracking cookies that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_cookies_description_2">محافظت کامل در برابر کلوچک‌ها، کلوچک‌ها را در پایگاهی که در آن هستید، منزوی می‌کند، پس ردیاب‌هایی مانند شبکه‌های تبلیغاتی نمی‌توانند از آن‌ها برای دنبال کردن شما در میان پایگاه‌ها استفاده کنند.</string>
     <!-- Category of trackers (cryptominers) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_cryptominers_title">استخراج کننده‌های رمزارزها</string>
     <!-- Description of cryptominers that can be blocked by Enhanced Tracking Protection -->
