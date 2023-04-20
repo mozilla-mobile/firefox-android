@@ -28,11 +28,11 @@ class SecretSettingsFragment :
         addPreferencesFromResource(R.xml.secret_settings)
     }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String?) {
         val nimbusPreviewPref =
             findPreference<SwitchPreferenceCompat>(getPreferenceKey(R.string.pref_key_use_nimbus_preview))
         if (key == nimbusPreviewPref?.key) {
-            requireComponents.settings.shouldUseNimbusPreview = nimbusPreviewPref.isChecked
+            requireComponents.settings.shouldUseNimbusPreview = nimbusPreviewPref?.isChecked == true
             quitTheApp()
         }
     }
