@@ -40,6 +40,7 @@ object FenixVersions {
     const val androidx_transition = "1.4.0"
     const val androidx_work = "2.7.1"
     const val androidx_datastore = "1.0.0"
+    const val androidx_datastore_preferences = "1.0.0"
     const val google_material = "1.2.1"
     const val google_accompanist = "0.28.0"
 
@@ -79,6 +80,7 @@ object FenixDependencies {
     const val androidx_compose_ui_test = "androidx.compose.ui:ui-test-junit4:${FenixVersions.androidx_compose}"
     const val androidx_compose_ui_test_manifest = "androidx.compose.ui:ui-test-manifest:${FenixVersions.androidx_compose}"
     const val androidx_compose_ui_tooling = "androidx.compose.ui:ui-tooling:${FenixVersions.androidx_compose}"
+    const val androidx_compose_ui_tooling_preview = "androidx.compose.ui:ui-tooling-preview:${FenixVersions.androidx_compose}"
     const val androidx_compose_foundation = "androidx.compose.foundation:foundation:${FenixVersions.androidx_compose}"
     const val androidx_compose_material = "androidx.compose.material:material:${FenixVersions.androidx_compose}"
     const val androidx_annotation = "androidx.annotation:annotation:${FenixVersions.androidx_annotation}"
@@ -110,6 +112,8 @@ object FenixDependencies {
     const val androidx_work_ktx = "androidx.work:work-runtime-ktx:${FenixVersions.androidx_work}"
     const val androidx_work_testing = "androidx.work:work-testing:${FenixVersions.androidx_work}"
     const val androidx_datastore = "androidx.datastore:datastore:${FenixVersions.androidx_datastore}"
+    const val androidx_data_store_preferences = "androidx.datastore:datastore-preferences:${FenixVersions.androidx_datastore_preferences}"
+
     const val google_material = "com.google.android.material:material:${FenixVersions.google_material}"
     const val google_accompanist_drawablepainter = "com.google.accompanist:accompanist-drawablepainter:${FenixVersions.google_accompanist}"
     const val google_accompanist_pager = "com.google.accompanist:accompanist-pager:${FenixVersions.google_accompanist}"
