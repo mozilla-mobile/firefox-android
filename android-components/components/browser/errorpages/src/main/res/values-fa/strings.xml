@@ -122,7 +122,12 @@
     <!-- The document title and heading of the error page shown when a website cannot be loaded because the browser is in offline mode. -->
     <string name="mozac_browser_errorpages_offline_title">حالت برون‌خط</string>
     <!-- The error message shown when a website cannot be loaded because the browser is in offline mode. -->
-    <string name="mozac_browser_errorpages_offline_message"><![CDATA[<p>مرورگر در حالت برون‌خط قرار دارد و نمی‌تواند به مورد درخواستی وصل شود.</p><ul><li> آیا رایانه به یک شبکهٔ فعال متصل است؟</li><li>دکمهٔ «تلاش دوبار» را فشار دهید تا به حالت برخط رفته و صفحه را دوباره بارگیری کنید.</li></ul>]]></string>
+    <string name="mozac_browser_errorpages_offline_message"><![CDATA[
+  <p>مرورگر در حالت برون‌خط قرار دارد و نمی‌تواند به مورد درخواستی وصل شود.</p>
+  <ul>
+  <li> آیا رایانه به یک شبکهٔ فعال متصل است؟</li><li>دکمهٔ «تلاش دوباره» را فشار دهید تا به حالت برخط رفته و صفحه را دوباره بار کنید.</li>
+  </ul>
+  ]]></string>
 
     <!-- The document title and heading of the error page shown when the browser prevents loading a website on a restricted port. -->
     <string name="mozac_browser_errorpages_port_blocked_title">درگاه به دلایل امنیتی محدود شده است</string>
@@ -177,9 +182,9 @@
     <!-- The document title and heading of an error page. -->
     <string name="mozac_browser_errorpages_no_internet_title">اتصال اینترنت در دسترس نیست</string>
     <!-- The main body text of this error page. It will be shown beneath the title -->
-    <string name="mozac_browser_errorpages_no_internet_message">اتصال شبکه خود را بررسی کنید یا در چند لحظه بارگیری مجدد صفحه را امتحان کنید.</string>
+    <string name="mozac_browser_errorpages_no_internet_message">اتصال شبکهٔ خود را بررسی کنید یا در چند لحظهٔ بار کردن دوبارهٔ صفحه را امتحان کنید.</string>
     <!-- Text that will show up on the button at the bottom of the error page -->
-    <string name="mozac_browser_errorpages_no_internet_refresh_button">بارگیری دوباره</string>
+    <string name="mozac_browser_errorpages_no_internet_refresh_button">بار کردن دوباره</string>
 
     <!-- The document title and heading of an error page. -->
     <string name="mozac_browser_errorpages_malformed_uri_title">نشانی نامعتبر</string>
@@ -249,7 +254,7 @@
     <!-- The title of the error page for websites that do not support HTTPS when HTTPS-Only is turned on -->
     <string name="mozac_browser_errorpages_httpsonly_title">پایگاه ایمن در دسترس نیست</string>
     <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will be replaced with the URL of the website. -->
-    <string name="mozac_browser_errorpages_httpsonly_message"><![CDATA[تنها حالت HTTPS برای امنیت بیشتر فعال شده است و نسخه HTTPS از <em>%1$s</em> در دسترس نیست.]]></string>
+    <string name="mozac_browser_errorpages_httpsonly_message"><![CDATA[حالت فقط-HTTPS برای امنیت بیش‌تر فعال شده است و نگارشی HTTPS از <em>%1$s</em> در دسترس نیست.]]></string>
     <!-- Button on error page for websites that do not support HTTPS when HTTPS-Only is turned on. Clicking the button allows the user to nevertheless load the website using HTTP. -->
     <string name="mozac_browser_errorpages_httpsonly_button">ادامه به این پایگاه اینترنتی به وسیله HTTP</string>
 </resources>
