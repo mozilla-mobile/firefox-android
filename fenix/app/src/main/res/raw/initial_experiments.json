@@ -1,27 +1,27 @@
 {
   "data": [
     {
-      "schemaVersion": "1.11.0",
-      "slug": "android-re-engagement-notifications-ab-experiment-v112",
-      "id": "android-re-engagement-notifications-ab-experiment-v112",
+      "schemaVersion": "1.12.0",
+      "slug": "android-onboarding-redesign",
+      "id": "android-onboarding-redesign",
       "arguments": {},
       "application": "org.mozilla.firefox_beta",
       "appName": "fenix",
       "appId": "org.mozilla.firefox_beta",
       "channel": "beta",
-      "userFacingName": "Android re-engagement notifications A/B experiment v112",
-      "userFacingDescription": "A/B message content test for Firefox 112",
+      "userFacingName": "[beta] Android Onboarding Redesign",
+      "userFacingDescription": "Testing a new onboarding experience.",
       "isEnrollmentPaused": false,
       "isRollout": false,
       "bucketConfig": {
         "randomizationUnit": "nimbus_id",
-        "namespace": "fenix-re-engagement-notification-beta-4",
+        "namespace": "fenix-juno-onboarding-beta-1",
         "start": 0,
         "count": 10000,
         "total": 10000
       },
       "featureIds": [
-        "re-engagement-notification"
+        "juno-onboarding"
       ],
       "probeSets": [],
       "outcomes": [],
@@ -30,11 +30,10 @@
           "slug": "control",
           "ratio": 1,
           "feature": {
-            "featureId": "re-engagement-notification",
+            "featureId": "juno-onboarding",
             "enabled": true,
             "value": {
-              "enabled": true,
-              "type": 0
+              "enabled": false
             }
           }
         },
@@ -42,38 +41,25 @@
           "slug": "treatment-a",
           "ratio": 1,
           "feature": {
-            "featureId": "re-engagement-notification",
+            "featureId": "juno-onboarding",
             "enabled": true,
             "value": {
-              "enabled": true,
-              "type": 1
-            }
-          }
-        },
-        {
-          "slug": "treatment-b",
-          "ratio": 1,
-          "feature": {
-            "featureId": "re-engagement-notification",
-            "enabled": true,
-            "value": {
-              "enabled": true,
-              "type": 2
+              "enabled": true
             }
           }
         }
       ],
-      "targeting": "(app_version|versionCompare('112.*') <= 0) && ((is_already_enrolled) || ((isFirstRun == 'true') && (app_version|versionCompare('112.!') >= 0)))",
-      "startDate": "2023-03-15",
-      "enrollmentEndDate": "2023-03-29",
+      "targeting": "((is_already_enrolled) || ((isFirstRun == 'true') && (app_version|versionCompare('112.!') >= 0)))",
+      "startDate": "2023-04-04",
+      "enrollmentEndDate": "2023-04-11",
       "endDate": null,
-      "proposedDuration": 28,
-      "proposedEnrollment": 14,
+      "proposedDuration": 7,
+      "proposedEnrollment": 7,
       "referenceBranch": "control",
       "featureValidationOptOut": false
     },
     {
-      "schemaVersion": "1.11.0",
+      "schemaVersion": "1.12.0",
       "slug": "fx-release-android-re-engagement-notifications-ab-experiment-v112",
       "id": "fx-release-android-re-engagement-notifications-ab-experiment-v112",
       "arguments": {},
@@ -83,7 +69,7 @@
       "channel": "release",
       "userFacingName": "Fx Release - Android re-engagement notifications A/B experiment v112",
       "userFacingDescription": "A/B message content test for Firefox 112",
-      "isEnrollmentPaused": false,
+      "isEnrollmentPaused": true,
       "isRollout": false,
       "bucketConfig": {
         "randomizationUnit": "nimbus_id",
@@ -137,7 +123,7 @@
       ],
       "targeting": "(app_version|versionCompare('112.*') <= 0) && ((is_already_enrolled) || ((isFirstRun == 'true') && (app_version|versionCompare('112.!') >= 0)))",
       "startDate": "2023-03-28",
-      "enrollmentEndDate": "2023-04-11",
+      "enrollmentEndDate": "2023-04-12",
       "endDate": null,
       "proposedDuration": 28,
       "proposedEnrollment": 14,
@@ -145,7 +131,7 @@
       "featureValidationOptOut": false
     },
     {
-      "schemaVersion": "1.11.0",
+      "schemaVersion": "1.12.0",
       "slug": "release-android-sign-to-sync-onboarding-page",
       "id": "release-android-sign-to-sync-onboarding-page",
       "arguments": {},
@@ -155,7 +141,7 @@
       "channel": "release",
       "userFacingName": "[release] Android Sign to Sync onboarding page",
       "userFacingDescription": "This experiement moves the sign-in to sync panel to the top of the onboarding page, where it previously was under themes and toolbar positioning.",
-      "isEnrollmentPaused": false,
+      "isEnrollmentPaused": true,
       "isRollout": false,
       "bucketConfig": {
         "randomizationUnit": "nimbus_id",
@@ -199,7 +185,7 @@
       ],
       "targeting": "((is_already_enrolled) || ((isFirstRun == 'true') && (app_version|versionCompare('111.!') >= 0)))",
       "startDate": "2023-02-27",
-      "enrollmentEndDate": "2023-04-01",
+      "enrollmentEndDate": "2023-04-05",
       "endDate": null,
       "proposedDuration": 61,
       "proposedEnrollment": 33,

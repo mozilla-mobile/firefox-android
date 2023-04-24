@@ -32,6 +32,7 @@ import mozilla.components.feature.downloads.ui.DownloadCancelDialogFragment
 import mozilla.components.feature.tabs.tabstray.TabsFeature
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.telemetry.glean.private.NoExtras
+import org.mozilla.fenix.Config
 import org.mozilla.fenix.GleanMetrics.TabsTray
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.NavGraphDirections
@@ -219,8 +220,17 @@ class TabsTrayFragment : AppCompatDialogFragment() {
             tabsTrayComposeBinding.root.setContent {
                 FirefoxTheme(theme = Theme.getTheme(allowPrivateTheme = false)) {
                     TabsTray(
+                        appStore = requireComponents.appStore,
+                        browserStore = requireComponents.core.store,
                         tabsTrayStore = tabsTrayStore,
                         displayTabsInGrid = requireContext().settings().gridTabView,
+                        isInDebugMode = Config.channel.isDebug ||
+                            requireComponents.settings.showSecretDebugMenuThisSession,
+                        shouldShowInactiveTabsAutoCloseDialog =
+                        requireContext().settings()::shouldShowInactiveTabsAutoCloseDialog,
+                        onTabPageClick = { page ->
+                            tabsTrayInteractor.onTrayPositionSelected(page.ordinal, false)
+                        },
                         onTabClose = { tab ->
                             tabsTrayInteractor.onTabClosed(tab, TABS_TRAY_FEATURE_NAME)
                         },
@@ -232,13 +242,32 @@ class TabsTrayFragment : AppCompatDialogFragment() {
                             tabsTrayInteractor.onMultiSelectClicked(tab, TABS_TRAY_FEATURE_NAME)
                         },
                         onTabLongClick = tabsTrayInteractor::onTabLongClicked,
+                        onInactiveTabsHeaderClick = tabsTrayInteractor::onInactiveTabsHeaderClicked,
+                        onDeleteAllInactiveTabsClick = tabsTrayInteractor::onDeleteAllInactiveTabsClicked,
+                        onInactiveTabsAutoCloseDialogShown = {
+                            TabsTray.autoCloseSeen.record(NoExtras())
+                        },
+                        onInactiveTabAutoCloseDialogCloseButtonClick =
+                        tabsTrayInteractor::onAutoCloseDialogCloseButtonClicked,
+                        onEnableInactiveTabAutoCloseClick = {
+                            tabsTrayInteractor.onEnableAutoCloseClicked()
+                            showInactiveTabsAutoCloseConfirmationSnackbar()
+                        },
+                        onInactiveTabClick = tabsTrayInteractor::onInactiveTabClicked,
+                        onInactiveTabClose = tabsTrayInteractor::onInactiveTabClosed,
+                        onSyncedTabClick = tabsTrayInteractor::onSyncedTabClicked,
                     )
                 }
             }
 
             fabButtonComposeBinding.root.setContent {
                 FirefoxTheme(theme = Theme.getTheme(allowPrivateTheme = false)) {
-                    TabsTrayFab(tabsTrayStore = tabsTrayStore)
+                    TabsTrayFab(
+                        tabsTrayStore = tabsTrayStore,
+                        onNormalTabsFabClicked = tabsTrayInteractor::onNormalTabsFabClicked,
+                        onPrivateTabsFabClicked = tabsTrayInteractor::onPrivateTabsFabClicked,
+                        onSyncedTabsFabClicked = tabsTrayInteractor::onSyncedTabsFabClicked,
+                    )
                 }
             }
         } else {
@@ -297,6 +326,11 @@ class TabsTrayFragment : AppCompatDialogFragment() {
             displayMetrics = requireContext().resources.displayMetrics,
         )
 
+        setupBackgroundDismissalListener {
+            TabsTray.closed.record(NoExtras())
+            dismissAllowingStateLoss()
+        }
+
         if (!requireContext().settings().enableTabsTrayToCompose) {
             val activity = activity as HomeActivity
 
@@ -312,11 +346,6 @@ class TabsTrayFragment : AppCompatDialogFragment() {
                 store = tabsTrayStore,
                 trayInteractor = tabsTrayInteractor,
             )
-
-            setupBackgroundDismissalListener {
-                TabsTray.closed.record(NoExtras())
-                dismissAllowingStateLoss()
-            }
 
             tabsTrayCtaBinding.set(
                 feature = TabsTrayInfoBannerBinding(
@@ -583,7 +612,9 @@ class TabsTrayFragment : AppCompatDialogFragment() {
     @VisibleForTesting
     internal fun setupBackgroundDismissalListener(block: (View) -> Unit) {
         tabsTrayDialogBinding.tabLayout.setOnClickListener(block)
-        tabsTrayBinding.handle.setOnClickListener(block)
+        if (!requireContext().settings().enableTabsTrayToCompose) {
+            tabsTrayBinding.handle.setOnClickListener(block)
+        }
     }
 
     @VisibleForTesting
@@ -603,8 +634,10 @@ class TabsTrayFragment : AppCompatDialogFragment() {
 
     @VisibleForTesting
     internal fun selectTabPosition(position: Int, smoothScroll: Boolean) {
-        tabsTrayBinding.tabsTray.setCurrentItem(position, smoothScroll)
-        tabsTrayBinding.tabLayout.getTabAt(position)?.select()
+        if (!requireContext().settings().enableTabsTrayToCompose) {
+            tabsTrayBinding.tabsTray.setCurrentItem(position, smoothScroll)
+            tabsTrayBinding.tabLayout.getTabAt(position)?.select()
+        }
     }
 
     @VisibleForTesting
@@ -662,6 +695,17 @@ class TabsTrayFragment : AppCompatDialogFragment() {
         } else {
             fabButtonBinding.newTabButton
         }
+    }
+
+    private fun showInactiveTabsAutoCloseConfirmationSnackbar() {
+        val text = getString(R.string.inactive_tabs_auto_close_message_snackbar)
+        val snackbar = FenixSnackbar.make(
+            view = tabsTrayComposeBinding.root,
+            duration = FenixSnackbar.LENGTH_SHORT,
+            isDisplayedWithBrowserToolbar = true,
+        ).setText(text)
+        snackbar.view.elevation = ELEVATION
+        snackbar.show()
     }
 
     companion object {

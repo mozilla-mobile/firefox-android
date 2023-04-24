@@ -127,6 +127,7 @@ treeherder:
         support-base: support-base
         support-images: support-images
         support-ktx: support-ktx
+        support-license: support-license
         support-locale: support-locale
         support-migration: support-migration
         support-rusthttp: support-rusthttp
@@ -176,6 +177,8 @@ taskgraph:
             name: firefox-android
     cached-task-prefix: mobile.v2.firefox-android
     decision-parameters: 'android_taskgraph:get_decision_parameters'
+    index-path-regexes:
+        - 'mobile\.v3.[^.]*\.).*'
 
 workers:
     aliases:

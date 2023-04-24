@@ -33,6 +33,7 @@ import:
               DAY_3_AFTER_INSTALL: days_since_install == 3
               DAY_4_AFTER_INSTALL: days_since_install == 4
               DAY_5_AFTER_INSTALL: days_since_install == 5
+              MORE_THAN_24H_SINCE_INSTALLED_OR_UPDATED: days_since_update >= 1
 
               # Using custom attributes for the browser
               I_AM_DEFAULT_BROWSER: "is_default_browser"
@@ -86,7 +87,7 @@ import:
                 max-display-count: 5
               SURVEY:
                 priority: 55
-                max-display-count: 10
+                max-display-count: 1
               PERSISTENT:
                 priority: 50
                 max-display-count: 20
@@ -105,10 +106,10 @@ import:
                 surface: homescreen
                 action: "MAKE_DEFAULT_BROWSER"
                 trigger: [ "I_AM_NOT_DEFAULT_BROWSER","USER_ESTABLISHED_INSTALL" ]
-                style: "PERSISTENT"
+                style: PERSISTENT
                 button-label: preferences_set_as_default_browser
               default-browser-notification:
-                title: "nimbus_notification_default_browser_title"
+                title: nimbus_notification_default_browser_title
                 text: nimbus_notification_default_browser_text
                 surface: notification
                 style: NOTIFICATION
@@ -302,7 +303,7 @@ features:
       enabled:
         description: if true, the pre-permission notification prompt is shown to the user.
         type: Boolean
-        default: true
+        default: false
 
   juno-onboarding:
     description: A feature that shows juno onboarding flow.
@@ -311,6 +312,13 @@ features:
         description: if true, juno onboarding is shown to the user.
         type: Boolean
         default: false
+    defaults:
+      - channel: developer
+        value:
+          enabled: false
+      - channel: nightly
+        value:
+          enabled: true
 
   onboarding:
     description: "A feature that configures the new user onboarding page.
