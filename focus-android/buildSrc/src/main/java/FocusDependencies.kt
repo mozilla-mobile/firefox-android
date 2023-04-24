@@ -27,6 +27,7 @@ object FocusVersions {
         const val splashscreen = "1.0.0"
         const val transition = "1.4.1"
         const val work = "2.7.1"
+        const val androidx_datastore_preferences = "1.0.0"
     }
 
     object Google {
@@ -65,7 +66,7 @@ object FocusVersions {
     object ThirdParty {
         const val leakcanary = "2.10"
         const val osslicenses_plugin = "0.10.4"
-        const val sentry = "6.15.0"
+        const val sentry = "6.17.0"
     }
 
     // Workaround for a Gradle parsing bug that prevents using nested objects directly in Gradle files.
@@ -104,6 +105,7 @@ object FocusDependencies {
     const val androidx_transition = "androidx.transition:transition:${FocusVersions.AndroidX.transition}"
     const val androidx_work_ktx = "androidx.work:work-runtime-ktx:${FocusVersions.AndroidX.work}"
     const val androidx_work_testing = "androidx.work:work-testing:${FocusVersions.AndroidX.work}"
+    const val androidx_data_store_preferences = "androidx.datastore:datastore-preferences:${FocusVersions.AndroidX.androidx_datastore_preferences}"
 
     const val google_material = "com.google.android.material:material:${FocusVersions.Google.material}"
     const val google_accompanist_insets_ui = "com.google.accompanist:accompanist-insets-ui:${FocusVersions.Google.accompanist}"
