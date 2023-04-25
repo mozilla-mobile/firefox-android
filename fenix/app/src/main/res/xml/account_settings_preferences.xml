@@ -60,5 +60,9 @@
             android:key="@string/pref_key_sync_address"
             android:layout="@layout/checkbox_left_preference"
             android:title="@string/preferences_sync_address" />
+
+        <Preference
+            android:key="@string/pref_key_export_account_info"
+            android:title="@string/preferences_export_account_info" />
     </PreferenceCategory>
 </PreferenceScreen>

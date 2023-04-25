@@ -4,15 +4,21 @@
 
 package org.mozilla.fenix.settings.account
 
+import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+import android.app.Activity
 import android.app.KeyguardManager
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.os.Build
+import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
+import android.os.Environment
 import android.provider.Settings
 import android.text.InputFilter
 import android.text.format.DateUtils
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -21,8 +27,10 @@ import androidx.preference.EditTextPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.ConstellationState
 import mozilla.components.concept.sync.DeviceConstellationObserver
@@ -34,6 +42,7 @@ import mozilla.components.service.fxa.sync.SyncReason
 import mozilla.components.service.fxa.sync.SyncStatusObserver
 import mozilla.components.service.fxa.sync.getLastSynced
 import mozilla.components.support.ktx.android.content.getColorFromAttr
+import mozilla.components.support.ktx.android.content.isPermissionGranted
 import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.GleanMetrics.SyncAccount
@@ -47,12 +56,22 @@ import org.mozilla.fenix.ext.secure
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.settings.requirePreference
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.InputStream
+import java.io.OutputStream
+import java.io.OutputStreamWriter
+import java.util.UUID.randomUUID
 
 @SuppressWarnings("TooManyFunctions", "LargeClass")
 class AccountSettingsFragment : PreferenceFragmentCompat() {
     private lateinit var accountManager: FxaAccountManager
     private lateinit var accountSettingsStore: AccountSettingsFragmentStore
     private lateinit var accountSettingsInteractor: AccountSettingsInteractor
+    private val randomSuffix = randomUUID().toString()
+    private val bufferSize = 1024
 
     // Navigate away from this fragment when we encounter auth problems or logout events.
     private val accountStateObserver = object : AccountObserver {
@@ -126,6 +145,11 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
         // Sign out
         val preferenceSignOut = requirePreference<Preference>(R.string.pref_key_sign_out)
         preferenceSignOut.onPreferenceClickListener = getClickListenerForSignOut()
+
+        // Export account info
+        val preferenceExportAccountInfo = requirePreference<Preference>(R.string.pref_key_export_account_info)
+        preferenceExportAccountInfo.isVisible = org.mozilla.fenix.Config.channel.isMozillaOnline
+        preferenceExportAccountInfo.onPreferenceClickListener = getClickListenerForExportAccountInfo()
 
         // Sync now
         val preferenceSyncNow = requirePreference<Preference>(R.string.pref_key_sync_now)
@@ -365,6 +389,100 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
         return Preference.OnPreferenceClickListener {
             accountSettingsInteractor.onSignOut()
             true
+        }
+    }
+
+    val permissions
+        get() = if (getSDKVersion() >= Build.VERSION_CODES.Q) {
+            arrayOf()
+        } else {
+            arrayOf(WRITE_EXTERNAL_STORAGE)
+        }
+
+    private fun getClickListenerForExportAccountInfo(): Preference.OnPreferenceClickListener {
+        val email = accountManager.accountProfile()?.email
+        val displayName = accountManager.accountProfile()?.displayName
+        val avatar = accountManager.accountProfile()?.avatar?.url
+        val device = requireComponents.backgroundServices.defaultDeviceName(requireContext())
+        val extraInfo = listOf("email:$email", "displayName:$displayName", "avatar:$avatar", "device:$device")
+        return Preference.OnPreferenceClickListener {
+            validatePermissionGranted(requireContext())
+
+            viewLifecycleOwner.lifecycleScope.launch {
+                exportAccountInfoToFile(extraInfo)
+            }
+
+            true
+        }
+    }
+
+    private fun validatePermissionGranted(context: Context) {
+        if (!context.isPermissionGranted(permissions.asIterable())) {
+            throw SecurityException("You must be granted ${permissions.joinToString()}")
+        }
+    }
+
+    private fun getSDKVersion() = SDK_INT
+
+    private suspend fun exportAccountInfoToFile(info: List<String>?) {
+        withContext(IO) {
+            // val path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
+            val path = requireContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
+            val accountInfoFilePath = path!!.absolutePath + "/Firefox-" + randomSuffix + ".txt"
+            val accountInfoFile = File(accountInfoFilePath)
+
+            val accountInfoStream = FileOutputStream(accountInfoFile)
+            val accountInfoOutWriter = OutputStreamWriter(accountInfoStream)
+            info?.forEach {
+                accountInfoOutWriter.append(it + "\n\r")
+            }
+
+            accountInfoOutWriter.close()
+            accountInfoStream.close()
+            saveToChosenPath()
+        }
+    }
+
+    private fun saveToChosenPath() {
+        val intent = Intent(Intent.ACTION_CREATE_DOCUMENT)
+        intent.addCategory(Intent.CATEGORY_OPENABLE)
+        intent.type = "*text/plain"
+        intent.putExtra(Intent.EXTRA_TITLE, "firefox-$randomSuffix.txt")
+        resultLauncher.launch(intent)
+    }
+
+    var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val data: Intent? = result.data
+
+            val sourceFile = requireContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)!!.absolutePath +
+                "/Firefox-" + randomSuffix + ".txt"
+
+            var input: InputStream? = null
+            var os: OutputStream? = null
+
+            viewLifecycleOwner.lifecycleScope.launch {
+                withContext(IO) {
+                    try {
+                        input = FileInputStream(sourceFile)
+                        os = requireContext().contentResolver.openOutputStream(data!!.data!!)
+                        val buffer = ByteArray(bufferSize)
+                        var length: Int
+                        while ((input as FileInputStream).read(buffer).also { length = it } > 0) {
+                            os!!.write(buffer, 0, length)
+                        }
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                    } finally {
+                        try {
+                            input!!.close()
+                            os!!.close()
+                            requireActivity().supportFragmentManager.popBackStack()
+                        } catch (_: IOException) {
+                        }
+                    }
+                }
+            }
         }
     }
 
