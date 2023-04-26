@@ -746,7 +746,8 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             }
 
             if (installedAddonSize > 0) {
-                Addons.installedAddons.set(installedAddonsList)
+                Addons.installedAddons.set(installedAddonsList.take(20))
+                Addons.installedAddonsExtra.set(installedAddonsList.subList(20, 39))
             }
 
             val enabledAddonSize = settings.enabledAddonsCount
@@ -756,7 +757,8 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             }
 
             if (enabledAddonSize > 0) {
-                Addons.enabledAddons.set(enabledAddonsList)
+                Addons.enabledAddons.set(enabledAddonsList.take(20))
+                Addons.enabledAddonsExtra.set(enabledAddonsList.subList(20, 39))
             }
 
             val desktopBookmarksSize = settings.desktopBookmarksSize
