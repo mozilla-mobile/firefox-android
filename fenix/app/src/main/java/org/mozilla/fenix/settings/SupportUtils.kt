@@ -12,6 +12,7 @@ import androidx.core.net.toUri
 import mozilla.components.support.ktx.android.content.appVersionName
 import mozilla.components.support.ktx.android.content.getColorFromAttr
 import org.mozilla.fenix.BuildConfig
+import org.mozilla.fenix.Config
 import org.mozilla.fenix.IntentReceiverActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.customtabs.EXTRA_IS_SANDBOX_CUSTOM_TAB
@@ -96,6 +97,9 @@ object SupportUtils {
     fun getMozillaPageUrl(page: MozillaPage, locale: Locale = Locale.getDefault()): String {
         val path = page.path
         val langTag = getLanguageTag(locale)
+        if (Config.channel.isMozillaOnline && page == MozillaPage.PRIVATE_NOTICE) {
+            return "https://www.firefox.com.cn/about/privacy/firefox-android/"
+        }
         return "https://www.mozilla.org/$langTag/$path"
     }
 
