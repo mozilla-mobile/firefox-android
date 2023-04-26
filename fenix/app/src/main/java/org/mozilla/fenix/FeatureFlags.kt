@@ -58,16 +58,6 @@ object FeatureFlags {
     const val composeTabsTray = false
 
     /**
-     * Enables the wallpaper v2 enhancements.
-     */
-    const val wallpaperV2Enabled = true
-
-    /**
-     * Enables the save to PDF feature.
-     */
-    const val saveToPDF = true
-
-    /**
      * Enables the notification pre permission prompt.
      */
     const val notificationPrePermissionPromptEnabled = true

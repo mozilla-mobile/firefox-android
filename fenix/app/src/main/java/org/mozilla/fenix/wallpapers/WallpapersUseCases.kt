@@ -46,57 +46,35 @@ class WallpapersUseCases(
     private val downloader = WallpaperDownloader(storageRootDirectory, client)
     private val fileManager = WallpaperFileManager(storageRootDirectory)
     val initialize: InitializeWallpapersUseCase by lazy {
-        if (FeatureFlags.wallpaperV2Enabled) {
-            val metadataFetcher = WallpaperMetadataFetcher(client)
-            val migrationHelper = LegacyWallpaperMigration(
-                storageRootDirectory = storageRootDirectory,
-                settings = context.settings(),
-                selectWallpaper::invoke,
-            )
-            DefaultInitializeWallpaperUseCase(
-                appStore = appStore,
-                downloader = downloader,
-                fileManager = fileManager,
-                metadataFetcher = metadataFetcher,
-                migrationHelper = migrationHelper,
-                settings = context.settings(),
-                currentLocale = currentLocale,
-            )
-        } else {
-            val fileManager = LegacyWallpaperFileManager(storageRootDirectory)
-            val downloader = LegacyWallpaperDownloader(context, client)
-            LegacyInitializeWallpaperUseCase(
-                appStore = appStore,
-                downloader = downloader,
-                fileManager = fileManager,
-                settings = context.settings(),
-                currentLocale = currentLocale,
-            )
-        }
+        val metadataFetcher = WallpaperMetadataFetcher(client)
+        val migrationHelper = LegacyWallpaperMigration(
+            storageRootDirectory = storageRootDirectory,
+            settings = context.settings(),
+            selectWallpaper::invoke,
+        )
+        DefaultInitializeWallpaperUseCase(
+            appStore = appStore,
+            downloader = downloader,
+            fileManager = fileManager,
+            metadataFetcher = metadataFetcher,
+            migrationHelper = migrationHelper,
+            settings = context.settings(),
+            currentLocale = currentLocale,
+        )
+
     }
     val loadBitmap: LoadBitmapUseCase by lazy {
-        if (FeatureFlags.wallpaperV2Enabled) {
-            DefaultLoadBitmapUseCase(
-                filesDir = context.filesDir,
-                getOrientation = { context.resources.configuration.orientation },
-            )
-        } else {
-            LegacyLoadBitmapUseCase(context)
-        }
+        DefaultLoadBitmapUseCase(
+            filesDir = context.filesDir,
+            getOrientation = { context.resources.configuration.orientation },
+        )
+
     }
     val loadThumbnail: LoadThumbnailUseCase by lazy {
-        if (FeatureFlags.wallpaperV2Enabled) {
-            DefaultLoadThumbnailUseCase(storageRootDirectory)
-        } else {
-            LegacyLoadThumbnailUseCase(context)
-        }
+        DefaultLoadThumbnailUseCase(storageRootDirectory)
     }
     val selectWallpaper: SelectWallpaperUseCase by lazy {
-        if (FeatureFlags.wallpaperV2Enabled) {
-            DefaultSelectWallpaperUseCase(context.settings(), appStore, fileManager, downloader)
-        } else {
-            LegacySelectWallpaperUseCase(context.settings(), appStore)
-        }
+        DefaultSelectWallpaperUseCase(context.settings(), appStore, fileManager, downloader)
     }
 
     /**
@@ -148,9 +126,17 @@ class WallpapersUseCases(
                     possibleWallpapers,
                 )
                 downloadAllRemoteWallpapers(availableWallpapers)
-                appStore.dispatch(AppAction.WallpaperAction.UpdateAvailableWallpapers(availableWallpapers))
+                appStore.dispatch(
+                    AppAction.WallpaperAction.UpdateAvailableWallpapers(
+                        availableWallpapers,
+                    ),
+                )
                 if (!dispatchedCurrent) {
-                    appStore.dispatch(AppAction.WallpaperAction.UpdateCurrentWallpaper(currentWallpaper))
+                    appStore.dispatch(
+                        AppAction.WallpaperAction.UpdateCurrentWallpaper(
+                            currentWallpaper,
+                        ),
+                    )
                 }
             }
         }
@@ -323,15 +309,16 @@ class WallpapersUseCases(
          *
          * @param wallpaper The wallpaper to load a bitmap for.
          */
-        override suspend operator fun invoke(wallpaper: Wallpaper): Bitmap? = when (wallpaper.name) {
-            Wallpaper.amethystName, Wallpaper.ceruleanName, Wallpaper.sunriseName -> {
-                loadWallpaperFromDrawable(context, wallpaper)
+        override suspend operator fun invoke(wallpaper: Wallpaper): Bitmap? =
+            when (wallpaper.name) {
+                Wallpaper.amethystName, Wallpaper.ceruleanName, Wallpaper.sunriseName -> {
+                    loadWallpaperFromDrawable(context, wallpaper)
+                }
+                Wallpaper.twilightHillsName, Wallpaper.beachVibeName -> {
+                    loadWallpaperFromDisk(context, wallpaper)
+                }
+                else -> null
             }
-            Wallpaper.twilightHillsName, Wallpaper.beachVibeName -> {
-                loadWallpaperFromDisk(context, wallpaper)
-            }
-            else -> null
-        }
 
         private suspend fun loadWallpaperFromDrawable(
             context: Context,
@@ -510,8 +497,16 @@ class WallpapersUseCases(
             appStore.dispatch(AppAction.WallpaperAction.UpdateCurrentWallpaper(wallpaper))
         }
 
-        private fun dispatchDownloadState(wallpaper: Wallpaper, downloadState: Wallpaper.ImageFileState) {
-            appStore.dispatch(AppAction.WallpaperAction.UpdateWallpaperDownloadState(wallpaper, downloadState))
+        private fun dispatchDownloadState(
+            wallpaper: Wallpaper,
+            downloadState: Wallpaper.ImageFileState,
+        ) {
+            appStore.dispatch(
+                AppAction.WallpaperAction.UpdateWallpaperDownloadState(
+                    wallpaper,
+                    downloadState,
+                ),
+            )
         }
     }
 }

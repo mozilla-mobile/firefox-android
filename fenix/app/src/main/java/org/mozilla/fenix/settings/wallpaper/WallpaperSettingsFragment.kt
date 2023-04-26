@@ -59,11 +59,7 @@ class WallpaperSettingsFragment : Fragment() {
                     val coroutineScope = rememberCoroutineScope()
 
                     WallpaperSettings(
-                        wallpaperGroups = if (FeatureFlags.wallpaperV2Enabled) {
-                            wallpapers.groupByDisplayableCollection()
-                        } else {
-                            mapOf(Wallpaper.ClassicFirefoxCollection to wallpapers)
-                        },
+                        wallpaperGroups = wallpapers.groupByDisplayableCollection(),
                         defaultWallpaper = Wallpaper.Default,
                         selectedWallpaper = currentWallpaper,
                         loadWallpaperResource = {
