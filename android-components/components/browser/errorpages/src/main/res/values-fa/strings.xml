@@ -16,11 +16,11 @@
     <string name="mozac_browser_errorpages_security_ssl_title">برقراری پیوند ایمن شکست خورد</string>
     <!-- The error message shown when a website sends back unusual and incorrect credentials for an SSL certificate. -->
     <string name="mozac_browser_errorpages_security_ssl_message"><![CDATA[
-      <ul>
-        <li>صفحه‌ای که تلاش می‌کنید از آن بازدید کنید قابل نمایش نیست، زیرا امکان تایید اعتبار اطلاعات دریافتی از آن وجود ندارد.</li>
-        <li>لطفا با صاحبان این سایت تماس بگیرید و آنها را در جریان این مشکل قرار دهید.</li>
-      </ul>
-    ]]></string>
+  <ul>
+  <li>صفحه‌ای که تلاش می‌کنید از آن بازدید کنید قابل نمایش نیست، زیرا امکان تأیید اعتبار داده‌های دریافتی از آن وجود ندارد.</li>
+  <li>لطفاً با صاحبان این وبگاه تماس بگیرید و آن‌ها را در جریان این مشکل قرار دهید.</li>
+  </ul>
+  ]]></string>
 
     <!-- The document title and heading of the error page shown when a website sends has an invalid or expired SSL certificate. -->
     <string name="mozac_browser_errorpages_security_bad_cert_title">برپاسازی پیوند ایمن شکست خورد</string>
@@ -46,7 +46,7 @@
     <string name="mozac_browser_errorpages_security_bad_cert_accept_temporary">پذیرش خطر و ادامه</string>
 
     <!-- The document title and heading of the error page shown when a website uses HSTS. -->
-    <string name="mozac_browser_errorpages_security_bad_hsts_cert_title">این وب سایت به یک پیوند ایمن نیاز دارد.</string>
+    <string name="mozac_browser_errorpages_security_bad_hsts_cert_title">این وبگاه به اتصالی ایمن نیاز دارد.</string>
 
     <!-- The error message shown when a website uses HSTS. -->
     <string name="mozac_browser_errorpages_security_bad_hsts_cert_message"><![CDATA[
@@ -122,7 +122,12 @@
     <!-- The document title and heading of the error page shown when a website cannot be loaded because the browser is in offline mode. -->
     <string name="mozac_browser_errorpages_offline_title">حالت برون‌خط</string>
     <!-- The error message shown when a website cannot be loaded because the browser is in offline mode. -->
-    <string name="mozac_browser_errorpages_offline_message"><![CDATA[<p>مرورگر در حالت برون‌خط قرار دارد و نمی‌تواند به مورد درخواستی وصل شود.</p><ul><li> آیا رایانه به یک شبکهٔ فعال متصل است؟</li><li>دکمهٔ «تلاش دوبار» را فشار دهید تا به حالت برخط رفته و صفحه را دوباره بارگیری کنید.</li></ul>]]></string>
+    <string name="mozac_browser_errorpages_offline_message"><![CDATA[
+  <p>مرورگر در حالت برون‌خط قرار دارد و نمی‌تواند به مورد درخواستی وصل شود.</p>
+  <ul>
+  <li> آیا رایانه به یک شبکهٔ فعال متصل است؟</li><li>دکمهٔ «تلاش دوباره» را فشار دهید تا به حالت برخط رفته و صفحه را دوباره بار کنید.</li>
+  </ul>
+  ]]></string>
 
     <!-- The document title and heading of the error page shown when the browser prevents loading a website on a restricted port. -->
     <string name="mozac_browser_errorpages_port_blocked_title">درگاه به دلایل امنیتی محدود شده است</string>
@@ -149,15 +154,20 @@
     <string name="mozac_browser_errorpages_corrupted_content_message"><![CDATA[<p>صفحه‌ای که تلاش می‌کنید از آن بازدید کنید قابل نمایش نیست، زیرا خطایی در هنگام انتقال اطلاعات رُخ داده است.</p><ul><li>لطفاً با صاحبان این پایگاه اینترنتی تماس بگیرید و آنها را در جریان این مشکل قرار دهید.</li></ul>]]></string>
 
     <!-- The document title and heading of an error page. -->
-    <string name="mozac_browser_errorpages_content_crashed_title">محتوا خراب شد</string>
-    <string name="mozac_browser_errorpages_content_crashed_message"><![CDATA[<p>صفحه‌ای که تلاش می‌کنید از آن بازدید کنید قابل نمایش نیست، زیرا خطایی در هنگام انتقال اطلاعات رُخ داده است.</p><ul><li>لطفاً با صاحبان این پایگاه اینترنتی تماس بگیرید و آنها را در جریان این مشکل قرار دهید.</li></ul>]]></string>
+    <string name="mozac_browser_errorpages_content_crashed_title">محتوا فروپاشید</string>
+    <string name="mozac_browser_errorpages_content_crashed_message"><![CDATA[
+  <p>صفحه‌ای که تلاش می‌کنید از آن بازدید کنید قابل نمایش نیست، زیرا خطایی در هنگام انتقال اطلاعات رخ داده است.</p>
+  <ul>
+  <li>لطفاً با صاحبان این وبگاه تماس بگیرید و آن‌ها را در جریان این مشکل قرار دهید.</li>
+  </ul>
+  ]]></string>
 
     <!-- The document title and heading of an error page. -->
     <string name="mozac_browser_errorpages_invalid_content_encoding_title">خطای کدگذاری محتوا</string>
     <string name="mozac_browser_errorpages_invalid_content_encoding_message"><![CDATA[<p>قادر به نمایش صفحه‌ای که درخواست بازدید از آن را کرده‌اید نیست، زیرا از گونه‌ای ناشناخته یا پشتیبانی نشده از فشرده‌سازی استفاده می‌کند.</p><ul><li>لطفاً با صاحبان این پایگاه اینترنتی تماس برقرار کنید و آنها را در جریان این مشکل قرار دهید.</li></ul>]]></string>
 
     <!-- The document title and heading of an error page. -->
-    <string name="mozac_browser_errorpages_unknown_host_title">آدرس پیدا نشد</string>
+    <string name="mozac_browser_errorpages_unknown_host_title">نشانی پیدا نشد</string>
     <!-- In the example, the two URLs in markup do not need to be translated. -->
     <string name="mozac_browser_errorpages_unknown_host_message"><![CDATA[
   <p>مرورگر نتوانست کارساز میزبان را برای نشانی ارائه شده پیدا کند.</p>
@@ -172,9 +182,9 @@
     <!-- The document title and heading of an error page. -->
     <string name="mozac_browser_errorpages_no_internet_title">اتصال اینترنت در دسترس نیست</string>
     <!-- The main body text of this error page. It will be shown beneath the title -->
-    <string name="mozac_browser_errorpages_no_internet_message">اتصال شبکه خود را بررسی کنید یا در چند لحظه بارگیری مجدد صفحه را امتحان کنید.</string>
+    <string name="mozac_browser_errorpages_no_internet_message">اتصال شبکهٔ خود را بررسی کنید یا در چند لحظهٔ بار کردن دوبارهٔ صفحه را امتحان کنید.</string>
     <!-- Text that will show up on the button at the bottom of the error page -->
-    <string name="mozac_browser_errorpages_no_internet_refresh_button">بارگیری دوباره</string>
+    <string name="mozac_browser_errorpages_no_internet_refresh_button">بار کردن دوباره</string>
 
     <!-- The document title and heading of an error page. -->
     <string name="mozac_browser_errorpages_malformed_uri_title">نشانی نامعتبر</string>
@@ -222,29 +232,29 @@
   ]]></string>
 
     <!-- The document title and heading of an error page. -->
-    <string name="mozac_browser_errorpages_safe_browsing_malware_uri_title">مشکل بدافزار سایت</string>
+    <string name="mozac_browser_errorpages_safe_browsing_malware_uri_title">مشکل پایگاه بدافزار</string>
     <!-- The %1$s will be replaced by the malicious website URL-->
     <string name="mozac_browser_errorpages_safe_browsing_malware_uri_message"><![CDATA[<p>پایگاه%1$s به عنوان یک وب‌گاه تهاجمی گزارش شده و بر اساس ترجیحات امنیتی شما مسدود شده است.</p>]]></string>
 
     <!-- The document title and heading of an error page. -->
-    <string name="mozac_browser_errorpages_safe_browsing_unwanted_uri_title">مشکل بدافزار سایت</string>
+    <string name="mozac_browser_errorpages_safe_browsing_unwanted_uri_title">مشکل پایگاه ناخواسته</string>
     <!-- The %1$s will be replaced by the malicious website URL-->
     <string name="mozac_browser_errorpages_safe_browsing_unwanted_uri_message"><![CDATA[<p>پایگاه %1$s به عنوان سایتی که اقدام به ارائه نرم‌افزارهای ناخواسته می‌کند گزارش شده و بر اساس ترجیحات امنیتی شما مسدود شده است.</p>]]></string>
 
     <!-- The document title and heading of an error page. -->
-    <string name="mozac_browser_errorpages_safe_harmful_uri_title">مشکل مضر سایت</string>
+    <string name="mozac_browser_errorpages_safe_harmful_uri_title">مشکل پایگاه زیان‌آور</string>
     <!-- The %1$s will be replaced by the malicious website URL-->
     <string name="mozac_browser_errorpages_safe_harmful_uri_message"><![CDATA[<p>پایگاه%1$s به عنوان یک وب‌گاه تهاجمی گزارش شده و بر اساس ترجیحات امنیتی شما مسدود شده است.</p>]]></string>
 
     <!-- The document title and heading of an error page. -->
-    <string name="mozac_browser_errorpages_safe_phishing_uri_title">مشکل یک سایت فریب دهنده است</string>
+    <string name="mozac_browser_errorpages_safe_phishing_uri_title">مشکل پایگاه گمراه‌کننده</string>
     <!-- The %1$s will be replaced by the malicious website URL-->
     <string name="mozac_browser_errorpages_safe_phishing_uri_message"><![CDATA[<p>صفحه %1$s به عنوان یک پایگاه وب گمراه‌کننده گزارش شده و بر اساس ترجیحات امنیتی شما مسدود شده است.</p>]]></string>
 
     <!-- The title of the error page for websites that do not support HTTPS when HTTPS-Only is turned on -->
     <string name="mozac_browser_errorpages_httpsonly_title">پایگاه ایمن در دسترس نیست</string>
     <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will be replaced with the URL of the website. -->
-    <string name="mozac_browser_errorpages_httpsonly_message"><![CDATA[تنها حالت HTTPS برای امنیت بیشتر فعال شده است و نسخه HTTPS از <em>%1$s</em> در دسترس نیست.]]></string>
+    <string name="mozac_browser_errorpages_httpsonly_message"><![CDATA[حالت فقط-HTTPS برای امنیت بیش‌تر فعال شده است و نگارشی HTTPS از <em>%1$s</em> در دسترس نیست.]]></string>
     <!-- Button on error page for websites that do not support HTTPS when HTTPS-Only is turned on. Clicking the button allows the user to nevertheless load the website using HTTP. -->
     <string name="mozac_browser_errorpages_httpsonly_button">ادامه به این پایگاه اینترنتی به وسیله HTTP</string>
 </resources>

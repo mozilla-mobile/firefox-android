@@ -6,7 +6,7 @@
 // FORCE REBUILD 2022-12-11
 
 object FenixVersions {
-    const val kotlin = "1.8.10"
+    const val kotlin = "1.8.20"
     const val coroutines = "1.6.4"
 
     // These versions are linked: lint should be X+23.Y.Z of gradle_plugin version, according to:
@@ -21,7 +21,7 @@ object FenixVersions {
 
     const val androidx_activity = "1.6.1"
     const val androidx_compose = "1.3.1"
-    const val androidx_compose_compiler = "1.4.3"
+    const val androidx_compose_compiler = "1.4.6"
     const val androidx_appcompat = "1.3.0"
     const val androidx_benchmark = "1.1.1"
     const val androidx_biometric = "1.1.0"
@@ -80,6 +80,7 @@ object FenixDependencies {
     const val androidx_compose_ui_test = "androidx.compose.ui:ui-test-junit4:${FenixVersions.androidx_compose}"
     const val androidx_compose_ui_test_manifest = "androidx.compose.ui:ui-test-manifest:${FenixVersions.androidx_compose}"
     const val androidx_compose_ui_tooling = "androidx.compose.ui:ui-tooling:${FenixVersions.androidx_compose}"
+    const val androidx_compose_ui_tooling_preview = "androidx.compose.ui:ui-tooling-preview:${FenixVersions.androidx_compose}"
     const val androidx_compose_foundation = "androidx.compose.foundation:foundation:${FenixVersions.androidx_compose}"
     const val androidx_compose_material = "androidx.compose.material:material:${FenixVersions.androidx_compose}"
     const val androidx_annotation = "androidx.annotation:annotation:${FenixVersions.androidx_annotation}"

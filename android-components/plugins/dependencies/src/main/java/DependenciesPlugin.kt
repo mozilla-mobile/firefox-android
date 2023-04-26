@@ -14,7 +14,7 @@ class DependenciesPlugin : Plugin<Settings> {
 
 // Synchronized version numbers for dependencies used by (some) modules
 object Versions {
-    const val kotlin = "1.8.10"
+    const val kotlin = "1.8.20"
     const val coroutines = "1.6.4"
     const val serialization = "1.5.0"
 
@@ -42,18 +42,16 @@ object Versions {
     const val disklrucache = "2.0.2"
     const val leakcanary = "2.10"
 
-    const val mozilla_appservices = "97.5.1"
-
     // DO NOT MODIFY MANUALLY. This is auto-updated along with GeckoView.
-    const val mozilla_glean = "52.5.0"
+    const val mozilla_glean = "52.6.0"
 
     const val material = "1.2.1"
-    const val ksp = "1.0.9"
+    const val ksp = "1.0.11"
 
     // see https://android-developers.googleblog.com/2022/06/independent-versioning-of-Jetpack-Compose-libraries.html
     // for Jetpack Compose libraries versioning
     const val compose_version = "1.3.1"
-    const val compose_compiler = "1.4.3"
+    const val compose_compiler = "1.4.6"
 
     object AndroidX {
         const val activityCompose = "1.4.0"
@@ -123,6 +121,7 @@ object ComponentsDependencies {
     const val androidx_compose_ui_test = "androidx.compose.ui:ui-test-junit4:${Versions.AndroidX.compose}"
     const val androidx_compose_ui_test_manifest = "androidx.compose.ui:ui-test-manifest:${Versions.AndroidX.compose}"
     const val androidx_compose_ui_tooling = "androidx.compose.ui:ui-tooling:${Versions.AndroidX.compose}"
+    const val androidx_compose_ui_tooling_preview = "androidx.compose.ui:ui-tooling-preview:${Versions.AndroidX.compose}"
     const val androidx_compose_foundation = "androidx.compose.foundation:foundation:${Versions.AndroidX.compose}"
     const val androidx_compose_material = "androidx.compose.material:material:${Versions.AndroidX.compose}"
     const val androidx_compose_navigation = "androidx.navigation:navigation-compose:${Versions.AndroidX.navigation}"
@@ -177,22 +176,22 @@ object ComponentsDependencies {
     const val tools_detekt_test = "io.gitlab.arturbosch.detekt:detekt-test:${Versions.detekt}"
 
     val mozilla_geckoview = "org.mozilla.geckoview:${Gecko.channel.artifactName}:${Gecko.version}"
-    const val mozilla_fxa = "org.mozilla.appservices:fxaclient:${Versions.mozilla_appservices}"
-    const val mozilla_nimbus = "org.mozilla.appservices:nimbus:${Versions.mozilla_appservices}"
+    val mozilla_fxa = "${ApplicationServicesConfig.groupId}:fxaclient:${ApplicationServicesConfig.version}"
+    val mozilla_nimbus = "${ApplicationServicesConfig.groupId}:nimbus:${ApplicationServicesConfig.version}"
     const val mozilla_glean_forUnitTests = "org.mozilla.telemetry:glean-native-forUnitTests:${Versions.mozilla_glean}"
-    const val mozilla_sync_autofill = "org.mozilla.appservices:autofill:${Versions.mozilla_appservices}"
-    const val mozilla_sync_logins = "org.mozilla.appservices:logins:${Versions.mozilla_appservices}"
-    const val mozilla_places = "org.mozilla.appservices:places:${Versions.mozilla_appservices}"
-    const val mozilla_sync_manager = "org.mozilla.appservices:syncmanager:${Versions.mozilla_appservices}"
-    const val mozilla_push = "org.mozilla.appservices:push:${Versions.mozilla_appservices}"
-    const val mozilla_remote_tabs = "org.mozilla.appservices:tabs:${Versions.mozilla_appservices}"
-    const val mozilla_httpconfig = "org.mozilla.appservices:httpconfig:${Versions.mozilla_appservices}"
-    const val mozilla_full_megazord = "org.mozilla.appservices:full-megazord:${Versions.mozilla_appservices}"
-    const val mozilla_full_megazord_forUnitTests = "org.mozilla.appservices:full-megazord-forUnitTests:${Versions.mozilla_appservices}"
+    val mozilla_sync_autofill = "${ApplicationServicesConfig.groupId}:autofill:${ApplicationServicesConfig.version}"
+    val mozilla_sync_logins = "${ApplicationServicesConfig.groupId}:logins:${ApplicationServicesConfig.version}"
+    val mozilla_places = "${ApplicationServicesConfig.groupId}:places:${ApplicationServicesConfig.version}"
+    val mozilla_sync_manager = "${ApplicationServicesConfig.groupId}:syncmanager:${ApplicationServicesConfig.version}"
+    val mozilla_push = "${ApplicationServicesConfig.groupId}:push:${ApplicationServicesConfig.version}"
+    val mozilla_remote_tabs = "${ApplicationServicesConfig.groupId}:tabs:${ApplicationServicesConfig.version}"
+    val mozilla_httpconfig = "${ApplicationServicesConfig.groupId}:httpconfig:${ApplicationServicesConfig.version}"
+    val mozilla_full_megazord = "${ApplicationServicesConfig.groupId}:full-megazord:${ApplicationServicesConfig.version}"
+    val mozilla_full_megazord_forUnitTests = "${ApplicationServicesConfig.groupId}:full-megazord-forUnitTests:${ApplicationServicesConfig.version}"
 
-    const val mozilla_errorsupport = "org.mozilla.appservices:errorsupport:${Versions.mozilla_appservices}"
-    const val mozilla_rustlog = "org.mozilla.appservices:rustlog:${Versions.mozilla_appservices}"
-    const val mozilla_sync15 = "org.mozilla.appservices:sync15:${Versions.mozilla_appservices}"
+    val mozilla_errorsupport = "${ApplicationServicesConfig.groupId}:errorsupport:${ApplicationServicesConfig.version}"
+    val mozilla_rustlog = "${ApplicationServicesConfig.groupId}:rustlog:${ApplicationServicesConfig.version}"
+    val mozilla_sync15 = "${ApplicationServicesConfig.groupId}:sync15:${ApplicationServicesConfig.version}"
 
     const val thirdparty_okhttp = "com.squareup.okhttp3:okhttp:${Versions.okhttp}"
     const val thirdparty_okhttp_urlconnection = "com.squareup.okhttp3:okhttp-urlconnection:${Versions.okhttp}"
