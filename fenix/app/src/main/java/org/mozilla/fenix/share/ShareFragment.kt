@@ -117,20 +117,19 @@ class ShareFragment : AppCompatDialogFragment() {
         }
         shareToAppsView = ShareToAppsView(binding.appsShareLayout, shareInteractor)
 
-        if (FeatureFlags.saveToPDF) {
-            binding.dividerLineAppsShareAndPdfSection.isVisible = true
-            binding.savePdf.apply {
-                isVisible = true
-                setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-                setContent {
-                    FirefoxTheme(theme = Theme.getTheme(allowPrivateTheme = false)) {
-                        SaveToPDFItem {
-                            shareInteractor.onSaveToPDF(tabId = args.sessionId)
-                        }
+        binding.dividerLineAppsShareAndPdfSection.isVisible = true
+        binding.savePdf.apply {
+            isVisible = true
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                FirefoxTheme(theme = Theme.getTheme(allowPrivateTheme = false)) {
+                    SaveToPDFItem {
+                        shareInteractor.onSaveToPDF(tabId = args.sessionId)
                     }
                 }
             }
         }
+
         return binding.root
     }
 
