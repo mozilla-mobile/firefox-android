@@ -71,6 +71,7 @@ import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
 import org.mozilla.fenix.helpers.ext.waitNotNull
 import org.mozilla.fenix.helpers.idlingresource.NetworkConnectionIdlingResource
 import org.mozilla.fenix.ui.robots.BrowserRobot
+import org.mozilla.fenix.ui.robots.clickPageObject
 import org.mozilla.fenix.utils.IntentUtils
 import org.mozilla.gecko.util.ThreadUtils
 import java.io.File
@@ -127,6 +128,9 @@ object TestHelper {
             waitingTime,
         )
     }
+
+    fun clickSnackbarButton(expectedText: String) =
+        clickPageObject(itemWithResIdAndText("$packageName:id/snackbar_btn", expectedText))
 
     fun waitUntilSnackbarGone() {
         mDevice.findObject(
@@ -339,29 +343,25 @@ object TestHelper {
         }
     }
 
-    fun grantPermission() {
+    // Permission allow dialogs differ on various Android APIs
+    fun grantSystemPermission() {
         if (Build.VERSION.SDK_INT >= 23) {
-            when (Build.VERSION.SDK_INT) {
-                Build.VERSION_CODES.R ->
-                    itemWithResIdAndText(
-                        "com.android.permissioncontroller:id/permission_allow_foreground_only_button",
-                        "While using the app",
-                    ).also {
-                        it.waitForExists(waitingTime)
-                        it.click()
-                    }
-                else ->
-                    itemWithResIdAndText(
-                        "com.android.packageinstaller:id/permission_allow_button",
-                        "ALLOW",
-                    ).also {
-                        it.waitForExists(waitingTime)
-                        it.click()
-                    }
+            if (mDevice.findObject(UiSelector().textContains("While using the app")).waitForExists(
+                    waitingTimeShort,
+                )
+            ) {
+                mDevice.findObject(UiSelector().textContains("While using the app")).click()
+            } else {
+                mDevice.findObject(
+                    UiSelector()
+                        .textContains("Allow")
+                        .className("android.widget.Button"),
+                ).click()
             }
         }
     }
 
+    // Permission deny dialogs differ on various Android APIs
     fun denyPermission() {
         if (Build.VERSION.SDK_INT >= 23) {
             mDevice.findObject(
