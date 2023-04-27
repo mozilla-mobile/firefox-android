@@ -379,7 +379,7 @@ open class MainActivity : LocaleAwareAppCompatActivity() {
             return
         }
 
-        super.getOnBackPressedDispatcher().onBackPressed()
+        onBackPressedDispatcher.onBackPressed()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -466,7 +466,11 @@ open class MainActivity : LocaleAwareAppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
-        privateNotificationFeature.stop()
+
+        if (this::privateNotificationFeature.isInitialized) {
+            privateNotificationFeature.stop()
+        }
+
         components.notificationsDelegate.unBindActivity(this)
     }
 
