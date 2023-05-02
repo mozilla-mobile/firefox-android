@@ -1,4 +1,8 @@
+import com.android.build.OutputFile
+import groovy.json.JsonOutput
 import org.apache.tools.ant.util.StringUtils
+import org.gradle.internal.logging.text.StyledTextOutput.Style
+import org.gradle.internal.logging.text.StyledTextOutputFactory
 import org.mozilla.fenix.gradle.tasks.ApkSizeTask
 
 plugins {
@@ -13,10 +17,6 @@ apply plugin: 'jacoco'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
 apply plugin: 'com.google.android.gms.oss-licenses-plugin'
 
-import com.android.build.OutputFile
-import groovy.json.JsonOutput
-import org.gradle.internal.logging.text.StyledTextOutput.Style
-import org.gradle.internal.logging.text.StyledTextOutputFactory
 
 import static org.gradle.api.tasks.testing.TestResult.ResultType
 
