@@ -12,6 +12,7 @@ import androidx.test.espresso.intent.rule.IntentsTestRule
 import androidx.test.rule.ActivityTestRule
 import androidx.test.uiautomator.UiSelector
 import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.FeatureSettingsHelper.Companion.settings
 import org.mozilla.fenix.helpers.TestHelper.appContext
 import org.mozilla.fenix.helpers.TestHelper.mDevice
@@ -83,6 +84,11 @@ class HomeActivityTestRule(
         setLongTapTimeout(3000)
         applyFlagUpdates()
         if (skipOnboarding) { skipOnboardingBeforeLaunch() }
+        appContext.settings().shouldShowSearchSuggestions = false
+        appContext.settings().shouldShowClipboardSuggestions = false
+        appContext.settings().shouldShowHistorySuggestions = false
+        appContext.settings().shouldShowVoiceSearch = false
+        appContext.settings().shouldAutocompleteInAwesomebar = false
     }
 
     override fun afterActivityFinished() {
@@ -202,6 +208,11 @@ class HomeActivityIntentTestRule internal constructor(
         setLongTapTimeout(3000)
         applyFlagUpdates()
         if (skipOnboarding) { skipOnboardingBeforeLaunch() }
+        appContext.settings().shouldShowSearchSuggestions = false
+        appContext.settings().shouldShowClipboardSuggestions = false
+        appContext.settings().shouldShowHistorySuggestions = false
+        appContext.settings().shouldShowVoiceSearch = false
+        appContext.settings().shouldAutocompleteInAwesomebar = false
     }
 
     override fun afterActivityFinished() {

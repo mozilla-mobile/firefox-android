@@ -21,6 +21,7 @@ import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.Constants.PackageName.ANDROID_SETTINGS
 import org.mozilla.fenix.helpers.Constants.searchEngineCodes
 import org.mozilla.fenix.helpers.HomeActivityTestRule
@@ -75,6 +76,11 @@ class SearchTest {
             dispatcher = SearchDispatcher()
             start()
         }
+        appContext.settings().shouldShowSearchSuggestions = true
+        appContext.settings().shouldShowClipboardSuggestions = true
+        appContext.settings().shouldShowHistorySuggestions = true
+        appContext.settings().shouldShowVoiceSearch = true
+        appContext.settings().shouldAutocompleteInAwesomebar = true
     }
 
     @After

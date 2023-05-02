@@ -15,6 +15,8 @@ import android.view.accessibility.AccessibilityManager
 import androidx.annotation.VisibleForTesting
 import androidx.annotation.VisibleForTesting.Companion.PRIVATE
 import androidx.lifecycle.LifecycleOwner
+import java.security.InvalidParameterException
+import java.util.UUID
 import mozilla.components.concept.engine.Engine.HttpsOnlyMode
 import mozilla.components.concept.engine.EngineSession.CookieBannerHandlingMode
 import mozilla.components.feature.sitepermissions.SitePermissionsRules
@@ -53,8 +55,6 @@ import org.mozilla.fenix.settings.registerOnSharedPreferenceChangeListener
 import org.mozilla.fenix.settings.sitepermissions.AUTOPLAY_BLOCK_ALL
 import org.mozilla.fenix.settings.sitepermissions.AUTOPLAY_BLOCK_AUDIBLE
 import org.mozilla.fenix.wallpapers.Wallpaper
-import java.security.InvalidParameterException
-import java.util.UUID
 
 private const val AUTOPLAY_USER_SETTING = "AUTOPLAY_USER_SETTING"
 
@@ -379,7 +379,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = 1f,
     )
 
-    val shouldShowHistorySuggestions by booleanPreference(
+    var shouldShowHistorySuggestions by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_search_browsing_history),
         default = true,
     )
@@ -394,12 +394,12 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = true,
     )
 
-    val shouldShowClipboardSuggestions by booleanPreference(
+    var shouldShowClipboardSuggestions by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_show_clipboard_suggestions),
         default = true,
     )
 
-    val shouldShowSearchShortcuts by booleanPreference(
+    var shouldShowSearchShortcuts by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_show_search_engine_shortcuts),
         default = false,
     )
@@ -962,12 +962,12 @@ class Settings(private val appContext: Context) : PreferencesHolder {
 
     fun incrementShowLoginsSecureWarningSyncCount() = loginsSecureWarningSyncCount.increment()
 
-    val shouldShowSearchSuggestions by booleanPreference(
+    var shouldShowSearchSuggestions by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_show_search_suggestions),
         default = true,
     )
 
-    val shouldAutocompleteInAwesomebar by booleanPreference(
+    var shouldAutocompleteInAwesomebar by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_enable_autocomplete_urls),
         default = true,
     )

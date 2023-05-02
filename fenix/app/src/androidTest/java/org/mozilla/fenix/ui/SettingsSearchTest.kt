@@ -39,6 +39,11 @@ class SettingsSearchTest {
             dispatcher = AndroidAssetDispatcher()
             start()
         }
+        appContext.settings().shouldShowSearchSuggestions = true
+        appContext.settings().shouldShowClipboardSuggestions = true
+        appContext.settings().shouldShowHistorySuggestions = true
+        appContext.settings().shouldShowVoiceSearch = true
+        appContext.settings().shouldAutocompleteInAwesomebar = true
     }
 
     @After
