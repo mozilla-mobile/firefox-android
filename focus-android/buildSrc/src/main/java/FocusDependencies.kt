@@ -14,12 +14,12 @@ object FocusVersions {
         const val arch = "2.1.0"
         const val browser = "1.4.0"
         const val cardview = "1.0.0"
-        const val compose = "1.3.1"
+        const val compose = "1.4.2"
         const val constraint_layout = "2.1.4"
         const val constraint_layout_compose = "1.0.1"
-        const val core = "1.9.0"
+        const val core = "1.10.0"
         const val fragment = "1.5.4"
-        const val lifecycle = "2.5.1"
+        const val lifecycle = "2.6.1"
         const val palette = "1.0.0"
         const val preference = "1.2.0"
         const val recyclerview = "1.2.1"
@@ -32,7 +32,7 @@ object FocusVersions {
 
     object Google {
         const val accompanist = "0.16.1"
-        const val compose_compiler = "1.4.3"
+        const val compose_compiler = "1.4.6"
         const val material = "1.7.0"
         const val play = "1.10.3"
     }
@@ -43,7 +43,7 @@ object FocusVersions {
     }
 
     object Kotlin {
-        const val compiler = "1.8.10"
+        const val compiler = "1.8.20"
         const val coroutines = "1.6.4"
     }
 

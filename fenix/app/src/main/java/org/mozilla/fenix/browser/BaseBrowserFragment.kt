@@ -104,6 +104,7 @@ import mozilla.components.support.locale.ActivityContextWrapper
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.GleanMetrics.MediaState
+import org.mozilla.fenix.GleanMetrics.PullToRefreshInBrowser
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.IntentReceiverActivity
 import org.mozilla.fenix.NavGraphDirections
@@ -142,7 +143,6 @@ import org.mozilla.fenix.ext.secure
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.HomeScreenViewModel
 import org.mozilla.fenix.home.SharedViewModel
-import org.mozilla.fenix.onboarding.FenixOnboarding
 import org.mozilla.fenix.perf.MarkersFragmentLifecycleCallbacks
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.settings.biometric.BiometricPromptFeature
@@ -224,9 +224,6 @@ abstract class BaseBrowserFragment :
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private val homeViewModel: HomeScreenViewModel by activityViewModels()
 
-    @VisibleForTesting
-    internal val onboarding by lazy { FenixOnboarding(requireContext()) }
-
     private var currentStartDownloadDialog: StartDownloadDialog? = null
 
     @CallSuper
@@ -295,7 +292,7 @@ abstract class BaseBrowserFragment :
 
         observeTabSelection(requireComponents.core.store)
 
-        if (!onboarding.userHasBeenOnboarded()) {
+        if (!requireComponents.fenixOnboarding.userHasBeenOnboarded()) {
             observeTabSource(requireComponents.core.store)
         }
 
@@ -643,7 +640,7 @@ abstract class BaseBrowserFragment :
                 store = store,
                 sessionId = customTabSessionId,
                 fragmentManager = parentFragmentManager,
-                launchInApp = { context.settings().shouldOpenLinksInApp() },
+                launchInApp = { context.settings().shouldOpenLinksInApp(customTabSessionId != null) },
                 loadUrlUseCase = context.components.useCases.sessionUseCases.loadUrl,
                 shouldPrompt = { context.settings().shouldPromptOpenLinksInApp() },
             ),
@@ -888,6 +885,7 @@ abstract class BaseBrowserFragment :
                     requireComponents.core.store,
                     context.components.useCases.sessionUseCases.reload,
                     binding.swipeRefresh,
+                    { PullToRefreshInBrowser.executed.record(NoExtras()) },
                     customTabSessionId,
                 ),
                 owner = this,
@@ -1166,12 +1164,12 @@ abstract class BaseBrowserFragment :
                 state.selectedTab
             }
                 .collect {
-                    if (!onboarding.userHasBeenOnboarded() &&
+                    if (!requireComponents.fenixOnboarding.userHasBeenOnboarded() &&
                         it.content.loadRequest?.triggeredByRedirect != true &&
                         it.source !is SessionState.Source.External &&
                         it.content.url !in onboardingLinksList
                     ) {
-                        onboarding.finish()
+                        requireComponents.fenixOnboarding.finish()
                     }
                 }
         }

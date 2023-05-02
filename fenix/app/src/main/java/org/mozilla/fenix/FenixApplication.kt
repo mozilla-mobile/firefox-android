@@ -88,7 +88,6 @@ import org.mozilla.fenix.ext.setCustomEndpointIfAvailable
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.lifecycle.StoreLifecycleObserver
 import org.mozilla.fenix.nimbus.FxNimbus
-import org.mozilla.fenix.onboarding.FenixOnboarding
 import org.mozilla.fenix.onboarding.MARKETING_CHANNEL_ID
 import org.mozilla.fenix.perf.MarkersActivityLifecycleCallbacks
 import org.mozilla.fenix.perf.ProfilerMarkerFactProcessor
@@ -727,6 +726,12 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
 
             searchWidgetInstalled.set(settings.searchWidgetInstalled)
 
+            if (settings.sharedPrefsUUID.isEmpty()) {
+                settings.sharedPrefsUUID = sharedPrefsUuid.generateAndSet().toString()
+            } else {
+                sharedPrefsUuid.set(UUID.fromString(settings.sharedPrefsUUID))
+            }
+
             val openTabsCount = settings.openTabsCount
             hasOpenTabs.set(openTabsCount > 0)
             if (openTabsCount > 0) {
@@ -964,6 +969,6 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
     internal fun shouldShowPrivacyNotice(): Boolean {
         return Config.channel.isMozillaOnline &&
             settings().shouldShowPrivacyPopWindow &&
-            !FenixOnboarding(this).userHasBeenOnboarded()
+            !components.fenixOnboarding.userHasBeenOnboarded()
     }
 }

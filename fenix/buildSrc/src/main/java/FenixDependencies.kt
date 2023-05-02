@@ -6,7 +6,7 @@
 // FORCE REBUILD 2022-12-11
 
 object FenixVersions {
-    const val kotlin = "1.8.10"
+    const val kotlin = "1.8.20"
     const val coroutines = "1.6.4"
 
     // These versions are linked: lint should be X+23.Y.Z of gradle_plugin version, according to:
@@ -20,8 +20,8 @@ object FenixVersions {
     const val detekt = "1.19.0"
 
     const val androidx_activity = "1.6.1"
-    const val androidx_compose = "1.3.1"
-    const val androidx_compose_compiler = "1.4.3"
+    const val androidx_compose = "1.4.2"
+    const val androidx_compose_compiler = "1.4.6"
     const val androidx_appcompat = "1.3.0"
     const val androidx_benchmark = "1.1.1"
     const val androidx_biometric = "1.1.0"
@@ -31,11 +31,11 @@ object FenixVersions {
     const val androidx_profileinstaller = "1.2.2"
     const val androidx_legacy = "1.0.0"
     const val androidx_annotation = "1.5.0"
-    const val androidx_lifecycle = "2.5.1"
+    const val androidx_lifecycle = "2.6.1"
     const val androidx_fragment = "1.5.1"
     const val androidx_navigation = "2.5.1"
     const val androidx_recyclerview = "1.2.1"
-    const val androidx_core = "1.9.0"
+    const val androidx_core = "1.10.0"
     const val androidx_paging = "3.1.1"
     const val androidx_transition = "1.4.0"
     const val androidx_work = "2.7.1"

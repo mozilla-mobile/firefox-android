@@ -291,6 +291,20 @@
     <!-- Text for the button to not request notification permission on the device and dismiss the dialog -->
     <string name="onboarding_home_enable_notifications_negative_button">ہݨ کائناں</string>
 
+    <!-- Juno first user onboarding flow experiment -->
+    <!-- Title for set firefox as default browser screen.
+        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
+    <string name="juno_onboarding_default_browser_title">%s کوں آپݨاں ون٘ڄݨ آلا براؤزر بݨاؤ</string>
+    <!-- Title for set firefox as default browser screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_default_browser_title_nimbus" tools:ignore="UnusedResources">فائرفوکس کوں آپݨاں ون٘ڄݨ آلا براؤزر بݨاؤ</string>
+    <!-- Description for set firefox as default browser screen.
+        The first parameter is the Firefox brand name.
+        The second parameter is the string with key "juno_onboarding_default_browser_description_link_text". -->
+    <string name="juno_onboarding_default_browser_description">%1$s لوکاں کوں منافع  کنوں ودھ رکھیندا ہے تے  کراس سائٹ ٹریکراں کوں بلاک کر تے تہاݙی رازداری دا دفاع کریند ہے۔\n\nساݙے %2$s وچ ٻیا ڄاݨو۔</string>
+    <!-- Description for set firefox as default browser screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_default_browser_description_nimbus" tools:ignore="UnusedResources">فائرفوکس لوکاں کوں منافع  کنوں ودھ رکھیندا ہے تے  کراس سائٹ ٹریکراں کوں بلاک کر تے تہاݙی رازداری دا دفاع کریند ہے۔\n\nساݙے رازداری نوٹس وچ ٻیا ڄاݨو۔</string>
     <!-- Text for the link to the privacy notice webpage for set as firefox default browser screen.
     This is part of the string with the key "juno_onboarding_default_browser_description". -->
     <string name="juno_onboarding_default_browser_description_link_text">رازداری نوٹس</string>
@@ -300,6 +314,8 @@
     <string name="juno_onboarding_default_browser_negative_button">ہݨ کائناں</string>
     <!-- Title for sign in to sync screen. -->
     <string name="juno_onboarding_sign_in_title">فون سیٹ کنوں لیپ ٹاپ تے ہاپ کرو تے ولدا واپس وی</string>
+    <!-- Description for sign in to sync screen. -->
+    <string name="juno_onboarding_sign_in_description">تساں آپݨیاں ٻیاں ݙیوائساں نال ٹیباں تے پاس ورڈ گھنو، جتھوں تساں چھوڑیا ہائی۔</string>
     <!-- Text for the button to sign in to sync on the device -->
     <string name="juno_onboarding_sign_in_positive_button">سائن ان</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
@@ -307,6 +323,15 @@
     <!-- Title for enable notification permission screen.
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
     <string name="juno_onboarding_enable_notifications_title">اطلاع نامے %s نال ودھیک کرݨ وچ تہاݙی مدد کریندن۔</string>
+    <!-- Title for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_enable_notifications_title_nimbus" tools:ignore="UnusedResources">اطلاع نامے فائرفوکس نال ودھیک کرݨ وچ تہاݙی مدد کریندن۔</string>
+    <!-- Description for enable notification permission screen.
+        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
+    <string name="juno_onboarding_enable_notifications_description">ڈیوائساں دے درمیان ٹیباں بھیڄو، ڈاؤن لوڈ منیج کرو، تے %s کنوں ودھ کنوں ودھ فائدہ چاوݨ کیتے گُر گھنو۔</string>
+    <!-- Description for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+       Note: The word "Firefox" should NOT be translated   -->
+    <string name="juno_onboarding_enable_notifications_description_nimbus" tools:ignore="UnusedResources">ڈیوائساں دے درمیان ٹیباں بھیڄو، ڈاؤن لوڈ منیج کرو، تے فائرفوکس کنوں ودھ کنوں ودھ فائدہ چاوݨ کیتے گُر گھنو۔</string>
     <!-- Text for the button to request notification permission on the device -->
     <string name="juno_onboarding_enable_notifications_positive_button">اطلاع نامے چالو کرو</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
@@ -1244,9 +1269,19 @@
 
     <!-- Title A shown in the notification that pops up to re-engage the user -->
     <string name="notification_re_engagement_A_title">کھوج دے بغیر براؤز کرو</string>
+    <!-- Text A shown in the notification that pops up to re-engage the user.
+    %1$s is a placeholder that will be replaced by the app name. -->
+    <string name="notification_re_engagement_A_text">%1$s وچ نجی براؤزنگ تہاݙی معلومات کوں محفوظ کائنی کریندی۔</string>
     <!-- Title B shown in the notification that pops up to re-engage the user -->
     <string name="notification_re_engagement_B_title">آپݨی پہلی ڳول شروع کرو</string>
 
+    <!-- Text B shown in the notification that pops up to re-engage the user -->
+    <string name="notification_re_engagement_B_text">نیڑے دی کئی شئے لبھو۔ یا کئی تفریحی شئے دریافت کرو۔</string>
+
+    <!-- Survey -->
+    <!-- Text shown in the fullscreen message that pops up to ask user to take a short survey.
+    The app name is in the text, due to limitations with localizing Nimbus experiments -->
+    <string name="nimbus_survey_message_text">سوہݨا، ہک مختصر سروے وچ حصہ گھن تے فائرفوکس بہتر بݨاوݨ کیتے مدد کرو۔</string>
     <!-- Preference for taking the short survey. -->
     <string name="preferences_take_survey">سروے وچ حصہ گھنو</string>
     <!-- Preference for not taking the short survey. -->
@@ -1473,20 +1508,28 @@
     <string name="preference_enhanced_tracking_protection">بہتر ٹریکنگ حفاظت</string>
     <!-- Title for the description of enhanced tracking protection -->
     <string name="preference_enhanced_tracking_protection_explanation_title" moz:removedIn="114" tools:ignore="UnusedResources">بغیر فالو تھئے براؤز کرو</string>
+    <!-- Preference summary for enhanced tracking protection settings on/off switch -->
+    <string name="preference_enhanced_tracking_protection_summary">ہݨ پوری کوکی حفاظت دی خاصیت، کراس سائٹ ٹریکراں دے خلاف ساݙی سب کنوں تکڑی رکاوٹ۔</string>
     <!-- Description of enhanced tracking protection. The first parameter is the name of the application (For example: Fenix) -->
     <string name="preference_enhanced_tracking_protection_explanation" moz:removedIn="114" tools:ignore="UnusedResources">آپݨاں ڈیٹا آپݨے کول رکھو۔ %s تہاکوں ٻہوں سارے ݙاڈھے عام ٹریکراں کنوں بچیندے، جہڑے  تہاݙے آن لائن کم کوں فالو کریندن۔</string>
+    <!-- Description of enhanced tracking protection. The parameter is the name of the application (For example: Firefox Fenix) -->
+    <string name="preference_enhanced_tracking_protection_explanation_2">%s تہاکوں ٻہوں سارے ݙاڈھے عام ٹریکراں کنوں بچیندے، جہڑے  تہاݙے آن لائن کم کوں فالو کریندن۔</string>
     <!-- Text displayed that links to website about enhanced tracking protection -->
     <string name="preference_enhanced_tracking_protection_explanation_learn_more">ٻیا سِکھو</string>
     <!-- Preference for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_standard_default_1">معیاری (پہلے کنوں مقرر)</string>
     <!-- Preference description for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_standard_description_4" moz:removedIn="114" tools:ignore="UnusedResources">کارکردگی تے رازداری کیتے متوازن تھیا، ورقے معمول دے مطابق لوڈ تھیندن۔</string>
+    <!-- Preference description for enhanced tracking protection for the standard protection settings -->
+    <string name="preference_enhanced_tracking_protection_standard_description_5">ورقے ٹھیک لوڈ تھیسن، پر کجھ ٹریکرز بلاک ہوسن۔</string>
     <!--  Accessibility text for the Standard protection information icon  -->
     <string name="preference_enhanced_tracking_protection_standard_info_button">معیاری ٹریکنگ تحفظ نال کیا بلاک ہے</string>
     <!-- Preference for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict">سخت</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict_description_3" moz:removedIn="114" tools:ignore="UnusedResources">ورقیاں کوں تکھیرا لوڈ کرݨ سانگے ٻئے ٹریکراں کوں بلاک کریندے، پر ورقے تے کجھ فعالت ترٹ سڳدی ہے۔</string>
+    <!-- Preference description for enhanced tracking protection for the strict protection settings -->
+    <string name="preference_enhanced_tracking_protection_strict_description_4">مظبوط ٹریکنگ تحفظ تے تکھیری کارکردگی، پر کجھ سائٹاں ٹھیک کم کائناں کریسن۔</string>
     <!--  Accessibility text for the Strict protection information icon  -->
     <string name="preference_enhanced_tracking_protection_strict_info_button">سخت ٹریکنگ تحفظ نال کیا بلاک ہے</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
@@ -1571,6 +1614,10 @@
     <string name="preference_etp_smartblock_description"> ہیٹھاں کجھ نشان زدہ ٹریکرز کوں ایں ورقے تے  جزوی طور تے اݨ بلاک کر ݙتا ڳئے کیوں جو تساں انہاں نال تعامل کیتے*۔</string>
     <!-- Text displayed that links to website about enhanced tracking protection SmartBlock -->
     <string name="preference_etp_smartblock_learn_more">ٻیا سِکھو</string>
+
+    <!-- Content description (not visible, for screen readers etc.):
+    Enhanced tracking protection exception preference icon for ETP settings. -->
+    <string name="preference_etp_exceptions_icon_description">ودھائی ہوئی ٹریکنگ حفاظت استشنائی ترجیح آئیکان</string>
 
     <!-- About page link text to open support link -->
     <string name="about_support">سہارا</string>
