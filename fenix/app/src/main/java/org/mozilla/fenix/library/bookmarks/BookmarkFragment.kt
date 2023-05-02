@@ -67,8 +67,8 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
     private lateinit var bookmarkStore: BookmarkFragmentStore
     private lateinit var bookmarkView: BookmarkView
     private var _bookmarkInteractor: BookmarkFragmentInteractor? = null
-    private val bookmarkInteractor: BookmarkFragmentInteractor
-        get() = _bookmarkInteractor!!
+    private val bookmarkInteractor: BookmarkFragmentInteractor?
+        get() = _bookmarkInteractor
 
     private val sharedViewModel: BookmarksSharedViewModel by activityViewModels()
     private val desktopFolders by lazy { DesktopFolders(requireContext(), showMobileRoot = false) }
@@ -171,7 +171,7 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
             val currentRoot = loadBookmarkNode(currentGuid)
 
             if (isActive && currentRoot != null) {
-                bookmarkInteractor.onBookmarksChanged(currentRoot)
+                bookmarkInteractor?.onBookmarksChanged(currentRoot)
             }
         }
     }
@@ -204,7 +204,7 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
     override fun onMenuItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.bookmark_search -> {
-                bookmarkInteractor.onSearch()
+                bookmarkInteractor?.onSearch()
                 true
             }
             R.id.close_bookmarks -> {
@@ -285,7 +285,7 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
         loadBookmarkNode(currentGuid)
             ?.let { node ->
                 val rootNode = node - pendingBookmarksToDelete
-                bookmarkInteractor.onBookmarksChanged(rootNode)
+                bookmarkInteractor?.onBookmarksChanged(rootNode)
             }
     }
 
@@ -420,7 +420,7 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
         pendingBookmarksToDelete.addAll(selected)
         val selectedFolder = sharedViewModel.selectedFolder ?: return
         val bookmarkTree = selectedFolder - pendingBookmarksToDelete
-        bookmarkInteractor.onBookmarksChanged(bookmarkTree)
+        bookmarkInteractor?.onBookmarksChanged(bookmarkTree)
     }
 
     private suspend fun undoPendingDeletion(selected: Set<BookmarkNode>) {

@@ -68,19 +68,19 @@ class LibrarySiteItemView @JvmOverloads constructor(
         }
     }
 
-    fun <T> setSelectionInteractor(item: T, holder: SelectionHolder<T>, interactor: SelectionInteractor<T>) {
+    fun <T> setSelectionInteractor(item: T, holder: SelectionHolder<T>, interactor: SelectionInteractor<T>?) {
         setOnClickListener {
             val selected = holder.selectedItems
             when {
-                selected.isEmpty() -> interactor.open(item)
-                item in selected -> interactor.deselect(item)
-                else -> interactor.select(item)
+                selected.isEmpty() -> interactor?.open(item)
+                item in selected -> interactor?.deselect(item)
+                else -> interactor?.select(item)
             }
         }
 
         setOnLongClickListener {
             if (holder.selectedItems.isEmpty()) {
-                interactor.select(item)
+                interactor?.select(item)
                 true
             } else {
                 false
@@ -89,9 +89,9 @@ class LibrarySiteItemView @JvmOverloads constructor(
 
         iconView.setOnClickListener {
             if (item in holder.selectedItems) {
-                interactor.deselect(item)
+                interactor?.deselect(item)
             } else {
-                interactor.select(item)
+                interactor?.select(item)
             }
         }
     }

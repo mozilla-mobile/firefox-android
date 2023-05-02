@@ -18,7 +18,7 @@ import org.mozilla.fenix.library.LibrarySiteItemView
 import org.mozilla.fenix.library.bookmarks.viewholders.BookmarkNodeViewHolder
 import org.mozilla.fenix.library.bookmarks.viewholders.BookmarkSeparatorViewHolder
 
-class BookmarkAdapter(private val emptyView: View, private val interactor: BookmarkViewInteractor) :
+class BookmarkAdapter(private val emptyView: View, private val interactor: BookmarkViewInteractor?) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     @VisibleForTesting var tree: List<BookmarkNode> = listOf()

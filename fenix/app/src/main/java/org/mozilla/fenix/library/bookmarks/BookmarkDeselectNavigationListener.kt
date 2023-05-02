@@ -14,7 +14,7 @@ import org.mozilla.fenix.R
 class BookmarkDeselectNavigationListener(
     private val navController: NavController,
     private val viewModel: BookmarksSharedViewModel,
-    private val bookmarkInteractor: BookmarkViewInteractor,
+    private val bookmarkInteractor: BookmarkViewInteractor?,
 ) : NavController.OnDestinationChangedListener, DefaultLifecycleObserver {
 
     override fun onResume(owner: LifecycleOwner) {
@@ -31,7 +31,7 @@ class BookmarkDeselectNavigationListener(
     override fun onDestinationChanged(controller: NavController, destination: NavDestination, arguments: Bundle?) {
         if (destination.id != R.id.bookmarkFragment || differentFromSelectedFolder(arguments)) {
             // TODO this is currently called when opening the bookmark menu. Fix this if possible
-            bookmarkInteractor.onAllBookmarksDeselected()
+            bookmarkInteractor?.onAllBookmarksDeselected()
         }
     }
 

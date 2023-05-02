@@ -120,7 +120,7 @@ interface BookmarkViewInteractor : SelectionInteractor<BookmarkNode> {
 
 class BookmarkView(
     container: ViewGroup,
-    val interactor: BookmarkViewInteractor,
+    val interactor: BookmarkViewInteractor?,
     private val navController: NavController,
 ) : LibraryPageView(container), UserInteractionHandler {
 
@@ -143,7 +143,7 @@ class BookmarkView(
             navController.navigate(NavGraphDirections.actionGlobalTurnOnSync())
         }
         binding.swipeRefresh.setOnRefreshListener {
-            interactor.onRequestSync()
+            interactor?.onRequestSync()
         }
     }
 
@@ -152,7 +152,7 @@ class BookmarkView(
         if (state.mode != mode) {
             mode = state.mode
             if (mode is BookmarkFragmentState.Mode.Normal || mode is BookmarkFragmentState.Mode.Selecting) {
-                interactor.onSelectionModeSwitch(mode)
+                interactor?.onSelectionModeSwitch(mode)
             }
         }
 
@@ -183,11 +183,11 @@ class BookmarkView(
     override fun onBackPressed(): Boolean {
         return when (mode) {
             is BookmarkFragmentState.Mode.Selecting -> {
-                interactor.onAllBookmarksDeselected()
+                interactor?.onAllBookmarksDeselected()
                 true
             }
             else -> {
-                interactor.onBackPressed()
+                interactor?.onBackPressed()
                 true
             }
         }

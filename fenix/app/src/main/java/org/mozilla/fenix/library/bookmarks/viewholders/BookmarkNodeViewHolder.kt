@@ -30,7 +30,7 @@ import org.mozilla.fenix.utils.Do
  */
 class BookmarkNodeViewHolder(
     private val containerView: LibrarySiteItemView,
-    private val interactor: BookmarkViewInteractor,
+    private val interactor: BookmarkViewInteractor?,
 ) : RecyclerView.ViewHolder(containerView) {
 
     var item: BookmarkNode? = null
@@ -40,14 +40,14 @@ class BookmarkNodeViewHolder(
         menu = BookmarkItemMenu(containerView.context) { menuItem ->
             val item = this.item ?: return@BookmarkItemMenu
             Do exhaustive when (menuItem) {
-                BookmarkItemMenu.Item.Edit -> interactor.onEditPressed(item)
-                BookmarkItemMenu.Item.Copy -> interactor.onCopyPressed(item)
-                BookmarkItemMenu.Item.Share -> interactor.onSharePressed(item)
-                BookmarkItemMenu.Item.OpenInNewTab -> interactor.onOpenInNormalTab(item)
-                BookmarkItemMenu.Item.OpenInPrivateTab -> interactor.onOpenInPrivateTab(item)
-                BookmarkItemMenu.Item.OpenAllInNewTabs -> interactor.onOpenAllInNewTabs(item)
-                BookmarkItemMenu.Item.OpenAllInPrivateTabs -> interactor.onOpenAllInPrivateTabs(item)
-                BookmarkItemMenu.Item.Delete -> interactor.onDelete(setOf(item))
+                BookmarkItemMenu.Item.Edit -> interactor?.onEditPressed(item)
+                BookmarkItemMenu.Item.Copy -> interactor?.onCopyPressed(item)
+                BookmarkItemMenu.Item.Share -> interactor?.onSharePressed(item)
+                BookmarkItemMenu.Item.OpenInNewTab -> interactor?.onOpenInNormalTab(item)
+                BookmarkItemMenu.Item.OpenInPrivateTab -> interactor?.onOpenInPrivateTab(item)
+                BookmarkItemMenu.Item.OpenAllInNewTabs -> interactor?.onOpenAllInNewTabs(item)
+                BookmarkItemMenu.Item.OpenAllInPrivateTabs -> interactor?.onOpenAllInPrivateTabs(item)
+                BookmarkItemMenu.Item.Delete -> interactor?.onDelete(setOf(item))
             }
         }
 
