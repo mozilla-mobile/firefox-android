@@ -19,8 +19,8 @@ gcloud:
   performance-metrics: true
 
   device:
-   - model: Pixel2.arm
-     version: 28
+   - model: redfin
+     version: 30
      locale: en_US
 
 flank:

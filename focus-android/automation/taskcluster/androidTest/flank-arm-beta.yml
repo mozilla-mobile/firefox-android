@@ -24,7 +24,7 @@ gcloud:
     - class org.mozilla.focus.activity.EraseBrowsingDataTest#deleteHistoryOnRestartTest
   
   device:
-    - model: Pixel2.arm
+    - model: redfin
       version: 30
       locale: en_US
 

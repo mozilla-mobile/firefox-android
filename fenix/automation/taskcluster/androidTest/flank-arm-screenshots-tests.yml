@@ -23,7 +23,7 @@ gcloud:
    - package org.mozilla.fenix.screenshots
 
   device:
-   - model: Pixel2.arm
+   - model: redfin
      version: 30
      locale: en_US
 
