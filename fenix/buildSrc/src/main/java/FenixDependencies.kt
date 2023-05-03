@@ -30,14 +30,14 @@ object FenixVersions {
     const val androidx_preference = "1.1.1"
     const val androidx_profileinstaller = "1.2.2"
     const val androidx_legacy = "1.0.0"
-    const val androidx_annotation = "1.5.0"
+    const val androidx_annotation = "1.6.0"
     const val androidx_lifecycle = "2.6.1"
-    const val androidx_fragment = "1.5.1"
-    const val androidx_navigation = "2.5.1"
+    const val androidx_fragment = "1.5.7"
+    const val androidx_navigation = "2.5.3"
     const val androidx_recyclerview = "1.2.1"
     const val androidx_core = "1.10.0"
     const val androidx_paging = "3.1.1"
-    const val androidx_transition = "1.4.0"
+    const val androidx_transition = "1.4.1"
     const val androidx_work = "2.7.1"
     const val androidx_datastore = "1.0.0"
     const val androidx_datastore_preferences = "1.0.0"
@@ -52,7 +52,7 @@ object FenixVersions {
 
     const val mockwebserver = "4.10.0"
     const val uiautomator = "2.2.0"
-    const val robolectric = "4.9.2"
+    const val robolectric = "4.10.1"
 
     const val google_ads_id_version = "16.0.0"
 
