@@ -24,7 +24,7 @@ gcloud:
     - class org.mozilla.focus.activity.EraseBrowsingDataTest#deleteHistoryOnRestartTest
 
   device:
-    - model: Pixel2.arm
+    - model: Pixel2
       version: 30
       locale: en_US
 

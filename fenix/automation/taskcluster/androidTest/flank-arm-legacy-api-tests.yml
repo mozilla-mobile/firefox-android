@@ -37,7 +37,7 @@ gcloud:
     - class org.mozilla.fenix.ui.BookmarksTest#addBookmarkTest
 
   device:
-    - model: Pixel2.arm
+    - model: Pixel2
       version: 26
       locale: en_US
     - model: walleye

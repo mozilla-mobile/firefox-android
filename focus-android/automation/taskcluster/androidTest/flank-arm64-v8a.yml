@@ -24,7 +24,7 @@ gcloud:
     - package org.mozilla.focus.privacy
 
   device:
-    - model: Pixel2.arm
+    - model: Pixel2
       version: 30
       locale: en_US
 

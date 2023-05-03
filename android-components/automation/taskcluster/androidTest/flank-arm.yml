@@ -19,7 +19,7 @@ gcloud:
   performance-metrics: true
 
   device:
-   - model: Pixel2.arm
+   - model: Pixel2
      version: 28
      locale: en_US
 
