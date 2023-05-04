@@ -34,7 +34,7 @@ object Versions {
     const val lint = "30.4.1"
     const val detekt = "1.19.0"
 
-    const val sentry_latest = "6.17.0"
+    const val sentry_latest = "6.18.1"
 
     // zxing 3.4+ requires a minimum API of 24 or higher
     const val zxing = "3.3.3"
@@ -55,8 +55,8 @@ object Versions {
 
     object AndroidX {
         const val activityCompose = "1.4.0"
-        const val annotation = "1.5.0"
-        const val appcompat = "1.3.0"
+        const val annotation = "1.6.0"
+        const val appcompat = "1.6.1"
         const val autofill = "1.1.0"
         const val browser = "1.3.0"
         const val biometric = "1.1.0"
