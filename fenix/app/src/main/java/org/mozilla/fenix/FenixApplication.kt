@@ -562,7 +562,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                     AppCompatDelegate.MODE_NIGHT_NO,
                 )
             }
-            settings.shouldUseDarkTheme -> {
+            settings.shouldUseDarkTheme || settings.shouldUseBlackTheme -> {
                 AppCompatDelegate.setDefaultNightMode(
                     AppCompatDelegate.MODE_NIGHT_YES,
                 )

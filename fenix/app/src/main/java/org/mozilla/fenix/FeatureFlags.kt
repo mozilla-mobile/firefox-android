@@ -21,6 +21,11 @@ object FeatureFlags {
     val customExtensionCollectionFeature = Config.channel.isNightlyOrDebug || Config.channel.isBeta
 
     /**
+     * Enables the user to select an "OLED Black" theme.
+     */
+    val blackTheme = Config.channel.isNightlyOrDebug
+
+    /**
      * Pull-to-refresh allows you to pull the web content down far enough to have the page to
      * reload.
      */
