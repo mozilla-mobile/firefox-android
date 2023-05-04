@@ -306,7 +306,7 @@ private fun assertTabButtonShortcutMenuItems() {
         .check(matches(hasDescendant(withText("New tab"))))
 }
 
-private fun urlBar() = mDevice.findObject(UiSelector().resourceId("$packageName:id/toolbar"))
+private fun urlBar() = onView(withId(R.id.toolbar))
 private fun awesomeBar() =
     mDevice.findObject(UiSelector().resourceId("$packageName:id/mozac_browser_toolbar_edit_url_view"))
 private fun threeDotButton() = onView(withId(R.id.mozac_browser_toolbar_menu))
