@@ -28,6 +28,7 @@ import org.mozilla.fenix.ext.settings
 enum class Theme {
     Light,
     Dark,
+    Black,
     Private,
     ;
 
@@ -48,7 +49,11 @@ enum class Theme {
             ) {
                 Private
             } else if (isSystemInDarkTheme()) {
-                Dark
+                if (LocalContext.current.settings().shouldUseBlackTheme) {
+                    Black
+                } else {
+                    Dark
+                }
             } else {
                 Light
             }
@@ -68,6 +73,7 @@ fun FirefoxTheme(
     val colors = when (theme) {
         Theme.Light -> lightColorPalette
         Theme.Dark -> darkColorPalette
+        Theme.Black -> blackColorPalette
         Theme.Private -> privateColorPalette
     }
 
@@ -217,6 +223,17 @@ private val lightColorPalette = FirefoxColors(
     borderAccent = PhotonColors.Ink20,
     borderDisabled = PhotonColors.DarkGrey90A40,
     borderWarning = PhotonColors.Red70,
+)
+
+private val blackColorPalette = darkColorPalette.copy(
+    layer1 = PhotonColors.Black,
+    layer2 = PhotonColors.DarkGrey90,
+    layer3 = PhotonColors.DarkGrey80,
+    layer4Start = PhotonColors.Black,
+    layer4Center = PhotonColors.Black,
+    layer4End = PhotonColors.Black,
+    actionTertiary = PhotonColors.DarkGrey80,
+    borderPrimary = PhotonColors.DarkGrey70,
 )
 
 private val privateColorPalette = darkColorPalette.copy(
