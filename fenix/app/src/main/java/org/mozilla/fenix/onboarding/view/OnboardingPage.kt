@@ -107,7 +107,11 @@ fun OnboardingPage(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Image(
-                    painter = painterResource(id = pageState.image),
+                    painter = painterResource(
+                        id = pageState.imageResources.resourceIdForScreenSize(
+                            boxWithConstraintsScope,
+                        ),
+                    ),
                     contentDescription = null,
                     modifier = Modifier.height(imageHeight(boxWithConstraintsScope)),
                 )
@@ -231,13 +235,23 @@ private fun imageHeight(boxWithConstraintsScope: BoxWithConstraintsScope): Dp {
     return boxWithConstraintsScope.maxHeight.times(imageHeightRatio)
 }
 
+/**
+ * @return the relevant image resource for the given screen size.
+ */
+private fun ImageResources.resourceIdForScreenSize(boxWithConstraintsScope: BoxWithConstraintsScope) =
+    when {
+        boxWithConstraintsScope.maxHeight <= 550.dp -> small ?: default
+        boxWithConstraintsScope.maxHeight <= 650.dp -> medium ?: default
+        else -> default
+    }
+
 @LightDarkPreview
 @Composable
 private fun OnboardingPagePreview() {
     FirefoxTheme {
         OnboardingPage(
             pageState = OnboardingPageState(
-                image = R.drawable.ic_notification_permission,
+                imageResources = ImageResources(R.drawable.ic_notification_permission),
                 title = stringResource(
                     id = R.string.onboarding_home_enable_notifications_title,
                     formatArgs = arrayOf(stringResource(R.string.app_name)),
