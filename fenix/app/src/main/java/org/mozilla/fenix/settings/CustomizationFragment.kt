@@ -31,6 +31,7 @@ import org.mozilla.fenix.utils.view.addToRadioGroup
 class CustomizationFragment : PreferenceFragmentCompat() {
     private lateinit var radioLightTheme: RadioButtonPreference
     private lateinit var radioDarkTheme: RadioButtonPreference
+    private lateinit var radioBlackTheme: RadioButtonPreference
     private lateinit var radioAutoBatteryTheme: RadioButtonPreference
     private lateinit var radioFollowDeviceTheme: RadioButtonPreference
 
@@ -48,6 +49,7 @@ class CustomizationFragment : PreferenceFragmentCompat() {
     private fun setupPreferences() {
         bindFollowDeviceTheme()
         bindDarkTheme()
+        bindBlackTheme()
         bindLightTheme()
         bindAutoBatteryTheme()
         setupRadioGroups()
@@ -59,6 +61,7 @@ class CustomizationFragment : PreferenceFragmentCompat() {
         addToRadioGroup(
             radioLightTheme,
             radioDarkTheme,
+            radioBlackTheme,
             if (SDK_INT >= Build.VERSION_CODES.P) {
                 radioFollowDeviceTheme
             } else {
@@ -95,6 +98,14 @@ class CustomizationFragment : PreferenceFragmentCompat() {
         }
     }
 
+    private fun bindBlackTheme() {
+        radioBlackTheme = requirePreference(R.string.pref_key_black_theme)
+        radioBlackTheme.onClickListener {
+            setNewTheme(AppCompatDelegate.MODE_NIGHT_YES)
+        }
+        radioBlackTheme.isVisible = FeatureFlags.blackTheme
+    }
+
     private fun bindFollowDeviceTheme() {
         radioFollowDeviceTheme = requirePreference(R.string.pref_key_follow_device_theme)
         if (SDK_INT >= Build.VERSION_CODES.P) {
@@ -105,8 +116,9 @@ class CustomizationFragment : PreferenceFragmentCompat() {
     }
 
     private fun setNewTheme(mode: Int) {
-        if (AppCompatDelegate.getDefaultNightMode() == mode) return
-        AppCompatDelegate.setDefaultNightMode(mode)
+        if (AppCompatDelegate.getDefaultNightMode() != mode) {
+            AppCompatDelegate.setDefaultNightMode(mode)
+        }
         activity?.recreate()
         with(requireComponents.core) {
             engine.settings.preferredColorScheme = getPreferredColorScheme()
