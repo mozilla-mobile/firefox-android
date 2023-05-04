@@ -161,19 +161,12 @@ class TabsTrayFragment : AppCompatDialogFragment() {
 
         navigationInteractor =
             DefaultNavigationInteractor(
-                context = requireContext(),
-                tabsTrayStore = tabsTrayStore,
                 browserStore = requireComponents.core.store,
                 navController = findNavController(),
                 dismissTabTray = ::dismissTabsTray,
                 dismissTabTrayAndNavigateHome = ::dismissTabsTrayAndNavigateHome,
-                bookmarksUseCase = requireComponents.useCases.bookmarksUseCases,
-                collectionStorage = requireComponents.core.tabCollectionStorage,
-                showCollectionSnackbar = ::showCollectionSnackbar,
-                showBookmarkSnackbar = ::showBookmarkSnackbar,
                 showCancelledDownloadWarning = ::showCancelledDownloadWarning,
                 accountManager = requireComponents.backgroundServices.accountManager,
-                ioDispatcher = Dispatchers.IO,
             )
 
         tabsTrayController = DefaultTabsTrayController(
@@ -188,10 +181,15 @@ class TabsTrayFragment : AppCompatDialogFragment() {
             navigationInteractor = navigationInteractor,
             profiler = requireComponents.core.engine.profiler,
             tabsUseCases = requireComponents.useCases.tabsUseCases,
+            bookmarksUseCase = requireComponents.useCases.bookmarksUseCases,
+            ioDispatcher = Dispatchers.IO,
+            collectionStorage = requireComponents.core.tabCollectionStorage,
             selectTabPosition = ::selectTabPosition,
             dismissTray = ::dismissTabsTray,
             showUndoSnackbarForTab = ::showUndoSnackbarForTab,
             showCancelledDownloadWarning = ::showCancelledDownloadWarning,
+            showCollectionSnackbar = ::showCollectionSnackbar,
+            showBookmarkSnackbar = ::showBookmarkSnackbar,
         )
 
         tabsTrayInteractor = DefaultTabsTrayInteractor(
@@ -298,6 +296,8 @@ class TabsTrayFragment : AppCompatDialogFragment() {
         _tabsTrayBinding = null
         _tabsTrayDialogBinding = null
         _fabButtonBinding = null
+        _tabsTrayComposeBinding = null
+        _fabButtonComposeBinding = null
     }
 
     @Suppress("LongMethod")
@@ -403,8 +403,7 @@ class TabsTrayFragment : AppCompatDialogFragment() {
                     context = requireContext(),
                     binding = tabsTrayBinding,
                     store = tabsTrayStore,
-                    navInteractor = navigationInteractor,
-                    tabsTrayInteractor = tabsTrayInteractor,
+                    interactor = tabsTrayInteractor,
                     backgroundView = tabsTrayBinding.topBar,
                     showOnSelectViews = VisibilityModifier(
                         tabsTrayMultiselectItemsBinding.collectMultiSelect,
@@ -540,25 +539,31 @@ class TabsTrayFragment : AppCompatDialogFragment() {
                 true -> getString(R.string.snackbar_private_tab_closed)
                 false -> getString(R.string.snackbar_tab_closed)
             }
+        val pagePosition = if (isPrivate) Page.PrivateTabs.ordinal else Page.NormalTabs.ordinal
 
-        if (!requireContext().settings().enableTabsTrayToCompose) {
-            lifecycleScope.allowUndo(
-                requireView(),
-                snackbarMessage,
-                getString(R.string.snackbar_deleted_undo),
-                {
-                    requireComponents.useCases.tabsUseCases.undo.invoke()
+        lifecycleScope.allowUndo(
+            view = requireView(),
+            message = snackbarMessage,
+            undoActionTitle = getString(R.string.snackbar_deleted_undo),
+            onCancel = {
+                requireComponents.useCases.tabsUseCases.undo.invoke()
+
+                if (requireContext().settings().enableTabsTrayToCompose) {
+                    tabsTrayStore.dispatch(TabsTrayAction.PageSelected(Page.positionToPage(pagePosition)))
+                } else {
                     tabLayoutMediator.withFeature {
-                        it.selectTabAtPosition(
-                            if (isPrivate) Page.PrivateTabs.ordinal else Page.NormalTabs.ordinal,
-                        )
+                        it.selectTabAtPosition(pagePosition)
                     }
-                },
-                operation = { },
-                elevation = ELEVATION,
-                anchorView = if (fabButtonBinding.newTabButton.isVisible) fabButtonBinding.newTabButton else null,
-            )
-        }
+                }
+            },
+            operation = { },
+            elevation = ELEVATION,
+            anchorView = when {
+                requireContext().settings().enableTabsTrayToCompose -> fabButtonComposeBinding.root
+                fabButtonBinding.newTabButton.isVisible -> fabButtonBinding.newTabButton
+                else -> null
+            },
+        )
     }
 
     @VisibleForTesting

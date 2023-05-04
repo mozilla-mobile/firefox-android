@@ -9,22 +9,22 @@ object FocusVersions {
     }
 
     object AndroidX {
-        const val annotation = "1.5.0"
-        const val appcompat = "1.5.1"
+        const val annotation = "1.6.0"
+        const val appcompat = "1.6.1"
         const val arch = "2.1.0"
         const val browser = "1.4.0"
         const val cardview = "1.0.0"
         const val compose = "1.4.2"
         const val constraint_layout = "2.1.4"
         const val constraint_layout_compose = "1.0.1"
-        const val core = "1.9.0"
-        const val fragment = "1.5.4"
+        const val core = "1.10.0"
+        const val fragment = "1.5.7"
         const val lifecycle = "2.6.1"
         const val palette = "1.0.0"
         const val preference = "1.2.0"
         const val recyclerview = "1.2.1"
-        const val savedstate = "1.2.0"
-        const val splashscreen = "1.0.0"
+        const val savedstate = "1.2.1"
+        const val splashscreen = "1.0.1"
         const val transition = "1.4.1"
         const val work = "2.7.1"
         const val androidx_datastore_preferences = "1.0.0"
@@ -60,13 +60,13 @@ object FocusVersions {
         const val ktlint = "0.48.2"
         const val mockito = "4.8.1"
         const val mockwebserver = "4.10.0"
-        const val robolectric = "4.9.2"
+        const val robolectric = "4.10.1"
     }
 
     object ThirdParty {
         const val leakcanary = "2.10"
         const val osslicenses_plugin = "0.10.4"
-        const val sentry = "6.17.0"
+        const val sentry = "6.18.1"
     }
 
     // Workaround for a Gradle parsing bug that prevents using nested objects directly in Gradle files.

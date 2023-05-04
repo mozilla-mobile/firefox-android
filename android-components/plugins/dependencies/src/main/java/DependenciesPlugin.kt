@@ -19,7 +19,7 @@ object Versions {
     const val serialization = "1.5.0"
 
     const val junit = "4.13.2"
-    const val robolectric = "4.9.2"
+    const val robolectric = "4.10.1"
     const val mockito = "3.12.4"
     const val maven_ant_tasks = "2.1.3"
 
@@ -34,7 +34,7 @@ object Versions {
     const val lint = "30.4.1"
     const val detekt = "1.19.0"
 
-    const val sentry_latest = "6.17.0"
+    const val sentry_latest = "6.18.1"
 
     // zxing 3.4+ requires a minimum API of 24 or higher
     const val zxing = "3.3.3"
@@ -55,8 +55,8 @@ object Versions {
 
     object AndroidX {
         const val activityCompose = "1.4.0"
-        const val annotation = "1.5.0"
-        const val appcompat = "1.3.0"
+        const val annotation = "1.6.0"
+        const val appcompat = "1.6.1"
         const val autofill = "1.1.0"
         const val browser = "1.3.0"
         const val biometric = "1.1.0"
@@ -64,21 +64,21 @@ object Versions {
         const val compose = compose_version
         const val constraintlayout = "2.0.4"
         const val coordinatorlayout = "1.1.0"
-        const val core = "1.9.0"
-        const val fragment = "1.5.1"
+        const val core = "1.10.0"
+        const val fragment = "1.5.7"
         const val recyclerview = "1.2.0"
         const val test = "1.5.0"
         const val test_ext = "1.1.5"
         const val test_runner = "1.5.2"
         const val espresso = "3.5.1"
         const val room = "2.4.3"
-        const val savedstate = "1.2.0"
+        const val savedstate = "1.2.1"
         const val paging = "2.1.2"
         const val palette = "1.0.0"
         const val preferences = "1.1.1"
         const val lifecycle = "2.6.1"
         const val media = "1.2.0"
-        const val navigation = "2.5.1"
+        const val navigation = "2.5.3"
         const val work = "2.7.1"
         const val arch = "2.1.0"
         const val uiautomator = "2.2.0"
