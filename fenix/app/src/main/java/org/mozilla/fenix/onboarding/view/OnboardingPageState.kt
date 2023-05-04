@@ -4,12 +4,10 @@
 
 package org.mozilla.fenix.onboarding.view
 
-import androidx.annotation.DrawableRes
-
 /**
  * Model containing data for [OnboardingPage].
  *
- * @param image [DrawableRes] displayed on the page.
+ * @param imageResources The [ImageResources] of the page.
  * @param title [String] title of the page.
  * @param description [String] description of the page.
  * @param linkTextState [LinkTextState] part of description text with a link.
@@ -18,7 +16,7 @@ import androidx.annotation.DrawableRes
  * @param onRecordImpressionEvent Callback for recording impression event.
  */
 data class OnboardingPageState(
-    @DrawableRes val image: Int,
+    val imageResources: ImageResources,
     val title: String,
     val description: String,
     val linkTextState: LinkTextState? = null,

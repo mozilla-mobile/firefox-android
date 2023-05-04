@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.onboarding.view
 
+import androidx.annotation.DrawableRes
 import org.mozilla.fenix.nimbus.OnboardingCardData
 import org.mozilla.fenix.nimbus.OnboardingCardType
 import org.mozilla.fenix.settings.SupportUtils
@@ -23,12 +24,25 @@ internal fun Collection<OnboardingCardData>.toPageUiData(showNotificationPage: B
 
 private fun OnboardingCardData.toPageUiData() = OnboardingPageUiData(
     type = cardType.toPageUiDataType(),
-    imageRes = imageRes.resourceId,
+    imageResources = ImageResources(
+        imageResDefault.resourceId,
+        imageResSmall?.resourceId,
+        imageResMedium?.resourceId,
+    ),
     title = title,
     description = body,
     linkText = linkText,
     primaryButtonLabel = primaryButtonLabel,
     secondaryButtonLabel = secondaryButtonLabel,
+)
+
+/**
+ * Stores all the available image resources for an [OnboardingCardData].
+ */
+data class ImageResources(
+    @DrawableRes val default: Int,
+    @DrawableRes val small: Int? = null,
+    @DrawableRes val medium: Int? = null,
 )
 
 private fun OnboardingCardType.toPageUiDataType() = when (this) {
@@ -78,7 +92,7 @@ private fun createOnboardingPageState(
     onNegativeButtonClick: () -> Unit,
     onUrlClick: (String) -> Unit = {},
 ): OnboardingPageState = OnboardingPageState(
-    image = onboardingPageUiData.imageRes,
+    imageResources = onboardingPageUiData.imageResources,
     title = onboardingPageUiData.title,
     description = onboardingPageUiData.description,
     linkTextState = onboardingPageUiData.linkText?.let {

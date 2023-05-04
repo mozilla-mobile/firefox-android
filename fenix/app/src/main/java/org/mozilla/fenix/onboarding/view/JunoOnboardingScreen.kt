@@ -228,7 +228,7 @@ private fun JunoOnboardingScreenPreview() {
 private fun defaultPreviewPages() = listOf(
     OnboardingPageUiData(
         type = OnboardingPageUiData.Type.DEFAULT_BROWSER,
-        imageRes = R.drawable.ic_onboarding_welcome,
+        imageResources = ImageResources(R.drawable.ic_onboarding_welcome),
         title = stringResource(R.string.juno_onboarding_default_browser_title_nimbus),
         description = stringResource(R.string.juno_onboarding_default_browser_description_nimbus),
         linkText = stringResource(R.string.juno_onboarding_default_browser_description_link_text),
@@ -237,7 +237,7 @@ private fun defaultPreviewPages() = listOf(
     ),
     OnboardingPageUiData(
         type = OnboardingPageUiData.Type.SYNC_SIGN_IN,
-        imageRes = R.drawable.ic_onboarding_sync,
+        imageResources = ImageResources(R.drawable.ic_onboarding_sync),
         title = stringResource(R.string.juno_onboarding_sign_in_title),
         description = stringResource(R.string.juno_onboarding_sign_in_description),
         primaryButtonLabel = stringResource(R.string.juno_onboarding_sign_in_positive_button),
@@ -245,7 +245,7 @@ private fun defaultPreviewPages() = listOf(
     ),
     OnboardingPageUiData(
         type = OnboardingPageUiData.Type.NOTIFICATION_PERMISSION,
-        imageRes = R.drawable.ic_notification_permission,
+        imageResources = ImageResources(R.drawable.ic_notification_permission),
         title = stringResource(R.string.juno_onboarding_enable_notifications_title_nimbus),
         description = stringResource(R.string.juno_onboarding_enable_notifications_description_nimbus),
         primaryButtonLabel = stringResource(R.string.juno_onboarding_enable_notifications_positive_button),

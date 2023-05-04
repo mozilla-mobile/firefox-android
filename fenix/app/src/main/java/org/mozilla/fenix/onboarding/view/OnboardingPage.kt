@@ -107,7 +107,7 @@ fun OnboardingPage(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Image(
-                    painter = painterResource(id = pageState.image),
+                    painter = painterResource(id = pageState.imageResources.default),
                     contentDescription = null,
                     modifier = Modifier.height(imageHeight(boxWithConstraintsScope)),
                 )
@@ -237,7 +237,7 @@ private fun OnboardingPagePreview() {
     FirefoxTheme {
         OnboardingPage(
             pageState = OnboardingPageState(
-                image = R.drawable.ic_notification_permission,
+                imageResources = ImageResources(R.drawable.ic_notification_permission),
                 title = stringResource(
                     id = R.string.onboarding_home_enable_notifications_title,
                     formatArgs = arrayOf(stringResource(R.string.app_name)),

@@ -30,7 +30,11 @@ class JunoOnboardingMapperTest {
 
 private val defaultBrowserPageUiData = OnboardingPageUiData(
     type = OnboardingPageUiData.Type.DEFAULT_BROWSER,
-    imageRes = R.drawable.ic_onboarding_welcome,
+    imageResources = ImageResources(
+        default = R.drawable.ic_onboarding_welcome,
+        small = R.drawable.ic_onboarding_welcome,
+        medium = R.drawable.ic_onboarding_welcome,
+    ),
     title = "default browser title",
     description = "default browser body with link text",
     linkText = "link text",
@@ -39,7 +43,7 @@ private val defaultBrowserPageUiData = OnboardingPageUiData(
 )
 private val syncPageUiData = OnboardingPageUiData(
     type = OnboardingPageUiData.Type.SYNC_SIGN_IN,
-    imageRes = R.drawable.ic_onboarding_sync,
+    imageResources = ImageResources(R.drawable.ic_onboarding_sync),
     title = "sync title",
     description = "sync body",
     primaryButtonLabel = "sync primary button text",
@@ -47,7 +51,7 @@ private val syncPageUiData = OnboardingPageUiData(
 )
 private val notificationPageUiData = OnboardingPageUiData(
     type = OnboardingPageUiData.Type.NOTIFICATION_PERMISSION,
-    imageRes = R.drawable.ic_notification_permission,
+    imageResources = ImageResources(R.drawable.ic_notification_permission),
     title = "notification title",
     description = "notification body",
     primaryButtonLabel = "notification primary button text",
@@ -56,7 +60,9 @@ private val notificationPageUiData = OnboardingPageUiData(
 
 private val defaultBrowserCardData = OnboardingCardData(
     cardType = OnboardingCardType.DEFAULT_BROWSER,
-    imageRes = R.drawable.ic_onboarding_welcome,
+    imageResDefault = R.drawable.ic_onboarding_welcome,
+    imageResSmall = R.drawable.ic_onboarding_welcome,
+    imageResMedium = R.drawable.ic_onboarding_welcome,
     title = StringHolder(null, "default browser title"),
     body = StringHolder(null, "default browser body with link text"),
     linkText = StringHolder(null, "link text"),
@@ -66,7 +72,7 @@ private val defaultBrowserCardData = OnboardingCardData(
 )
 private val syncCardData = OnboardingCardData(
     cardType = OnboardingCardType.SYNC_SIGN_IN,
-    imageRes = R.drawable.ic_onboarding_sync,
+    imageResDefault = R.drawable.ic_onboarding_sync,
     title = StringHolder(null, "sync title"),
     body = StringHolder(null, "sync body"),
     primaryButtonLabel = StringHolder(null, "sync primary button text"),
@@ -75,7 +81,7 @@ private val syncCardData = OnboardingCardData(
 )
 private val notificationCardData = OnboardingCardData(
     cardType = OnboardingCardType.NOTIFICATION_PERMISSION,
-    imageRes = R.drawable.ic_notification_permission,
+    imageResDefault = R.drawable.ic_notification_permission,
     title = StringHolder(null, "notification title"),
     body = StringHolder(null, "notification body"),
     primaryButtonLabel = StringHolder(null, "notification primary button text"),
