@@ -12,13 +12,14 @@ import org.mozilla.fenix.settings.SupportUtils
  * Returns a list of all the required Nimbus 'cards' that have been converted to [OnboardingPageUiData].
  */
 internal fun Collection<OnboardingCardData>.toPageUiData(showNotificationPage: Boolean): List<OnboardingPageUiData> =
-    filter {
-        if (it.cardType == OnboardingCardType.NOTIFICATION_PERMISSION) {
-            showNotificationPage
-        } else {
-            true
-        }
-    }.sortedBy { it.ordering }
+    filter { it.shouldDisplay }
+        .filter {
+            if (it.cardType == OnboardingCardType.NOTIFICATION_PERMISSION) {
+                showNotificationPage
+            } else {
+                true
+            }
+        }.sortedBy { it.ordering }
         .map { it.toPageUiData() }
 
 private fun OnboardingCardData.toPageUiData() = OnboardingPageUiData(

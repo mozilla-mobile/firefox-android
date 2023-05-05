@@ -81,6 +81,10 @@ objects:
         description: The resource id of the image to be displayed.
         # This should never be defaulted.
         default: ic_onboarding_welcome
+      should-display:
+        type: Boolean
+        description: If true, the card should be displayed.
+        default: true
       ordering:
         type: Int
         description: Used to sequence the cards.

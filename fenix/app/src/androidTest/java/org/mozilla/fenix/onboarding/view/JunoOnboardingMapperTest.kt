@@ -26,6 +26,15 @@ class JunoOnboardingMapperTest {
         val expected = listOf(defaultBrowserPageUiData, syncPageUiData)
         assertEquals(expected, unsortedAllKnownCardData.toPageUiData(false))
     }
+
+    @Test
+    fun cardShouldBeDisplayedFalse_pagesToDisplay_returnsSortedListOfConvertedPagesWithoutThatCard() {
+        val expected = listOf(defaultBrowserPageUiData, syncPageUiData, notificationPageUiData)
+
+        val cards = unsortedAllKnownCardData.plus(defaultBrowserCardData(false))
+
+        assertEquals(expected, cards.toPageUiData(true))
+    }
 }
 
 private val defaultBrowserPageUiData = OnboardingPageUiData(
@@ -54,7 +63,7 @@ private val notificationPageUiData = OnboardingPageUiData(
     secondaryButtonLabel = "notification secondary button text",
 )
 
-private val defaultBrowserCardData = OnboardingCardData(
+private fun defaultBrowserCardData(shouldDisplay: Boolean = true) = OnboardingCardData(
     cardType = OnboardingCardType.DEFAULT_BROWSER,
     imageRes = R.drawable.ic_onboarding_welcome,
     title = StringHolder(null, "default browser title"),
@@ -63,6 +72,7 @@ private val defaultBrowserCardData = OnboardingCardData(
     primaryButtonLabel = StringHolder(null, "default browser primary button text"),
     secondaryButtonLabel = StringHolder(null, "default browser secondary button text"),
     ordering = 10,
+    shouldDisplay = shouldDisplay,
 )
 private val syncCardData = OnboardingCardData(
     cardType = OnboardingCardType.SYNC_SIGN_IN,
@@ -86,5 +96,5 @@ private val notificationCardData = OnboardingCardData(
 private val unsortedAllKnownCardData = listOf(
     syncCardData,
     notificationCardData,
-    defaultBrowserCardData,
+    defaultBrowserCardData(),
 )
