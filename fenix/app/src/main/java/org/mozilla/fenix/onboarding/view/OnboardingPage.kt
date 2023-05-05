@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -43,16 +44,19 @@ import org.mozilla.fenix.theme.FirefoxTheme
  * taking the ratio of the image height to the mockup height.
  */
 private const val IMAGE_HEIGHT_RATIO_DEFAULT = 0.4f
+private const val EXPERIMENT_IMAGE_HEIGHT_RATIO_DEFAULT = 0.55f
 
 /**
  * The ratio of the image height to the parent height for medium sized devices.
  */
 private const val IMAGE_HEIGHT_RATIO_MEDIUM = 0.36f
+private const val EXPERIMENT_IMAGE_HEIGHT_RATIO_MEDIUM = 0.45f
 
 /**
  * The ratio of the image height to the parent height for small devices like Nexus 4, Nexus 1.
  */
 private const val IMAGE_HEIGHT_RATIO_SMALL = 0.28f
+private const val EXPERIMENT_IMAGE_HEIGHT_RATIO_SMALL = 0.35f
 
 /**
  * The tag used for links in the text for annotated strings.
@@ -106,10 +110,28 @@ fun OnboardingPage(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 32.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
+
+                val contentScale = if (pageState.isExperiment()) {
+                    ContentScale.FillHeight
+                } else {
+                    ContentScale.Fit
+                }
+
+                val imageHeight = if (pageState.isExperiment()) {
+                    experimentImageHeight(boxWithConstraintsScope)
+                } else {
+                    imageHeight(boxWithConstraintsScope)
+                }
+
                 Image(
-                    painter = painterResource(id = pageState.image),
+                    painter = painterResource(
+                        id = pageState.imageResources.resourceIdForScreenSize(
+                            boxWithConstraintsScope,
+                        ),
+                    ),
                     contentDescription = null,
-                    modifier = Modifier.height(imageHeight(boxWithConstraintsScope)),
+                    contentScale = contentScale,
+                    modifier = Modifier.height(imageHeight),
                 )
 
                 Spacer(modifier = Modifier.height(32.dp))
@@ -153,6 +175,10 @@ fun OnboardingPage(
         }
     }
 }
+
+@Composable
+private fun OnboardingPageState.isExperiment() =
+    imageResources.small != null && imageResources.medium != null
 
 @Composable
 private fun DescriptionText(
@@ -231,13 +257,35 @@ private fun imageHeight(boxWithConstraintsScope: BoxWithConstraintsScope): Dp {
     return boxWithConstraintsScope.maxHeight.times(imageHeightRatio)
 }
 
+/**
+ * Calculates the image height to be set. The ratio is selected based on parent height.
+ */
+private fun experimentImageHeight(boxWithConstraintsScope: BoxWithConstraintsScope): Dp {
+    val imageHeightRatio: Float = when {
+        boxWithConstraintsScope.maxHeight <= 550.dp -> EXPERIMENT_IMAGE_HEIGHT_RATIO_SMALL
+        boxWithConstraintsScope.maxHeight <= 650.dp -> EXPERIMENT_IMAGE_HEIGHT_RATIO_MEDIUM
+        else -> EXPERIMENT_IMAGE_HEIGHT_RATIO_DEFAULT
+    }
+    return boxWithConstraintsScope.maxHeight.times(imageHeightRatio)
+}
+
+/**
+ * @return the relevant image resource for the given screen size.
+ */
+private fun ImageResources.resourceIdForScreenSize(boxWithConstraintsScope: BoxWithConstraintsScope) =
+    when {
+        boxWithConstraintsScope.maxHeight <= 550.dp -> small ?: default
+        boxWithConstraintsScope.maxHeight <= 650.dp -> medium ?: default
+        else -> default
+    }
+
 @LightDarkPreview
 @Composable
 private fun OnboardingPagePreview() {
     FirefoxTheme {
         OnboardingPage(
             pageState = OnboardingPageState(
-                image = R.drawable.ic_notification_permission,
+                imageResources = ImageResources(R.drawable.ic_notification_permission),
                 title = stringResource(
                     id = R.string.onboarding_home_enable_notifications_title,
                     formatArgs = arrayOf(stringResource(R.string.app_name)),
