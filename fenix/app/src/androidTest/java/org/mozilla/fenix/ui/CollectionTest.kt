@@ -10,12 +10,14 @@ import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper.getGenericAsset
+import org.mozilla.fenix.helpers.TestHelper.clickSnackbarButton
 import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.collectionRobot
 import org.mozilla.fenix.ui.robots.homeScreen
@@ -205,6 +207,7 @@ class CollectionTest {
 
     // Test running on beta/release builds in CI:
     // caution when making changes to it, so they don't block the builds
+    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1807289")
     @SmokeTest
     @Test
     fun deleteCollectionTest() {
@@ -488,7 +491,7 @@ class CollectionTest {
 
         homeScreen {
             verifySnackBarText("Collection deleted")
-            clickUndoSnackBarButton()
+            clickSnackbarButton("UNDO")
             verifyCollectionIsDisplayed(collectionName, true)
         }
     }

@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.ui
 
+import androidx.core.net.toUri
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import mozilla.components.concept.engine.utils.EngineReleaseChannel
@@ -16,10 +17,13 @@ import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
+import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdAndText
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper.assertYoutubeAppOpens
 import org.mozilla.fenix.helpers.TestHelper.exitMenu
 import org.mozilla.fenix.helpers.TestHelper.runWithCondition
+import org.mozilla.fenix.ui.robots.clickPageObject
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
 
@@ -110,7 +114,7 @@ class SettingsAdvancedTest {
                 verifyOpenLinksInAppsButton()
                 verifySettingsOptionSummary("Open links in apps", "Never")
             }.openOpenLinksInAppsMenu {
-                verifyOpenLinksInAppsView("Never")
+                verifyPrivateOpenLinksInAppsView("Never")
             }
         }
     }
@@ -139,7 +143,7 @@ class SettingsAdvancedTest {
 
             navigationToolbar {
             }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-                clickLinkMatchingText("Youtube link")
+                clickPageObject(itemContainingText("Youtube link"))
                 waitForPageToLoad()
                 verifyUrl("youtube.com")
             }
@@ -166,14 +170,14 @@ class SettingsAdvancedTest {
                 verifyOpenLinksInAppsButton()
                 verifySettingsOptionSummary("Open links in apps", "Never")
             }.openOpenLinksInAppsMenu {
-                verifyOpenLinksInAppsView("Never")
+                verifyPrivateOpenLinksInAppsView("Never")
             }
 
             exitMenu()
 
             navigationToolbar {
             }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-                clickLinkMatchingText("Youtube link")
+                clickPageObject(itemContainingText("Youtube link"))
                 waitForPageToLoad()
                 verifyUrl("youtube.com")
             }
@@ -209,18 +213,18 @@ class SettingsAdvancedTest {
 
             navigationToolbar {
             }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-                clickLinkMatchingText("Youtube link")
+                clickPageObject(itemContainingText("Youtube link"))
                 verifyOpenLinkInAnotherAppPrompt()
-                cancelOpenLinkInAnotherApp()
+                clickPageObject(itemWithResIdAndText("android:id/button2", "CANCEL"))
                 waitForPageToLoad()
                 verifyUrl("youtube.com")
             }
 
             navigationToolbar {
             }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-                clickLinkMatchingText("Youtube link")
+                clickPageObject(itemContainingText("Youtube link"))
                 verifyOpenLinkInAnotherAppPrompt()
-                confirmOpenLinkInAnotherApp()
+                clickPageObject(itemWithResIdAndText("android:id/button1", "OPEN"))
                 mDevice.waitForIdle()
                 assertYoutubeAppOpens()
             }
@@ -248,7 +252,7 @@ class SettingsAdvancedTest {
                 verifyOpenLinksInAppsButton()
                 verifySettingsOptionSummary("Open links in apps", "Never")
             }.openOpenLinksInAppsMenu {
-                verifyOpenLinksInAppsView("Never")
+                verifyPrivateOpenLinksInAppsView("Never")
                 clickOpenLinkInAppOption("Ask before opening")
                 verifySelectedOpenLinksInAppOption("Ask before opening")
             }.goBack {
@@ -259,18 +263,18 @@ class SettingsAdvancedTest {
 
             navigationToolbar {
             }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-                clickLinkMatchingText("Youtube link")
+                clickPageObject(itemContainingText("Youtube link"))
                 verifyPrivateBrowsingOpenLinkInAnotherAppPrompt("youtube.com")
-                cancelOpenLinkInAnotherApp()
+                clickPageObject(itemWithResIdAndText("android:id/button2", "CANCEL"))
                 waitForPageToLoad()
                 verifyUrl("youtube.com")
             }
 
             navigationToolbar {
             }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-                clickLinkMatchingText("Youtube link")
+                clickPageObject(itemContainingText("Youtube link"))
                 verifyPrivateBrowsingOpenLinkInAnotherAppPrompt("youtube.com")
-                confirmOpenLinkInAnotherApp()
+                clickPageObject(itemWithResIdAndText("android:id/button1", "OPEN"))
                 mDevice.waitForIdle()
                 assertYoutubeAppOpens()
             }
@@ -305,59 +309,42 @@ class SettingsAdvancedTest {
 
             navigationToolbar {
             }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-                clickLinkMatchingText("Youtube link")
+                clickPageObject(itemContainingText("Youtube link"))
                 mDevice.waitForIdle()
                 assertYoutubeAppOpens()
             }
         }
     }
 
-    // Assumes Youtube is installed and enabled
     @Test
-    fun privateBrowsingAlwaysOpenLinkInAppTest() {
-        runWithCondition(
-            // Returns the GeckoView channel set for the current version, if a feature is limited to Nightly or Beta.
-            // Once this feature lands in RC we should remove the wrapper.
-            activityIntentTestRule.activity.components.core.engine.version.releaseChannel == EngineReleaseChannel.NIGHTLY ||
-                activityIntentTestRule.activity.components.core.engine.version.releaseChannel == EngineReleaseChannel.BETA,
-        ) {
-            val defaultWebPage = TestAssetHelper.getExternalLinksAsset(mockWebServer)
+    fun dismissOpenLinksInAppCFRTest() {
+        activityIntentTestRule.applySettingsExceptions {
+            it.isOpenInAppBannerEnabled = true
+        }
+        val defaultWebPage = "https://m.youtube.com/"
 
-            homeScreen {
-            }.togglePrivateBrowsingMode()
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(defaultWebPage.toUri()) {
+            waitForPageToLoad()
+            verifyOpenLinksInAppsCFRExists(true)
+            clickOpenLinksInAppsDismissCFRButton()
+            verifyOpenLinksInAppsCFRExists(false)
+        }
+    }
 
-            homeScreen {
-            }.openThreeDotMenu {
-            }.openSettings {
-                verifyOpenLinksInAppsButton()
-                verifySettingsOptionSummary("Open links in apps", "Never")
-            }.openOpenLinksInAppsMenu {
-                verifyOpenLinksInAppsView("Never")
-                clickOpenLinkInAppOption("Always")
-                verifySelectedOpenLinksInAppOption("Always")
-            }.goBack {
-                verifySettingsOptionSummary("Open links in apps", "Always")
-            }
+    @Test
+    fun goToSettingsFromOpenLinksInAppCFRTest() {
+        activityIntentTestRule.applySettingsExceptions {
+            it.isOpenInAppBannerEnabled = true
+        }
+        val defaultWebPage = "https://m.youtube.com/"
 
-            exitMenu()
-
-            navigationToolbar {
-            }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-                clickLinkMatchingText("Youtube link")
-                verifyPrivateBrowsingOpenLinkInAnotherAppPrompt("youtube.com")
-                cancelOpenLinkInAnotherApp()
-                waitForPageToLoad()
-                verifyUrl("youtube.com")
-            }
-
-            navigationToolbar {
-            }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-                clickLinkMatchingText("Youtube link")
-                verifyPrivateBrowsingOpenLinkInAnotherAppPrompt("youtube.com")
-                confirmOpenLinkInAnotherApp()
-                mDevice.waitForIdle()
-                assertYoutubeAppOpens()
-            }
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(defaultWebPage.toUri()) {
+            waitForPageToLoad()
+            verifyOpenLinksInAppsCFRExists(true)
+        }.clickOpenLinksInAppsGoToSettingsCFRButton {
+            verifyOpenLinksInAppsButton()
         }
     }
 }

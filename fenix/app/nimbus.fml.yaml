@@ -9,6 +9,8 @@ channels:
   - beta
   - nightly
   - developer
+includes:
+  - onboarding.fml.yaml
 import:
   - path: ../../android-components/components/service/nimbus/messaging.fml.yaml
     channel: release
@@ -305,21 +307,6 @@ features:
         type: Boolean
         default: false
 
-  juno-onboarding:
-    description: A feature that shows juno onboarding flow.
-    variables:
-      enabled:
-        description: if true, juno onboarding is shown to the user.
-        type: Boolean
-        default: false
-    defaults:
-      - channel: developer
-        value:
-          enabled: false
-      - channel: nightly
-        value:
-          enabled: true
-
   onboarding:
     description: "A feature that configures the new user onboarding page.
     Note that onboarding is a **first run** feature, and should only be modified by first run experiments."
@@ -328,6 +315,14 @@ features:
         description: Determines the order of the onboarding page panels
         type: List<OnboardingPanel>
         default: ["themes", "toolbar-placement", "sync", "tcp", "privacy-notice"]
+
+  glean:
+    description: "A feature that provides server-side configurations for Glean metrics (aka Server Knobs)."
+    variables:
+      metrics-enabled:
+        description: "A map of metric base-identifiers to booleans representing the state of the 'enabled' flag for that metric."
+        type: Map<String, Boolean>
+        default: {}
 
 types:
   objects: {}
