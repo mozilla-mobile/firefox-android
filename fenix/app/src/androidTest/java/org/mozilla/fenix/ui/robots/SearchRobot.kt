@@ -192,7 +192,20 @@ class SearchRobot {
         assertSearchEnginePrompt(rule, searchEngineName)
     fun verifySearchBarEmpty() = assertSearchBarEmpty()
 
-    fun verifyKeyboardVisibility() = assertKeyboardVisibility(isExpectedToBeVisible = true)
+    fun verifyKeyboardVisibility(isVisible: Boolean = true): Boolean {
+        mDevice.waitForIdle()
+        assertEquals(
+            "Keyboard not shown",
+            isVisible,
+            mDevice
+                .executeShellCommand("dumpsys input_method | grep mInputShown")
+                .contains("mInputShown=true"),
+        )
+       return mDevice
+            .executeShellCommand("dumpsys input_method | grep mInputShown")
+            .contains("mInputShown=true")
+    }
+
     fun verifySearchEngineList(rule: ComposeTestRule) = rule.assertSearchEngineList()
     fun verifySearchEngineIcon(expectedText: String) {
         onView(withContentDescription(expectedText))
@@ -457,18 +470,6 @@ private fun assertSearchBarEmpty() =
 fun searchScreen(interact: SearchRobot.() -> Unit): SearchRobot.Transition {
     SearchRobot().interact()
     return SearchRobot.Transition()
-}
-
-private fun assertKeyboardVisibility(isExpectedToBeVisible: Boolean): () -> Unit = {
-    searchWrapper().waitForExists(waitingTime)
-
-    assertEquals(
-        "Keyboard not shown",
-        isExpectedToBeVisible,
-        mDevice
-            .executeShellCommand("dumpsys input_method | grep mInputShown")
-            .contains("mInputShown=true"),
-    )
 }
 
 private fun ComposeTestRule.assertSearchEngineList() {
