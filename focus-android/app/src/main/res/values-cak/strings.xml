@@ -215,6 +215,10 @@
     <!-- Title of "switch" preference that enables/disables autocomplete for the user-defined list -->
     <string name="preference_switch_autocomplete_user_list">Kichin ri taq Ruxaq Ye\'atz\'aqatisaj</string>
 
+    <!-- Summary for the toggle to enable autocomplete for the user-defined list
+     %s is a placeholder for the app name (e.g. Firefox Focus)-->
+    <string name="preference_autocomplete_user_list_summary2">Titzij richin chi ri %s nunojisaj pa ruyonil ri taq URLs ye\'awajo\'.</string>
+
     <!-- Preference category: Manage (user-defined) sites -->
     <string name="preference_category_autocomplete_manage_sites">Kenuk\'samajïx taq ruxaq</string>
 
@@ -223,6 +227,9 @@
 
     <!-- Action at the bottom of the list of custom autocomplete URLs that will open a new screen to add a new URL to the list. -->
     <string name="preference_autocomplete_action_add">+ Titz\'aqatisäx ichinan URL</string>
+
+    <!-- Explanation text above the list of custom autocomplete URLs. -->
+    <string name="preference_autocomplete_explanation_text">Ri kicholb\'al kiyon enojisan:</string>
 
     <!-- Action at the bottom of the list of custom autocomplete URLs that will open a new screen to add a new URL to the list. -->
     <string name="preference_autocomplete_action_add2">Titz\'aqatisäx URL</string>
@@ -302,6 +309,12 @@
     <!-- Preference Title: Biometrics can be used to unlock Focus if the previous session's data was not erased by the user. -->
     <string name="preference_security_biometric">Tawokisaj retal ruwi\' aq\'a\' richin man niq\'at ta chik ri chokoy</string>
 
+    <!-- Preference Summary: Biometrics (iris scan, fingerprint, or facial scan) can be used to unlock Focus if the app had a URL
+        open when the app was last run to ensure that only the phone's owner can view a previous session.
+        %s will be replaced by the app name (e.g. Firefox Focus)
+        Shortcuts is a feature that allows the user to pin his favorite websites to Focus home screen so he can quickly access them-->
+    <string name="preference_security_biometric_summary2">Taq\'ata\' rik\'in ri retal ruwi\' q\'ab\'aj we xatz\'aqatisaj chojokem o toq jun ruxaq ajk\'amaya\'l jaqäl chik pa %s.</string>
+
     <!-- Preference Title: Secure Mode is a setting that prevents the app's content to show up in the "recent apps" screen
          and prevents the user from taking screenshots or casting the app to other displays. -->
     <string name="preference_privacy_secure_mode">Ewan</string>
@@ -339,6 +352,15 @@
 
     <!-- In-app link (in settings) to Focus privacy notice. -->
     <string name="preference_privacy_notice">Rutzijol Ichinanem</string>
+
+    <!-- In-app link (in settings) to Focus licensing information. -->
+    <string name="preference_licensing_info">Na\'oj chi rij ya\'öl q\'ij</string>
+
+    <!-- Link to Focus licensing information from other libraries that we use. -->
+    <string name="preference_libraries_we_use">Taq wujb\'äl yeqokisaj</string>
+
+    <!-- Open Source Licenses page title. The first parameter is the app name -->
+    <string name="open_source_licenses_title">%s | OSS taq wujb\'äl</string>
 
     <!-- Item in Preferences that shows the about page. Parameter 1 is the app name, i.e. Firefox Focus/Firefox Klar. -->
     <string name="preference_about">Chi rij ri %1$s</string>
@@ -505,6 +527,13 @@
     <!-- Onboarding second screen: Title -->
     <!-- %1$s will be replaced by the app short name(Focus) -->
     <string name="onboarding_second_screen_title">%1$s man junam ta achi\'el kik\'in ch\'aqa\' chik okik\'amaya\'l</string>
+
+    <!-- New Onboarding flow second screen subtitle the one that appears under title -->
+    <string name="onboarding_second_screen_subtitle_one">Niqayüj ri anatab\'al toq natz\'apij ri chokoy richin awichinanem.</string>
+
+    <!-- New Onboarding flow second screen subtitle two the one that appears under subtitle one -->
+    <!-- %1$s will be replaced by the app short name(Focus) -->
+    <string name="onboarding_second_screen_subtitle_two">Tab\'ana\' chi re ri %1$s achi\'el k\'o wi richin ye\'achajij ri taq atzij pa xab\'achike ximoj xtajäq.</string>
 
     <!-- New Onboarding flow second screen make Focus default browser button label-->
     <string name="onboarding_second_screen_default_browser_button_text">Tiya\' kan achi\'el kanob\'äl k\'o wi</string>
@@ -675,11 +704,17 @@
     <!--  Title preference inside Cookie banner reduction screen. Here you can set the cookie banner option to disabled or reject_all. -->
     <string name="cookie_banner_reject_all_option_title">Kech\'utinirisäx kitzijol kuki</string>
 
+    <!--  Preference summary inside Cookie banner reduction screen. Here you can set the cookie banner option to disabled or reject_all. -->
+    <string name="cookie_banner_reject_all_option_summary">Ke\'atz\'eta\' jub\'a\' taq rutzijol k\'ayij rik\'in yexutüx ri taq kik\'utuxik kuki toq ke ri\' nrajo\'.</string>
+
     <!-- Preference for removing cookie/consent banners from sites automatically, this is shown as part of the protections panel with the tracking protection toggle. -->--&gt;
     <string name="cookie_banner_exception_item_title">Kech\'utinirisäx kitzijol kuki</string>
 
     <!-- Text for indicating cookie banner handling is on this site, this is shown as part of the protections panel with the tracking protection toggle. -->
     <string name="cookie_banner_exception_item_description_state_on">TZIJÏL pa re ruxaq re\'</string>
+
+    <!-- Text for indicating cookie reducer is not supported on the current site, this is shown as part of the protections panel with the tracking protection toggle. -->
+    <string name="cookie_banner_exception_site_not_supported">Wakami man koch\'el ta re ruxaq re\'</string>
 
     <!-- Text for indicating cookie banner handling is off this site, this is shown as part of the protections panel with the tracking protection toggle. -->
     <string name="cookie_banner_exception_item_description_state_off">CHUPÜL pa re ruxaq re\'</string>
@@ -699,8 +734,21 @@
     <!-- Title text for a detail explanation indicating cookie banner handling is off this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site. -->
     <string name="cookie_banner_exception_panel_title_state_off_for_site">¿La nichup ri kich\'utinisaxik rutzijol kuki richin %1$s?</string>
 
-    <!-- CFR for Cookie Banner (Banner Info Message). This text should be the same as the settings text from "cfr_for_cookie_banner". The text should be underlined and should redirect the user to the cookie banner settings screen. -->
-    <string name="cfr_for_cookie_banner_underline_settings" moz:RemovedIn="111" tools:ignore="UnusedResources">taq nuk\'ulem</string>
+    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The placeholder will be updated with the app name. -->
+    <string name="cookie_banner_exception_panel_description_state_on_for_site">%1$s xkeruyüj ri taq rukuki re ruxaq chuqa\' xtuk\'ëx re ruxaq. Xkeruyüj ronojel ri taq kuki, nitikïr nutz\'apij ri molojri\'ïl o yerujäm ri taq ruch\'ich\' loq\'oj.</string>
+
+    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The placeholder will be updated with the app name. -->
+    <string name="cookie_banner_exception_panel_description_state_off_for_site2">%1$s nitikïr nutojtob\'ej yeruxutuj pa ruyonil ri kik\'utuxik taq kuki.</string>
+
+    <!-- Long text for a detail explanation indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_description_site_is_not_supported">Wakami re ruxaq re\' man nuköch\' ta ri kich\'utinisaxik kitzijol kuki. ¿La nawajo\' nak\'utuj chi re ri qamolaj richin nunik\'oj re ruxaq ajk\'amaya\'l re\' chuqa\' tutz\'aqatisaj tob\'äl ri chwa\'q kab\'ij?</string>
+
+    <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_site_is_not_supported_cancel_button">Tiq\'at</string>
+
+    <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_site_is_not_supported_request_support_button">Tik\'utüx to\'ïk</string>
+
     <!-- CFR for Cookie Banner (Banner Info Message). This string is used as text for a link in cfr_cookie_banner and takes the user to the app settings. -->
     <string name="cfr_cookie_banner_link">taq nuk\'ulem</string>
 
@@ -802,6 +850,10 @@
 
     <!-- Title for the prompt to enable search suggestions -->
     <string name="enable_search_suggestion_title2">La yek\'ut pe ri taq chilab\'enïk richin yakanon?</string>
+
+    <!-- Description for the prompt to enable search suggestions
+        %1$s will be replaced by the app name (e.g. Firefox Focus) -->
+    <string name="enable_search_suggestion_description"> Richin nik\'ul kichilab\'exik, %1$s k\'o chi nutäq ri natz\'ib\'aj pa ri rajtz\'ik ochochib\'äl.</string>
 
     <!-- Label used for the "NO button" for the prompt to enable search suggestions -->
     <string name="enable_search_suggestions_no">Mani</string>
@@ -918,6 +970,10 @@
     <!-- Placeholder text for the input field of rename top site-->
     <string name="placeholder_rename_top_site">Rub\'i\' ri choj okem</string>
 
+    <!-- Text for context menu additional note.
+    %1$s is a placeholder for the app name. -->
+    <string name="contextmenu_erased_images_note2">Taq wachib\'äl eyakon chuqa\' ekomonin &lt;b&gt;manäq&lt;/b&gt; xke\'elesäx toq xtayüj runatab\'al ri %1$s</string>
+
     <!-- Theme Preferences -->
     <!-- Preference category for changing default theme to dark or light mode -->
     <string name="preferences_theme">Wachinel</string>
@@ -951,7 +1007,18 @@
     close button from promote search widget dialog. -->
     <string name="promote_search_widget_dialog_content_description">Titz\'apïx</string>
 
+    <!-- Content description (not visible, for screen readers etc.): This is the description for
+    picture of search widget from promote search widget dialog. -->
+    <string name="promote_search_widget_dialog_picture_content_description">Rukanoxik widget</string>
+
     <!-- This is the title of promote search widget dialog. -->
     <string name="promote_search_widget_dialog_title">Josq\'in kinatab\'al okem pa k\'amaya\'l 🎉</string>
 
-    </resources>
+    <!-- This is te text from add search widget to home screen button .The button is located on
+    promote search widget dialog. -->
+    <string name="promote_search_widget_button_text">Titz\'aqatisäx widget pa ri rutikirib\'al ruwa</string>
+
+    <!-- This is te text of the snackbar that appears after the search widget was added successfully
+    to the home screen. -->
+    <string name="promote_search_widget_snackbar_message">Xtz\'aqatisäx widget pa ri rutikirib\'al ruwa</string>
+</resources>

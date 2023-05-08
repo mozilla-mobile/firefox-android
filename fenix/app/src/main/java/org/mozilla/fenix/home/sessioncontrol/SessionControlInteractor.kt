@@ -7,13 +7,15 @@ package org.mozilla.fenix.home.sessioncontrol
 import mozilla.components.feature.tab.collections.Tab
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSite
+import mozilla.components.service.nimbus.messaging.Message
 import mozilla.components.service.pocket.PocketStory
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.appstate.AppState
-import org.mozilla.fenix.gleanplumb.Message
 import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesCategory
 import org.mozilla.fenix.home.pocket.PocketStoriesController
 import org.mozilla.fenix.home.pocket.PocketStoriesInteractor
+import org.mozilla.fenix.home.privatebrowsing.controller.PrivateBrowsingController
+import org.mozilla.fenix.home.privatebrowsing.interactor.PrivateBrowsingInteractor
 import org.mozilla.fenix.home.recentbookmarks.RecentBookmark
 import org.mozilla.fenix.home.recentbookmarks.controller.RecentBookmarksController
 import org.mozilla.fenix.home.recentbookmarks.interactor.RecentBookmarksInteractor
@@ -31,6 +33,7 @@ import org.mozilla.fenix.home.toolbar.ToolbarController
 import org.mozilla.fenix.home.toolbar.ToolbarInteractor
 import org.mozilla.fenix.onboarding.controller.OnboardingController
 import org.mozilla.fenix.onboarding.interactor.OnboardingInteractor
+import org.mozilla.fenix.search.toolbar.SearchSelectorController
 import org.mozilla.fenix.search.toolbar.SearchSelectorInteractor
 import org.mozilla.fenix.search.toolbar.SearchSelectorMenu
 import org.mozilla.fenix.wallpapers.WallpaperState
@@ -39,17 +42,6 @@ import org.mozilla.fenix.wallpapers.WallpaperState
  * Interface for tab related actions in the [SessionControlInteractor].
  */
 interface TabSessionInteractor {
-    /**
-     * Shows the Private Browsing Learn More page in a new tab. Called when a user clicks on the
-     * "Common myths about private browsing" link in private mode.
-     */
-    fun onPrivateBrowsingLearnMoreClicked()
-
-    /**
-     * Called when a user clicks on the Private Mode button on the homescreen.
-     */
-    fun onPrivateModeButtonClicked(newMode: BrowsingMode, userHasBeenOnboarded: Boolean)
-
     /**
      * Called when there is an update to the session state and updated metrics need to be reported
      *
@@ -233,7 +225,9 @@ class SessionControlInteractor(
     private val recentBookmarksController: RecentBookmarksController,
     private val recentVisitsController: RecentVisitsController,
     private val pocketStoriesController: PocketStoriesController,
+    private val privateBrowsingController: PrivateBrowsingController,
     private val onboardingController: OnboardingController,
+    private val searchSelectorController: SearchSelectorController,
     private val toolbarController: ToolbarController,
 ) : CollectionInteractor,
     OnboardingInteractor,
@@ -247,6 +241,7 @@ class SessionControlInteractor(
     RecentVisitsInteractor,
     CustomizeHomeIteractor,
     PocketStoriesInteractor,
+    PrivateBrowsingInteractor,
     SearchSelectorInteractor,
     WallpaperInteractor {
 
@@ -322,12 +317,12 @@ class SessionControlInteractor(
         controller.handleCreateCollection()
     }
 
-    override fun onPrivateBrowsingLearnMoreClicked() {
-        controller.handlePrivateBrowsingLearnMoreClicked()
+    override fun onLearnMoreClicked() {
+        privateBrowsingController.handleLearnMoreClicked()
     }
 
     override fun onPrivateModeButtonClicked(newMode: BrowsingMode, userHasBeenOnboarded: Boolean) {
-        controller.handlePrivateModeButtonClicked(newMode, userHasBeenOnboarded)
+        privateBrowsingController.handlePrivateModeButtonClicked(newMode, userHasBeenOnboarded)
     }
 
     override fun onPasteAndGo(clipboardText: String) {
@@ -445,6 +440,6 @@ class SessionControlInteractor(
     }
 
     override fun onMenuItemTapped(item: SearchSelectorMenu.Item) {
-        controller.handleMenuItemTapped(item)
+        searchSelectorController.handleMenuItemTapped(item)
     }
 }

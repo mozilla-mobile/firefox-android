@@ -37,6 +37,11 @@ import org.hamcrest.CoreMatchers.anyOf
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.Matcher
 import org.mozilla.fenix.R
+import org.mozilla.fenix.helpers.Constants.LONG_CLICK_DURATION
+import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithResIdAndTextExists
+import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithResIdExists
+import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdAndDescription
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeLong
@@ -97,7 +102,8 @@ class TabDrawerRobot {
     fun verifyTabTrayIsClosed() = assertTabTrayDoesNotExist()
     fun verifyHalfExpandedRatio() = assertMinisculeHalfExpandedRatio()
     fun verifyBehaviorState(expectedState: Int) = assertBehaviorState(expectedState)
-    fun verifyOpenedTabThumbnail() = assertTabThumbnail()
+    fun verifyOpenedTabThumbnail() =
+        assertItemWithResIdExists(itemWithResId("$packageName:id/mozac_browser_tabstray_thumbnail"))
 
     fun closeTab() {
         closeTabButton().waitForExists(waitingTime)
@@ -191,10 +197,11 @@ class TabDrawerRobot {
             waitingTime,
         )
 
-        tab(title).also {
-            it.waitForExists(waitingTime)
-            it.longClick()
-        }
+        mDevice.findObject(
+            By
+                .textContains(title)
+                .res("$packageName:id/mozac_browser_tabstray_title"),
+        ).click(LONG_CLICK_DURATION)
     }
 
     fun createCollection(
@@ -215,12 +222,11 @@ class TabDrawerRobot {
         }
     }
 
-    fun verifyTabsMultiSelectionCounter(numOfTabs: Int) {
-        assertTrue(
-            mDevice.findObject(UiSelector().text("$numOfTabs selected"))
-                .waitForExists(waitingTime),
+    fun verifyTabsMultiSelectionCounter(numOfTabs: Int) =
+        assertItemWithResIdAndTextExists(
+            itemWithResId("$packageName:id/multiselect_title"),
+            itemContainingText("$numOfTabs selected"),
         )
-    }
 
     class Transition {
         fun openThreeDotMenu(interact: ThreeDotMenuMainRobot.() -> Unit): ThreeDotMenuMainRobot.Transition {
@@ -556,14 +562,6 @@ private fun assertPrivateBrowsingButtonIsSelected(isSelected: Boolean) {
 
 private fun assertSyncedTabsButtonIsSelected(isSelected: Boolean) {
     syncedTabsButton().check(matches(isSelected(isSelected)))
-}
-
-private fun assertTabThumbnail() {
-    assertTrue(
-        mDevice.findObject(
-            UiSelector().resourceId("$packageName:id/mozac_browser_tabstray_thumbnail"),
-        ).waitForExists(waitingTime),
-    )
 }
 
 private val tabsList =

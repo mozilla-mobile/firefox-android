@@ -13,12 +13,15 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityTestRule
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithText
 import org.mozilla.fenix.helpers.RetryTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.ui.robots.browserScreen
+import org.mozilla.fenix.ui.robots.clickPageObject
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
 import org.mozilla.fenix.ui.robots.notificationShade
@@ -61,6 +64,7 @@ class MediaNotificationTest {
         mockWebServer.shutdown()
     }
 
+    @SmokeTest
     @Test
     fun videoPlaybackSystemNotificationTest() {
         val videoTestPage = TestAssetHelper.getVideoPageAsset(mockWebServer)
@@ -68,7 +72,7 @@ class MediaNotificationTest {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(videoTestPage.url) {
             mDevice.waitForIdle()
-            clickMediaPlayerPlayButton()
+            clickPageObject(itemWithText("Play"))
             assertPlaybackState(browserStore, MediaSession.PlaybackState.PLAYING)
         }.openNotificationShade {
             verifySystemNotificationExists(videoTestPage.title)
@@ -94,6 +98,40 @@ class MediaNotificationTest {
         mDevice.pressBack()
     }
 
+    @SmokeTest
+    @Test
+    fun audioPlaybackSystemNotificationTest() {
+        val audioTestPage = TestAssetHelper.getAudioPageAsset(mockWebServer)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(audioTestPage.url) {
+            mDevice.waitForIdle()
+            clickPageObject(itemWithText("Play"))
+            assertPlaybackState(browserStore, MediaSession.PlaybackState.PLAYING)
+        }.openNotificationShade {
+            verifySystemNotificationExists(audioTestPage.title)
+            clickMediaNotificationControlButton("Pause")
+            verifyMediaSystemNotificationButtonState("Play")
+        }
+
+        mDevice.pressBack()
+
+        browserScreen {
+            assertPlaybackState(browserStore, MediaSession.PlaybackState.PAUSED)
+        }.openTabDrawer {
+            closeTab()
+        }
+
+        mDevice.openNotification()
+
+        notificationShade {
+            verifySystemNotificationGone(audioTestPage.title)
+        }
+
+        // close notification shade before the next test
+        mDevice.pressBack()
+    }
+
     @Test
     fun mediaSystemNotificationInPrivateModeTest() {
         val audioTestPage = TestAssetHelper.getAudioPageAsset(mockWebServer)
@@ -104,7 +142,7 @@ class MediaNotificationTest {
         }.openNewTab {
         }.submitQuery(audioTestPage.url.toString()) {
             mDevice.waitForIdle()
-            clickMediaPlayerPlayButton()
+            clickPageObject(itemWithText("Play"))
             assertPlaybackState(browserStore, MediaSession.PlaybackState.PLAYING)
         }.openNotificationShade {
             verifySystemNotificationExists("A site is playing media")

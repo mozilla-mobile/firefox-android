@@ -45,6 +45,9 @@ object MatcherHelper {
     fun itemWithResIdAndText(resourceId: String, text: String) =
         mDevice.findObject(UiSelector().resourceId(resourceId).text(text))
 
+    fun itemWithResIdContainingText(resourceId: String, text: String) =
+        mDevice.findObject(UiSelector().resourceId(resourceId).textContains(text))
+
     fun assertItemWithResIdExists(vararg appItems: UiObject, exists: Boolean = true) {
         if (exists) {
             for (appItem in appItems) {
@@ -57,9 +60,13 @@ object MatcherHelper {
         }
     }
 
-    fun assertItemContainingTextExists(vararg appItems: UiObject) {
+    fun assertItemContainingTextExists(vararg appItems: UiObject, exists: Boolean = true) {
         for (appItem in appItems) {
-            assertTrue(appItem.waitForExists(waitingTime))
+            if (exists) {
+                assertTrue(appItem.waitForExists(waitingTime))
+            } else {
+                assertFalse(appItem.waitForExists(waitingTime))
+            }
         }
     }
 

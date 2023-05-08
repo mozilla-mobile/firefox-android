@@ -4,7 +4,7 @@
 
 package mozilla.components.feature.prompts.login
 
-import androidx.test.ext.junit.runners.AndroidJUnit4
+import mozilla.components.browser.state.action.ContentAction
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.ContentState
 import mozilla.components.browser.state.state.CustomTabSessionState
@@ -12,16 +12,16 @@ import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.prompt.PromptRequest
 import mozilla.components.concept.storage.Login
+import mozilla.components.support.test.any
 import mozilla.components.support.test.mock
 import mozilla.components.support.test.whenever
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
+import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
 
-@RunWith(AndroidJUnit4::class)
 class LoginPickerTest {
     val login =
         Login(guid = "A", origin = "https://www.mozilla.org", username = "username", password = "password")
@@ -100,6 +100,30 @@ class LoginPickerTest {
         assertTrue(manageLoginsCalled)
         assertTrue(onDismissWasCalled)
         verify(loginSelectBar).hidePrompt()
+    }
+
+    @Test
+    fun `WHEN dismissCurrentLoginSelect is called without a parameter THEN the active login prompt is dismissed`() {
+        val selectedSession = prepareSelectedSession(request)
+        loginPicker = LoginPicker(store, loginSelectBar, onManageLogins, selectedSession.id)
+
+        verify(store, never()).dispatch(any())
+        loginPicker.dismissCurrentLoginSelect()
+
+        assertTrue(onDismissWasCalled)
+        verify(store).dispatch(ContentAction.ConsumePromptRequestAction(selectedSession.id, request))
+    }
+
+    @Test
+    fun `WHEN dismissCurrentLoginSelect is called with the active login prompt passed as parameter THEN the prompt is dismissed`() {
+        val selectedSession = prepareSelectedSession(request)
+        loginPicker = LoginPicker(store, loginSelectBar, onManageLogins, selectedSession.id)
+
+        verify(store, never()).dispatch(any())
+        loginPicker.dismissCurrentLoginSelect(request)
+
+        assertTrue(onDismissWasCalled)
+        verify(store).dispatch(ContentAction.ConsumePromptRequestAction(selectedSession.id, request))
     }
 
     private fun prepareSelectedSession(request: PromptRequest? = null): TabSessionState {

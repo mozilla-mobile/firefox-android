@@ -106,6 +106,8 @@ class SettingsRobot {
     fun verifyPrivacyHeading() = assertPrivacyHeading()
 
     fun verifyHTTPSOnlyModeButton() = assertHTTPSOnlyModeButton()
+    fun verifyCookieBannerReductionButton() =
+        onView(withText(R.string.preferences_cookie_banner_reduction)).check(matches(isDisplayed()))
 
     fun verifyEnhancedTrackingProtectionButton() = assertEnhancedTrackingProtectionButton()
     fun verifyLoginsAndPasswordsButton() = assertLoginsAndPasswordsButton()
@@ -192,7 +194,6 @@ class SettingsRobot {
 
     fun verifySettingsOptionSummary(setting: String, summary: String) {
         scrollToElementByText(setting)
-
         onView(
             allOf(
                 withText(setting),

@@ -8,6 +8,9 @@ import android.content.Context
 import mozilla.components.service.nimbus.NimbusApi
 import mozilla.components.service.nimbus.NimbusAppInfo
 import mozilla.components.service.nimbus.NimbusBuilder
+import mozilla.components.service.nimbus.loggingErrorReporter
+import mozilla.components.service.nimbus.messaging.FxNimbusMessaging
+import mozilla.components.service.nimbus.messaging.NimbusSystem
 import mozilla.components.support.base.log.logger.Logger
 import org.mozilla.experiments.nimbus.NimbusInterface
 import org.mozilla.experiments.nimbus.internal.NimbusException
@@ -15,9 +18,8 @@ import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.gleanplumb.CustomAttributeProvider
+import org.mozilla.fenix.messaging.CustomAttributeProvider
 import org.mozilla.fenix.nimbus.FxNimbus
-import org.mozilla.fenix.nimbus.NimbusSystem
 import org.mozilla.fenix.utils.Settings
 
 /**
@@ -58,9 +60,16 @@ fun createNimbus(context: Context, urlString: String?): NimbusApi {
     return NimbusBuilder(context).apply {
         url = urlString
         errorReporter = { message, e ->
-            Logger.error("Nimbus error: $message", e)
+            if (BuildConfig.BUILD_TYPE == "debug") {
+                Logger.error("Nimbus error: $message", e)
+            }
             if (e !is NimbusException || e.isReportableError()) {
-                context.components.analytics.crashReporter.submitCaughtException(e)
+                @Suppress("TooGenericExceptionCaught")
+                try {
+                    context.components.analytics.crashReporter.submitCaughtException(e)
+                } catch (e: Throwable) {
+                    loggingErrorReporter(message, e)
+                }
             }
         }
         initialExperiments = R.raw.initial_experiments
@@ -97,20 +106,20 @@ fun NimbusException.isReportableError(): Boolean {
  */
 fun NimbusInterface.maybeFetchExperiments(
     context: Context,
-    feature: NimbusSystem = FxNimbus.features.nimbusSystem.value(),
+    feature: NimbusSystem = FxNimbusMessaging.features.nimbusSystem.value(),
     currentTimeMillis: Long = System.currentTimeMillis(),
 ) {
-    val minimumPeriodMinutes = if (!context.settings().nimbusUsePreview) {
-        feature.refreshIntervalForeground
-    } else {
-        0
-    }
-
-    val lastFetchTimeMillis = context.settings().nimbusLastFetchTime
-    val minimumPeriodMillis = minimumPeriodMinutes * Settings.ONE_MINUTE_MS
-
-    if (currentTimeMillis - lastFetchTimeMillis >= minimumPeriodMillis) {
-        context.settings().nimbusLastFetchTime = currentTimeMillis
+    if (context.settings().nimbusUsePreview) {
+        context.settings().nimbusLastFetchTime = 0L
         fetchExperiments()
+    } else {
+        val minimumPeriodMinutes = feature.refreshIntervalForeground
+        val lastFetchTimeMillis = context.settings().nimbusLastFetchTime
+        val minimumPeriodMillis = minimumPeriodMinutes * Settings.ONE_MINUTE_MS
+
+        if (currentTimeMillis - lastFetchTimeMillis >= minimumPeriodMillis) {
+            context.settings().nimbusLastFetchTime = currentTimeMillis
+            fetchExperiments()
+        }
     }
 }

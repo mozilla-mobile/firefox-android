@@ -8,11 +8,11 @@ import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.lib.crash.Crash.NativeCodeCrash
 import mozilla.components.lib.state.Action
+import mozilla.components.service.nimbus.messaging.Message
+import mozilla.components.service.nimbus.messaging.MessageSurfaceId
 import mozilla.components.service.pocket.PocketStory
 import mozilla.components.service.pocket.PocketStory.PocketSponsoredStory
 import org.mozilla.fenix.components.AppStore
-import org.mozilla.fenix.gleanplumb.Message
-import org.mozilla.fenix.gleanplumb.MessagingState
 import org.mozilla.fenix.home.Mode
 import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesCategory
 import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesSelectedCategory
@@ -22,7 +22,7 @@ import org.mozilla.fenix.home.recentsyncedtabs.RecentSyncedTabState
 import org.mozilla.fenix.home.recenttabs.RecentTab
 import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItem
 import org.mozilla.fenix.library.history.PendingDeletionHistory
-import org.mozilla.fenix.nimbus.MessageSurfaceId
+import org.mozilla.fenix.messaging.MessagingState
 import org.mozilla.fenix.wallpapers.Wallpaper
 
 /**
@@ -194,7 +194,18 @@ sealed class AppAction : Action {
     }
 
     /**
-     * Indicates that the app has been resumed and metrics that relate to that should be sent.
+     * [AppAction] implementations related to the application lifecycle.
      */
-    object ResumedMetricsAction : AppAction()
+    sealed class AppLifecycleAction : AppAction() {
+
+        /**
+         * The application has received an ON_RESUME event.
+         */
+        object ResumeAction : AppLifecycleAction()
+
+        /**
+         * The application has received an ON_PAUSE event.
+         */
+        object PauseAction : AppLifecycleAction()
+    }
 }

@@ -3,26 +3,26 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 // If you ever need to force a toolchain rebuild (taskcluster) then edit the following comment.
-// FORCE REBUILD 2022-12-11
+// FORCE REBUILD 2023-05-05
 
 object FenixVersions {
-    const val kotlin = "1.8.10"
+    const val kotlin = "1.8.21"
     const val coroutines = "1.6.4"
 
     // These versions are linked: lint should be X+23.Y.Z of gradle_plugin version, according to:
     // https://github.com/alexjlockwood/android-lint-checks-demo/blob/0245fc027463137b1b4afb97c5295d60dce998b6/dependencies.gradle#L3
-    const val android_gradle_plugin = "7.4.1"
-    const val android_lint_api = "30.4.1"
+    const val android_gradle_plugin = "7.4.2"
+    const val android_lint_api = "30.4.2"
 
-    const val sentry = "6.15.0"
+    const val sentry = "6.18.1"
     const val leakcanary = "2.10"
     const val osslicenses_plugin = "0.10.4"
     const val detekt = "1.19.0"
 
     const val androidx_activity = "1.6.1"
-    const val androidx_compose = "1.3.1"
-    const val androidx_compose_compiler = "1.4.3"
-    const val androidx_appcompat = "1.3.0"
+    const val androidx_compose = "1.4.3"
+    const val androidx_compose_compiler = "1.4.7"
+    const val androidx_appcompat = "1.6.1"
     const val androidx_benchmark = "1.1.1"
     const val androidx_biometric = "1.1.0"
     const val androidx_coordinator_layout = "1.1.0"
@@ -30,16 +30,17 @@ object FenixVersions {
     const val androidx_preference = "1.1.1"
     const val androidx_profileinstaller = "1.2.2"
     const val androidx_legacy = "1.0.0"
-    const val androidx_annotation = "1.5.0"
-    const val androidx_lifecycle = "2.5.1"
-    const val androidx_fragment = "1.5.1"
-    const val androidx_navigation = "2.5.1"
-    const val androidx_recyclerview = "1.2.1"
-    const val androidx_core = "1.8.0"
+    const val androidx_annotation = "1.6.0"
+    const val androidx_lifecycle = "2.6.1"
+    const val androidx_fragment = "1.5.7"
+    const val androidx_navigation = "2.5.3"
+    const val androidx_recyclerview = "1.3.0"
+    const val androidx_core = "1.10.0"
     const val androidx_paging = "3.1.1"
-    const val androidx_transition = "1.4.0"
+    const val androidx_transition = "1.4.1"
     const val androidx_work = "2.7.1"
     const val androidx_datastore = "1.0.0"
+    const val androidx_datastore_preferences = "1.0.0"
     const val google_material = "1.2.1"
     const val google_accompanist = "0.28.0"
 
@@ -51,7 +52,7 @@ object FenixVersions {
 
     const val mockwebserver = "4.10.0"
     const val uiautomator = "2.2.0"
-    const val robolectric = "4.9.2"
+    const val robolectric = "4.10.1"
 
     const val google_ads_id_version = "16.0.0"
 
@@ -79,6 +80,7 @@ object FenixDependencies {
     const val androidx_compose_ui_test = "androidx.compose.ui:ui-test-junit4:${FenixVersions.androidx_compose}"
     const val androidx_compose_ui_test_manifest = "androidx.compose.ui:ui-test-manifest:${FenixVersions.androidx_compose}"
     const val androidx_compose_ui_tooling = "androidx.compose.ui:ui-tooling:${FenixVersions.androidx_compose}"
+    const val androidx_compose_ui_tooling_preview = "androidx.compose.ui:ui-tooling-preview:${FenixVersions.androidx_compose}"
     const val androidx_compose_foundation = "androidx.compose.foundation:foundation:${FenixVersions.androidx_compose}"
     const val androidx_compose_material = "androidx.compose.material:material:${FenixVersions.androidx_compose}"
     const val androidx_annotation = "androidx.annotation:annotation:${FenixVersions.androidx_annotation}"
@@ -110,6 +112,8 @@ object FenixDependencies {
     const val androidx_work_ktx = "androidx.work:work-runtime-ktx:${FenixVersions.androidx_work}"
     const val androidx_work_testing = "androidx.work:work-testing:${FenixVersions.androidx_work}"
     const val androidx_datastore = "androidx.datastore:datastore:${FenixVersions.androidx_datastore}"
+    const val androidx_data_store_preferences = "androidx.datastore:datastore-preferences:${FenixVersions.androidx_datastore_preferences}"
+
     const val google_material = "com.google.android.material:material:${FenixVersions.google_material}"
     const val google_accompanist_drawablepainter = "com.google.accompanist:accompanist-drawablepainter:${FenixVersions.google_accompanist}"
     const val google_accompanist_pager = "com.google.accompanist:accompanist-pager:${FenixVersions.google_accompanist}"

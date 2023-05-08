@@ -11,10 +11,12 @@ import android.os.StrictMode
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
+import androidx.datastore.preferences.preferencesDataStore
 import mozilla.components.browser.domains.autocomplete.BaseDomainAutocompleteProvider
 import mozilla.components.browser.domains.autocomplete.ShippedDomainsProvider
 import mozilla.components.browser.engine.gecko.GeckoEngine
 import mozilla.components.browser.engine.gecko.cookiebanners.GeckoCookieBannersStorage
+import mozilla.components.browser.engine.gecko.cookiebanners.ReportSiteDomainsRepository
 import mozilla.components.browser.engine.gecko.fetch.GeckoViewFetchClient
 import mozilla.components.browser.engine.gecko.permission.GeckoSitePermissionsStorage
 import mozilla.components.browser.icons.BrowserIcons
@@ -190,7 +192,16 @@ class Core(
         )
     }
 
-    val cookieBannersStorage by lazyMonitored { GeckoCookieBannersStorage(geckoRuntime) }
+    private val Context.dataStore by preferencesDataStore(
+        name = ReportSiteDomainsRepository.REPORT_SITE_DOMAINS_REPOSITORY_NAME,
+    )
+
+    val cookieBannersStorage by lazyMonitored {
+        GeckoCookieBannersStorage(
+            geckoRuntime,
+            ReportSiteDomainsRepository(context.dataStore),
+        )
+    }
 
     val geckoSitePermissionsStorage by lazyMonitored {
         GeckoSitePermissionsStorage(geckoRuntime, OnDiskSitePermissionsStorage(context))
@@ -241,7 +252,7 @@ class Core(
                 RecentlyClosedMiddleware(recentlyClosedTabsStorage, RECENTLY_CLOSED_MAX),
                 DownloadMiddleware(context, DownloadService::class.java),
                 ReaderViewMiddleware(),
-                TelemetryMiddleware(context.settings(), metrics, crashReporter),
+                TelemetryMiddleware(context, context.settings(), metrics, crashReporter),
                 ThumbnailsMiddleware(thumbnailStorage),
                 UndoMiddleware(context.getUndoDelay()),
                 RegionMiddleware(context, locationService),
@@ -250,7 +261,7 @@ class Core(
                     additionalBundledSearchEngineIds = listOf("reddit", "youtube"),
                     migration = SearchMigration(context),
                 ),
-                RecordingDevicesMiddleware(context),
+                RecordingDevicesMiddleware(context, context.components.notificationsDelegate),
                 PromptMiddleware(),
                 AdsTelemetryMiddleware(adsTelemetry),
                 LastMediaAccessMiddleware(),
@@ -297,6 +308,7 @@ class Core(
                 R.drawable.ic_status_logo,
                 permissionStorage.permissionsStorage,
                 IntentReceiverActivity::class.java,
+                notificationsDelegate = context.components.notificationsDelegate,
             )
 
             MediaSessionFeature(context, MediaSessionService::class.java, this).start()

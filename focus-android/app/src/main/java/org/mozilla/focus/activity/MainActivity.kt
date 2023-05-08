@@ -33,6 +33,7 @@ import mozilla.components.support.ktx.android.content.getColorFromAttr
 import mozilla.components.support.ktx.android.view.getWindowInsetsController
 import mozilla.components.support.locale.LocaleAwareAppCompatActivity
 import mozilla.components.support.utils.SafeIntent
+import mozilla.components.support.utils.StatusBarUtils
 import org.mozilla.focus.GleanMetrics.AppOpened
 import org.mozilla.focus.GleanMetrics.Notifications
 import org.mozilla.focus.R
@@ -55,7 +56,6 @@ import org.mozilla.focus.state.Screen
 import org.mozilla.focus.telemetry.TelemetryWrapper
 import org.mozilla.focus.telemetry.startuptelemetry.StartupPathProvider
 import org.mozilla.focus.telemetry.startuptelemetry.StartupTypeTelemetry
-import org.mozilla.focus.utils.StatusBarUtils
 import org.mozilla.focus.utils.SupportUtils
 
 private const val REQUEST_TIME_OUT = 2000L
@@ -156,6 +156,8 @@ open class MainActivity : LocaleAwareAppCompatActivity() {
         ).also {
             it.start()
         }
+
+        components.notificationsDelegate.bindToActivity(this)
     }
 
     private fun requestNotificationPermission() {
@@ -377,7 +379,7 @@ open class MainActivity : LocaleAwareAppCompatActivity() {
             return
         }
 
-        super.getOnBackPressedDispatcher().onBackPressed()
+        onBackPressedDispatcher.onBackPressed()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -464,7 +466,12 @@ open class MainActivity : LocaleAwareAppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
-        privateNotificationFeature.stop()
+
+        if (this::privateNotificationFeature.isInitialized) {
+            privateNotificationFeature.stop()
+        }
+
+        components.notificationsDelegate.unBindActivity(this)
     }
 
     enum class AppOpenType(val type: String) {
