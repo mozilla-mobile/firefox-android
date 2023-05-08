@@ -98,7 +98,7 @@ sealed class BrowserTabViewHolder(itemView: View) : RecyclerView.ViewHolder(item
     ) : AbstractBrowserTabViewHolder(itemView, imageLoader, store, selectionHolder, featureName) {
 
         private val nonSelectedColorId = ThemeManager.resolveAttribute(R.attr.layer1, itemView.context)
-        
+
         override val thumbnailSize: Int
             get() = max(
                 itemView.resources.getDimensionPixelSize(R.dimen.tab_tray_list_item_thumbnail_height),
