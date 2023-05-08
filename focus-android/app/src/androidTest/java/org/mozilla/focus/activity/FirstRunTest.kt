@@ -17,7 +17,7 @@ import org.mozilla.focus.helpers.MockWebServerHelper
 import org.mozilla.focus.helpers.TestHelper.restartApp
 import org.mozilla.focus.testAnnotations.SmokeTest
 
-// Tests the First run onboarding screens
+// Tests the various onboarding screens
 @RunWith(AndroidJUnit4ClassRunner::class)
 class FirstRunTest {
     private lateinit var webServer: MockWebServer
