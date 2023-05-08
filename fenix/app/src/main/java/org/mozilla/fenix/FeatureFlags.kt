@@ -20,7 +20,6 @@ object FeatureFlags {
      * */
     val customExtensionCollectionFeature = Config.channel.isNightlyOrDebug || Config.channel.isBeta
 
-
     /**
      * Enables the user to select an "OLED Black" theme.
      */
