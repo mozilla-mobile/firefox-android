@@ -13,6 +13,7 @@ import android.util.Log
 import android.widget.TimePicker
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.closeSoftKeyboard
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.PickerActions
 import androidx.test.espresso.matcher.RootMatchers.isDialog
@@ -28,6 +29,7 @@ import androidx.test.uiautomator.UiObject
 import androidx.test.uiautomator.UiObjectNotFoundException
 import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
+import java.time.LocalDate
 import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.mediasession.MediaSession
@@ -56,7 +58,6 @@ import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.TestHelper.waitForObjects
 import org.mozilla.fenix.helpers.ext.waitNotNull
-import java.time.LocalDate
 
 class BrowserRobot {
     private lateinit var sessionLoadedIdlingResource: SessionLoadedIdlingResource
@@ -551,10 +552,15 @@ class BrowserRobot {
         }
     }
 
-    fun verifySaveLoginPromptIsDisplayed() =
+    fun verifySaveLoginPromptIsDisplayed() {
+        // Closes the keyboard if still open. If keyboard already closed, it's a no-op.
+        mDevice.waitForIdle()
+        closeSoftKeyboard()
+
         assertItemWithResIdExists(
             itemWithResId("$packageName:id/feature_prompt_login_fragment"),
         )
+    }
 
     fun verifySaveLoginPromptIsNotDisplayed() =
         assertItemWithResIdExists(
