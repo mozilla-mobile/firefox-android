@@ -2,46 +2,51 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/
 
-name: "AC - Sync Strings"
-
-permissions:
-  contents: write
-  pull-requests: write
+name: AC - Uplift Strings
 
 on:
   schedule:
-    - cron: '0 2 * * *'
+    - cron: "0 2 * * *"
   workflow_dispatch:
 
 jobs:
   main:
-    name: "Sync Strings"
-    runs-on: ubuntu-20.04
+    name: Uplift strings
+    runs-on: ubuntu-latest
     steps:
-      - name: "Discover A-C Version"
-        id: ac-version-for-fenix-beta
-        uses: mozilla-mobile/ac-version-for-fenix-beta@1.3.0
-      - name: "Checkout Main Branch"
-        uses: actions/checkout@v2
+      - name: Discover A-C beta version
+        id: discover-beta-version
+        uses: mozilla-mobile/fenix-beta-version@4.2.3
+      - name: Skip non-beta versions
+        uses: andymckay/cancel-action@0.2
+        if: ${{ steps.discover-beta-version.outputs.beta_version == '' }}
+      - name: Store ENV variables
+        id: env-variables
+        run: |
+          echo "beta_branch=releases_v${{ steps.discover-beta-version.outputs.beta_version }}" >> $GITHUB_OUTPUT
+      - name: Checkout main branch
+        uses: actions/checkout@v3
         with:
           path: main
           ref: main
-      - name: "Checkout Beta Branch"
-        uses: actions/checkout@v2
+      - name: Checkout beta branch
+        uses: actions/checkout@v3
         with:
           path: beta
-          ref: "releases_v${{ steps.ac-version-for-fenix-beta.outputs.major-ac-version }}"
-      - name: "Sync Strings"
-        uses: mozilla-mobile/sync-strings-action@2.0.0
+          ref: ${{ steps.env-variables.outputs.beta_branch }}
+      - name: Sync strings
+        uses: mozilla-mobile/sync-strings-action@3.0.1
         with:
-          project: android-components
+          toml_path: android-components/l10n.toml
           src: main
-          dst: beta
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v3
+          dest: beta
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           path: beta
-          branch: automation/sync-ac-strings-${{ steps.ac-version-for-fenix-beta.outputs.major-ac-version }}
-          title: "Uplift AC Strings from main to releases_v${{steps.ac-version-for-fenix-beta.outputs.major-ac-version}}"
-          body: "This (automated) PR sync strings from `main` to `releases_v${{steps.ac-version-for-fenix-beta.outputs.major-ac-version}}`"
+          branch: automation/uplift-ac-strings-${{ steps.discover-beta-version.outputs.beta_version }}
+          author: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
+          commit-message: "Uplift AC strings from ${{ github.ref_name }} to ${{ steps.env-variables.outputs.beta_branch }}"
+          title: "Uplift AC strings from ${{ github.ref_name }} to ${{ steps.env-variables.outputs.beta_branch }}"
+          body: "This (automated) PR uplifts strings from `${{ github.ref_name }}` to `${{ steps.env-variables.outputs.beta_branch }}`"

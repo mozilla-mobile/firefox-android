@@ -357,6 +357,15 @@
     <!-- In-app link (in settings) to Focus privacy notice. -->
     <string name="preference_privacy_notice">Upplýsingar um meðferð persónuupplýsinga</string>
 
+    <!-- In-app link (in settings) to Focus licensing information. -->
+    <string name="preference_licensing_info">Upplýsingar um notkunarleyfi</string>
+
+    <!-- Link to Focus licensing information from other libraries that we use. -->
+    <string name="preference_libraries_we_use">Aðgerðasöfn sem við notum</string>
+
+    <!-- Open Source Licenses page title. The first parameter is the app name -->
+    <string name="open_source_licenses_title">%s | OSS-aðgerðasöfn</string>
+
     <!-- Item in Preferences that shows the about page. Parameter 1 is the app name, i.e. Firefox Focus/Firefox Klar. -->
     <string name="preference_about">Um %1$s</string>
 
@@ -680,6 +689,9 @@
     <!-- Text for indicating cookie banner handling is on this site, this is shown as part of the protections panel with the tracking protection toggle. -->
     <string name="cookie_banner_exception_item_description_state_on">Kveikt fyrir þetta vefsvæði</string>
 
+    <!-- Text for indicating cookie reducer is not supported on the current site, this is shown as part of the protections panel with the tracking protection toggle. -->
+    <string name="cookie_banner_exception_site_not_supported">Vefsvæðið er ekki stutt í augnablikinu</string>
+
     <!-- Text for indicating cookie banner handling is off this site, this is shown as part of the protections panel with the tracking protection toggle. -->
     <string name="cookie_banner_exception_item_description_state_off">Slökkt fyrir þetta vefsvæði</string>
 
@@ -702,16 +714,34 @@
     <string name="cookie_banner_exception_panel_description_state_on_for_site">%1$s mun hreinsa vefkökur þessa vefsvæðis og endurlesa síðuna. Að hreinsa allar vefkökur gæti skráð þig út eða tæmt innkaupakörfur.</string>
 
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The placeholder will be updated with the app name. -->
-    <string name="cookie_banner_exception_panel_description_state_off_for_site">%1$s reynir sjálfkrafa að hafna vefkökubeiðnum á vefkökuborðum. Ef ekki er boðið upp á að hafna vefkökum getur %1$s samþykkt allar vefkökur til að hafna borðanum.</string>
+    <string name="cookie_banner_exception_panel_description_state_off_for_site" moz:RemovedIn="111" tools:ignore="UnusedResources">%1$s reynir sjálfkrafa að hafna vefkökubeiðnum á vefkökuborðum. Ef ekki er boðið upp á að hafna vefkökum getur %1$s samþykkt allar vefkökur til að hafna borðanum.</string>
+
+    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The placeholder will be updated with the app name. -->
+    <string name="cookie_banner_exception_panel_description_state_off_for_site2">%1$s getur reynt að hafna sjálfkrafa beiðnum um vefkökur.</string>
+
+    <!-- Long text for a detail explanation indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_description_site_is_not_supported">Þetta vefsvæði styður ekki stendur fækkun vefkökuborða. Viltu biðja um að teymið okkar skoði þetta vefsvæði og bæti við stuðningi í framtíðinni?</string>
+
+    <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_site_is_not_supported_cancel_button">Hætta við</string>
+
+    <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_site_is_not_supported_request_support_button">Biðja um stuðning</string>
+
+    <!-- Label for the snackBar, after the user reports with success a website where cookie banner reducer did not work -->
+    <string name="cookie_banner_report_a_site_snackbar_label">Beiðni um stuðning við vefsvæði lögð fram.</string>
+
+    <!-- Label for cookie banner item from tracking protection, after the user reports with success a website where cookie banner reducer did not work -->
+    <string name="cookie_banner_the_site_was_reported">Beiðni um stuðning við vefsvæði lögð fram.</string>
 
     <!-- Contextual Feature Recommendation Popups -->
     <!-- CFR for Cookie Banner (Banner Info Message). The placeholder will be updated with the app name. -->
-    <string moz:RemovedIn="111" name="cfr_for_cookie_banner" tools:ignore="UnusedResources">%1$s reynir að hafna beiðnum um vefkökur til að hunsa pirrandi vefkökuborða.\n\nSýslaðu með stillingar fyrir vefkökuborða í stillingunum.</string>
+    <string name="cfr_for_cookie_banner" moz:RemovedIn="111" tools:ignore="UnusedResources">%1$s reynir að hafna beiðnum um vefkökur til að hunsa pirrandi vefkökuborða.\n\nSýslaðu með stillingar fyrir vefkökuborða í stillingunum.</string>
 
     <!-- CFR for Cookie Banner (Banner Info Message). %1$s will be replaced by the app name, %2$s will be an active link using the string cfr_cookie_banner_link as text. -->
     <string name="cfr_cookie_banner">%1$s reynir að hafna beiðnum um vefkökur til að hunsa pirrandi vefkökuborða.\n\nSýslaðu með stillingar fyrir vefkökuborða í %2$s.</string>
     <!-- CFR for Cookie Banner (Banner Info Message). This text should be the same as the settings text from "cfr_for_cookie_banner". The text should be underlined and should redirect the user to the cookie banner settings screen. -->
-    <string moz:RemovedIn="111" name="cfr_for_cookie_banner_underline_settings" tools:ignore="UnusedResources">stillingar</string>
+    <string name="cfr_for_cookie_banner_underline_settings" moz:RemovedIn="111" tools:ignore="UnusedResources">stillingar</string>
 
     <!-- CFR for Cookie Banner (Banner Info Message). This string is used as text for a link in cfr_cookie_banner and takes the user to the app settings. -->
     <string name="cfr_cookie_banner_link">stillingunum</string>
@@ -879,6 +909,9 @@
     <!-- Label for the button in the snackbar that switches to the newly opened tab -->
     <string name="open_new_tab_snackbar">Skipta</string>
 
+    <!-- Text displayed in a notification when the user enters full screen mode -->
+    <string name="full_screen_notification">Fara í fullan skjá</string>
+
     <!-- Preference for switching to a new tab immediately after opening -->
     <string name="preference_open_new_tab">Skipta strax yfir í tengil í nýjum flipa</string>
 
@@ -974,12 +1007,36 @@
     <string name="preference_follow_device_theme">Fylgja þema tækisins</string>
 
     <!-- The title of the error page for websites that do not support HTTPS when HTTPS-Only is turned on  -->
-    <string name="errorpage_httpsonly_title">Vefsvæðið sem þú baðst um styður ekki HTTPS</string>
+    <string name="errorpage_httpsonly_title" moz:RemovedIn="111" tools:ignore="UnusedResources">Vefsvæðið sem þú baðst um styður ekki HTTPS</string>
+
+    <!-- The title of the error page for websites that do not support HTTPS when HTTPS-Only is turned on  -->
+    <string name="errorpage_httpsonly_title2">Þetta vefsvæði styður ekki HTTPS</string>
 
     <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will get replaced with the name of the app (e.g. "Firefox Focus") -->
-    <string name="errorpage_httpsonly_message">Sjálfgefið er að %1$s reynir að tengjast með HTTPS til að auka öryggi. Til að breyta þessari stillingu eða til að læra meira, farðu í Stillingar &gt; Friðhelgi og öryggi &gt; Öryggi.</string>
+    <string name="errorpage_httpsonly_message" moz:RemovedIn="111" tools:ignore="UnusedResources">Sjálfgefið er að %1$s reynir að tengjast með HTTPS til að auka öryggi. Til að breyta þessari stillingu eða til að læra meira, farðu í Stillingar &gt; Friðhelgi og öryggi &gt; Öryggi.</string>
 
-    <!-- Sessions List -->
+    <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will get replaced with the name of the app (e.g. "Firefox Focus").
+        Contains a button that will redirect the user to Privacy & Security Screen-->
+    <string name="errorpage_httpsonly_message2"><![CDATA[%1$s reynir að nota HTTPS tengingu þegar mögulegt er til að auka öryggi.
+     <a href="%2$s">Frekari upplýsingar</a> <br/><br/>
+     Breyttu þessari stillingu í Stillingar > Persónuvernd og öryggi > Öryggi.]]></string>
+
+    <!-- The document title and heading of the error page shown when a website has an invalid or expired SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_title">Tenging er ekki örugg</string>
+
+     <!-- The error message shown when a website has an invalid or expired SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_message"><![CDATA[
+Þetta gæti verið vegna vandamála í stillingum netþjóns, eða einhver gæti verið að reyna að þykjast vera þessi netþjónn.<br/><br/>
+Ef þú hefur getað tengst þessum netþjóni án vandamála áður, gæti verið að vandamálið sé aðeins tímabundið, þannig að þú gætir reynt aftur seinna.
+ ]]></string>
+
+    <!-- The advanced certificate information shown when a website has an invalid SSL certificate. The %1$s will be replaced by the app name and %2$s will be replaced by website URL. It's only shown when a website has an invalid SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_techInfo"><![CDATA[
+        <label>Einhver gæti verið að reyna að þykjast vera þetta vefsvæði og þú ættir ekki að halda áfram.</label>
+        <br><br>
+        <label>%1$s treystir ekki <b>%2$s</b> vegna þess að útgefandi skilríkisins er óþekktur, skilríkið er gefið út af sjálfu sér eða þjóninn er ekki að senda rétt milliskilríki.</label>]]></string>
+
+     <!-- Sessions List -->
     <!-- Content description (not visible, for screen readers etc.): Button that closes a tab n the sessions list -->
     <string name="close_tab">Loka flipa</string>
 
@@ -1005,13 +1062,18 @@
 
     !-- Content description (not visible, for screen readers etc.): This is the description for
     picture of search widget from promote search widget dialog. --&gt;
+    <!-- Content description (not visible, for screen readers etc.): This is the description for the
+    close button from promote search widget dialog. -->
     <string name="promote_search_widget_dialog_content_description">Loka</string>
 
     !-- Content description (not visible, for screen readers etc.): This is the description for
     picture of search widget from promote search widget dialog. --&gt;
+    <!-- Content description (not visible, for screen readers etc.): This is the description for
+    picture of search widget from promote search widget dialog. -->
     <string name="promote_search_widget_dialog_picture_content_description">Viðmótshluti fyrir leit</string>
 
     !-- This is the title of promote search widget dialog. --&gt;
+    <!-- This is the title of promote search widget dialog. -->
     <string name="promote_search_widget_dialog_title">Vafurferill hreinsaður 🎉</string>
 
     <!-- Banner Info Message than will appear when user first enters in the app. The location is at the toolbar. -->
@@ -1019,13 +1081,19 @@
 
     !-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
     of the app (e.g. &quot;Focus&quot;) --&gt;
+    <!-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
+    of the app (e.g. "Focus") -->
     <string name="promote_search_widget_dialog_subtitle">Við látum þig vera í huliðsvafrinu þínu, en byrjum hraðar næst með %1$s-viðmótshlutanum á upphafsskjánum þínum.</string>
 
     !-- This is te text from add search widget to home screen button .The button is located on
     promote search widget dialog. --&gt;
+    <!-- This is te text from add search widget to home screen button .The button is located on
+    promote search widget dialog. -->
     <string name="promote_search_widget_button_text">Bæta viðmótshluta á upphafsskjá</string>
 
     !-- This is te text of the snackbar that appears after the search widget was added successfully
     to the home screen. --&gt;
+    <!-- This is te text of the snackbar that appears after the search widget was added successfully
+    to the home screen. -->
     <string name="promote_search_widget_snackbar_message">Viðmótshluta bætt á upphafsskjá</string>
 </resources>

@@ -10,5 +10,24 @@ jobs:
           treeherder-symbol: nightly-D
           target-tasks-method: nightly
       when:
-          - {hour: 14, minute: 30}
-          - {hour: 19, minute: 0}
+          - {hour: 4, minute: 0}
+          - {hour: 16, minute: 0}
+    - name: nightly-test
+      job:
+          type: decision-task
+          treeherder-symbol: Nt
+          target-tasks-method: nightly-test
+      when:
+        - {hour: 5, minute: 0}
+    - name: screenshots
+      job:
+          type: decision-task
+          treeherder-symbol: screenshots-D
+          target-tasks-method: screenshots
+      when: [{weekday: 'Monday', hour: 10, minute: 0}]
+    - name: legacy-api-ui-tests
+      job:
+          type: decision-task
+          treeherder-symbol: legacy-api-ui
+          target-tasks-method: legacy_api_ui_tests
+      when: [] # unscheduled

@@ -15,6 +15,8 @@ import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.feature.session.FullScreenFeature
 import mozilla.components.support.test.any
 import mozilla.components.support.test.mock
+import mozilla.components.support.test.robolectric.testContext
+import org.junit.Assert.assertNotNull
 import org.junit.Test
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.runner.RunWith
@@ -24,12 +26,15 @@ import org.mockito.Mockito.never
 import org.mockito.Mockito.spy
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
+import org.mozilla.focus.R
 import org.mozilla.focus.ext.disableDynamicBehavior
 import org.mozilla.focus.ext.enableDynamicBehavior
 import org.mozilla.focus.ext.hide
 import org.mozilla.focus.ext.showAsFixed
 import org.mozilla.focus.utils.Settings
+import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.shadows.ShadowToast
 
 @RunWith(RobolectricTestRunner::class)
 internal class FullScreenIntegrationTest {
@@ -286,18 +291,12 @@ internal class FullScreenIntegrationTest {
 
     @Test
     fun `WHEN entering fullscreen THEN put browser in fullscreen, hide system bars and enter immersive mode`() {
-        val toolbar: BrowserToolbar = mock()
+        val toolbar = BrowserToolbar(testContext)
         val engineView: GeckoEngineView = mock()
         doReturn(mock<View>()).`when`(engineView).asView()
         val settings: Settings = mock()
         doReturn(false).`when`(settings).isAccessibilityEnabled()
-        val resources: Resources = mock()
-        val activityWindow: Window = mock()
-        val decorView: View = mock()
-        val activity: Activity = mock()
-        doReturn(activityWindow).`when`(activity).window
-        doReturn(decorView).`when`(activityWindow).decorView
-        doReturn(resources).`when`(activity).resources
+        val activity = Robolectric.buildActivity(Activity::class.java).get()
         val statusBar: View = mock()
         val integration = spy(
             FullScreenIntegration(
@@ -317,6 +316,13 @@ internal class FullScreenIntegrationTest {
         verify(integration).enterBrowserFullscreen()
         verify(integration).switchToImmersiveMode()
         verify(statusBar).isVisible = false
+
+        val toast = ShadowToast.getTextOfLatestToast()
+        assertNotNull(toast)
+        assertEquals(
+            testContext.getString(R.string.full_screen_notification),
+            toast,
+        )
     }
 
     @Test

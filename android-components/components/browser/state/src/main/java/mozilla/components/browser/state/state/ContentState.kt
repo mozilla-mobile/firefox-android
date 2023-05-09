@@ -33,6 +33,7 @@ import mozilla.components.concept.engine.window.WindowRequest
  * @property icon the icon of the page currently loaded by this session.
  * @property download Last unhandled download request.
  * @property share Last unhandled request to share an internet resource that first needs to be downloaded.
+ * @property copy Last unhandled request to copy an internet resource that first needs to be downloaded.
  * @property hitResult the target of the latest long click operation.
  * @property promptRequests current[PromptRequest]s.
  * @property findResults the list of results of the latest "find in page" operation.
@@ -61,6 +62,7 @@ import mozilla.components.concept.engine.window.WindowRequest
  * @property showToolbarAsExpanded whether the dynamic toolbar should be forced as expanded.
  * @property previewImageUrl the preview image of the page (e.g. the hero image), if available.
  * @property isSearch whether or not the last url load request is the result of a search.
+ * @property hasFormData whether or not the content has filled out form data.
  */
 data class ContentState(
     val url: String,
@@ -73,6 +75,7 @@ data class ContentState(
     val icon: Bitmap? = null,
     val download: DownloadState? = null,
     val share: ShareInternetResourceState? = null,
+    val copy: ShareInternetResourceState? = null,
     val hitResult: HitResult? = null,
     val promptRequests: List<PromptRequest> = emptyList(),
     val findResults: List<FindResultState> = emptyList(),
@@ -97,4 +100,5 @@ data class ContentState(
     val showToolbarAsExpanded: Boolean = false,
     val previewImageUrl: String? = null,
     val isSearch: Boolean = false,
+    val hasFormData: Boolean = false,
 )

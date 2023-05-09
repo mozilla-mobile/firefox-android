@@ -10,6 +10,7 @@ locales = [
   "ast",
   "ay",
   "az",
+  "be",
   "bg",
   "bn",
   "bo",
@@ -55,6 +56,7 @@ locales = [
   "ja",
   "jv",
   "ka",
+  "kaa",
   "kab",
   "kk",
   "ko",
@@ -92,6 +94,7 @@ locales = [
   "sv-SE",
   "ta",
   "te",
+  "tg",
   "th",
   "tr",
   "trs",
@@ -106,12 +109,6 @@ locales = [
   "zh-CN",
   "zh-HK",
   "zh-TW",
-]
-
-# Expose the following branches to localization
-# Changes to this list should be announced to the l10n team ahead of time.
-branches = [
-    "main",
 ]
 
 [env]

@@ -28,10 +28,15 @@ internal class TelemetrySwitchPreference(context: Context, attrs: AttributeSet?)
     override fun onClick() {
         super.onClick()
         TelemetryHolder.get()
-            .configuration
-            .setUploadEnabled(isChecked).isCollectionEnabled = isChecked
+            .configuration.isUploadEnabled = isChecked
 
         Glean.setUploadEnabled(isChecked)
+
+        if (isChecked) {
+            TelemetryWrapper.startSession()
+        } else {
+            TelemetryWrapper.stopSession()
+        }
     }
 
     override fun getDescription(): String {
@@ -42,6 +47,9 @@ internal class TelemetrySwitchPreference(context: Context, attrs: AttributeSet?)
     }
 
     override fun getLearnMoreUrl(): String {
-        return SupportUtils.getSumoURLForTopic(context, SupportUtils.SumoTopic.USAGE_DATA)
+        return SupportUtils.getSumoURLForTopic(
+            SupportUtils.getAppVersion(context),
+            SupportUtils.SumoTopic.USAGE_DATA,
+        )
     }
 }

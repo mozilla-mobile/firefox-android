@@ -1,6 +1,6 @@
 # Firefox Focus for Android
 
-_Browse like no one’s watching. The new Firefox Focus automatically blocks a wide range of online trackers — from the moment you launch it to the second you leave it. Easily erase your history, passwords and cookies, so you won’t get followed by things like unwanted ads._ 
+_Browse like no one’s watching. The new Firefox Focus automatically blocks a wide range of online trackers — from the moment you launch it to the second you leave it. Easily erase your history, passwords and cookies, so you won’t get followed by things like unwanted ads._
 
 Firefox Focus provides automatic ad blocking and tracking protection on an easy-to-use private browser.
 
@@ -15,7 +15,7 @@ Firefox Focus provides automatic ad blocking and tracking protection on an easy-
 ## Getting Involved
 
 
-We encourage you to participate in this open source project. We love Pull Requests, Bug Reports, ideas, (security) code reviews or any other kind of positive contribution. 
+We encourage you to participate in this open source project. We love Pull Requests, Bug Reports, ideas, (security) code reviews or any other kind of positive contribution.
 
 Before you attempt to make a contribution please read the [Community Participation Guidelines](https://www.mozilla.org/en-US/about/governance/policies/participation/).
 
@@ -71,15 +71,13 @@ Nightly, Beta and Release variants are getting published to Google Play and ther
 debuggable
 ```
 
-### Auto-publication workflow for android-components and application-services
+### Auto-publication workflow for application-services and glean
 If you're making changes to these projects and want to test them in Focus, auto-publication workflow is the fastest, most reliable
 way to do that.
 
-In `local.properties`, specify a relative path to your local `android-components` and/or `application-services` projects. E.g.:
-- `autoPublish.android-components.dir=../firefox-android/android-components`
+In `local.properties`, specify a relative path to your local `glean` and/or `application-services` projects. E.g.:
+- `autoPublish.glean.dir=../glean`
 - `autoPublish.application-services.dir=../application-services`
-
-*Note that the Android Components project was already migrated to the new [firefox-android](https://github.com/mozilla-mobile/firefox-android) repository. Therefore, this auto publication workflow won't be neccessary for Android Components once Focus is integrated in the new repository as well.*
 
 Once these flags are set, your Focus builds will include any local modifications present in these projects.
 

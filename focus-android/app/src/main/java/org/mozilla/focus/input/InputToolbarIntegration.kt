@@ -15,11 +15,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.mapNotNull
 import mozilla.components.browser.domains.autocomplete.CustomDomainsProvider
-import mozilla.components.browser.domains.autocomplete.DomainAutocompleteResult
 import mozilla.components.browser.domains.autocomplete.ShippedDomainsProvider
 import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.compose.cfr.CFRPopup
 import mozilla.components.compose.cfr.CFRPopupProperties
+import mozilla.components.concept.toolbar.AutocompleteResult
 import mozilla.components.concept.toolbar.Toolbar
 import mozilla.components.lib.state.ext.flowScoped
 import mozilla.components.support.base.feature.LifecycleAwareFeature
@@ -60,6 +60,7 @@ class InputToolbarIntegration(
             hint = ContextCompat.getColor(toolbar.context, R.color.urlBarHintText),
             text = ContextCompat.getColor(toolbar.context, R.color.primaryText),
             clear = ContextCompat.getColor(toolbar.context, R.color.primaryText),
+            suggestionBackground = ContextCompat.getColor(toolbar.context, R.color.autocompleteBackgroundColor),
         )
 
         toolbar.setOnEditListener(
@@ -85,7 +86,7 @@ class InputToolbarIntegration(
         }
 
         toolbar.setAutocompleteListener { text, delegate ->
-            var result: DomainAutocompleteResult? = null
+            var result: AutocompleteResult? = null
             if (useCustomDomainProvider) {
                 result = customDomainsProvider.getAutocompleteSuggestion(text)
             }
@@ -96,7 +97,7 @@ class InputToolbarIntegration(
 
             if (result != null) {
                 delegate.applyAutocompleteResult(
-                    mozilla.components.concept.toolbar.AutocompleteResult(
+                    AutocompleteResult(
                         result.input,
                         result.text,
                         result.url,

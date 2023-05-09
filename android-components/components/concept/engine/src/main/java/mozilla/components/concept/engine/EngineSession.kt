@@ -247,6 +247,9 @@ abstract class EngineSession(
          * @param contentType The type of content to be downloaded.
          * @param cookie The cookie related to request.
          * @param userAgent The user agent of the engine.
+         * @param skipConfirmation Whether or not the confirmation dialog should be shown before the download begins.
+         * @param openInApp Whether or not the associated resource should be opened in a third party
+         * app after processed successfully.
          * @param isPrivate Indicates if the download was requested from a private session.
          * @param response A response object associated with this request, when provided can be
          * used instead of performing a manual a download.
@@ -260,6 +263,8 @@ abstract class EngineSession(
             cookie: String? = null,
             userAgent: String? = null,
             isPrivate: Boolean = false,
+            skipConfirmation: Boolean = false,
+            openInApp: Boolean = false,
             response: Response? = null,
         ) = Unit
 
@@ -549,11 +554,6 @@ abstract class EngineSession(
          * Reject cookies if possible. If rejecting is not possible, accept cookies
          */
         REJECT_OR_ACCEPT_ALL(2),
-
-        /**
-         * Detect cookie banners but do not handle them.
-         */
-        DETECT_ONLY(3),
     }
 
     /**
@@ -643,10 +643,11 @@ abstract class EngineSession(
             const val BYPASS_CLASSIFIER: Int = 1 shl 4
             const val LOAD_FLAGS_FORCE_ALLOW_DATA_URI: Int = 1 shl 5
             const val LOAD_FLAGS_REPLACE_HISTORY: Int = 1 shl 6
+            const val LOAD_FLAGS_BYPASS_LOAD_URI_DELEGATE: Int = 1 shl 7
             const val ALLOW_JAVASCRIPT_URL: Int = 1 shl 16
             internal const val ALL = BYPASS_CACHE + BYPASS_PROXY + EXTERNAL + ALLOW_POPUPS +
                 BYPASS_CLASSIFIER + LOAD_FLAGS_FORCE_ALLOW_DATA_URI + LOAD_FLAGS_REPLACE_HISTORY +
-                ALLOW_JAVASCRIPT_URL
+                LOAD_FLAGS_BYPASS_LOAD_URI_DELEGATE + ALLOW_JAVASCRIPT_URL
 
             fun all() = LoadUrlFlags(ALL)
             fun none() = LoadUrlFlags(NONE)
@@ -783,6 +784,16 @@ abstract class EngineSession(
      * Enables/disables Desktop Mode with an optional ability to reload the session right after.
      */
     abstract fun toggleDesktopMode(enable: Boolean, reload: Boolean = false)
+
+    /**
+     * Checks if there is a rule for handling a cookie banner for the current website in the session.
+     *
+     * @param onSuccess callback invoked if the engine API returned a valid response. Please note
+     * that the response can be null - which can indicate a bug, a miscommunication
+     * or other unexpected failure.
+     * @param onError callback invoked if there was an error getting the response.
+     */
+    abstract fun hasCookieBannerRuleForSession(onResult: (Boolean) -> Unit, onException: (Throwable) -> Unit)
 
     /**
      * Finds and highlights all occurrences of the provided String and highlights them asynchronously.

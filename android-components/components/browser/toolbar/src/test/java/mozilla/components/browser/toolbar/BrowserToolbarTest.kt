@@ -126,7 +126,7 @@ class BrowserToolbarTest {
         toolbar.url = "https://www.mozilla.org"
 
         verify(display).url = "https://www.mozilla.org"
-        verify(edit, never()).updateUrl(ArgumentMatchers.anyString(), ArgumentMatchers.anyBoolean(), ArgumentMatchers.anyBoolean())
+        verify(edit, never()).updateUrl(ArgumentMatchers.anyString(), ArgumentMatchers.anyBoolean(), ArgumentMatchers.anyBoolean(), ArgumentMatchers.anyBoolean())
     }
 
     @Test
@@ -846,6 +846,17 @@ class BrowserToolbarTest {
         toolbar.setAutocompleteListener(filter)
 
         verify(toolbar.edit).setAutocompleteListener(filter)
+    }
+
+    @Test
+    fun `WHEN an attempt to refresh autocomplete suggestions is made THEN forward the call to edit toolbar`() {
+        val toolbar = BrowserToolbar(testContext)
+        toolbar.edit = mock()
+        toolbar.setAutocompleteListener { _, _ -> }
+
+        toolbar.refreshAutocomplete()
+
+        verify(toolbar.edit).refreshAutocompleteSuggestion()
     }
 
     @Test

@@ -1,4 +1,8 @@
 <?xml version="1.0" ?>
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+
 <SmellBaseline>
   <ManuallySuppressedIssues></ManuallySuppressedIssues>
   <CurrentIssues>
@@ -274,7 +278,6 @@
     <ID>UndocumentedPublicFunction:AutocompleteListFragment.kt$AutocompleteListFragment.DomainListAdapter$fun refresh(context: Context, body: (() -&gt; Unit)? = null)</ID>
     <ID>UndocumentedPublicFunction:AutocompleteListFragment.kt$AutocompleteListFragment.DomainListAdapter$fun selection(): List&lt;String&gt;</ID>
     <ID>UndocumentedPublicFunction:BaseFragment.kt$BaseFragment$fun cancelAnimation()</ID>
-    <ID>UndocumentedPublicFunction:BaseFragment.kt$fun Fragment.requestInPlacePermissions( permissionsToRequest: Array&lt;String&gt;, onResult: (Map&lt;String, Boolean&gt;) -&gt; Unit, )</ID>
     <ID>UndocumentedPublicFunction:BrowserFragment.kt$BrowserFragment$fun crashReporterIsVisible(): Boolean</ID>
     <ID>UndocumentedPublicFunction:BrowserFragment.kt$BrowserFragment$fun erase(shouldEraseAllTabs: Boolean = false)</ID>
     <ID>UndocumentedPublicFunction:BrowserFragment.kt$BrowserFragment$fun handleTabCrash(crash: Crash)</ID>
@@ -307,7 +310,6 @@
     <ID>UndocumentedPublicFunction:FocusDialog.kt$@Composable fun FocusDialogSample()</ID>
     <ID>UndocumentedPublicFunction:FocusDialog.kt$@Preview( name = "dark theme", showBackground = true, backgroundColor = 0xFF393473, uiMode = Configuration.UI_MODE_NIGHT_MASK, ) @Composable fun DialogTitlePreviewDark()</ID>
     <ID>UndocumentedPublicFunction:FocusDialog.kt$@Preview( name = "light theme", showBackground = true, backgroundColor = 0xFFFBFBFE, uiMode = Configuration.UI_MODE_NIGHT_NO, ) @Composable fun DialogTitlePreviewLight()</ID>
-    <ID>UndocumentedPublicFunction:FocusSnackbar.kt$FocusSnackbar$fun setAction(text: String, action: () -&gt; Unit)</ID>
     <ID>UndocumentedPublicFunction:FocusSnackbar.kt$FocusSnackbar$fun setText(text: String)</ID>
     <ID>UndocumentedPublicFunction:FocusTheme.kt$fun phoneDimensions()</ID>
     <ID>UndocumentedPublicFunction:FocusTheme.kt$fun tabletDimensions()</ID>
@@ -430,7 +432,6 @@
     <ID>UndocumentedPublicFunction:StudiesViewModel.kt$StudiesViewModel$fun setStudiesState(state: Boolean)</ID>
     <ID>UndocumentedPublicFunction:SupportUtils.kt$SupportUtils$// For some reason this URL has a different format than the other SUMO URLs fun getSafeBrowsingURL(): String</ID>
     <ID>UndocumentedPublicFunction:SupportUtils.kt$SupportUtils$fun getGenericSumoURLForTopic(topic: SumoTopic): String</ID>
-    <ID>UndocumentedPublicFunction:SupportUtils.kt$SupportUtils$fun getSumoURLForTopic(context: Context, topic: SumoTopic): String</ID>
     <ID>UndocumentedPublicFunction:SupportUtils.kt$SupportUtils$fun openDefaultBrowserSumoPage(context: Context)</ID>
     <ID>UndocumentedPublicFunction:SupportUtils.kt$SupportUtils$fun openUrlInCustomTab(activity: FragmentActivity, destinationUrl: String)</ID>
     <ID>UndocumentedPublicFunction:TabViewHolder.kt$TabViewHolder$fun bind( tab: TabSessionState, isCurrentSession: Boolean, selectSession: (TabSessionState) -&gt; Unit, closeSession: (TabSessionState) -&gt; Unit, )</ID>

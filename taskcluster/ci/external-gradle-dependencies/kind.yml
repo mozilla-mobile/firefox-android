@@ -30,7 +30,6 @@ task-defaults:
             - android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt
             - android-components/build.gradle
             - android-components/gradle/wrapper/gradle-wrapper.properties
-            - focus-android/buildSrc/src/main/java/FocusDependencies.kt
         toolchain-artifact: public/build/external-gradle-dependencies.tar.xz
         using: toolchain-script
     treeherder:
@@ -47,13 +46,15 @@ task-defaults:
             - type: directory
               name: public/logs/nexus
               path: /opt/sonatype/nexus/logs
-        retry-exit-status: [1]
-    worker-type: b-android-large
+        retry-exit-status:
+            - 1     # Test failures (which actually catch any gradle failure)
+            - 17    # Download errors
+    worker-type: b-android-xlarge
 
 tasks:
     lint-components:
-        attributes:
-            treeherder-group: lint
+        treeherder:
+            symbol: lint(egd-components)
         run:
             arguments:
                 - android-components/
@@ -62,6 +63,25 @@ tasks:
                 - ktlint
                 - detekt
                 - githubLintDetektDetails
+            resources:
+                # TODO: Make focus lint tasks use their own gradle deps tasks
+                - focus-android/buildSrc/src/main/java/FocusDependencies.kt
+
+    lint-fenix:
+        treeherder:
+            symbol: lint(egd-fenix)
+        run:
+            arguments:
+                - fenix/
+                - lint
+                - githubLintAndroidDetails
+                - ktlint
+                - detekt
+                - githubLintDetektDetails
+                - mozilla-detekt-rules:test
+                - mozilla-lint-rules:test
+            resources:
+                - fenix/buildSrc/src/main/java/FenixDependencies.kt
 
     test-components:
         attributes:

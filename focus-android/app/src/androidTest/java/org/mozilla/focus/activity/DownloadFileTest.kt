@@ -144,7 +144,6 @@ class DownloadFileTest {
         downloadFileName = "washington.pdf"
         val pdfFileURL = "https://storage.googleapis.com/mobile_test_assets/public/washington.pdf"
         val pdfFileContent = "Washington Crossing the Delaware"
-
         searchScreen {
         }.loadPage(downloadTestPage) {
             progressBar.waitUntilGone(waitingTime)

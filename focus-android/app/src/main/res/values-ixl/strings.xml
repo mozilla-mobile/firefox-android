@@ -121,8 +121,21 @@
 
 
     <!-- This is the label of an action we offer when the user selects text in other third-party apps.
-         Clicking this action will launch Focus and perform a search in the default search engine. -->
-    <string name="text_selection_search_action">Chuk stuul sajunal</string>
+         Focus is hard coded since we can't use variables in this context.
+         Do not translate or transliterate Focus.-->
+    <string name="text_selection_search_action_focus">La chuk tu Focus</string>
+    <!-- This is the label of an action we offer when the user selects text in other third-party apps.
+             Klar is hard coded since we can't use variables in this context.
+             Do not translate or transliterate Klar.-->
+    <string name="text_selection_search_action_klar">La chuk tu Klar</string>
+    <!-- This is the label of an action we offer when the user selects text in other third-party apps.
+            Focus Beta is hard coded since we can't use variables in this context.
+            Do not translate or transliterate Focus Beta.-->
+    <string name="text_selection_search_action_focus_beta">La chuk tu Focus Beta</string>
+    <!-- This is the label of an action we offer when the user selects text in other third-party apps.
+          Focus Nightly is hard coded since we can't use variables in this context.
+          Do not translate or transliterate Focus Nightly.-->
+    <string name="text_selection_search_action_focus_nightly">La chuk tu Focus Nightly</string>
 
     <!-- Header for the Privacy and Security settings menu -->
     <string name="preference_privacy_and_security_header">Ye\'xhib\'il unka\'te la ootzin as tii tatine\'</string>
@@ -285,6 +298,12 @@
     <!-- Preference Title: Biometrics can be used to unlock Focus if the previous session's data was not erased by the user. -->
     <string name="preference_security_biometric">B\'anb\'e u vi\' aq\'ab\'e\' aq\'al uva\' la jaj u aplicacione\'</string>
 
+    <!-- Preference Summary: Biometrics (iris scan, fingerprint, or facial scan) can be used to unlock Focus if the app had a URL
+        open when the app was last run to ensure that only the phone's owner can view a previous session.
+        %s will be replaced by the app name (e.g. Firefox Focus)
+        Shortcuts is a feature that allows the user to pin his favorite websites to Focus home screen so he can quickly access them-->
+    <string name="preference_security_biometric_summary2">Jaja ta’n vi’ aq’ab’ asoj pajlat kuxh kat ak’ujb’a’kan moj tul uva’ jajlu kan ve’t uma’t kam tu %s.</string>
+
     <!-- Preference Title: Secure Mode is a setting that prevents the app's content to show up in the "recent apps" screen
          and prevents the user from taking screenshots or casting the app to other displays. -->
     <string name="preference_privacy_secure_mode">Ye\'xh kam na\'l</string>
@@ -322,6 +341,15 @@
 
     <!-- In-app link (in settings) to Focus privacy notice. -->
     <string name="preference_privacy_notice">Aviso de privacidad</string>
+
+    <!-- In-app link (in settings) to Focus licensing information. -->
+    <string name="preference_licensing_info">Yol atkan ti’ tu’aal</string>
+
+    <!-- Link to Focus licensing information from other libraries that we use. -->
+    <string name="preference_libraries_we_use">Tantinb’ala u’uj uve’ ni kub’anb’e</string>
+
+    <!-- Open Source Licenses page title. The first parameter is the app name -->
+    <string name="open_source_licenses_title">%s | Tatinb’al u’uj OSS</string>
 
     <!-- Item in Preferences that shows the about page. Parameter 1 is the app name, i.e. Firefox Focus/Firefox Klar. -->
     <string name="preference_about">Tokeb\'al u %1$s</string>
@@ -471,11 +499,7 @@
 
 
 
-  <!-- Onboarding: Title -->
-    <!-- %1$s will be replaced by the app name and build variant(e.g. Firefox Focus, Firefox Klar Nightly) -->
-    <string moz:removedIn="106" name="onboarding_title">¡B´a´n ool tu %1$s!</string>
-
-    <!-- Content description (not visible, for screen readers etc.): This is the description for the close button from the new onboarding flow screen one and two -->
+  <!-- Content description (not visible, for screen readers etc.): This is the description for the close button from the new onboarding flow screen one and two -->
     <string name="onboarding_close_button_content_description">Jupa</string>
 
     <!-- New Onboarding flow first screen title -->
@@ -506,20 +530,8 @@
     <string name="onboarding_second_screen_default_browser_button_text">Aq´kan uva´ a´ kuxhe´ la b´anb´e</string>
 
 
-    <!-- Onboarding: Description -->
-    <string moz:removedIn="106" name="onboarding_description">U chukb´ale´ uva´ eetz kuxhtu´ la aaq´kan stiib´a</string>
-
-    <!-- Onboarding: Incognito Title -->
-    <string moz:removedIn="106" name="onboarding_incognito_title">Tul uva´ at kat u vee´ uve´ ye´ na´l</string>
-
-    <!-- Onboarding: History Title -->
-    <string moz:removedIn="106" name="onboarding_history_title">Xaanen kuxh stuul ech chite´ uva´ ye´xh kam kuxh ni pale´</string>
-
-    <!-- Onboarding: Protection Title -->
-    <string moz:removedIn="106" name="onboarding_protection_title">Eetz kuxhtu´ uva´ kat kuxh la b´anb´e kat</string>
-
-    <!-- Onboarding: Protection Description -->
-    <string moz:removedIn="106" name="onboarding_protection_description">Asoj nasa´ ajalput u chukb´al tetze´, as jit b´a´n tan ab´il kuxh la ootzin ve´t unq´a kame´ chukeltu s-´an.</string>
+    <!-- New Onboarding flow second screen skip onboarding button label-->
+    <string name="onboarding_second_screen_skip_button_text">Ye\' ookeb\'al sti\'</string>
 
     <!-- First run tour (Default browser): Title -->
     <string name="firstrun_defaultbrowser_title">B\'an ooksat uyak\'il u eetze\'</string>
@@ -553,6 +565,10 @@
 
     <!-- Label of the action that will close the dialog and not add anything to the home screen (shown in the confirmation dialog). -->
     <string name="dialog_addtohomescreen_action_cancel">Ya\'sa</string>
+
+    <!-- When enhanced tracking protection is disabled for the current session then we will show this warning in the "Add to home screen" dialog to
+         let the user know that the shortcut will always be opened with enhanced tracking protection disabled. -->
+    <string name="dialog_addtohomescreen_tracking_protection2">Uve’ k’ujb’a’mal kan tuk ijaje’ tuk’ u kach’ub’al tetze’ aq’al uva’ ye’xhib’il kuxh la kanon</string>
 
     <!-- The user visible name of the "notification channel" (Android 8+ feature) for the ongoing notification shown while a browsing session is active.
     The recommended maximum length is 40 characters; the value may be truncated if it is too long.
@@ -625,17 +641,186 @@
   <!-- Checkbox menu item text to request desktop site -->
     <string name="preference_performance_request_desktop_site">Jaj aq\'al uva\' la eeq\'otzan svatz</string>
 
+    <!-- Checkbox menu item text to request desktop site -->
+    <string name="preference_performance_request_desktop_site2">Atinb’al tetz ilb’al ivatz</string>
+
     <!-- Displayed after a user long presses on the URL in a custom tab to copy the URL -->
     <string name="custom_tab_copy_url_action">URL eq\'omal ve\'t kan ivatz</string>
 
     <!-- Description of what a user may find in the Advanced Setting category, used for debugging -->
     <string name="preference_advanced_summary">Aq\'onb\'al ti\' ib\'anax tuche\'</string>
 
+    <!-- Preference for open links in third party apps -->
+    <string name="preferences_open_links_in_apps">La jaj tatinb’al unq’a aplicaciones</string>
+
     <!-- Title of Advanced Setting category -->
     <string name="preference_category_advanced">Tii ve\'t tuche\'</string>
 
+    <!-- Preference for site permissions -->
+    <string name="preference_site_permissions">Okeb’al tulaj unq’a atinb’ale’</string>
+
+    <!--  Preference for cookie banner. The name of the item from settings screen and the title of the cookie banner screen. -->
+    <string name="preferences_cookie_banner">Iku’ch’u’l ich’ii Banner tetz Cookies</string>
+
+    <!--  Preference summary for the cookie banner. If the cookie banner option is not disabled. -->
+    <string name="preferences_cookie_banner_summary_on">Oypisa\'m</string>
+
+    <!--  Preference summary for the cookie banner. If the cookie banner option is disabled. -->
+    <string name="preferences_cookie_banner_summary_off">Tzaanale</string>
+
+    <!--  Title preference inside Cookie banner reduction screen. Here you can set the cookie banner option to disabled or reject_all. -->
+    <string name="cookie_banner_reject_all_option_title">Iku’ch’u’l ich’ii Banner tetz Cookies</string>
+
+    <!--  Preference summary inside Cookie banner reduction screen. Here you can set the cookie banner option to disabled or reject_all. -->
+    <string name="cookie_banner_reject_all_option_summary">Ye’ nimal banners la eele’ ankuxhe’ tuk eesanel unq’a cookies tul uva’ la uchi.</string>
+
+    <!-- Preference for removing cookie/consent banners from sites automatically, this is shown as part of the protections panel with the tracking protection toggle. -->--&gt;
+    <string name="cookie_banner_exception_item_title">Iku’ch’u’l ich’ii Banner tetz Cookies</string>
+
+    <!-- Text for indicating cookie banner handling is on this site, this is shown as part of the protections panel with the tracking protection toggle. -->
+    <string name="cookie_banner_exception_item_description_state_on">Oypisamal ve’t kan tetz u atinb’ala’ vaa’</string>
+
+    <!-- Text for indicating cookie reducer is not supported on the current site, this is shown as part of the protections panel with the tracking protection toggle. -->
+    <string name="cookie_banner_exception_site_not_supported">U atinb’ale’ ye’ la uch ab’anb’el tu jalte</string>
+
+    <!-- Text for indicating cookie banner handling is off this site, this is shown as part of the protections panel with the tracking protection toggle. -->
+    <string name="cookie_banner_exception_item_description_state_off">Tzaasamal ve’t kan tetz u atinb’ala’ vaa’</string>
+
+    <!-- Preference for removing cookie/consent banners from sites automatically, this is shown when the user enters in details after he clicks on the item from protection panel. -->
+    <string name="cookie_banner_exception_panel_switch_title">Iku’ch’u’l ich’ii Banner tetz Cookies</string>
+
+    <!-- Text for indicating cookie banner handling is off this site, this is shown when the user enters in details after he clicks on the item from protection panel. -->
+    <string name="cookie_banner_exception_panel_switch_state_off">Tzaasamal ve’t kan tetz u atinb’ala’ vaa’</string>
+
+    <!-- Text for indicating cookie banner handling is on this site, this is shown when the user enters in details after he clicks on the item from protection panel. -->
+    <string name="cookie_banner_exception_panel_switch_state_on">Oypisamal ve’t kan tetz u atinb’ala’ vaa’</string>
+
+    <!-- Title text for a detail explanation indicating cookie banner handling is on this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site. -->
+    <string name="cookie_banner_exception_panel_title_state_on_for_site">Oypisa iku’ch’u’l yol tetz Cookies ti’ %1$s?</string>
+
+    <!-- Title text for a detail explanation indicating cookie banner handling is off this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site. -->
+    <string name="cookie_banner_exception_panel_title_state_off_for_site">Tzaasa iku’ch’u’l yol tetz Cookies ti’ %1$s?</string>
+
+    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The placeholder will be updated with the app name. -->
+    <string name="cookie_banner_exception_panel_description_state_on_for_site">U %1$s tuk osojsa unq’a cookies tzitza’ as tuk ib’antuch u u’uje’. Asoj la sojsal-el kaajayil unq’a cookies la ib’ane’ uva’ la ijup uve’ naaq’om kat moj la teese’l unq’a kame’ uve’ la loq’iki.</string>
+
+    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The placeholder will be updated with the app name. -->
+    <string name="cookie_banner_exception_panel_description_state_off_for_site2">%1$s la ib’ane’ uva’ ankuxhe’ ye’ la k’ulun unq’a cookies.</string>
+
+    <!-- Long text for a detail explanation indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_description_site_is_not_supported">Cheel ve’te’, u atinb’ale’ vaa’ ye’ la uch tilat tib’ tuk’ iku’ch’u’l u banner tetz u cookies. Nasa’ uva’ ajajat te unq’a kumoole’ aq’al la pich’uli as la taq’ku’ iyak’ib’al svatz b’en?</string>
+
+    <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_site_is_not_supported_cancel_button">Ya’sakan</string>
+
+    <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_site_is_not_supported_request_support_button">La jaj iyak’ib’al tetz</string>
+
+    <!-- Label for the snackBar, after the user reports with success a website where cookie banner reducer did not work -->
+    <string name="cookie_banner_report_a_site_snackbar_label">Ijajpu u yak’ib’al tetze’ ile’ kat b’enya.</string>
+
+    <!-- Label for cookie banner item from tracking protection, after the user reports with success a website where cookie banner reducer did not work -->
+    <string name="cookie_banner_the_site_was_reported">Ijajpu u yak’ib’al tetze’ ile’ kat b’enya.</string>
+
+    <!-- Contextual Feature Recommendation Popups -->
+    <!-- CFR for Cookie Banner (Banner Info Message). %1$s will be replaced by the app name, %2$s will be an active link using the string cfr_cookie_banner_link as text. -->
+    <string name="cfr_cookie_banner">%1$s tuk imaje’l ivatz unq’a cookies uve’ ni kuxh ilaao’k tib’.\n\nSaji as la txaae’ ab’iste unq’a banners tetz cookies nasa’ tu %2$s.</string>
+    <!-- CFR for Cookie Banner (Banner Info Message). This string is used as text for a link in cfr_cookie_banner and takes the user to the app settings. -->
+    <string name="cfr_cookie_banner_link">b\'an tuche\'</string>
+
+    <!-- Preference for autoplay -->
+    <string name="preference_autoplay">Ankuxhe’ la toypisa tib’</string>
+
+    <!-- Heading for the instructions to allow a permission -->
+    <string name="phone_feature_blocked_intro">Aq’al uva’ la uchi:</string>
+
+    <!-- First step for the allowing a permission -->
+    <string name="phone_feature_blocked_step_settings">1. La oon axh uve’ ni b’anax kat tuch tetz Android</string>
+
+    <!-- Second step for the allowing a permission -->
+    <string name="phone_feature_blocked_step_permissions"><![CDATA[2. Laaku’ uve’ <b>La uch kat</b>]]></string>
+
+    <!-- Button label that take the user to the Android App setting -->
+    <string name="phone_feature_go_to_settings">La b’en axh uve’ la b’anax kat tuche’</string>
+
+    <!-- Third step for allowing a permission. The placeholder will be updated by, for example, "Camera" -->
+    <string name="phone_feature_blocked_step_feature"><![CDATA[3. Oypisa <b>%1$s</b>]]></string>
+
+    <!-- Preference for altering the camera access for all websites -->
+    <string name="preference_phone_feature_camera">Eesan vatzib’al</string>
+
+    <!-- Preference for altering the microphone access for all websites -->
+    <string name="preference_phone_feature_microphone">Alb’al yol</string>
+
+    <!-- Preference for altering the location access for all websites -->
+    <string name="preference_phone_feature_location">Atinb’al at kat axh cheel</string>
+
+    <!-- Preference for altering the notification access for all websites -->
+    <string name="preference_phone_feature_notification">Aq’b’al nachb’al</string>
+
+    <!-- Preference for altering the EME access for all websites -->
+    <string name="preference_phone_feature_media_key_system_access">Aq’on uva’ ni til u DRM</string>
+
+    <!-- Label that indicates that a permission must be asked always -->
+    <string name="preference_option_phone_feature_ask_to_allow">La jaj ooke’</string>
+
+    <!-- Label that indicates that a permission must be blocked -->
+    <string name="preference_option_phone_feature_blocked">Majel ve´t ivatz</string>
+
+    <!-- Label that indicates that a permission must be allowed -->
+    <string name="preference_option_phone_feature_allowed">K´ulel ve´te´</string>
+
+    <!--Label that indicates a permission is by the Android OS-->
+    <string name="phone_feature_blocked_by_android">Majel ivatz ta’n u Android</string>
+
+    <!-- Preference for allow autoplay audio and video-->
+    <string name="preference_allow_audio_video_autoplay">La uch aaq’at tuul avi’ as eelpe’ unpasteurized</string>
+
+    <!-- Preference for block autoplay audio only-->
+    <string name="preference_block_autoplay_audio_only">A’ kuxh u tuul vi’e’ la maje’</string>
+
+    <!-- Preference summary for block autoplay audio only-->
+    <string name="preference_block_autoplay_audio_only_summary">A’e’ b’a’n la b’anb’e</string>
+
+    <!-- Preference for block autoplay audio and video-->
+    <string name="preference_block_autoplay_audio_video">La maj ivatz tuul avi’ as eelpe’ unpajte</string>
+
+    <!-- Preference for studies -->
+    <string name="preference_studies">Chusb’al</string>
+
+    <!-- Preference for studies summary-->
+    <string name="preference_studies_summary">U Firefox la uch taq’at kan as ib’anax chusb’al tul uva’ la uchi.</string>
+
+    <!-- Learn more link for studies, links to an article for more information about studies. -->
+    <string name="studies_learn_more">Ootzi ka´te</string>
+
+    <!-- Dialog message shown when some changes are made on studies -->
+    <string name="studies_restart_app">La uch ijupata’ aq’al uva’ la jalpu unq’a kame’ stuul</string>
+
+    <!-- Title of the remove studies button -->
+    <string name="studies_remove">Sojsa el</string>
+
+    <!-- Title of the active section on the studies list -->
+    <string name="studies_active">Ile’ b’a’n ve’te’</string>
+
+    <!-- Title of the completed section on the studies list -->
+    <string name="studies_completed">Kat tzojpiya</string>
+
     <!-- Preference to enable remote debugging of the app via USB or Wi-Fi -->
     <string name="preference_remote_debugging">Eesamal ve\'t el ta\'n USB/Wi-Fi</string>
+
+    <!-- Text Button for show biometric prompt -->
+    <string name="show_biometric_button_text">Jaj ivatz</string>
+
+    <!-- Title text for biometric prompt pop-up -->
+    <string name="biometric_prompt_title">Ala uva’ a’ u vi’ aq’ab’e’ la b’anb’e</string>
+
+    <!-- Subtitle text for biometric prompt pop-up -->
+    <string name="biometric_prompt_subtitle">La uch ab’anb’et u vi’ aq’ab’e’ aq’al uva’ la yakeb’ axh ti’ ab’anb’et u vaa’.</string>
+
+    <!-- Button for the fingerprint authentication dialog box that is shown to the user when sharing a link to the app
+    while the user has biometric authentication enabled. When pressed, the user's previous session is cleared, and the shared link is opened. -->
+    <string name="biometric_auth_open_link_new_session">La jaj uma’t atinb’al aq’al uva’ la xe’t axh aq’onvoj tu uma’t ak’ atinb’al</string>
 
     <!-- Description for the fingerprint authentication image. Used for accessibility purposes. -->
     <string name="biometric_auth_image_description">Texhlal u vi\' q\'ab\'e\'</string>
@@ -647,6 +832,13 @@
     <!-- Error text displayed when the user's fingerprint moved too quickly upon re-entering the app
     This is displayed during the authentication flow as the app launches.-->
     <string name="biometric_auth_moved_too_quickly">Oora kuxh kat atiinsa u vi\' aq\'ab\'e\'. B\'an unpajte.</string>
+
+    <!-- Title for the prompt to enable search suggestions -->
+    <string name="enable_search_suggestion_title2">La ik’uch ka’t ichukb’al tetz?</string>
+
+    <!-- Description for the prompt to enable search suggestions
+        %1$s will be replaced by the app name (e.g. Firefox Focus) -->
+    <string name="enable_search_suggestion_description">Aq’al uva’ la k’ul lochb’al, %1$s nisa’ taq’at b’en jank’al chit unq’a vee’ natz’ib’a tu chukb’al tetze’.</string>
 
     <!-- Label used for the "NO button" for the prompt to enable search suggestions -->
     <string name="enable_search_suggestions_no">Ye\'le</string>
@@ -683,9 +875,56 @@
     The new line here must be kept as the second half of the string is clickable for the user. -->
     <string name="tip_open_in_new_tab">Jaj uma\'t ak\' chukb\'al tetz\n Laaku\' ab\'iste kuxh chukb\'al tetz</string>
 
+    <!-- Tip displayed on home view explaining how to add a custom autocomplete URL -->
+    <string name="tip_disable_tips2">Jupkan unq’a alb’al txumb’ale’ uve’ ni tul svatz</string>
+
+    <!-- Label for the snackbar when a user opens a new tab -->
+    <string name="new_tab_opened_snackbar">Ak’ ilb’al tetz jajle’le</string>
+
+    <!-- Label for the button in the snackbar that switches to the newly opened tab -->
+    <string name="open_new_tab_snackbar">Jalpu</string>
+
+    <!-- Text displayed in a notification when the user enters full screen mode -->
+    <string name="full_screen_notification">La eel kaajayil chitu’</string>
+
+    <!-- Preference for switching to a new tab immediately after opening -->
+    <string name="preference_open_new_tab">Oora kuxh la jalpu tatinb’al tu uma’t ilb’al tetz</string>
+
+    <!-- Preference title for safe browsing which when enabled, blocks dangerous or deceptive webpages that may include phishing or malware -->
+    <string name="preference_safe_browsing_title">Maj ivatz unq’a va’lexh la kame’ uve’ ni yansane’</string>
+    <!-- Preference summary for safe browsing which when enabled, blocks dangerous or deceptive webpages that may include phishing or malware -->
+    <string name="preference_safe_browsing_summary">Maj ivatz unq’a vee’ xochel ve’t b’en, echkole’ u malware as unq’a tetz u software uva’ ye’ ni txakone’.</string>
+
+    <!-- Description of the preference to enable "HTTPS-Only" mode. -->
+    <string name="preference_https_only_summary3">Ankuxhe’ ni tal tok tulaj unq’a atinb’ale’ uve’ ni b’ab’e teq’ol u majol ivatze’ HTTPS aq’al uva’ tii tatine’.</string>
+
+    <!-- Preference for exceptions tracking protection -->
+    <string name="preference_exceptions">A’ kuxh unq’a vi’la’</string>
+
+    <!-- Description for the exceptions preference screen-->
+    <string name="preference_exceptions_description">Kat aq’alpul u majol tetz unq’a aq’one’ uve’ atik tzitza’.</string>
+    <!-- Button to remove all websites from the exception list -->
+    <string name="preference_exceptions_remove_all_button_label">Sojsa-el kaajayil unq’a atinb’ale’</string>
+
+    <!-- Title for Preference screen for cookie blocking for exceptions tracking protection -->
+    <string name="preference_block_cookies_title">Maj ivatz unq’a cookies</string>
+
+    <!-- Message for Preference screen for cookie blocking for exceptions tracking protection -->
+    <string name="preference_category_block_cookies">Nasa’ la maj ivatz unq’a cookies?</string>
+
+    <!-- Title for the tab crash report screen-->
+    <string name="tab_crash_report_title">Kat yanyu u k’uchb’al tetze’</string>
+    <!-- Headline for the tab crash report screen -->
+    <string name="tab_crash_report_headline">La kuy o’. At uma’l kam uva’ ni yansan u k’uchb’al tetze’.</string>
+    <!-- Subtitle for the tab crash report screen -->
+    <string name="tab_crash_report_description">U atinb’ale’ uva’ eetz kuxh naaq’onvu stuul, ye’ kat kukola ni kuxh la uch kuq’aavisat u k’uchb’al tetze’.</string>
+
+    <!-- Label for the checkbox to send the tab crash report to Mozilla -->
+    <string name="crash_report_send_crash_label">La aalb’en tu Mozilla ti’ unq’a vee’ ni Yáñez’</string>
+
     <!-- Tracking protection bottom sheet -->
 
-    <!-- Promote SearchWidget Dialog -->
+     <!-- Promote SearchWidget Dialog -->
 
     !-- Content description (not visible, for screen readers etc.): This is the description for
     picture of search widget from promote search widget dialog. --&gt;

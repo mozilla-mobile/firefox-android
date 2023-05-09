@@ -6,6 +6,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-parcelize'
 apply plugin: 'jacoco'
+apply plugin: 'com.google.android.gms.oss-licenses-plugin'
 apply from: "$project.rootDir/tools/gradle/versionCode.gradle"
 
 import com.android.build.OutputFile
@@ -39,11 +40,11 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 
-    lintOptions {
+    lint {
         lintConfig file("lint.xml")
     }
 
@@ -158,11 +159,14 @@ android {
         focusNightly.root = 'src/focusNightly'
         klarNightly.root = 'src/klarNightly'
     }
-
     packagingOptions {
-        pickFirst 'META-INF/atomicfu.kotlin_module'
-        pickFirst 'META-INF/proguard/coroutines.pro'
+        resources {
+            pickFirsts += ['META-INF/atomicfu.kotlin_module', 'META-INF/proguard/coroutines.pro']
+        }
     }
+
+
+    namespace 'org.mozilla.focus'
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
@@ -171,7 +175,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
             freeCompilerArgs += "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
             freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
             freeCompilerArgs += "-Xjvm-default=all"
-            jvmTarget = '1.8'
+            jvmTarget = '11'
         }
 }
 
@@ -179,14 +183,11 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 // Generate Kotlin code for the Focus Glean metrics.
 // -------------------------------------------------------------------------------------------------
 apply plugin: "org.mozilla.telemetry.glean-gradle-plugin"
-apply plugin: "org.mozilla.components.nimbus-gradle-plugin"
+apply plugin: "org.mozilla.appservices.nimbus-gradle-plugin"
 
 nimbus {
     // The path to the Nimbus feature manifest file
     manifestFile = "nimbus.fml.yaml"
-    // The fully qualified class name for the generated features.
-    // If the classname begins with a '.' this is taken as a suffix to the app's package name
-    destinationClass = ".nimbus.FocusNimbus"
     // Map from the variant name to the channel as experimenter and nimbus understand it.
     // If nimbus's channels were accurately set up well for this project, then this
     // shouldn't be needed.
@@ -204,23 +205,6 @@ nimbus {
     // It will be fetched by Experimenter (the Nimbus experiment website)
     // and used to inform experiment configuration.
     experimenterManifest = ".experimenter.yaml"
-}
-
-configurations {
-    // There's an interaction between Gradle's resolution of dependencies with different types
-    // (@jar, @aar) for `implementation` and `testImplementation` and with Android Studio's built-in
-    // JUnit test runner.  The runtime classpath in the built-in JUnit test runner gets the
-    // dependency from the `implementation`, which is type @aar, and therefore the JNA dependency
-    // doesn't provide the JNI dispatch libraries in the correct Java resource directories.  I think
-    // what's happening is that @aar type in `implementation` resolves to the @jar type in
-    // `testImplementation`, and that it wins the dependency resolution battle.
-    //
-    // A workaround is to add a new configuration which depends on the @jar type and to reference
-    // the underlying JAR file directly in `testImplementation`.  This JAR file doesn't resolve to
-    // the @aar type in `implementation`.  This works when invoked via `gradle`, but also sets the
-    // correct runtime classpath when invoked with Android Studio's built-in JUnit test runner.
-    // Success!
-    jnaForTest
 }
 
 dependencies {
@@ -245,6 +229,7 @@ dependencies {
     implementation FocusDependencies.androidx_splashscreen
     implementation FocusDependencies.androidx_transition
     implementation FocusDependencies.androidx_work_ktx
+    implementation FocusDependencies.androidx_data_store_preferences
 
     implementation FocusDependencies.google_accompanist_insets_ui
     implementation FocusDependencies.google_play
@@ -299,11 +284,13 @@ dependencies {
     implementation project(':support-utils')
     implementation project(':support-rusthttp')
     implementation project(':support-rustlog')
+    implementation project(':support-license')
 
     implementation project(':ui-autocomplete')
     implementation project(':ui-colors')
     implementation project(':ui-icons')
     implementation project(':ui-tabcounter')
+    implementation project(':ui-widgets')
     implementation project(':feature-webcompat')
     implementation project(':feature-webcompat-reporter')
     implementation project(':support-webextensions')
@@ -318,8 +305,6 @@ dependencies {
     focusImplementation FocusDependencies.adjust
     focusImplementation FocusDependencies.install_referrer // Required by Adjust
 
-    jnaForTest FocusDependencies.jna
-    testImplementation files(configurations.jnaForTest.copyRecursive().files)
     testImplementation "org.mozilla.telemetry:glean-native-forUnitTests:${project.ext.glean_version}"
 
     testImplementation FocusDependencies.testing_junit_api
@@ -593,6 +578,7 @@ clean.doLast {
 if (project.hasProperty("coverage")) {
     tasks.withType(Test) {
         jacoco.includeNoLocationClasses = true
+        jacoco.excludes = ['jdk.internal.*']
     }
 
     android.applicationVariants.all { variant ->
@@ -626,11 +612,6 @@ if (project.hasProperty("coverage")) {
             }
         }
     }
-}
-
-if (gradle.hasProperty('localProperties.autoPublish.android-components.dir')) {
-    ext.acSrcDir = gradle."localProperties.autoPublish.android-components.dir"
-    apply from: "../${acSrcDir}/substitute-local-ac.gradle"
 }
 
 if (gradle.hasProperty('localProperties.autoPublish.application-services.dir')) {

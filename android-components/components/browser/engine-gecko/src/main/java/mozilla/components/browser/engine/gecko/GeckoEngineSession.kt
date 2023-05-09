@@ -24,6 +24,8 @@ import mozilla.components.browser.engine.gecko.window.GeckoWindowRequest
 import mozilla.components.browser.errorpages.ErrorType
 import mozilla.components.concept.engine.EngineSession
 import mozilla.components.concept.engine.EngineSession.LoadUrlFlags.Companion.ALLOW_JAVASCRIPT_URL
+import mozilla.components.concept.engine.EngineSession.LoadUrlFlags.Companion.EXTERNAL
+import mozilla.components.concept.engine.EngineSession.LoadUrlFlags.Companion.LOAD_FLAGS_BYPASS_LOAD_URI_DELEGATE
 import mozilla.components.concept.engine.EngineSessionState
 import mozilla.components.concept.engine.HitResult
 import mozilla.components.concept.engine.Settings
@@ -439,6 +441,37 @@ class GeckoEngineSession(
     }
 
     /**
+     * See [EngineSession.hasCookieBannerRuleForSession]
+     */
+    override fun hasCookieBannerRuleForSession(
+        onResult: (Boolean) -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {
+        geckoSession.hasCookieBannerRuleForBrowsingContextTree().then(
+            { response ->
+                if (response == null) {
+                    logger.error(
+                        "Invalid value: unable to get response from hasCookieBannerRuleForBrowsingContextTree.",
+                    )
+                    onException(
+                        java.lang.IllegalStateException(
+                            "Invalid value: unable to get response from hasCookieBannerRuleForBrowsingContextTree.",
+                        ),
+                    )
+                    return@then GeckoResult()
+                }
+                onResult(response)
+                GeckoResult<Boolean>()
+            },
+            { throwable ->
+                logger.error("Checking for cookie banner rule failed.", throwable)
+                onException(throwable)
+                GeckoResult()
+            },
+        )
+    }
+
+    /**
      * Checks and returns a non-mobile version of the url.
      */
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
@@ -694,6 +727,10 @@ class GeckoEngineSession(
             request: NavigationDelegate.LoadRequest,
             isSubframeRequest: Boolean,
         ): InterceptionResponse? {
+            if (request.hasUserGesture) {
+                lastLoadRequestUri = ""
+            }
+
             val interceptor = settings.requestInterceptor
             val interceptionResponse = if (
                 interceptor != null && (!request.isDirectNavigation || interceptor.interceptsAppInitiatedRequests())
@@ -713,7 +750,10 @@ class GeckoEngineSession(
                 )?.apply {
                     when (this) {
                         is InterceptionResponse.Content -> loadData(data, mimeType, encoding)
-                        is InterceptionResponse.Url -> loadUrl(url, flags = LoadUrlFlags.external())
+                        is InterceptionResponse.Url -> loadUrl(
+                            url = url,
+                            flags = LoadUrlFlags.select(EXTERNAL, LOAD_FLAGS_BYPASS_LOAD_URI_DELEGATE),
+                        )
                         is InterceptionResponse.AppIntent -> {
                             appRedirectUrl = lastLoadRequestUri
                             notifyObservers {
@@ -731,14 +771,9 @@ class GeckoEngineSession(
 
             if (interceptionResponse !is InterceptionResponse.AppIntent) {
                 appRedirectUrl = ""
-                lastLoadRequestUri = request.uri
             }
 
-            // TODO fix root cause: https://github.com/mozilla-mobile/android-components/issues/12894
-            if (interceptor != null && interceptor.interceptsAppInitiatedRequests()) {
-                lastLoadRequestUri = request.uri
-            }
-
+            lastLoadRequestUri = request.uri
             return interceptionResponse
         }
     }
@@ -976,7 +1011,6 @@ class GeckoEngineSession(
                     mimeType = contentType,
                 )
                 val response = webResponse.toResponse()
-
                 notifyObservers {
                     onExternalResource(
                         url = url,
@@ -985,6 +1019,8 @@ class GeckoEngineSession(
                         fileName = fileName.sanitizeFileName(),
                         response = response,
                         isPrivate = privateMode,
+                        openInApp = webResponse.requestExternalApp,
+                        skipConfirmation = webResponse.skipConfirmation,
                     )
                 }
             }

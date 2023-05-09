@@ -13,7 +13,7 @@ android {
         targetSdkVersion config.targetSdkVersion
     }
 
-    lintOptions {
+    lint {
         warningsAsErrors true
         abortOnError true
     }
@@ -25,12 +25,14 @@ android {
             consumerProguardFiles 'proguard-rules-consumer.pro'
         }
     }
+
+    namespace 'mozilla.components.support.rusterrors'
 }
 
 dependencies {
-    implementation Dependencies.mozilla_errorsupport
-    implementation Dependencies.kotlin_stdlib
-    implementation Dependencies.kotlin_coroutines
+    implementation ComponentsDependencies.mozilla_errorsupport
+
+    implementation ComponentsDependencies.kotlin_coroutines
     implementation project(':support-base')
 }
 

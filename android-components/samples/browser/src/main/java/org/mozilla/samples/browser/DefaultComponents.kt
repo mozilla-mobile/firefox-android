@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.widget.Toast
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -79,6 +80,7 @@ import mozilla.components.service.digitalassetlinks.local.StatementApi
 import mozilla.components.service.digitalassetlinks.local.StatementRelationChecker
 import mozilla.components.service.location.LocationService
 import mozilla.components.service.sync.logins.SyncableLoginsStorage
+import mozilla.components.support.base.android.NotificationsDelegate
 import mozilla.components.support.base.worker.Frequency
 import org.mozilla.samples.browser.addons.AddonsActivity
 import org.mozilla.samples.browser.autofill.AutofillConfirmActivity
@@ -134,8 +136,16 @@ open class DefaultComponents(private val applicationContext: Context) {
         }
     }
 
+    private val notificationManagerCompat = NotificationManagerCompat.from(applicationContext)
+
+    val notificationsDelegate: NotificationsDelegate by lazy {
+        NotificationsDelegate(
+            notificationManagerCompat,
+        )
+    }
+
     val addonUpdater =
-        DefaultAddonUpdater(applicationContext, Frequency(1, TimeUnit.DAYS))
+        DefaultAddonUpdater(applicationContext, Frequency(1, TimeUnit.DAYS), notificationsDelegate)
 
     // Engine
     open val engine: Engine by lazy {
@@ -168,7 +178,7 @@ open class DefaultComponents(private val applicationContext: Context) {
                     LocationService.default(),
                 ),
                 SearchMiddleware(applicationContext),
-                RecordingDevicesMiddleware(applicationContext),
+                RecordingDevicesMiddleware(applicationContext, notificationsDelegate),
                 LastAccessMiddleware(),
                 PromptMiddleware(),
                 SessionPrioritizationMiddleware(),
@@ -181,6 +191,7 @@ open class DefaultComponents(private val applicationContext: Context) {
                 R.mipmap.ic_launcher_foreground,
                 permissionStorage,
                 IntentReceiverActivity::class.java,
+                notificationsDelegate = notificationsDelegate,
             )
 
             MediaSessionFeature(applicationContext, MediaSessionService::class.java, this).start()
@@ -414,7 +425,9 @@ open class DefaultComponents(private val applicationContext: Context) {
     }
 
     val shippedDomainsProvider by lazy {
-        ShippedDomainsProvider().also { it.initialize(applicationContext) }
+        // Assume this is used together with other autocomplete providers (like history) which have priority 0
+        // and set priority 1 for the domains provider to ensure other providers' results are shown first.
+        ShippedDomainsProvider(1).also { it.initialize(applicationContext) }
     }
 
     val tabsUseCases: TabsUseCases by lazy { TabsUseCases(store) }
@@ -451,6 +464,7 @@ open class DefaultComponents(private val applicationContext: Context) {
                     }
                 },
             ),
+            notificationsDelegate = notificationsDelegate,
         ).install(applicationContext)
     }
 }

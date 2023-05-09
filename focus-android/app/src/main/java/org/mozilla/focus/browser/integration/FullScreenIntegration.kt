@@ -7,6 +7,7 @@ package org.mozilla.focus.browser.integration
 import android.app.Activity
 import android.os.Build
 import android.view.View
+import android.widget.Toast
 import androidx.annotation.VisibleForTesting
 import androidx.core.view.isVisible
 import mozilla.components.browser.state.store.BrowserStore
@@ -18,6 +19,7 @@ import mozilla.components.support.base.feature.LifecycleAwareFeature
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.ktx.android.view.enterToImmersiveMode
 import mozilla.components.support.ktx.android.view.exitImmersiveMode
+import org.mozilla.focus.R
 import org.mozilla.focus.ext.disableDynamicBehavior
 import org.mozilla.focus.ext.enableDynamicBehavior
 import org.mozilla.focus.ext.hide
@@ -56,6 +58,10 @@ class FullScreenIntegration(
         if (enabled) {
             enterBrowserFullscreen()
             statusBar.isVisible = false
+
+            Toast
+                .makeText(activity, R.string.full_screen_notification, Toast.LENGTH_SHORT)
+                .show()
 
             switchToImmersiveMode()
         } else {

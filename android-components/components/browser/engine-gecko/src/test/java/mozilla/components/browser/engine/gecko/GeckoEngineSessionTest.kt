@@ -20,6 +20,8 @@ import mozilla.components.concept.engine.DefaultSettings
 import mozilla.components.concept.engine.EngineSession
 import mozilla.components.concept.engine.EngineSession.CookieBannerHandlingStatus
 import mozilla.components.concept.engine.EngineSession.LoadUrlFlags
+import mozilla.components.concept.engine.EngineSession.LoadUrlFlags.Companion.EXTERNAL
+import mozilla.components.concept.engine.EngineSession.LoadUrlFlags.Companion.LOAD_FLAGS_BYPASS_LOAD_URI_DELEGATE
 import mozilla.components.concept.engine.EngineSession.SafeBrowsingPolicy
 import mozilla.components.concept.engine.EngineSession.TrackingProtectionPolicy
 import mozilla.components.concept.engine.EngineSession.TrackingProtectionPolicy.CookiePolicy
@@ -95,6 +97,7 @@ import org.mozilla.geckoview.WebRequestError.ERROR_MALFORMED_URI
 import org.mozilla.geckoview.WebRequestError.ERROR_UNKNOWN
 import org.mozilla.geckoview.WebResponse
 import org.robolectric.Shadows.shadowOf
+import java.io.IOException
 import java.security.Principal
 import java.security.cert.X509Certificate
 
@@ -326,6 +329,8 @@ class GeckoEngineSessionTest {
         val response = WebResponse.Builder("https://download.mozilla.org/image.png")
             .addHeader(Headers.Names.CONTENT_TYPE, "image/png")
             .addHeader(Headers.Names.CONTENT_LENGTH, "42")
+            .skipConfirmation(true)
+            .requestExternalApp(true)
             .body(mock())
             .build()
 
@@ -341,6 +346,8 @@ class GeckoEngineSessionTest {
             cookie = eq(null),
             userAgent = eq(null),
             isPrivate = eq(true),
+            skipConfirmation = eq(true),
+            openInApp = eq(true),
             response = captor.capture(),
         )
 
@@ -1765,7 +1772,7 @@ class GeckoEngineSessionTest {
 
         assertEquals("sample:about", interceptorCalledWithUri)
         verify(geckoSession).load(
-            GeckoSession.Loader().uri("https://mozilla.org").flags(LoadUrlFlags.EXTERNAL),
+            GeckoSession.Loader().uri("https://mozilla.org").flags(EXTERNAL + LOAD_FLAGS_BYPASS_LOAD_URI_DELEGATE),
         )
     }
 
@@ -2289,6 +2296,80 @@ class GeckoEngineSessionTest {
 
         engineSession.toggleDesktopMode(false, reload = true)
         verify(engineSession, atLeastOnce()).reload()
+    }
+
+    @Test
+    fun `hasCookieBannerRuleForSession should call onSuccess callback for a valid GV response`() {
+        val engineSession = GeckoEngineSession(
+            mock(),
+            geckoSessionProvider = geckoSessionProvider,
+        )
+        var onResultCalled = false
+        var onExceptionCalled = false
+
+        val ruleResult = GeckoResult<Boolean>()
+        whenever(geckoSession.hasCookieBannerRuleForBrowsingContextTree()).thenReturn(ruleResult)
+
+        engineSession.hasCookieBannerRuleForSession(
+            onResult = { onResultCalled = true },
+            onException = { onExceptionCalled = true },
+        )
+
+        ruleResult.complete(true)
+        shadowOf(getMainLooper()).idle()
+
+        assertTrue(onResultCalled)
+        assertFalse(onExceptionCalled)
+    }
+
+    @Test
+    fun `hasCookieBannerRuleForSession should call onError callback in case GV returns an exception`() {
+        val engineSession = GeckoEngineSession(
+            mock(),
+            geckoSessionProvider = geckoSessionProvider,
+        )
+
+        var onResultCalled = false
+        var onExceptionCalled = false
+
+        val ruleResult = GeckoResult<Boolean>()
+        whenever(geckoSession.hasCookieBannerRuleForBrowsingContextTree()).thenReturn(ruleResult)
+
+        engineSession.hasCookieBannerRuleForSession(
+            onResult = { onResultCalled = true },
+            onException = { onExceptionCalled = true },
+        )
+
+        ruleResult.completeExceptionally(IOException())
+        shadowOf(getMainLooper()).idle()
+
+        assertTrue(onExceptionCalled)
+        assertFalse(onResultCalled)
+    }
+
+    @Test
+    fun `hasCookieBannerRuleForSession should call onError callback in case GV returns a null`() {
+        val engineSession = GeckoEngineSession(
+            mock(),
+            geckoSessionProvider = geckoSessionProvider,
+        )
+
+        var onResultCalled = false
+        var onExceptionCalled = false
+
+        val ruleResult = GeckoResult<Boolean>()
+        whenever(geckoSession.hasCookieBannerRuleForBrowsingContextTree()).thenReturn(ruleResult)
+
+        engineSession.hasCookieBannerRuleForSession(
+            onResult = { onResultCalled = true },
+            onException = { onExceptionCalled = true },
+        )
+
+        ruleResult.complete(null)
+        shadowOf(getMainLooper()).idle()
+
+        assertTrue(onExceptionCalled)
+        assertFalse(onResultCalled)
     }
 
     @Test
@@ -3647,6 +3728,8 @@ class GeckoEngineSessionTest {
                     cookie: String?,
                     userAgent: String?,
                     isPrivate: Boolean,
+                    skipConfirmation: Boolean,
+                    openInApp: Boolean,
                     response: Response?,
                 ) {
                     assertEquals("PDF response is always a success.", RESPONSE_CODE_SUCCESS, response!!.status)
@@ -3679,6 +3762,8 @@ class GeckoEngineSessionTest {
                     cookie: String?,
                     userAgent: String?,
                     isPrivate: Boolean,
+                    skipConfirmation: Boolean,
+                    openInApp: Boolean,
                     response: Response?,
                 ) {
                     assert(false) { "We should not notify observers." }

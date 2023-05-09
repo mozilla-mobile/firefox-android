@@ -274,7 +274,6 @@ class GeckoEngine(
     ) {
         runtime.webExtensionController.uninstall((ext as GeckoWebExtension).nativeExtension).then(
             {
-                webExtensionDelegate?.onUninstalled(ext)
                 onSuccess()
                 GeckoResult<Void>()
             },
@@ -357,8 +356,23 @@ class GeckoEngine(
             }
         }
 
-        runtime.webExtensionController.promptDelegate = promptDelegate
+        val addonManagerDelegate = object : WebExtensionController.AddonManagerDelegate {
+            override fun onDisabled(extension: org.mozilla.geckoview.WebExtension) {
+                webExtensionDelegate.onDisabled(GeckoWebExtension(extension, runtime))
+            }
+
+            override fun onEnabled(extension: org.mozilla.geckoview.WebExtension) {
+                webExtensionDelegate.onEnabled(GeckoWebExtension(extension, runtime))
+            }
+
+            override fun onUninstalled(extension: org.mozilla.geckoview.WebExtension) {
+                webExtensionDelegate.onUninstalled(GeckoWebExtension(extension, runtime))
+            }
+        }
+
+        runtime.webExtensionController.setPromptDelegate(promptDelegate)
         runtime.webExtensionController.setDebuggerDelegate(debuggerDelegate)
+        runtime.webExtensionController.setAddonManagerDelegate(addonManagerDelegate)
     }
 
     /**
@@ -399,7 +413,6 @@ class GeckoEngine(
         runtime.webExtensionController.enable((extension as GeckoWebExtension).nativeExtension, source.id).then(
             {
                 val enabledExtension = GeckoWebExtension(it!!, runtime)
-                webExtensionDelegate?.onEnabled(enabledExtension)
                 onSuccess(enabledExtension)
                 GeckoResult<Void>()
             },
@@ -422,7 +435,6 @@ class GeckoEngine(
         runtime.webExtensionController.disable((extension as GeckoWebExtension).nativeExtension, source.id).then(
             {
                 val disabledExtension = GeckoWebExtension(it!!, runtime)
-                webExtensionDelegate?.onDisabled(disabledExtension)
                 onSuccess(disabledExtension)
                 GeckoResult<Void>()
             },
@@ -577,8 +589,10 @@ class GeckoEngine(
 
     override fun name(): String = "Gecko"
 
-    override val version: EngineVersion = EngineVersion.parse(org.mozilla.geckoview.BuildConfig.MOZILLA_VERSION)
-        ?: throw IllegalStateException("Could not determine engine version")
+    override val version: EngineVersion = EngineVersion.parse(
+        org.mozilla.geckoview.BuildConfig.MOZILLA_VERSION,
+        org.mozilla.geckoview.BuildConfig.MOZ_UPDATE_CHANNEL,
+    ) ?: throw IllegalStateException("Could not determine engine version")
 
     /**
      * See [Engine.settings]
@@ -661,6 +675,16 @@ class GeckoEngine(
                 with(runtime.settings.contentBlocking) {
                     if (this.cookieBannerModePrivateBrowsing != value.mode) {
                         this.cookieBannerModePrivateBrowsing = value.mode
+                    }
+                }
+                field = value
+            }
+
+        override var cookieBannerHandlingDetectOnlyMode: Boolean = false
+            set(value) {
+                with(runtime.settings.contentBlocking) {
+                    if (this.cookieBannerDetectOnlyMode != value) {
+                        this.cookieBannerDetectOnlyMode = value
                     }
                 }
                 field = value
@@ -768,6 +792,7 @@ class GeckoEngine(
             this.httpsOnlyMode = it.httpsOnlyMode
             this.cookieBannerHandlingMode = it.cookieBannerHandlingMode
             this.cookieBannerHandlingModePrivateBrowsing = it.cookieBannerHandlingModePrivateBrowsing
+            this.cookieBannerHandlingDetectOnlyMode = it.cookieBannerHandlingDetectOnlyMode
         }
     }
 

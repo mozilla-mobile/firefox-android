@@ -21,17 +21,19 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    namespace 'mozilla.components.browser.domains'
 }
 
 dependencies {
-    implementation Dependencies.kotlin_stdlib
-    implementation Dependencies.kotlin_coroutines
+    implementation project(':concept-toolbar')
+    implementation ComponentsDependencies.kotlin_coroutines
 
     testImplementation project(':support-test')
 
-    testImplementation Dependencies.androidx_test_junit
-    testImplementation Dependencies.testing_robolectric
-    testImplementation Dependencies.testing_coroutines
+    testImplementation ComponentsDependencies.androidx_test_junit
+    testImplementation ComponentsDependencies.testing_robolectric
+    testImplementation ComponentsDependencies.testing_coroutines
 }
 
 apply from: '../../../android-lint.gradle'

@@ -18,11 +18,14 @@ import mozilla.components.browser.state.selector.findTabOrCustomTabOrSelectedTab
 import mozilla.components.browser.state.state.SessionState
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.EngineSession
+import mozilla.components.concept.engine.EngineSession.LoadUrlFlags.Companion.EXTERNAL
+import mozilla.components.concept.engine.EngineSession.LoadUrlFlags.Companion.LOAD_FLAGS_BYPASS_LOAD_URI_DELEGATE
 import mozilla.components.feature.app.links.AppLinksUseCases.Companion.ENGINE_SUPPORTED_SCHEMES
 import mozilla.components.feature.app.links.RedirectDialogFragment.Companion.FRAGMENT_TAG
 import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.lib.state.ext.flowScoped
 import mozilla.components.support.base.feature.LifecycleAwareFeature
+import mozilla.components.support.ktx.android.content.appName
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 
 /**
@@ -50,12 +53,13 @@ class AppLinksFeature(
     private val store: BrowserStore,
     private val sessionId: String? = null,
     private val fragmentManager: FragmentManager? = null,
-    private var dialog: RedirectDialogFragment? = null,
+    private val dialog: RedirectDialogFragment? = null,
     private val launchInApp: () -> Boolean = { false },
     private val useCases: AppLinksUseCases = AppLinksUseCases(context, launchInApp),
     private val failedToLaunchAction: () -> Unit = {},
     private val loadUrlUseCase: SessionUseCases.DefaultLoadUrlUseCase? = null,
     private val engineSupportedSchemes: Set<String> = ENGINE_SUPPORTED_SCHEMES,
+    private val shouldPrompt: () -> Boolean = { true },
 ) : LifecycleAwareFeature {
 
     private var scope: CoroutineScope? = null
@@ -103,13 +107,12 @@ class AppLinksFeature(
             )
         }
 
-        if (!tab.content.private || fragmentManager == null) {
+        if ((!tab.content.private && !shouldPrompt()) || fragmentManager == null) {
             doOpenApp()
             return
         }
 
-        val dialog = getOrCreateDialog()
-        dialog.setAppLinkRedirectUrl(url)
+        val dialog = getOrCreateDialog(tab.content.private, url)
         dialog.onConfirmRedirect = doOpenApp
         dialog.onCancelRedirect = doNotOpenApp
 
@@ -119,23 +122,41 @@ class AppLinksFeature(
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    internal fun getOrCreateDialog(): RedirectDialogFragment {
-        val existingDialog = dialog
-        if (existingDialog != null) {
-            return existingDialog
+    internal fun getOrCreateDialog(isPrivate: Boolean, url: String): RedirectDialogFragment {
+        if (dialog != null) {
+            return dialog
         }
 
-        SimpleRedirectDialogFragment.newInstance().also {
-            dialog = it
-            return it
-        }
+        val message = context.getString(
+            R.string.mozac_feature_applinks_normal_confirm_dialog_message,
+            context.appName,
+        )
+
+        return SimpleRedirectDialogFragment.newInstance(
+            dialogTitleText = if (isPrivate) {
+                R.string.mozac_feature_applinks_confirm_dialog_title
+            } else {
+                R.string.mozac_feature_applinks_normal_confirm_dialog_title
+            },
+            dialogMessageString = if (isPrivate) {
+                url
+            } else {
+                message
+            },
+            positiveButtonText = R.string.mozac_feature_applinks_confirm_dialog_confirm,
+            negativeButtonText = R.string.mozac_feature_applinks_confirm_dialog_deny,
+        )
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     internal fun loadUrlIfSchemeSupported(tab: SessionState, url: String) {
         val schemeSupported = engineSupportedSchemes.contains(Uri.parse(url).scheme)
         if (schemeSupported) {
-            loadUrlUseCase?.invoke(url, tab.id, EngineSession.LoadUrlFlags.none())
+            loadUrlUseCase?.invoke(
+                url = url,
+                sessionId = tab.id,
+                flags = EngineSession.LoadUrlFlags.select(EXTERNAL, LOAD_FLAGS_BYPASS_LOAD_URI_DELEGATE),
+            )
         }
     }
 

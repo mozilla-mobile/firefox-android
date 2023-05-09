@@ -22,17 +22,18 @@ android {
         }
     }
 
-    lintOptions {
+    lint {
         lintConfig file("lint.xml")
     }
+
+    namespace 'mozilla.components.tooling.fetch.tests'
+
 }
 
 dependencies {
     implementation project(':concept-fetch')
 
-    implementation Dependencies.kotlin_stdlib
-
-    implementation Dependencies.testing_mockwebserver
-    implementation Dependencies.testing_junit
-    implementation Dependencies.kotlin_coroutines
+    implementation ComponentsDependencies.testing_mockwebserver
+    implementation ComponentsDependencies.testing_junit
+    implementation ComponentsDependencies.kotlin_coroutines
 }

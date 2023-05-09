@@ -4,15 +4,17 @@
 package mozilla.components.feature.syncedtabs
 
 import android.graphics.drawable.Drawable
+import androidx.annotation.VisibleForTesting
 import mozilla.components.browser.icons.BrowserIcons
 import mozilla.components.browser.icons.IconRequest
-import mozilla.components.browser.storage.sync.TabEntry
 import mozilla.components.concept.awesomebar.AwesomeBar
 import mozilla.components.concept.awesomebar.AwesomeBar.Suggestion.Flag
 import mozilla.components.concept.sync.DeviceType
 import mozilla.components.feature.session.SessionUseCases
+import mozilla.components.feature.syncedtabs.ext.getActiveDeviceTabs
 import mozilla.components.feature.syncedtabs.facts.emitSyncedTabSuggestionClickedFact
 import mozilla.components.feature.syncedtabs.storage.SyncedTabsStorage
+import mozilla.components.support.ktx.kotlin.tryGetHostFromUrl
 import java.util.UUID
 
 /**
@@ -25,6 +27,7 @@ class SyncedTabsStorageSuggestionProvider(
     private val icons: BrowserIcons? = null,
     private val deviceIndicators: DeviceIndicators = DeviceIndicators(),
     private val suggestionsHeader: String? = null,
+    @get:VisibleForTesting val resultsHostFilter: String? = null,
 ) : AwesomeBar.SuggestionProvider {
     override val id: String = UUID.randomUUID().toString()
 
@@ -37,25 +40,12 @@ class SyncedTabsStorageSuggestionProvider(
             return emptyList()
         }
 
-        val results = mutableListOf<ClientTabPair>()
-        for ((client, tabs) in syncedTabs.getSyncedDeviceTabs()) {
-            for (tab in tabs) {
-                val activeTabEntry = tab.active()
-                // This is a fairly naive match implementation, but this is what we do on Desktop 🤷.
-                if (activeTabEntry.url.contains(text, ignoreCase = true) ||
-                    activeTabEntry.title.contains(text, ignoreCase = true)
-                ) {
-                    results.add(
-                        ClientTabPair(
-                            clientName = client.displayName,
-                            tab = activeTabEntry,
-                            lastUsed = tab.lastUsed,
-                            deviceType = client.deviceType,
-                        ),
-                    )
-                }
-            }
+        val results = syncedTabs.getActiveDeviceTabs { tab ->
+            // This is a fairly naive match implementation, but this is what we do on Desktop 🤷.
+            (tab.url.contains(text, ignoreCase = true) || tab.title.contains(text, ignoreCase = true)) &&
+                resultsHostFilter?.equals(tab.url.tryGetHostFromUrl()) != false
         }
+
         return results.sortedByDescending { it.lastUsed }.into()
     }
 
@@ -100,11 +90,4 @@ data class DeviceIndicators(
     val desktop: Drawable? = null,
     val mobile: Drawable? = null,
     val tablet: Drawable? = null,
-)
-
-private data class ClientTabPair(
-    val clientName: String,
-    val tab: TabEntry,
-    val lastUsed: Long,
-    val deviceType: DeviceType,
 )

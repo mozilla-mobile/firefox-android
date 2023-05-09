@@ -8,7 +8,6 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.widget.FrameLayout
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import mozilla.components.browser.state.action.ContentAction
 import mozilla.components.browser.state.selector.findCustomTabOrSelectedTab
 import mozilla.components.browser.state.state.BrowserState
@@ -27,13 +26,11 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.mockito.Mockito.doReturn
 import org.mockito.Mockito.reset
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 
-@RunWith(AndroidJUnit4::class)
 class SwipeRefreshFeatureTest {
     @get:Rule
     val coroutinesTestRule = MainCoroutineRule()
@@ -123,6 +120,7 @@ class SwipeRefreshFeatureTest {
     private open class DummyEngineView(context: Context) : FrameLayout(context), EngineView {
         override fun setVerticalClipping(clippingHeight: Int) {}
         override fun setDynamicToolbarMaxHeight(height: Int) {}
+        override fun setActivityContext(context: Context?) {}
         override fun captureThumbnail(onFinish: (Bitmap?) -> Unit) = Unit
         override fun clearSelection() {}
         override fun render(session: EngineSession) {}

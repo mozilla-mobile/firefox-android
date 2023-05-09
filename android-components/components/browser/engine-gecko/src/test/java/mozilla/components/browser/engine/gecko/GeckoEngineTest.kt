@@ -27,6 +27,7 @@ import mozilla.components.concept.engine.UnsupportedSettingException
 import mozilla.components.concept.engine.content.blocking.TrackerLog
 import mozilla.components.concept.engine.mediaquery.PreferredColorScheme
 import mozilla.components.concept.engine.serviceworker.ServiceWorkerDelegate
+import mozilla.components.concept.engine.utils.EngineReleaseChannel
 import mozilla.components.concept.engine.webextension.Action
 import mozilla.components.concept.engine.webextension.WebExtension
 import mozilla.components.concept.engine.webextension.WebExtensionDelegate
@@ -310,6 +311,7 @@ class GeckoEngineTest {
 
         assertEquals(contentBlockingSettings.cookieBannerMode, EngineSession.CookieBannerHandlingMode.DISABLED.mode)
         assertEquals(contentBlockingSettings.cookieBannerModePrivateBrowsing, EngineSession.CookieBannerHandlingMode.DISABLED.mode)
+        assertEquals(contentBlockingSettings.cookieBannerDetectOnlyMode, engine.settings.cookieBannerHandlingDetectOnlyMode)
 
         try {
             engine.settings.domStorageEnabled
@@ -536,6 +538,26 @@ class GeckoEngineTest {
         engine.settings.cookieBannerHandlingModePrivateBrowsing = policy
 
         verify(mockRuntime.settings.contentBlocking, never()).setCookieBannerModePrivateBrowsing(policy.mode)
+    }
+
+    @Test
+    fun `setCookieBannerHandlingDetectOnlyMode is only invoked when the value is changed`() {
+        val mockRuntime = mock<GeckoRuntime>()
+        val settings = spy(ContentBlocking.Settings.Builder().build())
+        whenever(mockRuntime.settings).thenReturn(mock())
+        whenever(mockRuntime.settings.contentBlocking).thenReturn(settings)
+
+        val engine = GeckoEngine(testContext, runtime = mockRuntime)
+
+        engine.settings.cookieBannerHandlingDetectOnlyMode = true
+
+        verify(mockRuntime.settings.contentBlocking).setCookieBannerDetectOnlyMode(true)
+
+        reset(settings)
+
+        engine.settings.cookieBannerHandlingDetectOnlyMode = true
+
+        verify(mockRuntime.settings.contentBlocking, never()).setCookieBannerDetectOnlyMode(true)
     }
 
     @Test
@@ -894,8 +916,6 @@ class GeckoEngineTest {
 
         shadowOf(getMainLooper()).idle()
 
-        verify(webExtensionsDelegate).onUninstalled(ext)
-
         val extCaptor = argumentCaptor<GeckoWebExtension>()
         verify(extensionController).uninstall(extCaptor.capture())
         assertSame(nativeExtension, extCaptor.value)
@@ -935,8 +955,6 @@ class GeckoEngineTest {
         result.completeExceptionally(expected)
 
         shadowOf(getMainLooper()).idle()
-
-        verify(webExtensionsDelegate, never()).onUninstalled(ext)
 
         assertTrue(onErrorCalled)
         assertEquals(expected, throwable)
@@ -1555,8 +1573,6 @@ class GeckoEngineTest {
             runtime,
         )
         val engine = GeckoEngine(context, runtime = runtime)
-        val webExtensionsDelegate: WebExtensionDelegate = mock()
-        engine.registerWebExtensionDelegate(webExtensionsDelegate)
 
         var result: WebExtension? = null
         var onErrorCalled = false
@@ -1572,7 +1588,6 @@ class GeckoEngineTest {
 
         assertFalse(onErrorCalled)
         assertNotNull(result)
-        verify(webExtensionsDelegate).onEnabled(result!!)
     }
 
     @Test
@@ -1585,8 +1600,6 @@ class GeckoEngineTest {
         whenever(runtime.webExtensionController).thenReturn(extensionController)
 
         val engine = GeckoEngine(context, runtime = runtime)
-        val webExtensionsDelegate: WebExtensionDelegate = mock()
-        engine.registerWebExtensionDelegate(webExtensionsDelegate)
 
         val extension = mozilla.components.browser.engine.gecko.webextension.GeckoWebExtension(
             mockNativeWebExtension(),
@@ -1607,7 +1620,6 @@ class GeckoEngineTest {
 
         assertSame(expected, throwable)
         assertNull(result)
-        verify(webExtensionsDelegate, never()).onEnabled(any())
     }
 
     @Test
@@ -1621,8 +1633,6 @@ class GeckoEngineTest {
         whenever(runtime.webExtensionController).thenReturn(extensionController)
 
         val engine = GeckoEngine(context, runtime = runtime)
-        val webExtensionsDelegate: WebExtensionDelegate = mock()
-        engine.registerWebExtensionDelegate(webExtensionsDelegate)
 
         val extension = mozilla.components.browser.engine.gecko.webextension.GeckoWebExtension(
             mockNativeWebExtension(),
@@ -1642,7 +1652,6 @@ class GeckoEngineTest {
 
         assertFalse(onErrorCalled)
         assertNotNull(result)
-        verify(webExtensionsDelegate).onDisabled(result!!)
     }
 
     @Test
@@ -1655,8 +1664,6 @@ class GeckoEngineTest {
         whenever(runtime.webExtensionController).thenReturn(extensionController)
 
         val engine = GeckoEngine(context, runtime = runtime)
-        val webExtensionsDelegate: WebExtensionDelegate = mock()
-        engine.registerWebExtensionDelegate(webExtensionsDelegate)
 
         val extension = mozilla.components.browser.engine.gecko.webextension.GeckoWebExtension(
             mockNativeWebExtension(),
@@ -1677,7 +1684,6 @@ class GeckoEngineTest {
 
         assertSame(expected, throwable)
         assertNull(result)
-        verify(webExtensionsDelegate, never()).onEnabled(any())
     }
 
     @Test
@@ -1885,6 +1891,7 @@ class GeckoEngineTest {
 
         assertTrue(version.major >= 69)
         assertTrue(version.isAtLeast(69, 0, 0))
+        assertTrue(version.releaseChannel != EngineReleaseChannel.UNKNOWN)
     }
 
     @Test
@@ -2205,6 +2212,72 @@ class GeckoEngineTest {
         val notification: WebNotification = mock()
         engine.handleWebNotificationClick(notification)
         verify(notification).click()
+    }
+
+    @Test
+    fun `web extension delegate handles add-on onEnabled event`() {
+        val runtime: GeckoRuntime = mock()
+        val webExtensionController: WebExtensionController = mock()
+        whenever(runtime.webExtensionController).thenReturn(webExtensionController)
+
+        val extension = mockNativeWebExtension("test", "uri")
+        val webExtensionsDelegate: WebExtensionDelegate = mock()
+        val engine = GeckoEngine(context, runtime = runtime)
+        engine.registerWebExtensionDelegate(webExtensionsDelegate)
+
+        val geckoDelegateCaptor = argumentCaptor<WebExtensionController.AddonManagerDelegate>()
+        verify(webExtensionController).setAddonManagerDelegate(geckoDelegateCaptor.capture())
+
+        assertEquals(Unit, geckoDelegateCaptor.value.onEnabled(extension))
+        val extensionCaptor = argumentCaptor<WebExtension>()
+        verify(webExtensionsDelegate).onEnabled(extensionCaptor.capture())
+        val capturedExtension =
+            extensionCaptor.value as mozilla.components.browser.engine.gecko.webextension.GeckoWebExtension
+        assertEquals(extension, capturedExtension.nativeExtension)
+    }
+
+    @Test
+    fun `web extension delegate handles add-on onDisabled event`() {
+        val runtime: GeckoRuntime = mock()
+        val webExtensionController: WebExtensionController = mock()
+        whenever(runtime.webExtensionController).thenReturn(webExtensionController)
+
+        val extension = mockNativeWebExtension("test", "uri")
+        val webExtensionsDelegate: WebExtensionDelegate = mock()
+        val engine = GeckoEngine(context, runtime = runtime)
+        engine.registerWebExtensionDelegate(webExtensionsDelegate)
+
+        val geckoDelegateCaptor = argumentCaptor<WebExtensionController.AddonManagerDelegate>()
+        verify(webExtensionController).setAddonManagerDelegate(geckoDelegateCaptor.capture())
+
+        assertEquals(Unit, geckoDelegateCaptor.value.onDisabled(extension))
+        val extensionCaptor = argumentCaptor<WebExtension>()
+        verify(webExtensionsDelegate).onDisabled(extensionCaptor.capture())
+        val capturedExtension =
+            extensionCaptor.value as mozilla.components.browser.engine.gecko.webextension.GeckoWebExtension
+        assertEquals(extension, capturedExtension.nativeExtension)
+    }
+
+    @Test
+    fun `web extension delegate handles add-on onUninstalled event`() {
+        val runtime: GeckoRuntime = mock()
+        val webExtensionController: WebExtensionController = mock()
+        whenever(runtime.webExtensionController).thenReturn(webExtensionController)
+
+        val extension = mockNativeWebExtension("test", "uri")
+        val webExtensionsDelegate: WebExtensionDelegate = mock()
+        val engine = GeckoEngine(context, runtime = runtime)
+        engine.registerWebExtensionDelegate(webExtensionsDelegate)
+
+        val geckoDelegateCaptor = argumentCaptor<WebExtensionController.AddonManagerDelegate>()
+        verify(webExtensionController).setAddonManagerDelegate(geckoDelegateCaptor.capture())
+
+        assertEquals(Unit, geckoDelegateCaptor.value.onUninstalled(extension))
+        val extensionCaptor = argumentCaptor<WebExtension>()
+        verify(webExtensionsDelegate).onUninstalled(extensionCaptor.capture())
+        val capturedExtension =
+            extensionCaptor.value as mozilla.components.browser.engine.gecko.webextension.GeckoWebExtension
+        assertEquals(extension, capturedExtension.nativeExtension)
     }
 
     private fun createSocialTrackersLogEntryList(): List<ContentBlockingController.LogEntry> {
