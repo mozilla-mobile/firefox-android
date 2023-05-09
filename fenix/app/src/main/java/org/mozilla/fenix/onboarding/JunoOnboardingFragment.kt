@@ -26,9 +26,12 @@ import org.mozilla.fenix.ext.hideToolbar
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.openSetDefaultBrowserOption
 import org.mozilla.fenix.ext.requireComponents
-import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.onboarding.view.JunoOnboardingPageType
+import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.onboarding.view.JunoOnboardingScreen
+import org.mozilla.fenix.onboarding.view.OnboardingPageUiData
+import org.mozilla.fenix.onboarding.view.sequencePosition
+import org.mozilla.fenix.onboarding.view.telemetrySequenceId
+import org.mozilla.fenix.onboarding.view.toPageUiData
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.theme.FirefoxTheme
 
@@ -37,13 +40,15 @@ import org.mozilla.fenix.theme.FirefoxTheme
  */
 class JunoOnboardingFragment : Fragment() {
 
-    private val fenixOnboarding by lazy { FenixOnboarding(requireContext()) }
-    private val onboardingPageTypeList by lazy { onboardingPageTypeList(requireContext()) }
+    private val pagesToDisplay by lazy { pagesToDisplay(shouldShowNotificationPage(requireContext())) }
+    private val telemetryRecorder by lazy { JunoOnboardingTelemetryRecorder() }
 
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        if (isNotATablet()) {
+            activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -67,51 +72,108 @@ class JunoOnboardingFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+        if (isNotATablet()) {
+            activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     @Composable
+    @Suppress("LongMethod")
     private fun ScreenContent() {
         val context = LocalContext.current
         JunoOnboardingScreen(
-            onboardingPageTypeList = onboardingPageTypeList,
-            onMakeFirefoxDefaultClick = { activity?.openSetDefaultBrowserOption(useCustomTab = true) },
+            pagesToDisplay = pagesToDisplay,
+            onMakeFirefoxDefaultClick = {
+                activity?.openSetDefaultBrowserOption(useCustomTab = true)
+                telemetryRecorder.onSetToDefaultClick(
+                    sequenceId = pagesToDisplay.telemetrySequenceId(),
+                    sequencePosition = pagesToDisplay.sequencePosition(OnboardingPageUiData.Type.DEFAULT_BROWSER),
+                )
+            },
+            onSkipDefaultClick = {
+                telemetryRecorder.onSkipSetToDefaultClick(
+                    pagesToDisplay.telemetrySequenceId(),
+                    pagesToDisplay.sequencePosition(OnboardingPageUiData.Type.DEFAULT_BROWSER),
+                )
+            },
             onPrivacyPolicyClick = { url ->
-                startActivity(SupportUtils.createSandboxCustomTabIntent(context = context, url = url))
+                startActivity(
+                    SupportUtils.createSandboxCustomTabIntent(
+                        context = context,
+                        url = url,
+                    ),
+                )
+                telemetryRecorder.onPrivacyPolicyClick(
+                    pagesToDisplay.telemetrySequenceId(),
+                    pagesToDisplay.sequencePosition(OnboardingPageUiData.Type.DEFAULT_BROWSER),
+                )
             },
             onSignInButtonClick = {
                 findNavController().nav(
                     id = R.id.junoOnboardingFragment,
                     directions = JunoOnboardingFragmentDirections.actionGlobalTurnOnSync(),
                 )
+                telemetryRecorder.onSyncSignInClick(
+                    sequenceId = pagesToDisplay.telemetrySequenceId(),
+                    sequencePosition = pagesToDisplay.sequencePosition(OnboardingPageUiData.Type.SYNC_SIGN_IN),
+                )
+            },
+            onSkipSignInClick = {
+                telemetryRecorder.onSkipSignInClick(
+                    pagesToDisplay.telemetrySequenceId(),
+                    pagesToDisplay.sequencePosition(OnboardingPageUiData.Type.SYNC_SIGN_IN),
+                )
             },
             onNotificationPermissionButtonClick = {
                 requireComponents.notificationsDelegate.requestNotificationPermission()
+                telemetryRecorder.onNotificationPermissionClick(
+                    sequenceId = pagesToDisplay.telemetrySequenceId(),
+                    sequencePosition =
+                    pagesToDisplay.sequencePosition(OnboardingPageUiData.Type.NOTIFICATION_PERMISSION),
+                )
             },
-            onFinish = { onFinish() },
+            onSkipNotificationClick = {
+                telemetryRecorder.onSkipTurnOnNotificationsClick(
+                    sequenceId = pagesToDisplay.telemetrySequenceId(),
+                    sequencePosition =
+                    pagesToDisplay.sequencePosition(OnboardingPageUiData.Type.NOTIFICATION_PERMISSION),
+                )
+            },
+            onFinish = {
+                onFinish(
+                    sequenceId = pagesToDisplay.telemetrySequenceId(),
+                    sequencePosition = pagesToDisplay.sequencePosition(it.type),
+                )
+            },
+            onImpression = {
+                telemetryRecorder.onImpression(
+                    sequenceId = pagesToDisplay.telemetrySequenceId(),
+                    pageType = it.type,
+                    sequencePosition = pagesToDisplay.sequencePosition(it.type),
+                )
+            },
         )
     }
 
-    private fun onFinish() {
-        context?.settings()?.isJunoOnboardingShown = true
-        fenixOnboarding.finish()
+    private fun onFinish(sequenceId: String, sequencePosition: String) {
+        requireComponents.fenixOnboarding.finish()
         findNavController().nav(
             id = R.id.junoOnboardingFragment,
             directions = JunoOnboardingFragmentDirections.actionOnboardingHome(),
         )
+        telemetryRecorder.onOnboardingComplete(
+            sequenceId = sequenceId,
+            sequencePosition = sequencePosition,
+        )
     }
 
-    private fun onboardingPageTypeList(context: Context): List<JunoOnboardingPageType> =
-        buildList {
-            add(JunoOnboardingPageType.DEFAULT_BROWSER)
-            add(JunoOnboardingPageType.SYNC_SIGN_IN)
-            if (shouldShowNotificationPage(context)) {
-                add(JunoOnboardingPageType.NOTIFICATION_PERMISSION)
-            }
-        }
-
     private fun shouldShowNotificationPage(context: Context) =
-        !NotificationManagerCompat.from(context.applicationContext).areNotificationsEnabledSafe() &&
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+        !NotificationManagerCompat.from(context.applicationContext)
+            .areNotificationsEnabledSafe() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+
+    private fun isNotATablet() = !resources.getBoolean(R.bool.tablet)
+
+    private fun pagesToDisplay(showNotificationPage: Boolean): List<OnboardingPageUiData> =
+        FxNimbus.features.junoOnboarding.value().cards.values.toPageUiData(showNotificationPage)
 }

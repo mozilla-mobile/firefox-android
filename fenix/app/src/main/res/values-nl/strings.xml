@@ -73,8 +73,6 @@
 
     <!-- Private mode shortcut "contextual feature recommendation" (CFR) -->
     <!-- Text for the Private mode shortcut CFR message for adding a private mode shortcut to open private tabs from the Home screen -->
-    <string name="private_mode_cfr_message" moz:removedIn="111" tools:ignore="UnusedResources">Start het volgende privétabblad met één tik.</string>
-    <!-- Text for the Private mode shortcut CFR message for adding a private mode shortcut to open private tabs from the Home screen -->
     <string name="private_mode_cfr_message_2">Start uw volgende privétabblad met één tik.</string>
     <!-- Text for the positive button to accept adding a Private Browsing shortcut to the Home screen -->
     <string name="private_mode_cfr_pos_button_text">Toevoegen aan startscherm</string>
@@ -266,9 +264,6 @@
     <string name="search_settings_menu_item">Zoekinstellingen</string>
 
     <!-- Header text for the search selector menu -->
-    <string name="search_header_menu_item" moz:RemovedIn="109" tools:ignore="UnusedResources">Deze keer zoeken met:</string>
-
-    <!-- Header text for the search selector menu -->
     <string name="search_header_menu_item_2">Deze keer zoeken in:</string>
 
     <!-- Home onboarding -->
@@ -310,36 +305,48 @@
     <!-- Juno first user onboarding flow experiment -->
     <!-- Title for set firefox as default browser screen.
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="juno_onboarding_default_browser_title" tools:ignore="UnusedResources">Maak %s uw ‘ga naar’-browser</string>
+    <string name="juno_onboarding_default_browser_title">Maak %s uw ‘ga naar’-browser</string>
+    <!-- Title for set firefox as default browser screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_default_browser_title_nimbus" tools:ignore="UnusedResources">Maak Firefox uw ‘ga naar’-browser</string>
     <!-- Description for set firefox as default browser screen.
         The first parameter is the Firefox brand name.
         The second parameter is the string with key "juno_onboarding_default_browser_description_link_text". -->
-    <string name="juno_onboarding_default_browser_description" tools:ignore="UnusedResources">%1$s plaatst mensen boven winst en verdedigt uw privacy door cross-sitetrackers te blokkeren.\n\nMeer info in onze %2$s.</string>
+    <string name="juno_onboarding_default_browser_description">%1$s plaatst mensen boven winst en verdedigt uw privacy door cross-sitetrackers te blokkeren.\n\nMeer info in onze %2$s.</string>
+    <!-- Description for set firefox as default browser screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_default_browser_description_nimbus" tools:ignore="UnusedResources">Firefox plaatst mensen boven winst en verdedigt uw privacy door cross-sitetrackers te blokkeren.\n\nMeer info in onze privacyverklaring.</string>
     <!-- Text for the link to the privacy notice webpage for set as firefox default browser screen.
     This is part of the string with the key "juno_onboarding_default_browser_description". -->
-    <string name="juno_onboarding_default_browser_description_link_text" tools:ignore="UnusedResources">privacyverklaring</string>
+    <string name="juno_onboarding_default_browser_description_link_text">privacyverklaring</string>
     <!-- Text for the button to set firefox as default browser on the device -->
-    <string name="juno_onboarding_default_browser_positive_button" tools:ignore="UnusedResources">Als standaardbrowser instellen</string>
+    <string name="juno_onboarding_default_browser_positive_button">Als standaardbrowser instellen</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
-    <string name="juno_onboarding_default_browser_negative_button" tools:ignore="UnusedResources">Niet nu</string>
+    <string name="juno_onboarding_default_browser_negative_button">Niet nu</string>
     <!-- Title for sign in to sync screen. -->
-    <string name="juno_onboarding_sign_in_title" tools:ignore="UnusedResources">Spring van telefoon naar laptop en terug</string>
+    <string name="juno_onboarding_sign_in_title">Spring van telefoon naar laptop en terug</string>
     <!-- Description for sign in to sync screen. -->
-    <string name="juno_onboarding_sign_in_description" tools:ignore="UnusedResources">Pik tabbladen en wachtwoorden op van uw andere apparaten om verder te gaan waar u was gebleven.</string>
+    <string name="juno_onboarding_sign_in_description">Pik tabbladen en wachtwoorden op van uw andere apparaten om verder te gaan waar u was gebleven.</string>
     <!-- Text for the button to sign in to sync on the device -->
-    <string name="juno_onboarding_sign_in_positive_button" tools:ignore="UnusedResources">Aanmelden</string>
+    <string name="juno_onboarding_sign_in_positive_button">Aanmelden</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
-    <string name="juno_onboarding_sign_in_negative_button" tools:ignore="UnusedResources">Niet nu</string>
+    <string name="juno_onboarding_sign_in_negative_button">Niet nu</string>
     <!-- Title for enable notification permission screen.
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="juno_onboarding_enable_notifications_title" tools:ignore="UnusedResources">Meldingen helpen u meer te doen met %s</string>
+    <string name="juno_onboarding_enable_notifications_title">Meldingen helpen u meer te doen met %s</string>
+    <!-- Title for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_enable_notifications_title_nimbus" tools:ignore="UnusedResources">Meldingen helpen u meer te doen met Firefox</string>
     <!-- Description for enable notification permission screen.
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="juno_onboarding_enable_notifications_description" tools:ignore="UnusedResources">Verzend tabbladen tussen apparaten, beheer downloads en ontvang tips om %s optimaal te benutten.</string>
+    <string name="juno_onboarding_enable_notifications_description">Verzend tabbladen tussen apparaten, beheer downloads en ontvang tips om %s optimaal te benutten.</string>
+    <!-- Description for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+       Note: The word "Firefox" should NOT be translated   -->
+    <string name="juno_onboarding_enable_notifications_description_nimbus" tools:ignore="UnusedResources">Verzend tabbladen tussen apparaten, beheer downloads en ontvang tips om Firefox optimaal te benutten.</string>
     <!-- Text for the button to request notification permission on the device -->
-    <string name="juno_onboarding_enable_notifications_positive_button" tools:ignore="UnusedResources">Notificaties inschakelen</string>
+    <string name="juno_onboarding_enable_notifications_positive_button">Notificaties inschakelen</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
-    <string name="juno_onboarding_enable_notifications_negative_button" tools:ignore="UnusedResources">Niet nu</string>
+    <string name="juno_onboarding_enable_notifications_negative_button">Niet nu</string>
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. The first parameter is the name of the application.-->
@@ -404,27 +411,35 @@
     <string name="reduce_cookie_banner_summary_1">%1$s probeert automatisch cookieverzoeken op cookiebanners te weigeren.</string>
     <!-- Text for indicating cookie banner handling is off this site, this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_off_for_site">Uit voor deze website</string>
+    <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
+    <string name="cookie_banner_handling_details_site_is_not_supported_cancel_button">Annuleren</string>
+    <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
+    <string name="cookie_banner_handling_details_site_is_not_supported_request_support_button">Ondersteuning vragen</string>
+    <!-- Text for title indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
+    <string name="cookie_banner_handling_details_site_is_not_supported_title">Reductie van cookiebanners</string>
+    <!-- Label for the snackBar, after the user reports with success a website where cookie banner reducer did not work -->
+    <string name="cookie_banner_handling_report_site_snack_bar_text">Verzoek om websiteondersteuning ingediend.</string>
     <!-- Text for indicating cookie banner handling is on this site, this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_on_for_site">Aan voor deze website</string>
+    <!-- Text for indicating that a request for unsupported site was sent to Nimbus (it's a Mozilla library for experiments), this is shown as part of the protections panel with the tracking protection toggle -->
+    <string name="reduce_cookie_banner_unsupported_site_request_submitted">Verzoek om websiteondersteuning ingediend</string>
     <!-- Text for indicating cookie banner handling is currently not supported for this site, this is shown as part of the protections panel with the tracking protection toggle -->
-    <string name="reduce_cookie_banner_unsupported_site" tools:ignore="UnusedResources">Website wordt momenteel niet ondersteund</string>
+    <string name="reduce_cookie_banner_unsupported_site">Website wordt momenteel niet ondersteund</string>
     <!-- Title text for a detail explanation indicating cookie banner handling is on this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
     <string name="reduce_cookie_banner_details_panel_title_on_for_site">Reductie van cookiebanners inschakelen voor %1$s?</string>
     <!-- Title text for a detail explanation indicating cookie banner handling is off this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
     <string name="reduce_cookie_banner_details_panel_title_off_for_site">Reductie van cookiebanners uitschakelen voor %1$s?</string>
+    <!-- Title text for a detail explanation indicating cookie banner reducer didn't work for the current site, this is shown as part of the cookie banner panel in the toolbar.-->
+    <string name="reduce_cookie_banner_details_panel_title_unsupported_site_request">Deze website wordt momenteel niet ondersteund door Reductie van cookiebanners. Wilt u dat ons team deze website beoordeelt en in de toekomst ondersteuning toevoegt?</string>
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
     <string name="reduce_cookie_banner_details_panel_description_off_for_site">%1$s wist de cookies voor deze website en vernieuwt de pagina. Als alle cookies worden gewist, wordt u mogelijk afgemeld of worden winkelwagentjes geleegd.</string>
 
-    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter are the application name -->
-    <string name="reduce_cookie_banner_details_panel_description_on_for_site_1" moz:RemovedIn="111" tools:ignore="UnusedResources">%1$s kan proberen cookieverzoeken automatisch te weigeren.</string>
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
     <string name="reduce_cookie_banner_details_panel_description_on_for_site_2">%1$s probeert alle cookieverzoeken op ondersteunde websites automatisch te weigeren.</string>
     <!-- Title text for the dialog use on the control branch of the experiment to determine which context users engaged the most -->
     <string name="reduce_cookie_banner_control_experiment_dialog_title" moz:RemovedIn="112" tools:ignore="UnusedResources">Vaarwel cookiebanners!</string>
     <!-- Title text for the cookie banner re-engagement dialog. The first parameter is the application name. -->
     <string name="reduce_cookie_banner_dialog_title">%1$s toestaan om cookiebanners te weigeren?</string>
-    <!-- Body text for the dialog use on the control branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_control_experiment_dialog_body_1" moz:RemovedIn="111" tools:ignore="UnusedResources">Cookieverzoeken automatisch weigeren, indien mogelijk.</string>
     <!-- Body text for the dialog use on the control branch of the experiment to determine which context users engaged the most.The first parameter is the application name -->
     <string name="reduce_cookie_banner_control_experiment_dialog_body_2" moz:RemovedIn="112" tools:ignore="UnusedResources">%1$s toestaan om cookieverzoeken indien mogelijk automatisch te weigeren?</string>
     <!-- Body text for the cookie banner re-engagement dialog use. The first parameter is the application name. -->
@@ -453,8 +468,6 @@
 
     <!-- Description of the preference to enable "HTTPS-Only" mode. -->
     <string name="preferences_https_only_summary">Probeert voor een betere beveiliging automatisch middels het HTTPS-versleutelingsprotocol verbinding te maken met websites.</string>
-    <!-- Summary of tracking protection preference if tracking protection is set to on -->
-    <string name="preferences_https_only_on" moz:removedIn="111" tools:ignore="UnusedResources">Aan</string>
     <!-- Summary of https only preference if https only is set to off -->
     <string name="preferences_https_only_off">Uit</string>
     <!-- Summary of https only preference if https only is set to on in all tabs -->
@@ -725,7 +738,7 @@
 
     <!-- Gestures Preferences-->
     <!-- Preferences for using pull to refresh in a webpage -->
-    <string name="preference_gestures_website_pull_to_refresh">Trek om te vernieuwen</string>
+    <string name="preference_gestures_website_pull_to_refresh">Trekken om te vernieuwen</string>
     <!-- Preference for using the dynamic toolbar -->
     <string name="preference_gestures_dynamic_toolbar">Scrollen om de werkbalk te verbergen</string>
     <!-- Preference for switching tabs by swiping horizontally on the toolbar -->
@@ -768,15 +781,9 @@
     <!-- Dialog button text for canceling open all tabs -->
     <string name="open_all_warning_cancel">Annuleren</string>
 
-    <!-- Text to show users they have one site in the history group section of the History fragment.
-    %d is a placeholder for the number of sites in the group. -->
-    <string name="history_search_group_site" moz:RemovedIn="111" tools:ignore="UnusedResources">%d website</string>
     <!-- Text to show users they have one page in the history group section of the History fragment.
     %d is a placeholder for the number of pages in the group. -->
     <string name="history_search_group_site_1">%d pagina</string>
-    <!-- Text to show users they have multiple sites in the history group section of the History fragment.
-    %d is a placeholder for the number of sites in the group. -->
-    <string name="history_search_group_sites" moz:RemovedIn="111" tools:ignore="UnusedResources">%d websites</string>
 
     <!-- Text to show users they have multiple pages in the history group section of the History fragment.
     %d is a placeholder for the number of pages in the group. -->
@@ -1108,8 +1115,6 @@
     <string name="phone_feature_blocked_by_android">Geblokkeerd door Android</string>
     <!-- Preference for showing a list of websites that the default configurations won't apply to them -->
     <string name="preference_exceptions">Uitzonderingen</string>
-    <!-- Summary of tracking protection preference if tracking protection is set to on -->
-    <string name="tracking_protection_on" moz:removedIn="111" tools:ignore="UnusedResources">Aan</string>
     <!-- Summary of tracking protection preference if tracking protection is set to off -->
     <string name="tracking_protection_off">Uit</string>
 
@@ -1275,11 +1280,11 @@
     <!-- Survey -->
     <!-- Text shown in the fullscreen message that pops up to ask user to take a short survey.
     The app name is in the text, due to limitations with localizing Nimbus experiments -->
-    <string name="nimbus_survey_message_text" tools:ignore="UnusedResources">Help Firefox beter te maken door een korte enquête in te vullen.</string>
+    <string name="nimbus_survey_message_text">Help Firefox beter te maken door een korte enquête in te vullen.</string>
     <!-- Preference for taking the short survey. -->
-    <string name="preferences_take_survey" tools:ignore="UnusedResources">Enquête starten</string>
+    <string name="preferences_take_survey">Enquête starten</string>
     <!-- Preference for not taking the short survey. -->
-    <string name="preferences_not_take_survey" tools:ignore="UnusedResources">Nee bedankt</string>
+    <string name="preferences_not_take_survey">Nee bedankt</string>
 
     <!-- Snackbar -->
     <!-- Text shown in snackbar when user deletes a collection -->
@@ -1494,29 +1499,29 @@
     <!-- Preference title for enhanced tracking protection settings -->
     <string name="preference_enhanced_tracking_protection">Verbeterde bescherming tegen volgen</string>
     <!-- Title for the description of enhanced tracking protection -->
-    <string name="preference_enhanced_tracking_protection_explanation_title">Surf zonder te worden gevolgd</string>
+    <string name="preference_enhanced_tracking_protection_explanation_title" moz:removedIn="114" tools:ignore="UnusedResources">Surf zonder te worden gevolgd</string>
     <!-- Preference summary for enhanced tracking protection settings on/off switch -->
-    <string name="preference_enhanced_tracking_protection_summary" tools:ignore="UnusedResources">Nu met Totale cookiebescherming, onze krachtigste barrière tot nu toe tegen cross-sitetrackers.</string>
+    <string name="preference_enhanced_tracking_protection_summary">Nu met Totale cookiebescherming, onze krachtigste barrière tot nu toe tegen cross-sitetrackers.</string>
     <!-- Description of enhanced tracking protection. The first parameter is the name of the application (For example: Fenix) -->
-    <string name="preference_enhanced_tracking_protection_explanation">Houd uw gegevens voor uzelf. %s beschermt u tegen veel van de meest voorkomende trackers die volgen wat u online doet.</string>
+    <string name="preference_enhanced_tracking_protection_explanation" moz:removedIn="114" tools:ignore="UnusedResources">Houd uw gegevens voor uzelf. %s beschermt u tegen veel van de meest voorkomende trackers die volgen wat u online doet.</string>
     <!-- Description of enhanced tracking protection. The parameter is the name of the application (For example: Firefox Fenix) -->
-    <string name="preference_enhanced_tracking_protection_explanation_2" tools:ignore="UnusedResources">%s beschermt u tegen veel van de meest voorkomende trackers die volgen wat u online doet.</string>
+    <string name="preference_enhanced_tracking_protection_explanation_2">%s beschermt u tegen veel van de meest voorkomende trackers die volgen wat u online doet.</string>
     <!-- Text displayed that links to website about enhanced tracking protection -->
     <string name="preference_enhanced_tracking_protection_explanation_learn_more">Meer info</string>
     <!-- Preference for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_standard_default_1">Standaard (standaard)</string>
     <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description_4">Gebalanceerd voor privacy en prestaties. Pagina’s laden normaal.</string>
+    <string name="preference_enhanced_tracking_protection_standard_description_4" moz:removedIn="114" tools:ignore="UnusedResources">Gebalanceerd voor privacy en prestaties. Pagina’s laden normaal.</string>
     <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description_5" tools:ignore="UnusedResources">Pagina’s worden normaal geladen, maar er worden minder trackers geblokkeerd.</string>
+    <string name="preference_enhanced_tracking_protection_standard_description_5">Pagina’s worden normaal geladen, maar er worden minder trackers geblokkeerd.</string>
     <!--  Accessibility text for the Standard protection information icon  -->
     <string name="preference_enhanced_tracking_protection_standard_info_button">Wat wordt geblokkeerd door standaard bescherming tegen volgen</string>
     <!-- Preference for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict">Streng</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_description_3">Blokkeert meer trackers, zodat pagina’s sneller worden geladen, maar sommige functionaliteit op een pagina werkt mogelijk niet.</string>
+    <string name="preference_enhanced_tracking_protection_strict_description_3" moz:removedIn="114" tools:ignore="UnusedResources">Blokkeert meer trackers, zodat pagina’s sneller worden geladen, maar sommige functionaliteit op een pagina werkt mogelijk niet.</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_description_4" tools:ignore="UnusedResources">Sterkere bescherming tegen volgen en snellere prestaties, maar sommige websites werken mogelijk niet goed.</string>
+    <string name="preference_enhanced_tracking_protection_strict_description_4">Sterkere bescherming tegen volgen en snellere prestaties, maar sommige websites werken mogelijk niet goed.</string>
     <!--  Accessibility text for the Strict protection information icon  -->
     <string name="preference_enhanced_tracking_protection_strict_info_button">Wat wordt geblokkeerd door strenge bescherming tegen volgen</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
@@ -1603,6 +1608,10 @@
     <string name="preference_etp_smartblock_description">Sommige hieronder gelabelde trackers zijn op deze pagina deels gedeblokkeerd, omdat u er interactie mee hebt gehad *.</string>
     <!-- Text displayed that links to website about enhanced tracking protection SmartBlock -->
     <string name="preference_etp_smartblock_learn_more">Meer info</string>
+
+    <!-- Content description (not visible, for screen readers etc.):
+    Enhanced tracking protection exception preference icon for ETP settings. -->
+    <string name="preference_etp_exceptions_icon_description">Pictogram voor de voorkeur voor Verbeterde bescherming tegen volgen-uitzondering</string>
 
     <!-- About page link text to open support link -->
     <string name="about_support">Ondersteuning</string>

@@ -68,8 +68,6 @@
 
     <!-- Private mode shortcut "contextual feature recommendation" (CFR) -->
     <!-- Text for the Private mode shortcut CFR message for adding a private mode shortcut to open private tabs from the Home screen -->
-    <string name="private_mode_cfr_message" moz:removedIn="111" tools:ignore="UnusedResources">פתיחת הלשונית הפרטית הבאה בהקשה אחת.</string>
-    <!-- Text for the Private mode shortcut CFR message for adding a private mode shortcut to open private tabs from the Home screen -->
     <string name="private_mode_cfr_message_2">פתיחת הלשונית הפרטית הבאה שלך בהקשה אחת.</string>
     <!-- Text for the positive button to accept adding a Private Browsing shortcut to the Home screen -->
     <string name="private_mode_cfr_pos_button_text">הוספה למסך הבית</string>
@@ -258,9 +256,6 @@
     <string name="search_settings_menu_item">הגדרות חיפוש</string>
 
     <!-- Header text for the search selector menu -->
-    <string name="search_header_menu_item" moz:RemovedIn="109" tools:ignore="UnusedResources">הפעם לחפש את:</string>
-
-    <!-- Header text for the search selector menu -->
     <string name="search_header_menu_item_2">הפעם לחפש ב:</string>
 
     <!-- Home onboarding -->
@@ -302,26 +297,32 @@
     <!-- Juno first user onboarding flow experiment -->
     <!-- Title for set firefox as default browser screen.
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="juno_onboarding_default_browser_title" tools:ignore="UnusedResources">הגדרת %s כדפדפן ברירת המחדל שלך</string>
+    <string name="juno_onboarding_default_browser_title">הגדרת %s כדפדפן ברירת המחדל שלך</string>
+    <!-- Title for set firefox as default browser screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_default_browser_title_nimbus" tools:ignore="UnusedResources">הגדרת Firefox כדפדפן ברירת המחדל שלך</string>
     <!-- Text for the button to set firefox as default browser on the device -->
-    <string name="juno_onboarding_default_browser_positive_button" tools:ignore="UnusedResources">הגדרה כדפדפן ברירת המחדל</string>
+    <string name="juno_onboarding_default_browser_positive_button">הגדרה כדפדפן ברירת המחדל</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
-    <string name="juno_onboarding_default_browser_negative_button" tools:ignore="UnusedResources">לא כעת</string>
+    <string name="juno_onboarding_default_browser_negative_button">לא כעת</string>
     <!-- Title for sign in to sync screen. -->
-    <string name="juno_onboarding_sign_in_title" tools:ignore="UnusedResources">לקפוץ מהטלפון למחשב הנייד ובחזרה</string>
+    <string name="juno_onboarding_sign_in_title">לקפוץ מהטלפון למחשב הנייד ובחזרה</string>
     <!-- Description for sign in to sync screen. -->
-    <string name="juno_onboarding_sign_in_description" tools:ignore="UnusedResources">ניתן לקבל לשוניות וססמאות מהמכשירים האחרים שלך כדי להמשיך מאיפה שהפסקת.</string>
+    <string name="juno_onboarding_sign_in_description">ניתן לקבל לשוניות וססמאות מהמכשירים האחרים שלך כדי להמשיך מאיפה שהפסקת.</string>
     <!-- Text for the button to sign in to sync on the device -->
-    <string name="juno_onboarding_sign_in_positive_button" tools:ignore="UnusedResources">כניסה</string>
+    <string name="juno_onboarding_sign_in_positive_button">כניסה</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
-    <string name="juno_onboarding_sign_in_negative_button" tools:ignore="UnusedResources">לא כעת</string>
+    <string name="juno_onboarding_sign_in_negative_button">לא כעת</string>
     <!-- Title for enable notification permission screen.
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="juno_onboarding_enable_notifications_title" tools:ignore="UnusedResources">התרעות עוזרות לך לעשות יותר עם %s</string>
+    <string name="juno_onboarding_enable_notifications_title">התרעות עוזרות לך לעשות יותר עם %s</string>
+    <!-- Title for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_enable_notifications_title_nimbus" tools:ignore="UnusedResources">התרעות עוזרות לך לעשות יותר עם Firefox</string>
     <!-- Text for the button to request notification permission on the device -->
-    <string name="juno_onboarding_enable_notifications_positive_button" tools:ignore="UnusedResources">הפעלת התרעות</string>
+    <string name="juno_onboarding_enable_notifications_positive_button">הפעלת התרעות</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
-    <string name="juno_onboarding_enable_notifications_negative_button" tools:ignore="UnusedResources">לא כעת</string>
+    <string name="juno_onboarding_enable_notifications_negative_button">לא כעת</string>
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. The first parameter is the name of the application.-->
@@ -380,8 +381,6 @@
 
     <!-- Description of the preference to enable "HTTPS-Only" mode. -->
     <string name="preferences_https_only_summary">מנסה להתחבר באופן אוטומטי לאתרים באמצעות פרוטוקול ההצפנה HTTPS לצורך אבטחה מוגברת.</string>
-    <!-- Summary of tracking protection preference if tracking protection is set to on -->
-    <string name="preferences_https_only_on" moz:removedIn="111" tools:ignore="UnusedResources">פעיל</string>
     <!-- Summary of https only preference if https only is set to off -->
     <string name="preferences_https_only_off">כבוי</string>
     <!-- Summary of https only preference if https only is set to on in all tabs -->
@@ -691,15 +690,9 @@
     <!-- Dialog button text for canceling open all tabs -->
     <string name="open_all_warning_cancel">ביטול</string>
 
-    <!-- Text to show users they have one site in the history group section of the History fragment.
-    %d is a placeholder for the number of sites in the group. -->
-    <string name="history_search_group_site" moz:RemovedIn="111" tools:ignore="UnusedResources">אתר אחד</string>
     <!-- Text to show users they have one page in the history group section of the History fragment.
     %d is a placeholder for the number of pages in the group. -->
     <string name="history_search_group_site_1">דף אחד (%d)</string>
-    <!-- Text to show users they have multiple sites in the history group section of the History fragment.
-    %d is a placeholder for the number of sites in the group. -->
-    <string name="history_search_group_sites" moz:RemovedIn="111" tools:ignore="UnusedResources">%d אתרים</string>
 
     <!-- Text to show users they have multiple pages in the history group section of the History fragment.
     %d is a placeholder for the number of pages in the group. -->
@@ -1033,8 +1026,6 @@
     <!-- Preference for showing a list of websites that the default configurations won't apply to them -->
     <string name="preference_exceptions">חריגות</string>
 
-    <!-- Summary of tracking protection preference if tracking protection is set to on -->
-    <string name="tracking_protection_on" moz:removedIn="111" tools:ignore="UnusedResources">פעילה</string>
     <!-- Summary of tracking protection preference if tracking protection is set to off -->
     <string name="tracking_protection_off">כבויה</string>
 
@@ -1199,11 +1190,11 @@
     <!-- Survey -->
     <!-- Text shown in the fullscreen message that pops up to ask user to take a short survey.
     The app name is in the text, due to limitations with localizing Nimbus experiments -->
-    <string name="nimbus_survey_message_text" tools:ignore="UnusedResources">אנא עזרו לשפר את Firefox על־ידי השתתפות בסקר קצר.</string>
+    <string name="nimbus_survey_message_text">אנא עזרו לשפר את Firefox על־ידי השתתפות בסקר קצר.</string>
     <!-- Preference for taking the short survey. -->
-    <string name="preferences_take_survey" tools:ignore="UnusedResources">לקיחת סקר</string>
+    <string name="preferences_take_survey">לקיחת סקר</string>
     <!-- Preference for not taking the short survey. -->
-    <string name="preferences_not_take_survey" tools:ignore="UnusedResources">לא תודה</string>
+    <string name="preferences_not_take_survey">לא תודה</string>
 
     <!-- Snackbar -->
     <!-- Text shown in snackbar when user deletes a collection -->
@@ -1420,27 +1411,29 @@
     <!-- Preference title for enhanced tracking protection settings -->
     <string name="preference_enhanced_tracking_protection">הגנת מעקב מתקדמת</string>
     <!-- Title for the description of enhanced tracking protection -->
-    <string name="preference_enhanced_tracking_protection_explanation_title">לגלוש מבלי שעוקבים אחריך</string>
+    <string name="preference_enhanced_tracking_protection_explanation_title" moz:removedIn="114" tools:ignore="UnusedResources">לגלוש מבלי שעוקבים אחריך</string>
+    <!-- Preference summary for enhanced tracking protection settings on/off switch -->
+    <string name="preference_enhanced_tracking_protection_summary">כעת כולל הגנת עוגיות מלאה, המחסום החזק ביותר שלנו עד כה נגד רכיבי מעקב חוצי אתרים.</string>
     <!-- Description of enhanced tracking protection. The first parameter is the name of the application (For example: Fenix) -->
-    <string name="preference_enhanced_tracking_protection_explanation">הנתונים שלך נשארים אצלך. %s מגן עליך מפני רוב רכיבי הריגול שעוקבים אחר הפעילות המקוונת שלך.</string>
+    <string name="preference_enhanced_tracking_protection_explanation" moz:removedIn="114" tools:ignore="UnusedResources">הנתונים שלך נשארים אצלך. %s מגן עליך מפני רוב רכיבי הריגול שעוקבים אחר הפעילות המקוונת שלך.</string>
     <!-- Description of enhanced tracking protection. The parameter is the name of the application (For example: Firefox Fenix) -->
-    <string name="preference_enhanced_tracking_protection_explanation_2" tools:ignore="UnusedResources">‏%s מגן עליך מפני רוב רכיבי הריגול שעוקבים אחר הפעילות המקוונת שלך.</string>
+    <string name="preference_enhanced_tracking_protection_explanation_2">‏%s מגן עליך מפני רוב רכיבי הריגול שעוקבים אחר הפעילות המקוונת שלך.</string>
     <!-- Text displayed that links to website about enhanced tracking protection -->
     <string name="preference_enhanced_tracking_protection_explanation_learn_more">מידע נוסף</string>
     <!-- Preference for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_standard_default_1">רגיל (ברירת מחדל)</string>
     <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description_4">מאוזן בין פרטיות לביצועים. דפים ייטענו כרגיל.</string>
+    <string name="preference_enhanced_tracking_protection_standard_description_4" moz:removedIn="114" tools:ignore="UnusedResources">מאוזן בין פרטיות לביצועים. דפים ייטענו כרגיל.</string>
     <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description_5" tools:ignore="UnusedResources">הדפים ייטענו כרגיל, אך פחות רכיבי מעקב ייחסמו.</string>
+    <string name="preference_enhanced_tracking_protection_standard_description_5">הדפים ייטענו כרגיל, אך פחות רכיבי מעקב ייחסמו.</string>
     <!--  Accessibility text for the Standard protection information icon  -->
     <string name="preference_enhanced_tracking_protection_standard_info_button">מה נחסם על־ידי הגנת מעקב רגילה</string>
     <!-- Preference for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict">מחמיר</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_description_3">חוסם יותר רכיבי מעקב כדי שדפים ייטענו מהר יותר, אך ייתכן שפונקציונליות בדפים מסויימים לא תעבוד.</string>
+    <string name="preference_enhanced_tracking_protection_strict_description_3" moz:removedIn="114" tools:ignore="UnusedResources">חוסם יותר רכיבי מעקב כדי שדפים ייטענו מהר יותר, אך ייתכן שפונקציונליות בדפים מסויימים לא תעבוד.</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_description_4" tools:ignore="UnusedResources">הגנת מעקב חזקה יותר וביצועים מהירים יותר, אך מספר אתרים עשויים שלא לעבוד כראוי.</string>
+    <string name="preference_enhanced_tracking_protection_strict_description_4">הגנת מעקב חזקה יותר וביצועים מהירים יותר, אך מספר אתרים עשויים שלא לעבוד כראוי.</string>
     <!--  Accessibility text for the Strict protection information icon  -->
     <string name="preference_enhanced_tracking_protection_strict_info_button">מה נחסם על־ידי הגנת מעקב מחמירה</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
@@ -1525,6 +1518,10 @@
 
     <!-- Text displayed that links to website about enhanced tracking protection SmartBlock -->
     <string name="preference_etp_smartblock_learn_more">מידע נוסף</string>
+
+    <!-- Content description (not visible, for screen readers etc.):
+    Enhanced tracking protection exception preference icon for ETP settings. -->
+    <string name="preference_etp_exceptions_icon_description">סמל של העדפת חריגות להגנת מעקב מתקדמת</string>
 
     <!-- About page link text to open support link -->
     <string name="about_support">תמיכה</string>

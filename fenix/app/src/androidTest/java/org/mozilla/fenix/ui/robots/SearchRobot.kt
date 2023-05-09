@@ -39,6 +39,8 @@ import org.mozilla.fenix.helpers.Constants
 import org.mozilla.fenix.helpers.Constants.LONG_CLICK_DURATION
 import org.mozilla.fenix.helpers.Constants.RETRY_COUNT
 import org.mozilla.fenix.helpers.Constants.SPEECH_RECOGNITION
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdAndText
 import org.mozilla.fenix.helpers.SessionLoadedIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
@@ -61,7 +63,7 @@ class SearchRobot {
         if (enabled) {
             assertTrue(voiceSearchButton.waitForExists(waitingTime))
         } else {
-            assertFalse(voiceSearchButton.waitForExists(waitingTime))
+            assertFalse(voiceSearchButton.waitForExists(waitingTimeShort))
         }
     }
 
@@ -142,7 +144,7 @@ class SearchRobot {
         for (searchSuggestion in searchSuggestions) {
             assertFalse(
                 mDevice.findObject(UiSelector().textContains(searchSuggestion))
-                    .waitForExists(waitingTime),
+                    .waitForExists(waitingTimeShort),
             )
         }
     }
@@ -204,18 +206,18 @@ class SearchRobot {
         rule.selectDefaultSearchEngine(searchEngineName)
 
     fun clickSearchEngineShortcutButton() {
-        val searchEnginesShortcutButton = mDevice.findObject(
-            UiSelector()
-                .resourceId("$packageName:id/search_engines_shortcut_button"),
-        )
-        searchEnginesShortcutButton.waitForExists(waitingTime)
-        searchEnginesShortcutButton.click()
+        itemWithResId("$packageName:id/search_engines_shortcut_button").also {
+            it.waitForExists(waitingTime)
+            it.click()
+        }
+        mDevice.waitForIdle(waitingTimeShort)
     }
 
-    fun clickScanButton() {
-        scanButton.waitForExists(waitingTime)
-        scanButton.click()
-    }
+    fun clickScanButton() =
+        scanButton.also {
+            it.waitForExists(waitingTime)
+            it.click()
+        }
 
     fun clickDismissPermissionRequiredDialog() {
         dismissPermissionButton.waitForExists(waitingTime)
@@ -399,7 +401,10 @@ private val goToPermissionsSettingsButton =
     mDevice.findObject(UiSelector().text("GO TO SETTINGS"))
 
 private val scanButton =
-    mDevice.findObject(UiSelector().resourceId("$packageName:id/qr_scan_button"))
+    itemWithResIdAndText(
+        "$packageName:id/qr_scan_button",
+        getStringResource(R.string.search_scan_button),
+    )
 
 private fun clearButton() =
     mDevice.findObject(UiSelector().resourceId("$packageName:id/mozac_browser_toolbar_clear_view"))
