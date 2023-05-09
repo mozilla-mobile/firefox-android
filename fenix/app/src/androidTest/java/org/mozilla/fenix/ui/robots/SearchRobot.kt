@@ -39,6 +39,7 @@ import org.mozilla.fenix.helpers.Constants
 import org.mozilla.fenix.helpers.Constants.LONG_CLICK_DURATION
 import org.mozilla.fenix.helpers.Constants.RETRY_COUNT
 import org.mozilla.fenix.helpers.Constants.SPEECH_RECOGNITION
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdAndText
 import org.mozilla.fenix.helpers.SessionLoadedIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
@@ -62,7 +63,7 @@ class SearchRobot {
         if (enabled) {
             assertTrue(voiceSearchButton.waitForExists(waitingTime))
         } else {
-            assertFalse(voiceSearchButton.waitForExists(waitingTime))
+            assertFalse(voiceSearchButton.waitForExists(waitingTimeShort))
         }
     }
 
@@ -143,7 +144,7 @@ class SearchRobot {
         for (searchSuggestion in searchSuggestions) {
             assertFalse(
                 mDevice.findObject(UiSelector().textContains(searchSuggestion))
-                    .waitForExists(waitingTime),
+                    .waitForExists(waitingTimeShort),
             )
         }
     }
@@ -205,12 +206,11 @@ class SearchRobot {
         rule.selectDefaultSearchEngine(searchEngineName)
 
     fun clickSearchEngineShortcutButton() {
-        val searchEnginesShortcutButton = mDevice.findObject(
-            UiSelector()
-                .resourceId("$packageName:id/search_engines_shortcut_button"),
-        )
-        searchEnginesShortcutButton.waitForExists(waitingTime)
-        searchEnginesShortcutButton.click()
+        itemWithResId("$packageName:id/search_engines_shortcut_button").also {
+            it.waitForExists(waitingTime)
+            it.click()
+        }
+        mDevice.waitForIdle(waitingTimeShort)
     }
 
     fun clickScanButton() =
