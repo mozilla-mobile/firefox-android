@@ -54,7 +54,7 @@ object Versions {
     const val compose_compiler = "1.4.7"
 
     object AndroidX {
-        const val activityCompose = "1.4.0"
+        const val activityCompose = "1.7.1"
         const val annotation = "1.6.0"
         const val appcompat = "1.6.1"
         const val autofill = "1.1.0"
@@ -62,8 +62,8 @@ object Versions {
         const val biometric = "1.1.0"
         const val cardview = "1.0.0"
         const val compose = compose_version
-        const val constraintlayout = "2.0.4"
-        const val coordinatorlayout = "1.1.0"
+        const val constraintlayout = "2.1.4"
+        const val coordinatorlayout = "1.2.0"
         const val core = "1.10.0"
         const val fragment = "1.5.7"
         const val recyclerview = "1.3.0"
