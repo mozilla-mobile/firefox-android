@@ -2,6 +2,9 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+// If you ever need to force a toolchain rebuild (taskcluster) then edit the following comment.
+// FORCE REBUILD 2023-05-04
+
 object FocusVersions {
     object Adjust {
         const val adjust = "4.33.0"
@@ -12,9 +15,9 @@ object FocusVersions {
         const val annotation = "1.6.0"
         const val appcompat = "1.6.1"
         const val arch = "2.1.0"
-        const val browser = "1.4.0"
+        const val browser = "1.5.0"
         const val cardview = "1.0.0"
-        const val compose = "1.4.2"
+        const val compose = "1.4.3"
         const val constraint_layout = "2.1.4"
         const val constraint_layout_compose = "1.0.1"
         const val core = "1.10.0"
@@ -32,18 +35,18 @@ object FocusVersions {
 
     object Google {
         const val accompanist = "0.16.1"
-        const val compose_compiler = "1.4.6"
+        const val compose_compiler = "1.4.7"
         const val material = "1.7.0"
         const val play = "1.10.3"
     }
 
     object Gradle {
-        const val android_plugin = "7.4.1"
+        const val android_plugin = "7.4.2"
         const val kotlin_plugin = Kotlin.compiler
     }
 
     object Kotlin {
-        const val compiler = "1.8.20"
+        const val compiler = "1.8.21"
         const val coroutines = "1.6.4"
     }
 

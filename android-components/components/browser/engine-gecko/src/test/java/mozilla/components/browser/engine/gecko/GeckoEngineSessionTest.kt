@@ -329,6 +329,8 @@ class GeckoEngineSessionTest {
         val response = WebResponse.Builder("https://download.mozilla.org/image.png")
             .addHeader(Headers.Names.CONTENT_TYPE, "image/png")
             .addHeader(Headers.Names.CONTENT_LENGTH, "42")
+            .skipConfirmation(true)
+            .requestExternalApp(true)
             .body(mock())
             .build()
 
@@ -344,6 +346,8 @@ class GeckoEngineSessionTest {
             cookie = eq(null),
             userAgent = eq(null),
             isPrivate = eq(true),
+            skipConfirmation = eq(true),
+            openInApp = eq(true),
             response = captor.capture(),
         )
 
@@ -3724,6 +3728,8 @@ class GeckoEngineSessionTest {
                     cookie: String?,
                     userAgent: String?,
                     isPrivate: Boolean,
+                    skipConfirmation: Boolean,
+                    openInApp: Boolean,
                     response: Response?,
                 ) {
                     assertEquals("PDF response is always a success.", RESPONSE_CODE_SUCCESS, response!!.status)
@@ -3756,6 +3762,8 @@ class GeckoEngineSessionTest {
                     cookie: String?,
                     userAgent: String?,
                     isPrivate: Boolean,
+                    skipConfirmation: Boolean,
+                    openInApp: Boolean,
                     response: Response?,
                 ) {
                     assert(false) { "We should not notify observers." }

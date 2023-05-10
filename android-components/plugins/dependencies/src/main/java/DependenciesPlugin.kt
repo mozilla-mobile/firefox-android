@@ -6,7 +6,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.initialization.Settings
 
 // If you ever need to force a toolchain rebuild (taskcluster) then edit the following comment.
-// FORCE REBUILD 2023-03-16
+// FORCE REBUILD 2023-05-05
 
 class DependenciesPlugin : Plugin<Settings> {
     override fun apply(settings: Settings) = Unit
@@ -14,7 +14,7 @@ class DependenciesPlugin : Plugin<Settings> {
 
 // Synchronized version numbers for dependencies used by (some) modules
 object Versions {
-    const val kotlin = "1.8.20"
+    const val kotlin = "1.8.21"
     const val coroutines = "1.6.4"
     const val serialization = "1.5.0"
 
@@ -27,11 +27,11 @@ object Versions {
     const val mockwebserver = "3.10.0"
     const val okhttp = "3.13.1"
 
-    const val android_gradle_plugin = "7.4.1"
+    const val android_gradle_plugin = "7.4.2"
 
     // This has to be synced to the gradlew plugin version. See
     // http://googlesamples.github.io/android-custom-lint-rules/api-guide/example.md.html#example:samplelintcheckgithubproject/lintversion?
-    const val lint = "30.4.1"
+    const val lint = "30.4.2"
     const val detekt = "1.19.0"
 
     const val sentry_latest = "6.18.1"
@@ -50,23 +50,23 @@ object Versions {
 
     // see https://android-developers.googleblog.com/2022/06/independent-versioning-of-Jetpack-Compose-libraries.html
     // for Jetpack Compose libraries versioning
-    const val compose_version = "1.4.2"
-    const val compose_compiler = "1.4.6"
+    const val compose_version = "1.4.3"
+    const val compose_compiler = "1.4.7"
 
     object AndroidX {
-        const val activityCompose = "1.4.0"
+        const val activityCompose = "1.7.1"
         const val annotation = "1.6.0"
         const val appcompat = "1.6.1"
         const val autofill = "1.1.0"
-        const val browser = "1.3.0"
+        const val browser = "1.5.0"
         const val biometric = "1.1.0"
         const val cardview = "1.0.0"
         const val compose = compose_version
-        const val constraintlayout = "2.0.4"
-        const val coordinatorlayout = "1.1.0"
+        const val constraintlayout = "2.1.4"
+        const val coordinatorlayout = "1.2.0"
         const val core = "1.10.0"
         const val fragment = "1.5.7"
-        const val recyclerview = "1.2.0"
+        const val recyclerview = "1.3.0"
         const val test = "1.5.0"
         const val test_ext = "1.1.5"
         const val test_runner = "1.5.2"

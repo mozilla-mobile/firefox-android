@@ -46,10 +46,12 @@ import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithDescription
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdAndText
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdContainingText
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithText
 import org.mozilla.fenix.helpers.SessionLoadedIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeLong
+import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
 import org.mozilla.fenix.helpers.TestHelper.getStringResource
 import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.packageName
@@ -436,9 +438,14 @@ class BrowserRobot {
 
     fun fillAndSaveCreditCard(cardNumber: String, cardName: String, expiryMonthAndYear: String) {
         itemWithResId("cardNumber").setText(cardNumber)
+        mDevice.waitForIdle(waitingTime)
         itemWithResId("nameOnCard").setText(cardName)
+        mDevice.waitForIdle(waitingTime)
         itemWithResId("expiryMonthAndYear").setText(expiryMonthAndYear)
+        mDevice.waitForIdle(waitingTime)
         itemWithResId("submit").clickAndWaitForNewWindow(waitingTime)
+        waitForPageToLoad()
+        mDevice.waitForWindowUpdate(packageName, waitingTime)
     }
 
     fun verifyUpdateOrSaveCreditCardPromptExists(exists: Boolean) =
@@ -634,7 +641,7 @@ class BrowserRobot {
             mDevice.findObject(
                 UiSelector()
                     .text("Selected date is: $currentDate"),
-            ).waitForExists(waitingTime),
+            ).waitForExists(waitingTimeShort),
         )
     }
 
@@ -737,7 +744,7 @@ class BrowserRobot {
             mDevice.findObject(
                 UiSelector()
                     .text("Selected date is: $hour:$minute"),
-            ).waitForExists(waitingTime),
+            ).waitForExists(waitingTimeShort),
         )
     }
 
@@ -746,7 +753,7 @@ class BrowserRobot {
             mDevice.findObject(
                 UiSelector()
                     .text("Selected date is: $hexValue"),
-            ).waitForExists(waitingTime),
+            ).waitForExists(waitingTimeShort),
         )
     }
 
@@ -816,6 +823,48 @@ class BrowserRobot {
         )
         assertItemWithResIdExists(itemWithResId("errorTryAgain"))
     }
+
+    fun verifyOpenLinksInAppsCFRExists(exists: Boolean) {
+        for (i in 1..RETRY_COUNT) {
+            try {
+                assertItemWithResIdExists(
+                    itemWithResId("$packageName:id/banner_container"),
+                    exists = exists,
+                )
+                assertItemWithResIdAndTextExists(
+                    itemWithResIdContainingText(
+                        "$packageName:id/banner_info_message",
+                        getStringResource(R.string.open_in_app_cfr_info_message_2),
+                    ),
+                    itemWithResIdContainingText(
+                        "$packageName:id/dismiss",
+                        getStringResource(R.string.open_in_app_cfr_negative_button_text),
+                    ),
+                    itemWithResIdContainingText(
+                        "$packageName:id/action",
+                        getStringResource(R.string.open_in_app_cfr_positive_button_text),
+                    ),
+                    exists = exists,
+                )
+            } catch (e: AssertionError) {
+                if (i == RETRY_COUNT) {
+                    throw e
+                } else {
+                    browserScreen {
+                    }.openThreeDotMenu {
+                    }.refreshPage {
+                        progressBar.waitUntilGone(waitingTimeLong)
+                    }
+                }
+            }
+        }
+    }
+
+    fun clickOpenLinksInAppsDismissCFRButton() =
+        itemWithResIdContainingText(
+            "$packageName:id/dismiss",
+            getStringResource(R.string.open_in_app_cfr_negative_button_text),
+        ).click()
 
     class Transition {
         fun openThreeDotMenu(interact: ThreeDotMenuMainRobot.() -> Unit): ThreeDotMenuMainRobot.Transition {
@@ -1016,6 +1065,16 @@ class BrowserRobot {
 
             SettingsSubMenuAutofillRobot().interact()
             return SettingsSubMenuAutofillRobot.Transition()
+        }
+
+        fun clickOpenLinksInAppsGoToSettingsCFRButton(interact: SettingsRobot.() -> Unit): SettingsRobot.Transition {
+            itemWithResIdContainingText(
+                "$packageName:id/action",
+                getStringResource(R.string.open_in_app_cfr_positive_button_text),
+            ).clickAndWaitForNewWindow(waitingTime)
+
+            SettingsRobot().interact()
+            return SettingsRobot.Transition()
         }
     }
 }
