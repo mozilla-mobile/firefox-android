@@ -19,7 +19,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -72,8 +71,12 @@ import mozilla.components.browser.storage.sync.Tab as SyncTab
  * @param onInactiveTabClick Invoked when the user clicks on an inactive tab.
  * @param onInactiveTabClose Invoked when the user clicks on an inactive tab's close button.
  * @param onSyncedTabClick Invoked when the user clicks on a synced tab.
+ * @param onSaveToCollectionClick Invoked when the user clicks on the save to collection button from
+ * the multi select banner.
+ * @param onShareSelectedTabsClick Invoked when the user clicks on the share button from the
+ * multi select banner.
  */
-@OptIn(ExperimentalPagerApi::class, ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalPagerApi::class)
 @Suppress("LongMethod", "LongParameterList", "ComplexMethod")
 @Composable
 fun TabsTray(
@@ -97,6 +100,8 @@ fun TabsTray(
     onInactiveTabClick: (TabSessionState) -> Unit,
     onInactiveTabClose: (TabSessionState) -> Unit,
     onSyncedTabClick: (SyncTab) -> Unit,
+    onSaveToCollectionClick: () -> Unit,
+    onShareSelectedTabsClick: () -> Unit,
 ) {
     val normalTabCount = browserStore
         .observeAsComposableState { state -> state.normalTabs.size }.value ?: 0
@@ -139,6 +144,8 @@ fun TabsTray(
                 isInDebugMode = isInDebugMode,
                 onTabPageIndicatorClicked = onTabPageClick,
                 onExitSelectModeClick = { tabsTrayStore.dispatch(TabsTrayAction.ExitSelectMode) },
+                onSaveToCollectionClick = onSaveToCollectionClick,
+                onShareSelectedTabsClick = onShareSelectedTabsClick,
             )
         }
 
@@ -491,6 +498,8 @@ private fun TabsTrayPreviewRoot(
             onInactiveTabClick = {},
             onInactiveTabClose = inactiveTabsState::remove,
             onSyncedTabClick = {},
+            onSaveToCollectionClick = {},
+            onShareSelectedTabsClick = {},
         )
     }
 }

@@ -63,6 +63,9 @@ private val ICON_SIZE = 24.dp
  * @param onTabPageIndicatorClicked Invoked when the user clicks on a tab page indicator.
  * @param onExitSelectModeClick Invoked when the user clicks on exit select mode button from the
  * multi select banner.
+ * @param onSaveToCollectionClick Invoked when the user clicks on the save to collection button from
+ * the multi select banner.
+ * @param onShareSelectedTabsClick Invoked when the user clicks on the share button from the multi select banner.
  */
 @Suppress("LongParameterList")
 @Composable
@@ -73,12 +76,16 @@ fun TabsTrayBanner(
     isInDebugMode: Boolean,
     onTabPageIndicatorClicked: (Page) -> Unit,
     onExitSelectModeClick: () -> Unit,
+    onSaveToCollectionClick: () -> Unit,
+    onShareSelectedTabsClick: () -> Unit,
 ) {
     if (selectMode is TabsTrayState.Mode.Select) {
         MultiSelectBanner(
             selectedTabCount = selectMode.selectedTabs.size,
             shouldShowInactiveButton = isInDebugMode,
             onExitSelectModeClick = onExitSelectModeClick,
+            onSaveToCollectionsClick = onSaveToCollectionClick,
+            onShareSelectedTabs = onShareSelectedTabsClick,
         )
     } else {
         SingleSelectBanner(
@@ -222,6 +229,8 @@ private fun NormalTabsTabIcon(normalTabCount: Int) {
  * @param selectedTabCount Number of selected tabs.
  * @param shouldShowInactiveButton Whether or not to show the inactive tabs menu item.
  * @param onExitSelectModeClick Invoked when the user clicks on exit select mode button.
+ * @param onSaveToCollectionsClick Invoked when the user clicks on the save to collection button.
+ * @param onShareSelectedTabs Invoked when the user clicks on the share button.
  */
 @Suppress("LongMethod")
 @Composable
@@ -229,6 +238,8 @@ private fun MultiSelectBanner(
     selectedTabCount: Int,
     shouldShowInactiveButton: Boolean,
     onExitSelectModeClick: () -> Unit,
+    onSaveToCollectionsClick: () -> Unit,
+    onShareSelectedTabs: () -> Unit,
 ) {
     var showMenu by remember { mutableStateOf(false) }
     val menuItems = mutableListOf(
@@ -272,7 +283,7 @@ private fun MultiSelectBanner(
 
         Spacer(modifier = Modifier.weight(1.0f))
 
-        IconButton(onClick = {}) {
+        IconButton(onClick = onSaveToCollectionsClick) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_tab_collection),
                 contentDescription = stringResource(
@@ -282,7 +293,7 @@ private fun MultiSelectBanner(
             )
         }
 
-        IconButton(onClick = {}) {
+        IconButton(onClick = onShareSelectedTabs) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_share),
                 contentDescription = stringResource(
@@ -369,6 +380,8 @@ private fun TabsTrayBannerPreviewRoot(
                     selectedPageState = page
                 },
                 onExitSelectModeClick = { selectModeState = TabsTrayState.Mode.Normal },
+                onSaveToCollectionClick = {},
+                onShareSelectedTabsClick = {},
             )
         }
     }
