@@ -18,7 +18,7 @@ import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.whenStarted
+import androidx.lifecycle.withStarted
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -139,7 +139,7 @@ class TrackingProtectionPanelDialogFragment : AppCompatDialogFragment(), UserInt
         observeTrackersChange(store)
         protectionsStore.observe(view) {
             viewLifecycleOwner.lifecycleScope.launch {
-                whenStarted {
+                withStarted {
                     trackingProtectionView.update(it)
                 }
             }
@@ -169,6 +169,8 @@ class TrackingProtectionPanelDialogFragment : AppCompatDialogFragment(), UserInt
             object : BottomSheetDialog(requireContext(), this.theme) {
                 @Deprecated("Deprecated in Java")
                 override fun onBackPressed() {
+                    @Suppress("DEPRECATION")
+                    super.onBackPressed()
                     this@TrackingProtectionPanelDialogFragment.onBackPressed()
                 }
             }.apply {

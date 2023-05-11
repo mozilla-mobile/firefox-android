@@ -56,13 +56,16 @@
     <!-- About content. The first parameter is the name of the application. (For example: Fenix) -->
     <string name="about_content">%1$s የሚመረተው በሞዚላ ነው።</string>
 
+    <!-- Private Browsing -->
+    <!-- Explanation for private browsing displayed to users on home view when they first enable private mode
+        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
+    <string name="private_browsing_placeholder_description_2">
+        %1$s ሲዘጉ ወይም መተግበሪያውን ሲያቆሙ የፍለጋ እና የአሰሳ ታሪክዎን ከግል ትሮች ያጸዳል። ይህ እርስዎን ለድር ጣቢያዎች ወይም የበይነመረብ አገልግሎት አቅራቢዎ ስም-አልባ ባያደርግም፣ በመስመር ላይ የሚያደርጉትን ይህን መሳሪያ ከሚጠቀም ከማንኛውም ሰው የግል ማድረግን ቀላል ያደርገዋል።</string>
     <string name="private_browsing_common_myths">
        ስለግል አሰሳ የተለመዱ አፈ ታሪኮች
     </string>
 
     <!-- Private mode shortcut "contextual feature recommendation" (CFR) -->
-    <!-- Text for the Private mode shortcut CFR message for adding a private mode shortcut to open private tabs from the Home screen -->
-    <string name="private_mode_cfr_message" moz:removedIn="111" tools:ignore="UnusedResources">አንዴ መታ በማድረግ ቀጣዩን የግል ትር አስጀምር።</string>
     <!-- Text for the Private mode shortcut CFR message for adding a private mode shortcut to open private tabs from the Home screen -->
     <string name="private_mode_cfr_message_2">አንዴ መታ በማድረግ ቀጣዩን የግል ትር አስጀምር።</string>
     <!-- Text for the positive button to accept adding a Private Browsing shortcut to the Home screen -->
@@ -78,6 +81,9 @@
     <!-- Text for the negative action button -->
     <string name="open_in_app_cfr_negative_button_text">አሰናብት</string>
 
+    <!-- Total cookie protection "contextual feature recommendation" (CFR) -->
+    <!-- Text for the message displayed in the contextual feature recommendation popup promoting the total cookie protection feature. -->
+    <string name="tcp_cfr_message">የእኛ በጣም ኃይለኛ የግላዊነት ባህሪ ግን የድረ-ገጽ ተሻጋሪ መከታተያዎችን ያገላል።</string>
     <!-- Text displayed that links to website containing documentation about the "Total cookie protection" feature. -->
     <string name="tcp_cfr_learn_more">ስለ አጠቃላይ የኩኪ ጥበቃ ይወቁ</string>
 
@@ -246,11 +252,11 @@
     <string name="search_settings_menu_item">የፍለጋ ቅንብሮች</string>
 
     <!-- Header text for the search selector menu -->
-    <string name="search_header_menu_item" moz:RemovedIn="109" tools:ignore="UnusedResources">በዚህ ጊዜ ፍለጋ፡-</string>
-
-    <!-- Header text for the search selector menu -->
     <string name="search_header_menu_item_2">በዚህ ጊዜ ፍለጋ በ፡-</string>
 
+    <!-- Home onboarding -->
+    <!-- Onboarding home screen popup dialog, shown on top of the Jump back in section. -->
+    <string name="onboarding_home_screen_jump_back_contextual_hint_2">የእርስዎን ግላዊ መነሻ ገጽ ያግኙ። የቅርብ ጊዜ ትሮች፣ እልባቶች እና የፍለጋ ውጤቶች እዚህ ይታያሉ።</string>
     <!-- Home onboarding dialog welcome screen title text. -->
     <string name="onboarding_home_welcome_title_2">ወደ የግል በይነመረብ እንኳን በደህና መጡ</string>
     <!-- Home onboarding dialog welcome screen description text. -->
@@ -282,6 +288,20 @@
     <!-- Text for the button to not request notification permission on the device and dismiss the dialog -->
     <string name="onboarding_home_enable_notifications_negative_button">አሁን አይሆንም</string>
 
+    <!-- Juno first user onboarding flow experiment -->
+    <!-- Title for set firefox as default browser screen.
+        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
+    <string name="juno_onboarding_default_browser_title">%sን ነባሪ አሳሽዎ ያድርጉ</string>
+    <!-- Title for set firefox as default browser screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_default_browser_title_nimbus" tools:ignore="UnusedResources">ፋየርፎክስን ነባሪ አሳሽዎ ያድርጉ</string>
+    <!-- Description for set firefox as default browser screen.
+        The first parameter is the Firefox brand name.
+        The second parameter is the string with key "juno_onboarding_default_browser_description_link_text". -->
+    <string name="juno_onboarding_default_browser_description">%1$s ሰዎችን ከትርፍ በላይ ያስቀምጣቸዋል እና ድረ-ገጽ ተሻጋሪ መከታተያዎችን በማገድ የእርስዎን ግላዊነት ይጠብቃል።\n\nበእኛ %2$s ውስጥ የበለጠ ይወቁ።</string>
+    <!-- Description for set firefox as default browser screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_default_browser_description_nimbus" tools:ignore="UnusedResources">ፋየርፎክስ ሰዎችን ከትርፍ በላይ ያስቀድማል እና ድረ-ገጽ ተሻጋሪ መከታተያዎችን በማገድ የእርስዎን ግላዊነት ይጠብቃል።\n\nበግላዊነት ማስታወቂያችን ውስጥ የበለጠ ይረዱ።</string>
     <!-- Text for the link to the privacy notice webpage for set as firefox default browser screen.
     This is part of the string with the key "juno_onboarding_default_browser_description". -->
     <string name="juno_onboarding_default_browser_description_link_text">የግላዊነት ማስታወቂያ</string>
@@ -301,9 +321,15 @@
     <!-- Title for enable notification permission screen.
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
     <string name="juno_onboarding_enable_notifications_title">ማሳወቂያዎች በ%s የበለጠ እንዲከውኑ ያግዝዎታል</string>
+    <!-- Title for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_enable_notifications_title_nimbus" tools:ignore="UnusedResources">ማሳወቂያዎች በፋየርፎክስ የበለጠ እንዲሰሩ ያግዝዎታል</string>
     <!-- Description for enable notification permission screen.
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
     <string name="juno_onboarding_enable_notifications_description">በመሳሪያዎች መካከል ትሮችን ይላኩ፣ ውርዶችን ያስተዳድሩ እና %sን የበለጠ ለመጠቀም ምክሮችን ያግኙ።</string>
+    <!-- Description for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+       Note: The word "Firefox" should NOT be translated   -->
+    <string name="juno_onboarding_enable_notifications_description_nimbus" tools:ignore="UnusedResources">በመሳሪያዎች መካከል ትሮችን ይላኩ፣ ውርዶችን ያስተዳድሩ እና ከፋየርፎክስ የበለጠ ለመጠቀም ምክሮችን ያግኙ።</string>
     <!-- Text for the button to request notification permission on the device -->
     <string name="juno_onboarding_enable_notifications_positive_button">ማሳወቂያዎችን ያብሩ</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
@@ -371,28 +397,36 @@
     <string name="reduce_cookie_banner_summary_1">%1$s በኩኪ ሰንደቆች ላይ የኩኪ ጥያቄዎችን በራስ-ሰር ውድቅ ለማድረግ ይሞክራል።</string>
     <!-- Text for indicating cookie banner handling is off this site, this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_off_for_site">ለዚህ ድረ-ገፅ ጠፍቷል</string>
+    <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
+    <string name="cookie_banner_handling_details_site_is_not_supported_cancel_button">ተወው</string>
+    <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
+    <string name="cookie_banner_handling_details_site_is_not_supported_request_support_button">ድጋፍ ይጠይቁ</string>
+    <!-- Text for title indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
+    <string name="cookie_banner_handling_details_site_is_not_supported_title">የኩኪ ሰሌዳ ቅነሳ</string>
+    <!-- Label for the snackBar, after the user reports with success a website where cookie banner reducer did not work -->
+    <string name="cookie_banner_handling_report_site_snack_bar_text">የድረ-ገጽ ድጋፍ ጥያቄ ገብቷል።</string>
     <!-- Text for indicating cookie banner handling is on this site, this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_on_for_site">ለዚህ ድረ-ገፅ በርቷል</string>
+    <!-- Text for indicating that a request for unsupported site was sent to Nimbus (it's a Mozilla library for experiments), this is shown as part of the protections panel with the tracking protection toggle -->
+    <string name="reduce_cookie_banner_unsupported_site_request_submitted">የድረ-ገጽ ድጋፍ ጥያቄ ገብቷል</string>
     <!-- Text for indicating cookie banner handling is currently not supported for this site, this is shown as part of the protections panel with the tracking protection toggle -->
-    <string name="reduce_cookie_banner_unsupported_site" tools:ignore="UnusedResources">በአሁኑ ጊዜ የማይደገፍ ድረ-ገፅ</string>
+    <string name="reduce_cookie_banner_unsupported_site">በአሁኑ ጊዜ የማይደገፍ ድረ-ገፅ</string>
     <!-- Title text for a detail explanation indicating cookie banner handling is on this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
     <string name="reduce_cookie_banner_details_panel_title_on_for_site">ለ%1$s የኩኪ ሰሌዳ ቅነሳ ይብራ?</string>
 
 
     <!-- Title text for a detail explanation indicating cookie banner handling is off this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
     <string name="reduce_cookie_banner_details_panel_title_off_for_site">ለ%1$s የኩኪ ሰሌዳ ቅነሳ ይጥፋ?</string>
+    <!-- Title text for a detail explanation indicating cookie banner reducer didn't work for the current site, this is shown as part of the cookie banner panel in the toolbar.-->
+    <string name="reduce_cookie_banner_details_panel_title_unsupported_site_request">ይህ ጣቢያ በአሁኑ ጊዜ በኩኪ ሰሌዳ ቅነሳ አይደገፍም። ቡድናችን ይህንን ድህረ ገጽ እንዲገመግም እና ወደፊት ድጋፍ እንዲጨምር ይፈልጋሉ?</string>
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
     <string name="reduce_cookie_banner_details_panel_description_off_for_site">%1$s የዚህን ድረ-ገፅ ኩኪዎች ያፀዳ እና ገጹን ያድሳል። ሁሉንም ኩኪዎች ማጽዳት እርስዎን ሊያስወጣዎት ወይም የግዢ ጋሪዎችን ባዶ ሊያደርግ ይችላል።</string>
-    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter are the application name -->
-    <string name="reduce_cookie_banner_details_panel_description_on_for_site_1" moz:RemovedIn="111" tools:ignore="UnusedResources">%1$s የኩኪ ጥያቄዎችን በራስ ሰር ውድቅ ለማድረግ መሞከር ይችላል።</string>
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
     <string name="reduce_cookie_banner_details_panel_description_on_for_site_2">%1$s በሚደገፉ ድረ-ገፆች ላይ ያሉ ሁሉንም የኩኪ ጥያቄዎችን በራስ ሰር ውድቅ ለማድረግ ይሞክራል።</string>
     <!-- Title text for the dialog use on the control branch of the experiment to determine which context users engaged the most -->
     <string name="reduce_cookie_banner_control_experiment_dialog_title" moz:RemovedIn="112" tools:ignore="UnusedResources">የኩኪ ሰሌዳዎች ተቀንሰዋል!</string>
     <!-- Title text for the cookie banner re-engagement dialog. The first parameter is the application name. -->
     <string name="reduce_cookie_banner_dialog_title">%1$s የኩኪ ሰንደቆችን ውድቅ እንዲያደርግ ይፈቀድለት?</string>
-    <!-- Body text for the dialog use on the control branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_control_experiment_dialog_body_1" moz:RemovedIn="111" tools:ignore="UnusedResources">በሚቻልበት ጊዜ የኩኪ ጥያቄዎችን በራስ-ሰር ውድቅ ያድርጉ።</string>
     <!-- Body text for the dialog use on the control branch of the experiment to determine which context users engaged the most.The first parameter is the application name -->
     <string name="reduce_cookie_banner_control_experiment_dialog_body_2" moz:RemovedIn="112" tools:ignore="UnusedResources">ሲቻል %1$s የኩኪ ጥያቄዎችን በራስ ሰር ውድቅ እንዲያደርግ ይፈቀድለት?</string>
     <!-- Body text for the cookie banner re-engagement dialog use. The first parameter is the application name. -->
@@ -424,8 +458,6 @@
 
     <!-- Description of the preference to enable "HTTPS-Only" mode. -->
     <string name="preferences_https_only_summary">ለበለጠ ደህንነት HTTPS ምስጠራ ፕሮቶኮልን በመጠቀም ከድረ-ገፆች ጋር በራስ-ሰር ለመገናኘት ይሞክራል።</string>
-    <!-- Summary of tracking protection preference if tracking protection is set to on -->
-    <string name="preferences_https_only_on" moz:removedIn="111" tools:ignore="UnusedResources">በርቷል</string>
     <!-- Summary of https only preference if https only is set to off -->
     <string name="preferences_https_only_off">ጠፍቷል</string>
     <!-- Summary of https only preference if https only is set to on in all tabs -->
@@ -476,6 +508,8 @@
     <string name="preferences_data_choices">የውሂብ ምርጫዎች</string>
     <!-- Preference for data collection -->
     <string name="preferences_data_collection">የውሂብ መሰብሰብ</string>
+    <!-- Preference for developers -->
+    <string name="preferences_remote_debugging">በUSB የርቀት ማረም</string>
     <!-- Preference title for switch preference to show search engines -->
     <string name="preferences_show_search_engines">የፍለጋ ፍርግሞችን አሳይ</string>
     <!-- Preference title for switch preference to show search suggestions -->
@@ -547,13 +581,29 @@
     <!-- Title for the customize home screen section with sponsored Pocket stories. -->
     <string name="customize_toggle_pocket_sponsored">ስፖንሰር የተደረጉ ታሪኮች</string>
 
+    <!-- Title for the opening wallpaper settings screen -->
+    <string name="customize_wallpapers">ልጣፎች</string>
+    <!-- Title for the customize home screen section with sponsored shortcuts. -->
+    <string name="customize_toggle_contile">ስፖንሰር የተደረጉ አቋራጮች</string>
+
+    <!-- Wallpapers -->
+    <!-- Content description for various wallpapers. The first parameter is the name of the wallpaper -->
+    <string name="wallpapers_item_name_content_description">ልጣፍ ንጥል፡- %1$s</string>
+    <!-- Snackbar message for when wallpaper is selected -->
+    <string name="wallpaper_updated_snackbar_message">ልጣፍ ዘምኗል!</string>
     <!-- Snackbar label for action to view selected wallpaper -->
     <string name="wallpaper_updated_snackbar_action">ዕይታ</string>
+    <!-- Snackbar message for when wallpaper couldn't be downloaded -->
+    <string name="wallpaper_download_error_snackbar_message">ልጣፍ ማውረድ አልተቻለም</string>
     <!-- Snackbar label for action to retry downloading the wallpaper -->
     <string name="wallpaper_download_error_snackbar_action">እንደገና ሞክር</string>
+    <!-- Snackbar message for when wallpaper couldn't be selected because of the disk error -->
+    <string name="wallpaper_select_error_snackbar_message">ልጣፍ መቀየር አልተቻለም</string>
     <!-- Text displayed that links to website containing documentation about the "Limited Edition" wallpapers. -->
     <string name="wallpaper_learn_more">ተጨማሪ ይወቁ</string>
 
+    <!-- Text for classic wallpapers title. The first parameter is the Firefox name. -->
+    <string name="wallpaper_classic_title">ምርጥ %s</string>
     <!-- Text for limited edition wallpapers title. -->
     <string name="wallpaper_limited_edition_title">የተወሰነ ስሪት</string>
     <!-- Description text for the limited edition wallpapers with learn more link. The first parameter is the learn more string defined in wallpaper_learn_more-->
@@ -562,6 +612,11 @@
     <string name="wallpaper_limited_edition_description">አዲሱ ገለልተኛ ድምጾች ስብስብ።</string>
     <!-- Wallpaper onboarding dialog header text. -->
     <string name="wallpapers_onboarding_dialog_title_text">የቀለም ነጠብጣብ ይሞክሩ</string>
+
+    <!-- Wallpaper onboarding dialog body text. -->
+    <string name="wallpapers_onboarding_dialog_body_text">እርስዎን የሚያናግር ልጣፍ ይምረጡ።</string>
+    <!-- Wallpaper onboarding dialog learn more button text. The button navigates to the wallpaper settings screen. -->
+    <string name="wallpapers_onboarding_dialog_explore_more_button_text">ተጨማሪ ልጣፎችን ያስሱ</string>
 
     <!-- Add-on Installation from AMO-->
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
@@ -705,21 +760,18 @@
     <!-- Title to show in alert when a lot of tabs are to be opened
     %d is a placeholder for the number of tabs that will be opened -->
     <string name="open_all_warning_title">%d ትሮች ይከፈቱ?</string>
+    <!-- Message to warn users that a large number of tabs will be opened
+    %s will be replaced by app name. -->
+    <string name="open_all_warning_message">ይህን ብዙ ትሮች መክፈት ገጾቹ በሚጫኑበት ጊዜ %sን ሊያዘገየው ይችላል። እርግጠኛ ነዎት መቀጠል ይፈልጋሉ?</string>
     <!-- Dialog button text for confirming open all tabs -->
     <string name="open_all_warning_confirm">ትሮችን ክፈት</string>
     <!-- Dialog button text for canceling open all tabs -->
     <string name="open_all_warning_cancel">ተወው</string>
 
 
-    <!-- Text to show users they have one site in the history group section of the History fragment.
-    %d is a placeholder for the number of sites in the group. -->
-    <string name="history_search_group_site" moz:RemovedIn="111" tools:ignore="UnusedResources">%d ድረ-ገፅ</string>
     <!-- Text to show users they have one page in the history group section of the History fragment.
     %d is a placeholder for the number of pages in the group. -->
     <string name="history_search_group_site_1">%d ገጽ</string>
-    <!-- Text to show users they have multiple sites in the history group section of the History fragment.
-    %d is a placeholder for the number of sites in the group. -->
-    <string name="history_search_group_sites" moz:RemovedIn="111" tools:ignore="UnusedResources">%d ድረ-ገፅ</string>
     <!-- Text to show users they have multiple pages in the history group section of the History fragment.
     %d is a placeholder for the number of pages in the group. -->
     <string name="history_search_group_sites_1">%d ገጾች</string>
@@ -768,6 +820,8 @@
     <string name="opening_screen_last_tab">የመጨረሻው ትር</string>
     <!-- Option for always opening the homepage when re-opening the app after four hours of inactivity -->
     <string name="opening_screen_after_four_hours_of_inactivity">መነሻ ገጽ ከአራት ሰዓታት እንቅስቃሴ-አልባነት በኋላ</string>
+    <!-- Summary for tabs preference when auto closing tabs setting is set to manual close-->
+    <string name="close_tabs_manually_summary">በተግባር ዝጋ</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one day-->
     <string name="close_tabs_after_one_day_summary">ከአንድ ቀን በኋላ ዝጋ</string>
     <!-- Summary for tabs preference when auto closing tabs setting is set to auto close tabs after one week-->
@@ -1044,8 +1098,6 @@
     <string name="phone_feature_blocked_by_android">በAndroid ታግዷል</string>
     <!-- Preference for showing a list of websites that the default configurations won't apply to them -->
     <string name="preference_exceptions">ልዩ ሁኔታዎች</string>
-    <!-- Summary of tracking protection preference if tracking protection is set to on -->
-    <string name="tracking_protection_on" moz:removedIn="111" tools:ignore="UnusedResources">በርቷል</string>
     <!-- Summary of tracking protection preference if tracking protection is set to off -->
     <string name="tracking_protection_off">ጠፍቷል</string>
     <!-- Summary of tracking protection preference if tracking protection is set to standard -->
@@ -1205,11 +1257,11 @@
     <!-- Survey -->
     <!-- Text shown in the fullscreen message that pops up to ask user to take a short survey.
     The app name is in the text, due to limitations with localizing Nimbus experiments -->
-    <string name="nimbus_survey_message_text" tools:ignore="UnusedResources">እባኮትን አጭር ዳሰሳ በማድረግ ፋየርፎክስን የተሻለ ለማድረግ ያግዙ።</string>
+    <string name="nimbus_survey_message_text">እባኮትን አጭር ዳሰሳ በማድረግ ፋየርፎክስን የተሻለ ለማድረግ ያግዙ።</string>
     <!-- Preference for taking the short survey. -->
-    <string name="preferences_take_survey" tools:ignore="UnusedResources">በዳሰሳ ጥናት ይሳተፉ</string>
+    <string name="preferences_take_survey">በዳሰሳ ጥናት ይሳተፉ</string>
     <!-- Preference for not taking the short survey. -->
-    <string name="preferences_not_take_survey" tools:ignore="UnusedResources">አይ አመሰግናለሁ</string>
+    <string name="preferences_not_take_survey">አይ አመሰግናለሁ</string>
 
     <!-- Snackbar -->
     <!-- Text shown in snackbar when user deletes a collection -->
@@ -1296,12 +1348,16 @@
     <string name="preferences_delete_browsing_data_button">የአሰሳ ውሂብን ሰርዝ</string>
     <!-- Title for the Delete browsing data on quit preference -->
     <string name="preferences_delete_browsing_data_on_quit">ሲዘጋ የአሰሳ ውሂብን ሰርዝ</string>
+    <!-- Summary for the Delete browsing data on quit preference. "Quit" translation should match delete_browsing_data_on_quit_action translation. -->
+    <string name="preference_summary_delete_browsing_data_on_quit_2">ከዋናው ምናሌ ውስጥ \&quot;አቋርጥ\&quot;ን ስትመርጡ የአሰሳ ውሂብን በራስ ሰር ይሰርዛል</string>
     <!-- Action item in menu for the Delete browsing data on quit feature -->
     <string name="delete_browsing_data_on_quit_action">አቁም</string>
 
     <!-- Title text of a delete browsing data dialog. -->
     <string name="delete_history_prompt_title">የሚሰረዝበት ጊዜ</string>
 
+    <!-- Body text of a delete browsing data dialog. -->
+    <string name="delete_history_prompt_body">ታሪክን (ከሌሎች መሳሪያዎች ጋር የሰመረ ታሪክን ጨምሮ)፣ ኩኪዎችን እና ሌላ የአሰሳ ውሂብን ያስወግዳል።</string>
     <!-- Radio button in the delete browsing data dialog to delete history items for the last hour. -->
     <string name="delete_history_prompt_button_last_hour">የመጨረሻው ሰዓት</string>
     <!-- Radio button in the delete browsing data dialog to delete history items for today and yesterday. -->
@@ -1336,12 +1392,18 @@
     <string name="onboarding_message">ለሰዎች የተሰራ አሳሽ እንጂ ትርፍ አይደለም።</string>
     <!-- Text for the Firefox account onboarding sign in card header. -->
     <string name="onboarding_account_sign_in_header">ካቆሙበት ይቀጥሉ</string>
+    <!-- Text for the button to learn more about signing in to your Firefox account. -->
+    <string name="onboarding_manual_sign_in_description">እንከን የለሽ ስክሪን ለመቀያየር ትሮችን እና የይለፍ ቃሎችን በመሳሪያዎች ላይ ያመሳስሉ።</string>
     <!-- Text for the button to manually sign into Firefox account. -->
     <string name="onboarding_firefox_account_sign_in">ይግቡ</string>
     <!-- text to display in the snackbar once account is signed-in -->
     <string name="onboarding_firefox_account_sync_is_on">ማመሳሰል በርቷል</string>
     <!-- Text for the tracking protection onboarding card header -->
     <string name="onboarding_tracking_protection_header">በነባሪ የግላዊነት ጥበቃ</string>
+    <!-- Text for the tracking protection card description. The first parameter is the name of the application.-->
+    <string name="onboarding_tracking_protection_description_old">%1$s ኩባንያዎች በድር ላይ በድብቅ እንዳይከተሉዎ በራስ ሰር ያቆማል።</string>
+    <!-- Text for the tracking protection card description. -->
+    <string name="onboarding_tracking_protection_description">ተከታታዮች እርስዎን በድረ-ገጾች ላይ ለማሳደድ ኩኪዎችን እንዳይጠቀሙ ለማቆም አጠቃላይ የኩኪ ጥበቃን በማሳየት ላይ።</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
     <string name="onboarding_tracking_protection_standard_button_2">መደበኛ (ነባሪ)</string>
     <!-- text for standard blocking option button description -->
@@ -1414,25 +1476,29 @@
     <!-- Preference title for enhanced tracking protection settings -->
     <string name="preference_enhanced_tracking_protection">የተሻሻለ የመከታተያ ጥበቃ</string>
     <!-- Title for the description of enhanced tracking protection -->
-    <string name="preference_enhanced_tracking_protection_explanation_title">ያለተከታታይ ያስሱ</string>
+    <string name="preference_enhanced_tracking_protection_explanation_title" moz:removedIn="114" tools:ignore="UnusedResources">ያለተከታታይ ያስሱ</string>
+    <!-- Preference summary for enhanced tracking protection settings on/off switch -->
+    <string name="preference_enhanced_tracking_protection_summary">አሁን አጠቃላይ የኩኪ ጥበቃን በማሳየት ላይ፣ የኛ እጅግ ኃይለኛው ድረ-ገጽ ተሻጋሪ መከታተያዎችን አጋጅ።</string>
+    <!-- Description of enhanced tracking protection. The first parameter is the name of the application (For example: Fenix) -->
+    <string name="preference_enhanced_tracking_protection_explanation" moz:removedIn="114" tools:ignore="UnusedResources">ውሂብዎን ለራስዎ ያስቀምጡ። %s በመስመር ላይ የሚያደርጉትን ከሚከተሉ ብዙ በጣም የተለመዱ መከታተያዎች ይጠብቅዎታል።</string>
     <!-- Description of enhanced tracking protection. The parameter is the name of the application (For example: Firefox Fenix) -->
-    <string name="preference_enhanced_tracking_protection_explanation_2" tools:ignore="UnusedResources">%s በመስመር ላይ የሚያደርጉትን ከሚከተሉ ብዙ በጣም የተለመዱ መከታተያዎች ይጠብቅዎታል።</string>
+    <string name="preference_enhanced_tracking_protection_explanation_2">%s በመስመር ላይ የሚያደርጉትን ከሚከተሉ ብዙ በጣም የተለመዱ መከታተያዎች ይጠብቅዎታል።</string>
     <!-- Text displayed that links to website about enhanced tracking protection -->
     <string name="preference_enhanced_tracking_protection_explanation_learn_more">የበለጠ ለማወቅ</string>
     <!-- Preference for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_standard_default_1">መደበኛ (ነባሪ)</string>
     <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description_4">ለግላዊነት እና ለአፈጻጸም የተመጣጠነ። ገጾች በመደበኛነት ይጫናሉ።</string>
+    <string name="preference_enhanced_tracking_protection_standard_description_4" moz:removedIn="114" tools:ignore="UnusedResources">ለግላዊነት እና ለአፈጻጸም የተመጣጠነ። ገጾች በመደበኛነት ይጫናሉ።</string>
     <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description_5" tools:ignore="UnusedResources">ገጾች በመደበኛነት ይጫናሉ፣ ነገር ግን ጥቂት መከታተያዎችን ያግዳል።</string>
+    <string name="preference_enhanced_tracking_protection_standard_description_5">ገጾች በመደበኛነት ይጫናሉ፣ ነገር ግን ጥቂት መከታተያዎችን ያግዳል።</string>
     <!--  Accessibility text for the Standard protection information icon  -->
     <string name="preference_enhanced_tracking_protection_standard_info_button">በመደበኛ የመከታተያ ጥበቃ የታገደው</string>
     <!-- Preference for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict">ጥብቅ</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_description_3">ገፆች በፍጥነት እንዲጫኑ ተጨማሪ መከታተያዎችን ያግዳል፣ ነገር ግን አንዳንድ በገጽ ላይ ያሉ ተግባራት ላይሰሩ ይችላሉ።</string>
+    <string name="preference_enhanced_tracking_protection_strict_description_3" moz:removedIn="114" tools:ignore="UnusedResources">ገፆች በፍጥነት እንዲጫኑ ተጨማሪ መከታተያዎችን ያግዳል፣ ነገር ግን አንዳንድ በገጽ ላይ ያሉ ተግባራት ላይሰሩ ይችላሉ።</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_description_4" tools:ignore="UnusedResources">ጠንካራ የመከታተያ ጥበቃ እና ፈጣን አፈጻጸም፣ ነገር ግን አንዳንድ ጣቢያዎች በትክክል ላይሰሩ ይችላሉ።</string>
+    <string name="preference_enhanced_tracking_protection_strict_description_4">ጠንካራ የመከታተያ ጥበቃ እና ፈጣን አፈጻጸም፣ ነገር ግን አንዳንድ ጣቢያዎች በትክክል ላይሰሩ ይችላሉ።</string>
     <!--  Accessibility text for the Strict protection information icon  -->
     <string name="preference_enhanced_tracking_protection_strict_info_button">በጥብቅ የመከታተያ ጥበቃ የታገደው</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
@@ -1452,12 +1518,18 @@
     <string name="preference_enhanced_tracking_protection_custom_cookies_3">ሁሉም የሶስተኛ ወገን ኩኪዎች (ድረ-ገፆች ባግባቡ እንዳይሰሩ ሊያደርግ ይችላል)</string>
     <!-- Option for enhanced tracking protection for the custom protection settings for cookies-->
     <string name="preference_enhanced_tracking_protection_custom_cookies_4">ሁሉም ኩኪዎች (ድረ-ገፆች ባግባቡ እንዳይሰሩ ያደርጋል)</string>
+    <!-- Option for enhanced tracking protection for the custom protection settings for cookies-->
+    <string name="preference_enhanced_tracking_protection_custom_cookies_5">ድረ-ገጽ ተሻጋሪ ኩኪዎችን ለይ</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings for tracking content -->
     <string name="preference_enhanced_tracking_protection_custom_tracking_content">የመከታተያ ይዘት</string>
     <!-- Option for enhanced tracking protection for the custom protection settings for tracking content-->
     <string name="preference_enhanced_tracking_protection_custom_tracking_content_1">በሁሉም ትሮች ውስጥ</string>
     <!-- Option for enhanced tracking protection for the custom protection settings for tracking content-->
     <string name="preference_enhanced_tracking_protection_custom_tracking_content_2">በግል ትሮች ውስጥ ብቻ</string>
+    <!-- Preference for enhanced tracking protection for the custom protection settings -->
+    <string name="preference_enhanced_tracking_protection_custom_cryptominers">ምናባዊ ገንዘብ መቆፈርያዎች</string>
+    <!-- Preference for enhanced tracking protection for the custom protection settings -->
+    <string name="preference_enhanced_tracking_protection_custom_fingerprinters">የአሳሽ አሻራ መከታተያዎች</string>
     <!-- Button label for navigating to the Enhanced Tracking Protection details -->
     <string name="enhanced_tracking_protection_details">ዝርዝር ማብራሪያዎች</string>
     <!-- Header for categories that are being being blocked by current Enhanced Tracking Protection settings -->
@@ -1466,10 +1538,28 @@
     <string name="enhanced_tracking_protection_allowed">ተፈቅዷል</string>
     <!-- Category of trackers (social media trackers) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_social_media_trackers_title">ማህበራዊ ሚዲያ መከታተያዎች</string>
+    <!-- Description of social media trackers that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_social_media_trackers_description">የማህበራዊ አውታረ መረቦች በድር ላይ የአሰሳ እንቅስቃሴዎን ለመከታተል ያላቸውን ችሎታ ይገድባል።</string>
     <!-- Category of trackers (cross-site tracking cookies) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_cookies_title">ገጽ-ተሻጋሪ መከታተያ ኩኪዎች</string>
+    <!-- Category of trackers (cross-site tracking cookies) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_cookies_title_2">ድረ-ገጽ ተሻጋሪ ኩኪዎች</string>
+    <!-- Description of cross-site tracking cookies that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_cookies_description">የማስታወቂያ አውታረ መረቦች እና የትንታኔ ኩባንያዎች የእርስዎን የአሰሳ ውሂብ በብዙ ድረ-ገጾች ላይ ለመሰብሰብ የሚጠቀሙባቸውን ኩኪዎች ያግዳል።</string>
+    <!-- Description of cross-site tracking cookies that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_cookies_description_2">አጠቃላይ የኩኪ ጥበቃ ኩኪዎችን እርስዎ ካሉበት ድረ-ገጽ ላይ ይነጥላቸዋል ስለዚህ እንደ የማስታወቂያ አውታረ መረቦች ያሉ መከታተያዎች እርስዎን በሁሉም ድረ-ገጾች ላይ ለመከታተል ሊጠቀሙባቸው አይችሉም።</string>
+    <!-- Category of trackers (cryptominers) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_cryptominers_title">ክሪፕቶማይነሮች</string>
+    <!-- Description of cryptominers that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_cryptominers_description">ተንኮል አዘል ስክሪፕቶች መሳሪያዎን ለዲጂታል ገንዘብ ቁፋሮ ለማዋል ፈቃድ እንዳያገኙ ይከላከላል።</string>
+    <!-- Category of trackers (fingerprinters) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_fingerprinters_title">የአሳሽ አሻራ መከታተያዎች</string>
+    <!-- Description of fingerprinters that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_fingerprinters_description">ለክትትል ዓላማዎች የሚያገለግል በልዩ ሁኔታ የሚለይ ውሂብ ስለ መሳሪያዎ እንዳይሰበሰብ ያቆማል።</string>
     <!-- Category of trackers (tracking content) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_tracking_content_title">የመከታተያ ይዘት</string>
+    <!-- Description of tracking content that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_tracking_content_description">ከማስታወቂያዎች፣ ቪዲዮዎች እና ሌሎች የክትትል ኮድ የያዙ ሌሎች ይዘቶችን ከመጫን ያቆማል። አንዳንድ የድረ-ገጽ ተግባራትን ሊጎዳ ይችላል።</string>
     <!-- Enhanced Tracking Protection message that protection is currently on for this site -->
     <string name="etp_panel_on">ጥበቃዎች ለዚህ ጣቢያ በርተዋል</string>
     <!-- Enhanced Tracking Protection message that protection is currently off for this site -->
@@ -1481,8 +1571,22 @@
     <string name="etp_back_button_content_description">ወደ ኋላ ያስሱ</string>
     <!-- About page link text to open what's new link -->
     <string name="about_whats_new">በ%s ውስጥ ምን አዲስ ነገር አለ</string>
+    <!-- Open source licenses page title
+    The first parameter is the app name -->
+    <string name="open_source_licenses_title">%s | ክፍት ምንጭ ሶፍትዌር (OSS) ጥቅሎች</string>
+    <!-- Category of trackers (redirect trackers) that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_title">የዝውውር መከታተያዎች</string>
+    <!-- Description of redirect tracker cookies that can be blocked by Enhanced Tracking Protection -->
+    <string name="etp_redirect_trackers_description">ወደታወቁ የመከታተያ ድረ-ገጾች በማዘዋወር የተዘጋጁ ኩኪዎችን ያጸዳል።</string>
+    <!-- Description of the SmartBlock Enhanced Tracking Protection feature. The * symbol is intentionally hardcoded here,
+         as we use it on the UI to indicate which trackers have been partially unblocked.  -->
+    <string name="preference_etp_smartblock_description">ከዚህ በታች ምልክት የተደረገባቸው አንዳንድ መከታተያዎች በዚህ ገጽ ላይ እገዳው በከፊል ተነስቷል ምክንያቱም ከእነሱ ጋር ስለተገናኙ *።</string>
     <!-- Text displayed that links to website about enhanced tracking protection SmartBlock -->
     <string name="preference_etp_smartblock_learn_more">ተጨማሪ ይወቁ</string>
+
+    <!-- Content description (not visible, for screen readers etc.):
+    Enhanced tracking protection exception preference icon for ETP settings. -->
+    <string name="preference_etp_exceptions_icon_description">የተሻሻለ የመከታተያ ጥበቃ ልዩ ምርጫ አዶ</string>
 
     <!-- About page link text to open support link -->
     <string name="about_support">ድጋፍ</string>
@@ -1494,6 +1598,13 @@
     <string name="about_know_your_rights">መብቶትን ይወቁ</string>
     <!-- About page link text to open licensing information link -->
     <string name="about_licensing_information">የፈቃድ መረጃ</string>
+
+    <!-- About page link text to open a screen with libraries that are used -->
+    <string name="about_other_open_source_libraries">የምንጠቀማቸው ጥቅሎች</string>
+    <!-- Toast shown to the user when they are activating the secret dev menu
+        The first parameter is number of long clicks left to enable the menu -->
+    <string name="about_debug_menu_toast_progress">የአርም ምናሌ፡ %1$d ጠቅታ(ዎች) ለማንቃት ይቀራል</string>
+    <string name="about_debug_menu_toast_done">ማረም ምናሌ ነቅቷል</string>
 
     <!-- Browser long press popup menu -->
     <!-- Copy the current url -->
@@ -1515,6 +1626,9 @@
     <string name="add_to_homescreen_continue">ወደ ድር ድረ-ገፅ ይቀጥሉ</string>
     <!-- Placeholder text for the TextView in the Add to Homescreen dialog -->
     <string name="add_to_homescreen_text_placeholder">የአቋራጭ ስም</string>
+
+    <!-- Describes the add to homescreen functionality -->
+    <string name="add_to_homescreen_description_2">ፈጣን መዳረሻ እንዲኖርዎት እና መተግበሪያ በሚመስል ልምድ በፍጥነት ለማሰስ ይህን ድረ-ገጽ በቀላሉ ወደ መሳሪያዎ መነሻ ማያ ገጽ ማከል ይችላሉ።</string>
 
     <!-- Preference for managing the settings for logins and passwords in Fenix -->
     <string name="preferences_passwords_logins_and_passwords">መግቢያዎች እና የይለፍ ቃሎች</string>
@@ -1593,6 +1707,8 @@
     <string name="logins_warning_dialog_set_up_now">አሁን አዋቅር</string>
     <!-- Title of PIN verification dialog to direct users to re-enter their device credentials to access their logins -->
     <string name="logins_biometric_prompt_message_pin">መሣሪያዎን ይክፈቱ</string>
+    <!-- Title for Accessibility Force Enable Zoom Preference -->
+    <string name="preference_accessibility_force_enable_zoom">በሁሉም ድረ-ገጾች ላይ አጉላ</string>
     <!-- Summary for Accessibility Force Enable Zoom Preference -->
     <string name="preference_accessibility_force_enable_zoom_summary">ይህን የእጅ ምልክት በሚከለክሉ ድረ-ገጾች ላይ እንኳን መቆንጠጥ እና ማጉላትን መፍቀድ ያንቁ።</string>
     <!-- Saved logins sorting strategy menu item -by name- (if selected, it will sort saved logins alphabetically) -->
@@ -1692,12 +1808,16 @@
     <string name="addresses_middle_name">የአባት ስም</string>
     <!-- The header for the last name of an address -->
     <string name="addresses_last_name">የአያት ስም</string>
+    <!-- The header for the street address of an address -->
+    <string name="addresses_street_address">የአድራሻ ጎዳና</string>
     <!-- The header for the city of an address -->
     <string name="addresses_city">ከተማ</string>
     <!-- The header for the subregion of an address when "state" should be used -->
     <string name="addresses_state">ክልል</string>
     <!-- The header for the subregion of an address when "province" should be used -->
     <string name="addresses_province">ዞን</string>
+    <!-- The header for the zip code of an address -->
+    <string name="addresses_zip">ዚፕ</string>
     <!-- The header for the country or region of an address -->
     <string name="addresses_country">ሀገር ወይም ክልል</string>
     <!-- The header for the phone number of an address -->
@@ -1785,6 +1905,10 @@
     <string name="confirm_clear_permissions_on_all_sites">እርግጠኛ ነዎት በሁሉም ድረ-ገፆች ላይ ያሉትን ሁሉንም ፈቃዶች ማጽዳት ይፈልጋሉ?</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete all the permissions for a site-->
     <string name="confirm_clear_permissions_site">እርግጠኛ ነዎት የዚህ ድረ-ገፅ ሁሉንም ፈቃዶች ማጽዳት ይፈልጋሉ?</string>
+    <!-- Confirmation message for a dialog confirming if the user wants to set default value a permission for a site-->
+    <string name="confirm_clear_permission_site">እርግጠኛ ነዎት የዚህን ድረ-ገፅ ፈቃድ ማጽዳት ይፈልጋሉ?</string>
+    <!-- label shown when there are not site exceptions to show in the site exception settings -->
+    <string name="no_site_exceptions">ምንም የተለየ ድረ-ገፅ የለም</string>
     <!-- Bookmark deletion confirmation -->
     <string name="bookmark_deletion_confirmation">እርግጠኛ ነዎት ይህን እልባት መሰረዝ ይፈልጋሉ?</string>
     <!-- Browser menu button that adds a shortcut to the home fragment -->

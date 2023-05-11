@@ -54,7 +54,7 @@ class SettingsPrivacyTest {
             verifyHTTPSOnlyModeButton()
             verifySettingsOptionSummary("HTTPS-Only Mode", "Off")
             verifyCookieBannerReductionButton()
-            verifySettingsOptionSummary("Cookie Banner Reduction", "Off")
+            verifySettingsOptionSummary("Cookie banner reduction", "Off")
             verifyEnhancedTrackingProtectionButton()
             verifySettingsOptionSummary("Enhanced Tracking Protection", "Standard")
             verifySitePermissionsButton()
@@ -142,17 +142,6 @@ class SettingsPrivacyTest {
             verifySitePermissionOption("Cross-site cookies", "Ask to allow")
             verifySitePermissionOption("DRM-controlled content", "Ask to allow")
             verifySitePermissionOption("Exceptions")
-        }
-    }
-
-    @Test
-    fun notificationPermissionsItemsTest() {
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openSettingsSubMenuSitePermissions {
-        }.openNotification {
-            verifyNotificationSubMenuItems()
         }
     }
 }

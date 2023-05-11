@@ -41,7 +41,6 @@ import org.mozilla.fenix.components.settings.lazyFeatureFlagPreference
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getPreferenceKey
-import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.nimbus.CookieBannersSection
 import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.nimbus.HomeScreenSection
@@ -188,6 +187,16 @@ class Settings(private val appContext: Context) : PreferencesHolder {
 
     var contileContextId by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_contile_context_id),
+        default = "",
+    )
+
+    /**
+     * A UUID stored in Shared Preferences used to analyze technical differences
+     * between storage mechanisms in Android, specifically the Glean DB and
+     * Shared Preferences.
+     */
+    var sharedPrefsUUID by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_shared_prefs_uuid),
         default = "",
     )
 
@@ -523,9 +532,13 @@ class Settings(private val appContext: Context) : PreferencesHolder {
      * Get the display string for the current open links in apps setting
      */
     fun getOpenLinksInAppsString(): String =
-        when (appContext.settings().openLinksInExternalApp) {
+        when (openLinksInExternalApp) {
             appContext.getString(R.string.pref_key_open_links_in_apps_always) -> {
-                appContext.getString(R.string.preferences_open_links_in_apps_always)
+                if (lastKnownMode == BrowsingMode.Normal) {
+                    appContext.getString(R.string.preferences_open_links_in_apps_always)
+                } else {
+                    appContext.getString(R.string.preferences_open_links_in_apps_ask)
+                }
             }
             appContext.getString(R.string.pref_key_open_links_in_apps_ask) -> {
                 appContext.getString(R.string.preferences_open_links_in_apps_ask)
@@ -670,7 +683,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     /**
      * Indicates if the re-engagement notification feature is enabled
      */
-    public val reEngagementNotificationType: Int
+    val reEngagementNotificationType: Int
         get() =
             FxNimbus.features.reEngagementNotification.value().type
 
@@ -1199,11 +1212,12 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     /**
      * Check to see if we should open the link in an external app
      */
-    fun shouldOpenLinksInApp(): Boolean {
+    fun shouldOpenLinksInApp(isCustomTab: Boolean = false): Boolean {
         return when (openLinksInExternalApp) {
             appContext.getString(R.string.pref_key_open_links_in_apps_always) -> true
             appContext.getString(R.string.pref_key_open_links_in_apps_ask) -> true
-            appContext.getString(R.string.pref_key_open_links_in_apps_never) -> false
+            /* Some applications will not work if custom tab never open links in apps, return true if it's custom tab */
+            appContext.getString(R.string.pref_key_open_links_in_apps_never) -> isCustomTab
             else -> false
         }
     }
@@ -1592,19 +1606,22 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     /**
      * Indicates if juno onboarding feature is enabled.
      */
-    var junoOnboardingEnabled by lazyFeatureFlagPreference(
-        key = appContext.getPreferenceKey(R.string.pref_key_juno_onboarding_enabled),
-        default = { FxNimbus.features.junoOnboarding.value().enabled },
-        featureFlag = FeatureFlags.junoOnboardingEnabled,
-    )
+    val junoOnboardingEnabled: Boolean
+        get() = FxNimbus.features.junoOnboarding.value().enabled
 
     /**
-     * Indicates if the juno onboarding has been shown to the user.
+     * Returns whether juno onboarding should be shown to the user.
+     * @param isLauncherIntent Boolean to indicate whether the app was launched on tapping on the
+     * app icon.
      */
-    var isJunoOnboardingShown by booleanPreference(
-        key = appContext.getPreferenceKey(R.string.pref_key_is_juno_onboarding_shown),
-        default = false,
-    )
+    fun shouldShowJunoOnboarding(hasUserBeenOnboarded: Boolean, isLauncherIntent: Boolean): Boolean {
+        return if (!hasUserBeenOnboarded && isLauncherIntent) {
+            FxNimbus.features.junoOnboarding.recordExposure()
+            junoOnboardingEnabled
+        } else {
+            false
+        }
+    }
 
     /**
      * Get the current mode for how https-only is enabled.

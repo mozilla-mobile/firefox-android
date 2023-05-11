@@ -24,7 +24,7 @@ object FeatureFlags {
      * Pull-to-refresh allows you to pull the web content down far enough to have the page to
      * reload.
      */
-    val pullToRefreshEnabled = Config.channel.isNightlyOrDebug || Config.channel.isBeta
+    const val pullToRefreshEnabled = true
 
     /**
      * Enables the Sync Addresses feature.
@@ -50,7 +50,7 @@ object FeatureFlags {
     /**
      * Enables the Unified Search feature.
      */
-    val unifiedSearchFeature = Config.channel.isNightlyOrDebug
+    const val unifiedSearchFeature = true
 
     /**
      * Enables compose on the tabs tray items.
@@ -71,9 +71,4 @@ object FeatureFlags {
      * Enables the notification pre permission prompt.
      */
     const val notificationPrePermissionPromptEnabled = true
-
-    /**
-     * Enables the redesigned onboarding.
-     */
-    const val junoOnboardingEnabled = false
 }

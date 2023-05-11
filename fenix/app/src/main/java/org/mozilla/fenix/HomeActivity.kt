@@ -41,6 +41,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -72,6 +73,7 @@ import mozilla.components.support.ktx.android.content.share
 import mozilla.components.support.ktx.kotlin.isUrl
 import mozilla.components.support.ktx.kotlin.toNormalizedUrl
 import mozilla.components.support.locale.LocaleAwareAppCompatActivity
+import mozilla.components.support.utils.BootUtils
 import mozilla.components.support.utils.ManufacturerCodes
 import mozilla.components.support.utils.SafeIntent
 import mozilla.components.support.utils.toSafeIntent
@@ -89,6 +91,7 @@ import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.metrics.BreadcrumbsRecorder
 import org.mozilla.fenix.databinding.ActivityHomeBinding
 import org.mozilla.fenix.exceptions.trackingprotection.TrackingProtectionExceptionsFragmentDirections
+import org.mozilla.fenix.experiments.ResearchSurfaceDialogFragment
 import org.mozilla.fenix.ext.alreadyOnDestination
 import org.mozilla.fenix.ext.areNotificationsEnabledSafe
 import org.mozilla.fenix.ext.breadcrumb
@@ -111,9 +114,10 @@ import org.mozilla.fenix.library.bookmarks.DesktopFolders
 import org.mozilla.fenix.library.history.HistoryFragmentDirections
 import org.mozilla.fenix.library.historymetadata.HistoryMetadataGroupFragmentDirections
 import org.mozilla.fenix.library.recentlyclosed.RecentlyClosedFragmentDirections
+import org.mozilla.fenix.messaging.FenixMessageSurfaceId
+import org.mozilla.fenix.messaging.FenixNimbusMessagingController
 import org.mozilla.fenix.messaging.MessageNotificationWorker
 import org.mozilla.fenix.nimbus.FxNimbus
-import org.mozilla.fenix.onboarding.FenixOnboarding
 import org.mozilla.fenix.onboarding.ReEngagementNotificationWorker
 import org.mozilla.fenix.onboarding.ensureMarketingChannelExists
 import org.mozilla.fenix.perf.MarkersActivityLifecycleCallbacks
@@ -188,8 +192,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     private val navHost by lazy {
         supportFragmentManager.findFragmentById(R.id.container) as NavHostFragment
     }
-
-    private val onboarding by lazy { FenixOnboarding(applicationContext) }
 
     private val externalSourceIntentProcessors by lazy {
         listOf(
@@ -266,20 +268,35 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             it.start()
         }
 
-        // Unless the activity is recreated, navigate to home first (without rendering it)
-        // to add it to the back stack.
-        if (savedInstanceState == null) {
-            navigateToHome()
-        }
-
-        if (!shouldStartOnHome() && shouldNavigateToBrowserOnColdStart(savedInstanceState)) {
-            navigateToBrowserOnColdStart()
+        if (settings().shouldShowJunoOnboarding(
+                hasUserBeenOnboarded = components.fenixOnboarding.userHasBeenOnboarded(),
+                isLauncherIntent = intent.toSafeIntent().isLauncherIntent,
+            )
+        ) {
+            // Unless activity is recreated due to config change, navigate to onboarding
+            if (savedInstanceState == null) {
+                navHost.navController.navigate(NavGraphDirections.actionGlobalHomeJunoOnboarding())
+            }
         } else {
-            StartOnHome.enterHomeScreen.record(NoExtras())
-        }
+            lifecycleScope.launch(IO) {
+                showFullscreenMessageIfNeeded(applicationContext)
+            }
 
-        if (settings().showHomeOnboardingDialog && onboarding.userHasBeenOnboarded()) {
-            navHost.navController.navigate(NavGraphDirections.actionGlobalHomeOnboardingDialog())
+            // Unless the activity is recreated, navigate to home first (without rendering it)
+            // to add it to the back stack.
+            if (savedInstanceState == null) {
+                navigateToHome()
+            }
+            if (!shouldStartOnHome() && shouldNavigateToBrowserOnColdStart(savedInstanceState)) {
+                navigateToBrowserOnColdStart()
+            } else {
+                StartOnHome.enterHomeScreen.record(NoExtras())
+            }
+
+            if (settings().showHomeOnboardingDialog && components.fenixOnboarding.userHasBeenOnboarded()) {
+                navHost.navController.navigate(NavGraphDirections.actionGlobalHomeOnboardingDialog())
+            }
+            showNotificationPermissionPromptIfRequired()
         }
 
         Performance.processIntentIfPerformanceTest(intent, this)
@@ -341,8 +358,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             }
         }
 
-        showNotificationPermissionPromptIfRequired()
-
         components.backgroundServices.accountManagerAvailableQueue.runIfReadyOrQueue {
             lifecycleScope.launch(IO) {
                 // If we're authenticated, kick-off a sync and a device state refresh.
@@ -368,6 +383,10 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
      * Show the pre permission dialog to the user once if the notification are not enabled.
      */
     private fun showNotificationPermissionPromptIfRequired() {
+        if (settings().junoOnboardingEnabled) {
+            return
+        }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
             !NotificationManagerCompat.from(applicationContext).areNotificationsEnabledSafe() &&
             settings().numberOfAppLaunches <= 1
@@ -429,11 +448,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             if (settings().checkIfFenixIsDefaultBrowserOnAppResume()) {
                 Events.defaultBrowserChanged.record(NoExtras())
             }
-
-            // We attempt to send metrics onResume so that the start of new user sessions is not
-            // missed. Previously, this was done in FenixApplication::onCreate, but it was decided
-            // that we should not rely on the application being killed between user sessions.
-            components.appStore.dispatch(AppAction.ResumedMetricsAction)
 
             ReEngagementNotificationWorker.setReEngagementNotificationIfNeeded(applicationContext)
             MessageNotificationWorker.setMessageNotificationWorker(applicationContext)
@@ -695,7 +709,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
                 return
             }
         }
-        super.getOnBackPressedDispatcher().onBackPressed()
+        onBackPressedDispatcher.onBackPressed()
     }
 
     @Deprecated("Deprecated in Java")
@@ -1164,6 +1178,49 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     private fun shouldNavigateToBrowserOnColdStart(savedInstanceState: Bundle?): Boolean {
         return isActivityColdStarted(intent, savedInstanceState) &&
             !processIntent(intent)
+    }
+
+    private suspend fun showFullscreenMessageIfNeeded(context: Context) {
+        val messagingStorage = context.components.analytics.messagingStorage
+        val messages = messagingStorage.getMessages()
+        val nextMessage =
+            messagingStorage.getNextMessage(FenixMessageSurfaceId.SURVEY, messages)
+                ?: return
+
+        val fenixNimbusMessagingController = FenixNimbusMessagingController(messagingStorage)
+        val researchSurfaceDialogFragment = ResearchSurfaceDialogFragment.newInstance(
+            keyMessageText = nextMessage.data.text,
+            keyAcceptButtonText = nextMessage.data.buttonLabel,
+            keyDismissButtonText = null,
+        )
+
+        researchSurfaceDialogFragment.onAccept = {
+            processIntent(fenixNimbusMessagingController.getIntentForMessage(nextMessage))
+            components.appStore.dispatch(AppAction.MessagingAction.MessageClicked(nextMessage))
+        }
+
+        researchSurfaceDialogFragment.onDismiss = {
+            components.appStore.dispatch(AppAction.MessagingAction.MessageDismissed(nextMessage))
+        }
+
+        lifecycleScope.launch(Main) {
+            researchSurfaceDialogFragment.showNow(
+                supportFragmentManager,
+                ResearchSurfaceDialogFragment.FRAGMENT_TAG,
+            )
+        }
+
+        // Update message as displayed.
+        val currentBootUniqueIdentifier = BootUtils.getBootIdentifier(context)
+        val updatedMessage =
+            fenixNimbusMessagingController.updateMessageAsDisplayed(
+                nextMessage,
+                currentBootUniqueIdentifier,
+            )
+
+        fenixNimbusMessagingController.onMessageDisplayed(updatedMessage)
+
+        return
     }
 
     companion object {
