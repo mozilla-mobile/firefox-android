@@ -160,7 +160,7 @@ class JunoOnboardingFragment : Fragment() {
         requireComponents.fenixOnboarding.finish()
         findNavController().nav(
             id = R.id.junoOnboardingFragment,
-            directions = JunoOnboardingFragmentDirections.actionOnboardingHome(),
+            directions = JunoOnboardingFragmentDirections.actionHome(),
         )
         telemetryRecorder.onOnboardingComplete(
             sequenceId = sequenceId,
