@@ -6,7 +6,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.initialization.Settings
 
 // If you ever need to force a toolchain rebuild (taskcluster) then edit the following comment.
-// FORCE REBUILD 2023-05-05
+// FORCE REBUILD 2023-05-12
 
 class DependenciesPlugin : Plugin<Settings> {
     override fun apply(settings: Settings) = Unit
@@ -16,7 +16,7 @@ class DependenciesPlugin : Plugin<Settings> {
 object Versions {
     const val kotlin = "1.8.21"
     const val coroutines = "1.6.4"
-    const val serialization = "1.5.0"
+    const val serialization = "1.5.1"
 
     const val junit = "4.13.2"
     const val robolectric = "4.10.1"
@@ -43,7 +43,7 @@ object Versions {
     const val leakcanary = "2.10"
 
     // DO NOT MODIFY MANUALLY. This is auto-updated along with GeckoView.
-    const val mozilla_glean = "52.6.0"
+    const val mozilla_glean = "52.7.0"
 
     const val material = "1.9.0"
     const val ksp = "1.0.11"
