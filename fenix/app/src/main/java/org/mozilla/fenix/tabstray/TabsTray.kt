@@ -19,7 +19,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -30,6 +29,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import mozilla.components.browser.state.selector.normalTabs
+import mozilla.components.browser.state.selector.privateTabs
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.ContentState
 import mozilla.components.browser.state.state.TabSessionState
@@ -72,8 +72,20 @@ import mozilla.components.browser.storage.sync.Tab as SyncTab
  * @param onInactiveTabClick Invoked when the user clicks on an inactive tab.
  * @param onInactiveTabClose Invoked when the user clicks on an inactive tab's close button.
  * @param onSyncedTabClick Invoked when the user clicks on a synced tab.
+ * @param onSaveToCollectionClick Invoked when the user clicks on the save to collection button from
+ * the multi select banner.
+ * @param onShareSelectedTabsClick Invoked when the user clicks on the share button from the
+ * multi select banner.
+ * @param onShareAllTabsClick Invoked when the user clicks on the share all tabs banner menu item.
+ * @param onTabSettingsClick Invoked when the user clicks on the tab settings banner menu item.
+ * @param onRecentlyClosedClick Invoked when the user clicks on the recently closed banner menu item.
+ * @param onAccountSettingsClick Invoked when the user clicks on the account settings banner menu item.
+ * @param onDeleteAllTabsClick Invoked when the user clicks on the close all tabs banner menu item.
+ * @param onBookmarkSelectedTabsClick Invoked when the user clicks on the bookmark banner menu item.
+ * @param onDeleteSelectedTabsClick Invoked when the user clicks on the close selected tabs banner menu item.
+ * @param onForceSelectedTabsAsInactiveClick Invoked when the user clicks on the make inactive banner menu item.
  */
-@OptIn(ExperimentalPagerApi::class, ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalPagerApi::class)
 @Suppress("LongMethod", "LongParameterList", "ComplexMethod")
 @Composable
 fun TabsTray(
@@ -97,9 +109,21 @@ fun TabsTray(
     onInactiveTabClick: (TabSessionState) -> Unit,
     onInactiveTabClose: (TabSessionState) -> Unit,
     onSyncedTabClick: (SyncTab) -> Unit,
+    onSaveToCollectionClick: () -> Unit,
+    onShareSelectedTabsClick: () -> Unit,
+    onShareAllTabsClick: () -> Unit,
+    onTabSettingsClick: () -> Unit,
+    onRecentlyClosedClick: () -> Unit,
+    onAccountSettingsClick: () -> Unit,
+    onDeleteAllTabsClick: () -> Unit,
+    onBookmarkSelectedTabsClick: () -> Unit,
+    onDeleteSelectedTabsClick: () -> Unit,
+    onForceSelectedTabsAsInactiveClick: () -> Unit,
 ) {
     val normalTabCount = browserStore
         .observeAsComposableState { state -> state.normalTabs.size }.value ?: 0
+    val privateTabCount = browserStore
+        .observeAsComposableState { state -> state.privateTabs.size }.value ?: 0
     val multiselectMode = tabsTrayStore
         .observeAsComposableState { state -> state.mode }.value ?: TabsTrayState.Mode.Normal
     val selectedPage = tabsTrayStore
@@ -136,9 +160,21 @@ fun TabsTray(
                 selectMode = multiselectMode,
                 selectedPage = selectedPage,
                 normalTabCount = normalTabCount,
+                privateTabCount = privateTabCount,
                 isInDebugMode = isInDebugMode,
                 onTabPageIndicatorClicked = onTabPageClick,
                 onExitSelectModeClick = { tabsTrayStore.dispatch(TabsTrayAction.ExitSelectMode) },
+                onSaveToCollectionClick = onSaveToCollectionClick,
+                onShareSelectedTabsClick = onShareSelectedTabsClick,
+                onEnterMultiselectModeClick = { tabsTrayStore.dispatch(TabsTrayAction.EnterSelectMode) },
+                onShareAllTabsClick = onShareAllTabsClick,
+                onTabSettingsClick = onTabSettingsClick,
+                onRecentlyClosedClick = onRecentlyClosedClick,
+                onAccountSettingsClick = onAccountSettingsClick,
+                onDeleteAllTabsClick = onDeleteAllTabsClick,
+                onBookmarkSelectedTabsClick = onBookmarkSelectedTabsClick,
+                onDeleteSelectedTabsClick = onDeleteSelectedTabsClick,
+                onForceSelectedTabsAsInactiveClick = onForceSelectedTabsAsInactiveClick,
             )
         }
 
@@ -491,6 +527,16 @@ private fun TabsTrayPreviewRoot(
             onInactiveTabClick = {},
             onInactiveTabClose = inactiveTabsState::remove,
             onSyncedTabClick = {},
+            onSaveToCollectionClick = {},
+            onShareSelectedTabsClick = {},
+            onShareAllTabsClick = {},
+            onTabSettingsClick = {},
+            onRecentlyClosedClick = {},
+            onAccountSettingsClick = {},
+            onDeleteAllTabsClick = {},
+            onDeleteSelectedTabsClick = {},
+            onBookmarkSelectedTabsClick = {},
+            onForceSelectedTabsAsInactiveClick = {},
         )
     }
 }

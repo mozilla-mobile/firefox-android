@@ -4,16 +4,25 @@ title: Changelog
 permalink: /changelog/
 ---
 
-# 114.0.0 (In Development)
-* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v113..main)
+# 115.0 (In Development)
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v114..main)
 * [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
 * [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/Gecko.kt)
 * [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/.config.yml)
 
+* **lib-crash**
+  * Log exceptions that crash the `CrashReporter` to avoid silent failurs. See [bug 1826591](https://bugzilla.mozilla.org/show_bug.cgi?id=1826591).
+
+# 114.0
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v113..releases_v114)
+* [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/releases_v114/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
+* [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/releases_v114/android-components/plugins/dependencies/src/main/java/Gecko.kt)
+* [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/releases_v114/android-components/.config.yml)
+
 * * **browser-state**
   * 🌟 Added `DownloadState`.`openInApp` to indicate whether or not the file associated with the download should be opened in a third party app after downloaded successfully, for more information see [bug 1829371](https://bugzilla.mozilla.org/show_bug.cgi?id=1829371) and [bug 1829372](https://bugzilla.mozilla.org/show_bug.cgi?id=1829372).
 
-# 113.0.0
+# 113.0
 * [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v112..releases_v113)
 * [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/releases_v113/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
 * [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/releases_v113/android-components/plugins/dependencies/src/main/java/Gecko.kt)
@@ -28,7 +37,7 @@ permalink: /changelog/
 * **support-license**
   * 🆕 New component to display generated license information.
 
-# 112.0.0
+# 112.0
 * [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v111...releases_v112)
 * [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/releases_v112/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
 * [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/releases_v112/android-components/plugins/dependencies/src/main/java/Gecko.kt)
@@ -59,7 +68,7 @@ permalink: /changelog/
   * Add new `hasCookieBannerRuleForSession` API in `Engine`. This is currently only supported in the Gecko Engine.
 
 
-# 111.0.0
+# 111.0
 * [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v110...releases_v111)
 * [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/releases_v111/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
 * [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/releases_v111/android-components/plugins/dependencies/src/main/java/Gecko.kt)
@@ -115,7 +124,7 @@ permalink: /changelog/
 * **lib-crash**
   * 🌟 Added support for Glean crash pings in the `GleanCrashReporterService`. [Bug 1810951](https://bugzilla.mozilla.org/show_bug.cgi?id=1810951)
 
-# 110.0.0
+# 110.0
 * [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v109...releases_v110)
 * [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/releases_v110/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
 * [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/releases_v110/android-components/plugins/dependencies/src/main/java/Gecko.kt)

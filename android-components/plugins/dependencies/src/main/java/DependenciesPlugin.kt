@@ -16,7 +16,7 @@ class DependenciesPlugin : Plugin<Settings> {
 object Versions {
     const val kotlin = "1.8.21"
     const val coroutines = "1.6.4"
-    const val serialization = "1.5.0"
+    const val serialization = "1.5.1"
 
     const val junit = "4.13.2"
     const val robolectric = "4.10.1"
@@ -43,9 +43,9 @@ object Versions {
     const val leakcanary = "2.10"
 
     // DO NOT MODIFY MANUALLY. This is auto-updated along with GeckoView.
-    const val mozilla_glean = "52.6.0"
+    const val mozilla_glean = "52.7.0"
 
-    const val material = "1.2.1"
+    const val material = "1.9.0"
     const val ksp = "1.0.11"
 
     // see https://android-developers.googleblog.com/2022/06/independent-versioning-of-Jetpack-Compose-libraries.html
@@ -54,7 +54,7 @@ object Versions {
     const val compose_compiler = "1.4.7"
 
     object AndroidX {
-        const val activityCompose = "1.4.0"
+        const val activityCompose = "1.7.1"
         const val annotation = "1.6.0"
         const val appcompat = "1.6.1"
         const val autofill = "1.1.0"
@@ -62,9 +62,10 @@ object Versions {
         const val biometric = "1.1.0"
         const val cardview = "1.0.0"
         const val compose = compose_version
-        const val constraintlayout = "2.0.4"
-        const val coordinatorlayout = "1.1.0"
+        const val constraintlayout = "2.1.4"
+        const val coordinatorlayout = "1.2.0"
         const val core = "1.10.0"
+        const val drawerlayout = "1.2.0"
         const val fragment = "1.5.7"
         const val recyclerview = "1.3.0"
         const val test = "1.5.0"
@@ -80,7 +81,7 @@ object Versions {
         const val media = "1.2.0"
         const val navigation = "2.5.3"
         const val work = "2.7.1"
-        const val arch = "2.1.0"
+        const val arch = "2.2.0"
         const val uiautomator = "2.2.0"
         const val localbroadcastmanager = "1.0.0"
         const val swiperefreshlayout = "1.1.0"
@@ -129,6 +130,7 @@ object ComponentsDependencies {
     const val androidx_core = "androidx.core:core:${Versions.AndroidX.core}"
     const val androidx_core_ktx = "androidx.core:core-ktx:${Versions.AndroidX.core}"
     const val androidx_coordinatorlayout = "androidx.coordinatorlayout:coordinatorlayout:${Versions.AndroidX.coordinatorlayout}"
+    const val androidx_drawerlayout = "androidx.drawerlayout:drawerlayout:${Versions.AndroidX.drawerlayout}"
     const val androidx_fragment = "androidx.fragment:fragment:${Versions.AndroidX.fragment}"
     const val androidx_lifecycle_livedata = "androidx.lifecycle:lifecycle-livedata-ktx:${Versions.AndroidX.lifecycle}"
     const val androidx_lifecycle_runtime = "androidx.lifecycle:lifecycle-runtime-ktx:${Versions.AndroidX.lifecycle}"
