@@ -14,7 +14,7 @@ object FocusVersions {
     object AndroidX {
         const val annotation = "1.6.0"
         const val appcompat = "1.6.1"
-        const val arch = "2.1.0"
+        const val arch = "2.2.0"
         const val browser = "1.5.0"
         const val cardview = "1.0.0"
         const val compose = "1.4.3"
@@ -36,7 +36,7 @@ object FocusVersions {
     object Google {
         const val accompanist = "0.16.1"
         const val compose_compiler = "1.4.7"
-        const val material = "1.7.0"
+        const val material = "1.9.0"
         const val play = "1.10.3"
     }
 

@@ -261,10 +261,10 @@
     <!-- Three options for Cookie blocking. Yes (All cookies Blocked), Block 3rd-party cookies
     only (Only 3rd-party Cookies Blocked), No (No cookies blocked) -->
     <string name="preference_privacy_should_block_cookies_no_option2">Non, grazas</string>
-    <string name="preference_privacy_should_block_cookies_third_party_tracker_cookies_option">Bloquear só rastros de seguimento de terceiras partes</string>
+    <string name="preference_privacy_should_block_cookies_third_party_tracker_cookies_option">Bloquear só as cookies de seguimento de terceiras partes</string>
     <string name="preference_privacy_should_block_cookies_third_party_only_option">Só bloquea as cookies de terceiros</string>
 
-    <string name="preference_privacy_should_block_cookies_cross_site_option">Bloquear os rastros entre sitios</string>
+    <string name="preference_privacy_should_block_cookies_cross_site_option">Bloquear as cookies entre sitios</string>
     <string name="preference_privacy_should_block_cookies_yes_option2">Si, por favor</string>
 
     <!-- Preference Title: Biometrics can be used to unlock Focus if the previous session's data was not erased by the user. -->
@@ -476,7 +476,7 @@
     <!-- First run tour (Privacy): Text. %1$s will be replaced with the name of the app (e.g. Firefox Focus) -->
     <string name="firstrun_privacy_text">Estabeleza %1$s como navegador predeterminado e experimente os beneficios da navegación privada ao abrir páxinas web dende outros aplicativos.</string>
 
-    <string name="firstrun_close_button">Entendín!</string>
+    <string name="firstrun_close_button">Entendido!</string>
     <string name="firstrun_skip_button">Saltar</string>
     <string name="firstrun_next_button">Seguinte</string>
 
