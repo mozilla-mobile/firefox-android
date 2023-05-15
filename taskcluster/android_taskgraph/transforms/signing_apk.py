@@ -9,7 +9,6 @@ kind.
 from taskgraph.transforms.base import TransformSequence
 from taskgraph.util.schema import resolve_keyed_by
 
-
 transforms = TransformSequence()
 
 PRODUCTION_SIGNING_BUILD_TYPES = [
@@ -17,36 +16,31 @@ PRODUCTION_SIGNING_BUILD_TYPES = [
     "focus-beta",
     "focus-release",
     "klar-release",
-    "android-test-nightly",
-    "android-test-beta",
     "fenix-nightly",
     "fenix-beta",
     "fenix-release",
-    "fenix-android-test-nightly",
     "fenix-beta-mozillaonline",
     "fenix-release-mozillaonline",
-]
-
-SIGNING_BUILD_TYPES = PRODUCTION_SIGNING_BUILD_TYPES + [
-    "focus-debug",
-    "klar-debug",
-    "fenix-debug",
-    "fenix-nightly-simulation",
 ]
 
 
 @transforms.add
 def resolve_keys(config, tasks):
     for task in tasks:
-        for key in ("run-on-tasks-for", "signing-format", "notify", "treeherder.platform"):
+        for key in (
+            "run-on-tasks-for",
+            "signing-format",
+            "notify",
+            "treeherder.platform",
+        ):
             resolve_keyed_by(
                 task,
                 key,
                 item_name=task["name"],
                 **{
-                    'build-type': task["attributes"]["build-type"],
-                    'level': config.params["level"],
-                    'tasks-for': config.params["tasks_for"],
+                    "build-type": task["attributes"]["build-type"],
+                    "level": config.params["level"],
+                    "tasks-for": config.params["tasks_for"],
                 }
             )
         yield task
@@ -59,7 +53,6 @@ def set_worker_type(config, tasks):
         if (
             str(config.params["level"]) == "3"
             and task["attributes"]["build-type"] in PRODUCTION_SIGNING_BUILD_TYPES
-            and config.params["tasks_for"] in ("cron", "github-release", "action")
         ):
             worker_type = "signing"
         task["worker-type"] = worker_type
@@ -70,10 +63,7 @@ def set_worker_type(config, tasks):
 def set_signing_type(config, tasks):
     for task in tasks:
         signing_type = "dep-signing"
-        if (
-            str(config.params["level"]) == "3"
-            and config.params["tasks_for"] in ("cron", "github-release", "action")
-        ):
+        if str(config.params["level"]) == "3":
             if task["attributes"]["build-type"] in ("fenix-beta", "fenix-release"):
                 signing_type = "fennec-production-signing"
             elif task["attributes"]["build-type"] in PRODUCTION_SIGNING_BUILD_TYPES:
@@ -85,13 +75,7 @@ def set_signing_type(config, tasks):
 @transforms.add
 def set_index(config, tasks):
     for task in tasks:
-        index = {}
-        if (
-            config.params["tasks_for"] in ("cron", "github-release", "action")
-            and task["attributes"]["build-type"] in SIGNING_BUILD_TYPES
-        ):
-            index["type"] = "signing"
-        task["index"] = index
+        task["index"] = {"type": "signing"}
         yield task
 
 

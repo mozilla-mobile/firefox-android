@@ -10,7 +10,6 @@ import android.content.res.Configuration
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
-import android.os.StrictMode
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -40,7 +39,6 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import mozilla.components.browser.menu.view.MenuButton
 import mozilla.components.browser.state.selector.findTab
 import mozilla.components.browser.state.selector.normalTabs
 import mozilla.components.browser.state.selector.privateTabs
@@ -106,10 +104,10 @@ import org.mozilla.fenix.messaging.DefaultMessageController
 import org.mozilla.fenix.messaging.FenixNimbusMessagingController
 import org.mozilla.fenix.messaging.MessagingFeature
 import org.mozilla.fenix.nimbus.FxNimbus
-import org.mozilla.fenix.onboarding.FenixOnboarding
 import org.mozilla.fenix.onboarding.controller.DefaultOnboardingController
 import org.mozilla.fenix.perf.MarkersFragmentLifecycleCallbacks
 import org.mozilla.fenix.perf.runBlockingIncrement
+import org.mozilla.fenix.search.toolbar.DefaultSearchSelectorController
 import org.mozilla.fenix.search.toolbar.SearchSelectorMenu
 import org.mozilla.fenix.tabstray.TabsTrayAccessPoint
 import org.mozilla.fenix.utils.Settings.Companion.TOP_SITES_PROVIDER_MAX_THRESHOLD
@@ -178,12 +176,6 @@ class HomeFragment : Fragment() {
     private val store: BrowserStore
         get() = requireComponents.core.store
 
-    private val onboarding by lazy {
-        requireComponents.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
-            FenixOnboarding(requireContext())
-        }
-    }
-
     private var _sessionControlInteractor: SessionControlInteractor? = null
     private val sessionControlInteractor: SessionControlInteractor
         get() = _sessionControlInteractor!!
@@ -192,6 +184,9 @@ class HomeFragment : Fragment() {
     private var tabCounterView: TabCounterView? = null
     private var toolbarView: ToolbarView? = null
     private var appBarLayout: AppBarLayout? = null
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    internal var homeMenuView: HomeMenuView? = null
 
     private lateinit var currentMode: CurrentMode
 
@@ -205,9 +200,6 @@ class HomeFragment : Fragment() {
     private val historyMetadataFeature = ViewBoundFeatureWrapper<RecentVisitsFeature>()
     private val searchSelectorBinding = ViewBoundFeatureWrapper<SearchSelectorBinding>()
     private val searchSelectorMenuBinding = ViewBoundFeatureWrapper<SearchSelectorMenuBinding>()
-
-    @VisibleForTesting
-    internal var getMenuButton: () -> MenuButton? = { binding.menuButton }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // DO NOT ADD ANYTHING ABOVE THIS getProfilerTime CALL!
@@ -243,7 +235,7 @@ class HomeFragment : Fragment() {
 
         currentMode = CurrentMode(
             requireContext(),
-            onboarding,
+            requireComponents.fenixOnboarding,
             browsingModeManager,
             ::dispatchModeChanges,
         )
@@ -409,6 +401,10 @@ class HomeFragment : Fragment() {
                 activity = activity,
                 hideOnboarding = ::hideOnboardingAndOpenSearch,
             ),
+            searchSelectorController = DefaultSearchSelectorController(
+                activity = activity,
+                navController = findNavController(),
+            ),
             toolbarController = DefaultToolbarController(
                 activity = activity,
                 store = components.core.store,
@@ -450,7 +446,7 @@ class HomeFragment : Fragment() {
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
 
-        getMenuButton()?.dismissMenu()
+        homeMenuView?.dismissMenu()
 
         val currentWallpaperName = requireContext().settings().currentWallpaperName
         applyWallpaper(wallpaperName = currentWallpaperName, orientationChange = true)
@@ -530,7 +526,7 @@ class HomeFragment : Fragment() {
         observeSearchEngineNameChanges()
         observeWallpaperUpdates()
 
-        HomeMenuView(
+        homeMenuView = HomeMenuView(
             view = view,
             context = view.context,
             lifecycleOwner = viewLifecycleOwner,
@@ -538,7 +534,7 @@ class HomeFragment : Fragment() {
             navController = findNavController(),
             menuButton = WeakReference(binding.menuButton),
             hideOnboardingIfNeeded = ::hideOnboardingIfNeeded,
-        ).build()
+        ).also { it.build() }
 
         tabCounterView = TabCounterView(
             context = requireContext(),
@@ -552,7 +548,7 @@ class HomeFragment : Fragment() {
         PrivateBrowsingButtonView(binding.privateBrowsingButton, browsingModeManager) { newMode ->
             sessionControlInteractor.onPrivateModeButtonClicked(
                 newMode,
-                onboarding.userHasBeenOnboarded(),
+                requireComponents.fenixOnboarding.userHasBeenOnboarded(),
             )
         }
 
@@ -703,6 +699,7 @@ class HomeFragment : Fragment() {
         super.onDestroyView()
 
         _sessionControlInteractor = null
+        homeMenuView = null
         sessionControlView = null
         tabCounterView = null
         toolbarView = null
@@ -876,8 +873,8 @@ class HomeFragment : Fragment() {
     }
 
     private fun hideOnboardingIfNeeded() {
-        if (!onboarding.userHasBeenOnboarded()) {
-            onboarding.finish()
+        if (!requireComponents.fenixOnboarding.userHasBeenOnboarded()) {
+            requireComponents.fenixOnboarding.finish()
             requireContext().components.appStore.dispatch(
                 AppAction.ModeChange(
                     mode = currentMode.getCurrentMode(),

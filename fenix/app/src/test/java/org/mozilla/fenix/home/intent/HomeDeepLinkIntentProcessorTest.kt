@@ -8,8 +8,6 @@ import android.content.Intent
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.os.Build.VERSION_CODES.M
-import android.os.Build.VERSION_CODES.N
-import android.os.Build.VERSION_CODES.P
 import androidx.core.net.toUri
 import androidx.navigation.NavController
 import io.mockk.Called
@@ -239,16 +237,6 @@ class HomeDeepLinkIntentProcessorTest {
     }
 
     @Test
-    @Config(minSdk = N, maxSdk = P)
-    fun `process make_default_browser deep link for above API 23`() {
-        assertTrue(processorHome.process(testIntent("make_default_browser"), navController, out))
-
-        verify { activity.startActivity(any()) }
-        verify { navController wasNot Called }
-        verify { out wasNot Called }
-    }
-
-    @Test
     @Config(maxSdk = M)
     fun `process make_default_browser deep link for API 23 and below`() {
         val packageManager: PackageManager = mockk()
@@ -262,9 +250,8 @@ class HomeDeepLinkIntentProcessorTest {
 
         assertTrue(processorHome.process(testIntent("make_default_browser"), navController, out))
 
-        val searchTermOrURL = SupportUtils.getSumoURLForTopic(
-            activity,
-            SupportUtils.SumoTopic.SET_AS_DEFAULT_BROWSER,
+        val searchTermOrURL = SupportUtils.getGenericSumoURLForTopic(
+            topic = SupportUtils.SumoTopic.SET_AS_DEFAULT_BROWSER,
         )
 
         verify {

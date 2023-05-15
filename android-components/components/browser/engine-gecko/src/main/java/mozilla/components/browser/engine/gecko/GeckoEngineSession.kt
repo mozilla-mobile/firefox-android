@@ -1001,7 +1001,7 @@ class GeckoEngineSession(
         override fun onExternalResponse(session: GeckoSession, webResponse: WebResponse) {
             with(webResponse) {
                 val contentType = headers[CONTENT_TYPE]?.trim()
-                val contentLength = headers[CONTENT_LENGTH]?.trim()?.toLong()
+                val contentLength = headers[CONTENT_LENGTH]?.trim()?.toLongOrNull()
                 val contentDisposition = headers[CONTENT_DISPOSITION]?.trim()
                 val url = uri
                 val fileName = DownloadUtils.guessFileName(
@@ -1011,7 +1011,6 @@ class GeckoEngineSession(
                     mimeType = contentType,
                 )
                 val response = webResponse.toResponse()
-
                 notifyObservers {
                     onExternalResource(
                         url = url,
@@ -1020,6 +1019,8 @@ class GeckoEngineSession(
                         fileName = fileName.sanitizeFileName(),
                         response = response,
                         isPrivate = privateMode,
+                        openInApp = webResponse.requestExternalApp,
+                        skipConfirmation = webResponse.skipConfirmation,
                     )
                 }
             }

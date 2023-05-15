@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -28,6 +32,18 @@
         app:destination="@id/externalAppBrowserFragment"
         app:popUpTo="@id/homeFragment"
         app:popUpToInclusive="false" />
+
+    <action
+        android:id="@+id/action_global_home_juno_onboarding"
+        app:destination="@id/junoOnboardingFragment"
+        app:popUpTo="@id/startupFragment"
+        app:popUpToInclusive="true" />
+
+    <action
+        android:id="@+id/action_onboarding_home"
+        app:destination="@id/homeFragment"
+        app:popUpTo="@id/junoOnboardingFragment"
+        app:popUpToInclusive="true" />
 
     <action
         android:id="@+id/action_global_home_onboarding_dialog"
@@ -184,6 +200,11 @@
     </fragment>
 
     <fragment
+        android:id="@+id/junoOnboardingFragment"
+        android:name="org.mozilla.fenix.onboarding.JunoOnboardingFragment">
+    </fragment>
+
+    <fragment
         android:id="@+id/homeFragment"
         android:name="org.mozilla.fenix.home.HomeFragment"
         tools:layout="@layout/fragment_home">
@@ -199,6 +220,23 @@
     <dialog
         android:id="@+id/homeOnboardingDialogFragment"
         android:name="org.mozilla.fenix.onboarding.HomeOnboardingDialogFragment" />
+
+    <dialog
+        android:id="@+id/researchSurfaceDialogFragment"
+        android:name="org.mozilla.fenix.experiments.ResearchSurfaceDialogFragment" >
+        <argument
+            android:name="KEY_MESSAGE_TEXT"
+            app:nullable="true"
+            app:argType="string" />
+        <argument
+            android:name="KEY_ACCEPT_BUTTON_TEXT"
+            app:nullable="true"
+            app:argType="string" />
+        <argument
+            android:name="KEY_DISMISS_BUTTON_TEXT"
+            app:nullable="true"
+            app:argType="string" />
+    </dialog>
 
     <dialog
         android:id="@+id/homeNotificationPermissionDialogFragment"
@@ -284,6 +322,9 @@
             android:name="webAppManifest"
             app:argType="string"
             app:nullable="true" />
+        <argument
+            android:name="isSandboxCustomTab"
+            app:argType="boolean" />
     </fragment>
 
     <fragment
@@ -934,8 +975,8 @@
             android:name="isTrackingProtectionEnabled"
             app:argType="boolean" />
         <argument
-            android:name="isCookieHandlingEnabled"
-            app:argType="boolean" />
+            android:name="cookieBannerUIMode"
+            app:argType="org.mozilla.fenix.trackingprotection.CookieBannerUIMode" />
     </dialog>
     <dialog
         android:id="@+id/cookieBannerDialogFragment"
@@ -965,8 +1006,8 @@
             android:name="trackingProtectionEnabled"
             app:argType="boolean" />
         <argument
-            android:name="cookieBannerHandlingEnabled"
-            app:argType="boolean" />
+            android:name="cookieBannerUIMode"
+            app:argType="org.mozilla.fenix.trackingprotection.CookieBannerUIMode" />
         <argument
             android:name="gravity"
             android:defaultValue="80"
@@ -1020,8 +1061,8 @@
             android:name="trackingProtectionEnabled"
             app:argType="boolean" />
         <argument
-            android:name="cookieBannerHandlingEnabled"
-            app:argType="boolean" />
+            android:name="cookieBannerUIMode"
+            app:argType="org.mozilla.fenix.trackingprotection.CookieBannerUIMode" />
         <argument
             android:name="gravity"
             android:defaultValue="80"

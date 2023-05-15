@@ -329,6 +329,8 @@ class GeckoEngineSessionTest {
         val response = WebResponse.Builder("https://download.mozilla.org/image.png")
             .addHeader(Headers.Names.CONTENT_TYPE, "image/png")
             .addHeader(Headers.Names.CONTENT_LENGTH, "42")
+            .skipConfirmation(true)
+            .requestExternalApp(true)
             .body(mock())
             .build()
 
@@ -344,6 +346,82 @@ class GeckoEngineSessionTest {
             cookie = eq(null),
             userAgent = eq(null),
             isPrivate = eq(true),
+            skipConfirmation = eq(true),
+            openInApp = eq(true),
+            response = captor.capture(),
+        )
+
+        assertNotNull(captor.value)
+    }
+
+    @Test
+    fun contentDelegateNotifiesObserverAboutDownloadsWithMalformedContentLength() {
+        val engineSession = GeckoEngineSession(
+            mock(),
+            geckoSessionProvider = geckoSessionProvider,
+            privateMode = true,
+        )
+
+        val observer: EngineSession.Observer = mock()
+        engineSession.register(observer)
+
+        val response = WebResponse.Builder("https://download.mozilla.org/image.png")
+            .addHeader(Headers.Names.CONTENT_TYPE, "image/png")
+            .addHeader(Headers.Names.CONTENT_LENGTH, "42,42")
+            .body(mock())
+            .build()
+
+        val captor = argumentCaptor<Response>()
+        captureDelegates()
+        contentDelegate.value.onExternalResponse(mock(), response)
+
+        verify(observer).onExternalResource(
+            url = eq("https://download.mozilla.org/image.png"),
+            fileName = eq("image.png"),
+            contentLength = eq(null),
+            contentType = eq("image/png"),
+            cookie = eq(null),
+            userAgent = eq(null),
+            isPrivate = eq(true),
+            skipConfirmation = eq(false),
+            openInApp = eq(false),
+            response = captor.capture(),
+        )
+
+        assertNotNull(captor.value)
+    }
+
+    @Test
+    fun contentDelegateNotifiesObserverAboutDownloadsWithEmptyContentLength() {
+        val engineSession = GeckoEngineSession(
+            mock(),
+            geckoSessionProvider = geckoSessionProvider,
+            privateMode = true,
+        )
+
+        val observer: EngineSession.Observer = mock()
+        engineSession.register(observer)
+
+        val response = WebResponse.Builder("https://download.mozilla.org/image.png")
+            .addHeader(Headers.Names.CONTENT_TYPE, "image/png")
+            .addHeader(Headers.Names.CONTENT_LENGTH, "")
+            .body(mock())
+            .build()
+
+        val captor = argumentCaptor<Response>()
+        captureDelegates()
+        contentDelegate.value.onExternalResponse(mock(), response)
+
+        verify(observer).onExternalResource(
+            url = eq("https://download.mozilla.org/image.png"),
+            fileName = eq("image.png"),
+            contentLength = eq(null),
+            contentType = eq("image/png"),
+            cookie = eq(null),
+            userAgent = eq(null),
+            isPrivate = eq(true),
+            skipConfirmation = eq(false),
+            openInApp = eq(false),
             response = captor.capture(),
         )
 
@@ -3724,6 +3802,8 @@ class GeckoEngineSessionTest {
                     cookie: String?,
                     userAgent: String?,
                     isPrivate: Boolean,
+                    skipConfirmation: Boolean,
+                    openInApp: Boolean,
                     response: Response?,
                 ) {
                     assertEquals("PDF response is always a success.", RESPONSE_CODE_SUCCESS, response!!.status)
@@ -3756,6 +3836,8 @@ class GeckoEngineSessionTest {
                     cookie: String?,
                     userAgent: String?,
                     isPrivate: Boolean,
+                    skipConfirmation: Boolean,
+                    openInApp: Boolean,
                     response: Response?,
                 ) {
                     assert(false) { "We should not notify observers." }

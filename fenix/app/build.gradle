@@ -1,3 +1,4 @@
+import org.apache.tools.ant.util.StringUtils
 import org.mozilla.fenix.gradle.tasks.ApkSizeTask
 
 plugins {
@@ -31,11 +32,6 @@ android {
         testBuildType project.property("testBuildType")
     }
 
-    // This allows overriding the target activity for MozillaOnline builds, which happens
-    // as part of the defaultConfig below, and applies to all other configurations (Nightly,
-    // Beta, and Release.)
-    def targetActivity = "HomeActivity"
-
     defaultConfig {
         applicationId "org.mozilla"
         minSdkVersion Config.minSdkVersion
@@ -67,8 +63,13 @@ android {
                 "}"
         // This should be the base URL used to call the AMO API.
         buildConfigField "String", "AMO_SERVER_URL", "\"https://services.addons.mozilla.org\""
+
         def deepLinkSchemeValue = "fenix-dev"
         buildConfigField "String", "DEEP_LINK_SCHEME", "\"$deepLinkSchemeValue\""
+
+        // This allows overriding the target activity for MozillaOnline builds, which happens
+        // as part of the defaultConfig below.
+        def targetActivity = "HomeActivity"
 
         // Build flag for "Mozilla Online" variants. See `Config.isMozillaOnline`.
         if (project.hasProperty("mozillaOnline") || gradle.hasProperty("localProperties.mozillaOnline")) {
@@ -77,6 +78,7 @@ android {
         } else {
             buildConfigField "boolean", "MOZILLA_ONLINE", "false"
         }
+
         manifestPlaceholders = [
                 "targetActivity": targetActivity,
                 "deepLinkScheme": deepLinkSchemeValue
@@ -117,46 +119,43 @@ android {
             buildConfigField "boolean", "USE_RELEASE_VERSIONING", "true"
             def deepLinkSchemeValue = "fenix-nightly"
             buildConfigField "String", "DEEP_LINK_SCHEME", "\"$deepLinkSchemeValue\""
-            manifestPlaceholders = [
-                    "deepLinkScheme": deepLinkSchemeValue,
-                    "targetActivity": targetActivity
-            ]
+            manifestPlaceholders.putAll([
+                    "deepLinkScheme": deepLinkSchemeValue
+            ])
         }
         beta releaseTemplate >> {
             buildConfigField "boolean", "USE_RELEASE_VERSIONING", "true"
             applicationIdSuffix ".firefox_beta"
             def deepLinkSchemeValue = "fenix-beta"
             buildConfigField "String", "DEEP_LINK_SCHEME", "\"$deepLinkSchemeValue\""
-            manifestPlaceholders = [
+            manifestPlaceholders.putAll([
                     // This release type is meant to replace Firefox (Beta channel) and therefore needs to inherit
                     // its sharedUserId for all eternity. See:
-                    // https://searchfox.org/mozilla-central/search?q=moz_android_shared_id&case=false&regexp=false&path=
+                    // https://searchfox.org/mozilla-esr68/search?q=moz_android_shared_id&case=false&regexp=false&path=
                     // Shipping an app update without sharedUserId can have
                     // fatal consequences. For example see:
                     //  - https://issuetracker.google.com/issues/36924841
                     //  - https://issuetracker.google.com/issues/36905922
                     "sharedUserId": "org.mozilla.firefox.sharedID",
                     "deepLinkScheme": deepLinkSchemeValue,
-                    "targetActivity": targetActivity
-            ]
+            ])
         }
         release releaseTemplate >> {
             buildConfigField "boolean", "USE_RELEASE_VERSIONING", "true"
             applicationIdSuffix ".firefox"
             def deepLinkSchemeValue = "fenix"
             buildConfigField "String", "DEEP_LINK_SCHEME", "\"$deepLinkSchemeValue\""
-            manifestPlaceholders = [
+            manifestPlaceholders.putAll([
                     // This release type is meant to replace Firefox (Release channel) and therefore needs to inherit
                     // its sharedUserId for all eternity. See:
-                    // https://searchfox.org/mozilla-central/search?q=moz_android_shared_id&case=false&regexp=false&path=
+                    // https://searchfox.org/mozilla-esr68/search?q=moz_android_shared_id&case=false&regexp=false&path=
                     // Shipping an app update without sharedUserId can have
                     // fatal consequences. For example see:
                     //  - https://issuetracker.google.com/issues/36924841
                     //  - https://issuetracker.google.com/issues/36905922
                     "sharedUserId": "org.mozilla.firefox.sharedID",
                     "deepLinkScheme": deepLinkSchemeValue,
-                    "targetActivity": targetActivity,
-            ]
+            ])
         }
         benchmark releaseTemplate >> {
             initWith buildTypes.nightly
@@ -474,7 +473,6 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
     kotlinOptions {
         freeCompilerArgs += [
                 "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-                "-opt-in=com.google.accompanist.pager.ExperimentalPagerApi",
         ]
     }
 }
@@ -489,7 +487,6 @@ dependencies {
     implementation FenixDependencies.androidx_constraintlayout
     implementation FenixDependencies.androidx_coordinatorlayout
     implementation FenixDependencies.google_accompanist_drawablepainter
-    implementation FenixDependencies.google_accompanist_pager
 
     implementation FenixDependencies.sentry
 
@@ -583,12 +580,13 @@ dependencies {
     implementation project(':lib-dataprotect')
 
     debugImplementation FenixDependencies.leakcanary
+    debugImplementation FenixDependencies.androidx_compose_ui_tooling
 
     implementation FenixDependencies.androidx_activity_compose
     implementation FenixDependencies.androidx_activity_ktx
     implementation FenixDependencies.androidx_annotation
     implementation FenixDependencies.androidx_compose_ui
-    implementation FenixDependencies.androidx_compose_ui_tooling
+    implementation FenixDependencies.androidx_compose_ui_tooling_preview
     implementation FenixDependencies.androidx_compose_foundation
     implementation FenixDependencies.androidx_compose_material
     implementation FenixDependencies.androidx_legacy
@@ -610,6 +608,7 @@ dependencies {
     implementation FenixDependencies.androidx_transition
     implementation FenixDependencies.androidx_work_ktx
     implementation FenixDependencies.androidx_datastore
+    implementation FenixDependencies.androidx_data_store_preferences
     implementation FenixDependencies.protobuf_javalite
     implementation FenixDependencies.google_material
 
@@ -847,7 +846,7 @@ if (gradle.hasProperty('localProperties.dependencySubstitutions.geckoviewTopsrcd
     if (gradle.hasProperty('localProperties.dependencySubstitutions.geckoviewTopobjdir')) {
         ext.topobjdir = gradle."localProperties.dependencySubstitutions.geckoviewTopobjdir"
     }
-    ext.topsrcdir = gradle."localProperties.dependencySubstitutions.geckoviewTopsrcdir"
+    ext.topsrcdir = StringUtils.removeSuffix(gradle."localProperties.dependencySubstitutions.geckoviewTopsrcdir", File.separator)
     apply from: "${topsrcdir}/substitute-local-geckoview.gradle"
 }
 

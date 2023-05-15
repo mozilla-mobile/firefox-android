@@ -85,7 +85,7 @@ class BrowserFragmentTest {
         every { browserFragment.browserToolbarView } returns mockk(relaxed = true)
         every { browserFragment.activity } returns homeActivity
         every { browserFragment.lifecycle } returns lifecycleOwner.lifecycle
-        every { browserFragment.onboarding } returns onboarding
+        every { context.components.fenixOnboarding } returns onboarding
 
         every { browserFragment.requireContext() } returns context
         every { browserFragment.initializeUI(any(), any()) } returns mockk()
@@ -267,18 +267,15 @@ class BrowserFragmentTest {
 
     @Test
     fun `WHEN isPullToRefreshEnabledInBrowser is disabled THEN pull down refresh is disabled`() {
-        every { FeatureFlags.pullToRefreshEnabled } returns true
         every { context.settings().isPullToRefreshEnabledInBrowser } returns true
         assertTrue(browserFragment.shouldPullToRefreshBeEnabled(false))
 
-        every { FeatureFlags.pullToRefreshEnabled } returns true
         every { context.settings().isPullToRefreshEnabledInBrowser } returns false
         assertTrue(!browserFragment.shouldPullToRefreshBeEnabled(false))
     }
 
     @Test
     fun `WHEN in fullscreen THEN pull down refresh is disabled`() {
-        every { FeatureFlags.pullToRefreshEnabled } returns true
         every { context.settings().isPullToRefreshEnabledInBrowser } returns true
         assertTrue(browserFragment.shouldPullToRefreshBeEnabled(false))
         assertTrue(!browserFragment.shouldPullToRefreshBeEnabled(true))
@@ -432,11 +429,9 @@ class BrowserFragmentTest {
     }
 
     internal class MockedLifecycleOwner(initialState: Lifecycle.State) : LifecycleOwner {
-        val lifecycleRegistry = LifecycleRegistry(this).apply {
+        override val lifecycle: Lifecycle = LifecycleRegistry(this).apply {
             currentState = initialState
         }
-
-        override fun getLifecycle(): Lifecycle = lifecycleRegistry
     }
 
     @Test

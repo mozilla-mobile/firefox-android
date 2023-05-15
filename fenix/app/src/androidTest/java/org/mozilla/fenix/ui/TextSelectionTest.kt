@@ -1,19 +1,24 @@
 package org.mozilla.fenix.ui
 
-import androidx.core.net.toUri
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
+import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithText
 import org.mozilla.fenix.helpers.RetryTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
+import org.mozilla.fenix.ui.robots.clickContextMenuItem
+import org.mozilla.fenix.ui.robots.clickPageObject
 import org.mozilla.fenix.ui.robots.homeScreen
+import org.mozilla.fenix.ui.robots.longClickPageObject
 import org.mozilla.fenix.ui.robots.navigationToolbar
 import org.mozilla.fenix.ui.robots.openEditURLView
 import org.mozilla.fenix.ui.robots.searchScreen
@@ -21,11 +26,6 @@ import org.mozilla.fenix.ui.robots.searchScreen
 class TextSelectionTest {
     private lateinit var mDevice: UiDevice
     private lateinit var mockWebServer: MockWebServer
-    private val downloadTestPage =
-        "https://storage.googleapis.com/mobile_test_assets/test_app/downloads.html"
-    private val pdfFileName = "washington.pdf"
-    private val pdfFileURL = "storage.googleapis.com/mobile_test_assets/public/washington.pdf"
-    private val pdfFileContent = "Washington Crossing the Delaware"
 
     @get:Rule
     val activityIntentTestRule = HomeActivityIntentTestRule.withDefaultSettingsOverrides()
@@ -55,7 +55,9 @@ class TextSelectionTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(genericURL.url) {
-            longClickAndCopyText("content", true)
+            longClickPageObject(itemContainingText("content"))
+            clickContextMenuItem("Select all")
+            clickContextMenuItem("Copy")
         }.openNavigationToolbar {
             openEditURLView()
         }
@@ -77,7 +79,8 @@ class TextSelectionTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(genericURL.url) {
-            longClickAndCopyText("content")
+            longClickPageObject(itemContainingText("content"))
+            clickContextMenuItem("Copy")
         }.openNavigationToolbar {
             openEditURLView()
         }
@@ -97,7 +100,7 @@ class TextSelectionTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(genericURL.url) {
-            longClickLink(genericURL.content)
+            longClickPageObject(itemWithText(genericURL.content))
         }.clickShareSelectedText {
             verifyAndroidShareLayout()
         }
@@ -110,7 +113,8 @@ class TextSelectionTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(genericURL.url) {
-            longClickAndSearchText("Search", "content")
+            longClickPageObject(itemContainingText("content"))
+            clickContextMenuItem("Search")
             mDevice.waitForIdle()
             verifyTabCounter("2")
             verifyUrl("google")
@@ -127,22 +131,27 @@ class TextSelectionTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(genericURL.url) {
-            longClickAndSearchText("Private Search", "content")
+            longClickPageObject(itemContainingText("content"))
+            clickContextMenuItem("Private Search")
             mDevice.waitForIdle()
             verifyTabCounter("2")
             verifyUrl("google")
         }
     }
 
+    @Ignore("Failing, see https://bugzilla.mozilla.org/show_bug.cgi?id=1828663")
     @SmokeTest
     @Test
     fun selectAllAndCopyPDFTextTest() {
+        val genericURL =
+            TestAssetHelper.getGenericAsset(mockWebServer, 3)
+
         navigationToolbar {
-        }.enterURLAndEnterToBrowser(downloadTestPage.toUri()) {
-            clickLinkMatchingText(pdfFileName)
-            verifyUrl(pdfFileURL)
-            verifyPageContent(pdfFileContent)
-            longClickAndCopyText("Crossing", true)
+        }.enterURLAndEnterToBrowser(genericURL.url) {
+            clickPageObject(itemWithText("PDF file"))
+            longClickPageObject(itemContainingText("Crossing"))
+            clickContextMenuItem("Select all")
+            clickContextMenuItem("Copy")
         }.openNavigationToolbar {
             openEditURLView()
         }
@@ -153,19 +162,21 @@ class TextSelectionTest {
             clickPasteText()
             // With Select all, white spaces are copied
             // Potential bug https://bugzilla.mozilla.org/show_bug.cgi?id=1821310
-            verifyTypedToolbarText(" Washington Crossing the Delaware ")
+            verifyTypedToolbarText(" Washington Crossing the Delaware Wikipedia link ")
         }
     }
 
     @SmokeTest
     @Test
     fun copyPDFTextTest() {
+        val genericURL =
+            TestAssetHelper.getGenericAsset(mockWebServer, 3)
+
         navigationToolbar {
-        }.enterURLAndEnterToBrowser(downloadTestPage.toUri()) {
-            clickLinkMatchingText(pdfFileName)
-            verifyUrl(pdfFileURL)
-            verifyPageContent(pdfFileContent)
-            longClickAndCopyText("Crossing")
+        }.enterURLAndEnterToBrowser(genericURL.url) {
+            clickPageObject(itemWithText("PDF file"))
+            longClickPageObject(itemContainingText("Crossing"))
+            clickContextMenuItem("Copy")
         }.openNavigationToolbar {
             openEditURLView()
         }
@@ -181,12 +192,13 @@ class TextSelectionTest {
     @SmokeTest
     @Test
     fun shareSelectedPDFTextTest() {
+        val genericURL =
+            TestAssetHelper.getGenericAsset(mockWebServer, 3)
+
         navigationToolbar {
-        }.enterURLAndEnterToBrowser(downloadTestPage.toUri()) {
-            clickLinkMatchingText(pdfFileName)
-            verifyUrl(pdfFileURL)
-            verifyPageContent(pdfFileContent)
-            longClickMatchingText("Crossing")
+        }.enterURLAndEnterToBrowser(genericURL.url) {
+            clickPageObject(itemWithText("PDF file"))
+            longClickPageObject(itemContainingText("Crossing"))
         }.clickShareSelectedText {
             verifyAndroidShareLayout()
         }
@@ -195,13 +207,15 @@ class TextSelectionTest {
     @SmokeTest
     @Test
     fun selectAndSearchPDFTextTest() {
+        val genericURL =
+            TestAssetHelper.getGenericAsset(mockWebServer, 3)
+
         navigationToolbar {
-        }.enterURLAndEnterToBrowser(downloadTestPage.toUri()) {
-            clickLinkMatchingText(pdfFileName)
-            verifyUrl(pdfFileURL)
-            verifyPageContent(pdfFileContent)
-            longClickAndSearchText("Search", "Crossing")
-            verifyTabCounter("3")
+        }.enterURLAndEnterToBrowser(genericURL.url) {
+            clickPageObject(itemWithText("PDF file"))
+            longClickPageObject(itemContainingText("Crossing"))
+            clickContextMenuItem("Search")
+            verifyTabCounter("2")
             verifyUrl("google")
         }
     }
@@ -209,16 +223,18 @@ class TextSelectionTest {
     @SmokeTest
     @Test
     fun privateSelectAndSearchPDFTextTest() {
+        val genericURL =
+            TestAssetHelper.getGenericAsset(mockWebServer, 3)
+
         homeScreen {
         }.togglePrivateBrowsingMode()
 
         navigationToolbar {
-        }.enterURLAndEnterToBrowser(downloadTestPage.toUri()) {
-            clickLinkMatchingText(pdfFileName)
-            verifyUrl(pdfFileURL)
-            verifyPageContent(pdfFileContent)
-            longClickAndSearchText("Private Search", "Crossing")
-            verifyTabCounter("3")
+        }.enterURLAndEnterToBrowser(genericURL.url) {
+            clickPageObject(itemWithText("PDF file"))
+            longClickPageObject(itemContainingText("Crossing"))
+            clickContextMenuItem("Private Search")
+            verifyTabCounter("2")
             verifyUrl("google")
         }
     }

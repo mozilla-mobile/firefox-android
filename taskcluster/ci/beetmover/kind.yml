@@ -19,6 +19,7 @@ primary-dependency: signing
 
 only-for-build-types:
     - release
+    - beta
     - nightly
 
 group-by: component
@@ -28,11 +29,12 @@ task-template:
     description: Publish component
     maven-destination: 'maven2/org/mozilla/components/{component}/{version}/{artifact_file_name}'
     run-on-tasks-for: []
-    shipping-phase: push
+    shipping-phase: ship
     treeherder:
         job-symbol:
             by-build-type:
                 release: BM-R
+                beta: BM-B
                 nightly: BM-N
                 default: BM-B
         kind: build
@@ -44,6 +46,10 @@ task-template:
                     by-level:
                         '3': maven-production
                         default: maven-staging
+                beta:
+                    by-level:
+                        '3': maven-production
+                        default: maven-staging
                 nightly:
                     by-level:
                         '3': maven-nightly-production
@@ -51,6 +57,7 @@ task-template:
         beetmover-application-name:
             by-build-type:
                 release: components
+                beta: components
                 nightly: nightly_components
                 default: UNDEFINED
     worker-type: beetmover

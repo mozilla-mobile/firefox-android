@@ -28,6 +28,7 @@ import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.service.nimbus.messaging.Message
 import mozilla.components.support.ktx.android.view.showKeyboard
+import mozilla.components.ui.widgets.withCenterAlignedButtons
 import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.GleanMetrics.Collections
@@ -39,7 +40,6 @@ import org.mozilla.fenix.GleanMetrics.RecentTabs
 import org.mozilla.fenix.GleanMetrics.TopSites
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
-import org.mozilla.fenix.browser.BrowserAnimator
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.collections.SaveCollectionStep
 import org.mozilla.fenix.components.AppStore
@@ -53,8 +53,6 @@ import org.mozilla.fenix.home.HomeFragment
 import org.mozilla.fenix.home.HomeFragmentDirections
 import org.mozilla.fenix.messaging.MessageController
 import org.mozilla.fenix.onboarding.WallpaperOnboardingDialogFragment.Companion.THUMBNAILS_SELECTION_COUNT
-import org.mozilla.fenix.search.toolbar.SearchSelectorInteractor
-import org.mozilla.fenix.search.toolbar.SearchSelectorMenu
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.utils.Settings
 import org.mozilla.fenix.wallpapers.Wallpaper
@@ -171,11 +169,6 @@ interface SessionControlController {
      * @see [SessionControlInteractor.reportSessionMetrics]
      */
     fun handleReportSessionMetrics(state: AppState)
-
-    /**
-     * @see [SearchSelectorInteractor.onMenuItemTapped]
-     */
-    fun handleMenuItemTapped(item: SearchSelectorMenu.Item)
 }
 
 @Suppress("TooManyFunctions", "LargeClass", "LongParameterList")
@@ -208,7 +201,7 @@ class DefaultSessionControlController(
 
     override fun handleCollectionOpenTabClicked(tab: ComponentTab) {
         restoreUseCase.invoke(
-            activity,
+            activity.filesDir,
             engine,
             tab,
             onTabRestored = {
@@ -230,7 +223,7 @@ class DefaultSessionControlController(
 
     override fun handleCollectionOpenTabsTapped(collection: TabCollection) {
         restoreUseCase.invoke(
-            activity,
+            activity.filesDir,
             engine,
             collection,
             onFailure = { url ->
@@ -314,7 +307,7 @@ class DefaultSessionControlController(
                 setNegativeButton(R.string.top_sites_rename_dialog_cancel) { dialog, _ ->
                     dialog.cancel()
                 }
-            }.show().also {
+            }.show().withCenterAlignedButtons().also {
                 topSiteLabelEditText.setSelection(0, topSiteLabelEditText.text.length)
                 topSiteLabelEditText.showKeyboard()
             }
@@ -536,27 +529,5 @@ class DefaultSessionControlController(
         }
 
         RecentBookmarks.recentBookmarksCount.set(state.recentBookmarks.size.toLong())
-    }
-
-    override fun handleMenuItemTapped(item: SearchSelectorMenu.Item) {
-        when (item) {
-            SearchSelectorMenu.Item.SearchSettings -> {
-                navController.nav(
-                    R.id.homeFragment,
-                    HomeFragmentDirections.actionGlobalSearchEngineFragment(),
-                )
-            }
-            is SearchSelectorMenu.Item.SearchEngine -> {
-                val directions = HomeFragmentDirections.actionGlobalSearchDialog(
-                    sessionId = null,
-                    searchEngine = item.searchEngine.id,
-                )
-                navController.nav(
-                    R.id.homeFragment,
-                    directions,
-                    BrowserAnimator.getToolbarNavOptions(activity),
-                )
-            }
-        }
     }
 }

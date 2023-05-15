@@ -4,11 +4,8 @@
 
 package org.mozilla.fenix.tabstray
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
@@ -24,10 +21,16 @@ import org.mozilla.fenix.theme.FirefoxTheme
  * Floating action button for tabs tray.
  *
  * @param tabsTrayStore [TabsTrayStore] used to listen for changes to [TabsTrayState].
+ * @param onNormalTabsFabClicked Invoked when the fab is clicked in [Page.NormalTabs].
+ * @param onPrivateTabsFabClicked Invoked when the fab is clicked in [Page.PrivateTabs].
+ * @param onSyncedTabsFabClicked Invoked when the fab is clicked in [Page.SyncedTabs].
  */
 @Composable
 fun TabsTrayFab(
     tabsTrayStore: TabsTrayStore,
+    onNormalTabsFabClicked: () -> Unit,
+    onPrivateTabsFabClicked: () -> Unit,
+    onSyncedTabsFabClicked: () -> Unit,
 ) {
     val currentPage: Page = tabsTrayStore.observeAsComposableState { state ->
         state.selectedPage
@@ -42,12 +45,14 @@ fun TabsTrayFab(
     val icon: Painter
     val contentDescription: String
     val label: String?
+    val onClick: () -> Unit
 
     when (currentPage) {
         Page.NormalTabs -> {
             icon = painterResource(id = R.drawable.ic_new)
             contentDescription = stringResource(id = R.string.add_tab)
             label = null
+            onClick = onNormalTabsFabClicked
         }
 
         Page.SyncedTabs -> {
@@ -58,26 +63,25 @@ fun TabsTrayFab(
             } else {
                 stringResource(id = R.string.resync_button_content_description)
             }.uppercase()
+            onClick = onSyncedTabsFabClicked
         }
 
         Page.PrivateTabs -> {
             icon = painterResource(id = R.drawable.ic_new)
             contentDescription = stringResource(id = R.string.add_private_tab)
             label = stringResource(id = R.string.tab_drawer_fab_content).uppercase()
+            onClick = onPrivateTabsFabClicked
         }
     }
 
-    Box(Modifier.fillMaxSize()) {
-        if (isInNormalMode) {
-            FloatingActionButton(
-                icon = icon,
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(16.dp),
-                contentDescription = contentDescription,
-                label = label,
-            ) {}
-        }
+    if (isInNormalMode) {
+        FloatingActionButton(
+            icon = icon,
+            modifier = Modifier.padding(bottom = 16.dp, end = 16.dp),
+            contentDescription = contentDescription,
+            label = label,
+            onClick = onClick,
+        )
     }
 }
 
@@ -92,7 +96,7 @@ private fun TabsTraySyncFabPreview() {
     )
 
     FirefoxTheme {
-        TabsTrayFab(store)
+        TabsTrayFab(store, {}, {}, {})
     }
 }
 
@@ -105,6 +109,6 @@ private fun TabsTrayPrivateFabPreview() {
         ),
     )
     FirefoxTheme {
-        TabsTrayFab(store)
+        TabsTrayFab(store, {}, {}, {})
     }
 }

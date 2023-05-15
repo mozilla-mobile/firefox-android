@@ -7,7 +7,10 @@
 package org.mozilla.fenix.ui.robots
 
 import android.graphics.Bitmap
+import android.view.View
 import android.widget.EditText
+import android.widget.TextView
+import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotSelected
@@ -178,7 +181,7 @@ class HomeScreenRobot {
         itemWithResId("$packageName:id/tracking_protection_strict_default").click()
 
     fun verifyPrivacyNoticeCard() {
-        scrollToElementByText(getStringResource(R.string.onboarding_privacy_notice_header_1))
+        scrollToElementByText(getStringResource(R.string.onboarding_privacy_notice_read_button))
         assertItemContainingTextExists(privacyNoticeHeader, privacyNoticeDescription)
         assertItemWithResIdExists(privacyNoticeButton)
     }
@@ -287,7 +290,7 @@ class HomeScreenRobot {
             ).getChild(
                 UiSelector()
                     .textContains(sponsoredShortcutTitle),
-            ).waitForExists(waitingTime),
+            ).waitForExists(waitingTimeShort),
         )
     fun verifyNotExistingSponsoredTopSitesList() = assertSponsoredTopSitesNotDisplayed()
     fun verifyExistingTopSitesTabs(title: String) = assertExistingTopSitesTabs(title)
@@ -356,8 +359,6 @@ class HomeScreenRobot {
         mDevice.waitNotNull(findObject(By.text(expectedText)), waitingTime)
     }
 
-    fun clickUndoSnackBarButton() = undoSnackBarButton.click()
-
     fun clickFirefoxLogo() = homepageWordmark.click()
 
     fun verifyThoughtProvokingStories(enabled: Boolean) {
@@ -379,7 +380,7 @@ class HomeScreenRobot {
                         .textContains(
                             getStringResource(R.string.pocket_stories_header_1),
                         ),
-                ).waitForExists(waitingTime),
+                ).waitForExists(waitingTimeShort),
             )
         }
     }
@@ -436,7 +437,7 @@ class HomeScreenRobot {
                         .textContains(
                             getStringResource(R.string.pocket_stories_categories_header),
                         ),
-                ).waitForExists(waitingTime),
+                ).waitForExists(waitingTimeShort),
             )
         }
     }
@@ -480,7 +481,7 @@ class HomeScreenRobot {
                 mDevice.findObject(
                     UiSelector()
                         .textContains("Customize homepage"),
-                ).waitForExists(waitingTime),
+                ).waitForExists(waitingTimeShort),
             )
         }
     }
@@ -519,6 +520,21 @@ class HomeScreenRobot {
                 },
             )
     }
+    fun verifyNimbusMessageCard(title: String, text: String, action: String) {
+        val textView = UiSelector()
+            .className(ComposeView::class.java)
+            .className(View::class.java)
+            .className(TextView::class.java)
+        assertTrue(
+            mDevice.findObject(textView.textContains(title)).waitForExists(waitingTime),
+        )
+        assertTrue(
+            mDevice.findObject(textView.textContains(text)).waitForExists(waitingTime),
+        )
+        assertTrue(
+            mDevice.findObject(textView.textContains(action)).waitForExists(waitingTime),
+        )
+    }
 
     class Transition {
 
@@ -554,6 +570,7 @@ class HomeScreenRobot {
         fun openSearch(interact: SearchRobot.() -> Unit): SearchRobot.Transition {
             navigationToolbar.waitForExists(waitingTime)
             navigationToolbar.click()
+            mDevice.waitForIdle()
 
             SearchRobot().interact()
             return SearchRobot.Transition()
@@ -963,7 +980,7 @@ private fun assertNotExistingTopSitesList(title: String) {
             UiSelector()
                 .resourceId("$packageName:id/top_site_title")
                 .textContains(title),
-        ).waitForExists(waitingTime),
+        ).waitForExists(waitingTimeShort),
     )
 }
 
@@ -973,7 +990,7 @@ private fun assertSponsoredTopSitesNotDisplayed() {
             UiSelector()
                 .resourceId("$packageName:id/top_site_subtitle")
                 .textContains(getStringResource(R.string.top_sites_sponsored_label)),
-        ).waitForExists(waitingTime),
+        ).waitForExists(waitingTimeShort),
     )
 }
 
@@ -1007,7 +1024,7 @@ private fun assertJumpBackInShowAllButton() =
 
 private fun assertRecentlyVisitedSectionIsDisplayed() = assertTrue(recentlyVisitedSection().waitForExists(waitingTime))
 
-private fun assertRecentlyVisitedSectionIsNotDisplayed() = assertFalse(recentlyVisitedSection().waitForExists(waitingTime))
+private fun assertRecentlyVisitedSectionIsNotDisplayed() = assertFalse(recentlyVisitedSection().waitForExists(waitingTimeShort))
 
 private fun assertRecentBookmarksSectionIsDisplayed() =
     assertTrue(recentBookmarksSection().waitForExists(waitingTime))
@@ -1017,7 +1034,7 @@ private fun assertRecentBookmarksSectionIsNotDisplayed() =
 
 private fun assertPocketSectionIsDisplayed() = assertTrue(pocketSection().waitForExists(waitingTime))
 
-private fun assertPocketSectionIsNotDisplayed() = assertFalse(pocketSection().waitForExists(waitingTime))
+private fun assertPocketSectionIsNotDisplayed() = assertFalse(pocketSection().waitForExists(waitingTimeShort))
 
 private fun saveTabsToCollectionButton() = onView(withId(R.id.add_tabs_to_collections_button))
 
@@ -1127,8 +1144,6 @@ private val menuButton =
     itemWithResId("$packageName:id/menuButton")
 private fun tabCounter(numberOfOpenTabs: String) =
     itemWithResIdAndText("$packageName:id/counter_text", numberOfOpenTabs)
-private val undoSnackBarButton =
-    itemWithResId("$packageName:id/snackbar_btn")
 
 val deleteFromHistory =
     onView(

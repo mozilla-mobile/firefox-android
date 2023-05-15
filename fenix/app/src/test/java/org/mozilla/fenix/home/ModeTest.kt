@@ -68,6 +68,15 @@ class ModeTest {
     }
 
     @Test
+    fun `get current browsing mode when userHasBeenOnboarded is false and juno onboarding is enabled`() {
+        every { onboarding.userHasBeenOnboarded() } returns false
+        every { context.components.settings.junoOnboardingEnabled } returns true
+        every { browsingModeManager.mode } returns BrowsingMode.Normal
+
+        assertEquals(Mode.Normal, currentMode.getCurrentMode())
+    }
+
+    @Test
     fun `get current onboarding mode when signed in`() {
         every { onboarding.userHasBeenOnboarded() } returns false
         every { accountManager.authenticatedAccount() } returns mockk()
@@ -79,7 +88,6 @@ class ModeTest {
     fun `get current onboarding mode when signed out`() {
         every { onboarding.userHasBeenOnboarded() } returns false
         every { accountManager.authenticatedAccount() } returns null
-        every { accountManager.shareableAccounts(context) } returns emptyList()
 
         assertEquals(Mode.Onboarding(OnboardingState.SignedOutNoAutoSignIn, onboarding.config), currentMode.getCurrentMode())
     }

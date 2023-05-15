@@ -6,7 +6,6 @@ package org.mozilla.fenix.home
 
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
-import androidx.navigation.NavOptions
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
@@ -68,11 +67,11 @@ import org.mozilla.fenix.home.recenttabs.RecentTab
 import org.mozilla.fenix.home.sessioncontrol.DefaultSessionControlController
 import org.mozilla.fenix.messaging.MessageController
 import org.mozilla.fenix.onboarding.WallpaperOnboardingDialogFragment.Companion.THUMBNAILS_SELECTION_COUNT
-import org.mozilla.fenix.search.toolbar.SearchSelectorMenu
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.utils.Settings
 import org.mozilla.fenix.wallpapers.Wallpaper
 import org.mozilla.fenix.wallpapers.WallpaperState
+import java.io.File
 import mozilla.components.feature.tab.collections.Tab as ComponentTab
 
 @RunWith(FenixRobolectricTestRunner::class) // For gleanTestRule
@@ -86,6 +85,7 @@ class DefaultSessionControlControllerTest {
     val gleanTestRule = GleanTestRule(testContext)
 
     private val activity: HomeActivity = mockk(relaxed = true)
+    private val filesDir: File = mockk(relaxed = true)
     private val appStore: AppStore = mockk(relaxed = true)
     private val navController: NavController = mockk(relaxed = true)
     private val messageController: MessageController = mockk(relaxed = true)
@@ -152,6 +152,8 @@ class DefaultSessionControlControllerTest {
         every { activity.components.settings } returns settings
         every { activity.settings() } returns settings
         every { activity.components.analytics } returns analytics
+        every { activity.filesDir } returns filesDir
+        every { filesDir.path } returns "/test"
     }
 
     @Test
@@ -197,7 +199,7 @@ class DefaultSessionControlControllerTest {
     fun `handleCollectionOpenTabClicked onFailure`() {
         val tab = mockk<ComponentTab> {
             every { url } returns "https://mozilla.org"
-            every { restore(activity, engine, restoreSessionId = false) } returns null
+            every { restore(filesDir, engine, restoreSessionId = false) } returns null
         }
         createController().handleCollectionOpenTabClicked(tab)
 
@@ -232,7 +234,7 @@ class DefaultSessionControlControllerTest {
         )
 
         val tab = mockk<ComponentTab> {
-            every { restore(activity, engine, restoreSessionId = false) } returns recoverableTab
+            every { restore(filesDir, engine, restoreSessionId = false) } returns recoverableTab
         }
 
         val restoredTab = createTab(id = recoverableTab.state.id, url = recoverableTab.state.url)
@@ -270,7 +272,7 @@ class DefaultSessionControlControllerTest {
         )
 
         val tab = mockk<ComponentTab> {
-            every { restore(activity, engine, restoreSessionId = false) } returns recoverableTab
+            every { restore(filesDir, engine, restoreSessionId = false) } returns recoverableTab
         }
 
         val restoredTab = createTab(id = recoverableTab.state.id, url = recoverableTab.state.url)
@@ -1114,34 +1116,6 @@ class DefaultSessionControlControllerTest {
         }
         verify {
             messageController.onMessageDismissed(message)
-        }
-    }
-
-    @Test
-    fun `WHEN handleMenuItemTapped is called with SearchSettings item THEN navigate to SearchEngineFragment`() {
-        createController().handleMenuItemTapped(SearchSelectorMenu.Item.SearchSettings)
-
-        verify {
-            navController.navigate(
-                match<NavDirections> { it.actionId == R.id.action_global_searchEngineFragment },
-                null,
-            )
-        }
-    }
-
-    @Test
-    fun `WHEN handleMenuItemTapped is called with SearchEngine item THEN navigate to SearchDialogFragment`() {
-        val item = mockk<SearchSelectorMenu.Item.SearchEngine>()
-        every { item.searchEngine.id } returns "DuckDuckGo"
-
-        createController().handleMenuItemTapped(item)
-
-        val expectedDirections = HomeFragmentDirections.actionGlobalSearchDialog(
-            sessionId = null,
-            searchEngine = item.searchEngine.id,
-        )
-        verify {
-            navController.navigate(expectedDirections, any<NavOptions>())
         }
     }
 
