@@ -49,3 +49,4 @@ A fully-featured reference browser implementation based on the components can be
 Please file issues for Android Components in the Fenix [Bugzilla](https://bugzilla.mozilla.org/enter_bug.cgi?product=Fenix), selecting the corresponding component. 
 
 [Learn more about Android Components](android-components/README.md)
+Test
