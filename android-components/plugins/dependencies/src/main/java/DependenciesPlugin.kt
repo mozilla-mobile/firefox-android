@@ -6,7 +6,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.initialization.Settings
 
 // If you ever need to force a toolchain rebuild (taskcluster) then edit the following comment.
-// FORCE REBUILD 2023-03-16
+// FORCE REBUILD 2023-05-12
 
 class DependenciesPlugin : Plugin<Settings> {
     override fun apply(settings: Settings) = Unit
@@ -14,9 +14,9 @@ class DependenciesPlugin : Plugin<Settings> {
 
 // Synchronized version numbers for dependencies used by (some) modules
 object Versions {
-    const val kotlin = "1.8.20"
+    const val kotlin = "1.8.21"
     const val coroutines = "1.6.4"
-    const val serialization = "1.5.0"
+    const val serialization = "1.5.1"
 
     const val junit = "4.13.2"
     const val robolectric = "4.10.1"
@@ -27,14 +27,14 @@ object Versions {
     const val mockwebserver = "3.10.0"
     const val okhttp = "3.13.1"
 
-    const val android_gradle_plugin = "7.4.1"
+    const val android_gradle_plugin = "7.4.2"
 
     // This has to be synced to the gradlew plugin version. See
     // http://googlesamples.github.io/android-custom-lint-rules/api-guide/example.md.html#example:samplelintcheckgithubproject/lintversion?
-    const val lint = "30.4.1"
+    const val lint = "30.4.2"
     const val detekt = "1.19.0"
 
-    const val sentry_latest = "6.18.1"
+    const val sentry_latest = "6.19.0"
 
     // zxing 3.4+ requires a minimum API of 24 or higher
     const val zxing = "3.3.3"
@@ -43,30 +43,31 @@ object Versions {
     const val leakcanary = "2.10"
 
     // DO NOT MODIFY MANUALLY. This is auto-updated along with GeckoView.
-    const val mozilla_glean = "52.6.0"
+    const val mozilla_glean = "52.7.0"
 
-    const val material = "1.2.1"
+    const val material = "1.9.0"
     const val ksp = "1.0.11"
 
     // see https://android-developers.googleblog.com/2022/06/independent-versioning-of-Jetpack-Compose-libraries.html
     // for Jetpack Compose libraries versioning
-    const val compose_version = "1.4.2"
-    const val compose_compiler = "1.4.6"
+    const val compose_version = "1.4.3"
+    const val compose_compiler = "1.4.7"
 
     object AndroidX {
-        const val activityCompose = "1.4.0"
+        const val activityCompose = "1.7.1"
         const val annotation = "1.6.0"
         const val appcompat = "1.6.1"
         const val autofill = "1.1.0"
-        const val browser = "1.3.0"
+        const val browser = "1.5.0"
         const val biometric = "1.1.0"
         const val cardview = "1.0.0"
         const val compose = compose_version
-        const val constraintlayout = "2.0.4"
-        const val coordinatorlayout = "1.1.0"
+        const val constraintlayout = "2.1.4"
+        const val coordinatorlayout = "1.2.0"
         const val core = "1.10.0"
+        const val drawerlayout = "1.2.0"
         const val fragment = "1.5.7"
-        const val recyclerview = "1.2.0"
+        const val recyclerview = "1.3.0"
         const val test = "1.5.0"
         const val test_ext = "1.1.5"
         const val test_runner = "1.5.2"
@@ -80,7 +81,7 @@ object Versions {
         const val media = "1.2.0"
         const val navigation = "2.5.3"
         const val work = "2.7.1"
-        const val arch = "2.1.0"
+        const val arch = "2.2.0"
         const val uiautomator = "2.2.0"
         const val localbroadcastmanager = "1.0.0"
         const val swiperefreshlayout = "1.1.0"
@@ -129,6 +130,7 @@ object ComponentsDependencies {
     const val androidx_core = "androidx.core:core:${Versions.AndroidX.core}"
     const val androidx_core_ktx = "androidx.core:core-ktx:${Versions.AndroidX.core}"
     const val androidx_coordinatorlayout = "androidx.coordinatorlayout:coordinatorlayout:${Versions.AndroidX.coordinatorlayout}"
+    const val androidx_drawerlayout = "androidx.drawerlayout:drawerlayout:${Versions.AndroidX.drawerlayout}"
     const val androidx_fragment = "androidx.fragment:fragment:${Versions.AndroidX.fragment}"
     const val androidx_lifecycle_livedata = "androidx.lifecycle:lifecycle-livedata-ktx:${Versions.AndroidX.lifecycle}"
     const val androidx_lifecycle_runtime = "androidx.lifecycle:lifecycle-runtime-ktx:${Versions.AndroidX.lifecycle}"

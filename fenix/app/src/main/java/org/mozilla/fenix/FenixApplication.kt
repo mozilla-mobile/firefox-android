@@ -51,6 +51,7 @@ import mozilla.components.service.glean.net.ConceptFetchHttpUploader
 import mozilla.components.support.base.facts.register
 import mozilla.components.support.base.log.Log
 import mozilla.components.support.base.log.logger.Logger
+import mozilla.components.support.base.log.sink.AndroidLogSink
 import mozilla.components.support.ktx.android.arch.lifecycle.addObservers
 import mozilla.components.support.ktx.android.content.isMainProcess
 import mozilla.components.support.ktx.android.content.runOnlyInMainProcess
@@ -76,7 +77,6 @@ import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.metrics.MetricServiceType
 import org.mozilla.fenix.components.metrics.MozillaProductDetector
 import org.mozilla.fenix.components.metrics.clientdeduplication.ClientDeduplicationLifecycleObserver
-import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.experiments.maybeFetchExperiments
 import org.mozilla.fenix.ext.areNotificationsEnabledSafe
 import org.mozilla.fenix.ext.containsQueryParameters
@@ -98,7 +98,6 @@ import org.mozilla.fenix.push.PushFxaIntegration
 import org.mozilla.fenix.push.WebPushEngineIntegration
 import org.mozilla.fenix.session.PerformanceActivityLifecycleCallbacks
 import org.mozilla.fenix.session.VisibilityLifecycleCallback
-import org.mozilla.fenix.settings.CustomizationFragment
 import org.mozilla.fenix.utils.BrowsersCache
 import org.mozilla.fenix.utils.Settings
 import org.mozilla.fenix.utils.Settings.Companion.TOP_SITES_PROVIDER_MAX_THRESHOLD
@@ -196,6 +195,9 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             buildInfo = GleanBuildInfo.buildInfo,
         )
 
+        // Set the metric configuration from Nimbus.
+        Glean.setMetricsEnabledConfig(FxNimbus.features.glean.value().metricsEnabled)
+
         // We avoid blocking the main thread on startup by setting startup metrics on the background thread.
         val store = components.core.store
         GlobalScope.launch(Dispatchers.IO) {
@@ -214,7 +216,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         setupCrashReporting()
 
         // We want the log messages of all builds to go to Android logcat
-        Log.addSink(FenixLogSink(logsDebug = Config.channel.isDebug))
+        Log.addSink(FenixLogSink(logsDebug = Config.channel.isDebug, AndroidLogSink()))
     }
 
     @VisibleForTesting
@@ -765,13 +767,6 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             if (mobileBookmarksSize > 0) {
                 mobileBookmarksCount.add(mobileBookmarksSize)
             }
-
-            toolbarPosition.set(
-                when (settings.toolbarPosition) {
-                    ToolbarPosition.BOTTOM -> CustomizationFragment.Companion.Position.BOTTOM.name
-                    ToolbarPosition.TOP -> CustomizationFragment.Companion.Position.TOP.name
-                },
-            )
 
             tabViewSetting.set(settings.getTabViewPingString())
             closeTabSetting.set(settings.getTabTimeoutPingString())
