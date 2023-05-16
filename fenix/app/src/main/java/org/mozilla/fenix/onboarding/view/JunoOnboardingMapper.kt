@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.onboarding.view
 
+import androidx.compose.ui.layout.ContentScale
 import org.mozilla.fenix.nimbus.OnboardingCardData
 import org.mozilla.fenix.nimbus.OnboardingCardType
 import org.mozilla.fenix.settings.SupportUtils
@@ -24,12 +25,19 @@ internal fun Collection<OnboardingCardData>.toPageUiData(showNotificationPage: B
 private fun OnboardingCardData.toPageUiData() = OnboardingPageUiData(
     type = cardType.toPageUiDataType(),
     imageRes = imageRes.resourceId,
+    imageResContentScale = imageIsIllustration.toContentScale(),
     title = title,
     description = body,
     linkText = linkText,
     primaryButtonLabel = primaryButtonLabel,
     secondaryButtonLabel = secondaryButtonLabel,
 )
+
+private fun Boolean.toContentScale() = if (this) {
+    ContentScale.Fit
+} else {
+    ContentScale.Crop
+}
 
 private fun OnboardingCardType.toPageUiDataType() = when (this) {
     OnboardingCardType.DEFAULT_BROWSER -> OnboardingPageUiData.Type.DEFAULT_BROWSER
@@ -78,7 +86,7 @@ private fun createOnboardingPageState(
     onNegativeButtonClick: () -> Unit,
     onUrlClick: (String) -> Unit = {},
 ): OnboardingPageState = OnboardingPageState(
-    image = onboardingPageUiData.imageRes,
+    imageRes = onboardingPageUiData.imageRes,
     title = onboardingPageUiData.title,
     description = onboardingPageUiData.description,
     linkTextState = onboardingPageUiData.linkText?.let {
