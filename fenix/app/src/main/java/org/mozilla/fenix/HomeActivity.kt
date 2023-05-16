@@ -79,6 +79,7 @@ import mozilla.components.support.utils.SafeIntent
 import mozilla.components.support.utils.toSafeIntent
 import mozilla.components.support.webextensions.WebExtensionPopupFeature
 import mozilla.telemetry.glean.private.NoExtras
+import org.mozilla.experiments.nimbus.initializeTooling
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.Metrics
 import org.mozilla.fenix.GleanMetrics.StartOnHome
@@ -221,6 +222,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         // DO NOT MOVE ANYTHING ABOVE THIS getProfilerTime CALL.
         val startTimeProfiler = components.core.engine.profiler?.getProfilerTime()
 
+        // Setup nimbus-cli tooling. This is a NOOP when launching normally.
+        components.analytics.experiments.initializeTooling(applicationContext, intent)
         components.strictMode.attachListenerToDisablePenaltyDeath(supportFragmentManager)
         MarkersFragmentLifecycleCallbacks.register(supportFragmentManager, components.core.engine)
 
@@ -275,7 +278,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         ) {
             // Unless activity is recreated due to config change, navigate to onboarding
             if (savedInstanceState == null) {
-                navHost.navController.navigate(NavGraphDirections.actionGlobalHomeJunoOnboarding())
+                navHost.navController.navigate(NavGraphDirections.actionGlobalJunoOnboarding())
             }
         } else {
             lifecycleScope.launch(IO) {
