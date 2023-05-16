@@ -79,6 +79,7 @@ import mozilla.components.support.utils.SafeIntent
 import mozilla.components.support.utils.toSafeIntent
 import mozilla.components.support.webextensions.WebExtensionPopupFeature
 import mozilla.telemetry.glean.private.NoExtras
+import org.mozilla.experiments.nimbus.initializeTooling
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.Metrics
 import org.mozilla.fenix.GleanMetrics.StartOnHome
@@ -105,6 +106,7 @@ import org.mozilla.fenix.home.intent.AssistIntentProcessor
 import org.mozilla.fenix.home.intent.CrashReporterIntentProcessor
 import org.mozilla.fenix.home.intent.HomeDeepLinkIntentProcessor
 import org.mozilla.fenix.home.intent.OpenBrowserIntentProcessor
+import org.mozilla.fenix.home.intent.OpenPasswordManagerIntentProcessor
 import org.mozilla.fenix.home.intent.OpenSpecificTabIntentProcessor
 import org.mozilla.fenix.home.intent.ReEngagementIntentProcessor
 import org.mozilla.fenix.home.intent.SpeechProcessingIntentProcessor
@@ -201,6 +203,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             StartSearchIntentProcessor(),
             OpenBrowserIntentProcessor(this, ::getIntentSessionId),
             OpenSpecificTabIntentProcessor(this),
+            OpenPasswordManagerIntentProcessor(),
             ReEngagementIntentProcessor(this, settings()),
         )
     }
@@ -221,6 +224,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         // DO NOT MOVE ANYTHING ABOVE THIS getProfilerTime CALL.
         val startTimeProfiler = components.core.engine.profiler?.getProfilerTime()
 
+        // Setup nimbus-cli tooling. This is a NOOP when launching normally.
+        components.analytics.experiments.initializeTooling(applicationContext, intent)
         components.strictMode.attachListenerToDisablePenaltyDeath(supportFragmentManager)
         MarkersFragmentLifecycleCallbacks.register(supportFragmentManager, components.core.engine)
 
@@ -275,7 +280,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         ) {
             // Unless activity is recreated due to config change, navigate to onboarding
             if (savedInstanceState == null) {
-                navHost.navController.navigate(NavGraphDirections.actionGlobalHomeJunoOnboarding())
+                navHost.navController.navigate(NavGraphDirections.actionGlobalJunoOnboarding())
             }
         } else {
             lifecycleScope.launch(IO) {
@@ -1229,6 +1234,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         const val OPEN_TO_SEARCH = "open_to_search"
         const val PRIVATE_BROWSING_MODE = "private_browsing_mode"
         const val START_IN_RECENTS_SCREEN = "start_in_recents_screen"
+        const val OPEN_PASSWORD_MANAGER = "open_password_manager"
 
         // PWA must have been used within last 30 days to be considered "recently used" for the
         // telemetry purposes.
