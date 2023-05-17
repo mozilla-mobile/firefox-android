@@ -6960,6 +6960,25 @@ play_store_attribution:
     metadata:
       tags:
         - Performance
+  referrer_url:
+    type: string
+    send_in_pings:
+      - first-session
+    description: |
+      The raw URL string that comes out of the Google Play Install Referrer Library
+    bugs:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1833678
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-android/pull/XXXX#issuecomment-YYYYYYYY
+    data_sensitivity:
+      - technical
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: 116
+    metadata:
+      tags:
+        - Attribution
 browser.search:
   with_ads:
     type: labeled_counter

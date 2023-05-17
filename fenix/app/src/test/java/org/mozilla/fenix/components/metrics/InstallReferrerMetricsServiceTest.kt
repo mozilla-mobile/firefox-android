@@ -72,10 +72,10 @@ internal class InstallReferrerMetricsServiceTest {
     }
 
     @Test
-    fun testInstallReferrerMetricsMinimumParams() {
+    fun testInstallReferrerMetricsOrganicInstall() {
         val service = InstallReferrerMetricsService(context)
         val settings = Settings(context)
-        service.recordInstallReferrer(settings, "https://example.com")
+        service.recordInstallReferrer(settings, null)
 
         val expected = UTMParams(source = "", medium = "", campaign = "", content = "", term = "")
         val observed = UTMParams.fromSettings(settings)
@@ -86,6 +86,28 @@ internal class InstallReferrerMetricsServiceTest {
         assertNull(PlayStoreAttribution.campaign.testGetValue())
         assertNull(PlayStoreAttribution.content.testGetValue())
         assertNull(PlayStoreAttribution.term.testGetValue())
+        assertNull(PlayStoreAttribution.referrerUrl.testGetValue())
+
+        assertTrue(observed.isEmpty())
+    }
+
+    @Test
+    fun testInstallReferrerMetricsMinimumParams() {
+        val service = InstallReferrerMetricsService(context)
+        val settings = Settings(context)
+        val url = "https://example.com"
+        service.recordInstallReferrer(settings, url)
+
+        val expected = UTMParams(source = "", medium = "", campaign = "", content = "", term = "")
+        val observed = UTMParams.fromSettings(settings)
+        assertEquals(observed, expected)
+
+        assertNull(PlayStoreAttribution.source.testGetValue())
+        assertNull(PlayStoreAttribution.medium.testGetValue())
+        assertNull(PlayStoreAttribution.campaign.testGetValue())
+        assertNull(PlayStoreAttribution.content.testGetValue())
+        assertNull(PlayStoreAttribution.term.testGetValue())
+        assertEquals(url, PlayStoreAttribution.referrerUrl.testGetValue())
 
         assertTrue(observed.isEmpty())
     }
@@ -94,7 +116,8 @@ internal class InstallReferrerMetricsServiceTest {
     fun testInstallReferrerMetricsPartial() {
         val service = InstallReferrerMetricsService(context)
         val settings = Settings(context)
-        service.recordInstallReferrer(settings, "https://example.com?utm_campaign=CAMPAIGN")
+        val url = "https://example.com?utm_campaign=CAMPAIGN"
+        service.recordInstallReferrer(settings, url)
 
         val expected = UTMParams(source = "", medium = "", campaign = "CAMPAIGN", content = "", term = "")
         val observed = UTMParams.fromSettings(settings)
@@ -105,6 +128,7 @@ internal class InstallReferrerMetricsServiceTest {
         assertEquals("CAMPAIGN", PlayStoreAttribution.campaign.testGetValue())
         assertNull(PlayStoreAttribution.content.testGetValue())
         assertNull(PlayStoreAttribution.term.testGetValue())
+        assertEquals(url, PlayStoreAttribution.referrerUrl.testGetValue())
 
         assertFalse(observed.isEmpty())
     }
@@ -113,7 +137,8 @@ internal class InstallReferrerMetricsServiceTest {
     fun testInstallReferrerMetricsMaximumParams() {
         val service = InstallReferrerMetricsService(context)
         val settings = Settings(context)
-        service.recordInstallReferrer(settings, "https://example.com?utm_source=SOURCE&utm_medium=MEDIUM&utm_campaign=CAMPAIGN&utm_content=CONTENT&utm_term=TERM")
+        val url = "https://example.com?utm_source=SOURCE&utm_medium=MEDIUM&utm_campaign=CAMPAIGN&utm_content=CONTENT&utm_term=TERM"
+        service.recordInstallReferrer(settings, url)
 
         val expected = UTMParams(source = "SOURCE", medium = "MEDIUM", campaign = "CAMPAIGN", content = "CONTENT", term = "TERM")
         val observed = UTMParams.fromSettings(settings)
@@ -124,6 +149,7 @@ internal class InstallReferrerMetricsServiceTest {
         assertEquals("CAMPAIGN", PlayStoreAttribution.campaign.testGetValue())
         assertEquals("CONTENT", PlayStoreAttribution.content.testGetValue())
         assertEquals("TERM", PlayStoreAttribution.term.testGetValue())
+        assertEquals(url, PlayStoreAttribution.referrerUrl.testGetValue())
 
         assertFalse(observed.isEmpty())
     }

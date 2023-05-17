@@ -83,8 +83,12 @@ class InstallReferrerMetricsService(private val context: Context) : MetricsServi
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     internal fun recordInstallReferrer(settings: Settings, url: String?) {
-        val params = url?.let(UTMParams::fromUrl)
-        if (params == null || params.isEmpty()) {
+        if (url.isNullOrBlank()) {
+            return
+        }
+        PlayStoreAttribution.referrerUrl.set(url)
+        val params = UTMParams.fromUrl(url)
+        if (params.isEmpty()) {
             return
         }
         params.intoSettings(settings)
