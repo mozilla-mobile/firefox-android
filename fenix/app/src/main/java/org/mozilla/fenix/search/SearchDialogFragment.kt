@@ -71,6 +71,7 @@ import mozilla.components.support.ktx.kotlin.toNormalizedUrl
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifAnyChanged
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import mozilla.components.ui.autocomplete.InlineAutocompleteEditText
+import mozilla.components.ui.widgets.withCenterAlignedButtons
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.GleanMetrics.Awesomebar
 import org.mozilla.fenix.GleanMetrics.VoiceSearch
@@ -311,7 +312,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
         return binding.root
     }
 
-    @SuppressWarnings("LongMethod")
+    @SuppressWarnings("LongMethod", "ComplexMethod")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -336,7 +337,17 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
 
         // When displayed above browser or home screen, dismisses keyboard when touching scrim area
         when (getPreviousDestination()?.destination?.id) {
-            R.id.browserFragment, R.id.homeFragment -> {
+            R.id.browserFragment -> {
+                binding.searchWrapper.setOnTouchListener { _, _ ->
+                    if (toolbarView.view.url.isEmpty()) {
+                        dismissAllowingStateLoss()
+                    } else {
+                        binding.searchWrapper.hideKeyboard()
+                    }
+                    false
+                }
+            }
+            R.id.homeFragment -> {
                 binding.searchWrapper.setOnTouchListener { _, _ ->
                     binding.searchWrapper.hideKeyboard()
                     false
@@ -664,7 +675,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                             setPositiveButton(R.string.qr_scanner_dialog_invalid_ok) { dialog: DialogInterface, _ ->
                                 dialog.dismiss()
                             }
-                            create()
+                            create().withCenterAlignedButtons()
                         }.show()
                     }
                 } else {
@@ -689,7 +700,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                                 )
                                 dialog.dismiss()
                             }
-                            create()
+                            create().withCenterAlignedButtons()
                         }.show()
                     }
                 }

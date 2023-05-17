@@ -28,6 +28,7 @@ import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.service.nimbus.messaging.Message
 import mozilla.components.support.ktx.android.view.showKeyboard
+import mozilla.components.ui.widgets.withCenterAlignedButtons
 import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.GleanMetrics.Collections
@@ -200,7 +201,7 @@ class DefaultSessionControlController(
 
     override fun handleCollectionOpenTabClicked(tab: ComponentTab) {
         restoreUseCase.invoke(
-            activity,
+            activity.filesDir,
             engine,
             tab,
             onTabRestored = {
@@ -222,7 +223,7 @@ class DefaultSessionControlController(
 
     override fun handleCollectionOpenTabsTapped(collection: TabCollection) {
         restoreUseCase.invoke(
-            activity,
+            activity.filesDir,
             engine,
             collection,
             onFailure = { url ->
@@ -306,7 +307,7 @@ class DefaultSessionControlController(
                 setNegativeButton(R.string.top_sites_rename_dialog_cancel) { dialog, _ ->
                     dialog.cancel()
                 }
-            }.show().also {
+            }.show().withCenterAlignedButtons().also {
                 topSiteLabelEditText.setSelection(0, topSiteLabelEditText.text.length)
                 topSiteLabelEditText.showKeyboard()
             }

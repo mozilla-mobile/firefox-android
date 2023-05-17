@@ -15,6 +15,7 @@ class CookieBannerReductionTest {
     @get:Rule
     val activityTestRule = HomeActivityIntentTestRule.withDefaultSettingsOverrides(skipOnboarding = true)
 
+    // Bug causing flakiness https://bugzilla.mozilla.org/show_bug.cgi?id=1807440
     @SmokeTest
     @Test
     fun verifyCookieBannerReductionTest() {
@@ -27,13 +28,13 @@ class CookieBannerReductionTest {
             verifyCookieBannerExists(exists = true)
         }.openThreeDotMenu {
         }.openSettings {
-            verifySettingsOptionSummary("Cookie Banner Reduction", "Off")
+            verifySettingsOptionSummary("Cookie banner reduction", "Off")
         }.openCookieBannerReductionSubMenu {
             verifyCookieBannerView(isCookieBannerReductionChecked = false)
             clickCookieBannerReductionToggle()
             verifyCheckedCookieBannerReductionToggle(isCookieBannerReductionChecked = true)
         }.goBack {
-            verifySettingsOptionSummary("Cookie Banner Reduction", "On")
+            verifySettingsOptionSummary("Cookie banner reduction", "On")
         }
 
         exitMenu()
@@ -62,6 +63,7 @@ class CookieBannerReductionTest {
         }
     }
 
+    // Bug causing flakiness https://bugzilla.mozilla.org/show_bug.cgi?id=1807440
     @SmokeTest
     @Test
     fun verifyCookieBannerReductionInPrivateBrowsingTest() {
@@ -76,13 +78,13 @@ class CookieBannerReductionTest {
             verifyCookieBannerExists(exists = true)
         }.openThreeDotMenu {
         }.openSettings {
-            verifySettingsOptionSummary("Cookie Banner Reduction", "Off")
+            verifySettingsOptionSummary("Cookie banner reduction", "Off")
         }.openCookieBannerReductionSubMenu {
             verifyCookieBannerView(isCookieBannerReductionChecked = false)
             clickCookieBannerReductionToggle()
             verifyCheckedCookieBannerReductionToggle(isCookieBannerReductionChecked = true)
         }.goBack {
-            verifySettingsOptionSummary("Cookie Banner Reduction", "On")
+            verifySettingsOptionSummary("Cookie banner reduction", "On")
         }
 
         exitMenu()

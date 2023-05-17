@@ -796,7 +796,7 @@ sealed class ContentAction : BrowserAction() {
      * Updates the [ContentState] with the provided [tabId] to the appropriate priority based on any
      * existing form data.
      */
-    data class CheckForFormDataAction(val tabId: String, val containsFormData: Boolean) : ContentAction()
+    data class UpdateHasFormDataAction(val tabId: String, val containsFormData: Boolean) : ContentAction()
 
     /**
      * Lowers priority of the [tabId] to default after certain period of time
@@ -1398,8 +1398,9 @@ sealed class SearchAction : BrowserAction() {
 
     /**
      * Sets the [RegionState] (region of the user).
+     * distribution is a [String] that specifies a set of default search engines if available
      */
-    data class SetRegionAction(val regionState: RegionState) : SearchAction()
+    data class SetRegionAction(val regionState: RegionState, val distribution: String? = null) : SearchAction()
 
     /**
      * Sets the list of search engines and default search engine IDs.
@@ -1477,4 +1478,20 @@ sealed class DebugAction : BrowserAction() {
      */
     @DelicateAction
     data class UpdateCreatedAtAction(val tabId: String, val createdAt: Long) : DebugAction()
+}
+
+/**
+ * [BrowserAction] implementations related to the application lifecycle.
+ */
+sealed class AppLifecycleAction : BrowserAction() {
+
+    /**
+     * The application has received an ON_RESUME event.
+     */
+    object ResumeAction : AppLifecycleAction()
+
+    /**
+     * The application has received an ON_PAUSE event.
+     */
+    object PauseAction : AppLifecycleAction()
 }
