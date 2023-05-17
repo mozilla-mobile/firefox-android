@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.onboarding.view
 
+import androidx.compose.ui.layout.ContentScale
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.mozilla.fenix.R
@@ -14,7 +15,7 @@ class JunoOnboardingMapperTest {
     @Test
     fun `GIVEN a default browser page WHEN mapToOnboardingPageState is called THEN creates the expected OnboardingPageState`() {
         val expected = OnboardingPageState(
-            image = R.drawable.ic_onboarding_welcome,
+            imageRes = R.drawable.ic_onboarding_welcome,
             title = "default browser title",
             description = "default browser body with link text",
             linkTextState = LinkTextState(
@@ -29,6 +30,7 @@ class JunoOnboardingMapperTest {
         val onboardingPageUiData = OnboardingPageUiData(
             type = OnboardingPageUiData.Type.DEFAULT_BROWSER,
             imageRes = R.drawable.ic_onboarding_welcome,
+            imageResContentScale = ContentScale.Fit,
             title = "default browser title",
             description = "default browser body with link text",
             linkText = "link text",
@@ -52,7 +54,7 @@ class JunoOnboardingMapperTest {
     @Test
     fun `GIVEN a sync page WHEN mapToOnboardingPageState is called THEN creates the expected OnboardingPageState`() {
         val expected = OnboardingPageState(
-            image = R.drawable.ic_onboarding_sync,
+            imageRes = R.drawable.ic_onboarding_sync,
             title = "sync title",
             description = "sync body",
             primaryButton = Action("sync primary button text", unitLambda),
@@ -62,6 +64,7 @@ class JunoOnboardingMapperTest {
         val onboardingPageUiData = OnboardingPageUiData(
             type = OnboardingPageUiData.Type.SYNC_SIGN_IN,
             imageRes = R.drawable.ic_onboarding_sync,
+            imageResContentScale = ContentScale.Fit,
             title = "sync title",
             description = "sync body",
             linkText = null,
@@ -85,7 +88,7 @@ class JunoOnboardingMapperTest {
     @Test
     fun `GIVEN a notification page WHEN mapToOnboardingPageState is called THEN creates the expected OnboardingPageState`() {
         val expected = OnboardingPageState(
-            image = R.drawable.ic_notification_permission,
+            imageRes = R.drawable.ic_notification_permission,
             title = "notification title",
             description = "notification body",
             primaryButton = Action("notification primary button text", unitLambda),
@@ -95,6 +98,7 @@ class JunoOnboardingMapperTest {
         val onboardingPageUiData = OnboardingPageUiData(
             type = OnboardingPageUiData.Type.NOTIFICATION_PERMISSION,
             imageRes = R.drawable.ic_notification_permission,
+            imageResContentScale = ContentScale.Fit,
             title = "notification title",
             description = "notification body",
             linkText = null,
