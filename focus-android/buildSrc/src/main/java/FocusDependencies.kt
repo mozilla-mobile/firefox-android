@@ -59,17 +59,17 @@ object FocusVersions {
         const val androidx_uiautomator = "2.2.0"
         const val falcon = "2.2.0"
         const val fastlane = "2.1.1"
-        const val junit = "5.9.1"
+        const val junit = "5.9.3"
         const val ktlint = "0.48.2"
-        const val mockito = "4.8.1"
-        const val mockwebserver = "4.10.0"
+        const val mockito = "5.3.1"
+        const val mockwebserver = "4.11.0"
         const val robolectric = "4.10.1"
     }
 
     object ThirdParty {
         const val leakcanary = "2.10"
         const val osslicenses_plugin = "0.10.4"
-        const val sentry = "6.18.1"
+        const val sentry = "6.19.0"
     }
 
     // Workaround for a Gradle parsing bug that prevents using nested objects directly in Gradle files.
