@@ -15,10 +15,14 @@ class CookieBannerReductionTest {
     @get:Rule
     val activityTestRule = HomeActivityIntentTestRule.withDefaultSettingsOverrides(skipOnboarding = true)
 
+<<<<<<< HEAD
+=======
+    // Bug causing flakiness https://bugzilla.mozilla.org/show_bug.cgi?id=1807440
+>>>>>>> eb210b176f (Bug 1814030 - Fix cookie banner reduction UI tests)
     @SmokeTest
     @Test
     fun verifyCookieBannerReductionTest() {
-        val webSite = "voetbal24.be"
+        val webSite = "startsiden.no"
 
         homeScreen {
         }.openNavigationToolbar {
@@ -62,10 +66,14 @@ class CookieBannerReductionTest {
         }
     }
 
+<<<<<<< HEAD
+=======
+    // Bug causing flakiness https://bugzilla.mozilla.org/show_bug.cgi?id=1807440
+>>>>>>> eb210b176f (Bug 1814030 - Fix cookie banner reduction UI tests)
     @SmokeTest
     @Test
     fun verifyCookieBannerReductionInPrivateBrowsingTest() {
-        val webSite = "voetbal24.be"
+        val webSite = "startsiden.no"
 
         homeScreen {
         }.togglePrivateBrowsingMode()
@@ -95,7 +103,7 @@ class CookieBannerReductionTest {
 
         homeScreen {
         }.openTabDrawer {
-        }.openTab("Voetbal24") {
+        }.openTab("Startsiden.no") {
             verifyCookieBannerExists(exists = false)
         }.openThreeDotMenu {
         }.openSettings {
