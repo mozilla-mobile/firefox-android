@@ -40,7 +40,7 @@ object Versions {
     const val zxing = "3.3.3"
 
     const val disklrucache = "2.0.2"
-    const val leakcanary = "2.10"
+    const val leakcanary = "2.11"
 
     // DO NOT MODIFY MANUALLY. This is auto-updated along with GeckoView.
     const val mozilla_glean = "52.7.0"
@@ -78,7 +78,7 @@ object Versions {
         const val palette = "1.0.0"
         const val preferences = "1.1.1"
         const val lifecycle = "2.6.1"
-        const val media = "1.2.0"
+        const val media = "1.6.0"
         const val navigation = "2.5.3"
         const val work = "2.7.1"
         const val arch = "2.2.0"
