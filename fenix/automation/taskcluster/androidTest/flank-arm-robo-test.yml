@@ -17,7 +17,7 @@ gcloud:
     - model: Pixel2.arm
       version: 26
       locale: en_US
-    - model: walleye
+    - model: Pixel2.arm
       version: 27
       locale: en_US
     - model: dreamlte
