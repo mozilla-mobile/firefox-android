@@ -14,10 +14,10 @@ object FenixVersions {
     const val android_gradle_plugin = "7.4.2"
     const val android_lint_api = "30.4.2"
 
-    const val sentry = "6.18.1"
-    const val leakcanary = "2.10"
+    const val sentry = "6.19.0"
+    const val leakcanary = "2.11"
     const val osslicenses_plugin = "0.10.4"
-    const val detekt = "1.19.0"
+    const val detekt = "1.22.0"
 
     const val androidx_activity = "1.7.1"
     const val androidx_compose = "1.4.3"
@@ -58,7 +58,9 @@ object FenixVersions {
 
     const val google_play_review_version = "2.0.0"
 
-    const val protobuf = "3.21.10" // keep in sync with the version used in AS.
+    // keep in sync with the versions used in AS.
+    const val protobuf = "3.21.10"
+    const val protobuf_plugin = "0.9.3"
 }
 
 @Suppress("unused")
