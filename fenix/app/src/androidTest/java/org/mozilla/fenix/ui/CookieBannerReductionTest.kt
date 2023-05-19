@@ -19,7 +19,7 @@ class CookieBannerReductionTest {
     @SmokeTest
     @Test
     fun verifyCookieBannerReductionTest() {
-        val webSite = "voetbal24.be"
+        val webSite = "startsiden.no"
 
         homeScreen {
         }.openNavigationToolbar {
@@ -67,7 +67,7 @@ class CookieBannerReductionTest {
     @SmokeTest
     @Test
     fun verifyCookieBannerReductionInPrivateBrowsingTest() {
-        val webSite = "voetbal24.be"
+        val webSite = "startsiden.no"
 
         homeScreen {
         }.togglePrivateBrowsingMode()
@@ -97,7 +97,7 @@ class CookieBannerReductionTest {
 
         homeScreen {
         }.openTabDrawer {
-        }.openTab("Voetbal24") {
+        }.openTab("Startsiden.no") {
             verifyCookieBannerExists(exists = false)
         }.openThreeDotMenu {
         }.openSettings {

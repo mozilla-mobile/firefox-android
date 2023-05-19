@@ -258,7 +258,6 @@ events:
     send_in_pings:
       - metrics
       - baseline
-      - client-deduplication
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/17089
     data_reviews:
@@ -1837,7 +1836,6 @@ metrics:
     send_in_pings:
       - metrics
       - baseline
-      - client-deduplication
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/1158
       - https://github.com/mozilla-mobile/fenix/issues/6556
@@ -2025,30 +2023,6 @@ metrics:
     metadata:
       tags:
         - Telemetry
-  toolbar_position:
-    type: string
-    lifetime: application
-    description: |
-      A string that indicates the new position of the toolbar TOP or BOTTOM
-    send_in_pings:
-      - metrics
-    bugs:
-      - https://github.com/mozilla-mobile/fenix/issues/6054
-    data_reviews:
-      - https://github.com/mozilla-mobile/fenix/pull/6608
-      - https://github.com/mozilla-mobile/fenix/pull/15713#issuecomment-703972068
-      - https://github.com/mozilla-mobile/fenix/pull/19924#issuecomment-861423789
-      - https://github.com/mozilla-mobile/fenix/pull/20517#pullrequestreview-718069041
-      - https://github.com/mozilla-mobile/fenix/pull/23453#issuecomment-1024694220
-      - https://github.com/mozilla-mobile/fenix/pull/28502
-    data_sensitivity:
-      - interaction
-    notification_emails:
-      - android-probes@mozilla.com
-    expires: 124
-    metadata:
-      tags:
-        - Toolbar
   close_tab_setting:
     type: string
     lifetime: application
@@ -2133,7 +2107,6 @@ metrics:
       please see `has_open_tabs`.
     send_in_pings:
       - metrics
-      - client-deduplication
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/11479
     data_reviews:
@@ -2951,7 +2924,6 @@ search.default_engine:
     send_in_pings:
       - metrics
       - baseline
-      - client-deduplication
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/800
     data_reviews:
@@ -2981,7 +2953,6 @@ search.default_engine:
     send_in_pings:
       - metrics
       - baseline
-      - client-deduplication
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/800
     data_reviews:
@@ -3567,8 +3538,6 @@ sync_auth:
     notification_emails:
       - android-probes@mozilla.com
       - cgordon@mozilla.com
-    send_in_pings:
-      - client-deduplication
     expires: never
     metadata:
       tags:
@@ -6726,6 +6695,7 @@ first_session:
     metadata:
       tags:
         - Performance
+        - Attribution
   network:
     type: string
     send_in_pings:
@@ -6750,6 +6720,7 @@ first_session:
     metadata:
       tags:
         - Performance
+        - Attribution
   adgroup:
     type: string
     send_in_pings:
@@ -6774,6 +6745,7 @@ first_session:
     metadata:
       tags:
         - Telemetry
+        - Attribution
   creative:
     send_in_pings:
       - first-session
@@ -6798,6 +6770,7 @@ first_session:
     metadata:
       tags:
         - Performance
+        - Attribution
   distribution_id:
     type: string
     description: |
@@ -6841,11 +6814,13 @@ first_session:
     metadata:
       tags:
         - Performance
+        - Attribution
   adjust_attribution_time:
     type: timing_distribution
     time_unit: millisecond
     send_in_pings:
       - first-session
+      - metrics
     description: >
       The time that it takes to derive the attribution parameters by
       the Adjust SDK.
@@ -6860,6 +6835,124 @@ first_session:
     expires: 124
     metadata:
       tags:
+        - Performance
+        - Attribution
+play_store_attribution:
+  source:
+    type: string
+    send_in_pings:
+      - first-session
+    description: |
+      The name of the utm_source that is responsible for this installation.
+    bugs:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1832069
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-android/pull/1991#issuecomment-1545842578
+    data_sensitivity:
+      - technical
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: 124
+    metadata:
+      tags:
+        - Attribution
+  medium:
+    type: string
+    send_in_pings:
+      - first-session
+    description: |
+      The name of the utm_medium that is responsible for this installation.
+    bugs:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1832069
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-android/pull/1991#issuecomment-1545842578
+    data_sensitivity:
+      - technical
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: 124
+    metadata:
+      tags:
+        - Attribution
+  campaign:
+    type: string
+    send_in_pings:
+      - first-session
+    description: |
+      The name of the utm_campaign that is responsible for this installation.
+    bugs:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1832069
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-android/pull/1991#issuecomment-1545842578
+    data_sensitivity:
+      - technical
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: 124
+    metadata:
+      tags:
+        - Attribution
+  term:
+    type: string
+    send_in_pings:
+      - first-session
+    description: |
+      The name of the utm_term that is responsible for this installation.
+    bugs:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1832069
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-android/pull/1991#issuecomment-1545842578
+    data_sensitivity:
+      - technical
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: 124
+    metadata:
+      tags:
+        - Attribution
+  content:
+    type: string
+    send_in_pings:
+      - first-session
+    description: |
+      The name of the utm_content that is responsible for this installation.
+    bugs:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1832069
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-android/pull/1991#issuecomment-1545842578
+    data_sensitivity:
+      - technical
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: 124
+    metadata:
+      tags:
+        - Attribution
+  attribution_time:
+    type: timing_distribution
+    time_unit: millisecond
+    send_in_pings:
+      - metrics
+    description: >
+      The time that it takes to derive the attribution parameters by
+      the Google Play Install Referrer library.
+    bugs:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1832069
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-android/pull/1991#issuecomment-1545842578
+    data_sensitivity:
+      - technical
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: 124
+    metadata:
+      tags:
+        - Attribution
         - Performance
 browser.search:
   with_ads:
@@ -6877,7 +6970,6 @@ browser.search:
     send_in_pings:
       - metrics
       - baseline
-      - client-deduplication
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/6558
       - https://github.com/mozilla-mobile/fenix/issues/28010
@@ -6912,7 +7004,6 @@ browser.search:
     send_in_pings:
       - metrics
       - baseline
-      - client-deduplication
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/6558
       - https://github.com/mozilla-mobile/fenix/issues/28010
@@ -6938,7 +7029,6 @@ browser.search:
     send_in_pings:
       - metrics
       - baseline
-      - client-deduplication
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/6557
     data_reviews:
@@ -9352,56 +9442,6 @@ review_prompt:
     data_sensitivity:
       - interaction
     expires: 121
-client_deduplication:
-  valid_advertising_id:
-    type: boolean
-    description: |
-      Whether or not we get a valid advertising ID from the device.
-    send_in_pings:
-      - client-deduplication
-    bugs:
-      - https://bugzilla.mozilla.org/show_bug.cgi?id=1817029
-    data_reviews:
-      - https://bugzilla.mozilla.org/show_bug.cgi?id=1813195#c11
-    data_sensitivity:
-      - interaction
-    notification_emails:
-      - android-probes@mozilla.com
-      - fbertsch@mozilla.com
-    expires: 122
-  experiment_timeframe:
-    type: string
-    description: |
-      A string we use to identify which run of the experiment this is.
-    send_in_pings:
-      - client-deduplication
-    bugs:
-      - https://bugzilla.mozilla.org/show_bug.cgi?id=1817029
-    data_reviews:
-      - https://bugzilla.mozilla.org/show_bug.cgi?id=1813195#c11
-    data_sensitivity:
-      - interaction
-    notification_emails:
-      - android-probes@mozilla.com
-      - fbertsch@mozilla.com
-    expires: 122
-  hashed_gaid:
-    type: string
-    lifetime: ping
-    description: |
-      A hashed and salted version of the Google Advertising ID from the device.
-    send_in_pings:
-      - client-deduplication
-    bugs:
-      - https://bugzilla.mozilla.org/show_bug.cgi?id=1817029
-    data_reviews:
-      - https://bugzilla.mozilla.org/show_bug.cgi?id=1813195#c11
-    data_sensitivity:
-      - interaction
-    notification_emails:
-      - android-probes@mozilla.com
-      - fbertsch@mozilla.com
-    expires: 122
 
 private_browsing_shortcut_cfr:
   add_shortcut:

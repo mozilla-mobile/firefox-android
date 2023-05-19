@@ -3,7 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 // If you ever need to force a toolchain rebuild (taskcluster) then edit the following comment.
-// FORCE REBUILD 2023-05-04
+// FORCE REBUILD 2023-05-05
 
 object FocusVersions {
     object Adjust {
@@ -25,7 +25,7 @@ object FocusVersions {
         const val lifecycle = "2.6.1"
         const val palette = "1.0.0"
         const val preference = "1.2.0"
-        const val recyclerview = "1.2.1"
+        const val recyclerview = "1.3.0"
         const val savedstate = "1.2.1"
         const val splashscreen = "1.0.1"
         const val transition = "1.4.1"
@@ -58,17 +58,17 @@ object FocusVersions {
         const val androidx_uiautomator = "2.2.0"
         const val falcon = "2.2.0"
         const val fastlane = "2.1.1"
-        const val junit = "5.9.1"
+        const val junit = "5.9.3"
         const val ktlint = "0.48.2"
-        const val mockito = "4.8.1"
-        const val mockwebserver = "4.10.0"
+        const val mockito = "5.3.1"
+        const val mockwebserver = "4.11.0"
         const val robolectric = "4.10.1"
     }
 
     object ThirdParty {
-        const val leakcanary = "2.10"
+        const val leakcanary = "2.11"
         const val osslicenses_plugin = "0.10.4"
-        const val sentry = "6.18.1"
+        const val sentry = "6.19.0"
     }
 
     // Workaround for a Gradle parsing bug that prevents using nested objects directly in Gradle files.

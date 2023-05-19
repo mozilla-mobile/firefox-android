@@ -68,6 +68,7 @@ class SavedLoginsStorageControllerTest {
 
         coVerify {
             passwordsStorage.delete(loginId)
+            loginsFragmentStore.dispatch(LoginsAction.DeleteLogin(loginId))
             navController.popBackStack(R.id.savedLoginsFragment, false)
         }
     }
@@ -135,14 +136,15 @@ class SavedLoginsStorageControllerTest {
                 oldLogin.guid,
             )
 
-        val expectedNewList = listOf(newLogin.mapToSavedLogin())
+        val expectedNewLogin = newLogin.mapToSavedLogin()
 
         coVerify {
             passwordsStorage.get(oldLogin.guid)
             passwordsStorage.update(newLogin.guid, newLogin.toEntry())
             loginsFragmentStore.dispatch(
-                LoginsAction.UpdateLoginsList(
-                    expectedNewList,
+                LoginsAction.UpdateLogin(
+                    newLogin.guid,
+                    expectedNewLogin,
                 ),
             )
             navController.navigate(directionsEq(directions))

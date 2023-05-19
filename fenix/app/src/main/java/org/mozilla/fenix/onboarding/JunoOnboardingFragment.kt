@@ -16,11 +16,11 @@ import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.accounts.FenixFxAEntryPoint
 import org.mozilla.fenix.ext.areNotificationsEnabledSafe
 import org.mozilla.fenix.ext.hideToolbar
 import org.mozilla.fenix.ext.nav
@@ -57,7 +57,6 @@ class JunoOnboardingFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View = ComposeView(requireContext()).apply {
-        setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
         setContent {
             FirefoxTheme {
                 ScreenContent()
@@ -112,7 +111,9 @@ class JunoOnboardingFragment : Fragment() {
             onSignInButtonClick = {
                 findNavController().nav(
                     id = R.id.junoOnboardingFragment,
-                    directions = JunoOnboardingFragmentDirections.actionGlobalTurnOnSync(),
+                    directions = JunoOnboardingFragmentDirections.actionGlobalTurnOnSync(
+                        entrypoint = FenixFxAEntryPoint.NewUserOnboarding,
+                    ),
                 )
                 telemetryRecorder.onSyncSignInClick(
                     sequenceId = pagesToDisplay.telemetrySequenceId(),
@@ -160,7 +161,7 @@ class JunoOnboardingFragment : Fragment() {
         requireComponents.fenixOnboarding.finish()
         findNavController().nav(
             id = R.id.junoOnboardingFragment,
-            directions = JunoOnboardingFragmentDirections.actionOnboardingHome(),
+            directions = JunoOnboardingFragmentDirections.actionHome(),
         )
         telemetryRecorder.onOnboardingComplete(
             sequenceId = sequenceId,

@@ -14,11 +14,8 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.addCallback
 import androidx.appcompat.app.AlertDialog
-import androidx.core.os.bundleOf
 import androidx.core.view.MenuProvider
-import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -73,11 +70,12 @@ class LoginDetailFragment : SecureFragment(R.layout.fragment_login_detail), Menu
     ): View? {
         val view = inflater.inflate(R.layout.fragment_login_detail, container, false)
         _binding = FragmentLoginDetailBinding.bind(view)
-        savedLoginsStore = StoreProvider.get(this) {
-            LoginsFragmentStore(
-                createInitialLoginsListState(requireContext().settings()),
-            )
-        }
+        savedLoginsStore =
+            StoreProvider.get(findNavController().getBackStackEntry(R.id.savedLogins)) {
+                LoginsFragmentStore(
+                    createInitialLoginsListState(requireContext().settings()),
+                )
+            }
         loginDetailsBindingDelegate = LoginDetailsBindingDelegate(binding)
 
         return view
@@ -126,13 +124,6 @@ class LoginDetailFragment : SecureFragment(R.layout.fragment_login_detail), Menu
             R.id.loginDetailFragment,
         )
         super.onPause()
-    }
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        requireActivity().onBackPressedDispatcher.addCallback(this) {
-            val directions = LoginDetailFragmentDirections.actionLoginDetailFragmentToSavedLoginsFragment()
-            findNavController().navigate(directions)
-        }
     }
 
     private fun setUpPasswordReveal() {
@@ -227,10 +218,6 @@ class LoginDetailFragment : SecureFragment(R.layout.fragment_login_detail), Menu
                 setPositiveButton(R.string.dialog_delete_positive) { dialog: DialogInterface, _ ->
                     Logins.deleteSavedLogin.record(NoExtras())
                     interactor.onDeleteLogin(args.savedLoginId)
-                    setFragmentResult(
-                        LOGIN_REQUEST_KEY,
-                        bundleOf(LOGIN_BUNDLE_ARGS to args.savedLoginId),
-                    )
                     dialog.dismiss()
                 }
                 create().withCenterAlignedButtons()
@@ -245,7 +232,5 @@ class LoginDetailFragment : SecureFragment(R.layout.fragment_login_detail), Menu
 
     companion object {
         private const val BUTTON_INCREASE_DPS = 24
-        const val LOGIN_REQUEST_KEY = "logins"
-        const val LOGIN_BUNDLE_ARGS = "loginsBundle"
     }
 }

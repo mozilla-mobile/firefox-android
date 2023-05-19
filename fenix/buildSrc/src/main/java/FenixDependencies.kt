@@ -3,7 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 // If you ever need to force a toolchain rebuild (taskcluster) then edit the following comment.
-// FORCE REBUILD 2023-05-05
+// FORCE REBUILD 2023-05-12
 
 object FenixVersions {
     const val kotlin = "1.8.21"
@@ -14,10 +14,10 @@ object FenixVersions {
     const val android_gradle_plugin = "7.4.2"
     const val android_lint_api = "30.4.2"
 
-    const val sentry = "6.18.1"
-    const val leakcanary = "2.10"
+    const val sentry = "6.19.0"
+    const val leakcanary = "2.11"
     const val osslicenses_plugin = "0.10.4"
-    const val detekt = "1.19.0"
+    const val detekt = "1.22.0"
 
     const val androidx_activity = "1.7.1"
     const val androidx_compose = "1.4.3"
@@ -28,7 +28,7 @@ object FenixVersions {
     const val androidx_coordinator_layout = "1.2.0"
     const val androidx_constraint_layout = "2.1.4"
     const val androidx_preference = "1.1.1"
-    const val androidx_profileinstaller = "1.2.2"
+    const val androidx_profileinstaller = "1.3.1"
     const val androidx_legacy = "1.0.0"
     const val androidx_annotation = "1.6.0"
     const val androidx_lifecycle = "2.6.1"
@@ -42,15 +42,15 @@ object FenixVersions {
     const val androidx_datastore = "1.0.0"
     const val androidx_datastore_preferences = "1.0.0"
     const val google_material = "1.9.0"
-    const val google_accompanist = "0.28.0"
+    const val google_accompanist = "0.30.1"
 
     const val adjust = "4.33.0"
     const val installreferrer = "2.2"
 
-    const val junit = "5.5.2"
+    const val junit = "5.9.3"
     const val mockk = "1.12.0"
 
-    const val mockwebserver = "4.10.0"
+    const val mockwebserver = "4.11.0"
     const val uiautomator = "2.2.0"
     const val robolectric = "4.10.1"
 
@@ -58,7 +58,9 @@ object FenixVersions {
 
     const val google_play_review_version = "2.0.0"
 
-    const val protobuf = "3.21.10" // keep in sync with the version used in AS.
+    // keep in sync with the versions used in AS.
+    const val protobuf = "3.21.10"
+    const val protobuf_plugin = "0.9.3"
 }
 
 @Suppress("unused")
