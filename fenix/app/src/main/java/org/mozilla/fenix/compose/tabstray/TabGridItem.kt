@@ -31,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -49,6 +50,7 @@ import org.mozilla.fenix.compose.Favicon
 import org.mozilla.fenix.compose.HorizontalFadingEdgeBox
 import org.mozilla.fenix.compose.ThumbnailCard
 import org.mozilla.fenix.compose.annotation.LightDarkPreview
+import org.mozilla.fenix.tabstray.TabsTrayTestTag
 import org.mozilla.fenix.tabstray.ext.toDisplayTitle
 import org.mozilla.fenix.theme.FirefoxTheme
 
@@ -148,16 +150,18 @@ fun TabGridItem(
                         )
                     }
 
-                    Icon(
-                        painter = painterResource(id = R.drawable.mozac_ic_close),
-                        contentDescription = stringResource(id = R.string.close_tab),
-                        tint = FirefoxTheme.colors.iconPrimary,
-                        modifier = Modifier
-                            .clickable { onCloseClick(tab) }
-                            .size(24.dp)
-                            .align(Alignment.CenterVertically),
-
-                    )
+                    if (!multiSelectionEnabled) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.mozac_ic_close),
+                            contentDescription = stringResource(id = R.string.close_tab),
+                            tint = FirefoxTheme.colors.iconPrimary,
+                            modifier = Modifier
+                                .clickable { onCloseClick(tab) }
+                                .size(24.dp)
+                                .align(Alignment.CenterVertically)
+                                .testTag(TabsTrayTestTag.tabItemClose),
+                        )
+                    }
                 }
 
                 Divider()

@@ -1,9 +1,17 @@
 import org.apache.tools.ant.util.StringUtils
 import org.mozilla.fenix.gradle.tasks.ApkSizeTask
 
+// Variables in plugins {} aren't directly supported. Hack around it by setting an
+// intermediate variable which can pull from FenixDependencies.kt and be used later.
+buildscript {
+    ext {
+        protobuf_plugin_version = FenixVersions.protobuf_plugin
+    }
+}
+
 plugins {
     id "com.jetbrains.python.envs" version "0.0.26"
-    id "com.google.protobuf" version "0.8.19"
+    id "com.google.protobuf" version "$protobuf_plugin_version"
 }
 
 apply plugin: 'com.android.application'
@@ -602,7 +610,7 @@ dependencies {
     implementation FenixDependencies.androidx_lifecycle_livedata
     implementation FenixDependencies.androidx_lifecycle_process
     implementation FenixDependencies.androidx_lifecycle_runtime
-    
+
     implementation FenixDependencies.androidx_lifecycle_viewmodel
     implementation FenixDependencies.androidx_core
     implementation FenixDependencies.androidx_core_ktx
@@ -684,14 +692,8 @@ dependencies {
 }
 
 protobuf {
-    // Mac M1 workaround until we can bump the version. Dependent on A-S.
-    // See https://github.com/mozilla-mobile/fenix/issues/22321
     protoc {
-        if (osdetector.os == "osx") {
-            artifact = "${FenixDependencies.protobuf_compiler}:osx-x86_64"
-        } else {
-            artifact = FenixDependencies.protobuf_compiler
-        }
+        artifact = FenixDependencies.protobuf_compiler
     }
 
     // Generates the java Protobuf-lite code for the Protobufs in this project. See
@@ -849,20 +851,6 @@ if (gradle.hasProperty('localProperties.dependencySubstitutions.geckoviewTopsrcd
     }
     ext.topsrcdir = StringUtils.removeSuffix(gradle."localProperties.dependencySubstitutions.geckoviewTopsrcdir", File.separator)
     apply from: "${topsrcdir}/substitute-local-geckoview.gradle"
-}
-
-def appServicesSrcDir = null
-if (gradle.hasProperty('localProperties.autoPublish.application-services.dir')) {
-  appServicesSrcDir = gradle.getProperty('localProperties.autoPublish.application-services.dir')
-} else if (gradle.hasProperty('localProperties.branchBuild.application-services.dir')) {
-  appServicesSrcDir = gradle.getProperty('localProperties.branchBuild.application-services.dir')
-}
-if (appServicesSrcDir) {
-    if (appServicesSrcDir.startsWith("/")) {
-        apply from: "${appServicesSrcDir}/build-scripts/substitute-local-appservices.gradle"
-    } else {
-        apply from: "../${appServicesSrcDir}/build-scripts/substitute-local-appservices.gradle"
-    }
 }
 
 if (gradle.hasProperty('localProperties.autoPublish.glean.dir')) {
