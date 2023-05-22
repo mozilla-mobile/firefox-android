@@ -274,6 +274,22 @@ class ContileTopSitesProviderTest {
         assertNull(provider.cacheState.serverCacheMaxAge)
     }
 
+    @Test
+    fun `GIVEN a json object with exclusions WHEN top sites are fetched THEN response should contain exclusions`() =
+        runTest {
+            val jsonResponse = loadResourceAsString("/contile/contile-hasExclusions.json")
+            val client = prepareClient(jsonResponse)
+            val provider = spy(
+                ContileTopSitesProvider(testContext, client, hasExclusions = true),
+            )
+            val topSites = provider.getTopSites()
+            val exclusions = provider.getPinnedExclusions()
+
+            assertEquals(0, topSites.size)
+            assertEquals(1, exclusions.size)
+            assertEquals("mozilla.com", exclusions[0])
+        }
+
     private fun prepareClient(
         jsonResponse: String = loadResourceAsString("/contile/contile.json"),
         status: Int = 200,

@@ -1,0 +1,9 @@
+{
+  "tiles": [
+  ],
+  "exclusions": [
+    {
+      "host": "mozilla.com"
+    }
+  ]
+}
