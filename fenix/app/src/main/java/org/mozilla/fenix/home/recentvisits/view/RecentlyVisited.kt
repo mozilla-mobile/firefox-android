@@ -179,7 +179,7 @@ private fun RecentlyVisitedHistoryGroup(
             RecentlyVisitedTitle(
                 text = recentVisit.title,
                 modifier = Modifier
-                    .padding(top = 7.dp, bottom = 2.dp)
+                    .padding(top = 4.dp, bottom = 2.dp)
                     .weight(1f)
                     .semantics {
                         testTagsAsResourceId = true
