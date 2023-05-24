@@ -58,7 +58,6 @@ fun showPrivacyPopWindow(context: Context, activity: Activity) {
             context.getString(R.string.privacy_notice_positive_button),
         ) { _, _ ->
             context.settings().shouldShowPrivacyPopWindow = false
-            context.settings().isMarketingTelemetryEnabled = true
             context.components.analytics.metrics.start(MetricServiceType.Marketing)
             // Now that the privacy notice is accepted, application initialization can continue.
             context.application.initialize()
@@ -69,7 +68,6 @@ fun showPrivacyPopWindow(context: Context, activity: Activity) {
             context.getString(R.string.privacy_notice_neutral_button_2),
         ) { _, _ ->
             context.settings().shouldShowPrivacyPopWindow = false
-            context.settings().isMarketingTelemetryEnabled = false
             context.settings().isTelemetryEnabled = false
             context.components.analytics.metrics.start(MetricServiceType.Marketing)
             // Now that the privacy notice is accepted, application initialization can continue.
