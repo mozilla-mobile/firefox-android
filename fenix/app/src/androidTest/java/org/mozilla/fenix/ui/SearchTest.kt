@@ -166,10 +166,11 @@ class SearchTest {
         }
     }
 
-    @Ignore("Test run timing out: https://github.com/mozilla-mobile/fenix/issues/27704")
     @SmokeTest
     @Test
     fun searchGroupShowsInRecentlyVisitedTest() {
+        val firstPageUrl = getGenericAsset(searchMockServer, 1).url
+        val secondPageUrl = getGenericAsset(searchMockServer, 2).url
         queryString = "test search"
         // setting our custom mockWebServer search URL
         val searchString =
@@ -189,11 +190,13 @@ class SearchTest {
             clickContextMenuItem("Open link in new tab")
             clickSnackbarButton("SWITCH")
             waitForPageToLoad()
-            pressBack()
+            verifyUrl(firstPageUrl.toString())
+            goBackToPreviousPage()
             longClickPageObject(itemWithText("Link 2"))
             clickContextMenuItem("Open link in new tab")
             clickSnackbarButton("SWITCH")
             waitForPageToLoad()
+            verifyUrl(secondPageUrl.toString())
         }.openTabDrawer {
         }.openTabsListThreeDotMenu {
         }.closeAllTabs {
@@ -201,7 +204,6 @@ class SearchTest {
         }
     }
 
-    @Ignore("Test run timing out: https://github.com/mozilla-mobile/fenix/issues/27704")
     @Test
     fun verifySearchGroupHistoryWithNoDuplicatesTest() {
         val firstPageUrl = getGenericAsset(searchMockServer, 1).url
@@ -227,17 +229,14 @@ class SearchTest {
             clickContextMenuItem("Open link in new tab")
             clickSnackbarButton("SWITCH")
             waitForPageToLoad()
-            pressBack()
-            longClickPageObject(itemWithText("Link 1"))
-            clickContextMenuItem("Open link in new tab")
-            clickSnackbarButton("SWITCH")
-            waitForPageToLoad()
-            pressBack()
+            verifyUrl(firstPageUrl.toString())
+            goBackToPreviousPage()
             longClickPageObject(itemWithText("Link 2"))
             clickContextMenuItem("Open link in new tab")
             clickSnackbarButton("SWITCH")
             waitForPageToLoad()
-            pressBack()
+            verifyUrl(secondPageUrl.toString())
+            goBackToPreviousPage()
             longClickPageObject(itemWithText("Link 1"))
             clickContextMenuItem("Open link in new tab")
             clickSnackbarButton("SWITCH")
@@ -283,7 +282,6 @@ class SearchTest {
         }
     }
 
-    @Ignore("Test run timing out: https://github.com/mozilla-mobile/fenix/issues/27704")
     @SmokeTest
     @Test
     fun noSearchGroupFromPrivateBrowsingTest() {
@@ -322,7 +320,6 @@ class SearchTest {
         }
     }
 
-    @Ignore("Test run timing out: https://github.com/mozilla-mobile/fenix/issues/27704")
     @SmokeTest
     @Test
     fun deleteItemsFromSearchGroupHistoryTest() {
@@ -347,11 +344,13 @@ class SearchTest {
             clickContextMenuItem("Open link in new tab")
             clickSnackbarButton("SWITCH")
             waitForPageToLoad()
-            mDevice.pressBack()
+            verifyUrl(firstPageUrl.toString())
+            goBackToPreviousPage()
             longClickPageObject(itemWithText("Link 2"))
             clickContextMenuItem("Open link in new tab")
             clickSnackbarButton("SWITCH")
             waitForPageToLoad()
+            verifyUrl(secondPageUrl.toString())
         }.openTabDrawer {
         }.openTabsListThreeDotMenu {
         }.closeAllTabs {
@@ -472,10 +471,10 @@ class SearchTest {
         }
     }
 
-    @Ignore("Test run timing out: https://github.com/mozilla-mobile/fenix/issues/27704")
     @Test
     fun sharePageFromASearchGroupTest() {
         val firstPageUrl = getGenericAsset(searchMockServer, 1).url
+        val secondPageUrl = getGenericAsset(searchMockServer, 2).url
         queryString = "test search"
         // setting our custom mockWebServer search URL
         val searchString =
@@ -494,12 +493,14 @@ class SearchTest {
             longClickPageObject(itemWithText("Link 1"))
             clickContextMenuItem("Open link in new tab")
             clickSnackbarButton("SWITCH")
+            verifyUrl(firstPageUrl.toString())
             waitForPageToLoad()
-            mDevice.pressBack()
+            goBackToPreviousPage()
             longClickPageObject(itemWithText("Link 2"))
             clickContextMenuItem("Open link in new tab")
             clickSnackbarButton("SWITCH")
             waitForPageToLoad()
+            verifyUrl(secondPageUrl.toString())
         }.openTabDrawer {
         }.openTabsListThreeDotMenu {
         }.closeAllTabs {

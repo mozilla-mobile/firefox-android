@@ -869,6 +869,11 @@ class BrowserRobot {
             getStringResource(R.string.open_in_app_cfr_negative_button_text),
         ).click()
 
+    fun goBackToPreviousPage() {
+        mDevice.pressBack()
+        mDevice.waitForWindowUpdate(packageName, waitingTimeShort)
+    }
+
     class Transition {
         fun openThreeDotMenu(interact: ThreeDotMenuMainRobot.() -> Unit): ThreeDotMenuMainRobot.Transition {
             mDevice.waitForIdle(waitingTime)

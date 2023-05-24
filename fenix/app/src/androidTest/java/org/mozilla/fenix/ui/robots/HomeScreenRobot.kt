@@ -70,6 +70,7 @@ import org.mozilla.fenix.helpers.MatcherHelper.itemWithDescription
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdAndDescription
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdAndText
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdContainingText
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
 import org.mozilla.fenix.helpers.TestHelper.appContext
@@ -322,20 +323,17 @@ class HomeScreenRobot {
 
     fun verifyRecentlyVisitedSearchGroupDisplayed(shouldBeDisplayed: Boolean, searchTerm: String, groupSize: Int) {
         // checks if the search group exists in the Recently visited section
-        if (shouldBeDisplayed) {
-            scrollToElementByText("Recently visited")
-            assertTrue(
-                mDevice.findObject(UiSelector().text(searchTerm))
-                    .getFromParent(UiSelector().text("$groupSize sites"))
-                    .waitForExists(waitingTimeShort),
-            )
-        } else {
-            assertTrue(
-                mDevice.findObject(UiSelector().text(searchTerm))
-                    .getFromParent(UiSelector().text("$groupSize sites"))
-                    .waitUntilGone(waitingTimeShort),
-            )
-        }
+        assertItemWithResIdAndTextExists(
+            itemWithResIdContainingText(
+                "recent.visits.group.title",
+                searchTerm,
+            ),
+            itemWithResIdContainingText(
+                "recent.visits.group.caption",
+                "$groupSize pages",
+            ),
+            exists = shouldBeDisplayed,
+        )
     }
 
     // Collections elements

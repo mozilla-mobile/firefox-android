@@ -128,8 +128,10 @@ object TestHelper {
         )
     }
 
-    fun clickSnackbarButton(expectedText: String) =
+    fun clickSnackbarButton(expectedText: String) {
         clickPageObject(itemWithResIdAndText("$packageName:id/snackbar_btn", expectedText))
+        mDevice.waitForWindowUpdate(packageName, waitingTimeShort)
+    }
 
     fun waitUntilSnackbarGone() {
         mDevice.findObject(

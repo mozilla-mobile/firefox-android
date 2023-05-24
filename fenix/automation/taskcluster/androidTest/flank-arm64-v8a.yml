@@ -21,6 +21,11 @@ gcloud:
   test-targets:
     - notPackage org.mozilla.fenix.screenshots
     - notPackage org.mozilla.fenix.syncintegration
+    - class org.mozilla.fenix.ui.SearchTest#searchGroupShowsInRecentlyVisitedTest
+    - class org.mozilla.fenix.ui.SearchTest#verifySearchGroupHistoryWithNoDuplicatesTest
+    - class org.mozilla.fenix.ui.SearchTest#deleteItemsFromSearchGroupHistoryTest
+    - class org.mozilla.fenix.ui.SearchTest#sharePageFromASearchGroupTest
+    - class org.mozilla.fenix.ui.SearchTest#noSearchGroupFromPrivateBrowsingTest
 
   device:
     - model: Pixel2.arm
@@ -30,6 +35,6 @@ gcloud:
 flank:
   project: GOOGLE_PROJECT
   max-test-shards: 100
-  num-test-runs: 1
+  num-test-runs: 75
   output-style: compact
   full-junit-result: true
