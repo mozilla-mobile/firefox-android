@@ -55,7 +55,11 @@ class DataChoicesFragment : PreferenceFragmentCompat() {
 
     override fun onResume() {
         super.onResume()
-        showToolbar(getString(R.string.preferences_data_collection))
+        if (Config.channel.isMozillaOnline) {
+            showToolbar(getString(R.string.preferences_mozonline_data_collection))
+        } else {
+            showToolbar(getString(R.string.preferences_data_collection))
+        }
         updateStudiesSection()
     }
 

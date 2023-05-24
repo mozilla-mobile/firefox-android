@@ -156,6 +156,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences, rootKey)
+
+        if (Config.channel.isMozillaOnline) {
+            requirePreference<Preference>(R.string.pref_key_data_choices).apply {
+                title = context.getString(R.string.preferences_mozonline_data_collection)
+            }
+        }
     }
 
     @SuppressLint("RestrictedApi")

@@ -33,6 +33,9 @@
     <!-- Default title for pinned meituan top site that links to 58 home page  -->
     <string name="default_top_site_meituan">美团</string>
 
+    <!-- Preference for data collection -->
+    <string name="preferences_mozonline_data_collection">改善用户体验</string>
+
     <!-- FxA server switch-->
     <!-- Switch Preference for domestic China/global fxa server -->
     <string name="preferences_allow_domestic_china_fxa_server">使用本地服务</string>
