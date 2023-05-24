@@ -158,7 +158,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
 
         startForResult = registerForActivityResult { result ->
             result.data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)?.first()?.also {
-                val updatedUrl = toolbarView.view.edit.updateUrl(url = it, shouldHighlight = true, shouldAppend = true)
+                val updatedUrl = toolbarView.view.edit.updateUrl(url = it, shouldHighlight = false, shouldAppend = true)
                 interactor.onTextChanged(updatedUrl)
                 toolbarView.view.edit.focus()
             }
@@ -288,7 +288,9 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                         }
                         else -> isPrivateButtonClicked = false
                     }
-                    requireActivity().dispatchTouchEvent(event)
+                    if (binding.awesomeBar.visibility != View.VISIBLE) {
+                        requireActivity().dispatchTouchEvent(event)
+                    }
                     false
                 }
             }

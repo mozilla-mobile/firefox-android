@@ -28,10 +28,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import mozilla.components.browser.state.selector.normalTabs
-import mozilla.components.browser.state.selector.privateTabs
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.ContentState
 import mozilla.components.browser.state.state.TabSessionState
@@ -121,10 +120,6 @@ fun TabsTray(
     onDeleteSelectedTabsClick: () -> Unit,
     onForceSelectedTabsAsInactiveClick: () -> Unit,
 ) {
-    val normalTabCount = browserStore
-        .observeAsComposableState { state -> state.normalTabs.size }.value ?: 0
-    val privateTabCount = browserStore
-        .observeAsComposableState { state -> state.privateTabs.size }.value ?: 0
     val multiselectMode = tabsTrayStore
         .observeAsComposableState { state -> state.mode }.value ?: TabsTrayState.Mode.Normal
     val selectedPage = tabsTrayStore
@@ -154,17 +149,14 @@ fun TabsTray(
         modifier = Modifier
             .fillMaxSize()
             .then(shapeModifier)
-            .background(FirefoxTheme.colors.layer1),
+            .background(FirefoxTheme.colors.layer1)
+            .testTag(TabsTrayTestTag.tabsTray),
     ) {
         Box(modifier = Modifier.nestedScroll(rememberNestedScrollInteropConnection())) {
             TabsTrayBanner(
-                selectMode = multiselectMode,
-                selectedPage = selectedPage,
-                normalTabCount = normalTabCount,
-                privateTabCount = privateTabCount,
+                tabsTrayStore = tabsTrayStore,
                 isInDebugMode = isInDebugMode,
                 onTabPageIndicatorClicked = onTabPageClick,
-                onExitSelectModeClick = { tabsTrayStore.dispatch(TabsTrayAction.ExitSelectMode) },
                 onSaveToCollectionClick = onSaveToCollectionClick,
                 onShareSelectedTabsClick = onShareSelectedTabsClick,
                 onEnterMultiselectModeClick = { tabsTrayStore.dispatch(TabsTrayAction.EnterSelectMode) },
@@ -304,6 +296,7 @@ private fun NormalTabsPage(
             displayTabsInGrid = displayTabsInGrid,
             selectedTabId = selectedTabId,
             selectionMode = selectionMode,
+            modifier = Modifier.testTag(TabsTrayTestTag.normalTabsList),
             onTabClose = onTabClose,
             onTabMediaClick = onTabMediaClick,
             onTabClick = onTabClick,
@@ -338,6 +331,7 @@ private fun PrivateTabsPage(
             displayTabsInGrid = displayTabsInGrid,
             selectedTabId = selectedTabId,
             selectionMode = selectionMode,
+            modifier = Modifier.testTag(TabsTrayTestTag.privateTabsList),
             onTabClose = onTabClose,
             onTabMediaClick = onTabMediaClick,
             onTabClick = onTabClick,
@@ -365,15 +359,23 @@ private fun SyncedTabsPage(
 
 @Composable
 private fun EmptyTabPage(isPrivate: Boolean) {
-    Box(modifier = Modifier.fillMaxSize()) {
+    val testTag: String
+    val emptyTextId: Int
+    if (isPrivate) {
+        testTag = TabsTrayTestTag.emptyPrivateTabsList
+        emptyTextId = R.string.no_private_tabs_description
+    } else {
+        testTag = TabsTrayTestTag.emptyNormalTabsList
+        emptyTextId = R.string.no_open_tabs_description
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .testTag(testTag),
+    ) {
         Text(
-            text = stringResource(
-                id = if (isPrivate) {
-                    R.string.no_private_tabs_description
-                } else {
-                    R.string.no_open_tabs_description
-                },
-            ),
+            text = stringResource(id = emptyTextId),
             modifier = Modifier
                 .align(Alignment.TopCenter)
                 .padding(top = 80.dp),

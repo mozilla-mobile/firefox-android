@@ -20,7 +20,7 @@ object Versions {
 
     const val junit = "4.13.2"
     const val robolectric = "4.10.1"
-    const val mockito = "3.12.4"
+    const val mockito = "5.3.1"
     const val maven_ant_tasks = "2.1.3"
 
     // TO-DO: These could be kept in sync in the future
@@ -32,7 +32,7 @@ object Versions {
     // This has to be synced to the gradlew plugin version. See
     // http://googlesamples.github.io/android-custom-lint-rules/api-guide/example.md.html#example:samplelintcheckgithubproject/lintversion?
     const val lint = "30.4.2"
-    const val detekt = "1.19.0"
+    const val detekt = "1.22.0"
 
     const val sentry_latest = "6.19.0"
 

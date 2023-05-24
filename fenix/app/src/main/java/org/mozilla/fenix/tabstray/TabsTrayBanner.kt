@@ -35,7 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import mozilla.components.browser.state.state.ContentState
 import mozilla.components.browser.state.state.TabSessionState
+import mozilla.components.lib.state.ext.observeAsComposableState
 import mozilla.components.ui.tabcounter.TabCounter
 import org.mozilla.fenix.R
 import org.mozilla.fenix.compose.DropdownMenu
@@ -57,14 +58,9 @@ private val ICON_SIZE = 24.dp
 /**
  * Top-level UI for displaying the banner in [TabsTray].
  *
- * @param selectMode Current [TabsTrayState.Mode] used in the tabs tray.
- * @param selectedPage The active [Page] of the Tabs Tray.
- * @param normalTabCount The total amount of normal browsing tabs currently open.
- * @param privateTabCount The number of private browsing tabs currently open.
+ * @param tabsTrayStore [TabsTrayStore] used to listen for changes to [TabsTrayState].
  * @param isInDebugMode True for debug variant or if secret menu is enabled for this session.
  * @param onTabPageIndicatorClicked Invoked when the user clicks on a tab page indicator.
- * @param onExitSelectModeClick Invoked when the user clicks on exit select mode button from the
- * multi select banner.
  * @param onSaveToCollectionClick Invoked when the user clicks on the save to collection button from
  * the multi select banner.
  * @param onShareSelectedTabsClick Invoked when the user clicks on the share button from the multi select banner.
@@ -81,13 +77,9 @@ private val ICON_SIZE = 24.dp
 @Suppress("LongParameterList")
 @Composable
 fun TabsTrayBanner(
-    selectMode: TabsTrayState.Mode,
-    selectedPage: Page,
-    normalTabCount: Int,
-    privateTabCount: Int,
+    tabsTrayStore: TabsTrayStore,
     isInDebugMode: Boolean,
     onTabPageIndicatorClicked: (Page) -> Unit,
-    onExitSelectModeClick: () -> Unit,
     onSaveToCollectionClick: () -> Unit,
     onShareSelectedTabsClick: () -> Unit,
     onEnterMultiselectModeClick: () -> Unit,
@@ -100,11 +92,21 @@ fun TabsTrayBanner(
     onBookmarkSelectedTabsClick: () -> Unit,
     onForceSelectedTabsAsInactiveClick: () -> Unit,
 ) {
-    if (selectMode is TabsTrayState.Mode.Select) {
+    val normalTabCount = tabsTrayStore.observeAsComposableState { state ->
+        state.normalTabs.size + state.inactiveTabs.size
+    }.value ?: 0
+    val privateTabCount = tabsTrayStore
+        .observeAsComposableState { state -> state.privateTabs.size }.value ?: 0
+    val multiselectMode = tabsTrayStore
+        .observeAsComposableState { state -> state.mode }.value ?: TabsTrayState.Mode.Normal
+    val selectedPage = tabsTrayStore
+        .observeAsComposableState { state -> state.selectedPage }.value ?: Page.NormalTabs
+
+    if (multiselectMode is TabsTrayState.Mode.Select) {
         MultiSelectBanner(
-            selectedTabCount = selectMode.selectedTabs.size,
+            selectedTabCount = multiselectMode.selectedTabs.size,
             shouldShowInactiveButton = isInDebugMode,
-            onExitSelectModeClick = onExitSelectModeClick,
+            onExitSelectModeClick = { tabsTrayStore.dispatch(TabsTrayAction.ExitSelectMode) },
             onSaveToCollectionsClick = onSaveToCollectionClick,
             onShareSelectedTabs = onShareSelectedTabsClick,
             onBookmarkSelectedTabsClick = onBookmarkSelectedTabsClick,
@@ -173,7 +175,9 @@ private fun SingleSelectBanner(
                     Tab(
                         selected = selectedPage == Page.NormalTabs,
                         onClick = { onTabPageIndicatorClicked(Page.NormalTabs) },
-                        modifier = Modifier.fillMaxHeight(),
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .testTag(TabsTrayTestTag.normalTabsPageButton),
                         selectedContentColor = selectedColor,
                         unselectedContentColor = inactiveColor,
                     ) {
@@ -183,7 +187,9 @@ private fun SingleSelectBanner(
                     Tab(
                         selected = selectedPage == Page.PrivateTabs,
                         onClick = { onTabPageIndicatorClicked(Page.PrivateTabs) },
-                        modifier = Modifier.fillMaxHeight(),
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .testTag(TabsTrayTestTag.privateTabsPageButton),
                         icon = {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_private_browsing),
@@ -197,7 +203,9 @@ private fun SingleSelectBanner(
                     Tab(
                         selected = selectedPage == Page.SyncedTabs,
                         onClick = { onTabPageIndicatorClicked(Page.SyncedTabs) },
-                        modifier = Modifier.fillMaxHeight(),
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .testTag(TabsTrayTestTag.syncedTabsPageButton),
                         icon = {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_synced_tabs),
@@ -214,7 +222,9 @@ private fun SingleSelectBanner(
 
             IconButton(
                 onClick = { showMenu = true },
-                modifier = Modifier.align(Alignment.CenterVertically),
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .testTag(TabsTrayTestTag.threeDotButton),
             ) {
                 DropdownMenu(
                     menuItems = generateSingleSelectBannerMenuItems(
@@ -256,34 +266,34 @@ private fun generateSingleSelectBannerMenuItems(
     onAccountSettingsClick: () -> Unit,
 ): List<MenuItem> {
     val tabSettingsItem = MenuItem(
-        stringResource(id = R.string.tab_tray_menu_tab_settings),
-        colorResource(id = R.color.fx_mobile_text_color_primary),
-        onTabSettingsClick,
+        title = stringResource(id = R.string.tab_tray_menu_tab_settings),
+        testTag = TabsTrayTestTag.tabSettings,
+        onClick = onTabSettingsClick,
     )
     val recentlyClosedTabsItem = MenuItem(
-        stringResource(id = R.string.tab_tray_menu_recently_closed),
-        colorResource(id = R.color.fx_mobile_text_color_primary),
-        onRecentlyClosedClick,
+        title = stringResource(id = R.string.tab_tray_menu_recently_closed),
+        testTag = TabsTrayTestTag.recentlyClosedTabs,
+        onClick = onRecentlyClosedClick,
     )
     val enterSelectModeItem = MenuItem(
-        stringResource(id = R.string.tabs_tray_select_tabs),
-        colorResource(id = R.color.fx_mobile_text_color_primary),
-        onEnterMultiselectModeClick,
+        title = stringResource(id = R.string.tabs_tray_select_tabs),
+        testTag = TabsTrayTestTag.selectTabs,
+        onClick = onEnterMultiselectModeClick,
     )
     val shareAllTabsItem = MenuItem(
-        stringResource(id = R.string.tab_tray_menu_item_share),
-        colorResource(id = R.color.fx_mobile_text_color_primary),
-        onShareAllTabsClick,
+        title = stringResource(id = R.string.tab_tray_menu_item_share),
+        testTag = TabsTrayTestTag.shareAllTabs,
+        onClick = onShareAllTabsClick,
     )
     val deleteAllTabsItem = MenuItem(
-        stringResource(id = R.string.tab_tray_menu_item_close),
-        colorResource(id = R.color.fx_mobile_text_color_primary),
-        onDeleteAllTabsClick,
+        title = stringResource(id = R.string.tab_tray_menu_item_close),
+        testTag = TabsTrayTestTag.closeAllTabs,
+        onClick = onDeleteAllTabsClick,
     )
     val accountSettingsItem = MenuItem(
-        stringResource(id = R.string.tab_tray_menu_account_settings),
-        colorResource(id = R.color.fx_mobile_text_color_primary),
-        onAccountSettingsClick,
+        title = stringResource(id = R.string.tab_tray_menu_account_settings),
+        testTag = TabsTrayTestTag.accountSettings,
+        onClick = onAccountSettingsClick,
     )
     return when {
         selectedPage == Page.NormalTabs && normalTabCount == 0 ||
@@ -502,22 +512,28 @@ private fun TabsTrayBannerPreviewRoot(
     selectMode: TabsTrayState.Mode = TabsTrayState.Mode.Normal,
     selectedPage: Page = Page.NormalTabs,
     normalTabCount: Int = 10,
+    privateTabCount: Int = 10,
 ) {
-    var selectedPageState by remember { mutableStateOf(selectedPage) }
-    var selectModeState by remember { mutableStateOf(selectMode) }
+    val normalTabs = generateFakeTabsList(normalTabCount)
+    val privateTabs = generateFakeTabsList(privateTabCount)
+
+    val tabsTrayStore = TabsTrayStore(
+        initialState = TabsTrayState(
+            selectedPage = selectedPage,
+            mode = selectMode,
+            normalTabs = normalTabs,
+            privateTabs = privateTabs,
+        ),
+    )
 
     FirefoxTheme {
         Box(modifier = Modifier.background(color = FirefoxTheme.colors.layer1)) {
             TabsTrayBanner(
-                selectMode = selectModeState,
-                selectedPage = selectedPageState,
-                normalTabCount = normalTabCount,
-                privateTabCount = 10,
+                tabsTrayStore = tabsTrayStore,
                 isInDebugMode = true,
                 onTabPageIndicatorClicked = { page ->
-                    selectedPageState = page
+                    tabsTrayStore.dispatch(TabsTrayAction.PageSelected(page))
                 },
-                onExitSelectModeClick = { selectModeState = TabsTrayState.Mode.Normal },
                 onSaveToCollectionClick = {},
                 onShareSelectedTabsClick = {},
                 onEnterMultiselectModeClick = {},
@@ -543,3 +559,14 @@ private object DisabledRippleTheme : RippleTheme {
     @Composable
     override fun rippleAlpha(): RippleAlpha = RippleAlpha(0.0f, 0.0f, 0.0f, 0.0f)
 }
+
+private fun generateFakeTabsList(tabCount: Int = 10, isPrivate: Boolean = false): List<TabSessionState> =
+    List(tabCount) { index ->
+        TabSessionState(
+            id = "tabId$index-$isPrivate",
+            content = ContentState(
+                url = "www.mozilla.com",
+                private = isPrivate,
+            ),
+        )
+    }

@@ -122,6 +122,9 @@
     <!-- Shortcut action to open new private tab -->
     <string name="home_screen_shortcut_open_new_private_tab_2">Прыватная картка</string>
 
+    <!-- Shortcut action to open Passwords screens -->
+    <string name="home_screen_shortcut_open_password_screen">Хуткі доступ да пароляў</string>
+
     <!-- Recent Tabs -->
     <!-- Header text for jumping back into the recent tab in the home screen -->
     <string name="recent_tabs_header">Назад да</string>
@@ -405,7 +408,9 @@
     <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
     <string name="cookie_banner_handling_details_site_is_not_supported_cancel_button">Скасаваць</string>
     <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
-    <string name="cookie_banner_handling_details_site_is_not_supported_request_support_button">Запытаць падтрымку</string>
+    <string name="cookie_banner_handling_details_site_is_not_supported_request_support_button" moz:RemovedIn="115" tools:ignore="UnusedResources">Запытаць падтрымку</string>
+    <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
+    <string name="cookie_banner_handling_details_site_is_not_supported_request_support_button_2">Адправіць запыт</string>
     <!-- Text for title indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
     <string name="cookie_banner_handling_details_site_is_not_supported_title" moz:RemovedIn="114" tools:ignore="UnusedResources">Памяншэнне колькасці банераў кукі</string>
     <!-- Text for title indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
@@ -1369,7 +1374,9 @@
     <!-- Title text of a delete browsing data dialog. -->
     <string name="delete_history_prompt_title">Дыяпазон часу для выдалення</string>
     <!-- Body text of a delete browsing data dialog. -->
-    <string name="delete_history_prompt_body">Выдаляе гісторыю (у тым ліку гісторыю, сінхранізаваную з іншых прылад), кукі і іншыя даныя аглядання.</string>
+    <string name="delete_history_prompt_body" moz:RemovedIn="130" tools:ignore="UnusedResources">Выдаляе гісторыю (у тым ліку гісторыю, сінхранізаваную з іншых прылад), кукі і іншыя даныя аглядання.</string>
+    <!-- Body text of a delete browsing data dialog. -->
+    <string name="delete_history_prompt_body_2">Выдаляе гісторыю (уключаючы гісторыю, сінхранізаваную з іншых прылад)</string>
     <!-- Radio button in the delete browsing data dialog to delete history items for the last hour. -->
     <string name="delete_history_prompt_button_last_hour">Апошняя гадзіна</string>
     <!-- Radio button in the delete browsing data dialog to delete history items for today and yesterday. -->

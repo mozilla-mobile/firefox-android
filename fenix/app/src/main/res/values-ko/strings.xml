@@ -130,6 +130,9 @@
     <!-- Shortcut action to open new private tab -->
     <string name="home_screen_shortcut_open_new_private_tab_2">새 사생활 보호 탭</string>
 
+    <!-- Shortcut action to open Passwords screens -->
+    <string name="home_screen_shortcut_open_password_screen">비밀번호 바로 가기</string>
+
     <!-- Recent Tabs -->
     <!-- Header text for jumping back into the recent tab in the home screen -->
     <string name="recent_tabs_header">최근 탭으로 이동</string>
@@ -415,7 +418,9 @@
     <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
     <string name="cookie_banner_handling_details_site_is_not_supported_cancel_button">취소</string>
     <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
-    <string name="cookie_banner_handling_details_site_is_not_supported_request_support_button">지원 요청</string>
+    <string name="cookie_banner_handling_details_site_is_not_supported_request_support_button" moz:RemovedIn="115" tools:ignore="UnusedResources">지원 요청</string>
+    <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
+    <string name="cookie_banner_handling_details_site_is_not_supported_request_support_button_2">요청 보내기</string>
     <!-- Text for title indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
     <string name="cookie_banner_handling_details_site_is_not_supported_title" moz:RemovedIn="114" tools:ignore="UnusedResources">쿠키 배너 감소</string>
     <!-- Text for title indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
@@ -1401,7 +1406,9 @@
     <!-- Title text of a delete browsing data dialog. -->
     <string name="delete_history_prompt_title">삭제할 시간 범위</string>
     <!-- Body text of a delete browsing data dialog. -->
-    <string name="delete_history_prompt_body">기록 (다른 기기에서 동기화된 기록 포함), 쿠키 및 기타 탐색 데이터를 제거합니다.</string>
+    <string name="delete_history_prompt_body" moz:RemovedIn="130" tools:ignore="UnusedResources">기록 (다른 기기에서 동기화된 기록 포함), 쿠키 및 기타 탐색 데이터를 제거합니다.</string>
+    <!-- Body text of a delete browsing data dialog. -->
+    <string name="delete_history_prompt_body_2">기록 제거 (다른 기기에서 동기화된 기록 포함)</string>
     <!-- Radio button in the delete browsing data dialog to delete history items for the last hour. -->
     <string name="delete_history_prompt_button_last_hour">지난 시간</string>
     <!-- Radio button in the delete browsing data dialog to delete history items for today and yesterday. -->

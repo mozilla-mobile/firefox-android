@@ -409,7 +409,9 @@
     <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
     <string name="cookie_banner_handling_details_site_is_not_supported_cancel_button">Diddymu</string>
     <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
-    <string name="cookie_banner_handling_details_site_is_not_supported_request_support_button">Gofyn am gymorth</string>
+    <string name="cookie_banner_handling_details_site_is_not_supported_request_support_button" moz:RemovedIn="115" tools:ignore="UnusedResources">Gofyn am gymorth</string>
+    <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
+    <string name="cookie_banner_handling_details_site_is_not_supported_request_support_button_2">Anfon cais</string>
     <!-- Text for title indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
     <string name="cookie_banner_handling_details_site_is_not_supported_title" moz:RemovedIn="114" tools:ignore="UnusedResources">Cyfyngu Baneri Cwcis</string>
     <!-- Text for title indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
@@ -1360,6 +1362,8 @@
     <string name="delete_history_prompt_title">Ystod amser i’w ddileu</string>
     <!-- Body text of a delete browsing data dialog. -->
     <string name="delete_history_prompt_body" moz:RemovedIn="130" tools:ignore="UnusedResources">Yn dileu hanes (gan gynnwys hanes wedi’i gydweddu o ddyfeisiau eraill), cwcis a data pori arall.</string>
+    <!-- Body text of a delete browsing data dialog. -->
+    <string name="delete_history_prompt_body_2">Yn dileu hanes (gan gynnwys hanes wedi’i gydweddu o ddyfeisiau eraill)</string>
     <!-- Radio button in the delete browsing data dialog to delete history items for the last hour. -->
     <string name="delete_history_prompt_button_last_hour">Awr diwethaf</string>
     <!-- Radio button in the delete browsing data dialog to delete history items for today and yesterday. -->
