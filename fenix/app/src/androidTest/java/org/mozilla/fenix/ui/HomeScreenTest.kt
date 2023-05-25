@@ -101,6 +101,11 @@ class HomeScreenTest {
 
     @Test
     fun verifyJumpBackInSectionTest() {
+        activityTestRule.activityRule.applySettingsExceptions {
+            it.isRecentlyVisitedFeatureEnabled = false
+            it.isPocketEnabled = false
+        }
+
         val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 4)
         val secondWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 

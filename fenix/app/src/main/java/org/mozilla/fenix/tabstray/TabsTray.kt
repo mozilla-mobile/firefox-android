@@ -31,8 +31,6 @@ import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import mozilla.components.browser.state.selector.normalTabs
-import mozilla.components.browser.state.selector.privateTabs
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.ContentState
 import mozilla.components.browser.state.state.TabSessionState
@@ -122,10 +120,6 @@ fun TabsTray(
     onDeleteSelectedTabsClick: () -> Unit,
     onForceSelectedTabsAsInactiveClick: () -> Unit,
 ) {
-    val normalTabCount = browserStore
-        .observeAsComposableState { state -> state.normalTabs.size }.value ?: 0
-    val privateTabCount = browserStore
-        .observeAsComposableState { state -> state.privateTabs.size }.value ?: 0
     val multiselectMode = tabsTrayStore
         .observeAsComposableState { state -> state.mode }.value ?: TabsTrayState.Mode.Normal
     val selectedPage = tabsTrayStore
@@ -160,13 +154,9 @@ fun TabsTray(
     ) {
         Box(modifier = Modifier.nestedScroll(rememberNestedScrollInteropConnection())) {
             TabsTrayBanner(
-                selectMode = multiselectMode,
-                selectedPage = selectedPage,
-                normalTabCount = normalTabCount,
-                privateTabCount = privateTabCount,
+                tabsTrayStore = tabsTrayStore,
                 isInDebugMode = isInDebugMode,
                 onTabPageIndicatorClicked = onTabPageClick,
-                onExitSelectModeClick = { tabsTrayStore.dispatch(TabsTrayAction.ExitSelectMode) },
                 onSaveToCollectionClick = onSaveToCollectionClick,
                 onShareSelectedTabsClick = onShareSelectedTabsClick,
                 onEnterMultiselectModeClick = { tabsTrayStore.dispatch(TabsTrayAction.EnterSelectMode) },
@@ -197,7 +187,6 @@ fun TabsTray(
                             browserStore = browserStore,
                             tabsTrayStore = tabsTrayStore,
                             displayTabsInGrid = displayTabsInGrid,
-                            selectionMode = multiselectMode,
                             onTabClose = onTabClose,
                             onTabMediaClick = onTabMediaClick,
                             onTabClick = handleTabClick,
@@ -218,7 +207,6 @@ fun TabsTray(
                             browserStore = browserStore,
                             tabsTrayStore = tabsTrayStore,
                             displayTabsInGrid = displayTabsInGrid,
-                            selectionMode = multiselectMode,
                             onTabClose = onTabClose,
                             onTabMediaClick = onTabMediaClick,
                             onTabClick = handleTabClick,
@@ -245,7 +233,6 @@ private fun NormalTabsPage(
     browserStore: BrowserStore,
     tabsTrayStore: TabsTrayStore,
     displayTabsInGrid: Boolean,
-    selectionMode: TabsTrayState.Mode,
     onTabClose: (TabSessionState) -> Unit,
     onTabMediaClick: (TabSessionState) -> Unit,
     onTabClick: (TabSessionState) -> Unit,
@@ -267,6 +254,8 @@ private fun NormalTabsPage(
         .observeAsComposableState { state -> state.normalTabs }.value ?: emptyList()
     val inactiveTabs = tabsTrayStore
         .observeAsComposableState { state -> state.inactiveTabs }.value ?: emptyList()
+    val selectionMode = tabsTrayStore
+        .observeAsComposableState { state -> state.mode }.value ?: TabsTrayState.Mode.Normal
 
     if (normalTabs.isNotEmpty() || inactiveTabs.isNotEmpty()) {
         val showInactiveTabsAutoCloseDialog =
@@ -324,7 +313,6 @@ private fun PrivateTabsPage(
     browserStore: BrowserStore,
     tabsTrayStore: TabsTrayStore,
     displayTabsInGrid: Boolean,
-    selectionMode: TabsTrayState.Mode,
     onTabClose: (TabSessionState) -> Unit,
     onTabMediaClick: (TabSessionState) -> Unit,
     onTabClick: (TabSessionState) -> Unit,
@@ -334,6 +322,8 @@ private fun PrivateTabsPage(
         .observeAsComposableState { state -> state.selectedTabId }.value
     val privateTabs = tabsTrayStore
         .observeAsComposableState { state -> state.privateTabs }.value ?: emptyList()
+    val selectionMode = tabsTrayStore
+        .observeAsComposableState { state -> state.mode }.value ?: TabsTrayState.Mode.Normal
 
     if (privateTabs.isNotEmpty()) {
         TabLayout(
