@@ -39,6 +39,8 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
@@ -48,7 +50,7 @@ import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.lib.state.ext.observeAsComposableState
 import mozilla.components.ui.tabcounter.TabCounter
 import org.mozilla.fenix.R
-import org.mozilla.fenix.compose.DropdownMenu
+import org.mozilla.fenix.compose.ContextualMenu
 import org.mozilla.fenix.compose.MenuItem
 import org.mozilla.fenix.compose.annotation.LightDarkPreview
 import org.mozilla.fenix.theme.FirefoxTheme
@@ -226,7 +228,7 @@ private fun SingleSelectBanner(
                     .align(Alignment.CenterVertically)
                     .testTag(TabsTrayTestTag.threeDotButton),
             ) {
-                DropdownMenu(
+                ContextualMenu(
                     menuItems = generateSingleSelectBannerMenuItems(
                         selectedPage,
                         normalTabCount,
@@ -342,7 +344,12 @@ private fun NormalTabsTabIcon(normalTabCount: Int) {
         stringResource(id = R.string.mozac_tab_counter_open_tab_tray_plural, normalTabCount.toString())
     }
 
-    Box {
+    Box(
+        modifier = Modifier
+            .semantics(mergeDescendants = true) {
+                testTag = TabsTrayTestTag.normalTabsCounter
+            },
+    ) {
         Icon(
             painter = painterResource(
                 id = mozilla.components.ui.tabcounter.R.drawable.mozac_ui_tabcounter_box,
@@ -457,7 +464,7 @@ private fun MultiSelectBanner(
                 tint = FirefoxTheme.colors.iconOnColor,
             )
 
-            DropdownMenu(
+            ContextualMenu(
                 menuItems = menuItems,
                 showMenu = showMenu,
                 offset = DpOffset(x = 0.dp, y = -ICON_SIZE),

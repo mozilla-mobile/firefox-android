@@ -21,6 +21,7 @@ import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
+import org.mozilla.fenix.ui.robots.notificationShade
 
 /**
  *  Tests for verifying basic functionality of tabbed browsing
@@ -261,24 +262,23 @@ class ComposeTabbedBrowsingTest {
         }
     }
 
-    @Ignore("Being converted in: https://bugzilla.mozilla.org/show_bug.cgi?id=1832611")
     @Test
     fun closePrivateTabsNotificationTest() {
-//        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-//
-//        homeScreen {
-//        }.togglePrivateBrowsingMode()
-//
-//        navigationToolbar {
-//        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-//            mDevice.openNotification()
-//        }
-//
-//        notificationShade {
-//            verifyPrivateTabsNotification()
-//        }.clickClosePrivateTabsNotification {
-//            verifyHomeScreen()
-//        }
+        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        homeScreen {
+        }.togglePrivateBrowsingMode()
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+            mDevice.openNotification()
+        }
+
+        notificationShade {
+            verifyPrivateTabsNotification()
+        }.clickClosePrivateTabsNotification {
+            verifyHomeScreen()
+        }
     }
 
     @Ignore("Being converted in: https://bugzilla.mozilla.org/show_bug.cgi?id=1832612")
@@ -305,75 +305,74 @@ class ComposeTabbedBrowsingTest {
 //        }
     }
 
-    @Ignore("Being converted in: https://bugzilla.mozilla.org/show_bug.cgi?id=1832613")
     @Test
     fun verifyEmptyTabTray() {
-//        navigationToolbar {
-//        }.openTabTray {
-//            verifyNormalBrowsingButtonIsSelected(true)
-//            verifyPrivateBrowsingButtonIsSelected(false)
-//            verifySyncedTabsButtonIsSelected(false)
-//            verifyNoOpenTabsInNormalBrowsing()
-//            verifyNormalBrowsingNewTabButton()
-//            verifyTabTrayOverflowMenu(true)
-//            verifyEmptyTabsTrayMenuButtons()
-//        }
+        homeScreen {
+        }.openComposeTabDrawer(composeTestRule) {
+            verifyNormalBrowsingButtonIsSelected()
+            verifyPrivateBrowsingButtonIsSelected(false)
+            verifySyncedTabsButtonIsSelected(false)
+            verifyNoOpenTabsInNormalBrowsing()
+            verifyFab()
+            verifyThreeDotButton()
+        }.openThreeDotMenu {
+            verifyTabSettingsButton()
+            verifyRecentlyClosedTabsButton()
+        }
     }
 
-    @Ignore("Being converted in: https://bugzilla.mozilla.org/show_bug.cgi?id=1832615")
     @Test
     fun verifyOpenTabDetails() {
-//        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-//
-//        navigationToolbar {
-//        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-//        }.openTabDrawer {
-//            verifyNormalBrowsingButtonIsSelected(true)
-//            verifyPrivateBrowsingButtonIsSelected(false)
-//            verifySyncedTabsButtonIsSelected(false)
-//            verifyTabTrayOverflowMenu(true)
-//            verifyTabsTrayCounter()
-//            verifyExistingTabList()
-//            verifyNormalBrowsingNewTabButton()
-//            verifyOpenedTabThumbnail()
-//            verifyExistingOpenTabs(defaultWebPage.title)
-//            verifyCloseTabsButton(defaultWebPage.title)
-//        }.openTab(defaultWebPage.title) {
-//            verifyUrl(defaultWebPage.url.toString())
-//            verifyTabCounter("1")
-//        }
+        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+        }.openComposeTabDrawer(composeTestRule) {
+            verifyNormalBrowsingButtonIsSelected()
+            verifyPrivateBrowsingButtonIsSelected(isSelected = false)
+            verifySyncedTabsButtonIsSelected(isSelected = false)
+            verifyThreeDotButton()
+            verifyNormalTabCounter()
+            verifyNormalTabsList()
+            verifyFab()
+            verifyTabThumbnail()
+            verifyExistingOpenTabs(defaultWebPage.title)
+            verifyTabCloseButton(defaultWebPage.title)
+        }.openTab(defaultWebPage.title) {
+            verifyUrl(defaultWebPage.url.toString())
+            verifyTabCounter("1")
+        }
     }
 
-    @Ignore("Being converted in: https://bugzilla.mozilla.org/show_bug.cgi?id=1832616")
     @Test
     fun verifyContextMenuShortcuts() {
-//        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-//
-//        navigationToolbar {
-//        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-//        }.openTabButtonShortcutsMenu {
-//            verifyTabButtonShortcutMenuItems()
-//        }.closeTabFromShortcutsMenu {
-//        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-//        }.openTabButtonShortcutsMenu {
-//        }.openNewPrivateTabFromShortcutsMenu {
-//            verifyKeyboardVisible()
-//            verifyFocusedNavigationToolbar()
-//            // dismiss search dialog
-//            homeScreen { }.pressBack()
-//            verifyCommonMythsLink()
-//            verifyNavigationToolbar()
-//        }
-//        navigationToolbar {
-//        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-//        }.openTabButtonShortcutsMenu {
-//        }.openTabFromShortcutsMenu {
-//            verifyKeyboardVisible()
-//            verifyFocusedNavigationToolbar()
-//            // dismiss search dialog
-//            homeScreen { }.pressBack()
-//            verifyHomeWordmark()
-//            verifyNavigationToolbar()
-//        }
+        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+        }.openTabButtonShortcutsMenu {
+            verifyTabButtonShortcutMenuItems()
+        }.closeTabFromShortcutsMenu {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+        }.openTabButtonShortcutsMenu {
+        }.openNewPrivateTabFromShortcutsMenu {
+            verifyKeyboardVisible()
+            verifyFocusedNavigationToolbar()
+            // dismiss search dialog
+            homeScreen { }.pressBack()
+            verifyCommonMythsLink()
+            verifyNavigationToolbar()
+        }
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+        }.openTabButtonShortcutsMenu {
+        }.openTabFromShortcutsMenu {
+            verifyKeyboardVisible()
+            verifyFocusedNavigationToolbar()
+            // dismiss search dialog
+            homeScreen { }.pressBack()
+            verifyHomeWordmark()
+            verifyNavigationToolbar()
+        }
     }
 }
