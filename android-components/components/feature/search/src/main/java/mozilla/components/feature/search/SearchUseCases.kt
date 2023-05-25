@@ -252,6 +252,15 @@ class SearchUseCases(
         }
     }
 
+    class UpdateSearchEngineShortcutUseCase(private val store: BrowserStore) {
+        operator fun invoke(
+            searchEngine: SearchEngine,
+            isSelected: Boolean
+        ) {
+            store.dispatch(SearchAction.UpdateSearchEngineShortcutAction(searchEngine, isSelected))
+        }
+    }
+
     val defaultSearch: DefaultSearchUseCase by lazy {
         DefaultSearchUseCase(store, tabsUseCases, sessionUseCases)
     }
@@ -274,5 +283,9 @@ class SearchUseCases(
 
     val selectSearchEngine: SelectSearchEngineUseCase by lazy {
         SelectSearchEngineUseCase(store)
+    }
+
+    val updateSearchEngineShortcutUseCase: UpdateSearchEngineShortcutUseCase by lazy {
+        UpdateSearchEngineShortcutUseCase(store)
     }
 }

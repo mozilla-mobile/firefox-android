@@ -73,6 +73,7 @@ class SearchMiddleware(
                 updateHiddenSearchEngines(context.state.search.hiddenSearchEngines)
             is SearchAction.AddAdditionalSearchEngineAction, is SearchAction.RemoveAdditionalSearchEngineAction ->
                 updateAdditionalSearchEngines(context.state.search.additionalSearchEngines)
+            is SearchAction.UpdateSearchEngineShortcutAction -> updateSearchEngineShortcut(action)
             else -> {
                 // no-op
             }
@@ -92,6 +93,7 @@ class SearchMiddleware(
         }
         val customSearchEngines = async(ioDispatcher) { customStorage.loadSearchEngineList() }
         val hiddenSearchEngineIds = async(ioDispatcher) { metadataStorage.getHiddenSearchEngines() }
+        val disabledSearchEngineShortcutIds = async(ioDispatcher) { metadataStorage.getDisabledSearchEngineShortcutIds() }
         val additionalSearchEngineIds = async(ioDispatcher) { metadataStorage.getAdditionalSearchEngines() }
         val allAdditionalSearchEngines = async(ioDispatcher) {
             bundleStorage.load(additionalBundledSearchEngineIds, ioDispatcher)
@@ -132,6 +134,7 @@ class SearchMiddleware(
             userSelectedSearchEngineName = userChoice.await()?.searchEngineName,
             customSearchEngines = customSearchEngines.await(),
             hiddenSearchEngines = hiddenSearchEngines,
+            disabledSearchEngineShortcutIds = disabledSearchEngineShortcutIds.await(),
             additionalSearchEngines = additionalSearchEngines,
             additionalAvailableSearchEngines = additionalAvailableSearchEngines,
             regionSearchEnginesOrder = regionSearchEngineIds,
@@ -159,6 +162,18 @@ class SearchMiddleware(
         action: SearchAction.UpdateCustomSearchEngineAction,
     ) = scope.launch {
         customStorage.saveSearchEngine(action.searchEngine)
+    }
+
+    private fun updateSearchEngineShortcut(
+        action: SearchAction.UpdateSearchEngineShortcutAction
+    ) = scope.launch {
+        val disabledIds = metadataStorage.getDisabledSearchEngineShortcutIds()
+        val updatedList = if (action.isSelected) {
+            disabledIds - action.searchEngine.id
+        } else {
+            disabledIds + action.searchEngine.id
+        }
+        metadataStorage.setDisabledSearchEngineShortcutIds(updatedList)
     }
 
     private fun updateHiddenSearchEngines(
@@ -296,6 +311,11 @@ class SearchMiddleware(
          * Gets the list of IDs of hidden search engines.
          */
         suspend fun getHiddenSearchEngines(): List<String>
+
+
+        suspend fun getDisabledSearchEngineShortcutIds(): List<String>
+
+        suspend fun setDisabledSearchEngineShortcutIds(ids: List<String>)
 
         /**
          * Gets the list of IDs of additional search engines that the user explicitly added.

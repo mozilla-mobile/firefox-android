@@ -11,8 +11,10 @@ import androidx.preference.CheckBoxPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
+import mozilla.components.browser.state.state.selectedOrDefaultSearchEngine
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
@@ -31,6 +33,11 @@ class SearchEngineFragment : PreferenceFragmentCompat() {
         super.onResume()
         view?.hideKeyboard()
         showToolbar(getString(R.string.preferences_search))
+
+        with(requirePreference<Preference>(R.string.pref_key_default_search_engine)) {
+            summary =
+                requireContext().components.core.store.state.search.selectedOrDefaultSearchEngine?.name
+        }
 
         val searchSuggestionsPreference =
             requirePreference<SwitchPreference>(R.string.pref_key_show_search_suggestions).apply {
@@ -108,9 +115,14 @@ class SearchEngineFragment : PreferenceFragmentCompat() {
 
     override fun onPreferenceTreeClick(preference: Preference): Boolean {
         when (preference.key) {
-            getPreferenceKey(R.string.pref_key_add_search_engine) -> {
+            getPreferenceKey(R.string.pref_key_default_search_engine) -> {
                 val directions = SearchEngineFragmentDirections
-                    .actionSearchEngineFragmentToAddSearchEngineFragment()
+                    .actionSearchEngineFragmentToDefaultEngineFragment()
+                findNavController().navigate(directions)
+            }
+            getPreferenceKey(R.string.pref_key_manage_search_shortcuts) -> {
+                val directions = SearchEngineFragmentDirections
+                    .actionSearchEngineFragmentToSearchShortcutsFragment()
                 findNavController().navigate(directions)
             }
         }

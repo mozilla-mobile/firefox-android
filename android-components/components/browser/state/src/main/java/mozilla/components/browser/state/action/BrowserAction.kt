@@ -1409,6 +1409,7 @@ sealed class SearchAction : BrowserAction() {
         val regionSearchEngines: List<SearchEngine>,
         val customSearchEngines: List<SearchEngine>,
         val hiddenSearchEngines: List<SearchEngine>,
+        val disabledSearchEngineShortcutIds: List<String>,
         val additionalSearchEngines: List<SearchEngine>,
         val additionalAvailableSearchEngines: List<SearchEngine>,
         val userSelectedSearchEngineId: String?,
@@ -1434,6 +1435,11 @@ sealed class SearchAction : BrowserAction() {
     data class SelectSearchEngineAction(
         val searchEngineId: String,
         val searchEngineName: String?,
+    ) : SearchAction()
+
+    data class UpdateSearchEngineShortcutAction(
+        val searchEngine: SearchEngine,
+        val isSelected: Boolean,
     ) : SearchAction()
 
     /**

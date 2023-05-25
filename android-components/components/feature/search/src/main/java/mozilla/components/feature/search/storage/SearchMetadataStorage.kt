@@ -14,6 +14,7 @@ private const val PREFERENCE_KEY_USER_SELECTED_SEARCH_ENGINE_ID = "user_selected
 private const val PREFERENCE_KEY_USER_SELECTED_SEARCH_ENGINE_NAME = "user_selected_search_engine_name"
 private const val PREFERENCE_KEY_HIDDEN_SEARCH_ENGINES = "hidden_search_engines"
 private const val PREFERENCE_KEY_ADDITIONAL_SEARCH_ENGINES = "additional_search_engines"
+private const val PREFERENCE_KEY_DISABLED_SEARCH_ENGINE_SHORTCUTS_ID = "preference_key_disabled_search_engine_shortcuts_id"
 
 /**
  * Storage for saving additional search related metadata.
@@ -67,6 +68,18 @@ internal class SearchMetadataStorage(
         return preferences.value
             .getStringSet(PREFERENCE_KEY_HIDDEN_SEARCH_ENGINES, emptySet())
             ?.toList() ?: emptyList()
+    }
+
+    override suspend fun getDisabledSearchEngineShortcutIds(): List<String> {
+        return preferences.value
+            .getStringSet(PREFERENCE_KEY_DISABLED_SEARCH_ENGINE_SHORTCUTS_ID, setOf("reddit", "youtube"))
+            ?.toList() ?: emptyList()
+    }
+
+    override suspend fun setDisabledSearchEngineShortcutIds(ids: List<String>) {
+        preferences.value.edit()
+            .putStringSet(PREFERENCE_KEY_DISABLED_SEARCH_ENGINE_SHORTCUTS_ID, ids.toSet())
+            .apply()
     }
 
     /**

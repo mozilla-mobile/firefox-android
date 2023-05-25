@@ -5,13 +5,11 @@
 package org.mozilla.fenix.settings.search
 
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
-import androidx.core.view.MenuProvider
+import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -25,7 +23,6 @@ import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
-import org.mozilla.fenix.databinding.CustomSearchEngineBinding
 import org.mozilla.fenix.databinding.FragmentAddSearchEngineBinding
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.showToolbar
@@ -34,14 +31,31 @@ import org.mozilla.fenix.settings.SupportUtils
 /**
  * Fragment to enter a custom search engine name and URL template.
  */
-class EditCustomSearchEngineFragment : Fragment(R.layout.fragment_add_search_engine), MenuProvider {
+class EditCustomSearchEngineFragment : Fragment(R.layout.fragment_add_search_engine) {
 
     private val args by navArgs<EditCustomSearchEngineFragmentArgs>()
     private lateinit var searchEngine: SearchEngine
 
     private var _binding: FragmentAddSearchEngineBinding? = null
     private val binding get() = _binding!!
-    private lateinit var customSearchEngine: CustomSearchEngineBinding
+
+    private val inputListener = object : TextWatcher {
+        override fun afterTextChanged(editable: Editable) {
+            val bothFieldsHaveInput = binding.editEngineName.text?.isNotBlank() == true &&
+                    binding.editSearchString.text?.isNotBlank() == true
+            binding.saveButton.isEnabled = bothFieldsHaveInput
+        }
+
+        override fun beforeTextChanged(
+            s: CharSequence?,
+            start: Int,
+            count: Int,
+            after: Int,
+        ) = Unit
+
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) =
+            Unit
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,17 +69,32 @@ class EditCustomSearchEngineFragment : Fragment(R.layout.fragment_add_search_eng
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        requireActivity().addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
         val url = searchEngine.resultUrls[0]
 
         _binding = FragmentAddSearchEngineBinding.bind(view)
-        customSearchEngine = binding.customSearchEngine
 
-        customSearchEngine.editEngineName.setText(searchEngine.name)
-        customSearchEngine.editSearchString.setText(url.toEditableUrl())
+        binding.saveButton.apply {
+            setOnClickListener { saveCustomEngine() }
+        }
 
-        customSearchEngine.customSearchEnginesLearnMore.setOnClickListener {
+        binding.editEngineName.addTextChangedListener(inputListener)
+        binding.editSearchString.addTextChangedListener(inputListener)
+
+        binding.editEngineName.setText(searchEngine.name)
+        binding.editSearchString.setText(url.toEditableUrl())
+
+        binding.editSearchString.setOnEditorActionListener { _, actionId, _ ->
+            when (actionId) {
+                EditorInfo.IME_ACTION_GO -> {
+                    saveCustomEngine()
+                    true
+                }
+                else -> false
+            }
+        }
+
+        binding.customSearchEnginesLearnMore.setOnClickListener {
             (activity as HomeActivity).openToBrowserAndLoad(
                 searchTermOrURL = SupportUtils.getSumoURLForTopic(
                     requireContext(),
@@ -87,28 +116,13 @@ class EditCustomSearchEngineFragment : Fragment(R.layout.fragment_add_search_eng
         _binding = null
     }
 
-    override fun onCreateMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.edit_custom_searchengine_menu, menu)
-    }
-
-    override fun onMenuItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.save_button -> {
-                saveCustomEngine()
-                true
-            }
-            // other options are not handled by this menu provider
-            else -> false
-        }
-    }
-
     @Suppress("LongMethod")
     private fun saveCustomEngine() {
-        customSearchEngine.customSearchEngineNameField.error = ""
-        customSearchEngine.customSearchEngineSearchStringField.error = ""
+        binding.customSearchEngineNameField.error = ""
+        binding.customSearchEngineSearchStringField.error = ""
 
-        val name = customSearchEngine.editEngineName.text?.toString()?.trim() ?: ""
-        val searchString = customSearchEngine.editSearchString.text?.toString() ?: ""
+        val name = binding.editEngineName.text?.toString()?.trim() ?: ""
+        val searchString = binding.editSearchString.text?.toString() ?: ""
 
         if (checkForErrors(name, searchString)) {
             return
@@ -124,7 +138,7 @@ class EditCustomSearchEngineFragment : Fragment(R.layout.fragment_add_search_eng
 
             when (result) {
                 SearchStringValidator.Result.CannotReach -> {
-                    customSearchEngine.customSearchEngineSearchStringField.error = resources
+                    binding.customSearchEngineSearchStringField.error = resources
                         .getString(R.string.search_add_custom_engine_error_cannot_reach, name)
                 }
 
@@ -160,17 +174,19 @@ class EditCustomSearchEngineFragment : Fragment(R.layout.fragment_add_search_eng
     private fun checkForErrors(name: String, searchString: String): Boolean {
         return when {
             name.isEmpty() -> {
-                customSearchEngine.customSearchEngineNameField.error = resources
+                binding.customSearchEngineNameField.error = resources
                     .getString(R.string.search_add_custom_engine_error_empty_name)
                 true
             }
+
             searchString.isEmpty() -> {
-                customSearchEngine.customSearchEngineSearchStringField.error =
+                binding.customSearchEngineSearchStringField.error =
                     resources.getString(R.string.search_add_custom_engine_error_empty_search_string)
                 true
             }
+
             !searchString.contains("%s") -> {
-                customSearchEngine.customSearchEngineSearchStringField.error =
+                binding.customSearchEngineSearchStringField.error =
                     resources.getString(R.string.search_add_custom_engine_error_missing_template)
                 true
             }

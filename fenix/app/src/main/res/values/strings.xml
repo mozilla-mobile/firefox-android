@@ -346,6 +346,14 @@
     <string name="preferences_category_general">General</string>
     <!-- Preference category for all links about Fenix -->
     <string name="preferences_category_about">About</string>
+    <!-- Preference category for settings related to changing the default search engine -->
+    <string name="preferences_category_select_default_search_engine">Select one</string>
+    <!-- Preference for settings related to managing search shortcuts for the quick search menu -->
+    <string name="preferences_manage_search_shortcuts">Manage search shortcuts</string>
+    <!-- Preference category for settings related to managing search shortcuts for the quick search menu -->
+    <string name="preferences_category_engines_in_search_menu">Engines visible on the search menu</string>
+    <!-- Summary for preference for settings related to managing search shortcuts for the quick search menu -->
+    <string name="summary_preferences_manage_search_shortcuts">Edit engines visible in the search menu</string>
     <!-- Preference for settings related to changing the default search engine -->
     <string name="preferences_default_search_engine">Default search engine</string>
     <!-- Preference for settings related to Search -->
@@ -1811,13 +1819,23 @@
     <!-- Text for the button to create a custom search engine on the Add search engine screen -->
     <string name="search_add_custom_engine_label_other">Other</string>
     <!-- Placeholder text shown in the Search Engine Name TextField before a user enters text -->
-    <string name="search_add_custom_engine_name_hint">Name</string>
+    <string name="search_add_custom_engine_name_hint" moz:RemovedIn="115">Name</string>
+    <!-- Label for the TextField in which user enters custom search engine name -->
+    <string name="search_add_custom_engine_name_label">Name</string>
+    <!-- Placeholder text shown in the Search Engine Name TextField before a user enters text -->
+    <string name="search_add_custom_engine_name_hint_2">Search engine name</string>
     <!-- Placeholder text shown in the Search String TextField before a user enters text -->
-    <string name="search_add_custom_engine_search_string_hint">Search string to use</string>
+    <string name="search_add_custom_engine_search_string_hint" moz:RemovedIn="115">Search string to use</string>
+    <!-- Placeholder text shown in the Search String TextField before a user enters text -->
+    <string name="search_add_custom_engine_search_string_hint_2">URL to use for search</string>
+    <!-- Label for the TextField in which user enters custom search engine URL -->
+    <string name="search_add_custom_engine_url_label">Search string URL</string>
     <!-- Description text for the Search String TextField. The %s is part of the string -->
     <string name="search_add_custom_engine_search_string_example" formatted="false">Replace query with “%s”. Example:\nhttps://www.google.com/search?q=%s</string>
     <!-- Accessibility description for the form in which details about the custom search engine are entered -->
     <string name="search_add_custom_engine_form_description">Custom search engine details</string>
+    <!-- The text for the "Save" button for saving a custom search engine -->
+    <string name="search_add_custom_engine_save_button">Save</string>
 
     <!-- Text shown when a user leaves the name field empty -->
     <string name="search_add_custom_engine_error_empty_name">Enter search engine name</string>
