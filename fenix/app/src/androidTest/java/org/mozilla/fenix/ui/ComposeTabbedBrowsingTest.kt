@@ -21,6 +21,7 @@ import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
+import org.mozilla.fenix.ui.robots.notificationShade
 
 /**
  *  Tests for verifying basic functionality of tabbed browsing
@@ -239,48 +240,45 @@ class ComposeTabbedBrowsingTest {
 //        }
     }
 
-    @Ignore("Being converted in: https://bugzilla.mozilla.org/show_bug.cgi?id=1832610")
     @Test
     fun verifyPrivateTabUndoSnackBarTest() {
-//        val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-//
-//        homeScreen { }.togglePrivateBrowsingMode()
-//        navigationToolbar {
-//        }.enterURLAndEnterToBrowser(genericURL.url) {
-//        }.openTabDrawer {
-//            verifyExistingOpenTabs("Test_Page_1")
-//            verifyCloseTabsButton("Test_Page_1")
-//            closeTab()
-//            verifySnackBarText("Private tab closed")
-//            snackBarButtonClick("UNDO")
-//        }
-//
-//        browserScreen {
-//            verifyTabCounter("1")
-//        }.openTabDrawer {
-//            verifyExistingOpenTabs("Test_Page_1")
-//            verifyPrivateModeSelected()
-//        }
+        val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        homeScreen { }.togglePrivateBrowsingMode()
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(genericURL.url) {
+        }.openComposeTabDrawer(composeTestRule) {
+            verifyExistingOpenTabs("Test_Page_1")
+            closeTab()
+            TestHelper.verifySnackBarText("Private tab closed")
+            TestHelper.clickSnackbarButton("UNDO")
+        }
+
+        browserScreen {
+            verifyTabCounter("1")
+        }.openComposeTabDrawer(composeTestRule) {
+            verifyExistingOpenTabs("Test_Page_1")
+            verifyPrivateBrowsingButtonIsSelected()
+        }
     }
 
-    @Ignore("Being converted in: https://bugzilla.mozilla.org/show_bug.cgi?id=1832611")
     @Test
     fun closePrivateTabsNotificationTest() {
-//        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-//
-//        homeScreen {
-//        }.togglePrivateBrowsingMode()
-//
-//        navigationToolbar {
-//        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-//            mDevice.openNotification()
-//        }
-//
-//        notificationShade {
-//            verifyPrivateTabsNotification()
-//        }.clickClosePrivateTabsNotification {
-//            verifyHomeScreen()
-//        }
+        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        homeScreen {
+        }.togglePrivateBrowsingMode()
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+            mDevice.openNotification()
+        }
+
+        notificationShade {
+            verifyPrivateTabsNotification()
+        }.clickClosePrivateTabsNotification {
+            verifyHomeScreen()
+        }
     }
 
     @Ignore("Being converted in: https://bugzilla.mozilla.org/show_bug.cgi?id=1832612")
@@ -307,19 +305,20 @@ class ComposeTabbedBrowsingTest {
 //        }
     }
 
-    @Ignore("Being converted in: https://bugzilla.mozilla.org/show_bug.cgi?id=1832613")
     @Test
     fun verifyEmptyTabTray() {
-//        navigationToolbar {
-//        }.openTabTray {
-//            verifyNormalBrowsingButtonIsSelected(true)
-//            verifyPrivateBrowsingButtonIsSelected(false)
-//            verifySyncedTabsButtonIsSelected(false)
-//            verifyNoOpenTabsInNormalBrowsing()
-//            verifyNormalBrowsingNewTabButton()
-//            verifyTabTrayOverflowMenu(true)
-//            verifyEmptyTabsTrayMenuButtons()
-//        }
+        homeScreen {
+        }.openComposeTabDrawer(composeTestRule) {
+            verifyNormalBrowsingButtonIsSelected()
+            verifyPrivateBrowsingButtonIsSelected(false)
+            verifySyncedTabsButtonIsSelected(false)
+            verifyNoOpenTabsInNormalBrowsing()
+            verifyFab()
+            verifyThreeDotButton()
+        }.openThreeDotMenu {
+            verifyTabSettingsButton()
+            verifyRecentlyClosedTabsButton()
+        }
     }
 
     @Ignore("Being converted in: https://bugzilla.mozilla.org/show_bug.cgi?id=1832615")
