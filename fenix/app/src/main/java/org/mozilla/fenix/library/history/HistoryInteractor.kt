@@ -13,12 +13,6 @@ import org.mozilla.fenix.GleanMetrics.History as GleanHistory
  * to respond to user interaction on the HistoryView
  */
 interface HistoryInteractor : SelectionInteractor<History> {
-
-    /**
-     * Called on backpressed to exit edit mode
-     */
-    fun onBackPressed(): Boolean
-
     /**
      * Called when the mode is switched so we can invalidate the menu
      */
@@ -77,10 +71,6 @@ class DefaultHistoryInteractor(
 
     override fun deselect(item: History) {
         historyController.handleDeselect(item)
-    }
-
-    override fun onBackPressed(): Boolean {
-        return historyController.handleBackPressed()
     }
 
     override fun onModeSwitched() {

@@ -32,7 +32,6 @@ interface HistoryController {
     fun handleOpen(item: History)
     fun handleSelect(item: History)
     fun handleDeselect(item: History)
-    fun handleBackPressed(): Boolean
     fun handleModeSwitched()
     fun handleSearch()
 
@@ -101,15 +100,6 @@ class DefaultHistoryController(
 
     override fun handleDeselect(item: History) {
         store.dispatch(HistoryFragmentAction.RemoveItemForRemoval(item))
-    }
-
-    override fun handleBackPressed(): Boolean {
-        return if (store.state.mode is HistoryFragmentState.Mode.Editing) {
-            store.dispatch(HistoryFragmentAction.ExitEditMode)
-            true
-        } else {
-            false
-        }
     }
 
     override fun handleModeSwitched() {

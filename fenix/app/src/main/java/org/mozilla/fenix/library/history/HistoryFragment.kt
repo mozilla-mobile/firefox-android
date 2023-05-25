@@ -29,6 +29,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
@@ -57,6 +58,7 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.setTextColor
 import org.mozilla.fenix.library.LibraryPageFragment
+import org.mozilla.fenix.library.history.state.HistoryNavigationMiddleware
 import org.mozilla.fenix.utils.allowUndo
 import org.mozilla.fenix.GleanMetrics.History as GleanHistory
 
@@ -99,6 +101,11 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler, 
                     isEmpty = false,
                     isDeletingItems = false,
                 ),
+                HistoryNavigationMiddleware(onBackPressed = {
+                    this@HistoryFragment.lifecycleScope.launch {
+                        requireActivity().onBackPressedDispatcher.onBackPressed()
+                    }
+                }),
             )
         }
         val historyController: HistoryController = DefaultHistoryController(
@@ -337,7 +344,8 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler, 
     }
 
     override fun onBackPressed(): Boolean {
-        return historyView.onBackPressed()
+        historyStore.dispatch(HistoryFragmentAction.BackPressed)
+        return true
     }
 
     override fun onDestroyView() {

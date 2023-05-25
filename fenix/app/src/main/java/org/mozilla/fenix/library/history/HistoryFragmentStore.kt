@@ -12,6 +12,7 @@ import mozilla.components.lib.state.Action
 import mozilla.components.lib.state.State
 import mozilla.components.lib.state.Store
 import mozilla.components.support.ktx.kotlin.tryGetHostFromUrl
+import org.mozilla.fenix.library.history.state.HistoryNavigationMiddleware
 
 /**
  * Class representing a history entry.
@@ -110,13 +111,19 @@ fun HistoryMetadata.toHistoryMetadata(position: Int): History.Metadata {
 /**
  * The [Store] for holding the [HistoryFragmentState] and applying [HistoryFragmentAction]s.
  */
-class HistoryFragmentStore(initialState: HistoryFragmentState) :
-    Store<HistoryFragmentState, HistoryFragmentAction>(initialState, ::historyStateReducer)
+class HistoryFragmentStore(
+    initialState: HistoryFragmentState,
+    navMiddleware: HistoryNavigationMiddleware,
+) :
+    Store<HistoryFragmentState, HistoryFragmentAction>(initialState, ::historyStateReducer, middleware = listOf(
+        navMiddleware,
+    ))
 
 /**
  * Actions to dispatch through the `HistoryStore` to modify `HistoryState` through the reducer.
  */
 sealed class HistoryFragmentAction : Action {
+    object BackPressed : HistoryFragmentAction()
     object ExitEditMode : HistoryFragmentAction()
     data class AddItemForRemoval(val item: History) : HistoryFragmentAction()
     data class RemoveItemForRemoval(val item: History) : HistoryFragmentAction()
@@ -167,6 +174,7 @@ private fun historyStateReducer(
     action: HistoryFragmentAction,
 ): HistoryFragmentState {
     return when (action) {
+        is HistoryFragmentAction.BackPressed -> state
         is HistoryFragmentAction.AddItemForRemoval ->
             state.copy(mode = HistoryFragmentState.Mode.Editing(state.mode.selectedItems + action.item))
         is HistoryFragmentAction.RemoveItemForRemoval -> {

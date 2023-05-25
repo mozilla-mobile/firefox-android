@@ -29,6 +29,7 @@ import org.mozilla.fenix.wallpapers.Wallpaper
  * [Action] implementation related to [AppStore].
  */
 sealed class AppAction : Action {
+
     data class UpdateInactiveExpanded(val expanded: Boolean) : AppAction()
 
     /**

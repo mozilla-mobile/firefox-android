@@ -26,7 +26,7 @@ class HistoryView(
     val interactor: HistoryInteractor,
     val onZeroItemsLoaded: () -> Unit,
     val onEmptyStateChanged: (Boolean) -> Unit,
-) : LibraryPageView(container), UserInteractionHandler {
+) : LibraryPageView(container) {
 
     val binding = ComponentHistoryBinding.inflate(
         LayoutInflater.from(container.context),
@@ -138,9 +138,5 @@ class HistoryView(
         if (!userHasHistory) {
             binding.historyEmptyView.announceForAccessibility(context.getString(R.string.history_empty_message))
         }
-    }
-
-    override fun onBackPressed(): Boolean {
-        return interactor.onBackPressed()
     }
 }
