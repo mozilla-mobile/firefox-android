@@ -10,6 +10,7 @@ import androidx.annotation.VisibleForTesting
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.withContext
+import kotlin.jvm.Throws
 import mozilla.appservices.autofill.AutofillApiException.NoSuchRecord
 import mozilla.components.concept.storage.Address
 import mozilla.components.concept.storage.CreditCard
@@ -115,6 +116,7 @@ class AutofillCreditCardsAddressesStorage(
         conn.getStorage().updateCreditCard(guid, updatableCreditCardFields.into())
     }
 
+    @Throws(NoSuchRecord::class)
     override suspend fun getCreditCard(guid: String): CreditCard? = withContext(coroutineContext) {
         try {
             conn.getStorage().getCreditCard(guid).into()
@@ -140,6 +142,7 @@ class AutofillCreditCardsAddressesStorage(
             conn.getStorage().addAddress(addressFields.into()).into()
         }
 
+    @Throws(NoSuchRecord::class)
     override suspend fun getAddress(guid: String): Address? = withContext(coroutineContext) {
         try {
             conn.getStorage().getAddress(guid).into()
