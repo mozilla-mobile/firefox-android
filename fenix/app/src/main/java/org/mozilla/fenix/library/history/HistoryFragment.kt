@@ -29,17 +29,19 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
 import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.lib.state.ext.flowScoped
+import mozilla.components.lib.state.helpers.AbstractBinding
 import mozilla.components.service.fxa.SyncEngine
 import mozilla.components.service.fxa.sync.SyncReason
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.ktx.kotlin.toShortUrl
+import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import mozilla.components.ui.widgets.withCenterAlignedButtons
 import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.BrowserDirection
@@ -85,6 +87,20 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler, 
     private var _binding: FragmentHistoryBinding? = null
     private val binding get() = _binding!!
 
+    class MenuBinding(
+        store: HistoryFragmentStore,
+        val invalidateOptionsMenu: () -> Unit
+    ) : AbstractBinding<HistoryFragmentState>(store) {
+        override suspend fun onState(flow: Flow<HistoryFragmentState>) {
+            flow.ifChanged { it.mode }
+                .collect { invalidateOptionsMenu() }
+        }
+    }
+
+    private val menuBinding by lazy {
+        MenuBinding(historyStore) { activity?.invalidateOptionsMenu() }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -118,7 +134,6 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler, 
             scope = lifecycleScope,
             openToBrowser = ::openItem,
             displayDeleteTimeRange = ::displayDeleteTimeRange,
-            invalidateOptionsMenu = ::invalidateOptionsMenu,
             deleteSnackbar = ::deleteSnackbar,
             onTimeFrameDeleted = ::onTimeFrameDeleted,
             syncHistory = ::syncHistory,
@@ -156,10 +171,6 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler, 
                 else -> accumulator + item
             }
         }.toSet()
-
-    private fun invalidateOptionsMenu() {
-        activity?.invalidateOptionsMenu()
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -217,6 +228,12 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler, 
                 historyView.historyAdapter.submitData(it)
             }
         }
+
+        startStateBindings()
+    }
+
+    private fun startStateBindings() {
+        menuBinding.start()
     }
 
     private fun updateDeleteMenuItemView(isEnabled: Boolean) {
@@ -233,6 +250,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler, 
         super.onResume()
 
         (activity as NavHostActivity).getSupportActionBarAndInflateIfNecessary().show()
+        startStateBindings()
     }
 
     override fun onCreateMenu(menu: Menu, inflater: MenuInflater) {

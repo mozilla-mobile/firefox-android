@@ -14,11 +14,6 @@ import org.mozilla.fenix.GleanMetrics.History as GleanHistory
  */
 interface HistoryInteractor : SelectionInteractor<History> {
     /**
-     * Called when the mode is switched so we can invalidate the menu
-     */
-    fun onModeSwitched()
-
-    /**
      * Called when search is tapped
      */
     fun onSearch()
@@ -71,10 +66,6 @@ class DefaultHistoryInteractor(
 
     override fun deselect(item: History) {
         historyController.handleDeselect(item)
-    }
-
-    override fun onModeSwitched() {
-        historyController.handleModeSwitched()
     }
 
     override fun onSearch() {

@@ -73,8 +73,6 @@ class HistoryView(
     }
 
     fun update(state: HistoryFragmentState) {
-        val oldMode = mode
-
         binding.progressBar.isVisible = state.isDeletingItems
         binding.swipeRefresh.isRefreshing = state.mode === HistoryFragmentState.Mode.Syncing
         binding.swipeRefresh.isEnabled =
@@ -91,10 +89,6 @@ class HistoryView(
         val first = layoutManager.findFirstVisibleItemPosition() - 1
         val last = layoutManager.findLastVisibleItemPosition() + 1
         historyAdapter.notifyItemRangeChanged(first, last - first)
-
-        if (state.mode::class != oldMode::class) {
-            interactor.onModeSwitched()
-        }
 
         when (val mode = state.mode) {
             is HistoryFragmentState.Mode.Normal -> {
