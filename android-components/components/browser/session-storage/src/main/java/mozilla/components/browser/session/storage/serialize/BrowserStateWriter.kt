@@ -86,6 +86,9 @@ private fun JsonWriter.tab(
         name(Keys.SESSION_SEARCH_TERM)
         value(tab.content.searchTerms)
 
+        name(Keys.SESSION_DESKTOP_MODE_KEY)
+        value(tab.content.desktopMode)
+
         name(Keys.SESSION_CONTEXT_ID_KEY)
         value(tab.contextId)
 

@@ -67,6 +67,8 @@ import org.mozilla.geckoview.GeckoSession
 import org.mozilla.geckoview.GeckoSession.NavigationDelegate
 import org.mozilla.geckoview.GeckoSession.PermissionDelegate.ContentPermission
 import org.mozilla.geckoview.GeckoSessionSettings
+import org.mozilla.geckoview.GeckoSessionSettings.VIEWPORT_MODE_DESKTOP
+import org.mozilla.geckoview.GeckoSessionSettings.VIEWPORT_MODE_MOBILE
 import org.mozilla.geckoview.WebRequestError
 import org.mozilla.geckoview.WebResponse
 import java.util.Locale
@@ -79,11 +81,13 @@ import kotlin.coroutines.CoroutineContext
 class GeckoEngineSession(
     private val runtime: GeckoRuntime,
     private val privateMode: Boolean = false,
+    private val enableDesktopMode: Boolean = false,
     private val defaultSettings: Settings? = null,
     contextId: String? = null,
     private val geckoSessionProvider: () -> GeckoSession = {
         val settings = GeckoSessionSettings.Builder()
             .usePrivateMode(privateMode)
+            .viewportMode(if (enableDesktopMode) VIEWPORT_MODE_DESKTOP else VIEWPORT_MODE_MOBILE)
             .contextId(contextId)
             .build()
         GeckoSession(settings)
@@ -335,6 +339,11 @@ class GeckoEngineSession(
         if (state.actualState.isNullOrEmpty()) {
             return false
         }
+
+        // TODO fetch the correct value for enableDesktopMode
+        val enableDesktopMode = geckoSession.settings.viewportMode == VIEWPORT_MODE_DESKTOP
+
+        toggleDesktopMode(enableDesktopMode, false)
 
         geckoSession.restoreState(state.actualState)
         return true
@@ -703,7 +712,7 @@ class GeckoEngineSession(
             uri: String,
         ): GeckoResult<GeckoSession> {
             val newEngineSession =
-                GeckoEngineSession(runtime, privateMode, defaultSettings, openGeckoSession = false)
+                GeckoEngineSession(runtime, privateMode, enableDesktopMode, defaultSettings, openGeckoSession = false)
             notifyObservers {
                 onWindowRequest(GeckoWindowRequest(uri, newEngineSession))
             }

@@ -38,7 +38,7 @@ class CustomTabsUseCasesTest {
         engineSession = mock()
         engine = mock()
 
-        whenever(engine.createSession(anyBoolean(), any())).thenReturn(engineSession)
+        whenever(engine.createSession(anyBoolean(), anyBoolean(), any())).thenReturn(engineSession)
         store = BrowserStore(
             middleware = EngineMiddleware.create(
                 engine = engine,

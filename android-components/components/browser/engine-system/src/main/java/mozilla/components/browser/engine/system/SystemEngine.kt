@@ -44,7 +44,7 @@ class SystemEngine(
     /**
      * Creates a new WebView-based EngineSession implementation.
      */
-    override fun createSession(private: Boolean, contextId: String?): EngineSession {
+    override fun createSession(private: Boolean, enableDesktopMode: Boolean, contextId: String?): EngineSession {
         if (private) {
             // TODO Implement private browsing: https://github.com/mozilla-mobile/android-components/issues/649
             throw UnsupportedOperationException("Private browsing is not supported in ${this::class.java.simpleName}")

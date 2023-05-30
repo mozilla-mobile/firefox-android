@@ -44,6 +44,7 @@ class ServiceWorkerSupportTest {
             engineSession = any<EngineSession>(),
             source = eq(SessionState.Source.Internal.None),
             searchTerms = eq(""), // default
+            desktopMode = eq(false),
             private = eq(false), // default
             historyMetadata = eq(null), // default
             isSearch = eq(false), // default

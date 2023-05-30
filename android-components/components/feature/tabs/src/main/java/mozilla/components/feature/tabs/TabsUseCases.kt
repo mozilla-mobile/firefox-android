@@ -144,6 +144,7 @@ class TabsUseCases(
          * @param source The [SessionState.Source] of the new tab.
          * @param searchTerms The search terms of this new tab if it represents an active
          * search (result) page.
+         * @param desktopMode True if desktop mode is selected, false otherwise
          * @param private Whether or not the new tab should be private.
          * @param historyMetadata the [HistoryMetadataKey] of the new tab in case this tab
          * was opened from history.
@@ -161,6 +162,7 @@ class TabsUseCases(
             engineSession: EngineSession? = null,
             source: SessionState.Source = SessionState.Source.Internal.NewTab,
             searchTerms: String = "",
+            desktopMode: Boolean = false,
             private: Boolean = false,
             historyMetadata: HistoryMetadataKey? = null,
             isSearch: Boolean = false,
@@ -173,6 +175,7 @@ class TabsUseCases(
                 parent = parentId?.let { store.state.findTab(it) },
                 engineSession = engineSession,
                 searchTerms = searchTerms,
+                desktopMode = desktopMode,
                 initialLoadFlags = flags,
                 historyMetadata = historyMetadata,
             )
@@ -226,6 +229,7 @@ class TabsUseCases(
          * @param flags the [LoadUrlFlags] to use when loading the provided URL.
          * @param engineSession (optional) engine session to use for this tab.
          * @param searchTerms (optional) search terms that were used to create this tab.
+         * @param desktopMode True, if desktop mode is enabled, false otherwise
          * @return The ID of the created tab.
          */
         @Suppress("LongParameterList")
@@ -238,6 +242,7 @@ class TabsUseCases(
             engineSession: EngineSession? = null,
             source: SessionState.Source = SessionState.Source.Internal.NewTab,
             searchTerms: String? = null,
+            desktopMode: Boolean? = false,
         ): String {
             val tab = createTab(
                 url = url,
@@ -246,6 +251,7 @@ class TabsUseCases(
                 parent = parentId?.let { store.state.findTab(it) },
                 engineSession = engineSession,
                 searchTerms = searchTerms ?: "",
+                desktopMode = desktopMode ?: false,
                 initialLoadFlags = flags,
             )
 

@@ -172,10 +172,10 @@ class GeckoEngine(
     /**
      * See [Engine.createSession].
      */
-    override fun createSession(private: Boolean, contextId: String?): EngineSession {
+    override fun createSession(private: Boolean, enableDesktopMode: Boolean, contextId: String?): EngineSession {
         ThreadUtils.assertOnUiThread()
-        val speculativeSession = speculativeConnectionFactory.get(private, contextId)
-        return speculativeSession ?: GeckoEngineSession(runtime, private, defaultSettings, contextId)
+        val speculativeSession = speculativeConnectionFactory.get(private, enableDesktopMode, contextId)
+        return speculativeSession ?: GeckoEngineSession(runtime, private, enableDesktopMode, defaultSettings, contextId)
     }
 
     /**
@@ -195,9 +195,9 @@ class GeckoEngine(
     /**
      * See [Engine.speculativeCreateSession].
      */
-    override fun speculativeCreateSession(private: Boolean, contextId: String?) {
+    override fun speculativeCreateSession(private: Boolean, enableDesktopMode: Boolean, contextId: String?) {
         ThreadUtils.assertOnUiThread()
-        speculativeConnectionFactory.create(runtime, private, contextId, defaultSettings)
+        speculativeConnectionFactory.create(runtime, private, enableDesktopMode, contextId, defaultSettings)
     }
 
     /**

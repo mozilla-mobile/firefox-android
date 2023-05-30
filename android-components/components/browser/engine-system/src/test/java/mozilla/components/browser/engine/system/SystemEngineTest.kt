@@ -39,13 +39,13 @@ class SystemEngineTest {
         assertTrue(engine.createSession() is SystemEngineSession)
 
         try {
-            engine.createSession(true)
+            engine.createSession(private = true, enableDesktopMode = false)
             // Private browsing not yet supported
             fail("Expected UnsupportedOperationException")
         } catch (e: UnsupportedOperationException) { }
 
         try {
-            engine.createSession(false, "1")
+            engine.createSession(private = false, enableDesktopMode = false, contextId = "1")
             // Contextual identities not yet supported
             fail("Expected UnsupportedOperationException")
         } catch (e: UnsupportedOperationException) { }

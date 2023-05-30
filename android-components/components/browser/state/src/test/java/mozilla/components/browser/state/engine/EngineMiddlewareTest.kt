@@ -30,7 +30,7 @@ class EngineMiddlewareTest {
     fun `Dispatching CreateEngineSessionAction multiple times should only create one engine session`() {
         val session: EngineSession = mock()
         val engine: Engine = mock()
-        Mockito.doReturn(session).`when`(engine).createSession(false, null)
+        Mockito.doReturn(session).`when`(engine).createSession(private = false, enableDesktopMode = false, contextId = null)
 
         val store = BrowserStore(
             initialState = BrowserState(
@@ -52,7 +52,7 @@ class EngineMiddlewareTest {
         dispatcher.scheduler.advanceUntilIdle()
         store.waitUntilIdle()
 
-        verify(engine, Mockito.times(1)).createSession(false, null)
+        verify(engine, Mockito.times(1)).createSession(private = false, enableDesktopMode = false, contextId = null)
     }
 
     @Test

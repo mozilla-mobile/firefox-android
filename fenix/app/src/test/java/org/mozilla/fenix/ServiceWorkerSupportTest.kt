@@ -69,6 +69,7 @@ class ServiceWorkerSupportTest {
                 engineSession = engineSession,
                 source = SessionState.Source.Internal.None,
                 searchTerms = "",
+                desktopMode = false,
                 private = false,
                 historyMetadata = null,
                 isSearch = false,

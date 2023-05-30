@@ -158,6 +158,11 @@ class SystemEngineSession(
             throw IllegalArgumentException("Can only restore from SystemEngineSessionState")
         }
 
+        // TODO fetch the correct value for enableDesktopMode
+        val enableDesktopMode = webView.settings.useWideViewPort
+
+        toggleDesktopMode(enableDesktopMode, false)
+
         return state.bundle?.let { webView.restoreState(it) } != null
     }
 

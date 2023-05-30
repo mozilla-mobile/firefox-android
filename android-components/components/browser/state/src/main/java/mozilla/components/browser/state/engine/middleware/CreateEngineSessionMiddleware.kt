@@ -111,7 +111,7 @@ private fun createEngineSession(
     store: Store<BrowserState, BrowserAction>,
     tab: SessionState,
 ): EngineSession {
-    val engineSession = engine.createSession(tab.content.private, tab.contextId)
+    val engineSession = engine.createSession(tab.content.private, tab.content.desktopMode, tab.contextId)
     logger.debug("Created engine session for tab ${tab.id}")
 
     val engineSessionState = tab.engineState.engineSessionState

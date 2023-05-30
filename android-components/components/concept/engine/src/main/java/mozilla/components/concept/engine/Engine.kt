@@ -114,7 +114,11 @@ interface Engine : WebExtensionRuntime, DataCleanable {
      * @return the newly created [EngineSession].
      */
     @MainThread
-    fun createSession(private: Boolean = false, contextId: String? = null): EngineSession
+    fun createSession(
+        private: Boolean = false,
+        enableDesktopMode: Boolean = false,
+        contextId: String? = null,
+    ): EngineSession
 
     /**
      * Create a new [EngineSessionState] instance from the serialized JSON representation.
@@ -153,10 +157,15 @@ interface Engine : WebExtensionRuntime, DataCleanable {
      * need it.
      *
      * @param private whether or not the session should use private mode.
+     * @param enableDesktopMode whether or not desktop mode should be enabled
      * @param contextId the session context ID for the session.
      */
     @MainThread
-    fun speculativeCreateSession(private: Boolean = false, contextId: String? = null) = Unit
+    fun speculativeCreateSession(
+        private: Boolean = false,
+        enableDesktopMode: Boolean = false,
+        contextId: String? = null,
+    ) = Unit
 
     /**
      * Removes and closes a speculative session created by [speculativeCreateSession]. This is

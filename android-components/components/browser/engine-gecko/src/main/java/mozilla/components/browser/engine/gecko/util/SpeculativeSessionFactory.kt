@@ -9,6 +9,7 @@ import mozilla.components.browser.engine.gecko.GeckoEngineSession
 import mozilla.components.concept.engine.EngineSession
 import mozilla.components.concept.engine.Settings
 import org.mozilla.geckoview.GeckoRuntime
+import org.mozilla.geckoview.GeckoSessionSettings
 
 /**
  * Helper factory for creating and maintaining a speculative [EngineSession].
@@ -27,10 +28,11 @@ internal class SpeculativeSessionFactory {
     fun create(
         runtime: GeckoRuntime,
         private: Boolean,
+        enableDesktopMode: Boolean,
         contextId: String?,
         defaultSettings: Settings?,
     ) {
-        if (speculativeEngineSession?.matches(private, contextId) == true) {
+        if (speculativeEngineSession?.matches(private, enableDesktopMode, contextId) == true) {
             // We already have a speculative engine session for this configuration. Nothing to do here.
             return
         }
@@ -42,6 +44,7 @@ internal class SpeculativeSessionFactory {
             this,
             runtime,
             private,
+            enableDesktopMode,
             contextId,
             defaultSettings,
         )
@@ -64,11 +67,12 @@ internal class SpeculativeSessionFactory {
     @Synchronized
     fun get(
         private: Boolean,
+        enableDesktopMode: Boolean,
         contextId: String?,
     ): GeckoEngineSession? {
         val speculativeEngineSession = speculativeEngineSession ?: return null
 
-        return if (speculativeEngineSession.matches(private, contextId)) {
+        return if (speculativeEngineSession.matches(private, enableDesktopMode, contextId)) {
             this.speculativeEngineSession = null
             speculativeEngineSession.unwrap()
         } else {
@@ -94,8 +98,11 @@ internal class SpeculativeEngineSession constructor(
     /**
      * Checks whether the [SpeculativeEngineSession] matches the given configuration.
      */
-    fun matches(private: Boolean, contextId: String?): Boolean {
+    fun matches(private: Boolean, enableDesktopMode: Boolean, contextId: String?): Boolean {
+        val desktopModeEnabled =
+            engineSession.geckoSession.settings.viewportMode == GeckoSessionSettings.VIEWPORT_MODE_DESKTOP
         return engineSession.geckoSession.settings.usePrivateMode == private &&
+            enableDesktopMode == desktopModeEnabled &&
             engineSession.geckoSession.settings.contextId == contextId
     }
 
@@ -120,14 +127,17 @@ internal class SpeculativeEngineSession constructor(
     }
 
     companion object {
+        @Suppress("LongParameterList")
         fun create(
             factory: SpeculativeSessionFactory,
             runtime: GeckoRuntime,
             private: Boolean,
+            enableDesktopMode: Boolean,
             contextId: String?,
             defaultSettings: Settings?,
         ): SpeculativeEngineSession {
-            val engineSession = GeckoEngineSession(runtime, private, defaultSettings, contextId)
+            val engineSession =
+                GeckoEngineSession(runtime, private, enableDesktopMode, defaultSettings, contextId)
             val observer = SpeculativeSessionObserver(factory)
             engineSession.register(observer)
 
@@ -140,10 +150,8 @@ internal class SpeculativeEngineSession constructor(
  * [EngineSession.Observer] implementation that will notify the [SpeculativeSessionFactory] if an
  * [GeckoEngineSession] can no longer be used after a crash.
  */
-internal class SpeculativeSessionObserver(
-    private val factory: SpeculativeSessionFactory,
-
-) : EngineSession.Observer {
+internal class SpeculativeSessionObserver(private val factory: SpeculativeSessionFactory) :
+    EngineSession.Observer {
     override fun onCrash() {
         factory.clear()
     }

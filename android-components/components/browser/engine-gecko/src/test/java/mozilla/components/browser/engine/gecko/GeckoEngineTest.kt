@@ -117,10 +117,10 @@ class GeckoEngineTest {
         assertTrue(engine.createSession() is GeckoEngineSession)
 
         // Create a private speculative session and consume it
-        engine.speculativeCreateSession(private = true)
+        engine.speculativeCreateSession(private = true, enableDesktopMode = false)
         assertTrue(engine.speculativeConnectionFactory.hasSpeculativeSession())
         var privateSpeculativeSession = engine.speculativeConnectionFactory.speculativeEngineSession!!.engineSession
-        assertSame(privateSpeculativeSession, engine.createSession(private = true))
+        assertSame(privateSpeculativeSession, engine.createSession(private = true, enableDesktopMode = false))
         assertFalse(engine.speculativeConnectionFactory.hasSpeculativeSession())
 
         // Create a regular speculative session and make sure it is not returned
@@ -128,7 +128,7 @@ class GeckoEngineTest {
         engine.speculativeCreateSession(private = false)
         assertTrue(engine.speculativeConnectionFactory.hasSpeculativeSession())
         privateSpeculativeSession = engine.speculativeConnectionFactory.speculativeEngineSession!!.engineSession
-        assertNotSame(privateSpeculativeSession, engine.createSession(private = true))
+        assertNotSame(privateSpeculativeSession, engine.createSession(private = true, enableDesktopMode = false))
         // Make sure previous (never used) speculative session is now closed
         assertFalse(privateSpeculativeSession.geckoSession.isOpen)
         assertFalse(engine.speculativeConnectionFactory.hasSpeculativeSession())
@@ -140,19 +140,19 @@ class GeckoEngineTest {
         assertNull(engine.speculativeConnectionFactory.speculativeEngineSession)
 
         // Create a private speculative session
-        engine.speculativeCreateSession(private = true)
+        engine.speculativeCreateSession(private = true, enableDesktopMode = false)
         assertNotNull(engine.speculativeConnectionFactory.speculativeEngineSession)
         val privateSpeculativeSession = engine.speculativeConnectionFactory.speculativeEngineSession!!
         assertTrue(privateSpeculativeSession.engineSession.geckoSession.settings.usePrivateMode)
 
         // Creating another private speculative session should have no effect as
         // session hasn't been "consumed".
-        engine.speculativeCreateSession(private = true)
+        engine.speculativeCreateSession(private = true, enableDesktopMode = false)
         assertSame(privateSpeculativeSession, engine.speculativeConnectionFactory.speculativeEngineSession)
         assertTrue(privateSpeculativeSession.engineSession.geckoSession.settings.usePrivateMode)
 
         // Creating a non-private speculative session should affect prepared session
-        engine.speculativeCreateSession(private = false)
+        engine.speculativeCreateSession(private = false, enableDesktopMode = false)
         assertNotSame(privateSpeculativeSession, engine.speculativeConnectionFactory.speculativeEngineSession)
         // Make sure previous (never used) speculative session is now closed
         assertFalse(privateSpeculativeSession.engineSession.geckoSession.isOpen)
@@ -181,18 +181,18 @@ class GeckoEngineTest {
         val engine = GeckoEngine(context, runtime = runtime)
 
         // Create a speculative session with a context id and consume it
-        engine.speculativeCreateSession(private = false, contextId = "1")
+        engine.speculativeCreateSession(private = false, enableDesktopMode = false, contextId = "1")
         assertNotNull(engine.speculativeConnectionFactory.speculativeEngineSession)
         var newSpeculativeSession = engine.speculativeConnectionFactory.speculativeEngineSession!!.engineSession
-        assertSame(newSpeculativeSession, engine.createSession(private = false, contextId = "1"))
+        assertSame(newSpeculativeSession, engine.createSession(private = false, enableDesktopMode = false, contextId = "1"))
         assertNull(engine.speculativeConnectionFactory.speculativeEngineSession)
 
         // Create a regular speculative session and make sure it is not returned
         // if a session with a context id is requested instead.
-        engine.speculativeCreateSession(private = false)
+        engine.speculativeCreateSession(private = false, enableDesktopMode = false)
         assertNotNull(engine.speculativeConnectionFactory.speculativeEngineSession)
         newSpeculativeSession = engine.speculativeConnectionFactory.speculativeEngineSession!!.engineSession
-        assertNotSame(newSpeculativeSession, engine.createSession(private = false, contextId = "1"))
+        assertNotSame(newSpeculativeSession, engine.createSession(private = false, enableDesktopMode = false, contextId = "1"))
         // Make sure previous (never used) speculative session is now closed
         assertFalse(newSpeculativeSession.geckoSession.isOpen)
         assertNull(engine.speculativeConnectionFactory.speculativeEngineSession)

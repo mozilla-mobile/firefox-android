@@ -34,11 +34,23 @@ class SpeculativeSessionFactoryTest {
         val factory = SpeculativeSessionFactory()
         assertNull(factory.speculativeEngineSession)
 
-        factory.create(runtime = runtime, private = true, contextId = null, defaultSettings = mock())
+        factory.create(
+            runtime = runtime,
+            private = true,
+            enableDesktopMode = false,
+            contextId = null,
+            defaultSettings = mock(),
+        )
         val speculativeSession = factory.speculativeEngineSession
         assertNotNull(speculativeSession)
 
-        factory.create(runtime = runtime, private = true, contextId = null, defaultSettings = mock())
+        factory.create(
+            runtime = runtime,
+            private = true,
+            enableDesktopMode = false,
+            contextId = null,
+            defaultSettings = mock(),
+        )
         assertSame(speculativeSession, factory.speculativeEngineSession)
     }
 
@@ -47,11 +59,23 @@ class SpeculativeSessionFactoryTest {
         val factory = SpeculativeSessionFactory()
         assertNull(factory.speculativeEngineSession)
 
-        factory.create(runtime = runtime, private = true, contextId = null, defaultSettings = mock())
+        factory.create(
+            runtime = runtime,
+            private = true,
+            enableDesktopMode = false,
+            contextId = null,
+            defaultSettings = mock(),
+        )
         val speculativeSession = factory.speculativeEngineSession
         assertNotNull(speculativeSession)
 
-        factory.create(runtime = runtime, private = false, contextId = null, defaultSettings = mock())
+        factory.create(
+            runtime = runtime,
+            private = false,
+            enableDesktopMode = false,
+            contextId = null,
+            defaultSettings = mock(),
+        )
         assertNotSame(speculativeSession, factory.speculativeEngineSession)
         assertFalse(speculativeSession!!.engineSession.geckoSession.isOpen)
         assertFalse(speculativeSession.engineSession.isObserved())
@@ -62,10 +86,17 @@ class SpeculativeSessionFactoryTest {
         val factory = SpeculativeSessionFactory()
         assertFalse(factory.hasSpeculativeSession())
 
-        factory.create(runtime = runtime, private = true, contextId = null, defaultSettings = mock())
+        factory.create(
+            runtime = runtime,
+            private = true,
+            enableDesktopMode = false,
+            contextId = null,
+            defaultSettings = mock(),
+        )
         assertTrue(factory.hasSpeculativeSession())
 
-        val speculativeSession = factory.get(private = true, contextId = null)
+        val speculativeSession =
+            factory.get(private = true, enableDesktopMode = false, contextId = null)
         assertNotNull(speculativeSession)
         assertFalse(speculativeSession!!.isObserved())
 
@@ -78,11 +109,17 @@ class SpeculativeSessionFactoryTest {
         val factory = SpeculativeSessionFactory()
         assertNull(factory.speculativeEngineSession)
 
-        factory.create(runtime = runtime, private = true, contextId = null, defaultSettings = mock())
+        factory.create(
+            runtime = runtime,
+            private = true,
+            enableDesktopMode = false,
+            contextId = null,
+            defaultSettings = mock(),
+        )
         val speculativeSession = factory.speculativeEngineSession
         assertNotNull(speculativeSession)
 
-        assertNull(factory.get(private = true, contextId = "test"))
+        assertNull(factory.get(private = true, enableDesktopMode = false, contextId = "test"))
         assertFalse(speculativeSession!!.engineSession.geckoSession.isOpen)
         assertFalse(speculativeSession.engineSession.isObserved())
     }
@@ -90,7 +127,13 @@ class SpeculativeSessionFactoryTest {
     @Test
     fun `clears speculative session on crash`() {
         val factory = SpeculativeSessionFactory()
-        factory.create(runtime = runtime, private = true, contextId = null, defaultSettings = mock())
+        factory.create(
+            runtime = runtime,
+            private = true,
+            enableDesktopMode = false,
+            contextId = null,
+            defaultSettings = mock(),
+        )
         assertTrue(factory.hasSpeculativeSession())
         val speculativeSession = factory.speculativeEngineSession
 
@@ -103,7 +146,13 @@ class SpeculativeSessionFactoryTest {
     @Test
     fun `clears speculative session when process is killed`() {
         val factory = SpeculativeSessionFactory()
-        factory.create(runtime = runtime, private = true, contextId = null, defaultSettings = mock())
+        factory.create(
+            runtime = runtime,
+            private = true,
+            enableDesktopMode = false,
+            contextId = null,
+            defaultSettings = mock(),
+        )
         assertTrue(factory.hasSpeculativeSession())
         val speculativeSession = factory.speculativeEngineSession
 
@@ -116,7 +165,13 @@ class SpeculativeSessionFactoryTest {
     @Test
     fun `clear unregisters observer and closes session`() {
         val factory = SpeculativeSessionFactory()
-        factory.create(runtime = runtime, private = true, contextId = null, defaultSettings = mock())
+        factory.create(
+            runtime = runtime,
+            private = true,
+            enableDesktopMode = false,
+            contextId = null,
+            defaultSettings = mock(),
+        )
         assertTrue(factory.hasSpeculativeSession())
         val speculativeSession = factory.speculativeEngineSession
         assertTrue(speculativeSession!!.engineSession.isObserved())

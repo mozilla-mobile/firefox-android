@@ -26,6 +26,7 @@ import mozilla.components.concept.storage.HistoryMetadataKey
  * @property title The last title of this tab (or an empty String).
  * @property searchTerm The last used search terms, or an empty string if no
  * search was executed for this session.
+ * @property desktopMode True if desktop mode is enabled, false otherwise
  * @property contextId The context ID ("container") this tab used (or null).
  * @property readerState The last [ReaderState] of the tab.
  * @property lastAccess The last time this tab was selected.
@@ -42,6 +43,7 @@ data class TabState(
     val parentId: String? = null,
     val title: String = "",
     val searchTerm: String = "",
+    val desktopMode: Boolean = false,
     val contextId: String? = null,
     val readerState: ReaderState = ReaderState(),
     val lastAccess: Long = 0,
@@ -77,6 +79,7 @@ fun TabSessionState.toRecoverableTab(index: Int = -1): RecoverableTab {
             url = content.url,
             title = content.title,
             searchTerm = content.searchTerms,
+            desktopMode = content.desktopMode,
             contextId = contextId,
             readerState = readerState,
             lastAccess = lastAccess,
@@ -100,6 +103,7 @@ fun RecoverableTab.toTabSessionState() = createTab(
     parentId = state.parentId,
     title = state.title,
     searchTerms = state.searchTerm,
+    desktopMode = state.desktopMode,
     contextId = state.contextId,
     engineSessionState = engineSessionState,
     readerState = state.readerState,
