@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import mozilla.components.browser.state.search.SearchEngine
 import mozilla.components.browser.state.state.BrowserState
-import mozilla.components.browser.state.state.searchEngines
+import mozilla.components.browser.state.state.searchEngineShortcuts
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.menu.candidate.DrawableMenuIcon
 import mozilla.components.concept.menu.candidate.TextMenuCandidate
@@ -35,7 +35,7 @@ class SearchSelectorMenuBinding(
         flow.map { state -> state.search }
             .ifChanged()
             .collect { search ->
-                updateSearchSelectorMenu(search.searchEngines)
+                updateSearchSelectorMenu(search.searchEngineShortcuts)
             }
     }
 

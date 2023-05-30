@@ -364,7 +364,7 @@ private fun assertAddSearchEngineList() {
     onView(withText("Other")).check(matches(isDisplayed()))
 }
 
-private fun addSearchEngineSaveButton() = onView(withId(R.id.add_search_engine))
+private fun addSearchEngineSaveButton() = onView(withId(R.id.save_button))
 
 private fun assertEngineListContains(searchEngineName: String) {
     onView(withId(R.id.search_engine_group)).check(matches(hasDescendant(withText(searchEngineName))))

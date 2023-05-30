@@ -38,6 +38,7 @@ data class SearchState(
     val additionalSearchEngines: List<SearchEngine> = emptyList(),
     val additionalAvailableSearchEngines: List<SearchEngine> = emptyList(),
     val hiddenSearchEngines: List<SearchEngine> = emptyList(),
+    val disabledSearchEngineShortcutIds: List<String> = emptyList(),
     val userSelectedSearchEngineId: String? = null,
     val userSelectedSearchEngineName: String? = null,
     val regionDefaultSearchEngineId: String? = null,
@@ -57,6 +58,14 @@ val SearchState.searchEngines: List<SearchEngine>
  */
 val SearchState.availableSearchEngines: List<SearchEngine>
     get() = (hiddenSearchEngines + additionalAvailableSearchEngines)
+
+val SearchState.searchEngineShortcuts: List<SearchEngine>
+    get() = (
+        regionSearchEngines + additionalSearchEngines + availableSearchEngines +
+            customSearchEngines + applicationSearchEngines
+        ).filter {
+        !disabledSearchEngineShortcutIds.contains(it.id)
+    }
 
 /**
  * The primary search engine to be used by default for searches. This will either be the user

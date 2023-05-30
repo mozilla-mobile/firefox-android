@@ -252,6 +252,22 @@ class SearchUseCases(
         }
     }
 
+    /**
+     * Updates the list of unselected shortcuts, to be hidden from the quick search menus.
+     */
+    class UpdateSearchEngineShortcutUseCase(private val store: BrowserStore) {
+        /**
+         * Updates the list of unselected shortcuts with the given [searchEngine], to be hidden from
+         * the quick search menus.
+         */
+        operator fun invoke(
+            searchEngine: SearchEngine,
+            isSelected: Boolean,
+        ) {
+            store.dispatch(SearchAction.UpdateSearchEngineShortcutAction(searchEngine, isSelected))
+        }
+    }
+
     val defaultSearch: DefaultSearchUseCase by lazy {
         DefaultSearchUseCase(store, tabsUseCases, sessionUseCases)
     }
@@ -274,5 +290,9 @@ class SearchUseCases(
 
     val selectSearchEngine: SelectSearchEngineUseCase by lazy {
         SelectSearchEngineUseCase(store)
+    }
+
+    val updateSearchEngineShortcut: UpdateSearchEngineShortcutUseCase by lazy {
+        UpdateSearchEngineShortcutUseCase(store)
     }
 }
