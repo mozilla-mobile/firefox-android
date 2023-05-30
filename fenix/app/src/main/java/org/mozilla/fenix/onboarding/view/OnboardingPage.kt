@@ -66,10 +66,7 @@ private const val URL_TAG = "URL_TAG"
  * @param modifier The modifier to be applied to the Composable.
  * @param onDismiss Invoked when the user clicks the close button. This defaults to null. When null,
  * it doesn't show the close button.
-<<<<<<< HEAD
-=======
  * @param imageResContentScale The [ContentScale] for the [OnboardingPageState.imageRes].
->>>>>>> 19bd5c6685 (Bug 1833118 - Rename OnboardingPageState `image` to `imageRes` and update class desc @param to @property)
  */
 @Composable
 fun OnboardingPage(
