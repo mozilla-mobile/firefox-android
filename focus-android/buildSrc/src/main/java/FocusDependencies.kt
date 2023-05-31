@@ -20,7 +20,7 @@ object FocusVersions {
         const val compose = "1.4.3"
         const val constraint_layout = "2.1.4"
         const val constraint_layout_compose = "1.0.1"
-        const val core = "1.10.0"
+        const val core = "1.10.1"
         const val fragment = "1.5.7"
         const val lifecycle = "2.6.1"
         const val palette = "1.0.0"
@@ -47,6 +47,7 @@ object FocusVersions {
     object Kotlin {
         const val compiler = "1.8.21"
         const val coroutines = "1.6.4"
+        const val python_envs_plugin = "0.0.31"
     }
 
     object Testing {
@@ -56,6 +57,7 @@ object FocusVersions {
         const val androidx_orchestrator = "1.4.2"
         const val androidx_runner = "1.5.2"
         const val androidx_uiautomator = "2.2.0"
+        const val detekt = "1.22.0"
         const val falcon = "2.2.0"
         const val fastlane = "2.1.1"
         const val junit = "5.9.3"
@@ -74,8 +76,10 @@ object FocusVersions {
     // Workaround for a Gradle parsing bug that prevents using nested objects directly in Gradle files.
     // These might be removable if we switch to kts files instead.
     // https://github.com/gradle/gradle/issues/9251
+    const val detekt_version = FocusVersions.Testing.detekt
     const val google_compose_compiler = FocusVersions.Google.compose_compiler
     const val ktlint_version = FocusVersions.Testing.ktlint
+    const val python_envs_plugin_version = FocusVersions.Kotlin.python_envs_plugin
 }
 
 object FocusDependencies {
