@@ -408,7 +408,9 @@
     <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
     <string name="cookie_banner_handling_details_site_is_not_supported_cancel_button">لغو</string>
     <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
-    <string name="cookie_banner_handling_details_site_is_not_supported_request_support_button">درخواست پشتیبانی</string>
+    <string name="cookie_banner_handling_details_site_is_not_supported_request_support_button" moz:RemovedIn="115" tools:ignore="UnusedResources">درخواست پشتیبانی</string>
+    <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
+    <string name="cookie_banner_handling_details_site_is_not_supported_request_support_button_2">ارسال درخواست</string>
     <!-- Text for title indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
     <string name="cookie_banner_handling_details_site_is_not_supported_title" moz:RemovedIn="114" tools:ignore="UnusedResources">کاهش برنمای کلوچک</string>
     <!-- Text for title indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
@@ -1634,7 +1636,7 @@
     <string name="add_to_homescreen_text_placeholder">نام میانبر</string>
 
     <!-- Describes the add to homescreen functionality -->
-    <string name="add_to_homescreen_description_2">شما به راحتی می‌توانید این وبگاه را به صفحهٔ خانگی تلفن خود اضافه کنید تا دسترسی مستقیم به آن داشته باشید و مرور سریع‌تری را مانند تجربه کردن یک برنامه داشته باشید.</string>
+    <string name="add_to_homescreen_description_2">به‌راحتی می‌توانید این وبگاه را به صفحهٔ خانگی تلفن خود اضافه کنید تا بی‌درنگ به آن دسترسی داشته باشید و همچون کار با یک برنامه مرور سریع‌تری را تجربه کنید.</string>
 
     <!-- Preference for managing the settings for logins and passwords in Fenix -->
     <string name="preferences_passwords_logins_and_passwords">ورودها و گذرواژه‌ها</string>

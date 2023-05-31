@@ -90,6 +90,7 @@ import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
 import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.metrics.BreadcrumbsRecorder
+import org.mozilla.fenix.components.metrics.GrowthDataWorker
 import org.mozilla.fenix.databinding.ActivityHomeBinding
 import org.mozilla.fenix.exceptions.trackingprotection.TrackingProtectionExceptionsFragmentDirections
 import org.mozilla.fenix.experiments.ResearchSurfaceDialogFragment
@@ -454,6 +455,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
                 Events.defaultBrowserChanged.record(NoExtras())
             }
 
+            GrowthDataWorker.sendActivatedSignalIfNeeded(applicationContext)
             ReEngagementNotificationWorker.setReEngagementNotificationIfNeeded(applicationContext)
             MessageNotificationWorker.setMessageNotificationWorker(applicationContext)
         }
@@ -1068,7 +1070,11 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     }
 
     open fun navigateToHome() {
-        navHost.navController.navigate(NavGraphDirections.actionStartupHome())
+        if (components.fenixOnboarding.userHasBeenOnboarded()) {
+            navHost.navController.navigate(NavGraphDirections.actionStartupHome())
+        } else {
+            navHost.navController.navigate(NavGraphDirections.actionStartupOnboarding())
+        }
     }
 
     override fun attachBaseContext(base: Context) {

@@ -60,7 +60,6 @@ import mozilla.components.browser.storage.sync.Tab as SyncTab
  * @param onTabClose Invoked when the user clicks to close a tab.
  * @param onTabMediaClick Invoked when the user interacts with a tab's media controls.
  * @param onTabClick Invoked when the user clicks on a tab.
- * @param onTabMultiSelectClick Invoked when the user clicks on a tab while in multi-select mode.
  * @param onTabLongClick Invoked when the user long clicks a tab.
  * @param onInactiveTabsHeaderClick Invoked when the user clicks on the inactive tabs section header.
  * @param onDeleteAllInactiveTabsClick Invoked when the user clicks on the delete all inactive tabs button.
@@ -99,7 +98,6 @@ fun TabsTray(
     onTabClose: (TabSessionState) -> Unit,
     onTabMediaClick: (TabSessionState) -> Unit,
     onTabClick: (TabSessionState) -> Unit,
-    onTabMultiSelectClick: (TabSessionState) -> Unit,
     onTabLongClick: (TabSessionState) -> Unit,
     onInactiveTabsHeaderClick: (Boolean) -> Unit,
     onDeleteAllInactiveTabsClick: () -> Unit,
@@ -127,14 +125,6 @@ fun TabsTray(
     val pagerState = rememberPagerState(initialPage = selectedPage.ordinal)
     val isInMultiSelectMode = multiselectMode is TabsTrayState.Mode.Select
 
-    val handleTabClick: ((TabSessionState) -> Unit) = { tab ->
-        if (isInMultiSelectMode) {
-            onTabMultiSelectClick(tab)
-        } else {
-            onTabClick(tab)
-        }
-    }
-
     val shapeModifier = if (isInMultiSelectMode) {
         Modifier
     } else {
@@ -159,7 +149,6 @@ fun TabsTray(
                 onTabPageIndicatorClicked = onTabPageClick,
                 onSaveToCollectionClick = onSaveToCollectionClick,
                 onShareSelectedTabsClick = onShareSelectedTabsClick,
-                onEnterMultiselectModeClick = { tabsTrayStore.dispatch(TabsTrayAction.EnterSelectMode) },
                 onShareAllTabsClick = onShareAllTabsClick,
                 onTabSettingsClick = onTabSettingsClick,
                 onRecentlyClosedClick = onRecentlyClosedClick,
@@ -189,7 +178,7 @@ fun TabsTray(
                             displayTabsInGrid = displayTabsInGrid,
                             onTabClose = onTabClose,
                             onTabMediaClick = onTabMediaClick,
-                            onTabClick = handleTabClick,
+                            onTabClick = onTabClick,
                             onTabLongClick = onTabLongClick,
                             shouldShowInactiveTabsAutoCloseDialog = shouldShowInactiveTabsAutoCloseDialog,
                             onInactiveTabsHeaderClick = onInactiveTabsHeaderClick,
@@ -209,7 +198,7 @@ fun TabsTray(
                             displayTabsInGrid = displayTabsInGrid,
                             onTabClose = onTabClose,
                             onTabMediaClick = onTabMediaClick,
-                            onTabClick = handleTabClick,
+                            onTabClick = onTabClick,
                             onTabLongClick = onTabLongClick,
                         )
                     }
@@ -505,12 +494,16 @@ private fun TabsTrayPreviewRoot(
                 }
             },
             onTabMediaClick = {},
-            onTabClick = {},
-            onTabMultiSelectClick = { tab ->
-                if (tabsTrayStore.state.mode.selectedTabs.contains(tab)) {
-                    tabsTrayStore.dispatch(TabsTrayAction.RemoveSelectTab(tab))
-                } else {
-                    tabsTrayStore.dispatch(TabsTrayAction.AddSelectTab(tab))
+            onTabClick = { tab ->
+                when (tabsTrayStore.state.mode) {
+                    TabsTrayState.Mode.Normal -> {}
+                    is TabsTrayState.Mode.Select -> {
+                        if (tabsTrayStore.state.mode.selectedTabs.contains(tab)) {
+                            tabsTrayStore.dispatch(TabsTrayAction.RemoveSelectTab(tab))
+                        } else {
+                            tabsTrayStore.dispatch(TabsTrayAction.AddSelectTab(tab))
+                        }
+                    }
                 }
             },
             onTabLongClick = { tab ->
