@@ -41,7 +41,6 @@ interface HistoryController {
      * @param timeFrame Selected time frame by the user. If `null`, removes all history.
      */
     fun handleDeleteTimeRangeConfirmed(timeFrame: RemoveTimeFrame?)
-    fun handleEnterRecentlyClosed()
 }
 
 @Suppress("TooManyFunctions", "LongParameterList")
@@ -51,7 +50,6 @@ class DefaultHistoryController(
     private val browserStore: BrowserStore,
     private val historyStorage: PlacesHistoryStorage,
     private var historyProvider: DefaultPagedHistoryProvider,
-    private val navController: NavController,
     private val scope: CoroutineScope,
     private val displayDeleteTimeRange: () -> Unit,
     private val onTimeFrameDeleted: () -> Unit,
@@ -130,12 +128,5 @@ class DefaultHistoryController(
                 store.dispatch(HistoryFragmentAction.ExitDeletionMode)
             }
         }
-    }
-    override fun handleEnterRecentlyClosed() {
-        navController.navigate(
-            HistoryFragmentDirections.actionGlobalRecentlyClosed(),
-            NavOptions.Builder().setPopUpTo(R.id.recentlyClosedFragment, true).build(),
-        )
-        Events.recentlyClosedTabsOpened.record(NoExtras())
     }
 }

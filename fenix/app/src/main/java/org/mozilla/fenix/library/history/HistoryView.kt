@@ -115,7 +115,7 @@ class HistoryView(
 
         with(binding.recentlyClosedNavEmpty) {
             recentlyClosedNav.setOnClickListener {
-                interactor.onRecentlyClosedClicked()
+                store.dispatch(HistoryFragmentAction.EnterRecentlyClosed)
             }
             val numRecentTabs = recentlyClosedNav.context.components.core.store.state.closedTabs.size
             recentlyClosedTabsDescription.text = String.format(

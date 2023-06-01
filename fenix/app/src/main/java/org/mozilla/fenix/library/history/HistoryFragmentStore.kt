@@ -132,6 +132,7 @@ sealed class HistoryFragmentAction : Action {
 
     data class HistoryItemLongClicked(val item: History) : HistoryFragmentAction()
     object SearchClicked : HistoryFragmentAction()
+    object EnterRecentlyClosed : HistoryFragmentAction()
     object ExitEditMode : HistoryFragmentAction()
 
     /**
@@ -180,7 +181,6 @@ private fun historyStateReducer(
     action: HistoryFragmentAction,
 ): HistoryFragmentState {
     return when (action) {
-        is HistoryFragmentAction.BackPressed -> state
         is HistoryFragmentAction.HistoryItemClicked -> {
             if (state.mode.selectedItems.isEmpty() || state.mode is HistoryFragmentState.Mode.Syncing) {
                 state
@@ -215,7 +215,6 @@ private fun historyStateReducer(
                 )
             }
         }
-        is HistoryFragmentAction.SearchClicked -> state
         is HistoryFragmentAction.ExitEditMode -> state.copy(mode = HistoryFragmentState.Mode.Normal)
         is HistoryFragmentAction.EnterDeletionMode -> state.copy(isDeletingItems = true)
         is HistoryFragmentAction.ExitDeletionMode -> state.copy(isDeletingItems = false)
@@ -225,5 +224,8 @@ private fun historyStateReducer(
         is HistoryFragmentAction.UpdatePendingDeletionItems -> state.copy(
             pendingDeletionItems = action.pendingDeletionItems,
         )
+        is HistoryFragmentAction.BackPressed,
+        is HistoryFragmentAction.SearchClicked,
+        is HistoryFragmentAction.EnterRecentlyClosed-> state
     }
 }

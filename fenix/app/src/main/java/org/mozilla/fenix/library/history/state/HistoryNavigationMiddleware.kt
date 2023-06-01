@@ -67,7 +67,12 @@ class HistoryNavigationMiddleware(
 
                     navController.navigateSafe(R.id.historyFragment, directions)
                 }
-
+                is HistoryFragmentAction.EnterRecentlyClosed -> {
+                    navController.navigate(
+                        HistoryFragmentDirections.actionGlobalRecentlyClosed(),
+                        NavOptions.Builder().setPopUpTo(R.id.recentlyClosedFragment, true).build(),
+                    )
+                }
                 else -> Unit
             }
             next(action)
