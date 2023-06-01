@@ -15,7 +15,7 @@ object FenixVersions {
     const val android_gradle_plugin = "7.4.2"
     const val android_lint_api = "30.4.2"
 
-    const val sentry = "6.19.0"
+    const val sentry = "6.21.0"
     const val leakcanary = "2.11"
     const val osslicenses_plugin = "0.10.4"
     const val detekt = "1.23.0"
@@ -26,7 +26,7 @@ object FenixVersions {
     const val falcon = "2.2.0"
     const val fastlane = "2.1.1"
 
-    const val androidx_activity = "1.7.1"
+    const val androidx_activity = "1.7.2"
     const val androidx_compose = "1.4.3"
     const val androidx_compose_compiler = "1.4.7"
     const val androidx_appcompat = "1.6.1"
@@ -42,7 +42,7 @@ object FenixVersions {
     const val androidx_fragment = "1.5.7"
     const val androidx_navigation = "2.5.3"
     const val androidx_recyclerview = "1.3.0"
-    const val androidx_core = "1.10.0"
+    const val androidx_core = "1.10.1"
     const val androidx_paging = "3.1.1"
     const val androidx_transition = "1.4.1"
     const val androidx_work = "2.7.1"
