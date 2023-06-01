@@ -33,11 +33,6 @@ interface HistoryInteractor : SelectionInteractor<History> {
     fun onDeleteTimeRangeConfirmed(timeFrame: RemoveTimeFrame?)
 
     /**
-     * Called when the user requests a sync of the history
-     */
-    fun onRequestSync()
-
-    /**
      * Called when the user clicks on recently closed tab button.
      */
     fun onRecentlyClosedClicked()
@@ -67,10 +62,6 @@ class DefaultHistoryInteractor(
 
     override fun onDeleteTimeRangeConfirmed(timeFrame: RemoveTimeFrame?) {
         historyController.handleDeleteTimeRangeConfirmed(timeFrame)
-    }
-
-    override fun onRequestSync() {
-        historyController.handleRequestSync()
     }
 
     override fun onRecentlyClosedClicked() {

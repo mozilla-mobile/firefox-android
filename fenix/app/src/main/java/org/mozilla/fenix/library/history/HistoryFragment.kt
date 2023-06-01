@@ -61,6 +61,7 @@ import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.setTextColor
 import org.mozilla.fenix.library.LibraryPageFragment
 import org.mozilla.fenix.library.history.state.HistoryNavigationMiddleware
+import org.mozilla.fenix.library.history.state.HistorySyncMiddleware
 import org.mozilla.fenix.library.history.state.HistoryTelemetryMiddleware
 import org.mozilla.fenix.utils.allowUndo
 import org.mozilla.fenix.GleanMetrics.History as GleanHistory
@@ -134,6 +135,10 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler, 
                             (activity as HomeActivity)
                                 .browsingModeManager.mode == BrowsingMode.Private
                         }
+                    ),
+                    HistorySyncMiddleware(
+                        syncHistory = this@HistoryFragment::syncHistory,
+                        scope = this@HistoryFragment.lifecycleScope,
                     )
                 )
             )
@@ -149,7 +154,6 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler, 
             displayDeleteTimeRange = ::displayDeleteTimeRange,
             deleteSnackbar = ::deleteSnackbar,
             onTimeFrameDeleted = ::onTimeFrameDeleted,
-            syncHistory = ::syncHistory,
         )
         historyInteractor = DefaultHistoryInteractor(
             historyController,

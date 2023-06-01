@@ -41,7 +41,6 @@ interface HistoryController {
      * @param timeFrame Selected time frame by the user. If `null`, removes all history.
      */
     fun handleDeleteTimeRangeConfirmed(timeFrame: RemoveTimeFrame?)
-    fun handleRequestSync()
     fun handleEnterRecentlyClosed()
 }
 
@@ -61,7 +60,6 @@ class DefaultHistoryController(
         undo: suspend (Set<History>) -> Unit,
         delete: (Set<History>) -> suspend (context: Context) -> Unit,
     ) -> Unit,
-    private val syncHistory: suspend () -> Unit,
 ) : HistoryController {
 
     override fun handleDeleteTimeRange() {
@@ -133,15 +131,6 @@ class DefaultHistoryController(
             }
         }
     }
-
-    override fun handleRequestSync() {
-        scope.launch {
-            store.dispatch(HistoryFragmentAction.StartSync)
-            syncHistory.invoke()
-            store.dispatch(HistoryFragmentAction.FinishSync)
-        }
-    }
-
     override fun handleEnterRecentlyClosed() {
         navController.navigate(
             HistoryFragmentDirections.actionGlobalRecentlyClosed(),
