@@ -56,17 +56,11 @@ interface HistoryInteractor : SelectionInteractor<History> {
 class DefaultHistoryInteractor(
     private val historyController: HistoryController,
 ) : HistoryInteractor {
-    override fun open(item: History) {
-        historyController.handleOpen(item)
-    }
+    override fun open(item: History) = Unit
 
-    override fun select(item: History) {
-        historyController.handleSelect(item)
-    }
+    override fun select(item: History) = Unit
 
-    override fun deselect(item: History) {
-        historyController.handleDeselect(item)
-    }
+    override fun deselect(item: History) = Unit
 
     override fun onSearch() {
         GleanHistory.searchIconTapped.record(NoExtras())

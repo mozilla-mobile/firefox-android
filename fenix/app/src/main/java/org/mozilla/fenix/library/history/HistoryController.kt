@@ -29,9 +29,6 @@ import org.mozilla.fenix.GleanMetrics.History as GleanHistory
 
 @Suppress("TooManyFunctions")
 interface HistoryController {
-    fun handleOpen(item: History)
-    fun handleSelect(item: History)
-    fun handleDeselect(item: History)
     fun handleSearch()
 
     /**
@@ -70,36 +67,6 @@ class DefaultHistoryController(
     private val syncHistory: suspend () -> Unit,
     private val settings: Settings,
 ) : HistoryController {
-
-    override fun handleOpen(item: History) {
-        when (item) {
-            is History.Regular -> openToBrowser(item)
-            is History.Group -> {
-                GleanHistory.searchTermGroupTapped.record(NoExtras())
-                navController.navigate(
-                    HistoryFragmentDirections.actionGlobalHistoryMetadataGroup(
-                        title = item.title,
-                        historyMetadataItems = item.items.toTypedArray(),
-                    ),
-                    NavOptions.Builder().setPopUpTo(R.id.historyMetadataGroupFragment, true).build(),
-                )
-            }
-            else -> { /* noop */ }
-        }
-    }
-
-    override fun handleSelect(item: History) {
-        if (store.state.mode === HistoryFragmentState.Mode.Syncing) {
-            return
-        }
-
-        store.dispatch(HistoryFragmentAction.AddItemForRemoval(item))
-    }
-
-    override fun handleDeselect(item: History) {
-        store.dispatch(HistoryFragmentAction.RemoveItemForRemoval(item))
-    }
-
     override fun handleSearch() {
         val directions = if (settings.showUnifiedSearchFeature) {
             HistoryFragmentDirections.actionGlobalSearchDialog(null)

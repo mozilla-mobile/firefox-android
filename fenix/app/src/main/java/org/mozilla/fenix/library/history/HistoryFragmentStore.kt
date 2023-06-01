@@ -9,10 +9,12 @@ import kotlinx.parcelize.Parcelize
 import mozilla.components.concept.storage.HistoryMetadata
 import mozilla.components.concept.storage.HistoryMetadataKey
 import mozilla.components.lib.state.Action
+import mozilla.components.lib.state.Middleware
 import mozilla.components.lib.state.State
 import mozilla.components.lib.state.Store
 import mozilla.components.support.ktx.kotlin.tryGetHostFromUrl
 import org.mozilla.fenix.library.history.state.HistoryNavigationMiddleware
+import org.mozilla.fenix.selection.SelectionHolder
 
 /**
  * Class representing a history entry.
@@ -113,20 +115,23 @@ fun HistoryMetadata.toHistoryMetadata(position: Int): History.Metadata {
  */
 class HistoryFragmentStore(
     initialState: HistoryFragmentState,
-    navMiddleware: HistoryNavigationMiddleware,
+    middleware: List<Middleware<HistoryFragmentState, HistoryFragmentAction>>,
 ) :
-    Store<HistoryFragmentState, HistoryFragmentAction>(initialState, ::historyStateReducer, middleware = listOf(
-        navMiddleware,
-    ))
+    Store<HistoryFragmentState, HistoryFragmentAction>(
+        initialState,
+        ::historyStateReducer,
+        middleware
+    )
 
 /**
  * Actions to dispatch through the `HistoryStore` to modify `HistoryState` through the reducer.
  */
 sealed class HistoryFragmentAction : Action {
     object BackPressed : HistoryFragmentAction()
+    data class HistoryItemClicked(val item: History) : HistoryFragmentAction()
+
+    data class HistoryItemLongClicked(val item: History) : HistoryFragmentAction()
     object ExitEditMode : HistoryFragmentAction()
-    data class AddItemForRemoval(val item: History) : HistoryFragmentAction()
-    data class RemoveItemForRemoval(val item: History) : HistoryFragmentAction()
 
     /**
      * Updates the empty state of [org.mozilla.fenix.library.history.HistoryView].
@@ -175,17 +180,39 @@ private fun historyStateReducer(
 ): HistoryFragmentState {
     return when (action) {
         is HistoryFragmentAction.BackPressed -> state
-        is HistoryFragmentAction.AddItemForRemoval ->
-            state.copy(mode = HistoryFragmentState.Mode.Editing(state.mode.selectedItems + action.item))
-        is HistoryFragmentAction.RemoveItemForRemoval -> {
-            val selected = state.mode.selectedItems - action.item
-            state.copy(
-                mode = if (selected.isEmpty()) {
-                    HistoryFragmentState.Mode.Normal
+        is HistoryFragmentAction.HistoryItemClicked -> {
+            if (state.mode.selectedItems.isEmpty() || state.mode is HistoryFragmentState.Mode.Syncing) {
+                state
+            } else {
+                if (state.mode.selectedItems.contains(action.item)) {
+                    val selected = state.mode.selectedItems - action.item
+                    state.copy(
+                        mode = if (selected.isEmpty()) {
+                            HistoryFragmentState.Mode.Normal
+                        } else {
+                            HistoryFragmentState.Mode.Editing(selected)
+                        },
+                    )
                 } else {
-                    HistoryFragmentState.Mode.Editing(selected)
-                },
-            )
+                    state.copy(
+                        mode = HistoryFragmentState.Mode.Editing(
+                            state.mode.selectedItems + action.item
+                        )
+                    )
+                }
+            }
+        }
+        is HistoryFragmentAction.HistoryItemLongClicked -> {
+            if (state.mode == HistoryFragmentState.Mode.Syncing) {
+                state
+            }
+            else {
+                state.copy(
+                    mode = HistoryFragmentState.Mode.Editing(
+                        state.mode.selectedItems + action.item
+                    )
+                )
+            }
         }
         is HistoryFragmentAction.ExitEditMode -> state.copy(mode = HistoryFragmentState.Mode.Normal)
         is HistoryFragmentAction.EnterDeletionMode -> state.copy(isDeletingItems = true)

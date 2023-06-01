@@ -61,6 +61,7 @@ import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.setTextColor
 import org.mozilla.fenix.library.LibraryPageFragment
 import org.mozilla.fenix.library.history.state.HistoryNavigationMiddleware
+import org.mozilla.fenix.library.history.state.HistoryTelemetryMiddleware
 import org.mozilla.fenix.utils.allowUndo
 import org.mozilla.fenix.GleanMetrics.History as GleanHistory
 
@@ -117,11 +118,23 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler, 
                     isEmpty = false,
                     isDeletingItems = false,
                 ),
-                HistoryNavigationMiddleware(onBackPressed = {
-                    this@HistoryFragment.lifecycleScope.launch {
-                        requireActivity().onBackPressedDispatcher.onBackPressed()
-                    }
-                }),
+                listOf(
+                    HistoryNavigationMiddleware(
+                        navController = findNavController(),
+                        openToBrowser = this@HistoryFragment::openItem,
+                        onBackPressed = {
+                            this@HistoryFragment.lifecycleScope.launch {
+                                requireActivity().onBackPressedDispatcher.onBackPressed()
+                            }
+                        }
+                    ),
+                    HistoryTelemetryMiddleware(
+                        isInPrivateMode = {
+                            (activity as HomeActivity)
+                                .browsingModeManager.mode == BrowsingMode.Private
+                        }
+                    )
+                )
             )
         }
         val historyController: HistoryController = DefaultHistoryController(
@@ -145,6 +158,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler, 
         _historyView = HistoryView(
             binding.historyLayout,
             historyInteractor,
+            historyStore,
             onZeroItemsLoaded = {
                 historyStore.dispatch(
                     HistoryFragmentAction.ChangeEmptyState(isEmpty = true),
