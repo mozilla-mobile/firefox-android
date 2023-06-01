@@ -14,11 +14,6 @@ import org.mozilla.fenix.GleanMetrics.History as GleanHistory
  */
 interface HistoryInteractor : SelectionInteractor<History> {
     /**
-     * Called when search is tapped
-     */
-    fun onSearch()
-
-    /**
      * Called when the delete menu button is tapped.
      */
     fun onDeleteTimeRange()
@@ -61,11 +56,6 @@ class DefaultHistoryInteractor(
     override fun select(item: History) = Unit
 
     override fun deselect(item: History) = Unit
-
-    override fun onSearch() {
-        GleanHistory.searchIconTapped.record(NoExtras())
-        historyController.handleSearch()
-    }
 
     override fun onDeleteTimeRange() {
         historyController.handleDeleteTimeRange()

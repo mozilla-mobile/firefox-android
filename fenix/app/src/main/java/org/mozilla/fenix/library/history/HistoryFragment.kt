@@ -121,6 +121,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler, 
                 listOf(
                     HistoryNavigationMiddleware(
                         navController = findNavController(),
+                        settings = requireContext().components.settings,
                         openToBrowser = this@HistoryFragment::openItem,
                         onBackPressed = {
                             this@HistoryFragment.lifecycleScope.launch {
@@ -145,12 +146,10 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler, 
             historyProvider = historyProvider,
             navController = findNavController(),
             scope = lifecycleScope,
-            openToBrowser = ::openItem,
             displayDeleteTimeRange = ::displayDeleteTimeRange,
             deleteSnackbar = ::deleteSnackbar,
             onTimeFrameDeleted = ::onTimeFrameDeleted,
             syncHistory = ::syncHistory,
-            settings = requireContext().components.settings,
         )
         historyInteractor = DefaultHistoryInteractor(
             historyController,
@@ -340,7 +339,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler, 
             true
         }
         R.id.history_search -> {
-            historyInteractor.onSearch()
+            historyStore.dispatch(HistoryFragmentAction.SearchClicked)
             true
         }
         R.id.history_delete -> {

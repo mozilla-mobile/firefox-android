@@ -29,8 +29,6 @@ import org.mozilla.fenix.GleanMetrics.History as GleanHistory
 
 @Suppress("TooManyFunctions")
 interface HistoryController {
-    fun handleSearch()
-
     /**
      * Displays a [DeleteConfirmationDialogFragment].
      */
@@ -56,7 +54,6 @@ class DefaultHistoryController(
     private var historyProvider: DefaultPagedHistoryProvider,
     private val navController: NavController,
     private val scope: CoroutineScope,
-    private val openToBrowser: (item: History.Regular) -> Unit,
     private val displayDeleteTimeRange: () -> Unit,
     private val onTimeFrameDeleted: () -> Unit,
     private val deleteSnackbar: (
@@ -65,17 +62,7 @@ class DefaultHistoryController(
         delete: (Set<History>) -> suspend (context: Context) -> Unit,
     ) -> Unit,
     private val syncHistory: suspend () -> Unit,
-    private val settings: Settings,
 ) : HistoryController {
-    override fun handleSearch() {
-        val directions = if (settings.showUnifiedSearchFeature) {
-            HistoryFragmentDirections.actionGlobalSearchDialog(null)
-        } else {
-            HistoryFragmentDirections.actionGlobalHistorySearchDialog()
-        }
-
-        navController.navigateSafe(R.id.historyFragment, directions)
-    }
 
     override fun handleDeleteTimeRange() {
         displayDeleteTimeRange.invoke()

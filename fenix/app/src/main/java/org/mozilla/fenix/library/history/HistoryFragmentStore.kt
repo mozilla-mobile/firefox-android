@@ -131,6 +131,7 @@ sealed class HistoryFragmentAction : Action {
     data class HistoryItemClicked(val item: History) : HistoryFragmentAction()
 
     data class HistoryItemLongClicked(val item: History) : HistoryFragmentAction()
+    object SearchClicked : HistoryFragmentAction()
     object ExitEditMode : HistoryFragmentAction()
 
     /**
@@ -214,6 +215,7 @@ private fun historyStateReducer(
                 )
             }
         }
+        is HistoryFragmentAction.SearchClicked -> state
         is HistoryFragmentAction.ExitEditMode -> state.copy(mode = HistoryFragmentState.Mode.Normal)
         is HistoryFragmentAction.EnterDeletionMode -> state.copy(isDeletingItems = true)
         is HistoryFragmentAction.ExitDeletionMode -> state.copy(isDeletingItems = false)

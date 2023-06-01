@@ -35,6 +35,7 @@ class HistoryTelemetryMiddleware(
                     }
                 }
             }
+            is HistoryFragmentAction.SearchClicked -> GleanHistory.searchIconTapped.record(NoExtras())
             else -> {}
         }
         next(action)
