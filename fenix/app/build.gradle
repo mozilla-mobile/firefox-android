@@ -23,8 +23,6 @@ import static org.gradle.api.tasks.testing.TestResult.ResultType
 apply from: 'benchmark.gradle'
 
 android {
-    compileSdkVersion config.compileSdkVersion
-
     project.maybeConfigForJetpackBenchmark(it)
     if (project.hasProperty("testBuildType")) {
         // Allowing to configure the test build type via command line flag (./gradlew -PtestBuildType=beta ..)
@@ -34,8 +32,6 @@ android {
 
     defaultConfig {
         applicationId "org.mozilla"
-        minSdkVersion config.minSdkVersion
-        targetSdkVersion config.targetSdkVersion
         versionCode 1
         versionName Config.generateDebugVersionName()
         vectorDrawables.useSupportLibrary = true
@@ -212,11 +208,6 @@ android {
         }
     }
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
-    }
-
     lint {
         lintConfig file("lint.xml")
         baseline file("lint-baseline.xml")
@@ -227,7 +218,6 @@ android {
                          'META-INF/LICENSE.md', 'META-INF/LICENSE-notice.md']
         }
     }
-
 
     testOptions {
         unitTests.returnDefaultValues = true

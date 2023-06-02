@@ -163,9 +163,37 @@ allprojects {
     }
 
     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
-        kotlinOptions.jvmTarget = "17"
         kotlinOptions.allWarningsAsErrors = true
         kotlinOptions.freeCompilerArgs += "-Xjvm-default=all"
+    }
+}
+
+subprojects {
+    afterEvaluate {
+        tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+            kotlin {
+                jvmToolchain(17)
+            }
+        }
+
+        if (it.hasProperty('android')) {
+            android {
+                compileSdkVersion config.compileSdkVersion
+
+                defaultConfig {
+                    // Allow benchmark/build.gradle to set a higher minSdkVersion
+                    if (!minSdkVersion) { minSdkVersion config.minSdkVersion }
+                    targetSdkVersion config.targetSdkVersion
+                }
+
+                // This shouldn't be needed anymore with AGP 8.1.0+
+                // https://kotlinlang.org/docs/gradle-configure-project.html#gradle-java-toolchains-support
+                compileOptions {
+                    sourceCompatibility JavaVersion.VERSION_17
+                    targetCompatibility JavaVersion.VERSION_17
+                }
+            }
+        }
     }
 }
 
