@@ -103,6 +103,34 @@ allprojects {
     }
 }
 
+subprojects {
+    afterEvaluate {
+        tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+            kotlin {
+                jvmToolchain(17)
+            }
+        }
+
+        if (it.hasProperty('android')) {
+            android {
+                compileSdkVersion config.compileSdkVersion
+
+                defaultConfig {
+                    minSdkVersion config.minSdkVersion
+                    targetSdkVersion config.targetSdkVersion
+                }
+
+                // This shouldn't be needed anymore with AGP 8.1.0+
+                // https://kotlinlang.org/docs/gradle-configure-project.html#gradle-java-toolchains-support
+                compileOptions {
+                    sourceCompatibility JavaVersion.VERSION_17
+                    targetCompatibility JavaVersion.VERSION_17
+                }
+            }
+        }
+    }
+}
+
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
