@@ -165,9 +165,7 @@ allprojects {
     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
         kotlinOptions.jvmTarget = "17"
         kotlinOptions.allWarningsAsErrors = true
-        kotlinOptions.freeCompilerArgs += [
-            "-opt-in=kotlin.RequiresOptIn", "-Xjvm-default=all"
-        ]
+        kotlinOptions.freeCompilerArgs += "-Xjvm-default=all"
     }
 }
 
