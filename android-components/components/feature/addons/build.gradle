@@ -9,12 +9,7 @@ apply plugin: 'kotlin-parcelize'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion config.compileSdkVersion
-
     defaultConfig {
-        minSdkVersion config.minSdkVersion
-        targetSdkVersion config.targetSdkVersion
-
         kapt {
             arguments {
                 arg("room.schemaLocation", "$projectDir/schemas".toString())

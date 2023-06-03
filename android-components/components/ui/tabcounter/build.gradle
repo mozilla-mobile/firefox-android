@@ -7,13 +7,6 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion config.compileSdkVersion
-
-    defaultConfig {
-        minSdkVersion config.minSdkVersion
-        targetSdkVersion config.targetSdkVersion
-    }
-
     buildTypes {
         release {
             minifyEnabled false

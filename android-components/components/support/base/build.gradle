@@ -18,12 +18,7 @@ def getGitHash = { ->
 }
 
 android {
-    compileSdkVersion config.compileSdkVersion
-
     defaultConfig {
-        minSdkVersion config.minSdkVersion
-        targetSdkVersion config.targetSdkVersion
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         def appServicesVersion = ApplicationServicesConfig.version

@@ -7,12 +7,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-parcelize'
 
 android {
-    compileSdkVersion config.compileSdkVersion
-
     defaultConfig {
-        minSdkVersion config.minSdkVersion
-        targetSdkVersion config.targetSdkVersion
-
         buildConfigField("String", "LIBRARY_VERSION", "\"" + config.componentsVersion + "\"")
     }
 

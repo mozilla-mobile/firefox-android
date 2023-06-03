@@ -5,13 +5,6 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion config.compileSdkVersion
-
-    defaultConfig {
-        minSdkVersion config.minSdkVersion
-        targetSdkVersion config.targetSdkVersion
-    }
-
     buildTypes {
         release {
             minifyEnabled false

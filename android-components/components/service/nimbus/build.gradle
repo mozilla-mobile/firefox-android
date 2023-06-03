@@ -30,13 +30,6 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion config.compileSdkVersion
-
-    defaultConfig {
-        minSdkVersion config.minSdkVersion
-        targetSdkVersion config.targetSdkVersion
-    }
-
     buildTypes {
         debug {
             // Export experiments proguard rules even in debug since consuming apps may still
