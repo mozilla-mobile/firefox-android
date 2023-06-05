@@ -8,6 +8,7 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.databinding.HistoryListItemBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.hideAndDisable
@@ -16,14 +17,12 @@ import org.mozilla.fenix.library.history.History
 import org.mozilla.fenix.library.history.HistoryFragmentAction
 import org.mozilla.fenix.library.history.HistoryFragmentState
 import org.mozilla.fenix.library.history.HistoryFragmentStore
-import org.mozilla.fenix.library.history.HistoryInteractor
 import org.mozilla.fenix.library.history.HistoryItemTimeGroup
 import org.mozilla.fenix.selection.SelectionHolder
 import org.mozilla.fenix.utils.Do
 
 class HistoryListItemViewHolder(
     view: View,
-    private val historyInteractor: HistoryInteractor,
     private val selectionHolder: SelectionHolder<History>,
     private val store: HistoryFragmentStore,
 ) : RecyclerView.ViewHolder(view) {
@@ -41,7 +40,7 @@ class HistoryListItemViewHolder(
             contentDescription = view.context.getString(R.string.history_delete_item)
             setOnClickListener {
                 val item = item ?: return@setOnClickListener
-                historyInteractor.onDeleteSome(setOf(item))
+                store.dispatch(HistoryFragmentAction.DeleteItems(setOf(item)))
             }
         }
     }

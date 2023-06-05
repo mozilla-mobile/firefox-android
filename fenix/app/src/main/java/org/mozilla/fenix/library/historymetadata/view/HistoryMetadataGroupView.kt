@@ -11,6 +11,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.appstate.AppState
 import org.mozilla.fenix.databinding.ComponentHistoryMetadataGroupBinding
 import org.mozilla.fenix.library.LibraryPageView
 import org.mozilla.fenix.library.historymetadata.HistoryMetadataGroupFragmentState
@@ -61,7 +62,6 @@ class HistoryMetadataGroupView(
             it.selected
         }.toSet()
 
-        historyMetadataGroupAdapter.updatePendingDeletionItems(state.pendingDeletionItems)
         historyMetadataGroupAdapter.updateSelectedItems(selectedHistoryItems)
         historyMetadataGroupAdapter.updateData(state.items)
 
@@ -94,5 +94,10 @@ class HistoryMetadataGroupView(
                 context.getString(R.string.history_multi_select_title, selectedHistoryItems.size),
             )
         }
+    }
+
+    fun update(state: AppState) {
+        historyMetadataGroupAdapter.updatePendingDeletionItems(state.pendingDeletionHistoryItems)
+        historyMetadataGroupAdapter.notifyDataSetChanged()
     }
 }

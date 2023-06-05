@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import mozilla.components.support.base.feature.UserInteractionHandler
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.AppStore
+import org.mozilla.fenix.components.appstate.AppState
 import org.mozilla.fenix.databinding.ComponentHistoryBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.library.LibraryPageView
@@ -23,7 +25,6 @@ import org.mozilla.fenix.theme.ThemeManager
  */
 class HistoryView(
     container: ViewGroup,
-    val interactor: HistoryInteractor,
     val store: HistoryFragmentStore,
     val onZeroItemsLoaded: () -> Unit,
     val onEmptyStateChanged: (Boolean) -> Unit,
@@ -38,7 +39,7 @@ class HistoryView(
     var mode: HistoryFragmentState.Mode = HistoryFragmentState.Mode.Normal
         private set
 
-    val historyAdapter = HistoryAdapter(interactor, store) { isEmpty ->
+    val historyAdapter = HistoryAdapter(store) { isEmpty ->
         onEmptyStateChanged(isEmpty)
     }.apply {
         addLoadStateListener {
@@ -80,8 +81,6 @@ class HistoryView(
             state.mode === HistoryFragmentState.Mode.Normal || state.mode === HistoryFragmentState.Mode.Syncing
         mode = state.mode
 
-        historyAdapter.updatePendingDeletionItems(state.pendingDeletionItems)
-
         updateEmptyState(userHasHistory = !state.isEmpty)
 
         historyAdapter.updateMode(state.mode)
@@ -106,6 +105,11 @@ class HistoryView(
                 // no-op
             }
         }
+    }
+
+    fun update(state: AppState) {
+        historyAdapter.updatePendingDeletionItems(state.pendingDeletionHistoryItems)
+        historyAdapter.notifyDataSetChanged()
     }
 
     private fun updateEmptyState(userHasHistory: Boolean) {

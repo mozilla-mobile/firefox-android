@@ -38,6 +38,9 @@ sealed class PendingDeletionHistory {
     ) : PendingDeletionHistory()
 }
 
+fun Set<History>.toPendingDeletionHistory(): Set<PendingDeletionHistory> =
+    map { it.toPendingDeletionHistory() }.toSet()
+
 /**
  * Maps an instance of [History] to an instance of [PendingDeletionHistory].
  */

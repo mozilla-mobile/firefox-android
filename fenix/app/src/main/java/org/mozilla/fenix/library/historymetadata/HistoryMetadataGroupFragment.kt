@@ -23,17 +23,22 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.lib.state.ext.flowScoped
+import mozilla.components.lib.state.helpers.AbstractBinding
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.ktx.kotlin.toShortUrl
+import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import mozilla.components.ui.widgets.withCenterAlignedButtons
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.addons.showSnackBar
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
+import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.StoreProvider
+import org.mozilla.fenix.components.appstate.AppState
 import org.mozilla.fenix.databinding.FragmentHistoryMetadataGroupBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
@@ -46,6 +51,7 @@ import org.mozilla.fenix.library.history.History
 import org.mozilla.fenix.library.historymetadata.controller.DefaultHistoryMetadataGroupController
 import org.mozilla.fenix.library.historymetadata.interactor.DefaultHistoryMetadataGroupInteractor
 import org.mozilla.fenix.library.historymetadata.interactor.HistoryMetadataGroupInteractor
+import org.mozilla.fenix.library.historymetadata.view.HistoryMetadataGroupAdapter
 import org.mozilla.fenix.library.historymetadata.view.HistoryMetadataGroupView
 import org.mozilla.fenix.utils.allowUndo
 
@@ -70,6 +76,20 @@ class HistoryMetadataGroupFragment :
     override val selectedItems: Set<History.Metadata>
         get() = historyMetadataGroupStore.state.items.filter { it.selected }.toSet()
 
+    private val pendingDeletionBinding by lazy {
+        PendingDeletionBinding(requireContext().components.appStore, historyMetadataGroupView)
+    }
+
+    private class PendingDeletionBinding(
+        appStore: AppStore,
+        private val view: HistoryMetadataGroupView
+    ) : AbstractBinding<AppState>(appStore) {
+        override suspend fun onState(flow: Flow<AppState>) {
+            flow.ifChanged { it.pendingDeletionHistoryItems }
+                .collect { view.update(it) }
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -82,7 +102,6 @@ class HistoryMetadataGroupFragment :
             HistoryMetadataGroupFragmentStore(
                 HistoryMetadataGroupFragmentState(
                     items = historyItems,
-                    pendingDeletionItems = requireContext().components.appStore.state.pendingDeletionHistoryItems,
                     isEmpty = historyItems.isEmpty(),
                 ),
             )
@@ -126,15 +145,7 @@ class HistoryMetadataGroupFragment :
             activity?.invalidateOptionsMenu()
         }
 
-        requireContext().components.appStore.flowScoped(viewLifecycleOwner) { flow ->
-            flow.map { state -> state.pendingDeletionHistoryItems }.collect { items ->
-                historyMetadataGroupStore.dispatch(
-                    HistoryMetadataGroupFragmentAction.UpdatePendingDeletionItems(
-                        pendingDeletionItems = items,
-                    ),
-                )
-            }
-        }
+        pendingDeletionBinding.start()
     }
 
     override fun onResume() {
@@ -144,8 +155,10 @@ class HistoryMetadataGroupFragment :
 
     override fun onDestroyView() {
         super.onDestroyView()
+        pendingDeletionBinding.stop()
         _historyMetadataGroupView = null
         _binding = null
+
     }
 
     override fun onBackPressed(): Boolean = interactor.onBackPressed(selectedItems)

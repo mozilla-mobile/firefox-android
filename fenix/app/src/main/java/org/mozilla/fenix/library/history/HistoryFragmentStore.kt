@@ -131,6 +131,8 @@ sealed class HistoryFragmentAction : Action {
     data class HistoryItemClicked(val item: History) : HistoryFragmentAction()
 
     data class HistoryItemLongClicked(val item: History) : HistoryFragmentAction()
+    data class DeleteTimeRange(val timeFrame: RemoveTimeFrame?) : HistoryFragmentAction()
+    data class DeleteItems(val items: Set<History>) : HistoryFragmentAction()
     object SearchClicked : HistoryFragmentAction()
     object EnterRecentlyClosed : HistoryFragmentAction()
     object ExitEditMode : HistoryFragmentAction()
@@ -140,12 +142,6 @@ sealed class HistoryFragmentAction : Action {
      */
     data class ChangeEmptyState(val isEmpty: Boolean) : HistoryFragmentAction()
 
-    /**
-     * Updates the set of items marked for removal from the [org.mozilla.fenix.components.AppStore]
-     * to the [HistoryFragmentStore], to be hidden from the UI.
-     */
-    data class UpdatePendingDeletionItems(val pendingDeletionItems: Set<PendingDeletionHistory>) :
-        HistoryFragmentAction()
     object EnterDeletionMode : HistoryFragmentAction()
     object ExitDeletionMode : HistoryFragmentAction()
     object StartSync : HistoryFragmentAction()
@@ -160,7 +156,6 @@ sealed class HistoryFragmentAction : Action {
 data class HistoryFragmentState(
     val items: List<History>,
     val mode: Mode,
-    val pendingDeletionItems: Set<PendingDeletionHistory>,
     val isEmpty: Boolean,
     val isDeletingItems: Boolean,
 ) : State {
@@ -221,9 +216,8 @@ private fun historyStateReducer(
         is HistoryFragmentAction.StartSync -> state.copy(mode = HistoryFragmentState.Mode.Syncing)
         is HistoryFragmentAction.FinishSync -> state.copy(mode = HistoryFragmentState.Mode.Normal)
         is HistoryFragmentAction.ChangeEmptyState -> state.copy(isEmpty = action.isEmpty)
-        is HistoryFragmentAction.UpdatePendingDeletionItems -> state.copy(
-            pendingDeletionItems = action.pendingDeletionItems,
-        )
+        is HistoryFragmentAction.DeleteItems, // state is updated by storage
+        is HistoryFragmentAction.DeleteTimeRange, // state is updated by storage
         is HistoryFragmentAction.BackPressed,
         is HistoryFragmentAction.SearchClicked,
         is HistoryFragmentAction.EnterRecentlyClosed-> state
