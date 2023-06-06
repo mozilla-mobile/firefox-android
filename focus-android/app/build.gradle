@@ -100,7 +100,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = FocusVersions.google_compose_compiler
+        kotlinCompilerExtensionVersion = Versions.compose_compiler
     }
 
     flavorDimensions "product"
@@ -206,34 +206,34 @@ nimbus {
 }
 
 dependencies {
-    implementation FocusDependencies.androidx_appcompat
-    implementation FocusDependencies.androidx_browser
-    implementation FocusDependencies.androidx_cardview
-    implementation FocusDependencies.androidx_compose_ui
-    implementation FocusDependencies.androidx_compose_ui_tooling
-    implementation FocusDependencies.androidx_compose_foundation
-    implementation FocusDependencies.androidx_compose_material
-    implementation FocusDependencies.androidx_compose_runtime_livedata
-    implementation FocusDependencies.androidx_constraint_layout
-    implementation FocusDependencies.androidx_constraint_layout_compose
-    implementation FocusDependencies.androidx_core_ktx
-    implementation FocusDependencies.androidx_fragment
-    implementation FocusDependencies.androidx_lifecycle_process
-    implementation FocusDependencies.androidx_lifecycle_viewmodel
-    implementation FocusDependencies.androidx_palette
-    implementation FocusDependencies.androidx_preference
-    implementation FocusDependencies.androidx_recyclerview
-    implementation FocusDependencies.androidx_savedstate
-    implementation FocusDependencies.androidx_splashscreen
-    implementation FocusDependencies.androidx_transition
-    implementation FocusDependencies.androidx_work_ktx
-    implementation FocusDependencies.androidx_data_store_preferences
+    implementation ComponentsDependencies.androidx_appcompat
+    implementation ComponentsDependencies.androidx_browser
+    implementation ComponentsDependencies.androidx_cardview
+    implementation ComponentsDependencies.androidx_compose_ui
+    implementation ComponentsDependencies.androidx_compose_ui_tooling
+    implementation ComponentsDependencies.androidx_compose_foundation
+    implementation ComponentsDependencies.androidx_compose_material
+    implementation ComponentsDependencies.androidx_compose_runtime_livedata
+    implementation ComponentsDependencies.androidx_constraintlayout
+    implementation ComponentsDependencies.androidx_constraintlayout_compose
+    implementation ComponentsDependencies.androidx_core_ktx
+    implementation ComponentsDependencies.androidx_fragment
+    implementation ComponentsDependencies.androidx_lifecycle_process
+    implementation ComponentsDependencies.androidx_lifecycle_viewmodel
+    implementation ComponentsDependencies.androidx_palette
+    implementation ComponentsDependencies.androidx_preferences_focus
+    implementation ComponentsDependencies.androidx_recyclerview
+    implementation ComponentsDependencies.androidx_savedstate
+    implementation ComponentsDependencies.androidx_splashscreen
+    implementation ComponentsDependencies.androidx_transition
+    implementation ComponentsDependencies.androidx_work_runtime
+    implementation ComponentsDependencies.androidx_data_store_preferences
 
-    implementation FocusDependencies.google_play
+    implementation ComponentsDependencies.google_play
 
-    implementation FocusDependencies.google_material
+    implementation ComponentsDependencies.google_material
 
-    implementation FocusDependencies.sentry
+    implementation ComponentsDependencies.thirdparty_sentry_latest
 
     implementation project(':browser-engine-gecko')
     implementation project(':browser-domains')
@@ -296,42 +296,41 @@ dependencies {
 
     implementation project(':service-telemetry')
 
-    implementation FocusDependencies.kotlin_coroutines
-    debugImplementation FocusDependencies.leakcanary
+    implementation ComponentsDependencies.kotlin_coroutines_core
+    debugImplementation ComponentsDependencies.leakcanary
 
-    focusImplementation FocusDependencies.adjust
-    focusImplementation FocusDependencies.install_referrer // Required by Adjust
+    focusImplementation ComponentsDependencies.adjust
+    focusImplementation ComponentsDependencies.install_referrer // Required by Adjust
 
     testImplementation "org.mozilla.telemetry:glean-native-forUnitTests:${project.ext.glean_version}"
 
-    testImplementation FocusDependencies.testing_junit_api
-    testRuntimeOnly FocusDependencies.testing_junit_engine
-    testImplementation FocusDependencies.testing_junit_params
-    testImplementation FocusDependencies.testing_robolectric
-    testImplementation FocusDependencies.testing_mockito
-    testImplementation FocusDependencies.testing_coroutines
-    testImplementation FocusDependencies.androidx_work_testing
-    testImplementation FocusDependencies.androidx_arch_core_testing
+    testImplementation ComponentsDependencies.testing_junit_api
+    testRuntimeOnly ComponentsDependencies.testing_junit_engine
+    testImplementation ComponentsDependencies.testing_junit_params
+    testImplementation ComponentsDependencies.testing_robolectric
+    testImplementation ComponentsDependencies.testing_mockito
+    testImplementation ComponentsDependencies.testing_coroutines
+    testImplementation ComponentsDependencies.androidx_work_testing
+    testImplementation ComponentsDependencies.androidx_arch_core_testing
     testImplementation project(':support-test')
     testImplementation project(':support-test-libstate')
-    androidTestImplementation FocusDependencies.espresso_core, {
+    androidTestImplementation ComponentsDependencies.androidx_espresso_core, {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
-    androidTestImplementation FocusDependencies.espresso_idling_resource
-    androidTestImplementation FocusDependencies.espresso_web, {
+    androidTestImplementation ComponentsDependencies.androidx_espresso_idling_resource
+    androidTestImplementation ComponentsDependencies.androidx_espresso_web, {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
-    androidTestImplementation FocusDependencies.espresso_intents
+    androidTestImplementation ComponentsDependencies.androidx_espresso_intents
 
-
-    androidTestImplementation FocusDependencies.testing_mockwebserver
-    testImplementation FocusDependencies.testing_mockwebserver
+    androidTestImplementation ComponentsDependencies.testing_mockwebserver_focus
+    testImplementation ComponentsDependencies.testing_mockwebserver_focus
     testImplementation project(':lib-fetch-okhttp')
 
-    androidTestImplementation FocusDependencies.fastlane
-    androidTestImplementation FocusDependencies.falcon // Required by fastlane
+    androidTestImplementation ComponentsDependencies.testing_fastlane
+    androidTestImplementation ComponentsDependencies.testing_falcon // Required by fastlane
 
-    androidTestImplementation FocusDependencies.espresso_contrib, {
+    androidTestImplementation ComponentsDependencies.androidx_espresso_contrib, {
         exclude module: 'appcompat-v7'
         exclude module: 'support-v4'
         exclude module: 'support-annotations'
@@ -339,15 +338,15 @@ dependencies {
         exclude module: 'design'
         exclude module: 'espresso-core'
     }
-    testImplementation FocusDependencies.androidx_test_core
-    testImplementation FocusDependencies.androidx_test_runner
-    testImplementation FocusDependencies.androidx_test_rules
+    testImplementation ComponentsDependencies.androidx_test_core
+    testImplementation ComponentsDependencies.androidx_test_runner
+    testImplementation ComponentsDependencies.androidx_test_rules
 
-    androidTestImplementation FocusDependencies.androidx_test_core_ktx
-    androidTestImplementation FocusDependencies.androidx_junit_ktx
-    androidTestImplementation FocusDependencies.androidx_uiautomator
-    androidTestImplementation FocusDependencies.androidx_test_runner
-    androidTestUtil FocusDependencies.androidx_orchestrator
+    androidTestImplementation ComponentsDependencies.androidx_test_core
+    androidTestImplementation ComponentsDependencies.androidx_test_junit
+    androidTestImplementation ComponentsDependencies.androidx_test_uiautomator
+    androidTestImplementation ComponentsDependencies.androidx_test_runner
+    androidTestUtil ComponentsDependencies.androidx_test_orchestrator
 
 }
 // -------------------------------------------------------------------------------------------------
