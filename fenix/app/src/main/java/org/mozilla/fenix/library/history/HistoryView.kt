@@ -11,9 +11,7 @@ import androidx.core.view.isVisible
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
-import mozilla.components.support.base.feature.UserInteractionHandler
 import org.mozilla.fenix.R
-import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.appstate.AppState
 import org.mozilla.fenix.databinding.ComponentHistoryBinding
 import org.mozilla.fenix.ext.components

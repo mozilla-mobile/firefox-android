@@ -13,8 +13,6 @@ import mozilla.components.lib.state.Middleware
 import mozilla.components.lib.state.State
 import mozilla.components.lib.state.Store
 import mozilla.components.support.ktx.kotlin.tryGetHostFromUrl
-import org.mozilla.fenix.library.history.state.HistoryNavigationMiddleware
-import org.mozilla.fenix.selection.SelectionHolder
 
 /**
  * Class representing a history entry.
@@ -120,7 +118,7 @@ class HistoryFragmentStore(
     Store<HistoryFragmentState, HistoryFragmentAction>(
         initialState,
         ::historyStateReducer,
-        middleware
+        middleware,
     )
 
 /**
@@ -192,8 +190,8 @@ private fun historyStateReducer(
                 } else {
                     state.copy(
                         mode = HistoryFragmentState.Mode.Editing(
-                            state.mode.selectedItems + action.item
-                        )
+                            state.mode.selectedItems + action.item,
+                        ),
                     )
                 }
             }
@@ -201,12 +199,11 @@ private fun historyStateReducer(
         is HistoryFragmentAction.HistoryItemLongClicked -> {
             if (state.mode == HistoryFragmentState.Mode.Syncing) {
                 state
-            }
-            else {
+            } else {
                 state.copy(
                     mode = HistoryFragmentState.Mode.Editing(
-                        state.mode.selectedItems + action.item
-                    )
+                        state.mode.selectedItems + action.item,
+                    ),
                 )
             }
         }
@@ -220,6 +217,7 @@ private fun historyStateReducer(
         is HistoryFragmentAction.DeleteTimeRange, // state is updated by storage
         is HistoryFragmentAction.BackPressed,
         is HistoryFragmentAction.SearchClicked,
-        is HistoryFragmentAction.EnterRecentlyClosed-> state
+        is HistoryFragmentAction.EnterRecentlyClosed,
+        -> state
     }
 }

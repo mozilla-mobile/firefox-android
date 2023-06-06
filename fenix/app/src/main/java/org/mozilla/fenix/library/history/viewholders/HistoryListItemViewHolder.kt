@@ -8,7 +8,6 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import org.mozilla.fenix.R
-import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.databinding.HistoryListItemBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.hideAndDisable

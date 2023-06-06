@@ -30,13 +30,9 @@ import androidx.paging.PagingData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
 import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.lib.state.ext.consumeFrom
-import mozilla.components.lib.state.ext.flowScoped
 import mozilla.components.lib.state.helpers.AbstractBinding
 import mozilla.components.service.fxa.SyncEngine
 import mozilla.components.service.fxa.sync.SyncReason
@@ -53,7 +49,6 @@ import org.mozilla.fenix.addons.showSnackBar
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.StoreProvider
-import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.appstate.AppState
 import org.mozilla.fenix.components.history.DefaultPagedHistoryProvider
 import org.mozilla.fenix.databinding.FragmentHistoryBinding
@@ -68,7 +63,6 @@ import org.mozilla.fenix.library.history.state.HistoryNavigationMiddleware
 import org.mozilla.fenix.library.history.state.HistoryStorageMiddleware
 import org.mozilla.fenix.library.history.state.HistorySyncMiddleware
 import org.mozilla.fenix.library.history.state.HistoryTelemetryMiddleware
-import org.mozilla.fenix.library.historymetadata.view.HistoryMetadataGroupView
 import org.mozilla.fenix.utils.allowUndo
 import org.mozilla.fenix.GleanMetrics.History as GleanHistory
 
@@ -98,9 +92,9 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler, 
         PendingDeletionBinding(requireContext().components.appStore, historyView)
     }
 
-    private class PendingDeletionBinding(
+    internal class PendingDeletionBinding(
         appStore: AppStore,
-        private val view: HistoryView
+        private val view: HistoryView,
     ) : AbstractBinding<AppState>(appStore) {
         override suspend fun onState(flow: Flow<AppState>) {
             flow.ifChanged { it.pendingDeletionHistoryItems }
@@ -108,9 +102,9 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler, 
         }
     }
 
-    class MenuBinding(
+    internal class MenuBinding(
         store: HistoryFragmentStore,
-        val invalidateOptionsMenu: () -> Unit
+        val invalidateOptionsMenu: () -> Unit,
     ) : AbstractBinding<HistoryFragmentState>(store) {
         override suspend fun onState(flow: Flow<HistoryFragmentState>) {
             flow.ifChanged { it.mode }
@@ -141,22 +135,23 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler, 
                     HistoryNavigationMiddleware(
                         navController = findNavController(),
                         settings = requireContext().components.settings,
-                        openToBrowser = this@HistoryFragment::openItem,
+                        openToBrowser = ::openItem,
                         onBackPressed = {
-                            this@HistoryFragment.lifecycleScope.launch {
+                            lifecycleScope.launch {
                                 requireActivity().onBackPressedDispatcher.onBackPressed()
                             }
-                        }
+                        },
                     ),
                     HistoryTelemetryMiddleware(
                         isInPrivateMode = {
                             (activity as HomeActivity)
                                 .browsingModeManager.mode == BrowsingMode.Private
-                        }
+                        },
                     ),
                     HistorySyncMiddleware(
-                        syncHistory = this@HistoryFragment::syncHistory,
-                        scope = this@HistoryFragment.lifecycleScope,
+                        accountManager = requireContext().components.backgroundServices.accountManager,
+                        refreshView = { historyView.historyAdapter.refresh() },
+                        scope = lifecycleScope,
                     ),
                     HistoryStorageMiddleware(
                         appStore = requireContext().components.appStore,
@@ -165,8 +160,8 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler, 
                         historyStorage = requireContext().components.core.historyStorage,
                         deleteSnackbar = ::deleteSnackbar,
                         onTimeFrameDeleted = ::onTimeFrameDeleted,
-                    )
-                )
+                    ),
+                ),
             )
         }
         _historyView = HistoryView(
@@ -275,7 +270,6 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler, 
         super.onResume()
 
         (activity as NavHostActivity).getSupportActionBarAndInflateIfNecessary().show()
-        startStateBindings()
     }
 
     override fun onCreateMenu(menu: Menu, inflater: MenuInflater) {
@@ -321,8 +315,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler, 
             true
         }
         R.id.delete_history_multi_select -> {
-
-            with (historyStore) {
+            with(historyStore) {
                 dispatch(HistoryFragmentAction.DeleteItems(state.mode.selectedItems))
                 dispatch(HistoryFragmentAction.ExitEditMode)
             }
@@ -432,17 +425,6 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler, 
             R.id.historyFragment,
             directions,
         )
-    }
-
-    @Suppress("UnusedPrivateMember")
-    private suspend fun syncHistory() {
-        val accountManager = requireComponents.backgroundServices.accountManager
-        accountManager.syncNow(
-            reason = SyncReason.User,
-            debounce = true,
-            customEngineSubset = listOf(SyncEngine.History),
-        )
-        historyView.historyAdapter.refresh()
     }
 
     internal class DeleteConfirmationDialogFragment(

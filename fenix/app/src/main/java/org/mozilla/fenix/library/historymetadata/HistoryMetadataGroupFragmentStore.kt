@@ -8,7 +8,6 @@ import mozilla.components.lib.state.Action
 import mozilla.components.lib.state.State
 import mozilla.components.lib.state.Store
 import org.mozilla.fenix.library.history.History
-import org.mozilla.fenix.library.history.PendingDeletionHistory
 
 /**
  * The [Store] for holding the [HistoryMetadataGroupFragmentState] and applying

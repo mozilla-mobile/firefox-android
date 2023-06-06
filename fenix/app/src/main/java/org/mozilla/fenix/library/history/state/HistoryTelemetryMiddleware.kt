@@ -10,13 +10,16 @@ import org.mozilla.fenix.library.history.HistoryFragmentState
 import org.mozilla.fenix.library.history.RemoveTimeFrame
 import org.mozilla.fenix.GleanMetrics.History as GleanHistory
 
+/**
+ * Middleware to send telemetry events in response to HistoryFragmentActions
+ */
 class HistoryTelemetryMiddleware(
     private val isInPrivateMode: () -> Boolean, // this should potentially be a browser store read
 ) : Middleware<HistoryFragmentState, HistoryFragmentAction> {
     override fun invoke(
         context: MiddlewareContext<HistoryFragmentState, HistoryFragmentAction>,
         next: (HistoryFragmentAction) -> Unit,
-        action: HistoryFragmentAction
+        action: HistoryFragmentAction,
     ) {
         when (action) {
             is HistoryFragmentAction.HistoryItemClicked -> {
@@ -45,10 +48,10 @@ class HistoryTelemetryMiddleware(
                 }
             }
             is HistoryFragmentAction.DeleteTimeRange -> when (action.timeFrame) {
-                    RemoveTimeFrame.LastHour -> GleanHistory.removedLastHour.record(NoExtras())
-                    RemoveTimeFrame.TodayAndYesterday -> GleanHistory.removedTodayAndYesterday.record(NoExtras())
-                    null -> GleanHistory.removedAll.record(NoExtras())
-                }
+                RemoveTimeFrame.LastHour -> GleanHistory.removedLastHour.record(NoExtras())
+                RemoveTimeFrame.TodayAndYesterday -> GleanHistory.removedTodayAndYesterday.record(NoExtras())
+                null -> GleanHistory.removedAll.record(NoExtras())
+            }
             else -> {}
         }
         next(action)

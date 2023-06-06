@@ -11,7 +11,6 @@ import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.browser.storage.sync.PlacesHistoryStorage
 import mozilla.components.lib.state.Middleware
 import mozilla.components.lib.state.MiddlewareContext
-import mozilla.components.service.glean.private.NoExtras
 import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.history.DefaultPagedHistoryProvider
@@ -22,6 +21,9 @@ import org.mozilla.fenix.library.history.HistoryFragmentState
 import org.mozilla.fenix.library.history.HistoryFragmentStore
 import org.mozilla.fenix.library.history.toPendingDeletionHistory
 
+/**
+ * Middleware to initiate storage-layer side-effects in response to HistoryFragmentActions.
+ */
 class HistoryStorageMiddleware(
     private val appStore: AppStore,
     private val browserStore: BrowserStore,
@@ -32,12 +34,12 @@ class HistoryStorageMiddleware(
         undo: suspend (Set<History>) -> Unit,
         delete: (HistoryFragmentStore, Set<History>) -> suspend (context: Context) -> Unit,
     ) -> Unit,
-    private val onTimeFrameDeleted: () -> Unit
+    private val onTimeFrameDeleted: () -> Unit,
 ) : Middleware<HistoryFragmentState, HistoryFragmentAction> {
     override fun invoke(
         context: MiddlewareContext<HistoryFragmentState, HistoryFragmentAction>,
         next: (HistoryFragmentAction) -> Unit,
-        action: HistoryFragmentAction
+        action: HistoryFragmentAction,
     ) {
         when (action) {
             is HistoryFragmentAction.DeleteItems -> {

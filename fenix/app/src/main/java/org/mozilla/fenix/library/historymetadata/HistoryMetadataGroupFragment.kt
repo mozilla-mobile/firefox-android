@@ -24,9 +24,7 @@ import androidx.navigation.fragment.navArgs
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import mozilla.components.lib.state.ext.consumeFrom
-import mozilla.components.lib.state.ext.flowScoped
 import mozilla.components.lib.state.helpers.AbstractBinding
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.ktx.kotlin.toShortUrl
@@ -51,7 +49,6 @@ import org.mozilla.fenix.library.history.History
 import org.mozilla.fenix.library.historymetadata.controller.DefaultHistoryMetadataGroupController
 import org.mozilla.fenix.library.historymetadata.interactor.DefaultHistoryMetadataGroupInteractor
 import org.mozilla.fenix.library.historymetadata.interactor.HistoryMetadataGroupInteractor
-import org.mozilla.fenix.library.historymetadata.view.HistoryMetadataGroupAdapter
 import org.mozilla.fenix.library.historymetadata.view.HistoryMetadataGroupView
 import org.mozilla.fenix.utils.allowUndo
 
@@ -80,9 +77,9 @@ class HistoryMetadataGroupFragment :
         PendingDeletionBinding(requireContext().components.appStore, historyMetadataGroupView)
     }
 
-    private class PendingDeletionBinding(
+    internal class PendingDeletionBinding(
         appStore: AppStore,
-        private val view: HistoryMetadataGroupView
+        private val view: HistoryMetadataGroupView,
     ) : AbstractBinding<AppState>(appStore) {
         override suspend fun onState(flow: Flow<AppState>) {
             flow.ifChanged { it.pendingDeletionHistoryItems }
@@ -158,7 +155,6 @@ class HistoryMetadataGroupFragment :
         pendingDeletionBinding.stop()
         _historyMetadataGroupView = null
         _binding = null
-
     }
 
     override fun onBackPressed(): Boolean = interactor.onBackPressed(selectedItems)
