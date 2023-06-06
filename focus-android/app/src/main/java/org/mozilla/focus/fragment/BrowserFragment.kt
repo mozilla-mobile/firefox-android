@@ -394,6 +394,15 @@ class BrowserFragment :
                 fragmentManager = parentFragmentManager,
                 launchInApp = { requireContext().settings.openLinksInExternalApp },
                 loadUrlUseCase = requireContext().components.sessionUseCases.loadUrl,
+                failedToLaunchAction = { fallbackUrl ->
+                    fallbackUrl?.let {
+                        val appLinksUseCases = components.appLinksUseCases
+                        val getRedirect = appLinksUseCases.appLinkRedirect
+                        val redirect = getRedirect.invoke(fallbackUrl)
+                        redirect.appIntent?.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        appLinksUseCases.openAppLink.invoke(redirect.appIntent)
+                    }
+                },
             ),
             owner = this,
             view = view,
@@ -522,6 +531,7 @@ class BrowserFragment :
             ::showFindInPageBar,
             ::openSelectBrowser,
             ::openInBrowser,
+            ::showShortcutAddedSnackBar,
         )
 
         if (tab.ifCustomTab()?.config == null) {
@@ -553,6 +563,12 @@ class BrowserFragment :
             owner = this,
             view = binding.browserToolbar,
         )
+    }
+
+    private fun showShortcutAddedSnackBar() {
+        FocusSnackbar.make(requireView())
+            .setText(requireContext().getString(R.string.snackbar_added_to_shortcuts))
+            .show()
     }
 
     private fun initialiseNormalBrowserUi() {
