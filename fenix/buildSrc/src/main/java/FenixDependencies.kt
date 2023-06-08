@@ -39,7 +39,7 @@ object FenixVersions {
     const val androidx_legacy = "1.0.0"
     const val androidx_annotation = "1.6.0"
     const val androidx_lifecycle = "2.6.1"
-    const val androidx_fragment = "1.5.7"
+    const val androidx_fragment = "1.6.0"
     const val androidx_navigation = "2.5.3"
     const val androidx_recyclerview = "1.3.0"
     const val androidx_core = "1.10.1"
@@ -63,7 +63,7 @@ object FenixVersions {
 
     const val google_ads_id_version = "16.0.0"
 
-    const val google_play_review_version = "2.0.0"
+    const val google_play_review_version = "2.0.1"
 
     // keep in sync with the versions used in AS.
     const val protobuf = "3.21.10"
