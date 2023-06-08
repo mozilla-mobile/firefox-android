@@ -336,7 +336,7 @@
     <string name="juno_onboarding_enable_notifications_description">Anfonwch dabiau rhwng dyfeisiau, rheoli llwytho a chael awgrymiadau ar sut i gael y gorau o %s.</string>
     <!-- Description for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
        Note: The word "Firefox" should NOT be translated   -->
-    <string name="juno_onboarding_enable_notifications_description_nimbus" tools:ignore="UnusedResources">Anfon tabiau rhwng dyfeisiau, rheoli lweythi, a chael awgrymiadau ar gael y gorau o Firefox.</string>
+    <string name="juno_onboarding_enable_notifications_description_nimbus" tools:ignore="UnusedResources">Yn anfon tabiau rhwng dyfeisiau, rheoli llwythi, a chael awgrymiadau am sut i gael y gorau o Firefox.</string>
     <!-- Text for the button to request notification permission on the device -->
     <string name="juno_onboarding_enable_notifications_positive_button">Troi hysbysiadau ymlaen</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
@@ -409,7 +409,9 @@
     <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
     <string name="cookie_banner_handling_details_site_is_not_supported_cancel_button">Diddymu</string>
     <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
-    <string name="cookie_banner_handling_details_site_is_not_supported_request_support_button">Gofyn am gymorth</string>
+    <string name="cookie_banner_handling_details_site_is_not_supported_request_support_button" moz:RemovedIn="115" tools:ignore="UnusedResources">Gofyn am gymorth</string>
+    <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
+    <string name="cookie_banner_handling_details_site_is_not_supported_request_support_button_2">Anfon cais</string>
     <!-- Text for title indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
     <string name="cookie_banner_handling_details_site_is_not_supported_title" moz:RemovedIn="114" tools:ignore="UnusedResources">Cyfyngu Baneri Cwcis</string>
     <!-- Text for title indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->

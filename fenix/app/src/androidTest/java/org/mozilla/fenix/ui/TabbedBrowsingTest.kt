@@ -9,14 +9,15 @@ import androidx.test.uiautomator.UiDevice
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
+import org.junit.Assert.assertTrue
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.RetryTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
+import org.mozilla.fenix.helpers.TestHelper.isSoftKeyboardVisible
 import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
@@ -141,7 +142,6 @@ class TabbedBrowsingTest {
         }
     }
 
-    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1830870")
     @Test
     fun closeTabTest() {
         val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -199,7 +199,6 @@ class TabbedBrowsingTest {
         }
     }
 
-    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1829838")
     @Test
     fun closePrivateTabTest() {
         val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -347,7 +346,7 @@ class TabbedBrowsingTest {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
         }.openTabButtonShortcutsMenu {
         }.openNewPrivateTabFromShortcutsMenu {
-            verifyKeyboardVisible()
+            assertTrue(isSoftKeyboardVisible())
             verifyFocusedNavigationToolbar()
             // dismiss search dialog
             homeScreen { }.pressBack()
@@ -358,7 +357,7 @@ class TabbedBrowsingTest {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
         }.openTabButtonShortcutsMenu {
         }.openTabFromShortcutsMenu {
-            verifyKeyboardVisible()
+            assertTrue(isSoftKeyboardVisible())
             verifyFocusedNavigationToolbar()
             // dismiss search dialog
             homeScreen { }.pressBack()

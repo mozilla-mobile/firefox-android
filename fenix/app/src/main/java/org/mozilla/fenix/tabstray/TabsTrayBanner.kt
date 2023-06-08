@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
@@ -39,15 +40,18 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import mozilla.components.browser.state.state.ContentState
 import mozilla.components.browser.state.state.TabSessionState
+import mozilla.components.lib.state.ext.observeAsComposableState
 import mozilla.components.ui.tabcounter.TabCounter
 import org.mozilla.fenix.R
-import org.mozilla.fenix.compose.DropdownMenu
+import org.mozilla.fenix.compose.ContextualMenu
 import org.mozilla.fenix.compose.MenuItem
 import org.mozilla.fenix.compose.annotation.LightDarkPreview
 import org.mozilla.fenix.theme.FirefoxTheme
@@ -57,18 +61,12 @@ private val ICON_SIZE = 24.dp
 /**
  * Top-level UI for displaying the banner in [TabsTray].
  *
- * @param selectMode Current [TabsTrayState.Mode] used in the tabs tray.
- * @param selectedPage The active [Page] of the Tabs Tray.
- * @param normalTabCount The total amount of normal browsing tabs currently open.
- * @param privateTabCount The number of private browsing tabs currently open.
+ * @param tabsTrayStore [TabsTrayStore] used to listen for changes to [TabsTrayState].
  * @param isInDebugMode True for debug variant or if secret menu is enabled for this session.
  * @param onTabPageIndicatorClicked Invoked when the user clicks on a tab page indicator.
- * @param onExitSelectModeClick Invoked when the user clicks on exit select mode button from the
- * multi select banner.
  * @param onSaveToCollectionClick Invoked when the user clicks on the save to collection button from
  * the multi select banner.
  * @param onShareSelectedTabsClick Invoked when the user clicks on the share button from the multi select banner.
- * @param onEnterMultiselectModeClick Invoked when the user clicks on the enter multiselect mode menu item.
  * @param onShareAllTabsClick Invoked when the user clicks on the share menu item.
  * @param onTabSettingsClick Invoked when the user clicks on the tab settings menu item.
  * @param onRecentlyClosedClick Invoked when the user clicks on the recently closed tabs menu item.
@@ -81,16 +79,11 @@ private val ICON_SIZE = 24.dp
 @Suppress("LongParameterList")
 @Composable
 fun TabsTrayBanner(
-    selectMode: TabsTrayState.Mode,
-    selectedPage: Page,
-    normalTabCount: Int,
-    privateTabCount: Int,
+    tabsTrayStore: TabsTrayStore,
     isInDebugMode: Boolean,
     onTabPageIndicatorClicked: (Page) -> Unit,
-    onExitSelectModeClick: () -> Unit,
     onSaveToCollectionClick: () -> Unit,
     onShareSelectedTabsClick: () -> Unit,
-    onEnterMultiselectModeClick: () -> Unit,
     onShareAllTabsClick: () -> Unit,
     onTabSettingsClick: () -> Unit,
     onRecentlyClosedClick: () -> Unit,
@@ -100,11 +93,21 @@ fun TabsTrayBanner(
     onBookmarkSelectedTabsClick: () -> Unit,
     onForceSelectedTabsAsInactiveClick: () -> Unit,
 ) {
-    if (selectMode is TabsTrayState.Mode.Select) {
+    val normalTabCount = tabsTrayStore.observeAsComposableState { state ->
+        state.normalTabs.size + state.inactiveTabs.size
+    }.value ?: 0
+    val privateTabCount = tabsTrayStore
+        .observeAsComposableState { state -> state.privateTabs.size }.value ?: 0
+    val multiselectMode = tabsTrayStore
+        .observeAsComposableState { state -> state.mode }.value ?: TabsTrayState.Mode.Normal
+    val selectedPage = tabsTrayStore
+        .observeAsComposableState { state -> state.selectedPage }.value ?: Page.NormalTabs
+
+    if (multiselectMode is TabsTrayState.Mode.Select) {
         MultiSelectBanner(
-            selectedTabCount = selectMode.selectedTabs.size,
+            selectedTabCount = multiselectMode.selectedTabs.size,
             shouldShowInactiveButton = isInDebugMode,
-            onExitSelectModeClick = onExitSelectModeClick,
+            onExitSelectModeClick = { tabsTrayStore.dispatch(TabsTrayAction.ExitSelectMode) },
             onSaveToCollectionsClick = onSaveToCollectionClick,
             onShareSelectedTabs = onShareSelectedTabsClick,
             onBookmarkSelectedTabsClick = onBookmarkSelectedTabsClick,
@@ -117,7 +120,7 @@ fun TabsTrayBanner(
             selectedPage = selectedPage,
             normalTabCount = normalTabCount,
             privateTabCount = privateTabCount,
-            onEnterMultiselectModeClick = onEnterMultiselectModeClick,
+            onEnterMultiselectModeClick = { tabsTrayStore.dispatch(TabsTrayAction.EnterSelectMode) },
             onShareAllTabsClick = onShareAllTabsClick,
             onTabSettingsClick = onTabSettingsClick,
             onRecentlyClosedClick = onRecentlyClosedClick,
@@ -145,7 +148,7 @@ private fun SingleSelectBanner(
     val inactiveColor = FirefoxTheme.colors.iconPrimaryInactive
     var showMenu by remember { mutableStateOf(false) }
 
-    Column {
+    Column(modifier = Modifier.background(color = FirefoxTheme.colors.layer1)) {
         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.bottom_sheet_handle_top_margin)))
 
         Divider(
@@ -224,7 +227,7 @@ private fun SingleSelectBanner(
                     .align(Alignment.CenterVertically)
                     .testTag(TabsTrayTestTag.threeDotButton),
             ) {
-                DropdownMenu(
+                ContextualMenu(
                     menuItems = generateSingleSelectBannerMenuItems(
                         selectedPage,
                         normalTabCount,
@@ -340,7 +343,12 @@ private fun NormalTabsTabIcon(normalTabCount: Int) {
         stringResource(id = R.string.mozac_tab_counter_open_tab_tray_plural, normalTabCount.toString())
     }
 
-    Box {
+    Box(
+        modifier = Modifier
+            .semantics(mergeDescendants = true) {
+                testTag = TabsTrayTestTag.normalTabsCounter
+            },
+    ) {
         Icon(
             painter = painterResource(
                 id = mozilla.components.ui.tabcounter.R.drawable.mozac_ui_tabcounter_box,
@@ -455,7 +463,7 @@ private fun MultiSelectBanner(
                 tint = FirefoxTheme.colors.iconOnColor,
             )
 
-            DropdownMenu(
+            ContextualMenu(
                 menuItems = menuItems,
                 showMenu = showMenu,
                 offset = DpOffset(x = 0.dp, y = -ICON_SIZE),
@@ -510,25 +518,30 @@ private fun TabsTrayBannerPreviewRoot(
     selectMode: TabsTrayState.Mode = TabsTrayState.Mode.Normal,
     selectedPage: Page = Page.NormalTabs,
     normalTabCount: Int = 10,
+    privateTabCount: Int = 10,
 ) {
-    var selectedPageState by remember { mutableStateOf(selectedPage) }
-    var selectModeState by remember { mutableStateOf(selectMode) }
+    val normalTabs = generateFakeTabsList(normalTabCount)
+    val privateTabs = generateFakeTabsList(privateTabCount)
+
+    val tabsTrayStore = TabsTrayStore(
+        initialState = TabsTrayState(
+            selectedPage = selectedPage,
+            mode = selectMode,
+            normalTabs = normalTabs,
+            privateTabs = privateTabs,
+        ),
+    )
 
     FirefoxTheme {
-        Box(modifier = Modifier.background(color = FirefoxTheme.colors.layer1)) {
+        Box(modifier = Modifier.size(400.dp)) {
             TabsTrayBanner(
-                selectMode = selectModeState,
-                selectedPage = selectedPageState,
-                normalTabCount = normalTabCount,
-                privateTabCount = 10,
+                tabsTrayStore = tabsTrayStore,
                 isInDebugMode = true,
                 onTabPageIndicatorClicked = { page ->
-                    selectedPageState = page
+                    tabsTrayStore.dispatch(TabsTrayAction.PageSelected(page))
                 },
-                onExitSelectModeClick = { selectModeState = TabsTrayState.Mode.Normal },
                 onSaveToCollectionClick = {},
                 onShareSelectedTabsClick = {},
-                onEnterMultiselectModeClick = {},
                 onShareAllTabsClick = {},
                 onTabSettingsClick = {},
                 onRecentlyClosedClick = {},
@@ -551,3 +564,14 @@ private object DisabledRippleTheme : RippleTheme {
     @Composable
     override fun rippleAlpha(): RippleAlpha = RippleAlpha(0.0f, 0.0f, 0.0f, 0.0f)
 }
+
+private fun generateFakeTabsList(tabCount: Int = 10, isPrivate: Boolean = false): List<TabSessionState> =
+    List(tabCount) { index ->
+        TabSessionState(
+            id = "tabId$index-$isPrivate",
+            content = ContentState(
+                url = "www.mozilla.com",
+                private = isPrivate,
+            ),
+        )
+    }

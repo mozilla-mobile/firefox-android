@@ -54,7 +54,7 @@ class BookmarksStorageSuggestionProvider(
     private val icons: BrowserIcons? = null,
     private val indicatorIcon: Drawable? = null,
     private val engine: Engine? = null,
-    private val showEditSuggestion: Boolean = true,
+    @get:VisibleForTesting val showEditSuggestion: Boolean = true,
     private val suggestionsHeader: String? = null,
     @get:VisibleForTesting val resultsUriFilter: Uri? = null,
 ) : AwesomeBar.SuggestionProvider {

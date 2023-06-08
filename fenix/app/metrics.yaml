@@ -2266,26 +2266,6 @@ metrics:
     metadata:
       tags:
         - Notifications
-  shared_prefs_uuid:
-    type: uuid
-    lifetime: ping
-    description: |
-      A UUID stored in Shared Preferences used to analyze technical differences
-      between storage mechanisms in Android, specifically the Glean DB and
-      Shared Preferences.
-    send_in_pings:
-      - metrics
-    notification_emails:
-      - android-probes@mozilla.com
-      - raphael@mozilla.com
-      - fbertsch@mozilla.com
-    bugs:
-      - https://bugzilla.mozilla.org/show_bug.cgi?id=1822119
-    data_reviews:
-      - https://bugzilla.mozilla.org/show_bug.cgi?id=1822119
-    data_sensitivity:
-      - technical
-    expires: 116
 
 customize_home:
   most_visited_sites:
@@ -3837,11 +3817,12 @@ history:
       - https://github.com/mozilla-mobile/fenix/issues/26101
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/26153
+      - https://github.com/mozilla-mobile/firefox-android/pull/2225
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 117
+    expires: 123
     metadata:
       tags:
         - History
@@ -3853,11 +3834,12 @@ history:
       - https://github.com/mozilla-mobile/fenix/issues/26101
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/26153
+      - https://github.com/mozilla-mobile/firefox-android/pull/2225
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 117
+    expires: 123
     metadata:
       tags:
         - History
@@ -3869,11 +3851,12 @@ history:
       - https://github.com/mozilla-mobile/fenix/issues/26101
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/26153
+      - https://github.com/mozilla-mobile/firefox-android/pull/2225
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 117
+    expires: 123
     metadata:
       tags:
         - History
@@ -3885,11 +3868,12 @@ history:
       - https://github.com/mozilla-mobile/fenix/issues/26101
     data_reviews:
       - https://github.com/mozilla-mobile/fenix/pull/26153
+      - https://github.com/mozilla-mobile/firefox-android/pull/2225
     data_sensitivity:
       - interaction
     notification_emails:
       - android-probes@mozilla.com
-    expires: 117
+    expires: 123
     metadata:
       tags:
         - History
@@ -9468,23 +9452,6 @@ private_browsing_shortcut_cfr:
     notification_emails:
       - android-probes@mozilla.com
     expires: 122
-
-server_knobs:
-  validation:
-    disabled: true
-    type: event
-    description: |
-      Temporary metric recorded at the same time as
-      "tabs_tray.new_tab_tapped" to validate that the Glean Server Knobs
-      functionality is working correctly.
-    bugs:
-      - https://bugzilla.mozilla.org/show_bug.cgi?id=1823682
-    data_reviews:
-      - https://bugzilla.mozilla.org/show_bug.cgi?id=1823682#c2
-    notification_emails:
-      - android-probes@mozilla.com
-      - brosa@mozilla.com
-    expires: 116
 
 pull_to_refresh_in_browser:
   enabled:

@@ -31,8 +31,6 @@ import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import mozilla.components.browser.state.selector.normalTabs
-import mozilla.components.browser.state.selector.privateTabs
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.ContentState
 import mozilla.components.browser.state.state.TabSessionState
@@ -62,7 +60,6 @@ import mozilla.components.browser.storage.sync.Tab as SyncTab
  * @param onTabClose Invoked when the user clicks to close a tab.
  * @param onTabMediaClick Invoked when the user interacts with a tab's media controls.
  * @param onTabClick Invoked when the user clicks on a tab.
- * @param onTabMultiSelectClick Invoked when the user clicks on a tab while in multi-select mode.
  * @param onTabLongClick Invoked when the user long clicks a tab.
  * @param onInactiveTabsHeaderClick Invoked when the user clicks on the inactive tabs section header.
  * @param onDeleteAllInactiveTabsClick Invoked when the user clicks on the delete all inactive tabs button.
@@ -101,7 +98,6 @@ fun TabsTray(
     onTabClose: (TabSessionState) -> Unit,
     onTabMediaClick: (TabSessionState) -> Unit,
     onTabClick: (TabSessionState) -> Unit,
-    onTabMultiSelectClick: (TabSessionState) -> Unit,
     onTabLongClick: (TabSessionState) -> Unit,
     onInactiveTabsHeaderClick: (Boolean) -> Unit,
     onDeleteAllInactiveTabsClick: () -> Unit,
@@ -122,24 +118,12 @@ fun TabsTray(
     onDeleteSelectedTabsClick: () -> Unit,
     onForceSelectedTabsAsInactiveClick: () -> Unit,
 ) {
-    val normalTabCount = browserStore
-        .observeAsComposableState { state -> state.normalTabs.size }.value ?: 0
-    val privateTabCount = browserStore
-        .observeAsComposableState { state -> state.privateTabs.size }.value ?: 0
     val multiselectMode = tabsTrayStore
         .observeAsComposableState { state -> state.mode }.value ?: TabsTrayState.Mode.Normal
     val selectedPage = tabsTrayStore
         .observeAsComposableState { state -> state.selectedPage }.value ?: Page.NormalTabs
     val pagerState = rememberPagerState(initialPage = selectedPage.ordinal)
     val isInMultiSelectMode = multiselectMode is TabsTrayState.Mode.Select
-
-    val handleTabClick: ((TabSessionState) -> Unit) = { tab ->
-        if (isInMultiSelectMode) {
-            onTabMultiSelectClick(tab)
-        } else {
-            onTabClick(tab)
-        }
-    }
 
     val shapeModifier = if (isInMultiSelectMode) {
         Modifier
@@ -160,16 +144,11 @@ fun TabsTray(
     ) {
         Box(modifier = Modifier.nestedScroll(rememberNestedScrollInteropConnection())) {
             TabsTrayBanner(
-                selectMode = multiselectMode,
-                selectedPage = selectedPage,
-                normalTabCount = normalTabCount,
-                privateTabCount = privateTabCount,
+                tabsTrayStore = tabsTrayStore,
                 isInDebugMode = isInDebugMode,
                 onTabPageIndicatorClicked = onTabPageClick,
-                onExitSelectModeClick = { tabsTrayStore.dispatch(TabsTrayAction.ExitSelectMode) },
                 onSaveToCollectionClick = onSaveToCollectionClick,
                 onShareSelectedTabsClick = onShareSelectedTabsClick,
-                onEnterMultiselectModeClick = { tabsTrayStore.dispatch(TabsTrayAction.EnterSelectMode) },
                 onShareAllTabsClick = onShareAllTabsClick,
                 onTabSettingsClick = onTabSettingsClick,
                 onRecentlyClosedClick = onRecentlyClosedClick,
@@ -197,10 +176,9 @@ fun TabsTray(
                             browserStore = browserStore,
                             tabsTrayStore = tabsTrayStore,
                             displayTabsInGrid = displayTabsInGrid,
-                            selectionMode = multiselectMode,
                             onTabClose = onTabClose,
                             onTabMediaClick = onTabMediaClick,
-                            onTabClick = handleTabClick,
+                            onTabClick = onTabClick,
                             onTabLongClick = onTabLongClick,
                             shouldShowInactiveTabsAutoCloseDialog = shouldShowInactiveTabsAutoCloseDialog,
                             onInactiveTabsHeaderClick = onInactiveTabsHeaderClick,
@@ -218,10 +196,9 @@ fun TabsTray(
                             browserStore = browserStore,
                             tabsTrayStore = tabsTrayStore,
                             displayTabsInGrid = displayTabsInGrid,
-                            selectionMode = multiselectMode,
                             onTabClose = onTabClose,
                             onTabMediaClick = onTabMediaClick,
-                            onTabClick = handleTabClick,
+                            onTabClick = onTabClick,
                             onTabLongClick = onTabLongClick,
                         )
                     }
@@ -245,7 +222,6 @@ private fun NormalTabsPage(
     browserStore: BrowserStore,
     tabsTrayStore: TabsTrayStore,
     displayTabsInGrid: Boolean,
-    selectionMode: TabsTrayState.Mode,
     onTabClose: (TabSessionState) -> Unit,
     onTabMediaClick: (TabSessionState) -> Unit,
     onTabClick: (TabSessionState) -> Unit,
@@ -267,6 +243,8 @@ private fun NormalTabsPage(
         .observeAsComposableState { state -> state.normalTabs }.value ?: emptyList()
     val inactiveTabs = tabsTrayStore
         .observeAsComposableState { state -> state.inactiveTabs }.value ?: emptyList()
+    val selectionMode = tabsTrayStore
+        .observeAsComposableState { state -> state.mode }.value ?: TabsTrayState.Mode.Normal
 
     if (normalTabs.isNotEmpty() || inactiveTabs.isNotEmpty()) {
         val showInactiveTabsAutoCloseDialog =
@@ -324,7 +302,6 @@ private fun PrivateTabsPage(
     browserStore: BrowserStore,
     tabsTrayStore: TabsTrayStore,
     displayTabsInGrid: Boolean,
-    selectionMode: TabsTrayState.Mode,
     onTabClose: (TabSessionState) -> Unit,
     onTabMediaClick: (TabSessionState) -> Unit,
     onTabClick: (TabSessionState) -> Unit,
@@ -334,6 +311,8 @@ private fun PrivateTabsPage(
         .observeAsComposableState { state -> state.selectedTabId }.value
     val privateTabs = tabsTrayStore
         .observeAsComposableState { state -> state.privateTabs }.value ?: emptyList()
+    val selectionMode = tabsTrayStore
+        .observeAsComposableState { state -> state.mode }.value ?: TabsTrayState.Mode.Normal
 
     if (privateTabs.isNotEmpty()) {
         TabLayout(
@@ -515,12 +494,16 @@ private fun TabsTrayPreviewRoot(
                 }
             },
             onTabMediaClick = {},
-            onTabClick = {},
-            onTabMultiSelectClick = { tab ->
-                if (tabsTrayStore.state.mode.selectedTabs.contains(tab)) {
-                    tabsTrayStore.dispatch(TabsTrayAction.RemoveSelectTab(tab))
-                } else {
-                    tabsTrayStore.dispatch(TabsTrayAction.AddSelectTab(tab))
+            onTabClick = { tab ->
+                when (tabsTrayStore.state.mode) {
+                    TabsTrayState.Mode.Normal -> {}
+                    is TabsTrayState.Mode.Select -> {
+                        if (tabsTrayStore.state.mode.selectedTabs.contains(tab)) {
+                            tabsTrayStore.dispatch(TabsTrayAction.RemoveSelectTab(tab))
+                        } else {
+                            tabsTrayStore.dispatch(TabsTrayAction.AddSelectTab(tab))
+                        }
+                    }
                 }
             },
             onTabLongClick = { tab ->

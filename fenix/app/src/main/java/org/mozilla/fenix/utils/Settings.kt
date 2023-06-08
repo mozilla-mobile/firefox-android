@@ -220,16 +220,6 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = "",
     )
 
-    /**
-     * A UUID stored in Shared Preferences used to analyze technical differences
-     * between storage mechanisms in Android, specifically the Glean DB and
-     * Shared Preferences.
-     */
-    var sharedPrefsUUID by stringPreference(
-        appContext.getPreferenceKey(R.string.pref_key_shared_prefs_uuid),
-        default = "",
-    )
-
     var currentWallpaperName by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_current_wallpaper),
         default = Wallpaper.Default.name,
@@ -1734,5 +1724,42 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var enableTabsTrayToCompose by booleanPreference(
         key = appContext.getPreferenceKey(R.string.pref_key_enable_tabs_tray_to_compose),
         default = FeatureFlags.composeTabsTray,
+    )
+
+    /**
+     * Indicates if the Compose Top Sites are enabled.
+     */
+    var enableComposeTopSites by booleanPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_enable_compose_top_sites),
+        default = FeatureFlags.composeTopSites,
+    )
+
+    /**
+     * Adjust Activated User sent
+     */
+    var growthUserActivatedSent by booleanPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_growth_user_activated_sent),
+        default = false,
+    )
+
+    /**
+     * Indicates how many days in the first week user opened the app.
+     */
+    val growthEarlyUseCount = counterPreference(
+        appContext.getPreferenceKey(R.string.pref_key_growth_early_browse_count),
+        maxCount = 3,
+    )
+
+    var growthEarlyUseCountLastIncrement by longPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_growth_early_browse_count_last_increment),
+        default = 0L,
+    )
+
+    /**
+     * Indicates how many days in the first week user searched in the app.
+     */
+    var growthEarlySearchUsed by booleanPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_growth_early_search),
+        default = false,
     )
 }
