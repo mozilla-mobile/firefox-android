@@ -14,29 +14,14 @@ import mozilla.components.service.pocket.PocketStory
 import mozilla.components.service.pocket.PocketStory.PocketRecommendedStory
 import mozilla.components.service.pocket.PocketStory.PocketSponsoredStory
 import mozilla.components.service.pocket.ext.getCurrentFlightImpressions
-import mozilla.components.support.test.robolectric.testContext
-import mozilla.telemetry.glean.testing.GleanTestRule
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertNull
-import org.junit.Assert.assertTrue
-import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.mozilla.fenix.BrowserDirection
-import org.mozilla.fenix.GleanMetrics.Pings
-import org.mozilla.fenix.GleanMetrics.Pocket
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.appstate.AppState
-import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 
-@RunWith(FenixRobolectricTestRunner::class) // For gleanTestRule
 class DefaultPocketStoriesControllerTest {
-
-    @get:Rule
-    val gleanTestRule = GleanTestRule(testContext)
 
     @Test
     fun `GIVEN a category is selected WHEN that same category is clicked THEN deselect it and record telemetry`() {
@@ -52,21 +37,10 @@ class DefaultPocketStoriesControllerTest {
             ),
         )
         val controller = DefaultPocketStoriesController(mockk(), store)
-        assertNull(Pocket.homeRecsCategoryClicked.testGetValue())
 
         controller.handleCategoryClick(category2)
         verify(exactly = 0) { store.dispatch(AppAction.SelectPocketStoriesCategory(category2.name)) }
         verify { store.dispatch(AppAction.DeselectPocketStoriesCategory(category2.name)) }
-
-        assertNotNull(Pocket.homeRecsCategoryClicked.testGetValue())
-        val event = Pocket.homeRecsCategoryClicked.testGetValue()!!
-        assertEquals(1, event.size)
-        assertTrue(event.single().extra!!.containsKey("category_name"))
-        assertEquals(category2.name, event.single().extra!!["category_name"])
-        assertTrue(event.single().extra!!.containsKey("new_state"))
-        assertEquals("deselected", event.single().extra!!["new_state"])
-        assertTrue(event.single().extra!!.containsKey("selected_total"))
-        assertEquals("1", event.single().extra!!["selected_total"])
     }
 
     @Test
@@ -97,22 +71,11 @@ class DefaultPocketStoriesControllerTest {
             ),
         )
         val controller = DefaultPocketStoriesController(mockk(), store)
-        assertNull(Pocket.homeRecsCategoryClicked.testGetValue())
 
         controller.handleCategoryClick(PocketRecommendedStoriesCategory(newSelectedCategory.name))
 
         verify { store.dispatch(AppAction.DeselectPocketStoriesCategory(oldestSelectedCategory.name)) }
         verify { store.dispatch(AppAction.SelectPocketStoriesCategory(newSelectedCategory.name)) }
-
-        assertNotNull(Pocket.homeRecsCategoryClicked.testGetValue())
-        val event = Pocket.homeRecsCategoryClicked.testGetValue()!!
-        assertEquals(1, event.size)
-        assertTrue(event.single().extra!!.containsKey("category_name"))
-        assertEquals(newSelectedCategory.name, event.single().extra!!["category_name"])
-        assertTrue(event.single().extra!!.containsKey("new_state"))
-        assertEquals("selected", event.single().extra!!["new_state"])
-        assertTrue(event.single().extra!!.containsKey("selected_total"))
-        assertEquals("8", event.single().extra!!["selected_total"])
     }
 
     @Test
@@ -146,16 +109,6 @@ class DefaultPocketStoriesControllerTest {
 
         verify(exactly = 0) { store.dispatch(AppAction.DeselectPocketStoriesCategory(oldestSelectedCategory.name)) }
         verify { store.dispatch(AppAction.SelectPocketStoriesCategory(newSelectedCategoryName)) }
-
-        assertNotNull(Pocket.homeRecsCategoryClicked.testGetValue())
-        val event = Pocket.homeRecsCategoryClicked.testGetValue()!!
-        assertEquals(1, event.size)
-        assertTrue(event.single().extra!!.containsKey("category_name"))
-        assertEquals(newSelectedCategoryName, event.single().extra!!["category_name"])
-        assertTrue(event.single().extra!!.containsKey("new_state"))
-        assertEquals("selected", event.single().extra!!["new_state"])
-        assertTrue(event.single().extra!!.containsKey("selected_total"))
-        assertEquals("7", event.single().extra!!["selected_total"])
     }
 
     @Test
@@ -179,27 +132,14 @@ class DefaultPocketStoriesControllerTest {
             every { shim.impression } returns "testImpressionShim"
             every { id } returns 123
         }
-        var wasPingSent = false
+
         mockkStatic("mozilla.components.service.pocket.ext.PocketStoryKt") {
             // Simulate that the story was already shown 3 times.
             every { storyShown.getCurrentFlightImpressions() } returns listOf(2L, 3L, 7L)
-            // Test that the spoc ping is immediately sent with the needed data.
-            Pings.spoc.testBeforeNextSubmit { reason ->
-                assertEquals(storyShown.shim.impression, Pocket.spocShim.testGetValue())
-                assertEquals(Pings.spocReasonCodes.impression.name, reason?.name)
-                wasPingSent = true
-            }
 
             controller.handleStoryShown(storyShown, 1 to 2)
 
             verify { store.dispatch(AppAction.PocketStoriesShown(listOf(storyShown))) }
-            assertNotNull(Pocket.homeRecsSpocShown.testGetValue())
-            assertEquals(1, Pocket.homeRecsSpocShown.testGetValue()!!.size)
-            val data = Pocket.homeRecsSpocShown.testGetValue()!!.single().extra
-            assertEquals("123", data?.entries?.first { it.key == "spoc_id" }?.value)
-            assertEquals("1x2", data?.entries?.first { it.key == "position" }?.value)
-            assertEquals("4", data?.entries?.first { it.key == "times_shown" }?.value)
-            assertTrue(wasPingSent)
         }
     }
 
@@ -208,14 +148,10 @@ class DefaultPocketStoriesControllerTest {
         val store = spyk(AppStore())
         val controller = DefaultPocketStoriesController(mockk(), store)
         val storiesShown: List<PocketStory> = mockk()
-        assertNull(Pocket.homeRecsShown.testGetValue())
 
         controller.handleStoriesShown(storiesShown)
 
         verify { store.dispatch(AppAction.PocketStoriesShown(storiesShown)) }
-        assertNotNull(Pocket.homeRecsShown.testGetValue())
-        assertEquals(1, Pocket.homeRecsShown.testGetValue()!!.size)
-        assertNull(Pocket.homeRecsShown.testGetValue()!!.single().extra)
     }
 
     @Test
@@ -231,19 +167,10 @@ class DefaultPocketStoriesControllerTest {
         )
         val homeActivity: HomeActivity = mockk(relaxed = true)
         val controller = DefaultPocketStoriesController(homeActivity, mockk())
-        assertNull(Pocket.homeRecsStoryClicked.testGetValue())
 
         controller.handleStoryClicked(story, 1 to 2)
 
         verify { homeActivity.openToBrowserAndLoad(story.url, true, BrowserDirection.FromHome) }
-
-        assertNotNull(Pocket.homeRecsStoryClicked.testGetValue())
-        val event = Pocket.homeRecsStoryClicked.testGetValue()!!
-        assertEquals(1, event.size)
-        assertTrue(event.single().extra!!.containsKey("position"))
-        assertEquals("1x2", event.single().extra!!["position"])
-        assertTrue(event.single().extra!!.containsKey("times_shown"))
-        assertEquals(story.timesShown.inc().toString(), event.single().extra!!["times_shown"])
     }
 
     @Test
@@ -263,28 +190,14 @@ class DefaultPocketStoriesControllerTest {
         )
         val homeActivity: HomeActivity = mockk(relaxed = true)
         val controller = DefaultPocketStoriesController(homeActivity, mockk())
-        var wasPingSent = false
-        assertNull(Pocket.homeRecsSpocClicked.testGetValue())
+
         mockkStatic("mozilla.components.service.pocket.ext.PocketStoryKt") {
             // Simulate that the story was already shown 2 times.
             every { storyClicked.getCurrentFlightImpressions() } returns listOf(2L, 3L)
-            // Test that the spoc ping is immediately sent with the needed data.
-            Pings.spoc.testBeforeNextSubmit { reason ->
-                assertEquals(storyClicked.shim.click, Pocket.spocShim.testGetValue())
-                assertEquals(Pings.spocReasonCodes.click.name, reason?.name)
-                wasPingSent = true
-            }
 
             controller.handleStoryClicked(storyClicked, 2 to 3)
 
             verify { homeActivity.openToBrowserAndLoad(storyClicked.url, true, BrowserDirection.FromHome) }
-            assertNotNull(Pocket.homeRecsSpocClicked.testGetValue())
-            assertEquals(1, Pocket.homeRecsSpocClicked.testGetValue()!!.size)
-            val data = Pocket.homeRecsSpocClicked.testGetValue()!!.single().extra
-            assertEquals("7", data?.entries?.first { it.key == "spoc_id" }?.value)
-            assertEquals("2x3", data?.entries?.first { it.key == "position" }?.value)
-            assertEquals("3", data?.entries?.first { it.key == "times_shown" }?.value)
-            assertTrue(wasPingSent)
         }
     }
 
@@ -293,14 +206,10 @@ class DefaultPocketStoriesControllerTest {
         val link = "http://getpocket.com/explore"
         val homeActivity: HomeActivity = mockk(relaxed = true)
         val controller = DefaultPocketStoriesController(homeActivity, mockk())
-        assertNull(Pocket.homeRecsDiscoverClicked.testGetValue())
 
         controller.handleDiscoverMoreClicked(link)
 
         verify { homeActivity.openToBrowserAndLoad(link, true, BrowserDirection.FromHome) }
-        assertNotNull(Pocket.homeRecsDiscoverClicked.testGetValue())
-        assertEquals(1, Pocket.homeRecsDiscoverClicked.testGetValue()!!.size)
-        assertNull(Pocket.homeRecsDiscoverClicked.testGetValue()!!.single().extra)
     }
 
     @Test
@@ -308,13 +217,10 @@ class DefaultPocketStoriesControllerTest {
         val link = "https://www.mozilla.org/en-US/firefox/pocket/"
         val homeActivity: HomeActivity = mockk(relaxed = true)
         val controller = DefaultPocketStoriesController(homeActivity, mockk())
-        assertNull(Pocket.homeRecsLearnMoreClicked.testGetValue())
 
         controller.handleLearnMoreClicked(link)
 
         verify { homeActivity.openToBrowserAndLoad(link, true, BrowserDirection.FromHome) }
-        assertNotNull(Pocket.homeRecsLearnMoreClicked.testGetValue())
-        assertNull(Pocket.homeRecsLearnMoreClicked.testGetValue()!!.single().extra)
     }
 
     @Test

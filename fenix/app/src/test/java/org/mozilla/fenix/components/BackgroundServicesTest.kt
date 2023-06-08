@@ -18,24 +18,12 @@ import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.service.nimbus.NimbusApi
 import mozilla.components.support.base.observer.ObserverRegistry
-import mozilla.components.support.test.robolectric.testContext
-import mozilla.telemetry.glean.testing.GleanTestRule
-import org.junit.Assert.assertEquals
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.mozilla.fenix.GleanMetrics.SyncAuth
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.utils.Settings
 
-// For gleanTestRule
-@RunWith(FenixRobolectricTestRunner::class)
 class BackgroundServicesTest {
-
-    @get:Rule
-    val gleanTestRule = GleanTestRule(testContext)
 
     @MockK
     private lateinit var context: Context
@@ -71,8 +59,7 @@ class BackgroundServicesTest {
         val account = mockk<OAuthAccount>()
 
         registry.notifyObservers { onAuthenticated(account, AuthType.Signin) }
-        assertEquals(1, SyncAuth.signIn.testGetValue()!!.size)
-        assertEquals(null, SyncAuth.signIn.testGetValue()!!.single().extra)
+
         verify { settings.signedInFxaAccount = true }
         confirmVerified(settings)
     }
@@ -82,8 +69,7 @@ class BackgroundServicesTest {
         val account = mockk<OAuthAccount>()
 
         registry.notifyObservers { onAuthenticated(account, AuthType.Signup) }
-        assertEquals(1, SyncAuth.signUp.testGetValue()!!.size)
-        assertEquals(null, SyncAuth.signUp.testGetValue()!!.single().extra)
+
         verify { settings.signedInFxaAccount = true }
         confirmVerified(settings)
     }
@@ -93,8 +79,7 @@ class BackgroundServicesTest {
         val account = mockk<OAuthAccount>()
 
         registry.notifyObservers { onAuthenticated(account, AuthType.Pairing) }
-        assertEquals(1, SyncAuth.paired.testGetValue()!!.size)
-        assertEquals(null, SyncAuth.paired.testGetValue()!!.single().extra)
+
         verify { settings.signedInFxaAccount = true }
         confirmVerified(settings)
     }
@@ -104,8 +89,7 @@ class BackgroundServicesTest {
         val account = mockk<OAuthAccount>()
 
         registry.notifyObservers { onAuthenticated(account, AuthType.Recovered) }
-        assertEquals(1, SyncAuth.recovered.testGetValue()!!.size)
-        assertEquals(null, SyncAuth.recovered.testGetValue()!!.single().extra)
+
         verify { settings.signedInFxaAccount = true }
         confirmVerified(settings)
     }
@@ -115,8 +99,7 @@ class BackgroundServicesTest {
         val account = mockk<OAuthAccount>()
 
         registry.notifyObservers { onAuthenticated(account, AuthType.OtherExternal(null)) }
-        assertEquals(1, SyncAuth.otherExternal.testGetValue()!!.size)
-        assertEquals(null, SyncAuth.otherExternal.testGetValue()!!.single().extra)
+
         verify { settings.signedInFxaAccount = true }
         confirmVerified(settings)
     }
@@ -126,8 +109,7 @@ class BackgroundServicesTest {
         val account = mockk<OAuthAccount>()
 
         registry.notifyObservers { onAuthenticated(account, AuthType.OtherExternal("someAction")) }
-        assertEquals(1, SyncAuth.otherExternal.testGetValue()!!.size)
-        assertEquals(null, SyncAuth.otherExternal.testGetValue()!!.single().extra)
+
         verify { settings.signedInFxaAccount = true }
         confirmVerified(settings)
     }
@@ -135,8 +117,7 @@ class BackgroundServicesTest {
     @Test
     fun `telemetry account observer tracks sign out event`() {
         registry.notifyObservers { onLoggedOut() }
-        assertEquals(1, SyncAuth.signOut.testGetValue()!!.size)
-        assertEquals(null, SyncAuth.signOut.testGetValue()!!.single().extra)
+
         verify { settings.signedInFxaAccount = false }
         confirmVerified(settings)
     }

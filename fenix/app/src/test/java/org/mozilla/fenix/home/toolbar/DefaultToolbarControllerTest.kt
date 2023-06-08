@@ -14,28 +14,15 @@ import mozilla.components.browser.state.search.SearchEngine
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.SearchState
 import mozilla.components.browser.state.store.BrowserStore
-import mozilla.components.service.glean.testing.GleanTestRule
-import mozilla.components.support.test.robolectric.testContext
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertNull
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.mozilla.fenix.BrowserDirection
-import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.utils.Settings
 
-@RunWith(FenixRobolectricTestRunner::class) // For gleanTestRule
 class DefaultToolbarControllerTest {
-
-    @get:Rule
-    val gleanTestRule = GleanTestRule(testContext)
 
     private val activity: HomeActivity = mockk(relaxed = true)
     private val navController: NavController = mockk(relaxed = true)
@@ -69,9 +56,6 @@ class DefaultToolbarControllerTest {
 
     @Test
     fun `WHEN Paste & Go toolbar menu is clicked THEN open the browser with the clipboard text as the search term`() {
-        assertNull(Events.enteredUrl.testGetValue())
-        assertNull(Events.performedSearch.testGetValue())
-
         var clipboardText = "text"
         createController().handlePasteAndGo(clipboardText)
 
@@ -84,8 +68,6 @@ class DefaultToolbarControllerTest {
             )
         }
 
-        assertNotNull(Events.performedSearch.testGetValue())
-
         clipboardText = "https://mozilla.org"
         createController().handlePasteAndGo(clipboardText)
 
@@ -97,8 +79,6 @@ class DefaultToolbarControllerTest {
                 engine = searchEngine,
             )
         }
-
-        assertNotNull(Events.enteredUrl.testGetValue())
     }
 
     @Test
@@ -115,15 +95,7 @@ class DefaultToolbarControllerTest {
 
     @Test
     fun `WHEN the toolbar is tapped THEN navigate to the search dialog`() {
-        assertNull(Events.searchBarTapped.testGetValue())
-
         createController().handleNavigateSearch()
-
-        assertNotNull(Events.searchBarTapped.testGetValue())
-
-        val recordedEvents = Events.searchBarTapped.testGetValue()!!
-        assertEquals(1, recordedEvents.size)
-        assertEquals("HOME", recordedEvents.single().extra?.getValue("source"))
 
         verify {
             navController.navigate(

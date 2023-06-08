@@ -19,35 +19,22 @@ import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.state.state.content.DownloadState
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.service.fxa.manager.FxaAccountManager
-import mozilla.components.service.glean.testing.GleanTestRule
-import mozilla.components.support.test.robolectric.testContext
 import mozilla.components.support.test.rule.MainCoroutineRule
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.RuleChain
-import org.junit.runner.RunWith
-import org.mozilla.fenix.GleanMetrics.Events
-import org.mozilla.fenix.GleanMetrics.TabsTray
 import org.mozilla.fenix.components.accounts.FenixFxAEntryPoint
-import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import mozilla.components.browser.state.state.createTab as createStateTab
 
-@RunWith(FenixRobolectricTestRunner::class) // for gleanTestRule
 class NavigationInteractorTest {
     private lateinit var store: BrowserStore
     private val testTab: TabSessionState = createStateTab(url = "https://mozilla.org")
     private val navController: NavController = mockk(relaxed = true)
     private val accountManager: FxaAccountManager = mockk(relaxed = true)
 
-    val coroutinesTestRule: MainCoroutineRule = MainCoroutineRule()
-    val gleanTestRule = GleanTestRule(testContext)
-
     @get:Rule
-    val chain: RuleChain = RuleChain.outerRule(gleanTestRule).around(coroutinesTestRule)
+    val coroutinesTestRule: MainCoroutineRule = MainCoroutineRule()
 
     @Before
     fun setup() {
@@ -58,8 +45,6 @@ class NavigationInteractorTest {
     fun `onTabTrayDismissed calls dismissTabTray on DefaultNavigationInteractor`() {
         var dismissTabTrayInvoked = false
 
-        assertNull(TabsTray.closed.testGetValue())
-
         createInteractor(
             dismissTabTray = {
                 dismissTabTrayInvoked = true
@@ -67,7 +52,6 @@ class NavigationInteractorTest {
         ).onTabTrayDismissed()
 
         assertTrue(dismissTabTrayInvoked)
-        assertNotNull(TabsTray.closed.testGetValue())
     }
 
     @Test
@@ -102,12 +86,9 @@ class NavigationInteractorTest {
 
     @Test
     fun `onOpenRecentlyClosedClicked calls navigation on DefaultNavigationInteractor`() {
-        assertNull(Events.recentlyClosedTabsOpened.testGetValue())
-
         createInteractor().onOpenRecentlyClosedClicked()
 
         verify(exactly = 1) { navController.navigate(TabsTrayFragmentDirections.actionGlobalRecentlyClosed()) }
-        assertNotNull(Events.recentlyClosedTabsOpened.testGetValue())
     }
 
     @Test

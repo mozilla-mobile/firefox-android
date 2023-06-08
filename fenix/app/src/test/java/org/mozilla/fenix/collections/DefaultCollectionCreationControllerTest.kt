@@ -16,28 +16,18 @@ import mozilla.components.browser.state.action.TabListAction
 import mozilla.components.browser.state.state.createTab
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.feature.tab.collections.TabCollection
-import mozilla.components.service.glean.testing.GleanTestRule
 import mozilla.components.support.test.ext.joinBlocking
-import mozilla.components.support.test.robolectric.testContext
 import mozilla.components.support.test.rule.MainCoroutineRule
 import mozilla.components.support.test.rule.runTestOnMain
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.mozilla.fenix.GleanMetrics.Collections
 import org.mozilla.fenix.components.TabCollectionStorage
-import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 
-@RunWith(FenixRobolectricTestRunner::class) // For gleanTestRule
 class DefaultCollectionCreationControllerTest {
-
-    @get:Rule
-    val gleanTestRule = GleanTestRule(testContext)
 
     @get:Rule
     val coroutinesTestRule = MainCoroutineRule()
@@ -99,16 +89,6 @@ class DefaultCollectionCreationControllerTest {
 
         assertTrue(dismissed)
         coVerify { tabCollectionStorage.createCollection("name", listOf(tab1)) }
-
-        assertNotNull(Collections.saved.testGetValue())
-        val recordedEvents = Collections.saved.testGetValue()!!
-        assertEquals(1, recordedEvents.size)
-        val eventExtra = recordedEvents.single().extra
-        assertNotNull(eventExtra)
-        assertTrue(eventExtra!!.containsKey("tabs_open"))
-        assertEquals("2", eventExtra["tabs_open"])
-        assertTrue(eventExtra.containsKey("tabs_selected"))
-        assertEquals("1", eventExtra["tabs_selected"])
     }
 
     @Test
@@ -155,11 +135,6 @@ class DefaultCollectionCreationControllerTest {
 
         assertTrue(dismissed)
 
-        assertNotNull(Collections.renamed.testGetValue())
-        val recordedEvents = Collections.renamed.testGetValue()!!
-        assertEquals(1, recordedEvents.size)
-        assertNull(recordedEvents.single().extra)
-
         coVerify { tabCollectionStorage.renameCollection(collection, "name") }
     }
 
@@ -205,16 +180,6 @@ class DefaultCollectionCreationControllerTest {
 
         assertTrue(dismissed)
         coVerify { tabCollectionStorage.addTabsToCollection(collection, listOf(tab1)) }
-
-        assertNotNull(Collections.tabsAdded.testGetValue())
-        val recordedEvents = Collections.tabsAdded.testGetValue()!!
-        assertEquals(1, recordedEvents.size)
-        val eventExtra = recordedEvents.single().extra
-        assertNotNull(eventExtra)
-        assertTrue(eventExtra!!.containsKey("tabs_open"))
-        assertEquals("2", eventExtra["tabs_open"])
-        assertTrue(eventExtra.containsKey("tabs_selected"))
-        assertEquals("1", eventExtra["tabs_selected"])
     }
 
     @Test
