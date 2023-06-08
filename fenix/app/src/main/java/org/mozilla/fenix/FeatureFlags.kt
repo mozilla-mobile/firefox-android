@@ -60,7 +60,7 @@ object FeatureFlags {
     /**
      * Enables compose on the top sites.
      */
-    const val composeTopSites = false
+    const val composeTopSites = true
 
     /**
      * Enables the save to PDF feature.
