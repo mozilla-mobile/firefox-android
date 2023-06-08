@@ -19,11 +19,14 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -36,6 +39,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.compose.annotation.LightDarkPreview
 import org.mozilla.fenix.compose.button.PrimaryButton
 import org.mozilla.fenix.compose.button.SecondaryButton
+import org.mozilla.fenix.compose.ext.thenConditional
 import org.mozilla.fenix.theme.FirefoxTheme
 
 /**
@@ -69,10 +73,12 @@ private const val URL_TAG = "URL_TAG"
  * @param imageResContentScale The [ContentScale] for the [OnboardingPageState.imageRes].
  */
 @Composable
+@Suppress("LongMethod")
 fun OnboardingPage(
     pageState: OnboardingPageState,
     modifier: Modifier = Modifier,
     onDismiss: (() -> Unit)? = null,
+    imageResContentScale: ContentScale = ContentScale.Fit,
 ) {
     BoxWithConstraints(
         modifier = Modifier
@@ -110,7 +116,12 @@ fun OnboardingPage(
                 Image(
                     painter = painterResource(id = pageState.imageRes),
                     contentDescription = null,
-                    modifier = Modifier.height(imageHeight(boxWithConstraintsScope)),
+                    contentScale = imageResContentScale,
+                    modifier = Modifier
+                        .height(imageHeight(boxWithConstraintsScope))
+                        .thenConditional(Modifier.clip(MaterialTheme.shapes.medium)) {
+                            imageResContentScale == ContentScale.Crop
+                        },
                 )
 
                 Spacer(modifier = Modifier.height(32.dp))
