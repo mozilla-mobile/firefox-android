@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -491,31 +492,29 @@ fun PoweredByPocketHeader(
     val linkStartIndex = text.indexOf(link)
     val linkEndIndex = linkStartIndex + link.length
 
-    Column(
-        modifier = modifier.semantics {
-            testTagsAsResourceId = true
-            testTag = "pocket.header"
-        },
-        horizontalAlignment = Alignment.CenterHorizontally,
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .heightIn(min = 48.dp)
+            .semantics(mergeDescendants = true) {
+                testTagsAsResourceId = true
+                testTag = "pocket.header"
+            },
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .semantics(mergeDescendants = true) {},
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.pocket_vector),
-                contentDescription = null,
-                // Apply the red tint in code. Otherwise the image is black and white.
-                tint = Color(0xFFEF4056),
-            )
+        Icon(
+            painter = painterResource(id = R.drawable.pocket_vector),
+            contentDescription = null,
+            // Apply the red tint in code. Otherwise the image is black and white.
+            tint = Color(0xFFEF4056),
+        )
 
-            Spacer(modifier = Modifier.width(16.dp))
+        Spacer(modifier = Modifier.width(16.dp))
 
-            val onClickLabel = stringResource(id = R.string.a11y_action_label_pocket_learn_more)
-            Column(
-                Modifier.semantics(mergeDescendants = true) {
+        val onClickLabel = stringResource(id = R.string.a11y_action_label_pocket_learn_more)
+        Column(
+            modifier = Modifier
+                .semantics(mergeDescendants = true) {
                     role = Role.Button
                     onClick(label = onClickLabel) {
                         onLearnMoreClicked(
@@ -524,38 +523,37 @@ fun PoweredByPocketHeader(
                         false
                     }
                 },
-            ) {
-                Text(
-                    text = stringResource(
-                        R.string.pocket_stories_feature_title_2,
-                        LocalContext.current.getString(R.string.pocket_product_name),
-                    ),
-                    modifier = Modifier.semantics {
-                        testTagsAsResourceId = true
-                        testTag = "pocket.header.title"
-                    },
-                    color = textColor,
-                    style = FirefoxTheme.typography.caption,
-                )
+        ) {
+            Text(
+                text = stringResource(
+                    R.string.pocket_stories_feature_title_2,
+                    LocalContext.current.getString(R.string.pocket_product_name),
+                ),
+                modifier = Modifier.semantics {
+                    testTagsAsResourceId = true
+                    testTag = "pocket.header.title"
+                },
+                color = textColor,
+                style = FirefoxTheme.typography.caption,
+            )
 
-                Box(
-                    modifier = modifier.semantics {
-                        testTagsAsResourceId = true
-                        testTag = "pocket.header.subtitle"
-                    },
+            Box(
+                modifier = modifier.semantics {
+                    testTagsAsResourceId = true
+                    testTag = "pocket.header.subtitle"
+                },
+            ) {
+                ClickableSubstringLink(
+                    text = text,
+                    textColor = textColor,
+                    linkTextColor = linkTextColor,
+                    linkTextDecoration = TextDecoration.Underline,
+                    clickableStartIndex = linkStartIndex,
+                    clickableEndIndex = linkEndIndex,
                 ) {
-                    ClickableSubstringLink(
-                        text = text,
-                        textColor = textColor,
-                        linkTextColor = linkTextColor,
-                        linkTextDecoration = TextDecoration.Underline,
-                        clickableStartIndex = linkStartIndex,
-                        clickableEndIndex = linkEndIndex,
-                    ) {
-                        onLearnMoreClicked(
-                            "https://www.mozilla.org/en-US/firefox/pocket/?$POCKET_FEATURE_UTM_KEY_VALUE",
-                        )
-                    }
+                    onLearnMoreClicked(
+                        "https://www.mozilla.org/en-US/firefox/pocket/?$POCKET_FEATURE_UTM_KEY_VALUE",
+                    )
                 }
             }
         }
