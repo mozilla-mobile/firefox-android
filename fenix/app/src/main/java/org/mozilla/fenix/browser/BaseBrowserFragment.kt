@@ -909,7 +909,11 @@ abstract class BaseBrowserFragment :
             owner = this,
             view = view,
         )
-        initializeEngineView(toolbarHeight)
+        if (browserToolbarView.isPwaTabOrTwaTab) {
+            initializeEngineView(0)
+        } else {
+            initializeEngineView(toolbarHeight)
+        }
     }
 
     /**
