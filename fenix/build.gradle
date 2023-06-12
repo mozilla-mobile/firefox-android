@@ -83,7 +83,7 @@ buildscript {
     }
 
     // Variables in plugins {} aren't directly supported. Hack around it by setting an
-    // intermediate variable which can pull from FenixDependencies.kt and be used later.
+    // intermediate variable which can pull from FenixDependenciesPlugin.kt and be used later.
     ext {
         detekt_plugin = FenixVersions.detekt
         protobuf_plugin = FenixVersions.protobuf_plugin
@@ -163,7 +163,7 @@ allprojects {
     }
 
     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
-        kotlinOptions.jvmTarget = "11"
+        kotlinOptions.jvmTarget = "17"
         kotlinOptions.allWarningsAsErrors = true
         kotlinOptions.freeCompilerArgs += [
             "-opt-in=kotlin.RequiresOptIn", "-Xjvm-default=all"
