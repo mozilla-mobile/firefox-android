@@ -2,8 +2,15 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+import org.gradle.api.Plugin
+import org.gradle.api.initialization.Settings
+
 // If you ever need to force a toolchain rebuild (taskcluster) then edit the following comment.
 // FORCE REBUILD 2023-05-12
+
+class FenixDependenciesPlugin : Plugin<Settings> {
+    override fun apply(settings: Settings) = Unit
+}
 
 object FenixVersions {
     const val kotlin = "1.8.21"
@@ -39,7 +46,7 @@ object FenixVersions {
     const val androidx_legacy = "1.0.0"
     const val androidx_annotation = "1.6.0"
     const val androidx_lifecycle = "2.6.1"
-    const val androidx_fragment = "1.5.7"
+    const val androidx_fragment = "1.6.0"
     const val androidx_navigation = "2.5.3"
     const val androidx_recyclerview = "1.3.0"
     const val androidx_core = "1.10.1"
@@ -63,7 +70,7 @@ object FenixVersions {
 
     const val google_ads_id_version = "16.0.0"
 
-    const val google_play_review_version = "2.0.0"
+    const val google_play_review_version = "2.0.1"
 
     // keep in sync with the versions used in AS.
     const val protobuf = "3.21.10"

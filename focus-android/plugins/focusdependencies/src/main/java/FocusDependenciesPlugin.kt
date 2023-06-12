@@ -2,8 +2,15 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+import org.gradle.api.Plugin
+import org.gradle.api.initialization.Settings
+
 // If you ever need to force a toolchain rebuild (taskcluster) then edit the following comment.
 // FORCE REBUILD 2023-05-05
+
+class FocusDependenciesPlugin : Plugin<Settings> {
+    override fun apply(settings: Settings) = Unit
+}
 
 object FocusVersions {
     object Adjust {
@@ -21,7 +28,7 @@ object FocusVersions {
         const val constraint_layout = "2.1.4"
         const val constraint_layout_compose = "1.0.1"
         const val core = "1.10.1"
-        const val fragment = "1.5.7"
+        const val fragment = "1.6.0"
         const val lifecycle = "2.6.1"
         const val palette = "1.0.0"
         const val preference = "1.2.0"
