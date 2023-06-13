@@ -877,8 +877,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
 
     var shouldUseBottomToolbar by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_toolbar_bottom),
-        // Default accessibility users to top toolbar
-        default = !touchExplorationIsEnabled && !switchServiceIsEnabled,
+        default = shouldDefaultToBottomToolbar(),
     )
 
     val toolbarPosition: ToolbarPosition
@@ -915,6 +914,18 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         get() {
             return touchExplorationIsEnabled || switchServiceIsEnabled
         }
+
+    val toolbarPositionTop: Boolean
+        get() = FxNimbus.features.toolbar.value().toolbarPositionTop
+
+    /**
+     * Checks if we should default to bottom toolbar.
+     */
+    fun shouldDefaultToBottomToolbar(): Boolean {
+        // Default accessibility users to top toolbar
+        return (!touchExplorationIsEnabled && !switchServiceIsEnabled) &&
+            !toolbarPositionTop
+    }
 
     fun getDeleteDataOnQuit(type: DeleteBrowsingDataOnQuitType): Boolean =
         preferences.getBoolean(type.getPreferenceKey(appContext), false)
@@ -1762,4 +1773,9 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         key = appContext.getPreferenceKey(R.string.pref_key_growth_early_search),
         default = false,
     )
+
+    /**
+     * Indicates if the new Search settings UI is enabled.
+     */
+    var enableUnifiedSearchSettingsUI: Boolean = showUnifiedSearchFeature && FeatureFlags.unifiedSearchSettings
 }
