@@ -318,6 +318,14 @@ features:
         type: Map<String, Boolean>
         default: {}
 
+  splash-screen:
+    description: "A feature that sets maximum duration for the splash screen during the first launch."
+    variables:
+      maximum_duration:
+        description: The maximum amount of time the splashscreen will be visible while waiting for initialization calls to complete.
+        type: Int
+        default: 0
+
 types:
   objects: {}
 
