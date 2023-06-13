@@ -260,14 +260,7 @@ features:
       enabled:
         description: If true, the feature shows up in the search bar.
         type: Boolean
-        default: false
-    defaults:
-      - channel: nightly
-        value:
-          enabled: true
-      - channel: developer
-        value:
-          enabled: true
+        default: true
 
   growth-data:
     description: A feature measuring campaign growth data
