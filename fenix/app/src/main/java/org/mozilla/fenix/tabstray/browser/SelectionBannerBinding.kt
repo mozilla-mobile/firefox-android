@@ -6,6 +6,7 @@ package org.mozilla.fenix.tabstray.browser
 
 import android.content.Context
 import android.view.View
+import android.widget.ImageButton
 import androidx.annotation.VisibleForTesting
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -53,7 +54,7 @@ class SelectionBannerBinding(
     class VisibilityModifier(vararg val views: View)
 
     private var isPreviousModeSelect = false
-
+    private var collectImageButton: ImageButton? = null
     override fun start() {
         super.start()
 
@@ -79,6 +80,8 @@ class SelectionBannerBinding(
                 updateSelectTitle(isSelectMode, mode.selectedTabs.size)
 
                 isPreviousModeSelect = isSelectMode
+
+                updateCollectionButtonColor(mode.selectedTabs.size)
             }
     }
 
@@ -89,6 +92,7 @@ class SelectionBannerBinding(
             interactor.onShareSelectedTabs()
         }
 
+        collectImageButton = tabsTrayMultiselectItemsBinding.collectMultiSelect
         tabsTrayMultiselectItemsBinding.collectMultiSelect.setOnClickListener {
             if (store.state.mode.selectedTabs.isNotEmpty()) {
                 interactor.onAddSelectedTabsToCollectionClicked()
@@ -122,6 +126,14 @@ class SelectionBannerBinding(
             val color = ContextCompat.getColor(backgroundView.context, colorResource)
 
             backgroundView.setBackgroundColor(color)
+        }
+    }
+
+    private fun updateCollectionButtonColor(tabCount: Int) {
+        if (tabCount == 0) {
+            collectImageButton?.setColorFilter(R.color.fx_mobile_icon_color_disabled)
+        } else {
+            collectImageButton?.colorFilter = null
         }
     }
 
