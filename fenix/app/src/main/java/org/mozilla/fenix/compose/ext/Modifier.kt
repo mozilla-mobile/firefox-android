@@ -4,7 +4,14 @@
 
 package org.mozilla.fenix.compose.ext
 
+import android.os.SystemClock
+import androidx.compose.foundation.clickable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
@@ -49,3 +56,47 @@ fun Modifier.dashedBorder(
         )
     },
 )
+
+/**
+ * Used when clickable needs to be debounced to prevent rapid successive clicks
+ * from calling the onClick function.
+ *
+ * @param debounceInterval The length of time to wait between click events in milliseconds
+ * @param onClick Callback for when item this modifier effects is clicked
+ */
+fun Modifier.debouncedClickable(
+    debounceInterval: Long = 1000L,
+    onClick: () -> Unit,
+) = composed {
+    var lastClickTime: Long by remember { mutableStateOf(0) }
+
+    this.then(
+        Modifier.clickable(
+            onClick = {
+                val currentSystemTime = SystemClock.elapsedRealtime()
+                if (currentSystemTime - lastClickTime > debounceInterval) {
+                    onClick()
+                    lastClickTime = currentSystemTime
+                }
+            },
+        ),
+    )
+}
+
+/**
+ * A conditional [Modifier.then] extension that allows chaining of conditional Modifiers.
+ *
+ * @param modifier The [Modifier] to return if the [predicate] is satisfied.
+ * @param predicate The predicate used to determine which [Modifier] to return.
+ *
+ * @return the appropriate [Modifier] given the [predicate].
+ */
+fun Modifier.thenConditional(
+    modifier: Modifier,
+    predicate: () -> Boolean,
+): Modifier =
+    if (predicate()) {
+        then(modifier)
+    } else {
+        this
+    }

@@ -6,16 +6,10 @@ package org.mozilla.fenix.home
 
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
-import androidx.navigation.NavOptions
-import io.mockk.Runs
 import io.mockk.every
-import io.mockk.just
 import io.mockk.mockk
-import io.mockk.mockkObject
 import io.mockk.mockkStatic
-import io.mockk.slot
 import io.mockk.spyk
-import io.mockk.unmockkObject
 import io.mockk.unmockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -37,6 +31,7 @@ import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.service.glean.testing.GleanTestRule
+import mozilla.components.service.nimbus.messaging.Message
 import mozilla.components.support.test.ext.joinBlocking
 import mozilla.components.support.test.robolectric.testContext
 import mozilla.components.support.test.rule.MainCoroutineRule
@@ -59,8 +54,6 @@ import org.mozilla.fenix.GleanMetrics.RecentTabs
 import org.mozilla.fenix.GleanMetrics.TopSites
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
-import org.mozilla.fenix.browser.BrowserFragmentDirections
-import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.Analytics
 import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.TabCollectionStorage
@@ -68,18 +61,17 @@ import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.appstate.AppState
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.gleanplumb.Message
-import org.mozilla.fenix.gleanplumb.MessageController
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.home.recentbookmarks.RecentBookmark
 import org.mozilla.fenix.home.recenttabs.RecentTab
 import org.mozilla.fenix.home.sessioncontrol.DefaultSessionControlController
+import org.mozilla.fenix.messaging.MessageController
 import org.mozilla.fenix.onboarding.WallpaperOnboardingDialogFragment.Companion.THUMBNAILS_SELECTION_COUNT
-import org.mozilla.fenix.search.toolbar.SearchSelectorMenu
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.utils.Settings
 import org.mozilla.fenix.wallpapers.Wallpaper
 import org.mozilla.fenix.wallpapers.WallpaperState
+import java.io.File
 import mozilla.components.feature.tab.collections.Tab as ComponentTab
 
 @RunWith(FenixRobolectricTestRunner::class) // For gleanTestRule
@@ -93,6 +85,7 @@ class DefaultSessionControlControllerTest {
     val gleanTestRule = GleanTestRule(testContext)
 
     private val activity: HomeActivity = mockk(relaxed = true)
+    private val filesDir: File = mockk(relaxed = true)
     private val appStore: AppStore = mockk(relaxed = true)
     private val navController: NavController = mockk(relaxed = true)
     private val messageController: MessageController = mockk(relaxed = true)
@@ -159,6 +152,8 @@ class DefaultSessionControlControllerTest {
         every { activity.components.settings } returns settings
         every { activity.settings() } returns settings
         every { activity.components.analytics } returns analytics
+        every { activity.filesDir } returns filesDir
+        every { filesDir.path } returns "/test"
     }
 
     @Test
@@ -204,7 +199,7 @@ class DefaultSessionControlControllerTest {
     fun `handleCollectionOpenTabClicked onFailure`() {
         val tab = mockk<ComponentTab> {
             every { url } returns "https://mozilla.org"
-            every { restore(activity, engine, restoreSessionId = false) } returns null
+            every { restore(filesDir, engine, restoreSessionId = false) } returns null
         }
         createController().handleCollectionOpenTabClicked(tab)
 
@@ -239,7 +234,7 @@ class DefaultSessionControlControllerTest {
         )
 
         val tab = mockk<ComponentTab> {
-            every { restore(activity, engine, restoreSessionId = false) } returns recoverableTab
+            every { restore(filesDir, engine, restoreSessionId = false) } returns recoverableTab
         }
 
         val restoredTab = createTab(id = recoverableTab.state.id, url = recoverableTab.state.url)
@@ -277,7 +272,7 @@ class DefaultSessionControlControllerTest {
         )
 
         val tab = mockk<ComponentTab> {
-            every { restore(activity, engine, restoreSessionId = false) } returns recoverableTab
+            every { restore(filesDir, engine, restoreSessionId = false) } returns recoverableTab
         }
 
         val restoredTab = createTab(id = recoverableTab.state.id, url = recoverableTab.state.url)
@@ -396,19 +391,6 @@ class DefaultSessionControlControllerTest {
         val recordedEvents = Collections.removed.testGetValue()!!
         assertEquals(1, recordedEvents.size)
         assertEquals(null, recordedEvents.single().extra)
-    }
-
-    @Test
-    fun handlePrivateBrowsingLearnMoreClicked() {
-        createController().handlePrivateBrowsingLearnMoreClicked()
-        verify {
-            activity.openToBrowserAndLoad(
-                searchTermOrURL = SupportUtils.getGenericSumoURLForTopic
-                    (SupportUtils.SumoTopic.PRIVATE_BROWSING_MYTHS),
-                newTab = true,
-                from = BrowserDirection.FromHome,
-            )
-        }
     }
 
     @Test
@@ -958,34 +940,6 @@ class DefaultSessionControlControllerTest {
     }
 
     @Test
-    fun handleStartBrowsingClicked() {
-        var hideOnboardingInvoked = false
-        createController(hideOnboarding = { hideOnboardingInvoked = true }).handleStartBrowsingClicked()
-
-        assertTrue(hideOnboardingInvoked)
-    }
-
-    @Test
-    fun handleReadPrivacyNoticeClicked() {
-        mockkObject(SupportUtils)
-        val urlCaptor = slot<String>()
-        every { SupportUtils.createCustomTabIntent(any(), capture(urlCaptor)) } returns mockk()
-
-        createController().handleReadPrivacyNoticeClicked()
-
-        verify {
-            activity.startActivity(
-                any(),
-            )
-        }
-        assertEquals(
-            SupportUtils.getMozillaPageUrl(SupportUtils.MozillaPage.PRIVATE_NOTICE),
-            urlCaptor.captured,
-        )
-        unmockkObject(SupportUtils)
-    }
-
-    @Test
     fun handleToggleCollectionExpanded() {
         val collection = mockk<TabCollection>()
         createController().handleToggleCollectionExpanded(collection, true)
@@ -1005,48 +959,6 @@ class DefaultSessionControlControllerTest {
     }
 
     @Test
-    fun handlePasteAndGo() {
-        assertNull(Events.enteredUrl.testGetValue())
-        assertNull(Events.performedSearch.testGetValue())
-
-        createController().handlePasteAndGo("text")
-
-        verify {
-            activity.openToBrowserAndLoad(
-                searchTermOrURL = "text",
-                newTab = true,
-                from = BrowserDirection.FromHome,
-                engine = searchEngine,
-            )
-        }
-
-        assertNotNull(Events.performedSearch.testGetValue())
-
-        createController().handlePasteAndGo("https://mozilla.org")
-        verify {
-            activity.openToBrowserAndLoad(
-                searchTermOrURL = "https://mozilla.org",
-                newTab = true,
-                from = BrowserDirection.FromHome,
-                engine = searchEngine,
-            )
-        }
-        assertNotNull(Events.enteredUrl.testGetValue())
-    }
-
-    @Test
-    fun handlePaste() {
-        createController().handlePaste("text")
-
-        verify {
-            navController.navigate(
-                match<NavDirections> { it.actionId == R.id.action_global_search_dialog },
-                null,
-            )
-        }
-    }
-
-    @Test
     fun handleRemoveCollectionsPlaceholder() {
         createController().handleRemoveCollectionsPlaceholder()
 
@@ -1056,93 +968,6 @@ class DefaultSessionControlControllerTest {
         verify {
             settings.showCollectionsPlaceholderOnHome = false
             appStore.dispatch(AppAction.RemoveCollectionsPlaceholder)
-        }
-    }
-
-    @Test
-    fun `WHEN private mode button is selected from home THEN handle mode change`() {
-        every { navController.currentDestination } returns mockk {
-            every { id } returns R.id.homeFragment
-        }
-
-        every { settings.incrementNumTimesPrivateModeOpened() } just Runs
-
-        val newMode = BrowsingMode.Private
-        val hasBeenOnboarded = true
-
-        createController().handlePrivateModeButtonClicked(newMode, hasBeenOnboarded)
-
-        verify {
-            settings.incrementNumTimesPrivateModeOpened()
-            AppAction.ModeChange(Mode.fromBrowsingMode(newMode))
-        }
-    }
-
-    @Test
-    fun `WHEN private mode is selected on home from behind search THEN handle mode change`() {
-        every { navController.currentDestination } returns mockk {
-            every { id } returns R.id.searchDialogFragment
-        }
-
-        every { settings.incrementNumTimesPrivateModeOpened() } just Runs
-
-        val url = "https://mozilla.org"
-        val tab = createTab(
-            id = "otherTab",
-            url = url,
-            private = false,
-            engineSession = mockk(relaxed = true),
-        )
-        store.dispatch(TabListAction.AddTabAction(tab, select = true)).joinBlocking()
-
-        val newMode = BrowsingMode.Private
-        val hasBeenOnboarded = true
-
-        createController().handlePrivateModeButtonClicked(newMode, hasBeenOnboarded)
-
-        verify {
-            settings.incrementNumTimesPrivateModeOpened()
-            AppAction.ModeChange(Mode.fromBrowsingMode(newMode))
-            navController.navigate(
-                BrowserFragmentDirections.actionGlobalSearchDialog(
-                    sessionId = null,
-                ),
-            )
-        }
-    }
-
-    @Test
-    fun `WHEN private mode is deselected on home from behind search THEN handle mode change`() {
-        every { navController.currentDestination } returns mockk {
-            every { id } returns R.id.searchDialogFragment
-        }
-
-        val url = "https://mozilla.org"
-        val tab = createTab(
-            id = "otherTab",
-            url = url,
-            private = true,
-            engineSession = mockk(relaxed = true),
-        )
-        store.dispatch(TabListAction.AddTabAction(tab, select = true)).joinBlocking()
-
-        val newMode = BrowsingMode.Normal
-        val hasBeenOnboarded = true
-
-        createController().handlePrivateModeButtonClicked(newMode, hasBeenOnboarded)
-
-        verify(exactly = 0) {
-            settings.incrementNumTimesPrivateModeOpened()
-        }
-        verify {
-            appStore.dispatch(
-                AppAction.ModeChange(Mode.fromBrowsingMode(newMode)),
-            )
-            navController.navigate(
-                BrowserFragmentDirections.actionGlobalSearchDialog(
-                    sessionId = null,
-                ),
-            )
         }
     }
 
@@ -1227,6 +1052,25 @@ class DefaultSessionControlControllerTest {
     }
 
     @Test
+    fun `WHEN top site long clicked is called THEN report the top site long click telemetry`() {
+        assertNull(TopSites.longPress.testGetValue())
+
+        val topSite = TopSite.Provided(
+            id = 1L,
+            title = "Mozilla",
+            url = "mozilla.org",
+            clickUrl = "",
+            imageUrl = "",
+            impressionUrl = "",
+            createdAt = 0,
+        )
+
+        createController().handleTopSiteLongClicked(topSite)
+
+        assertEquals(topSite.type, TopSites.longPress.testGetValue()!!.single().extra!!["type"])
+    }
+
+    @Test
     fun `WHEN handleOpenInPrivateTabClicked is called with a TopSite#Provided site THEN Event#TopSiteOpenContileInPrivateTab is reported`() {
         val topSite = TopSite.Provided(
             id = 1L,
@@ -1294,36 +1138,7 @@ class DefaultSessionControlControllerTest {
         }
     }
 
-    @Test
-    fun `WHEN handleMenuItemTapped is called with SearchSettings item THEN navigate to SearchEngineFragment`() {
-        createController().handleMenuItemTapped(SearchSelectorMenu.Item.SearchSettings)
-
-        verify {
-            navController.navigate(
-                match<NavDirections> { it.actionId == R.id.action_global_searchEngineFragment },
-                null,
-            )
-        }
-    }
-
-    @Test
-    fun `WHEN handleMenuItemTapped is called with SearchEngine item THEN navigate to SearchDialogFragment`() {
-        val item = mockk<SearchSelectorMenu.Item.SearchEngine>()
-        every { item.searchEngine.id } returns "DuckDuckGo"
-
-        createController().handleMenuItemTapped(item)
-
-        val expectedDirections = HomeFragmentDirections.actionGlobalSearchDialog(
-            sessionId = null,
-            searchEngine = item.searchEngine.id,
-        )
-        verify {
-            navController.navigate(expectedDirections, any<NavOptions>())
-        }
-    }
-
     private fun createController(
-        hideOnboarding: () -> Unit = { },
         registerCollectionStorageObserver: () -> Unit = { },
         showTabTray: () -> Unit = { },
         removeCollectionWithUndo: (tabCollection: TabCollection) -> Unit = { },
@@ -1342,7 +1157,6 @@ class DefaultSessionControlControllerTest {
             appStore = appStore,
             navController = navController,
             viewLifecycleScope = scope,
-            hideOnboarding = hideOnboarding,
             registerCollectionStorageObserver = registerCollectionStorageObserver,
             removeCollectionWithUndo = removeCollectionWithUndo,
             showTabTray = showTabTray,

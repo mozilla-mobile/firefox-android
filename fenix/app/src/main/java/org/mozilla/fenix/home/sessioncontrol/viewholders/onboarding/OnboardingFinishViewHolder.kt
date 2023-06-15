@@ -10,7 +10,7 @@ import mozilla.components.service.glean.private.NoExtras
 import org.mozilla.fenix.GleanMetrics.Onboarding
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.OnboardingFinishBinding
-import org.mozilla.fenix.home.sessioncontrol.OnboardingInteractor
+import org.mozilla.fenix.onboarding.interactor.OnboardingInteractor
 
 class OnboardingFinishViewHolder(
     view: View,
@@ -20,7 +20,7 @@ class OnboardingFinishViewHolder(
     init {
         val binding = OnboardingFinishBinding.bind(view)
         binding.finishButton.setOnClickListener {
-            interactor.onStartBrowsingClicked()
+            interactor.onFinishOnboarding(focusOnAddressBar = true)
             Onboarding.finish.record(NoExtras())
         }
     }

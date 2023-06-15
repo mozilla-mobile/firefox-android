@@ -31,10 +31,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.dp
@@ -42,12 +45,15 @@ import androidx.compose.ui.unit.sp
 import androidx.core.text.BidiFormatter
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.state.state.createTab
+import mozilla.components.support.ktx.kotlin.MAX_URI_LENGTH
 import org.mozilla.fenix.R
 import org.mozilla.fenix.compose.Divider
 import org.mozilla.fenix.compose.Favicon
 import org.mozilla.fenix.compose.HorizontalFadingEdgeBox
 import org.mozilla.fenix.compose.ThumbnailCard
 import org.mozilla.fenix.compose.annotation.LightDarkPreview
+import org.mozilla.fenix.tabstray.TabsTrayTestTag
+import org.mozilla.fenix.tabstray.ext.toDisplayTitle
 import org.mozilla.fenix.theme.FirefoxTheme
 
 /**
@@ -78,7 +84,7 @@ fun TabGridItem(
     onClick: (tab: TabSessionState) -> Unit,
     onLongClick: (tab: TabSessionState) -> Unit,
 ) {
-    val tabBorderModifier = if (isSelected && !multiSelectionEnabled) {
+    val tabBorderModifier = if (isSelected) {
         Modifier.border(
             4.dp,
             FirefoxTheme.colors.borderAccent,
@@ -135,7 +141,7 @@ fun TabGridItem(
                         isContentRtl = BidiFormatter.getInstance().isRtl(tab.content.title),
                     ) {
                         Text(
-                            text = tab.content.title,
+                            text = tab.toDisplayTitle().take(MAX_URI_LENGTH),
                             fontSize = 14.sp,
                             maxLines = 1,
                             softWrap = false,
@@ -146,16 +152,18 @@ fun TabGridItem(
                         )
                     }
 
-                    Icon(
-                        painter = painterResource(id = R.drawable.mozac_ic_close),
-                        contentDescription = stringResource(id = R.string.close_tab),
-                        tint = FirefoxTheme.colors.iconPrimary,
-                        modifier = Modifier
-                            .clickable { onCloseClick(tab) }
-                            .size(24.dp)
-                            .align(Alignment.CenterVertically),
-
-                    )
+                    if (!multiSelectionEnabled) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.mozac_ic_close),
+                            contentDescription = stringResource(id = R.string.close_tab),
+                            tint = FirefoxTheme.colors.iconPrimary,
+                            modifier = Modifier
+                                .clickable { onCloseClick(tab) }
+                                .size(24.dp)
+                                .align(Alignment.CenterVertically)
+                                .testTag(TabsTrayTestTag.tabItemClose),
+                        )
+                    }
                 }
 
                 Divider()
@@ -192,13 +200,15 @@ private fun Thumbnail(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(FirefoxTheme.colors.layer2),
+            .background(FirefoxTheme.colors.layer2)
+            .semantics(mergeDescendants = true) {
+                testTag = TabsTrayTestTag.tabItemThumbnail
+            },
     ) {
         ThumbnailCard(
             url = tab.content.url,
             key = tab.id,
             size = LocalConfiguration.current.screenWidthDp.dp,
-            backgroundColor = FirefoxTheme.colors.layer2,
             modifier = Modifier.fillMaxSize(),
         )
 

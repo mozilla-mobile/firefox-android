@@ -15,23 +15,24 @@ import mozilla.components.lib.crash.service.CrashReporterService
 import mozilla.components.lib.crash.service.GleanCrashReporterService
 import mozilla.components.lib.crash.service.MozillaSocorroService
 import mozilla.components.service.nimbus.NimbusApi
+import mozilla.components.service.nimbus.messaging.FxNimbusMessaging
+import mozilla.components.service.nimbus.messaging.NimbusMessagingStorage
+import mozilla.components.service.nimbus.messaging.OnDiskMessageMetadataStorage
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
-import org.mozilla.fenix.GleanMetrics.Messaging
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ReleaseChannel
 import org.mozilla.fenix.components.metrics.AdjustMetricsService
 import org.mozilla.fenix.components.metrics.DefaultMetricsStorage
 import org.mozilla.fenix.components.metrics.GleanMetricsService
+import org.mozilla.fenix.components.metrics.InstallReferrerMetricsService
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.components.metrics.MetricsStorage
 import org.mozilla.fenix.experiments.createNimbus
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.gleanplumb.CustomAttributeProvider
-import org.mozilla.fenix.gleanplumb.NimbusMessagingStorage
-import org.mozilla.fenix.gleanplumb.OnDiskMessageMetadataStorage
-import org.mozilla.fenix.nimbus.FxNimbus
+import org.mozilla.fenix.messaging.CustomAttributeProvider
 import org.mozilla.fenix.perf.lazyMonitored
 import org.mozilla.fenix.utils.BrowsersCache
 import org.mozilla.geckoview.BuildConfig.MOZ_APP_BUILDID
@@ -115,6 +116,7 @@ class Analytics(
             ),
             enabled = true,
             nonFatalCrashIntent = pendingIntent,
+            notificationsDelegate = context.components.notificationsDelegate,
         )
     }
 
@@ -135,6 +137,7 @@ class Analytics(
                     storage = metricsStorage,
                     crashReporter = crashReporter,
                 ),
+                InstallReferrerMetricsService(context),
             ),
             isDataTelemetryEnabled = { context.settings().isTelemetryEnabled },
             isMarketingDataTelemetryEnabled = { context.settings().isMarketingTelemetryEnabled },
@@ -151,10 +154,7 @@ class Analytics(
             context = context,
             metadataStorage = OnDiskMessageMetadataStorage(context),
             gleanPlumb = experiments,
-            reportMalformedMessage = {
-                Messaging.malformed.record(Messaging.MalformedExtra(it))
-            },
-            messagingFeature = FxNimbus.features.messaging,
+            messagingFeature = FxNimbusMessaging.features.messaging,
             attributeProvider = CustomAttributeProvider,
         )
     }

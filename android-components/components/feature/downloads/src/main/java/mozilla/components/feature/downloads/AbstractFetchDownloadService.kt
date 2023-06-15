@@ -69,6 +69,7 @@ import mozilla.components.feature.downloads.facts.emitNotificationOpenFact
 import mozilla.components.feature.downloads.facts.emitNotificationPauseFact
 import mozilla.components.feature.downloads.facts.emitNotificationResumeFact
 import mozilla.components.feature.downloads.facts.emitNotificationTryAgainFact
+import mozilla.components.support.base.android.NotificationsDelegate
 import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.ktx.kotlin.ifNullOrEmpty
 import mozilla.components.support.ktx.kotlin.sanitizeURL
@@ -91,6 +92,7 @@ import kotlin.random.Random
 @Suppress("TooManyFunctions", "LargeClass", "ComplexMethod")
 abstract class AbstractFetchDownloadService : Service() {
     protected abstract val store: BrowserStore
+    protected abstract val notificationsDelegate: NotificationsDelegate
 
     private val notificationUpdateScope = MainScope()
 
@@ -254,10 +256,22 @@ abstract class AbstractFetchDownloadService : Service() {
             store.state.downloads[it]
         } ?: return START_REDELIVER_INTENT
 
-        if (intent.action == ACTION_REMOVE_PRIVATE_DOWNLOAD) {
-            handleRemovePrivateDownloadIntent(download)
-        } else {
-            handleDownloadIntent(download)
+        when (intent.action) {
+            ACTION_REMOVE_PRIVATE_DOWNLOAD -> {
+                handleRemovePrivateDownloadIntent(download)
+            }
+            ACTION_TRY_AGAIN -> {
+                val newDownloadState = download.copy(status = DOWNLOADING)
+                store.dispatch(
+                    DownloadAction.UpdateDownloadAction(
+                        newDownloadState,
+                    ),
+                )
+                handleDownloadIntent(newDownloadState)
+            }
+            else -> {
+                handleDownloadIntent(download)
+            }
         }
 
         return super.onStartCommand(intent, flags, startId)
@@ -388,7 +402,10 @@ abstract class AbstractFetchDownloadService : Service() {
         }
 
         notification?.let {
-            NotificationManagerCompat.from(context).notify(download.foregroundServiceId, it)
+            notificationsDelegate.notify(
+                notificationId = download.foregroundServiceId,
+                notification = it,
+            )
             download.lastNotificationUpdate = System.currentTimeMillis()
         }
     }
@@ -549,9 +566,11 @@ abstract class AbstractFetchDownloadService : Service() {
                     downloadList,
                     style.notificationAccentColor,
                 )
-            NotificationManagerCompat.from(context).apply {
-                notify(NOTIFICATION_DOWNLOAD_GROUP_ID, notificationGroup)
-            }
+
+            notificationsDelegate.notify(
+                notificationId = NOTIFICATION_DOWNLOAD_GROUP_ID,
+                notification = notificationGroup,
+            )
             notificationGroup
         } else {
             null
@@ -566,10 +585,14 @@ abstract class AbstractFetchDownloadService : Service() {
                 style.notificationAccentColor,
             )
         compatForegroundNotificationId = downloadJobState.foregroundServiceId
-        NotificationManagerCompat.from(context).apply {
-            notify(compatForegroundNotificationId, notification)
-            downloadJobState.lastNotificationUpdate = System.currentTimeMillis()
-        }
+
+        notificationsDelegate.notify(
+            notificationId = compatForegroundNotificationId,
+            notification = notification,
+        )
+
+        downloadJobState.lastNotificationUpdate = System.currentTimeMillis()
+
         return notification
     }
 

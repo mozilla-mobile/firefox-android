@@ -5,7 +5,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
-import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.helpers.TestHelper.exitMenu
 import org.mozilla.fenix.helpers.TestHelper.restartApp
 import org.mozilla.fenix.ui.robots.browserScreen
@@ -16,10 +15,11 @@ class CookieBannerReductionTest {
     @get:Rule
     val activityTestRule = HomeActivityIntentTestRule.withDefaultSettingsOverrides(skipOnboarding = true)
 
+    // Bug causing flakiness https://bugzilla.mozilla.org/show_bug.cgi?id=1807440
     @SmokeTest
     @Test
     fun verifyCookieBannerReductionTest() {
-        val webSite = "voetbal24.be"
+        val webSite = "startsiden.no"
 
         homeScreen {
         }.openNavigationToolbar {
@@ -28,10 +28,13 @@ class CookieBannerReductionTest {
             verifyCookieBannerExists(exists = true)
         }.openThreeDotMenu {
         }.openSettings {
+            verifySettingsOptionSummary("Cookie banner reduction", "Off")
         }.openCookieBannerReductionSubMenu {
             verifyCookieBannerView(isCookieBannerReductionChecked = false)
             clickCookieBannerReductionToggle()
             verifyCheckedCookieBannerReductionToggle(isCookieBannerReductionChecked = true)
+        }.goBack {
+            verifySettingsOptionSummary("Cookie banner reduction", "On")
         }
 
         exitMenu()
@@ -40,7 +43,7 @@ class CookieBannerReductionTest {
             verifyCookieBannerExists(exists = false)
         }
 
-        TestHelper.restartApp(activityTestRule)
+        restartApp(activityTestRule)
 
         browserScreen {
             verifyCookieBannerExists(exists = false)
@@ -60,10 +63,11 @@ class CookieBannerReductionTest {
         }
     }
 
+    // Bug causing flakiness https://bugzilla.mozilla.org/show_bug.cgi?id=1807440
     @SmokeTest
     @Test
     fun verifyCookieBannerReductionInPrivateBrowsingTest() {
-        val webSite = "voetbal24.be"
+        val webSite = "startsiden.no"
 
         homeScreen {
         }.togglePrivateBrowsingMode()
@@ -74,12 +78,17 @@ class CookieBannerReductionTest {
             verifyCookieBannerExists(exists = true)
         }.openThreeDotMenu {
         }.openSettings {
+            verifySettingsOptionSummary("Cookie banner reduction", "Off")
         }.openCookieBannerReductionSubMenu {
             verifyCookieBannerView(isCookieBannerReductionChecked = false)
             clickCookieBannerReductionToggle()
             verifyCheckedCookieBannerReductionToggle(isCookieBannerReductionChecked = true)
-            exitMenu()
+        }.goBack {
+            verifySettingsOptionSummary("Cookie banner reduction", "On")
         }
+
+        exitMenu()
+
         browserScreen {
             verifyCookieBannerExists(exists = false)
         }
@@ -88,7 +97,7 @@ class CookieBannerReductionTest {
 
         homeScreen {
         }.openTabDrawer {
-        }.openTab("Voetbal24") {
+        }.openTab("Startsiden.no") {
             verifyCookieBannerExists(exists = false)
         }.openThreeDotMenu {
         }.openSettings {

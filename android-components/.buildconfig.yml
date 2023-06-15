@@ -18,14 +18,18 @@ projects:
     publish: true
     upstream_dependencies:
     - browser-errorpages
+    - browser-state
     - concept-base
     - concept-engine
     - concept-fetch
     - concept-storage
     - lib-publicsuffixlist
+    - lib-state
     - service-glean
+    - service-nimbus
     - support-base
     - support-ktx
+    - support-locale
     - support-test
     - support-utils
     - tooling-fetch-tests
@@ -140,10 +144,12 @@ projects:
     - feature-tabs
     - lib-publicsuffixlist
     - lib-state
+    - service-nimbus
     - support-android-test
     - support-base
     - support-images
     - support-ktx
+    - support-locale
     - support-test
     - support-test-fakes
     - support-test-libstate
@@ -580,7 +586,9 @@ projects:
     - support-test-libstate
     - support-utils
     - tooling-lint
+    - ui-colors
     - ui-icons
+    - ui-widgets
   feature-autofill:
     description: Component adding support for Android`s Autofill framework.
     path: components/feature/autofill
@@ -597,6 +605,9 @@ projects:
     - support-test
     - support-utils
     - tooling-lint
+    - ui-colors
+    - ui-icons
+    - ui-widgets
   feature-awesomebar:
     description: Component connecting a concept-toolbar with a concept-awesomebar.
     path: components/feature/awesomebar
@@ -694,6 +705,7 @@ projects:
     - ui-colors
     - ui-icons
     - ui-tabcounter
+    - ui-widgets
   feature-customtabs:
     description: Component for providing custom tabs functionality.
     path: components/feature/customtabs
@@ -754,7 +766,9 @@ projects:
     - support-test-libstate
     - support-utils
     - tooling-lint
+    - ui-colors
     - ui-icons
+    - ui-widgets
   feature-findinpage:
     description: Feature that will subscribe to the selected session and show an UI
       for results of find in page.
@@ -831,7 +845,9 @@ projects:
     - support-test
     - support-utils
     - tooling-lint
+    - ui-colors
     - ui-icons
+    - ui-widgets
   feature-media:
     description: Feature component for website media related features.
     path: components/feature/media
@@ -895,7 +911,9 @@ projects:
     - support-test-libstate
     - support-utils
     - tooling-lint
+    - ui-colors
     - ui-icons
+    - ui-widgets
   feature-push:
     description: Feature that implements push notifications with a supported push
       service.
@@ -1065,9 +1083,11 @@ projects:
     - feature-tabs
     - lib-publicsuffixlist
     - lib-state
+    - service-nimbus
     - support-base
     - support-images
     - support-ktx
+    - support-locale
     - support-test
     - support-utils
     - tooling-lint
@@ -1539,11 +1559,13 @@ projects:
     - service-digitalassetlinks
     - service-glean
     - service-location
+    - service-nimbus
     - service-sync-logins
     - support-android-test
     - support-base
     - support-images
     - support-ktx
+    - support-locale
     - support-rustlog
     - support-sync-telemetry
     - support-utils
@@ -1589,9 +1611,11 @@ projects:
     - lib-state
     - service-glean
     - service-location
+    - service-nimbus
     - support-base
     - support-images
     - support-ktx
+    - support-locale
     - support-sync-telemetry
     - support-utils
     - tooling-lint
@@ -1864,6 +1888,7 @@ projects:
     - concept-storage
     - lib-publicsuffixlist
     - lib-state
+    - service-glean
     - support-base
     - support-ktx
     - support-locale
@@ -1961,6 +1986,12 @@ projects:
     - support-utils
     - tooling-lint
     - ui-icons
+  support-license:
+    description: A component to help display licensing agreements.
+    path: components/support/license
+    publish: true
+    upstream_dependencies:
+    - tooling-lint
   support-locale:
     description: A component to allow apps to change the system defined language by
       their custom one

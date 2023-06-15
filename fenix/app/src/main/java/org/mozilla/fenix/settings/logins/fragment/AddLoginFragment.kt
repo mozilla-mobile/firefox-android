@@ -63,11 +63,12 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login), MenuProvider {
 
         _binding = FragmentAddLoginBinding.bind(view)
 
-        loginsFragmentStore = StoreProvider.get(this) {
-            LoginsFragmentStore(
-                createInitialLoginsListState(requireContext().settings()),
-            )
-        }
+        loginsFragmentStore =
+            StoreProvider.get(findNavController().getBackStackEntry(R.id.savedLogins)) {
+                LoginsFragmentStore(
+                    createInitialLoginsListState(requireContext().settings()),
+                )
+            }
 
         interactor = AddLoginInteractor(
             SavedLoginsStorageController(
@@ -353,7 +354,7 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login), MenuProvider {
 
     override fun onPause() {
         redirectToReAuth(
-            listOf(R.id.savedLoginsFragment),
+            listOf(R.id.loginDetailFragment, R.id.savedLoginsFragment),
             findNavController().currentDestination?.id,
             R.id.addLoginFragment,
         )

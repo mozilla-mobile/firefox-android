@@ -55,6 +55,7 @@ projects:
     - support-base
     - support-images
     - support-ktx
+    - support-license
     - support-locale
     - support-rusthttp
     - support-rustlog
@@ -67,6 +68,7 @@ projects:
     - ui-colors
     - ui-icons
     - ui-tabcounter
+    - ui-widgets
 variants:
 - apks:
   - abi: arm64-v8a

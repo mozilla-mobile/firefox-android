@@ -1,18 +1,19 @@
 plugins {
-    id "com.jetbrains.python.envs" version "0.0.26"
+    id "com.jetbrains.python.envs" version "$python_envs_plugin"
 }
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-parcelize'
 apply plugin: 'jacoco'
+apply plugin: 'com.google.android.gms.oss-licenses-plugin'
 apply from: "$project.rootDir/tools/gradle/versionCode.gradle"
 
 import com.android.build.OutputFile
 import groovy.json.JsonOutput
 
 android {
-    compileSdkVersion 33
+    compileSdkVersion config.compileSdkVersion
 
     if (project.hasProperty("testBuildType")) {
         // Allowing to configure the test build type via command line flag (./gradlew -PtestBuildType=beta ..)
@@ -22,8 +23,8 @@ android {
 
     defaultConfig {
         applicationId "org.mozilla"
-        minSdkVersion 21
-        targetSdkVersion 33
+        minSdkVersion config.minSdkVersion
+        targetSdkVersion config.targetSdkVersion
         versionCode 11 // This versionCode is "frozen" for local builds. For "release" builds we
                        // override this with a generated versionCode at build time.
         // The versionName is dynamically overridden for all the build variants at build time.
@@ -34,13 +35,11 @@ android {
         buildConfigField "String", "GIT_HASH", "\"\""
 
         vectorDrawables.useSupportLibrary = true
-
-        multiDexEnabled true
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     lint {
@@ -206,23 +205,6 @@ nimbus {
     experimenterManifest = ".experimenter.yaml"
 }
 
-configurations {
-    // There's an interaction between Gradle's resolution of dependencies with different types
-    // (@jar, @aar) for `implementation` and `testImplementation` and with Android Studio's built-in
-    // JUnit test runner.  The runtime classpath in the built-in JUnit test runner gets the
-    // dependency from the `implementation`, which is type @aar, and therefore the JNA dependency
-    // doesn't provide the JNI dispatch libraries in the correct Java resource directories.  I think
-    // what's happening is that @aar type in `implementation` resolves to the @jar type in
-    // `testImplementation`, and that it wins the dependency resolution battle.
-    //
-    // A workaround is to add a new configuration which depends on the @jar type and to reference
-    // the underlying JAR file directly in `testImplementation`.  This JAR file doesn't resolve to
-    // the @aar type in `implementation`.  This works when invoked via `gradle`, but also sets the
-    // correct runtime classpath when invoked with Android Studio's built-in JUnit test runner.
-    // Success!
-    jnaForTest
-}
-
 dependencies {
     implementation FocusDependencies.androidx_appcompat
     implementation FocusDependencies.androidx_browser
@@ -245,8 +227,8 @@ dependencies {
     implementation FocusDependencies.androidx_splashscreen
     implementation FocusDependencies.androidx_transition
     implementation FocusDependencies.androidx_work_ktx
+    implementation FocusDependencies.androidx_data_store_preferences
 
-    implementation FocusDependencies.google_accompanist_insets_ui
     implementation FocusDependencies.google_play
 
     implementation FocusDependencies.google_material
@@ -299,11 +281,13 @@ dependencies {
     implementation project(':support-utils')
     implementation project(':support-rusthttp')
     implementation project(':support-rustlog')
+    implementation project(':support-license')
 
     implementation project(':ui-autocomplete')
     implementation project(':ui-colors')
     implementation project(':ui-icons')
     implementation project(':ui-tabcounter')
+    implementation project(':ui-widgets')
     implementation project(':feature-webcompat')
     implementation project(':feature-webcompat-reporter')
     implementation project(':support-webextensions')
@@ -318,8 +302,6 @@ dependencies {
     focusImplementation FocusDependencies.adjust
     focusImplementation FocusDependencies.install_referrer // Required by Adjust
 
-    jnaForTest FocusDependencies.jna
-    testImplementation files(configurations.jnaForTest.copyRecursive().files)
     testImplementation "org.mozilla.telemetry:glean-native-forUnitTests:${project.ext.glean_version}"
 
     testImplementation FocusDependencies.testing_junit_api
@@ -341,6 +323,7 @@ dependencies {
     }
     androidTestImplementation FocusDependencies.espresso_intents
 
+
     androidTestImplementation FocusDependencies.testing_mockwebserver
     testImplementation FocusDependencies.testing_mockwebserver
     testImplementation project(':lib-fetch-okhttp')
@@ -361,7 +344,6 @@ dependencies {
     testImplementation FocusDependencies.androidx_test_rules
 
     androidTestImplementation FocusDependencies.androidx_test_core_ktx
-    androidTestImplementation FocusDependencies.androidx_tracing
     androidTestImplementation FocusDependencies.androidx_junit_ktx
     androidTestImplementation FocusDependencies.androidx_uiautomator
     androidTestImplementation FocusDependencies.androidx_test_runner
@@ -558,7 +540,7 @@ android.applicationVariants.all { variant ->
 }
 
 def generatedLocaleListDir = 'src/main/java/org/mozilla/focus/generated'
-def generatedLocaleListFilename = 'LocaleList.java'
+def generatedLocaleListFilename = 'LocalesList.kt'
 
 task generateLocaleList {
     doLast {
@@ -568,15 +550,25 @@ task generateLocaleList {
 
         localeList.delete()
         localeList.createNewFile()
-        localeList << "package org.mozilla.focus.generated;" << "\n" << "\n"
-        localeList << "import java.util.Arrays;" << "\n"
-        localeList << "import java.util.Collections;" << "\n"
-        localeList << "import java.util.List;" << "\n"
+        localeList << "package org.mozilla.focus.generated" << "\n" << "\n"
+        localeList << "import java.util.Collections" << "\n"
         localeList << "\n"
-        localeList << "public class LocaleList {" << "\n"
-        // findbugs doesn't like "public static final String[]", see http://findbugs.sourceforge.net/bugDescriptions.html#MS_MUTABLE_ARRAY
-        localeList << "    public static final List<String> BUNDLED_LOCALES = Collections.unmodifiableList(Arrays.asList(new String[] { "
-        localeList << getEnabledLocales().join(", ") + " }));" << "\n"
+        localeList << "/**"
+        localeList << "\n"
+        localeList << " * Provides a list of bundled locales based on the language files in the res folder."
+        localeList << "\n"
+        localeList << " */"
+        localeList << "\n"
+        localeList << "object LocalesList {" << "\n"
+        localeList << "    " << "val BUNDLED_LOCALES: List<String> = Collections.unmodifiableList("
+        localeList << "\n"
+        localeList << "        " << "listOf("
+        localeList << "\n"
+        localeList << "            "
+        localeList << getEnabledLocales().join(",\n" + "            ")
+        localeList << ",\n"
+        localeList << "        )," << "\n"
+        localeList << "    )" << "\n"
         localeList << "}" << "\n"
     }
 }
@@ -628,11 +620,6 @@ if (project.hasProperty("coverage")) {
             }
         }
     }
-}
-
-if (gradle.hasProperty('localProperties.autoPublish.application-services.dir')) {
-    ext.appServicesSrcDir = gradle."localProperties.autoPublish.application-services.dir"
-    apply from: "../${appServicesSrcDir}/build-scripts/substitute-local-appservices.gradle"
 }
 
 if (gradle.hasProperty('localProperties.autoPublish.glean.dir')) {

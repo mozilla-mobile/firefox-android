@@ -1,12 +1,4 @@
 ---
-client-deduplication:
-  description: A feature to control the sending of the client-deduplication ping.
-  hasExposure: true
-  exposureDescription: ""
-  variables:
-    enabled:
-      type: boolean
-      description: "If true, the ping will be sent."
 cookie-banners:
   description: Features for cookie banner handling.
   hasExposure: true
@@ -15,6 +7,14 @@ cookie-banners:
     sections-enabled:
       type: json
       description: This property provides a lookup table of whether or not the given section should be enabled.
+glean:
+  description: A feature that provides server-side configurations for Glean metrics (aka Server Knobs).
+  hasExposure: true
+  exposureDescription: ""
+  variables:
+    metrics-enabled:
+      type: json
+      description: "A map of metric base-identifiers to booleans representing the state of the 'enabled' flag for that metric."
 growth-data:
   description: A feature measuring campaign growth data
   hasExposure: true
@@ -31,6 +31,17 @@ homescreen:
     sections-enabled:
       type: json
       description: "This property provides a lookup table of whether or not the given section should be enabled. If the section is enabled, it should be toggleable in the settings screen, and on by default."
+juno-onboarding:
+  description: A feature that shows juno onboarding flow.
+  hasExposure: true
+  exposureDescription: ""
+  variables:
+    cards:
+      type: json
+      description: Collection of user facing onboarding cards.
+    enabled:
+      type: boolean
+      description: "if true, juno onboarding is shown to the user."
 messaging:
   description: "Configuration for the messaging system.\n\nIn practice this is a set of growable lookup tables for the\nmessage controller to piece together.\n"
   hasExposure: true
@@ -69,7 +80,7 @@ mr2022:
       type: json
       description: This property provides a lookup table of whether or not the given section should be enabled.
 nimbus-system:
-  description: "Configuration of the Nimbus System in Fenix.\n"
+  description: "Configuration of the Nimbus System in Android.\n"
   hasExposure: true
   exposureDescription: ""
   variables:
@@ -98,6 +109,17 @@ onboarding:
     order:
       type: json
       description: Determines the order of the onboarding page panels
+pdfjs:
+  description: PDF.js features
+  hasExposure: true
+  exposureDescription: ""
+  variables:
+    download-button:
+      type: boolean
+      description: Download button
+    open-in-app-button:
+      type: boolean
+      description: Open in app button
 pre-permission-notification-prompt:
   description: A feature that shows the pre-permission notification prompt.
   hasExposure: true
@@ -125,6 +147,14 @@ search-term-groups:
     enabled:
       type: boolean
       description: "If true, the feature shows up on the homescreen and on the new tab screen."
+toolbar:
+  description: The searchbar/awesomebar that user uses to search.
+  hasExposure: true
+  exposureDescription: ""
+  variables:
+    toolbar-position-top:
+      type: boolean
+      description: "If true, toolbar appears at top of the screen."
 unified-search:
   description: A feature allowing user to easily search for specified results directly in the search bar.
   hasExposure: true

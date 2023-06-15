@@ -82,7 +82,7 @@ class AbstractBrowserTabViewHolderTest {
 
         holder.itemView.performClick()
 
-        verify { interactor.onMultiSelectClicked(tab, any(), holder.featureName) }
+        verify { interactor.onTabSelected(tab, holder.featureName) }
     }
 
     @Test

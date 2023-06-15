@@ -13,6 +13,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestAssetHelper.getStorageTestAsset
 import org.mozilla.fenix.helpers.TestHelper.exitMenu
@@ -21,6 +22,7 @@ import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.restartApp
 import org.mozilla.fenix.helpers.TestHelper.setNetworkEnabled
 import org.mozilla.fenix.ui.robots.browserScreen
+import org.mozilla.fenix.ui.robots.clickPageObject
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
 import org.mozilla.fenix.ui.robots.settingsScreen
@@ -28,8 +30,6 @@ import org.mozilla.fenix.ui.robots.settingsScreen
 /**
  *  Tests for verifying the Settings for:
  *  Delete Browsing Data
- *  Delete Browsing Data on quit
- *
  */
 
 class SettingsDeleteBrowsingDataTest {
@@ -119,6 +119,7 @@ class SettingsDeleteBrowsingDataTest {
             verifyAllCheckBoxesAreChecked()
             selectOnlyOpenTabsCheckBox()
             clickDeleteBrowsingDataButton()
+            verifyDeleteBrowsingDataDialog()
             confirmDeletionAndAssertSnackbar()
         }
         settingsScreen {
@@ -140,9 +141,11 @@ class SettingsDeleteBrowsingDataTest {
             verifyAllCheckBoxesAreChecked()
             selectOnlyOpenTabsCheckBox()
             clickDeleteBrowsingDataButton()
+            verifyDeleteBrowsingDataDialog()
             clickDialogCancelButton()
             verifyOpenTabsCheckBox(true)
             clickDeleteBrowsingDataButton()
+            verifyDeleteBrowsingDataDialog()
             confirmDeletionAndAssertSnackbar()
         }
         settingsScreen {
@@ -174,9 +177,11 @@ class SettingsDeleteBrowsingDataTest {
             verifyBrowsingHistoryDetails("2")
             selectOnlyBrowsingHistoryCheckBox()
             clickDeleteBrowsingDataButton()
+            verifyDeleteBrowsingDataDialog()
             clickDialogCancelButton()
             verifyBrowsingHistoryDetails(true)
             clickDeleteBrowsingDataButton()
+            verifyDeleteBrowsingDataDialog()
             confirmDeletionAndAssertSnackbar()
             verifyBrowsingHistoryDetails("0")
             exitMenu()
@@ -206,13 +211,14 @@ class SettingsDeleteBrowsingDataTest {
         }.openNavigationToolbar {
         }.enterURLAndEnterToBrowser(cookiesTestPage) {
             verifyPageContent("No cookies set")
-            clickSetCookiesButton()
+            clickPageObject(itemWithResId("setCookies"))
             verifyPageContent("user=android")
         }.openThreeDotMenu {
         }.openSettings {
         }.openSettingsSubMenuDeleteBrowsingData {
             selectOnlyCookiesCheckBox()
             clickDeleteBrowsingDataButton()
+            verifyDeleteBrowsingDataDialog()
             confirmDeletionAndAssertSnackbar()
             exitMenu()
         }
@@ -242,6 +248,7 @@ class SettingsDeleteBrowsingDataTest {
         }.openSettingsSubMenuDeleteBrowsingData {
             selectOnlyCachedFilesCheckBox()
             clickDeleteBrowsingDataButton()
+            verifyDeleteBrowsingDataDialog()
             confirmDeletionAndAssertSnackbar()
             exitMenu()
         }

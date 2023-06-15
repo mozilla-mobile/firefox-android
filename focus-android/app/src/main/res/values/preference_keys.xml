@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="pref_key_search_engine" translatable="false"><xliff:g id="preference_key">pref_search_engine</xliff:g></string>
     <string name="pref_key_show_search_suggestions" translatable="false"><xliff:g id="preference_key">pref_show_search_suggestions</xliff:g></string>
@@ -38,6 +42,8 @@
     <string name="pref_key_help" translatable="false"><xliff:g id="preference_key">pref_help</xliff:g></string>
     <string name="pref_key_rights" translatable="false"><xliff:g id="preference_key">pref_rights</xliff:g></string>
     <string name="pref_key_privacy_notice" translatable="false"><xliff:g id="preference_key">pref_privacy_notice</xliff:g></string>
+    <string name="pref_key_licensing_info" translatable="false"><xliff:g id="preference_key">pref_licensing_info</xliff:g></string>
+    <string name="pref_key_libraries_we_use" translatable="false"><xliff:g id="preference_key">pref_libraries_we_use</xliff:g></string>
 
     <string name="pref_key_locale" translatable="false"><xliff:g id="preference_key">pref_locale</xliff:g></string>
     <string name="pref_in_app_review_openings" translatable="false"><xliff:g id="preference_key">pref_in_app_review_openings</xliff:g></string>

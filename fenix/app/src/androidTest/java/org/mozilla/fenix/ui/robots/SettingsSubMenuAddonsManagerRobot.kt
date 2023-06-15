@@ -36,6 +36,7 @@ import org.mozilla.fenix.helpers.Constants.RETRY_COUNT
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeLong
+import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
 import org.mozilla.fenix.helpers.TestHelper.appName
 import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.restartApp
@@ -66,7 +67,7 @@ class SettingsSubMenuAddonsManagerRobot {
             try {
                 assertFalse(
                     mDevice.findObject(UiSelector().text("Failed to install $addonName"))
-                        .waitForExists(waitingTime),
+                        .waitForExists(waitingTimeShort),
                 )
 
                 assertTrue(
@@ -185,6 +186,8 @@ class SettingsSubMenuAddonsManagerRobot {
     }
 
     private fun assertAddonPermissionPrompt(addonName: String) {
+        mDevice.waitNotNull(Until.findObject(By.text("Add $addonName?")), waitingTime)
+
         onView(allOf(withId(R.id.title), withText("Add $addonName?")))
             .check(matches(isCompletelyDisplayed()))
 
@@ -220,6 +223,8 @@ class SettingsSubMenuAddonsManagerRobot {
     }
 
     private fun allowPermissionToInstall() {
+        mDevice.waitNotNull(Until.findObject(By.text("Add")), waitingTime)
+
         onView(allOf(withId(R.id.allow_button), withText("Add")))
             .check(matches(isCompletelyDisplayed()))
             .perform(click())

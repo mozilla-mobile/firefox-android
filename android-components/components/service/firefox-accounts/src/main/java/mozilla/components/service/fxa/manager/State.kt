@@ -5,8 +5,8 @@
 package mozilla.components.service.fxa.manager
 
 import mozilla.components.concept.sync.AuthType
+import mozilla.components.concept.sync.FxAEntryPoint
 import mozilla.components.service.fxa.FxaAuthData
-import mozilla.components.service.fxa.sharing.ShareableAccount
 
 /**
  * This file is the "heart" of the accounts system. It's a finite state machine.
@@ -54,7 +54,6 @@ import mozilla.components.service.fxa.sharing.ShareableAccount
 
 internal enum class AccountState {
     NotAuthenticated,
-    IncompleteMigration,
     Authenticated,
     AuthenticationProblem,
 }
@@ -63,7 +62,6 @@ internal enum class ProgressState {
     Initializing,
     BeginningAuthentication,
     CompletingAuthentication,
-    MigratingAccount,
     RecoveringFromAuthProblem,
     LoggingOut,
 }
@@ -71,8 +69,8 @@ internal enum class ProgressState {
 internal sealed class Event {
     internal sealed class Account : Event() {
         internal object Start : Account()
-        object BeginEmailFlow : Account()
-        data class BeginPairingFlow(val pairingUrl: String?) : Account()
+        data class BeginEmailFlow(val entrypoint: FxAEntryPoint) : Account()
+        data class BeginPairingFlow(val pairingUrl: String?, val entrypoint: FxAEntryPoint) : Account()
         data class AuthenticationError(val operation: String, val errorCountWithinTheTimeWindow: Int = 1) : Account() {
             override fun toString(): String {
                 return "${this.javaClass.simpleName} - $operation"
@@ -80,26 +78,15 @@ internal sealed class Event {
         }
         object AccessTokenKeyError : Account()
 
-        data class MigrateFromAccount(val account: ShareableAccount, val reuseSessionToken: Boolean) : Account() {
-            override fun toString(): String {
-                return this.javaClass.simpleName
-            }
-        }
-
-        object RetryMigration : Account()
-
         object Logout : Account()
     }
 
     internal sealed class Progress : Event() {
         object AccountNotFound : Progress()
         object AccountRestored : Progress()
-        data class IncompleteMigration(val reuseSessionToken: Boolean) : Progress()
 
         data class AuthData(val authData: FxaAuthData) : Progress()
-        data class Migrated(val reusedSessionToken: Boolean) : Progress()
 
-        object FailedToCompleteMigration : Progress()
         object FailedToBeginAuth : Progress()
         object FailedToCompleteAuthRestore : Progress()
         object FailedToCompleteAuth : Progress()
@@ -125,14 +112,8 @@ internal fun State.next(event: Event): State? = when (this) {
     is State.Idle -> when (this.accountState) {
         AccountState.NotAuthenticated -> when (event) {
             Event.Account.Start -> State.Active(ProgressState.Initializing)
-            Event.Account.BeginEmailFlow -> State.Active(ProgressState.BeginningAuthentication)
+            is Event.Account.BeginEmailFlow -> State.Active(ProgressState.BeginningAuthentication)
             is Event.Account.BeginPairingFlow -> State.Active(ProgressState.BeginningAuthentication)
-            is Event.Account.MigrateFromAccount -> State.Active(ProgressState.MigratingAccount)
-            else -> null
-        }
-        AccountState.IncompleteMigration -> when (event) {
-            is Event.Account.RetryMigration -> State.Active(ProgressState.MigratingAccount)
-            is Event.Account.Logout -> State.Active(ProgressState.LoggingOut)
             else -> null
         }
         AccountState.Authenticated -> when (event) {
@@ -152,7 +133,6 @@ internal fun State.next(event: Event): State? = when (this) {
         ProgressState.Initializing -> when (event) {
             Event.Progress.AccountNotFound -> State.Idle(AccountState.NotAuthenticated)
             Event.Progress.AccountRestored -> State.Active(ProgressState.CompletingAuthentication)
-            is Event.Progress.IncompleteMigration -> State.Active(ProgressState.MigratingAccount)
             else -> null
         }
         ProgressState.BeginningAuthentication -> when (event) {
@@ -166,12 +146,6 @@ internal fun State.next(event: Event): State? = when (this) {
             is Event.Account.AuthenticationError -> State.Active(ProgressState.RecoveringFromAuthProblem)
             Event.Progress.FailedToCompleteAuthRestore -> State.Idle(AccountState.NotAuthenticated)
             Event.Progress.FailedToCompleteAuth -> State.Idle(AccountState.NotAuthenticated)
-            else -> null
-        }
-        ProgressState.MigratingAccount -> when (event) {
-            is Event.Progress.Migrated -> State.Active(ProgressState.CompletingAuthentication)
-            Event.Progress.FailedToCompleteMigration -> State.Idle(AccountState.NotAuthenticated)
-            is Event.Progress.IncompleteMigration -> State.Idle(AccountState.IncompleteMigration)
             else -> null
         }
         ProgressState.RecoveringFromAuthProblem -> when (event) {

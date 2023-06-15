@@ -189,6 +189,8 @@ internal class EngineObserver(
         cookie: String?,
         userAgent: String?,
         isPrivate: Boolean,
+        skipConfirmation: Boolean,
+        openInApp: Boolean,
         response: Response?,
     ) {
         // We want to avoid negative contentLength values
@@ -204,6 +206,8 @@ internal class EngineObserver(
             userAgent,
             Environment.DIRECTORY_DOWNLOADS,
             private = isPrivate,
+            skipConfirmation = skipConfirmation,
+            openInApp = openInApp,
             response = response,
         )
 
@@ -431,8 +435,16 @@ internal class EngineObserver(
         store.dispatch(EngineAction.SaveToPdfExceptionAction(tabId, throwable))
     }
 
+    override fun onPrintFinish() {
+        store.dispatch(EngineAction.PrintContentCompletedAction(tabId))
+    }
+
+    override fun onPrintException(isPrint: Boolean, throwable: Throwable) {
+        store.dispatch(EngineAction.PrintContentExceptionAction(tabId, isPrint, throwable))
+    }
+
     override fun onCheckForFormData(containsFormData: Boolean) {
-        store.dispatch(ContentAction.CheckForFormDataAction(tabId, containsFormData))
+        store.dispatch(ContentAction.UpdateHasFormDataAction(tabId, containsFormData))
     }
 
     override fun onCheckForFormDataException(throwable: Throwable) {

@@ -127,6 +127,7 @@ treeherder:
         support-base: support-base
         support-images: support-images
         support-ktx: support-ktx
+        support-license: support-license
         support-locale: support-locale
         support-migration: support-migration
         support-rusthttp: support-rusthttp
@@ -175,7 +176,9 @@ taskgraph:
         mobile:
             name: firefox-android
     cached-task-prefix: mobile.v2.firefox-android
-    decision-parameters: 'android_taskgraph:get_decision_parameters'
+    decision-parameters: 'android_taskgraph.parameters:get_decision_parameters'
+    index-path-regexes:
+        - '(mobile\.v3.[^.]*\.).*'
 
 workers:
     aliases:
@@ -189,6 +192,11 @@ workers:
             implementation: docker-worker
             os: linux
             worker-type: b-linux-large-gcp
+        b-android-xlarge:
+            provisioner: 'mobile-{level}'
+            implementation: docker-worker
+            os: linux
+            worker-type: b-linux-xlarge-gcp
         beetmover:
             provisioner: scriptworker-k8s
             implementation: scriptworker-beetmover

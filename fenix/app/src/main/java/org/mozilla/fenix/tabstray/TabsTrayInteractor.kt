@@ -7,7 +7,6 @@ package org.mozilla.fenix.tabstray
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.storage.sync.Tab
 import mozilla.components.browser.tabstray.TabsTray
-import org.mozilla.fenix.selection.SelectionHolder
 import org.mozilla.fenix.tabstray.browser.InactiveTabsInteractor
 import org.mozilla.fenix.tabstray.browser.TabsTrayFabInteractor
 
@@ -36,18 +35,29 @@ interface TabsTrayInteractor :
     fun onDeletePrivateTabWarningAccepted(tabId: String, source: String? = null)
 
     /**
-     * Invoked when tabs are requested to be deleted.
-     *
-     * @param tabs The group of [TabSessionState] to be deleted.
+     * Invoked when the selected tabs are requested to be deleted.
      */
-    fun onDeleteTabs(tabs: Collection<TabSessionState>)
+    fun onDeleteSelectedTabsClicked()
 
     /**
      * Invoked when the debug menu option for inactive tabs is clicked.
-     *
-     * @param tabs The group of [TabSessionState] to be made inactive.
      */
-    fun onInactiveDebugClicked(tabs: Collection<TabSessionState>)
+    fun onForceSelectedTabsAsInactiveClicked()
+
+    /**
+     * Invoked when the bookmark button in the multi selection banner is clicked.
+     */
+    fun onBookmarkSelectedTabsClicked()
+
+    /**
+     * Invoked when the collections button in the multi selection banner is clicked.
+     */
+    fun onAddSelectedTabsToCollectionClicked()
+
+    /**
+     * Invoked when the share button in the multi selection banner is clicked.
+     */
+    fun onShareSelectedTabs()
 
     /**
      * Invoked when a drag-drop operation with a tab is completed.
@@ -75,28 +85,11 @@ interface TabsTrayInteractor :
     fun onMediaClicked(tab: TabSessionState)
 
     /**
-     * Invoked when tabs are clicked when multi-selection is enabled.
-     *
-     * @param tab [TabSessionState] that was clicked.
-     * @param holder [SelectionHolder] used to access the current selection of tabs.
-     * @param source App feature from which the tab was clicked.
-     */
-    fun onMultiSelectClicked(
-        tab: TabSessionState,
-        holder: SelectionHolder<TabSessionState>,
-        source: String?,
-    )
-
-    /**
      * Invoked when a tab is long clicked.
      *
      * @param tab [TabSessionState] that was clicked.
-     * @param holder [SelectionHolder] used to access the current selection of tabs.
      */
-    fun onTabLongClicked(
-        tab: TabSessionState,
-        holder: SelectionHolder<TabSessionState>,
-    ): Boolean
+    fun onTabLongClicked(tab: TabSessionState): Boolean
 
     /**
      * Invoked when the back button is pressed.
@@ -118,6 +111,7 @@ interface TabsTrayInteractor :
  *
  * @property controller [TabsTrayController] to which user actions can be delegated for app updates.
  */
+@Suppress("TooManyFunctions")
 class DefaultTabsTrayInteractor(
     private val controller: TabsTrayController,
 ) : TabsTrayInteractor {
@@ -130,8 +124,8 @@ class DefaultTabsTrayInteractor(
         controller.handleDeleteTabWarningAccepted(tabId, source)
     }
 
-    override fun onDeleteTabs(tabs: Collection<TabSessionState>) {
-        controller.handleMultipleTabsDeletion(tabs)
+    override fun onDeleteSelectedTabsClicked() {
+        controller.handleDeleteSelectedTabsClicked()
     }
 
     override fun onTabsMove(
@@ -142,8 +136,20 @@ class DefaultTabsTrayInteractor(
         controller.handleTabsMove(tabId, targetId, placeAfter)
     }
 
-    override fun onInactiveDebugClicked(tabs: Collection<TabSessionState>) {
-        controller.forceTabsAsInactive(tabs)
+    override fun onForceSelectedTabsAsInactiveClicked() {
+        controller.handleForceSelectedTabsAsInactiveClicked()
+    }
+
+    override fun onBookmarkSelectedTabsClicked() {
+        controller.handleBookmarkSelectedTabsClicked()
+    }
+
+    override fun onAddSelectedTabsToCollectionClicked() {
+        controller.handleAddSelectedTabsToCollectionClicked()
+    }
+
+    override fun onShareSelectedTabs() {
+        controller.handleShareSelectedTabsClicked()
     }
 
     override fun onSyncedTabClicked(tab: Tab) {
@@ -180,16 +186,8 @@ class DefaultTabsTrayInteractor(
         controller.handleMediaClicked(tab)
     }
 
-    override fun onMultiSelectClicked(
-        tab: TabSessionState,
-        holder: SelectionHolder<TabSessionState>,
-        source: String?,
-    ) {
-        controller.handleMultiSelectClicked(tab, holder, source)
-    }
-
-    override fun onTabLongClicked(tab: TabSessionState, holder: SelectionHolder<TabSessionState>): Boolean {
-        return controller.handleTabLongClick(tab, holder)
+    override fun onTabLongClicked(tab: TabSessionState): Boolean {
+        return controller.handleTabLongClick(tab)
     }
 
     override fun onTabUnselected(tab: TabSessionState) {

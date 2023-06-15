@@ -1,8 +1,9 @@
+import org.apache.tools.ant.util.StringUtils
 import org.mozilla.fenix.gradle.tasks.ApkSizeTask
 
 plugins {
-    id "com.jetbrains.python.envs" version "0.0.26"
-    id "com.google.protobuf" version "0.8.19"
+    id "com.jetbrains.python.envs" version "$python_envs_plugin"
+    id "com.google.protobuf" version "$protobuf_plugin"
 }
 
 apply plugin: 'com.android.application'
@@ -11,8 +12,6 @@ apply plugin: 'kotlin-parcelize'
 apply plugin: 'jacoco'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
 apply plugin: 'com.google.android.gms.oss-licenses-plugin'
-apply plugin: 'androidx.benchmark'
-
 
 import com.android.build.OutputFile
 import groovy.json.JsonOutput
@@ -24,7 +23,7 @@ import static org.gradle.api.tasks.testing.TestResult.ResultType
 apply from: 'benchmark.gradle'
 
 android {
-    compileSdkVersion Config.compileSdkVersion
+    compileSdkVersion config.compileSdkVersion
 
     project.maybeConfigForJetpackBenchmark(it)
     if (project.hasProperty("testBuildType")) {
@@ -35,8 +34,8 @@ android {
 
     defaultConfig {
         applicationId "org.mozilla"
-        minSdkVersion Config.minSdkVersion
-        targetSdkVersion Config.targetSdkVersion
+        minSdkVersion config.minSdkVersion
+        targetSdkVersion config.targetSdkVersion
         versionCode 1
         versionName Config.generateDebugVersionName()
         vectorDrawables.useSupportLibrary = true
@@ -64,18 +63,26 @@ android {
                 "}"
         // This should be the base URL used to call the AMO API.
         buildConfigField "String", "AMO_SERVER_URL", "\"https://services.addons.mozilla.org\""
+
         def deepLinkSchemeValue = "fenix-dev"
         buildConfigField "String", "DEEP_LINK_SCHEME", "\"$deepLinkSchemeValue\""
-        manifestPlaceholders = [
-                "deepLinkScheme": deepLinkSchemeValue
-        ]
+
+        // This allows overriding the target activity for MozillaOnline builds, which happens
+        // as part of the defaultConfig below.
+        def targetActivity = "HomeActivity"
 
         // Build flag for "Mozilla Online" variants. See `Config.isMozillaOnline`.
         if (project.hasProperty("mozillaOnline") || gradle.hasProperty("localProperties.mozillaOnline")) {
             buildConfigField "boolean", "MOZILLA_ONLINE", "true"
+            targetActivity = "MozillaOnlineHomeActivity"
         } else {
             buildConfigField "boolean", "MOZILLA_ONLINE", "false"
         }
+
+        manifestPlaceholders = [
+                "targetActivity": targetActivity,
+                "deepLinkScheme": deepLinkSchemeValue
+        ]
     }
 
     def releaseTemplate = {
@@ -112,41 +119,48 @@ android {
             buildConfigField "boolean", "USE_RELEASE_VERSIONING", "true"
             def deepLinkSchemeValue = "fenix-nightly"
             buildConfigField "String", "DEEP_LINK_SCHEME", "\"$deepLinkSchemeValue\""
-            manifestPlaceholders = ["deepLinkScheme": deepLinkSchemeValue]
+            manifestPlaceholders.putAll([
+                    "deepLinkScheme": deepLinkSchemeValue
+            ])
         }
         beta releaseTemplate >> {
             buildConfigField "boolean", "USE_RELEASE_VERSIONING", "true"
             applicationIdSuffix ".firefox_beta"
             def deepLinkSchemeValue = "fenix-beta"
             buildConfigField "String", "DEEP_LINK_SCHEME", "\"$deepLinkSchemeValue\""
-            manifestPlaceholders = [
+            manifestPlaceholders.putAll([
                     // This release type is meant to replace Firefox (Beta channel) and therefore needs to inherit
                     // its sharedUserId for all eternity. See:
-                    // https://searchfox.org/mozilla-central/search?q=moz_android_shared_id&case=false&regexp=false&path=
+                    // https://searchfox.org/mozilla-esr68/search?q=moz_android_shared_id&case=false&regexp=false&path=
                     // Shipping an app update without sharedUserId can have
                     // fatal consequences. For example see:
                     //  - https://issuetracker.google.com/issues/36924841
                     //  - https://issuetracker.google.com/issues/36905922
                     "sharedUserId": "org.mozilla.firefox.sharedID",
-                    "deepLinkScheme": deepLinkSchemeValue
-            ]
+                    "deepLinkScheme": deepLinkSchemeValue,
+            ])
         }
         release releaseTemplate >> {
             buildConfigField "boolean", "USE_RELEASE_VERSIONING", "true"
             applicationIdSuffix ".firefox"
             def deepLinkSchemeValue = "fenix"
             buildConfigField "String", "DEEP_LINK_SCHEME", "\"$deepLinkSchemeValue\""
-            manifestPlaceholders = [
+            manifestPlaceholders.putAll([
                     // This release type is meant to replace Firefox (Release channel) and therefore needs to inherit
                     // its sharedUserId for all eternity. See:
-                    // https://searchfox.org/mozilla-central/search?q=moz_android_shared_id&case=false&regexp=false&path=
+                    // https://searchfox.org/mozilla-esr68/search?q=moz_android_shared_id&case=false&regexp=false&path=
                     // Shipping an app update without sharedUserId can have
                     // fatal consequences. For example see:
                     //  - https://issuetracker.google.com/issues/36924841
                     //  - https://issuetracker.google.com/issues/36905922
                     "sharedUserId": "org.mozilla.firefox.sharedID",
-                    "deepLinkScheme": deepLinkSchemeValue
-            ]
+                    "deepLinkScheme": deepLinkSchemeValue,
+            ])
+        }
+        benchmark releaseTemplate >> {
+            initWith buildTypes.nightly
+            applicationIdSuffix ".fenix"
+            debuggable false
         }
     }
 
@@ -199,8 +213,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     lint {
@@ -209,7 +223,8 @@ android {
     }
     packagingOptions {
         resources {
-            excludes += ['META-INF/atomicfu.kotlin_module', 'META-INF/AL2.0', 'META-INF/LGPL2.1']
+            excludes += ['META-INF/atomicfu.kotlin_module', 'META-INF/AL2.0', 'META-INF/LGPL2.1',
+                         'META-INF/LICENSE.md', 'META-INF/LICENSE-notice.md']
         }
     }
 
@@ -447,6 +462,7 @@ nimbus {
             fenixNightly: "nightly",
             fenixBeta: "beta",
             fenixRelease: "release",
+            fenixBenchmark: "developer",
     ]
     // This is generated by the FML and should be checked into git.
     // It will be fetched by Experimenter (the Nimbus experiment website)
@@ -454,33 +470,15 @@ nimbus {
     experimenterManifest = ".experimenter.yaml"
 }
 
-configurations {
-    // There's an interaction between Gradle's resolution of dependencies with different types
-    // (@jar, @aar) for `implementation` and `testImplementation` and with Android Studio's built-in
-    // JUnit test runner.  The runtime classpath in the built-in JUnit test runner gets the
-    // dependency from the `implementation`, which is type @aar, and therefore the JNA dependency
-    // doesn't provide the JNI dispatch libraries in the correct Java resource directories.  I think
-    // what's happening is that @aar type in `implementation` resolves to the @jar type in
-    // `testImplementation`, and that it wins the dependency resolution battle.
-    //
-    // A workaround is to add a new configuration which depends on the @jar type and to reference
-    // the underlying JAR file directly in `testImplementation`.  This JAR file doesn't resolve to
-    // the @aar type in `implementation`.  This works when invoked via `gradle`, but also sets the
-    // correct runtime classpath when invoked with Android Studio's built-in JUnit test runner.
-    // Success!
-    jnaForTest
-}
-
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
     kotlinOptions {
-        freeCompilerArgs += "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
+        freeCompilerArgs += [
+                "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+        ]
     }
 }
 
 dependencies {
-    jnaForTest FenixDependencies.jna
-    testImplementation files(configurations.jnaForTest.copyRecursive().files)
-
     implementation project(':browser-engine-gecko')
 
     implementation FenixDependencies.kotlin_coroutines
@@ -490,7 +488,6 @@ dependencies {
     implementation FenixDependencies.androidx_constraintlayout
     implementation FenixDependencies.androidx_coordinatorlayout
     implementation FenixDependencies.google_accompanist_drawablepainter
-    implementation FenixDependencies.google_accompanist_pager
 
     implementation FenixDependencies.sentry
 
@@ -584,10 +581,13 @@ dependencies {
     implementation project(':lib-dataprotect')
 
     debugImplementation FenixDependencies.leakcanary
+    debugImplementation FenixDependencies.androidx_compose_ui_tooling
 
+    implementation FenixDependencies.androidx_activity_compose
+    implementation FenixDependencies.androidx_activity_ktx
     implementation FenixDependencies.androidx_annotation
     implementation FenixDependencies.androidx_compose_ui
-    implementation FenixDependencies.androidx_compose_ui_tooling
+    implementation FenixDependencies.androidx_compose_ui_tooling_preview
     implementation FenixDependencies.androidx_compose_foundation
     implementation FenixDependencies.androidx_compose_material
     implementation FenixDependencies.androidx_legacy
@@ -602,12 +602,14 @@ dependencies {
     implementation FenixDependencies.androidx_lifecycle_livedata
     implementation FenixDependencies.androidx_lifecycle_process
     implementation FenixDependencies.androidx_lifecycle_runtime
+
     implementation FenixDependencies.androidx_lifecycle_viewmodel
     implementation FenixDependencies.androidx_core
     implementation FenixDependencies.androidx_core_ktx
     implementation FenixDependencies.androidx_transition
     implementation FenixDependencies.androidx_work_ktx
     implementation FenixDependencies.androidx_datastore
+    implementation FenixDependencies.androidx_data_store_preferences
     implementation FenixDependencies.protobuf_javalite
     implementation FenixDependencies.google_material
 
@@ -620,10 +622,12 @@ dependencies {
     implementation FenixDependencies.google_play_review
     implementation FenixDependencies.google_play_review_ktx
 
+    implementation FenixDependencies.androidx_profileinstaller
+
     androidTestImplementation FenixDependencies.uiautomator
-    androidTestImplementation "tools.fastlane:screengrab:2.0.0"
+    androidTestImplementation FenixDependencies.fastlane
     // This Falcon version is added to maven central now required for Screengrab
-    androidTestImplementation 'com.jraska:falcon:2.2.0'
+    androidTestImplementation FenixDependencies.falcon
 
     androidTestImplementation FenixDependencies.androidx_compose_ui_test
 
@@ -654,7 +658,6 @@ dependencies {
 
     androidTestImplementation FenixDependencies.androidx_junit
     androidTestImplementation FenixDependencies.androidx_test_extensions
-    androidTestImplementation FenixDependencies.androidx_tracing
     androidTestImplementation FenixDependencies.androidx_work_testing
     androidTestImplementation FenixDependencies.androidx_benchmark_junit4
     androidTestImplementation FenixDependencies.mockwebserver
@@ -667,7 +670,7 @@ dependencies {
         exclude group: 'org.apache.maven'
     }
 
-    testImplementation 'org.apache.maven:maven-ant-tasks:2.1.3'
+    testImplementation FenixDependencies.maven_ant_tasks
     implementation project(':support-rusthttp')
 
     androidTestImplementation FenixDependencies.mockk_android
@@ -681,14 +684,8 @@ dependencies {
 }
 
 protobuf {
-    // Mac M1 workaround until we can bump the version. Dependent on A-S.
-    // See https://github.com/mozilla-mobile/fenix/issues/22321
     protoc {
-        if (osdetector.os == "osx") {
-            artifact = "${FenixDependencies.protobuf_compiler}:osx-x86_64"
-        } else {
-            artifact = FenixDependencies.protobuf_compiler
-        }
+        artifact = FenixDependencies.protobuf_compiler
     }
 
     // Generates the java Protobuf-lite code for the Protobufs in this project. See
@@ -712,7 +709,7 @@ if (project.hasProperty("coverage")) {
     }
 
     jacoco {
-        toolVersion = "0.8.7"
+        toolVersion = FenixVersions.jacoco
     }
 
     android.applicationVariants.all { variant ->
@@ -844,22 +841,8 @@ if (gradle.hasProperty('localProperties.dependencySubstitutions.geckoviewTopsrcd
     if (gradle.hasProperty('localProperties.dependencySubstitutions.geckoviewTopobjdir')) {
         ext.topobjdir = gradle."localProperties.dependencySubstitutions.geckoviewTopobjdir"
     }
-    ext.topsrcdir = gradle."localProperties.dependencySubstitutions.geckoviewTopsrcdir"
+    ext.topsrcdir = StringUtils.removeSuffix(gradle."localProperties.dependencySubstitutions.geckoviewTopsrcdir", File.separator)
     apply from: "${topsrcdir}/substitute-local-geckoview.gradle"
-}
-
-def appServicesSrcDir = null
-if (gradle.hasProperty('localProperties.autoPublish.application-services.dir')) {
-  appServicesSrcDir = gradle.getProperty('localProperties.autoPublish.application-services.dir')
-} else if (gradle.hasProperty('localProperties.branchBuild.application-services.dir')) {
-  appServicesSrcDir = gradle.getProperty('localProperties.branchBuild.application-services.dir')
-}
-if (appServicesSrcDir) {
-    if (appServicesSrcDir.startsWith("/")) {
-        apply from: "${appServicesSrcDir}/build-scripts/substitute-local-appservices.gradle"
-    } else {
-        apply from: "../${appServicesSrcDir}/build-scripts/substitute-local-appservices.gradle"
-    }
 }
 
 if (gradle.hasProperty('localProperties.autoPublish.glean.dir')) {

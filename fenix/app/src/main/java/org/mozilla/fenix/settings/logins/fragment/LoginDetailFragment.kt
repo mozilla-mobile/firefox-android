@@ -23,6 +23,7 @@ import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
 import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.service.glean.private.NoExtras
+import mozilla.components.ui.widgets.withCenterAlignedButtons
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.GleanMetrics.Logins
 import org.mozilla.fenix.HomeActivity
@@ -69,11 +70,12 @@ class LoginDetailFragment : SecureFragment(R.layout.fragment_login_detail), Menu
     ): View? {
         val view = inflater.inflate(R.layout.fragment_login_detail, container, false)
         _binding = FragmentLoginDetailBinding.bind(view)
-        savedLoginsStore = StoreProvider.get(this) {
-            LoginsFragmentStore(
-                createInitialLoginsListState(requireContext().settings()),
-            )
-        }
+        savedLoginsStore =
+            StoreProvider.get(findNavController().getBackStackEntry(R.id.savedLogins)) {
+                LoginsFragmentStore(
+                    createInitialLoginsListState(requireContext().settings()),
+                )
+            }
         loginDetailsBindingDelegate = LoginDetailsBindingDelegate(binding)
 
         return view
@@ -218,7 +220,7 @@ class LoginDetailFragment : SecureFragment(R.layout.fragment_login_detail), Menu
                     interactor.onDeleteLogin(args.savedLoginId)
                     dialog.dismiss()
                 }
-                create()
+                create().withCenterAlignedButtons()
             }.show()
         }
     }
@@ -228,7 +230,7 @@ class LoginDetailFragment : SecureFragment(R.layout.fragment_login_detail), Menu
         _binding = null
     }
 
-    private companion object {
+    companion object {
         private const val BUTTON_INCREASE_DPS = 24
     }
 }

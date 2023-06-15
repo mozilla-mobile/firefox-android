@@ -5,7 +5,6 @@
 package mozilla.components.lib.state.ext
 
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.runBlocking
 import mozilla.components.lib.state.Action
 import mozilla.components.lib.state.State
@@ -13,9 +12,7 @@ import mozilla.components.lib.state.Store
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 
-@RunWith(AndroidJUnit4::class)
 class ComposeExtensionsKtTest {
     @get:Rule
     val rule = createComposeRule()
@@ -55,6 +52,50 @@ class ComposeExtensionsKtTest {
 
         rule.runOnIdle {
             assertEquals(86, value)
+        }
+    }
+
+    @Test
+    fun usingInitialValueWithUpdates() {
+        val loading = "Loading"
+        val content = "Content"
+        val store = Store(
+            initialState = TestState(counter = 0),
+            reducer = ::reducer,
+        )
+
+        val value = mutableListOf<String>()
+
+        rule.setContent {
+            val composeState = store.observeAsState(
+                initialValue = loading,
+                map = { if (it.counter < 5) loading else content },
+            )
+            value.add(composeState.value)
+        }
+
+        rule.runOnIdle {
+            // Initial value when counter is 0.
+            assertEquals(listOf("Loading"), value)
+        }
+
+        store.dispatchBlockingOnIdle(TestAction.IncrementAction)
+        store.dispatchBlockingOnIdle(TestAction.IncrementAction)
+        store.dispatchBlockingOnIdle(TestAction.IncrementAction)
+        store.dispatchBlockingOnIdle(TestAction.IncrementAction)
+
+        rule.runOnIdle {
+            // Value after 4 increments, aka counter is 4. Note that it doesn't recompose here
+            // as the mapped value has stayed the same. We have 1 item in the list and not 5.
+            assertEquals(listOf(loading), value)
+        }
+
+        // 5th increment
+        store.dispatchBlockingOnIdle(TestAction.IncrementAction)
+
+        rule.runOnIdle {
+            assertEquals(listOf(loading, content), value)
+            assertEquals(content, value.last())
         }
     }
 

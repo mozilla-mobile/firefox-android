@@ -16,6 +16,7 @@ import mozilla.components.feature.pwa.ext.getWebAppManifest
 import mozilla.components.feature.pwa.ext.putWebAppManifest
 import mozilla.components.feature.pwa.feature.ManifestUpdateFeature
 import mozilla.components.feature.pwa.feature.WebAppActivityFeature
+import mozilla.components.feature.pwa.feature.WebAppContentFeature
 import mozilla.components.feature.pwa.feature.WebAppHideToolbarFeature
 import mozilla.components.feature.pwa.feature.WebAppSiteControlsFeature
 import mozilla.components.support.base.feature.UserInteractionHandler
@@ -90,6 +91,11 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
                     sessionId!!,
                     manifest,
                 ),
+                WebAppContentFeature(
+                    components.store,
+                    sessionId,
+                    manifest,
+                ),
             )
             viewLifecycleOwner.lifecycle.addObserver(
                 WebAppSiteControlsFeature(
@@ -99,6 +105,7 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
                     sessionId!!,
                     manifest,
                     icons = components.icons,
+                    notificationsDelegate = components.notificationsDelegate,
                 ),
             )
         }

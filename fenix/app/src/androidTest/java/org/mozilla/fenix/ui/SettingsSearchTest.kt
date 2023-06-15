@@ -98,6 +98,7 @@ class SettingsSearchTest {
         }
     }
 
+    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1807268")
     @Test
     fun toggleSearchBookmarksAndHistoryTest() {
         val page1 = getGenericAsset(mockWebServer, 1)
@@ -201,6 +202,13 @@ class SettingsSearchTest {
             changeDefaultSearchEngine(activityTestRule, searchEngine)
         }.submitQuery("mozilla ") {
             verifyUrl(searchEngine)
+        }.openThreeDotMenu {
+        }.openSettings {
+            verifySettingsOptionSummary("Search", "Google")
+        }.openSearchSubMenu {
+            changeDefaultSearchEngine(searchEngine)
+        }.goBack {
+            verifySettingsOptionSummary("Search", searchEngine)
         }
     }
 
@@ -232,6 +240,7 @@ class SettingsSearchTest {
             saveEditSearchEngine()
             changeDefaultSearchEngine(searchEngine.newTitle)
         }.goBack {
+            verifySettingsOptionSummary("Search", searchEngine.newTitle)
         }.goBack {
         }.openSearch {
             verifyDefaultSearchEngine(searchEngine.newTitle)
@@ -274,11 +283,6 @@ class SettingsSearchTest {
             verifyAllowSuggestionsInPrivateModeDialog()
             denySuggestionsInPrivateMode()
             verifyNoSuggestionsAreDisplayed(activityTestRule, "mozilla firefox")
-        }.dismissSearchBar {
-            togglePrivateBrowsingModeOnOff()
-        }.openSearch {
-            typeSearch("mozilla")
-            verifySearchEngineSuggestionResults(activityTestRule, "mozilla firefox")
         }
     }
 

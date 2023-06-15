@@ -11,7 +11,6 @@ import android.os.Build.VERSION.SDK_INT
 import android.os.StrictMode
 import android.os.SystemClock
 import android.util.Log.INFO
-import androidx.annotation.CallSuper
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.NotificationManagerCompat
@@ -52,6 +51,8 @@ import mozilla.components.service.glean.net.ConceptFetchHttpUploader
 import mozilla.components.support.base.facts.register
 import mozilla.components.support.base.log.Log
 import mozilla.components.support.base.log.logger.Logger
+import mozilla.components.support.base.log.sink.AndroidLogSink
+import mozilla.components.support.ktx.android.arch.lifecycle.addObservers
 import mozilla.components.support.ktx.android.content.isMainProcess
 import mozilla.components.support.ktx.android.content.runOnlyInMainProcess
 import mozilla.components.support.locale.LocaleAwareApplication
@@ -75,8 +76,6 @@ import org.mozilla.fenix.components.Core
 import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.metrics.MetricServiceType
 import org.mozilla.fenix.components.metrics.MozillaProductDetector
-import org.mozilla.fenix.components.metrics.clientdeduplication.ClientDeduplicationLifecycleObserver
-import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.experiments.maybeFetchExperiments
 import org.mozilla.fenix.ext.areNotificationsEnabledSafe
 import org.mozilla.fenix.ext.containsQueryParameters
@@ -86,6 +85,7 @@ import org.mozilla.fenix.ext.isKnownSearchDomain
 import org.mozilla.fenix.ext.isNotificationChannelEnabled
 import org.mozilla.fenix.ext.setCustomEndpointIfAvailable
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.lifecycle.StoreLifecycleObserver
 import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.onboarding.MARKETING_CHANNEL_ID
 import org.mozilla.fenix.perf.MarkersActivityLifecycleCallbacks
@@ -97,8 +97,6 @@ import org.mozilla.fenix.push.PushFxaIntegration
 import org.mozilla.fenix.push.WebPushEngineIntegration
 import org.mozilla.fenix.session.PerformanceActivityLifecycleCallbacks
 import org.mozilla.fenix.session.VisibilityLifecycleCallback
-import org.mozilla.fenix.settings.CustomizationFragment
-import org.mozilla.fenix.telemetry.TelemetryLifecycleObserver
 import org.mozilla.fenix.utils.BrowsersCache
 import org.mozilla.fenix.utils.Settings
 import org.mozilla.fenix.utils.Settings.Companion.TOP_SITES_PROVIDER_MAX_THRESHOLD
@@ -124,10 +122,23 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         private set
 
     override fun onCreate() {
+        super.onCreate()
+
+        if (shouldShowPrivacyNotice()) {
+            // For Mozilla Online build: Delay initialization on first run until privacy notice
+            // is accepted by the user.
+            return
+        }
+
+        initialize()
+    }
+
+    /**
+     * Initializes Fenix and all required subsystems such as Nimbus, Glean and Gecko.
+     */
+    fun initialize() {
         // We measure ourselves to avoid a call into Glean before its loaded.
         val start = SystemClock.elapsedRealtimeNanos()
-
-        super.onCreate()
 
         setupInAllProcesses()
 
@@ -155,6 +166,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
     }
 
     @OptIn(DelicateCoroutinesApi::class) // GlobalScope usage
+    @VisibleForTesting
     protected open fun initializeGlean() {
         val telemetryEnabled = settings().isTelemetryEnabled
 
@@ -182,29 +194,26 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             buildInfo = GleanBuildInfo.buildInfo,
         )
 
+        // Set the metric configuration from Nimbus.
+        Glean.setMetricsEnabledConfig(FxNimbus.features.glean.value().metricsEnabled)
+
         // We avoid blocking the main thread on startup by setting startup metrics on the background thread.
         val store = components.core.store
         GlobalScope.launch(Dispatchers.IO) {
             setStartupMetrics(store, settings())
         }
-
-        ProcessLifecycleOwner.get().lifecycle.addObserver(
-            ClientDeduplicationLifecycleObserver(
-                this.applicationContext,
-            ),
-        )
     }
 
-    @CallSuper
-    open fun setupInAllProcesses() {
+    @VisibleForTesting
+    protected open fun setupInAllProcesses() {
         setupCrashReporting()
 
         // We want the log messages of all builds to go to Android logcat
-        Log.addSink(FenixLogSink(logsDebug = Config.channel.isDebug))
+        Log.addSink(FenixLogSink(logsDebug = Config.channel.isDebug, AndroidLogSink()))
     }
 
-    @CallSuper
-    open fun setupInMainProcessOnly() {
+    @VisibleForTesting
+    protected open fun setupInMainProcessOnly() {
         // ⚠️ DO NOT ADD ANYTHING ABOVE THIS LINE.
         // Especially references to the engine/BrowserStore which can alter the app initialization.
         // See: https://github.com/mozilla-mobile/fenix/issues/26320
@@ -264,7 +273,12 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         components.startupActivityLog.registerInAppOnCreate(this)
         initVisualCompletenessQueueAndQueueTasks()
 
-        ProcessLifecycleOwner.get().lifecycle.addObserver(TelemetryLifecycleObserver(components.core.store))
+        ProcessLifecycleOwner.get().lifecycle.addObservers(
+            StoreLifecycleObserver(
+                appStore = components.appStore,
+                browserStore = components.core.store,
+            ),
+        )
 
         components.analytics.metricsStorage.tryRegisterAsUsageRecorder(this)
 
@@ -496,7 +510,8 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         }
     }
 
-    private fun restoreMessaging() {
+    @VisibleForTesting
+    internal fun restoreMessaging() {
         if (settings().isExperimentationEnabled) {
             components.appStore.dispatch(AppAction.MessagingAction.Restore)
         }
@@ -740,13 +755,6 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                 mobileBookmarksCount.add(mobileBookmarksSize)
             }
 
-            toolbarPosition.set(
-                when (settings.toolbarPosition) {
-                    ToolbarPosition.BOTTOM -> CustomizationFragment.Companion.Position.BOTTOM.name
-                    ToolbarPosition.TOP -> CustomizationFragment.Companion.Position.TOP.name
-                },
-            )
-
             tabViewSetting.set(settings.getTabViewPingString())
             closeTabSetting.set(settings.getTabTimeoutPingString())
 
@@ -932,5 +940,15 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         GlobalScope.launch {
             components.useCases.wallpaperUseCases.initialize()
         }
+    }
+
+    /**
+     * Checks whether or not a privacy notice needs to be displayed before
+     * the application can continue to initialize.
+     */
+    internal fun shouldShowPrivacyNotice(): Boolean {
+        return Config.channel.isMozillaOnline &&
+            settings().shouldShowPrivacyPopWindow &&
+            !components.fenixOnboarding.userHasBeenOnboarded()
     }
 }

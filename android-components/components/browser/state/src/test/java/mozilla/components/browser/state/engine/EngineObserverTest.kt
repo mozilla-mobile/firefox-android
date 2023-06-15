@@ -84,6 +84,7 @@ class EngineObserverTest {
                 notifyObservers { onNavigationStateChange(true, true) }
             }
             override fun requestPdfToDownload() = Unit
+            override fun requestPrintContent() = Unit
             override fun loadUrl(
                 url: String,
                 parent: EngineSession?,
@@ -139,6 +140,7 @@ class EngineObserverTest {
             override fun purgeHistory() {}
             override fun loadData(data: String, mimeType: String, encoding: String) {}
             override fun requestPdfToDownload() = Unit
+            override fun requestPrintContent() = Unit
             override fun loadUrl(
                 url: String,
                 parent: EngineSession?,
@@ -196,6 +198,7 @@ class EngineObserverTest {
             ) {}
             override fun loadData(data: String, mimeType: String, encoding: String) {}
             override fun requestPdfToDownload() = Unit
+            override fun requestPrintContent() = Unit
             override fun findAll(text: String) {}
             override fun findNext(forward: Boolean) {}
             override fun clearFindMatches() {}
@@ -867,7 +870,7 @@ class EngineObserverTest {
 
     @Test
     fun engineObserverHandlesPromptRequest() {
-        val promptRequest: PromptRequest = mock()
+        val promptRequest: PromptRequest = mock<PromptRequest.SingleChoice>()
         val store: BrowserStore = mock()
         val observer = EngineObserver("tab-id", store)
 
@@ -882,7 +885,7 @@ class EngineObserverTest {
 
     @Test
     fun engineObserverHandlesOnPromptUpdate() {
-        val promptRequest: PromptRequest = mock()
+        val promptRequest: PromptRequest = mock<PromptRequest.SingleChoice>()
         val store: BrowserStore = mock()
         val observer = EngineObserver("tab-id", store)
         val previousPromptUID = "prompt-uid"

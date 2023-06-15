@@ -10,7 +10,6 @@ import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
@@ -58,11 +57,9 @@ class HomeScreenTest {
         mockWebServer.shutdown()
     }
 
-    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1815275")
     @Test
     fun homeScreenItemsTest() {
-        homeScreen { }.dismissOnboarding()
-
+        homeScreen {}.dismissOnboarding()
         homeScreen {
             verifyHomeWordmark()
             verifyHomePrivateBrowsingButton()
@@ -72,12 +69,8 @@ class HomeScreenTest {
             verifyCollectionsHeader()
             verifyNoCollectionsText()
             scrollToPocketProvokingStories()
-            swipePocketProvokingStories()
-            verifyPocketRecommendedStoriesItems(activityTestRule, 1, 3, 4, 5, 6, 7)
-            verifyPocketSponsoredStoriesItems(activityTestRule, 2, 8)
-            verifyDiscoverMoreStoriesButton(activityTestRule, 9)
+            verifyThoughtProvokingStories(true)
             verifyStoriesByTopicItems()
-            verifyPoweredByPocket(activityTestRule)
             verifyCustomizeHomepageButton(true)
             verifyNavigationToolbar()
             verifyDefaultSearchEngine("Google")
@@ -101,6 +94,11 @@ class HomeScreenTest {
 
     @Test
     fun verifyJumpBackInSectionTest() {
+        activityTestRule.activityRule.applySettingsExceptions {
+            it.isRecentlyVisitedFeatureEnabled = false
+            it.isPocketEnabled = false
+        }
+
         val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 4)
         val secondWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
@@ -144,7 +142,6 @@ class HomeScreenTest {
         }
     }
 
-    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1815276")
     @Test
     fun verifyPocketHomepageStoriesTest() {
         activityTestRule.activityRule.applySettingsExceptions {
@@ -158,15 +155,15 @@ class HomeScreenTest {
         homeScreen {
             verifyThoughtProvokingStories(true)
             scrollToPocketProvokingStories()
-            swipePocketProvokingStories()
-            verifyPocketRecommendedStoriesItems(activityTestRule, 1, 3, 4, 5, 6, 7)
-            verifyPocketSponsoredStoriesItems(activityTestRule, 2, 8)
-            verifyDiscoverMoreStoriesButton(activityTestRule, 9)
+            verifyPocketRecommendedStoriesItems(1, 3, 4, 5, 6, 7)
+            verifyPocketSponsoredStoriesItems(2, 8)
+            verifyDiscoverMoreStoriesButton()
             verifyStoriesByTopic(true)
+            verifyPoweredByPocket()
         }.openThreeDotMenu {
         }.openCustomizeHome {
             clickPocketButton()
-        }.goBack {
+        }.goBackToHomeScreen {
             verifyThoughtProvokingStories(false)
             verifyStoriesByTopic(false)
         }
@@ -191,7 +188,6 @@ class HomeScreenTest {
         }
     }
 
-    @Ignore("Failed, see: https://github.com/mozilla-mobile/fenix/issues/28098")
     @Test
     fun openPocketDiscoverMoreTest() {
         activityTestRule.activityRule.applySettingsExceptions {
@@ -204,9 +200,8 @@ class HomeScreenTest {
 
         homeScreen {
             scrollToPocketProvokingStories()
-            swipePocketProvokingStories()
-            verifyDiscoverMoreStoriesButton(activityTestRule, 9)
-        }.clickPocketDiscoverMoreButton(activityTestRule, 9) {
+            verifyDiscoverMoreStoriesButton()
+        }.clickPocketDiscoverMoreButton {
             verifyUrl("getpocket.com/explore")
         }
     }
@@ -239,7 +234,7 @@ class HomeScreenTest {
         }.dismissOnboarding()
 
         homeScreen {
-            verifyPoweredByPocket(activityTestRule)
+            verifyPoweredByPocket()
         }.clickPocketLearnMoreLink(activityTestRule) {
             verifyUrl("mozilla.org/en-US/firefox/pocket")
         }
@@ -257,12 +252,12 @@ class HomeScreenTest {
             clickRecentBookmarksButton()
             clickRecentSearchesButton()
             clickPocketButton()
-        }.goBack {
+        }.goBackToHomeScreen {
             verifyCustomizeHomepageButton(false)
         }.openThreeDotMenu {
         }.openCustomizeHome {
             clickJumpBackInButton()
-        }.goBack {
+        }.goBackToHomeScreen {
             verifyCustomizeHomepageButton(true)
         }
     }

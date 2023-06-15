@@ -23,6 +23,7 @@ import mozilla.components.feature.contextmenu.ContextMenuCandidate
 import mozilla.components.feature.customtabs.CustomTabWindowFeature
 import mozilla.components.feature.pwa.feature.ManifestUpdateFeature
 import mozilla.components.feature.pwa.feature.WebAppActivityFeature
+import mozilla.components.feature.pwa.feature.WebAppContentFeature
 import mozilla.components.feature.pwa.feature.WebAppHideToolbarFeature
 import mozilla.components.feature.pwa.feature.WebAppSiteControlsFeature
 import mozilla.components.support.base.feature.UserInteractionHandler
@@ -33,12 +34,12 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BaseBrowserFragment
 import org.mozilla.fenix.browser.CustomTabContextMenuCandidate
 import org.mozilla.fenix.browser.FenixSnackbarDelegate
-import org.mozilla.fenix.components.components
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.settings.quicksettings.protections.cookiebanners.getCookieBannerUIMode
 
 /**
  * Fragment used for browsing the web within external apps.
@@ -60,7 +61,8 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
         val components = activity.components
         val toolbar = binding.root.findViewById<BrowserToolbar>(R.id.toolbar)
 
-        val manifest = args.webAppManifest?.let { json -> WebAppManifestParser().parse(json).getOrNull() }
+        val manifest =
+            args.webAppManifest?.let { json -> WebAppManifestParser().parse(json).getOrNull() }
 
         customTabsIntegration.set(
             feature = CustomTabsIntegration(
@@ -72,6 +74,7 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
                 onItemTapped = { browserToolbarInteractor.onBrowserToolbarMenuItemTapped(it) },
                 isPrivate = tab.content.private,
                 shouldReverseItems = !activity.settings().shouldUseBottomToolbar,
+                isSandboxCustomTab = args.isSandboxCustomTab,
             ),
             owner = this,
             view = view,
@@ -124,6 +127,11 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
                     components.core.icons,
                     manifest,
                 ),
+                WebAppContentFeature(
+                    store = requireComponents.core.store,
+                    tabId = customTabSessionId,
+                    manifest,
+                ),
                 ManifestUpdateFeature(
                     activity.applicationContext,
                     requireComponents.core.store,
@@ -146,6 +154,7 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
                         customTabSessionId,
                         manifest,
                     ),
+                    notificationsDelegate = requireComponents.notificationsDelegate,
                 ),
             )
         } else {
@@ -154,6 +163,7 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
                     activity.applicationContext,
                     requireComponents.core.store,
                     customTabSessionId,
+                    requireComponents.notificationsDelegate,
                 ),
             )
         }
@@ -164,14 +174,13 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
     }
 
     override fun navToQuickSettingsSheet(tab: SessionState, sitePermissions: SitePermissions?) {
-        val cookieBannersStorage = requireComponents.core.cookieBannersStorage
         requireComponents.useCases.trackingProtectionUseCases.containsException(tab.id) { contains ->
-            lifecycleScope.launch(Dispatchers.IO) {
-                val hasException = if (requireContext().settings().shouldUseCookieBanner) {
-                    cookieBannersStorage.hasException(tab.content.url, tab.content.private)
-                } else {
-                    false
-                }
+            lifecycleScope.launch {
+                val cookieBannersStorage = requireComponents.core.cookieBannersStorage
+                val cookieBannerUIMode = cookieBannersStorage.getCookieBannerUIMode(
+                    requireContext(),
+                    tab,
+                )
                 withContext(Dispatchers.Main) {
                     runIfFragmentIsAttached {
                         val directions = ExternalAppBrowserFragmentDirections
@@ -185,7 +194,7 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
                                 certificateName = tab.content.securityInfo.issuer,
                                 permissionHighlights = tab.content.permissionHighlights,
                                 isTrackingProtectionEnabled = tab.trackingProtection.enabled && !contains,
-                                isCookieHandlingEnabled = !hasException,
+                                cookieBannerUIMode = cookieBannerUIMode,
                             )
                         nav(R.id.externalAppBrowserFragment, directions)
                     }

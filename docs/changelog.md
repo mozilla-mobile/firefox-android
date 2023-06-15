@@ -4,13 +4,62 @@ title: Changelog
 permalink: /changelog/
 ---
 
-# 113.0.0 (In Development)
-* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v112..main)
+# 116.0 (In Development)
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v115..main)
 * [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
 * [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/Gecko.kt)
 * [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/.config.yml)
 
-# 112.0.0
+* **feature-pwa**
+  * Adds `WebAppContentFeature` to set the "display" mode from the web app manifest on the `EngineSession`.
+* **browser-engine-gecko**:
+  * Added support for Printing on the Engine.
+* **concept-engine**:
+  * Added new `requestPrintContent` API in `Engine`. This is currently only supported in the Gecko Engine.
+
+# 115.0
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v114..releases_v115)
+* [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/releases_v115/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
+* [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/releases_v115/android-components/plugins/dependencies/src/main/java/Gecko.kt)
+* [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/releases_v115/android-components/.config.yml)
+
+* **lib-crash**
+  * Log exceptions that crash the `CrashReporter` to avoid silent failurs. See [bug 1826591](https://bugzilla.mozilla.org/show_bug.cgi?id=1826591).
+
+* **crash-sentry**
+  * Sends exceptions with an attached `Mechanism` to signal to Sentry that it was an uncaught exception. See [bug 1835107](https://bugzilla.mozilla.org/show_bug.cgi?id=1835107)
+
+* **concept-sync**
+  *  Bug Fixed [bug #1804274]((https://bugzilla.mozilla.org/show_bug.cgi?id=1804274)) Passes an entrypoint url parameter to FxA when logging-in, that represents the context which the app launches the Firefox Accounts web channel.
+
+* **feature-push**
+  * Refactored [bug #1829982]( https://bugzilla.mozilla.org/show_bug.cgi?id=1829982) Refactors push to remove the RustConnection layer, and instead use the underlying Rust layer directly.
+
+# 114.0
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v113..releases_v114)
+* [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/releases_v114/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
+* [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/releases_v114/android-components/plugins/dependencies/src/main/java/Gecko.kt)
+* [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/releases_v114/android-components/.config.yml)
+
+* * **browser-state**
+  * 🌟 Added `DownloadState`.`openInApp` to indicate whether or not the file associated with the download should be opened in a third party app after downloaded successfully, for more information see [bug 1829371](https://bugzilla.mozilla.org/show_bug.cgi?id=1829371) and [bug 1829372](https://bugzilla.mozilla.org/show_bug.cgi?id=1829372).
+
+# 113.0.0
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v112..releases_v113)
+* [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/releases_v113/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
+* [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/releases_v113/android-components/plugins/dependencies/src/main/java/Gecko.kt)
+* [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/releases_v113/android-components/.config.yml)
+
+* **compose-cfr**
+  * 🚒 Bug fixed [bug #1819950](https://bugzilla.mozilla.org/show_bug.cgi?id=1819950). Ensure CFRs are automatically dismissed on screen rotation on all Android versions.
+
+* **concept-sync**, **service-firefox-accounts**
+  * Removed unused `AccountSharing` from sync and accounts.
+
+* **support-license**
+  * 🆕 New component to display generated license information.
+
+# 112.0
 * [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v111...releases_v112)
 * [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/releases_v112/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
 * [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/releases_v112/android-components/plugins/dependencies/src/main/java/Gecko.kt)
@@ -31,6 +80,9 @@ permalink: /changelog/
 * **lib-crash-sentry-legacy**
   * ⚠️ **This is a breaking change**: This component has been removed. Consumers should use the newer `lib-crash-sentry` component instead.
 
+* **lib-crash**
+  * 🚒 Bug fixed [Bug 1822148](https://bugzilla.mozilla.org/show_bug.cgi?id=1822148). Ensure proguard rules retain serialization classes.
+
 * **browser-engine-gecko**:
   * Add support for `hasCookieBannerRuleForSession` API for checking whether a cookie banner from the current website in the session can be handled.
 
@@ -38,7 +90,7 @@ permalink: /changelog/
   * Add new `hasCookieBannerRuleForSession` API in `Engine`. This is currently only supported in the Gecko Engine.
 
 
-# 111.0.0
+# 111.0
 * [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v110...releases_v111)
 * [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/releases_v111/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
 * [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/releases_v111/android-components/plugins/dependencies/src/main/java/Gecko.kt)
@@ -94,7 +146,7 @@ permalink: /changelog/
 * **lib-crash**
   * 🌟 Added support for Glean crash pings in the `GleanCrashReporterService`. [Bug 1810951](https://bugzilla.mozilla.org/show_bug.cgi?id=1810951)
 
-# 110.0.0
+# 110.0
 * [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v109...releases_v110)
 * [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/releases_v110/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
 * [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/releases_v110/android-components/plugins/dependencies/src/main/java/Gecko.kt)
@@ -464,7 +516,7 @@ permalink: /changelog/
 
 * **browser-storage-sync**
   * ⚠️ **This is a breaking change**: When constructing a `RemoteTabsStorage` object you must now a `Context` which is used to determine the location of the sqlite database which is used to persist the remote tabs [#11799](https://github.com/mozilla-mobile/android-components/pull/11799).
-  * Fixed a low frequency crasher that might occur when the app attempts to delete all history. [#12112](https://github.com/mozilla-mobile/android-components/pull/12112)
+  * Fixed a low frequency crash that might occur when the app attempts to delete all history. [#12112](https://github.com/mozilla-mobile/android-components/pull/12112)
 
 * **feature-syncedtabs**
   * ⚠️ **This is a breaking change**: When constructing a `SyncedTabsStorage`, the `tabsStorage: RemoteTabsStorage` parameter is no longer optional so must be supplied [#11799](https://github.com/mozilla-mobile/android-components/pull/11799).
@@ -2358,7 +2410,7 @@ permalink: /changelog/
   *  ⚠️ **This is a breaking change**: Refactored component to use `browser-state` instead of `browser-session`. The `FxaWebChannelFeature`  now requires a `BrowserStore` instance instead of a `SessionManager`.
 
 * **lib-push-fcm**, **lib-push-adm**, **concept-push**
-  * Allow nullable encoding values in push messsages. If they are null, we attempt to use `aes128gcm` for encoding.
+  * Allow nullable encoding values in push messages. If they are null, we attempt to use `aes128gcm` for encoding.
 
 * **browser-toolbar**
   * It will only be animated for vertical scrolls inside the EngineView. Not for horizontal scrolls. Not for zoom gestures.
@@ -4302,7 +4354,7 @@ permalink: /changelog/
   * Added custom notification icon for `FetchDownloadManager`.
 
 * **feature-app-links**
-  * Added whitelist for schemes of URLs to open with an external app. This defaults to `mailto`, `market`, `sms` and `tel`.
+  * Added allow-list for schemes of URLs to open with an external app. This defaults to `mailto`, `market`, `sms` and `tel`.
 
 * **feature-accounts**
   * ⚠️ **This is a breaking change**: Public API for interacting with `FxaAccountManager` and sync changes

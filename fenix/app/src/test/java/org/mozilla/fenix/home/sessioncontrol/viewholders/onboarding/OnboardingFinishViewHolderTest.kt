@@ -21,7 +21,7 @@ import org.mozilla.fenix.GleanMetrics.Onboarding
 import org.mozilla.fenix.databinding.OnboardingFinishBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
-import org.mozilla.fenix.home.sessioncontrol.OnboardingInteractor
+import org.mozilla.fenix.onboarding.interactor.OnboardingInteractor
 
 @RunWith(FenixRobolectricTestRunner::class)
 class OnboardingFinishViewHolderTest {
@@ -44,7 +44,7 @@ class OnboardingFinishViewHolderTest {
         OnboardingFinishViewHolder(binding.root, interactor)
 
         binding.finishButton.performClick()
-        verify { interactor.onStartBrowsingClicked() }
+        verify { interactor.onFinishOnboarding(focusOnAddressBar = true) }
         // Check if the event was recorded
         assertNotNull(Onboarding.finish.testGetValue())
         assertEquals(1, Onboarding.finish.testGetValue()!!.size)

@@ -19,6 +19,7 @@ import kotlinx.coroutines.launch
 import mozilla.components.lib.crash.CrashReporter
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
+import org.mozilla.fenix.GleanMetrics.FirstSession
 import org.mozilla.fenix.ext.settings
 
 class AdjustMetricsService(
@@ -46,10 +47,13 @@ class AdjustMetricsService(
             AdjustConfig.ENVIRONMENT_PRODUCTION,
             true,
         )
+        config.setPreinstallTrackingEnabled(true)
 
         val installationPing = FirstSessionPing(application)
 
+        val timerId = FirstSession.adjustAttributionTime.start()
         config.setOnAttributionChangedListener {
+            FirstSession.adjustAttributionTime.stopAndAccumulate(timerId)
             if (!it.network.isNullOrEmpty()) {
                 application.applicationContext.settings().adjustNetwork =
                     it.network
@@ -85,9 +89,13 @@ class AdjustMetricsService(
     override fun track(event: Event) {
         CoroutineScope(dispatcher).launch {
             try {
-                if (event is Event.GrowthData && storage.shouldTrack(event)) {
-                    Adjust.trackEvent(AdjustEvent(event.tokenName))
-                    storage.updateSentState(event)
+                if (event is Event.GrowthData) {
+                    if (storage.shouldTrack(event)) {
+                        Adjust.trackEvent(AdjustEvent(event.tokenName))
+                        storage.updateSentState(event)
+                    } else {
+                        storage.updatePersistentState(event)
+                    }
                 }
             } catch (e: Exception) {
                 crashReporter.submitCaughtException(e)

@@ -8,6 +8,7 @@
         <!-- Android system styling -->
         <item name="searchViewStyle">@style/SearchViewStyle</item>
         <item name="autoCompleteTextViewStyle">@style/AutoCompleteTextViewStyle</item>
+        <item name="android:textAlignment">viewStart</item>
         <item name="android:windowContentTransitions">true</item>
         <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
         <item name="android:progressBarStyleHorizontal">@style/progressBarStyleHorizontal</item>
@@ -191,14 +192,14 @@
     </style>
 
     <style name="DialogButtonStyleLight" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
-        <item name="android:background">?android:attr/selectableItemBackgroundBorderless</item>
+        <item name="android:background">@drawable/ripple_button</item>
         <item name="android:textColor">?accentBright</item>
         <item name="android:textFontWeight" tools:ignore="NewApi">@integer/font_weight_medium</item>
         <item name="android:fontWeight" tools:ignore="NewApi">@integer/font_weight_medium</item>
     </style>
 
     <style name="DialogButtonStyleDark" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
-        <item name="android:background">?android:attr/selectableItemBackgroundBorderless</item>
+        <item name="android:background">@drawable/ripple_button_dark</item>
         <item name="android:textColor">?accentHighContrast</item>
         <item name="android:textFontWeight" tools:ignore="NewApi">@integer/font_weight_medium</item>
         <item name="android:fontWeight" tools:ignore="NewApi">@integer/font_weight_medium</item>    </style>
@@ -209,6 +210,7 @@
         <!-- Android system styling -->
         <item name="searchViewStyle">@style/SearchViewStyle</item>
         <item name="autoCompleteTextViewStyle">@style/AutoCompleteTextViewStyle</item>
+        <item name="android:textAlignment">viewStart</item>
         <item name="android:windowContentTransitions">true</item>
         <item name="android:windowAnimationStyle">@style/WindowAnimationTransition</item>
         <item name="android:progressBarStyleHorizontal">@style/progressBarStyleHorizontal</item>
@@ -339,6 +341,13 @@
     <style name="WindowAnimationTransition">
         <item name="android:windowEnterAnimation">@anim/fade_in</item>
         <item name="android:windowExitAnimation">@anim/fade_out</item>
+    </style>
+
+    <!-- On some android versions (known about OneUI 2.5) the entering animation is played every -->
+    <!-- time DialogFragment goes though an onStart() lifecycle call. We want to prevent the -->
+    <!-- animation from being repeated after app returns from background.-->
+    <style name="DialogFragmentRestoreAnimation" parent="Animation.MaterialComponents.BottomSheetDialog">
+        <item name="android:windowEnterAnimation">@null</item>
     </style>
 
     <!-- UI button styling -->
@@ -567,6 +576,10 @@
     <style name="CreateCollectionDialogStyle" parent="DialogStyleBase"/>
     <style name="CreateShortcutDialogStyle" parent="DialogStyleBase"/>
     <style name="HomeOnboardingDialogStyle" parent="DialogStyleBase"/>
+    <style name="ResearchSurfaceDialogStyle" parent="NormalThemeBase">
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowTranslucentNavigation">false</item>
+    </style>
     <style name="WallpaperOnboardingDialogStyle" parent="DialogStyleBase">
         <item name="android:windowIsFloating">true</item>
         <item name="android:backgroundDimAmount">0.06</item>
@@ -576,6 +589,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:minHeight">40dp</item>
         <item name="android:layout_marginTop">32dp</item>
+        <item name="android:textAlignment">center</item>
         <item name="android:textColor">?accentUsedOnDarkBackground</item>
         <item name="android:textFontWeight" tools:ignore="NewApi">@integer/font_weight_medium</item>
         <item name="android:fontWeight" tools:ignore="NewApi">@integer/font_weight_medium</item>

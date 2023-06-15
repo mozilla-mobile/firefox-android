@@ -9,7 +9,6 @@ import mozilla.appservices.fxaclient.AccessTokenInfo
 import mozilla.appservices.fxaclient.AccountEvent
 import mozilla.appservices.fxaclient.Device
 import mozilla.appservices.fxaclient.IncomingDeviceCommand
-import mozilla.appservices.fxaclient.MigrationState
 import mozilla.appservices.fxaclient.Profile
 import mozilla.appservices.fxaclient.ScopedKey
 import mozilla.appservices.fxaclient.TabHistoryEntry
@@ -17,12 +16,11 @@ import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.Avatar
 import mozilla.components.concept.sync.DeviceCapability
 import mozilla.components.concept.sync.DeviceType
-import mozilla.components.concept.sync.InFlightMigrationState
 import mozilla.components.concept.sync.OAuthScopedKey
 import mozilla.components.concept.sync.SyncAuthInfo
 import mozilla.appservices.fxaclient.DeviceCapability as RustDeviceCapability
 import mozilla.appservices.fxaclient.DevicePushSubscription as RustDevicePushSubscription
-import mozilla.appservices.fxaclient.DeviceType as RustDeviceType
+import mozilla.appservices.sync15.DeviceType as RustDeviceType
 
 /**
  * Converts a raw 'action' string into an [AuthType] instance.
@@ -135,21 +133,6 @@ fun DeviceType.into(): RustDeviceType {
 }
 
 /**
- * FxA and Sync libraries both define a "DeviceType", so we get to have even more cruft.
- */
-fun DeviceType.intoSyncType(): mozilla.appservices.syncmanager.DeviceType {
-    return when (this) {
-        DeviceType.DESKTOP -> mozilla.appservices.syncmanager.DeviceType.DESKTOP
-        DeviceType.MOBILE -> mozilla.appservices.syncmanager.DeviceType.MOBILE
-        DeviceType.TABLET -> mozilla.appservices.syncmanager.DeviceType.TABLET
-        DeviceType.TV -> mozilla.appservices.syncmanager.DeviceType.TV
-        DeviceType.VR -> mozilla.appservices.syncmanager.DeviceType.VR
-        // There's not a corresponding syncmanager type, so we pick a default for simplicity's sake.
-        DeviceType.UNKNOWN -> mozilla.appservices.syncmanager.DeviceType.MOBILE
-    }
-}
-
-/**
  * Convert between the native-code DeviceCapability data class
  * and the one from the corresponding a-c concept.
  */
@@ -250,6 +233,7 @@ fun AccountEvent.into(): mozilla.components.concept.sync.AccountEvent {
                 deviceId = this.deviceId,
                 isLocalDevice = this.isLocalDevice,
             )
+        is AccountEvent.Unknown -> mozilla.components.concept.sync.AccountEvent.Unknown
     }
 }
 
@@ -264,15 +248,4 @@ fun IncomingDeviceCommand.TabReceived.into(): mozilla.components.concept.sync.De
         from = this.sender?.into(),
         entries = this.payload.entries.map { it.into() },
     )
-}
-
-/**
- * Conversion function from fxaclient's data structure to ours.
- */
-fun MigrationState.into(): InFlightMigrationState? {
-    return when (this) {
-        MigrationState.NONE -> null
-        MigrationState.COPY_SESSION_TOKEN -> InFlightMigrationState.COPY_SESSION_TOKEN
-        MigrationState.REUSE_SESSION_TOKEN -> InFlightMigrationState.REUSE_SESSION_TOKEN
-    }
 }

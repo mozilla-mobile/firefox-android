@@ -15,8 +15,10 @@ import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityTestRule
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithText
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper.runWithSystemLocaleChanged
+import org.mozilla.fenix.ui.robots.clickPageObject
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
 import java.util.Locale
@@ -34,11 +36,6 @@ import java.util.Locale
 class NavigationToolbarTest {
     private lateinit var mDevice: UiDevice
     private lateinit var mockWebServer: MockWebServer
-    private val downloadTestPage =
-        "https://storage.googleapis.com/mobile_test_assets/test_app/downloads.html"
-    private val pdfFileName = "washington.pdf"
-    private val pdfFileURL = "storage.googleapis.com/mobile_test_assets/public/washington.pdf"
-    private val pdfFileContent = "Washington Crossing the Delaware"
 
     /* ktlint-disable no-blank-line-before-rbrace */ // This imposes unreadable grouping.
     @get:Rule
@@ -192,11 +189,12 @@ class NavigationToolbarTest {
 
     @Test
     fun pdfFindInPageTest() {
+        val genericURL =
+            TestAssetHelper.getGenericAsset(mockWebServer, 3)
+
         navigationToolbar {
-        }.enterURLAndEnterToBrowser(downloadTestPage.toUri()) {
-            clickLinkMatchingText(pdfFileName)
-            verifyUrl(pdfFileURL)
-            verifyPageContent(pdfFileContent)
+        }.enterURLAndEnterToBrowser(genericURL.url) {
+            clickPageObject(itemWithText("PDF file"))
         }.openThreeDotMenu {
             verifyThreeDotMenuExists()
             verifyFindInPageButton()
@@ -214,7 +212,7 @@ class NavigationToolbarTest {
             verifyFindInPageBar(false)
         }.openThreeDotMenu {
         }.openFindInPage {
-            enterFindInPageQuery("l")
+            enterFindInPageQuery("p")
             verifyFindNextInPageResult("1/1")
         }.closeFindInPageWithBackButton {
             verifyFindInPageBar(false)
@@ -241,6 +239,7 @@ class NavigationToolbarTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+            waitForPageToLoad()
         }.openSiteSecuritySheet {
             verifyQuickActionSheet(defaultWebPage.url.toString(), false)
             openSecureConnectionSubMenu(false)

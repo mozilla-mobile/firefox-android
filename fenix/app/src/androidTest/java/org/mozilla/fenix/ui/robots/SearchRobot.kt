@@ -6,7 +6,6 @@
 
 package org.mozilla.fenix.ui.robots
 
-import android.os.Build
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
@@ -39,10 +38,13 @@ import org.mozilla.fenix.helpers.Constants
 import org.mozilla.fenix.helpers.Constants.LONG_CLICK_DURATION
 import org.mozilla.fenix.helpers.Constants.RETRY_COUNT
 import org.mozilla.fenix.helpers.Constants.SPEECH_RECOGNITION
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdAndText
 import org.mozilla.fenix.helpers.SessionLoadedIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
 import org.mozilla.fenix.helpers.TestHelper.getStringResource
+import org.mozilla.fenix.helpers.TestHelper.grantSystemPermission
 import org.mozilla.fenix.helpers.TestHelper.isPackageInstalled
 import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.packageName
@@ -61,32 +63,17 @@ class SearchRobot {
         if (enabled) {
             assertTrue(voiceSearchButton.waitForExists(waitingTime))
         } else {
-            assertFalse(voiceSearchButton.waitForExists(waitingTime))
+            assertFalse(voiceSearchButton.waitForExists(waitingTimeShort))
         }
     }
 
     // Device or AVD requires a Google Services Android OS installation
     fun startVoiceSearch() {
         voiceSearchButton.click()
+        grantSystemPermission()
 
-        // Accept runtime permission (API 30) for Google Voice
-        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.R) {
-            val allowPermission = mDevice.findObject(
-                UiSelector().text(
-                    when {
-                        Build.VERSION.SDK_INT == Build.VERSION_CODES.R -> "Allow all the time"
-                        else -> "While using the app"
-                    },
-                ),
-            )
-
-            if (allowPermission.exists()) {
-                allowPermission.click()
-            }
-
-            if (isPackageInstalled(Constants.PackageName.GOOGLE_QUICK_SEARCH)) {
-                Intents.intended(IntentMatchers.hasAction(SPEECH_RECOGNITION))
-            }
+        if (isPackageInstalled(Constants.PackageName.GOOGLE_QUICK_SEARCH)) {
+            Intents.intended(IntentMatchers.hasAction(SPEECH_RECOGNITION))
         }
     }
 
@@ -142,7 +129,7 @@ class SearchRobot {
         for (searchSuggestion in searchSuggestions) {
             assertFalse(
                 mDevice.findObject(UiSelector().textContains(searchSuggestion))
-                    .waitForExists(waitingTime),
+                    .waitForExists(waitingTimeShort),
             )
         }
     }
@@ -204,18 +191,18 @@ class SearchRobot {
         rule.selectDefaultSearchEngine(searchEngineName)
 
     fun clickSearchEngineShortcutButton() {
-        val searchEnginesShortcutButton = mDevice.findObject(
-            UiSelector()
-                .resourceId("$packageName:id/search_engines_shortcut_button"),
-        )
-        searchEnginesShortcutButton.waitForExists(waitingTime)
-        searchEnginesShortcutButton.click()
+        itemWithResId("$packageName:id/search_engines_shortcut_button").also {
+            it.waitForExists(waitingTime)
+            it.click()
+        }
+        mDevice.waitForIdle(waitingTimeShort)
     }
 
-    fun clickScanButton() {
-        scanButton.waitForExists(waitingTime)
-        scanButton.click()
-    }
+    fun clickScanButton() =
+        scanButton.also {
+            it.waitForExists(waitingTime)
+            it.click()
+        }
 
     fun clickDismissPermissionRequiredDialog() {
         dismissPermissionButton.waitForExists(waitingTime)
@@ -399,7 +386,10 @@ private val goToPermissionsSettingsButton =
     mDevice.findObject(UiSelector().text("GO TO SETTINGS"))
 
 private val scanButton =
-    mDevice.findObject(UiSelector().resourceId("$packageName:id/qr_scan_button"))
+    itemWithResIdAndText(
+        "$packageName:id/qr_scan_button",
+        getStringResource(R.string.search_scan_button),
+    )
 
 private fun clearButton() =
     mDevice.findObject(UiSelector().resourceId("$packageName:id/mozac_browser_toolbar_clear_view"))
@@ -510,18 +500,15 @@ private fun assertEngineListShortcutContains(rule: ComposeTestRule, searchEngine
         ).waitForExists(waitingTime)
 
         rule.onNodeWithTag("mozac.awesomebar.suggestions")
-            .performScrollToIndex(5)
+            .performScrollToNode(hasText(searchEngineName))
 
         rule.onNodeWithText(searchEngineName)
-            .assertExists()
             .assertIsDisplayed()
             .assertHasClickAction()
     }
 }
 
 private fun ComposeTestRule.selectDefaultSearchEngine(searchEngine: String) {
-    onView(withId(R.id.mozac_browser_toolbar_edit_icon)).click()
-
     onNodeWithText(searchEngine)
         .assertExists()
         .assertIsDisplayed()

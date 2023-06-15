@@ -10,10 +10,12 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -21,17 +23,25 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.state.state.createTab
+import mozilla.components.support.ktx.kotlin.MAX_URI_LENGTH
 import org.mozilla.fenix.R
 import org.mozilla.fenix.compose.ThumbnailCard
 import org.mozilla.fenix.compose.annotation.LightDarkPreview
 import org.mozilla.fenix.ext.toShortUrl
+import org.mozilla.fenix.tabstray.TabsTrayTestTag
+import org.mozilla.fenix.tabstray.ext.toDisplayTitle
 import org.mozilla.fenix.theme.FirefoxTheme
 
 /**
@@ -75,7 +85,7 @@ fun TabListItem(
                 onLongClick = { onLongClick(tab) },
                 onClick = { onClick(tab) },
             )
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .padding(start = 16.dp, top = 8.dp, bottom = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Thumbnail(
@@ -87,27 +97,34 @@ fun TabListItem(
 
         Column(
             modifier = Modifier
-                .padding(horizontal = 16.dp)
+                .padding(start = 12.dp)
                 .weight(weight = 1f),
         ) {
             Text(
-                text = tab.content.title,
-                fontSize = 16.sp,
-                maxLines = 2,
+                text = tab.toDisplayTitle().take(MAX_URI_LENGTH),
                 color = FirefoxTheme.colors.textPrimary,
+                fontSize = 16.sp,
+                letterSpacing = 0.0.sp,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 2,
             )
 
             Text(
                 text = tab.content.url.toShortUrl(),
-                fontSize = 12.sp,
                 color = FirefoxTheme.colors.textSecondary,
+                fontSize = 14.sp,
+                letterSpacing = 0.0.sp,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1,
             )
         }
 
         if (!multiSelectionEnabled) {
             IconButton(
                 onClick = { onCloseClick(tab) },
-                modifier = Modifier.size(size = 24.dp),
+                modifier = Modifier
+                    .size(size = 48.dp)
+                    .testTag(TabsTrayTestTag.tabItemClose),
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.mozac_ic_close),
@@ -118,6 +135,8 @@ fun TabListItem(
                     tint = FirefoxTheme.colors.iconPrimary,
                 )
             }
+        } else {
+            Spacer(modifier = Modifier.size(48.dp))
         }
     }
 }
@@ -133,11 +152,22 @@ private fun Thumbnail(
         ThumbnailCard(
             url = tab.content.url,
             key = tab.id,
-            modifier = Modifier.size(width = 92.dp, height = 72.dp),
+            modifier = Modifier
+                .size(width = 92.dp, height = 72.dp)
+                .semantics(mergeDescendants = true) {
+                    testTag = TabsTrayTestTag.tabItemThumbnail
+                },
             contentDescription = stringResource(id = R.string.mozac_browser_tabstray_open_tab),
         )
 
         if (isSelected) {
+            Box(
+                modifier = Modifier
+                    .size(width = 92.dp, height = 72.dp)
+                    .clip(RoundedCornerShape(4.dp))
+                    .background(FirefoxTheme.colors.layerAccentNonOpaque),
+            )
+
             Card(
                 modifier = Modifier
                     .size(size = 40.dp)

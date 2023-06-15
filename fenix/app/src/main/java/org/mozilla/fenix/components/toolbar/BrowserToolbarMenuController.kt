@@ -28,6 +28,7 @@ import mozilla.components.feature.top.sites.PinnedSiteStorage
 import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
+import mozilla.components.ui.widgets.withCenterAlignedButtons
 import org.mozilla.fenix.GleanMetrics.Collections
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.ReaderMode
@@ -41,6 +42,7 @@ import org.mozilla.fenix.collections.SaveCollectionStep
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.accounts.AccountState
+import org.mozilla.fenix.components.accounts.FenixFxAEntryPoint
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getRootView
 import org.mozilla.fenix.ext.nav
@@ -230,9 +232,11 @@ class DefaultBrowserToolbarMenuController(
                     AccountState.AUTHENTICATED ->
                         BrowserFragmentDirections.actionGlobalAccountSettingsFragment()
                     AccountState.NEEDS_REAUTHENTICATION ->
-                        BrowserFragmentDirections.actionGlobalAccountProblemFragment()
+                        BrowserFragmentDirections.actionGlobalAccountProblemFragment(
+                            entrypoint = FenixFxAEntryPoint.BrowserToolbar,
+                        )
                     AccountState.NO_ACCOUNT ->
-                        BrowserFragmentDirections.actionGlobalTurnOnSync()
+                        BrowserFragmentDirections.actionGlobalTurnOnSync(entrypoint = FenixFxAEntryPoint.BrowserToolbar)
                 }
                 browserAnimator.captureEngineViewAndDrawStatically {
                     navController.nav(
@@ -262,7 +266,7 @@ class DefaultBrowserToolbarMenuController(
                             setPositiveButton(R.string.top_sites_max_limit_confirmation_button) { dialog, _ ->
                                 dialog.dismiss()
                             }
-                            create()
+                            create().withCenterAlignedButtons()
                         }.show()
                     } else {
                         ioScope.launch {

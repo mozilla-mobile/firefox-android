@@ -84,6 +84,8 @@ import org.mozilla.geckoview.GeckoSession.ContentDelegate.ContextElement.TYPE_AU
 import org.mozilla.geckoview.GeckoSession.ContentDelegate.ContextElement.TYPE_IMAGE
 import org.mozilla.geckoview.GeckoSession.ContentDelegate.ContextElement.TYPE_NONE
 import org.mozilla.geckoview.GeckoSession.ContentDelegate.ContextElement.TYPE_VIDEO
+import org.mozilla.geckoview.GeckoSession.GeckoPrintException
+import org.mozilla.geckoview.GeckoSession.GeckoPrintException.ERROR_PRINT_SETTINGS_SERVICE_NOT_AVAILABLE
 import org.mozilla.geckoview.GeckoSession.PermissionDelegate.ContentPermission.VALUE_ALLOW
 import org.mozilla.geckoview.GeckoSession.PermissionDelegate.ContentPermission.VALUE_DENY
 import org.mozilla.geckoview.GeckoSession.PermissionDelegate.PERMISSION_STORAGE_ACCESS
@@ -329,6 +331,8 @@ class GeckoEngineSessionTest {
         val response = WebResponse.Builder("https://download.mozilla.org/image.png")
             .addHeader(Headers.Names.CONTENT_TYPE, "image/png")
             .addHeader(Headers.Names.CONTENT_LENGTH, "42")
+            .skipConfirmation(true)
+            .requestExternalApp(true)
             .body(mock())
             .build()
 
@@ -344,6 +348,82 @@ class GeckoEngineSessionTest {
             cookie = eq(null),
             userAgent = eq(null),
             isPrivate = eq(true),
+            skipConfirmation = eq(true),
+            openInApp = eq(true),
+            response = captor.capture(),
+        )
+
+        assertNotNull(captor.value)
+    }
+
+    @Test
+    fun contentDelegateNotifiesObserverAboutDownloadsWithMalformedContentLength() {
+        val engineSession = GeckoEngineSession(
+            mock(),
+            geckoSessionProvider = geckoSessionProvider,
+            privateMode = true,
+        )
+
+        val observer: EngineSession.Observer = mock()
+        engineSession.register(observer)
+
+        val response = WebResponse.Builder("https://download.mozilla.org/image.png")
+            .addHeader(Headers.Names.CONTENT_TYPE, "image/png")
+            .addHeader(Headers.Names.CONTENT_LENGTH, "42,42")
+            .body(mock())
+            .build()
+
+        val captor = argumentCaptor<Response>()
+        captureDelegates()
+        contentDelegate.value.onExternalResponse(mock(), response)
+
+        verify(observer).onExternalResource(
+            url = eq("https://download.mozilla.org/image.png"),
+            fileName = eq("image.png"),
+            contentLength = eq(null),
+            contentType = eq("image/png"),
+            cookie = eq(null),
+            userAgent = eq(null),
+            isPrivate = eq(true),
+            skipConfirmation = eq(false),
+            openInApp = eq(false),
+            response = captor.capture(),
+        )
+
+        assertNotNull(captor.value)
+    }
+
+    @Test
+    fun contentDelegateNotifiesObserverAboutDownloadsWithEmptyContentLength() {
+        val engineSession = GeckoEngineSession(
+            mock(),
+            geckoSessionProvider = geckoSessionProvider,
+            privateMode = true,
+        )
+
+        val observer: EngineSession.Observer = mock()
+        engineSession.register(observer)
+
+        val response = WebResponse.Builder("https://download.mozilla.org/image.png")
+            .addHeader(Headers.Names.CONTENT_TYPE, "image/png")
+            .addHeader(Headers.Names.CONTENT_LENGTH, "")
+            .body(mock())
+            .build()
+
+        val captor = argumentCaptor<Response>()
+        captureDelegates()
+        contentDelegate.value.onExternalResponse(mock(), response)
+
+        verify(observer).onExternalResource(
+            url = eq("https://download.mozilla.org/image.png"),
+            fileName = eq("image.png"),
+            contentLength = eq(null),
+            contentType = eq("image/png"),
+            cookie = eq(null),
+            userAgent = eq(null),
+            isPrivate = eq(true),
+            skipConfirmation = eq(false),
+            openInApp = eq(false),
             response = captor.capture(),
         )
 
@@ -3724,6 +3804,8 @@ class GeckoEngineSessionTest {
                     cookie: String?,
                     userAgent: String?,
                     isPrivate: Boolean,
+                    skipConfirmation: Boolean,
+                    openInApp: Boolean,
                     response: Response?,
                 ) {
                     assertEquals("PDF response is always a success.", RESPONSE_CODE_SUCCESS, response!!.status)
@@ -3756,6 +3838,8 @@ class GeckoEngineSessionTest {
                     cookie: String?,
                     userAgent: String?,
                     isPrivate: Boolean,
+                    skipConfirmation: Boolean,
+                    openInApp: Boolean,
                     response: Response?,
                 ) {
                     assert(false) { "We should not notify observers." }
@@ -3773,6 +3857,75 @@ class GeckoEngineSessionTest {
 
         // When we receive an exception from the GeckoResult.
         engineSession.requestPdfToDownload()
+        shadowOf(getMainLooper()).idle()
+    }
+
+    @Test
+    fun `setDisplayMode sets same display mode value`() {
+        val geckoSetting = mock<GeckoSessionSettings>()
+        val geckoSession = mock<GeckoSession>()
+
+        val engineSession = GeckoEngineSession(
+            mock(),
+            geckoSessionProvider = geckoSessionProvider,
+        )
+
+        whenever(geckoSession.settings).thenReturn(geckoSetting)
+
+        engineSession.geckoSession = geckoSession
+
+        engineSession.setDisplayMode(WebAppManifest.DisplayMode.FULLSCREEN)
+        verify(geckoSetting, atLeastOnce()).setDisplayMode(GeckoSessionSettings.DISPLAY_MODE_FULLSCREEN)
+
+        engineSession.setDisplayMode(WebAppManifest.DisplayMode.STANDALONE)
+        verify(geckoSetting, atLeastOnce()).setDisplayMode(GeckoSessionSettings.DISPLAY_MODE_STANDALONE)
+
+        engineSession.setDisplayMode(WebAppManifest.DisplayMode.MINIMAL_UI)
+        verify(geckoSetting, atLeastOnce()).setDisplayMode(GeckoSessionSettings.DISPLAY_MODE_MINIMAL_UI)
+
+        engineSession.setDisplayMode(WebAppManifest.DisplayMode.BROWSER)
+        verify(geckoSetting, atLeastOnce()).setDisplayMode(GeckoSessionSettings.DISPLAY_MODE_BROWSER)
+    }
+
+    fun `WHEN requestPrintContent is successful THEN notify of completion`() {
+        val engineSession = GeckoEngineSession(
+            runtime = mock(),
+            geckoSessionProvider = geckoSessionProvider,
+        )
+        whenever(geckoSession.didPrintPageContent()).thenReturn(GeckoResult.fromValue(true))
+
+        engineSession.register(object : EngineSession.Observer {
+            override fun onPrintFinish() {
+                assert(true) { "We should notify of a successful print." }
+            }
+
+            override fun onPrintException(isPrint: Boolean, throwable: Throwable) {
+                assert(false) { "We should not notify of an exception." } }
+        })
+        engineSession.requestPrintContent()
+        shadowOf(getMainLooper()).idle()
+    }
+
+    @Test
+    fun `WHEN requestPrintContent has an exception THEN do nothing`() {
+        val engineSession = GeckoEngineSession(
+            runtime = mock(),
+            geckoSessionProvider = geckoSessionProvider,
+        )
+        class MockGeckoPrintException() : GeckoPrintException()
+        whenever(geckoSession.didPrintPageContent()).thenReturn(GeckoResult.fromException(MockGeckoPrintException()))
+
+        engineSession.register(object : EngineSession.Observer {
+            override fun onPrintFinish() {
+                assert(false) { "We should not notify of a successful print." }
+            }
+
+            override fun onPrintException(isPrint: Boolean, throwable: Throwable) {
+                assert(true) { "An exception should occur." }
+                assertEquals("A GeckoPrintException occurred.", ERROR_PRINT_SETTINGS_SERVICE_NOT_AVAILABLE, (throwable as GeckoPrintException).code)
+            }
+        })
+        engineSession.requestPrintContent()
         shadowOf(getMainLooper()).idle()
     }
 
