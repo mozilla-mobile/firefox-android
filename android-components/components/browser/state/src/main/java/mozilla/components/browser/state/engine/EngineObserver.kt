@@ -435,6 +435,18 @@ internal class EngineObserver(
         store.dispatch(EngineAction.SaveToPdfExceptionAction(tabId, throwable))
     }
 
+    override fun onPrintFinish() {
+        store.dispatch(EngineAction.PrintContentCompletedAction(tabId))
+    }
+
+    override fun onPrintException(isPrint: Boolean, throwable: Throwable) {
+        store.dispatch(EngineAction.PrintContentExceptionAction(tabId, isPrint, throwable))
+    }
+
+    override fun onSaveToPdfComplete() {
+        store.dispatch(EngineAction.SaveToPdfCompleteAction(tabId))
+    }
+
     override fun onCheckForFormData(containsFormData: Boolean) {
         store.dispatch(ContentAction.UpdateHasFormDataAction(tabId, containsFormData))
     }

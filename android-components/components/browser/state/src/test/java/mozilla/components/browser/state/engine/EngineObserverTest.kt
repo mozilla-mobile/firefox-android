@@ -72,6 +72,10 @@ class EngineObserverTest {
                 onResult: (Boolean) -> Unit,
                 onException: (Throwable) -> Unit,
             ) {}
+            override fun checkForPdfViewer(
+                onResult: (Boolean) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
             override fun findAll(text: String) {}
             override fun findNext(forward: Boolean) {}
             override fun clearFindMatches() {}
@@ -84,6 +88,7 @@ class EngineObserverTest {
                 notifyObservers { onNavigationStateChange(true, true) }
             }
             override fun requestPdfToDownload() = Unit
+            override fun requestPrintContent() = Unit
             override fun loadUrl(
                 url: String,
                 parent: EngineSession?,
@@ -132,6 +137,10 @@ class EngineObserverTest {
                 onResult: (Boolean) -> Unit,
                 onException: (Throwable) -> Unit,
             ) {}
+            override fun checkForPdfViewer(
+                onResult: (Boolean) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
             override fun findAll(text: String) {}
             override fun findNext(forward: Boolean) {}
             override fun clearFindMatches() {}
@@ -139,6 +148,7 @@ class EngineObserverTest {
             override fun purgeHistory() {}
             override fun loadData(data: String, mimeType: String, encoding: String) {}
             override fun requestPdfToDownload() = Unit
+            override fun requestPrintContent() = Unit
             override fun loadUrl(
                 url: String,
                 parent: EngineSession?,
@@ -188,6 +198,10 @@ class EngineObserverTest {
                 onResult: (Boolean) -> Unit,
                 onException: (Throwable) -> Unit,
             ) {}
+            override fun checkForPdfViewer(
+                onResult: (Boolean) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
             override fun loadUrl(
                 url: String,
                 parent: EngineSession?,
@@ -196,6 +210,7 @@ class EngineObserverTest {
             ) {}
             override fun loadData(data: String, mimeType: String, encoding: String) {}
             override fun requestPdfToDownload() = Unit
+            override fun requestPrintContent() = Unit
             override fun findAll(text: String) {}
             override fun findNext(forward: Boolean) {}
             override fun clearFindMatches() {}

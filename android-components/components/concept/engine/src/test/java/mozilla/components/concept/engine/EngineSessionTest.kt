@@ -949,6 +949,8 @@ open class DummyEngineSession : EngineSession() {
 
     override fun requestPdfToDownload() {}
 
+    override fun requestPrintContent() {}
+
     override fun stopLoading() {}
 
     override fun reload(flags: LoadUrlFlags) {}
@@ -964,6 +966,11 @@ open class DummyEngineSession : EngineSession() {
     override fun toggleDesktopMode(enable: Boolean, reload: Boolean) {}
 
     override fun hasCookieBannerRuleForSession(
+        onResult: (Boolean) -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {}
+
+    override fun checkForPdfViewer(
         onResult: (Boolean) -> Unit,
         onException: (Throwable) -> Unit,
     ) {}

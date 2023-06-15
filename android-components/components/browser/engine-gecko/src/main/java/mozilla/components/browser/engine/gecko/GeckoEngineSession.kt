@@ -264,6 +264,10 @@ class GeckoEngineSession(
                     )
                 }
 
+                notifyObservers {
+                    onSaveToPdfComplete()
+                }
+
                 GeckoResult()
             },
             { throwable ->
@@ -271,6 +275,29 @@ class GeckoEngineSession(
                 logger.error("Save to PDF failed.", throwable)
                 notifyObservers {
                     onSaveToPdfException(throwable)
+                }
+                GeckoResult()
+            },
+        )
+    }
+
+    /**
+     * See [EngineSession.requestPrintContent]
+     */
+    override fun requestPrintContent() {
+        geckoSession.didPrintPageContent().then(
+            { finishedPrinting ->
+                if (finishedPrinting == true) {
+                    notifyObservers {
+                        onPrintFinish()
+                    }
+                }
+                GeckoResult<Void>()
+            },
+            { throwable ->
+                logger.error("Printing failed.", throwable)
+                notifyObservers {
+                    onPrintException(true, throwable)
                 }
                 GeckoResult()
             },
@@ -585,6 +612,37 @@ class GeckoEngineSession(
                     onCheckForFormDataException(throwable)
                 }
                 GeckoResult<Boolean>()
+            },
+        )
+    }
+
+    /**
+     * Checks if a PDF viewer is being used on the current page or not via GeckoView session.
+     */
+    override fun checkForPdfViewer(
+        onResult: (Boolean) -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {
+        geckoSession.isPdfJs.then(
+            { response ->
+                if (response == null) {
+                    logger.error(
+                        "Invalid value: No result from GeckoView if a PDF viewer is used.",
+                    )
+                    onException(
+                        IllegalStateException(
+                            "Invalid value: No result from GeckoView if a PDF viewer is used.",
+                        ),
+                    )
+                    return@then GeckoResult()
+                }
+                onResult(response)
+                GeckoResult<Boolean>()
+            },
+            { throwable ->
+                logger.error("Checking for PDF viewer failed.", throwable)
+                onException(throwable)
+                GeckoResult()
             },
         )
     }
