@@ -111,6 +111,7 @@ internal class SpocsEndpointRaw internal constructor(
             null
         }
 
+        response?.close()
         return response?.isSuccess ?: false
     }
 
