@@ -15,10 +15,6 @@ class CookieBannerReductionTest {
     @get:Rule
     val activityTestRule = HomeActivityIntentTestRule.withDefaultSettingsOverrides(skipOnboarding = true)
 
-<<<<<<< HEAD
-=======
-    // Bug causing flakiness https://bugzilla.mozilla.org/show_bug.cgi?id=1807440
->>>>>>> eb210b176f (Bug 1814030 - Fix cookie banner reduction UI tests)
     @SmokeTest
     @Test
     fun verifyCookieBannerReductionTest() {
@@ -66,10 +62,6 @@ class CookieBannerReductionTest {
         }
     }
 
-<<<<<<< HEAD
-=======
-    // Bug causing flakiness https://bugzilla.mozilla.org/show_bug.cgi?id=1807440
->>>>>>> eb210b176f (Bug 1814030 - Fix cookie banner reduction UI tests)
     @SmokeTest
     @Test
     fun verifyCookieBannerReductionInPrivateBrowsingTest() {
