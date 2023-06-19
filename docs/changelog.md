@@ -4,17 +4,40 @@ title: Changelog
 permalink: /changelog/
 ---
 
-# 115.0 (In Development)
-* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v114..main)
+# 116.0 (In Development)
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v115..main)
 * [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
 * [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/Gecko.kt)
 * [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/.config.yml)
 
+* **support-base**
+  * Adds `NotificationManangerCompat` extension functions `areNotificationsEnabledSafe()` and  `isNotificationChannelEnabled()`.
+  
+* **feature-pwa**
+  * Adds `WebAppContentFeature` to set the "display" mode from the web app manifest on the `EngineSession`.
+* **browser-engine-gecko**:
+  * Added support for Printing on the Engine.
+  * Add support for `checkForPdfViewer` API for checking whether a PDF viewer is loaded on the current session or not.
+* **concept-engine**:
+  * Added new `requestPrintContent` API in `Engine`. This is currently only supported in the Gecko Engine.
+
+# 115.0
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v114..releases_v115)
+* [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/releases_v115/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
+* [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/releases_v115/android-components/plugins/dependencies/src/main/java/Gecko.kt)
+* [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/releases_v115/android-components/.config.yml)
+
 * **lib-crash**
   * Log exceptions that crash the `CrashReporter` to avoid silent failurs. See [bug 1826591](https://bugzilla.mozilla.org/show_bug.cgi?id=1826591).
 
+* **crash-sentry**
+  * Sends exceptions with an attached `Mechanism` to signal to Sentry that it was an uncaught exception. See [bug 1835107](https://bugzilla.mozilla.org/show_bug.cgi?id=1835107)
+
 * **concept-sync**
   *  Bug Fixed [bug #1804274]((https://bugzilla.mozilla.org/show_bug.cgi?id=1804274)) Passes an entrypoint url parameter to FxA when logging-in, that represents the context which the app launches the Firefox Accounts web channel.
+
+* **feature-push**
+  * Refactored [bug #1829982]( https://bugzilla.mozilla.org/show_bug.cgi?id=1829982) Refactors push to remove the RustConnection layer, and instead use the underlying Rust layer directly.
 
 # 114.0
 * [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v113..releases_v114)
@@ -25,7 +48,7 @@ permalink: /changelog/
 * * **browser-state**
   * 🌟 Added `DownloadState`.`openInApp` to indicate whether or not the file associated with the download should be opened in a third party app after downloaded successfully, for more information see [bug 1829371](https://bugzilla.mozilla.org/show_bug.cgi?id=1829371) and [bug 1829372](https://bugzilla.mozilla.org/show_bug.cgi?id=1829372).
 
-# 113.0
+# 113.0.0
 * [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v112..releases_v113)
 * [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/releases_v113/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
 * [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/releases_v113/android-components/plugins/dependencies/src/main/java/Gecko.kt)

@@ -18,6 +18,7 @@ import io.mockk.slot
 import io.mockk.spyk
 import io.mockk.verify
 import io.mockk.verifyOrder
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.test.advanceUntilIdle
 import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.concept.sync.Device
@@ -264,7 +265,7 @@ class ShareControllerTest {
     }
 
     @Test
-    fun `WHEN handleSaveToPDF THEN send telemetry, close the dialog and save the page to pdf`() {
+    fun `WHEN handleSaveToPDF close the dialog and save the page to pdf`() {
         val testController = DefaultShareController(
             context = mockk(),
             shareSubject = shareSubject,
@@ -285,8 +286,6 @@ class ShareControllerTest {
             saveToPdfUseCase.invoke("tabID")
             dismiss(ShareController.Result.DISMISSED)
         }
-
-        assertNotNull(Events.saveToPdfTapped.testGetValue())
     }
 
     @Test
@@ -417,16 +416,18 @@ class ShareControllerTest {
         val deviceId = slot<String>()
         val tabsShared = slot<List<TabData>>()
 
+        every { sendTabUseCases.sendToDeviceAsync(any(), any<List<TabData>>()) } returns CompletableDeferred(true)
+        every { navController.currentDestination?.id } returns R.id.shareFragment
+
         controller.handleShareToDevice(deviceToShareTo)
 
         assertNotNull(SyncAccount.sendTab.testGetValue())
         assertEquals(1, SyncAccount.sendTab.testGetValue()!!.size)
         assertNull(SyncAccount.sendTab.testGetValue()!!.single().extra)
 
-        // Verify all the needed methods are called.
-        verify {
+        verifyOrder {
             sendTabUseCases.sendToDeviceAsync(capture(deviceId), capture(tabsShared))
-            // dismiss() is also to be called, but at the moment cannot test it in a coroutine.
+            dismiss(ShareController.Result.SUCCESS)
         }
 
         assertTrue(deviceId.isCaptured)
@@ -438,6 +439,9 @@ class ShareControllerTest {
     @Test
     @Suppress("DeferredResultUnused")
     fun `handleShareToAllDevices calls handleShareToDevice multiple times`() {
+        every { sendTabUseCases.sendToAllAsync(any<List<TabData>>()) } returns CompletableDeferred(true)
+        every { navController.currentDestination?.id } returns R.id.shareFragment
+
         val devicesToShareTo = listOf(
             Device(
                 "deviceId0",
@@ -466,7 +470,7 @@ class ShareControllerTest {
 
         verifyOrder {
             sendTabUseCases.sendToAllAsync(capture(tabsShared))
-            // dismiss() is also to be called, but at the moment cannot test it in a coroutine.
+            dismiss(ShareController.Result.SUCCESS)
         }
 
         // SendTabUseCases should send a the `shareTabs` mapped to tabData

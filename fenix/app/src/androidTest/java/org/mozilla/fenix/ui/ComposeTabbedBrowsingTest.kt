@@ -7,6 +7,7 @@ package org.mozilla.fenix.ui
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
@@ -17,8 +18,12 @@ import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.RetryTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
+import org.mozilla.fenix.helpers.TestHelper.clickSnackbarButton
+import org.mozilla.fenix.helpers.TestHelper.verifySnackBarText
+import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
+import org.mozilla.fenix.ui.robots.notificationShade
 
 /**
  *  Tests for verifying basic functionality of tabbed browsing
@@ -85,7 +90,7 @@ class ComposeTabbedBrowsingTest {
             verifyNoOpenTabsInNormalBrowsing()
         }.openNewTab {
         }.submitQuery(defaultWebPage.url.toString()) {
-            mDevice.waitForIdle()
+            verifyPageContent(defaultWebPage.content)
             verifyTabCounter("1")
         }.openComposeTabDrawer(composeTestRule) {
             verifyNormalBrowsingButtonIsSelected()
@@ -176,31 +181,31 @@ class ComposeTabbedBrowsingTest {
 //        }
     }
 
-    @Ignore("Being converted in: https://bugzilla.mozilla.org/show_bug.cgi?id=1832608")
     @Test
     fun verifyUndoSnackBarTest() {
         // disabling these features because they interfere with the snackbar visibility
-//        activityTestRule.applySettingsExceptions {
-//            it.isPocketEnabled = false
-//            it.isRecentTabsFeatureEnabled = false
-//        }
-//
-//        val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-//
-//        navigationToolbar {
-//        }.enterURLAndEnterToBrowser(genericURL.url) {
-//        }.openTabDrawer {
-//            verifyExistingOpenTabs("Test_Page_1")
-//            closeTab()
-//            verifySnackBarText("Tab closed")
-//            snackBarButtonClick("UNDO")
-//        }
-//
-//        browserScreen {
-//            verifyTabCounter("1")
-//        }.openTabDrawer {
-//            verifyExistingOpenTabs("Test_Page_1")
-//        }
+        composeTestRule.activityRule.applySettingsExceptions {
+            it.isPocketEnabled = false
+            it.isRecentTabsFeatureEnabled = false
+            it.isRecentlyVisitedFeatureEnabled = false
+        }
+
+        val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(genericURL.url) {
+        }.openComposeTabDrawer(composeTestRule) {
+            verifyExistingOpenTabs("Test_Page_1")
+            closeTab()
+            verifySnackBarText("Tab closed")
+            clickSnackbarButton("UNDO")
+        }
+
+        browserScreen {
+            verifyTabCounter("1")
+        }.openComposeTabDrawer(composeTestRule) {
+            verifyExistingOpenTabs("Test_Page_1")
+        }
     }
 
     @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1829838")
@@ -238,143 +243,140 @@ class ComposeTabbedBrowsingTest {
 //        }
     }
 
-    @Ignore("Being converted in: https://bugzilla.mozilla.org/show_bug.cgi?id=1832610")
     @Test
     fun verifyPrivateTabUndoSnackBarTest() {
-//        val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-//
-//        homeScreen { }.togglePrivateBrowsingMode()
-//        navigationToolbar {
-//        }.enterURLAndEnterToBrowser(genericURL.url) {
-//        }.openTabDrawer {
-//            verifyExistingOpenTabs("Test_Page_1")
-//            verifyCloseTabsButton("Test_Page_1")
-//            closeTab()
-//            verifySnackBarText("Private tab closed")
-//            snackBarButtonClick("UNDO")
-//        }
-//
-//        browserScreen {
-//            verifyTabCounter("1")
-//        }.openTabDrawer {
-//            verifyExistingOpenTabs("Test_Page_1")
-//            verifyPrivateModeSelected()
-//        }
+        val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        homeScreen { }.togglePrivateBrowsingMode()
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(genericURL.url) {
+            verifyPageContent(genericURL.content)
+        }.openComposeTabDrawer(composeTestRule) {
+            verifyExistingOpenTabs("Test_Page_1")
+            closeTab()
+            verifySnackBarText("Private tab closed")
+            clickSnackbarButton("UNDO")
+        }
+
+        browserScreen {
+            verifyPageContent(genericURL.content)
+            verifyTabCounter("1")
+        }.openComposeTabDrawer(composeTestRule) {
+            verifyExistingOpenTabs("Test_Page_1")
+            verifyPrivateBrowsingButtonIsSelected()
+        }
     }
 
-    @Ignore("Being converted in: https://bugzilla.mozilla.org/show_bug.cgi?id=1832611")
     @Test
     fun closePrivateTabsNotificationTest() {
-//        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-//
-//        homeScreen {
-//        }.togglePrivateBrowsingMode()
-//
-//        navigationToolbar {
-//        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-//            mDevice.openNotification()
-//        }
-//
-//        notificationShade {
-//            verifyPrivateTabsNotification()
-//        }.clickClosePrivateTabsNotification {
-//            verifyHomeScreen()
-//        }
+        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        homeScreen {
+        }.togglePrivateBrowsingMode()
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+            mDevice.openNotification()
+        }
+
+        notificationShade {
+            verifyPrivateTabsNotification()
+        }.clickClosePrivateTabsNotification {
+            verifyHomeScreen()
+        }
     }
 
-    @Ignore("Being converted in: https://bugzilla.mozilla.org/show_bug.cgi?id=1832612")
     @Test
     fun verifyTabTrayNotShowingStateHalfExpanded() {
-//        navigationToolbar {
-//        }.openTabTray {
-//            verifyNoOpenTabsInNormalBrowsing()
-//            // With no tabs opened the state should be STATE_COLLAPSED.
-//            verifyBehaviorState(BottomSheetBehavior.STATE_COLLAPSED)
-//            // Need to ensure the halfExpandedRatio is very small so that when in STATE_HALF_EXPANDED
-//            // the tabTray will actually have a very small height (for a very short time) akin to being hidden.
-//            verifyHalfExpandedRatio()
-//        }.clickTopBar {
-//        }.waitForTabTrayBehaviorToIdle {
-//            // Touching the topBar would normally advance the tabTray to the next state.
-//            // We don't want that.
-//            verifyBehaviorState(BottomSheetBehavior.STATE_COLLAPSED)
-//        }.advanceToHalfExpandedState {
-//        }.waitForTabTrayBehaviorToIdle {
-//            // TabTray should not be displayed in STATE_HALF_EXPANDED.
-//            // When advancing to this state it should immediately be hidden.
-//            verifyTabTrayIsClosed()
-//        }
+        homeScreen {
+        }.openComposeTabDrawer(composeTestRule) {
+            verifyNoOpenTabsInNormalBrowsing()
+            // With no tabs opened the state should be STATE_COLLAPSED.
+            verifyTabsTrayBehaviorState(BottomSheetBehavior.STATE_COLLAPSED)
+            // Need to ensure the halfExpandedRatio is very small so that when in STATE_HALF_EXPANDED
+            // the tabTray will actually have a very small height (for a very short time) akin to being hidden.
+            verifyMinusculeHalfExpandedRatio()
+        }.clickTopBar {
+        }.waitForTabTrayBehaviorToIdle {
+            // Touching the topBar would normally advance the tabTray to the next state.
+            // We don't want that.
+            verifyTabsTrayBehaviorState(BottomSheetBehavior.STATE_COLLAPSED)
+        }.advanceToHalfExpandedState {
+        }.waitForTabTrayBehaviorToIdle {
+            // TabTray should not be displayed in STATE_HALF_EXPANDED.
+            // When advancing to this state it should immediately be hidden.
+            verifyTabTrayIsClosed()
+        }
     }
 
-    @Ignore("Being converted in: https://bugzilla.mozilla.org/show_bug.cgi?id=1832613")
     @Test
     fun verifyEmptyTabTray() {
-//        navigationToolbar {
-//        }.openTabTray {
-//            verifyNormalBrowsingButtonIsSelected(true)
-//            verifyPrivateBrowsingButtonIsSelected(false)
-//            verifySyncedTabsButtonIsSelected(false)
-//            verifyNoOpenTabsInNormalBrowsing()
-//            verifyNormalBrowsingNewTabButton()
-//            verifyTabTrayOverflowMenu(true)
-//            verifyEmptyTabsTrayMenuButtons()
-//        }
+        homeScreen {
+        }.openComposeTabDrawer(composeTestRule) {
+            verifyNormalBrowsingButtonIsSelected()
+            verifyPrivateBrowsingButtonIsSelected(false)
+            verifySyncedTabsButtonIsSelected(false)
+            verifyNoOpenTabsInNormalBrowsing()
+            verifyFab()
+            verifyThreeDotButton()
+        }.openThreeDotMenu {
+            verifyTabSettingsButton()
+            verifyRecentlyClosedTabsButton()
+        }
     }
 
-    @Ignore("Being converted in: https://bugzilla.mozilla.org/show_bug.cgi?id=1832615")
     @Test
     fun verifyOpenTabDetails() {
-//        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-//
-//        navigationToolbar {
-//        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-//        }.openTabDrawer {
-//            verifyNormalBrowsingButtonIsSelected(true)
-//            verifyPrivateBrowsingButtonIsSelected(false)
-//            verifySyncedTabsButtonIsSelected(false)
-//            verifyTabTrayOverflowMenu(true)
-//            verifyTabsTrayCounter()
-//            verifyExistingTabList()
-//            verifyNormalBrowsingNewTabButton()
-//            verifyOpenedTabThumbnail()
-//            verifyExistingOpenTabs(defaultWebPage.title)
-//            verifyCloseTabsButton(defaultWebPage.title)
-//        }.openTab(defaultWebPage.title) {
-//            verifyUrl(defaultWebPage.url.toString())
-//            verifyTabCounter("1")
-//        }
+        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+        }.openComposeTabDrawer(composeTestRule) {
+            verifyNormalBrowsingButtonIsSelected()
+            verifyPrivateBrowsingButtonIsSelected(isSelected = false)
+            verifySyncedTabsButtonIsSelected(isSelected = false)
+            verifyThreeDotButton()
+            verifyNormalTabCounter()
+            verifyNormalTabsList()
+            verifyFab()
+            verifyTabThumbnail()
+            verifyExistingOpenTabs(defaultWebPage.title)
+            verifyTabCloseButton(defaultWebPage.title)
+        }.openTab(defaultWebPage.title) {
+            verifyUrl(defaultWebPage.url.toString())
+            verifyTabCounter("1")
+        }
     }
 
-    @Ignore("Being converted in: https://bugzilla.mozilla.org/show_bug.cgi?id=1832616")
     @Test
     fun verifyContextMenuShortcuts() {
-//        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-//
-//        navigationToolbar {
-//        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-//        }.openTabButtonShortcutsMenu {
-//            verifyTabButtonShortcutMenuItems()
-//        }.closeTabFromShortcutsMenu {
-//        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-//        }.openTabButtonShortcutsMenu {
-//        }.openNewPrivateTabFromShortcutsMenu {
-//            verifyKeyboardVisible()
-//            verifyFocusedNavigationToolbar()
-//            // dismiss search dialog
-//            homeScreen { }.pressBack()
-//            verifyCommonMythsLink()
-//            verifyNavigationToolbar()
-//        }
-//        navigationToolbar {
-//        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-//        }.openTabButtonShortcutsMenu {
-//        }.openTabFromShortcutsMenu {
-//            verifyKeyboardVisible()
-//            verifyFocusedNavigationToolbar()
-//            // dismiss search dialog
-//            homeScreen { }.pressBack()
-//            verifyHomeWordmark()
-//            verifyNavigationToolbar()
-//        }
+        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+        }.openTabButtonShortcutsMenu {
+            verifyTabButtonShortcutMenuItems()
+        }.closeTabFromShortcutsMenu {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+        }.openTabButtonShortcutsMenu {
+        }.openNewPrivateTabFromShortcutsMenu {
+            verifyKeyboardVisible()
+            verifyFocusedNavigationToolbar()
+            // dismiss search dialog
+            homeScreen { }.pressBack()
+            verifyCommonMythsLink()
+            verifyNavigationToolbar()
+        }
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+        }.openTabButtonShortcutsMenu {
+        }.openTabFromShortcutsMenu {
+            verifyKeyboardVisible()
+            verifyFocusedNavigationToolbar()
+            // dismiss search dialog
+            homeScreen { }.pressBack()
+            verifyHomeWordmark()
+            verifyNavigationToolbar()
+        }
     }
 }
