@@ -32,6 +32,7 @@ import mozilla.components.concept.engine.Settings
 import mozilla.components.concept.engine.content.blocking.Tracker
 import mozilla.components.concept.engine.history.HistoryItem
 import mozilla.components.concept.engine.history.HistoryTrackingDelegate
+import mozilla.components.concept.engine.manifest.WebAppManifest
 import mozilla.components.concept.engine.manifest.WebAppManifestParser
 import mozilla.components.concept.engine.request.RequestInterceptor
 import mozilla.components.concept.engine.request.RequestInterceptor.InterceptionResponse
@@ -263,6 +264,10 @@ class GeckoEngineSession(
                     )
                 }
 
+                notifyObservers {
+                    onSaveToPdfComplete()
+                }
+
                 GeckoResult()
             },
             { throwable ->
@@ -270,6 +275,29 @@ class GeckoEngineSession(
                 logger.error("Save to PDF failed.", throwable)
                 notifyObservers {
                     onSaveToPdfException(throwable)
+                }
+                GeckoResult()
+            },
+        )
+    }
+
+    /**
+     * See [EngineSession.requestPrintContent]
+     */
+    override fun requestPrintContent() {
+        geckoSession.didPrintPageContent().then(
+            { finishedPrinting ->
+                if (finishedPrinting == true) {
+                    notifyObservers {
+                        onPrintFinish()
+                    }
+                }
+                GeckoResult<Void>()
+            },
+            { throwable ->
+                logger.error("Printing failed.", throwable)
+                notifyObservers {
+                    onPrintException(true, throwable)
                 }
                 GeckoResult()
             },
@@ -555,6 +583,18 @@ class GeckoEngineSession(
     }
 
     /**
+     * See [EngineSession.setDisplayMode].
+     */
+    override fun setDisplayMode(displayMode: WebAppManifest.DisplayMode) {
+        geckoSession.settings.displayMode = when (displayMode) {
+            WebAppManifest.DisplayMode.MINIMAL_UI -> GeckoSessionSettings.DISPLAY_MODE_MINIMAL_UI
+            WebAppManifest.DisplayMode.FULLSCREEN -> GeckoSessionSettings.DISPLAY_MODE_FULLSCREEN
+            WebAppManifest.DisplayMode.STANDALONE -> GeckoSessionSettings.DISPLAY_MODE_STANDALONE
+            else -> GeckoSessionSettings.DISPLAY_MODE_BROWSER
+        }
+    }
+
+    /**
      * See [EngineSession.checkForFormData].
      */
     override fun checkForFormData() {
@@ -572,6 +612,37 @@ class GeckoEngineSession(
                     onCheckForFormDataException(throwable)
                 }
                 GeckoResult<Boolean>()
+            },
+        )
+    }
+
+    /**
+     * Checks if a PDF viewer is being used on the current page or not via GeckoView session.
+     */
+    override fun checkForPdfViewer(
+        onResult: (Boolean) -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {
+        geckoSession.isPdfJs.then(
+            { response ->
+                if (response == null) {
+                    logger.error(
+                        "Invalid value: No result from GeckoView if a PDF viewer is used.",
+                    )
+                    onException(
+                        IllegalStateException(
+                            "Invalid value: No result from GeckoView if a PDF viewer is used.",
+                        ),
+                    )
+                    return@then GeckoResult()
+                }
+                onResult(response)
+                GeckoResult<Boolean>()
+            },
+            { throwable ->
+                logger.error("Checking for PDF viewer failed.", throwable)
+                onException(throwable)
+                GeckoResult()
             },
         )
     }
@@ -1235,6 +1306,7 @@ class GeckoEngineSession(
     private fun createScrollDelegate() = object : GeckoSession.ScrollDelegate {
         override fun onScrollChanged(session: GeckoSession, scrollX: Int, scrollY: Int) {
             this@GeckoEngineSession.scrollY = scrollY
+            notifyObservers { onScrollChange(scrollX, scrollY) }
         }
     }
 

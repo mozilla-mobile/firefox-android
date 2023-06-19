@@ -6,6 +6,8 @@
     <string name="pref_key_search_settings" translatable="false">pref_key_search_settings</string>
     <string name="pref_key_search_engine" translatable="false">pref_key_search_engine</string>
     <string name="pref_key_add_search_engine" translatable="false">pref_key_add_Search_engine</string>
+    <string name="pref_key_default_search_engine" translatable="false">pref_key_default_search_engine</string>
+    <string name="pref_key_manage_search_shortcuts" translatable="false">pref_key_manage_search_shortcuts</string>
     <string name="pref_key_passwords" translatable="false">pref_key_passwords</string>
     <string name="pref_key_site_permissions" translatable="false">pref_key_site_permissions</string>
     <string name="pref_key_add_private_browsing_shortcut" translatable="false">pref_key_add_private_browsing_shortcut</string>
@@ -291,6 +293,12 @@
 
     <string name="pref_key_show_collections_placeholder_home" translatable="false">pref_key_show_collections_home</string>
 
+    <!-- Adjust Activated User values-->
+    <string name="pref_key_growth_user_activated_sent" translatable="false">pref_key_growth_user_activated_sent</string>
+    <string name="pref_key_growth_early_browse_count" translatable="false">pref_key_growth_early_browse_count</string>
+    <string name="pref_key_growth_early_browse_count_last_increment" translatable="false">pref_key_growth_early_browse_count_last_increment</string>
+    <string name="pref_key_growth_early_search" translatable="false">pref_key_growth_early_search</string>
+
     <!-- Tabs Settings -->
     <!-- pref_key_tab_view_list_do_not_use is needed for UI implementation only and should be expected to be useful. -->
     <string name="pref_key_tab_view_list_do_not_use" translatable="false">pref_key_tab_view_list</string>
@@ -336,7 +344,7 @@
     <string name="pref_key_custom_sponsored_stories_site_id" translatable="false">pref_key_custom_sponsored_stories_site_id</string>
     <string name="pref_key_custom_sponsored_stories_country" translatable="false">pref_key_custom_sponsored_stories_country</string>
     <string name="pref_key_custom_sponsored_stories_city" translatable="false">pref_key_custom_sponsored_stories_city</string>
-    <string name="pref_key_shared_prefs_uuid" translatable="false">pref_key_shared_prefs_uuid</string>
+    <string name="pref_key_enable_compose_top_sites" translatable="false">pref_key_enable_compose_top_sites</string>
 
     <!-- Growth Data -->
     <string name="pref_key_growth_set_as_default" translatable="false">pref_key_growth_set_as_default</string>

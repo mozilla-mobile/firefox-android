@@ -4,7 +4,6 @@
 
 package org.mozilla.fenix.home.sessioncontrol
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
@@ -36,19 +35,17 @@ import org.mozilla.fenix.home.sessioncontrol.viewholders.CustomizeHomeButtonView
 import org.mozilla.fenix.home.sessioncontrol.viewholders.NoCollectionsMessageViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.PrivateBrowsingDescriptionViewHolder
 import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.MessageCardViewHolder
-import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingFinishViewHolder
-import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingHeaderViewHolder
-import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingManualSignInViewHolder
-import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingPrivacyNoticeViewHolder
-import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingSectionHeaderViewHolder
-import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingThemePickerViewHolder
-import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingToolbarPositionPickerViewHolder
-import org.mozilla.fenix.home.sessioncontrol.viewholders.onboarding.OnboardingTrackingProtectionViewHolder
 import org.mozilla.fenix.home.topsites.TopSitePagerViewHolder
+import org.mozilla.fenix.home.topsites.TopSitesViewHolder
 import mozilla.components.feature.tab.collections.Tab as ComponentTab
 
 sealed class AdapterItem(@LayoutRes val viewType: Int) {
     object TopPlaceholderItem : AdapterItem(TopPlaceholderViewHolder.LAYOUT_ID)
+
+    /**
+     * Top sites.
+     */
+    object TopSites : AdapterItem(TopSitesViewHolder.LAYOUT_ID)
 
     /**
      * Contains a set of [Pair]s where [Pair.first] is the index of the changed [TopSite] and
@@ -138,31 +135,12 @@ sealed class AdapterItem(@LayoutRes val viewType: Int) {
         }
     }
 
-    object OnboardingHeader : AdapterItem(OnboardingHeaderViewHolder.LAYOUT_ID)
-    data class OnboardingSectionHeader(
-        val labelBuilder: (Context) -> String,
-    ) : AdapterItem(OnboardingSectionHeaderViewHolder.LAYOUT_ID) {
-        override fun sameAs(other: AdapterItem) =
-            other is OnboardingSectionHeader && labelBuilder == other.labelBuilder
-    }
-
-    object OnboardingManualSignIn : AdapterItem(OnboardingManualSignInViewHolder.LAYOUT_ID)
-
     data class NimbusMessageCard(
         val message: Message,
     ) : AdapterItem(MessageCardViewHolder.LAYOUT_ID) {
         override fun sameAs(other: AdapterItem) =
             other is NimbusMessageCard && message.id == other.message.id
     }
-
-    object OnboardingThemePicker : AdapterItem(OnboardingThemePickerViewHolder.LAYOUT_ID)
-    object OnboardingTrackingProtection :
-        AdapterItem(OnboardingTrackingProtectionViewHolder.LAYOUT_ID)
-
-    object OnboardingPrivacyNotice : AdapterItem(OnboardingPrivacyNoticeViewHolder.LAYOUT_ID)
-    object OnboardingFinish : AdapterItem(OnboardingFinishViewHolder.LAYOUT_ID)
-    object OnboardingToolbarPositionPicker :
-        AdapterItem(OnboardingToolbarPositionPickerViewHolder.LAYOUT_ID)
 
     object CustomizeHomeButton : AdapterItem(CustomizeHomeButtonViewHolder.LAYOUT_ID)
 
@@ -302,6 +280,11 @@ class SessionControlAdapter(
                 viewLifecycleOwner = viewLifecycleOwner,
                 interactor = interactor,
             )
+            TopSitesViewHolder.LAYOUT_ID -> return TopSitesViewHolder(
+                composeView = ComposeView(parent.context),
+                viewLifecycleOwner = viewLifecycleOwner,
+                interactor = interactor,
+            )
         }
 
         val view = LayoutInflater.from(parent.context).inflate(viewType, parent, false)
@@ -321,21 +304,6 @@ class SessionControlAdapter(
                     components.appStore,
                     interactor,
                 )
-            OnboardingHeaderViewHolder.LAYOUT_ID -> OnboardingHeaderViewHolder(view)
-            OnboardingSectionHeaderViewHolder.LAYOUT_ID -> OnboardingSectionHeaderViewHolder(view)
-            OnboardingManualSignInViewHolder.LAYOUT_ID -> OnboardingManualSignInViewHolder(view)
-            OnboardingThemePickerViewHolder.LAYOUT_ID -> OnboardingThemePickerViewHolder(view)
-            OnboardingTrackingProtectionViewHolder.LAYOUT_ID -> OnboardingTrackingProtectionViewHolder(
-                view,
-            )
-            OnboardingPrivacyNoticeViewHolder.LAYOUT_ID -> OnboardingPrivacyNoticeViewHolder(
-                view,
-                interactor,
-            )
-            OnboardingFinishViewHolder.LAYOUT_ID -> OnboardingFinishViewHolder(view, interactor)
-            OnboardingToolbarPositionPickerViewHolder.LAYOUT_ID -> OnboardingToolbarPositionPickerViewHolder(
-                view,
-            )
             BottomSpacerViewHolder.LAYOUT_ID -> BottomSpacerViewHolder(view)
             else -> throw IllegalStateException()
         }
@@ -362,6 +330,11 @@ class SessionControlAdapter(
                 // entire Composable destroyed and recreated when this View is scrolled off or on screen again.
                 // This View already listens and maps store updates. Avoid creating and binding new Views.
                 // The composition will live until the ViewTreeLifecycleOwner to which it's attached to is destroyed.
+            }
+            is TopSitesViewHolder -> {
+                // Dispose the underlying composition immediately.
+                // This ViewHolder can be removed / re-added and we need it to show a fresh new composition.
+                holder.composeView.disposeComposition()
             }
             is CollectionViewHolder -> {
                 // Dispose the underlying composition immediately.
@@ -424,10 +397,7 @@ class SessionControlAdapter(
                 val (collection, tab, isLastTab) = item as AdapterItem.TabInCollectionItem
                 holder.bindSession(collection, tab, isLastTab)
             }
-            is OnboardingSectionHeaderViewHolder -> holder.bind(
-                (item as AdapterItem.OnboardingSectionHeader).labelBuilder,
-            )
-            is OnboardingManualSignInViewHolder,
+            is TopSitesViewHolder,
             is RecentlyVisitedViewHolder,
             is RecentBookmarksViewHolder,
             is RecentTabViewHolder,

@@ -243,7 +243,7 @@
     <string name="search_suggestions_onboarding_title">පෞද්. වාරවල සෙවුම් යෝජනා සඳහා ඉඩ දෙන්නද?</string>
     <!-- Search suggestion onboarding hint description text, first parameter is the name of the app defined in app_name (for example: Fenix)-->
     <string name="search_suggestions_onboarding_text">ඔබ ලිපින තීරුවේ ලියන සෑම දෙයක්ම ඔබගේ සෙවුම් යන්ත්‍රයට %s හරහා යවයි.</string>
-    <!-- Search engine suggestion title text. The first parameter is the name of teh suggested engine-->
+    <!-- Search engine suggestion title text. The first parameter is the name of the suggested engine-->
     <string name="search_engine_suggestions_title">%s සොයන්න</string>
     <!-- Search engine suggestion description text -->
     <string name="search_engine_suggestions_description">ලිපින තීරුවෙන් කෙලින්ම සොයන්න</string>
@@ -252,6 +252,9 @@
 
     <!-- Header text for the search selector menu -->
     <string name="search_header_menu_item_2">මෙවර සෙවීම:</string>
+
+    <!-- Content description (not visible, for screen readers etc.): Search engine icon. The first parameter is the search engine name (for example: DuckDuckGo). -->
+    <string name="search_engine_icon_content_description" tools:ignore="UnusedResources">%s සෙවුම් යන්ත්‍රය</string>
 
     <!-- Home onboarding -->
     <!-- Onboarding home screen popup dialog, shown on top of the Jump back in section. -->
@@ -282,10 +285,10 @@
     <!-- Notification pre-permission dialog -->
     <!-- Enable notification pre permission dialog title
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="onboarding_home_enable_notifications_title">ඔබට %s සමඟ බොහෝ දෑ කිරීමට දැනුම්දීම් උපකාරී වේ</string>
+    <string name="onboarding_home_enable_notifications_title">%s සමඟ බොහෝ දෑ කිරීමට දැනුම්දීම් උපකාරී වේ</string>
     <!-- Enable notification pre permission dialog description with rationale
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="onboarding_home_enable_notifications_description">උපාංග අතර පටිති සමමුහූර්තය, බාගැනීම් කළමනාකරණය, %s හි පෞද්ගලිකත්‍ව රැකවරණයෙන් උපරිම ප්‍රයෝජන ගැනීමට ඉඟි, සහ තවත් බොහෝ දෑ.</string>
+    <string name="onboarding_home_enable_notifications_description">උපාංග අතර පටිති සමමුහූර්තය, බාගැනීම් කළමනාකරණය, %s පෞද්ගලිකත්‍ව රැකවරණයෙන් උපරිම ප්‍රයෝජන ගැනීමට ඉඟි, සහ තවත් බොහෝ දෑ.</string>
     <!-- Text for the button to request notification permission on the device -->
     <string name="onboarding_home_enable_notifications_positive_button">ඉදිරියට</string>
     <!-- Text for the button to not request notification permission on the device and dismiss the dialog -->
@@ -298,6 +301,13 @@
     <!-- Title for set firefox as default browser screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
         Note: The word "Firefox" should NOT be translated -->
     <string name="juno_onboarding_default_browser_title_nimbus" tools:ignore="UnusedResources">ෆයර්ෆොක්ස් ප්‍රධාන අතිරික්සුව කරන්න</string>
+    <!-- Description for set firefox as default browser screen.
+        The first parameter is the Firefox brand name.
+        The second parameter is the string with key "juno_onboarding_default_browser_description_link_text". -->
+    <string name="juno_onboarding_default_browser_description">%1$s සැමවිට ලාභයට ඉහළින් මිනිසුන්ව තබයි. හරස්-අඩවි ලුහුබැඳීම් අවහිර කර ඔබගේ පෞද්ගලිකත්‍වය රැක දෙයි.\n\nඅපගේ %2$s හරහා තව දැනගන්න.</string>
+    <!-- Description for set firefox as default browser screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_default_browser_description_nimbus" tools:ignore="UnusedResources">%1$s සැමවිට ලාභයට ඉහළින් මිනිසුන්ව තබයි. හරස්-අඩවි ලුහුබැඳීම් අවහිර කර ඔබගේ පෞද්ගලිකත්‍වය රැක දෙයි.\n\nඅපගේ පෞද්ගලිකත්‍ව දැන්වීම හරහා තව දැනගන්න.</string>
     <!-- Text for the link to the privacy notice webpage for set as firefox default browser screen.
     This is part of the string with the key "juno_onboarding_default_browser_description". -->
     <string name="juno_onboarding_default_browser_description_link_text">පෞද්ගලිකත්‍ව දැන්වීම</string>
@@ -315,7 +325,16 @@
     <string name="juno_onboarding_sign_in_negative_button">දැන් නොවේ</string>
     <!-- Title for enable notification permission screen.
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="juno_onboarding_enable_notifications_title">ඔබට %s සමඟ බොහෝ දෑ කිරීමට දැනුම්දීම් උපකාරී වේ</string>
+    <string name="juno_onboarding_enable_notifications_title">%s සමඟ බොහෝ දෑ කිරීමට දැනුම්දීම් උපකාරී වේ</string>
+    <!-- Title for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_enable_notifications_title_nimbus" tools:ignore="UnusedResources">ෆයර්ෆොක්ස් සමඟ බොහෝ දෑ කිරීමට දැනුම්දීම් උපකාරී වේ</string>
+    <!-- Description for enable notification permission screen.
+        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
+    <string name="juno_onboarding_enable_notifications_description">උපාංග අතර පටිති යැවීමට, බාගැනීම් කළමනාකරණයට මෙන්ම %s වෙතින් බොහෝ ප්‍රතිලාභ අත්විඳීම සඳහා ඉඟි ලබා ගන්න.</string>
+    <!-- Description for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+       Note: The word "Firefox" should NOT be translated   -->
+    <string name="juno_onboarding_enable_notifications_description_nimbus" tools:ignore="UnusedResources">උපාංග අතර පටිති යැවීමට, බාගැනීම් කළමනාකරණයට මෙන්ම ෆයර්ෆොක්ස් වෙතින් බොහෝ ප්‍රතිලාභ අත්විඳීම සඳහා ඉඟි ලබා ගන්න.</string>
     <!-- Text for the button to request notification permission on the device -->
     <string name="juno_onboarding_enable_notifications_positive_button">දැනුම්දීම් සක්‍රිය කරන්න</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
@@ -338,6 +357,14 @@
     <string name="preferences_category_general">සාමාන්‍ය</string>
     <!-- Preference category for all links about Fenix -->
     <string name="preferences_category_about">පිළිබඳව</string>
+    <!-- Preference category for settings related to changing the default search engine -->
+    <string name="preferences_category_select_default_search_engine" tools:ignore="UnusedResources">එකක් තෝරගන්න</string>
+    <!-- Preference for settings related to managing search shortcuts for the quick search menu -->
+    <string name="preferences_manage_search_shortcuts" tools:ignore="UnusedResources">සෙවුම් කෙටිමං කළමනාකරණය</string>
+    <!-- Summary for preference for settings related to managing search shortcuts for the quick search menu -->
+    <string name="preferences_manage_search_shortcuts_summary" tools:ignore="UnusedResources">සෙවුමෙහි පෙනෙන යන්ත්‍ර සංශෝධනය</string>
+    <!-- Preference category for settings related to managing search shortcuts for the quick search menu -->
+    <string name="preferences_category_engines_in_search_menu" tools:ignore="UnusedResources">සෙවුම් වට්ටෝරුවෙහි පෙනෙන යන්ත්‍ර</string>
     <!-- Preference for settings related to changing the default search engine -->
     <string name="preferences_default_search_engine">පෙරනිමි සෙවුම් යන්ත්‍රය</string>
     <!-- Preference for settings related to Search -->
@@ -400,17 +427,29 @@
     <string name="cookie_banner_handling_report_site_snack_bar_text_2">ඉල්ලීම යැවිණි</string>
     <!-- Text for indicating cookie banner handling is on this site, this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_on_for_site">මෙම අඩවියට සක්‍රියයි</string>
+    <!-- Text for indicating that a request for unsupported site was sent to Nimbus (it's a Mozilla library for experiments), this is shown as part of the protections panel with the tracking protection toggle -->
+    <string name="reduce_cookie_banner_unsupported_site_request_submitted" moz:RemovedIn="114" tools:ignore="UnusedResources">අඩවිය සඳහා සහාය ඉල්ලීම යොමු කෙරිණි</string>
+    <!-- Text for indicating that a request for unsupported site was sent to Nimbus (it's a Mozilla library for experiments), this is shown as part of the protections panel with the tracking protection toggle -->
+    <string name="reduce_cookie_banner_unsupported_site_request_submitted_2">සහාය ඉල්ලීම යැවිණි</string>
     <!-- Text for indicating cookie banner handling is currently not supported for this site, this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_unsupported_site">අඩවියට සහාය නොදක්වයි</string>
     <!-- Title text for a detail explanation indicating cookie banner handling is on this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
     <string name="reduce_cookie_banner_details_panel_title_on_for_site">%1$s සඳහා දත්තකඩ පතාක අවකරණය සක්‍රිය කරන්නද?</string>
     <!-- Title text for a detail explanation indicating cookie banner handling is off this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
     <string name="reduce_cookie_banner_details_panel_title_off_for_site">%1$s සඳහා දත්තකඩ පතාක අවකරණය අක්‍රිය කරන්නද?</string>
+    <!-- Title text for a detail explanation indicating cookie banner reducer didn't work for the current site, this is shown as part of the cookie banner panel in the toolbar.-->
+    <string name="reduce_cookie_banner_details_panel_title_unsupported_site_request" moz:RemovedIn="114" tools:ignore="UnusedResources">මෙම අඩවිය දැනට දත්තකඩ පතාක අවකරණයට සහාය නොදක්වයි. මෙම වියමන අඩවිය සමාලෝචනය කර අනාගතයේදී සහාය දක්වන ලෙස අපගේ කණ්ඩායමට දැන්වීමට කැමතිද?</string>
+    <!-- Title text for a detail explanation indicating cookie banner reducer didn't work for the current site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name-->
+    <string name="reduce_cookie_banner_details_panel_title_unsupported_site_request_2">%1$s මඟින්  මෙම අඩවියේ දත්තකඩ ඉල්ලීම් ස්වයංක්‍රීයව ඉවතලීමට නොහැක. ඉදිරියේ දී මෙම අඩවිය සඳහා සහාය දැක්වීමට ඉල්ලීමක් යැවීමට හැකිය.</string>
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
     <string name="reduce_cookie_banner_details_panel_description_off_for_site">%1$s මෙම අඩවියේ දත්තකඩ ඉවත් කර පිටුව නැවුම් කරයි. සියළුම දත්තකඩ මැකීමෙන් බඩු කරත්ත හිස් වීමට හෝ ඔබව නික්මවීමට ඉඩ ඇත.</string>
 
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
     <string name="reduce_cookie_banner_details_panel_description_on_for_site_2">%1$s සහාය දක්වන අඩවිවල තිබෙන සියළුම දත්තකඩ ඉල්ලීම් ස්වයංක්‍රීයව ප්‍රතික්‍ෂේප කිරීමට උත්සාහ කරයි.</string>
+    <!-- Title text for the cookie banner re-engagement dialog. The first parameter is the application name. -->
+    <string name="reduce_cookie_banner_dialog_title">දත්තකඩ පතාක ප්‍රතික්‍ෂේපයට %1$s වෙත ඉඩ දෙන්නද?</string>
+    <!-- Body text for the cookie banner re-engagement dialog use. The first parameter is the application name. -->
+    <string name="reduce_cookie_banner_dialog_body">%1$s මඟින් බොහෝ දත්තකඩ පතාක ඉල්ලීම් ස්වයංක්‍රීයව ඉවතලිය හැකිය.</string>
     <!-- Remind me later text button for the onboarding dialog -->
     <string name="reduce_cookie_banner_dialog_not_now_button">දැන් නොවේ</string>
     <!-- Snack text for the cookie banner dialog, after user hit the dismiss banner button -->
@@ -497,6 +536,8 @@
     <string name="preferences_open_links_in_apps">යෙදුම්වල සබැඳි අරින්න</string>
     <!-- Preference for open links in third party apps always open in apps option -->
     <string name="preferences_open_links_in_apps_always">සැමවිටම</string>
+    <!-- Preference for open links in third party apps ask before opening option -->
+    <string name="preferences_open_links_in_apps_ask">ඇරීමට පෙර අසන්න</string>
     <!-- Preference for open links in third party apps never open in apps option -->
     <string name="preferences_open_links_in_apps_never">කවදාවත්</string>
     <!-- Preference for open download with an external download manager app -->
@@ -1193,6 +1234,9 @@
     <!-- Name of the marketing notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="notification_marketing_channel_name">අළෙවිකරණය</string>
 
+    <!-- Title shown in the notification that pops up to remind the user to set fenix as default browser.
+    The app name is in the text, due to limitations with localizing Nimbus experiments -->
+    <string name="nimbus_notification_default_browser_title" tools:ignore="UnusedResources">ෆයර්ෆොක්ස් වේගවත් හා පෞද්ගලිකයි</string>
     <!-- Text shown in the notification that pops up to remind the user to set fenix as default browser.
     The app name is in the text, due to limitations with localizing Nimbus experiments -->
     <string name="nimbus_notification_default_browser_text" tools:ignore="UnusedResources">ෆයර්ෆොක්ස් පෙරනිමි අතිරික්සුව කරන්න</string>
@@ -1201,8 +1245,25 @@
 
     <!-- Text shown in the notification that pops up to re-engage the user.
     %1$s is a placeholder that will be replaced by the app name. -->
-    <string name="notification_re_engagement_text">%1$s හි සුරැකින ලද දත්තකඩ හෝ ඉතිහාසයක් නැතිව පිරික්සන්න</string>
+    <string name="notification_re_engagement_text">%1$s හි සුරැකෙන දත්තකඩ හෝ ඉතිහාසයකින් තොරව පිරික්සන්න</string>
 
+    <!-- Title A shown in the notification that pops up to re-engage the user -->
+    <string name="notification_re_engagement_A_title">හෝඩුවාවකින් තොරව පිරික්සන්න</string>
+    <!-- Text A shown in the notification that pops up to re-engage the user.
+    %1$s is a placeholder that will be replaced by the app name. -->
+    <string name="notification_re_engagement_A_text">%1$s පෞද්. පිරික්සුමේ ඔබගේ තොරතුරු සුරැකෙන්නේ නැත.</string>
+    <!-- Title B shown in the notification that pops up to re-engage the user -->
+    <string name="notification_re_engagement_B_title">ප්‍රථම සෙවීම අරඹන්න</string>
+
+    <!-- Text B shown in the notification that pops up to re-engage the user -->
+    <string name="notification_re_engagement_B_text">අවට යමක් හෝ විනෝදාත්මක දෙයක් සොයා ගන්න.</string>
+
+    <!-- Survey -->
+    <!-- Text shown in the fullscreen message that pops up to ask user to take a short survey.
+    The app name is in the text, due to limitations with localizing Nimbus experiments -->
+    <string name="nimbus_survey_message_text">කෙටි සමීක්‍ෂණයෙන් ෆයර්ෆොක්ස් දියුණු කිරීමට උදවු කරන්න.</string>
+    <!-- Preference for taking the short survey. -->
+    <string name="preferences_take_survey">සමීක්‍ෂණය ගන්න</string>
     <!-- Preference for not taking the short survey. -->
     <string name="preferences_not_take_survey">එපා, ස්තුතියි</string>
 
@@ -1300,6 +1361,8 @@
     <string name="delete_history_prompt_title">මකා දමන කාල පරාසය</string>
     <!-- Body text of a delete browsing data dialog. -->
     <string name="delete_history_prompt_body" moz:RemovedIn="130" tools:ignore="UnusedResources">ඉතිහාසය (අන් උපාංග වලින් සමමුහූර්ත ඉතිහාසය ද), දත්තකඩ හා වෙනත් පිරික්සුම් දත්ත ඉවත් කරයි.</string>
+    <!-- Body text of a delete browsing data dialog. -->
+    <string name="delete_history_prompt_body_2">ඉතිහාසය ඉවත් කරයි (අන් උපාංග වෙතින් සමමුහූර්ත දෑ ඇතුළුව)</string>
     <!-- Radio button in the delete browsing data dialog to delete history items for the last hour. -->
     <string name="delete_history_prompt_button_last_hour">පසුගිය පැය</string>
     <!-- Radio button in the delete browsing data dialog to delete history items for today and yesterday. -->
@@ -1378,7 +1441,7 @@
     <!-- text for the theme picker onboarding card header -->
     <string name="onboarding_theme_picker_header">ඔබගේ තේමාව තෝරන්න</string>
     <!-- text for the theme picker onboarding card description -->
-    <string name="onboarding_theme_picker_description_2">අඳුරු ප්‍රකාරය සමඟ විදුලිකෝෂය හා ඔබගේ නෙත් සුරකින්න.</string>
+    <string name="onboarding_theme_picker_description_2">අඳුරු ප්‍රකාරය සමඟ විදුලිකෝෂය මෙන්ම ඔබගේ නෙත් සුරකින්න.</string>
     <!-- Automatic theme setting (will follow device setting) -->
     <string name="onboarding_theme_automatic_title">ස්වයංක්‍රීය</string>
     <!-- Summary of automatic theme setting (will follow device setting) -->
@@ -1425,20 +1488,28 @@
     <string name="preference_enhanced_tracking_protection">දියුණු කළ ලුහුබැඳීමේ රැකවරණය</string>
     <!-- Title for the description of enhanced tracking protection -->
     <string name="preference_enhanced_tracking_protection_explanation_title" moz:removedIn="114" tools:ignore="UnusedResources">ලුහුබැඳීම් මඟහැර පිරික්සන්න</string>
+    <!-- Preference summary for enhanced tracking protection settings on/off switch -->
+    <string name="preference_enhanced_tracking_protection_summary">පූර්ණ දත්තකඩ රැකවරණ විශේෂාංගය, හරස්-අඩවි ලුහුබැඳීම් වලට එරෙහි වන අපගේ බලවත්ම බාධකය.</string>
     <!-- Description of enhanced tracking protection. The first parameter is the name of the application (For example: Fenix) -->
     <string name="preference_enhanced_tracking_protection_explanation" moz:removedIn="114" tools:ignore="UnusedResources">ඔබගේ දත්ත ඔබම තබා ගන්න. ඔබ මාර්ගගතව කරන දෑ සොයන බොහෝ පොදු ලුහුබැඳීම් වලින් %s ඔබව ආරක්‍ෂා කරයි.</string>
+    <!-- Description of enhanced tracking protection. The parameter is the name of the application (For example: Firefox Fenix) -->
+    <string name="preference_enhanced_tracking_protection_explanation_2">ඔබ මාර්ගගතව කරන දෑ සොයන බොහෝ පොදු ලුහුබැඳීම් වලින් %s ඔබව ආරක්‍ෂා කරයි.</string>
     <!-- Text displayed that links to website about enhanced tracking protection -->
     <string name="preference_enhanced_tracking_protection_explanation_learn_more">තව දැනගන්න</string>
     <!-- Preference for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_standard_default_1">සම්මත (පෙරනිමි)</string>
     <!-- Preference description for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_standard_description_4" moz:removedIn="114" tools:ignore="UnusedResources">ආරක්‍ෂාව හා කාර්ය සාධනය අතර සංතුලිතයි. පිටු සාමාන්‍ය ලෙස පූරණය වේ.</string>
+    <!-- Preference description for enhanced tracking protection for the standard protection settings -->
+    <string name="preference_enhanced_tracking_protection_standard_description_5">පිටු සුපුරුදු පරිදි පූරණය වුවත් ලුහුබැඳීම් අඩුවෙන් අවහිර කරයි.</string>
     <!--  Accessibility text for the Standard protection information icon  -->
     <string name="preference_enhanced_tracking_protection_standard_info_button">සම්මත ලුහුබැඳීමේ රැකවරණය මගින් අවහිර කළ දෑ</string>
     <!-- Preference for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict">දැඩි</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict_description_3" moz:removedIn="114" tools:ignore="UnusedResources">බොහෝ දැන්වීම් අවහිර කරන විට පිටු වේගයෙන් පූරණය වේ, නමුත් ඇතැම් පිටු හරිහැටි ක්‍රියා නොකරනු ඇත.</string>
+    <!-- Preference description for enhanced tracking protection for the strict protection settings -->
+    <string name="preference_enhanced_tracking_protection_strict_description_4">ප්‍රබල ලුහුබැඳීමේ රැකවරණයක් හා වේගවත් ක්‍රියාකාරිත්‍වයක්, නමුත් ඇතැම් අඩවි හරිහැටි වැඩ නොකරනු ඇත.</string>
     <!--  Accessibility text for the Strict protection information icon  -->
     <string name="preference_enhanced_tracking_protection_strict_info_button">දැඩි ලුහුබැඳීමේ රැකවරණය මගින් අවහිර කළ දෑ</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
@@ -1520,6 +1591,10 @@
     <string name="preference_etp_smartblock_description">ඔබ පහත ලුහුබැඳීම් සමඟ අන්යෝන්‍යව කටයුතු කළ නිසා සලකුණු කර තිබෙන දෑ මෙම පිටුවෙහි අර්ධ වශයෙන් අවහිර කර ඇත *.</string>
     <!-- Text displayed that links to website about enhanced tracking protection SmartBlock -->
     <string name="preference_etp_smartblock_learn_more">තව දැනගන්න</string>
+
+    <!-- Content description (not visible, for screen readers etc.):
+    Enhanced tracking protection exception preference icon for ETP settings. -->
+    <string name="preference_etp_exceptions_icon_description">දියුණු කළ ලුහුබැඳීමේ රැකවරණය හැරදැමීම් අභිප්‍රේත නිරූපකය</string>
 
     <!-- About page link text to open support link -->
     <string name="about_support">සහාය</string>
@@ -1778,6 +1853,8 @@
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">සෙවුම් යන්ත්‍රයක් යොදන්න</string>
+    <!-- Content description (not visible, for screen readers etc.): Title for the button that navigates to add new engine screen -->
+    <string name="search_engine_add_custom_search_engine_button_content_description" tools:ignore="UnusedResources">නව සෙවුම් යන්ත්‍රයක් යොදන්න</string>
     <!-- Title of the Edit search engine screen -->
     <string name="search_engine_edit_custom_search_engine_title">සෙවුම් යන්ත්‍රය සංස්කරණය</string>
     <!-- Content description (not visible, for screen readers etc.): Title for the button to add a search engine in the action bar -->
@@ -1791,14 +1868,25 @@
 
     <!-- Text for the button to create a custom search engine on the Add search engine screen -->
     <string name="search_add_custom_engine_label_other">වෙනත්</string>
+    <!-- Label for the TextField in which user enters custom search engine name -->
+    <string name="search_add_custom_engine_name_label" tools:ignore="UnusedResources">නම</string>
     <!-- Placeholder text shown in the Search Engine Name TextField before a user enters text -->
     <string name="search_add_custom_engine_name_hint">නම</string>
+    <!-- Placeholder text shown in the Search Engine Name text field before a user enters text -->
+    <string name="search_add_custom_engine_name_hint_2" tools:ignore="UnusedResources">සෙවුම් යන්ත්‍රයේ නම</string>
+    <!-- Label for the TextField in which user enters custom search engine URL -->
+    <string name="search_add_custom_engine_url_label" tools:ignore="UnusedResources">සෙවුම් තන්තුවේ ඒ.ස.නි.</string>
     <!-- Placeholder text shown in the Search String TextField before a user enters text -->
     <string name="search_add_custom_engine_search_string_hint">භාවිතයට සෙවුම් තන්තුව</string>
+    <!-- Placeholder text shown in the Search String TextField before a user enters text -->
+    <string name="search_add_custom_engine_search_string_hint_2" tools:ignore="UnusedResources">සෙවීමට භාවිතා කරන ඒ.ස.නි.</string>
     <!-- Description text for the Search String TextField. The %s is part of the string -->
     <string name="search_add_custom_engine_search_string_example" formatted="false">“%s” සමඟ විමසුම ප්‍රතිස්ථාපනය කරන්න. නිදසුන:\nhttps://search.naver.com/search.naver?where=nexearch&amp;sm=top_hty&amp;fbm=0&amp;ie=utf8&amp;query=%s</string>
     <!-- Accessibility description for the form in which details about the custom search engine are entered -->
     <string name="search_add_custom_engine_form_description">අභිරුචි සෙවුම් යන්ත්‍රයේ විස්තර</string>
+
+    <!-- The text for the "Save" button for saving a custom search engine -->
+    <string name="search_custom_engine_save_button" tools:ignore="UnusedResources">සුරකින්න</string>
 
     <!-- Text shown when a user leaves the name field empty -->
     <string name="search_add_custom_engine_error_empty_name">සෙවුම් යන්ත්‍රයේ නම යොදන්න</string>
@@ -1848,7 +1936,7 @@
     <string name="browser_menu_remove_from_shortcuts">කෙටිමං වෙතින් ඉවත් කරන්න</string>
     <!-- text shown before the issuer name to indicate who its verified by, parameter is the name of
      the certificate authority that verified the ticket-->
-    <string name="certificate_info_verified_by">තහවුරු කළේ: %1$s</string>
+    <string name="certificate_info_verified_by">සත්‍යාපනය: %1$s</string>
     <!-- Login overflow menu delete button -->
     <string name="login_menu_delete_button">මකන්න</string>
     <!-- Login overflow menu edit button -->
@@ -2008,4 +2096,6 @@
     <string name="a11y_action_label_wallpaper_collection_learn_more">මෙම එකතුව ගැන තව දැන ගැනීමට සබැඳිය අරින්න</string>
     <!-- Action label for links that point to an article. Talkback will append this to say "Double tap to read the article". -->
     <string name="a11y_action_label_read_article">ලිපිය කියවන්න</string>
-    </resources>
+    <!-- Action label for links to the Firefox Pocket website. Talkback will append this to say "Double tap to open link to learn more". -->
+    <string name="a11y_action_label_pocket_learn_more">තව දැන ගැනීමට සබැඳිය අරින්න</string>
+</resources>

@@ -55,8 +55,6 @@ import mozilla.components.browser.state.state.SessionState
 import mozilla.components.browser.state.state.WebExtensionState
 import mozilla.components.concept.engine.EngineSession
 import mozilla.components.concept.engine.EngineView
-import mozilla.components.concept.storage.BookmarkNode
-import mozilla.components.concept.storage.BookmarkNodeType
 import mozilla.components.concept.storage.HistoryMetadataKey
 import mozilla.components.feature.contextmenu.DefaultSelectionActionDelegate
 import mozilla.components.feature.media.ext.findActiveMediaTab
@@ -74,6 +72,7 @@ import mozilla.components.support.ktx.kotlin.isUrl
 import mozilla.components.support.ktx.kotlin.toNormalizedUrl
 import mozilla.components.support.locale.LocaleAwareAppCompatActivity
 import mozilla.components.support.utils.BootUtils
+import mozilla.components.support.utils.BrowsersCache
 import mozilla.components.support.utils.ManufacturerCodes
 import mozilla.components.support.utils.SafeIntent
 import mozilla.components.support.utils.toSafeIntent
@@ -90,6 +89,7 @@ import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
 import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.metrics.BreadcrumbsRecorder
+import org.mozilla.fenix.components.metrics.GrowthDataWorker
 import org.mozilla.fenix.databinding.ActivityHomeBinding
 import org.mozilla.fenix.exceptions.trackingprotection.TrackingProtectionExceptionsFragmentDirections
 import org.mozilla.fenix.experiments.ResearchSurfaceDialogFragment
@@ -142,6 +142,7 @@ import org.mozilla.fenix.settings.logins.fragment.SavedLoginsAuthFragmentDirecti
 import org.mozilla.fenix.settings.quicksettings.protections.cookiebanners.dialog.CookieBannerReEngagementDialogUtils
 import org.mozilla.fenix.settings.search.AddSearchEngineFragmentDirections
 import org.mozilla.fenix.settings.search.EditCustomSearchEngineFragmentDirections
+import org.mozilla.fenix.settings.search.SaveSearchEngineFragmentDirections
 import org.mozilla.fenix.settings.studies.StudiesFragmentDirections
 import org.mozilla.fenix.settings.wallpaper.WallpaperSettingsFragmentDirections
 import org.mozilla.fenix.share.AddNewDeviceFragmentDirections
@@ -151,7 +152,6 @@ import org.mozilla.fenix.tabstray.TabsTrayFragmentDirections
 import org.mozilla.fenix.theme.DefaultThemeManager
 import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.trackingprotection.TrackingProtectionPanelDialogFragmentDirections
-import org.mozilla.fenix.utils.BrowsersCache
 import org.mozilla.fenix.utils.Settings
 import java.lang.ref.WeakReference
 import java.util.Locale
@@ -454,6 +454,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
                 Events.defaultBrowserChanged.record(NoExtras())
             }
 
+            GrowthDataWorker.sendActivatedSignalIfNeeded(applicationContext)
             ReEngagementNotificationWorker.setReEngagementNotificationIfNeeded(applicationContext)
             MessageNotificationWorker.setMessageNotificationWorker(applicationContext)
         }
@@ -512,11 +513,11 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
                     applicationContext,
                     showMobileRoot = false,
                 ).withOptionalDesktopFolders(it)
-                settings().desktopBookmarksSize = getBookmarkCount(desktopRootNode)
+                settings().desktopBookmarksSize = desktopRootNode.count()
             }
 
             components.core.bookmarksStorage.getTree(BookmarkRoot.Mobile.id, true)?.let {
-                settings().mobileBookmarksSize = getBookmarkCount(it)
+                settings().mobileBookmarksSize = it.count()
             }
         }
 
@@ -544,25 +545,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         super.onProvideAssistContent(outContent)
         val currentTabUrl = components.core.store.state.selectedTab?.content?.url
         outContent?.webUri = currentTabUrl?.let { Uri.parse(it) }
-    }
-
-    private fun getBookmarkCount(node: BookmarkNode): Int {
-        val children = node.children
-        return if (children == null) {
-            0
-        } else {
-            var count = 0
-
-            for (child in children) {
-                if (child.type == BookmarkNodeType.FOLDER) {
-                    count += getBookmarkCount(child)
-                } else if (child.type == BookmarkNodeType.ITEM) {
-                    count++
-                }
-            }
-
-            count
-        }
     }
 
     override fun onDestroy() {
@@ -960,6 +942,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             AddSearchEngineFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromEditCustomSearchEngineFragment ->
             EditCustomSearchEngineFragmentDirections.actionGlobalBrowser(customTabSessionId)
+        BrowserDirection.FromSaveSearchEngineFragment ->
+            SaveSearchEngineFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromAddonDetailsFragment ->
             AddonDetailsFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromAddonPermissionsDetailsFragment ->
@@ -1068,7 +1052,11 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     }
 
     open fun navigateToHome() {
-        navHost.navController.navigate(NavGraphDirections.actionStartupHome())
+        if (components.fenixOnboarding.userHasBeenOnboarded()) {
+            navHost.navController.navigate(NavGraphDirections.actionStartupHome())
+        } else {
+            navHost.navController.navigate(NavGraphDirections.actionStartupOnboarding())
+        }
     }
 
     override fun attachBaseContext(base: Context) {

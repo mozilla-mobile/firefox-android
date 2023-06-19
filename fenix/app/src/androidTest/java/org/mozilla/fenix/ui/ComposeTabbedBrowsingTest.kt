@@ -7,6 +7,7 @@ package org.mozilla.fenix.ui
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
@@ -17,7 +18,6 @@ import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.RetryTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
-import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.helpers.TestHelper.clickSnackbarButton
 import org.mozilla.fenix.helpers.TestHelper.verifySnackBarText
 import org.mozilla.fenix.ui.robots.browserScreen
@@ -90,7 +90,7 @@ class ComposeTabbedBrowsingTest {
             verifyNoOpenTabsInNormalBrowsing()
         }.openNewTab {
         }.submitQuery(defaultWebPage.url.toString()) {
-            mDevice.waitForIdle()
+            verifyPageContent(defaultWebPage.content)
             verifyTabCounter("1")
         }.openComposeTabDrawer(composeTestRule) {
             verifyNormalBrowsingButtonIsSelected()
@@ -250,14 +250,16 @@ class ComposeTabbedBrowsingTest {
         homeScreen { }.togglePrivateBrowsingMode()
         navigationToolbar {
         }.enterURLAndEnterToBrowser(genericURL.url) {
+            verifyPageContent(genericURL.content)
         }.openComposeTabDrawer(composeTestRule) {
             verifyExistingOpenTabs("Test_Page_1")
             closeTab()
-            TestHelper.verifySnackBarText("Private tab closed")
-            TestHelper.clickSnackbarButton("UNDO")
+            verifySnackBarText("Private tab closed")
+            clickSnackbarButton("UNDO")
         }
 
         browserScreen {
+            verifyPageContent(genericURL.content)
             verifyTabCounter("1")
         }.openComposeTabDrawer(composeTestRule) {
             verifyExistingOpenTabs("Test_Page_1")
@@ -284,28 +286,27 @@ class ComposeTabbedBrowsingTest {
         }
     }
 
-    @Ignore("Being converted in: https://bugzilla.mozilla.org/show_bug.cgi?id=1832612")
     @Test
     fun verifyTabTrayNotShowingStateHalfExpanded() {
-//        navigationToolbar {
-//        }.openTabTray {
-//            verifyNoOpenTabsInNormalBrowsing()
-//            // With no tabs opened the state should be STATE_COLLAPSED.
-//            verifyBehaviorState(BottomSheetBehavior.STATE_COLLAPSED)
-//            // Need to ensure the halfExpandedRatio is very small so that when in STATE_HALF_EXPANDED
-//            // the tabTray will actually have a very small height (for a very short time) akin to being hidden.
-//            verifyHalfExpandedRatio()
-//        }.clickTopBar {
-//        }.waitForTabTrayBehaviorToIdle {
-//            // Touching the topBar would normally advance the tabTray to the next state.
-//            // We don't want that.
-//            verifyBehaviorState(BottomSheetBehavior.STATE_COLLAPSED)
-//        }.advanceToHalfExpandedState {
-//        }.waitForTabTrayBehaviorToIdle {
-//            // TabTray should not be displayed in STATE_HALF_EXPANDED.
-//            // When advancing to this state it should immediately be hidden.
-//            verifyTabTrayIsClosed()
-//        }
+        homeScreen {
+        }.openComposeTabDrawer(composeTestRule) {
+            verifyNoOpenTabsInNormalBrowsing()
+            // With no tabs opened the state should be STATE_COLLAPSED.
+            verifyTabsTrayBehaviorState(BottomSheetBehavior.STATE_COLLAPSED)
+            // Need to ensure the halfExpandedRatio is very small so that when in STATE_HALF_EXPANDED
+            // the tabTray will actually have a very small height (for a very short time) akin to being hidden.
+            verifyMinusculeHalfExpandedRatio()
+        }.clickTopBar {
+        }.waitForTabTrayBehaviorToIdle {
+            // Touching the topBar would normally advance the tabTray to the next state.
+            // We don't want that.
+            verifyTabsTrayBehaviorState(BottomSheetBehavior.STATE_COLLAPSED)
+        }.advanceToHalfExpandedState {
+        }.waitForTabTrayBehaviorToIdle {
+            // TabTray should not be displayed in STATE_HALF_EXPANDED.
+            // When advancing to this state it should immediately be hidden.
+            verifyTabTrayIsClosed()
+        }
     }
 
     @Test

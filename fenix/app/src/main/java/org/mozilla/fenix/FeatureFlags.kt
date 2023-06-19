@@ -48,22 +48,18 @@ object FeatureFlags {
     }
 
     /**
-     * Enables the Unified Search feature.
-     */
-    const val unifiedSearchFeature = true
-
-    /**
      * Enables compose on the tabs tray items.
      */
     const val composeTabsTray = false
 
     /**
-     * Enables the save to PDF feature.
+     * Enables compose on the top sites.
      */
-    const val saveToPDF = true
+    const val composeTopSites = false
 
     /**
-     * Enables the notification pre permission prompt.
+     * Enables new search settings UI with two extra fragments, for managing the default engine
+     * and managing search shortcuts in the quick search menu.
      */
-    const val notificationPrePermissionPromptEnabled = true
+    val unifiedSearchSettings = Config.channel.isNightlyOrDebug
 }
