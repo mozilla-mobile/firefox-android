@@ -84,6 +84,8 @@ import org.mozilla.geckoview.GeckoSession.ContentDelegate.ContextElement.TYPE_AU
 import org.mozilla.geckoview.GeckoSession.ContentDelegate.ContextElement.TYPE_IMAGE
 import org.mozilla.geckoview.GeckoSession.ContentDelegate.ContextElement.TYPE_NONE
 import org.mozilla.geckoview.GeckoSession.ContentDelegate.ContextElement.TYPE_VIDEO
+import org.mozilla.geckoview.GeckoSession.GeckoPrintException
+import org.mozilla.geckoview.GeckoSession.GeckoPrintException.ERROR_PRINT_SETTINGS_SERVICE_NOT_AVAILABLE
 import org.mozilla.geckoview.GeckoSession.PermissionDelegate.ContentPermission.VALUE_ALLOW
 import org.mozilla.geckoview.GeckoSession.PermissionDelegate.ContentPermission.VALUE_DENY
 import org.mozilla.geckoview.GeckoSession.PermissionDelegate.PERMISSION_STORAGE_ACCESS
@@ -121,6 +123,7 @@ class GeckoEngineSessionTest {
     private lateinit var mediaDelegate: ArgumentCaptor<GeckoSession.MediaDelegate>
     private lateinit var contentDelegate: ArgumentCaptor<GeckoSession.ContentDelegate>
     private lateinit var permissionDelegate: ArgumentCaptor<GeckoSession.PermissionDelegate>
+    private lateinit var scrollDelegate: ArgumentCaptor<GeckoSession.ScrollDelegate>
     private lateinit var contentBlockingDelegate: ArgumentCaptor<ContentBlocking.Delegate>
     private lateinit var historyDelegate: ArgumentCaptor<GeckoSession.HistoryDelegate>
 
@@ -151,6 +154,7 @@ class GeckoEngineSessionTest {
         mediaDelegate = ArgumentCaptor.forClass(GeckoSession.MediaDelegate::class.java)
         contentDelegate = ArgumentCaptor.forClass(GeckoSession.ContentDelegate::class.java)
         permissionDelegate = ArgumentCaptor.forClass(GeckoSession.PermissionDelegate::class.java)
+        scrollDelegate = ArgumentCaptor.forClass(GeckoSession.ScrollDelegate::class.java)
         contentBlockingDelegate = ArgumentCaptor.forClass(ContentBlocking.Delegate::class.java)
         historyDelegate = ArgumentCaptor.forClass(GeckoSession.HistoryDelegate::class.java)
 
@@ -163,6 +167,7 @@ class GeckoEngineSessionTest {
         verify(geckoSession).progressDelegate = progressDelegate.capture()
         verify(geckoSession).contentDelegate = contentDelegate.capture()
         verify(geckoSession).permissionDelegate = permissionDelegate.capture()
+        verify(geckoSession).scrollDelegate = scrollDelegate.capture()
         verify(geckoSession).contentBlockingDelegate = contentBlockingDelegate.capture()
         verify(geckoSession).historyDelegate = historyDelegate.capture()
         verify(geckoSession).mediaDelegate = mediaDelegate.capture()
@@ -520,6 +525,41 @@ class GeckoEngineSessionTest {
         assertEquals("originMedia", observedContentPermissionRequests[2].uri)
         assertEquals("about:blank", observedContentPermissionRequests[3].uri)
         assertEquals(2, observedAppPermissionRequests.size)
+    }
+
+    @Test
+    fun scrollDelegateNotifiesObservers() {
+        val engineSession = GeckoEngineSession(
+            mock(),
+            geckoSessionProvider = geckoSessionProvider,
+        )
+
+        val observedScrollChanges: MutableList<Pair<Int, Int>> = mutableListOf()
+        engineSession.register(
+            object : EngineSession.Observer {
+                override fun onScrollChange(scrollX: Int, scrollY: Int) {
+                    observedScrollChanges.add(Pair(scrollX, scrollY))
+                }
+            },
+        )
+
+        captureDelegates()
+
+        scrollDelegate.value.onScrollChanged(
+            geckoSession,
+            1234,
+            4321,
+        )
+
+        scrollDelegate.value.onScrollChanged(
+            geckoSession,
+            2345,
+            5432,
+        )
+
+        assertEquals(2, observedScrollChanges.size)
+        assertEquals(Pair(1234, 4321), observedScrollChanges[0])
+        assertEquals(Pair(2345, 5432), observedScrollChanges[1])
     }
 
     @Test
@@ -2447,6 +2487,30 @@ class GeckoEngineSessionTest {
     }
 
     @Test
+    fun `checkForPdfViewer should correctly process a GV response`() {
+        val engineSession = GeckoEngineSession(
+            mock(),
+            geckoSessionProvider = geckoSessionProvider,
+        )
+        var onResultCalled = false
+        var onExceptionCalled = false
+
+        val ruleResult = GeckoResult<Boolean>()
+        whenever(geckoSession.isPdfJs).thenReturn(ruleResult)
+
+        engineSession.checkForPdfViewer(
+            onResult = { onResultCalled = true },
+            onException = { onExceptionCalled = true },
+        )
+
+        ruleResult.complete(true)
+        shadowOf(getMainLooper()).idle()
+
+        assertTrue(onResultCalled)
+        assertFalse(onExceptionCalled)
+    }
+
+    @Test
     fun containsFormData() {
         val engineSession = GeckoEngineSession(runtime = mock(), geckoSessionProvider = geckoSessionProvider)
         var formData = false
@@ -3883,6 +3947,48 @@ class GeckoEngineSessionTest {
 
         engineSession.setDisplayMode(WebAppManifest.DisplayMode.BROWSER)
         verify(geckoSetting, atLeastOnce()).setDisplayMode(GeckoSessionSettings.DISPLAY_MODE_BROWSER)
+    }
+
+    fun `WHEN requestPrintContent is successful THEN notify of completion`() {
+        val engineSession = GeckoEngineSession(
+            runtime = mock(),
+            geckoSessionProvider = geckoSessionProvider,
+        )
+        whenever(geckoSession.didPrintPageContent()).thenReturn(GeckoResult.fromValue(true))
+
+        engineSession.register(object : EngineSession.Observer {
+            override fun onPrintFinish() {
+                assert(true) { "We should notify of a successful print." }
+            }
+
+            override fun onPrintException(isPrint: Boolean, throwable: Throwable) {
+                assert(false) { "We should not notify of an exception." } }
+        })
+        engineSession.requestPrintContent()
+        shadowOf(getMainLooper()).idle()
+    }
+
+    @Test
+    fun `WHEN requestPrintContent has an exception THEN do nothing`() {
+        val engineSession = GeckoEngineSession(
+            runtime = mock(),
+            geckoSessionProvider = geckoSessionProvider,
+        )
+        class MockGeckoPrintException() : GeckoPrintException()
+        whenever(geckoSession.didPrintPageContent()).thenReturn(GeckoResult.fromException(MockGeckoPrintException()))
+
+        engineSession.register(object : EngineSession.Observer {
+            override fun onPrintFinish() {
+                assert(false) { "We should not notify of a successful print." }
+            }
+
+            override fun onPrintException(isPrint: Boolean, throwable: Throwable) {
+                assert(true) { "An exception should occur." }
+                assertEquals("A GeckoPrintException occurred.", ERROR_PRINT_SETTINGS_SERVICE_NOT_AVAILABLE, (throwable as GeckoPrintException).code)
+            }
+        })
+        engineSession.requestPrintContent()
+        shadowOf(getMainLooper()).idle()
     }
 
     private fun mockGeckoSession(): GeckoSession {

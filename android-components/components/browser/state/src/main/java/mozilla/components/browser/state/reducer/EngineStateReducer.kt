@@ -45,7 +45,9 @@ internal object EngineStateReducer {
         is EngineAction.OptimizedLoadUrlTriggeredAction -> {
             state
         }
-        is EngineAction.SaveToPdfExceptionAction -> {
+        is EngineAction.SaveToPdfExceptionAction,
+        is EngineAction.SaveToPdfCompleteAction,
+        -> {
             throw IllegalStateException(
                 "You need to add a middleware to handle this action in your BrowserStore. ($action)",
             )
@@ -61,6 +63,9 @@ internal object EngineStateReducer {
         is EngineAction.ToggleDesktopModeAction,
         is EngineAction.ExitFullScreenModeAction,
         is EngineAction.SaveToPdfAction,
+        is EngineAction.PrintContentAction,
+        is EngineAction.PrintContentCompletedAction,
+        is EngineAction.PrintContentExceptionAction,
         is EngineAction.KillEngineSessionAction,
         is EngineAction.ClearDataAction,
         -> {

@@ -29,6 +29,7 @@ import mozilla.components.support.ktx.android.content.longPreference
 import mozilla.components.support.ktx.android.content.stringPreference
 import mozilla.components.support.ktx.android.content.stringSetPreference
 import mozilla.components.support.locale.LocaleManager
+import mozilla.components.support.utils.BrowsersCache
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.FeatureFlags
@@ -875,9 +876,10 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = true,
     )
 
-    var shouldUseBottomToolbar by booleanPreference(
+    var shouldUseBottomToolbar by lazyFeatureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_toolbar_bottom),
-        default = shouldDefaultToBottomToolbar(),
+        featureFlag = true,
+        default = { shouldDefaultToBottomToolbar() },
     )
 
     val toolbarPosition: ToolbarPosition
