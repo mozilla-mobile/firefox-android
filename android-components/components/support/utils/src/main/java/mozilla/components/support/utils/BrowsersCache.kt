@@ -2,11 +2,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.fenix.utils
+package mozilla.components.support.utils
 
 import android.content.Context
 import androidx.annotation.VisibleForTesting
-import mozilla.components.support.utils.Browsers
 
 /**
  * Caches the list of browsers installed on a user's device.
@@ -26,6 +25,10 @@ object BrowsersCache {
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     internal var cachedBrowsers: Browsers? = null
 
+    /**
+     * Return installed browsers if cache exist.  If not, Collect information about all installed
+     * browsers and return a [Browsers] object containing that data.
+     */
     @Synchronized
     fun all(context: Context): Browsers {
         run {
@@ -39,6 +42,9 @@ object BrowsersCache {
         }
     }
 
+    /**
+     * Remove installed browsers cache
+     */
     @Synchronized
     fun resetAll() {
         cachedBrowsers = null
