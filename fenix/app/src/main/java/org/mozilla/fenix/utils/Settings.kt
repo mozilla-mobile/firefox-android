@@ -29,6 +29,7 @@ import mozilla.components.support.ktx.android.content.longPreference
 import mozilla.components.support.ktx.android.content.stringPreference
 import mozilla.components.support.ktx.android.content.stringSetPreference
 import mozilla.components.support.locale.LocaleManager
+import mozilla.components.support.utils.BrowsersCache
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.FeatureFlags
@@ -875,10 +876,10 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = true,
     )
 
-    var shouldUseBottomToolbar by booleanPreference(
+    var shouldUseBottomToolbar by lazyFeatureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_toolbar_bottom),
-        // Default accessibility users to top toolbar
-        default = !touchExplorationIsEnabled && !switchServiceIsEnabled,
+        featureFlag = true,
+        default = { shouldDefaultToBottomToolbar() },
     )
 
     val toolbarPosition: ToolbarPosition
@@ -915,6 +916,18 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         get() {
             return touchExplorationIsEnabled || switchServiceIsEnabled
         }
+
+    val toolbarPositionTop: Boolean
+        get() = FxNimbus.features.toolbar.value().toolbarPositionTop
+
+    /**
+     * Checks if we should default to bottom toolbar.
+     */
+    fun shouldDefaultToBottomToolbar(): Boolean {
+        // Default accessibility users to top toolbar
+        return (!touchExplorationIsEnabled && !switchServiceIsEnabled) &&
+            !toolbarPositionTop
+    }
 
     fun getDeleteDataOnQuit(type: DeleteBrowsingDataOnQuitType): Boolean =
         preferences.getBoolean(type.getPreferenceKey(appContext), false)
@@ -1595,7 +1608,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var showUnifiedSearchFeature by lazyFeatureFlagPreference(
         key = appContext.getPreferenceKey(R.string.pref_key_show_unified_search_2),
         default = { FxNimbus.features.unifiedSearch.value().enabled },
-        featureFlag = FeatureFlags.unifiedSearchFeature,
+        featureFlag = true,
     )
 
     /**
@@ -1612,7 +1625,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var notificationPrePermissionPromptEnabled by lazyFeatureFlagPreference(
         key = appContext.getPreferenceKey(R.string.pref_key_notification_pre_permission_prompt_enabled),
         default = { FxNimbus.features.prePermissionNotificationPrompt.value().enabled },
-        featureFlag = FeatureFlags.notificationPrePermissionPromptEnabled,
+        featureFlag = true,
     )
 
     /**
@@ -1762,4 +1775,9 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         key = appContext.getPreferenceKey(R.string.pref_key_growth_early_search),
         default = false,
     )
+
+    /**
+     * Indicates if the new Search settings UI is enabled.
+     */
+    var enableUnifiedSearchSettingsUI: Boolean = showUnifiedSearchFeature && FeatureFlags.unifiedSearchSettings
 }

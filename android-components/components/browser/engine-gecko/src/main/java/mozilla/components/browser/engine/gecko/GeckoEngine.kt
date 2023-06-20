@@ -322,13 +322,15 @@ class GeckoEngine(
         this.webExtensionDelegate = webExtensionDelegate
 
         val promptDelegate = object : WebExtensionController.PromptDelegate {
-            override fun onInstallPrompt(ext: org.mozilla.geckoview.WebExtension): GeckoResult<AllowOrDeny>? {
+            override fun onInstallPrompt(ext: org.mozilla.geckoview.WebExtension): GeckoResult<AllowOrDeny> {
                 val extension = GeckoWebExtension(ext, runtime)
-                return if (webExtensionDelegate.onInstallPermissionRequest(extension)) {
-                    GeckoResult.allow()
-                } else {
-                    GeckoResult.deny()
+                val result = GeckoResult<AllowOrDeny>()
+
+                webExtensionDelegate.onInstallPermissionRequest(extension) { allow ->
+                    if (allow) result.complete(AllowOrDeny.ALLOW) else result.complete(AllowOrDeny.DENY)
                 }
+
+                return result
             }
 
             override fun onUpdatePrompt(
@@ -367,6 +369,10 @@ class GeckoEngine(
 
             override fun onUninstalled(extension: org.mozilla.geckoview.WebExtension) {
                 webExtensionDelegate.onUninstalled(GeckoWebExtension(extension, runtime))
+            }
+
+            override fun onInstalled(extension: org.mozilla.geckoview.WebExtension) {
+                webExtensionDelegate.onInstalled(GeckoWebExtension(extension, runtime))
             }
         }
 
@@ -458,10 +464,19 @@ class GeckoEngine(
             (extension as GeckoWebExtension).nativeExtension,
             allowed,
         ).then(
-            {
-                val ext = GeckoWebExtension(it!!, runtime)
-                webExtensionDelegate?.onAllowedInPrivateBrowsingChanged(ext)
-                onSuccess(ext)
+            { geckoExtension ->
+                if (geckoExtension == null) {
+                    onError(
+                        Exception(
+                            "Gecko extension was not returned after trying to" +
+                                " setAllowedInPrivateBrowsing with value $allowed",
+                        ),
+                    )
+                } else {
+                    val ext = GeckoWebExtension(geckoExtension, runtime)
+                    webExtensionDelegate?.onAllowedInPrivateBrowsingChanged(ext)
+                    onSuccess(ext)
+                }
                 GeckoResult<Void>()
             },
             { throwable ->

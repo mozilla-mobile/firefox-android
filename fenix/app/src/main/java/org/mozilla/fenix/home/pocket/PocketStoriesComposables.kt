@@ -60,6 +60,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import kotlinx.coroutines.delay
 import mozilla.components.service.pocket.PocketStory
 import mozilla.components.service.pocket.PocketStory.PocketRecommendedStory
@@ -348,8 +349,11 @@ private fun endPadding(configuration: Configuration, screenWidth: Dp, contentPad
         contentPadding
     }
 
+/**
+ * If the column item is wider than the [screenWidth] default to the [contentPadding].
+ */
 private fun alignColumnToTitlePadding(screenWidth: Dp, contentPadding: Dp) =
-    screenWidth - (ITEM_WIDTH.dp + contentPadding)
+    max(screenWidth - (ITEM_WIDTH.dp + contentPadding), contentPadding)
 
 /**
  * Add a callback for when this Composable is "shown" on the screen.

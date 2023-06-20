@@ -490,6 +490,9 @@
     <!-- Snackbar action to immediately open the successfully downloaded file. -->
     <string name="download_snackbar_open">අරින්න</string>
 
+    <!-- Snackbar that will be displayed after a website has been added to shortcuts. -->
+    <string name="snackbar_added_to_shortcuts">කෙටිමං වෙත එක් කෙරිණි!</string>
+
     <string name="error_hostLookup_title">සේවාදායකය හමු නොවුණි</string>
 
     <!-- Content description (not visible, for screen readers etc.): This is the description for the close button from the new onboarding flow screen one and two -->
@@ -624,7 +627,7 @@
     <string name="security_popup_secure_connection">ආරක්‍ෂිත සම්බන්ධතාවයකි</string>
     <string name="security_popup_insecure_connection">ආනාරක්‍ෂිත සම්බන්ධතාවයකි</string>
     <!-- %1$s will be replaced with organization that granted the SSL certificate -->
-    <string name="security_popup_security_verified">තහවුරු කළේ: %1$s</string>
+    <string name="security_popup_security_verified">සත්‍යාපනය: %1$s</string>
 
     <!-- Content Description of Security Icon in toolbar -->
     <string name="site_security_icon_content_description">අඩවියේ ආරක්‍ෂාව</string>

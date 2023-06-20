@@ -15,7 +15,7 @@ class DependenciesPlugin : Plugin<Settings> {
 // Synchronized version numbers for dependencies used by (some) modules
 object Versions {
     const val kotlin = "1.8.21"
-    const val coroutines = "1.6.4"
+    const val coroutines = "1.7.1"
     const val serialization = "1.5.1"
     const val python_envs_plugin = "0.0.31"
 
@@ -46,7 +46,7 @@ object Versions {
     const val leakcanary = "2.11"
 
     // DO NOT MODIFY MANUALLY. This is auto-updated along with GeckoView.
-    const val mozilla_glean = "52.7.0"
+    const val mozilla_glean = "53.0.0"
 
     const val material = "1.9.0"
     const val ksp = "1.0.11"
@@ -69,7 +69,7 @@ object Versions {
         const val coordinatorlayout = "1.2.0"
         const val core = "1.10.1"
         const val drawerlayout = "1.2.0"
-        const val fragment = "1.5.7"
+        const val fragment = "1.6.0"
         const val recyclerview = "1.3.0"
         const val test = "1.5.0"
         const val test_ext = "1.1.5"
