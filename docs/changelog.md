@@ -10,8 +10,16 @@ permalink: /changelog/
 * [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/Gecko.kt)
 * [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/.config.yml)
 
+* **support-base**
+  * Adds `NotificationManangerCompat` extension functions `areNotificationsEnabledSafe()` and  `isNotificationChannelEnabled()`.
+  
 * **feature-pwa**
   * Adds `WebAppContentFeature` to set the "display" mode from the web app manifest on the `EngineSession`.
+* **browser-engine-gecko**:
+  * Added support for Printing on the Engine.
+  * Add support for `checkForPdfViewer` API for checking whether a PDF viewer is loaded on the current session or not.
+* **concept-engine**:
+  * Added new `requestPrintContent` API in `Engine`. This is currently only supported in the Gecko Engine.
 
 * **support-ktx**
   * Removes ifChanged Flow extension functions in favour of `distintUntilChanged` and `distintUntilChangedBy`in `kotlin.coroutines.flow`.

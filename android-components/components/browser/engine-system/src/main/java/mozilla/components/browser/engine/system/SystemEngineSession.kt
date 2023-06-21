@@ -106,6 +106,10 @@ class SystemEngineSession(
         throw UnsupportedOperationException("PDF support is not available in this engine")
     }
 
+    override fun requestPrintContent() {
+        throw UnsupportedOperationException("Print support is not available in this engine")
+    }
+
     /**
      * See [EngineSession.stopLoading]
      */
@@ -403,6 +407,16 @@ class SystemEngineSession(
         if (reload) {
             webView.reload()
         }
+    }
+
+    /**
+     * Checks for if PDF Viewer is used.
+     */
+    override fun checkForPdfViewer(
+        onResult: (Boolean) -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {
+        throw UnsupportedOperationException("Checking for PDF viewer is not available in this engine")
     }
 
     override fun hasCookieBannerRuleForSession(

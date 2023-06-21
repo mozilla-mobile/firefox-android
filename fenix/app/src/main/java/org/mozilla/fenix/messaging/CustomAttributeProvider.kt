@@ -7,15 +7,15 @@ package org.mozilla.fenix.messaging
 import android.content.Context
 import androidx.core.app.NotificationManagerCompat
 import mozilla.components.service.nimbus.messaging.JexlAttributeProvider
+import mozilla.components.support.base.ext.areNotificationsEnabledSafe
+import mozilla.components.support.utils.BrowsersCache
 import org.json.JSONObject
 import org.mozilla.fenix.components.metrics.UTMParams.Companion.UTM_CAMPAIGN
 import org.mozilla.fenix.components.metrics.UTMParams.Companion.UTM_CONTENT
 import org.mozilla.fenix.components.metrics.UTMParams.Companion.UTM_MEDIUM
 import org.mozilla.fenix.components.metrics.UTMParams.Companion.UTM_SOURCE
 import org.mozilla.fenix.components.metrics.UTMParams.Companion.UTM_TERM
-import org.mozilla.fenix.ext.areNotificationsEnabledSafe
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.utils.BrowsersCache
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
