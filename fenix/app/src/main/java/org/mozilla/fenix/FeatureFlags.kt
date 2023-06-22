@@ -63,7 +63,6 @@ object FeatureFlags {
     const val composeTopSites = false
 
     /**
-<<<<<<< HEAD
      * Enables the save to PDF feature.
      */
     const val saveToPDF = true
@@ -72,10 +71,10 @@ object FeatureFlags {
      * Enables the notification pre permission prompt.
      */
     const val notificationPrePermissionPromptEnabled = true
-=======
+
+    /**
      * Enables new search settings UI with two extra fragments, for managing the default engine
      * and managing search shortcuts in the quick search menu.
      */
-    val unifiedSearchSettings = Config.channel.isNightlyOrDebug
->>>>>>> 6fa2c0342c (Bug 1826473 – add new search engine settings screens)
+    const val unifiedSearchSettings = true
 }
