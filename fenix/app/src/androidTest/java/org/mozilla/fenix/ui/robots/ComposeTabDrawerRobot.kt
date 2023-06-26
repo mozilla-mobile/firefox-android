@@ -17,6 +17,9 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.swipeLeft
+import androidx.compose.ui.test.swipeRight
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
@@ -162,6 +165,20 @@ class ComposeTabDrawerRobot(private val composeTestRule: HomeActivityComposeTest
         composeTestRule.closeTabButton().performClick()
     }
 
+    /**
+     * Swipes a tab with [title] left.
+     */
+    fun swipeTabLeft(title: String) {
+        composeTestRule.tabItem(title).performTouchInput { swipeLeft() }
+    }
+
+    /**
+     * Swipes a tab with [title] right.
+     */
+    fun swipeTabRight(title: String) {
+        composeTestRule.tabItem(title).performTouchInput { swipeRight() }
+    }
+
     class Transition(private val composeTestRule: HomeActivityComposeTestRule) {
 
         fun openNewTab(interact: SearchRobot.() -> Unit): SearchRobot.Transition {
@@ -190,10 +207,10 @@ class ComposeTabDrawerRobot(private val composeTestRule: HomeActivityComposeTest
             return Transition(composeTestRule)
         }
 
-        fun closeAllTabs(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
+        fun closeAllTabs(interact: HomeScreenRobot.() -> Unit): HomeScreenRobot.Transition {
             composeTestRule.dropdownMenuItemCloseAllTabs().performClick()
-            BrowserRobot().interact()
-            return BrowserRobot.Transition()
+            HomeScreenRobot().interact()
+            return HomeScreenRobot.Transition()
         }
 
         fun openTab(title: String, interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {

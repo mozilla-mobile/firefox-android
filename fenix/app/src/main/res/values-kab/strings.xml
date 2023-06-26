@@ -128,6 +128,9 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <!-- Shortcut action to open new private tab -->
     <string name="home_screen_shortcut_open_new_private_tab_2">Iccer uslig amaynut</string>
 
+    <!-- Shortcut action to open Passwords screens -->
+    <string name="home_screen_shortcut_open_password_screen">Inegzumen n wawalen uffiren</string>
+
     <!-- Recent Tabs -->
     <!-- Header text for jumping back into the recent tab in the home screen -->
     <string name="recent_tabs_header">Uɣal ɣer deffir</string>
@@ -251,7 +254,7 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <!-- Search suggestion onboarding hint description text, first parameter is the name of the app defined in app_name (for example: Fenix)-->
     <string name="search_suggestions_onboarding_text">%s ad yazen sekra n wayen i tettaruḍ deg ufeggag n tansiwin ɣer umsedday-inek n unadi s wudem amezwer.</string>
 
-    <!-- Search engine suggestion title text. The first parameter is the name of teh suggested engine-->
+    <!-- Search engine suggestion title text. The first parameter is the name of the suggested engine-->
     <string name="search_engine_suggestions_title">Nadi %s</string>
     <!-- Search engine suggestion description text -->
     <string name="search_engine_suggestions_description">Nadi srid seg ufeggag n tansiwin</string>
@@ -261,6 +264,9 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
 
     <!-- Header text for the search selector menu -->
     <string name="search_header_menu_item_2">I unadi-a:</string>
+
+    <!-- Content description (not visible, for screen readers etc.): Search engine icon. The first parameter is the search engine name (for example: DuckDuckGo). -->
+    <string name="search_engine_icon_content_description" tools:ignore="UnusedResources">Amsedday n unadi %s</string>
 
     <!-- Home onboarding -->
     <!-- Onboarding home screen popup dialog, shown on top of the Jump back in section. -->
@@ -356,6 +362,8 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <string name="preferences_category_general">Amatu</string>
     <!-- Preference category for all links about Fenix -->
     <string name="preferences_category_about">Ɣef</string>
+    <!-- Preference category for settings related to changing the default search engine -->
+    <string name="preferences_category_select_default_search_engine">Fren yiwen</string>
     <!-- Preference for settings related to changing the default search engine -->
     <string name="preferences_default_search_engine">Amsedday n unadi amezwer</string>
     <!-- Preference for settings related to Search -->
@@ -405,7 +413,9 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
     <string name="cookie_banner_handling_details_site_is_not_supported_cancel_button">Sefsex</string>
     <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
-    <string name="cookie_banner_handling_details_site_is_not_supported_request_support_button">Ssuter tallalt</string>
+    <string name="cookie_banner_handling_details_site_is_not_supported_request_support_button" moz:RemovedIn="115" tools:ignore="UnusedResources">Ssuter tallalt</string>
+    <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
+    <string name="cookie_banner_handling_details_site_is_not_supported_request_support_button_2">Azen assuter</string>
     <!-- Text for title indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
     <string name="cookie_banner_handling_details_site_is_not_supported_title" moz:RemovedIn="114" tools:ignore="UnusedResources">Asenqes n yiɣarracen n yinagan n tuqqna</string>
     <!-- Text for title indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
@@ -618,6 +628,8 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <string name="addon_already_installed">Azegrir yettusebded yakan</string>
 
     <!-- Account Preferences -->
+    <!-- Preference for managing your account via accounts.firefox.com -->
+    <string name="preferences_manage_account">Sefrek amiḍan</string>
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">Mtawi tura</string>
     <!-- Preference category for sync -->
@@ -1368,7 +1380,7 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <!-- Title text of a delete browsing data dialog. -->
     <string name="delete_history_prompt_title">Azilal ara tekkseḍ</string>
     <!-- Body text of a delete browsing data dialog. -->
-    <string name="delete_history_prompt_body">Itekkes azray (ula d azray yemtawan seg yibenkan-nniḍen), inagan n tuqqna akked isefka-nniḍen n tunigin.</string>
+    <string name="delete_history_prompt_body" moz:RemovedIn="130" tools:ignore="UnusedResources">Itekkes azray (ula d azray yemtawan seg yibenkan-nniḍen), inagan n tuqqna akked isefka-nniḍen n tunigin.</string>
     <!-- Radio button in the delete browsing data dialog to delete history items for the last hour. -->
     <string name="delete_history_prompt_button_last_hour">Asrag aneggaru</string>
     <!-- Radio button in the delete browsing data dialog to delete history items for today and yesterday. -->
@@ -1867,6 +1879,8 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Rnu amsedday n unadi</string>
+    <!-- Content description (not visible, for screen readers etc.): Title for the button that navigates to add new engine screen -->
+    <string name="search_engine_add_custom_search_engine_button_content_description">Rnu amsedday n unadi amaynut</string>
     <!-- Title of the Edit search engine screen -->
     <string name="search_engine_edit_custom_search_engine_title">Ẓreg amsedday n unadi</string>
     <!-- Content description (not visible, for screen readers etc.): Title for the button to add a search engine in the action bar -->
@@ -1880,8 +1894,14 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
 
     <!-- Text for the button to create a custom search engine on the Add search engine screen -->
     <string name="search_add_custom_engine_label_other">Wiyaḍ</string>
+    <!-- Label for the TextField in which user enters custom search engine name -->
+    <string name="search_add_custom_engine_name_label">Isem</string>
     <!-- Placeholder text shown in the Search Engine Name TextField before a user enters text -->
     <string name="search_add_custom_engine_name_hint">Isem</string>
+    <!-- Placeholder text shown in the Search Engine Name text field before a user enters text -->
+    <string name="search_add_custom_engine_name_hint_2">Isem n umsedday n unadi</string>
+    <!-- Label for the TextField in which user enters custom search engine URL -->
+    <string name="search_add_custom_engine_url_label">URL n uzrir n unadi</string>
     <!-- Placeholder text shown in the Search String TextField before a user enters text -->
     <string name="search_add_custom_engine_search_string_hint">Aḍris ara tnadiḍ</string>
     <!-- Description text for the Search String TextField. The %s is part of the string -->
@@ -1889,6 +1909,9 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
 
     <!-- Accessibility description for the form in which details about the custom search engine are entered -->
     <string name="search_add_custom_engine_form_description">Talqayt ɣef umsedday n unadi udmawan</string>
+
+    <!-- The text for the "Save" button for saving a custom search engine -->
+    <string name="search_custom_engine_save_button">Sekles</string>
 
     <!-- Text shown when a user leaves the name field empty -->
     <string name="search_add_custom_engine_error_empty_name">Sekcem isem n umsedday n unadi</string>
