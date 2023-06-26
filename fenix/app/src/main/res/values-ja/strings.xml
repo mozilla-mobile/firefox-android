@@ -14,9 +14,11 @@
     <string name="content_description_private_browsing_button">プライベートブラウジングを有効にします</string>
     <!-- Content description (not visible, for screen readers etc.): "Private Browsing" menu button. -->
     <string name="content_description_disable_private_browsing_button">プライベートブラウジングを無効にします</string>
-    <!-- Placeholder text shown in the search bar before a user enters text -->
+    <!-- Placeholder text shown in the search bar before a user enters text for the default engine -->
     <string name="search_hint">検索語またはアドレスを入力</string>
 
+    <!-- Placeholder text shown in the search bar before a user enters text for a general engine -->
+    <string name="search_hint_general_engine">ウェブを検索</string>
     <!-- Placeholder text shown in search bar when using history search -->
     <string name="history_search_hint">履歴を検索</string>
     <!-- Placeholder text shown in search bar when using bookmarks search -->
@@ -69,8 +71,6 @@
 
     <!-- Private mode shortcut "contextual feature recommendation" (CFR) -->
     <!-- Text for the Private mode shortcut CFR message for adding a private mode shortcut to open private tabs from the Home screen -->
-    <string name="private_mode_cfr_message" moz:removedIn="111" tools:ignore="UnusedResources">タップ 1 回で次のプライベートタブを開きます。</string>
-    <!-- Text for the Private mode shortcut CFR message for adding a private mode shortcut to open private tabs from the Home screen -->
     <string name="private_mode_cfr_message_2">タップ 1 回で次のプライベートタブを開きます。</string>
     <!-- Text for the positive button to accept adding a Private Browsing shortcut to the Home screen -->
     <string name="private_mode_cfr_pos_button_text">ホーム画面に追加</string>
@@ -84,9 +84,6 @@
     <string name="open_in_app_cfr_positive_button_text">設定を開く</string>
     <!-- Text for the negative action button -->
     <string name="open_in_app_cfr_negative_button_text">閉じる</string>
-
-    <!-- Content description for close button used in "contextual feature recommendation" (CFR) popups -->
-    <string name="cfr_dismiss_button_default_content_description" moz:removedIn="110" tools:ignore="UnusedResources">閉じる</string>
 
     <!-- Total cookie protection "contextual feature recommendation" (CFR) -->
     <!-- Text for the message displayed in the contextual feature recommendation popup promoting the total cookie protection feature. -->
@@ -131,6 +128,9 @@
     <string name="home_screen_shortcut_open_new_tab_2">新しいタブ</string>
     <!-- Shortcut action to open new private tab -->
     <string name="home_screen_shortcut_open_new_private_tab_2">新しいプライベートタブ</string>
+
+    <!-- Shortcut action to open Passwords screens -->
+    <string name="home_screen_shortcut_open_password_screen">パスワードのショートカット</string>
 
     <!-- Recent Tabs -->
     <!-- Header text for jumping back into the recent tab in the home screen -->
@@ -257,7 +257,7 @@
     <!-- Search suggestion onboarding hint description text, first parameter is the name of the app defined in app_name (for example: Fenix)-->
     <string name="search_suggestions_onboarding_text">%s のアドレスバーに入力したすべての語句が既定の検索エンジンと共有されます。</string>
 
-    <!-- Search engine suggestion title text. The first parameter is the name of teh suggested engine-->
+    <!-- Search engine suggestion title text. The first parameter is the name of the suggested engine-->
     <string name="search_engine_suggestions_title">%s で検索</string>
     <!-- Search engine suggestion description text -->
     <string name="search_engine_suggestions_description">アドレスバーから直接検索します</string>
@@ -266,10 +266,10 @@
     <string name="search_settings_menu_item">検索設定</string>
 
     <!-- Header text for the search selector menu -->
-    <string name="search_header_menu_item" moz:RemovedIn="109" tools:ignore="UnusedResources">今回の検索:</string>
-
-    <!-- Header text for the search selector menu -->
     <string name="search_header_menu_item_2">今回だけ使う検索エンジン:</string>
+
+    <!-- Content description (not visible, for screen readers etc.): Search engine icon. The first parameter is the search engine name (for example: DuckDuckGo). -->
+    <string name="search_engine_icon_content_description" tools:ignore="UnusedResources">%s 検索エンジン</string>
 
     <!-- Home onboarding -->
     <!-- Onboarding home screen popup dialog, shown on top of the Jump back in section. -->
@@ -307,6 +307,53 @@
     <!-- Text for the button to not request notification permission on the device and dismiss the dialog -->
     <string name="onboarding_home_enable_notifications_negative_button">後で</string>
 
+    <!-- Juno first user onboarding flow experiment -->
+    <!-- Title for set firefox as default browser screen.
+        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
+    <string name="juno_onboarding_default_browser_title">%s をいつものブラウザーに</string>
+    <!-- Title for set firefox as default browser screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_default_browser_title_nimbus" tools:ignore="UnusedResources">Firefox をいつものブラウザーに</string>
+    <!-- Description for set firefox as default browser screen.
+        The first parameter is the Firefox brand name.
+        The second parameter is the string with key "juno_onboarding_default_browser_description_link_text". -->
+    <string name="juno_onboarding_default_browser_description">%1$s はユーザーのことを第一に考え、クロスサイトトラッカーからあなたのプライバシーを守ります。\n\n%2$s もご覧ください。</string>
+    <!-- Description for set firefox as default browser screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_default_browser_description_nimbus" tools:ignore="UnusedResources">Firefox はユーザーのことを第一に考え、クロスサイトトラッカーからあなたのプライバシーを守ります。\n\n詳細はプライバシー通知をご覧ください。</string>
+    <!-- Text for the link to the privacy notice webpage for set as firefox default browser screen.
+    This is part of the string with the key "juno_onboarding_default_browser_description". -->
+    <string name="juno_onboarding_default_browser_description_link_text">プライバシー通知</string>
+    <!-- Text for the button to set firefox as default browser on the device -->
+    <string name="juno_onboarding_default_browser_positive_button">既定のブラウザーに設定</string>
+    <!-- Text for the button dismiss the screen and move on with the flow -->
+    <string name="juno_onboarding_default_browser_negative_button">後で</string>
+
+    <!-- Title for sign in to sync screen. -->
+    <string name="juno_onboarding_sign_in_title">スマートフォンとラップトップの間を行ったり来たり</string>
+    <!-- Description for sign in to sync screen. -->
+    <string name="juno_onboarding_sign_in_description">他の端末からタブとパスワードを転送して、中断したところから再開できます。</string>
+    <!-- Text for the button to sign in to sync on the device -->
+    <string name="juno_onboarding_sign_in_positive_button">ログイン</string>
+    <!-- Text for the button dismiss the screen and move on with the flow -->
+    <string name="juno_onboarding_sign_in_negative_button">後で</string>
+    <!-- Title for enable notification permission screen.
+        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
+    <string name="juno_onboarding_enable_notifications_title">通知をオンにして %s をさらに活用しましょう</string>
+    <!-- Title for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_enable_notifications_title_nimbus" tools:ignore="UnusedResources">通知をオンにして Firefox をさらに活用しましょう</string>
+    <!-- Description for enable notification permission screen.
+        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
+    <string name="juno_onboarding_enable_notifications_description">通知を使って他の端末にタブを送信したり、ダウンロードを管理したり、%s を最大限に活用するためのヒントを受け取れます。</string>
+    <!-- Description for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+       Note: The word "Firefox" should NOT be translated   -->
+    <string name="juno_onboarding_enable_notifications_description_nimbus" tools:ignore="UnusedResources">通知を使って他の端末にタブを送信したり、ダウンロードを管理したり、Firefox を最大限に活用するためのヒントを受け取れます。</string>
+    <!-- Text for the button to request notification permission on the device -->
+    <string name="juno_onboarding_enable_notifications_positive_button">通知をオンにする</string>
+    <!-- Text for the button dismiss the screen and move on with the flow -->
+    <string name="juno_onboarding_enable_notifications_negative_button">後で</string>
+
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. The first parameter is the name of the application.-->
     <string name="search_widget_content_description_2">%1$s の新しいタブで開く</string>
@@ -326,6 +373,14 @@
     <string name="preferences_category_general">一般</string>
     <!-- Preference category for all links about Fenix -->
     <string name="preferences_category_about">製品情報</string>
+    <!-- Preference category for settings related to changing the default search engine -->
+    <string name="preferences_category_select_default_search_engine">一つを選んでください</string>
+    <!-- Preference for settings related to managing search shortcuts for the quick search menu -->
+    <string name="preferences_manage_search_shortcuts">検索ショートカットの管理</string>
+    <!-- Summary for preference for settings related to managing search shortcuts for the quick search menu -->
+    <string name="preferences_manage_search_shortcuts_summary">検索メニューに表示されるエンジンの編集</string>
+    <!-- Preference category for settings related to managing search shortcuts for the quick search menu -->
+    <string name="preferences_category_engines_in_search_menu">検索メニューに表示されるエンジン</string>
     <!-- Preference for settings related to changing the default search engine -->
     <string name="preferences_default_search_engine">既定の検索エンジン</string>
     <!-- Preference for settings related to Search -->
@@ -367,68 +422,62 @@
     <string name="reduce_cookie_banner_option_off">オフ</string>
     <!-- Summary of cookie banner handling preference if the setting enabled is set to on -->
     <string name="reduce_cookie_banner_option_on">オン</string>
-    <!-- Summary for the preference for rejecting all cookies whenever possible. -->
-    <string name="reduce_cookie_banner_summary" moz:RemovedIn="110" tools:ignore="UnusedResources">Firefox が自動的に Cookie バナーによる Cookie 要求を拒否しようとします。拒否オプションが利用できない場合、すべての Cookie を受け入れてバナーを閉じることがあります。</string>
 
     <!-- Summary for the preference for rejecting all cookies whenever possible. The first parameter is the application name -->
     <string name="reduce_cookie_banner_summary_1">%1$s が自動的に Cookie バナー上の Cookie 要求を拒否しようとします。</string>
     <!-- Text for indicating cookie banner handling is off this site, this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_off_for_site">このサイトでオフ</string>
+    <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
+    <string name="cookie_banner_handling_details_site_is_not_supported_cancel_button">キャンセル</string>
+    <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
+    <string name="cookie_banner_handling_details_site_is_not_supported_request_support_button" moz:RemovedIn="115" tools:ignore="UnusedResources">対処を依頼</string>
+    <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
+    <string name="cookie_banner_handling_details_site_is_not_supported_request_support_button_2">依頼を送信</string>
+    <!-- Text for title indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
+    <string name="cookie_banner_handling_details_site_is_not_supported_title" moz:RemovedIn="114" tools:ignore="UnusedResources">Cookie バナーの削減</string>
+    <!-- Text for title indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
+    <string name="cookie_banner_handling_details_site_is_not_supported_title_2">このサイトの対処を依頼しますか？</string>
+    <!-- Label for the snackBar, after the user reports with success a website where cookie banner reducer did not work -->
+    <string name="cookie_banner_handling_report_site_snack_bar_text" moz:RemovedIn="114" tools:ignore="UnusedResources">サイトへの対処依頼が送信されました。</string>
+    <!-- Label for the snackBar, after the user reports with success a website where cookie banner reducer did not work -->
+    <string name="cookie_banner_handling_report_site_snack_bar_text_2">リクエストを送信しました</string>
     <!-- Text for indicating cookie banner handling is on this site, this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_on_for_site">このサイトでオン</string>
 
+    <!-- Text for indicating that a request for unsupported site was sent to Nimbus (it's a Mozilla library for experiments), this is shown as part of the protections panel with the tracking protection toggle -->
+    <string name="reduce_cookie_banner_unsupported_site_request_submitted" moz:RemovedIn="114" tools:ignore="UnusedResources">対処を依頼済み</string>
+    <!-- Text for indicating that a request for unsupported site was sent to Nimbus (it's a Mozilla library for experiments), this is shown as part of the protections panel with the tracking protection toggle -->
+    <string name="reduce_cookie_banner_unsupported_site_request_submitted_2">対処を依頼済みです</string>
     <!-- Text for indicating cookie banner handling is currently not supported for this site, this is shown as part of the protections panel with the tracking protection toggle -->
-    <string name="reduce_cookie_banner_unsupported_site" tools:ignore="UnusedResources">現在サポートされていないサイトです</string>
+    <string name="reduce_cookie_banner_unsupported_site">現在サポートされていないサイトです</string>
     <!-- Title text for a detail explanation indicating cookie banner handling is on this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
     <string name="reduce_cookie_banner_details_panel_title_on_for_site">%1$s で Cookie バナー削減を有効にしますか?</string>
     <!-- Title text for a detail explanation indicating cookie banner handling is off this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
     <string name="reduce_cookie_banner_details_panel_title_off_for_site">%1$s で Cookie バナー削減を無効にしますか?</string>
+    <!-- Title text for a detail explanation indicating cookie banner reducer didn't work for the current site, this is shown as part of the cookie banner panel in the toolbar.-->
+    <string name="reduce_cookie_banner_details_panel_title_unsupported_site_request" moz:RemovedIn="114" tools:ignore="UnusedResources">現在、Cookie バナー削減機能はこのサイトに対応していません。このウェブサイトに対処するためのレビューを開発チームに依頼しますか？</string>
+    <!-- Title text for a detail explanation indicating cookie banner reducer didn't work for the current site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name-->
+    <string name="reduce_cookie_banner_details_panel_title_unsupported_site_request_2">%1$s は現在、このサイトの Cookie 使用要求を自動的に拒否できません。このサイトへの対処を要求してください。</string>
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
     <string name="reduce_cookie_banner_details_panel_description_off_for_site">%1$s はこのサイトの Cookie を消去してページを読み込み直します。すべての Cookie を消去すると、ログアウトしたり、ショッピングカートが空になったりする場合があります。</string>
-    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first and second parameter are the application name -->
-    <string name="reduce_cookie_banner_details_panel_description_on_for_site" moz:RemovedIn="110" tools:ignore="UnusedResources">%1$s が自動的に Cookie 要求を拒否しようとします。拒否オプションが利用できない場合、%2$s がすべての Cookie を受け入れてバナーを閉じることがあります。</string>
 
-    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter are the application name -->
-    <string name="reduce_cookie_banner_details_panel_description_on_for_site_1" moz:RemovedIn="111" tools:ignore="UnusedResources">%1$s は自動的に Cookie 要求を拒否することができます。</string>
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
     <string name="reduce_cookie_banner_details_panel_description_on_for_site_2">%1$s はサポートされたサイト上の Cookie 要求を自動的に拒否しようとします。</string>
-    <!-- Title text for the dialog use on the control branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_control_experiment_dialog_title">Cookie バナーよ、去れ！</string>
-    <!-- Body text for the dialog use on the control branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_control_experiment_dialog_body" moz:RemovedIn="110" tools:ignore="UnusedResources">Cookie 要求を可能な限り自動的に拒否します。拒否できない場合は、Cookie を受け入れてバナーを閉じます。</string>
-    <!-- Body text for the dialog use on the control branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_control_experiment_dialog_body_1" moz:RemovedIn="111" tools:ignore="UnusedResources">可能な限り自動的に Cookie 要求を拒否します。</string>
-    <!-- Body text for the dialog use on the control branch of the experiment to determine which context users engaged the most.The first parameter is the application name -->
-    <string name="reduce_cookie_banner_control_experiment_dialog_body_2">可能な場合、%1$s に自動的に Cookie 要求を拒否させますか？</string>
+    <!-- Title text for the cookie banner re-engagement dialog. The first parameter is the application name. -->
+    <string name="reduce_cookie_banner_dialog_title">%1$s に Cookie バナーを拒否させますか？</string>
+    <!-- Body text for the cookie banner re-engagement dialog use. The first parameter is the application name. -->
+    <string name="reduce_cookie_banner_dialog_body">%1$s は多くの Cookie バナーの同意確認を自動的に拒否できます。</string>
     <!-- Remind me later text button for the onboarding dialog -->
     <string name="reduce_cookie_banner_dialog_not_now_button">後で</string>
-    <!-- Change setting text button, for the dialog use on the control branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_control_experiment_dialog_change_setting_button">バナーを閉じる</string>
 
     <!-- Snack text for the cookie banner dialog, after user hit the dismiss banner button -->
     <string name="reduce_cookie_banner_dialog_snackbar_text">Cookie 要求が少なくなります</string>
-    <!-- Title text for the dialog use on the variant 1 branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_variant_1_experiment_dialog_title">Cookie ポップアップを減らす</string>
 
-    <!-- Body text for the dialog use on the variant 1 branch of the experiment to determine which context users engaged the most. The first parameter is the application name. -->
-    <string name="reduce_cookie_banner_variant_1_experiment_dialog_body" moz:RemovedIn="110" tools:ignore="UnusedResources">目障りな Cookie ポップアップに自動的に応答します。%1$s が可能な限りすべての要求を拒否します。拒否できない場合はすべてを受け入れます。</string>
-    <!-- Body text for the dialog use on the variant 1 branch of the experiment to determine which context users engaged the most. The first parameter is the application name. -->
-    <string name="reduce_cookie_banner_variant_1_experiment_dialog_body_1">目障りな Cookie ポップアップに自動的に応答します。%1$s が可能な限りすべての要求を拒否します。</string>
-    <!-- Change setting text button, for the onboarding dialog use on the variant 1 branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_variant_1_experiment_dialog_change_setting_button">ポップアップを閉じる</string>
-    <!-- Title text for the dialog use on the variant 2 branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_variant_2_experiment_dialog_title">Cookie バナーの削減</string>
-    <!-- Body text for the dialog use on the variant 2 branch of the experiment to determine which context users engaged the most. The first parameter is the application name. -->
-    <string name="reduce_cookie_banner_variant_2_experiment_dialog_body" moz:RemovedIn="110" tools:ignore="UnusedResources">可能な場合、サイトの Cookie 同意要求を %1$s に拒否させ、そうでない場合は Cookie を受け入れますか？</string>
-    <!-- Body text for the dialog use on the variant 2 branch of the experiment to determine which context users engaged the most. The first parameter is the application name. -->
-    <string name="reduce_cookie_banner_variant_2_experiment_dialog_body_1">可能な場合、サイトの Cookie 同意要求を %1$s に拒否させますか？</string>
-    <!-- Change setting text button, for the dialog use on the variant 2 branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_variant_2_experiment_dialog_change_setting_button">許可</string>
+    <!-- Change setting text button, for the cookie banner re-engagement dialog -->
+    <string name="reduce_cookie_banner_dialog_change_setting_button">許可</string>
 
     <!-- Description of the preference to enable "HTTPS-Only" mode. -->
     <string name="preferences_https_only_summary">セキュリティ強化のため、自動的に HTTPS 暗号化プロトコルを使用してサイトへの接続を試行します。</string>
-    <!-- Summary of tracking protection preference if tracking protection is set to on -->
-    <string name="preferences_https_only_on" moz:removedIn="111" tools:ignore="UnusedResources">オン</string>
     <!-- Summary of https only preference if https only is set to off -->
     <string name="preferences_https_only_off">オフ</string>
     <!-- Summary of https only preference if https only is set to on in all tabs -->
@@ -505,6 +554,12 @@
     <!-- Preference for open links in third party apps -->
     <string name="preferences_open_links_in_apps">リンクを外部アプリで開く</string>
 
+    <!-- Preference for open links in third party apps always open in apps option -->
+    <string name="preferences_open_links_in_apps_always">常に使用する</string>
+    <!-- Preference for open links in third party apps ask before opening option -->
+    <string name="preferences_open_links_in_apps_ask">開く前に確認する</string>
+    <!-- Preference for open links in third party apps never open in apps option -->
+    <string name="preferences_open_links_in_apps_never">使用しない</string>
     <!-- Preference for open download with an external download manager app -->
     <string name="preferences_external_download_manager">外部のダウンロードマネージャー</string>
     <!-- Preference for add_ons -->
@@ -590,6 +645,8 @@
     <string name="addon_already_installed">アドオンはすでにインストールされています。</string>
 
     <!-- Account Preferences -->
+    <!-- Preference for managing your account via accounts.firefox.com -->
+    <string name="preferences_manage_account">アカウント管理</string>
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">今すぐ同期</string>
     <!-- Preference category for sync -->
@@ -685,9 +742,9 @@
 
     <!-- Theme Preferences -->
     <!-- Preference for using light theme -->
-    <string name="preference_light_theme">Light</string>
+    <string name="preference_light_theme">ライト</string>
     <!-- Preference for using dark theme -->
-    <string name="preference_dark_theme">Dark</string>
+    <string name="preference_dark_theme">ダーク</string>
     <!-- Preference for using using dark or light theme automatically set by battery -->
     <string name="preference_auto_battery_theme">バッテリーセーバーで設定</string>
     <!-- Preference for using following device theme -->
@@ -736,15 +793,9 @@
     <!-- Dialog button text for canceling open all tabs -->
     <string name="open_all_warning_cancel">キャンセル</string>
 
-    <!-- Text to show users they have one site in the history group section of the History fragment.
-    %d is a placeholder for the number of sites in the group. -->
-    <string name="history_search_group_site" moz:RemovedIn="111" tools:ignore="UnusedResources">%d サイト</string>
     <!-- Text to show users they have one page in the history group section of the History fragment.
     %d is a placeholder for the number of pages in the group. -->
     <string name="history_search_group_site_1">%d ページ</string>
-    <!-- Text to show users they have multiple sites in the history group section of the History fragment.
-    %d is a placeholder for the number of sites in the group. -->
-    <string name="history_search_group_sites" moz:RemovedIn="111" tools:ignore="UnusedResources">%d サイト</string>
 
     <!-- Text to show users they have multiple pages in the history group section of the History fragment.
     %d is a placeholder for the number of pages in the group. -->
@@ -1080,8 +1131,6 @@
     <string name="phone_feature_blocked_by_android">Android によってブロック</string>
     <!-- Preference for showing a list of websites that the default configurations won't apply to them -->
     <string name="preference_exceptions">例外設定</string>
-    <!-- Summary of tracking protection preference if tracking protection is set to on -->
-    <string name="tracking_protection_on" moz:removedIn="111" tools:ignore="UnusedResources">オン</string>
     <!-- Summary of tracking protection preference if tracking protection is set to off -->
     <string name="tracking_protection_off">オフ</string>
 
@@ -1234,6 +1283,26 @@
     %1$s is a placeholder that will be replaced by the app name. -->
     <string name="notification_re_engagement_text">Cookie や履歴を %1$s に保存せずに閲覧します</string>
 
+    <!-- Title A shown in the notification that pops up to re-engage the user -->
+    <string name="notification_re_engagement_A_title">足跡を残さずにブラウジング</string>
+
+    <!-- Text A shown in the notification that pops up to re-engage the user.
+    %1$s is a placeholder that will be replaced by the app name. -->
+    <string name="notification_re_engagement_A_text">%1$s のプライベートブラウジングは知られたくない情報を残しません。</string>
+    <!-- Title B shown in the notification that pops up to re-engage the user -->
+    <string name="notification_re_engagement_B_title">検索を使ってみよう</string>
+    <!-- Text B shown in the notification that pops up to re-engage the user -->
+    <string name="notification_re_engagement_B_text">気になること、興味のあることをさがしてみましょう。</string>
+
+    <!-- Survey -->
+    <!-- Text shown in the fullscreen message that pops up to ask user to take a short survey.
+    The app name is in the text, due to limitations with localizing Nimbus experiments -->
+    <string name="nimbus_survey_message_text">Firefox の改善のために簡単なアンケートへの回答をお願いします。</string>
+    <!-- Preference for taking the short survey. -->
+    <string name="preferences_take_survey">アンケートに答える</string>
+    <!-- Preference for not taking the short survey. -->
+    <string name="preferences_not_take_survey">今はしない</string>
+
     <!-- Snackbar -->
     <!-- Text shown in snackbar when user deletes a collection -->
     <string name="snackbar_collection_deleted">コレクションを削除しました</string>
@@ -1329,7 +1398,9 @@
     <!-- Title text of a delete browsing data dialog. -->
     <string name="delete_history_prompt_title">削除する期間</string>
     <!-- Body text of a delete browsing data dialog. -->
-    <string name="delete_history_prompt_body">履歴 (他の端末から同期されたものを含む)、Cookie および他のブラウジングデータを削除します。</string>
+    <string name="delete_history_prompt_body" moz:RemovedIn="130" tools:ignore="UnusedResources">履歴 (他の端末から同期されたものを含む)、Cookie および他のブラウジングデータを削除します。</string>
+    <!-- Body text of a delete browsing data dialog. -->
+    <string name="delete_history_prompt_body_2">履歴を削除します (他の端末から同期した履歴を含む)</string>
     <!-- Radio button in the delete browsing data dialog to delete history items for the last hour. -->
     <string name="delete_history_prompt_button_last_hour">1 時間以内</string>
     <!-- Radio button in the delete browsing data dialog to delete history items for today and yesterday. -->
@@ -1450,21 +1521,29 @@
     <!-- Preference title for enhanced tracking protection settings -->
     <string name="preference_enhanced_tracking_protection">強化型トラッキング防止</string>
     <!-- Title for the description of enhanced tracking protection -->
-    <string name="preference_enhanced_tracking_protection_explanation_title">閲覧中のプライバシーを保護します</string>
+    <string name="preference_enhanced_tracking_protection_explanation_title" moz:removedIn="114" tools:ignore="UnusedResources">閲覧中のプライバシーを保護します</string>
+    <!-- Preference summary for enhanced tracking protection settings on/off switch -->
+    <string name="preference_enhanced_tracking_protection_summary">包括的 Cookie 保護が登場しました。これまでで最も強力なクロスサイトトラッカー遮断機能です。</string>
     <!-- Description of enhanced tracking protection. The first parameter is the name of the application (For example: Fenix) -->
-    <string name="preference_enhanced_tracking_protection_explanation">個人データの収集を防止します。%s はオンラインでのあなたの行動を追跡するよく知られた数多くのトラッカーからあなたを守ります。</string>
+    <string name="preference_enhanced_tracking_protection_explanation" moz:removedIn="114" tools:ignore="UnusedResources">個人データの収集を防止します。%s はオンラインでのあなたの行動を追跡するよく知られた数多くのトラッカーからあなたを守ります。</string>
+    <!-- Description of enhanced tracking protection. The parameter is the name of the application (For example: Firefox Fenix) -->
+    <string name="preference_enhanced_tracking_protection_explanation_2">%s はインターネット上で個人の行動を追跡する数多くのトラッカーからあなたを守ります。</string>
     <!-- Text displayed that links to website about enhanced tracking protection -->
     <string name="preference_enhanced_tracking_protection_explanation_learn_more">詳細情報</string>
     <!-- Preference for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_standard_default_1">標準 (既定)</string>
     <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description_4">プライバシーと性能をバランスよく。ページが正しく読み込まれます。</string>
+    <string name="preference_enhanced_tracking_protection_standard_description_4" moz:removedIn="114" tools:ignore="UnusedResources">プライバシーと性能をバランスよく。ページが正しく読み込まれます。</string>
+    <!-- Preference description for enhanced tracking protection for the standard protection settings -->
+    <string name="preference_enhanced_tracking_protection_standard_description_5">ページは正常に読み込まれますが、ブロックされるトラッカーが少なくなります。</string>
     <!--  Accessibility text for the Standard protection information icon  -->
     <string name="preference_enhanced_tracking_protection_standard_info_button">標準のトラッキング防止でブロックされるもの</string>
     <!-- Preference for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict">厳格</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_description_3">より多くのトラッカーをブロックするとページの読み込みが速くなりますが、一部のページは正しく機能しなくなる可能性があります。</string>
+    <string name="preference_enhanced_tracking_protection_strict_description_3" moz:removedIn="114" tools:ignore="UnusedResources">より多くのトラッカーをブロックするとページの読み込みが速くなりますが、一部のページは正しく機能しなくなる可能性があります。</string>
+    <!-- Preference description for enhanced tracking protection for the strict protection settings -->
+    <string name="preference_enhanced_tracking_protection_strict_description_4">トラッキング防止を強力にし、パフォーマンスを高速化します。ただし、一部のサイトが正常に機能しなくなる可能性があります。</string>
     <!--  Accessibility text for the Strict protection information icon  -->
     <string name="preference_enhanced_tracking_protection_strict_info_button">厳格なトラッキング防止でブロックされるもの</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
@@ -1551,6 +1630,10 @@
     <string name="preference_etp_smartblock_description">ユーザーの操作により、以下のマークされたトラッカー*のブロックがこのページ上で部分的に解除されています。</string>
     <!-- Text displayed that links to website about enhanced tracking protection SmartBlock -->
     <string name="preference_etp_smartblock_learn_more">詳細情報</string>
+
+    <!-- Content description (not visible, for screen readers etc.):
+    Enhanced tracking protection exception preference icon for ETP settings. -->
+    <string name="preference_etp_exceptions_icon_description">強化型トラッキング防止の例外設定のアイコン</string>
 
     <!-- About page link text to open support link -->
     <string name="about_support">サポート</string>
@@ -1690,7 +1773,7 @@
 
     <!-- Autofill -->
     <!-- Preference and title for managing the autofill settings -->
-    <string name="preferences_autofill">自動補完</string>
+    <string name="preferences_autofill">自動入力</string>
     <!-- Preference and title for managing the settings for addresses -->
     <string name="preferences_addresses">所在地フォーム</string>
     <!-- Preference and title for managing the settings for credit cards -->
@@ -1821,6 +1904,8 @@
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">検索エンジンの追加</string>
+    <!-- Content description (not visible, for screen readers etc.): Title for the button that navigates to add new engine screen -->
+    <string name="search_engine_add_custom_search_engine_button_content_description">新しい検索エンジンを追加します</string>
     <!-- Title of the Edit search engine screen -->
     <string name="search_engine_edit_custom_search_engine_title">検索エンジンの編集</string>
     <!-- Content description (not visible, for screen readers etc.): Title for the button to add a search engine in the action bar -->
@@ -1834,15 +1919,26 @@
 
     <!-- Text for the button to create a custom search engine on the Add search engine screen -->
     <string name="search_add_custom_engine_label_other">その他</string>
+    <!-- Label for the TextField in which user enters custom search engine name -->
+    <string name="search_add_custom_engine_name_label">名前</string>
     <!-- Placeholder text shown in the Search Engine Name TextField before a user enters text -->
     <string name="search_add_custom_engine_name_hint">検索エンジン名</string>
+    <!-- Placeholder text shown in the Search Engine Name text field before a user enters text -->
+    <string name="search_add_custom_engine_name_hint_2">検索エンジン名</string>
+    <!-- Label for the TextField in which user enters custom search engine URL -->
+    <string name="search_add_custom_engine_url_label">検索文字列の URL</string>
     <!-- Placeholder text shown in the Search String TextField before a user enters text -->
     <string name="search_add_custom_engine_search_string_hint">検索クエリー文字列</string>
+    <!-- Placeholder text shown in the Search String TextField before a user enters text -->
+    <string name="search_add_custom_engine_search_string_hint_2">検索に使用する URL</string>
     <!-- Description text for the Search String TextField. The %s is part of the string -->
     <string name="search_add_custom_engine_search_string_example" formatted="false">クエリーを “%s” に置き換えます。例:\nhttps://www.google.com/search?q=%s</string>
 
     <!-- Accessibility description for the form in which details about the custom search engine are entered -->
     <string name="search_add_custom_engine_form_description">カスタム検索エンジンの詳細</string>
+
+    <!-- The text for the "Save" button for saving a custom search engine -->
+    <string name="search_custom_engine_save_button">保存</string>
 
     <!-- Text shown when a user leaves the name field empty -->
     <string name="search_add_custom_engine_error_empty_name">検索エンジン名を入力してください</string>

@@ -29,6 +29,7 @@ import mozilla.components.browser.state.state.WebExtensionState
 import mozilla.components.browser.state.state.content.DownloadState
 import mozilla.components.browser.state.state.content.FindResultState
 import mozilla.components.browser.state.state.content.ShareInternetResourceState
+import mozilla.components.browser.state.state.extension.WebExtensionPromptRequest
 import mozilla.components.browser.state.state.recover.RecoverableTab
 import mozilla.components.browser.state.state.recover.TabState
 import mozilla.components.concept.engine.Engine
@@ -796,7 +797,7 @@ sealed class ContentAction : BrowserAction() {
      * Updates the [ContentState] with the provided [tabId] to the appropriate priority based on any
      * existing form data.
      */
-    data class CheckForFormDataAction(val tabId: String, val containsFormData: Boolean) : ContentAction()
+    data class UpdateHasFormDataAction(val tabId: String, val containsFormData: Boolean) : ContentAction()
 
     /**
      * Lowers priority of the [tabId] to default after certain period of time
@@ -864,6 +865,17 @@ sealed class WebExtensionAction : BrowserAction() {
      * Updates [BrowserState.extensions] to register the given [extension] as installed.
      */
     data class InstallWebExtensionAction(val extension: WebExtensionState) : WebExtensionAction()
+
+    /**
+     * Updates [BrowserState.webExtensionPromptRequest] give the given [promptRequest].
+     */
+    data class UpdatePromptRequestWebExtensionAction(val promptRequest: WebExtensionPromptRequest) :
+        WebExtensionAction()
+
+    /**
+     * Removes the actual [WebExtensionPromptRequest] of the [BrowserState].
+     */
+    object ConsumePromptRequestWebExtensionAction : WebExtensionAction()
 
     /**
      * Removes all state of the uninstalled extension from [BrowserState.extensions]
@@ -1045,9 +1057,40 @@ sealed class EngineAction : BrowserAction() {
     ) : EngineAction(), ActionWithTab
 
     /**
+     * Indicates the given [tabId] is to print the page content.
+     */
+    data class PrintContentAction(
+        override val tabId: String,
+    ) : EngineAction(), ActionWithTab
+
+    /**
+     * Indicates the given [tabId] completed printing the page content.
+     */
+    data class PrintContentCompletedAction(
+        override val tabId: String,
+    ) : EngineAction(), ActionWithTab
+
+    /**
+     * Indicates the given [tabId] was unable to print the page content.
+     * [isPrint] indicates if it is in response to a print (true) or PDF saving (false).
+     */
+    data class PrintContentExceptionAction(
+        override val tabId: String,
+        val isPrint: Boolean,
+        val throwable: Throwable,
+    ) : EngineAction(), ActionWithTab
+
+    /**
      * Navigates back in the tab with the given [tabId].
      */
     data class SaveToPdfAction(
+        override val tabId: String,
+    ) : EngineAction(), ActionWithTab
+
+    /**
+     * Indicates the given [tabId] was successful in generating a requested PDF page.
+     */
+    data class SaveToPdfCompleteAction(
         override val tabId: String,
     ) : EngineAction(), ActionWithTab
 
@@ -1186,6 +1229,11 @@ sealed class ReaderAction : BrowserAction() {
      */
     data class UpdateReaderActiveUrlAction(val tabId: String, val activeUrl: String) :
         ReaderAction()
+
+    /**
+     * Updates the [ReaderState.scrollY].
+     */
+    data class UpdateReaderScrollYAction(val tabId: String, val scrollY: Int) : ReaderAction()
 
     /**
      * Clears the [ReaderState.activeUrl].
@@ -1398,8 +1446,9 @@ sealed class SearchAction : BrowserAction() {
 
     /**
      * Sets the [RegionState] (region of the user).
+     * distribution is a [String] that specifies a set of default search engines if available
      */
-    data class SetRegionAction(val regionState: RegionState) : SearchAction()
+    data class SetRegionAction(val regionState: RegionState, val distribution: String? = null) : SearchAction()
 
     /**
      * Sets the list of search engines and default search engine IDs.
@@ -1408,6 +1457,7 @@ sealed class SearchAction : BrowserAction() {
         val regionSearchEngines: List<SearchEngine>,
         val customSearchEngines: List<SearchEngine>,
         val hiddenSearchEngines: List<SearchEngine>,
+        val disabledSearchEngineIds: List<String>,
         val additionalSearchEngines: List<SearchEngine>,
         val additionalAvailableSearchEngines: List<SearchEngine>,
         val userSelectedSearchEngineId: String?,
@@ -1458,6 +1508,14 @@ sealed class SearchAction : BrowserAction() {
      * back to [SearchState.additionalAvailableSearchEngines].
      */
     data class RemoveAdditionalSearchEngineAction(val searchEngineId: String) : SearchAction()
+
+    /**
+     * Updates [SearchState.disabledSearchEngineIds] list inside [BrowserState.search].
+     */
+    data class UpdateDisabledSearchEngineIdsAction(
+        val searchEngineId: String,
+        val isEnabled: Boolean,
+    ) : SearchAction()
 }
 
 /**
@@ -1477,4 +1535,20 @@ sealed class DebugAction : BrowserAction() {
      */
     @DelicateAction
     data class UpdateCreatedAtAction(val tabId: String, val createdAt: Long) : DebugAction()
+}
+
+/**
+ * [BrowserAction] implementations related to the application lifecycle.
+ */
+sealed class AppLifecycleAction : BrowserAction() {
+
+    /**
+     * The application has received an ON_RESUME event.
+     */
+    object ResumeAction : AppLifecycleAction()
+
+    /**
+     * The application has received an ON_PAUSE event.
+     */
+    object PauseAction : AppLifecycleAction()
 }

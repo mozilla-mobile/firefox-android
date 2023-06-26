@@ -50,6 +50,7 @@ open class BrowserActivity : LocaleAwareAppCompatActivity(), ComponentCallbacks2
 
         lifecycle.addObserver(webExtensionPopupFeature)
         components.historyStorage.registerStorageMaintenanceWorker()
+        components.notificationsDelegate.bindToActivity(this)
     }
 
     override fun onBackPressed() {
@@ -59,7 +60,7 @@ open class BrowserActivity : LocaleAwareAppCompatActivity(), ComponentCallbacks2
             }
         }
 
-        super.getOnBackPressedDispatcher().onBackPressed()
+        onBackPressedDispatcher.onBackPressed()
     }
 
     override fun onCreateView(parent: View?, name: String, context: Context, attrs: AttributeSet): View? =
@@ -79,5 +80,10 @@ open class BrowserActivity : LocaleAwareAppCompatActivity(), ComponentCallbacks2
         intent.putExtra("web_extension_name", webExtensionState.name)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         startActivity(intent)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        components.notificationsDelegate.unBindActivity(this)
     }
 }

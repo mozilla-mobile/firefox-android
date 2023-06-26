@@ -9,20 +9,20 @@ plugins {
 
 android {
     namespace 'org.mozilla.fenix.benchmark'
-    compileSdk Config.compileSdkVersion
+    compileSdk config.compileSdkVersion
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "17"
     }
 
     defaultConfig {
         minSdk 23
-        targetSdk Config.targetSdkVersion
+        targetSdk config.targetSdkVersion
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -57,9 +57,9 @@ configurations.all {
 }
 
 dependencies {
-    implementation FenixDependencies.androidx_junit
-    implementation FenixDependencies.espresso_core
-    implementation FenixDependencies.uiautomator
+    implementation ComponentsDependencies.androidx_test_junit
+    implementation ComponentsDependencies.androidx_espresso_core
+    implementation ComponentsDependencies.androidx_test_uiautomator
     implementation FenixDependencies.androidx_benchmark_macro_junit4
 }
 

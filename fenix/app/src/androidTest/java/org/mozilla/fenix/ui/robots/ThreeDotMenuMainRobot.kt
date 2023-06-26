@@ -28,6 +28,7 @@ import org.hamcrest.Matchers.allOf
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
+import org.mozilla.fenix.helpers.Constants.LONG_CLICK_DURATION
 import org.mozilla.fenix.helpers.Constants.RETRY_COUNT
 import org.mozilla.fenix.helpers.MatcherHelper.assertCheckedItemWithResIdAndTextExists
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemContainingTextExists
@@ -37,6 +38,7 @@ import org.mozilla.fenix.helpers.MatcherHelper.checkedItemWithResIdAndText
 import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithDescription
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdAndText
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithText
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeLong
 import org.mozilla.fenix.helpers.TestHelper.getStringResource
@@ -58,6 +60,14 @@ class ThreeDotMenuMainRobot {
     fun verifyEditBookmarkButton() = assertEditBookmarkButton()
     fun verifyCloseAllTabsButton() = assertCloseAllTabsButton()
     fun verifyReaderViewAppearance(visible: Boolean) = assertReaderViewAppearanceButton(visible)
+
+    fun verifyQuitButtonExists() {
+        // Need to double swipe the menu, to make this button visible.
+        // In case it reaches the end, the second swipe is no-op.
+        expandMenu()
+        expandMenu()
+        assertItemContainingTextExists(itemWithText("Quit"))
+    }
 
     fun expandMenu() {
         onView(withId(R.id.mozac_browser_menu_menuView)).perform(swipeUp())
@@ -156,6 +166,11 @@ class ThreeDotMenuMainRobot {
         }
     }
 
+    fun clickQuit() {
+        expandMenu()
+        onView(withText("Quit")).click()
+    }
+
     class Transition {
         fun openSettings(
             localizedText: String = getStringResource(R.string.browser_menu_settings),
@@ -198,6 +213,13 @@ class ThreeDotMenuMainRobot {
 
             BookmarksRobot().interact()
             return BookmarksRobot.Transition()
+        }
+
+        fun clickNewTabButton(interact: SearchRobot.() -> Unit): SearchRobot.Transition {
+            normalBrowsingNewTabButton.click()
+
+            SearchRobot().interact()
+            return SearchRobot.Transition()
         }
 
         fun openHistory(interact: HistoryRobot.() -> Unit): HistoryRobot.Transition {
@@ -283,7 +305,18 @@ class ThreeDotMenuMainRobot {
         }
 
         fun refreshPage(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
-            refreshButton.click()
+            refreshButton.also {
+                it.waitForExists(waitingTime)
+                it.click()
+            }
+
+            BrowserRobot().interact()
+            return BrowserRobot.Transition()
+        }
+
+        fun forceRefreshPage(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
+            mDevice.findObject(By.desc(getStringResource(R.string.browser_menu_refresh)))
+                .click(LONG_CLICK_DURATION)
 
             BrowserRobot().interact()
             return BrowserRobot.Transition()

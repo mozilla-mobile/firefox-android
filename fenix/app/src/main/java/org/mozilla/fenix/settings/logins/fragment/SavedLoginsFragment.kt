@@ -18,7 +18,6 @@ import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.MenuProvider
-import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -37,7 +36,6 @@ import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.settings.logins.LoginsAction
 import org.mozilla.fenix.settings.logins.LoginsFragmentStore
-import org.mozilla.fenix.settings.logins.LoginsListState
 import org.mozilla.fenix.settings.logins.SavedLoginsSortingStrategyMenu
 import org.mozilla.fenix.settings.logins.SortingStrategy
 import org.mozilla.fenix.settings.logins.controller.LoginsListController
@@ -57,9 +55,6 @@ class SavedLoginsFragment : SecureFragment(), MenuProvider {
     private lateinit var sortLoginsMenuRoot: ConstraintLayout
     private lateinit var loginsListController: LoginsListController
     private lateinit var savedLoginsStorageController: SavedLoginsStorageController
-    private lateinit var loginState: LoginsListState
-    private var removedLoginGuid: String? = null
-    private var deletedGuid = mutableSetOf<String>()
 
     override fun onResume() {
         super.onResume()
@@ -74,11 +69,12 @@ class SavedLoginsFragment : SecureFragment(), MenuProvider {
         val view = inflater.inflate(R.layout.fragment_saved_logins, container, false)
         val binding = FragmentSavedLoginsBinding.bind(view)
 
-        savedLoginsStore = StoreProvider.get(this) {
-            LoginsFragmentStore(
-                createInitialLoginsListState(requireContext().settings()),
-            )
-        }
+        savedLoginsStore =
+            StoreProvider.get(findNavController().getBackStackEntry(R.id.savedLogins)) {
+                LoginsFragmentStore(
+                    createInitialLoginsListState(requireContext().settings()),
+                )
+            }
 
         loginsListController =
             LoginsListController(
@@ -111,25 +107,9 @@ class SavedLoginsFragment : SecureFragment(), MenuProvider {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        setFragmentResultListener(LoginDetailFragment.LOGIN_REQUEST_KEY) { _, bundle ->
-            removedLoginGuid = bundle.getString(LoginDetailFragment.LOGIN_BUNDLE_ARGS)
-            deletedGuid.add(removedLoginGuid.toString())
-        }
-        consumeFrom(savedLoginsStore) { loginsListState ->
+        consumeFrom(savedLoginsStore) {
             sortingStrategyMenu.updateMenu(savedLoginsStore.state.highlightedItem)
-
-            loginState = loginsListState
-            val currentList = loginState.filteredItems.toMutableList()
-
-            if (removedLoginGuid != null) {
-                val newList = currentList.filter { !deletedGuid.contains(it.guid) }
-
-                loginState = loginState.copy(
-                    loginList = newList,
-                    filteredItems = newList,
-                )
-            }
-            savedLoginsListView.update(loginState)
+            savedLoginsListView.update(it)
         }
     }
 

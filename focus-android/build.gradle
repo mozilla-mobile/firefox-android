@@ -13,25 +13,39 @@ buildscript {
         maven {
             url "https://nightly.maven.mozilla.org/maven2"
         }
+
+        if (ExtraRepositories.mozillaStaging) {
+            maven {
+                name "Mozilla Staging"
+                url "https://maven-default.stage.mozaws.net/maven2"
+            }
+        }
     }
 
     dependencies {
-        classpath FocusDependencies.android_gradle_plugin
-        classpath FocusDependencies.kotlin_gradle_plugin
+        classpath ComponentsDependencies.tools_androidgradle
+        classpath ComponentsDependencies.tools_kotlingradle
+        classpath FocusDependencies.osslicenses_plugin
         classpath "org.mozilla.telemetry:glean-gradle-plugin:${Versions.mozilla_glean}"
-        classpath "org.mozilla.appservices:tooling-nimbus-gradle:${Versions.mozilla_appservices}"
+        classpath "${ApplicationServicesConfig.groupId}:tooling-nimbus-gradle:${ApplicationServicesConfig.version}"
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
+
+    // Variables in plugins {} aren't directly supported. Hack around it by setting an
+    // intermediate variable which can pull from FocusDependenciesPlugin.kt and be used later.
+    ext {
+        detekt_plugin = Versions.detekt
+        python_envs_plugin = Versions.python_envs_plugin
+    }
 }
 
 plugins {
-    id "io.gitlab.arturbosch.detekt" version "1.19.0" // Variables in plugins {} aren't supported
+    id "io.gitlab.arturbosch.detekt" version "$detekt_plugin"
 }
 
 detekt {
-    buildUponDefaultConfig = true
     input = files("$projectDir/app")
     config = files("$projectDir/quality/detekt.yml")
     baseline = file("$projectDir/quality/detekt-baseline.xml")
@@ -41,7 +55,32 @@ detekt {
             enabled = true
             destination = file("$projectDir/build/reports/detekt.html")
         }
+        xml {
+            enabled = false
+        }
+        txt {
+            enabled = false
+        }
     }
+}
+
+tasks.withType(io.gitlab.arturbosch.detekt.Detekt).configureEach() {
+    autoCorrect = true
+
+    exclude "**/test/**"
+    exclude "**/androidTest/**"
+    exclude "**/build/**"
+    exclude "**/resources/**"
+    exclude "**/tmp/**"
+}
+
+// Apply same path exclusions as for the main task
+tasks.withType(io.gitlab.arturbosch.detekt.DetektCreateBaselineTask).configureEach() {
+    exclude "**/test/**"
+    exclude "**/androidTest/**"
+    exclude "**/build/**"
+    exclude "**/resources/**"
+    exclude "**/tmp/**"
 }
 
 allprojects {
@@ -54,24 +93,12 @@ allprojects {
         maven {
             url "https://maven.mozilla.org/maven2"
         }
-    }
-}
 
-subprojects {
-    // Define a reusable task for updating the version in manifest.json for modules that package
-    // a web extension. We automate this to make sure we never forget to update the version, either
-    // in local development or for releases. In both cases, we want to make sure the latest version
-    // of all extensions (including their latest changes) are installed on first start-up.
-    ext.updateExtensionVersion = { task, extDir ->
-        configure(task) {
-            from extDir
-            include 'manifest.template.json'
-            rename { 'manifest.json' }
-            into extDir
-
-            def values = ['version': rootProject.ext.config.componentsVersion.split("a|b")[0] + "." + new Date().format('MMddHHmmss')]
-            inputs.properties(values)
-            expand(values)
+        if (ExtraRepositories.mozillaStaging) {
+            maven {
+                name "Mozilla Staging"
+                url "https://maven-default.stage.mozaws.net/maven2"
+            }
         }
     }
 }
@@ -86,7 +113,7 @@ configurations {
 }
 
 dependencies {
-    ktlint("com.pinterest:ktlint:${FocusVersions.ktlint_version}") {
+    ktlint("com.pinterest:ktlint:${Versions.ktlint}") {
         attributes {
             attribute(Bundling.BUNDLING_ATTRIBUTE, getObjects().named(Bundling, Bundling.EXTERNAL))
         }
@@ -106,6 +133,7 @@ task ktlintFormat(type: JavaExec, group: "formatting") {
     classpath = configurations.ktlint
     mainClass.set("com.pinterest.ktlint.Main")
     args "-F", "app/**/*.kt", "!**/build/**/*.kt", "buildSrc/**/*.kt"
+    jvmArgs("--add-opens", "java.base/java.lang=ALL-UNNAMED")
 }
 
 tasks.register("listRepositories") {

@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
@@ -62,7 +66,7 @@
         <activity-alias
             android:name="${applicationId}.App"
             android:exported="true"
-            android:targetActivity=".HomeActivity">
+            android:targetActivity=".${targetActivity}">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -143,6 +147,9 @@
                     android:host="urls_history"/>
             </intent-filter>
         </activity>
+
+        <activity android:name=".MozillaOnlineHomeActivity"
+                android:exported="false"/>
 
         <activity android:name=".home.mozonline.PrivacyContentDisplayActivity"
                 android:exported="false"/>
@@ -284,7 +291,7 @@
             android:theme="@style/DialogActivityTheme" />
 
         <activity
-            android:name=".gleanplumb.NotificationClickedReceiverActivity"
+            android:name=".messaging.NotificationClickedReceiverActivity"
             android:exported="false" />
 
         <service
@@ -310,7 +317,6 @@
             tools:ignore="ExportedService">
             <intent-filter>
                 <action android:name="android.support.customtabs.action.CustomTabsService" />
-                <category android:name="androidx.browser.trusted.category.TrustedWebActivities" />
             </intent-filter>
         </service>
 
@@ -333,7 +339,7 @@
                 android:exported="false" />
 
         <service
-            android:name=".gleanplumb.NotificationDismissedService"
+            android:name=".messaging.NotificationDismissedService"
             android:exported="false" />
 
         <service

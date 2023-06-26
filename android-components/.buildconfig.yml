@@ -18,14 +18,18 @@ projects:
     publish: true
     upstream_dependencies:
     - browser-errorpages
+    - browser-state
     - concept-base
     - concept-engine
     - concept-fetch
     - concept-storage
     - lib-publicsuffixlist
+    - lib-state
     - service-glean
+    - service-nimbus
     - support-base
     - support-ktx
+    - support-locale
     - support-test
     - support-utils
     - tooling-fetch-tests
@@ -140,10 +144,12 @@ projects:
     - feature-tabs
     - lib-publicsuffixlist
     - lib-state
+    - service-nimbus
     - support-android-test
     - support-base
     - support-images
     - support-ktx
+    - support-locale
     - support-test
     - support-test-fakes
     - support-test-libstate
@@ -178,15 +184,12 @@ projects:
     publish: true
     upstream_dependencies:
     - concept-base
-    - concept-fetch
     - concept-storage
     - concept-sync
     - concept-toolbar
     - lib-publicsuffixlist
-    - service-glean
     - support-base
     - support-ktx
-    - support-sync-telemetry
     - support-test
     - support-utils
     - tooling-lint
@@ -502,11 +505,9 @@ projects:
     - lib-publicsuffixlist
     - lib-state
     - service-firefox-accounts
-    - service-glean
     - support-base
     - support-images
     - support-ktx
-    - support-sync-telemetry
     - support-test
     - support-utils
     - support-webextensions
@@ -520,7 +521,6 @@ projects:
     publish: true
     upstream_dependencies:
     - concept-base
-    - concept-fetch
     - concept-push
     - concept-storage
     - concept-sync
@@ -529,10 +529,8 @@ projects:
     - lib-publicsuffixlist
     - lib-state
     - service-firefox-accounts
-    - service-glean
     - support-base
     - support-ktx
-    - support-sync-telemetry
     - support-test
     - support-utils
     - tooling-lint
@@ -580,7 +578,9 @@ projects:
     - support-test-libstate
     - support-utils
     - tooling-lint
+    - ui-colors
     - ui-icons
+    - ui-widgets
   feature-autofill:
     description: Component adding support for Android`s Autofill framework.
     path: components/feature/autofill
@@ -597,6 +597,9 @@ projects:
     - support-test
     - support-utils
     - tooling-lint
+    - ui-colors
+    - ui-icons
+    - ui-widgets
   feature-awesomebar:
     description: Component connecting a concept-toolbar with a concept-awesomebar.
     path: components/feature/awesomebar
@@ -625,12 +628,10 @@ projects:
     - lib-fetch-httpurlconnection
     - lib-publicsuffixlist
     - lib-state
-    - service-glean
     - service-location
     - support-base
     - support-images
     - support-ktx
-    - support-sync-telemetry
     - support-test
     - support-utils
     - tooling-lint
@@ -694,6 +695,7 @@ projects:
     - ui-colors
     - ui-icons
     - ui-tabcounter
+    - ui-widgets
   feature-customtabs:
     description: Component for providing custom tabs functionality.
     path: components/feature/customtabs
@@ -754,7 +756,9 @@ projects:
     - support-test-libstate
     - support-utils
     - tooling-lint
+    - ui-colors
     - ui-icons
+    - ui-widgets
   feature-findinpage:
     description: Feature that will subscribe to the selected session and show an UI
       for results of find in page.
@@ -831,7 +835,9 @@ projects:
     - support-test
     - support-utils
     - tooling-lint
+    - ui-colors
     - ui-icons
+    - ui-widgets
   feature-media:
     description: Feature component for website media related features.
     path: components/feature/media
@@ -895,7 +901,9 @@ projects:
     - support-test-libstate
     - support-utils
     - tooling-lint
+    - ui-colors
     - ui-icons
+    - ui-widgets
   feature-push:
     description: Feature that implements push notifications with a supported push
       service.
@@ -1065,9 +1073,11 @@ projects:
     - feature-tabs
     - lib-publicsuffixlist
     - lib-state
+    - service-nimbus
     - support-base
     - support-images
     - support-ktx
+    - support-locale
     - support-test
     - support-utils
     - tooling-lint
@@ -1164,11 +1174,9 @@ projects:
     - lib-publicsuffixlist
     - lib-state
     - service-firefox-accounts
-    - service-glean
     - support-base
     - support-images
     - support-ktx
-    - support-sync-telemetry
     - support-test
     - support-utils
     - tooling-lint
@@ -1270,16 +1278,13 @@ projects:
     upstream_dependencies:
     - browser-storage-sync
     - concept-base
-    - concept-fetch
     - concept-storage
     - concept-sync
     - concept-toolbar
     - lib-publicsuffixlist
-    - service-glean
     - support-android-test
     - support-base
     - support-ktx
-    - support-sync-telemetry
     - support-test
     - support-utils
     - tooling-lint
@@ -1539,6 +1544,7 @@ projects:
     - service-digitalassetlinks
     - service-glean
     - service-location
+    - service-nimbus
     - service-sync-logins
     - support-android-test
     - support-base
@@ -1546,7 +1552,6 @@ projects:
     - support-ktx
     - support-locale
     - support-rustlog
-    - support-sync-telemetry
     - support-utils
     - support-webextensions
     - tooling-lint
@@ -1588,12 +1593,12 @@ projects:
     - feature-tabs
     - lib-publicsuffixlist
     - lib-state
-    - service-glean
     - service-location
+    - service-nimbus
     - support-base
     - support-images
     - support-ktx
-    - support-sync-telemetry
+    - support-locale
     - support-utils
     - tooling-lint
     - ui-colors
@@ -1642,12 +1647,10 @@ projects:
     - lib-publicsuffixlist
     - lib-state
     - service-firefox-accounts
-    - service-glean
     - support-base
     - support-ktx
     - support-rusthttp
     - support-rustlog
-    - support-sync-telemetry
     - support-utils
     - tooling-lint
   samples-glean:
@@ -1713,7 +1716,6 @@ projects:
     - support-ktx
     - support-rusthttp
     - support-rustlog
-    - support-sync-telemetry
     - support-utils
     - tooling-lint
   samples-sync-logins:
@@ -1736,7 +1738,6 @@ projects:
     - support-ktx
     - support-rusthttp
     - support-rustlog
-    - support-sync-telemetry
     - support-utils
     - tooling-lint
   samples-toolbar:
@@ -1782,10 +1783,8 @@ projects:
     - concept-toolbar
     - feature-top-sites
     - lib-publicsuffixlist
-    - service-glean
     - support-base
     - support-ktx
-    - support-sync-telemetry
     - support-test
     - support-utils
     - tooling-lint
@@ -1808,16 +1807,13 @@ projects:
     publish: true
     upstream_dependencies:
     - concept-base
-    - concept-fetch
     - concept-storage
     - concept-sync
     - lib-dataprotect
     - lib-publicsuffixlist
     - lib-state
-    - service-glean
     - support-base
     - support-ktx
-    - support-sync-telemetry
     - support-test
     - support-test-libstate
     - support-utils
@@ -1865,6 +1861,7 @@ projects:
     - concept-storage
     - lib-publicsuffixlist
     - lib-state
+    - service-glean
     - support-base
     - support-ktx
     - support-locale
@@ -1916,7 +1913,6 @@ projects:
     - service-glean
     - support-base
     - support-ktx
-    - support-sync-telemetry
     - support-utils
     - tooling-lint
   support-android-test:
@@ -1962,6 +1958,12 @@ projects:
     - support-utils
     - tooling-lint
     - ui-icons
+  support-license:
+    description: A component to help display licensing agreements.
+    path: components/support/license
+    publish: true
+    upstream_dependencies:
+    - tooling-lint
   support-locale:
     description: A component to allow apps to change the system defined language by
       their custom one
@@ -2008,20 +2010,6 @@ projects:
     - concept-base
     - support-base
     - support-test
-    - tooling-lint
-  support-sync-telemetry:
-    description: A collection of sync-related telemetry helper classes and ping descriptions.
-    path: components/support/sync-telemetry
-    publish: true
-    upstream_dependencies:
-    - concept-base
-    - concept-fetch
-    - lib-publicsuffixlist
-    - service-glean
-    - support-base
-    - support-ktx
-    - support-test
-    - support-utils
     - tooling-lint
   support-test:
     description: A collection of helpers for testing components (local unit tests).

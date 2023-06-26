@@ -15,22 +15,24 @@ import android.os.IBinder
 import androidx.annotation.CallSuper
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.VISIBILITY_SECRET
-import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.NotificationManagerCompat.IMPORTANCE_LOW
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import mozilla.components.browser.state.action.TabListAction
 import mozilla.components.browser.state.selector.privateTabs
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.feature.privatemode.R
 import mozilla.components.lib.state.ext.flowScoped
+import mozilla.components.support.base.android.NotificationsDelegate
 import mozilla.components.support.base.ids.SharedIdsHelper
 import mozilla.components.support.ktx.android.notification.ChannelData
 import mozilla.components.support.ktx.android.notification.ensureNotificationChannelExists
-import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import mozilla.components.support.utils.PendingIntentUtils
 import mozilla.components.support.utils.ext.stopForegroundCompat
 import java.util.Locale
@@ -47,12 +49,14 @@ import java.util.Locale
  * As long as a private tab is open this service will keep its notification alive.
  */
 @Suppress("TooManyFunctions")
-abstract class AbstractPrivateNotificationService : Service() {
-
+abstract class AbstractPrivateNotificationService(
+    private val notificationScope: CoroutineScope = CoroutineScope(Dispatchers.IO),
+) : Service() {
     private var privateTabsScope: CoroutineScope? = null
     private var localeScope: CoroutineScope? = null
 
     abstract val store: BrowserStore
+    abstract val notificationsDelegate: NotificationsDelegate
 
     /**
      * Customizes the private browsing notification.
@@ -100,11 +104,15 @@ abstract class AbstractPrivateNotificationService : Service() {
      * Re-build and notify an existing notification.
      */
     protected fun refreshNotification() {
-        val notificationId = getNotificationId()
-        val channelId = getChannelId()
+        notificationScope.launch {
+            val notificationId = getNotificationId()
+            val channelId = getChannelId()
 
-        val notification = createNotification(channelId)
-        NotificationManagerCompat.from(applicationContext).notify(notificationId, notification)
+            val notification = createNotification(channelId)
+            withContext(Dispatchers.Main) {
+                notificationsDelegate.notify(notificationId = notificationId, notification = notification)
+            }
+        }
     }
 
     /**
@@ -114,15 +122,25 @@ abstract class AbstractPrivateNotificationService : Service() {
      * The service should be started only if private tabs are open.
      */
     final override fun onCreate() {
-        val notificationId = getNotificationId()
-        val channelId = getChannelId()
-        val notification = createNotification(channelId)
+        notificationScope.launch {
+            val notificationId = getNotificationId()
+            val channelId = getChannelId()
+            val notification = createNotification(channelId)
 
-        startForeground(notificationId, notification)
+            if (SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                notificationsDelegate.requestNotificationPermission(
+                    onPermissionGranted = { refreshNotification() },
+                )
+            }
+
+            withContext(Dispatchers.Main) {
+                startForeground(notificationId, notification)
+            }
+        }
 
         privateTabsScope = store.flowScoped { flow ->
             flow.map { state -> state.privateTabs.isEmpty() }
-                .ifChanged()
+                .distinctUntilChanged()
                 .collect { noPrivateTabs ->
                     if (noPrivateTabs) stopService()
                 }
@@ -130,7 +148,7 @@ abstract class AbstractPrivateNotificationService : Service() {
 
         localeScope = store.flowScoped { flow ->
             flow.mapNotNull { state -> state.locale }
-                .ifChanged()
+                .distinctUntilChanged()
                 .collect {
                     notifyLocaleChanged()
                 }

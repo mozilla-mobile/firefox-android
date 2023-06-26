@@ -15,11 +15,12 @@ import android.widget.CompoundButton
 import android.widget.LinearLayout
 import android.widget.RadioGroup
 import androidx.core.view.isVisible
-import androidx.navigation.Navigation
+import androidx.navigation.Navigation.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceViewHolder
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import mozilla.components.browser.state.search.SearchEngine
@@ -29,12 +30,13 @@ import mozilla.components.browser.state.state.selectedOrDefaultSearchEngine
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.lib.state.ext.flow
 import mozilla.components.support.ktx.android.view.toScope
-import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
+import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.SearchEngineRadioButtonBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getRootView
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.ext.telemetryName
 import org.mozilla.fenix.utils.allowUndo
 
 class RadioSearchEngineListPreference @JvmOverloads constructor(
@@ -62,7 +64,7 @@ class RadioSearchEngineListPreference @JvmOverloads constructor(
     private fun subscribeToSearchEngineUpdates(store: BrowserStore, view: View) = view.toScope().launch {
         store.flow()
             .map { state -> state.search }
-            .ifChanged()
+            .distinctUntilChanged()
             .collect { state -> refreshSearchEngineViews(view, state) }
     }
 
@@ -80,19 +82,28 @@ class RadioSearchEngineListPreference @JvmOverloads constructor(
             it.isGeneral
         }.size == 1
         state.searchEngines.filter { engine ->
-            engine.type != SearchEngine.Type.APPLICATION
+            if (context.settings().enableUnifiedSearchSettingsUI) {
+                engine.type != SearchEngine.Type.APPLICATION && engine.isGeneral
+            } else {
+                engine.type != SearchEngine.Type.APPLICATION
+            }
         }.forEach { engine ->
             val isLastSearchEngineAvailable =
                 state.searchEngines.count { it.type != SearchEngine.Type.APPLICATION } > 1
+            val allowDeletion = if (context.settings().enableUnifiedSearchSettingsUI) {
+                engine.type == SearchEngine.Type.CUSTOM
+            } else {
+                if (context.settings().showUnifiedSearchFeature) {
+                    isLastSearchEngineAvailable && !(engine.isGeneral && isLastGeneralOrCustomSearchEngine)
+                } else {
+                    isLastSearchEngineAvailable
+                }
+            }
             val searchEngineView = makeButtonFromSearchEngine(
                 engine = engine,
                 layoutInflater = layoutInflater,
                 res = context.resources,
-                allowDeletion = if (context.settings().showUnifiedSearchFeature) {
-                    isLastSearchEngineAvailable && !(engine.isGeneral && isLastGeneralOrCustomSearchEngine)
-                } else {
-                    isLastSearchEngineAvailable
-                },
+                allowDeletion = allowDeletion,
                 isSelected = engine == state.selectedOrDefaultSearchEngine,
             )
 
@@ -156,13 +167,19 @@ class RadioSearchEngineListPreference @JvmOverloads constructor(
         )
 
         context.components.useCases.searchUseCases.selectSearchEngine(engine)
+
+        Events.defaultEngineSelected.record(Events.DefaultEngineSelectedExtra(engine.telemetryName()))
     }
 
     private fun editCustomSearchEngine(view: View, engine: SearchEngine) {
-        val directions = SearchEngineFragmentDirections
-            .actionSearchEngineFragmentToEditCustomSearchEngineFragment(engine.id)
-
-        Navigation.findNavController(view).navigate(directions)
+        val directions = if (view.context.settings().enableUnifiedSearchSettingsUI) {
+            DefaultSearchEngineFragmentDirections
+                .actionDefaultEngineFragmentToSaveSearchEngineFragment(engine.id)
+        } else {
+            SearchEngineFragmentDirections
+                .actionSearchEngineFragmentToEditCustomSearchEngineFragment(engine.id)
+        }
+        findNavController(view).navigate(directions)
     }
 
     private fun deleteSearchEngine(
@@ -171,16 +188,25 @@ class RadioSearchEngineListPreference @JvmOverloads constructor(
     ) {
         val selectedOrDefaultSearchEngine = context.components.core.store.state.search.selectedOrDefaultSearchEngine
         if (selectedOrDefaultSearchEngine == engine) {
-            val nextSearchEngine = if (context.settings().showUnifiedSearchFeature) {
-                context.components.core.store.state.search.searchEngines.first {
-                    it.id != engine.id && (it.isGeneral || it.type == SearchEngine.Type.CUSTOM)
+            val nextSearchEngine =
+                if (context.settings().showUnifiedSearchFeature) {
+                    context.components.core.store.state.search.searchEngines.firstOrNull {
+                        it.id != engine.id && (it.isGeneral || it.type == SearchEngine.Type.CUSTOM)
+                    }
+                        ?: context.components.core.store.state.search.searchEngines.firstOrNull {
+                            it.id != engine.id
+                        }
+                } else {
+                    context.components.core.store.state.search.searchEngines.firstOrNull {
+                        it.id != engine.id
+                    }
                 }
-            } else {
-                context.components.core.store.state.search.searchEngines.first {
-                    it.id != engine.id
-                }
+
+            nextSearchEngine?.let {
+                context.components.useCases.searchUseCases.selectSearchEngine(
+                    nextSearchEngine,
+                )
             }
-            context.components.useCases.searchUseCases.selectSearchEngine(nextSearchEngine)
         }
         context.components.useCases.searchUseCases.removeSearchEngine(engine)
 

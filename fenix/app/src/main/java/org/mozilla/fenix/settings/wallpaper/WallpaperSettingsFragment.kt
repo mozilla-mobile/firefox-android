@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -19,7 +18,6 @@ import kotlinx.coroutines.launch
 import mozilla.components.lib.state.ext.observeAsComposableState
 import mozilla.components.service.glean.private.NoExtras
 import org.mozilla.fenix.BrowserDirection
-import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.GleanMetrics.Wallpapers
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
@@ -46,7 +44,6 @@ class WallpaperSettingsFragment : Fragment() {
     ): View {
         Wallpapers.wallpaperSettingsOpened.record(NoExtras())
         val wallpaperSettings = ComposeView(requireContext()).apply {
-            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 FirefoxTheme {
                     val wallpapers = appStore.observeAsComposableState { state ->
@@ -59,11 +56,7 @@ class WallpaperSettingsFragment : Fragment() {
                     val coroutineScope = rememberCoroutineScope()
 
                     WallpaperSettings(
-                        wallpaperGroups = if (FeatureFlags.wallpaperV2Enabled) {
-                            wallpapers.groupByDisplayableCollection()
-                        } else {
-                            mapOf(Wallpaper.ClassicFirefoxCollection to wallpapers)
-                        },
+                        wallpaperGroups = wallpapers.groupByDisplayableCollection(),
                         defaultWallpaper = Wallpaper.Default,
                         selectedWallpaper = currentWallpaper,
                         loadWallpaperResource = {

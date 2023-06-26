@@ -20,7 +20,7 @@ import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 class OnSharedPreferenceChangeListenerTest {
 
     private lateinit var sharedPrefs: SharedPreferences
-    private lateinit var listener: (SharedPreferences, String) -> Unit
+    private lateinit var listener: (SharedPreferences, String?) -> Unit
     private lateinit var owner: LifecycleOwner
     private lateinit var lifecycleRegistry: LifecycleRegistry
 
@@ -28,7 +28,10 @@ class OnSharedPreferenceChangeListenerTest {
     fun setup() {
         sharedPrefs = mockk(relaxUnitFun = true)
         listener = mockk(relaxed = true)
-        owner = LifecycleOwner { lifecycleRegistry }
+        owner = object : LifecycleOwner {
+            override val lifecycle: Lifecycle
+                get() = lifecycleRegistry
+        }
         lifecycleRegistry = LifecycleRegistry(owner)
     }
 

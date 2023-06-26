@@ -14,11 +14,13 @@ import mozilla.components.ui.tabcounter.TabCounter
 import mozilla.components.ui.tabcounter.TabCounterMenu
 import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.GleanMetrics.StartOnHome
+import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.components.toolbar.FenixTabCounterMenu
 import org.mozilla.fenix.ext.nav
+import org.mozilla.fenix.tabstray.Page
 
 /**
  * Helper class for building the [FenixTabCounterMenu].
@@ -62,8 +64,13 @@ class TabCounterView(
             StartOnHome.openTabsTray.record(NoExtras())
 
             navController.nav(
-                R.id.homeFragment,
-                HomeFragmentDirections.actionGlobalTabsTrayFragment(),
+                navController.currentDestination?.id,
+                NavGraphDirections.actionGlobalTabsTrayFragment(
+                    page = when (browsingModeManager.mode) {
+                        BrowsingMode.Normal -> Page.NormalTabs
+                        BrowsingMode.Private -> Page.PrivateTabs
+                    },
+                ),
             )
         }
     }

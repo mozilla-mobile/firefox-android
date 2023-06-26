@@ -13,21 +13,25 @@ import mozilla.components.browser.storage.sync.PlacesHistoryStorage
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.R
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
-import org.mozilla.fenix.helpers.HomeActivityTestRule
+import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.RecyclerViewIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper
+import org.mozilla.fenix.helpers.TestHelper.exitMenu
 import org.mozilla.fenix.helpers.TestHelper.longTapSelectItem
 import org.mozilla.fenix.helpers.TestHelper.registerAndCleanupIdlingResources
+import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.historyMenu
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.multipleSelectionToolbar
 import org.mozilla.fenix.ui.robots.navigationToolbar
+import org.mozilla.fenix.ui.robots.searchScreen
 
 /**
  *  Tests for verifying basic functionality of history
@@ -39,7 +43,7 @@ class HistoryTest {
     private lateinit var mDevice: UiDevice
 
     @get:Rule
-    val activityTestRule = HomeActivityTestRule.withDefaultSettingsOverrides()
+    val activityTestRule = HomeActivityIntentTestRule.withDefaultSettingsOverrides()
 
     @Before
     fun setUp() {
@@ -216,6 +220,7 @@ class HistoryTest {
         }
     }
 
+    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1807268")
     @Test
     fun openHistoryInNewTabTest() {
         val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -330,27 +335,108 @@ class HistoryTest {
         }
     }
 
-    // This test verifies the Recently Closed Tabs List and items
     @Test
-    fun verifyRecentlyClosedTabsListTest() {
-        val website = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+    fun verifySearchHistoryViewTest() {
+        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+        }.openThreeDotMenu {
+        }.openHistory {
+            clickSearchButton()
+            verifyHistorySearchBar(true)
+            verifyHistorySearchBarPosition(true)
+            tapOutsideToDismissSearchBar()
+            verifyHistorySearchBar(false)
+        }.goBack {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openCustomizeSubMenu {
+            clickTopToolbarToggle()
+        }
+
+        exitMenu()
+
+        browserScreen {
+        }.openThreeDotMenu {
+        }.openHistory {
+            clickSearchButton()
+            verifyHistorySearchBar(true)
+            verifyHistorySearchBarPosition(false)
+            dismissHistorySearchBarUsingBackButton()
+            verifyHistorySearchBar(false)
+        }
+    }
+
+    @Test
+    fun verifyVoiceSearchInHistoryTest() {
         homeScreen {
-        }.openNavigationToolbar {
-        }.enterURLAndEnterToBrowser(website.url) {
-            mDevice.waitForIdle()
-        }.openTabDrawer {
-            closeTab()
-        }.openTabDrawer {
-        }.openRecentlyClosedTabs {
-            waitForListToExist()
-            registerAndCleanupIdlingResources(
-                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.recently_closed_list), 1),
-            ) {
-                verifyRecentlyClosedTabsMenuView()
-            }
-            verifyRecentlyClosedTabsPageTitle("Test_Page_1")
-            verifyRecentlyClosedTabsUrl(website.url)
+        }.openThreeDotMenu {
+        }.openHistory {
+            clickSearchButton()
+            verifyHistorySearchBar(true)
+        }
+        searchScreen {
+            startVoiceSearch()
+        }
+    }
+
+    @Test
+    fun verifySearchForHistoryItemsTest() {
+        val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+        val secondWebPage = TestAssetHelper.getHTMLControlsFormAsset(mockWebServer)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(firstWebPage.url) {
+        }
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(secondWebPage.url) {
+        }.openThreeDotMenu {
+        }.openHistory {
+            clickSearchButton()
+            // Search for a valid term
+            searchForHistoryItem(firstWebPage.title)
+            verifySearchedHistoryItemExists(firstWebPage.url.toString(), true)
+            verifySearchedHistoryItemExists(secondWebPage.url.toString(), false)
+            // Search for invalid term
+            searchForHistoryItem("Android")
+            verifySearchedHistoryItemExists(firstWebPage.url.toString(), false)
+            verifySearchedHistoryItemExists(secondWebPage.url.toString(), false)
+        }
+    }
+
+    @Test
+    fun verifyDeletedHistoryItemsCanNotBeSearchedTest() {
+        val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+        val secondWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 2)
+        val thirdWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 3)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(firstWebPage.url) {
+        }
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(secondWebPage.url) {
+        }
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(thirdWebPage.url) {
+        }.openThreeDotMenu {
+        }.openHistory {
+            verifyHistoryListExists()
+            clickDeleteHistoryButton(firstWebPage.title)
+            verifyHistoryItemExists(false, firstWebPage.title)
+            clickDeleteHistoryButton(secondWebPage.title)
+            verifyHistoryItemExists(false, secondWebPage.title)
+            clickSearchButton()
+            searchForHistoryItem("generic")
+            verifySearchedHistoryItemExists(firstWebPage.url.toString(), false)
+            verifySearchedHistoryItemExists(secondWebPage.url.toString(), false)
+            verifySearchedHistoryItemExists(thirdWebPage.url.toString(), true)
+            dismissHistorySearchBarUsingBackButton()
+            clickDeleteHistoryButton(thirdWebPage.title)
+            verifyHistoryItemExists(false, firstWebPage.title)
+            clickSearchButton()
+            searchForHistoryItem("generic")
+            verifySearchedHistoryItemExists(thirdWebPage.url.toString(), false)
         }
     }
 }

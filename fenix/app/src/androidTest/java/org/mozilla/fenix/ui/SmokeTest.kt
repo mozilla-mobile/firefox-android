@@ -17,7 +17,6 @@ import mozilla.components.concept.engine.mediasession.MediaSession
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.IntentReceiverActivity
@@ -25,20 +24,19 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
-import org.mozilla.fenix.helpers.Constants.PackageName.YOUTUBE_APP
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
-import org.mozilla.fenix.helpers.RecyclerViewIdlingResource
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithText
 import org.mozilla.fenix.helpers.RetryTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
-import org.mozilla.fenix.helpers.TestHelper.assertNativeAppOpens
+import org.mozilla.fenix.helpers.TestHelper.assertYoutubeAppOpens
 import org.mozilla.fenix.helpers.TestHelper.createCustomTabIntent
 import org.mozilla.fenix.helpers.TestHelper.registerAndCleanupIdlingResources
 import org.mozilla.fenix.helpers.ViewVisibilityIdlingResource
 import org.mozilla.fenix.ui.robots.browserScreen
+import org.mozilla.fenix.ui.robots.clickPageObject
 import org.mozilla.fenix.ui.robots.customTabScreen
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
-import org.mozilla.fenix.ui.robots.notificationShade
 
 /**
  * Test Suite that contains a part of the Smoke and Sanity tests defined in TestRail:
@@ -116,136 +114,8 @@ class SmokeTest {
         }
     }
 
-    // Verifies the list of items in a tab's 3 dot menu
-    @Test
-    fun verifyPageMainMenuItemsTest() {
-        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-            waitForPageToLoad()
-        }.openThreeDotMenu {
-            verifyPageThreeDotMainMenuItems(isRequestDesktopSiteEnabled = false)
-        }
-    }
-
-    // Could be removed when more smoke tests from the History category are added
-    // Verifies the History menu opens from a tab's 3 dot menu
-    @Test
-    fun openMainMenuHistoryItemTest() {
-        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-        }.openThreeDotMenu {
-        }.openHistory {
-            verifyHistoryListExists()
-        }
-    }
-
-    // Could be removed when more smoke tests from the Bookmarks category are added
-    // Verifies the Bookmarks menu opens from a tab's 3 dot menu
-    @Test
-    fun openMainMenuBookmarksItemTest() {
-        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-        }.openThreeDotMenu {
-        }.openBookmarks {
-            verifyBookmarksMenuView()
-        }
-    }
-
-    // Verifies the Add-ons menu opens from a tab's 3 dot menu
-    @Test
-    fun openMainMenuAddonsTest() {
-        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-        }.openThreeDotMenu {
-        }.openAddonsManagerMenu {
-            registerAndCleanupIdlingResources(
-                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.add_ons_list), 1),
-            ) {
-                verifyAddonsItems()
-            }
-        }
-    }
-
-    // Verifies the Synced tabs menu or Sync Sign In menu opens from a tab's 3 dot menu.
-    // The test is assuming we are NOT signed in.
-    @Test
-    fun openMainMenuSyncItemTest() {
-        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-            mDevice.waitForIdle()
-        }.openThreeDotMenu {
-        }.openSyncSignIn {
-            verifyTurnOnSyncMenu()
-        }
-    }
-
-    // Test running on beta/release builds in CI:
-    // caution when making changes to it, so they don't block the builds
-    // Verifies the Settings menu opens from a tab's 3 dot menu
-    @Test
-    fun openMainMenuSettingsItemTest() {
-        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-        }.openThreeDotMenu {
-        }.openSettings {
-            verifySettingsView()
-        }
-    }
-
-    // Verifies the Find in page option in a tab's 3 dot menu
-    @Test
-    fun openMainMenuFindInPageTest() {
-        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-        }.openThreeDotMenu {
-        }.openFindInPage {
-            verifyFindInPageSearchBarItems()
-        }
-    }
-
-    // Verifies the Add to collection option in a tab's 3 dot menu
-    @Test
-    fun openMainMenuAddToCollectionTest() {
-        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-        }.openThreeDotMenu {
-        }.openSaveToCollection {
-            verifyCollectionNameTextField()
-        }
-    }
-
-    // Verifies the Bookmark button in a tab's 3 dot menu
-    @Test
-    fun mainMenuBookmarkButtonTest() {
-        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-        }.openThreeDotMenu {
-        }.bookmarkPage {
-            verifySnackBarText("Bookmark saved!")
-        }
-    }
-
     // Device or AVD requires a Google Services Android OS installation with Play Store installed
     // Verifies the Open in app button when an app is installed
-    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1824928")
     @Test
     fun mainMenuOpenInAppTest() {
         val youtubeURL = "https://m.youtube.com/user/mozilla?cbrd=1"
@@ -255,51 +125,7 @@ class SmokeTest {
             verifyNotificationDotOnMainMenu()
         }.openThreeDotMenu {
         }.clickOpenInApp {
-            assertNativeAppOpens(YOUTUBE_APP, youtubeURL)
-        }
-    }
-
-    // Verifies the Desktop site toggle in a tab's 3 dot menu
-    @Test
-    fun mainMenuDesktopSiteTest() {
-        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-        }.openThreeDotMenu {
-        }.switchDesktopSiteMode {
-        }.openThreeDotMenu {
-            verifyDesktopSiteModeEnabled(true)
-        }
-    }
-
-    // Verifies the Share button in a tab's 3 dot menu
-    @Test
-    fun mainMenuShareButtonTest() {
-        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-        }.openThreeDotMenu {
-        }.clickShareButton {
-            verifyShareTabLayout()
-            verifySendToDeviceTitle()
-            verifyShareALinkTitle()
-        }
-    }
-
-    // Verifies the refresh button in a tab's 3 dot menu
-    @Test
-    fun mainMenuRefreshButtonTest() {
-        val refreshWebPage = TestAssetHelper.getRefreshAsset(mockWebServer)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(refreshWebPage.url) {
-            mDevice.waitForIdle()
-        }.openThreeDotMenu {
-            verifyThreeDotMenuExists()
-        }.refreshPage {
-            verifyPageContent("REFRESHED")
+            assertYoutubeAppOpens()
         }
     }
 
@@ -319,54 +145,6 @@ class SmokeTest {
             }.submitQuery("mozilla ") {
                 verifyUrl(searchEngine)
             }.goToHomescreen { }
-        }
-    }
-
-    // Verifies that a recently closed item is properly opened
-    @Test
-    fun openRecentlyClosedItemTest() {
-        val website = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        homeScreen {
-        }.openNavigationToolbar {
-        }.enterURLAndEnterToBrowser(website.url) {
-            mDevice.waitForIdle()
-        }.openTabDrawer {
-            closeTab()
-        }.openTabDrawer {
-        }.openRecentlyClosedTabs {
-            waitForListToExist()
-            registerAndCleanupIdlingResources(
-                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.recently_closed_list), 1),
-            ) {
-                verifyRecentlyClosedTabsMenuView()
-            }
-        }.clickRecentlyClosedItem("Test_Page_1") {
-            verifyUrl(website.url.toString())
-        }
-    }
-
-    // Verifies that tapping the "x" button removes a recently closed item from the list
-    @Test
-    fun deleteRecentlyClosedTabsItemTest() {
-        val website = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        homeScreen {
-        }.openNavigationToolbar {
-        }.enterURLAndEnterToBrowser(website.url) {
-            mDevice.waitForIdle()
-        }.openTabDrawer {
-            closeTab()
-        }.openTabDrawer {
-        }.openRecentlyClosedTabs {
-            waitForListToExist()
-            registerAndCleanupIdlingResources(
-                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.recently_closed_list), 1),
-            ) {
-                verifyRecentlyClosedTabsMenuView()
-            }
-            clickDeleteRecentlyClosedTabs()
-            verifyEmptyRecentlyClosedTabsList()
         }
     }
 
@@ -482,8 +260,7 @@ class SmokeTest {
             verifyExistingTabList()
             verifyExistingOpenTabs(website.title)
             verifyCloseTabsButton(website.title)
-            // Disabled step due to ongoing tabs tray compose refactoring, see: https://github.com/mozilla-mobile/fenix/issues/21318
-            // verifyOpenedTabThumbnail()
+            verifyOpenedTabThumbnail()
             verifyPrivateBrowsingNewTabButton()
         }
     }
@@ -545,10 +322,10 @@ class SmokeTest {
         navigationToolbar {
             verifyReaderViewDetected(true)
             toggleReaderView()
-            mDevice.waitForIdle()
         }
 
         browserScreen {
+            waitForPageToLoad()
             verifyPageContent(estimatedReadingTime)
         }.openThreeDotMenu {
             verifyReaderViewAppearance(true)
@@ -611,46 +388,13 @@ class SmokeTest {
     }
 
     @Test
-    fun audioPlaybackSystemNotificationTest() {
-        val audioTestPage = TestAssetHelper.getAudioPageAsset(mockWebServer)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(audioTestPage.url) {
-            mDevice.waitForIdle()
-            clickMediaPlayerPlayButton()
-            assertPlaybackState(browserStore, MediaSession.PlaybackState.PLAYING)
-        }.openNotificationShade {
-            verifySystemNotificationExists(audioTestPage.title)
-            clickMediaNotificationControlButton("Pause")
-            verifyMediaSystemNotificationButtonState("Play")
-        }
-
-        mDevice.pressBack()
-
-        browserScreen {
-            assertPlaybackState(browserStore, MediaSession.PlaybackState.PAUSED)
-        }.openTabDrawer {
-            closeTab()
-        }
-
-        mDevice.openNotification()
-
-        notificationShade {
-            verifySystemNotificationGone(audioTestPage.title)
-        }
-
-        // close notification shade before the next test
-        mDevice.pressBack()
-    }
-
-    @Test
     fun tabMediaControlButtonTest() {
         val audioTestPage = TestAssetHelper.getAudioPageAsset(mockWebServer)
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(audioTestPage.url) {
             mDevice.waitForIdle()
-            clickMediaPlayerPlayButton()
+            clickPageObject(itemWithText("Play"))
             assertPlaybackState(browserStore, MediaSession.PlaybackState.PLAYING)
         }.openTabDrawer {
             verifyTabMediaControlButtonState("Pause")

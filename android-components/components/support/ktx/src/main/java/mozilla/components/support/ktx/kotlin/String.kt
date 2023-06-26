@@ -6,13 +6,17 @@
 
 package mozilla.components.support.ktx.kotlin
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.InetAddresses
 import android.net.Uri
 import android.os.Build
+import android.util.Base64
 import android.util.Patterns
 import android.webkit.URLUtil
 import androidx.core.net.toUri
 import mozilla.components.lib.publicsuffixlist.PublicSuffixList
+import mozilla.components.support.ktx.android.net.commonPrefixes
 import mozilla.components.support.ktx.android.net.hostWithoutCommonPrefixes
 import mozilla.components.support.ktx.util.URLStringUtils
 import java.io.File
@@ -48,6 +52,9 @@ const val MAX_URI_LENGTH = 25000
 
 private const val FILE_PREFIX = "file://"
 private const val MAX_VALID_PORT = 65_535
+
+// Prefix for a valid image URI string
+private const val PNG_URI_PREFIX = "data:image/png;base64,"
 
 /**
  * Shortens URLs to be more user friendly.
@@ -381,6 +388,16 @@ fun String.getRepresentativeCharacter(): String {
 }
 
 /**
+ * Strips common mobile subdomains from a [String].
+ */
+fun String.stripCommonSubdomains(): String {
+    for (prefix in commonPrefixes) {
+        if (this.startsWith(prefix)) return this.substring(prefix.length)
+    }
+    return this
+}
+
+/**
  * Returns the last 4 digits from a formatted credit card number string.
  */
 fun String.last4Digits(): String {
@@ -393,4 +410,23 @@ fun String.last4Digits(): String {
  */
 fun String.trimmed(): String {
     return this.take(MAX_URI_LENGTH)
+}
+
+/**
+ * Returns a bitmap from the base64 representation of a PNG.
+ * Returns null if the string is not a valid base64 representation of a PNG
+ */
+fun String.base64PngToBitmap(): Bitmap? = base64ToBitmap(PNG_URI_PREFIX)
+
+/**
+ * Returns a bitmap from its base64 representation.
+ * Returns null if the string is not a valid base64 representation of a bitmap
+ * @param prefix the prefix expected for the string to be considered a valid base64 bitmap string
+ */
+private fun String.base64ToBitmap(prefix: String): Bitmap? {
+    if (!startsWith(prefix)) {
+        return null
+    }
+    val raw = Base64.decode(substring(PNG_URI_PREFIX.length), Base64.DEFAULT)
+    return BitmapFactory.decodeByteArray(raw, 0, raw.size)
 }

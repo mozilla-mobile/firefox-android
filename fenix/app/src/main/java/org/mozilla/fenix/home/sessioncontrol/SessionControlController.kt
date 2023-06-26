@@ -26,7 +26,9 @@ import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.tab.collections.ext.invoke
 import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.feature.top.sites.TopSite
+import mozilla.components.service.nimbus.messaging.Message
 import mozilla.components.support.ktx.android.view.showKeyboard
+import mozilla.components.ui.widgets.withCenterAlignedButtons
 import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.GleanMetrics.Collections
@@ -38,8 +40,6 @@ import org.mozilla.fenix.GleanMetrics.RecentTabs
 import org.mozilla.fenix.GleanMetrics.TopSites
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
-import org.mozilla.fenix.browser.BrowserAnimator
-import org.mozilla.fenix.browser.BrowserFragmentDirections
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.collections.SaveCollectionStep
 import org.mozilla.fenix.components.AppStore
@@ -49,17 +49,11 @@ import org.mozilla.fenix.components.appstate.AppState
 import org.mozilla.fenix.components.metrics.MetricsUtils
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
-import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.gleanplumb.Message
-import org.mozilla.fenix.gleanplumb.MessageController
 import org.mozilla.fenix.home.HomeFragment
 import org.mozilla.fenix.home.HomeFragmentDirections
-import org.mozilla.fenix.home.Mode
+import org.mozilla.fenix.messaging.MessageController
 import org.mozilla.fenix.onboarding.WallpaperOnboardingDialogFragment.Companion.THUMBNAILS_SELECTION_COUNT
-import org.mozilla.fenix.search.toolbar.SearchSelectorInteractor
-import org.mozilla.fenix.search.toolbar.SearchSelectorMenu
 import org.mozilla.fenix.settings.SupportUtils
-import org.mozilla.fenix.settings.SupportUtils.SumoTopic.PRIVATE_BROWSING_MYTHS
 import org.mozilla.fenix.utils.Settings
 import org.mozilla.fenix.wallpapers.Wallpaper
 import org.mozilla.fenix.wallpapers.WallpaperState
@@ -107,11 +101,6 @@ interface SessionControlController {
     fun handleOpenInPrivateTabClicked(topSite: TopSite)
 
     /**
-     * @see [TabSessionInteractor.onPrivateBrowsingLearnMoreClicked]
-     */
-    fun handlePrivateBrowsingLearnMoreClicked()
-
-    /**
      * @see [TopSiteInteractor.onRenameTopSiteClicked]
      */
     fun handleRenameTopSiteClicked(topSite: TopSite)
@@ -142,6 +131,11 @@ interface SessionControlController {
     fun handleSponsorPrivacyClicked()
 
     /**
+     * @see [TopSiteInteractor.onTopSiteLongClicked]
+     */
+    fun handleTopSiteLongClicked(topSite: TopSite)
+
+    /**
      * @see [CollectionInteractor.onToggleCollectionExpanded]
      */
     fun handleToggleCollectionExpanded(collection: TabCollection, expand: Boolean)
@@ -167,11 +161,6 @@ interface SessionControlController {
     fun handleMessageClosed(message: Message)
 
     /**
-     * @see [TabSessionInteractor.onPrivateModeButtonClicked]
-     */
-    fun handlePrivateModeButtonClicked(newMode: BrowsingMode, userHasBeenOnboarded: Boolean)
-
-    /**
      * @see [CustomizeHomeIteractor.openCustomizeHomePage]
      */
     fun handleCustomizeHomeTapped()
@@ -185,11 +174,6 @@ interface SessionControlController {
      * @see [SessionControlInteractor.reportSessionMetrics]
      */
     fun handleReportSessionMetrics(state: AppState)
-
-    /**
-     * @see [SearchSelectorInteractor.onMenuItemTapped]
-     */
-    fun handleMenuItemTapped(item: SearchSelectorMenu.Item)
 }
 
 @Suppress("TooManyFunctions", "LargeClass", "LongParameterList")
@@ -222,7 +206,7 @@ class DefaultSessionControlController(
 
     override fun handleCollectionOpenTabClicked(tab: ComponentTab) {
         restoreUseCase.invoke(
-            activity,
+            activity.filesDir,
             engine,
             tab,
             onTabRestored = {
@@ -244,7 +228,7 @@ class DefaultSessionControlController(
 
     override fun handleCollectionOpenTabsTapped(collection: TabCollection) {
         restoreUseCase.invoke(
-            activity,
+            activity.filesDir,
             engine,
             collection,
             onFailure = { url ->
@@ -301,14 +285,6 @@ class DefaultSessionControlController(
         }
     }
 
-    override fun handlePrivateBrowsingLearnMoreClicked() {
-        activity.openToBrowserAndLoad(
-            searchTermOrURL = SupportUtils.getGenericSumoURLForTopic(PRIVATE_BROWSING_MYTHS),
-            newTab = true,
-            from = BrowserDirection.FromHome,
-        )
-    }
-
     @SuppressLint("InflateParams")
     override fun handleRenameTopSiteClicked(topSite: TopSite) {
         activity.let {
@@ -336,7 +312,7 @@ class DefaultSessionControlController(
                 setNegativeButton(R.string.top_sites_rename_dialog_cancel) { dialog, _ ->
                     dialog.cancel()
                 }
-            }.show().also {
+            }.show().withCenterAlignedButtons().also {
                 topSiteLabelEditText.setSelection(0, topSiteLabelEditText.text.length)
                 topSiteLabelEditText.showKeyboard()
             }
@@ -439,6 +415,10 @@ class DefaultSessionControlController(
             newTab = true,
             from = BrowserDirection.FromHome,
         )
+    }
+
+    override fun handleTopSiteLongClicked(topSite: TopSite) {
+        TopSites.longPress.record(TopSites.LongPressExtra(topSite.type))
     }
 
     @VisibleForTesting
@@ -550,29 +530,6 @@ class DefaultSessionControlController(
         messageController.onMessageDismissed(message)
     }
 
-    override fun handlePrivateModeButtonClicked(
-        newMode: BrowsingMode,
-        userHasBeenOnboarded: Boolean,
-    ) {
-        if (newMode == BrowsingMode.Private) {
-            activity.settings().incrementNumTimesPrivateModeOpened()
-        }
-
-        if (userHasBeenOnboarded) {
-            appStore.dispatch(
-                AppAction.ModeChange(Mode.fromBrowsingMode(newMode)),
-            )
-
-            if (navController.currentDestination?.id == R.id.searchDialogFragment) {
-                navController.navigate(
-                    BrowserFragmentDirections.actionGlobalSearchDialog(
-                        sessionId = null,
-                    ),
-                )
-            }
-        }
-    }
-
     override fun handleReportSessionMetrics(state: AppState) {
         if (state.recentTabs.isEmpty()) {
             RecentTabs.sectionVisible.set(false)
@@ -581,27 +538,5 @@ class DefaultSessionControlController(
         }
 
         RecentBookmarks.recentBookmarksCount.set(state.recentBookmarks.size.toLong())
-    }
-
-    override fun handleMenuItemTapped(item: SearchSelectorMenu.Item) {
-        when (item) {
-            SearchSelectorMenu.Item.SearchSettings -> {
-                navController.nav(
-                    R.id.homeFragment,
-                    HomeFragmentDirections.actionGlobalSearchEngineFragment(),
-                )
-            }
-            is SearchSelectorMenu.Item.SearchEngine -> {
-                val directions = HomeFragmentDirections.actionGlobalSearchDialog(
-                    sessionId = null,
-                    searchEngine = item.searchEngine.id,
-                )
-                navController.nav(
-                    R.id.homeFragment,
-                    directions,
-                    BrowserAnimator.getToolbarNavOptions(activity),
-                )
-            }
-        }
     }
 }

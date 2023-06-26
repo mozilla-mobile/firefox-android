@@ -11,7 +11,7 @@ import androidx.annotation.VisibleForTesting
 import androidx.fragment.app.FragmentManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.mapNotNull
 import mozilla.components.browser.state.action.ContentAction
 import mozilla.components.browser.state.selector.findTabOrCustomTabOrSelectedTab
@@ -26,7 +26,6 @@ import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.lib.state.ext.flowScoped
 import mozilla.components.support.base.feature.LifecycleAwareFeature
 import mozilla.components.support.ktx.android.content.appName
-import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 
 /**
  * This feature implements observer for handling redirects to external apps. The users are asked to
@@ -56,7 +55,7 @@ class AppLinksFeature(
     private val dialog: RedirectDialogFragment? = null,
     private val launchInApp: () -> Boolean = { false },
     private val useCases: AppLinksUseCases = AppLinksUseCases(context, launchInApp),
-    private val failedToLaunchAction: () -> Unit = {},
+    private val failedToLaunchAction: (fallbackUrl: String?) -> Unit = {},
     private val loadUrlUseCase: SessionUseCases.DefaultLoadUrlUseCase? = null,
     private val engineSupportedSchemes: Set<String> = ENGINE_SUPPORTED_SCHEMES,
     private val shouldPrompt: () -> Boolean = { true },
@@ -70,7 +69,7 @@ class AppLinksFeature(
     override fun start() {
         scope = store.flowScoped { flow ->
             flow.mapNotNull { state -> state.findTabOrCustomTabOrSelectedTab(sessionId) }
-                .ifChanged {
+                .distinctUntilChangedBy {
                     it.content.appIntent
                 }
                 .collect { tab ->
@@ -107,7 +106,10 @@ class AppLinksFeature(
             )
         }
 
-        if ((!tab.content.private && !shouldPrompt()) || fragmentManager == null) {
+        @Suppress("ComplexCondition")
+        if (isSameCallerAndApp(tab, appIntent) || (!tab.content.private && !shouldPrompt()) ||
+            fragmentManager == null
+        ) {
             doOpenApp()
             return
         }
@@ -166,5 +168,16 @@ class AppLinksFeature(
 
     private fun findPreviousDialogFragment(): RedirectDialogFragment? {
         return fragmentManager?.findFragmentByTag(FRAGMENT_TAG) as? RedirectDialogFragment
+    }
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    internal fun isSameCallerAndApp(tab: SessionState, appIntent: Intent): Boolean {
+        return (tab.source as? SessionState.Source.External)?.let { externalSource ->
+            when (externalSource.caller?.packageId) {
+                null -> false
+                appIntent.component?.packageName -> true
+                else -> false
+            }
+        } ?: false
     }
 }

@@ -33,6 +33,14 @@ abstract class EngineSession(
      * Interface to be implemented by classes that want to observe this engine session.
      */
     interface Observer {
+        /**
+         * Event to indicate the scroll position of the content has changed.
+         *
+         * @param scrollX The new horizontal scroll position in pixels.
+         * @param scrollY The new vertical scroll position in pixels.
+         */
+        fun onScrollChange(scrollX: Int, scrollY: Int) = Unit
+
         fun onLocationChange(url: String) = Unit
         fun onTitleChange(title: String) = Unit
 
@@ -247,6 +255,9 @@ abstract class EngineSession(
          * @param contentType The type of content to be downloaded.
          * @param cookie The cookie related to request.
          * @param userAgent The user agent of the engine.
+         * @param skipConfirmation Whether or not the confirmation dialog should be shown before the download begins.
+         * @param openInApp Whether or not the associated resource should be opened in a third party
+         * app after processed successfully.
          * @param isPrivate Indicates if the download was requested from a private session.
          * @param response A response object associated with this request, when provided can be
          * used instead of performing a manual a download.
@@ -260,6 +271,8 @@ abstract class EngineSession(
             cookie: String? = null,
             userAgent: String? = null,
             isPrivate: Boolean = false,
+            skipConfirmation: Boolean = false,
+            openInApp: Boolean = false,
             response: Response? = null,
         ) = Unit
 
@@ -277,6 +290,24 @@ abstract class EngineSession(
          * @param throwable The throwable from the exception.
          */
         fun onSaveToPdfException(throwable: Throwable) = Unit
+
+        /**
+         * Event to indicate that printing finished.
+         */
+        fun onPrintFinish() = Unit
+
+        /**
+         * Event to indicate that an exception was thrown while preparing to print or save as pdf.
+         *
+         * @param isPrint true for a true print error or false for a Save as PDF error.
+         * @param throwable The exception throwable. Usually a GeckoPrintException.
+         */
+        fun onPrintException(isPrint: Boolean, throwable: Throwable) = Unit
+
+        /**
+         * Event to indicate that the PDF was successfully generated.
+         */
+        fun onSaveToPdfComplete() = Unit
 
         /**
          * Event to indicate that this session needs to be checked for form data.
@@ -723,6 +754,13 @@ abstract class EngineSession(
     abstract fun requestPdfToDownload()
 
     /**
+     * Requests the [EngineSession] to print the current session's contents.
+     *
+     * This will open the Android Print Spooler.
+     */
+    abstract fun requestPrintContent()
+
+    /**
      * Stops loading the current session.
      */
     abstract fun stopLoading()
@@ -791,6 +829,16 @@ abstract class EngineSession(
     abstract fun hasCookieBannerRuleForSession(onResult: (Boolean) -> Unit, onException: (Throwable) -> Unit)
 
     /**
+     * Checks if the current session is using a PDF viewer.
+     *
+     * @param onSuccess callback invoked if the engine API returned a valid response. Please note
+     * that the response can be null - which can indicate a bug, a miscommunication
+     * or other unexpected failure.
+     * @param onError callback invoked if there was an error getting the response.
+     */
+    abstract fun checkForPdfViewer(onResult: (Boolean) -> Unit, onException: (Throwable) -> Unit)
+
+    /**
      * Finds and highlights all occurrences of the provided String and highlights them asynchronously.
      *
      * @param text the String to search for
@@ -851,4 +899,11 @@ abstract class EngineSession(
      * Returns the list of URL schemes that are blocked from loading.
      */
     open fun getBlockedSchemes(): List<String> = emptyList()
+
+    /**
+     * Set the display member in Web App Manifest for this session.
+     *
+     * @param displayMode the display mode value for this session.
+     */
+    open fun setDisplayMode(displayMode: WebAppManifest.DisplayMode) = Unit
 }

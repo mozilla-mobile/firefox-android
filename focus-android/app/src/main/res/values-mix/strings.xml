@@ -137,6 +137,19 @@
           Do not translate or transliterate Focus Nightly.-->
     <string name="text_selection_search_action_focus_nightly">Nduku tsi Focus Nightly</string>
 
+    <!-- Content of about focus. Argument 1 is the app name (Firefox Focus/Firefox Klar/etc).
+         Argument 2 is the url for the learn-more link. -->
+    <string name="about_content"><![CDATA[<p>%1$s te da el control.</p>
+<p>Usalo como navegador privado:
+  <ul>
+    <li>Buscar y navegar directamente en la aplicación</li>
+    <li>Bloquear rastreadores (o actualizar los ajustes para permitir rastreadores)</li>
+    <li>Borrar para eliminar cookies e historial de búsqueda y navegación</li>
+  </ul>
+</p>
+<p>%1$s es producido por Mozilla. Nuestra misión es promover una Internet saludable y abierta.<br/>
+<a href="%2$s">Conocer más</a></p>]]></string>
+
     <!-- Header for the Privacy and Security settings menu -->
     <string name="preference_privacy_and_security_header">Ña i\'í tsi Ña kunka vai</string>
 
@@ -196,8 +209,16 @@
     <!-- Title of "switch" preference that enables/disables autocomplete for the default list -->
     <string name="preference_switch_autocomplete_topsites">Sitio kua ncheu</string>
 
+    <!-- Summary for the toggle to enable autocomplete for the topsites list
+    %s is a placeholder for the app name (e.g. Firefox Focus)-->
+    <string name="preference_autocomplete_topsite_summary2">Habilitar para que %s autocomplete más de 450 URLs populares en la barra de direcciones.</string>
+
     <!-- Title of "switch" preference that enables/disables autocomplete for the user-defined list -->
     <string name="preference_switch_autocomplete_user_list">Sitio chikau</string>
+
+    <!-- Summary for the toggle to enable autocomplete for the user-defined list
+     %s is a placeholder for the app name (e.g. Firefox Focus)-->
+    <string name="preference_autocomplete_user_list_summary2">Habilitar para que %s autocomplete tus URLs favoritas.</string>
 
     <!-- Preference category: Manage (user-defined) sites -->
     <string name="preference_category_autocomplete_manage_sites">Kunche sitio</string>
@@ -290,6 +311,12 @@
     <!-- Preference Title: Biometrics can be used to unlock Focus if the previous session's data was not erased by the user. -->
     <string name="preference_security_biometric">Kuchun huella digital tava kunu aplicación</string>
 
+    <!-- Preference Summary: Biometrics (iris scan, fingerprint, or facial scan) can be used to unlock Focus if the app had a URL
+        open when the app was last run to ensure that only the phone's owner can view a previous session.
+        %s will be replaced by the app name (e.g. Firefox Focus)
+        Shortcuts is a feature that allows the user to pin his favorite websites to Focus home screen so he can quickly access them-->
+    <string name="preference_security_biometric_summary2">Desbloqueá usando la huella digital si agregaste accesos directos o cuando un sitio web ya está abierto en %s.</string>
+
     <!-- Preference Title: Secure Mode is a setting that prevents the app's content to show up in the "recent apps" screen
          and prevents the user from taking screenshots or casting the app to other displays. -->
     <string name="preference_privacy_secure_mode">Sèè</string>
@@ -327,6 +354,15 @@
 
     <!-- In-app link (in settings) to Focus privacy notice. -->
     <string name="preference_privacy_notice">Nixi inka vaa tutu\'ku</string>
+
+    <!-- In-app link (in settings) to Focus licensing information. -->
+    <string name="preference_licensing_info">Información de licencia</string>
+
+    <!-- Link to Focus licensing information from other libraries that we use. -->
+    <string name="preference_libraries_we_use">Bibliotecas que usamos</string>
+
+    <!-- Open Source Licenses page title. The first parameter is the app name -->
+    <string name="open_source_licenses_title">%s | Bibliotecas OSS</string>
 
     <!-- Item in Preferences that shows the about page. Parameter 1 is the app name, i.e. Firefox Focus/Firefox Klar. -->
     <string name="preference_about">Tsaa ña\'a%1$s</string>
@@ -457,7 +493,10 @@
 
 
 
-  <string name="error_hostLookup_title">Kòo servidor ni ntanèe</string>
+  <!-- Snackbar that will be displayed after a website has been added to shortcuts. -->
+    <string name="snackbar_added_to_shortcuts">Tyika xina</string>
+
+    <string name="error_hostLookup_title">Kòo servidor ni ntanèe</string>
 
 
 
@@ -484,12 +523,22 @@
     <!-- %1$s will be replaced by the app name and build variant(e.g. Firefox Focus, Firefox Klar Nightly) -->
     <string name="onboarding_first_screen_title">A nikitsau nu %1$s</string>
 
+    <!-- New Onboarding flow first screen subtitle the one that appears under title -->
+    <string name="onboarding_first_screen_subtitle">Rápido. Privado. Sin distracciones.</string>
+
     <!-- New Onboarding flow first screen button label-->
     <string name="onboarding_first_screen_button_text">Ki tsaà</string>
 
     <!-- Onboarding second screen: Title -->
     <!-- %1$s will be replaced by the app short name(Focus) -->
     <string name="onboarding_second_screen_title">%1$s kue inui tsi inka la nduku</string>
+
+    <!-- New Onboarding flow second screen subtitle the one that appears under title -->
+    <string name="onboarding_second_screen_subtitle_one">Borramos tu historial cuando cerrás la aplicación para mayor privacidad.</string>
+
+    <!-- New Onboarding flow second screen subtitle two the one that appears under subtitle one -->
+    <!-- %1$s will be replaced by the app short name(Focus) -->
+    <string name="onboarding_second_screen_subtitle_two">Poné a %1$s como predeterminado para proteger tus datos con cada enlace que abrás.</string>
 
     <!-- New Onboarding flow second screen make Focus default browser button label-->
     <string name="onboarding_second_screen_default_browser_button_text">Tyika Tana ña nduku xina</string>
@@ -536,6 +585,10 @@
     <!-- Label of the action that will close the dialog and not add anything to the home screen (shown in the confirmation dialog). -->
     <string name="dialog_addtohomescreen_action_no">Va´á</string>
 
+    <!-- When enhanced tracking protection is disabled for the current session then we will show this warning in the "Add to home screen" dialog to
+         let the user know that the shortcut will always be opened with enhanced tracking protection disabled. -->
+    <string name="dialog_addtohomescreen_tracking_protection2">El acceso directo se abrirá con la protección de rastreo aumentada desactivada</string>
+
     <!-- The user visible name of the "notification channel" (Android 8+ feature) for the ongoing notification shown while a browsing session is active.
     The recommended maximum length is 40 characters; the value may be truncated if it is too long.
 
@@ -575,6 +628,17 @@
     %1$s will be replaced with the name of the app (e.g. Firefox Focus)
     %2$s will be replaced with a URL linking to the trademark policy (e.g. https://www.mozilla.org/foundation/trademarks/policy/) -->
     <string name="your_rights_content3"><![CDATA[Ma ku kuatyu´un marca a licencia tsa fundación Mozilla a inka ña´a, tana logos a sivi Mozilla, Firefox a %1$s. kuntyee nu <a href="%2$s">aquí</a>.]]></string>
+
+    <!-- Text shown in the "Your rights" screen.
+    %1$s will be replaced with the name of the app (e.g. Firefox Focus)
+    %2$s will be replaced with a URL linking to the list of licenses used by the dependencies.-->
+    <string name="your_rights_content4"><![CDATA[El código fuente adicional para %1$s está disponible bajo varias otras <a href="%2$s">licencias</a> gratuitas y de código abierto.]]></string>
+
+    <!-- Text shown in the "Your rights" screen.
+    %1$s will be replaced with the name of the app (e.g. Firefox Focus)
+    %2$s will be replaced with a URL linking to the GPL
+    %3$s will be replaced with a URL linking to the tracking protection wiki page (e.g. https://wiki.mozilla.org/Security/Tracking_protection#Lists) -->
+    <string name="your_rights_content5"><![CDATA[%1$s también usa listas de bloqueo provistas por Disconnect, Inc. como trabajos separados e independientes bajo la <a href="%2$s">GPLv3 (GNU General Public License v3)</a>, y se encuentra disponible <a href="%3$s">aquí</a>.]]></string>
 
     <!-- Text shown in prompts for GeckoView -->
     <string name="gv_prompt_username_hint">Sivìi</string>
@@ -656,6 +720,9 @@
     <!-- Text for indicating cookie banner handling is on this site, this is shown as part of the protections panel with the tracking protection toggle. -->
     <string name="cookie_banner_exception_item_description_state_on">ACTIVADA para este sitio</string>
 
+    <!-- Text for indicating cookie reducer is not supported on the current site, this is shown as part of the protections panel with the tracking protection toggle. -->
+    <string name="cookie_banner_exception_site_not_supported">El sitio actualmente no es compatible</string>
+
     <!-- Text for indicating cookie banner handling is off this site, this is shown as part of the protections panel with the tracking protection toggle. -->
     <string name="cookie_banner_exception_item_description_state_off">DESACTIVADA para este sitio</string>
 
@@ -674,8 +741,27 @@
     <!-- Title text for a detail explanation indicating cookie banner handling is off this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site. -->
     <string name="cookie_banner_exception_panel_title_state_off_for_site">¿Habilitar reducción de mensajes de cookies para %1$s?</string>
 
-    <!-- CFR for Cookie Banner (Banner Info Message). This text should be the same as the settings text from "cfr_for_cookie_banner". The text should be underlined and should redirect the user to the cookie banner settings screen. -->
-    <string name="cfr_for_cookie_banner_underline_settings" moz:RemovedIn="111" tools:ignore="UnusedResources">Ndasama</string>
+    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The placeholder will be updated with the app name. -->
+    <string name="cookie_banner_exception_panel_description_state_on_for_site">%1$s borrará las cookies de este sitio y actualizará la página. Borrar todas las cookies puede cerrar la sesión o vaciar los carritos de compras.</string>
+
+    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The placeholder will be updated with the app name. -->
+    <string name="cookie_banner_exception_panel_description_state_off_for_site2">%1$s puede intentar rechazar automáticamente las solicitudes de cookies.</string>
+
+    <!-- Long text for a detail explanation indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_description_site_is_not_supported">Este sitio actualmente no soporta la reducción de mensajes de cookies. ¿Querés pedirle a nuestro equipo que revise este sitio web y agregue soporte en el futuro?</string>
+
+    <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_site_is_not_supported_cancel_button">Kunchatu</string>
+
+    <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_site_is_not_supported_request_support_button">Katu un</string>
+
+    <!-- Label for the snackBar, after the user reports with success a website where cookie banner reducer did not work -->
+    <string name="cookie_banner_report_a_site_snackbar_label">Pedido para soporte del sitio enviado.</string>
+
+    <!-- Label for cookie banner item from tracking protection, after the user reports with success a website where cookie banner reducer did not work -->
+    <string name="cookie_banner_the_site_was_reported">Pedido para soporte del sitio enviado.</string>
+
     <!-- CFR for Cookie Banner (Banner Info Message). This string is used as text for a link in cfr_cookie_banner and takes the user to the app settings. -->
     <string name="cfr_cookie_banner_link">Ndasama</string>
 
@@ -778,6 +864,9 @@
     This is displayed during the authentication flow as the app launches.-->
     <string name="biometric_auth_moved_too_quickly">Vichi nchua ni kanta ndau. Kitsa tuku.</string>
 
+    <!-- Title for the prompt to enable search suggestions -->
+    <string name="enable_search_suggestion_title2">A Kuncheu nixi ndukuku</string>
+
     <!-- Label used for the "NO button" for the prompt to enable search suggestions -->
     <string name="enable_search_suggestions_no">No</string>
 
@@ -829,6 +918,8 @@
 
     <!-- Title for the tab crash report screen-->
     <string name="tab_crash_report_title">Vaa Xikua</string>
+    <!-- Headline for the tab crash report screen -->
+    <string name="tab_crash_report_headline">Kue ku nuna xikua yoo</string>
     <!-- Subtitle for the tab crash report screen -->
     <string name="tab_crash_report_description">Ña Ntukú sèè, kue nchikavai ña ntsinu tsi xikua ntsinu sata.</string>
     <!-- Label for button to close the tab-->
@@ -893,6 +984,12 @@
     <!-- Preference for using following device theme -->
     <string name="preference_follow_device_theme">Tatyu´un ña inka nu kaa ndusu ku</string>
 
+     <!-- The title of the error page for websites that do not support HTTPS when HTTPS-Only is turned on  -->
+    <string name="errorpage_httpsonly_title2">Sitio yo kue ku kuni HTTPS</string>
+
+    <!-- The document title and heading of the error page shown when a website has an invalid or expired SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_title">Conexión ntu va´a</string>
+
      <!-- Sessions List -->
     <!-- Content description (not visible, for screen readers etc.): Button that closes a tab n the sessions list -->
     <string name="close_tab">Kasi xikua</string>
@@ -909,4 +1006,18 @@
 
     <!-- Promote SearchWidget Dialog -->
 
-    </resources>
+    <!-- Content description (not visible, for screen readers etc.): This is the description for the
+    close button from promote search widget dialog. -->
+    <string name="promote_search_widget_dialog_content_description">Kasi</string>
+
+    <!-- This is the title of promote search widget dialog. -->
+    <string name="promote_search_widget_dialog_title">¡Koo ña ntsinu ! 🎉</string>
+
+    <!-- This is te text from add search widget to home screen button .The button is located on
+    promote search widget dialog. -->
+    <string name="promote_search_widget_button_text">Chika\'a nu pantalla xina</string>
+
+    <!-- This is te text of the snackbar that appears after the search widget was added successfully
+    to the home screen. -->
+    <string name="promote_search_widget_snackbar_message">Tyika Widget xina</string>
+</resources>

@@ -26,6 +26,7 @@ import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.feature.downloads.AbstractFetchDownloadService
 import mozilla.components.feature.downloads.AbstractFetchDownloadService.Companion.EXTRA_DOWNLOAD_STATUS
 import mozilla.components.feature.downloads.ext.isScheme
+import mozilla.components.support.base.android.NotificationsDelegate
 import mozilla.components.support.utils.ext.getSerializableExtraCompat
 import kotlin.reflect.KClass
 
@@ -41,6 +42,7 @@ class FetchDownloadManager<T : AbstractFetchDownloadService>(
     private val service: KClass<T>,
     private val broadcastManager: LocalBroadcastManager = LocalBroadcastManager.getInstance(applicationContext),
     override var onDownloadStopped: onDownloadStopped = noop,
+    private val notificationsDelegate: NotificationsDelegate,
 ) : BroadcastReceiver(), DownloadManager {
 
     private var isSubscribedReceiver = false
@@ -66,10 +68,14 @@ class FetchDownloadManager<T : AbstractFetchDownloadService>(
      * @return the id reference of the scheduled download.
      */
     override fun download(download: DownloadState, cookie: String): String? {
-        if (!download.isScheme(listOf("http", "https", "data", "blob"))) {
+        if (!download.isScheme(listOf("http", "https", "data", "blob", "moz-extension"))) {
             return null
         }
         validatePermissionGranted(applicationContext)
+
+        if (SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            notificationsDelegate.requestNotificationPermission()
+        }
 
         // The middleware will notify the service to start the download
         // once this action is processed.
@@ -84,6 +90,7 @@ class FetchDownloadManager<T : AbstractFetchDownloadService>(
 
         val intent = Intent(applicationContext, service.java)
         intent.putExtra(EXTRA_DOWNLOAD_ID, download.id)
+        intent.action = AbstractFetchDownloadService.ACTION_TRY_AGAIN
         applicationContext.startService(intent)
 
         registerBroadcastReceiver()

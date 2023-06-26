@@ -9,6 +9,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.spyk
 import io.mockk.verify
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.browser.menu.view.MenuButton
@@ -27,6 +28,7 @@ import org.mozilla.fenix.GleanMetrics.HomeScreen
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.accounts.AccountState
+import org.mozilla.fenix.components.accounts.FenixFxAEntryPoint
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
@@ -46,7 +48,7 @@ class HomeMenuViewTest {
     private lateinit var lifecycleOwner: LifecycleOwner
     private lateinit var homeActivity: HomeActivity
     private lateinit var navController: NavController
-    private lateinit var menuButton: WeakReference<MenuButton>
+    private lateinit var menuButton: MenuButton
     private lateinit var homeMenuView: HomeMenuView
 
     @Before
@@ -54,8 +56,9 @@ class HomeMenuViewTest {
         view = mockk(relaxed = true)
         lifecycleOwner = mockk(relaxed = true)
         homeActivity = mockk(relaxed = true)
-        menuButton = mockk(relaxed = true)
         navController = mockk(relaxed = true)
+
+        menuButton = spyk(MenuButton(testContext))
 
         homeMenuView = HomeMenuView(
             view = view,
@@ -63,9 +66,17 @@ class HomeMenuViewTest {
             lifecycleOwner = lifecycleOwner,
             homeActivity = homeActivity,
             navController = navController,
-            menuButton = menuButton,
-            hideOnboardingIfNeeded = {},
+            menuButton = WeakReference(menuButton),
         )
+    }
+
+    @Test
+    fun `WHEN dismiss menu is called THEN the menu is dismissed`() {
+        homeMenuView.dismissMenu()
+
+        verify {
+            menuButton.dismissMenu()
+        }
     }
 
     @Test
@@ -116,7 +127,9 @@ class HomeMenuViewTest {
         verify {
             navController.nav(
                 R.id.homeFragment,
-                HomeFragmentDirections.actionGlobalAccountProblemFragment(),
+                HomeFragmentDirections.actionGlobalAccountProblemFragment(
+                    entrypoint = FenixFxAEntryPoint.HomeMenu,
+                ),
             )
         }
 
@@ -125,7 +138,7 @@ class HomeMenuViewTest {
         verify {
             navController.nav(
                 R.id.homeFragment,
-                HomeFragmentDirections.actionGlobalTurnOnSync(),
+                HomeFragmentDirections.actionGlobalTurnOnSync(entrypoint = FenixFxAEntryPoint.HomeMenu),
             )
         }
     }
@@ -194,7 +207,7 @@ class HomeMenuViewTest {
             WhatsNew.userViewedWhatsNew(testContext)
 
             homeActivity.openToBrowserAndLoad(
-                searchTermOrURL = SupportUtils.getWhatsNewUrl(testContext),
+                searchTermOrURL = SupportUtils.WHATS_NEW_URL,
                 newTab = true,
                 from = BrowserDirection.FromHome,
             )
@@ -208,7 +221,9 @@ class HomeMenuViewTest {
         verify {
             navController.nav(
                 R.id.homeFragment,
-                HomeFragmentDirections.actionGlobalAccountProblemFragment(),
+                HomeFragmentDirections.actionGlobalAccountProblemFragment(
+                    entrypoint = FenixFxAEntryPoint.HomeMenu,
+                ),
             )
         }
     }

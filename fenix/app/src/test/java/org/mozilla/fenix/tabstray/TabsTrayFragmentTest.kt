@@ -291,6 +291,8 @@ class TabsTrayFragmentTest {
     fun `WHEN setupBackgroundDismissalListener is called THEN it sets a click listener for tray's tabLayout and handle`() {
         var clickCount = 0
         val callback: (View) -> Unit = { clickCount++ }
+        every { fragment.context } returns testContext
+        every { testContext.settings().enableTabsTrayToCompose } returns false
 
         fragment.setupBackgroundDismissalListener(callback)
 
@@ -340,6 +342,9 @@ class TabsTrayFragmentTest {
         val tabLayout: TabLayout = mockk {
             every { getTabAt(any()) } returns tab
         }
+
+        every { fragment.context } returns testContext
+        every { testContext.settings().enableTabsTrayToCompose } returns false
 
         mockkStatic(ViewBindings::class) {
             every { ViewBindings.findChildViewById<View>(tabsTrayBinding.root, tabsTrayBinding.tabsTray.id) } returns tabsTray

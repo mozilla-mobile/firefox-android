@@ -13,18 +13,19 @@ import android.os.Build
 import android.os.StrictMode
 import androidx.annotation.CheckResult
 import androidx.annotation.VisibleForTesting
+import androidx.core.net.toUri
 import androidx.preference.PreferenceManager
 import kotlinx.coroutines.runBlocking
 import mozilla.components.browser.state.search.SearchEngine
 import mozilla.components.browser.state.selector.privateTabs
 import mozilla.components.browser.state.state.selectedOrDefaultSearchEngine
+import mozilla.components.support.ktx.android.net.hostWithoutCommonPrefixes
 import org.json.JSONObject
 import org.mozilla.focus.BuildConfig
 import org.mozilla.focus.R
 import org.mozilla.focus.ext.components
 import org.mozilla.focus.utils.AppConstants
 import org.mozilla.focus.utils.MobileMetricsPingStorage
-import org.mozilla.focus.utils.UrlUtils
 import org.mozilla.telemetry.Telemetry
 import org.mozilla.telemetry.TelemetryHolder
 import org.mozilla.telemetry.config.TelemetryConfiguration
@@ -39,7 +40,6 @@ import org.mozilla.telemetry.schedule.jobscheduler.JobSchedulerTelemetrySchedule
 import org.mozilla.telemetry.serialize.JSONPingSerializer
 import org.mozilla.telemetry.storage.FileTelemetryStorage
 import java.net.MalformedURLException
-import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -145,7 +145,6 @@ object TelemetryWrapper {
         const val CANCEL = "cancel"
         const val ADD_TO_HOMESCREEN = "add_to_homescreen"
         const val TAB = "tab"
-        const val WHATS_NEW = "whats_new"
         const val RESUME = "resume"
         const val RELOAD = "refresh"
         const val FULL_BROWSER = "full_browser"
@@ -308,7 +307,7 @@ object TelemetryWrapper {
     @JvmStatic
     fun addLoadToHistogram(url: String, newLoadTime: Long) {
         try {
-            domainMap.add(UrlUtils.stripCommonSubdomains(URL(url).host))
+            url.toUri().hostWithoutCommonPrefixes?.let { domainMap.add(it) }
             numUri++
             var histogramLoadIndex = (newLoadTime / BUCKET_SIZE_MS).toInt()
 
@@ -680,13 +679,6 @@ object TelemetryWrapper {
     @JvmStatic
     fun openTabsTrayEvent() {
         TelemetryEvent.create(Category.ACTION, Method.SHOW, Object.TABS_TRAY).queue()
-    }
-
-    @JvmStatic
-    fun openWhatsNewEvent(highlighted: Boolean) {
-        TelemetryEvent.create(Category.ACTION, Method.CLICK, Object.SETTING, Value.WHATS_NEW)
-            .extra(Extra.HIGHLIGHTED, highlighted.toString())
-            .queue()
     }
 
     @JvmStatic

@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSite
+import mozilla.components.service.nimbus.messaging.Message
 import mozilla.components.service.pocket.PocketStory
 import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.appstate.AppState
@@ -18,16 +19,12 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.shouldShowRecentSyncedTabs
 import org.mozilla.fenix.ext.shouldShowRecentTabs
-import org.mozilla.fenix.gleanplumb.Message
 import org.mozilla.fenix.home.Mode
 import org.mozilla.fenix.home.recentbookmarks.RecentBookmark
 import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItem
-import org.mozilla.fenix.nimbus.MessageSurfaceId
-import org.mozilla.fenix.nimbus.OnboardingPanel
+import org.mozilla.fenix.messaging.FenixMessageSurfaceId
 import org.mozilla.fenix.onboarding.HomeCFRPresenter
-import org.mozilla.fenix.onboarding.OnboardingState
 import org.mozilla.fenix.utils.Settings
-import org.mozilla.fenix.nimbus.Onboarding as OnboardingConfig
 
 // This method got a little complex with the addition of the tab tray feature flag
 // When we remove the tabs from the home screen this will get much simpler again.
@@ -58,7 +55,11 @@ internal fun normalModeAdapterItems(
     }
 
     if (settings.showTopSitesFeature && topSites.isNotEmpty()) {
-        items.add(AdapterItem.TopSitePager(topSites))
+        if (settings.enableComposeTopSites) {
+            items.add(AdapterItem.TopSites)
+        } else {
+            items.add(AdapterItem.TopSitePager(topSites))
+        }
     }
 
     if (showRecentTab) {
@@ -129,34 +130,6 @@ private fun showCollections(
 
 private fun privateModeAdapterItems() = listOf(AdapterItem.PrivateBrowsingDescription)
 
-private fun onboardingAdapterItems(
-    onboardingState: OnboardingState,
-    onboardingConfig: OnboardingConfig,
-): List<AdapterItem> {
-    val items: MutableList<AdapterItem> = mutableListOf(AdapterItem.OnboardingHeader)
-
-    onboardingConfig.order.forEach {
-        when (it) {
-            OnboardingPanel.THEMES -> items.add(AdapterItem.OnboardingThemePicker)
-            OnboardingPanel.TOOLBAR_PLACEMENT -> items.add(AdapterItem.OnboardingToolbarPositionPicker)
-            // Customize FxA items based on where we are with the account state:
-            OnboardingPanel.SYNC -> if (onboardingState == OnboardingState.SignedOutNoAutoSignIn) {
-                items.add(AdapterItem.OnboardingManualSignIn)
-            }
-            OnboardingPanel.TCP -> items.add(AdapterItem.OnboardingTrackingProtection)
-            OnboardingPanel.PRIVACY_NOTICE -> items.add(AdapterItem.OnboardingPrivacyNotice)
-        }
-    }
-    items.addAll(
-        listOf(
-            AdapterItem.OnboardingFinish,
-            AdapterItem.BottomSpacer,
-        ),
-    )
-
-    return items
-}
-
 private fun AppState.toAdapterList(settings: Settings): List<AdapterItem> = when (mode) {
     is Mode.Normal -> normalModeAdapterItems(
         settings,
@@ -165,7 +138,7 @@ private fun AppState.toAdapterList(settings: Settings): List<AdapterItem> = when
         expandedCollections,
         recentBookmarks,
         showCollectionPlaceholder,
-        messaging.messageToShow[MessageSurfaceId.HOMESCREEN],
+        messaging.messageToShow[FenixMessageSurfaceId.HOMESCREEN],
         shouldShowRecentTabs(settings),
         shouldShowRecentSyncedTabs(settings),
         recentHistory,
@@ -173,7 +146,6 @@ private fun AppState.toAdapterList(settings: Settings): List<AdapterItem> = when
         firstFrameDrawn,
     )
     is Mode.Private -> privateModeAdapterItems()
-    is Mode.Onboarding -> onboardingAdapterItems(mode.state, mode.config)
 }
 
 private fun collectionTabItems(collection: TabCollection) =

@@ -14,6 +14,7 @@ import mozilla.components.support.ktx.android.content.getColorFromAttr
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.IntentReceiverActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.customtabs.EXTRA_IS_SANDBOX_CUSTOM_TAB
 import org.mozilla.fenix.settings.account.AuthIntentReceiverActivity
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
@@ -25,7 +26,7 @@ object SupportUtils {
     const val WIKIPEDIA_URL = "https://www.wikipedia.org/"
     const val FENIX_PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=${BuildConfig.APPLICATION_ID}"
     const val GOOGLE_URL = "https://www.google.com/"
-    const val BAIDU_URL = "https://m.baidu.com/?from=1000969a"
+    const val BAIDU_URL = "https://m.baidu.com/"
     const val JD_URL = "https://union-click.jd.com/jdc" +
         "?e=&p=AyIGZRprFDJWWA1FBCVbV0IUWVALHFRBEwQAQB1AWQkFVUVXfFkAF14lRFRbJXstVWR3WQ1rJ08AZnhS" +
         "HDJBYh4LZR9eEAMUBlccWCUBEQZRGFoXCxc3ZRteJUl8BmUZWhQ" +
@@ -36,17 +37,17 @@ object SupportUtils {
     const val MEITUAN_URL = "https://tb.j5k6.com/6ZSOp"
     const val GOOGLE_US_URL = "https://www.google.com/webhp?client=firefox-b-1-m&channel=ts"
     const val GOOGLE_XX_URL = "https://www.google.com/webhp?client=firefox-b-m&channel=ts"
+    const val WHATS_NEW_URL = "https://www.mozilla.org/firefox/android/notes"
 
     enum class SumoTopic(internal val topicStr: String) {
         HELP("faq-android"),
         PRIVATE_BROWSING_MYTHS("common-myths-about-private-browsing"),
         YOUR_RIGHTS("your-rights"),
         TRACKING_PROTECTION("tracking-protection-firefox-android"),
-        TOTAL_COOKIE_PROTECTION("enhanced-tracking-protection-firefox-android"),
-        WHATS_NEW("whats-new-firefox-preview"),
+        TOTAL_COOKIE_PROTECTION("enhanced-tracking-protection-android"),
         OPT_OUT_STUDIES("how-opt-out-studies-firefox-android"),
         SEND_TABS("send-tab-preview"),
-        SET_AS_DEFAULT_BROWSER("set-firefox-preview-default"),
+        SET_AS_DEFAULT_BROWSER("make-firefox-default-browser-android"),
         SEARCH_SUGGESTION("how-search-firefox-preview"),
         CUSTOM_SEARCH_ENGINES("custom-search-engines"),
         SYNC_SETUP("how-set-firefox-sync-firefox-android"),
@@ -98,8 +99,6 @@ object SupportUtils {
         return "https://www.mozilla.org/$langTag/$path"
     }
 
-    fun getWhatsNewUrl(context: Context) = getSumoURLForTopic(context, SumoTopic.WHATS_NEW)
-
     fun createCustomTabIntent(context: Context, url: String): Intent = CustomTabsIntent.Builder()
         .setInstantAppsEnabled(false)
         .setDefaultColorSchemeParams(
@@ -113,6 +112,13 @@ object SupportUtils {
 
     fun createAuthCustomTabIntent(context: Context, url: String): Intent =
         createCustomTabIntent(context, url).setClassName(context, AuthIntentReceiverActivity::class.java.name)
+
+    /**
+     * Custom tab that cannot open the content in Firefox directly.
+     * This ensures the content is contained to this custom tab only.
+     */
+    fun createSandboxCustomTabIntent(context: Context, url: String): Intent =
+        createCustomTabIntent(context, url).putExtra(EXTRA_IS_SANDBOX_CUSTOM_TAB, true)
 
     private fun getEncodedTopicUTF8(topic: String): String {
         try {

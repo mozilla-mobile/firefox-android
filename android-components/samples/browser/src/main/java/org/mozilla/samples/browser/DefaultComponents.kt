@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.widget.Toast
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -79,6 +80,7 @@ import mozilla.components.service.digitalassetlinks.local.StatementApi
 import mozilla.components.service.digitalassetlinks.local.StatementRelationChecker
 import mozilla.components.service.location.LocationService
 import mozilla.components.service.sync.logins.SyncableLoginsStorage
+import mozilla.components.support.base.android.NotificationsDelegate
 import mozilla.components.support.base.worker.Frequency
 import org.mozilla.samples.browser.addons.AddonsActivity
 import org.mozilla.samples.browser.autofill.AutofillConfirmActivity
@@ -134,8 +136,16 @@ open class DefaultComponents(private val applicationContext: Context) {
         }
     }
 
+    private val notificationManagerCompat = NotificationManagerCompat.from(applicationContext)
+
+    val notificationsDelegate: NotificationsDelegate by lazy {
+        NotificationsDelegate(
+            notificationManagerCompat,
+        )
+    }
+
     val addonUpdater =
-        DefaultAddonUpdater(applicationContext, Frequency(1, TimeUnit.DAYS))
+        DefaultAddonUpdater(applicationContext, Frequency(1, TimeUnit.DAYS), notificationsDelegate)
 
     // Engine
     open val engine: Engine by lazy {
@@ -168,7 +178,7 @@ open class DefaultComponents(private val applicationContext: Context) {
                     LocationService.default(),
                 ),
                 SearchMiddleware(applicationContext),
-                RecordingDevicesMiddleware(applicationContext),
+                RecordingDevicesMiddleware(applicationContext, notificationsDelegate),
                 LastAccessMiddleware(),
                 PromptMiddleware(),
                 SessionPrioritizationMiddleware(),
@@ -181,6 +191,7 @@ open class DefaultComponents(private val applicationContext: Context) {
                 R.mipmap.ic_launcher_foreground,
                 permissionStorage,
                 IntentReceiverActivity::class.java,
+                notificationsDelegate = notificationsDelegate,
             )
 
             MediaSessionFeature(applicationContext, MediaSessionService::class.java, this).start()
@@ -304,6 +315,9 @@ open class DefaultComponents(private val applicationContext: Context) {
             },
             SimpleBrowserMenuItem("Save to PDF") {
                 sessionUseCases.saveToPdf.invoke()
+            },
+            SimpleBrowserMenuItem("Print") {
+                sessionUseCases.printContent.invoke()
             },
             SimpleBrowserMenuItem("Restore after crash") {
                 sessionUseCases.crashRecovery.invoke()
@@ -453,6 +467,7 @@ open class DefaultComponents(private val applicationContext: Context) {
                     }
                 },
             ),
+            notificationsDelegate = notificationsDelegate,
         ).install(applicationContext)
     }
 }

@@ -13,7 +13,10 @@ import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityTestRule
+import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.ui.robots.homeScreen
+import org.mozilla.fenix.ui.robots.navigationToolbar
+import org.mozilla.fenix.ui.robots.notificationShade
 
 /**
  *  Tests for verifying the the privacy and security section of the Settings menu
@@ -54,7 +57,7 @@ class SettingsPrivacyTest {
             verifyHTTPSOnlyModeButton()
             verifySettingsOptionSummary("HTTPS-Only Mode", "Off")
             verifyCookieBannerReductionButton()
-            verifySettingsOptionSummary("Cookie Banner Reduction", "Off")
+            verifySettingsOptionSummary("Cookie banner reduction", "Off")
             verifyEnhancedTrackingProtectionButton()
             verifySettingsOptionSummary("Enhanced Tracking Protection", "Standard")
             verifySitePermissionsButton()
@@ -146,13 +149,38 @@ class SettingsPrivacyTest {
     }
 
     @Test
-    fun notificationPermissionsItemsTest() {
+    fun verifyNotificationsSettingsTest() {
+        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        // Clear all existing notifications
+        notificationShade {
+            mDevice.openNotification()
+            clearNotifications()
+        }
+
         homeScreen {
+        }.togglePrivateBrowsingMode()
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+        }.openNotificationShade {
+            verifySystemNotificationExists("Close private tabs")
+        }.closeNotificationTray {
         }.openThreeDotMenu {
         }.openSettings {
-        }.openSettingsSubMenuSitePermissions {
-        }.openNotification {
-            verifyNotificationSubMenuItems()
+            verifySettingsOptionSummary("Notifications", "Allowed")
+        }.openSettingsSubMenuNotifications {
+            verifyAllSystemNotificationsToggleState(true)
+            verifyPrivateBrowsingSystemNotificationsToggleState(true)
+            clickPrivateBrowsingSystemNotificationsToggle()
+            verifyPrivateBrowsingSystemNotificationsToggleState(false)
+            clickAllSystemNotificationsToggle()
+            verifyAllSystemNotificationsToggleState(false)
+        }.goBack {
+            verifySettingsOptionSummary("Notifications", "Not allowed")
+        }.goBackToBrowser {
+        }.openNotificationShade {
+            verifySystemNotificationDoesNotExist("Close private tabs")
         }
     }
 }

@@ -20,13 +20,13 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.lib.state.ext.flowScoped
 import mozilla.components.support.ktx.android.content.getColorFromAttr
-import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import org.mozilla.fenix.GleanMetrics.Pings
 import org.mozilla.fenix.GleanMetrics.TopSites
 import org.mozilla.fenix.R
@@ -37,7 +37,6 @@ import org.mozilla.fenix.ext.bitmapForUrl
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.isSystemInDarkTheme
 import org.mozilla.fenix.ext.loadIntoView
-import org.mozilla.fenix.ext.name
 import org.mozilla.fenix.home.sessioncontrol.TopSiteInteractor
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.utils.view.ViewHolder
@@ -54,7 +53,7 @@ class TopSiteItemViewHolder(
 
     init {
         itemView.setOnLongClickListener {
-            TopSites.longPress.record(TopSites.LongPressExtra(topSite.name()))
+            interactor.onTopSiteLongClicked(topSite)
 
             val topSiteMenu = TopSiteItemMenu(
                 context = view.context,
@@ -98,7 +97,7 @@ class TopSiteItemViewHolder(
 
         appStore.flowScoped(viewLifecycleOwner) { flow ->
             flow.map { state -> state.wallpaperState }
-                .ifChanged()
+                .distinctUntilChanged()
                 .collect { currentState ->
                     var backgroundColor = ContextCompat.getColor(view.context, R.color.fx_mobile_layer_color_2)
 
