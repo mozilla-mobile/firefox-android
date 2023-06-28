@@ -23,6 +23,7 @@ import androidx.work.Configuration.Provider
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -67,10 +68,13 @@ import mozilla.components.support.utils.BrowsersCache
 import mozilla.components.support.utils.logElapsedTime
 import mozilla.components.support.webextensions.WebExtensionSupport
 import org.mozilla.fenix.GleanMetrics.Addons
+import org.mozilla.fenix.GleanMetrics.Addresses
 import org.mozilla.fenix.GleanMetrics.AndroidAutofill
+import org.mozilla.fenix.GleanMetrics.CreditCards
 import org.mozilla.fenix.GleanMetrics.CustomizeHome
 import org.mozilla.fenix.GleanMetrics.Events.marketingNotificationAllowed
 import org.mozilla.fenix.GleanMetrics.GleanBuildInfo
+import org.mozilla.fenix.GleanMetrics.Logins
 import org.mozilla.fenix.GleanMetrics.Metrics
 import org.mozilla.fenix.GleanMetrics.PerfStartup
 import org.mozilla.fenix.GleanMetrics.Preferences
@@ -82,6 +86,7 @@ import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.metrics.MetricServiceType
 import org.mozilla.fenix.components.metrics.MozillaProductDetector
 import org.mozilla.fenix.experiments.maybeFetchExperiments
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.containsQueryParameters
 import org.mozilla.fenix.ext.getCustomGleanServerUrlIfAvailable
 import org.mozilla.fenix.ext.isCustomEngine
@@ -741,6 +746,11 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                 tabsOpenCount.add(openTabsCount)
             }
 
+            val openPrivateTabsCount = settings.openPrivateTabsCount
+            if (openPrivateTabsCount > 0) {
+                privateTabsOpenCount.add(openPrivateTabsCount)
+            }
+
             val topSitesSize = settings.topSitesSize
             hasTopSites.set(topSitesSize > 0)
             if (topSitesSize > 0) {
@@ -821,6 +831,16 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
 
                 migrateTopicSpecificSearchEngines()
             }
+        }
+
+        @OptIn(DelicateCoroutinesApi::class)
+        GlobalScope.launch(IO) {
+            val autoFillStorage = applicationContext.components.core.autofillStorage
+            Addresses.savedAll.set(autoFillStorage.getAllAddresses().size.toLong())
+            CreditCards.savedAll.set(autoFillStorage.getAllCreditCards().size.toLong())
+
+            val lazyPasswordStorage = applicationContext.components.core.lazyPasswordsStorage
+            Logins.savedAll.set(lazyPasswordStorage.value.list().size.toLong())
         }
     }
 

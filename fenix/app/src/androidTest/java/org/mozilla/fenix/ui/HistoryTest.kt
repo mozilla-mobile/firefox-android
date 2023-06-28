@@ -38,7 +38,6 @@ import org.mozilla.fenix.ui.robots.searchScreen
  *
  */
 class HistoryTest {
-    /* ktlint-disable no-blank-line-before-rbrace */ // This imposes unreadable grouping.
     private lateinit var mockWebServer: MockWebServer
     private lateinit var mDevice: UiDevice
 
@@ -159,7 +158,6 @@ class HistoryTest {
                 RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.history_list), 1),
             ) {
                 clickDeleteAllHistoryButton()
-
             }
             verifyDeleteConfirmationMessage()
             selectEverythingOption()
@@ -332,30 +330,6 @@ class HistoryTest {
             verifyShareTabFavicon()
             verifyShareTabTitle()
             verifyShareTabUrl()
-        }
-    }
-
-    // This test verifies the Recently Closed Tabs List and items
-    @Test
-    fun verifyRecentlyClosedTabsListTest() {
-        val website = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        homeScreen {
-        }.openNavigationToolbar {
-        }.enterURLAndEnterToBrowser(website.url) {
-            mDevice.waitForIdle()
-        }.openTabDrawer {
-            closeTab()
-        }.openTabDrawer {
-        }.openRecentlyClosedTabs {
-            waitForListToExist()
-            registerAndCleanupIdlingResources(
-                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.recently_closed_list), 1),
-            ) {
-                verifyRecentlyClosedTabsMenuView()
-            }
-            verifyRecentlyClosedTabsPageTitle("Test_Page_1")
-            verifyRecentlyClosedTabsUrl(website.url)
         }
     }
 

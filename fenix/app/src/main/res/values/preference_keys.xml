@@ -71,6 +71,7 @@
     <string name="pref_key_re_engagement_notification_shown" translatable="false">pref_key_re_engagement_notification_shown</string>
     <string name="pref_key_re_engagement_notification_enabled" translatable="false">pref_key_re_engagement_notification_enabled</string>
     <string name="pref_key_is_first_run" translatable="false">pref_key_is_first_run</string>
+    <string name="pref_key_is_first_splash_screen_shown" translatable="false">pref_key_is_first_splash_screen_shown</string>
     <string name="pref_key_nimbus_last_fetch" translatable="false">pref_key_nimbus_last_fetch</string>
     <string name="pref_key_home_blocklist">pref_key_home_blocklist</string>
 
@@ -81,6 +82,7 @@
 
     <!-- Account Settings -->
     <string name="pref_key_account_category" translatable="false">pref_key_account_category</string>
+    <string name="pref_key_sync_manage_account" translatable="false">pref_key_sync_manage_account</string>
     <string name="pref_key_sync_device_name" translatable="false">pref_key_sync_device_name</string>
     <string name="pref_key_sync_now" translatable="false">pref_key_sync_now</string>
     <string name="pref_key_sync_history" translatable="false">pref_key_sync_history</string>
@@ -275,6 +277,7 @@
     <string name="pref_key_debug_settings" translatable="false">pref_key_debug_settings</string>
 
     <string name="pref_key_open_tabs_count" translatable="false">pref_key_open_tabs_count</string>
+    <string name="pref_key_open_private_tabs_count" translatable="false">pref_key_open_private_tabs_count</string>
 
     <!-- Add-on Metrics Values -->
     <string name="pref_key_installed_addons_count" translatable="false">pref_key_installed_addons_count</string>
