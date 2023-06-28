@@ -42,6 +42,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import mozilla.components.browser.state.state.ContentState
@@ -172,8 +174,9 @@ private fun SingleSelectBanner(
                     contentColor = selectedColor,
                     divider = {},
                 ) {
+                    val isSelected = selectedPage == Page.NormalTabs
                     Tab(
-                        selected = selectedPage == Page.NormalTabs,
+                        selected = isSelected,
                         onClick = { onTabPageIndicatorClicked(Page.NormalTabs) },
                         modifier = Modifier
                             .fillMaxHeight()
@@ -181,7 +184,7 @@ private fun SingleSelectBanner(
                         selectedContentColor = selectedColor,
                         unselectedContentColor = inactiveColor,
                     ) {
-                        NormalTabsTabIcon(normalTabCount = normalTabCount)
+                        NormalTabsTabIcon(normalTabCount = normalTabCount, selected = isSelected)
                     }
 
                     Tab(
@@ -325,21 +328,52 @@ private fun generateSingleSelectBannerMenuItems(
     }
 }
 
+private const val MAX_VISIBLE_TABS = 99
+private const val SO_MANY_TABS_OPEN = "∞"
+private val INFINITE_CHAR_TABS_PADDING_BOTTOM = 3.dp
+private val NUMBER_TABS_PADDING_BOTTOM = 1.dp
+
+private const val ONE_DIGIT_SIZE_RATIO = 0.5f
+private const val TWO_DIGITS_SIZE_RATIO = 0.4f
+
 @Composable
-private fun NormalTabsTabIcon(normalTabCount: Int) {
+private fun NormalTabsTabIcon(normalTabCount: Int, selected: Boolean) {
     val normalTabCountText: String
     val normalTabCountTextModifier: Modifier
-    if (normalTabCount > TabCounter.MAX_VISIBLE_TABS) {
-        normalTabCountText = TabCounter.SO_MANY_TABS_OPEN
-        normalTabCountTextModifier = Modifier.padding(bottom = 1.dp)
+
+    if (normalTabCount > MAX_VISIBLE_TABS) {
+        normalTabCountText = SO_MANY_TABS_OPEN
+        normalTabCountTextModifier = Modifier.padding(bottom = INFINITE_CHAR_TABS_PADDING_BOTTOM)
     } else {
         normalTabCountText = normalTabCount.toString()
-        normalTabCountTextModifier = Modifier
+        normalTabCountTextModifier =
+            Modifier.padding(bottom = NUMBER_TABS_PADDING_BOTTOM, end = NUMBER_TABS_PADDING_BOTTOM)
     }
+
     val normalTabsContentDescription = if (normalTabCount == 1) {
         stringResource(id = R.string.mozac_tab_counter_open_tab_tray_single)
     } else {
-        stringResource(id = R.string.mozac_tab_counter_open_tab_tray_plural, normalTabCount.toString())
+        stringResource(
+            id = R.string.mozac_tab_counter_open_tab_tray_plural,
+            normalTabCount.toString(),
+        )
+    }
+
+    val tabCountTextRatio = if (normalTabCountText.length == 2) {
+        TWO_DIGITS_SIZE_RATIO
+    } else {
+        ONE_DIGIT_SIZE_RATIO
+    }
+
+    val counterBoxWidthDp =
+        dimensionResource(id = mozilla.components.ui.tabcounter.R.dimen.mozac_tab_counter_box_width_height)
+    val counterBoxWidthPx = LocalDensity.current.run { counterBoxWidthDp.dpToPx() }
+    val counterTabsTextSize = (tabCountTextRatio * counterBoxWidthPx).toInt()
+
+    val normalTabsCountTextColor = if (selected) {
+        FirefoxTheme.colors.iconActive
+    } else {
+        FirefoxTheme.colors.iconPrimaryInactive
     }
 
     Box(
@@ -347,24 +381,37 @@ private fun NormalTabsTabIcon(normalTabCount: Int) {
             .semantics(mergeDescendants = true) {
                 testTag = TabsTrayTestTag.normalTabsCounter
             },
+        contentAlignment = Alignment.Center,
     ) {
         Icon(
             painter = painterResource(
                 id = mozilla.components.ui.tabcounter.R.drawable.mozac_ui_tabcounter_box,
             ),
             contentDescription = normalTabsContentDescription,
-            modifier = Modifier.align(Alignment.Center),
         )
-
-        Text(
-            text = normalTabCountText,
-            modifier = normalTabCountTextModifier.align(Alignment.Center),
-            color = LocalContentColor.current,
-            fontSize = with(LocalDensity.current) { 12.dp.toSp() },
-            fontWeight = FontWeight.W700,
-        )
+        CompositionLocalProvider(LocalContentColor provides normalTabsCountTextColor) {
+            Text(
+                text = normalTabCountText,
+                modifier = normalTabCountTextModifier,
+                fontSize = with(LocalDensity.current) { counterTabsTextSize.pxToDp().toSp() },
+                fontWeight = FontWeight.W700,
+                textAlign = TextAlign.Center,
+            )
+        }
     }
 }
+
+/**
+ * Extension function that converts the density pixels to pixels (as int)
+ */
+@Composable
+fun Dp.dpToPx() = with(LocalDensity.current) { this@dpToPx.roundToPx() }
+
+/**
+ * Extension function that converts the pixels to density pixels
+ */
+@Composable
+fun Int.pxToDp() = with(LocalDensity.current) { this@pxToDp.toDp() }
 
 /**
  * Banner displayed in multi select mode.
