@@ -21,16 +21,19 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.delay
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.ContentState
 import mozilla.components.browser.state.state.TabSessionState
@@ -48,6 +51,8 @@ import org.mozilla.fenix.tabstray.syncedtabs.SyncedTabsList
 import org.mozilla.fenix.tabstray.syncedtabs.SyncedTabsListItem
 import org.mozilla.fenix.theme.FirefoxTheme
 import mozilla.components.browser.storage.sync.Tab as SyncTab
+
+private const val PAGER_DELAY = 100L
 
 /**
  * Top-level UI for displaying the Tabs Tray feature.
@@ -133,6 +138,13 @@ fun TabsTray(
 
     LaunchedEffect(selectedPage) {
         pagerState.animateScrollToPage(selectedPage.ordinal)
+    }
+
+    // Force the HorizontalPager to go to the correct page to prevent a bug where the pager will be
+    // in between two pages after rotating the device to landscape while on the synced tabs page.
+    LaunchedEffect(LocalConfiguration.current.orientation) {
+        delay(PAGER_DELAY)
+        pagerState.scrollToPage(tabsTrayStore.state.selectedPage.ordinal)
     }
 
     Column(
@@ -445,7 +457,7 @@ private fun TabsTrayPreviewRoot(
     inactiveTabsExpanded: Boolean = false,
     showInactiveTabsAutoCloseDialog: Boolean = false,
 ) {
-    var selectedPageState by remember { mutableStateOf(selectedPage) }
+    var selectedPageState by rememberSaveable { mutableStateOf(selectedPage) }
     val normalTabsState = remember { normalTabs.toMutableStateList() }
     val inactiveTabsState = remember { inactiveTabs.toMutableStateList() }
     val privateTabsState = remember { privateTabs.toMutableStateList() }
