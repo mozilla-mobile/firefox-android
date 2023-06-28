@@ -99,9 +99,9 @@ class BrowserRobot {
     }
 
     /* Asserts that the text within DOM element with ID="testContent" has the given text, i.e.
-    *  document.querySelector('#testContent').innerText == expectedText
-    *
-    */
+     *  document.querySelector('#testContent').innerText == expectedText
+     *
+     */
 
     fun verifyPageContent(expectedText: String) {
         sessionLoadedIdlingResource = SessionLoadedIdlingResource()
@@ -868,6 +868,8 @@ class BrowserRobot {
             "$packageName:id/dismiss",
             getStringResource(R.string.open_in_app_cfr_negative_button_text),
         ).click()
+
+    fun longClickToolbar() = mDevice.findObject(By.res("$packageName:id/mozac_browser_toolbar_url_view")).click(LONG_CLICK_DURATION)
 
     class Transition {
         fun openThreeDotMenu(interact: ThreeDotMenuMainRobot.() -> Unit): ThreeDotMenuMainRobot.Transition {

@@ -435,6 +435,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = true,
     )
 
+    var isFirstSplashScreenShown: Boolean by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_is_first_splash_screen_shown),
+        default = false,
+    )
+
     var nimbusLastFetchTime: Long by longPreference(
         appContext.getPreferenceKey(R.string.pref_key_nimbus_last_fetch),
         default = 0L,
@@ -1321,6 +1326,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
 
     var openTabsCount by intPreference(
         appContext.getPreferenceKey(R.string.pref_key_open_tabs_count),
+        0,
+    )
+
+    var openPrivateTabsCount by intPreference(
+        appContext.getPreferenceKey(R.string.pref_key_open_private_tabs_count),
         0,
     )
 
