@@ -20,7 +20,7 @@ object Versions {
     const val python_envs_plugin = "0.0.31"
 
     const val junit = "4.13.2"
-    const val robolectric = "4.10.1"
+    const val robolectric = "4.10.3"
     const val mockito = "5.3.1"
     const val maven_ant_tasks = "2.1.3"
     const val jacoco = "0.8.10"
@@ -37,7 +37,7 @@ object Versions {
     const val detekt = "1.23.0"
     const val ktlint = "0.49.1"
 
-    const val sentry_latest = "6.21.0"
+    const val sentry_latest = "6.24.0"
 
     // zxing 3.4+ requires a minimum API of 24 or higher
     const val zxing = "3.3.3"
