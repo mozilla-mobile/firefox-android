@@ -342,14 +342,14 @@ features:
         value:
           enabled: true
 
-  search_extra_params:
+  search-extra-params:
     description: A feature that provides a search engine name and a channel ID.
     variables:
       enabled:
         description: If true, the feature is active.
         type: Boolean
         default: false
-      search_name_channel_id:
+      search-name-channel-id:
         description: The search engine name and the channel ID.
         type: Map<String, String>
         default: {}
