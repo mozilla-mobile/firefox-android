@@ -46,8 +46,8 @@ class SessionSuggestionProvider(
 
     @Suppress("ComplexCondition")
     override suspend fun onInputChanged(text: String): List<AwesomeBar.Suggestion> {
-        val safeText = text.trim()
-        if (safeText.isEmpty()) {
+        val searchText = text.trim()
+        if (searchText.isEmpty()) {
             return emptyList()
         }
 
@@ -59,10 +59,11 @@ class SessionSuggestionProvider(
             icons?.loadIcon(IconRequest(url = it.content.url, waitOnNetworkLoad = false))
         }
 
+        val searchWords = searchText.split(" ")
         tabs.zip(iconRequests) { result, icon ->
             if (
                 resultsUriFilter?.sameHostWithoutMobileSubdomainAs(result.content.url.toUri()) != false &&
-                result.contains(safeText) &&
+                searchWords.all { result.contains(it) } &&
                 !result.content.private &&
                 shouldIncludeSelectedTab(state, result)
             ) {

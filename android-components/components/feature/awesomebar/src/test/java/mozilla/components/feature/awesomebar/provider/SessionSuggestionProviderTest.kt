@@ -138,6 +138,47 @@ class SessionSuggestionProviderTest {
         }
 
     @Test
+    fun `GIVEN input text has multiple matching words WHEN all match THEN Provider returns Sessions with matching URLs`() =
+        runTest {
+            val store = BrowserStore()
+
+            val tab1 = createTab("https://www.mozilla.org/example/of/content")
+
+            val resources: Resources = mock()
+            `when`(resources.getString(anyInt())).thenReturn("Switch to tab")
+
+            val provider = SessionSuggestionProvider(resources, store, mock())
+            store.dispatch(TabListAction.AddTabAction(tab1)).join()
+
+            run {
+                val suggestions = provider.onInputChanged("mozilla example content")
+                assertEquals(1, suggestions.size)
+
+                assertEquals(tab1.id, suggestions[0].id)
+                assertEquals("Switch to tab", suggestions[0].description)
+            }
+        }
+
+    @Test
+    fun `GIVEN input text has multiple matching words WHEN some match THEN Provider returns an empty list`() =
+        runTest {
+            val store = BrowserStore()
+
+            val tab1 = createTab("https://www.mozilla.org/example/of/content")
+
+            val resources: Resources = mock()
+            `when`(resources.getString(anyInt())).thenReturn("Switch to tab")
+
+            val provider = SessionSuggestionProvider(resources, store, mock())
+            store.dispatch(TabListAction.AddTabAction(tab1)).join()
+
+            run {
+                val suggestions = provider.onInputChanged("mozilla example test")
+                assertTrue(suggestions.isEmpty())
+            }
+        }
+
+    @Test
     fun `Provider returns Sessions with matching titles`() = runTest {
         val tab1 = createTab("https://allizom.org", title = "Internet for people, not profit — Mozilla")
         val tab2 = createTab("https://getpocket.com", title = "Pocket: My List")
