@@ -46,7 +46,8 @@ class SessionSuggestionProvider(
 
     @Suppress("ComplexCondition")
     override suspend fun onInputChanged(text: String): List<AwesomeBar.Suggestion> {
-        if (text.isEmpty()) {
+        val safeText = text.trim()
+        if (safeText.isEmpty()) {
             return emptyList()
         }
 
@@ -61,7 +62,7 @@ class SessionSuggestionProvider(
         tabs.zip(iconRequests) { result, icon ->
             if (
                 resultsUriFilter?.sameHostWithoutMobileSubdomainAs(result.content.url.toUri()) != false &&
-                result.contains(text) &&
+                result.contains(safeText) &&
                 !result.content.private &&
                 shouldIncludeSelectedTab(state, result)
             ) {
@@ -69,7 +70,7 @@ class SessionSuggestionProvider(
                     AwesomeBar.Suggestion(
                         provider = this,
                         id = result.id,
-                        title = if (result.content.title.isNotBlank()) result.content.title else result.content.url,
+                        title = result.content.title.ifBlank { result.content.url },
                         description = resources.getString(R.string.switch_to_tab_description),
                         flags = setOf(AwesomeBar.Suggestion.Flag.OPEN_TAB),
                         icon = icon?.await()?.bitmap,
