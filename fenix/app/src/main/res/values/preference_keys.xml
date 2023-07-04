@@ -40,6 +40,7 @@
     <string name="pref_key_addons" translatable="false">pref_key_addons</string>
     <string name="pref_key_override_amo_user" translatable="false">pref_key_override_amo_user</string>
     <string name="pref_key_override_amo_collection" translatable="false">pref_key_override_amo_collection</string>
+    <string name="pref_key_enable_gecko_logs" translatable="false">pref_key_enable_gecko_logs</string>
     <string name="pref_key_help" translatable="false">pref_key_help</string>
     <string name="pref_key_rate" translatable="false">pref_key_rate</string>
     <string name="pref_key_about" translatable="false">pref_key_about</string>
@@ -217,6 +218,7 @@
     <string name="pref_key_adjust_adgroup" translatable="false">pref_key_adjust_adgroup</string>
     <string name="pref_key_adjust_creative" translatable="false">pref_key_adjust_creative</string>
 
+    <string name="pref_key_nimbus_experiments_fetched" translatable="false">pref_key_nimbus_experiments_fetched</string>
     <string name="pref_key_utm_params_known" translatable="false">pref_key_utm_params_known</string>
     <string name="pref_key_utm_source" translatable="false">pref_key_utm_source</string>
     <string name="pref_key_utm_medium" translatable="false">pref_key_utm_medium</string>

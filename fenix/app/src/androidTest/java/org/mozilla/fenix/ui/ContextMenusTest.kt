@@ -16,9 +16,11 @@ import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
+import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithText
 import org.mozilla.fenix.helpers.RetryTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
+import org.mozilla.fenix.helpers.TestHelper.assertYoutubeAppOpens
 import org.mozilla.fenix.helpers.TestHelper.clickSnackbarButton
 import org.mozilla.fenix.ui.robots.clickContextMenuItem
 import org.mozilla.fenix.ui.robots.clickPageObject
@@ -267,7 +269,8 @@ class ContextMenusTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(genericURL.url) {
-            clickPageObject(itemWithText("PDF file"))
+            clickPageObject(itemWithText("PDF form file"))
+            waitForPageToLoad()
             longClickPageObject(itemWithText("Wikipedia link"))
             verifyLinkContextMenuItems("wikipedia.org".toUri(), false)
             dismissContentContextMenu()
@@ -276,6 +279,18 @@ class ContextMenusTest {
             longClickPDFImage()
             verifyLinkContextMenuItems("wikipedia.org".toUri())
             dismissContentContextMenu()
+        }
+    }
+
+    @Test
+    fun verifyContextOpenLinkInAppTest() {
+        val defaultWebPage = TestAssetHelper.getExternalLinksAsset(mockWebServer)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+            longClickPageObject(itemContainingText("Youtube link"))
+            clickContextMenuItem("Open link in external app")
+            assertYoutubeAppOpens()
         }
     }
 }

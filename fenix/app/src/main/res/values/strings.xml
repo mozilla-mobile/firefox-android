@@ -529,6 +529,11 @@
     <string name="preferences_open_links_in_apps_never">Never</string>
     <!-- Preference for open download with an external download manager app -->
     <string name="preferences_external_download_manager">External download manager</string>
+    <!-- Preference for enabling gecko engine logs -->
+    <string name="preferences_enable_gecko_logs">Enable Gecko logs</string>
+    <!-- Message to indicate users that we are quitting the application to apply the changes -->
+    <string name="quit_application">Quitting the application to apply changes…</string>
+
     <!-- Preference for add_ons -->
     <string name="preferences_addons">Add-ons</string>
     <!-- Preference for notifications -->
@@ -1163,6 +1168,10 @@
     <string name="share_save_to_pdf">Save as PDF</string>
     <!-- Text for error message when generating a PDF file Text for error message when generating a PDF file. -->
     <string name="unable_to_save_to_pdf_error">Unable to generate PDF</string>
+    <!-- Text for error message when printing a page and it fails. -->
+    <string name="unable_to_print_error">Unable to print</string>
+    <!-- Text for the print feature in the share and browser menu -->
+    <string name="menu_print">Print</string>
     <!-- Sub-header in the dialog to share a link to another sync device -->
     <string name="share_device_subheader">Send to device</string>
     <!-- Sub-header in the dialog to share a link to an app from the full list -->

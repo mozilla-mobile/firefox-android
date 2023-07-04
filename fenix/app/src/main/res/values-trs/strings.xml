@@ -450,11 +450,25 @@
     <string name="reduce_cookie_banner_details_panel_title_off_for_site">Dūnâ’àjt sa nadugua’ nej si banêr nej kôki guendâ %1$s aj</string>
     <!-- Title text for a detail explanation indicating cookie banner reducer didn't work for the current site, this is shown as part of the cookie banner panel in the toolbar.-->
     <string name="reduce_cookie_banner_details_panel_title_unsupported_site_request" moz:RemovedIn="114" tools:ignore="UnusedResources">Akuan’ nï̄, nitāj si â’nï̀nj sitiô nan da’ nāgà’ si banêr nej kôki. Ruhuât gāchìnj nīhiát da’ nātsij ñûnj sitiô nan nī gā’nïn ñûnj nej sa gàchin nan ne’ rūkù doj aj.</string>
+    <!-- Title text for a detail explanation indicating cookie banner reducer didn't work for the current site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name-->
+    <string name="reduce_cookie_banner_details_panel_title_unsupported_site_request_2">%1$s na’hue gūxunj nej nuguan’ achín nì’hiaj nej kôki riña sitiô nan. Gā’hue gā’nïnjt ‘ngō nuguan’an riña sa nikāj ñu’ūnj sitiô nan.</string>
+    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
+    <string name="reduce_cookie_banner_details_panel_description_off_for_site">%1$s nādure’ man daran’ nej kokî ‘na’ riña sitiô nan nī nāgi’hiaj nàkaj pâjina. Si nādure’ej daran’ nej kôki nī gā’hue nāran si sēsiûnt asi nādure’ej nej sa ruhuât gīrānt.</string>
+    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
+    <string name="reduce_cookie_banner_details_panel_description_on_for_site_2">%1$s huin ruhuâj nāran riña daran’ nej kokî ahui riña nej sitiô gūñān huaa.</string>
+    <!-- Title text for the cookie banner re-engagement dialog. The first parameter is the application name. -->
+    <string name="reduce_cookie_banner_dialog_title">Gā’nïnt riña %1$s da’ sī ga’nïnj man gātū nej si banêr kôki aj.</string>
+    <!-- Body text for the cookie banner re-engagement dialog use. The first parameter is the application name. -->
+    <string name="reduce_cookie_banner_dialog_body">%1$s gā’hue nādure’ej daran’ nej si banêr kôki ruhuâ gātū.</string>
     <!-- Remind me later text button for the onboarding dialog -->
     <string name="reduce_cookie_banner_dialog_not_now_button">Sī ga\'hue Akuan\' nïn</string>
+    <!-- Snack text for the cookie banner dialog, after user hit the dismiss banner button -->
+    <string name="reduce_cookie_banner_dialog_snackbar_text">Gārán man riña nìko doj nej si solisitû kôki</string>
     <!-- Change setting text button, for the cookie banner re-engagement dialog -->
     <string name="reduce_cookie_banner_dialog_change_setting_button">Gā\'nïn</string>
 
+    <!-- Description of the preference to enable "HTTPS-Only" mode. -->
+    <string name="preferences_https_only_summary">Huin ruhuaj gātu riña nej sitio ngà ‘ngō da’nga’ gū’nàj HTTPS dadin’ dugumîn da’nga’ nan doj daran’ nej sa huā ‘hiát.</string>
     <!-- Summary of https only preference if https only is set to off -->
     <string name="preferences_https_only_off">Dūnâ\’àj</string>
     <!-- Summary of https only preference if https only is set to on in all tabs -->
@@ -694,6 +708,14 @@
     <!-- Preference switch for marketing data collection -->
     <string name="preferences_marketing_data">Sa huā rayi\'î Marketin</string>
 
+    <!-- Title for studies preferences -->
+    <string name="preference_experiments_2">Nej ēstûdio</string>
+    <!-- Summary for studies preferences -->
+    <string name="preference_experiments_summary_2">Gā’nï̄n guendâ gā’nïnj Mozilla nej ēstûdio</string>
+
+    <!-- Turn On Sync Preferences -->
+    <!-- Header of the Sync and save your data preference view -->
+    <string name="preferences_sync_2">Nāgi\’hiaj nūguà\'àn nī na’nïnj sà\’t nej si datôt</string>
     <!-- Preference for reconnecting to FxA sync -->
     <string name="preferences_sync_sign_in_to_reconnect">Gāyi\'ì sēsiûn da\' ga\'ue gānātū nûnt</string>
     <!-- Preference for removing FxA account -->
@@ -719,6 +741,17 @@
     <!-- Preference for using following device theme -->
     <string name="preference_follow_device_theme">Gānikò\' si tema aga\' dan</string>
 
+    <!-- Gestures Preferences-->
+    <!-- Preferences for using pull to refresh in a webpage -->
+    <string name="preference_gestures_website_pull_to_refresh">Dūsiki’ da’ nāhuin nàkaj</string>
+
+    <!-- Preference for using the dynamic toolbar -->
+    <string name="preference_gestures_dynamic_toolbar">Dūsiki’ da’ nāhuin huì dukuán sa màn rasūun</string>
+    <!-- Preference for switching tabs by swiping horizontally on the toolbar -->
+    <string name="preference_gestures_swipe_toolbar_switch_tabs">Dūguaché ānèj ané dukuán màn rasūun da’ gā’hue nādunā rakïj ñanj</string>
+    <!-- Preference for showing the opened tabs by swiping up on the toolbar-->
+    <string name="preference_gestures_swipe_toolbar_show_tabs">Dūguaché nāhuī dukuán màn rasūun da’ gā’hue nā’nï̄nt rakïj ñanj</string>
+
     <!-- Library -->
     <!-- Option in Library to open Downloads page -->
     <string name="library_downloads">Sa nadunïnjt</string>
@@ -742,6 +775,9 @@
     <!-- Content description (not visible, for screen readers etc.): "Close button for library settings" -->
     <string name="content_description_close_button">Nārán</string>
 
+    <!-- Title to show in alert when a lot of tabs are to be opened
+    %d is a placeholder for the number of tabs that will be opened -->
+    <string name="open_all_warning_title">Nā’nï̄n %d nej rakïj ñanj anj</string>
     <!-- Dialog button text for confirming open all tabs -->
     <string name="open_all_warning_confirm">Na\'nïn nej rakïj ñanj </string>
     <!-- Dialog button text for canceling open all tabs -->
@@ -756,12 +792,17 @@
 
     <!-- Option in library for Recently Closed Tabs -->
     <string name="library_recently_closed_tabs">Rakïj ñanj hiaj narán nakà</string>
+    <!-- Option in library to open Recently Closed Tabs page -->
+    <string name="recently_closed_show_full_history">Nādigân man daran’ nej sa gini’hiājt riña aga’ nan</string>
     <!-- Text to show users they have multiple tabs saved in the Recently Closed Tabs section of history.
     %d is a placeholder for the number of tabs selected. -->
     <string name="recently_closed_tabs">%d nej rakïj ñanj</string>
     <!-- Text to show users they have one tab saved in the Recently Closed Tabs section of history.
     %d is a placeholder for the number of tabs selected. -->
     <string name="recently_closed_tab">%d rakïj ñanj</string>
+
+    <!-- Recently closed tabs screen message when there are no recently closed tabs -->
+    <string name="recently_closed_empty_message">Nitāj rakïj ñanj narán nākà hiūj nan</string>
 
     <!-- Tab Management -->
     <!-- Title of preference for tabs management -->
@@ -810,6 +851,13 @@
     <!-- Summary for homepage preference indicating always opening the last-open tab when re-opening the app -->
     <string name="opening_screen_last_tab_summary">Nā’nïn man riña rakïj ñanj rūkù nï’ïn</string>
 
+    <!-- Summary for homepage preference indicating opening the homepage when re-opening the app after four hours of inactivity -->
+    <string name="opening_screen_after_four_hours_of_inactivity_summary">Na’nïnt man riña pajinâ ayi’ìt yichrá gàn’anj hôra</string>
+
+    <!-- Inactive tabs -->
+    <!-- Category header of a preference that allows a user to enable or disable the inactive tabs feature -->
+    <string name="preferences_inactive_tabs">Dūre’ nej rakïj ñanj nitāj si arâj sunt ngà’</string>
+
     <!-- Studies -->
     <!-- Title of the remove studies button -->
     <string name="studies_remove">Nādure\'</string>
@@ -823,6 +871,9 @@
     <string name="studies_restart_dialog_ok">GĀ’HUE</string>
     <!-- Dialog button text for canceling removing a study. -->
     <string name="studies_restart_dialog_cancel">Dūyichin\'</string>
+
+    <!-- Toast shown after turning on/off studies preferences -->
+    <string name="studies_toast_quit_application" tools:ignore="UnusedResources">Gāhuī riña aplikasiûn nan da’ gā’hue nātū sa nākàa…</string>
 
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
@@ -1048,6 +1099,12 @@
     <string name="preference_phone_feature_location">Danè\' huin</string>
     <!-- Preference for altering the notification access for all websites -->
     <string name="preference_phone_feature_notification">Sa atāj nan\'ānj an</string>
+    <!-- Preference for altering the persistent storage access for all websites -->
+    <string name="preference_phone_feature_persistent_storage">Riña nāgimàn sà’ nej sa hūaa</string>
+    <!-- Preference for altering the storage access setting for all websites -->
+    <string name="preference_phone_feature_cross_origin_storage_access">Si kokî nej sitiô nadunâ dugui’i</string>
+    <!-- Preference for altering the EME access for all websites -->
+    <string name="preference_phone_feature_media_key_system_access">Sa màn nan nī sa ‘nï̄nj ra’a DRM huin</string>
     <!-- Label that indicates that a permission must be asked always -->
     <string name="preference_option_phone_feature_ask_to_allow">Gāchinj nì\'iaj</string>
     <!-- Label that indicates that a permission must be blocked -->
@@ -1060,6 +1117,10 @@
     <string name="preference_exceptions">Sa huā gi\'iát</string>
     <!-- Summary of tracking protection preference if tracking protection is set to off -->
     <string name="tracking_protection_off">Dūnâ\’àj</string>
+    <!-- Summary of tracking protection preference if tracking protection is set to standard -->
+    <string name="tracking_protection_standard">&amp;Standard</string>
+    <!-- Summary of tracking protection preference if tracking protection is set to strict -->
+    <string name="tracking_protection_strict">Sa a\'ne\'e</string>
     <!-- Summary of tracking protection preference if tracking protection is set to custom -->
     <string name="tracking_protection_custom">Nāgi\'iaj mun\'ûn\'</string>
     <!-- Label for global setting that indicates that all video and audio autoplay is allowed -->
@@ -1145,6 +1206,10 @@
     <string name="share_save_to_pdf">Nā’nïnj sà’ ngà PDF</string>
     <!-- Text for error message when generating a PDF file Text for error message when generating a PDF file. -->
     <string name="unable_to_save_to_pdf_error">Nā’hue nāgi’hia PDF</string>
+    <!-- Text for error message when printing a page and it fails. -->
+    <string name="unable_to_print_error">Nu gā\'hue gīrij ñadu’hua</string>
+    <!-- Text for the print feature in the share and browser menu -->
+    <string name="menu_print">Gīrī ñadu’hua</string>
     <!-- Sub-header in the dialog to share a link to another sync device -->
     <string name="share_device_subheader">Gā\'nïnj riña aga\'</string>
     <!-- Sub-header in the dialog to share a link to an app from the full list -->
@@ -1191,6 +1256,15 @@
 
     <!-- Name of the marketing notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="notification_marketing_channel_name">Dūyingô’</string>
+
+    <!-- Title shown in the notification that pops up to remind the user to set fenix as default browser.
+    The app name is in the text, due to limitations with localizing Nimbus experiments -->
+    <string name="nimbus_notification_default_browser_title" tools:ignore="UnusedResources">Hìo nī huì hua Firefox</string>
+    <!-- Text shown in the notification that pops up to remind the user to set fenix as default browser.
+    The app name is in the text, due to limitations with localizing Nimbus experiments -->
+    <string name="nimbus_notification_default_browser_text" tools:ignore="UnusedResources">Nā’nïnj Firefox da’ gāhuin man riña aché nana’hui’ yītïnjt</string>
+    <!-- Title shown in the notification that pops up to re-engage the user -->
+    <string name="notification_re_engagement_title">Ni’hiāj dàj ‘hiaj sun riña sa aché nu yītï̀njt</string>
 
     <!-- Preference for taking the short survey. -->
     <string name="preferences_take_survey">Nātsij ēnkuêsta</string>

@@ -186,6 +186,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = "",
     )
 
+    var nimbusExperimentsFetched by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_nimbus_experiments_fetched),
+        default = false,
+    )
+
     var utmParamsKnown by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_utm_params_known),
         default = false,
@@ -1308,6 +1313,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var overrideAmoCollection by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_override_amo_collection),
         default = "",
+    )
+
+    var enableGeckoLogs by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_enable_gecko_logs),
+        default = Config.channel.isDebug,
     )
 
     fun amoCollectionOverrideConfigured(): Boolean {

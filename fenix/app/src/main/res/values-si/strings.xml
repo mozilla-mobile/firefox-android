@@ -598,7 +598,7 @@
     <!-- Snackbar message for when wallpaper couldn't be downloaded -->
     <string name="wallpaper_download_error_snackbar_message">බිතුපත බාගැනීමට නොහැකි විය</string>
     <!-- Snackbar label for action to retry downloading the wallpaper -->
-    <string name="wallpaper_download_error_snackbar_action">යළි උත්සාහය</string>
+    <string name="wallpaper_download_error_snackbar_action">නැවත</string>
     <!-- Snackbar message for when wallpaper couldn't be selected because of the disk error -->
     <string name="wallpaper_select_error_snackbar_message">බිතුපත වෙනස් කළ නොහැකි විය</string>
     <!-- Text displayed that links to website containing documentation about the "Limited Edition" wallpapers. -->
@@ -1193,6 +1193,10 @@
     <string name="share_save_to_pdf">පීඩීඑෆ් ලෙස සුරකින්න</string>
     <!-- Text for error message when generating a PDF file Text for error message when generating a PDF file. -->
     <string name="unable_to_save_to_pdf_error">පීඩීඑෆ් උත්පාදනය කිරීමට නොහැකිය</string>
+    <!-- Text for error message when printing a page and it fails. -->
+    <string name="unable_to_print_error">මුද්‍රණයට නොහැකිය</string>
+    <!-- Text for the print feature in the share and browser menu -->
+    <string name="menu_print">මුද්‍රණය</string>
     <!-- Sub-header in the dialog to share a link to another sync device -->
     <string name="share_device_subheader">උපාංගයට යවන්න</string>
     <!-- Sub-header in the dialog to share a link to an app from the full list -->
@@ -1460,7 +1464,7 @@
     <!-- Text shown in snackbar when sharing tabs failed  -->
     <string name="sync_sent_tab_error_snackbar">යැවීමට නොහැකිය</string>
     <!-- Text shown in snackbar for the "retry" action that the user has after sharing tabs failed -->
-    <string name="sync_sent_tab_error_snackbar_action">යළි උත්සාහය</string>
+    <string name="sync_sent_tab_error_snackbar_action">නැවත</string>
     <!-- Title of QR Pairing Fragment -->
     <string name="sync_scan_code">කේතය සුපිරික්සන්න</string>
     <!-- Instructions on how to access pairing -->
