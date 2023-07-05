@@ -1219,6 +1219,10 @@
     <string name="share_save_to_pdf">Αποθήκευση ως PDF</string>
     <!-- Text for error message when generating a PDF file Text for error message when generating a PDF file. -->
     <string name="unable_to_save_to_pdf_error">Δεν είναι δυνατή η δημιουργία PDF</string>
+    <!-- Text for error message when printing a page and it fails. -->
+    <string name="unable_to_print_error">Αδυναμία εκτύπωσης</string>
+    <!-- Text for the print feature in the share and browser menu -->
+    <string name="menu_print">Εκτύπωση</string>
     <!-- Sub-header in the dialog to share a link to another sync device -->
     <string name="share_device_subheader">Αποστολή σε συσκευή</string>
     <!-- Sub-header in the dialog to share a link to an app from the full list -->
@@ -1536,7 +1540,7 @@
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict_description_3" moz:removedIn="114" tools:ignore="UnusedResources">Φραγή περισσότερων ιχνηλατών για ταχύτερη φόρτωση σελίδων. Ορισμένες λειτουργίες της σελίδας ενδέχεται να δυσλειτουργούν.</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_description_4">Ισχυρότερη προστασία από καταγραφή και καλύτερες επιδόσεις, αλλά ορισμένοι ιστότοποι ενδέχεται να μην λειτουργούν σωστά.</string>
+    <string name="preference_enhanced_tracking_protection_strict_description_4">Ισχυρότερη προστασία από καταγραφή και καλύτερες επιδόσεις, αλλά ορισμένοι ιστότοποι ενδέχεται να μη λειτουργούν σωστά.</string>
     <!--  Accessibility text for the Strict protection information icon  -->
     <string name="preference_enhanced_tracking_protection_strict_info_button">Τι αποκλείει η αυστηρή προστασία από καταγραφή</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
