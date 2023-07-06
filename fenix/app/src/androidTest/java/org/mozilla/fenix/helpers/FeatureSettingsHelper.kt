@@ -77,6 +77,16 @@ interface FeatureSettingsHelper {
      */
     var isOpenInAppBannerEnabled: Boolean
 
+    /**
+     * Enable or disable the Tabs Tray to Compose rewrite.
+     */
+    var tabsTrayRewriteEnabled: Boolean
+
+    /**
+     * Enable or disable the Unified search feature.
+     */
+    var isUnifiedSearchEnabled: Boolean
+
     fun applyFlagUpdates()
 
     fun resetAllFeatureFlags()

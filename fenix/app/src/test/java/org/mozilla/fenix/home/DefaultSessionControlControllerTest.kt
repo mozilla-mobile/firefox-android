@@ -868,6 +868,28 @@ class DefaultSessionControlControllerTest {
     }
 
     @Test
+    fun `WHEN top site is removed THEN the undo snackbar is called`() {
+        val mozillaTopSite = TopSite.Default(
+            id = 1L,
+            title = "Mozilla",
+            url = "https://mozilla.org",
+            null,
+        )
+        var undoSnackbarCalled = false
+        var undoSnackbarShownFor = "TopSiteName"
+
+        createController(
+            showUndoSnackbarForTopSite = { topSite ->
+                undoSnackbarCalled = true
+                undoSnackbarShownFor = topSite.title.toString()
+            },
+        ).handleRemoveTopSiteClicked(mozillaTopSite)
+
+        assertEquals(true, undoSnackbarCalled)
+        assertEquals("Mozilla", undoSnackbarShownFor)
+    }
+
+    @Test
     fun `GIVEN exactly the required amount of downloaded thumbnails with no errors WHEN handling wallpaper dialog THEN dialog is shown`() {
         val wallpaperState = WallpaperState.default.copy(
             availableWallpapers = makeFakeRemoteWallpapers(
@@ -1052,6 +1074,25 @@ class DefaultSessionControlControllerTest {
     }
 
     @Test
+    fun `WHEN top site long clicked is called THEN report the top site long click telemetry`() {
+        assertNull(TopSites.longPress.testGetValue())
+
+        val topSite = TopSite.Provided(
+            id = 1L,
+            title = "Mozilla",
+            url = "mozilla.org",
+            clickUrl = "",
+            imageUrl = "",
+            impressionUrl = "",
+            createdAt = 0,
+        )
+
+        createController().handleTopSiteLongClicked(topSite)
+
+        assertEquals(topSite.type, TopSites.longPress.testGetValue()!!.single().extra!!["type"])
+    }
+
+    @Test
     fun `WHEN handleOpenInPrivateTabClicked is called with a TopSite#Provided site THEN Event#TopSiteOpenContileInPrivateTab is reported`() {
         val topSite = TopSite.Provided(
             id = 1L,
@@ -1123,6 +1164,7 @@ class DefaultSessionControlControllerTest {
         registerCollectionStorageObserver: () -> Unit = { },
         showTabTray: () -> Unit = { },
         removeCollectionWithUndo: (tabCollection: TabCollection) -> Unit = { },
+        showUndoSnackbarForTopSite: (topSite: TopSite) -> Unit = { },
     ): DefaultSessionControlController {
         return DefaultSessionControlController(
             activity = activity,
@@ -1140,6 +1182,7 @@ class DefaultSessionControlControllerTest {
             viewLifecycleScope = scope,
             registerCollectionStorageObserver = registerCollectionStorageObserver,
             removeCollectionWithUndo = removeCollectionWithUndo,
+            showUndoSnackbarForTopSite = showUndoSnackbarForTopSite,
             showTabTray = showTabTray,
         )
     }

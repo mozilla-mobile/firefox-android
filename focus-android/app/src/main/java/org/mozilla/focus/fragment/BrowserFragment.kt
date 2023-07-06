@@ -32,6 +32,7 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
@@ -62,7 +63,6 @@ import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.ktx.android.view.exitImmersiveMode
-import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import mozilla.components.support.locale.ActivityContextWrapper
 import mozilla.components.support.utils.Browsers
 import mozilla.components.support.utils.StatusBarUtils
@@ -216,7 +216,7 @@ class BrowserFragment :
     private fun updateCookieBannerSiteToReportSnackBar() {
         siteNotSupportedSnackBarScope = cookieBannerReducerStore.flowScoped { flow ->
             flow.mapNotNull { state -> state.showSnackBarForSiteToReport }
-                .ifChanged()
+                .distinctUntilChanged()
                 .collect { showSnackBarForSiteToReport ->
                     if (showSnackBarForSiteToReport) {
                         ViewUtils.showBrandedSnackbar(
@@ -255,6 +255,7 @@ class BrowserFragment :
             FindInPageIntegration(
                 components.store,
                 binding.findInPage,
+                binding.browserToolbar,
                 binding.engineView,
             ),
             this,
@@ -320,6 +321,7 @@ class BrowserFragment :
             PromptFeature(
                 fragment = this,
                 store = components.store,
+                tabsUseCases = components.tabsUseCases,
                 customTabId = tryGetCustomTabId(),
                 fragmentManager = parentFragmentManager,
                 onNeedToRequestPermissions = { permissions ->
@@ -393,6 +395,15 @@ class BrowserFragment :
                 fragmentManager = parentFragmentManager,
                 launchInApp = { requireContext().settings.openLinksInExternalApp },
                 loadUrlUseCase = requireContext().components.sessionUseCases.loadUrl,
+                failedToLaunchAction = { fallbackUrl ->
+                    fallbackUrl?.let {
+                        val appLinksUseCases = components.appLinksUseCases
+                        val getRedirect = appLinksUseCases.appLinkRedirect
+                        val redirect = getRedirect.invoke(fallbackUrl)
+                        redirect.appIntent?.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        appLinksUseCases.openAppLink.invoke(redirect.appIntent)
+                    }
+                },
             ),
             owner = this,
             view = view,
@@ -521,6 +532,7 @@ class BrowserFragment :
             ::showFindInPageBar,
             ::openSelectBrowser,
             ::openInBrowser,
+            ::showShortcutAddedSnackBar,
         )
 
         if (tab.ifCustomTab()?.config == null) {
@@ -552,6 +564,12 @@ class BrowserFragment :
             owner = this,
             view = binding.browserToolbar,
         )
+    }
+
+    private fun showShortcutAddedSnackBar() {
+        FocusSnackbar.make(requireView())
+            .setText(requireContext().getString(R.string.snackbar_added_to_shortcuts))
+            .show()
     }
 
     private fun initialiseNormalBrowserUi() {

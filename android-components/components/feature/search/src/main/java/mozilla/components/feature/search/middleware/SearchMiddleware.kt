@@ -26,6 +26,17 @@ import java.util.Locale
 import kotlin.coroutines.CoroutineContext
 
 /**
+ * Holds data for the search extra params.
+ */
+data class SearchExtraParams(
+    val searchEngineName: String,
+    val featureEnablerName: String?,
+    val featureEnablerParam: String?,
+    val channelIdName: String,
+    val channelIdParam: String,
+)
+
+/**
  * [Middleware] implementation for loading and saving [SearchEngine]s whenever the state changes.
  *
  * @param additionalBundledSearchEngineIds List of (bundled) search engine IDs that will be loaded
@@ -36,6 +47,7 @@ import kotlin.coroutines.CoroutineContext
  * @param customStorage A storage for custom search engines of the user.
  * @param bundleStorage A storage for loading bundled search engines.
  * @param metadataStorage A storage for saving additional metadata related to search.
+ * @param searchExtraParams Optional search extra params.
  * @param ioDispatcher The coroutine dispatcher to be used when loading.
  */
 @Suppress("LongParameterList")
@@ -45,7 +57,11 @@ class SearchMiddleware(
     private val migration: Migration? = null,
     private val customStorage: CustomStorage = CustomSearchEngineStorage(context),
     private val bundleStorage: BundleStorage = BundledSearchEnginesStorage(context),
-    private val metadataStorage: MetadataStorage = SearchMetadataStorage(context),
+    private val metadataStorage: MetadataStorage = SearchMetadataStorage(
+        context,
+        additionalBundledSearchEngineIds.toSet(),
+    ),
+    private val searchExtraParams: SearchExtraParams? = null,
     private val ioDispatcher: CoroutineContext = Dispatchers.IO,
 ) : Middleware<BrowserState, BrowserAction> {
     private val logger = Logger("SearchMiddleware")
@@ -73,6 +89,10 @@ class SearchMiddleware(
                 updateHiddenSearchEngines(context.state.search.hiddenSearchEngines)
             is SearchAction.AddAdditionalSearchEngineAction, is SearchAction.RemoveAdditionalSearchEngineAction ->
                 updateAdditionalSearchEngines(context.state.search.additionalSearchEngines)
+            is SearchAction.UpdateDisabledSearchEngineIdsAction -> updateDisabledSearchEngineIds(
+                context.store,
+                action,
+            )
             else -> {
                 // no-op
             }
@@ -88,13 +108,23 @@ class SearchMiddleware(
         performCustomSearchEnginesMigration(migrationValues)
 
         val regionBundle = async(ioDispatcher) {
-            bundleStorage.load(region, distribution = distribution, coroutineContext = ioDispatcher)
+            bundleStorage.load(
+                region = region,
+                distribution = distribution,
+                searchExtraParams = searchExtraParams,
+                coroutineContext = ioDispatcher,
+            )
         }
         val customSearchEngines = async(ioDispatcher) { customStorage.loadSearchEngineList() }
         val hiddenSearchEngineIds = async(ioDispatcher) { metadataStorage.getHiddenSearchEngines() }
+        val disabledSearchEngineIds = async(ioDispatcher) { metadataStorage.getDisabledSearchEngineIds() }
         val additionalSearchEngineIds = async(ioDispatcher) { metadataStorage.getAdditionalSearchEngines() }
         val allAdditionalSearchEngines = async(ioDispatcher) {
-            bundleStorage.load(additionalBundledSearchEngineIds, ioDispatcher)
+            bundleStorage.load(
+                ids = additionalBundledSearchEngineIds,
+                searchExtraParams = searchExtraParams,
+                coroutineContext = ioDispatcher,
+            )
         }
 
         val hiddenSearchEngines = mutableListOf<SearchEngine>()
@@ -132,11 +162,11 @@ class SearchMiddleware(
             userSelectedSearchEngineName = userChoice.await()?.searchEngineName,
             customSearchEngines = customSearchEngines.await(),
             hiddenSearchEngines = hiddenSearchEngines,
+            disabledSearchEngineIds = disabledSearchEngineIds.await(),
             additionalSearchEngines = additionalSearchEngines,
             additionalAvailableSearchEngines = additionalAvailableSearchEngines,
             regionSearchEnginesOrder = regionSearchEngineIds,
         )
-
         store.dispatch(action)
     }
 
@@ -175,6 +205,19 @@ class SearchMiddleware(
         metadataStorage.setAdditionalSearchEngines(
             additionalSearchEngines.map { searchEngine -> searchEngine.id },
         )
+    }
+
+    private fun updateDisabledSearchEngineIds(
+        store: Store<BrowserState, BrowserAction>,
+        action: SearchAction.UpdateDisabledSearchEngineIdsAction,
+    ) = scope.launch {
+        val disabledIds = store.state.search.disabledSearchEngineIds
+        val updatedList = if (action.isEnabled) {
+            disabledIds - action.searchEngineId
+        } else {
+            disabledIds + action.searchEngineId
+        }
+        metadataStorage.setDisabledSearchEngineIds(updatedList)
     }
 
     private suspend fun performCustomSearchEnginesMigration(values: Migration.MigrationValues?) {
@@ -251,6 +294,7 @@ class SearchMiddleware(
             region: RegionState,
             locale: Locale = Locale.getDefault(),
             distribution: String? = null,
+            searchExtraParams: SearchExtraParams? = null,
             coroutineContext: CoroutineContext = Dispatchers.IO,
         ): Bundle
 
@@ -259,6 +303,7 @@ class SearchMiddleware(
          */
         suspend fun load(
             ids: List<String>,
+            searchExtraParams: SearchExtraParams? = null,
             coroutineContext: CoroutineContext = Dispatchers.IO,
         ): List<SearchEngine>
 
@@ -306,6 +351,16 @@ class SearchMiddleware(
          * Sets the list of IDs of additional search engines that the user explicitly added.
          */
         suspend fun setAdditionalSearchEngines(ids: List<String>)
+
+        /**
+         * Gets the list of IDs of disabled search engine shortcuts.
+         */
+        suspend fun getDisabledSearchEngineIds(): List<String>
+
+        /**
+         * Sets the list of IDs of disabled search engine shortcuts.
+         */
+        suspend fun setDisabledSearchEngineIds(ids: List<String>)
 
         /**
          * Data class holding the ID and name of the selected search engine of the user.

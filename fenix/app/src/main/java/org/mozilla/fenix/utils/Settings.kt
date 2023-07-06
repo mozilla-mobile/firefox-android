@@ -29,6 +29,7 @@ import mozilla.components.support.ktx.android.content.longPreference
 import mozilla.components.support.ktx.android.content.stringPreference
 import mozilla.components.support.ktx.android.content.stringSetPreference
 import mozilla.components.support.locale.LocaleManager
+import mozilla.components.support.utils.BrowsersCache
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.FeatureFlags
@@ -185,18 +186,43 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = "",
     )
 
-    var contileContextId by stringPreference(
-        appContext.getPreferenceKey(R.string.pref_key_contile_context_id),
+    var nimbusExperimentsFetched by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_nimbus_experiments_fetched),
+        default = false,
+    )
+
+    var utmParamsKnown by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_utm_params_known),
+        default = false,
+    )
+
+    var utmSource by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_utm_source),
         default = "",
     )
 
-    /**
-     * A UUID stored in Shared Preferences used to analyze technical differences
-     * between storage mechanisms in Android, specifically the Glean DB and
-     * Shared Preferences.
-     */
-    var sharedPrefsUUID by stringPreference(
-        appContext.getPreferenceKey(R.string.pref_key_shared_prefs_uuid),
+    var utmMedium by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_utm_medium),
+        default = "",
+    )
+
+    var utmCampaign by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_utm_campaign),
+        default = "",
+    )
+
+    var utmTerm by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_utm_term),
+        default = "",
+    )
+
+    var utmContent by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_utm_content),
+        default = "",
+    )
+
+    var contileContextId by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_contile_context_id),
         default = "",
     )
 
@@ -412,6 +438,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var isFirstNimbusRun: Boolean by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_is_first_run),
         default = true,
+    )
+
+    var isFirstSplashScreenShown: Boolean by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_is_first_splash_screen_shown),
+        default = false,
     )
 
     var nimbusLastFetchTime: Long by longPreference(
@@ -855,10 +886,10 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = true,
     )
 
-    var shouldUseBottomToolbar by booleanPreference(
+    var shouldUseBottomToolbar by lazyFeatureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_toolbar_bottom),
-        // Default accessibility users to top toolbar
-        default = !touchExplorationIsEnabled && !switchServiceIsEnabled,
+        featureFlag = true,
+        default = { shouldDefaultToBottomToolbar() },
     )
 
     val toolbarPosition: ToolbarPosition
@@ -895,6 +926,18 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         get() {
             return touchExplorationIsEnabled || switchServiceIsEnabled
         }
+
+    val toolbarPositionTop: Boolean
+        get() = FxNimbus.features.toolbar.value().toolbarPositionTop
+
+    /**
+     * Checks if we should default to bottom toolbar.
+     */
+    fun shouldDefaultToBottomToolbar(): Boolean {
+        // Default accessibility users to top toolbar
+        return (!touchExplorationIsEnabled && !switchServiceIsEnabled) &&
+            !toolbarPositionTop
+    }
 
     fun getDeleteDataOnQuit(type: DeleteBrowsingDataOnQuitType): Boolean =
         preferences.getBoolean(type.getPreferenceKey(appContext), false)
@@ -1272,6 +1315,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = "",
     )
 
+    var enableGeckoLogs by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_enable_gecko_logs),
+        default = Config.channel.isDebug,
+    )
+
     fun amoCollectionOverrideConfigured(): Boolean {
         return overrideAmoUser.isNotEmpty() || overrideAmoCollection.isNotEmpty()
     }
@@ -1288,6 +1336,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
 
     var openTabsCount by intPreference(
         appContext.getPreferenceKey(R.string.pref_key_open_tabs_count),
+        0,
+    )
+
+    var openPrivateTabsCount by intPreference(
+        appContext.getPreferenceKey(R.string.pref_key_open_private_tabs_count),
         0,
     )
 
@@ -1575,7 +1628,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var showUnifiedSearchFeature by lazyFeatureFlagPreference(
         key = appContext.getPreferenceKey(R.string.pref_key_show_unified_search_2),
         default = { FxNimbus.features.unifiedSearch.value().enabled },
-        featureFlag = FeatureFlags.unifiedSearchFeature,
+        featureFlag = true,
     )
 
     /**
@@ -1592,7 +1645,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var notificationPrePermissionPromptEnabled by lazyFeatureFlagPreference(
         key = appContext.getPreferenceKey(R.string.pref_key_notification_pre_permission_prompt_enabled),
         default = { FxNimbus.features.prePermissionNotificationPrompt.value().enabled },
-        featureFlag = FeatureFlags.notificationPrePermissionPromptEnabled,
+        featureFlag = true,
     )
 
     /**
@@ -1705,4 +1758,46 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         key = appContext.getPreferenceKey(R.string.pref_key_enable_tabs_tray_to_compose),
         default = FeatureFlags.composeTabsTray,
     )
+
+    /**
+     * Indicates if the Compose Top Sites are enabled.
+     */
+    var enableComposeTopSites by booleanPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_enable_compose_top_sites),
+        default = FeatureFlags.composeTopSites,
+    )
+
+    /**
+     * Adjust Activated User sent
+     */
+    var growthUserActivatedSent by booleanPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_growth_user_activated_sent),
+        default = false,
+    )
+
+    /**
+     * Indicates how many days in the first week user opened the app.
+     */
+    val growthEarlyUseCount = counterPreference(
+        appContext.getPreferenceKey(R.string.pref_key_growth_early_browse_count),
+        maxCount = 3,
+    )
+
+    var growthEarlyUseCountLastIncrement by longPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_growth_early_browse_count_last_increment),
+        default = 0L,
+    )
+
+    /**
+     * Indicates how many days in the first week user searched in the app.
+     */
+    var growthEarlySearchUsed by booleanPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_growth_early_search),
+        default = false,
+    )
+
+    /**
+     * Indicates if the new Search settings UI is enabled.
+     */
+    var enableUnifiedSearchSettingsUI: Boolean = showUnifiedSearchFeature && FeatureFlags.unifiedSearchSettings
 }

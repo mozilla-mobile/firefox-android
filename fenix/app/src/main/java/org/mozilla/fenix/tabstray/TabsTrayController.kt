@@ -28,7 +28,6 @@ import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.GleanMetrics.Collections
 import org.mozilla.fenix.GleanMetrics.Events
-import org.mozilla.fenix.GleanMetrics.ServerKnobs
 import org.mozilla.fenix.GleanMetrics.TabsTray
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
@@ -136,17 +135,6 @@ interface TabsTrayController : SyncedTabsController, InactiveTabsController, Tab
      * Handles when a tab item is click either to play/pause.
      */
     fun handleMediaClicked(tab: SessionState)
-
-    /**
-     * Handles a user's tab click while in multi select mode.
-     *
-     * @param tab [TabSessionState] that was clicked.
-     * @param source App feature from which the tab was clicked.
-     */
-    fun handleMultiSelectClicked(
-        tab: TabSessionState,
-        source: String?,
-    )
 
     /**
      * Adds the provided tab to the current selection of tabs.
@@ -266,8 +254,16 @@ class DefaultTabsTrayController(
     }
 
     override fun handleTrayScrollingToPosition(position: Int, smoothScroll: Boolean) {
+        val page = Page.positionToPage(position)
+
+        when (page) {
+            Page.NormalTabs -> TabsTray.normalModeTapped.record(NoExtras())
+            Page.PrivateTabs -> TabsTray.privateModeTapped.record(NoExtras())
+            Page.SyncedTabs -> TabsTray.syncedModeTapped.record(NoExtras())
+        }
+
         selectTabPosition(position, smoothScroll)
-        tabsTrayStore.dispatch(TabsTrayAction.PageSelected(Page.positionToPage(position)))
+        tabsTrayStore.dispatch(TabsTrayAction.PageSelected(page))
     }
 
     /**
@@ -479,9 +475,6 @@ class DefaultTabsTrayController(
             TabsTray.newPrivateTabTapped.record(NoExtras())
         } else {
             TabsTray.newTabTapped.record(NoExtras())
-
-            // Temporary recording for validating the Glean Server Knobs functionality.
-            ServerKnobs.validation.record(NoExtras())
         }
     }
 
@@ -519,17 +512,6 @@ class DefaultTabsTrayController(
         )
     }
 
-    override fun handleMultiSelectClicked(tab: TabSessionState, source: String?) {
-        val selected = tabsTrayStore.state.mode.selectedTabs
-        when {
-            selected.isEmpty() && tabsTrayStore.state.mode.isSelect().not() -> {
-                handleTabSelected(tab, source)
-            }
-            tab.id in selected.map { it.id } -> handleTabUnselected(tab)
-            else -> tabsTrayStore.dispatch(TabsTrayAction.AddSelectTab(tab))
-        }
-    }
-
     override fun handleTabLongClick(tab: TabSessionState): Boolean {
         return if (tab.isNormalTab() && tabsTrayStore.state.mode.selectedTabs.isEmpty()) {
             Collections.longPress.record(NoExtras())
@@ -541,10 +523,19 @@ class DefaultTabsTrayController(
     }
 
     override fun handleTabSelected(tab: TabSessionState, source: String?) {
-        TabsTray.openedExistingTab.record(TabsTray.OpenedExistingTabExtra(source ?: "unknown"))
-        tabsUseCases.selectTab(tab.id)
-        browsingModeManager.mode = BrowsingMode.fromBoolean(tab.content.private)
-        handleNavigateToBrowser()
+        val selected = tabsTrayStore.state.mode.selectedTabs
+        when {
+            selected.isEmpty() && tabsTrayStore.state.mode.isSelect().not() -> {
+                TabsTray.openedExistingTab.record(TabsTray.OpenedExistingTabExtra(source ?: "unknown"))
+                tabsUseCases.selectTab(tab.id)
+                browsingModeManager.mode = BrowsingMode.fromBoolean(tab.content.private)
+                handleNavigateToBrowser()
+            }
+            tab.id in selected.map { it.id } -> handleTabUnselected(tab)
+            source != TrayPagerAdapter.INACTIVE_TABS_FEATURE_NAME -> {
+                tabsTrayStore.dispatch(TabsTrayAction.AddSelectTab(tab))
+            }
+        }
     }
 
     override fun handleTabUnselected(tab: TabSessionState) {

@@ -131,8 +131,24 @@ import:
                 max-display-count: 1
             notification-config:
               refresh-interval: 120 # minutes (2 hours)
+  - path: ../../android-components/components/browser/engine-gecko/geckoview.fml.yaml
+    channel: release
+    features:
+      pdfjs:
+        - channel: developer
+          value: {
+          download-button: true,
+          open-in-app-button: true
+        }
 
 features:
+  toolbar:
+    description: The searchbar/awesomebar that user uses to search.
+    variables:
+      toolbar-position-top:
+        description: If true, toolbar appears at top of the screen.
+        type: Boolean
+        default: false
   homescreen:
     description: The homescreen that the user goes to when they press home or new tab.
     variables:
@@ -251,29 +267,7 @@ features:
       enabled:
         description: If true, the feature shows up in the search bar.
         type: Boolean
-        default: false
-    defaults:
-      - channel: nightly
-        value:
-          enabled: true
-      - channel: developer
-        value:
-          enabled: true
-
-  client-deduplication:
-    description: A feature to control the sending of the client-deduplication ping.
-    variables:
-      enabled:
-        description: If true, the ping will be sent.
-        type: Boolean
-        default: false
-    defaults:
-      - channel: nightly
-        value:
-          enabled: false
-      - channel: developer
-        value:
-          enabled: false
+        default: true
 
   growth-data:
     description: A feature measuring campaign growth data
@@ -324,6 +318,49 @@ features:
         type: Map<String, Boolean>
         default: {}
 
+  splash-screen:
+    description: "A feature that extends splash screen duration, allowing additional data fetching time for the app's initial run."
+    variables:
+      enabled:
+        description: "If true, the feature is active."
+        type: Boolean
+        default: false
+      maximum_duration_ms:
+        description: The maximum amount of time in milliseconds the splashscreen will be visible while waiting for initialization calls to complete.
+        type: Int
+        default: 0
+
+  shopping-experience:
+    description: A feature that shows product review quality information.
+    variables:
+      enabled:
+        description: if true, the shopping experience feature is shown to the user.
+        type: Boolean
+        default: false
+    defaults:
+      - channel: developer
+        value:
+          enabled: true
+
+  search-extra-params:
+    description: A feature that provides additional args for search.
+    variables:
+      enabled:
+        description: If true, the feature is active.
+        type: Boolean
+        default: false
+      search-engine:
+        description: The search engine name.
+        type: String
+        default: ""
+      feature-enabler:
+        description: The feature enabler param name with arg, NOTE this map could be empty.
+        type: Map<String, String>
+        default: {}
+      channel-id:
+        description: The channel Id param name with arg.
+        type: Map<String, String>
+        default: {}
 types:
   objects: {}
 

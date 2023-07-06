@@ -70,8 +70,8 @@ buildscript {
     }
 
     dependencies {
-        classpath FenixDependencies.tools_androidgradle
-        classpath FenixDependencies.tools_kotlingradle
+        classpath ComponentsDependencies.tools_androidgradle
+        classpath ComponentsDependencies.tools_kotlingradle
         classpath FenixDependencies.tools_benchmarkgradle
         classpath FenixDependencies.androidx_safeargs
         classpath FenixDependencies.osslicenses_plugin
@@ -81,10 +81,18 @@ buildscript {
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
+
+    // Variables in plugins {} aren't directly supported. Hack around it by setting an
+    // intermediate variable which can pull from FenixDependenciesPlugin.kt and be used later.
+    ext {
+        detekt_plugin = Versions.detekt
+        protobuf_plugin = FenixVersions.protobuf_plugin
+        python_envs_plugin = Versions.python_envs_plugin
+    }
 }
 
 plugins {
-    id("io.gitlab.arturbosch.detekt").version("1.19.0")
+    id("io.gitlab.arturbosch.detekt").version("$detekt_plugin")
 }
 
 allprojects {
@@ -155,7 +163,7 @@ allprojects {
     }
 
     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
-        kotlinOptions.jvmTarget = "11"
+        kotlinOptions.jvmTarget = "17"
         kotlinOptions.allWarningsAsErrors = true
         kotlinOptions.freeCompilerArgs += [
             "-opt-in=kotlin.RequiresOptIn", "-Xjvm-default=all"
@@ -209,14 +217,14 @@ configurations {
 }
 
 dependencies {
-    ktlint("com.pinterest:ktlint:0.48.2") {
+    ktlint("com.pinterest:ktlint:${Versions.ktlint}") {
         attributes {
             attribute(Bundling.BUNDLING_ATTRIBUTE, getObjects().named(Bundling, Bundling.EXTERNAL))
         }
     }
 
     detekt project(":mozilla-detekt-rules")
-    detekt "io.gitlab.arturbosch.detekt:detekt-cli:${FenixVersions.detekt}"
+    detekt "io.gitlab.arturbosch.detekt:detekt-cli:${Versions.detekt}"
 }
 
 tasks.register('ktlint', JavaExec) {
@@ -232,6 +240,7 @@ task ktlintFormat(type: JavaExec, group: "formatting") {
     classpath = configurations.ktlint
     mainClass.set("com.pinterest.ktlint.Main")
     args "-F", "app/src/**/*.kt", "!**/build/**/*.kt", "--baseline=ktlint-baseline.xml"
+    jvmArgs("--add-opens", "java.base/java.lang=ALL-UNNAMED")
 }
 
 tasks.withType(io.gitlab.arturbosch.detekt.Detekt.class).configureEach {

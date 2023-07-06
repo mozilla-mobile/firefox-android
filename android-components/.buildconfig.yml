@@ -18,14 +18,18 @@ projects:
     publish: true
     upstream_dependencies:
     - browser-errorpages
+    - browser-state
     - concept-base
     - concept-engine
     - concept-fetch
     - concept-storage
     - lib-publicsuffixlist
+    - lib-state
     - service-glean
+    - service-nimbus
     - support-base
     - support-ktx
+    - support-locale
     - support-test
     - support-utils
     - tooling-fetch-tests
@@ -140,10 +144,12 @@ projects:
     - feature-tabs
     - lib-publicsuffixlist
     - lib-state
+    - service-nimbus
     - support-android-test
     - support-base
     - support-images
     - support-ktx
+    - support-locale
     - support-test
     - support-test-fakes
     - support-test-libstate
@@ -178,15 +184,12 @@ projects:
     publish: true
     upstream_dependencies:
     - concept-base
-    - concept-fetch
     - concept-storage
     - concept-sync
     - concept-toolbar
     - lib-publicsuffixlist
-    - service-glean
     - support-base
     - support-ktx
-    - support-sync-telemetry
     - support-test
     - support-utils
     - tooling-lint
@@ -502,11 +505,9 @@ projects:
     - lib-publicsuffixlist
     - lib-state
     - service-firefox-accounts
-    - service-glean
     - support-base
     - support-images
     - support-ktx
-    - support-sync-telemetry
     - support-test
     - support-utils
     - support-webextensions
@@ -520,7 +521,6 @@ projects:
     publish: true
     upstream_dependencies:
     - concept-base
-    - concept-fetch
     - concept-push
     - concept-storage
     - concept-sync
@@ -529,10 +529,8 @@ projects:
     - lib-publicsuffixlist
     - lib-state
     - service-firefox-accounts
-    - service-glean
     - support-base
     - support-ktx
-    - support-sync-telemetry
     - support-test
     - support-utils
     - tooling-lint
@@ -630,12 +628,10 @@ projects:
     - lib-fetch-httpurlconnection
     - lib-publicsuffixlist
     - lib-state
-    - service-glean
     - service-location
     - support-base
     - support-images
     - support-ktx
-    - support-sync-telemetry
     - support-test
     - support-utils
     - tooling-lint
@@ -823,24 +819,33 @@ projects:
     publish: true
     upstream_dependencies:
     - browser-errorpages
+    - browser-menu2
+    - browser-session-storage
     - browser-state
+    - browser-tabstray
+    - browser-thumbnails
     - concept-base
     - concept-engine
     - concept-fetch
+    - concept-menu
     - concept-storage
+    - concept-tabstray
     - concept-toolbar
     - feature-prompts
     - feature-session
+    - feature-tabs
     - lib-publicsuffixlist
     - lib-state
     - support-android-test
     - support-base
+    - support-images
     - support-ktx
     - support-test
     - support-utils
     - tooling-lint
     - ui-colors
     - ui-icons
+    - ui-tabcounter
     - ui-widgets
   feature-media:
     description: Feature component for website media related features.
@@ -889,17 +894,25 @@ projects:
     publish: true
     upstream_dependencies:
     - browser-errorpages
+    - browser-menu2
+    - browser-session-storage
     - browser-state
+    - browser-tabstray
+    - browser-thumbnails
     - concept-base
     - concept-engine
     - concept-fetch
+    - concept-menu
     - concept-storage
+    - concept-tabstray
     - concept-toolbar
     - feature-session
+    - feature-tabs
     - lib-publicsuffixlist
     - lib-state
     - support-android-test
     - support-base
+    - support-images
     - support-ktx
     - support-test
     - support-test-libstate
@@ -907,6 +920,7 @@ projects:
     - tooling-lint
     - ui-colors
     - ui-icons
+    - ui-tabcounter
     - ui-widgets
   feature-push:
     description: Feature that implements push notifications with a supported push
@@ -1077,9 +1091,11 @@ projects:
     - feature-tabs
     - lib-publicsuffixlist
     - lib-state
+    - service-nimbus
     - support-base
     - support-images
     - support-ktx
+    - support-locale
     - support-test
     - support-utils
     - tooling-lint
@@ -1176,11 +1192,9 @@ projects:
     - lib-publicsuffixlist
     - lib-state
     - service-firefox-accounts
-    - service-glean
     - support-base
     - support-images
     - support-ktx
-    - support-sync-telemetry
     - support-test
     - support-utils
     - tooling-lint
@@ -1282,16 +1296,13 @@ projects:
     upstream_dependencies:
     - browser-storage-sync
     - concept-base
-    - concept-fetch
     - concept-storage
     - concept-sync
     - concept-toolbar
     - lib-publicsuffixlist
-    - service-glean
     - support-android-test
     - support-base
     - support-ktx
-    - support-sync-telemetry
     - support-test
     - support-utils
     - tooling-lint
@@ -1551,6 +1562,7 @@ projects:
     - service-digitalassetlinks
     - service-glean
     - service-location
+    - service-nimbus
     - service-sync-logins
     - support-android-test
     - support-base
@@ -1558,7 +1570,6 @@ projects:
     - support-ktx
     - support-locale
     - support-rustlog
-    - support-sync-telemetry
     - support-utils
     - support-webextensions
     - tooling-lint
@@ -1600,12 +1611,12 @@ projects:
     - feature-tabs
     - lib-publicsuffixlist
     - lib-state
-    - service-glean
     - service-location
+    - service-nimbus
     - support-base
     - support-images
     - support-ktx
-    - support-sync-telemetry
+    - support-locale
     - support-utils
     - tooling-lint
     - ui-colors
@@ -1654,12 +1665,10 @@ projects:
     - lib-publicsuffixlist
     - lib-state
     - service-firefox-accounts
-    - service-glean
     - support-base
     - support-ktx
     - support-rusthttp
     - support-rustlog
-    - support-sync-telemetry
     - support-utils
     - tooling-lint
   samples-glean:
@@ -1725,7 +1734,6 @@ projects:
     - support-ktx
     - support-rusthttp
     - support-rustlog
-    - support-sync-telemetry
     - support-utils
     - tooling-lint
   samples-sync-logins:
@@ -1748,7 +1756,6 @@ projects:
     - support-ktx
     - support-rusthttp
     - support-rustlog
-    - support-sync-telemetry
     - support-utils
     - tooling-lint
   samples-toolbar:
@@ -1794,10 +1801,8 @@ projects:
     - concept-toolbar
     - feature-top-sites
     - lib-publicsuffixlist
-    - service-glean
     - support-base
     - support-ktx
-    - support-sync-telemetry
     - support-test
     - support-utils
     - tooling-lint
@@ -1820,16 +1825,13 @@ projects:
     publish: true
     upstream_dependencies:
     - concept-base
-    - concept-fetch
     - concept-storage
     - concept-sync
     - lib-dataprotect
     - lib-publicsuffixlist
     - lib-state
-    - service-glean
     - support-base
     - support-ktx
-    - support-sync-telemetry
     - support-test
     - support-test-libstate
     - support-utils
@@ -1929,7 +1931,6 @@ projects:
     - service-glean
     - support-base
     - support-ktx
-    - support-sync-telemetry
     - support-utils
     - tooling-lint
   support-android-test:
@@ -2027,20 +2028,6 @@ projects:
     - concept-base
     - support-base
     - support-test
-    - tooling-lint
-  support-sync-telemetry:
-    description: A collection of sync-related telemetry helper classes and ping descriptions.
-    path: components/support/sync-telemetry
-    publish: true
-    upstream_dependencies:
-    - concept-base
-    - concept-fetch
-    - lib-publicsuffixlist
-    - service-glean
-    - support-base
-    - support-ktx
-    - support-test
-    - support-utils
     - tooling-lint
   support-test:
     description: A collection of helpers for testing components (local unit tests).

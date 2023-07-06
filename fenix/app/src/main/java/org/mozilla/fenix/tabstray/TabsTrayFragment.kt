@@ -194,6 +194,12 @@ class TabsTrayFragment : AppCompatDialogFragment() {
         return tabsTrayDialog
     }
 
+    override fun onPause() {
+        super.onPause()
+
+        dialog?.window?.setWindowAnimations(R.style.DialogFragmentRestoreAnimation)
+    }
+
     @Suppress("LongMethod")
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -239,9 +245,6 @@ class TabsTrayFragment : AppCompatDialogFragment() {
                         onTabMediaClick = tabsTrayInteractor::onMediaClicked,
                         onTabClick = { tab ->
                             tabsTrayInteractor.onTabSelected(tab, TABS_TRAY_FEATURE_NAME)
-                        },
-                        onTabMultiSelectClick = { tab ->
-                            tabsTrayInteractor.onMultiSelectClicked(tab, TABS_TRAY_FEATURE_NAME)
                         },
                         onTabLongClick = tabsTrayInteractor::onTabLongClicked,
                         onInactiveTabsHeaderClick = tabsTrayInteractor::onInactiveTabsHeaderClicked,
@@ -531,12 +534,9 @@ class TabsTrayFragment : AppCompatDialogFragment() {
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
 
-        if (!requireContext().settings().enableTabsTrayToCompose) {
-            trayBehaviorManager.updateDependingOnOrientation(newConfig.orientation)
-
-            if (requireContext().settings().gridTabView) {
-                tabsTrayBinding.tabsTray.adapter?.notifyDataSetChanged()
-            }
+        trayBehaviorManager.updateDependingOnOrientation(newConfig.orientation)
+        if (!requireContext().settings().enableTabsTrayToCompose && requireContext().settings().gridTabView) {
+            tabsTrayBinding.tabsTray.adapter?.notifyDataSetChanged()
         }
     }
 

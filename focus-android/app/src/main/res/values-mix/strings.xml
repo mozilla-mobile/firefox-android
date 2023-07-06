@@ -54,7 +54,7 @@
     <string name="menu_remove_from_shortcuts">Stoó ña xina</string>
 
     <!-- Menu item: Shows information about features and changes that are new to this version -->
-    <string name="menu_whats_new">Ña tsa\'a</string>
+    <string name="menu_whats_new" moz:RemovedIn="116" tools:ignore="UnusedResources">Ña tsa\'a</string>
     <string name="menu_settings">Nu samu</string>
     <string name="menu_about">Tsaa ña</string>
     <string name="menu_help">Chinchee</string>
@@ -493,7 +493,10 @@
 
 
 
-  <string name="error_hostLookup_title">Kòo servidor ni ntanèe</string>
+  <!-- Snackbar that will be displayed after a website has been added to shortcuts. -->
+    <string name="snackbar_added_to_shortcuts">Tyika xina</string>
+
+    <string name="error_hostLookup_title">Kòo servidor ni ntanèe</string>
 
 
 
@@ -759,6 +762,9 @@
     <!-- Label for cookie banner item from tracking protection, after the user reports with success a website where cookie banner reducer did not work -->
     <string name="cookie_banner_the_site_was_reported">Pedido para soporte del sitio enviado.</string>
 
+    <!-- Contextual Feature Recommendation Popups -->
+    <!-- CFR for Cookie Banner (Banner Info Message). %1$s will be replaced by the app name, %2$s will be an active link using the string cfr_cookie_banner_link as text. -->
+    <string name="cfr_cookie_banner">%1$s trata de rechazar los pedidos de cookies para descartar pancartas de cookies molestos.\n\nAdministrar preferencias de mensajes de cookies en %2$s.</string>
     <!-- CFR for Cookie Banner (Banner Info Message). This string is used as text for a link in cfr_cookie_banner and takes the user to the app settings. -->
     <string name="cfr_cookie_banner_link">Ndasama</string>
 
@@ -846,6 +852,9 @@
     <!-- Title text for biometric prompt pop-up -->
     <string name="biometric_prompt_title">Confirmar usando tu huella digital</string>
 
+    <!-- Subtitle text for biometric prompt pop-up -->
+    <string name="biometric_prompt_subtitle">Kuvi niínu huella digital sa kuvi kaji´enu sesión nu ka̱a̱</string>
+
     <!-- Button for the fingerprint authentication dialog box that is shown to the user when sharing a link to the app
     while the user has biometric authentication enabled. When pressed, the user's previous session is cleared, and the shared link is opened. -->
     <string name="biometric_auth_open_link_new_session">Kuna nu xikua tsàa</string>
@@ -861,6 +870,13 @@
     This is displayed during the authentication flow as the app launches.-->
     <string name="biometric_auth_moved_too_quickly">Vichi nchua ni kanta ndau. Kitsa tuku.</string>
 
+    <!-- Title for the prompt to enable search suggestions -->
+    <string name="enable_search_suggestion_title2">A Kuncheu nixi ndukuku</string>
+
+    <!-- Description for the prompt to enable search suggestions
+        %1$s will be replaced by the app name (e.g. Firefox Focus) -->
+    <string name="enable_search_suggestion_description">Para obtener sugerencias de búsqueda, %1$s necesita enviar lo que ingreses en la barra de direcciones al motor de búsqueda.</string>
+
     <!-- Label used for the "NO button" for the prompt to enable search suggestions -->
     <string name="enable_search_suggestions_no">No</string>
 
@@ -875,6 +891,10 @@
 
     <!-- Tips displayed on the home view -->
 
+    <!-- Tip displayed on home view explaining how to disable tracking protection
+    The new line here must be kept as the second half of the string is clickable for the user. -->
+    <string name="tip_disable_tracking_protection">¿Ntu satiñu vii sitio ya´a?\n Xita protección de rastreo </string>
+
     <!-- Tip displayed on home view explaining how to make Focus the default browser
     Argument 1 is the app name (Firefox Focus/Firefox Klar/etc).
     The new line here must be kept as the second half of the string is clickable for the user. -->
@@ -888,12 +908,23 @@
     The new line here must be kept as the second half of the string is clickable for the user. -->
     <string name="tip_open_in_new_tab">Kuna enlace nu xikua tsaá\n Katavi nchi enlace niku nu página</string>
 
+    <!-- Tip displayed on home view explaining how to add a custom autocomplete URL -->
+    <string name="tip_disable_tips2">Xita tu´un xina ya kitsau</string>
+
     <!-- Label for the snackbar when a user opens a new tab -->
     <string name="new_tab_opened_snackbar">Ndutsa xikua nuna</string>
 
     <!-- Label for the button in the snackbar that switches to the newly opened tab -->
     <string name="open_new_tab_snackbar">Sama</string>
 
+    <!-- Text displayed in a notification when the user enters full screen mode -->
+    <string name="full_screen_notification">Sama pantalla kanu</string>
+
+    <!-- Preference for switching to a new tab immediately after opening -->
+    <string name="preference_open_new_tab">Sama  enlazar nu xikua  tsaa vityi</string>
+
+    <!-- Preference title for safe browsing which when enabled, blocks dangerous or deceptive webpages that may include phishing or malware -->
+    <string name="preference_safe_browsing_title">Kasi sitio vaa tsi ña stavi</string>
     <!-- Title of the preference to enable "HTTPS-Only" mode -->
     <string name="preference_https_only_title"> HTTPS</string>
 
@@ -912,6 +943,8 @@
 
     <!-- Title for the tab crash report screen-->
     <string name="tab_crash_report_title">Vaa Xikua</string>
+    <!-- Headline for the tab crash report screen -->
+    <string name="tab_crash_report_headline">Kue ku nuna xikua yoo</string>
     <!-- Subtitle for the tab crash report screen -->
     <string name="tab_crash_report_description">Ña Ntukú sèè, kue nchikavai ña ntsinu tsi xikua ntsinu sata.</string>
     <!-- Label for button to close the tab-->
@@ -976,6 +1009,12 @@
     <!-- Preference for using following device theme -->
     <string name="preference_follow_device_theme">Tatyu´un ña inka nu kaa ndusu ku</string>
 
+     <!-- The title of the error page for websites that do not support HTTPS when HTTPS-Only is turned on  -->
+    <string name="errorpage_httpsonly_title2">Sitio yo kue ku kuni HTTPS</string>
+
+    <!-- The document title and heading of the error page shown when a website has an invalid or expired SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_title">Conexión ntu va´a</string>
+
      <!-- Sessions List -->
     <!-- Content description (not visible, for screen readers etc.): Button that closes a tab n the sessions list -->
     <string name="close_tab">Kasi xikua</string>
@@ -992,7 +1031,18 @@
 
     <!-- Promote SearchWidget Dialog -->
 
+    <!-- Content description (not visible, for screen readers etc.): This is the description for the
+    close button from promote search widget dialog. -->
+    <string name="promote_search_widget_dialog_content_description">Kasi</string>
+
     <!-- This is the title of promote search widget dialog. -->
     <string name="promote_search_widget_dialog_title">¡Koo ña ntsinu ! 🎉</string>
 
-    </resources>
+    <!-- This is te text from add search widget to home screen button .The button is located on
+    promote search widget dialog. -->
+    <string name="promote_search_widget_button_text">Chika\'a nu pantalla xina</string>
+
+    <!-- This is te text of the snackbar that appears after the search widget was added successfully
+    to the home screen. -->
+    <string name="promote_search_widget_snackbar_message">Tyika Widget xina</string>
+</resources>

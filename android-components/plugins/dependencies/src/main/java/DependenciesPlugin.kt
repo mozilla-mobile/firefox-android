@@ -6,7 +6,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.initialization.Settings
 
 // If you ever need to force a toolchain rebuild (taskcluster) then edit the following comment.
-// FORCE REBUILD 2023-05-12
+// FORCE REBUILD 2023-05-24
 
 class DependenciesPlugin : Plugin<Settings> {
     override fun apply(settings: Settings) = Unit
@@ -15,13 +15,15 @@ class DependenciesPlugin : Plugin<Settings> {
 // Synchronized version numbers for dependencies used by (some) modules
 object Versions {
     const val kotlin = "1.8.21"
-    const val coroutines = "1.6.4"
+    const val coroutines = "1.7.1"
     const val serialization = "1.5.1"
+    const val python_envs_plugin = "0.0.31"
 
     const val junit = "4.13.2"
-    const val robolectric = "4.10.1"
-    const val mockito = "3.12.4"
+    const val robolectric = "4.10.3"
+    const val mockito = "5.3.1"
     const val maven_ant_tasks = "2.1.3"
+    const val jacoco = "0.8.10"
 
     // TO-DO: These could be kept in sync in the future
     const val mockwebserver = "3.10.0"
@@ -32,18 +34,19 @@ object Versions {
     // This has to be synced to the gradlew plugin version. See
     // http://googlesamples.github.io/android-custom-lint-rules/api-guide/example.md.html#example:samplelintcheckgithubproject/lintversion?
     const val lint = "30.4.2"
-    const val detekt = "1.19.0"
+    const val detekt = "1.23.0"
+    const val ktlint = "0.49.1"
 
-    const val sentry_latest = "6.18.1"
+    const val sentry_latest = "6.24.0"
 
     // zxing 3.4+ requires a minimum API of 24 or higher
     const val zxing = "3.3.3"
 
     const val disklrucache = "2.0.2"
-    const val leakcanary = "2.10"
+    const val leakcanary = "2.11"
 
     // DO NOT MODIFY MANUALLY. This is auto-updated along with GeckoView.
-    const val mozilla_glean = "52.7.0"
+    const val mozilla_glean = "53.0.0"
 
     const val material = "1.9.0"
     const val ksp = "1.0.11"
@@ -54,7 +57,7 @@ object Versions {
     const val compose_compiler = "1.4.7"
 
     object AndroidX {
-        const val activityCompose = "1.7.1"
+        const val activityCompose = "1.7.2"
         const val annotation = "1.6.0"
         const val appcompat = "1.6.1"
         const val autofill = "1.1.0"
@@ -64,9 +67,9 @@ object Versions {
         const val compose = compose_version
         const val constraintlayout = "2.1.4"
         const val coordinatorlayout = "1.2.0"
-        const val core = "1.10.0"
+        const val core = "1.10.1"
         const val drawerlayout = "1.2.0"
-        const val fragment = "1.5.7"
+        const val fragment = "1.6.0"
         const val recyclerview = "1.3.0"
         const val test = "1.5.0"
         const val test_ext = "1.1.5"
@@ -78,7 +81,7 @@ object Versions {
         const val palette = "1.0.0"
         const val preferences = "1.1.1"
         const val lifecycle = "2.6.1"
-        const val media = "1.2.0"
+        const val media = "1.6.0"
         const val navigation = "2.5.3"
         const val work = "2.7.1"
         const val arch = "2.2.0"
@@ -89,7 +92,7 @@ object Versions {
     }
 
     object Firebase {
-        const val messaging = "23.0.8"
+        const val messaging = "23.1.2"
     }
 }
 

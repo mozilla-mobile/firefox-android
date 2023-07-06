@@ -10,7 +10,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDialogFragment
-import androidx.core.view.isVisible
 import androidx.fragment.app.clearFragmentResult
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
@@ -85,6 +84,7 @@ class ShareFragment : AppCompatDialogFragment() {
                 navController = findNavController(),
                 sendTabUseCases = SendTabUseCases(accountManager),
                 saveToPdfUseCase = requireComponents.useCases.sessionUseCases.saveToPdf,
+                printUseCase = requireComponents.useCases.sessionUseCases.printContent,
                 recentAppsStorage = RecentAppsStorage(requireContext()),
                 viewLifecycleScope = viewLifecycleOwner.lifecycleScope,
             ) { result ->
@@ -116,15 +116,19 @@ class ShareFragment : AppCompatDialogFragment() {
         }
         shareToAppsView = ShareToAppsView(binding.appsShareLayout, shareInteractor)
 
-        if (FeatureFlags.saveToPDF) {
-            binding.dividerLineAppsShareAndPdfSection.isVisible = true
-            binding.savePdf.apply {
-                isVisible = true
-                setContent {
-                    FirefoxTheme(theme = Theme.getTheme(allowPrivateTheme = false)) {
-                        SaveToPDFItem {
-                            shareInteractor.onSaveToPDF(tabId = args.sessionId)
-                        }
+        binding.savePdf.setContent {
+            FirefoxTheme(theme = Theme.getTheme(allowPrivateTheme = false)) {
+                SaveToPDFItem {
+                    shareInteractor.onSaveToPDF(tabId = args.sessionId)
+                }
+            }
+        }
+
+        if (FeatureFlags.print) {
+            binding.print.setContent {
+                FirefoxTheme(theme = Theme.getTheme(allowPrivateTheme = false)) {
+                    PrintItem {
+                        shareInteractor.onPrint(tabId = args.sessionId)
                     }
                 }
             }

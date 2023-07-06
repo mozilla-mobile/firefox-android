@@ -11,6 +11,7 @@ import android.net.Uri
 import android.os.SystemClock
 import android.util.Log
 import android.widget.TimePicker
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -38,6 +39,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.Constants.LONG_CLICK_DURATION
 import org.mozilla.fenix.helpers.Constants.RETRY_COUNT
+import org.mozilla.fenix.helpers.HomeActivityComposeTestRule
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemContainingTextExists
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithDescriptionExists
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithResIdAndTextExists
@@ -57,6 +59,7 @@ import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.TestHelper.waitForObjects
 import org.mozilla.fenix.helpers.ext.waitNotNull
+import org.mozilla.fenix.tabstray.TabsTrayTestTag
 import java.time.LocalDate
 
 class BrowserRobot {
@@ -96,9 +99,9 @@ class BrowserRobot {
     }
 
     /* Asserts that the text within DOM element with ID="testContent" has the given text, i.e.
-    *  document.querySelector('#testContent').innerText == expectedText
-    *
-    */
+     *  document.querySelector('#testContent').innerText == expectedText
+     *
+     */
 
     fun verifyPageContent(expectedText: String) {
         sessionLoadedIdlingResource = SessionLoadedIdlingResource()
@@ -313,7 +316,18 @@ class BrowserRobot {
         }
     }
 
-    fun longClickPDFImage() = longClickPageObject(itemWithResId("pdfjs_internal_id_8R"))
+    fun longClickPDFImage() = longClickPageObject(itemWithResId("pdfjs_internal_id_13R"))
+
+    fun verifyPDFReaderToolbarItems() {
+        assertTrue(
+            itemWithResIdAndText("download", "Download")
+                .waitForExists(waitingTime),
+        )
+        assertTrue(
+            itemWithResIdAndText("openInApp", "Open in app")
+                .waitForExists(waitingTime),
+        )
+    }
 
     fun clickSubmitLoginButton() {
         clickPageObject(itemWithResId("submit"))
@@ -866,6 +880,57 @@ class BrowserRobot {
             getStringResource(R.string.open_in_app_cfr_negative_button_text),
         ).click()
 
+    fun longClickToolbar() = mDevice.findObject(By.res("$packageName:id/mozac_browser_toolbar_url_view")).click(LONG_CLICK_DURATION)
+
+    fun verifyDownloadPromptIsDismissed() =
+        assertItemWithResIdExists(
+            itemWithResId("$packageName:id/viewDynamicDownloadDialog"),
+            exists = false,
+        )
+
+    fun verifyCancelPrivateDownloadsPrompt(numberOfActiveDownloads: String) {
+        assertItemWithResIdAndTextExists(
+            itemWithResIdContainingText(
+                "$packageName:id/title",
+                getStringResource(R.string.mozac_feature_downloads_cancel_active_downloads_warning_content_title),
+            ),
+            itemWithResIdContainingText(
+                "$packageName:id/body",
+                "If you close all Private tabs now, $numberOfActiveDownloads download will be canceled. Are you sure you want to leave Private Browsing?",
+            ),
+            itemWithResIdContainingText(
+                "$packageName:id/deny_button",
+                getStringResource(R.string.mozac_feature_downloads_cancel_active_private_downloads_deny),
+            ),
+            itemWithResIdContainingText(
+                "$packageName:id/accept_button",
+                getStringResource(R.string.mozac_feature_downloads_cancel_active_downloads_accept),
+            ),
+        )
+    }
+
+    fun clickStayInPrivateBrowsingPromptButton() =
+        itemWithResIdContainingText(
+            "$packageName:id/deny_button",
+            getStringResource(R.string.mozac_feature_downloads_cancel_active_private_downloads_deny),
+        ).click()
+
+    fun clickCancelPrivateDownloadsPromptButton() {
+        itemWithResIdContainingText(
+            "$packageName:id/accept_button",
+            getStringResource(R.string.mozac_feature_downloads_cancel_active_downloads_accept),
+        ).click()
+
+        mDevice.waitForWindowUpdate(packageName, waitingTime)
+    }
+
+    fun fillPdfForm(name: String) {
+        // Set PDF form text for the text box
+        itemWithResId("pdfjs_internal_id_10R").setText(name)
+        // Click PDF form check box
+        itemWithResId("pdfjs_internal_id_11R").click()
+    }
+
     class Transition {
         fun openThreeDotMenu(interact: ThreeDotMenuMainRobot.() -> Unit): ThreeDotMenuMainRobot.Transition {
             mDevice.waitForIdle(waitingTime)
@@ -917,6 +982,37 @@ class BrowserRobot {
 
             TabDrawerRobot().interact()
             return TabDrawerRobot.Transition()
+        }
+
+        fun openComposeTabDrawer(composeTestRule: HomeActivityComposeTestRule, interact: ComposeTabDrawerRobot.() -> Unit): ComposeTabDrawerRobot.Transition {
+            for (i in 1..RETRY_COUNT) {
+                try {
+                    mDevice.waitForObjects(
+                        mDevice.findObject(
+                            UiSelector()
+                                .resourceId("$packageName:id/mozac_browser_toolbar_browser_actions"),
+                        ),
+                        waitingTime,
+                    )
+
+                    tabsCounter().click()
+
+                    composeTestRule.onNodeWithTag(TabsTrayTestTag.tabsTray).assertExists()
+
+                    break
+                } catch (e: AssertionError) {
+                    if (i == RETRY_COUNT) {
+                        throw e
+                    } else {
+                        mDevice.waitForIdle()
+                    }
+                }
+            }
+
+            composeTestRule.onNodeWithTag(TabsTrayTestTag.fab).assertExists()
+
+            ComposeTabDrawerRobot(composeTestRule).interact()
+            return ComposeTabDrawerRobot.Transition(composeTestRule)
         }
 
         fun openTabButtonShortcutsMenu(interact: NavigationToolbarRobot.() -> Unit): NavigationToolbarRobot.Transition {
@@ -1076,6 +1172,16 @@ class BrowserRobot {
             SettingsRobot().interact()
             return SettingsRobot.Transition()
         }
+
+        fun clickDownloadPDFButton(interact: DownloadRobot.() -> Unit): DownloadRobot.Transition {
+            itemWithResIdContainingText(
+                "download",
+                "Download",
+            ).click()
+
+            DownloadRobot().interact()
+            return DownloadRobot.Transition()
+        }
     }
 }
 
@@ -1093,7 +1199,7 @@ fun homeScreenButton() = onView(withContentDescription(R.string.browser_toolbar_
 private fun threeDotButton() = onView(withContentDescription("Menu"))
 
 private fun tabsCounter() =
-    mDevice.findObject(By.res("$packageName:id/mozac_browser_toolbar_browser_actions"))
+    mDevice.findObject(By.res("$packageName:id/counter_root"))
 
 private val progressBar =
     itemWithResId("$packageName:id/mozac_browser_toolbar_progress")
@@ -1195,7 +1301,7 @@ private val currentDate = LocalDate.now()
 private val currentDay = currentDate.dayOfMonth
 private val currentMonth = currentDate.month
 private val currentYear = currentDate.year
-private val cookieBanner = itemWithResId("CybotCookiebotDialog")
+private val cookieBanner = itemWithResId("startsiden-gdpr-disclaimer")
 private val totalCookieProtectionHintMessage =
     itemContainingText(getStringResource(R.string.tcp_cfr_message))
 private val totalCookieProtectionHintLearnMoreLink =

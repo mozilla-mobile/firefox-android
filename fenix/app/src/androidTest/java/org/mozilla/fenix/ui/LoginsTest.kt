@@ -344,7 +344,7 @@ class LoginsTest {
     }
 
     @Test
-    fun verifyLoginWithNoUserNameCanBeSavedTest() {
+    fun verifyLoginWithNoUserNameCanNotBeSavedTest() {
         val loginPage = "https://mozilla-mobile.github.io/testapp/loginForm"
         val originWebsite = "mozilla-mobile.github.io"
 
@@ -365,8 +365,10 @@ class LoginsTest {
             clickThreeDotButton(activityTestRule)
             clickEditLoginButton()
             clickClearUserNameButton()
-            saveEditedLogin()
-            verifyLoginItemUsername("")
+            verifyUserNameRequiredErrorMessage()
+            verifySaveLoginButtonIsEnabled(false)
+            clickGoBackButton()
+            verifyLoginItemUsername("mozilla")
         }
     }
 
@@ -393,7 +395,8 @@ class LoginsTest {
             clickEditLoginButton()
             clickClearPasswordButton()
             verifyPasswordRequiredErrorMessage()
-            saveEditedLogin()
+            verifySaveLoginButtonIsEnabled(false)
+            clickGoBackButton()
             revealPassword()
             verifyPasswordSaved("firefox")
         }

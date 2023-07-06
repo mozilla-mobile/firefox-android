@@ -48,6 +48,7 @@ import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.TrackingProtection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.accounts.FenixFxAEntryPoint
 import org.mozilla.fenix.databinding.AmoCollectionOverrideDialogBinding
 import org.mozilla.fenix.ext.application
 import org.mozilla.fenix.ext.components
@@ -62,6 +63,7 @@ import org.mozilla.fenix.perf.ProfilerViewModel
 import org.mozilla.fenix.settings.account.AccountUiView
 import org.mozilla.fenix.utils.Settings
 import kotlin.system.exitProcess
+import org.mozilla.fenix.GleanMetrics.Settings as SettingsMetrics
 
 @Suppress("LargeClass", "TooManyFunctions")
 class SettingsFragment : PreferenceFragmentCompat() {
@@ -254,7 +256,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         val directions: NavDirections? = when (preference.key) {
             resources.getString(R.string.pref_key_sign_in) -> {
-                SettingsFragmentDirections.actionSettingsFragmentToTurnOnSyncFragment()
+                SettingsMetrics.signIntoSync.add()
+                SettingsFragmentDirections.actionSettingsFragmentToTurnOnSyncFragment(
+                    entrypoint = FenixFxAEntryPoint.SettingsMenu,
+                )
             }
             resources.getString(R.string.pref_key_tabs) -> {
                 SettingsFragmentDirections.actionSettingsFragmentToTabsSettingsFragment()
@@ -340,7 +345,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 SettingsFragmentDirections.actionSettingsFragmentToAccountSettingsFragment()
             }
             resources.getString(R.string.pref_key_account_auth_error) -> {
-                SettingsFragmentDirections.actionSettingsFragmentToAccountProblemFragment()
+                SettingsFragmentDirections.actionSettingsFragmentToAccountProblemFragment(
+                    entrypoint = FenixFxAEntryPoint.SettingsMenu,
+                )
             }
             resources.getString(R.string.pref_key_delete_browsing_data) -> {
                 SettingsFragmentDirections.actionSettingsFragmentToDeleteBrowsingDataFragment()
@@ -349,7 +356,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 SettingsFragmentDirections.actionSettingsFragmentToDeleteBrowsingDataOnQuitFragment()
             }
             resources.getString(R.string.pref_key_notifications) -> {
-                context?.navigateToNotificationsSettings()
+                context?.navigateToNotificationsSettings {}
                 null
             }
             resources.getString(R.string.pref_key_customize) -> {
@@ -484,6 +491,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
         setupCookieBannerPreference()
         setupAmoCollectionOverridePreference(requireContext().settings())
+        setupGeckoLogsPreference(requireContext().settings())
         setupAllowDomesticChinaFxaServerPreference()
         setupHttpsOnlyPreferences()
         setupNotificationPreference()
@@ -554,6 +562,32 @@ class SettingsFragment : PreferenceFragmentCompat() {
             isVisible = show
             summary = settings.overrideAmoCollection.ifEmpty { null }
         }
+    }
+
+    @VisibleForTesting
+    internal fun setupGeckoLogsPreference(settings: Settings) {
+        val preferenceEnabledGeckoLogs =
+            findPreference<Preference>(getPreferenceKey(R.string.pref_key_enable_gecko_logs))
+
+        val show = settings.showSecretDebugMenuThisSession
+        preferenceEnabledGeckoLogs?.isVisible = show
+
+        preferenceEnabledGeckoLogs?.onPreferenceChangeListener =
+            Preference.OnPreferenceChangeListener { _, newValue ->
+                context?.settings()?.enableGeckoLogs = newValue as Boolean
+                Toast.makeText(
+                    context,
+                    getString(R.string.quit_application),
+                    Toast.LENGTH_LONG,
+                ).show()
+                Handler(Looper.getMainLooper()).postDelayed(
+                    {
+                        exitProcess(0)
+                    },
+                    FXA_SYNC_OVERRIDE_EXIT_DELAY,
+                )
+                true
+            }
     }
 
     private fun setupAllowDomesticChinaFxaServerPreference() {

@@ -9,7 +9,7 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import mozilla.components.browser.state.action.CustomTabListAction
@@ -22,6 +22,7 @@ import mozilla.components.browser.state.state.CustomTabSessionState
 import mozilla.components.browser.state.state.SessionState
 import mozilla.components.browser.state.state.WebExtensionState
 import mozilla.components.browser.state.state.createTab
+import mozilla.components.browser.state.state.extension.WebExtensionPromptRequest
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.EngineSession
 import mozilla.components.concept.engine.webextension.Action
@@ -34,7 +35,6 @@ import mozilla.components.lib.state.ext.flowScoped
 import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.ktx.kotlin.isExtensionUrl
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.filterChanged
-import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import mozilla.components.support.webextensions.facts.emitWebExtensionsInitializedFact
 import java.util.concurrent.ConcurrentHashMap
 
@@ -228,6 +228,15 @@ object WebExtensionSupport {
 
                 override fun onInstalled(extension: WebExtension) {
                     registerInstalledExtension(store, extension)
+                    // Built-in extensions are not installed by users, they are not aware of them
+                    // for this reason we don't show any UI related to built-in extensions.
+                    if (!extension.isBuiltIn()) {
+                        store.dispatch(
+                            WebExtensionAction.UpdatePromptRequestWebExtensionAction(
+                                WebExtensionPromptRequest.PostInstallation(extension),
+                            ),
+                        )
+                    }
                 }
 
                 override fun onUninstalled(extension: WebExtension) {
@@ -255,11 +264,15 @@ object WebExtensionSupport {
                     )
                 }
 
-                override fun onInstallPermissionRequest(extension: WebExtension): Boolean {
-                    // Our current installation flow has us approve permissions before we call
-                    // install on the engine. Therefore we can just approve the permission request
-                    // here during installation.
-                    return true
+                override fun onInstallPermissionRequest(
+                    extension: WebExtension,
+                    onPermissionsGranted: ((Boolean) -> Unit),
+                ) {
+                    store.dispatch(
+                        WebExtensionAction.UpdatePromptRequestWebExtensionAction(
+                            WebExtensionPromptRequest.Permissions(extension, onPermissionsGranted),
+                        ),
+                    )
                 }
 
                 override fun onUpdatePermissionRequest(
@@ -349,7 +362,7 @@ object WebExtensionSupport {
         var scope: CoroutineScope? = null
         scope = store.flowScoped { flow ->
             flow.map { state -> state.tabs.filter { it.restored }.size }
-                .ifChanged()
+                .distinctUntilChanged()
                 .collect { size ->
                     if (size > 0) {
                         store.state.tabs.forEach { tab ->

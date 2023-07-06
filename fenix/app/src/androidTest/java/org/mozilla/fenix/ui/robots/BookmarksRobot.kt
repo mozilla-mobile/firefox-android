@@ -12,11 +12,11 @@ import androidx.test.espresso.action.ViewActions.clearText
 import androidx.test.espresso.action.ViewActions.longClick
 import androidx.test.espresso.action.ViewActions.replaceText
 import androidx.test.espresso.action.ViewActions.typeText
-import androidx.test.espresso.assertion.PositionAssertions
 import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.RootMatchers
 import androidx.test.espresso.matcher.ViewMatchers
+import androidx.test.espresso.matcher.ViewMatchers.hasSibling
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withChild
 import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
@@ -35,7 +35,6 @@ import org.junit.Assert.assertFalse
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemContainingTextExists
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithDescriptionExists
-import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithResIdAndTextExists
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithResIdExists
 import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithDescription
@@ -245,48 +244,6 @@ class BookmarksRobot {
 
     fun clickDeleteInEditModeButton() = deleteInEditModeButton().click()
 
-    fun clickSearchButton() = itemWithResId("$packageName:id/bookmark_search").click()
-
-    fun verifyBookmarksSearchBarPosition(defaultPosition: Boolean) {
-        onView(withId(R.id.toolbar))
-            .check(
-                if (defaultPosition) {
-                    PositionAssertions.isCompletelyBelow(withId(R.id.pill_wrapper_divider))
-                } else {
-                    PositionAssertions.isCompletelyAbove(withId(R.id.pill_wrapper_divider))
-                },
-            )
-    }
-
-    fun clickOutsideTheSearchBar() {
-        itemWithResId("$packageName:id/search_wrapper").click()
-        itemWithResId("$packageName:id/mozac_browser_toolbar_edit_url_view")
-            .waitUntilGone(waitingTime)
-    }
-
-    fun dismissBookmarksSearchBarUsingBackButton() {
-        mDevice.pressBack()
-        itemWithResId("$packageName:id/mozac_browser_toolbar_edit_url_view")
-            .waitUntilGone(waitingTime)
-    }
-
-    fun verifyBookmarksSearchBar(exists: Boolean) {
-        assertItemWithResIdExists(
-            itemWithResId("$packageName:id/toolbar"),
-            itemWithResId("$packageName:id/mozac_browser_toolbar_edit_icon"),
-            exists = exists,
-        )
-        assertItemWithResIdAndTextExists(
-            itemWithResId("$packageName:id/mozac_browser_toolbar_edit_url_view"),
-            itemContainingText(getStringResource(R.string.bookmark_search)),
-            exists = exists,
-        )
-        assertItemWithDescriptionExists(
-            itemWithDescription(getStringResource(R.string.voice_search_content_description)),
-            exists = exists,
-        )
-    }
-
     fun searchBookmarkedItem(bookmarkedItem: String) {
         itemWithResId("$packageName:id/mozac_browser_toolbar_edit_url_view").also {
             it.waitForExists(waitingTime)
@@ -308,16 +265,9 @@ class BookmarksRobot {
             return Transition()
         }
 
-        fun openThreeDotMenu(bookmarkTitle: String, interact: ThreeDotMenuBookmarksRobot.() -> Unit): ThreeDotMenuBookmarksRobot.Transition {
+        fun openThreeDotMenu(bookmark: String, interact: ThreeDotMenuBookmarksRobot.() -> Unit): ThreeDotMenuBookmarksRobot.Transition {
             mDevice.waitNotNull(Until.findObject(res("$packageName:id/overflow_menu")))
-            threeDotMenu(bookmarkTitle).click()
-
-            ThreeDotMenuBookmarksRobot().interact()
-            return ThreeDotMenuBookmarksRobot.Transition()
-        }
-
-        fun openThreeDotMenu(bookmarkUrl: Uri, interact: ThreeDotMenuBookmarksRobot.() -> Unit): ThreeDotMenuBookmarksRobot.Transition {
-            threeDotMenu(bookmarkUrl).click()
+            threeDotMenu(bookmark).click()
 
             ThreeDotMenuBookmarksRobot().interact()
             return ThreeDotMenuBookmarksRobot.Transition()
@@ -344,11 +294,11 @@ class BookmarksRobot {
             return BrowserRobot.Transition()
         }
 
-        fun closeEditBookmarkSection(interact: BookmarksRobot.() -> Unit): BookmarksRobot.Transition {
+        fun closeEditBookmarkSection(interact: BookmarksRobot.() -> Unit): Transition {
             goBackButton().click()
 
             BookmarksRobot().interact()
-            return BookmarksRobot.Transition()
+            return Transition()
         }
 
         fun openBookmarkWithTitle(bookmarkTitle: String, interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
@@ -360,6 +310,13 @@ class BookmarksRobot {
 
             BrowserRobot().interact()
             return BrowserRobot.Transition()
+        }
+
+        fun clickSearchButton(interact: SearchRobot.() -> Unit): SearchRobot.Transition {
+            itemWithResId("$packageName:id/bookmark_search").click()
+
+            SearchRobot().interact()
+            return SearchRobot.Transition()
         }
     }
 }
@@ -392,17 +349,10 @@ private fun addFolderTitleField() = onView(withId(R.id.bookmarkNameEdit))
 
 private fun saveFolderButton() = onView(withId(R.id.confirm_add_folder_button))
 
-private fun threeDotMenu(bookmarkUrl: Uri) = onView(
+private fun threeDotMenu(bookmark: String) = onView(
     allOf(
         withId(R.id.overflow_menu),
-        withParent(withChild(allOf(withId(R.id.url), withText(bookmarkUrl.toString())))),
-    ),
-)
-
-private fun threeDotMenu(bookmarkTitle: String) = onView(
-    allOf(
-        withId(R.id.overflow_menu),
-        withParent(withChild(allOf(withId(R.id.title), withText(bookmarkTitle)))),
+        hasSibling(withText(bookmark)),
     ),
 )
 

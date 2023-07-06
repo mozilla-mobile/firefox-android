@@ -20,6 +20,7 @@ import mozilla.components.concept.engine.webextension.WebExtension
 import mozilla.components.feature.addons.migration.DefaultSupportedAddonsChecker
 import mozilla.components.service.glean.testing.GleanTestRule
 import mozilla.components.support.test.robolectric.testContext
+import mozilla.components.support.utils.BrowsersCache
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
@@ -36,7 +37,6 @@ import org.mozilla.fenix.GleanMetrics.TopSites
 import org.mozilla.fenix.components.metrics.MozillaProductDetector
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
-import org.mozilla.fenix.utils.BrowsersCache
 import org.mozilla.fenix.utils.Settings
 import org.robolectric.annotation.Config
 
@@ -148,10 +148,13 @@ class FenixApplicationTest {
         assertTrue(settings.contileContextId.isEmpty())
         assertNull(TopSites.contextId.testGetValue())
 
-        assertTrue(settings.sharedPrefsUUID.isEmpty())
-        assertNull(Metrics.sharedPrefsUuid.testGetValue())
-
-        application.setStartupMetrics(browserStore, settings, browsersCache, mozillaProductDetector)
+        application.setStartupMetrics(
+            browserStore = browserStore,
+            settings = settings,
+            browsersCache = browsersCache,
+            mozillaProductDetector = mozillaProductDetector,
+            isDeviceRamAboveThreshold = true,
+        )
 
         // Verify that browser defaults metrics are set.
         assertEquals("Mozilla", Metrics.distributionId.testGetValue())
@@ -189,19 +192,12 @@ class FenixApplicationTest {
         assertEquals(true, Preferences.inactiveTabsEnabled.testGetValue())
         assertEquals(expectedAppInstallSource, Metrics.installSource.testGetValue())
         assertEquals(true, Metrics.defaultWallpaper.testGetValue())
+        assertEquals(true, Metrics.ramMoreThanThreshold.testGetValue())
 
         val contextId = TopSites.contextId.testGetValue()!!.toString()
 
         assertNotNull(TopSites.contextId.testGetValue())
         assertEquals(contextId, settings.contileContextId)
-
-        // Verify that setStartupMetrics() creates `the Metrics.sharedPrefsUuid`
-        // Glean metric and that it stores the value in shared preferences at
-        // settings.sharedPrefsUUID. Subsequent calls load the UUID value from
-        // shared preferences rather than generating a new one.
-        val sharedPrefsUUIDMetricValue = Metrics.sharedPrefsUuid.testGetValue()!!.toString()
-        assertNotNull(Metrics.sharedPrefsUuid.testGetValue())
-        assertEquals(sharedPrefsUUIDMetricValue, settings.sharedPrefsUUID)
 
         // Verify that search engine defaults are NOT set. This test does
         // not mock most of the objects telemetry is collected from.
@@ -213,9 +209,6 @@ class FenixApplicationTest {
 
         assertEquals(contextId, TopSites.contextId.testGetValue()!!.toString())
         assertEquals(contextId, settings.contileContextId)
-
-        assertEquals(sharedPrefsUUIDMetricValue, Metrics.sharedPrefsUuid.testGetValue()!!.toString())
-        assertEquals(sharedPrefsUUIDMetricValue, settings.sharedPrefsUUID)
     }
 
     @Test

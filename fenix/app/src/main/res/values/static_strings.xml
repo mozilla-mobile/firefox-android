@@ -64,6 +64,8 @@
     <string name="preferences_sync_debug_quit_button_summary">Custom server changes will take effect on the next Firefox run.</string>
     <!-- Label for enabling the Tabs Tray to Compose changes -->
     <string name="preferences_debug_settings_tabs_tray_to_compose" translatable="false">Enable Tabs Tray to Compose rewrite</string>
+    <!-- Label for enabling the Compose Top Sites -->
+    <string name="preferences_debug_settings_compose_top_sites" translatable="false">Enable Compose Top Sites</string>
 
     <!-- A secret menu option in the tabs tray for making a tab inactive for testing. -->
     <string name="inactive_tabs_menu_item">Make inactive</string>
@@ -106,4 +108,11 @@
     <string name="profiler_io_error">Something went wrong contacting the Profiler server.</string>
 
     <string name="profiler_uploaded_url_to_clipboard">URL copied to clipboard successfully</string>
+
+    <!-- These strings are placeholders till they are finalised for review quality check -->
+    <!-- Browser menu button to open review quality check -->
+    <string name="browser_menu_review_quality_check" translatable="false">Review quality check</string>
+    <!-- Browser menu button content description to close review quality check-->
+    <string name="browser_menu_review_quality_check_close" translatable="false">Close review quality check</string>
+    <string name="review_quality_check" translatable="false">Review quality check</string>
 </resources>

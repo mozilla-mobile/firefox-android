@@ -131,6 +131,11 @@ interface SessionControlController {
     fun handleSponsorPrivacyClicked()
 
     /**
+     * @see [TopSiteInteractor.onTopSiteLongClicked]
+     */
+    fun handleTopSiteLongClicked(topSite: TopSite)
+
+    /**
      * @see [CollectionInteractor.onToggleCollectionExpanded]
      */
     fun handleToggleCollectionExpanded(collection: TabCollection, expand: Boolean)
@@ -188,6 +193,7 @@ class DefaultSessionControlController(
     private val viewLifecycleScope: CoroutineScope,
     private val registerCollectionStorageObserver: () -> Unit,
     private val removeCollectionWithUndo: (tabCollection: TabCollection) -> Unit,
+    private val showUndoSnackbarForTopSite: (topSite: TopSite) -> Unit,
     private val showTabTray: () -> Unit,
 ) : SessionControlController {
 
@@ -327,6 +333,8 @@ class DefaultSessionControlController(
                 removeTopSites(topSite)
             }
         }
+
+        showUndoSnackbarForTopSite(topSite)
     }
 
     override fun handleRenameCollectionTapped(collection: TabCollection) {
@@ -410,6 +418,10 @@ class DefaultSessionControlController(
             newTab = true,
             from = BrowserDirection.FromHome,
         )
+    }
+
+    override fun handleTopSiteLongClicked(topSite: TopSite) {
+        TopSites.longPress.record(TopSites.LongPressExtra(topSite.type))
     }
 
     @VisibleForTesting

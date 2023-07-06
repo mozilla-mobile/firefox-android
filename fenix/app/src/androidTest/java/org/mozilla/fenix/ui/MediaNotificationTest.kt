@@ -33,8 +33,6 @@ import org.mozilla.fenix.ui.robots.notificationShade
  *  Note: this test only verifies media notifications, not media itself
  */
 class MediaNotificationTest {
-    /* ktlint-disable no-blank-line-before-rbrace */ // This imposes unreadable grouping.
-
     private lateinit var mockWebServer: MockWebServer
     private lateinit var mDevice: UiDevice
 
@@ -91,7 +89,7 @@ class MediaNotificationTest {
         mDevice.openNotification()
 
         notificationShade {
-            verifySystemNotificationGone(videoTestPage.title)
+            verifySystemNotificationDoesNotExist(videoTestPage.title)
         }
 
         // close notification shade before the next test
@@ -125,7 +123,7 @@ class MediaNotificationTest {
         mDevice.openNotification()
 
         notificationShade {
-            verifySystemNotificationGone(audioTestPage.title)
+            verifySystemNotificationDoesNotExist(audioTestPage.title)
         }
 
         // close notification shade before the next test
@@ -162,7 +160,7 @@ class MediaNotificationTest {
         mDevice.openNotification()
 
         notificationShade {
-            verifySystemNotificationGone("A site is playing media")
+            verifySystemNotificationDoesNotExist("A site is playing media")
         }
 
         // close notification shade before and go back to regular mode before the next test

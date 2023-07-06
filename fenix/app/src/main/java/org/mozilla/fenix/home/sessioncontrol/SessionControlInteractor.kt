@@ -31,8 +31,6 @@ import org.mozilla.fenix.home.recentvisits.controller.RecentVisitsController
 import org.mozilla.fenix.home.recentvisits.interactor.RecentVisitsInteractor
 import org.mozilla.fenix.home.toolbar.ToolbarController
 import org.mozilla.fenix.home.toolbar.ToolbarInteractor
-import org.mozilla.fenix.onboarding.controller.OnboardingController
-import org.mozilla.fenix.onboarding.interactor.OnboardingInteractor
 import org.mozilla.fenix.search.toolbar.SearchSelectorController
 import org.mozilla.fenix.search.toolbar.SearchSelectorInteractor
 import org.mozilla.fenix.search.toolbar.SearchSelectorMenu
@@ -183,6 +181,14 @@ interface TopSiteInteractor {
      * "Our sponsors & your privacy" top site menu item.
      */
     fun onSponsorPrivacyClicked()
+
+    /**
+     * Handles long click event for the given top site. Called when an user long clicks on a top
+     * site.
+     *
+     * @param topSite The top site that was long clicked.
+     */
+    fun onTopSiteLongClicked(topSite: TopSite)
 }
 
 interface MessageCardInteractor {
@@ -226,11 +232,9 @@ class SessionControlInteractor(
     private val recentVisitsController: RecentVisitsController,
     private val pocketStoriesController: PocketStoriesController,
     private val privateBrowsingController: PrivateBrowsingController,
-    private val onboardingController: OnboardingController,
     private val searchSelectorController: SearchSelectorController,
     private val toolbarController: ToolbarController,
 ) : CollectionInteractor,
-    OnboardingInteractor,
     TopSiteInteractor,
     TabSessionInteractor,
     ToolbarInteractor,
@@ -297,12 +301,8 @@ class SessionControlInteractor(
         controller.handleSponsorPrivacyClicked()
     }
 
-    override fun onStartBrowsingClicked() {
-        onboardingController.handleStartBrowsingClicked()
-    }
-
-    override fun onReadPrivacyNoticeClicked() {
-        onboardingController.handleReadPrivacyNoticeClicked()
+    override fun onTopSiteLongClicked(topSite: TopSite) {
+        controller.handleTopSiteLongClicked(topSite)
     }
 
     override fun showWallpapersOnboardingDialog(state: WallpaperState): Boolean {

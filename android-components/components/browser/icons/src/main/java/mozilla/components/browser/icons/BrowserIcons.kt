@@ -79,7 +79,8 @@ internal val sharedDiskCache = IconDiskCache()
  * @param generator The [IconGenerator] to generate an icon if no icon could be loaded.
  * @param decoders List of [ImageDecoder] instances to use when decoding a loaded icon into a [android.graphics.Bitmap].
  */
-class BrowserIcons @Suppress("LongParameterList") constructor(
+@Suppress("LongParameterList")
+class BrowserIcons constructor(
     private val context: Context,
     httpClient: Client,
     private val generator: IconGenerator = DefaultIconGenerator(),
@@ -211,7 +212,9 @@ class BrowserIcons @Suppress("LongParameterList") constructor(
     }
 
     @MainThread
-    private fun loadIntoViewInternal(
+    @VisibleForTesting
+    @Suppress("UndocumentedPublicFunction") // this is visible only for tests
+    fun loadIntoViewInternal(
         view: WeakReference<ImageView>,
         request: IconRequest,
         placeholder: Drawable?,

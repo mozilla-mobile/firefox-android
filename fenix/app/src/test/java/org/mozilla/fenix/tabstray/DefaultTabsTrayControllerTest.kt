@@ -106,11 +106,10 @@ class DefaultTabsTrayControllerTest {
     private val coroutinesTestRule: MainCoroutineRule = MainCoroutineRule()
     private val testDispatcher = coroutinesTestRule.testDispatcher
 
-    @get:Rule
     val gleanTestRule = GleanTestRule(testContext)
 
     @get:Rule
-    val chain: RuleChain = RuleChain.outerRule(coroutinesTestRule).around(gleanTestRule)
+    val chain: RuleChain = RuleChain.outerRule(gleanTestRule).around(coroutinesTestRule)
 
     @Before
     fun setup() {
@@ -585,10 +584,10 @@ class DefaultTabsTrayControllerTest {
         trayStore.dispatch(TabsTrayAction.ExitSelectMode)
         trayStore.waitUntilIdle()
 
-        controller.handleMultiSelectClicked(tab1, "Tabs tray")
+        controller.handleTabSelected(tab1, "Tabs tray")
         verify(exactly = 1) { controller.handleTabSelected(tab1, "Tabs tray") }
 
-        controller.handleMultiSelectClicked(tab2, "Tabs tray")
+        controller.handleTabSelected(tab2, "Tabs tray")
         verify(exactly = 1) { controller.handleTabSelected(tab2, "Tabs tray") }
     }
 
@@ -613,10 +612,10 @@ class DefaultTabsTrayControllerTest {
         trayStore.dispatch(TabsTrayAction.AddSelectTab(tab2))
         trayStore.waitUntilIdle()
 
-        controller.handleMultiSelectClicked(tab1, "Tabs tray")
+        controller.handleTabSelected(tab1, "Tabs tray")
         verify(exactly = 1) { controller.handleTabUnselected(tab1) }
 
-        controller.handleMultiSelectClicked(tab2, "Tabs tray")
+        controller.handleTabSelected(tab2, "Tabs tray")
         verify(exactly = 1) { controller.handleTabUnselected(tab2) }
     }
 
@@ -644,10 +643,41 @@ class DefaultTabsTrayControllerTest {
         trayStore.dispatch(TabsTrayAction.AddSelectTab(tab1))
         trayStore.waitUntilIdle()
 
-        controller.handleMultiSelectClicked(tab2, "Tabs tray")
+        controller.handleTabSelected(tab2, "Tabs tray")
 
         middleware.assertLastAction(TabsTrayAction.AddSelectTab::class) {
             assertEquals(tab2, it.tab)
+        }
+    }
+
+    @Test
+    fun `GIVEN at least a tab is selected and the user is in multi select mode WHEN the user taps an inactive tab THEN that tab will not be selected`() {
+        val middleware = CaptureActionsMiddleware<TabsTrayState, TabsTrayAction>()
+        trayStore = TabsTrayStore(middlewares = listOf(middleware))
+        trayStore.dispatch(TabsTrayAction.EnterSelectMode)
+        trayStore.waitUntilIdle()
+        val controller = spyk(createController())
+        val normalTab = TabSessionState(
+            id = "1",
+            content = ContentState(
+                url = "www.mozilla.com",
+            ),
+        )
+        val inactiveTab = TabSessionState(
+            id = "2",
+            content = ContentState(
+                url = "www.google.com",
+            ),
+        )
+
+        trayStore.dispatch(TabsTrayAction.EnterSelectMode)
+        trayStore.dispatch(TabsTrayAction.AddSelectTab(normalTab))
+        trayStore.waitUntilIdle()
+
+        controller.handleTabSelected(inactiveTab, TrayPagerAdapter.INACTIVE_TABS_FEATURE_NAME)
+
+        middleware.assertLastAction(TabsTrayAction.AddSelectTab::class) {
+            assertEquals(normalTab, it.tab)
         }
     }
 
@@ -829,8 +859,7 @@ class DefaultTabsTrayControllerTest {
         }
 
         try {
-            mockkStatic("mozilla.components.browser.state.selector.SelectorsKt")
-            every { browserStore.state } returns mockk()
+            mockkStatic("org.mozilla.fenix.ext.BrowserStateKt")
             every { browserStore.state.potentialInactiveTabs } returns listOf(inactiveTab)
             assertNull(TabsTray.closeAllInactiveTabs.testGetValue())
 
@@ -840,7 +869,7 @@ class DefaultTabsTrayControllerTest {
             assertNotNull(TabsTray.closeAllInactiveTabs.testGetValue())
             assertTrue(showSnackbarInvoked)
         } finally {
-            unmockkStatic("mozilla.components.browser.state.selector.SelectorsKt")
+            unmockkStatic("org.mozilla.fenix.ext.BrowserStateKt")
         }
     }
 
@@ -904,6 +933,7 @@ class DefaultTabsTrayControllerTest {
             content = ContentState(url = "https://mozilla.com", private = true),
             id = "privateTab",
         )
+        trayStore = TabsTrayStore()
         browserStore = BrowserStore(
             initialState = BrowserState(
                 tabs = listOf(normalTab, privateTab),
@@ -943,6 +973,7 @@ class DefaultTabsTrayControllerTest {
         val privateTab = TabSessionState(content = ContentState(url = "https://mozilla.com", private = true), id = "privateTab")
         var showUndoSnackbarForTabInvoked = false
         var navigateToHomeAndDeleteSessionInvoked = false
+        trayStore = TabsTrayStore()
         browserStore = BrowserStore(
             initialState = BrowserState(
                 tabs = listOf(currentTab, privateTab),
@@ -1065,6 +1096,33 @@ class DefaultTabsTrayControllerTest {
         val snapshot = TabsTray.bookmarkSelectedTabs.testGetValue()!!
         assertEquals(1, snapshot.size)
         assertEquals("1", snapshot.single().extra?.getValue("tab_count"))
+    }
+
+    @Test
+    fun `WHEN the normal tabs page button is clicked THEN report the metric`() {
+        assertNull(TabsTray.normalModeTapped.testGetValue())
+
+        createController().handleTrayScrollingToPosition(Page.NormalTabs.ordinal, false)
+
+        assertNotNull(TabsTray.normalModeTapped.testGetValue())
+    }
+
+    @Test
+    fun `WHEN the private tabs page button is clicked THEN report the metric`() {
+        assertNull(TabsTray.privateModeTapped.testGetValue())
+
+        createController().handleTrayScrollingToPosition(Page.PrivateTabs.ordinal, false)
+
+        assertNotNull(TabsTray.privateModeTapped.testGetValue())
+    }
+
+    @Test
+    fun `WHEN the synced tabs page button is clicked THEN report the metric`() {
+        assertNull(TabsTray.syncedModeTapped.testGetValue())
+
+        createController().handleTrayScrollingToPosition(Page.SyncedTabs.ordinal, false)
+
+        assertNotNull(TabsTray.syncedModeTapped.testGetValue())
     }
 
     private fun createController(

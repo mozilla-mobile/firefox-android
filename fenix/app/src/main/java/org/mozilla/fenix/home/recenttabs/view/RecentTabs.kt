@@ -53,10 +53,10 @@ import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.support.ktx.kotlin.trimmed
 import mozilla.components.ui.colors.PhotonColors
 import org.mozilla.fenix.components.components
-import org.mozilla.fenix.compose.DropdownMenu
+import org.mozilla.fenix.compose.ContextualMenu
 import org.mozilla.fenix.compose.Image
 import org.mozilla.fenix.compose.MenuItem
-import org.mozilla.fenix.compose.ThumbnailCard
+import org.mozilla.fenix.compose.TabThumbnail
 import org.mozilla.fenix.compose.annotation.LightDarkPreview
 import org.mozilla.fenix.compose.inComposePreview
 import org.mozilla.fenix.home.recenttabs.RecentTab
@@ -191,7 +191,7 @@ private fun RecentTabItem(
                 }
             }
 
-            DropdownMenu(
+            ContextualMenu(
                 showMenu = isMenuExpanded,
                 onDismissRequest = { isMenuExpanded = false },
                 menuItems = menuItems.map { item -> MenuItem(item.title) { item.onClick(tab) } },
@@ -228,9 +228,8 @@ fun RecentTabImage(
                 contentScale = ContentScale.Crop,
             )
         }
-        else -> ThumbnailCard(
-            url = tab.state.content.url,
-            key = tab.state.id,
+        else -> TabThumbnail(
+            tab = tab.state,
             modifier = modifier,
             contentScale = contentScale,
         )

@@ -87,7 +87,7 @@ class SearchTest {
         homeScreen {
         }.openSearch {
             verifySearchView()
-            verifyBrowserToolbar()
+            verifySearchToolbar(true)
             verifyScanButton()
             verifySearchEngineButton()
         }
@@ -283,7 +283,6 @@ class SearchTest {
         }
     }
 
-    @Ignore("Test run timing out: https://github.com/mozilla-mobile/fenix/issues/27704")
     @SmokeTest
     @Test
     fun noSearchGroupFromPrivateBrowsingTest() {

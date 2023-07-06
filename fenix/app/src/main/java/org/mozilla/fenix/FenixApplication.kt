@@ -5,6 +5,8 @@
 package org.mozilla.fenix
 
 import android.annotation.SuppressLint
+import android.app.ActivityManager
+import android.content.Context
 import android.net.Uri
 import android.os.Build
 import android.os.Build.VERSION.SDK_INT
@@ -21,6 +23,7 @@ import androidx.work.Configuration.Provider
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -48,6 +51,8 @@ import mozilla.components.service.fxa.manager.SyncEnginesStorage
 import mozilla.components.service.glean.Glean
 import mozilla.components.service.glean.config.Configuration
 import mozilla.components.service.glean.net.ConceptFetchHttpUploader
+import mozilla.components.support.base.ext.areNotificationsEnabledSafe
+import mozilla.components.support.base.ext.isNotificationChannelEnabled
 import mozilla.components.support.base.facts.register
 import mozilla.components.support.base.log.Log
 import mozilla.components.support.base.log.logger.Logger
@@ -59,13 +64,17 @@ import mozilla.components.support.locale.LocaleAwareApplication
 import mozilla.components.support.rusterrors.initializeRustErrors
 import mozilla.components.support.rusthttp.RustHttpConfig
 import mozilla.components.support.rustlog.RustLog
+import mozilla.components.support.utils.BrowsersCache
 import mozilla.components.support.utils.logElapsedTime
 import mozilla.components.support.webextensions.WebExtensionSupport
 import org.mozilla.fenix.GleanMetrics.Addons
+import org.mozilla.fenix.GleanMetrics.Addresses
 import org.mozilla.fenix.GleanMetrics.AndroidAutofill
+import org.mozilla.fenix.GleanMetrics.CreditCards
 import org.mozilla.fenix.GleanMetrics.CustomizeHome
 import org.mozilla.fenix.GleanMetrics.Events.marketingNotificationAllowed
 import org.mozilla.fenix.GleanMetrics.GleanBuildInfo
+import org.mozilla.fenix.GleanMetrics.Logins
 import org.mozilla.fenix.GleanMetrics.Metrics
 import org.mozilla.fenix.GleanMetrics.PerfStartup
 import org.mozilla.fenix.GleanMetrics.Preferences
@@ -76,14 +85,12 @@ import org.mozilla.fenix.components.Core
 import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.metrics.MetricServiceType
 import org.mozilla.fenix.components.metrics.MozillaProductDetector
-import org.mozilla.fenix.components.metrics.clientdeduplication.ClientDeduplicationLifecycleObserver
 import org.mozilla.fenix.experiments.maybeFetchExperiments
-import org.mozilla.fenix.ext.areNotificationsEnabledSafe
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.containsQueryParameters
 import org.mozilla.fenix.ext.getCustomGleanServerUrlIfAvailable
 import org.mozilla.fenix.ext.isCustomEngine
 import org.mozilla.fenix.ext.isKnownSearchDomain
-import org.mozilla.fenix.ext.isNotificationChannelEnabled
 import org.mozilla.fenix.ext.setCustomEndpointIfAvailable
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.lifecycle.StoreLifecycleObserver
@@ -98,12 +105,24 @@ import org.mozilla.fenix.push.PushFxaIntegration
 import org.mozilla.fenix.push.WebPushEngineIntegration
 import org.mozilla.fenix.session.PerformanceActivityLifecycleCallbacks
 import org.mozilla.fenix.session.VisibilityLifecycleCallback
-import org.mozilla.fenix.utils.BrowsersCache
 import org.mozilla.fenix.utils.Settings
 import org.mozilla.fenix.utils.Settings.Companion.TOP_SITES_PROVIDER_MAX_THRESHOLD
 import org.mozilla.fenix.wallpapers.Wallpaper
 import java.util.UUID
 import java.util.concurrent.TimeUnit
+
+/**
+ * The actual RAM threshold is 2GB.
+ *
+ * To enable simpler reporting, we want to use the device's 'advertised' RAM.
+ * As [ActivityManager.MemoryInfo.totalMem] is not the device's 'advertised' RAM spec & we cannot
+ * access [ActivityManager.MemoryInfo.advertisedMem] across all Android versions, we will use a
+ * proxy value of 1.6GB. This is based on 1.5GB with a small 'excess' buffer. We assert that all
+ * values above this proxy value are 2GB or more.
+ */
+private const val RAM_THRESHOLD_PROXY_GB = 1.6F
+
+private const val RAM_THRESHOLD_BYTES = RAM_THRESHOLD_PROXY_GB * (1e+9).toLong()
 
 /**
  *The main application class for Fenix. Records data to measure initialization performance.
@@ -203,12 +222,6 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         GlobalScope.launch(Dispatchers.IO) {
             setStartupMetrics(store, settings())
         }
-
-        ProcessLifecycleOwner.get().lifecycle.addObserver(
-            ClientDeduplicationLifecycleObserver(
-                this.applicationContext,
-            ),
-        )
     }
 
     @VisibleForTesting
@@ -691,6 +704,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         settings: Settings,
         browsersCache: BrowsersCache = BrowsersCache,
         mozillaProductDetector: MozillaProductDetector = MozillaProductDetector,
+        isDeviceRamAboveThreshold: Boolean = isDeviceRamAboveThreshold(),
     ) {
         setPreferenceMetrics(settings)
         with(Metrics) {
@@ -726,16 +740,15 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
 
             searchWidgetInstalled.set(settings.searchWidgetInstalled)
 
-            if (settings.sharedPrefsUUID.isEmpty()) {
-                settings.sharedPrefsUUID = sharedPrefsUuid.generateAndSet().toString()
-            } else {
-                sharedPrefsUuid.set(UUID.fromString(settings.sharedPrefsUUID))
-            }
-
             val openTabsCount = settings.openTabsCount
             hasOpenTabs.set(openTabsCount > 0)
             if (openTabsCount > 0) {
                 tabsOpenCount.add(openTabsCount)
+            }
+
+            val openPrivateTabsCount = settings.openPrivateTabsCount
+            if (openPrivateTabsCount > 0) {
+                privateTabsOpenCount.add(openPrivateTabsCount)
             }
 
             val topSitesSize = settings.topSitesSize
@@ -789,6 +802,8 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             marketingNotificationAllowed.set(
                 notificationManagerCompat.isNotificationChannelEnabled(MARKETING_CHANNEL_ID),
             )
+
+            ramMoreThanThreshold.set(isDeviceRamAboveThreshold)
         }
 
         with(AndroidAutofill) {
@@ -817,7 +832,27 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                 migrateTopicSpecificSearchEngines()
             }
         }
+
+        @OptIn(DelicateCoroutinesApi::class)
+        GlobalScope.launch(IO) {
+            val autoFillStorage = applicationContext.components.core.autofillStorage
+            Addresses.savedAll.set(autoFillStorage.getAllAddresses().size.toLong())
+            CreditCards.savedAll.set(autoFillStorage.getAllCreditCards().size.toLong())
+
+            val lazyPasswordStorage = applicationContext.components.core.lazyPasswordsStorage
+            Logins.savedAll.set(lazyPasswordStorage.value.list().size.toLong())
+        }
     }
+
+    private fun deviceRamBytes(): Long {
+        val memoryInfo = ActivityManager.MemoryInfo()
+        val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        activityManager.getMemoryInfo(memoryInfo)
+
+        return memoryInfo.totalMem
+    }
+
+    private fun isDeviceRamAboveThreshold() = deviceRamBytes() > RAM_THRESHOLD_BYTES
 
     @Suppress("ComplexMethod")
     private fun setPreferenceMetrics(

@@ -19,6 +19,7 @@ import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.ktx.android.content.pm.isPackageInstalled
 import mozilla.components.support.ktx.android.net.isHttpOrHttps
 import mozilla.components.support.utils.Browsers
+import mozilla.components.support.utils.BrowsersCache
 import mozilla.components.support.utils.ext.queryIntentActivitiesCompat
 import mozilla.components.support.utils.ext.resolveActivityCompat
 import java.lang.Exception
@@ -26,7 +27,8 @@ import java.lang.NullPointerException
 import java.lang.NumberFormatException
 import java.net.URISyntaxException
 
-private const val EXTRA_BROWSER_FALLBACK_URL = "browser_fallback_url"
+@VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+internal const val EXTRA_BROWSER_FALLBACK_URL = "browser_fallback_url"
 private const val MARKET_INTENT_URI_PACKAGE_PREFIX = "market://details?id="
 
 @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
@@ -49,11 +51,13 @@ private const val ANDROID_RESOLVER_PACKAGE_NAME = "android"
  * @param launchInApp If {true} then launch app links in third party app(s). Default to false because
  * of security concerns.
  * @param alwaysDeniedSchemes List of schemes that will never be opened in a third-party app.
+ * @param installedBrowsers List of all installed browsers on the device.
  */
 class AppLinksUseCases(
     private val context: Context,
     private val launchInApp: () -> Boolean = { false },
     private val alwaysDeniedSchemes: Set<String> = ALWAYS_DENY_SCHEMES,
+    private val installedBrowsers: Browsers = BrowsersCache.all(context),
 ) {
     @Suppress(
         "QueryPermissionsNeeded", // We expect our browsers to have the QUERY_ALL_PACKAGES permission
@@ -103,8 +107,8 @@ class AppLinksUseCases(
             val redirectData = createBrowsableIntents(url)
             val isAppIntentHttpOrHttps = redirectData.appIntent?.data?.isHttpOrHttps ?: false
             val isEngineSupportedScheme = ENGINE_SUPPORTED_SCHEMES.contains(Uri.parse(url).scheme)
-            val isBrowserRedirect = redirectData.resolveInfo?.activityInfo?.packageName?.let {
-                Browsers.isBrowser(it)
+            val isBrowserRedirect = redirectData.resolveInfo?.activityInfo?.packageName?.let { packageName ->
+                installedBrowsers.isInstalled(packageName)
             } ?: false
 
             val fallbackUrl = when {
@@ -210,7 +214,7 @@ class AppLinksUseCases(
         operator fun invoke(
             appIntent: Intent?,
             launchInNewTask: Boolean = true,
-            failedToLaunchAction: () -> Unit = {},
+            failedToLaunchAction: (fallbackUrl: String?) -> Unit = {},
         ) {
             appIntent?.let {
                 try {
@@ -226,7 +230,7 @@ class AppLinksUseCases(
                 } catch (e: Exception) {
                     when (e) {
                         is ActivityNotFoundException, is SecurityException, is NullPointerException -> {
-                            failedToLaunchAction()
+                            failedToLaunchAction(it.getStringExtra(EXTRA_BROWSER_FALLBACK_URL))
                             Logger.error("failed to start third party app activity", e)
                         }
                         else -> throw e
@@ -298,6 +302,7 @@ class AppLinksUseCases(
             "https", "moz-extension", "moz-safe-about", "resource", "view-source", "ws", "wss", "blob",
         )
 
+        internal val ALWAYS_ALLOW_SCHEMES: Set<String> = setOf("tel", "mailto")
         internal val ALWAYS_DENY_SCHEMES: Set<String> = setOf("jar", "file", "javascript", "data", "about")
     }
 }
