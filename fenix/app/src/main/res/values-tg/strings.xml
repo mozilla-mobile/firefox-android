@@ -741,7 +741,7 @@
 
     <!-- Gestures Preferences-->
     <!-- Preferences for using pull to refresh in a webpage -->
-    <string name="preference_gestures_website_pull_to_refresh">Барон нав кардан кашед</string>
+    <string name="preference_gestures_website_pull_to_refresh">Барои нав кардан кашед</string>
     <!-- Preference for using the dynamic toolbar -->
     <string name="preference_gestures_dynamic_toolbar">Барои пинҳон кардани навори абзорҳо ҳаракат кунед</string>
 
@@ -1213,6 +1213,10 @@
     <string name="share_save_to_pdf">Нигоҳ доштан ҳамчун PDF</string>
     <!-- Text for error message when generating a PDF file Text for error message when generating a PDF file. -->
     <string name="unable_to_save_to_pdf_error">Файли PDF эҷод карда нашуд</string>
+    <!-- Text for error message when printing a page and it fails. -->
+    <string name="unable_to_print_error">Чоп ғайриимкон аст</string>
+    <!-- Text for the print feature in the share and browser menu -->
+    <string name="menu_print">Чоп кардан</string>
     <!-- Sub-header in the dialog to share a link to another sync device -->
     <string name="share_device_subheader">Фиристодан ба дастгоҳ</string>
     <!-- Sub-header in the dialog to share a link to an app from the full list -->

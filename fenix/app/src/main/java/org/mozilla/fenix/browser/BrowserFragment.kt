@@ -199,12 +199,16 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                 )!!,
                 imageSelected = AppCompatResources.getDrawable(
                     context,
-                    R.drawable.ic_shopping_cart_selected,
+                    R.drawable.ic_shopping_cart,
                 )!!,
                 contentDescription = context.getString(R.string.browser_menu_review_quality_check),
                 contentDescriptionSelected = context.getString(R.string.browser_menu_review_quality_check_close),
                 visible = { reviewQualityCheckAvailable },
-                listener = {},
+                listener = {
+                    findNavController().navigate(
+                        BrowserFragmentDirections.actionBrowserFragmentToReviewQualityCheckDialogFragment(),
+                    )
+                },
             )
 
         browserToolbarView.view.addPageAction(reviewQualityCheck)
