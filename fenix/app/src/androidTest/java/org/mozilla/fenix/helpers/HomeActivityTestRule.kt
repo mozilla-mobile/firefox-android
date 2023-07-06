@@ -56,6 +56,7 @@ class HomeActivityTestRule(
         etpPolicy: ETPPolicy = getETPPolicy(settings),
         tabsTrayRewriteEnabled: Boolean = false,
         isUnifiedSearchEnabled: Boolean = false,
+        newSearchSettingsEnabled: Boolean = false,
     ) : this(initialTouchMode, launchActivity, skipOnboarding) {
         this.isHomeOnboardingDialogEnabled = isHomeOnboardingDialogEnabled
         this.isPocketEnabled = isPocketEnabled
@@ -71,6 +72,7 @@ class HomeActivityTestRule(
         this.etpPolicy = etpPolicy
         this.tabsTrayRewriteEnabled = tabsTrayRewriteEnabled
         this.isUnifiedSearchEnabled = isUnifiedSearchEnabled
+        this.newSearchSettingsEnabled = newSearchSettingsEnabled
     }
 
     /**
@@ -127,6 +129,7 @@ class HomeActivityTestRule(
             isCookieBannerReductionDialogEnabled = false,
             isOpenInAppBannerEnabled = false,
             isUnifiedSearchEnabled = false,
+            newSearchSettingsEnabled = false,
         )
     }
 }
@@ -161,6 +164,7 @@ class HomeActivityIntentTestRule internal constructor(
         isPWAsPromptEnabled: Boolean = !settings.userKnowsAboutPwas,
         isTCPCFREnabled: Boolean = settings.shouldShowTotalCookieProtectionCFR,
         isUnifiedSearchEnabled: Boolean = false,
+        newSearchSettingsEnabled: Boolean = false,
         isWallpaperOnboardingEnabled: Boolean = settings.showWallpaperOnboarding,
         isDeleteSitePermissionsEnabled: Boolean = settings.deleteSitePermissions,
         isCookieBannerReductionDialogEnabled: Boolean = !settings.userOptOutOfReEngageCookieBannerDialog,
@@ -176,6 +180,7 @@ class HomeActivityIntentTestRule internal constructor(
         this.isPWAsPromptEnabled = isPWAsPromptEnabled
         this.isTCPCFREnabled = isTCPCFREnabled
         this.isUnifiedSearchEnabled = isUnifiedSearchEnabled
+        this.newSearchSettingsEnabled = newSearchSettingsEnabled
         this.isWallpaperOnboardingEnabled = isWallpaperOnboardingEnabled
         this.isDeleteSitePermissionsEnabled = isDeleteSitePermissionsEnabled
         this.isCookieBannerReductionDialogEnabled = isCookieBannerReductionDialogEnabled
@@ -264,6 +269,7 @@ class HomeActivityIntentTestRule internal constructor(
             skipOnboarding: Boolean = false,
             tabsTrayRewriteEnabled: Boolean = false,
             isUnifiedSearchEnabled: Boolean = false,
+            newSearchSettingsEnabled: Boolean = false,
         ) = HomeActivityIntentTestRule(
             initialTouchMode = initialTouchMode,
             launchActivity = launchActivity,
@@ -273,6 +279,7 @@ class HomeActivityIntentTestRule internal constructor(
             isPWAsPromptEnabled = false,
             isTCPCFREnabled = false,
             isUnifiedSearchEnabled = isUnifiedSearchEnabled,
+            newSearchSettingsEnabled = newSearchSettingsEnabled,
             isWallpaperOnboardingEnabled = false,
             isCookieBannerReductionDialogEnabled = false,
             isOpenInAppBannerEnabled = false,
