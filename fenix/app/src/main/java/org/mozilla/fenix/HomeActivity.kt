@@ -49,6 +49,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.browser.state.action.ContentAction
+import mozilla.components.browser.state.action.MediaSessionAction
 import mozilla.components.browser.state.action.SearchAction
 import mozilla.components.browser.state.search.SearchEngine
 import mozilla.components.browser.state.selector.getNormalOrPrivateTabs
@@ -84,6 +85,7 @@ import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.experiments.nimbus.initializeTooling
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.Metrics
+import org.mozilla.fenix.GleanMetrics.SplashScreen
 import org.mozilla.fenix.GleanMetrics.StartOnHome
 import org.mozilla.fenix.addons.AddonDetailsFragmentDirections
 import org.mozilla.fenix.addons.AddonPermissionsDetailsFragmentDirections
@@ -433,7 +435,13 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             splashScreen.setKeepOnScreenCondition {
                 val dataFetched = components.settings.utmParamsKnown &&
                     components.settings.nimbusExperimentsFetched
-                !maxDurationReached && !dataFetched
+                val keepOnScreen = !maxDurationReached && !dataFetched
+                if (!keepOnScreen) {
+                    SplashScreen.firstLaunchExtended.record(
+                        SplashScreen.FirstLaunchExtendedExtra(dataFetched = dataFetched),
+                    )
+                }
+                keepOnScreen
             }
             MainScope().launch {
                 delay(timeMillis = delay)
@@ -595,6 +603,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         components.core.pocketStoriesService.stopPeriodicSponsoredStoriesRefresh()
         privateNotificationObserver?.stop()
         components.notificationsDelegate.unBindActivity(this)
+        stopMediaSession()
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -863,6 +872,21 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         themeManager = createThemeManager()
         themeManager.setActivityTheme(this)
         themeManager.applyStatusBarTheme(this)
+    }
+
+    // Stop active media when activity is destroyed.
+    private fun stopMediaSession() {
+        components.core.store.state.tabs.forEach {
+            it.mediaSessionState?.controller?.stop()
+        }
+
+        components.core.store.state.findActiveMediaTab()?.let {
+            components.core.store.dispatch(
+                MediaSessionAction.DeactivatedMediaSessionAction(
+                    it.id,
+                ),
+            )
+        }
     }
 
     /**

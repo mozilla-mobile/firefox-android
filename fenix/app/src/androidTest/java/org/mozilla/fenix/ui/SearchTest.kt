@@ -87,7 +87,7 @@ class SearchTest {
         homeScreen {
         }.openSearch {
             verifySearchView()
-            verifyBrowserToolbar()
+            verifySearchToolbar(true)
             verifyScanButton()
             verifySearchEngineButton()
         }
@@ -567,6 +567,19 @@ class SearchTest {
         }.openSearch {
         }.submitQuery(queryString) {
             verifyUrl(searchEngineCodes["DuckDuckGo"]!!)
+        }
+    }
+
+    // Expected for en-us defaults
+    @Test
+    fun changeSearchEnginesBasedOnTextTest() {
+        homeScreen {
+        }.openSearch {
+            typeSearch("D")
+            verifySearchEnginePrompt(activityTestRule, "DuckDuckGo")
+            clickSearchEnginePrompt(activityTestRule, "DuckDuckGo")
+        }.submitQuery("firefox") {
+            verifyUrl("duckduckgo.com/?q=firefox")
         }
     }
 }

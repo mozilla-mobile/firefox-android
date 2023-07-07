@@ -82,6 +82,16 @@ interface FeatureSettingsHelper {
      */
     var tabsTrayRewriteEnabled: Boolean
 
+    /**
+     * Enable or disable the Unified search feature.
+     */
+    var isUnifiedSearchEnabled: Boolean
+
+    /**
+     * Enable or disable the Unified search settings feature.
+     */
+    var newSearchSettingsEnabled: Boolean
+
     fun applyFlagUpdates()
 
     fun resetAllFeatureFlags()
