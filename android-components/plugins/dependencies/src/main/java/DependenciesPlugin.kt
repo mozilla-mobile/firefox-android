@@ -15,13 +15,13 @@ class DependenciesPlugin : Plugin<Settings> {
 // Synchronized version numbers for dependencies used by (some) modules
 object Versions {
     const val kotlin = "1.8.22"
-    const val coroutines = "1.7.1"
+    const val coroutines = "1.7.2"
     const val serialization = "1.5.1"
     const val python_envs_plugin = "0.0.31"
 
     const val junit = "4.13.2"
     const val robolectric = "4.10.3"
-    const val mockito = "5.3.1"
+    const val mockito = "5.4.0"
     const val maven_ant_tasks = "2.1.3"
     const val jacoco = "0.8.10"
 
@@ -43,7 +43,7 @@ object Versions {
     const val zxing = "3.3.3"
 
     const val disklrucache = "2.0.2"
-    const val leakcanary = "2.11"
+    const val leakcanary = "2.12"
 
     // DO NOT MODIFY MANUALLY. This is auto-updated along with GeckoView.
     const val mozilla_glean = "53.0.0"
