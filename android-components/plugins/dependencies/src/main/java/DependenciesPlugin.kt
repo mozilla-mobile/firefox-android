@@ -14,8 +14,8 @@ class DependenciesPlugin : Plugin<Settings> {
 
 // Synchronized version numbers for dependencies used by (some) modules
 object Versions {
-    const val kotlin = "1.8.21"
-    const val coroutines = "1.7.1"
+    const val kotlin = "1.8.22"
+    const val coroutines = "1.7.2"
     const val serialization = "1.5.1"
     const val python_envs_plugin = "0.0.31"
 
@@ -43,7 +43,7 @@ object Versions {
     const val zxing = "3.3.3"
 
     const val disklrucache = "2.0.2"
-    const val leakcanary = "2.11"
+    const val leakcanary = "2.12"
 
     // DO NOT MODIFY MANUALLY. This is auto-updated along with GeckoView.
     const val mozilla_glean = "53.0.0"
@@ -54,7 +54,7 @@ object Versions {
     // see https://android-developers.googleblog.com/2022/06/independent-versioning-of-Jetpack-Compose-libraries.html
     // for Jetpack Compose libraries versioning
     const val compose_version = "1.4.3"
-    const val compose_compiler = "1.4.7"
+    const val compose_compiler = "1.4.8"
 
     object AndroidX {
         const val activityCompose = "1.7.2"
