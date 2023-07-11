@@ -68,6 +68,9 @@ import mozilla.components.feature.prompts.dialog.TextPromptDialogFragment
 import mozilla.components.feature.prompts.dialog.TimePickerDialogFragment
 import mozilla.components.feature.prompts.ext.executeIfWindowedPrompt
 import mozilla.components.feature.prompts.facts.emitCreditCardSaveShownFact
+import mozilla.components.feature.prompts.facts.emitPromptConfirmedFact
+import mozilla.components.feature.prompts.facts.emitPromptDismissedFact
+import mozilla.components.feature.prompts.facts.emitPromptDisplayedFact
 import mozilla.components.feature.prompts.facts.emitSuccessfulAddressAutofillFormDetectedFact
 import mozilla.components.feature.prompts.facts.emitSuccessfulCreditCardAutofillFormDetectedFact
 import mozilla.components.feature.prompts.file.FilePicker
@@ -85,6 +88,7 @@ import mozilla.components.support.base.feature.OnNeedToRequestPermissions
 import mozilla.components.support.base.feature.PermissionsFeature
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.log.logger.Logger
+import mozilla.components.support.ktx.kotlin.ifNullOrEmpty
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifAnyChanged
 import java.lang.ref.WeakReference
 import java.security.InvalidParameterException
@@ -467,7 +471,10 @@ class PromptFeature private constructor(
             }
 
             when (promptRequest) {
-                is File -> filePicker.handleFileRequest(promptRequest)
+                is File -> {
+                    emitPromptDisplayedFact(promptName = "FilePrompt")
+                    filePicker.handleFileRequest(promptRequest)
+                }
                 is Share -> handleShareRequest(promptRequest, session)
                 is SelectCreditCard -> {
                     emitSuccessfulCreditCardAutofillFormDetectedFact()
@@ -476,6 +483,7 @@ class PromptFeature private constructor(
                     }
                 }
                 is SelectLoginPrompt -> {
+                    emitPromptDisplayedFact(promptName = "SelectLoginPrompt")
                     if (promptRequest.logins.isNotEmpty()) {
                         loginPicker?.handleSelectLoginRequest(promptRequest)
                     }
@@ -501,6 +509,7 @@ class PromptFeature private constructor(
      */
     override fun onCancel(sessionId: String, promptRequestUID: String, value: Any?) {
         store.consumePromptFrom(sessionId, promptRequestUID, activePrompt) {
+            emitPromptDismissedFact(promptName = it::class.simpleName.ifNullOrEmpty { "" })
             when (it) {
                 is BeforeUnload -> it.onStay()
                 is Popup -> {
@@ -581,6 +590,7 @@ class PromptFeature private constructor(
                     // no-op
                 }
             }
+            emitPromptConfirmedFact(it::class.simpleName.ifNullOrEmpty { "" })
         }
     }
 
@@ -619,10 +629,14 @@ class PromptFeature private constructor(
     }
 
     private fun handleShareRequest(promptRequest: Share, session: SessionState) {
+        emitPromptDisplayedFact(promptName = "ShareSheet")
         shareDelegate.showShareSheet(
             context = container.context,
             shareData = promptRequest.data,
-            onDismiss = { onCancel(session.id, promptRequest.uid) },
+            onDismiss = {
+                emitPromptDismissedFact(promptName = "ShareSheet")
+                onCancel(session.id, promptRequest.uid)
+            },
             onSuccess = { onConfirm(session.id, promptRequest.uid, null) },
         )
     }
@@ -892,6 +906,7 @@ class PromptFeature private constructor(
                 }
             }
 
+            emitPromptDisplayedFact(promptName = dialog::class.simpleName.ifNullOrEmpty { "" })
             dialog.show(fragmentManager, FRAGMENT_TAG)
             activePrompt = WeakReference(dialog)
 
@@ -911,6 +926,7 @@ class PromptFeature private constructor(
     internal fun dismissDialogRequest(promptRequest: PromptRequest, session: SessionState) {
         (promptRequest as Dismissible).onDismiss()
         store.dispatch(ContentAction.ConsumePromptRequestAction(session.id, promptRequest))
+        emitPromptDismissedFact(promptName = promptRequest::class.simpleName.ifNullOrEmpty { "" })
     }
 
     private fun canShowThisPrompt(promptRequest: PromptRequest): Boolean {
