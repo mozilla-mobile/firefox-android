@@ -94,7 +94,7 @@ class BrowserToolbarIntegration(
     private val eraseAction = BrowserToolbar.Button(
         imageDrawable = AppCompatResources.getDrawable(
             toolbar.context,
-            R.drawable.mozac_ic_delete,
+            R.drawable.mozac_ic_delete_24,
         )!!,
         contentDescription = toolbar.context.getString(R.string.content_description_erase),
         iconTintColorResource = R.color.primaryText,
@@ -150,15 +150,15 @@ class BrowserToolbarIntegration(
             icons = icons.copy(
                 trackingProtectionTrackersBlocked = AppCompatResources.getDrawable(
                     context,
-                    R.drawable.mozac_ic_shield,
+                    R.drawable.mozac_ic_shield_24,
                 )!!,
                 trackingProtectionNothingBlocked = AppCompatResources.getDrawable(
                     context,
-                    R.drawable.mozac_ic_shield,
+                    R.drawable.mozac_ic_shield_24,
                 )!!,
                 trackingProtectionException = AppCompatResources.getDrawable(
                     context,
-                    R.drawable.mozac_ic_shield_disabled,
+                    R.drawable.mozac_ic_shield_slash_24,
                 )!!,
             )
         }
