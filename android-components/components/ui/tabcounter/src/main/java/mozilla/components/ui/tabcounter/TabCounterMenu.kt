@@ -54,7 +54,7 @@ open class TabCounterMenu(
             text = context.getString(R.string.mozac_browser_menu_new_tab),
             start = DrawableMenuIcon(
                 context,
-                iconsR.drawable.mozac_ic_new,
+                iconsR.drawable.mozac_ic_plus_24,
                 tint = iconColor ?: getColor(context, R.color.mozac_ui_tabcounter_default_text),
             ),
             textStyle = TextStyle(),
@@ -66,7 +66,7 @@ open class TabCounterMenu(
             text = context.getString(R.string.mozac_browser_menu_new_private_tab),
             start = DrawableMenuIcon(
                 context,
-                iconsR.drawable.mozac_ic_private_browsing,
+                iconsR.drawable.mozac_ic_private_mode_24,
                 tint = iconColor ?: getColor(context, R.color.mozac_ui_tabcounter_default_text),
             ),
             textStyle = TextStyle(),
@@ -78,7 +78,7 @@ open class TabCounterMenu(
             text = context.getString(R.string.mozac_close_tab),
             start = DrawableMenuIcon(
                 context,
-                iconsR.drawable.mozac_ic_close,
+                iconsR.drawable.mozac_ic_cross_24,
                 tint = iconColor ?: getColor(context, R.color.mozac_ui_tabcounter_default_text),
             ),
             textStyle = TextStyle(),
