@@ -28,6 +28,7 @@ import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.databinding.FragmentShareBinding
 import org.mozilla.fenix.ext.getRootView
 import org.mozilla.fenix.ext.requireComponents
+import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.theme.FirefoxTheme
 import org.mozilla.fenix.theme.Theme
 
@@ -124,7 +125,8 @@ class ShareFragment : AppCompatDialogFragment() {
             }
         }
 
-        if (FeatureFlags.print) {
+        FxNimbus.features.print.recordExposure()
+        if (FeatureFlags.print && FxNimbus.features.print.value().sharePrintEnabled) {
             binding.print.setContent {
                 FirefoxTheme(theme = Theme.getTheme(allowPrivateTheme = false)) {
                     PrintItem {
