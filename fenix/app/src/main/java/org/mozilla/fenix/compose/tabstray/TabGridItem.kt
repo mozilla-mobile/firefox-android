@@ -205,7 +205,7 @@ fun TabGridItem(
 
                         if (!multiSelectionEnabled) {
                             Icon(
-                                painter = painterResource(id = R.drawable.mozac_ic_close),
+                                painter = painterResource(id = R.drawable.mozac_ic_cross_24),
                                 contentDescription = stringResource(id = R.string.close_tab),
                                 tint = FirefoxTheme.colors.iconPrimary,
                                 modifier = Modifier
@@ -279,7 +279,7 @@ private fun Thumbnail(
                 backgroundColor = FirefoxTheme.colors.layerAccent,
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.mozac_ic_check),
+                    painter = painterResource(id = R.drawable.mozac_ic_checkmark_24),
                     modifier = Modifier
                         .matchParentSize()
                         .padding(all = 8.dp),

@@ -14,7 +14,6 @@ import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.core.graphics.drawable.toDrawable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.mapNotNull
 import mozilla.components.browser.menu.BrowserMenuBuilder
 import mozilla.components.browser.menu.BrowserMenuItem
@@ -165,7 +164,7 @@ class CustomTabsToolbarFeature(
     @VisibleForTesting
     internal fun addCloseButton(tab: CustomTabSessionState, bitmap: Bitmap?) {
         val drawableIcon = bitmap?.toDrawable(context.resources)
-            ?: getDrawable(context, iconsR.drawable.mozac_ic_close)!!.mutate()
+            ?: getDrawable(context, iconsR.drawable.mozac_ic_cross_24)!!.mutate()
 
         drawableIcon.setTint(readableColor)
 
@@ -216,7 +215,7 @@ class CustomTabsToolbarFeature(
      */
     @VisibleForTesting
     internal fun addShareButton(tab: CustomTabSessionState) {
-        val drawableIcon = getDrawable(context, iconsR.drawable.mozac_ic_share)!!
+        val drawableIcon = getDrawable(context, iconsR.drawable.mozac_ic_share_android_24)!!
         drawableIcon.setTint(readableColor)
 
         val button = Toolbar.ActionButton(

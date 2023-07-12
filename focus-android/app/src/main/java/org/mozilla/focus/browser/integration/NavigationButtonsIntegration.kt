@@ -45,7 +45,7 @@ class NavigationButtonsIntegration(
         }
 
         val backButton = BrowserToolbar.TwoStateButton(
-            primaryImage = ContextCompat.getDrawable(context, R.drawable.mozac_ic_back)!!,
+            primaryImage = ContextCompat.getDrawable(context, R.drawable.mozac_ic_back_24)!!,
             primaryContentDescription = context.getString(R.string.content_description_back),
             primaryImageTintResource = enabledColorRes,
             isInPrimaryState = {
@@ -62,7 +62,7 @@ class NavigationButtonsIntegration(
         toolbar.addNavigationAction(backButton)
 
         val forwardButton = BrowserToolbar.TwoStateButton(
-            primaryImage = ContextCompat.getDrawable(context, R.drawable.mozac_ic_forward)!!,
+            primaryImage = ContextCompat.getDrawable(context, R.drawable.mozac_ic_forward_24)!!,
             primaryContentDescription = context.getString(R.string.content_description_forward),
             primaryImageTintResource = enabledColorRes,
             isInPrimaryState = {
@@ -80,7 +80,7 @@ class NavigationButtonsIntegration(
 
         val reloadOrStopButton = BrowserToolbar.TwoStateButton(
             primaryImage = ContextCompat.getDrawable(context, R.drawable.mozac_ic_stop)!!,
-            secondaryImage = ContextCompat.getDrawable(context, R.drawable.mozac_ic_refresh)!!,
+            secondaryImage = ContextCompat.getDrawable(context, R.drawable.mozac_ic_arrow_clockwise_24)!!,
             primaryContentDescription = context.getString(R.string.content_description_stop),
             secondaryContentDescription = context.getString(R.string.content_description_reload),
             primaryImageTintResource = enabledColorRes,
