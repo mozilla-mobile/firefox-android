@@ -52,7 +52,7 @@
         android:scaleType="centerInside"
         android:background="@null"
         android:contentDescription="@string/mozac_feature_downloads_button_close"
-        app:srcCompat="@drawable/mozac_ic_close"
+        app:srcCompat="@drawable/mozac_ic_cross_24"
         app:tint="?android:attr/textColorPrimary"
         tools:textColor="#000000" />
 
@@ -87,6 +87,5 @@
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
         android:text="@string/mozac_feature_downloads_dialog_download"
-        android:textAlignment="center"
         android:textAllCaps="false" />
 </RelativeLayout>

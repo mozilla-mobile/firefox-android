@@ -6,7 +6,6 @@
 
 package org.mozilla.fenix.ui.robots
 
-import android.graphics.Bitmap
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
@@ -35,7 +34,6 @@ import androidx.test.espresso.matcher.ViewMatchers.Visibility
 import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
-import androidx.test.espresso.matcher.ViewMatchers.withHint
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.uiautomator.By
@@ -79,7 +77,6 @@ import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.TestHelper.scrollToElementByText
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
-import org.mozilla.fenix.helpers.withBitmapDrawable
 import org.mozilla.fenix.tabstray.TabsTrayTestTag
 import org.mozilla.fenix.utils.Settings
 
@@ -94,7 +91,7 @@ class HomeScreenRobot {
             " else who uses this device."
 
     fun verifyNavigationToolbar() = assertItemWithResIdExists(navigationToolbar)
-    fun verifyFocusedNavigationToolbar() = assertFocusedNavigationToolbar()
+
     fun verifyHomeScreen() = assertItemWithResIdExists(homeScreen)
 
     fun verifyPrivateBrowsingHomeScreen() {
@@ -208,10 +205,9 @@ class HomeScreenRobot {
         assertItemWithResIdExists(homepageWordmark)
     }
     fun verifyHomeComponent() = assertHomeComponent()
-    fun verifyDefaultSearchEngine(searchEngine: String) = verifySearchEngineIcon(searchEngine)
+
     fun verifyTabCounter(numberOfOpenTabs: String) =
         assertItemWithResIdAndTextExists(tabCounter(numberOfOpenTabs))
-    fun verifyKeyboardVisible() = assertKeyboardVisibility(isExpectedToBeVisible = true)
 
     fun verifyWallpaperImageApplied(isEnabled: Boolean) {
         if (isEnabled) {
@@ -919,10 +915,6 @@ private fun assertKeyboardVisibility(isExpectedToBeVisible: Boolean) =
             .contains("mInputShown=true"),
     )
 
-private fun assertFocusedNavigationToolbar() =
-    onView(allOf(withHint("Search or enter address")))
-        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-
 private fun assertTabButton() =
     onView(allOf(withId(R.id.tab_button), isDisplayed()))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
@@ -947,19 +939,8 @@ private fun assertHomeComponent() =
 
 private fun threeDotButton() = onView(allOf(withId(R.id.menuButton)))
 
-private fun verifySearchEngineIcon(searchEngineIcon: Bitmap, searchEngineName: String) {
-    onView(withId(R.id.search_engine_icon))
-        .check(matches(withBitmapDrawable(searchEngineIcon, searchEngineName)))
-}
-
 private fun getSearchEngine(searchEngineName: String) =
     appContext.components.core.store.state.search.searchEngines.find { it.name == searchEngineName }
-
-private fun verifySearchEngineIcon(searchEngineName: String) {
-    val defaultSearchEngine = getSearchEngine(searchEngineName)
-        ?: throw AssertionError("No search engine with name $searchEngineName")
-    verifySearchEngineIcon(defaultSearchEngine.icon, defaultSearchEngine.name)
-}
 
 private fun collectionTitle(title: String, rule: ComposeTestRule) =
     rule.onNode(hasText(title))

@@ -91,7 +91,7 @@ class HomeMenu(
     private val quitItem by lazy {
         BrowserMenuImageText(
             context.getString(R.string.delete_browsing_data_on_quit_action),
-            R.drawable.mozac_ic_quit,
+            R.drawable.mozac_ic_cross_circle_24,
             primaryTextColor,
         ) {
             onItemTapped.invoke(Item.Quit)
@@ -169,7 +169,7 @@ class HomeMenu(
 
         val helpItem = BrowserMenuImageText(
             context.getString(R.string.browser_menu_help),
-            R.drawable.mozac_ic_help,
+            R.drawable.mozac_ic_help_circle_24,
             primaryTextColor,
         ) {
             onItemTapped.invoke(Item.Help)
@@ -187,7 +187,7 @@ class HomeMenu(
         val nimbusValidation = FxNimbus.features.nimbusValidation.value()
         val settingsItem = BrowserMenuImageText(
             nimbusValidation.settingsTitle,
-            R.drawable.mozac_ic_settings,
+            R.drawable.mozac_ic_settings_24,
             primaryTextColor,
         ) {
             onItemTapped.invoke(Item.Settings)

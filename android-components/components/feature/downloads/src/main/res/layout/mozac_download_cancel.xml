@@ -18,7 +18,7 @@
         android:layout_marginTop="16dp"
         android:importantForAccessibility="no"
         android:scaleType="center"
-        app:srcCompat="@drawable/mozac_ic_information"
+        app:srcCompat="@drawable/mozac_ic_information_24"
         app:tint="?android:attr/textColorPrimary" />
 
     <TextView
@@ -56,7 +56,6 @@
         android:layout_below="@id/body"
         android:layout_marginTop="16dp"
         android:layout_toStartOf="@id/accept_button"
-        android:textAlignment="center"
         android:textAllCaps="false"
         tools:text="@string/mozac_feature_downloads_cancel_active_private_downloads_deny" />
 
@@ -72,7 +71,6 @@
         android:layout_marginBottom="16dp"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        android:textAlignment="center"
         android:textAllCaps="false"
         tools:text="@string/mozac_feature_downloads_cancel_active_downloads_accept" />
 </RelativeLayout>

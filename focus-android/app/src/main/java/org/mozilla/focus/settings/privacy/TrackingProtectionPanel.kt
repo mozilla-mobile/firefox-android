@@ -119,12 +119,12 @@ class TrackingProtectionPanel(
             context.getString(R.string.insecure_connection)
         }
 
-        val nextIcon = AppCompatResources.getDrawable(context, R.drawable.mozac_ic_arrowhead_right)
+        val nextIcon = AppCompatResources.getDrawable(context, R.drawable.mozac_ic_chevron_right_24)
 
         val securityIcon = if (isConnectionSecure) {
-            AppCompatResources.getDrawable(context, R.drawable.mozac_ic_lock)
+            AppCompatResources.getDrawable(context, R.drawable.mozac_ic_lock_24)
         } else {
-            AppCompatResources.getDrawable(context, R.drawable.mozac_ic_warning)
+            AppCompatResources.getDrawable(context, R.drawable.mozac_ic_warning_fill_24)
         }
 
         binding.securityInfo.putCompoundDrawablesRelativeWithIntrinsicBounds(
@@ -143,9 +143,9 @@ class TrackingProtectionPanel(
         }
 
         val icon = if (isTrackingProtectionOn) {
-            R.drawable.mozac_ic_shield
+            R.drawable.mozac_ic_shield_24
         } else {
-            R.drawable.mozac_ic_shield_disabled
+            R.drawable.mozac_ic_shield_slash_24
         }
 
         val iconContentDescription = context.getString(R.string.enhanced_tracking_protection)
