@@ -84,6 +84,7 @@ import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.experiments.nimbus.initializeTooling
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.Metrics
+import org.mozilla.fenix.GleanMetrics.PlayStoreAttribution
 import org.mozilla.fenix.GleanMetrics.StartOnHome
 import org.mozilla.fenix.addons.AddonDetailsFragmentDirections
 import org.mozilla.fenix.addons.AddonPermissionsDetailsFragmentDirections
@@ -231,6 +232,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         components.strictMode.attachListenerToDisablePenaltyDeath(supportFragmentManager)
         MarkersFragmentLifecycleCallbacks.register(supportFragmentManager, components.core.engine)
 
+        PlayStoreAttribution.deferredDeeplinkTime.start()
         maybeShowSplashScreen()
 
         // There is disk read violations on some devices such as samsung and pixel for android 9/10
@@ -531,6 +533,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
                 "finishing" to isFinishing.toString(),
             ),
         )
+
+        PlayStoreAttribution.deferredDeeplinkTime.cancel()
     }
 
     final override fun onPause() {
