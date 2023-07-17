@@ -9,7 +9,7 @@ from mozilla_version.mobile import MobileVersion
 from taskgraph.transforms.base import TransformSequence
 from taskgraph.util.schema import resolve_keyed_by
 
-from ..build_config import get_extensions, get_path, get_version
+from ..build_config import get_extensions, get_path
 
 transforms = TransformSequence()
 
@@ -19,7 +19,6 @@ def resolve_keys(config, tasks):
     for task in tasks:
         for field in (
             "attributes.code-review",
-            "expose-artifacts",
             "include-coverage",
             "shipping-phase",
             "run-on-tasks-for",
@@ -50,7 +49,7 @@ def handle_coverage(config, tasks):
 @transforms.add
 def interpolate_missing_values(config, tasks):
     timestamp = _get_timestamp(config)
-    version = get_version()
+    version = config.params["version"]
     nightly_version = get_nightly_version(config, version)
 
     for task in tasks:
@@ -129,7 +128,7 @@ def set_external_gradle_dependencies(config, tasks):
 @transforms.add
 def add_artifacts(config, tasks):
     timestamp = _get_timestamp(config)
-    version = get_version()
+    version = config.params["version"]
     nightly_version = get_nightly_version(config, version)
 
     for task in tasks:
@@ -159,7 +158,7 @@ def add_artifacts(config, tasks):
                     }
                 )
 
-        if task.pop("expose-artifacts", False):
+        if artifact_template:
             all_extensions = get_extensions(component)
             artifact_file_names_per_extension = {
                 extension: "{component}-{version}{timestamp}{extension}".format(

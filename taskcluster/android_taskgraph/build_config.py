@@ -13,7 +13,7 @@ EXTENSIONS = {
     "aar": (".aar", ".pom", "-sources.jar"),
     "jar": (".jar", ".pom", "-sources.jar"),
 }
-CHECKSUMS_EXTENSIONS = (".sha1", ".md5")
+CHECKSUMS_EXTENSIONS = (".md5", ".sha1", ".sha256", ".sha512")
 
 
 def get_components():
@@ -22,11 +22,6 @@ def get_components():
         {"name": name, "path": project["path"], "shouldPublish": project["publish"]}
         for (name, project) in build_config["projects"].items()
     ]
-
-
-def get_version():
-    with open(os.path.join(PROJECT_DIR, "version.txt")) as fh:
-        return fh.read().strip()
 
 
 def get_path(component):

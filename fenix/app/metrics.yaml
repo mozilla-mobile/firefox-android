@@ -563,6 +563,95 @@ events:
     metadata:
       tags:
         - Sharing
+  print_failure:
+    type: event
+    description: |
+      A user tapped the print in the menu or share sheet but an error occurred
+      and the process failed.
+    extra_keys:
+      source:
+        type: string
+        description: |
+          A string that indicates the type of document of pdf, non-pdf or unknown. 
+          The default is unknown.
+      reason:
+        type: string
+        description: |
+          An error occurred while setting up for printing.
+          Default option is unknown, other options are no_settings_service, no_settings, 
+          no_canonical_context, no_activity_context_delegate, no_activity_context, 
+          no_print_delegate, and io_error.
+    bugs:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1837517
+    data_reviews:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1837517#c3
+    data_sensitivity:
+      - technical
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: 122
+  print_completed:
+    type: event
+    description: |
+      Printing from the share sheet or menu successfully completed.
+    extra_keys:
+      source:
+        type: string
+        description: |
+          A string that indicates the type of document of pdf, non-pdf or unknown. 
+          The default is unknown.
+    bugs:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1837517
+    data_reviews:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1837517#c3
+    data_sensitivity:
+      - technical
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: 122
+  print_tapped:
+    type: event
+    description: |
+      A user tapped the print option in the menu or share sheet.
+    extra_keys:
+      source:
+        type: string
+        description: |
+          A string that indicates the type of document of pdf, non-pdf or unknown. 
+          The default is unknown.
+    bugs:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1837517
+    data_reviews:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1837517#c5
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: 122
+  share_menu_action:
+    type: event
+    description: |
+      A share menu item was tapped.
+      The name of the item that the user tapped is stored in extras with the
+      key `item`.
+    extra_keys:
+      item:
+        description: |
+          A string containing the name of the item the user tapped. These items
+          currently include: print
+        type: string
+    bugs:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1837517
+    data_reviews:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1837517#c5
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: 122
+    metadata:
+      tags:
+        - Sharing
   share_to_app:
     type: event
     description: |
@@ -7270,6 +7359,27 @@ play_store_attribution:
       tags:
         - Attribution
         - Performance
+  deferred_deeplink_time:
+    type: timespan
+    time_unit: millisecond
+    send_in_pings:
+      - metrics
+    description: |
+      The time that it takes to receive deferred deeplink from the Google Play Store.
+    bugs:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1843610
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-android/pull/2851
+    data_sensitivity:
+      - technical
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: 128
+    metadata:
+      tags:
+        - Attribution
+        - Performance
+
 browser.search:
   with_ads:
     type: labeled_counter
@@ -8842,6 +8952,24 @@ home_screen:
       - https://github.com/mozilla-mobile/fenix/pull/21076#issuecomment-909237275
       - https://github.com/mozilla-mobile/fenix/pull/23786#issuecomment-1042331298
       - https://github.com/mozilla-mobile/fenix/pull/28709#issuecomment-1410681521
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+      - cgordon@mozilla.com
+    expires: never
+    metadata:
+      tags:
+        - HomeScreen
+  standard_homepage_view_count:
+    type: counter
+    description: |
+      The number of times the standard browsing mode home screen was
+      displayed to the user. (for tile counts)
+    bugs:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1842082
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-android/pull/2841
     data_sensitivity:
       - interaction
     notification_emails:
