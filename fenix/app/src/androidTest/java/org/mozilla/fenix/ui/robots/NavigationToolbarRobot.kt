@@ -180,6 +180,8 @@ class NavigationToolbarRobot {
                         UiSelector().resourceId("$packageName:id/download_button"),
                     ).waitForExists(waitingTime) || mDevice.findObject(
                         UiSelector().text(getStringResource(R.string.tcp_cfr_message)),
+                    ).waitForExists(waitingTime) || mDevice.findObject(
+                        UiSelector().resourceId("$packageName:id/title"),
                     ).waitForExists(waitingTime),
                 )
             }

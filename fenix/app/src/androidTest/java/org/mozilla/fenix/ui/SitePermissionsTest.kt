@@ -30,6 +30,7 @@ import org.mozilla.fenix.helpers.TestHelper.grantSystemPermission
 import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.clickPageObject
 import org.mozilla.fenix.ui.robots.navigationToolbar
+import org.mozilla.fenix.ui.robots.sitePermissionsRobot
 
 /**
  *  Tests for verifying site permissions prompts & functionality
@@ -293,7 +294,7 @@ class SitePermissionsTest {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(testPage.toUri()) {
         }.clickGetLocationButton {
-            verifyLocationPermissionPrompt(testPageSubstring)
+            verifyLocationPermissionPrompt(url = testPageSubstring, exists = true)
         }.clickPagePermissionButton(true) {
             verifyPageContent("${mockLocationUpdatesRule.latitude}")
             verifyPageContent("${mockLocationUpdatesRule.longitude}")
@@ -305,7 +306,7 @@ class SitePermissionsTest {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(testPage.toUri()) {
         }.clickGetLocationButton {
-            verifyLocationPermissionPrompt(testPageSubstring)
+            verifyLocationPermissionPrompt(url = testPageSubstring, exists = true)
         }.clickPagePermissionButton(false) {
             verifyPageContent("User denied geolocation prompt")
         }
@@ -325,6 +326,28 @@ class SitePermissionsTest {
             } else {
                 assertExternalAppOpens("com.android.documentsui")
             }
+        }
+    }
+
+    @Test
+    fun verifyPermissionPromptForInsecureWebsiteTest() {
+        val insecureWebsite = "http://chrisdavidmills.github.io/location-finder-permissions-api"
+        val secureWebsite = "https://chrisdavidmills.github.io/location-finder-permissions-api"
+        val secureWebsiteSubstring = "https://chrisdavidmills.github.io:443"
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(insecureWebsite.toUri()) {
+            waitForPageToLoad()
+        }
+        sitePermissionsRobot {
+            verifyLocationPermissionPrompt(url = secureWebsiteSubstring, exists = false)
+        }
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(secureWebsite.toUri()) {
+            waitForPageToLoad()
+        }
+        sitePermissionsRobot {
+            verifyLocationPermissionPrompt(url = secureWebsiteSubstring, exists = true)
         }
     }
 }
