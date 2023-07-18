@@ -206,7 +206,7 @@ workers:
             provisioner: scriptworker-k8s
             implementation: scriptworker-signing
             os: scriptworker
-            worker-type: mobile-t-signing
+            worker-type: mobile-t-signing-dev
         github:
             provisioner: scriptworker-k8s
             implementation: scriptworker-github
@@ -240,7 +240,7 @@ workers:
             worker-type:
                 by-level:
                     "3": mobile-3-signing
-                    default: mobile-t-signing-dev
+                    default: mobile-t-signing
         tree:
             provisioner: scriptworker-k8s
             implementation: scriptworker-tree
