@@ -28,6 +28,9 @@ def index_exists(index_path, reason=""):
 @_target_task("nightly")
 def target_tasks_nightly(full_task_graph, parameters, graph_config):
     def filter(task, parameters):
+        if task.kind in ("build-components", "signing", "beetmover", "startup-test"):
+            return False
+
         build_type = task.attributes.get("build-type", "")
         return build_type in ("nightly", "focus-nightly", "fenix-nightly", "fenix-nightly-firebase", "focus-nightly-firebase")
 
