@@ -8,36 +8,25 @@ import android.content.Context
 import android.hardware.camera2.CameraManager
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.core.net.toUri
-import androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu
-import androidx.test.espresso.Espresso.pressBack
+import androidx.test.espresso.Espresso
 import mozilla.components.browser.icons.IconRequest
 import mozilla.components.browser.icons.generator.DefaultIconGenerator
 import mozilla.components.feature.search.ext.createSearchEngine
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
-import org.junit.Assume.assumeTrue
+import org.junit.Assume
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
-import org.mozilla.fenix.helpers.Constants.PackageName.ANDROID_SETTINGS
-import org.mozilla.fenix.helpers.Constants.searchEngineCodes
+import org.mozilla.fenix.helpers.Constants
 import org.mozilla.fenix.helpers.HomeActivityTestRule
-import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
-import org.mozilla.fenix.helpers.MatcherHelper.itemWithText
+import org.mozilla.fenix.helpers.MatcherHelper
 import org.mozilla.fenix.helpers.SearchDispatcher
-import org.mozilla.fenix.helpers.TestAssetHelper.getGenericAsset
-import org.mozilla.fenix.helpers.TestHelper.appContext
-import org.mozilla.fenix.helpers.TestHelper.assertNativeAppOpens
-import org.mozilla.fenix.helpers.TestHelper.clickSnackbarButton
-import org.mozilla.fenix.helpers.TestHelper.denyPermission
+import org.mozilla.fenix.helpers.TestAssetHelper
+import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.helpers.TestHelper.exitMenu
-import org.mozilla.fenix.helpers.TestHelper.grantSystemPermission
-import org.mozilla.fenix.helpers.TestHelper.longTapSelectItem
-import org.mozilla.fenix.helpers.TestHelper.mDevice
-import org.mozilla.fenix.helpers.TestHelper.setCustomSearchEngine
-import org.mozilla.fenix.helpers.TestHelper.verifyKeyboardVisibility
 import org.mozilla.fenix.ui.robots.clickContextMenuItem
 import org.mozilla.fenix.ui.robots.clickPageObject
 import org.mozilla.fenix.ui.robots.homeScreen
@@ -56,7 +45,7 @@ import org.mozilla.fenix.ui.robots.searchScreen
  *
  */
 
-class SearchTest {
+class ComposeSearchTest {
     lateinit var searchMockServer: MockWebServer
     lateinit var queryString: String
     private val generalEnginesList = listOf("DuckDuckGo", "Google", "Bing")
@@ -71,6 +60,7 @@ class SearchTest {
             isRecentTabsFeatureEnabled = false,
             isTCPCFREnabled = false,
             isWallpaperOnboardingEnabled = false,
+            tabsTrayRewriteEnabled = true,
         ),
     ) { it.activity }
 
@@ -93,7 +83,7 @@ class SearchTest {
             verifyDefaultSearchEngine("Google")
             verifySearchBarPlaceholder("Search or enter address")
         }.clickUrlbar {
-            verifyKeyboardVisibility(isExpectedToBeVisible = true)
+            TestHelper.verifyKeyboardVisibility(isExpectedToBeVisible = true)
             verifyScanButtonVisibility(visible = true)
             verifyVoiceSearchButtonVisibility(enabled = true)
             verifySearchBarPlaceholder("Search or enter address")
@@ -165,13 +155,13 @@ class SearchTest {
     @SmokeTest
     @Test
     fun scanButtonDenyPermissionTest() {
-        val cameraManager = appContext.getSystemService(Context.CAMERA_SERVICE) as CameraManager
-        assumeTrue(cameraManager.cameraIdList.isNotEmpty())
+        val cameraManager = TestHelper.appContext.getSystemService(Context.CAMERA_SERVICE) as CameraManager
+        Assume.assumeTrue(cameraManager.cameraIdList.isNotEmpty())
 
         homeScreen {
         }.openSearch {
             clickScanButton()
-            denyPermission()
+            TestHelper.denyPermission()
             clickScanButton()
             clickDismissPermissionRequiredDialog()
         }
@@ -179,20 +169,20 @@ class SearchTest {
         }.openSearch {
             clickScanButton()
             clickGoToPermissionsSettings()
-            assertNativeAppOpens(ANDROID_SETTINGS)
+            TestHelper.assertNativeAppOpens(Constants.PackageName.ANDROID_SETTINGS)
         }
     }
 
     @SmokeTest
     @Test
     fun scanButtonAllowPermissionTest() {
-        val cameraManager = appContext.getSystemService(Context.CAMERA_SERVICE) as CameraManager
-        assumeTrue(cameraManager.cameraIdList.isNotEmpty())
+        val cameraManager = TestHelper.appContext.getSystemService(Context.CAMERA_SERVICE) as CameraManager
+        Assume.assumeTrue(cameraManager.cameraIdList.isNotEmpty())
 
         homeScreen {
         }.openSearch {
             clickScanButton()
-            grantSystemPermission()
+            TestHelper.grantSystemPermission()
             verifyScannerOpen()
         }
     }
@@ -247,7 +237,7 @@ class SearchTest {
             verifySearchSettingsToolbar()
             openDefaultSearchEngineMenu()
             changeDefaultSearchEngine("DuckDuckGo")
-            exitMenu()
+            TestHelper.exitMenu()
         }
         homeScreen {
         }.openSearch {
@@ -279,25 +269,25 @@ class SearchTest {
         val customSearchEngine = createSearchEngine(
             name = "TestSearchEngine",
             url = searchString,
-            icon = DefaultIconGenerator().generate(appContext, IconRequest(searchString)).bitmap,
+            icon = DefaultIconGenerator().generate(TestHelper.appContext, IconRequest(searchString)).bitmap,
         )
-        setCustomSearchEngine(customSearchEngine)
+        TestHelper.setCustomSearchEngine(customSearchEngine)
 
         // Performs a search and opens 2 dummy search results links to create a search group
         homeScreen {
         }.openSearch {
         }.submitQuery(queryString) {
-            longClickPageObject(itemWithText("Link 1"))
+            longClickPageObject(MatcherHelper.itemWithText("Link 1"))
             clickContextMenuItem("Open link in new tab")
-            clickSnackbarButton("SWITCH")
+            TestHelper.clickSnackbarButton("SWITCH")
             waitForPageToLoad()
-            pressBack()
-            longClickPageObject(itemWithText("Link 2"))
+            Espresso.pressBack()
+            longClickPageObject(MatcherHelper.itemWithText("Link 2"))
             clickContextMenuItem("Open link in new tab")
-            clickSnackbarButton("SWITCH")
+            TestHelper.clickSnackbarButton("SWITCH")
             waitForPageToLoad()
-        }.openTabDrawer {
-        }.openTabsListThreeDotMenu {
+        }.openComposeTabDrawer(activityTestRule) {
+        }.openThreeDotMenu {
         }.closeAllTabs {
             verifyRecentlyVisitedSearchGroupDisplayed(shouldBeDisplayed = true, searchTerm = queryString, groupSize = 3)
         }
@@ -306,8 +296,8 @@ class SearchTest {
     @Ignore("Test run timing out: https://github.com/mozilla-mobile/fenix/issues/27704")
     @Test
     fun verifySearchGroupHistoryWithNoDuplicatesTest() {
-        val firstPageUrl = getGenericAsset(searchMockServer, 1).url
-        val secondPageUrl = getGenericAsset(searchMockServer, 2).url
+        val firstPageUrl = TestAssetHelper.getGenericAsset(searchMockServer, 1).url
+        val secondPageUrl = TestAssetHelper.getGenericAsset(searchMockServer, 2).url
         val originPageUrl =
             "http://localhost:${searchMockServer.port}/pages/searchResults.html?search=test%20search".toUri()
         queryString = "test search"
@@ -317,35 +307,35 @@ class SearchTest {
         val customSearchEngine = createSearchEngine(
             name = "TestSearchEngine",
             url = searchString,
-            icon = DefaultIconGenerator().generate(appContext, IconRequest(searchString)).bitmap,
+            icon = DefaultIconGenerator().generate(TestHelper.appContext, IconRequest(searchString)).bitmap,
         )
-        setCustomSearchEngine(customSearchEngine)
+        TestHelper.setCustomSearchEngine(customSearchEngine)
 
         // Performs a search and opens 2 dummy search results links to create a search group
         homeScreen {
         }.openSearch {
         }.submitQuery(queryString) {
-            longClickPageObject(itemWithText("Link 1"))
+            longClickPageObject(MatcherHelper.itemWithText("Link 1"))
             clickContextMenuItem("Open link in new tab")
-            clickSnackbarButton("SWITCH")
+            TestHelper.clickSnackbarButton("SWITCH")
             waitForPageToLoad()
-            pressBack()
-            longClickPageObject(itemWithText("Link 1"))
+            Espresso.pressBack()
+            longClickPageObject(MatcherHelper.itemWithText("Link 1"))
             clickContextMenuItem("Open link in new tab")
-            clickSnackbarButton("SWITCH")
+            TestHelper.clickSnackbarButton("SWITCH")
             waitForPageToLoad()
-            pressBack()
-            longClickPageObject(itemWithText("Link 2"))
+            Espresso.pressBack()
+            longClickPageObject(MatcherHelper.itemWithText("Link 2"))
             clickContextMenuItem("Open link in new tab")
-            clickSnackbarButton("SWITCH")
+            TestHelper.clickSnackbarButton("SWITCH")
             waitForPageToLoad()
-            pressBack()
-            longClickPageObject(itemWithText("Link 1"))
+            Espresso.pressBack()
+            longClickPageObject(MatcherHelper.itemWithText("Link 1"))
             clickContextMenuItem("Open link in new tab")
-            clickSnackbarButton("SWITCH")
+            TestHelper.clickSnackbarButton("SWITCH")
             waitForPageToLoad()
-        }.openTabDrawer {
-        }.openTabsListThreeDotMenu {
+        }.openComposeTabDrawer(activityTestRule) {
+        }.openThreeDotMenu {
         }.closeAllTabs {
             verifyRecentlyVisitedSearchGroupDisplayed(shouldBeDisplayed = true, searchTerm = queryString, groupSize = 3)
         }.openRecentlyVisitedSearchGroupHistoryList(queryString) {
@@ -365,21 +355,21 @@ class SearchTest {
         val customSearchEngine = createSearchEngine(
             name = "TestSearchEngine",
             url = searchString,
-            icon = DefaultIconGenerator().generate(appContext, IconRequest(searchString)).bitmap,
+            icon = DefaultIconGenerator().generate(TestHelper.appContext, IconRequest(searchString)).bitmap,
         )
-        setCustomSearchEngine(customSearchEngine)
+        TestHelper.setCustomSearchEngine(customSearchEngine)
 
         // Performs a search and opens 2 dummy search results links to create a search group
         homeScreen {
         }.openSearch {
         }.submitQuery(queryString) {
-            clickPageObject(itemContainingText("Link 1"))
+            clickPageObject(MatcherHelper.itemContainingText("Link 1"))
             waitForPageToLoad()
-            pressBack()
-            clickPageObject(itemContainingText("Link 2"))
+            Espresso.pressBack()
+            clickPageObject(MatcherHelper.itemContainingText("Link 2"))
             waitForPageToLoad()
-        }.openTabDrawer {
-        }.openTabsListThreeDotMenu {
+        }.openComposeTabDrawer(activityTestRule) {
+        }.openThreeDotMenu {
         }.closeAllTabs {
             verifyRecentlyVisitedSearchGroupDisplayed(shouldBeDisplayed = true, searchTerm = queryString, groupSize = 3)
         }
@@ -395,25 +385,25 @@ class SearchTest {
         val customSearchEngine = createSearchEngine(
             name = "TestSearchEngine",
             url = searchString,
-            icon = DefaultIconGenerator().generate(appContext, IconRequest(searchString)).bitmap,
+            icon = DefaultIconGenerator().generate(TestHelper.appContext, IconRequest(searchString)).bitmap,
         )
-        setCustomSearchEngine(customSearchEngine)
+        TestHelper.setCustomSearchEngine(customSearchEngine)
 
         // Performs a search and opens 2 dummy search results links to create a search group
         homeScreen {
         }.openSearch {
         }.submitQuery(queryString) {
-            longClickPageObject(itemWithText("Link 1"))
+            longClickPageObject(MatcherHelper.itemWithText("Link 1"))
             clickContextMenuItem("Open link in private tab")
-            longClickPageObject(itemWithText("Link 2"))
+            longClickPageObject(MatcherHelper.itemWithText("Link 2"))
             clickContextMenuItem("Open link in private tab")
-        }.openTabDrawer {
+        }.openComposeTabDrawer(activityTestRule) {
         }.toggleToPrivateTabs {
-        }.openTabWithIndex(0) {
-        }.openTabDrawer {
-        }.openTabWithIndex(1) {
-        }.openTabDrawer {
-        }.openTabsListThreeDotMenu {
+        }.openPrivateTab(0) {
+        }.openComposeTabDrawer(activityTestRule) {
+        }.openPrivateTab(1) {
+        }.openComposeTabDrawer(activityTestRule) {
+        }.openThreeDotMenu {
         }.closeAllTabs {
             togglePrivateBrowsingModeOnOff()
             verifyRecentlyVisitedSearchGroupDisplayed(shouldBeDisplayed = false, searchTerm = queryString, groupSize = 3)
@@ -428,43 +418,43 @@ class SearchTest {
     @Test
     fun deleteItemsFromSearchGroupHistoryTest() {
         queryString = "test search"
-        val firstPageUrl = getGenericAsset(searchMockServer, 1).url
-        val secondPageUrl = getGenericAsset(searchMockServer, 2).url
+        val firstPageUrl = TestAssetHelper.getGenericAsset(searchMockServer, 1).url
+        val secondPageUrl = TestAssetHelper.getGenericAsset(searchMockServer, 2).url
         // setting our custom mockWebServer search URL
         val searchString =
             "http://localhost:${searchMockServer.port}/pages/searchResults.html?search={searchTerms}"
         val customSearchEngine = createSearchEngine(
             name = "TestSearchEngine",
             url = searchString,
-            icon = DefaultIconGenerator().generate(appContext, IconRequest(searchString)).bitmap,
+            icon = DefaultIconGenerator().generate(TestHelper.appContext, IconRequest(searchString)).bitmap,
         )
-        setCustomSearchEngine(customSearchEngine)
+        TestHelper.setCustomSearchEngine(customSearchEngine)
 
         // Performs a search and opens 2 dummy search results links to create a search group
         homeScreen {
         }.openSearch {
         }.submitQuery(queryString) {
-            longClickPageObject(itemWithText("Link 1"))
+            longClickPageObject(MatcherHelper.itemWithText("Link 1"))
             clickContextMenuItem("Open link in new tab")
-            clickSnackbarButton("SWITCH")
+            TestHelper.clickSnackbarButton("SWITCH")
             waitForPageToLoad()
-            mDevice.pressBack()
-            longClickPageObject(itemWithText("Link 2"))
+            TestHelper.mDevice.pressBack()
+            longClickPageObject(MatcherHelper.itemWithText("Link 2"))
             clickContextMenuItem("Open link in new tab")
-            clickSnackbarButton("SWITCH")
+            TestHelper.clickSnackbarButton("SWITCH")
             waitForPageToLoad()
-        }.openTabDrawer {
-        }.openTabsListThreeDotMenu {
+        }.openComposeTabDrawer(activityTestRule) {
+        }.openThreeDotMenu {
         }.closeAllTabs {
             verifyRecentlyVisitedSearchGroupDisplayed(shouldBeDisplayed = true, searchTerm = queryString, groupSize = 3)
         }.openRecentlyVisitedSearchGroupHistoryList(queryString) {
             clickDeleteHistoryButton(firstPageUrl.toString())
-            longTapSelectItem(secondPageUrl)
+            TestHelper.longTapSelectItem(secondPageUrl)
             multipleSelectionToolbar {
-                openActionBarOverflowOrOptionsMenu(activityTestRule.activity)
+                Espresso.openActionBarOverflowOrOptionsMenu(activityTestRule.activity)
                 clickMultiSelectionDelete()
             }
-            exitMenu()
+            TestHelper.exitMenu()
         }
         homeScreen {
             // checking that the group is removed when only 1 item is left
@@ -476,32 +466,32 @@ class SearchTest {
     @Test
     fun deleteSearchGroupFromHistoryTest() {
         queryString = "test search"
-        val firstPageUrl = getGenericAsset(searchMockServer, 1).url
+        val firstPageUrl = TestAssetHelper.getGenericAsset(searchMockServer, 1).url
         // setting our custom mockWebServer search URL
         val searchString =
             "http://localhost:${searchMockServer.port}/pages/searchResults.html?search={searchTerms}"
         val customSearchEngine = createSearchEngine(
             name = "TestSearchEngine",
             url = searchString,
-            icon = DefaultIconGenerator().generate(appContext, IconRequest(searchString)).bitmap,
+            icon = DefaultIconGenerator().generate(TestHelper.appContext, IconRequest(searchString)).bitmap,
         )
-        setCustomSearchEngine(customSearchEngine)
+        TestHelper.setCustomSearchEngine(customSearchEngine)
 
         // Performs a search and opens 2 dummy search results links to create a search group
         homeScreen {
         }.openSearch {
         }.submitQuery(queryString) {
-            longClickPageObject(itemWithText("Link 1"))
+            longClickPageObject(MatcherHelper.itemWithText("Link 1"))
             clickContextMenuItem("Open link in new tab")
-            clickSnackbarButton("SWITCH")
+            TestHelper.clickSnackbarButton("SWITCH")
             waitForPageToLoad()
-            mDevice.pressBack()
-            longClickPageObject(itemWithText("Link 2"))
+            TestHelper.mDevice.pressBack()
+            longClickPageObject(MatcherHelper.itemWithText("Link 2"))
             clickContextMenuItem("Open link in new tab")
-            clickSnackbarButton("SWITCH")
+            TestHelper.clickSnackbarButton("SWITCH")
             waitForPageToLoad()
-        }.openTabDrawer {
-        }.openTabsListThreeDotMenu {
+        }.openComposeTabDrawer(activityTestRule) {
+        }.openThreeDotMenu {
         }.closeAllTabs {
             verifyRecentlyVisitedSearchGroupDisplayed(shouldBeDisplayed = true, searchTerm = queryString, groupSize = 3)
         }.openRecentlyVisitedSearchGroupHistoryList(queryString) {
@@ -522,8 +512,8 @@ class SearchTest {
     @Ignore("Test run timing out: https://github.com/mozilla-mobile/fenix/issues/27704")
     @Test
     fun reopenTabsFromSearchGroupTest() {
-        val firstPageUrl = getGenericAsset(searchMockServer, 1).url
-        val secondPageUrl = getGenericAsset(searchMockServer, 2).url
+        val firstPageUrl = TestAssetHelper.getGenericAsset(searchMockServer, 1).url
+        val secondPageUrl = TestAssetHelper.getGenericAsset(searchMockServer, 2).url
         queryString = "test search"
         // setting our custom mockWebServer search URL
         val searchString =
@@ -531,25 +521,25 @@ class SearchTest {
         val customSearchEngine = createSearchEngine(
             name = "TestSearchEngine",
             url = searchString,
-            icon = DefaultIconGenerator().generate(appContext, IconRequest(searchString)).bitmap,
+            icon = DefaultIconGenerator().generate(TestHelper.appContext, IconRequest(searchString)).bitmap,
         )
-        setCustomSearchEngine(customSearchEngine)
+        TestHelper.setCustomSearchEngine(customSearchEngine)
 
         // Performs a search and opens 2 dummy search results links to create a search group
         homeScreen {
         }.openSearch {
         }.submitQuery(queryString) {
-            longClickPageObject(itemWithText("Link 1"))
+            longClickPageObject(MatcherHelper.itemWithText("Link 1"))
             clickContextMenuItem("Open link in new tab")
-            clickSnackbarButton("SWITCH")
+            TestHelper.clickSnackbarButton("SWITCH")
             waitForPageToLoad()
-            mDevice.pressBack()
-            longClickPageObject(itemWithText("Link 2"))
+            TestHelper.mDevice.pressBack()
+            longClickPageObject(MatcherHelper.itemWithText("Link 2"))
             clickContextMenuItem("Open link in new tab")
-            clickSnackbarButton("SWITCH")
+            TestHelper.clickSnackbarButton("SWITCH")
             waitForPageToLoad()
-        }.openTabDrawer {
-        }.openTabsListThreeDotMenu {
+        }.openComposeTabDrawer(activityTestRule) {
+        }.openThreeDotMenu {
         }.closeAllTabs {
             verifyRecentlyVisitedSearchGroupDisplayed(shouldBeDisplayed = true, searchTerm = queryString, groupSize = 3)
         }.openRecentlyVisitedSearchGroupHistoryList(queryString) {
@@ -557,16 +547,16 @@ class SearchTest {
             verifyUrl(firstPageUrl.toString())
         }.goToHomescreen {
         }.openRecentlyVisitedSearchGroupHistoryList(queryString) {
-            longTapSelectItem(firstPageUrl)
-            longTapSelectItem(secondPageUrl)
-            openActionBarOverflowOrOptionsMenu(activityTestRule.activity)
+            TestHelper.longTapSelectItem(firstPageUrl)
+            TestHelper.longTapSelectItem(secondPageUrl)
+            Espresso.openActionBarOverflowOrOptionsMenu(activityTestRule.activity)
         }
 
         multipleSelectionToolbar {
-        }.clickOpenNewTab {
-            verifyNormalModeSelected()
+        }.clickOpenNewTab(activityTestRule) {
+            verifyNormalBrowsingButtonIsSelected()
         }.closeTabDrawer {}
-        openActionBarOverflowOrOptionsMenu(activityTestRule.activity)
+        Espresso.openActionBarOverflowOrOptionsMenu(activityTestRule.activity)
         multipleSelectionToolbar {
         }.clickOpenPrivateTab {
             verifyPrivateModeSelected()
@@ -576,7 +566,7 @@ class SearchTest {
     @Ignore("Test run timing out: https://github.com/mozilla-mobile/fenix/issues/27704")
     @Test
     fun sharePageFromASearchGroupTest() {
-        val firstPageUrl = getGenericAsset(searchMockServer, 1).url
+        val firstPageUrl = TestAssetHelper.getGenericAsset(searchMockServer, 1).url
         queryString = "test search"
         // setting our custom mockWebServer search URL
         val searchString =
@@ -584,29 +574,29 @@ class SearchTest {
         val customSearchEngine = createSearchEngine(
             name = "TestSearchEngine",
             url = searchString,
-            icon = DefaultIconGenerator().generate(appContext, IconRequest(searchString)).bitmap,
+            icon = DefaultIconGenerator().generate(TestHelper.appContext, IconRequest(searchString)).bitmap,
         )
-        setCustomSearchEngine(customSearchEngine)
+        TestHelper.setCustomSearchEngine(customSearchEngine)
 
         // Performs a search and opens 2 dummy search results links to create a search group
         homeScreen {
         }.openSearch {
         }.submitQuery(queryString) {
-            longClickPageObject(itemWithText("Link 1"))
+            longClickPageObject(MatcherHelper.itemWithText("Link 1"))
             clickContextMenuItem("Open link in new tab")
-            clickSnackbarButton("SWITCH")
+            TestHelper.clickSnackbarButton("SWITCH")
             waitForPageToLoad()
-            mDevice.pressBack()
-            longClickPageObject(itemWithText("Link 2"))
+            TestHelper.mDevice.pressBack()
+            longClickPageObject(MatcherHelper.itemWithText("Link 2"))
             clickContextMenuItem("Open link in new tab")
-            clickSnackbarButton("SWITCH")
+            TestHelper.clickSnackbarButton("SWITCH")
             waitForPageToLoad()
-        }.openTabDrawer {
-        }.openTabsListThreeDotMenu {
+        }.openComposeTabDrawer(activityTestRule) {
+        }.openThreeDotMenu {
         }.closeAllTabs {
             verifyRecentlyVisitedSearchGroupDisplayed(shouldBeDisplayed = true, searchTerm = queryString, groupSize = 3)
         }.openRecentlyVisitedSearchGroupHistoryList(queryString) {
-            longTapSelectItem(firstPageUrl)
+            TestHelper.longTapSelectItem(firstPageUrl)
         }
 
         multipleSelectionToolbar {
@@ -630,7 +620,7 @@ class SearchTest {
         }.openThreeDotMenu {
         }.openHistory {
             // Full URL no longer visible in the nav bar, so we'll check the history record
-            verifyHistoryItemExists(shouldExist = true, searchEngineCodes["Google"]!!)
+            verifyHistoryItemExists(shouldExist = true, Constants.searchEngineCodes["Google"]!!)
         }
     }
 
@@ -645,7 +635,7 @@ class SearchTest {
         }.openSearchSubMenu {
             openDefaultSearchEngineMenu()
             changeDefaultSearchEngine("Bing")
-            exitMenu()
+            TestHelper.exitMenu()
         }
 
         homeScreen {
@@ -655,7 +645,7 @@ class SearchTest {
         }.openThreeDotMenu {
         }.openHistory {
             // Full URL no longer visible in the nav bar, so we'll check the history record
-            verifyHistoryItemExists(shouldExist = true, searchEngineCodes["Bing"]!!)
+            verifyHistoryItemExists(shouldExist = true, Constants.searchEngineCodes["Bing"]!!)
         }
     }
 
@@ -670,7 +660,7 @@ class SearchTest {
         }.openSearchSubMenu {
             openDefaultSearchEngineMenu()
             changeDefaultSearchEngine("DuckDuckGo")
-            exitMenu()
+            TestHelper.exitMenu()
         }
         homeScreen {
         }.openSearch {
@@ -681,10 +671,10 @@ class SearchTest {
             // Full URL no longer visible in the nav bar, so we'll check the history record
             // A search group is sometimes created when searching with DuckDuckGo
             try {
-                verifyHistoryItemExists(shouldExist = true, item = searchEngineCodes["DuckDuckGo"]!!)
+                verifyHistoryItemExists(shouldExist = true, item = Constants.searchEngineCodes["DuckDuckGo"]!!)
             } catch (e: AssertionError) {
                 openSearchGroup(queryString)
-                verifyHistoryItemExists(shouldExist = true, item = searchEngineCodes["DuckDuckGo"]!!)
+                verifyHistoryItemExists(shouldExist = true, item = Constants.searchEngineCodes["DuckDuckGo"]!!)
             }
         }
     }
