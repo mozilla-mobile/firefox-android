@@ -368,13 +368,13 @@
     <!-- Preference category for all links about Fenix -->
     <string name="preferences_category_about">Hakkında</string>
     <!-- Preference category for settings related to changing the default search engine -->
-    <string name="preferences_category_select_default_search_engine" tools:ignore="UnusedResources">Birini seçin</string>
+    <string name="preferences_category_select_default_search_engine">Birini seçin</string>
     <!-- Preference for settings related to managing search shortcuts for the quick search menu -->
-    <string name="preferences_manage_search_shortcuts" tools:ignore="UnusedResources">Arama kısayollarını yönet</string>
+    <string name="preferences_manage_search_shortcuts">Arama kısayollarını yönet</string>
     <!-- Summary for preference for settings related to managing search shortcuts for the quick search menu -->
-    <string name="preferences_manage_search_shortcuts_summary" tools:ignore="UnusedResources">Arama menüsünde görünen motorları düzenle</string>
+    <string name="preferences_manage_search_shortcuts_summary">Arama menüsünde görünen motorları düzenle</string>
     <!-- Preference category for settings related to managing search shortcuts for the quick search menu -->
-    <string name="preferences_category_engines_in_search_menu" tools:ignore="UnusedResources">Arama menüsünde görünen motorlar</string>
+    <string name="preferences_category_engines_in_search_menu">Arama menüsünde görünen motorlar</string>
     <!-- Preference for settings related to changing the default search engine -->
     <string name="preferences_default_search_engine">Varsayılan arama motoru</string>
     <!-- Preference for settings related to Search -->
@@ -427,17 +427,11 @@
     <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
     <string name="cookie_banner_handling_details_site_is_not_supported_request_support_button_2">İstek gönder</string>
     <!-- Text for title indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
-    <string name="cookie_banner_handling_details_site_is_not_supported_title" moz:RemovedIn="114" tools:ignore="UnusedResources">Çerez Bildirimlerini Azalt</string>
-    <!-- Text for title indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
     <string name="cookie_banner_handling_details_site_is_not_supported_title_2">Bu site için destek istensin mi?</string>
-    <!-- Label for the snackBar, after the user reports with success a website where cookie banner reducer did not work -->
-    <string name="cookie_banner_handling_report_site_snack_bar_text" moz:RemovedIn="114" tools:ignore="UnusedResources">Destek sitesine istek gönderildi.</string>
     <!-- Label for the snackBar, after the user reports with success a website where cookie banner reducer did not work -->
     <string name="cookie_banner_handling_report_site_snack_bar_text_2">İstek gönderildi</string>
     <!-- Text for indicating cookie banner handling is on this site, this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_on_for_site">Bu sitede açık</string>
-    <!-- Text for indicating that a request for unsupported site was sent to Nimbus (it's a Mozilla library for experiments), this is shown as part of the protections panel with the tracking protection toggle -->
-    <string name="reduce_cookie_banner_unsupported_site_request_submitted" moz:RemovedIn="114" tools:ignore="UnusedResources">Destek sitesine istek gönderildi</string>
     <!-- Text for indicating that a request for unsupported site was sent to Nimbus (it's a Mozilla library for experiments), this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_unsupported_site_request_submitted_2">Destek isteği gönderildi</string>
     <!-- Text for indicating cookie banner handling is currently not supported for this site, this is shown as part of the protections panel with the tracking protection toggle -->
@@ -446,8 +440,6 @@
     <string name="reduce_cookie_banner_details_panel_title_on_for_site">%1$s için çerez bildirimlerini azaltma açılsın mı?</string>
     <!-- Title text for a detail explanation indicating cookie banner handling is off this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
     <string name="reduce_cookie_banner_details_panel_title_off_for_site">%1$s için çerez bildirimlerini azaltma kapatılsın mı?</string>
-    <!-- Title text for a detail explanation indicating cookie banner reducer didn't work for the current site, this is shown as part of the cookie banner panel in the toolbar.-->
-    <string name="reduce_cookie_banner_details_panel_title_unsupported_site_request" moz:RemovedIn="114" tools:ignore="UnusedResources">Çerez bildirimlerini azaltma özelliği henüz bu siteyi desteklemiyor. Ekibimizin bu siteyi inceleyip gelecekte desteklemesini ister misiniz?</string>
     <!-- Title text for a detail explanation indicating cookie banner reducer didn't work for the current site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name-->
     <string name="reduce_cookie_banner_details_panel_title_unsupported_site_request_2">%1$s bu sitedeki çerez isteklerini otomatik olarak reddedemiyor. İleride bu siteyi desteklememiz için istekte bulunabilirsiniz.</string>
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
@@ -553,6 +545,9 @@
     <string name="preferences_open_links_in_apps_never">Asla</string>
     <!-- Preference for open download with an external download manager app -->
     <string name="preferences_external_download_manager">Harici indirme yöneticisi</string>
+    <!-- Message to indicate users that we are quitting the application to apply the changes -->
+    <string name="quit_application">Değişiklikleri uygulamak için uygulamadan çıkılıyor…</string>
+
     <!-- Preference for add_ons -->
     <string name="preferences_addons">Eklentiler</string>
 
@@ -636,6 +631,8 @@
     <string name="addon_already_installed">Eklenti zaten yüklenmiş</string>
 
     <!-- Account Preferences -->
+    <!-- Preference for managing your account via accounts.firefox.com -->
+    <string name="preferences_manage_account">Hesabı yönet</string>
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">Şimdi eşitle</string>
     <!-- Preference category for sync -->
@@ -1209,6 +1206,10 @@
     <string name="share_save_to_pdf">PDF olarak kaydet</string>
     <!-- Text for error message when generating a PDF file Text for error message when generating a PDF file. -->
     <string name="unable_to_save_to_pdf_error">PDF oluşturulamadı</string>
+    <!-- Text for error message when printing a page and it fails. -->
+    <string name="unable_to_print_error">Yazdırılamadı</string>
+    <!-- Text for the print feature in the share and browser menu -->
+    <string name="menu_print">Yazdır</string>
     <!-- Sub-header in the dialog to share a link to another sync device -->
     <string name="share_device_subheader">Cihaza gönder</string>
     <!-- Sub-header in the dialog to share a link to an app from the full list -->
@@ -1434,7 +1435,7 @@
     <!-- text for tracking protection radio button option for strict level of blocking -->
     <string name="onboarding_tracking_protection_strict_option">Sıkı</string>
     <!-- text for strict blocking option button description -->
-    <string name="onboarding_tracking_protection_strict_button_description_3">Sayfaların daha hızlı yüklenmesi için daha fazla takipçiyi engeller ancak bazı sayfa işlevleri bozulabilir.</string>
+    <string name="onboarding_tracking_protection_strict_button_description_3">Sayfaların daha hızlı yüklenmesi için daha fazla takip kodunu engeller ancak bazı sayfa işlevleri bozulabilir.</string>
     <!-- text for the toolbar position card header  -->
     <string name="onboarding_toolbar_placement_header_1">Araç çubuğu konumunu seçin</string>
     <!-- Text for the toolbar position card description -->
@@ -1500,28 +1501,20 @@
     <string name="etp_settings">Koruma ayarları</string>
     <!-- Preference title for enhanced tracking protection settings -->
     <string name="preference_enhanced_tracking_protection">Gelişmiş izlenme koruması</string>
-    <!-- Title for the description of enhanced tracking protection -->
-    <string name="preference_enhanced_tracking_protection_explanation_title" moz:removedIn="114" tools:ignore="UnusedResources">Takip edilmeden gezinin</string>
     <!-- Preference summary for enhanced tracking protection settings on/off switch -->
     <string name="preference_enhanced_tracking_protection_summary">Siteler arası takip kodlarına karşı en güçlü korumamız olan Komple Çerez Koruması da içinde.</string>
-    <!-- Description of enhanced tracking protection. The first parameter is the name of the application (For example: Fenix) -->
-    <string name="preference_enhanced_tracking_protection_explanation" moz:removedIn="114" tools:ignore="UnusedResources">Verileriniz sizde kalsın. %s, internette ne yaptığınızı öğrenmeye çalışan takipçilerin çoğundan sizi korur.</string>
     <!-- Description of enhanced tracking protection. The parameter is the name of the application (For example: Firefox Fenix) -->
-    <string name="preference_enhanced_tracking_protection_explanation_2">%s, internette ne yaptığınızı öğrenmeye çalışan takipçilerin çoğundan sizi korur.</string>
+    <string name="preference_enhanced_tracking_protection_explanation_2">%s, internette ne yaptığınızı öğrenmeye çalışan takip kodlarının çoğundan sizi korur.</string>
     <!-- Text displayed that links to website about enhanced tracking protection -->
     <string name="preference_enhanced_tracking_protection_explanation_learn_more">Daha fazla bilgi al</string>
     <!-- Preference for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_standard_default_1">Standart (varsayılan)</string>
     <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description_4" moz:removedIn="114" tools:ignore="UnusedResources">Dengeli gizlilik ve performans. Sayfalar normal şekilde yüklenir.</string>
-    <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description_5">Sayfalar normal şekilde yüklenecek ama daha az takipçi engellenecek.</string>
+    <string name="preference_enhanced_tracking_protection_standard_description_5">Sayfalar normal şekilde yüklenecek ama daha az takip kodu engellenecek.</string>
     <!--  Accessibility text for the Standard protection information icon  -->
     <string name="preference_enhanced_tracking_protection_standard_info_button">Standart izlenme korumasında neler engellenir?</string>
     <!-- Preference for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict">Sıkı</string>
-    <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_description_3" moz:removedIn="114" tools:ignore="UnusedResources">Sayfaların daha hızlı yüklenmesi için daha fazla takipçiyi engeller ancak bazı sayfa işlevleri bozulabilir.</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict_description_4">Daha güçlü izlenme koruması ve daha hızlı performans, ancak bazı siteler düzgün çalışmayabilir.</string>
     <!--  Accessibility text for the Strict protection information icon  -->
@@ -1529,14 +1522,14 @@
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
     <string name="preference_enhanced_tracking_protection_custom">Özel</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_custom_description_2">Hangi takipçilerin ve betiklerin engelleneceğini seçin.</string>
+    <string name="preference_enhanced_tracking_protection_custom_description_2">Hangi takip kodlarının ve betiklerin engelleneceğini seçin.</string>
     <!--  Accessibility text for the Strict protection information icon  -->
     <string name="preference_enhanced_tracking_protection_custom_info_button">Özel izlenme korumasında neler engellenir?</string>
     <!-- Header for categories that are being blocked by current Enhanced Tracking Protection settings -->
     <!-- Preference for enhanced tracking protection for the custom protection settings for cookies-->
     <string name="preference_enhanced_tracking_protection_custom_cookies">Çerezler</string>
     <!-- Option for enhanced tracking protection for the custom protection settings for cookies-->
-    <string name="preference_enhanced_tracking_protection_custom_cookies_1">Siteler arası takipçiler ve sosyal medya takipçileri</string>
+    <string name="preference_enhanced_tracking_protection_custom_cookies_1">Siteler arası takip kodlrı ve sosyal medya takip kodları</string>
     <!-- Option for enhanced tracking protection for the custom protection settings for cookies-->
     <string name="preference_enhanced_tracking_protection_custom_cookies_2">Ziyaret etmediğim sitelerden gelen çerezler</string>
     <!-- Option for enhanced tracking protection for the custom protection settings for cookies-->
@@ -1562,7 +1555,7 @@
     <!-- Header for categories that are being not being blocked by current Enhanced Tracking Protection settings -->
     <string name="enhanced_tracking_protection_allowed">İzin verilenler</string>
     <!-- Category of trackers (social media trackers) that can be blocked by Enhanced Tracking Protection -->
-    <string name="etp_social_media_trackers_title">Sosyal medya takipçileri</string>
+    <string name="etp_social_media_trackers_title">Sosyal medya takip kodları</string>
     <!-- Description of social media trackers that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_social_media_trackers_description">Sosyal ağların web’deki gezinme etkinliğinizi izleyebilme özelliğini sınırlar.</string>
     <!-- Category of trackers (cross-site tracking cookies) that can be blocked by Enhanced Tracking Protection -->
@@ -1601,13 +1594,13 @@
     <string name="open_source_licenses_title">%s | OSS Kitaplıkları</string>
 
     <!-- Category of trackers (redirect trackers) that can be blocked by Enhanced Tracking Protection -->
-    <string name="etp_redirect_trackers_title">Yönlendirme takipçileri</string>
+    <string name="etp_redirect_trackers_title">Yönlendirme takip kodları</string>
     <!-- Description of redirect tracker cookies that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_redirect_trackers_description">Bilinen takip sitelerine yapılan yönlendirmelere ait çerezleri temizler.</string>
 
     <!-- Description of the SmartBlock Enhanced Tracking Protection feature. The * symbol is intentionally hardcoded here,
          as we use it on the UI to indicate which trackers have been partially unblocked.  -->
-    <string name="preference_etp_smartblock_description">Aşağıda işaretlenen bazı takipçilerle etkileşimde bulunduğunuz için bu sayfadaki engellemeleri kısmen kaldırıldı. *</string>
+    <string name="preference_etp_smartblock_description">Aşağıda işaretlenen bazı takip kodlarıyla etkileşimde bulunduğunuz için bu sayfadaki engellemeler kısmen kaldırıldı.*</string>
     <!-- Text displayed that links to website about enhanced tracking protection SmartBlock -->
     <string name="preference_etp_smartblock_learn_more">Daha fazla bilgi al</string>
 
@@ -1880,7 +1873,7 @@
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Arama motoru ekle</string>
     <!-- Content description (not visible, for screen readers etc.): Title for the button that navigates to add new engine screen -->
-    <string name="search_engine_add_custom_search_engine_button_content_description" tools:ignore="UnusedResources">Yeni arama motoru ekle</string>
+    <string name="search_engine_add_custom_search_engine_button_content_description">Yeni arama motoru ekle</string>
     <!-- Title of the Edit search engine screen -->
     <string name="search_engine_edit_custom_search_engine_title">Arama motorunu düzenle</string>
     <!-- Content description (not visible, for screen readers etc.): Title for the button to add a search engine in the action bar -->
@@ -1895,17 +1888,17 @@
     <!-- Text for the button to create a custom search engine on the Add search engine screen -->
     <string name="search_add_custom_engine_label_other">Diğer</string>
     <!-- Label for the TextField in which user enters custom search engine name -->
-    <string name="search_add_custom_engine_name_label" tools:ignore="UnusedResources">Adı</string>
+    <string name="search_add_custom_engine_name_label">Adı</string>
     <!-- Placeholder text shown in the Search Engine Name TextField before a user enters text -->
     <string name="search_add_custom_engine_name_hint">Adı</string>
     <!-- Placeholder text shown in the Search Engine Name text field before a user enters text -->
-    <string name="search_add_custom_engine_name_hint_2" tools:ignore="UnusedResources">Arama motoru adı</string>
+    <string name="search_add_custom_engine_name_hint_2">Arama motoru adı</string>
     <!-- Label for the TextField in which user enters custom search engine URL -->
-    <string name="search_add_custom_engine_url_label" tools:ignore="UnusedResources">Arama dizgisinin URL’si</string>
+    <string name="search_add_custom_engine_url_label">Arama dizgisinin URL’si</string>
     <!-- Placeholder text shown in the Search String TextField before a user enters text -->
     <string name="search_add_custom_engine_search_string_hint">Kullanılacak arama dizgisi</string>
     <!-- Placeholder text shown in the Search String TextField before a user enters text -->
-    <string name="search_add_custom_engine_search_string_hint_2" tools:ignore="UnusedResources">Arama için kullanılacak URL</string>
+    <string name="search_add_custom_engine_search_string_hint_2">Arama için kullanılacak URL</string>
     <!-- Description text for the Search String TextField. The %s is part of the string -->
     <string name="search_add_custom_engine_search_string_example" formatted="false">Sorguyu “%s” ile değiştirin. Örnek:\nhttps://www.google.com/search?q=%s</string>
 
@@ -1913,7 +1906,7 @@
     <string name="search_add_custom_engine_form_description">Özel arama motoru ayrıntıları</string>
 
     <!-- The text for the "Save" button for saving a custom search engine -->
-    <string name="search_custom_engine_save_button" tools:ignore="UnusedResources">Kaydet</string>
+    <string name="search_custom_engine_save_button">Kaydet</string>
 
     <!-- Text shown when a user leaves the name field empty -->
     <string name="search_add_custom_engine_error_empty_name">Arama motoru adını yazın</string>

@@ -28,7 +28,6 @@ import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.service.nimbus.messaging.Message
 import mozilla.components.support.ktx.android.view.showKeyboard
-import mozilla.components.ui.widgets.withCenterAlignedButtons
 import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.GleanMetrics.Collections
@@ -193,6 +192,7 @@ class DefaultSessionControlController(
     private val viewLifecycleScope: CoroutineScope,
     private val registerCollectionStorageObserver: () -> Unit,
     private val removeCollectionWithUndo: (tabCollection: TabCollection) -> Unit,
+    private val showUndoSnackbarForTopSite: (topSite: TopSite) -> Unit,
     private val showTabTray: () -> Unit,
 ) : SessionControlController {
 
@@ -312,7 +312,7 @@ class DefaultSessionControlController(
                 setNegativeButton(R.string.top_sites_rename_dialog_cancel) { dialog, _ ->
                     dialog.cancel()
                 }
-            }.show().withCenterAlignedButtons().also {
+            }.show().also {
                 topSiteLabelEditText.setSelection(0, topSiteLabelEditText.text.length)
                 topSiteLabelEditText.showKeyboard()
             }
@@ -332,6 +332,8 @@ class DefaultSessionControlController(
                 removeTopSites(topSite)
             }
         }
+
+        showUndoSnackbarForTopSite(topSite)
     }
 
     override fun handleRenameCollectionTapped(collection: TabCollection) {

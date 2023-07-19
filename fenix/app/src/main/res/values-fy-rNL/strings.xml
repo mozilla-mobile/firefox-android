@@ -368,13 +368,13 @@
     <!-- Preference category for all links about Fenix -->
     <string name="preferences_category_about">Oer</string>
     <!-- Preference category for settings related to changing the default search engine -->
-    <string name="preferences_category_select_default_search_engine" tools:ignore="UnusedResources">Selektearje ien</string>
+    <string name="preferences_category_select_default_search_engine">Selektearje ien</string>
     <!-- Preference for settings related to managing search shortcuts for the quick search menu -->
-    <string name="preferences_manage_search_shortcuts" tools:ignore="UnusedResources">Sykfluchkeppelingen beheare</string>
+    <string name="preferences_manage_search_shortcuts">Sykfluchkeppelingen beheare</string>
     <!-- Summary for preference for settings related to managing search shortcuts for the quick search menu -->
-    <string name="preferences_manage_search_shortcuts_summary" tools:ignore="UnusedResources">Yn it sykmenu sichtbere sykmasinen bewurkje</string>
+    <string name="preferences_manage_search_shortcuts_summary">Yn it sykmenu sichtbere sykmasinen bewurkje</string>
     <!-- Preference category for settings related to managing search shortcuts for the quick search menu -->
-    <string name="preferences_category_engines_in_search_menu" tools:ignore="UnusedResources">Yn it sykmenu sichtbere sykmasinen</string>
+    <string name="preferences_category_engines_in_search_menu">Yn it sykmenu sichtbere sykmasinen</string>
     <!-- Preference for settings related to changing the default search engine -->
     <string name="preferences_default_search_engine">Standertsykmasine</string>
     <!-- Preference for settings related to Search -->
@@ -427,17 +427,11 @@
     <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
     <string name="cookie_banner_handling_details_site_is_not_supported_request_support_button_2">Oanfraach ferstjoere</string>
     <!-- Text for title indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
-    <string name="cookie_banner_handling_details_site_is_not_supported_title" moz:RemovedIn="114" tools:ignore="UnusedResources">Reduksje fan cookiebanners</string>
-    <!-- Text for title indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
     <string name="cookie_banner_handling_details_site_is_not_supported_title_2">Stipe oanfreegje foar dizze side?</string>
-    <!-- Label for the snackBar, after the user reports with success a website where cookie banner reducer did not work -->
-    <string name="cookie_banner_handling_report_site_snack_bar_text" moz:RemovedIn="114" tools:ignore="UnusedResources">Fersyk om te websitestipe yntsjinne.</string>
     <!-- Label for the snackBar, after the user reports with success a website where cookie banner reducer did not work -->
     <string name="cookie_banner_handling_report_site_snack_bar_text_2">Oanfraach ferstjoerd</string>
     <!-- Text for indicating cookie banner handling is on this site, this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_on_for_site">Oan foar dizze website</string>
-    <!-- Text for indicating that a request for unsupported site was sent to Nimbus (it's a Mozilla library for experiments), this is shown as part of the protections panel with the tracking protection toggle -->
-    <string name="reduce_cookie_banner_unsupported_site_request_submitted" moz:RemovedIn="114" tools:ignore="UnusedResources">Fersyk om te websitestipe yntsjinne</string>
     <!-- Text for indicating that a request for unsupported site was sent to Nimbus (it's a Mozilla library for experiments), this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_unsupported_site_request_submitted_2">Stipe-oanfraach ferstjoerd</string>
     <!-- Text for indicating cookie banner handling is currently not supported for this site, this is shown as part of the protections panel with the tracking protection toggle -->
@@ -446,8 +440,6 @@
     <string name="reduce_cookie_banner_details_panel_title_on_for_site">Reduksje fan cookiebanners ynskeakelje foar %1$s?</string>
     <!-- Title text for a detail explanation indicating cookie banner handling is off this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
     <string name="reduce_cookie_banner_details_panel_title_off_for_site">Reduksje fan cookiebanners útskeakelje foar %1$s?</string>
-    <!-- Title text for a detail explanation indicating cookie banner reducer didn't work for the current site, this is shown as part of the cookie banner panel in the toolbar.-->
-    <string name="reduce_cookie_banner_details_panel_title_unsupported_site_request" moz:RemovedIn="114" tools:ignore="UnusedResources">Dizze website wurdt op it stuit net stipe troch Reduksje fan cookiebanners. Wolle jo dat ús team dizze website beoardielet en yn de takomst stipe tafoeget?</string>
     <!-- Title text for a detail explanation indicating cookie banner reducer didn't work for the current site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name-->
     <string name="reduce_cookie_banner_details_panel_title_unsupported_site_request_2">%1$s kin cookiefersiken op dizze website net automatysk wegerje. Jo kinne in oanfraach stjoere om dizze website yn de takomst te stypjen.</string>
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
@@ -553,6 +545,11 @@
     <string name="preferences_open_links_in_apps_never">Nea</string>
     <!-- Preference for open download with an external download manager app -->
     <string name="preferences_external_download_manager">Eksterne downloadbehearder</string>
+    <!-- Preference for enabling gecko engine logs -->
+    <string name="preferences_enable_gecko_logs">Gecko-lochboeken ynskeakelje</string>
+    <!-- Message to indicate users that we are quitting the application to apply the changes -->
+    <string name="quit_application">De tapassing wurdt ôfsluten om wizigingen ta te passen…</string>
+
     <!-- Preference for add_ons -->
     <string name="preferences_addons">Add-ons</string>
 
@@ -636,6 +633,8 @@
     <string name="addon_already_installed">Add-on is al ynstallearre</string>
 
     <!-- Account Preferences -->
+    <!-- Preference for managing your account via accounts.firefox.com -->
+    <string name="preferences_manage_account">Account beheare</string>
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">No syngronisearje</string>
     <!-- Preference category for sync -->
@@ -1202,6 +1201,10 @@
     <string name="share_save_to_pdf">Bewarje as PDF</string>
     <!-- Text for error message when generating a PDF file Text for error message when generating a PDF file. -->
     <string name="unable_to_save_to_pdf_error">Kin PDF net oanmeitsje</string>
+    <!-- Text for error message when printing a page and it fails. -->
+    <string name="unable_to_print_error">Kin net ôfdrukke</string>
+    <!-- Text for the print feature in the share and browser menu -->
+    <string name="menu_print">Ofdrukke</string>
     <!-- Sub-header in the dialog to share a link to another sync device -->
     <string name="share_device_subheader">Ferstjoere nei apparaat</string>
     <!-- Sub-header in the dialog to share a link to an app from the full list -->
@@ -1491,12 +1494,8 @@
     <string name="etp_settings">Beskermingsynstellingen</string>
     <!-- Preference title for enhanced tracking protection settings -->
     <string name="preference_enhanced_tracking_protection">Ferbettere beskerming tsjin folgjen</string>
-    <!-- Title for the description of enhanced tracking protection -->
-    <string name="preference_enhanced_tracking_protection_explanation_title" moz:removedIn="114" tools:ignore="UnusedResources">Sneup sûnder folge te wurden</string>
     <!-- Preference summary for enhanced tracking protection settings on/off switch -->
     <string name="preference_enhanced_tracking_protection_summary">No mei Totale cookiebeskerming, ús krêftichste barriêre oant no ta tsjin cross-sitetrackers.</string>
-    <!-- Description of enhanced tracking protection. The first parameter is the name of the application (For example: Fenix) -->
-    <string name="preference_enhanced_tracking_protection_explanation" moz:removedIn="114" tools:ignore="UnusedResources">Hâld jo gegevens foar josels. %s beskermet jo tsjin in protte fan de meast foarkommende trackers dy’t folgje wat jo online dogge.</string>
     <!-- Description of enhanced tracking protection. The parameter is the name of the application (For example: Firefox Fenix) -->
     <string name="preference_enhanced_tracking_protection_explanation_2">%s beskermet jo tsjin in protte fan de meast foarkommende trackers dy\’t folgje wat jo online dogge.  </string>
     <!-- Text displayed that links to website about enhanced tracking protection -->
@@ -1504,15 +1503,11 @@
     <!-- Preference for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_standard_default_1">Standert (standert)</string>
     <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description_4" moz:removedIn="114" tools:ignore="UnusedResources">Balansearre foar privacy en prestaasjes. Siden lade normaal.</string>
-    <!-- Preference description for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_standard_description_5">Siden wurde normaal laden, mar der wurde minder trackers blokkearre.</string>
     <!--  Accessibility text for the Standard protection information icon  -->
     <string name="preference_enhanced_tracking_protection_standard_info_button">Wat wurdt blokkearre troch standert beskerming tsjin folgjen</string>
     <!-- Preference for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict">Strang</string>
-    <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_description_3" moz:removedIn="114" tools:ignore="UnusedResources">Blokkearret mear trackers, sadat siden rapper laden wurde, mar guon funksjonaliteit op in side wurket mooglik net.</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict_description_4">Sterkere beskerming tsjin folgjen en fluggere prestaasjes, mar guon websites wurkje mooglik net goed.</string>
     <!--  Accessibility text for the Strict protection information icon  -->
@@ -1873,7 +1868,7 @@
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Sykmasine tafoegje</string>
     <!-- Content description (not visible, for screen readers etc.): Title for the button that navigates to add new engine screen -->
-    <string name="search_engine_add_custom_search_engine_button_content_description" tools:ignore="UnusedResources">Nije sykmasine tafoegje</string>
+    <string name="search_engine_add_custom_search_engine_button_content_description">Nije sykmasine tafoegje</string>
     <!-- Title of the Edit search engine screen -->
     <string name="search_engine_edit_custom_search_engine_title">Sykmasine bewurkje</string>
     <!-- Content description (not visible, for screen readers etc.): Title for the button to add a search engine in the action bar -->
@@ -1888,17 +1883,17 @@
     <!-- Text for the button to create a custom search engine on the Add search engine screen -->
     <string name="search_add_custom_engine_label_other">Oars</string>
     <!-- Label for the TextField in which user enters custom search engine name -->
-    <string name="search_add_custom_engine_name_label" tools:ignore="UnusedResources">Namme</string>
+    <string name="search_add_custom_engine_name_label">Namme</string>
     <!-- Placeholder text shown in the Search Engine Name TextField before a user enters text -->
     <string name="search_add_custom_engine_name_hint">Namme</string>
     <!-- Placeholder text shown in the Search Engine Name text field before a user enters text -->
-    <string name="search_add_custom_engine_name_hint_2" tools:ignore="UnusedResources">Namme fan sykmasine</string>
+    <string name="search_add_custom_engine_name_hint_2">Namme fan sykmasine</string>
     <!-- Label for the TextField in which user enters custom search engine URL -->
-    <string name="search_add_custom_engine_url_label" tools:ignore="UnusedResources">Sykterm-URL</string>
+    <string name="search_add_custom_engine_url_label">Sykterm-URL</string>
     <!-- Placeholder text shown in the Search String TextField before a user enters text -->
     <string name="search_add_custom_engine_search_string_hint">Te brûken sykterm</string>
     <!-- Placeholder text shown in the Search String TextField before a user enters text -->
-    <string name="search_add_custom_engine_search_string_hint_2" tools:ignore="UnusedResources">Foar de sykopdracht te brûken URL</string>
+    <string name="search_add_custom_engine_search_string_hint_2">Foar de sykopdracht te brûken URL</string>
     <!-- Description text for the Search String TextField. The %s is part of the string -->
     <string name="search_add_custom_engine_search_string_example" formatted="false">Sykfraach ferfange troch ‘%s’. Bygelyks: \nhttps://www.google.com/search?q=%s</string>
 
@@ -1906,7 +1901,7 @@
     <string name="search_add_custom_engine_form_description">Details oanpaste sykmasine</string>
 
     <!-- The text for the "Save" button for saving a custom search engine -->
-    <string name="search_custom_engine_save_button" tools:ignore="UnusedResources">Bewarje</string>
+    <string name="search_custom_engine_save_button">Bewarje</string>
 
     <!-- Text shown when a user leaves the name field empty -->
     <string name="search_add_custom_engine_error_empty_name">Fier namme fan sykmasine yn</string>

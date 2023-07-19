@@ -11,11 +11,10 @@ import android.content.pm.ActivityInfo
 import android.content.pm.PackageInfo
 import android.content.pm.ResolveInfo
 import android.net.Uri
-import android.os.Looper.getMainLooper
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import mozilla.components.support.test.mock
 import mozilla.components.support.test.robolectric.testContext
+import mozilla.components.support.test.whenever
 import mozilla.components.support.utils.Browsers
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -33,9 +32,7 @@ import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.robolectric.Shadows.shadowOf
 import java.io.File
-import java.util.concurrent.TimeUnit.MILLISECONDS
 
-@ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
 class AppLinksUseCasesTest {
 
@@ -106,11 +103,11 @@ class AppLinksUseCasesTest {
     }
 
     @Test
-    fun `A malformed URL should not cause a crash`() {
+    fun `WHEN receiving a malformed URL THEN will not cause a crash`() {
         val context = createContext()
         val subject = AppLinksUseCases(context, { true })
         val redirect = subject.interceptedAppLinkRedirect("test://test#Intent;")
-        assert(redirect.isRedirect())
+        assertFalse(redirect.isRedirect())
     }
 
     @Test
@@ -237,7 +234,9 @@ class AppLinksUseCasesTest {
     @Test
     fun `WHEN A URL that matches a browser AND the scheme is not supported THEN is an app link`() {
         val context = createContext(Triple(browserSchemeUrl, browserPackage, ""))
-        val subject = AppLinksUseCases(context, { true })
+        val browsers: Browsers = mock()
+        whenever(browsers.isInstalled(browserPackage)).thenReturn(true)
+        val subject = AppLinksUseCases(context = context, launchInApp = { true }, installedBrowsers = browsers)
 
         val redirect = subject.interceptedAppLinkRedirect(browserSchemeUrl)
         assertTrue(redirect.isRedirect())
@@ -249,7 +248,9 @@ class AppLinksUseCasesTest {
     @Test
     fun `WHEN A URL that matches a browser AND the scheme is supported THEN is not an app link`() {
         val context = createContext(Triple(appUrl, browserPackage, ""))
-        val subject = AppLinksUseCases(context, { true })
+        val browsers: Browsers = mock()
+        whenever(browsers.isInstalled(browserPackage)).thenReturn(true)
+        val subject = AppLinksUseCases(context = context, launchInApp = { true }, installedBrowsers = browsers)
 
         val redirect = subject.interceptedAppLinkRedirect(appUrl)
         assertFalse(redirect.isRedirect())
@@ -411,17 +412,15 @@ class AppLinksUseCasesTest {
         assertTrue(redirect.isRedirect())
         val timestamp = AppLinksUseCases.redirectCache?.cacheTimeStamp
 
-        shadowOf(getMainLooper()).idleFor(APP_LINKS_CACHE_INTERVAL / 2, MILLISECONDS)
         subject = AppLinksUseCases(context, { true })
         redirect = subject.interceptedAppLinkRedirect(appUrl)
         assertTrue(redirect.isRedirect())
         assert(timestamp == AppLinksUseCases.redirectCache?.cacheTimeStamp)
 
-        shadowOf(getMainLooper()).idleFor(APP_LINKS_CACHE_INTERVAL / 2 + 1, MILLISECONDS)
+        AppLinksUseCases.clearRedirectCache()
         subject = AppLinksUseCases(context, { true })
         redirect = subject.interceptedAppLinkRedirect(appUrl)
         assertTrue(redirect.isRedirect())
-        assert(timestamp != AppLinksUseCases.redirectCache?.cacheTimeStamp)
     }
 
     @Test
@@ -495,7 +494,7 @@ class AppLinksUseCasesTest {
     }
 
     @Test
-    fun `A intent scheme uri with package name will have marketplace intent regardless user preference`() {
+    fun `WHEN receiving a app scheme uri WITH target package THEN will have marketplace intent`() {
         val context = createContext()
         val uri = "intent://scan/#Intent;scheme=zxing;package=com.google.zxing.client.android;end"
         var subject = AppLinksUseCases(context, { false })
@@ -514,7 +513,7 @@ class AppLinksUseCasesTest {
     }
 
     @Test
-    fun `A app scheme uri will redirect regardless user preference`() {
+    fun `WHEN receiving a app scheme uri THEN should try to redirect`() {
         val context = createContext(Triple(appSchemeIntent, appPackage, ""))
 
         var subject = AppLinksUseCases(context, { false })
@@ -535,20 +534,19 @@ class AppLinksUseCasesTest {
     }
 
     @Test
-    fun `WHEN opening A app scheme uri WITH fallback URL then respect user preference`() {
+    fun `WHEN opening a app scheme uri WITH fallback URL THEN use fallback if needed`() {
         val context = createContext(Triple(appIntentWithPackageAndFallback, appPackage, ""))
 
-        val subject = AppLinksUseCases(context, { false })
+        var subject = AppLinksUseCases(context, { false })
         var redirect = subject.interceptedAppLinkRedirect(appIntentWithPackageAndFallback)
         assertFalse(redirect.hasExternalApp())
         assertTrue(redirect.hasFallback())
         assertTrue(redirect.marketplaceIntent != null)
         assertEquals(redirect.fallbackUrl, "https://example.com")
 
-        // Wait till cache expires
-        shadowOf(getMainLooper()).idleFor(APP_LINKS_CACHE_INTERVAL + 1, MILLISECONDS)
-        val subject2 = AppLinksUseCases(context, { true })
-        redirect = subject2.interceptedAppLinkRedirect(appIntentWithPackageAndFallback)
+        AppLinksUseCases.clearRedirectCache()
+        subject = AppLinksUseCases(context, { true })
+        redirect = subject.interceptedAppLinkRedirect(appIntentWithPackageAndFallback)
         assertTrue(redirect.hasExternalApp())
         assertTrue(redirect.hasFallback())
         assertTrue(redirect.marketplaceIntent != null)
@@ -557,7 +555,7 @@ class AppLinksUseCasesTest {
     }
 
     @Test
-    fun `A app intent uri will redirect regardless user preference`() {
+    fun `WHEN opening a app scheme uri THEN tries to redirect`() {
         val context = createContext(Triple(appIntent, appPackage, ""))
 
         var subject = AppLinksUseCases(context, { false })
@@ -575,6 +573,25 @@ class AppLinksUseCasesTest {
         assertNull(redirect.marketplaceIntent)
         assertNull(redirect.fallbackUrl)
         assertTrue(redirect.appIntent?.flags?.and(Intent.FLAG_ACTIVITY_CLEAR_TASK) == 0)
+    }
+
+    @Test
+    fun `WHEN opening a app scheme uri WITHOUT package installed THEN do not try to redirect`() {
+        val context = createContext()
+
+        var subject = AppLinksUseCases(context, { false })
+        var redirect = subject.interceptedAppLinkRedirect(appIntent)
+        assertFalse(redirect.hasExternalApp())
+        assertFalse(redirect.hasFallback())
+        assertNull(redirect.marketplaceIntent)
+        assertNull(redirect.fallbackUrl)
+
+        subject = AppLinksUseCases(context, { true })
+        redirect = subject.interceptedAppLinkRedirect(appIntent)
+        assertFalse(redirect.hasExternalApp())
+        assertFalse(redirect.hasFallback())
+        assertNull(redirect.marketplaceIntent)
+        assertNull(redirect.fallbackUrl)
     }
 
     @Test

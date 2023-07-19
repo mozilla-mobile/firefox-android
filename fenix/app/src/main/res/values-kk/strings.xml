@@ -362,13 +362,13 @@
     <!-- Preference category for all links about Fenix -->
     <string name="preferences_category_about">Осы туралы</string>
     <!-- Preference category for settings related to changing the default search engine -->
-    <string name="preferences_category_select_default_search_engine" tools:ignore="UnusedResources">Біреуін таңдаңыз</string>
+    <string name="preferences_category_select_default_search_engine">Біреуін таңдаңыз</string>
     <!-- Preference for settings related to managing search shortcuts for the quick search menu -->
-    <string name="preferences_manage_search_shortcuts" tools:ignore="UnusedResources">Іздеу жарлықтарын басқару</string>
+    <string name="preferences_manage_search_shortcuts">Іздеу жарлықтарын басқару</string>
     <!-- Summary for preference for settings related to managing search shortcuts for the quick search menu -->
-    <string name="preferences_manage_search_shortcuts_summary" tools:ignore="UnusedResources">Іздеу мәзірінде көрінетін іздеу жүйелерін түзету</string>
+    <string name="preferences_manage_search_shortcuts_summary">Іздеу мәзірінде көрінетін іздеу жүйелерін түзету</string>
     <!-- Preference category for settings related to managing search shortcuts for the quick search menu -->
-    <string name="preferences_category_engines_in_search_menu" tools:ignore="UnusedResources">Іздеу мәзірінде көрінетін іздеу жүйелері</string>
+    <string name="preferences_category_engines_in_search_menu">Іздеу мәзірінде көрінетін іздеу жүйелері</string>
     <!-- Preference for settings related to changing the default search engine -->
     <string name="preferences_default_search_engine">Негізгі іздеу жүйесі</string>
     <!-- Preference for settings related to Search -->
@@ -422,18 +422,12 @@
     <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
     <string name="cookie_banner_handling_details_site_is_not_supported_request_support_button_2">Сұранымды жіберу</string>
     <!-- Text for title indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
-    <string name="cookie_banner_handling_details_site_is_not_supported_title" moz:RemovedIn="114" tools:ignore="UnusedResources">Cookie баннерлерін азайту</string>
-    <!-- Text for title indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
     <string name="cookie_banner_handling_details_site_is_not_supported_title_2">Осы сайтқа қолдауды сұрау керек пе?</string>
-    <!-- Label for the snackBar, after the user reports with success a website where cookie banner reducer did not work -->
-    <string name="cookie_banner_handling_report_site_snack_bar_text" moz:RemovedIn="114" tools:ignore="UnusedResources">Сайтқа қолдау көрсетуге сұраным жіберілді.</string>
     <!-- Label for the snackBar, after the user reports with success a website where cookie banner reducer did not work -->
     <string name="cookie_banner_handling_report_site_snack_bar_text_2">Сұраным жіберілді</string>
     <!-- Text for indicating cookie banner handling is on this site, this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_on_for_site">Бұл сайт үшін іске қосылған</string>
 
-    <!-- Text for indicating that a request for unsupported site was sent to Nimbus (it's a Mozilla library for experiments), this is shown as part of the protections panel with the tracking protection toggle -->
-    <string name="reduce_cookie_banner_unsupported_site_request_submitted" moz:RemovedIn="114" tools:ignore="UnusedResources">Сайтқа қолдау көрсетуге сұраным жіберілді</string>
     <!-- Text for indicating that a request for unsupported site was sent to Nimbus (it's a Mozilla library for experiments), this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_unsupported_site_request_submitted_2">Қолдау көрсету сұрауы жіберілді</string>
     <!-- Text for indicating cookie banner handling is currently not supported for this site, this is shown as part of the protections panel with the tracking protection toggle -->
@@ -443,8 +437,6 @@
     <!-- Title text for a detail explanation indicating cookie banner handling is off this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
     <string name="reduce_cookie_banner_details_panel_title_off_for_site">%1$s үшін cookie баннерлерін азайту мүмкіндігін сөндіру керек пе?</string>
 
-    <!-- Title text for a detail explanation indicating cookie banner reducer didn't work for the current site, this is shown as part of the cookie banner panel in the toolbar.-->
-    <string name="reduce_cookie_banner_details_panel_title_unsupported_site_request" moz:RemovedIn="114" tools:ignore="UnusedResources">Бұл сайтқа қазіргі уақытта Cookie баннерлерін азайту қолдау көрсетпейді. Біздің топ осы веб-сайтты қарап шығуды және болашақта қолдау көрсетуді қалайсыз ба?</string>
     <!-- Title text for a detail explanation indicating cookie banner reducer didn't work for the current site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name-->
     <string name="reduce_cookie_banner_details_panel_title_unsupported_site_request_2">%1$s бұл сайттағы cookie сұрауларын автоматты түрде қабылдамай алмайды. Болашақта осы сайтқа қолдау көрсету туралы сұраным жібере аласыз.</string>
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
@@ -549,6 +541,11 @@
     <string name="preferences_open_links_in_apps_never">Ешқашан</string>
     <!-- Preference for open download with an external download manager app -->
     <string name="preferences_external_download_manager">Сыртқы жүктеу менеджері</string>
+    <!-- Preference for enabling gecko engine logs -->
+    <string name="preferences_enable_gecko_logs">Gecko журналдарын іске қосу</string>
+    <!-- Message to indicate users that we are quitting the application to apply the changes -->
+    <string name="quit_application">Өзгерістерді іске асыру үшін қолданбадан шығу…</string>
+
     <!-- Preference for add_ons -->
     <string name="preferences_addons">Қосымшалар</string>
 
@@ -632,6 +629,8 @@
     <string name="addon_already_installed">Қосымша орнатылған болып тұр</string>
 
     <!-- Account Preferences -->
+    <!-- Preference for managing your account via accounts.firefox.com -->
+    <string name="preferences_manage_account">Тіркелгіні басқару</string>
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">Қазір синхрондау</string>
     <!-- Preference category for sync -->
@@ -1200,6 +1199,10 @@
     <string name="share_save_to_pdf">PDF ретінде сақтау</string>
     <!-- Text for error message when generating a PDF file Text for error message when generating a PDF file. -->
     <string name="unable_to_save_to_pdf_error">PDF жасау мүмкін емес</string>
+    <!-- Text for error message when printing a page and it fails. -->
+    <string name="unable_to_print_error">Баспаға шығару мүмкін емес</string>
+    <!-- Text for the print feature in the share and browser menu -->
+    <string name="menu_print">Баспаға шығару</string>
     <!-- Sub-header in the dialog to share a link to another sync device -->
     <string name="share_device_subheader">Құрылғыға жіберу</string>
     <!-- Sub-header in the dialog to share a link to an app from the full list -->
@@ -1490,12 +1493,8 @@
     <string name="etp_settings">Қорғаныс баптаулары</string>
     <!-- Preference title for enhanced tracking protection settings -->
     <string name="preference_enhanced_tracking_protection">Бақылаудан кеңейтілген қорғаныс</string>
-    <!-- Title for the description of enhanced tracking protection -->
-    <string name="preference_enhanced_tracking_protection_explanation_title" moz:removedIn="114" tools:ignore="UnusedResources">Бақылаусыз шолу</string>
     <!-- Preference summary for enhanced tracking protection settings on/off switch -->
     <string name="preference_enhanced_tracking_protection_summary">Енді сайтаралық трекерлерге қарсы ең күшті тосқауыл болып табылатын Cookie файлдарынан Толық қорғаныс функциясы бар.</string>
-    <!-- Description of enhanced tracking protection. The first parameter is the name of the application (For example: Fenix) -->
-    <string name="preference_enhanced_tracking_protection_explanation" moz:removedIn="114" tools:ignore="UnusedResources">Деректеріңізді тек өзіңіз үшін қалдырыңыз. %s желіде сіздің соңыңыздан еретін ең кең тараған трекерлердің көбінен қорғайды.</string>
     <!-- Description of enhanced tracking protection. The parameter is the name of the application (For example: Firefox Fenix) -->
     <string name="preference_enhanced_tracking_protection_explanation_2">%s желіде сіздің соңыңыздан еретін ең кең тараған трекерлердің көбінен қорғайды.</string>
     <!-- Text displayed that links to website about enhanced tracking protection -->
@@ -1504,16 +1503,12 @@
     <!-- Preference for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_standard_default_1">Стандартты (бастапқы)</string>
     <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description_4" moz:removedIn="114" tools:ignore="UnusedResources">Жекелік және өнімділік теңгерімі. Беттер әдеттегідей жүктеледі.</string>
-    <!-- Preference description for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_standard_description_5">Беттер қалыпты түрде жүктеледі, бірақ азырақ трекерлерді бұғаттайды.</string>
     <!--  Accessibility text for the Standard protection information icon  -->
     <string name="preference_enhanced_tracking_protection_standard_info_button">Бақылаудан қалыпты қорғаныс нені бұғаттайды</string>
     <!-- Preference for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict">Қатаң</string>
 
-    <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_description_3" moz:removedIn="114" tools:ignore="UnusedResources">Беттерді тезірек жүктеу үшін көбірек трекерлерді блоктайды, бірақ кейбір беттер функционалдылығы бұзылуы мүмкін.</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict_description_4">Бақылаудан күшейтілген қорғаныс және жылдамырақ жұмыс істеу, бірақ кейбір сайттар дұрыс жұмыс істемеуі мүмкін.</string>
     <!--  Accessibility text for the Strict protection information icon  -->
@@ -1874,7 +1869,7 @@
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Іздеу жүйесін қосу</string>
     <!-- Content description (not visible, for screen readers etc.): Title for the button that navigates to add new engine screen -->
-    <string name="search_engine_add_custom_search_engine_button_content_description" tools:ignore="UnusedResources">Жаңа іздеу жүйесін қосу</string>
+    <string name="search_engine_add_custom_search_engine_button_content_description">Жаңа іздеу жүйесін қосу</string>
     <!-- Title of the Edit search engine screen -->
     <string name="search_engine_edit_custom_search_engine_title">Іздеу жүйесін түзету</string>
     <!-- Content description (not visible, for screen readers etc.): Title for the button to add a search engine in the action bar -->
@@ -1889,24 +1884,24 @@
     <!-- Text for the button to create a custom search engine on the Add search engine screen -->
     <string name="search_add_custom_engine_label_other">Басқа</string>
     <!-- Label for the TextField in which user enters custom search engine name -->
-    <string name="search_add_custom_engine_name_label" tools:ignore="UnusedResources">Аты</string>
+    <string name="search_add_custom_engine_name_label">Аты</string>
     <!-- Placeholder text shown in the Search Engine Name TextField before a user enters text -->
     <string name="search_add_custom_engine_name_hint">Атауы</string>
     <!-- Placeholder text shown in the Search Engine Name text field before a user enters text -->
-    <string name="search_add_custom_engine_name_hint_2" tools:ignore="UnusedResources">Іздеу жүйесінің атауы</string>
+    <string name="search_add_custom_engine_name_hint_2">Іздеу жүйесінің атауы</string>
     <!-- Label for the TextField in which user enters custom search engine URL -->
-    <string name="search_add_custom_engine_url_label" tools:ignore="UnusedResources">Іздеу жолының URL адресі</string>
+    <string name="search_add_custom_engine_url_label">Іздеу жолының URL адресі</string>
     <!-- Placeholder text shown in the Search String TextField before a user enters text -->
     <string name="search_add_custom_engine_search_string_hint">Қолданылатын іздеу жолы</string>
     <!-- Placeholder text shown in the Search String TextField before a user enters text -->
-    <string name="search_add_custom_engine_search_string_hint_2" tools:ignore="UnusedResources">Іздеу үшін пайдаланылатын URL</string>
+    <string name="search_add_custom_engine_search_string_hint_2">Іздеу үшін пайдаланылатын URL</string>
     <!-- Description text for the Search String TextField. The %s is part of the string -->
     <string name="search_add_custom_engine_search_string_example" formatted="false">Сұранымды &quot;%s&quot; жолымен алмастырыңыз. Мысалы:\nhttps://www.google.com/search?q=%s</string>
     <!-- Accessibility description for the form in which details about the custom search engine are entered -->
     <string name="search_add_custom_engine_form_description">Таңдауыңызша іздеу жүйесінің ақпараты</string>
 
     <!-- The text for the "Save" button for saving a custom search engine -->
-    <string name="search_custom_engine_save_button" tools:ignore="UnusedResources">Сақтау</string>
+    <string name="search_custom_engine_save_button">Сақтау</string>
 
     <!-- Text shown when a user leaves the name field empty -->
     <string name="search_add_custom_engine_error_empty_name">Іздеу жүйесінің атауын енгізіңіз</string>

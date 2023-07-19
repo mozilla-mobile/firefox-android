@@ -7,6 +7,8 @@ package org.mozilla.fenix.compose.tabstray
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,7 +25,9 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.rememberDismissState
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,9 +43,10 @@ import androidx.compose.ui.unit.sp
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.state.state.createTab
 import mozilla.components.support.ktx.kotlin.MAX_URI_LENGTH
+import mozilla.components.ui.colors.PhotonColors
 import org.mozilla.fenix.R
 import org.mozilla.fenix.compose.SwipeToDismiss
-import org.mozilla.fenix.compose.ThumbnailCard
+import org.mozilla.fenix.compose.TabThumbnail
 import org.mozilla.fenix.compose.annotation.LightDarkPreview
 import org.mozilla.fenix.ext.toShortUrl
 import org.mozilla.fenix.tabstray.TabsTrayTestTag
@@ -93,6 +98,9 @@ fun TabListItem(
         },
     )
 
+    // Used to propagate the ripple effect to the whole tab
+    val interactionSource = remember { MutableInteractionSource() }
+
     SwipeToDismiss(
         state = dismissState,
         enabled = !multiSelectionEnabled,
@@ -106,10 +114,18 @@ fun TabListItem(
                 .background(FirefoxTheme.colors.layer3)
                 .background(contentBackgroundColor)
                 .combinedClickable(
+                    interactionSource = interactionSource,
+                    indication = rememberRipple(
+                        color = when (isSystemInDarkTheme()) {
+                            true -> PhotonColors.White
+                            false -> PhotonColors.Black
+                        },
+                    ),
                     onLongClick = { onLongClick(tab) },
                     onClick = { onClick(tab) },
                 )
-                .padding(start = 16.dp, top = 8.dp, bottom = 8.dp),
+                .padding(start = 16.dp, top = 8.dp, bottom = 8.dp)
+                .testTag(TabsTrayTestTag.tabItemRoot),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Thumbnail(
@@ -117,6 +133,7 @@ fun TabListItem(
                 multiSelectionEnabled = multiSelectionEnabled,
                 isSelected = multiSelectionSelected,
                 onMediaIconClicked = { onMediaClick(it) },
+                interactionSource = interactionSource,
             )
 
             Column(
@@ -151,7 +168,7 @@ fun TabListItem(
                         .testTag(TabsTrayTestTag.tabItemClose),
                 ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.mozac_ic_close),
+                        painter = painterResource(id = R.drawable.mozac_ic_cross_24),
                         contentDescription = stringResource(
                             id = R.string.close_tab_title,
                             tab.content.title,
@@ -172,11 +189,11 @@ private fun Thumbnail(
     multiSelectionEnabled: Boolean,
     isSelected: Boolean,
     onMediaIconClicked: ((TabSessionState) -> Unit),
+    interactionSource: MutableInteractionSource,
 ) {
     Box {
-        ThumbnailCard(
-            url = tab.content.url,
-            key = tab.id,
+        TabThumbnail(
+            tab = tab,
             modifier = Modifier
                 .size(width = 92.dp, height = 72.dp)
                 .semantics(mergeDescendants = true) {
@@ -201,7 +218,7 @@ private fun Thumbnail(
                 backgroundColor = FirefoxTheme.colors.layerAccent,
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.mozac_ic_check),
+                    painter = painterResource(id = R.drawable.mozac_ic_checkmark_24),
                     modifier = Modifier
                         .matchParentSize()
                         .padding(all = 8.dp),
@@ -216,6 +233,7 @@ private fun Thumbnail(
                 tab = tab,
                 onMediaIconClicked = onMediaIconClicked,
                 modifier = Modifier.align(Alignment.TopEnd),
+                interactionSource = interactionSource,
             )
         }
     }

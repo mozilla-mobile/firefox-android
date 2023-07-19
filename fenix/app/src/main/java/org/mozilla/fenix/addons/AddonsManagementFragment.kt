@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
+import mozilla.components.concept.engine.webextension.WebExtensionInstallException
 import mozilla.components.feature.addons.Addon
 import mozilla.components.feature.addons.AddonManagerException
 import mozilla.components.feature.addons.ui.AddonsManagerAdapter
@@ -214,13 +215,12 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
                 runIfFragmentIsAttached {
                     isInstallationInProgress = false
                     adapter?.updateAddon(it)
-                    binding?.addonProgressOverlay?.overlayCardView?.visibility = View.GONE
                 }
             },
             onError = { _, e ->
                 this@AddonsManagementFragment.view?.let { view ->
                     // No need to display an error message if installation was cancelled by the user.
-                    if (e !is CancellationException) {
+                    if (e !is CancellationException && e !is WebExtensionInstallException.UserCancelled) {
                         val rootView = activity?.getRootView() ?: view
                         context?.let {
                             showSnackBar(
@@ -232,7 +232,6 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
                             )
                         }
                     }
-                    binding?.addonProgressOverlay?.overlayCardView?.visibility = View.GONE
                     isInstallationInProgress = false
                 }
             },

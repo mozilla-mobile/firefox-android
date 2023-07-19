@@ -23,6 +23,8 @@ import androidx.test.uiautomator.Until
 import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.containsString
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemContainingTextExists
@@ -31,6 +33,7 @@ import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithResIdExists
 import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
 import org.mozilla.fenix.helpers.TestAssetHelper
+import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestHelper.getStringResource
 import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.packageName
@@ -156,15 +159,38 @@ class SettingsSubMenuLoginsAndPasswordsSavedLoginsRobot {
 
     fun saveEditedLogin() = itemWithResId("$packageName:id/save_login_button").click()
 
+    fun verifySaveLoginButtonIsEnabled(isEnabled: Boolean) {
+        if (isEnabled) {
+            assertTrue(itemWithResId("$packageName:id/save_login_button").isChecked)
+        } else {
+            assertFalse(itemWithResId("$packageName:id/save_login_button").isChecked)
+        }
+    }
+
     fun revealPassword() = onView(withId(R.id.revealPasswordButton)).click()
 
     fun verifyPasswordSaved(password: String) =
         onView(withId(R.id.passwordText)).check(matches(withText(password)))
 
+    fun verifyUserNameRequiredErrorMessage() =
+        assertItemContainingTextExists(itemContainingText(getStringResource(R.string.saved_login_username_required)))
+
     fun verifyPasswordRequiredErrorMessage() =
         assertItemContainingTextExists(itemContainingText(getStringResource(R.string.saved_login_password_required)))
 
     fun clickGoBackButton() = goBackButton().click()
+
+    fun clickCopyUserNameButton() =
+        itemWithResId("$packageName:id/copyUsername").also {
+            it.waitForExists(waitingTime)
+            it.click()
+        }
+
+    fun clickCopyPasswordButton() =
+        itemWithResId("$packageName:id/copyPassword").also {
+            it.waitForExists(waitingTime)
+            it.click()
+        }
 
     class Transition {
         fun goBack(interact: SettingsSubMenuLoginsAndPasswordRobot.() -> Unit): SettingsSubMenuLoginsAndPasswordRobot.Transition {

@@ -15,6 +15,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import mozilla.appservices.places.BookmarkRoot
+import mozilla.components.browser.state.action.EngineAction
 import mozilla.components.browser.state.selector.findCustomTabOrSelectedTab
 import mozilla.components.browser.state.selector.findTab
 import mozilla.components.browser.state.selector.selectedTab
@@ -28,7 +29,7 @@ import mozilla.components.feature.top.sites.PinnedSiteStorage
 import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
-import mozilla.components.ui.widgets.withCenterAlignedButtons
+import org.mozilla.fenix.GleanMetrics.AppMenu
 import org.mozilla.fenix.GleanMetrics.Collections
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.ReaderMode
@@ -265,7 +266,7 @@ class DefaultBrowserToolbarMenuController(
                             setPositiveButton(R.string.top_sites_max_limit_confirmation_button) { dialog, _ ->
                                 dialog.dismiss()
                             }
-                            create().withCenterAlignedButtons()
+                            create()
                         }.show()
                     } else {
                         ioScope.launch {
@@ -330,6 +331,11 @@ class DefaultBrowserToolbarMenuController(
                             },
                         )
                     navController.nav(R.id.browserFragment, directions)
+                }
+            }
+            is ToolbarMenu.Item.PrintContent -> {
+                store.state.selectedTab?.let {
+                    store.dispatch(EngineAction.PrintContentAction(it.id))
                 }
             }
             is ToolbarMenu.Item.Bookmark -> {
@@ -442,10 +448,14 @@ class DefaultBrowserToolbarMenuController(
                 Events.browserMenuAction.record(Events.BrowserMenuActionExtra("save_to_collection"))
             is ToolbarMenu.Item.AddToTopSites ->
                 Events.browserMenuAction.record(Events.BrowserMenuActionExtra("add_to_top_sites"))
+            is ToolbarMenu.Item.PrintContent ->
+                Events.browserMenuAction.record(Events.BrowserMenuActionExtra("print_content"))
             is ToolbarMenu.Item.AddToHomeScreen ->
                 Events.browserMenuAction.record(Events.BrowserMenuActionExtra("add_to_homescreen"))
-            is ToolbarMenu.Item.SyncAccount ->
+            is ToolbarMenu.Item.SyncAccount -> {
                 Events.browserMenuAction.record(Events.BrowserMenuActionExtra("sync_account"))
+                AppMenu.signIntoSync.add()
+            }
             is ToolbarMenu.Item.Bookmark ->
                 Events.browserMenuAction.record(Events.BrowserMenuActionExtra("bookmark"))
             is ToolbarMenu.Item.AddonsManager ->

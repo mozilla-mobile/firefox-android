@@ -57,6 +57,7 @@ import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.state.state.content.DownloadState
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.browser.thumbnails.BrowserThumbnails
+import mozilla.components.concept.base.crash.Breadcrumb
 import mozilla.components.concept.engine.permission.SitePermissions
 import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.feature.accounts.FxaCapability
@@ -103,7 +104,6 @@ import mozilla.components.support.ktx.android.view.hideKeyboard
 import mozilla.components.support.ktx.kotlin.getOrigin
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifAnyChanged
 import mozilla.components.support.locale.ActivityContextWrapper
-import mozilla.components.ui.widgets.withCenterAlignedButtons
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.GleanMetrics.MediaState
@@ -118,6 +118,7 @@ import org.mozilla.fenix.browser.readermode.DefaultReaderModeController
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.FindInPageIntegration
 import org.mozilla.fenix.components.StoreProvider
+import org.mozilla.fenix.components.metrics.MetricsUtils
 import org.mozilla.fenix.components.toolbar.BrowserFragmentState
 import org.mozilla.fenix.components.toolbar.BrowserFragmentStore
 import org.mozilla.fenix.components.toolbar.BrowserToolbarView
@@ -549,6 +550,9 @@ abstract class BaseBrowserFragment :
             customFirstPartyDownloadDialog = { filename, contentSize, positiveAction, negativeAction ->
                 run {
                     if (currentStartDownloadDialog == null) {
+                        context.components.analytics.crashReporter.recordCrashBreadcrumb(
+                            Breadcrumb("FirstPartyDownloadDialog created"),
+                        )
                         FirstPartyDownloadDialog(
                             activity = requireActivity(),
                             filename = filename.value,
@@ -556,6 +560,9 @@ abstract class BaseBrowserFragment :
                             positiveButtonAction = positiveAction.value,
                             negativeButtonAction = negativeAction.value,
                         ).onDismiss {
+                            context.components.analytics.crashReporter.recordCrashBreadcrumb(
+                                Breadcrumb("FirstPartyDownloadDialog onDismiss"),
+                            )
                             currentStartDownloadDialog = null
                         }.show(binding.startDownloadDialogContainer)
                             .also {
@@ -567,12 +574,18 @@ abstract class BaseBrowserFragment :
             customThirdPartyDownloadDialog = { downloaderApps, onAppSelected, negativeActionCallback ->
                 run {
                     if (currentStartDownloadDialog == null) {
+                        context.components.analytics.crashReporter.recordCrashBreadcrumb(
+                            Breadcrumb("ThirdPartyDownloadDialog created"),
+                        )
                         ThirdPartyDownloadDialog(
                             activity = requireActivity(),
                             downloaderApps = downloaderApps.value,
                             onAppSelected = onAppSelected.value,
                             negativeButtonAction = negativeActionCallback.value,
                         ).onDismiss {
+                            context.components.analytics.crashReporter.recordCrashBreadcrumb(
+                                Breadcrumb("ThirdPartyDownloadDialog onDismiss"),
+                            )
                             currentStartDownloadDialog = null
                         }.show(binding.startDownloadDialogContainer).also {
                             currentStartDownloadDialog = it
@@ -662,6 +675,7 @@ abstract class BaseBrowserFragment :
                 store = store,
                 customTabId = customTabSessionId,
                 fragmentManager = parentFragmentManager,
+                tabsUseCases = requireComponents.useCases.tabsUseCases,
                 creditCardValidationDelegate = DefaultCreditCardValidationDelegate(
                     context.components.core.lazyAutofillStorage,
                 ),
@@ -985,7 +999,7 @@ abstract class BaseBrowserFragment :
             }
 
             create()
-        }.show().withCenterAlignedButtons().secure(activity)
+        }.show().secure(activity)
 
         context.settings().incrementSecureWarningCount()
     }
@@ -1403,6 +1417,7 @@ abstract class BaseBrowserFragment :
                     position = null,
                 )
 
+                MetricsUtils.recordBookmarkMetrics(MetricsUtils.BookmarkAction.ADD, METRIC_SOURCE)
                 withContext(Main) {
                     view?.let {
                         FenixSnackbar.make(
@@ -1412,6 +1427,10 @@ abstract class BaseBrowserFragment :
                         )
                             .setText(getString(R.string.bookmark_saved_snackbar))
                             .setAction(getString(R.string.edit_bookmark_snackbar_action)) {
+                                MetricsUtils.recordBookmarkMetrics(
+                                    MetricsUtils.BookmarkAction.EDIT,
+                                    TOAST_METRIC_SOURCE,
+                                )
                                 nav(
                                     R.id.browserFragment,
                                     BrowserFragmentDirections.actionGlobalBookmarkEditFragment(
@@ -1566,6 +1585,8 @@ abstract class BaseBrowserFragment :
         private const val REQUEST_CODE_DOWNLOAD_PERMISSIONS = 1
         private const val REQUEST_CODE_PROMPT_PERMISSIONS = 2
         private const val REQUEST_CODE_APP_PERMISSIONS = 3
+        private const val METRIC_SOURCE = "page_action_menu"
+        private const val TOAST_METRIC_SOURCE = "add_bookmark_toast"
 
         val onboardingLinksList: List<String> = listOf(
             SupportUtils.getMozillaPageUrl(SupportUtils.MozillaPage.PRIVATE_NOTICE),

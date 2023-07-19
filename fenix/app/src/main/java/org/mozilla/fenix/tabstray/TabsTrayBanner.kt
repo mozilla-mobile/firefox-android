@@ -15,9 +15,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.LocalContentColor
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
@@ -42,6 +42,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import mozilla.components.browser.state.state.ContentState
@@ -49,6 +50,7 @@ import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.lib.state.ext.observeAsComposableState
 import mozilla.components.ui.tabcounter.TabCounter
 import org.mozilla.fenix.R
+import org.mozilla.fenix.compose.BottomSheetHandle
 import org.mozilla.fenix.compose.ContextualMenu
 import org.mozilla.fenix.compose.MenuItem
 import org.mozilla.fenix.compose.annotation.LightDarkPreview
@@ -56,6 +58,7 @@ import org.mozilla.fenix.theme.FirefoxTheme
 
 private val ICON_SIZE = 24.dp
 private const val MAX_WIDTH_TAB_ROW_PERCENT = 0.5f
+private const val BOTTOM_SHEET_HANDLE_WIDTH_PERCENT = 0.1f
 
 /**
  * Top-level UI for displaying the banner in [TabsTray].
@@ -74,6 +77,7 @@ private const val MAX_WIDTH_TAB_ROW_PERCENT = 0.5f
  * @param onDeleteSelectedTabsClick Invoked when user interacts with the close menu item.
  * @param onBookmarkSelectedTabsClick Invoked when user interacts with the bookmark menu item.
  * @param onForceSelectedTabsAsInactiveClick Invoked when user interacts with the make inactive menu item.
+ * @param onDismissClick Invoked when accessibility services or UI automation requests dismissal.
  */
 @Suppress("LongParameterList")
 @Composable
@@ -91,6 +95,7 @@ fun TabsTrayBanner(
     onDeleteSelectedTabsClick: () -> Unit,
     onBookmarkSelectedTabsClick: () -> Unit,
     onForceSelectedTabsAsInactiveClick: () -> Unit,
+    onDismissClick: () -> Unit,
 ) {
     val normalTabCount = tabsTrayStore.observeAsComposableState { state ->
         state.normalTabs.size + state.inactiveTabs.size
@@ -125,6 +130,7 @@ fun TabsTrayBanner(
             onRecentlyClosedClick = onRecentlyClosedClick,
             onAccountSettingsClick = onAccountSettingsClick,
             onDeleteAllTabsClick = onDeleteAllTabsClick,
+            onDismissClick = onDismissClick,
         )
     }
 }
@@ -142,6 +148,7 @@ private fun SingleSelectBanner(
     onRecentlyClosedClick: () -> Unit,
     onAccountSettingsClick: () -> Unit,
     onDeleteAllTabsClick: () -> Unit,
+    onDismissClick: () -> Unit,
 ) {
     val selectedColor = FirefoxTheme.colors.iconActive
     val inactiveColor = FirefoxTheme.colors.iconPrimaryInactive
@@ -150,12 +157,13 @@ private fun SingleSelectBanner(
     Column(modifier = Modifier.background(color = FirefoxTheme.colors.layer1)) {
         Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.bottom_sheet_handle_top_margin)))
 
-        Divider(
+        BottomSheetHandle(
+            onRequestDismiss = onDismissClick,
+            contentDescription = stringResource(R.string.a11y_action_label_collapse),
             modifier = Modifier
-                .fillMaxWidth(DRAG_INDICATOR_WIDTH_PERCENT)
-                .align(Alignment.CenterHorizontally),
-            color = FirefoxTheme.colors.textSecondary,
-            thickness = dimensionResource(id = R.dimen.bottom_sheet_handle_height),
+                .fillMaxWidth(BOTTOM_SHEET_HANDLE_WIDTH_PERCENT)
+                .align(Alignment.CenterHorizontally)
+                .testTag(TabsTrayTestTag.bannerHandle),
         )
 
         Row(
@@ -325,21 +333,58 @@ private fun generateSingleSelectBannerMenuItems(
     }
 }
 
+private const val MAX_VISIBLE_TABS = 99
+private const val SO_MANY_TABS_OPEN = "∞"
+private val NORMAL_TABS_BOTTOM_PADDING = 0.5.dp
+private const val ONE_DIGIT_SIZE_RATIO = 0.5f
+private const val TWO_DIGITS_SIZE_RATIO = 0.4f
+
 @Composable
+@Suppress("MagicNumber")
 private fun NormalTabsTabIcon(normalTabCount: Int) {
     val normalTabCountText: String
-    val normalTabCountTextModifier: Modifier
-    if (normalTabCount > TabCounter.MAX_VISIBLE_TABS) {
-        normalTabCountText = TabCounter.SO_MANY_TABS_OPEN
-        normalTabCountTextModifier = Modifier.padding(bottom = 1.dp)
-    } else {
-        normalTabCountText = normalTabCount.toString()
-        normalTabCountTextModifier = Modifier
+    val tabCountTextRatio: Float
+    val needsBottomPaddingForInfiniteTabs: Boolean
+
+    when (normalTabCount) {
+        in 0..9 -> {
+            normalTabCountText = normalTabCount.toString()
+            tabCountTextRatio = ONE_DIGIT_SIZE_RATIO
+            needsBottomPaddingForInfiniteTabs = false
+        }
+
+        in 10..MAX_VISIBLE_TABS -> {
+            normalTabCountText = normalTabCount.toString()
+            tabCountTextRatio = TWO_DIGITS_SIZE_RATIO
+            needsBottomPaddingForInfiniteTabs = false
+        }
+
+        else -> {
+            normalTabCountText = SO_MANY_TABS_OPEN
+            tabCountTextRatio = ONE_DIGIT_SIZE_RATIO
+            needsBottomPaddingForInfiniteTabs = true
+        }
     }
+
     val normalTabsContentDescription = if (normalTabCount == 1) {
         stringResource(id = R.string.mozac_tab_counter_open_tab_tray_single)
     } else {
-        stringResource(id = R.string.mozac_tab_counter_open_tab_tray_plural, normalTabCount.toString())
+        stringResource(
+            id = R.string.mozac_tab_counter_open_tab_tray_plural,
+            normalTabCount.toString(),
+        )
+    }
+
+    val counterBoxWidthDp =
+        dimensionResource(id = mozilla.components.ui.tabcounter.R.dimen.mozac_tab_counter_box_width_height)
+    val counterBoxWidthPx = LocalDensity.current.run { counterBoxWidthDp.roundToPx() }
+    val counterTabsTextSize = (tabCountTextRatio * counterBoxWidthPx).toInt()
+
+    val normalTabsTextModifier = if (needsBottomPaddingForInfiniteTabs) {
+        val bottomPadding = with(LocalDensity.current) { counterTabsTextSize.toDp() / 4 }
+        Modifier.padding(bottom = bottomPadding)
+    } else {
+        Modifier.padding(bottom = NORMAL_TABS_BOTTOM_PADDING)
     }
 
     Box(
@@ -347,21 +392,22 @@ private fun NormalTabsTabIcon(normalTabCount: Int) {
             .semantics(mergeDescendants = true) {
                 testTag = TabsTrayTestTag.normalTabsCounter
             },
+        contentAlignment = Alignment.Center,
     ) {
         Icon(
             painter = painterResource(
                 id = mozilla.components.ui.tabcounter.R.drawable.mozac_ui_tabcounter_box,
             ),
             contentDescription = normalTabsContentDescription,
-            modifier = Modifier.align(Alignment.Center),
         )
 
         Text(
             text = normalTabCountText,
-            modifier = normalTabCountTextModifier.align(Alignment.Center),
-            color = LocalContentColor.current,
-            fontSize = with(LocalDensity.current) { 12.dp.toSp() },
+            modifier = normalTabsTextModifier,
+            color = LocalContentColor.current.copy(alpha = LocalContentAlpha.current),
+            fontSize = with(LocalDensity.current) { counterTabsTextSize.toDp().toSp() },
             fontWeight = FontWeight.W700,
+            textAlign = TextAlign.Center,
         )
     }
 }
@@ -427,13 +473,17 @@ private fun MultiSelectBanner(
 
         Text(
             text = stringResource(R.string.tab_tray_multi_select_title, selectedTabCount),
+            modifier = Modifier.testTag(TabsTrayTestTag.selectionCounter),
             style = FirefoxTheme.typography.headline6,
             color = FirefoxTheme.colors.textOnColorPrimary,
         )
 
         Spacer(modifier = Modifier.weight(1.0f))
 
-        IconButton(onClick = onSaveToCollectionsClick) {
+        IconButton(
+            onClick = onSaveToCollectionsClick,
+            modifier = Modifier.testTag(TabsTrayTestTag.collectionsButton),
+        ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_tab_collection),
                 contentDescription = stringResource(
@@ -547,12 +597,11 @@ private fun TabsTrayBannerPreviewRoot(
                 onBookmarkSelectedTabsClick = {},
                 onDeleteSelectedTabsClick = {},
                 onForceSelectedTabsAsInactiveClick = {},
+                onDismissClick = {},
             )
         }
     }
 }
-
-private const val DRAG_INDICATOR_WIDTH_PERCENT = 0.1f
 
 private object DisabledRippleTheme : RippleTheme {
     @Composable

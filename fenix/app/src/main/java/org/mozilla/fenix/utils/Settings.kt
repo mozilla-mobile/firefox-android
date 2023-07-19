@@ -186,6 +186,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = "",
     )
 
+    var nimbusExperimentsFetched by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_nimbus_experiments_fetched),
+        default = false,
+    )
+
     var utmParamsKnown by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_utm_params_known),
         default = false,
@@ -433,6 +438,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var isFirstNimbusRun: Boolean by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_is_first_run),
         default = true,
+    )
+
+    var isFirstSplashScreenShown: Boolean by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_is_first_splash_screen_shown),
+        default = false,
     )
 
     var nimbusLastFetchTime: Long by longPreference(
@@ -1305,6 +1315,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = "",
     )
 
+    var enableGeckoLogs by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_enable_gecko_logs),
+        default = Config.channel.isDebug,
+    )
+
     fun amoCollectionOverrideConfigured(): Boolean {
         return overrideAmoUser.isNotEmpty() || overrideAmoCollection.isNotEmpty()
     }
@@ -1321,6 +1336,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
 
     var openTabsCount by intPreference(
         appContext.getPreferenceKey(R.string.pref_key_open_tabs_count),
+        0,
+    )
+
+    var openPrivateTabsCount by intPreference(
+        appContext.getPreferenceKey(R.string.pref_key_open_private_tabs_count),
         0,
     )
 

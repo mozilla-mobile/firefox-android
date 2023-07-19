@@ -21,6 +21,7 @@ import org.mozilla.fenix.helpers.MatcherHelper
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestAssetHelper.getStorageTestAsset
 import org.mozilla.fenix.helpers.TestHelper
+import org.mozilla.fenix.helpers.TestHelper.deleteDownloadedFileOnStorage
 import org.mozilla.fenix.helpers.TestHelper.exitMenu
 import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.restartApp
@@ -35,7 +36,6 @@ import org.mozilla.fenix.ui.robots.navigationToolbar
  *
  */
 class SettingsDeleteBrowsingDataOnQuitTest {
-    /* ktlint-disable no-blank-line-before-rbrace */ // This imposes unreadable grouping.
     private lateinit var mockWebServer: MockWebServer
 
     @get:Rule
@@ -182,6 +182,7 @@ class SettingsDeleteBrowsingDataOnQuitTest {
         }.openDownloadsManager {
             verifyEmptyDownloadsList()
         }
+        deleteDownloadedFileOnStorage("smallZip.zip")
     }
 
     @SmokeTest

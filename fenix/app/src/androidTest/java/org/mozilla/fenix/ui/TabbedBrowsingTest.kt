@@ -16,6 +16,7 @@ import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.RetryTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
+import org.mozilla.fenix.helpers.TestHelper.verifyKeyboardVisibility
 import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
@@ -42,7 +43,6 @@ class TabbedBrowsingTest {
     private lateinit var mDevice: UiDevice
     private lateinit var mockWebServer: MockWebServer
 
-    /* ktlint-disable no-blank-line-before-rbrace */ // This imposes unreadable grouping.
     @get:Rule
     val activityTestRule = HomeActivityTestRule.withDefaultSettingsOverrides()
 
@@ -344,10 +344,10 @@ class TabbedBrowsingTest {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
         }.openTabButtonShortcutsMenu {
         }.openNewPrivateTabFromShortcutsMenu {
-            verifyKeyboardVisible()
-            verifyFocusedNavigationToolbar()
+            verifyKeyboardVisibility()
+            verifySearchBarPlaceholder("Search or enter address")
             // dismiss search dialog
-            homeScreen { }.pressBack()
+        }.dismissSearchBar {
             verifyCommonMythsLink()
             verifyNavigationToolbar()
         }
@@ -355,10 +355,10 @@ class TabbedBrowsingTest {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
         }.openTabButtonShortcutsMenu {
         }.openTabFromShortcutsMenu {
-            verifyKeyboardVisible()
-            verifyFocusedNavigationToolbar()
+            verifyKeyboardVisibility()
+            verifySearchBarPlaceholder("Search or enter address")
             // dismiss search dialog
-            homeScreen { }.pressBack()
+        }.dismissSearchBar {
             verifyHomeWordmark()
             verifyNavigationToolbar()
         }

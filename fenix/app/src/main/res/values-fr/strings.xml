@@ -370,13 +370,13 @@
     <!-- Preference category for all links about Fenix -->
     <string name="preferences_category_about">À propos</string>
     <!-- Preference category for settings related to changing the default search engine -->
-    <string name="preferences_category_select_default_search_engine" tools:ignore="UnusedResources">Sélectionnez une des options</string>
+    <string name="preferences_category_select_default_search_engine">Sélectionnez une des options</string>
     <!-- Preference for settings related to managing search shortcuts for the quick search menu -->
-    <string name="preferences_manage_search_shortcuts" tools:ignore="UnusedResources">Gérer les raccourcis de recherche</string>
+    <string name="preferences_manage_search_shortcuts">Gérer les raccourcis de recherche</string>
     <!-- Summary for preference for settings related to managing search shortcuts for the quick search menu -->
-    <string name="preferences_manage_search_shortcuts_summary" tools:ignore="UnusedResources">Modifier les moteurs visibles dans le menu de recherche</string>
+    <string name="preferences_manage_search_shortcuts_summary">Modifier les moteurs visibles dans le menu de recherche</string>
     <!-- Preference category for settings related to managing search shortcuts for the quick search menu -->
-    <string name="preferences_category_engines_in_search_menu" tools:ignore="UnusedResources">Moteurs visibles dans le menu de recherche</string>
+    <string name="preferences_category_engines_in_search_menu">Moteurs visibles dans le menu de recherche</string>
     <!-- Preference for settings related to changing the default search engine -->
     <string name="preferences_default_search_engine">Moteur de recherche par défaut</string>
     <!-- Preference for settings related to Search -->
@@ -429,17 +429,11 @@
     <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
     <string name="cookie_banner_handling_details_site_is_not_supported_request_support_button_2">Envoyer la demande</string>
     <!-- Text for title indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
-    <string name="cookie_banner_handling_details_site_is_not_supported_title" moz:RemovedIn="114" tools:ignore="UnusedResources">Réduction des bannières de cookies</string>
-    <!-- Text for title indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
     <string name="cookie_banner_handling_details_site_is_not_supported_title_2">Demander la prise en charge de ce site ?</string>
-    <!-- Label for the snackBar, after the user reports with success a website where cookie banner reducer did not work -->
-    <string name="cookie_banner_handling_report_site_snack_bar_text" moz:RemovedIn="114" tools:ignore="UnusedResources">La demande de prise en charge du site a été envoyée.</string>
     <!-- Label for the snackBar, after the user reports with success a website where cookie banner reducer did not work -->
     <string name="cookie_banner_handling_report_site_snack_bar_text_2">Demande envoyée</string>
     <!-- Text for indicating cookie banner handling is on this site, this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_on_for_site">Activée pour ce site</string>
-    <!-- Text for indicating that a request for unsupported site was sent to Nimbus (it's a Mozilla library for experiments), this is shown as part of the protections panel with the tracking protection toggle -->
-    <string name="reduce_cookie_banner_unsupported_site_request_submitted" moz:RemovedIn="114" tools:ignore="UnusedResources">La demande de prise en charge du site a été envoyée</string>
     <!-- Text for indicating that a request for unsupported site was sent to Nimbus (it's a Mozilla library for experiments), this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_unsupported_site_request_submitted_2">Demande de prise en charge envoyée</string>
     <!-- Text for indicating cookie banner handling is currently not supported for this site, this is shown as part of the protections panel with the tracking protection toggle -->
@@ -448,8 +442,6 @@
     <string name="reduce_cookie_banner_details_panel_title_on_for_site">Activer la réduction des bannières de cookies pour %1$s ?</string>
     <!-- Title text for a detail explanation indicating cookie banner handling is off this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
     <string name="reduce_cookie_banner_details_panel_title_off_for_site">Désactiver la réduction des bannières de cookies pour %1$s ?</string>
-    <!-- Title text for a detail explanation indicating cookie banner reducer didn't work for the current site, this is shown as part of the cookie banner panel in the toolbar.-->
-    <string name="reduce_cookie_banner_details_panel_title_unsupported_site_request" moz:RemovedIn="114" tools:ignore="UnusedResources">Ce site n’est actuellement pas pris en charge par la réduction des bannières de cookies. Souhaitez-vous que notre équipe vérifie ce site et ajoute sa prise en charge ultérieurement ?</string>
     <!-- Title text for a detail explanation indicating cookie banner reducer didn't work for the current site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name-->
     <string name="reduce_cookie_banner_details_panel_title_unsupported_site_request_2">%1$s ne peut pas refuser automatiquement les demandes de dépôt de cookies sur ce site. Vous pouvez envoyer une demande afin que ce site soit pris en charge ultérieurement.</string>
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
@@ -555,6 +547,11 @@
     <string name="preferences_open_links_in_apps_never">Jamais</string>
     <!-- Preference for open download with an external download manager app -->
     <string name="preferences_external_download_manager">Gestionnaire de téléchargement externe</string>
+    <!-- Preference for enabling gecko engine logs -->
+    <string name="preferences_enable_gecko_logs">Activer les journaux de Gecko</string>
+    <!-- Message to indicate users that we are quitting the application to apply the changes -->
+    <string name="quit_application">Fermeture de l’application pour appliquer les modifications…</string>
+
     <!-- Preference for add_ons -->
     <string name="preferences_addons">Modules complémentaires</string>
 
@@ -638,6 +635,8 @@
     <string name="addon_already_installed">Ce module complémentaire est déjà installé</string>
 
     <!-- Account Preferences -->
+    <!-- Preference for managing your account via accounts.firefox.com -->
+    <string name="preferences_manage_account">Gérer le compte</string>
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">Synchroniser maintenant</string>
     <!-- Preference category for sync -->
@@ -1229,6 +1228,10 @@
     <string name="share_save_to_pdf">Enregistrer en PDF</string>
     <!-- Text for error message when generating a PDF file Text for error message when generating a PDF file. -->
     <string name="unable_to_save_to_pdf_error">Impossible de générer le PDF</string>
+    <!-- Text for error message when printing a page and it fails. -->
+    <string name="unable_to_print_error">Impression impossible</string>
+    <!-- Text for the print feature in the share and browser menu -->
+    <string name="menu_print">Imprimer</string>
     <!-- Sub-header in the dialog to share a link to another sync device -->
     <string name="share_device_subheader">Envoyer à l’appareil</string>
     <!-- Sub-header in the dialog to share a link to an app from the full list -->
@@ -1526,12 +1529,8 @@
     <string name="etp_settings">Paramètres de protection</string>
     <!-- Preference title for enhanced tracking protection settings -->
     <string name="preference_enhanced_tracking_protection">Protection renforcée contre le pistage</string>
-    <!-- Title for the description of enhanced tracking protection -->
-    <string name="preference_enhanced_tracking_protection_explanation_title" moz:removedIn="114" tools:ignore="UnusedResources">Naviguez sans être suivi·e</string>
     <!-- Preference summary for enhanced tracking protection settings on/off switch -->
     <string name="preference_enhanced_tracking_protection_summary">Maintenant avec la protection totale contre les cookies, notre plus puissante barrière contre les traqueurs intersites à ce jour.</string>
-    <!-- Description of enhanced tracking protection. The first parameter is the name of the application (For example: Fenix) -->
-    <string name="preference_enhanced_tracking_protection_explanation" moz:removedIn="114" tools:ignore="UnusedResources">Gardez vos données pour vous. %s vous protège de la plupart des traqueurs les plus courants qui suivent ce que vous faites en ligne.</string>
     <!-- Description of enhanced tracking protection. The parameter is the name of the application (For example: Firefox Fenix) -->
     <string name="preference_enhanced_tracking_protection_explanation_2">%s vous protège de la plupart des traqueurs les plus courants qui pistent vos activités en ligne.</string>
     <!-- Text displayed that links to website about enhanced tracking protection -->
@@ -1539,15 +1538,11 @@
     <!-- Preference for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_standard_default_1">Standard (par défaut)</string>
     <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description_4" moz:removedIn="114" tools:ignore="UnusedResources">Équilibré entre protection et performances. Les pages se chargent normalement.</string>
-    <!-- Preference description for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_standard_description_5">Les pages se chargeront normalement, mais bloqueront moins de traqueurs.</string>
     <!--  Accessibility text for the Standard protection information icon  -->
     <string name="preference_enhanced_tracking_protection_standard_info_button">Ce qui est bloqué par la protection standard contre le pistage</string>
     <!-- Preference for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict">Stricte</string>
-    <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_description_3" moz:removedIn="114" tools:ignore="UnusedResources">Bloque davantage de traqueurs, accélérant le chargement des pages, mais quelques dysfonctionnements peuvent s’ensuivre.</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict_description_4">Une protection renforcée contre le pistage et de meilleures performances, mais certains sites peuvent ne pas fonctionner correctement.</string>
     <!--  Accessibility text for the Strict protection information icon  -->
@@ -1905,7 +1900,7 @@
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Ajouter un moteur de recherche</string>
     <!-- Content description (not visible, for screen readers etc.): Title for the button that navigates to add new engine screen -->
-    <string name="search_engine_add_custom_search_engine_button_content_description" tools:ignore="UnusedResources">Ajouter un nouveau moteur de recherche</string>
+    <string name="search_engine_add_custom_search_engine_button_content_description">Ajouter un nouveau moteur de recherche</string>
     <!-- Title of the Edit search engine screen -->
     <string name="search_engine_edit_custom_search_engine_title">Modifier le moteur de recherche</string>
     <!-- Content description (not visible, for screen readers etc.): Title for the button to add a search engine in the action bar -->
@@ -1920,17 +1915,17 @@
     <!-- Text for the button to create a custom search engine on the Add search engine screen -->
     <string name="search_add_custom_engine_label_other">Autre</string>
     <!-- Label for the TextField in which user enters custom search engine name -->
-    <string name="search_add_custom_engine_name_label" tools:ignore="UnusedResources">Nom</string>
+    <string name="search_add_custom_engine_name_label">Nom</string>
     <!-- Placeholder text shown in the Search Engine Name TextField before a user enters text -->
     <string name="search_add_custom_engine_name_hint">Nom</string>
     <!-- Placeholder text shown in the Search Engine Name text field before a user enters text -->
-    <string name="search_add_custom_engine_name_hint_2" tools:ignore="UnusedResources">Nom du moteur de recherche</string>
+    <string name="search_add_custom_engine_name_hint_2">Nom du moteur de recherche</string>
     <!-- Label for the TextField in which user enters custom search engine URL -->
-    <string name="search_add_custom_engine_url_label" tools:ignore="UnusedResources">URL de la chaîne de recherche</string>
+    <string name="search_add_custom_engine_url_label">URL de la chaîne de recherche</string>
     <!-- Placeholder text shown in the Search String TextField before a user enters text -->
     <string name="search_add_custom_engine_search_string_hint">Chaîne de recherche à utiliser</string>
     <!-- Placeholder text shown in the Search String TextField before a user enters text -->
-    <string name="search_add_custom_engine_search_string_hint_2" tools:ignore="UnusedResources">URL à utiliser pour les recherches</string>
+    <string name="search_add_custom_engine_search_string_hint_2">URL à utiliser pour les recherches</string>
     <!-- Description text for the Search String TextField. The %s is part of the string -->
     <string name="search_add_custom_engine_search_string_example" formatted="false">Remplacer les termes de la recherche par « %s ». Par exemple :\nhttps://www.google.com/search?q=%s</string>
 
@@ -1938,7 +1933,7 @@
     <string name="search_add_custom_engine_form_description">Détails du moteur de recherche personnalisé</string>
 
     <!-- The text for the "Save" button for saving a custom search engine -->
-    <string name="search_custom_engine_save_button" tools:ignore="UnusedResources">Enregistrer</string>
+    <string name="search_custom_engine_save_button">Enregistrer</string>
 
     <!-- Text shown when a user leaves the name field empty -->
     <string name="search_add_custom_engine_error_empty_name">Saisissez le nom du moteur de recherche</string>
