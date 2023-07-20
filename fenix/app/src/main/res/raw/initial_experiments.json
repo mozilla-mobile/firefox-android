@@ -151,6 +151,7 @@
     },
     {
       "schemaVersion": "1.12.0",
+<<<<<<< HEAD
       "slug": "fx-release-android-re-engagement-notifications-114-rollout-v2",
       "id": "fx-release-android-re-engagement-notifications-114-rollout-v2",
       "arguments": {},
@@ -208,6 +209,8 @@
     },
     {
       "schemaVersion": "1.12.0",
+=======
+>>>>>>> 25d03c214f (Update Fenix initial_experiments.json based on the current first-run experiments in experimenter)
       "slug": "on-boarding-challenge-the-default",
       "id": "on-boarding-challenge-the-default",
       "arguments": {},
