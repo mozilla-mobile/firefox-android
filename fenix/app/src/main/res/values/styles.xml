@@ -3,16 +3,6 @@
    - License, v. 2.0. If a copy of the MPL was not distributed with this
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 <resources xmlns:tools="http://schemas.android.com/tools">
-
-    <style name="SplashScreen" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">@color/fx_mobile_layer_color_1</item>
-        <item name="windowSplashScreenIconBackgroundColor">@color/fx_mobile_layer_color_1</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/animated_splash_screen</item>
-        <!-- Splash screen is animated to maximum 12 seconds -->
-        <item name="windowSplashScreenAnimationDuration">12000</item>
-        <item name="postSplashScreenTheme">@style/NormalTheme</item>
-    </style>
-
     <style name="NormalThemeBase" parent="Theme.MaterialComponents.DayNight.NoActionBar.Bridge">
         <!-- Android system styling -->
         <item name="searchViewStyle">@style/SearchViewStyle</item>
