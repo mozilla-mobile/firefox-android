@@ -491,4 +491,9 @@ sealed class WebExtensionInstallException(
      * The extension install was canceled by the user.
      */
     class UserCancelled(throwable: Throwable) : WebExtensionInstallException(throwable)
+
+    /**
+     * The extension to install was blocked
+     */
+    class Blocked(throwable: Throwable) : WebExtensionInstallException(throwable)
 }

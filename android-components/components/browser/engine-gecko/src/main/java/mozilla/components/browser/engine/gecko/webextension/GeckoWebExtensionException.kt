@@ -7,6 +7,7 @@ package mozilla.components.browser.engine.gecko.webextension
 import mozilla.components.concept.engine.webextension.WebExtensionException
 import mozilla.components.concept.engine.webextension.WebExtensionInstallException
 import org.mozilla.geckoview.WebExtension.InstallException
+import org.mozilla.geckoview.WebExtension.InstallException.ErrorCodes.ERROR_BLOCKED
 import org.mozilla.geckoview.WebExtension.InstallException.ErrorCodes.ERROR_USER_CANCELED
 
 /**
@@ -21,6 +22,8 @@ class GeckoWebExtensionException(throwable: Throwable) : WebExtensionException(t
         internal fun createWebExtensionException(throwable: Throwable): WebExtensionException {
             return if (throwable is InstallException && throwable.code == ERROR_USER_CANCELED) {
                 WebExtensionInstallException.UserCancelled(throwable)
+            } else if (throwable is InstallException && throwable.code == ERROR_BLOCKED) {
+                WebExtensionInstallException.Blocked(throwable)
             } else {
                 GeckoWebExtensionException(throwable)
             }
