@@ -345,7 +345,6 @@ private fun SyncedTabsPage(
 
     SyncedTabsList(
         syncedTabs = syncedTabs,
-        taskContinuityEnabled = true,
         onTabClick = onTabClick,
     )
 }
