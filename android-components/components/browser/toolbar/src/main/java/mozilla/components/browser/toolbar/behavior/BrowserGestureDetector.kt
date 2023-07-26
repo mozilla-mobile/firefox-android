@@ -35,7 +35,6 @@ internal class BrowserGestureDetector(
     private val crashReporting: CrashReporting? = null,
 ) {
     @VisibleForTesting
-    @Suppress("MaxLineLength")
     internal var gestureDetector = GestureDetector(
         applicationContext,
         CustomScrollDetectorListener { previousEvent: MotionEvent?, currentEvent: MotionEvent, distanceX, distanceY ->
@@ -154,14 +153,14 @@ internal class BrowserGestureDetector(
 
     private class CustomScrollDetectorListener(
         val onScrolling: (
-            previousEvent: MotionEvent,
+            previousEvent: MotionEvent?,
             currentEvent: MotionEvent,
             distanceX: Float,
             distanceY: Float,
         ) -> Unit,
     ) : GestureDetector.SimpleOnGestureListener() {
         override fun onScroll(
-            e1: MotionEvent,
+            e1: MotionEvent?,
             e2: MotionEvent,
             distanceX: Float,
             distanceY: Float,

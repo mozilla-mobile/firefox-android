@@ -39,7 +39,6 @@ import mozilla.components.service.fxa.SyncEngine
 import mozilla.components.service.fxa.sync.SyncReason
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.ktx.kotlin.toShortUrl
-import mozilla.components.ui.widgets.withCenterAlignedButtons
 import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
@@ -57,6 +56,7 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.setTextColor
 import org.mozilla.fenix.library.LibraryPageFragment
+import org.mozilla.fenix.tabstray.Page
 import org.mozilla.fenix.utils.allowUndo
 import org.mozilla.fenix.GleanMetrics.History as GleanHistory
 
@@ -296,7 +296,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler, 
                 supportActionBar?.hide()
             }
 
-            showTabTray()
+            showTabTray(openInPrivate = true)
             historyStore.dispatch(HistoryFragmentAction.ExitEditMode)
             true
         }
@@ -312,10 +312,16 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler, 
         else -> false
     }
 
-    private fun showTabTray() {
+    private fun showTabTray(openInPrivate: Boolean = false) {
         findNavController().nav(
             R.id.historyFragment,
-            HistoryFragmentDirections.actionGlobalTabsTrayFragment(),
+            HistoryFragmentDirections.actionGlobalTabsTrayFragment(
+                page = if (openInPrivate) {
+                    Page.PrivateTabs
+                } else {
+                    Page.NormalTabs
+                },
+            ),
         )
     }
 
@@ -421,7 +427,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler, 
                 }
 
                 GleanHistory.removePromptOpened.record(NoExtras())
-            }.create().withCenterAlignedButtons()
+            }.create()
     }
 
     @Suppress("UnusedPrivateMember")

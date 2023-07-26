@@ -6,7 +6,9 @@ package mozilla.components.feature.awesomebar.provider
 
 import android.content.res.Resources
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import androidx.annotation.VisibleForTesting
+import androidx.core.net.toUri
 import kotlinx.coroutines.Deferred
 import mozilla.components.browser.icons.BrowserIcons
 import mozilla.components.browser.icons.Icon
@@ -18,7 +20,7 @@ import mozilla.components.concept.awesomebar.AwesomeBar
 import mozilla.components.feature.awesomebar.R
 import mozilla.components.feature.awesomebar.facts.emitOpenTabSuggestionClickedFact
 import mozilla.components.feature.tabs.TabsUseCases
-import mozilla.components.support.ktx.kotlin.tryGetHostFromUrl
+import mozilla.components.support.ktx.android.net.sameHostWithoutMobileSubdomainAs
 import java.util.UUID
 
 /**
@@ -34,7 +36,7 @@ class SessionSuggestionProvider(
     private val indicatorIcon: Drawable? = null,
     private val excludeSelectedSession: Boolean = false,
     private val suggestionsHeader: String? = null,
-    @get:VisibleForTesting val resultsHostFilter: String? = null,
+    @get:VisibleForTesting val resultsUriFilter: Uri? = null,
 ) : AwesomeBar.SuggestionProvider {
     override val id: String = UUID.randomUUID().toString()
 
@@ -44,7 +46,8 @@ class SessionSuggestionProvider(
 
     @Suppress("ComplexCondition")
     override suspend fun onInputChanged(text: String): List<AwesomeBar.Suggestion> {
-        if (text.isEmpty()) {
+        val searchText = text.trim()
+        if (searchText.isEmpty()) {
             return emptyList()
         }
 
@@ -56,10 +59,11 @@ class SessionSuggestionProvider(
             icons?.loadIcon(IconRequest(url = it.content.url, waitOnNetworkLoad = false))
         }
 
+        val searchWords = searchText.split(" ")
         tabs.zip(iconRequests) { result, icon ->
             if (
-                resultsHostFilter?.equals(result.content.url.tryGetHostFromUrl()) != false &&
-                result.contains(text) &&
+                resultsUriFilter?.sameHostWithoutMobileSubdomainAs(result.content.url.toUri()) != false &&
+                searchWords.all { result.contains(it) } &&
                 !result.content.private &&
                 shouldIncludeSelectedTab(state, result)
             ) {
@@ -67,7 +71,7 @@ class SessionSuggestionProvider(
                     AwesomeBar.Suggestion(
                         provider = this,
                         id = result.id,
-                        title = if (result.content.title.isNotBlank()) result.content.title else result.content.url,
+                        title = result.content.title.ifBlank { result.content.url },
                         description = resources.getString(R.string.switch_to_tab_description),
                         flags = setOf(AwesomeBar.Suggestion.Flag.OPEN_TAB),
                         icon = icon?.await()?.bitmap,

@@ -300,51 +300,51 @@
     <!-- Text for the button to not request notification permission on the device and dismiss the dialog -->
     <string name="onboarding_home_enable_notifications_negative_button">ᱱᱤᱛᱚᱜ ᱫᱚ ᱵᱟᱝᱟ</string>
 
-    <!-- Juno first user onboarding flow experiment -->
+    <!-- Juno first user onboarding flow experiment, strings are marked unused as they are only referenced by Nimbus experiments. -->
     <!-- Title for set firefox as default browser screen.
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="juno_onboarding_default_browser_title">%s ᱟᱢᱟᱜ ᱠᱩᱥᱤ ᱵᱽᱨᱟᱣᱡᱚᱨ ᱛᱮᱭᱟᱨ ᱢᱮ</string>
+    <string name="juno_onboarding_default_browser_title" moz:RemovedIn="117" tools:ignore="UnusedResources">%s ᱟᱢᱟᱜ ᱠᱩᱥᱤ ᱵᱽᱨᱟᱣᱡᱚᱨ ᱛᱮᱭᱟᱨ ᱢᱮ</string>
     <!-- Title for set firefox as default browser screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
         Note: The word "Firefox" should NOT be translated -->
     <string name="juno_onboarding_default_browser_title_nimbus" tools:ignore="UnusedResources">Firefox ᱫᱚ ᱟᱢᱟᱜ ᱱᱤᱡᱚᱨᱟᱜ ᱵᱽᱨᱟᱣᱡᱚᱨ ᱦᱟᱛᱟᱣ ᱢᱮ</string>
     <!-- Description for set firefox as default browser screen.
         The first parameter is the Firefox brand name.
         The second parameter is the string with key "juno_onboarding_default_browser_description_link_text". -->
-    <string name="juno_onboarding_default_browser_description">%1$s ᱫᱚ ᱦᱚᱲ ᱠᱚ ᱵᱮᱯᱟᱨ ᱠᱷᱚᱱ ᱢᱩᱬᱩᱛ ᱨᱮ ᱫᱚᱦᱚᱭᱟ ᱟᱨ ᱠᱨᱚᱥ-ᱥᱟᱭᱤᱴ ᱴᱨᱮᱠᱚᱨ ᱵᱞᱚᱠ ᱠᱟᱛᱮ ᱟᱢᱟᱜ ᱯᱨᱟᱵᱷᱮᱴᱤ ᱫᱚᱦᱚᱭᱟ ᱾\n\n ᱟᱞᱮᱭᱟᱜ %2$s ᱨᱮ ᱰᱷᱮᱨ ᱵᱟᱲᱟᱭ ᱢᱮ ᱾</string>
+    <string name="juno_onboarding_default_browser_description" moz:RemovedIn="117" tools:ignore="UnusedResources">%1$s ᱫᱚ ᱦᱚᱲ ᱠᱚ ᱵᱮᱯᱟᱨ ᱠᱷᱚᱱ ᱢᱩᱬᱩᱛ ᱨᱮ ᱫᱚᱦᱚᱭᱟ ᱟᱨ ᱠᱨᱚᱥ-ᱥᱟᱭᱤᱴ ᱴᱨᱮᱠᱚᱨ ᱵᱞᱚᱠ ᱠᱟᱛᱮ ᱟᱢᱟᱜ ᱯᱨᱟᱵᱷᱮᱴᱤ ᱫᱚᱦᱚᱭᱟ ᱾\n\n ᱟᱞᱮᱭᱟᱜ %2$s ᱨᱮ ᱰᱷᱮᱨ ᱵᱟᱲᱟᱭ ᱢᱮ ᱾</string>
     <!-- Description for set firefox as default browser screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
         Note: The word "Firefox" should NOT be translated -->
     <string name="juno_onboarding_default_browser_description_nimbus" tools:ignore="UnusedResources">Firefox ᱫᱚ ᱦᱚᱲ ᱠᱚ ᱵᱮᱯᱟᱨ ᱠᱷᱚᱱ ᱢᱩᱬᱩᱛ ᱨᱮ ᱫᱚᱦᱚᱭᱟ ᱟᱨ ᱠᱨᱚᱥ-ᱥᱟᱭᱤᱴ ᱴᱨᱮᱠᱚᱨ ᱵᱞᱚᱠ ᱠᱟᱛᱮ ᱟᱢᱟᱜ ᱯᱨᱟᱵᱷᱮᱴᱤ ᱫᱚᱦᱚᱭᱟ ᱾\n\n ᱟᱞᱮᱭᱟᱜ ᱫᱟᱱᱟᱝ ᱠᱷᱚᱵᱚᱨ ᱨᱮ ᱰᱷᱮᱨ ᱵᱟᱲᱟᱭ ᱢᱮ ᱾</string>
     <!-- Text for the link to the privacy notice webpage for set as firefox default browser screen.
     This is part of the string with the key "juno_onboarding_default_browser_description". -->
-    <string name="juno_onboarding_default_browser_description_link_text">ᱱᱤᱥᱚᱱ ᱨᱮᱭᱟᱜ ᱱᱚᱴᱤᱥ</string>
+    <string name="juno_onboarding_default_browser_description_link_text" tools:ignore="UnusedResources">ᱱᱤᱥᱚᱱ ᱨᱮᱭᱟᱜ ᱱᱚᱴᱤᱥ</string>
     <!-- Text for the button to set firefox as default browser on the device -->
-    <string name="juno_onboarding_default_browser_positive_button">ᱢᱩᱞ ᱵᱽᱨᱟᱣᱩᱡᱟᱹᱨ ᱞᱮᱠᱷᱟ ᱥᱟᱡᱟᱣ ᱢᱮ</string>
+    <string name="juno_onboarding_default_browser_positive_button" tools:ignore="UnusedResources">ᱢᱩᱞ ᱵᱽᱨᱟᱣᱩᱡᱟᱹᱨ ᱞᱮᱠᱷᱟ ᱥᱟᱡᱟᱣ ᱢᱮ</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
-    <string name="juno_onboarding_default_browser_negative_button">ᱱᱤᱛᱚᱜ ᱫᱚ ᱵᱟᱝᱟ</string>
+    <string name="juno_onboarding_default_browser_negative_button" tools:ignore="UnusedResources">ᱱᱤᱛᱚᱜ ᱫᱚ ᱵᱟᱝᱟ</string>
     <!-- Title for sign in to sync screen. -->
-    <string name="juno_onboarding_sign_in_title">ᱯᱷᱚᱱ ᱠᱷᱚᱱ ᱞᱮᱯᱴᱚᱯ ᱛᱮ ᱩᱪᱟᱹᱲ ᱢᱮ ᱵᱟᱨ ᱯᱟᱦᱴᱮ ᱞᱮᱠᱟᱛᱮ</string>
+    <string name="juno_onboarding_sign_in_title" tools:ignore="UnusedResources">ᱯᱷᱚᱱ ᱠᱷᱚᱱ ᱞᱮᱯᱴᱚᱯ ᱛᱮ ᱩᱪᱟᱹᱲ ᱢᱮ ᱵᱟᱨ ᱯᱟᱦᱴᱮ ᱞᱮᱠᱟᱛᱮ</string>
     <!-- Description for sign in to sync screen. -->
-    <string name="juno_onboarding_sign_in_description">ᱴᱮᱵᱽ ᱟᱨ ᱫᱟᱱᱟᱝ ᱥᱟᱵᱟᱫ ᱫᱚ ᱮᱴᱟᱜ ᱥᱟᱫᱷᱚᱱ ᱠᱷᱚᱱ ᱡᱟᱦᱟᱸ ᱨᱮ ᱟᱲᱟᱜ ᱞᱮᱫᱟᱢ ᱚᱱᱰᱮ ᱠᱷᱚᱱ ᱯᱟᱧᱡᱟ ᱫᱟᱲᱮᱭᱟᱜᱼᱟᱢ ᱾</string>
+    <string name="juno_onboarding_sign_in_description" tools:ignore="UnusedResources">ᱴᱮᱵᱽ ᱟᱨ ᱫᱟᱱᱟᱝ ᱥᱟᱵᱟᱫ ᱫᱚ ᱮᱴᱟᱜ ᱥᱟᱫᱷᱚᱱ ᱠᱷᱚᱱ ᱡᱟᱦᱟᱸ ᱨᱮ ᱟᱲᱟᱜ ᱞᱮᱫᱟᱢ ᱚᱱᱰᱮ ᱠᱷᱚᱱ ᱯᱟᱧᱡᱟ ᱫᱟᱲᱮᱭᱟᱜᱼᱟᱢ ᱾</string>
     <!-- Text for the button to sign in to sync on the device -->
-    <string name="juno_onboarding_sign_in_positive_button">ᱵᱚᱞᱚᱱ ᱥᱩᱦᱤ</string>
+    <string name="juno_onboarding_sign_in_positive_button" tools:ignore="UnusedResources">ᱵᱚᱞᱚᱱ ᱥᱩᱦᱤ</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
-    <string name="juno_onboarding_sign_in_negative_button">ᱱᱤᱛᱚᱜ ᱫᱚ ᱵᱟᱝᱟ</string>
+    <string name="juno_onboarding_sign_in_negative_button" tools:ignore="UnusedResources">ᱱᱤᱛᱚᱜ ᱫᱚ ᱵᱟᱝᱟ</string>
     <!-- Title for enable notification permission screen.
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="juno_onboarding_enable_notifications_title">%s ᱮᱛᱞᱟᱤᱭᱟᱹ ᱥᱟᱞᱟᱜ ᱵᱟᱹᱲᱛᱤ ᱠᱟᱹᱢᱤ ᱠᱚᱨᱟᱣ ᱨᱮ ᱜᱚᱲᱚ ᱮᱢᱚᱜᱼᱟᱭ</string>
+    <string name="juno_onboarding_enable_notifications_title" moz:RemovedIn="117" tools:ignore="UnusedResources">%s ᱮᱛᱞᱟᱤᱭᱟᱹ ᱥᱟᱞᱟᱜ ᱵᱟᱹᱲᱛᱤ ᱠᱟᱹᱢᱤ ᱠᱚᱨᱟᱣ ᱨᱮ ᱜᱚᱲᱚ ᱮᱢᱚᱜᱼᱟᱭ</string>
     <!-- Title for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
         Note: The word "Firefox" should NOT be translated -->
     <string name="juno_onboarding_enable_notifications_title_nimbus" tools:ignore="UnusedResources">Firefox ᱮᱛᱞᱟᱤᱭᱟᱹ ᱥᱟᱞᱟᱜ ᱵᱟᱹᱲᱛᱤ ᱠᱟᱹᱢᱤ ᱠᱚᱨᱟᱣ ᱨᱮ ᱜᱚᱲᱚ ᱮᱢᱚᱜᱼᱟᱭ</string>
     <!-- Description for enable notification permission screen.
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="juno_onboarding_enable_notifications_description">ᱥᱟᱫᱷᱚᱱ ᱠᱚ ᱛᱟᱞᱟᱨᱮ ᱴᱟᱵᱽ ᱠᱚ ᱩᱪᱟᱹᱲ ᱢᱮ, ᱰᱟᱣᱩᱱᱞᱚᱰ ᱠᱚ ᱢᱮᱱᱮᱡᱽ ᱢᱮ, ᱟᱨ %s ᱠᱷᱚᱱ ᱡᱚᱛᱚ ᱠᱷᱚᱱ ᱡᱟᱹᱥᱛᱤ ᱵᱮᱵᱷᱟᱨ ᱞᱟᱹᱜᱤᱫ ᱴᱤᱯᱥ ᱧᱟᱢ ᱢᱮ ᱾</string>
+    <string name="juno_onboarding_enable_notifications_description" moz:RemovedIn="117" tools:ignore="UnusedResources">ᱥᱟᱫᱷᱚᱱ ᱠᱚ ᱛᱟᱞᱟᱨᱮ ᱴᱟᱵᱽ ᱠᱚ ᱩᱪᱟᱹᱲ ᱢᱮ, ᱰᱟᱣᱩᱱᱞᱚᱰ ᱠᱚ ᱢᱮᱱᱮᱡᱽ ᱢᱮ, ᱟᱨ %s ᱠᱷᱚᱱ ᱡᱚᱛᱚ ᱠᱷᱚᱱ ᱡᱟᱹᱥᱛᱤ ᱵᱮᱵᱷᱟᱨ ᱞᱟᱹᱜᱤᱫ ᱴᱤᱯᱥ ᱧᱟᱢ ᱢᱮ ᱾</string>
     <!-- Description for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
        Note: The word "Firefox" should NOT be translated   -->
     <string name="juno_onboarding_enable_notifications_description_nimbus" tools:ignore="UnusedResources">ᱥᱟᱫᱷᱚᱱ ᱠᱚ ᱛᱟᱞᱟᱨᱮ ᱴᱟᱵᱽ ᱠᱚ ᱩᱪᱟᱹᱲ ᱢᱮ, ᱰᱟᱣᱩᱱᱞᱚᱰ ᱠᱚ ᱢᱮᱱᱮᱡᱽ ᱢᱮ, ᱟᱨ Firefox ᱠᱷᱚᱱ ᱡᱚᱛᱚ ᱠᱷᱚᱱ ᱡᱟᱹᱥᱛᱤ ᱵᱮᱵᱷᱟᱨ ᱞᱟᱹᱜᱤᱫ ᱴᱤᱯᱥ ᱧᱟᱢ ᱢᱮ ᱾</string>
     <!-- Text for the button to request notification permission on the device -->
-    <string name="juno_onboarding_enable_notifications_positive_button">ᱠᱷᱚᱵᱚᱨ ᱠᱚ ᱦᱮᱡ ᱪᱷᱚᱭ ᱢᱮ</string>
+    <string name="juno_onboarding_enable_notifications_positive_button" tools:ignore="UnusedResources">ᱠᱷᱚᱵᱚᱨ ᱠᱚ ᱦᱮᱡ ᱪᱷᱚᱭ ᱢᱮ</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
-    <string name="juno_onboarding_enable_notifications_negative_button">ᱱᱤᱛᱚᱜ ᱫᱚ ᱵᱟᱝᱟ</string>
+    <string name="juno_onboarding_enable_notifications_negative_button" tools:ignore="UnusedResources">ᱱᱤᱛᱚᱜ ᱫᱚ ᱵᱟᱝᱟ</string>
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. The first parameter is the name of the application.-->
@@ -364,13 +364,13 @@
     <!-- Preference category for all links about Fenix -->
     <string name="preferences_category_about">ᱵᱟᱵᱚᱛ</string>
     <!-- Preference category for settings related to changing the default search engine -->
-    <string name="preferences_category_select_default_search_engine" tools:ignore="UnusedResources">ᱢᱤᱫᱴᱟᱹᱝ ᱵᱟᱪᱷᱟᱣ ᱢᱮ</string>
+    <string name="preferences_category_select_default_search_engine">ᱢᱤᱫᱴᱟᱹᱝ ᱵᱟᱪᱷᱟᱣ ᱢᱮ</string>
     <!-- Preference for settings related to managing search shortcuts for the quick search menu -->
-    <string name="preferences_manage_search_shortcuts" tools:ignore="UnusedResources">ᱥᱮᱸᱫᱽᱨᱟ ᱠᱷᱟᱴᱚᱢᱟᱪᱷᱟ ᱢᱮᱱᱮᱡᱽ ᱢᱮ</string>
+    <string name="preferences_manage_search_shortcuts">ᱥᱮᱸᱫᱽᱨᱟ ᱠᱷᱟᱴᱚᱢᱟᱪᱷᱟ ᱢᱮᱱᱮᱡᱽ ᱢᱮ</string>
     <!-- Summary for preference for settings related to managing search shortcuts for the quick search menu -->
-    <string name="preferences_manage_search_shortcuts_summary" tools:ignore="UnusedResources">ᱥᱮᱸᱫᱽᱨᱟ ᱢᱮᱱᱩ ᱨᱮ ᱧᱮᱞᱚᱜ ᱠᱟᱱ ᱤᱧᱡᱤᱱ ᱠᱚ ᱥᱟᱯᱲᱟᱣ ᱢᱮ</string>
+    <string name="preferences_manage_search_shortcuts_summary">ᱥᱮᱸᱫᱽᱨᱟ ᱢᱮᱱᱩ ᱨᱮ ᱧᱮᱞᱚᱜ ᱠᱟᱱ ᱤᱧᱡᱤᱱ ᱠᱚ ᱥᱟᱯᱲᱟᱣ ᱢᱮ</string>
     <!-- Preference category for settings related to managing search shortcuts for the quick search menu -->
-    <string name="preferences_category_engines_in_search_menu" tools:ignore="UnusedResources">ᱥᱮᱸᱫᱽᱨᱟ ᱢᱮᱱᱩ ᱨᱮ ᱧᱮᱞᱚᱜ ᱠᱟᱱ ᱤᱧᱡᱤᱱ ᱠᱚ</string>
+    <string name="preferences_category_engines_in_search_menu">ᱥᱮᱸᱫᱽᱨᱟ ᱢᱮᱱᱩ ᱨᱮ ᱧᱮᱞᱚᱜ ᱠᱟᱱ ᱤᱧᱡᱤᱱ ᱠᱚ</string>
     <!-- Preference for settings related to changing the default search engine -->
     <string name="preferences_default_search_engine">ᱢᱩᱞ ᱥᱮᱸᱫᱽᱨᱟ ᱤᱧᱡᱤᱱ</string>
     <!-- Preference for settings related to Search -->
@@ -423,17 +423,11 @@
     <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
     <string name="cookie_banner_handling_details_site_is_not_supported_request_support_button_2">ᱱᱮᱦᱚᱨ ᱵᱷᱮᱡᱟᱭ ᱢᱮ</string>
     <!-- Text for title indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
-    <string name="cookie_banner_handling_details_site_is_not_supported_title" moz:RemovedIn="114" tools:ignore="UnusedResources">ᱠᱩᱠᱤ ᱵᱮᱱᱚᱨ ᱠᱷᱟᱴᱚ</string>
-    <!-- Text for title indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
     <string name="cookie_banner_handling_details_site_is_not_supported_title_2">ᱱᱚᱶᱟ ᱥᱟᱭᱤ ᱞᱟᱹᱜᱤᱫ ᱜᱚᱲᱚ ᱱᱮᱦᱚᱨᱟᱢ ᱥᱮ ?</string>
-    <!-- Label for the snackBar, after the user reports with success a website where cookie banner reducer did not work -->
-    <string name="cookie_banner_handling_report_site_snack_bar_text" moz:RemovedIn="114" tools:ignore="UnusedResources">ᱥᱟᱭᱤᱴ ᱥᱚᱦᱚᱫ ᱞᱟᱹᱜᱤᱫ ᱜᱚᱲᱚ ᱡᱚᱢᱟ ᱟᱠᱟᱱᱟ ᱾</string>
     <!-- Label for the snackBar, after the user reports with success a website where cookie banner reducer did not work -->
     <string name="cookie_banner_handling_report_site_snack_bar_text_2">ᱱᱮᱦᱚᱨ ᱵᱷᱮᱡᱟ ᱮᱱᱟ</string>
     <!-- Text for indicating cookie banner handling is on this site, this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_on_for_site">ᱱᱚᱶᱟ ᱥᱟᱭᱤᱴ ᱞᱟᱹᱜᱤᱫ ᱮᱢ ᱪᱷᱚ ᱜᱮᱭᱟ</string>
-    <!-- Text for indicating that a request for unsupported site was sent to Nimbus (it's a Mozilla library for experiments), this is shown as part of the protections panel with the tracking protection toggle -->
-    <string name="reduce_cookie_banner_unsupported_site_request_submitted" moz:RemovedIn="114" tools:ignore="UnusedResources">ᱥᱟᱭᱤᱴ ᱥᱚᱦᱚᱫ ᱞᱟᱹᱜᱤᱫ ᱜᱚᱲᱚ ᱡᱚᱢᱟ ᱟᱠᱟᱱᱟ</string>
     <!-- Text for indicating that a request for unsupported site was sent to Nimbus (it's a Mozilla library for experiments), this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_unsupported_site_request_submitted_2">ᱜᱚᱲᱚ ᱱᱮᱦᱚᱨ ᱵᱷᱮᱡᱟ ᱮᱱᱟ</string>
     <!-- Text for indicating cookie banner handling is currently not supported for this site, this is shown as part of the protections panel with the tracking protection toggle -->
@@ -444,8 +438,6 @@
     <!-- Title text for a detail explanation indicating cookie banner handling is off this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
     <string name="reduce_cookie_banner_details_panel_title_off_for_site">%1$s ᱞᱟᱹᱜᱤᱫ ᱠᱩᱠᱤ ᱵᱮᱱᱚᱨ ᱨᱮᱰᱟᱹᱠᱥᱚᱱ ᱵᱚᱱᱫᱚᱭᱟᱢ ᱥᱮ?</string>
 
-    <!-- Title text for a detail explanation indicating cookie banner reducer didn't work for the current site, this is shown as part of the cookie banner panel in the toolbar.-->
-    <string name="reduce_cookie_banner_details_panel_title_unsupported_site_request" moz:RemovedIn="114" tools:ignore="UnusedResources">ᱱᱚᱶᱟ ᱥᱟᱭᱤᱴ ᱫᱚ ᱱᱤᱛᱚᱜ ᱠᱩᱠᱤ ᱵᱮᱱᱚᱨ ᱨᱤᱰᱩᱠᱥᱚᱱ ᱵᱟᱭ ᱥᱚᱦᱚᱫᱟᱭ ᱾ ᱟᱢ ᱱᱚᱶᱟ ᱣᱮᱵᱽᱥᱟᱭᱤᱴ ᱫᱚ ᱵᱷᱚᱵᱤᱥᱚᱛ ᱨᱮ ᱜᱚᱲᱚ ᱮᱢ ᱪᱷᱚ ᱞᱟᱹᱜᱤᱫ ᱟᱞᱮ ᱫᱳᱞᱟᱜ ᱜᱚᱲᱚ ᱤᱫᱤ ᱥᱮᱱᱮ ᱮᱫ ᱢᱮᱭᱟ ᱥᱮ ?</string>
     <!-- Title text for a detail explanation indicating cookie banner reducer didn't work for the current site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name-->
     <string name="reduce_cookie_banner_details_panel_title_unsupported_site_request_2">ᱱᱚᱶᱟ ᱥᱟᱭᱤᱴ ᱨᱮ %1$s ᱫᱚ ᱟᱡ ᱛᱮ ᱠᱩᱠᱤ ᱱᱚᱦᱚᱨ ᱵᱟᱝ ᱢᱟᱱᱟ ᱫᱟᱲᱮᱭᱟᱜ ᱠᱟᱱᱟᱭ ᱾ ᱵᱷᱚᱵᱤᱥᱚᱛ ᱨᱮ ᱱᱚᱶᱟ ᱥᱟᱭᱤᱴ ᱜᱚᱲᱚ ᱮᱢ ᱞᱟᱹᱜᱤᱫ ᱱᱮᱦᱚᱨ ᱵᱷᱮᱡᱟ ᱫᱟᱲᱮᱭᱟᱜᱼᱟᱢ ᱾
 </string>
@@ -551,6 +543,11 @@
     <string name="preferences_open_links_in_apps_never">ᱛᱤᱥ ᱦᱚᱸ ᱵᱟᱝ</string>
     <!-- Preference for open download with an external download manager app -->
     <string name="preferences_external_download_manager">ᱵᱟᱦᱨᱮ ᱨᱮᱭᱟᱜ ᱰᱟᱣᱱᱞᱳᱰ ᱢᱮᱱᱮᱡᱟᱹᱨ</string>
+    <!-- Preference for enabling gecko engine logs -->
+    <string name="preferences_enable_gecko_logs">Gecko ᱞᱚᱜᱽ ᱮᱢ ᱪᱷᱚᱭ ᱢᱮ</string>
+    <!-- Message to indicate users that we are quitting the application to apply the changes -->
+    <string name="quit_application">ᱵᱚᱫᱚᱞ ᱫᱚᱦᱚ ᱞᱟᱹᱜᱤᱫ ᱮᱯᱞᱤᱠᱮᱥᱚᱱ ᱵᱚᱸᱫᱚᱜ ᱠᱟᱱᱟ…</string>
+
     <!-- Preference for add_ons -->
     <string name="preferences_addons">ᱮᱰ-ᱟᱸᱱᱥ</string>
     <!-- Preference for notifications -->
@@ -636,6 +633,8 @@
     <string name="addon_already_installed">ᱮᱰᱼᱚᱱ ᱢᱟᱲᱟᱝ ᱠᱷᱚᱱ ᱵᱚᱦᱟᱞ ᱟᱠᱟᱱᱟ</string>
 
     <!-- Account Preferences -->
+    <!-- Preference for managing your account via accounts.firefox.com -->
+    <string name="preferences_manage_account">ᱠᱷᱟᱛᱟ ᱢᱮᱱᱮᱡᱽ ᱢᱮ</string>
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">ᱱᱤᱛᱚᱜ ᱥᱭᱝᱠ ᱢᱮ</string>
     <!-- Preference category for sync -->
@@ -1211,8 +1210,14 @@
 
     <!-- Text for the Save to PDF feature in the share menu -->
     <string name="share_save_to_pdf">PDF ᱞᱮᱠᱷᱟ ᱥᱟᱺᱪᱟᱣ ᱢᱮ</string>
-    <!-- Text for error message when generating a PDF file Text for error message when generating a PDF file. -->
+    <!-- Text for error message when generating a PDF file Text. -->
     <string name="unable_to_save_to_pdf_error">PDF ᱛᱮᱭᱟᱨ ᱵᱟᱭ ᱜᱟᱱ ᱞᱮᱱᱟ</string>
+    <!-- Text for standard error snackbar dismiss button. -->
+    <string name="standard_snackbar_error_dismiss">ᱵᱚᱸᱫ</string>
+    <!-- Text for error message when printing a page and it fails. -->
+    <string name="unable_to_print_error">ᱪᱷᱟᱯᱟ ᱵᱟᱭ ᱜᱟᱱ ᱞᱮᱱᱟ</string>
+    <!-- Text for the print feature in the share and browser menu -->
+    <string name="menu_print">ᱪᱷᱟᱯᱟ</string>
     <!-- Sub-header in the dialog to share a link to another sync device -->
     <string name="share_device_subheader">ᱥᱟᱫᱷᱚᱱ ᱨᱮ ᱠᱩᱞ ᱢᱮ</string>
     <!-- Sub-header in the dialog to share a link to an app from the full list -->
@@ -1504,12 +1509,8 @@
     <string name="etp_settings">ᱨᱚᱯᱷᱟ ᱥᱟᱡᱟᱣ ᱠᱚ</string>
     <!-- Preference title for enhanced tracking protection settings -->
     <string name="preference_enhanced_tracking_protection">ᱵᱟᱲᱦᱟᱣᱟᱠᱟᱱ ᱯᱟᱸᱡᱟ ᱨᱚᱯᱷᱟ</string>
-    <!-- Title for the description of enhanced tracking protection -->
-    <string name="preference_enhanced_tracking_protection_explanation_title" moz:removedIn="114" tools:ignore="UnusedResources">ᱯᱟᱸᱡᱟ ᱵᱮᱜᱚᱨ ᱵᱽᱨᱟᱣᱩᱡ ᱢᱮ</string>
     <!-- Preference summary for enhanced tracking protection settings on/off switch -->
     <string name="preference_enhanced_tracking_protection_summary">ᱱᱤᱛᱚᱜ ᱢᱩᱴ ᱜᱚᱴᱟ ᱥᱟᱦᱴᱟ ᱠᱩᱠᱤ ᱦᱮᱡ ᱥᱮᱴᱮᱨ ᱮᱱᱟ, ᱱᱚᱣᱟ ᱫᱚ ᱠᱨᱚᱥ-ᱥᱟᱭᱤᱴ ᱴᱨᱮᱠᱚᱨ ᱠᱚ ᱞᱟᱹᱜᱤᱫ ᱱᱤᱛ ᱦᱟᱹᱵᱤᱡ ᱡᱚᱛᱚ ᱠᱷᱚᱱ ᱢᱟᱨᱟᱝ ᱟᱠᱚᱴ ᱥᱟᱫᱷᱚᱱ ᱠᱟᱱᱟ ᱾</string>
-    <!-- Description of enhanced tracking protection. The first parameter is the name of the application (For example: Fenix) -->
-    <string name="preference_enhanced_tracking_protection_explanation" moz:removedIn="114" tools:ignore="UnusedResources">ᱟᱢᱟᱜᱽ ᱰᱟᱴᱟ ᱟᱢ ᱴᱷᱮᱱ ᱜᱮ ᱫᱚᱦᱚᱭ ᱢᱮ ᱾ %s ᱫᱚ ᱟᱭᱢᱟ ᱥᱚᱢᱟᱱ ᱯᱟᱧᱡᱟ ᱫᱟᱱᱟᱲ ᱠᱚ ᱴᱷᱮᱱ ᱠᱷᱚᱱ ᱚᱱᱞᱟᱭᱤᱱ ᱨᱩᱠᱷᱤᱭᱟᱹᱭ ᱢᱮᱟᱭ ᱾</string>
     <!-- Description of enhanced tracking protection. The parameter is the name of the application (For example: Firefox Fenix) -->
     <string name="preference_enhanced_tracking_protection_explanation_2">​%s​ ᱫᱚ ᱟᱭᱢᱟ ᱥᱚᱢᱟᱱ ᱯᱟᱧᱡᱟ ᱫᱟᱱᱟᱲ ᱠᱚ ᱴᱷᱮᱱ ᱠᱷᱚᱱ ᱚᱱᱞᱟᱭᱤᱱ ᱨᱩᱠᱷᱤᱭᱟᱹᱭ ᱢᱮᱟᱭ ᱾</string>
     <!-- Text displayed that links to website about enhanced tracking protection -->
@@ -1517,15 +1518,11 @@
     <!-- Preference for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_standard_default_1">ᱱᱟᱯ (ᱢᱩᱞ ᱯᱷᱮᱲᱟᱛ)</string>
     <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description_4" moz:removedIn="114" tools:ignore="UnusedResources">ᱯᱨᱟᱭᱣᱮᱥᱭ ᱟᱨ ᱯᱚᱨᱯᱷᱚᱨᱢᱮᱱᱥ ᱞᱟᱹᱜᱤᱫ ᱥᱚᱢᱟᱱ ᱾ ᱥᱟᱦᱴᱟ ᱢᱩᱞ ᱞᱮᱠᱷᱟᱛᱮ ᱞᱟᱫᱮᱜᱼᱟ ᱾</string>
-    <!-- Preference description for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_standard_description_5">ᱥᱟᱦᱴᱚ ᱫᱚ ᱴᱷᱤᱠ ᱛᱮ ᱞᱟᱫᱮᱜᱼᱟ, ᱢᱮᱱᱠᱷᱟᱱ ᱴᱨᱚᱠᱚᱨ ᱠᱚᱢ ᱵᱞᱚᱠᱚᱜᱼᱟ ᱾</string>
     <!--  Accessibility text for the Standard protection information icon  -->
     <string name="preference_enhanced_tracking_protection_standard_info_button">ᱢᱩᱞ ᱜᱷᱮᱨ ᱮᱥᱮᱫ ᱨᱚᱠᱷᱭᱟ ᱫᱚ ᱪᱮᱫ ᱮ ᱵᱞᱚᱠ ᱪᱷᱚ ᱠᱮᱜᱼᱟᱭ</string>
     <!-- Preference for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict">ᱱᱤᱦᱟᱹᱛ</string>
-    <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_description_3" moz:removedIn="114" tools:ignore="UnusedResources">ᱥᱟᱦᱴᱟ ᱞᱚᱜᱚᱱ ᱞᱳᱰ ᱞᱟᱹᱜᱤᱫ ᱯᱟᱧᱡᱟ ᱫᱟᱱᱟᱲ ᱠᱚ ᱵᱞᱚᱠ ᱠᱚᱟᱭ, ᱦᱮᱞᱮ ᱥᱟᱦᱴᱟ ᱞᱳᱰ ᱨᱮ ᱰᱤᱜᱟᱹᱣ ᱦᱩᱭ ᱫᱟᱲᱮᱭᱟᱜᱼᱟ ᱾</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict_description_4">ᱠᱚᱴᱮᱡ ᱯᱟᱧᱡᱟ ᱨᱩᱠᱷᱤᱭᱟᱹ ᱟᱨ ᱞᱚᱜᱚᱱ ᱜᱮ ᱠᱟᱹᱢᱤᱭᱟᱭ, ᱢᱮᱱᱠᱷᱟᱱ ᱡᱷᱚᱛᱚ ᱥᱟᱭᱤᱴ ᱠᱚᱨᱮ ᱫᱚ ᱵᱟᱭ ᱠᱟᱹᱢᱤᱭᱟ ᱾</string>
     <!--  Accessibility text for the Strict protection information icon  -->
@@ -1885,7 +1882,7 @@
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">ᱥᱮᱸᱫᱽᱨᱟ ᱤᱧᱡᱤᱱ ᱥᱮᱞᱮᱫᱽ ᱢᱮ</string>
     <!-- Content description (not visible, for screen readers etc.): Title for the button that navigates to add new engine screen -->
-    <string name="search_engine_add_custom_search_engine_button_content_description" tools:ignore="UnusedResources">ᱢᱤᱫᱴᱟᱹᱝ ᱱᱟᱶᱟ ᱥᱮᱸᱫᱽᱨᱟ ᱤᱧᱡᱤᱱ ᱥᱮᱞᱮᱫ ᱢᱮ</string>
+    <string name="search_engine_add_custom_search_engine_button_content_description">ᱢᱤᱫᱴᱟᱹᱝ ᱱᱟᱶᱟ ᱥᱮᱸᱫᱽᱨᱟ ᱤᱧᱡᱤᱱ ᱥᱮᱞᱮᱫ ᱢᱮ</string>
     <!-- Title of the Edit search engine screen -->
     <string name="search_engine_edit_custom_search_engine_title">ᱥᱮᱸᱫᱽᱨᱟ ᱤᱧᱡᱤᱱ ᱥᱟᱯᱲᱟᱣ ᱢᱮ</string>
     <!-- Content description (not visible, for screen readers etc.): Title for the button to add a search engine in the action bar -->
@@ -1900,25 +1897,25 @@
     <!-- Text for the button to create a custom search engine on the Add search engine screen -->
     <string name="search_add_custom_engine_label_other">ᱮᱴᱟᱜ-ᱟᱜ</string>
     <!-- Label for the TextField in which user enters custom search engine name -->
-    <string name="search_add_custom_engine_name_label" tools:ignore="UnusedResources">ᱧᱩᱛᱩᱢ</string>
+    <string name="search_add_custom_engine_name_label">ᱧᱩᱛᱩᱢ</string>
     <!-- Placeholder text shown in the Search Engine Name TextField before a user enters text -->
     <string name="search_add_custom_engine_name_hint">ᱧᱩᱛᱩᱢ</string>
 
     <!-- Placeholder text shown in the Search Engine Name text field before a user enters text -->
-    <string name="search_add_custom_engine_name_hint_2" tools:ignore="UnusedResources">ᱥᱮᱸᱫᱽᱨᱟ ᱤᱧᱡᱤᱱ ᱧᱩᱛᱩᱢ</string>
+    <string name="search_add_custom_engine_name_hint_2">ᱥᱮᱸᱫᱽᱨᱟ ᱤᱧᱡᱤᱱ ᱧᱩᱛᱩᱢ</string>
     <!-- Label for the TextField in which user enters custom search engine URL -->
-    <string name="search_add_custom_engine_url_label" tools:ignore="UnusedResources">ᱥᱴᱨᱤᱝ URL ᱥᱮᱸᱫᱽᱨᱟᱭ ᱢᱮ</string>
+    <string name="search_add_custom_engine_url_label">ᱥᱴᱨᱤᱝ URL ᱥᱮᱸᱫᱽᱨᱟᱭ ᱢᱮ</string>
     <!-- Placeholder text shown in the Search String TextField before a user enters text -->
     <string name="search_add_custom_engine_search_string_hint">ᱵᱮᱵᱷᱟᱨ ᱞᱟᱹᱜᱤᱫ ᱥᱴᱨᱭᱸᱜ ᱥᱮᱸᱫᱽᱨᱟᱭ ᱢᱮ</string>
     <!-- Placeholder text shown in the Search String TextField before a user enters text -->
-    <string name="search_add_custom_engine_search_string_hint_2" tools:ignore="UnusedResources">ᱥᱮᱸᱫᱽᱨᱟ ᱞᱟᱹᱜᱤᱫ URL ᱵᱮᱵᱷᱟᱨ</string>
+    <string name="search_add_custom_engine_search_string_hint_2">ᱥᱮᱸᱫᱽᱨᱟ ᱞᱟᱹᱜᱤᱫ URL ᱵᱮᱵᱷᱟᱨ</string>
     <!-- Description text for the Search String TextField. The %s is part of the string -->
     <string name="search_add_custom_engine_search_string_example" formatted="false">“%s” ᱥᱟᱞᱟᱜ ᱠᱣᱮᱨᱭ ᱵᱚᱫᱚᱞ ᱢᱮ ᱾ ᱡᱮᱢᱚᱱ:\nhttps://www.google.com/search?q=%s</string>
     <!-- Accessibility description for the form in which details about the custom search engine are entered -->
     <string name="search_add_custom_engine_form_description">ᱠᱩᱥᱤᱭᱟᱜ ᱥᱮᱸᱫᱽᱨᱟ ᱤᱧᱡᱤᱱ ᱨᱮᱭᱟᱜ ᱵᱤᱵᱨᱚᱬ</string>
 
     <!-- The text for the "Save" button for saving a custom search engine -->
-    <string name="search_custom_engine_save_button" tools:ignore="UnusedResources">ᱥᱟᱺᱪᱟᱣ ᱢᱮ</string>
+    <string name="search_custom_engine_save_button">ᱥᱟᱺᱪᱟᱣ ᱢᱮ</string>
 
     <!-- Text shown when a user leaves the name field empty -->
     <string name="search_add_custom_engine_error_empty_name">ᱥᱮᱸᱫᱽᱨᱟ ᱤᱧᱡᱤᱱ ᱨᱮᱭᱟᱜ ᱧᱩᱛᱩᱢ ᱟᱫᱮᱨ ᱢᱮ</string>

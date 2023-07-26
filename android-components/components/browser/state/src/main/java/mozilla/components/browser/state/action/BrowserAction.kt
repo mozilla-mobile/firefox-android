@@ -542,10 +542,14 @@ sealed class ContentAction : BrowserAction() {
         ContentAction()
 
     /**
-     * Updates the isSearch state of the [ContentState] with the given [sessionId].
+     * Updates the isSearch state and optionally the search engine name of the [ContentState] with
+     * the given [sessionId].
      */
-    data class UpdateIsSearchAction(val sessionId: String, val isSearch: Boolean) :
-        ContentAction()
+    data class UpdateIsSearchAction(
+        val sessionId: String,
+        val isSearch: Boolean,
+        val searchEngineName: String? = null,
+    ) : ContentAction()
 
     /**
      * Updates the [SecurityInfoState] of the [ContentState] with the given [sessionId].
@@ -1057,9 +1061,40 @@ sealed class EngineAction : BrowserAction() {
     ) : EngineAction(), ActionWithTab
 
     /**
+     * Indicates the given [tabId] is to print the page content.
+     */
+    data class PrintContentAction(
+        override val tabId: String,
+    ) : EngineAction(), ActionWithTab
+
+    /**
+     * Indicates the given [tabId] completed printing the page content.
+     */
+    data class PrintContentCompletedAction(
+        override val tabId: String,
+    ) : EngineAction(), ActionWithTab
+
+    /**
+     * Indicates the given [tabId] was unable to print the page content.
+     * [isPrint] indicates if it is in response to a print (true) or PDF saving (false).
+     */
+    data class PrintContentExceptionAction(
+        override val tabId: String,
+        val isPrint: Boolean,
+        val throwable: Throwable,
+    ) : EngineAction(), ActionWithTab
+
+    /**
      * Navigates back in the tab with the given [tabId].
      */
     data class SaveToPdfAction(
+        override val tabId: String,
+    ) : EngineAction(), ActionWithTab
+
+    /**
+     * Indicates the given [tabId] was successful in generating a requested PDF page.
+     */
+    data class SaveToPdfCompleteAction(
         override val tabId: String,
     ) : EngineAction(), ActionWithTab
 
@@ -1198,6 +1233,11 @@ sealed class ReaderAction : BrowserAction() {
      */
     data class UpdateReaderActiveUrlAction(val tabId: String, val activeUrl: String) :
         ReaderAction()
+
+    /**
+     * Updates the [ReaderState.scrollY].
+     */
+    data class UpdateReaderScrollYAction(val tabId: String, val scrollY: Int) : ReaderAction()
 
     /**
      * Clears the [ReaderState.activeUrl].

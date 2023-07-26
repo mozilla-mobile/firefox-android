@@ -557,8 +557,6 @@
     <ID>UndocumentedPublicFunction:BrowserToolbarView.kt$BrowserToolbarView$fun collapse()</ID>
     <ID>UndocumentedPublicFunction:BrowserToolbarView.kt$BrowserToolbarView$fun dismissMenu()</ID>
     <ID>UndocumentedPublicFunction:BrowserToolbarView.kt$BrowserToolbarView$fun expand()</ID>
-    <ID>UndocumentedPublicFunction:BrowsersCache.kt$BrowsersCache$@Synchronized fun all(context: Context): Browsers</ID>
-    <ID>UndocumentedPublicFunction:BrowsersCache.kt$BrowsersCache$@Synchronized fun resetAll()</ID>
     <ID>UndocumentedPublicFunction:ClearSiteDataView.kt$ClearSiteDataView$fun update(webInfoState: WebsiteInfoState)</ID>
     <ID>UndocumentedPublicFunction:ClearableEditText.kt$ClearableEditText$fun onTextChanged(text: CharSequence?)</ID>
     <ID>UndocumentedPublicFunction:ColdStartupDurationTelemetry.kt$ColdStartupDurationTelemetry$fun onHomeActivityOnCreate( visualCompletenessQueue: VisualCompletenessQueue, startupStateProvider: StartupStateProvider, safeIntent: SafeIntent, rootContainer: View, )</ID>
@@ -723,7 +721,6 @@
     <ID>UndocumentedPublicFunction:NavController.kt$fun NavController.navigateSafe( @IdRes resId: Int, directions: NavDirections, )</ID>
     <ID>UndocumentedPublicFunction:NimbusBranchesView.kt$NimbusBranchesView$fun update(state: NimbusBranchesState)</ID>
     <ID>UndocumentedPublicFunction:NotificationManager.kt$NotificationManager$fun showReceivedTabs(context: Context, device: Device?, tabs: List&lt;TabData&gt;)</ID>
-    <ID>UndocumentedPublicFunction:OnSharedPreferenceChangeListener.kt$fun SharedPreferences.registerOnSharedPreferenceChangeListener( owner: LifecycleOwner, listener: (SharedPreferences, String) -&gt; Unit, )</ID>
     <ID>UndocumentedPublicFunction:OnboardingRadioButton.kt$OnboardingRadioButton$fun addIllustration(illustration: ImageView)</ID>
     <ID>UndocumentedPublicFunction:OnboardingRadioButton.kt$OnboardingRadioButton$fun onClickListener(listener: () -&gt; Unit)</ID>
     <ID>UndocumentedPublicFunction:OnboardingSectionHeaderViewHolder.kt$OnboardingSectionHeaderViewHolder$fun bind(labelBuilder: (Context) -&gt; String)</ID>

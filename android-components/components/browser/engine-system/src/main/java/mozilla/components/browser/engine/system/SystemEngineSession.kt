@@ -55,6 +55,7 @@ class SystemEngineSession(
     @Volatile internal var currentUrl = ""
 
     @Volatile internal var useWideViewPort: Boolean? = null // See [toggleDesktopMode]
+
     @Volatile internal var fullScreenCallback: WebChromeClient.CustomViewCallback? = null
 
     // This is public for FFTV which needs access to the WebView instance. We can mark it internal once
@@ -104,6 +105,10 @@ class SystemEngineSession(
 
     override fun requestPdfToDownload() {
         throw UnsupportedOperationException("PDF support is not available in this engine")
+    }
+
+    override fun requestPrintContent() {
+        throw UnsupportedOperationException("Print support is not available in this engine")
     }
 
     /**
@@ -403,6 +408,16 @@ class SystemEngineSession(
         if (reload) {
             webView.reload()
         }
+    }
+
+    /**
+     * Checks for if PDF Viewer is used.
+     */
+    override fun checkForPdfViewer(
+        onResult: (Boolean) -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {
+        throw UnsupportedOperationException("Checking for PDF viewer is not available in this engine")
     }
 
     override fun hasCookieBannerRuleForSession(

@@ -17,7 +17,7 @@ import org.mozilla.fenix.utils.Settings
 /**
  * Helper for querying the status and modifying various features and settings in the application.
  */
-class FeatureSettingsHelperDelegate : FeatureSettingsHelper {
+class FeatureSettingsHelperDelegate() : FeatureSettingsHelper {
     /**
      * The current feature flags used inside the app before the tests start.
      * These will be restored when the tests end.
@@ -31,14 +31,12 @@ class FeatureSettingsHelperDelegate : FeatureSettingsHelper {
         isRecentlyVisitedFeatureEnabled = settings.historyMetadataUIFeature,
         isPWAsPromptEnabled = !settings.userKnowsAboutPwas,
         isTCPCFREnabled = settings.shouldShowTotalCookieProtectionCFR,
-        isUnifiedSearchEnabled = false,
         isWallpaperOnboardingEnabled = settings.showWallpaperOnboarding,
         isDeleteSitePermissionsEnabled = settings.deleteSitePermissions,
         isCookieBannerReductionDialogEnabled = !settings.userOptOutOfReEngageCookieBannerDialog,
         isOpenInAppBannerEnabled = settings.shouldShowOpenInAppBanner,
         etpPolicy = getETPPolicy(settings),
         tabsTrayRewriteEnabled = settings.enableTabsTrayToCompose,
-        newSearchSettingsEnabled = false,
     )
 
     /**
@@ -56,6 +54,7 @@ class FeatureSettingsHelperDelegate : FeatureSettingsHelper {
                 false -> 0
             }
         }
+
     override var isPocketEnabled: Boolean by updatedFeatureFlags::isPocketEnabled
     override var isJumpBackInCFREnabled: Boolean by updatedFeatureFlags::isJumpBackInCFREnabled
     override var isWallpaperOnboardingEnabled: Boolean by updatedFeatureFlags::isWallpaperOnboardingEnabled
@@ -87,13 +86,11 @@ class FeatureSettingsHelperDelegate : FeatureSettingsHelper {
         settings.historyMetadataUIFeature = featureFlags.isRecentlyVisitedFeatureEnabled
         settings.userKnowsAboutPwas = !featureFlags.isPWAsPromptEnabled
         settings.shouldShowTotalCookieProtectionCFR = featureFlags.isTCPCFREnabled
-        settings.showUnifiedSearchFeature = featureFlags.isUnifiedSearchEnabled
         settings.showWallpaperOnboarding = featureFlags.isWallpaperOnboardingEnabled
         settings.deleteSitePermissions = featureFlags.isDeleteSitePermissionsEnabled
         settings.userOptOutOfReEngageCookieBannerDialog = !featureFlags.isCookieBannerReductionDialogEnabled
         settings.shouldShowOpenInAppBanner = featureFlags.isOpenInAppBannerEnabled
         settings.enableTabsTrayToCompose = featureFlags.tabsTrayRewriteEnabled
-        settings.enableUnifiedSearchSettingsUI = featureFlags.newSearchSettingsEnabled
         setETPPolicy(featureFlags.etpPolicy)
     }
 }
@@ -107,14 +104,12 @@ private data class FeatureFlags(
     var isRecentlyVisitedFeatureEnabled: Boolean,
     var isPWAsPromptEnabled: Boolean,
     var isTCPCFREnabled: Boolean,
-    val isUnifiedSearchEnabled: Boolean,
     var isWallpaperOnboardingEnabled: Boolean,
     var isDeleteSitePermissionsEnabled: Boolean,
     var isCookieBannerReductionDialogEnabled: Boolean,
     var isOpenInAppBannerEnabled: Boolean,
     var etpPolicy: ETPPolicy,
     var tabsTrayRewriteEnabled: Boolean,
-    var newSearchSettingsEnabled: Boolean,
 )
 
 internal fun getETPPolicy(settings: Settings): ETPPolicy {

@@ -339,7 +339,7 @@ class AwesomeBarView(
     internal fun getHistoryProvidersForSearchEngine(
         searchEngineSource: SearchEngineSource,
     ): AwesomeBar.SuggestionProvider? {
-        val searchEngineHostFilter = searchEngineSource.searchEngine?.resultsUrl?.host ?: return null
+        val searchEngineUriFilter = searchEngineSource.searchEngine?.resultsUrl ?: return null
 
         return if (activity.settings().historyMetadataUIFeature) {
             CombinedHistorySuggestionProvider(
@@ -351,7 +351,7 @@ class AwesomeBarView(
                 maxNumberOfSuggestions = METADATA_SUGGESTION_LIMIT,
                 showEditSuggestion = false,
                 suggestionsHeader = activity.getString(R.string.firefox_suggest_header),
-                resultsHostFilter = searchEngineHostFilter,
+                resultsUriFilter = searchEngineUriFilter,
             )
         } else {
             HistoryStorageSuggestionProvider(
@@ -362,7 +362,7 @@ class AwesomeBarView(
                 maxNumberOfSuggestions = METADATA_SUGGESTION_LIMIT,
                 showEditSuggestion = false,
                 suggestionsHeader = activity.getString(R.string.firefox_suggest_header),
-                resultsHostFilter = searchEngineHostFilter,
+                resultsUriFilter = searchEngineUriFilter,
             )
         }
     }
@@ -493,8 +493,8 @@ class AwesomeBarView(
         searchEngineSource: SearchEngineSource,
         filterByCurrentEngine: Boolean = false,
     ): SessionSuggestionProvider {
-        val searchEngineHostFilter = when (filterByCurrentEngine) {
-            true -> searchEngineSource.searchEngine?.resultsUrl?.host
+        val searchEngineUriFilter = when (filterByCurrentEngine) {
+            true -> searchEngineSource.searchEngine?.resultsUrl
             false -> null
         }
 
@@ -506,7 +506,7 @@ class AwesomeBarView(
             getDrawable(activity, R.drawable.ic_search_results_tab),
             excludeSelectedSession = !fromHomeFragment,
             suggestionsHeader = activity.getString(R.string.firefox_suggest_header),
-            resultsHostFilter = searchEngineHostFilter,
+            resultsUriFilter = searchEngineUriFilter,
         )
     }
 

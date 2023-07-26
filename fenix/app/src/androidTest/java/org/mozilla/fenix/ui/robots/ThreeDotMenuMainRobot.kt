@@ -27,6 +27,7 @@ import androidx.test.uiautomator.Until
 import org.hamcrest.Matchers.allOf
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.Constants.LONG_CLICK_DURATION
 import org.mozilla.fenix.helpers.Constants.RETRY_COUNT
@@ -46,6 +47,7 @@ import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
+import org.mozilla.fenix.nimbus.FxNimbus
 
 /**
  * Implementation of Robot Pattern for the three dot (main) menu.
@@ -77,7 +79,8 @@ class ThreeDotMenuMainRobot {
     fun verifySelectTabs() = assertSelectTabsButton()
 
     fun verifyFindInPageButton() = assertItemContainingTextExists(findInPageButton)
-    fun verifyAddToShortcutsButton() = assertItemContainingTextExists(addToShortcutsButton)
+    fun verifyAddToShortcutsButton(shouldExist: Boolean) =
+        assertItemContainingTextExists(addToShortcutsButton, exists = shouldExist)
     fun verifyRemoveFromShortcutsButton() = assertRemoveFromShortcutsButton()
     fun verifyShareTabsOverlay() = assertShareTabsOverlay()
 
@@ -101,10 +104,17 @@ class ThreeDotMenuMainRobot {
             addToHomeScreenButton,
             addToShortcutsButton,
             saveToCollectionButton,
-            settingsButton(),
         )
         assertCheckedItemWithResIdAndTextExists(addBookmarkButton)
         assertCheckedItemWithResIdAndTextExists(desktopSiteToggle(isRequestDesktopSiteEnabled))
+        // Swipe to second part of menu
+        expandMenu()
+        assertItemContainingTextExists(
+            settingsButton(),
+        )
+        if (FeatureFlags.print && FxNimbus.features.print.value().browserPrintEnabled) {
+            assertItemContainingTextExists(printContentButton)
+        }
         assertItemWithDescriptionExists(
             backButton,
             forwardButton,
@@ -582,6 +592,7 @@ private val reportSiteIssueButton = itemContainingText("Report Site Issue")
 private val addToHomeScreenButton = itemContainingText(getStringResource(R.string.browser_menu_add_to_homescreen))
 private val addToShortcutsButton = itemContainingText(getStringResource(R.string.browser_menu_add_to_shortcuts))
 private val saveToCollectionButton = itemContainingText(getStringResource(R.string.browser_menu_save_to_collection_2))
+private val printContentButton = itemContainingText(getStringResource(R.string.menu_print))
 private val backButton = itemWithDescription(getStringResource(R.string.browser_menu_back))
 private val forwardButton = itemWithDescription(getStringResource(R.string.browser_menu_forward))
 private val shareButton = itemWithDescription(getStringResource(R.string.share_button_content_description))

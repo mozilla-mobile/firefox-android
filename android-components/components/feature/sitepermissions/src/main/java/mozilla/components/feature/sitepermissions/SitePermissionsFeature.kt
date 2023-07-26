@@ -16,6 +16,7 @@ import androidx.fragment.app.FragmentManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -66,7 +67,6 @@ import mozilla.components.support.ktx.android.content.isPermissionGranted
 import mozilla.components.support.ktx.kotlin.getOrigin
 import mozilla.components.support.ktx.kotlin.stripDefaultPort
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.filterChanged
-import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import java.security.InvalidParameterException
 import mozilla.components.ui.icons.R as iconsR
 
@@ -142,7 +142,7 @@ class SitePermissionsFeature(
         loadingScope = store.flowScoped { flow ->
             flow.mapNotNull { state ->
                 state.findTabOrCustomTabOrSelectedTab(sessionId)
-            }.ifChanged { it.content.loading }.collect { tab ->
+            }.distinctUntilChangedBy { it.content.loading }.collect { tab ->
                 if (tab.content.loading) {
                     // Clears stale permission indicators in the toolbar,
                     // after the session starts loading.
@@ -734,7 +734,7 @@ class SitePermissionsFeature(
                 host,
                 permissionRequest,
                 R.string.mozac_feature_sitepermissions_camera_and_microphone,
-                iconsR.drawable.mozac_ic_microphone,
+                iconsR.drawable.mozac_ic_microphone_24,
                 showDoNotAskAgainCheckBox = shouldShowDoNotAskAgainCheckBox,
                 shouldSelectRememberChoice = dialogConfig?.shouldPreselectDoNotAskAgain
                     ?: DialogConfig.DEFAULT_PRESELECT_DO_NOT_ASK_AGAIN,
@@ -758,7 +758,7 @@ class SitePermissionsFeature(
                     host,
                     permissionRequest,
                     R.string.mozac_feature_sitepermissions_location_title,
-                    iconsR.drawable.mozac_ic_location,
+                    iconsR.drawable.mozac_ic_location_24,
                     showDoNotAskAgainCheckBox = shouldShowDoNotAskAgainCheckBox,
                     shouldSelectRememberChoice = dialogConfig?.shouldPreselectDoNotAskAgain
                         ?: DialogConfig.DEFAULT_PRESELECT_DO_NOT_ASK_AGAIN,
@@ -770,7 +770,7 @@ class SitePermissionsFeature(
                     host,
                     permissionRequest,
                     R.string.mozac_feature_sitepermissions_notification_title,
-                    iconsR.drawable.mozac_ic_notification,
+                    iconsR.drawable.mozac_ic_notification_24,
                     showDoNotAskAgainCheckBox = false,
                     shouldSelectRememberChoice = false,
                     isNotificationRequest = true,
@@ -782,7 +782,7 @@ class SitePermissionsFeature(
                     host,
                     permissionRequest,
                     R.string.mozac_feature_sitepermissions_microfone_title,
-                    iconsR.drawable.mozac_ic_microphone,
+                    iconsR.drawable.mozac_ic_microphone_24,
                     showDoNotAskAgainCheckBox = shouldShowDoNotAskAgainCheckBox,
                     shouldSelectRememberChoice = dialogConfig?.shouldPreselectDoNotAskAgain
                         ?: DialogConfig.DEFAULT_PRESELECT_DO_NOT_ASK_AGAIN,
@@ -794,7 +794,7 @@ class SitePermissionsFeature(
                     host,
                     permissionRequest,
                     R.string.mozac_feature_sitepermissions_camera_title,
-                    iconsR.drawable.mozac_ic_video,
+                    iconsR.drawable.mozac_ic_camera_24,
                     showDoNotAskAgainCheckBox = shouldShowDoNotAskAgainCheckBox,
                     shouldSelectRememberChoice = dialogConfig?.shouldPreselectDoNotAskAgain
                         ?: DialogConfig.DEFAULT_PRESELECT_DO_NOT_ASK_AGAIN,
@@ -806,7 +806,7 @@ class SitePermissionsFeature(
                     host,
                     permissionRequest,
                     R.string.mozac_feature_sitepermissions_persistent_storage_title,
-                    iconsR.drawable.mozac_ic_storage,
+                    iconsR.drawable.mozac_ic_storage_24,
                     showDoNotAskAgainCheckBox = false,
                     shouldSelectRememberChoice = true,
                 )
@@ -817,7 +817,7 @@ class SitePermissionsFeature(
                     host,
                     permissionRequest,
                     R.string.mozac_feature_sitepermissions_media_key_system_access_title,
-                    iconsR.drawable.mozac_ic_link,
+                    iconsR.drawable.mozac_ic_link_24,
                     showDoNotAskAgainCheckBox = false,
                     shouldSelectRememberChoice = true,
                 )
@@ -890,7 +890,7 @@ class SitePermissionsFeature(
         return SitePermissionsDialogFragment.newInstance(
             sessionId = currentSession.id,
             title = title,
-            titleIcon = iconsR.drawable.mozac_ic_cookies,
+            titleIcon = iconsR.drawable.mozac_ic_cookies_24,
             message = message,
             negativeButtonText = negativeButtonText,
             permissionRequestId = permissionRequest.id,

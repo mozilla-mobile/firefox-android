@@ -18,6 +18,7 @@ import mozilla.components.service.nimbus.NimbusApi
 import mozilla.components.service.nimbus.messaging.FxNimbusMessaging
 import mozilla.components.service.nimbus.messaging.NimbusMessagingStorage
 import mozilla.components.service.nimbus.messaging.OnDiskMessageMetadataStorage
+import mozilla.components.support.utils.BrowsersCache
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.HomeActivity
@@ -29,12 +30,12 @@ import org.mozilla.fenix.components.metrics.GleanMetricsService
 import org.mozilla.fenix.components.metrics.InstallReferrerMetricsService
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.components.metrics.MetricsStorage
+import org.mozilla.fenix.crashes.CrashFactCollector
 import org.mozilla.fenix.experiments.createNimbus
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.messaging.CustomAttributeProvider
 import org.mozilla.fenix.perf.lazyMonitored
-import org.mozilla.fenix.utils.BrowsersCache
 import org.mozilla.geckoview.BuildConfig.MOZ_APP_BUILDID
 import org.mozilla.geckoview.BuildConfig.MOZ_APP_VENDOR
 import org.mozilla.geckoview.BuildConfig.MOZ_APP_VERSION
@@ -118,6 +119,10 @@ class Analytics(
             nonFatalCrashIntent = pendingIntent,
             notificationsDelegate = context.components.notificationsDelegate,
         )
+    }
+
+    val crashFactCollector: CrashFactCollector by lazyMonitored {
+        CrashFactCollector(crashReporter)
     }
 
     val metricsStorage: MetricsStorage by lazyMonitored {

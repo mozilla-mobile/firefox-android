@@ -26,16 +26,13 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithText
-import org.mozilla.fenix.helpers.RecyclerViewIdlingResource
 import org.mozilla.fenix.helpers.RetryTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper.assertYoutubeAppOpens
-import org.mozilla.fenix.helpers.TestHelper.createCustomTabIntent
 import org.mozilla.fenix.helpers.TestHelper.registerAndCleanupIdlingResources
 import org.mozilla.fenix.helpers.ViewVisibilityIdlingResource
 import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.clickPageObject
-import org.mozilla.fenix.ui.robots.customTabScreen
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
 
@@ -94,7 +91,7 @@ class SmokeTest {
      - editing the url bar
      - the tab drawer button
      - opening a new search and dismissing the nav bar
-    */
+     */
     @Test
     fun verifyBasicNavigationToolbarFunctionality() {
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -127,73 +124,6 @@ class SmokeTest {
         }.openThreeDotMenu {
         }.clickOpenInApp {
             assertYoutubeAppOpens()
-        }
-    }
-
-    // Verifies changing the default engine from the Search Shortcut menu
-    @Test
-    fun selectSearchEnginesShortcutTest() {
-        val enginesList = listOf("DuckDuckGo", "Google", "Amazon.com", "Wikipedia", "Bing", "eBay")
-
-        for (searchEngine in enginesList) {
-            homeScreen {
-            }.openSearch {
-                verifyKeyboardVisibility()
-                clickSearchEngineShortcutButton()
-                verifySearchEngineList(activityTestRule)
-                changeDefaultSearchEngine(activityTestRule, searchEngine)
-                verifySearchEngineIcon(searchEngine)
-            }.submitQuery("mozilla ") {
-                verifyUrl(searchEngine)
-            }.goToHomescreen { }
-        }
-    }
-
-    // Verifies that a recently closed item is properly opened
-    @Test
-    fun openRecentlyClosedItemTest() {
-        val website = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        homeScreen {
-        }.openNavigationToolbar {
-        }.enterURLAndEnterToBrowser(website.url) {
-            mDevice.waitForIdle()
-        }.openTabDrawer {
-            closeTab()
-        }.openTabDrawer {
-        }.openRecentlyClosedTabs {
-            waitForListToExist()
-            registerAndCleanupIdlingResources(
-                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.recently_closed_list), 1),
-            ) {
-                verifyRecentlyClosedTabsMenuView()
-            }
-        }.clickRecentlyClosedItem("Test_Page_1") {
-            verifyUrl(website.url.toString())
-        }
-    }
-
-    // Verifies that tapping the "x" button removes a recently closed item from the list
-    @Test
-    fun deleteRecentlyClosedTabsItemTest() {
-        val website = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        homeScreen {
-        }.openNavigationToolbar {
-        }.enterURLAndEnterToBrowser(website.url) {
-            mDevice.waitForIdle()
-        }.openTabDrawer {
-            closeTab()
-        }.openTabDrawer {
-        }.openRecentlyClosedTabs {
-            waitForListToExist()
-            registerAndCleanupIdlingResources(
-                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.recently_closed_list), 1),
-            ) {
-                verifyRecentlyClosedTabsMenuView()
-            }
-            clickDeleteRecentlyClosedTabs()
-            verifyEmptyRecentlyClosedTabsList()
         }
     }
 
@@ -388,51 +318,6 @@ class SmokeTest {
             verifyAppearanceColorDark(true)
             verifyAppearanceColorLight(true)
             verifyAppearanceColorSepia(true)
-        }
-    }
-
-    // Verifies the main menu of a custom tab with a custom menu item
-    @Test
-    fun customTabMenuItemsTest() {
-        val customTabPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        intentReceiverActivityTestRule.launchActivity(
-            createCustomTabIntent(
-                customTabPage.url.toString(),
-                customMenuItem,
-            ),
-        )
-
-        customTabScreen {
-            verifyCustomTabCloseButton()
-        }.openMainMenu {
-            verifyPoweredByTextIsDisplayed()
-            verifyCustomMenuItem(customMenuItem)
-            verifyDesktopSiteButtonExists()
-            verifyFindInPageButtonExists()
-            verifyOpenInBrowserButtonExists()
-            verifyBackButtonExists()
-            verifyForwardButtonExists()
-            verifyRefreshButtonExists()
-        }
-    }
-
-    // The test opens a link in a custom tab then sends it to the browser
-    @Test
-    fun openCustomTabInBrowserTest() {
-        val customTabPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        intentReceiverActivityTestRule.launchActivity(
-            createCustomTabIntent(
-                customTabPage.url.toString(),
-            ),
-        )
-
-        customTabScreen {
-            verifyCustomTabCloseButton()
-        }.openMainMenu {
-        }.clickOpenInBrowserButton {
-            verifyTabCounter("1")
         }
     }
 

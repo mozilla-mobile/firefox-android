@@ -28,8 +28,6 @@ import org.mozilla.fenix.ui.robots.navigationToolbar
  */
 
 class HomeScreenTest {
-    /* ktlint-disable no-blank-line-before-rbrace */ // This imposes unreadable grouping.
-
     private lateinit var mDevice: UiDevice
     private lateinit var mockWebServer: MockWebServer
     private lateinit var firstPocketStoryPublisher: String
@@ -73,7 +71,6 @@ class HomeScreenTest {
             verifyStoriesByTopicItems()
             verifyCustomizeHomepageButton(true)
             verifyNavigationToolbar()
-            verifyDefaultSearchEngine("Google")
             verifyHomeMenuButton()
             verifyTabButton()
             verifyTabCounter("0")
@@ -155,8 +152,10 @@ class HomeScreenTest {
         homeScreen {
             verifyThoughtProvokingStories(true)
             scrollToPocketProvokingStories()
-            verifyPocketRecommendedStoriesItems(1, 3, 4, 5, 6, 7)
-            verifyPocketSponsoredStoriesItems(2, 8)
+            verifyPocketRecommendedStoriesItems()
+            // Sponsored Pocket stories are only advertised for a limited time.
+            // See also known issue https://bugzilla.mozilla.org/show_bug.cgi?id=1828629
+            // verifyPocketSponsoredStoriesItems(2, 8)
             verifyDiscoverMoreStoriesButton()
             verifyStoriesByTopic(true)
             verifyPoweredByPocket()

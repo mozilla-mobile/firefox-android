@@ -13,7 +13,6 @@ import android.widget.ListView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
-import mozilla.components.ui.widgets.withCenterAlignedButtons
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.FragmentAboutLibrariesBinding
 import org.mozilla.fenix.ext.showToolbar
@@ -77,7 +76,7 @@ class AboutLibrariesFragment : Fragment(R.layout.fragment_about_libraries) {
                  [name]             : either the name of the library, or its artifact name.
 
             See https://github.com/google/play-services-plugins/tree/master/oss-licenses-plugin
-        */
+         */
         val licensesData = resources
             .openRawResource(R.raw.third_party_licenses)
             .readBytes()
@@ -99,7 +98,6 @@ class AboutLibrariesFragment : Fragment(R.layout.fragment_about_libraries) {
             .setTitle(libraryItem.name)
             .setMessage(libraryItem.license)
             .create()
-            .withCenterAlignedButtons()
         dialog.show()
 
         val textView = dialog.findViewById<TextView>(android.R.id.message)!!

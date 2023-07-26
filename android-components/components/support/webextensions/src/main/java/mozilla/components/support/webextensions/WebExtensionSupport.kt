@@ -9,7 +9,7 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import mozilla.components.browser.state.action.CustomTabListAction
@@ -35,7 +35,6 @@ import mozilla.components.lib.state.ext.flowScoped
 import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.ktx.kotlin.isExtensionUrl
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.filterChanged
-import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import mozilla.components.support.webextensions.facts.emitWebExtensionsInitializedFact
 import java.util.concurrent.ConcurrentHashMap
 
@@ -229,6 +228,15 @@ object WebExtensionSupport {
 
                 override fun onInstalled(extension: WebExtension) {
                     registerInstalledExtension(store, extension)
+                    // Built-in extensions are not installed by users, they are not aware of them
+                    // for this reason we don't show any UI related to built-in extensions.
+                    if (!extension.isBuiltIn()) {
+                        store.dispatch(
+                            WebExtensionAction.UpdatePromptRequestWebExtensionAction(
+                                WebExtensionPromptRequest.PostInstallation(extension),
+                            ),
+                        )
+                    }
                 }
 
                 override fun onUninstalled(extension: WebExtension) {
@@ -354,7 +362,7 @@ object WebExtensionSupport {
         var scope: CoroutineScope? = null
         scope = store.flowScoped { flow ->
             flow.map { state -> state.tabs.filter { it.restored }.size }
-                .ifChanged()
+                .distinctUntilChanged()
                 .collect { size ->
                     if (size > 0) {
                         store.state.tabs.forEach { tab ->
