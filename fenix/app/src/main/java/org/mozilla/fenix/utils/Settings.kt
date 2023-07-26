@@ -712,6 +712,15 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     /**
+     * Indicates if TPBM feature is enabled
+     */
+    var feltPrivacyEnabled by lazyFeatureFlagPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_felt_privacy_enabled),
+        default = { FxNimbus.features.privateBrowsing.value().feltPrivacyEnabled },
+        featureFlag = true,
+    )
+
+    /**
      * Indicates if the re-engagement notification feature is enabled
      */
     val reEngagementNotificationType: Int
