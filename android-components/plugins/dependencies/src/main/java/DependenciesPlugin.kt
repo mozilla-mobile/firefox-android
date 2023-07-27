@@ -37,7 +37,7 @@ object Versions {
     const val detekt = "1.23.0"
     const val ktlint = "0.49.1"
 
-    const val sentry_latest = "6.24.0"
+    const val sentry_latest = "6.27.0"
 
     // zxing 3.4+ requires a minimum API of 24 or higher
     const val zxing = "3.3.3"
@@ -46,7 +46,7 @@ object Versions {
     const val leakcanary = "2.12"
 
     // DO NOT MODIFY MANUALLY. This is auto-updated along with GeckoView.
-    const val mozilla_glean = "53.0.0"
+    const val mozilla_glean = "53.1.0"
 
     const val material = "1.9.0"
     const val ksp = "1.0.11"
