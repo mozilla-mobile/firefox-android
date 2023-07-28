@@ -6,13 +6,17 @@ pluginManagement {
     includeBuild("../android-components/plugins/publicsuffixlist")
     includeBuild("../android-components/plugins/dependencies")
     includeBuild("../android-components/plugins/config")
+    includeBuild("../android-components/plugins/github")
+    includeBuild("./plugins/apksize")
     includeBuild("./plugins/fenixdependencies")
 }
 
 plugins {
+    id 'ApkSizePlugin'
     id 'FenixDependenciesPlugin'
     id "mozac.ConfigPlugin"
     id 'mozac.DependenciesPlugin'
+    id 'mozac.GitHubPlugin'
 }
 
 apply from: file('../shared-settings.gradle')

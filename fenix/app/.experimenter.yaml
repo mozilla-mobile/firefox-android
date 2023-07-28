@@ -43,7 +43,7 @@ juno-onboarding:
       type: boolean
       description: "if true, juno onboarding is shown to the user."
 messaging:
-  description: "Configuration for the messaging system.\n\nIn practice this is a set of growable lookup tables for the\nmessage controller to piece together.\n"
+  description: "The in-app messaging system.\n"
   hasExposure: true
   exposureDescription: ""
   variables:
@@ -52,7 +52,7 @@ messaging:
       description: A growable map of action URLs.
     message-under-experiment:
       type: string
-      description: Id or prefix of the message under experiment.
+      description: "Deprecated in favor of `MessageData#experiment`. This will be removed in future releases."
     messages:
       type: json
       description: A growable collection of messages
@@ -128,6 +128,17 @@ pre-permission-notification-prompt:
     enabled:
       type: boolean
       description: "if true, the pre-permission notification prompt is shown to the user."
+print:
+  description: A feature for printing from the share or browser menu.
+  hasExposure: true
+  exposureDescription: ""
+  variables:
+    browser-print-enabled:
+      type: boolean
+      description: "If true, a print button from the browser menu is available."
+    share-print-enabled:
+      type: boolean
+      description: "If true, a print button from the share menu is available."
 re-engagement-notification:
   description: A feature that shows the re-engagement notification if the user is inactive.
   hasExposure: true

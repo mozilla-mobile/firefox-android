@@ -40,6 +40,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.components.accounts.FenixAccountManager
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.theme.ThemeManager
 
 /**
@@ -78,6 +79,7 @@ open class DefaultToolbarMenu(
         get() = store.state.selectedTab
 
     override val menuBuilder by lazy {
+        FxNimbus.features.print.recordExposure()
         WebExtensionBrowserMenuBuilder(
             items = coreMenuItems,
             endOfMenuAlwaysVisible = shouldUseBottomToolbar,
@@ -95,7 +97,7 @@ open class DefaultToolbarMenu(
 
     override val menuToolbar by lazy {
         val back = BrowserMenuItemToolbar.TwoStateButton(
-            primaryImageResource = mozilla.components.ui.icons.R.drawable.mozac_ic_back,
+            primaryImageResource = mozilla.components.ui.icons.R.drawable.mozac_ic_back_24,
             primaryContentDescription = context.getString(R.string.browser_menu_back),
             primaryImageTintResource = primaryTextColor(),
             isInPrimaryState = {
@@ -109,7 +111,7 @@ open class DefaultToolbarMenu(
         }
 
         val forward = BrowserMenuItemToolbar.TwoStateButton(
-            primaryImageResource = mozilla.components.ui.icons.R.drawable.mozac_ic_forward,
+            primaryImageResource = mozilla.components.ui.icons.R.drawable.mozac_ic_forward_24,
             primaryContentDescription = context.getString(R.string.browser_menu_forward),
             primaryImageTintResource = primaryTextColor(),
             isInPrimaryState = {
@@ -123,7 +125,7 @@ open class DefaultToolbarMenu(
         }
 
         val refresh = BrowserMenuItemToolbar.TwoStateButton(
-            primaryImageResource = mozilla.components.ui.icons.R.drawable.mozac_ic_refresh,
+            primaryImageResource = mozilla.components.ui.icons.R.drawable.mozac_ic_arrow_clockwise_24,
             primaryContentDescription = context.getString(R.string.browser_menu_refresh),
             primaryImageTintResource = primaryTextColor(),
             isInPrimaryState = {
@@ -181,7 +183,7 @@ open class DefaultToolbarMenu(
 
     private val installToHomescreen = BrowserMenuHighlightableItem(
         label = context.getString(R.string.browser_menu_install_on_homescreen),
-        startImageResource = R.drawable.mozac_ic_add_to_home_screen,
+        startImageResource = R.drawable.mozac_ic_add_to_home_screen_24,
         iconTintColorResource = primaryTextColor(),
         highlight = BrowserMenuHighlight.LowPriority(
             label = context.getString(R.string.browser_menu_install_on_homescreen),
@@ -226,7 +228,7 @@ open class DefaultToolbarMenu(
 
     private val findInPageItem = BrowserMenuImageText(
         label = context.getString(R.string.browser_menu_find_in_page),
-        imageResource = R.drawable.mozac_ic_search,
+        imageResource = R.drawable.mozac_ic_search_24,
         iconTintColorResource = primaryTextColor(),
     ) {
         onItemTapped.invoke(ToolbarMenu.Item.FindInPage)
@@ -270,7 +272,7 @@ open class DefaultToolbarMenu(
 
     private val addToHomeScreenItem = BrowserMenuImageText(
         label = context.getString(R.string.browser_menu_add_to_homescreen),
-        imageResource = R.drawable.mozac_ic_add_to_home_screen,
+        imageResource = R.drawable.mozac_ic_add_to_home_screen_24,
         iconTintColorResource = primaryTextColor(),
         isCollapsingMenuLimit = true,
     ) {
@@ -314,7 +316,7 @@ open class DefaultToolbarMenu(
     @VisibleForTesting
     internal val settingsItem = BrowserMenuHighlightableItem(
         label = context.getString(R.string.browser_menu_settings),
-        startImageResource = R.drawable.mozac_ic_settings,
+        startImageResource = R.drawable.mozac_ic_settings_24,
         iconTintColorResource = if (hasAccountProblem) {
             ThemeManager.resolveAttribute(R.attr.syncDisconnected, context)
         } else {
@@ -354,7 +356,7 @@ open class DefaultToolbarMenu(
 
     private val deleteDataOnQuit = BrowserMenuImageText(
         label = context.getString(R.string.delete_browsing_data_on_quit_action),
-        imageResource = R.drawable.mozac_ic_quit,
+        imageResource = R.drawable.mozac_ic_cross_circle_24,
         iconTintColorResource = primaryTextColor(),
     ) {
         onItemTapped.invoke(ToolbarMenu.Item.Quit)
@@ -391,7 +393,7 @@ open class DefaultToolbarMenu(
                 installToHomescreen.apply { visible = ::canInstall },
                 if (shouldShowTopSites) addRemoveTopSitesItem else null,
                 saveToCollectionItem,
-                if (FeatureFlags.print) printPageItem else null,
+                if (FeatureFlags.print && FxNimbus.features.print.value().browserPrintEnabled) printPageItem else null,
                 BrowserMenuDivider(),
                 settingsItem,
                 if (shouldDeleteDataOnQuit) deleteDataOnQuit else null,

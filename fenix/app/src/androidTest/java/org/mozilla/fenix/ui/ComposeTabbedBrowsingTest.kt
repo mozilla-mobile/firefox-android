@@ -18,6 +18,7 @@ import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.RetryTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper.clickSnackbarButton
+import org.mozilla.fenix.helpers.TestHelper.verifyKeyboardVisibility
 import org.mozilla.fenix.helpers.TestHelper.verifySnackBarText
 import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.homeScreen
@@ -336,7 +337,7 @@ class ComposeTabbedBrowsingTest {
             verifyFab()
             verifyTabThumbnail()
             verifyExistingOpenTabs(defaultWebPage.title)
-            verifyTabCloseButton(defaultWebPage.title)
+            verifyTabCloseButton()
         }.openTab(defaultWebPage.title) {
             verifyUrl(defaultWebPage.url.toString())
             verifyTabCounter("1")
@@ -355,10 +356,10 @@ class ComposeTabbedBrowsingTest {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
         }.openTabButtonShortcutsMenu {
         }.openNewPrivateTabFromShortcutsMenu {
-            verifyKeyboardVisible()
-            verifyFocusedNavigationToolbar()
+            verifyKeyboardVisibility()
+            verifySearchBarPlaceholder("Search or enter address")
             // dismiss search dialog
-            homeScreen { }.pressBack()
+        }.dismissSearchBar {
             verifyCommonMythsLink()
             verifyNavigationToolbar()
         }
@@ -366,12 +367,25 @@ class ComposeTabbedBrowsingTest {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
         }.openTabButtonShortcutsMenu {
         }.openTabFromShortcutsMenu {
-            verifyKeyboardVisible()
-            verifyFocusedNavigationToolbar()
+            verifyKeyboardVisibility()
+            verifySearchBarPlaceholder("Search or enter address")
             // dismiss search dialog
-            homeScreen { }.pressBack()
+        }.dismissSearchBar {
             verifyHomeWordmark()
             verifyNavigationToolbar()
+        }
+    }
+
+    @Test
+    fun verifySyncedTabsWhenUserIsNotSignedInTest() {
+        navigationToolbar {
+        }.openComposeTabDrawer(composeTestRule) {
+            verifySyncedTabsButtonIsSelected(isSelected = false)
+        }.toggleToSyncedTabs {
+            verifySyncedTabsButtonIsSelected(isSelected = true)
+            verifySyncedTabsListWhenUserIsNotSignedIn()
+        }.clickSignInToSyncButton {
+            verifyTurnOnSyncMenu()
         }
     }
 }

@@ -7,16 +7,25 @@
 package org.mozilla.fenix.ui.robots
 
 import android.view.View
+import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsSelected
+import androidx.compose.ui.test.filter
 import androidx.compose.ui.test.hasAnyChild
-import androidx.compose.ui.test.hasTestTag
+import androidx.compose.ui.test.hasParent
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.ComposeTestRule
+import androidx.compose.ui.test.longClick
+import androidx.compose.ui.test.onAllNodesWithTag
+import androidx.compose.ui.test.onChildren
+import androidx.compose.ui.test.onFirst
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeLeft
 import androidx.compose.ui.test.swipeRight
@@ -27,9 +36,16 @@ import androidx.test.espresso.action.GeneralLocation
 import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.matcher.ViewMatchers
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import junit.framework.TestCase
 import org.hamcrest.Matcher
 import org.mozilla.fenix.R
+import org.mozilla.fenix.helpers.Constants
 import org.mozilla.fenix.helpers.HomeActivityComposeTestRule
+import org.mozilla.fenix.helpers.MatcherHelper.assertItemContainingTextExists
+import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
+import org.mozilla.fenix.helpers.TestAssetHelper
+import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
+import org.mozilla.fenix.helpers.TestHelper.getStringResource
 import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.clickAtLocationInView
 import org.mozilla.fenix.helpers.idlingresource.BottomSheetBehaviorStateIdlingResource
@@ -66,9 +82,27 @@ class ComposeTabDrawerRobot(private val composeTestRule: HomeActivityComposeTest
         }
     }
 
+    fun verifySyncedTabsListWhenUserIsNotSignedIn() {
+        verifySyncedTabsList()
+        assertItemContainingTextExists(
+            itemContainingText(getStringResource(R.string.synced_tabs_sign_in_message)),
+            itemContainingText(getStringResource(R.string.sync_sign_in)),
+            itemContainingText(getStringResource(R.string.tab_drawer_fab_sync)),
+        )
+    }
+
     fun verifyExistingOpenTabs(vararg titles: String) {
         titles.forEach { title ->
+            itemContainingText(title).waitForExists(waitingTime)
             composeTestRule.tabItem(title).assertExists()
+        }
+    }
+
+    fun verifyNoExistingOpenTabs(vararg titles: String) {
+        titles.forEach { title ->
+            TestCase.assertFalse(
+                itemContainingText(title).waitForExists(TestAssetHelper.waitingTimeShort),
+            )
         }
     }
 
@@ -136,14 +170,10 @@ class ComposeTabDrawerRobot(private val composeTestRule: HomeActivityComposeTest
     }
 
     /**
-     * Verifies a tab with [title] has a close button.
+     * Verifies a tab's close button when there is only one tab open.
      */
-    fun verifyTabCloseButton(title: String) {
-        composeTestRule.tabItem(title).assert(
-            hasAnyChild(
-                hasTestTag(TabsTrayTestTag.tabItemClose),
-            ),
-        )
+    fun verifyTabCloseButton() {
+        composeTestRule.closeTabButton().assertExists()
     }
 
     fun verifyTabsTrayBehaviorState(expectedState: Int) {
@@ -152,6 +182,10 @@ class ComposeTabDrawerRobot(private val composeTestRule: HomeActivityComposeTest
 
     fun verifyMinusculeHalfExpandedRatio() {
         tabsTrayView().check(ViewAssertions.matches(BottomSheetBehaviorHalfExpandedMaxRatioMatcher(0.001f)))
+    }
+
+    fun verifyTabTrayIsOpen() {
+        composeTestRule.tabsTray().assertExists()
     }
 
     fun verifyTabTrayIsClosed() {
@@ -179,6 +213,80 @@ class ComposeTabDrawerRobot(private val composeTestRule: HomeActivityComposeTest
         composeTestRule.tabItem(title).performTouchInput { swipeRight() }
     }
 
+    /**
+     * Creates a collection from the provided [tabTitles].
+     */
+    fun createCollection(
+        vararg tabTitles: String,
+        collectionName: String,
+        firstCollection: Boolean = true,
+    ) {
+        composeTestRule.threeDotButton().performClick()
+        composeTestRule.dropdownMenuItemSelectTabs().performClick()
+
+        for (tab in tabTitles) {
+            selectTab(tab)
+        }
+
+        clickCollectionsButton(composeTestRule) {
+            if (!firstCollection) {
+                clickAddNewCollection()
+            }
+            typeCollectionNameAndSave(collectionName)
+        }
+    }
+
+    /**
+     * Selects a tab with [title].
+     */
+    @OptIn(ExperimentalTestApi::class)
+    fun selectTab(title: String) {
+        composeTestRule.waitUntilExactlyOneExists(hasText(title), TestAssetHelper.waitingTime)
+        composeTestRule.tabItem(title).performClick()
+    }
+
+    /**
+     * Performs a long click on a tab with [title].
+     */
+    fun longClickTab(title: String) {
+        composeTestRule.tabItem(title)
+            .performTouchInput { longClick(durationMillis = Constants.LONG_CLICK_DURATION) }
+    }
+
+    /**
+     * Verifies the multi selection counter displays [numOfTabs].
+     */
+    fun verifyTabsMultiSelectionCounter(numOfTabs: Int) {
+        composeTestRule.multiSelectionCounter()
+            .assert(hasText("$numOfTabs selected"))
+    }
+
+    /**
+     * Verifies a tab's media button matches [action] when there is only one tab with media.
+     */
+    fun verifyTabMediaControlButtonState(action: String) {
+        composeTestRule.tabMediaControlButton(action)
+            .assertExists()
+    }
+
+    /**
+     * Clicks a tab's media button when there is only one tab with media.
+     */
+    fun clickTabMediaControlButton(action: String) {
+        composeTestRule.tabMediaControlButton(action)
+            .performClick()
+    }
+
+    /**
+     * Closes a tab with a given [title].
+     */
+    fun closeTabWithTitle(title: String) {
+        composeTestRule.onAllNodesWithTag(TabsTrayTestTag.tabItemClose)
+            .filter(hasParent(hasText(title)))
+            .onFirst()
+            .performClick()
+    }
+
     class Transition(private val composeTestRule: HomeActivityComposeTestRule) {
 
         fun openNewTab(interact: SearchRobot.() -> Unit): SearchRobot.Transition {
@@ -201,6 +309,19 @@ class ComposeTabDrawerRobot(private val composeTestRule: HomeActivityComposeTest
             return Transition(composeTestRule)
         }
 
+        fun toggleToSyncedTabs(interact: ComposeTabDrawerRobot.() -> Unit): Transition {
+            composeTestRule.syncedTabsButton().performClick()
+            ComposeTabDrawerRobot(composeTestRule).interact()
+            return Transition(composeTestRule)
+        }
+
+        fun clickSignInToSyncButton(interact: SyncSignInRobot.() -> Unit): SyncSignInRobot.Transition {
+            itemContainingText(getStringResource(R.string.sync_sign_in))
+                .clickAndWaitForNewWindow(TestAssetHelper.waitingTimeShort)
+            SyncSignInRobot().interact()
+            return SyncSignInRobot.Transition()
+        }
+
         fun openThreeDotMenu(interact: ComposeTabDrawerRobot.() -> Unit): Transition {
             composeTestRule.threeDotButton().performClick()
             ComposeTabDrawerRobot(composeTestRule).interact()
@@ -216,6 +337,24 @@ class ComposeTabDrawerRobot(private val composeTestRule: HomeActivityComposeTest
         fun openTab(title: String, interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
             composeTestRule.tabItem(title)
                 .performScrollTo()
+                .performClick()
+
+            BrowserRobot().interact()
+            return BrowserRobot.Transition()
+        }
+
+        fun openPrivateTab(position: Int, interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
+            composeTestRule.privateTabsList()
+                .onChildren()[position]
+                .performClick()
+
+            BrowserRobot().interact()
+            return BrowserRobot.Transition()
+        }
+
+        fun openNormalTab(position: Int, interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
+            composeTestRule.normalTabsList()
+                .onChildren()[position]
                 .performClick()
 
             BrowserRobot().interact()
@@ -280,7 +419,46 @@ class ComposeTabDrawerRobot(private val composeTestRule: HomeActivityComposeTest
             ComposeTabDrawerRobot(composeTestRule).interact()
             return Transition(composeTestRule)
         }
+
+        fun closeTabDrawer(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
+            composeTestRule.bannerHandle().performSemanticsAction(SemanticsActions.OnClick)
+
+            BrowserRobot().interact()
+            return BrowserRobot.Transition()
+        }
+
+        fun clickSaveCollection(interact: CollectionRobot.() -> Unit): CollectionRobot.Transition {
+            composeTestRule.collectionsButton().performClick()
+
+            CollectionRobot().interact()
+            return CollectionRobot.Transition()
+        }
+
+        fun clickShareAllTabsButton(interact: ShareOverlayRobot.() -> Unit): ShareOverlayRobot.Transition {
+            composeTestRule.dropdownMenuItemShareAllTabs().performClick()
+
+            ShareOverlayRobot().interact()
+            return ShareOverlayRobot.Transition()
+        }
     }
+}
+
+/**
+ * Opens a transition in the [ComposeTabDrawerRobot].
+ */
+fun composeTabDrawer(composeTestRule: HomeActivityComposeTestRule, interact: ComposeTabDrawerRobot.() -> Unit): ComposeTabDrawerRobot.Transition {
+    ComposeTabDrawerRobot(composeTestRule).interact()
+    return ComposeTabDrawerRobot.Transition(composeTestRule)
+}
+
+/**
+ * Clicks on the Collections button in the Tabs Tray banner and opens a transition in the [CollectionRobot].
+ */
+private fun clickCollectionsButton(composeTestRule: HomeActivityComposeTestRule, interact: CollectionRobot.() -> Unit): CollectionRobot.Transition {
+    composeTestRule.collectionsButton().performClick()
+
+    CollectionRobot().interact()
+    return CollectionRobot.Transition()
 }
 
 /**
@@ -341,7 +519,9 @@ private fun ComposeTestRule.emptyPrivateTabsList() = onNodeWithTag(TabsTrayTestT
 /**
  * Obtains the tab with the provided [title]
  */
-private fun ComposeTestRule.tabItem(title: String) = onNodeWithText(title)
+private fun ComposeTestRule.tabItem(title: String) = onAllNodesWithTag(TabsTrayTestTag.tabItemRoot)
+    .filter(hasAnyChild(hasText(title)))
+    .onFirst()
 
 /**
  * Obtains an open tab's close button when there's only one tab open.
@@ -392,3 +572,23 @@ private fun ComposeTestRule.dropdownMenuItemTabSettings() = onNodeWithTag(TabsTr
  * Obtains the normal tabs counter.
  */
 private fun ComposeTestRule.normalTabsCounter() = onNodeWithTag(TabsTrayTestTag.normalTabsCounter)
+
+/**
+ * Obtains the Tabs Tray banner collections button.
+ */
+private fun ComposeTestRule.collectionsButton() = onNodeWithTag(TabsTrayTestTag.collectionsButton)
+
+/**
+ * Obtains the Tabs Tray banner multi selection counter.
+ */
+private fun ComposeTestRule.multiSelectionCounter() = onNodeWithTag(TabsTrayTestTag.selectionCounter)
+
+/**
+ * Obtains the Tabs Tray banner handle.
+ */
+private fun ComposeTestRule.bannerHandle() = onNodeWithTag(TabsTrayTestTag.bannerHandle)
+
+/**
+ * Obtains the media control button with the given [action] as its content description.
+ */
+private fun ComposeTestRule.tabMediaControlButton(action: String) = onNodeWithContentDescription(action)

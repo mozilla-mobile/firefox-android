@@ -371,13 +371,6 @@ class DownloadTest {
             verifySystemNotificationExists("Firefox Fenix")
             expandNotificationMessage()
             swipeDownloadNotification("Left", false)
-            verifySystemNotificationExists("Firefox Fenix")
-        }.closeNotificationTray {
-        }.openNotificationShade {
-            verifySystemNotificationExists("Firefox Fenix")
-            expandNotificationMessage()
-            swipeDownloadNotification("Right", false)
-            verifySystemNotificationExists("Firefox Fenix")
             clickDownloadNotificationControlButton("CANCEL")
         }
         deleteDownloadedFileOnStorage(downloadFile)

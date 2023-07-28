@@ -62,6 +62,8 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
 
     private val windowFeature = ViewBoundFeatureWrapper<WindowFeature>()
     private val openInAppOnboardingObserver = ViewBoundFeatureWrapper<OpenInAppOnboardingObserver>()
+    private val standardSnackbarErrorBinding =
+        ViewBoundFeatureWrapper<StandardSnackbarErrorBinding>()
     private val reviewQualityCheckFeature = ViewBoundFeatureWrapper<ReviewQualityCheckFeature>()
 
     private var readerModeAvailable = false
@@ -96,7 +98,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
         val homeAction = BrowserToolbar.Button(
             imageDrawable = AppCompatResources.getDrawable(
                 context,
-                R.drawable.mozac_ic_home,
+                R.drawable.mozac_ic_home_24,
             )!!,
             contentDescription = context.getString(R.string.browser_toolbar_home),
             iconTintColorResource = ThemeManager.resolveAttribute(R.attr.textPrimary, context),
@@ -188,6 +190,14 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
         if (!context.settings().shouldUseCookieBanner && !context.settings().userOptOutOfReEngageCookieBannerDialog) {
             observeCookieBannerHandlingState(context.components.core.store)
         }
+        standardSnackbarErrorBinding.set(
+            feature = StandardSnackbarErrorBinding(
+                requireActivity(),
+                requireActivity().components.appStore,
+            ),
+            owner = viewLifecycleOwner,
+            view = binding.root,
+        )
     }
 
     private fun initReviewQualityCheck(context: Context, view: View) {
@@ -250,7 +260,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
             backAction = BrowserToolbar.TwoStateButton(
                 primaryImage = AppCompatResources.getDrawable(
                     context,
-                    R.drawable.mozac_ic_back,
+                    R.drawable.mozac_ic_back_24,
                 )!!,
                 primaryContentDescription = context.getString(R.string.browser_menu_back),
                 primaryImageTintResource = enableTint,
@@ -278,7 +288,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
             forwardAction = BrowserToolbar.TwoStateButton(
                 primaryImage = AppCompatResources.getDrawable(
                     context,
-                    R.drawable.mozac_ic_forward,
+                    R.drawable.mozac_ic_forward_24,
                 )!!,
                 primaryContentDescription = context.getString(R.string.browser_menu_forward),
                 primaryImageTintResource = enableTint,
@@ -306,7 +316,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
             refreshAction = BrowserToolbar.TwoStateButton(
                 primaryImage = AppCompatResources.getDrawable(
                     context,
-                    R.drawable.mozac_ic_refresh,
+                    R.drawable.mozac_ic_arrow_clockwise_24,
                 )!!,
                 primaryContentDescription = context.getString(R.string.browser_menu_refresh),
                 primaryImageTintResource = enableTint,

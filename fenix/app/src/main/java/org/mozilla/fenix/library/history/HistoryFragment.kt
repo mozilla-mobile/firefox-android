@@ -39,9 +39,9 @@ import mozilla.components.service.fxa.SyncEngine
 import mozilla.components.service.fxa.sync.SyncReason
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.ktx.kotlin.toShortUrl
-import mozilla.components.ui.widgets.withCenterAlignedButtons
 import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.BrowserDirection
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.NavHostActivity
 import org.mozilla.fenix.R
@@ -56,7 +56,11 @@ import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.setTextColor
+import org.mozilla.fenix.home.Mode
 import org.mozilla.fenix.library.LibraryPageFragment
+import org.mozilla.fenix.library.history.state.HistoryNavigationMiddleware
+import org.mozilla.fenix.library.history.state.HistoryTelemetryMiddleware
+import org.mozilla.fenix.tabstray.Page
 import org.mozilla.fenix.utils.allowUndo
 import org.mozilla.fenix.GleanMetrics.History as GleanHistory
 
@@ -92,12 +96,15 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler, 
         val view = binding.root
         historyStore = StoreProvider.get(this) {
             HistoryFragmentStore(
-                HistoryFragmentState(
-                    items = listOf(),
-                    mode = HistoryFragmentState.Mode.Normal,
-                    pendingDeletionItems = emptySet(),
-                    isEmpty = false,
-                    isDeletingItems = false,
+                initialState = HistoryFragmentState.initial,
+                middleware = listOf(
+                    HistoryNavigationMiddleware(
+                        navController = findNavController(),
+                        openToBrowser = ::openItem,
+                    ),
+                    HistoryTelemetryMiddleware(
+                        isInPrivateMode = requireComponents.appStore.state.mode == Mode.Private,
+                    ),
                 ),
             )
         }
@@ -128,6 +135,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler, 
                     HistoryFragmentAction.ChangeEmptyState(isEmpty = true),
                 )
             },
+            store = historyStore,
             onEmptyStateChanged = {
                 historyStore.dispatch(
                     HistoryFragmentAction.ChangeEmptyState(it),
@@ -296,7 +304,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler, 
                 supportActionBar?.hide()
             }
 
-            showTabTray()
+            showTabTray(openInPrivate = true)
             historyStore.dispatch(HistoryFragmentAction.ExitEditMode)
             true
         }
@@ -312,10 +320,16 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler, 
         else -> false
     }
 
-    private fun showTabTray() {
+    private fun showTabTray(openInPrivate: Boolean = false) {
         findNavController().nav(
             R.id.historyFragment,
-            HistoryFragmentDirections.actionGlobalTabsTrayFragment(),
+            HistoryFragmentDirections.actionGlobalTabsTrayFragment(
+                page = if (openInPrivate) {
+                    Page.PrivateTabs
+                } else {
+                    Page.NormalTabs
+                },
+            ),
         )
     }
 
@@ -347,13 +361,16 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler, 
     }
 
     private fun openItem(item: History.Regular) {
-        GleanHistory.openedItem.record(
-            GleanHistory.OpenedItemExtra(
-                isRemote = item.isRemote,
-                timeGroup = item.historyTimeGroup.toString(),
-                isPrivate = (activity as HomeActivity).browsingModeManager.mode == BrowsingMode.Private,
-            ),
-        )
+        // This telemetry is recorded by the middleware if the refactor is enabled
+        if (!FeatureFlags.historyFragmentLibStateRefactor) {
+            GleanHistory.openedItem.record(
+                GleanHistory.OpenedItemExtra(
+                    isRemote = item.isRemote,
+                    timeGroup = item.historyTimeGroup.toString(),
+                    isPrivate = (activity as HomeActivity).browsingModeManager.mode == BrowsingMode.Private,
+                ),
+            )
+        }
 
         (activity as HomeActivity).openToBrowserAndLoad(
             searchTermOrURL = item.url,
@@ -421,7 +438,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler, 
                 }
 
                 GleanHistory.removePromptOpened.record(NoExtras())
-            }.create().withCenterAlignedButtons()
+            }.create()
     }
 
     @Suppress("UnusedPrivateMember")

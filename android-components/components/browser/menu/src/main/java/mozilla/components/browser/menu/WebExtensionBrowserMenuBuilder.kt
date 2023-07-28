@@ -160,8 +160,8 @@ class WebExtensionBrowserMenuBuilder(
         @ColorRes
         val webExtIconTintColorResource: Int = NO_ID,
         @DrawableRes
-        val backPressMenuItemDrawableRes: Int = iconsR.drawable.mozac_ic_back,
+        val backPressMenuItemDrawableRes: Int = iconsR.drawable.mozac_ic_back_24,
         @DrawableRes
-        val addonsManagerMenuItemDrawableRes: Int = iconsR.drawable.mozac_ic_extensions,
+        val addonsManagerMenuItemDrawableRes: Int = iconsR.drawable.mozac_ic_extension_24,
     )
 }

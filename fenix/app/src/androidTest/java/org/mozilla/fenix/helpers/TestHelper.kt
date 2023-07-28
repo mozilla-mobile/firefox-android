@@ -52,11 +52,13 @@ import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
 import junit.framework.AssertionFailedError
 import mozilla.components.browser.state.search.SearchEngine
+import mozilla.components.browser.state.state.availableSearchEngines
 import mozilla.components.support.ktx.android.content.appName
 import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.Matcher
 import org.junit.Assert
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.mozilla.fenix.Config
@@ -344,13 +346,6 @@ object TestHelper {
 
     fun getStringResource(id: Int, argument: String = appName) = appContext.resources.getString(id, argument)
 
-    fun setCustomSearchEngine(searchEngine: SearchEngine) {
-        with(appContext.components.useCases.searchUseCases) {
-            addSearchEngine(searchEngine)
-            selectSearchEngine(searchEngine)
-        }
-    }
-
     // Permission allow dialogs differ on various Android APIs
     fun grantSystemPermission() {
         val whileUsingTheAppPermissionButton: UiObject =
@@ -422,7 +417,7 @@ object TestHelper {
     /**
      * Changes the default language of the entire device, not just the app.
      */
-    private fun setSystemLocale(locale: Locale) {
+    fun setSystemLocale(locale: Locale) {
         val activityManagerNative = Class.forName("android.app.ActivityManagerNative")
         val am = activityManagerNative.getMethod("getDefault", *arrayOfNulls(0))
             .invoke(activityManagerNative, *arrayOfNulls(0))
@@ -484,5 +479,37 @@ object TestHelper {
     fun bringAppToForeground() {
         mDevice.pressRecentApps()
         mDevice.findObject(UiSelector().resourceId("$packageName:id/container")).waitForExists(waitingTime)
+    }
+
+    fun verifyKeyboardVisibility(isExpectedToBeVisible: Boolean = true) {
+        mDevice.waitForIdle()
+
+        assertEquals(
+            "Keyboard not shown",
+            isExpectedToBeVisible,
+            mDevice
+                .executeShellCommand("dumpsys input_method | grep mInputShown")
+                .contains("mInputShown=true"),
+        )
+    }
+
+    /**
+     * The list of Search engines for the "home" region of the user.
+     * For en-us it will return the 6 engines selected by default: Google, Bing, DuckDuckGo, Amazon, Ebay, Wikipedia.
+     */
+    fun getRegionSearchEnginesList(): List<SearchEngine> {
+        val searchEnginesList = appContext.components.core.store.state.search.regionSearchEngines
+        assertTrue("Search engines list returned nothing", searchEnginesList.isNotEmpty())
+        return searchEnginesList
+    }
+
+    /**
+     * The list of Search engines available to be added by user choice.
+     * For en-us it will return the 2 engines: Reddit, Youtube.
+     */
+    fun getAvailableSearchEngines(): List<SearchEngine> {
+        val searchEnginesList = appContext.components.core.store.state.search.availableSearchEngines
+        assertTrue("Search engines list returned nothing", searchEnginesList.isNotEmpty())
+        return searchEnginesList
     }
 }

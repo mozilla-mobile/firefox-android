@@ -84,22 +84,6 @@ class SettingsAdvancedTest {
         }
     }
 
-    @SmokeTest
-    @Test
-    fun verifyOpenLinkInAppViewInPrivateBrowsingTest() {
-        homeScreen {
-        }.togglePrivateBrowsingMode()
-
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-            verifyOpenLinksInAppsButton()
-            verifySettingsOptionSummary("Open links in apps", "Never")
-        }.openOpenLinksInAppsMenu {
-            verifyPrivateOpenLinksInAppsView("Never")
-        }
-    }
-
     // Assumes Youtube is installed and enabled
     @Test
     fun neverOpenLinkInAppTest() {
@@ -179,6 +163,8 @@ class SettingsAdvancedTest {
             clickPageObject(itemWithResIdAndText("android:id/button2", "CANCEL"))
             waitForPageToLoad()
             verifyUrl("youtube.com")
+        }.openTabDrawer {
+            closeTab()
         }
 
         navigationToolbar {
@@ -222,6 +208,8 @@ class SettingsAdvancedTest {
             clickPageObject(itemWithResIdAndText("android:id/button2", "CANCEL"))
             waitForPageToLoad()
             verifyUrl("youtube.com")
+        }.openTabDrawer {
+            closeTab()
         }
 
         navigationToolbar {

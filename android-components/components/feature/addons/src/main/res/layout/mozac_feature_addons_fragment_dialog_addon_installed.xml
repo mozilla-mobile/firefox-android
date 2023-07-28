@@ -19,7 +19,7 @@
         android:layout_marginTop="16dp"
         android:importantForAccessibility="no"
         android:scaleType="centerInside"
-        app:srcCompat="@drawable/mozac_ic_extensions" />
+        app:srcCompat="@drawable/mozac_ic_extension_24" />
 
     <TextView
         android:id="@+id/title"
@@ -59,7 +59,7 @@
         android:layout_below="@id/title"
         android:layout_marginTop="16dp"
         app:tint="?android:attr/textColorPrimary"
-        app:srcCompat="@drawable/mozac_ic_menu"
+        app:srcCompat="@drawable/mozac_ic_ellipsis_vertical_24"
         />
 
     <androidx.appcompat.widget.AppCompatCheckBox
@@ -88,7 +88,6 @@
         android:paddingStart="20dp"
         android:paddingEnd="20dp"
         android:text="@string/mozac_feature_addons_installed_dialog_okay_button"
-        android:textAlignment="center"
         android:textAllCaps="false" />
 
 </RelativeLayout>
