@@ -66,6 +66,7 @@ class ShareControllerTest {
     private val textToShare = "${shareData[0].url}\n\n${shareData[1].url}"
     private val sendTabUseCases = mockk<SendTabUseCases>(relaxed = true)
     private val saveToPdfUseCase = mockk<SessionUseCases.SaveToPdfUseCase>(relaxed = true)
+    private val printUseCase = mockk<SessionUseCases.PrintContentUseCase>(relaxed = true)
     private val snackbar = mockk<FenixSnackbar>(relaxed = true)
     private val navController = mockk<NavController>(relaxed = true)
     private val dismiss = mockk<(ShareController.Result) -> Unit>(relaxed = true)
@@ -79,7 +80,7 @@ class ShareControllerTest {
     private val testDispatcher = coroutinesTestRule.testDispatcher
     private val testCoroutineScope = coroutinesTestRule.scope
     private val controller = DefaultShareController(
-        context, shareSubject, shareData, sendTabUseCases, saveToPdfUseCase, snackbar, navController,
+        context, shareSubject, shareData, sendTabUseCases, saveToPdfUseCase, printUseCase, snackbar, navController,
         recentAppStorage, testCoroutineScope, testDispatcher, FenixFxAEntryPoint.ShareMenu, dismiss,
     )
 
@@ -104,7 +105,7 @@ class ShareControllerTest {
         val activityContext: Context = mockk<Activity>()
         val testController = DefaultShareController(
             activityContext, shareSubject, shareData, mockk(), mockk(),
-            mockk(), mockk(), recentAppStorage, testCoroutineScope, testDispatcher,
+            mockk(), mockk(), mockk(), recentAppStorage, testCoroutineScope, testDispatcher,
             FenixFxAEntryPoint.ShareMenu, dismiss,
         )
         every { activityContext.startActivity(capture(shareIntent)) } just Runs
@@ -149,7 +150,7 @@ class ShareControllerTest {
         val activityContext: Context = mockk<Activity>()
         val testController = DefaultShareController(
             activityContext, shareSubject, shareData, mockk(), mockk(),
-            mockk(), mockk(), recentAppStorage, testCoroutineScope, testDispatcher,
+            mockk(), mockk(), mockk(), recentAppStorage, testCoroutineScope, testDispatcher,
             FenixFxAEntryPoint.ShareMenu, dismiss,
         )
 
@@ -176,7 +177,7 @@ class ShareControllerTest {
         val activityContext: Context = mockk<Activity>()
         val testController = DefaultShareController(
             activityContext, shareSubject, shareData, mockk(), mockk(),
-            mockk(), mockk(), recentAppStorage, testCoroutineScope, testDispatcher,
+            mockk(), mockk(), mockk(), recentAppStorage, testCoroutineScope, testDispatcher,
             FenixFxAEntryPoint.ShareMenu, dismiss,
         )
 
@@ -206,6 +207,7 @@ class ShareControllerTest {
             shareData = shareData,
             sendTabUseCases = mockk(),
             saveToPdfUseCase = mockk(),
+            printUseCase = mockk(),
             snackbar = snackbar,
             navController = mockk(),
             recentAppsStorage = recentAppStorage,
@@ -243,6 +245,7 @@ class ShareControllerTest {
             shareData = shareData,
             sendTabUseCases = mockk(),
             saveToPdfUseCase = mockk(),
+            printUseCase = mockk(),
             snackbar = snackbar,
             navController = mockk(),
             recentAppsStorage = recentAppStorage,
@@ -272,6 +275,7 @@ class ShareControllerTest {
             shareData = shareData,
             sendTabUseCases = mockk(),
             saveToPdfUseCase = saveToPdfUseCase,
+            printUseCase = mockk(),
             snackbar = snackbar,
             navController = mockk(),
             recentAppsStorage = recentAppStorage,
@@ -289,6 +293,36 @@ class ShareControllerTest {
     }
 
     @Test
+    fun `WHEN handlePrint close the dialog and print the page AND send tapped telemetry`() {
+        val testController = DefaultShareController(
+            context = mockk(),
+            shareSubject = shareSubject,
+            shareData = shareData,
+            sendTabUseCases = mockk(),
+            saveToPdfUseCase = mockk(),
+            printUseCase = printUseCase,
+            snackbar = snackbar,
+            navController = mockk(),
+            recentAppsStorage = recentAppStorage,
+            viewLifecycleScope = testCoroutineScope,
+            dispatcher = testDispatcher,
+            dismiss = dismiss,
+        )
+
+        testController.handlePrint("tabID")
+
+        verify {
+            printUseCase.invoke("tabID")
+            dismiss(ShareController.Result.DISMISSED)
+        }
+
+        assertNotNull(Events.shareMenuAction.testGetValue())
+        val printTapped = Events.shareMenuAction.testGetValue()!!
+        assertEquals(1, printTapped.size)
+        assertEquals("print", printTapped.single().extra?.getValue("item"))
+    }
+
+    @Test
     fun `getShareSubject should return the shareSubject when shareSubject is not null`() {
         val activityContext: Context = mockk<Activity>()
         val testController = DefaultShareController(
@@ -297,6 +331,7 @@ class ShareControllerTest {
             shareData = shareData,
             sendTabUseCases = mockk(),
             saveToPdfUseCase = mockk(),
+            printUseCase = mockk(),
             snackbar = mockk(),
             navController = mockk(),
             recentAppsStorage = recentAppStorage,
@@ -317,6 +352,7 @@ class ShareControllerTest {
             shareData = shareData,
             sendTabUseCases = mockk(),
             saveToPdfUseCase = mockk(),
+            printUseCase = mockk(),
             snackbar = mockk(),
             navController = mockk(),
             recentAppsStorage = recentAppStorage,
@@ -341,6 +377,7 @@ class ShareControllerTest {
             shareData = partialTitlesShareData,
             sendTabUseCases = mockk(),
             saveToPdfUseCase = mockk(),
+            printUseCase = mockk(),
             snackbar = mockk(),
             navController = mockk(),
             recentAppsStorage = recentAppStorage,
@@ -365,6 +402,7 @@ class ShareControllerTest {
             shareData = noTitleShareData,
             sendTabUseCases = mockk(),
             saveToPdfUseCase = mockk(),
+            printUseCase = mockk(),
             snackbar = mockk(),
             navController = mockk(),
             recentAppsStorage = recentAppStorage,
@@ -389,6 +427,7 @@ class ShareControllerTest {
             shareData = noTitleShareData,
             sendTabUseCases = mockk(),
             saveToPdfUseCase = mockk(),
+            printUseCase = mockk(),
             snackbar = mockk(),
             navController = mockk(),
             recentAppsStorage = recentAppStorage,
@@ -553,6 +592,7 @@ class ShareControllerTest {
             shareData = listOf(ShareData(url = "url0", title = "title0")),
             sendTabUseCases = mockk(),
             saveToPdfUseCase = mockk(),
+            printUseCase = mockk(),
             snackbar = mockk(),
             navController = mockk(),
             recentAppsStorage = mockk(),
@@ -590,6 +630,7 @@ class ShareControllerTest {
             shareData = shareData,
             sendTabUseCases = sendTabUseCases,
             saveToPdfUseCase = mockk(),
+            printUseCase = mockk(),
             snackbar = snackbar,
             navController = navController,
             recentAppsStorage = recentAppStorage,
@@ -615,6 +656,7 @@ class ShareControllerTest {
             shareData = shareData,
             sendTabUseCases = sendTabUseCases,
             saveToPdfUseCase = mockk(),
+            printUseCase = mockk(),
             snackbar = snackbar,
             navController = navController,
             recentAppsStorage = recentAppStorage,

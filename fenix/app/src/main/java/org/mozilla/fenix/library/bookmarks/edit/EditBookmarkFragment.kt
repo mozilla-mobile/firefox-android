@@ -37,12 +37,12 @@ import mozilla.components.support.ktx.android.content.getColorFromAttr
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import mozilla.components.support.ktx.android.view.showKeyboard
 import mozilla.components.support.ktx.kotlin.toShortUrl
-import mozilla.components.ui.widgets.withCenterAlignedButtons
 import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.GleanMetrics.BookmarksManagement
 import org.mozilla.fenix.NavHostActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
+import org.mozilla.fenix.components.metrics.MetricsUtils
 import org.mozilla.fenix.databinding.FragmentEditBookmarkBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getRootView
@@ -222,6 +222,7 @@ class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark), MenuProv
                     lifecycleScope.launch(IO) {
                         requireComponents.core.bookmarksStorage.deleteNode(args.guidToEdit)
                         BookmarksManagement.removed.record(NoExtras())
+                        MetricsUtils.recordBookmarkMetrics(MetricsUtils.BookmarkAction.DELETE, METRIC_SOURCE)
 
                         launch(Main) {
                             Navigation.findNavController(requireActivity(), R.id.container)
@@ -245,7 +246,7 @@ class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark), MenuProv
                     }
                     dialog.dismiss()
                 }
-                create().withCenterAlignedButtons()
+                create()
             }.show()
         }
     }
@@ -311,5 +312,9 @@ class EditBookmarkFragment : Fragment(R.layout.fragment_edit_bookmark), MenuProv
         super.onDestroyView()
 
         _binding = null
+    }
+
+    companion object {
+        private const val METRIC_SOURCE = "bookmark_edit_page"
     }
 }

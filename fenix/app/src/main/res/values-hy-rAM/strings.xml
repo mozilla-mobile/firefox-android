@@ -299,51 +299,51 @@
     <!-- Text for the button to not request notification permission on the device and dismiss the dialog -->
     <string name="onboarding_home_enable_notifications_negative_button">Ոչ հիմա</string>
 
-    <!-- Juno first user onboarding flow experiment -->
+    <!-- Juno first user onboarding flow experiment, strings are marked unused as they are only referenced by Nimbus experiments. -->
     <!-- Title for set firefox as default browser screen.
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="juno_onboarding_default_browser_title">Դարձրեք %s-ը ձեր հիմնական դիտարկիչը</string>
+    <string name="juno_onboarding_default_browser_title" moz:RemovedIn="117" tools:ignore="UnusedResources">Դարձրեք %s-ը ձեր հիմնական դիտարկիչը</string>
     <!-- Title for set firefox as default browser screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
         Note: The word "Firefox" should NOT be translated -->
     <string name="juno_onboarding_default_browser_title_nimbus" tools:ignore="UnusedResources">Դարձրեք Firefox-ը ձեր հիմնական դիտարկիչը</string>
     <!-- Description for set firefox as default browser screen.
         The first parameter is the Firefox brand name.
         The second parameter is the string with key "juno_onboarding_default_browser_description_link_text". -->
-    <string name="juno_onboarding_default_browser_description">%1$s-ը մարդկանց վեր է դասում շահույթից և պաշտպանում է ձեր գաղտնիությունը՝ արգելափակելով միջկայքի հետագծիչները:\n\nԻմացեք ավելին մեր %2$s-ում:</string>
+    <string name="juno_onboarding_default_browser_description" moz:RemovedIn="117" tools:ignore="UnusedResources">%1$s-ը մարդկանց վեր է դասում շահույթից և պաշտպանում է ձեր գաղտնիությունը՝ արգելափակելով միջկայքի հետագծիչները:\n\nԻմացեք ավելին մեր %2$s-ում:</string>
     <!-- Description for set firefox as default browser screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
         Note: The word "Firefox" should NOT be translated -->
     <string name="juno_onboarding_default_browser_description_nimbus" tools:ignore="UnusedResources">Firefox-ը մարդկանց վեր է դասում շահույթից և պաշտպանում է ձեր գաղտնիությունը՝ արգելափակելով միջկայքի հետագծիչները:\n\nԻմացեք ավելին մեր գաղտնիության ծանուցումներում:</string>
     <!-- Text for the link to the privacy notice webpage for set as firefox default browser screen.
     This is part of the string with the key "juno_onboarding_default_browser_description". -->
-    <string name="juno_onboarding_default_browser_description_link_text">գաղտնիության ծանուցում</string>
+    <string name="juno_onboarding_default_browser_description_link_text" tools:ignore="UnusedResources">գաղտնիության ծանուցում</string>
     <!-- Text for the button to set firefox as default browser on the device -->
-    <string name="juno_onboarding_default_browser_positive_button">Կայել որպես սկզբնադիր դիտարկիչ</string>
+    <string name="juno_onboarding_default_browser_positive_button" tools:ignore="UnusedResources">Կայել որպես սկզբնադիր դիտարկիչ</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
-    <string name="juno_onboarding_default_browser_negative_button">Ոչ հիմա</string>
+    <string name="juno_onboarding_default_browser_negative_button" tools:ignore="UnusedResources">Ոչ հիմա</string>
     <!-- Title for sign in to sync screen. -->
-    <string name="juno_onboarding_sign_in_title">Անցեք հեռախոսից նոութբուք և հետ</string>
+    <string name="juno_onboarding_sign_in_title" tools:ignore="UnusedResources">Անցեք հեռախոսից նոութբուք և հետ</string>
     <!-- Description for sign in to sync screen. -->
-    <string name="juno_onboarding_sign_in_description">Ձեռք բերեք ներդիրներն ու գաղտնաբառերը ձեր մյուս սարքերից՝ շարունակելու այնտեղից, որտեղ թողել եք:</string>
+    <string name="juno_onboarding_sign_in_description" tools:ignore="UnusedResources">Ձեռք բերեք ներդիրներն ու գաղտնաբառերը ձեր մյուս սարքերից՝ շարունակելու այնտեղից, որտեղ թողել եք:</string>
     <!-- Text for the button to sign in to sync on the device -->
-    <string name="juno_onboarding_sign_in_positive_button">Մուտք գործել</string>
+    <string name="juno_onboarding_sign_in_positive_button" tools:ignore="UnusedResources">Մուտք գործել</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
-    <string name="juno_onboarding_sign_in_negative_button">Ոչ հիմա</string>
+    <string name="juno_onboarding_sign_in_negative_button" tools:ignore="UnusedResources">Ոչ հիմա</string>
     <!-- Title for enable notification permission screen.
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="juno_onboarding_enable_notifications_title">Ծանուցումներն օգնում են ձեզ ավելին անել %s-ի հետ</string>
+    <string name="juno_onboarding_enable_notifications_title" moz:RemovedIn="117" tools:ignore="UnusedResources">Ծանուցումներն օգնում են ձեզ ավելին անել %s-ի հետ</string>
     <!-- Title for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
         Note: The word "Firefox" should NOT be translated -->
     <string name="juno_onboarding_enable_notifications_title_nimbus" tools:ignore="UnusedResources">Ծանուցումներն օգնում են ձեզ ավելին անել Firefox-ի հետ</string>
     <!-- Description for enable notification permission screen.
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="juno_onboarding_enable_notifications_description">Ուղարկեք ներդիրներ սարքերի միջև, կառավարեք ներբեռնումները և ստացեք խորհուրդներ %s-ից առավելագույնը քաղելու վերաբերյալ:</string>
+    <string name="juno_onboarding_enable_notifications_description" moz:RemovedIn="117" tools:ignore="UnusedResources">Ուղարկեք ներդիրներ սարքերի միջև, կառավարեք ներբեռնումները և ստացեք խորհուրդներ %s-ից առավելագույնը քաղելու վերաբերյալ:</string>
     <!-- Description for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
        Note: The word "Firefox" should NOT be translated   -->
     <string name="juno_onboarding_enable_notifications_description_nimbus" tools:ignore="UnusedResources">Ուղարկեք ներդիրներ սարքերի միջև, կառավարեք ներբեռնումները և ստացեք խորհուրդներ Firefox-ից առավելագույնը քաղելու վերաբերյալ:</string>
     <!-- Text for the button to request notification permission on the device -->
-    <string name="juno_onboarding_enable_notifications_positive_button">Միացնել ծանուցումները</string>
+    <string name="juno_onboarding_enable_notifications_positive_button" tools:ignore="UnusedResources">Միացնել ծանուցումները</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
-    <string name="juno_onboarding_enable_notifications_negative_button">Ոչ հիմա</string>
+    <string name="juno_onboarding_enable_notifications_negative_button" tools:ignore="UnusedResources">Ոչ հիմա</string>
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. The first parameter is the name of the application.-->
@@ -364,13 +364,13 @@
     <!-- Preference category for all links about Fenix -->
     <string name="preferences_category_about">Ծրագրի մասին</string>
     <!-- Preference category for settings related to changing the default search engine -->
-    <string name="preferences_category_select_default_search_engine" tools:ignore="UnusedResources">Ընտրեք մեկը</string>
+    <string name="preferences_category_select_default_search_engine">Ընտրեք մեկը</string>
     <!-- Preference for settings related to managing search shortcuts for the quick search menu -->
-    <string name="preferences_manage_search_shortcuts" tools:ignore="UnusedResources">Կառավարել որոնման դյուրանցումները</string>
+    <string name="preferences_manage_search_shortcuts">Կառավարել որոնման դյուրանցումները</string>
     <!-- Summary for preference for settings related to managing search shortcuts for the quick search menu -->
-    <string name="preferences_manage_search_shortcuts_summary" tools:ignore="UnusedResources">Խմբագրել շարժիչները, որոնք տեսանելի են որոնման ցանկում</string>
+    <string name="preferences_manage_search_shortcuts_summary">Խմբագրել շարժիչները, որոնք տեսանելի են որոնման ցանկում</string>
     <!-- Preference category for settings related to managing search shortcuts for the quick search menu -->
-    <string name="preferences_category_engines_in_search_menu" tools:ignore="UnusedResources">Որոնման ցանկում տեսանելի շարժիչներ</string>
+    <string name="preferences_category_engines_in_search_menu">Որոնման ցանկում տեսանելի շարժիչներ</string>
     <!-- Preference for settings related to changing the default search engine -->
     <string name="preferences_default_search_engine">Հիմնական որոնիչ</string>
     <!-- Preference for settings related to Search -->
@@ -423,17 +423,11 @@
     <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
     <string name="cookie_banner_handling_details_site_is_not_supported_request_support_button_2">Հարցում ուղարկել</string>
     <!-- Text for title indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
-    <string name="cookie_banner_handling_details_site_is_not_supported_title" moz:RemovedIn="114" tools:ignore="UnusedResources">Թխուկների դրոշակի կրճատում</string>
-    <!-- Text for title indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
     <string name="cookie_banner_handling_details_site_is_not_supported_title_2">Պահանջե՞լ աջակցություն այս կայքի համար:</string>
-    <!-- Label for the snackBar, after the user reports with success a website where cookie banner reducer did not work -->
-    <string name="cookie_banner_handling_report_site_snack_bar_text" moz:RemovedIn="114" tools:ignore="UnusedResources">Կայքին աջակցելու հայտ է ներկայացվել:</string>
     <!-- Label for the snackBar, after the user reports with success a website where cookie banner reducer did not work -->
     <string name="cookie_banner_handling_report_site_snack_bar_text_2">Հարցումն ուղարկված է</string>
     <!-- Text for indicating cookie banner handling is on this site, this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_on_for_site">Միացված է այս կայքի համար</string>
-    <!-- Text for indicating that a request for unsupported site was sent to Nimbus (it's a Mozilla library for experiments), this is shown as part of the protections panel with the tracking protection toggle -->
-    <string name="reduce_cookie_banner_unsupported_site_request_submitted" moz:RemovedIn="114" tools:ignore="UnusedResources">Կայքին աջակցելու հայտ է ներկայացվել</string>
     <!-- Text for indicating that a request for unsupported site was sent to Nimbus (it's a Mozilla library for experiments), this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_unsupported_site_request_submitted_2">Աջակցության հարցումն ուղարկվել է</string>
     <!-- Text for indicating cookie banner handling is currently not supported for this site, this is shown as part of the protections panel with the tracking protection toggle -->
@@ -442,8 +436,6 @@
     <string name="reduce_cookie_banner_details_panel_title_on_for_site">Միացնե՞լ Cookie Banner կրճատումը %1$s-ի համար:</string>
     <!-- Title text for a detail explanation indicating cookie banner handling is off this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
     <string name="reduce_cookie_banner_details_panel_title_off_for_site">Անջատե՞լ Cookie Banner կրճատումը %1$s-ի համար:</string>
-    <!-- Title text for a detail explanation indicating cookie banner reducer didn't work for the current site, this is shown as part of the cookie banner panel in the toolbar.-->
-    <string name="reduce_cookie_banner_details_panel_title_unsupported_site_request" moz:RemovedIn="114" tools:ignore="UnusedResources">Այս կայքը ներկայումս չի աջակցվում Թխուկների դրոշակի կրճատման կողմից: Ցանկանու՞մ եք, որ մեր թիմը վերանայի այս կայքը և հետագայում ավելացնի աջակցություն:</string>
     <!-- Title text for a detail explanation indicating cookie banner reducer didn't work for the current site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name-->
     <string name="reduce_cookie_banner_details_panel_title_unsupported_site_request_2">%1$s-ը չի կարող ինքնաշխատ մերժել թխուկների հարցումներն այս կայքում: Դուք կարող եք հարցում ուղարկել այս կայքին ապագայում աջակցելու համար:</string>
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
@@ -549,6 +541,11 @@
     <string name="preferences_open_links_in_apps_never">Երբեք</string>
     <!-- Preference for open download with an external download manager app -->
     <string name="preferences_external_download_manager">Ներբեռնումների արտաքին հավելված</string>
+    <!-- Preference for enabling gecko engine logs -->
+    <string name="preferences_enable_gecko_logs">Միացնել Gecko մատյանները</string>
+    <!-- Message to indicate users that we are quitting the application to apply the changes -->
+    <string name="quit_application">Փոփոխությունները գործադրելու համար դուրս է գալիս հավելվածից…</string>
+
     <!-- Preference for add_ons -->
     <string name="preferences_addons">Հավելումներ</string>
 
@@ -632,6 +629,8 @@
     <string name="addon_already_installed">Հավելումն արդեն տեղադրված է</string>
 
     <!-- Account Preferences -->
+    <!-- Preference for managing your account via accounts.firefox.com -->
+    <string name="preferences_manage_account">Կառավարել հաշիվը</string>
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">Համաժամեցնել</string>
     <!-- Preference category for sync -->
@@ -1201,8 +1200,14 @@
 
     <!-- Text for the Save to PDF feature in the share menu -->
     <string name="share_save_to_pdf">Պահել որպես PDF</string>
-    <!-- Text for error message when generating a PDF file Text for error message when generating a PDF file. -->
+    <!-- Text for error message when generating a PDF file Text. -->
     <string name="unable_to_save_to_pdf_error">Անհնար է ստեղծել PDF</string>
+    <!-- Text for standard error snackbar dismiss button. -->
+    <string name="standard_snackbar_error_dismiss">Բաց թողնել</string>
+    <!-- Text for error message when printing a page and it fails. -->
+    <string name="unable_to_print_error">Անհնար է տպել</string>
+    <!-- Text for the print feature in the share and browser menu -->
+    <string name="menu_print">Տպել</string>
     <!-- Sub-header in the dialog to share a link to another sync device -->
     <string name="share_device_subheader">Ուղարկել սարքի</string>
     <!-- Sub-header in the dialog to share a link to an app from the full list -->
@@ -1493,12 +1498,8 @@
     <string name="etp_settings">Պաշտպանության կարգավորումներ</string>
     <!-- Preference title for enhanced tracking protection settings -->
     <string name="preference_enhanced_tracking_protection">Ուժեղացված հետագծման պաշտպանություն</string>
-    <!-- Title for the description of enhanced tracking protection -->
-    <string name="preference_enhanced_tracking_protection_explanation_title" moz:removedIn="114" tools:ignore="UnusedResources">Դիտարկեք առանց Ձեզ հետևելու</string>
     <!-- Preference summary for enhanced tracking protection settings on/off switch -->
     <string name="preference_enhanced_tracking_protection_summary">Այժմ գործում է Total Cookie Protection-ը, որը մեր ամենահզոր պատնեշն է միջկայքի հետագծերի դեմ:</string>
-    <!-- Description of enhanced tracking protection. The first parameter is the name of the application (For example: Fenix) -->
-    <string name="preference_enhanced_tracking_protection_explanation" moz:removedIn="114" tools:ignore="UnusedResources">Ձեր տվյալները պահեք ձեզ մոտ: %s-ը պաշտպանում է ամենատարածված հետագծիչներից, որոնք հետևում են այն ամենին, ինչ որ անում եք առցանց:</string>
     <!-- Description of enhanced tracking protection. The parameter is the name of the application (For example: Firefox Fenix) -->
     <string name="preference_enhanced_tracking_protection_explanation_2">%s-ը պաշտպանում է ամենատարածված հետագծիչներից, որոնք հետևում են այն ամենին, ինչ որ անում եք առցանց:</string>
     <!-- Text displayed that links to website about enhanced tracking protection -->
@@ -1506,16 +1507,12 @@
     <!-- Preference for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_standard_default_1">Ստանդարտ (սկզբնադիր)</string>
     <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description_4" moz:removedIn="114" tools:ignore="UnusedResources">Հավասարակշռված է գաղտնիության և արտադրողականության միջև: Էջերը նորմալ են բեռնվում:</string>
-    <!-- Preference description for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_standard_description_5">Էջերը նորմալ կբեռնվեն, բայց արգելափակվելու են ավելի քիչ հետագծիչներ:</string>
     <!--  Accessibility text for the Standard protection information icon  -->
     <string name="preference_enhanced_tracking_protection_standard_info_button">Ինչն է արգելափակված հետագծման ստանդարտ պաշտպանությամբ</string>
     <!-- Preference for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict">Խիստ</string>
 
-    <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_description_3" moz:removedIn="114" tools:ignore="UnusedResources">Արգելափակում է ավելի շատ հետագծիչներ, որ էջերը արագ բեռնվեն, բայց էջի որոշ գործույթներ կարող են ընդհատվեն:</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict_description_4">Ավելի ուժեղ հետագծման պաշտպանություն և ավելի արագ արտադրողականություն, բայց որոշ կայքեր, հնարավոր է, նորմալ չաշխատեն:</string>
     <!--  Accessibility text for the Strict protection information icon  -->
@@ -1872,7 +1869,7 @@
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Ավելացնել որոնիչ</string>
     <!-- Content description (not visible, for screen readers etc.): Title for the button that navigates to add new engine screen -->
-    <string name="search_engine_add_custom_search_engine_button_content_description" tools:ignore="UnusedResources">Ավելացնել որոնիչ</string>
+    <string name="search_engine_add_custom_search_engine_button_content_description">Ավելացնել որոնիչ</string>
     <!-- Title of the Edit search engine screen -->
     <string name="search_engine_edit_custom_search_engine_title">Խմբագրել որոնիչը</string>
     <!-- Content description (not visible, for screen readers etc.): Title for the button to add a search engine in the action bar -->
@@ -1887,24 +1884,24 @@
     <!-- Text for the button to create a custom search engine on the Add search engine screen -->
     <string name="search_add_custom_engine_label_other">Այլ</string>
     <!-- Label for the TextField in which user enters custom search engine name -->
-    <string name="search_add_custom_engine_name_label" tools:ignore="UnusedResources">Անունը</string>
+    <string name="search_add_custom_engine_name_label">Անունը</string>
     <!-- Placeholder text shown in the Search Engine Name TextField before a user enters text -->
     <string name="search_add_custom_engine_name_hint">Անուն</string>
     <!-- Placeholder text shown in the Search Engine Name text field before a user enters text -->
-    <string name="search_add_custom_engine_name_hint_2" tools:ignore="UnusedResources">Որոնիչի անունը</string>
+    <string name="search_add_custom_engine_name_hint_2">Որոնիչի անունը</string>
     <!-- Label for the TextField in which user enters custom search engine URL -->
-    <string name="search_add_custom_engine_url_label" tools:ignore="UnusedResources">Որոնել տողի URL-ն</string>
+    <string name="search_add_custom_engine_url_label">Որոնել տողի URL-ն</string>
     <!-- Placeholder text shown in the Search String TextField before a user enters text -->
     <string name="search_add_custom_engine_search_string_hint">Օգտագործվող որոնման տողը </string>
     <!-- Placeholder text shown in the Search String TextField before a user enters text -->
-    <string name="search_add_custom_engine_search_string_hint_2" tools:ignore="UnusedResources">Որոնման համար օգտագործվող URL-ն</string>
+    <string name="search_add_custom_engine_search_string_hint_2">Որոնման համար օգտագործվող URL-ն</string>
     <!-- Description text for the Search String TextField. The %s is part of the string -->
     <string name="search_add_custom_engine_search_string_example" formatted="false">Հարցումը փոխարինել “%s”-ով: Օրինակ՝ \nhttps://www.google.com/search?q=%s</string>
     <!-- Accessibility description for the form in which details about the custom search engine are entered -->
     <string name="search_add_custom_engine_form_description">Հարմարեցված որոնիչի մանրամասներ</string>
 
     <!-- The text for the "Save" button for saving a custom search engine -->
-    <string name="search_custom_engine_save_button" tools:ignore="UnusedResources">Պահել</string>
+    <string name="search_custom_engine_save_button">Պահել</string>
 
     <!-- Text shown when a user leaves the name field empty -->
     <string name="search_add_custom_engine_error_empty_name">Մուտքագրել որոնիչի անունը</string>

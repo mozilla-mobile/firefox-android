@@ -193,7 +193,7 @@
     <!-- Content description (not visible, for screen readers etc.) for the Resync tabs button -->
     <string name="resync_button_content_description">Neu synchronisieren</string>
     <!-- Browser menu button that opens the find in page menu -->
-    <string name="browser_menu_find_in_page">In Seite suchen</string>
+    <string name="browser_menu_find_in_page">Seite durchsuchen</string>
     <!-- Browser menu button that saves the current tab to a collection -->
     <string name="browser_menu_save_to_collection_2">In Sammlung speichern</string>
     <!-- Browser menu button that open a share menu to share the current site -->
@@ -306,51 +306,51 @@
     <!-- Text for the button to not request notification permission on the device and dismiss the dialog -->
     <string name="onboarding_home_enable_notifications_negative_button">Nicht jetzt</string>
 
-    <!-- Juno first user onboarding flow experiment -->
+    <!-- Juno first user onboarding flow experiment, strings are marked unused as they are only referenced by Nimbus experiments. -->
     <!-- Title for set firefox as default browser screen.
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="juno_onboarding_default_browser_title">Machen Sie %s zu Ihrem Browser Nr. 1.</string>
+    <string name="juno_onboarding_default_browser_title" moz:RemovedIn="117" tools:ignore="UnusedResources">Machen Sie %s zu Ihrem Browser Nr. 1.</string>
     <!-- Title for set firefox as default browser screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
         Note: The word "Firefox" should NOT be translated -->
     <string name="juno_onboarding_default_browser_title_nimbus" tools:ignore="UnusedResources">Machen Sie Firefox zu Ihrem Browser Nr. 1.</string>
     <!-- Description for set firefox as default browser screen.
         The first parameter is the Firefox brand name.
         The second parameter is the string with key "juno_onboarding_default_browser_description_link_text". -->
-    <string name="juno_onboarding_default_browser_description">%1$s stellt Menschen über Gewinne und schützt Ihre Privatsphäre, indem er websiteübergreifende Tracker blockiert.\n\nErfahren Sie mehr in unserem %2$s.</string>
+    <string name="juno_onboarding_default_browser_description" moz:RemovedIn="117" tools:ignore="UnusedResources">%1$s stellt Menschen über Gewinne und schützt Ihre Privatsphäre, indem er websiteübergreifende Tracker blockiert.\n\nErfahren Sie mehr in unserem %2$s.</string>
     <!-- Description for set firefox as default browser screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
         Note: The word "Firefox" should NOT be translated -->
     <string name="juno_onboarding_default_browser_description_nimbus" tools:ignore="UnusedResources">Firefox stellt Menschen über Gewinne und schützt Ihre Privatsphäre, indem er websiteübergreifende Tracker blockiert.\n\nErfahren Sie mehr in unserem Datenschutzhinweis.</string>
     <!-- Text for the link to the privacy notice webpage for set as firefox default browser screen.
     This is part of the string with the key "juno_onboarding_default_browser_description". -->
-    <string name="juno_onboarding_default_browser_description_link_text">Datenschutzhinweis</string>
+    <string name="juno_onboarding_default_browser_description_link_text" tools:ignore="UnusedResources">Datenschutzhinweis</string>
     <!-- Text for the button to set firefox as default browser on the device -->
-    <string name="juno_onboarding_default_browser_positive_button">Als Standardbrowser festlegen</string>
+    <string name="juno_onboarding_default_browser_positive_button" tools:ignore="UnusedResources">Als Standardbrowser festlegen</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
-    <string name="juno_onboarding_default_browser_negative_button">Nicht jetzt</string>
+    <string name="juno_onboarding_default_browser_negative_button" tools:ignore="UnusedResources">Nicht jetzt</string>
     <!-- Title for sign in to sync screen. -->
-    <string name="juno_onboarding_sign_in_title">Wechseln Sie vom Handy zum Laptop und zurück</string>
+    <string name="juno_onboarding_sign_in_title" tools:ignore="UnusedResources">Wechseln Sie vom Handy zum Laptop und zurück</string>
     <!-- Description for sign in to sync screen. -->
-    <string name="juno_onboarding_sign_in_description">Holen Sie sich die Tabs und Passwörter von Ihren anderen Geräten, um dort weiterzumachen, wo Sie aufgehört haben.</string>
+    <string name="juno_onboarding_sign_in_description" tools:ignore="UnusedResources">Holen Sie sich die Tabs und Passwörter von Ihren anderen Geräten, um dort weiterzumachen, wo Sie aufgehört haben.</string>
     <!-- Text for the button to sign in to sync on the device -->
-    <string name="juno_onboarding_sign_in_positive_button">Anmelden</string>
+    <string name="juno_onboarding_sign_in_positive_button" tools:ignore="UnusedResources">Anmelden</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
-    <string name="juno_onboarding_sign_in_negative_button">Nicht jetzt</string>
+    <string name="juno_onboarding_sign_in_negative_button" tools:ignore="UnusedResources">Nicht jetzt</string>
     <!-- Title for enable notification permission screen.
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="juno_onboarding_enable_notifications_title">Benachrichtigungen helfen Ihnen, mehr aus %s zu machen</string>
+    <string name="juno_onboarding_enable_notifications_title" moz:RemovedIn="117" tools:ignore="UnusedResources">Benachrichtigungen helfen Ihnen, mehr aus %s zu machen</string>
     <!-- Title for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
         Note: The word "Firefox" should NOT be translated -->
     <string name="juno_onboarding_enable_notifications_title_nimbus" tools:ignore="UnusedResources">Benachrichtigungen helfen Ihnen, mehr aus Firefox zu machen</string>
     <!-- Description for enable notification permission screen.
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="juno_onboarding_enable_notifications_description">Versenden Sie Tabs zwischen Geräten, verwalten Sie Downloads und erhalten Sie Tipps zur optimalen Nutzung von %s.</string>
+    <string name="juno_onboarding_enable_notifications_description" moz:RemovedIn="117" tools:ignore="UnusedResources">Versenden Sie Tabs zwischen Geräten, verwalten Sie Downloads und erhalten Sie Tipps zur optimalen Nutzung von %s.</string>
     <!-- Description for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
        Note: The word "Firefox" should NOT be translated   -->
     <string name="juno_onboarding_enable_notifications_description_nimbus" tools:ignore="UnusedResources">Versenden Sie Tabs zwischen Geräten, verwalten Sie Downloads und erhalten Sie Tipps zur optimalen Nutzung von Firefox.</string>
     <!-- Text for the button to request notification permission on the device -->
-    <string name="juno_onboarding_enable_notifications_positive_button">Benachrichtigungen aktivieren</string>
+    <string name="juno_onboarding_enable_notifications_positive_button" tools:ignore="UnusedResources">Benachrichtigungen aktivieren</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
-    <string name="juno_onboarding_enable_notifications_negative_button">Nicht jetzt</string>
+    <string name="juno_onboarding_enable_notifications_negative_button" tools:ignore="UnusedResources">Nicht jetzt</string>
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. The first parameter is the name of the application.-->
@@ -372,13 +372,13 @@
     <!-- Preference category for all links about Fenix -->
     <string name="preferences_category_about">Über</string>
     <!-- Preference category for settings related to changing the default search engine -->
-    <string name="preferences_category_select_default_search_engine" tools:ignore="UnusedResources">Eine Option auswählen</string>
+    <string name="preferences_category_select_default_search_engine">Eine Option auswählen</string>
     <!-- Preference for settings related to managing search shortcuts for the quick search menu -->
-    <string name="preferences_manage_search_shortcuts" tools:ignore="UnusedResources">Kürzel für die Suche verwalten</string>
+    <string name="preferences_manage_search_shortcuts">Kürzel für die Suche verwalten</string>
     <!-- Summary for preference for settings related to managing search shortcuts for the quick search menu -->
-    <string name="preferences_manage_search_shortcuts_summary" tools:ignore="UnusedResources">Im Suchmenü sichtbare Suchmaschinen bearbeiten</string>
+    <string name="preferences_manage_search_shortcuts_summary">Im Suchmenü sichtbare Suchmaschinen bearbeiten</string>
     <!-- Preference category for settings related to managing search shortcuts for the quick search menu -->
-    <string name="preferences_category_engines_in_search_menu" tools:ignore="UnusedResources">Im Suchmenü sichtbare Suchmaschinen</string>
+    <string name="preferences_category_engines_in_search_menu">Im Suchmenü sichtbare Suchmaschinen</string>
     <!-- Preference for settings related to changing the default search engine -->
     <string name="preferences_default_search_engine">Standardsuchmaschine</string>
     <!-- Preference for settings related to Search -->
@@ -431,17 +431,11 @@
     <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
     <string name="cookie_banner_handling_details_site_is_not_supported_request_support_button_2">Anfrage senden</string>
     <!-- Text for title indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
-    <string name="cookie_banner_handling_details_site_is_not_supported_title" moz:RemovedIn="114" tools:ignore="UnusedResources">Reduzierung von Cookie-Bannern</string>
-    <!-- Text for title indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
     <string name="cookie_banner_handling_details_site_is_not_supported_title_2">Unterstützung für diese Website anfordern?</string>
-    <!-- Label for the snackBar, after the user reports with success a website where cookie banner reducer did not work -->
-    <string name="cookie_banner_handling_report_site_snack_bar_text" moz:RemovedIn="114" tools:ignore="UnusedResources">Anfrage an Hilfe-Website übermittelt.</string>
     <!-- Label for the snackBar, after the user reports with success a website where cookie banner reducer did not work -->
     <string name="cookie_banner_handling_report_site_snack_bar_text_2">Anfrage gesendet</string>
     <!-- Text for indicating cookie banner handling is on this site, this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_on_for_site">Für diese Website aktiviert</string>
-    <!-- Text for indicating that a request for unsupported site was sent to Nimbus (it's a Mozilla library for experiments), this is shown as part of the protections panel with the tracking protection toggle -->
-    <string name="reduce_cookie_banner_unsupported_site_request_submitted" moz:RemovedIn="114" tools:ignore="UnusedResources">Anfrage an Hilfe-Website übermittelt</string>
     <!-- Text for indicating that a request for unsupported site was sent to Nimbus (it's a Mozilla library for experiments), this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_unsupported_site_request_submitted_2">Hilfeanfrage gesendet</string>
     <!-- Text for indicating cookie banner handling is currently not supported for this site, this is shown as part of the protections panel with the tracking protection toggle -->
@@ -450,8 +444,6 @@
     <string name="reduce_cookie_banner_details_panel_title_on_for_site">Cookie-Banner-Reduzierung für %1$s aktivieren?</string>
     <!-- Title text for a detail explanation indicating cookie banner handling is off this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
     <string name="reduce_cookie_banner_details_panel_title_off_for_site">Cookie-Banner-Reduzierung für %1$s deaktivieren?</string>
-    <!-- Title text for a detail explanation indicating cookie banner reducer didn't work for the current site, this is shown as part of the cookie banner panel in the toolbar.-->
-    <string name="reduce_cookie_banner_details_panel_title_unsupported_site_request" moz:RemovedIn="114" tools:ignore="UnusedResources">Diese Website wird derzeit nicht von der Cookie-Banner-Reduktion unterstützt. Soll unser Team diese Website zu überprüfen und in Zukunft Unterstützung hinzuzufügen?</string>
     <!-- Title text for a detail explanation indicating cookie banner reducer didn't work for the current site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name-->
     <string name="reduce_cookie_banner_details_panel_title_unsupported_site_request_2">%1$s kann Cookie-Anfragen auf dieser Website nicht automatisch ablehnen. Sie können eine Anfrage senden, um diese Website in Zukunft zu unterstützen.</string>
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
@@ -557,6 +549,11 @@
     <string name="preferences_open_links_in_apps_never">Nie</string>
     <!-- Preference for open download with an external download manager app -->
     <string name="preferences_external_download_manager">Externer Download-Manager</string>
+    <!-- Preference for enabling gecko engine logs -->
+    <string name="preferences_enable_gecko_logs">Gecko-Protokolle aktivieren</string>
+    <!-- Message to indicate users that we are quitting the application to apply the changes -->
+    <string name="quit_application">Beenden der Anwendung, um Änderungen zu übernehmen…</string>
+
     <!-- Preference for add_ons -->
     <string name="preferences_addons">Add-ons</string>
 
@@ -640,6 +637,8 @@
     <string name="addon_already_installed">Add-on ist bereits installiert</string>
 
     <!-- Account Preferences -->
+    <!-- Preference for managing your account via accounts.firefox.com -->
+    <string name="preferences_manage_account">Benutzerkonto verwalten</string>
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">Jetzt synchronisieren</string>
     <!-- Preference category for sync -->
@@ -1231,8 +1230,14 @@
     <string name="share_button_content_description">Teilen</string>
     <!-- Text for the Save to PDF feature in the share menu -->
     <string name="share_save_to_pdf">Als PDF speichern</string>
-    <!-- Text for error message when generating a PDF file Text for error message when generating a PDF file. -->
+    <!-- Text for error message when generating a PDF file Text. -->
     <string name="unable_to_save_to_pdf_error">PDF kann nicht generiert werden</string>
+    <!-- Text for standard error snackbar dismiss button. -->
+    <string name="standard_snackbar_error_dismiss">Schließen</string>
+    <!-- Text for error message when printing a page and it fails. -->
+    <string name="unable_to_print_error">Drucken nicht möglich</string>
+    <!-- Text for the print feature in the share and browser menu -->
+    <string name="menu_print">Drucken</string>
     <!-- Sub-header in the dialog to share a link to another sync device -->
     <string name="share_device_subheader">An Gerät senden</string>
     <!-- Sub-header in the dialog to share a link to an app from the full list -->
@@ -1529,12 +1534,8 @@
     <string name="etp_settings">Schutzeinstellungen</string>
     <!-- Preference title for enhanced tracking protection settings -->
     <string name="preference_enhanced_tracking_protection">Verbesserter Schutz vor Aktivitätenverfolgung</string>
-    <!-- Title for the description of enhanced tracking protection -->
-    <string name="preference_enhanced_tracking_protection_explanation_title" moz:removedIn="114" tools:ignore="UnusedResources">Surfen Sie, ohne verfolgt zu werden</string>
     <!-- Preference summary for enhanced tracking protection settings on/off switch -->
     <string name="preference_enhanced_tracking_protection_summary">Jetzt mit Total Cookie Protection, unserer bisher stärksten Barriere gegen website-übergreifendes Tracking.</string>
-    <!-- Description of enhanced tracking protection. The first parameter is the name of the application (For example: Fenix) -->
-    <string name="preference_enhanced_tracking_protection_explanation" moz:removedIn="114" tools:ignore="UnusedResources">Behalten Sie Ihre Daten für sich. %s schützt Sie vor vielen der gängigsten Skripte, die Ihre Online-Aktivitäten verfolgen.</string>
     <!-- Description of enhanced tracking protection. The parameter is the name of the application (For example: Firefox Fenix) -->
     <string name="preference_enhanced_tracking_protection_explanation_2">%s schützt Sie vor vielen der gängigsten Skripte, die Ihre Online-Aktivitäten verfolgen.</string>
     <!-- Text displayed that links to website about enhanced tracking protection -->
@@ -1542,15 +1543,11 @@
     <!-- Preference for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_standard_default_1">Standard</string>
     <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description_4" moz:removedIn="114" tools:ignore="UnusedResources">Ausgewogen zwischen Datenschutz und Leistung. Seiten laden normal.</string>
-    <!-- Preference description for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_standard_description_5">Die Seiten werden normal geladen, aber weniger Tracker blockiert.</string>
     <!--  Accessibility text for the Standard protection information icon  -->
     <string name="preference_enhanced_tracking_protection_standard_info_button">Was wird durch den Standard-Tracking-Schutz blockiert?</string>
     <!-- Preference for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict">Streng</string>
-    <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_description_3" moz:removedIn="114" tools:ignore="UnusedResources">Blockiert weitere Elemente zur Aktivitätenverfolgung, sodass Seiten schneller geladen werden, aber einige Seiten funktionieren dann eventuell nicht richtig.</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict_description_4">Stärkerer Tracking-Schutz und schnellere Leistung, aber einige Websites funktionieren möglicherweise nicht richtig.</string>
     <!--  Accessibility text for the Strict protection information icon  -->
@@ -1910,7 +1907,7 @@
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Suchmaschine hinzufügen</string>
     <!-- Content description (not visible, for screen readers etc.): Title for the button that navigates to add new engine screen -->
-    <string name="search_engine_add_custom_search_engine_button_content_description" tools:ignore="UnusedResources">Neue Suchmaschine hinzufügen</string>
+    <string name="search_engine_add_custom_search_engine_button_content_description">Neue Suchmaschine hinzufügen</string>
     <!-- Title of the Edit search engine screen -->
     <string name="search_engine_edit_custom_search_engine_title">Suchmaschine bearbeiten</string>
     <!-- Content description (not visible, for screen readers etc.): Title for the button to add a search engine in the action bar -->
@@ -1925,25 +1922,31 @@
     <!-- Text for the button to create a custom search engine on the Add search engine screen -->
     <string name="search_add_custom_engine_label_other">Andere</string>
     <!-- Label for the TextField in which user enters custom search engine name -->
-    <string name="search_add_custom_engine_name_label" tools:ignore="UnusedResources">Name</string>
+    <string name="search_add_custom_engine_name_label">Name</string>
     <!-- Placeholder text shown in the Search Engine Name TextField before a user enters text -->
     <string name="search_add_custom_engine_name_hint">Name</string>
     <!-- Placeholder text shown in the Search Engine Name text field before a user enters text -->
-    <string name="search_add_custom_engine_name_hint_2" tools:ignore="UnusedResources">Name der Suchmaschine</string>
+    <string name="search_add_custom_engine_name_hint_2">Name der Suchmaschine</string>
     <!-- Label for the TextField in which user enters custom search engine URL -->
-    <string name="search_add_custom_engine_url_label" tools:ignore="UnusedResources">Such-String-URL</string>
+    <string name="search_add_custom_engine_url_label">Such-String-URL</string>
     <!-- Placeholder text shown in the Search String TextField before a user enters text -->
     <string name="search_add_custom_engine_search_string_hint">Zu verwendender Such-String</string>
     <!-- Placeholder text shown in the Search String TextField before a user enters text -->
-    <string name="search_add_custom_engine_search_string_hint_2" tools:ignore="UnusedResources">Für die Suche zu verwendende URL</string>
+    <string name="search_add_custom_engine_search_string_hint_2">Für die Suche zu verwendende URL</string>
     <!-- Description text for the Search String TextField. The %s is part of the string -->
     <string name="search_add_custom_engine_search_string_example" formatted="false">Anfrage durch „%s“ ersetzen. Beispiel:\nhttps://www.google.com/search?q=%s</string>
 
     <!-- Accessibility description for the form in which details about the custom search engine are entered -->
     <string name="search_add_custom_engine_form_description">Details zur benutzerdefinierten Suchmaschine</string>
 
+    <!-- Label for the TextField in which user enters custom search engine suggestion URL -->
+    <string name="search_add_custom_engine_suggest_url_label">Suchvorschlags-API (optional)</string>
+    <!-- Placeholder text shown in the Search Suggestion String TextField before a user enters text -->
+    <string name="search_add_custom_engine_suggest_string_hint">API-URL für Suchvorschläge</string>
+    <!-- Description text for the Search Suggestion String TextField. The %s is part of the string -->
+    <string name="search_add_custom_engine_suggest_string_example" formatted="false">Anfrage durch „%s“ ersetzen. Beispiel:\nhttp://suggestqueries.google.com/complete/search?client=firefox&amp;q=%s</string>
     <!-- The text for the "Save" button for saving a custom search engine -->
-    <string name="search_custom_engine_save_button" tools:ignore="UnusedResources">Speichern</string>
+    <string name="search_custom_engine_save_button">Speichern</string>
 
     <!-- Text shown when a user leaves the name field empty -->
     <string name="search_add_custom_engine_error_empty_name">Name der Suchmaschine eingeben</string>

@@ -318,6 +318,61 @@ features:
         type: Map<String, Boolean>
         default: {}
 
+  splash-screen:
+    description: "A feature that extends splash screen duration, allowing additional data fetching time for the app's initial run."
+    variables:
+      enabled:
+        description: "If true, the feature is active."
+        type: Boolean
+        default: false
+      maximum_duration_ms:
+        description: The maximum amount of time in milliseconds the splashscreen will be visible while waiting for initialization calls to complete.
+        type: Int
+        default: 0
+
+  shopping-experience:
+    description: A feature that shows product review quality information.
+    variables:
+      enabled:
+        description: if true, the shopping experience feature is shown to the user.
+        type: Boolean
+        default: false
+    defaults:
+      - channel: developer
+        value:
+          enabled: true
+
+  print:
+    description: A feature for printing from the share or browser menu.
+    variables:
+      share-print-enabled:
+        description: If true, a print button from the share menu is available.
+        type: Boolean
+        default: true
+      browser-print-enabled:
+        description: If true, a print button from the browser menu is available.
+        type: Boolean
+        default: true
+
+  search-extra-params:
+    description: A feature that provides additional args for search.
+    variables:
+      enabled:
+        description: If true, the feature is active.
+        type: Boolean
+        default: false
+      search-engine:
+        description: The search engine name.
+        type: String
+        default: ""
+      feature-enabler:
+        description: The feature enabler param name with arg, NOTE this map could be empty.
+        type: Map<String, String>
+        default: {}
+      channel-id:
+        description: The channel Id param name with arg.
+        type: Map<String, String>
+        default: {}
 types:
   objects: {}
 

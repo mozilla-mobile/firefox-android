@@ -30,8 +30,6 @@ import org.mozilla.fenix.ui.robots.navigationToolbar
  */
 
 class SettingsAdvancedTest {
-    /* ktlint-disable no-blank-line-before-rbrace */ // This imposes unreadable grouping.
-
     private lateinit var mDevice: UiDevice
     private lateinit var mockWebServer: MockWebServer
 
@@ -83,22 +81,6 @@ class SettingsAdvancedTest {
             verifySettingsOptionSummary("Open links in apps", "Never")
         }.openOpenLinksInAppsMenu {
             verifyOpenLinksInAppsView("Never")
-        }
-    }
-
-    @SmokeTest
-    @Test
-    fun verifyOpenLinkInAppViewInPrivateBrowsingTest() {
-        homeScreen {
-        }.togglePrivateBrowsingMode()
-
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-            verifyOpenLinksInAppsButton()
-            verifySettingsOptionSummary("Open links in apps", "Never")
-        }.openOpenLinksInAppsMenu {
-            verifyPrivateOpenLinksInAppsView("Never")
         }
     }
 
@@ -181,6 +163,8 @@ class SettingsAdvancedTest {
             clickPageObject(itemWithResIdAndText("android:id/button2", "CANCEL"))
             waitForPageToLoad()
             verifyUrl("youtube.com")
+        }.openTabDrawer {
+            closeTab()
         }
 
         navigationToolbar {
@@ -224,6 +208,8 @@ class SettingsAdvancedTest {
             clickPageObject(itemWithResIdAndText("android:id/button2", "CANCEL"))
             waitForPageToLoad()
             verifyUrl("youtube.com")
+        }.openTabDrawer {
+            closeTab()
         }
 
         navigationToolbar {

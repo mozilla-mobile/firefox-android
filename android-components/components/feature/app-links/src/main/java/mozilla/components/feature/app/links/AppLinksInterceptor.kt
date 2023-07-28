@@ -11,6 +11,7 @@ import android.net.Uri
 import androidx.annotation.VisibleForTesting
 import mozilla.components.concept.engine.EngineSession
 import mozilla.components.concept.engine.request.RequestInterceptor
+import mozilla.components.feature.app.links.AppLinksUseCases.Companion.ALWAYS_ALLOW_SCHEMES
 import mozilla.components.feature.app.links.AppLinksUseCases.Companion.ALWAYS_DENY_SCHEMES
 import mozilla.components.feature.app.links.AppLinksUseCases.Companion.ENGINE_SUPPORTED_SCHEMES
 import mozilla.components.support.ktx.kotlin.tryGetHostFromUrl
@@ -52,15 +53,26 @@ class AppLinksInterceptor(
     private val context: Context,
     private val interceptLinkClicks: Boolean = false,
     private val engineSupportedSchemes: Set<String> = ENGINE_SUPPORTED_SCHEMES,
+    private val alwaysAllowedSchemes: Set<String> = ALWAYS_ALLOW_SCHEMES,
     private val alwaysDeniedSchemes: Set<String> = ALWAYS_DENY_SCHEMES,
-    private val launchInApp: () -> Boolean = { false },
+    private var launchInApp: () -> Boolean = { false },
     private val useCases: AppLinksUseCases = AppLinksUseCases(
         context,
-        launchInApp,
+        // passing launchInApp() in the lambda to make sure it will always get the updated value
+        { launchInApp() },
         alwaysDeniedSchemes = alwaysDeniedSchemes,
     ),
     private val launchFromInterceptor: Boolean = false,
 ) : RequestInterceptor {
+
+    /**
+     * Update launchInApp for this instance of AppLinksInterceptor
+     * @param launchInApp the new value of launchInApp
+     */
+    fun updateLaunchInApp(launchInApp: () -> Boolean) {
+        this.launchInApp = launchInApp
+    }
+
     @Suppress("ComplexMethod")
     override fun onLoadRequest(
         engineSession: EngineSession,
@@ -99,7 +111,7 @@ class AppLinksInterceptor(
         }
 
         val redirect = useCases.interceptedAppLinkRedirect(uri)
-        val result = handleRedirect(redirect, uri)
+        val result = handleRedirect(redirect, uri, alwaysAllowedSchemes.contains(uriScheme))
 
         if (redirect.isRedirect()) {
             if (launchFromInterceptor && result is RequestInterceptor.InterceptionResponse.AppIntent) {
@@ -119,10 +131,15 @@ class AppLinksInterceptor(
     internal fun handleRedirect(
         redirect: AppLinkRedirect,
         uri: String,
+        isAlwaysAllowedScheme: Boolean,
     ): RequestInterceptor.InterceptionResponse? {
         if (!launchInApp()) {
             redirect.fallbackUrl?.let {
                 return RequestInterceptor.InterceptionResponse.Url(it)
+            }
+
+            if (!isAlwaysAllowedScheme) {
+                return null
             }
         }
 

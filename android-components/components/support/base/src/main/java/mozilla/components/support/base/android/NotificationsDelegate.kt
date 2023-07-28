@@ -12,9 +12,12 @@ import android.os.RemoteException
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.Lifecycle
+import java.lang.ref.WeakReference
+import java.util.WeakHashMap
 
 typealias OnPermissionGranted = () -> Unit
 typealias OnPermissionRejected = () -> Unit
@@ -36,8 +39,10 @@ class NotificationsDelegate(
 ) {
     private var onPermissionGranted: OnPermissionGranted = { }
     private var onPermissionRejected: OnPermissionRejected = { }
-    private val notificationPermissionHandler: MutableMap<AppCompatActivity, ActivityResultLauncher<String>> =
-        mutableMapOf()
+
+    @VisibleForTesting
+    internal val notificationPermissionHandler:
+        WeakHashMap<AppCompatActivity, WeakReference<ActivityResultLauncher<String>>> = WeakHashMap()
 
     /**
      * Provides the context for a permission request.
@@ -53,7 +58,7 @@ class NotificationsDelegate(
                 }
             }
 
-        notificationPermissionHandler[activity] = activityResultLauncher
+        notificationPermissionHandler[activity] = WeakReference(activityResultLauncher)
     }
 
     /**
@@ -151,7 +156,7 @@ class NotificationsDelegate(
         } else {
             notificationPermissionHandler.entries.firstOrNull {
                 it.key.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)
-            }?.value?.launch(POST_NOTIFICATIONS)
+            }?.value?.get()?.launch(POST_NOTIFICATIONS)
         }
     }
 

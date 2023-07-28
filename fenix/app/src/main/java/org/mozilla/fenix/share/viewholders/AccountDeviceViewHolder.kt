@@ -14,7 +14,6 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.AccountShareListItemBinding
 import org.mozilla.fenix.share.ShareToAccountDevicesInteractor
 import org.mozilla.fenix.share.listadapters.SyncShareOption
-import org.mozilla.fenix.utils.Do
 
 class AccountDeviceViewHolder(
     itemView: View,
@@ -31,7 +30,7 @@ class AccountDeviceViewHolder(
 
     private fun bindClickListeners(option: SyncShareOption) {
         itemView.setOnClickListener {
-            Do exhaustive when (option) {
+            when (option) {
                 SyncShareOption.SignIn -> interactor.onSignIn()
                 SyncShareOption.AddNewDevice -> interactor.onAddNewDevice()
                 is SyncShareOption.SendAll -> interactor.onShareToAllDevices(option.devices)
@@ -69,22 +68,22 @@ class AccountDeviceViewHolder(
             when (option) {
                 SyncShareOption.SignIn -> Triple(
                     context.getText(R.string.sync_sign_in),
-                    R.drawable.mozac_ic_sync,
+                    R.drawable.mozac_ic_sync_24,
                     R.color.default_share_background,
                 )
                 SyncShareOption.Reconnect -> Triple(
                     context.getText(R.string.sync_reconnect),
-                    R.drawable.mozac_ic_warning,
+                    R.drawable.mozac_ic_warning_fill_24,
                     R.color.default_share_background,
                 )
                 SyncShareOption.Offline -> Triple(
                     context.getText(R.string.sync_offline),
-                    R.drawable.mozac_ic_warning,
+                    R.drawable.mozac_ic_warning_fill_24,
                     R.color.default_share_background,
                 )
                 SyncShareOption.AddNewDevice -> Triple(
                     context.getText(R.string.sync_connect_device),
-                    R.drawable.mozac_ic_new,
+                    R.drawable.mozac_ic_plus_24,
                     R.color.default_share_background,
                 )
                 is SyncShareOption.SendAll -> Triple(
@@ -95,12 +94,12 @@ class AccountDeviceViewHolder(
                 is SyncShareOption.SingleDevice -> when (option.device.deviceType) {
                     DeviceType.MOBILE -> Triple(
                         option.device.displayName,
-                        R.drawable.mozac_ic_device_mobile,
+                        R.drawable.mozac_ic_device_mobile_24,
                         R.color.device_type_mobile_background,
                     )
                     else -> Triple(
                         option.device.displayName,
-                        R.drawable.mozac_ic_device_desktop,
+                        R.drawable.mozac_ic_device_desktop_24,
                         R.color.device_type_desktop_background,
                     )
                 }

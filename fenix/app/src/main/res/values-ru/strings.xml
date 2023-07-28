@@ -310,51 +310,51 @@
     <!-- Text for the button to not request notification permission on the device and dismiss the dialog -->
     <string name="onboarding_home_enable_notifications_negative_button">Не сейчас</string>
 
-    <!-- Juno first user onboarding flow experiment -->
+    <!-- Juno first user onboarding flow experiment, strings are marked unused as they are only referenced by Nimbus experiments. -->
     <!-- Title for set firefox as default browser screen.
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="juno_onboarding_default_browser_title">Сделайте %s своим повседневным браузером</string>
+    <string name="juno_onboarding_default_browser_title" moz:RemovedIn="117" tools:ignore="UnusedResources">Сделайте %s своим повседневным браузером</string>
     <!-- Title for set firefox as default browser screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
         Note: The word "Firefox" should NOT be translated -->
     <string name="juno_onboarding_default_browser_title_nimbus" tools:ignore="UnusedResources">Сделайте Firefox своим повседневным браузером</string>
     <!-- Description for set firefox as default browser screen.
         The first parameter is the Firefox brand name.
         The second parameter is the string with key "juno_onboarding_default_browser_description_link_text". -->
-    <string name="juno_onboarding_default_browser_description">%1$s ставит людей выше прибыли и защищает вашу приватность, блокируя межсайтовые трекеры.\n\nУзнайте больше в нашем %2$s.</string>
+    <string name="juno_onboarding_default_browser_description" moz:RemovedIn="117" tools:ignore="UnusedResources">%1$s ставит людей выше прибыли и защищает вашу приватность, блокируя межсайтовые трекеры.\n\nУзнайте больше в нашем %2$s.</string>
     <!-- Description for set firefox as default browser screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
         Note: The word "Firefox" should NOT be translated -->
     <string name="juno_onboarding_default_browser_description_nimbus" tools:ignore="UnusedResources">Firefox ставит людей выше прибыли и защищает вашу приватность, блокируя межсайтовые трекеры.\n\nУзнайте больше в нашем уведомлении о конфиденциальности.</string>
     <!-- Text for the link to the privacy notice webpage for set as firefox default browser screen.
     This is part of the string with the key "juno_onboarding_default_browser_description". -->
-    <string name="juno_onboarding_default_browser_description_link_text">уведомлении о конфиденциальности</string>
+    <string name="juno_onboarding_default_browser_description_link_text" tools:ignore="UnusedResources">уведомлении о конфиденциальности</string>
     <!-- Text for the button to set firefox as default browser on the device -->
-    <string name="juno_onboarding_default_browser_positive_button">Установить браузером по умолчанию</string>
+    <string name="juno_onboarding_default_browser_positive_button" tools:ignore="UnusedResources">Установить браузером по умолчанию</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
-    <string name="juno_onboarding_default_browser_negative_button">Не сейчас</string>
+    <string name="juno_onboarding_default_browser_negative_button" tools:ignore="UnusedResources">Не сейчас</string>
     <!-- Title for sign in to sync screen. -->
-    <string name="juno_onboarding_sign_in_title">Переходите с телефона на ноутбук и обратно</string>
+    <string name="juno_onboarding_sign_in_title" tools:ignore="UnusedResources">Переходите с телефона на ноутбук и обратно</string>
     <!-- Description for sign in to sync screen. -->
-    <string name="juno_onboarding_sign_in_description">Возьмите вкладки и пароли с других ваших устройств, чтобы продолжить с того места, на котором вы остановились.</string>
+    <string name="juno_onboarding_sign_in_description" tools:ignore="UnusedResources">Возьмите вкладки и пароли с других ваших устройств, чтобы продолжить с того места, на котором вы остановились.</string>
     <!-- Text for the button to sign in to sync on the device -->
-    <string name="juno_onboarding_sign_in_positive_button">Войти</string>
+    <string name="juno_onboarding_sign_in_positive_button" tools:ignore="UnusedResources">Войти</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
-    <string name="juno_onboarding_sign_in_negative_button">Не сейчас</string>
+    <string name="juno_onboarding_sign_in_negative_button" tools:ignore="UnusedResources">Не сейчас</string>
     <!-- Title for enable notification permission screen.
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="juno_onboarding_enable_notifications_title">Уведомления помогают вам делать больше с %s</string>
+    <string name="juno_onboarding_enable_notifications_title" moz:RemovedIn="117" tools:ignore="UnusedResources">Уведомления помогают вам делать больше с %s</string>
     <!-- Title for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
         Note: The word "Firefox" should NOT be translated -->
     <string name="juno_onboarding_enable_notifications_title_nimbus" tools:ignore="UnusedResources">Уведомления помогают вам делать с Firefox больше</string>
     <!-- Description for enable notification permission screen.
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="juno_onboarding_enable_notifications_description">Отправляйте вкладки между устройствами, управляйте загрузками и получайте советы по максимально эффективному использованию %s.</string>
+    <string name="juno_onboarding_enable_notifications_description" moz:RemovedIn="117" tools:ignore="UnusedResources">Отправляйте вкладки между устройствами, управляйте загрузками и получайте советы по максимально эффективному использованию %s.</string>
     <!-- Description for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
        Note: The word "Firefox" should NOT be translated   -->
     <string name="juno_onboarding_enable_notifications_description_nimbus" tools:ignore="UnusedResources">Отправляйте вкладки между устройствами, управляйте загрузками и получайте советы по максимально эффективному использованию Firefox.</string>
     <!-- Text for the button to request notification permission on the device -->
-    <string name="juno_onboarding_enable_notifications_positive_button">Включить уведомления</string>
+    <string name="juno_onboarding_enable_notifications_positive_button" tools:ignore="UnusedResources">Включить уведомления</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
-    <string name="juno_onboarding_enable_notifications_negative_button">Не сейчас</string>
+    <string name="juno_onboarding_enable_notifications_negative_button" tools:ignore="UnusedResources">Не сейчас</string>
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. The first parameter is the name of the application.-->
@@ -376,13 +376,13 @@
     <!-- Preference category for all links about Fenix -->
     <string name="preferences_category_about">О приложении</string>
     <!-- Preference category for settings related to changing the default search engine -->
-    <string name="preferences_category_select_default_search_engine" tools:ignore="UnusedResources">Выберите</string>
+    <string name="preferences_category_select_default_search_engine">Выберите</string>
     <!-- Preference for settings related to managing search shortcuts for the quick search menu -->
-    <string name="preferences_manage_search_shortcuts" tools:ignore="UnusedResources">Управление ярлыками поисковиков</string>
+    <string name="preferences_manage_search_shortcuts">Управление ярлыками поисковиков</string>
     <!-- Summary for preference for settings related to managing search shortcuts for the quick search menu -->
-    <string name="preferences_manage_search_shortcuts_summary" tools:ignore="UnusedResources">Редактировать системы, видимые в меню поиска</string>
+    <string name="preferences_manage_search_shortcuts_summary">Редактировать системы, видимые в меню поиска</string>
     <!-- Preference category for settings related to managing search shortcuts for the quick search menu -->
-    <string name="preferences_category_engines_in_search_menu" tools:ignore="UnusedResources">Системы, видимые в меню поиска</string>
+    <string name="preferences_category_engines_in_search_menu">Системы, видимые в меню поиска</string>
     <!-- Preference for settings related to changing the default search engine -->
     <string name="preferences_default_search_engine">Поисковая система по умолчанию</string>
     <!-- Preference for settings related to Search -->
@@ -436,17 +436,11 @@
     <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
     <string name="cookie_banner_handling_details_site_is_not_supported_request_support_button_2">Отправить запрос</string>
     <!-- Text for title indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
-    <string name="cookie_banner_handling_details_site_is_not_supported_title" moz:RemovedIn="114" tools:ignore="UnusedResources">Снижение числа уведомлений о куках</string>
-    <!-- Text for title indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
     <string name="cookie_banner_handling_details_site_is_not_supported_title_2">Запросить поддержку для этого сайта?</string>
-    <!-- Label for the snackBar, after the user reports with success a website where cookie banner reducer did not work -->
-    <string name="cookie_banner_handling_report_site_snack_bar_text" moz:RemovedIn="114" tools:ignore="UnusedResources">Запрос на поддержку сайта отправлен.</string>
     <!-- Label for the snackBar, after the user reports with success a website where cookie banner reducer did not work -->
     <string name="cookie_banner_handling_report_site_snack_bar_text_2">Запрос отправлен</string>
     <!-- Text for indicating cookie banner handling is on this site, this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_on_for_site">Включено для этого сайта</string>
-    <!-- Text for indicating that a request for unsupported site was sent to Nimbus (it's a Mozilla library for experiments), this is shown as part of the protections panel with the tracking protection toggle -->
-    <string name="reduce_cookie_banner_unsupported_site_request_submitted" moz:RemovedIn="114" tools:ignore="UnusedResources">Запрос на поддержку сайта отправлен</string>
     <!-- Text for indicating that a request for unsupported site was sent to Nimbus (it's a Mozilla library for experiments), this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_unsupported_site_request_submitted_2">Запрос на поддержку отправлен</string>
     <!-- Text for indicating cookie banner handling is currently not supported for this site, this is shown as part of the protections panel with the tracking protection toggle -->
@@ -455,8 +449,6 @@
     <string name="reduce_cookie_banner_details_panel_title_on_for_site">Включить Снижение количества уведомлений о куках для %1$s?</string>
     <!-- Title text for a detail explanation indicating cookie banner handling is off this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
     <string name="reduce_cookie_banner_details_panel_title_off_for_site">Отключить Снижение количества уведомлений о куках для %1$s?</string>
-    <!-- Title text for a detail explanation indicating cookie banner reducer didn't work for the current site, this is shown as part of the cookie banner panel in the toolbar.-->
-    <string name="reduce_cookie_banner_details_panel_title_unsupported_site_request" moz:RemovedIn="114" tools:ignore="UnusedResources">Этот сайт в настоящее время не поддерживается функцией снижения числа уведомлений о куках. Хотите ли вы, чтобы наша команда рассмотрела этот сайт и добавила поддержку в будущем?</string>
     <!-- Title text for a detail explanation indicating cookie banner reducer didn't work for the current site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name-->
     <string name="reduce_cookie_banner_details_panel_title_unsupported_site_request_2">%1$s не может автоматически отклонять запросы на использование кук на этом сайте. Вы можете отправить запрос на поддержку этого сайта в будущем.</string>
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
@@ -550,7 +542,7 @@
     <string name="preferences_account_settings">Настройки аккаунта</string>
 
     <!-- Preference for enabling url autocomplete-->
-    <string name="preferences_enable_autocomplete_urls">Автозаполнение сетевых адресов</string>
+    <string name="preferences_enable_autocomplete_urls">Автозаполнение URL</string>
     <!-- Preference for open links in third party apps -->
     <string name="preferences_open_links_in_apps">Открывать ссылки в приложениях</string>
 
@@ -562,6 +554,11 @@
     <string name="preferences_open_links_in_apps_never">Никогда</string>
     <!-- Preference for open download with an external download manager app -->
     <string name="preferences_external_download_manager">Внешний менеджер загрузок</string>
+    <!-- Preference for enabling gecko engine logs -->
+    <string name="preferences_enable_gecko_logs">Включить журналы Gecko</string>
+    <!-- Message to indicate users that we are quitting the application to apply the changes -->
+    <string name="quit_application">Выход из приложения для применения изменений…</string>
+
     <!-- Preference for add_ons -->
     <string name="preferences_addons">Дополнения</string>
 
@@ -645,6 +642,8 @@
     <string name="addon_already_installed">Дополнение уже установлено</string>
 
     <!-- Account Preferences -->
+    <!-- Preference for managing your account via accounts.firefox.com -->
+    <string name="preferences_manage_account">Управление аккаунтом</string>
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">Синхронизировать</string>
     <!-- Preference category for sync -->
@@ -1023,7 +1022,7 @@
     <!-- Bookmark overflow menu edit button -->
     <string name="bookmark_menu_edit_button">Изменить</string>
     <!-- Bookmark overflow menu copy button -->
-    <string name="bookmark_menu_copy_button">Копировать</string>
+    <string name="bookmark_menu_copy_button">Скопировать</string>
     <!-- Bookmark overflow menu share button -->
     <string name="bookmark_menu_share_button">Поделиться</string>
     <!-- Bookmark overflow menu open in new tab button -->
@@ -1229,8 +1228,14 @@
     <string name="share_button_content_description">Поделиться</string>
     <!-- Text for the Save to PDF feature in the share menu -->
     <string name="share_save_to_pdf">Сохранить как PDF</string>
-    <!-- Text for error message when generating a PDF file Text for error message when generating a PDF file. -->
+    <!-- Text for error message when generating a PDF file Text. -->
     <string name="unable_to_save_to_pdf_error">Не удалось сгенерировать PDF</string>
+    <!-- Text for standard error snackbar dismiss button. -->
+    <string name="standard_snackbar_error_dismiss">Убрать</string>
+    <!-- Text for error message when printing a page and it fails. -->
+    <string name="unable_to_print_error">Невозможно распечатать</string>
+    <!-- Text for the print feature in the share and browser menu -->
+    <string name="menu_print">Печать</string>
     <!-- Sub-header in the dialog to share a link to another sync device -->
     <string name="share_device_subheader">Отправить на устройство</string>
     <!-- Sub-header in the dialog to share a link to an app from the full list -->
@@ -1238,7 +1243,7 @@
     <!-- Sub-header in the dialog to share a link to an app from the most-recent sorted list -->
     <string name="share_link_recent_apps_subheader">Недавно использованные</string>
     <!-- Text for the copy link action in the share screen. -->
-    <string name="share_copy_link_to_clipboard">Копировать в буфер обмена</string>
+    <string name="share_copy_link_to_clipboard">Скопировать в буфер обмена</string>
     <!-- Toast shown after copying link to clipboard -->
     <string name="toast_copy_link_to_clipboard">Скопировано в буфер обмена</string>
     <!-- An option from the share dialog to sign into sync -->
@@ -1528,12 +1533,8 @@
     <string name="etp_settings">Настройки защиты</string>
     <!-- Preference title for enhanced tracking protection settings -->
     <string name="preference_enhanced_tracking_protection">Улучшенная защита от отслеживания</string>
-    <!-- Title for the description of enhanced tracking protection -->
-    <string name="preference_enhanced_tracking_protection_explanation_title" moz:removedIn="114" tools:ignore="UnusedResources">Используйте Интернет без слежки</string>
     <!-- Preference summary for enhanced tracking protection settings on/off switch -->
     <string name="preference_enhanced_tracking_protection_summary">Теперь у нас есть полная защита от кук, наша самая крепкая преграда против межсайтовых трекеров.</string>
-    <!-- Description of enhanced tracking protection. The first parameter is the name of the application (For example: Fenix) -->
-    <string name="preference_enhanced_tracking_protection_explanation" moz:removedIn="114" tools:ignore="UnusedResources">Храните свои данные при себе. %s защитит вас от многих наиболее известных трекеров, которые следят за вашим поведением в Интернете.</string>
     <!-- Description of enhanced tracking protection. The parameter is the name of the application (For example: Firefox Fenix) -->
     <string name="preference_enhanced_tracking_protection_explanation_2">%s защищает вас от многих наиболее распространённых трекеров, которые следят за вами, когда вы находитесь в сети.</string>
     <!-- Text displayed that links to website about enhanced tracking protection -->
@@ -1541,15 +1542,11 @@
     <!-- Preference for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_standard_default_1">Обычная (по умолчанию)</string>
     <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description_4" moz:removedIn="114" tools:ignore="UnusedResources">Золотая середина: приватность и производительность. Страницы будут загружаться нормально.</string>
-    <!-- Preference description for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_standard_description_5">Страницы будут загружаться нормально, но трекеров блокироваться будет меньше.</string>
     <!--  Accessibility text for the Standard protection information icon  -->
     <string name="preference_enhanced_tracking_protection_standard_info_button">Что блокируется обычной защитой от отслеживания</string>
     <!-- Preference for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict">Строгая</string>
-    <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_description_3" moz:removedIn="114" tools:ignore="UnusedResources">Блокирует больше трекеров, так что страницы загружаются быстрее, но некоторые страницы могут работать некорректно.</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict_description_4">Строгая защита от отслеживания с увеличенной производительностью, некоторые сайты могут работать неправильно.</string>
     <!--  Accessibility text for the Strict protection information icon  -->
@@ -1741,7 +1738,7 @@
     <!-- Content Description (for screenreaders etc) read for the button to clear a password while editing a login-->
     <string name="saved_logins_clear_password">Очистить пароль</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a username in logins -->
-    <string name="saved_login_copy_username">Копировать имя пользователя</string>
+    <string name="saved_login_copy_username">Скопировать имя пользователя</string>
     <!-- Content Description (for screenreaders etc) read for the button to clear a username while editing a login -->
     <string name="saved_login_clear_username">Очистить имя пользователя</string>
     <!-- Content Description (for screenreaders etc) read for the button to clear the hostname field while creating a login -->
@@ -1904,7 +1901,7 @@
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Добавление поисковой системы</string>
     <!-- Content description (not visible, for screen readers etc.): Title for the button that navigates to add new engine screen -->
-    <string name="search_engine_add_custom_search_engine_button_content_description" tools:ignore="UnusedResources">Добавить новую поисковую систему</string>
+    <string name="search_engine_add_custom_search_engine_button_content_description">Добавить новую поисковую систему</string>
     <!-- Title of the Edit search engine screen -->
     <string name="search_engine_edit_custom_search_engine_title">Изменение поисковой системы</string>
     <!-- Content description (not visible, for screen readers etc.): Title for the button to add a search engine in the action bar -->
@@ -1919,17 +1916,17 @@
     <!-- Text for the button to create a custom search engine on the Add search engine screen -->
     <string name="search_add_custom_engine_label_other">Другое</string>
     <!-- Label for the TextField in which user enters custom search engine name -->
-    <string name="search_add_custom_engine_name_label" tools:ignore="UnusedResources">Имя</string>
+    <string name="search_add_custom_engine_name_label">Имя</string>
     <!-- Placeholder text shown in the Search Engine Name TextField before a user enters text -->
     <string name="search_add_custom_engine_name_hint">Имя</string>
     <!-- Placeholder text shown in the Search Engine Name text field before a user enters text -->
-    <string name="search_add_custom_engine_name_hint_2" tools:ignore="UnusedResources">Имя поисковой системы</string>
+    <string name="search_add_custom_engine_name_hint_2">Имя поисковой системы</string>
     <!-- Label for the TextField in which user enters custom search engine URL -->
-    <string name="search_add_custom_engine_url_label" tools:ignore="UnusedResources">URL строки поиска</string>
+    <string name="search_add_custom_engine_url_label">URL строки поиска</string>
     <!-- Placeholder text shown in the Search String TextField before a user enters text -->
     <string name="search_add_custom_engine_search_string_hint">Используемая поисковая строка</string>
     <!-- Placeholder text shown in the Search String TextField before a user enters text -->
-    <string name="search_add_custom_engine_search_string_hint_2" tools:ignore="UnusedResources">URL для поиска</string>
+    <string name="search_add_custom_engine_search_string_hint_2">URL для поиска</string>
     <!-- Description text for the Search String TextField. The %s is part of the string -->
     <string name="search_add_custom_engine_search_string_example" formatted="false">Замените строку запроса на “%s”. Пример:\nhttps://www.google.com/search?q=%s</string>
 
@@ -1937,7 +1934,7 @@
     <string name="search_add_custom_engine_form_description">Сведения о выбранной поисковой системе</string>
 
     <!-- The text for the "Save" button for saving a custom search engine -->
-    <string name="search_custom_engine_save_button" tools:ignore="UnusedResources">Сохранить</string>
+    <string name="search_custom_engine_save_button">Сохранить</string>
 
     <!-- Text shown when a user leaves the name field empty -->
     <string name="search_add_custom_engine_error_empty_name">Введите имя поисковой системы</string>

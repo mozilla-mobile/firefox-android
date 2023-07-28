@@ -24,6 +24,7 @@ import androidx.navigation.fragment.findNavController
 import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import mozilla.components.support.ktx.android.view.showKeyboard
+import org.mozilla.fenix.GleanMetrics.Logins
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.databinding.FragmentAddLoginBinding
@@ -305,8 +306,8 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login), MenuProvider {
                 layout.errorIconDrawable = null
             }
         }
-        clearButton.isVisible = validUsername
-        clearButton.isEnabled = validUsername
+        clearButton.isVisible = currentValue.isNotEmpty()
+        clearButton.isEnabled = currentValue.isNotEmpty()
         setSaveButtonState()
     }
 
@@ -374,6 +375,7 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login), MenuProvider {
                 binding.usernameText.text.toString(),
                 binding.passwordText.text.toString(),
             )
+            Logins.saved.add()
             true
         }
         else -> false

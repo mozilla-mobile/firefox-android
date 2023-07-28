@@ -186,6 +186,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = "",
     )
 
+    var nimbusExperimentsFetched by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_nimbus_experiments_fetched),
+        default = false,
+    )
+
     var utmParamsKnown by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_utm_params_known),
         default = false,
@@ -433,6 +438,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var isFirstNimbusRun: Boolean by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_is_first_run),
         default = true,
+    )
+
+    var isFirstSplashScreenShown: Boolean by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_is_first_splash_screen_shown),
+        default = false,
     )
 
     var nimbusLastFetchTime: Long by longPreference(
@@ -876,9 +886,10 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = true,
     )
 
-    var shouldUseBottomToolbar by booleanPreference(
+    var shouldUseBottomToolbar by lazyFeatureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_toolbar_bottom),
-        default = shouldDefaultToBottomToolbar(),
+        featureFlag = true,
+        default = { shouldDefaultToBottomToolbar() },
     )
 
     val toolbarPosition: ToolbarPosition
@@ -1304,6 +1315,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = "",
     )
 
+    var enableGeckoLogs by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_enable_gecko_logs),
+        default = Config.channel.isDebug,
+    )
+
     fun amoCollectionOverrideConfigured(): Boolean {
         return overrideAmoUser.isNotEmpty() || overrideAmoCollection.isNotEmpty()
     }
@@ -1320,6 +1336,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
 
     var openTabsCount by intPreference(
         appContext.getPreferenceKey(R.string.pref_key_open_tabs_count),
+        0,
+    )
+
+    var openPrivateTabsCount by intPreference(
+        appContext.getPreferenceKey(R.string.pref_key_open_private_tabs_count),
         0,
     )
 
@@ -1654,6 +1675,22 @@ class Settings(private val appContext: Context) : PreferencesHolder {
             false
         }
     }
+
+    /**
+     * Indicates if the review quality check feature is enabled by the user.
+     */
+    var isReviewQualityCheckEnabled by booleanPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_is_review_quality_check_enabled),
+        default = false,
+    )
+
+    /**
+     * Indicates if the review quality check product recommendations option is enabled by the user.
+     */
+    var isReviewQualityCheckProductRecommendationsEnabled by booleanPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_is_review_quality_check_product_recommendations_enabled),
+        default = false,
+    )
 
     /**
      * Get the current mode for how https-only is enabled.

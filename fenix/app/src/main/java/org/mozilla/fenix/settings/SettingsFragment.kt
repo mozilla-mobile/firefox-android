@@ -38,7 +38,6 @@ import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.concept.sync.Profile
 import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.support.ktx.android.view.showKeyboard
-import mozilla.components.ui.widgets.withCenterAlignedButtons
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.FeatureFlags
@@ -63,6 +62,7 @@ import org.mozilla.fenix.perf.ProfilerViewModel
 import org.mozilla.fenix.settings.account.AccountUiView
 import org.mozilla.fenix.utils.Settings
 import kotlin.system.exitProcess
+import org.mozilla.fenix.GleanMetrics.Settings as SettingsMetrics
 
 @Suppress("LargeClass", "TooManyFunctions")
 class SettingsFragment : PreferenceFragmentCompat() {
@@ -255,6 +255,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         val directions: NavDirections? = when (preference.key) {
             resources.getString(R.string.pref_key_sign_in) -> {
+                SettingsMetrics.signIntoSync.add()
                 SettingsFragmentDirections.actionSettingsFragmentToTurnOnSyncFragment(
                     entrypoint = FenixFxAEntryPoint.SettingsMenu,
                 )
@@ -331,9 +332,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 null
             }
             resources.getString(R.string.pref_key_passwords) -> {
+                SettingsMetrics.passwords.record()
                 SettingsFragmentDirections.actionSettingsFragmentToSavedLoginsAuthFragment()
             }
             resources.getString(R.string.pref_key_credit_cards) -> {
+                SettingsMetrics.autofill.record()
                 SettingsFragmentDirections.actionSettingsFragmentToAutofillSettingFragment()
             }
             resources.getString(R.string.pref_key_about) -> {
@@ -420,7 +423,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     binding.customAmoUser.setText(context.settings().overrideAmoUser)
                     binding.customAmoUser.requestFocus()
                     binding.customAmoUser.showKeyboard()
-                    create().withCenterAlignedButtons()
+                    create()
                 }.show()
 
                 null
@@ -489,6 +492,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
         setupCookieBannerPreference()
         setupAmoCollectionOverridePreference(requireContext().settings())
+        setupGeckoLogsPreference(requireContext().settings())
         setupAllowDomesticChinaFxaServerPreference()
         setupHttpsOnlyPreferences()
         setupNotificationPreference()
@@ -559,6 +563,32 @@ class SettingsFragment : PreferenceFragmentCompat() {
             isVisible = show
             summary = settings.overrideAmoCollection.ifEmpty { null }
         }
+    }
+
+    @VisibleForTesting
+    internal fun setupGeckoLogsPreference(settings: Settings) {
+        val preferenceEnabledGeckoLogs =
+            findPreference<Preference>(getPreferenceKey(R.string.pref_key_enable_gecko_logs))
+
+        val show = settings.showSecretDebugMenuThisSession
+        preferenceEnabledGeckoLogs?.isVisible = show
+
+        preferenceEnabledGeckoLogs?.onPreferenceChangeListener =
+            Preference.OnPreferenceChangeListener { _, newValue ->
+                context?.settings()?.enableGeckoLogs = newValue as Boolean
+                Toast.makeText(
+                    context,
+                    getString(R.string.quit_application),
+                    Toast.LENGTH_LONG,
+                ).show()
+                Handler(Looper.getMainLooper()).postDelayed(
+                    {
+                        exitProcess(0)
+                    },
+                    FXA_SYNC_OVERRIDE_EXIT_DELAY,
+                )
+                true
+            }
     }
 
     private fun setupAllowDomesticChinaFxaServerPreference() {

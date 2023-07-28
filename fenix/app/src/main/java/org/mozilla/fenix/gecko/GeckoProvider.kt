@@ -56,7 +56,8 @@ object GeckoProvider {
             .crashHandler(CrashHandlerService::class.java)
             .telemetryDelegate(GeckoAdapter())
             .contentBlocking(policy.toContentBlockingSetting())
-            .debugLogging(Config.channel.isDebug)
+            .consoleOutput(context.components.settings.enableGeckoLogs)
+            .debugLogging(Config.channel.isDebug || context.components.settings.enableGeckoLogs)
             .aboutConfigEnabled(Config.channel.isBeta || Config.channel.isNightlyOrDebug)
             .build()
 

@@ -50,7 +50,7 @@ object FeatureFlags {
     /**
      * Enables compose on the tabs tray items.
      */
-    const val composeTabsTray = false
+    val composeTabsTray = Config.channel.isNightlyOrDebug
 
     /**
      * Enables compose on the top sites.
@@ -61,5 +61,15 @@ object FeatureFlags {
      * Enables new search settings UI with two extra fragments, for managing the default engine
      * and managing search shortcuts in the quick search menu.
      */
-    val unifiedSearchSettings = Config.channel.isNightlyOrDebug
+    const val unifiedSearchSettings = true
+
+    /**
+     * Enables printing from the share and primary menu.
+     */
+    val print = Config.channel.isNightlyOrDebug
+
+    /**
+     * Enables the lib-state HistoryFragment refactor
+     */
+    val historyFragmentLibStateRefactor = Config.channel.isNightlyOrDebug
 }

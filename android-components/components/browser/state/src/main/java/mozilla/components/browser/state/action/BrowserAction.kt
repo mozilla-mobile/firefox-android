@@ -542,10 +542,14 @@ sealed class ContentAction : BrowserAction() {
         ContentAction()
 
     /**
-     * Updates the isSearch state of the [ContentState] with the given [sessionId].
+     * Updates the isSearch state and optionally the search engine name of the [ContentState] with
+     * the given [sessionId].
      */
-    data class UpdateIsSearchAction(val sessionId: String, val isSearch: Boolean) :
-        ContentAction()
+    data class UpdateIsSearchAction(
+        val sessionId: String,
+        val isSearch: Boolean,
+        val searchEngineName: String? = null,
+    ) : ContentAction()
 
     /**
      * Updates the [SecurityInfoState] of the [ContentState] with the given [sessionId].
@@ -1229,6 +1233,11 @@ sealed class ReaderAction : BrowserAction() {
      */
     data class UpdateReaderActiveUrlAction(val tabId: String, val activeUrl: String) :
         ReaderAction()
+
+    /**
+     * Updates the [ReaderState.scrollY].
+     */
+    data class UpdateReaderScrollYAction(val tabId: String, val scrollY: Int) : ReaderAction()
 
     /**
      * Clears the [ReaderState.activeUrl].

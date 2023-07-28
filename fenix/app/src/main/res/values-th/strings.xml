@@ -364,13 +364,13 @@
     <!-- Preference category for all links about Fenix -->
     <string name="preferences_category_about">เกี่ยวกับ</string>
     <!-- Preference category for settings related to changing the default search engine -->
-    <string name="preferences_category_select_default_search_engine" tools:ignore="UnusedResources">เลือกหนึ่งตัว</string>
+    <string name="preferences_category_select_default_search_engine">เลือกหนึ่งตัว</string>
     <!-- Preference for settings related to managing search shortcuts for the quick search menu -->
-    <string name="preferences_manage_search_shortcuts" tools:ignore="UnusedResources">จัดการทางลัดการค้นหา</string>
+    <string name="preferences_manage_search_shortcuts">จัดการทางลัดการค้นหา</string>
     <!-- Summary for preference for settings related to managing search shortcuts for the quick search menu -->
-    <string name="preferences_manage_search_shortcuts_summary" tools:ignore="UnusedResources">แก้ไขเครื่องมือที่แสดงในเมนูค้นหา</string>
+    <string name="preferences_manage_search_shortcuts_summary">แก้ไขเครื่องมือที่แสดงในเมนูค้นหา</string>
     <!-- Preference category for settings related to managing search shortcuts for the quick search menu -->
-    <string name="preferences_category_engines_in_search_menu" tools:ignore="UnusedResources">เครื่องมือที่แสดงบนเมนูค้นหา</string>
+    <string name="preferences_category_engines_in_search_menu">เครื่องมือที่แสดงบนเมนูค้นหา</string>
     <!-- Preference for settings related to changing the default search engine -->
     <string name="preferences_default_search_engine">เครื่องมือค้นหาเริ่มต้น</string>
     <!-- Preference for settings related to Search -->
@@ -424,18 +424,12 @@
     <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
     <string name="cookie_banner_handling_details_site_is_not_supported_request_support_button_2">ส่งคำขอ</string>
     <!-- Text for title indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
-    <string name="cookie_banner_handling_details_site_is_not_supported_title" moz:RemovedIn="114" tools:ignore="UnusedResources">การลดแบนเนอร์คุกกี้</string>
-    <!-- Text for title indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
     <string name="cookie_banner_handling_details_site_is_not_supported_title_2">ขอการรองรับไซต์นี้ไหม?</string>
-    <!-- Label for the snackBar, after the user reports with success a website where cookie banner reducer did not work -->
-    <string name="cookie_banner_handling_report_site_snack_bar_text" moz:RemovedIn="114" tools:ignore="UnusedResources">ส่งคำขอรองรับไซต์แล้ว</string>
     <!-- Label for the snackBar, after the user reports with success a website where cookie banner reducer did not work -->
     <string name="cookie_banner_handling_report_site_snack_bar_text_2">ส่งคำขอแล้ว</string>
     <!-- Text for indicating cookie banner handling is on this site, this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_on_for_site">เปิดสำหรับไซต์นี้</string>
 
-    <!-- Text for indicating that a request for unsupported site was sent to Nimbus (it's a Mozilla library for experiments), this is shown as part of the protections panel with the tracking protection toggle -->
-    <string name="reduce_cookie_banner_unsupported_site_request_submitted" moz:RemovedIn="114" tools:ignore="UnusedResources">ส่งคำขอรองรับไซต์แล้ว</string>
     <!-- Text for indicating that a request for unsupported site was sent to Nimbus (it's a Mozilla library for experiments), this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_unsupported_site_request_submitted_2">ส่งคำขอรองรับแล้ว</string>
     <!-- Text for indicating cookie banner handling is currently not supported for this site, this is shown as part of the protections panel with the tracking protection toggle -->
@@ -444,8 +438,6 @@
     <string name="reduce_cookie_banner_details_panel_title_on_for_site">ต้องการเปิดการลดแบนเนอร์คุกกี้สำหรับ %1$s หรือไม่?</string>
     <!-- Title text for a detail explanation indicating cookie banner handling is off this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
     <string name="reduce_cookie_banner_details_panel_title_off_for_site">ต้องการปิดการลดแบนเนอร์คุกกี้สำหรับ %1$s หรือไม่?</string>
-    <!-- Title text for a detail explanation indicating cookie banner reducer didn't work for the current site, this is shown as part of the cookie banner panel in the toolbar.-->
-    <string name="reduce_cookie_banner_details_panel_title_unsupported_site_request" moz:RemovedIn="114" tools:ignore="UnusedResources">ขณะนี้ไซต์นี้ไม่รองรับการลดแบนเนอร์คุกกี้ คุณต้องการให้ทีมงานของเราตรวจสอบเว็บไซต์นี้และเพิ่มการรองรับในอนาคตหรือไม่?</string>
     <!-- Title text for a detail explanation indicating cookie banner reducer didn't work for the current site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name-->
     <string name="reduce_cookie_banner_details_panel_title_unsupported_site_request_2">%1$s ไม่สามารถปฏิเสธคำขอคุกกี้โดยอัตโนมัติบนไซต์นี้ คุณสามารถส่งคำขอให้รองรับไซต์นี้ในอนาคตได้</string>
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
@@ -551,6 +543,11 @@
     <string name="preferences_open_links_in_apps_never">ไม่เลย</string>
     <!-- Preference for open download with an external download manager app -->
     <string name="preferences_external_download_manager">ตัวจัดการการดาวน์โหลดภายนอก</string>
+    <!-- Preference for enabling gecko engine logs -->
+    <string name="preferences_enable_gecko_logs">เปิดใช้งานปูม Gecko</string>
+    <!-- Message to indicate users that we are quitting the application to apply the changes -->
+    <string name="quit_application">กำลังปิดแอปพลิเคชันเพื่อนำการเปลี่ยนแปลงไปใช้…</string>
+
     <!-- Preference for add_ons -->
     <string name="preferences_addons">ส่วนเสริม</string>
 
@@ -637,6 +634,8 @@
     <string name="addon_already_installed">ส่วนเสริมถูกติดตั้งแล้ว</string>
 
     <!-- Account Preferences -->
+    <!-- Preference for managing your account via accounts.firefox.com -->
+    <string name="preferences_manage_account">จัดการบัญชี</string>
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">ซิงค์ตอนนี้</string>
     <!-- Preference category for sync -->
@@ -1206,6 +1205,10 @@
     <string name="share_save_to_pdf">บันทึกเป็น PDF</string>
     <!-- Text for error message when generating a PDF file Text for error message when generating a PDF file. -->
     <string name="unable_to_save_to_pdf_error">ไม่สามารถสร้าง PDF</string>
+    <!-- Text for error message when printing a page and it fails. -->
+    <string name="unable_to_print_error">ไม่สามารถพิมพ์</string>
+    <!-- Text for the print feature in the share and browser menu -->
+    <string name="menu_print">พิมพ์</string>
     <!-- Sub-header in the dialog to share a link to another sync device -->
     <string name="share_device_subheader">ส่งไปยังอุปกรณ์</string>
     <!-- Sub-header in the dialog to share a link to an app from the full list -->
@@ -1496,12 +1499,8 @@
     <string name="etp_settings">การตั้งค่าการป้องกัน</string>
     <!-- Preference title for enhanced tracking protection settings -->
     <string name="preference_enhanced_tracking_protection">การป้องกันการติดตามแบบพิเศษ</string>
-    <!-- Title for the description of enhanced tracking protection -->
-    <string name="preference_enhanced_tracking_protection_explanation_title" moz:removedIn="114" tools:ignore="UnusedResources">เรียกดูโดยไม่ต้องมีใครมาติดตาม</string>
     <!-- Preference summary for enhanced tracking protection settings on/off switch -->
     <string name="preference_enhanced_tracking_protection_summary">ตอนนี้มีการป้องกันคุกกี้แบบทั้งหมด ซึ่งเป็นอุปสรรคต่อตัวติดตามข้ามไซต์ที่ทรงพลังที่สุดของเรา</string>
-    <!-- Description of enhanced tracking protection. The first parameter is the name of the application (For example: Fenix) -->
-    <string name="preference_enhanced_tracking_protection_explanation" moz:removedIn="114" tools:ignore="UnusedResources">เก็บข้อมูลของคุณไว้กับตัวคุณเอง %s ปกป้องคุณจากตัวติดตามที่พบบ่อยที่สุดซึ่งติดตามสิ่งที่คุณทำทางออนไลน์</string>
     <!-- Description of enhanced tracking protection. The parameter is the name of the application (For example: Firefox Fenix) -->
     <string name="preference_enhanced_tracking_protection_explanation_2">%s ปกป้องคุณจากตัวติดตามที่พบบ่อยที่สุดซึ่งติดตามสิ่งที่คุณทำทางออนไลน์</string>
     <!-- Text displayed that links to website about enhanced tracking protection -->
@@ -1509,15 +1508,11 @@
     <!-- Preference for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_standard_default_1">มาตรฐาน (ค่าเริ่มต้น)</string>
     <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description_4" moz:removedIn="114" tools:ignore="UnusedResources">ความเป็นส่วนตัวและประสิทธิภาพแบบสมดุล หน้าเว็บจะโหลดเป็นปกติ</string>
-    <!-- Preference description for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_standard_description_5">หน้าเว็บต่างๆ จะโหลดตามปกติ แต่จะปิดกั้นตัวติดตามน้อยลง</string>
     <!--  Accessibility text for the Standard protection information icon  -->
     <string name="preference_enhanced_tracking_protection_standard_info_button">สิ่งที่ถูกปิดกั้นโดยการป้องกันการติดตามแบบมาตรฐาน</string>
     <!-- Preference for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict">เข้มงวด</string>
-    <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_description_3" moz:removedIn="114" tools:ignore="UnusedResources">ปิดกั้นตัวติดตามเพิ่มเติมเพื่อให้โหลดหน้าเว็บได้เร็วขึ้น แต่การทำงานบางอย่างในหน้าเว็บอาจพัง</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict_description_4">การป้องกันการติดตามที่แข็งแกร่งขึ้นและประสิทธิภาพที่เร็วขึ้น แต่บางไซต์อาจทำงานไม่ถูกต้อง</string>
     <!--  Accessibility text for the Strict protection information icon  -->
@@ -1877,7 +1872,7 @@
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">เพิ่มเครื่องมือค้นหา</string>
     <!-- Content description (not visible, for screen readers etc.): Title for the button that navigates to add new engine screen -->
-    <string name="search_engine_add_custom_search_engine_button_content_description" tools:ignore="UnusedResources">เพิ่มเครื่องมือค้นหาใหม่</string>
+    <string name="search_engine_add_custom_search_engine_button_content_description">เพิ่มเครื่องมือค้นหาใหม่</string>
     <!-- Title of the Edit search engine screen -->
     <string name="search_engine_edit_custom_search_engine_title">แก้ไขเครื่องมือค้นหา</string>
     <!-- Content description (not visible, for screen readers etc.): Title for the button to add a search engine in the action bar -->
@@ -1892,17 +1887,17 @@
     <!-- Text for the button to create a custom search engine on the Add search engine screen -->
     <string name="search_add_custom_engine_label_other">อื่น ๆ</string>
     <!-- Label for the TextField in which user enters custom search engine name -->
-    <string name="search_add_custom_engine_name_label" tools:ignore="UnusedResources">ชื่อ</string>
+    <string name="search_add_custom_engine_name_label">ชื่อ</string>
     <!-- Placeholder text shown in the Search Engine Name TextField before a user enters text -->
     <string name="search_add_custom_engine_name_hint">ชื่อ</string>
     <!-- Placeholder text shown in the Search Engine Name text field before a user enters text -->
-    <string name="search_add_custom_engine_name_hint_2" tools:ignore="UnusedResources">ชื่อเครื่องมือค้นหา</string>
+    <string name="search_add_custom_engine_name_hint_2">ชื่อเครื่องมือค้นหา</string>
     <!-- Label for the TextField in which user enters custom search engine URL -->
-    <string name="search_add_custom_engine_url_label" tools:ignore="UnusedResources">URL สตริงการค้นหา</string>
+    <string name="search_add_custom_engine_url_label">URL สตริงการค้นหา</string>
     <!-- Placeholder text shown in the Search String TextField before a user enters text -->
     <string name="search_add_custom_engine_search_string_hint">สตริงการค้นหาที่จะใช้</string>
     <!-- Placeholder text shown in the Search String TextField before a user enters text -->
-    <string name="search_add_custom_engine_search_string_hint_2" tools:ignore="UnusedResources">URL ที่จะใช้ในการค้นหา</string>
+    <string name="search_add_custom_engine_search_string_hint_2">URL ที่จะใช้ในการค้นหา</string>
     <!-- Description text for the Search String TextField. The %s is part of the string -->
     <string name="search_add_custom_engine_search_string_example" formatted="false">แทนที่คำค้นด้วย “%s” ตัวอย่าง:\nhttps://www.google.com/search?q=%s</string>
 
@@ -1910,7 +1905,7 @@
     <string name="search_add_custom_engine_form_description">รายละเอียดเครื่องมือค้นหาที่กำหนดเอง</string>
 
     <!-- The text for the "Save" button for saving a custom search engine -->
-    <string name="search_custom_engine_save_button" tools:ignore="UnusedResources">บันทึก</string>
+    <string name="search_custom_engine_save_button">บันทึก</string>
 
     <!-- Text shown when a user leaves the name field empty -->
     <string name="search_add_custom_engine_error_empty_name">ป้อนชื่อเครื่องมือค้นหา</string>
