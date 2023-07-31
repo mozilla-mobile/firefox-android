@@ -73,32 +73,37 @@ class GeckoCreditCardsAddressesStorageDelegate(
 
     override suspend fun onCreditCardSave(creditCard: CreditCardEntry) {
         scope.launch {
-            when (val result = validationDelegate.shouldCreateOrUpdate(creditCard)) {
-                is CreditCardValidationDelegate.Result.CanBeCreated -> {
-                    storage.value.addCreditCard(
-                        NewCreditCardFields(
-                            billingName = creditCard.name,
-                            plaintextCardNumber = CreditCardNumber.Plaintext(creditCard.number),
-                            cardNumberLast4 = creditCard.number.last4Digits(),
-                            expiryMonth = creditCard.expiryMonth.toLong(),
-                            expiryYear = creditCard.expiryYear.toLong(),
-                            cardType = creditCard.cardType,
-                        ),
-                    )
+            try {
+                when (val result = validationDelegate.shouldCreateOrUpdate(creditCard)) {
+                    is CreditCardValidationDelegate.Result.CanBeCreated -> {
+                        storage.value.addCreditCard(
+                            NewCreditCardFields(
+                                billingName = creditCard.name,
+                                plaintextCardNumber = CreditCardNumber.Plaintext(creditCard.number),
+                                cardNumberLast4 = creditCard.number.last4Digits(),
+                                expiryMonth = creditCard.expiryMonth.toLong(),
+                                expiryYear = creditCard.expiryYear.toLong(),
+                                cardType = creditCard.cardType,
+                            ),
+                        )
+                    }
+
+                    is CreditCardValidationDelegate.Result.CanBeUpdated -> {
+                        storage.value.updateCreditCard(
+                            guid = result.foundCreditCard.guid,
+                            creditCardFields = UpdatableCreditCardFields(
+                                billingName = creditCard.name,
+                                cardNumber = CreditCardNumber.Plaintext(creditCard.number),
+                                cardNumberLast4 = creditCard.number.last4Digits(),
+                                expiryMonth = creditCard.expiryMonth.toLong(),
+                                expiryYear = creditCard.expiryYear.toLong(),
+                                cardType = creditCard.cardType,
+                            ),
+                        )
+                    }
                 }
-                is CreditCardValidationDelegate.Result.CanBeUpdated -> {
-                    storage.value.updateCreditCard(
-                        guid = result.foundCreditCard.guid,
-                        creditCardFields = UpdatableCreditCardFields(
-                            billingName = creditCard.name,
-                            cardNumber = CreditCardNumber.Plaintext(creditCard.number),
-                            cardNumberLast4 = creditCard.number.last4Digits(),
-                            expiryMonth = creditCard.expiryMonth.toLong(),
-                            expiryYear = creditCard.expiryYear.toLong(),
-                            cardType = creditCard.cardType,
-                        ),
-                    )
-                }
+            } catch (e: NumberFormatException) {
+                // Swallow these exceptions to avoid crashing when empty strings sneak through.
             }
         }
     }
