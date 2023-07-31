@@ -115,6 +115,33 @@ class DefaultCreditCardValidationDelegateTest {
 
             assertEquals(Result.CanBeCreated, result)
         }
+
+    @Test
+    fun `WHEN credit card number is empty THEN result is invalid`() = runBlocking {
+        val newCreditCard = createCreditCardEntry(guid = "2").copy(number = "")
+
+        val result = validationDelegate.shouldCreateOrUpdate(newCreditCard)
+
+        assertEquals(Result.IsInvalidEntry, result)
+    }
+
+    @Test
+    fun `WHEN credit card expiry month is empty THEN result is invalid`() = runBlocking {
+        val newCreditCard = createCreditCardEntry(guid = "2").copy(expiryMonth = "")
+
+        val result = validationDelegate.shouldCreateOrUpdate(newCreditCard)
+
+        assertEquals(Result.IsInvalidEntry, result)
+    }
+
+    @Test
+    fun `WHEN credit card expiry year is empty THEN result is invalid`() = runBlocking {
+        val newCreditCard = createCreditCardEntry(guid = "2").copy(expiryYear = "")
+
+        val result = validationDelegate.shouldCreateOrUpdate(newCreditCard)
+
+        assertEquals(Result.IsInvalidEntry, result)
+    }
 }
 
 fun createCreditCardEntry(

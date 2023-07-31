@@ -275,6 +275,10 @@ data class CreditCardEntry(
             }
         }
 
+    fun isValidEntry(): Boolean {
+        return number.isNotEmpty() && expiryDate.isNotEmpty()
+    }
+
     companion object {
         // Date format pattern for the credit card expiry date.
         private const val DATE_PATTERN = "MM/yyyy"
@@ -451,6 +455,8 @@ interface CreditCardValidationDelegate {
          * can be used to update its information.
          */
         data class CanBeUpdated(val foundCreditCard: CreditCard) : Result()
+
+        object IsInvalidEntry : Result()
     }
 
     /**

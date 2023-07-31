@@ -99,6 +99,7 @@ class GeckoCreditCardsAddressesStorageDelegate(
                         ),
                     )
                 }
+                is CreditCardValidationDelegate.Result.IsInvalidEntry -> Unit
             }
         }
     }

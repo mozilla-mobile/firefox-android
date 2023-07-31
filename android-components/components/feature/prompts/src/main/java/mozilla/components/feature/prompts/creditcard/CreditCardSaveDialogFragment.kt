@@ -21,6 +21,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import mozilla.components.concept.storage.CreditCardEntry
@@ -118,6 +119,7 @@ internal class CreditCardSaveDialogFragment : PromptDialogFragment() {
             is Result.CanBeUpdated -> {
                 emitCreditCardAutofillUpdatedFact()
             }
+            is Result.IsInvalidEntry -> Unit
         }
     }
 
@@ -151,6 +153,7 @@ internal class CreditCardSaveDialogFragment : PromptDialogFragment() {
                     confirmButtonText = requireContext().getString(R.string.mozac_feature_prompt_update_confirmation),
                     showMessageBody = false,
                 )
+                is Result.IsInvalidEntry -> Unit
             }
         }
     }
