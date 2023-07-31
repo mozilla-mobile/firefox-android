@@ -71,6 +71,7 @@ def add_artifacts(config, tasks):
                     gradle_build_type=gradle_build_type,
                     gradle_build=gradle_build,
                     source_project_name=source_project_name,
+                    variant_name=variant_name,
                 ),
             })
             task["attributes"]["aab"] = artifact_template["name"]

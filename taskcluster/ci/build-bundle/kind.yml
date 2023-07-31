@@ -19,7 +19,7 @@ task-defaults:
         type: file
         name: 'public/build/target.aab'
         # github-name: '{gradle_build}-{version}.aab'
-        path: '/builds/worker/checkouts/vcs/{source_project_name}/app/build/outputs/bundle/{gradle_build}/{gradle_build_type}/app-{variant}.aab'
+        path: '/builds/worker/checkouts/vcs/{source_project_name}/app/build/outputs/bundle/{gradle_build}/{gradle_build_type}/app-{variant_name}.aab'
     description: 'Build Fenix AAB from source code'
     fetches:
         toolchain:
