@@ -552,10 +552,15 @@ class MozillaSocorroService(
         return resultMap
     }
 
-    private fun getExceptionStackTrace(throwable: Throwable, isCaughtException: Boolean): String {
-        return when (isCaughtException) {
-            true -> "$LIB_CRASH_INFO_PREFIX ${throwable.getStacktraceAsString()}"
-            false -> throwable.getStacktraceAsString()
+    @Suppress("TooGenericExceptionCaught")
+    private fun getExceptionStackTrace(throwable: Throwable, isCaughtException: Boolean): String? {
+        return try {
+            when (isCaughtException) {
+                true -> "$LIB_CRASH_INFO_PREFIX ${throwable.getStacktraceAsString()}"
+                false -> throwable.getStacktraceAsString()
+            }
+        } catch (e: NullPointerException) {
+            null
         }
     }
 }
