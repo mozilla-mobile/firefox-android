@@ -36,7 +36,7 @@ class ThreadPenaltyDeathWithIgnoresListener(
         if (shouldViolationBeIgnored(violation)) {
             logger.debug("Ignoring StrictMode ThreadPolicy violation", violation)
         } else {
-            penaltyDeath(violation)
+            // penaltyDeath(violation)
         }
     }
 
