@@ -37,7 +37,7 @@ def build_pre_gradle_command(config, tasks):
 def build_gradle_command(config, tasks):
     for task in tasks:
         gradle_build_type = task["run"]["gradle-build-type"]
-        gradle_build_name = task["run"]["gradle-build-name"]
+        gradle_build_name = task["run"].pop("gradle-build-name")
         variant_config = get_variant(gradle_build_type, gradle_build_name)
         variant_name = variant_config["name"][0].upper() + variant_config["name"][1:]
         gradle_command = [
