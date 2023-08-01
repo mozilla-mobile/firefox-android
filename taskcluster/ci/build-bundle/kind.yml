@@ -18,20 +18,18 @@ task-defaults:
     aab-artifact-template:
         type: file
         name: 'public/build/target.aab'
-        # github-name: '{gradle_build}-{version}.aab'
         path: '/builds/worker/checkouts/vcs/{source_project_name}/app/build/outputs/bundle/{variant}/app-{gradle_build}-{gradle_build_type}.aab'
-        # /builds/worker/checkouts/vcs/fenix/app/build/outputs/bundle/fenixDebug/app-fenix-debug.aab
     description: 'Build Fenix AAB from source code'
     fetches:
         toolchain:
             - android-sdk-linux
         external-gradle-dependencies:
             - external-gradle-dependencies.tar.xz
-    # TODO optimization:
-    # TODO     by-tasks-for:
-    # TODO         github-pu(sh|ll-request.*):
-    # TODO             skip-unless-changed: [] # Paths are dynamically added by transforms
-    # TODO         default: {}
+    optimization:
+        by-tasks-for:
+            github-pu(sh|ll-request.*):
+                skip-unless-changed: [] # Paths are dynamically added by transforms
+            default: {}
     run:
         using: gradlew
         use-caches: false
@@ -63,7 +61,6 @@ tasks:
             gradle-build-type: debug
             gradle-build-name: fenixDebug
             gradle-build: fenix
-            # track-apk-size: true
         source-project-name: "fenix"
         treeherder:
             symbol: fenix-debug(AAB)
@@ -76,13 +73,11 @@ tasks:
         dependencies:
             external-gradle-dependencies: external-gradle-dependencies-fenix
         run-on-tasks-for: []
-        # include-shippable-secrets: true
         include-release-version: true
         run:
             gradle-build-type: release
             gradle-build-name: fenixRelease
             gradle-build: fenix
-            # track-apk-size: true
         shipping-phase: promote
         source-project-name: "fenix"
         treeherder:
@@ -98,13 +93,11 @@ tasks:
         dependencies:
             external-gradle-dependencies: external-gradle-dependencies-fenix
         run-on-tasks-for: []
-        # include-shippable-secrets: true
         include-nightly-version: true
         run:
             gradle-build-type: nightly
             gradle-build-name: fenixNightly
             gradle-build: fenix
-            # track-apk-size: true
         source-project-name: "fenix"
         treeherder:
             symbol: fenix-nightly(AAB)
