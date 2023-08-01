@@ -19,7 +19,8 @@ task-defaults:
         type: file
         name: 'public/build/target.aab'
         # github-name: '{gradle_build}-{version}.aab'
-        path: '/builds/worker/checkouts/vcs/{source_project_name}/app/build/outputs/bundle/{gradle_build}/{gradle_build_type}/app-{variant_name}.aab'
+        path: '/builds/worker/checkouts/vcs/{source_project_name}/app/build/outputs/bundle/{variant}/app-{gradle_build}-{gradle_build_type}.aab'
+        # /builds/worker/checkouts/vcs/fenix/app/build/outputs/bundle/fenixDebug/app-fenix-debug.aab
     description: 'Build Fenix AAB from source code'
     fetches:
         toolchain:
@@ -63,8 +64,6 @@ tasks:
             gradle-build-name: fenixDebug
             gradle-build: fenix
             # track-apk-size: true
-            post-gradlew:
-                - ["find", "/builds/worker/checkouts/vcs/fenix/app/build/outputs", "-name", "*.aab"]
         source-project-name: "fenix"
         treeherder:
             symbol: fenix-debug(AAB)
