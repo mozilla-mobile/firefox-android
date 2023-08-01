@@ -9,6 +9,7 @@ kind.
 from android_taskgraph.build_config import get_variant
 
 from taskgraph.transforms.base import TransformSequence
+from taskgraph.util.schema import resolve_keyed_by
 
 
 transforms = TransformSequence()
