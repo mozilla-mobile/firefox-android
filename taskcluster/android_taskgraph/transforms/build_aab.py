@@ -24,6 +24,22 @@ def add_variant_config(config, tasks):
 
 
 @transforms.add
+def resolve_keys(config, tasks):
+    for task in tasks:
+        for field in ("optimization",):
+            resolve_keyed_by(
+                task,
+                field,
+                item_name=task["name"],
+                **{
+                    "tasks-for": config.params["tasks_for"],
+                },
+            )
+
+        yield task
+
+
+@transforms.add
 def build_pre_gradle_command(config, tasks):
     for task in tasks:
         source_project_name = task["source-project-name"]
