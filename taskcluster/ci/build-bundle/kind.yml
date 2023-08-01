@@ -18,7 +18,7 @@ task-defaults:
     aab-artifact-template:
         type: file
         name: 'public/build/target.aab'
-        path: '/builds/worker/checkouts/vcs/{source_project_name}/app/build/outputs/bundle/{variant}/app-{gradle_build}-{gradle_build_type}.aab'
+        path: '/builds/worker/checkouts/vcs/{source_project_name}/app/build/outputs/bundle/{variant_name}/app-{gradle_build}-{gradle_build_type}.aab'
     description: 'Build Fenix AAB from source code'
     fetches:
         toolchain:
