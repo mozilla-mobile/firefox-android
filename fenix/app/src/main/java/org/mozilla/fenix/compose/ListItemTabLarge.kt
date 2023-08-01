@@ -159,7 +159,12 @@ fun ListItemTabSurface(
                 .size(imageWidth, imageHeight)
                 .clip(RoundedCornerShape(8.dp))
 
-            Image(imageUrl, imageModifier, false, imageWidth)
+            Image(
+                url = imageUrl,
+                modifier = imageModifier,
+                private = false,
+                targetSize = imageWidth
+            )
 
             Spacer(Modifier.width(16.dp))
 

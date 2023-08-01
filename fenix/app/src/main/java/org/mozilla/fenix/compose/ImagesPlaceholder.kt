@@ -13,6 +13,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.support.images.compose.loader.Fallback
 import mozilla.components.support.images.compose.loader.ImageLoaderScope
 import mozilla.components.support.images.compose.loader.Placeholder
@@ -22,6 +23,8 @@ import org.mozilla.fenix.theme.FirefoxTheme
  * Renders the app default image placeholder while the image is still getting loaded.
  *
  * @param modifier [Modifier] allowing to control among others the dimensions and shape of the image.
+ * @param tabState The given [TabSessionState] to render a thumbnail in case downloading image fails.
+ * Defaults to [null] when the image loaded does not have a tab state provided (e.g. pocket stories).
  * @param contentDescription Text provided to accessibility services to describe what this image represents.
  * Defaults to [null] suited for an image used only for decorative purposes and not to be read by
  * accessibility services.
@@ -29,10 +32,11 @@ import org.mozilla.fenix.theme.FirefoxTheme
 @Composable
 internal fun ImageLoaderScope.WithDefaultPlaceholder(
     modifier: Modifier,
+    tabState: TabSessionState? = null,
     contentDescription: String? = null,
 ) {
     Placeholder {
-        DefaultImagePlaceholder(modifier, contentDescription)
+        DefaultImagePlaceholder(modifier, tabState, contentDescription)
     }
 }
 
@@ -40,6 +44,8 @@ internal fun ImageLoaderScope.WithDefaultPlaceholder(
  * Renders the app default image placeholder if loading the image failed.
  *
  * @param modifier [Modifier] allowing to control among others the dimensions and shape of the image.
+ * @param tabState The given [TabSessionState] to render a thumbnail in case downloading image fails.
+ * Defaults to [null] when the image loaded does not have a tab state provided (e.g. pocket stories).
  * @param contentDescription Text provided to accessibility services to describe what this image represents.
  * Defaults to [null] suited for an image used only for decorative purposes and not to be read by
  * accessibility services.
@@ -47,10 +53,11 @@ internal fun ImageLoaderScope.WithDefaultPlaceholder(
 @Composable
 internal fun ImageLoaderScope.WithDefaultFallback(
     modifier: Modifier,
+    tabState: TabSessionState? = null,
     contentDescription: String? = null,
 ) {
     Fallback {
-        DefaultImagePlaceholder(modifier, contentDescription)
+        DefaultImagePlaceholder(modifier, tabState,contentDescription)
     }
 }
 
@@ -58,6 +65,8 @@ internal fun ImageLoaderScope.WithDefaultFallback(
  * Application default image placeholder.
  *
  * @param modifier [Modifier] allowing to control among others the dimensions and shape of the image.
+ * @param tabState The given [TabSessionState] to render a thumbnail in case downloading image fails.
+ * Defaults to [null] when the image loaded does not have a tab state provided (e.g. pocket stories)
  * @param contentDescription Text provided to accessibility services to describe what this image represents.
  * Defaults to [null] suited for an image used only for decorative purposes and not to be read by
  * accessibility services.
@@ -65,9 +74,17 @@ internal fun ImageLoaderScope.WithDefaultFallback(
 @Composable
 internal fun DefaultImagePlaceholder(
     modifier: Modifier,
+    tabState: TabSessionState? = null,
     contentDescription: String? = null,
 ) {
-    Image(ColorPainter(FirefoxTheme.colors.layer2), contentDescription, modifier)
+    if(tabState == null) {
+        Image(ColorPainter(FirefoxTheme.colors.layer2), contentDescription, modifier)
+    } else {
+        TabThumbnail(
+            tab = tabState,
+            modifier = modifier
+        )
+    }
 }
 
 @Composable

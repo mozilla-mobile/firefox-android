@@ -14,6 +14,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.support.images.compose.loader.ImageLoader
 import mozilla.components.support.images.compose.loader.WithImage
 import org.mozilla.fenix.components.components
@@ -24,6 +25,8 @@ import org.mozilla.fenix.theme.FirefoxTheme
  * while that image is downloaded or a default fallback image when downloading failed.
  *
  * @param url URL from where the to download the image to be shown.
+ * @param tabState The given [TabSessionState] to render a thumbnail in case downloading image fails.
+ * Defaults to [null] when the image loaded does not have a tab state provided (e.g. pocket stories).
  * @param modifier [Modifier] to be applied to the layout.
  * @param private Whether or not this is a private request. Like in private browsing mode,
  * private requests will not cache anything on disk and not send any cookies shared with the browser.
@@ -41,6 +44,7 @@ import org.mozilla.fenix.theme.FirefoxTheme
 fun Image(
     url: String,
     modifier: Modifier = Modifier,
+    tabState: TabSessionState? = null,
     private: Boolean = false,
     targetSize: Dp = 100.dp,
     contentDescription: String? = null,
@@ -66,9 +70,9 @@ fun Image(
                 )
             }
 
-            WithDefaultPlaceholder(modifier, contentDescription)
+            WithDefaultPlaceholder(modifier, tabState, contentDescription)
 
-            WithDefaultFallback(modifier, contentDescription)
+            WithDefaultFallback(modifier, tabState, contentDescription)
         }
     }
 }

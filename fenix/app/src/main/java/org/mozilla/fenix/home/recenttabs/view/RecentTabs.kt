@@ -224,6 +224,7 @@ fun RecentTabImage(
             Image(
                 url = previewImageUrl,
                 modifier = modifier,
+                tabState = tab.state,
                 targetSize = 108.dp,
                 contentScale = ContentScale.Crop,
             )
