@@ -547,6 +547,11 @@
     <!-- Preference for open download with an external download manager app -->
     <string name="preferences_external_download_manager">Ekstern nedlastingshandsamar</string>
 
+    <!-- Preference for enabling gecko engine logs -->
+    <string name="preferences_enable_gecko_logs">Slå på Gecko-loggar</string>
+    <!-- Message to indicate users that we are quitting the application to apply the changes -->
+    <string name="quit_application">Avsluttar applikasjonen for å leggje til endringar…</string>
+
     <!-- Preference for add_ons -->
     <string name="preferences_addons">Tillegg</string>
 
@@ -1208,8 +1213,10 @@
     <string name="share_button_content_description">Del</string>
     <!-- Text for the Save to PDF feature in the share menu -->
     <string name="share_save_to_pdf">Lagre som PDF</string>
-    <!-- Text for error message when generating a PDF file Text for error message when generating a PDF file. -->
+    <!-- Text for error message when generating a PDF file Text. -->
     <string name="unable_to_save_to_pdf_error">Klarte ikkje å generere PDF</string>
+    <!-- Text for standard error snackbar dismiss button. -->
+    <string name="standard_snackbar_error_dismiss">Ignorer</string>
     <!-- Text for error message when printing a page and it fails. -->
     <string name="unable_to_print_error">Klarte ikkje å skrive ut</string>
     <!-- Text for the print feature in the share and browser menu -->
@@ -1916,6 +1923,12 @@
     <!-- Accessibility description for the form in which details about the custom search engine are entered -->
     <string name="search_add_custom_engine_form_description">Detaljar om tilpassa søkjeteneste</string>
 
+    <!-- Label for the TextField in which user enters custom search engine suggestion URL -->
+    <string name="search_add_custom_engine_suggest_url_label">Søkjeforslag-API (valfritt)</string>
+    <!-- Placeholder text shown in the Search Suggestion String TextField before a user enters text -->
+    <string name="search_add_custom_engine_suggest_string_hint">Søkjeforslag-API nettadresse</string>
+    <!-- Description text for the Search Suggestion String TextField. The %s is part of the string -->
+    <string name="search_add_custom_engine_suggest_string_example" formatted="false">Erstatt spørjinga med «%s». Døme:\nhttp://suggestqueries.google.com/complete/search?client=firefox&amp;q=%s</string>
     <!-- The text for the "Save" button for saving a custom search engine -->
     <string name="search_custom_engine_save_button">Lagre</string>
 

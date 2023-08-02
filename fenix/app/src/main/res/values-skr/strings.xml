@@ -422,6 +422,8 @@
     <!-- Text for indicating cookie banner handling is on this site, this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_on_for_site">ایں سائٹ کیتے چالو کرو</string>
 
+    <!-- Text for indicating that a request for unsupported site was sent to Nimbus (it's a Mozilla library for experiments), this is shown as part of the protections panel with the tracking protection toggle -->
+    <string name="reduce_cookie_banner_unsupported_site_request_submitted_2">سہارا ارداس بھیڄ ݙتی</string>
     <!-- Text for indicating cookie banner handling is currently not supported for this site, this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_unsupported_site">سائٹ فی الحال سہارا تھئی کائنی</string>
     <!-- Title text for a detail explanation indicating cookie banner handling is on this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
@@ -1201,8 +1203,10 @@
 
     <!-- Text for the Save to PDF feature in the share menu -->
     <string name="share_save_to_pdf">پی ڈی ایف محفوظ کرو</string>
-    <!-- Text for error message when generating a PDF file Text for error message when generating a PDF file. -->
+    <!-- Text for error message when generating a PDF file Text. -->
     <string name="unable_to_save_to_pdf_error">پی ڈی ایف بݨاوݨ توں قاصر</string>
+    <!-- Text for standard error snackbar dismiss button. -->
+    <string name="standard_snackbar_error_dismiss">فارغ کرو</string>
     <!-- Text for error message when printing a page and it fails. -->
     <string name="unable_to_print_error">پرنٹ کرݨ دے قابل کائنی</string>
     <!-- Text for the print feature in the share and browser menu -->
