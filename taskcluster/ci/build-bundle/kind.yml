@@ -36,14 +36,16 @@ task-defaults:
         workdir: '/builds/worker'
     treeherder:
         kind: build
-        symbol: AAB
         platform: fenix-android-all/opt
         tier: 1
     worker-type: b-android-large
     worker:
         docker-image: {in-tree: base}
-        max-run-time: 7200
+        max-run-time: 3600
         chain-of-trust: true
+    dependencies:
+        external-gradle-dependencies: external-gradle-dependencies-fenix
+    source-project-name: "fenix"
 
 
 tasks:
@@ -51,8 +53,6 @@ tasks:
         attributes:
             code-review: true
             shipping-product: fenix
-        dependencies:
-            external-gradle-dependencies: external-gradle-dependencies-fenix
         run-on-tasks-for:
             - github-pull-request
             - github-pull-request-untrusted
@@ -61,17 +61,13 @@ tasks:
             gradle-build-type: debug
             gradle-build-name: fenixDebug
             gradle-build: fenix
-        source-project-name: "fenix"
         treeherder:
             symbol: fenix-debug(AAB)
-            platform: fenix-android-all/opt
 
     fenix-release:
         attributes:
             release-type: release
             shipping-product: fenix
-        dependencies:
-            external-gradle-dependencies: external-gradle-dependencies-fenix
         run-on-tasks-for: []
         include-release-version: true
         run:
@@ -79,26 +75,18 @@ tasks:
             gradle-build-name: fenixRelease
             gradle-build: fenix
         shipping-phase: promote
-        source-project-name: "fenix"
         treeherder:
             symbol: fenix-release(AAB)
-            platform: fenix-android-all/opt
 
     fenix-nightly:
         attributes:
-            # any tasks that have this as a primary dependency will
-            # inherit this attribute via the multi_dep loader
             nightly-task: true
             shipping-product: fenix
-        dependencies:
-            external-gradle-dependencies: external-gradle-dependencies-fenix
         run-on-tasks-for: []
         include-nightly-version: true
         run:
             gradle-build-type: nightly
             gradle-build-name: fenixNightly
             gradle-build: fenix
-        source-project-name: "fenix"
         treeherder:
             symbol: fenix-nightly(AAB)
-            platform: fenix-android-all/opt

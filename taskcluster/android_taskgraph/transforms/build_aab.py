@@ -80,16 +80,18 @@ def add_artifacts(config, tasks):
         variant_name = variant_config["name"]
         if "aab-artifact-template" in task:
             artifact_template = task.pop("aab-artifact-template")
-            artifacts.append({
-                "type": artifact_template["type"],
-                "name": artifact_template["name"],
-                "path": artifact_template["path"].format(
-                    gradle_build_type=gradle_build_type,
-                    gradle_build=gradle_build,
-                    source_project_name=source_project_name,
-                    variant_name=variant_name,
-                ),
-            })
+            artifacts.append(
+                {
+                    "type": artifact_template["type"],
+                    "name": artifact_template["name"],
+                    "path": artifact_template["path"].format(
+                        gradle_build_type=gradle_build_type,
+                        gradle_build=gradle_build,
+                        source_project_name=source_project_name,
+                        variant_name=variant_name,
+                    ),
+                }
+            )
             task["attributes"]["aab"] = artifact_template["name"]
 
         yield task
