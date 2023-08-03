@@ -62,7 +62,7 @@ tasks:
         source-project-name: "focus-android"
         treeherder:
             platform: focus-android-all/opt
-            symbol: focus-debug(Bf)
+            symbol: focus-debug(AABf)
 
     klar-debug:
         attributes:
@@ -82,7 +82,7 @@ tasks:
         source-project-name: "focus-android"
         treeherder:
             platform: focus-android-all/opt
-            symbol: focus-debug(Bkl)
+            symbol: focus-debug(AABkl)
 
     fenix-debug:
         attributes:
@@ -121,7 +121,7 @@ tasks:
         source-project-name: "focus-android"
         treeherder:
             platform: focus-android-all/opt
-            symbol: focus-release(Bf)
+            symbol: focus-release(AABf)
 
     klar-release:
         attributes:
@@ -140,7 +140,7 @@ tasks:
         source-project-name: "focus-android"
         treeherder:
             platform: focus-android-all/opt
-            symbol: focus-release(Bkl)
+            symbol: focus-release(AABkl)
 
     fenix-release:
         attributes:
@@ -177,7 +177,7 @@ tasks:
         source-project-name: "focus-android"
         treeherder:
             platform: focus-android-all/opt
-            symbol: focus-nightly(B)
+            symbol: focus-nightly(AABf)
 
     fenix-nightly:
         attributes:
@@ -214,7 +214,7 @@ tasks:
         source-project-name: "focus-android"
         treeherder:
             platform: focus-android-all/opt
-            symbol: focus-beta(B)
+            symbol: focus-beta(AABf)
 
     fenix-beta:
         attributes:
@@ -233,4 +233,4 @@ tasks:
         source-project-name: "fenix"
         treeherder:
             platform: fenix-android-all/opt
-            symbol: fenix-beta(B)
+            symbol: fenix-beta(AAB)
