@@ -19,7 +19,6 @@ task-defaults:
         type: file
         name: 'public/build/target.aab'
         path: '/builds/worker/checkouts/vcs/{source_project_name}/app/build/outputs/bundle/{variant_name}/app-{gradle_build}-{gradle_build_type}.aab'
-    description: 'Build Fenix AAB from source code'
     fetches:
         toolchain:
             - android-sdk-linux
@@ -36,23 +35,62 @@ task-defaults:
         workdir: '/builds/worker'
     treeherder:
         kind: build
-        platform: fenix-android-all/opt
         tier: 1
     worker-type: b-android-large
     worker:
         docker-image: {in-tree: base}
         max-run-time: 3600
         chain-of-trust: true
-    dependencies:
-        external-gradle-dependencies: external-gradle-dependencies-fenix
-    source-project-name: "fenix"
 
 
 tasks:
+    focus-debug:
+        attributes:
+            code-review: true
+            shipping-product: focus
+        dependencies:
+            external-gradle-dependencies: external-gradle-dependencies-focus
+        description: 'Focus debug AAB build from source code'
+        run-on-tasks-for:
+            - github-pull-request
+            - github-pull-request-untrusted
+            - github-push
+        run:
+            gradle-build-type: debug
+            gradle-build-name: focusDebug
+            gradle-build: focus
+        source-project-name: "focus-android"
+        treeherder:
+            platform: focus-android-all/opt
+            symbol: focus-debug(Bf)
+
+    klar-debug:
+        attributes:
+            code-review: true
+            shipping-product: focus
+        dependencies:
+            external-gradle-dependencies: external-gradle-dependencies-focus
+        description: 'Klar debug AAB build from source code'
+        run-on-tasks-for:
+            - github-pull-request
+            - github-pull-request-untrusted
+            - github-push
+        run:
+            gradle-build-type: debug
+            gradle-build-name: klarDebug
+            gradle-build: klar
+        source-project-name: "focus-android"
+        treeherder:
+            platform: focus-android-all/opt
+            symbol: focus-debug(Bkl)
+
     fenix-debug:
         attributes:
             code-review: true
             shipping-product: fenix
+        dependencies:
+            external-gradle-dependencies: external-gradle-dependencies-fenix
+        description: 'Fenix debug AAB build from source code'
         run-on-tasks-for:
             - github-pull-request
             - github-pull-request-untrusted
@@ -61,32 +99,143 @@ tasks:
             gradle-build-type: debug
             gradle-build-name: fenixDebug
             gradle-build: fenix
+        source-project-name: "fenix"
         treeherder:
+            platform: fenix-android-all/opt
             symbol: fenix-debug(AAB)
+
+    focus-release:
+        attributes:
+            release-type: release
+            shipping-product: focus
+        dependencies:
+            external-gradle-dependencies: external-gradle-dependencies-focus
+        description: 'Focus release AAB build from source code'
+        include-shippable-secrets: true
+        include-release-version: true
+        run-on-tasks-for: []
+        run:
+            gradle-build-type: release
+            gradle-build-name: focusRelease
+            gradle-build: focus
+        shipping-phase: promote
+        source-project-name: "focus-android"
+        treeherder:
+            platform: focus-android-all/opt
+            symbol: focus-release(Bf)
+
+    klar-release:
+        attributes:
+            release-type: release
+            shipping-product: focus
+        dependencies:
+            external-gradle-dependencies: external-gradle-dependencies-focus
+        description: 'Klar release AAB build from source code'
+        include-shippable-secrets: true
+        include-release-version: true
+        run-on-tasks-for: []
+        run:
+            gradle-build-type: release
+            gradle-build-name: klarRelease
+            gradle-build: klar
+        shipping-phase: promote
+        source-project-name: "focus-android"
+        treeherder:
+            platform: focus-android-all/opt
+            symbol: focus-release(Bkl)
 
     fenix-release:
         attributes:
             release-type: release
             shipping-product: fenix
-        run-on-tasks-for: []
+        dependencies:
+            external-gradle-dependencies: external-gradle-dependencies-fenix
+        description: 'Fenix release AAB build from source code'
         include-release-version: true
+        run-on-tasks-for: []
         run:
             gradle-build-type: release
             gradle-build-name: fenixRelease
             gradle-build: fenix
         shipping-phase: promote
+        source-project-name: "fenix"
         treeherder:
+            platform: fenix-android-all/opt
             symbol: fenix-release(AAB)
+
+    focus-nightly:
+        attributes:
+            nightly-task: true
+            shipping-product: focus
+        dependencies:
+            external-gradle-dependencies: external-gradle-dependencies-focus
+        description: 'Focus nightly AAB build from source code'
+        include-shippable-secrets: true
+        include-nightly-version: true
+        run-on-tasks-for: []
+        run:
+            gradle-build-type: nightly
+            gradle-build-name: focusNightly
+            gradle-build: focus
+        source-project-name: "focus-android"
+        treeherder:
+            platform: focus-android-all/opt
+            symbol: focus-nightly(B)
 
     fenix-nightly:
         attributes:
             nightly-task: true
             shipping-product: fenix
-        run-on-tasks-for: []
+        dependencies:
+            external-gradle-dependencies: external-gradle-dependencies-fenix
+        description: 'Fenix nightly AAB build from source code'
         include-nightly-version: true
+        run-on-tasks-for: []
         run:
             gradle-build-type: nightly
             gradle-build-name: fenixNightly
             gradle-build: fenix
+        source-project-name: "fenix"
         treeherder:
+            platform: fenix-android-all/opt
             symbol: fenix-nightly(AAB)
+
+    focus-beta:
+        attributes:
+            release-type: beta
+            shipping-product: focus
+        dependencies:
+            external-gradle-dependencies: external-gradle-dependencies-focus
+        description: 'Focus beta AAB build from source code'
+        include-shippable-secrets: true
+        include-release-version: true
+        run-on-tasks-for: []
+        run:
+            gradle-build-type: beta
+            gradle-build-name: focusBeta
+            gradle-build: focus
+        shipping-phase: promote
+        source-project-name: "focus-android"
+        treeherder:
+            platform: focus-android-all/opt
+            symbol: focus-beta(B)
+
+    fenix-beta:
+        attributes:
+            release-type: beta
+            shipping-product: fenix
+        dependencies:
+            external-gradle-dependencies: external-gradle-dependencies-fenix
+        description: 'Fenix beta AAB build from source code'
+        include-shippable-secrets: true
+        include-release-version: true
+        run-on-tasks-for: []
+        run:
+            gradle-build-type: beta
+            gradle-build-name: fenixBeta
+            gradle-build: fenix
+        shipping-phase: promote
+        source-project-name: "fenix"
+        treeherder:
+            platform: fenix-android-all/opt
+            symbol: fenix-beta(B)
