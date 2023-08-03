@@ -111,7 +111,6 @@ tasks:
         dependencies:
             external-gradle-dependencies: external-gradle-dependencies-focus
         description: 'Focus release AAB build from source code'
-        include-shippable-secrets: true
         include-release-version: true
         run-on-tasks-for: []
         run:
@@ -131,7 +130,6 @@ tasks:
         dependencies:
             external-gradle-dependencies: external-gradle-dependencies-focus
         description: 'Klar release AAB build from source code'
-        include-shippable-secrets: true
         include-release-version: true
         run-on-tasks-for: []
         run:
@@ -170,7 +168,6 @@ tasks:
         dependencies:
             external-gradle-dependencies: external-gradle-dependencies-focus
         description: 'Focus nightly AAB build from source code'
-        include-shippable-secrets: true
         include-nightly-version: true
         run-on-tasks-for: []
         run:
@@ -207,7 +204,6 @@ tasks:
         dependencies:
             external-gradle-dependencies: external-gradle-dependencies-focus
         description: 'Focus beta AAB build from source code'
-        include-shippable-secrets: true
         include-release-version: true
         run-on-tasks-for: []
         run:
@@ -227,7 +223,6 @@ tasks:
         dependencies:
             external-gradle-dependencies: external-gradle-dependencies-fenix
         description: 'Fenix beta AAB build from source code'
-        include-shippable-secrets: true
         include-release-version: true
         run-on-tasks-for: []
         run:
