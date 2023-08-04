@@ -15,6 +15,35 @@ transforms = TransformSequence()
 
 
 @transforms.add
+def add_common_config(config, tasks):
+    for task in tasks:
+        fetches = task.setdefault("fetches", {})
+        fetches["toolchain"] = ["android-sdk-linux"]
+        fetches["external-gradle-dependencies"] = ["external-gradle-dependencies.tar.xz"]
+
+        task["run-on-tasks-for"] = []
+
+        run = task.setdefault("run", {})
+        run["using"] = "gradlew"
+        run["use-caches"] = False
+        run["workdir"] = "/builds/worker"
+
+        treeherder = task.setdefault("treeherder", {})
+        treeherder["kind"] = "build"
+        treeherder["tier"] = 1
+
+        task["worker-type"] = "b-android-large"
+
+        worker = task.setdefault("worker", {})
+        worker["docker-image"] = {}
+        worker["docker-image"]["in-tree"] = "base"
+        worker["max-run-time"] = 7200
+        worker["chain-of-trust"] = True
+
+        yield task
+
+
+@transforms.add
 def add_variant_config(config, tasks):
     for task in tasks:
         attributes = task.setdefault("attributes", {})

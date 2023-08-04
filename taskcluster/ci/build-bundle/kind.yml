@@ -19,29 +19,13 @@ task-defaults:
         type: file
         name: 'public/build/target.aab'
         path: '/builds/worker/checkouts/vcs/{source_project_name}/app/build/outputs/bundle/{variant_name}/app-{gradle_build}-{gradle_build_type}.aab'
-    fetches:
-        toolchain:
-            - android-sdk-linux
-        external-gradle-dependencies:
-            - external-gradle-dependencies.tar.xz
     optimization:
         by-tasks-for:
             github-pu(sh|ll-request.*):
                 skip-unless-changed: [] # Paths are dynamically added by transforms
             default: {}
     run:
-        using: gradlew
-        use-caches: false
-        workdir: '/builds/worker'
         gradle-package-command: bundle
-    treeherder:
-        kind: build
-        tier: 1
-    worker-type: b-android-large
-    worker:
-        docker-image: {in-tree: base}
-        max-run-time: 3600
-        chain-of-trust: true
 
 
 tasks:
@@ -113,7 +97,6 @@ tasks:
             external-gradle-dependencies: external-gradle-dependencies-focus
         description: 'Focus release AAB build from source code'
         include-release-version: true
-        run-on-tasks-for: []
         run:
             gradle-build-type: release
             gradle-build-name: focusRelease
@@ -132,7 +115,6 @@ tasks:
             external-gradle-dependencies: external-gradle-dependencies-focus
         description: 'Klar release AAB build from source code'
         include-release-version: true
-        run-on-tasks-for: []
         run:
             gradle-build-type: release
             gradle-build-name: klarRelease
@@ -151,7 +133,6 @@ tasks:
             external-gradle-dependencies: external-gradle-dependencies-fenix
         description: 'Fenix release AAB build from source code'
         include-release-version: true
-        run-on-tasks-for: []
         run:
             gradle-build-type: release
             gradle-build-name: fenixRelease
@@ -170,7 +151,6 @@ tasks:
             external-gradle-dependencies: external-gradle-dependencies-focus
         description: 'Focus nightly AAB build from source code'
         include-nightly-version: true
-        run-on-tasks-for: []
         run:
             gradle-build-type: nightly
             gradle-build-name: focusNightly
@@ -188,7 +168,6 @@ tasks:
             external-gradle-dependencies: external-gradle-dependencies-fenix
         description: 'Fenix nightly AAB build from source code'
         include-nightly-version: true
-        run-on-tasks-for: []
         run:
             gradle-build-type: nightly
             gradle-build-name: fenixNightly
@@ -206,7 +185,6 @@ tasks:
             external-gradle-dependencies: external-gradle-dependencies-focus
         description: 'Focus beta AAB build from source code'
         include-release-version: true
-        run-on-tasks-for: []
         run:
             gradle-build-type: beta
             gradle-build-name: focusBeta
@@ -225,7 +203,6 @@ tasks:
             external-gradle-dependencies: external-gradle-dependencies-fenix
         description: 'Fenix beta AAB build from source code'
         include-release-version: true
-        run-on-tasks-for: []
         run:
             gradle-build-type: beta
             gradle-build-name: fenixBeta
