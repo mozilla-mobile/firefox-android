@@ -21,7 +21,7 @@ def add_common_config(config, tasks):
         fetches["toolchain"] = ["android-sdk-linux"]
         fetches["external-gradle-dependencies"] = ["external-gradle-dependencies.tar.xz"]
 
-        task["run-on-tasks-for"] = []
+        task.setdefault("run-on-tasks-for", [])
 
         run = task.setdefault("run", {})
         run["using"] = "gradlew"
