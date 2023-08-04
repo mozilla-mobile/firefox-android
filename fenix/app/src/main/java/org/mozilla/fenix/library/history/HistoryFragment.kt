@@ -42,6 +42,7 @@ import mozilla.components.support.ktx.kotlin.toShortUrl
 import mozilla.components.ui.widgets.withCenterAlignedButtons
 import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.BrowserDirection
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.NavHostActivity
 import org.mozilla.fenix.R
@@ -56,7 +57,11 @@ import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.setTextColor
+import org.mozilla.fenix.home.Mode
 import org.mozilla.fenix.library.LibraryPageFragment
+import org.mozilla.fenix.library.history.state.HistoryNavigationMiddleware
+import org.mozilla.fenix.library.history.state.HistorySyncMiddleware
+import org.mozilla.fenix.library.history.state.HistoryTelemetryMiddleware
 import org.mozilla.fenix.tabstray.Page
 import org.mozilla.fenix.utils.allowUndo
 import org.mozilla.fenix.GleanMetrics.History as GleanHistory
@@ -93,13 +98,25 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler, 
         val view = binding.root
         historyStore = StoreProvider.get(this) {
             HistoryFragmentStore(
-                HistoryFragmentState(
-                    items = listOf(),
-                    mode = HistoryFragmentState.Mode.Normal,
-                    pendingDeletionItems = emptySet(),
-                    isEmpty = false,
-                    isDeletingItems = false,
-                ),
+                initialState = HistoryFragmentState.initial,
+                middleware = if (FeatureFlags.historyFragmentLibStateRefactor) {
+                    listOf(
+                        HistoryNavigationMiddleware(
+                            navController = findNavController(),
+                            openToBrowser = ::openItem,
+                        ),
+                        HistoryTelemetryMiddleware(
+                            isInPrivateMode = requireComponents.appStore.state.mode == Mode.Private,
+                        ),
+                        HistorySyncMiddleware(
+                            accountManager = requireContext().components.backgroundServices.accountManager,
+                            refreshView = { historyView.historyAdapter.refresh() },
+                            scope = lifecycleScope,
+                        ),
+                    )
+                } else {
+                    listOf()
+                },
             )
         }
         val historyController: HistoryController = DefaultHistoryController(
@@ -129,6 +146,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler, 
                     HistoryFragmentAction.ChangeEmptyState(isEmpty = true),
                 )
             },
+            store = historyStore,
             onEmptyStateChanged = {
                 historyStore.dispatch(
                     HistoryFragmentAction.ChangeEmptyState(it),
