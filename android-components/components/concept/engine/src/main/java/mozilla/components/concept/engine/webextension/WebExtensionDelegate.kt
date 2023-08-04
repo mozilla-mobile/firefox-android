@@ -28,6 +28,23 @@ interface WebExtensionDelegate {
     fun onUninstalled(extension: WebExtension) = Unit
 
     /**
+     * Invoked when the download file for a web extension has started.
+     */
+    fun onDownloadStarted() = Unit
+
+    /**
+     * Invoked when the download file for a web extension has ended successfully.
+     */
+    fun onDownloadEnded() = Unit
+    /**
+     * Invoked when the download file for a web extension has failed.
+     */
+    fun onDownloadFailed() = Unit
+    /**
+     * Invoked when the download file for a web extension has been cancelled.
+     */
+    fun onDownloadCancelled() = Unit
+    /**
      * Invoked when a web extension was enabled successfully.
      *
      * @param extension The enabled extension.

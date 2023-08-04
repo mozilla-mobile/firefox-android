@@ -233,12 +233,41 @@ object WebExtensionSupport {
                     if (!extension.isBuiltIn()) {
                         store.dispatch(
                             WebExtensionAction.UpdatePromptRequestWebExtensionAction(
-                                WebExtensionPromptRequest.PostInstallation(extension),
+                                WebExtensionPromptRequest.PostInstallation.Welcome(extension),
                             ),
                         )
                     }
                 }
 
+                override fun onDownloadStarted() {
+                    store.dispatch(
+                        WebExtensionAction.UpdatePromptRequestWebExtensionAction(
+                            WebExtensionPromptRequest.PreInstallation.DownloadStarted,
+                        ),
+                    )
+                }
+
+                override fun onDownloadEnded () {
+                    store.dispatch(
+                        WebExtensionAction.UpdatePromptRequestWebExtensionAction(
+                            WebExtensionPromptRequest.PreInstallation.DownloadEnded,
+                        ),
+                    )
+                }
+                override fun onDownloadFailed () {
+                    store.dispatch(
+                        WebExtensionAction.UpdatePromptRequestWebExtensionAction(
+                            WebExtensionPromptRequest.PreInstallation.DownloadFailed,
+                        ),
+                    )
+                }
+                override fun onDownloadCancelled () {
+                    store.dispatch(
+                        WebExtensionAction.UpdatePromptRequestWebExtensionAction(
+                            WebExtensionPromptRequest.PreInstallation.DownloadCancelled,
+                        ),
+                    )
+                }
                 override fun onUninstalled(extension: WebExtension) {
                     installedExtensions.remove(extension.id)
                     store.dispatch(WebExtensionAction.UninstallWebExtensionAction(extension.id))
@@ -270,7 +299,10 @@ object WebExtensionSupport {
                 ) {
                     store.dispatch(
                         WebExtensionAction.UpdatePromptRequestWebExtensionAction(
-                            WebExtensionPromptRequest.Permissions(extension, onPermissionsGranted),
+                            WebExtensionPromptRequest.PostInstallation.Permissions(
+                                extension,
+                                onPermissionsGranted,
+                            ),
                         ),
                     )
                 }

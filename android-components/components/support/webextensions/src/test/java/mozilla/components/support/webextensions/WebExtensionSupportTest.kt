@@ -16,6 +16,8 @@ import mozilla.components.browser.state.state.WebExtensionState
 import mozilla.components.browser.state.state.createCustomTab
 import mozilla.components.browser.state.state.createTab
 import mozilla.components.browser.state.state.extension.WebExtensionPromptRequest
+import mozilla.components.browser.state.state.extension.WebExtensionPromptRequest.PostInstallation
+import mozilla.components.browser.state.state.extension.WebExtensionPromptRequest.PreInstallation
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.Engine
 import mozilla.components.concept.engine.EngineSession
@@ -400,7 +402,7 @@ class WebExtensionSupportTest {
         )
         verify(store).dispatch(
             WebExtensionAction.UpdatePromptRequestWebExtensionAction(
-                WebExtensionPromptRequest.PostInstallation(ext),
+                PostInstallation.Welcome(ext),
             ),
         )
         assertEquals(ext, WebExtensionSupport.installedExtensions[ext.id])
@@ -452,7 +454,7 @@ class WebExtensionSupportTest {
 
         verify(store).dispatch(
             WebExtensionAction.UpdatePromptRequestWebExtensionAction(
-                WebExtensionPromptRequest.Permissions(ext, onPermissionsGranted),
+                PostInstallation.Permissions(ext, onPermissionsGranted),
             ),
         )
     }
@@ -503,7 +505,79 @@ class WebExtensionSupportTest {
         delegateCaptor.value.onInstalled(ext)
         verify(store, times(0)).dispatch(
             WebExtensionAction.UpdatePromptRequestWebExtensionAction(
-                WebExtensionPromptRequest.PostInstallation(ext),
+                PostInstallation.Welcome(ext),
+            ),
+        )
+    }
+
+    @Test
+    fun `reacts to extension being onDownloadStarted`() {
+        val store = spy(BrowserStore())
+        val engine: Engine = mock()
+
+        val delegateCaptor = argumentCaptor<WebExtensionDelegate>()
+        WebExtensionSupport.initialize(engine, store)
+        verify(engine).registerWebExtensionDelegate(delegateCaptor.capture())
+
+        delegateCaptor.value.onDownloadStarted()
+
+        verify(store).dispatch(
+            WebExtensionAction.UpdatePromptRequestWebExtensionAction(
+                PreInstallation.DownloadStarted,
+            ),
+        )
+    }
+
+    @Test
+    fun `reacts to extension being onDownloadEnded`() {
+        val store = spy(BrowserStore())
+        val engine: Engine = mock()
+
+        val delegateCaptor = argumentCaptor<WebExtensionDelegate>()
+        WebExtensionSupport.initialize(engine, store)
+        verify(engine).registerWebExtensionDelegate(delegateCaptor.capture())
+
+        delegateCaptor.value.onDownloadEnded()
+
+        verify(store).dispatch(
+            WebExtensionAction.UpdatePromptRequestWebExtensionAction(
+                PreInstallation.DownloadEnded,
+            ),
+        )
+    }
+
+    @Test
+    fun `reacts to extension being onDownloadFailed`() {
+        val store = spy(BrowserStore())
+        val engine: Engine = mock()
+
+        val delegateCaptor = argumentCaptor<WebExtensionDelegate>()
+        WebExtensionSupport.initialize(engine, store)
+        verify(engine).registerWebExtensionDelegate(delegateCaptor.capture())
+
+        delegateCaptor.value.onDownloadFailed()
+
+        verify(store).dispatch(
+            WebExtensionAction.UpdatePromptRequestWebExtensionAction(
+                PreInstallation.DownloadFailed,
+            ),
+        )
+    }
+
+    @Test
+    fun `reacts to extension being onDownloadCancelled`() {
+        val store = spy(BrowserStore())
+        val engine: Engine = mock()
+
+        val delegateCaptor = argumentCaptor<WebExtensionDelegate>()
+        WebExtensionSupport.initialize(engine, store)
+        verify(engine).registerWebExtensionDelegate(delegateCaptor.capture())
+
+        delegateCaptor.value.onDownloadCancelled()
+
+        verify(store).dispatch(
+            WebExtensionAction.UpdatePromptRequestWebExtensionAction(
+                PreInstallation.DownloadCancelled,
             ),
         )
     }

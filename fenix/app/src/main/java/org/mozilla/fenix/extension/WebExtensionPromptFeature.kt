@@ -15,6 +15,12 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.mapNotNull
 import mozilla.components.browser.state.action.WebExtensionAction
 import mozilla.components.browser.state.state.extension.WebExtensionPromptRequest
+import mozilla.components.browser.state.state.extension.WebExtensionPromptRequest.PostInstallation
+import mozilla.components.browser.state.state.extension.WebExtensionPromptRequest.PreInstallation
+import mozilla.components.browser.state.state.extension.WebExtensionPromptRequest.PreInstallation.DownloadCancelled
+import mozilla.components.browser.state.state.extension.WebExtensionPromptRequest.PreInstallation.DownloadEnded
+import mozilla.components.browser.state.state.extension.WebExtensionPromptRequest.PreInstallation.DownloadFailed
+import mozilla.components.browser.state.state.extension.WebExtensionPromptRequest.PreInstallation.DownloadStarted
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.feature.addons.Addon
 import mozilla.components.feature.addons.toInstalledState
@@ -47,6 +53,9 @@ class WebExtensionPromptFeature(
     private var isInstallationInProgress = false
     private var scope: CoroutineScope? = null
 
+    @VisibleForTesting
+    internal var activeDownloadingDialog: WeakReference<AddonDownloadingDialogFragment>? = null
+
     /**
      * Starts observing the selected session to listen for window requests
      * and opens / closes tabs as needed.
@@ -56,18 +65,31 @@ class WebExtensionPromptFeature(
             flow.mapNotNull { state ->
                 state.webExtensionPromptRequest
             }.distinctUntilChanged().collect { promptRequest ->
-                val addon = provideAddons().find { addon ->
-                    addon.id == promptRequest.extension.id
-                }
-                when (promptRequest) {
-                    is WebExtensionPromptRequest.Permissions -> handlePermissionRequest(
-                        addon,
-                        promptRequest,
-                    )
+                if (promptRequest is PostInstallation) {
+                    val addon = provideAddons().find { addon ->
+                        addon.id == promptRequest.extension.id
+                    }
+                    when (promptRequest) {
+                        is PostInstallation.Permissions -> handlePermissionRequest(
+                            addon,
+                            promptRequest,
+                        )
 
-                    is WebExtensionPromptRequest.PostInstallation -> handlePostInstallationRequest(
-                        addon?.copy(installedState = promptRequest.extension.toInstalledState()),
-                    )
+                        is PostInstallation.Welcome -> handlePostInstallationRequest(
+                            addon?.copy(installedState = promptRequest.extension.toInstalledState()),
+                        )
+                    }
+                } else if (promptRequest is PreInstallation) {
+                    when (promptRequest) {
+                        is DownloadStarted -> {
+                            activeDownloadingDialog = WeakReference((showDownloadDialog()))
+                        }
+
+                        is DownloadEnded, DownloadCancelled, DownloadFailed -> {
+                            activeDownloadingDialog?.get()?.dismiss()
+                            activeDownloadingDialog?.clear()
+                        }
+                    }
                 }
             }
         }
@@ -86,7 +108,7 @@ class WebExtensionPromptFeature(
 
     private fun handlePermissionRequest(
         addon: Addon?,
-        promptRequest: WebExtensionPromptRequest.Permissions,
+        promptRequest: PostInstallation.Permissions,
     ) {
         if (hasExistingPermissionDialogFragment()) return
 
@@ -119,7 +141,7 @@ class WebExtensionPromptFeature(
     @VisibleForTesting
     internal fun showPermissionDialog(
         addon: Addon,
-        promptRequest: WebExtensionPromptRequest.Permissions,
+        promptRequest: PostInstallation.Permissions,
     ) {
         if (!isInstallationInProgress && !hasExistingPermissionDialogFragment()) {
             val dialog = PermissionsDialogFragment.newInstance(
@@ -156,8 +178,8 @@ class WebExtensionPromptFeature(
         findPreviousPermissionDialogFragment()?.let { dialog ->
             dialog.onPositiveButtonClicked = { addon ->
                 store.state.webExtensionPromptRequest?.let { promptRequest ->
-                    if (addon.id == promptRequest.extension.id &&
-                        promptRequest is WebExtensionPromptRequest.Permissions
+                    if (promptRequest is PostInstallation && addon.id == promptRequest.extension.id &&
+                        promptRequest is PostInstallation.Permissions
                     ) {
                         handleApprovedPermissions(promptRequest)
                     }
@@ -165,7 +187,7 @@ class WebExtensionPromptFeature(
             }
             dialog.onNegativeButtonClicked = {
                 store.state.webExtensionPromptRequest?.let { promptRequest ->
-                    if (promptRequest is WebExtensionPromptRequest.Permissions) {
+                    if (promptRequest is PostInstallation.Permissions) {
                         handleDeniedPermissions(promptRequest)
                     }
                 }
@@ -175,8 +197,7 @@ class WebExtensionPromptFeature(
         findPreviousPostInstallationDialogFragment()?.let { dialog ->
             dialog.onConfirmButtonClicked = { addon, allowInPrivateBrowsing ->
                 store.state.webExtensionPromptRequest?.let { promptRequest ->
-                    if (addon.id == promptRequest.extension.id &&
-                        promptRequest is WebExtensionPromptRequest.PostInstallation
+                    if (promptRequest is PostInstallation && addon.id == promptRequest.extension.id
                     ) {
                         handlePostInstallationButtonClicked(
                             allowInPrivateBrowsing = allowInPrivateBrowsing,
@@ -194,17 +215,18 @@ class WebExtensionPromptFeature(
         }
     }
 
-    private fun handleDeniedPermissions(promptRequest: WebExtensionPromptRequest.Permissions) {
+    private fun handleDeniedPermissions(promptRequest: PostInstallation.Permissions) {
         promptRequest.onConfirm(false)
         consumePromptRequest()
     }
 
-    private fun handleApprovedPermissions(promptRequest: WebExtensionPromptRequest.Permissions) {
+    private fun handleApprovedPermissions(promptRequest: PostInstallation.Permissions) {
         promptRequest.onConfirm(true)
         consumePromptRequest()
     }
 
-    private fun consumePromptRequest() {
+    @VisibleForTesting
+    internal fun consumePromptRequest() {
         store.dispatch(WebExtensionAction.ConsumePromptRequestWebExtensionAction)
     }
 
@@ -270,6 +292,21 @@ class WebExtensionPromptFeature(
         }
     }
 
+    @VisibleForTesting
+    internal fun showDownloadDialog(): AddonDownloadingDialogFragment {
+        val dialog = activeDownloadingDialog?.get()
+            ?: AddonDownloadingDialogFragment().apply {
+                this.show(
+                    this@WebExtensionPromptFeature.fragmentManager,
+                    DOWNLOAD_DIALOG_FRAGMENT_TAG,
+                )
+            }
+        dialog.onDismissed = {
+            activeDownloadingDialog?.clear()
+            consumePromptRequest()
+        }
+        return dialog
+    }
     private fun handlePostInstallationButtonClicked(
         context: WeakReference<Context>,
         allowInPrivateBrowsing: Boolean,
@@ -291,5 +328,6 @@ class WebExtensionPromptFeature(
         private const val PERMISSIONS_DIALOG_FRAGMENT_TAG = "ADDONS_PERMISSIONS_DIALOG_FRAGMENT"
         private const val POST_INSTALLATION_DIALOG_FRAGMENT_TAG =
             "ADDONS_INSTALLATION_DIALOG_FRAGMENT"
+        private const val DOWNLOAD_DIALOG_FRAGMENT_TAG = "DOWNLOAD_DIALOG_FRAGMENT_TAG"
     }
 }

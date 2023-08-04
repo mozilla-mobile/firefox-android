@@ -374,6 +374,21 @@ class GeckoEngine(
             override fun onInstalled(extension: org.mozilla.geckoview.WebExtension) {
                 webExtensionDelegate.onInstalled(GeckoWebExtension(extension, runtime))
             }
+
+            override fun onDownloadStarted() {
+                webExtensionDelegate.onDownloadStarted()
+            }
+
+            override fun onDownloadEnded() {
+                webExtensionDelegate.onDownloadEnded()
+            }
+
+            override fun onDownloadFailed() {
+                webExtensionDelegate.onDownloadFailed()
+            }
+            override fun onDownloadCancelled() {
+                webExtensionDelegate.onDownloadCancelled()
+            }
         }
 
         runtime.webExtensionController.setPromptDelegate(promptDelegate)
