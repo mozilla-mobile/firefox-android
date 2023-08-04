@@ -128,9 +128,10 @@ def build_gradle_command(config, tasks):
         variant_config = get_variant(gradle_build_type, gradle_build_name)
         variant_name = variant_config["name"][0].upper() + variant_config["name"][1:]
 
+        package_command = task["run"].pop("gradle-package-command", "assemble")
         gradle_command = [
             "clean",
-            f"assemble{variant_name}",
+            f"{package_command}{variant_name}",
         ]
 
         if task["run"].pop("track-apk-size", False):
@@ -229,5 +230,21 @@ def add_artifacts(config, tasks):
                         **apk,
                     ),
                 }
+        elif "aab-artifact-template" in task:
+            variant_name = variant_config["name"]
+            artifact_template = task.pop("aab-artifact-template")
+            artifacts.append(
+                {
+                    "type": artifact_template["type"],
+                    "name": artifact_template["name"],
+                    "path": artifact_template["path"].format(
+                        gradle_build_type=gradle_build_type,
+                        gradle_build=gradle_build,
+                        source_project_name=source_project_name,
+                        variant_name=variant_name,
+                    ),
+                }
+            )
+            task["attributes"]["aab"] = artifact_template["name"]
 
         yield task
