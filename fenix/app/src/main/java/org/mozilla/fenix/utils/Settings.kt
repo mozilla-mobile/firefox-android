@@ -1668,6 +1668,28 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         }
     }
 
+    val feltPrivateBrowsingEnabled: Boolean
+        get() {
+            FxNimbus.features.privateBrowsing.recordExposure()
+            return FxNimbus.features.privateBrowsing.value().feltPrivacyEnabled
+        }
+
+    /**
+     * Indicates if the review quality check feature is enabled by the user.
+     */
+    var isReviewQualityCheckEnabled by booleanPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_is_review_quality_check_enabled),
+        default = false,
+    )
+
+    /**
+     * Indicates if the review quality check product recommendations option is enabled by the user.
+     */
+    var isReviewQualityCheckProductRecommendationsEnabled by booleanPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_is_review_quality_check_product_recommendations_enabled),
+        default = false,
+    )
+
     /**
      * Get the current mode for how https-only is enabled.
      */

@@ -38,6 +38,7 @@ import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.concept.sync.Profile
 import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.support.ktx.android.view.showKeyboard
+import mozilla.components.ui.widgets.withCenterAlignedButtons
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.FeatureFlags
@@ -332,9 +333,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 null
             }
             resources.getString(R.string.pref_key_passwords) -> {
+                SettingsMetrics.passwords.record()
                 SettingsFragmentDirections.actionSettingsFragmentToSavedLoginsAuthFragment()
             }
             resources.getString(R.string.pref_key_credit_cards) -> {
+                SettingsMetrics.autofill.record()
                 SettingsFragmentDirections.actionSettingsFragmentToAutofillSettingFragment()
             }
             resources.getString(R.string.pref_key_about) -> {
@@ -421,7 +424,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     binding.customAmoUser.setText(context.settings().overrideAmoUser)
                     binding.customAmoUser.requestFocus()
                     binding.customAmoUser.showKeyboard()
-                    create()
+                    create().withCenterAlignedButtons()
                 }.show()
 
                 null

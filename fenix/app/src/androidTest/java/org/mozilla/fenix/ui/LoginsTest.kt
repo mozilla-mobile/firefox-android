@@ -242,7 +242,6 @@ class LoginsTest {
         }
     }
 
-    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1816066")
     @SmokeTest
     @Test
     fun verifyMultipleLoginsSelectionsTest() {
@@ -665,7 +664,6 @@ class LoginsTest {
         }
     }
 
-    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1815650")
     @Test
     fun verifyLastUsedLoginSortingOptionTest() {
         val firstLoginPage = TestAssetHelper.getSaveLoginAsset(mockWebServer)
@@ -692,12 +690,12 @@ class LoginsTest {
             clickSavedLoginsChevronIcon()
             verifyLoginsSortingOptions()
             clickLastUsedSortingOption()
-            verifySortedLogin(activityTestRule, 0, originWebsite)
-            verifySortedLogin(activityTestRule, 1, firstLoginPage.url.authority.toString())
+            verifySortedLogin(0, originWebsite)
+            verifySortedLogin(1, firstLoginPage.url.authority.toString())
         }.goBack {
         }.openSavedLogins {
-            verifySortedLogin(activityTestRule, 0, originWebsite)
-            verifySortedLogin(activityTestRule, 1, firstLoginPage.url.authority.toString())
+            verifySortedLogin(0, originWebsite)
+            verifySortedLogin(1, firstLoginPage.url.authority.toString())
         }
 
         restartApp(activityTestRule)
@@ -707,8 +705,8 @@ class LoginsTest {
         }.openSettings {
         }.openLoginsAndPasswordSubMenu {
         }.openSavedLogins {
-            verifySortedLogin(activityTestRule, 0, originWebsite)
-            verifySortedLogin(activityTestRule, 1, firstLoginPage.url.authority.toString())
+            verifySortedLogin(0, originWebsite)
+            verifySortedLogin(1, firstLoginPage.url.authority.toString())
         }
     }
 
@@ -736,12 +734,12 @@ class LoginsTest {
         }.openLoginsAndPasswordSubMenu {
         }.openSavedLogins {
             tapSetupLater()
-            verifySortedLogin(activityTestRule, 0, firstLoginPage.url.authority.toString())
-            verifySortedLogin(activityTestRule, 1, originWebsite)
+            verifySortedLogin(0, firstLoginPage.url.authority.toString())
+            verifySortedLogin(1, originWebsite)
         }.goBack {
         }.openSavedLogins {
-            verifySortedLogin(activityTestRule, 0, firstLoginPage.url.authority.toString())
-            verifySortedLogin(activityTestRule, 1, originWebsite)
+            verifySortedLogin(0, firstLoginPage.url.authority.toString())
+            verifySortedLogin(1, originWebsite)
         }
 
         restartApp(activityTestRule)
@@ -751,8 +749,8 @@ class LoginsTest {
         }.openSettings {
         }.openLoginsAndPasswordSubMenu {
         }.openSavedLogins {
-            verifySortedLogin(activityTestRule, 0, firstLoginPage.url.authority.toString())
-            verifySortedLogin(activityTestRule, 1, originWebsite)
+            verifySortedLogin(0, firstLoginPage.url.authority.toString())
+            verifySortedLogin(1, originWebsite)
         }
     }
 

@@ -71,6 +71,7 @@ import mozilla.components.support.ktx.android.view.hideKeyboard
 import mozilla.components.support.ktx.kotlin.toNormalizedUrl
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifAnyChanged
 import mozilla.components.ui.autocomplete.InlineAutocompleteEditText
+import mozilla.components.ui.widgets.withCenterAlignedButtons
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.GleanMetrics.Awesomebar
 import org.mozilla.fenix.GleanMetrics.VoiceSearch
@@ -694,7 +695,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                             setPositiveButton(R.string.qr_scanner_dialog_invalid_ok) { dialog: DialogInterface, _ ->
                                 dialog.dismiss()
                             }
-                            create()
+                            create().withCenterAlignedButtons()
                         }.show()
                     }
                 } else {
@@ -719,7 +720,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                                 )
                                 dialog.dismiss()
                             }
-                            create()
+                            create().withCenterAlignedButtons()
                         }.show()
                     }
                 }
@@ -1027,7 +1028,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
     internal fun getPreviousDestination(): NavBackStackEntry? {
         // This duplicates the platform functionality for "previousBackStackEntry" but additionally skips this entry.
 
-        val descendingEntries = findNavController().backQueue.reversed().iterator()
+        val descendingEntries = findNavController().currentBackStack.value.reversed().iterator()
         // Throw the topmost destination away.
         if (descendingEntries.hasNext()) {
             descendingEntries.next()

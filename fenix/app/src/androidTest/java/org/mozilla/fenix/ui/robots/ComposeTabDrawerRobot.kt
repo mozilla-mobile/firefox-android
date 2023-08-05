@@ -14,6 +14,7 @@ import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.filter
 import androidx.compose.ui.test.hasAnyChild
+import androidx.compose.ui.test.hasParent
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.longClick
@@ -40,9 +41,11 @@ import org.hamcrest.Matcher
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.Constants
 import org.mozilla.fenix.helpers.HomeActivityComposeTestRule
+import org.mozilla.fenix.helpers.MatcherHelper.assertItemContainingTextExists
 import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
+import org.mozilla.fenix.helpers.TestHelper.getStringResource
 import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.clickAtLocationInView
 import org.mozilla.fenix.helpers.idlingresource.BottomSheetBehaviorStateIdlingResource
@@ -77,6 +80,15 @@ class ComposeTabDrawerRobot(private val composeTestRule: HomeActivityComposeTest
         } else {
             composeTestRule.syncedTabsButton().assertIsNotSelected()
         }
+    }
+
+    fun verifySyncedTabsListWhenUserIsNotSignedIn() {
+        verifySyncedTabsList()
+        assertItemContainingTextExists(
+            itemContainingText(getStringResource(R.string.synced_tabs_sign_in_message)),
+            itemContainingText(getStringResource(R.string.sync_sign_in)),
+            itemContainingText(getStringResource(R.string.tab_drawer_fab_sync)),
+        )
     }
 
     fun verifyExistingOpenTabs(vararg titles: String) {
@@ -265,6 +277,16 @@ class ComposeTabDrawerRobot(private val composeTestRule: HomeActivityComposeTest
             .performClick()
     }
 
+    /**
+     * Closes a tab with a given [title].
+     */
+    fun closeTabWithTitle(title: String) {
+        composeTestRule.onAllNodesWithTag(TabsTrayTestTag.tabItemClose)
+            .filter(hasParent(hasText(title)))
+            .onFirst()
+            .performClick()
+    }
+
     class Transition(private val composeTestRule: HomeActivityComposeTestRule) {
 
         fun openNewTab(interact: SearchRobot.() -> Unit): SearchRobot.Transition {
@@ -285,6 +307,19 @@ class ComposeTabDrawerRobot(private val composeTestRule: HomeActivityComposeTest
             composeTestRule.privateBrowsingButton().performClick()
             ComposeTabDrawerRobot(composeTestRule).interact()
             return Transition(composeTestRule)
+        }
+
+        fun toggleToSyncedTabs(interact: ComposeTabDrawerRobot.() -> Unit): Transition {
+            composeTestRule.syncedTabsButton().performClick()
+            ComposeTabDrawerRobot(composeTestRule).interact()
+            return Transition(composeTestRule)
+        }
+
+        fun clickSignInToSyncButton(interact: SyncSignInRobot.() -> Unit): SyncSignInRobot.Transition {
+            itemContainingText(getStringResource(R.string.sync_sign_in))
+                .clickAndWaitForNewWindow(TestAssetHelper.waitingTimeShort)
+            SyncSignInRobot().interact()
+            return SyncSignInRobot.Transition()
         }
 
         fun openThreeDotMenu(interact: ComposeTabDrawerRobot.() -> Unit): Transition {
