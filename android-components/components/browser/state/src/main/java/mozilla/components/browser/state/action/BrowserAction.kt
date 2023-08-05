@@ -542,10 +542,14 @@ sealed class ContentAction : BrowserAction() {
         ContentAction()
 
     /**
-     * Updates the isSearch state of the [ContentState] with the given [sessionId].
+     * Updates the isSearch state and optionally the search engine name of the [ContentState] with
+     * the given [sessionId].
      */
-    data class UpdateIsSearchAction(val sessionId: String, val isSearch: Boolean) :
-        ContentAction()
+    data class UpdateIsSearchAction(
+        val sessionId: String,
+        val isSearch: Boolean,
+        val searchEngineName: String? = null,
+    ) : ContentAction()
 
     /**
      * Updates the [SecurityInfoState] of the [ContentState] with the given [sessionId].
@@ -854,6 +858,18 @@ sealed class CookieBannerAction : BrowserAction() {
      */
     data class UpdateStatusAction(val tabId: String, val status: CookieBannerHandlingStatus) :
         CookieBannerAction()
+}
+
+/**
+ * [BrowserAction] implementations related to updating the [SessionState.ShoppingProduct]
+ * of a single [SessionState] inside [BrowserState]
+ */
+sealed class ShoppingProductAction : BrowserAction() {
+    /**
+     * Updates the [SessionState.ShoppingProduct] state or a a single [SessionState].
+     */
+    data class UpdateProductUrlStatusAction(val tabId: String, val isProductUrl: Boolean) :
+        ShoppingProductAction()
 }
 
 /**

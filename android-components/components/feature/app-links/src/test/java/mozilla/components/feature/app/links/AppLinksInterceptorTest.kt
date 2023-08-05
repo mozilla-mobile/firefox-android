@@ -4,21 +4,28 @@
 
 package mozilla.components.feature.app.links
 
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import mozilla.components.concept.engine.EngineSession
 import mozilla.components.concept.engine.request.RequestInterceptor
+import mozilla.components.feature.app.links.AppLinksInterceptor.Companion.APP_LINKS_DO_NOT_OPEN_CACHE_INTERVAL
+import mozilla.components.feature.app.links.AppLinksInterceptor.Companion.addUserDoNotIntercept
+import mozilla.components.feature.app.links.AppLinksInterceptor.Companion.inUserDoNotIntercept
+import mozilla.components.feature.app.links.AppLinksInterceptor.Companion.userDoNotInterceptCache
 import mozilla.components.support.test.any
 import mozilla.components.support.test.mock
 import mozilla.components.support.test.whenever
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers.anyBoolean
+import org.mockito.Mockito.doReturn
 import org.mockito.Mockito.verify
 
 @RunWith(AndroidJUnit4::class)
@@ -115,6 +122,23 @@ class AppLinksInterceptorTest {
 
         val response = appLinksInterceptor.onLoadRequest(mockEngineSession, webUrlWithAppLink, null, true, false, false, false, false)
         assertEquals(null, response)
+    }
+
+    @Test
+    fun `request is not intercepted when launchInApp preference is updated to false`() {
+        appLinksInterceptor = AppLinksInterceptor(
+            context = mockContext,
+            interceptLinkClicks = true,
+            launchInApp = { false },
+            useCases = mockUseCases,
+        )
+
+        val response = appLinksInterceptor.onLoadRequest(mockEngineSession, webUrlWithAppLink, null, true, false, false, false, false)
+        assertEquals(null, response)
+
+        appLinksInterceptor.updateLaunchInApp { true }
+        val response2 = appLinksInterceptor.onLoadRequest(mockEngineSession, webUrlWithAppLink, null, true, false, false, false, false)
+        assert(response2 is RequestInterceptor.InterceptionResponse.AppIntent)
     }
 
     @Test
@@ -245,7 +269,7 @@ class AppLinksInterceptorTest {
     }
 
     @Test
-    fun `WHEN receiving not supported schemes request THEN always intercepted regardless of hasUserGesture, interceptLinkClicks`() {
+    fun `not supported schemes request always intercepted regardless of hasUserGesture, interceptLinkClicks or launchInApp`() {
         val engineSession: EngineSession = mock()
         val supportedScheme = "supported"
         val notSupportedScheme = "not_supported"
@@ -255,34 +279,11 @@ class AppLinksInterceptorTest {
             interceptLinkClicks = false,
             engineSupportedSchemes = setOf(supportedScheme),
             alwaysDeniedSchemes = setOf(blocklistedScheme),
-            launchInApp = { true },
-            useCases = mockUseCases,
-        )
-
-        val notSupportedUrl = "$notSupportedScheme://example.com"
-        val notSupportedRedirect = AppLinkRedirect(Intent.parseUri(notSupportedUrl, 0), null, null)
-        whenever(mockGetRedirect.invoke(notSupportedUrl)).thenReturn(notSupportedRedirect)
-        val response = feature.onLoadRequest(engineSession, notSupportedUrl, null, false, false, false, false, false)
-        assert(response is RequestInterceptor.InterceptionResponse.AppIntent)
-    }
-
-    @Test
-    fun `WHEN receiving always allowed schemes request THEN always intercepted regardless of user launchInApp setting`() {
-        val engineSession: EngineSession = mock()
-        val supportedScheme = "supported"
-        val alwaysAllowedScheme = "always"
-        val blocklistedScheme = "blocklisted"
-        val feature = AppLinksInterceptor(
-            context = mockContext,
-            interceptLinkClicks = false,
-            engineSupportedSchemes = setOf(supportedScheme),
-            alwaysAllowedSchemes = setOf(alwaysAllowedScheme),
-            alwaysDeniedSchemes = setOf(blocklistedScheme),
             launchInApp = { false },
             useCases = mockUseCases,
         )
 
-        val notSupportedUrl = "$alwaysAllowedScheme://example.com"
+        val notSupportedUrl = "$notSupportedScheme://example.com"
         val notSupportedRedirect = AppLinkRedirect(Intent.parseUri(notSupportedUrl, 0), null, null)
         whenever(mockGetRedirect.invoke(notSupportedUrl)).thenReturn(notSupportedRedirect)
         val response = feature.onLoadRequest(engineSession, notSupportedUrl, null, false, false, false, false, false)
@@ -379,7 +380,7 @@ class AppLinksInterceptorTest {
     }
 
     @Test
-    fun `WHEN launchInApp is false THEN don't launch intent even if scheme is not supported launch intent and fallback URL is unavailable`() {
+    fun `intent scheme launch intent if fallback URL is unavailable and launchInApp is set to false`() {
         val engineSession: EngineSession = mock()
         val feature = AppLinksInterceptor(
             context = mockContext,
@@ -392,7 +393,7 @@ class AppLinksInterceptorTest {
         val intentRedirect = AppLinkRedirect(Intent.parseUri(intentUrl, 0), null, null)
         whenever(mockGetRedirect.invoke(intentUrl)).thenReturn(intentRedirect)
         val response = feature.onLoadRequest(engineSession, intentUrl, null, true, false, false, false, false)
-        assertNull(response)
+        assert(response is RequestInterceptor.InterceptionResponse.AppIntent)
     }
 
     @Test
@@ -462,16 +463,16 @@ class AppLinksInterceptorTest {
         )
 
         val testRedirect = AppLinkRedirect(Intent.parseUri(intentUrl, 0), fallbackUrl, null)
-        val response = appLinksInterceptor.handleRedirect(testRedirect, intentUrl, false)
+        val response = appLinksInterceptor.handleRedirect(testRedirect, intentUrl)
         assert(response is RequestInterceptor.InterceptionResponse.Url)
     }
 
     @Test
-    fun `WHEN url scheme is not supported by the engine THEN external app is launched`() {
+    fun `external app is launched when url scheme is not supported by the engine`() {
         appLinksInterceptor = AppLinksInterceptor(
             context = mockContext,
             interceptLinkClicks = true,
-            launchInApp = { true },
+            launchInApp = { false },
             useCases = mockUseCases,
             launchFromInterceptor = true,
         )
@@ -492,7 +493,7 @@ class AppLinksInterceptorTest {
         )
 
         val testRedirect = AppLinkRedirect(Intent.parseUri(intentUrl, 0), fallbackUrl, null)
-        val response = appLinksInterceptor.handleRedirect(testRedirect, intentUrl, false)
+        val response = appLinksInterceptor.handleRedirect(testRedirect, intentUrl)
         assert(response is RequestInterceptor.InterceptionResponse.AppIntent)
     }
 
@@ -507,7 +508,7 @@ class AppLinksInterceptorTest {
         )
 
         val testRedirect = AppLinkRedirect(null, fallbackUrl, Intent.parseUri(marketplaceUrl, 0))
-        val response = appLinksInterceptor.handleRedirect(testRedirect, webUrl, false)
+        val response = appLinksInterceptor.handleRedirect(testRedirect, webUrl)
         assert(response is RequestInterceptor.InterceptionResponse.AppIntent)
     }
 
@@ -522,7 +523,7 @@ class AppLinksInterceptorTest {
         )
 
         val testRedirect = AppLinkRedirect(null, fallbackUrl, null)
-        val response = appLinksInterceptor.handleRedirect(testRedirect, webUrl, false)
+        val response = appLinksInterceptor.handleRedirect(testRedirect, webUrl)
         assert(response is RequestInterceptor.InterceptionResponse.Url)
     }
 
@@ -543,5 +544,63 @@ class AppLinksInterceptorTest {
         assertFalse(appLinksInterceptor.isSameDomain("www.google.ca", "www.google.com"))
         assertFalse(appLinksInterceptor.isSameDomain("maps.google.ca", "m.google.com"))
         assertFalse(appLinksInterceptor.isSameDomain("accounts.google.com", "www.google.com"))
+    }
+
+    @Test
+    fun `WHEN request is in user do not intercept cache THEN request is not intercepted`() {
+        appLinksInterceptor = AppLinksInterceptor(
+            context = mockContext,
+            interceptLinkClicks = true,
+            launchInApp = { true },
+            useCases = mockUseCases,
+        )
+
+        var response = appLinksInterceptor.onLoadRequest(mockEngineSession, webUrlWithAppLink, null, true, false, false, false, false)
+        assert(response is RequestInterceptor.InterceptionResponse.AppIntent)
+
+        addUserDoNotIntercept("https://soundcloud.com", null)
+
+        response = appLinksInterceptor.onLoadRequest(mockEngineSession, webUrlWithAppLink, null, true, false, false, false, false)
+        assertNull(response)
+    }
+
+    @Test
+    fun `WHEN added to user do not open cache THEN return true if user do no intercept cache exists`() {
+        addUserDoNotIntercept("test://test.com", null)
+        assertTrue(inUserDoNotIntercept("test://test.com", null))
+        assertFalse(inUserDoNotIntercept("https://test.com", null))
+
+        addUserDoNotIntercept("http://test.com", null)
+        assertTrue(inUserDoNotIntercept("https://test.com", null))
+        assertFalse(inUserDoNotIntercept("https://example.com", null))
+
+        val testIntent: Intent = mock()
+        val componentName: ComponentName = mock()
+        doReturn(componentName).`when`(testIntent).component
+        doReturn("app.example.com").`when`(componentName).packageName
+
+        addUserDoNotIntercept("https://example.com", testIntent)
+        assertTrue(inUserDoNotIntercept("https://example.com", testIntent))
+        assertTrue(inUserDoNotIntercept("https://test.com", testIntent))
+
+        doReturn("app.test.com").`when`(componentName).packageName
+        assertFalse(inUserDoNotIntercept("https://test.com", testIntent))
+        assertFalse(inUserDoNotIntercept("https://mozilla.org", null))
+    }
+
+    @Test
+    fun `WHEN user do not open cache expires THEN return false`() {
+        val testIntent: Intent = mock()
+        val componentName: ComponentName = mock()
+        doReturn(componentName).`when`(testIntent).component
+        doReturn("app.example.com").`when`(componentName).packageName
+
+        addUserDoNotIntercept("https://example.com", testIntent)
+        assertTrue(inUserDoNotIntercept("https://example.com", testIntent))
+        assertTrue(inUserDoNotIntercept("https://test.com", testIntent))
+
+        userDoNotInterceptCache["app.example.com".hashCode()] = -APP_LINKS_DO_NOT_OPEN_CACHE_INTERVAL
+        assertFalse(inUserDoNotIntercept("https://example.com", testIntent))
+        assertFalse(inUserDoNotIntercept("https://test.com", testIntent))
     }
 }

@@ -42,6 +42,7 @@
         android:gravity="center"
         android:minWidth="22dp"
         android:padding="3dp"
+        android:textAlignment="center"
         android:textColor="@color/photonWhite"
         android:textSize="12sp"
         android:textStyle="bold"

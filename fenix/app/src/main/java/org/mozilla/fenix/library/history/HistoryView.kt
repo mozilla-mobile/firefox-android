@@ -12,6 +12,7 @@ import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import mozilla.components.support.base.feature.UserInteractionHandler
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.ComponentHistoryBinding
 import org.mozilla.fenix.ext.components
@@ -24,6 +25,7 @@ import org.mozilla.fenix.theme.ThemeManager
 class HistoryView(
     container: ViewGroup,
     val interactor: HistoryInteractor,
+    val store: HistoryFragmentStore,
     val onZeroItemsLoaded: () -> Unit,
     val onEmptyStateChanged: (Boolean) -> Unit,
 ) : LibraryPageView(container), UserInteractionHandler {
@@ -37,7 +39,7 @@ class HistoryView(
     var mode: HistoryFragmentState.Mode = HistoryFragmentState.Mode.Normal
         private set
 
-    val historyAdapter = HistoryAdapter(interactor) { isEmpty ->
+    val historyAdapter = HistoryAdapter(interactor, store) { isEmpty ->
         onEmptyStateChanged(isEmpty)
     }.apply {
         addLoadStateListener {
@@ -68,7 +70,11 @@ class HistoryView(
         val primaryTextColor = ThemeManager.resolveAttribute(R.attr.textPrimary, context)
         binding.swipeRefresh.setColorSchemeColors(primaryTextColor)
         binding.swipeRefresh.setOnRefreshListener {
-            interactor.onRequestSync()
+            if (FeatureFlags.historyFragmentLibStateRefactor) {
+                store.dispatch(HistoryFragmentAction.StartSync)
+            } else {
+                interactor.onRequestSync()
+            }
         }
     }
 

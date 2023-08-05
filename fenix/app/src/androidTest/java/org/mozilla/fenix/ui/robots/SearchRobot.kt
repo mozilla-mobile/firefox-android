@@ -35,6 +35,7 @@ import org.mozilla.fenix.helpers.MatcherHelper.itemWithDescription
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
 import org.mozilla.fenix.helpers.SessionLoadedIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
+import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeLong
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
 import org.mozilla.fenix.helpers.TestHelper.getStringResource
 import org.mozilla.fenix.helpers.TestHelper.grantSystemPermission
@@ -96,7 +97,7 @@ class SearchRobot {
             try {
                 assertTrue(
                     mDevice.findObject(UiSelector().textContains(searchSuggestion))
-                        .waitForExists(waitingTime),
+                        .waitForExists(waitingTimeLong),
                 )
                 break
             } catch (e: AssertionError) {
@@ -140,7 +141,7 @@ class SearchRobot {
         for (searchSuggestion in searchSuggestions) {
             assertTrue(
                 mDevice.findObject(UiSelector().textContains(searchSuggestion))
-                    .waitUntilGone(waitingTimeShort),
+                    .waitUntilGone(waitingTimeLong),
             )
         }
     }
@@ -204,12 +205,19 @@ class SearchRobot {
         )
     }
 
-    fun verifySearchShortcutListContains(vararg searchEngineName: String) {
+    fun verifySearchShortcutListContains(vararg searchEngineName: String, shouldExist: Boolean = true) {
         searchEngineName.forEach {
-            assertTrue(
-                searchShortcutList.getChild(UiSelector().text(it))
-                    .waitForExists(waitingTimeShort),
-            )
+            if (shouldExist) {
+                assertTrue(
+                    searchShortcutList.getChild(UiSelector().text(it))
+                        .waitForExists(waitingTimeShort),
+                )
+            } else {
+                assertTrue(
+                    searchShortcutList.getChild(UiSelector().text(it))
+                        .waitUntilGone(waitingTimeShort),
+                )
+            }
         }
     }
 
