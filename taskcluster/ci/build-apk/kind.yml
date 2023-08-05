@@ -20,11 +20,6 @@ task-defaults:
         name: 'public/build/target.{abi}.apk'
         github-name: '{gradle_build}-{version}-{abi}.apk'
         path: '/builds/worker/checkouts/vcs/{source_project_name}/app/build/outputs/apk/{gradle_build}/{gradle_build_type}/{fileName}'
-    optimization:
-        by-tasks-for:
-            github-pu(sh|ll-request.*):
-                skip-unless-changed: [] # Paths are dynamically added by transforms
-            default: {}
 
 
 tasks:

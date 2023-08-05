@@ -9,7 +9,6 @@ build-apk and build-bundle kinds.
 
 from android_taskgraph.build_config import get_variant
 from taskgraph.transforms.base import TransformSequence
-from taskgraph.util.schema import resolve_keyed_by
 
 transforms = TransformSequence()
 
@@ -19,7 +18,17 @@ def add_common_config(config, tasks):
     for task in tasks:
         fetches = task.setdefault("fetches", {})
         fetches["toolchain"] = ["android-sdk-linux"]
-        fetches["external-gradle-dependencies"] = ["external-gradle-dependencies.tar.xz"]
+        fetches["external-gradle-dependencies"] = [
+            "external-gradle-dependencies.tar.xz"
+        ]
+
+        optimization = task.setdefault("optimization", {})
+        if config.params["tasks_for"] == "github-push" or config.params[
+            "tasks_for"
+        ].startswith("github-pull-request"):
+            optimization[
+                "skip-unless-changed"
+            ] = []  # Paths are dynamically added by transforms
 
         task.setdefault("run-on-tasks-for", [])
 
@@ -49,22 +58,6 @@ def add_variant_config(config, tasks):
         attributes = task.setdefault("attributes", {})
         if not attributes.get("build-type"):
             attributes["build-type"] = task["name"]
-        yield task
-
-
-@transforms.add
-def resolve_keys(config, tasks):
-    for task in tasks:
-        for field in ("optimization",):
-            resolve_keyed_by(
-                task,
-                field,
-                item_name=task["name"],
-                **{
-                    "tasks-for": config.params["tasks_for"],
-                },
-            )
-
         yield task
 
 

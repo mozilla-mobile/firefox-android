@@ -19,11 +19,6 @@ task-defaults:
         type: file
         name: 'public/build/target.aab'
         path: '/builds/worker/checkouts/vcs/{source_project_name}/app/build/outputs/bundle/{variant_name}/app-{gradle_build}-{gradle_build_type}.aab'
-    optimization:
-        by-tasks-for:
-            github-pu(sh|ll-request.*):
-                skip-unless-changed: [] # Paths are dynamically added by transforms
-            default: {}
     run:
         gradle-package-command: bundle
 
