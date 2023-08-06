@@ -87,13 +87,13 @@ android {
 }
 ```
 
-Follow the build instructions in the [README](https://github.com/mozilla-mobile/fenix/blob/main/README.md) to get a Fenix build setup.
+Follow the build instructions in the [README](../README.md) to get a Fenix build setup.
 
 Now select the `geckoNightlyFennecNightly` build variant in Android Studio and deploy it. This build should have replaced your Fennec build now.
 
 ## Sample browser
 
-When working on migration code that lives in the [Android Components repository](https://github.com/mozilla-mobile/android-components) it can be helpful to replace a local Fennec build with the sample browser (instead of Fenix). The following setup is needed for that.
+When working on migration code that lives in the [Android Components repository](../../android-components) it can be helpful to replace a local Fennec build with the sample browser (instead of Fenix). The following setup is needed for that.
 
 Add the sharedUserId to the AndroidManifest.xml of sample browser:
 

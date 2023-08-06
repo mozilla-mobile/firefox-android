@@ -4,7 +4,7 @@ The framework consists of a software development kit (SDK) linked into Firefox f
 
 ## Adjust Integration
 
-The Adjust framework is abstracted via the [AdjustMetricService](https://github.com/mozilla-mobile/fenix/blob/main/app/src/main/java/org/mozilla/fenix/components/metrics/AdjustMetricsService.kt) class. All interaction with Adjust happens via this class.
+The Adjust framework is abstracted via the [AdjustMetricService](../app/src/main/java/org/mozilla/fenix/components/metrics/AdjustMetricsService.kt) class. All interaction with Adjust happens via this class.
 
 ## Adjust Messages
 

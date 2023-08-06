@@ -14,7 +14,7 @@ By running them manually you can check whether the test works or not but screens
 2. From command line run:
 `fastlane screengrab --test_instrumentation_runner "androidx.test.runner.AndroidJUnitRunner"`
 
-The package configuration, apk paths as well as the locales are set in [Screengrab file](https://github.com/mozilla-mobile/fenix/blob/073fd8939067bc7a367d8db497bcf53fbd24cdd2/fastlane/Screengrabfile#L5).
+The package configuration, apk paths as well as the locales are set in [Screengrab file](../fastlane/Screengrabfile#L5).
 In case there is a change there the file has to be modified accordingly.
 Before launching that command, there has to be an emulator running.
 
