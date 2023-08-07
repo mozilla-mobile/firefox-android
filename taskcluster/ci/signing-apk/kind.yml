@@ -23,9 +23,9 @@ tasks:
         worker: {}
         signing-format:
             by-build-type:
-                (focus-.*|klar-.*): autograph_stage_focus
-                fenix-(beta|release)-mozillaonline: autograph_stage_apk_mozillaonline
-                default: autograph_stage_apk
+                (focus-.*|klar-.*): autograph_stage_focus_v3
+                fenix-(beta|release)-mozillaonline: autograph_stage_apk_mozillaonline_v3
+                default: autograph_stage_apk_v3
         index:
             by-tasks-for:
                 (action|cron|github-release):
