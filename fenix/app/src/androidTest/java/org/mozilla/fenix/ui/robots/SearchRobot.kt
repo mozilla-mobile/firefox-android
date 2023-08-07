@@ -6,8 +6,10 @@
 
 package org.mozilla.fenix.ui.robots
 
+import androidx.compose.ui.test.assertAny
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.ComposeTestRule
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performScrollToNode
 import androidx.test.espresso.Espresso.onView
@@ -35,6 +37,7 @@ import org.mozilla.fenix.helpers.MatcherHelper.itemWithDescription
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
 import org.mozilla.fenix.helpers.SessionLoadedIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
+import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeLong
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
 import org.mozilla.fenix.helpers.TestHelper.getStringResource
 import org.mozilla.fenix.helpers.TestHelper.grantSystemPermission
@@ -96,7 +99,7 @@ class SearchRobot {
             try {
                 assertTrue(
                     mDevice.findObject(UiSelector().textContains(searchSuggestion))
-                        .waitForExists(waitingTime),
+                        .waitForExists(waitingTimeLong),
                 )
                 break
             } catch (e: AssertionError) {
@@ -138,10 +141,11 @@ class SearchRobot {
     fun verifyNoSuggestionsAreDisplayed(rule: ComposeTestRule, vararg searchSuggestions: String) {
         rule.waitForIdle()
         for (searchSuggestion in searchSuggestions) {
-            assertTrue(
-                mDevice.findObject(UiSelector().textContains(searchSuggestion))
-                    .waitUntilGone(waitingTimeShort),
-            )
+            rule.onAllNodesWithTag("mozac.awesomebar.suggestions")
+                .assertAny(
+                    hasText(searchSuggestion)
+                        .not(),
+                )
         }
     }
 

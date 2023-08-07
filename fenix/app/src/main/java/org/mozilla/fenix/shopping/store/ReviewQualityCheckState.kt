@@ -2,9 +2,12 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.fenix.shopping.state
+package org.mozilla.fenix.shopping.store
 
 import mozilla.components.lib.state.State
+import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.HighlightType
+
+private const val NUMBER_OF_HIGHLIGHTS_FOR_COMPACT_MODE = 2
 
 /**
  * UI state of the review quality check feature.
@@ -28,7 +31,7 @@ sealed interface ReviewQualityCheckState : State {
      * recommendations. True if product recommendations should be shown.
      */
     data class OptedIn(
-        val productReviewState: ProductReviewState = ProductReviewState.Loading,
+        val productReviewState: ProductReviewState = fakeAnalysis,
         val productRecommendationsPreference: Boolean,
     ) : ReviewQualityCheckState {
 
@@ -56,7 +59,7 @@ sealed interface ReviewQualityCheckState : State {
             ) : ProductReviewState
 
             /**
-             * Denotes the state where analysis of the product is fetched and available.
+             * Denotes the state where analysis of the product is fetched and present.
              *
              * @property productId The id of the product, e.g ASIN, SKU.
              * @property reviewGrade The review grade of the product.
@@ -67,7 +70,7 @@ sealed interface ReviewQualityCheckState : State {
              * @property highlights Optional highlights based on recent reviews of the product.
              * @property recommendedProductState The state of the recommended product.
              */
-            data class ProductAnalysis(
+            data class AnalysisPresent(
                 val productId: String,
                 val reviewGrade: Grade,
                 val needsAnalysis: Boolean,
@@ -136,3 +139,50 @@ sealed interface ReviewQualityCheckState : State {
         ) : RecommendedProductState
     }
 }
+
+/**
+ * Highlights to display in compact mode that contains first 2 highlights of the first
+ * highlight type.
+ */
+fun Map<HighlightType, List<String>>.forCompactMode(): Map<HighlightType, List<String>> =
+    entries.first().let { entry ->
+        mapOf(entry.key to entry.value.take(NUMBER_OF_HIGHLIGHTS_FOR_COMPACT_MODE))
+    }
+
+/**
+ * Fake analysis for showing the UI. To be deleted once the API is integrated.
+ */
+private val fakeAnalysis = ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent(
+    productId = "123",
+    reviewGrade = ReviewQualityCheckState.Grade.B,
+    needsAnalysis = false,
+    adjustedRating = 3.6f,
+    productUrl = "123",
+    highlights = mapOf(
+        HighlightType.QUALITY to listOf(
+            "High quality",
+            "Excellent craftsmanship",
+            "Superior materials",
+        ),
+        HighlightType.PRICE to listOf(
+            "Affordable prices",
+            "Great value for money",
+            "Discounted offers",
+        ),
+        HighlightType.SHIPPING to listOf(
+            "Fast and reliable shipping",
+            "Free shipping options",
+            "Express delivery",
+        ),
+        HighlightType.PACKAGING_AND_APPEARANCE to listOf(
+            "Elegant packaging",
+            "Attractive appearance",
+            "Beautiful design",
+        ),
+        HighlightType.COMPETITIVENESS to listOf(
+            "Competitive pricing",
+            "Strong market presence",
+            "Unbeatable deals",
+        ),
+    ),
+)

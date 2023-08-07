@@ -4,11 +4,17 @@ title: Changelog
 permalink: /changelog/
 ---
 
-# 117.0 (In Development)
-* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v116..main)
+# 118.0 (In Development)
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v117..main)
 * [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
 * [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/Gecko.kt)
 * [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/.config.yml)
+
+# 117.0
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v116..main)
+* [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/releases_v117/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
+* [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/releases_v117/android-components/plugins/dependencies/src/main/java/Gecko.kt)
+* [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/releases_v117/android-components/.config.yml)
 
 * **service-nimbus**
   * Add `allow-coenrollment` to the `messaging` feature, making it possible to enroll in multiple experiments involving messaging.
@@ -66,6 +72,11 @@ permalink: /changelog/
     * Rename mozac_ic_add_to_homescreen to mozac_ic_add_to_homescreen_24
     * Rename mozac_ic_cookies to mozac_ic_cookies_24
     * Rename mozac_ic_sync to mozac_ic_sync_24
+
+# 117.0
+
+* **concept-engine**
+  * 🌟️️ Add `ProductUrlStatus` to `SessionState` instance to indicate whether or not a product page of a given session state is being displayed. See more on [bug #1842638](https://bugzilla.mozilla.org/show_bug.cgi?id=1842638).
 
 # 116.0
 * [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v115..releases_v116)
