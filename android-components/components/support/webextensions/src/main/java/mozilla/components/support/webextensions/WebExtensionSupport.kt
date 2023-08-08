@@ -174,6 +174,7 @@ object WebExtensionSupport {
         onSelectTabOverride: ((WebExtension?, String) -> Unit)? = null,
         onUpdatePermissionRequest: onUpdatePermissionRequest? = { _, _, _, _ -> },
         onExtensionsLoaded: ((List<WebExtension>) -> Unit)? = null,
+        onDisabledExtensionProcessRestart: (((Boolean) -> Unit) -> Unit)? = null,
     ) {
         this.onUpdatePermissionRequest = onUpdatePermissionRequest
         this.onExtensionsLoaded = onExtensionsLoaded
@@ -236,6 +237,13 @@ object WebExtensionSupport {
                                 WebExtensionPromptRequest.PostInstallation(extension),
                             ),
                         )
+                    }
+                }
+
+                override fun onDisabledExtensionProcessRestart(shouldRestart: (Boolean) -> Unit) {
+                    onDisabledExtensionProcessRestart?.invoke {
+                        response ->
+                        shouldRestart.invoke(response)
                     }
                 }
 
