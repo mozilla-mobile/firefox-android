@@ -35,6 +35,7 @@ import mozilla.components.browser.state.state.selectedOrDefaultSearchEngine
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.browser.storage.sync.GlobalPlacesDependencyProvider
 import mozilla.components.concept.base.crash.Breadcrumb
+import mozilla.components.concept.engine.prompt.PromptRequest
 import mozilla.components.concept.engine.webextension.WebExtension
 import mozilla.components.concept.engine.webextension.isUnsupported
 import mozilla.components.concept.push.PushProcessor
@@ -669,6 +670,10 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                     subscribeForNewAddonsIfNeeded(components.supportedAddonsChecker, extensions)
                 },
                 onUpdatePermissionRequest = components.addonUpdater::onUpdatePermissionRequest,
+                onDisabledExtensionProcessRestart = { shouldRestartExtensionsProcess ->
+                    shouldRestartExtensionsProcess.invoke(false)
+                }
+
             )
         } catch (e: UnsupportedOperationException) {
             Logger.error("Failed to initialize web extension support", e)

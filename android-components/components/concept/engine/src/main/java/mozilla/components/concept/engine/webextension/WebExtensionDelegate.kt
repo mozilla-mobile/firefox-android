@@ -135,4 +135,9 @@ interface WebExtensionDelegate {
      * of installing / uninstalling extensions by the user.
      */
     fun onExtensionListUpdated() = Unit
+
+    /**
+     * Invoked when the extension process auto-restart has been disabled
+     */
+    fun onDisabledExtensionProcessRestart(shouldRestart:((Boolean) -> Unit)) = Unit
 }
