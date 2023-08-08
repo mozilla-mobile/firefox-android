@@ -113,11 +113,11 @@ class SettingsSearchTest {
         homeScreen {
         }.openSearch {
             typeSearch("test")
-            verifyFirefoxSuggestResults(
+            verifySearchEngineSuggestionResults(
                 activityTestRule,
-                "test",
                 "Firefox Suggest",
-                "Test_Page_1",
+                page1.title,
+                searchTerm = "test",
             )
         }.clickSearchSuggestion("Test_Page_1") {
             verifyUrl(page1.url.toString())
@@ -145,11 +145,15 @@ class SettingsSearchTest {
         homeScreen {
         }.openSearch {
             typeSearch("test")
-            verifyFirefoxSuggestResults(
+            verifySearchEngineSuggestionResults(
                 activityTestRule,
-                "test",
                 "Firefox Suggest",
+<<<<<<< HEAD
                 "Test_Page_2",
+=======
+                website.title,
+                searchTerm = "test",
+>>>>>>> 5e5d7ce213 (Bug 1847583 - Fenix: Add search by bookmarks tests)
             )
         }.clickSearchSuggestion("Test_Page_2") {
             verifyUrl(page2.url.toString())
@@ -173,8 +177,12 @@ class SettingsSearchTest {
             verifyNoSuggestionsAreDisplayed(
                 activityTestRule,
                 "Firefox Suggest",
+<<<<<<< HEAD
                 "Test_Page_1",
                 "Test_Page_2",
+=======
+                website.title,
+>>>>>>> 5e5d7ce213 (Bug 1847583 - Fenix: Add search by bookmarks tests)
             )
         }
     }
@@ -258,8 +266,12 @@ class SettingsSearchTest {
     fun toggleSearchSuggestionsTest() {
         homeScreen {
         }.openSearch {
-            typeSearch("mozilla")
-            verifySearchEngineSuggestionResults(activityTestRule, "mozilla firefox")
+            typeSearch("mozilla ")
+            verifySearchEngineSuggestionResults(
+                activityTestRule,
+                "mozilla firefox",
+                searchTerm = "mozilla ",
+            )
         }.dismissSearchBar {
         }.openThreeDotMenu {
         }.openSettings {
@@ -295,7 +307,11 @@ class SettingsSearchTest {
             typeSearch("mozilla")
             verifyAllowSuggestionsInPrivateModeDialog()
             allowSuggestionsInPrivateMode()
-            verifySearchEngineSuggestionResults(activityTestRule, "mozilla firefox")
+            verifySearchEngineSuggestionResults(
+                activityTestRule,
+                "mozilla firefox",
+                searchTerm = "mozilla",
+            )
         }.dismissSearchBar {
         }.openThreeDotMenu {
         }.openSettings {

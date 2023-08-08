@@ -38,7 +38,7 @@ import org.mozilla.fenix.ui.robots.navigationToolbar
 /**
  *  Tests for verifying basic functionality of bookmarks
  */
-class BookmarksTest {
+class ComposeBookmarksTest {
     private lateinit var mockWebServer: MockWebServer
     private lateinit var mDevice: UiDevice
     private val bookmarksFolderName = "New Folder"
@@ -50,7 +50,9 @@ class BookmarksTest {
     @get:Rule(order = 0)
     val activityTestRule =
         AndroidComposeTestRule(
-            HomeActivityIntentTestRule.withDefaultSettingsOverrides(isUnifiedSearchEnabled = true),
+            HomeActivityIntentTestRule.withDefaultSettingsOverrides(
+                tabsTrayRewriteEnabled = true,
+            ),
         ) { it.activity }
 
     @Rule(order = 1)
@@ -283,9 +285,9 @@ class BookmarksTest {
                 RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.bookmark_list), 2),
             ) {}
         }.openThreeDotMenu(defaultWebPage.title) {
-        }.clickOpenInNewTab {
-            verifyTabTrayIsOpened()
-            verifyNormalModeSelected()
+        }.clickOpenInNewTab(activityTestRule) {
+            verifyTabTrayIsOpen()
+            verifyNormalBrowsingButtonIsSelected()
         }
     }
 
@@ -312,7 +314,7 @@ class BookmarksTest {
             createBookmark(webPages[1].url, "root")
             createBookmark(webPages[2].url, "root")
             createBookmark(webPages[3].url, "sub")
-        }.openTabDrawer {
+        }.openComposeTabDrawer(activityTestRule) {
             closeTab()
         }
 
@@ -320,9 +322,9 @@ class BookmarksTest {
         }.openThreeDotMenu {
         }.openBookmarks {
         }.openThreeDotMenu("root") {
-        }.clickOpenAllInTabs {
-            verifyTabTrayIsOpened()
-            verifyNormalModeSelected()
+        }.clickOpenAllInTabs(activityTestRule) {
+            verifyTabTrayIsOpen()
+            verifyNormalBrowsingButtonIsSelected()
 
             verifyExistingOpenTabs("Test_Page_2", "Test_Page_3", "Test_Page_4")
 
@@ -350,7 +352,7 @@ class BookmarksTest {
         browserScreen {
             createBookmark(webPages[0].url, "root")
             createBookmark(webPages[1].url, "sub")
-        }.openTabDrawer {
+        }.openComposeTabDrawer(activityTestRule) {
             closeTab()
         }
 
@@ -358,9 +360,9 @@ class BookmarksTest {
         }.openThreeDotMenu {
         }.openBookmarks {
         }.openThreeDotMenu("root") {
-        }.clickOpenAllInPrivateTabs {
-            verifyTabTrayIsOpened()
-            verifyPrivateModeSelected()
+        }.clickOpenAllInPrivateTabs(activityTestRule) {
+            verifyTabTrayIsOpen()
+            verifyPrivateBrowsingButtonIsSelected()
 
             verifyExistingOpenTabs("Test_Page_1", "Test_Page_2")
         }
@@ -378,9 +380,9 @@ class BookmarksTest {
                 RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.bookmark_list), 2),
             ) {}
         }.openThreeDotMenu(defaultWebPage.title) {
-        }.clickOpenInPrivateTab {
-            verifyTabTrayIsOpened()
-            verifyPrivateModeSelected()
+        }.clickOpenInPrivateTab(activityTestRule) {
+            verifyTabTrayIsOpen()
+            verifyPrivateBrowsingButtonIsSelected()
         }
     }
 
@@ -461,7 +463,7 @@ class BookmarksTest {
 
         browserScreen {
             createBookmark(defaultWebPage.url)
-        }.openTabDrawer {
+        }.openComposeTabDrawer(activityTestRule) {
             closeTab()
         }
 
@@ -477,9 +479,10 @@ class BookmarksTest {
         }
 
         multipleSelectionToolbar {
-        }.clickOpenNewTab {
-            verifyNormalModeSelected()
-            verifyExistingTabList()
+        }.clickOpenNewTab(activityTestRule) {
+            verifyTabTrayIsOpen()
+            verifyNormalBrowsingButtonIsSelected()
+            verifyNormalTabsList()
         }
     }
 
@@ -501,9 +504,9 @@ class BookmarksTest {
         }
 
         multipleSelectionToolbar {
-        }.clickOpenPrivateTab {
-            verifyPrivateModeSelected()
-            verifyExistingTabList()
+        }.clickOpenPrivateTab(activityTestRule) {
+            verifyPrivateBrowsingButtonIsSelected()
+            verifyPrivateTabsList()
         }
     }
 

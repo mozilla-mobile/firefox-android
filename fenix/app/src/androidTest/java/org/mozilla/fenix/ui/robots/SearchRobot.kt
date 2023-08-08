@@ -91,6 +91,7 @@ class SearchRobot {
         }
     }
 
+<<<<<<< HEAD
     fun verifySearchEngineButton() = assertSearchButton()
 
     fun verifySearchEngineSuggestionResults(rule: ComposeTestRule, searchSuggestion: String) {
@@ -113,6 +114,9 @@ class SearchRobot {
     }
 
     fun verifyFirefoxSuggestResults(rule: ComposeTestRule, searchTerm: String, vararg searchSuggestions: String) {
+=======
+    fun verifySearchEngineSuggestionResults(rule: ComposeTestRule, vararg searchSuggestions: String, searchTerm: String) {
+>>>>>>> 5e5d7ce213 (Bug 1847583 - Fenix: Add search by bookmarks tests)
         rule.waitForIdle()
         for (i in 1..RETRY_COUNT) {
             try {
@@ -122,7 +126,6 @@ class SearchRobot {
                         .performScrollToNode(hasText(searchSuggestion))
                         .assertExists()
                 }
-
                 break
             } catch (e: AssertionError) {
                 if (i == RETRY_COUNT) {

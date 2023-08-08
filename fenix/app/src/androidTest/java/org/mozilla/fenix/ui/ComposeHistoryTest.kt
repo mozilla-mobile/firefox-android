@@ -38,14 +38,16 @@ import org.mozilla.fenix.ui.robots.navigationToolbar
  *  Tests for verifying basic functionality of history
  *
  */
-class HistoryTest {
+class ComposeHistoryTest {
     private lateinit var mockWebServer: MockWebServer
     private lateinit var mDevice: UiDevice
 
     @get:Rule
     val activityTestRule =
         AndroidComposeTestRule(
-            HomeActivityIntentTestRule.withDefaultSettingsOverrides(isUnifiedSearchEnabled = true),
+            HomeActivityIntentTestRule.withDefaultSettingsOverrides(
+                tabsTrayRewriteEnabled = true,
+            ),
         ) { it.activity }
 
     @Before
@@ -230,7 +232,7 @@ class HistoryTest {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(firstWebPage.url) {
             mDevice.waitForIdle()
-        }.openTabDrawer {
+        }.openComposeTabDrawer(activityTestRule) {
             closeTab()
         }
 
@@ -246,9 +248,9 @@ class HistoryTest {
         }
 
         multipleSelectionToolbar {
-        }.clickOpenNewTab {
-            verifyExistingTabList()
-            verifyNormalModeSelected()
+        }.clickOpenNewTab(activityTestRule) {
+            verifyNormalTabsList()
+            verifyNormalBrowsingButtonIsSelected()
         }
     }
 
@@ -271,9 +273,9 @@ class HistoryTest {
         }
 
         multipleSelectionToolbar {
-        }.clickOpenPrivateTab {
-            verifyPrivateModeSelected()
-            verifyExistingTabList()
+        }.clickOpenPrivateTab(activityTestRule) {
+            verifyPrivateTabsList()
+            verifyPrivateBrowsingButtonIsSelected()
         }
     }
 
@@ -405,13 +407,8 @@ class HistoryTest {
         }.openHistory {
         }.clickSearchButton {
             // Search for a valid term
-<<<<<<< HEAD
             typeSearch(firstWebPage.title)
-            verifySearchEngineSuggestionResults(activityTestRule, firstWebPage.url.toString())
-=======
-            typeSearch("generic")
-            verifySearchEngineSuggestionResults(activityTestRule, firstWebPage.url.toString(), searchTerm = "generic")
->>>>>>> 5e5d7ce213 (Bug 1847583 - Fenix: Add search by bookmarks tests)
+            verifySearchEngineSuggestionResults(activityTestRule, firstWebPage.url.toString(), searchTerm = firstWebPage.title)
             verifyNoSuggestionsAreDisplayed(activityTestRule, secondWebPage.url.toString())
             clickClearButton()
             // Search for invalid term
@@ -450,11 +447,7 @@ class HistoryTest {
             typeSearch("generic")
             verifyNoSuggestionsAreDisplayed(activityTestRule, firstWebPage.url.toString())
             verifyNoSuggestionsAreDisplayed(activityTestRule, secondWebPage.url.toString())
-            verifySearchEngineSuggestionResults(
-                activityTestRule,
-                thirdWebPage.url.toString(),
-                searchTerm = "generic",
-            )
+            verifySearchEngineSuggestionResults(activityTestRule, thirdWebPage.url.toString(), searchTerm = "generic")
             pressBack()
         }
         historyMenu {

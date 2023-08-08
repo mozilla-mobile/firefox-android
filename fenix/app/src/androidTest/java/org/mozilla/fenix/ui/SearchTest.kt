@@ -54,8 +54,15 @@ import org.mozilla.fenix.ui.robots.multipleSelectionToolbar
  */
 
 class SearchTest {
+<<<<<<< HEAD
     lateinit var searchMockServer: MockWebServer
     lateinit var queryString: String
+=======
+    private lateinit var searchMockServer: MockWebServer
+    private var queryString = "firefox"
+    private val generalEnginesList = listOf("DuckDuckGo", "Google", "Bing")
+    private val topicEnginesList = listOf("Amazon.com", "Wikipedia", "eBay")
+>>>>>>> 5e5d7ce213 (Bug 1847583 - Fenix: Add search by bookmarks tests)
 
     @get:Rule
     val activityTestRule = AndroidComposeTestRule(
@@ -524,7 +531,21 @@ class SearchTest {
         homeScreen {
         }.openSearch {
         }.submitQuery(queryString) {
+<<<<<<< HEAD
             verifyUrl(searchEngineCodes["Google"]!!)
+=======
+            waitForPageToLoad()
+        }.openThreeDotMenu {
+        }.openHistory {
+            // Full URL no longer visible in the nav bar, so we'll check the history record
+            // A search group is sometimes created when searching with Google (probably redirects)
+            try {
+                verifyHistoryItemExists(shouldExist = true, searchEngineCodes["Google"]!!)
+            } catch (e: AssertionError) {
+                openSearchGroup(queryString)
+                verifyHistoryItemExists(shouldExist = true, searchEngineCodes["Google"]!!)
+            }
+>>>>>>> 5e5d7ce213 (Bug 1847583 - Fenix: Add search by bookmarks tests)
         }
     }
 
@@ -566,7 +587,81 @@ class SearchTest {
         homeScreen {
         }.openSearch {
         }.submitQuery(queryString) {
+<<<<<<< HEAD
             verifyUrl(searchEngineCodes["DuckDuckGo"]!!)
+=======
+            waitForPageToLoad()
+        }.openThreeDotMenu {
+        }.openHistory {
+            // Full URL no longer visible in the nav bar, so we'll check the history record
+            // A search group is sometimes created when searching with DuckDuckGo
+            try {
+                verifyHistoryItemExists(shouldExist = true, item = searchEngineCodes["DuckDuckGo"]!!)
+            } catch (e: AssertionError) {
+                openSearchGroup(queryString)
+                verifyHistoryItemExists(shouldExist = true, item = searchEngineCodes["DuckDuckGo"]!!)
+            }
+        }
+    }
+
+    @Test
+    fun verifySearchTabsItemsTest() {
+        navigationToolbar {
+        }.clickUrlbar {
+            clickSearchSelectorButton()
+            selectTemporarySearchMethod("Tabs")
+            verifyKeyboardVisibility(isExpectedToBeVisible = true)
+            verifyScanButtonVisibility(visible = false)
+            verifyVoiceSearchButtonVisibility(enabled = true)
+            verifySearchBarPlaceholder(text = "Search tabs")
+        }
+    }
+
+    @Test
+    fun verifySearchTabsWithoutOpenTabsTest() {
+        navigationToolbar {
+        }.clickUrlbar {
+            clickSearchSelectorButton()
+            selectTemporarySearchMethod(searchEngineName = "Tabs")
+            typeSearch(searchTerm = "Mozilla")
+            verifyNoSuggestionsAreDisplayed(rule = activityTestRule, "Mozilla")
+            clickClearButton()
+            verifySearchBarPlaceholder("Search tabs")
+        }
+    }
+
+    @Test
+    fun verifySearchTabsWithOpenTabsTest() {
+        val firstPageUrl = getGenericAsset(searchMockServer, 1)
+        val secondPageUrl = getGenericAsset(searchMockServer, 2)
+
+        createTabItem(firstPageUrl.url.toString())
+        createTabItem(secondPageUrl.url.toString())
+
+        navigationToolbar {
+        }.clickUrlbar {
+            clickSearchSelectorButton()
+            selectTemporarySearchMethod(searchEngineName = "Tabs")
+            typeSearch(searchTerm = "Mozilla")
+            verifyNoSuggestionsAreDisplayed(rule = activityTestRule, "Mozilla")
+            clickClearButton()
+            typeSearch(searchTerm = "generic")
+            verifyTypedToolbarText("generic")
+            verifySearchEngineSuggestionResults(
+                rule = activityTestRule,
+                searchSuggestions = arrayOf(
+                    "Firefox Suggest",
+                    firstPageUrl.url.toString(),
+                    secondPageUrl.url.toString(),
+                ),
+                searchTerm = "generic",
+            )
+        }.clickSearchSuggestion(firstPageUrl.url.toString()) {
+            verifyTabCounter("2")
+        }.openTabDrawer {
+            verifyOpenTabsOrder(position = 1, title = firstPageUrl.url.toString())
+            verifyOpenTabsOrder(position = 2, title = secondPageUrl.url.toString())
+>>>>>>> 5e5d7ce213 (Bug 1847583 - Fenix: Add search by bookmarks tests)
         }
     }
 }

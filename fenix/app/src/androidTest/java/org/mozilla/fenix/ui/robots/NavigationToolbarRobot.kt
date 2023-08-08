@@ -117,6 +117,25 @@ class NavigationToolbarRobot {
             getStringResource(R.string.search_hint),
         )
 
+<<<<<<< HEAD
+=======
+    // New unified search UI selector
+    fun verifySearchBarPlaceholder(text: String) {
+        urlBar().waitForExists(waitingTime)
+        assertTrue(
+            urlBar().text == text,
+        )
+    }
+
+    // New unified search UI selector
+    fun verifyDefaultSearchEngine(engineName: String) =
+        assertTrue(
+            searchSelectorButton
+                .getChild(UiSelector().description(engineName))
+                .waitForExists(waitingTime),
+        )
+
+>>>>>>> 5e5d7ce213 (Bug 1847583 - Fenix: Add search by bookmarks tests)
     fun verifyTextSelectionOptions(vararg textSelectionOptions: String) {
         for (textSelectionOption in textSelectionOptions) {
             mDevice.waitNotNull(Until.findObject(textContains(textSelectionOption)), waitingTime)
@@ -301,6 +320,14 @@ class NavigationToolbarRobot {
             SearchRobot().interact()
             return SearchRobot.Transition()
         }
+
+        fun clickSearchSelectorButton(interact: SearchRobot.() -> Unit): SearchRobot.Transition {
+            searchSelectorButton.waitForExists(waitingTime)
+            searchSelectorButton.click()
+
+            SearchRobot().interact()
+            return SearchRobot.Transition()
+        }
     }
 }
 
@@ -387,6 +414,9 @@ private fun assertCloseReaderViewDetected(visible: Boolean) {
         },
     )
 }
+
+private val searchSelectorButton =
+    mDevice.findObject(UiSelector().resourceId("$packageName:id/search_selector"))
 
 inline fun runWithIdleRes(ir: IdlingResource?, pendingCheck: () -> Unit) {
     try {
