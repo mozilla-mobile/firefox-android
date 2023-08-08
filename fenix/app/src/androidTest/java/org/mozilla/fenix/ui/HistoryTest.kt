@@ -405,8 +405,13 @@ class HistoryTest {
         }.openHistory {
         }.clickSearchButton {
             // Search for a valid term
+<<<<<<< HEAD
             typeSearch(firstWebPage.title)
             verifySearchEngineSuggestionResults(activityTestRule, firstWebPage.url.toString())
+=======
+            typeSearch("generic")
+            verifySearchEngineSuggestionResults(activityTestRule, firstWebPage.url.toString(), searchTerm = "generic")
+>>>>>>> 5e5d7ce213 (Bug 1847583 - Fenix: Add search by bookmarks tests)
             verifyNoSuggestionsAreDisplayed(activityTestRule, secondWebPage.url.toString())
             clickClearButton()
             // Search for invalid term
@@ -445,7 +450,11 @@ class HistoryTest {
             typeSearch("generic")
             verifyNoSuggestionsAreDisplayed(activityTestRule, firstWebPage.url.toString())
             verifyNoSuggestionsAreDisplayed(activityTestRule, secondWebPage.url.toString())
-            verifySearchEngineSuggestionResults(activityTestRule, thirdWebPage.url.toString())
+            verifySearchEngineSuggestionResults(
+                activityTestRule,
+                thirdWebPage.url.toString(),
+                searchTerm = "generic",
+            )
             pressBack()
         }
         historyMenu {
