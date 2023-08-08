@@ -92,7 +92,7 @@ class AddonCollectionProvider(
      */
     @Throws(IOException::class)
     @Suppress("NestedBlockDepth")
-    override suspend fun getAvailableAddons(
+    override suspend fun getFeaturedAddons(
         allowCache: Boolean,
         readTimeoutInSeconds: Long?,
         language: String?,

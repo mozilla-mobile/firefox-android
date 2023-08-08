@@ -37,10 +37,10 @@ import java.util.concurrent.TimeUnit
 class AddonCollectionProviderTest {
 
     @Test
-    fun `getAvailableAddons - with a successful status response must contain add-ons`() = runTest {
+    fun `getFeaturedAddons - with a successful status response must contain add-ons`() = runTest {
         val mockedClient = prepareClient(loadResourceAsString("/collection.json"))
         val provider = AddonCollectionProvider(testContext, client = mockedClient)
-        val addons = provider.getAvailableAddons()
+        val addons = provider.getFeaturedAddons()
         val addon = addons.first()
 
         assertTrue(addons.isNotEmpty())
@@ -96,11 +96,11 @@ class AddonCollectionProviderTest {
     }
 
     @Test
-    fun `getAvailableAddons - with a successful status response must handle empty values`() = runTest {
+    fun `getFeaturedAddons - with a successful status response must handle empty values`() = runTest {
         val client = prepareClient()
         val provider = AddonCollectionProvider(testContext, client = client)
 
-        val addons = provider.getAvailableAddons()
+        val addons = provider.getFeaturedAddons()
         val addon = addons.first()
 
         assertTrue(addons.isNotEmpty())
@@ -135,11 +135,11 @@ class AddonCollectionProviderTest {
     }
 
     @Test
-    fun `getAvailableAddons - with a language`() = runTest {
+    fun `getFeaturedAddons - with a language`() = runTest {
         val client = prepareClient(loadResourceAsString("/localized_collection.json"))
         val provider = AddonCollectionProvider(testContext, client = client)
 
-        val addons = provider.getAvailableAddons(language = "en")
+        val addons = provider.getFeaturedAddons(language = "en")
         val addon = addons.first()
 
         assertTrue(addons.isNotEmpty())
@@ -208,11 +208,11 @@ class AddonCollectionProviderTest {
     }
 
     @Test
-    fun `getAvailableAddons - read timeout can be configured`() = runTest {
+    fun `getFeaturedAddons - read timeout can be configured`() = runTest {
         val mockedClient = prepareClient()
 
         val provider = spy(AddonCollectionProvider(testContext, client = mockedClient))
-        provider.getAvailableAddons(readTimeoutInSeconds = 5)
+        provider.getFeaturedAddons(readTimeoutInSeconds = 5)
         verify(mockedClient).fetch(
             Request(
                 url = "https://services.addons.mozilla.org/api/v4/accounts/account/mozilla/collections/" +
@@ -224,33 +224,33 @@ class AddonCollectionProviderTest {
     }
 
     @Test(expected = IOException::class)
-    fun `getAvailableAddons - with unexpected status will throw exception`() = runTest {
+    fun `getFeaturedAddons - with unexpected status will throw exception`() = runTest {
         val mockedClient = prepareClient(status = 500)
         val provider = AddonCollectionProvider(testContext, client = mockedClient)
-        provider.getAvailableAddons()
+        provider.getFeaturedAddons()
         Unit
     }
 
     @Test
-    fun `getAvailableAddons - returns cached result if allowed and not expired`() = runTest {
+    fun `getFeaturedAddons - returns cached result if allowed and not expired`() = runTest {
         val mockedClient = prepareClient(loadResourceAsString("/collection.json"))
 
         val provider = spy(AddonCollectionProvider(testContext, client = mockedClient))
-        provider.getAvailableAddons(false)
+        provider.getFeaturedAddons(false)
         verify(provider, never()).readFromDiskCache(null, useFallbackFile = false)
 
         whenever(provider.cacheExpired(testContext, null, useFallbackFile = false)).thenReturn(true)
-        provider.getAvailableAddons(true)
+        provider.getFeaturedAddons(true)
         verify(provider, never()).readFromDiskCache(null, useFallbackFile = false)
 
         whenever(provider.cacheExpired(testContext, null, useFallbackFile = false)).thenReturn(false)
-        provider.getAvailableAddons(true)
+        provider.getFeaturedAddons(true)
         verify(provider).readFromDiskCache(null, useFallbackFile = false)
         Unit
     }
 
     @Test
-    fun `getAvailableAddons - returns cached result if allowed and fetch failed`() = runTest {
+    fun `getFeaturedAddons - returns cached result if allowed and fetch failed`() = runTest {
         val mockedClient: Client = mock()
         val exception = IOException("test")
         val cachedAddons: List<Addon> = emptyList()
@@ -260,7 +260,7 @@ class AddonCollectionProviderTest {
 
         try {
             // allowCache = false
-            provider.getAvailableAddons(allowCache = false)
+            provider.getFeaturedAddons(allowCache = false)
             fail("Expected IOException")
         } catch (e: IOException) {
             assertSame(exception, e)
@@ -268,7 +268,7 @@ class AddonCollectionProviderTest {
 
         try {
             // allowCache = true, but no cache present
-            provider.getAvailableAddons(allowCache = true)
+            provider.getFeaturedAddons(allowCache = true)
             fail("Expected IOException")
         } catch (e: IOException) {
             assertSame(exception, e)
@@ -277,7 +277,7 @@ class AddonCollectionProviderTest {
         try {
             // allowCache = true, cache present, but we fail to read
             whenever(provider.getCacheLastUpdated(testContext, null, useFallbackFile = false)).thenReturn(Date().time)
-            provider.getAvailableAddons(allowCache = true)
+            provider.getFeaturedAddons(allowCache = true)
             fail("Expected IOException")
         } catch (e: IOException) {
             assertSame(exception, e)
@@ -286,38 +286,38 @@ class AddonCollectionProviderTest {
 //        // allowCache = true, cache present for a fallback file, and reading successfully
         whenever(provider.getCacheLastUpdated(testContext, null, useFallbackFile = true)).thenReturn(Date().time)
         whenever(provider.readFromDiskCache(null, useFallbackFile = true)).thenReturn(cachedAddons)
-        assertSame(cachedAddons, provider.getAvailableAddons(allowCache = true))
+        assertSame(cachedAddons, provider.getFeaturedAddons(allowCache = true))
 
         // allowCache = true, cache present, and reading successfully
         whenever(provider.getCacheLastUpdated(testContext, null, useFallbackFile = false)).thenReturn(Date().time)
         whenever(provider.cacheExpired(testContext, null, useFallbackFile = false)).thenReturn(false)
         whenever(provider.readFromDiskCache(null, useFallbackFile = false)).thenReturn(cachedAddons)
-        assertSame(cachedAddons, provider.getAvailableAddons(allowCache = true))
+        assertSame(cachedAddons, provider.getFeaturedAddons(allowCache = true))
     }
 
     @Test
-    fun `getAvailableAddons - writes response to cache if configured`() = runTest {
+    fun `getFeaturedAddons - writes response to cache if configured`() = runTest {
         val jsonResponse = loadResourceAsString("/collection.json")
         val mockedClient = prepareClient(jsonResponse)
 
         val provider = spy(AddonCollectionProvider(testContext, client = mockedClient))
         val cachingProvider = spy(AddonCollectionProvider(testContext, client = mockedClient, maxCacheAgeInMinutes = 1))
 
-        provider.getAvailableAddons()
+        provider.getFeaturedAddons()
         verify(provider, never()).writeToDiskCache(jsonResponse, null)
 
-        cachingProvider.getAvailableAddons()
+        cachingProvider.getFeaturedAddons()
         verify(cachingProvider).writeToDiskCache(jsonResponse, null)
     }
 
     @Test
-    fun `getAvailableAddons - deletes unused cache files`() = runTest {
+    fun `getFeaturedAddons - deletes unused cache files`() = runTest {
         val jsonResponse = loadResourceAsString("/collection.json")
         val mockedClient = prepareClient(jsonResponse)
 
         val provider = spy(AddonCollectionProvider(testContext, client = mockedClient, maxCacheAgeInMinutes = 1))
 
-        provider.getAvailableAddons()
+        provider.getFeaturedAddons()
         verify(provider).deleteUnusedCacheFiles(null)
     }
 
@@ -394,7 +394,7 @@ class AddonCollectionProviderTest {
     }
 
     @Test
-    fun `getAvailableAddons - cache expiration check`() {
+    fun `getFeaturedAddons - cache expiration check`() {
         var provider = spy(AddonCollectionProvider(testContext, client = mock(), maxCacheAgeInMinutes = -1))
         whenever(provider.getCacheLastUpdated(testContext, null, useFallbackFile = false)).thenReturn(Date().time)
         assertTrue(provider.cacheExpired(testContext, null, useFallbackFile = false))
@@ -470,7 +470,7 @@ class AddonCollectionProviderTest {
             collectionName = collectionName,
         )
 
-        provider.getAvailableAddons()
+        provider.getFeaturedAddons()
         verify(mockedClient).fetch(
             Request(
                 url = "https://services.addons.mozilla.org/api/v4/accounts/account/mozilla/collections/" +
@@ -493,7 +493,7 @@ class AddonCollectionProviderTest {
             collectionName = collectionName,
             sortOption = SortOption.POPULARITY,
         ).also {
-            it.getAvailableAddons()
+            it.getFeaturedAddons()
         }
 
         verify(mockedClient).fetch(
@@ -510,7 +510,7 @@ class AddonCollectionProviderTest {
             collectionName = collectionName,
             sortOption = SortOption.POPULARITY_DESC,
         ).also {
-            it.getAvailableAddons()
+            it.getFeaturedAddons()
         }
 
         verify(mockedClient).fetch(
@@ -527,7 +527,7 @@ class AddonCollectionProviderTest {
             collectionName = collectionName,
             sortOption = SortOption.NAME,
         ).also {
-            it.getAvailableAddons()
+            it.getFeaturedAddons()
         }
 
         verify(mockedClient).fetch(
@@ -544,7 +544,7 @@ class AddonCollectionProviderTest {
             collectionName = collectionName,
             sortOption = SortOption.NAME_DESC,
         ).also {
-            it.getAvailableAddons()
+            it.getFeaturedAddons()
         }
 
         verify(mockedClient).fetch(
@@ -561,7 +561,7 @@ class AddonCollectionProviderTest {
             collectionName = collectionName,
             sortOption = SortOption.DATE_ADDED,
         ).also {
-            it.getAvailableAddons()
+            it.getFeaturedAddons()
         }
 
         verify(mockedClient).fetch(
@@ -578,7 +578,7 @@ class AddonCollectionProviderTest {
             collectionName = collectionName,
             sortOption = SortOption.DATE_ADDED_DESC,
         ).also {
-            it.getAvailableAddons()
+            it.getFeaturedAddons()
         }
 
         verify(mockedClient).fetch(
@@ -604,7 +604,7 @@ class AddonCollectionProviderTest {
             collectionName = collectionName,
         )
 
-        provider.getAvailableAddons()
+        provider.getFeaturedAddons()
         verify(mockedClient).fetch(
             Request(
                 url = "https://services.addons.mozilla.org/api/v4/accounts/account/" +
@@ -630,7 +630,7 @@ class AddonCollectionProviderTest {
             client = mockedClient,
         )
 
-        provider.getAvailableAddons()
+        provider.getFeaturedAddons()
         verify(mockedClient).fetch(
             Request(
                 url = "https://services.addons.mozilla.org/api/v4/accounts/account/" +
