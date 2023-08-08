@@ -670,6 +670,9 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                     subscribeForNewAddonsIfNeeded(components.supportedAddonsChecker, extensions)
                 },
                 onUpdatePermissionRequest = components.addonUpdater::onUpdatePermissionRequest,
+                onDisabledExtensionProcessSpawning = {
+                    // https://bugzilla.mozilla.org/show_bug.cgi?id=1846979
+                }
             )
         } catch (e: UnsupportedOperationException) {
             logger.error("Failed to initialize web extension support", e)
