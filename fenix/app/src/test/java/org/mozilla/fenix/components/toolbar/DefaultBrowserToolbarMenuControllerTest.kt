@@ -76,6 +76,7 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.directionsEq
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.settings.deletebrowsingdata.deleteAndQuit
+import org.mozilla.fenix.tabhistory.TabHistoryBottomSheet
 import org.mozilla.fenix.utils.Settings
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -121,6 +122,8 @@ class DefaultBrowserToolbarMenuControllerTest {
     @RelaxedMockK private lateinit var topSitesStorage: DefaultTopSitesStorage
 
     @RelaxedMockK private lateinit var pinnedSiteStorage: PinnedSiteStorage
+
+    @RelaxedMockK private lateinit var tabHistoryBottomSheet: TabHistoryBottomSheet
 
     private lateinit var browserStore: BrowserStore
     private lateinit var selectedTab: TabSessionState
@@ -313,9 +316,8 @@ class DefaultBrowserToolbarMenuControllerTest {
         val snapshot = Events.browserMenuAction.testGetValue()!!
         assertEquals(1, snapshot.size)
         assertEquals("back", snapshot.single().extra?.getValue("item"))
-        val directions = BrowserFragmentDirections.actionGlobalTabHistoryDialogFragment(null)
 
-        verify { navController.navigate(directions) }
+        verify { tabHistoryBottomSheet.show() }
     }
 
     @Test
@@ -349,9 +351,7 @@ class DefaultBrowserToolbarMenuControllerTest {
         assertEquals(1, snapshot.size)
         assertEquals("forward", snapshot.single().extra?.getValue("item"))
 
-        val directions = BrowserFragmentDirections.actionGlobalTabHistoryDialogFragment(null)
-
-        verify { navController.navigate(directions) }
+        verify { tabHistoryBottomSheet.show() }
     }
 
     @Test
@@ -849,6 +849,7 @@ class DefaultBrowserToolbarMenuControllerTest {
         topSitesStorage = topSitesStorage,
         pinnedSiteStorage = pinnedSiteStorage,
         browserStore = browserStore,
+        tabHistoryBottomSheet = tabHistoryBottomSheet,
     ).apply {
         ioScope = scope
     }

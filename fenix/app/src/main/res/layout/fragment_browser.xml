@@ -120,4 +120,12 @@
         android:clickable="false"
         android:focusable="false"
         android:visibility="gone" />
+
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/tabHistoryComposeView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:clickable="false"
+        android:focusable="false" />
 </org.mozilla.fenix.browser.SwipeGestureLayout>

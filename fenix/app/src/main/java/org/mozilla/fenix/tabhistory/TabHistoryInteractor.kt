@@ -4,6 +4,14 @@
 
 package org.mozilla.fenix.tabhistory
 
+private interface TabHistoryViewInteractor {
+
+    /**
+     * Jump to a specific index in the tab's history.
+     */
+    fun goToHistoryItem(item: TabHistoryItem)
+}
+
 class TabHistoryInteractor(
     private val controller: TabHistoryController,
 ) : TabHistoryViewInteractor {

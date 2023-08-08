@@ -51,6 +51,7 @@ import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.navigateSafe
 import org.mozilla.fenix.ext.openSetDefaultBrowserOption
 import org.mozilla.fenix.settings.deletebrowsingdata.deleteAndQuit
+import org.mozilla.fenix.tabhistory.TabHistoryBottomSheet
 import org.mozilla.fenix.utils.Settings
 
 /**
@@ -71,6 +72,7 @@ class DefaultBrowserToolbarMenuController(
     private val findInPageLauncher: () -> Unit,
     private val browserAnimator: BrowserAnimator,
     private val snackbarParent: ViewGroup,
+    private val tabHistoryBottomSheet: TabHistoryBottomSheet,
     private val customTabSessionId: String?,
     private val openInFenixIntent: Intent,
     private val bookmarkTapped: (String, String) -> Unit,
@@ -171,11 +173,7 @@ class DefaultBrowserToolbarMenuController(
             }
             is ToolbarMenu.Item.Back -> {
                 if (item.viewHistory) {
-                    navController.navigate(
-                        BrowserFragmentDirections.actionGlobalTabHistoryDialogFragment(
-                            activeSessionId = customTabSessionId,
-                        ),
-                    )
+                    tabHistoryBottomSheet.show()
                 } else {
                     currentSession?.let {
                         sessionUseCases.goBack.invoke(it.id)
@@ -184,11 +182,7 @@ class DefaultBrowserToolbarMenuController(
             }
             is ToolbarMenu.Item.Forward -> {
                 if (item.viewHistory) {
-                    navController.navigate(
-                        BrowserFragmentDirections.actionGlobalTabHistoryDialogFragment(
-                            activeSessionId = customTabSessionId,
-                        ),
-                    )
+                    tabHistoryBottomSheet.show()
                 } else {
                     currentSession?.let {
                         sessionUseCases.goForward.invoke(it.id)

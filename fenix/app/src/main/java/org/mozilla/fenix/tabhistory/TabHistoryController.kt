@@ -4,7 +4,6 @@
 
 package org.mozilla.fenix.tabhistory
 
-import androidx.navigation.NavController
 import mozilla.components.feature.session.SessionUseCases
 
 interface TabHistoryController {
@@ -12,14 +11,11 @@ interface TabHistoryController {
 }
 
 class DefaultTabHistoryController(
-    private val navController: NavController,
     private val goToHistoryIndexUseCase: SessionUseCases.GoToHistoryIndexUseCase,
     private val customTabId: String? = null,
 ) : TabHistoryController {
 
     override fun handleGoToHistoryItem(item: TabHistoryItem) {
-        navController.navigateUp()
-
         if (customTabId != null) {
             goToHistoryIndexUseCase.invoke(item.index, customTabId)
         } else {

@@ -153,6 +153,7 @@ import org.mozilla.fenix.home.SharedViewModel
 import org.mozilla.fenix.perf.MarkersFragmentLifecycleCallbacks
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.settings.biometric.BiometricPromptFeature
+import org.mozilla.fenix.tabhistory.TabHistoryBottomSheet
 import org.mozilla.fenix.tabstray.Page
 import org.mozilla.fenix.tabstray.ext.toDisplayTitle
 import org.mozilla.fenix.theme.ThemeManager
@@ -406,6 +407,10 @@ abstract class BaseBrowserFragment :
             sessionFeature = sessionFeature,
             findInPageLauncher = { findInPageIntegration.withFeature { it.launch() } },
             snackbarParent = binding.dynamicSnackbarContainer,
+            tabHistoryBottomSheet = TabHistoryBottomSheet(
+                customTabSessionId,
+                binding.tabHistoryComposeView,
+            ),
             browserAnimator = browserAnimator,
             customTabSessionId = customTabSessionId,
             openInFenixIntent = openInFenixIntent,
@@ -1281,11 +1286,10 @@ abstract class BaseBrowserFragment :
     }
 
     override fun onBackLongPressed(): Boolean {
-        findNavController().navigate(
-            NavGraphDirections.actionGlobalTabHistoryDialogFragment(
-                activeSessionId = customTabSessionId,
-            ),
-        )
+        TabHistoryBottomSheet(
+            customTabSessionId,
+            binding.tabHistoryComposeView,
+        ).show()
         return true
     }
 

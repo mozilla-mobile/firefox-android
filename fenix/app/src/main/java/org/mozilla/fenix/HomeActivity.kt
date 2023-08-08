@@ -103,7 +103,6 @@ import org.mozilla.fenix.experiments.ResearchSurfaceDialogFragment
 import org.mozilla.fenix.ext.alreadyOnDestination
 import org.mozilla.fenix.ext.breadcrumb
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.hasTopDestination
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.setNavigationIcon
 import org.mozilla.fenix.ext.settings
@@ -153,7 +152,6 @@ import org.mozilla.fenix.settings.studies.StudiesFragmentDirections
 import org.mozilla.fenix.settings.wallpaper.WallpaperSettingsFragmentDirections
 import org.mozilla.fenix.share.AddNewDeviceFragmentDirections
 import org.mozilla.fenix.shortcut.NewTabShortcutIntentProcessor.Companion.ACTION_OPEN_PRIVATE_TAB
-import org.mozilla.fenix.tabhistory.TabHistoryDialogFragment
 import org.mozilla.fenix.tabstray.TabsTrayFragment
 import org.mozilla.fenix.tabstray.TabsTrayFragmentDirections
 import org.mozilla.fenix.theme.DefaultThemeManager
@@ -802,15 +800,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     final override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
         if (shouldUseCustomBackLongPress() && keyCode == KeyEvent.KEYCODE_BACK) {
             backLongPressJob?.cancel()
-
-            // check if the key has been pressed for longer than the time needed for a press to turn into a long press
-            // and if tab history is already visible we do not want to dismiss it.
-            if (event.eventTime - event.downTime >= ViewConfiguration.getLongPressTimeout() &&
-                navHost.navController.hasTopDestination(TabHistoryDialogFragment.NAME)
-            ) {
-                // returning true avoids further processing of the KeyUp event and avoids dismissing tab history.
-                return true
-            }
         }
         return super.onKeyUp(keyCode, event)
     }
