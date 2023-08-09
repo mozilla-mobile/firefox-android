@@ -5,6 +5,7 @@
 package org.mozilla.fenix.settings.logins.fragment
 
 import android.content.DialogInterface
+import android.graphics.Typeface
 import android.os.Build
 import android.os.Bundle
 import android.text.InputType
@@ -130,6 +131,7 @@ class LoginDetailFragment : SecureFragment(R.layout.fragment_login_detail), Menu
         binding.passwordText.inputType =
             InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
         binding.revealPasswordButton.increaseTapArea(BUTTON_INCREASE_DPS)
+        binding.passwordText.typeface = Typeface.MONOSPACE
         binding.revealPasswordButton.setOnClickListener {
             togglePasswordReveal(binding.passwordText, binding.revealPasswordButton)
         }

@@ -5,6 +5,7 @@
 package org.mozilla.fenix.settings.logins.fragment
 
 import android.content.res.ColorStateList
+import android.graphics.Typeface
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputType
@@ -113,12 +114,12 @@ class EditLoginFragment : Fragment(R.layout.fragment_edit_login), MenuProvider {
         binding.hostnameText.isClickable = false
         binding.hostnameText.isFocusable = false
         binding.usernameText.inputType = InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
-        // TODO: extend PasswordTransformationMethod() to change bullets to asterisks
         binding.passwordText.inputType =
             InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
         binding.passwordText.compoundDrawablePadding =
             requireContext().resources
                 .getDimensionPixelOffset(R.dimen.saved_logins_end_icon_drawable_padding)
+        binding.passwordText.typeface = Typeface.MONOSPACE
     }
 
     private fun setUpClickListeners() {
