@@ -36,11 +36,8 @@ def build_upstream_artifacts(config, tasks):
                         for apk_metadata in dep.attributes.get("apks", {}).values()
                     ]
                 )
-                paths.extend(
-                    [
-                        dep.attributes.get("aab")
-                    ]
-                )
+                if dep.attributes.get("aab"):
+                    paths.extend([dep.attributes.get("aab")])
                 if paths:
                     worker_definition["upstream-artifacts"].append(
                         {
