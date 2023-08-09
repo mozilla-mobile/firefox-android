@@ -13,20 +13,28 @@ import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.ui.robots.homeScreen
 
 /**
- *  Tests for verifying the new onboarding features.
- *  Note: This involves setting the feature flag On for the onboarding dialog
+ *  Tests for verifying the new onboarding features for upgrading users.
+ *  Note: This involves setting the feature flag On for the onboarding cards
  *
  */
-class OnboardingFeaturesTest {
+class UpgradingUsersOnboardingTest {
 
     @get:Rule
     val activityTestRule = AndroidComposeTestRule(
         HomeActivityTestRule(isHomeOnboardingDialogEnabled = true),
     ) { it.activity }
 
-    @SmokeTest
     @Test
     fun upgradingUsersOnboardingScreensTest() {
+        homeScreen {
+            verifyUpgradingUserOnboardingFirstScreen(activityTestRule)
+            clickGetStartedButton(activityTestRule)
+            verifyUpgradingUserOnboardingSecondScreen(activityTestRule)
+        }
+    }
+
+    @Test
+    fun upgradingUsersOnboardingCanBeSkippedTest() {
         homeScreen {
             verifyUpgradingUserOnboardingFirstScreen(activityTestRule)
             clickGetStartedButton(activityTestRule)

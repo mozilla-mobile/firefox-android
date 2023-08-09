@@ -11,21 +11,25 @@ import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
+import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
+import org.mozilla.fenix.helpers.TestHelper
+import org.mozilla.fenix.helpers.TestHelper.closeApp
+import org.mozilla.fenix.helpers.TestHelper.relaunchCleanApp
+import org.mozilla.fenix.helpers.TestHelper.restartApp
 import org.mozilla.fenix.helpers.TestHelper.verifyDarkThemeApplied
 import org.mozilla.fenix.helpers.TestHelper.verifyKeyboardVisibility
 import org.mozilla.fenix.helpers.TestHelper.verifyLightThemeApplied
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
 
-class OnboardingTest {
+class NewUserOnboardingTest {
     private lateinit var mDevice: UiDevice
     private lateinit var mockWebServer: MockWebServer
-    private val privacyNoticeLink = "mozilla.org/en-US/privacy/firefox"
 
     @get:Rule
-    val activityTestRule = HomeActivityTestRule.withDefaultSettingsOverrides()
+    val activityTestRule = HomeActivityIntentTestRule.withDefaultSettingsOverrides()
 
     @Before
     fun setUp() {
@@ -78,7 +82,6 @@ class OnboardingTest {
     }
 
     // Verifies the functionality of the onboarding Start Browsing button
-    @SmokeTest
     @Test
     fun startBrowsingButtonTest() {
         homeScreen {
@@ -89,7 +92,9 @@ class OnboardingTest {
     }
 
     @Test
-    fun dismissOnboardingUsingSettingsTest() {
+    fun dismissOnboardingByBrowsingTest() {
+        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
         homeScreen {
             verifyWelcomeHeader()
         }.openThreeDotMenu {
@@ -98,10 +103,8 @@ class OnboardingTest {
         }.goBack {
             verifyExistingTopSitesList()
         }
-    }
 
-    @Test
-    fun dismissOnboardingUsingBookmarksTest() {
+        relaunchCleanApp(activityTestRule)
         homeScreen {
             verifyWelcomeHeader()
         }.openThreeDotMenu {
@@ -112,7 +115,32 @@ class OnboardingTest {
         homeScreen {
             verifyExistingTopSitesList()
         }
+
+        relaunchCleanApp(activityTestRule)
+
+        homeScreen {
+            verifyStartBrowsingButton()
+        }
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+        }.goToHomescreen {
+            verifyHomeScreen()
+        }
     }
+
+//    @Test
+//    fun dismissOnboardingUsingBookmarksTest() {
+//        homeScreen {
+//            verifyWelcomeHeader()
+//        }.openThreeDotMenu {
+//        }.openBookmarks {
+//            verifyBookmarksMenuView()
+//            navigateUp()
+//        }
+//        homeScreen {
+//            verifyExistingTopSitesList()
+//        }
+//    }
 
     @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1807268")
     @Test
@@ -139,19 +167,19 @@ class OnboardingTest {
         }
     }
 
-    @Test
-    fun dismissOnboardingWithPageLoadTest() {
-        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        homeScreen {
-            verifyStartBrowsingButton()
-        }
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-        }.goToHomescreen {
-            verifyHomeScreen()
-        }
-    }
+//    @Test
+//    fun dismissOnboardingWithPageLoadTest() {
+//        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+//
+//        homeScreen {
+//            verifyStartBrowsingButton()
+//        }
+//        navigationToolbar {
+//        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+//        }.goToHomescreen {
+//            verifyHomeScreen()
+//        }
+//    }
 
     @Test
     fun chooseYourThemeCardTest() {
