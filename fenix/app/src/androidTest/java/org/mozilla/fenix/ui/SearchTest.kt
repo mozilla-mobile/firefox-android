@@ -524,7 +524,17 @@ class SearchTest {
         homeScreen {
         }.openSearch {
         }.submitQuery(queryString) {
-            verifyUrl(searchEngineCodes["Google"]!!)
+            waitForPageToLoad()
+        }.openThreeDotMenu {
+        }.openHistory {
+            // Full URL no longer visible in the nav bar, so we'll check the history record
+            // A search group is sometimes created when searching with Google (probably redirects)
+            try {
+                verifyHistoryItemExists(shouldExist = true, searchEngineCodes["Google"]!!)
+            } catch (e: AssertionError) {
+                openSearchGroup(queryString)
+                verifyHistoryItemExists(shouldExist = true, searchEngineCodes["Google"]!!)
+            }
         }
     }
 
