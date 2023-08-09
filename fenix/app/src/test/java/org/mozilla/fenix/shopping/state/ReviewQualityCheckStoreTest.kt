@@ -28,6 +28,7 @@ class ReviewQualityCheckStoreTest {
                 ),
                 scope = scope,
             )
+            tested.waitUntilIdle()
             dispatcher.scheduler.advanceUntilIdle()
             tested.waitUntilIdle()
 
@@ -45,11 +46,11 @@ class ReviewQualityCheckStoreTest {
                 ),
                 scope = scope,
             )
-            dispatcher.scheduler.advanceUntilIdle()
             tested.waitUntilIdle()
+            dispatcher.scheduler.advanceUntilIdle()
             tested.dispatch(ReviewQualityCheckAction.OptIn).joinBlocking()
-            dispatcher.scheduler.advanceUntilIdle()
             tested.waitUntilIdle()
+            dispatcher.scheduler.advanceUntilIdle()
 
             val expected = ReviewQualityCheckState.OptedIn(productRecommendationsPreference = false)
             assertEquals(expected, tested.state)
@@ -65,11 +66,11 @@ class ReviewQualityCheckStoreTest {
                 ),
                 scope = scope,
             )
-            dispatcher.scheduler.advanceUntilIdle()
             tested.waitUntilIdle()
+            dispatcher.scheduler.advanceUntilIdle()
             tested.dispatch(ReviewQualityCheckAction.OptOut).joinBlocking()
-            dispatcher.scheduler.advanceUntilIdle()
             tested.waitUntilIdle()
+            dispatcher.scheduler.advanceUntilIdle()
 
             val expected = ReviewQualityCheckState.NotOptedIn
             assertEquals(expected, tested.state)
@@ -85,11 +86,11 @@ class ReviewQualityCheckStoreTest {
                 ),
                 scope = scope,
             )
-            dispatcher.scheduler.advanceUntilIdle()
             tested.waitUntilIdle()
+            dispatcher.scheduler.advanceUntilIdle()
             tested.dispatch(ReviewQualityCheckAction.ToggleProductRecommendation).joinBlocking()
-            dispatcher.scheduler.advanceUntilIdle()
             tested.waitUntilIdle()
+            dispatcher.scheduler.advanceUntilIdle()
 
             val expected = ReviewQualityCheckState.OptedIn(productRecommendationsPreference = true)
             assertEquals(expected, tested.state)
@@ -105,11 +106,11 @@ class ReviewQualityCheckStoreTest {
                 ),
                 scope = scope,
             )
-            dispatcher.scheduler.advanceUntilIdle()
             tested.waitUntilIdle()
+            dispatcher.scheduler.advanceUntilIdle()
             tested.dispatch(ReviewQualityCheckAction.ToggleProductRecommendation).joinBlocking()
-            dispatcher.scheduler.advanceUntilIdle()
             tested.waitUntilIdle()
+            dispatcher.scheduler.advanceUntilIdle()
 
             val expected = ReviewQualityCheckState.OptedIn(productRecommendationsPreference = false)
             assertEquals(expected, tested.state)
