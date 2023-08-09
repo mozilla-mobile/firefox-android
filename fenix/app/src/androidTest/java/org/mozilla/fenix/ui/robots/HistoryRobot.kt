@@ -152,6 +152,11 @@ class HistoryRobot {
     fun verifySearchedHistoryItemExists(historyItemUrl: String, exists: Boolean = true) =
         assertItemContainingTextExists(itemContainingText(historyItemUrl), exists = exists)
 
+    fun openSearchGroup(searchTerm: String) {
+        mDevice.findObject(UiSelector().text(searchTerm)).waitForExists(waitingTime)
+        mDevice.findObject(UiSelector().text(searchTerm)).click()
+    }
+
     class Transition {
         fun goBack(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
             onView(withContentDescription("Navigate up")).click()
