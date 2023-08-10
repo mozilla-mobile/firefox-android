@@ -27,9 +27,7 @@ tasks:
                 default: autograph_apk
         run-on-tasks-for:
             by-build-type:
-                # (focus-debug|fenix-debug): [github-push]
-                # TODO
-                (focus-debug|fenix-debug): [github-push, github-pull-request]
+                (focus-debug|fenix-debug): [github-push]
                 default: []
         treeherder:
             job-symbol:

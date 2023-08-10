@@ -4,7 +4,6 @@
 ---
 loader: taskgraph.loader.transform:loader
 
-# TODO: trigger builds
 transforms:
     - android_taskgraph.transforms.build_android_app:transforms
     - android_taskgraph.transforms.gradle_optimization:transforms
