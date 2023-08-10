@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.accessibility.AccessibilityEvent
 import androidx.annotation.VisibleForTesting
+import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -28,6 +29,7 @@ import mozilla.components.feature.addons.AddonManagerException
 import mozilla.components.feature.addons.ui.AddonsManagerAdapter
 import mozilla.components.feature.addons.ui.translateName
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
+import mozilla.components.ui.widgets.withCenterAlignedButtons
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.R
@@ -243,12 +245,15 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
                     if (e !is CancellationException && e !is WebExtensionInstallException.UserCancelled) {
                         val rootView = activity?.getRootView() ?: view
                         var messageId = R.string.mozac_feature_addons_failed_to_install
+                        val safeContext = context ?: return@let
                         if (e is WebExtensionInstallException.Blocklisted) {
                             messageId = R.string.mozac_feature_addons_blocklisted
-                        }
-                        context?.let {
+                            val title = getString(R.string.mozac_feature_addons_error_failed_to_install)
+                            val message = getString(messageId, addon.translateName(safeContext))
+                            showDialog(safeContext, title, message)
+                        } else {
                             showErrorSnackBar(
-                                text = getString(messageId, addon.translateName(it)),
+                                text = getString(messageId, addon.translateName(safeContext)),
                                 anchorView = rootView,
                             )
                         }
@@ -267,6 +272,22 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
                 }
             }
         }
+    }
+
+    @VisibleForTesting
+    internal fun showDialog(
+        context: Context,
+        title: String,
+        message: String,
+    ) {
+        AlertDialog.Builder(context)
+            .setTitle(title)
+            .setPositiveButton(android.R.string.ok) { _, _ -> }
+            .setMessage(
+                message,
+            )
+            .show()
+            .withCenterAlignedButtons()
     }
 
     private fun announceForAccessibility(announcementText: CharSequence) {

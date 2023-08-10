@@ -8,7 +8,9 @@ import android.content.Context
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import io.mockk.CapturingSlot
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.runs
 import io.mockk.spyk
 import io.mockk.verify
 import mozilla.components.concept.engine.webextension.WebExtensionInstallException
@@ -71,7 +73,9 @@ class AddonsManagementFragmentTest {
             R.string.mozac_feature_addons_blocklisted,
             addon.translateName(context),
         )
+        val title = fragment.getString(R.string.mozac_feature_addons_error_failed_to_install)
 
+        every { fragment.showDialog(any(), any(), any()) } just runs
         every { fragment.provideAccessibilityServicesEnabled() } returns false
         every { fragment.provideAddonManger() } returns addonManger
         every { addonManger.installAddon(addon, any(), capture(onError)) } returns mockk()
@@ -79,6 +83,6 @@ class AddonsManagementFragmentTest {
         fragment.installAddon(addon)
         onError.captured("", WebExtensionInstallException.Blocklisted(mockk()))
 
-        verify { fragment.showErrorSnackBar(expectedErrorMessage) }
+        verify { fragment.showDialog(context, title, expectedErrorMessage) }
     }
 }
