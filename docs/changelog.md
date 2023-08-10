@@ -13,12 +13,17 @@ permalink: /changelog/
 * **concept-engine**
   * 🌟️️ Add `ProductUrlStatus` to `SessionState` instance to indicate whether or not a product page of a given session state is being displayed. See more on [bug #1842638](https://bugzilla.mozilla.org/show_bug.cgi?id=1842638).
   * 🌟️️ Add `requestProductAnalysis` API to `EngineSession` to allow request product analysis result from the engine. See more on [bug #1840692](https://bugzilla.mozilla.org/show_bug.cgi?id=1840692).
+  * 🌟️️ Add `requestProductRecommendations` API to `EngineSession` to allow request product recommendations from the engine. See more on [bug #1840693](https://bugzilla.mozilla.org/show_bug.cgi?id=1840693).
 
 * **feature-addons**
   * ⚠️ **This is a breaking change**: the method `getAvailableAddons()` in `AddonsProvider` has been renamed to `getFeaturedAddons()`.
   * ⚠️ **This is a breaking change**: the `AddonCollectionProvider` has been renamed to `AMOAddonsProvider`.
   * ⚠️ **This is a breaking change**: add new method `getAddonIconBitmap()` to `AddonsProvider`.
   * ⚠️ **This is a breaking change**: added `getAddonsByGUIDs()` method to `AddonsProvider`.
+
+* **browser-engine-gecko**:
+ * Implemented new `NimbusExperimentDelegate` to allow GeckoView to send and recieve Nimbus experiment information. [Bug 1843592](https://bugzilla.mozilla.org/show_bug.cgi?id=1843592)
+  * Removed deprecated `ContentDelegate.onGetNimbusFeature`. Please use `ExperimentDelegate.onGetExperimentFeature`. [Bug 1843592](https://bugzilla.mozilla.org/show_bug.cgi?id=1843592)
 
 # 117.0
 * [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v116..main)
