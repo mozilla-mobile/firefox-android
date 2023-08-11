@@ -42,23 +42,23 @@ internal const val DEFAULT_READ_TIMEOUT_IN_SECONDS = 20L
 internal const val PAGE_SIZE = 50
 
 /**
- * Provide access to the AMO collections API.
- * https://addons-server.readthedocs.io/en/latest/topics/api/collections.html
+ * Implement an add-ons provider that uses the AMO API.
  *
  * @property context A reference to the application context.
  * @property client A [Client] for interacting with the AMO HTTP api.
  * @property serverURL The url of the endpoint to interact with e.g production, staging
  * or testing. Defaults to [DEFAULT_SERVER_URL].
  * @property collectionUser The id or name of the user owning the collection specified in
- * [collectionName], defaults to [DEFAULT_COLLECTION_USER].
- * @property collectionName The name of the collection to access, defaults
- * to [DEFAULT_COLLECTION_NAME].
- * @property maxCacheAgeInMinutes maximum time (in minutes) the collection cache
- * should remain valid before a refresh is attempted. Defaults to -1, meaning no
- * cache is being used by default
+ * [collectionName], defaults to [DEFAULT_COLLECTION_USER]. This is used to retrieve the
+ * featured add-ons.
+ * @property collectionName The name of the collection to access, defaults to
+ * [DEFAULT_COLLECTION_NAME]. This is used to retrieve the featured add-ons.
+ * @property maxCacheAgeInMinutes maximum time (in minutes) the cached featured add-ons
+ * should remain valid before a refresh is attempted. Defaults to -1, meaning no cache
+ * is being used by default
  */
 @Suppress("LongParameterList")
-class AddonCollectionProvider(
+class AMOAddonsProvider(
     private val context: Context,
     private val client: Client,
     private val serverURL: String = DEFAULT_SERVER_URL,
@@ -68,15 +68,17 @@ class AddonCollectionProvider(
     private val maxCacheAgeInMinutes: Long = -1,
 ) : AddonsProvider {
 
-    private val logger = Logger("AddonCollectionProvider")
+    private val logger = Logger("AMOAddonsProvider")
 
     private val diskCacheLock = Any()
 
     /**
      * Interacts with the collections endpoint to provide a list of available
      * add-ons. May return a cached response, if [allowCache] is true, and the
-     * cache is not expired (see [maxCacheAgeInMinutes]) or fetching from
-     * AMO failed.
+     * cache is not expired (see [maxCacheAgeInMinutes]) or fetching from AMO
+     * failed.
+     *
+     * See: https://addons-server.readthedocs.io/en/latest/topics/api/collections.html
      *
      * @param allowCache whether or not the result may be provided
      * from a previously cached response, defaults to true. Note that
@@ -92,7 +94,7 @@ class AddonCollectionProvider(
      */
     @Throws(IOException::class)
     @Suppress("NestedBlockDepth")
-    override suspend fun getAvailableAddons(
+    override suspend fun getFeaturedAddons(
         allowCache: Boolean,
         readTimeoutInSeconds: Long?,
         language: String?,
@@ -100,18 +102,18 @@ class AddonCollectionProvider(
         // We want to make sure we always use useFallbackFile = false here, as it warranties
         // that we are trying to fetch the latest localized add-ons when the user changes
         // language from the previous one.
-        val cachedAvailableAddons = if (allowCache && !cacheExpired(context, language, useFallbackFile = false)) {
+        val cachedFeaturedAddons = if (allowCache && !cacheExpired(context, language, useFallbackFile = false)) {
             readFromDiskCache(language, useFallbackFile = false)
         } else {
             null
         }
 
-        if (cachedAvailableAddons != null) {
-            return cachedAvailableAddons
+        if (cachedFeaturedAddons != null) {
+            return cachedFeaturedAddons
         }
 
         return try {
-            fetchAvailableAddons(readTimeoutInSeconds, language)
+            fetchFeaturedAddons(readTimeoutInSeconds, language)
         } catch (e: IOException) {
             logger.error("Failed to fetch available add-ons", e)
             if (allowCache) {
@@ -132,7 +134,61 @@ class AddonCollectionProvider(
         }
     }
 
-    private fun fetchAvailableAddons(readTimeoutInSeconds: Long?, language: String?): List<Addon> {
+    /**
+     * Interacts with the search endpoint to provide a list of add-ons for a given list of GUIDs.
+     *
+     * See: https://addons-server.readthedocs.io/en/latest/topics/api/addons.html#search
+     *
+     * @param guids list of add-on GUIDs to retrieve.
+     * @param readTimeoutInSeconds optional timeout in seconds to use when fetching available
+     * add-ons from a remote endpoint. If not specified [DEFAULT_READ_TIMEOUT_IN_SECONDS] will
+     * be used.
+     * @param language indicates in which language the translatable fields should be in, if no
+     * matching language is found then a fallback translation is returned using the default
+     * language. When it is null all translations available will be returned.
+     * @throws IOException if the request failed, or could not be executed due to cancellation,
+     * a connectivity problem or a timeout.
+     */
+    @Throws(IOException::class)
+    override suspend fun getAddonsByGUIDs(
+        guids: List<String>,
+        readTimeoutInSeconds: Long?,
+        language: String?,
+    ): List<Addon> {
+        if (guids.isEmpty()) {
+            logger.warn("Attempted to retrieve add-ons with an empty list of GUIDs")
+            return emptyList()
+        }
+
+        val langParam = if (!language.isNullOrEmpty()) {
+            "&lang=$language"
+        } else {
+            ""
+        }
+
+        client.fetch(
+            Request(
+                url = "$serverURL/$API_VERSION/addons/search/?guid=${guids.joinToString(",")}" + langParam,
+                readTimeout = Pair(readTimeoutInSeconds ?: DEFAULT_READ_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS),
+            ),
+        )
+            .use { response ->
+                if (response.isSuccess) {
+                    val responseBody = response.body.string(Charsets.UTF_8)
+                    return try {
+                        JSONObject(responseBody).getAddonsFromSearchResults(language)
+                    } catch (e: JSONException) {
+                        throw IOException(e)
+                    }
+                } else {
+                    val errorMessage = "Failed to get add-ons by GUIDs. Status code: ${response.status}"
+                    logger.error(errorMessage)
+                    throw IOException(errorMessage)
+                }
+            }
+    }
+
+    private fun fetchFeaturedAddons(readTimeoutInSeconds: Long?, language: String?): List<Addon> {
         val langParam = if (!language.isNullOrEmpty()) {
             "&lang=$language"
         } else {
@@ -152,7 +208,7 @@ class AddonCollectionProvider(
                 if (response.isSuccess) {
                     val responseBody = response.body.string(Charsets.UTF_8)
                     return try {
-                        JSONObject(responseBody).getAddons(language).also {
+                        JSONObject(responseBody).getAddonsFromCollection(language).also {
                             if (maxCacheAgeInMinutes > 0) {
                                 writeToDiskCache(responseBody, language)
                             }
@@ -162,7 +218,8 @@ class AddonCollectionProvider(
                         throw IOException(e)
                     }
                 } else {
-                    val errorMessage = "Failed to fetch add-on collection. Status code: ${response.status}"
+                    val errorMessage = "Failed to fetch featured add-ons from collection. " +
+                        "Status code: ${response.status}"
                     logger.error(errorMessage)
                     throw IOException(errorMessage)
                 }
@@ -175,7 +232,7 @@ class AddonCollectionProvider(
      * a connectivity problem or a timeout.
      */
     @Throws(IOException::class)
-    suspend fun getAddonIconBitmap(addon: Addon): Bitmap? {
+    override suspend fun getAddonIconBitmap(addon: Addon): Bitmap? {
         var bitmap: Bitmap? = null
         if (addon.iconUrl != "") {
             client.fetch(
@@ -203,7 +260,7 @@ class AddonCollectionProvider(
     internal fun readFromDiskCache(language: String?, useFallbackFile: Boolean): List<Addon>? {
         synchronized(diskCacheLock) {
             return getCacheFile(context, language, useFallbackFile).readAndDeserialize {
-                JSONObject(it).getAddons(language)
+                JSONObject(it).getAddonsFromCollection(language)
             }
         }
     }
@@ -304,15 +361,23 @@ enum class SortOption(val value: String) {
     DATE_ADDED_DESC("-added"),
 }
 
-internal fun JSONObject.getAddons(language: String? = null): List<Addon> {
+internal fun JSONObject.getAddonsFromSearchResults(language: String? = null): List<Addon> {
     val addonsJson = getJSONArray("results")
     return (0 until addonsJson.length()).map { index ->
-        addonsJson.getJSONObject(index).toAddons(language)
+        addonsJson.getJSONObject(index).toAddon(language)
     }
 }
 
-internal fun JSONObject.toAddons(language: String? = null): Addon {
-    return with(getJSONObject("addon")) {
+internal fun JSONObject.getAddonsFromCollection(language: String? = null): List<Addon> {
+    val addonsJson = getJSONArray("results")
+    // Each result in a collection response has an `addon` key and some (optional) notes.
+    return (0 until addonsJson.length()).map { index ->
+        addonsJson.getJSONObject(index).getJSONObject("addon").toAddon(language)
+    }
+}
+
+internal fun JSONObject.toAddon(language: String? = null): Addon {
+    return with(this) {
         val download = getDownload()
         val safeLanguage = language?.lowercase(Locale.getDefault())
         val summary = getSafeTranslations("summary", safeLanguage)
@@ -428,6 +493,7 @@ internal fun JSONObject.getSafeJSONArray(key: String): JSONArray {
         getJSONArray(key)
     }
 }
+
 internal fun JSONObject.getSafeTranslations(valueKey: String, language: String?): Map<String, String> {
     // We can have two different versions of the JSON structure for translatable fields:
     // 1) A string with only one language, when we provide a language parameter.
@@ -440,6 +506,7 @@ internal fun JSONObject.getSafeTranslations(valueKey: String, language: String?)
         getSafeMap(valueKey)
     }
 }
+
 internal fun JSONObject.getSafeMap(valueKey: String): Map<String, String> {
     return if (isNull(valueKey)) {
         emptyMap()
