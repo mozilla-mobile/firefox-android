@@ -26,7 +26,7 @@ permalink: /changelog/
   * Removed deprecated `ContentDelegate.onGetNimbusFeature`. Please use `ExperimentDelegate.onGetExperimentFeature`. [Bug 1843592](https://bugzilla.mozilla.org/show_bug.cgi?id=1843592)
 
 * **feature-prompts**:
- * Removed media storage permissions (`READ_MEDIA_IMAGES`, `READ_MEDIA_VIDEO` and `READ_MEDIA_AUDIO`) as they weren't needed to open the system file picker 
+ * Removed media storage permissions (`READ_MEDIA_IMAGES`, `READ_MEDIA_VIDEO` and `READ_MEDIA_AUDIO`) as they weren't needed to open the system file picker. [Bug 1848502](https://bugzilla.mozilla.org/show_bug.cgi?id=1848502)
 
 # 117.0
 * [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v116..main)
