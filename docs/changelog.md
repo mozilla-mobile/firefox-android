@@ -25,6 +25,9 @@ permalink: /changelog/
  * Implemented new `NimbusExperimentDelegate` to allow GeckoView to send and recieve Nimbus experiment information. [Bug 1843592](https://bugzilla.mozilla.org/show_bug.cgi?id=1843592)
   * Removed deprecated `ContentDelegate.onGetNimbusFeature`. Please use `ExperimentDelegate.onGetExperimentFeature`. [Bug 1843592](https://bugzilla.mozilla.org/show_bug.cgi?id=1843592)
 
+* **feature-prompts**:
+ * Removed media storage permissions (`READ_MEDIA_IMAGES`, `READ_MEDIA_VIDEO` and `READ_MEDIA_AUDIO`) as they weren't needed to open the system file picker 
+
 # 117.0
 * [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v116..main)
 * [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/releases_v117/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
