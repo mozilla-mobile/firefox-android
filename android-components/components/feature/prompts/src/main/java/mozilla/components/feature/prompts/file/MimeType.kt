@@ -6,9 +6,6 @@ package mozilla.components.feature.prompts.file
 
 import android.Manifest.permission.CAMERA
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
-import android.Manifest.permission.READ_MEDIA_AUDIO
-import android.Manifest.permission.READ_MEDIA_IMAGES
-import android.Manifest.permission.READ_MEDIA_VIDEO
 import android.Manifest.permission.RECORD_AUDIO
 import android.annotation.SuppressLint
 import android.content.Context
@@ -43,11 +40,7 @@ internal sealed class MimeType(
         },
     ) : MimeType(
         "image/",
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            listOf(CAMERA, READ_MEDIA_IMAGES)
-        } else {
-            listOf(CAMERA)
-        },
+        listOf(CAMERA),
     ) {
         /**
          * Build an image capture intent using the application FileProvider.
@@ -72,11 +65,7 @@ internal sealed class MimeType(
 
     object Video : MimeType(
         "video/",
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            listOf(CAMERA, READ_MEDIA_VIDEO)
-        } else {
-            listOf(CAMERA)
-        },
+        listOf(CAMERA),
     ) {
         override fun buildIntent(context: Context, request: File) =
             Intent(ACTION_VIDEO_CAPTURE).withDeviceSupport(context)?.addCaptureHint(request.captureMode)
@@ -84,11 +73,7 @@ internal sealed class MimeType(
 
     object Audio : MimeType(
         "audio/",
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            listOf(RECORD_AUDIO, READ_MEDIA_AUDIO)
-        } else {
-            listOf(RECORD_AUDIO)
-        },
+        listOf(RECORD_AUDIO),
     ) {
         override fun buildIntent(context: Context, request: File) =
             Intent(RECORD_SOUND_ACTION).withDeviceSupport(context)
@@ -97,7 +82,7 @@ internal sealed class MimeType(
     object Wildcard : MimeType(
         "*/",
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            listOf(READ_MEDIA_IMAGES, READ_MEDIA_AUDIO, READ_MEDIA_VIDEO)
+            emptyList()
         } else {
             listOf(READ_EXTERNAL_STORAGE)
         },
