@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 @file:Suppress("DEPRECATION")
 
 package org.mozilla.fenix.ui
@@ -18,6 +22,7 @@ import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.FeatureSettingsHelperDelegate
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdAndText
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithText
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper.createCustomTabIntent
@@ -310,6 +315,7 @@ class CustomTabsTest {
 
         customTabScreen {
             clickPageObject(itemWithText("PDF form file"))
+            clickPageObject(itemWithResIdAndText("android:id/button2", "CANCEL"))
             waitForPageToLoad()
             verifyPDFReaderToolbarItems()
             verifyCustomTabCloseButton()

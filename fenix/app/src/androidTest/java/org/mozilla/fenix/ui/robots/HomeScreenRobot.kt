@@ -14,6 +14,7 @@ import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsSelected
+import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.onChildAt
@@ -251,6 +252,9 @@ class HomeScreenRobot {
 
     fun clickGetStartedButton(testRule: ComposeTestRule) =
         testRule.onNodeWithText(getStringResource(R.string.onboarding_home_get_started_button)).performClick()
+
+    fun clickCloseButton(testRule: ComposeTestRule) =
+        testRule.onNode(hasContentDescription("Close")).performClick()
 
     fun verifyUpgradingUserOnboardingSecondScreen(testRule: ComposeTestRule) {
         testRule.also {
@@ -497,15 +501,11 @@ class HomeScreenRobot {
         }
     }
 
-    fun verifyJumpBackInMessage() {
-        assertTrue(
-            mDevice.findObject(
-                UiSelector().text(
-                    getStringResource(R.string.onboarding_home_screen_jump_back_contextual_hint_2),
-                ),
-            ).waitForExists(waitingTime),
-        )
-    }
+    fun verifyJumpBackInMessage(composeTestRule: ComposeTestRule) =
+        composeTestRule
+            .onNodeWithText(
+                getStringResource(R.string.onboarding_home_screen_jump_back_contextual_hint_2),
+            ).assertExists()
 
     fun getProvokingStoryPublisher(position: Int): String {
         val publisher = mDevice.findObject(
