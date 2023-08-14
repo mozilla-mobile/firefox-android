@@ -421,8 +421,6 @@
     <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
     <string name="cookie_banner_handling_details_site_is_not_supported_cancel_button">Bolay</string>
     <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
-    <string name="cookie_banner_handling_details_site_is_not_supported_request_support_button" moz:RemovedIn="115" tools:ignore="UnusedResources">Rekés dukungan</string>
-    <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
     <string name="cookie_banner_handling_details_site_is_not_supported_request_support_button_2">Kirim rekés</string>
     <!-- Text for title indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
     <string name="cookie_banner_handling_details_site_is_not_supported_title_2">Rekés dukungan pikeun ieu loka?</string>
@@ -617,11 +615,17 @@
     <string name="wallpaper_classic_title">%s klasik</string>
 
     <!-- Text for limited edition wallpapers title. -->
-    <string name="wallpaper_limited_edition_title">Édisi Diwates</string>
+    <string name="wallpaper_limited_edition_title" moz:RemovedIn="118" tools:ignore="UnusedResources">Édisi Diwates</string>
+    <!-- Text for artist series wallpapers title. "Artist series" represents a collection of artist collaborated wallpapers. -->
+    <string name="wallpaper_artist_series_title">Séri artis</string>
     <!-- Description text for the limited edition wallpapers with learn more link. The first parameter is the learn more string defined in wallpaper_learn_more-->
-    <string name="wallpaper_limited_edition_description_with_learn_more">Kumpulan Independent Voices anyar. %s</string>
+    <string name="wallpaper_limited_edition_description_with_learn_more" moz:RemovedIn="118" tools:ignore="UnusedResources">Kumpulan Independent Voices anyar. %s</string>
+    <!-- Description text for the artist series wallpapers with learn more link. The first parameter is the learn more string defined in wallpaper_learn_more. "Independent voices" is the name of the wallpaper collection -->
+    <string name="wallpaper_artist_series_description_with_learn_more">Koléksi Independent Voices. %s</string>
     <!-- Description text for the limited edition wallpapers. -->
-    <string name="wallpaper_limited_edition_description">Kumpulan Independent Voices anyar.</string>
+    <string name="wallpaper_limited_edition_description" moz:RemovedIn="118" tools:ignore="UnusedResources">Kumpulan Independent Voices anyar.</string>
+    <!-- Description text for the artist series wallpapers. "Independent voices" is the name of the wallpaper collection -->
+    <string name="wallpaper_artist_series_description">Koléksi Independent Voices.</string>
     <!-- Wallpaper onboarding dialog header text. -->
     <string name="wallpapers_onboarding_dialog_title_text">Cobaan képrétkeun kelir</string>
     <!-- Wallpaper onboarding dialog body text. -->
@@ -1217,7 +1221,9 @@
     <!-- Text for standard error snackbar dismiss button. -->
     <string name="standard_snackbar_error_dismiss">Tutup</string>
     <!-- Text for error message when printing a page and it fails. -->
-    <string name="unable_to_print_error">Teu bisa nyitak</string>
+    <string name="unable_to_print_error" moz:removedIn="121" tools:ignore="UnusedResources">Teu bisa nyitak</string>
+    <!-- Text for error message when printing a page and it fails. -->
+    <string name="unable_to_print_page_error">Teu bisa nyitak ieu kaca</string>
     <!-- Text for the print feature in the share and browser menu -->
     <string name="menu_print">Citak</string>
     <!-- Sub-header in the dialog to share a link to another sync device -->
@@ -1531,6 +1537,8 @@
     <string name="preference_enhanced_tracking_protection_standard_info_button">Naon anu dipeungpeuk ku perlindungan pelacakan baku</string>
     <!-- Preference for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict">Pereketkeun</string>
+    <!-- Preference description for enhanced tracking protection for the strict protection settings -->
+    <string name="preference_enhanced_tracking_protection_strict_description_4">Kilungan palacakan anu leuwih wedel sarta kinerja anu leuwih hadé, ngan sababaraha loka bisa jadi teu jalan sakumaha biasa.</string>
     <!--  Accessibility text for the Strict protection information icon  -->
     <string name="preference_enhanced_tracking_protection_strict_info_button">Naon anu dipeungpeuk ku perlindungan palacak rékép</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
@@ -1621,6 +1629,10 @@
     <string name="preference_etp_smartblock_description">Sababaraha palacak anu ditandaan di handap sawaréh geus teu dipeungpeuk di ieu kaca kusabab geus aya interaksi jeung anjeun *.</string>
     <!-- Text displayed that links to website about enhanced tracking protection SmartBlock -->
     <string name="preference_etp_smartblock_learn_more">Lenyepan</string>
+
+    <!-- Content description (not visible, for screen readers etc.):
+    Enhanced tracking protection exception preference icon for ETP settings. -->
+    <string name="preference_etp_exceptions_icon_description">Ikon préperénsi pangiwalan kilungan palacakan</string>
 
     <!-- About page link text to open support link -->
     <string name="about_support">Pangrojong</string>
@@ -1918,6 +1930,12 @@
     <!-- Accessibility description for the form in which details about the custom search engine are entered -->
     <string name="search_add_custom_engine_form_description">Wincikan mesin pamaluruh sakahayang</string>
 
+    <!-- Label for the TextField in which user enters custom search engine suggestion URL -->
+    <string name="search_add_custom_engine_suggest_url_label">API kamandang maluruh (opsional)</string>
+    <!-- Placeholder text shown in the Search Suggestion String TextField before a user enters text -->
+    <string name="search_add_custom_engine_suggest_string_hint">URL API kamandang maluruh</string>
+    <!-- Description text for the Search Suggestion String TextField. The %s is part of the string -->
+    <string name="search_add_custom_engine_suggest_string_example" formatted="false">Ganti kueri ku “%s”. Conto:\nhttp://suggestqueries.google.com/complete/search?client=firefox&amp;q=%s</string>
     <!-- The text for the "Save" button for saving a custom search engine -->
     <string name="search_custom_engine_save_button">Teundeun</string>
 

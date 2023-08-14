@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.library.history.state
 
 import mozilla.components.service.glean.testing.GleanTestRule
@@ -13,6 +17,7 @@ import org.mozilla.fenix.library.history.HistoryFragmentAction
 import org.mozilla.fenix.library.history.HistoryFragmentState
 import org.mozilla.fenix.library.history.HistoryFragmentStore
 import org.mozilla.fenix.library.history.HistoryItemTimeGroup
+import org.mozilla.fenix.library.history.RemoveTimeFrame
 import org.robolectric.RobolectricTestRunner
 import org.mozilla.fenix.GleanMetrics.History as GleanHistory
 
@@ -61,5 +66,46 @@ class HistoryTelemetryMiddlewareTest {
         store.dispatch(HistoryFragmentAction.HistoryItemClicked(history)).joinBlocking()
 
         assertNotNull(GleanHistory.searchTermGroupTapped.testGetValue())
+    }
+
+    @Test
+    fun `WHEN history items deleted THEN record telemetry`() {
+        val history = History.Regular(0, "title", "url", 0, HistoryItemTimeGroup.timeGroupForTimestamp(0))
+        val store =
+            HistoryFragmentStore(HistoryFragmentState.initial, middleware = listOf(middleware))
+
+        store.dispatch(HistoryFragmentAction.DeleteItems(setOf(history))).joinBlocking()
+
+        assertNotNull(GleanHistory.removed.testGetValue())
+    }
+
+    @Test
+    fun `WHEN history time range of last hour deleted THEN record telemetry`() {
+        val store =
+            HistoryFragmentStore(HistoryFragmentState.initial, middleware = listOf(middleware))
+
+        store.dispatch(HistoryFragmentAction.DeleteTimeRange(RemoveTimeFrame.LastHour)).joinBlocking()
+
+        assertNotNull(GleanHistory.removedLastHour.testGetValue())
+    }
+
+    @Test
+    fun `WHEN history time range of today and yesterday deleted THEN record telemetry`() {
+        val store =
+            HistoryFragmentStore(HistoryFragmentState.initial, middleware = listOf(middleware))
+
+        store.dispatch(HistoryFragmentAction.DeleteTimeRange(RemoveTimeFrame.TodayAndYesterday)).joinBlocking()
+
+        assertNotNull(GleanHistory.removedTodayAndYesterday.testGetValue())
+    }
+
+    @Test
+    fun `WHEN history time range deleted with no range specified THEN record telemetry`() {
+        val store =
+            HistoryFragmentStore(HistoryFragmentState.initial, middleware = listOf(middleware))
+
+        store.dispatch(HistoryFragmentAction.DeleteTimeRange(null)).joinBlocking()
+
+        assertNotNull(GleanHistory.removedAll.testGetValue())
     }
 }

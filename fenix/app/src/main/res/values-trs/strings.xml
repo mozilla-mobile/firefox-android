@@ -425,8 +425,6 @@
     <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
     <string name="cookie_banner_handling_details_site_is_not_supported_cancel_button">Dūyichin\'</string>
     <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
-    <string name="cookie_banner_handling_details_site_is_not_supported_request_support_button" moz:RemovedIn="115" tools:ignore="UnusedResources">Gāchìnj man</string>
-    <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
     <string name="cookie_banner_handling_details_site_is_not_supported_request_support_button_2">Gā’nïnj si nùguàn’t gān’an</string>
     <!-- Text for title indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
     <string name="cookie_banner_handling_details_site_is_not_supported_title_2">Gāchìnj nan’ānj doj sa huā rayi’î sitiô nan ân.</string>
@@ -617,12 +615,18 @@
     <!-- Text for classic wallpapers title. The first parameter is the Firefox name. -->
     <string name="wallpaper_classic_title">Klâsiko %s</string>
     <!-- Text for limited edition wallpapers title. -->
-    <string name="wallpaper_limited_edition_title">Sa ahui Nāsinùnj</string>
+    <string name="wallpaper_limited_edition_title" moz:RemovedIn="118" tools:ignore="UnusedResources">Sa ahui Nāsinùnj</string>
 
+    <!-- Text for artist series wallpapers title. "Artist series" represents a collection of artist collaborated wallpapers. -->
+    <string name="wallpaper_artist_series_title">Si dā’nga’ nej artîsta</string>
     <!-- Description text for the limited edition wallpapers with learn more link. The first parameter is the learn more string defined in wallpaper_learn_more-->
-    <string name="wallpaper_limited_edition_description_with_learn_more">Yi’nïn’ nākà huā rayi’î nej si nūguàn’ nej duguî’ anïn ruhuâ hue’è. %s</string>
+    <string name="wallpaper_limited_edition_description_with_learn_more" moz:RemovedIn="118" tools:ignore="UnusedResources">Yi’nïn’ nākà huā rayi’î nej si nūguàn’ nej duguî’ anïn ruhuâ hue’è. %s</string>
+    <!-- Description text for the artist series wallpapers with learn more link. The first parameter is the learn more string defined in wallpaper_learn_more. "Independent voices" is the name of the wallpaper collection -->
+    <string name="wallpaper_artist_series_description_with_learn_more">Yi’nïn’ huā rayi’î nej si nūguàn’ nej duguî’ anïn ruhuâ hue’ê. %s</string>
     <!-- Description text for the limited edition wallpapers. -->
-    <string name="wallpaper_limited_edition_description">Yi’nïn’ nākà huā rayi’î nej si nūguàn’ nej duguî’ anïn ruhuâ hue’è.</string>
+    <string name="wallpaper_limited_edition_description" moz:RemovedIn="118" tools:ignore="UnusedResources">Yi’nïn’ nākà huā rayi’î nej si nūguàn’ nej duguî’ anïn ruhuâ hue’è.</string>
+    <!-- Description text for the artist series wallpapers. "Independent voices" is the name of the wallpaper collection -->
+    <string name="wallpaper_artist_series_description">Yi’nïn’ huā rayi’î nej si nūguàn’ nej duguî’ anïn ruhuâ hue’ê.</string>
     <!-- Wallpaper onboarding dialog header text. -->
     <string name="wallpapers_onboarding_dialog_title_text">Gārahuè ngà a’ngô kōlô</string>
     <!-- Wallpaper onboarding dialog body text. -->
@@ -1223,7 +1227,9 @@
     <!-- Text for standard error snackbar dismiss button. -->
     <string name="standard_snackbar_error_dismiss">Si gi\'hiaj guendô\'</string>
     <!-- Text for error message when printing a page and it fails. -->
-    <string name="unable_to_print_error">Nu gā\'hue gīrij ñadu’hua</string>
+    <string name="unable_to_print_error" moz:removedIn="121" tools:ignore="UnusedResources">Nu gā\'hue gīrij ñadu’hua</string>
+    <!-- Text for error message when printing a page and it fails. -->
+    <string name="unable_to_print_page_error">Nu gā’hue gīrij ñadu’hua ñanj nan</string>
     <!-- Text for the print feature in the share and browser menu -->
     <string name="menu_print">Gīrī ñadu’hua</string>
     <!-- Sub-header in the dialog to share a link to another sync device -->
@@ -1943,6 +1949,12 @@
     <!-- Accessibility description for the form in which details about the custom search engine are entered -->
     <string name="search_add_custom_engine_form_description">Sa huā riña sa nana\'uî\'t nagi\'iaj man\'ânt</string>
 
+    <!-- Label for the TextField in which user enters custom search engine suggestion URL -->
+    <string name="search_add_custom_engine_suggest_url_label">API atāj nùhuin si ga’hue nāna’huì’ (si ruhuât gāraunt)</string>
+    <!-- Placeholder text shown in the Search Suggestion String TextField before a user enters text -->
+    <string name="search_add_custom_engine_suggest_string_hint">Si URL API atāj nùhuin sa gā’hue nāna’huì’t</string>
+    <!-- Description text for the Search Suggestion String TextField. The %s is part of the string -->
+    <string name="search_add_custom_engine_suggest_string_example" formatted="false">Nādunā sa nana\’huî\’t ngà “%s”. Dàj rû\':\nhttp://suggestqueries.google.com/complete/search?client=firefox&amp;q=%s</string>
     <!-- The text for the "Save" button for saving a custom search engine -->
     <string name="search_custom_engine_save_button">Nā\'nïnj sà\'</string>
 

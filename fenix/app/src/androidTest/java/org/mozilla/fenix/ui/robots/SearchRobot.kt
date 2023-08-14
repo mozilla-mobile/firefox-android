@@ -6,8 +6,10 @@
 
 package org.mozilla.fenix.ui.robots
 
+import androidx.compose.ui.test.assertAny
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.ComposeTestRule
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performScrollToNode
 import androidx.test.espresso.Espresso.onView
@@ -90,26 +92,7 @@ class SearchRobot {
         }
     }
 
-    fun verifySearchEngineSuggestionResults(rule: ComposeTestRule, searchSuggestion: String) {
-        rule.waitForIdle()
-        for (i in 1..RETRY_COUNT) {
-            try {
-                assertTrue(
-                    mDevice.findObject(UiSelector().textContains(searchSuggestion))
-                        .waitForExists(waitingTime),
-                )
-                break
-            } catch (e: AssertionError) {
-                if (i == RETRY_COUNT) {
-                    throw e
-                } else {
-                    expandSearchSuggestionsList()
-                }
-            }
-        }
-    }
-
-    fun verifyFirefoxSuggestResults(rule: ComposeTestRule, searchTerm: String, vararg searchSuggestions: String) {
+    fun verifySearchEngineSuggestionResults(rule: ComposeTestRule, vararg searchSuggestions: String, searchTerm: String) {
         rule.waitForIdle()
         for (i in 1..RETRY_COUNT) {
             try {
@@ -119,7 +102,6 @@ class SearchRobot {
                         .performScrollToNode(hasText(searchSuggestion))
                         .assertExists()
                 }
-
                 break
             } catch (e: AssertionError) {
                 if (i == RETRY_COUNT) {
@@ -138,10 +120,11 @@ class SearchRobot {
     fun verifyNoSuggestionsAreDisplayed(rule: ComposeTestRule, vararg searchSuggestions: String) {
         rule.waitForIdle()
         for (searchSuggestion in searchSuggestions) {
-            assertTrue(
-                mDevice.findObject(UiSelector().textContains(searchSuggestion))
-                    .waitUntilGone(waitingTimeShort),
-            )
+            rule.onAllNodesWithTag("mozac.awesomebar.suggestions")
+                .assertAny(
+                    hasText(searchSuggestion)
+                        .not(),
+                )
         }
     }
 

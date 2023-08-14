@@ -37,6 +37,8 @@ import mozilla.components.concept.engine.manifest.WebAppManifest
 import mozilla.components.concept.engine.mediasession.MediaSession
 import mozilla.components.concept.engine.permission.PermissionRequest
 import mozilla.components.concept.engine.prompt.PromptRequest
+import mozilla.components.concept.engine.shopping.ProductAnalysis
+import mozilla.components.concept.engine.shopping.ProductRecommendation
 import mozilla.components.concept.engine.window.WindowRequest
 import mozilla.components.concept.fetch.Response
 import mozilla.components.support.test.libstate.ext.waitUntilIdle
@@ -55,6 +57,7 @@ import org.mockito.Mockito.verify
 
 @RunWith(AndroidJUnit4::class)
 class EngineObserverTest {
+    // TO DO: add tests for product URL after a test endpoint is implemented in desktop (Bug 1846341)
     @Test
     fun engineSessionObserver() {
         val engineSession = object : EngineSession() {
@@ -77,6 +80,18 @@ class EngineObserverTest {
                 onResult: (Boolean) -> Unit,
                 onException: (Throwable) -> Unit,
             ) {}
+            override fun requestProductAnalysis(
+                url: String,
+                onResult: (ProductAnalysis) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+
+            override fun requestProductRecommendations(
+                url: String,
+                onResult: (List<ProductRecommendation>) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+
             override fun findAll(text: String) {}
             override fun findNext(forward: Boolean) {}
             override fun clearFindMatches() {}
@@ -142,6 +157,18 @@ class EngineObserverTest {
                 onResult: (Boolean) -> Unit,
                 onException: (Throwable) -> Unit,
             ) {}
+            override fun requestProductAnalysis(
+                url: String,
+                onResult: (ProductAnalysis) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+
+            override fun requestProductRecommendations(
+                url: String,
+                onResult: (List<ProductRecommendation>) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+
             override fun findAll(text: String) {}
             override fun findNext(forward: Boolean) {}
             override fun clearFindMatches() {}
@@ -203,6 +230,19 @@ class EngineObserverTest {
                 onResult: (Boolean) -> Unit,
                 onException: (Throwable) -> Unit,
             ) {}
+
+            override fun requestProductRecommendations(
+                url: String,
+                onResult: (List<ProductRecommendation>) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+
+            override fun requestProductAnalysis(
+                url: String,
+                onResult: (ProductAnalysis) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+
             override fun loadUrl(
                 url: String,
                 parent: EngineSession?,

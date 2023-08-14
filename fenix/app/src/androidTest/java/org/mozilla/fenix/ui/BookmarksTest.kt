@@ -14,21 +14,25 @@ import mozilla.appservices.places.BookmarkRoot
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.R
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.ext.bookmarkStorage
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
+import org.mozilla.fenix.helpers.MockBrowserDataHelper.createBookmarkItem
 import org.mozilla.fenix.helpers.RecyclerViewIdlingResource
 import org.mozilla.fenix.helpers.RetryTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper
+import org.mozilla.fenix.helpers.TestHelper.appContext
 import org.mozilla.fenix.helpers.TestHelper.clickSnackbarButton
-import org.mozilla.fenix.helpers.TestHelper.exitMenu
 import org.mozilla.fenix.helpers.TestHelper.longTapSelectItem
 import org.mozilla.fenix.helpers.TestHelper.registerAndCleanupIdlingResources
+import org.mozilla.fenix.helpers.TestHelper.restartApp
 import org.mozilla.fenix.ui.robots.bookmarksMenu
 import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.homeScreen
@@ -331,6 +335,7 @@ class BookmarksTest {
         }
     }
 
+    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1807268")
     @Test
     fun openAllInPrivateTabsTest() {
         val webPages = listOf(
@@ -749,8 +754,8 @@ class BookmarksTest {
     fun verifySearchBookmarksViewTest() {
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
-        browserScreen {
-            createBookmark(defaultWebPage.url)
+        createBookmarkItem(defaultWebPage.url.toString(), defaultWebPage.title, 1u)
+        homeScreen {
         }.openThreeDotMenu {
         }.openBookmarks {
         }.clickSearchButton {
@@ -763,17 +768,14 @@ class BookmarksTest {
             tapOutsideToDismissSearchBar()
             verifySearchToolbar(false)
         }
-        bookmarksMenu {
-        }.goBackToBrowserScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openCustomizeSubMenu {
-            clickTopToolbarToggle()
+
+        runBlocking {
+            // Switching to top toolbar position
+            appContext.settings().shouldUseBottomToolbar = false
+            restartApp(activityTestRule.activityRule)
         }
 
-        exitMenu()
-
-        browserScreen {
+        homeScreen {
         }.openThreeDotMenu {
         }.openBookmarks {
         }.clickSearchButton {
@@ -790,28 +792,27 @@ class BookmarksTest {
         val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
         val secondWebPage = TestAssetHelper.getHTMLControlsFormAsset(mockWebServer)
 
+        createBookmarkItem(firstWebPage.url.toString(), firstWebPage.title, 1u)
+        createBookmarkItem(secondWebPage.url.toString(), secondWebPage.title, 2u)
+
         homeScreen {
-        }.openThreeDotMenu {
-        }.openBookmarks {
-            createFolder(bookmarksFolderName)
-        }
-
-        exitMenu()
-
-        browserScreen {
-            createBookmark(firstWebPage.url, bookmarksFolderName)
-            createBookmark(secondWebPage.url)
         }.openThreeDotMenu {
         }.openBookmarks {
         }.clickSearchButton {
             // Search for a valid term
             typeSearch(firstWebPage.title)
-            verifySearchEngineSuggestionResults(activityTestRule, firstWebPage.url.toString())
+            verifySearchEngineSuggestionResults(activityTestRule, firstWebPage.url.toString(), searchTerm = firstWebPage.title)
             verifyNoSuggestionsAreDisplayed(activityTestRule, secondWebPage.url.toString())
+        }.dismissSearchBar {}
+        bookmarksMenu {
+        }.clickSearchButton {
             // Search for invalid term
             typeSearch("Android")
-            verifyNoSuggestionsAreDisplayed(activityTestRule, firstWebPage.url.toString())
-            verifyNoSuggestionsAreDisplayed(activityTestRule, secondWebPage.url.toString())
+            verifyNoSuggestionsAreDisplayed(
+                activityTestRule,
+                firstWebPage.url.toString(),
+                secondWebPage.url.toString(),
+            )
         }
     }
 
@@ -853,7 +854,7 @@ class BookmarksTest {
             typeSearch("generic")
             verifyNoSuggestionsAreDisplayed(activityTestRule, firstWebPage.url.toString())
             verifyNoSuggestionsAreDisplayed(activityTestRule, secondWebPage.url.toString())
-            verifySearchEngineSuggestionResults(activityTestRule, thirdWebPage.url.toString())
+            verifySearchEngineSuggestionResults(activityTestRule, thirdWebPage.url.toString(), searchTerm = "generic")
             pressBack()
         }
         bookmarksMenu {

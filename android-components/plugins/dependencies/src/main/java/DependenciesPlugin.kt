@@ -34,7 +34,7 @@ object Versions {
     // This has to be synced to the gradlew plugin version. See
     // http://googlesamples.github.io/android-custom-lint-rules/api-guide/example.md.html#example:samplelintcheckgithubproject/lintversion?
     const val lint = "30.4.2"
-    const val detekt = "1.23.0"
+    const val detekt = "1.23.1"
     const val ktlint = "0.49.1"
 
     const val sentry_latest = "6.27.0"
@@ -46,7 +46,7 @@ object Versions {
     const val leakcanary = "2.12"
 
     // DO NOT MODIFY MANUALLY. This is auto-updated along with GeckoView.
-    const val mozilla_glean = "53.1.0"
+    const val mozilla_glean = "53.2.0"
 
     const val material = "1.9.0"
     const val ksp = "1.0.11"
@@ -69,7 +69,7 @@ object Versions {
         const val coordinatorlayout = "1.2.0"
         const val core = "1.10.1"
         const val drawerlayout = "1.2.0"
-        const val fragment = "1.6.0"
+        const val fragment = "1.6.1"
         const val recyclerview = "1.3.0"
         const val test = "1.5.0"
         const val test_ext = "1.1.5"
@@ -77,12 +77,12 @@ object Versions {
         const val espresso = "3.5.1"
         const val room = "2.5.2"
         const val savedstate = "1.2.1"
-        const val paging = "2.1.2"
+        const val paging = "3.2.0"
         const val palette = "1.0.0"
         const val preferences = "1.1.1"
         const val lifecycle = "2.6.1"
         const val media = "1.6.0"
-        const val navigation = "2.5.3"
+        const val navigation = "2.6.0"
         const val work = "2.7.1"
         const val arch = "2.2.0"
         const val uiautomator = "2.2.0"
@@ -120,6 +120,7 @@ object ComponentsDependencies {
     const val androidx_biometric = "androidx.biometric:biometric:${Versions.AndroidX.biometric}"
     const val androidx_browser = "androidx.browser:browser:${Versions.AndroidX.browser}"
     const val androidx_cardview = "androidx.cardview:cardview:${Versions.AndroidX.cardview}"
+    const val androidx_compose_animation = "androidx.compose.animation:animation:${Versions.AndroidX.compose}"
     const val androidx_compose_ui = "androidx.compose.ui:ui:${Versions.AndroidX.compose}"
     const val androidx_compose_ui_graphics = "androidx.compose.ui:ui-graphics:${Versions.AndroidX.compose}"
     const val androidx_compose_ui_test = "androidx.compose.ui:ui-test-junit4:${Versions.AndroidX.compose}"
@@ -129,6 +130,9 @@ object ComponentsDependencies {
     const val androidx_compose_foundation = "androidx.compose.foundation:foundation:${Versions.AndroidX.compose}"
     const val androidx_compose_material = "androidx.compose.material:material:${Versions.AndroidX.compose}"
     const val androidx_compose_navigation = "androidx.navigation:navigation-compose:${Versions.AndroidX.navigation}"
+    const val androidx_safeargs = "androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.AndroidX.navigation}"
+    const val androidx_navigation_fragment = "androidx.navigation:navigation-fragment-ktx:${Versions.AndroidX.navigation}"
+    const val androidx_navigation_ui = "androidx.navigation:navigation-ui:$${Versions.AndroidX.navigation}"
     const val androidx_constraintlayout = "androidx.constraintlayout:constraintlayout:${Versions.AndroidX.constraintlayout}"
     const val androidx_core = "androidx.core:core:${Versions.AndroidX.core}"
     const val androidx_core_ktx = "androidx.core:core-ktx:${Versions.AndroidX.core}"
