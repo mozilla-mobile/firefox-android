@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.ui
 
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
@@ -305,6 +309,7 @@ class SettingsSearchTest {
         }
     }
 
+    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1848623")
     @Test
     fun errorForInvalidSearchEngineStringsTest() {
         val customSearchEngine = object {
