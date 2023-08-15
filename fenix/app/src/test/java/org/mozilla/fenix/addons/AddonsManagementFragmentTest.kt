@@ -8,7 +8,9 @@ import android.content.Context
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import io.mockk.CapturingSlot
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.runs
 import io.mockk.spyk
 import io.mockk.verify
 import mozilla.components.concept.engine.webextension.WebExtensionInstallException
@@ -35,7 +37,7 @@ class AddonsManagementFragmentTest {
         fragment = spyk(AddonsManagementFragment())
         every { fragment.context } returns context
         every { fragment.view } returns view
-        every { fragment.showErrorSnackBar(any()) } returns Unit
+        every { fragment.showDialog(any(), any()) } just runs
         every { fragment.getString(R.string.addon_not_supported_error) } returns addonNotSupportedErrorMessage
         every { fragment.getString(R.string.addon_already_installed) } returns addonAlreadyInstalledErrorMessage
         every { fragment.getString(R.string.mozac_feature_addons_blocklisted) } returns addonAlreadyInstalledErrorMessage
@@ -49,7 +51,7 @@ class AddonsManagementFragmentTest {
         )
         val installAddonId = "d3"
         fragment.installExternalAddon(supportedAddons, installAddonId)
-        verify { fragment.showErrorSnackBar(addonNotSupportedErrorMessage) }
+        verify { fragment.showDialog(any(), any()) }
     }
 
     @Test
@@ -59,11 +61,11 @@ class AddonsManagementFragmentTest {
         val supportedAddons = listOf(addon1, addon2)
 
         fragment.installExternalAddon(supportedAddons, "d1")
-        verify { fragment.showErrorSnackBar(addonAlreadyInstalledErrorMessage) }
+        verify { fragment.showDialog(any(), any()) }
     }
 
     @Test
-    fun `GIVEN add-on is installed  WHEN add-on is blocklisted THEN error is shown`() {
+    fun `GIVEN add-on is installed WHEN add-on is blocklisted THEN error is shown`() {
         val addonManger = mockk<AddonManager>()
         val addon = Addon("1")
         val onError = CapturingSlot<((String, Throwable) -> Unit)>()
@@ -79,6 +81,5 @@ class AddonsManagementFragmentTest {
         fragment.installAddon(addon)
         onError.captured("", WebExtensionInstallException.Blocklisted(mockk()))
 
-        verify { fragment.showErrorSnackBar(expectedErrorMessage) }
-    }
+        verify { fragment.showDialog(any(), expectedErrorMessage) } }
 }

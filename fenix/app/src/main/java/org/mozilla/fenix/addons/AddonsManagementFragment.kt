@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.accessibility.AccessibilityEvent
 import androidx.annotation.VisibleForTesting
+import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -28,13 +29,12 @@ import mozilla.components.feature.addons.AddonManagerException
 import mozilla.components.feature.addons.ui.AddonsManagerAdapter
 import mozilla.components.feature.addons.ui.translateName
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
+import mozilla.components.ui.widgets.withCenterAlignedButtons
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.R
-import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.databinding.FragmentAddOnsManagementBinding
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.getRootView
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.settings
@@ -178,10 +178,18 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
     internal fun installExternalAddon(supportedAddons: List<Addon>, installAddonId: String) {
         val addonToInstall = supportedAddons.find { it.downloadId == installAddonId }
         if (addonToInstall == null) {
-            showErrorSnackBar(getString(R.string.addon_not_supported_error))
+            showDialog(
+                title = getString(R.string.mozac_feature_addons_error_failed_to_install_dialog_title),
+                message = getString(R.string.addon_not_supported_error),
+            )
         } else {
             if (addonToInstall.isInstalled()) {
-                showErrorSnackBar(getString(R.string.addon_already_installed))
+                context?.let {
+                    showDialog(
+                        title = getString(R.string.mozac_feature_addons_error_failed_to_install_dialog_title),
+                        message = getString(R.string.addon_already_installed),
+                    )
+                }
             } else {
                 installAddon(addonToInstall)
             }
@@ -190,11 +198,19 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
     }
 
     @VisibleForTesting
-    internal fun showErrorSnackBar(text: String, anchorView: View? = this.view) {
-        runIfFragmentIsAttached {
-            anchorView?.let {
-                showSnackBar(it, text, FenixSnackbar.LENGTH_LONG)
-            }
+    internal fun showDialog(
+        title: String,
+        message: String,
+    ) {
+        context?.let {
+            AlertDialog.Builder(it)
+                .setTitle(title)
+                .setPositiveButton(android.R.string.ok) { _, _ -> }
+                .setMessage(
+                    message,
+                )
+                .show()
+                .withCenterAlignedButtons()
         }
     }
 
@@ -238,18 +254,19 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
                 }
             },
             onError = { _, e ->
-                this@AddonsManagementFragment.view?.let { view ->
+                this@AddonsManagementFragment.view?.let { _ ->
                     // No need to display an error message if installation was cancelled by the user.
                     if (e !is CancellationException && e !is WebExtensionInstallException.UserCancelled) {
-                        val rootView = activity?.getRootView() ?: view
                         var messageId = R.string.mozac_feature_addons_failed_to_install
                         if (e is WebExtensionInstallException.Blocklisted) {
                             messageId = R.string.mozac_feature_addons_blocklisted
                         }
                         context?.let {
-                            showErrorSnackBar(
-                                text = getString(messageId, addon.translateName(it)),
-                                anchorView = rootView,
+                            showDialog(
+                                title = getString(
+                                    R.string.mozac_feature_addons_error_failed_to_install_dialog_title,
+                                ),
+                                message = getString(messageId, addon.translateName(it)),
                             )
                         }
                     }
