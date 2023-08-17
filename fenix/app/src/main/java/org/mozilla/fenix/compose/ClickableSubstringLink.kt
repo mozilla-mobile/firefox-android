@@ -12,10 +12,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.sp
 import org.mozilla.fenix.theme.FirefoxTheme
 
 /**
@@ -29,9 +29,11 @@ import org.mozilla.fenix.theme.FirefoxTheme
  * @param clickableEndIndex [text] index at which the URL substring ends.
  * @param onClick Callback to be invoked only when the URL substring is clicked.
  */
+@Deprecated("Use LinkText instead", ReplaceWith("LinkText", "org.mozilla.fenix.compose.LinkText"))
 @Composable
 fun ClickableSubstringLink(
     text: String,
+    textStyle: TextStyle = FirefoxTheme.typography.caption,
     textColor: Color = FirefoxTheme.colors.textPrimary,
     linkTextColor: Color = FirefoxTheme.colors.textAccent,
     linkTextDecoration: TextDecoration? = null,
@@ -63,12 +65,6 @@ fun ClickableSubstringLink(
             end = text.length,
         )
 
-        addStyle(
-            SpanStyle(fontSize = 12.sp),
-            start = 0,
-            end = clickableEndIndex,
-        )
-
         addStringAnnotation(
             tag = "link",
             annotation = "",
@@ -79,6 +75,7 @@ fun ClickableSubstringLink(
 
     ClickableText(
         text = annotatedText,
+        style = textStyle,
         onClick = {
             annotatedText
                 .getStringAnnotations("link", it, it)
@@ -90,6 +87,7 @@ fun ClickableSubstringLink(
 }
 
 @Composable
+@Suppress("Deprecation")
 @Preview
 private fun ClickableSubstringTextPreview() {
     val text = "This text contains a link"

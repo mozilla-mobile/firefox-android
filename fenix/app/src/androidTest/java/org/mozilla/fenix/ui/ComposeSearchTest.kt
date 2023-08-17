@@ -20,6 +20,8 @@ import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.Constants
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.MatcherHelper
+import org.mozilla.fenix.helpers.MockBrowserDataHelper.createBookmarkItem
+import org.mozilla.fenix.helpers.MockBrowserDataHelper.createHistoryItem
 import org.mozilla.fenix.helpers.MockBrowserDataHelper.createTabItem
 import org.mozilla.fenix.helpers.MockBrowserDataHelper.setCustomSearchEngine
 import org.mozilla.fenix.helpers.SearchDispatcher
@@ -559,7 +561,13 @@ class ComposeSearchTest {
         }.openThreeDotMenu {
         }.openHistory {
             // Full URL no longer visible in the nav bar, so we'll check the history record
-            verifyHistoryItemExists(shouldExist = true, Constants.searchEngineCodes["Google"]!!)
+            // A search group is sometimes created when searching with Google (probably redirects)
+            try {
+                verifyHistoryItemExists(shouldExist = true, Constants.searchEngineCodes["Google"]!!)
+            } catch (e: AssertionError) {
+                openSearchGroup(queryString)
+                verifyHistoryItemExists(shouldExist = true, Constants.searchEngineCodes["Google"]!!)
+            }
         }
     }
 
@@ -614,6 +622,30 @@ class ComposeSearchTest {
         }
     }
 
+    // Test that verifies the Firefox Suggest results in a general search context
+    @Test
+    fun firefoxSuggestHeaderForBrowsingDataSuggestionsTest() {
+        val firstPage = TestAssetHelper.getGenericAsset(searchMockServer, 1)
+        val secondPage = TestAssetHelper.getGenericAsset(searchMockServer, 2)
+
+        createTabItem(firstPage.url.toString())
+        createBookmarkItem(secondPage.url.toString(), secondPage.title, 1u)
+
+        homeScreen {
+        }.openSearch {
+            typeSearch("generic")
+            verifySearchEngineSuggestionResults(
+                rule = activityTestRule,
+                searchSuggestions = arrayOf(
+                    "Firefox Suggest",
+                    firstPage.url.toString(),
+                    secondPage.url.toString(),
+                ),
+                searchTerm = "generic",
+            )
+        }
+    }
+
     @Test
     fun verifySearchTabsItemsTest() {
         navigationToolbar {
@@ -657,17 +689,125 @@ class ComposeSearchTest {
             clickClearButton()
             typeSearch(searchTerm = "generic")
             verifyTypedToolbarText("generic")
-            verifyFirefoxSuggestResults(
+            verifySearchEngineSuggestionResults(
                 rule = activityTestRule,
+                searchSuggestions = arrayOf(
+                    "Firefox Suggest",
+                    firstPageUrl.url.toString(),
+                    secondPageUrl.url.toString(),
+                ),
                 searchTerm = "generic",
-                firstPageUrl.url.toString(),
-                secondPageUrl.url.toString(),
             )
         }.clickSearchSuggestion(firstPageUrl.url.toString()) {
             verifyTabCounter("2")
         }.openComposeTabDrawer(activityTestRule) {
             verifyOpenTabsOrder(position = 1, title = firstPageUrl.url.toString())
             verifyOpenTabsOrder(position = 2, title = secondPageUrl.url.toString())
+        }
+    }
+
+    @Test
+    fun verifySearchForBookmarksUITest() {
+        navigationToolbar {
+        }.clickSearchSelectorButton {
+            selectTemporarySearchMethod("Bookmarks")
+            verifySearchBarPlaceholder("Search bookmarks")
+            verifyKeyboardVisibility(isExpectedToBeVisible = true)
+            verifyScanButtonVisibility(visible = false)
+            verifyVoiceSearchButtonVisibility(enabled = true)
+        }
+    }
+
+    @Test
+    fun bookmarkSearchWithNoBookmarksTest() {
+        navigationToolbar {
+        }.clickSearchSelectorButton {
+            selectTemporarySearchMethod("Bookmarks")
+            typeSearch("test")
+            verifyNoSuggestionsAreDisplayed(activityTestRule, "test")
+        }
+    }
+
+    @Test
+    fun bookmarkSearchWhenBookmarksExistTest() {
+        createBookmarkItem(url = "https://bookmarktest1.com", title = "Test1", position = 1u)
+        createBookmarkItem(url = "https://bookmarktest2.com", title = "Test2", position = 2u)
+
+        navigationToolbar {
+        }.clickSearchSelectorButton {
+            selectTemporarySearchMethod("Bookmarks")
+            typeSearch("test")
+            verifySearchEngineSuggestionResults(
+                activityTestRule,
+                searchSuggestions = arrayOf(
+                    "Firefox Suggest",
+                    "Test1",
+                    "https://bookmarktest1.com/",
+                    "Test2",
+                    "https://bookmarktest2.com/",
+                ),
+                searchTerm = "test",
+            )
+        }.dismissSearchBar {
+        }.openSearch {
+            typeSearch("mozilla ")
+            verifyNoSuggestionsAreDisplayed(activityTestRule, "Test1", "Test2")
+        }
+    }
+
+    @Test
+    fun verifySearchHistoryItemsTest() {
+        navigationToolbar {
+        }.clickUrlbar {
+            clickSearchSelectorButton()
+            selectTemporarySearchMethod("History")
+            verifyKeyboardVisibility(isExpectedToBeVisible = true)
+            verifyScanButtonVisibility(visible = false)
+            verifyVoiceSearchButtonVisibility(enabled = true)
+            verifySearchBarPlaceholder(text = "Search history")
+        }
+    }
+
+    @Test
+    fun verifySearchHistoryWithoutBrowsingDataTest() {
+        navigationToolbar {
+        }.clickUrlbar {
+            clickSearchSelectorButton()
+            selectTemporarySearchMethod(searchEngineName = "History")
+            typeSearch(searchTerm = "Mozilla")
+            verifyNoSuggestionsAreDisplayed(rule = activityTestRule, "Mozilla")
+            clickClearButton()
+            verifySearchBarPlaceholder("Search history")
+        }
+    }
+
+    @Test
+    fun verifySearchHistoryWithBrowsingDataTest() {
+        val firstPageUrl = TestAssetHelper.getGenericAsset(searchMockServer, 1)
+        val secondPageUrl = TestAssetHelper.getGenericAsset(searchMockServer, 2)
+
+        createHistoryItem(firstPageUrl.url.toString())
+        createHistoryItem(secondPageUrl.url.toString())
+
+        navigationToolbar {
+        }.clickUrlbar {
+            clickSearchSelectorButton()
+            selectTemporarySearchMethod(searchEngineName = "History")
+            typeSearch(searchTerm = "Mozilla")
+            verifyNoSuggestionsAreDisplayed(rule = activityTestRule, "Mozilla")
+            clickClearButton()
+            typeSearch(searchTerm = "generic")
+            verifyTypedToolbarText("generic")
+            verifySearchEngineSuggestionResults(
+                rule = activityTestRule,
+                searchSuggestions = arrayOf(
+                    firstPageUrl.url.toString(),
+                    secondPageUrl.url.toString(),
+                ),
+                searchTerm = "generic",
+            )
+        }.clickSearchSuggestion(firstPageUrl.url.toString()) {
+            verifyUrl(firstPageUrl.url.toString())
         }
     }
 }
