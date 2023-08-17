@@ -58,12 +58,6 @@ object FeatureFlags {
     const val composeTopSites = false
 
     /**
-     * Enables new search settings UI with two extra fragments, for managing the default engine
-     * and managing search shortcuts in the quick search menu.
-     */
-    const val unifiedSearchSettings = true
-
-    /**
      * Allows users to enable translations.
      * Preference to fully enable translations is pref_key_enable_translations.
      */

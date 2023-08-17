@@ -271,13 +271,6 @@ features:
             "feature-setting-global-rules-sub-frames": 0
           }
         }
-  unified-search:
-    description: A feature allowing user to easily search for specified results directly in the search bar.
-    variables:
-      enabled:
-        description: If true, the feature shows up in the search bar.
-        type: Boolean
-        default: true
 
   extensions-process:
     description: A feature to rollout the extensions process.

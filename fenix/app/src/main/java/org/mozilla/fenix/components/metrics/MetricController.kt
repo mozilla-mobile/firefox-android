@@ -59,7 +59,6 @@ import org.mozilla.fenix.GleanMetrics.ProgressiveWebApp
 import org.mozilla.fenix.GleanMetrics.SitePermissions
 import org.mozilla.fenix.GleanMetrics.Sync
 import org.mozilla.fenix.GleanMetrics.SyncedTabs
-import org.mozilla.fenix.search.awesomebar.ShortcutsSuggestionProvider
 import org.mozilla.fenix.utils.Settings
 import java.util.UUID
 import mozilla.components.compose.browser.awesomebar.AwesomeBarFacts as ComposeAwesomeBarFacts
@@ -358,7 +357,6 @@ internal class ReleaseMetricController(
                         is SessionSuggestionProvider -> PerfAwesomebar.sessionSuggestions
                         is SearchSuggestionProvider -> PerfAwesomebar.searchEngineSuggestions
                         is ClipboardSuggestionProvider -> PerfAwesomebar.clipboardSuggestions
-                        is ShortcutsSuggestionProvider -> PerfAwesomebar.shortcutsSuggestions
                         // NB: add PerfAwesomebar.syncedTabsSuggestions once we're using SyncedTabsSuggestionProvider
                         else -> {
                             Logger("Metrics").error("Unknown suggestion provider: $provider")
