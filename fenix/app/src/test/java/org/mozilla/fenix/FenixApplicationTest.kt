@@ -126,7 +126,6 @@ class FenixApplicationTest {
         every { settings.shouldShowHistorySuggestions } returns true
         every { settings.shouldShowBookmarkSuggestions } returns true
         every { settings.shouldShowClipboardSuggestions } returns true
-        every { settings.shouldShowSearchShortcuts } returns true
         every { settings.openLinksInAPrivateTab } returns true
         every { settings.shouldShowSearchSuggestionsInPrivate } returns true
         every { settings.shouldShowVoiceSearch } returns true
@@ -183,7 +182,6 @@ class FenixApplicationTest {
         assertEquals(true, Preferences.browsingHistorySuggestion.testGetValue())
         assertEquals(true, Preferences.bookmarksSuggestion.testGetValue())
         assertEquals(true, Preferences.clipboardSuggestionsEnabled.testGetValue())
-        assertEquals(true, Preferences.searchShortcutsEnabled.testGetValue())
         assertEquals(true, Preferences.voiceSearchEnabled.testGetValue())
         assertEquals("never", Preferences.openLinksInAppEnabled.testGetValue())
         assertEquals(true, Preferences.signedInSync.testGetValue())

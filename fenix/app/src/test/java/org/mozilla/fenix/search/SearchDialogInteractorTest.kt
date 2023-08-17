@@ -87,15 +87,6 @@ class SearchDialogInteractorTest {
     }
 
     @Test
-    fun onClickSearchEngineSettings() {
-        interactor.onClickSearchEngineSettings()
-
-        verify {
-            searchController.handleClickSearchEngineSettings()
-        }
-    }
-
-    @Test
     fun onExistingSessionSelected() {
         val sessionId = "mozilla"
 

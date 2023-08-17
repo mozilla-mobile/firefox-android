@@ -155,32 +155,6 @@ class ToolbarView(
     }
 
     private fun configureAutocomplete(searchEngineSource: SearchEngineSource) {
-        when (settings.showUnifiedSearchFeature) {
-            true -> configureAutocompleteWithUnifiedSearch(searchEngineSource)
-            else -> configureAutocompleteWithoutUnifiedSearch(searchEngineSource)
-        }
-    }
-
-    private fun configureAutocompleteWithoutUnifiedSearch(searchEngineSource: SearchEngineSource) {
-        when (searchEngineSource) {
-            is SearchEngineSource.Default -> {
-                autocompleteFeature.updateAutocompleteProviders(
-                    listOfNotNull(
-                        when (settings.shouldShowHistorySuggestions) {
-                            true -> components.core.historyStorage
-                            false -> null
-                        },
-                        components.core.domainsAutocompleteProvider,
-                    ),
-                )
-            }
-            else -> {
-                autocompleteFeature.updateAutocompleteProviders(emptyList())
-            }
-        }
-    }
-
-    private fun configureAutocompleteWithUnifiedSearch(searchEngineSource: SearchEngineSource) {
         when (searchEngineSource) {
             is SearchEngineSource.Default -> {
                 autocompleteFeature.updateAutocompleteProviders(

@@ -898,7 +898,6 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             browsingHistorySuggestion.set(settings.shouldShowHistorySuggestions)
             bookmarksSuggestion.set(settings.shouldShowBookmarkSuggestions)
             clipboardSuggestionsEnabled.set(settings.shouldShowClipboardSuggestions)
-            searchShortcutsEnabled.set(settings.shouldShowSearchShortcuts)
             voiceSearchEnabled.set(settings.shouldShowVoiceSearch)
             openLinksInAppEnabled.set(settings.openLinksInExternalApp)
             signedInSync.set(settings.signedInFxaAccount)

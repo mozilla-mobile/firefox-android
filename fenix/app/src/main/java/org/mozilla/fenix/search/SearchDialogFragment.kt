@@ -324,18 +324,11 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val showUnifiedSearchFeature = requireContext().settings().showUnifiedSearchFeature
-
         consumeFlow(requireComponents.core.store) { flow ->
             flow.map { state -> state.search }
                 .distinctUntilChanged()
                 .collect { search ->
-                    store.dispatch(
-                        SearchFragmentAction.UpdateSearchState(
-                            search,
-                            showUnifiedSearchFeature,
-                        ),
-                    )
+                    store.dispatch(SearchFragmentAction.UpdateSearchState(search))
 
                     updateSearchSelectorMenu(search.searchEngineShortcuts)
                 }
@@ -503,13 +496,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
     }
 
     private fun observeAwesomeBarState() = consumeFlow(store) { flow ->
-        /*
-         * firstUpdate is used to make sure we keep the awesomebar hidden on the first run
-         *  of the searchFragmentDialog. We only turn it false after the user has changed the
-         *  query as consumeFrom may run several times on fragment start due to state updates.
-         * */
-
-        flow.map { state -> state.url != state.query && state.query.isNotBlank() || state.showSearchShortcuts }
+        flow.map { state -> state.url != state.query && state.query.isNotBlank() }
             .distinctUntilChanged()
             .collect { shouldShowAwesomebar ->
                 binding.awesomeBar.visibility = if (shouldShowAwesomebar) {
@@ -524,7 +511,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
         flow.map { state ->
             val shouldShowView = state.showClipboardSuggestions &&
                 state.query.isEmpty() &&
-                state.clipboardHasUrl && !state.showSearchShortcuts
+                state.clipboardHasUrl
             Pair(shouldShowView, state.clipboardHasUrl)
         }
             .distinctUntilChanged()
@@ -729,9 +716,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
 
     private fun updateSearchSuggestionsHintVisibility(state: SearchFragmentState) {
         view?.apply {
-            val showHint = state.showSearchSuggestionsHint &&
-                !state.showSearchShortcuts &&
-                state.url != state.query
+            val showHint = state.showSearchSuggestionsHint && state.url != state.query
 
             binding.searchSuggestionsHint.isVisible = showHint
             binding.searchSuggestionsHintDivider.isVisible = showHint

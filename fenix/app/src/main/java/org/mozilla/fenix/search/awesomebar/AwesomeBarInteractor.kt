@@ -38,11 +38,6 @@ interface AwesomeBarInteractor {
     fun onSearchShortcutEngineSelected(searchEngine: SearchEngine)
 
     /**
-     * Called whenever the "Search Engine Settings" item is tapped
-     */
-    fun onClickSearchEngineSettings()
-
-    /**
      * Called whenever an existing session is selected from the sessionSuggestionProvider
      */
     fun onExistingSessionSelected(tabId: String)

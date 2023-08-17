@@ -395,11 +395,6 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = true,
     )
 
-    val shouldShowSearchShortcuts by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_show_search_engine_shortcuts),
-        default = false,
-    )
-
     var gridTabView by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_tab_view_grid),
         default = true,
@@ -1647,15 +1642,6 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     /**
-     * Indicates if the Unified Search feature should be visible.
-     */
-    var showUnifiedSearchFeature by lazyFeatureFlagPreference(
-        key = appContext.getPreferenceKey(R.string.pref_key_show_unified_search_2),
-        default = { FxNimbus.features.unifiedSearch.value().enabled },
-        featureFlag = true,
-    )
-
-    /**
      * Blocklist used to filter items from the home screen that have previously been removed.
      */
     var homescreenBlocklist by stringSetPreference(
@@ -1869,11 +1855,6 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         key = appContext.getPreferenceKey(R.string.pref_key_growth_early_search),
         default = false,
     )
-
-    /**
-     * Indicates if the new Search settings UI is enabled.
-     */
-    var enableUnifiedSearchSettingsUI: Boolean = showUnifiedSearchFeature && FeatureFlags.unifiedSearchSettings
 
     /**
      * Indicates if hidden engines were restored due to migration to unified search settings UI.
