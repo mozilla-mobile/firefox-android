@@ -34,7 +34,7 @@ object Versions {
     // This has to be synced to the gradlew plugin version. See
     // http://googlesamples.github.io/android-custom-lint-rules/api-guide/example.md.html#example:samplelintcheckgithubproject/lintversion?
     const val lint = "30.4.2"
-    const val detekt = "1.23.0"
+    const val detekt = "1.23.1"
     const val ktlint = "0.49.1"
 
     const val sentry_latest = "6.27.0"
@@ -77,7 +77,7 @@ object Versions {
         const val espresso = "3.5.1"
         const val room = "2.5.2"
         const val savedstate = "1.2.1"
-        const val paging = "2.1.2"
+        const val paging = "3.2.0"
         const val palette = "1.0.0"
         const val preferences = "1.1.1"
         const val lifecycle = "2.6.1"
