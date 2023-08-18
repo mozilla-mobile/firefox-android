@@ -5,12 +5,16 @@
 package org.mozilla.fenix.components
 
 import android.content.Context
+import android.content.Intent
+import androidx.core.net.toUri
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import mozilla.components.feature.accounts.FirefoxAccountsAuthFeature
 import mozilla.components.feature.app.links.AppLinksInterceptor
 import mozilla.components.service.fxa.manager.FxaAccountManager
+import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.IntentReceiverActivity
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.perf.lazyMonitored
 import org.mozilla.fenix.settings.SupportUtils
@@ -25,8 +29,15 @@ class Services(
     val accountsAuthFeature by lazyMonitored {
         FirefoxAccountsAuthFeature(accountManager, FxaServer.REDIRECT_URL) { context, authUrl ->
             CoroutineScope(Dispatchers.Main).launch {
-                val intent = SupportUtils.createAuthCustomTabIntent(context, authUrl)
+                // new flow
+                val intent = Intent(context, HomeActivity::class.java)
+                intent.data = authUrl.toUri()
+                intent.putExtra(HomeActivity.OPEN_TO_BROWSER_AND_LOAD, true)
                 context.startActivity(intent)
+
+                // old flow
+//                val intent = SupportUtils.createAuthCustomTabIntent(context, authUrl)
+//                context.startActivity(intent)
             }
         }
     }

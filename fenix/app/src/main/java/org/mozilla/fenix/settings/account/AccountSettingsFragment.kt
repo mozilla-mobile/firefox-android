@@ -37,9 +37,11 @@ import mozilla.components.service.fxa.sync.setLastSynced
 import mozilla.components.support.ktx.android.content.getColorFromAttr
 import mozilla.components.ui.widgets.withCenterAlignedButtons
 import mozilla.telemetry.glean.private.NoExtras
+import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.GleanMetrics.SyncAccount
+import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.StoreProvider
@@ -375,11 +377,19 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
         return Preference.OnPreferenceClickListener {
             viewLifecycleOwner.lifecycleScope.launch(Main) {
                 context?.let {
-                    var acct = accountManager.authenticatedAccount()
-                    var url = acct?.getManageAccountURL(FenixFxAEntryPoint.SettingsMenu)
+                    val acct = accountManager.authenticatedAccount()
+                    val url = acct?.getManageAccountURL(FenixFxAEntryPoint.SettingsMenu)
                     if (url != null) {
-                        val intent = SupportUtils.createCustomTabIntent(it, url)
-                        startActivity(intent)
+                        // new flow
+                        (activity as HomeActivity).openToBrowserAndLoad(
+                            searchTermOrURL = url,
+                            newTab = true,
+                            from = BrowserDirection.FromGlobal,
+                        )
+
+                        // old flow
+//                        val intent = SupportUtils.createCustomTabIntent(it, url)
+//                        startActivity(intent)
                     }
                 }
             }

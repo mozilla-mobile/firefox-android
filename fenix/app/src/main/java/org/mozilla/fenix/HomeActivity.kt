@@ -59,6 +59,9 @@ import mozilla.components.browser.state.state.WebExtensionState
 import mozilla.components.concept.engine.EngineSession
 import mozilla.components.concept.engine.EngineView
 import mozilla.components.concept.storage.HistoryMetadataKey
+import mozilla.components.concept.sync.AccountObserver
+import mozilla.components.concept.sync.AuthType
+import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.feature.contextmenu.DefaultSelectionActionDelegate
 import mozilla.components.feature.media.ext.findActiveMediaTab
 import mozilla.components.feature.privatemode.notification.PrivateNotificationFeature
@@ -94,6 +97,7 @@ import org.mozilla.fenix.addons.AddonPermissionsDetailsFragmentDirections
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
+import org.mozilla.fenix.components.accounts.FenixFxAEntryPoint
 import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.metrics.BreadcrumbsRecorder
 import org.mozilla.fenix.components.metrics.GrowthDataWorker
@@ -112,6 +116,7 @@ import org.mozilla.fenix.home.intent.AssistIntentProcessor
 import org.mozilla.fenix.home.intent.CrashReporterIntentProcessor
 import org.mozilla.fenix.home.intent.HomeDeepLinkIntentProcessor
 import org.mozilla.fenix.home.intent.OpenBrowserIntentProcessor
+import org.mozilla.fenix.home.intent.OpenNewTabIntentProcessor
 import org.mozilla.fenix.home.intent.OpenPasswordManagerIntentProcessor
 import org.mozilla.fenix.home.intent.OpenSpecificTabIntentProcessor
 import org.mozilla.fenix.home.intent.ReEngagementIntentProcessor
@@ -210,6 +215,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             StartSearchIntentProcessor(),
             OpenBrowserIntentProcessor(this, ::getIntentSessionId),
             OpenSpecificTabIntentProcessor(this),
+            OpenNewTabIntentProcessor(this),
             OpenPasswordManagerIntentProcessor(),
             ReEngagementIntentProcessor(this, settings()),
         )
@@ -933,6 +939,32 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     }
 
     protected open fun getIntentSessionId(intent: SafeIntent): String? = null
+
+    fun callItBetter() {
+        val accountStateObserver = object : AccountObserver {
+            /**
+             * Navigate away from this activity when we have successful authentication
+             */
+            override fun onAuthenticated(account: OAuthAccount, authType: AuthType) {
+                lifecycleScope.launch(Main) {
+                    // TODO do something upon logging it
+                    // we could load the user page, though it needs a sync first to support all cases
+//                    val acct = components.backgroundServices.accountManager.authenticatedAccount()
+//                    val url = acct?.getManageAccountURL(FenixFxAEntryPoint.SettingsMenu)
+//                    if (url != null) {
+//                        openToBrowserAndLoad(
+//                            searchTermOrURL = url,
+//                            newTab = true,
+//                            from = BrowserDirection.FromGlobal,
+//                        )
+//                    }
+                }
+            }
+        }
+
+        val accountManager = components.backgroundServices.accountManager
+        accountManager.register(accountStateObserver, this, true)
+    }
 
     /**
      * Navigates to the browser fragment and loads a URL or performs a search (depending on the
