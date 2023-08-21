@@ -68,6 +68,8 @@ class SearchTest {
             isRecentTabsFeatureEnabled = false,
             isTCPCFREnabled = false,
             isWallpaperOnboardingEnabled = false,
+            tabsTrayRewriteEnabled = false,
+            isCookieBannerReductionDialogEnabled = false,
         ),
     ) { it.activity }
 
