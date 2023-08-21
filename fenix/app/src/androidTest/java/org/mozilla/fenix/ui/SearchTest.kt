@@ -54,7 +54,7 @@ import org.mozilla.fenix.ui.robots.searchScreen
  */
 
 class SearchTest {
-    lateinit var searchMockServer: MockWebServer
+    private lateinit var searchMockServer: MockWebServer
     private var queryString = "firefox"
     private val generalEnginesList = listOf("DuckDuckGo", "Google", "Bing")
     private val topicEnginesList = listOf("Amazon.com", "Wikipedia", "eBay")
@@ -68,6 +68,8 @@ class SearchTest {
             isRecentTabsFeatureEnabled = false,
             isTCPCFREnabled = false,
             isWallpaperOnboardingEnabled = false,
+            isCookieBannerReductionDialogEnabled = false,
+            tabsTrayRewriteEnabled = false,
         ),
     ) { it.activity }
 
