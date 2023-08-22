@@ -725,27 +725,27 @@
     "ru": {
       "default": {
         "visibleDefaultEngines": [
-          "google-b-m", "ddg", "wikipedia-ru"
+          "google-b-m", "ddg", "wikipedia-ru", "yandex-ru"
         ]
       },
       "RU": {
         "visibleDefaultEngines": [
-          "google-com-nocodes", "ddg", "wikipedia-ru"
+          "google-com-nocodes", "ddg", "wikipedia-ru", "yandex-ru"
         ]
       },
       "BY": {
         "visibleDefaultEngines": [
-          "google-com-nocodes", "ddg", "wikipedia-ru"
+          "google-com-nocodes", "ddg", "wikipedia-ru", "yandex-ru"
         ]
       },
       "KZ": {
         "visibleDefaultEngines": [
-          "google-com-nocodes", "ddg", "wikipedia-ru"
+          "google-com-nocodes", "ddg", "wikipedia-ru", "yandex-ru"
         ]
       },
       "TR": {
         "visibleDefaultEngines": [
-          "google-com-nocodes", "ddg", "wikipedia-ru"
+          "google-com-nocodes", "ddg", "wikipedia-ru", "yandex-ru"
         ]
       }
     },
