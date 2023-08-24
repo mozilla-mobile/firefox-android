@@ -17,7 +17,6 @@ import mozilla.components.concept.engine.mediasession.MediaSession
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.IntentReceiverActivity
@@ -115,13 +114,12 @@ class SmokeTest {
 
     // Device or AVD requires a Google Services Android OS installation with Play Store installed
     // Verifies the Open in app button when an app is installed
-    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1849278")
     @Test
     fun mainMenuOpenInAppTest() {
-        val youtubeURL = "https://m.youtube.com/user/mozilla?cbrd=1"
+        val youtubeURL = "vnd.youtube://".toUri()
 
         navigationToolbar {
-        }.enterURLAndEnterToBrowser(youtubeURL.toUri()) {
+        }.enterURLAndEnterToBrowser(youtubeURL) {
             verifyNotificationDotOnMainMenu()
         }.openThreeDotMenu {
         }.clickOpenInApp {
