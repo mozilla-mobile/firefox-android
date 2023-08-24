@@ -382,10 +382,32 @@ class DefaultSessionControlController(
             startLoading = true,
         )
 
+<<<<<<< HEAD
         if (settings.openNextTabInDesktopMode) {
             activity.handleRequestDesktopMode(tabId)
         }
         activity.openToBrowser(BrowserDirection.FromHome)
+=======
+            else -> null
+        }
+
+        if (existingTabForUrl == null) {
+            TopSites.openInNewTab.record(NoExtras())
+
+            val tabId = addTabUseCase.invoke(
+                url = appendSearchAttributionToUrlIfNeeded(topSite.url),
+                selectTab = true,
+                startLoading = true,
+            )
+
+            if (settings.openNextTabInDesktopMode) {
+                activity.handleRequestDesktopMode(tabId)
+            }
+        } else {
+            selectTabUseCase.invoke(existingTabForUrl.id)
+        }
+        navController.navigate(R.id.browserFragment)
+>>>>>>> fb8062ab66 (Bug 1841582 - Opening link from shortcuts should display the page.)
     }
 
     @VisibleForTesting
