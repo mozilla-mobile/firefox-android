@@ -44,6 +44,7 @@ internal const val CIPHER_NONCE_LEN = 12
 @TargetApi(M)
 open class KeyStoreWrapper {
     private var keystore: KeyStore? = null
+    private val logger = Logger("KeyStoreWrapper")
 
     /**
      * Retrieves the underlying KeyStore, loading it if necessary.
@@ -70,10 +71,13 @@ open class KeyStoreWrapper {
      * @return The key for the given label, or `null` if not present
      * @throws InvalidKeyException If there is a Key but it is not a SecretKey
      * @throws NoSuchAlgorithmException If the recovery algorithm is not supported
-     * @throws UnrecoverableKeyException If the key could not be recovered for some reason
      */
-    open fun getKeyFor(label: String): Key? =
+    open fun getKeyFor(label: String): Key? = try {
         loadKeyStore().getKey(label, null)
+    } catch (e: UnrecoverableKeyException) {
+        logger.error("Failed to get key", e)
+        null
+    }
 
     /**
      * Creates a SecretKey for the given label.
@@ -153,20 +157,14 @@ open class Keystore(
     manual: Boolean = false,
     internal val wrapper: KeyStoreWrapper = KeyStoreWrapper(),
 ) {
-    private val logger = Logger("Keystore")
-
     init {
         if (!manual and !available()) {
             generateKey()
         }
     }
 
-    private fun getKey(): SecretKey? = try {
+    private fun getKey(): SecretKey? =
         wrapper.getKeyFor(label) as? SecretKey?
-    } catch (e: UnrecoverableKeyException) {
-        logger.error("Failed to get key", e)
-        null
-    }
 
     /**
      * Determines if the managed key is available for use.  Consumers can use this to
