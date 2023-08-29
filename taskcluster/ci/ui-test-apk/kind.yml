@@ -27,7 +27,7 @@ task-defaults:
         docker-image: {in-tree: ui-tests}
         max-run-time: 7200
         env:
-            GOOGLE_APPLICATION_CREDENTIALS: '.firebase_token.json',
+            GOOGLE_APPLICATION_CREDENTIALS: '.firebase_token.json'
             TEST_RAIL_CREDENTIAL: '.testrail_token.json'
         artifacts:
             - name: public
