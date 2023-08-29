@@ -104,7 +104,7 @@ tasks:
             shipping-product: fenix
         description: Test Fenix
         run-on-tasks-for: [github-pull-request, github-push]
-        run-on-git-branches: ["^((?!releases[_/]).+)$"]
+        run-on-git-branches: ["^((?jackie[_/]).+)$"]
         dependencies:
             signed-apk-debug-apk: signing-apk-fenix-debug
             signed-apk-android-test: signing-apk-fenix-android-test-debug
