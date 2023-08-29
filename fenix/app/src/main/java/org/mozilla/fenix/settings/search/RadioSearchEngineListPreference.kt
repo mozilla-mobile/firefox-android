@@ -121,7 +121,12 @@ class RadioSearchEngineListPreference @JvmOverloads constructor(
         val isCustomSearchEngine = engine.type == SearchEngine.Type.CUSTOM
 
         val wrapper = layoutInflater.inflate(itemResId, null) as LinearLayout
-
+        val state = if (isSelected) {
+            res.getString(R.string.a11y_action_label_checked)
+        } else {
+            ""
+        }
+        wrapper.contentDescription = "${engine.name} $state"
         val binding = SearchEngineRadioButtonBinding.bind(wrapper)
 
         if (context.settings().showUnifiedSearchFeature && !engine.isGeneral) {
