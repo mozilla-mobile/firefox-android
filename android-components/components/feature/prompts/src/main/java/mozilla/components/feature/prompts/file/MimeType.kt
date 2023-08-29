@@ -108,22 +108,35 @@ internal sealed class MimeType(
 
         override fun shouldCapture(mimeTypes: Array<out String>, capture: File.FacingMode) = false
 
+        @Suppress("NestedBlockDepth")
         override fun buildIntent(context: Context, request: File) =
             Intent(ACTION_GET_CONTENT).apply {
                 type = "*/*"
                 addCategory(CATEGORY_OPENABLE)
                 putExtra(EXTRA_LOCAL_ONLY, true)
                 if (request.mimeTypes.isNotEmpty()) {
+                    var shouldAddImageTypes = false
                     val types = request.mimeTypes
                         .map {
+                            shouldAddImageTypes = shouldAddImageTypes || it.startsWith("image")
+
                             if (it.contains("/")) {
                                 it
                             } else {
                                 mimeTypeMap.getMimeTypeFromExtension(it) ?: "*/*"
                             }
+                        }.toMutableList()
+
+                    if (shouldAddImageTypes) {
+                        val imageTypes =
+                            arrayOf("image/jpeg", "image/png", "image/gif", "image/bmp")
+                        for (imageType in imageTypes) {
+                            if (!types.contains(imageType)) {
+                                types += imageType
+                            }
                         }
-                        .toTypedArray()
-                    putExtra(EXTRA_MIME_TYPES, types)
+                    }
+                    putExtra(EXTRA_MIME_TYPES, types.toTypedArray())
                 }
                 putExtra(EXTRA_ALLOW_MULTIPLE, request.isMultipleFilesSelection)
             }
