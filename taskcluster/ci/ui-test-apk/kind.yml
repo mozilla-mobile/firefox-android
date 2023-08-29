@@ -204,7 +204,7 @@ tasks:
                 - [wget, {artifact-reference: '<signed-apk-debug-apk/public/build/target.arm64-v8a.apk>'}, '-O', app.apk]
                 - [wget, {artifact-reference: '<signed-apk-android-test/public/build/target.noarch.apk>'}, '-O', android-test.apk]
                 - [automation/taskcluster/androidTest/ui-test.sh, arm64-v8a, app.apk, android-test.apk, '100']
-                - [python3 automation/taskcluster/androidTest/demo_script.py]
+                - [python3 automation/taskcluster/androidTest/test_dashboard.py]
         treeherder:
             platform: 'fenix-ui-test/opt'
             symbol: fenix-debug(ui-test-arm)
@@ -372,4 +372,4 @@ tasks:
                 - [wget, {artifact-reference: '<signed-apk-debug-apk/public/build/target.arm64-v8a.apk>'}, '-O', app.apk]
                 - [wget, {artifact-reference: '<signed-apk-android-test/public/build/target.noarch.apk>'}, '-O', android-test.apk]
                 - [automation/taskcluster/androidTest/ui-test.sh, arm64-v8a, app.apk, android-test.apk, '100']
-                - [python3 automation/taskcluster/androidTest/demo_script.py]
+                - [python3 automation/taskcluster/androidTest/test_dashboard.py]
