@@ -27,7 +27,8 @@ task-defaults:
         docker-image: {in-tree: ui-tests}
         max-run-time: 7200
         env:
-            GOOGLE_APPLICATION_CREDENTIALS: '.firebase_token.json'
+            GOOGLE_APPLICATION_CREDENTIALS: '.firebase_token.json',
+            TEST_RAIL_CREDENTIAL: '.testrail_token.json'
         artifacts:
             - name: public
               path: /builds/worker/artifacts
@@ -203,6 +204,7 @@ tasks:
                 - [wget, {artifact-reference: '<signed-apk-debug-apk/public/build/target.arm64-v8a.apk>'}, '-O', app.apk]
                 - [wget, {artifact-reference: '<signed-apk-android-test/public/build/target.noarch.apk>'}, '-O', android-test.apk]
                 - [automation/taskcluster/androidTest/ui-test.sh, arm64-v8a, app.apk, android-test.apk, '100']
+                - [python3 automation/taskcluster/androidTest/demo_script.py]
         treeherder:
             platform: 'fenix-ui-test/opt'
             symbol: fenix-debug(ui-test-arm)
@@ -323,7 +325,6 @@ tasks:
         worker:
             env:
                 GOOGLE_PROJECT: moz-fenix
-
     fenix-robo-arm-debug:
         attributes:
             shipping-product: fenix
@@ -350,3 +351,25 @@ tasks:
         worker:
             env:
                 GOOGLE_PROJECT: moz-fenix
+    fenix-test-dashboard:
+        attributes:
+            shipping-product: fenix
+        description: Test Fenix
+        run-on-tasks-for: [github-pull-request, github-push]
+        run-on-git-branches: ["^((?jackie[_/]).+)$"]
+        dependencies:
+            signed-apk-debug-apk: signing-apk-fenix-debug
+            signed-apk-android-test: signing-apk-fenix-android-test-debug
+        run:
+            secrets:
+                - name: project/mobile/firefox-android/fenix/firebase
+                  key: firebaseToken
+                  path: .firebase_token.json
+                  json: true
+            pre-commands:
+                - ["cd", "fenix"]
+            commands:
+                - [wget, {artifact-reference: '<signed-apk-debug-apk/public/build/target.arm64-v8a.apk>'}, '-O', app.apk]
+                - [wget, {artifact-reference: '<signed-apk-android-test/public/build/target.noarch.apk>'}, '-O', android-test.apk]
+                - [automation/taskcluster/androidTest/ui-test.sh, arm64-v8a, app.apk, android-test.apk, '100']
+                - [python3 automation/taskcluster/androidTest/demo_script.py]
