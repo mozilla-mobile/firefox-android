@@ -3,7 +3,7 @@
     <!-- Text for confirmation for a positive action in dialog  -->
     <string name="mozac_feature_prompts_ok">تأیید</string>
     <!-- Text for confirmation for a negative action in dialog.  -->
-    <string name="mozac_feature_prompts_cancel">انصراف</string>
+    <string name="mozac_feature_prompts_cancel">لغو</string>
     <!-- When a page shows many dialogs, this checkbox will appear for letting the user choose to prevent showing more dialogs. -->
     <string name="mozac_feature_prompts_no_more_dialogs">از ایجاد پنجره‌های جدید توسط این صفحه جلوگیری شود.</string>
     <!-- Text for a positive button, when an user selects a date in date/time picker. -->
@@ -29,7 +29,7 @@
     <!-- Positive confirmation that we should save the updated login -->
     <string name="mozac_feature_prompt_update_confirmation">بروزرسانی</string>
     <!-- Error text displayed underneath the password field when it is in an error case -->
-    <string name="mozac_feature_prompt_error_empty_password">قسمت رمز عبور نباید خالی باشد</string>
+    <string name="mozac_feature_prompt_error_empty_password">خانهٔ گذرواژه نباید خالی باشد</string>
     <!-- Error text displayed underneath the password field when it is in an error case -->
     <string name="mozac_feature_prompt_error_unknown_cause">ذخیره ورود امکان پذیر نیست</string>
     <!-- Prompt message displayed when app detects a user has entered a new username and password and user decides if app should save the new login. -->
@@ -40,7 +40,7 @@
     <string name="mozac_feature_prompt_login_add_username_headline">افزودن نام‌کاربری به گذرواژه ذخیره شده؟</string>
     <!-- Text for a label for the field when prompt requesting a text is shown. -->
     <!-- For more info take a look here https://developer.mozilla.org/en-US/docs/Web/API/Window/prompt -->
-    <string name="mozac_feature_prompts_content_description_input_label">برچسب ورود به فیلد ورودی متن</string>
+    <string name="mozac_feature_prompts_content_description_input_label">برچسب برای وارد کردن یک خانهٔ ورودی متنی</string>
     <!-- Title of a color picker dialog, this text is shown above a color picker. -->
     <string name="mozac_feature_prompts_choose_a_color">یک رنگ انتخاب کنید</string>
     <!-- Text of a confirm button in dialog requesting to open a new window. -->
@@ -94,11 +94,11 @@
 
     <!-- Strings shown in a dialog that appear when users try to refresh a certain kind of webpages -->
     <string name="mozac_feature_prompt_repost_title">ارسال دوباره داده به این پایگاه؟</string>
-    <string name="mozac_feature_prompt_repost_message">نوسازی این صفحه می تواند اقدامات اخیر مانند پرداخت یا ارسال نظر را دوبار تکرار کند.</string>
+    <string name="mozac_feature_prompt_repost_message">بازخوانی این صفحه می‌تواند کنش‌های اخیر مانند پرداخت یا ارسال نظر را دوباره تکرار کند.</string>
     <!-- Pressing this will dismiss the dialog and reload the page sending again the previous data -->
-    <string name="mozac_feature_prompt_repost_positive_button_text">ارسال مجدد داده ها</string>
+    <string name="mozac_feature_prompt_repost_positive_button_text">ارسال دوبارهٔ داده‌ها</string>
     <!-- Pressing this will dismiss the dialog and not refresh the webpage -->
-    <string name="mozac_feature_prompt_repost_negative_button_text">انصراف</string>
+    <string name="mozac_feature_prompt_repost_negative_button_text">لغو</string>
 
     <!-- Credit Card Autofill -->
     <!-- Header for the select credit card prompt to allow users to fill a form with a saved credit card. -->
@@ -125,4 +125,16 @@
     <string name="mozac_feature_prompts_collapse_address_content_description">جمع کردن نشانی‌های پیشنهادی</string>
     <!-- Text for the manage addresses button. -->
     <string name="mozac_feature_prompts_manage_address">مدیریت نشانی‌ها</string>
+
+    <!-- Federated Credential Management prompts -->
+    <!--Content description for the Account picture in the Select Account FedCM prompt -->
+    <string name="mozac_feature_prompts_account_picture">تصویر حساب</string>
+    <!-- Title of the Identity Credential provider dialog choose. -->
+    <string name="mozac_feature_prompts_identity_credentials_choose_provider">انتخاب یک فراهم‌کنندهٔ ورود</string>
+    <!-- Title of an account picker dialog for identity credentials. -->
+    <string name="mozac_feature_prompts_identity_credentials_choose_account">حسابی انتخاب کنید</string>
+    <!-- Title of the Identity Credential privacy policy dialog title. The %1$s will be replaced with the name of the provider. -->
+    <string name="mozac_feature_prompts_identity_credentials_privacy_policy_title">استفاده از %1$s به عنوان یک فراهم‌کننده</string>
+    <!-- Title of the Identity Credential privacy policy dialog description. The %1$s will be replaced with the name of the provider, %2$s will be replaced with the account, %3$s will be replaced with the privacy policy url and  %4$s will be replaced with the terms of service. -->
+    <string name="mozac_feature_prompts_identity_credentials_privacy_policy_description"><![CDATA[ورود به %1$s با یک حساب %2$s تحت <a href="%3$s">سیاست حفظ محرمانگی</a> و <a href="%4$s">شرایط ارائهٔ خدمات</a> آن‌هاست]]></string>
 </resources>

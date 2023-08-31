@@ -50,6 +50,8 @@ import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.settings.quicksettings.protections.cookiebanners.dialog.CookieBannerReEngagementDialogUtils
 import org.mozilla.fenix.settings.quicksettings.protections.cookiebanners.getCookieBannerUIMode
+import org.mozilla.fenix.shopping.DefaultShoppingExperienceFeature
+import org.mozilla.fenix.shopping.ReviewQualityCheckFeature
 import org.mozilla.fenix.shortcut.PwaOnboardingObserver
 import org.mozilla.fenix.theme.ThemeManager
 
@@ -61,8 +63,12 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
 
     private val windowFeature = ViewBoundFeatureWrapper<WindowFeature>()
     private val openInAppOnboardingObserver = ViewBoundFeatureWrapper<OpenInAppOnboardingObserver>()
+    private val standardSnackbarErrorBinding =
+        ViewBoundFeatureWrapper<StandardSnackbarErrorBinding>()
+    private val reviewQualityCheckFeature = ViewBoundFeatureWrapper<ReviewQualityCheckFeature>()
 
     private var readerModeAvailable = false
+    private var reviewQualityCheckAvailable = false
     private var pwaOnboardingObserver: PwaOnboardingObserver? = null
 
     private var forwardAction: BrowserToolbar.TwoStateButton? = null
@@ -93,7 +99,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
         val homeAction = BrowserToolbar.Button(
             imageDrawable = AppCompatResources.getDrawable(
                 context,
-                R.drawable.mozac_ic_home,
+                R.drawable.mozac_ic_home_24,
             )!!,
             contentDescription = context.getString(R.string.browser_toolbar_home),
             iconTintColorResource = ThemeManager.resolveAttribute(R.attr.textPrimary, context),
@@ -118,7 +124,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                 contentDescription = context.getString(R.string.browser_menu_read),
                 contentDescriptionSelected = context.getString(R.string.browser_menu_read_close),
                 visible = {
-                    readerModeAvailable
+                    readerModeAvailable && !reviewQualityCheckAvailable
                 },
                 selected = getCurrentTab()?.let {
                     activity?.components?.core?.store?.state?.findTab(it.id)?.readerState?.active
@@ -127,6 +133,8 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
             )
 
         browserToolbarView.view.addPageAction(readerModeAction)
+
+        initReviewQualityCheck(context, view)
 
         thumbnailsFeature.set(
             feature = BrowserThumbnails(context, binding.engineView, components.core.store),
@@ -183,6 +191,50 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
         if (!context.settings().shouldUseCookieBanner && !context.settings().userOptOutOfReEngageCookieBannerDialog) {
             observeCookieBannerHandlingState(context.components.core.store)
         }
+        standardSnackbarErrorBinding.set(
+            feature = StandardSnackbarErrorBinding(
+                requireActivity(),
+                requireActivity().components.appStore,
+            ),
+            owner = viewLifecycleOwner,
+            view = binding.root,
+        )
+    }
+
+    private fun initReviewQualityCheck(context: Context, view: View) {
+        val reviewQualityCheck =
+            BrowserToolbar.ToggleButton(
+                image = AppCompatResources.getDrawable(
+                    context,
+                    R.drawable.ic_shopping_cart,
+                )!!,
+                imageSelected = AppCompatResources.getDrawable(
+                    context,
+                    R.drawable.ic_shopping_cart,
+                )!!,
+                contentDescription = context.getString(R.string.browser_menu_review_quality_check),
+                contentDescriptionSelected = context.getString(R.string.browser_menu_review_quality_check_close),
+                visible = { reviewQualityCheckAvailable },
+                listener = {
+                    findNavController().navigate(
+                        BrowserFragmentDirections.actionBrowserFragmentToReviewQualityCheckDialogFragment(),
+                    )
+                },
+            )
+
+        browserToolbarView.view.addPageAction(reviewQualityCheck)
+
+        reviewQualityCheckFeature.set(
+            feature = ReviewQualityCheckFeature(
+                browserStore = context.components.core.store,
+                shoppingExperienceFeature = DefaultShoppingExperienceFeature(
+                    settings = requireContext().settings(),
+                ),
+                onAvailabilityChange = { reviewQualityCheckAvailable = it },
+            ),
+            owner = this,
+            view = view,
+        )
     }
 
     override fun onUpdateToolbarForConfigurationChange(toolbar: BrowserToolbarView) {
@@ -213,7 +265,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
             backAction = BrowserToolbar.TwoStateButton(
                 primaryImage = AppCompatResources.getDrawable(
                     context,
-                    R.drawable.mozac_ic_back,
+                    R.drawable.mozac_ic_back_24,
                 )!!,
                 primaryContentDescription = context.getString(R.string.browser_menu_back),
                 primaryImageTintResource = enableTint,
@@ -241,7 +293,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
             forwardAction = BrowserToolbar.TwoStateButton(
                 primaryImage = AppCompatResources.getDrawable(
                     context,
-                    R.drawable.mozac_ic_forward,
+                    R.drawable.mozac_ic_forward_24,
                 )!!,
                 primaryContentDescription = context.getString(R.string.browser_menu_forward),
                 primaryImageTintResource = enableTint,
@@ -269,7 +321,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
             refreshAction = BrowserToolbar.TwoStateButton(
                 primaryImage = AppCompatResources.getDrawable(
                     context,
-                    R.drawable.mozac_ic_refresh,
+                    R.drawable.mozac_ic_arrow_clockwise_24,
                 )!!,
                 primaryContentDescription = context.getString(R.string.browser_menu_refresh),
                 primaryImageTintResource = enableTint,

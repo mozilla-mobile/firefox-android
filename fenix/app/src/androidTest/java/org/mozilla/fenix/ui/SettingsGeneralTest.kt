@@ -35,7 +35,6 @@ import java.util.Locale
  *
  */
 class SettingsGeneralTest {
-    /* ktlint-disable no-blank-line-before-rbrace */ // This imposes unreadable grouping.
     private lateinit var mockWebServer: MockWebServer
 
     @get:Rule
@@ -77,6 +76,7 @@ class SettingsGeneralTest {
         }
     }
 
+    @SmokeTest
     @Test
     fun changeAccessibiltySettings() {
         // Goes through the settings and changes the default text on a webpage, then verifies if the text has changed.
@@ -190,6 +190,18 @@ class SettingsGeneralTest {
             verifySelectedOpeningScreenOption("Last tab")
         }.goBack {
             verifySettingsOptionSummary("Homepage", "Open on last tab")
+        }
+    }
+
+    @Test
+    fun tabsSettingsMenuItemsTest() {
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openTabsSubMenu {
+            verifyTabViewOptions()
+            verifyCloseTabsOptions()
+            verifyMoveOldTabsToInactiveOptions()
         }
     }
 

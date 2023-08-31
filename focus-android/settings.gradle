@@ -5,10 +5,16 @@
 pluginManagement {
     includeBuild("../android-components/plugins/publicsuffixlist")
     includeBuild("../android-components/plugins/dependencies")
+    includeBuild("../android-components/plugins/config")
+    includeBuild("../android-components/plugins/github")
+    includeBuild("./plugins/focusdependencies")
 }
 
 plugins {
+    id "mozac.ConfigPlugin"
     id 'mozac.DependenciesPlugin'
+    id 'mozac.GitHubPlugin'
+    id 'FocusDependenciesPlugin'
 }
 
 apply from: file('../shared-settings.gradle')
@@ -27,6 +33,20 @@ gradle.projectsLoaded { ->
                 if (task.name.contains("lint")) {
                     task.enabled = false
                 }
+            }
+        }
+
+        def appServicesSrcDir = null
+        if (gradle.hasProperty('localProperties.autoPublish.application-services.dir')) {
+          appServicesSrcDir = gradle.getProperty('localProperties.autoPublish.application-services.dir')
+        } else if (gradle.hasProperty('localProperties.branchBuild.application-services.dir')) {
+          appServicesSrcDir = gradle.getProperty('localProperties.branchBuild.application-services.dir')
+        }
+        if (appServicesSrcDir) {
+            if (appServicesSrcDir.startsWith("/")) {
+                apply from: "${appServicesSrcDir}/build-scripts/substitute-local-appservices.gradle"
+            } else {
+                apply from: "${rootProject.projectDir}/${appServicesSrcDir}/build-scripts/substitute-local-appservices.gradle"
             }
         }
     }

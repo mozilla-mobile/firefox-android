@@ -118,8 +118,6 @@
 
     <!-- Address Autofill -->
     <!-- Header for the select address prompt to allow users to fill a form with a saved address. -->
-    <string moz:removedIn="104" name="mozac_feature_prompts_select_address" tools:ignore="UnusedResources">Chọn địa chỉ</string>
-    <!-- Header for the select address prompt to allow users to fill a form with a saved address. -->
     <string name="mozac_feature_prompts_select_address_2">Chọn địa chỉ</string>
     <!-- Content description for expanding the select addresses options in the select address prompt. -->
     <string name="mozac_feature_prompts_expand_address_content_description">Mở rộng các địa chỉ được đề xuất</string>
@@ -127,4 +125,16 @@
     <string name="mozac_feature_prompts_collapse_address_content_description">Thu gọn các địa chỉ được đề xuất</string>
     <!-- Text for the manage addresses button. -->
     <string name="mozac_feature_prompts_manage_address">Quản lý địa chỉ</string>
+
+    <!-- Federated Credential Management prompts -->
+    <!--Content description for the Account picture in the Select Account FedCM prompt -->
+    <string name="mozac_feature_prompts_account_picture">Ảnh tài khoản</string>
+    <!-- Title of the Identity Credential provider dialog choose. -->
+    <string name="mozac_feature_prompts_identity_credentials_choose_provider">Chọn một nhà cung cấp đăng nhập</string>
+    <!-- Title of an account picker dialog for identity credentials. -->
+    <string name="mozac_feature_prompts_identity_credentials_choose_account">Chọn một tài khoản</string>
+    <!-- Title of the Identity Credential privacy policy dialog title. The %1$s will be replaced with the name of the provider. -->
+    <string name="mozac_feature_prompts_identity_credentials_privacy_policy_title">Sử dụng %1$s làm nhà cung cấp thông tin đăng nhập</string>
+    <!-- Title of the Identity Credential privacy policy dialog description. The %1$s will be replaced with the name of the provider, %2$s will be replaced with the account, %3$s will be replaced with the privacy policy url and  %4$s will be replaced with the terms of service. -->
+    <string name="mozac_feature_prompts_identity_credentials_privacy_policy_description"><![CDATA[ Đăng nhập vào %1$s với tài khoản %2$s phải tuân theo <a href="%3$s">chính sách bảo mật</a> và <a href="%4$s">điều khoản dịch vụ</a> của họ]]></string>
 </resources>

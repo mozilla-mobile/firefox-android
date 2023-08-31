@@ -217,17 +217,18 @@ class SettingsRobot {
             return BrowserRobot.Transition()
         }
 
-        fun openAboutFirefoxPreview(interact: SettingsSubMenuAboutRobot.() -> Unit):
-            SettingsSubMenuAboutRobot.Transition {
+        fun openAboutFirefoxPreview(interact: SettingsSubMenuAboutRobot.() -> Unit): SettingsSubMenuAboutRobot.Transition {
             aboutFirefoxHeading().click()
             SettingsSubMenuAboutRobot().interact()
             return SettingsSubMenuAboutRobot.Transition()
         }
 
-        fun openSearchSubMenu(interact: SettingsSubMenuSearchRobot.() -> Unit):
-            SettingsSubMenuSearchRobot.Transition {
-            fun searchEngineButton() = onView(withText("Search"))
-            searchEngineButton().click()
+        fun openSearchSubMenu(interact: SettingsSubMenuSearchRobot.() -> Unit): SettingsSubMenuSearchRobot.Transition {
+            itemWithText(getStringResource(R.string.preferences_search))
+                .also {
+                    it.waitForExists(waitingTimeShort)
+                    it.click()
+                }
 
             SettingsSubMenuSearchRobot().interact()
             return SettingsSubMenuSearchRobot.Transition()
@@ -423,6 +424,15 @@ class SettingsRobot {
 
             SettingsSubMenuHttpsOnlyModeRobot().interact()
             return SettingsSubMenuHttpsOnlyModeRobot.Transition()
+        }
+
+        fun openExperimentsMenu(interact: SettingsSubMenuExperimentsRobot.() -> Unit): SettingsSubMenuExperimentsRobot.Transition {
+            scrollToElementByText("Nimbus Experiments")
+            fun nimbusExperimentsButton() = mDevice.findObject(textContains("Nimbus Experiments"))
+            nimbusExperimentsButton().click()
+
+            SettingsSubMenuExperimentsRobot().interact()
+            return SettingsSubMenuExperimentsRobot.Transition()
         }
     }
 

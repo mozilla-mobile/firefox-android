@@ -132,7 +132,7 @@ class MainActivity :
 
         findViewById<View>(R.id.buttonSignIn).setOnClickListener {
             launch {
-                accountManager.beginAuthentication()?.let { openWebView(it) }
+                accountManager.beginAuthentication(entrypoint = SampleFxAEntryPoint.HomeMenu)?.let { openWebView(it) }
             }
         }
 
@@ -307,6 +307,10 @@ class MainActivity :
                         } else {
                             txtView.text = "The device ${it.deviceId} disconnected"
                         }
+                    }
+                    is AccountEvent.Unknown -> {
+                        // Unknown events are ignored to allow supporting new
+                        // account events
                     }
                 }
             }

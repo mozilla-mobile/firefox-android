@@ -34,9 +34,9 @@ import androidx.annotation.ColorRes
 import androidx.annotation.GuardedBy
 import androidx.annotation.VisibleForTesting
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
@@ -75,6 +75,7 @@ import mozilla.components.support.ktx.kotlin.ifNullOrEmpty
 import mozilla.components.support.ktx.kotlin.sanitizeURL
 import mozilla.components.support.ktx.kotlinx.coroutines.throttleLatest
 import mozilla.components.support.utils.DownloadUtils
+import mozilla.components.support.utils.ext.registerReceiverCompat
 import mozilla.components.support.utils.ext.stopForegroundCompat
 import java.io.File
 import java.io.FileOutputStream
@@ -99,9 +100,6 @@ abstract class AbstractFetchDownloadService : Service() {
     protected abstract val httpClient: Client
 
     protected open val style: Style = Style()
-
-    @VisibleForTesting
-    internal val broadcastManager by lazy { LocalBroadcastManager.getInstance(this) }
 
     @VisibleForTesting
     internal val context: Context get() = this
@@ -256,10 +254,22 @@ abstract class AbstractFetchDownloadService : Service() {
             store.state.downloads[it]
         } ?: return START_REDELIVER_INTENT
 
-        if (intent.action == ACTION_REMOVE_PRIVATE_DOWNLOAD) {
-            handleRemovePrivateDownloadIntent(download)
-        } else {
-            handleDownloadIntent(download)
+        when (intent.action) {
+            ACTION_REMOVE_PRIVATE_DOWNLOAD -> {
+                handleRemovePrivateDownloadIntent(download)
+            }
+            ACTION_TRY_AGAIN -> {
+                val newDownloadState = download.copy(status = DOWNLOADING)
+                store.dispatch(
+                    DownloadAction.UpdateDownloadAction(
+                        newDownloadState,
+                    ),
+                )
+                handleDownloadIntent(newDownloadState)
+            }
+            else -> {
+                handleDownloadIntent(download)
+            }
         }
 
         return super.onStartCommand(intent, flags, startId)
@@ -319,11 +329,11 @@ abstract class AbstractFetchDownloadService : Service() {
         for (download in downloadJobs.values) {
             if (!download.canUpdateNotification()) { continue }
             /*
-            * We want to keep a consistent state in the UI, download.status can be changed from
-            * another thread while we are posting updates to the UI, causing inconsistent UIs.
-            * For this reason, we ONLY use the latest status during an UI update, new changes
-            * will be posted in subsequent updates.
-            */
+             * We want to keep a consistent state in the UI, download.status can be changed from
+             * another thread while we are posting updates to the UI, causing inconsistent UIs.
+             * For this reason, we ONLY use the latest status during an UI update, new changes
+             * will be posted in subsequent updates.
+             */
             val uiStatus = getDownloadJobStatus(download)
 
             updateForegroundNotificationIfNeeded(download)
@@ -516,7 +526,11 @@ abstract class AbstractFetchDownloadService : Service() {
             addAction(ACTION_OPEN)
         }
 
-        context.registerReceiver(broadcastReceiver, filter)
+        context.registerReceiverCompat(
+            broadcastReceiver,
+            filter,
+            ContextCompat.RECEIVER_NOT_EXPORTED,
+        )
     }
 
     @VisibleForTesting
@@ -758,7 +772,6 @@ abstract class AbstractFetchDownloadService : Service() {
     }
 
     @VisibleForTesting
-    @Suppress("MaxLineLength")
     internal fun copyInChunks(
         downloadJobState: DownloadJobState,
         inStream: InputStream,
@@ -827,7 +840,7 @@ abstract class AbstractFetchDownloadService : Service() {
         intent.putExtra(EXTRA_DOWNLOAD_STATUS, getDownloadJobStatus(downloadState))
         intent.putExtra(EXTRA_DOWNLOAD_ID, downloadState.state.id)
 
-        broadcastManager.sendBroadcast(intent)
+        context.sendBroadcast(intent)
     }
 
     /**

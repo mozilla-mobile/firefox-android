@@ -38,6 +38,7 @@ import org.mozilla.fenix.helpers.MatcherHelper.checkedItemWithResIdAndText
 import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithDescription
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdAndText
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithText
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeLong
 import org.mozilla.fenix.helpers.TestHelper.getStringResource
@@ -45,6 +46,7 @@ import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
+import org.mozilla.fenix.nimbus.FxNimbus
 
 /**
  * Implementation of Robot Pattern for the three dot (main) menu.
@@ -60,6 +62,14 @@ class ThreeDotMenuMainRobot {
     fun verifyCloseAllTabsButton() = assertCloseAllTabsButton()
     fun verifyReaderViewAppearance(visible: Boolean) = assertReaderViewAppearanceButton(visible)
 
+    fun verifyQuitButtonExists() {
+        // Need to double swipe the menu, to make this button visible.
+        // In case it reaches the end, the second swipe is no-op.
+        expandMenu()
+        expandMenu()
+        assertItemContainingTextExists(itemWithText("Quit"))
+    }
+
     fun expandMenu() {
         onView(withId(R.id.mozac_browser_menu_menuView)).perform(swipeUp())
     }
@@ -68,7 +78,8 @@ class ThreeDotMenuMainRobot {
     fun verifySelectTabs() = assertSelectTabsButton()
 
     fun verifyFindInPageButton() = assertItemContainingTextExists(findInPageButton)
-    fun verifyAddToShortcutsButton() = assertItemContainingTextExists(addToShortcutsButton)
+    fun verifyAddToShortcutsButton(shouldExist: Boolean) =
+        assertItemContainingTextExists(addToShortcutsButton, exists = shouldExist)
     fun verifyRemoveFromShortcutsButton() = assertRemoveFromShortcutsButton()
     fun verifyShareTabsOverlay() = assertShareTabsOverlay()
 
@@ -92,10 +103,17 @@ class ThreeDotMenuMainRobot {
             addToHomeScreenButton,
             addToShortcutsButton,
             saveToCollectionButton,
-            settingsButton(),
         )
         assertCheckedItemWithResIdAndTextExists(addBookmarkButton)
         assertCheckedItemWithResIdAndTextExists(desktopSiteToggle(isRequestDesktopSiteEnabled))
+        // Swipe to second part of menu
+        expandMenu()
+        assertItemContainingTextExists(
+            settingsButton(),
+        )
+        if (FxNimbus.features.print.value().browserPrintEnabled) {
+            assertItemContainingTextExists(printContentButton)
+        }
         assertItemWithDescriptionExists(
             backButton,
             forwardButton,
@@ -155,6 +173,11 @@ class ThreeDotMenuMainRobot {
                 }
             }
         }
+    }
+
+    fun clickQuit() {
+        expandMenu()
+        onView(withText("Quit")).click()
     }
 
     class Transition {
@@ -291,7 +314,10 @@ class ThreeDotMenuMainRobot {
         }
 
         fun refreshPage(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
-            refreshButton.click()
+            refreshButton.also {
+                it.waitForExists(waitingTime)
+                it.click()
+            }
 
             BrowserRobot().interact()
             return BrowserRobot.Transition()
@@ -565,6 +591,7 @@ private val reportSiteIssueButton = itemContainingText("Report Site Issue")
 private val addToHomeScreenButton = itemContainingText(getStringResource(R.string.browser_menu_add_to_homescreen))
 private val addToShortcutsButton = itemContainingText(getStringResource(R.string.browser_menu_add_to_shortcuts))
 private val saveToCollectionButton = itemContainingText(getStringResource(R.string.browser_menu_save_to_collection_2))
+private val printContentButton = itemContainingText(getStringResource(R.string.menu_print))
 private val backButton = itemWithDescription(getStringResource(R.string.browser_menu_back))
 private val forwardButton = itemWithDescription(getStringResource(R.string.browser_menu_forward))
 private val shareButton = itemWithDescription(getStringResource(R.string.share_button_content_description))

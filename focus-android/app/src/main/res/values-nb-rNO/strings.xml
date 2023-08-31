@@ -53,7 +53,7 @@
     <string name="menu_remove_from_shortcuts">Fjern fra snarveier</string>
 
     <!-- Menu item: Shows information about features and changes that are new to this version -->
-    <string name="menu_whats_new">Hva er nytt</string>
+    <string name="menu_whats_new" moz:RemovedIn="116" tools:ignore="UnusedResources">Hva er nytt</string>
     <string name="menu_settings">Innstillinger</string>
     <string name="menu_about">Om</string>
     <string name="menu_help">Hjelp</string>
@@ -353,6 +353,15 @@
     <!-- In-app link (in settings) to Focus privacy notice. -->
     <string name="preference_privacy_notice">Personvernbestemmelser</string>
 
+    <!-- In-app link (in settings) to Focus licensing information. -->
+    <string name="preference_licensing_info">Lisensinformasjon</string>
+
+    <!-- Link to Focus licensing information from other libraries that we use. -->
+    <string name="preference_libraries_we_use">Bibliotek som vi bruker</string>
+
+    <!-- Open Source Licenses page title. The first parameter is the app name -->
+    <string name="open_source_licenses_title">%s | OSS-bibliotek</string>
+
     <!-- Item in Preferences that shows the about page. Parameter 1 is the app name, i.e. Firefox Focus/Firefox Klar. -->
     <string name="preference_about">Om %1$s</string>
 
@@ -482,7 +491,10 @@
 
 
 
-  <string name="error_hostLookup_title">Fant ikke serveren</string>
+  <!-- Snackbar that will be displayed after a website has been added to shortcuts. -->
+    <string name="snackbar_added_to_shortcuts">Lagt til i snarveier!</string>
+
+    <string name="error_hostLookup_title">Fant ikke serveren</string>
 
 
 
@@ -732,9 +744,6 @@
     <string name="cookie_banner_exception_panel_description_state_on_for_site">%1$s vill slette infokapsler og oppdatere siden. Sletting av alle infokapsler kan føre til at du blir logget ut eller at handlekurver blir tømt.</string>
 
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The placeholder will be updated with the app name. -->
-    <string name="cookie_banner_exception_panel_description_state_off_for_site" moz:RemovedIn="111" tools:ignore="UnusedResources">%1$s kan forsøke å automatisk avslå infokapselforespørsler. Hvis avslag ikke er ett alternativ, kan %1$s godta alle infokapsler for å fjerne banneret.</string>
-
-    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The placeholder will be updated with the app name. -->
     <string name="cookie_banner_exception_panel_description_state_off_for_site2">%1$s kan prøve å automatisk avvise infokapselforespørsler.</string>
 
     <!-- Long text for a detail explanation indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
@@ -753,12 +762,8 @@
     <string name="cookie_banner_the_site_was_reported">Forespørsel om støtte av nettsted er sendt inn.</string>
 
     <!-- Contextual Feature Recommendation Popups -->
-    <!-- CFR for Cookie Banner (Banner Info Message). The placeholder will be updated with the app name. -->
-    <string name="cfr_for_cookie_banner" moz:RemovedIn="111" tools:ignore="UnusedResources">%1$s prøver å avvise infokapsellforespørsler for å avvise irriterende infokapselbannere.\n\nAdministrer innstillinger for infokapselbanner i innstillingene.</string>
     <!-- CFR for Cookie Banner (Banner Info Message). %1$s will be replaced by the app name, %2$s will be an active link using the string cfr_cookie_banner_link as text. -->
     <string name="cfr_cookie_banner">%1$s prøver å avvise infokapsellforespørsler for å avvise irriterende infokapselbannere.\n\nAdministrer innstillinger for infokapselbanner i %2$s.</string>
-    <!-- CFR for Cookie Banner (Banner Info Message). This text should be the same as the settings text from "cfr_for_cookie_banner". The text should be underlined and should redirect the user to the cookie banner settings screen. -->
-    <string name="cfr_for_cookie_banner_underline_settings" moz:RemovedIn="111" tools:ignore="UnusedResources">innstillinger</string>
     <!-- CFR for Cookie Banner (Banner Info Message). This string is used as text for a link in cfr_cookie_banner and takes the user to the app settings. -->
     <string name="cfr_cookie_banner_link">innstillinger</string>
 
@@ -942,7 +947,7 @@
     <!-- Menu item to remove existing exceptions. -->
     <string name="preference_exceptions_menu_remove">Fjern</string>
     <!-- Button to remove all websites from the exception list -->
-    <string name="preference_exceptions_remove_all_button_label">Fjern alle nettsted</string>
+    <string name="preference_exceptions_remove_all_button_label">Fjern alle nettsteder</string>
 
     <!-- Title for Preference screen for cookie blocking for exceptions tracking protection -->
     <string name="preference_block_cookies_title">Blokker infokapsler</string>
@@ -1021,13 +1026,7 @@
     <string name="preference_follow_device_theme">Følg enhetens tema</string>
 
     <!-- The title of the error page for websites that do not support HTTPS when HTTPS-Only is turned on  -->
-    <string name="errorpage_httpsonly_title" moz:RemovedIn="111" tools:ignore="UnusedResources">Nettstedet du ba om støtter ikke HTTPS</string>
-
-    <!-- The title of the error page for websites that do not support HTTPS when HTTPS-Only is turned on  -->
     <string name="errorpage_httpsonly_title2">Dette nettstedet støtter ikke HTTPS</string>
-
-    <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will get replaced with the name of the app (e.g. "Firefox Focus") -->
-    <string name="errorpage_httpsonly_message" moz:RemovedIn="111" tools:ignore="UnusedResources">Som standard forsøker %1$s å koble til ved hjelp av HTTPS for økt sikkerhet. For å endre denne innstillingen eller lese mer, gå til Innstillinger &gt; Personvern og sikkerhet &gt; Sikkerhet.</string>
 
     <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will get replaced with the name of the app (e.g. "Firefox Focus").
         Contains a button that will redirect the user to Privacy & Security Screen-->

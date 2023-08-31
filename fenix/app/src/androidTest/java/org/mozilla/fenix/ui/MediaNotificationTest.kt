@@ -17,9 +17,11 @@ import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityTestRule
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithText
 import org.mozilla.fenix.helpers.RetryTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.ui.robots.browserScreen
+import org.mozilla.fenix.ui.robots.clickPageObject
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
 import org.mozilla.fenix.ui.robots.notificationShade
@@ -31,8 +33,6 @@ import org.mozilla.fenix.ui.robots.notificationShade
  *  Note: this test only verifies media notifications, not media itself
  */
 class MediaNotificationTest {
-    /* ktlint-disable no-blank-line-before-rbrace */ // This imposes unreadable grouping.
-
     private lateinit var mockWebServer: MockWebServer
     private lateinit var mDevice: UiDevice
 
@@ -70,7 +70,7 @@ class MediaNotificationTest {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(videoTestPage.url) {
             mDevice.waitForIdle()
-            clickMediaPlayerPlayButton()
+            clickPageObject(itemWithText("Play"))
             assertPlaybackState(browserStore, MediaSession.PlaybackState.PLAYING)
         }.openNotificationShade {
             verifySystemNotificationExists(videoTestPage.title)
@@ -89,7 +89,7 @@ class MediaNotificationTest {
         mDevice.openNotification()
 
         notificationShade {
-            verifySystemNotificationGone(videoTestPage.title)
+            verifySystemNotificationDoesNotExist(videoTestPage.title)
         }
 
         // close notification shade before the next test
@@ -104,7 +104,7 @@ class MediaNotificationTest {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(audioTestPage.url) {
             mDevice.waitForIdle()
-            clickMediaPlayerPlayButton()
+            clickPageObject(itemWithText("Play"))
             assertPlaybackState(browserStore, MediaSession.PlaybackState.PLAYING)
         }.openNotificationShade {
             verifySystemNotificationExists(audioTestPage.title)
@@ -123,7 +123,7 @@ class MediaNotificationTest {
         mDevice.openNotification()
 
         notificationShade {
-            verifySystemNotificationGone(audioTestPage.title)
+            verifySystemNotificationDoesNotExist(audioTestPage.title)
         }
 
         // close notification shade before the next test
@@ -140,7 +140,7 @@ class MediaNotificationTest {
         }.openNewTab {
         }.submitQuery(audioTestPage.url.toString()) {
             mDevice.waitForIdle()
-            clickMediaPlayerPlayButton()
+            clickPageObject(itemWithText("Play"))
             assertPlaybackState(browserStore, MediaSession.PlaybackState.PLAYING)
         }.openNotificationShade {
             verifySystemNotificationExists("A site is playing media")
@@ -160,7 +160,7 @@ class MediaNotificationTest {
         mDevice.openNotification()
 
         notificationShade {
-            verifySystemNotificationGone("A site is playing media")
+            verifySystemNotificationDoesNotExist("A site is playing media")
         }
 
         // close notification shade before and go back to regular mode before the next test

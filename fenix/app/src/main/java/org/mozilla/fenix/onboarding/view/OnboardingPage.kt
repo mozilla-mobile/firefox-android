@@ -8,13 +8,13 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.BoxWithConstraintsScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -25,27 +25,32 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.mozilla.fenix.R
+import org.mozilla.fenix.compose.LinkText
+import org.mozilla.fenix.compose.LinkTextState
 import org.mozilla.fenix.compose.annotation.LightDarkPreview
 import org.mozilla.fenix.compose.button.PrimaryButton
 import org.mozilla.fenix.compose.button.SecondaryButton
 import org.mozilla.fenix.theme.FirefoxTheme
 
 /**
- * The ratio of the image height to the window height. This was determined from the designs in figma
+ * The ratio of the image height to the parent height. This was determined from the designs in figma
  * taking the ratio of the image height to the mockup height.
  */
-private const val IMAGE_HEIGHT_RATIO = 0.4f
+private const val IMAGE_HEIGHT_RATIO_DEFAULT = 0.4f
 
 /**
- * The tag used for links in the text for annotated strings.
+ * The ratio of the image height to the parent height for medium sized devices.
  */
-private const val URL_TAG = "URL_TAG"
+private const val IMAGE_HEIGHT_RATIO_MEDIUM = 0.36f
+
+/**
+ * The ratio of the image height to the parent height for small devices like Nexus 4, Nexus 1.
+ */
+private const val IMAGE_HEIGHT_RATIO_SMALL = 0.28f
 
 /**
  * A composable for displaying onboarding page content.
@@ -81,7 +86,7 @@ fun OnboardingPage(
                     modifier = Modifier.align(Alignment.End),
                 ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.mozac_ic_close),
+                        painter = painterResource(id = R.drawable.mozac_ic_cross_24),
                         contentDescription = stringResource(R.string.onboarding_home_content_description_close_button),
                         tint = FirefoxTheme.colors.iconPrimary,
                     )
@@ -95,10 +100,9 @@ fun OnboardingPage(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Image(
-                    painter = painterResource(id = pageState.image),
+                    painter = painterResource(id = pageState.imageRes),
                     contentDescription = null,
-                    modifier = Modifier
-                        .height(boxWithConstraintsScope.maxHeight.times(IMAGE_HEIGHT_RATIO)),
+                    modifier = Modifier.height(imageHeight(boxWithConstraintsScope)),
                 )
 
                 Spacer(modifier = Modifier.height(32.dp))
@@ -148,7 +152,7 @@ private fun DescriptionText(
     description: String,
     linkTextState: LinkTextState?,
 ) {
-    if (linkTextState != null) {
+    if (linkTextState != null && description.contains(linkTextState.text, ignoreCase = true)) {
         LinkText(
             text = description,
             linkTextState = linkTextState,
@@ -164,48 +168,15 @@ private fun DescriptionText(
 }
 
 /**
- * A composable for displaying text that contains a clickable link text.
- *
- * @param text The complete text.
- * @param linkTextState The clickable part of the text.
+ * Calculates the image height to be set. The ratio is selected based on parent height.
  */
-@Composable
-private fun LinkText(
-    text: String,
-    linkTextState: LinkTextState,
-) {
-    val annotatedString = buildAnnotatedString {
-        val startIndex = text.indexOf(linkTextState.text)
-        val endIndex = startIndex + linkTextState.text.length
-        append(text)
-        addStyle(
-            style = SpanStyle(color = FirefoxTheme.colors.textAccent),
-            start = startIndex,
-            end = endIndex,
-        )
-
-        addStringAnnotation(
-            tag = URL_TAG,
-            annotation = linkTextState.url,
-            start = startIndex,
-            end = endIndex,
-        )
+private fun imageHeight(boxWithConstraintsScope: BoxWithConstraintsScope): Dp {
+    val imageHeightRatio: Float = when {
+        boxWithConstraintsScope.maxHeight <= 550.dp -> IMAGE_HEIGHT_RATIO_SMALL
+        boxWithConstraintsScope.maxHeight <= 650.dp -> IMAGE_HEIGHT_RATIO_MEDIUM
+        else -> IMAGE_HEIGHT_RATIO_DEFAULT
     }
-
-    ClickableText(
-        text = annotatedString,
-        style = FirefoxTheme.typography.body2.copy(
-            textAlign = TextAlign.Center,
-            color = FirefoxTheme.colors.textSecondary,
-        ),
-        onClick = {
-            val range: AnnotatedString.Range<String>? =
-                annotatedString.getStringAnnotations(URL_TAG, it, it).firstOrNull()
-            range?.let { stringAnnotation ->
-                linkTextState.onClick(stringAnnotation.item)
-            }
-        },
-    )
+    return boxWithConstraintsScope.maxHeight.times(imageHeightRatio)
 }
 
 @LightDarkPreview
@@ -214,7 +185,7 @@ private fun OnboardingPagePreview() {
     FirefoxTheme {
         OnboardingPage(
             pageState = OnboardingPageState(
-                image = R.drawable.ic_notification_permission,
+                imageRes = R.drawable.ic_notification_permission,
                 title = stringResource(
                     id = R.string.onboarding_home_enable_notifications_title,
                     formatArgs = arrayOf(stringResource(R.string.app_name)),

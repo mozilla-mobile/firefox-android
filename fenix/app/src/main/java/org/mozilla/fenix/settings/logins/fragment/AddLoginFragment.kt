@@ -24,6 +24,8 @@ import androidx.navigation.fragment.findNavController
 import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import mozilla.components.support.ktx.android.view.showKeyboard
+import mozilla.components.support.ktx.util.URLStringUtils
+import org.mozilla.fenix.GleanMetrics.Logins
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.databinding.FragmentAddLoginBinding
@@ -63,11 +65,12 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login), MenuProvider {
 
         _binding = FragmentAddLoginBinding.bind(view)
 
-        loginsFragmentStore = StoreProvider.get(this) {
-            LoginsFragmentStore(
-                createInitialLoginsListState(requireContext().settings()),
-            )
-        }
+        loginsFragmentStore =
+            StoreProvider.get(findNavController().getBackStackEntry(R.id.savedLogins)) {
+                LoginsFragmentStore(
+                    createInitialLoginsListState(requireContext().settings()),
+                )
+            }
 
         interactor = AddLoginInteractor(
             SavedLoginsStorageController(
@@ -304,8 +307,8 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login), MenuProvider {
                 layout.errorIconDrawable = null
             }
         }
-        clearButton.isVisible = validUsername
-        clearButton.isEnabled = validUsername
+        clearButton.isVisible = currentValue.isNotEmpty()
+        clearButton.isEnabled = currentValue.isNotEmpty()
         setSaveButtonState()
     }
 
@@ -369,10 +372,17 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login), MenuProvider {
         R.id.save_login_button -> {
             view?.hideKeyboard()
             interactor.onAddLogin(
-                binding.hostnameText.text.toString(),
+                with(binding.hostnameText.text.toString()) {
+                    if (URLStringUtils.isHttpOrHttps(this)) {
+                        this
+                    } else {
+                        "$HTTPS$this"
+                    }
+                },
                 binding.usernameText.text.toString(),
                 binding.passwordText.text.toString(),
             )
+            Logins.saved.add()
             true
         }
         else -> false
@@ -381,5 +391,9 @@ class AddLoginFragment : Fragment(R.layout.fragment_add_login), MenuProvider {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object {
+        private const val HTTPS = "https://"
     }
 }

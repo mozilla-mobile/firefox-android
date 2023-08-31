@@ -8,14 +8,18 @@ package org.mozilla.fenix.helpers
 
 import android.content.Intent
 import android.view.ViewConfiguration.getLongPressTimeout
+import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.test.espresso.intent.rule.IntentsTestRule
 import androidx.test.rule.ActivityTestRule
 import androidx.test.uiautomator.UiSelector
+import org.junit.rules.TestRule
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.helpers.FeatureSettingsHelper.Companion.settings
 import org.mozilla.fenix.helpers.TestHelper.appContext
 import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.onboarding.FenixOnboarding
+
+typealias HomeActivityComposeTestRule = AndroidComposeTestRule<out TestRule, HomeActivity>
 
 /**
  * A [org.junit.Rule] to handle shared test set up for tests on [HomeActivity].
@@ -51,6 +55,7 @@ class HomeActivityTestRule(
         isCookieBannerReductionDialogEnabled: Boolean = !settings.userOptOutOfReEngageCookieBannerDialog,
         isOpenInAppBannerEnabled: Boolean = settings.shouldShowOpenInAppBanner,
         etpPolicy: ETPPolicy = getETPPolicy(settings),
+        tabsTrayRewriteEnabled: Boolean = false,
     ) : this(initialTouchMode, launchActivity, skipOnboarding) {
         this.isHomeOnboardingDialogEnabled = isHomeOnboardingDialogEnabled
         this.isPocketEnabled = isPocketEnabled
@@ -64,6 +69,7 @@ class HomeActivityTestRule(
         this.isCookieBannerReductionDialogEnabled = isCookieBannerReductionDialogEnabled
         this.isOpenInAppBannerEnabled = isOpenInAppBannerEnabled
         this.etpPolicy = etpPolicy
+        this.tabsTrayRewriteEnabled = tabsTrayRewriteEnabled
     }
 
     /**
@@ -71,7 +77,7 @@ class HomeActivityTestRule(
      */
     fun applySettingsExceptions(settings: (FeatureSettingsHelper) -> Unit) {
         FeatureSettingsHelperDelegate().also {
-            settings(it)
+            settings(this)
             applyFlagUpdates()
         }
     }
@@ -107,10 +113,12 @@ class HomeActivityTestRule(
             initialTouchMode: Boolean = false,
             launchActivity: Boolean = true,
             skipOnboarding: Boolean = false,
+            tabsTrayRewriteEnabled: Boolean = false,
         ) = HomeActivityTestRule(
             initialTouchMode = initialTouchMode,
             launchActivity = launchActivity,
             skipOnboarding = skipOnboarding,
+            tabsTrayRewriteEnabled = tabsTrayRewriteEnabled,
             isJumpBackInCFREnabled = false,
             isPWAsPromptEnabled = false,
             isTCPCFREnabled = false,
@@ -155,6 +163,7 @@ class HomeActivityIntentTestRule internal constructor(
         isCookieBannerReductionDialogEnabled: Boolean = !settings.userOptOutOfReEngageCookieBannerDialog,
         isOpenInAppBannerEnabled: Boolean = settings.shouldShowOpenInAppBanner,
         etpPolicy: ETPPolicy = getETPPolicy(settings),
+        tabsTrayRewriteEnabled: Boolean = false,
     ) : this(initialTouchMode, launchActivity, skipOnboarding) {
         this.isHomeOnboardingDialogEnabled = isHomeOnboardingDialogEnabled
         this.isPocketEnabled = isPocketEnabled
@@ -168,6 +177,7 @@ class HomeActivityIntentTestRule internal constructor(
         this.isCookieBannerReductionDialogEnabled = isCookieBannerReductionDialogEnabled
         this.isOpenInAppBannerEnabled = isOpenInAppBannerEnabled
         this.etpPolicy = etpPolicy
+        this.tabsTrayRewriteEnabled = tabsTrayRewriteEnabled
     }
 
     private val longTapUserPreference = getLongPressTimeout()
@@ -248,10 +258,12 @@ class HomeActivityIntentTestRule internal constructor(
             initialTouchMode: Boolean = false,
             launchActivity: Boolean = true,
             skipOnboarding: Boolean = false,
+            tabsTrayRewriteEnabled: Boolean = false,
         ) = HomeActivityIntentTestRule(
             initialTouchMode = initialTouchMode,
             launchActivity = launchActivity,
             skipOnboarding = skipOnboarding,
+            tabsTrayRewriteEnabled = tabsTrayRewriteEnabled,
             isJumpBackInCFREnabled = false,
             isPWAsPromptEnabled = false,
             isTCPCFREnabled = false,

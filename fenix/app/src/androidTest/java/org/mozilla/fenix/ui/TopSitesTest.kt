@@ -18,6 +18,7 @@ import org.mozilla.fenix.helpers.Constants.defaultTopSitesList
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.RetryTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper.getGenericAsset
+import org.mozilla.fenix.helpers.TestHelper.clickSnackbarButton
 import org.mozilla.fenix.helpers.TestHelper.generateRandomString
 import org.mozilla.fenix.helpers.TestHelper.getStringResource
 import org.mozilla.fenix.helpers.TestHelper.waitUntilSnackbarGone
@@ -67,7 +68,7 @@ class TopSitesTest {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
         }.openThreeDotMenu {
             expandMenu()
-            verifyAddToShortcutsButton()
+            verifyAddToShortcutsButton(shouldExist = true)
         }.addToFirefoxHome {
             verifySnackBarText(getStringResource(R.string.snackbar_added_to_shortcuts))
         }.goToHomescreen {
@@ -84,7 +85,7 @@ class TopSitesTest {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
         }.openThreeDotMenu {
             expandMenu()
-            verifyAddToShortcutsButton()
+            verifyAddToShortcutsButton(shouldExist = true)
         }.addToFirefoxHome {
             verifySnackBarText(getStringResource(R.string.snackbar_added_to_shortcuts))
         }.goToHomescreen {
@@ -111,7 +112,7 @@ class TopSitesTest {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
         }.openThreeDotMenu {
             expandMenu()
-            verifyAddToShortcutsButton()
+            verifyAddToShortcutsButton(shouldExist = true)
         }.addToFirefoxHome {
             verifySnackBarText(getStringResource(R.string.snackbar_added_to_shortcuts))
         }.goToHomescreen {
@@ -134,7 +135,7 @@ class TopSitesTest {
             waitForPageToLoad()
         }.openThreeDotMenu {
             expandMenu()
-            verifyAddToShortcutsButton()
+            verifyAddToShortcutsButton(shouldExist = true)
         }.addToFirefoxHome {
             verifySnackBarText(getStringResource(R.string.snackbar_added_to_shortcuts))
         }.goToHomescreen {
@@ -156,7 +157,7 @@ class TopSitesTest {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
         }.openThreeDotMenu {
             expandMenu()
-            verifyAddToShortcutsButton()
+            verifyAddToShortcutsButton(shouldExist = true)
         }.addToFirefoxHome {
             verifySnackBarText(getStringResource(R.string.snackbar_added_to_shortcuts))
         }.goToHomescreen {
@@ -177,7 +178,7 @@ class TopSitesTest {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
         }.openThreeDotMenu {
             expandMenu()
-            verifyAddToShortcutsButton()
+            verifyAddToShortcutsButton(shouldExist = true)
         }.addToFirefoxHome {
             verifySnackBarText(getStringResource(R.string.snackbar_added_to_shortcuts))
         }.goToHomescreen {
@@ -186,7 +187,7 @@ class TopSitesTest {
         }.openContextMenuOnTopSitesWithTitle(defaultWebPage.title) {
             verifyTopSiteContextMenuItems()
         }.removeTopSite {
-            clickUndoSnackBarButton()
+            clickSnackbarButton("UNDO")
             verifyExistingTopSitesTabs(defaultWebPage.title)
         }
     }
@@ -199,7 +200,7 @@ class TopSitesTest {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
         }.openThreeDotMenu {
             expandMenu()
-            verifyAddToShortcutsButton()
+            verifyAddToShortcutsButton(shouldExist = true)
         }.addToFirefoxHome {
             verifySnackBarText(getStringResource(R.string.snackbar_added_to_shortcuts))
         }.goToHomescreen {

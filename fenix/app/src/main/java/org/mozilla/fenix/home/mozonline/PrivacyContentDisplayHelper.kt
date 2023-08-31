@@ -12,13 +12,13 @@ import android.text.Spanned
 import android.text.method.LinkMovementMethod
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import mozilla.components.ui.widgets.withCenterAlignedButtons
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.MetricServiceType
 import org.mozilla.fenix.ext.application
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
-import kotlin.system.exitProcess
 
 fun showPrivacyPopWindow(context: Context, activity: Activity) {
     val content = context.getString(R.string.privacy_notice_content)
@@ -67,12 +67,20 @@ fun showPrivacyPopWindow(context: Context, activity: Activity) {
         }
         .setNeutralButton(
             context.getString(R.string.privacy_notice_neutral_button_2),
-            { _, _ -> exitProcess(0) },
-        )
+        ) { _, _ ->
+            context.settings().shouldShowPrivacyPopWindow = false
+            context.settings().isMarketingTelemetryEnabled = false
+            context.settings().isTelemetryEnabled = false
+            context.components.analytics.metrics.start(MetricServiceType.Marketing)
+            // Now that the privacy notice is accepted, application initialization can continue.
+            context.application.initialize()
+            activity.startActivity(Intent(activity, HomeActivity::class.java))
+            activity.finish()
+        }
         .setTitle(context.getString(R.string.privacy_notice_title))
         .setMessage(messageSpannable)
         .setCancelable(false)
-    val alertDialog: AlertDialog = builder.create()
+    val alertDialog: AlertDialog = builder.create().withCenterAlignedButtons()
     alertDialog.show()
     alertDialog.findViewById<TextView>(android.R.id.message)?.movementMethod = LinkMovementMethod.getInstance()
 }

@@ -9,6 +9,7 @@ import androidx.test.uiautomator.UiSelector
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
+import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
 import org.mozilla.fenix.helpers.TestHelper.mDevice
 
 /**
@@ -45,6 +46,9 @@ object MatcherHelper {
     fun itemWithResIdAndText(resourceId: String, text: String) =
         mDevice.findObject(UiSelector().resourceId(resourceId).text(text))
 
+    fun itemWithResIdContainingText(resourceId: String, text: String) =
+        mDevice.findObject(UiSelector().resourceId(resourceId).textContains(text))
+
     fun assertItemWithResIdExists(vararg appItems: UiObject, exists: Boolean = true) {
         if (exists) {
             for (appItem in appItems) {
@@ -52,7 +56,7 @@ object MatcherHelper {
             }
         } else {
             for (appItem in appItems) {
-                assertFalse(appItem.waitForExists(waitingTime))
+                assertFalse(appItem.waitForExists(waitingTimeShort))
             }
         }
     }
@@ -62,7 +66,7 @@ object MatcherHelper {
             if (exists) {
                 assertTrue(appItem.waitForExists(waitingTime))
             } else {
-                assertFalse(appItem.waitForExists(waitingTime))
+                assertFalse(appItem.waitForExists(waitingTimeShort))
             }
         }
     }
@@ -72,7 +76,7 @@ object MatcherHelper {
             if (exists) {
                 assertTrue(appItem.waitForExists(waitingTime))
             } else {
-                assertFalse(appItem.waitForExists(waitingTime))
+                assertFalse(appItem.waitForExists(waitingTimeShort))
             }
         }
     }
@@ -100,7 +104,7 @@ object MatcherHelper {
             if (exists) {
                 assertTrue(appItem.waitForExists(waitingTime))
             } else {
-                assertFalse(appItem.waitForExists(waitingTime))
+                assertFalse(appItem.waitForExists(waitingTimeShort))
             }
         }
     }

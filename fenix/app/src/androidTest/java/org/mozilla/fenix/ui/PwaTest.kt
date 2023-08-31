@@ -1,21 +1,30 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.ui
 
 import androidx.core.net.toUri
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
-import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.Constants.PackageName.GMAIL_APP
 import org.mozilla.fenix.helpers.Constants.PackageName.PHONE_APP
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
+import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdAndText
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithText
 import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.helpers.TestHelper.assertNativeAppOpens
 import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.ui.robots.addToHomeScreen
 import org.mozilla.fenix.ui.robots.browserScreen
+import org.mozilla.fenix.ui.robots.clickPageObject
 import org.mozilla.fenix.ui.robots.customTabScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
 import org.mozilla.fenix.ui.robots.pwaScreen
+import org.mozilla.fenix.ui.robots.setPageObjectText
 
 class PwaTest {
     /* Updated externalLinks.html to v2.0,
@@ -29,7 +38,6 @@ class PwaTest {
     @get:Rule
     val activityTestRule = HomeActivityIntentTestRule.withDefaultSettingsOverrides()
 
-    @SmokeTest
     @Test
     fun externalLinkPWATest() {
         val externalLinkURL = "https://mozilla-mobile.github.io/testapp/downloads"
@@ -42,7 +50,7 @@ class PwaTest {
         }.clickInstall {
             clickAddAutomaticallyButton()
         }.openHomeScreenShortcut(shortcutTitle) {
-            clickLinkMatchingText("External link")
+            clickPageObject(itemContainingText("External link"))
         }
 
         customTabScreen {
@@ -50,8 +58,7 @@ class PwaTest {
         }
     }
 
-    @Ignore("Failing, see: https://github.com/mozilla-mobile/fenix/issues/28212")
-    @SmokeTest
+    @Ignore("Failing, see https://bugzilla.mozilla.org/show_bug.cgi?id=1807275")
     @Test
     fun emailLinkPWATest() {
         navigationToolbar {
@@ -62,12 +69,12 @@ class PwaTest {
         }.clickInstall {
             clickAddAutomaticallyButton()
         }.openHomeScreenShortcut(shortcutTitle) {
-            clickLinkMatchingText("Email link")
+            clickPageObject(itemContainingText("Email link"))
+            clickPageObject(itemWithResIdAndText("android:id/button1", "OPEN"))
             assertNativeAppOpens(GMAIL_APP, emailLink)
         }
     }
 
-    @SmokeTest
     @Test
     fun telephoneLinkPWATest() {
         navigationToolbar {
@@ -78,13 +85,12 @@ class PwaTest {
         }.clickInstall {
             clickAddAutomaticallyButton()
         }.openHomeScreenShortcut(shortcutTitle) {
-            clickLinkMatchingText("Telephone link")
-            confirmOpenLinkInAnotherApp()
+            clickPageObject(itemContainingText("Telephone link"))
+            clickPageObject(itemWithResIdAndText("android:id/button1", "OPEN"))
             assertNativeAppOpens(PHONE_APP, phoneLink)
         }
     }
 
-    @SmokeTest
     @Test
     fun appLikeExperiencePWATest() {
         navigationToolbar {
@@ -103,7 +109,7 @@ class PwaTest {
         }
     }
 
-    @SmokeTest
+    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1807273")
     @Test
     fun saveLoginsInPWATest() {
         val pwaPage = "https://mozilla-mobile.github.io/testapp/loginForm"
@@ -117,9 +123,11 @@ class PwaTest {
             clickAddAutomaticallyButton()
         }.openHomeScreenShortcut(shortcutTitle) {
             mDevice.waitForIdle()
-            fillAndSubmitLoginCredentials("mozilla", "firefox")
+            setPageObjectText(itemWithResId("username"), "mozilla")
+            setPageObjectText(itemWithResId("password"), "firefox")
+            clickPageObject(itemWithResId("submit"))
             verifySaveLoginPromptIsDisplayed()
-            saveLoginFromPrompt("Save")
+            clickPageObject(itemWithText("Save"))
             TestHelper.openAppFromExternalLink(pwaPage)
 
             browserScreen {

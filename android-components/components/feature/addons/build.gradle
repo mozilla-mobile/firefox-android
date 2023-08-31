@@ -38,9 +38,6 @@ android {
     lint {
         warningsAsErrors true
         abortOnError true
-
-        // https://github.com/mozilla-mobile/android-components/issues/10642
-        disable 'UnusedResources'
     }
 
     buildFeatures {
@@ -84,7 +81,6 @@ dependencies {
     testImplementation ComponentsDependencies.androidx_test_core
     testImplementation ComponentsDependencies.androidx_test_junit
     testImplementation ComponentsDependencies.testing_robolectric
-    testImplementation ComponentsDependencies.testing_mockito
     testImplementation ComponentsDependencies.androidx_work_testing
     testImplementation ComponentsDependencies.testing_coroutines
 }

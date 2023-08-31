@@ -122,6 +122,7 @@ class AwesomeBarView(
                 loadUrlUseCase,
                 components.core.icons,
                 engineForSpeculativeConnects,
+                showEditSuggestion = false,
                 suggestionsHeader = activity.getString(R.string.firefox_suggest_header),
             )
 
@@ -133,6 +134,7 @@ class AwesomeBarView(
                 icons = components.core.icons,
                 engine = engineForSpeculativeConnects,
                 maxNumberOfSuggestions = METADATA_SUGGESTION_LIMIT,
+                showEditSuggestion = false,
                 suggestionsHeader = activity.getString(R.string.firefox_suggest_header),
             )
 
@@ -186,6 +188,7 @@ class AwesomeBarView(
                 title = R.string.search_engine_suggestions_title,
                 description = activity.getString(R.string.search_engine_suggestions_description),
                 searchIcon = searchWithBitmap,
+                suggestionsHeader = getSearchEngineSuggestionsHeader(),
             )
 
         searchSuggestionProviderMap = HashMap()
@@ -316,9 +319,7 @@ class AwesomeBarView(
             providersToAdd.add(getLocalTabsProvider(state.searchEngineSource, true))
         }
 
-        if (!activity.settings().showUnifiedSearchFeature) {
-            providersToAdd.add(searchEngineSuggestionProvider)
-        }
+        providersToAdd.add(searchEngineSuggestionProvider)
 
         return providersToAdd
     }
@@ -337,7 +338,7 @@ class AwesomeBarView(
     internal fun getHistoryProvidersForSearchEngine(
         searchEngineSource: SearchEngineSource,
     ): AwesomeBar.SuggestionProvider? {
-        val searchEngineHostFilter = searchEngineSource.searchEngine?.resultsUrl?.host ?: return null
+        val searchEngineUriFilter = searchEngineSource.searchEngine?.resultsUrl ?: return null
 
         return if (activity.settings().historyMetadataUIFeature) {
             CombinedHistorySuggestionProvider(
@@ -347,8 +348,9 @@ class AwesomeBarView(
                 icons = components.core.icons,
                 engine = engineForSpeculativeConnects,
                 maxNumberOfSuggestions = METADATA_SUGGESTION_LIMIT,
+                showEditSuggestion = false,
                 suggestionsHeader = activity.getString(R.string.firefox_suggest_header),
-                resultsHostFilter = searchEngineHostFilter,
+                resultsUriFilter = searchEngineUriFilter,
             )
         } else {
             HistoryStorageSuggestionProvider(
@@ -357,8 +359,9 @@ class AwesomeBarView(
                 icons = components.core.icons,
                 engine = engineForSpeculativeConnects,
                 maxNumberOfSuggestions = METADATA_SUGGESTION_LIMIT,
+                showEditSuggestion = false,
                 suggestionsHeader = activity.getString(R.string.firefox_suggest_header),
-                resultsHostFilter = searchEngineHostFilter,
+                resultsUriFilter = searchEngineUriFilter,
             )
         }
     }
@@ -489,8 +492,8 @@ class AwesomeBarView(
         searchEngineSource: SearchEngineSource,
         filterByCurrentEngine: Boolean = false,
     ): SessionSuggestionProvider {
-        val searchEngineHostFilter = when (filterByCurrentEngine) {
-            true -> searchEngineSource.searchEngine?.resultsUrl?.host
+        val searchEngineUriFilter = when (filterByCurrentEngine) {
+            true -> searchEngineSource.searchEngine?.resultsUrl
             false -> null
         }
 
@@ -502,7 +505,7 @@ class AwesomeBarView(
             getDrawable(activity, R.drawable.ic_search_results_tab),
             excludeSelectedSession = !fromHomeFragment,
             suggestionsHeader = activity.getString(R.string.firefox_suggest_header),
-            resultsHostFilter = searchEngineHostFilter,
+            resultsUriFilter = searchEngineUriFilter,
         )
     }
 
@@ -521,7 +524,7 @@ class AwesomeBarView(
         filterByCurrentEngine: Boolean = false,
     ): BookmarksStorageSuggestionProvider {
         val searchEngineHostFilter = when (filterByCurrentEngine) {
-            true -> searchEngineSource.searchEngine?.resultsUrl?.host
+            true -> searchEngineSource.searchEngine?.resultsUrl
             false -> null
         }
 
@@ -531,8 +534,9 @@ class AwesomeBarView(
             icons = components.core.icons,
             indicatorIcon = getDrawable(activity, R.drawable.ic_search_results_bookmarks),
             engine = engineForSpeculativeConnects,
+            showEditSuggestion = false,
             suggestionsHeader = activity.getString(R.string.firefox_suggest_header),
-            resultsHostFilter = searchEngineHostFilter,
+            resultsUriFilter = searchEngineHostFilter,
         )
     }
 

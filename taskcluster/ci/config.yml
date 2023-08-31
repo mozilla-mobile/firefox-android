@@ -133,7 +133,6 @@ treeherder:
         support-rusthttp: support-rusthttp
         support-rusterrors: support-rusterrors
         support-rustlog: support-rustlog
-        support-sync-telemetry: support-sync-telemetry
         support-test-appservices: support-test-appservices
         support-test-fakes: support-test-fakes
         support-test-libstate: support-test-libstate
@@ -176,9 +175,9 @@ taskgraph:
         mobile:
             name: firefox-android
     cached-task-prefix: mobile.v2.firefox-android
-    decision-parameters: 'android_taskgraph:get_decision_parameters'
+    decision-parameters: 'android_taskgraph.parameters:get_decision_parameters'
     index-path-regexes:
-        - 'mobile\.v3.[^.]*\.).*'
+        - '(mobile\.v3.[^.]*\.).*'
 
 workers:
     aliases:
@@ -264,3 +263,7 @@ release-promotion:
             target-tasks-method: push
         ship:
             target-tasks-method: ship
+    rebuild-kinds:
+        - docker-image
+        - fetch
+        - toolchain

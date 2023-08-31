@@ -12,6 +12,8 @@ import mozilla.components.concept.engine.content.blocking.Tracker
 import mozilla.components.concept.engine.history.HistoryItem
 import mozilla.components.concept.engine.mediasession.MediaSession
 import mozilla.components.concept.engine.permission.PermissionRequest
+import mozilla.components.concept.engine.shopping.ProductAnalysis
+import mozilla.components.concept.engine.shopping.ProductRecommendation
 import mozilla.components.concept.engine.window.WindowRequest
 import mozilla.components.support.test.mock
 import org.junit.Assert.assertEquals
@@ -46,6 +48,8 @@ class EngineSessionTest {
         val mediaSessionElementMetadata: MediaSession.ElementMetadata = mock()
         val tracker = Tracker("tracker")
 
+        session.notifyInternalObservers { onScrollChange(1234, 4321) }
+        session.notifyInternalObservers { onScrollChange(2345, 5432) }
         session.notifyInternalObservers { onLocationChange("https://www.mozilla.org") }
         session.notifyInternalObservers { onLocationChange("https://www.firefox.com") }
         session.notifyInternalObservers { onProgress(25) }
@@ -81,6 +85,8 @@ class EngineSessionTest {
 
         verify(observer).onLocationChange("https://www.mozilla.org")
         verify(observer).onLocationChange("https://www.firefox.com")
+        verify(observer).onScrollChange(1234, 4321)
+        verify(observer).onScrollChange(2345, 5432)
         verify(observer).onProgress(25)
         verify(observer).onProgress(100)
         verify(observer).onLoadingStateChange(true)
@@ -127,6 +133,7 @@ class EngineSessionTest {
 
         session.register(observer)
 
+        session.notifyInternalObservers { onScrollChange(1234, 4321) }
         session.notifyInternalObservers { onLocationChange("https://www.mozilla.org") }
         session.notifyInternalObservers { onProgress(25) }
         session.notifyInternalObservers { onLoadingStateChange(true) }
@@ -155,6 +162,7 @@ class EngineSessionTest {
         val mediaSessionPositionState: MediaSession.PositionState = mock()
         val mediaSessionElementMetadata: MediaSession.ElementMetadata = mock()
 
+        session.notifyInternalObservers { onScrollChange(2345, 5432) }
         session.notifyInternalObservers { onLocationChange("https://www.firefox.com") }
         session.notifyInternalObservers { onProgress(100) }
         session.notifyInternalObservers { onLoadingStateChange(false) }
@@ -184,6 +192,7 @@ class EngineSessionTest {
         session.notifyInternalObservers { onLaunchIntentRequest("https://www.firefox.com", null) }
         session.notifyInternalObservers { onShowDynamicToolbar() }
 
+        verify(observer).onScrollChange(1234, 4321)
         verify(observer).onLocationChange("https://www.mozilla.org")
         verify(observer).onProgress(25)
         verify(observer).onLoadingStateChange(true)
@@ -204,6 +213,7 @@ class EngineSessionTest {
         verify(observer).onLoadRequest("https://www.mozilla.org", true, true)
         verify(observer).onLaunchIntentRequest("https://www.mozilla.org", null)
         verify(observer).onShowDynamicToolbar()
+        verify(observer, never()).onScrollChange(2345, 5432)
         verify(observer, never()).onLocationChange("https://www.firefox.com")
         verify(observer, never()).onProgress(100)
         verify(observer, never()).onLoadingStateChange(false)
@@ -248,6 +258,7 @@ class EngineSessionTest {
         session.register(observer)
         session.register(otherObserver)
 
+        session.notifyInternalObservers { onScrollChange(1234, 4321) }
         session.notifyInternalObservers { onLocationChange("https://www.mozilla.org") }
         session.notifyInternalObservers { onProgress(25) }
         session.notifyInternalObservers { onLoadingStateChange(true) }
@@ -274,6 +285,7 @@ class EngineSessionTest {
         val mediaSessionPositionState: MediaSession.PositionState = mock()
         val mediaSessionElementMetadata: MediaSession.ElementMetadata = mock()
 
+        session.notifyInternalObservers { onScrollChange(2345, 5432) }
         session.notifyInternalObservers { onLocationChange("https://www.firefox.com") }
         session.notifyInternalObservers { onProgress(100) }
         session.notifyInternalObservers { onLoadingStateChange(false) }
@@ -300,6 +312,7 @@ class EngineSessionTest {
         session.notifyInternalObservers { onMediaFullscreenChanged(true, mediaSessionElementMetadata) }
         session.notifyInternalObservers { onShowDynamicToolbar() }
 
+        verify(observer).onScrollChange(1234, 4321)
         verify(observer).onLocationChange("https://www.mozilla.org")
         verify(observer).onProgress(25)
         verify(observer).onLoadingStateChange(true)
@@ -317,6 +330,7 @@ class EngineSessionTest {
         verify(observer).onCancelContentPermissionRequest(permissionRequest)
         verify(observer).onWindowRequest(windowRequest)
         verify(observer).onShowDynamicToolbar()
+        verify(observer, never()).onScrollChange(2345, 5432)
         verify(observer, never()).onLocationChange("https://www.firefox.com")
         verify(observer, never()).onProgress(100)
         verify(observer, never()).onLoadingStateChange(false)
@@ -341,6 +355,7 @@ class EngineSessionTest {
         verify(observer, never()).onMediaPositionStateChanged(mediaSessionPositionState)
         verify(observer, never()).onMediaMuteChanged(true)
         verify(observer, never()).onMediaFullscreenChanged(true, mediaSessionElementMetadata)
+        verify(otherObserver, never()).onScrollChange(2345, 5432)
         verify(otherObserver, never()).onLocationChange("https://www.firefox.com")
         verify(otherObserver, never()).onProgress(100)
         verify(otherObserver, never()).onLoadingStateChange(false)
@@ -380,6 +395,7 @@ class EngineSessionTest {
 
         session.register(observer)
 
+        session.notifyInternalObservers { onScrollChange(1234, 4321) }
         session.notifyInternalObservers { onLocationChange("https://www.mozilla.org") }
         session.notifyInternalObservers { onProgress(25) }
         session.notifyInternalObservers { onLoadingStateChange(true) }
@@ -406,6 +422,7 @@ class EngineSessionTest {
         val mediaSessionPositionState: MediaSession.PositionState = mock()
         val mediaSessionElementMetadata: MediaSession.ElementMetadata = mock()
 
+        session.notifyInternalObservers { onScrollChange(2345, 5432) }
         session.notifyInternalObservers { onLocationChange("https://www.firefox.com") }
         session.notifyInternalObservers { onProgress(100) }
         session.notifyInternalObservers { onLoadingStateChange(false) }
@@ -432,6 +449,7 @@ class EngineSessionTest {
         session.notifyInternalObservers { onMediaFullscreenChanged(true, mediaSessionElementMetadata) }
         session.notifyInternalObservers { onShowDynamicToolbar() }
 
+        verify(observer).onScrollChange(1234, 4321)
         verify(observer).onLocationChange("https://www.mozilla.org")
         verify(observer).onProgress(25)
         verify(observer).onLoadingStateChange(true)
@@ -449,6 +467,7 @@ class EngineSessionTest {
         verify(observer).onCancelContentPermissionRequest(permissionRequest)
         verify(observer).onWindowRequest(windowRequest)
         verify(observer).onShowDynamicToolbar()
+        verify(observer, never()).onScrollChange(2345, 5432)
         verify(observer, never()).onLocationChange("https://www.firefox.com")
         verify(observer, never()).onProgress(100)
         verify(observer, never()).onLoadingStateChange(false)
@@ -491,6 +510,7 @@ class EngineSessionTest {
         val mediaSessionElementMetadata: MediaSession.ElementMetadata = mock()
         session.register(observer)
 
+        otherSession.notifyInternalObservers { onScrollChange(1234, 4321) }
         otherSession.notifyInternalObservers { onLocationChange("https://www.mozilla.org") }
         otherSession.notifyInternalObservers { onLocationChange("https://www.mozilla.org") }
         otherSession.notifyInternalObservers { onProgress(25) }
@@ -517,6 +537,7 @@ class EngineSessionTest {
         otherSession.notifyInternalObservers { onMediaMuteChanged(true) }
         otherSession.notifyInternalObservers { onMediaFullscreenChanged(true, mediaSessionElementMetadata) }
         otherSession.notifyInternalObservers { onShowDynamicToolbar() }
+        verify(observer, never()).onScrollChange(1234, 4321)
         verify(observer, never()).onLocationChange("https://www.mozilla.org")
         verify(observer, never()).onProgress(25)
         verify(observer, never()).onLoadingStateChange(true)
@@ -543,6 +564,7 @@ class EngineSessionTest {
         verify(observer, never()).onMediaFullscreenChanged(true, mediaSessionElementMetadata)
         verify(observer, never()).onShowDynamicToolbar()
 
+        session.notifyInternalObservers { onScrollChange(1234, 4321) }
         session.notifyInternalObservers { onLocationChange("https://www.mozilla.org") }
         session.notifyInternalObservers { onProgress(25) }
         session.notifyInternalObservers { onLoadingStateChange(true) }
@@ -568,6 +590,7 @@ class EngineSessionTest {
         session.notifyInternalObservers { onMediaMuteChanged(true) }
         session.notifyInternalObservers { onMediaFullscreenChanged(true, mediaSessionElementMetadata) }
         session.notifyInternalObservers { onShowDynamicToolbar() }
+        verify(observer, times(1)).onScrollChange(1234, 4321)
         verify(observer, times(1)).onLocationChange("https://www.mozilla.org")
         verify(observer, times(1)).onProgress(25)
         verify(observer, times(1)).onLoadingStateChange(true)
@@ -650,6 +673,8 @@ class EngineSessionTest {
                 contentType = "application/vnd.android.package-archive",
                 cookie = "PHPSESSID=298zf09hf012fh2; csrftoken=u32t4o3tb3gg43; _gat=1;",
                 isPrivate = true,
+                skipConfirmation = false,
+                openInApp = false,
                 userAgent = "Components/1.0",
             )
         }
@@ -661,6 +686,8 @@ class EngineSessionTest {
             contentType = "application/vnd.android.package-archive",
             cookie = "PHPSESSID=298zf09hf012fh2; csrftoken=u32t4o3tb3gg43; _gat=1;",
             isPrivate = true,
+            skipConfirmation = false,
+            openInApp = false,
             userAgent = "Components/1.0",
         )
     }
@@ -800,6 +827,7 @@ class EngineSessionTest {
         val defaultObserver = object : EngineSession.Observer {}
 
         defaultObserver.onTitleChange("")
+        defaultObserver.onScrollChange(0, 0)
         defaultObserver.onLocationChange("")
         defaultObserver.onPreviewImageChange("")
         defaultObserver.onLongPress(HitResult.UNKNOWN(""))
@@ -901,6 +929,7 @@ class EngineSessionTest {
         val windowRequest = mock(WindowRequest::class.java)
         val tracker: Tracker = mock()
 
+        observer.onScrollChange(1234, 4321)
         observer.onLocationChange("https://www.mozilla.org")
         observer.onLocationChange("https://www.firefox.com")
         observer.onProgress(25)
@@ -945,6 +974,8 @@ open class DummyEngineSession : EngineSession() {
 
     override fun requestPdfToDownload() {}
 
+    override fun requestPrintContent() {}
+
     override fun stopLoading() {}
 
     override fun reload(flags: LoadUrlFlags) {}
@@ -961,6 +992,23 @@ open class DummyEngineSession : EngineSession() {
 
     override fun hasCookieBannerRuleForSession(
         onResult: (Boolean) -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {}
+
+    override fun checkForPdfViewer(
+        onResult: (Boolean) -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {}
+
+    override fun requestProductRecommendations(
+        url: String,
+        onResult: (List<ProductRecommendation>) -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {}
+
+    override fun requestProductAnalysis(
+        url: String,
+        onResult: (ProductAnalysis) -> Unit,
         onException: (Throwable) -> Unit,
     ) {}
 

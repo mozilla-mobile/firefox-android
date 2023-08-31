@@ -44,17 +44,12 @@ dependencies {
 
     testImplementation project(':support-test')
     testImplementation project(':support-test-fakes')
-
-    androidTestImplementation project(':support-android-test')
-    androidTestImplementation ComponentsDependencies.androidx_test_core
-    androidTestImplementation ComponentsDependencies.androidx_test_runner
     
     testImplementation ComponentsDependencies.androidx_test_core
     testImplementation ComponentsDependencies.androidx_test_junit
     testImplementation ComponentsDependencies.kotlin_reflect
     testImplementation ComponentsDependencies.testing_coroutines
     testImplementation ComponentsDependencies.testing_robolectric
-    testImplementation ComponentsDependencies.testing_mockito
 
     androidTestImplementation project(':support-android-test')
     androidTestImplementation ComponentsDependencies.androidx_test_core

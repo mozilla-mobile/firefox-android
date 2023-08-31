@@ -67,8 +67,6 @@
 
     <!-- Private mode shortcut "contextual feature recommendation" (CFR) -->
     <!-- Text for the Private mode shortcut CFR message for adding a private mode shortcut to open private tabs from the Home screen -->
-    <string name="private_mode_cfr_message" moz:removedIn="111" tools:ignore="UnusedResources">Запускайте наступну приватну вкладку одним торканням.</string>
-    <!-- Text for the Private mode shortcut CFR message for adding a private mode shortcut to open private tabs from the Home screen -->
     <string name="private_mode_cfr_message_2">Запускайте наступну приватну вкладку одним торканням.</string>
     <!-- Text for the positive button to accept adding a Private Browsing shortcut to the Home screen -->
     <string name="private_mode_cfr_pos_button_text">Додати на головний екран</string>
@@ -125,6 +123,9 @@
     <string name="home_screen_shortcut_open_new_tab_2">Нова вкладка</string>
     <!-- Shortcut action to open new private tab -->
     <string name="home_screen_shortcut_open_new_private_tab_2">Приватна вкладка</string>
+
+    <!-- Shortcut action to open Passwords screens -->
+    <string name="home_screen_shortcut_open_password_screen">Ярлик паролів</string>
 
     <!-- Recent Tabs -->
     <!-- Header text for jumping back into the recent tab in the home screen -->
@@ -252,7 +253,7 @@
     <!-- Search suggestion onboarding hint description text, first parameter is the name of the app defined in app_name (for example: Fenix)-->
     <string name="search_suggestions_onboarding_text">%s відправлятиме все, що ви вводите в адресному рядку, вашому типовому провайдеру пошуку.</string>
 
-    <!-- Search engine suggestion title text. The first parameter is the name of teh suggested engine-->
+    <!-- Search engine suggestion title text. The first parameter is the name of the suggested engine-->
     <string name="search_engine_suggestions_title">Пошук в %s</string>
     <!-- Search engine suggestion description text -->
     <string name="search_engine_suggestions_description">Пошук безпосередньо з панелі адреси</string>
@@ -261,10 +262,10 @@
     <string name="search_settings_menu_item">Налаштування пошуку</string>
 
     <!-- Header text for the search selector menu -->
-    <string name="search_header_menu_item" moz:RemovedIn="109" tools:ignore="UnusedResources">Шукати за допомогою:</string>
-
-    <!-- Header text for the search selector menu -->
     <string name="search_header_menu_item_2">Шукати в:</string>
+
+    <!-- Content description (not visible, for screen readers etc.): Search engine icon. The first parameter is the search engine name (for example: DuckDuckGo). -->
+    <string name="search_engine_icon_content_description" tools:ignore="UnusedResources">Засіб пошуку %s</string>
 
     <!-- Home onboarding -->
     <!-- Onboarding home screen popup dialog, shown on top of the Jump back in section. -->
@@ -302,41 +303,53 @@
     <!-- Text for the button to not request notification permission on the device and dismiss the dialog -->
     <string name="onboarding_home_enable_notifications_negative_button">Не зараз</string>
 
-    <!-- Juno first user onboarding flow experiment -->
+    <!-- Juno first user onboarding flow experiment, strings are marked unused as they are only referenced by Nimbus experiments. -->
     <!-- Title for set firefox as default browser screen.
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="juno_onboarding_default_browser_title">Зробіть %s своїм щоденним браузером</string>
+    <string name="juno_onboarding_default_browser_title" moz:RemovedIn="117" tools:ignore="UnusedResources">Зробіть %s своїм щоденним браузером</string>
 
+    <!-- Title for set firefox as default browser screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_default_browser_title_nimbus" tools:ignore="UnusedResources">Зробіть Firefox своїм щоденним браузером</string>
     <!-- Description for set firefox as default browser screen.
         The first parameter is the Firefox brand name.
         The second parameter is the string with key "juno_onboarding_default_browser_description_link_text". -->
-    <string name="juno_onboarding_default_browser_description">%1$s цінує людей понад прибуток і захищає вашу приватність, блокуючи стеження між сайтами.\n\nДізнайтеся більше у нашій %2$s.</string>
+    <string name="juno_onboarding_default_browser_description" moz:RemovedIn="117" tools:ignore="UnusedResources">%1$s цінує людей понад прибуток і захищає вашу приватність, блокуючи стеження між сайтами.\n\nДізнайтеся більше у нашій %2$s.</string>
+    <!-- Description for set firefox as default browser screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_default_browser_description_nimbus" tools:ignore="UnusedResources">Firefox цінує людей понад прибуток і захищає вашу приватність, блокуючи стеження між сайтами.\n\nДізнайтеся більше у нашому положенні про приватність.</string>
     <!-- Text for the link to the privacy notice webpage for set as firefox default browser screen.
     This is part of the string with the key "juno_onboarding_default_browser_description". -->
-    <string name="juno_onboarding_default_browser_description_link_text">політиці приватності</string>
+    <string name="juno_onboarding_default_browser_description_link_text" tools:ignore="UnusedResources">політиці приватності</string>
     <!-- Text for the button to set firefox as default browser on the device -->
-    <string name="juno_onboarding_default_browser_positive_button">Встановити типовим браузером</string>
+    <string name="juno_onboarding_default_browser_positive_button" tools:ignore="UnusedResources">Встановити типовим браузером</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
-    <string name="juno_onboarding_default_browser_negative_button">Не зараз</string>
+    <string name="juno_onboarding_default_browser_negative_button" tools:ignore="UnusedResources">Не зараз</string>
     <!-- Title for sign in to sync screen. -->
-    <string name="juno_onboarding_sign_in_title">Перемикайтеся між телефоном і комп’ютером</string>
+    <string name="juno_onboarding_sign_in_title" tools:ignore="UnusedResources">Перемикайтеся між телефоном і комп’ютером</string>
     <!-- Description for sign in to sync screen. -->
-    <string name="juno_onboarding_sign_in_description">Продовжуйте роботу зі своїми вкладками та паролями з інших пристроїв.</string>
+    <string name="juno_onboarding_sign_in_description" tools:ignore="UnusedResources">Продовжуйте роботу зі своїми вкладками та паролями з інших пристроїв.</string>
     <!-- Text for the button to sign in to sync on the device -->
-    <string name="juno_onboarding_sign_in_positive_button">Увійти</string>
+    <string name="juno_onboarding_sign_in_positive_button" tools:ignore="UnusedResources">Увійти</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
-    <string name="juno_onboarding_sign_in_negative_button">Не зараз</string>
+    <string name="juno_onboarding_sign_in_negative_button" tools:ignore="UnusedResources">Не зараз</string>
     <!-- Title for enable notification permission screen.
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="juno_onboarding_enable_notifications_title">Сповіщення допомагають вам ефективніше взаємодіяти з %s</string>
+    <string name="juno_onboarding_enable_notifications_title" moz:RemovedIn="117" tools:ignore="UnusedResources">Сповіщення допомагають вам ефективніше взаємодіяти з %s</string>
+    <!-- Title for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_enable_notifications_title_nimbus" tools:ignore="UnusedResources">Сповіщення допомагають вам ефективніше взаємодіяти з Firefox</string>
     <!-- Description for enable notification permission screen.
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="juno_onboarding_enable_notifications_description">Надсилайте вкладки на інші пристрої, керуйте завантаженнями, а також отримуйте поради про можливості %s.</string>
+    <string name="juno_onboarding_enable_notifications_description" moz:RemovedIn="117" tools:ignore="UnusedResources">Надсилайте вкладки на інші пристрої, керуйте завантаженнями, а також отримуйте поради про можливості %s.</string>
+    <!-- Description for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+       Note: The word "Firefox" should NOT be translated   -->
+    <string name="juno_onboarding_enable_notifications_description_nimbus" tools:ignore="UnusedResources">Надсилайте вкладки на інші пристрої, керуйте завантаженнями, а також отримуйте поради про можливості Firefox.</string>
     <!-- Text for the button to request notification permission on the device -->
-    <string name="juno_onboarding_enable_notifications_positive_button">Увімкнути сповіщення</string>
+    <string name="juno_onboarding_enable_notifications_positive_button" tools:ignore="UnusedResources">Увімкнути сповіщення</string>
 
     <!-- Text for the button dismiss the screen and move on with the flow -->
-    <string name="juno_onboarding_enable_notifications_negative_button">Не зараз</string>
+    <string name="juno_onboarding_enable_notifications_negative_button" tools:ignore="UnusedResources">Не зараз</string>
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. The first parameter is the name of the application.-->
@@ -356,10 +369,20 @@
     <string name="preferences_category_general">Загальні</string>
     <!-- Preference category for all links about Fenix -->
     <string name="preferences_category_about">Про програму</string>
+    <!-- Preference category for settings related to changing the default search engine -->
+    <string name="preferences_category_select_default_search_engine">Оберіть</string>
+    <!-- Preference for settings related to managing search shortcuts for the quick search menu -->
+    <string name="preferences_manage_search_shortcuts">Керувати ярликами пошуку</string>
+    <!-- Summary for preference for settings related to managing search shortcuts for the quick search menu -->
+    <string name="preferences_manage_search_shortcuts_summary">Редагувати засоби пошуку, доступні в меню</string>
+    <!-- Preference category for settings related to managing search shortcuts for the quick search menu -->
+    <string name="preferences_category_engines_in_search_menu">Засоби пошуку, доступні в меню</string>
     <!-- Preference for settings related to changing the default search engine -->
     <string name="preferences_default_search_engine">Типовий засіб пошуку</string>
     <!-- Preference for settings related to Search -->
     <string name="preferences_search">Пошук</string>
+    <!-- Preference for settings related to Search engines -->
+    <string name="preferences_search_engines">Засоби пошуку</string>
     <!-- Preference for settings related to Search address bar -->
     <string name="preferences_search_address_bar">Панель адреси</string>
     <!-- Preference link to rating Fenix on the Play Store -->
@@ -405,66 +428,42 @@
     <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
     <string name="cookie_banner_handling_details_site_is_not_supported_cancel_button">Скасувати</string>
     <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
-    <string name="cookie_banner_handling_details_site_is_not_supported_request_support_button">Звернутися по підтримку</string>
+    <string name="cookie_banner_handling_details_site_is_not_supported_request_support_button_2">Надіслати запит</string>
     <!-- Text for title indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
-    <string name="cookie_banner_handling_details_site_is_not_supported_title">Зменшення кількості банерів кук</string>
+    <string name="cookie_banner_handling_details_site_is_not_supported_title_2">Подати запит на підтримку цього сайту?</string>
     <!-- Label for the snackBar, after the user reports with success a website where cookie banner reducer did not work -->
-    <string name="cookie_banner_handling_report_site_snack_bar_text">Запит на підтримку сайту надіслано.</string>
+    <string name="cookie_banner_handling_report_site_snack_bar_text_2">Запит надіслано</string>
     <!-- Text for indicating cookie banner handling is on this site, this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_on_for_site">Увімкнено для цього сайту</string>
-    <!-- Text for indicating that a request for unsupported site was sent to nimbus, this is shown as part of the protections panel with the tracking protection toggle -->
-    <string name="reduce_cookie_banner_unsupported_site_request_submitted">Запит на підтримку сайту надіслано</string>
+    <!-- Text for indicating that a request for unsupported site was sent to Nimbus (it's a Mozilla library for experiments), this is shown as part of the protections panel with the tracking protection toggle -->
+    <string name="reduce_cookie_banner_unsupported_site_request_submitted_2">Запит на підтримку сайту надіслано</string>
     <!-- Text for indicating cookie banner handling is currently not supported for this site, this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_unsupported_site">Сайт наразі не підтримується</string>
     <!-- Title text for a detail explanation indicating cookie banner handling is on this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
     <string name="reduce_cookie_banner_details_panel_title_on_for_site">Увімкнути зменшення кількості банерів кук для %1$s?</string>
     <!-- Title text for a detail explanation indicating cookie banner handling is off this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
     <string name="reduce_cookie_banner_details_panel_title_off_for_site">Вимкнути зменшення кількості банерів кук для %1$s?</string>
-    <!-- Title text for a detail explanation indicating cookie banner reducer didn't work for the current site, this is shown as part of the cookie banner panel in the toolbar.-->
-    <string name="reduce_cookie_banner_details_panel_title_unsupported_site_request">Цей сайт наразі не підтримується функцією зменшення кількості банерів кук. Бажаєте, щоб наша команда перевірила цей сайт і забезпечила його підтримку в майбутньому?</string>
+    <!-- Title text for a detail explanation indicating cookie banner reducer didn't work for the current site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name-->
+    <string name="reduce_cookie_banner_details_panel_title_unsupported_site_request_2">%1$s не може автоматично відхиляти запити на розміщення кук на цьому сайті. Ви можете надіслати запит для підтримки цього сайту в майбутньому.</string>
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
     <string name="reduce_cookie_banner_details_panel_description_off_for_site">%1$s очистить куки цього сайту та оновить сторінку. Очищення всіх кук може призвести до виходу з облікових записів або спорожнення кошика для покупок.</string>
 
-    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter are the application name -->
-    <string name="reduce_cookie_banner_details_panel_description_on_for_site_1" moz:RemovedIn="111" tools:ignore="UnusedResources">%1$s може намагатися автоматично відхиляти запити на збереження кук.</string>
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
     <string name="reduce_cookie_banner_details_panel_description_on_for_site_2">%1$s намагається автоматично відхиляти всі запити кук на підтримуваних сайтах.</string>
-    <!-- Title text for the dialog use on the control branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_control_experiment_dialog_title" moz:RemovedIn="112" tools:ignore="UnusedResources">Геть банери про куки!</string>
     <!-- Title text for the cookie banner re-engagement dialog. The first parameter is the application name. -->
     <string name="reduce_cookie_banner_dialog_title">Дозволити %1$s відхиляти банери кук?</string>
-    <!-- Body text for the dialog use on the control branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_control_experiment_dialog_body_1" moz:RemovedIn="111" tools:ignore="UnusedResources">Автоматично відхиляти запити кук, коли можливо.</string>
-    <!-- Body text for the dialog use on the control branch of the experiment to determine which context users engaged the most.The first parameter is the application name -->
-    <string name="reduce_cookie_banner_control_experiment_dialog_body_2" moz:RemovedIn="112" tools:ignore="UnusedResources">Дозволити %1$s автоматично відхиляти запити на збереження кук, коли це можливо?</string>
     <!-- Body text for the cookie banner re-engagement dialog use. The first parameter is the application name. -->
     <string name="reduce_cookie_banner_dialog_body">%1$s може автоматично відхиляти багато запитів банерів кук.</string>
     <!-- Remind me later text button for the onboarding dialog -->
     <string name="reduce_cookie_banner_dialog_not_now_button">Не зараз</string>
-    <!-- Change setting text button, for the dialog use on the control branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_control_experiment_dialog_change_setting_button" moz:RemovedIn="112" tools:ignore="UnusedResources">Відхилити банери</string>
     <!-- Snack text for the cookie banner dialog, after user hit the dismiss banner button -->
     <string name="reduce_cookie_banner_dialog_snackbar_text">Ви бачитимете менше запитів на збереження кук</string>
-    <!-- Title text for the dialog use on the variant 1 branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_variant_1_experiment_dialog_title" moz:RemovedIn="112" tools:ignore="UnusedResources">Менше спливних повідомлень про збереження кук</string>
-    <!-- Body text for the dialog use on the variant 1 branch of the experiment to determine which context users engaged the most. The first parameter is the application name. -->
-    <string name="reduce_cookie_banner_variant_1_experiment_dialog_body_1" moz:RemovedIn="112" tools:ignore="UnusedResources">Автоматично відповідайте на спливні запити про збереження кук, щоб не відриватися від роботи. %1$s відхилятиме всі можливі запити.</string>
-    <!-- Change setting text button, for the onboarding dialog use on the variant 1 branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_variant_1_experiment_dialog_change_setting_button" moz:RemovedIn="112" tools:ignore="UnusedResources">Відхилити спливні запити</string>
-    <!-- Title text for the dialog use on the variant 2 branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_variant_2_experiment_dialog_title" moz:RemovedIn="112" tools:ignore="UnusedResources">Зменшення кількості банерів кук</string>
-    <!-- Body text for the dialog use on the variant 2 branch of the experiment to determine which context users engaged the most. The first parameter is the application name. -->
-    <string name="reduce_cookie_banner_variant_2_experiment_dialog_body_1" moz:RemovedIn="112" tools:ignore="UnusedResources">Дозволити %1$s відхиляти запити сайтів на згоду про збереження кук, коли це можливо?</string>
-    <!-- Change setting text button, for the dialog use on the variant 2 branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_variant_2_experiment_dialog_change_setting_button" moz:RemovedIn="112" tools:ignore="UnusedResources">Дозволити</string>
 
     <!-- Change setting text button, for the cookie banner re-engagement dialog -->
     <string name="reduce_cookie_banner_dialog_change_setting_button">Дозволити</string>
 
     <!-- Description of the preference to enable "HTTPS-Only" mode. -->
     <string name="preferences_https_only_summary">Намагатися автоматично доступатися до сайтів за допомогою протоколу шифрування HTTPS для поліпшення безпеки.</string>
-    <!-- Summary of tracking protection preference if tracking protection is set to on -->
-    <string name="preferences_https_only_on" moz:removedIn="111" tools:ignore="UnusedResources">Увімкнено</string>
     <!-- Summary of https only preference if https only is set to off -->
     <string name="preferences_https_only_off">Вимкнено</string>
     <!-- Summary of https only preference if https only is set to on in all tabs -->
@@ -517,7 +516,7 @@
     <!-- Preference for data collection -->
     <string name="preferences_data_collection">Збір даних</string>
     <!-- Preference for developers -->
-    <string name="preferences_remote_debugging">Віддалене зневадження через USB</string>
+    <string name="preferences_remote_debugging">Віддалене налагодження через USB</string>
 
     <!-- Preference title for switch preference to show search engines -->
     <string name="preferences_show_search_engines">Показати засоби пошуку</string>
@@ -551,6 +550,11 @@
     <string name="preferences_open_links_in_apps_never">Ніколи</string>
     <!-- Preference for open download with an external download manager app -->
     <string name="preferences_external_download_manager">Зовнішній менеджер завантажень</string>
+    <!-- Preference for enabling gecko engine logs -->
+    <string name="preferences_enable_gecko_logs">Увімкнути журнали Gecko</string>
+    <!-- Message to indicate users that we are quitting the application to apply the changes -->
+    <string name="quit_application">Закриття програми для застосування змін…</string>
+
     <!-- Preference for add_ons -->
     <string name="preferences_addons">Додатки</string>
 
@@ -616,11 +620,17 @@
     <!-- Text for classic wallpapers title. The first parameter is the Firefox name. -->
     <string name="wallpaper_classic_title">Класичні %s</string>
     <!-- Text for limited edition wallpapers title. -->
-    <string name="wallpaper_limited_edition_title">Обмежений випуск</string>
+    <string name="wallpaper_limited_edition_title" moz:RemovedIn="118" tools:ignore="UnusedResources">Обмежений випуск</string>
+    <!-- Text for artist series wallpapers title. "Artist series" represents a collection of artist collaborated wallpapers. -->
+    <string name="wallpaper_artist_series_title">Серія Від художників</string>
     <!-- Description text for the limited edition wallpapers with learn more link. The first parameter is the learn more string defined in wallpaper_learn_more-->
-    <string name="wallpaper_limited_edition_description_with_learn_more">Нова колекція Незалежні Голоси. %s</string>
+    <string name="wallpaper_limited_edition_description_with_learn_more" moz:RemovedIn="118" tools:ignore="UnusedResources">Нова колекція Незалежні Голоси. %s</string>
+    <!-- Description text for the artist series wallpapers with learn more link. The first parameter is the learn more string defined in wallpaper_learn_more. "Independent voices" is the name of the wallpaper collection -->
+    <string name="wallpaper_artist_series_description_with_learn_more">Збірка Незалежні Голоси. %s</string>
     <!-- Description text for the limited edition wallpapers. -->
-    <string name="wallpaper_limited_edition_description">Нова колекція Незалежні Голоси.</string>
+    <string name="wallpaper_limited_edition_description" moz:RemovedIn="118" tools:ignore="UnusedResources">Нова колекція Незалежні Голоси.</string>
+    <!-- Description text for the artist series wallpapers. "Independent voices" is the name of the wallpaper collection -->
+    <string name="wallpaper_artist_series_description">Збірка Незалежні Голоси.</string>
     <!-- Wallpaper onboarding dialog header text. -->
     <string name="wallpapers_onboarding_dialog_title_text">Спробуйте сплеск кольорів</string>
     <!-- Wallpaper onboarding dialog body text. -->
@@ -634,7 +644,19 @@
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is already installed -->
     <string name="addon_already_installed">Додаток вже встановлено</string>
 
+    <!-- Add-on process crash dialog to user -->
+    <!-- Title of a dialog shown to the user when enough errors have occurred with addons and they need to be temporarily disabled -->
+    <string name="addon_process_crash_dialog_title" tools:ignore="UnusedResources">Додаток тимчасово вимкнено</string>
+    <!-- The first parameter is the application name. This is a message shown to the user when too many errors have occurred with the addons process and they have been disabled. The user can decide if they would like to continue trying to start add-ons or if they'd rather continue without them. -->
+    <string name="addon_process_crash_dialog_message" tools:ignore="UnusedResources">Один або кілька додатків припинили роботу, внаслідок цього ваша система працює нестабільно. %1$s безуспішно намагався перезапустити додатки.\n\nДодатки не буде перезапущено під час вашого поточного сеансу.\n\nЦю проблему може усунути вилучення або вимкнення додатків.</string>
+    <!-- This will cause the add-ons to try restarting but the dialog will reappear if it is unsuccessful again -->
+    <string name="addon_process_crash_dialog_retry_button_text" tools:ignore="UnusedResources">Спробувати перезапустити додатки</string>
+    <!-- The user will continue with all add-ons disabled -->
+    <string name="addon_process_crash_dialog_disable_addons_button_text" tools:ignore="UnusedResources">Продовжити з вимкненими додатками</string>
+
     <!-- Account Preferences -->
+    <!-- Preference for managing your account via accounts.firefox.com -->
+    <string name="preferences_manage_account">Керувати обліковим записом</string>
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">Синхронізувати</string>
     <!-- Preference category for sync -->
@@ -781,15 +803,9 @@
     <!-- Dialog button text for canceling open all tabs -->
     <string name="open_all_warning_cancel">Скасувати</string>
 
-    <!-- Text to show users they have one site in the history group section of the History fragment.
-    %d is a placeholder for the number of sites in the group. -->
-    <string name="history_search_group_site" moz:RemovedIn="111" tools:ignore="UnusedResources">%d сайт</string>
     <!-- Text to show users they have one page in the history group section of the History fragment.
     %d is a placeholder for the number of pages in the group. -->
     <string name="history_search_group_site_1">%d сторінка</string>
-    <!-- Text to show users they have multiple sites in the history group section of the History fragment.
-    %d is a placeholder for the number of sites in the group. -->
-    <string name="history_search_group_sites" moz:RemovedIn="111" tools:ignore="UnusedResources">сайтів: %d</string>
 
     <!-- Text to show users they have multiple pages in the history group section of the History fragment.
     %d is a placeholder for the number of pages in the group. -->
@@ -1121,8 +1137,6 @@
     <string name="phone_feature_blocked_by_android">Заблоковано Android</string>
     <!-- Preference for showing a list of websites that the default configurations won't apply to them -->
     <string name="preference_exceptions">Винятки</string>
-    <!-- Summary of tracking protection preference if tracking protection is set to on -->
-    <string name="tracking_protection_on" moz:removedIn="111" tools:ignore="UnusedResources">Увімкнено</string>
     <!-- Summary of tracking protection preference if tracking protection is set to off -->
     <string name="tracking_protection_off">Вимкнено</string>
     <!-- Summary of tracking protection preference if tracking protection is set to standard -->
@@ -1215,8 +1229,16 @@
     <string name="share_button_content_description">Поділитися</string>
     <!-- Text for the Save to PDF feature in the share menu -->
     <string name="share_save_to_pdf">Зберегти як PDF</string>
-    <!-- Text for error message when generating a PDF file Text for error message when generating a PDF file. -->
+    <!-- Text for error message when generating a PDF file Text. -->
     <string name="unable_to_save_to_pdf_error">Неможливо створити PDF</string>
+    <!-- Text for standard error snackbar dismiss button. -->
+    <string name="standard_snackbar_error_dismiss">Відхилити</string>
+    <!-- Text for error message when printing a page and it fails. -->
+    <string name="unable_to_print_error" moz:removedIn="121" tools:ignore="UnusedResources">Не вдалося надрукувати</string>
+    <!-- Text for error message when printing a page and it fails. -->
+    <string name="unable_to_print_page_error">Неможливо надрукувати цю сторінку</string>
+    <!-- Text for the print feature in the share and browser menu -->
+    <string name="menu_print">Друк</string>
     <!-- Sub-header in the dialog to share a link to another sync device -->
     <string name="share_device_subheader">Надіслати на пристрій</string>
     <!-- Sub-header in the dialog to share a link to an app from the full list -->
@@ -1286,11 +1308,11 @@
     <!-- Survey -->
     <!-- Text shown in the fullscreen message that pops up to ask user to take a short survey.
     The app name is in the text, due to limitations with localizing Nimbus experiments -->
-    <string name="nimbus_survey_message_text" tools:ignore="UnusedResources">Допоможіть удосконалити Firefox, взявши участь у короткому опитуванні.</string>
+    <string name="nimbus_survey_message_text">Допоможіть удосконалити Firefox, взявши участь у короткому опитуванні.</string>
     <!-- Preference for taking the short survey. -->
-    <string name="preferences_take_survey" tools:ignore="UnusedResources">Пройти опитування</string>
+    <string name="preferences_take_survey">Пройти опитування</string>
     <!-- Preference for not taking the short survey. -->
-    <string name="preferences_not_take_survey" tools:ignore="UnusedResources">Ні, дякую</string>
+    <string name="preferences_not_take_survey">Ні, дякую</string>
 
     <!-- Snackbar -->
     <!-- Text shown in snackbar when user deletes a collection -->
@@ -1355,13 +1377,17 @@
     <!-- Subtitle for the tabs item in Delete browsing data, parameter will be replaced with the number of open tabs -->
     <string name="preferences_delete_browsing_data_tabs_subtitle">Вкладок: %d</string>
     <!-- Title for the data and history items in Delete browsing data -->
-    <string name="preferences_delete_browsing_data_browsing_data_title">Історія перегляду і дані сайтів</string>
+    <string name="preferences_delete_browsing_data_browsing_data_title" moz:removedIn="118" tools:ignore="UnusedResources">Історія перегляду і дані сайтів</string>
 
+    <!-- Title for the history item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_browsing_history_title">Історія перегляду</string>
     <!-- Subtitle for the data and history items in delete browsing data, parameter will be replaced with the
         number of history items the user has -->
     <string name="preferences_delete_browsing_data_browsing_data_subtitle">Адрес: %d</string>
     <!-- Title for the cookies item in Delete browsing data -->
-    <string name="preferences_delete_browsing_data_cookies">Куки</string>
+    <string name="preferences_delete_browsing_data_cookies" moz:removedIn="118" tools:ignore="UnusedResources">Куки</string>
+    <!-- Title for the cookies and site data items in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_cookies_and_site_data">Куки і дані сайтів</string>
     <!-- Subtitle for the cookies item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_cookies_subtitle">Ви вийдете з більшості сайтів</string>
     <!-- Title for the cached images and files item in Delete browsing data -->
@@ -1384,7 +1410,9 @@
     <!-- Title text of a delete browsing data dialog. -->
     <string name="delete_history_prompt_title">Проміжок часу для видалення</string>
     <!-- Body text of a delete browsing data dialog. -->
-    <string name="delete_history_prompt_body">Вилучає історію (включно з історією, синхронізованою з інших пристроїв), куки та інші дані вебперегляду.</string>
+    <string name="delete_history_prompt_body" moz:RemovedIn="130" tools:ignore="UnusedResources">Вилучає історію (включно з історією, синхронізованою з інших пристроїв), куки та інші дані вебперегляду.</string>
+    <!-- Body text of a delete browsing data dialog. -->
+    <string name="delete_history_prompt_body_2">Вилучає історію (зокрема синхронізовану з інших пристроїв)</string>
     <!-- Radio button in the delete browsing data dialog to delete history items for the last hour. -->
     <string name="delete_history_prompt_button_last_hour">Остання година</string>
     <!-- Radio button in the delete browsing data dialog to delete history items for today and yesterday. -->
@@ -1414,63 +1442,63 @@
 
     <!-- Onboarding -->
     <!-- Text for onboarding welcome header. -->
-    <string name="onboarding_header_2">Ласкаво просимо до кращого інтернету</string>
+    <string name="onboarding_header_2" moz:RemovedIn="118" tools:ignore="UnusedResources">Ласкаво просимо до кращого інтернету</string>
     <!-- Text for the onboarding welcome message. -->
-    <string name="onboarding_message">Браузер, створений для людей, а не для прибутку.</string>
+    <string name="onboarding_message" moz:RemovedIn="118" tools:ignore="UnusedResources">Браузер, створений для людей, а не для прибутку.</string>
     <!-- Text for the Firefox account onboarding sign in card header. -->
-    <string name="onboarding_account_sign_in_header">Продовжуйте звідти, де зупинилися</string>
+    <string name="onboarding_account_sign_in_header" moz:RemovedIn="118" tools:ignore="UnusedResources">Продовжуйте звідти, де зупинилися</string>
     <!-- Text for the button to learn more about signing in to your Firefox account. -->
-    <string name="onboarding_manual_sign_in_description">Синхронізуйте вкладки та паролі на всіх пристроях для плавного перемикання між ними.</string>
+    <string name="onboarding_manual_sign_in_description" moz:RemovedIn="118" tools:ignore="UnusedResources">Синхронізуйте вкладки та паролі на всіх пристроях для плавного перемикання між ними.</string>
     <!-- Text for the button to manually sign into Firefox account. -->
-    <string name="onboarding_firefox_account_sign_in">Увійти</string>
+    <string name="onboarding_firefox_account_sign_in" moz:RemovedIn="118" tools:ignore="UnusedResources">Увійти</string>
     <!-- text to display in the snackbar once account is signed-in -->
     <string name="onboarding_firefox_account_sync_is_on">Синхронізація увімкнена</string>
 
     <!-- Text for the tracking protection onboarding card header -->
-    <string name="onboarding_tracking_protection_header">Типовий захист приватності</string>
+    <string name="onboarding_tracking_protection_header" moz:RemovedIn="118" tools:ignore="UnusedResources">Типовий захист приватності</string>
     <!-- Text for the tracking protection card description. The first parameter is the name of the application.-->
-    <string name="onboarding_tracking_protection_description_old">%1$s автоматично блокує таємне стеження компаній за вами в інтернеті.</string>
+    <string name="onboarding_tracking_protection_description_old" moz:RemovedIn="118" tools:ignore="UnusedResources">%1$s автоматично блокує таємне стеження компаній за вами в інтернеті.</string>
     <!-- Text for the tracking protection card description. -->
-    <string name="onboarding_tracking_protection_description">Функція повний захист кук не дає змогу елементам стеження переслідувати вас на різних сайтах за допомогою кук.</string>
+    <string name="onboarding_tracking_protection_description" moz:RemovedIn="118" tools:ignore="UnusedResources">Функція повний захист кук не дає змогу елементам стеження переслідувати вас на різних сайтах за допомогою кук.</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
-    <string name="onboarding_tracking_protection_standard_button_2">Стандартний (типово)</string>
+    <string name="onboarding_tracking_protection_standard_button_2" moz:RemovedIn="118" tools:ignore="UnusedResources">Стандартний (типово)</string>
     <!-- text for standard blocking option button description -->
-    <string name="onboarding_tracking_protection_standard_button_description_3">Баланс приватності та швидкодії. Сторінки завантажуються нормально.</string>
+    <string name="onboarding_tracking_protection_standard_button_description_3" moz:RemovedIn="118" tools:ignore="UnusedResources">Баланс приватності та швидкодії. Сторінки завантажуються нормально.</string>
     <!-- text for tracking protection radio button option for strict level of blocking -->
-    <string name="onboarding_tracking_protection_strict_option">Надійний</string>
+    <string name="onboarding_tracking_protection_strict_option" moz:RemovedIn="118" tools:ignore="UnusedResources">Надійний</string>
     <!-- text for strict blocking option button description -->
-    <string name="onboarding_tracking_protection_strict_button_description_3">Блокує більше стеження, тому сторінки завантажуються швидше, однак можливі порушення їх роботи.</string>
+    <string name="onboarding_tracking_protection_strict_button_description_3" moz:RemovedIn="118" tools:ignore="UnusedResources">Блокує більше стеження, тому сторінки завантажуються швидше, однак можливі порушення їх роботи.</string>
     <!-- text for the toolbar position card header  -->
-    <string name="onboarding_toolbar_placement_header_1">Оберіть розташування панелі інструментів</string>
+    <string name="onboarding_toolbar_placement_header_1" moz:RemovedIn="118" tools:ignore="UnusedResources">Оберіть розташування панелі інструментів</string>
 
     <!-- Text for the toolbar position card description -->
-    <string name="onboarding_toolbar_placement_description">Залиште її внизу або перемістіть угору.</string>
+    <string name="onboarding_toolbar_placement_description" moz:RemovedIn="118" tools:ignore="UnusedResources">Залиште її внизу або перемістіть угору.</string>
 
     <!-- Text for the privacy notice onboarding card header -->
-    <string name="onboarding_privacy_notice_header_1">Ви контролюєте свої дані</string>
+    <string name="onboarding_privacy_notice_header_1" moz:RemovedIn="118" tools:ignore="UnusedResources">Ви контролюєте свої дані</string>
     <!-- Text for the privacy notice onboarding card description. -->
-    <string name="onboarding_privacy_notice_description">Firefox надає вам контроль над тим, чим ви ділитесь в інтернеті та з нами.</string>
+    <string name="onboarding_privacy_notice_description" moz:RemovedIn="118" tools:ignore="UnusedResources">Firefox надає вам контроль над тим, чим ви ділитесь в інтернеті та з нами.</string>
     <!-- Text for the button to read the privacy notice -->
-    <string name="onboarding_privacy_notice_read_button">Повідомлення про приватність</string>
+    <string name="onboarding_privacy_notice_read_button" moz:RemovedIn="118" tools:ignore="UnusedResources">Повідомлення про приватність</string>
 
     <!-- Text for the conclusion onboarding message -->
-    <string name="onboarding_conclusion_header">Готові відкрити дивовижний інтернет?</string>
+    <string name="onboarding_conclusion_header" moz:RemovedIn="118" tools:ignore="UnusedResources">Готові відкрити дивовижний інтернет?</string>
     <!-- text for the button to finish onboarding -->
-    <string name="onboarding_finish">Почати перегляд</string>
+    <string name="onboarding_finish" moz:RemovedIn="118" tools:ignore="UnusedResources">Почати перегляд</string>
 
     <!-- Onboarding theme -->
     <!-- text for the theme picker onboarding card header -->
-    <string name="onboarding_theme_picker_header">Оберіть тему</string>
+    <string name="onboarding_theme_picker_header" moz:RemovedIn="118" tools:ignore="UnusedResources">Оберіть тему</string>
     <!-- text for the theme picker onboarding card description -->
-    <string name="onboarding_theme_picker_description_2">Заощадьте заряд акумулятора і збережіть свої очі з темним режимом.</string>
+    <string name="onboarding_theme_picker_description_2" moz:RemovedIn="118" tools:ignore="UnusedResources">Заощадьте заряд акумулятора і збережіть свої очі з темним режимом.</string>
     <!-- Automatic theme setting (will follow device setting) -->
-    <string name="onboarding_theme_automatic_title">Автоматично</string>
+    <string name="onboarding_theme_automatic_title" moz:RemovedIn="118" tools:ignore="UnusedResources">Автоматично</string>
     <!-- Summary of automatic theme setting (will follow device setting) -->
-    <string name="onboarding_theme_automatic_summary">Пристосовується до налаштувань пристрою</string>
+    <string name="onboarding_theme_automatic_summary" moz:RemovedIn="118" tools:ignore="UnusedResources">Пристосовується до налаштувань пристрою</string>
     <!-- Theme setting for dark mode -->
-    <string name="onboarding_theme_dark_title">Темна тема</string>
+    <string name="onboarding_theme_dark_title" moz:RemovedIn="118" tools:ignore="UnusedResources">Темна тема</string>
     <!-- Theme setting for light mode -->
-    <string name="onboarding_theme_light_title">Світла тема</string>
+    <string name="onboarding_theme_light_title" moz:RemovedIn="118" tools:ignore="UnusedResources">Світла тема</string>
 
     <!-- Text shown in snackbar when multiple tabs have been sent to device -->
     <string name="sync_sent_tabs_snackbar">Вкладки надіслано!</string>
@@ -1507,12 +1535,8 @@
     <string name="etp_settings">Налаштування захисту</string>
     <!-- Preference title for enhanced tracking protection settings -->
     <string name="preference_enhanced_tracking_protection">Розширений захист від стеження</string>
-    <!-- Title for the description of enhanced tracking protection -->
-    <string name="preference_enhanced_tracking_protection_explanation_title" moz:removedIn="114" tools:ignore="UnusedResources">Переглядайте без стеження</string>
     <!-- Preference summary for enhanced tracking protection settings on/off switch -->
     <string name="preference_enhanced_tracking_protection_summary">Тепер із функцією Total Cookie Protection, наша найпотужніша перепона від стеження між сайтами.</string>
-    <!-- Description of enhanced tracking protection. The first parameter is the name of the application (For example: Fenix) -->
-    <string name="preference_enhanced_tracking_protection_explanation" moz:removedIn="114" tools:ignore="UnusedResources">Зберігайте свої дані при собі. %s захищає вас від численних найпоширеніших елементів стеження, що переслідують вас в мережі.</string>
     <!-- Description of enhanced tracking protection. The parameter is the name of the application (For example: Firefox Fenix) -->
     <string name="preference_enhanced_tracking_protection_explanation_2">%s захищає вас від численних найпоширеніших елементів стеження, що переслідують вас в мережі.</string>
     <!-- Text displayed that links to website about enhanced tracking protection -->
@@ -1520,15 +1544,11 @@
     <!-- Preference for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_standard_default_1">Стандартний (типово)</string>
     <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description_4" moz:removedIn="114" tools:ignore="UnusedResources">Баланс приватності та швидкодії. Сторінки завантажуються нормально.</string>
-    <!-- Preference description for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_standard_description_5">Нормальне завантаження сторінок за меншого блокування елементів стеження.</string>
     <!--  Accessibility text for the Standard protection information icon  -->
     <string name="preference_enhanced_tracking_protection_standard_info_button">Що блокується стандартним рівнем захисту від стеження</string>
     <!-- Preference for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict">Надійний</string>
-    <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_description_3" moz:removedIn="114" tools:ignore="UnusedResources">Блокує більше стеження, тому сторінки завантажуються швидше, однак можливі порушення їх роботи.</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict_description_4">Кращий захист від стеження і швидкодія, але деякі сайти можуть працювати неправильно.</string>
     <!--  Accessibility text for the Strict protection information icon  -->
@@ -1638,8 +1658,8 @@
 
     <!-- Toast shown to the user when they are activating the secret dev menu
         The first parameter is number of long clicks left to enable the menu -->
-    <string name="about_debug_menu_toast_progress">Меню зневадження: %1$d лівих кліки для увімкнення</string>
-    <string name="about_debug_menu_toast_done">Меню зневадження увімкнено</string>
+    <string name="about_debug_menu_toast_progress">Натискань до увімкнення меню налагодження: %1$d</string>
+    <string name="about_debug_menu_toast_done">Меню налагодження увімкнено</string>
 
     <!-- Browser long press popup menu -->
     <!-- Copy the current url -->
@@ -1888,6 +1908,8 @@
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Додати засіб пошуку</string>
+    <!-- Content description (not visible, for screen readers etc.): Title for the button that navigates to add new engine screen -->
+    <string name="search_engine_add_custom_search_engine_button_content_description">Додати новий засіб пошуку</string>
     <!-- Title of the Edit search engine screen -->
     <string name="search_engine_edit_custom_search_engine_title">Змінити засіб пошуку</string>
     <!-- Content description (not visible, for screen readers etc.): Title for the button to add a search engine in the action bar -->
@@ -1901,15 +1923,34 @@
 
     <!-- Text for the button to create a custom search engine on the Add search engine screen -->
     <string name="search_add_custom_engine_label_other">Інший</string>
+    <!-- Label for the TextField in which user enters custom search engine name -->
+    <string name="search_add_custom_engine_name_label">Назва</string>
     <!-- Placeholder text shown in the Search Engine Name TextField before a user enters text -->
     <string name="search_add_custom_engine_name_hint">Назва</string>
+    <!-- Placeholder text shown in the Search Engine Name text field before a user enters text -->
+    <string name="search_add_custom_engine_name_hint_2">Назва засобу пошуку</string>
+    <!-- Label for the TextField in which user enters custom search engine URL -->
+    <string name="search_add_custom_engine_url_label">URL рядка пошуку</string>
     <!-- Placeholder text shown in the Search String TextField before a user enters text -->
     <string name="search_add_custom_engine_search_string_hint">Запит для пошуку</string>
+    <!-- Placeholder text shown in the Search String TextField before a user enters text -->
+    <string name="search_add_custom_engine_search_string_hint_2">URL для пошуку</string>
     <!-- Description text for the Search String TextField. The %s is part of the string -->
     <string name="search_add_custom_engine_search_string_example" formatted="false">Змініть запит на “%s”. Зразок:\nhttps://www.google.com/search?q=%s</string>
 
     <!-- Accessibility description for the form in which details about the custom search engine are entered -->
     <string name="search_add_custom_engine_form_description">Подробиці власного засобу пошуку</string>
+
+    <!-- Label for the TextField in which user enters custom search engine suggestion URL -->
+    <string name="search_add_custom_engine_suggest_url_label">API пошукових пропозицій (необов’язково)</string>
+    <!-- Placeholder text shown in the Search Suggestion String TextField before a user enters text -->
+    <string name="search_add_custom_engine_suggest_string_hint">URL-адреса API пошукових пропозицій</string>
+    <!-- Description text for the Search Suggestion String TextField. The %s is part of the string -->
+    <string name="search_add_custom_engine_suggest_string_example" formatted="false" moz:RemovedIn="118" tools:ignore="UnusedResources">Замініть запит на “%s”. Наприклад:\nhttp://suggestqueries.google.com/complete/search?client=firefox&amp;q=%s</string>
+    <!-- Description text for the Search Suggestion String TextField. The %s is part of the string -->
+    <string name="search_add_custom_engine_suggest_string_example_2" formatted="false">Замініть запит на “%s”. Наприклад:\nhttps://suggestqueries.google.com/complete/search?client=firefox&amp;q=%s</string>
+    <!-- The text for the "Save" button for saving a custom search engine -->
+    <string name="search_custom_engine_save_button">Зберегти</string>
 
     <!-- Text shown when a user leaves the name field empty -->
     <string name="search_add_custom_engine_error_empty_name">Введіть назву засобу пошуку</string>

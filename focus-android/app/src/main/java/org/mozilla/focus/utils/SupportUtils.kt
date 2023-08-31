@@ -1,5 +1,4 @@
-/* -*- Mode: Java; c-basic-offset: 4; tab-width: 4; indent-tabs-mode: nil; -*-
- * This Source Code Form is subject to the terms of the Mozilla Public
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -48,8 +47,6 @@ object SupportUtils {
         AUTOCOMPLETE("autofill-domain-android"),
         TRACKERS("trackers"),
         USAGE_DATA("usage-data"),
-        WHATS_NEW_FOCUS("whats-new-firefox-focus-android"),
-        WHATS_NEW_KLAR("whats-new-firefox-klar-android"),
         SEARCH_SUGGESTIONS("search-suggestions-focus-android"),
         ALLOWLIST("focus-android-allowlist"),
         STUDIES("how-opt-out-studies-firefox-focus-android"),

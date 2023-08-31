@@ -40,7 +40,6 @@ dependencies {
 
     // Observable is part of public API of the FxaAccountManager.
     api project(':support-base')
-    implementation project(':support-sync-telemetry')
     implementation project(':support-ktx')
     implementation project(':support-utils')
     implementation project(':lib-dataprotect')
@@ -57,7 +56,6 @@ dependencies {
     testImplementation ComponentsDependencies.androidx_test_junit
     testImplementation ComponentsDependencies.androidx_work_testing
     testImplementation ComponentsDependencies.testing_robolectric
-    testImplementation ComponentsDependencies.testing_mockito
     testImplementation ComponentsDependencies.testing_coroutines
 
     testImplementation ComponentsDependencies.mozilla_full_megazord_forUnitTests

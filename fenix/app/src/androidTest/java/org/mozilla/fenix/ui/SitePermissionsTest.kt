@@ -20,6 +20,7 @@ import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
 import org.mozilla.fenix.helpers.MockLocationUpdatesRule
 import org.mozilla.fenix.helpers.RetryTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
@@ -27,6 +28,7 @@ import org.mozilla.fenix.helpers.TestHelper.appContext
 import org.mozilla.fenix.helpers.TestHelper.assertExternalAppOpens
 import org.mozilla.fenix.helpers.TestHelper.grantSystemPermission
 import org.mozilla.fenix.ui.robots.browserScreen
+import org.mozilla.fenix.ui.robots.clickPageObject
 import org.mozilla.fenix.ui.robots.navigationToolbar
 
 /**
@@ -284,6 +286,7 @@ class SitePermissionsTest {
         }
     }
 
+    @SmokeTest
     @Test
     fun allowLocationPermissionsTest() {
         mockLocationUpdatesRule.setMockLocation()
@@ -298,6 +301,7 @@ class SitePermissionsTest {
         }
     }
 
+    @SmokeTest
     @Test
     fun blockLocationPermissionsTest() {
         navigationToolbar {
@@ -316,7 +320,7 @@ class SitePermissionsTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(testPage.url) {
-            clickUploadButton()
+            clickPageObject(itemWithResId("upload_file"))
             grantSystemPermission()
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 assertExternalAppOpens("com.google.android.documentsui")

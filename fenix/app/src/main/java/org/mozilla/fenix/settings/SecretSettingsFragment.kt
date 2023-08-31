@@ -53,8 +53,20 @@ class SecretSettingsFragment : PreferenceFragmentCompat() {
         }
 
         requirePreference<SwitchPreference>(R.string.pref_key_enable_tabs_tray_to_compose).apply {
-            isVisible = Config.channel.isNightlyOrDebug
+            isVisible = true
             isChecked = context.settings().enableTabsTrayToCompose
+            onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
+
+        requirePreference<SwitchPreference>(R.string.pref_key_enable_compose_top_sites).apply {
+            isVisible = Config.channel.isNightlyOrDebug
+            isChecked = context.settings().enableComposeTopSites
+            onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
+
+        requirePreference<SwitchPreference>(R.string.pref_key_enable_shopping_experience).apply {
+            isVisible = Config.channel.isNightlyOrDebug
+            isChecked = context.settings().enableShoppingExperience
             onPreferenceChangeListener = SharedPreferenceUpdater()
         }
 

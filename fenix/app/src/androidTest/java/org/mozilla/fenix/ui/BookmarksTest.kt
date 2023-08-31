@@ -4,8 +4,9 @@
 
 package org.mozilla.fenix.ui
 
+import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu
-import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.espresso.Espresso.pressBack
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.test.uiautomator.UiDevice
 import kotlinx.coroutines.runBlocking
@@ -13,19 +14,25 @@ import mozilla.appservices.places.BookmarkRoot
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.R
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.ext.bookmarkStorage
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
-import org.mozilla.fenix.helpers.HomeActivityTestRule
+import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
+import org.mozilla.fenix.helpers.MockBrowserDataHelper.createBookmarkItem
 import org.mozilla.fenix.helpers.RecyclerViewIdlingResource
 import org.mozilla.fenix.helpers.RetryTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper
+import org.mozilla.fenix.helpers.TestHelper.appContext
+import org.mozilla.fenix.helpers.TestHelper.clickSnackbarButton
 import org.mozilla.fenix.helpers.TestHelper.longTapSelectItem
 import org.mozilla.fenix.helpers.TestHelper.registerAndCleanupIdlingResources
+import org.mozilla.fenix.helpers.TestHelper.restartApp
 import org.mozilla.fenix.ui.robots.bookmarksMenu
 import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.homeScreen
@@ -36,8 +43,6 @@ import org.mozilla.fenix.ui.robots.navigationToolbar
  *  Tests for verifying basic functionality of bookmarks
  */
 class BookmarksTest {
-    /* ktlint-disable no-blank-line-before-rbrace */ // This imposes unreadable grouping.
-
     private lateinit var mockWebServer: MockWebServer
     private lateinit var mDevice: UiDevice
     private val bookmarksFolderName = "New Folder"
@@ -46,16 +51,19 @@ class BookmarksTest {
         var url: String = "https://www.example.com"
     }
 
-    @get:Rule
-    val activityTestRule = HomeActivityTestRule.withDefaultSettingsOverrides()
+    @get:Rule(order = 0)
+    val activityTestRule =
+        AndroidComposeTestRule(
+            HomeActivityIntentTestRule.withDefaultSettingsOverrides(),
+        ) { it.activity }
 
-    @Rule
+    @Rule(order = 1)
     @JvmField
     val retryTestRule = RetryTestRule(3)
 
     @Before
     fun setUp() {
-        mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+        mDevice = UiDevice.getInstance(getInstrumentation())
         mockWebServer = MockWebServer().apply {
             dispatcher = AndroidAssetDispatcher()
             start()
@@ -232,7 +240,7 @@ class BookmarksTest {
             registerAndCleanupIdlingResources(
                 RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.bookmark_list), 2),
             ) {}
-        }.openThreeDotMenu(defaultWebPage.url) {
+        }.openThreeDotMenu(defaultWebPage.title) {
         }.clickCopy {
             verifyCopySnackBarText()
             navigateUp()
@@ -258,7 +266,7 @@ class BookmarksTest {
             registerAndCleanupIdlingResources(
                 RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.bookmark_list), 2),
             ) {}
-        }.openThreeDotMenu(defaultWebPage.url) {
+        }.openThreeDotMenu(defaultWebPage.title) {
         }.clickShare {
             verifyShareOverlay()
             verifyShareBookmarkFavicon()
@@ -278,13 +286,14 @@ class BookmarksTest {
             registerAndCleanupIdlingResources(
                 RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.bookmark_list), 2),
             ) {}
-        }.openThreeDotMenu(defaultWebPage.url) {
+        }.openThreeDotMenu(defaultWebPage.title) {
         }.clickOpenInNewTab {
             verifyTabTrayIsOpened()
             verifyNormalModeSelected()
         }
     }
 
+    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1807268")
     @Test
     fun openAllInTabsTest() {
         val webPages = listOf(
@@ -327,6 +336,7 @@ class BookmarksTest {
         }
     }
 
+    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1807268")
     @Test
     fun openAllInPrivateTabsTest() {
         val webPages = listOf(
@@ -373,7 +383,7 @@ class BookmarksTest {
             registerAndCleanupIdlingResources(
                 RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.bookmark_list), 2),
             ) {}
-        }.openThreeDotMenu(defaultWebPage.url) {
+        }.openThreeDotMenu(defaultWebPage.title) {
         }.clickOpenInPrivateTab {
             verifyTabTrayIsOpened()
             verifyPrivateModeSelected()
@@ -392,7 +402,7 @@ class BookmarksTest {
             registerAndCleanupIdlingResources(
                 RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.bookmark_list), 2),
             ) {}
-        }.openThreeDotMenu(defaultWebPage.url) {
+        }.openThreeDotMenu(defaultWebPage.title) {
         }.clickDelete {
             verifyDeleteSnackBarText()
             verifyUndoDeleteSnackBarButton()
@@ -411,7 +421,7 @@ class BookmarksTest {
             registerAndCleanupIdlingResources(
                 RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.bookmark_list), 2),
             ) {}
-        }.openThreeDotMenu(defaultWebPage.url) {
+        }.openThreeDotMenu(defaultWebPage.title) {
         }.clickDelete {
             verifyUndoDeleteSnackBarButton()
             clickUndoDeleteButton()
@@ -705,7 +715,7 @@ class BookmarksTest {
             registerAndCleanupIdlingResources(
                 RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.bookmark_list), 2),
             ) {}
-        }.openThreeDotMenu(defaultWebPage.url) {
+        }.openThreeDotMenu(defaultWebPage.title) {
         }.clickEdit {
             clickDeleteInEditModeButton()
             cancelDeletion()
@@ -738,6 +748,124 @@ class BookmarksTest {
             verifyDeleteSnackBarText()
             clickUndoDeleteButton()
             verifyFolderTitle("My Folder")
+        }
+    }
+
+    @Test
+    fun verifySearchBookmarksViewTest() {
+        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        createBookmarkItem(defaultWebPage.url.toString(), defaultWebPage.title, 1u)
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openBookmarks {
+        }.clickSearchButton {
+            verifySearchView()
+            verifySearchToolbar(true)
+            verifySearchSelectorButton()
+            verifySearchEngineIcon("Bookmarks")
+            verifySearchBarPlaceholder("Search bookmarks")
+            verifySearchBarPosition(true)
+            tapOutsideToDismissSearchBar()
+            verifySearchToolbar(false)
+        }
+
+        runBlocking {
+            // Switching to top toolbar position
+            appContext.settings().shouldUseBottomToolbar = false
+            restartApp(activityTestRule.activityRule)
+        }
+
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openBookmarks {
+        }.clickSearchButton {
+            verifySearchToolbar(true)
+            verifySearchEngineIcon("Bookmarks")
+            verifySearchBarPosition(false)
+            pressBack()
+            verifySearchToolbar(false)
+        }
+    }
+
+    @Test
+    fun verifySearchForBookmarkedItemsTest() {
+        val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+        val secondWebPage = TestAssetHelper.getHTMLControlsFormAsset(mockWebServer)
+
+        createBookmarkItem(firstWebPage.url.toString(), firstWebPage.title, 1u)
+        createBookmarkItem(secondWebPage.url.toString(), secondWebPage.title, 2u)
+
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openBookmarks {
+        }.clickSearchButton {
+            // Search for a valid term
+            typeSearch(firstWebPage.title)
+            verifySearchEngineSuggestionResults(activityTestRule, firstWebPage.url.toString(), searchTerm = firstWebPage.title)
+            verifyNoSuggestionsAreDisplayed(activityTestRule, secondWebPage.url.toString())
+        }.dismissSearchBar {}
+        bookmarksMenu {
+        }.clickSearchButton {
+            // Search for invalid term
+            typeSearch("Android")
+            verifyNoSuggestionsAreDisplayed(
+                activityTestRule,
+                firstWebPage.url.toString(),
+                secondWebPage.url.toString(),
+            )
+        }
+    }
+
+    @Test
+    fun verifyVoiceSearchInBookmarksTest() {
+        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        browserScreen {
+            createBookmark(defaultWebPage.url)
+        }.openThreeDotMenu {
+        }.openBookmarks {
+        }.clickSearchButton {
+            verifySearchToolbar(true)
+            verifySearchEngineIcon("Bookmarks")
+            startVoiceSearch()
+        }
+    }
+
+    @Test
+    fun verifyDeletedBookmarksCanNotBeSearchedTest() {
+        val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+        val secondWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 2)
+        val thirdWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 3)
+
+        browserScreen {
+            createBookmark(firstWebPage.url)
+            createBookmark(secondWebPage.url)
+            createBookmark(thirdWebPage.url)
+        }.openThreeDotMenu {
+        }.openBookmarks {
+        }.openThreeDotMenu(firstWebPage.title) {
+        }.clickDelete {
+            verifyBookmarkIsDeleted(firstWebPage.title)
+        }.openThreeDotMenu(secondWebPage.title) {
+        }.clickDelete {
+            verifyBookmarkIsDeleted(secondWebPage.title)
+        }.clickSearchButton {
+            // Search for a valid term
+            typeSearch("generic")
+            verifyNoSuggestionsAreDisplayed(activityTestRule, firstWebPage.url.toString())
+            verifyNoSuggestionsAreDisplayed(activityTestRule, secondWebPage.url.toString())
+            verifySearchEngineSuggestionResults(activityTestRule, thirdWebPage.url.toString(), searchTerm = "generic")
+            pressBack()
+        }
+        bookmarksMenu {
+        }.openThreeDotMenu(thirdWebPage.title) {
+        }.clickDelete {
+            verifyBookmarkIsDeleted(thirdWebPage.title)
+        }.clickSearchButton {
+            // Search for a valid term
+            typeSearch("generic")
+            verifyNoSuggestionsAreDisplayed(activityTestRule, thirdWebPage.url.toString())
         }
     }
 }

@@ -28,6 +28,7 @@ import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.service.nimbus.messaging.Message
 import mozilla.components.support.ktx.android.view.showKeyboard
+import mozilla.components.ui.widgets.withCenterAlignedButtons
 import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.GleanMetrics.Collections
@@ -130,6 +131,11 @@ interface SessionControlController {
     fun handleSponsorPrivacyClicked()
 
     /**
+     * @see [TopSiteInteractor.onTopSiteLongClicked]
+     */
+    fun handleTopSiteLongClicked(topSite: TopSite)
+
+    /**
      * @see [CollectionInteractor.onToggleCollectionExpanded]
      */
     fun handleToggleCollectionExpanded(collection: TabCollection, expand: Boolean)
@@ -187,6 +193,7 @@ class DefaultSessionControlController(
     private val viewLifecycleScope: CoroutineScope,
     private val registerCollectionStorageObserver: () -> Unit,
     private val removeCollectionWithUndo: (tabCollection: TabCollection) -> Unit,
+    private val showUndoSnackbarForTopSite: (topSite: TopSite) -> Unit,
     private val showTabTray: () -> Unit,
 ) : SessionControlController {
 
@@ -306,7 +313,7 @@ class DefaultSessionControlController(
                 setNegativeButton(R.string.top_sites_rename_dialog_cancel) { dialog, _ ->
                     dialog.cancel()
                 }
-            }.show().also {
+            }.show().withCenterAlignedButtons().also {
                 topSiteLabelEditText.setSelection(0, topSiteLabelEditText.text.length)
                 topSiteLabelEditText.showKeyboard()
             }
@@ -326,6 +333,8 @@ class DefaultSessionControlController(
                 removeTopSites(topSite)
             }
         }
+
+        showUndoSnackbarForTopSite(topSite)
     }
 
     override fun handleRenameCollectionTapped(collection: TabCollection) {
@@ -337,8 +346,6 @@ class DefaultSessionControlController(
     }
 
     override fun handleSelectTopSite(topSite: TopSite, position: Int) {
-        TopSites.openInNewTab.record(NoExtras())
-
         when (topSite) {
             is TopSite.Default -> TopSites.openDefault.record(NoExtras())
             is TopSite.Frecent -> TopSites.openFrecency.record(NoExtras())
@@ -367,16 +374,30 @@ class DefaultSessionControlController(
             )
         }
 
-        val tabId = addTabUseCase.invoke(
-            url = appendSearchAttributionToUrlIfNeeded(topSite.url),
-            selectTab = true,
-            startLoading = true,
-        )
+        val existingTabForUrl = when (topSite) {
+            is TopSite.Frecent, is TopSite.Pinned -> {
+                store.state.tabs.firstOrNull { topSite.url == it.content.url }
+            }
 
-        if (settings.openNextTabInDesktopMode) {
-            activity.handleRequestDesktopMode(tabId)
+            else -> null
         }
-        activity.openToBrowser(BrowserDirection.FromHome)
+
+        if (existingTabForUrl == null) {
+            TopSites.openInNewTab.record(NoExtras())
+
+            val tabId = addTabUseCase.invoke(
+                url = appendSearchAttributionToUrlIfNeeded(topSite.url),
+                selectTab = true,
+                startLoading = true,
+            )
+
+            if (settings.openNextTabInDesktopMode) {
+                activity.handleRequestDesktopMode(tabId)
+            }
+        } else {
+            selectTabUseCase.invoke(existingTabForUrl.id)
+        }
+        navController.navigate(R.id.browserFragment)
     }
 
     @VisibleForTesting
@@ -409,6 +430,10 @@ class DefaultSessionControlController(
             newTab = true,
             from = BrowserDirection.FromHome,
         )
+    }
+
+    override fun handleTopSiteLongClicked(topSite: TopSite) {
+        TopSites.longPress.record(TopSites.LongPressExtra(topSite.type))
     }
 
     @VisibleForTesting

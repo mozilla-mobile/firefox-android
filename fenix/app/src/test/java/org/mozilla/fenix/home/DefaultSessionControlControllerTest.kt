@@ -442,7 +442,7 @@ class DefaultSessionControlControllerTest {
                 startLoading = true,
             )
         }
-        verify { activity.openToBrowser(BrowserDirection.FromHome) }
+        verify { navController.navigate(R.id.browserFragment) }
     }
 
     @Test
@@ -470,7 +470,176 @@ class DefaultSessionControlControllerTest {
                 startLoading = true,
             )
         }
-        verify { activity.openToBrowser(BrowserDirection.FromHome) }
+        verify { navController.navigate(R.id.browserFragment) }
+    }
+
+    @Test
+    fun `GIVEN existing tab for url WHEN Default TopSite selected THEN open new tab`() {
+        val url = "mozilla.org"
+        val existingTabForUrl = createTab(url = url)
+
+        store = BrowserStore(
+            BrowserState(
+                tabs = listOf(existingTabForUrl),
+                search = SearchState(
+                    regionSearchEngines = listOf(searchEngine),
+                ),
+            ),
+        )
+
+        val topSite = TopSite.Default(
+            id = 1L,
+            title = "Mozilla",
+            url = url,
+            createdAt = 0,
+        )
+        val controller = spyk(createController())
+
+        every { controller.getAvailableSearchEngines() } returns listOf(searchEngine)
+
+        controller.handleSelectTopSite(topSite, position = 0)
+
+        assertNotNull(TopSites.openInNewTab.testGetValue())
+        assertEquals(1, TopSites.openInNewTab.testGetValue()!!.size)
+        assertNull(TopSites.openInNewTab.testGetValue()!!.single().extra)
+
+        assertNotNull(TopSites.openDefault.testGetValue())
+        assertEquals(1, TopSites.openDefault.testGetValue()!!.size)
+        assertNull(TopSites.openDefault.testGetValue()!!.single().extra)
+
+        verify {
+            tabsUseCases.addTab.invoke(
+                url = topSite.url,
+                selectTab = true,
+                startLoading = true,
+            )
+        }
+        verify { navController.navigate(R.id.browserFragment) }
+    }
+
+    @Test
+    fun `GIVEN existing tab for url WHEN Provided TopSite selected THEN open new tab`() {
+        val url = "mozilla.org"
+        val existingTabForUrl = createTab(url = url)
+
+        store = BrowserStore(
+            BrowserState(
+                tabs = listOf(existingTabForUrl),
+                search = SearchState(
+                    regionSearchEngines = listOf(searchEngine),
+                ),
+            ),
+        )
+
+        val topSite = TopSite.Provided(
+            id = 1L,
+            title = "Mozilla",
+            url = url,
+            clickUrl = "",
+            imageUrl = "",
+            impressionUrl = "",
+            createdAt = 0,
+        )
+        val position = 0
+        val controller = spyk(createController())
+
+        every { controller.getAvailableSearchEngines() } returns listOf(searchEngine)
+
+        controller.handleSelectTopSite(topSite, position)
+
+        assertNotNull(TopSites.openInNewTab.testGetValue())
+        assertEquals(1, TopSites.openInNewTab.testGetValue()!!.size)
+        assertNull(TopSites.openInNewTab.testGetValue()!!.single().extra)
+
+        assertNotNull(TopSites.openContileTopSite.testGetValue())
+        assertEquals(1, TopSites.openContileTopSite.testGetValue()!!.size)
+        assertNull(TopSites.openContileTopSite.testGetValue()!!.single().extra)
+
+        verify {
+            tabsUseCases.addTab.invoke(
+                url = topSite.url,
+                selectTab = true,
+                startLoading = true,
+            )
+        }
+        verify { controller.submitTopSitesImpressionPing(topSite, position) }
+        verify { navController.navigate(R.id.browserFragment) }
+    }
+
+    @Test
+    fun `GIVEN existing tab for url WHEN Frecent TopSite selected THEN navigate to tab`() {
+        val url = "mozilla.org"
+        val existingTabForUrl = createTab(url = url)
+
+        store = BrowserStore(
+            BrowserState(
+                tabs = listOf(existingTabForUrl),
+                search = SearchState(
+                    regionSearchEngines = listOf(searchEngine),
+                ),
+            ),
+        )
+
+        val topSite = TopSite.Frecent(
+            id = 1L,
+            title = "Mozilla",
+            url = url,
+            createdAt = 0,
+        )
+        val controller = spyk(createController())
+
+        every { controller.getAvailableSearchEngines() } returns listOf(searchEngine)
+
+        controller.handleSelectTopSite(topSite, position = 0)
+
+        assertNull(TopSites.openInNewTab.testGetValue())
+
+        assertNotNull(TopSites.openFrecency.testGetValue())
+        assertEquals(1, TopSites.openFrecency.testGetValue()!!.size)
+        assertNull(TopSites.openFrecency.testGetValue()!!.single().extra)
+
+        verify {
+            selectTabUseCase.invoke(existingTabForUrl.id)
+            navController.navigate(R.id.browserFragment)
+        }
+    }
+
+    @Test
+    fun `GIVEN existing tab for url WHEN Pinned TopSite selected THEN navigate to tab`() {
+        val url = "mozilla.org"
+        val existingTabForUrl = createTab(url = url)
+
+        store = BrowserStore(
+            BrowserState(
+                tabs = listOf(existingTabForUrl),
+                search = SearchState(
+                    regionSearchEngines = listOf(searchEngine),
+                ),
+            ),
+        )
+
+        val topSite = TopSite.Pinned(
+            id = 1L,
+            title = "Mozilla",
+            url = url,
+            createdAt = 0,
+        )
+        val controller = spyk(createController())
+
+        every { controller.getAvailableSearchEngines() } returns listOf(searchEngine)
+
+        controller.handleSelectTopSite(topSite, position = 0)
+
+        assertNull(TopSites.openInNewTab.testGetValue())
+
+        assertNotNull(TopSites.openPinned.testGetValue())
+        assertEquals(1, TopSites.openPinned.testGetValue()!!.size)
+        assertNull(TopSites.openPinned.testGetValue()!!.single().extra)
+
+        verify {
+            selectTabUseCase.invoke(existingTabForUrl.id)
+            navController.navigate(R.id.browserFragment)
+        }
     }
 
     @Test
@@ -508,7 +677,7 @@ class DefaultSessionControlControllerTest {
                 startLoading = true,
             )
         }
-        verify { activity.openToBrowser(BrowserDirection.FromHome) }
+        verify { navController.navigate(R.id.browserFragment) }
     }
 
     @Test
@@ -546,7 +715,7 @@ class DefaultSessionControlControllerTest {
                 startLoading = true,
             )
         }
-        verify { activity.openToBrowser(BrowserDirection.FromHome) }
+        verify { navController.navigate(R.id.browserFragment) }
     }
 
     @Test
@@ -596,7 +765,10 @@ class DefaultSessionControlControllerTest {
         )
         val controller = spyk(createController())
 
-        every { controller.getAvailableSearchEngines() } returns listOf(googleSearchEngine, duckDuckGoSearchEngine)
+        every { controller.getAvailableSearchEngines() } returns listOf(
+            googleSearchEngine,
+            duckDuckGoSearchEngine,
+        )
 
         try {
             mockkStatic("mozilla.components.browser.state.state.SearchStateKt")
@@ -646,7 +818,7 @@ class DefaultSessionControlControllerTest {
                 startLoading = true,
             )
         }
-        verify { activity.openToBrowser(BrowserDirection.FromHome) }
+        verify { navController.navigate(R.id.browserFragment) }
     }
 
     @Test
@@ -684,7 +856,7 @@ class DefaultSessionControlControllerTest {
                 startLoading = true,
             )
         }
-        verify { activity.openToBrowser(BrowserDirection.FromHome) }
+        verify { navController.navigate(R.id.browserFragment) }
     }
 
     @Test
@@ -722,7 +894,7 @@ class DefaultSessionControlControllerTest {
                 startLoading = true,
             )
         }
-        verify { activity.openToBrowser(BrowserDirection.FromHome) }
+        verify { navController.navigate(R.id.browserFragment) }
     }
 
     @Test
@@ -760,7 +932,7 @@ class DefaultSessionControlControllerTest {
                 startLoading = true,
             )
         }
-        verify { activity.openToBrowser(BrowserDirection.FromHome) }
+        verify { navController.navigate(R.id.browserFragment) }
     }
 
     @Test
@@ -797,7 +969,7 @@ class DefaultSessionControlControllerTest {
             )
         }
         verify { controller.submitTopSitesImpressionPing(topSite, position) }
-        verify { activity.openToBrowser(BrowserDirection.FromHome) }
+        verify { navController.navigate(R.id.browserFragment) }
     }
 
     @Test
@@ -865,6 +1037,28 @@ class DefaultSessionControlControllerTest {
         assertNotNull(TopSites.remove.testGetValue())
         assertEquals(1, TopSites.remove.testGetValue()!!.size)
         assertNull(TopSites.remove.testGetValue()!!.single().extra)
+    }
+
+    @Test
+    fun `WHEN top site is removed THEN the undo snackbar is called`() {
+        val mozillaTopSite = TopSite.Default(
+            id = 1L,
+            title = "Mozilla",
+            url = "https://mozilla.org",
+            null,
+        )
+        var undoSnackbarCalled = false
+        var undoSnackbarShownFor = "TopSiteName"
+
+        createController(
+            showUndoSnackbarForTopSite = { topSite ->
+                undoSnackbarCalled = true
+                undoSnackbarShownFor = topSite.title.toString()
+            },
+        ).handleRemoveTopSiteClicked(mozillaTopSite)
+
+        assertEquals(true, undoSnackbarCalled)
+        assertEquals("Mozilla", undoSnackbarShownFor)
     }
 
     @Test
@@ -1052,6 +1246,25 @@ class DefaultSessionControlControllerTest {
     }
 
     @Test
+    fun `WHEN top site long clicked is called THEN report the top site long click telemetry`() {
+        assertNull(TopSites.longPress.testGetValue())
+
+        val topSite = TopSite.Provided(
+            id = 1L,
+            title = "Mozilla",
+            url = "mozilla.org",
+            clickUrl = "",
+            imageUrl = "",
+            impressionUrl = "",
+            createdAt = 0,
+        )
+
+        createController().handleTopSiteLongClicked(topSite)
+
+        assertEquals(topSite.type, TopSites.longPress.testGetValue()!!.single().extra!!["type"])
+    }
+
+    @Test
     fun `WHEN handleOpenInPrivateTabClicked is called with a TopSite#Provided site THEN Event#TopSiteOpenContileInPrivateTab is reported`() {
         val topSite = TopSite.Provided(
             id = 1L,
@@ -1123,6 +1336,7 @@ class DefaultSessionControlControllerTest {
         registerCollectionStorageObserver: () -> Unit = { },
         showTabTray: () -> Unit = { },
         removeCollectionWithUndo: (tabCollection: TabCollection) -> Unit = { },
+        showUndoSnackbarForTopSite: (topSite: TopSite) -> Unit = { },
     ): DefaultSessionControlController {
         return DefaultSessionControlController(
             activity = activity,
@@ -1140,6 +1354,7 @@ class DefaultSessionControlControllerTest {
             viewLifecycleScope = scope,
             registerCollectionStorageObserver = registerCollectionStorageObserver,
             removeCollectionWithUndo = removeCollectionWithUndo,
+            showUndoSnackbarForTopSite = showUndoSnackbarForTopSite,
             showTabTray = showTabTray,
         )
     }

@@ -126,6 +126,9 @@
     <!-- Shortcut action to open new private tab -->
     <string name="home_screen_shortcut_open_new_private_tab_2">نویں نجی ٹیب</string>
 
+    <!-- Shortcut action to open Passwords screens -->
+    <string name="home_screen_shortcut_open_password_screen">پاسورڈ شارٹ کٹ</string>
+
     <!-- Recent Tabs -->
     <!-- Header text for jumping back into the recent tab in the home screen -->
     <string name="recent_tabs_header">واپس ون٘ڄو</string>
@@ -245,7 +248,7 @@
     <string name="search_suggestions_onboarding_title">نجی مجلساں وچ ڳولݨ تجویزاں دی اجازت ݙیووں؟</string>
     <!-- Search suggestion onboarding hint description text, first parameter is the name of the app defined in app_name (for example: Fenix)-->
     <string name="search_suggestions_onboarding_text">جہڑی شئے تساں پتہ بار وچ ٹائپ کریسو %s تہاݙے کیتے پہلوں مقرر ڳولݨ انجݨ نال شیئر کریسی۔</string>
-    <!-- Search engine suggestion title text. The first parameter is the name of teh suggested engine-->
+    <!-- Search engine suggestion title text. The first parameter is the name of the suggested engine-->
     <string name="search_engine_suggestions_title">%s ڳولو</string>
     <!-- Search engine suggestion description text -->
     <string name="search_engine_suggestions_description">پتہ پٹی نال براہ راست ڳولو</string>
@@ -254,6 +257,9 @@
 
     <!-- Header text for the search selector menu -->
     <string name="search_header_menu_item_2">ایں ویلے ایندے وچ ڳول:</string>
+
+    <!-- Content description (not visible, for screen readers etc.): Search engine icon. The first parameter is the search engine name (for example: DuckDuckGo). -->
+    <string name="search_engine_icon_content_description" tools:ignore="UnusedResources">%s ڳولݨ انجݨ</string>
 
     <!-- Home onboarding -->
     <!-- Onboarding home screen popup dialog, shown on top of the Jump back in section. -->
@@ -291,26 +297,51 @@
     <!-- Text for the button to not request notification permission on the device and dismiss the dialog -->
     <string name="onboarding_home_enable_notifications_negative_button">ہݨ کائناں</string>
 
+    <!-- Juno first user onboarding flow experiment, strings are marked unused as they are only referenced by Nimbus experiments. -->
+    <!-- Title for set firefox as default browser screen.
+        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
+    <string name="juno_onboarding_default_browser_title" moz:RemovedIn="117" tools:ignore="UnusedResources">%s کوں آپݨاں ون٘ڄݨ آلا براؤزر بݨاؤ</string>
+    <!-- Title for set firefox as default browser screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_default_browser_title_nimbus" tools:ignore="UnusedResources">فائرفوکس کوں آپݨاں ون٘ڄݨ آلا براؤزر بݨاؤ</string>
+    <!-- Description for set firefox as default browser screen.
+        The first parameter is the Firefox brand name.
+        The second parameter is the string with key "juno_onboarding_default_browser_description_link_text". -->
+    <string name="juno_onboarding_default_browser_description" moz:RemovedIn="117" tools:ignore="UnusedResources">%1$s لوکاں کوں منافع  کنوں ودھ رکھیندا ہے تے  کراس سائٹ ٹریکراں کوں بلاک کر تے تہاݙی رازداری دا دفاع کریند ہے۔\n\nساݙے %2$s وچ ٻیا ڄاݨو۔</string>
+    <!-- Description for set firefox as default browser screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_default_browser_description_nimbus" tools:ignore="UnusedResources">فائرفوکس لوکاں کوں منافع  کنوں ودھ رکھیندا ہے تے  کراس سائٹ ٹریکراں کوں بلاک کر تے تہاݙی رازداری دا دفاع کریند ہے۔\n\nساݙے رازداری نوٹس وچ ٻیا ڄاݨو۔</string>
     <!-- Text for the link to the privacy notice webpage for set as firefox default browser screen.
     This is part of the string with the key "juno_onboarding_default_browser_description". -->
-    <string name="juno_onboarding_default_browser_description_link_text">رازداری نوٹس</string>
+    <string name="juno_onboarding_default_browser_description_link_text" tools:ignore="UnusedResources">رازداری نوٹس</string>
     <!-- Text for the button to set firefox as default browser on the device -->
-    <string name="juno_onboarding_default_browser_positive_button">پہلوں مقرر براؤز تے طور تے سیٹ کرو</string>
+    <string name="juno_onboarding_default_browser_positive_button" tools:ignore="UnusedResources">پہلوں مقرر براؤز تے طور تے سیٹ کرو</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
-    <string name="juno_onboarding_default_browser_negative_button">ہݨ کائناں</string>
+    <string name="juno_onboarding_default_browser_negative_button" tools:ignore="UnusedResources">ہݨ کائناں</string>
     <!-- Title for sign in to sync screen. -->
-    <string name="juno_onboarding_sign_in_title">فون سیٹ کنوں لیپ ٹاپ تے ہاپ کرو تے ولدا واپس وی</string>
+    <string name="juno_onboarding_sign_in_title" tools:ignore="UnusedResources">فون سیٹ کنوں لیپ ٹاپ تے ہاپ کرو تے ولدا واپس وی</string>
+    <!-- Description for sign in to sync screen. -->
+    <string name="juno_onboarding_sign_in_description" tools:ignore="UnusedResources">تساں آپݨیاں ٻیاں ݙیوائساں نال ٹیباں تے پاس ورڈ گھنو، جتھوں تساں چھوڑیا ہائی۔</string>
     <!-- Text for the button to sign in to sync on the device -->
-    <string name="juno_onboarding_sign_in_positive_button">سائن ان</string>
+    <string name="juno_onboarding_sign_in_positive_button" tools:ignore="UnusedResources">سائن ان</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
-    <string name="juno_onboarding_sign_in_negative_button">ہݨ کائناں</string>
+    <string name="juno_onboarding_sign_in_negative_button" tools:ignore="UnusedResources">ہݨ کائناں</string>
     <!-- Title for enable notification permission screen.
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="juno_onboarding_enable_notifications_title">اطلاع نامے %s نال ودھیک کرݨ وچ تہاݙی مدد کریندن۔</string>
+    <string name="juno_onboarding_enable_notifications_title" moz:RemovedIn="117" tools:ignore="UnusedResources">اطلاع نامے %s نال ودھیک کرݨ وچ تہاݙی مدد کریندن۔</string>
+    <!-- Title for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_enable_notifications_title_nimbus" tools:ignore="UnusedResources">اطلاع نامے فائرفوکس نال ودھیک کرݨ وچ تہاݙی مدد کریندن۔</string>
+    <!-- Description for enable notification permission screen.
+        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
+    <string name="juno_onboarding_enable_notifications_description" moz:RemovedIn="117" tools:ignore="UnusedResources">ڈیوائساں دے درمیان ٹیباں بھیڄو، ڈاؤن لوڈ منیج کرو، تے %s کنوں ودھ کنوں ودھ فائدہ چاوݨ کیتے گُر گھنو۔</string>
+    <!-- Description for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+       Note: The word "Firefox" should NOT be translated   -->
+    <string name="juno_onboarding_enable_notifications_description_nimbus" tools:ignore="UnusedResources">ڈیوائساں دے درمیان ٹیباں بھیڄو، ڈاؤن لوڈ منیج کرو، تے فائرفوکس کنوں ودھ کنوں ودھ فائدہ چاوݨ کیتے گُر گھنو۔</string>
     <!-- Text for the button to request notification permission on the device -->
-    <string name="juno_onboarding_enable_notifications_positive_button">اطلاع نامے چالو کرو</string>
+    <string name="juno_onboarding_enable_notifications_positive_button" tools:ignore="UnusedResources">اطلاع نامے چالو کرو</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
-    <string name="juno_onboarding_enable_notifications_negative_button">ہݨ کائناں</string>
+    <string name="juno_onboarding_enable_notifications_negative_button" tools:ignore="UnusedResources">ہݨ کائناں</string>
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. The first parameter is the name of the application.-->
@@ -330,6 +361,10 @@
     <string name="preferences_category_general">عمومی</string>
     <!-- Preference category for all links about Fenix -->
     <string name="preferences_category_about">تعارف</string>
+    <!-- Preference category for settings related to changing the default search engine -->
+    <string name="preferences_category_select_default_search_engine">ہک چݨو</string>
+    <!-- Preference for settings related to managing search shortcuts for the quick search menu -->
+    <string name="preferences_manage_search_shortcuts">ڳولݨ شارٹ کٹ منیج کرو</string>
     <!-- Preference for settings related to changing the default search engine -->
     <string name="preferences_default_search_engine">طےشدہ  ڳولݨ انجݨ</string>
     <!-- Preference for settings related to Search -->
@@ -379,16 +414,16 @@
     <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
     <string name="cookie_banner_handling_details_site_is_not_supported_cancel_button">منسوخ</string>
     <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
-    <string name="cookie_banner_handling_details_site_is_not_supported_request_support_button">سپورٹ کیتے ارداس کرو</string>
-    <!-- Text for title indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
-    <string name="cookie_banner_handling_details_site_is_not_supported_title">کوکی بینر گھٹاوݨ</string>
+    <string name="cookie_banner_handling_details_site_is_not_supported_request_support_button" moz:RemovedIn="115" tools:ignore="UnusedResources">سپورٹ کیتے ارداس کرو</string>
+    <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
+    <string name="cookie_banner_handling_details_site_is_not_supported_request_support_button_2">ارداس پٹھو</string>
     <!-- Label for the snackBar, after the user reports with success a website where cookie banner reducer did not work -->
-    <string name="cookie_banner_handling_report_site_snack_bar_text">سپورٹ سائٹ دی ارداس جمع کرا ݙتی ڳئی ہے۔</string>
+    <string name="cookie_banner_handling_report_site_snack_bar_text_2">ارداس بھیڄ ڈتی</string>
     <!-- Text for indicating cookie banner handling is on this site, this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_on_for_site">ایں سائٹ کیتے چالو کرو</string>
 
     <!-- Text for indicating that a request for unsupported site was sent to Nimbus (it's a Mozilla library for experiments), this is shown as part of the protections panel with the tracking protection toggle -->
-    <string name="reduce_cookie_banner_unsupported_site_request_submitted">سپورٹ سائٹ دی ارداس جمع کرا ݙتی ڳئی ہے</string>
+    <string name="reduce_cookie_banner_unsupported_site_request_submitted_2">سہارا ارداس بھیڄ ݙتی</string>
     <!-- Text for indicating cookie banner handling is currently not supported for this site, this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_unsupported_site">سائٹ فی الحال سہارا تھئی کائنی</string>
     <!-- Title text for a detail explanation indicating cookie banner handling is on this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
@@ -396,39 +431,19 @@
     <!-- Title text for a detail explanation indicating cookie banner handling is off this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
     <string name="reduce_cookie_banner_details_panel_title_off_for_site">%1$s کیتے کوکی بینر گھٹاوݨ بند کروں؟</string>
 
-    <!-- Title text for a detail explanation indicating cookie banner reducer didn't work for the current site, this is shown as part of the cookie banner panel in the toolbar.-->
-    <string name="reduce_cookie_banner_details_panel_title_unsupported_site_request">ایہ سائٹ کوکی بینر گھٹاوݨ ولوں حمایت یافتہ کائنی۔ بھلا تساں ساݙی ٹیم کوں ایں ویب سائٹ تے نظرثانی کرݨ تے مستقبل وچ سپورٹ شامل کرݨ پسند کریسو؟</string>
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
     <string name="reduce_cookie_banner_details_panel_description_off_for_site">%1$s ایں سائٹ دیاں کوکیاں صاف کریسی تے ورقہ تازہ کریسی۔ساریاں کوکیاں صاف کرݨ نال تساں سائن آوٹ تھی سڳدے ہو یا تہاݙی خریداری ریڑھی خالی تھی ویسی۔</string>
 
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
     <string name="reduce_cookie_banner_details_panel_description_on_for_site_2">%1$s آپݨے آپ سہارا تھیاں سائٹاں تے ساریاں کوکی ارداساں کوں مسترد کرݨ دی کوشش کریندا ہے۔</string>
-    <!-- Title text for the dialog use on the control branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_control_experiment_dialog_title" moz:RemovedIn="112" tools:ignore="UnusedResources">کوکی بینرز شروع تھی ڳئے!</string>
     <!-- Title text for the cookie banner re-engagement dialog. The first parameter is the application name. -->
     <string name="reduce_cookie_banner_dialog_title">بھلا %1$s کوں کوکی بینراں مسترد کرݨ دی اجازت ݙیوں؟</string>
-    <!-- Body text for the dialog use on the control branch of the experiment to determine which context users engaged the most.The first parameter is the application name -->
-    <string name="reduce_cookie_banner_control_experiment_dialog_body_2" moz:RemovedIn="112" tools:ignore="UnusedResources">ڄݙݨ ممکن ہووے تاں %1$s کوں کوکی اردساں آپݨے آپ مسترد کرݨ دی اجازت ݙیووں؟</string>
     <!-- Body text for the cookie banner re-engagement dialog use. The first parameter is the application name. -->
     <string name="reduce_cookie_banner_dialog_body">%1$s آپݨے آپ ٻہوں ساریاں کوکی بینر ارداساں مسترد کر سڳدے۔</string>
     <!-- Remind me later text button for the onboarding dialog -->
     <string name="reduce_cookie_banner_dialog_not_now_button">ہݨ نہ</string>
-    <!-- Change setting text button, for the dialog use on the control branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_control_experiment_dialog_change_setting_button" moz:RemovedIn="112" tools:ignore="UnusedResources">بینر فارغ کرو</string>
     <!-- Snack text for the cookie banner dialog, after user hit the dismiss banner button -->
     <string name="reduce_cookie_banner_dialog_snackbar_text">تساں ٻہوں تھوڑیاں کوکی ارداساں ݙیکھسو</string>
-    <!-- Title text for the dialog use on the variant 1 branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_variant_1_experiment_dialog_title" moz:RemovedIn="112" tools:ignore="UnusedResources">تھوڑیاں پوپ اپاں کوکی ݙیکھو</string>
-    <!-- Body text for the dialog use on the variant 1 branch of the experiment to determine which context users engaged the most. The first parameter is the application name. -->
-    <string name="reduce_cookie_banner_variant_1_experiment_dialog_body_1" moz:RemovedIn="112" tools:ignore="UnusedResources">بدحواسی کنوں پاک براؤزنگ کیتے کوکی پوپ اپاں  دا خودکار جواب ݙیوو۔ جے ممکن ہوسی تاں %1$s ساریاں ارداساں مسترد کر ݙیسی۔ </string>
-    <!-- Change setting text button, for the onboarding dialog use on the variant 1 branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_variant_1_experiment_dialog_change_setting_button" moz:RemovedIn="112" tools:ignore="UnusedResources">پوپ اپ فارغ کرو</string>
-    <!-- Title text for the dialog use on the variant 2 branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_variant_2_experiment_dialog_title" moz:RemovedIn="112" tools:ignore="UnusedResources">کوکی بینر گھٹاوݨ</string>
-    <!-- Body text for the dialog use on the variant 2 branch of the experiment to determine which context users engaged the most. The first parameter is the application name. -->
-    <string name="reduce_cookie_banner_variant_2_experiment_dialog_body_1" moz:RemovedIn="112" tools:ignore="UnusedResources">جے ممکن ہووے تاں %1$s کوں سائٹ دیاں کوکی رضامندی ارداس دا انکار کرݨ دی اجازت ݙیووں؟</string>
-    <!-- Change setting text button, for the dialog use on the variant 2 branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_variant_2_experiment_dialog_change_setting_button" moz:RemovedIn="112" tools:ignore="UnusedResources">اجازت ݙیوو</string>
 
     <!-- Change setting text button, for the cookie banner re-engagement dialog -->
     <string name="reduce_cookie_banner_dialog_change_setting_button">اجازت ݙیوو</string>
@@ -518,6 +533,12 @@
     <string name="preferences_open_links_in_apps_never">کݙاہیں نہ</string>
     <!-- Preference for open download with an external download manager app -->
     <string name="preferences_external_download_manager">ٻاہرلا ڈاؤن لوڈ منیجر</string>
+
+    <!-- Preference for enabling gecko engine logs -->
+    <string name="preferences_enable_gecko_logs">Gecko لاگ فعال کرو</string>
+    <!-- Message to indicate users that we are quitting the application to apply the changes -->
+    <string name="quit_application">تبدیلیاں لاگو کرݨ کیتے ایپ چھوڑیندے پئے ہو۔۔۔</string>
+
     <!-- Preference for add_ons -->
     <string name="preferences_addons">ایڈ ــ آن</string>
 
@@ -607,6 +628,8 @@
     <string name="addon_already_installed">ایڈ ــ آن پہلے ہی انسٹال تھیا ہویا ہے</string>
 
     <!-- Account Preferences -->
+    <!-- Preference for managing your account via accounts.firefox.com -->
+    <string name="preferences_manage_account">کھاتہ منیج کرو</string>
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">ہݨ ہم وقت کرو</string>
     <!-- Preference category for sync -->
@@ -1180,8 +1203,14 @@
 
     <!-- Text for the Save to PDF feature in the share menu -->
     <string name="share_save_to_pdf">پی ڈی ایف محفوظ کرو</string>
-    <!-- Text for error message when generating a PDF file Text for error message when generating a PDF file. -->
+    <!-- Text for error message when generating a PDF file Text. -->
     <string name="unable_to_save_to_pdf_error">پی ڈی ایف بݨاوݨ توں قاصر</string>
+    <!-- Text for standard error snackbar dismiss button. -->
+    <string name="standard_snackbar_error_dismiss">فارغ کرو</string>
+    <!-- Text for error message when printing a page and it fails. -->
+    <string name="unable_to_print_error">پرنٹ کرݨ دے قابل کائنی</string>
+    <!-- Text for the print feature in the share and browser menu -->
+    <string name="menu_print">چھاپو</string>
     <!-- Sub-header in the dialog to share a link to another sync device -->
     <string name="share_device_subheader">ڈیوائس تے بھیڄو</string>
     <!-- Sub-header in the dialog to share a link to an app from the full list -->
@@ -1244,9 +1273,19 @@
 
     <!-- Title A shown in the notification that pops up to re-engage the user -->
     <string name="notification_re_engagement_A_title">کھوج دے بغیر براؤز کرو</string>
+    <!-- Text A shown in the notification that pops up to re-engage the user.
+    %1$s is a placeholder that will be replaced by the app name. -->
+    <string name="notification_re_engagement_A_text">%1$s وچ نجی براؤزنگ تہاݙی معلومات کوں محفوظ کائنی کریندی۔</string>
     <!-- Title B shown in the notification that pops up to re-engage the user -->
     <string name="notification_re_engagement_B_title">آپݨی پہلی ڳول شروع کرو</string>
 
+    <!-- Text B shown in the notification that pops up to re-engage the user -->
+    <string name="notification_re_engagement_B_text">نیڑے دی کئی شئے لبھو۔ یا کئی تفریحی شئے دریافت کرو۔</string>
+
+    <!-- Survey -->
+    <!-- Text shown in the fullscreen message that pops up to ask user to take a short survey.
+    The app name is in the text, due to limitations with localizing Nimbus experiments -->
+    <string name="nimbus_survey_message_text">سوہݨا، ہک مختصر سروے وچ حصہ گھن تے فائرفوکس بہتر بݨاوݨ کیتے مدد کرو۔</string>
     <!-- Preference for taking the short survey. -->
     <string name="preferences_take_survey">سروے وچ حصہ گھنو</string>
     <!-- Preference for not taking the short survey. -->
@@ -1345,7 +1384,7 @@
     <!-- Title text of a delete browsing data dialog. -->
     <string name="delete_history_prompt_title">مٹاوݨ کیتے وقت دی حد</string>
     <!-- Body text of a delete browsing data dialog. -->
-    <string name="delete_history_prompt_body">تاریخ (ٻنھاں ڈیوائساں کنوں ہم وقت تھئی تاریخ سمیت)، کوکیاں تے ٻیا براؤزنگ ڈیٹا ہٹیندے۔</string>
+    <string name="delete_history_prompt_body" moz:RemovedIn="130" tools:ignore="UnusedResources">تاریخ (ٻنھاں ڈیوائساں کنوں ہم وقت تھئی تاریخ سمیت)، کوکیاں تے ٻیا براؤزنگ ڈیٹا ہٹیندے۔</string>
     <!-- Radio button in the delete browsing data dialog to delete history items for the last hour. -->
     <string name="delete_history_prompt_button_last_hour">چھیکڑی گھنٹہ</string>
     <!-- Radio button in the delete browsing data dialog to delete history items for today and yesterday. -->
@@ -1471,22 +1510,22 @@
     <string name="etp_settings">حفاظتی ترتیباں</string>
     <!-- Preference title for enhanced tracking protection settings -->
     <string name="preference_enhanced_tracking_protection">بہتر ٹریکنگ حفاظت</string>
-    <!-- Title for the description of enhanced tracking protection -->
-    <string name="preference_enhanced_tracking_protection_explanation_title" moz:removedIn="114" tools:ignore="UnusedResources">بغیر فالو تھئے براؤز کرو</string>
-    <!-- Description of enhanced tracking protection. The first parameter is the name of the application (For example: Fenix) -->
-    <string name="preference_enhanced_tracking_protection_explanation" moz:removedIn="114" tools:ignore="UnusedResources">آپݨاں ڈیٹا آپݨے کول رکھو۔ %s تہاکوں ٻہوں سارے ݙاڈھے عام ٹریکراں کنوں بچیندے، جہڑے  تہاݙے آن لائن کم کوں فالو کریندن۔</string>
+    <!-- Preference summary for enhanced tracking protection settings on/off switch -->
+    <string name="preference_enhanced_tracking_protection_summary">ہݨ پوری کوکی حفاظت دی خاصیت، کراس سائٹ ٹریکراں دے خلاف ساݙی سب کنوں تکڑی رکاوٹ۔</string>
+    <!-- Description of enhanced tracking protection. The parameter is the name of the application (For example: Firefox Fenix) -->
+    <string name="preference_enhanced_tracking_protection_explanation_2">%s تہاکوں ٻہوں سارے ݙاڈھے عام ٹریکراں کنوں بچیندے، جہڑے  تہاݙے آن لائن کم کوں فالو کریندن۔</string>
     <!-- Text displayed that links to website about enhanced tracking protection -->
     <string name="preference_enhanced_tracking_protection_explanation_learn_more">ٻیا سِکھو</string>
     <!-- Preference for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_standard_default_1">معیاری (پہلے کنوں مقرر)</string>
     <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description_4" moz:removedIn="114" tools:ignore="UnusedResources">کارکردگی تے رازداری کیتے متوازن تھیا، ورقے معمول دے مطابق لوڈ تھیندن۔</string>
+    <string name="preference_enhanced_tracking_protection_standard_description_5">ورقے ٹھیک لوڈ تھیسن، پر کجھ ٹریکرز بلاک ہوسن۔</string>
     <!--  Accessibility text for the Standard protection information icon  -->
     <string name="preference_enhanced_tracking_protection_standard_info_button">معیاری ٹریکنگ تحفظ نال کیا بلاک ہے</string>
     <!-- Preference for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict">سخت</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_description_3" moz:removedIn="114" tools:ignore="UnusedResources">ورقیاں کوں تکھیرا لوڈ کرݨ سانگے ٻئے ٹریکراں کوں بلاک کریندے، پر ورقے تے کجھ فعالت ترٹ سڳدی ہے۔</string>
+    <string name="preference_enhanced_tracking_protection_strict_description_4">مظبوط ٹریکنگ تحفظ تے تکھیری کارکردگی، پر کجھ سائٹاں ٹھیک کم کائناں کریسن۔</string>
     <!--  Accessibility text for the Strict protection information icon  -->
     <string name="preference_enhanced_tracking_protection_strict_info_button">سخت ٹریکنگ تحفظ نال کیا بلاک ہے</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
@@ -1571,6 +1610,10 @@
     <string name="preference_etp_smartblock_description"> ہیٹھاں کجھ نشان زدہ ٹریکرز کوں ایں ورقے تے  جزوی طور تے اݨ بلاک کر ݙتا ڳئے کیوں جو تساں انہاں نال تعامل کیتے*۔</string>
     <!-- Text displayed that links to website about enhanced tracking protection SmartBlock -->
     <string name="preference_etp_smartblock_learn_more">ٻیا سِکھو</string>
+
+    <!-- Content description (not visible, for screen readers etc.):
+    Enhanced tracking protection exception preference icon for ETP settings. -->
+    <string name="preference_etp_exceptions_icon_description">ودھائی ہوئی ٹریکنگ حفاظت استشنائی ترجیح آئیکان</string>
 
     <!-- About page link text to open support link -->
     <string name="about_support">سہارا</string>
@@ -1835,6 +1878,8 @@
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">ڳولݨ انجݨ شامل کرو</string>
+    <!-- Content description (not visible, for screen readers etc.): Title for the button that navigates to add new engine screen -->
+    <string name="search_engine_add_custom_search_engine_button_content_description">نواں ڳولݨ انجݨ شامل کرو</string>
     <!-- Title of the Edit search engine screen -->
     <string name="search_engine_edit_custom_search_engine_title">ڳولݨ انجݨ وچ تبدیلی کرو</string>
     <!-- Content description (not visible, for screen readers etc.): Title for the button to add a search engine in the action bar -->
@@ -1848,16 +1893,27 @@
 
     <!-- Text for the button to create a custom search engine on the Add search engine screen -->
     <string name="search_add_custom_engine_label_other">ٻیا</string>
+    <!-- Label for the TextField in which user enters custom search engine name -->
+    <string name="search_add_custom_engine_name_label">ناں</string>
     <!-- Placeholder text shown in the Search Engine Name TextField before a user enters text -->
     <string name="search_add_custom_engine_name_hint">ناں</string>
 
+    <!-- Placeholder text shown in the Search Engine Name text field before a user enters text -->
+    <string name="search_add_custom_engine_name_hint_2">ڳولݨ انجݨ ناں</string>
+    <!-- Label for the TextField in which user enters custom search engine URL -->
+    <string name="search_add_custom_engine_url_label">تند یوآرایل ڳولو</string>
     <!-- Placeholder text shown in the Search String TextField before a user enters text -->
     <string name="search_add_custom_engine_search_string_hint">ورتݨ کیتے تند ڳولو</string>
+    <!-- Placeholder text shown in the Search String TextField before a user enters text -->
+    <string name="search_add_custom_engine_search_string_hint_2">ڳولݨ دے ورتݨ کیتے یوآرایل</string>
     <!-- Description text for the Search String TextField. The %s is part of the string -->
     <string name="search_add_custom_engine_search_string_example" formatted="false"> “%s” نال سوال وٹاؤ۔
 مثال:\nhttps://www.google.com/search?q=%s</string>
     <!-- Accessibility description for the form in which details about the custom search engine are entered -->
     <string name="search_add_custom_engine_form_description">من پسند ڳولݨ انجݨ  تفصیلاں</string>
+
+    <!-- The text for the "Save" button for saving a custom search engine -->
+    <string name="search_custom_engine_save_button">محفوظ</string>
 
     <!-- Text shown when a user leaves the name field empty -->
     <string name="search_add_custom_engine_error_empty_name">ڳولݨ انجݨ دا ناں درج کرو</string>

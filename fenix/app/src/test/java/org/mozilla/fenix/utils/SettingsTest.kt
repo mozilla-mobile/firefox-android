@@ -21,6 +21,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.settings.PhoneFeature
 import org.mozilla.fenix.settings.deletebrowsingdata.DeleteBrowsingDataOnQuitType
@@ -878,6 +879,15 @@ class SettingsTest {
     }
 
     @Test
+    fun `GIVEN toolbarPositionTop is false, touchExplorationIsEnabled is true THEN shouldDefaultToBottomToolbar returns false`() {
+        val settings = spyk(settings)
+        every { settings.toolbarPositionTop } returns true
+        every { settings.touchExplorationIsEnabled } returns true
+
+        assertEquals(false, settings.shouldDefaultToBottomToolbar())
+    }
+
+    @Test
     fun `GIVEN Https-only mode is disabled THEN the engine mode is HttpsOnlyMode#DISABLED`() {
         settings.shouldUseHttpsOnly = false
 
@@ -932,5 +942,28 @@ class SettingsTest {
     @Test
     fun `GIVEN unset user preferences THEN https-only is disabled for private tabs`() {
         assertFalse(settings.shouldUseHttpsOnlyInPrivateTabsOnly)
+    }
+
+    @Test
+    fun `GIVEN open links in apps setting THEN return the correct display string`() {
+        settings.openLinksInExternalApp = "pref_key_open_links_in_apps_always"
+        settings.lastKnownMode = BrowsingMode.Normal
+        assertEquals(settings.getOpenLinksInAppsString(), "Always")
+
+        settings.openLinksInExternalApp = "pref_key_open_links_in_apps_ask"
+        assertEquals(settings.getOpenLinksInAppsString(), "Ask before opening")
+
+        settings.openLinksInExternalApp = "pref_key_open_links_in_apps_never"
+        assertEquals(settings.getOpenLinksInAppsString(), "Never")
+
+        settings.openLinksInExternalApp = "pref_key_open_links_in_apps_always"
+        settings.lastKnownMode = BrowsingMode.Private
+        assertEquals(settings.getOpenLinksInAppsString(), "Ask before opening")
+
+        settings.openLinksInExternalApp = "pref_key_open_links_in_apps_ask"
+        assertEquals(settings.getOpenLinksInAppsString(), "Ask before opening")
+
+        settings.openLinksInExternalApp = "pref_key_open_links_in_apps_never"
+        assertEquals(settings.getOpenLinksInAppsString(), "Never")
     }
 }

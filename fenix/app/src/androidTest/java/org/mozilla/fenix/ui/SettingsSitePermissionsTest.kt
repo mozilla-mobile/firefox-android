@@ -19,12 +19,14 @@ import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityTestRule
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithText
 import org.mozilla.fenix.helpers.TestAssetHelper.getGenericAsset
 import org.mozilla.fenix.helpers.TestAssetHelper.getMutedVideoPageAsset
 import org.mozilla.fenix.helpers.TestAssetHelper.getVideoPageAsset
 import org.mozilla.fenix.helpers.TestHelper.exitMenu
 import org.mozilla.fenix.helpers.TestHelper.grantSystemPermission
 import org.mozilla.fenix.ui.robots.browserScreen
+import org.mozilla.fenix.ui.robots.clickPageObject
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
 
@@ -106,7 +108,6 @@ class SettingsSitePermissionsTest {
         }
     }
 
-    @Ignore("Failing, see https://bugzilla.mozilla.org/show_bug.cgi?id=1827599")
     @SmokeTest
     @Test
     fun verifyAutoplayBlockAudioOnlySettingTest() {
@@ -131,14 +132,14 @@ class SettingsSitePermissionsTest {
         }.enterURLAndEnterToBrowser(videoTestPage.url) {
             try {
                 verifyPageContent(videoTestPage.content)
-                clickMediaPlayerPlayButton()
+                clickPageObject(itemWithText("Play"))
                 assertPlaybackState(browserStore, MediaSession.PlaybackState.PLAYING)
             } catch (e: java.lang.AssertionError) {
                 navigationToolbar {
                 }.openThreeDotMenu {
                 }.refreshPage {
                     verifyPageContent(videoTestPage.content)
-                    clickMediaPlayerPlayButton()
+                    clickPageObject(itemWithText("Play"))
                     assertPlaybackState(browserStore, MediaSession.PlaybackState.PLAYING)
                 }
             }
@@ -172,7 +173,6 @@ class SettingsSitePermissionsTest {
         }
     }
 
-    @Ignore("Failing, see https://bugzilla.mozilla.org/show_bug.cgi?id=1827599")
     @Test
     fun verifyAutoplayAllowAudioVideoSettingTest() {
         val genericPage = getGenericAsset(mockWebServer, 1)
@@ -235,7 +235,6 @@ class SettingsSitePermissionsTest {
         }
     }
 
-    @Ignore("Failing, see https://bugzilla.mozilla.org/show_bug.cgi?id=1827599")
     @Test
     fun verifyAutoplayBlockAudioAndVideoSettingTest() {
         val videoTestPage = getVideoPageAsset(mockWebServer)
@@ -252,21 +251,20 @@ class SettingsSitePermissionsTest {
         }.enterURLAndEnterToBrowser(videoTestPage.url) {
             try {
                 verifyPageContent(videoTestPage.content)
-                clickMediaPlayerPlayButton()
+                clickPageObject(itemWithText("Play"))
                 assertPlaybackState(browserStore, MediaSession.PlaybackState.PLAYING)
             } catch (e: java.lang.AssertionError) {
                 navigationToolbar {
                 }.openThreeDotMenu {
                 }.refreshPage {
                     verifyPageContent(videoTestPage.content)
-                    clickMediaPlayerPlayButton()
+                    clickPageObject(itemWithText("Play"))
                     assertPlaybackState(browserStore, MediaSession.PlaybackState.PLAYING)
                 }
             }
         }
     }
 
-    @Ignore("Failing, see https://bugzilla.mozilla.org/show_bug.cgi?id=1827599")
     @Test
     fun verifyAutoplayBlockAudioAndVideoSettingOnMutedVideoTest() {
         val mutedVideoTestPage = getMutedVideoPageAsset(mockWebServer)
@@ -282,14 +280,14 @@ class SettingsSitePermissionsTest {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(mutedVideoTestPage.url) {
             verifyPageContent("Media file not playing")
-            clickMediaPlayerPlayButton()
+            clickPageObject(itemWithText("Play"))
             try {
                 verifyPageContent("Media file is playing")
             } catch (e: java.lang.AssertionError) {
                 navigationToolbar {
                 }.openThreeDotMenu {
                 }.refreshPage {
-                    clickMediaPlayerPlayButton()
+                    clickPageObject(itemWithText("Play"))
                     verifyPageContent("Media file is playing")
                 }
             }

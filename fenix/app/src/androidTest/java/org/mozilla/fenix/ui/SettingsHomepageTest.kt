@@ -67,6 +67,7 @@ class SettingsHomepageTest {
             "Wikipedia",
             "Google",
         )
+        val genericURL = getGenericAsset(mockWebServer, 1)
 
         homeScreen {
             defaultTopSites.forEach { item ->
@@ -79,6 +80,13 @@ class SettingsHomepageTest {
             defaultTopSites.forEach { item ->
                 verifyNotExistingTopSitesList(item)
             }
+        }
+        // Disabling the "Shortcuts" homepage setting option should remove the "Add to shortcuts" from main menu option
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(genericURL.url) {
+        }.openThreeDotMenu {
+            expandMenu()
+            verifyAddToShortcutsButton(shouldExist = false)
         }
     }
 
@@ -222,9 +230,8 @@ class SettingsHomepageTest {
         }
     }
 
-    @SmokeTest
-    @Test
     @Ignore("Intermittent test: https://github.com/mozilla-mobile/fenix/issues/26559")
+    @Test
     fun setWallpaperTest() {
         val wallpapers = listOf(
             "Wallpaper Item: amethyst",

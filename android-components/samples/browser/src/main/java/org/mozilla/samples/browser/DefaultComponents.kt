@@ -38,7 +38,7 @@ import mozilla.components.concept.engine.Engine
 import mozilla.components.concept.engine.mediaquery.PreferredColorScheme
 import mozilla.components.concept.fetch.Client
 import mozilla.components.feature.addons.AddonManager
-import mozilla.components.feature.addons.amo.AddonCollectionProvider
+import mozilla.components.feature.addons.amo.AMOAddonsProvider
 import mozilla.components.feature.addons.migration.DefaultSupportedAddonsChecker
 import mozilla.components.feature.addons.update.DefaultAddonUpdater
 import mozilla.components.feature.app.links.AppLinksInterceptor
@@ -206,11 +206,11 @@ open class DefaultComponents(private val applicationContext: Context) {
 
     // Addons
     val addonManager by lazy {
-        AddonManager(store, engine, addonCollectionProvider, addonUpdater)
+        AddonManager(store, engine, addonsProvider, addonUpdater)
     }
 
-    val addonCollectionProvider by lazy {
-        AddonCollectionProvider(
+    val addonsProvider by lazy {
+        AMOAddonsProvider(
             applicationContext,
             client,
             collectionName = "7dfae8669acc4312a65e8ba5553036",
@@ -295,7 +295,7 @@ open class DefaultComponents(private val applicationContext: Context) {
             menuToolbar,
             BrowserMenuHighlightableItem(
                 "No Highlight",
-                iconsR.drawable.mozac_ic_share,
+                iconsR.drawable.mozac_ic_share_android_24,
                 android.R.color.black,
                 highlight = BrowserMenuHighlight.LowPriority(
                     notificationTint = ContextCompat.getColor(applicationContext, android.R.color.holo_green_dark),
@@ -304,7 +304,7 @@ open class DefaultComponents(private val applicationContext: Context) {
             ) {
                 Toast.makeText(applicationContext, "Highlight", Toast.LENGTH_SHORT).show()
             },
-            BrowserMenuImageText("Share", iconsR.drawable.mozac_ic_share, android.R.color.black) {
+            BrowserMenuImageText("Share", iconsR.drawable.mozac_ic_share_android_24, android.R.color.black) {
                 Toast.makeText(applicationContext, "Share", Toast.LENGTH_SHORT).show()
             },
             SimpleBrowserMenuItem("Settings") {
@@ -315,6 +315,9 @@ open class DefaultComponents(private val applicationContext: Context) {
             },
             SimpleBrowserMenuItem("Save to PDF") {
                 sessionUseCases.saveToPdf.invoke()
+            },
+            SimpleBrowserMenuItem("Print") {
+                sessionUseCases.printContent.invoke()
             },
             SimpleBrowserMenuItem("Restore after crash") {
                 sessionUseCases.crashRecovery.invoke()
@@ -377,7 +380,7 @@ open class DefaultComponents(private val applicationContext: Context) {
 
     private val menuToolbar by lazy {
         val back = BrowserMenuItemToolbar.TwoStateButton(
-            primaryImageResource = iconsR.drawable.mozac_ic_back,
+            primaryImageResource = iconsR.drawable.mozac_ic_back_24,
             primaryImageTintResource = photonColors.photonBlue90,
             primaryContentDescription = "Back",
             isInPrimaryState = {
@@ -390,7 +393,7 @@ open class DefaultComponents(private val applicationContext: Context) {
         }
 
         val forward = BrowserMenuItemToolbar.TwoStateButton(
-            primaryImageResource = iconsR.drawable.mozac_ic_forward,
+            primaryImageResource = iconsR.drawable.mozac_ic_forward_24,
             primaryContentDescription = "Forward",
             primaryImageTintResource = photonColors.photonBlue90,
             isInPrimaryState = {
@@ -403,7 +406,7 @@ open class DefaultComponents(private val applicationContext: Context) {
         }
 
         val refresh = BrowserMenuItemToolbar.TwoStateButton(
-            primaryImageResource = iconsR.drawable.mozac_ic_refresh,
+            primaryImageResource = iconsR.drawable.mozac_ic_arrow_clockwise_24,
             primaryContentDescription = "Refresh",
             primaryImageTintResource = photonColors.photonBlue90,
             isInPrimaryState = {

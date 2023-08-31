@@ -68,8 +68,6 @@
 
     <!-- Private mode shortcut "contextual feature recommendation" (CFR) -->
     <!-- Text for the Private mode shortcut CFR message for adding a private mode shortcut to open private tabs from the Home screen -->
-    <string name="private_mode_cfr_message" moz:removedIn="111" tools:ignore="UnusedResources">פתיחת הלשונית הפרטית הבאה בהקשה אחת.</string>
-    <!-- Text for the Private mode shortcut CFR message for adding a private mode shortcut to open private tabs from the Home screen -->
     <string name="private_mode_cfr_message_2">פתיחת הלשונית הפרטית הבאה שלך בהקשה אחת.</string>
     <!-- Text for the positive button to accept adding a Private Browsing shortcut to the Home screen -->
     <string name="private_mode_cfr_pos_button_text">הוספה למסך הבית</string>
@@ -126,6 +124,9 @@
     <string name="home_screen_shortcut_open_new_tab_2">לשונית חדשה</string>
     <!-- Shortcut action to open new private tab -->
     <string name="home_screen_shortcut_open_new_private_tab_2">לשונית פרטית חדשה</string>
+
+    <!-- Shortcut action to open Passwords screens -->
+    <string name="home_screen_shortcut_open_password_screen">קיצור דרך לססמאות</string>
 
     <!-- Recent Tabs -->
     <!-- Header text for jumping back into the recent tab in the home screen -->
@@ -249,7 +250,7 @@
     <!-- Search suggestion onboarding hint description text, first parameter is the name of the app defined in app_name (for example: Fenix)-->
     <string name="search_suggestions_onboarding_text">‏%s ישתף את מה שיוקלד בשורת הכתובת עם מנוע החיפוש ברירת המחדל שלך.</string>
 
-    <!-- Search engine suggestion title text. The first parameter is the name of teh suggested engine-->
+    <!-- Search engine suggestion title text. The first parameter is the name of the suggested engine-->
     <string name="search_engine_suggestions_title">חיפוש ב־%s</string>
     <!-- Search engine suggestion description text -->
     <string name="search_engine_suggestions_description">חיפוש ישירות משורת הכתובת</string>
@@ -258,10 +259,10 @@
     <string name="search_settings_menu_item">הגדרות חיפוש</string>
 
     <!-- Header text for the search selector menu -->
-    <string name="search_header_menu_item" moz:RemovedIn="109" tools:ignore="UnusedResources">הפעם לחפש את:</string>
-
-    <!-- Header text for the search selector menu -->
     <string name="search_header_menu_item_2">הפעם לחפש ב:</string>
+
+    <!-- Content description (not visible, for screen readers etc.): Search engine icon. The first parameter is the search engine name (for example: DuckDuckGo). -->
+    <string name="search_engine_icon_content_description" tools:ignore="UnusedResources">מנוע חיפוש %s</string>
 
     <!-- Home onboarding -->
     <!-- Onboarding home screen popup dialog, shown on top of the Jump back in section. -->
@@ -299,29 +300,35 @@
     <!-- Text for the button to not request notification permission on the device and dismiss the dialog -->
     <string name="onboarding_home_enable_notifications_negative_button">לא כעת</string>
 
-    <!-- Juno first user onboarding flow experiment -->
+    <!-- Juno first user onboarding flow experiment, strings are marked unused as they are only referenced by Nimbus experiments. -->
     <!-- Title for set firefox as default browser screen.
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="juno_onboarding_default_browser_title">הגדרת %s כדפדפן ברירת המחדל שלך</string>
+    <string name="juno_onboarding_default_browser_title" moz:RemovedIn="117" tools:ignore="UnusedResources">הגדרת %s כדפדפן ברירת המחדל שלך</string>
+    <!-- Title for set firefox as default browser screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_default_browser_title_nimbus" tools:ignore="UnusedResources">הגדרת Firefox כדפדפן ברירת המחדל שלך</string>
     <!-- Text for the button to set firefox as default browser on the device -->
-    <string name="juno_onboarding_default_browser_positive_button">הגדרה כדפדפן ברירת המחדל</string>
+    <string name="juno_onboarding_default_browser_positive_button" tools:ignore="UnusedResources">הגדרה כדפדפן ברירת המחדל</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
-    <string name="juno_onboarding_default_browser_negative_button">לא כעת</string>
+    <string name="juno_onboarding_default_browser_negative_button" tools:ignore="UnusedResources">לא כעת</string>
     <!-- Title for sign in to sync screen. -->
-    <string name="juno_onboarding_sign_in_title">לקפוץ מהטלפון למחשב הנייד ובחזרה</string>
+    <string name="juno_onboarding_sign_in_title" tools:ignore="UnusedResources">לקפוץ מהטלפון למחשב הנייד ובחזרה</string>
     <!-- Description for sign in to sync screen. -->
-    <string name="juno_onboarding_sign_in_description">ניתן לקבל לשוניות וססמאות מהמכשירים האחרים שלך כדי להמשיך מאיפה שהפסקת.</string>
+    <string name="juno_onboarding_sign_in_description" tools:ignore="UnusedResources">ניתן לקבל לשוניות וססמאות מהמכשירים האחרים שלך כדי להמשיך מאיפה שהפסקת.</string>
     <!-- Text for the button to sign in to sync on the device -->
-    <string name="juno_onboarding_sign_in_positive_button">כניסה</string>
+    <string name="juno_onboarding_sign_in_positive_button" tools:ignore="UnusedResources">כניסה</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
-    <string name="juno_onboarding_sign_in_negative_button">לא כעת</string>
+    <string name="juno_onboarding_sign_in_negative_button" tools:ignore="UnusedResources">לא כעת</string>
     <!-- Title for enable notification permission screen.
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="juno_onboarding_enable_notifications_title">התרעות עוזרות לך לעשות יותר עם %s</string>
+    <string name="juno_onboarding_enable_notifications_title" moz:RemovedIn="117" tools:ignore="UnusedResources">התרעות עוזרות לך לעשות יותר עם %s</string>
+    <!-- Title for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_enable_notifications_title_nimbus" tools:ignore="UnusedResources">התרעות עוזרות לך לעשות יותר עם Firefox</string>
     <!-- Text for the button to request notification permission on the device -->
-    <string name="juno_onboarding_enable_notifications_positive_button">הפעלת התרעות</string>
+    <string name="juno_onboarding_enable_notifications_positive_button" tools:ignore="UnusedResources">הפעלת התרעות</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
-    <string name="juno_onboarding_enable_notifications_negative_button">לא כעת</string>
+    <string name="juno_onboarding_enable_notifications_negative_button" tools:ignore="UnusedResources">לא כעת</string>
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. The first parameter is the name of the application.-->
@@ -341,10 +348,20 @@
     <string name="preferences_category_general">כללי</string>
     <!-- Preference category for all links about Fenix -->
     <string name="preferences_category_about">על אודות</string>
+    <!-- Preference category for settings related to changing the default search engine -->
+    <string name="preferences_category_select_default_search_engine">יש לבחור אחד</string>
+    <!-- Preference for settings related to managing search shortcuts for the quick search menu -->
+    <string name="preferences_manage_search_shortcuts">ניהול קיצורי דרך לחיפוש</string>
+    <!-- Summary for preference for settings related to managing search shortcuts for the quick search menu -->
+    <string name="preferences_manage_search_shortcuts_summary">עריכת מנועים הגלויים בתפריט החיפוש</string>
+    <!-- Preference category for settings related to managing search shortcuts for the quick search menu -->
+    <string name="preferences_category_engines_in_search_menu">מנועים הגלויים בתפריט החיפוש</string>
     <!-- Preference for settings related to changing the default search engine -->
     <string name="preferences_default_search_engine">מנוע חיפוש ברירת מחדל</string>
     <!-- Preference for settings related to Search -->
     <string name="preferences_search">חיפוש</string>
+    <!-- Preference for settings related to Search engines -->
+    <string name="preferences_search_engines">מנועי חיפוש</string>
     <!-- Preference for settings related to Search address bar -->
     <string name="preferences_search_address_bar">שורת כתובת</string>
     <!-- Preference link to rating Fenix on the Play Store -->
@@ -380,8 +397,6 @@
 
     <!-- Description of the preference to enable "HTTPS-Only" mode. -->
     <string name="preferences_https_only_summary">מנסה להתחבר באופן אוטומטי לאתרים באמצעות פרוטוקול ההצפנה HTTPS לצורך אבטחה מוגברת.</string>
-    <!-- Summary of tracking protection preference if tracking protection is set to on -->
-    <string name="preferences_https_only_on" moz:removedIn="111" tools:ignore="UnusedResources">פעיל</string>
     <!-- Summary of https only preference if https only is set to off -->
     <string name="preferences_https_only_off">כבוי</string>
     <!-- Summary of https only preference if https only is set to on in all tabs -->
@@ -466,6 +481,11 @@
     <string name="preferences_open_links_in_apps_never">לעולם לא</string>
     <!-- Preference for open download with an external download manager app -->
     <string name="preferences_external_download_manager">מנהל הורדות חיצוני</string>
+    <!-- Preference for enabling gecko engine logs -->
+    <string name="preferences_enable_gecko_logs">לאפשר יומני Gecko</string>
+    <!-- Message to indicate users that we are quitting the application to apply the changes -->
+    <string name="quit_application">היישום ייסגר לצורך להחלת השינויים…</string>
+
     <!-- Preference for add_ons -->
     <string name="preferences_addons">תוספות</string>
 
@@ -533,7 +553,7 @@
     <!-- Text for classic wallpapers title. The first parameter is the Firefox name. -->
     <string name="wallpaper_classic_title">‏%s קלאסי</string>
     <!-- Text for limited edition wallpapers title. -->
-    <string name="wallpaper_limited_edition_title">מהדורה מוגבלת</string>
+    <string name="wallpaper_limited_edition_title" moz:RemovedIn="118" tools:ignore="UnusedResources">מהדורה מוגבלת</string>
 
     <!-- Wallpaper onboarding dialog body text. -->
     <string name="wallpapers_onboarding_dialog_body_text">אפשר לבחור טפט שהולם אותך.</string>
@@ -546,7 +566,19 @@
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is already installed -->
     <string name="addon_already_installed">התוספת כבר מותקנת</string>
 
+    <!-- Add-on process crash dialog to user -->
+    <!-- Title of a dialog shown to the user when enough errors have occurred with addons and they need to be temporarily disabled -->
+    <string name="addon_process_crash_dialog_title" tools:ignore="UnusedResources">התוספות מושבתות באופן זמני</string>
+    <!-- The first parameter is the application name. This is a message shown to the user when too many errors have occurred with the addons process and they have been disabled. The user can decide if they would like to continue trying to start add-ons or if they'd rather continue without them. -->
+    <string name="addon_process_crash_dialog_message" tools:ignore="UnusedResources">תוספת אחת או יותר הפסיקו לעבוד, מה שהפך את המערכת שלך לבלתי יציבה. %1$s ניסתה להפעיל מחדש את התוספות ללא הצלחה.\n\nתוספות לא יופעלו מחדש במהלך ההפעלה הנוכחית שלך.\n\nהסרה או השבתה של תוספות עשויה לפתור בעיה זו.</string>
+    <!-- This will cause the add-ons to try restarting but the dialog will reappear if it is unsuccessful again -->
+    <string name="addon_process_crash_dialog_retry_button_text" tools:ignore="UnusedResources">לנסות להפעיל מחדש את התוספות</string>
+    <!-- The user will continue with all add-ons disabled -->
+    <string name="addon_process_crash_dialog_disable_addons_button_text" tools:ignore="UnusedResources">המשך עם התוספות מושבתות</string>
+
     <!-- Account Preferences -->
+    <!-- Preference for managing your account via accounts.firefox.com -->
+    <string name="preferences_manage_account">ניהול חשבון</string>
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">סנכרון כעת</string>
     <!-- Preference category for sync -->
@@ -691,15 +723,9 @@
     <!-- Dialog button text for canceling open all tabs -->
     <string name="open_all_warning_cancel">ביטול</string>
 
-    <!-- Text to show users they have one site in the history group section of the History fragment.
-    %d is a placeholder for the number of sites in the group. -->
-    <string name="history_search_group_site" moz:RemovedIn="111" tools:ignore="UnusedResources">אתר אחד</string>
     <!-- Text to show users they have one page in the history group section of the History fragment.
     %d is a placeholder for the number of pages in the group. -->
     <string name="history_search_group_site_1">דף אחד (%d)</string>
-    <!-- Text to show users they have multiple sites in the history group section of the History fragment.
-    %d is a placeholder for the number of sites in the group. -->
-    <string name="history_search_group_sites" moz:RemovedIn="111" tools:ignore="UnusedResources">%d אתרים</string>
 
     <!-- Text to show users they have multiple pages in the history group section of the History fragment.
     %d is a placeholder for the number of pages in the group. -->
@@ -1033,8 +1059,6 @@
     <!-- Preference for showing a list of websites that the default configurations won't apply to them -->
     <string name="preference_exceptions">חריגות</string>
 
-    <!-- Summary of tracking protection preference if tracking protection is set to on -->
-    <string name="tracking_protection_on" moz:removedIn="111" tools:ignore="UnusedResources">פעילה</string>
     <!-- Summary of tracking protection preference if tracking protection is set to off -->
     <string name="tracking_protection_off">כבויה</string>
 
@@ -1127,8 +1151,16 @@
     <string name="share_button_content_description">שיתוף</string>
     <!-- Text for the Save to PDF feature in the share menu -->
     <string name="share_save_to_pdf">שמירה כ־PDF</string>
-    <!-- Text for error message when generating a PDF file Text for error message when generating a PDF file. -->
+    <!-- Text for error message when generating a PDF file Text. -->
     <string name="unable_to_save_to_pdf_error">לא ניתן ליצור PDF</string>
+    <!-- Text for standard error snackbar dismiss button. -->
+    <string name="standard_snackbar_error_dismiss">סגירה</string>
+    <!-- Text for error message when printing a page and it fails. -->
+    <string name="unable_to_print_error" moz:removedIn="121" tools:ignore="UnusedResources">לא ניתן להדפיס</string>
+    <!-- Text for error message when printing a page and it fails. -->
+    <string name="unable_to_print_page_error">לא ניתן להדפיס דף זה</string>
+    <!-- Text for the print feature in the share and browser menu -->
+    <string name="menu_print">הדפסה</string>
     <!-- Sub-header in the dialog to share a link to another sync device -->
     <string name="share_device_subheader">שליחה למכשיר</string>
     <!-- Sub-header in the dialog to share a link to an app from the full list -->
@@ -1199,11 +1231,11 @@
     <!-- Survey -->
     <!-- Text shown in the fullscreen message that pops up to ask user to take a short survey.
     The app name is in the text, due to limitations with localizing Nimbus experiments -->
-    <string name="nimbus_survey_message_text" tools:ignore="UnusedResources">אנא עזרו לשפר את Firefox על־ידי השתתפות בסקר קצר.</string>
+    <string name="nimbus_survey_message_text">אנא עזרו לשפר את Firefox על־ידי השתתפות בסקר קצר.</string>
     <!-- Preference for taking the short survey. -->
-    <string name="preferences_take_survey" tools:ignore="UnusedResources">לקיחת סקר</string>
+    <string name="preferences_take_survey">לקיחת סקר</string>
     <!-- Preference for not taking the short survey. -->
-    <string name="preferences_not_take_survey" tools:ignore="UnusedResources">לא תודה</string>
+    <string name="preferences_not_take_survey">לא תודה</string>
 
     <!-- Snackbar -->
     <!-- Text shown in snackbar when user deletes a collection -->
@@ -1270,12 +1302,16 @@
     <!-- Subtitle for the tabs item in Delete browsing data, parameter will be replaced with the number of open tabs -->
     <string name="preferences_delete_browsing_data_tabs_subtitle">%d לשוניות</string>
     <!-- Title for the data and history items in Delete browsing data -->
-    <string name="preferences_delete_browsing_data_browsing_data_title">היסטוריית גלישה ונתוני אתרים</string>
+    <string name="preferences_delete_browsing_data_browsing_data_title" moz:removedIn="118" tools:ignore="UnusedResources">היסטוריית גלישה ונתוני אתרים</string>
+    <!-- Title for the history item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_browsing_history_title">היסטוריית גלישה</string>
     <!-- Subtitle for the data and history items in delete browsing data, parameter will be replaced with the
         number of history items the user has -->
     <string name="preferences_delete_browsing_data_browsing_data_subtitle">%d כתובות</string>
     <!-- Title for the cookies item in Delete browsing data -->
-    <string name="preferences_delete_browsing_data_cookies">עוגיות</string>
+    <string name="preferences_delete_browsing_data_cookies" moz:removedIn="118" tools:ignore="UnusedResources">עוגיות</string>
+    <!-- Title for the cookies and site data items in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_cookies_and_site_data">עוגיות ונתוני אתרים</string>
     <!-- Subtitle for the cookies item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_cookies_subtitle">המשתמש שלך ינותק מרוב האתרים</string>
     <!-- Title for the cached images and files item in Delete browsing data -->
@@ -1298,7 +1334,9 @@
     <!-- Title text of a delete browsing data dialog. -->
     <string name="delete_history_prompt_title">טווח זמן למחיקה</string>
     <!-- Body text of a delete browsing data dialog. -->
-    <string name="delete_history_prompt_body">מסיר היסטוריה (כולל היסטוריה מסונכרנת ממכשירים אחרים), עוגיות ונתוני גלישה אחרים.</string>
+    <string name="delete_history_prompt_body" moz:RemovedIn="130" tools:ignore="UnusedResources">מסיר היסטוריה (כולל היסטוריה המסונכרנת ממכשירים אחרים), עוגיות ונתוני גלישה אחרים.</string>
+    <!-- Body text of a delete browsing data dialog. -->
+    <string name="delete_history_prompt_body_2">מסיר היסטוריה (כולל היסטוריה המסונכרנת ממכשירים אחרים)</string>
     <!-- Radio button in the delete browsing data dialog to delete history items for the last hour. -->
     <string name="delete_history_prompt_button_last_hour">שעה אחרונה</string>
     <!-- Radio button in the delete browsing data dialog to delete history items for today and yesterday. -->
@@ -1329,61 +1367,61 @@
 
     <!-- Onboarding -->
     <!-- Text for onboarding welcome header. -->
-    <string name="onboarding_header_2">ברוכים הבאים לאינטרנט טוב יותר</string>
+    <string name="onboarding_header_2" moz:RemovedIn="118" tools:ignore="UnusedResources">ברוכים הבאים לאינטרנט טוב יותר</string>
     <!-- Text for the onboarding welcome message. -->
-    <string name="onboarding_message">דפדפן שנבנה לטובת בני אדם, לא למטרות רווח.</string>
+    <string name="onboarding_message" moz:RemovedIn="118" tools:ignore="UnusedResources">דפדפן שנבנה לטובת בני אדם, לא למטרות רווח.</string>
     <!-- Text for the Firefox account onboarding sign in card header. -->
-    <string name="onboarding_account_sign_in_header">להמשיך מאיפה שהפסקת</string>
+    <string name="onboarding_account_sign_in_header" moz:RemovedIn="118" tools:ignore="UnusedResources">להמשיך מאיפה שהפסקת</string>
     <!-- Text for the button to learn more about signing in to your Firefox account. -->
-    <string name="onboarding_manual_sign_in_description">סנכרון לשוניות וססמאות בין מכשירים למעבר חלק בין מסכים.</string>
+    <string name="onboarding_manual_sign_in_description" moz:RemovedIn="118" tools:ignore="UnusedResources">סנכרון לשוניות וססמאות בין מכשירים למעבר חלק בין מסכים.</string>
     <!-- Text for the button to manually sign into Firefox account. -->
-    <string name="onboarding_firefox_account_sign_in">כניסה</string>
+    <string name="onboarding_firefox_account_sign_in" moz:RemovedIn="118" tools:ignore="UnusedResources">כניסה</string>
     <!-- text to display in the snackbar once account is signed-in -->
     <string name="onboarding_firefox_account_sync_is_on">הסנכרון פעיל</string>
     <!-- Text for the tracking protection onboarding card header -->
-    <string name="onboarding_tracking_protection_header">הגנה על הפרטיות כברירת מחדל</string>
+    <string name="onboarding_tracking_protection_header" moz:RemovedIn="118" tools:ignore="UnusedResources">הגנה על הפרטיות כברירת מחדל</string>
     <!-- Text for the tracking protection card description. The first parameter is the name of the application.-->
-    <string name="onboarding_tracking_protection_description_old">‏%1$s מונע באופן אוטומטי מחברות לעקוב אחריך בסתר ברחבי הרשת.</string>
+    <string name="onboarding_tracking_protection_description_old" moz:RemovedIn="118" tools:ignore="UnusedResources">‏%1$s מונע באופן אוטומטי מחברות לעקוב אחריך בסתר ברחבי הרשת.</string>
     <!-- Text for the tracking protection card description. -->
-    <string name="onboarding_tracking_protection_description">הגנת עוגיות מלאה מונעת מרכיבי מעקב להשתמש בעוגיות כדי לעקוב אחריך בין אתרים.</string>
+    <string name="onboarding_tracking_protection_description" moz:RemovedIn="118" tools:ignore="UnusedResources">הגנת עוגיות מלאה מונעת מרכיבי מעקב להשתמש בעוגיות כדי לעקוב אחריך בין אתרים.</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
-    <string name="onboarding_tracking_protection_standard_button_2">רגיל (ברירת מחדל)</string>
+    <string name="onboarding_tracking_protection_standard_button_2" moz:RemovedIn="118" tools:ignore="UnusedResources">רגיל (ברירת מחדל)</string>
     <!-- text for standard blocking option button description -->
-    <string name="onboarding_tracking_protection_standard_button_description_3">מאוזן בין פרטיות לביצועים. דפים ייטענו כרגיל.</string>
+    <string name="onboarding_tracking_protection_standard_button_description_3" moz:RemovedIn="118" tools:ignore="UnusedResources">מאוזן בין פרטיות לביצועים. דפים ייטענו כרגיל.</string>
     <!-- text for tracking protection radio button option for strict level of blocking -->
-    <string name="onboarding_tracking_protection_strict_option">מחמיר</string>
+    <string name="onboarding_tracking_protection_strict_option" moz:RemovedIn="118" tools:ignore="UnusedResources">מחמיר</string>
     <!-- text for strict blocking option button description -->
-    <string name="onboarding_tracking_protection_strict_button_description_3">חוסם יותר רכיבי מעקב כדי שדפים ייטענו מהר יותר, אך ייתכן שפונקציונליות בדפים מסויימים לא תעבוד.</string>
+    <string name="onboarding_tracking_protection_strict_button_description_3" moz:RemovedIn="118" tools:ignore="UnusedResources">חוסם יותר רכיבי מעקב כדי שדפים ייטענו מהר יותר, אך ייתכן שפונקציונליות בדפים מסויימים לא תעבוד.</string>
     <!-- text for the toolbar position card header  -->
-    <string name="onboarding_toolbar_placement_header_1">בחירת מיקום סרגל הכלים שלך</string>
+    <string name="onboarding_toolbar_placement_header_1" moz:RemovedIn="118" tools:ignore="UnusedResources">בחירת מיקום סרגל הכלים שלך</string>
     <!-- Text for the toolbar position card description -->
-    <string name="onboarding_toolbar_placement_description">אפשר להשאיר אותו למטה, או להזיז אותו למעלה.</string>
+    <string name="onboarding_toolbar_placement_description" moz:RemovedIn="118" tools:ignore="UnusedResources">אפשר להשאיר אותו למטה, או להזיז אותו למעלה.</string>
 
     <!-- Text for the privacy notice onboarding card header -->
-    <string name="onboarding_privacy_notice_header_1">הנתונים שלך בשליטתך</string>
+    <string name="onboarding_privacy_notice_header_1" moz:RemovedIn="118" tools:ignore="UnusedResources">הנתונים שלך בשליטתך</string>
     <!-- Text for the privacy notice onboarding card description. -->
-    <string name="onboarding_privacy_notice_description">‏Firefox מעניק לך שליטה במה שמעניין אותך לשתף ברשת ומה שמעניין אותך לשתף איתנו.</string>
+    <string name="onboarding_privacy_notice_description" moz:RemovedIn="118" tools:ignore="UnusedResources">‏Firefox מעניק לך שליטה במה שמעניין אותך לשתף ברשת ומה שמעניין אותך לשתף איתנו.</string>
     <!-- Text for the button to read the privacy notice -->
-    <string name="onboarding_privacy_notice_read_button">קריאת הצהרת הפרטיות שלנו</string>
+    <string name="onboarding_privacy_notice_read_button" moz:RemovedIn="118" tools:ignore="UnusedResources">קריאת הצהרת הפרטיות שלנו</string>
 
     <!-- Text for the conclusion onboarding message -->
-    <string name="onboarding_conclusion_header">מוכנים לגלות אינטרנט מדהים?</string>
+    <string name="onboarding_conclusion_header" moz:RemovedIn="118" tools:ignore="UnusedResources">מוכנים לגלות אינטרנט מדהים?</string>
     <!-- text for the button to finish onboarding -->
-    <string name="onboarding_finish">התחלת גלישה</string>
+    <string name="onboarding_finish" moz:RemovedIn="118" tools:ignore="UnusedResources">התחלת גלישה</string>
 
     <!-- Onboarding theme -->
     <!-- text for the theme picker onboarding card header -->
-    <string name="onboarding_theme_picker_header">בחירת ערכת הנושא שלך</string>
+    <string name="onboarding_theme_picker_header" moz:RemovedIn="118" tools:ignore="UnusedResources">בחירת ערכת הנושא שלך</string>
     <!-- text for the theme picker onboarding card description -->
-    <string name="onboarding_theme_picker_description_2">ניתן לחסוך בסוללה ולשמור על העיניים באמצעות הפעלת מצב כהה.</string>
+    <string name="onboarding_theme_picker_description_2" moz:RemovedIn="118" tools:ignore="UnusedResources">ניתן לחסוך בסוללה ולשמור על העיניים באמצעות הפעלת מצב כהה.</string>
     <!-- Automatic theme setting (will follow device setting) -->
-    <string name="onboarding_theme_automatic_title">אוטומטי</string>
+    <string name="onboarding_theme_automatic_title" moz:RemovedIn="118" tools:ignore="UnusedResources">אוטומטי</string>
     <!-- Summary of automatic theme setting (will follow device setting) -->
-    <string name="onboarding_theme_automatic_summary">מסתגל להגדרות המכשיר שלך</string>
+    <string name="onboarding_theme_automatic_summary" moz:RemovedIn="118" tools:ignore="UnusedResources">מסתגל להגדרות המכשיר שלך</string>
     <!-- Theme setting for dark mode -->
-    <string name="onboarding_theme_dark_title">ערכת נושא כהה</string>
+    <string name="onboarding_theme_dark_title" moz:RemovedIn="118" tools:ignore="UnusedResources">ערכת נושא כהה</string>
     <!-- Theme setting for light mode -->
-    <string name="onboarding_theme_light_title">ערכת נושא בהירה</string>
+    <string name="onboarding_theme_light_title" moz:RemovedIn="118" tools:ignore="UnusedResources">ערכת נושא בהירה</string>
 
     <!-- Text shown in snackbar when multiple tabs have been sent to device -->
     <string name="sync_sent_tabs_snackbar">הלשוניות נשלחו!</string>
@@ -1419,12 +1457,8 @@
     <string name="etp_settings">הגדרות הגנה</string>
     <!-- Preference title for enhanced tracking protection settings -->
     <string name="preference_enhanced_tracking_protection">הגנת מעקב מתקדמת</string>
-    <!-- Title for the description of enhanced tracking protection -->
-    <string name="preference_enhanced_tracking_protection_explanation_title" moz:removedIn="114" tools:ignore="UnusedResources">לגלוש מבלי שעוקבים אחריך</string>
     <!-- Preference summary for enhanced tracking protection settings on/off switch -->
     <string name="preference_enhanced_tracking_protection_summary">כעת כולל הגנת עוגיות מלאה, המחסום החזק ביותר שלנו עד כה נגד רכיבי מעקב חוצי אתרים.</string>
-    <!-- Description of enhanced tracking protection. The first parameter is the name of the application (For example: Fenix) -->
-    <string name="preference_enhanced_tracking_protection_explanation" moz:removedIn="114" tools:ignore="UnusedResources">הנתונים שלך נשארים אצלך. %s מגן עליך מפני רוב רכיבי הריגול שעוקבים אחר הפעילות המקוונת שלך.</string>
     <!-- Description of enhanced tracking protection. The parameter is the name of the application (For example: Firefox Fenix) -->
     <string name="preference_enhanced_tracking_protection_explanation_2">‏%s מגן עליך מפני רוב רכיבי הריגול שעוקבים אחר הפעילות המקוונת שלך.</string>
     <!-- Text displayed that links to website about enhanced tracking protection -->
@@ -1432,15 +1466,11 @@
     <!-- Preference for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_standard_default_1">רגיל (ברירת מחדל)</string>
     <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description_4" moz:removedIn="114" tools:ignore="UnusedResources">מאוזן בין פרטיות לביצועים. דפים ייטענו כרגיל.</string>
-    <!-- Preference description for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_standard_description_5">הדפים ייטענו כרגיל, אך פחות רכיבי מעקב ייחסמו.</string>
     <!--  Accessibility text for the Standard protection information icon  -->
     <string name="preference_enhanced_tracking_protection_standard_info_button">מה נחסם על־ידי הגנת מעקב רגילה</string>
     <!-- Preference for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict">מחמיר</string>
-    <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_description_3" moz:removedIn="114" tools:ignore="UnusedResources">חוסם יותר רכיבי מעקב כדי שדפים ייטענו מהר יותר, אך ייתכן שפונקציונליות בדפים מסויימים לא תעבוד.</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict_description_4">הגנת מעקב חזקה יותר וביצועים מהירים יותר, אך מספר אתרים עשויים שלא לעבוד כראוי.</string>
     <!--  Accessibility text for the Strict protection information icon  -->
@@ -1798,6 +1828,8 @@
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">הוספת מנוע חיפוש</string>
+    <!-- Content description (not visible, for screen readers etc.): Title for the button that navigates to add new engine screen -->
+    <string name="search_engine_add_custom_search_engine_button_content_description">הוספת מנוע חיפוש חדש</string>
     <!-- Title of the Edit search engine screen -->
     <string name="search_engine_edit_custom_search_engine_title">עריכת מנוע חיפוש</string>
     <!-- Content description (not visible, for screen readers etc.): Title for the button to add a search engine in the action bar -->
@@ -1811,15 +1843,34 @@
 
     <!-- Text for the button to create a custom search engine on the Add search engine screen -->
     <string name="search_add_custom_engine_label_other">אחר</string>
+    <!-- Label for the TextField in which user enters custom search engine name -->
+    <string name="search_add_custom_engine_name_label">שם</string>
     <!-- Placeholder text shown in the Search Engine Name TextField before a user enters text -->
     <string name="search_add_custom_engine_name_hint">שם</string>
+    <!-- Placeholder text shown in the Search Engine Name text field before a user enters text -->
+    <string name="search_add_custom_engine_name_hint_2">שם מנוע החיפוש</string>
+    <!-- Label for the TextField in which user enters custom search engine URL -->
+    <string name="search_add_custom_engine_url_label">כתובת מחרוזת החיפוש</string>
     <!-- Placeholder text shown in the Search String TextField before a user enters text -->
     <string name="search_add_custom_engine_search_string_hint">מחרוזת חיפוש לשימוש</string>
+    <!-- Placeholder text shown in the Search String TextField before a user enters text -->
+    <string name="search_add_custom_engine_search_string_hint_2">כתובת URL לשימוש לחיפוש</string>
     <!-- Description text for the Search String TextField. The %s is part of the string -->
     <string name="search_add_custom_engine_search_string_example" formatted="false">יש להחליף את השאילתה עם ״%s״. לדוגמה:\nhttps://www.google.com/search?q=%s</string>
 
     <!-- Accessibility description for the form in which details about the custom search engine are entered -->
     <string name="search_add_custom_engine_form_description">פרטי מנוע חיפוש מותאם אישית</string>
+
+    <!-- Label for the TextField in which user enters custom search engine suggestion URL -->
+    <string name="search_add_custom_engine_suggest_url_label">‏API להצעות חיפוש (אופציונלי)</string>
+    <!-- Placeholder text shown in the Search Suggestion String TextField before a user enters text -->
+    <string name="search_add_custom_engine_suggest_string_hint">כתובת ה־API להצעות חיפוש</string>
+    <!-- Description text for the Search Suggestion String TextField. The %s is part of the string -->
+    <string name="search_add_custom_engine_suggest_string_example" formatted="false" moz:RemovedIn="118" tools:ignore="UnusedResources">יש להחליף את השאילתה ב־״%s״. לדוגמה:\nhttp://suggestqueries.google.com/complete/search?client=firefox&amp;q=%s</string>
+    <!-- Description text for the Search Suggestion String TextField. The %s is part of the string -->
+    <string name="search_add_custom_engine_suggest_string_example_2" formatted="false">יש להחליף את השאילתה ב־״%s״. לדוגמה:\nhttps://suggestqueries.google.com/complete/search?client=firefox&amp;q=%s</string>
+    <!-- The text for the "Save" button for saving a custom search engine -->
+    <string name="search_custom_engine_save_button">שמירה</string>
 
     <!-- Text shown when a user leaves the name field empty -->
     <string name="search_add_custom_engine_error_empty_name">נא להקליד שם למנוע החיפוש</string>

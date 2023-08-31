@@ -20,6 +20,8 @@ import mozilla.components.concept.engine.prompt.PromptRequest.MenuChoice
 import mozilla.components.concept.engine.prompt.PromptRequest.MultipleChoice
 import mozilla.components.concept.engine.prompt.PromptRequest.SingleChoice
 import mozilla.components.concept.engine.prompt.ShareData
+import mozilla.components.concept.identitycredential.Account
+import mozilla.components.concept.identitycredential.Provider
 import mozilla.components.concept.storage.Address
 import mozilla.components.concept.storage.CreditCardEntry
 import mozilla.components.concept.storage.Login
@@ -41,6 +43,9 @@ import org.mozilla.geckoview.GeckoSession.PromptDelegate.DateTimePrompt.Type.DAT
 import org.mozilla.geckoview.GeckoSession.PromptDelegate.DateTimePrompt.Type.MONTH
 import org.mozilla.geckoview.GeckoSession.PromptDelegate.DateTimePrompt.Type.TIME
 import org.mozilla.geckoview.GeckoSession.PromptDelegate.DateTimePrompt.Type.WEEK
+import org.mozilla.geckoview.GeckoSession.PromptDelegate.IdentityCredential.AccountSelectorPrompt
+import org.mozilla.geckoview.GeckoSession.PromptDelegate.IdentityCredential.PrivacyPolicyPrompt
+import org.mozilla.geckoview.GeckoSession.PromptDelegate.IdentityCredential.ProviderSelectorPrompt
 import org.mozilla.geckoview.GeckoSession.PromptDelegate.PromptResponse
 import java.io.File
 import java.io.FileOutputStream
@@ -56,6 +61,8 @@ typealias GeckoChoice = PromptDelegate.ChoicePrompt.Choice
 typealias GECKO_AUTH_FLAGS = PromptDelegate.AuthPrompt.AuthOptions.Flags
 typealias GECKO_AUTH_LEVEL = PromptDelegate.AuthPrompt.AuthOptions.Level
 typealias GECKO_PROMPT_FILE_TYPE = PromptDelegate.FilePrompt.Type
+typealias GECKO_PROMPT_PROVIDER_SELECTOR = ProviderSelectorPrompt.Provider
+typealias GECKO_PROMPT_ACCOUNT_SELECTOR = AccountSelectorPrompt.Account
 typealias GECKO_PROMPT_CHOICE_TYPE = PromptDelegate.ChoicePrompt.Type
 typealias GECKO_PROMPT_FILE_CAPTURE = PromptDelegate.FilePrompt.Capture
 typealias GECKO_PROMPT_SHARE_RESULT = PromptDelegate.SharePrompt.Result
@@ -69,6 +76,103 @@ typealias AC_FILE_FACING_MODE = PromptRequest.File.FacingMode
 @Suppress("LargeClass")
 internal class GeckoPromptDelegate(private val geckoEngineSession: GeckoEngineSession) :
     PromptDelegate {
+    override fun onSelectIdentityCredentialProvider(
+        session: GeckoSession,
+        prompt: ProviderSelectorPrompt,
+    ): GeckoResult<PromptResponse> {
+        val geckoResult = GeckoResult<PromptResponse>()
+
+        val onConfirm: (Provider) -> Unit = { provider ->
+            if (!prompt.isComplete) {
+                geckoResult.complete(
+                    prompt.confirm(
+                        provider.id,
+                    ),
+                )
+            }
+        }
+
+        val onDismiss: () -> Unit = {
+            prompt.dismissSafely(geckoResult)
+        }
+
+        geckoEngineSession.notifyObservers {
+            onPromptRequest(
+                PromptRequest.IdentityCredential.SelectProvider(
+                    providers = prompt.providers.map { it.toProvider() },
+                    onConfirm = onConfirm,
+                    onDismiss = onDismiss,
+                ),
+            )
+        }
+        return geckoResult
+    }
+
+    override fun onSelectIdentityCredentialAccount(
+        session: GeckoSession,
+        prompt: AccountSelectorPrompt,
+    ): GeckoResult<PromptResponse> {
+        val geckoResult = GeckoResult<PromptResponse>()
+
+        val onConfirm: (Account) -> Unit = { account ->
+            if (!prompt.isComplete) {
+                geckoResult.complete(
+                    prompt.confirm(
+                        account.id,
+                    ),
+                )
+            }
+        }
+
+        val onDismiss: () -> Unit = {
+            prompt.dismissSafely(geckoResult)
+        }
+
+        geckoEngineSession.notifyObservers {
+            onPromptRequest(
+                PromptRequest.IdentityCredential.SelectAccount(
+                    accounts = prompt.accounts.map { it.toAccount() },
+                    onConfirm = onConfirm,
+                    onDismiss = onDismiss,
+                ),
+            )
+        }
+        return geckoResult
+    }
+
+    override fun onShowPrivacyPolicyIdentityCredential(
+        session: GeckoSession,
+        prompt: PrivacyPolicyPrompt,
+    ): GeckoResult<PromptResponse> {
+        val geckoResult = GeckoResult<PromptResponse>()
+
+        val onConfirm: (Boolean) -> Unit = { confirmed ->
+            if (!prompt.isComplete) {
+                geckoResult.complete(
+                    prompt.confirm(confirmed),
+                )
+            }
+        }
+
+        val onDismiss: () -> Unit = {
+            prompt.dismissSafely(geckoResult)
+        }
+
+        geckoEngineSession.notifyObservers {
+            onPromptRequest(
+                PromptRequest.IdentityCredential.PrivacyPolicy(
+                    privacyPolicyUrl = prompt.privacyPolicyUrl,
+                    termsOfServiceUrl = prompt.termsOfServiceUrl,
+                    providerDomain = prompt.providerDomain,
+                    host = prompt.host,
+                    icon = prompt.icon,
+                    onConfirm = onConfirm,
+                    onDismiss = onDismiss,
+                ),
+            )
+        }
+        return geckoResult
+    }
 
     override fun onCreditCardSave(
         session: GeckoSession,
@@ -804,4 +908,14 @@ internal fun PromptDelegate.BasePrompt.dismissSafely(geckoResult: GeckoResult<Pr
     if (!this.isComplete) {
         geckoResult.complete(dismiss())
     }
+}
+
+@VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+internal fun GECKO_PROMPT_PROVIDER_SELECTOR.toProvider(): Provider {
+    return Provider(id, icon, name)
+}
+
+@VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+internal fun GECKO_PROMPT_ACCOUNT_SELECTOR.toAccount(): Account {
+    return Account(id, email, name, icon)
 }

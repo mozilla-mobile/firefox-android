@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.ui
 
 import androidx.core.net.toUri
@@ -15,10 +19,11 @@ class CookieBannerReductionTest {
     @get:Rule
     val activityTestRule = HomeActivityIntentTestRule.withDefaultSettingsOverrides(skipOnboarding = true)
 
+    // Bug causing flakiness https://bugzilla.mozilla.org/show_bug.cgi?id=1807440
     @SmokeTest
     @Test
     fun verifyCookieBannerReductionTest() {
-        val webSite = "voetbal24.be"
+        val webSite = "startsiden.no"
 
         homeScreen {
         }.openNavigationToolbar {
@@ -27,13 +32,13 @@ class CookieBannerReductionTest {
             verifyCookieBannerExists(exists = true)
         }.openThreeDotMenu {
         }.openSettings {
-            verifySettingsOptionSummary("Cookie Banner Reduction", "Off")
+            verifySettingsOptionSummary("Cookie banner reduction", "Off")
         }.openCookieBannerReductionSubMenu {
             verifyCookieBannerView(isCookieBannerReductionChecked = false)
             clickCookieBannerReductionToggle()
             verifyCheckedCookieBannerReductionToggle(isCookieBannerReductionChecked = true)
         }.goBack {
-            verifySettingsOptionSummary("Cookie Banner Reduction", "On")
+            verifySettingsOptionSummary("Cookie banner reduction", "On")
         }
 
         exitMenu()
@@ -56,16 +61,18 @@ class CookieBannerReductionTest {
         exitMenu()
 
         browserScreen {
+            waitForPageToLoad()
         }.openThreeDotMenu {
         }.refreshPage {
             verifyCookieBannerExists(exists = false)
         }
     }
 
+    // Bug causing flakiness https://bugzilla.mozilla.org/show_bug.cgi?id=1807440
     @SmokeTest
     @Test
     fun verifyCookieBannerReductionInPrivateBrowsingTest() {
-        val webSite = "voetbal24.be"
+        val webSite = "startsiden.no"
 
         homeScreen {
         }.togglePrivateBrowsingMode()
@@ -76,13 +83,13 @@ class CookieBannerReductionTest {
             verifyCookieBannerExists(exists = true)
         }.openThreeDotMenu {
         }.openSettings {
-            verifySettingsOptionSummary("Cookie Banner Reduction", "Off")
+            verifySettingsOptionSummary("Cookie banner reduction", "Off")
         }.openCookieBannerReductionSubMenu {
             verifyCookieBannerView(isCookieBannerReductionChecked = false)
             clickCookieBannerReductionToggle()
             verifyCheckedCookieBannerReductionToggle(isCookieBannerReductionChecked = true)
         }.goBack {
-            verifySettingsOptionSummary("Cookie Banner Reduction", "On")
+            verifySettingsOptionSummary("Cookie banner reduction", "On")
         }
 
         exitMenu()
@@ -95,7 +102,7 @@ class CookieBannerReductionTest {
 
         homeScreen {
         }.openTabDrawer {
-        }.openTab("Voetbal24") {
+        }.openTab("Startsiden.no") {
             verifyCookieBannerExists(exists = false)
         }.openThreeDotMenu {
         }.openSettings {
@@ -105,6 +112,7 @@ class CookieBannerReductionTest {
             exitMenu()
         }
         browserScreen {
+            waitForPageToLoad()
         }.openThreeDotMenu {
         }.refreshPage {
             verifyCookieBannerExists(exists = false)

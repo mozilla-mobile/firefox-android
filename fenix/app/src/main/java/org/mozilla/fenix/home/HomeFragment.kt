@@ -10,7 +10,6 @@ import android.content.res.Configuration
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
-import android.os.StrictMode
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -38,6 +37,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import mozilla.components.browser.state.selector.findTab
@@ -52,6 +52,7 @@ import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.feature.tab.collections.TabCollection
+import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.feature.top.sites.TopSitesConfig
 import mozilla.components.feature.top.sites.TopSitesFeature
 import mozilla.components.feature.top.sites.TopSitesFrecencyConfig
@@ -60,8 +61,8 @@ import mozilla.components.lib.state.ext.consumeFlow
 import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
-import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import org.mozilla.fenix.GleanMetrics.HomeScreen
+import org.mozilla.fenix.GleanMetrics.Homepage
 import org.mozilla.fenix.GleanMetrics.PrivateBrowsingShortcutCfr
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
@@ -105,8 +106,6 @@ import org.mozilla.fenix.messaging.DefaultMessageController
 import org.mozilla.fenix.messaging.FenixNimbusMessagingController
 import org.mozilla.fenix.messaging.MessagingFeature
 import org.mozilla.fenix.nimbus.FxNimbus
-import org.mozilla.fenix.onboarding.FenixOnboarding
-import org.mozilla.fenix.onboarding.controller.DefaultOnboardingController
 import org.mozilla.fenix.perf.MarkersFragmentLifecycleCallbacks
 import org.mozilla.fenix.perf.runBlockingIncrement
 import org.mozilla.fenix.search.toolbar.DefaultSearchSelectorController
@@ -156,6 +155,7 @@ class HomeFragment : Fragment() {
             showRenamedSnackbar()
         }
 
+        @SuppressLint("NotifyDataSetChanged")
         override fun onTabsAdded(tabCollection: TabCollection, sessions: List<TabSessionState>) {
             view?.let {
                 val message = if (sessions.size == 1) {
@@ -163,6 +163,11 @@ class HomeFragment : Fragment() {
                 } else {
                     R.string.create_collection_tabs_saved
                 }
+
+                lifecycleScope.launch(Main) {
+                    binding.sessionControlRecyclerView.adapter?.notifyDataSetChanged()
+                }
+
                 FenixSnackbar.make(
                     view = it,
                     duration = Snackbar.LENGTH_LONG,
@@ -178,12 +183,6 @@ class HomeFragment : Fragment() {
     private val store: BrowserStore
         get() = requireComponents.core.store
 
-    private val onboarding by lazy {
-        requireComponents.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
-            FenixOnboarding(requireContext())
-        }
-    }
-
     private var _sessionControlInteractor: SessionControlInteractor? = null
     private val sessionControlInteractor: SessionControlInteractor
         get() = _sessionControlInteractor!!
@@ -191,12 +190,9 @@ class HomeFragment : Fragment() {
     private var sessionControlView: SessionControlView? = null
     private var tabCounterView: TabCounterView? = null
     private var toolbarView: ToolbarView? = null
-    private var appBarLayout: AppBarLayout? = null
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     internal var homeMenuView: HomeMenuView? = null
-
-    private lateinit var currentMode: CurrentMode
 
     private var lastAppliedWallpaperName: String = Wallpaper.defaultName
 
@@ -241,14 +237,7 @@ class HomeFragment : Fragment() {
         val currentWallpaperName = requireContext().settings().currentWallpaperName
         applyWallpaper(wallpaperName = currentWallpaperName, orientationChange = false)
 
-        currentMode = CurrentMode(
-            requireContext(),
-            onboarding,
-            browsingModeManager,
-            ::dispatchModeChanges,
-        )
-
-        components.appStore.dispatch(AppAction.ModeChange(currentMode.getCurrentMode()))
+        components.appStore.dispatch(AppAction.ModeChange(Mode.fromBrowsingMode(browsingModeManager.mode)))
 
         lifecycleScope.launch(IO) {
             if (requireContext().settings().showPocketRecommendationsFeature) {
@@ -370,6 +359,7 @@ class HomeFragment : Fragment() {
                 viewLifecycleScope = viewLifecycleOwner.lifecycleScope,
                 registerCollectionStorageObserver = ::registerCollectionStorageObserver,
                 removeCollectionWithUndo = ::removeCollectionWithUndo,
+                showUndoSnackbarForTopSite = ::showUndoSnackbarForTopSite,
                 showTabTray = ::openTabsTray,
             ),
             recentTabController = DefaultRecentTabsController(
@@ -387,6 +377,8 @@ class HomeFragment : Fragment() {
                 activity = activity,
                 navController = findNavController(),
                 appStore = components.appStore,
+                browserStore = components.core.store,
+                selectTabUseCase = components.useCases.tabsUseCases.selectTab,
             ),
             recentVisitsController = DefaultRecentVisitsController(
                 navController = findNavController(),
@@ -404,10 +396,6 @@ class HomeFragment : Fragment() {
                 activity = activity,
                 appStore = components.appStore,
                 navController = findNavController(),
-            ),
-            onboardingController = DefaultOnboardingController(
-                activity = activity,
-                hideOnboarding = ::hideOnboardingAndOpenSearch,
             ),
             searchSelectorController = DefaultSearchSelectorController(
                 activity = activity,
@@ -433,8 +421,6 @@ class HomeFragment : Fragment() {
         )
 
         updateSessionControlView()
-
-        appBarLayout = binding.homeAppBar
 
         disableAppBarDragging()
 
@@ -486,6 +472,24 @@ class HomeFragment : Fragment() {
         )
     }
 
+    @VisibleForTesting
+    internal fun showUndoSnackbarForTopSite(topSite: TopSite) {
+        lifecycleScope.allowUndo(
+            view = requireView(),
+            message = getString(R.string.snackbar_top_site_removed),
+            undoActionTitle = getString(R.string.snackbar_deleted_undo),
+            onCancel = {
+                requireComponents.useCases.topSitesUseCase.addPinnedSites(
+                    topSite.title.toString(),
+                    topSite.url,
+                )
+            },
+            operation = { },
+            elevation = TOAST_ELEVATION,
+            paddedForBottomToolbar = true,
+        )
+    }
+
     /**
      * The [SessionControlView] is forced to update with our current state when we call
      * [HomeFragment.onCreateView] in order to be able to draw everything at once with the current
@@ -530,6 +534,9 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         HomeScreen.homeScreenDisplayed.record(NoExtras())
         HomeScreen.homeScreenViewCount.add()
+        if (!browsingModeManager.mode.isPrivate) {
+            HomeScreen.standardHomepageViewCount.add()
+        }
 
         observeSearchEngineNameChanges()
         observeWallpaperUpdates()
@@ -541,7 +548,6 @@ class HomeFragment : Fragment() {
             homeActivity = activity as HomeActivity,
             navController = findNavController(),
             menuButton = WeakReference(binding.menuButton),
-            hideOnboardingIfNeeded = ::hideOnboardingIfNeeded,
         ).also { it.build() }
 
         tabCounterView = TabCounterView(
@@ -554,10 +560,8 @@ class HomeFragment : Fragment() {
         toolbarView?.build()
 
         PrivateBrowsingButtonView(binding.privateBrowsingButton, browsingModeManager) { newMode ->
-            sessionControlInteractor.onPrivateModeButtonClicked(
-                newMode,
-                onboarding.userHasBeenOnboarded(),
-            )
+            sessionControlInteractor.onPrivateModeButtonClicked(newMode)
+            Homepage.privateModeIconTapped.record(mozilla.telemetry.glean.private.NoExtras())
         }
 
         consumeFrom(requireComponents.core.store) {
@@ -643,7 +647,7 @@ class HomeFragment : Fragment() {
                     else -> null
                 }
             }
-                .ifChanged()
+                .distinctUntilChanged()
                 .collect {
                     topSitesFeature.withFeature {
                         it.storage.notifyObservers { onStorageUpdated() }
@@ -711,7 +715,6 @@ class HomeFragment : Fragment() {
         sessionControlView = null
         tabCounterView = null
         toolbarView = null
-        appBarLayout = null
         _binding = null
 
         bundleArgs.clear()
@@ -731,10 +734,6 @@ class HomeFragment : Fragment() {
                 return@runIfReadyOrQueue
             }
 
-            requireComponents.backgroundServices.accountManager.register(
-                currentMode,
-                owner = this@HomeFragment.viewLifecycleOwner,
-            )
             requireComponents.backgroundServices.accountManager.register(
                 object : AccountObserver {
                     override fun onAuthenticated(account: OAuthAccount, authType: AuthType) {
@@ -769,12 +768,6 @@ class HomeFragment : Fragment() {
 
         lifecycleScope.launch(IO) {
             requireComponents.reviewPromptController.promptReview(requireActivity())
-        }
-    }
-
-    private fun dispatchModeChanges(mode: Mode) {
-        if (mode != Mode.fromBrowsingMode(browsingModeManager.mode)) {
-            requireContext().components.appStore.dispatch(AppAction.ModeChange(mode))
         }
     }
 
@@ -878,23 +871,6 @@ class HomeFragment : Fragment() {
                 }
             }
         }
-    }
-
-    private fun hideOnboardingIfNeeded() {
-        if (!onboarding.userHasBeenOnboarded()) {
-            onboarding.finish()
-            requireContext().components.appStore.dispatch(
-                AppAction.ModeChange(
-                    mode = currentMode.getCurrentMode(),
-                ),
-            )
-        }
-    }
-
-    private fun hideOnboardingAndOpenSearch() {
-        hideOnboardingIfNeeded()
-        appBarLayout?.setExpanded(true, true)
-        sessionControlInteractor.onNavigateSearch()
     }
 
     private fun subscribeToTabCollections(): Observer<List<TabCollection>> {

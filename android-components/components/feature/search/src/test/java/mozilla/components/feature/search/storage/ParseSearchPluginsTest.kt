@@ -6,6 +6,7 @@ package mozilla.components.feature.search.storage
 
 import android.text.TextUtils
 import mozilla.components.browser.state.search.SearchEngine
+import mozilla.components.feature.search.middleware.SearchExtraParams
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -21,7 +22,7 @@ class ParseSearchPluginsTest(private val searchEngineIdentifier: String) {
 
     @Test
     @Throws(Exception::class)
-    fun parser() {
+    fun parserNoSearchExtraParams() {
         val stream = FileInputStream(File(basePath, searchEngineIdentifier))
         val searchEngine = SearchEngineReader(type = SearchEngine.Type.BUNDLED)
             .loadStream(searchEngineIdentifier, stream)
@@ -35,6 +36,56 @@ class ParseSearchPluginsTest(private val searchEngineIdentifier: String) {
 
         val searchUrl = searchEngine.resultUrls
         assertTrue(searchUrl.isNotEmpty())
+
+        stream.close()
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun parserWithSearchExtraParams() {
+        val stream = FileInputStream(File(basePath, searchEngineIdentifier))
+        val searchEngineName = "test"
+        val featureEnablerName = "t"
+        val featureEnablerParam = "enabled"
+        val channelIdName = "p"
+        val channelIdParam = "12345"
+        val searchExtraParams = SearchExtraParams(
+            searchEngineName = searchEngineName,
+            featureEnablerName = featureEnablerName,
+            featureEnablerParam = featureEnablerParam,
+            channelIdName = channelIdName,
+            channelIdParam = channelIdParam,
+        )
+        val searchEngine =
+            SearchEngineReader(
+                type = SearchEngine.Type.BUNDLED,
+                searchExtraParams = searchExtraParams,
+            ).loadStream(
+                identifier = searchEngineIdentifier,
+                stream = stream,
+            )
+
+        assertEquals(searchEngineIdentifier, searchEngine.id)
+
+        assertNotNull(searchEngine.name)
+        assertFalse(TextUtils.isEmpty(searchEngine.name))
+
+        assertNotNull(searchEngine.icon)
+
+        val searchUrl = searchEngine.resultUrls
+        assertTrue(searchUrl.isNotEmpty())
+
+        if (searchEngine.name.startsWith(searchEngineName)) {
+            for (url in searchUrl) {
+                assertTrue(url.contains("=$featureEnablerParam"))
+                assertTrue(url.endsWith("=$channelIdParam"))
+            }
+        } else {
+            for (url in searchUrl) {
+                assertFalse(url.endsWith("=$channelIdParam"))
+                assertFalse(url.contains("=$featureEnablerParam"))
+            }
+        }
 
         stream.close()
     }

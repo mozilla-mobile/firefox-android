@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.ui
 
 import androidx.test.platform.app.InstrumentationRegistry
@@ -5,18 +9,24 @@ import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
+import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithText
 import org.mozilla.fenix.helpers.RetryTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
+import org.mozilla.fenix.ui.robots.browserScreen
+import org.mozilla.fenix.ui.robots.clickContextMenuItem
+import org.mozilla.fenix.ui.robots.clickPageObject
 import org.mozilla.fenix.ui.robots.homeScreen
+import org.mozilla.fenix.ui.robots.longClickPageObject
 import org.mozilla.fenix.ui.robots.navigationToolbar
 import org.mozilla.fenix.ui.robots.openEditURLView
 import org.mozilla.fenix.ui.robots.searchScreen
+import org.mozilla.fenix.ui.robots.shareOverlay
 
 class TextSelectionTest {
     private lateinit var mDevice: UiDevice
@@ -50,7 +60,9 @@ class TextSelectionTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(genericURL.url) {
-            longClickAndCopyText("content", true)
+            longClickPageObject(itemContainingText("content"))
+            clickContextMenuItem("Select all")
+            clickContextMenuItem("Copy")
         }.openNavigationToolbar {
             openEditURLView()
         }
@@ -72,7 +84,8 @@ class TextSelectionTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(genericURL.url) {
-            longClickAndCopyText("content")
+            longClickPageObject(itemContainingText("content"))
+            clickContextMenuItem("Copy")
         }.openNavigationToolbar {
             openEditURLView()
         }
@@ -92,7 +105,7 @@ class TextSelectionTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(genericURL.url) {
-            longClickLink(genericURL.content)
+            longClickPageObject(itemWithText(genericURL.content))
         }.clickShareSelectedText {
             verifyAndroidShareLayout()
         }
@@ -105,10 +118,11 @@ class TextSelectionTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(genericURL.url) {
-            longClickAndSearchText("Search", "content")
+            longClickPageObject(itemContainingText("content"))
+            clickContextMenuItem("Search")
             mDevice.waitForIdle()
             verifyTabCounter("2")
-            verifyUrl("google")
+            verifyUrl("content")
         }
     }
 
@@ -122,14 +136,14 @@ class TextSelectionTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(genericURL.url) {
-            longClickAndSearchText("Private Search", "content")
+            longClickPageObject(itemContainingText("content"))
+            clickContextMenuItem("Private Search")
             mDevice.waitForIdle()
             verifyTabCounter("2")
-            verifyUrl("google")
+            verifyUrl("content")
         }
     }
 
-    @Ignore("Failing, see https://bugzilla.mozilla.org/show_bug.cgi?id=1828663")
     @SmokeTest
     @Test
     fun selectAllAndCopyPDFTextTest() {
@@ -138,8 +152,10 @@ class TextSelectionTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(genericURL.url) {
-            clickLinkMatchingText("PDF file")
-            longClickAndCopyText("Crossing", true)
+            clickPageObject(itemWithText("PDF form file"))
+            longClickPageObject(itemContainingText("Crossing"))
+            clickContextMenuItem("Select all")
+            clickContextMenuItem("Copy")
         }.openNavigationToolbar {
             openEditURLView()
         }
@@ -148,9 +164,7 @@ class TextSelectionTest {
             clickClearButton()
             longClickToolbar()
             clickPasteText()
-            // With Select all, white spaces are copied
-            // Potential bug https://bugzilla.mozilla.org/show_bug.cgi?id=1821310
-            verifyTypedToolbarText(" Washington Crossing the Delaware Wikipedia link ")
+            verifyTypedToolbarText("Washington Crossing the Delaware Wikipedia linkName: Android")
         }
     }
 
@@ -162,8 +176,9 @@ class TextSelectionTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(genericURL.url) {
-            clickLinkMatchingText("PDF file")
-            longClickAndCopyText("Crossing")
+            clickPageObject(itemWithText("PDF form file"))
+            longClickPageObject(itemContainingText("Crossing"))
+            clickContextMenuItem("Copy")
         }.openNavigationToolbar {
             openEditURLView()
         }
@@ -184,8 +199,8 @@ class TextSelectionTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(genericURL.url) {
-            clickLinkMatchingText("PDF file")
-            longClickMatchingText("Crossing")
+            clickPageObject(itemWithText("PDF form file"))
+            longClickPageObject(itemContainingText("Crossing"))
         }.clickShareSelectedText {
             verifyAndroidShareLayout()
         }
@@ -199,10 +214,11 @@ class TextSelectionTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(genericURL.url) {
-            clickLinkMatchingText("PDF file")
-            longClickAndSearchText("Search", "Crossing")
+            clickPageObject(itemWithText("PDF form file"))
+            longClickPageObject(itemContainingText("Crossing"))
+            clickContextMenuItem("Search")
             verifyTabCounter("2")
-            verifyUrl("google")
+            verifyUrl("Crossing")
         }
     }
 
@@ -217,10 +233,98 @@ class TextSelectionTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(genericURL.url) {
-            clickLinkMatchingText("PDF file")
-            longClickAndSearchText("Private Search", "Crossing")
+            clickPageObject(itemWithText("PDF form file"))
+            longClickPageObject(itemContainingText("Crossing"))
+            clickContextMenuItem("Private Search")
             verifyTabCounter("2")
-            verifyUrl("google")
+            verifyUrl("Crossing")
+        }
+    }
+
+    @Test
+    fun verifyUrlBarTextSelectionOptionsTest() {
+        val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(genericURL.url) {
+        }.openNavigationToolbar {
+            longClickEditModeToolbar()
+            verifyTextSelectionOptions("Open", "Cut", "Copy", "Share")
+        }
+    }
+
+    @Test
+    fun copyUrlBarTextTest() {
+        val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(genericURL.url) {
+        }.openNavigationToolbar {
+            longClickEditModeToolbar()
+            clickContextMenuItem("Copy")
+            clickClearToolbarButton()
+            verifyToolbarIsEmpty()
+            longClickEditModeToolbar()
+            clickContextMenuItem("Paste")
+            verifyUrl(genericURL.url.toString())
+        }
+    }
+
+    @Test
+    fun cutUrlBarTextTest() {
+        val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(genericURL.url) {
+        }.openNavigationToolbar {
+            longClickEditModeToolbar()
+            clickContextMenuItem("Cut")
+            verifyToolbarIsEmpty()
+            longClickEditModeToolbar()
+            clickContextMenuItem("Paste")
+            verifyUrl(genericURL.url.toString())
+        }
+    }
+
+    @Test
+    fun shareUrlBarTextTest() {
+        val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(genericURL.url) {
+        }.openNavigationToolbar {
+            longClickEditModeToolbar()
+            clickContextMenuItem("Share")
+        }
+        shareOverlay {
+            verifyAndroidShareLayout()
+        }
+    }
+
+    @Test
+    fun urlBarQuickActionsTest() {
+        val firstWebsite = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+        val secondWebsite = TestAssetHelper.getGenericAsset(mockWebServer, 2)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(firstWebsite.url) {
+            longClickToolbar()
+            clickContextMenuItem("Copy")
+        }
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(secondWebsite.url) {
+            longClickToolbar()
+            clickContextMenuItem("Paste")
+        }
+        searchScreen {
+            verifyTypedToolbarText(firstWebsite.url.toString())
+        }.dismissSearchBar {
+        }
+        browserScreen {
+            verifyUrl(secondWebsite.url.toString())
+            longClickToolbar()
+            clickContextMenuItem("Paste & Go")
+            verifyUrl(firstWebsite.url.toString())
         }
     }
 }

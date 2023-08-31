@@ -28,6 +28,8 @@ import mozilla.components.feature.top.sites.TopSitesFeature
 import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.ktx.android.view.hideKeyboard
+import mozilla.components.support.ktx.util.URLStringUtils
+import mozilla.components.support.utils.StatusBarUtils
 import mozilla.components.support.utils.ThreadUtils
 import org.mozilla.focus.GleanMetrics.BrowserSearch
 import org.mozilla.focus.GleanMetrics.SearchBar
@@ -53,9 +55,7 @@ import org.mozilla.focus.topsites.DefaultTopSitesView
 import org.mozilla.focus.topsites.TopSitesOverlay
 import org.mozilla.focus.ui.theme.FocusTheme
 import org.mozilla.focus.utils.OneShotOnPreDrawListener
-import org.mozilla.focus.utils.StatusBarUtils
 import org.mozilla.focus.utils.SupportUtils
-import org.mozilla.focus.utils.UrlUtils
 import org.mozilla.focus.utils.ViewUtils
 import kotlin.coroutines.CoroutineContext
 
@@ -492,29 +492,6 @@ class UrlInputFragment :
                 },
             )
 
-        // We only need to animate the toolbar if we are an overlay.
-        /*
-        if (isOverlay) {
-            val screenLocation = IntArray(2)
-            //urlView?.getLocationOnScreen(screenLocation)
-
-            val leftDelta = requireArguments().getInt(ARGUMENT_X) - screenLocation[0] - urlView.paddingLeft
-
-            if (!reverse) {
-                //urlView?.pivotX = 0f
-                //urlView?.pivotY = 0f
-                //urlView?.translationX = leftDelta.toFloat()
-            }
-
-            if (urlView != null) {
-                // The URL moves from the right (at least if the lock is visible) to it's actual position
-                urlView.animate()
-                    .setDuration(ANIMATION_DURATION.toLong())
-                    .translationX((if (reverse) leftDelta else 0).toFloat())
-            }
-        }
-        */
-
         if (reverse) {
             binding.toolbarBottomBorder.isVisible = true
 
@@ -543,9 +520,9 @@ class UrlInputFragment :
 
             ViewUtils.hideKeyboard(binding.browserToolbar)
 
-            val isUrl = UrlUtils.isUrl(input)
+            val isUrl = URLStringUtils.isURLLike(input)
             if (isUrl) {
-                openUrl(UrlUtils.normalize(input))
+                openUrl(URLStringUtils.toNormalizedURL(input))
             } else {
                 search(input)
             }
@@ -580,8 +557,8 @@ class UrlInputFragment :
         if (alwaysSearch) {
             search(query)
         } else {
-            if (UrlUtils.isUrl(query)) {
-                openUrl(UrlUtils.normalize(query))
+            if (URLStringUtils.isURLLike(query)) {
+                openUrl(URLStringUtils.toNormalizedURL(query))
             } else {
                 search(query)
             }
