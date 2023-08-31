@@ -221,6 +221,14 @@ open class DefaultToolbarMenu(
         onItemTapped.invoke(ToolbarMenu.Item.Downloads)
     }
 
+    val passwordsItem = BrowserMenuImageText(
+        context.getString(R.string.library_passwords),
+        R.drawable.ic_static_lock,
+        primaryTextColor(),
+    ) {
+        onItemTapped.invoke(ToolbarMenu.Item.Passwords)
+    }
+
     private val extensionsItem = WebExtensionPlaceholderMenuItem(
         id = WebExtensionPlaceholderMenuItem.MAIN_EXTENSIONS_MENU_ID,
     )
@@ -379,6 +387,7 @@ open class DefaultToolbarMenu(
                 bookmarksItem,
                 historyItem,
                 downloadsItem,
+                passwordsItem,
                 extensionsItem,
                 syncMenuItem(),
                 BrowserMenuDivider(),

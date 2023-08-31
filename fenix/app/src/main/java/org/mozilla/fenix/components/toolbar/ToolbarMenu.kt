@@ -39,6 +39,11 @@ interface ToolbarMenu {
         object Bookmarks : Item()
         object History : Item()
         object Downloads : Item()
+
+        /**
+         * Menu item for the shortcut to passwords
+         */
+        object Passwords : Item()
         object NewTab : Item()
     }
 

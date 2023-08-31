@@ -363,6 +363,12 @@ class DefaultBrowserToolbarMenuController(
                     BrowserFragmentDirections.actionGlobalDownloadsFragment(),
                 )
             }
+            is ToolbarMenu.Item.Passwords -> browserAnimator.captureEngineViewAndDrawStatically {
+                navController.nav(
+                    R.id.browserFragment,
+                    BrowserFragmentDirections.actionGlobalSavedLoginsAuthFragment(),
+                )
+            }
             is ToolbarMenu.Item.NewTab -> {
                 navController.navigate(
                     BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = true),
@@ -467,6 +473,8 @@ class DefaultBrowserToolbarMenuController(
                 Events.browserMenuAction.record(Events.BrowserMenuActionExtra("history"))
             is ToolbarMenu.Item.Downloads ->
                 Events.browserMenuAction.record(Events.BrowserMenuActionExtra("downloads"))
+            is ToolbarMenu.Item.Passwords ->
+                Events.browserMenuAction.record(Events.BrowserMenuActionExtra("passwords"))
             is ToolbarMenu.Item.NewTab ->
                 Events.browserMenuAction.record(Events.BrowserMenuActionExtra("new_tab"))
             is ToolbarMenu.Item.SetDefaultBrowser ->

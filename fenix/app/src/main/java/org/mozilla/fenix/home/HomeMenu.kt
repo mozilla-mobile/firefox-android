@@ -49,6 +49,11 @@ class HomeMenu(
         object Bookmarks : Item()
         object History : Item()
         object Downloads : Item()
+
+        /**
+         * Menu item for the shortcut to passwords
+         */
+        object Passwords : Item()
         object Extensions : Item()
         data class SyncAccount(val accountState: AccountState) : Item()
 
@@ -142,6 +147,14 @@ class HomeMenu(
             onItemTapped.invoke(Item.Downloads)
         }
 
+        val passwordsItem = BrowserMenuImageText(
+            context.getString(R.string.library_passwords),
+            R.drawable.ic_static_lock,
+            primaryTextColor,
+        ) {
+            onItemTapped.invoke(Item.Passwords)
+        }
+
         val extensionsItem = BrowserMenuImageText(
             context.getString(R.string.browser_menu_add_ons),
             R.drawable.ic_addons_extensions,
@@ -217,6 +230,7 @@ class HomeMenu(
             bookmarksItem,
             historyItem,
             downloadsItem,
+            passwordsItem,
             extensionsItem,
             syncSignInMenuItem,
             accountAuthItem,

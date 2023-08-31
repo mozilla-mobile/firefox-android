@@ -152,6 +152,12 @@ class HomeMenuView(
                     HomeFragmentDirections.actionGlobalDownloadsFragment(),
                 )
             }
+            HomeMenu.Item.Passwords -> {
+                navController.nav(
+                    R.id.homeFragment,
+                    HomeFragmentDirections.actionGlobalSavedLoginsAuthFragment(),
+                )
+            }
             HomeMenu.Item.Help -> {
                 homeActivity.openToBrowserAndLoad(
                     searchTermOrURL = SupportUtils.getSumoURLForTopic(
