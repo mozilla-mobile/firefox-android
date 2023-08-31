@@ -385,17 +385,6 @@ class GeckoEngine(
             }
         }
 
-        val extensionProcessDelegate = object : WebExtensionController.ExtensionProcessDelegate {
-            override fun onDisabledProcessRestart(): GeckoResult<AllowOrDeny> {
-                val result = GeckoResult<AllowOrDeny>()
-                webExtensionDelegate.onDisabledExtensionProcessRestart {
-                        shouldRestart ->
-                    if (shouldRestart) result.complete(AllowOrDeny.ALLOW) else result.complete(AllowOrDeny.DENY)
-                }
-                return result
-            }
-        }
-
         runtime.webExtensionController.setPromptDelegate(promptDelegate)
         runtime.webExtensionController.setDebuggerDelegate(debuggerDelegate)
         runtime.webExtensionController.setAddonManagerDelegate(addonManagerDelegate)
