@@ -295,7 +295,7 @@ class MozillaSocorroService(
                 nameSet,
             )
 
-            sendPart(gzipOs, boundary, "JavaException", throwable.getStacktraceAsJsonString(), nameSet)
+            sendPart(gzipOs, boundary, "JavaException", getExceptionJsonStackTrace(throwable), nameSet)
         }
 
         miniDumpFilePath?.let {
@@ -561,6 +561,18 @@ class MozillaSocorroService(
                 false -> throwable.getStacktraceAsString()
             }
         } catch (e: NullPointerException) {
+            logger.error("failed to printStackTrace from throwable", e)
+            null
+        }
+    }
+
+    @Suppress("TooGenericExceptionCaught")
+    // getStacktraceAsJsonString() can throw a NullPointerException exception even if throwable is not null
+    private fun getExceptionJsonStackTrace(throwable: Throwable): String? {
+        return try {
+            throwable.getStacktraceAsJsonString()
+        } catch (e: NullPointerException) {
+            logger.error("failed to getStacktraceAsJsonString from throwable", e)
             null
         }
     }
