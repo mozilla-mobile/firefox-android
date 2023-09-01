@@ -53,7 +53,7 @@ object Versions {
 
     // see https://android-developers.googleblog.com/2022/06/independent-versioning-of-Jetpack-Compose-libraries.html
     // for Jetpack Compose libraries versioning
-    const val compose_version = "1.4.3"
+    const val compose_version = "1.5.0"
     const val compose_compiler = "1.4.8"
 
     object AndroidX {
@@ -82,7 +82,7 @@ object Versions {
         const val preferences = "1.1.1"
         const val lifecycle = "2.6.1"
         const val media = "1.6.0"
-        const val navigation = "2.6.0"
+        const val navigation = "2.5.3"
         const val work = "2.7.1"
         const val arch = "2.2.0"
         const val uiautomator = "2.2.0"
@@ -129,10 +129,8 @@ object ComponentsDependencies {
     const val androidx_compose_ui_tooling_preview = "androidx.compose.ui:ui-tooling-preview:${Versions.AndroidX.compose}"
     const val androidx_compose_foundation = "androidx.compose.foundation:foundation:${Versions.AndroidX.compose}"
     const val androidx_compose_material = "androidx.compose.material:material:${Versions.AndroidX.compose}"
+    const val androidx_compose_runtime_livedata = "androidx.compose.runtime:runtime-livedata:${Versions.AndroidX.compose}"
     const val androidx_compose_navigation = "androidx.navigation:navigation-compose:${Versions.AndroidX.navigation}"
-    const val androidx_safeargs = "androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.AndroidX.navigation}"
-    const val androidx_navigation_fragment = "androidx.navigation:navigation-fragment-ktx:${Versions.AndroidX.navigation}"
-    const val androidx_navigation_ui = "androidx.navigation:navigation-ui:$${Versions.AndroidX.navigation}"
     const val androidx_constraintlayout = "androidx.constraintlayout:constraintlayout:${Versions.AndroidX.constraintlayout}"
     const val androidx_core = "androidx.core:core:${Versions.AndroidX.core}"
     const val androidx_core_ktx = "androidx.core:core-ktx:${Versions.AndroidX.core}"
