@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.telemetry
 
+import android.content.Context
 import mozilla.components.browser.state.action.BrowserAction
 import mozilla.components.browser.state.action.ContentAction
 import mozilla.components.browser.state.action.DownloadAction
@@ -12,33 +13,44 @@ import mozilla.components.browser.state.action.TabListAction
 import mozilla.components.browser.state.selector.findTab
 import mozilla.components.browser.state.selector.findTabOrCustomTab
 import mozilla.components.browser.state.selector.normalTabs
+import mozilla.components.browser.state.selector.privateTabs
 import mozilla.components.browser.state.state.BrowserState
-import mozilla.components.browser.state.state.EngineState
 import mozilla.components.browser.state.state.SessionState
 import mozilla.components.concept.base.crash.CrashReporting
 import mozilla.components.lib.state.Middleware
 import mozilla.components.lib.state.MiddlewareContext
-import mozilla.components.support.base.android.Clock
 import mozilla.components.support.base.log.logger.Logger
+import mozilla.telemetry.glean.internal.TimerId
 import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.Metrics
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
+import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.utils.Settings
 import org.mozilla.fenix.GleanMetrics.EngineTab as EngineMetrics
+
+private const val PROGRESS_COMPLETE = 100
 
 /**
  * [Middleware] to record telemetry in response to [BrowserAction]s.
  *
  * @property settings reference to the application [Settings].
  * @property metrics [MetricController] to pass events that have been mapped from actions
+ * @property nimbusSearchEngine The Nimbus search engine.
+ * @property searchState Map that stores the [TabSessionState.id] & [TimerId].
+ * @property timerId The [TimerId] for the [Metrics.searchPageLoadTime].
  */
 class TelemetryMiddleware(
+    private val context: Context,
     private val settings: Settings,
     private val metrics: MetricController,
     private val crashReporting: CrashReporting? = null,
+    private val nimbusSearchEngine: String = FxNimbus.features.searchExtraParams.value().searchEngine,
+    private val searchState: MutableMap<String, TimerId> = mutableMapOf(),
+    private val timerId: TimerId = Metrics.searchPageLoadTime.start(),
 ) : Middleware<BrowserState, BrowserAction> {
 
     private val logger = Logger("TelemetryMiddleware")
@@ -50,12 +62,35 @@ class TelemetryMiddleware(
         action: BrowserAction,
     ) {
         // Pre process actions
+
         when (action) {
+            is ContentAction.UpdateIsSearchAction -> {
+                if (action.isSearch && nimbusSearchEngine.isNotEmpty() &&
+                    (action.searchEngineName == nimbusSearchEngine)
+                ) {
+                    searchState[action.sessionId] = timerId
+                }
+            }
             is ContentAction.UpdateLoadingStateAction -> {
                 context.state.findTab(action.sessionId)?.let { tab ->
+                    val hasFinishedLoading = tab.content.loading && !action.loading
+
                     // Record UriOpened event when a non-private page finishes loading
-                    if (tab.content.loading && !action.loading) {
+                    if (hasFinishedLoading) {
                         Events.normalAndPrivateUriCount.add()
+
+                        val progressCompleted = tab.content.progress == PROGRESS_COMPLETE
+                        if (progressCompleted) {
+                            searchState[action.sessionId]?.let {
+                                Metrics.searchPageLoadTime.stopAndAccumulate(it)
+                            }
+                        } else {
+                            searchState[action.sessionId]?.let {
+                                Metrics.searchPageLoadTime.cancel(it)
+                            }
+                        }
+
+                        searchState.remove(action.sessionId)
                     }
                 }
             }
@@ -92,6 +127,7 @@ class TelemetryMiddleware(
             -> {
                 // Update/Persist tabs count whenever it changes
                 settings.openTabsCount = context.state.normalTabs.count()
+                settings.openPrivateTabsCount = context.state.privateTabs.count()
                 if (context.state.normalTabs.isNotEmpty()) {
                     Metrics.hasOpenTabs.set(true)
                 } else {
@@ -115,24 +151,14 @@ class TelemetryMiddleware(
         }
 
         val isSelected = tab.id == state.selectedTabId
-        val age = tab.engineState.age()
 
         // Increment the counter of killed foreground/background tabs
-        val tabKillLabel = if (isSelected) { "foreground" } else { "background" }
-        EngineMetrics.kills[tabKillLabel].add()
-
-        // Record the age of the engine session of the killed foreground/background tab.
-        if (isSelected && age != null) {
-            EngineMetrics.killForegroundAge.accumulateSamples(listOf(age))
-        } else if (age != null) {
-            EngineMetrics.killBackgroundAge.accumulateSamples(listOf(age))
-        }
+        EngineMetrics.tabKilled.record(
+            EngineMetrics.TabKilledExtra(
+                foregroundTab = isSelected,
+                appForeground = context.components.appStore.state.isForeground,
+                hadFormData = tab.content.hasFormData,
+            ),
+        )
     }
-}
-
-@Suppress("MagicNumber")
-private fun EngineState.age(): Long? {
-    val timestamp = (timestamp ?: return null)
-    val now = Clock.elapsedRealtime()
-    return (now - timestamp)
 }

@@ -65,18 +65,18 @@ class CollectionCreationView(
             COLLECTION_NAME_MAX_LENGTH,
         )
         binding.nameCollectionEdittext.setOnEditorActionListener { view, actionId, _ ->
-            val text = view.text.toString()
-            if (actionId == EditorInfo.IME_ACTION_DONE && text.isNotBlank()) {
+            val text = view.text.toString().trim()
+            if (actionId == EditorInfo.IME_ACTION_DONE && text.isNotEmpty()) {
                 when (step) {
                     SaveCollectionStep.NameCollection ->
                         interactor.onNewCollectionNameSaved(selectedTabs.toList(), text)
                     SaveCollectionStep.RenameCollection ->
                         selectedCollection?.let { interactor.onCollectionRenamed(it, text) }
-                    else -> { /* noop */
+                    else -> { // noop
                     }
                 }
             }
-            false
+            actionId == EditorInfo.IME_ACTION_DONE && text.isEmpty()
         }
 
         binding.tabList.run {
@@ -243,7 +243,7 @@ class CollectionCreationView(
         }
         transition.addListener(
             object : Transition.TransitionListener {
-                override fun onTransitionStart(transition: Transition) { /* noop */
+                override fun onTransitionStart(transition: Transition) { // noop
                 }
 
                 override fun onTransitionEnd(transition: Transition) {
@@ -251,13 +251,13 @@ class CollectionCreationView(
                     transition.removeListener(this)
                 }
 
-                override fun onTransitionCancel(transition: Transition) { /* noop */
+                override fun onTransitionCancel(transition: Transition) { // noop
                 }
 
-                override fun onTransitionPause(transition: Transition) { /* noop */
+                override fun onTransitionPause(transition: Transition) { // noop
                 }
 
-                override fun onTransitionResume(transition: Transition) { /* noop */
+                override fun onTransitionResume(transition: Transition) { // noop
                 }
             },
         )

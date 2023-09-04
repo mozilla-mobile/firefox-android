@@ -60,13 +60,21 @@ def _get_build_gradle_paths(gradle_project):
     else:
         project_subdir = get_path(gradle_project)
 
-    return [
+    file_list = [
         "android-components/plugins/dependencies/build.gradle",
+        "android-components/plugins/github/build.gradle",
         "android-components/plugins/publicsuffixlist/build.gradle",
         f"{project_dir}/build.gradle",
-        f"{project_dir}/buildSrc/build.gradle",
         f"{project_dir}/{project_subdir}/build.gradle",
     ]
+
+    # Make sure we rebuild the cache when Fenix or Focus dependencies are changed
+    if gradle_project == "fenix":
+        file_list.append(f"{project_dir}/plugins/fenixdependencies/src/main/java/FenixDependenciesPlugin.kt")
+    elif gradle_project == "focus":
+        file_list.append(f"{project_dir}/plugins/focusdependencies/src/main/java/FocusDependenciesPlugin.kt")
+
+    return file_list
 
 
 def _get_gradle_project_dir(gradle_project):
@@ -106,7 +114,7 @@ def _get_gradle_task_names(gradle_project):
     if gradle_project == "focus":
         gradle_tasks_name.extend(["assembleFocusDebug", "assembleAndroidTest", "testFocusDebugUnitTest", "lint"])
     elif gradle_project == "fenix":
-        gradle_tasks_name.extend(["assemble", "assembleAndroidTest", "testClasses", "test", "lint"])
+        gradle_tasks_name.extend(["assemble", "assembleAndroidTest", "testClasses", "lint"])
     else:
         lint_task_name = "lint" if gradle_project in ("tooling-lint", "samples-browser") else "lintRelease"
         gradle_tasks_name.extend(["assemble", "assembleAndroidTest", "test", lint_task_name])

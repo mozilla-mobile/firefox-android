@@ -10,13 +10,13 @@ import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper.getGenericAsset
+import org.mozilla.fenix.helpers.TestHelper.clickSnackbarButton
 import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.collectionRobot
 import org.mozilla.fenix.ui.robots.homeScreen
@@ -354,6 +354,31 @@ class CollectionTest {
     }
 
     @Test
+    fun undoTabRemovalFromCollectionTest() {
+        val webPage = getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(webPage.url) {
+        }.openTabDrawer {
+            createCollection(webPage.title, collectionName = collectionName)
+            closeTab()
+        }
+
+        homeScreen {
+            verifyCollectionIsDisplayed(collectionName)
+        }.expandCollection(collectionName) {
+            verifyTabSavedInCollection(webPage.title, true)
+            removeTabFromCollection(webPage.title)
+        }
+        homeScreen {
+            verifySnackBarText("Collection deleted")
+            clickSnackbarButton("UNDO")
+            verifyCollectionIsDisplayed(collectionName, true)
+            verifyCollectionIsDisplayed(collectionName, true)
+        }
+    }
+
+    @Test
     fun swipeLeftToRemoveTabFromCollectionTest() {
         val testPage = getGenericAsset(mockWebServer, 1)
 
@@ -375,6 +400,8 @@ class CollectionTest {
             verifyTabSavedInCollection(testPage.title, false)
         }
         homeScreen {
+            verifySnackBarText("Collection deleted")
+            verifySnackBarText("UNDO")
             verifyCollectionIsDisplayed(collectionName, false)
         }
     }
@@ -401,12 +428,13 @@ class CollectionTest {
             verifyTabSavedInCollection(testPage.title, false)
         }
         homeScreen {
+            verifySnackBarText("Collection deleted")
+            verifySnackBarText("UNDO")
             verifyCollectionIsDisplayed(collectionName, false)
         }
     }
 
     @Test
-    @Ignore("Failing after compose migration. See: https://github.com/mozilla-mobile/fenix/issues/26087")
     fun selectTabOnLongTapTest() {
         val firstWebPage = getGenericAsset(mockWebServer, 1)
         val secondWebPage = getGenericAsset(mockWebServer, 2)
@@ -490,7 +518,7 @@ class CollectionTest {
 
         homeScreen {
             verifySnackBarText("Collection deleted")
-            clickUndoSnackBarButton()
+            clickSnackbarButton("UNDO")
             verifyCollectionIsDisplayed(collectionName, true)
         }
     }

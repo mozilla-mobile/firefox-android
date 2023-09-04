@@ -4,6 +4,7 @@
 
 package mozilla.components.browser.state.reducer
 
+import mozilla.components.browser.state.action.AppLifecycleAction
 import mozilla.components.browser.state.action.BrowserAction
 import mozilla.components.browser.state.action.ContainerAction
 import mozilla.components.browser.state.action.ContentAction
@@ -24,6 +25,7 @@ import mozilla.components.browser.state.action.RecentlyClosedAction
 import mozilla.components.browser.state.action.RestoreCompleteAction
 import mozilla.components.browser.state.action.SearchAction
 import mozilla.components.browser.state.action.ShareInternetResourceAction
+import mozilla.components.browser.state.action.ShoppingProductAction
 import mozilla.components.browser.state.action.SystemAction
 import mozilla.components.browser.state.action.TabGroupAction
 import mozilla.components.browser.state.action.TabListAction
@@ -47,6 +49,7 @@ internal object BrowserStateReducer {
     fun reduce(state: BrowserState, action: BrowserAction): BrowserState {
         return when (action) {
             is InitAction -> state
+            is AppLifecycleAction -> state
             is RestoreCompleteAction -> state.copy(restoreComplete = true)
             is ContainerAction -> ContainerReducer.reduce(state, action)
             is RecentlyClosedAction -> RecentlyClosedReducer.reduce(state, action)
@@ -71,6 +74,7 @@ internal object BrowserStateReducer {
             is LocaleAction -> LocaleStateReducer.reduce(state, action)
             is HistoryMetadataAction -> HistoryMetadataReducer.reduce(state, action)
             is DebugAction -> DebugReducer.reduce(state, action)
+            is ShoppingProductAction -> ShoppingProductStateReducer.reduce(state, action)
         }
     }
 }

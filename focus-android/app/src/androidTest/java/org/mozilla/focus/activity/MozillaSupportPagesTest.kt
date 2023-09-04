@@ -36,17 +36,6 @@ class MozillaSupportPagesTest {
 
     @SmokeTest
     @Test
-    fun openMenuWhatsNewPageTest() {
-        homeScreen {
-        }.openMainMenu {
-        }.openSettings {
-        }.clickWhatsNewLink {
-            verifyPageURL("support.mozilla.org")
-        }
-    }
-
-    @SmokeTest
-    @Test
     fun openMenuHelpPageTest() {
         homeScreen {
         }.openMainMenu {
@@ -98,6 +87,30 @@ class MozillaSupportPagesTest {
         }.openMozillaSettingsMenu {
         }.openYourRightsPage {
             verifyPageContent(yourRightsString)
+        }
+    }
+
+    @SmokeTest
+    @Test
+    fun openLibrariesThatWeUse() {
+        homeScreen {
+        }.openMainMenu {
+        }.openSettings {
+        }.openMozillaSettingsMenu {
+        }.openLibrariesUsedPage {
+            verifyLibrariesUsedTitle()
+        }
+    }
+
+    @SmokeTest
+    @Test
+    fun openAboutLicenses() {
+        homeScreen {
+        }.openMainMenu {
+        }.openSettings {
+        }.openMozillaSettingsMenu {
+        }.openLicenseInformation {
+            verifyPageURL("about:license")
         }
     }
 

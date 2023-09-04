@@ -10,11 +10,10 @@ import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
+import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
-import org.mozilla.fenix.helpers.Constants.POCKET_RECOMMENDED_STORIES_UTM_PARAM
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.RetryTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
@@ -29,11 +28,8 @@ import org.mozilla.fenix.ui.robots.navigationToolbar
  */
 
 class HomeScreenTest {
-    /* ktlint-disable no-blank-line-before-rbrace */ // This imposes unreadable grouping.
-
     private lateinit var mDevice: UiDevice
     private lateinit var mockWebServer: MockWebServer
-    private lateinit var firstPocketStoryPublisher: String
 
     @get:Rule(order = 0)
     val activityTestRule =
@@ -58,11 +54,10 @@ class HomeScreenTest {
         mockWebServer.shutdown()
     }
 
-    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1815275")
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/235396
     @Test
     fun homeScreenItemsTest() {
-        homeScreen { }.dismissOnboarding()
-
+        homeScreen {}.dismissOnboarding()
         homeScreen {
             verifyHomeWordmark()
             verifyHomePrivateBrowsingButton()
@@ -72,23 +67,19 @@ class HomeScreenTest {
             verifyCollectionsHeader()
             verifyNoCollectionsText()
             scrollToPocketProvokingStories()
-            swipePocketProvokingStories()
-            verifyPocketRecommendedStoriesItems(activityTestRule, 1, 3, 4, 5, 6, 7)
-            verifyPocketSponsoredStoriesItems(activityTestRule, 2, 8)
-            verifyDiscoverMoreStoriesButton(activityTestRule, 9)
+            verifyThoughtProvokingStories(true)
             verifyStoriesByTopicItems()
-            verifyPoweredByPocket(activityTestRule)
             verifyCustomizeHomepageButton(true)
             verifyNavigationToolbar()
-            verifyDefaultSearchEngine("Google")
             verifyHomeMenuButton()
             verifyTabButton()
             verifyTabCounter("0")
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/244199
     @Test
-    fun privateModeScreenItemsTest() {
+    fun privateBrowsingHomeScreenItemsTest() {
         homeScreen { }.dismissOnboarding()
         homeScreen { }.togglePrivateBrowsingMode()
 
@@ -99,8 +90,15 @@ class HomeScreenTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1364362
+    @SmokeTest
     @Test
     fun verifyJumpBackInSectionTest() {
+        activityTestRule.activityRule.applySettingsExceptions {
+            it.isRecentlyVisitedFeatureEnabled = false
+            it.isPocketEnabled = false
+        }
+
         val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 4)
         val secondWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
@@ -144,110 +142,9 @@ class HomeScreenTest {
         }
     }
 
-    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1815276")
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1569839
     @Test
-    fun verifyPocketHomepageStoriesTest() {
-        activityTestRule.activityRule.applySettingsExceptions {
-            it.isRecentTabsFeatureEnabled = false
-            it.isRecentlyVisitedFeatureEnabled = false
-        }
-
-        homeScreen {
-        }.dismissOnboarding()
-
-        homeScreen {
-            verifyThoughtProvokingStories(true)
-            scrollToPocketProvokingStories()
-            swipePocketProvokingStories()
-            verifyPocketRecommendedStoriesItems(activityTestRule, 1, 3, 4, 5, 6, 7)
-            verifyPocketSponsoredStoriesItems(activityTestRule, 2, 8)
-            verifyDiscoverMoreStoriesButton(activityTestRule, 9)
-            verifyStoriesByTopic(true)
-        }.openThreeDotMenu {
-        }.openCustomizeHome {
-            clickPocketButton()
-        }.goBackToHomeScreen {
-            verifyThoughtProvokingStories(false)
-            verifyStoriesByTopic(false)
-        }
-    }
-
-    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1821016")
-    @Test
-    fun openPocketStoryItemTest() {
-        activityTestRule.activityRule.applySettingsExceptions {
-            it.isRecentTabsFeatureEnabled = false
-            it.isRecentlyVisitedFeatureEnabled = false
-        }
-
-        homeScreen {
-        }.dismissOnboarding()
-
-        homeScreen {
-            verifyThoughtProvokingStories(true)
-            scrollToPocketProvokingStories()
-            firstPocketStoryPublisher = getProvokingStoryPublisher(1)
-        }.clickPocketStoryItem(firstPocketStoryPublisher, 1) {
-            verifyUrl(POCKET_RECOMMENDED_STORIES_UTM_PARAM)
-        }
-    }
-
-    @Ignore("Failed, see: https://github.com/mozilla-mobile/fenix/issues/28098")
-    @Test
-    fun openPocketDiscoverMoreTest() {
-        activityTestRule.activityRule.applySettingsExceptions {
-            it.isRecentTabsFeatureEnabled = false
-            it.isRecentlyVisitedFeatureEnabled = false
-        }
-
-        homeScreen {
-        }.dismissOnboarding()
-
-        homeScreen {
-            scrollToPocketProvokingStories()
-            swipePocketProvokingStories()
-            verifyDiscoverMoreStoriesButton(activityTestRule, 9)
-        }.clickPocketDiscoverMoreButton(activityTestRule, 9) {
-            verifyUrl("getpocket.com/explore")
-        }
-    }
-
-    @Test
-    fun selectStoriesByTopicItemTest() {
-        activityTestRule.activityRule.applySettingsExceptions {
-            it.isRecentTabsFeatureEnabled = false
-            it.isRecentlyVisitedFeatureEnabled = false
-        }
-
-        homeScreen {
-        }.dismissOnboarding()
-
-        homeScreen {
-            verifyStoriesByTopicItemState(activityTestRule, false, 1)
-            clickStoriesByTopicItem(activityTestRule, 1)
-            verifyStoriesByTopicItemState(activityTestRule, true, 1)
-        }
-    }
-
-    @Test
-    fun verifyPocketLearnMoreLinkTest() {
-        activityTestRule.activityRule.applySettingsExceptions {
-            it.isRecentTabsFeatureEnabled = false
-            it.isRecentlyVisitedFeatureEnabled = false
-        }
-
-        homeScreen {
-        }.dismissOnboarding()
-
-        homeScreen {
-            verifyPoweredByPocket(activityTestRule)
-        }.clickPocketLearnMoreLink(activityTestRule) {
-            verifyUrl("mozilla.org/en-US/firefox/pocket")
-        }
-    }
-
-    @Test
-    fun verifyCustomizeHomepageTest() {
+    fun verifyCustomizeHomepageButtonTest() {
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         navigationToolbar {

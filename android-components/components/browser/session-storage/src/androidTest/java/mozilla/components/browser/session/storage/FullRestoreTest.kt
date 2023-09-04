@@ -1,11 +1,12 @@
-package mozilla.components.browser.session.storage/* This Source Code Form is subject to the terms of the Mozilla Public
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+package mozilla.components.browser.session.storage
 
 import android.content.Context
 import android.os.SystemClock
 import androidx.test.core.app.ApplicationProvider
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import mozilla.components.browser.engine.gecko.GeckoEngine
@@ -19,10 +20,8 @@ import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 import java.util.concurrent.TimeoutException
 
-@RunWith(AndroidJUnit4::class)
 class FullRestoreTest {
     @get:Rule
     val webserverRule: WebserverRule = WebserverRule()

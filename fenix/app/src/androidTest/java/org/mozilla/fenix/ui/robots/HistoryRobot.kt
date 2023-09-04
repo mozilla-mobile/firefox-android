@@ -24,8 +24,9 @@ import org.hamcrest.Matchers.allOf
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
-import org.mozilla.fenix.helpers.TestAssetHelper
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
+import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
 import org.mozilla.fenix.helpers.TestHelper.getStringResource
 import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.packageName
@@ -59,7 +60,13 @@ class HistoryRobot {
         assertVisitedTimeTitle()
     }
 
-    fun verifyHistoryItemExists(shouldExist: Boolean, item: String) = assertHistoryItemExists(shouldExist, item)
+    fun verifyHistoryItemExists(shouldExist: Boolean, item: String) {
+        if (shouldExist) {
+            assertTrue(mDevice.findObject(UiSelector().textContains(item)).waitForExists(waitingTime))
+        } else {
+            assertFalse(mDevice.findObject(UiSelector().textContains(item)).waitForExists(waitingTimeShort))
+        }
+    }
 
     fun verifyFirstTestPageTitle(title: String) = assertTestPageTitle(title)
 
@@ -107,15 +114,20 @@ class HistoryRobot {
             assertTrue(
                 mDevice.findObject(UiSelector().text(searchTerm))
                     .getFromParent(UiSelector().text("$groupSize sites"))
-                    .waitForExists(TestAssetHelper.waitingTimeShort),
+                    .waitForExists(waitingTimeShort),
             )
         } else {
             assertFalse(
                 mDevice.findObject(UiSelector().text(searchTerm))
                     .getFromParent(UiSelector().text("$groupSize sites"))
-                    .waitForExists(TestAssetHelper.waitingTimeShort),
+                    .waitForExists(waitingTimeShort),
             )
         }
+    }
+
+    fun openSearchGroup(searchTerm: String) {
+        mDevice.findObject(UiSelector().text(searchTerm)).waitForExists(waitingTime)
+        mDevice.findObject(UiSelector().text(searchTerm)).click()
     }
 
     class Transition {
@@ -132,6 +144,21 @@ class HistoryRobot {
 
             BrowserRobot().interact()
             return BrowserRobot.Transition()
+        }
+
+        fun openRecentlyClosedTabs(interact: RecentlyClosedTabsRobot.() -> Unit): RecentlyClosedTabsRobot.Transition {
+            recentlyClosedTabsListButton.waitForExists(waitingTime)
+            recentlyClosedTabsListButton.click()
+
+            RecentlyClosedTabsRobot().interact()
+            return RecentlyClosedTabsRobot.Transition()
+        }
+
+        fun clickSearchButton(interact: SearchRobot.() -> Unit): SearchRobot.Transition {
+            itemWithResId("$packageName:id/history_search").click()
+
+            SearchRobot().interact()
+            return SearchRobot.Transition()
         }
     }
 }
@@ -171,14 +198,6 @@ private fun assertEmptyHistoryView() =
 private fun assertHistoryListExists() =
     mDevice.findObject(UiSelector().resourceId("$packageName:id/history_list")).waitForExists(waitingTime)
 
-private fun assertHistoryItemExists(shouldExist: Boolean, item: String) {
-    if (shouldExist) {
-        assertTrue(mDevice.findObject(UiSelector().textContains(item)).waitForExists(waitingTime))
-    } else {
-        assertFalse(mDevice.findObject(UiSelector().textContains(item)).waitForExists(waitingTime))
-    }
-}
-
 private fun assertVisitedTimeTitle() =
     onView(withId(R.id.header_title)).check(matches(withText("Today")))
 
@@ -213,7 +232,7 @@ private fun deleteHistoryPromptSummary() =
     mDevice
         .findObject(
             UiSelector()
-                .textContains(getStringResource(R.string.delete_history_prompt_body))
+                .textContains(getStringResource(R.string.delete_history_prompt_body_2))
                 .resourceId("$packageName:id/body"),
         )
 
@@ -224,3 +243,6 @@ private fun deleteHistoryEverythingOption() =
                 .textContains(getStringResource(R.string.delete_history_prompt_button_everything))
                 .resourceId("$packageName:id/everything_button"),
         )
+
+private val recentlyClosedTabsListButton =
+    mDevice.findObject(UiSelector().resourceId("$packageName:id/recently_closed_tabs_header"))

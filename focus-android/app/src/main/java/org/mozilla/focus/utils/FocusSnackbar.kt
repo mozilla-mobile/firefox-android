@@ -4,6 +4,7 @@
 
 package org.mozilla.focus.utils
 
+import android.content.Context
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
@@ -33,12 +34,15 @@ class FocusSnackbar private constructor(
         binding.snackbarText.text = text
     }
 
-    fun setAction(text: String, action: () -> Unit) = apply {
+    /**
+     * Sets an action to be performed on clicking [FocusSnackbar]'s action button.
+     */
+    fun setAction(text: String, action: (Context) -> Unit) = apply {
         binding.snackbarAction.apply {
             setText(text)
             isVisible = true
             setOnClickListener {
-                action.invoke()
+                action.invoke(it.context)
                 dismiss()
             }
         }
@@ -47,7 +51,7 @@ class FocusSnackbar private constructor(
     companion object {
         const val LENGTH_LONG = Snackbar.LENGTH_LONG
         const val LENGTH_SHORT = Snackbar.LENGTH_SHORT
-        private const val LENGTH_ACCESSIBLE = 15000 /* 15 seconds in ms */
+        private const val LENGTH_ACCESSIBLE = 15000 // 15 seconds in ms
 
         /**
          * Display a custom Focus Snackbar in the given view with duration and proper styling.

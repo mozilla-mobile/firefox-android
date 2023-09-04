@@ -6,6 +6,7 @@ package org.mozilla.fenix.ui.robots
 
 import android.net.Uri
 import android.widget.TextView
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
@@ -19,12 +20,14 @@ import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
 import org.hamcrest.Matchers.allOf
 import org.mozilla.fenix.R
+import org.mozilla.fenix.helpers.HomeActivityComposeTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
+import org.mozilla.fenix.tabstray.TabsTrayTestTag
 
 /*
  * Implementation of Robot Pattern for the multiple selection toolbar of History and Bookmarks menus.
@@ -110,6 +113,14 @@ class LibrarySubMenusMultipleSelectionToolbarRobot {
             return TabDrawerRobot.Transition()
         }
 
+        fun clickOpenNewTab(composeTestRule: HomeActivityComposeTestRule, interact: ComposeTabDrawerRobot.() -> Unit): ComposeTabDrawerRobot.Transition {
+            openInNewTabButton().click()
+            composeTestRule.onNodeWithTag(TabsTrayTestTag.tabsTray).assertExists()
+
+            ComposeTabDrawerRobot(composeTestRule).interact()
+            return ComposeTabDrawerRobot.Transition(composeTestRule)
+        }
+
         fun clickOpenPrivateTab(interact: TabDrawerRobot.() -> Unit): TabDrawerRobot.Transition {
             openInPrivateTabButton().click()
             mDevice.waitNotNull(
@@ -119,6 +130,13 @@ class LibrarySubMenusMultipleSelectionToolbarRobot {
 
             TabDrawerRobot().interact()
             return TabDrawerRobot.Transition()
+        }
+
+        fun clickOpenPrivateTab(composeTestRule: HomeActivityComposeTestRule, interact: ComposeTabDrawerRobot.() -> Unit): ComposeTabDrawerRobot.Transition {
+            openInPrivateTabButton().click()
+
+            ComposeTabDrawerRobot(composeTestRule).interact()
+            return ComposeTabDrawerRobot.Transition(composeTestRule)
         }
     }
 }

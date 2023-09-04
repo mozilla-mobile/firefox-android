@@ -4,21 +4,30 @@
 
 package org.mozilla.fenix.ui
 
+import androidx.core.net.toUri
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
-import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
+import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithText
 import org.mozilla.fenix.helpers.RetryTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
+import org.mozilla.fenix.helpers.TestHelper.assertYoutubeAppOpens
+import org.mozilla.fenix.helpers.TestHelper.clickSnackbarButton
+import org.mozilla.fenix.ui.robots.clickContextMenuItem
+import org.mozilla.fenix.ui.robots.clickPageObject
 import org.mozilla.fenix.ui.robots.downloadRobot
+import org.mozilla.fenix.ui.robots.longClickPageObject
 import org.mozilla.fenix.ui.robots.navigationToolbar
+import org.mozilla.fenix.ui.robots.shareOverlay
 
 /**
  *  Tests for verifying basic functionality of content context menus
@@ -60,7 +69,6 @@ class ContextMenusTest {
         mockWebServer.shutdown()
     }
 
-    @SmokeTest
     @Test
     fun verifyContextOpenLinkNewTab() {
         val pageLinks =
@@ -71,9 +79,9 @@ class ContextMenusTest {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(pageLinks.url) {
             mDevice.waitForIdle()
-            longClickLink("Link 1")
-            verifyLinkContextMenuItems(genericURL.url)
-            clickContextOpenLinkInNewTab()
+            longClickPageObject(itemWithText("Link 1"))
+            verifyContextMenuForLocalHostLinks(genericURL.url)
+            clickContextMenuItem("Open link in new tab")
             verifySnackBarText("New tab opened")
             clickSnackbarButton("SWITCH")
             verifyUrl(genericURL.url.toString())
@@ -84,7 +92,6 @@ class ContextMenusTest {
         }
     }
 
-    @SmokeTest
     @Test
     fun verifyContextOpenLinkPrivateTab() {
         val pageLinks =
@@ -95,9 +102,9 @@ class ContextMenusTest {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(pageLinks.url) {
             mDevice.waitForIdle()
-            longClickLink("Link 2")
-            verifyLinkContextMenuItems(genericURL.url)
-            clickContextOpenLinkInPrivateTab()
+            longClickPageObject(itemWithText("Link 2"))
+            verifyContextMenuForLocalHostLinks(genericURL.url)
+            clickContextMenuItem("Open link in private tab")
             verifySnackBarText("New private tab opened")
             clickSnackbarButton("SWITCH")
             verifyUrl(genericURL.url.toString())
@@ -117,9 +124,9 @@ class ContextMenusTest {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(pageLinks.url) {
             mDevice.waitForIdle()
-            longClickLink("Link 3")
-            verifyLinkContextMenuItems(genericURL.url)
-            clickContextCopyLink()
+            longClickPageObject(itemWithText("Link 3"))
+            verifyContextMenuForLocalHostLinks(genericURL.url)
+            clickContextMenuItem("Copy link")
             verifySnackBarText("Link copied to clipboard")
         }.openNavigationToolbar {
         }.visitLinkFromClipboard {
@@ -127,6 +134,7 @@ class ContextMenusTest {
         }
     }
 
+    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1807268")
     @Test
     fun verifyContextCopyLinkNotDisplayedAfterApplied() {
         val pageLinks = TestAssetHelper.getGenericAsset(mockWebServer, 4)
@@ -134,9 +142,9 @@ class ContextMenusTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(pageLinks.url) {
-            longClickMatchingText("Link 3")
-            verifyLinkContextMenuItems(genericURL.url)
-            clickContextCopyLink()
+            longClickPageObject(itemWithText("Link 3"))
+            verifyContextMenuForLocalHostLinks(genericURL.url)
+            clickContextMenuItem("Copy link")
             verifySnackBarText("Link copied to clipboard")
         }.openNavigationToolbar {
         }.visitLinkFromClipboard {
@@ -159,9 +167,12 @@ class ContextMenusTest {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(pageLinks.url) {
             mDevice.waitForIdle()
-            longClickLink("Link 1")
-            verifyLinkContextMenuItems(genericURL.url)
-            clickContextShareLink(genericURL.url) // verify share intent is matched with associated URL
+            longClickPageObject(itemWithText("Link 1"))
+            verifyContextMenuForLocalHostLinks(genericURL.url)
+            clickContextMenuItem("Share link")
+            shareOverlay {
+                verifyShareLinkIntent(genericURL.url)
+            }
         }
     }
 
@@ -175,9 +186,9 @@ class ContextMenusTest {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(pageLinks.url) {
             mDevice.waitForIdle()
-            longClickLink("test_link_image")
+            longClickPageObject(itemWithText("test_link_image"))
             verifyLinkImageContextMenuItems(imageResource.url)
-            clickContextOpenImageNewTab()
+            clickContextMenuItem("Open image in new tab")
             verifySnackBarText("New tab opened")
             clickSnackbarButton("SWITCH")
             verifyUrl(imageResource.url.toString())
@@ -194,9 +205,9 @@ class ContextMenusTest {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(pageLinks.url) {
             mDevice.waitForIdle()
-            longClickLink("test_link_image")
+            longClickPageObject(itemWithText("test_link_image"))
             verifyLinkImageContextMenuItems(imageResource.url)
-            clickContextCopyImageLocation()
+            clickContextMenuItem("Copy image location")
             verifySnackBarText("Link copied to clipboard")
         }.openNavigationToolbar {
         }.visitLinkFromClipboard {
@@ -214,9 +225,9 @@ class ContextMenusTest {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(pageLinks.url) {
             mDevice.waitForIdle()
-            longClickLink("test_link_image")
+            longClickPageObject(itemWithText("test_link_image"))
             verifyLinkImageContextMenuItems(imageResource.url)
-            clickContextSaveImage()
+            clickContextMenuItem("Save image")
         }
 
         downloadRobot {
@@ -239,14 +250,47 @@ class ContextMenusTest {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(pageLinks.url) {
             mDevice.waitForIdle()
-            longClickLink("Link 1")
-            verifyLinkContextMenuItems(genericURL.url)
-            dismissContentContextMenu(genericURL.url)
-            longClickLink("test_link_image")
+            longClickPageObject(itemWithText("Link 1"))
+            verifyContextMenuForLocalHostLinks(genericURL.url)
+            dismissContentContextMenu()
+            longClickPageObject(itemWithText("test_link_image"))
             verifyLinkImageContextMenuItems(imageResource.url)
-            dismissContentContextMenu(imageResource.url)
-            longClickLink("test_no_link_image")
+            dismissContentContextMenu()
+            longClickPageObject(itemWithText("test_no_link_image"))
             verifyNoLinkImageContextMenuItems(imageResource.url)
+        }
+    }
+
+    @Test
+    fun verifyContextMixedVariationsInPDFTest() {
+        val genericURL =
+            TestAssetHelper.getGenericAsset(mockWebServer, 3)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(genericURL.url) {
+            clickPageObject(itemWithText("PDF form file"))
+            waitForPageToLoad()
+            longClickPageObject(itemWithText("Wikipedia link"))
+            verifyContextMenuForLinksToOtherHosts("wikipedia.org".toUri())
+            dismissContentContextMenu()
+            // Some options are missing from the linked and non liked images context menus in PDF files
+            // See https://bugzilla.mozilla.org/show_bug.cgi?id=1012805 for more details
+            longClickPDFImage()
+            verifyContextMenuForLinksToOtherHosts("wikipedia.org".toUri())
+            dismissContentContextMenu()
+        }
+    }
+
+    @Test
+    fun verifyContextOpenLinkInAppTest() {
+        val defaultWebPage = TestAssetHelper.getExternalLinksAsset(mockWebServer)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+            longClickPageObject(itemContainingText("Youtube link"))
+            verifyContextMenuForLinksToOtherApps("youtube.com".toUri())
+            clickContextMenuItem("Open link in external app")
+            assertYoutubeAppOpens()
         }
     }
 }

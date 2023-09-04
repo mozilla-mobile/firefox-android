@@ -4,6 +4,7 @@
 
 package mozilla.components.feature.tab.collections.ext
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import mozilla.components.browser.state.engine.EngineMiddleware
 import mozilla.components.browser.state.selector.findTab
 import mozilla.components.browser.state.state.createTab
@@ -16,19 +17,16 @@ import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.support.test.libstate.ext.waitUntilIdle
 import mozilla.components.support.test.mock
-import mozilla.components.support.test.robolectric.testContext
 import mozilla.components.support.test.rule.MainCoroutineRule
 import mozilla.components.support.test.whenever
 import org.junit.Assert.assertNotEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchers.anyBoolean
-import org.robolectric.RobolectricTestRunner
+import java.io.File
 
-@RunWith(RobolectricTestRunner::class)
 class TabsUseCasesKtTest {
 
     private lateinit var store: BrowserStore
@@ -38,7 +36,9 @@ class TabsUseCasesKtTest {
 
     private lateinit var collection: TabCollection
     private lateinit var tab: Tab
+    private lateinit var filesDir: File
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @get:Rule
     val coroutinesTestRule = MainCoroutineRule()
 
@@ -46,6 +46,8 @@ class TabsUseCasesKtTest {
     fun setup() {
         engineSession = mock()
         engine = mock()
+        filesDir = mock()
+        whenever(filesDir.path).thenReturn("/test")
 
         whenever(engine.createSession(anyBoolean(), any())).thenReturn(engineSession)
         store = BrowserStore(
@@ -65,7 +67,7 @@ class TabsUseCasesKtTest {
             whenever(id).thenReturn(123)
             whenever(title).thenReturn("Firefox")
             whenever(url).thenReturn("https://firefox.com")
-            whenever(restore(testContext, engine, false)).thenReturn(recoveredTab)
+            whenever(restore(filesDir, engine, false)).thenReturn(recoveredTab)
         }
         collection = mock<TabCollection>().apply {
             whenever(tabs).thenReturn(listOf(tab))
@@ -74,7 +76,7 @@ class TabsUseCasesKtTest {
 
     @Test
     fun `RestoreUseCase updates last access when restoring collection`() {
-        tabsUseCases.restore.invoke(testContext, engine, collection) {}
+        tabsUseCases.restore.invoke(filesDir, engine, collection) {}
 
         store.waitUntilIdle()
 
@@ -83,7 +85,7 @@ class TabsUseCasesKtTest {
 
     @Test
     fun `RestoreUseCase updates last access when restoring single tab in collection`() {
-        tabsUseCases.restore.invoke(testContext, engine, tab, onTabRestored = {}, onFailure = {})
+        tabsUseCases.restore.invoke(filesDir, engine, tab, onTabRestored = {}, onFailure = {})
 
         store.waitUntilIdle()
 

@@ -28,6 +28,7 @@ import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.lib.state.ext.flowScoped
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.ktx.kotlin.toShortUrl
+import mozilla.components.ui.widgets.withCenterAlignedButtons
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.addons.showSnackBar
@@ -46,6 +47,7 @@ import org.mozilla.fenix.library.historymetadata.controller.DefaultHistoryMetada
 import org.mozilla.fenix.library.historymetadata.interactor.DefaultHistoryMetadataGroupInteractor
 import org.mozilla.fenix.library.historymetadata.interactor.HistoryMetadataGroupInteractor
 import org.mozilla.fenix.library.historymetadata.view.HistoryMetadataGroupView
+import org.mozilla.fenix.tabstray.Page
 import org.mozilla.fenix.utils.allowUndo
 
 /**
@@ -191,7 +193,7 @@ class HistoryMetadataGroupFragment :
                     supportActionBar?.hide()
                 }
 
-                showTabTray()
+                showTabTray(openInPrivate = true)
                 true
             }
             R.id.history_delete -> {
@@ -241,10 +243,16 @@ class HistoryMetadataGroupFragment :
         }
     }
 
-    private fun showTabTray() {
+    private fun showTabTray(openInPrivate: Boolean = false) {
         findNavController().nav(
             R.id.historyMetadataGroupFragment,
-            HistoryMetadataGroupFragmentDirections.actionGlobalTabsTrayFragment(),
+            HistoryMetadataGroupFragmentDirections.actionGlobalTabsTrayFragment(
+                page = if (openInPrivate) {
+                    Page.PrivateTabs
+                } else {
+                    Page.NormalTabs
+                },
+            ),
         )
     }
 
@@ -275,7 +283,7 @@ class HistoryMetadataGroupFragment :
                     interactor.onDeleteAllConfirmed()
                     dialog.dismiss()
                 }
-                .create()
+                .create().withCenterAlignedButtons()
 
         companion object {
             const val TAG = "DELETE_CONFIRMATION_DIALOG_FRAGMENT"

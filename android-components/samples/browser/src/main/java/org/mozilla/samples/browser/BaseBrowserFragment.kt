@@ -129,6 +129,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
                     requireContext().applicationContext,
                     components.store,
                     DownloadService::class,
+                    notificationsDelegate = components.notificationsDelegate,
                 ),
                 tabId = sessionId,
                 onNeedToRequestPermissions = { permissions ->
@@ -183,6 +184,7 @@ abstract class BaseBrowserFragment : Fragment(), UserInteractionHandler, Activit
                 fragment = this,
                 store = components.store,
                 customTabId = sessionId,
+                tabsUseCases = components.tabsUseCases,
                 fragmentManager = parentFragmentManager,
                 onNeedToRequestPermissions = { permissions ->
                     requestInPlacePermissions(REQUEST_KEY_PROMPT_PERMISSIONS, permissions) { result ->

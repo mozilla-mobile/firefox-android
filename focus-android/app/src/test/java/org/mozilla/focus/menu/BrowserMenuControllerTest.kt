@@ -9,19 +9,19 @@ import mozilla.components.browser.state.state.createTab
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.feature.top.sites.TopSitesUseCases
+import mozilla.components.support.test.any
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito
+import org.mockito.Mockito.doNothing
+import org.mockito.Mockito.spy
 import org.mockito.Mockito.times
 import org.mockito.MockitoAnnotations
 import org.mockito.Spy
 import org.mozilla.focus.browser.integration.BrowserMenuController
 import org.mozilla.focus.state.AppStore
-import org.robolectric.RobolectricTestRunner
 
-@RunWith(RobolectricTestRunner::class)
 class BrowserMenuControllerTest {
     private lateinit var browserMenuController: BrowserMenuController
 
@@ -54,6 +54,9 @@ class BrowserMenuControllerTest {
     @Mock
     private lateinit var openInBrowser: () -> Unit
 
+    @Mock
+    private lateinit var showShortcutAddedSnackBar: () -> Unit
+
     @Before
     fun setup() {
         val store = BrowserStore(
@@ -65,19 +68,24 @@ class BrowserMenuControllerTest {
         sessionUseCases = SessionUseCases(store)
         MockitoAnnotations.openMocks(this)
 
-        browserMenuController = BrowserMenuController(
-            sessionUseCases,
-            appStore,
-            store,
-            topSitesUseCases,
-            currentTabId,
-            shareCallback,
-            requestDesktopCallback,
-            addToHomeScreenCallback,
-            showFindInPageCallback,
-            openInCallback,
-            openInBrowser,
+        browserMenuController = spy(
+            BrowserMenuController(
+                sessionUseCases,
+                appStore,
+                store,
+                topSitesUseCases,
+                currentTabId,
+                shareCallback,
+                requestDesktopCallback,
+                addToHomeScreenCallback,
+                showFindInPageCallback,
+                openInCallback,
+                openInBrowser,
+                showShortcutAddedSnackBar,
+            ),
         )
+
+        doNothing().`when`(browserMenuController).recordBrowserMenuTelemetry(any())
     }
 
     @Test
@@ -143,5 +151,12 @@ class BrowserMenuControllerTest {
         val menuItem = ToolbarMenu.Item.FindInPage
         browserMenuController.handleMenuInteraction(menuItem)
         Mockito.verify(showFindInPageCallback, times(1)).invoke()
+    }
+
+    @Test
+    fun `Given AddToShortCut menu item WHEN  the item is pressed THEN showShortcutAddedSnackBar is called`() {
+        val menuItem = ToolbarMenu.Item.AddToShortcuts
+        browserMenuController.handleMenuInteraction(menuItem)
+        Mockito.verify(showShortcutAddedSnackBar, times(1)).invoke()
     }
 }

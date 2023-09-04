@@ -1,15 +1,13 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.focus.utils
 
-import android.app.Application
-import androidx.test.core.app.ApplicationProvider
-import mozilla.components.support.utils.ext.getPackageInfoCompat
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
 import java.util.Locale
 
-@RunWith(RobolectricTestRunner::class)
 class SupportUtilsTest {
 
     @Test
@@ -26,8 +24,7 @@ class SupportUtilsTest {
     @Test
     @Throws(Exception::class)
     fun getSumoURLForTopic() {
-        val context = ApplicationProvider.getApplicationContext() as Application
-        val versionName = context.packageManager.getPackageInfoCompat(context.packageName, 0).versionName
+        val versionName = "testVersion"
 
         val testTopic = SupportUtils.SumoTopic.TRACKERS
         val testTopicStr = testTopic.topicStr
@@ -35,13 +32,13 @@ class SupportUtilsTest {
         Locale.setDefault(Locale.GERMANY)
         assertEquals(
             "https://support.mozilla.org/1/mobile/$versionName/Android/de-DE/$testTopicStr",
-            SupportUtils.getSumoURLForTopic(ApplicationProvider.getApplicationContext(), testTopic),
+            SupportUtils.getSumoURLForTopic(versionName, testTopic),
         )
 
         Locale.setDefault(Locale.CANADA_FRENCH)
         assertEquals(
             "https://support.mozilla.org/1/mobile/$versionName/Android/fr-CA/$testTopicStr",
-            SupportUtils.getSumoURLForTopic(ApplicationProvider.getApplicationContext(), testTopic),
+            SupportUtils.getSumoURLForTopic(versionName, testTopic),
         )
     }
 

@@ -26,7 +26,7 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        def appServicesVersion = Versions.mozilla_appservices
+        def appServicesVersion = ApplicationServicesConfig.version
         if (gradle.hasProperty("localProperties.branchBuild.application-services.version")) {
             appServicesVersion = gradle["localProperties.branchBuild.application-services.version"]
         }
@@ -76,7 +76,6 @@ dependencies {
     testImplementation ComponentsDependencies.androidx_test_core
     testImplementation ComponentsDependencies.androidx_test_junit
     testImplementation ComponentsDependencies.testing_robolectric
-    testImplementation ComponentsDependencies.testing_mockito
 }
 
 

@@ -20,6 +20,8 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.children
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.mapNotNull
 import mozilla.components.browser.state.selector.findCustomTabOrSelectedTab
 import mozilla.components.browser.state.store.BrowserStore
@@ -36,7 +38,6 @@ import mozilla.components.feature.toolbar.ToolbarPresenter
 import mozilla.components.lib.state.ext.flowScoped
 import mozilla.components.support.base.feature.LifecycleAwareFeature
 import mozilla.components.support.ktx.android.view.hideKeyboard
-import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import org.mozilla.focus.GleanMetrics.TabCount
 import org.mozilla.focus.GleanMetrics.TrackingProtection
 import org.mozilla.focus.R
@@ -93,7 +94,7 @@ class BrowserToolbarIntegration(
     private val eraseAction = BrowserToolbar.Button(
         imageDrawable = AppCompatResources.getDrawable(
             toolbar.context,
-            R.drawable.mozac_ic_delete,
+            R.drawable.mozac_ic_delete_24,
         )!!,
         contentDescription = toolbar.context.getString(R.string.content_description_erase),
         iconTintColorResource = R.color.primaryText,
@@ -135,6 +136,7 @@ class BrowserToolbarIntegration(
 
             setOnSiteSecurityClickedListener {
                 TrackingProtection.toolbarShieldClicked.add()
+                fragment.initCookieBanner()
                 fragment.showTrackingProtectionPanel()
             }
 
@@ -148,21 +150,22 @@ class BrowserToolbarIntegration(
             icons = icons.copy(
                 trackingProtectionTrackersBlocked = AppCompatResources.getDrawable(
                     context,
-                    R.drawable.mozac_ic_shield,
+                    R.drawable.mozac_ic_shield_24,
                 )!!,
                 trackingProtectionNothingBlocked = AppCompatResources.getDrawable(
                     context,
-                    R.drawable.mozac_ic_shield,
+                    R.drawable.mozac_ic_shield_24,
                 )!!,
                 trackingProtectionException = AppCompatResources.getDrawable(
                     context,
-                    R.drawable.mozac_ic_shield_disabled,
+                    R.drawable.mozac_ic_shield_slash_24,
                 )!!,
             )
         }
 
         toolbar.display.setOnTrackingProtectionClickedListener {
             TrackingProtection.toolbarShieldClicked.add()
+            fragment.initCookieBanner()
             fragment.showTrackingProtectionPanel()
         }
 
@@ -219,7 +222,7 @@ class BrowserToolbarIntegration(
 
     private fun setBrowserActionButtons() {
         tabsCounterScope = store.flowScoped { flow ->
-            flow.ifChanged { state -> state.tabs.size > 1 }
+            flow.distinctUntilChangedBy { state -> state.tabs.size > 1 }
                 .collect { state ->
                     if (state.tabs.size > 1) {
                         toolbar.addBrowserAction(tabsAction)
@@ -256,7 +259,7 @@ class BrowserToolbarIntegration(
     internal fun observeEraseCfr() {
         eraseTabsCfrScope = fragment.components?.appStore?.flowScoped { flow ->
             flow.mapNotNull { state -> state.showEraseTabsCfr }
-                .ifChanged()
+                .distinctUntilChanged()
                 .collect { showEraseCfr ->
                     if (showEraseCfr) {
                         val eraseActionView =
@@ -308,7 +311,7 @@ class BrowserToolbarIntegration(
     internal fun observeCookieBannerCfr() {
         cookieBannerCfrScope = fragment.components?.appStore?.flowScoped { flow ->
             flow.mapNotNull { state -> state.showCookieBannerCfr }
-                .ifChanged()
+                .distinctUntilChanged()
                 .collect { showCookieBannerCfr ->
                     if (showCookieBannerCfr) {
                         CFRPopup(
@@ -371,7 +374,7 @@ class BrowserToolbarIntegration(
     internal fun observeTrackingProtectionCfr() {
         trackingProtectionCfrScope = fragment.components?.appStore?.flowScoped { flow ->
             flow.mapNotNull { state -> state.showTrackingProtectionCfrForTab }
-                .ifChanged()
+                .distinctUntilChanged()
                 .collect { showTrackingProtectionCfrForTab ->
                     if (showTrackingProtectionCfrForTab[store.state.selectedTabId] == true) {
                         CFRPopup(
@@ -441,7 +444,7 @@ class BrowserToolbarIntegration(
     internal fun observerSecurityIndicatorChanges() {
         securityIndicatorScope = store.flowScoped { flow ->
             flow.mapNotNull { state -> state.findCustomTabOrSelectedTab(customTabId) }
-                .ifChanged { tab -> tab.content.securityInfo }
+                .distinctUntilChangedBy { tab -> tab.content.securityInfo }
                 .collect {
                     val secure = it.content.securityInfo.secure
                     val url = it.content.url

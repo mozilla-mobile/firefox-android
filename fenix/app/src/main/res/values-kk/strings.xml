@@ -65,8 +65,6 @@
 
     <!-- Private mode shortcut "contextual feature recommendation" (CFR) -->
     <!-- Text for the Private mode shortcut CFR message for adding a private mode shortcut to open private tabs from the Home screen -->
-    <string name="private_mode_cfr_message" moz:removedIn="111" tools:ignore="UnusedResources">Келесі жекелік бетін бір шерту арқылы ашыңыз.</string>
-    <!-- Text for the Private mode shortcut CFR message for adding a private mode shortcut to open private tabs from the Home screen -->
     <string name="private_mode_cfr_message_2">Келесі жекелік бетін бір шерту арқылы ашыңыз.</string>
     <!-- Text for the positive button to accept adding a Private Browsing shortcut to the Home screen -->
     <string name="private_mode_cfr_pos_button_text">Үй экранына қосу</string>
@@ -80,9 +78,6 @@
     <string name="open_in_app_cfr_positive_button_text">Баптауларға өту</string>
     <!-- Text for the negative action button -->
     <string name="open_in_app_cfr_negative_button_text">Тайдыру</string>
-
-    <!-- Content description for close button used in "contextual feature recommendation" (CFR) popups -->
-    <string name="cfr_dismiss_button_default_content_description" moz:removedIn="110" tools:ignore="UnusedResources">Елемеу</string>
 
     <!-- Total cookie protection "contextual feature recommendation" (CFR) -->
     <!-- Text for the message displayed in the contextual feature recommendation popup promoting the total cookie protection feature. -->
@@ -126,6 +121,9 @@
     <string name="home_screen_shortcut_open_new_tab_2">Жаңа бет</string>
     <!-- Shortcut action to open new private tab -->
     <string name="home_screen_shortcut_open_new_private_tab_2">Жаңа жекелік беті</string>
+
+    <!-- Shortcut action to open Passwords screens -->
+    <string name="home_screen_shortcut_open_password_screen">Парольдерге жылдам қатынау</string>
 
     <!-- Recent Tabs -->
     <!-- Header text for jumping back into the recent tab in the home screen -->
@@ -249,7 +247,7 @@
     <!-- Search suggestion onboarding hint description text, first parameter is the name of the app defined in app_name (for example: Fenix)-->
     <string name="search_suggestions_onboarding_text">%s сіз адрестік жолақта терген барлық нәрсемен сіздің іздеу жүйеңізбен бөлісетін болады.</string>
 
-    <!-- Search engine suggestion title text. The first parameter is the name of teh suggested engine-->
+    <!-- Search engine suggestion title text. The first parameter is the name of the suggested engine-->
     <string name="search_engine_suggestions_title">%s ішінен іздеу</string>
     <!-- Search engine suggestion description text -->
     <string name="search_engine_suggestions_description">Адрестік жолақтан тікелей іздеу</string>
@@ -258,10 +256,10 @@
     <string name="search_settings_menu_item">Іздеу баптаулары</string>
 
     <!-- Header text for the search selector menu -->
-    <string name="search_header_menu_item" moz:RemovedIn="109" tools:ignore="UnusedResources">Бұл жолы іздеу:</string>
-
-    <!-- Header text for the search selector menu -->
     <string name="search_header_menu_item_2">Бұл жолы келесі жерде іздеу:</string>
+
+    <!-- Content description (not visible, for screen readers etc.): Search engine icon. The first parameter is the search engine name (for example: DuckDuckGo). -->
+    <string name="search_engine_icon_content_description" tools:ignore="UnusedResources">%s іздеу жүйесі</string>
 
     <!-- Home onboarding -->
     <!-- Onboarding home screen popup dialog, shown on top of the Jump back in section. -->
@@ -299,6 +297,52 @@
     <!-- Text for the button to not request notification permission on the device and dismiss the dialog -->
     <string name="onboarding_home_enable_notifications_negative_button">Қазір емес</string>
 
+    <!-- Juno first user onboarding flow experiment, strings are marked unused as they are only referenced by Nimbus experiments. -->
+    <!-- Title for set firefox as default browser screen.
+        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
+    <string name="juno_onboarding_default_browser_title" moz:RemovedIn="117" tools:ignore="UnusedResources">%s негізгі браузер етіп орнатыңыз</string>
+    <!-- Title for set firefox as default browser screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_default_browser_title_nimbus" tools:ignore="UnusedResources">Firefox-ты негізгі браузер етіп орнатыңыз</string>
+    <!-- Description for set firefox as default browser screen.
+        The first parameter is the Firefox brand name.
+        The second parameter is the string with key "juno_onboarding_default_browser_description_link_text". -->
+    <string name="juno_onboarding_default_browser_description" moz:RemovedIn="117" tools:ignore="UnusedResources">%1$s сайтаралық трекерлерді блоктау арқылы адамдарды табыстан жоғары қояды және жекелігіңізді қорғайды.\n\nТолығырақ ақпаратты %2$s ішінен алыңыз.</string>
+    <!-- Description for set firefox as default browser screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_default_browser_description_nimbus" tools:ignore="UnusedResources">Firefox сайтаралық трекерлерді блоктау арқылы адамдарды табыстан жоғары қояды және жекелігіңізді қорғайды.\n\nТолығырақ ақпаратты жекелік хабарламамыздан алыңыз.</string>
+    <!-- Text for the link to the privacy notice webpage for set as firefox default browser screen.
+    This is part of the string with the key "juno_onboarding_default_browser_description". -->
+    <string name="juno_onboarding_default_browser_description_link_text" tools:ignore="UnusedResources">жекелік ескертуі</string>
+    <!-- Text for the button to set firefox as default browser on the device -->
+    <string name="juno_onboarding_default_browser_positive_button" tools:ignore="UnusedResources">Негізгі браузер қылу</string>
+    <!-- Text for the button dismiss the screen and move on with the flow -->
+    <string name="juno_onboarding_default_browser_negative_button" tools:ignore="UnusedResources">Қазір емес</string>
+    <!-- Title for sign in to sync screen. -->
+    <string name="juno_onboarding_sign_in_title" tools:ignore="UnusedResources">Телефоннан ноутбукке және кері өтіңіз</string>
+    <!-- Description for sign in to sync screen. -->
+    <string name="juno_onboarding_sign_in_description" tools:ignore="UnusedResources">Тоқтаған жерден жалғастыру үшін басқа құрылғыларыңыздан беттер мен парольдерді алыңыз.</string>
+    <!-- Text for the button to sign in to sync on the device -->
+    <string name="juno_onboarding_sign_in_positive_button" tools:ignore="UnusedResources">Кіру</string>
+    <!-- Text for the button dismiss the screen and move on with the flow -->
+    <string name="juno_onboarding_sign_in_negative_button" tools:ignore="UnusedResources">Қазір емес</string>
+    <!-- Title for enable notification permission screen.
+        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
+    <string name="juno_onboarding_enable_notifications_title" moz:RemovedIn="117" tools:ignore="UnusedResources">Хабарландырулар %s арқылы көбірек жұмыс бітіруге көмектеседі</string>
+    <!-- Title for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_enable_notifications_title_nimbus" tools:ignore="UnusedResources">Хабарландырулар Firefox арқылы көбірек жұмыс бітіруге көмектеседі</string>
+    <!-- Description for enable notification permission screen.
+        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
+    <string name="juno_onboarding_enable_notifications_description" moz:RemovedIn="117" tools:ignore="UnusedResources">Құрылғылар арасында беттерді жіберіңіз, жүктемелеріңізді басқарыңыз және %s мүмкіндігін барынша пайдалану туралы кеңестер алыңыз.</string>
+    <!-- Description for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+       Note: The word "Firefox" should NOT be translated   -->
+    <string name="juno_onboarding_enable_notifications_description_nimbus" tools:ignore="UnusedResources">Құрылғылар арасында беттерді жіберіңіз, жүктемелеріңізді басқарыңыз және Firefox мүмкіндігін барынша пайдалану туралы кеңестер алыңыз.</string>
+    <!-- Text for the button to request notification permission on the device -->
+    <string name="juno_onboarding_enable_notifications_positive_button" tools:ignore="UnusedResources">Хабарламаларды іске қосу</string>
+    <!-- Text for the button dismiss the screen and move on with the flow -->
+    <string name="juno_onboarding_enable_notifications_negative_button" tools:ignore="UnusedResources">Қазір емес</string>
+
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. The first parameter is the name of the application.-->
     <string name="search_widget_content_description_2">Жаңа %1$s бетін ашу</string>
@@ -317,11 +361,21 @@
     <string name="preferences_category_general">Жалпы</string>
     <!-- Preference category for all links about Fenix -->
     <string name="preferences_category_about">Осы туралы</string>
+    <!-- Preference category for settings related to changing the default search engine -->
+    <string name="preferences_category_select_default_search_engine">Біреуін таңдаңыз</string>
+    <!-- Preference for settings related to managing search shortcuts for the quick search menu -->
+    <string name="preferences_manage_search_shortcuts">Іздеу жарлықтарын басқару</string>
+    <!-- Summary for preference for settings related to managing search shortcuts for the quick search menu -->
+    <string name="preferences_manage_search_shortcuts_summary">Іздеу мәзірінде көрінетін іздеу жүйелерін түзету</string>
+    <!-- Preference category for settings related to managing search shortcuts for the quick search menu -->
+    <string name="preferences_category_engines_in_search_menu">Іздеу мәзірінде көрінетін іздеу жүйелері</string>
     <!-- Preference for settings related to changing the default search engine -->
     <string name="preferences_default_search_engine">Негізгі іздеу жүйесі</string>
     <!-- Preference for settings related to Search -->
     <string name="preferences_search">Іздеу</string>
 
+    <!-- Preference for settings related to Search engines -->
+    <string name="preferences_search_engines">Іздеу жүйелері</string>
     <!-- Preference for settings related to Search address bar -->
     <string name="preferences_search_address_bar">Адрес жолағы</string>
     <!-- Preference link to rating Fenix on the Play Store -->
@@ -358,73 +412,53 @@
     <string name="reduce_cookie_banner_option_off">Сөндірулі</string>
     <!-- Summary of cookie banner handling preference if the setting enabled is set to on -->
     <string name="reduce_cookie_banner_option_on">Іске қосулы</string>
-    <!-- Summary for the preference for rejecting all cookies whenever possible. -->
-    <string name="reduce_cookie_banner_summary" moz:RemovedIn="110" tools:ignore="UnusedResources">Firefox cookie баннерлеріндегі cookie сұрауларын автоматты түрде қабылдамау әрекетін жасайды. Қабылдамау опциясы қол жетімді болмаса, Firefox баннерді жабу үшін барлық cookie файлдарын қабылдауы мүмкін.</string>
 
     <!-- Summary for the preference for rejecting all cookies whenever possible. The first parameter is the application name -->
     <string name="reduce_cookie_banner_summary_1">%1$s cookie баннерлеріндегі cookie сұрауларын автоматты түрде қабылдамау әрекетін жасайды.</string>
     <!-- Text for indicating cookie banner handling is off this site, this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_off_for_site">Бұл сайт үшін сөндірілген</string>
+    <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
+    <string name="cookie_banner_handling_details_site_is_not_supported_cancel_button">Бас тарту</string>
+    <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
+    <string name="cookie_banner_handling_details_site_is_not_supported_request_support_button_2">Сұранымды жіберу</string>
+    <!-- Text for title indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
+    <string name="cookie_banner_handling_details_site_is_not_supported_title_2">Осы сайтқа қолдауды сұрау керек пе?</string>
+    <!-- Label for the snackBar, after the user reports with success a website where cookie banner reducer did not work -->
+    <string name="cookie_banner_handling_report_site_snack_bar_text_2">Сұраным жіберілді</string>
     <!-- Text for indicating cookie banner handling is on this site, this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_on_for_site">Бұл сайт үшін іске қосылған</string>
 
+    <!-- Text for indicating that a request for unsupported site was sent to Nimbus (it's a Mozilla library for experiments), this is shown as part of the protections panel with the tracking protection toggle -->
+    <string name="reduce_cookie_banner_unsupported_site_request_submitted_2">Қолдау көрсету сұрауы жіберілді</string>
     <!-- Text for indicating cookie banner handling is currently not supported for this site, this is shown as part of the protections panel with the tracking protection toggle -->
-    <string name="reduce_cookie_banner_unsupported_site" tools:ignore="UnusedResources">Сайтқа ағымдағы уақытта қолдау жоқ</string>
+    <string name="reduce_cookie_banner_unsupported_site">Сайтқа ағымдағы уақытта қолдау жоқ</string>
     <!-- Title text for a detail explanation indicating cookie banner handling is on this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
     <string name="reduce_cookie_banner_details_panel_title_on_for_site">%1$s үшін cookie баннерлерін азайту мүмкіндігін іске қосу керек пе?</string>
     <!-- Title text for a detail explanation indicating cookie banner handling is off this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
     <string name="reduce_cookie_banner_details_panel_title_off_for_site">%1$s үшін cookie баннерлерін азайту мүмкіндігін сөндіру керек пе?</string>
 
+    <!-- Title text for a detail explanation indicating cookie banner reducer didn't work for the current site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name-->
+    <string name="reduce_cookie_banner_details_panel_title_unsupported_site_request_2">%1$s бұл сайттағы cookie сұрауларын автоматты түрде қабылдамай алмайды. Болашақта осы сайтқа қолдау көрсету туралы сұраным жібере аласыз.</string>
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
     <string name="reduce_cookie_banner_details_panel_description_off_for_site">%1$s осы сайттың cookie файлдарын тазартып, бетті жаңартады. Барлық cookie файлдарын тазарту салдарынан сіз сайттан шығуыңыз мүмкін немесе дүкен себеттері тазартылуы мүмкін.</string>
-    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first and second parameter are the application name -->
-    <string name="reduce_cookie_banner_details_panel_description_on_for_site" moz:RemovedIn="110" tools:ignore="UnusedResources">%1$s cookie сұрауларын автоматты түрде тайдыру әрекетін жасайды. Тайдыру опциясы қол жетімді болмаса, %2$s баннерді жабу үшін барлық cookie файлдарын қабылдауы мүмкін.</string>
 
-    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter are the application name -->
-    <string name="reduce_cookie_banner_details_panel_description_on_for_site_1" moz:RemovedIn="111" tools:ignore="UnusedResources">%1$s cookie сұрауларын автоматты түрде қабылдамау әрекетін жасай алады.</string>
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
     <string name="reduce_cookie_banner_details_panel_description_on_for_site_2">%1$s қолдау көрсетілетін сайттардағы барлық cookie сұрауларын автоматты түрде қабылдамау әрекетін жасайды.</string>
-    <!-- Title text for the dialog use on the control branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_control_experiment_dialog_title" moz:RemovedIn="112" tools:ignore="UnusedResources">Cookie баннерлері жоғалсын!</string>
-    <!-- Body text for the dialog use on the control branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_control_experiment_dialog_body" moz:RemovedIn="110" tools:ignore="UnusedResources">Cookie сұрауларын мүмкіндігінше автоматты түрде тайдыру. Болмаса, cookie баннерлерін жабу үшін барлық cookie файлдарын қабылдау.</string>
-    <!-- Body text for the dialog use on the control branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_control_experiment_dialog_body_1" moz:RemovedIn="111" tools:ignore="UnusedResources">Мүмкіндігінше cookie сұрауларын автоматты түрде қабылдамау.</string>
-    <!-- Body text for the dialog use on the control branch of the experiment to determine which context users engaged the most.The first parameter is the application name -->
-    <string name="reduce_cookie_banner_control_experiment_dialog_body_2" moz:RemovedIn="112" tools:ignore="UnusedResources">%1$s үшін cookie сұрауларын мүмкіндігінше автоматты түрде қабылдамау рұқсатын беру керек пе?</string>
+    <!-- Title text for the cookie banner re-engagement dialog. The first parameter is the application name. -->
+    <string name="reduce_cookie_banner_dialog_title">%1$s үшін cookie баннерлерін қабылдамауға рұқсат бересіз бе?</string>
+    <!-- Body text for the cookie banner re-engagement dialog use. The first parameter is the application name. -->
+    <string name="reduce_cookie_banner_dialog_body">%1$s көптеген cookie баннер сұрауларын автоматты түрде қабылдамау әрекетін жасай алады.</string>
     <!-- Remind me later text button for the onboarding dialog -->
     <string name="reduce_cookie_banner_dialog_not_now_button">Қазір емес</string>
 
-    <!-- Change setting text button, for the dialog use on the control branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_control_experiment_dialog_change_setting_button" moz:RemovedIn="112" tools:ignore="UnusedResources">Баннерлерді тайдыру</string>
     <!-- Snack text for the cookie banner dialog, after user hit the dismiss banner button -->
     <string name="reduce_cookie_banner_dialog_snackbar_text">Сіз азырақ cookie сұрауларын көресіз</string>
-
-    <!-- Title text for the dialog use on the variant 1 branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_variant_1_experiment_dialog_title" moz:RemovedIn="112" tools:ignore="UnusedResources">Азырақ cookie қалқымалы терезелерін көру</string>
-    <!-- Body text for the dialog use on the variant 1 branch of the experiment to determine which context users engaged the most. The first parameter is the application name. -->
-    <string name="reduce_cookie_banner_variant_1_experiment_dialog_body" moz:RemovedIn="110" tools:ignore="UnusedResources">Мазасыз шолу үшін cookie файлдарының қалқымалы терезелеріне автоматты түрде жауап беру. %1$s барлық сұрауларды мүмкіндігінше тайдырады, ал болмаса, барлығын қабылдайды.</string>
-    <!-- Body text for the dialog use on the variant 1 branch of the experiment to determine which context users engaged the most. The first parameter is the application name. -->
-    <string name="reduce_cookie_banner_variant_1_experiment_dialog_body_1" moz:RemovedIn="112" tools:ignore="UnusedResources">Мазасыз шолу үшін cookie файлдарының қалқымалы терезелеріне автоматты түрде жауап беру. %1$s барлық сұрауларды мүмкіндігінше қабылдамайды.</string>
-    <!-- Change setting text button, for the onboarding dialog use on the variant 1 branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_variant_1_experiment_dialog_change_setting_button" moz:RemovedIn="112" tools:ignore="UnusedResources">Қалқымалы терезелерді тайдыру</string>
-    <!-- Title text for the dialog use on the variant 2 branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_variant_2_experiment_dialog_title" moz:RemovedIn="112" tools:ignore="UnusedResources">Cookie баннерлерін азайту</string>
-
-    <!-- Body text for the dialog use on the variant 2 branch of the experiment to determine which context users engaged the most. The first parameter is the application name. -->
-    <string name="reduce_cookie_banner_variant_2_experiment_dialog_body" moz:RemovedIn="110" tools:ignore="UnusedResources">%1$s сайтына cookie файлына рұқсат сұрауын тайдыру, немесе мүмкін болмаса, cookie файлдарына рұқсатын беру керек пе?</string>
-    <!-- Body text for the dialog use on the variant 2 branch of the experiment to determine which context users engaged the most. The first parameter is the application name. -->
-    <string name="reduce_cookie_banner_variant_2_experiment_dialog_body_1" moz:RemovedIn="112" tools:ignore="UnusedResources">Мүмкін болса, %1$s үшін сайтының cookie файлына рұқсат сұрауын қабылдамауға рұқсат бересіз бе?</string>
-    <!-- Change setting text button, for the dialog use on the variant 2 branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_variant_2_experiment_dialog_change_setting_button" moz:RemovedIn="112" tools:ignore="UnusedResources">Рұқсат ету</string>
 
     <!-- Change setting text button, for the cookie banner re-engagement dialog -->
     <string name="reduce_cookie_banner_dialog_change_setting_button">Рұқсат ету</string>
 
     <!-- Description of the preference to enable "HTTPS-Only" mode. -->
     <string name="preferences_https_only_summary">Қауіпсіздікті арттыру үшін сайттарға HTTPS шифрлеу хаттамасын пайдаланып автоматты түрде қосылу әрекетін жасайды.</string>
-    <!-- Summary of tracking protection preference if tracking protection is set to on -->
-    <string name="preferences_https_only_on" moz:removedIn="111" tools:ignore="UnusedResources">Іске қосулы</string>
     <!-- Summary of https only preference if https only is set to off -->
     <string name="preferences_https_only_off">Сөндірулі</string>
     <!-- Summary of https only preference if https only is set to on in all tabs -->
@@ -507,6 +541,11 @@
     <string name="preferences_open_links_in_apps_never">Ешқашан</string>
     <!-- Preference for open download with an external download manager app -->
     <string name="preferences_external_download_manager">Сыртқы жүктеу менеджері</string>
+    <!-- Preference for enabling gecko engine logs -->
+    <string name="preferences_enable_gecko_logs">Gecko журналдарын іске қосу</string>
+    <!-- Message to indicate users that we are quitting the application to apply the changes -->
+    <string name="quit_application">Өзгерістерді іске асыру үшін қолданбадан шығу…</string>
+
     <!-- Preference for add_ons -->
     <string name="preferences_addons">Қосымшалар</string>
 
@@ -571,11 +610,17 @@
     <!-- Text for classic wallpapers title. The first parameter is the Firefox name. -->
     <string name="wallpaper_classic_title">Классикалық %s</string>
     <!-- Text for limited edition wallpapers title. -->
-    <string name="wallpaper_limited_edition_title">Шектеулі таралым</string>
+    <string name="wallpaper_limited_edition_title" moz:RemovedIn="118" tools:ignore="UnusedResources">Шектеулі таралым</string>
+    <!-- Text for artist series wallpapers title. "Artist series" represents a collection of artist collaborated wallpapers. -->
+    <string name="wallpaper_artist_series_title">Суретшілер сериясы</string>
     <!-- Description text for the limited edition wallpapers with learn more link. The first parameter is the learn more string defined in wallpaper_learn_more-->
-    <string name="wallpaper_limited_edition_description_with_learn_more">Жаңа &quot;Тәуелсіз дауыстар&quot; топтамасы. %s</string>
+    <string name="wallpaper_limited_edition_description_with_learn_more" moz:RemovedIn="118" tools:ignore="UnusedResources">Жаңа &quot;Тәуелсіз дауыстар&quot; топтамасы. %s</string>
+    <!-- Description text for the artist series wallpapers with learn more link. The first parameter is the learn more string defined in wallpaper_learn_more. "Independent voices" is the name of the wallpaper collection -->
+    <string name="wallpaper_artist_series_description_with_learn_more">&quot;Тәуелсіз дауыстар&quot; топтамасы. %s</string>
     <!-- Description text for the limited edition wallpapers. -->
-    <string name="wallpaper_limited_edition_description">Жаңа &quot;Тәуелсіз дауыстар&quot; топтамасы.</string>
+    <string name="wallpaper_limited_edition_description" moz:RemovedIn="118" tools:ignore="UnusedResources">Жаңа &quot;Тәуелсіз дауыстар&quot; топтамасы.</string>
+    <!-- Description text for the artist series wallpapers. "Independent voices" is the name of the wallpaper collection -->
+    <string name="wallpaper_artist_series_description">&quot;Тәуелсіз дауыстар&quot; топтамасы.</string>
     <!-- Wallpaper onboarding dialog header text. -->
     <string name="wallpapers_onboarding_dialog_title_text">Түстер шашырауын қолданып көріңіз</string>
     <!-- Wallpaper onboarding dialog body text. -->
@@ -589,7 +634,20 @@
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is already installed -->
     <string name="addon_already_installed">Қосымша орнатылған болып тұр</string>
 
+    <!-- Add-on process crash dialog to user -->
+    <!-- Title of a dialog shown to the user when enough errors have occurred with addons and they need to be temporarily disabled -->
+    <string name="addon_process_crash_dialog_title" tools:ignore="UnusedResources">Қосымшалар уақытша сөндірілген</string>
+
+    <!-- The first parameter is the application name. This is a message shown to the user when too many errors have occurred with the addons process and they have been disabled. The user can decide if they would like to continue trying to start add-ons or if they'd rather continue without them. -->
+    <string name="addon_process_crash_dialog_message" tools:ignore="UnusedResources">Бір немесе бірнеше қосымша жұмысын тоқтатып, жүйені тұрақсыз етті. %1$s қосымша(лар)ды қайта іске қосуды талабын сәтсіз жасады.\n\nҚосымшалар ағымдағы сеанс кезінде қайта іске қосылмайды.\n\nҚосымшаларды өшіру немесе сөндіру бұл мәселені шешуі мүмкін.</string>
+    <!-- This will cause the add-ons to try restarting but the dialog will reappear if it is unsuccessful again -->
+    <string name="addon_process_crash_dialog_retry_button_text" tools:ignore="UnusedResources">Қосымшаларды қайта іске қосып көру</string>
+    <!-- The user will continue with all add-ons disabled -->
+    <string name="addon_process_crash_dialog_disable_addons_button_text" tools:ignore="UnusedResources">Сөндірілген кеңейтулермен жалғастыру</string>
+
     <!-- Account Preferences -->
+    <!-- Preference for managing your account via accounts.firefox.com -->
+    <string name="preferences_manage_account">Тіркелгіні басқару</string>
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">Қазір синхрондау</string>
     <!-- Preference category for sync -->
@@ -732,15 +790,9 @@
     <!-- Dialog button text for canceling open all tabs -->
     <string name="open_all_warning_cancel">Бас тарту</string>
 
-    <!-- Text to show users they have one site in the history group section of the History fragment.
-    %d is a placeholder for the number of sites in the group. -->
-    <string name="history_search_group_site" moz:RemovedIn="111" tools:ignore="UnusedResources">%d сайт</string>
     <!-- Text to show users they have one page in the history group section of the History fragment.
     %d is a placeholder for the number of pages in the group. -->
     <string name="history_search_group_site_1">%d бет</string>
-    <!-- Text to show users they have multiple sites in the history group section of the History fragment.
-    %d is a placeholder for the number of sites in the group. -->
-    <string name="history_search_group_sites" moz:RemovedIn="111" tools:ignore="UnusedResources">%d сайт</string>
 
     <!-- Text to show users they have multiple pages in the history group section of the History fragment.
     %d is a placeholder for the number of pages in the group. -->
@@ -1070,8 +1122,6 @@
     <string name="phone_feature_blocked_by_android">Android бұғаттаған</string>
     <!-- Preference for showing a list of websites that the default configurations won't apply to them -->
     <string name="preference_exceptions">Ережеден бөлек</string>
-    <!-- Summary of tracking protection preference if tracking protection is set to on -->
-    <string name="tracking_protection_on" moz:removedIn="111" tools:ignore="UnusedResources">Іске қосулы</string>
     <!-- Summary of tracking protection preference if tracking protection is set to off -->
     <string name="tracking_protection_off">Сөндірулі</string>
     <!-- Summary of tracking protection preference if tracking protection is set to standard -->
@@ -1164,8 +1214,16 @@
     <string name="share_button_content_description">Бөлісу</string>
     <!-- Text for the Save to PDF feature in the share menu -->
     <string name="share_save_to_pdf">PDF ретінде сақтау</string>
-    <!-- Text for error message when generating a PDF file Text for error message when generating a PDF file. -->
+    <!-- Text for error message when generating a PDF file Text. -->
     <string name="unable_to_save_to_pdf_error">PDF жасау мүмкін емес</string>
+    <!-- Text for standard error snackbar dismiss button. -->
+    <string name="standard_snackbar_error_dismiss">Тайдыру</string>
+    <!-- Text for error message when printing a page and it fails. -->
+    <string name="unable_to_print_error" moz:removedIn="121" tools:ignore="UnusedResources">Баспаға шығару мүмкін емес</string>
+    <!-- Text for error message when printing a page and it fails. -->
+    <string name="unable_to_print_page_error">Бұл бетті басып шығару мүмкін емес</string>
+    <!-- Text for the print feature in the share and browser menu -->
+    <string name="menu_print">Баспаға шығару</string>
     <!-- Sub-header in the dialog to share a link to another sync device -->
     <string name="share_device_subheader">Құрылғыға жіберу</string>
     <!-- Sub-header in the dialog to share a link to an app from the full list -->
@@ -1231,6 +1289,15 @@
     <!-- Text B shown in the notification that pops up to re-engage the user -->
     <string name="notification_re_engagement_B_text">Жақын жерден бірдеңе табыңыз. Немесе қызықты нәрсе табыңыз.</string>
 
+    <!-- Survey -->
+    <!-- Text shown in the fullscreen message that pops up to ask user to take a short survey.
+    The app name is in the text, due to limitations with localizing Nimbus experiments -->
+    <string name="nimbus_survey_message_text">Қысқа сауалнамадан өту арқылы Firefox-ты жақсартуға көмектесіңіз.</string>
+    <!-- Preference for taking the short survey. -->
+    <string name="preferences_take_survey">Сауалнамаға қатысу</string>
+    <!-- Preference for not taking the short survey. -->
+    <string name="preferences_not_take_survey">Жоқ, рахмет</string>
+
     <!-- Snackbar -->
     <!-- Text shown in snackbar when user deletes a collection -->
     <string name="snackbar_collection_deleted">Жинақ өшірілді</string>
@@ -1295,12 +1362,16 @@
     <!-- Subtitle for the tabs item in Delete browsing data, parameter will be replaced with the number of open tabs -->
     <string name="preferences_delete_browsing_data_tabs_subtitle">%d бет</string>
     <!-- Title for the data and history items in Delete browsing data -->
-    <string name="preferences_delete_browsing_data_browsing_data_title">Шолу тарихы және сайт деректері</string>
+    <string name="preferences_delete_browsing_data_browsing_data_title" moz:removedIn="118" tools:ignore="UnusedResources">Шолу тарихы және сайт деректері</string>
+    <!-- Title for the history item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_browsing_history_title">Шолу тарихы</string>
     <!-- Subtitle for the data and history items in delete browsing data, parameter will be replaced with the
         number of history items the user has -->
     <string name="preferences_delete_browsing_data_browsing_data_subtitle">%d адрес</string>
     <!-- Title for the cookies item in Delete browsing data -->
-    <string name="preferences_delete_browsing_data_cookies">Cookies файлдары</string>
+    <string name="preferences_delete_browsing_data_cookies" moz:removedIn="118" tools:ignore="UnusedResources">Cookies файлдары</string>
+    <!-- Title for the cookies and site data items in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_cookies_and_site_data">Cookies файлдары және сайт деректері</string>
     <!-- Subtitle for the cookies item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_cookies_subtitle">Сіз сайттардың көбінен шығасыз</string>
     <!-- Title for the cached images and files item in Delete browsing data -->
@@ -1324,7 +1395,9 @@
     <!-- Title text of a delete browsing data dialog. -->
     <string name="delete_history_prompt_title">Жойылатын деректер мерзімі</string>
     <!-- Body text of a delete browsing data dialog. -->
-    <string name="delete_history_prompt_body">Тарихты (басқа құрылғылардан синхрондалған тарихты қоса), cookie файлдарын және басқа шолу деректерін өшіреді.</string>
+    <string name="delete_history_prompt_body" moz:RemovedIn="130" tools:ignore="UnusedResources">Тарихты (басқа құрылғылардан синхрондалған тарихты қоса), cookie файлдарын және басқа шолу деректерін өшіреді.</string>
+    <!-- Body text of a delete browsing data dialog. -->
+    <string name="delete_history_prompt_body_2">Тарихты өшіреді (басқа құрылғылардан синхрондалған тарихты қоса)</string>
     <!-- Radio button in the delete browsing data dialog to delete history items for the last hour. -->
     <string name="delete_history_prompt_button_last_hour">Соңғы сағат</string>
     <!-- Radio button in the delete browsing data dialog to delete history items for today and yesterday. -->
@@ -1354,61 +1427,61 @@
 
     <!-- Onboarding -->
     <!-- Text for onboarding welcome header. -->
-    <string name="onboarding_header_2">Жақсырақ интернетке қош келдіңіз</string>
+    <string name="onboarding_header_2" moz:RemovedIn="118" tools:ignore="UnusedResources">Жақсырақ интернетке қош келдіңіз</string>
     <!-- Text for the onboarding welcome message. -->
-    <string name="onboarding_message">Табыс үшін емес, адамдар үшін жасалған браузер.</string>
+    <string name="onboarding_message" moz:RemovedIn="118" tools:ignore="UnusedResources">Табыс үшін емес, адамдар үшін жасалған браузер.</string>
     <!-- Text for the Firefox account onboarding sign in card header. -->
-    <string name="onboarding_account_sign_in_header">Жұмысты қалдырған жерінен жалғастырыңыз</string>
+    <string name="onboarding_account_sign_in_header" moz:RemovedIn="118" tools:ignore="UnusedResources">Жұмысты қалдырған жерінен жалғастырыңыз</string>
     <!-- Text for the button to learn more about signing in to your Firefox account. -->
-    <string name="onboarding_manual_sign_in_description">Экранды оңай ауыстыру үшін беттер мен парольдерді құрылғылар арасында синхрондаңыз.</string>
+    <string name="onboarding_manual_sign_in_description" moz:RemovedIn="118" tools:ignore="UnusedResources">Экранды оңай ауыстыру үшін беттер мен парольдерді құрылғылар арасында синхрондаңыз.</string>
     <!-- Text for the button to manually sign into Firefox account. -->
-    <string name="onboarding_firefox_account_sign_in">Кіру</string>
+    <string name="onboarding_firefox_account_sign_in" moz:RemovedIn="118" tools:ignore="UnusedResources">Кіру</string>
     <!-- text to display in the snackbar once account is signed-in -->
     <string name="onboarding_firefox_account_sync_is_on">Синхрондау іске қосулы</string>
 
     <!-- Text for the tracking protection onboarding card header -->
-    <string name="onboarding_tracking_protection_header">Үнсіз келісім бойынша жекелікті қорғау</string>
+    <string name="onboarding_tracking_protection_header" moz:RemovedIn="118" tools:ignore="UnusedResources">Үнсіз келісім бойынша жекелікті қорғау</string>
     <!-- Text for the tracking protection card description. The first parameter is the name of the application.-->
-    <string name="onboarding_tracking_protection_description_old">%1$s компанияларды интернетте сізді жасырын түрде бақылауын автоматты түрде тоқтатады.</string>
+    <string name="onboarding_tracking_protection_description_old" moz:RemovedIn="118" tools:ignore="UnusedResources">%1$s компанияларды интернетте сізді жасырын түрде бақылауын автоматты түрде тоқтатады.</string>
     <!-- Text for the tracking protection card description. -->
-    <string name="onboarding_tracking_protection_description">Трекерлерге cookie файлдарын пайдаланып, сізді сайттар арасында бақылауға жол бермеу үшін Толық қорғанысты ұсынады.</string>
+    <string name="onboarding_tracking_protection_description" moz:RemovedIn="118" tools:ignore="UnusedResources">Трекерлерге cookie файлдарын пайдаланып, сізді сайттар арасында бақылауға жол бермеу үшін Толық қорғанысты ұсынады.</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
-    <string name="onboarding_tracking_protection_standard_button_2">Стандартты (бастапқы)</string>
+    <string name="onboarding_tracking_protection_standard_button_2" moz:RemovedIn="118" tools:ignore="UnusedResources">Стандартты (бастапқы)</string>
     <!-- text for standard blocking option button description -->
-    <string name="onboarding_tracking_protection_standard_button_description_3">Жекелік және өнімділік теңгерімі. Беттер әдеттегідей жүктеледі.</string>
+    <string name="onboarding_tracking_protection_standard_button_description_3" moz:RemovedIn="118" tools:ignore="UnusedResources">Жекелік және өнімділік теңгерімі. Беттер әдеттегідей жүктеледі.</string>
     <!-- text for tracking protection radio button option for strict level of blocking -->
-    <string name="onboarding_tracking_protection_strict_option">Қатаң</string>
+    <string name="onboarding_tracking_protection_strict_option" moz:RemovedIn="118" tools:ignore="UnusedResources">Қатаң</string>
     <!-- text for strict blocking option button description -->
-    <string name="onboarding_tracking_protection_strict_button_description_3">Беттерді тезірек жүктеу үшін көбірек трекерлерді блоктайды, бірақ кейбір беттер функционалдылығы бұзылуы мүмкін.</string>
+    <string name="onboarding_tracking_protection_strict_button_description_3" moz:RemovedIn="118" tools:ignore="UnusedResources">Беттерді тезірек жүктеу үшін көбірек трекерлерді блоктайды, бірақ кейбір беттер функционалдылығы бұзылуы мүмкін.</string>
     <!-- text for the toolbar position card header  -->
-    <string name="onboarding_toolbar_placement_header_1">Құралдар панелінің орналасуын таңдау</string>
+    <string name="onboarding_toolbar_placement_header_1" moz:RemovedIn="118" tools:ignore="UnusedResources">Құралдар панелінің орналасуын таңдау</string>
     <!-- Text for the toolbar position card description -->
-    <string name="onboarding_toolbar_placement_description">Оны төменгі жағында ұстаңыз немесе жоғарғы жағына жылжытыңыз.</string>
+    <string name="onboarding_toolbar_placement_description" moz:RemovedIn="118" tools:ignore="UnusedResources">Оны төменгі жағында ұстаңыз немесе жоғарғы жағына жылжытыңыз.</string>
     <!-- Text for the privacy notice onboarding card header -->
-    <string name="onboarding_privacy_notice_header_1">Өз деректеріңізді өзіңіз басқарасыз</string>
+    <string name="onboarding_privacy_notice_header_1" moz:RemovedIn="118" tools:ignore="UnusedResources">Өз деректеріңізді өзіңіз басқарасыз</string>
     <!-- Text for the privacy notice onboarding card description. -->
-    <string name="onboarding_privacy_notice_description">Firefox сіз желіде және бізбен немен бөлісетіңізді басқаруды өз қолыңызға береді.</string>
+    <string name="onboarding_privacy_notice_description" moz:RemovedIn="118" tools:ignore="UnusedResources">Firefox сіз желіде және бізбен немен бөлісетіңізді басқаруды өз қолыңызға береді.</string>
     <!-- Text for the button to read the privacy notice -->
-    <string name="onboarding_privacy_notice_read_button">Біздің жекелік ескертуімізді оқыңыз</string>
+    <string name="onboarding_privacy_notice_read_button" moz:RemovedIn="118" tools:ignore="UnusedResources">Біздің жекелік ескертуімізді оқыңыз</string>
 
     <!-- Text for the conclusion onboarding message -->
-    <string name="onboarding_conclusion_header">Ғажайып интернетті ашуға дайынсыз ба?</string>
+    <string name="onboarding_conclusion_header" moz:RemovedIn="118" tools:ignore="UnusedResources">Ғажайып интернетті ашуға дайынсыз ба?</string>
     <!-- text for the button to finish onboarding -->
-    <string name="onboarding_finish">Шолуды бастау</string>
+    <string name="onboarding_finish" moz:RemovedIn="118" tools:ignore="UnusedResources">Шолуды бастау</string>
 
     <!-- Onboarding theme -->
     <!-- text for the theme picker onboarding card header -->
-    <string name="onboarding_theme_picker_header">Теманы таңдау</string>
+    <string name="onboarding_theme_picker_header" moz:RemovedIn="118" tools:ignore="UnusedResources">Теманы таңдау</string>
     <!-- text for the theme picker onboarding card description -->
-    <string name="onboarding_theme_picker_description_2">Күңгірт режимді көмегімен батареяны және көздің көру қабілетін үнемдеңіз.</string>
+    <string name="onboarding_theme_picker_description_2" moz:RemovedIn="118" tools:ignore="UnusedResources">Күңгірт режимді көмегімен батареяны және көздің көру қабілетін үнемдеңіз.</string>
     <!-- Automatic theme setting (will follow device setting) -->
-    <string name="onboarding_theme_automatic_title">Автоматты түрде</string>
+    <string name="onboarding_theme_automatic_title" moz:RemovedIn="118" tools:ignore="UnusedResources">Автоматты түрде</string>
     <!-- Summary of automatic theme setting (will follow device setting) -->
-    <string name="onboarding_theme_automatic_summary">Құрылғы параметрлеріне бейімделеді</string>
+    <string name="onboarding_theme_automatic_summary" moz:RemovedIn="118" tools:ignore="UnusedResources">Құрылғы параметрлеріне бейімделеді</string>
     <!-- Theme setting for dark mode -->
-    <string name="onboarding_theme_dark_title">Күңгірт тема</string>
+    <string name="onboarding_theme_dark_title" moz:RemovedIn="118" tools:ignore="UnusedResources">Күңгірт тема</string>
     <!-- Theme setting for light mode -->
-    <string name="onboarding_theme_light_title">Ашық түсті тема</string>
+    <string name="onboarding_theme_light_title" moz:RemovedIn="118" tools:ignore="UnusedResources">Ашық түсті тема</string>
 
     <!-- Text shown in snackbar when multiple tabs have been sent to device -->
     <string name="sync_sent_tabs_snackbar">Беттер жіберілді</string>
@@ -1445,24 +1518,24 @@
     <string name="etp_settings">Қорғаныс баптаулары</string>
     <!-- Preference title for enhanced tracking protection settings -->
     <string name="preference_enhanced_tracking_protection">Бақылаудан кеңейтілген қорғаныс</string>
-    <!-- Title for the description of enhanced tracking protection -->
-    <string name="preference_enhanced_tracking_protection_explanation_title">Бақылаусыз шолу</string>
-    <!-- Description of enhanced tracking protection. The first parameter is the name of the application (For example: Fenix) -->
-    <string name="preference_enhanced_tracking_protection_explanation">Деректеріңізді тек өзіңіз үшін қалдырыңыз. %s желіде сіздің соңыңыздан еретін ең кең тараған трекерлердің көбінен қорғайды.</string>
+    <!-- Preference summary for enhanced tracking protection settings on/off switch -->
+    <string name="preference_enhanced_tracking_protection_summary">Енді сайтаралық трекерлерге қарсы ең күшті тосқауыл болып табылатын Cookie файлдарынан Толық қорғаныс функциясы бар.</string>
+    <!-- Description of enhanced tracking protection. The parameter is the name of the application (For example: Firefox Fenix) -->
+    <string name="preference_enhanced_tracking_protection_explanation_2">%s желіде сіздің соңыңыздан еретін ең кең тараған трекерлердің көбінен қорғайды.</string>
     <!-- Text displayed that links to website about enhanced tracking protection -->
     <string name="preference_enhanced_tracking_protection_explanation_learn_more">Көбірек білу</string>
 
     <!-- Preference for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_standard_default_1">Стандартты (бастапқы)</string>
     <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description_4">Жекелік және өнімділік теңгерімі. Беттер әдеттегідей жүктеледі.</string>
+    <string name="preference_enhanced_tracking_protection_standard_description_5">Беттер қалыпты түрде жүктеледі, бірақ азырақ трекерлерді бұғаттайды.</string>
     <!--  Accessibility text for the Standard protection information icon  -->
     <string name="preference_enhanced_tracking_protection_standard_info_button">Бақылаудан қалыпты қорғаныс нені бұғаттайды</string>
     <!-- Preference for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict">Қатаң</string>
 
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_description_3">Беттерді тезірек жүктеу үшін көбірек трекерлерді блоктайды, бірақ кейбір беттер функционалдылығы бұзылуы мүмкін.</string>
+    <string name="preference_enhanced_tracking_protection_strict_description_4">Бақылаудан күшейтілген қорғаныс және жылдамырақ жұмыс істеу, бірақ кейбір сайттар дұрыс жұмыс істемеуі мүмкін.</string>
     <!--  Accessibility text for the Strict protection information icon  -->
     <string name="preference_enhanced_tracking_protection_strict_info_button">Бақылаудан қатаң қорғаныс нені бұғаттайды</string>
 
@@ -1551,6 +1624,10 @@
     <string name="preference_etp_smartblock_description">Төменде белгіленген кейбір трекерлер бұл бетте жартылай бұғатталмаған, себебі сіз олармен әрекеттестіңіз *.</string>
     <!-- Text displayed that links to website about enhanced tracking protection SmartBlock -->
     <string name="preference_etp_smartblock_learn_more">Көбірек білу</string>
+
+    <!-- Content description (not visible, for screen readers etc.):
+    Enhanced tracking protection exception preference icon for ETP settings. -->
+    <string name="preference_etp_exceptions_icon_description">Бақылаудан жақсартылған қорғаныстың ережеден тыс жағдайының баптау таңбашасы</string>
 
     <!-- About page link text to open support link -->
     <string name="about_support">Қолдау</string>
@@ -1816,6 +1893,8 @@
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Іздеу жүйесін қосу</string>
+    <!-- Content description (not visible, for screen readers etc.): Title for the button that navigates to add new engine screen -->
+    <string name="search_engine_add_custom_search_engine_button_content_description">Жаңа іздеу жүйесін қосу</string>
     <!-- Title of the Edit search engine screen -->
     <string name="search_engine_edit_custom_search_engine_title">Іздеу жүйесін түзету</string>
     <!-- Content description (not visible, for screen readers etc.): Title for the button to add a search engine in the action bar -->
@@ -1829,14 +1908,33 @@
 
     <!-- Text for the button to create a custom search engine on the Add search engine screen -->
     <string name="search_add_custom_engine_label_other">Басқа</string>
+    <!-- Label for the TextField in which user enters custom search engine name -->
+    <string name="search_add_custom_engine_name_label">Аты</string>
     <!-- Placeholder text shown in the Search Engine Name TextField before a user enters text -->
     <string name="search_add_custom_engine_name_hint">Атауы</string>
+    <!-- Placeholder text shown in the Search Engine Name text field before a user enters text -->
+    <string name="search_add_custom_engine_name_hint_2">Іздеу жүйесінің атауы</string>
+    <!-- Label for the TextField in which user enters custom search engine URL -->
+    <string name="search_add_custom_engine_url_label">Іздеу жолының URL адресі</string>
     <!-- Placeholder text shown in the Search String TextField before a user enters text -->
     <string name="search_add_custom_engine_search_string_hint">Қолданылатын іздеу жолы</string>
+    <!-- Placeholder text shown in the Search String TextField before a user enters text -->
+    <string name="search_add_custom_engine_search_string_hint_2">Іздеу үшін пайдаланылатын URL</string>
     <!-- Description text for the Search String TextField. The %s is part of the string -->
     <string name="search_add_custom_engine_search_string_example" formatted="false">Сұранымды &quot;%s&quot; жолымен алмастырыңыз. Мысалы:\nhttps://www.google.com/search?q=%s</string>
     <!-- Accessibility description for the form in which details about the custom search engine are entered -->
     <string name="search_add_custom_engine_form_description">Таңдауыңызша іздеу жүйесінің ақпараты</string>
+
+    <!-- Label for the TextField in which user enters custom search engine suggestion URL -->
+    <string name="search_add_custom_engine_suggest_url_label">Іздеу ұсыныстарының API (міндетті емес)</string>
+    <!-- Placeholder text shown in the Search Suggestion String TextField before a user enters text -->
+    <string name="search_add_custom_engine_suggest_string_hint">Іздеу ұсыныстарының API URL адресі</string>
+    <!-- Description text for the Search Suggestion String TextField. The %s is part of the string -->
+    <string name="search_add_custom_engine_suggest_string_example" formatted="false" moz:RemovedIn="118" tools:ignore="UnusedResources">Сұранымды &quot;%s&quot; мәнімен алмастырыңыз. Мысалы\nhttp://suggestqueries.google.com/complete/search?client=firefox&amp;q=%s</string>
+    <!-- Description text for the Search Suggestion String TextField. The %s is part of the string -->
+    <string name="search_add_custom_engine_suggest_string_example_2" formatted="false">Сұранымды &quot;%s&quot; мәнімен алмастырыңыз. Мысалы\nhttps://suggestqueries.google.com/complete/search?client=firefox&amp;q=%s</string>
+    <!-- The text for the "Save" button for saving a custom search engine -->
+    <string name="search_custom_engine_save_button">Сақтау</string>
 
     <!-- Text shown when a user leaves the name field empty -->
     <string name="search_add_custom_engine_error_empty_name">Іздеу жүйесінің атауын енгізіңіз</string>

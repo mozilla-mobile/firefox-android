@@ -39,6 +39,7 @@ import mozilla.components.feature.addons.R
 import mozilla.components.feature.addons.update.db.UpdateAttemptsDatabase
 import mozilla.components.feature.addons.update.db.toEntity
 import mozilla.components.feature.addons.worker.shouldReport
+import mozilla.components.support.base.android.NotificationsDelegate
 import mozilla.components.support.base.ids.SharedIdsHelper
 import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.base.worker.Frequency
@@ -152,6 +153,7 @@ interface AddonUpdater {
 class DefaultAddonUpdater(
     private val applicationContext: Context,
     private val frequency: Frequency = Frequency(1, TimeUnit.DAYS),
+    private val notificationsDelegate: NotificationsDelegate,
 ) : AddonUpdater {
     private val logger = Logger("DefaultAddonUpdater")
 
@@ -216,7 +218,9 @@ class DefaultAddonUpdater(
         onPermissionsGranted(shouldShowNotification)
 
         if (!shouldShowNotification) {
-            createNotification(updated, newPermissions)
+            val notificationId = NotificationHandlerService.getNotificationId(applicationContext, updated.id)
+            val notification = createNotification(updated, newPermissions, notificationId)
+            notificationsDelegate.notify(notificationId = notificationId, notification = notification)
         } else {
             updateStatusStorage.markAsUnallowed(applicationContext, updated.id)
         }
@@ -269,9 +273,8 @@ class DefaultAddonUpdater(
     internal fun createNotification(
         extension: WebExtension,
         newPermissions: List<String>,
+        notificationId: Int,
     ): Notification {
-        val notificationId = NotificationHandlerService.getNotificationId(applicationContext, extension.id)
-
         val channel = ChannelData(
             NOTIFICATION_CHANNEL_ID,
             R.string.mozac_feature_addons_updater_notification_channel,
@@ -282,7 +285,7 @@ class DefaultAddonUpdater(
 
         logger.info("Created update notification for add-on ${extension.id}")
         return NotificationCompat.Builder(applicationContext, channelId)
-            .setSmallIcon(iconsR.drawable.mozac_ic_extensions)
+            .setSmallIcon(iconsR.drawable.mozac_ic_extension_24)
             .setContentTitle(getNotificationTitle(extension))
             .setContentText(text)
             .setPriority(NotificationCompat.PRIORITY_MAX)
@@ -294,9 +297,7 @@ class DefaultAddonUpdater(
             .addAction(createAllowAction(extension, notificationId))
             .addAction(createDenyAction(extension, notificationId))
             .setAutoCancel(true)
-            .build().also {
-                NotificationManagerCompat.from(applicationContext).notify(notificationId, it)
-            }
+            .build()
     }
 
     private fun getNotificationTitle(extension: WebExtension): String {
@@ -359,7 +360,7 @@ class DefaultAddonUpdater(
             applicationContext.getString(R.string.mozac_feature_addons_updater_notification_allow_button)
 
         return NotificationCompat.Action.Builder(
-            iconsR.drawable.mozac_ic_extensions,
+            iconsR.drawable.mozac_ic_extension_24,
             allowText,
             allowPendingIntent,
         ).build()
@@ -379,7 +380,7 @@ class DefaultAddonUpdater(
             applicationContext.getString(R.string.mozac_feature_addons_updater_notification_deny_button)
 
         return NotificationCompat.Action.Builder(
-            iconsR.drawable.mozac_ic_extensions,
+            iconsR.drawable.mozac_ic_extension_24,
             denyText,
             denyPendingIntent,
         ).build()

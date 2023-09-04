@@ -78,17 +78,25 @@ class SearchUseCases(
 
             val id = if (sessionId == null) {
                 // If no `sessionId` was passed in then create a new tab
-                tabsUseCases.addTab(searchUrl, isSearch = true)
+                tabsUseCases.addTab(
+                    url = searchUrl,
+                    isSearch = true,
+                    searchEngineName = searchEngine?.name,
+                )
             } else {
                 // If we got a `sessionId` then try to find the tab and load the search URL in it
                 val existingTab = store.state.findTabOrCustomTab(sessionId)
                 if (existingTab != null) {
-                    store.dispatch(ContentAction.UpdateIsSearchAction(existingTab.id, true))
+                    store.dispatch(ContentAction.UpdateIsSearchAction(existingTab.id, true, searchEngine?.name))
                     store.dispatch(EngineAction.LoadUrlAction(existingTab.id, searchUrl))
                     existingTab.id
                 } else {
                     // If the tab with the provided id was not found then create a new tab
-                    tabsUseCases.addTab(searchUrl, isSearch = true)
+                    tabsUseCases.addTab(
+                        url = searchUrl,
+                        isSearch = true,
+                        searchEngineName = searchEngine?.name,
+                    )
                 }
             }
 
@@ -252,6 +260,22 @@ class SearchUseCases(
         }
     }
 
+    /**
+     * Updates the list of unselected shortcuts, to be hidden from the quick search menus.
+     */
+    class UpdateDisabledSearchEngineIdsUseCase(private val store: BrowserStore) {
+        /**
+         * Updates the list of unselected shortcuts with the given [searchEngineId], to be hidden from
+         * the quick search menus.
+         */
+        operator fun invoke(
+            searchEngineId: String,
+            isEnabled: Boolean,
+        ) {
+            store.dispatch(SearchAction.UpdateDisabledSearchEngineIdsAction(searchEngineId, isEnabled))
+        }
+    }
+
     val defaultSearch: DefaultSearchUseCase by lazy {
         DefaultSearchUseCase(store, tabsUseCases, sessionUseCases)
     }
@@ -274,5 +298,9 @@ class SearchUseCases(
 
     val selectSearchEngine: SelectSearchEngineUseCase by lazy {
         SelectSearchEngineUseCase(store)
+    }
+
+    val updateDisabledSearchEngineIds: UpdateDisabledSearchEngineIdsUseCase by lazy {
+        UpdateDisabledSearchEngineIdsUseCase(store)
     }
 }

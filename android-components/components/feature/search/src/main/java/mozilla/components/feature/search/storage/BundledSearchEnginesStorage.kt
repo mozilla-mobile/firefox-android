@@ -13,6 +13,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import mozilla.components.browser.state.search.RegionState
 import mozilla.components.browser.state.search.SearchEngine
+import mozilla.components.feature.search.middleware.SearchExtraParams
 import mozilla.components.feature.search.middleware.SearchMiddleware
 import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.ktx.android.content.res.readJSONObject
@@ -37,16 +38,19 @@ internal class BundledSearchEnginesStorage(
     override suspend fun load(
         region: RegionState,
         locale: Locale,
+        distribution: String?,
+        searchExtraParams: SearchExtraParams?,
         coroutineContext: CoroutineContext,
     ): SearchMiddleware.BundleStorage.Bundle = withContext(coroutineContext) {
-        val localizedConfiguration = loadAndFilterConfiguration(context, region, locale)
-        val searchEngineIdentifiers = localizedConfiguration.visibleDefaultEngines
+        val localizedConfiguration = loadAndFilterConfiguration(context, region, locale, distribution)
+        val searchEngineIdentifiers = localizedConfiguration.visibleSearchEngines
 
         val searchEngines = loadSearchEnginesFromList(
-            context,
-            searchEngineIdentifiers.distinct(),
-            SearchEngine.Type.BUNDLED,
-            coroutineContext,
+            context = context,
+            searchEngineIdentifiers = searchEngineIdentifiers.distinct(),
+            type = SearchEngine.Type.BUNDLED,
+            searchExtraParams = searchExtraParams,
+            coroutineContext = coroutineContext,
         )
 
         // Reorder the list of search engines according to the configuration.
@@ -76,23 +80,25 @@ internal class BundledSearchEnginesStorage(
 
     override suspend fun load(
         ids: List<String>,
+        searchExtraParams: SearchExtraParams?,
         coroutineContext: CoroutineContext,
     ): List<SearchEngine> = withContext(coroutineContext) {
         if (ids.isEmpty()) {
             emptyList()
         } else {
             loadSearchEnginesFromList(
-                context,
-                ids.distinct(),
-                SearchEngine.Type.BUNDLED_ADDITIONAL,
-                coroutineContext,
+                context = context,
+                searchEngineIdentifiers = ids.distinct(),
+                type = SearchEngine.Type.BUNDLED_ADDITIONAL,
+                searchExtraParams = searchExtraParams,
+                coroutineContext = coroutineContext,
             )
         }
     }
 }
 
 private data class SearchEngineListConfiguration(
-    val visibleDefaultEngines: List<String>,
+    val visibleSearchEngines: List<String>,
     val searchOrder: List<String>,
     val searchDefault: String?,
 )
@@ -101,11 +107,13 @@ private fun loadAndFilterConfiguration(
     context: Context,
     region: RegionState,
     locale: Locale,
+    distribution: String?,
 ): SearchEngineListConfiguration {
     val config = context.assets.readJSONObject("search/list.json")
 
     val configBlocks = pickConfigurationBlocks(locale, config)
-    val jsonSearchEngineIdentifiers = getSearchEngineIdentifiersFromBlock(region, locale, configBlocks)
+    val jsonSearchEngineIdentifiers =
+        getSearchEngineIdentifiersFromBlock(region, locale, distribution, configBlocks)
 
     val searchOrder = getSearchOrderFromBlock(region, configBlocks)
     val searchDefault = getSearchDefaultFromBlock(region, configBlocks)
@@ -144,10 +152,12 @@ private fun pickConfigurationBlocks(
 private fun getSearchEngineIdentifiersFromBlock(
     region: RegionState,
     locale: Locale,
+    distribution: String?,
     configBlocks: Array<JSONObject>,
 ): JSONArray {
-    // Now test if there's an override for the region (if it's set)
-    return getArrayFromBlock(region, "visibleDefaultEngines", configBlocks)
+    // Now test if there's an override for the distribution or region (if it's set)
+    return distribution?.let { getArrayFromBlock(region, distribution, configBlocks) }
+        ?: getArrayFromBlock(region, "visibleDefaultEngines", configBlocks)
         ?: throw IllegalStateException("No visibleDefaultEngines using region $region and locale $locale")
 }
 
@@ -224,10 +234,11 @@ private suspend fun loadSearchEnginesFromList(
     context: Context,
     searchEngineIdentifiers: List<String>,
     type: SearchEngine.Type,
+    searchExtraParams: SearchExtraParams?,
     coroutineContext: CoroutineContext,
 ): List<SearchEngine> {
     val assets = context.assets
-    val reader = SearchEngineReader(type)
+    val reader = SearchEngineReader(type, searchExtraParams)
 
     val deferredSearchEngines = mutableListOf<Deferred<SearchEngine?>>()
 

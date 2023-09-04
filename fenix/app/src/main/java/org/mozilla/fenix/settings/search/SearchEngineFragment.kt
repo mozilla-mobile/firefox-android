@@ -11,9 +11,12 @@ import androidx.preference.CheckBoxPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
+import mozilla.components.browser.state.state.selectedOrDefaultSearchEngine
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getPreferenceKey
+import org.mozilla.fenix.ext.navigateWithBreadcrumb
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.settings.SharedPreferenceUpdater
@@ -22,8 +25,20 @@ import org.mozilla.gecko.search.SearchWidgetProvider
 
 class SearchEngineFragment : PreferenceFragmentCompat() {
 
+    private var unifiedSearchUI = false
+
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        setPreferencesFromResource(R.xml.search_preferences, rootKey)
+        unifiedSearchUI = requireContext().settings().enableUnifiedSearchSettingsUI
+        setPreferencesFromResource(
+            if (unifiedSearchUI) R.xml.search_settings_preferences else R.xml.search_preferences,
+            rootKey,
+        )
+
+        // Visibility should be set before the view has been created, to avoid visual glitches.
+        requirePreference<SwitchPreference>(R.string.pref_key_show_search_engine_shortcuts).apply {
+            isVisible = !context.settings().showUnifiedSearchFeature
+        }
+
         view?.hideKeyboard()
     }
 
@@ -31,6 +46,13 @@ class SearchEngineFragment : PreferenceFragmentCompat() {
         super.onResume()
         view?.hideKeyboard()
         showToolbar(getString(R.string.preferences_search))
+
+        if (unifiedSearchUI) {
+            with(requirePreference<Preference>(R.string.pref_key_default_search_engine)) {
+                summary =
+                    requireContext().components.core.store.state.search.selectedOrDefaultSearchEngine?.name
+            }
+        }
 
         val searchSuggestionsPreference =
             requirePreference<SwitchPreference>(R.string.pref_key_show_search_suggestions).apply {
@@ -50,7 +72,6 @@ class SearchEngineFragment : PreferenceFragmentCompat() {
         val showSearchShortcuts =
             requirePreference<SwitchPreference>(R.string.pref_key_show_search_engine_shortcuts).apply {
                 isChecked = context.settings().shouldShowSearchShortcuts
-                isVisible = !context.settings().showUnifiedSearchFeature
             }
 
         val showHistorySuggestions =
@@ -111,7 +132,31 @@ class SearchEngineFragment : PreferenceFragmentCompat() {
             getPreferenceKey(R.string.pref_key_add_search_engine) -> {
                 val directions = SearchEngineFragmentDirections
                     .actionSearchEngineFragmentToAddSearchEngineFragment()
+                context?.let {
+                    findNavController().navigateWithBreadcrumb(
+                        directions = directions,
+                        navigateFrom = "SearchEngineFragment",
+                        navigateTo = "ActionSearchEngineFragmentToAddSearchEngineFragment",
+                        it.components.analytics.crashReporter,
+                    )
+                }
+            }
+            getPreferenceKey(R.string.pref_key_default_search_engine) -> {
+                val directions = SearchEngineFragmentDirections
+                    .actionSearchEngineFragmentToDefaultEngineFragment()
                 findNavController().navigate(directions)
+            }
+            getPreferenceKey(R.string.pref_key_manage_search_shortcuts) -> {
+                val directions = SearchEngineFragmentDirections
+                    .actionSearchEngineFragmentToSearchShortcutsFragment()
+                context?.let {
+                    findNavController().navigateWithBreadcrumb(
+                        directions = directions,
+                        navigateFrom = "SearchEngineFragment",
+                        navigateTo = "ActionSearchEngineFragmentToSearchShortcutsFragment",
+                        it.components.analytics.crashReporter,
+                    )
+                }
             }
         }
 

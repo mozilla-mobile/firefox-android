@@ -19,7 +19,8 @@ import java.lang.ref.WeakReference
 /**
  * Properties used to customize the behavior of a [CFRPopup].
  *
- * @property popupWidth Width of the popup. Defaults to [CFRPopup.DEFAULT_WIDTH].
+ * @property popupWidth Width of the popup. Defaults to [CFRPopup.DEFAULT_WIDTH]. To be used as maximum
+ * width when alignment is set to [PopupAlignment.BODY_CENTERED_IN_SCREEN].
  * @property popupAlignment Where in relation to it's anchor should the popup be placed.
  * @property popupBodyColors One or more colors serving as the popup background.
  * If more colors are provided they will be used in a gradient.
@@ -81,6 +82,19 @@ class CFRPopup(
      */
     fun show() {
         anchor.post {
+            // When we're in this Runnable, the 'show' method might have been called right before
+            // the activity is no longer attached to the WindowManager. When we get to calling
+            // the CFRPopupFullscreenLayout#show method below, we are now trying to attach the View
+            // with the WindowManager that has an unusable Activity.
+            //
+            // To protect against this, within this same Runnable, we check if the anchor view is
+            // safe to use before continuing.
+            //
+            // See: https://bugzilla.mozilla.org/show_bug.cgi?id=1799996
+            if (anchor.context == null || !anchor.isAttachedToWindow) {
+                return@post
+            }
+
             CFRPopupFullscreenLayout(anchor, properties, onDismiss, text, action).apply {
                 this.show()
                 popup = WeakReference(this)
@@ -126,6 +140,14 @@ class CFRPopup(
          * to indicate exactly which widget the popup refers to.
          */
         INDICATOR_CENTERED_IN_ANCHOR,
+
+        /**
+         * If the popup doesn't have enough space to expand to its full [CFRPopupProperties.popupWidth],
+         * it will be centred in the screen.
+         * If the popup does have enough space, it defaults to [INDICATOR_CENTERED_IN_ANCHOR].
+         * Recommended to be used when the popup text is very long.
+         */
+        BODY_CENTERED_IN_SCREEN,
     }
 
     companion object {
@@ -162,5 +184,11 @@ class CFRPopup(
          * Vertical distance between the indicator arrow and the anchor.
          */
         internal const val DEFAULT_VERTICAL_OFFSET = 9
+
+        /**
+         * Horizontal margin between the popup and viewport edges used to center the popup when alignment
+         * is set to [PopupAlignment.BODY_CENTERED_IN_SCREEN].
+         */
+        internal const val DEFAULT_HORIZONTAL_VIEWPORT_MARGIN_DP = 16
     }
 }

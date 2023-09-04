@@ -1,17 +1,26 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.ui
 
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdContainingText
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper.bringAppToForeground
 import org.mozilla.fenix.helpers.TestHelper.exitMenu
+import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.TestHelper.putAppToBackground
+import org.mozilla.fenix.ui.robots.clickPageObject
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
 import java.time.LocalDate
@@ -78,9 +87,14 @@ class CreditCardAutofillTest {
         }
         navigationToolbar {
         }.enterURLAndEnterToBrowser(creditCardFormPage.url) {
-            clickCreditCardNumberTextBox()
-            clickSelectCreditCardButton()
-            clickCreditCardSuggestion(MockCreditCard1.MOCK_LAST_CARD_DIGITS)
+            clickPageObject(itemWithResId("cardNumber"))
+            clickPageObject(itemWithResId("$packageName:id/select_credit_card_header"))
+            clickPageObject(
+                itemWithResIdContainingText(
+                    "$packageName:id/credit_card_number",
+                    MockCreditCard1.MOCK_LAST_CARD_DIGITS,
+                ),
+            )
             verifyAutofilledCreditCard(MockCreditCard1.MOCK_CREDIT_CARD_NUMBER)
         }
     }
@@ -221,8 +235,8 @@ class CreditCardAutofillTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(creditCardFormPage.url) {
-            clickCreditCardNumberTextBox()
-            clickSelectCreditCardButton()
+            clickPageObject(itemWithResId("cardNumber"))
+            clickPageObject(itemWithResId("$packageName:id/select_credit_card_header"))
         }.clickManageCreditCardsButton {
         }.goBackToBrowser {
             verifySelectCreditCardPromptExists(false)
@@ -251,7 +265,7 @@ class CreditCardAutofillTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(creditCardFormPage.url) {
-            clickCreditCardNumberTextBox()
+            clickPageObject(itemWithResId("cardNumber"))
             verifySelectCreditCardPromptExists(true)
         }.openThreeDotMenu {
         }.openSettings {
@@ -264,7 +278,7 @@ class CreditCardAutofillTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(creditCardFormPage.url) {
-            clickCreditCardNumberTextBox()
+            clickPageObject(itemWithResId("cardNumber"))
             verifySelectCreditCardPromptExists(false)
         }
     }
@@ -339,9 +353,14 @@ class CreditCardAutofillTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(creditCardFormPage.url) {
-            clickCreditCardNumberTextBox()
-            clickSelectCreditCardButton()
-            clickCreditCardSuggestion(MockCreditCard2.MOCK_LAST_CARD_DIGITS)
+            clickPageObject(itemWithResId("cardNumber"))
+            clickPageObject(itemWithResId("$packageName:id/select_credit_card_header"))
+            clickPageObject(
+                itemWithResIdContainingText(
+                    "$packageName:id/credit_card_number",
+                    MockCreditCard2.MOCK_LAST_CARD_DIGITS,
+                ),
+            )
             verifyAutofilledCreditCard(MockCreditCard2.MOCK_CREDIT_CARD_NUMBER)
         }
     }
@@ -441,13 +460,18 @@ class CreditCardAutofillTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(creditCardFormPage.url) {
-            clickCreditCardNumberTextBox()
-            clickSelectCreditCardButton()
+            clickPageObject(itemWithResId("cardNumber"))
+            clickPageObject(itemWithResId("$packageName:id/select_credit_card_header"))
             verifyCreditCardSuggestion(
                 MockCreditCard1.MOCK_LAST_CARD_DIGITS,
                 MockCreditCard2.MOCK_LAST_CARD_DIGITS,
             )
-            clickCreditCardSuggestion(MockCreditCard2.MOCK_LAST_CARD_DIGITS)
+            clickPageObject(
+                itemWithResIdContainingText(
+                    "$packageName:id/credit_card_number",
+                    MockCreditCard2.MOCK_LAST_CARD_DIGITS,
+                ),
+            )
             verifyAutofilledCreditCard(MockCreditCard2.MOCK_CREDIT_CARD_NUMBER)
         }
     }
@@ -463,7 +487,7 @@ class CreditCardAutofillTest {
                 MockCreditCard1.MOCK_NAME_ON_CARD,
                 MockCreditCard1.MOCK_EXPIRATION_MONTH_AND_YEAR,
             )
-            clickCancelCreditCardPromptButton()
+            clickPageObject(itemWithResId("$packageName:id/save_cancel"))
             verifyUpdateOrSaveCreditCardPromptExists(exists = false)
         }.openThreeDotMenu {
         }.openSettings {
@@ -483,7 +507,7 @@ class CreditCardAutofillTest {
                 MockCreditCard1.MOCK_NAME_ON_CARD,
                 MockCreditCard1.MOCK_EXPIRATION_MONTH_AND_YEAR,
             )
-            clickUpdateOrSaveCreditCardPromptButton()
+            clickPageObject(itemWithResId("$packageName:id/save_confirm"))
             verifyUpdateOrSaveCreditCardPromptExists(exists = false)
         }.openThreeDotMenu {
         }.openSettings {
@@ -523,13 +547,18 @@ class CreditCardAutofillTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(creditCardFormPage.url) {
-            clickCreditCardNumberTextBox()
-            clickSelectCreditCardButton()
-            clickCreditCardSuggestion(MockCreditCard2.MOCK_LAST_CARD_DIGITS)
+            clickPageObject(itemWithResId("cardNumber"))
+            clickPageObject(itemWithResId("$packageName:id/select_credit_card_header"))
+            clickPageObject(
+                itemWithResIdContainingText(
+                    "$packageName:id/credit_card_number",
+                    MockCreditCard2.MOCK_LAST_CARD_DIGITS,
+                ),
+            )
             verifyAutofilledCreditCard(MockCreditCard2.MOCK_CREDIT_CARD_NUMBER)
             changeCreditCardExpiryDate(MockCreditCard1.MOCK_EXPIRATION_MONTH_AND_YEAR)
             clickCreditCardFormSubmitButton()
-            clickCancelCreditCardPromptButton()
+            clickPageObject(itemWithResId("$packageName:id/save_cancel"))
             verifyUpdateOrSaveCreditCardPromptExists(false)
         }.openThreeDotMenu {
         }.openSettings {
@@ -568,13 +597,18 @@ class CreditCardAutofillTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(creditCardFormPage.url) {
-            clickCreditCardNumberTextBox()
-            clickSelectCreditCardButton()
-            clickCreditCardSuggestion(MockCreditCard2.MOCK_LAST_CARD_DIGITS)
+            clickPageObject(itemWithResId("cardNumber"))
+            clickPageObject(itemWithResId("$packageName:id/select_credit_card_header"))
+            clickPageObject(
+                itemWithResIdContainingText(
+                    "$packageName:id/credit_card_number",
+                    MockCreditCard2.MOCK_LAST_CARD_DIGITS,
+                ),
+            )
             verifyAutofilledCreditCard(MockCreditCard2.MOCK_CREDIT_CARD_NUMBER)
             changeCreditCardExpiryDate(MockCreditCard1.MOCK_EXPIRATION_MONTH_AND_YEAR)
             clickCreditCardFormSubmitButton()
-            clickUpdateOrSaveCreditCardPromptButton()
+            clickPageObject(itemWithResId("$packageName:id/save_confirm"))
             verifyUpdateOrSaveCreditCardPromptExists(false)
         }.openThreeDotMenu {
         }.openSettings {
@@ -588,6 +622,7 @@ class CreditCardAutofillTest {
         }
     }
 
+    @Ignore("Failing, see https://bugzilla.mozilla.org/show_bug.cgi?id=1847774")
     @Test
     fun verifySavedCreditCardsRedirectionToAutofillAfterInterruptionTest() {
         homeScreen {

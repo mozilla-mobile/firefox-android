@@ -12,7 +12,9 @@ import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import mozilla.components.support.base.feature.UserInteractionHandler
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.appstate.AppState
 import org.mozilla.fenix.databinding.ComponentHistoryBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.library.LibraryPageView
@@ -24,6 +26,7 @@ import org.mozilla.fenix.theme.ThemeManager
 class HistoryView(
     container: ViewGroup,
     val interactor: HistoryInteractor,
+    val store: HistoryFragmentStore,
     val onZeroItemsLoaded: () -> Unit,
     val onEmptyStateChanged: (Boolean) -> Unit,
 ) : LibraryPageView(container), UserInteractionHandler {
@@ -37,7 +40,7 @@ class HistoryView(
     var mode: HistoryFragmentState.Mode = HistoryFragmentState.Mode.Normal
         private set
 
-    val historyAdapter = HistoryAdapter(interactor) { isEmpty ->
+    val historyAdapter = HistoryAdapter(interactor, store) { isEmpty ->
         onEmptyStateChanged(isEmpty)
     }.apply {
         addLoadStateListener {
@@ -68,7 +71,11 @@ class HistoryView(
         val primaryTextColor = ThemeManager.resolveAttribute(R.attr.textPrimary, context)
         binding.swipeRefresh.setColorSchemeColors(primaryTextColor)
         binding.swipeRefresh.setOnRefreshListener {
-            interactor.onRequestSync()
+            if (FeatureFlags.historyFragmentLibStateRefactor) {
+                store.dispatch(HistoryFragmentAction.StartSync)
+            } else {
+                interactor.onRequestSync()
+            }
         }
     }
 
@@ -92,7 +99,7 @@ class HistoryView(
         val last = layoutManager.findLastVisibleItemPosition() + 1
         historyAdapter.notifyItemRangeChanged(first, last - first)
 
-        if (state.mode::class != oldMode::class) {
+        if (state.mode::class != oldMode::class && !FeatureFlags.historyFragmentLibStateRefactor) {
             interactor.onModeSwitched()
         }
 
@@ -113,6 +120,14 @@ class HistoryView(
         }
     }
 
+    /**
+     * Updates the View with the latest changes to [AppState].
+     */
+    fun update(state: AppState) {
+        historyAdapter.updatePendingDeletionItems(state.pendingDeletionHistoryItems)
+        historyAdapter.notifyDataSetChanged()
+    }
+
     private fun updateEmptyState(userHasHistory: Boolean) {
         binding.historyList.isInvisible = !userHasHistory
         binding.historyEmptyView.isVisible = !userHasHistory
@@ -120,7 +135,11 @@ class HistoryView(
 
         with(binding.recentlyClosedNavEmpty) {
             recentlyClosedNav.setOnClickListener {
-                interactor.onRecentlyClosedClicked()
+                if (FeatureFlags.historyFragmentLibStateRefactor) {
+                    store.dispatch(HistoryFragmentAction.EnterRecentlyClosed)
+                } else {
+                    interactor.onRecentlyClosedClicked()
+                }
             }
             val numRecentTabs = recentlyClosedNav.context.components.core.store.state.closedTabs.size
             recentlyClosedTabsDescription.text = String.format(

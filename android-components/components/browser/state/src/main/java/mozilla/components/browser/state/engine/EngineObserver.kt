@@ -12,6 +12,8 @@ import mozilla.components.browser.state.action.CookieBannerAction
 import mozilla.components.browser.state.action.CrashAction
 import mozilla.components.browser.state.action.EngineAction
 import mozilla.components.browser.state.action.MediaSessionAction
+import mozilla.components.browser.state.action.ReaderAction
+import mozilla.components.browser.state.action.ShoppingProductAction
 import mozilla.components.browser.state.action.TrackingProtectionAction
 import mozilla.components.browser.state.selector.findTabOrCustomTab
 import mozilla.components.browser.state.state.AppIntentState
@@ -44,6 +46,11 @@ internal class EngineObserver(
     private val tabId: String,
     private val store: Store<BrowserState, BrowserAction>,
 ) : EngineSession.Observer {
+
+    override fun onScrollChange(scrollX: Int, scrollY: Int) {
+        store.dispatch(ReaderAction.UpdateReaderScrollYAction(tabId, scrollY))
+    }
+
     override fun onNavigateBack() {
         store.dispatch(ContentAction.UpdateSearchTermsAction(tabId, ""))
     }
@@ -158,6 +165,10 @@ internal class EngineObserver(
         store.dispatch(CookieBannerAction.UpdateStatusAction(tabId, status))
     }
 
+    override fun onProductUrlChange(isProductUrl: Boolean) {
+        store.dispatch(ShoppingProductAction.UpdateProductUrlStatusAction(tabId, isProductUrl))
+    }
+
     override fun onLongPress(hitResult: HitResult) {
         store.dispatch(
             ContentAction.UpdateHitResultAction(tabId, hitResult),
@@ -189,6 +200,8 @@ internal class EngineObserver(
         cookie: String?,
         userAgent: String?,
         isPrivate: Boolean,
+        skipConfirmation: Boolean,
+        openInApp: Boolean,
         response: Response?,
     ) {
         // We want to avoid negative contentLength values
@@ -204,6 +217,8 @@ internal class EngineObserver(
             userAgent,
             Environment.DIRECTORY_DOWNLOADS,
             private = isPrivate,
+            skipConfirmation = skipConfirmation,
+            openInApp = openInApp,
             response = response,
         )
 
@@ -431,8 +446,20 @@ internal class EngineObserver(
         store.dispatch(EngineAction.SaveToPdfExceptionAction(tabId, throwable))
     }
 
+    override fun onPrintFinish() {
+        store.dispatch(EngineAction.PrintContentCompletedAction(tabId))
+    }
+
+    override fun onPrintException(isPrint: Boolean, throwable: Throwable) {
+        store.dispatch(EngineAction.PrintContentExceptionAction(tabId, isPrint, throwable))
+    }
+
+    override fun onSaveToPdfComplete() {
+        store.dispatch(EngineAction.SaveToPdfCompleteAction(tabId))
+    }
+
     override fun onCheckForFormData(containsFormData: Boolean) {
-        store.dispatch(ContentAction.CheckForFormDataAction(tabId, containsFormData))
+        store.dispatch(ContentAction.UpdateHasFormDataAction(tabId, containsFormData))
     }
 
     override fun onCheckForFormDataException(throwable: Throwable) {

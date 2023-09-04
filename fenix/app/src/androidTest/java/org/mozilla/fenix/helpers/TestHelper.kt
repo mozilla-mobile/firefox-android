@@ -34,6 +34,7 @@ import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.IdlingResource
 import androidx.test.espresso.action.ViewActions.longClick
 import androidx.test.espresso.assertion.ViewAssertions
+import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.Intents.intended
 import androidx.test.espresso.intent.matcher.IntentMatchers.toPackage
 import androidx.test.espresso.matcher.ViewMatchers.hasSibling
@@ -52,11 +53,13 @@ import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
 import junit.framework.AssertionFailedError
 import mozilla.components.browser.state.search.SearchEngine
+import mozilla.components.browser.state.state.availableSearchEngines
 import mozilla.components.support.ktx.android.content.appName
 import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.Matcher
 import org.junit.Assert
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.mozilla.fenix.Config
@@ -64,16 +67,18 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.customtabs.ExternalAppBrowserActivity
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.helpers.Constants.PackageName.YOUTUBE_APP
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdAndText
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
 import org.mozilla.fenix.helpers.ext.waitNotNull
 import org.mozilla.fenix.helpers.idlingresource.NetworkConnectionIdlingResource
 import org.mozilla.fenix.ui.robots.BrowserRobot
+import org.mozilla.fenix.ui.robots.clickPageObject
 import org.mozilla.fenix.utils.IntentUtils
 import org.mozilla.gecko.util.ThreadUtils
 import java.io.File
 import java.util.Locale
-import java.util.regex.Pattern
 
 object TestHelper {
 
@@ -111,6 +116,15 @@ object TestHelper {
         }
     }
 
+    fun closeApp(activity: HomeActivityIntentTestRule) =
+        activity.activity.finishAndRemoveTask()
+
+    fun relaunchCleanApp(activity: HomeActivityIntentTestRule) {
+        closeApp(activity)
+        Intents.release()
+        activity.launchActivity(null)
+    }
+
     fun getPermissionAllowID(): String {
         return when
             (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
@@ -126,10 +140,22 @@ object TestHelper {
         )
     }
 
+    fun clickSnackbarButton(expectedText: String) =
+        clickPageObject(itemWithResIdAndText("$packageName:id/snackbar_btn", expectedText))
+
     fun waitUntilSnackbarGone() {
         mDevice.findObject(
             UiSelector().resourceId("$packageName:id/snackbar_layout"),
         ).waitUntilGone(waitingTime)
+    }
+
+    fun verifySnackBarText(expectedText: String) {
+        assertTrue(
+            mDevice.findObject(
+                UiSelector()
+                    .textContains(expectedText),
+            ).waitForExists(waitingTime),
+        )
     }
 
     fun verifyUrl(urlSubstring: String, resourceName: String, resId: Int) {
@@ -266,17 +292,7 @@ object TestHelper {
         }
     }
 
-    fun assertPlayStoreOpens() {
-        if (isPackageInstalled(Constants.PackageName.GOOGLE_PLAY_SERVICES)) {
-            try {
-                intended(toPackage(Constants.PackageName.GOOGLE_PLAY_SERVICES))
-            } catch (e: AssertionFailedError) {
-                BrowserRobot().verifyRateOnGooglePlayURL()
-            }
-        } else {
-            BrowserRobot().verifyRateOnGooglePlayURL()
-        }
-    }
+    fun assertYoutubeAppOpens() = intended(toPackage(YOUTUBE_APP))
 
     /**
      * Checks whether the latest activity of the application is used for custom tabs or PWAs.
@@ -338,45 +354,33 @@ object TestHelper {
         )
     }
 
-    fun getStringResource(id: Int) = appContext.resources.getString(id, appName)
+    fun getStringResource(id: Int, argument: String = appName) = appContext.resources.getString(id, argument)
 
-    fun setCustomSearchEngine(searchEngine: SearchEngine) {
-        with(appContext.components.useCases.searchUseCases) {
-            addSearchEngine(searchEngine)
-            selectSearchEngine(searchEngine)
-        }
-    }
+    // Permission allow dialogs differ on various Android APIs
+    fun grantSystemPermission() {
+        val whileUsingTheAppPermissionButton: UiObject =
+            mDevice.findObject(UiSelector().textContains("While using the app"))
 
-    fun grantPermission() {
-        if (Build.VERSION.SDK_INT >= 23) {
+        val allowPermissionButton: UiObject =
             mDevice.findObject(
-                By.text(
-                    when (Build.VERSION.SDK_INT) {
-                        Build.VERSION_CODES.R -> Pattern.compile(
-                            "WHILE USING THE APP",
-                            Pattern.CASE_INSENSITIVE,
-                        )
-                        else -> Pattern.compile("Allow", Pattern.CASE_INSENSITIVE)
-                    },
-                ),
-            ).click()
+                UiSelector()
+                    .textContains("Allow")
+                    .className("android.widget.Button"),
+            )
+
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (whileUsingTheAppPermissionButton.waitForExists(waitingTimeShort)) {
+                whileUsingTheAppPermissionButton.click()
+            } else if (allowPermissionButton.waitForExists(waitingTimeShort)) {
+                allowPermissionButton.click()
+            }
         }
     }
 
+    // Permission deny dialogs differ on various Android APIs
     fun denyPermission() {
-        if (Build.VERSION.SDK_INT >= 23) {
-            mDevice.findObject(
-                By.text(
-                    when (Build.VERSION.SDK_INT) {
-                        Build.VERSION_CODES.R -> Pattern.compile(
-                            "DENY",
-                            Pattern.CASE_INSENSITIVE,
-                        )
-                        else -> Pattern.compile("Deny", Pattern.CASE_INSENSITIVE)
-                    },
-                ),
-            ).click()
-        }
+        mDevice.findObject(UiSelector().textContains("Deny")).waitForExists(waitingTime)
+        mDevice.findObject(UiSelector().textContains("Deny")).click()
     }
 
     fun isTestLab(): Boolean {
@@ -423,7 +427,7 @@ object TestHelper {
     /**
      * Changes the default language of the entire device, not just the app.
      */
-    private fun setSystemLocale(locale: Locale) {
+    fun setSystemLocale(locale: Locale) {
         val activityManagerNative = Class.forName("android.app.ActivityManagerNative")
         val am = activityManagerNative.getMethod("getDefault", *arrayOfNulls(0))
             .invoke(activityManagerNative, *arrayOfNulls(0))
@@ -485,5 +489,37 @@ object TestHelper {
     fun bringAppToForeground() {
         mDevice.pressRecentApps()
         mDevice.findObject(UiSelector().resourceId("$packageName:id/container")).waitForExists(waitingTime)
+    }
+
+    fun verifyKeyboardVisibility(isExpectedToBeVisible: Boolean = true) {
+        mDevice.waitForIdle()
+
+        assertEquals(
+            "Keyboard not shown",
+            isExpectedToBeVisible,
+            mDevice
+                .executeShellCommand("dumpsys input_method | grep mInputShown")
+                .contains("mInputShown=true"),
+        )
+    }
+
+    /**
+     * The list of Search engines for the "home" region of the user.
+     * For en-us it will return the 6 engines selected by default: Google, Bing, DuckDuckGo, Amazon, Ebay, Wikipedia.
+     */
+    fun getRegionSearchEnginesList(): List<SearchEngine> {
+        val searchEnginesList = appContext.components.core.store.state.search.regionSearchEngines
+        assertTrue("Search engines list returned nothing", searchEnginesList.isNotEmpty())
+        return searchEnginesList
+    }
+
+    /**
+     * The list of Search engines available to be added by user choice.
+     * For en-us it will return the 2 engines: Reddit, Youtube.
+     */
+    fun getAvailableSearchEngines(): List<SearchEngine> {
+        val searchEnginesList = appContext.components.core.store.state.search.availableSearchEngines
+        assertTrue("Search engines list returned nothing", searchEnginesList.isNotEmpty())
+        return searchEnginesList
     }
 }

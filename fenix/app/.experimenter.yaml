@@ -1,12 +1,4 @@
 ---
-client-deduplication:
-  description: A feature to control the sending of the client-deduplication ping.
-  hasExposure: true
-  exposureDescription: ""
-  variables:
-    enabled:
-      type: boolean
-      description: "If true, the ping will be sent."
 cookie-banners:
   description: Features for cookie banner handling.
   hasExposure: true
@@ -15,6 +7,22 @@ cookie-banners:
     sections-enabled:
       type: json
       description: This property provides a lookup table of whether or not the given section should be enabled.
+extensions-process:
+  description: A feature to rollout the extensions process.
+  hasExposure: true
+  exposureDescription: ""
+  variables:
+    enabled:
+      type: boolean
+      description: "If true, the extensions process is enabled."
+glean:
+  description: A feature that provides server-side configurations for Glean metrics (aka Server Knobs).
+  hasExposure: true
+  exposureDescription: ""
+  variables:
+    metrics-enabled:
+      type: json
+      description: "A map of metric base-identifiers to booleans representing the state of the 'enabled' flag for that metric."
 growth-data:
   description: A feature measuring campaign growth data
   hasExposure: true
@@ -36,11 +44,14 @@ juno-onboarding:
   hasExposure: true
   exposureDescription: ""
   variables:
+    cards:
+      type: json
+      description: Collection of user facing onboarding cards.
     enabled:
       type: boolean
       description: "if true, juno onboarding is shown to the user."
 messaging:
-  description: "Configuration for the messaging system.\n\nIn practice this is a set of growable lookup tables for the\nmessage controller to piece together.\n"
+  description: "The in-app messaging system.\n"
   hasExposure: true
   exposureDescription: ""
   variables:
@@ -49,7 +60,7 @@ messaging:
       description: A growable map of action URLs.
     message-under-experiment:
       type: string
-      description: Id or prefix of the message under experiment.
+      description: "Deprecated in favor of `MessageData#experiment`. This will be removed in future releases."
     messages:
       type: json
       description: A growable collection of messages
@@ -77,7 +88,7 @@ mr2022:
       type: json
       description: This property provides a lookup table of whether or not the given section should be enabled.
 nimbus-system:
-  description: "Configuration of the Nimbus System in Fenix.\n"
+  description: "Configuration of the Nimbus System in Android.\n"
   hasExposure: true
   exposureDescription: ""
   variables:
@@ -106,6 +117,17 @@ onboarding:
     order:
       type: json
       description: Determines the order of the onboarding page panels
+pdfjs:
+  description: PDF.js features
+  hasExposure: true
+  exposureDescription: ""
+  variables:
+    download-button:
+      type: boolean
+      description: Download button
+    open-in-app-button:
+      type: boolean
+      description: Open in app button
 pre-permission-notification-prompt:
   description: A feature that shows the pre-permission notification prompt.
   hasExposure: true
@@ -114,6 +136,25 @@ pre-permission-notification-prompt:
     enabled:
       type: boolean
       description: "if true, the pre-permission notification prompt is shown to the user."
+print:
+  description: A feature for printing from the share or browser menu.
+  hasExposure: true
+  exposureDescription: ""
+  variables:
+    browser-print-enabled:
+      type: boolean
+      description: "If true, a print button from the browser menu is available."
+    share-print-enabled:
+      type: boolean
+      description: "If true, a print button from the share menu is available."
+private-browsing:
+  description: Private Browsing Mode
+  hasExposure: true
+  exposureDescription: ""
+  variables:
+    felt-privacy-enabled:
+      type: boolean
+      description: "if true, enable felt privacy related UI"
 re-engagement-notification:
   description: A feature that shows the re-engagement notification if the user is inactive.
   hasExposure: true
@@ -125,6 +166,23 @@ re-engagement-notification:
     type:
       type: int
       description: The type of re-engagement notification that is shown to the inactive user.
+search-extra-params:
+  description: A feature that provides additional args for search.
+  hasExposure: true
+  exposureDescription: ""
+  variables:
+    channel-id:
+      type: json
+      description: The channel Id param name with arg.
+    enabled:
+      type: boolean
+      description: "If true, the feature is active."
+    feature-enabler:
+      type: json
+      description: "The feature enabler param name with arg, NOTE this map could be empty."
+    search-engine:
+      type: string
+      description: The search engine name.
 search-term-groups:
   description: A feature allowing the grouping of URLs around the search term that it came from.
   hasExposure: true
@@ -133,6 +191,33 @@ search-term-groups:
     enabled:
       type: boolean
       description: "If true, the feature shows up on the homescreen and on the new tab screen."
+shopping-experience:
+  description: A feature that shows product review quality information.
+  hasExposure: true
+  exposureDescription: ""
+  variables:
+    enabled:
+      type: boolean
+      description: "if true, the shopping experience feature is shown to the user."
+splash-screen:
+  description: "A feature that extends splash screen duration, allowing additional data fetching time for the app's initial run."
+  hasExposure: true
+  exposureDescription: ""
+  variables:
+    enabled:
+      type: boolean
+      description: "If true, the feature is active."
+    maximum_duration_ms:
+      type: int
+      description: The maximum amount of time in milliseconds the splashscreen will be visible while waiting for initialization calls to complete.
+toolbar:
+  description: The searchbar/awesomebar that user uses to search.
+  hasExposure: true
+  exposureDescription: ""
+  variables:
+    toolbar-position-top:
+      type: boolean
+      description: "If true, toolbar appears at top of the screen."
 unified-search:
   description: A feature allowing user to easily search for specified results directly in the search bar.
   hasExposure: true

@@ -6,13 +6,15 @@
 
 package org.mozilla.fenix.ui.robots
 
-import android.graphics.Bitmap
+import android.view.View
 import android.widget.EditText
+import android.widget.TextView
+import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsSelected
-import androidx.compose.ui.test.hasTestTag
+import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.onChildAt
@@ -33,16 +35,13 @@ import androidx.test.espresso.matcher.ViewMatchers.Visibility
 import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
-import androidx.test.espresso.matcher.ViewMatchers.withHint
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.uiautomator.By
-import androidx.test.uiautomator.UiObject
 import androidx.test.uiautomator.UiScrollable
 import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
 import androidx.test.uiautomator.Until.findObject
-import mozilla.components.browser.state.state.searchEngines
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.CoreMatchers.instanceOf
@@ -51,16 +50,13 @@ import org.junit.Assert
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
-import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.Constants.LISTS_MAXSWIPES
 import org.mozilla.fenix.helpers.Constants.LONG_CLICK_DURATION
-import org.mozilla.fenix.helpers.MatcherHelper.assertCheckedItemWithResIdExists
+import org.mozilla.fenix.helpers.HomeActivityComposeTestRule
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemContainingTextExists
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithDescriptionExists
-import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithResIdAndDescriptionExists
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithResIdAndTextExists
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithResIdExists
-import org.mozilla.fenix.helpers.MatcherHelper.checkedItemWithResId
 import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithDescription
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
@@ -68,7 +64,6 @@ import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdAndDescription
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdAndText
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
-import org.mozilla.fenix.helpers.TestHelper.appContext
 import org.mozilla.fenix.helpers.TestHelper.appName
 import org.mozilla.fenix.helpers.TestHelper.getStringResource
 import org.mozilla.fenix.helpers.TestHelper.mDevice
@@ -76,8 +71,7 @@ import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.TestHelper.scrollToElementByText
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
-import org.mozilla.fenix.helpers.withBitmapDrawable
-import org.mozilla.fenix.utils.Settings
+import org.mozilla.fenix.tabstray.TabsTrayTestTag
 
 /**
  * Implementation of Robot Pattern for the home screen menu.
@@ -90,7 +84,7 @@ class HomeScreenRobot {
             " else who uses this device."
 
     fun verifyNavigationToolbar() = assertItemWithResIdExists(navigationToolbar)
-    fun verifyFocusedNavigationToolbar() = assertFocusedNavigationToolbar()
+
     fun verifyHomeScreen() = assertItemWithResIdExists(homeScreen)
 
     fun verifyPrivateBrowsingHomeScreen() {
@@ -103,92 +97,6 @@ class HomeScreenRobot {
     fun verifyHomeScreenAppBarItems() =
         assertItemWithResIdExists(homeScreen, privateBrowsingButton, homepageWordmark)
 
-    fun verifyHomeScreenWelcomeItems() =
-        assertItemContainingTextExists(welcomeHeader, welcomeSubHeader)
-
-    fun verifyChooseYourThemeCard(
-        isDarkThemeChecked: Boolean,
-        isLightThemeChecked: Boolean,
-        isAutomaticThemeChecked: Boolean,
-    ) {
-        scrollToElementByText(getStringResource(R.string.onboarding_theme_picker_header))
-        assertItemContainingTextExists(
-            chooseThemeHeader,
-            chooseThemeText,
-            darkThemeDescription,
-            lightThemeDescription,
-        )
-        assertCheckedItemWithResIdExists(
-            darkThemeToggle(isDarkThemeChecked),
-            lightThemeToggle(isLightThemeChecked),
-            automaticThemeToggle(isAutomaticThemeChecked),
-        )
-        assertItemWithResIdAndDescriptionExists(automaticThemeDescription)
-    }
-
-    fun clickLightThemeButton() =
-        itemWithResId("$packageName:id/theme_light_radio_button").click()
-
-    fun clickDarkThemeButton() =
-        itemWithResId("$packageName:id/theme_dark_radio_button").click()
-
-    fun clickAutomaticThemeButton() =
-        itemWithResId("$packageName:id/theme_automatic_radio_button").click()
-
-    fun verifyToolbarPlacementCard(isBottomChecked: Boolean, isTopChecked: Boolean) {
-        scrollToElementByText(getStringResource(R.string.onboarding_toolbar_placement_header_1))
-        assertItemContainingTextExists(toolbarPlacementHeader, toolbarPlacementDescription)
-        assertCheckedItemWithResIdExists(
-            toolbarPlacementBottomRadioButton(isBottomChecked),
-            toolbarPlacementTopRadioButton(isTopChecked),
-        )
-        assertItemWithResIdExists(
-            toolbarPlacementBottomImage,
-            toolbarPlacementBottomTitle,
-            toolbarPlacementTopImage,
-            toolbarPlacementTopTitle,
-        )
-    }
-
-    fun clickTopToolbarPlacementButton() =
-        itemWithResId("$packageName:id/toolbar_top_radio_button").click()
-
-    fun clickBottomToolbarPlacementButton() =
-        itemWithResId("$packageName:id/toolbar_bottom_radio_button").click()
-
-    fun verifySignInToSyncCard() {
-        scrollToElementByText(getStringResource(R.string.onboarding_account_sign_in_header))
-        assertItemContainingTextExists(startSyncHeader, startSyncDescription)
-        assertItemWithResIdExists(signInButton)
-    }
-
-    fun verifyPrivacyProtectionCard(settings: Settings, isStandardChecked: Boolean, isStrictChecked: Boolean) {
-        scrollToElementByText(getStringResource(R.string.onboarding_privacy_notice_header_1))
-        assertItemContainingTextExists(privacyProtectionHeader, privacyProtectionDescription(settings))
-        assertCheckedItemWithResIdExists(
-            standardTrackingProtectionToggle(isStandardChecked),
-            strictTrackingProtectionToggle(isStrictChecked),
-        )
-    }
-
-    fun clickStandardTrackingProtectionButton() =
-        itemWithResId("$packageName:id/tracking_protection_standard_option").click()
-
-    fun clickStrictTrackingProtectionButton() =
-        itemWithResId("$packageName:id/tracking_protection_strict_default").click()
-
-    fun verifyPrivacyNoticeCard() {
-        scrollToElementByText(getStringResource(R.string.onboarding_privacy_notice_header_1))
-        assertItemContainingTextExists(privacyNoticeHeader, privacyNoticeDescription)
-        assertItemWithResIdExists(privacyNoticeButton)
-    }
-
-    fun verifyStartBrowsingSection() {
-        scrollToElementByText(getStringResource(R.string.onboarding_finish))
-        assertItemWithResIdExists(startBrowsingButton)
-        assertItemContainingTextExists(conclusionHeader)
-    }
-
     fun verifyNavigationToolbarItems(numberOfOpenTabs: String = "0") {
         assertItemWithResIdExists(navigationToolbar, menuButton)
         assertItemWithResIdAndTextExists(tabCounter(numberOfOpenTabs))
@@ -199,12 +107,14 @@ class HomeScreenRobot {
     fun verifyTabButton() = assertTabButton()
     fun verifyCollectionsHeader() = assertCollectionsHeader()
     fun verifyNoCollectionsText() = assertNoCollectionsText()
-    fun verifyHomeWordmark() = assertItemWithResIdExists(homepageWordmark)
+    fun verifyHomeWordmark() {
+        homeScreenList().scrollToBeginning(3)
+        assertItemWithResIdExists(homepageWordmark)
+    }
     fun verifyHomeComponent() = assertHomeComponent()
-    fun verifyDefaultSearchEngine(searchEngine: String) = verifySearchEngineIcon(searchEngine)
+
     fun verifyTabCounter(numberOfOpenTabs: String) =
         assertItemWithResIdAndTextExists(tabCounter(numberOfOpenTabs))
-    fun verifyKeyboardVisible() = assertKeyboardVisibility(isExpectedToBeVisible = true)
 
     fun verifyWallpaperImageApplied(isEnabled: Boolean) {
         if (isEnabled) {
@@ -224,17 +134,6 @@ class HomeScreenRobot {
         mDevice.findObject(UiSelector())
     }
 
-    // First Run elements
-    fun verifyWelcomeHeader() = assertItemContainingTextExists(welcomeHeader)
-    fun verifyAccountsSignInButton() {
-        scrollToElementByText(getStringResource(R.string.onboarding_account_sign_in_header))
-        assertItemWithResIdExists(signInButton)
-    }
-    fun verifyStartBrowsingButton() {
-        scrollToElementByText(getStringResource(R.string.onboarding_finish))
-        assertItemWithResIdExists(startBrowsingButton)
-    }
-
     // Upgrading users onboarding dialog
     fun verifyUpgradingUserOnboardingFirstScreen(testRule: ComposeTestRule) {
         testRule.also {
@@ -251,6 +150,9 @@ class HomeScreenRobot {
 
     fun clickGetStartedButton(testRule: ComposeTestRule) =
         testRule.onNodeWithText(getStringResource(R.string.onboarding_home_get_started_button)).performClick()
+
+    fun clickCloseButton(testRule: ComposeTestRule) =
+        testRule.onNode(hasContentDescription("Close")).performClick()
 
     fun verifyUpgradingUserOnboardingSecondScreen(testRule: ComposeTestRule) {
         testRule.also {
@@ -287,10 +189,13 @@ class HomeScreenRobot {
             ).getChild(
                 UiSelector()
                     .textContains(sponsoredShortcutTitle),
-            ).waitForExists(waitingTime),
+            ).waitForExists(waitingTimeShort),
         )
     fun verifyNotExistingSponsoredTopSitesList() = assertSponsoredTopSitesNotDisplayed()
-    fun verifyExistingTopSitesTabs(title: String) = assertExistingTopSitesTabs(title)
+    fun verifyExistingTopSitesTabs(title: String) {
+        homeScreenList().scrollIntoView(itemWithResId("$packageName:id/top_sites_list"))
+        assertExistingTopSitesTabs(title)
+    }
     fun verifySponsoredShortcutDetails(sponsoredShortcutTitle: String, position: Int) {
         assertSponsoredShortcutLogoIsDisplayed(position)
         assertSponsoredShortcutTitle(sponsoredShortcutTitle, position)
@@ -356,8 +261,6 @@ class HomeScreenRobot {
         mDevice.waitNotNull(findObject(By.text(expectedText)), waitingTime)
     }
 
-    fun clickUndoSnackBarButton() = undoSnackBarButton.click()
-
     fun clickFirefoxLogo() = homepageWordmark.click()
 
     fun verifyThoughtProvokingStories(enabled: Boolean) {
@@ -379,42 +282,52 @@ class HomeScreenRobot {
                         .textContains(
                             getStringResource(R.string.pocket_stories_header_1),
                         ),
-                ).waitForExists(waitingTime),
+                ).waitForExists(waitingTimeShort),
             )
         }
     }
 
-    fun scrollToPocketProvokingStories() =
-        scrollToElementByText(getStringResource(R.string.pocket_stories_categories_header))
-
-    fun swipePocketProvokingStories() {
-        UiScrollable(UiSelector().resourceId("pocket.stories")).setAsHorizontalList()
-            .swipeLeft(3)
+    fun scrollToPocketProvokingStories() {
+        homeScreenList().scrollIntoView(
+            mDevice.findObject(UiSelector().resourceId("pocket.recommended.story").index(2)),
+        )
     }
 
-    fun verifyPocketRecommendedStoriesItems(composeTestRule: ComposeTestRule, vararg positions: Int) {
-        composeTestRule.onNodeWithTag("pocket.stories").assertIsDisplayed()
-        positions.forEach {
-            composeTestRule.onNodeWithTag("pocket.stories")
-                .onChildAt(it - 1)
-                .assert(hasTestTag("pocket.recommended.story"))
+    fun verifyPocketRecommendedStoriesItems() {
+        for (position in 0..8) {
+            pocketStoriesList
+                .scrollIntoView(UiSelector().index(position))
+
+            assertTrue(
+                "Pocket story item at position $position not found.",
+                mDevice.findObject(UiSelector().index(position))
+                    .waitForExists(waitingTimeShort),
+            )
         }
     }
 
-    fun verifyPocketSponsoredStoriesItems(composeTestRule: ComposeTestRule, vararg positions: Int) {
-        composeTestRule.onNodeWithTag("pocket.stories").assertIsDisplayed()
-        positions.forEach {
-            composeTestRule.onNodeWithTag("pocket.stories")
-                .onChildAt(it - 1)
-                .assert(hasTestTag("pocket.sponsored.story"))
-        }
-    }
+    // Temporarily not in use because Sponsored Pocket stories are only advertised for a limited time.
+    // See also known issue https://bugzilla.mozilla.org/show_bug.cgi?id=1828629
+//    fun verifyPocketSponsoredStoriesItems(vararg positions: Int) {
+//        positions.forEach {
+//            pocketStoriesList
+//                .scrollIntoView(UiSelector().resourceId("pocket.sponsored.story").index(it - 1))
+//
+//            assertTrue(
+//                "Pocket story item at position $it not found.",
+//                mDevice.findObject(UiSelector().index(it - 1).resourceId("pocket.sponsored.story"))
+//                    .waitForExists(waitingTimeShort),
+//            )
+//        }
+//    }
 
-    fun verifyDiscoverMoreStoriesButton(composeTestRule: ComposeTestRule, position: Int) {
-        composeTestRule.onNodeWithTag("pocket.stories")
-            .assertIsDisplayed()
-            .onChildAt(position - 1)
-            .assert(hasTestTag("pocket.discover.more.story"))
+    fun verifyDiscoverMoreStoriesButton() {
+        pocketStoriesList
+            .scrollIntoView(UiSelector().text("Discover more"))
+        assertTrue(
+            mDevice.findObject(UiSelector().text("Discover more"))
+                .waitForExists(waitingTimeShort),
+        )
     }
 
     fun verifyStoriesByTopic(enabled: Boolean) {
@@ -436,13 +349,15 @@ class HomeScreenRobot {
                         .textContains(
                             getStringResource(R.string.pocket_stories_categories_header),
                         ),
-                ).waitForExists(waitingTime),
+                ).waitForExists(waitingTimeShort),
             )
         }
     }
 
-    fun verifyStoriesByTopicItems() =
+    fun verifyStoriesByTopicItems() {
+        homeScreenList().scrollIntoView(UiSelector().resourceId("pocket.categories"))
         assertTrue(mDevice.findObject(UiSelector().resourceId("pocket.categories")).childCount > 1)
+    }
 
     fun verifyStoriesByTopicItemState(composeTestRule: ComposeTestRule, isSelected: Boolean, position: Int) {
         homeScreenList().scrollIntoView(mDevice.findObject(UiSelector().resourceId("pocket.header")))
@@ -459,10 +374,9 @@ class HomeScreenRobot {
     fun clickStoriesByTopicItem(composeTestRule: ComposeTestRule, position: Int) =
         storyByTopicItem(composeTestRule, position).performClick()
 
-    fun verifyPoweredByPocket(rule: ComposeTestRule) {
+    fun verifyPoweredByPocket() {
         homeScreenList().scrollIntoView(mDevice.findObject(UiSelector().resourceId("pocket.header")))
-        rule.onNodeWithTag("pocket.header.title", true).assertIsDisplayed()
-        rule.onNodeWithTag("pocket.header.subtitle", true).assertIsDisplayed()
+        assertTrue(mDevice.findObject(UiSelector().resourceId("pocket.header.title")).exists())
     }
 
     fun verifyCustomizeHomepageButton(enabled: Boolean) {
@@ -480,20 +394,16 @@ class HomeScreenRobot {
                 mDevice.findObject(
                     UiSelector()
                         .textContains("Customize homepage"),
-                ).waitForExists(waitingTime),
+                ).waitForExists(waitingTimeShort),
             )
         }
     }
 
-    fun verifyJumpBackInMessage() {
-        assertTrue(
-            mDevice.findObject(
-                UiSelector().text(
-                    getStringResource(R.string.onboarding_home_screen_jump_back_contextual_hint_2),
-                ),
-            ).waitForExists(waitingTime),
-        )
-    }
+    fun verifyJumpBackInMessage(composeTestRule: ComposeTestRule) =
+        composeTestRule
+            .onNodeWithText(
+                getStringResource(R.string.onboarding_home_screen_jump_back_contextual_hint_2),
+            ).assertExists()
 
     fun getProvokingStoryPublisher(position: Int): String {
         val publisher = mDevice.findObject(
@@ -519,6 +429,21 @@ class HomeScreenRobot {
                 },
             )
     }
+    fun verifyNimbusMessageCard(title: String, text: String, action: String) {
+        val textView = UiSelector()
+            .className(ComposeView::class.java)
+            .className(View::class.java)
+            .className(TextView::class.java)
+        assertTrue(
+            mDevice.findObject(textView.textContains(title)).waitForExists(waitingTime),
+        )
+        assertTrue(
+            mDevice.findObject(textView.textContains(text)).waitForExists(waitingTime),
+        )
+        assertTrue(
+            mDevice.findObject(textView.textContains(action)).waitForExists(waitingTime),
+        )
+    }
 
     class Transition {
 
@@ -532,6 +457,15 @@ class HomeScreenRobot {
 
             TabDrawerRobot().interact()
             return TabDrawerRobot.Transition()
+        }
+
+        fun openComposeTabDrawer(composeTestRule: HomeActivityComposeTestRule, interact: ComposeTabDrawerRobot.() -> Unit): ComposeTabDrawerRobot.Transition {
+            mDevice.waitForIdle(waitingTime)
+            onView(withId(R.id.tab_button)).click()
+            composeTestRule.onNodeWithTag(TabsTrayTestTag.tabsTray).assertExists()
+
+            ComposeTabDrawerRobot(composeTestRule).interact()
+            return ComposeTabDrawerRobot.Transition(composeTestRule)
         }
 
         fun openThreeDotMenu(interact: ThreeDotMenuMainRobot.() -> Unit): ThreeDotMenuMainRobot.Transition {
@@ -554,6 +488,7 @@ class HomeScreenRobot {
         fun openSearch(interact: SearchRobot.() -> Unit): SearchRobot.Transition {
             navigationToolbar.waitForExists(waitingTime)
             navigationToolbar.click()
+            mDevice.waitForIdle()
 
             SearchRobot().interact()
             return SearchRobot.Transition()
@@ -561,13 +496,6 @@ class HomeScreenRobot {
 
         fun dismissOnboarding() {
             openThreeDotMenu { }.openSettings { }.goBack { }
-        }
-
-        fun clickStartBrowsingButton(interact: SearchRobot.() -> Unit): SearchRobot.Transition {
-            startBrowsingButton.click()
-
-            SearchRobot().interact()
-            return SearchRobot.Transition()
         }
 
         fun clickUpgradingUserOnboardingSignInButton(
@@ -581,11 +509,18 @@ class HomeScreenRobot {
         }
 
         fun togglePrivateBrowsingMode() {
-            mDevice.findObject(UiSelector().resourceId("$packageName:id/privateBrowsingButton"))
-                .waitForExists(
-                    waitingTime,
-                )
-            privateBrowsingButton.click()
+            if (
+                !itemWithResIdAndDescription(
+                    "$packageName:id/privateBrowsingButton",
+                    "Disable private browsing",
+                ).exists()
+            ) {
+                mDevice.findObject(UiSelector().resourceId("$packageName:id/privateBrowsingButton"))
+                    .waitForExists(
+                        waitingTime,
+                    )
+                privateBrowsingButton.click()
+            }
         }
 
         fun triggerPrivateBrowsingShortcutPrompt(interact: AddToHomeScreenRobot.() -> Unit): AddToHomeScreenRobot.Transition {
@@ -733,6 +668,14 @@ class HomeScreenRobot {
             return TabDrawerRobot.Transition()
         }
 
+        fun clickSaveTabsToCollectionButton(composeTestRule: HomeActivityComposeTestRule, interact: ComposeTabDrawerRobot.() -> Unit): ComposeTabDrawerRobot.Transition {
+            scrollToElementByText(getStringResource(R.string.no_collections_description2))
+            saveTabsToCollectionButton().click()
+
+            ComposeTabDrawerRobot(composeTestRule).interact()
+            return ComposeTabDrawerRobot.Transition(composeTestRule)
+        }
+
         fun expandCollection(title: String, interact: CollectionRobot.() -> Unit): CollectionRobot.Transition {
             assertItemContainingTextExists(itemContainingText(title))
             itemContainingText(title).clickAndWaitForNewWindow(waitingTimeShort)
@@ -776,6 +719,17 @@ class HomeScreenRobot {
             return TabDrawerRobot.Transition()
         }
 
+        fun clickJumpBackInShowAllButton(composeTestRule: HomeActivityComposeTestRule, interact: ComposeTabDrawerRobot.() -> Unit): ComposeTabDrawerRobot.Transition {
+            mDevice
+                .findObject(
+                    UiSelector()
+                        .textContains(getStringResource(R.string.recent_tabs_show_all)),
+                ).clickAndWaitForNewWindow(waitingTime)
+
+            ComposeTabDrawerRobot(composeTestRule).interact()
+            return ComposeTabDrawerRobot.Transition(composeTestRule)
+        }
+
         fun clickJumpBackInItemWithTitle(itemTitle: String, interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
             mDevice
                 .findObject(
@@ -804,12 +758,14 @@ class HomeScreenRobot {
             return BrowserRobot.Transition()
         }
 
-        fun clickPocketDiscoverMoreButton(composeTestRule: ComposeTestRule, position: Int, interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
-            composeTestRule.onNodeWithTag("pocket.stories")
-                .assertIsDisplayed()
-                .onChildAt(position - 1)
-                .assert(hasTestTag("pocket.discover.more.story"))
-                .performClick()
+        fun clickPocketDiscoverMoreButton(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
+            pocketStoriesList
+                .scrollIntoView(UiSelector().text("Discover more"))
+
+            mDevice.findObject(UiSelector().text("Discover more")).also {
+                it.waitForExists(waitingTimeShort)
+                it.click()
+            }
 
             BrowserRobot().interact()
             return BrowserRobot.Transition()
@@ -820,20 +776,6 @@ class HomeScreenRobot {
 
             BrowserRobot().interact()
             return BrowserRobot.Transition()
-        }
-
-        fun clickSignInButton(interact: SyncSignInRobot.() -> Unit): SyncSignInRobot.Transition {
-            signInButton.clickAndWaitForNewWindow(waitingTimeShort)
-
-            SyncSignInRobot().interact()
-            return SyncSignInRobot.Transition()
-        }
-
-        fun clickPrivacyNoticeButton(interact: CustomTabRobot.() -> Unit): CustomTabRobot.Transition {
-            privacyNoticeButton.clickAndWaitForNewWindow(waitingTimeShort)
-
-            CustomTabRobot().interact()
-            return CustomTabRobot.Transition()
         }
     }
 }
@@ -857,10 +799,6 @@ private fun assertKeyboardVisibility(isExpectedToBeVisible: Boolean) =
             .executeShellCommand("dumpsys input_method | grep mInputShown")
             .contains("mInputShown=true"),
     )
-
-private fun assertFocusedNavigationToolbar() =
-    onView(allOf(withHint("Search or enter address")))
-        .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
 private fun assertTabButton() =
     onView(allOf(withId(R.id.tab_button), isDisplayed()))
@@ -886,26 +824,8 @@ private fun assertHomeComponent() =
 
 private fun threeDotButton() = onView(allOf(withId(R.id.menuButton)))
 
-private fun verifySearchEngineIcon(searchEngineIcon: Bitmap, searchEngineName: String) {
-    onView(withId(R.id.search_engine_icon))
-        .check(matches(withBitmapDrawable(searchEngineIcon, searchEngineName)))
-}
-
-private fun getSearchEngine(searchEngineName: String) =
-    appContext.components.core.store.state.search.searchEngines.find { it.name == searchEngineName }
-
-private fun verifySearchEngineIcon(searchEngineName: String) {
-    val defaultSearchEngine = getSearchEngine(searchEngineName)
-        ?: throw AssertionError("No search engine with name $searchEngineName")
-    verifySearchEngineIcon(defaultSearchEngine.icon, defaultSearchEngine.name)
-}
-
-private fun collectionTitle(title: String, rule: ComposeTestRule) =
-    rule.onNode(hasText(title))
-
 private fun assertExistingTopSitesList() =
-    onView(allOf(withId(R.id.top_sites_list)))
-        .check((matches(withEffectiveVisibility(Visibility.VISIBLE))))
+    assertItemWithResIdExists(itemWithResId("$packageName:id/top_sites_list"))
 
 private fun assertExistingTopSitesTabs(title: String) {
     mDevice.findObject(
@@ -963,7 +883,7 @@ private fun assertNotExistingTopSitesList(title: String) {
             UiSelector()
                 .resourceId("$packageName:id/top_site_title")
                 .textContains(title),
-        ).waitForExists(waitingTime),
+        ).waitForExists(waitingTimeShort),
     )
 }
 
@@ -973,7 +893,7 @@ private fun assertSponsoredTopSitesNotDisplayed() {
             UiSelector()
                 .resourceId("$packageName:id/top_site_subtitle")
                 .textContains(getStringResource(R.string.top_sites_sponsored_label)),
-        ).waitForExists(waitingTime),
+        ).waitForExists(waitingTimeShort),
     )
 }
 
@@ -1007,7 +927,7 @@ private fun assertJumpBackInShowAllButton() =
 
 private fun assertRecentlyVisitedSectionIsDisplayed() = assertTrue(recentlyVisitedSection().waitForExists(waitingTime))
 
-private fun assertRecentlyVisitedSectionIsNotDisplayed() = assertFalse(recentlyVisitedSection().waitForExists(waitingTime))
+private fun assertRecentlyVisitedSectionIsNotDisplayed() = assertFalse(recentlyVisitedSection().waitForExists(waitingTimeShort))
 
 private fun assertRecentBookmarksSectionIsDisplayed() =
     assertTrue(recentBookmarksSection().waitForExists(waitingTime))
@@ -1017,7 +937,7 @@ private fun assertRecentBookmarksSectionIsNotDisplayed() =
 
 private fun assertPocketSectionIsDisplayed() = assertTrue(pocketSection().waitForExists(waitingTime))
 
-private fun assertPocketSectionIsNotDisplayed() = assertFalse(pocketSection().waitForExists(waitingTime))
+private fun assertPocketSectionIsNotDisplayed() = assertFalse(pocketSection().waitForExists(waitingTimeShort))
 
 private fun saveTabsToCollectionButton() = onView(withId(R.id.add_tabs_to_collections_button))
 
@@ -1045,90 +965,19 @@ private fun sponsoredShortcut(sponsoredShortcutTitle: String) =
 private fun storyByTopicItem(composeTestRule: ComposeTestRule, position: Int) =
     composeTestRule.onNodeWithTag("pocket.categories").onChildAt(position - 1)
 
-private fun privacyProtectionDescription(settings: Settings): UiObject {
-    val isTCPPublic = settings.enabledTotalCookieProtectionCFR
-    val descriptionText = when (isTCPPublic) {
-        true -> R.string.onboarding_tracking_protection_description
-        false -> R.string.onboarding_tracking_protection_description_old
-    }
-
-    return itemContainingText(getStringResource(descriptionText))
-}
-
 private val homeScreen =
     itemWithResId("$packageName:id/homeLayout")
 private val privateBrowsingButton =
     itemWithResId("$packageName:id/privateBrowsingButton")
 private val homepageWordmark =
     itemWithResId("$packageName:id/wordmark")
-private val welcomeHeader = itemContainingText(getStringResource(R.string.onboarding_header_2))
-private val welcomeSubHeader =
-    itemContainingText(getStringResource(R.string.onboarding_message))
-private val chooseThemeHeader =
-    itemContainingText(getStringResource(R.string.onboarding_theme_picker_header))
-private val chooseThemeText =
-    itemContainingText(getStringResource(R.string.onboarding_theme_picker_description_2))
-private val darkThemeDescription =
-    itemContainingText(getStringResource(R.string.onboarding_theme_dark_title))
-private val lightThemeDescription =
-    itemContainingText(getStringResource(R.string.onboarding_theme_light_title))
-private val automaticThemeDescription =
-    itemWithResIdAndDescription(
-        "$packageName:id/clickable_region_automatic",
-        "${getStringResource(R.string.onboarding_theme_automatic_title)} ${getStringResource(R.string.onboarding_theme_automatic_summary)}",
-    )
-private fun darkThemeToggle(isChecked: Boolean) =
-    checkedItemWithResId("$packageName:id/theme_dark_radio_button", isChecked)
-private fun lightThemeToggle(isChecked: Boolean) =
-    checkedItemWithResId("$packageName:id/theme_light_radio_button", isChecked)
-private fun automaticThemeToggle(isChecked: Boolean) =
-    checkedItemWithResId("$packageName:id/theme_automatic_radio_button", isChecked)
-private val toolbarPlacementHeader =
-    itemContainingText(getStringResource(R.string.onboarding_toolbar_placement_header_1))
-private val toolbarPlacementDescription =
-    itemContainingText(getStringResource(R.string.onboarding_toolbar_placement_description))
-private fun toolbarPlacementBottomRadioButton(isChecked: Boolean) =
-    checkedItemWithResId("$packageName:id/toolbar_bottom_radio_button", isChecked)
-private fun toolbarPlacementTopRadioButton(isChecked: Boolean) =
-    checkedItemWithResId("$packageName:id/toolbar_top_radio_button", isChecked)
-private val toolbarPlacementBottomImage =
-    itemWithResId("$packageName:id/toolbar_bottom_image")
-private val toolbarPlacementBottomTitle =
-    itemWithResId("$packageName:id/toolbar_bottom_title")
-private val toolbarPlacementTopTitle =
-    itemWithResId("$packageName:id/toolbar_top_title")
-private val toolbarPlacementTopImage =
-    itemWithResId("$packageName:id/toolbar_top_image")
-private val startSyncHeader =
-    itemContainingText(getStringResource(R.string.onboarding_account_sign_in_header))
-private val startSyncDescription =
-    itemContainingText(getStringResource(R.string.onboarding_manual_sign_in_description))
-private val signInButton =
-    itemWithResId("$packageName:id/fxa_sign_in_button")
-private val privacyProtectionHeader =
-    itemContainingText(getStringResource(R.string.onboarding_tracking_protection_header))
-private fun standardTrackingProtectionToggle(isChecked: Boolean) =
-    checkedItemWithResId("$packageName:id/tracking_protection_standard_option", isChecked)
-private fun strictTrackingProtectionToggle(isChecked: Boolean) =
-    checkedItemWithResId("$packageName:id/tracking_protection_strict_default", isChecked)
-private val privacyNoticeHeader =
-    itemContainingText(getStringResource(R.string.onboarding_privacy_notice_header_1))
-private val privacyNoticeDescription =
-    itemContainingText(getStringResource(R.string.onboarding_privacy_notice_description))
-private val privacyNoticeButton =
-    itemWithResId("$packageName:id/read_button")
-private val startBrowsingButton =
-    itemWithResId("$packageName:id/finish_button")
-private val conclusionHeader =
-    itemContainingText(getStringResource(R.string.onboarding_conclusion_header))
+
 private val navigationToolbar =
     itemWithResId("$packageName:id/toolbar")
 private val menuButton =
     itemWithResId("$packageName:id/menuButton")
 private fun tabCounter(numberOfOpenTabs: String) =
     itemWithResIdAndText("$packageName:id/counter_text", numberOfOpenTabs)
-private val undoSnackBarButton =
-    itemWithResId("$packageName:id/snackbar_btn")
 
 val deleteFromHistory =
     onView(
@@ -1159,3 +1008,6 @@ private val sponsorsAndPrivacyButton =
                 .textContains(getStringResource(R.string.top_sites_menu_sponsor_privacy))
                 .resourceId("$packageName:id/simple_text"),
         )
+
+private val pocketStoriesList =
+    UiScrollable(UiSelector().resourceId("pocket.stories")).setAsHorizontalList()

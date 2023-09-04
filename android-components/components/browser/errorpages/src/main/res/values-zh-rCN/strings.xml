@@ -60,10 +60,6 @@
     <string name="mozac_browser_errorpages_security_bad_hsts_cert_advanced">高级…</string>
 
     <!-- The advanced certificate information shown when a website uses HSTS. The %1$s will be replaced by the website URL and %2$s will be replaced by the app name. It's only shown when a website uses HSTS. -->
-    <string moz:removedIn="104" name="mozac_browser_errorpages_security_bad_hsts_cert_techInfo" tools:ignore="UnusedResources"><![CDATA[
-        <label> <b>%1$s</b> 启用了被称为 HTTP 严格传输安全（HSTS）的安全策略，<b>%2$s</b> 只能与其建立安全连接。您无法为此网站添加例外，以访问此网站。
-    ]]></string>
-    <!-- The advanced certificate information shown when a website uses HSTS. The %1$s will be replaced by the website URL and %2$s will be replaced by the app name. It's only shown when a website uses HSTS. -->
     <string name="mozac_browser_errorpages_security_bad_hsts_cert_techInfo2"><![CDATA[
         <label> <b>%1$s</b> 启用了被称为 HTTP 严格传输安全（HSTS）的安全策略，<b>%2$s</b> 只能与其建立安全连接。您无法为此网站添加例外，以访问此网站。</label>
     ]]></string>
@@ -77,7 +73,7 @@
       <p>浏览器连接成功，但连接在传输数据时中断了。请稍后重试。</p>
       <ul>
         <li>该网站可能暂时无法使用或太忙。请稍后再试一次。</li>
-        <li>如果您无法载入任何页面，请检查设备的数据或 Wi-Fi 连接。</li>
+        <li>如果您无法加载任何页面，请检查设备的数据或 Wi-Fi 连接。</li>
       </ul>
     ]]></string>
 
@@ -89,7 +85,7 @@
       <ul>
         <li>该网站可能目前访问人数过多？请稍后重试。</li>
         <li>您是否也无法浏览其他网站？请检查您网络连接。</li>
-        <li>电脑有开防火墙或代理服务器？请确定这些设置是否正确。</li>
+        <li>设备或网络是否受防火墙或代理保护？请确定这些设置是否正确。</li>
         <li>仍然不行？请联系您的网络管理员或者电信运营商以寻求协助。</li>
       </ul>
     
@@ -101,7 +97,7 @@
     <string name="mozac_browser_errorpages_connection_failure_message"><![CDATA[
       <ul>
         <li>该网站可能暂时无法使用或太忙。请稍后再试一次。</li>
-        <li>如果您无法载入任何页面，请检查设备的数据或 Wi-Fi 连接。</li>
+        <li>如果您无法加载任何页面，请检查设备的数据或 Wi-Fi 连接。</li>
       </ul>
     ]]></string>
 
@@ -148,7 +144,7 @@
       <p>协商连接时网络链路中断。请重试。</p>
       <ul>
         <li>该网站可能暂时无法使用或太忙。请稍后再试一次。</li>
-        <li>如果您无法载入任何页面，请检查设备的数据或 Wi-Fi 连接。</li>
+        <li>如果您无法加载任何页面，请检查设备的数据或 Wi-Fi 连接。</li>
       </ul>
     ]]></string>
 
@@ -198,12 +194,12 @@
         <li>检查网址有没有输入错误，比如把
 			<strong>www</strong>.example.com 输入成了
 			<strong>ww</strong>.example.com。</li>
-        <li>如果您无法载入任何页面，请检查设备的数据或 Wi-Fi 连接。</li>
+        <li>如果您无法加载任何页面，请检查设备的数据或 Wi-Fi 连接。</li>
       </ul>
     ]]></string>
 
     <!-- The document title and heading of an error page. -->
-    <string name="mozac_browser_errorpages_no_internet_title">没有互联网连接</string>
+    <string name="mozac_browser_errorpages_no_internet_title">无互联网连接</string>
     <!-- The main body text of this error page. It will be shown beneath the title -->
     <string name="mozac_browser_errorpages_no_internet_message">请检查您的网络连接，或在稍后尝试重新加载页面。</string>
     <!-- Text that will show up on the button at the bottom of the error page -->

@@ -8,6 +8,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.BoxWithConstraintsScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,31 +26,45 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.mozilla.fenix.R
+import org.mozilla.fenix.compose.LinkText
+import org.mozilla.fenix.compose.LinkTextState
 import org.mozilla.fenix.compose.annotation.LightDarkPreview
 import org.mozilla.fenix.compose.button.PrimaryButton
 import org.mozilla.fenix.compose.button.SecondaryButton
 import org.mozilla.fenix.theme.FirefoxTheme
 
 /**
- * The ratio of the image height to the window height. This was determined from the designs in figma
+ * The ratio of the image height to the parent height. This was determined from the designs in figma
  * taking the ratio of the image height to the mockup height.
  */
-private const val IMAGE_HEIGHT_RATIO = 0.4f
+private const val IMAGE_HEIGHT_RATIO_DEFAULT = 0.4f
+
+/**
+ * The ratio of the image height to the parent height for medium sized devices.
+ */
+private const val IMAGE_HEIGHT_RATIO_MEDIUM = 0.36f
+
+/**
+ * The ratio of the image height to the parent height for small devices like Nexus 4, Nexus 1.
+ */
+private const val IMAGE_HEIGHT_RATIO_SMALL = 0.28f
 
 /**
  * A composable for displaying onboarding page content.
  *
  * @param pageState [OnboardingPageState] The page content that's displayed.
- * @param onDismiss Invoked when the user clicks the close button.
  * @param modifier The modifier to be applied to the Composable.
+ * @param onDismiss Invoked when the user clicks the close button. This defaults to null. When null,
+ * it doesn't show the close button.
  */
 @Composable
 fun OnboardingPage(
     pageState: OnboardingPageState,
-    onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
+    onDismiss: (() -> Unit)? = null,
 ) {
     BoxWithConstraints(
         modifier = Modifier
@@ -65,15 +80,19 @@ fun OnboardingPage(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween,
         ) {
-            IconButton(
-                onClick = onDismiss,
-                modifier = Modifier.align(Alignment.End),
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.mozac_ic_close),
-                    contentDescription = stringResource(R.string.onboarding_home_content_description_close_button),
-                    tint = FirefoxTheme.colors.iconPrimary,
-                )
+            if (onDismiss != null) {
+                IconButton(
+                    onClick = onDismiss,
+                    modifier = Modifier.align(Alignment.End),
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.mozac_ic_cross_24),
+                        contentDescription = stringResource(R.string.onboarding_home_content_description_close_button),
+                        tint = FirefoxTheme.colors.iconPrimary,
+                    )
+                }
+            } else {
+                Spacer(Modifier)
             }
 
             Column(
@@ -81,10 +100,9 @@ fun OnboardingPage(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Image(
-                    painter = painterResource(id = pageState.image),
+                    painter = painterResource(id = pageState.imageRes),
                     contentDescription = null,
-                    modifier = Modifier
-                        .height(boxWithConstraintsScope.maxHeight.times(IMAGE_HEIGHT_RATIO)),
+                    modifier = Modifier.height(imageHeight(boxWithConstraintsScope)),
                 )
 
                 Spacer(modifier = Modifier.height(32.dp))
@@ -98,11 +116,9 @@ fun OnboardingPage(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Text(
-                    text = pageState.description,
-                    color = FirefoxTheme.colors.textSecondary,
-                    textAlign = TextAlign.Center,
-                    style = FirefoxTheme.typography.body2,
+                DescriptionText(
+                    description = pageState.description,
+                    linkTextState = pageState.linkTextState,
                 )
             }
 
@@ -131,13 +147,45 @@ fun OnboardingPage(
     }
 }
 
+@Composable
+private fun DescriptionText(
+    description: String,
+    linkTextState: LinkTextState?,
+) {
+    if (linkTextState != null && description.contains(linkTextState.text, ignoreCase = true)) {
+        LinkText(
+            text = description,
+            linkTextState = linkTextState,
+        )
+    } else {
+        Text(
+            text = description,
+            color = FirefoxTheme.colors.textSecondary,
+            textAlign = TextAlign.Center,
+            style = FirefoxTheme.typography.body2,
+        )
+    }
+}
+
+/**
+ * Calculates the image height to be set. The ratio is selected based on parent height.
+ */
+private fun imageHeight(boxWithConstraintsScope: BoxWithConstraintsScope): Dp {
+    val imageHeightRatio: Float = when {
+        boxWithConstraintsScope.maxHeight <= 550.dp -> IMAGE_HEIGHT_RATIO_SMALL
+        boxWithConstraintsScope.maxHeight <= 650.dp -> IMAGE_HEIGHT_RATIO_MEDIUM
+        else -> IMAGE_HEIGHT_RATIO_DEFAULT
+    }
+    return boxWithConstraintsScope.maxHeight.times(imageHeightRatio)
+}
+
 @LightDarkPreview
 @Composable
 private fun OnboardingPagePreview() {
     FirefoxTheme {
         OnboardingPage(
             pageState = OnboardingPageState(
-                image = R.drawable.ic_notification_permission,
+                imageRes = R.drawable.ic_notification_permission,
                 title = stringResource(
                     id = R.string.onboarding_home_enable_notifications_title,
                     formatArgs = arrayOf(stringResource(R.string.app_name)),

@@ -7,6 +7,8 @@ package org.mozilla.fenix.ui.robots
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.Visibility
+import androidx.test.espresso.matcher.ViewMatchers.isChecked
+import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
@@ -16,6 +18,10 @@ import org.hamcrest.CoreMatchers.allOf
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
+import org.mozilla.fenix.helpers.MatcherHelper.assertItemContainingTextExists
+import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithDescriptionExists
+import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithDescription
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
 import org.mozilla.fenix.helpers.TestHelper.getStringResource
@@ -23,6 +29,7 @@ import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.assertIsChecked
 import org.mozilla.fenix.helpers.click
+import org.mozilla.fenix.helpers.isChecked
 
 /**
  * Implementation of Robot Pattern for the settings Site Permissions sub menu.
@@ -39,11 +46,13 @@ class SettingsSubMenuSitePermissionsCommonRobot {
 
     fun verifyCheckAutoPlayRadioButtonDefault() = assertCheckAutoPayRadioButtonDefault()
 
-    fun verifyassertAskToAllowRecommended() = assertAskToAllowRecommended()
+    fun verifyAskToAllowButton(isChecked: Boolean = true) =
+        onView(withId(R.id.ask_to_allow_radio))
+            .check((matches(isDisplayed()))).assertIsChecked(isChecked)
 
-    fun verifyassertBlocked() = assertBlocked()
-
-    fun verifyCheckCommonRadioButtonDefault() = assertCheckCommonRadioButtonDefault()
+    fun verifyBlockedButton(isChecked: Boolean = false) =
+        onView(withId(R.id.block_radio))
+            .check((matches(isDisplayed()))).assertIsChecked(isChecked)
 
     fun verifyBlockedByAndroid() = assertBlockedByAndroid()
 
@@ -67,9 +76,11 @@ class SettingsSubMenuSitePermissionsCommonRobot {
     }
 
     fun verifySitePermissionsCommonSubMenuItems() {
-        verifyassertAskToAllowRecommended()
-        verifyassertBlocked()
-        verifyCheckCommonRadioButtonDefault()
+        verifyAskToAllowButton()
+        verifyBlockedButton()
+    }
+
+    fun verifyBlockedByAndroidSection() {
         verifyBlockedByAndroid()
         verifyToAllowIt()
         verifyGotoAndroidSettings()
@@ -77,16 +88,21 @@ class SettingsSubMenuSitePermissionsCommonRobot {
         verifyGoToSettingsButton()
     }
 
-    fun verifySitePermissionsNotificationSubMenuItems() {
-        verifyassertAskToAllowRecommended()
-        verifyassertBlocked()
-        verifyCheckCommonRadioButtonDefault()
+    fun verifyNotificationSubMenuItems() {
+        verifyNotificationToolbar()
+        verifySitePermissionsCommonSubMenuItems()
     }
 
     fun verifySitePermissionsPersistentStorageSubMenuItems() {
-        verifyassertAskToAllowRecommended()
-        verifyassertBlocked()
-        verifyCheckCommonRadioButtonDefault()
+        verifyAskToAllowButton()
+        verifyBlockedButton()
+    }
+
+    fun verifyDRMControlledContentSubMenuItems() {
+        verifyAskToAllowButton()
+        verifyBlockedButton()
+        // Third option is "Allowed"
+        thirdRadioButton.check(matches(withText("Allowed")))
     }
 
     fun clickGoToSettingsButton() {
@@ -143,6 +159,35 @@ class SettingsSubMenuSitePermissionsCommonRobot {
         )
     }
 
+    fun verifyNotificationToolbar() {
+        assertItemContainingTextExists(itemContainingText(getStringResource(R.string.preference_phone_feature_notification)))
+        assertItemWithDescriptionExists(itemWithDescription(getStringResource(R.string.action_bar_up_description)))
+    }
+
+    fun selectAutoplayOption(text: String) {
+        when (text) {
+            "Allow audio and video" -> askToAllowRadioButton.click()
+            "Block audio and video on cellular data only" -> blockRadioButton.click()
+            "Block audio only" -> thirdRadioButton.click()
+            "Block audio and video" -> fourthRadioButton.click()
+        }
+    }
+
+    fun selectPermissionSettingOption(text: String) {
+        when (text) {
+            "Ask to allow" -> askToAllowRadioButton.click()
+            "Blocked" -> blockRadioButton.click()
+        }
+    }
+
+    fun selectDRMControlledContentPermissionSettingOption(text: String) {
+        when (text) {
+            "Ask to allow" -> askToAllowRadioButton.click()
+            "Blocked" -> blockRadioButton.click()
+            "Allowed" -> thirdRadioButton.click()
+        }
+    }
+
     class Transition {
         fun goBack(interact: SettingsSubMenuSitePermissionsRobot.() -> Unit): SettingsSubMenuSitePermissionsRobot.Transition {
             goBackButton().click()
@@ -153,45 +198,45 @@ class SettingsSubMenuSitePermissionsCommonRobot {
     }
 }
 
+// common Blocked radio button for all settings
+private val blockRadioButton = onView(withId(R.id.block_radio))
+
+// common Ask to Allow radio button for all settings
+private val askToAllowRadioButton = onView(withId(R.id.ask_to_allow_radio))
+
+// common extra 3rd radio button for all settings
+private val thirdRadioButton = onView(withId(R.id.third_radio))
+
+// common extra 4th radio button for all settings
+private val fourthRadioButton = onView(withId(R.id.fourth_radio))
+
 private fun assertNavigationToolBarHeader(header: String) = onView(allOf(withContentDescription(header)))
 
 private fun assertBlockAudioAndVideoOnMobileDataOnlyAudioAndVideoWillPlayOnWiFi() =
-    onView(withId(R.id.block_radio))
-        .check((matches(withEffectiveVisibility(Visibility.VISIBLE))))
+    blockRadioButton.check((matches(withEffectiveVisibility(Visibility.VISIBLE))))
 
-private fun assertBlockAudioOnly() = onView(withId(R.id.third_radio))
-    .check((matches(withEffectiveVisibility(Visibility.VISIBLE))))
+private fun assertBlockAudioOnly() =
+    thirdRadioButton.check((matches(withEffectiveVisibility(Visibility.VISIBLE))))
 
 private fun assertVideoAndAudioBlockedRecommended() = onView(withId(R.id.fourth_radio))
     .check((matches(withEffectiveVisibility(Visibility.VISIBLE))))
 
 private fun assertCheckAutoPayRadioButtonDefault() {
     // Allow audio and video
-    onView(withId(R.id.block_radio))
+    askToAllowRadioButton
         .assertIsChecked(isChecked = false)
 
     // Block audio and video on cellular data only
-    onView(withId(R.id.block_radio))
+    blockRadioButton
         .assertIsChecked(isChecked = false)
 
-    // Block audio only
-    onView(withId(R.id.third_radio))
+    // Block audio only (default)
+    thirdRadioButton
         .assertIsChecked(isChecked = true)
 
     // Block audio and video
-    onView(withId(R.id.fourth_radio))
+    fourthRadioButton
         .assertIsChecked(isChecked = false)
-}
-
-private fun assertAskToAllowRecommended() = onView(withId(R.id.ask_to_allow_radio))
-    .check((matches(withEffectiveVisibility(Visibility.VISIBLE))))
-
-private fun assertBlocked() = onView(withId(R.id.block_radio))
-    .check((matches(withEffectiveVisibility(Visibility.VISIBLE))))
-
-private fun assertCheckCommonRadioButtonDefault() {
-    onView(withId(R.id.ask_to_allow_radio)).assertIsChecked(isChecked = true)
-    onView(withId(R.id.block_radio)).assertIsChecked(isChecked = false)
 }
 
 private fun assertBlockedByAndroid() {

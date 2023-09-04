@@ -68,8 +68,6 @@
 
     <!-- Private mode shortcut "contextual feature recommendation" (CFR) -->
     <!-- Text for the Private mode shortcut CFR message for adding a private mode shortcut to open private tabs from the Home screen -->
-    <string name="private_mode_cfr_message" moz:removedIn="111" tools:ignore="UnusedResources">Agor y tab preifat nesaf gydag un tap.</string>
-    <!-- Text for the Private mode shortcut CFR message for adding a private mode shortcut to open private tabs from the Home screen -->
     <string name="private_mode_cfr_message_2">Agor eich tab preifat gydag un tap.</string>
     <!-- Text for the positive button to accept adding a Private Browsing shortcut to the Home screen -->
     <string name="private_mode_cfr_pos_button_text">Ychwanegu i’r sgrin Cartref</string>
@@ -83,9 +81,6 @@
     <string name="open_in_app_cfr_positive_button_text">Mynd i’r gosodiadau</string>
     <!-- Text for the negative action button -->
     <string name="open_in_app_cfr_negative_button_text">Cau</string>
-
-    <!-- Content description for close button used in "contextual feature recommendation" (CFR) popups -->
-    <string name="cfr_dismiss_button_default_content_description" moz:removedIn="110" tools:ignore="UnusedResources">Cau</string>
 
     <!-- Total cookie protection "contextual feature recommendation" (CFR) -->
     <!-- Text for the message displayed in the contextual feature recommendation popup promoting the total cookie protection feature. -->
@@ -129,6 +124,9 @@
     <string name="home_screen_shortcut_open_new_tab_2">Tab newydd</string>
     <!-- Shortcut action to open new private tab -->
     <string name="home_screen_shortcut_open_new_private_tab_2">Tab preifat newydd</string>
+
+    <!-- Shortcut action to open Passwords screens -->
+    <string name="home_screen_shortcut_open_password_screen">Llwybr byr cyfrineiriau</string>
 
     <!-- Recent Tabs -->
     <!-- Header text for jumping back into the recent tab in the home screen -->
@@ -252,7 +250,7 @@
     <!-- Search suggestion onboarding hint description text, first parameter is the name of the app defined in app_name (for example: Fenix)-->
     <string name="search_suggestions_onboarding_text">Bydd %s yn rhannu popeth rydych chi’n ei deipio yn y bar cyfeiriad â’ch peiriant chwilio rhagosodedig.</string>
 
-    <!-- Search engine suggestion title text. The first parameter is the name of teh suggested engine-->
+    <!-- Search engine suggestion title text. The first parameter is the name of the suggested engine-->
     <string name="search_engine_suggestions_title">Chwilio %s</string>
     <!-- Search engine suggestion description text -->
     <string name="search_engine_suggestions_description">Chwilio’n uniongyrchol o’r bar cyfeiriad</string>
@@ -261,10 +259,10 @@
     <string name="search_settings_menu_item">Gosodiadau chwilio</string>
 
     <!-- Header text for the search selector menu -->
-    <string name="search_header_menu_item" moz:RemovedIn="109" tools:ignore="UnusedResources">Chwiliad y tro yma:</string>
-
-    <!-- Header text for the search selector menu -->
     <string name="search_header_menu_item_2">Y tro hwn chwiliwch yn:</string>
+
+    <!-- Content description (not visible, for screen readers etc.): Search engine icon. The first parameter is the search engine name (for example: DuckDuckGo). -->
+    <string name="search_engine_icon_content_description" tools:ignore="UnusedResources">Peiriant chwilio %s</string>
 
     <!-- Home onboarding -->
     <!-- Onboarding home screen popup dialog, shown on top of the Jump back in section. -->
@@ -301,6 +299,52 @@
     <!-- Text for the button to not request notification permission on the device and dismiss the dialog -->
     <string name="onboarding_home_enable_notifications_negative_button">Nid nawr</string>
 
+    <!-- Juno first user onboarding flow experiment, strings are marked unused as they are only referenced by Nimbus experiments. -->
+    <!-- Title for set firefox as default browser screen.
+        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
+    <string name="juno_onboarding_default_browser_title" moz:RemovedIn="117" tools:ignore="UnusedResources">Gwnewch %s eich hoff borwr</string>
+    <!-- Title for set firefox as default browser screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_default_browser_title_nimbus" tools:ignore="UnusedResources">Gwnewch Firefox yn borwr i chi</string>
+    <!-- Description for set firefox as default browser screen.
+        The first parameter is the Firefox brand name.
+        The second parameter is the string with key "juno_onboarding_default_browser_description_link_text". -->
+    <string name="juno_onboarding_default_browser_description" moz:RemovedIn="117" tools:ignore="UnusedResources">Mae %1$s yn rhoi pobl dros elw ac yn diogelu eich preifatrwydd drwy rwystro tracwyr traws-gwefan.\n\nDysgu rhagor yn ein %2$s.</string>
+    <!-- Description for set firefox as default browser screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_default_browser_description_nimbus" tools:ignore="UnusedResources">Mae Firefox yn rhoi pobl o flaen elw ac yn diogelu eich preifatrwydd trwy rwystro tracwyr traws-gwefan.\n\nDysgwch ragor yn ein hysbysiad preifatrwydd.</string>
+    <!-- Text for the link to the privacy notice webpage for set as firefox default browser screen.
+    This is part of the string with the key "juno_onboarding_default_browser_description". -->
+    <string name="juno_onboarding_default_browser_description_link_text" tools:ignore="UnusedResources">hysbysiad preifatrwydd</string>
+    <!-- Text for the button to set firefox as default browser on the device -->
+    <string name="juno_onboarding_default_browser_positive_button" tools:ignore="UnusedResources">Gosod fel y porwr ragosodedig</string>
+    <!-- Text for the button dismiss the screen and move on with the flow -->
+    <string name="juno_onboarding_default_browser_negative_button" tools:ignore="UnusedResources">Nid nawr</string>
+    <!-- Title for sign in to sync screen. -->
+    <string name="juno_onboarding_sign_in_title" tools:ignore="UnusedResources">Ewch o’r ffôn i’r gliniadur ac yn ôl</string>
+    <!-- Description for sign in to sync screen. -->
+    <string name="juno_onboarding_sign_in_description" tools:ignore="UnusedResources">Cipiwch dabiau a chyfrineiriau o’ch dyfeisiau eraill i barhau lle roeddech chi gynt.</string>
+    <!-- Text for the button to sign in to sync on the device -->
+    <string name="juno_onboarding_sign_in_positive_button" tools:ignore="UnusedResources">Mewngofnodi</string>
+    <!-- Text for the button dismiss the screen and move on with the flow -->
+    <string name="juno_onboarding_sign_in_negative_button" tools:ignore="UnusedResources">Nid nawr</string>
+    <!-- Title for enable notification permission screen.
+        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
+    <string name="juno_onboarding_enable_notifications_title" moz:RemovedIn="117" tools:ignore="UnusedResources">Mae hysbysiadau yn eich helpu i wneud mwy gyda %s</string>
+    <!-- Title for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_enable_notifications_title_nimbus" tools:ignore="UnusedResources">Mae hysbysiadau yn eich helpu i wneud rhagor gyda Firefox</string>
+    <!-- Description for enable notification permission screen.
+        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
+    <string name="juno_onboarding_enable_notifications_description" moz:RemovedIn="117" tools:ignore="UnusedResources">Anfonwch dabiau rhwng dyfeisiau, rheoli llwytho a chael awgrymiadau ar sut i gael y gorau o %s.</string>
+    <!-- Description for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+       Note: The word "Firefox" should NOT be translated   -->
+    <string name="juno_onboarding_enable_notifications_description_nimbus" tools:ignore="UnusedResources">Yn anfon tabiau rhwng dyfeisiau, rheoli llwythi, a chael awgrymiadau am sut i gael y gorau o Firefox.</string>
+    <!-- Text for the button to request notification permission on the device -->
+    <string name="juno_onboarding_enable_notifications_positive_button" tools:ignore="UnusedResources">Troi hysbysiadau ymlaen</string>
+    <!-- Text for the button dismiss the screen and move on with the flow -->
+    <string name="juno_onboarding_enable_notifications_negative_button" tools:ignore="UnusedResources">Nid nawr</string>
+
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. The first parameter is the name of the application.-->
     <string name="search_widget_content_description_2">Agor tab %1$s newydd</string>
@@ -319,10 +363,20 @@
     <string name="preferences_category_general">Cyffredinol</string>
     <!-- Preference category for all links about Fenix -->
     <string name="preferences_category_about">Ynghylch</string>
+    <!-- Preference category for settings related to changing the default search engine -->
+    <string name="preferences_category_select_default_search_engine">Dewiswch un</string>
+    <!-- Preference for settings related to managing search shortcuts for the quick search menu -->
+    <string name="preferences_manage_search_shortcuts">Rheoli llwybrau byr chwilio</string>
+    <!-- Summary for preference for settings related to managing search shortcuts for the quick search menu -->
+    <string name="preferences_manage_search_shortcuts_summary">Golygu peiriannau sy’n weladwy yn y ddewislen chwilio</string>
+    <!-- Preference category for settings related to managing search shortcuts for the quick search menu -->
+    <string name="preferences_category_engines_in_search_menu">Peiriannau i’w gweld ar y ddewislen chwilio</string>
     <!-- Preference for settings related to changing the default search engine -->
     <string name="preferences_default_search_engine">Peiriant chwilio rhagosodedig</string>
     <!-- Preference for settings related to Search -->
     <string name="preferences_search">Chwilio</string>
+    <!-- Preference for settings related to Search engines -->
+    <string name="preferences_search_engines">Peiriannau chwilio</string>
     <!-- Preference for settings related to Search address bar -->
     <string name="preferences_search_address_bar">Bar cyfeiriad</string>
     <!-- Preference link to rating Fenix on the Play Store -->
@@ -360,74 +414,52 @@
     <string name="reduce_cookie_banner_option_off">Diffodd</string>
     <!-- Summary of cookie banner handling preference if the setting enabled is set to on -->
     <string name="reduce_cookie_banner_option_on">Ymlaen</string>
-    <!-- Summary for the preference for rejecting all cookies whenever possible. -->
-    <string name="reduce_cookie_banner_summary" moz:RemovedIn="110" tools:ignore="UnusedResources">Mae Firefox yn ceisio gwrthod ceisiadau cwcis ar faneri cwcisyn awtomatig. Os nad oes dewis gwrthod ar gael, gall Firefox dderbyn pob cwci er mwyn cau’r faner.</string>
 
     <!-- Summary for the preference for rejecting all cookies whenever possible. The first parameter is the application name -->
     <string name="reduce_cookie_banner_summary_1">Mae %1$s yn ceisio gwrthod ceisiadau cwci ar faneri cwci yn awtomatig.</string>
     <!-- Text for indicating cookie banner handling is off this site, this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_off_for_site">Diffodd ar gyfer y wefan hon</string>
+    <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
+    <string name="cookie_banner_handling_details_site_is_not_supported_cancel_button">Diddymu</string>
+    <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
+    <string name="cookie_banner_handling_details_site_is_not_supported_request_support_button_2">Anfon cais</string>
+    <!-- Text for title indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
+    <string name="cookie_banner_handling_details_site_is_not_supported_title_2">Gwneud cais am gefnogaeth ar gyfer y wefan hon?</string>
+    <!-- Label for the snackBar, after the user reports with success a website where cookie banner reducer did not work -->
+    <string name="cookie_banner_handling_report_site_snack_bar_text_2">Cais wedi ei anfon</string>
     <!-- Text for indicating cookie banner handling is on this site, this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_on_for_site">Ymlaen ar gyfer y wefan hon</string>
 
+    <!-- Text for indicating that a request for unsupported site was sent to Nimbus (it's a Mozilla library for experiments), this is shown as part of the protections panel with the tracking protection toggle -->
+    <string name="reduce_cookie_banner_unsupported_site_request_submitted_2">Cais am gefnogaeth wedi’i anfon</string>
     <!-- Text for indicating cookie banner handling is currently not supported for this site, this is shown as part of the protections panel with the tracking protection toggle -->
-    <string name="reduce_cookie_banner_unsupported_site" tools:ignore="UnusedResources">Nid yw’r wefan yn cael ei chefnogi ar hyn o bryd</string>
+    <string name="reduce_cookie_banner_unsupported_site">Nid yw’r wefan yn cael ei chefnogi ar hyn o bryd</string>
     <!-- Title text for a detail explanation indicating cookie banner handling is on this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
     <string name="reduce_cookie_banner_details_panel_title_on_for_site">Troi Llai o Faneri Cwcis ymlaen ar %1$s?</string>
     <!-- Title text for a detail explanation indicating cookie banner handling is off this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
     <string name="reduce_cookie_banner_details_panel_title_off_for_site">Diffodd Llai o Faneri Cwcis ar %1$s?</string>
+    <!-- Title text for a detail explanation indicating cookie banner reducer didn't work for the current site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name-->
+    <string name="reduce_cookie_banner_details_panel_title_unsupported_site_request_2">Nid yw %1$s yn gallu gwrthod ceisiadau cwcis ar y wefan hon yn awtomatig. Gallwch anfon cais i gefnogi’r wefan hon yn y dyfodol.</string>
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
     <string name="reduce_cookie_banner_details_panel_description_off_for_site">Bydd %1$s yn clirio cwcis y wefan hon ac yn adnewyddu’r dudalen. Gall clirio pob cwci eich allgofnodi neu wagio eich certiau siopa.</string>
-    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first and second parameter are the application name -->
-    <string name="reduce_cookie_banner_details_panel_description_on_for_site" moz:RemovedIn="110" tools:ignore="UnusedResources">Gall %1$s geisio gwrthod ceisiadau cwcis yn awtomatig. Os nad oes dewis gwrthod ar gael, gall %2$s dderbyn pob cwci er mwyn cau’r faner.</string>
 
-    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter are the application name -->
-    <string name="reduce_cookie_banner_details_panel_description_on_for_site_1" moz:RemovedIn="111" tools:ignore="UnusedResources">Gall %1$s geisio gwrthod ceisiadau cwcis yn awtomatig.</string>
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
     <string name="reduce_cookie_banner_details_panel_description_on_for_site_2">Mae %1$s yn ceisio gwrthod yn awtomatig pob cais cwci ar wefannau sy’n cael eu cefnogi.</string>
-    <!-- Title text for the dialog use on the control branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_control_experiment_dialog_title" moz:RemovedIn="112" tools:ignore="UnusedResources">Gwaredu baneri cwcis!</string>
     <!-- Title text for the cookie banner re-engagement dialog. The first parameter is the application name. -->
     <string name="reduce_cookie_banner_dialog_title">Caniatáu i %1$s wrthod baneri cwci?</string>
-    <!-- Body text for the dialog use on the control branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_control_experiment_dialog_body" moz:RemovedIn="110" tools:ignore="UnusedResources">Gwrthod ceisiadau cwcis yn awtomatig, pan fo modd. Fel arall, derbyn pob cwci i ddiystyru baneri cwcis.</string>
 
-    <!-- Body text for the dialog use on the control branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_control_experiment_dialog_body_1" moz:RemovedIn="111" tools:ignore="UnusedResources">Gwrthod ceisiadau cwcis yn awtomatig, pan fo modd.</string>
-    <!-- Body text for the dialog use on the control branch of the experiment to determine which context users engaged the most.The first parameter is the application name -->
-    <string name="reduce_cookie_banner_control_experiment_dialog_body_2" moz:RemovedIn="112" tools:ignore="UnusedResources">Caniatáu i %1$s wrthod ceisiadau cwcis yn awtomatig pan fo modd?</string>
     <!-- Body text for the cookie banner re-engagement dialog use. The first parameter is the application name. -->
     <string name="reduce_cookie_banner_dialog_body">Gall %1$s wrthod llawer o geisiadau baner cwci yn awtomatig.</string>
     <!-- Remind me later text button for the onboarding dialog -->
     <string name="reduce_cookie_banner_dialog_not_now_button">Nid Nawr</string>
-    <!-- Change setting text button, for the dialog use on the control branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_control_experiment_dialog_change_setting_button" moz:RemovedIn="112" tools:ignore="UnusedResources">Cau baneri</string>
     <!-- Snack text for the cookie banner dialog, after user hit the dismiss banner button -->
     <string name="reduce_cookie_banner_dialog_snackbar_text">Fe welwch lai o geisiadau cwcis</string>
-    <!-- Title text for the dialog use on the variant 1 branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_variant_1_experiment_dialog_title" moz:RemovedIn="112" tools:ignore="UnusedResources">Gweld llai o lamlenni cwci</string>
-    <!-- Body text for the dialog use on the variant 1 branch of the experiment to determine which context users engaged the most. The first parameter is the application name. -->
-    <string name="reduce_cookie_banner_variant_1_experiment_dialog_body" moz:RemovedIn="110" tools:ignore="UnusedResources">Atebwch ffenestri llamlenni cwci yn awtomatig er mwyn gallu pori heb eich poeni. Bydd %1$s yn gwrthod pob cais os yn bosib, neu’n derbyn pob un os nad.</string>
-    <!-- Body text for the dialog use on the variant 1 branch of the experiment to determine which context users engaged the most. The first parameter is the application name. -->
-    <string name="reduce_cookie_banner_variant_1_experiment_dialog_body_1" moz:RemovedIn="112" tools:ignore="UnusedResources">Atebwch ffenestri llamlenni cwci yn awtomatig er mwyn gallu pori heb eich poeni. Bydd %1$s yn gwrthod pob cais os yn bosib.</string>
-    <!-- Change setting text button, for the onboarding dialog use on the variant 1 branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_variant_1_experiment_dialog_change_setting_button" moz:RemovedIn="112" tools:ignore="UnusedResources">Cau Llamlenni</string>
-    <!-- Title text for the dialog use on the variant 2 branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_variant_2_experiment_dialog_title" moz:RemovedIn="112" tools:ignore="UnusedResources">Cyfyngu Baneri Cwcis</string>
-    <!-- Body text for the dialog use on the variant 2 branch of the experiment to determine which context users engaged the most. The first parameter is the application name. -->
-    <string name="reduce_cookie_banner_variant_2_experiment_dialog_body" moz:RemovedIn="110" tools:ignore="UnusedResources">Caniatáu i %1$s wrthod cais caniatâd cwci gwefan os yn bosibl neu dderbyn mynediad cwci pan nad yw’n bosibl?</string>
-    <!-- Body text for the dialog use on the variant 2 branch of the experiment to determine which context users engaged the most. The first parameter is the application name. -->
-    <string name="reduce_cookie_banner_variant_2_experiment_dialog_body_1" moz:RemovedIn="112" tools:ignore="UnusedResources">Caniatáu i %1$s wrthod cais caniatâd cwci gwefan os yn bosibl?</string>
-    <!-- Change setting text button, for the dialog use on the variant 2 branch of the experiment to determine which context users engaged the most -->
-    <string name="reduce_cookie_banner_variant_2_experiment_dialog_change_setting_button" moz:RemovedIn="112" tools:ignore="UnusedResources">Caniatáu</string>
 
     <!-- Change setting text button, for the cookie banner re-engagement dialog -->
     <string name="reduce_cookie_banner_dialog_change_setting_button">Caniatáu</string>
 
     <!-- Description of the preference to enable "HTTPS-Only" mode. -->
     <string name="preferences_https_only_summary">Yn ceisio cysylltu’n awtomatig â gwefannau gan ddefnyddio’r protocol amgryptio HTTPS am fwy o ddiogelwch.</string>
-    <!-- Summary of tracking protection preference if tracking protection is set to on -->
-    <string name="preferences_https_only_on" moz:removedIn="111" tools:ignore="UnusedResources">Ymlaen</string>
     <!-- Summary of https only preference if https only is set to off -->
     <string name="preferences_https_only_off">Diffodd</string>
     <!-- Summary of https only preference if https only is set to on in all tabs -->
@@ -512,6 +544,11 @@
     <string name="preferences_open_links_in_apps_never">Byth</string>
     <!-- Preference for open download with an external download manager app -->
     <string name="preferences_external_download_manager">Rheolwr llwytho i lawr allanol</string>
+    <!-- Preference for enabling gecko engine logs -->
+    <string name="preferences_enable_gecko_logs">Galluogi cofnodion Gecko</string>
+    <!-- Message to indicate users that we are quitting the application to apply the changes -->
+    <string name="quit_application">Yn gadael y rhaglen er mwyn gosod y newidiadau…</string>
+
     <!-- Preference for add_ons -->
     <string name="preferences_addons">Ychwanegion</string>
 
@@ -576,11 +613,17 @@
     <!-- Text for classic wallpapers title. The first parameter is the Firefox name. -->
     <string name="wallpaper_classic_title">%s clasurol</string>
     <!-- Text for limited edition wallpapers title. -->
-    <string name="wallpaper_limited_edition_title">Fersiwn Cyfyngedig</string>
+    <string name="wallpaper_limited_edition_title" moz:RemovedIn="118" tools:ignore="UnusedResources">Fersiwn Cyfyngedig</string>
+    <!-- Text for artist series wallpapers title. "Artist series" represents a collection of artist collaborated wallpapers. -->
+    <string name="wallpaper_artist_series_title">Cyfres artistiaid</string>
     <!-- Description text for the limited edition wallpapers with learn more link. The first parameter is the learn more string defined in wallpaper_learn_more-->
-    <string name="wallpaper_limited_edition_description_with_learn_more">Casgliad newydd Lleisiau Annibynnol. %s</string>
+    <string name="wallpaper_limited_edition_description_with_learn_more" moz:RemovedIn="118" tools:ignore="UnusedResources">Casgliad newydd Lleisiau Annibynnol. %s</string>
+    <!-- Description text for the artist series wallpapers with learn more link. The first parameter is the learn more string defined in wallpaper_learn_more. "Independent voices" is the name of the wallpaper collection -->
+    <string name="wallpaper_artist_series_description_with_learn_more">Casgliad Lleisiau’r Annibynwyr. %s</string>
     <!-- Description text for the limited edition wallpapers. -->
-    <string name="wallpaper_limited_edition_description">Casgliad newydd Lleisiau Annibynnol.</string>
+    <string name="wallpaper_limited_edition_description" moz:RemovedIn="118" tools:ignore="UnusedResources">Casgliad newydd Lleisiau Annibynnol.</string>
+    <!-- Description text for the artist series wallpapers. "Independent voices" is the name of the wallpaper collection -->
+    <string name="wallpaper_artist_series_description">Casgliad Lleisiau’r Annibynwyr.</string>
     <!-- Wallpaper onboarding dialog header text. -->
     <string name="wallpapers_onboarding_dialog_title_text">Ychwanegwch bach o liw</string>
     <!-- Wallpaper onboarding dialog body text. -->
@@ -594,7 +637,20 @@
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is already installed -->
     <string name="addon_already_installed">Mae’r ychwanegyn eisoes wedi’i osod</string>
 
+    <!-- Add-on process crash dialog to user -->
+    <!-- Title of a dialog shown to the user when enough errors have occurred with addons and they need to be temporarily disabled -->
+    <string name="addon_process_crash_dialog_title" tools:ignore="UnusedResources">Mae ychwanegion wedi’u hanalluogi dros dro</string>
+    <!-- The first parameter is the application name. This is a message shown to the user when too many errors have occurred with the addons process and they have been disabled. The user can decide if they would like to continue trying to start add-ons or if they'd rather continue without them. -->
+    <string name="addon_process_crash_dialog_message" tools:ignore="UnusedResources">Rhoddodd un neu fwy o ategion y gorau i weithio, gan wneud eich system yn ansefydlog. Ceisiodd %1$s ailgychwyn yr ychwanegyn(ion) yn aflwyddiannus.\n\nNi fydd ychwanegion yn cael eu hailddechrau yn ystod eich sesiwn gyfredol.\n\nGallai dileu neu analluogi ychwanegion ddatrys y broblem hon.</string>
+    <!-- This will cause the add-ons to try restarting but the dialog will reappear if it is unsuccessful again -->
+    <string name="addon_process_crash_dialog_retry_button_text" tools:ignore="UnusedResources">Ceisiwch ailgychwyn ychwanegion</string>
+
+    <!-- The user will continue with all add-ons disabled -->
+    <string name="addon_process_crash_dialog_disable_addons_button_text" tools:ignore="UnusedResources">Parhau gydag ychwanegion wedi’u hanalluogi</string>
+
     <!-- Account Preferences -->
+    <!-- Preference for managing your account via accounts.firefox.com -->
+    <string name="preferences_manage_account">Rheoli cyfrif</string>
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">Cydweddu nawr</string>
     <!-- Preference category for sync -->
@@ -738,15 +794,9 @@
     <!-- Dialog button text for canceling open all tabs -->
     <string name="open_all_warning_cancel">Diddymu</string>
 
-    <!-- Text to show users they have one site in the history group section of the History fragment.
-    %d is a placeholder for the number of sites in the group. -->
-    <string name="history_search_group_site" moz:RemovedIn="111" tools:ignore="UnusedResources">%d gwefan</string>
     <!-- Text to show users they have one page in the history group section of the History fragment.
     %d is a placeholder for the number of pages in the group. -->
     <string name="history_search_group_site_1">%d tudalen</string>
-    <!-- Text to show users they have multiple sites in the history group section of the History fragment.
-    %d is a placeholder for the number of sites in the group. -->
-    <string name="history_search_group_sites" moz:RemovedIn="111" tools:ignore="UnusedResources">%d gwefan</string>
 
     <!-- Text to show users they have multiple pages in the history group section of the History fragment.
     %d is a placeholder for the number of pages in the group. -->
@@ -1079,8 +1129,6 @@
     <string name="phone_feature_blocked_by_android">Rhwystrwyd gan Android</string>
     <!-- Preference for showing a list of websites that the default configurations won't apply to them -->
     <string name="preference_exceptions">Eithriadau</string>
-    <!-- Summary of tracking protection preference if tracking protection is set to on -->
-    <string name="tracking_protection_on" moz:removedIn="111" tools:ignore="UnusedResources">Ymlaen</string>
     <!-- Summary of tracking protection preference if tracking protection is set to off -->
     <string name="tracking_protection_off">Diffodd</string>
     <!-- Summary of tracking protection preference if tracking protection is set to standard -->
@@ -1172,8 +1220,16 @@
     <string name="share_button_content_description">Rhannu</string>
     <!-- Text for the Save to PDF feature in the share menu -->
     <string name="share_save_to_pdf">Cadw fel PDF</string>
-    <!-- Text for error message when generating a PDF file Text for error message when generating a PDF file. -->
+    <!-- Text for error message when generating a PDF file Text. -->
     <string name="unable_to_save_to_pdf_error">Methu cynhyrchu PDF</string>
+    <!-- Text for standard error snackbar dismiss button. -->
+    <string name="standard_snackbar_error_dismiss">Cau</string>
+    <!-- Text for error message when printing a page and it fails. -->
+    <string name="unable_to_print_error" moz:removedIn="121" tools:ignore="UnusedResources">Methu argraffu</string>
+    <!-- Text for error message when printing a page and it fails. -->
+    <string name="unable_to_print_page_error">Methu argraffu’r dudalen hon</string>
+    <!-- Text for the print feature in the share and browser menu -->
+    <string name="menu_print">Argraffu</string>
     <!-- Sub-header in the dialog to share a link to another sync device -->
     <string name="share_device_subheader">Anfon i ddyfais</string>
     <!-- Sub-header in the dialog to share a link to an app from the full list -->
@@ -1239,6 +1295,15 @@
     <!-- Text B shown in the notification that pops up to re-engage the user -->
     <string name="notification_re_engagement_B_text">Canfod rhywbeth gerllaw. Neu darganfod rywbeth difyr.</string>
 
+    <!-- Survey -->
+    <!-- Text shown in the fullscreen message that pops up to ask user to take a short survey.
+    The app name is in the text, due to limitations with localizing Nimbus experiments -->
+    <string name="nimbus_survey_message_text">Helpwch i wneud Firefox yn well drwy lanw arolwg byr.</string>
+    <!-- Preference for taking the short survey. -->
+    <string name="preferences_take_survey">Llenwch yr Arolwg</string>
+    <!-- Preference for not taking the short survey. -->
+    <string name="preferences_not_take_survey">Dim Diolch</string>
+
     <!-- Snackbar -->
     <!-- Text shown in snackbar when user deletes a collection -->
     <string name="snackbar_collection_deleted">Dilëwyd y casgliad</string>
@@ -1303,12 +1368,16 @@
     <!-- Subtitle for the tabs item in Delete browsing data, parameter will be replaced with the number of open tabs -->
     <string name="preferences_delete_browsing_data_tabs_subtitle">%d tab</string>
     <!-- Title for the data and history items in Delete browsing data -->
-    <string name="preferences_delete_browsing_data_browsing_data_title">Hanes pori a data gwefan</string>
+    <string name="preferences_delete_browsing_data_browsing_data_title" moz:removedIn="118" tools:ignore="UnusedResources">Hanes pori a data gwefan</string>
+    <!-- Title for the history item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_browsing_history_title">Hanes pori</string>
     <!-- Subtitle for the data and history items in delete browsing data, parameter will be replaced with the
         number of history items the user has -->
     <string name="preferences_delete_browsing_data_browsing_data_subtitle">%d cyfeiriad</string>
     <!-- Title for the cookies item in Delete browsing data -->
-    <string name="preferences_delete_browsing_data_cookies">Cwcis</string>
+    <string name="preferences_delete_browsing_data_cookies" moz:removedIn="118" tools:ignore="UnusedResources">Cwcis</string>
+    <!-- Title for the cookies and site data items in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_cookies_and_site_data">Cwcis a data gwefan</string>
     <!-- Subtitle for the cookies item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_cookies_subtitle">Byddwch wedi eich allgofnodi o’r mwyafrif o wefannau</string>
     <!-- Title for the cached images and files item in Delete browsing data -->
@@ -1331,7 +1400,9 @@
     <!-- Title text of a delete browsing data dialog. -->
     <string name="delete_history_prompt_title">Ystod amser i’w ddileu</string>
     <!-- Body text of a delete browsing data dialog. -->
-    <string name="delete_history_prompt_body">Yn dileu hanes (gan gynnwys hanes wedi’i gydweddu o ddyfeisiau eraill), cwcis a data pori arall.</string>
+    <string name="delete_history_prompt_body" moz:RemovedIn="130" tools:ignore="UnusedResources">Yn dileu hanes (gan gynnwys hanes wedi’i gydweddu o ddyfeisiau eraill), cwcis a data pori arall.</string>
+    <!-- Body text of a delete browsing data dialog. -->
+    <string name="delete_history_prompt_body_2">Yn dileu hanes (gan gynnwys hanes wedi’i gydweddu o ddyfeisiau eraill)</string>
     <!-- Radio button in the delete browsing data dialog to delete history items for the last hour. -->
     <string name="delete_history_prompt_button_last_hour">Awr diwethaf</string>
     <!-- Radio button in the delete browsing data dialog to delete history items for today and yesterday. -->
@@ -1361,61 +1432,61 @@
 
     <!-- Onboarding -->
     <!-- Text for onboarding welcome header. -->
-    <string name="onboarding_header_2">Croeso i rhyngrwyd gwell</string>
+    <string name="onboarding_header_2" moz:RemovedIn="118" tools:ignore="UnusedResources">Croeso i rhyngrwyd gwell</string>
     <!-- Text for the onboarding welcome message. -->
-    <string name="onboarding_message">Porwr a adeiladwyd ar gyfer pobl, nid elw.</string>
+    <string name="onboarding_message" moz:RemovedIn="118" tools:ignore="UnusedResources">Porwr a adeiladwyd ar gyfer pobl, nid elw.</string>
     <!-- Text for the Firefox account onboarding sign in card header. -->
-    <string name="onboarding_account_sign_in_header">Parhau lle roeddech o’r blaen</string>
+    <string name="onboarding_account_sign_in_header" moz:RemovedIn="118" tools:ignore="UnusedResources">Parhau lle roeddech o’r blaen</string>
     <!-- Text for the button to learn more about signing in to your Firefox account. -->
-    <string name="onboarding_manual_sign_in_description">Cydweddu tabiau a chyfrineiriau ar draws dyfeisiau ar gyfer newid sgriniau di-dor.</string>
+    <string name="onboarding_manual_sign_in_description" moz:RemovedIn="118" tools:ignore="UnusedResources">Cydweddu tabiau a chyfrineiriau ar draws dyfeisiau ar gyfer newid sgriniau di-dor.</string>
     <!-- Text for the button to manually sign into Firefox account. -->
-    <string name="onboarding_firefox_account_sign_in">Mewngofnodi</string>
+    <string name="onboarding_firefox_account_sign_in" moz:RemovedIn="118" tools:ignore="UnusedResources">Mewngofnodi</string>
     <!-- text to display in the snackbar once account is signed-in -->
     <string name="onboarding_firefox_account_sync_is_on">Mae Sync ymlaen</string>
 
     <!-- Text for the tracking protection onboarding card header -->
-    <string name="onboarding_tracking_protection_header">Diogelu preifatrwydd drwy ragosodiad</string>
+    <string name="onboarding_tracking_protection_header" moz:RemovedIn="118" tools:ignore="UnusedResources">Diogelu preifatrwydd drwy ragosodiad</string>
     <!-- Text for the tracking protection card description. The first parameter is the name of the application.-->
-    <string name="onboarding_tracking_protection_description_old">Mae %1$s yn awtomatig yn atal cwmnïau rhag eich dilyn yn gyfrinachol o amgylch y we.</string>
+    <string name="onboarding_tracking_protection_description_old" moz:RemovedIn="118" tools:ignore="UnusedResources">Mae %1$s yn awtomatig yn atal cwmnïau rhag eich dilyn yn gyfrinachol o amgylch y we.</string>
     <!-- Text for the tracking protection card description. -->
-    <string name="onboarding_tracking_protection_description">Yn cynnwys Diogelwch Cwcis Llwyr i atal tracwyr rhag defnyddio cwcis i’ch stelcian ar draws gwefannau.</string>
+    <string name="onboarding_tracking_protection_description" moz:RemovedIn="118" tools:ignore="UnusedResources">Yn cynnwys Diogelwch Cwcis Llwyr i atal tracwyr rhag defnyddio cwcis i’ch stelcian ar draws gwefannau.</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
-    <string name="onboarding_tracking_protection_standard_button_2">Safonol (rhagosodedig)</string>
+    <string name="onboarding_tracking_protection_standard_button_2" moz:RemovedIn="118" tools:ignore="UnusedResources">Safonol (rhagosodedig)</string>
     <!-- text for standard blocking option button description -->
-    <string name="onboarding_tracking_protection_standard_button_description_3">Cydbwysedd rhwng diogelwch a pherfformiad. Bydd tudalennau’n llwytho fel arfer.</string>
+    <string name="onboarding_tracking_protection_standard_button_description_3" moz:RemovedIn="118" tools:ignore="UnusedResources">Cydbwysedd rhwng diogelwch a pherfformiad. Bydd tudalennau’n llwytho fel arfer.</string>
     <!-- text for tracking protection radio button option for strict level of blocking -->
-    <string name="onboarding_tracking_protection_strict_option">Llym</string>
+    <string name="onboarding_tracking_protection_strict_option" moz:RemovedIn="118" tools:ignore="UnusedResources">Llym</string>
     <!-- text for strict blocking option button description -->
-    <string name="onboarding_tracking_protection_strict_button_description_3">Yn rhwystro mwy o dracwyr fel bod tudalennau’n llwytho’n gyflymach, ond gall dorri rhai swyddogaethau ar y dudalen.</string>
+    <string name="onboarding_tracking_protection_strict_button_description_3" moz:RemovedIn="118" tools:ignore="UnusedResources">Yn rhwystro mwy o dracwyr fel bod tudalennau’n llwytho’n gyflymach, ond gall dorri rhai swyddogaethau ar y dudalen.</string>
     <!-- text for the toolbar position card header  -->
-    <string name="onboarding_toolbar_placement_header_1">Dewiswch leoliad eich bar offer</string>
+    <string name="onboarding_toolbar_placement_header_1" moz:RemovedIn="118" tools:ignore="UnusedResources">Dewiswch leoliad eich bar offer</string>
     <!-- Text for the toolbar position card description -->
-    <string name="onboarding_toolbar_placement_description">Ei gadw ar y gwaelod, neu ei symud i’r brig.</string>
+    <string name="onboarding_toolbar_placement_description" moz:RemovedIn="118" tools:ignore="UnusedResources">Ei gadw ar y gwaelod, neu ei symud i’r brig.</string>
     <!-- Text for the privacy notice onboarding card header -->
-    <string name="onboarding_privacy_notice_header_1">Chi sy’n rheoli eich data</string>
+    <string name="onboarding_privacy_notice_header_1" moz:RemovedIn="118" tools:ignore="UnusedResources">Chi sy’n rheoli eich data</string>
     <!-- Text for the privacy notice onboarding card description. -->
-    <string name="onboarding_privacy_notice_description">Mae Firefox yn rhoi rheolaeth i chi dros yr hyn rydych chi’n ei rannu ar-lein a’r hyn rydych chi’n ei rannu gyda ni.</string>
+    <string name="onboarding_privacy_notice_description" moz:RemovedIn="118" tools:ignore="UnusedResources">Mae Firefox yn rhoi rheolaeth i chi dros yr hyn rydych chi’n ei rannu ar-lein a’r hyn rydych chi’n ei rannu gyda ni.</string>
     <!-- Text for the button to read the privacy notice -->
-    <string name="onboarding_privacy_notice_read_button">Darllenwch ein hysbysiad preifatrwydd</string>
+    <string name="onboarding_privacy_notice_read_button" moz:RemovedIn="118" tools:ignore="UnusedResources">Darllenwch ein hysbysiad preifatrwydd</string>
 
     <!-- Text for the conclusion onboarding message -->
-    <string name="onboarding_conclusion_header">Yn barod i agor rhyngrwyd rhyfeddol?</string>
+    <string name="onboarding_conclusion_header" moz:RemovedIn="118" tools:ignore="UnusedResources">Yn barod i agor rhyngrwyd rhyfeddol?</string>
     <!-- text for the button to finish onboarding -->
-    <string name="onboarding_finish">Cychwyn pori</string>
+    <string name="onboarding_finish" moz:RemovedIn="118" tools:ignore="UnusedResources">Cychwyn pori</string>
 
     <!-- Onboarding theme -->
     <!-- text for the theme picker onboarding card header -->
-    <string name="onboarding_theme_picker_header">Dewiswch eich thema</string>
+    <string name="onboarding_theme_picker_header" moz:RemovedIn="118" tools:ignore="UnusedResources">Dewiswch eich thema</string>
     <!-- text for the theme picker onboarding card description -->
-    <string name="onboarding_theme_picker_description_2">Arbedwch ychydig o fatri a’ch golwg trwy alluogi’r modd tywyll.</string>
+    <string name="onboarding_theme_picker_description_2" moz:RemovedIn="118" tools:ignore="UnusedResources">Arbedwch ychydig o fatri a’ch golwg trwy alluogi’r modd tywyll.</string>
     <!-- Automatic theme setting (will follow device setting) -->
-    <string name="onboarding_theme_automatic_title">Awtomatig</string>
+    <string name="onboarding_theme_automatic_title" moz:RemovedIn="118" tools:ignore="UnusedResources">Awtomatig</string>
     <!-- Summary of automatic theme setting (will follow device setting) -->
-    <string name="onboarding_theme_automatic_summary">Yn addasu i osodiadau eich dyfais</string>
+    <string name="onboarding_theme_automatic_summary" moz:RemovedIn="118" tools:ignore="UnusedResources">Yn addasu i osodiadau eich dyfais</string>
     <!-- Theme setting for dark mode -->
-    <string name="onboarding_theme_dark_title">Thema dywyll</string>
+    <string name="onboarding_theme_dark_title" moz:RemovedIn="118" tools:ignore="UnusedResources">Thema dywyll</string>
     <!-- Theme setting for light mode -->
-    <string name="onboarding_theme_light_title">Thema olau</string>
+    <string name="onboarding_theme_light_title" moz:RemovedIn="118" tools:ignore="UnusedResources">Thema olau</string>
 
     <!-- Text shown in snackbar when multiple tabs have been sent to device -->
     <string name="sync_sent_tabs_snackbar">Tabiau wedi’u hanfon!</string>
@@ -1451,30 +1522,22 @@
     <string name="etp_settings">Gosodiadau Diogelu</string>
     <!-- Preference title for enhanced tracking protection settings -->
     <string name="preference_enhanced_tracking_protection">Diogelwch Uwch Rhag Tracio</string>
-    <!-- Title for the description of enhanced tracking protection -->
-    <string name="preference_enhanced_tracking_protection_explanation_title">Pori heb gael eich dilyn</string>
     <!-- Preference summary for enhanced tracking protection settings on/off switch -->
-    <string name="preference_enhanced_tracking_protection_summary" tools:ignore="UnusedResources">Nawr yn cynnwys Diogelwch Cwci Llwyr, ein rhwystr mwyaf pwerus eto yn erbyn tracwyr traws-gwefan.</string>
-    <!-- Description of enhanced tracking protection. The first parameter is the name of the application (For example: Fenix) -->
-    <string name="preference_enhanced_tracking_protection_explanation">Cadwch eich data i chi’ch hun. Mae %s yn eich diogelu rhag llawer o’r tracwyr mwyaf cyffredin sy’n eich dilyn ar-lein.</string>
+    <string name="preference_enhanced_tracking_protection_summary">Nawr yn cynnwys Diogelwch Cwci Llwyr, ein rhwystr mwyaf pwerus eto yn erbyn tracwyr traws-gwefan.</string>
     <!-- Description of enhanced tracking protection. The parameter is the name of the application (For example: Firefox Fenix) -->
-    <string name="preference_enhanced_tracking_protection_explanation_2" tools:ignore="UnusedResources">Mae %s yn eich diogelu rhag llawer o’r tracwyr mwyaf cyffredin sy’n dilyn yr hyn rydych chi’n ei wneud ar-lein.</string>
+    <string name="preference_enhanced_tracking_protection_explanation_2">Mae %s yn eich diogelu rhag llawer o’r tracwyr mwyaf cyffredin sy’n dilyn yr hyn rydych chi’n ei wneud ar-lein.</string>
     <!-- Text displayed that links to website about enhanced tracking protection -->
     <string name="preference_enhanced_tracking_protection_explanation_learn_more">Dysgu rhagor</string>
     <!-- Preference for enhanced tracking protection for the standard protection settings -->
     <string name="preference_enhanced_tracking_protection_standard_default_1">Safonol (rhagosodedig)</string>
     <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description_4">Cydbwysedd rhwng diogelwch a pherfformiad. Bydd tudalennau’n llwytho fel arfer.</string>
-    <!-- Preference description for enhanced tracking protection for the standard protection settings -->
-    <string name="preference_enhanced_tracking_protection_standard_description_5" tools:ignore="UnusedResources">Bydd tudalennau’n llwytho fel arfer, ond yn rhwystro llai o dracwyr.</string>
+    <string name="preference_enhanced_tracking_protection_standard_description_5">Bydd tudalennau’n llwytho fel arfer, ond yn rhwystro llai o dracwyr.</string>
     <!--  Accessibility text for the Standard protection information icon  -->
     <string name="preference_enhanced_tracking_protection_standard_info_button">Beth sydd wedi’i rwystro gan ddiogelu tracio safonol</string>
     <!-- Preference for enhanced tracking protection for the strict protection settings -->
     <string name="preference_enhanced_tracking_protection_strict">Llym</string>
     <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_description_3">Yn rhwystro mwy o dracwyr fel bod tudalennau’n llwytho’n gyflymach, ond gall dorri rhai swyddogaethau ar y dudalen.</string>
-    <!-- Preference description for enhanced tracking protection for the strict protection settings -->
-    <string name="preference_enhanced_tracking_protection_strict_description_4" tools:ignore="UnusedResources">Diogelwch tracio cryfach a pherfformiad cyflymach, ond efallai na fydd rhai gwefannau’n gweithio’n iawn.</string>
+    <string name="preference_enhanced_tracking_protection_strict_description_4">Diogelwch tracio cryfach a pherfformiad cyflymach, ond efallai na fydd rhai gwefannau’n gweithio’n iawn.</string>
     <!--  Accessibility text for the Strict protection information icon  -->
     <string name="preference_enhanced_tracking_protection_strict_info_button">Beth sydd wedi’i rwystro gan ddiogelu tracio llym</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
@@ -1562,6 +1625,10 @@
     <string name="preference_etp_smartblock_description">Mae rhai tracwyr sydd wedi’u marcio isod wedi cael eu dad-rwystr’n rhannol ar y dudalen hon oherwydd i chi ryngweithio â nhw *.</string>
     <!-- Text displayed that links to website about enhanced tracking protection SmartBlock -->
     <string name="preference_etp_smartblock_learn_more">Dysgu rhagor</string>
+
+    <!-- Content description (not visible, for screen readers etc.):
+    Enhanced tracking protection exception preference icon for ETP settings. -->
+    <string name="preference_etp_exceptions_icon_description">Eicon dewis eithriad diogelu tracio gwell</string>
 
     <!-- About page link text to open support link -->
     <string name="about_support">Cefnogaeth</string>
@@ -1826,6 +1893,8 @@
 
     <!-- Title of the Add search engine screen -->
     <string name="search_engine_add_custom_search_engine_title">Ychwanegu peiriant chwilio</string>
+    <!-- Content description (not visible, for screen readers etc.): Title for the button that navigates to add new engine screen -->
+    <string name="search_engine_add_custom_search_engine_button_content_description">Ychwanegu peiriant chwilio newydd</string>
     <!-- Title of the Edit search engine screen -->
     <string name="search_engine_edit_custom_search_engine_title">Golygu peiriant chwilio</string>
     <!-- Content description (not visible, for screen readers etc.): Title for the button to add a search engine in the action bar -->
@@ -1839,15 +1908,34 @@
 
     <!-- Text for the button to create a custom search engine on the Add search engine screen -->
     <string name="search_add_custom_engine_label_other">Eraill</string>
+    <!-- Label for the TextField in which user enters custom search engine name -->
+    <string name="search_add_custom_engine_name_label">Enw</string>
     <!-- Placeholder text shown in the Search Engine Name TextField before a user enters text -->
     <string name="search_add_custom_engine_name_hint">Enw</string>
+    <!-- Placeholder text shown in the Search Engine Name text field before a user enters text -->
+    <string name="search_add_custom_engine_name_hint_2">Enw peiriant chwilio</string>
+    <!-- Label for the TextField in which user enters custom search engine URL -->
+    <string name="search_add_custom_engine_url_label">URL llinyn chwilio</string>
     <!-- Placeholder text shown in the Search String TextField before a user enters text -->
     <string name="search_add_custom_engine_search_string_hint">Llinyn chwilio i’w ddefnyddio</string>
+    <!-- Placeholder text shown in the Search String TextField before a user enters text -->
+    <string name="search_add_custom_engine_search_string_hint_2">URL i’w ddefnyddio i chwilio</string>
     <!-- Description text for the Search String TextField. The %s is part of the string -->
     <string name="search_add_custom_engine_search_string_example" formatted="false">Disodli’r ymholiad â “%s”. Enghraifft:\nhttps://www.google.com/search?q=%s</string>
 
     <!-- Accessibility description for the form in which details about the custom search engine are entered -->
     <string name="search_add_custom_engine_form_description">Manylion peiriant chwilio cyfaddas</string>
+
+    <!-- Label for the TextField in which user enters custom search engine suggestion URL -->
+    <string name="search_add_custom_engine_suggest_url_label">API awgrymiadau chwilio (dewisol)</string>
+    <!-- Placeholder text shown in the Search Suggestion String TextField before a user enters text -->
+    <string name="search_add_custom_engine_suggest_string_hint">URL API awgrymiadau chwilio</string>
+    <!-- Description text for the Search Suggestion String TextField. The %s is part of the string -->
+    <string name="search_add_custom_engine_suggest_string_example" formatted="false" moz:RemovedIn="118" tools:ignore="UnusedResources">Amnewid yr ymholiad gyda “%s”. Enghraifft:\nhttp://suggestqueries.google.com/complete/search?client=firefox&amp;q=%s</string>
+    <!-- Description text for the Search Suggestion String TextField. The %s is part of the string -->
+    <string name="search_add_custom_engine_suggest_string_example_2" formatted="false">Disodli ymholiad gyda “%s”. Enghraifft:\nhttps://suggestqueries.google.com/complete/search?client=firefox&amp;q=%s</string>
+    <!-- The text for the "Save" button for saving a custom search engine -->
+    <string name="search_custom_engine_save_button">Cadw</string>
 
     <!-- Text shown when a user leaves the name field empty -->
     <string name="search_add_custom_engine_error_empty_name">Rhowch enw peiriant chwilio</string>

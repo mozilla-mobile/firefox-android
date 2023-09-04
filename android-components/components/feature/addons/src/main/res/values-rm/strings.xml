@@ -40,6 +40,8 @@
     <string name="mozac_feature_addons_permissions_clipboard_write_description">Scriver datas en l\'archiv provisoric</string>
     <!-- Description for declarativeNetRequest permission. -->
     <string name="mozac_feature_addons_permissions_declarative_net_request_description">Bloccar cuntegn sin n\'emporta betg tge pagina</string>
+    <!-- Description for declarativeNetRequestFeedback permission. -->
+    <string name="mozac_feature_addons_permissions_declarative_net_request_feedback_description">Leger tia cronologia da navigaziun</string>
     <!-- Description for downloads permission. -->
     <string name="mozac_feature_addons_permissions_downloads_description">Telechargiar datotecas e leger e modifitgar la cronologia da telechargiadas dal navigatur</string>
     <!-- Description for downloads_open permission. -->
@@ -168,6 +170,8 @@
     <string name="mozac_feature_addons_successfully_installed">Installà cun success %1$s</string>
     <!-- Text shown after failed to install an add-on. %1$s is the add-on name. -->
     <string name="mozac_feature_addons_failed_to_install">Betg reussì dad installar %1$s</string>
+    <!-- Text shown when attempting to install a blocklisted add-on. %1$s is the add-on name. -->
+    <string name="mozac_feature_addons_blocklisted">Impussibel dad installar %1$s perquai che la ristga è gronda ch\'i dat problems da stabilitad u da segirezza</string>
     <!-- Text shown after successfully enabled an add-on. %1$s is the add-on name. -->
     <string name="mozac_feature_addons_successfully_enabled">Activà cun success %1$s</string>
     <!-- Text shown after failed to enable an add-on. %1$s is the add-on name. -->

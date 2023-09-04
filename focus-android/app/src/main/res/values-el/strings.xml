@@ -111,7 +111,7 @@
 
     <!-- On Android 7+ users can add a shortcut for erasing the browsing history to the home screen.
          This is the label for this shortcut. Android recommends a maximum length of 10 characters. -->
-    <string name="shortcut_erase_and_open_short_label">Διαγραφή &amp; άνοιγμα</string>
+    <string name="shortcut_erase_and_open_short_label">Διαγραφή και άνοιγμα</string>
 
     <!-- The same as 'shortcut_erase_short_label' but more descriptive. The launcher shows this
          instead of the short title when it has enough space. Android recommends a maximum length
@@ -151,7 +151,7 @@
 <a href="%2$s">Μάθετε περισσότερα</a></p>]]></string>
 
     <!-- Header for the Privacy and Security settings menu -->
-    <string name="preference_privacy_and_security_header">Απόρρητο &amp; ασφάλεια</string>
+    <string name="preference_privacy_and_security_header">Απόρρητο και ασφάλεια</string>
 
     <!-- Preference summary for settings related to privacy and security -->
     <string name="preference_privacy_and_security_summary">Επιλογές καταγραφής, cookies, δεδομένων</string>
@@ -181,7 +181,7 @@
     <string name="preference_general_summary2">Προεπιλεγμένος φυλλομετρητής, γλώσσα</string>
 
     <!-- Preference category for settings about sending usage data -->
-    <string name="preference_category_data_collection_use">Συλλογή &amp; χρήση δεδομένων</string>
+    <string name="preference_category_data_collection_use">Συλλογή και χρήση δεδομένων</string>
 
     <string name="preference_category_search">Αναζήτηση</string>
 
@@ -355,6 +355,15 @@
     <!-- In-app link (in settings) to Focus privacy notice. -->
     <string name="preference_privacy_notice">Σημείωση απορρήτου</string>
 
+    <!-- In-app link (in settings) to Focus licensing information. -->
+    <string name="preference_licensing_info">Πληροφορίες άδειας</string>
+
+    <!-- Link to Focus licensing information from other libraries that we use. -->
+    <string name="preference_libraries_we_use">Βιβλιοθήκες που χρησιμοποιούμε</string>
+
+    <!-- Open Source Licenses page title. The first parameter is the app name -->
+    <string name="open_source_licenses_title">%s | Βιβλιοθήκες OSS</string>
+
     <!-- Item in Preferences that shows the about page. Parameter 1 is the app name, i.e. Firefox Focus/Firefox Klar. -->
     <string name="preference_about">Σχετικά με το %1$s</string>
 
@@ -484,7 +493,10 @@
 
 
 
-  <string name="error_hostLookup_title">Ο διακομιστής δεν βρέθηκε</string>
+  <!-- Snackbar that will be displayed after a website has been added to shortcuts. -->
+    <string name="snackbar_added_to_shortcuts">Προστέθηκε στις συντομεύσεις!</string>
+
+    <string name="error_hostLookup_title">Ο διακομιστής δεν βρέθηκε</string>
 
 
 
@@ -709,6 +721,9 @@
     <!-- Text for indicating cookie banner handling is on this site, this is shown as part of the protections panel with the tracking protection toggle. -->
     <string name="cookie_banner_exception_item_description_state_on">ΕΝΕΡΓΗ για αυτόν τον ιστότοπο</string>
 
+    <!-- Text for indicating cookie reducer is not supported on the current site, this is shown as part of the protections panel with the tracking protection toggle. -->
+    <string name="cookie_banner_exception_site_not_supported">Ο ιστότοπος δεν υποστηρίζεται</string>
+
     <!-- Text for indicating cookie banner handling is off this site, this is shown as part of the protections panel with the tracking protection toggle. -->
     <string name="cookie_banner_exception_item_description_state_off">ΑΝΕΝΕΡΓΗ για αυτόν τον ιστότοπο</string>
 
@@ -731,19 +746,26 @@
     <string name="cookie_banner_exception_panel_description_state_on_for_site">Το %1$s θα απαλείψει τα cookies του ιστοτόπου και θα ανανεώσει τη σελίδα. Η απαλοιφή όλων των cookies ενδέχεται να σας αποσυνδέσει ή να αδειάσει τα καλάθια αγορών.</string>
 
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The placeholder will be updated with the app name. -->
-    <string name="cookie_banner_exception_panel_description_state_off_for_site" moz:RemovedIn="111" tools:ignore="UnusedResources">Το %1$s προσπαθεί αυτόματα να απορρίψει τα αιτήματα για cookies. Εάν δεν διατίθεται επιλογή απόρριψης, το %1$s μπορεί να αποδεχτεί όλα τα cookies για να απορρίψει το μήνυμα.</string>
-
-    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The placeholder will be updated with the app name. -->
     <string name="cookie_banner_exception_panel_description_state_off_for_site2">Το %1$s προσπαθεί να απορρίπτει αυτόματα τα αιτήματα για cookies.</string>
 
-    <!-- Contextual Feature Recommendation Popups -->
-    <!-- CFR for Cookie Banner (Banner Info Message). The placeholder will be updated with the app name. -->
-    <string name="cfr_for_cookie_banner" moz:RemovedIn="111" tools:ignore="UnusedResources">Το %1$s προσπαθεί να απορρίψει τα αιτήματα για cookies, ώστε να κλείσει τα ενοχλητικά μηνύματα για cookies.\n\nΔιαχειριστείτε τις προτιμήσεις των μηνυμάτων για cookies στις ρυθμίσεις.</string>
+    <!-- Long text for a detail explanation indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_description_site_is_not_supported">Αυτός ο ιστότοπος δεν υποστηρίζεται προς το παρόν από τη Μείωση μηνυμάτων για cookies. Θέλετε να ζητήσετε από την ομάδα μας να ελέγξει αυτόν τον ιστότοπο και να προσθέσει υποστήριξη στο μέλλον;</string>
 
+    <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_site_is_not_supported_cancel_button">Ακύρωση</string>
+
+    <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_site_is_not_supported_request_support_button">Αίτημα υποστήριξης</string>
+
+    <!-- Label for the snackBar, after the user reports with success a website where cookie banner reducer did not work -->
+    <string name="cookie_banner_report_a_site_snackbar_label">Υποβλήθηκε αίτημα για υποστήριξη ιστοτόπου.</string>
+
+    <!-- Label for cookie banner item from tracking protection, after the user reports with success a website where cookie banner reducer did not work -->
+    <string name="cookie_banner_the_site_was_reported">Υποβλήθηκε αίτημα για υποστήριξη ιστοτόπου.</string>
+
+    <!-- Contextual Feature Recommendation Popups -->
     <!-- CFR for Cookie Banner (Banner Info Message). %1$s will be replaced by the app name, %2$s will be an active link using the string cfr_cookie_banner_link as text. -->
     <string name="cfr_cookie_banner">Το %1$s προσπαθεί να απορρίψει τα αιτήματα για cookies, ώστε να κλείσει τα ενοχλητικά μηνύματα για cookies.\n\nΔιαχειριστείτε τις προτιμήσεις των μηνυμάτων για cookies στις %2$s.</string>
-    <!-- CFR for Cookie Banner (Banner Info Message). This text should be the same as the settings text from "cfr_for_cookie_banner". The text should be underlined and should redirect the user to the cookie banner settings screen. -->
-    <string name="cfr_for_cookie_banner_underline_settings" moz:RemovedIn="111" tools:ignore="UnusedResources">ρυθμίσεις</string>
 
     <!-- CFR for Cookie Banner (Banner Info Message). This string is used as text for a link in cfr_cookie_banner and takes the user to the app settings. -->
     <string name="cfr_cookie_banner_link">ρυθμίσεις</string>
@@ -1015,13 +1037,7 @@
 
 
     <!-- The title of the error page for websites that do not support HTTPS when HTTPS-Only is turned on  -->
-    <string name="errorpage_httpsonly_title" moz:RemovedIn="111" tools:ignore="UnusedResources">Ο ζητούμενος ιστότοπος δεν υποστηρίζει HTTPS</string>
-
-    <!-- The title of the error page for websites that do not support HTTPS when HTTPS-Only is turned on  -->
     <string name="errorpage_httpsonly_title2">Αυτός ο ιστότοπος δεν υποστηρίζει HTTPS</string>
-
-    <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will get replaced with the name of the app (e.g. "Firefox Focus") -->
-    <string name="errorpage_httpsonly_message" moz:RemovedIn="111" tools:ignore="UnusedResources">Από προεπιλογή, το %1$s επιχειρεί να συνδεθεί μέσω HTTPS για αυξημένη ασφάλεια. Για να αλλάξετε αυτήν τη ρύθμιση ή για να μάθετε περισσότερα, μεταβείτε στις Ρυθμίσεις &gt; Απόρρητο &amp; ασφάλεια &gt; Ασφάλεια.</string>
 
     <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will get replaced with the name of the app (e.g. "Firefox Focus").
         Contains a button that will redirect the user to Privacy & Security Screen-->

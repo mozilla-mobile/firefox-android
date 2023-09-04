@@ -5,7 +5,6 @@
 package mozilla.components.feature.awesomebar.provider
 
 import android.content.Context
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import mozilla.components.feature.search.ext.createSearchEngine
@@ -15,15 +14,15 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
 
 @ExperimentalCoroutinesApi // for runTest
-@RunWith(AndroidJUnit4::class)
+
 class SearchEngineSuggestionProviderTest {
     private lateinit var defaultProvider: SearchEngineSuggestionProvider
     private val engineList = listOf(
         createSearchEngine("amazon", "https://www.amazon.org/?q={searchTerms}", mock()),
         createSearchEngine("bing", "https://www.bing.com/?q={searchTerms}", mock()),
+        createSearchEngine("bingo", "https://www.bingo.com/?q={searchTerms}", mock()),
     )
     private val testContext: Context = mock()
 
@@ -42,6 +41,7 @@ class SearchEngineSuggestionProviderTest {
 
         whenever(testContext.getString(1, "amazon")).thenReturn("Search amazon")
         whenever(testContext.getString(1, "bing")).thenReturn("Search bing")
+        whenever(testContext.getString(1, "bingo")).thenReturn("Search bingo")
     }
 
     @Test
@@ -83,10 +83,17 @@ class SearchEngineSuggestionProviderTest {
     }
 
     @Test
-    fun `Provider returns a match when list contains the typed engine`() = runTest {
+    fun `WHEN input matches the beginning of the engine name THEN return the corresponding engine`() = runTest {
         val suggestions = defaultProvider.onInputChanged("am")
 
         assertEquals("Search amazon", suggestions[0].title)
+    }
+
+    @Test
+    fun `WHEN input matches not the beginning of the engine name THEN return nothing`() = runTest {
+        val suggestions = defaultProvider.onInputChanged("ma")
+
+        assertEquals(0, suggestions.size)
     }
 
     @Test
@@ -108,7 +115,7 @@ class SearchEngineSuggestionProviderTest {
     @Test
     fun `Provider limits number of returned suggestions to maxSuggestions`() = runTest {
         // this should match to both engines in list
-        val suggestions = defaultProvider.onInputChanged("n")
+        val suggestions = defaultProvider.onInputChanged("bi")
 
         assertEquals(defaultProvider.maxSuggestions, suggestions.size)
     }

@@ -14,7 +14,7 @@ import android.os.Build
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import androidx.annotation.VisibleForTesting
-import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -34,8 +34,10 @@ import mozilla.components.feature.media.facts.emitStateStopFact
 import mozilla.components.feature.media.focus.AudioFocus
 import mozilla.components.feature.media.notification.MediaNotification
 import mozilla.components.feature.media.session.MediaSessionCallback
+import mozilla.components.support.base.android.NotificationsDelegate
 import mozilla.components.support.base.ids.SharedIdsHelper
 import mozilla.components.support.base.log.logger.Logger
+import mozilla.components.support.utils.ext.registerReceiverCompat
 import mozilla.components.support.utils.ext.stopForegroundCompat
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
@@ -65,11 +67,9 @@ internal class MediaSessionServiceDelegate(
     @get:VisibleForTesting internal val service: AbstractMediaSessionService,
     @get:VisibleForTesting internal val store: BrowserStore,
     @get:VisibleForTesting internal val crashReporter: CrashReporting?,
+    @get:VisibleForTesting internal val notificationsDelegate: NotificationsDelegate,
 ) : MediaSessionDelegate {
     private val logger = Logger("MediaSessionService")
-
-    @VisibleForTesting
-    internal var notificationManager = NotificationManagerCompat.from(context)
 
     @VisibleForTesting
     internal var notificationHelper = MediaNotification(context, service::class.java)
@@ -181,7 +181,10 @@ internal class MediaSessionServiceDelegate(
     internal fun updateNotification(sessionState: SessionState) {
         notificationScope?.launch {
             val notification = notificationHelper.create(sessionState, mediaSession)
-            notificationManager.notify(notificationId, notification)
+            notificationsDelegate.notify(
+                notificationId = notificationId,
+                notification = notification,
+            )
         }
     }
 
@@ -248,7 +251,18 @@ internal class MediaSessionServiceDelegate(
         }
 
         noisyAudioStreamReceiver = BecomingNoisyReceiver(state.mediaSessionState?.controller)
-        context.registerReceiver(noisyAudioStreamReceiver, intentFilter)
+        noisyAudioStreamReceiver?.let {
+            registerBecomingNoisyListener(it)
+        }
+    }
+
+    @VisibleForTesting
+    internal fun registerBecomingNoisyListener(broadcastReceiver: BroadcastReceiver) {
+        context.registerReceiverCompat(
+            broadcastReceiver,
+            intentFilter,
+            ContextCompat.RECEIVER_NOT_EXPORTED,
+        )
     }
 
     @VisibleForTesting
@@ -265,7 +279,8 @@ internal class MediaSessionServiceDelegate(
         // Explicitly cancel media notification.
         // Otherwise, when media is paused, with [STOP_FOREGROUND_DETACH] notification behavior,
         // the notification will persist even after service is stopped and destroyed.
-        notificationManager.cancel(notificationId)
+        notificationsDelegate.notificationManagerCompat.cancel(notificationId)
+        unregisterBecomingNoisyListenerIfNeeded()
         service.stopSelf()
     }
 

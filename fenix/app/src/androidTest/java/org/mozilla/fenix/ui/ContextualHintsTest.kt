@@ -9,10 +9,14 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityTestRule
+import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithDescription
 import org.mozilla.fenix.helpers.TestAssetHelper.getGenericAsset
-import org.mozilla.fenix.helpers.TestHelper.mDevice
+import org.mozilla.fenix.helpers.TestHelper.getStringResource
+import org.mozilla.fenix.ui.robots.clickPageObject
 import org.mozilla.fenix.ui.robots.navigationToolbar
 
 /**
@@ -46,26 +50,26 @@ class ContextualHintsTest {
     }
 
     @Test
-    fun jumpBackInCFRTest() {
+    fun openTotalCookieProtectionLearnMoreLinkTest() {
         val genericPage = getGenericAsset(mockWebServer, 1)
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(genericPage.url) {
-            verifyCookiesProtectionHint()
-            // One back press to dismiss the TCP hint
-            mDevice.pressBack()
-        }.goToHomescreen {
-            verifyJumpBackInMessage()
+            verifyCookiesProtectionHintIsDisplayed(true)
+            clickPageObject(itemContainingText(getStringResource(R.string.tcp_cfr_learn_more)))
+            verifyUrl("support.mozilla.org/en-US/kb/enhanced-tracking-protection-firefox-android")
         }
     }
 
     @Test
-    fun cookieProtectionHintTest() {
+    fun dismissTotalCookieProtectionHintTest() {
         val genericPage = getGenericAsset(mockWebServer, 1)
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(genericPage.url) {
-            verifyCookiesProtectionHint()
+            verifyCookiesProtectionHintIsDisplayed(true)
+            clickPageObject(itemWithDescription(getStringResource(R.string.mozac_cfr_dismiss_button_content_description)))
+            verifyCookiesProtectionHintIsDisplayed(false)
         }
     }
 }

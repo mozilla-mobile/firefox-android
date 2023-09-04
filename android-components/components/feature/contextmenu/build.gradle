@@ -38,6 +38,7 @@ dependencies {
     implementation project(':support-utils')
     implementation project(':support-ktx')
     implementation project(':feature-search')
+    implementation project(':ui-widgets')
 
     implementation ComponentsDependencies.google_material
     implementation ComponentsDependencies.androidx_constraintlayout
@@ -46,7 +47,6 @@ dependencies {
     testImplementation ComponentsDependencies.androidx_test_junit
     testImplementation ComponentsDependencies.testing_coroutines
     testImplementation ComponentsDependencies.testing_robolectric
-    testImplementation ComponentsDependencies.testing_mockito
 
     testImplementation project(':support-test')
     testImplementation project(':support-test-libstate')

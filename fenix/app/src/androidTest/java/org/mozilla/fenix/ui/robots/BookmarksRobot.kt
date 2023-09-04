@@ -16,6 +16,7 @@ import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.RootMatchers
 import androidx.test.espresso.matcher.ViewMatchers
+import androidx.test.espresso.matcher.ViewMatchers.hasSibling
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withChild
 import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
@@ -35,6 +36,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemContainingTextExists
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithDescriptionExists
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithResIdExists
+import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithDescription
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdAndText
@@ -242,6 +244,19 @@ class BookmarksRobot {
 
     fun clickDeleteInEditModeButton() = deleteInEditModeButton().click()
 
+    fun searchBookmarkedItem(bookmarkedItem: String) {
+        itemWithResId("$packageName:id/mozac_browser_toolbar_edit_url_view").also {
+            it.waitForExists(waitingTime)
+            it.setText(bookmarkedItem)
+        }
+        mDevice.waitForWindowUpdate(packageName, waitingTimeShort)
+    }
+
+    fun verifySearchedBookmarkExists(bookmarkUrl: String, exists: Boolean = true) =
+        assertItemContainingTextExists(itemContainingText(bookmarkUrl), exists = exists)
+
+    fun dismissBookmarksSearchBar() = mDevice.pressBack()
+
     class Transition {
         fun closeMenu(interact: HomeScreenRobot.() -> Unit): Transition {
             closeButton().click()
@@ -250,16 +265,9 @@ class BookmarksRobot {
             return Transition()
         }
 
-        fun openThreeDotMenu(bookmarkTitle: String, interact: ThreeDotMenuBookmarksRobot.() -> Unit): ThreeDotMenuBookmarksRobot.Transition {
+        fun openThreeDotMenu(bookmark: String, interact: ThreeDotMenuBookmarksRobot.() -> Unit): ThreeDotMenuBookmarksRobot.Transition {
             mDevice.waitNotNull(Until.findObject(res("$packageName:id/overflow_menu")))
-            threeDotMenu(bookmarkTitle).click()
-
-            ThreeDotMenuBookmarksRobot().interact()
-            return ThreeDotMenuBookmarksRobot.Transition()
-        }
-
-        fun openThreeDotMenu(bookmarkUrl: Uri, interact: ThreeDotMenuBookmarksRobot.() -> Unit): ThreeDotMenuBookmarksRobot.Transition {
-            threeDotMenu(bookmarkUrl).click()
+            threeDotMenu(bookmark).click()
 
             ThreeDotMenuBookmarksRobot().interact()
             return ThreeDotMenuBookmarksRobot.Transition()
@@ -279,11 +287,18 @@ class BookmarksRobot {
             return HomeScreenRobot.Transition()
         }
 
-        fun closeEditBookmarkSection(interact: BookmarksRobot.() -> Unit): BookmarksRobot.Transition {
+        fun goBackToBrowserScreen(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
+            goBackButton().click()
+
+            BrowserRobot().interact()
+            return BrowserRobot.Transition()
+        }
+
+        fun closeEditBookmarkSection(interact: BookmarksRobot.() -> Unit): Transition {
             goBackButton().click()
 
             BookmarksRobot().interact()
-            return BookmarksRobot.Transition()
+            return Transition()
         }
 
         fun openBookmarkWithTitle(bookmarkTitle: String, interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
@@ -295,6 +310,13 @@ class BookmarksRobot {
 
             BrowserRobot().interact()
             return BrowserRobot.Transition()
+        }
+
+        fun clickSearchButton(interact: SearchRobot.() -> Unit): SearchRobot.Transition {
+            itemWithResId("$packageName:id/bookmark_search").click()
+
+            SearchRobot().interact()
+            return SearchRobot.Transition()
         }
     }
 }
@@ -327,17 +349,10 @@ private fun addFolderTitleField() = onView(withId(R.id.bookmarkNameEdit))
 
 private fun saveFolderButton() = onView(withId(R.id.confirm_add_folder_button))
 
-private fun threeDotMenu(bookmarkUrl: Uri) = onView(
+private fun threeDotMenu(bookmark: String) = onView(
     allOf(
         withId(R.id.overflow_menu),
-        withParent(withChild(allOf(withId(R.id.url), withText(bookmarkUrl.toString())))),
-    ),
-)
-
-private fun threeDotMenu(bookmarkTitle: String) = onView(
-    allOf(
-        withId(R.id.overflow_menu),
-        withParent(withChild(allOf(withId(R.id.title), withText(bookmarkTitle)))),
+        hasSibling(withText(bookmark)),
     ),
 )
 
@@ -385,7 +400,7 @@ private fun assertBookmarkFolderIsNotCreated(title: String) {
         mDevice.findObject(
             UiSelector()
                 .textContains(title),
-        ).waitForExists(waitingTime),
+        ).waitForExists(waitingTimeShort),
     )
 }
 
@@ -417,7 +432,7 @@ private fun assertBookmarkIsDeleted(expectedTitle: String) {
             UiSelector()
                 .resourceId("$packageName:id/title")
                 .textContains(expectedTitle),
-        ).waitForExists(waitingTime),
+        ).waitForExists(waitingTimeShort),
     )
 }
 private fun assertUndoDeleteSnackBarButton() =

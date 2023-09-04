@@ -45,7 +45,7 @@
     <!-- Description for downloads permission. -->
     <string name="mozac_feature_addons_permissions_downloads_description">Telecargar de fichièrs, consultar e modificar l’istoric dels telecargaments del navigator</string>
     <!-- Description for downloads_open permission. -->
-    <string name="mozac_feature_addons_permissions_downloads_open_description">Dobrir los fichièrs telecargats a vòstre ordenador</string>
+    <string name="mozac_feature_addons_permissions_downloads_open_description">Dobrir los fichièrs telecargats sus vòstre aparelh</string>
     <!-- Description for find permission. -->
     <string name="mozac_feature_addons_permissions_find_description">Legir lo tèxte de totes los onglets dobèrts</string>
     <!-- Description for geolocation permission. -->
@@ -170,6 +170,8 @@
     <string name="mozac_feature_addons_successfully_installed">%1$s installat corrèctament</string>
     <!-- Text shown after failed to install an add-on. %1$s is the add-on name. -->
     <string name="mozac_feature_addons_failed_to_install">Fracàs de l’installacion de %1$s</string>
+    <!-- Text shown when attempting to install a blocklisted add-on. %1$s is the add-on name. -->
+    <string name="mozac_feature_addons_blocklisted">%1$s a pas pogut èsser installat perque presenta un grand risc de problèmas d’instabilitat o de seguretat.</string>
     <!-- Text shown after successfully enabled an add-on. %1$s is the add-on name. -->
     <string name="mozac_feature_addons_successfully_enabled">%1$s activat corrèctament</string>
     <!-- Text shown after failed to enable an add-on. %1$s is the add-on name. -->

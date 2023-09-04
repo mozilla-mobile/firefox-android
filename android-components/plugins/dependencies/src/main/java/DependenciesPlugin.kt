@@ -6,7 +6,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.initialization.Settings
 
 // If you ever need to force a toolchain rebuild (taskcluster) then edit the following comment.
-// FORCE REBUILD 2023-03-06
+// FORCE REBUILD 2023-05-24
 
 class DependenciesPlugin : Plugin<Settings> {
     override fun apply(settings: Settings) = Unit
@@ -14,83 +14,86 @@ class DependenciesPlugin : Plugin<Settings> {
 
 // Synchronized version numbers for dependencies used by (some) modules
 object Versions {
-    const val kotlin = "1.8.10"
-    const val coroutines = "1.6.4"
-    const val serialization = "1.5.0"
+    const val kotlin = "1.8.22"
+    const val coroutines = "1.7.2"
+    const val serialization = "1.5.1"
+    const val python_envs_plugin = "0.0.31"
 
     const val junit = "4.13.2"
-    const val robolectric = "4.9.2"
-    const val mockito = "3.12.4"
+    const val robolectric = "4.10.3"
+    const val mockito = "5.4.0"
     const val maven_ant_tasks = "2.1.3"
+    const val jacoco = "0.8.10"
 
     // TO-DO: These could be kept in sync in the future
     const val mockwebserver = "3.10.0"
     const val okhttp = "3.13.1"
 
-    const val android_gradle_plugin = "7.4.1"
+    const val android_gradle_plugin = "7.4.2"
 
     // This has to be synced to the gradlew plugin version. See
     // http://googlesamples.github.io/android-custom-lint-rules/api-guide/example.md.html#example:samplelintcheckgithubproject/lintversion?
-    const val lint = "30.4.1"
-    const val detekt = "1.19.0"
+    const val lint = "30.4.2"
+    const val detekt = "1.23.1"
+    const val ktlint = "0.49.1"
 
-    const val sentry_latest = "6.15.0"
+    const val sentry_latest = "6.27.0"
 
     // zxing 3.4+ requires a minimum API of 24 or higher
     const val zxing = "3.3.3"
 
-    const val jna = "5.13.0"
     const val disklrucache = "2.0.2"
-    const val leakcanary = "2.10"
-
-    const val mozilla_appservices = "97.2.0"
+    const val leakcanary = "2.12"
 
     // DO NOT MODIFY MANUALLY. This is auto-updated along with GeckoView.
-    const val mozilla_glean = "52.3.0"
+    const val mozilla_glean = "53.2.0"
 
-    const val material = "1.2.1"
-    const val ksp = "1.0.9"
+    const val material = "1.9.0"
+    const val ksp = "1.0.11"
+    val ksp_plugin = "$kotlin-$ksp"
 
     // see https://android-developers.googleblog.com/2022/06/independent-versioning-of-Jetpack-Compose-libraries.html
     // for Jetpack Compose libraries versioning
-    const val compose_version = "1.3.1"
-    const val compose_compiler = "1.4.3"
+    const val compose_version = "1.5.0"
+    const val compose_compiler = "1.4.8"
 
     object AndroidX {
-        const val activityCompose = "1.4.0"
-        const val annotation = "1.5.0"
-        const val appcompat = "1.3.0"
+        const val activityCompose = "1.7.2"
+        const val annotation = "1.6.0"
+        const val appcompat = "1.6.1"
         const val autofill = "1.1.0"
-        const val browser = "1.3.0"
+        const val browser = "1.5.0"
         const val biometric = "1.1.0"
         const val cardview = "1.0.0"
         const val compose = compose_version
-        const val constraintlayout = "2.0.4"
-        const val coordinatorlayout = "1.1.0"
-        const val core = "1.8.0"
-        const val fragment = "1.5.1"
-        const val recyclerview = "1.2.0"
+        const val constraintlayout = "2.1.4"
+        const val coordinatorlayout = "1.2.0"
+        const val core = "1.10.1"
+        const val drawerlayout = "1.2.0"
+        const val fragment = "1.6.1"
+        const val recyclerview = "1.3.0"
         const val test = "1.5.0"
         const val test_ext = "1.1.5"
         const val test_runner = "1.5.2"
         const val espresso = "3.5.1"
-        const val room = "2.4.3"
-        const val savedstate = "1.2.0"
-        const val paging = "2.1.2"
+        const val room = "2.5.2"
+        const val savedstate = "1.2.1"
+        const val paging = "3.2.0"
         const val palette = "1.0.0"
-        const val preferences = "1.1.1"
-        const val lifecycle = "2.5.1"
-        const val media = "1.2.0"
-        const val navigation = "2.5.1"
+        const val preferences = "1.2.1"
+        const val lifecycle = "2.6.1"
+        const val media = "1.6.0"
+        const val navigation = "2.5.3"
         const val work = "2.7.1"
-        const val arch = "2.1.0"
+        const val arch = "2.2.0"
         const val uiautomator = "2.2.0"
         const val localbroadcastmanager = "1.0.0"
         const val swiperefreshlayout = "1.1.0"
+        const val data_store_preferences="1.0.0"
     }
 
     object Firebase {
-        const val messaging = "23.0.8"
+        const val messaging = "23.1.2"
     }
 }
 
@@ -118,18 +121,22 @@ object ComponentsDependencies {
     const val androidx_biometric = "androidx.biometric:biometric:${Versions.AndroidX.biometric}"
     const val androidx_browser = "androidx.browser:browser:${Versions.AndroidX.browser}"
     const val androidx_cardview = "androidx.cardview:cardview:${Versions.AndroidX.cardview}"
+    const val androidx_compose_animation = "androidx.compose.animation:animation:${Versions.AndroidX.compose}"
     const val androidx_compose_ui = "androidx.compose.ui:ui:${Versions.AndroidX.compose}"
     const val androidx_compose_ui_graphics = "androidx.compose.ui:ui-graphics:${Versions.AndroidX.compose}"
     const val androidx_compose_ui_test = "androidx.compose.ui:ui-test-junit4:${Versions.AndroidX.compose}"
     const val androidx_compose_ui_test_manifest = "androidx.compose.ui:ui-test-manifest:${Versions.AndroidX.compose}"
     const val androidx_compose_ui_tooling = "androidx.compose.ui:ui-tooling:${Versions.AndroidX.compose}"
+    const val androidx_compose_ui_tooling_preview = "androidx.compose.ui:ui-tooling-preview:${Versions.AndroidX.compose}"
     const val androidx_compose_foundation = "androidx.compose.foundation:foundation:${Versions.AndroidX.compose}"
     const val androidx_compose_material = "androidx.compose.material:material:${Versions.AndroidX.compose}"
+    const val androidx_compose_runtime_livedata = "androidx.compose.runtime:runtime-livedata:${Versions.AndroidX.compose}"
     const val androidx_compose_navigation = "androidx.navigation:navigation-compose:${Versions.AndroidX.navigation}"
     const val androidx_constraintlayout = "androidx.constraintlayout:constraintlayout:${Versions.AndroidX.constraintlayout}"
     const val androidx_core = "androidx.core:core:${Versions.AndroidX.core}"
     const val androidx_core_ktx = "androidx.core:core-ktx:${Versions.AndroidX.core}"
     const val androidx_coordinatorlayout = "androidx.coordinatorlayout:coordinatorlayout:${Versions.AndroidX.coordinatorlayout}"
+    const val androidx_drawerlayout = "androidx.drawerlayout:drawerlayout:${Versions.AndroidX.drawerlayout}"
     const val androidx_fragment = "androidx.fragment:fragment:${Versions.AndroidX.fragment}"
     const val androidx_lifecycle_livedata = "androidx.lifecycle:lifecycle-livedata-ktx:${Versions.AndroidX.lifecycle}"
     const val androidx_lifecycle_runtime = "androidx.lifecycle:lifecycle-runtime-ktx:${Versions.AndroidX.lifecycle}"
@@ -156,10 +163,10 @@ object ComponentsDependencies {
     const val androidx_espresso_core = "androidx.test.espresso:espresso-core:${Versions.AndroidX.espresso}"
     const val androidx_localbroadcastmanager = "androidx.localbroadcastmanager:localbroadcastmanager:${Versions.AndroidX.localbroadcastmanager}"
     const val androidx_swiperefreshlayout = "androidx.swiperefreshlayout:swiperefreshlayout:${Versions.AndroidX.swiperefreshlayout}"
+    const val androidx_data_store_preferences = "androidx.datastore:datastore-preferences:${Versions.AndroidX.data_store_preferences}"
 
     const val google_material = "com.google.android.material:material:${Versions.material}"
 
-    const val plugin_ksp = "com.google.devtools.ksp:symbol-processing-gradle-plugin:${Versions.kotlin}-${Versions.ksp}"
     const val plugin_serialization = "org.jetbrains.kotlin.plugin.serialization:org.jetbrains.kotlin.plugin.serialization.gradle.plugin:${Versions.kotlin}"
 
     const val leakcanary = "com.squareup.leakcanary:leakcanary-android:${Versions.leakcanary}"
@@ -176,28 +183,28 @@ object ComponentsDependencies {
     const val tools_detekt_test = "io.gitlab.arturbosch.detekt:detekt-test:${Versions.detekt}"
 
     val mozilla_geckoview = "org.mozilla.geckoview:${Gecko.channel.artifactName}:${Gecko.version}"
-    const val mozilla_fxa = "org.mozilla.appservices:fxaclient:${Versions.mozilla_appservices}"
-    const val mozilla_nimbus = "org.mozilla.appservices:nimbus:${Versions.mozilla_appservices}"
+    val mozilla_fxa = "${ApplicationServicesConfig.groupId}:fxaclient:${ApplicationServicesConfig.version}"
+    val mozilla_nimbus = "${ApplicationServicesConfig.groupId}:nimbus:${ApplicationServicesConfig.version}"
     const val mozilla_glean_forUnitTests = "org.mozilla.telemetry:glean-native-forUnitTests:${Versions.mozilla_glean}"
-    const val mozilla_sync_autofill = "org.mozilla.appservices:autofill:${Versions.mozilla_appservices}"
-    const val mozilla_sync_logins = "org.mozilla.appservices:logins:${Versions.mozilla_appservices}"
-    const val mozilla_places = "org.mozilla.appservices:places:${Versions.mozilla_appservices}"
-    const val mozilla_sync_manager = "org.mozilla.appservices:syncmanager:${Versions.mozilla_appservices}"
-    const val mozilla_push = "org.mozilla.appservices:push:${Versions.mozilla_appservices}"
-    const val mozilla_remote_tabs = "org.mozilla.appservices:tabs:${Versions.mozilla_appservices}"
-    const val mozilla_httpconfig = "org.mozilla.appservices:httpconfig:${Versions.mozilla_appservices}"
-    const val mozilla_full_megazord = "org.mozilla.appservices:full-megazord:${Versions.mozilla_appservices}"
-    const val mozilla_full_megazord_forUnitTests = "org.mozilla.appservices:full-megazord-forUnitTests:${Versions.mozilla_appservices}"
+    val mozilla_sync_autofill = "${ApplicationServicesConfig.groupId}:autofill:${ApplicationServicesConfig.version}"
+    val mozilla_sync_logins = "${ApplicationServicesConfig.groupId}:logins:${ApplicationServicesConfig.version}"
+    val mozilla_places = "${ApplicationServicesConfig.groupId}:places:${ApplicationServicesConfig.version}"
+    val mozilla_sync_manager = "${ApplicationServicesConfig.groupId}:syncmanager:${ApplicationServicesConfig.version}"
+    val mozilla_push = "${ApplicationServicesConfig.groupId}:push:${ApplicationServicesConfig.version}"
+    val mozilla_remote_tabs = "${ApplicationServicesConfig.groupId}:tabs:${ApplicationServicesConfig.version}"
+    val mozilla_suggest = "${ApplicationServicesConfig.groupId}:suggest:${ApplicationServicesConfig.version}"
+    val mozilla_httpconfig = "${ApplicationServicesConfig.groupId}:httpconfig:${ApplicationServicesConfig.version}"
+    val mozilla_full_megazord = "${ApplicationServicesConfig.groupId}:full-megazord:${ApplicationServicesConfig.version}"
+    val mozilla_full_megazord_forUnitTests = "${ApplicationServicesConfig.groupId}:full-megazord-forUnitTests:${ApplicationServicesConfig.version}"
 
-    const val mozilla_errorsupport = "org.mozilla.appservices:errorsupport:${Versions.mozilla_appservices}"
-    const val mozilla_rustlog = "org.mozilla.appservices:rustlog:${Versions.mozilla_appservices}"
-    const val mozilla_sync15 = "org.mozilla.appservices:sync15:${Versions.mozilla_appservices}"
+    val mozilla_errorsupport = "${ApplicationServicesConfig.groupId}:errorsupport:${ApplicationServicesConfig.version}"
+    val mozilla_rust_log_forwarder = "${ApplicationServicesConfig.groupId}:rust-log-forwarder:${ApplicationServicesConfig.version}"
+    val mozilla_sync15 = "${ApplicationServicesConfig.groupId}:sync15:${ApplicationServicesConfig.version}"
 
     const val thirdparty_okhttp = "com.squareup.okhttp3:okhttp:${Versions.okhttp}"
     const val thirdparty_okhttp_urlconnection = "com.squareup.okhttp3:okhttp-urlconnection:${Versions.okhttp}"
     const val thirdparty_sentry_latest = "io.sentry:sentry-android:${Versions.sentry_latest}"
     const val thirdparty_zxing = "com.google.zxing:core:${Versions.zxing}"
-    const val thirdparty_jna = "net.java.dev.jna:jna:${Versions.jna}@jar"
     const val thirdparty_disklrucache = "com.jakewharton:disklrucache:${Versions.disklrucache}"
 
     const val firebase_messaging = "com.google.firebase:firebase-messaging:${Versions.Firebase.messaging}"

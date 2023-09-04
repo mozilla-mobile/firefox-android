@@ -14,7 +14,6 @@ import org.robolectric.RobolectricTestRunner
 class HistogramTest {
 
     @Test
-    @Suppress("Deprecation")
     fun testAddLoadToHistogram() {
         TelemetryWrapper.addLoadToHistogram("https://www.mozilla.org", 99L)
         TelemetryWrapper.addLoadToHistogram("https://www.mozilla.org/en-US/MPL/", 199L)

@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 "use strict";
 
 /**
@@ -10,7 +14,7 @@
  */
 
 const selector =
-  ".ml-directions-searchbox-parent [aria-haspopup=dialog][disabled=true]";
+  ".ml-directions-searchbox-parent [aria-haspopup=dialog][disabled]";
 
 document.addEventListener("DOMContentLoaded", () => {
   // In case the element appeared before the MutationObserver was activated.
@@ -23,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
     attributes: true,
     subtree: true,
   };
-  const mo = new MutationObserver(function(records) {
+  const mo = new MutationObserver(function (records) {
     for (const { target } of records) {
       if (target.matches(selector)) {
         target.disabled = false;

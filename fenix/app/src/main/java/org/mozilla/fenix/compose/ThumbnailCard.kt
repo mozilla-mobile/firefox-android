@@ -11,39 +11,34 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import mozilla.components.browser.icons.compose.Loader
 import mozilla.components.browser.icons.compose.Placeholder
 import mozilla.components.browser.icons.compose.WithIcon
+import mozilla.components.browser.thumbnails.storage.ThumbnailStorage
 import mozilla.components.concept.base.images.ImageLoadRequest
-import org.mozilla.fenix.R
 import org.mozilla.fenix.components.components
 import org.mozilla.fenix.theme.FirefoxTheme
+
+private const val THUMBNAIL_SIZE = 108
+private const val FALLBACK_ICON_SIZE = 36
 
 /**
  * Card which will display a thumbnail. If a thumbnail is not available for [url], the favicon
  * will be displayed until the thumbnail is loaded.
  *
  * @param url Url to display thumbnail for.
- * @param key Key used to remember the thumbnail for future compositions.
- * @param size [Dp] size of the thumbnail.
- * @param backgroundColor [Color] used for the background of the favicon.
+ * @param request [ImageLoadRequest] used to fetch the thumbnail bitmap.
+ * @param storage [ThumbnailStorage] to obtain tab thumbnail bitmaps from.
  * @param modifier [Modifier] used to draw the image content.
+ * @param backgroundColor [Color] used for the background of the favicon.
  * @param contentDescription Text used by accessibility services
  * to describe what this image represents.
  * @param contentScale [ContentScale] used to draw image content.
@@ -52,10 +47,10 @@ import org.mozilla.fenix.theme.FirefoxTheme
 @Composable
 fun ThumbnailCard(
     url: String,
-    key: String,
-    size: Dp = 108.dp,
-    backgroundColor: Color = colorResource(id = R.color.photonGrey20),
+    request: ImageLoadRequest,
+    storage: ThumbnailStorage,
     modifier: Modifier = Modifier,
+    backgroundColor: Color = FirefoxTheme.colors.layer2,
     contentDescription: String? = null,
     contentScale: ContentScale = ContentScale.FillWidth,
     alignment: Alignment = Alignment.TopCenter,
@@ -64,73 +59,35 @@ fun ThumbnailCard(
         modifier = modifier,
         backgroundColor = backgroundColor,
     ) {
-        if (inComposePreview) {
-            Box(
-                modifier = Modifier.background(color = FirefoxTheme.colors.layer3),
-            )
-        } else {
+        ThumbnailImage(
+            request = request,
+            storage = storage,
+            modifier = modifier,
+            contentScale = contentScale,
+            alignment = alignment,
+        ) {
             components.core.icons.Loader(url) {
                 Placeholder {
-                    Box(
-                        modifier = Modifier.background(color = FirefoxTheme.colors.layer3),
-                    )
+                    Box(modifier = Modifier.background(color = FirefoxTheme.colors.layer3))
                 }
 
                 WithIcon { icon ->
                     Box(
-                        modifier = Modifier.size(36.dp),
+                        modifier = Modifier.size(FALLBACK_ICON_SIZE.dp),
                         contentAlignment = Alignment.Center,
                     ) {
                         Image(
                             painter = icon.painter,
                             contentDescription = contentDescription,
                             modifier = Modifier
-                                .size(36.dp)
+                                .size(FALLBACK_ICON_SIZE.dp)
                                 .clip(RoundedCornerShape(8.dp)),
                             contentScale = contentScale,
                         )
                     }
                 }
             }
-
-            ThumbnailImage(
-                key = key,
-                size = size,
-                modifier = modifier,
-                contentScale = contentScale,
-                alignment = alignment,
-            )
         }
-    }
-}
-
-@Composable
-private fun ThumbnailImage(
-    key: String,
-    size: Dp,
-    modifier: Modifier,
-    contentScale: ContentScale,
-    alignment: Alignment,
-) {
-    val rememberBitmap = remember(key) { mutableStateOf<ImageBitmap?>(null) }
-    val thumbnailSize = LocalDensity.current.run { size.toPx().toInt() }
-    val request = ImageLoadRequest(key, thumbnailSize)
-    val storage = components.core.thumbnailStorage
-    val bitmap = rememberBitmap.value
-
-    LaunchedEffect(key) {
-        rememberBitmap.value = storage.loadThumbnail(request).await()?.asImageBitmap()
-    }
-
-    if (bitmap != null) {
-        val painter = BitmapPainter(bitmap)
-        Image(
-            painter = painter,
-            contentDescription = null,
-            modifier = modifier,
-            contentScale = contentScale,
-            alignment = alignment,
-        )
     }
 }
 
@@ -140,9 +97,10 @@ private fun ThumbnailCardPreview() {
     FirefoxTheme {
         ThumbnailCard(
             url = "https://mozilla.com",
-            key = "123",
+            request = ImageLoadRequest("123", THUMBNAIL_SIZE),
+            storage = ThumbnailStorage(LocalContext.current),
             modifier = Modifier
-                .size(108.dp, 80.dp)
+                .size(THUMBNAIL_SIZE.dp)
                 .clip(RoundedCornerShape(8.dp)),
         )
     }

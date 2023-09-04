@@ -9,7 +9,7 @@ import android.widget.FrameLayout
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.isVisible
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.ViewTreeLifecycleOwner
+import androidx.lifecycle.setViewTreeLifecycleOwner
 import androidx.savedstate.SavedStateRegistryOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -19,8 +19,8 @@ import mozilla.components.lib.state.ext.observeAsComposableState
 import mozilla.components.support.ktx.android.view.putCompoundDrawablesRelativeWithIntrinsicBounds
 import mozilla.components.support.ktx.kotlin.tryGetHostFromUrl
 import org.mozilla.focus.R
-import org.mozilla.focus.cookiebannerexception.CookieBannerExceptionItem
-import org.mozilla.focus.cookiebannerexception.CookieBannerExceptionStore
+import org.mozilla.focus.cookiebannerreducer.CookieBannerReducerItem
+import org.mozilla.focus.cookiebannerreducer.CookieBannerReducerStore
 import org.mozilla.focus.databinding.DialogTrackingProtectionSheetBinding
 import org.mozilla.focus.engine.EngineSharedPreferencesListener.TrackerChanged
 import org.mozilla.focus.ext.components
@@ -32,7 +32,7 @@ import org.mozilla.focus.ui.theme.FocusTheme
 class TrackingProtectionPanel(
     context: Context,
     private val lifecycleOwner: LifecycleOwner,
-    private val cookieBannerExceptionStore: CookieBannerExceptionStore,
+    private val cookieBannerReducerStore: CookieBannerReducerStore,
     private val tabUrl: String,
     private val blockedTrackersCount: Int,
     private val isTrackingProtectionOn: Boolean,
@@ -61,7 +61,7 @@ class TrackingProtectionPanel(
 
     private fun initWindow() {
         this.window?.decorView?.let {
-            ViewTreeLifecycleOwner.set(it, lifecycleOwner)
+            it.setViewTreeLifecycleOwner(lifecycleOwner)
             it.setViewTreeSavedStateRegistryOwner(
                 lifecycleOwner as SavedStateRegistryOwner,
             )
@@ -86,20 +86,23 @@ class TrackingProtectionPanel(
         binding.cookieBannerException.apply {
             setContent {
                 FocusTheme {
-                    val hasException = cookieBannerExceptionStore.observeAsComposableState { state ->
-                        state.hasException
-                    }.value
-                    val shouldShowCookieBannerItem = cookieBannerExceptionStore.observeAsComposableState { state ->
-                        state.shouldShowCookieBannerItem
-                    }.value
+                    val cookieBannerExceptionStatus =
+                        cookieBannerReducerStore.observeAsComposableState { state ->
+                            state.cookieBannerReducerStatus
+                        }.value
+                    val shouldShowCookieBannerItem =
+                        cookieBannerReducerStore.observeAsComposableState { state ->
+                            state.shouldShowCookieBannerItem
+                        }.value
                     if (shouldShowCookieBannerItem == true) {
                         binding.cookieBannerException.visibility = View.VISIBLE
                     } else {
                         binding.cookieBannerException.visibility = View.GONE
                     }
-                    if (hasException != null) {
-                        CookieBannerExceptionItem(
-                            hasException = hasException,
+
+                    if (cookieBannerExceptionStatus != null) {
+                        CookieBannerReducerItem(
+                            cookieBannerReducerStatus = cookieBannerExceptionStatus,
                             preferenceOnClickListener = ::showCookieBannerExceptionsDetailsPanel.invoke(),
                         )
                     }
@@ -116,12 +119,12 @@ class TrackingProtectionPanel(
             context.getString(R.string.insecure_connection)
         }
 
-        val nextIcon = AppCompatResources.getDrawable(context, R.drawable.mozac_ic_arrowhead_right)
+        val nextIcon = AppCompatResources.getDrawable(context, R.drawable.mozac_ic_chevron_right_24)
 
         val securityIcon = if (isConnectionSecure) {
-            AppCompatResources.getDrawable(context, R.drawable.mozac_ic_lock)
+            AppCompatResources.getDrawable(context, R.drawable.mozac_ic_lock_24)
         } else {
-            AppCompatResources.getDrawable(context, R.drawable.mozac_ic_warning)
+            AppCompatResources.getDrawable(context, R.drawable.mozac_ic_warning_fill_24)
         }
 
         binding.securityInfo.putCompoundDrawablesRelativeWithIntrinsicBounds(
@@ -140,9 +143,9 @@ class TrackingProtectionPanel(
         }
 
         val icon = if (isTrackingProtectionOn) {
-            R.drawable.mozac_ic_shield
+            R.drawable.mozac_ic_shield_24
         } else {
-            R.drawable.mozac_ic_shield_disabled
+            R.drawable.mozac_ic_shield_slash_24
         }
 
         val iconContentDescription = context.getString(R.string.enhanced_tracking_protection)
@@ -183,11 +186,17 @@ class TrackingProtectionPanel(
                 dismiss()
             }
             advertising.onClickListener {
-                updateTrackingProtectionPolicy(TrackerChanged.ADVERTISING.tracker, advertising.isChecked)
+                updateTrackingProtectionPolicy(
+                    TrackerChanged.ADVERTISING.tracker,
+                    advertising.isChecked,
+                )
             }
 
             analytics.onClickListener {
-                updateTrackingProtectionPolicy(TrackerChanged.ANALYTICS.tracker, analytics.isChecked)
+                updateTrackingProtectionPolicy(
+                    TrackerChanged.ANALYTICS.tracker,
+                    analytics.isChecked,
+                )
             }
 
             social.onClickListener {

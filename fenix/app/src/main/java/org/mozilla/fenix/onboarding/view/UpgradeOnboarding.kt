@@ -4,7 +4,6 @@
 
 package org.mozilla.fenix.onboarding.view
 
-import android.os.Build
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,7 +20,6 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,9 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.R
@@ -60,21 +56,6 @@ fun UpgradeOnboarding(
     onDismiss: () -> Unit,
     onSignInButtonClick: () -> Unit,
 ) {
-    CompositionLocalProvider(LocalLayoutDirection provides layoutDirection()) {
-        UpgradeOnboardingContent(
-            isSyncSignIn = isSyncSignIn,
-            onDismiss = onDismiss,
-            onSignInButtonClick = onSignInButtonClick,
-        )
-    }
-}
-
-@Composable
-private fun UpgradeOnboardingContent(
-    isSyncSignIn: Boolean,
-    onDismiss: () -> Unit,
-    onSignInButtonClick: () -> Unit,
-) {
     var onboardingState by remember { mutableStateOf(UpgradeOnboardingState.Welcome) }
 
     Column(
@@ -88,7 +69,7 @@ private fun UpgradeOnboardingContent(
         OnboardingPage(
             pageState = when (onboardingState) {
                 UpgradeOnboardingState.Welcome -> OnboardingPageState(
-                    image = R.drawable.ic_onboarding_welcome,
+                    imageRes = R.drawable.ic_onboarding_welcome,
                     title = stringResource(id = R.string.onboarding_home_welcome_title_2),
                     description = stringResource(id = R.string.onboarding_home_welcome_description),
                     primaryButton = Action(
@@ -107,7 +88,7 @@ private fun UpgradeOnboardingContent(
                     },
                 )
                 UpgradeOnboardingState.SyncSignIn -> OnboardingPageState(
-                    image = R.drawable.ic_onboarding_sync,
+                    imageRes = R.drawable.ic_onboarding_sync,
                     title = stringResource(id = R.string.onboarding_home_sync_title_3),
                     description = stringResource(id = R.string.onboarding_home_sync_description),
                     primaryButton = Action(
@@ -195,16 +176,4 @@ private fun OnboardingPreview() {
             onSignInButtonClick = {},
         )
     }
-}
-
-/**
- * Force Left to Right layout direction when running on Android API level < 23 (Android 5.1).
- * Bug with compose and RTL views causing crash in the Onboarding screen in Android 5.1.
- * Bugzilla link: https://bugzilla.mozilla.org/show_bug.cgi?id=1792796
- */
-@Composable
-private fun layoutDirection() = if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
-    LocalLayoutDirection.current
-} else {
-    LayoutDirection.Ltr
 }
