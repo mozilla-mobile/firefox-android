@@ -5,15 +5,19 @@
 package mozilla.components.support.ktx.android.view
 
 import android.app.Activity
+import android.os.Build
 import android.view.View
 import android.view.ViewTreeObserver
 import android.view.Window
 import android.view.WindowInsets
+import android.view.WindowManager
 import androidx.core.view.WindowInsetsCompat
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import mozilla.components.support.test.any
 import mozilla.components.support.test.argumentCaptor
 import mozilla.components.support.test.mock
+import org.junit.Assert
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -23,6 +27,7 @@ import org.mockito.Mockito.never
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
+import org.robolectric.annotation.Config
 
 @Suppress("DEPRECATION")
 @RunWith(AndroidJUnit4::class)
@@ -30,6 +35,7 @@ class ActivityTest {
 
     private lateinit var activity: Activity
     private lateinit var window: Window
+    private lateinit var layoutParams: WindowManager.LayoutParams
     private lateinit var decorView: View
     private lateinit var viewTreeObserver: ViewTreeObserver
     private lateinit var windowInsetsCompat: WindowInsetsCompat
@@ -39,6 +45,7 @@ class ActivityTest {
     fun setup() {
         activity = mock()
         window = mock()
+        layoutParams = WindowManager.LayoutParams()
         decorView = mock()
         viewTreeObserver = mock()
         windowInsetsCompat = mock()
@@ -47,6 +54,7 @@ class ActivityTest {
         `when`(activity.window).thenReturn(window)
         `when`(window.decorView).thenReturn(decorView)
         `when`(window.decorView.viewTreeObserver).thenReturn(viewTreeObserver)
+        `when`(window.attributes).thenReturn(layoutParams)
         `when`(windowInsetsCompat.toWindowInsets()).thenReturn(windowInsets)
         `when`(window.decorView.onApplyWindowInsets(windowInsets)).thenReturn(windowInsets)
     }
@@ -63,12 +71,20 @@ class ActivityTest {
     }
 
     @Test
-    fun `check setAsImmersive sets the correct flags`() {
+    @Config(sdk = [Build.VERSION_CODES.P])
+    fun `GIVEN Android version P WHEN setAsImmersive is called THEN notch flags are set`() {
         activity.setAsImmersive()
 
-        verify(decorView).systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
-        verify(decorView).systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-        verify(window.decorView, never()).setOnSystemUiVisibilityChangeListener(any())
+        verify(window).setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+        assertEquals(WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES, layoutParams.layoutInDisplayCutoutMode)
+    }
+
+    @Test
+    @Config(sdk = [Build.VERSION_CODES.O_MR1])
+    fun `GIVEN Android version O_MR1 WHEN setAsImmersive is called THEN notch flags are not being set`() {
+        activity.setAsImmersive()
+
+        verify(window, never()).setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
     }
 
     @Test
@@ -112,11 +128,24 @@ class ActivityTest {
     }
 
     @Test
-    fun `check exitImmersiveMode sets the correct flags`() {
+    @Config(sdk = [Build.VERSION_CODES.O_MR1])
+    fun `check exitImmersiveMode sets the correct flags devices with an Android version prior to P`() {
         activity.exitImmersiveMode()
 
         verify(decorView, times(2)).systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
         verify(decorView).setOnApplyWindowInsetsListener(null)
+    }
+
+    @Test
+    @Config(sdk = [Build.VERSION_CODES.P])
+    fun `check exitImmersiveMode sets the correct flags on devices with Android P`() {
+        activity.exitImmersiveMode()
+
+        verify(decorView, times(2)).systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
+        verify(decorView).setOnApplyWindowInsetsListener(null)
+
+        verify(window).clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+        Assert.assertEquals(WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_DEFAULT, layoutParams.layoutInDisplayCutoutMode)
     }
 
     @Test
