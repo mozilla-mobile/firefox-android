@@ -7,6 +7,7 @@
 package org.mozilla.fenix.ui.robots
 
 import androidx.compose.ui.test.assertAny
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.onAllNodesWithTag
@@ -37,7 +38,6 @@ import org.mozilla.fenix.helpers.MatcherHelper.itemWithDescription
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
 import org.mozilla.fenix.helpers.SessionLoadedIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
-import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeLong
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
 import org.mozilla.fenix.helpers.TestHelper.getStringResource
 import org.mozilla.fenix.helpers.TestHelper.grantSystemPermission
@@ -93,26 +93,7 @@ class SearchRobot {
         }
     }
 
-    fun verifySearchEngineSuggestionResults(rule: ComposeTestRule, searchSuggestion: String) {
-        rule.waitForIdle()
-        for (i in 1..RETRY_COUNT) {
-            try {
-                assertTrue(
-                    mDevice.findObject(UiSelector().textContains(searchSuggestion))
-                        .waitForExists(waitingTimeLong),
-                )
-                break
-            } catch (e: AssertionError) {
-                if (i == RETRY_COUNT) {
-                    throw e
-                } else {
-                    expandSearchSuggestionsList()
-                }
-            }
-        }
-    }
-
-    fun verifyFirefoxSuggestResults(rule: ComposeTestRule, searchTerm: String, vararg searchSuggestions: String) {
+    fun verifySearchEngineSuggestionResults(rule: ComposeTestRule, vararg searchSuggestions: String, searchTerm: String) {
         rule.waitForIdle()
         for (i in 1..RETRY_COUNT) {
             try {
@@ -122,7 +103,6 @@ class SearchRobot {
                         .performScrollToNode(hasText(searchSuggestion))
                         .assertExists()
                 }
-
                 break
             } catch (e: AssertionError) {
                 if (i == RETRY_COUNT) {
@@ -138,7 +118,7 @@ class SearchRobot {
         }
     }
 
-    fun verifyNoSuggestionsAreDisplayed(rule: ComposeTestRule, vararg searchSuggestions: String) {
+    fun verifySuggestionsAreNotDisplayed(rule: ComposeTestRule, vararg searchSuggestions: String) {
         rule.waitForIdle()
         for (searchSuggestion in searchSuggestions) {
             rule.onAllNodesWithTag("mozac.awesomebar.suggestions")
@@ -148,6 +128,9 @@ class SearchRobot {
                 )
         }
     }
+
+    fun verifySearchSuggestionsCount(rule: ComposeTestRule, numberOfSuggestions: Int) =
+        rule.onAllNodesWithTag("mozac.awesomebar.suggestion").assertCountEquals(numberOfSuggestions)
 
     fun verifyAllowSuggestionsInPrivateModeDialog() {
         assertTrue(

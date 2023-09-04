@@ -312,6 +312,13 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <!-- Title for set firefox as default browser screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
         Note: The word "Firefox" should NOT be translated -->
     <string name="juno_onboarding_default_browser_title_nimbus" tools:ignore="UnusedResources">Seqdec Firefox d iminig-inek amezwer</string>
+    <!-- Description for set firefox as default browser screen.
+        The first parameter is the Firefox brand name.
+        The second parameter is the string with key "juno_onboarding_default_browser_description_link_text". -->
+    <string name="juno_onboarding_default_browser_description" moz:RemovedIn="117" tools:ignore="UnusedResources">%1$s izewwir deg yimdanen uqbel idrimen, yekkat ɣef tudert-ik tabaḍnit s usewḥel n yineḍfaren n gar yismal.\n\Issin ugar deg %2$s nneɣ.</string>
+    <!-- Description for set firefox as default browser screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_default_browser_description_nimbus" tools:ignore="UnusedResources">Firefox izewwir deg yimdanen uqbel idrimen, yekkat ɣef tudert-ik tabaḍnit s usewḥel n yineḍfaren n gar yismal.\n\Issin ugar deg Tasertit-nneɣ tbaḍnit.</string>
     <!-- Text for the link to the privacy notice webpage for set as firefox default browser screen.
     This is part of the string with the key "juno_onboarding_default_browser_description". -->
     <string name="juno_onboarding_default_browser_description_link_text" tools:ignore="UnusedResources">tasertit n tbaḍnit</string>
@@ -374,6 +381,8 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <string name="preferences_default_search_engine">Amsedday n unadi amezwer</string>
     <!-- Preference for settings related to Search -->
     <string name="preferences_search">Nadi</string>
+    <!-- Preference for settings related to Search engines -->
+    <string name="preferences_search_engines">Nadi imseddayen n unadi</string>
     <!-- Preference for settings related to Search address bar -->
     <string name="preferences_search_address_bar">Afeggag n tansa</string>
     <!-- Preference link to rating Fenix on the Play Store -->
@@ -419,8 +428,6 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
     <string name="cookie_banner_handling_details_site_is_not_supported_cancel_button">Sefsex</string>
     <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
-    <string name="cookie_banner_handling_details_site_is_not_supported_request_support_button" moz:RemovedIn="115" tools:ignore="UnusedResources">Ssuter tallalt</string>
-    <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
     <string name="cookie_banner_handling_details_site_is_not_supported_request_support_button_2">Azen assuter</string>
     <!-- Text for title indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
     <string name="cookie_banner_handling_details_site_is_not_supported_title_2">Ssuter tallalit i usmel-a?</string>
@@ -437,6 +444,8 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <!-- Title text for a detail explanation indicating cookie banner handling is off this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
     <string name="reduce_cookie_banner_details_panel_title_off_for_site">Sens asenqes n yiɣerracen n yinagan n tuqqna i %1$s?</string>
 
+    <!-- Title text for a detail explanation indicating cookie banner reducer didn't work for the current site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name-->
+    <string name="reduce_cookie_banner_details_panel_title_unsupported_site_request_2">%1$s ur yezmir ara ad yagi issutar n trusi n yinagan n tuqqna s wudem awurman ɣef usmel-a. Tzemreḍ ad tazneḍ assuter i tallalt n usmel-a ɣer sdat.</string>
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
     <string name="reduce_cookie_banner_details_panel_description_off_for_site">%1$s ad isfeḍ inagan n tuqqna n usmel-a syen ad issesfer asebter. Asfaḍ meṛṛa n yinagan n tuqqna yezmer ad ak·am-isseḥbes tuqqna neɣ ad yenɣel tiqecwalin n tiɣtin.</string>
 
@@ -612,11 +621,17 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <!-- Text for classic wallpapers title. The first parameter is the Firefox name. -->
     <string name="wallpaper_classic_title">Aklasik %s</string>
     <!-- Text for limited edition wallpapers title. -->
-    <string name="wallpaper_limited_edition_title">Taẓrigt s talast</string>
+    <string name="wallpaper_limited_edition_title" moz:RemovedIn="118" tools:ignore="UnusedResources">Taẓrigt s talast</string>
+    <!-- Text for artist series wallpapers title. "Artist series" represents a collection of artist collaborated wallpapers. -->
+    <string name="wallpaper_artist_series_title">Asaru n ufennan</string>
     <!-- Description text for the limited edition wallpapers with learn more link. The first parameter is the learn more string defined in wallpaper_learn_more-->
-    <string name="wallpaper_limited_edition_description_with_learn_more">Tafrant tamaynut n tuɣac tilelliyin. %s</string>
+    <string name="wallpaper_limited_edition_description_with_learn_more" moz:RemovedIn="118" tools:ignore="UnusedResources">Tafrant tamaynut n tuɣac tilelliyin. %s</string>
+    <!-- Description text for the artist series wallpapers with learn more link. The first parameter is the learn more string defined in wallpaper_learn_more. "Independent voices" is the name of the wallpaper collection -->
+    <string name="wallpaper_artist_series_description_with_learn_more">Alqaḍ n tuɣac tilelliyin. %s</string>
     <!-- Description text for the limited edition wallpapers. -->
-    <string name="wallpaper_limited_edition_description">Tafrant tamaynut n tuɣac tilelliyin.</string>
+    <string name="wallpaper_limited_edition_description" moz:RemovedIn="118" tools:ignore="UnusedResources">Tafrant tamaynut n tuɣac tilelliyin.</string>
+    <!-- Description text for the artist series wallpapers. "Independent voices" is the name of the wallpaper collection -->
+    <string name="wallpaper_artist_series_description">Alqaḍ n tuɣac tilelliyin.</string>
     <!-- Wallpaper onboarding dialog header text. -->
     <string name="wallpapers_onboarding_dialog_title_text">Ɛreḍ aṛuccu n yini</string>
     <!-- Wallpaper onboarding dialog body text. -->
@@ -1215,7 +1230,9 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <!-- Text for standard error snackbar dismiss button. -->
     <string name="standard_snackbar_error_dismiss">Zgel</string>
     <!-- Text for error message when printing a page and it fails. -->
-    <string name="unable_to_print_error">Ur yizmir ara ad issigez</string>
+    <string name="unable_to_print_error" moz:removedIn="121" tools:ignore="UnusedResources">Ur yizmir ara ad issigez</string>
+    <!-- Text for error message when printing a page and it fails. -->
+    <string name="unable_to_print_page_error">D awezɣi ad yettwasiggez usebtar-a</string>
     <!-- Text for the print feature in the share and browser menu -->
     <string name="menu_print">Siggez</string>
     <!-- Sub-header in the dialog to share a link to another sync device -->
@@ -1360,12 +1377,16 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <!-- Subtitle for the tabs item in Delete browsing data, parameter will be replaced with the number of open tabs -->
     <string name="preferences_delete_browsing_data_tabs_subtitle">%d n yiccaren</string>
     <!-- Title for the data and history items in Delete browsing data -->
-    <string name="preferences_delete_browsing_data_browsing_data_title">Azray n tunigin akked isefka n yismal</string>
+    <string name="preferences_delete_browsing_data_browsing_data_title" moz:removedIn="118">Azray n tunigin akked isefka n yismal</string>
+    <!-- Title for the history item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_browsing_history_title">Azray n tunigin</string>
     <!-- Subtitle for the data and history items in delete browsing data, parameter will be replaced with the
         number of history items the user has -->
     <string name="preferences_delete_browsing_data_browsing_data_subtitle">%d n tansiwin</string>
     <!-- Title for the cookies item in Delete browsing data -->
-    <string name="preferences_delete_browsing_data_cookies">Inagan n tuqqna</string>
+    <string name="preferences_delete_browsing_data_cookies" moz:removedIn="118">Inagan n tuqqna</string>
+    <!-- Title for the cookies and site data items in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_cookies_and_site_data">Inagan n tuqqna d yisefka n usmel</string>
     <!-- Subtitle for the cookies item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_cookies_subtitle">Ad teffɣeḍ seg tuget n yismal</string>
     <!-- Title for the cached images and files item in Delete browsing data -->
@@ -1421,61 +1442,61 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
 
     <!-- Onboarding -->
     <!-- Text for onboarding welcome header. -->
-    <string name="onboarding_header_2">Ansuf ɣer internet ifazen</string>
+    <string name="onboarding_header_2" moz:RemovedIn="118" tools:ignore="UnusedResources">Ansuf ɣer internet ifazen</string>
     <!-- Text for the onboarding welcome message. -->
-    <string name="onboarding_message">D iminig i yettwafeṣṣlen i yimdanen, yerna baṭel.</string>
+    <string name="onboarding_message" moz:RemovedIn="118" tools:ignore="UnusedResources">D iminig i yettwafeṣṣlen i yimdanen, yerna baṭel.</string>
     <!-- Text for the Firefox account onboarding sign in card header. -->
-    <string name="onboarding_account_sign_in_header">Kemmel seg wanida i tḥebseḍ</string>
+    <string name="onboarding_account_sign_in_header" moz:RemovedIn="118" tools:ignore="UnusedResources">Kemmel seg wanida i tḥebseḍ</string>
     <!-- Text for the button to learn more about signing in to your Firefox account. -->
-    <string name="onboarding_manual_sign_in_description">Mtawi accaren d wawalen uffiren gar yibenkan-ik·im i wakken add tɛeddiḍ seg ugdil ɣer wayeḍ s wudem afrawan.</string>
+    <string name="onboarding_manual_sign_in_description" moz:RemovedIn="118" tools:ignore="UnusedResources">Mtawi accaren d wawalen uffiren gar yibenkan-ik·im i wakken add tɛeddiḍ seg ugdil ɣer wayeḍ s wudem afrawan.</string>
     <!-- Text for the button to manually sign into Firefox account. -->
-    <string name="onboarding_firefox_account_sign_in">Kcem</string>
+    <string name="onboarding_firefox_account_sign_in" moz:RemovedIn="118" tools:ignore="UnusedResources">Kcem</string>
     <!-- text to display in the snackbar once account is signed-in -->
     <string name="onboarding_firefox_account_sync_is_on">Amtawi yermed</string>
     <!-- Text for the tracking protection onboarding card header -->
-    <string name="onboarding_tracking_protection_header">Ammesten n tudert tabaḍnit s wudem amezwer</string>
+    <string name="onboarding_tracking_protection_header" moz:RemovedIn="118" tools:ignore="UnusedResources">Ammesten n tudert tabaḍnit s wudem amezwer</string>
     <!-- Text for the tracking protection card description. The first parameter is the name of the application.-->
-    <string name="onboarding_tracking_protection_description_old">%1$s yessewḥal s wudem awurman tikebbaniyin ara ak-iḍefren deg web.</string>
+    <string name="onboarding_tracking_protection_description_old" moz:RemovedIn="118" tools:ignore="UnusedResources">%1$s yessewḥal s wudem awurman tikebbaniyin ara ak-iḍefren deg web.</string>
     <!-- Text for the tracking protection card description. -->
-    <string name="onboarding_tracking_protection_description">Ammesten asemday mgal y inagan n tuqqna yessewḥal ineḍfaren ad sqedc inagan n tuqqna i wakken ad ak•akem-ḍefren deg web.</string>
+    <string name="onboarding_tracking_protection_description" moz:RemovedIn="118" tools:ignore="UnusedResources">Ammesten asemday mgal y inagan n tuqqna yessewḥal ineḍfaren ad sqedc inagan n tuqqna i wakken ad ak•akem-ḍefren deg web.</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
-    <string name="onboarding_tracking_protection_standard_button_2">Alugan (amezwer)</string>
+    <string name="onboarding_tracking_protection_standard_button_2" moz:RemovedIn="118" tools:ignore="UnusedResources">Alugan (amezwer)</string>
     <!-- text for standard blocking option button description -->
-    <string name="onboarding_tracking_protection_standard_button_description_3">Yerked gar tbaḍnit akked temlellit. ISebtar ad d-alin s wudem amagnu.</string>
+    <string name="onboarding_tracking_protection_standard_button_description_3" moz:RemovedIn="118" tools:ignore="UnusedResources">Yerked gar tbaḍnit akked temlellit. ISebtar ad d-alin s wudem amagnu.</string>
     <!-- text for tracking protection radio button option for strict level of blocking -->
-    <string name="onboarding_tracking_protection_strict_option">Uḥris</string>
+    <string name="onboarding_tracking_protection_strict_option" moz:RemovedIn="118" tools:ignore="UnusedResources">Uḥris</string>
     <!-- text for strict blocking option button description -->
-    <string name="onboarding_tracking_protection_strict_button_description_3">Isewḥal ugar n ineḍfaren akken isebtar ad d-allin s wudem aurad, maca kra n tmahilin n usebter zemrent ad rẓent.</string>
+    <string name="onboarding_tracking_protection_strict_button_description_3" moz:RemovedIn="118" tools:ignore="UnusedResources">Isewḥal ugar n ineḍfaren akken isebtar ad d-allin s wudem aurad, maca kra n tmahilin n usebter zemrent ad rẓent.</string>
     <!-- text for the toolbar position card header  -->
-    <string name="onboarding_toolbar_placement_header_1">Fren adig n ufeggag-ik·im n yifecka</string>
+    <string name="onboarding_toolbar_placement_header_1" moz:RemovedIn="118" tools:ignore="UnusedResources">Fren adig n ufeggag-ik·im n yifecka</string>
     <!-- Text for the toolbar position card description -->
-    <string name="onboarding_toolbar_placement_description">Eǧǧ-it ukessar neɣ err-it d asawen</string>
+    <string name="onboarding_toolbar_placement_description" moz:RemovedIn="118" tools:ignore="UnusedResources">Eǧǧ-it ukessar neɣ err-it d asawen</string>
 
     <!-- Text for the privacy notice onboarding card header -->
-    <string name="onboarding_privacy_notice_header_1">Ad tiliḍ d aɛessas ɣef yisefka-k</string>
+    <string name="onboarding_privacy_notice_header_1" moz:RemovedIn="118" tools:ignore="UnusedResources">Ad tiliḍ d aɛessas ɣef yisefka-k</string>
     <!-- Text for the privacy notice onboarding card description. -->
-    <string name="onboarding_privacy_notice_description">Firefox ad yerr gar ifassen-ik·im ayen i tbeṭṭuḍ srid akked wayen tbeṭṭuḍ yid-neɣ.</string>
+    <string name="onboarding_privacy_notice_description" moz:RemovedIn="118" tools:ignore="UnusedResources">Firefox ad yerr gar ifassen-ik·im ayen i tbeṭṭuḍ srid akked wayen tbeṭṭuḍ yid-neɣ.</string>
     <!-- Text for the button to read the privacy notice -->
-    <string name="onboarding_privacy_notice_read_button">Ɣer tasertit-nneɣ n tbaḍnit</string>
+    <string name="onboarding_privacy_notice_read_button" moz:RemovedIn="118" tools:ignore="UnusedResources">Ɣer tasertit-nneɣ n tbaḍnit</string>
 
     <!-- Text for the conclusion onboarding message -->
-    <string name="onboarding_conclusion_header">Twejdeḍ ad teldiḍ internet issedhacen?</string>
+    <string name="onboarding_conclusion_header" moz:RemovedIn="118" tools:ignore="UnusedResources">Twejdeḍ ad teldiḍ internet issedhacen?</string>
     <!-- text for the button to finish onboarding -->
-    <string name="onboarding_finish">Bdu tunigin</string>
+    <string name="onboarding_finish" moz:RemovedIn="118" tools:ignore="UnusedResources">Bdu tunigin</string>
 
     <!-- Onboarding theme -->
     <!-- text for the theme picker onboarding card header -->
-    <string name="onboarding_theme_picker_header">Fren asentel</string>
+    <string name="onboarding_theme_picker_header" moz:RemovedIn="118" tools:ignore="UnusedResources">Fren asentel</string>
     <!-- text for the theme picker onboarding card description -->
-    <string name="onboarding_theme_picker_description_2">Ḥreze tabatrit d wallen-ik s uskar aberkan.</string>
+    <string name="onboarding_theme_picker_description_2" moz:RemovedIn="118" tools:ignore="UnusedResources">Ḥreze tabatrit d wallen-ik s uskar aberkan.</string>
     <!-- Automatic theme setting (will follow device setting) -->
-    <string name="onboarding_theme_automatic_title">Awurman</string>
+    <string name="onboarding_theme_automatic_title" moz:RemovedIn="118" tools:ignore="UnusedResources">Awurman</string>
     <!-- Summary of automatic theme setting (will follow device setting) -->
-    <string name="onboarding_theme_automatic_summary">Ittṣeggim deg yiɣewwaṛen n yibenk-ik</string>
+    <string name="onboarding_theme_automatic_summary" moz:RemovedIn="118" tools:ignore="UnusedResources">Ittṣeggim deg yiɣewwaṛen n yibenk-ik</string>
     <!-- Theme setting for dark mode -->
-    <string name="onboarding_theme_dark_title">Asentel aberkan</string>
+    <string name="onboarding_theme_dark_title" moz:RemovedIn="118" tools:ignore="UnusedResources">Asentel aberkan</string>
     <!-- Theme setting for light mode -->
-    <string name="onboarding_theme_light_title">Asentel aceεlal</string>
+    <string name="onboarding_theme_light_title" moz:RemovedIn="118" tools:ignore="UnusedResources">Asentel aceεlal</string>
 
     <!-- Text shown in snackbar when multiple tabs have been sent to device -->
     <string name="sync_sent_tabs_snackbar">Ttwaznen iccaren!</string>
@@ -1512,6 +1533,8 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <string name="etp_settings">Iɣewwaren n tɣellist</string>
     <!-- Preference title for enhanced tracking protection settings -->
     <string name="preference_enhanced_tracking_protection">Ammesten yettwasǧehden mgal aḍfar</string>
+    <!-- Preference summary for enhanced tracking protection settings on/off switch -->
+    <string name="preference_enhanced_tracking_protection_summary">Tura, Ammesten asemday mgal inagan n tuqqna, d ẓẓerb-nneɣ iǧehden ugar mgal ineḍfaren n gar yismal ar tura.</string>
     <!-- Description of enhanced tracking protection. The parameter is the name of the application (For example: Firefox Fenix) -->
     <string name="preference_enhanced_tracking_protection_explanation_2">%s ad k-yemmesten seg tuget n yineḍfaṛen yettwassnen i yeṭṭafaṛen ayen i txeddmeḍ srid.</string>
     <!-- Text displayed that links to website about enhanced tracking protection -->
@@ -1915,6 +1938,14 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
     <!-- Accessibility description for the form in which details about the custom search engine are entered -->
     <string name="search_add_custom_engine_form_description">Talqayt ɣef umsedday n unadi udmawan</string>
 
+    <!-- Label for the TextField in which user enters custom search engine suggestion URL -->
+    <string name="search_add_custom_engine_suggest_url_label">API n yisumar n unadi (d afrayan)</string>
+    <!-- Placeholder text shown in the Search Suggestion String TextField before a user enters text -->
+    <string name="search_add_custom_engine_suggest_string_hint">URL n API n yisumar n unadi</string>
+    <!-- Description text for the Search Suggestion String TextField. The %s is part of the string -->
+    <string name="search_add_custom_engine_suggest_string_example" formatted="false" moz:RemovedIn="118" tools:ignore="UnusedResources">Semselsi tuttra s “%s”. Amedya:\nhttp://suggestqueries.google.com/complete/search?client=firefox&amp;q=%s</string>
+    <!-- Description text for the Search Suggestion String TextField. The %s is part of the string -->
+    <string name="search_add_custom_engine_suggest_string_example_2" formatted="false">Semselsi tuttra s “%s”. Amedya:\nhttps://suggestqueries.google.com/complete/search?client=firefox&amp;q=%s</string>
     <!-- The text for the "Save" button for saving a custom search engine -->
     <string name="search_custom_engine_save_button">Sekles</string>
 

@@ -674,7 +674,9 @@ class PromptFeature private constructor(
         // Requests that are handled with dialogs
         val dialog = when (promptRequest) {
             is SaveCreditCard -> {
-                if (!isCreditCardAutofillEnabled.invoke() || creditCardValidationDelegate == null) {
+                if (!isCreditCardAutofillEnabled.invoke() || creditCardValidationDelegate == null ||
+                    !promptRequest.creditCard.isValid
+                ) {
                     dismissDialogRequest(promptRequest, session)
 
                     if (creditCardValidationDelegate == null) {
@@ -864,10 +866,10 @@ class PromptFeature private constructor(
                     } else {
                         positiveButtonTitle
                     }
-                    val negativeButton = if (positiveButtonTitle.isEmpty()) {
+                    val negativeButton = if (negativeButtonTitle.isEmpty()) {
                         container.getString(R.string.mozac_feature_prompts_cancel)
                     } else {
-                        positiveButtonTitle
+                        negativeButtonTitle
                     }
 
                     MultiButtonDialogFragment.newInstance(
