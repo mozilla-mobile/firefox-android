@@ -28,7 +28,6 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools:r8:8.0.40'
         classpath ComponentsDependencies.tools_androidgradle
         classpath ComponentsDependencies.tools_kotlingradle
     }
