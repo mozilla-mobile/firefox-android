@@ -50,6 +50,7 @@ object Versions {
 
     const val material = "1.9.0"
     const val ksp = "1.0.11"
+    val ksp_plugin = "$kotlin-$ksp"
 
     // see https://android-developers.googleblog.com/2022/06/independent-versioning-of-Jetpack-Compose-libraries.html
     // for Jetpack Compose libraries versioning
@@ -79,7 +80,7 @@ object Versions {
         const val savedstate = "1.2.1"
         const val paging = "3.2.0"
         const val palette = "1.0.0"
-        const val preferences = "1.1.1"
+        const val preferences = "1.2.1"
         const val lifecycle = "2.6.1"
         const val media = "1.6.0"
         const val navigation = "2.5.3"
@@ -166,7 +167,6 @@ object ComponentsDependencies {
 
     const val google_material = "com.google.android.material:material:${Versions.material}"
 
-    const val plugin_ksp = "com.google.devtools.ksp:symbol-processing-gradle-plugin:${Versions.kotlin}-${Versions.ksp}"
     const val plugin_serialization = "org.jetbrains.kotlin.plugin.serialization:org.jetbrains.kotlin.plugin.serialization.gradle.plugin:${Versions.kotlin}"
 
     const val leakcanary = "com.squareup.leakcanary:leakcanary-android:${Versions.leakcanary}"
@@ -192,6 +192,7 @@ object ComponentsDependencies {
     val mozilla_sync_manager = "${ApplicationServicesConfig.groupId}:syncmanager:${ApplicationServicesConfig.version}"
     val mozilla_push = "${ApplicationServicesConfig.groupId}:push:${ApplicationServicesConfig.version}"
     val mozilla_remote_tabs = "${ApplicationServicesConfig.groupId}:tabs:${ApplicationServicesConfig.version}"
+    val mozilla_suggest = "${ApplicationServicesConfig.groupId}:suggest:${ApplicationServicesConfig.version}"
     val mozilla_httpconfig = "${ApplicationServicesConfig.groupId}:httpconfig:${ApplicationServicesConfig.version}"
     val mozilla_full_megazord = "${ApplicationServicesConfig.groupId}:full-megazord:${ApplicationServicesConfig.version}"
     val mozilla_full_megazord_forUnitTests = "${ApplicationServicesConfig.groupId}:full-megazord-forUnitTests:${ApplicationServicesConfig.version}"

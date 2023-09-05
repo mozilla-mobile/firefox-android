@@ -21,7 +21,7 @@ GRADLE_COMMANDS="$@"
 : WORKSPACE ${WORKSPACE:=/builds/worker/workspace}
 NEXUS_PREFIX='http://localhost:8081/nexus/content/repositories'
 REPOS="-PgoogleRepo=$NEXUS_PREFIX/google/ -PcentralRepo=$NEXUS_PREFIX/central/"
-GRADLE_ARGS="--parallel $REPOS -Pcoverage"
+GRADLE_ARGS="$REPOS -Pcoverage"
 
 # override the default org.gradle.jvmargs to add more heap space
 GRADLE_USER_HOME="${WORKSPACE}/gradle-home"
@@ -48,17 +48,7 @@ if [[ $WORKING_DIR == ${ANDROID_COMPONENTS_DIR}* ]]; then
   done
 fi
 
-# gradle occasionally hangs, so run a watchdog that'll exit after 30min
-(
-sleep 30m
-exit 42
-) &
-
-./gradlew $GRADLE_ARGS $GRADLE_COMMANDS &
-# wait for either the watchdog or gradle process to exit
-wait -n %1 %2
-# if gradle finished in time, kill the watchdog, no longer necessary
-kill %1 || :
+./gradlew $GRADLE_ARGS $GRADLE_COMMANDS
 
 . "$REPO_ROOT_DIR/taskcluster/scripts/toolchain/external-gradle-dependencies/after.sh"
 
