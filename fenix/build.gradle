@@ -71,7 +71,7 @@ buildscript {
         classpath ComponentsDependencies.tools_androidgradle
         classpath ComponentsDependencies.tools_kotlingradle
         classpath FenixDependencies.tools_benchmarkgradle
-        classpath ComponentsDependencies.androidx_safeargs
+        classpath FenixDependencies.androidx_safeargs
         classpath FenixDependencies.osslicenses_plugin
         classpath "org.mozilla.telemetry:glean-gradle-plugin:${Versions.mozilla_glean}"
         classpath "${ApplicationServicesConfig.groupId}:tooling-nimbus-gradle:${ApplicationServicesConfig.version}"
@@ -84,6 +84,7 @@ buildscript {
     // intermediate variable which can pull from FenixDependenciesPlugin.kt and be used later.
     ext {
         detekt_plugin = Versions.detekt
+        ksp_plugin = Versions.ksp_plugin
         protobuf_plugin = FenixVersions.protobuf_plugin
         python_envs_plugin = Versions.python_envs_plugin
     }
@@ -91,6 +92,7 @@ buildscript {
 
 plugins {
     id("io.gitlab.arturbosch.detekt").version("$detekt_plugin")
+    id("com.google.devtools.ksp").version("$ksp_plugin")
 }
 
 allprojects {
@@ -164,7 +166,7 @@ allprojects {
         kotlinOptions.jvmTarget = "17"
         kotlinOptions.allWarningsAsErrors = true
         kotlinOptions.freeCompilerArgs += [
-            "-opt-in=kotlin.RequiresOptIn", "-Xjvm-default=all"
+            "-opt-in=kotlin.RequiresOptIn", "-Xjvm-default=all-compatibility"
         ]
     }
 }

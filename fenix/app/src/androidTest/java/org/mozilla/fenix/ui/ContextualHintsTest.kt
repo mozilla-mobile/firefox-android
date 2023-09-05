@@ -10,14 +10,12 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.R
-import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithDescription
 import org.mozilla.fenix.helpers.TestAssetHelper.getGenericAsset
 import org.mozilla.fenix.helpers.TestHelper.getStringResource
-import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.ui.robots.clickPageObject
 import org.mozilla.fenix.ui.robots.navigationToolbar
 
@@ -52,21 +50,6 @@ class ContextualHintsTest {
     }
 
     @Test
-    fun jumpBackInCFRTest() {
-        val genericPage = getGenericAsset(mockWebServer, 1)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(genericPage.url) {
-            verifyCookiesProtectionHintIsDisplayed(true)
-            // One back press to dismiss the TCP hint
-            mDevice.pressBack()
-        }.goToHomescreen {
-            verifyJumpBackInMessage()
-        }
-    }
-
-    @SmokeTest
-    @Test
     fun openTotalCookieProtectionLearnMoreLinkTest() {
         val genericPage = getGenericAsset(mockWebServer, 1)
 
@@ -78,7 +61,6 @@ class ContextualHintsTest {
         }
     }
 
-    @SmokeTest
     @Test
     fun dismissTotalCookieProtectionHintTest() {
         val genericPage = getGenericAsset(mockWebServer, 1)

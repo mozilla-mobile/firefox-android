@@ -61,6 +61,7 @@ class ComposeSearchTest {
             isRecentTabsFeatureEnabled = false,
             isTCPCFREnabled = false,
             isWallpaperOnboardingEnabled = false,
+            isCookieBannerReductionDialogEnabled = false,
             tabsTrayRewriteEnabled = true,
         ),
     ) { it.activity }
@@ -665,12 +666,13 @@ class ComposeSearchTest {
             clickSearchSelectorButton()
             selectTemporarySearchMethod(searchEngineName = "Tabs")
             typeSearch(searchTerm = "Mozilla")
-            verifyNoSuggestionsAreDisplayed(rule = activityTestRule, "Mozilla")
+            verifySuggestionsAreNotDisplayed(rule = activityTestRule, "Mozilla")
             clickClearButton()
             verifySearchBarPlaceholder("Search tabs")
         }
     }
 
+    @SmokeTest
     @Test
     fun verifySearchTabsWithOpenTabsTest() {
         val firstPageUrl = TestAssetHelper.getGenericAsset(searchMockServer, 1)
@@ -684,7 +686,7 @@ class ComposeSearchTest {
             clickSearchSelectorButton()
             selectTemporarySearchMethod(searchEngineName = "Tabs")
             typeSearch(searchTerm = "Mozilla")
-            verifyNoSuggestionsAreDisplayed(rule = activityTestRule, "Mozilla")
+            verifySuggestionsAreNotDisplayed(rule = activityTestRule, "Mozilla")
             clickClearButton()
             typeSearch(searchTerm = "generic")
             verifyTypedToolbarText("generic")
@@ -723,7 +725,7 @@ class ComposeSearchTest {
         }.clickSearchSelectorButton {
             selectTemporarySearchMethod("Bookmarks")
             typeSearch("test")
-            verifyNoSuggestionsAreDisplayed(activityTestRule, "test")
+            verifySuggestionsAreNotDisplayed(activityTestRule, "test")
         }
     }
 
@@ -750,7 +752,33 @@ class ComposeSearchTest {
         }.dismissSearchBar {
         }.openSearch {
             typeSearch("mozilla ")
-            verifyNoSuggestionsAreDisplayed(activityTestRule, "Test1", "Test2")
+            verifySuggestionsAreNotDisplayed(activityTestRule, "Test1", "Test2")
+        }
+    }
+
+    @Test
+    fun verifySearchHistoryItemsTest() {
+        navigationToolbar {
+        }.clickUrlbar {
+            clickSearchSelectorButton()
+            selectTemporarySearchMethod("History")
+            verifyKeyboardVisibility(isExpectedToBeVisible = true)
+            verifyScanButtonVisibility(visible = false)
+            verifyVoiceSearchButtonVisibility(enabled = true)
+            verifySearchBarPlaceholder(text = "Search history")
+        }
+    }
+
+    @Test
+    fun verifySearchHistoryWithoutBrowsingDataTest() {
+        navigationToolbar {
+        }.clickUrlbar {
+            clickSearchSelectorButton()
+            selectTemporarySearchMethod(searchEngineName = "History")
+            typeSearch(searchTerm = "Mozilla")
+            verifySuggestionsAreNotDisplayed(rule = activityTestRule, "Mozilla")
+            clickClearButton()
+            verifySearchBarPlaceholder("Search history")
         }
     }
 }
