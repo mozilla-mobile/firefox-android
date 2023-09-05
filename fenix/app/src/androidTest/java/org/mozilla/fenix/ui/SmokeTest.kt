@@ -47,7 +47,6 @@ import org.mozilla.fenix.ui.robots.navigationToolbar
 class SmokeTest {
     private lateinit var mDevice: UiDevice
     private lateinit var mockWebServer: MockWebServer
-    private val customMenuItem = "TestMenuItem"
     private lateinit var browserStore: BrowserStore
 
     @get:Rule(order = 0)
@@ -85,41 +84,14 @@ class SmokeTest {
         mockWebServer.shutdown()
     }
 
-    /* Verifies the nav bar:
-     - opening a web page
-     - the existence of nav bar items
-     - editing the url bar
-     - the tab drawer button
-     - opening a new search and dismissing the nav bar
-     */
-    @Test
-    fun verifyBasicNavigationToolbarFunctionality() {
-        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        homeScreen {
-            navigationToolbar {
-            }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-                mDevice.waitForIdle()
-                verifyNavURLBarItems()
-            }.openNavigationToolbar {
-            }.goBackToWebsite {
-            }.openTabDrawer {
-                verifyExistingTabList()
-            }.openNewTab {
-            }.dismissSearchBar {
-                verifyHomeScreen()
-            }
-        }
-    }
-
     // Device or AVD requires a Google Services Android OS installation with Play Store installed
     // Verifies the Open in app button when an app is installed
     @Test
     fun mainMenuOpenInAppTest() {
-        val youtubeURL = "https://m.youtube.com/user/mozilla?cbrd=1"
+        val youtubeURL = "vnd.youtube://".toUri()
 
         navigationToolbar {
-        }.enterURLAndEnterToBrowser(youtubeURL.toUri()) {
+        }.enterURLAndEnterToBrowser(youtubeURL) {
             verifyNotificationDotOnMainMenu()
         }.openThreeDotMenu {
         }.clickOpenInApp {
@@ -202,21 +174,6 @@ class SmokeTest {
                 sharedUrlsString,
                 "$firstWebsiteTitle, $secondWebsiteTitle",
             )
-        }
-    }
-
-    @Test
-    fun emptyTabsTrayViewPrivateBrowsingTest() {
-        navigationToolbar {
-        }.openTabTray {
-        }.toggleToPrivateTabs() {
-            verifyNormalBrowsingButtonIsSelected(false)
-            verifyPrivateBrowsingButtonIsSelected(true)
-            verifySyncedTabsButtonIsSelected(false)
-            verifyNoOpenTabsInPrivateBrowsing()
-            verifyPrivateBrowsingNewTabButton()
-            verifyTabTrayOverflowMenu(true)
-            verifyEmptyTabsTrayMenuButtons()
         }
     }
 
@@ -352,84 +309,5 @@ class SmokeTest {
         }
         // Dismiss the request
         mDevice.pressBack()
-    }
-
-    @Test
-    fun goToHomeScreenBottomToolbarTest() {
-        val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(genericURL.url) {
-            mDevice.waitForIdle()
-        }.goToHomescreen {
-            verifyHomeScreen()
-        }
-    }
-
-    @Test
-    fun goToHomeScreenTopToolbarTest() {
-        val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openCustomizeSubMenu {
-            clickTopToolbarToggle()
-        }.goBack {
-        }.goBack {
-        }.openNavigationToolbar {
-        }.enterURLAndEnterToBrowser(genericURL.url) {
-            mDevice.waitForIdle()
-        }.goToHomescreen {
-            verifyHomeScreen()
-        }
-    }
-
-    @Test
-    fun goToHomeScreenBottomToolbarPrivateModeTest() {
-        val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        homeScreen {
-            togglePrivateBrowsingModeOnOff()
-        }
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(genericURL.url) {
-            mDevice.waitForIdle()
-        }.goToHomescreen {
-            verifyHomeScreen()
-        }
-    }
-
-    @Test
-    fun goToHomeScreenTopToolbarPrivateModeTest() {
-        val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        homeScreen {
-            togglePrivateBrowsingModeOnOff()
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openCustomizeSubMenu {
-            clickTopToolbarToggle()
-        }.goBack {
-        }.goBack {
-        }.openNavigationToolbar {
-        }.enterURLAndEnterToBrowser(genericURL.url) {
-            mDevice.waitForIdle()
-        }.goToHomescreen {
-            verifyHomeScreen()
-        }
-    }
-
-    @Test
-    fun tabsSettingsMenuItemsTest() {
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openTabsSubMenu {
-            verifyTabViewOptions()
-            verifyCloseTabsOptions()
-            verifyMoveOldTabsToInactiveOptions()
-        }
     }
 }

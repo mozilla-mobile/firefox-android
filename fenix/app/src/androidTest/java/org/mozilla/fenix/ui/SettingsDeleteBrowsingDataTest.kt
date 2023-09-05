@@ -7,6 +7,7 @@ package org.mozilla.fenix.ui
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.R
@@ -160,20 +161,15 @@ class SettingsDeleteBrowsingDataTest {
 
     @SmokeTest
     @Test
-    fun deleteBrowsingHistoryAndSiteDataTest() {
-        val storageWritePage = getStorageTestAsset(mockWebServer, "storage_write.html").url
-        val storageCheckPage = getStorageTestAsset(mockWebServer, "storage_check.html").url
+    fun deleteBrowsingHistoryTest() {
+        val genericPage = getStorageTestAsset(mockWebServer, "generic1.html").url
 
         navigationToolbar {
-        }.enterURLAndEnterToBrowser(storageWritePage) {
-        }.openNavigationToolbar {
-        }.enterURLAndEnterToBrowser(storageCheckPage) {
-            verifyPageContent("Session storage has value")
-            verifyPageContent("Local storage has value")
+        }.enterURLAndEnterToBrowser(genericPage) {
         }.openThreeDotMenu {
         }.openSettings {
         }.openSettingsSubMenuDeleteBrowsingData {
-            verifyBrowsingHistoryDetails("2")
+            verifyBrowsingHistoryDetails("1")
             selectOnlyBrowsingHistoryCheckBox()
             clickDeleteBrowsingDataButton()
             verifyDeleteBrowsingDataDialog()
@@ -191,27 +187,27 @@ class SettingsDeleteBrowsingDataTest {
             verifyEmptyHistoryView()
             mDevice.pressBack()
         }
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(storageCheckPage) {
-            verifyPageContent("Session storage empty")
-            verifyPageContent("Local storage empty")
-        }
     }
 
     @SmokeTest
     @Test
-    fun deleteCookiesTest() {
+    fun deleteCookiesAndSiteDataTest() {
         val genericPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-        val cookiesTestPage = getStorageTestAsset(mockWebServer, "storage_write.html").url
+        val storageWritePage = getStorageTestAsset(mockWebServer, "storage_write.html").url
+        val storageCheckPage = getStorageTestAsset(mockWebServer, "storage_check.html").url
 
         // Browsing a generic page to allow GV to load on a fresh run
         navigationToolbar {
         }.enterURLAndEnterToBrowser(genericPage.url) {
         }.openNavigationToolbar {
-        }.enterURLAndEnterToBrowser(cookiesTestPage) {
+        }.enterURLAndEnterToBrowser(storageWritePage) {
             verifyPageContent("No cookies set")
             clickPageObject(itemWithResId("setCookies"))
             verifyPageContent("user=android")
+        }.openNavigationToolbar {
+        }.enterURLAndEnterToBrowser(storageCheckPage) {
+            verifyPageContent("Session storage has value")
+            verifyPageContent("Local storage has value")
         }.openThreeDotMenu {
         }.openSettings {
         }.openSettingsSubMenuDeleteBrowsingData {
@@ -221,13 +217,17 @@ class SettingsDeleteBrowsingDataTest {
             confirmDeletionAndAssertSnackbar()
             exitMenu()
         }
-        browserScreen {
-        }.openThreeDotMenu {
-        }.refreshPage {
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(storageCheckPage) {
+            verifyPageContent("Session storage empty")
+            verifyPageContent("Local storage empty")
+        }.openNavigationToolbar {
+        }.enterURLAndEnterToBrowser(storageWritePage) {
             verifyPageContent("No cookies set")
         }
     }
 
+    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1807268")
     @SmokeTest
     @Test
     fun deleteCachedFilesTest() {

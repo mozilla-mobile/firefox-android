@@ -1425,7 +1425,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
 
     var isPullToRefreshEnabledInBrowser by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_website_pull_to_refresh),
-        default = true,
+        default = Config.channel.isNightlyOrDebug,
     )
 
     var isDynamicToolbarEnabled by booleanPreference(
@@ -1676,6 +1676,12 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         }
     }
 
+    val feltPrivateBrowsingEnabled: Boolean
+        get() {
+            FxNimbus.features.privateBrowsing.recordExposure()
+            return FxNimbus.features.privateBrowsing.value().feltPrivacyEnabled
+        }
+
     /**
      * Indicates if the review quality check feature is enabled by the user.
      */
@@ -1781,6 +1787,14 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var enableComposeTopSites by booleanPreference(
         key = appContext.getPreferenceKey(R.string.pref_key_enable_compose_top_sites),
         default = FeatureFlags.composeTopSites,
+    )
+
+    /**
+     * Indicates if the shopping experience feature is enabled.
+     */
+    val enableShoppingExperience by booleanPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_enable_shopping_experience),
+        default = FxNimbus.features.shoppingExperience.value().enabled,
     )
 
     /**

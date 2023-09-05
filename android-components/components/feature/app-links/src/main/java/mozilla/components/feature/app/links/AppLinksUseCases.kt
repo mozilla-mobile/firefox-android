@@ -55,7 +55,7 @@ private const val ANDROID_RESOLVER_PACKAGE_NAME = "android"
  */
 class AppLinksUseCases(
     private val context: Context,
-    private val launchInApp: () -> Boolean = { false },
+    private var launchInApp: () -> Boolean = { false },
     private val alwaysDeniedSchemes: Set<String> = ALWAYS_DENY_SCHEMES,
     private val installedBrowsers: Browsers = BrowsersCache.all(context),
 ) {
@@ -72,6 +72,14 @@ class AppLinksUseCases(
             Logger("AppLinksUseCases").error("failed to query activities", e)
             emptyList()
         }
+    }
+
+    /**
+     * Update launchInApp for this instance of AppLinksUseCases
+     * @param launchInApp the new value of launchInApp
+     */
+    fun updateLaunchInApp(launchInApp: () -> Boolean) {
+        this.launchInApp = launchInApp
     }
 
     private fun findDefaultActivity(intent: Intent): ResolveInfo? {
@@ -306,7 +314,6 @@ class AppLinksUseCases(
             "https", "moz-extension", "moz-safe-about", "resource", "view-source", "ws", "wss", "blob",
         )
 
-        internal val ALWAYS_ALLOW_SCHEMES: Set<String> = setOf("tel", "mailto")
         internal val ALWAYS_DENY_SCHEMES: Set<String> = setOf("jar", "file", "javascript", "data", "about")
     }
 }

@@ -152,6 +152,7 @@ import org.mozilla.fenix.settings.search.SaveSearchEngineFragmentDirections
 import org.mozilla.fenix.settings.studies.StudiesFragmentDirections
 import org.mozilla.fenix.settings.wallpaper.WallpaperSettingsFragmentDirections
 import org.mozilla.fenix.share.AddNewDeviceFragmentDirections
+import org.mozilla.fenix.shopping.ReviewQualityCheckFragmentDirections
 import org.mozilla.fenix.shortcut.NewTabShortcutIntentProcessor.Companion.ACTION_OPEN_PRIVATE_TAB
 import org.mozilla.fenix.tabhistory.TabHistoryDialogFragment
 import org.mozilla.fenix.tabstray.TabsTrayFragment
@@ -886,16 +887,18 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
     // Stop active media when activity is destroyed.
     private fun stopMediaSession() {
-        components.core.store.state.tabs.forEach {
-            it.mediaSessionState?.controller?.stop()
-        }
+        if (isFinishing) {
+            components.core.store.state.tabs.forEach {
+                it.mediaSessionState?.controller?.stop()
+            }
 
-        components.core.store.state.findActiveMediaTab()?.let {
-            components.core.store.dispatch(
-                MediaSessionAction.DeactivatedMediaSessionAction(
-                    it.id,
-                ),
-            )
+            components.core.store.state.findActiveMediaTab()?.let {
+                components.core.store.dispatch(
+                    MediaSessionAction.DeactivatedMediaSessionAction(
+                        it.id,
+                    ),
+                )
+            }
         }
     }
 
@@ -1022,6 +1025,9 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         BrowserDirection.FromStudiesFragment -> StudiesFragmentDirections.actionGlobalBrowser(
             customTabSessionId,
         )
+        BrowserDirection.FromReviewQualityCheck -> ReviewQualityCheckFragmentDirections.actionGlobalBrowser(
+            customTabSessionId,
+        )
     }
 
     /**
@@ -1117,11 +1123,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     }
 
     open fun navigateToHome() {
-        if (components.fenixOnboarding.userHasBeenOnboarded()) {
-            navHost.navController.navigate(NavGraphDirections.actionStartupHome())
-        } else {
-            navHost.navController.navigate(NavGraphDirections.actionStartupOnboarding())
-        }
+        navHost.navController.navigate(NavGraphDirections.actionStartupHome())
     }
 
     override fun attachBaseContext(base: Context) {

@@ -8,6 +8,7 @@ import androidx.core.net.toUri
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
@@ -125,6 +126,7 @@ class DownloadTest {
         deleteDownloadedFileOnStorage(downloadFile)
     }
 
+    @Ignore("Failing: Bug https://bugzilla.mozilla.org/show_bug.cgi?id=1813521")
     @SmokeTest
     @Test
     fun pauseResumeCancelDownloadTest() {
@@ -350,6 +352,7 @@ class DownloadTest {
         deleteDownloadedFileOnStorage(secondDownloadedFile)
     }
 
+    @Ignore("Failing: https://bugzilla.mozilla.org/show_bug.cgi?id=1840994")
     @Test
     fun systemNotificationCantBeDismissedWhileDownloadingTest() {
         // Clear the "Firefox Fenix default browser notification"

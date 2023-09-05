@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 @file:Suppress("DEPRECATION")
 
 package org.mozilla.fenix.ui
@@ -18,13 +22,16 @@ import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.FeatureSettingsHelperDelegate
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdAndText
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithText
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper.createCustomTabIntent
+import org.mozilla.fenix.helpers.TestHelper.exitMenu
 import org.mozilla.fenix.helpers.TestHelper.openAppFromExternalLink
 import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.clickPageObject
 import org.mozilla.fenix.ui.robots.customTabScreen
+import org.mozilla.fenix.ui.robots.enhancedTrackingProtection
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.longClickPageObject
 import org.mozilla.fenix.ui.robots.navigationToolbar
@@ -308,6 +315,7 @@ class CustomTabsTest {
 
         customTabScreen {
             clickPageObject(itemWithText("PDF form file"))
+            clickPageObject(itemWithResIdAndText("android:id/button2", "CANCEL"))
             waitForPageToLoad()
             verifyPDFReaderToolbarItems()
             verifyCustomTabCloseButton()
@@ -320,6 +328,46 @@ class CustomTabsTest {
         }
         homeScreen {
             verifyHomeScreenAppBarItems()
+        }
+    }
+
+    @Test
+    fun verifyETPSheetAndToggleTest() {
+        val customTabPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        intentReceiverActivityTestRule.launchActivity(
+            createCustomTabIntent(
+                pageUrl = customTabPage.url.toString(),
+                customActionButtonDescription = customTabActionButton,
+            ),
+        )
+
+        enhancedTrackingProtection {
+        }.openEnhancedTrackingProtectionSheet {
+            verifyEnhancedTrackingProtectionSheetStatus(status = "ON", state = true)
+        }.toggleEnhancedTrackingProtectionFromSheet {
+            verifyEnhancedTrackingProtectionSheetStatus(status = "OFF", state = false)
+        }
+
+        openAppFromExternalLink(customTabPage.url.toString())
+
+        browserScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openEnhancedTrackingProtectionSubMenu {
+            switchEnhancedTrackingProtectionToggle()
+            verifyEnhancedTrackingProtectionOptionsEnabled(enabled = false)
+        }
+
+        exitMenu()
+
+        browserScreen {
+        }.goBack {
+            // Actually exiting to the previously opened custom tab
+        }
+
+        enhancedTrackingProtection {
+            verifyETPSectionIsDisplayedInQuickSettingsSheet(isDisplayed = false)
         }
     }
 }

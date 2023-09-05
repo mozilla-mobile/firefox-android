@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -36,6 +37,7 @@ import mozilla.components.browser.state.state.ContentState
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.browser.storage.sync.TabEntry
+import mozilla.components.browser.thumbnails.storage.ThumbnailStorage
 import mozilla.components.lib.state.ext.observeAsComposableState
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.AppStore
@@ -55,8 +57,12 @@ import mozilla.components.browser.storage.sync.Tab as SyncTab
  * @param appStore [AppStore] used to listen for changes to [AppState].
  * @param browserStore [BrowserStore] used to listen for changes to [BrowserState].
  * @param tabsTrayStore [TabsTrayStore] used to listen for changes to [TabsTrayState].
+ * @param storage [ThumbnailStorage] to obtain tab thumbnail bitmaps from.
  * @param displayTabsInGrid Whether the normal and private tabs should be displayed in a grid.
  * @param isInDebugMode True for debug variant or if secret menu is enabled for this session.
+ * @param shouldShowTabAutoCloseBanner Whether the tab auto closer banner should be displayed.
+ * @param shouldShowInactiveTabsAutoCloseDialog Whether the inactive tabs auto close dialog should be displayed.
+ * @param onTabPageClick Invoked when the user clicks on the Normal, Private, or Synced tabs page button.
  * @param onTabClose Invoked when the user clicks to close a tab.
  * @param onTabMediaClick Invoked when the user interacts with a tab's media controls.
  * @param onTabClick Invoked when the user clicks on a tab.
@@ -85,15 +91,22 @@ import mozilla.components.browser.storage.sync.Tab as SyncTab
  * @param onDeleteSelectedTabsClick Invoked when the user clicks on the close selected tabs banner menu item.
  * @param onForceSelectedTabsAsInactiveClick Invoked when the user clicks on the make inactive banner menu item.
  * @param onTabsTrayDismiss Invoked when accessibility services or UI automation requests dismissal.
+ * @param onTabAutoCloseBannerViewOptionsClick Invoked when the user clicks to view the auto close options.
+ * @param onTabAutoCloseBannerDismiss Invoked when the user clicks to dismiss the auto close banner.
+ * @param onTabAutoCloseBannerShown Invoked when the auto close banner has been shown to the user.
+ * @param onMove Invoked after the drag and drop gesture completed. Swaps positions of two tabs.
  */
+@OptIn(ExperimentalFoundationApi::class)
 @Suppress("LongMethod", "LongParameterList", "ComplexMethod")
 @Composable
 fun TabsTray(
     appStore: AppStore,
     browserStore: BrowserStore,
     tabsTrayStore: TabsTrayStore,
+    storage: ThumbnailStorage,
     displayTabsInGrid: Boolean,
     isInDebugMode: Boolean,
+    shouldShowTabAutoCloseBanner: Boolean,
     shouldShowInactiveTabsAutoCloseDialog: (Int) -> Boolean,
     onTabPageClick: (Page) -> Unit,
     onTabClose: (TabSessionState) -> Unit,
@@ -119,12 +132,17 @@ fun TabsTray(
     onDeleteSelectedTabsClick: () -> Unit,
     onForceSelectedTabsAsInactiveClick: () -> Unit,
     onTabsTrayDismiss: () -> Unit,
+    onTabAutoCloseBannerViewOptionsClick: () -> Unit,
+    onTabAutoCloseBannerDismiss: () -> Unit,
+    onTabAutoCloseBannerShown: () -> Unit,
+    onMove: (String, String?, Boolean) -> Unit,
 ) {
     val multiselectMode = tabsTrayStore
         .observeAsComposableState { state -> state.mode }.value ?: TabsTrayState.Mode.Normal
     val selectedPage = tabsTrayStore
         .observeAsComposableState { state -> state.selectedPage }.value ?: Page.NormalTabs
-    val pagerState = rememberPagerState(initialPage = selectedPage.ordinal)
+    val pagerState =
+        rememberPagerState(initialPage = selectedPage.ordinal, pageCount = { Page.values().size })
     val isInMultiSelectMode = multiselectMode is TabsTrayState.Mode.Select
 
     val shapeModifier = if (isInMultiSelectMode) {
@@ -148,6 +166,7 @@ fun TabsTray(
             TabsTrayBanner(
                 tabsTrayStore = tabsTrayStore,
                 isInDebugMode = isInDebugMode,
+                shouldShowTabAutoCloseBanner = shouldShowTabAutoCloseBanner,
                 onTabPageIndicatorClicked = onTabPageClick,
                 onSaveToCollectionClick = onSaveToCollectionClick,
                 onShareSelectedTabsClick = onShareSelectedTabsClick,
@@ -160,6 +179,9 @@ fun TabsTray(
                 onDeleteSelectedTabsClick = onDeleteSelectedTabsClick,
                 onForceSelectedTabsAsInactiveClick = onForceSelectedTabsAsInactiveClick,
                 onDismissClick = onTabsTrayDismiss,
+                onTabAutoCloseBannerViewOptionsClick = onTabAutoCloseBannerViewOptionsClick,
+                onTabAutoCloseBannerDismiss = onTabAutoCloseBannerDismiss,
+                onTabAutoCloseBannerShown = onTabAutoCloseBannerShown,
             )
         }
 
@@ -167,7 +189,6 @@ fun TabsTray(
 
         Box(modifier = Modifier.fillMaxSize()) {
             HorizontalPager(
-                pageCount = Page.values().size,
                 modifier = Modifier.fillMaxSize(),
                 state = pagerState,
                 beyondBoundsPageCount = 2,
@@ -179,6 +200,7 @@ fun TabsTray(
                             appStore = appStore,
                             browserStore = browserStore,
                             tabsTrayStore = tabsTrayStore,
+                            storage = storage,
                             displayTabsInGrid = displayTabsInGrid,
                             onTabClose = onTabClose,
                             onTabMediaClick = onTabMediaClick,
@@ -192,6 +214,7 @@ fun TabsTray(
                             onEnableInactiveTabAutoCloseClick = onEnableInactiveTabAutoCloseClick,
                             onInactiveTabClick = onInactiveTabClick,
                             onInactiveTabClose = onInactiveTabClose,
+                            onMove = onMove,
                         )
                     }
 
@@ -199,11 +222,13 @@ fun TabsTray(
                         PrivateTabsPage(
                             browserStore = browserStore,
                             tabsTrayStore = tabsTrayStore,
+                            storage = storage,
                             displayTabsInGrid = displayTabsInGrid,
                             onTabClose = onTabClose,
                             onTabMediaClick = onTabMediaClick,
                             onTabClick = onTabClick,
                             onTabLongClick = onTabLongClick,
+                            onMove = onMove,
                         )
                     }
 
@@ -225,6 +250,7 @@ private fun NormalTabsPage(
     appStore: AppStore,
     browserStore: BrowserStore,
     tabsTrayStore: TabsTrayStore,
+    storage: ThumbnailStorage,
     displayTabsInGrid: Boolean,
     onTabClose: (TabSessionState) -> Unit,
     onTabMediaClick: (TabSessionState) -> Unit,
@@ -238,6 +264,7 @@ private fun NormalTabsPage(
     onEnableInactiveTabAutoCloseClick: () -> Unit,
     onInactiveTabClick: (TabSessionState) -> Unit,
     onInactiveTabClose: (TabSessionState) -> Unit,
+    onMove: (String, String?, Boolean) -> Unit,
 ) {
     val inactiveTabsExpanded = appStore
         .observeAsComposableState { state -> state.inactiveTabsExpanded }.value ?: false
@@ -285,6 +312,7 @@ private fun NormalTabsPage(
 
         TabLayout(
             tabs = normalTabs,
+            storage = storage,
             displayTabsInGrid = displayTabsInGrid,
             selectedTabId = selectedTabId,
             selectionMode = selectionMode,
@@ -294,6 +322,8 @@ private fun NormalTabsPage(
             onTabClick = onTabClick,
             onTabLongClick = onTabLongClick,
             header = optionalInactiveTabsHeader,
+            onTabDragStart = { tabsTrayStore.dispatch(TabsTrayAction.ExitSelectMode) },
+            onMove = onMove,
         )
     } else {
         EmptyTabPage(isPrivate = false)
@@ -305,11 +335,13 @@ private fun NormalTabsPage(
 private fun PrivateTabsPage(
     browserStore: BrowserStore,
     tabsTrayStore: TabsTrayStore,
+    storage: ThumbnailStorage,
     displayTabsInGrid: Boolean,
     onTabClose: (TabSessionState) -> Unit,
     onTabMediaClick: (TabSessionState) -> Unit,
     onTabClick: (TabSessionState) -> Unit,
     onTabLongClick: (TabSessionState) -> Unit,
+    onMove: (String, String?, Boolean) -> Unit,
 ) {
     val selectedTabId = browserStore
         .observeAsComposableState { state -> state.selectedTabId }.value
@@ -321,6 +353,7 @@ private fun PrivateTabsPage(
     if (privateTabs.isNotEmpty()) {
         TabLayout(
             tabs = privateTabs,
+            storage = storage,
             displayTabsInGrid = displayTabsInGrid,
             selectedTabId = selectedTabId,
             selectionMode = selectionMode,
@@ -329,6 +362,11 @@ private fun PrivateTabsPage(
             onTabMediaClick = onTabMediaClick,
             onTabClick = onTabClick,
             onTabLongClick = onTabLongClick,
+            onTabDragStart = {
+                // Because we don't currently support selection mode for private tabs,
+                // there's no need to exit selection mode when dragging tabs.
+            },
+            onMove = onMove,
         )
     } else {
         EmptyTabPage(isPrivate = true)
@@ -435,6 +473,15 @@ private fun TabsTraySyncedTabsPreview() {
     )
 }
 
+@LightDarkPreview
+@Composable
+private fun TabsTrayAutoCloseBannerPreview() {
+    TabsTrayPreviewRoot(
+        normalTabs = generateFakeTabsList(),
+        showTabAutoCloseBanner = true,
+    )
+}
+
 @Suppress("LongMethod", "LongParameterList")
 @Composable
 private fun TabsTrayPreviewRoot(
@@ -448,6 +495,7 @@ private fun TabsTrayPreviewRoot(
     syncedTabs: List<SyncedTabsListItem> = emptyList(),
     inactiveTabsExpanded: Boolean = false,
     showInactiveTabsAutoCloseDialog: Boolean = false,
+    showTabAutoCloseBanner: Boolean = false,
 ) {
     var selectedPageState by remember { mutableStateOf(selectedPage) }
     val normalTabsState = remember { normalTabs.toMutableStateList() }
@@ -484,9 +532,11 @@ private fun TabsTrayPreviewRoot(
             appStore = appStore,
             browserStore = browserStore,
             tabsTrayStore = tabsTrayStore,
+            storage = ThumbnailStorage(LocalContext.current),
             displayTabsInGrid = displayTabsInGrid,
             isInDebugMode = false,
             shouldShowInactiveTabsAutoCloseDialog = { true },
+            shouldShowTabAutoCloseBanner = showTabAutoCloseBanner,
             onTabPageClick = { page ->
                 selectedPageState = page
             },
@@ -538,6 +588,10 @@ private fun TabsTrayPreviewRoot(
             onBookmarkSelectedTabsClick = {},
             onForceSelectedTabsAsInactiveClick = {},
             onTabsTrayDismiss = {},
+            onTabAutoCloseBannerViewOptionsClick = {},
+            onTabAutoCloseBannerDismiss = {},
+            onTabAutoCloseBannerShown = {},
+            onMove = { _, _, _ -> },
         )
     }
 }

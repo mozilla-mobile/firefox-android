@@ -34,7 +34,7 @@ object Versions {
     // This has to be synced to the gradlew plugin version. See
     // http://googlesamples.github.io/android-custom-lint-rules/api-guide/example.md.html#example:samplelintcheckgithubproject/lintversion?
     const val lint = "30.4.2"
-    const val detekt = "1.23.0"
+    const val detekt = "1.23.1"
     const val ktlint = "0.49.1"
 
     const val sentry_latest = "6.27.0"
@@ -46,14 +46,15 @@ object Versions {
     const val leakcanary = "2.12"
 
     // DO NOT MODIFY MANUALLY. This is auto-updated along with GeckoView.
-    const val mozilla_glean = "53.1.0"
+    const val mozilla_glean = "53.2.0"
 
     const val material = "1.9.0"
     const val ksp = "1.0.11"
+    val ksp_plugin = "$kotlin-$ksp"
 
     // see https://android-developers.googleblog.com/2022/06/independent-versioning-of-Jetpack-Compose-libraries.html
     // for Jetpack Compose libraries versioning
-    const val compose_version = "1.4.3"
+    const val compose_version = "1.5.0"
     const val compose_compiler = "1.4.8"
 
     object AndroidX {
@@ -69,7 +70,7 @@ object Versions {
         const val coordinatorlayout = "1.2.0"
         const val core = "1.10.1"
         const val drawerlayout = "1.2.0"
-        const val fragment = "1.6.0"
+        const val fragment = "1.6.1"
         const val recyclerview = "1.3.0"
         const val test = "1.5.0"
         const val test_ext = "1.1.5"
@@ -77,9 +78,9 @@ object Versions {
         const val espresso = "3.5.1"
         const val room = "2.5.2"
         const val savedstate = "1.2.1"
-        const val paging = "2.1.2"
+        const val paging = "3.2.0"
         const val palette = "1.0.0"
-        const val preferences = "1.1.1"
+        const val preferences = "1.2.1"
         const val lifecycle = "2.6.1"
         const val media = "1.6.0"
         const val navigation = "2.5.3"
@@ -120,6 +121,7 @@ object ComponentsDependencies {
     const val androidx_biometric = "androidx.biometric:biometric:${Versions.AndroidX.biometric}"
     const val androidx_browser = "androidx.browser:browser:${Versions.AndroidX.browser}"
     const val androidx_cardview = "androidx.cardview:cardview:${Versions.AndroidX.cardview}"
+    const val androidx_compose_animation = "androidx.compose.animation:animation:${Versions.AndroidX.compose}"
     const val androidx_compose_ui = "androidx.compose.ui:ui:${Versions.AndroidX.compose}"
     const val androidx_compose_ui_graphics = "androidx.compose.ui:ui-graphics:${Versions.AndroidX.compose}"
     const val androidx_compose_ui_test = "androidx.compose.ui:ui-test-junit4:${Versions.AndroidX.compose}"
@@ -128,6 +130,7 @@ object ComponentsDependencies {
     const val androidx_compose_ui_tooling_preview = "androidx.compose.ui:ui-tooling-preview:${Versions.AndroidX.compose}"
     const val androidx_compose_foundation = "androidx.compose.foundation:foundation:${Versions.AndroidX.compose}"
     const val androidx_compose_material = "androidx.compose.material:material:${Versions.AndroidX.compose}"
+    const val androidx_compose_runtime_livedata = "androidx.compose.runtime:runtime-livedata:${Versions.AndroidX.compose}"
     const val androidx_compose_navigation = "androidx.navigation:navigation-compose:${Versions.AndroidX.navigation}"
     const val androidx_constraintlayout = "androidx.constraintlayout:constraintlayout:${Versions.AndroidX.constraintlayout}"
     const val androidx_core = "androidx.core:core:${Versions.AndroidX.core}"
@@ -164,7 +167,6 @@ object ComponentsDependencies {
 
     const val google_material = "com.google.android.material:material:${Versions.material}"
 
-    const val plugin_ksp = "com.google.devtools.ksp:symbol-processing-gradle-plugin:${Versions.kotlin}-${Versions.ksp}"
     const val plugin_serialization = "org.jetbrains.kotlin.plugin.serialization:org.jetbrains.kotlin.plugin.serialization.gradle.plugin:${Versions.kotlin}"
 
     const val leakcanary = "com.squareup.leakcanary:leakcanary-android:${Versions.leakcanary}"
@@ -190,12 +192,13 @@ object ComponentsDependencies {
     val mozilla_sync_manager = "${ApplicationServicesConfig.groupId}:syncmanager:${ApplicationServicesConfig.version}"
     val mozilla_push = "${ApplicationServicesConfig.groupId}:push:${ApplicationServicesConfig.version}"
     val mozilla_remote_tabs = "${ApplicationServicesConfig.groupId}:tabs:${ApplicationServicesConfig.version}"
+    val mozilla_suggest = "${ApplicationServicesConfig.groupId}:suggest:${ApplicationServicesConfig.version}"
     val mozilla_httpconfig = "${ApplicationServicesConfig.groupId}:httpconfig:${ApplicationServicesConfig.version}"
     val mozilla_full_megazord = "${ApplicationServicesConfig.groupId}:full-megazord:${ApplicationServicesConfig.version}"
     val mozilla_full_megazord_forUnitTests = "${ApplicationServicesConfig.groupId}:full-megazord-forUnitTests:${ApplicationServicesConfig.version}"
 
     val mozilla_errorsupport = "${ApplicationServicesConfig.groupId}:errorsupport:${ApplicationServicesConfig.version}"
-    val mozilla_rustlog = "${ApplicationServicesConfig.groupId}:rustlog:${ApplicationServicesConfig.version}"
+    val mozilla_rust_log_forwarder = "${ApplicationServicesConfig.groupId}:rust-log-forwarder:${ApplicationServicesConfig.version}"
     val mozilla_sync15 = "${ApplicationServicesConfig.groupId}:sync15:${ApplicationServicesConfig.version}"
 
     const val thirdparty_okhttp = "com.squareup.okhttp3:okhttp:${Versions.okhttp}"

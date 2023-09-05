@@ -809,12 +809,12 @@ class ComposeBookmarksTest {
         }.clickSearchButton {
             // Search for a valid term
             typeSearch(firstWebPage.title)
-            verifySearchEngineSuggestionResults(activityTestRule, firstWebPage.url.toString())
-            verifyNoSuggestionsAreDisplayed(activityTestRule, secondWebPage.url.toString())
+            verifySearchEngineSuggestionResults(activityTestRule, firstWebPage.url.toString(), searchTerm = firstWebPage.title)
+            verifySuggestionsAreNotDisplayed(activityTestRule, secondWebPage.url.toString())
             // Search for invalid term
             typeSearch("Android")
-            verifyNoSuggestionsAreDisplayed(activityTestRule, firstWebPage.url.toString())
-            verifyNoSuggestionsAreDisplayed(activityTestRule, secondWebPage.url.toString())
+            verifySuggestionsAreNotDisplayed(activityTestRule, firstWebPage.url.toString())
+            verifySuggestionsAreNotDisplayed(activityTestRule, secondWebPage.url.toString())
         }
     }
 
@@ -854,9 +854,9 @@ class ComposeBookmarksTest {
         }.clickSearchButton {
             // Search for a valid term
             typeSearch("generic")
-            verifyNoSuggestionsAreDisplayed(activityTestRule, firstWebPage.url.toString())
-            verifyNoSuggestionsAreDisplayed(activityTestRule, secondWebPage.url.toString())
-            verifySearchEngineSuggestionResults(activityTestRule, thirdWebPage.url.toString())
+            verifySuggestionsAreNotDisplayed(activityTestRule, firstWebPage.url.toString())
+            verifySuggestionsAreNotDisplayed(activityTestRule, secondWebPage.url.toString())
+            verifySearchEngineSuggestionResults(activityTestRule, thirdWebPage.url.toString(), searchTerm = "generic")
             pressBack()
         }
         bookmarksMenu {
@@ -866,7 +866,7 @@ class ComposeBookmarksTest {
         }.clickSearchButton {
             // Search for a valid term
             typeSearch("generic")
-            verifyNoSuggestionsAreDisplayed(activityTestRule, thirdWebPage.url.toString())
+            verifySuggestionsAreNotDisplayed(activityTestRule, thirdWebPage.url.toString())
         }
     }
 }

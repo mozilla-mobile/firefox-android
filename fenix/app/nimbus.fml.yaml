@@ -11,6 +11,7 @@ channels:
   - developer
 includes:
   - onboarding.fml.yaml
+  - pbm.fml.yaml
 import:
   - path: ../../android-components/components/service/nimbus/messaging.fml.yaml
     channel: release
@@ -268,6 +269,14 @@ features:
         description: If true, the feature shows up in the search bar.
         type: Boolean
         default: true
+
+  extensions-process:
+    description: A feature to rollout the extensions process.
+    variables:
+      enabled:
+        description: If true, the extensions process is enabled.
+        type: Boolean
+        default: false
 
   growth-data:
     description: A feature measuring campaign growth data

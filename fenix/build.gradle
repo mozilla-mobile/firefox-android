@@ -1,7 +1,5 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
-import org.mozilla.fenix.gradle.tasks.GithubDetailsTask
-
 buildscript {
     // This logic is duplicated in the allprojects block: I don't know how to fix that.
     repositories {
@@ -86,6 +84,7 @@ buildscript {
     // intermediate variable which can pull from FenixDependenciesPlugin.kt and be used later.
     ext {
         detekt_plugin = Versions.detekt
+        ksp_plugin = Versions.ksp_plugin
         protobuf_plugin = FenixVersions.protobuf_plugin
         python_envs_plugin = Versions.python_envs_plugin
     }
@@ -93,6 +92,7 @@ buildscript {
 
 plugins {
     id("io.gitlab.arturbosch.detekt").version("$detekt_plugin")
+    id("com.google.devtools.ksp").version("$ksp_plugin")
 }
 
 allprojects {
@@ -166,7 +166,7 @@ allprojects {
         kotlinOptions.jvmTarget = "17"
         kotlinOptions.allWarningsAsErrors = true
         kotlinOptions.freeCompilerArgs += [
-            "-opt-in=kotlin.RequiresOptIn", "-Xjvm-default=all"
+            "-opt-in=kotlin.RequiresOptIn", "-Xjvm-default=all-compatibility"
         ]
     }
 }

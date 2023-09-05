@@ -372,13 +372,23 @@ class GeckoEngine(
             }
 
             override fun onInstalled(extension: org.mozilla.geckoview.WebExtension) {
-                webExtensionDelegate.onInstalled(GeckoWebExtension(extension, runtime))
+                val installedExtension = GeckoWebExtension(extension, runtime)
+                webExtensionDelegate.onInstalled(installedExtension)
+                installedExtension.registerActionHandler(webExtensionActionHandler)
+                installedExtension.registerTabHandler(webExtensionTabHandler, defaultSettings)
+            }
+        }
+
+        val extensionProcessDelegate = object : WebExtensionController.ExtensionProcessDelegate {
+            override fun onDisabledProcessSpawning() {
+                webExtensionDelegate.onDisabledExtensionProcessSpawning()
             }
         }
 
         runtime.webExtensionController.setPromptDelegate(promptDelegate)
         runtime.webExtensionController.setDebuggerDelegate(debuggerDelegate)
         runtime.webExtensionController.setAddonManagerDelegate(addonManagerDelegate)
+        runtime.webExtensionController.setExtensionProcessDelegate(extensionProcessDelegate)
     }
 
     /**
