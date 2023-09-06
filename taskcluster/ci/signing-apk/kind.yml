@@ -42,7 +42,7 @@ tasks:
                 # We want beta on push so that we detect problem before shipping it
                 (fenix-nightly-simulation|fenix-beta-firebase|fenix-android-test-beta|fenix-nightly-firebase|fenix-android-test-nightly): [github-push]
                 # bug 1851826
-                # (fenix-android-test-mozillaonline): [github-push]
+                (fenix-android-test-mozillaonline): []
                 default: []
         treeherder:
             job-symbol:
