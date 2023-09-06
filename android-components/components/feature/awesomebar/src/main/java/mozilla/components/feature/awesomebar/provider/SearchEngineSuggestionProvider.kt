@@ -34,14 +34,9 @@ class SearchEngineSuggestionProvider(
     private val description: String?,
     private val searchIcon: Bitmap?,
     internal val maxSuggestions: Int = DEFAULT_MAX_SUGGESTIONS,
-    private val suggestionsHeader: String? = null,
     internal val charactersThreshold: Int = DEFAULT_CHARACTERS_THRESHOLD,
 ) : AwesomeBar.SuggestionProvider {
     override val id: String = UUID.randomUUID().toString()
-
-    override fun groupTitle(): String? {
-        return suggestionsHeader
-    }
 
     override suspend fun onInputChanged(text: String): List<AwesomeBar.Suggestion> {
         if (text.isEmpty() || text.length < charactersThreshold) {
@@ -49,7 +44,7 @@ class SearchEngineSuggestionProvider(
         }
 
         val suggestions = searchEnginesList
-            .filter { it.name.contains(text, true) }.take(maxSuggestions)
+            .filter { it.name.startsWith(text, true) }.take(maxSuggestions)
 
         return if (suggestions.isNotEmpty()) {
             suggestions.into()
@@ -78,6 +73,6 @@ class SearchEngineSuggestionProvider(
 
     companion object {
         internal const val DEFAULT_MAX_SUGGESTIONS = 1
-        internal const val DEFAULT_CHARACTERS_THRESHOLD = 1
+        internal const val DEFAULT_CHARACTERS_THRESHOLD = 2
     }
 }
