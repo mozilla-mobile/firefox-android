@@ -505,7 +505,7 @@ tasks:
         apk-artifact-template:
             github-name: 'fenix-mozillaonline-{version}-{abi}.apk'
         attributes:
-            release-type: beta
+            # release-type: beta  # bug 1851826
             shipping_phase: promote
             shipping-product: fenix
         include-release-version: true
@@ -529,7 +529,7 @@ tasks:
         apk-artifact-template:
             github-name: 'fenix-mozillaonline-{version}-{abi}.apk'
         attributes:
-            release-type: release
+            # release-type: release  # bug 1851826
             shipping_phase: promote
             shipping-product: fenix
         include-release-version: true
