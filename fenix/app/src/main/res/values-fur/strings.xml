@@ -373,6 +373,8 @@
     <string name="preferences_default_search_engine">Motôr di ricercje predefinît</string>
     <!-- Preference for settings related to Search -->
     <string name="preferences_search">Ricercje</string>
+    <!-- Preference for settings related to Search engines -->
+    <string name="preferences_search_engines">Motôrs di ricercje</string>
     <!-- Preference for settings related to Search address bar -->
     <string name="preferences_search_address_bar">Sbare de direzion</string>
     <!-- Preference link to rating Fenix on the Play Store -->
@@ -636,6 +638,17 @@
     <string name="addon_not_supported_error">Il component adizionâl nol è supuartât</string>
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is already installed -->
     <string name="addon_already_installed">Il component adizionâ al è za instalât</string>
+
+    <!-- Add-on process crash dialog to user -->
+    <!-- Title of a dialog shown to the user when enough errors have occurred with addons and they need to be temporarily disabled -->
+    <string name="addon_process_crash_dialog_title" tools:ignore="UnusedResources">I components adizionâi a son disativâts in mût temporani</string>
+
+    <!-- The first parameter is the application name. This is a message shown to the user when too many errors have occurred with the addons process and they have been disabled. The user can decide if they would like to continue trying to start add-ons or if they'd rather continue without them. -->
+    <string name="addon_process_crash_dialog_message" tools:ignore="UnusedResources">Un o plui components adizionâi a àn fermât di funzionâ, rindint instabil il sisteme. %1$s al à cirût di tornâ a inviâ i components adizionâi cence sucès.\n\nDilunc cheste session no si tornarà a inviâ i components adizionâi.\n\nLa rimozion o la disativazion dai components adizionâi e podarès risolvi chest probleme.</string>
+    <!-- This will cause the add-ons to try restarting but the dialog will reappear if it is unsuccessful again -->
+    <string name="addon_process_crash_dialog_retry_button_text" tools:ignore="UnusedResources">Prove a tornâ a inviâ i components adizionâi</string>
+    <!-- The user will continue with all add-ons disabled -->
+    <string name="addon_process_crash_dialog_disable_addons_button_text" tools:ignore="UnusedResources">Continue cui components adizionâi disativâts</string>
 
     <!-- Account Preferences -->
     <!-- Preference for managing your account via accounts.firefox.com -->
@@ -1361,12 +1374,16 @@
     <!-- Subtitle for the tabs item in Delete browsing data, parameter will be replaced with the number of open tabs -->
     <string name="preferences_delete_browsing_data_tabs_subtitle">%d schedis</string>
     <!-- Title for the data and history items in Delete browsing data -->
-    <string name="preferences_delete_browsing_data_browsing_data_title">Cronologjie di navigazion e dâts dai sîts</string>
+    <string name="preferences_delete_browsing_data_browsing_data_title" moz:removedIn="118" tools:ignore="UnusedResources">Cronologjie di navigazion e dâts dai sîts</string>
+    <!-- Title for the history item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_browsing_history_title">Cronologjie di navigazion</string>
     <!-- Subtitle for the data and history items in delete browsing data, parameter will be replaced with the
         number of history items the user has -->
     <string name="preferences_delete_browsing_data_browsing_data_subtitle">%d direzions</string>
     <!-- Title for the cookies item in Delete browsing data -->
-    <string name="preferences_delete_browsing_data_cookies">Cookies</string>
+    <string name="preferences_delete_browsing_data_cookies" moz:removedIn="118" tools:ignore="UnusedResources">Cookies</string>
+    <!-- Title for the cookies and site data items in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_cookies_and_site_data">Cookies e dâts dai sîts web</string>
     <!-- Subtitle for the cookies item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_cookies_subtitle">Tu vignarâs disconetût de plui part dai sîts</string>
 
@@ -1608,9 +1625,9 @@
     The first parameter is the app name -->
     <string name="open_source_licenses_title">%s | Librariis OSS</string>
     <!-- Category of trackers (redirect trackers) that can be blocked by Enhanced Tracking Protection -->
-    <string name="etp_redirect_trackers_title">Spiis che a indreçin</string>
+    <string name="etp_redirect_trackers_title">Spiis che a dirotin</string>
     <!-- Description of redirect tracker cookies that can be blocked by Enhanced Tracking Protection -->
-    <string name="etp_redirect_trackers_description">Al nete vie i cookies configurâts par indreçâ a sîts web cognossûts pal lôr spiâ.</string>
+    <string name="etp_redirect_trackers_description">Al nete vie i cookies configurâts par dirotâ viers sîts web cognossûts pal lôr spiâ.</string>
     <!-- Description of the SmartBlock Enhanced Tracking Protection feature. The * symbol is intentionally hardcoded here,
          as we use it on the UI to indicate which trackers have been partially unblocked.  -->
     <string name="preference_etp_smartblock_description">Cualchi spie indicade chi sot e je stade sblocade in mût parziâl su cheste pagjine parcè che tu âs interagjît cun lôr *.</string>
@@ -1913,7 +1930,9 @@
     <!-- Placeholder text shown in the Search Suggestion String TextField before a user enters text -->
     <string name="search_add_custom_engine_suggest_string_hint">URL de API pai sugjeriments di ricercje</string>
     <!-- Description text for the Search Suggestion String TextField. The %s is part of the string -->
-    <string name="search_add_custom_engine_suggest_string_example" formatted="false">Sostituìs la clâf di ricercje cun “%s”. Esempli:\nhttp://suggestqueries.google.com/complete/search?client=firefox&amp;q=%s</string>
+    <string name="search_add_custom_engine_suggest_string_example" formatted="false" moz:RemovedIn="118" tools:ignore="UnusedResources">Sostituìs la clâf di ricercje cun “%s”. Esempli:\nhttp://suggestqueries.google.com/complete/search?client=firefox&amp;q=%s</string>
+    <!-- Description text for the Search Suggestion String TextField. The %s is part of the string -->
+    <string name="search_add_custom_engine_suggest_string_example_2" formatted="false">Sostituìs la clâf di ricercje cun “%s”. Esempli:\nhttps://suggestqueries.google.com/complete/search?client=firefox&amp;q=%s</string>
     <!-- The text for the "Save" button for saving a custom search engine -->
     <string name="search_custom_engine_save_button">Salve</string>
 

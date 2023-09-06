@@ -105,15 +105,15 @@ fun TopSites(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        val pagerState = rememberPagerState()
-        val pageCount = ceil((topSites.size.toDouble() / TOP_SITES_PER_PAGE)).toInt()
+        val pagerState = rememberPagerState(
+            pageCount = { ceil((topSites.size.toDouble() / TOP_SITES_PER_PAGE)).toInt() },
+        )
 
         Box(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center,
         ) {
             HorizontalPager(
-                pageCount = pageCount,
                 state = pagerState,
             ) { page ->
                 Column {
@@ -150,12 +150,11 @@ fun TopSites(
             }
         }
 
-        if (pageCount > 1) {
+        if (pagerState.pageCount > 1) {
             Spacer(modifier = Modifier.height(8.dp))
 
             PagerIndicator(
                 pagerState = pagerState,
-                pageCount = pageCount,
                 modifier = Modifier.padding(horizontal = 16.dp),
                 spacing = 4.dp,
             )
@@ -375,8 +374,13 @@ private fun FaviconBitmap(topSite: TopSite.Provided) {
     }
 
     when (val uiState = faviconBitmapUiState) {
-        is FaviconBitmapUiState.Loading, FaviconBitmapUiState.Error -> FaviconDefault(topSite.url)
         is FaviconBitmapUiState.Data -> FaviconImage(BitmapPainter(uiState.imageBitmap))
+        is FaviconBitmapUiState.Error -> FaviconDefault(topSite.url)
+        is FaviconBitmapUiState.Loading -> {
+            // no-op
+            // Don't update the icon while loading else the top site icon could have a 'flashing' effect
+            // caused by the 'place holder letter' icon being immediately updated with the desired bitmap.
+        }
     }
 }
 
