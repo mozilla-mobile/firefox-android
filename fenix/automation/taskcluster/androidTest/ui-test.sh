@@ -94,6 +94,7 @@ APK_TEST="$(get_abs_filename $APK_TEST)"
 echo "device_type: ${device_type}"
 echo "APK_APP: ${APK_APP}"
 echo "APK_TEST: ${APK_TEST}"
+echo "ENV_VARS: "; env
 
 # function to exit script with exit code from test run.
 # (Only 0 if all test executions passed)
