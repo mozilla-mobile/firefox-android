@@ -11,8 +11,8 @@ except KeyError:
     print("ERROR: MOBILE_HEAD_REF env var not set")
     # sys.exit()
 
-def release_number(mobile_head_ref):
-    parts = mobile_head_ref.split('_')
+def release_number(MOBILE_HEAD_REF):
+    parts = MOBILE_HEAD_REF.split('_')
     return parts[1]
 
 def create_milestone_name(product_name, release_type, release_version):
@@ -77,7 +77,23 @@ class TestRail():
     # def test_run(self, run_id):
     #     return self.client.send_get('get_run/{0}'.format(run_id))
     
+    def test_cases_automated():
+        # need to query full functional suite to return a list of case_ids where Automation field
+        # equals 'Completed' (#4)
+        # 'automation_status' = 4
+        pass
+
     def test_run_add(self, testrail_project_id, testrail_milestone_id, name_run):
+        """
+        {
+            "suite_id": 1,
+            "name": "This is a new test run",
+            "assignedto_id": 5,
+            "refs": "SAN-1, SAN-2",
+            "include_all": false,
+            "case_ids": [1, 2, 3, 4, 7, 8]
+        }
+        """
         data = {"name": name_run, "milestone_id": testrail_milestone_id}
         return self.client.send_post('add_run/{0}'.format(testrail_project_id), data)
     
@@ -131,8 +147,9 @@ if __name__ == "__main__":
     if tests pass:
         4. create milestone name with version number
         5. POST to TestRail with new milestone name
-        6. create test run name with version number
+        6. create test run name with version number + milestone_id
             Format: Automated smoke test - {Release Type} {version_number}
+        7. query testrail full functional suite where automation field = 'Completed' (returns list of case_ids)
         7. POST to TestRail milestone with new test run
             Format: Automated smoke test - {Device} {Device API}
         8. POST test results to testrail with test run with run results (TBD)
@@ -150,5 +167,5 @@ if __name__ == "__main__":
     # print("------", result)
     # result = t.project(testrail_project_id)
     # print("------", result)
-    x = release_number("releases_v117")
+    x = release_number(MOBILE_HEAD_REF)
     print(x)
