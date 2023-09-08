@@ -9,6 +9,7 @@ import org.junit.After
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.R
+import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.TestHelper.setNetworkEnabled
@@ -42,8 +43,6 @@ class NoNetworkAccessStartupTests {
 
         activityTestRule.launchActivity(null)
 
-        homeScreen {
-        }.dismissOnboarding()
         homeScreen {
             verifyHomeScreen()
         }
@@ -83,6 +82,7 @@ class NoNetworkAccessStartupTests {
         }.refreshPage { }
     }
 
+    @SmokeTest
     @Test
     fun testSignInPageWithNoNetworkConnection() {
         setNetworkEnabled(false)

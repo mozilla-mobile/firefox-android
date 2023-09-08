@@ -1,5 +1,4 @@
-/* -*- Mode: Java; c-basic-offset: 4; tab-width: 4; indent-tabs-mode: nil; -*-
- * This Source Code Form is subject to the terms of the Mozilla Public
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -54,7 +53,7 @@ class AddToHomescreenDialogFragment : DialogFragment() {
         )
 
         val blockIcon = dialogView.findViewById<ImageView>(R.id.homescreen_dialog_block_icon)
-        blockIcon.setImageResource(R.drawable.mozac_ic_shield_disabled)
+        blockIcon.setImageResource(R.drawable.mozac_ic_shield_slash_24)
         val warning =
             dialogView.findViewById<ConstraintLayout>(R.id.homescreen_dialog_warning_layout)
         warning.isVisible = !blockingEnabled

@@ -62,6 +62,7 @@ import mozilla.components.lib.state.ext.consumeFrom
 import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import org.mozilla.fenix.GleanMetrics.HomeScreen
+import org.mozilla.fenix.GleanMetrics.Homepage
 import org.mozilla.fenix.GleanMetrics.PrivateBrowsingShortcutCfr
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
@@ -154,6 +155,7 @@ class HomeFragment : Fragment() {
             showRenamedSnackbar()
         }
 
+        @SuppressLint("NotifyDataSetChanged")
         override fun onTabsAdded(tabCollection: TabCollection, sessions: List<TabSessionState>) {
             view?.let {
                 val message = if (sessions.size == 1) {
@@ -161,6 +163,11 @@ class HomeFragment : Fragment() {
                 } else {
                     R.string.create_collection_tabs_saved
                 }
+
+                lifecycleScope.launch(Main) {
+                    binding.sessionControlRecyclerView.adapter?.notifyDataSetChanged()
+                }
+
                 FenixSnackbar.make(
                     view = it,
                     duration = Snackbar.LENGTH_LONG,
@@ -370,6 +377,8 @@ class HomeFragment : Fragment() {
                 activity = activity,
                 navController = findNavController(),
                 appStore = components.appStore,
+                browserStore = components.core.store,
+                selectTabUseCase = components.useCases.tabsUseCases.selectTab,
             ),
             recentVisitsController = DefaultRecentVisitsController(
                 navController = findNavController(),
@@ -525,6 +534,9 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         HomeScreen.homeScreenDisplayed.record(NoExtras())
         HomeScreen.homeScreenViewCount.add()
+        if (!browsingModeManager.mode.isPrivate) {
+            HomeScreen.standardHomepageViewCount.add()
+        }
 
         observeSearchEngineNameChanges()
         observeWallpaperUpdates()
@@ -548,10 +560,8 @@ class HomeFragment : Fragment() {
         toolbarView?.build()
 
         PrivateBrowsingButtonView(binding.privateBrowsingButton, browsingModeManager) { newMode ->
-            sessionControlInteractor.onPrivateModeButtonClicked(
-                newMode,
-                userHasBeenOnboarded = true,
-            )
+            sessionControlInteractor.onPrivateModeButtonClicked(newMode)
+            Homepage.privateModeIconTapped.record(mozilla.telemetry.glean.private.NoExtras())
         }
 
         consumeFrom(requireComponents.core.store) {

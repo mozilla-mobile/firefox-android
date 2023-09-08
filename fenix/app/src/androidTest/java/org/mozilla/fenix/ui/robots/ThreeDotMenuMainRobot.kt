@@ -27,7 +27,6 @@ import androidx.test.uiautomator.Until
 import org.hamcrest.Matchers.allOf
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
-import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.Constants.LONG_CLICK_DURATION
 import org.mozilla.fenix.helpers.Constants.RETRY_COUNT
@@ -47,6 +46,7 @@ import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
+import org.mozilla.fenix.nimbus.FxNimbus
 
 /**
  * Implementation of Robot Pattern for the three dot (main) menu.
@@ -78,7 +78,8 @@ class ThreeDotMenuMainRobot {
     fun verifySelectTabs() = assertSelectTabsButton()
 
     fun verifyFindInPageButton() = assertItemContainingTextExists(findInPageButton)
-    fun verifyAddToShortcutsButton() = assertItemContainingTextExists(addToShortcutsButton)
+    fun verifyAddToShortcutsButton(shouldExist: Boolean) =
+        assertItemContainingTextExists(addToShortcutsButton, exists = shouldExist)
     fun verifyRemoveFromShortcutsButton() = assertRemoveFromShortcutsButton()
     fun verifyShareTabsOverlay() = assertShareTabsOverlay()
 
@@ -110,7 +111,7 @@ class ThreeDotMenuMainRobot {
         assertItemContainingTextExists(
             settingsButton(),
         )
-        if (FeatureFlags.print) {
+        if (FxNimbus.features.print.value().browserPrintEnabled) {
             assertItemContainingTextExists(printContentButton)
         }
         assertItemWithDescriptionExists(

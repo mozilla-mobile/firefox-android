@@ -178,55 +178,43 @@ class BrowserRobot {
         )
     }
 
-    fun verifyLinkContextMenuItems(containsURL: Uri, isTheLinkLocal: Boolean = true) {
+    fun verifyContextMenuForLocalHostLinks(containsURL: Uri) {
         // If the link is directing to another local asset the "Download link" option is not available
-        if (isTheLinkLocal) {
-            mDevice.waitNotNull(
-                Until.findObject(By.textContains(containsURL.toString())),
-                waitingTime,
-            )
-            mDevice.waitNotNull(
-                Until.findObject(text(getStringResource(R.string.mozac_feature_contextmenu_open_link_in_new_tab))),
-                waitingTime,
-            )
-            mDevice.waitNotNull(
-                Until.findObject(text(getStringResource(R.string.mozac_feature_contextmenu_open_link_in_private_tab))),
-                waitingTime,
-            )
-            mDevice.waitNotNull(
-                Until.findObject(text(getStringResource(R.string.mozac_feature_contextmenu_copy_link))),
-                waitingTime,
-            )
-            mDevice.waitNotNull(
-                Until.findObject(text(getStringResource(R.string.mozac_feature_contextmenu_share_link))),
-                waitingTime,
-            )
-        } else {
-            mDevice.waitNotNull(
-                Until.findObject(By.textContains(containsURL.toString())),
-                waitingTime,
-            )
-            mDevice.waitNotNull(
-                Until.findObject(text(getStringResource(R.string.mozac_feature_contextmenu_open_link_in_new_tab))),
-                waitingTime,
-            )
-            mDevice.waitNotNull(
-                Until.findObject(text(getStringResource(R.string.mozac_feature_contextmenu_open_link_in_private_tab))),
-                waitingTime,
-            )
-            mDevice.waitNotNull(
-                Until.findObject(text(getStringResource(R.string.mozac_feature_contextmenu_copy_link))),
-                waitingTime,
-            )
-            mDevice.waitNotNull(
-                Until.findObject(text(getStringResource(R.string.mozac_feature_contextmenu_download_link))),
-                waitingTime,
-            )
-            mDevice.waitNotNull(
-                Until.findObject(text(getStringResource(R.string.mozac_feature_contextmenu_share_link))),
-                waitingTime,
-            )
-        }
+        // If the link is not re-directing to an external app the "Open link in external app" option is not available
+        assertItemContainingTextExists(
+            contextMenuLinkUrl(containsURL.toString()),
+            contextMenuOpenLinkInNewTab,
+            contextMenuOpenLinkInPrivateTab,
+            contextMenuCopyLink,
+            contextMenuShareLink,
+        )
+    }
+
+    fun verifyContextMenuForLinksToOtherApps(containsURL: Uri) {
+        // If the link is re-directing to an external app the "Open link in external app" option is available
+        // If the link is not directing to another local asset the "Download link" option is not available
+        assertItemContainingTextExists(
+            contextMenuLinkUrl(containsURL.toString()),
+            contextMenuOpenLinkInNewTab,
+            contextMenuOpenLinkInPrivateTab,
+            contextMenuCopyLink,
+            contextMenuDownloadLink,
+            contextMenuShareLink,
+            contextMenuOpenInExternalApp,
+        )
+    }
+
+    fun verifyContextMenuForLinksToOtherHosts(containsURL: Uri) {
+        // If the link is re-directing to another host the "Download link" option is available
+        // If the link is not re-directing to an external app the "Open link in external app" option is not available
+        assertItemContainingTextExists(
+            contextMenuLinkUrl(containsURL.toString()),
+            contextMenuOpenLinkInNewTab,
+            contextMenuOpenLinkInPrivateTab,
+            contextMenuCopyLink,
+            contextMenuDownloadLink,
+            contextMenuShareLink,
+        )
     }
 
     fun verifyLinkImageContextMenuItems(containsURL: Uri) {
@@ -260,15 +248,6 @@ class BrowserRobot {
             .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
 
     fun verifyMenuButton() = threeDotButton().check(matches(isDisplayed()))
-
-    fun verifyNavURLBarItems() {
-        navURLBar().waitForExists(waitingTime)
-        verifyMenuButton()
-        verifyTabCounter("1")
-        verifySearchBar()
-        verifySecureConnectionLockIcon()
-        verifyHomeScreenButton()
-    }
 
     fun verifyNoLinkImageContextMenuItems(containsURL: Uri) {
         mDevice.waitNotNull(Until.findObject(By.textContains(containsURL.toString())))
@@ -874,11 +853,34 @@ class BrowserRobot {
         }
     }
 
+    fun verifySurveyButton() {
+        val button = mDevice.findObject(
+            UiSelector().text(
+                getStringResource(
+                    R.string.preferences_take_survey,
+                ),
+            ),
+        )
+        assertTrue(button.waitForExists(waitingTime))
+    }
+
     fun clickOpenLinksInAppsDismissCFRButton() =
         itemWithResIdContainingText(
             "$packageName:id/dismiss",
             getStringResource(R.string.open_in_app_cfr_negative_button_text),
         ).click()
+
+    fun clickTakeSurveyButton() {
+        val button = mDevice.findObject(
+            UiSelector().text(
+                getStringResource(
+                    R.string.preferences_take_survey,
+                ),
+            ),
+        )
+        button.waitForExists(waitingTime)
+        button.click()
+    }
 
     fun longClickToolbar() = mDevice.findObject(By.res("$packageName:id/mozac_browser_toolbar_url_view")).click(LONG_CLICK_DURATION)
 
@@ -927,6 +929,16 @@ class BrowserRobot {
     fun fillPdfForm(name: String) {
         // Set PDF form text for the text box
         itemWithResId("pdfjs_internal_id_10R").setText(name)
+        mDevice.waitForWindowUpdate(packageName, waitingTime)
+        if (
+            !itemWithResId("pdfjs_internal_id_11R").exists() &&
+            mDevice
+                .executeShellCommand("dumpsys input_method | grep mInputShown")
+                .contains("mInputShown=true")
+        ) {
+            // Close the keyboard
+            mDevice.pressBack()
+        }
         // Click PDF form check box
         itemWithResId("pdfjs_internal_id_11R").click()
     }
@@ -1182,6 +1194,14 @@ class BrowserRobot {
             DownloadRobot().interact()
             return DownloadRobot.Transition()
         }
+
+        fun clickSurveyButton(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
+            surveyButton.waitForExists(waitingTime)
+            surveyButton.click()
+
+            BrowserRobot().interact()
+            return Transition()
+        }
     }
 }
 
@@ -1308,3 +1328,35 @@ private val totalCookieProtectionHintLearnMoreLink =
     itemContainingText(getStringResource(R.string.tcp_cfr_learn_more))
 private val totalCookieProtectionHintCloseButton =
     itemWithDescription(getStringResource(R.string.mozac_cfr_dismiss_button_content_description))
+
+// Context menu items
+// Link URL
+private fun contextMenuLinkUrl(linkUrl: String) =
+    itemContainingText(linkUrl)
+
+// Open link in new tab option
+private val contextMenuOpenLinkInNewTab =
+    itemContainingText(getStringResource(R.string.mozac_feature_contextmenu_open_link_in_new_tab))
+
+// Open link in private tab option
+private val contextMenuOpenLinkInPrivateTab =
+    itemContainingText(getStringResource(R.string.mozac_feature_contextmenu_open_link_in_private_tab))
+
+// Copy link option
+private val contextMenuCopyLink =
+    itemContainingText(getStringResource(R.string.mozac_feature_contextmenu_copy_link))
+
+// Download link option
+private val contextMenuDownloadLink =
+    itemContainingText(getStringResource(R.string.mozac_feature_contextmenu_download_link))
+
+// Share link option
+private val contextMenuShareLink =
+    itemContainingText(getStringResource(R.string.mozac_feature_contextmenu_share_link))
+
+// Open in external app option
+private val contextMenuOpenInExternalApp =
+    itemContainingText(getStringResource(R.string.mozac_feature_contextmenu_open_link_in_external_app))
+
+private val surveyButton =
+    itemContainingText(getStringResource(R.string.preferences_take_survey))

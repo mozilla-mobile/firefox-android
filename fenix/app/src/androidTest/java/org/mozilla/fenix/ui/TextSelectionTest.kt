@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.ui
 
 import androidx.test.platform.app.InstrumentationRegistry
@@ -118,7 +122,7 @@ class TextSelectionTest {
             clickContextMenuItem("Search")
             mDevice.waitForIdle()
             verifyTabCounter("2")
-            verifyUrl("google")
+            verifyUrl("content")
         }
     }
 
@@ -136,7 +140,7 @@ class TextSelectionTest {
             clickContextMenuItem("Private Search")
             mDevice.waitForIdle()
             verifyTabCounter("2")
-            verifyUrl("google")
+            verifyUrl("content")
         }
     }
 
@@ -214,7 +218,7 @@ class TextSelectionTest {
             longClickPageObject(itemContainingText("Crossing"))
             clickContextMenuItem("Search")
             verifyTabCounter("2")
-            verifyUrl("google")
+            verifyUrl("Crossing")
         }
     }
 
@@ -233,7 +237,7 @@ class TextSelectionTest {
             longClickPageObject(itemContainingText("Crossing"))
             clickContextMenuItem("Private Search")
             verifyTabCounter("2")
-            verifyUrl("google")
+            verifyUrl("Crossing")
         }
     }
 

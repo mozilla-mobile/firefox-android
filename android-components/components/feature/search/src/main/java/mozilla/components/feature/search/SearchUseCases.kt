@@ -78,17 +78,25 @@ class SearchUseCases(
 
             val id = if (sessionId == null) {
                 // If no `sessionId` was passed in then create a new tab
-                tabsUseCases.addTab(searchUrl, isSearch = true)
+                tabsUseCases.addTab(
+                    url = searchUrl,
+                    isSearch = true,
+                    searchEngineName = searchEngine?.name,
+                )
             } else {
                 // If we got a `sessionId` then try to find the tab and load the search URL in it
                 val existingTab = store.state.findTabOrCustomTab(sessionId)
                 if (existingTab != null) {
-                    store.dispatch(ContentAction.UpdateIsSearchAction(existingTab.id, true))
+                    store.dispatch(ContentAction.UpdateIsSearchAction(existingTab.id, true, searchEngine?.name))
                     store.dispatch(EngineAction.LoadUrlAction(existingTab.id, searchUrl))
                     existingTab.id
                 } else {
                     // If the tab with the provided id was not found then create a new tab
-                    tabsUseCases.addTab(searchUrl, isSearch = true)
+                    tabsUseCases.addTab(
+                        url = searchUrl,
+                        isSearch = true,
+                        searchEngineName = searchEngine?.name,
+                    )
                 }
             }
 
@@ -268,6 +276,18 @@ class SearchUseCases(
         }
     }
 
+    /**
+     * Restores bundled search engines that may have been removed.
+     */
+    class RestoreHiddenSearchEnginesUseCase(private val store: BrowserStore) {
+        /**
+         * Restores all hidden engines back to the bundled engine list.
+         */
+        operator fun invoke() {
+            store.dispatch(SearchAction.RestoreHiddenSearchEnginesAction)
+        }
+    }
+
     val defaultSearch: DefaultSearchUseCase by lazy {
         DefaultSearchUseCase(store, tabsUseCases, sessionUseCases)
     }
@@ -294,5 +314,9 @@ class SearchUseCases(
 
     val updateDisabledSearchEngineIds: UpdateDisabledSearchEngineIdsUseCase by lazy {
         UpdateDisabledSearchEngineIdsUseCase(store)
+    }
+
+    val restoreHiddenSearchEngines: RestoreHiddenSearchEnginesUseCase by lazy {
+        RestoreHiddenSearchEnginesUseCase(store)
     }
 }

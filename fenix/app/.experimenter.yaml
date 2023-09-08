@@ -7,6 +7,14 @@ cookie-banners:
     sections-enabled:
       type: json
       description: This property provides a lookup table of whether or not the given section should be enabled.
+extensions-process:
+  description: A feature to rollout the extensions process.
+  hasExposure: true
+  exposureDescription: ""
+  variables:
+    enabled:
+      type: boolean
+      description: "If true, the extensions process is enabled."
 glean:
   description: A feature that provides server-side configurations for Glean metrics (aka Server Knobs).
   hasExposure: true
@@ -43,7 +51,7 @@ juno-onboarding:
       type: boolean
       description: "if true, juno onboarding is shown to the user."
 messaging:
-  description: "Configuration for the messaging system.\n\nIn practice this is a set of growable lookup tables for the\nmessage controller to piece together.\n"
+  description: "The in-app messaging system.\n"
   hasExposure: true
   exposureDescription: ""
   variables:
@@ -52,7 +60,7 @@ messaging:
       description: A growable map of action URLs.
     message-under-experiment:
       type: string
-      description: Id or prefix of the message under experiment.
+      description: "Deprecated in favor of `MessageData#experiment`. This will be removed in future releases."
     messages:
       type: json
       description: A growable collection of messages
@@ -128,6 +136,25 @@ pre-permission-notification-prompt:
     enabled:
       type: boolean
       description: "if true, the pre-permission notification prompt is shown to the user."
+print:
+  description: A feature for printing from the share or browser menu.
+  hasExposure: true
+  exposureDescription: ""
+  variables:
+    browser-print-enabled:
+      type: boolean
+      description: "If true, a print button from the browser menu is available."
+    share-print-enabled:
+      type: boolean
+      description: "If true, a print button from the share menu is available."
+private-browsing:
+  description: Private Browsing Mode
+  hasExposure: true
+  exposureDescription: ""
+  variables:
+    felt-privacy-enabled:
+      type: boolean
+      description: "if true, enable felt privacy related UI"
 re-engagement-notification:
   description: A feature that shows the re-engagement notification if the user is inactive.
   hasExposure: true
@@ -139,6 +166,23 @@ re-engagement-notification:
     type:
       type: int
       description: The type of re-engagement notification that is shown to the inactive user.
+search-extra-params:
+  description: A feature that provides additional args for search.
+  hasExposure: true
+  exposureDescription: ""
+  variables:
+    channel-id:
+      type: json
+      description: The channel Id param name with arg.
+    enabled:
+      type: boolean
+      description: "If true, the feature is active."
+    feature-enabler:
+      type: json
+      description: "The feature enabler param name with arg, NOTE this map could be empty."
+    search-engine:
+      type: string
+      description: The search engine name.
 search-term-groups:
   description: A feature allowing the grouping of URLs around the search term that it came from.
   hasExposure: true
@@ -147,17 +191,6 @@ search-term-groups:
     enabled:
       type: boolean
       description: "If true, the feature shows up on the homescreen and on the new tab screen."
-search_extra_params:
-  description: A feature that provides a search engine name and a channel ID.
-  hasExposure: true
-  exposureDescription: ""
-  variables:
-    enabled:
-      type: boolean
-      description: "If true, the feature is active."
-    search_name_channel_id:
-      type: json
-      description: The search engine name and the channel ID.
 shopping-experience:
   description: A feature that shows product review quality information.
   hasExposure: true

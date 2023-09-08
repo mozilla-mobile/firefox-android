@@ -50,6 +50,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import mozilla.components.feature.top.sites.TopSite
+import org.mozilla.fenix.GleanMetrics.Pings
 import org.mozilla.fenix.R
 import org.mozilla.fenix.compose.ContextualMenu
 import org.mozilla.fenix.compose.Favicon
@@ -62,6 +63,7 @@ import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.theme.FirefoxTheme
 import org.mozilla.fenix.wallpapers.WallpaperState
 import kotlin.math.ceil
+import org.mozilla.fenix.GleanMetrics.TopSites as TopSitesMetrics
 
 private const val TOP_SITES_PER_PAGE = 8
 private const val TOP_SITES_PER_ROW = 4
@@ -103,15 +105,15 @@ fun TopSites(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        val pagerState = rememberPagerState()
-        val pageCount = ceil((topSites.size.toDouble() / TOP_SITES_PER_PAGE)).toInt()
+        val pagerState = rememberPagerState(
+            pageCount = { ceil((topSites.size.toDouble() / TOP_SITES_PER_PAGE)).toInt() },
+        )
 
         Box(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center,
         ) {
             HorizontalPager(
-                pageCount = pageCount,
                 state = pagerState,
             ) { page ->
                 Column {
@@ -123,7 +125,7 @@ fun TopSites(
 
                     for (items in topSitesWindows) {
                         Row(modifier = Modifier.defaultMinSize(minWidth = TOP_SITES_ROW_WIDTH.dp)) {
-                            items.forEach { topSite ->
+                            items.forEachIndexed { position, topSite ->
                                 TopSiteItem(
                                     topSite = topSite,
                                     menuItems = getMenuItems(
@@ -134,6 +136,7 @@ fun TopSites(
                                         onSettingsClicked = onSettingsClicked,
                                         onSponsorPrivacyClicked = onSponsorPrivacyClicked,
                                     ),
+                                    position = position,
                                     topSiteColors = topSiteColors,
                                     onTopSiteClick = { item -> onTopSiteClick(item) },
                                     onTopSiteLongClick = onTopSiteLongClick,
@@ -147,12 +150,11 @@ fun TopSites(
             }
         }
 
-        if (pageCount > 1) {
+        if (pagerState.pageCount > 1) {
             Spacer(modifier = Modifier.height(8.dp))
 
             PagerIndicator(
                 pagerState = pagerState,
-                pageCount = pageCount,
                 modifier = Modifier.padding(horizontal = 16.dp),
                 spacing = 4.dp,
             )
@@ -220,15 +222,18 @@ data class TopSiteColors(
  *
  * @param topSite The [TopSite] to display.
  * @param menuItems List of [MenuItem]s to display in a top site dropdown menu.
+ * @param position The position of the top site.
  * @param topSiteColors The color set defined by [TopSiteColors] used to style a top site.
  * @param onTopSiteClick Invoked when the user clicks on a top site.
  * @param onTopSiteLongClick Invoked when the user long clicks on a top site.
  */
+@Suppress("LongParameterList")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun TopSiteItem(
     topSite: TopSite,
     menuItems: List<MenuItem>,
+    position: Int,
     topSiteColors: TopSiteColors,
     onTopSiteClick: (TopSite) -> Unit,
     onTopSiteLongClick: (TopSite) -> Unit,
@@ -300,6 +305,12 @@ private fun TopSiteItem(
             showMenu = menuExpanded,
             onDismissRequest = { menuExpanded = false },
         )
+
+        if (topSite is TopSite.Provided) {
+            LaunchedEffect(topSite) {
+                submitTopSitesImpressionPing(topSite = topSite, position = position)
+            }
+        }
     }
 }
 
@@ -326,19 +337,10 @@ private fun TopSiteFaviconCard(
                 color = backgroundColor,
                 shape = RoundedCornerShape(4.dp),
             ) {
-                val drawableForUrl = getDrawableForUrl(topSite.url)
-                when {
-                    drawableForUrl != null -> {
-                        FaviconImage(painterResource(drawableForUrl))
-                    }
-
-                    topSite is TopSite.Provided -> {
-                        FaviconBitmap(topSite)
-                    }
-
-                    else -> {
-                        FaviconDefault(topSite.url)
-                    }
+                if (topSite is TopSite.Provided) {
+                    FaviconBitmap(topSite)
+                } else {
+                    FavIconForUrl(topSite.url)
                 }
             }
         }
@@ -372,8 +374,13 @@ private fun FaviconBitmap(topSite: TopSite.Provided) {
     }
 
     when (val uiState = faviconBitmapUiState) {
-        is FaviconBitmapUiState.Loading, FaviconBitmapUiState.Error -> FaviconDefault(topSite.url)
         is FaviconBitmapUiState.Data -> FaviconImage(BitmapPainter(uiState.imageBitmap))
+        is FaviconBitmapUiState.Error -> FaviconDefault(topSite.url)
+        is FaviconBitmapUiState.Loading -> {
+            // no-op
+            // Don't update the icon while loading else the top site icon could have a 'flashing' effect
+            // caused by the 'place holder letter' icon being immediately updated with the desired bitmap.
+        }
     }
 }
 
@@ -388,16 +395,18 @@ private fun FaviconDefault(url: String) {
     Favicon(url = url, size = TOP_SITES_FAVICON_SIZE.dp)
 }
 
-private fun getDrawableForUrl(url: String) =
+@Composable
+private fun FavIconForUrl(url: String) {
     when (url) {
-        SupportUtils.POCKET_TRENDING_URL -> R.drawable.ic_pocket
-        SupportUtils.BAIDU_URL -> R.drawable.ic_baidu
-        SupportUtils.JD_URL -> R.drawable.ic_jd
-        SupportUtils.PDD_URL -> R.drawable.ic_pdd
-        SupportUtils.TC_URL -> R.drawable.ic_tc
-        SupportUtils.MEITUAN_URL -> R.drawable.ic_meituan
-        else -> null
+        SupportUtils.POCKET_TRENDING_URL -> FaviconImage(painterResource(R.drawable.ic_pocket))
+        SupportUtils.BAIDU_URL -> FaviconImage(painterResource(R.drawable.ic_baidu))
+        SupportUtils.JD_URL -> FaviconImage(painterResource(R.drawable.ic_jd))
+        SupportUtils.PDD_URL -> FaviconImage(painterResource(R.drawable.ic_pdd))
+        SupportUtils.TC_URL -> FaviconImage(painterResource(R.drawable.ic_tc))
+        SupportUtils.MEITUAN_URL -> FaviconImage(painterResource(R.drawable.ic_meituan))
+        else -> FaviconDefault(url)
     }
+}
 
 @Composable
 @Suppress("LongParameterList")
@@ -472,6 +481,20 @@ private fun getMenuItems(
     }
 
     return result
+}
+
+private fun submitTopSitesImpressionPing(topSite: TopSite.Provided, position: Int) {
+    TopSitesMetrics.contileImpression.record(
+        TopSitesMetrics.ContileImpressionExtra(
+            position = position + 1,
+            source = "newtab",
+        ),
+    )
+
+    topSite.id?.let { TopSitesMetrics.contileTileId.set(it) }
+    topSite.title?.let { TopSitesMetrics.contileAdvertiser.set(it.lowercase()) }
+    TopSitesMetrics.contileReportingUrl.set(topSite.impressionUrl)
+    Pings.topsitesImpression.submit()
 }
 
 @Composable

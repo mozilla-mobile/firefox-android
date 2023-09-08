@@ -16,12 +16,6 @@
         app:popUpToInclusive="true" />
 
     <action
-        android:id="@+id/action_startup_onboarding"
-        app:destination="@id/onboardingFragment"
-        app:popUpTo="@id/startupFragment"
-        app:popUpToInclusive="true" />
-
-    <action
         android:id="@+id/action_global_home"
         app:destination="@id/homeFragment"
         app:popUpTo="@id/homeFragment"
@@ -223,17 +217,6 @@
             app:argType="boolean" />
     </fragment>
 
-    <fragment
-        android:id="@+id/onboardingFragment"
-        android:name="org.mozilla.fenix.onboarding.OnboardingFragment"
-        tools:layout="@layout/fragment_home">
-        <action
-            android:id="@+id/action_home"
-            app:destination="@id/homeFragment"
-            app:popUpTo="@id/onboardingFragment"
-            app:popUpToInclusive="true" />
-    </fragment>
-
     <dialog
         android:id="@+id/homeOnboardingDialogFragment"
         android:name="org.mozilla.fenix.onboarding.HomeOnboardingDialogFragment" />
@@ -325,6 +308,9 @@
         <action
             android:id="@+id/action_browserFragment_to_cookieBannerDialogFragment"
             app:destination="@id/cookieBannerDialogFragment" />
+        <action
+            android:id="@+id/action_browserFragment_to_reviewQualityCheckDialogFragment"
+            app:destination="@id/reviewQualityCheckFragment" />
     </fragment>
 
     <fragment
@@ -457,6 +443,10 @@
             android:id="@+id/action_bookmarkAddFolderFragment_to_bookmarkSelectFolderFragment"
             app:destination="@id/bookmarkSelectFolderFragment" />
     </fragment>
+
+    <dialog
+        android:id="@+id/reviewQualityCheckFragment"
+        android:name="org.mozilla.fenix.shopping.ReviewQualityCheckFragment"/>
 
     <fragment
         android:id="@+id/savedLoginsAuthFragment"

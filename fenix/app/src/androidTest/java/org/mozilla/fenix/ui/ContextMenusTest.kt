@@ -10,9 +10,9 @@ import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
-import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
@@ -69,7 +69,6 @@ class ContextMenusTest {
         mockWebServer.shutdown()
     }
 
-    @SmokeTest
     @Test
     fun verifyContextOpenLinkNewTab() {
         val pageLinks =
@@ -81,7 +80,7 @@ class ContextMenusTest {
         }.enterURLAndEnterToBrowser(pageLinks.url) {
             mDevice.waitForIdle()
             longClickPageObject(itemWithText("Link 1"))
-            verifyLinkContextMenuItems(genericURL.url)
+            verifyContextMenuForLocalHostLinks(genericURL.url)
             clickContextMenuItem("Open link in new tab")
             verifySnackBarText("New tab opened")
             clickSnackbarButton("SWITCH")
@@ -93,7 +92,6 @@ class ContextMenusTest {
         }
     }
 
-    @SmokeTest
     @Test
     fun verifyContextOpenLinkPrivateTab() {
         val pageLinks =
@@ -105,7 +103,7 @@ class ContextMenusTest {
         }.enterURLAndEnterToBrowser(pageLinks.url) {
             mDevice.waitForIdle()
             longClickPageObject(itemWithText("Link 2"))
-            verifyLinkContextMenuItems(genericURL.url)
+            verifyContextMenuForLocalHostLinks(genericURL.url)
             clickContextMenuItem("Open link in private tab")
             verifySnackBarText("New private tab opened")
             clickSnackbarButton("SWITCH")
@@ -127,7 +125,7 @@ class ContextMenusTest {
         }.enterURLAndEnterToBrowser(pageLinks.url) {
             mDevice.waitForIdle()
             longClickPageObject(itemWithText("Link 3"))
-            verifyLinkContextMenuItems(genericURL.url)
+            verifyContextMenuForLocalHostLinks(genericURL.url)
             clickContextMenuItem("Copy link")
             verifySnackBarText("Link copied to clipboard")
         }.openNavigationToolbar {
@@ -136,6 +134,7 @@ class ContextMenusTest {
         }
     }
 
+    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1807268")
     @Test
     fun verifyContextCopyLinkNotDisplayedAfterApplied() {
         val pageLinks = TestAssetHelper.getGenericAsset(mockWebServer, 4)
@@ -144,7 +143,7 @@ class ContextMenusTest {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(pageLinks.url) {
             longClickPageObject(itemWithText("Link 3"))
-            verifyLinkContextMenuItems(genericURL.url)
+            verifyContextMenuForLocalHostLinks(genericURL.url)
             clickContextMenuItem("Copy link")
             verifySnackBarText("Link copied to clipboard")
         }.openNavigationToolbar {
@@ -169,7 +168,7 @@ class ContextMenusTest {
         }.enterURLAndEnterToBrowser(pageLinks.url) {
             mDevice.waitForIdle()
             longClickPageObject(itemWithText("Link 1"))
-            verifyLinkContextMenuItems(genericURL.url)
+            verifyContextMenuForLocalHostLinks(genericURL.url)
             clickContextMenuItem("Share link")
             shareOverlay {
                 verifyShareLinkIntent(genericURL.url)
@@ -252,7 +251,7 @@ class ContextMenusTest {
         }.enterURLAndEnterToBrowser(pageLinks.url) {
             mDevice.waitForIdle()
             longClickPageObject(itemWithText("Link 1"))
-            verifyLinkContextMenuItems(genericURL.url)
+            verifyContextMenuForLocalHostLinks(genericURL.url)
             dismissContentContextMenu()
             longClickPageObject(itemWithText("test_link_image"))
             verifyLinkImageContextMenuItems(imageResource.url)
@@ -272,12 +271,12 @@ class ContextMenusTest {
             clickPageObject(itemWithText("PDF form file"))
             waitForPageToLoad()
             longClickPageObject(itemWithText("Wikipedia link"))
-            verifyLinkContextMenuItems("wikipedia.org".toUri(), false)
+            verifyContextMenuForLinksToOtherHosts("wikipedia.org".toUri())
             dismissContentContextMenu()
             // Some options are missing from the linked and non liked images context menus in PDF files
             // See https://bugzilla.mozilla.org/show_bug.cgi?id=1012805 for more details
             longClickPDFImage()
-            verifyLinkContextMenuItems("wikipedia.org".toUri())
+            verifyContextMenuForLinksToOtherHosts("wikipedia.org".toUri())
             dismissContentContextMenu()
         }
     }
@@ -289,6 +288,7 @@ class ContextMenusTest {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
             longClickPageObject(itemContainingText("Youtube link"))
+            verifyContextMenuForLinksToOtherApps("youtube.com".toUri())
             clickContextMenuItem("Open link in external app")
             assertYoutubeAppOpens()
         }

@@ -1,10 +1,13 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.ui
 
 import androidx.core.net.toUri
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
-import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.Constants.PackageName.GMAIL_APP
 import org.mozilla.fenix.helpers.Constants.PackageName.PHONE_APP
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
@@ -35,7 +38,6 @@ class PwaTest {
     @get:Rule
     val activityTestRule = HomeActivityIntentTestRule.withDefaultSettingsOverrides()
 
-    @SmokeTest
     @Test
     fun externalLinkPWATest() {
         val externalLinkURL = "https://mozilla-mobile.github.io/testapp/downloads"
@@ -57,7 +59,6 @@ class PwaTest {
     }
 
     @Ignore("Failing, see https://bugzilla.mozilla.org/show_bug.cgi?id=1807275")
-    @SmokeTest
     @Test
     fun emailLinkPWATest() {
         navigationToolbar {
@@ -74,7 +75,6 @@ class PwaTest {
         }
     }
 
-    @SmokeTest
     @Test
     fun telephoneLinkPWATest() {
         navigationToolbar {
@@ -91,7 +91,6 @@ class PwaTest {
         }
     }
 
-    @SmokeTest
     @Test
     fun appLikeExperiencePWATest() {
         navigationToolbar {
@@ -111,7 +110,6 @@ class PwaTest {
     }
 
     @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1807273")
-    @SmokeTest
     @Test
     fun saveLoginsInPWATest() {
         val pwaPage = "https://mozilla-mobile.github.io/testapp/loginForm"

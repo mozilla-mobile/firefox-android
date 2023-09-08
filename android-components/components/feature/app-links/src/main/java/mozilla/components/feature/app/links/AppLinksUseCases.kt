@@ -55,7 +55,7 @@ private const val ANDROID_RESOLVER_PACKAGE_NAME = "android"
  */
 class AppLinksUseCases(
     private val context: Context,
-    private val launchInApp: () -> Boolean = { false },
+    private var launchInApp: () -> Boolean = { false },
     private val alwaysDeniedSchemes: Set<String> = ALWAYS_DENY_SCHEMES,
     private val installedBrowsers: Browsers = BrowsersCache.all(context),
 ) {
@@ -72,6 +72,14 @@ class AppLinksUseCases(
             Logger("AppLinksUseCases").error("failed to query activities", e)
             emptyList()
         }
+    }
+
+    /**
+     * Update launchInApp for this instance of AppLinksUseCases
+     * @param launchInApp the new value of launchInApp
+     */
+    fun updateLaunchInApp(launchInApp: () -> Boolean) {
+        this.launchInApp = launchInApp
     }
 
     private fun findDefaultActivity(intent: Intent): ResolveInfo? {
@@ -118,8 +126,7 @@ class AppLinksUseCases(
             }
 
             val appIntent = when {
-                redirectData.resolveInfo == null && isEngineSupportedScheme -> null
-                redirectData.resolveInfo == null && redirectData.marketplaceIntent != null -> null
+                redirectData.resolveInfo == null -> null
                 isBrowserRedirect && isEngineSupportedScheme -> null
                 includeHttpAppLinks && isAppIntentHttpOrHttps -> redirectData.appIntent
                 !launchInApp() && (isEngineSupportedScheme || fallbackUrl != null) -> null
@@ -175,7 +182,7 @@ class AppLinksUseCases(
                     context.packageName -> null
                     // no default app found but Android resolver shows there are multiple applications
                     // that can open this app link
-                    ANDROID_RESOLVER_PACKAGE_NAME -> {
+                    ANDROID_RESOLVER_PACKAGE_NAME, null -> {
                         findActivities(appIntent).filter {
                             it.filter != null &&
                                 !(it.filter.countDataPaths() == 0 && it.filter.countDataAuthorities() == 0)
@@ -295,6 +302,11 @@ class AppLinksUseCases(
     companion object {
         @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
         internal var redirectCache: AppLinkRedirectCache? = null
+
+        @VisibleForTesting
+        internal fun clearRedirectCache() {
+            redirectCache = null
+        }
 
         // list of scheme from https://searchfox.org/mozilla-central/source/netwerk/build/components.conf
         internal val ENGINE_SUPPORTED_SCHEMES: Set<String> = setOf(

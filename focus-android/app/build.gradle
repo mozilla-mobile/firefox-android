@@ -213,7 +213,7 @@ dependencies {
     implementation ComponentsDependencies.androidx_compose_ui_tooling
     implementation ComponentsDependencies.androidx_compose_foundation
     implementation ComponentsDependencies.androidx_compose_material
-    implementation FocusDependencies.androidx_compose_runtime_livedata
+    implementation ComponentsDependencies.androidx_compose_runtime_livedata
     implementation ComponentsDependencies.androidx_constraintlayout
     implementation FocusDependencies.androidx_constraint_layout_compose
     implementation ComponentsDependencies.androidx_core_ktx
@@ -221,7 +221,7 @@ dependencies {
     implementation ComponentsDependencies.androidx_lifecycle_process
     implementation ComponentsDependencies.androidx_lifecycle_viewmodel
     implementation ComponentsDependencies.androidx_palette
-    implementation FocusDependencies.androidx_preference
+    implementation ComponentsDependencies.androidx_preferences
     implementation ComponentsDependencies.androidx_recyclerview
     implementation ComponentsDependencies.androidx_savedstate
     implementation FocusDependencies.androidx_splashscreen
@@ -296,8 +296,8 @@ dependencies {
 
     implementation project(':service-telemetry')
 
-    implementation FocusDependencies.kotlin_coroutines
-    debugImplementation FocusDependencies.leakcanary
+    implementation ComponentsDependencies.kotlin_coroutines
+    debugImplementation ComponentsDependencies.leakcanary
 
     focusImplementation FocusDependencies.adjust
     focusImplementation FocusDependencies.install_referrer // Required by Adjust

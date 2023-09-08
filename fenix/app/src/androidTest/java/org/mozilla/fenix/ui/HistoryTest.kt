@@ -23,6 +23,7 @@ import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
+import org.mozilla.fenix.helpers.MockBrowserDataHelper
 import org.mozilla.fenix.helpers.RecyclerViewIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper.exitMenu
@@ -45,7 +46,7 @@ class HistoryTest {
     @get:Rule
     val activityTestRule =
         AndroidComposeTestRule(
-            HomeActivityIntentTestRule.withDefaultSettingsOverrides(isUnifiedSearchEnabled = true),
+            HomeActivityIntentTestRule.withDefaultSettingsOverrides(),
         ) { it.activity }
 
     @Before
@@ -396,23 +397,27 @@ class HistoryTest {
         val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
         val secondWebPage = TestAssetHelper.getHTMLControlsFormAsset(mockWebServer)
 
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(firstWebPage.url) {
-        }
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(secondWebPage.url) {
+        MockBrowserDataHelper.createHistoryItem(firstWebPage.url.toString())
+        MockBrowserDataHelper.createHistoryItem(secondWebPage.url.toString())
+
+        homeScreen {
         }.openThreeDotMenu {
         }.openHistory {
         }.clickSearchButton {
             // Search for a valid term
-            typeSearch(firstWebPage.title)
-            verifySearchEngineSuggestionResults(activityTestRule, firstWebPage.url.toString())
-            verifyNoSuggestionsAreDisplayed(activityTestRule, secondWebPage.url.toString())
-            clickClearButton()
+            typeSearch("generic")
+            verifySearchEngineSuggestionResults(activityTestRule, firstWebPage.url.toString(), searchTerm = "generic")
+            verifySuggestionsAreNotDisplayed(activityTestRule, secondWebPage.url.toString())
+        }.dismissSearchBar {}
+        historyMenu {
+        }.clickSearchButton {
             // Search for invalid term
             typeSearch("Android")
-            verifyNoSuggestionsAreDisplayed(activityTestRule, firstWebPage.url.toString())
-            verifyNoSuggestionsAreDisplayed(activityTestRule, secondWebPage.url.toString())
+            verifySuggestionsAreNotDisplayed(
+                activityTestRule,
+                firstWebPage.url.toString(),
+                secondWebPage.url.toString(),
+            )
         }
     }
 
@@ -443,9 +448,13 @@ class HistoryTest {
         }.clickSearchButton {
             // Search for a valid term
             typeSearch("generic")
-            verifyNoSuggestionsAreDisplayed(activityTestRule, firstWebPage.url.toString())
-            verifyNoSuggestionsAreDisplayed(activityTestRule, secondWebPage.url.toString())
-            verifySearchEngineSuggestionResults(activityTestRule, thirdWebPage.url.toString())
+            verifySuggestionsAreNotDisplayed(activityTestRule, firstWebPage.url.toString())
+            verifySuggestionsAreNotDisplayed(activityTestRule, secondWebPage.url.toString())
+            verifySearchEngineSuggestionResults(
+                activityTestRule,
+                thirdWebPage.url.toString(),
+                searchTerm = "generic",
+            )
             pressBack()
         }
         historyMenu {
@@ -454,7 +463,7 @@ class HistoryTest {
         }.clickSearchButton {
             // Search for a valid term
             typeSearch("generic")
-            verifyNoSuggestionsAreDisplayed(activityTestRule, thirdWebPage.url.toString())
+            verifySuggestionsAreNotDisplayed(activityTestRule, thirdWebPage.url.toString())
         }
     }
 }

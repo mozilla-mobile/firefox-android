@@ -4,12 +4,16 @@
 
 package mozilla.components.support.utils.ext
 
+import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Build
 import android.provider.Settings
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.utils.ManufacturerCodes
@@ -43,5 +47,35 @@ fun Context.navigateToDefaultBrowserAppsSettings() {
         startActivity(intent)
     } catch (e: ActivityNotFoundException) {
         logger.error("ActivityNotFoundException " + e.message.toString())
+    }
+}
+
+/**
+ * Context  Context to retrieve service from.
+ * @param broadcastReceiver The BroadcastReceiver to handle the broadcast.
+ * @param filter   Selects the Intent broadcasts to be received.
+ * @param exportedFlag [ContextCompat.RECEIVER_EXPORTED], if the receiver
+ * should be able to receiver broadcasts from other applications, or
+ * [ContextCompat.RECEIVER_NOT_EXPORTED] if the receiver should be able
+ * to receive broadcasts only from the system or from within the app.
+ *
+ * @return The first sticky intent found that matches [filter],
+ * or null if there are none.
+ */
+@SuppressLint("UnspecifiedRegisterReceiverFlag")
+fun Context.registerReceiverCompat(
+    broadcastReceiver: BroadcastReceiver?,
+    filter: IntentFilter,
+    exportedFlag: Int,
+): Intent? {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        ContextCompat.registerReceiver(
+            this,
+            broadcastReceiver,
+            filter,
+            exportedFlag,
+        )
+    } else {
+        registerReceiver(broadcastReceiver, filter)
     }
 }

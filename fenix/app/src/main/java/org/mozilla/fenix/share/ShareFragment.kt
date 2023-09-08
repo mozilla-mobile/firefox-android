@@ -19,15 +19,17 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import mozilla.components.browser.state.action.ContentAction
 import mozilla.components.browser.state.selector.findTabOrCustomTab
+import mozilla.components.concept.base.crash.Breadcrumb
 import mozilla.components.concept.engine.prompt.PromptRequest
 import mozilla.components.feature.accounts.push.SendTabUseCases
 import mozilla.components.feature.share.RecentAppsStorage
-import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.databinding.FragmentShareBinding
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getRootView
 import org.mozilla.fenix.ext.requireComponents
+import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.theme.FirefoxTheme
 import org.mozilla.fenix.theme.Theme
 
@@ -49,11 +51,17 @@ class ShareFragment : AppCompatDialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        context?.components?.analytics?.crashReporter?.recordCrashBreadcrumb(
+            Breadcrumb("ShareFragment onCreate"),
+        )
         setStyle(STYLE_NO_TITLE, R.style.ShareDialogStyle)
     }
 
     override fun onPause() {
         super.onPause()
+        context?.components?.analytics?.crashReporter?.recordCrashBreadcrumb(
+            Breadcrumb("ShareFragment dismiss"),
+        )
         consumePrompt { onDismiss() }
         dismiss()
     }
@@ -124,7 +132,8 @@ class ShareFragment : AppCompatDialogFragment() {
             }
         }
 
-        if (FeatureFlags.print) {
+        FxNimbus.features.print.recordExposure()
+        if (FxNimbus.features.print.value().sharePrintEnabled) {
             binding.print.setContent {
                 FirefoxTheme(theme = Theme.getTheme(allowPrivateTheme = false)) {
                     PrintItem {
@@ -150,6 +159,9 @@ class ShareFragment : AppCompatDialogFragment() {
     }
 
     override fun onDestroy() {
+        context?.components?.analytics?.crashReporter?.recordCrashBreadcrumb(
+            Breadcrumb("ShareFragment onDestroy"),
+        )
         setFragmentResult(RESULT_KEY, Bundle())
         // Clear the stored result in case there is no listener with the same key set.
         clearFragmentResult(RESULT_KEY)

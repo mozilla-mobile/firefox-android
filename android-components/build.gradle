@@ -37,11 +37,13 @@ buildscript {
     ext {
         detekt_plugin = Versions.detekt
         python_envs_plugin = Versions.python_envs_plugin
+        ksp_plugin = Versions.ksp_plugin
     }
 }
 
 plugins {
     id("io.gitlab.arturbosch.detekt").version("$detekt_plugin")
+    id("com.google.devtools.ksp").version("$ksp_plugin")
 }
 
 allprojects {
@@ -351,8 +353,6 @@ tasks.register("ktlint", JavaExec) {
     mainClass.set("com.pinterest.ktlint.Main")
     args "components/**/*.kt" , "samples/**/*.kt", "!**/build/**/*.kt", "buildSrc/**/*.kt", "--baseline=ktlint-baseline.xml"
 }
-
-apply plugin: GitHubPlugin
 
 tasks.register("ktlintFormat", JavaExec) {
     group = "formatting"

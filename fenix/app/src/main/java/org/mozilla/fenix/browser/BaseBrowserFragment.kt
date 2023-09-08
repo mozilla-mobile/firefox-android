@@ -57,11 +57,11 @@ import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.state.state.content.DownloadState
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.browser.thumbnails.BrowserThumbnails
+import mozilla.components.concept.base.crash.Breadcrumb
 import mozilla.components.concept.engine.permission.SitePermissions
 import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.feature.accounts.FxaCapability
 import mozilla.components.feature.accounts.FxaWebChannelFeature
-import mozilla.components.feature.addons.Addon
 import mozilla.components.feature.app.links.AppLinksFeature
 import mozilla.components.feature.contextmenu.ContextMenuCandidate
 import mozilla.components.feature.contextmenu.ContextMenuFeature
@@ -137,10 +137,10 @@ import org.mozilla.fenix.downloads.ThirdPartyDownloadDialog
 import org.mozilla.fenix.ext.accessibilityManager
 import org.mozilla.fenix.ext.breadcrumb
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.getFenixAddons
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.hideToolbar
 import org.mozilla.fenix.ext.nav
+import org.mozilla.fenix.ext.navigateWithBreadcrumb
 import org.mozilla.fenix.ext.registerForActivityResult
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
@@ -550,6 +550,9 @@ abstract class BaseBrowserFragment :
             customFirstPartyDownloadDialog = { filename, contentSize, positiveAction, negativeAction ->
                 run {
                     if (currentStartDownloadDialog == null) {
+                        context.components.analytics.crashReporter.recordCrashBreadcrumb(
+                            Breadcrumb("FirstPartyDownloadDialog created"),
+                        )
                         FirstPartyDownloadDialog(
                             activity = requireActivity(),
                             filename = filename.value,
@@ -557,6 +560,9 @@ abstract class BaseBrowserFragment :
                             positiveButtonAction = positiveAction.value,
                             negativeButtonAction = negativeAction.value,
                         ).onDismiss {
+                            context.components.analytics.crashReporter.recordCrashBreadcrumb(
+                                Breadcrumb("FirstPartyDownloadDialog onDismiss"),
+                            )
                             currentStartDownloadDialog = null
                         }.show(binding.startDownloadDialogContainer)
                             .also {
@@ -568,12 +574,18 @@ abstract class BaseBrowserFragment :
             customThirdPartyDownloadDialog = { downloaderApps, onAppSelected, negativeActionCallback ->
                 run {
                     if (currentStartDownloadDialog == null) {
+                        context.components.analytics.crashReporter.recordCrashBreadcrumb(
+                            Breadcrumb("ThirdPartyDownloadDialog created"),
+                        )
                         ThirdPartyDownloadDialog(
                             activity = requireActivity(),
                             downloaderApps = downloaderApps.value,
                             onAppSelected = onAppSelected.value,
                             negativeButtonAction = negativeActionCallback.value,
                         ).onDismiss {
+                            context.components.analytics.crashReporter.recordCrashBreadcrumb(
+                                Breadcrumb("ThirdPartyDownloadDialog onDismiss"),
+                            )
                             currentStartDownloadDialog = null
                         }.show(binding.startDownloadDialogContainer).also {
                             currentStartDownloadDialog = it
@@ -904,10 +916,8 @@ abstract class BaseBrowserFragment :
         webExtensionPromptFeature.set(
             feature = WebExtensionPromptFeature(
                 store = requireComponents.core.store,
-                provideAddons = ::provideAddons,
                 context = requireContext(),
                 fragmentManager = parentFragmentManager,
-                view = view,
             ),
             owner = this,
             view = view,
@@ -1212,6 +1222,13 @@ abstract class BaseBrowserFragment :
             components.useCases.sessionUseCases.reload()
         }
         hideToolbar()
+
+        context?.settings()?.shouldOpenLinksInApp(customTabSessionId != null)
+            ?.let { openLinksInExternalApp ->
+                components.services.appLinksInterceptor.updateLaunchInApp {
+                    openLinksInExternalApp
+                }
+            }
     }
 
     @CallSuper
@@ -1419,12 +1436,14 @@ abstract class BaseBrowserFragment :
                                     MetricsUtils.BookmarkAction.EDIT,
                                     TOAST_METRIC_SOURCE,
                                 )
-                                nav(
-                                    R.id.browserFragment,
-                                    BrowserFragmentDirections.actionGlobalBookmarkEditFragment(
+                                findNavController().navigateWithBreadcrumb(
+                                    directions = BrowserFragmentDirections.actionGlobalBookmarkEditFragment(
                                         guid,
                                         true,
                                     ),
+                                    navigateFrom = "BrowserFragment",
+                                    navigateTo = "ActionGlobalBookmarkEditFragment",
+                                    crashReporter = it.context.components.analytics.crashReporter,
                                 )
                             }
                             .show()
@@ -1629,14 +1648,5 @@ abstract class BaseBrowserFragment :
         val isSameTab = downloadState.sessionId == getCurrentTab()?.id ?: false
 
         return isValidStatus && isSameTab
-    }
-
-    private suspend fun provideAddons(): List<Addon> {
-        return withContext(IO) {
-            // We deactivated the cache to get the most up-to-date list of add-ons to match against.
-            // as this will be used to install add-ons from AMO.
-            val addons = requireContext().components.addonManager.getFenixAddons(allowCache = false)
-            addons
-        }
     }
 }

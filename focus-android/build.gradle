@@ -1,7 +1,5 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
-import org.mozilla.focus.gradle.tasks.GithubDetailsTask
-
 buildscript {
     repositories {
         google()
@@ -38,11 +36,13 @@ buildscript {
     ext {
         detekt_plugin = Versions.detekt
         python_envs_plugin = Versions.python_envs_plugin
+        ksp_plugin = Versions.ksp_plugin
     }
 }
 
 plugins {
     id "io.gitlab.arturbosch.detekt" version "$detekt_plugin"
+    id("com.google.devtools.ksp").version("$ksp_plugin")
 }
 
 detekt {

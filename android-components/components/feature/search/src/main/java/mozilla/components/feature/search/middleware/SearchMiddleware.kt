@@ -28,7 +28,13 @@ import kotlin.coroutines.CoroutineContext
 /**
  * Holds data for the search extra params.
  */
-data class SearchExtraParams(val searchEngineName: String, val channelId: String)
+data class SearchExtraParams(
+    val searchEngineName: String,
+    val featureEnablerName: String?,
+    val featureEnablerParam: String?,
+    val channelIdName: String,
+    val channelIdParam: String,
+)
 
 /**
  * [Middleware] implementation for loading and saving [SearchEngine]s whenever the state changes.
@@ -79,8 +85,9 @@ class SearchMiddleware(
         next(action)
 
         when (action) {
-            is SearchAction.ShowSearchEngineAction, is SearchAction.HideSearchEngineAction ->
-                updateHiddenSearchEngines(context.state.search.hiddenSearchEngines)
+            is SearchAction.ShowSearchEngineAction, is SearchAction.HideSearchEngineAction,
+            is SearchAction.RestoreHiddenSearchEnginesAction,
+            -> updateHiddenSearchEngines(context.state.search.hiddenSearchEngines)
             is SearchAction.AddAdditionalSearchEngineAction, is SearchAction.RemoveAdditionalSearchEngineAction ->
                 updateAdditionalSearchEngines(context.state.search.additionalSearchEngines)
             is SearchAction.UpdateDisabledSearchEngineIdsAction -> updateDisabledSearchEngineIds(

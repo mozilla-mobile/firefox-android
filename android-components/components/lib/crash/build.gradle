@@ -12,7 +12,6 @@ buildscript {
 
         dependencies {
             classpath "org.mozilla.telemetry:glean-gradle-plugin:${Versions.mozilla_glean}"
-            classpath ComponentsDependencies.plugin_ksp
             classpath ComponentsDependencies.plugin_serialization
         }
     }
@@ -86,7 +85,6 @@ dependencies {
     testImplementation ComponentsDependencies.androidx_test_core
     testImplementation ComponentsDependencies.androidx_test_junit
     testImplementation ComponentsDependencies.testing_robolectric
-    testImplementation ComponentsDependencies.testing_mockito
     testImplementation ComponentsDependencies.testing_coroutines
     testImplementation ComponentsDependencies.testing_mockwebserver
     testImplementation ComponentsDependencies.mozilla_glean_forUnitTests

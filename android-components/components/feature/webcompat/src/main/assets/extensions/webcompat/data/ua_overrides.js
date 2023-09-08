@@ -348,26 +348,6 @@ const AVAILABLE_UA_OVERRIDES = [
   },
   {
     /*
-     * Bug 1628455 - UA override for autotrader.ca
-     * Webcompat issue #50961 - https://webcompat.com/issues/50961
-     *
-     * autotrader.ca is showing desktop site for Firefox on Android
-     * based on server side UA detection. Spoofing as Chrome allows to
-     * get mobile experience
-     */
-    id: "bug1628455",
-    platform: "android",
-    domain: "autotrader.ca",
-    bug: "1628455",
-    config: {
-      matches: ["https://*.autotrader.ca/*"],
-      uaTransformer: () => {
-        return UAHelpers.getDeviceAppropriateChromeUA();
-      },
-    },
-  },
-  {
-    /*
      * Bug 1646791 - bancosantander.es - Re-add UA override.
      * Bug 1665129 - *.gruposantander.es - Add wildcard domains.
      * WebCompat issue #33462 - https://webcompat.com/issues/33462
@@ -800,25 +780,6 @@ const AVAILABLE_UA_OVERRIDES = [
   },
   {
     /*
-     * Bug 1803131 - UA override for argaam.com
-     * Webcompat issue #113638 - https://webcompat.com/issues/113638
-     *
-     * To receive the proper mobile version instead of the desktop version
-     * the UA is spoofed.
-     */
-    id: "bug1803131",
-    platform: "android",
-    domain: "argaam.com",
-    bug: "1803131",
-    config: {
-      matches: ["*://*.argaam.com/*"],
-      uaTransformer: originalUA => {
-        return UAHelpers.getDeviceAppropriateChromeUA();
-      },
-    },
-  },
-  {
-    /*
      * Bug 1819702 - UA override for feelgoodcontacts.com
      * Webcompat issue #118030 - https://webcompat.com/issues/118030
      *
@@ -863,22 +824,6 @@ const AVAILABLE_UA_OVERRIDES = [
     bug: "1827678",
     config: {
       matches: ["*://*.admissions.nid.edu/*"],
-      uaTransformer: originalUA => {
-        return UAHelpers.getDeviceAppropriateChromeUA();
-      },
-    },
-  },
-  {
-    /*
-     * Bug 1827678 - UA override for www.hepsiburada.com
-     * Webcompat issue #66888 - https://webcompat.com/issues/66888
-     */
-    id: "bug1827678-webc66888",
-    platform: "android",
-    domain: "www.hepsiburada.com",
-    bug: "1827678",
-    config: {
-      matches: ["*://www.hepsiburada.com/*"],
       uaTransformer: originalUA => {
         return UAHelpers.getDeviceAppropriateChromeUA();
       },
@@ -1139,7 +1084,7 @@ const AVAILABLE_UA_OVERRIDES = [
         "*://*.captainjackcasino.com/*", // 79490
         "*://*.casinoextreme.eu/*", // 118175
         "*://*.cryptoloko.com/*", // 117911
-        "*://*.heapsowins.com/*", // 120027
+        "*://*.123lobbygames.com/*", // 120027
         "*://*.planet7casino.com/*", // 120609
         "*://*.yebocasino.co.za/*", // 88409
         "*://*.yabbycasino.com/*", // 108025
@@ -1346,6 +1291,65 @@ const AVAILABLE_UA_OVERRIDES = [
     bug: "1836182",
     config: {
       matches: ["*://*.flatsatshadowglen.com/*"],
+      uaTransformer: originalUA => {
+        return UAHelpers.getDeviceAppropriateChromeUA();
+      },
+    },
+  },
+  {
+    /*
+     * Bug 1843234 - UA override for fdj.fr
+     *
+     * The site blocks Linux users from playing games,
+     * so use a Windows user-agent on Linux.
+     */
+    id: "bug1843234",
+    platform: "desktop",
+    domain: "fdj.fr",
+    bug: "1843234",
+    config: {
+      matches: ["*://*.fdj.fr/*"],
+      uaTransformer: originalUA => {
+        if (originalUA.includes("Linux")) {
+          return UAHelpers.getWindowsUA(originalUA);
+        }
+        return originalUA;
+      },
+    },
+  },
+  {
+    /*
+     * Bug 1849018 - UA override for carefirst.com
+     * Webcompat issue #125341 - https://webcompat.com/issues/125341
+     *
+     * The site is showing "Application Blocked" message
+     * for Firefox UA.
+     */
+    id: "bug1849018",
+    platform: "all",
+    domain: "carefirst.com",
+    bug: "1849018",
+    config: {
+      matches: ["*://*.carefirst.com/myaccount*"],
+      uaTransformer: originalUA => {
+        return UAHelpers.getDeviceAppropriateChromeUA();
+      },
+    },
+  },
+  {
+    /*
+     * Bug 1849029 - UA override for publi24.ro
+     * Webcompat issue #124958 - https://webcompat.com/issues/124958
+     *
+     * The site is adding "desktop" class instead of "mobile"
+     * for Firefox on Android and it breaks the filter button.
+     */
+    id: "bug1849029",
+    platform: "android",
+    domain: "publi24.ro",
+    bug: "1849029",
+    config: {
+      matches: ["*://*.publi24.ro/*"],
       uaTransformer: originalUA => {
         return UAHelpers.getDeviceAppropriateChromeUA();
       },

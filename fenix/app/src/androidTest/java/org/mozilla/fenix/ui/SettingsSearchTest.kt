@@ -1,32 +1,46 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.ui
 
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
+import androidx.test.espresso.Espresso.pressBack
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
-import org.mozilla.fenix.R
 import org.mozilla.fenix.customannotations.SmokeTest
-import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
-import org.mozilla.fenix.helpers.RecyclerViewIdlingResource
+import org.mozilla.fenix.helpers.MockBrowserDataHelper.addCustomSearchEngine
+import org.mozilla.fenix.helpers.MockBrowserDataHelper.createBookmarkItem
+import org.mozilla.fenix.helpers.MockBrowserDataHelper.createHistoryItem
 import org.mozilla.fenix.helpers.SearchDispatcher
 import org.mozilla.fenix.helpers.TestAssetHelper.getGenericAsset
-import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.helpers.TestHelper.appContext
 import org.mozilla.fenix.helpers.TestHelper.exitMenu
-import org.mozilla.fenix.helpers.TestHelper.runWithCondition
+import org.mozilla.fenix.helpers.TestHelper.restartApp
+import org.mozilla.fenix.helpers.TestHelper.runWithSystemLocaleChanged
+import org.mozilla.fenix.helpers.TestHelper.setSystemLocale
 import org.mozilla.fenix.helpers.TestHelper.setTextToClipBoard
+import org.mozilla.fenix.helpers.TestHelper.verifySnackBarText
+import org.mozilla.fenix.ui.robots.EngineShortcut
 import org.mozilla.fenix.ui.robots.homeScreen
-import org.mozilla.fenix.ui.robots.navigationToolbar
-import org.mozilla.fenix.ui.util.ARABIC_LANGUAGE_HEADER
+import org.mozilla.fenix.ui.robots.searchScreen
+import java.util.Locale
 
 class SettingsSearchTest {
     private lateinit var mockWebServer: MockWebServer
     private lateinit var searchMockServer: MockWebServer
+    private val defaultSearchEngineList =
+        listOf(
+            "Bing",
+            "DuckDuckGo",
+            "Google",
+        )
 
     @get:Rule
     val activityTestRule = AndroidComposeTestRule(
@@ -37,6 +51,11 @@ class SettingsSearchTest {
     fun setUp() {
         mockWebServer = MockWebServer().apply {
             dispatcher = AndroidAssetDispatcher()
+            start()
+        }
+
+        searchMockServer = MockWebServer().apply {
+            dispatcher = SearchDispatcher()
             start()
         }
     }
@@ -52,28 +71,54 @@ class SettingsSearchTest {
         }.openThreeDotMenu {
         }.openSettings {
         }.openSearchSubMenu {
-            verifySearchToolbar()
+            verifyToolbarText("Search")
+            verifySearchEnginesSectionHeader()
             verifyDefaultSearchEngineHeader()
-            verifySearchEngineList()
-            verifyShowSearchSuggestions()
-            verifyShowSearchShortcuts()
-            verifySearchBrowsingHistory()
-            verifySearchBookmarks()
-            verifyShowClipboardSuggestionsDefault()
+            verifyDefaultSearchEngineSummary("Google")
+            verifyManageSearchShortcutsHeader()
+            verifyManageShortcutsSummary()
+            verifyAddressBarSectionHeader()
+            verifyAutocompleteURlsIsEnabled(true)
+            verifyShowClipboardSuggestionsEnabled(true)
+            verifySearchBrowsingHistoryEnabled(true)
+            verifySearchBookmarksEnabled(true)
+            verifySearchSyncedTabsEnabled(true)
+            verifyVoiceSearchEnabled(true)
+            verifyShowSearchSuggestionsEnabled(true)
+            verifyShowSearchSuggestionsInPrivateEnabled(false)
         }
     }
 
     @Test
-    fun selectNewDefaultSearchEngine() {
-        // Goes through the settings and changes the default search engine, then verifies it has changed.
+    fun defaultSearchEnginesSettingsItemsTest() {
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
         }.openSearchSubMenu {
-            changeDefaultSearchEngine("DuckDuckGo")
-        }.goBack {
-        }.goBack {
-            verifyDefaultSearchEngine("DuckDuckGo")
+            verifyDefaultSearchEngineHeader()
+            openDefaultSearchEngineMenu()
+            verifyToolbarText("Default search engine")
+            verifyDefaultSearchEngineList()
+            verifyDefaultSearchEngineSelected("Google")
+        }
+    }
+
+    @SmokeTest
+    @Test
+    fun selectNewDefaultSearchEngine() {
+        // Goes through the settings and changes the default search engine, then verifies it has changed.
+        defaultSearchEngineList.forEach {
+            homeScreen {
+            }.openThreeDotMenu {
+            }.openSettings {
+            }.openSearchSubMenu {
+                openDefaultSearchEngineMenu()
+                changeDefaultSearchEngine(it)
+                exitMenu()
+            }
+            searchScreen {
+                verifySearchEngineIcon(it)
+            }
         }
     }
 
@@ -98,154 +143,262 @@ class SettingsSearchTest {
         }
     }
 
-    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1807268")
     @Test
-    fun toggleSearchBookmarksAndHistoryTest() {
-        val page1 = getGenericAsset(mockWebServer, 1)
-        val page2 = getGenericAsset(mockWebServer, 2)
+    fun toggleOffHistorySearchSuggestionsTest() {
+        val websiteURL = getGenericAsset(mockWebServer, 1).url.toString()
 
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(page1.url) {
-        }.openTabDrawer {
-            closeTab()
-        }
-
-        homeScreen {
-        }.openSearch {
-            typeSearch("test")
-            verifyFirefoxSuggestResults(
-                activityTestRule,
-                "test",
-                "Firefox Suggest",
-                "Test_Page_1",
-            )
-        }.clickSearchSuggestion("Test_Page_1") {
-            verifyUrl(page1.url.toString())
-        }.openTabDrawer {
-            closeTab()
-        }
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(page2.url) {
-        }.openThreeDotMenu {
-        }.bookmarkPage {
-        }.openTabDrawer {
-            closeTab()
-        }
-
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openHistory {
-            verifyHistoryListExists()
-            clickDeleteHistoryButton("Test_Page_2")
-        }
-
-        exitMenu()
-
-        homeScreen {
-        }.openSearch {
-            typeSearch("test")
-            verifyFirefoxSuggestResults(
-                activityTestRule,
-                "test",
-                "Firefox Suggest",
-                "Test_Page_2",
-            )
-        }.clickSearchSuggestion("Test_Page_2") {
-            verifyUrl(page2.url.toString())
-        }.openTabDrawer {
-            closeTab()
-        }
+        createHistoryItem(websiteURL)
 
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
         }.openSearchSubMenu {
             switchSearchHistoryToggle()
-            switchSearchBookmarksToggle()
+            exitMenu()
         }
-
-        exitMenu()
 
         homeScreen {
         }.openSearch {
             typeSearch("test")
-            verifyNoSuggestionsAreDisplayed(
+            verifySuggestionsAreNotDisplayed(
                 activityTestRule,
                 "Firefox Suggest",
-                "Test_Page_1",
-                "Test_Page_2",
+                websiteURL,
             )
         }
     }
 
-    // Ads a new search engine from the list of custom engines
-    @SmokeTest
     @Test
-    fun addPredefinedSearchEngineTest() {
-        val searchEngine = "Reddit"
+    fun toggleOffBookmarksSearchSuggestionsTest() {
+        val website = getGenericAsset(mockWebServer, 1)
+
+        createBookmarkItem(website.url.toString(), website.title, 1u)
 
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
         }.openSearchSubMenu {
-            openAddSearchEngineMenu()
-            verifyAddSearchEngineList()
-            addNewSearchEngine(searchEngine)
-            verifyEngineListContains(searchEngine)
-        }.goBack {
-        }.goBack {
+            switchSearchBookmarksToggle()
+            // We want to avoid confusion between history and bookmarks searches,
+            // so we'll disable this too.
+            switchSearchHistoryToggle()
+            exitMenu()
+        }
+
+        homeScreen {
         }.openSearch {
-            verifyKeyboardVisibility()
-            clickSearchEngineShortcutButton()
-            verifyEnginesListShortcutContains(activityTestRule, searchEngine)
-            changeDefaultSearchEngine(activityTestRule, searchEngine)
-        }.submitQuery("mozilla ") {
-            verifyUrl(searchEngine)
-        }.openThreeDotMenu {
-        }.openSettings {
-            verifySettingsOptionSummary("Search", "Google")
-        }.openSearchSubMenu {
-            changeDefaultSearchEngine(searchEngine)
-        }.goBack {
-            verifySettingsOptionSummary("Search", searchEngine)
+            typeSearch("test")
+            verifySuggestionsAreNotDisplayed(
+                activityTestRule,
+                "Firefox Suggest",
+                website.title,
+            )
         }
     }
 
     // Verifies setting as default a customized search engine name and URL
     @SmokeTest
     @Test
-    fun editCustomSearchEngineTest() {
-        searchMockServer = MockWebServer().apply {
-            dispatcher = SearchDispatcher()
-            start()
-        }
-        val searchEngine = object {
+    fun addCustomDefaultSearchEngineTest() {
+        val customSearchEngine = object {
             val title = "TestSearchEngine"
             val url = "http://localhost:${searchMockServer.port}/searchResults.html?search=%s"
-            val newTitle = "Test"
         }
 
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
         }.openSearchSubMenu {
+            openDefaultSearchEngineMenu()
             openAddSearchEngineMenu()
-            selectAddCustomSearchEngine()
-            typeCustomEngineDetails(searchEngine.title, searchEngine.url)
+            verifySaveSearchEngineButtonEnabled(false)
+            typeCustomEngineDetails(customSearchEngine.title, customSearchEngine.url)
+            verifySaveSearchEngineButtonEnabled(true)
             saveNewSearchEngine()
-            openEngineOverflowMenu(searchEngine.title)
-            clickEdit()
-            typeCustomEngineDetails(searchEngine.newTitle, searchEngine.url)
-            saveEditSearchEngine()
-            changeDefaultSearchEngine(searchEngine.newTitle)
+            verifySnackBarText("Created ${customSearchEngine.title}")
+            verifyEngineListContains(customSearchEngine.title, shouldExist = true)
+            openEngineOverflowMenu(customSearchEngine.title)
+            pressBack()
+            changeDefaultSearchEngine(customSearchEngine.title)
+            pressBack()
+            openManageShortcutsMenu()
+            verifyEngineListContains(customSearchEngine.title, shouldExist = true)
+            pressBack()
         }.goBack {
-            verifySettingsOptionSummary("Search", searchEngine.newTitle)
+            verifySettingsOptionSummary("Search", customSearchEngine.title)
         }.goBack {
         }.openSearch {
-            verifyDefaultSearchEngine(searchEngine.newTitle)
-            clickSearchEngineShortcutButton()
-            verifyEnginesListShortcutContains(activityTestRule, searchEngine.newTitle)
+            verifySearchEngineIcon(customSearchEngine.title)
+            clickSearchSelectorButton()
+            verifySearchShortcutListContains(customSearchEngine.title)
+        }
+    }
+
+    @Test
+    fun addSearchEngineToManageShortcutsListTest() {
+        val customSearchEngine = object {
+            val title = "TestSearchEngine"
+            val url = "http://localhost:${searchMockServer.port}/searchResults.html?search=%s"
+        }
+
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openSearchSubMenu {
+            openManageShortcutsMenu()
+            openAddSearchEngineMenu()
+            typeCustomEngineDetails(customSearchEngine.title, customSearchEngine.url)
+            saveNewSearchEngine()
+            verifyEngineListContains(customSearchEngine.title, shouldExist = true)
+            pressBack()
+            openDefaultSearchEngineMenu()
+            verifyEngineListContains(customSearchEngine.title, shouldExist = true)
+        }
+    }
+
+    @Test
+    fun addSearchEngineLearnMoreLinksTest() {
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openSearchSubMenu {
+            openDefaultSearchEngineMenu()
+            openAddSearchEngineMenu()
+        }.clickCustomSearchStringLearnMoreLink {
+            verifyUrl(
+                "support.mozilla.org/en-US/kb/manage-my-default-search-engines-firefox-android?as=u&utm_source=inproduct",
+            )
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openSearchSubMenu {
+            openDefaultSearchEngineMenu()
+            openAddSearchEngineMenu()
+        }.clickCustomSearchSuggestionsLearnMoreLink {
+            verifyUrl(
+                "support.mozilla.org/en-US/kb/manage-my-default-search-engines-firefox-android?as=u&utm_source=inproduct",
+            )
+        }
+    }
+
+    @Test
+    fun editCustomSearchEngineTest() {
+        val customSearchEngine = object {
+            val title = "TestSearchEngine"
+            val url = "http://localhost:${searchMockServer.port}/searchResults.html?search=%s"
+            val newTitle = "NewEngineTitle"
+        }
+
+        addCustomSearchEngine(searchMockServer, customSearchEngine.title)
+        restartApp(activityTestRule.activityRule)
+
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openSearchSubMenu {
+            openDefaultSearchEngineMenu()
+            verifyEngineListContains(customSearchEngine.title, shouldExist = true)
+            openEngineOverflowMenu(customSearchEngine.title)
+            clickEdit()
+            typeCustomEngineDetails(customSearchEngine.newTitle, customSearchEngine.url)
+            saveEditSearchEngine()
+            verifySnackBarText("Saved ${customSearchEngine.newTitle}")
+            verifyEngineListContains(customSearchEngine.newTitle, shouldExist = true)
+            pressBack()
+            openManageShortcutsMenu()
+            verifyEngineListContains(customSearchEngine.newTitle, shouldExist = true)
+        }
+    }
+
+    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1848623")
+    @Test
+    fun errorForInvalidSearchEngineStringsTest() {
+        val customSearchEngine = object {
+            val title = "TestSearchEngine"
+            val badTemplateUrl = "http://localhost:${searchMockServer.port}/searchResults.html?search="
+            val typoUrl = "http://local:${searchMockServer.port}/searchResults.html?search=%s"
+            val goodUrl = "http://localhost:${searchMockServer.port}/searchResults.html?search=%s"
+        }
+
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openSearchSubMenu {
+            openDefaultSearchEngineMenu()
+            openAddSearchEngineMenu()
+            typeCustomEngineDetails(customSearchEngine.title, customSearchEngine.badTemplateUrl)
+            saveNewSearchEngine()
+            verifyInvalidTemplateSearchStringFormatError()
+            typeCustomEngineDetails(customSearchEngine.title, customSearchEngine.typoUrl)
+            saveNewSearchEngine()
+            verifyErrorConnectingToSearchString(customSearchEngine.title)
+            typeCustomEngineDetails(customSearchEngine.title, customSearchEngine.goodUrl)
+            typeSearchEngineSuggestionString(customSearchEngine.badTemplateUrl)
+            saveNewSearchEngine()
+            verifyInvalidTemplateSearchStringFormatError()
+            typeSearchEngineSuggestionString(customSearchEngine.typoUrl)
+            saveNewSearchEngine()
+            verifyErrorConnectingToSearchString(customSearchEngine.title)
+        }
+    }
+
+    @Test
+    fun deleteCustomSearchEngineTest() {
+        val customSearchEngineTitle = "TestSearchEngine"
+
+        addCustomSearchEngine(mockWebServer, searchEngineName = customSearchEngineTitle)
+        restartApp(activityTestRule.activityRule)
+
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openSearchSubMenu {
+            openDefaultSearchEngineMenu()
+            verifyEngineListContains(customSearchEngineTitle, shouldExist = true)
+            openEngineOverflowMenu(customSearchEngineTitle)
+            clickDeleteSearchEngine()
+            verifySnackBarText("Deleted $customSearchEngineTitle")
+            clickUndoSnackBarButton()
+            verifyEngineListContains(customSearchEngineTitle, shouldExist = true)
+            changeDefaultSearchEngine(customSearchEngineTitle)
+            openEngineOverflowMenu(customSearchEngineTitle)
+            clickDeleteSearchEngine()
+            verifyEngineListContains(customSearchEngineTitle, shouldExist = false)
+            verifyDefaultSearchEngineSelected("Google")
+            pressBack()
+            openManageShortcutsMenu()
+            verifyEngineListContains(customSearchEngineTitle, shouldExist = false)
+            exitMenu()
+        }
+        searchScreen {
+            clickSearchSelectorButton()
+            verifySearchShortcutListContains(customSearchEngineTitle, shouldExist = false)
+        }
+    }
+
+    @Test
+    fun deleteCustomSearchShortcutTest() {
+        val customSearchEngineTitle = "TestSearchEngine"
+
+        addCustomSearchEngine(mockWebServer, searchEngineName = customSearchEngineTitle)
+        restartApp(activityTestRule.activityRule)
+
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openSearchSubMenu {
+            openManageShortcutsMenu()
+            verifyEngineListContains(customSearchEngineTitle, shouldExist = true)
+            openCustomShortcutOverflowMenu(activityTestRule, customSearchEngineTitle)
+            clickDeleteSearchEngine(activityTestRule)
+            verifyEngineListContains(customSearchEngineTitle, shouldExist = false)
+            pressBack()
+            openDefaultSearchEngineMenu()
+            verifyEngineListContains(customSearchEngineTitle, shouldExist = false)
+            exitMenu()
+        }
+        searchScreen {
+            clickSearchSelectorButton()
+            verifySearchShortcutListContains(customSearchEngineTitle, shouldExist = false)
         }
     }
 
@@ -258,8 +411,12 @@ class SettingsSearchTest {
     fun toggleSearchSuggestionsTest() {
         homeScreen {
         }.openSearch {
-            typeSearch("mozilla")
-            verifySearchEngineSuggestionResults(activityTestRule, "mozilla firefox")
+            typeSearch("mozilla ")
+            verifySearchEngineSuggestionResults(
+                activityTestRule,
+                "mozilla firefox",
+                searchTerm = "mozilla ",
+            )
         }.dismissSearchBar {
         }.openThreeDotMenu {
         }.openSettings {
@@ -269,7 +426,7 @@ class SettingsSearchTest {
         }.goBack {
         }.openSearch {
             typeSearch("mozilla")
-            verifyNoSuggestionsAreDisplayed(activityTestRule, "mozilla firefox")
+            verifySuggestionsAreNotDisplayed(activityTestRule, "mozilla firefox")
         }
     }
 
@@ -282,7 +439,7 @@ class SettingsSearchTest {
             typeSearch("mozilla")
             verifyAllowSuggestionsInPrivateModeDialog()
             denySuggestionsInPrivateMode()
-            verifyNoSuggestionsAreDisplayed(activityTestRule, "mozilla firefox")
+            verifySuggestionsAreNotDisplayed(activityTestRule, "mozilla firefox")
         }
     }
 
@@ -295,21 +452,24 @@ class SettingsSearchTest {
             typeSearch("mozilla")
             verifyAllowSuggestionsInPrivateModeDialog()
             allowSuggestionsInPrivateMode()
-            verifySearchEngineSuggestionResults(activityTestRule, "mozilla firefox")
+            verifySearchEngineSuggestionResults(
+                activityTestRule,
+                "mozilla firefox",
+                searchTerm = "mozilla",
+            )
         }.dismissSearchBar {
         }.openThreeDotMenu {
         }.openSettings {
         }.openSearchSubMenu {
-            toggleShowSuggestionsInPrivateSessions()
+            switchShowSuggestionsInPrivateSessionsToggle()
         }.goBack {
         }.goBack {
         }.openSearch {
             typeSearch("mozilla")
-            verifyNoSuggestionsAreDisplayed(activityTestRule, "mozilla firefox")
+            verifySuggestionsAreNotDisplayed(activityTestRule, "mozilla firefox")
         }
     }
 
-    @SmokeTest
     @Test
     fun toggleVoiceSearchTest() {
         homeScreen {
@@ -341,8 +501,9 @@ class SettingsSearchTest {
         }.openThreeDotMenu {
         }.openSettings {
         }.openSearchSubMenu {
-            verifyShowClipboardSuggestionsDefault()
+            verifyShowClipboardSuggestionsEnabled(true)
             toggleClipboardSuggestion()
+            verifyShowClipboardSuggestionsEnabled(false)
             exitMenu()
         }
         homeScreen {
@@ -351,194 +512,103 @@ class SettingsSearchTest {
         }
     }
 
-    // Expected for en-us defaults
-    @Test
-    fun undoDeleteSearchEngineTest() {
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openSearchSubMenu {
-            verifyEngineListContains("Bing")
-            openEngineOverflowMenu("Bing")
-            clickDeleteSearchEngine()
-            clickUndoSnackBarButton()
-            verifyEngineListContains("Bing")
-        }
-    }
-
-    // Expected for en-us defaults
-    @Test
-    fun deleteDefaultSearchEngineTest() {
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openSearchSubMenu {
-            verifyEngineListContains("Google")
-            verifyDefaultSearchEngine("Google")
-            openEngineOverflowMenu("Google")
-            clickDeleteSearchEngine()
-            verifyEngineListDoesNotContain("Google")
-            verifyDefaultSearchEngine("Bing")
-        }
-    }
-
-    // Expected for en-us defaults
-    @Test
-    fun deleteAllSearchEnginesTest() {
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openSearchSubMenu {
-            runWithCondition(!appContext.settings().showUnifiedSearchFeature) {
-                // If the feature is disabled run old steps.
-                deleteMultipleSearchEngines(
-                    "Google",
-                    "Bing",
-                    "Amazon.com",
-                    "DuckDuckGo",
-                    "eBay",
-                )
-                verifyDefaultSearchEngine("Wikipedia")
-                verifyThreeDotButtonIsNotDisplayed("Wikipedia")
-                openAddSearchEngineMenu()
-                verifyAddSearchEngineListContains(
-                    "Google",
-                    "Bing",
-                    "Amazon.com",
-                    "DuckDuckGo",
-                    "eBay",
-                )
-            }
-            runWithCondition(appContext.settings().showUnifiedSearchFeature) {
-                // Run steps suitable for the enabled unified search feature.
-                deleteMultipleSearchEngines(
-                    "Google",
-                    "Bing",
-                    "Amazon.com",
-                    "eBay",
-                    "Wikipedia",
-                )
-                verifyDefaultSearchEngine("DuckDuckGo")
-                verifyThreeDotButtonIsNotDisplayed("DuckDuckGo")
-                openAddSearchEngineMenu()
-                verifyAddSearchEngineListContains(
-                    "Google",
-                    "Bing",
-                    "Amazon.com",
-                    "eBay",
-                    "Wikipedia",
-                )
-            }
-        }
-    }
-
-    // Expected for en-us defaults
-    @Test
-    fun changeSearchEnginesBasedOnTextTest() {
-        homeScreen {
-        }.openSearch {
-            typeSearch("D")
-            verifySearchEnginePrompt(activityTestRule, "DuckDuckGo")
-            clickSearchEnginePrompt(activityTestRule, "DuckDuckGo")
-        }.submitQuery("firefox") {
-            verifyUrl("duckduckgo.com/?q=firefox")
-        }
-    }
-
     // Expected for app language set to Arabic
     @Test
     fun verifySearchEnginesWithRTLLocale() {
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openSearchSubMenu {
-            toggleShowSearchShortcuts()
-        }.goBack {
-        }.openLanguageSubMenu {
-            TestHelper.registerAndCleanupIdlingResources(
-                RecyclerViewIdlingResource(
-                    activityTestRule.activity.findViewById(R.id.locale_list),
-                    2,
-                ),
-            ) {
-                selectLanguage("Arabic")
-                verifyLanguageHeaderIsTranslated(ARABIC_LANGUAGE_HEADER)
+        val arabicLocale = Locale("ar", "AR")
+
+        runWithSystemLocaleChanged(arabicLocale, activityTestRule.activityRule) {
+            homeScreen {
+            }.openSearch {
+                verifyTranslatedFocusedNavigationToolbar("ابحث أو أدخِل عنوانا")
+                clickSearchSelectorButton()
+                verifySearchShortcutListContains(
+                    "Google",
+                    "Bing",
+                    "Amazon.com",
+                    "DuckDuckGo",
+                    "ويكيبيديا (ar)",
+                )
+                selectTemporarySearchMethod("ويكيبيديا (ar)")
+            }.submitQuery("firefox") {
+                verifyUrl("firefox")
             }
-        }
-
-        exitMenu()
-
-        homeScreen {
-        }.openSearch {
-            verifyTranslatedFocusedNavigationToolbar("ابحث أو أدخِل عنوانا")
-            verifySearchEngineShortcuts(
-                activityTestRule,
-                "Google",
-                "Bing",
-                "Amazon.com",
-                "DuckDuckGo",
-                "ويكيبيديا (ar)",
-            )
-            changeDefaultSearchEngine(activityTestRule, "ويكيبيديا (ar)")
-        }.submitQuery("firefox") {
-            verifyUrl("ar.m.wikipedia.org")
         }
     }
 
-    // Expected for en-us defaults
     @Test
-    fun toggleSearchEnginesShortcutListTest() {
+    fun searchEnginesListRespectLocaleTest() {
+        runWithSystemLocaleChanged(Locale.CHINA, activityTestRule.activityRule) {
+            // Checking search engines for CH locale
+            homeScreen {
+            }.openSearch {
+                clickSearchSelectorButton()
+                verifySearchShortcutListContains(
+                    "Google",
+                    "百度",
+                    "Bing",
+                    "DuckDuckGo",
+                )
+            }.dismissSearchBar {}
+
+            // Checking search engines for FR locale
+            setSystemLocale(Locale.FRENCH)
+            homeScreen {
+            }.openSearch {
+                clickSearchSelectorButton()
+                verifySearchShortcutListContains(
+                    "Google",
+                    "Bing",
+                    "DuckDuckGo",
+                    "Qwant",
+                    "Wikipédia (fr)",
+                )
+            }
+        }
+    }
+
+    @Test
+    fun manageSearchShortcutsSettingsItemsTest() {
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
         }.openSearchSubMenu {
-            verifyShowSearchEnginesToggleState(false)
-            toggleShowSearchShortcuts()
-            verifyShowSearchEnginesToggleState(true)
+            openManageShortcutsMenu()
+            verifyToolbarText("Manage search shortcuts")
+            verifyEnginesShortcutsListHeader()
+            verifyManageShortcutsList(activityTestRule)
+            verifySearchShortcutChecked(
+                EngineShortcut(name = "Google", checkboxIndex = 1, isChecked = true),
+                EngineShortcut(name = "Bing", checkboxIndex = 4, isChecked = true),
+                EngineShortcut(name = "Amazon.com", checkboxIndex = 7, isChecked = true),
+                EngineShortcut(name = "DuckDuckGo", checkboxIndex = 10, isChecked = true),
+                EngineShortcut(name = "eBay", checkboxIndex = 13, isChecked = true),
+                EngineShortcut(name = "Wikipedia", checkboxIndex = 16, isChecked = true),
+                EngineShortcut(name = "Reddit", checkboxIndex = 19, isChecked = false),
+                EngineShortcut(name = "YouTube", checkboxIndex = 22, isChecked = false),
+            )
         }
+    }
 
-        exitMenu()
-
+    @SmokeTest
+    @Test
+    fun changeSearchShortcutsListTest() {
         homeScreen {
-        }.openSearch {
-            verifySearchEngineShortcuts(
-                activityTestRule,
-                "Google",
-                "Bing",
-                "Amazon.com",
-                "DuckDuckGo",
-                "eBay",
-                "Wikipedia",
-            )
-            scrollToSearchEngineSettings(activityTestRule)
-        }.clickSearchEngineSettings(activityTestRule) {
-            toggleShowSearchShortcuts()
-            verifyShowSearchEnginesToggleState(false)
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openSearchSubMenu {
+            openManageShortcutsMenu()
+            selectSearchShortcut(EngineShortcut(name = "Google", checkboxIndex = 1))
+            selectSearchShortcut(EngineShortcut(name = "Amazon.com", checkboxIndex = 7))
+            selectSearchShortcut(EngineShortcut(name = "Reddit", checkboxIndex = 19))
+            selectSearchShortcut(EngineShortcut(name = "YouTube", checkboxIndex = 22))
+            exitMenu()
         }
-
-        exitMenu()
-
-        homeScreen {
-        }.openSearch {
-            verifySearchEngineShortcutsAreNotDisplayed(
-                activityTestRule,
-                "Google",
-                "Bing",
-                "Amazon.com",
-                "DuckDuckGo",
-                "eBay",
-                "Wikipedia",
-            )
-            clickSearchEngineShortcutButton()
-            verifySearchEngineShortcuts(
-                activityTestRule,
-                "Google",
-                "Bing",
-                "Amazon.com",
-                "DuckDuckGo",
-                "eBay",
-                "Wikipedia",
-            )
+        searchScreen {
+            clickSearchSelectorButton()
+            verifySearchShortcutListContains("Google", "Amazon.com", shouldExist = false)
+            verifySearchShortcutListContains("YouTube", shouldExist = true)
+            verifySearchShortcutListContains("Reddit", shouldExist = true)
         }
     }
 }

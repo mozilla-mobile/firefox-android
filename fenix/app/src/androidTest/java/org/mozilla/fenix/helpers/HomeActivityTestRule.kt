@@ -12,13 +12,14 @@ import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.test.espresso.intent.rule.IntentsTestRule
 import androidx.test.rule.ActivityTestRule
 import androidx.test.uiautomator.UiSelector
+import org.junit.rules.TestRule
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.helpers.FeatureSettingsHelper.Companion.settings
 import org.mozilla.fenix.helpers.TestHelper.appContext
 import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.onboarding.FenixOnboarding
 
-typealias HomeActivityComposeTestRule = AndroidComposeTestRule<HomeActivityTestRule, HomeActivity>
+typealias HomeActivityComposeTestRule = AndroidComposeTestRule<out TestRule, HomeActivity>
 
 /**
  * A [org.junit.Rule] to handle shared test set up for tests on [HomeActivity].
@@ -55,7 +56,6 @@ class HomeActivityTestRule(
         isOpenInAppBannerEnabled: Boolean = settings.shouldShowOpenInAppBanner,
         etpPolicy: ETPPolicy = getETPPolicy(settings),
         tabsTrayRewriteEnabled: Boolean = false,
-        isUnifiedSearchEnabled: Boolean = false,
     ) : this(initialTouchMode, launchActivity, skipOnboarding) {
         this.isHomeOnboardingDialogEnabled = isHomeOnboardingDialogEnabled
         this.isPocketEnabled = isPocketEnabled
@@ -70,7 +70,6 @@ class HomeActivityTestRule(
         this.isOpenInAppBannerEnabled = isOpenInAppBannerEnabled
         this.etpPolicy = etpPolicy
         this.tabsTrayRewriteEnabled = tabsTrayRewriteEnabled
-        this.isUnifiedSearchEnabled = isUnifiedSearchEnabled
     }
 
     /**
@@ -126,7 +125,6 @@ class HomeActivityTestRule(
             isWallpaperOnboardingEnabled = false,
             isCookieBannerReductionDialogEnabled = false,
             isOpenInAppBannerEnabled = false,
-            isUnifiedSearchEnabled = false,
         )
     }
 }
@@ -160,7 +158,6 @@ class HomeActivityIntentTestRule internal constructor(
         isRecentlyVisitedFeatureEnabled: Boolean = settings.historyMetadataUIFeature,
         isPWAsPromptEnabled: Boolean = !settings.userKnowsAboutPwas,
         isTCPCFREnabled: Boolean = settings.shouldShowTotalCookieProtectionCFR,
-        isUnifiedSearchEnabled: Boolean = false,
         isWallpaperOnboardingEnabled: Boolean = settings.showWallpaperOnboarding,
         isDeleteSitePermissionsEnabled: Boolean = settings.deleteSitePermissions,
         isCookieBannerReductionDialogEnabled: Boolean = !settings.userOptOutOfReEngageCookieBannerDialog,
@@ -175,7 +172,6 @@ class HomeActivityIntentTestRule internal constructor(
         this.isRecentlyVisitedFeatureEnabled = isRecentlyVisitedFeatureEnabled
         this.isPWAsPromptEnabled = isPWAsPromptEnabled
         this.isTCPCFREnabled = isTCPCFREnabled
-        this.isUnifiedSearchEnabled = isUnifiedSearchEnabled
         this.isWallpaperOnboardingEnabled = isWallpaperOnboardingEnabled
         this.isDeleteSitePermissionsEnabled = isDeleteSitePermissionsEnabled
         this.isCookieBannerReductionDialogEnabled = isCookieBannerReductionDialogEnabled
@@ -263,7 +259,6 @@ class HomeActivityIntentTestRule internal constructor(
             launchActivity: Boolean = true,
             skipOnboarding: Boolean = false,
             tabsTrayRewriteEnabled: Boolean = false,
-            isUnifiedSearchEnabled: Boolean = false,
         ) = HomeActivityIntentTestRule(
             initialTouchMode = initialTouchMode,
             launchActivity = launchActivity,
@@ -272,7 +267,6 @@ class HomeActivityIntentTestRule internal constructor(
             isJumpBackInCFREnabled = false,
             isPWAsPromptEnabled = false,
             isTCPCFREnabled = false,
-            isUnifiedSearchEnabled = isUnifiedSearchEnabled,
             isWallpaperOnboardingEnabled = false,
             isCookieBannerReductionDialogEnabled = false,
             isOpenInAppBannerEnabled = false,

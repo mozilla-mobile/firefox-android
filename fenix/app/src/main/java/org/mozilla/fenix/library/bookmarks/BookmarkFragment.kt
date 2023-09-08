@@ -56,6 +56,7 @@ import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.setTextColor
 import org.mozilla.fenix.library.LibraryPageFragment
+import org.mozilla.fenix.tabstray.Page
 import org.mozilla.fenix.utils.allowUndo
 
 /**
@@ -228,7 +229,7 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
             R.id.open_bookmarks_in_private_tabs_multi_select -> {
                 openItemsInNewTab(private = true) { node -> node.url }
 
-                showTabTray()
+                showTabTray(openInPrivate = true)
                 BookmarksManagement.openInPrivateTabs.record(NoExtras())
                 true
             }
@@ -252,8 +253,16 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
         }
     }
 
-    private fun showTabTray() {
-        navigateToBookmarkFragment(BookmarkFragmentDirections.actionGlobalTabsTrayFragment())
+    private fun showTabTray(openInPrivate: Boolean = false) {
+        navigateToBookmarkFragment(
+            BookmarkFragmentDirections.actionGlobalTabsTrayFragment(
+                page = if (openInPrivate) {
+                    Page.PrivateTabs
+                } else {
+                    Page.NormalTabs
+                },
+            ),
+        )
     }
 
     private fun navigateToBookmarkFragment(directions: NavDirections) {
