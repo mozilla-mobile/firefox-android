@@ -96,7 +96,6 @@ class SitePermissionsTest {
         }
     }
 
-    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1815395")
     @SmokeTest
     @Test
     fun rememberBlockAudioVideoPermissionChoiceTest() {
@@ -120,7 +119,6 @@ class SitePermissionsTest {
         }
     }
 
-    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1815395")
     @SmokeTest
     @Test
     fun rememberAllowAudioVideoPermissionChoiceTest() {
@@ -161,7 +159,6 @@ class SitePermissionsTest {
         }
     }
 
-    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1815395")
     @Test
     fun rememberBlockMicrophonePermissionChoiceTest() {
         assumeTrue(micManager.microphones.isNotEmpty())
@@ -183,7 +180,6 @@ class SitePermissionsTest {
         }
     }
 
-    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1815395")
     @Test
     fun rememberAllowMicrophonePermissionChoiceTest() {
         assumeTrue(micManager.microphones.isNotEmpty())
@@ -222,7 +218,6 @@ class SitePermissionsTest {
         }
     }
 
-    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1815395")
     @Test
     fun rememberBlockCameraPermissionChoiceTest() {
         assumeTrue(cameraManager.cameraIdList.isNotEmpty())
@@ -244,7 +239,6 @@ class SitePermissionsTest {
         }
     }
 
-    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1815395")
     @Test
     fun rememberAllowCameraPermissionChoiceTest() {
         assumeTrue(cameraManager.cameraIdList.isNotEmpty())
