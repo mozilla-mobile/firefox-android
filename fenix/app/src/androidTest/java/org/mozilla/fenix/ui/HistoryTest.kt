@@ -406,14 +406,14 @@ class HistoryTest {
         }.clickSearchButton {
             // Search for a valid term
             typeSearch("generic")
-            verifySearchEngineSuggestionResults(activityTestRule, firstWebPage.url.toString())
-            verifyNoSuggestionsAreDisplayed(activityTestRule, secondWebPage.url.toString())
+            verifySearchEngineSuggestionResults(activityTestRule, firstWebPage.url.toString(), searchTerm = "generic")
+            verifySuggestionsAreNotDisplayed(activityTestRule, secondWebPage.url.toString())
         }.dismissSearchBar {}
         historyMenu {
         }.clickSearchButton {
             // Search for invalid term
             typeSearch("Android")
-            verifyNoSuggestionsAreDisplayed(
+            verifySuggestionsAreNotDisplayed(
                 activityTestRule,
                 firstWebPage.url.toString(),
                 secondWebPage.url.toString(),
@@ -448,9 +448,13 @@ class HistoryTest {
         }.clickSearchButton {
             // Search for a valid term
             typeSearch("generic")
-            verifyNoSuggestionsAreDisplayed(activityTestRule, firstWebPage.url.toString())
-            verifyNoSuggestionsAreDisplayed(activityTestRule, secondWebPage.url.toString())
-            verifySearchEngineSuggestionResults(activityTestRule, thirdWebPage.url.toString())
+            verifySuggestionsAreNotDisplayed(activityTestRule, firstWebPage.url.toString())
+            verifySuggestionsAreNotDisplayed(activityTestRule, secondWebPage.url.toString())
+            verifySearchEngineSuggestionResults(
+                activityTestRule,
+                thirdWebPage.url.toString(),
+                searchTerm = "generic",
+            )
             pressBack()
         }
         historyMenu {
@@ -459,7 +463,7 @@ class HistoryTest {
         }.clickSearchButton {
             // Search for a valid term
             typeSearch("generic")
-            verifyNoSuggestionsAreDisplayed(activityTestRule, thirdWebPage.url.toString())
+            verifySuggestionsAreNotDisplayed(activityTestRule, thirdWebPage.url.toString())
         }
     }
 }

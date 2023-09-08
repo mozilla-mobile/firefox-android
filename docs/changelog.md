@@ -4,14 +4,51 @@ title: Changelog
 permalink: /changelog/
 ---
 
-# 118.0 (In Development)
-* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v117..main)
+# 119.0 (In Development)
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v118..main)
 * [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
 * [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/Gecko.kt)
 * [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/.config.yml)
 
+
+* **feature-downloads**
+  * Added a custom permission `${applicationId}.permission.RECEIVE_DOWNLOAD_BROADCAST` that needs to be used by apps in order to receive download related broadcasts
+  
+* **ui-tabcounter**
+  * Adds a mask overlay to the tabcounter that can be shown with `toggleCounterMask`.
+
+**feature-push**
+  * We will no longer report `RecordNotFoundException` to the `CrashReporter` as it's largely a (web) application side reason why these messages are still trying to be delivered.
+
+* **feature-awesomebar**
+ * Search engine suggestions will only be displayed if the user inputs at least 2 characters and matches the starting characters of the search engine name. [bug #1851012](https://bugzilla.mozilla.org/show_bug.cgi?id=1851012) 
+
+# 118.0
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v117..releases_v118)
+* [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/releases_v118/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
+* [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/releases_v118/android-components/plugins/dependencies/src/main/java/Gecko.kt)
+* [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/releases_v118/android-components/.config.yml)
+
+* **concept-engine**
+  * 🌟️️ Add `ProductUrlStatus` to `SessionState` instance to indicate whether or not a product page of a given session state is being displayed. See more on [bug #1842638](https://bugzilla.mozilla.org/show_bug.cgi?id=1842638).
+  * 🌟️️ Add `requestProductAnalysis` API to `EngineSession` to allow request product analysis result from the engine. See more on [bug #1840692](https://bugzilla.mozilla.org/show_bug.cgi?id=1840692).
+  * 🌟️️ Add `requestProductRecommendations` API to `EngineSession` to allow request product recommendations from the engine. See more on [bug #1840693](https://bugzilla.mozilla.org/show_bug.cgi?id=1840693).
+
+* **feature-addons**
+  * ⚠️ **This is a breaking change**: the method `getAvailableAddons()` in `AddonsProvider` has been renamed to `getFeaturedAddons()`.
+  * ⚠️ **This is a breaking change**: the `AddonCollectionProvider` has been renamed to `AMOAddonsProvider`.
+  * ⚠️ **This is a breaking change**: add new method `getAddonIconBitmap()` to `AddonsProvider`.
+  * ⚠️ **This is a breaking change**: added `getAddonsByGUIDs()` method to `AddonsProvider`.
+
+* **support-ktx**
+  * 🌟`Activity.enterToImmersiveMode()` now extends the full screen view into the notch area. See more on [Bug 1849009](https://bugzilla.mozilla.org/show_bug.cgi?id=1849009)
+
+* **browser-engine-gecko**:
+ * Implemented new `NimbusExperimentDelegate` to allow GeckoView to send and recieve Nimbus experiment information. [Bug 1843592](https://bugzilla.mozilla.org/show_bug.cgi?id=1843592)
+  * Removed deprecated `ContentDelegate.onGetNimbusFeature`. Please use `ExperimentDelegate.onGetExperimentFeature`. [Bug 1843592](https://bugzilla.mozilla.org/show_bug.cgi?id=1843592)
+
 # 117.0
-* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v116..main)
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v116..releases_v117)
 * [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/releases_v117/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
 * [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/releases_v117/android-components/plugins/dependencies/src/main/java/Gecko.kt)
 * [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/releases_v117/android-components/.config.yml)
@@ -72,11 +109,6 @@ permalink: /changelog/
     * Rename mozac_ic_add_to_homescreen to mozac_ic_add_to_homescreen_24
     * Rename mozac_ic_cookies to mozac_ic_cookies_24
     * Rename mozac_ic_sync to mozac_ic_sync_24
-
-# 117.0
-
-* **concept-engine**
-  * 🌟️️ Add `ProductUrlStatus` to `SessionState` instance to indicate whether or not a product page of a given session state is being displayed. See more on [bug #1842638](https://bugzilla.mozilla.org/show_bug.cgi?id=1842638).
 
 # 116.0
 * [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v115..releases_v116)

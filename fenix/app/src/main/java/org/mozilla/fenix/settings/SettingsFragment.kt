@@ -135,8 +135,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
             requireContext().getString(R.string.pref_key_show_search_suggestions_in_private),
         )
 
-        preferenceManager.sharedPreferences
-            .registerOnSharedPreferenceChangeListener(this) { sharedPreferences, key ->
+        preferenceManager?.sharedPreferences
+            ?.registerOnSharedPreferenceChangeListener(this) { sharedPreferences, key ->
                 try {
                     if (key in booleanPreferenceTelemetryAllowList) {
                         val enabled = sharedPreferences.getBoolean(key, false)
@@ -178,9 +178,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
         requireView().findViewById<RecyclerView>(R.id.recycler_view)
             ?.hideInitialScrollBar(viewLifecycleOwner.lifecycleScope)
 
-        if (args.preferenceToScrollTo != null) {
-            scrollToPreference(args.preferenceToScrollTo)
+        args.preferenceToScrollTo?.let {
+            scrollToPreference(it)
         }
+
         // Consider finish of `onResume` to be the point at which we consider this fragment as 'created'.
         creatingFragment = false
     }
@@ -636,16 +637,17 @@ class SettingsFragment : PreferenceFragmentCompat() {
     @VisibleForTesting
     internal fun setupHomepagePreference() {
         with(requirePreference<Preference>(R.string.pref_key_home)) {
-            summary = context?.let {
-                when {
-                    it.settings().alwaysOpenTheHomepageWhenOpeningTheApp ->
-                        getString(R.string.opening_screen_homepage_summary)
-                    it.settings().openHomepageAfterFourHoursOfInactivity ->
-                        getString(R.string.opening_screen_after_four_hours_of_inactivity_summary)
-                    it.settings().alwaysOpenTheLastTabWhenOpeningTheApp ->
-                        getString(R.string.opening_screen_last_tab_summary)
-                    else -> null
-                }
+            summary = when {
+                context.settings().alwaysOpenTheHomepageWhenOpeningTheApp ->
+                    getString(R.string.opening_screen_homepage_summary)
+
+                context.settings().openHomepageAfterFourHoursOfInactivity ->
+                    getString(R.string.opening_screen_after_four_hours_of_inactivity_summary)
+
+                context.settings().alwaysOpenTheLastTabWhenOpeningTheApp ->
+                    getString(R.string.opening_screen_last_tab_summary)
+
+                else -> null
             }
         }
     }
@@ -661,14 +663,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
     @VisibleForTesting
     internal fun setupTrackingProtectionPreference() {
         with(requirePreference<Preference>(R.string.pref_key_tracking_protection_settings)) {
-            summary = context?.let {
-                when {
-                    !it.settings().shouldUseTrackingProtection -> getString(R.string.tracking_protection_off)
-                    it.settings().useStandardTrackingProtection -> getString(R.string.tracking_protection_standard)
-                    it.settings().useStrictTrackingProtection -> getString(R.string.tracking_protection_strict)
-                    it.settings().useCustomTrackingProtection -> getString(R.string.tracking_protection_custom)
-                    else -> null
-                }
+            summary = when {
+                !context.settings().shouldUseTrackingProtection -> getString(R.string.tracking_protection_off)
+                context.settings().useStandardTrackingProtection -> getString(R.string.tracking_protection_standard)
+                context.settings().useStrictTrackingProtection -> getString(R.string.tracking_protection_strict)
+                context.settings().useCustomTrackingProtection -> getString(R.string.tracking_protection_custom)
+                else -> null
             }
         }
     }
@@ -676,14 +676,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
     @VisibleForTesting
     internal fun setupCookieBannerPreference() {
         with(requirePreference<Preference>(R.string.pref_key_cookie_banner_settings)) {
-            summary = context?.let {
-                isVisible = it.settings().shouldShowCookieBannerUI
+            isVisible = context.settings().shouldShowCookieBannerUI
 
-                if (it.settings().shouldUseCookieBanner) {
-                    getString(R.string.reduce_cookie_banner_option_on)
-                } else {
-                    getString(R.string.reduce_cookie_banner_option_off)
-                }
+            summary = if (context.settings().shouldUseCookieBanner) {
+                getString(R.string.reduce_cookie_banner_option_on)
+            } else {
+                getString(R.string.reduce_cookie_banner_option_off)
             }
         }
     }

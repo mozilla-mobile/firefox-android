@@ -105,15 +105,15 @@ fun TopSites(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        val pagerState = rememberPagerState()
-        val pageCount = ceil((topSites.size.toDouble() / TOP_SITES_PER_PAGE)).toInt()
+        val pagerState = rememberPagerState(
+            pageCount = { ceil((topSites.size.toDouble() / TOP_SITES_PER_PAGE)).toInt() },
+        )
 
         Box(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center,
         ) {
             HorizontalPager(
-                pageCount = pageCount,
                 state = pagerState,
             ) { page ->
                 Column {
@@ -150,12 +150,11 @@ fun TopSites(
             }
         }
 
-        if (pageCount > 1) {
+        if (pagerState.pageCount > 1) {
             Spacer(modifier = Modifier.height(8.dp))
 
             PagerIndicator(
                 pagerState = pagerState,
-                pageCount = pageCount,
                 modifier = Modifier.padding(horizontal = 16.dp),
                 spacing = 4.dp,
             )
@@ -338,19 +337,10 @@ private fun TopSiteFaviconCard(
                 color = backgroundColor,
                 shape = RoundedCornerShape(4.dp),
             ) {
-                val drawableForUrl = getDrawableForUrl(topSite.url)
-                when {
-                    drawableForUrl != null -> {
-                        FaviconImage(painterResource(drawableForUrl))
-                    }
-
-                    topSite is TopSite.Provided -> {
-                        FaviconBitmap(topSite)
-                    }
-
-                    else -> {
-                        FaviconDefault(topSite.url)
-                    }
+                if (topSite is TopSite.Provided) {
+                    FaviconBitmap(topSite)
+                } else {
+                    FavIconForUrl(topSite.url)
                 }
             }
         }
@@ -384,8 +374,13 @@ private fun FaviconBitmap(topSite: TopSite.Provided) {
     }
 
     when (val uiState = faviconBitmapUiState) {
-        is FaviconBitmapUiState.Loading, FaviconBitmapUiState.Error -> FaviconDefault(topSite.url)
         is FaviconBitmapUiState.Data -> FaviconImage(BitmapPainter(uiState.imageBitmap))
+        is FaviconBitmapUiState.Error -> FaviconDefault(topSite.url)
+        is FaviconBitmapUiState.Loading -> {
+            // no-op
+            // Don't update the icon while loading else the top site icon could have a 'flashing' effect
+            // caused by the 'place holder letter' icon being immediately updated with the desired bitmap.
+        }
     }
 }
 
@@ -400,16 +395,18 @@ private fun FaviconDefault(url: String) {
     Favicon(url = url, size = TOP_SITES_FAVICON_SIZE.dp)
 }
 
-private fun getDrawableForUrl(url: String) =
+@Composable
+private fun FavIconForUrl(url: String) {
     when (url) {
-        SupportUtils.POCKET_TRENDING_URL -> R.drawable.ic_pocket
-        SupportUtils.BAIDU_URL -> R.drawable.ic_baidu
-        SupportUtils.JD_URL -> R.drawable.ic_jd
-        SupportUtils.PDD_URL -> R.drawable.ic_pdd
-        SupportUtils.TC_URL -> R.drawable.ic_tc
-        SupportUtils.MEITUAN_URL -> R.drawable.ic_meituan
-        else -> null
+        SupportUtils.POCKET_TRENDING_URL -> FaviconImage(painterResource(R.drawable.ic_pocket))
+        SupportUtils.BAIDU_URL -> FaviconImage(painterResource(R.drawable.ic_baidu))
+        SupportUtils.JD_URL -> FaviconImage(painterResource(R.drawable.ic_jd))
+        SupportUtils.PDD_URL -> FaviconImage(painterResource(R.drawable.ic_pdd))
+        SupportUtils.TC_URL -> FaviconImage(painterResource(R.drawable.ic_tc))
+        SupportUtils.MEITUAN_URL -> FaviconImage(painterResource(R.drawable.ic_meituan))
+        else -> FaviconDefault(url)
     }
+}
 
 @Composable
 @Suppress("LongParameterList")

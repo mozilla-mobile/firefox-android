@@ -14,6 +14,7 @@ import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsSelected
+import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.onChildAt
@@ -37,7 +38,6 @@ import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.uiautomator.By
-import androidx.test.uiautomator.UiObject
 import androidx.test.uiautomator.UiScrollable
 import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
@@ -53,13 +53,10 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.Constants.LISTS_MAXSWIPES
 import org.mozilla.fenix.helpers.Constants.LONG_CLICK_DURATION
 import org.mozilla.fenix.helpers.HomeActivityComposeTestRule
-import org.mozilla.fenix.helpers.MatcherHelper.assertCheckedItemWithResIdExists
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemContainingTextExists
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithDescriptionExists
-import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithResIdAndDescriptionExists
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithResIdAndTextExists
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithResIdExists
-import org.mozilla.fenix.helpers.MatcherHelper.checkedItemWithResId
 import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithDescription
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
@@ -75,7 +72,6 @@ import org.mozilla.fenix.helpers.TestHelper.scrollToElementByText
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
 import org.mozilla.fenix.tabstray.TabsTrayTestTag
-import org.mozilla.fenix.utils.Settings
 
 /**
  * Implementation of Robot Pattern for the home screen menu.
@@ -100,92 +96,6 @@ class HomeScreenRobot {
 
     fun verifyHomeScreenAppBarItems() =
         assertItemWithResIdExists(homeScreen, privateBrowsingButton, homepageWordmark)
-
-    fun verifyHomeScreenWelcomeItems() =
-        assertItemContainingTextExists(welcomeHeader, welcomeSubHeader)
-
-    fun verifyChooseYourThemeCard(
-        isDarkThemeChecked: Boolean,
-        isLightThemeChecked: Boolean,
-        isAutomaticThemeChecked: Boolean,
-    ) {
-        scrollToElementByText(getStringResource(R.string.onboarding_theme_picker_header))
-        assertItemContainingTextExists(
-            chooseThemeHeader,
-            chooseThemeText,
-            darkThemeDescription,
-            lightThemeDescription,
-        )
-        assertCheckedItemWithResIdExists(
-            darkThemeToggle(isDarkThemeChecked),
-            lightThemeToggle(isLightThemeChecked),
-            automaticThemeToggle(isAutomaticThemeChecked),
-        )
-        assertItemWithResIdAndDescriptionExists(automaticThemeDescription)
-    }
-
-    fun clickLightThemeButton() =
-        itemWithResId("$packageName:id/theme_light_radio_button").click()
-
-    fun clickDarkThemeButton() =
-        itemWithResId("$packageName:id/theme_dark_radio_button").click()
-
-    fun clickAutomaticThemeButton() =
-        itemWithResId("$packageName:id/theme_automatic_radio_button").click()
-
-    fun verifyToolbarPlacementCard(isBottomChecked: Boolean, isTopChecked: Boolean) {
-        scrollToElementByText(getStringResource(R.string.onboarding_toolbar_placement_header_1))
-        assertItemContainingTextExists(toolbarPlacementHeader, toolbarPlacementDescription)
-        assertCheckedItemWithResIdExists(
-            toolbarPlacementBottomRadioButton(isBottomChecked),
-            toolbarPlacementTopRadioButton(isTopChecked),
-        )
-        assertItemWithResIdExists(
-            toolbarPlacementBottomImage,
-            toolbarPlacementBottomTitle,
-            toolbarPlacementTopImage,
-            toolbarPlacementTopTitle,
-        )
-    }
-
-    fun clickTopToolbarPlacementButton() =
-        itemWithResId("$packageName:id/toolbar_top_radio_button").click()
-
-    fun clickBottomToolbarPlacementButton() =
-        itemWithResId("$packageName:id/toolbar_bottom_radio_button").click()
-
-    fun verifySignInToSyncCard() {
-        scrollToElementByText(getStringResource(R.string.onboarding_account_sign_in_header))
-        assertItemContainingTextExists(startSyncHeader, startSyncDescription)
-        assertItemWithResIdExists(signInButton)
-    }
-
-    fun verifyPrivacyProtectionCard(settings: Settings, isStandardChecked: Boolean, isStrictChecked: Boolean) {
-        scrollToElementByText(getStringResource(R.string.onboarding_privacy_notice_header_1))
-        assertItemContainingTextExists(privacyProtectionHeader, privacyProtectionDescription(settings))
-        assertCheckedItemWithResIdExists(
-            standardTrackingProtectionToggle(isStandardChecked),
-            strictTrackingProtectionToggle(isStrictChecked),
-        )
-    }
-
-    fun clickStandardTrackingProtectionButton() =
-        itemWithResId("$packageName:id/tracking_protection_standard_option").click()
-
-    fun clickStrictTrackingProtectionButton() =
-        itemWithResId("$packageName:id/tracking_protection_strict_default").click()
-
-    fun verifyPrivacyNoticeCard() {
-        scrollToElementByText(getStringResource(R.string.onboarding_privacy_notice_read_button))
-        assertItemContainingTextExists(privacyNoticeHeader, privacyNoticeDescription)
-        assertItemWithResIdExists(privacyNoticeButton)
-    }
-
-    fun verifyStartBrowsingSection() {
-        scrollToElementByText(getStringResource(R.string.onboarding_finish))
-        assertItemWithResIdExists(startBrowsingButton)
-        assertItemContainingTextExists(conclusionHeader)
-    }
 
     fun verifyNavigationToolbarItems(numberOfOpenTabs: String = "0") {
         assertItemWithResIdExists(navigationToolbar, menuButton)
@@ -224,17 +134,6 @@ class HomeScreenRobot {
         mDevice.findObject(UiSelector())
     }
 
-    // First Run elements
-    fun verifyWelcomeHeader() = assertItemContainingTextExists(welcomeHeader)
-    fun verifyAccountsSignInButton() {
-        scrollToElementByText(getStringResource(R.string.onboarding_account_sign_in_header))
-        assertItemWithResIdExists(signInButton)
-    }
-    fun verifyStartBrowsingButton() {
-        scrollToElementByText(getStringResource(R.string.onboarding_finish))
-        assertItemWithResIdExists(startBrowsingButton)
-    }
-
     // Upgrading users onboarding dialog
     fun verifyUpgradingUserOnboardingFirstScreen(testRule: ComposeTestRule) {
         testRule.also {
@@ -251,6 +150,9 @@ class HomeScreenRobot {
 
     fun clickGetStartedButton(testRule: ComposeTestRule) =
         testRule.onNodeWithText(getStringResource(R.string.onboarding_home_get_started_button)).performClick()
+
+    fun clickCloseButton(testRule: ComposeTestRule) =
+        testRule.onNode(hasContentDescription("Close")).performClick()
 
     fun verifyUpgradingUserOnboardingSecondScreen(testRule: ComposeTestRule) {
         testRule.also {
@@ -497,15 +399,11 @@ class HomeScreenRobot {
         }
     }
 
-    fun verifyJumpBackInMessage() {
-        assertTrue(
-            mDevice.findObject(
-                UiSelector().text(
-                    getStringResource(R.string.onboarding_home_screen_jump_back_contextual_hint_2),
-                ),
-            ).waitForExists(waitingTime),
-        )
-    }
+    fun verifyJumpBackInMessage(composeTestRule: ComposeTestRule) =
+        composeTestRule
+            .onNodeWithText(
+                getStringResource(R.string.onboarding_home_screen_jump_back_contextual_hint_2),
+            ).assertExists()
 
     fun getProvokingStoryPublisher(position: Int): String {
         val publisher = mDevice.findObject(
@@ -591,17 +489,6 @@ class HomeScreenRobot {
             navigationToolbar.waitForExists(waitingTime)
             navigationToolbar.click()
             mDevice.waitForIdle()
-
-            SearchRobot().interact()
-            return SearchRobot.Transition()
-        }
-
-        fun dismissOnboarding() {
-            openThreeDotMenu { }.openSettings { }.goBack { }
-        }
-
-        fun clickStartBrowsingButton(interact: SearchRobot.() -> Unit): SearchRobot.Transition {
-            startBrowsingButton.click()
 
             SearchRobot().interact()
             return SearchRobot.Transition()
@@ -886,20 +773,6 @@ class HomeScreenRobot {
             BrowserRobot().interact()
             return BrowserRobot.Transition()
         }
-
-        fun clickSignInButton(interact: SyncSignInRobot.() -> Unit): SyncSignInRobot.Transition {
-            signInButton.clickAndWaitForNewWindow(waitingTimeShort)
-
-            SyncSignInRobot().interact()
-            return SyncSignInRobot.Transition()
-        }
-
-        fun clickPrivacyNoticeButton(interact: CustomTabRobot.() -> Unit): CustomTabRobot.Transition {
-            privacyNoticeButton.clickAndWaitForNewWindow(waitingTimeShort)
-
-            CustomTabRobot().interact()
-            return CustomTabRobot.Transition()
-        }
     }
 }
 
@@ -1088,82 +961,13 @@ private fun sponsoredShortcut(sponsoredShortcutTitle: String) =
 private fun storyByTopicItem(composeTestRule: ComposeTestRule, position: Int) =
     composeTestRule.onNodeWithTag("pocket.categories").onChildAt(position - 1)
 
-private fun privacyProtectionDescription(settings: Settings): UiObject {
-    val isTCPPublic = settings.enabledTotalCookieProtectionCFR
-    val descriptionText = when (isTCPPublic) {
-        true -> R.string.onboarding_tracking_protection_description
-        false -> R.string.onboarding_tracking_protection_description_old
-    }
-
-    return itemContainingText(getStringResource(descriptionText))
-}
-
 private val homeScreen =
     itemWithResId("$packageName:id/homeLayout")
 private val privateBrowsingButton =
     itemWithResId("$packageName:id/privateBrowsingButton")
 private val homepageWordmark =
     itemWithResId("$packageName:id/wordmark")
-private val welcomeHeader = itemContainingText(getStringResource(R.string.onboarding_header_2))
-private val welcomeSubHeader =
-    itemContainingText(getStringResource(R.string.onboarding_message))
-private val chooseThemeHeader =
-    itemContainingText(getStringResource(R.string.onboarding_theme_picker_header))
-private val chooseThemeText =
-    itemContainingText(getStringResource(R.string.onboarding_theme_picker_description_2))
-private val darkThemeDescription =
-    itemContainingText(getStringResource(R.string.onboarding_theme_dark_title))
-private val lightThemeDescription =
-    itemContainingText(getStringResource(R.string.onboarding_theme_light_title))
-private val automaticThemeDescription =
-    itemWithResIdAndDescription(
-        "$packageName:id/clickable_region_automatic",
-        "${getStringResource(R.string.onboarding_theme_automatic_title)} ${getStringResource(R.string.onboarding_theme_automatic_summary)}",
-    )
-private fun darkThemeToggle(isChecked: Boolean) =
-    checkedItemWithResId("$packageName:id/theme_dark_radio_button", isChecked)
-private fun lightThemeToggle(isChecked: Boolean) =
-    checkedItemWithResId("$packageName:id/theme_light_radio_button", isChecked)
-private fun automaticThemeToggle(isChecked: Boolean) =
-    checkedItemWithResId("$packageName:id/theme_automatic_radio_button", isChecked)
-private val toolbarPlacementHeader =
-    itemContainingText(getStringResource(R.string.onboarding_toolbar_placement_header_1))
-private val toolbarPlacementDescription =
-    itemContainingText(getStringResource(R.string.onboarding_toolbar_placement_description))
-private fun toolbarPlacementBottomRadioButton(isChecked: Boolean) =
-    checkedItemWithResId("$packageName:id/toolbar_bottom_radio_button", isChecked)
-private fun toolbarPlacementTopRadioButton(isChecked: Boolean) =
-    checkedItemWithResId("$packageName:id/toolbar_top_radio_button", isChecked)
-private val toolbarPlacementBottomImage =
-    itemWithResId("$packageName:id/toolbar_bottom_image")
-private val toolbarPlacementBottomTitle =
-    itemWithResId("$packageName:id/toolbar_bottom_title")
-private val toolbarPlacementTopTitle =
-    itemWithResId("$packageName:id/toolbar_top_title")
-private val toolbarPlacementTopImage =
-    itemWithResId("$packageName:id/toolbar_top_image")
-private val startSyncHeader =
-    itemContainingText(getStringResource(R.string.onboarding_account_sign_in_header))
-private val startSyncDescription =
-    itemContainingText(getStringResource(R.string.onboarding_manual_sign_in_description))
-private val signInButton =
-    itemWithResId("$packageName:id/fxa_sign_in_button")
-private val privacyProtectionHeader =
-    itemContainingText(getStringResource(R.string.onboarding_tracking_protection_header))
-private fun standardTrackingProtectionToggle(isChecked: Boolean) =
-    checkedItemWithResId("$packageName:id/tracking_protection_standard_option", isChecked)
-private fun strictTrackingProtectionToggle(isChecked: Boolean) =
-    checkedItemWithResId("$packageName:id/tracking_protection_strict_default", isChecked)
-private val privacyNoticeHeader =
-    itemContainingText(getStringResource(R.string.onboarding_privacy_notice_header_1))
-private val privacyNoticeDescription =
-    itemContainingText(getStringResource(R.string.onboarding_privacy_notice_description))
-private val privacyNoticeButton =
-    itemWithResId("$packageName:id/read_button")
-private val startBrowsingButton =
-    itemWithResId("$packageName:id/finish_button")
-private val conclusionHeader =
-    itemContainingText(getStringResource(R.string.onboarding_conclusion_header))
+
 private val navigationToolbar =
     itemWithResId("$packageName:id/toolbar")
 private val menuButton =

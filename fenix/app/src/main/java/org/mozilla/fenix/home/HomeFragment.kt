@@ -155,6 +155,7 @@ class HomeFragment : Fragment() {
             showRenamedSnackbar()
         }
 
+        @SuppressLint("NotifyDataSetChanged")
         override fun onTabsAdded(tabCollection: TabCollection, sessions: List<TabSessionState>) {
             view?.let {
                 val message = if (sessions.size == 1) {
@@ -162,6 +163,11 @@ class HomeFragment : Fragment() {
                 } else {
                     R.string.create_collection_tabs_saved
                 }
+
+                lifecycleScope.launch(Main) {
+                    binding.sessionControlRecyclerView.adapter?.notifyDataSetChanged()
+                }
+
                 FenixSnackbar.make(
                     view = it,
                     duration = Snackbar.LENGTH_LONG,
@@ -552,10 +558,7 @@ class HomeFragment : Fragment() {
         toolbarView?.build()
 
         PrivateBrowsingButtonView(binding.privateBrowsingButton, browsingModeManager) { newMode ->
-            sessionControlInteractor.onPrivateModeButtonClicked(
-                newMode,
-                userHasBeenOnboarded = true,
-            )
+            sessionControlInteractor.onPrivateModeButtonClicked(newMode)
             Homepage.privateModeIconTapped.record(mozilla.telemetry.glean.private.NoExtras())
         }
 
@@ -659,7 +662,11 @@ class HomeFragment : Fragment() {
         }
 
         val snackbarMessage = if (sessionCode == ALL_PRIVATE_TABS) {
-            getString(R.string.snackbar_private_tabs_closed)
+            if (requireContext().settings().feltPrivateBrowsingEnabled) {
+                getString(R.string.snackbar_private_data_deleted)
+            } else {
+                getString(R.string.snackbar_private_tabs_closed)
+            }
         } else {
             getString(R.string.snackbar_tabs_closed)
         }
