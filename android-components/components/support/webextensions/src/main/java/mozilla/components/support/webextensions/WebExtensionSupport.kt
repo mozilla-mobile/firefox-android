@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import mozilla.components.browser.state.action.CustomTabListAction
 import mozilla.components.browser.state.action.EngineAction
+import mozilla.components.browser.state.action.ExtensionProcessDisabledPopupAction
 import mozilla.components.browser.state.action.TabListAction
 import mozilla.components.browser.state.action.WebExtensionAction
 import mozilla.components.browser.state.selector.allTabs
@@ -293,6 +294,10 @@ object WebExtensionSupport {
                     installedExtensions.clear()
                     store.dispatch(WebExtensionAction.UninstallAllWebExtensionsAction)
                     registerInstalledExtensions(store, runtime)
+                }
+
+                override fun onDisabledExtensionProcessSpawning() {
+                    store.dispatch(ExtensionProcessDisabledPopupAction(showPopup = true))
                 }
             },
         )
