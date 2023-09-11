@@ -114,15 +114,15 @@ import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 /**
- * The actual RAM threshold is 2GB.
+ * The actual RAM threshold is 1GB.
  *
  * To enable simpler reporting, we want to use the device's 'advertised' RAM.
  * As [ActivityManager.MemoryInfo.totalMem] is not the device's 'advertised' RAM spec & we cannot
  * access [ActivityManager.MemoryInfo.advertisedMem] across all Android versions, we will use a
- * proxy value of 1.6GB. This is based on 1.5GB with a small 'excess' buffer. We assert that all
- * values above this proxy value are 2GB or more.
+ * proxy value of 0.6GB. This is based on 0.5GB with a small 'excess' buffer. We assert that all
+ * values above this proxy value are 1GB or more.
  */
-private const val RAM_THRESHOLD_PROXY_GB = 1.6F
+private const val RAM_THRESHOLD_PROXY_GB = 0.6F
 
 private const val RAM_THRESHOLD_BYTES = RAM_THRESHOLD_PROXY_GB * (1e+9).toLong()
 
