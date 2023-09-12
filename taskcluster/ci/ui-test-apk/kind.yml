@@ -28,6 +28,7 @@ task-defaults:
         max-run-time: 7200
         env:
             GOOGLE_APPLICATION_CREDENTIALS: '.firebase_token.json'
+            TESTRAIL_TOKEN: '.my_token_here'
         artifacts:
             - name: public
               path: /builds/worker/artifacts
