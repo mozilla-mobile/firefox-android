@@ -840,7 +840,7 @@ abstract class AbstractFetchDownloadService : Service() {
         intent.putExtra(EXTRA_DOWNLOAD_STATUS, getDownloadJobStatus(downloadState))
         intent.putExtra(EXTRA_DOWNLOAD_ID, downloadState.state.id)
 
-        context.sendBroadcast(intent)
+        context.sendBroadcast(intent, "${context.packageName}.permission.RECEIVE_DOWNLOAD_BROADCAST")
     }
 
     /**

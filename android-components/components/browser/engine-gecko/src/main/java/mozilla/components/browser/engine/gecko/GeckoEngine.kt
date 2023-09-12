@@ -379,9 +379,16 @@ class GeckoEngine(
             }
         }
 
+        val extensionProcessDelegate = object : WebExtensionController.ExtensionProcessDelegate {
+            override fun onDisabledProcessSpawning() {
+                webExtensionDelegate.onDisabledExtensionProcessSpawning()
+            }
+        }
+
         runtime.webExtensionController.setPromptDelegate(promptDelegate)
         runtime.webExtensionController.setDebuggerDelegate(debuggerDelegate)
         runtime.webExtensionController.setAddonManagerDelegate(addonManagerDelegate)
+        runtime.webExtensionController.setExtensionProcessDelegate(extensionProcessDelegate)
     }
 
     /**
@@ -487,6 +494,13 @@ class GeckoEngine(
                 GeckoResult<Void>()
             },
         )
+    }
+
+    /**
+     * See [Engine.enableExtensionProcessSpawning].
+     */
+    override fun enableExtensionProcessSpawning() {
+        runtime.webExtensionController.enableExtensionProcessSpawning()
     }
 
     /**

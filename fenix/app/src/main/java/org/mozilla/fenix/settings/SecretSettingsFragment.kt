@@ -46,12 +46,6 @@ class SecretSettingsFragment : PreferenceFragmentCompat() {
             onPreferenceChangeListener = SharedPreferenceUpdater()
         }
 
-        requirePreference<SwitchPreference>(R.string.pref_key_enable_task_continuity).apply {
-            isVisible = true
-            isChecked = context.settings().enableTaskContinuityEnhancements
-            onPreferenceChangeListener = SharedPreferenceUpdater()
-        }
-
         requirePreference<SwitchPreference>(R.string.pref_key_enable_tabs_tray_to_compose).apply {
             isVisible = true
             isChecked = context.settings().enableTabsTrayToCompose
@@ -80,8 +74,8 @@ class SecretSettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
-    override fun onPreferenceTreeClick(preference: Preference?): Boolean {
-        when (preference?.key) {
+    override fun onPreferenceTreeClick(preference: Preference): Boolean {
+        when (preference.key) {
             getString(R.string.pref_key_custom_sponsored_stories_parameters) ->
                 findNavController().nav(
                     R.id.secretSettingsPreference,

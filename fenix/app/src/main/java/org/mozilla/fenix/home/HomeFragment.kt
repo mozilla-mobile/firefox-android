@@ -294,21 +294,19 @@ class HomeFragment : Fragment() {
                 view = binding.root,
             )
 
-            if (requireContext().settings().enableTaskContinuityEnhancements) {
-                recentSyncedTabFeature.set(
-                    feature = RecentSyncedTabFeature(
-                        context = requireContext(),
-                        appStore = requireComponents.appStore,
-                        syncStore = requireComponents.backgroundServices.syncStore,
-                        storage = requireComponents.backgroundServices.syncedTabsStorage,
-                        accountManager = requireComponents.backgroundServices.accountManager,
-                        historyStorage = requireComponents.core.historyStorage,
-                        coroutineScope = viewLifecycleOwner.lifecycleScope,
-                    ),
-                    owner = viewLifecycleOwner,
-                    view = binding.root,
-                )
-            }
+            recentSyncedTabFeature.set(
+                feature = RecentSyncedTabFeature(
+                    context = requireContext(),
+                    appStore = requireComponents.appStore,
+                    syncStore = requireComponents.backgroundServices.syncStore,
+                    storage = requireComponents.backgroundServices.syncedTabsStorage,
+                    accountManager = requireComponents.backgroundServices.accountManager,
+                    historyStorage = requireComponents.core.historyStorage,
+                    coroutineScope = viewLifecycleOwner.lifecycleScope,
+                ),
+                owner = viewLifecycleOwner,
+                view = binding.root,
+            )
         }
 
         if (requireContext().settings().showRecentBookmarksFeature) {
@@ -664,7 +662,11 @@ class HomeFragment : Fragment() {
         }
 
         val snackbarMessage = if (sessionCode == ALL_PRIVATE_TABS) {
-            getString(R.string.snackbar_private_tabs_closed)
+            if (requireContext().settings().feltPrivateBrowsingEnabled) {
+                getString(R.string.snackbar_private_data_deleted)
+            } else {
+                getString(R.string.snackbar_private_tabs_closed)
+            }
         } else {
             getString(R.string.snackbar_tabs_closed)
         }
