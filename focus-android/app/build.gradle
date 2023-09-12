@@ -9,12 +9,11 @@ apply plugin: 'jacoco'
 apply plugin: 'com.google.android.gms.oss-licenses-plugin'
 apply from: "$project.rootDir/tools/gradle/versionCode.gradle"
 
-import com.android.build.OutputFile
+import com.android.build.api.variant.FilterConfiguration
 import groovy.json.JsonOutput
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 android {
-    compileSdkVersion config.compileSdkVersion
-
     if (project.hasProperty("testBuildType")) {
         // Allowing to configure the test build type via command line flag (./gradlew -PtestBuildType=beta ..)
         // in order to run UI tests against other build variants than debug in automation.
@@ -24,6 +23,7 @@ android {
     defaultConfig {
         applicationId "org.mozilla"
         minSdkVersion config.minSdkVersion
+        compileSdk config.compileSdkVersion
         targetSdkVersion config.targetSdkVersion
         versionCode 11 // This versionCode is "frozen" for local builds. For "release" builds we
                        // override this with a generated versionCode at build time.
@@ -103,7 +103,7 @@ android {
         kotlinCompilerExtensionVersion = Versions.compose_compiler
     }
 
-    flavorDimensions "product"
+    flavorDimensions.add("product")
 
     productFlavors {
         // In most countries we are Firefox Focus - but in some we need to be Firefox Klar
@@ -167,14 +167,14 @@ android {
     namespace 'org.mozilla.focus'
 }
 
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
-        kotlinOptions {
-            allWarningsAsErrors = true
-            freeCompilerArgs += "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
-            freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
-            freeCompilerArgs += "-Xjvm-default=all"
-            jvmTarget = '11'
-        }
+tasks.withType(KotlinCompile).configureEach {
+    kotlinOptions.allWarningsAsErrors = true
+    kotlinOptions.freeCompilerArgs += [
+            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+            "-opt-in=kotlin.RequiresOptIn",
+            "-Xjvm-default=all"
+    ]
+    kotlinOptions.jvmTarget = '17'
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -354,7 +354,7 @@ dependencies {
 //  Dynamically set versionCode (See tools/build/versionCode.gradle
 // -------------------------------------------------------------------------------------------------
 
-android.applicationVariants.all { variant ->
+android.applicationVariants.configureEach { variant ->
     def buildType = variant.buildType.name
 
     println("----------------------------------------------")
@@ -377,7 +377,7 @@ android.applicationVariants.all { variant ->
         // with ARM compatibility mode.
 
         variant.outputs.each { output ->
-            def abi = output.getFilter(OutputFile.ABI)
+            def abi = output.getFilter(FilterConfiguration.FilterType.ABI.name())
             // We use the same version code generator, that we inherited from Fennec, across all channels - even on
             // channels that never shipped a Fennec build.
 
@@ -410,7 +410,7 @@ android.applicationVariants.all { variant ->
 // MLS: Read token from local file if it exists (Only release builds)
 // -------------------------------------------------------------------------------------------------
 
-android.applicationVariants.all {
+android.applicationVariants.configureEach {
     print("MLS token: ")
     try {
         def token = new File("${rootDir}/.mls_token").text.trim()
@@ -426,7 +426,7 @@ android.applicationVariants.all {
 // Adjust: Read token from local file if it exists (Only release builds)
 // -------------------------------------------------------------------------------------------------
 
-android.applicationVariants.all { variant ->
+android.applicationVariants.configureEach { variant ->
     def variantName = variant.getName()
 
     print("Adjust token: ")
@@ -455,7 +455,7 @@ android.applicationVariants.all { variant ->
 // Sentry: Read token from local file if it exists (Only release builds)
 // -------------------------------------------------------------------------------------------------
 
-android.applicationVariants.all {
+android.applicationVariants.configureEach {
     print("Sentry token: ")
     try {
         def token = new File("${rootDir}/.sentry_token").text.trim()
@@ -517,7 +517,7 @@ def getEnabledLocales() {
 // -------------------------------------------------------------------------------------------------
 
 print("Nimbus endpoint: ")
-android.applicationVariants.all { variant ->
+android.applicationVariants.configureEach { variant ->
     def variantName = variant.getName()
 
     if (!variantName.contains("Debug")) {
@@ -542,7 +542,7 @@ android.applicationVariants.all { variant ->
 def generatedLocaleListDir = 'src/main/java/org/mozilla/focus/generated'
 def generatedLocaleListFilename = 'LocalesList.kt'
 
-task generateLocaleList {
+tasks.register('generateLocaleList') {
     doLast {
         def dir = file(generatedLocaleListDir)
         dir.mkdir()
@@ -573,7 +573,7 @@ task generateLocaleList {
     }
 }
 
-tasks.whenTaskAdded { task ->
+tasks.configureEach { task ->
     if (name.contains("compile")) {
         task.dependsOn generateLocaleList
     }
@@ -584,15 +584,15 @@ clean.doLast {
 }
 
 if (project.hasProperty("coverage")) {
-    tasks.withType(Test) {
+    tasks.withType(Test).configureEach {
         jacoco.includeNoLocationClasses = true
         jacoco.excludes = ['jdk.internal.*']
     }
 
-    android.applicationVariants.all { variant ->
-        task "jacoco${variant.name.capitalize()}TestReport"(type: JacocoReport,
-                dependsOn: ["test${variant.name.capitalize()}UnitTest"]) {
+    android.applicationVariants.configureEach { variant ->
+        tasks.register("jacoco${variant.name.capitalize()}TestReport", JacocoReport) {
 
+            dependsOn(["test${variant.name.capitalize()}UnitTest"])
             reports {
                 html.enabled true
                 xml.enabled true
@@ -635,7 +635,7 @@ tasks.register('printVariants') {
     doLast {
         def variants = android.applicationVariants.collect { variant -> [
             apks: variant.outputs.collect { output -> [
-                abi: output.getFilter(com.android.build.VariantOutput.FilterType.ABI),
+                abi: output.getFilter(FilterConfiguration.FilterType.ABI.name()),
                 fileName: output.outputFile.name
             ]},
             build_type: variant.buildType.name,

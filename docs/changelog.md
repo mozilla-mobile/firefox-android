@@ -12,8 +12,8 @@ permalink: /changelog/
 
 
 * **feature-downloads**
-  * Added a custom permission `org.mozilla.permission.RECEIVE_DOWNLOAD_BROADCAST` that needs to be used by apps in order to receive download related broadcasts
-  
+  * Added a custom permission `${applicationId}.permission.RECEIVE_DOWNLOAD_BROADCAST` that needs to be used by apps in order to receive download related broadcasts
+
 * **ui-tabcounter**
   * Adds a mask overlay to the tabcounter that can be shown with `toggleCounterMask`.
 
@@ -21,7 +21,7 @@ permalink: /changelog/
   * We will no longer report `RecordNotFoundException` to the `CrashReporter` as it's largely a (web) application side reason why these messages are still trying to be delivered.
 
 * **feature-awesomebar**
- * Search engine suggestions will only be displayed if the user inputs at least 2 characters and matches the starting characters of the search engine name. [bug #1851012](https://bugzilla.mozilla.org/show_bug.cgi?id=1851012) 
+ * Search engine suggestions will only be displayed if the user inputs at least 2 characters and matches the starting characters of the search engine name. [bug #1851012](https://bugzilla.mozilla.org/show_bug.cgi?id=1851012)
 
 # 118.0
 * [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v117..releases_v118)
@@ -44,7 +44,7 @@ permalink: /changelog/
   * 🌟`Activity.enterToImmersiveMode()` now extends the full screen view into the notch area. See more on [Bug 1849009](https://bugzilla.mozilla.org/show_bug.cgi?id=1849009)
 
 * **browser-engine-gecko**:
- * Implemented new `NimbusExperimentDelegate` to allow GeckoView to send and recieve Nimbus experiment information. [Bug 1843592](https://bugzilla.mozilla.org/show_bug.cgi?id=1843592)
+ * Implemented new `NimbusExperimentDelegate` to allow GeckoView to send and receive Nimbus experiment information. [Bug 1843592](https://bugzilla.mozilla.org/show_bug.cgi?id=1843592)
   * Removed deprecated `ContentDelegate.onGetNimbusFeature`. Please use `ExperimentDelegate.onGetExperimentFeature`. [Bug 1843592](https://bugzilla.mozilla.org/show_bug.cgi?id=1843592)
 
 # 117.0
