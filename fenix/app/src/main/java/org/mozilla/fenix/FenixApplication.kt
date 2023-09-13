@@ -138,6 +138,10 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
 
     private val logger = Logger("FenixApplication")
 
+    internal val isDeviceRamAboveThreshold by lazy {
+        isDeviceRamAboveThreshold()
+    }
+
     open val components by lazy { Components(this) }
 
     var visibilityLifecycleCallback: VisibilityLifecycleCallback? = null
@@ -707,7 +711,6 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         settings: Settings,
         browsersCache: BrowsersCache = BrowsersCache,
         mozillaProductDetector: MozillaProductDetector = MozillaProductDetector,
-        isDeviceRamAboveThreshold: Boolean = isDeviceRamAboveThreshold(),
     ) {
         setPreferenceMetrics(settings)
         with(Metrics) {
