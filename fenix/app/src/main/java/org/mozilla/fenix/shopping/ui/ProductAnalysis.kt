@@ -57,7 +57,7 @@ import org.mozilla.fenix.theme.FirefoxTheme
 @Composable
 @Suppress("LongParameterList")
 fun ProductAnalysis(
-    productRecommendationsEnabled: Boolean,
+    productRecommendationsEnabled: Boolean?,
     productAnalysis: AnalysisPresent,
     onOptOutClick: () -> Unit,
     onReanalyzeClick: () -> Unit,
