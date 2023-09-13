@@ -21,7 +21,7 @@ object Versions {
 
     const val junit = "4.13.2"
     const val robolectric = "4.10.3"
-    const val mockito = "5.4.0"
+    const val mockito = "5.5.0"
     const val maven_ant_tasks = "2.1.3"
     const val jacoco = "0.8.10"
 
@@ -71,7 +71,7 @@ object Versions {
         const val core = "1.12.0"
         const val drawerlayout = "1.2.0"
         const val fragment = "1.6.1"
-        const val recyclerview = "1.3.0"
+        const val recyclerview = "1.3.1"
         const val test = "1.5.0"
         const val test_ext = "1.1.5"
         const val test_runner = "1.5.2"
@@ -93,7 +93,7 @@ object Versions {
     }
 
     object Firebase {
-        const val messaging = "23.1.2"
+        const val messaging = "23.2.1"
     }
 }
 
