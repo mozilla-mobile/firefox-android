@@ -28,7 +28,6 @@ import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithText
 import org.mozilla.fenix.helpers.RetryTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
-import org.mozilla.fenix.helpers.TestHelper.assertYoutubeAppOpens
 import org.mozilla.fenix.helpers.TestHelper.registerAndCleanupIdlingResources
 import org.mozilla.fenix.helpers.ViewVisibilityIdlingResource
 import org.mozilla.fenix.ui.robots.browserScreen
@@ -82,21 +81,6 @@ class SmokeTest {
     @After
     fun tearDown() {
         mockWebServer.shutdown()
-    }
-
-    // Device or AVD requires a Google Services Android OS installation with Play Store installed
-    // Verifies the Open in app button when an app is installed
-    @Test
-    fun mainMenuOpenInAppTest() {
-        val youtubeURL = "vnd.youtube://".toUri()
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(youtubeURL) {
-            verifyNotificationDotOnMainMenu()
-        }.openThreeDotMenu {
-        }.clickOpenInApp {
-            assertYoutubeAppOpens()
-        }
     }
 
     // Verifies that deleting a Bookmarks folder also removes the item from inside it.
@@ -293,88 +277,6 @@ class SmokeTest {
             verifyTabMediaControlButtonState("Play")
         }.openTab(audioTestPage.title) {
             assertPlaybackState(browserStore, MediaSession.PlaybackState.PAUSED)
-        }
-    }
-
-    // For API>23
-    // Verifies the default browser switch opens the system default apps menu.
-    @Test
-    fun changeDefaultBrowserSetting() {
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-            verifyDefaultBrowserToggle(false)
-            clickDefaultBrowserSwitch()
-            verifyAndroidDefaultAppsMenuAppears()
-        }
-        // Dismiss the request
-        mDevice.pressBack()
-    }
-
-    @Test
-    fun goToHomeScreenBottomToolbarTest() {
-        val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(genericURL.url) {
-            mDevice.waitForIdle()
-        }.goToHomescreen {
-            verifyHomeScreen()
-        }
-    }
-
-    @Test
-    fun goToHomeScreenTopToolbarTest() {
-        val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openCustomizeSubMenu {
-            clickTopToolbarToggle()
-        }.goBack {
-        }.goBack {
-        }.openNavigationToolbar {
-        }.enterURLAndEnterToBrowser(genericURL.url) {
-            mDevice.waitForIdle()
-        }.goToHomescreen {
-            verifyHomeScreen()
-        }
-    }
-
-    @Test
-    fun goToHomeScreenBottomToolbarPrivateModeTest() {
-        val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        homeScreen {
-            togglePrivateBrowsingModeOnOff()
-        }
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(genericURL.url) {
-            mDevice.waitForIdle()
-        }.goToHomescreen {
-            verifyHomeScreen()
-        }
-    }
-
-    @Test
-    fun goToHomeScreenTopToolbarPrivateModeTest() {
-        val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        homeScreen {
-            togglePrivateBrowsingModeOnOff()
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openCustomizeSubMenu {
-            clickTopToolbarToggle()
-        }.goBack {
-        }.goBack {
-        }.openNavigationToolbar {
-        }.enterURLAndEnterToBrowser(genericURL.url) {
-            mDevice.waitForIdle()
-        }.goToHomescreen {
-            verifyHomeScreen()
         }
     }
 }
