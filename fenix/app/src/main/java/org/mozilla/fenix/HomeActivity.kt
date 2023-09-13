@@ -949,6 +949,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
      * value of [searchTermOrURL]).
      *
      * @param flags Flags that will be used when loading the URL (not applied to searches).
+     * @param additionalHeaders The extra headers to use when loading the URL.
      */
     @Suppress("LongParameterList")
     fun openToBrowserAndLoad(
@@ -961,9 +962,19 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         flags: EngineSession.LoadUrlFlags = EngineSession.LoadUrlFlags.none(),
         requestDesktopMode: Boolean = false,
         historyMetadata: HistoryMetadataKey? = null,
+        additionalHeaders: Map<String, String>? = null,
     ) {
         openToBrowser(from, customTabSessionId)
-        load(searchTermOrURL, newTab, engine, forceSearch, flags, requestDesktopMode, historyMetadata)
+        load(
+            searchTermOrURL = searchTermOrURL,
+            newTab = newTab,
+            engine = engine,
+            forceSearch = forceSearch,
+            flags = flags,
+            requestDesktopMode = requestDesktopMode,
+            historyMetadata = historyMetadata,
+            additionalHeaders = additionalHeaders,
+        )
     }
 
     fun openToBrowser(from: BrowserDirection, customTabSessionId: String? = null) {
@@ -1042,6 +1053,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
      * @param flags Flags that will be used when loading the URL (not applied to searches).
      * @param historyMetadata The [HistoryMetadataKey] of the new tab in case this tab
      * was opened from history.
+     * @param additionalHeaders The extra headers to use when loading the URL.
      */
     private fun load(
         searchTermOrURL: String,
@@ -1051,6 +1063,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         flags: EngineSession.LoadUrlFlags = EngineSession.LoadUrlFlags.none(),
         requestDesktopMode: Boolean = false,
         historyMetadata: HistoryMetadataKey? = null,
+        additionalHeaders: Map<String, String>? = null,
     ) {
         val startTime = components.core.engine.profiler?.getProfilerTime()
         val mode = browsingModeManager.mode
@@ -1090,13 +1103,20 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
                     components.useCases.searchUseCases.newTabSearch
                 }
                 searchUseCase.invoke(
-                    searchTermOrURL,
-                    SessionState.Source.Internal.UserEntered,
-                    true,
+                    searchTerms = searchTermOrURL,
+                    source = SessionState.Source.Internal.UserEntered,
+                    selected = true,
                     searchEngine = engine,
+                    flags = flags,
+                    additionalHeaders = additionalHeaders,
                 )
             } else {
-                components.useCases.searchUseCases.defaultSearch.invoke(searchTermOrURL, engine)
+                components.useCases.searchUseCases.defaultSearch.invoke(
+                    searchTerms = searchTermOrURL,
+                    searchEngine = engine,
+                    flags = flags,
+                    additionalHeaders = additionalHeaders,
+                )
             }
         }
 
