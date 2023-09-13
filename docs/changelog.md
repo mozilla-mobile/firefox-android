@@ -4,24 +4,6 @@ title: Changelog
 permalink: /changelog/
 ---
 
-<<<<<<< HEAD
-=======
-# 119.0 (In Development)
-* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v118..main)
-* [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
-* [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/Gecko.kt)
-* [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/.config.yml)
-
-* **ui-tabcounter**
-  * Adds a mask overlay to the tabcounter that can be shown with `toggleCounterMask`.
-
-**feature-push**
-  * We will no longer report `RecordNotFoundException` to the `CrashReporter` as it's largely a (web) application side reason why these messages are still trying to be delivered.
-
-* **feature-awesomebar**
- * Search engine suggestions will only be displayed if the user inputs at least 2 characters and matches the starting characters of the search engine name. [bug #1851012](https://bugzilla.mozilla.org/show_bug.cgi?id=1851012) 
-
->>>>>>> 5389b39020 (Bug 1851012 – aligned Search Engine Suggestion Provider behaviour with Desktop)
 # 118.0
 * [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v117..releases_v118)
 * [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/releases_v118/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
@@ -30,6 +12,9 @@ permalink: /changelog/
 
 * **feature-push**
   * We will no longer report `RecordNotFoundException` to the `CrashReporter` as it's largely a (web) application side reason why these messages are still trying to be delivered.
+
+* **feature-awesomebar**
+ * Search engine suggestions will only be displayed if the user inputs at least 2 characters and matches the starting characters of the search engine name. [bug #1851012](https://bugzilla.mozilla.org/show_bug.cgi?id=1851012) 
 
 * **concept-engine**
   * 🌟️️ Add `ProductUrlStatus` to `SessionState` instance to indicate whether or not a product page of a given session state is being displayed. See more on [bug #1842638](https://bugzilla.mozilla.org/show_bug.cgi?id=1842638).
