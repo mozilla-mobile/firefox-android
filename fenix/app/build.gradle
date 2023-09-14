@@ -1,3 +1,4 @@
+import com.android.build.api.variant.FilterConfiguration
 import org.apache.tools.ant.util.StringUtils
 
 plugins {
@@ -12,18 +13,16 @@ apply plugin: 'jacoco'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
 apply plugin: 'com.google.android.gms.oss-licenses-plugin'
 
-import com.android.build.OutputFile
 import groovy.json.JsonOutput
 import org.gradle.internal.logging.text.StyledTextOutput.Style
 import org.gradle.internal.logging.text.StyledTextOutputFactory
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 import static org.gradle.api.tasks.testing.TestResult.ResultType
 
 apply from: 'benchmark.gradle'
 
 android {
-    compileSdkVersion config.compileSdkVersion
-
     project.maybeConfigForJetpackBenchmark(it)
     if (project.hasProperty("testBuildType")) {
         // Allowing to configure the test build type via command line flag (./gradlew -PtestBuildType=beta ..)
@@ -34,6 +33,7 @@ android {
     defaultConfig {
         applicationId "org.mozilla"
         minSdkVersion config.minSdkVersion
+        compileSdk config.compileSdkVersion
         targetSdkVersion config.targetSdkVersion
         versionCode 1
         versionName Config.generateDebugVersionName()
@@ -185,9 +185,7 @@ android {
         animationsDisabled = true
     }
 
-    flavorDimensions "engine"
-
-    flavorDimensions "product"
+    flavorDimensions.add("product")
 
     productFlavors {
         fenix {
@@ -253,7 +251,7 @@ android {
     namespace 'org.mozilla.fenix'
 }
 
-android.applicationVariants.all { variant ->
+android.applicationVariants.configureEach { variant ->
 
 // -------------------------------------------------------------------------------------------------
 // Generate version codes for builds
@@ -279,7 +277,7 @@ android.applicationVariants.all { variant ->
 
         variant.outputs.each { output ->
             def isMozillaOnline = project.hasProperty("mozillaOnline") || gradle.hasProperty("localProperties.mozillaOnline")
-            def abi = output.getFilter(OutputFile.ABI)
+            def abi = output.getFilter(FilterConfiguration.FilterType.ABI.name())
             // If it is a Mozilla Online build, use a unified version code of armeabi-v7a
             def arch = (isMozillaOnline) ? "armeabi-v7a" : abi
             // We use the same version code generator, that we inherited from Fennec, across all channels - even on
@@ -471,12 +469,8 @@ nimbus {
     experimenterManifest = ".experimenter.yaml"
 }
 
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
-    kotlinOptions {
-        freeCompilerArgs += [
-                "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-        ]
-    }
+tasks.withType(KotlinCompile).configureEach {
+    kotlinOptions.freeCompilerArgs += "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
 }
 
 dependencies {
@@ -599,7 +593,7 @@ dependencies {
     implementation FenixDependencies.androidx_navigation_fragment
     implementation FenixDependencies.androidx_navigation_ui
     implementation ComponentsDependencies.androidx_recyclerview
-    implementation FenixDependencies.androidx_lifecycle_common
+    implementation ComponentsDependencies.androidx_lifecycle_common
     implementation ComponentsDependencies.androidx_lifecycle_livedata
     implementation ComponentsDependencies.androidx_lifecycle_process
     implementation ComponentsDependencies.androidx_lifecycle_runtime
@@ -712,13 +706,13 @@ if (project.hasProperty("coverage")) {
         toolVersion = Versions.jacoco
     }
 
-    android.applicationVariants.all { variant ->
+    android.applicationVariants.configureEach { variant ->
         tasks.register("jacoco${variant.name.capitalize()}TestReport", JacocoReport) {
             dependsOn "test${variant.name.capitalize()}UnitTest"
 
             reports {
-                xml.enabled = true
-                html.enabled = true
+                xml.enabled  true
+                html.enabled  true
             }
 
             def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*',
@@ -754,7 +748,7 @@ tasks.register('printVariants') {
     doLast {
         def variants = android.applicationVariants.collect { variant -> [
             apks: variant.outputs.collect { output -> [
-                abi: output.getFilter(com.android.build.VariantOutput.FilterType.ABI),
+                abi: output.getFilter(FilterConfiguration.FilterType.ABI.name()),
                 fileName: output.outputFile.name
             ]},
             build_type: variant.buildType.name,
@@ -773,22 +767,22 @@ tasks.register('printVariants') {
     }
 }
 
-task buildTranslationArray {
+tasks.register('buildTranslationArray') {
     // This isn't running as a task, instead the array is build when the gradle file is parsed.
     // https://github.com/mozilla-mobile/fenix/issues/14175
     def foundLocales = new StringBuilder()
     foundLocales.append("new String[]{")
 
     fileTree("src/main/res").visit { FileVisitDetails details ->
-        if(details.file.path.endsWith("${File.separator}strings.xml")){
-            def languageCode = details.file.parent.tokenize(File.separator).last().replaceAll('values-','').replaceAll('-r','-')
+        if (details.file.path.endsWith("${File.separator}strings.xml")) {
+            def languageCode = details.file.parent.tokenize(File.separator).last().replaceAll('values-', '').replaceAll('-r', '-')
             languageCode = (languageCode == "values") ? "en-US" : languageCode
             foundLocales.append("\"").append(languageCode).append("\"").append(",")
         }
     }
 
     foundLocales.append("}")
-    def foundLocalesString = foundLocales.toString().replaceAll(',}','}')
+    def foundLocalesString = foundLocales.toString().replaceAll(',}', '}')
     android.defaultConfig.buildConfigField "String[]", "SUPPORTED_LOCALE_ARRAY", foundLocalesString
 }
 
@@ -850,7 +844,7 @@ if (gradle.hasProperty('localProperties.autoPublish.glean.dir')) {
     apply from: "../${gleanSrcDir}/build-scripts/substitute-local-glean.gradle"
 }
 
-android.applicationVariants.all { variant ->
+android.applicationVariants.configureEach { variant ->
     tasks.register("apkSize${variant.name.capitalize()}", ApkSizeTask) {
         variantName = variant.name
         apks = variant.outputs.collect { output -> output.outputFile.name }

@@ -4,14 +4,14 @@
 
 package org.mozilla.fenix.addons
 
-import android.app.AlertDialog
 import android.content.Context
 import androidx.annotation.UiContext
+import androidx.appcompat.app.AlertDialog
 import mozilla.components.browser.state.action.ExtensionProcessDisabledPopupAction
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.Engine
 import mozilla.components.support.ktx.android.content.appName
-import mozilla.components.support.webextensions.ExtensionProcessDisabledPopupFeature
+import mozilla.components.support.webextensions.ExtensionProcessDisabledPopupObserver
 import org.mozilla.fenix.GleanMetrics.Addons
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
@@ -70,9 +70,9 @@ class ExtensionProcessDisabledController(
     @UiContext context: Context,
     store: BrowserStore,
     engine: Engine = context.components.core.engine,
-    builder: AlertDialog.Builder = AlertDialog.Builder(context, R.style.DialogStyleNormal),
+    builder: AlertDialog.Builder = AlertDialog.Builder(context),
     appName: String = context.appName,
-) : ExtensionProcessDisabledPopupFeature(
+) : ExtensionProcessDisabledPopupObserver(
     store,
     { presentDialog(context, store, engine, builder, appName) },
 )

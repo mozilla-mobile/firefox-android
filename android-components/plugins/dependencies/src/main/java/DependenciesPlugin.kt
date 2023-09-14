@@ -21,7 +21,7 @@ object Versions {
 
     const val junit = "4.13.2"
     const val robolectric = "4.10.3"
-    const val mockito = "5.4.0"
+    const val mockito = "5.5.0"
     const val maven_ant_tasks = "2.1.3"
     const val jacoco = "0.8.10"
 
@@ -59,29 +59,29 @@ object Versions {
 
     object AndroidX {
         const val activityCompose = "1.7.2"
-        const val annotation = "1.6.0"
+        const val annotation = "1.7.0"
         const val appcompat = "1.6.1"
         const val autofill = "1.1.0"
-        const val browser = "1.5.0"
+        const val browser = "1.6.0"
         const val biometric = "1.1.0"
         const val cardview = "1.0.0"
         const val compose = compose_version
         const val constraintlayout = "2.1.4"
         const val coordinatorlayout = "1.2.0"
-        const val core = "1.10.1"
+        const val core = "1.12.0"
         const val drawerlayout = "1.2.0"
         const val fragment = "1.6.1"
-        const val recyclerview = "1.3.0"
+        const val recyclerview = "1.3.1"
         const val test = "1.5.0"
         const val test_ext = "1.1.5"
         const val test_runner = "1.5.2"
         const val espresso = "3.5.1"
         const val room = "2.5.2"
         const val savedstate = "1.2.1"
-        const val paging = "3.2.0"
+        const val paging = "3.2.1"
         const val palette = "1.0.0"
         const val preferences = "1.2.1"
-        const val lifecycle = "2.6.1"
+        const val lifecycle = "2.6.2"
         const val media = "1.6.0"
         const val navigation = "2.5.3"
         const val work = "2.7.1"
@@ -93,7 +93,7 @@ object Versions {
     }
 
     object Firebase {
-        const val messaging = "23.1.2"
+        const val messaging = "23.2.1"
     }
 }
 
@@ -138,11 +138,10 @@ object ComponentsDependencies {
     const val androidx_coordinatorlayout = "androidx.coordinatorlayout:coordinatorlayout:${Versions.AndroidX.coordinatorlayout}"
     const val androidx_drawerlayout = "androidx.drawerlayout:drawerlayout:${Versions.AndroidX.drawerlayout}"
     const val androidx_fragment = "androidx.fragment:fragment:${Versions.AndroidX.fragment}"
+    const val androidx_lifecycle_common = "androidx.lifecycle:lifecycle-common:${Versions.AndroidX.lifecycle}"
     const val androidx_lifecycle_livedata = "androidx.lifecycle:lifecycle-livedata-ktx:${Versions.AndroidX.lifecycle}"
-    const val androidx_lifecycle_runtime = "androidx.lifecycle:lifecycle-runtime-ktx:${Versions.AndroidX.lifecycle}"
-    const val androidx_lifecycle_service = "androidx.lifecycle:lifecycle-service:${Versions.AndroidX.lifecycle}"
     const val androidx_lifecycle_process = "androidx.lifecycle:lifecycle-process:${Versions.AndroidX.lifecycle}"
-    const val androidx_lifecycle_compiler = "androidx.lifecycle:lifecycle-compiler:${Versions.AndroidX.lifecycle}"
+    const val androidx_lifecycle_runtime = "androidx.lifecycle:lifecycle-runtime-ktx:${Versions.AndroidX.lifecycle}"
     const val androidx_lifecycle_viewmodel = "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.AndroidX.lifecycle}"
     const val androidx_media = "androidx.media:media:${Versions.AndroidX.media}"
     const val androidx_paging = "androidx.paging:paging-runtime:${Versions.AndroidX.paging}"

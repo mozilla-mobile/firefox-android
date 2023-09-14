@@ -6,6 +6,7 @@ package org.mozilla.fenix.shopping.ui
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -55,6 +56,7 @@ fun ReviewQualityCheckBottomSheet(
                         onRequestDismiss()
                         store.dispatch(ReviewQualityCheckAction.OptOut)
                     },
+                    onReanalyzeClick = {},
                     onProductRecommendationsEnabledStateChange = {
                         store.dispatch(ReviewQualityCheckAction.ToggleProductRecommendation)
                     },
@@ -83,6 +85,7 @@ fun ReviewQualityCheckBottomSheet(
 private fun ProductReview(
     state: ReviewQualityCheckState.OptedIn,
     onOptOutClick: () -> Unit,
+    onReanalyzeClick: () -> Unit,
     onProductRecommendationsEnabledStateChange: (Boolean) -> Unit,
     onReviewGradeLearnMoreClick: (String) -> Unit,
 ) {
@@ -96,13 +99,20 @@ private fun ProductReview(
                     productRecommendationsEnabled = state.productRecommendationsPreference,
                     productAnalysis = productReviewState,
                     onOptOutClick = onOptOutClick,
+                    onReanalyzeClick = onReanalyzeClick,
                     onProductRecommendationsEnabledStateChange = onProductRecommendationsEnabledStateChange,
                     onReviewGradeLearnMoreClick = onReviewGradeLearnMoreClick,
                 )
             }
 
             is ReviewQualityCheckState.OptedIn.ProductReviewState.Error -> {
-                // Bug 1840113
+                ProductAnalysisError(
+                    productRecommendationsEnabled = state.productRecommendationsPreference,
+                    onReviewGradeLearnMoreClick = onReviewGradeLearnMoreClick,
+                    onOptOutClick = onOptOutClick,
+                    onProductRecommendationsEnabledStateChange = onProductRecommendationsEnabledStateChange,
+                    modifier = Modifier.fillMaxWidth(),
+                )
             }
 
             is ReviewQualityCheckState.OptedIn.ProductReviewState.Loading -> {

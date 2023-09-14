@@ -86,6 +86,7 @@
     <!-- Text displayed that links to website containing documentation about the "Total cookie protection" feature. -->
     <string name="tcp_cfr_learn_more">Даведайцеся аб поўнай ахове кукаў</string>
 
+
     <!-- Text for the info dialog when camera permissions have been denied but user tries to access a camera feature. -->
     <string name="camera_permissions_needed_message">Патрабуецца доступ да камеры. Перайдзіце ў налады Android, націсніце &quot;Дазволы&quot;, і затым &quot;Дазволіць&quot;.</string>
     <!-- Text for the positive action button to go to Android Settings to grant permissions. -->
@@ -166,7 +167,7 @@
     <!-- Browser menu button that opens the addon manager -->
     <string name="browser_menu_add_ons">Дадаткі</string>
     <!-- Browser menu button that opens account settings -->
-    <string name="browser_menu_account_settings">Інфармацыя аб уліковым запісе</string>
+    <string name="browser_menu_account_settings">Ваш уліковы запіс</string>
     <!-- Text displayed when there are no add-ons to be shown -->
     <string name="no_add_ons">Няма дадаткаў</string>
     <!-- Browser menu button that sends a user to help articles -->
@@ -178,7 +179,7 @@
     <!-- Browser menu button that opens a user's library -->
     <string name="browser_menu_library">Бібліятэка</string>
     <!-- Browser menu toggle that requests a desktop site -->
-    <string name="browser_menu_desktop_site">Версія для камп’ютара</string>
+    <string name="browser_menu_desktop_site">Версія для ПК</string>
     <!-- Browser menu toggle that adds a shortcut to the site on the device home screen. -->
     <string name="browser_menu_add_to_homescreen">Дадаць на хатні экран</string>
     <!-- Browser menu toggle that installs a Progressive Web App shortcut to the site on the device home screen. -->
@@ -223,6 +224,9 @@
     <!-- Content description for the Home screen button on the browser toolbar -->
     <string name="browser_toolbar_home">Хатні экран</string>
 
+    <!-- Content description (not visible, for screen readers etc.): Erase button: Erase the browsing
+         history and go back to the home screen. -->
+    <string name="browser_toolbar_erase">Сцерці гісторыю аглядання</string>
     <!-- Locale Settings Fragment -->
     <!-- Content description for tick mark on selected language -->
     <string name="a11y_selected_locale_content_description">Абраная мова</string>
@@ -345,6 +349,15 @@
     <string name="juno_onboarding_enable_notifications_positive_button" tools:ignore="UnusedResources">Уключыць апавяшчэнні</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
     <string name="juno_onboarding_enable_notifications_negative_button" tools:ignore="UnusedResources">Не зараз</string>
+
+    <!-- Title for add search widget screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_add_search_widget_title" tools:ignore="UnusedResources">Паспрабуйце віджэт пошуку Firefox</string>
+    <!-- Text for the button to add search widget on the device used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_add_search_widget_positive_button" tools:ignore="UnusedResources">Дадаць віджэт Firefox</string>
+    <!-- Text for the button to dismiss the screen and move on with the flow -->
+    <string name="juno_onboarding_add_search_widget_negative_button" tools:ignore="UnusedResources">Не зараз</string>
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. The first parameter is the name of the application.-->
@@ -637,6 +650,16 @@
     <string name="addon_not_supported_error">Дадатак не падтрымліваецца</string>
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is already installed -->
     <string name="addon_already_installed">Дадатак ужо ўсталяваны</string>
+
+    <!-- Add-on process crash dialog to user -->
+    <!-- Title of a dialog shown to the user when enough errors have occurred with addons and they need to be temporarily disabled -->
+    <string name="addon_process_crash_dialog_title" tools:ignore="UnusedResources">Дадаткі часова адключаны</string>
+    <!-- The first parameter is the application name. This is a message shown to the user when too many errors have occurred with the addons process and they have been disabled. The user can decide if they would like to continue trying to start add-ons or if they'd rather continue without them. -->
+    <string name="addon_process_crash_dialog_message" tools:ignore="UnusedResources">Адзін ці некалькі дадаткаў перасталі працаваць, што зрабіла вашу сістэму нестабільнай. %1$s беспаспяхова спрабаваў перазапусціць дадатак(і).\n\nДадаткі не будуць перазапушчаны ў часе бягучага сеансу.\n\nВыдаленне або адключэнне дадаткаў можа вырашыць гэтую праблему.</string>
+    <!-- This will cause the add-ons to try restarting but the dialog will reappear if it is unsuccessful again -->
+    <string name="addon_process_crash_dialog_retry_button_text" tools:ignore="UnusedResources">Паспрабаваць перазапусціць дадаткі</string>
+    <!-- The user will continue with all add-ons disabled -->
+    <string name="addon_process_crash_dialog_disable_addons_button_text" tools:ignore="UnusedResources">Працягнуць з адключанымі дадаткамі</string>
 
     <!-- Account Preferences -->
     <!-- Preference for managing your account via accounts.firefox.com -->
@@ -1948,6 +1971,8 @@
     <string name="search_add_custom_engine_suggest_string_hint">URL-адрас API пошукавых прапаноў</string>
     <!-- Description text for the Search Suggestion String TextField. The %s is part of the string -->
     <string name="search_add_custom_engine_suggest_string_example" formatted="false" moz:RemovedIn="118" tools:ignore="UnusedResources">Замяніце запыт на «%s». Прыклад:\nhttp://suggestqueries.google.com/complete/search?client=firefox&amp;q=%s</string>
+    <!-- Description text for the Search Suggestion String TextField. The %s is part of the string -->
+    <string name="search_add_custom_engine_suggest_string_example_2" formatted="false">Замяніце запыт на «%s». Прыклад:\nhttps://suggestqueries.google.com/complete/search?client=firefox&amp;q=%s</string>
     <!-- The text for the "Save" button for saving a custom search engine -->
     <string name="search_custom_engine_save_button">Захаваць</string>
 
@@ -2167,6 +2192,25 @@
     <string name="experiments_snackbar">Уключыць тэлеметрыю для адпраўкі дадзеных.</string>
     <!-- Snackbar button text to navigate to telemetry settings.-->
     <string name="experiments_snackbar_button">Перайсці ў налады</string>
+
+    <!-- Text for learn more caption presenting a link with information about review quality. First parameter is for clickable text defined in review_quality_check_info_learn_more_link. -->
+    <string name="review_quality_check_info_learn_more">Даведайцеся больш пра %s.</string>
+    <!-- Text for title of settings section. -->
+    <string name="review_quality_check_settings_title">Налады</string>
+    <!-- Text for button from warning card informing the user that the current analysis is outdated. Clicking this should trigger the product's re-analysis. -->
+    <string name="review_quality_check_outdated_analysis_warning_action" tools:ignore="UnusedResources">Праверыць зараз</string>
+    <!-- Text for minimize button from highlights card. When clicked the highlights card should reduce its size. -->
+    <string name="review_quality_check_highlights_show_less">Паказаць менш</string>
+    <!-- Text for maximize button from highlights card. When clicked the highlights card should expand to its full size. -->
+    <string name="review_quality_check_highlights_show_more">Паказаць больш</string>
+    <!-- Text for highlights card quality category header. Reviews shown under this header should refer the product's quality. -->
+    <string name="review_quality_check_highlights_type_quality">Якасць</string>
+    <!-- Text for highlights card price category header. Reviews shown under this header should refer the product's price. -->
+    <string name="review_quality_check_highlights_type_price">Кошт</string>
+    <!-- Text for highlights card shipping category header. Reviews shown under this header should refer the product's shipping. -->
+    <string name="review_quality_check_highlights_type_shipping">Дастаўка</string>
+    <!-- Text for highlights card competitiveness category header. Reviews shown under this header should refer the product's competitiveness. -->
+    <string name="review_quality_check_highlights_type_competitiveness">Канкурэнтаздольнасць</string>
 
     <!-- Accessibility services actions labels. These will be appended to accessibility actions like "Double tap to.." but not by or applications but by services like Talkback. -->
     <!-- Action label for elements that can be collapsed if interacting with them. Talkback will append this to say "Double tap to collapse". -->

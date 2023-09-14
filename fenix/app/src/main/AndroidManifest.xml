@@ -40,9 +40,6 @@
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
 
-    <!-- Needed to receive broadcasts from AC code-->
-    <uses-permission android:name="org.mozilla.permission.RECEIVE_DOWNLOAD_BROADCAST" />
-
     <application
         android:name=".FenixApplication"
         android:allowBackup="false"
@@ -339,6 +336,13 @@
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/search_widget_info" />
+        </receiver>
+
+        <receiver android:name=".onboarding.WidgetPinnedReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="org.mozilla.fenix.onboarding.WidgetPinnedReceiver.widgetPinned"/>
+            </intent-filter>
         </receiver>
 
         <service android:name=".session.PrivateNotificationService"
