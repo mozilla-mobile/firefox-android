@@ -7,6 +7,11 @@ package org.mozilla.fenix.onboarding
 import android.content.Context
 import android.view.View
 import androidx.compose.material.Text
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.getColor
 import androidx.recyclerview.widget.RecyclerView
@@ -55,6 +60,7 @@ class HomeCFRPresenter(
         }
     }
 
+    @OptIn(ExperimentalComposeUiApi::class)
     private fun showSyncedTabCFR(view: View) {
         CFRPopup(
             anchor = view,
@@ -69,7 +75,12 @@ class HomeCFRPresenter(
             ),
             onDismiss = {
                 when (it) {
-                    true -> Onboarding.syncCfrExplicitDismissal.record(NoExtras())
+                    true -> {
+                        Onboarding.syncCfrExplicitDismissal.record(NoExtras())
+                        // Turn off both the recent tab and synced tab CFR after the recent synced tab CFR is shown.
+                        context.settings().showSyncCFR = false
+                        context.settings().shouldShowJumpBackInCFR = false
+                    }
                     false -> Onboarding.syncCfrImplicitDismissal.record(NoExtras())
                 }
             },
@@ -79,18 +90,20 @@ class HomeCFRPresenter(
                         text = context.getString(R.string.sync_cfr_message),
                         color = FirefoxTheme.colors.textOnColorPrimary,
                         style = FirefoxTheme.typography.body2,
+                        modifier = Modifier
+                            .semantics {
+                                testTagsAsResourceId = true
+                                testTag = "sync_cfr.message"
+                            },
                     )
                 }
             },
         ).show()
 
-        // Turn off both the recent tab and synced tab CFR after the recent synced tab CFR is shown.
-        context.settings().showSyncCFR = false
-        context.settings().shouldShowJumpBackInCFR = false
-
         Onboarding.synCfrShown.record(NoExtras())
     }
 
+    @OptIn(ExperimentalComposeUiApi::class)
     @Suppress("MagicNumber")
     private fun showJumpBackInCFR(view: View) {
         CFRPopup(
@@ -106,7 +119,12 @@ class HomeCFRPresenter(
             ),
             onDismiss = {
                 when (it) {
-                    true -> RecentTabs.jumpBackInCfrDismissed.record(NoExtras())
+                    true -> {
+                        RecentTabs.jumpBackInCfrDismissed.record(NoExtras())
+                        // Users can still see the recent synced tab CFR after the recent tab CFR is shown in
+                        // subsequent navigation to the Home screen.
+                        context.settings().shouldShowJumpBackInCFR = false
+                    }
                     false -> RecentTabs.jumpBackInCfrCancelled.record(NoExtras())
                 }
             },
@@ -116,14 +134,15 @@ class HomeCFRPresenter(
                         text = context.getString(R.string.onboarding_home_screen_jump_back_contextual_hint_2),
                         color = FirefoxTheme.colors.textOnColorPrimary,
                         style = FirefoxTheme.typography.body2,
+                        modifier = Modifier
+                            .semantics {
+                                testTagsAsResourceId = true
+                                testTag = "jump_back_cfr.message"
+                            },
                     )
                 }
             },
         ).show()
-
-        // Users can still see the recent synced tab CFR after the recent tab CFR is shown in
-        // subsequent navigation to the Home screen.
-        context.settings().shouldShowJumpBackInCFR = false
 
         RecentTabs.jumpBackInCfrShown.record(NoExtras())
     }

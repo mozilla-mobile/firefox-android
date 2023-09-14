@@ -5,13 +5,16 @@
 package org.mozilla.fenix.addons
 
 import android.content.Context
+import android.view.LayoutInflater
+import android.widget.Button
+import android.widget.TextView
 import androidx.annotation.UiContext
 import androidx.appcompat.app.AlertDialog
 import mozilla.components.browser.state.action.ExtensionProcessDisabledPopupAction
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.Engine
 import mozilla.components.support.ktx.android.content.appName
-import mozilla.components.support.webextensions.ExtensionProcessDisabledPopupFeature
+import mozilla.components.support.webextensions.ExtensionProcessDisabledPopupObserver
 import org.mozilla.fenix.GleanMetrics.Addons
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
@@ -36,25 +39,31 @@ private fun presentDialog(
     appName: String,
 ) {
     val message = context.getString(R.string.addon_process_crash_dialog_message, appName)
-
-    builder.apply {
-        setCancelable(false)
-        setTitle(R.string.addon_process_crash_dialog_title)
-        setMessage(message)
-        setPositiveButton(R.string.addon_process_crash_dialog_retry_button_text) { dialog, _ ->
+    var onDismissDialog: (() -> Unit)? = null
+    val layout = LayoutInflater.from(context)
+        .inflate(R.layout.crash_extension_dialog, null, false)
+    layout?.apply {
+        findViewById<TextView>(R.id.message)?.text = message
+        findViewById<Button>(R.id.positive)?.setOnClickListener {
             engine.enableExtensionProcessSpawning()
             Addons.extensionsProcessUiRetry.add()
             store.dispatch(ExtensionProcessDisabledPopupAction(false))
-            dialog.dismiss()
+            onDismissDialog?.invoke()
         }
-        setNegativeButton(R.string.addon_process_crash_dialog_disable_addons_button_text) { dialog, _ ->
+        findViewById<Button>(R.id.negative)?.setOnClickListener {
             Addons.extensionsProcessUiDisable.add()
             store.dispatch(ExtensionProcessDisabledPopupAction(false))
-            dialog.dismiss()
+            onDismissDialog?.invoke()
         }
     }
+    builder.apply {
+        setCancelable(false)
+        setView(layout)
+        setTitle(R.string.addon_process_crash_dialog_title)
+    }
 
-    builder.show()
+    val dialog = builder.show()
+    onDismissDialog = { dialog?.dismiss() }
 }
 
 /**
@@ -72,7 +81,7 @@ class ExtensionProcessDisabledController(
     engine: Engine = context.components.core.engine,
     builder: AlertDialog.Builder = AlertDialog.Builder(context),
     appName: String = context.appName,
-) : ExtensionProcessDisabledPopupFeature(
+) : ExtensionProcessDisabledPopupObserver(
     store,
     { presentDialog(context, store, engine, builder, appName) },
 )
