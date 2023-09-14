@@ -47,10 +47,12 @@ class JunoOnboardingFragment : Fragment() {
 
     private val pagesToDisplay by lazy {
         pagesToDisplay(
+            requireContext(),
             canShowNotificationPage(requireContext()),
             canShowAddWidgetCard(),
         )
     }
+
     private val telemetryRecorder by lazy { JunoOnboardingTelemetryRecorder() }
     private val pinAppWidgetReceiver = WidgetPinnedReceiver()
 
@@ -215,11 +217,18 @@ class JunoOnboardingFragment : Fragment() {
     private fun isNotATablet() = !resources.getBoolean(R.bool.tablet)
 
     private fun pagesToDisplay(
+        context: Context,
         showNotificationPage: Boolean,
         showAddWidgetPage: Boolean,
-    ): List<OnboardingPageUiData> =
-        FxNimbus.features.junoOnboarding.value().cards.values.toPageUiData(
+    ): List<OnboardingPageUiData> {
+        val junoOnboardingFeature = FxNimbus.features.junoOnboarding.value()
+        val conditions = junoOnboardingFeature.conditions
+
+        return junoOnboardingFeature.cards.values.toPageUiData(
+            context,
             showNotificationPage,
             showAddWidgetPage,
+            conditions,
         )
+    }
 }
