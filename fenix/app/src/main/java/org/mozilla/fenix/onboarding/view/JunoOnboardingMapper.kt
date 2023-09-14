@@ -9,6 +9,7 @@ import org.mozilla.experiments.nimbus.GleanPlumbMessageHelper
 import org.mozilla.experiments.nimbus.internal.NimbusException
 import org.mozilla.fenix.compose.LinkTextState
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.nimbus.OnboardingCardData
 import org.mozilla.fenix.nimbus.OnboardingCardType
 import org.mozilla.fenix.settings.SupportUtils
@@ -20,51 +21,49 @@ internal fun Collection<OnboardingCardData>.toPageUiData(
     context: Context,
     showNotificationPage: Boolean,
     showAddWidgetPage: Boolean,
-    conditions: Map<String, String>,
-): List<OnboardingPageUiData> =
-    filter {
-        val typeFilter = when (it.cardType) {
-            OnboardingCardType.NOTIFICATION_PERMISSION -> {
-                it.enabled && showNotificationPage
-            }
+): List<OnboardingPageUiData> {
+    val junoOnboardingFeature = FxNimbus.features.junoOnboarding.value()
+    val jexlConditions = junoOnboardingFeature.conditions
 
-            OnboardingCardType.ADD_SEARCH_WIDGET -> {
-                it.enabled && showAddWidgetPage
-            }
+    return filter { it.shouldDisplayCard(context, jexlConditions) }
+        .filter {
+            when (it.cardType) {
+                OnboardingCardType.NOTIFICATION_PERMISSION -> {
+                    it.enabled && showNotificationPage
+                }
 
-            else -> {
-                it.enabled
-            }
-        }
+                OnboardingCardType.ADD_SEARCH_WIDGET -> {
+                    it.enabled && showAddWidgetPage
+                }
 
-        if (!typeFilter) {
-            false
-        } else {
-            it.shouldDisplayCard(context, conditions)
-        }
-    }.sortedBy { it.ordering }
+                else -> {
+                    it.enabled
+                }
+            }
+        }.sortedBy { it.ordering }
         .map { it.toPageUiData() }
+}
 
 private fun OnboardingCardData.shouldDisplayCard(
     context: Context,
-    conditionsTable: Map<String, String>,
+    jexlConditions: Map<String, String>,
 ): Boolean {
     val jexlCache: MutableMap<String, Boolean> = mutableMapOf()
-    val helper = context.components.analytics.messagingStorage.helper
+    val jexlHelper = context.components.analytics.messagingStorage.helper
 
     return verifyConditionEligibility(
         prerequisites,
-        conditionsTable,
+        jexlConditions,
         jexlCache,
-        helper,
-    ) && !verifyConditionEligibility(disqualifiers, conditionsTable, jexlCache, helper)
+        jexlHelper,
+    ) && !verifyConditionEligibility(disqualifiers, jexlConditions, jexlCache, jexlHelper)
 }
 
 private fun verifyConditionEligibility(
     cardConditions: List<String>,
-    conditionsTable: Map<String, String>,
+    jexlConditions: Map<String, String>,
     jexlCache: MutableMap<String, Boolean>,
-    helper: GleanPlumbMessageHelper,
+    jexlHelper: GleanPlumbMessageHelper,
 ): Boolean {
     val malFormedMap = mutableMapOf<String, String>()
     // Make sure conditions exist and have a value, and that the number
@@ -73,16 +72,16 @@ private fun verifyConditionEligibility(
     // that means a card contains a condition that's not in the feature
     // conditions lookup table. JEXLs can only be evaluated on
     // supported conditions. Otherwise, consider the card invalid.
-    val conditions = cardConditions.mapNotNull { conditionsTable[it] }
-    return if (conditions.size == cardConditions.size) {
-        return conditions.all { condition ->
+    val allConditionValues = cardConditions.mapNotNull { jexlConditions[it] }
+    return if (allConditionValues.size == cardConditions.size) {
+        return allConditionValues.all { condition ->
             jexlCache[condition]
                 ?: try {
                     if (malFormedMap.containsKey(condition)) {
                         return false
                     }
-                    helper.evalJexl(condition).also { result ->
-                        jexlCache[condition] = result
+                    jexlHelper.evalJexl(condition).also { isValid ->
+                        jexlCache.set(condition, isValid)
                     }
                 } catch (e: NimbusException.EvaluationException) {
                     malFormedMap[condition] = condition

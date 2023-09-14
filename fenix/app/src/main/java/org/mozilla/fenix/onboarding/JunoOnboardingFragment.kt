@@ -220,15 +220,10 @@ class JunoOnboardingFragment : Fragment() {
         context: Context,
         showNotificationPage: Boolean,
         showAddWidgetPage: Boolean,
-    ): List<OnboardingPageUiData> {
-        val junoOnboardingFeature = FxNimbus.features.junoOnboarding.value()
-        val conditions = junoOnboardingFeature.conditions
-
-        return junoOnboardingFeature.cards.values.toPageUiData(
+    ): List<OnboardingPageUiData> =
+        FxNimbus.features.junoOnboarding.value().cards.values.toPageUiData(
             context,
             showNotificationPage,
             showAddWidgetPage,
-            conditions,
         )
-    }
 }

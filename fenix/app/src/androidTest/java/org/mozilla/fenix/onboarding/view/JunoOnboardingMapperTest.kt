@@ -4,7 +4,10 @@
 
 package org.mozilla.fenix.onboarding.view
 
+import android.content.Context
+import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.Assert.assertEquals
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.experiments.nimbus.StringHolder
@@ -19,28 +22,35 @@ class JunoOnboardingMapperTest {
     val activityTestRule =
         HomeActivityIntentTestRule.withDefaultSettingsOverrides(skipOnboarding = true)
 
+    lateinit var instrumentationContext: Context
+
+    @Before
+    fun setup() {
+        instrumentationContext = InstrumentationRegistry.getInstrumentation().context
+    }
+
     @Test
     fun showNotificationTrue_showAddWidgetFalse_pagesToDisplay_returnsSortedListOfAllConvertedPages_withoutAddWidgetPage() {
         val expected = listOf(defaultBrowserPageUiData, syncPageUiData, notificationPageUiData)
-        assertEquals(expected, unsortedAllKnownCardData.toPageUiData(true, false))
+        assertEquals(expected, unsortedAllKnownCardData.toPageUiData(instrumentationContext, true, false))
     }
 
     @Test
     fun showNotificationFalse_showAddWidgetFalse_pagesToDisplay_returnsSortedListOfConvertedPages_withoutNotificationPage_and_addWidgetPage() {
         val expected = listOf(defaultBrowserPageUiData, syncPageUiData)
-        assertEquals(expected, unsortedAllKnownCardData.toPageUiData(false, false))
+        assertEquals(expected, unsortedAllKnownCardData.toPageUiData(instrumentationContext, false, false))
     }
 
     @Test
     fun showNotificationFalse_showAddWidgetTrue_pagesToDisplay_returnsSortedListOfAllConvertedPages_withoutNotificationPage() {
         val expected = listOf(defaultBrowserPageUiData, addSearchWidgetPageUiData, syncPageUiData)
-        assertEquals(expected, unsortedAllKnownCardData.toPageUiData(false, true))
+        assertEquals(expected, unsortedAllKnownCardData.toPageUiData(instrumentationContext, false, true))
     }
 
     @Test
     fun showNotificationTrue_and_showAddWidgetTrue_pagesToDisplay_returnsSortedListOfConvertedPages() {
         val expected = listOf(defaultBrowserPageUiData, addSearchWidgetPageUiData, syncPageUiData, notificationPageUiData)
-        assertEquals(expected, unsortedAllKnownCardData.toPageUiData(true, true))
+        assertEquals(expected, unsortedAllKnownCardData.toPageUiData(instrumentationContext, true, true))
     }
 }
 

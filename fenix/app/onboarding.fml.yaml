@@ -10,7 +10,7 @@ features:
         type: Boolean
         default: false
       conditions:
-        description:
+        description: >
             A collection of out the box conditional expressions to be
             used in determining whether a card should show or not.
             Each entry maps to a valid JEXL expression.
@@ -122,15 +122,15 @@ objects:
         default: ""
       prerequisites:
         type: List<String>
-        description:
+        description: >
           A list of strings corresponding to targeting expressions.
-          The card will be shown if all expressions `true` and if
+          The card will be shown if all expressions are `true` and if
           no expressions in the `disqualifiers` table are true, or
           if the `disqualifiers` table is empty.
         default: [ ALWAYS ]
       disqualifiers:
         type: List<String>
-        description:
+        description: >
           A list of strings corresponding to targeting expressions.
           The card will not be shown if any expression is `true`.
         default: [ NEVER ]
