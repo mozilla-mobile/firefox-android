@@ -10,6 +10,8 @@ permalink: /changelog/
 * [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/Gecko.kt)
 * [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/.config.yml)
 
+* **feature-tabs**
+  * Removed deprecated `TabsUseCases.AddNewPrivateTabUseCase`. [Bug 1853070](https://bugzilla.mozilla.org/show_bug.cgi?id=1853070)
 
 * **feature-downloads**
   * Added a custom permission `${applicationId}.permission.RECEIVE_DOWNLOAD_BROADCAST` that needs to be used by apps in order to receive download related broadcasts
@@ -31,6 +33,10 @@ permalink: /changelog/
   * User is using the logins feature and has a version of v95 or below
   * User is NOT syncing their logins with another device
   * User plans to upgrade from v95 to v119 or above
+
+* **support-webextensions**
+  * ⚠️ **This is a breaking change**: Renamed `WebExtensionPopupFeature` to `WebExtensionPopupObserver` [bug #1852335](https://bugzilla.mozilla.org/show_bug.cgi?id=1852335)
+  * Added `ExtensionProcessDisabledPopupObserver` to display to the user a dialog when the extensions process spawning has been disabled. [bug #1846979](https://bugzilla.mozilla.org/show_bug.cgi?id=1846979)
 
 # 118.0
 * [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v117..releases_v118)
