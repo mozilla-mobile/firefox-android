@@ -12,10 +12,10 @@ transforms:
     - taskgraph.transforms.task
 
 kind-dependencies:
-    - signing-apk
+    - signing-bundle
 
 tasks:
-    beetmover-fenix:
+    beetmover-aab-fenix:
         from-deps:
             with-attributes:
                 build-type:
@@ -31,12 +31,13 @@ tasks:
             copy-attributes: true
         attributes:
             artifact_map: taskcluster/android_taskgraph/manifests/apk_releases.yml
+            artifact_format: aab
             shipping_phase: ship
         treeherder:
             job-symbol:
                 by-build-type:
-                    klar.*: BM-klar
-                    default: BM
+                    klar.*: BM-klar-aab
+                    default: BM-aab
         bucket-scope:
             by-level:
                 '3':
