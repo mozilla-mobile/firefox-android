@@ -56,8 +56,6 @@
     <string name="mozac_browser_errorpages_security_bad_hsts_cert_advanced">Opanungáva…</string>
 
     <!-- The advanced certificate information shown when a website uses HSTS. The %1$s will be replaced by the website URL and %2$s will be replaced by the app name. It's only shown when a website uses HSTS. -->
-    <string moz:removedIn="104" name="mozac_browser_errorpages_security_bad_hsts_cert_techInfo" tools:ignore="UnusedResources"><![CDATA[<label><b>%1$s</b>oguereko peteĩ ñe’ẽñemi ñeñangarekorã hérava HTTP Strict Transport Security (HSTS), he’iséva <b>%2$s</b> ikatuha oñembojoaju hese ñeñangareko reheve añoite. Ndaikatúi remoĩ peteĩ oĩ’ỹva reike hag̃ua ko tendápe.]]></string>
-    <!-- The advanced certificate information shown when a website uses HSTS. The %1$s will be replaced by the website URL and %2$s will be replaced by the app name. It's only shown when a website uses HSTS. -->
     <string name="mozac_browser_errorpages_security_bad_hsts_cert_techInfo2"><![CDATA[
 <label> <b>%1$s</b> oguereko peteĩ ñe’ẽñemi ñeñangarekorã hérava HTTP Strict Transport Security (HSTS), he’iséva <b>%2$s</b> ikatuha oñembojoaju hekopete añoite. Ndaikatúi remoĩ peteĩ oĩ’ỹva reike hag̃ua ko tendápe. </label>
     ]]></string>
@@ -70,7 +68,7 @@
     <!-- The error message shown when the user's network connection is interrupted while connecting to a website. -->
     <string name="mozac_browser_errorpages_net_interrupt_message"><![CDATA[<p>Pe kundahára oike hekopete, hákatu osẽ ñandutígui ombahasakuévo marandu. Eha’ãjey.</p>
       <ul>
-        <li>Pe tenda ikatu ndoikói sapy’ami térã ojepurueterei. Eha’ãjey ag̃amieve.</li>
+        <li>Pe tenda ikatu ndoikói sapy’ami térã ojeporueterei. Eha’ãjey ag̃amieve.</li>
         <li>Ndaikatúiramo emyanyhẽ kuatiarogue, ehecha oikópa nde wifi térã mba’ekuaarã ne pumbyry pegua.</li>
       </ul>]]></string>
 
@@ -80,7 +78,7 @@
     <!-- The error message shown when a website took long to load. -->
     <string name="mozac_browser_errorpages_net_timeout_message"><![CDATA[<p>Pe tenda ejeruréva nombohovái pe jerure jeike rehegua ha pe kundahára noha’ãrõvéima ñembohovái.</p>
       <ul>
-        <li>¿Ikatu pe mohendahavusu ojepurueterei térã peteĩ ñekytĩ ndahi’aréitava? Eha’ãjey ag̃amieve.</li>
+        <li>¿Ikatu pe mohendahavusu ojeporueterei térã peteĩ ñekytĩ ndahi’aréitava? Eha’ãjey ag̃amieve.</li>
         <li>Ndaikatúi eikundaha ambue tenda rupi? Ehechajey ne mohendaha oĩpa ñandutípe.</li>
         <li>Ne ñanduti térã ne mohendaha omo’ã chupe peteĩ firewall térã proxy? Peteĩ ñemboheko oiko’ỹva ikatu omboykese ne ñekundaha ñandutípe.</li>
         <li>Oĩ gueteri apañuãi? Eporandu ne ñanduti ñangarekohára térã ne ñanduti me’ẽhárape nepytyvõ hag̃ua.</li>
@@ -91,7 +89,7 @@
 
     <!-- The error message shown when a website could not be reached. -->
     <string name="mozac_browser_errorpages_connection_failure_message"><![CDATA[<ul>
-        <li>Tenda ikatu ndoikói sapy’ami térã ojepurueterei. Eha’ãjey ag̃ave.</li>
+        <li>Tenda ikatu ndoikói sapy’ami térã ojeporueterei. Eha’ãjey ag̃ave.</li>
         <li>Ndaikatúiramo emyanyhẽ mavave kuatiarogue, ehechajey oĩpa wifi térã mba’ekuaarã ne mba’e’oka oku’éva rehegua.</li>
       </ul>]]></string>
 
@@ -133,7 +131,7 @@
     <!-- The error message shown when the Internet connection is disrupted while loading a website. -->
     <string name="mozac_browser_errorpages_net_reset_message"><![CDATA[<p>Pe juajuha ñandutigua ndoikói oñeñe’ẽ aja jeikerã rehe. Eha’ãjey ag̃ave.</p>
       <ul>
-        <li>Pe tenda ikatu ndoikói hína sapy’ami térã ojepurueterei. Eha’ãjey ag̃amieve.</li>
+        <li>Pe tenda ikatu ndoikói hína sapy’ami térã ojeporueterei. Eha’ãjey ag̃amieve.</li>
         <li>Ndaikatúiramo emyanyhẽ mavave kuatiarogue, ehecha oikópa nde Wi-Fi térã mba’ekuaarã ne pumbyry pegua.</li>
       </ul>]]></string>
 
@@ -165,7 +163,7 @@
     <!-- The document title and heading of an error page. -->
     <string name="mozac_browser_errorpages_invalid_content_encoding_title">Tetepy mbopapapy jejavy</string>
 
-    <string name="mozac_browser_errorpages_invalid_content_encoding_message"><![CDATA[<p>Ko kuatiarogue eñeha’ãva ehecha ndojehechaukakuaái oipuru rupi ñeikumby oiko’ỹvaa térã ipu’aka’ỹva.</p>
+    <string name="mozac_browser_errorpages_invalid_content_encoding_message"><![CDATA[<p>Ko kuatiarogue eñeha’ãva ehecha ndojehechaukakuaái oiporu rupi ñeikumby oiko’ỹvaa térã ipu’aka’ỹva.</p>
       <ul>
         <li>Eñe’ẽ ñanduti renda jára ndive emombe’u hag̃ua chupekuéra ko apañuãi.</li>
       </ul>]]></string>
@@ -199,7 +197,7 @@
     <!-- This string contains markup. The URL should not be localized. -->
     <string name="mozac_browser_errorpages_malformed_uri_message_alternative"><![CDATA[<ul>
         <li>Ñanduti kundaharape ojehai jepi kóicha: <strong>http://www.example.com/</strong></li>
-        <li>Ema’ẽjey eipuru porãpa barra ojero’áva tenonde gotyo (i.e. <strong>/</strong>).</li>
+        <li>Ema’ẽjey eiporu porãpa barra ojero’áva tenonde gotyo (i.e. <strong>/</strong>).</li>
       </ul>]]></string>
 
     <!-- The document title and heading of an error page. -->
@@ -229,7 +227,7 @@
     <!-- The document title and heading of an error page. -->
     <string name="mozac_browser_errorpages_proxy_connection_refused_title">Mohendahavusu proxy ombotove jeike</string>
 
-    <string name="mozac_browser_errorpages_proxy_connection_refused_message"><![CDATA[<p>Ko kundahára oñemboheko oipuru hag̃ua mohendahavusu proxy, hákatu pe proxy omboyke jeike.</p>
+    <string name="mozac_browser_errorpages_proxy_connection_refused_message"><![CDATA[<p>Ko kundahára oñemboheko oiporu hag̃ua mohendahavusu proxy, hákatu pe proxy omboyke jeike.</p>
       <ul>
         <li>Oĩporãpa proxy ñemboheko kundahárape. Ehechajey ñemboheko ha eha’ãjey.</li>
         <li>¿Omoneĩpa proxy mba’epuru jeike ko ñanduti guive?</li>
@@ -239,7 +237,7 @@
     <!-- The document title and heading of an error page. -->
     <string name="mozac_browser_errorpages_unknown_proxy_host_title">Ndojejuhúi mohendahavusu proxy</string>
 
-    <string name="mozac_browser_errorpages_unknown_proxy_host_message"><![CDATA[<p>Ko kundahára oñemboheko oipuru hag̃ua mohendahavusu proxy, hákatu ndojejuhúi mohendahavusu proxy?</p>
+    <string name="mozac_browser_errorpages_unknown_proxy_host_message"><![CDATA[<p>Ko kundahára oñemboheko oiporu hag̃ua mohendahavusu proxy, hákatu ndojejuhúi mohendahavusu proxy?</p>
       <ul>
         <li>Oĩporã proxy kundahára ñemboheko? Ehechajey ñemboheko ha eha’ãjey.</li>
         <li>¿Pe mohendaha ojoajuhína ñanduti oikóvare?</li>
@@ -272,7 +270,7 @@
     <!-- The title of the error page for websites that do not support HTTPS when HTTPS-Only is turned on -->
     <string name="mozac_browser_errorpages_httpsonly_title">Ndaipóri tenda hekorosãva</string>
     <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will be replaced with the URL of the website. -->
-    <string name="mozac_browser_errorpages_httpsonly_message"><![CDATA[Emyandyhína HTTPS ayvu añoitéva hekorosãve hag̃ua ha ndaipóri HTTPS rehegua <em>%1$s</em> reipurukuaáva.]]></string>
+    <string name="mozac_browser_errorpages_httpsonly_message"><![CDATA[Emyandyhína HTTPS ayvu añoitéva hekorosãve hag̃ua ha ndaipóri HTTPS rehegua <em>%1$s</em> reiporukuaáva.]]></string>
     <!-- Button on error page for websites that do not support HTTPS when HTTPS-Only is turned on. Clicking the button allows the user to nevertheless load the website using HTTP. -->
     <string name="mozac_browser_errorpages_httpsonly_button">Epyta ko HTTP rendápe</string>
 </resources>

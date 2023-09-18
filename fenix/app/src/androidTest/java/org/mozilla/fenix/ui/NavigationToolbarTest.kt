@@ -15,10 +15,8 @@ import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityTestRule
-import org.mozilla.fenix.helpers.MatcherHelper.itemWithText
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper.runWithSystemLocaleChanged
-import org.mozilla.fenix.ui.robots.clickPageObject
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
 import java.util.Locale
@@ -54,51 +52,7 @@ class NavigationToolbarTest {
         mockWebServer.shutdown()
     }
 
-    @Test
-    fun goBackTest() {
-        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-        val nextWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 2)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-            mDevice.waitForIdle()
-        }.openNavigationToolbar {
-        }.enterURLAndEnterToBrowser(nextWebPage.url) {
-            verifyUrl(nextWebPage.url.toString())
-        }.openThreeDotMenu {
-        }.goToPreviousPage {
-            mDevice.waitForIdle()
-            verifyUrl(defaultWebPage.url.toString())
-        }
-    }
-
-    @Test
-    fun goForwardTest() {
-        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-        val nextWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 2)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-            mDevice.waitForIdle()
-        }.openNavigationToolbar {
-        }.enterURLAndEnterToBrowser(nextWebPage.url) {
-            mDevice.waitForIdle()
-            verifyUrl(nextWebPage.url.toString())
-        }.openThreeDotMenu {
-        }.goToPreviousPage {
-            mDevice.waitForIdle()
-            verifyUrl(defaultWebPage.url.toString())
-        }
-
-        // Re-open the three-dot menu for verification
-        navigationToolbar {
-        }.openThreeDotMenu {
-            verifyThreeDotMenuExists()
-        }.goForward {
-            verifyUrl(nextWebPage.url.toString())
-        }
-    }
-
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/987326
     // Swipes the nav bar left/right to switch between tabs
     @SmokeTest
     @Test
@@ -118,6 +72,7 @@ class NavigationToolbarTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/987327
     // Because it requires changing system prefs, this test will run only on Debug builds
     @Test
     fun swipeToSwitchTabInRTLTest() {
@@ -139,85 +94,7 @@ class NavigationToolbarTest {
         }
     }
 
-    // Test running on beta/release builds in CI:
-    // caution when making changes to it, so they don't block the builds
-    @Test
-    fun visitURLTest() {
-        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-            verifyUrl(defaultWebPage.url.toString())
-        }
-    }
-
-    @Test
-    fun findInPageTest() {
-        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 3)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-            mDevice.waitForIdle()
-        }.openThreeDotMenu {
-            verifyThreeDotMenuExists()
-            verifyFindInPageButton()
-        }.openFindInPage {
-            verifyFindInPageNextButton()
-            verifyFindInPagePrevButton()
-            verifyFindInPageCloseButton()
-            enterFindInPageQuery("a")
-            verifyFindNextInPageResult("1/3")
-            clickFindInPageNextButton()
-            verifyFindNextInPageResult("2/3")
-            clickFindInPageNextButton()
-            verifyFindNextInPageResult("3/3")
-            clickFindInPagePrevButton()
-            verifyFindPrevInPageResult("2/3")
-            clickFindInPagePrevButton()
-            verifyFindPrevInPageResult("1/3")
-        }.closeFindInPageWithCloseButton {
-            verifyFindInPageBar(false)
-        }.openThreeDotMenu {
-        }.openFindInPage {
-            enterFindInPageQuery("3")
-            verifyFindNextInPageResult("1/1")
-        }.closeFindInPageWithBackButton {
-            verifyFindInPageBar(false)
-        }
-    }
-
-    @Test
-    fun pdfFindInPageTest() {
-        val genericURL =
-            TestAssetHelper.getGenericAsset(mockWebServer, 3)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(genericURL.url) {
-            clickPageObject(itemWithText("PDF form file"))
-        }.openThreeDotMenu {
-            verifyThreeDotMenuExists()
-            verifyFindInPageButton()
-        }.openFindInPage {
-            verifyFindInPageNextButton()
-            verifyFindInPagePrevButton()
-            verifyFindInPageCloseButton()
-            enterFindInPageQuery("l")
-            verifyFindNextInPageResult("1/2")
-            clickFindInPageNextButton()
-            verifyFindNextInPageResult("2/2")
-            clickFindInPagePrevButton()
-            verifyFindPrevInPageResult("1/2")
-        }.closeFindInPageWithCloseButton {
-            verifyFindInPageBar(false)
-        }.openThreeDotMenu {
-        }.openFindInPage {
-            enterFindInPageQuery("p")
-            verifyFindNextInPageResult("1/1")
-        }.closeFindInPageWithBackButton {
-            verifyFindInPageBar(false)
-        }
-    }
-
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2265279
     @SmokeTest
     @Test
     fun verifySecurePageSecuritySubMenuTest() {
@@ -233,6 +110,7 @@ class NavigationToolbarTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2265280
     @SmokeTest
     @Test
     fun verifyInsecurePageSecuritySubMenuTest() {
@@ -248,6 +126,8 @@ class NavigationToolbarTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1661318
+    @SmokeTest
     @Test
     fun verifyClearCookiesFromQuickSettingsTest() {
         val helpPageUrl = "mozilla.org"
@@ -258,6 +138,38 @@ class NavigationToolbarTest {
         }.openSiteSecuritySheet {
             clickQuickActionSheetClearSiteData()
             verifyClearSiteDataPrompt(helpPageUrl)
+        }
+    }
+
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1360555
+    @SmokeTest
+    @Test
+    fun goToHomeScreenTest() {
+        val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(genericURL.url) {
+            mDevice.waitForIdle()
+        }.goToHomescreen {
+            verifyHomeScreen()
+        }
+    }
+
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2256552
+    @SmokeTest
+    @Test
+    fun goToHomeScreenInPrivateModeTest() {
+        val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        homeScreen {
+            togglePrivateBrowsingModeOnOff()
+        }
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(genericURL.url) {
+            mDevice.waitForIdle()
+        }.goToHomescreen {
+            verifyHomeScreen()
         }
     }
 }

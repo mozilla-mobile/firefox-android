@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -34,13 +35,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import org.mozilla.fenix.R
-import org.mozilla.fenix.compose.ClickableSubstringLink
-import org.mozilla.fenix.compose.SwitchWithLabel
 import org.mozilla.fenix.compose.annotation.LightDarkPreview
 import org.mozilla.fenix.compose.button.SecondaryButton
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.HighlightType
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent
+import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent.AnalysisStatus
 import org.mozilla.fenix.shopping.store.forCompactMode
 import org.mozilla.fenix.theme.FirefoxTheme
 
@@ -53,21 +53,43 @@ import org.mozilla.fenix.theme.FirefoxTheme
  * @param onProductRecommendationsEnabledStateChange Invoked when the user changes the product
  * recommendations toggle state.
  * @param onReviewGradeLearnMoreClick Invoked when the user clicks to learn more about review grades.
+ * @param onBylineLinkClick Invoked when the user clicks on the byline link.
  * @param modifier The modifier to be applied to the Composable.
  */
 @Composable
+@Suppress("LongParameterList")
 fun ProductAnalysis(
-    productRecommendationsEnabled: Boolean,
+    productRecommendationsEnabled: Boolean?,
     productAnalysis: AnalysisPresent,
     onOptOutClick: () -> Unit,
+    onReanalyzeClick: () -> Unit,
     onProductRecommendationsEnabledStateChange: (Boolean) -> Unit,
-    onReviewGradeLearnMoreClick: () -> Unit,
+    onReviewGradeLearnMoreClick: (String) -> Unit,
+    onBylineLinkClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
+        when (productAnalysis.analysisStatus) {
+            AnalysisStatus.NEEDS_ANALYSIS -> {
+                ReanalyzeCard(onReanalyzeClick = onReanalyzeClick)
+            }
+
+            AnalysisStatus.REANALYZING -> {
+                // TBD
+            }
+
+            AnalysisStatus.COMPLETED -> {
+                // TBD
+            }
+
+            AnalysisStatus.UP_TO_DATE -> {
+                // no-op
+            }
+        }
+
         if (productAnalysis.reviewGrade != null) {
             ReviewGradeCard(
                 reviewGrade = productAnalysis.reviewGrade,
@@ -85,34 +107,49 @@ fun ProductAnalysis(
         if (productAnalysis.highlights != null) {
             HighlightsCard(
                 highlights = productAnalysis.highlights,
+                highlightsFadeVisible = productAnalysis.highlightsFadeVisible,
+                showMoreButtonVisible = productAnalysis.showMoreButtonVisible,
                 modifier = Modifier.fillMaxWidth(),
-            )
-
-            Text(
-                text = stringResource(R.string.review_quality_check_highlights_caption),
-                color = FirefoxTheme.colors.textPrimary,
-                style = FirefoxTheme.typography.caption,
-                modifier = Modifier.padding(horizontal = 16.dp),
             )
         }
 
-        ReviewQualityCheckExpandableCard(
-            title = stringResource(id = R.string.review_quality_check_info_title),
+        ReviewQualityInfoCard(
             modifier = Modifier.fillMaxWidth(),
-        ) {
-            ReviewQualityInfo(
-                modifier = Modifier.fillMaxWidth(),
-                onLearnMoreClick = onReviewGradeLearnMoreClick,
-            )
-        }
+            onLearnMoreClick = onReviewGradeLearnMoreClick,
+        )
 
-        SettingsCard(
-            modifier = Modifier.fillMaxWidth(),
+        ReviewQualityCheckSettingsCard(
             productRecommendationsEnabled = productRecommendationsEnabled,
             onProductRecommendationsEnabledStateChange = onProductRecommendationsEnabledStateChange,
             onTurnOffReviewQualityCheckClick = onOptOutClick,
+            modifier = Modifier.fillMaxWidth(),
+        )
+
+        ReviewQualityCheckFooter(
+            onLinkClick = onBylineLinkClick,
         )
     }
+}
+
+@Composable
+private fun ReanalyzeCard(
+    onReanalyzeClick: () -> Unit,
+) {
+    ReviewQualityCheckInfoCard(
+        title = stringResource(R.string.review_quality_check_outdated_analysis_warning_title),
+        type = ReviewQualityCheckInfoType.AnalysisUpdate,
+        modifier = Modifier.fillMaxWidth(),
+        buttonText = stringResource(R.string.review_quality_check_outdated_analysis_warning_action),
+        onButtonClick = onReanalyzeClick,
+        icon = {
+            Icon(
+                painter = painterResource(id = R.drawable.mozac_ic_information_fill_24),
+                contentDescription = null,
+                modifier = Modifier.size(24.dp),
+                tint = FirefoxTheme.colors.iconPrimary,
+            )
+        },
+    )
 }
 
 @Composable
@@ -170,6 +207,8 @@ private fun AdjustedProductRatingCard(
 @Composable
 private fun HighlightsCard(
     highlights: Map<HighlightType, List<String>>,
+    highlightsFadeVisible: Boolean,
+    showMoreButtonVisible: Boolean,
     modifier: Modifier = Modifier,
 ) {
     ReviewQualityCheckCard(modifier = modifier) {
@@ -221,7 +260,7 @@ private fun HighlightsCard(
                 targetState = isExpanded,
                 label = "HighlightsCard-Crossfade",
             ) { expanded ->
-                if (expanded.not()) {
+                if (expanded.not() && highlightsFadeVisible) {
                     Spacer(
                         modifier = Modifier
                             .height(32.dp)
@@ -239,16 +278,18 @@ private fun HighlightsCard(
             }
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        if (showMoreButtonVisible) {
+            Spacer(modifier = Modifier.height(8.dp))
 
-        SecondaryButton(
-            text = if (isExpanded) {
-                stringResource(R.string.review_quality_check_highlights_show_less)
-            } else {
-                stringResource(R.string.review_quality_check_highlights_show_more)
-            },
-            onClick = { isExpanded = isExpanded.not() },
-        )
+            SecondaryButton(
+                text = if (isExpanded) {
+                    stringResource(R.string.review_quality_check_highlights_show_less)
+                } else {
+                    stringResource(R.string.review_quality_check_highlights_show_more)
+                },
+                onClick = { isExpanded = isExpanded.not() },
+            )
+        }
     }
 }
 
@@ -290,126 +331,6 @@ private fun HighlightTitle(highlightType: HighlightType) {
     }
 }
 
-@Composable
-private fun SettingsCard(
-    productRecommendationsEnabled: Boolean,
-    onProductRecommendationsEnabledStateChange: (Boolean) -> Unit,
-    onTurnOffReviewQualityCheckClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    ReviewQualityCheckExpandableCard(
-        modifier = modifier,
-        title = stringResource(R.string.review_quality_check_settings_title),
-    ) {
-        Column {
-            Spacer(modifier = Modifier.height(8.dp))
-
-            SwitchWithLabel(
-                checked = productRecommendationsEnabled,
-                onCheckedChange = onProductRecommendationsEnabledStateChange,
-                label = stringResource(R.string.review_quality_check_settings_recommended_products),
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            SecondaryButton(
-                text = stringResource(R.string.review_quality_check_settings_turn_off),
-                onClick = onTurnOffReviewQualityCheckClick,
-            )
-        }
-    }
-}
-
-@Suppress("Deprecation")
-@Composable
-private fun ReviewQualityInfo(
-    modifier: Modifier = Modifier,
-    onLearnMoreClick: () -> Unit,
-) {
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(24.dp),
-    ) {
-        // Any and all text formatting (bullets, inline substring bolding, etc.) will be handled as
-        // follow-up when the copy is finalized.
-        // Bug 1848219
-        Text(
-            text = stringResource(id = R.string.review_quality_check_info_overview),
-            color = FirefoxTheme.colors.textPrimary,
-            style = FirefoxTheme.typography.body2,
-        )
-
-        val link = stringResource(R.string.review_quality_check_info_learn_more_link)
-        val text = stringResource(R.string.review_quality_check_info_learn_more, link)
-        val linkStartIndex = text.indexOf(link)
-        val linkEndIndex = linkStartIndex + link.length
-        ClickableSubstringLink(
-            text = text,
-            textStyle = FirefoxTheme.typography.body2,
-            clickableStartIndex = linkStartIndex,
-            clickableEndIndex = linkEndIndex,
-            onClick = onLearnMoreClick,
-        )
-
-        Text(
-            text = stringResource(id = R.string.review_quality_check_info_review_grade_header),
-            color = FirefoxTheme.colors.textPrimary,
-            style = FirefoxTheme.typography.body2,
-        )
-
-        ReviewGradingScaleInfo(
-            reviewGrades = listOf(
-                ReviewQualityCheckState.Grade.A,
-                ReviewQualityCheckState.Grade.B,
-            ),
-            info = stringResource(id = R.string.review_quality_check_info_grade_info_AB),
-            modifier = Modifier.fillMaxWidth(),
-        )
-
-        ReviewGradingScaleInfo(
-            reviewGrades = listOf(ReviewQualityCheckState.Grade.C),
-            info = stringResource(id = R.string.review_quality_check_info_grade_info_C),
-            modifier = Modifier.fillMaxWidth(),
-        )
-
-        ReviewGradingScaleInfo(
-            reviewGrades = listOf(
-                ReviewQualityCheckState.Grade.D,
-                ReviewQualityCheckState.Grade.F,
-            ),
-            info = stringResource(id = R.string.review_quality_check_info_grade_info_DF),
-            modifier = Modifier.fillMaxWidth(),
-        )
-    }
-}
-
-@Composable
-private fun ReviewGradingScaleInfo(
-    reviewGrades: List<ReviewQualityCheckState.Grade>,
-    info: String,
-    modifier: Modifier = Modifier,
-) {
-    Row(
-        modifier = modifier.semantics(mergeDescendants = true) {},
-        verticalAlignment = Alignment.Top,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        reviewGrades.forEach { grade ->
-            ReviewGradeCompact(grade = grade)
-        }
-
-        if (reviewGrades.size == 1) {
-            Spacer(modifier = Modifier.width(24.dp))
-        }
-
-        Text(
-            text = info,
-            color = FirefoxTheme.colors.textPrimary,
-            style = FirefoxTheme.typography.body2,
-        )
-    }
-}
-
 private fun HighlightType.toHighlight() =
     when (this) {
         HighlightType.QUALITY -> Highlight.QUALITY
@@ -419,30 +340,29 @@ private fun HighlightType.toHighlight() =
         HighlightType.COMPETITIVENESS -> Highlight.COMPETITIVENESS
     }
 
-// As part of Bug 1841600, update iconResourceId for each highlight type.
 private enum class Highlight(
     val titleResourceId: Int,
     val iconResourceId: Int,
 ) {
     QUALITY(
         titleResourceId = R.string.review_quality_check_highlights_type_quality,
-        iconResourceId = R.drawable.ic_shopping_cart,
+        iconResourceId = R.drawable.mozac_ic_quality_24,
     ),
     PRICE(
         titleResourceId = R.string.review_quality_check_highlights_type_price,
-        iconResourceId = R.drawable.ic_shopping_cart,
+        iconResourceId = R.drawable.mozac_ic_price_24,
     ),
     SHIPPING(
         titleResourceId = R.string.review_quality_check_highlights_type_shipping,
-        iconResourceId = R.drawable.ic_shopping_cart,
+        iconResourceId = R.drawable.mozac_ic_shipping_24,
     ),
     PACKAGING_AND_APPEARANCE(
         titleResourceId = R.string.review_quality_check_highlights_type_packaging_appearance,
-        iconResourceId = R.drawable.ic_shopping_cart,
+        iconResourceId = R.drawable.mozac_ic_packaging_24,
     ),
     COMPETITIVENESS(
         titleResourceId = R.string.review_quality_check_highlights_type_competitiveness,
-        iconResourceId = R.drawable.ic_shopping_cart,
+        iconResourceId = R.drawable.mozac_ic_competitiveness_24,
     ),
 }
 
@@ -460,7 +380,7 @@ private fun ProductAnalysisPreview() {
                 productAnalysis = AnalysisPresent(
                     productId = "123",
                     reviewGrade = ReviewQualityCheckState.Grade.B,
-                    needsAnalysis = false,
+                    analysisStatus = AnalysisStatus.UP_TO_DATE,
                     adjustedRating = 3.6f,
                     productUrl = "123",
                     highlights = sortedMapOf(
@@ -492,10 +412,12 @@ private fun ProductAnalysisPreview() {
                     ),
                 ),
                 onOptOutClick = {},
+                onReanalyzeClick = {},
                 onProductRecommendationsEnabledStateChange = {
                     productRecommendationsEnabled.value = it
                 },
                 onReviewGradeLearnMoreClick = {},
+                onBylineLinkClick = {},
             )
         }
     }
@@ -503,7 +425,7 @@ private fun ProductAnalysisPreview() {
 
 @Composable
 @LightDarkPreview
-private fun ReviewQualityInfoPreview() {
+private fun ReanalyzeCardPreview() {
     FirefoxTheme {
         Box(
             modifier = Modifier
@@ -511,9 +433,8 @@ private fun ReviewQualityInfoPreview() {
                 .background(color = FirefoxTheme.colors.layer1)
                 .padding(all = 16.dp),
         ) {
-            ReviewQualityInfo(
-                modifier = Modifier.fillMaxWidth(),
-                onLearnMoreClick = {},
+            ReanalyzeCard(
+                onReanalyzeClick = {},
             )
         }
     }

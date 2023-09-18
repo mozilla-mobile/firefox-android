@@ -28,6 +28,7 @@ class ReviewQualityCheckPreferencesMiddleware(
         next: (ReviewQualityCheckAction) -> Unit,
         action: ReviewQualityCheckAction,
     ) {
+        next(action)
         when (action) {
             is ReviewQualityCheckAction.PreferencesMiddlewareAction -> {
                 processAction(context.store, action)
@@ -37,8 +38,6 @@ class ReviewQualityCheckPreferencesMiddleware(
                 // no-op
             }
         }
-        // Forward the actions
-        next(action)
     }
 
     private fun processAction(
@@ -73,6 +72,7 @@ class ReviewQualityCheckPreferencesMiddleware(
 
                     // Update the preference
                     reviewQualityCheckPreferences.setEnabled(true)
+                    reviewQualityCheckPreferences.updateCFRCondition(System.currentTimeMillis())
                 }
             }
 
@@ -85,9 +85,13 @@ class ReviewQualityCheckPreferencesMiddleware(
 
             ReviewQualityCheckAction.ToggleProductRecommendation -> {
                 scope.launch {
-                    reviewQualityCheckPreferences.setProductRecommendationsEnabled(
-                        !reviewQualityCheckPreferences.productRecommendationsEnabled(),
-                    )
+                    val productRecommendationsEnabled =
+                        reviewQualityCheckPreferences.productRecommendationsEnabled()
+                    if (productRecommendationsEnabled != null) {
+                        reviewQualityCheckPreferences.setProductRecommendationsEnabled(
+                            !productRecommendationsEnabled,
+                        )
+                    }
                 }
             }
         }

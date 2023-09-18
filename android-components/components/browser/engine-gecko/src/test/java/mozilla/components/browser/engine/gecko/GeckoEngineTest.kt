@@ -33,6 +33,7 @@ import mozilla.components.concept.engine.webextension.Action
 import mozilla.components.concept.engine.webextension.WebExtension
 import mozilla.components.concept.engine.webextension.WebExtensionDelegate
 import mozilla.components.concept.engine.webextension.WebExtensionException
+import mozilla.components.concept.engine.webextension.WebExtensionInstallException
 import mozilla.components.support.test.any
 import mozilla.components.support.test.argumentCaptor
 import mozilla.components.support.test.eq
@@ -71,6 +72,7 @@ import org.mozilla.geckoview.GeckoSession
 import org.mozilla.geckoview.GeckoWebExecutor
 import org.mozilla.geckoview.OrientationController
 import org.mozilla.geckoview.StorageController
+import org.mozilla.geckoview.WebExtension.InstallException.ErrorCodes.ERROR_BLOCKLISTED
 import org.mozilla.geckoview.WebExtension.InstallException.ErrorCodes.ERROR_CORRUPT_FILE
 import org.mozilla.geckoview.WebExtension.InstallException.ErrorCodes.ERROR_FILE_ACCESS
 import org.mozilla.geckoview.WebExtension.InstallException.ErrorCodes.ERROR_INCORRECT_HASH
@@ -1380,6 +1382,23 @@ class GeckoEngineTest {
     }
 
     @Test
+    fun `web extension delegate notified of extension process spawning disabled`() {
+        val runtime: GeckoRuntime = mock()
+        val webExtensionController: WebExtensionController = mock()
+        whenever(runtime.webExtensionController).thenReturn(webExtensionController)
+
+        val webExtensionDelegate: WebExtensionDelegate = mock()
+        val engine = GeckoEngine(context, runtime = runtime)
+        engine.registerWebExtensionDelegate(webExtensionDelegate)
+
+        val extensionProcessDelegate = argumentCaptor<WebExtensionController.ExtensionProcessDelegate>()
+        verify(webExtensionController).setExtensionProcessDelegate(extensionProcessDelegate.capture())
+
+        extensionProcessDelegate.value.onDisabledProcessSpawning()
+        verify(webExtensionDelegate).onDisabledExtensionProcessSpawning()
+    }
+
+    @Test
     fun `update web extension successfully`() {
         val runtime = mock<GeckoRuntime>()
         val extensionController: WebExtensionController = mock()
@@ -2304,6 +2323,39 @@ class GeckoEngineTest {
     }
 
     @Test
+    fun `web extension delegate handles add-on onInstallationFailed event`() {
+        val runtime: GeckoRuntime = mock()
+        val webExtensionController: WebExtensionController = mock()
+
+        whenever(runtime.webExtensionController).thenReturn(webExtensionController)
+
+        val extension = mockNativeWebExtension("test", "uri")
+        val webExtensionsDelegate: WebExtensionDelegate = mock()
+        val engine = GeckoEngine(context, runtime = runtime)
+        val exception = mockGeckoInstallException(ERROR_BLOCKLISTED)
+
+        engine.registerWebExtensionDelegate(webExtensionsDelegate)
+
+        val geckoDelegateCaptor = argumentCaptor<WebExtensionController.AddonManagerDelegate>()
+        verify(webExtensionController).setAddonManagerDelegate(geckoDelegateCaptor.capture())
+
+        assertEquals(Unit, geckoDelegateCaptor.value.onInstallationFailed(extension, exception))
+
+        val extensionCaptor = argumentCaptor<WebExtension>()
+        val exceptionCaptor = argumentCaptor<WebExtensionInstallException>()
+
+        verify(webExtensionsDelegate).onInstallationFailedRequest(
+            extensionCaptor.capture(),
+            exceptionCaptor.capture(),
+        )
+        val capturedExtension =
+            extensionCaptor.value as mozilla.components.browser.engine.gecko.webextension.GeckoWebExtension
+        assertEquals(extension, capturedExtension.nativeExtension)
+
+        assertTrue(exceptionCaptor.value is WebExtensionInstallException.Blocklisted)
+    }
+
+    @Test
     fun `web extension delegate handles add-on onDisabled event`() {
         val runtime: GeckoRuntime = mock()
         val webExtensionController: WebExtensionController = mock()
@@ -2345,6 +2397,33 @@ class GeckoEngineTest {
         val capturedExtension =
             extensionCaptor.value as mozilla.components.browser.engine.gecko.webextension.GeckoWebExtension
         assertEquals(extension, capturedExtension.nativeExtension)
+    }
+
+    @Test
+    fun `web extension delegate handles add-on onInstalled event`() {
+        val runtime: GeckoRuntime = mock()
+        val webExtensionController: WebExtensionController = mock()
+        whenever(runtime.webExtensionController).thenReturn(webExtensionController)
+
+        val extension = mockNativeWebExtension("test", "uri")
+        val webExtensionsDelegate: WebExtensionDelegate = mock()
+        val engine = GeckoEngine(context, runtime = runtime)
+        engine.registerWebExtensionDelegate(webExtensionsDelegate)
+
+        val geckoDelegateCaptor = argumentCaptor<WebExtensionController.AddonManagerDelegate>()
+        verify(webExtensionController).setAddonManagerDelegate(geckoDelegateCaptor.capture())
+
+        assertEquals(Unit, geckoDelegateCaptor.value.onInstalled(extension))
+        val extensionCaptor = argumentCaptor<WebExtension>()
+        verify(webExtensionsDelegate).onInstalled(extensionCaptor.capture())
+        val capturedExtension =
+            extensionCaptor.value as mozilla.components.browser.engine.gecko.webextension.GeckoWebExtension
+        assertEquals(extension, capturedExtension.nativeExtension)
+
+        // Make sure we called `registerActionHandler()` on the installed extension.
+        verify(extension).setActionDelegate(any())
+        // Make sure we called `registerTabHandler()` on the installed extension.
+        verify(extension).tabDelegate = any()
     }
 
     private fun createSocialTrackersLogEntryList(): List<ContentBlockingController.LogEntry> {

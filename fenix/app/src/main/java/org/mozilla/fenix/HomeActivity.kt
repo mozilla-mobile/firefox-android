@@ -80,7 +80,7 @@ import mozilla.components.support.utils.BrowsersCache
 import mozilla.components.support.utils.ManufacturerCodes
 import mozilla.components.support.utils.SafeIntent
 import mozilla.components.support.utils.toSafeIntent
-import mozilla.components.support.webextensions.WebExtensionPopupFeature
+import mozilla.components.support.webextensions.WebExtensionPopupObserver
 import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.experiments.nimbus.initializeTooling
 import org.mozilla.fenix.GleanMetrics.AppIcon
@@ -91,6 +91,7 @@ import org.mozilla.fenix.GleanMetrics.SplashScreen
 import org.mozilla.fenix.GleanMetrics.StartOnHome
 import org.mozilla.fenix.addons.AddonDetailsFragmentDirections
 import org.mozilla.fenix.addons.AddonPermissionsDetailsFragmentDirections
+import org.mozilla.fenix.addons.ExtensionProcessDisabledController
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
@@ -152,6 +153,7 @@ import org.mozilla.fenix.settings.search.SaveSearchEngineFragmentDirections
 import org.mozilla.fenix.settings.studies.StudiesFragmentDirections
 import org.mozilla.fenix.settings.wallpaper.WallpaperSettingsFragmentDirections
 import org.mozilla.fenix.share.AddNewDeviceFragmentDirections
+import org.mozilla.fenix.shopping.ReviewQualityCheckFragmentDirections
 import org.mozilla.fenix.shortcut.NewTabShortcutIntentProcessor.Companion.ACTION_OPEN_PRIVATE_TAB
 import org.mozilla.fenix.tabhistory.TabHistoryDialogFragment
 import org.mozilla.fenix.tabstray.TabsTrayFragment
@@ -188,8 +190,12 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
     private var isToolbarInflated = false
 
-    private val webExtensionPopupFeature by lazy {
-        WebExtensionPopupFeature(components.core.store, ::openPopup)
+    private val webExtensionPopupObserver by lazy {
+        WebExtensionPopupObserver(components.core.store, ::openPopup)
+    }
+
+    private val extensionProcessDisabledPopupObserver by lazy {
+        ExtensionProcessDisabledController(this@HomeActivity, components.core.store)
     }
 
     private val serviceWorkerSupport by lazy {
@@ -340,7 +346,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         }
         supportActionBar?.hide()
 
-        lifecycle.addObservers(webExtensionPopupFeature, serviceWorkerSupport)
+        lifecycle.addObservers(webExtensionPopupObserver, extensionProcessDisabledPopupObserver, serviceWorkerSupport)
 
         if (shouldAddToRecentsScreen(intent)) {
             intent.removeExtra(START_IN_RECENTS_SCREEN)
@@ -359,6 +365,11 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
         if (settings().showContileFeature) {
             components.core.contileTopSitesUpdater.startPeriodicWork()
+        }
+
+        if (settings().enableUnifiedSearchSettingsUI && !settings().hiddenEnginesRestored) {
+            settings().hiddenEnginesRestored = true
+            components.useCases.searchUseCases.restoreHiddenSearchEngines.invoke()
         }
 
         // To assess whether the Pocket stories are to be downloaded or not multiple SharedPreferences
@@ -1022,6 +1033,9 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         BrowserDirection.FromRecentlyClosed ->
             RecentlyClosedFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromStudiesFragment -> StudiesFragmentDirections.actionGlobalBrowser(
+            customTabSessionId,
+        )
+        BrowserDirection.FromReviewQualityCheck -> ReviewQualityCheckFragmentDirections.actionGlobalBrowser(
             customTabSessionId,
         )
     }

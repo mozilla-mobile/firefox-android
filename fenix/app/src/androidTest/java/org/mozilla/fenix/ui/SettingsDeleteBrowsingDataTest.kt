@@ -7,6 +7,7 @@ package org.mozilla.fenix.ui
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.R
@@ -51,6 +52,7 @@ class SettingsDeleteBrowsingDataTest {
         mockWebServer.shutdown()
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/937561
     @Test
     fun deleteBrowsingDataOptionStatesTest() {
         homeScreen {
@@ -109,8 +111,9 @@ class SettingsDeleteBrowsingDataTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/517811
     @Test
-    fun deleteTabsDataWithNoOpenTabsTest() {
+    fun deleteOpenTabsBrowsingDataWithNoOpenTabsTest() {
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
@@ -126,9 +129,10 @@ class SettingsDeleteBrowsingDataTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/353531
     @SmokeTest
     @Test
-    fun deleteTabsDataTest() {
+    fun deleteOpenTabsBrowsingDataTest() {
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         navigationToolbar {
@@ -158,6 +162,7 @@ class SettingsDeleteBrowsingDataTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/378864
     @SmokeTest
     @Test
     fun deleteBrowsingHistoryTest() {
@@ -188,6 +193,7 @@ class SettingsDeleteBrowsingDataTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/416041
     @SmokeTest
     @Test
     fun deleteCookiesAndSiteDataTest() {
@@ -226,6 +232,8 @@ class SettingsDeleteBrowsingDataTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/416042
+    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1807268")
     @SmokeTest
     @Test
     fun deleteCachedFilesTest() {

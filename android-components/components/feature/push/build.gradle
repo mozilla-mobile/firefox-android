@@ -6,10 +6,9 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion config.compileSdkVersion
-
     defaultConfig {
         minSdkVersion config.minSdkVersion
+        compileSdk config.compileSdkVersion
         targetSdkVersion config.targetSdkVersion
     }
 
@@ -27,7 +26,7 @@ android {
 dependencies {
     implementation project(':concept-push')
 
-    implementation ComponentsDependencies.mozilla_push
+    implementation ComponentsDependencies.mozilla_appservices_push
 
     // Remove when the MessageBus is implemented somewhere else.
     implementation project(':support-base')

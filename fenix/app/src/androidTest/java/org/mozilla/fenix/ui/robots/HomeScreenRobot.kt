@@ -494,10 +494,6 @@ class HomeScreenRobot {
             return SearchRobot.Transition()
         }
 
-        fun dismissOnboarding() {
-            openThreeDotMenu { }.openSettings { }.goBack { }
-        }
-
         fun clickUpgradingUserOnboardingSignInButton(
             testRule: ComposeTestRule,
             interact: SyncSignInRobot.() -> Unit,
@@ -783,6 +779,11 @@ class HomeScreenRobot {
 fun homeScreen(interact: HomeScreenRobot.() -> Unit): HomeScreenRobot.Transition {
     HomeScreenRobot().interact()
     return HomeScreenRobot.Transition()
+}
+
+fun homeScreenWithComposeTopSites(composeTestRule: HomeActivityComposeTestRule, interact: ComposeTopSitesRobot.() -> Unit): ComposeTopSitesRobot.Transition {
+    ComposeTopSitesRobot(composeTestRule).interact()
+    return ComposeTopSitesRobot.Transition(composeTestRule)
 }
 
 private fun homeScreenList() =

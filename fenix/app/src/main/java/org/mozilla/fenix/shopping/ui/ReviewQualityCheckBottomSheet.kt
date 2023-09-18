@@ -6,6 +6,7 @@ package org.mozilla.fenix.shopping.ui
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -55,11 +56,25 @@ fun ReviewQualityCheckBottomSheet(
                         onRequestDismiss()
                         store.dispatch(ReviewQualityCheckAction.OptOut)
                     },
+                    onReanalyzeClick = {
+                        store.dispatch(ReviewQualityCheckAction.ReanalyzeProduct)
+                    },
                     onProductRecommendationsEnabledStateChange = {
                         store.dispatch(ReviewQualityCheckAction.ToggleProductRecommendation)
                     },
-                    onReviewGradeLearnMoreClick = {
-                        // Bug 1847740
+                    onReviewGradeLearnMoreClick = { url ->
+                        store.dispatch(
+                            ReviewQualityCheckAction.OpenLink(
+                                ReviewQualityCheckState.LinkType.ExternalLink(url),
+                            ),
+                        )
+                    },
+                    onBylineLinkClick = { url ->
+                        store.dispatch(
+                            ReviewQualityCheckAction.OpenLink(
+                                ReviewQualityCheckState.LinkType.ExternalLink(url),
+                            ),
+                        )
                     },
                 )
             }
@@ -76,11 +91,14 @@ fun ReviewQualityCheckBottomSheet(
 }
 
 @Composable
+@Suppress("LongParameterList")
 private fun ProductReview(
     state: ReviewQualityCheckState.OptedIn,
     onOptOutClick: () -> Unit,
+    onReanalyzeClick: () -> Unit,
     onProductRecommendationsEnabledStateChange: (Boolean) -> Unit,
-    onReviewGradeLearnMoreClick: () -> Unit,
+    onReviewGradeLearnMoreClick: (String) -> Unit,
+    onBylineLinkClick: (String) -> Unit,
 ) {
     Crossfade(
         targetState = state.productReviewState,
@@ -92,13 +110,22 @@ private fun ProductReview(
                     productRecommendationsEnabled = state.productRecommendationsPreference,
                     productAnalysis = productReviewState,
                     onOptOutClick = onOptOutClick,
+                    onReanalyzeClick = onReanalyzeClick,
                     onProductRecommendationsEnabledStateChange = onProductRecommendationsEnabledStateChange,
                     onReviewGradeLearnMoreClick = onReviewGradeLearnMoreClick,
+                    onBylineLinkClick = onBylineLinkClick,
                 )
             }
 
             is ReviewQualityCheckState.OptedIn.ProductReviewState.Error -> {
-                // Bug 1840113
+                ProductAnalysisError(
+                    productRecommendationsEnabled = state.productRecommendationsPreference,
+                    onReviewGradeLearnMoreClick = onReviewGradeLearnMoreClick,
+                    onOptOutClick = onOptOutClick,
+                    onProductRecommendationsEnabledStateChange = onProductRecommendationsEnabledStateChange,
+                    onBylineLinkClick = onBylineLinkClick,
+                    modifier = Modifier.fillMaxWidth(),
+                )
             }
 
             is ReviewQualityCheckState.OptedIn.ProductReviewState.Loading -> {

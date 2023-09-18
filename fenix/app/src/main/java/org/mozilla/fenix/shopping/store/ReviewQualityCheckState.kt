@@ -29,11 +29,12 @@ sealed interface ReviewQualityCheckState : State {
      *
      * @property productReviewState The state of the product the user is browsing.
      * @property productRecommendationsPreference User preference whether to show product
-     * recommendations. True if product recommendations should be shown.
+     * recommendations. True if product recommendations should be shown. Null indicates that product
+     * recommendations are disabled.
      */
     data class OptedIn(
         val productReviewState: ProductReviewState = ProductReviewState.Loading,
-        val productRecommendationsPreference: Boolean,
+        val productRecommendationsPreference: Boolean?,
     ) : ReviewQualityCheckState {
 
         /**
@@ -53,15 +54,16 @@ sealed interface ReviewQualityCheckState : State {
             /**
              * Denotes no analysis is present for the product the user is browsing.
              */
-            object NoAnalysisPresent : ProductReviewState
+            data class NoAnalysisPresent(
+                val isReanalyzing: Boolean = false,
+            ) : ProductReviewState
 
             /**
              * Denotes the state where analysis of the product is fetched and present.
              *
              * @property productId The id of the product, e.g ASIN, SKU.
              * @property reviewGrade The review grade of the product.
-             * @property needsAnalysis If true, the analysis is stale and that to get the fresh
-             * data, re–analysis is needed.
+             * @property analysisStatus The status of the product analysis.
              * @property adjustedRating The adjusted rating taking review quality into consideration.
              * @property productUrl The url of the product the user is browsing.
              * @property highlights Optional highlights based on recent reviews of the product.
@@ -70,7 +72,7 @@ sealed interface ReviewQualityCheckState : State {
             data class AnalysisPresent(
                 val productId: String,
                 val reviewGrade: Grade?,
-                val needsAnalysis: Boolean,
+                val analysisStatus: AnalysisStatus,
                 val adjustedRating: Float?,
                 val productUrl: String,
                 val highlights: SortedMap<HighlightType, List<String>>?,
@@ -81,6 +83,20 @@ sealed interface ReviewQualityCheckState : State {
                         "AnalysisPresent state should only be created when at least one of " +
                             "reviewGrade, adjustedRating or highlights is not null"
                     }
+                }
+
+                val showMoreButtonVisible: Boolean =
+                    highlights != null && highlights != highlights.forCompactMode()
+
+                val highlightsFadeVisible: Boolean =
+                    highlights != null && showMoreButtonVisible &&
+                        highlights.forCompactMode().entries.first().value.size > 1
+
+                /**
+                 * The status of the product analysis.
+                 */
+                enum class AnalysisStatus {
+                    NEEDS_ANALYSIS, REANALYZING, UP_TO_DATE, COMPLETED
                 }
             }
         }
@@ -98,6 +114,21 @@ sealed interface ReviewQualityCheckState : State {
      */
     enum class HighlightType {
         QUALITY, PRICE, SHIPPING, PACKAGING_AND_APPEARANCE, COMPETITIVENESS
+    }
+
+    /**
+     * Types of links that can be opened from the review quality check feature.
+     */
+    sealed class LinkType {
+        /**
+         * Opens a link to analyze a product.
+         */
+        data class AnalyzeLink(val url: String) : LinkType()
+
+        /**
+         * Opens an external "Learn more" link.
+         */
+        data class ExternalLink(val url: String) : LinkType()
     }
 
     /**
@@ -142,6 +173,17 @@ sealed interface ReviewQualityCheckState : State {
             val analysisUrl: String,
         ) : RecommendedProductState
     }
+
+    /**
+     * Returns [ReviewQualityCheckState] applying the given [transform] function if the current
+     * state is [OptedIn].
+     */
+    fun mapIfOptedIn(transform: (OptedIn) -> ReviewQualityCheckState): ReviewQualityCheckState =
+        if (this is OptedIn) {
+            transform(this)
+        } else {
+            this
+        }
 }
 
 /**

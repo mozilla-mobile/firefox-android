@@ -19,7 +19,8 @@ import java.lang.ref.WeakReference
 /**
  * Properties used to customize the behavior of a [CFRPopup].
  *
- * @property popupWidth Width of the popup. Defaults to [CFRPopup.DEFAULT_WIDTH].
+ * @property popupWidth Width of the popup. Defaults to [CFRPopup.DEFAULT_WIDTH]. To be used as maximum
+ * width when alignment is set to [PopupAlignment.BODY_CENTERED_IN_SCREEN].
  * @property popupAlignment Where in relation to it's anchor should the popup be placed.
  * @property popupBodyColors One or more colors serving as the popup background.
  * If more colors are provided they will be used in a gradient.
@@ -43,9 +44,10 @@ data class CFRPopupProperties(
     val popupAlignment: PopupAlignment = PopupAlignment.BODY_TO_ANCHOR_CENTER,
     val popupBodyColors: List<Int> = listOf(Color.Blue.toArgb()),
     val popupVerticalOffset: Dp = CFRPopup.DEFAULT_VERTICAL_OFFSET.dp,
+    val showDismissButton: Boolean = true,
     val dismissButtonColor: Int = Color.Black.toArgb(),
-    val dismissOnBackPress: Boolean = true,
-    val dismissOnClickOutside: Boolean = true,
+    val dismissOnBackPress: Boolean = false,
+    val dismissOnClickOutside: Boolean = false,
     val overlapAnchor: Boolean = false,
     val indicatorDirection: IndicatorDirection = IndicatorDirection.UP,
     val indicatorArrowStartOffset: Dp = CFRPopup.DEFAULT_INDICATOR_START_OFFSET.dp,
@@ -139,6 +141,14 @@ class CFRPopup(
          * to indicate exactly which widget the popup refers to.
          */
         INDICATOR_CENTERED_IN_ANCHOR,
+
+        /**
+         * If the popup doesn't have enough space to expand to its full [CFRPopupProperties.popupWidth],
+         * it will be centred in the screen.
+         * If the popup does have enough space, it defaults to [INDICATOR_CENTERED_IN_ANCHOR].
+         * Recommended to be used when the popup text is very long.
+         */
+        BODY_CENTERED_IN_SCREEN,
     }
 
     companion object {
@@ -175,5 +185,11 @@ class CFRPopup(
          * Vertical distance between the indicator arrow and the anchor.
          */
         internal const val DEFAULT_VERTICAL_OFFSET = 9
+
+        /**
+         * Horizontal margin between the popup and viewport edges used to center the popup when alignment
+         * is set to [PopupAlignment.BODY_CENTERED_IN_SCREEN].
+         */
+        internal const val DEFAULT_HORIZONTAL_VIEWPORT_MARGIN_DP = 16
     }
 }

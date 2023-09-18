@@ -49,6 +49,7 @@ import mozilla.components.concept.engine.webextension.EnableSource
 import mozilla.components.concept.engine.webextension.TabHandler
 import mozilla.components.concept.engine.webextension.WebExtension
 import mozilla.components.concept.engine.webextension.WebExtensionDelegate
+import mozilla.components.concept.engine.webextension.WebExtensionInstallException
 import mozilla.components.concept.engine.webextension.WebExtensionRuntime
 import mozilla.components.concept.engine.webnotifications.WebNotificationDelegate
 import mozilla.components.concept.engine.webpush.WebPushDelegate
@@ -372,13 +373,35 @@ class GeckoEngine(
             }
 
             override fun onInstalled(extension: org.mozilla.geckoview.WebExtension) {
-                webExtensionDelegate.onInstalled(GeckoWebExtension(extension, runtime))
+                val installedExtension = GeckoWebExtension(extension, runtime)
+                webExtensionDelegate.onInstalled(installedExtension)
+                installedExtension.registerActionHandler(webExtensionActionHandler)
+                installedExtension.registerTabHandler(webExtensionTabHandler, defaultSettings)
+            }
+
+            override fun onInstallationFailed(
+                extension: org.mozilla.geckoview.WebExtension?,
+                installException: org.mozilla.geckoview.WebExtension.InstallException,
+            ) {
+                val exception =
+                    GeckoWebExtensionException.createWebExtensionException(installException)
+                webExtensionDelegate.onInstallationFailedRequest(
+                    extension.toSafeWebExtension(),
+                    exception as WebExtensionInstallException,
+                )
+            }
+        }
+
+        val extensionProcessDelegate = object : WebExtensionController.ExtensionProcessDelegate {
+            override fun onDisabledProcessSpawning() {
+                webExtensionDelegate.onDisabledExtensionProcessSpawning()
             }
         }
 
         runtime.webExtensionController.setPromptDelegate(promptDelegate)
         runtime.webExtensionController.setDebuggerDelegate(debuggerDelegate)
         runtime.webExtensionController.setAddonManagerDelegate(addonManagerDelegate)
+        runtime.webExtensionController.setExtensionProcessDelegate(extensionProcessDelegate)
     }
 
     /**
@@ -484,6 +507,13 @@ class GeckoEngine(
                 GeckoResult<Void>()
             },
         )
+    }
+
+    /**
+     * See [Engine.enableExtensionProcessSpawning].
+     */
+    override fun enableExtensionProcessSpawning() {
+        runtime.webExtensionController.enableExtensionProcessSpawning()
     }
 
     /**
@@ -912,6 +942,17 @@ class GeckoEngine(
             cookiesHasBeenBlocked = cookiesHasBeenBlocked,
             unBlockedBySmartBlock = this.blockingData.any { it.unBlockedBySmartBlock() },
         )
+    }
+
+    internal fun org.mozilla.geckoview.WebExtension?.toSafeWebExtension(): GeckoWebExtension? {
+        return if (this != null) {
+            GeckoWebExtension(
+                this,
+                runtime,
+            )
+        } else {
+            null
+        }
     }
 }
 

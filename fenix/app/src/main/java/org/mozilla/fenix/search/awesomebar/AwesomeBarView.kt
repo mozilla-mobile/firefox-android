@@ -188,7 +188,6 @@ class AwesomeBarView(
                 title = R.string.search_engine_suggestions_title,
                 description = activity.getString(R.string.search_engine_suggestions_description),
                 searchIcon = searchWithBitmap,
-                suggestionsHeader = getSearchEngineSuggestionsHeader(),
             )
 
         searchSuggestionProviderMap = HashMap()

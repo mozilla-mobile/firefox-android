@@ -37,6 +37,7 @@ import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifAnyChanged
 import org.mozilla.fenix.GleanMetrics.ReaderMode
+import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.TabCollectionStorage
@@ -96,17 +97,30 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
             )
         }
 
-        val homeAction = BrowserToolbar.Button(
-            imageDrawable = AppCompatResources.getDrawable(
-                context,
-                R.drawable.mozac_ic_home_24,
-            )!!,
-            contentDescription = context.getString(R.string.browser_toolbar_home),
-            iconTintColorResource = ThemeManager.resolveAttribute(R.attr.textPrimary, context),
-            listener = browserToolbarInteractor::onHomeButtonClicked,
-        )
+        val isPrivate = (activity as HomeActivity).browsingModeManager.mode.isPrivate
+        val leadingAction = if (isPrivate && context.settings().feltPrivateBrowsingEnabled) {
+            BrowserToolbar.Button(
+                imageDrawable = AppCompatResources.getDrawable(
+                    context,
+                    R.drawable.mozac_ic_data_clearance_24,
+                )!!,
+                contentDescription = context.getString(R.string.browser_toolbar_erase),
+                iconTintColorResource = ThemeManager.resolveAttribute(R.attr.textPrimary, context),
+                listener = browserToolbarInteractor::onEraseButtonClicked,
+            )
+        } else {
+            BrowserToolbar.Button(
+                imageDrawable = AppCompatResources.getDrawable(
+                    context,
+                    R.drawable.mozac_ic_home_24,
+                )!!,
+                contentDescription = context.getString(R.string.browser_toolbar_home),
+                iconTintColorResource = ThemeManager.resolveAttribute(R.attr.textPrimary, context),
+                listener = browserToolbarInteractor::onHomeButtonClicked,
+            )
+        }
 
-        browserToolbarView.view.addNavigationAction(homeAction)
+        browserToolbarView.view.addNavigationAction(leadingAction)
 
         updateToolbarActions(isTablet = resources.getBoolean(R.bool.tablet))
 
@@ -203,17 +217,13 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
 
     private fun initReviewQualityCheck(context: Context, view: View) {
         val reviewQualityCheck =
-            BrowserToolbar.ToggleButton(
-                image = AppCompatResources.getDrawable(
+            BrowserToolbar.Button(
+                imageDrawable = AppCompatResources.getDrawable(
                     context,
-                    R.drawable.ic_shopping_cart,
-                )!!,
-                imageSelected = AppCompatResources.getDrawable(
-                    context,
-                    R.drawable.ic_shopping_cart,
+                    R.drawable.mozac_ic_shopping_24,
                 )!!,
                 contentDescription = context.getString(R.string.browser_menu_review_quality_check),
-                contentDescriptionSelected = context.getString(R.string.browser_menu_review_quality_check_close),
+                iconTintColorResource = ThemeManager.resolveAttribute(R.attr.textPrimary, context),
                 visible = { reviewQualityCheckAvailable },
                 listener = {
                     findNavController().navigate(

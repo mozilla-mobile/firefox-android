@@ -270,6 +270,14 @@ features:
         type: Boolean
         default: true
 
+  extensions-process:
+    description: A feature to rollout the extensions process.
+    variables:
+      enabled:
+        description: If true, the extensions process is enabled.
+        type: Boolean
+        default: false
+
   growth-data:
     description: A feature measuring campaign growth data
     variables:
@@ -336,6 +344,10 @@ features:
     variables:
       enabled:
         description: if true, the shopping experience feature is shown to the user.
+        type: Boolean
+        default: false
+      product-recommendations:
+        description: if true, recommended products feature is enabled to be shown to the user based on their preference.
         type: Boolean
         default: false
     defaults:

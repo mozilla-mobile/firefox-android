@@ -6,7 +6,11 @@
 
 package org.mozilla.fenix.ui.robots
 
+import androidx.compose.ui.test.ComposeTimeoutException
+import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertAny
+import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.onAllNodesWithTag
@@ -117,7 +121,7 @@ class SearchRobot {
         }
     }
 
-    fun verifyNoSuggestionsAreDisplayed(rule: ComposeTestRule, vararg searchSuggestions: String) {
+    fun verifySuggestionsAreNotDisplayed(rule: ComposeTestRule, vararg searchSuggestions: String) {
         rule.waitForIdle()
         for (searchSuggestion in searchSuggestions) {
             rule.onAllNodesWithTag("mozac.awesomebar.suggestions")
@@ -125,6 +129,28 @@ class SearchRobot {
                     hasText(searchSuggestion)
                         .not(),
                 )
+        }
+    }
+
+    @OptIn(ExperimentalTestApi::class)
+    fun verifySearchSuggestionsCount(rule: ComposeTestRule, numberOfSuggestions: Int, searchTerm: String) {
+        for (i in 1..RETRY_COUNT) {
+            try {
+                rule.waitUntilNodeCount(hasTestTag("mozac.awesomebar.suggestion"), numberOfSuggestions, waitingTime)
+                rule.onAllNodesWithTag("mozac.awesomebar.suggestion").assertCountEquals(numberOfSuggestions)
+
+                break
+            } catch (e: ComposeTimeoutException) {
+                if (i == RETRY_COUNT) {
+                    throw e
+                } else {
+                    mDevice.pressBack()
+                    homeScreen {
+                    }.openSearch {
+                        typeSearch(searchTerm)
+                    }
+                }
+            }
         }
     }
 
