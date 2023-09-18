@@ -40,6 +40,7 @@ import org.mozilla.fenix.compose.button.SecondaryButton
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.HighlightType
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent
+import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent.AnalysisStatus
 import org.mozilla.fenix.shopping.store.forCompactMode
 import org.mozilla.fenix.theme.FirefoxTheme
 
@@ -52,27 +53,41 @@ import org.mozilla.fenix.theme.FirefoxTheme
  * @param onProductRecommendationsEnabledStateChange Invoked when the user changes the product
  * recommendations toggle state.
  * @param onReviewGradeLearnMoreClick Invoked when the user clicks to learn more about review grades.
+ * @param onBylineLinkClick Invoked when the user clicks on the byline link.
  * @param modifier The modifier to be applied to the Composable.
  */
 @Composable
 @Suppress("LongParameterList")
 fun ProductAnalysis(
-    productRecommendationsEnabled: Boolean,
+    productRecommendationsEnabled: Boolean?,
     productAnalysis: AnalysisPresent,
     onOptOutClick: () -> Unit,
     onReanalyzeClick: () -> Unit,
     onProductRecommendationsEnabledStateChange: (Boolean) -> Unit,
     onReviewGradeLearnMoreClick: (String) -> Unit,
+    onBylineLinkClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        if (productAnalysis.needsAnalysis) {
-            ReanalyzeCard(
-                onReanalyzeClick = onReanalyzeClick,
-            )
+        when (productAnalysis.analysisStatus) {
+            AnalysisStatus.NEEDS_ANALYSIS -> {
+                ReanalyzeCard(onReanalyzeClick = onReanalyzeClick)
+            }
+
+            AnalysisStatus.REANALYZING -> {
+                // TBD
+            }
+
+            AnalysisStatus.COMPLETED -> {
+                // TBD
+            }
+
+            AnalysisStatus.UP_TO_DATE -> {
+                // no-op
+            }
         }
 
         if (productAnalysis.reviewGrade != null) {
@@ -92,6 +107,8 @@ fun ProductAnalysis(
         if (productAnalysis.highlights != null) {
             HighlightsCard(
                 highlights = productAnalysis.highlights,
+                highlightsFadeVisible = productAnalysis.highlightsFadeVisible,
+                showMoreButtonVisible = productAnalysis.showMoreButtonVisible,
                 modifier = Modifier.fillMaxWidth(),
             )
         }
@@ -106,6 +123,10 @@ fun ProductAnalysis(
             onProductRecommendationsEnabledStateChange = onProductRecommendationsEnabledStateChange,
             onTurnOffReviewQualityCheckClick = onOptOutClick,
             modifier = Modifier.fillMaxWidth(),
+        )
+
+        ReviewQualityCheckFooter(
+            onLinkClick = onBylineLinkClick,
         )
     }
 }
@@ -186,6 +207,8 @@ private fun AdjustedProductRatingCard(
 @Composable
 private fun HighlightsCard(
     highlights: Map<HighlightType, List<String>>,
+    highlightsFadeVisible: Boolean,
+    showMoreButtonVisible: Boolean,
     modifier: Modifier = Modifier,
 ) {
     ReviewQualityCheckCard(modifier = modifier) {
@@ -237,7 +260,7 @@ private fun HighlightsCard(
                 targetState = isExpanded,
                 label = "HighlightsCard-Crossfade",
             ) { expanded ->
-                if (expanded.not()) {
+                if (expanded.not() && highlightsFadeVisible) {
                     Spacer(
                         modifier = Modifier
                             .height(32.dp)
@@ -255,16 +278,18 @@ private fun HighlightsCard(
             }
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        if (showMoreButtonVisible) {
+            Spacer(modifier = Modifier.height(8.dp))
 
-        SecondaryButton(
-            text = if (isExpanded) {
-                stringResource(R.string.review_quality_check_highlights_show_less)
-            } else {
-                stringResource(R.string.review_quality_check_highlights_show_more)
-            },
-            onClick = { isExpanded = isExpanded.not() },
-        )
+            SecondaryButton(
+                text = if (isExpanded) {
+                    stringResource(R.string.review_quality_check_highlights_show_less)
+                } else {
+                    stringResource(R.string.review_quality_check_highlights_show_more)
+                },
+                onClick = { isExpanded = isExpanded.not() },
+            )
+        }
     }
 }
 
@@ -355,7 +380,7 @@ private fun ProductAnalysisPreview() {
                 productAnalysis = AnalysisPresent(
                     productId = "123",
                     reviewGrade = ReviewQualityCheckState.Grade.B,
-                    needsAnalysis = false,
+                    analysisStatus = AnalysisStatus.UP_TO_DATE,
                     adjustedRating = 3.6f,
                     productUrl = "123",
                     highlights = sortedMapOf(
@@ -392,6 +417,7 @@ private fun ProductAnalysisPreview() {
                     productRecommendationsEnabled.value = it
                 },
                 onReviewGradeLearnMoreClick = {},
+                onBylineLinkClick = {},
             )
         }
     }
