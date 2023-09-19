@@ -11,7 +11,9 @@ import android.net.Uri
 import android.os.SystemClock
 import android.util.Log
 import android.widget.TimePicker
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performClick
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -41,7 +43,6 @@ import org.mozilla.fenix.helpers.Constants.LONG_CLICK_DURATION
 import org.mozilla.fenix.helpers.Constants.RETRY_COUNT
 import org.mozilla.fenix.helpers.HomeActivityComposeTestRule
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemContainingTextExists
-import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithDescriptionExists
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithResIdAndTextExists
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithResIdExists
 import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
@@ -60,6 +61,7 @@ import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.TestHelper.waitForObjects
 import org.mozilla.fenix.helpers.ext.waitNotNull
 import org.mozilla.fenix.tabstray.TabsTrayTestTag
+import org.mozilla.fenix.utils.Settings
 import java.time.LocalDate
 
 class BrowserRobot {
@@ -190,11 +192,11 @@ class BrowserRobot {
         )
     }
 
-    fun verifyContextMenuForLinksToOtherApps(containsURL: Uri) {
+    fun verifyContextMenuForLinksToOtherApps(containsURL: String) {
         // If the link is re-directing to an external app the "Open link in external app" option is available
         // If the link is not directing to another local asset the "Download link" option is not available
         assertItemContainingTextExists(
-            contextMenuLinkUrl(containsURL.toString()),
+            contextMenuLinkUrl(containsURL),
             contextMenuOpenLinkInNewTab,
             contextMenuOpenLinkInPrivateTab,
             contextMenuCopyLink,
@@ -581,16 +583,32 @@ class BrowserRobot {
         }
     }
 
-    fun verifyCookiesProtectionHintIsDisplayed(isDisplayed: Boolean) {
-        assertItemContainingTextExists(
-            totalCookieProtectionHintMessage,
-            totalCookieProtectionHintLearnMoreLink,
-            exists = isDisplayed,
-        )
-        assertItemWithDescriptionExists(
-            totalCookieProtectionHintCloseButton,
-            exists = isDisplayed,
-        )
+    fun verifyCookiesProtectionHintIsDisplayed(composeTestRule: HomeActivityComposeTestRule, isDisplayed: Boolean) {
+        if (isDisplayed) {
+            composeTestRule.onNodeWithTag("tcp_cfr.message").assertIsDisplayed()
+            composeTestRule.onNodeWithTag("tcp_cfr.action").assertIsDisplayed()
+            composeTestRule.onNodeWithTag("cfr.dismiss").assertIsDisplayed()
+        } else {
+            composeTestRule.onNodeWithTag("tcp_cfr.message").assertDoesNotExist()
+            composeTestRule.onNodeWithTag("tcp_cfr.action").assertDoesNotExist()
+            composeTestRule.onNodeWithTag("cfr.dismiss").assertDoesNotExist()
+        }
+    }
+
+    fun clickTCPCFRLearnMore(composeTestRule: HomeActivityComposeTestRule) {
+        composeTestRule.onNodeWithTag("tcp_cfr.action").performClick()
+    }
+
+    fun dismissTCPCFRPopup(composeTestRule: HomeActivityComposeTestRule) {
+        composeTestRule.onNodeWithTag("cfr.dismiss").performClick()
+    }
+
+    fun verifyShouldShowCFRTCP(shouldShow: Boolean, settings: Settings) {
+        if (shouldShow) {
+            assertTrue(settings.shouldShowTotalCookieProtectionCFR)
+        } else {
+            assertFalse(settings.shouldShowTotalCookieProtectionCFR)
+        }
     }
 
     fun selectTime(hour: Int, minute: Int) =
@@ -1080,6 +1098,21 @@ class BrowserRobot {
             return HomeScreenRobot.Transition()
         }
 
+        fun goToHomescreenWithComposeTopSites(composeTestRule: HomeActivityComposeTestRule, interact: ComposeTopSitesRobot.() -> Unit): ComposeTopSitesRobot.Transition {
+            clickPageObject(itemWithDescription("Home screen"))
+
+            mDevice.findObject(UiSelector().resourceId("$packageName:id/homeLayout"))
+                .waitForExists(waitingTime) ||
+                mDevice.findObject(
+                    UiSelector().text(
+                        getStringResource(R.string.onboarding_home_screen_jump_back_contextual_hint_2),
+                    ),
+                ).waitForExists(waitingTime)
+
+            ComposeTopSitesRobot(composeTestRule).interact()
+            return ComposeTopSitesRobot.Transition(composeTestRule)
+        }
+
         fun goBack(interact: HomeScreenRobot.() -> Unit): HomeScreenRobot.Transition {
             mDevice.pressBack()
 
@@ -1353,12 +1386,6 @@ private val currentDay = currentDate.dayOfMonth
 private val currentMonth = currentDate.month
 private val currentYear = currentDate.year
 private val cookieBanner = itemWithResId("startsiden-gdpr-disclaimer")
-private val totalCookieProtectionHintMessage =
-    itemContainingText(getStringResource(R.string.tcp_cfr_message))
-private val totalCookieProtectionHintLearnMoreLink =
-    itemContainingText(getStringResource(R.string.tcp_cfr_learn_more))
-private val totalCookieProtectionHintCloseButton =
-    itemWithDescription(getStringResource(R.string.mozac_cfr_dismiss_button_content_description))
 
 // Context menu items
 // Link URL
