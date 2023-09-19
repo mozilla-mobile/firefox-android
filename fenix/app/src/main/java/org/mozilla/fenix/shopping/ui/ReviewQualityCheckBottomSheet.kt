@@ -56,7 +56,9 @@ fun ReviewQualityCheckBottomSheet(
                         onRequestDismiss()
                         store.dispatch(ReviewQualityCheckAction.OptOut)
                     },
-                    onReanalyzeClick = {},
+                    onReanalyzeClick = {
+                        store.dispatch(ReviewQualityCheckAction.ReanalyzeProduct)
+                    },
                     onProductRecommendationsEnabledStateChange = {
                         store.dispatch(ReviewQualityCheckAction.ToggleProductRecommendation)
                     },
@@ -67,7 +69,7 @@ fun ReviewQualityCheckBottomSheet(
                             ),
                         )
                     },
-                    onBylineLinkClick = { url ->
+                    onFooterLinkClick = { url ->
                         store.dispatch(
                             ReviewQualityCheckAction.OpenLink(
                                 ReviewQualityCheckState.LinkType.ExternalLink(url),
@@ -96,7 +98,7 @@ private fun ProductReview(
     onReanalyzeClick: () -> Unit,
     onProductRecommendationsEnabledStateChange: (Boolean) -> Unit,
     onReviewGradeLearnMoreClick: (String) -> Unit,
-    onBylineLinkClick: (String) -> Unit,
+    onFooterLinkClick: (String) -> Unit,
 ) {
     Crossfade(
         targetState = state.productReviewState,
@@ -111,7 +113,7 @@ private fun ProductReview(
                     onReanalyzeClick = onReanalyzeClick,
                     onProductRecommendationsEnabledStateChange = onProductRecommendationsEnabledStateChange,
                     onReviewGradeLearnMoreClick = onReviewGradeLearnMoreClick,
-                    onBylineLinkClick = onBylineLinkClick,
+                    onFooterLinkClick = onFooterLinkClick,
                 )
             }
 
@@ -121,7 +123,7 @@ private fun ProductReview(
                     onReviewGradeLearnMoreClick = onReviewGradeLearnMoreClick,
                     onOptOutClick = onOptOutClick,
                     onProductRecommendationsEnabledStateChange = onProductRecommendationsEnabledStateChange,
-                    onBylineLinkClick = onBylineLinkClick,
+                    onFooterLinkClick = onFooterLinkClick,
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
@@ -131,7 +133,15 @@ private fun ProductReview(
             }
 
             is ReviewQualityCheckState.OptedIn.ProductReviewState.NoAnalysisPresent -> {
-                // Bug 1840333
+                NoAnalysis(
+                    productRecommendationsEnabled = state.productRecommendationsPreference,
+                    isAnalyzing = productReviewState.isReanalyzing,
+                    onAnalyzeClick = onReanalyzeClick,
+                    onReviewGradeLearnMoreClick = onReviewGradeLearnMoreClick,
+                    onOptOutClick = onOptOutClick,
+                    onProductRecommendationsEnabledStateChange = onProductRecommendationsEnabledStateChange,
+                    modifier = Modifier.fillMaxWidth(),
+                )
             }
         }
     }

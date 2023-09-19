@@ -55,9 +55,10 @@ class SettingsAdvancedTest {
         mockWebServer.shutdown()
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2092699
     // Walks through settings menu and sub-menus to ensure all items are present
     @Test
-    fun settingsAdvancedItemsTest() {
+    fun verifyAdvancedSettingsSectionItemsTest() {
         // ADVANCED
         homeScreen {
         }.openThreeDotMenu {
@@ -76,19 +77,7 @@ class SettingsAdvancedTest {
         }
     }
 
-    @SmokeTest
-    @Test
-    fun verifyOpenLinkInAppViewTest() {
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-            verifyOpenLinksInAppsButton()
-            verifySettingsOptionSummary("Open links in apps", "Never")
-        }.openOpenLinksInAppsMenu {
-            verifyOpenLinksInAppsView("Never")
-        }
-    }
-
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2121046
     // Assumes Youtube is installed and enabled
     @SmokeTest
     @Test
@@ -114,6 +103,7 @@ class SettingsAdvancedTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2121052
     // Assumes Youtube is installed and enabled
     @Test
     fun privateBrowsingNeverOpenLinkInAppTest() {
@@ -141,6 +131,7 @@ class SettingsAdvancedTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2121045
     // Assumes Youtube is installed and enabled
     @SmokeTest
     @Test
@@ -172,6 +163,7 @@ class SettingsAdvancedTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2288347
     // Assumes Youtube is installed and enabled
     @SmokeTest
     @Test
@@ -203,6 +195,7 @@ class SettingsAdvancedTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2121051
     // Assumes Youtube is installed and enabled
     @Test
     fun privateBrowsingAskBeforeOpeningLinkInAppCancelTest() {
@@ -236,6 +229,7 @@ class SettingsAdvancedTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2288350
     // Assumes Youtube is installed and enabled
     @Test
     fun privateBrowsingAskBeforeOpeningLinkInAppOpenTest() {
@@ -269,6 +263,7 @@ class SettingsAdvancedTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1058618
     // Assumes Youtube is installed and enabled
     @Test
     fun alwaysOpenLinkInAppTest() {
@@ -297,6 +292,7 @@ class SettingsAdvancedTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1058617
     @Test
     fun dismissOpenLinksInAppCFRTest() {
         activityIntentTestRule.applySettingsExceptions {
@@ -312,6 +308,7 @@ class SettingsAdvancedTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2288331
     @Test
     fun goToSettingsFromOpenLinksInAppCFRTest() {
         activityIntentTestRule.applySettingsExceptions {

@@ -40,6 +40,7 @@ import org.mozilla.fenix.compose.button.SecondaryButton
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.HighlightType
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent
+import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent.AnalysisStatus
 import org.mozilla.fenix.shopping.store.forCompactMode
 import org.mozilla.fenix.theme.FirefoxTheme
 
@@ -52,7 +53,7 @@ import org.mozilla.fenix.theme.FirefoxTheme
  * @param onProductRecommendationsEnabledStateChange Invoked when the user changes the product
  * recommendations toggle state.
  * @param onReviewGradeLearnMoreClick Invoked when the user clicks to learn more about review grades.
- * @param onBylineLinkClick Invoked when the user clicks on the byline link.
+ * @param onFooterLinkClick Invoked when the user clicks on the footer link.
  * @param modifier The modifier to be applied to the Composable.
  */
 @Composable
@@ -64,17 +65,29 @@ fun ProductAnalysis(
     onReanalyzeClick: () -> Unit,
     onProductRecommendationsEnabledStateChange: (Boolean) -> Unit,
     onReviewGradeLearnMoreClick: (String) -> Unit,
-    onBylineLinkClick: (String) -> Unit,
+    onFooterLinkClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        if (productAnalysis.needsAnalysis) {
-            ReanalyzeCard(
-                onReanalyzeClick = onReanalyzeClick,
-            )
+        when (productAnalysis.analysisStatus) {
+            AnalysisStatus.NEEDS_ANALYSIS -> {
+                ReanalyzeCard(onReanalyzeClick = onReanalyzeClick)
+            }
+
+            AnalysisStatus.REANALYZING -> {
+                // TBD
+            }
+
+            AnalysisStatus.COMPLETED -> {
+                // TBD
+            }
+
+            AnalysisStatus.UP_TO_DATE -> {
+                // no-op
+            }
         }
 
         if (productAnalysis.reviewGrade != null) {
@@ -113,7 +126,7 @@ fun ProductAnalysis(
         )
 
         ReviewQualityCheckFooter(
-            onLinkClick = onBylineLinkClick,
+            onLinkClick = onFooterLinkClick,
         )
     }
 }
@@ -367,7 +380,7 @@ private fun ProductAnalysisPreview() {
                 productAnalysis = AnalysisPresent(
                     productId = "123",
                     reviewGrade = ReviewQualityCheckState.Grade.B,
-                    needsAnalysis = false,
+                    analysisStatus = AnalysisStatus.UP_TO_DATE,
                     adjustedRating = 3.6f,
                     productUrl = "123",
                     highlights = sortedMapOf(
@@ -404,7 +417,7 @@ private fun ProductAnalysisPreview() {
                     productRecommendationsEnabled.value = it
                 },
                 onReviewGradeLearnMoreClick = {},
-                onBylineLinkClick = {},
+                onFooterLinkClick = {},
             )
         }
     }
