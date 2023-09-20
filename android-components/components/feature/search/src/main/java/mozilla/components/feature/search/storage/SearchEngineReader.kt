@@ -140,17 +140,12 @@ internal class SearchEngineReader(
         val template = parser.getAttributeValue(null, "template")
         val rel = parser.getAttributeValue(null, "rel")
 
-        val url = buildString {
-            append(readUri(parser, template))
-            searchExtraParams?.let {
-                with(it) {
-                    if (builder.name == searchEngineName) {
-                        featureEnablerParam?.let { append("&$featureEnablerName=$it") }
-                        append("&$channelIdName=$channelIdParam")
-                    }
-                }
+        val url =
+            if (searchExtraParams != null && builder.name == searchExtraParams.searchEngineName) {
+                readUri(parser, template).toString().plus("/${searchExtraParams.channelId}")
+            } else {
+                readUri(parser, template).toString()
             }
-        }
 
         if (type == URL_TYPE_SEARCH_HTML) {
             // Prefer mobile URIs.

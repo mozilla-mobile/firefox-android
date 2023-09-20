@@ -355,6 +355,8 @@ features:
         value:
           enabled: true
 
+  search_extra_params:
+    description: A feature that provides a search engine name and a channel ID.
   print:
     description: A feature for printing from the share or browser menu.
     variables:
@@ -374,16 +376,8 @@ features:
         description: If true, the feature is active.
         type: Boolean
         default: false
-      search-engine:
-        description: The search engine name.
-        type: String
-        default: ""
-      feature-enabler:
-        description: The feature enabler param name with arg, NOTE this map could be empty.
-        type: Map<String, String>
-        default: {}
-      channel-id:
-        description: The channel Id param name with arg.
+      search_name_channel_id:
+        description: The search engine name and the channel ID.
         type: Map<String, String>
         default: {}
 types:
