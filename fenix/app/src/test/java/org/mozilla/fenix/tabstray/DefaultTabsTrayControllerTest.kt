@@ -22,6 +22,7 @@ import io.mockk.verifyOrder
 import mozilla.components.browser.state.action.TabListAction
 import mozilla.components.browser.state.selector.findTab
 import mozilla.components.browser.state.selector.getNormalOrPrivateTabs
+import mozilla.components.browser.state.selector.privateTabs
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.ContentState
 import mozilla.components.browser.state.state.TabSessionState
@@ -226,7 +227,10 @@ class DefaultTabsTrayControllerTest {
                 },
             ),
         )
-        val tab: TabSessionState = mockk { every { content.private } returns true }
+        val tab: TabSessionState = mockk {
+            every { content.private } returns true
+            every { id } returns "testTabId"
+        }
         every { browserStore.state } returns mockk()
         every { browserStore.state.downloads } returns mapOf(
             "1" to DownloadState(
@@ -243,6 +247,10 @@ class DefaultTabsTrayControllerTest {
             every { browserStore.state.selectedTabId } returns "testTabId"
 
             controller.handleTabDeletion("testTabId", "unknown")
+
+            val privateTabs = browserStore.state.privateTabs.filter { privateTab -> privateTab.id != "testTabId" }
+
+            verify { trayStore.dispatch(TabsTrayAction.UpdatePrivateTabs(privateTabs)) }
 
             assertTrue(showCancelledDownloadWarningInvoked)
         } finally {

@@ -604,6 +604,13 @@ class TabsTrayFragment : AppCompatDialogFragment() {
             ),
 
             onPositiveButtonClicked = ::onCancelDownloadWarningAccepted,
+            onNegativeButtonClicked = {
+                tabsTrayStore.dispatch(
+                    TabsTrayAction.UpdatePrivateTabs(
+                        requireComponents.core.store.state.privateTabs,
+                    ),
+                )
+            },
         )
         dialog.show(parentFragmentManager, DOWNLOAD_CANCEL_DIALOG_FRAGMENT_TAG)
     }

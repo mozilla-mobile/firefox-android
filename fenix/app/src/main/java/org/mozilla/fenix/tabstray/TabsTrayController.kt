@@ -13,9 +13,11 @@ import mozilla.components.browser.state.action.LastAccessAction
 import mozilla.components.browser.state.selector.findTab
 import mozilla.components.browser.state.selector.getNormalOrPrivateTabs
 import mozilla.components.browser.state.selector.normalTabs
+import mozilla.components.browser.state.selector.privateTabs
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.SessionState
 import mozilla.components.browser.state.state.TabSessionState
+import mozilla.components.browser.state.state.content.DownloadState
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.browser.storage.sync.Tab
 import mozilla.components.concept.base.profiler.Profiler
@@ -296,28 +298,47 @@ class DefaultTabsTrayController(
 
     private fun deleteTab(tabId: String, source: String?, isConfirmed: Boolean) {
         val tab = browserStore.state.findTab(tabId)
-
         tab?.let {
-            val isLastTab = browserStore.state.getNormalOrPrivateTabs(it.content.private).size == 1
+            val privateDownloads = browserStore.state.downloads.filter { map ->
+                map.value.private && map.value.isActiveDownload()
+            }
+
+            val isLastPrivateTab = browserStore.state.privateTabs.size == 1
+
+            if (!isConfirmed && shouldShowCancelDownLoadWarning(
+                    privateDownloads = privateDownloads,
+                    isLastPrivateTab = isLastPrivateTab,
+                    tab = tab,
+                )
+            ) {
+                val privateTabs = browserStore.state.privateTabs.filter { tab -> tab.id != tabId }
+                tabsTrayStore.dispatch(TabsTrayAction.UpdatePrivateTabs(privateTabs))
+                showCancelledDownloadWarning(privateDownloads.size, tabId, source)
+                return
+            }
+
             val isCurrentTab = browserStore.state.selectedTabId.equals(tabId)
+            val isLastTab = browserStore.state.getNormalOrPrivateTabs(it.content.private).size == 1
+
             if (!isLastTab || !isCurrentTab) {
                 tabsUseCases.removeTab(tabId)
                 showUndoSnackbarForTab(it.content.private)
             } else {
-                val privateDownloads = browserStore.state.downloads.filter { map ->
-                    map.value.private && map.value.isActiveDownload()
-                }
-                if (!isConfirmed && privateDownloads.isNotEmpty()) {
-                    showCancelledDownloadWarning(privateDownloads.size, tabId, source)
-                    return
-                } else {
-                    dismissTabsTrayAndNavigateHome(tabId)
-                }
+                dismissTabsTrayAndNavigateHome(tabId)
             }
+
             TabsTray.closedExistingTab.record(TabsTray.ClosedExistingTabExtra(source ?: "unknown"))
         }
 
         tabsTrayStore.dispatch(TabsTrayAction.ExitSelectMode)
+    }
+
+    private fun shouldShowCancelDownLoadWarning(
+        privateDownloads: Map<String, DownloadState>,
+        isLastPrivateTab: Boolean,
+        tab: TabSessionState,
+    ): Boolean {
+        return privateDownloads.isNotEmpty() && isLastPrivateTab && tab.content.private
     }
 
     override fun handleDeleteSelectedTabsClicked() {
