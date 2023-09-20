@@ -12,6 +12,9 @@ permalink: /changelog/
 
 * **feature-tabs**
   * Removed deprecated `TabsUseCases.AddNewPrivateTabUseCase`. [Bug 1853070](https://bugzilla.mozilla.org/show_bug.cgi?id=1853070)
+  
+* **lib-crash-sentry**
+  * `SentryService.initIfNeeded` is now public. [bug #1851676](https://bugzilla.mozilla.org/show_bug.cgi?id=1851676)
 
 * **feature-downloads**
   * Added a custom permission `${applicationId}.permission.RECEIVE_DOWNLOAD_BROADCAST` that needs to be used by apps in order to receive download related broadcasts
@@ -35,6 +38,10 @@ permalink: /changelog/
 * **support-webextensions**
   * ⚠️ **This is a breaking change**: Renamed `WebExtensionPopupFeature` to `WebExtensionPopupObserver` [bug #1852335](https://bugzilla.mozilla.org/show_bug.cgi?id=1852335)
   * Added `ExtensionProcessDisabledPopupObserver` to display to the user a dialog when the extensions process spawning has been disabled. [bug #1846979](https://bugzilla.mozilla.org/show_bug.cgi?id=1846979)
+
+* **concept-engine**
+  * 🌟️️ Add `reanalyzeProduct` API to `EngineSession` to allow reanalyzing product from the engine. See more on [Bug 1853309](https://bugzilla.mozilla.org/show_bug.cgi?id=1853309).
+  * 🌟️️ Add `requestAnalysisStatus` API to `EngineSession` to allow request product analysis status from the engine. See more on [Bug 1853309](https://bugzilla.mozilla.org/show_bug.cgi?id=1853309).
 
 # 118.0
 * [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v117..releases_v118)

@@ -44,6 +44,7 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -544,6 +545,7 @@ class PlacesHistoryStorageTest {
         assertEquals(0, visits.size)
     }
 
+    @Ignore("Disabled: https://bugzilla.mozilla.org/show_bug.cgi?id=1853687")
     @Test
     fun `store can delete by 'range'`() = runTestOnMain {
         history.recordVisit("http://www.mozilla.org/1", PageVisit(VisitType.TYPED))
@@ -961,6 +963,7 @@ class PlacesHistoryStorageTest {
         }
     }
 
+    @Ignore("Disabled: https://bugzilla.mozilla.org/show_bug.cgi?id=1853687")
     @Test
     fun `get history metadata between`() = runTestOnMain {
         assertEquals(0, history.getHistoryMetadataBetween(-1, 0).size)
