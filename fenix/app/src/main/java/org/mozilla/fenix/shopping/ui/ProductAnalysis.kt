@@ -33,6 +33,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import org.mozilla.fenix.R
 import org.mozilla.fenix.compose.annotation.LightDarkPreview
@@ -40,8 +42,10 @@ import org.mozilla.fenix.compose.button.SecondaryButton
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.HighlightType
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent
+import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent.AnalysisStatus
 import org.mozilla.fenix.shopping.store.forCompactMode
 import org.mozilla.fenix.theme.FirefoxTheme
+import java.util.SortedMap
 
 /**
  * UI for review quality check content displaying product analysis.
@@ -52,28 +56,52 @@ import org.mozilla.fenix.theme.FirefoxTheme
  * @param onProductRecommendationsEnabledStateChange Invoked when the user changes the product
  * recommendations toggle state.
  * @param onReviewGradeLearnMoreClick Invoked when the user clicks to learn more about review grades.
- * @param onBylineLinkClick Invoked when the user clicks on the byline link.
+ * @param onFooterLinkClick Invoked when the user clicks on the footer link.
  * @param modifier The modifier to be applied to the Composable.
  */
 @Composable
 @Suppress("LongParameterList")
 fun ProductAnalysis(
-    productRecommendationsEnabled: Boolean,
+    productRecommendationsEnabled: Boolean?,
     productAnalysis: AnalysisPresent,
     onOptOutClick: () -> Unit,
     onReanalyzeClick: () -> Unit,
     onProductRecommendationsEnabledStateChange: (Boolean) -> Unit,
     onReviewGradeLearnMoreClick: (String) -> Unit,
-    onBylineLinkClick: (String) -> Unit,
+    onFooterLinkClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        if (productAnalysis.needsAnalysis) {
-            ReanalyzeCard(
-                onReanalyzeClick = onReanalyzeClick,
+        when (productAnalysis.analysisStatus) {
+            AnalysisStatus.NEEDS_ANALYSIS -> {
+                ReanalyzeCard(onReanalyzeClick = onReanalyzeClick)
+            }
+
+            AnalysisStatus.REANALYZING -> {
+                ReanalysisInProgressCard()
+            }
+
+            AnalysisStatus.UP_TO_DATE -> {
+                // no-op
+            }
+        }
+
+        if (productAnalysis.notEnoughReviewsCardVisible) {
+            ReviewQualityCheckInfoCard(
+                title = stringResource(id = R.string.review_quality_check_no_reviews_warning_title),
+                description = stringResource(id = R.string.review_quality_check_no_reviews_warning_body),
+                type = ReviewQualityCheckInfoType.Info,
+                modifier = Modifier.fillMaxWidth(),
+                icon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.mozac_ic_information_fill_24),
+                        contentDescription = null,
+                        tint = FirefoxTheme.colors.iconPrimary,
+                    )
+                },
             )
         }
 
@@ -94,6 +122,8 @@ fun ProductAnalysis(
         if (productAnalysis.highlights != null) {
             HighlightsCard(
                 highlights = productAnalysis.highlights,
+                highlightsFadeVisible = productAnalysis.highlightsFadeVisible,
+                showMoreButtonVisible = productAnalysis.showMoreButtonVisible,
                 modifier = Modifier.fillMaxWidth(),
             )
         }
@@ -111,7 +141,7 @@ fun ProductAnalysis(
         )
 
         ReviewQualityCheckFooter(
-            onLinkClick = onBylineLinkClick,
+            onLinkClick = onFooterLinkClick,
         )
     }
 }
@@ -132,6 +162,20 @@ private fun ReanalyzeCard(
                 contentDescription = null,
                 modifier = Modifier.size(24.dp),
                 tint = FirefoxTheme.colors.iconPrimary,
+            )
+        },
+    )
+}
+
+@Composable
+private fun ReanalysisInProgressCard() {
+    ReviewQualityCheckInfoCard(
+        title = stringResource(R.string.review_quality_check_reanalysis_in_progress_warning_title),
+        type = ReviewQualityCheckInfoType.AnalysisUpdate,
+        modifier = Modifier.fillMaxWidth(),
+        icon = {
+            IndeterminateProgressIndicator(
+                modifier = Modifier.size(24.dp),
             )
         },
     )
@@ -192,6 +236,8 @@ private fun AdjustedProductRatingCard(
 @Composable
 private fun HighlightsCard(
     highlights: Map<HighlightType, List<String>>,
+    highlightsFadeVisible: Boolean,
+    showMoreButtonVisible: Boolean,
     modifier: Modifier = Modifier,
 ) {
     ReviewQualityCheckCard(modifier = modifier) {
@@ -243,7 +289,7 @@ private fun HighlightsCard(
                 targetState = isExpanded,
                 label = "HighlightsCard-Crossfade",
             ) { expanded ->
-                if (expanded.not()) {
+                if (expanded.not() && highlightsFadeVisible) {
                     Spacer(
                         modifier = Modifier
                             .height(32.dp)
@@ -261,16 +307,18 @@ private fun HighlightsCard(
             }
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        if (showMoreButtonVisible) {
+            Spacer(modifier = Modifier.height(8.dp))
 
-        SecondaryButton(
-            text = if (isExpanded) {
-                stringResource(R.string.review_quality_check_highlights_show_less)
-            } else {
-                stringResource(R.string.review_quality_check_highlights_show_more)
-            },
-            onClick = { isExpanded = isExpanded.not() },
-        )
+            SecondaryButton(
+                text = if (isExpanded) {
+                    stringResource(R.string.review_quality_check_highlights_show_less)
+                } else {
+                    stringResource(R.string.review_quality_check_highlights_show_more)
+                },
+                onClick = { isExpanded = isExpanded.not() },
+            )
+        }
     }
 }
 
@@ -347,75 +395,106 @@ private enum class Highlight(
     ),
 }
 
-@Composable
-@LightDarkPreview
-private fun ProductAnalysisPreview() {
-    FirefoxTheme {
-        ReviewQualityCheckScaffold(
-            onRequestDismiss = {},
-        ) {
-            val productRecommendationsEnabled = remember { mutableStateOf(false) }
+private class ProductAnalysisPreviewModel(
+    val productRecommendationsEnabled: Boolean?,
+    val productAnalysis: AnalysisPresent,
+) {
+    constructor(
+        productRecommendationsEnabled: Boolean? = false,
+        productId: String = "123",
+        reviewGrade: ReviewQualityCheckState.Grade? = ReviewQualityCheckState.Grade.B,
+        analysisStatus: AnalysisStatus = AnalysisStatus.UP_TO_DATE,
+        adjustedRating: Float? = 3.6f,
+        productUrl: String = "",
+        highlights: SortedMap<HighlightType, List<String>>? = sortedMapOf(
+            HighlightType.QUALITY to listOf(
+                "High quality",
+                "Excellent craftsmanship",
+                "Superior materials",
+            ),
+            HighlightType.PRICE to listOf(
+                "Affordable prices",
+                "Great value for money",
+                "Discounted offers",
+            ),
+            HighlightType.SHIPPING to listOf(
+                "Fast and reliable shipping",
+                "Free shipping options",
+                "Express delivery",
+            ),
+            HighlightType.PACKAGING_AND_APPEARANCE to listOf(
+                "Elegant packaging",
+                "Attractive appearance",
+                "Beautiful design",
+            ),
+            HighlightType.COMPETITIVENESS to listOf(
+                "Competitive pricing",
+                "Strong market presence",
+                "Unbeatable deals",
+            ),
+        ),
+        recommendedProductState: ReviewQualityCheckState.RecommendedProductState =
+            ReviewQualityCheckState.RecommendedProductState.Initial,
+    ) : this(
+        productRecommendationsEnabled = productRecommendationsEnabled,
+        productAnalysis = AnalysisPresent(
+            productId = productId,
+            reviewGrade = reviewGrade,
+            analysisStatus = analysisStatus,
+            adjustedRating = adjustedRating,
+            productUrl = productUrl,
+            highlights = highlights,
+            recommendedProductState = recommendedProductState,
+        ),
+    )
+}
 
-            ProductAnalysis(
-                productRecommendationsEnabled = productRecommendationsEnabled.value,
-                productAnalysis = AnalysisPresent(
-                    productId = "123",
-                    reviewGrade = ReviewQualityCheckState.Grade.B,
-                    needsAnalysis = false,
-                    adjustedRating = 3.6f,
-                    productUrl = "123",
-                    highlights = sortedMapOf(
-                        HighlightType.QUALITY to listOf(
-                            "High quality",
-                            "Excellent craftsmanship",
-                            "Superior materials",
-                        ),
-                        HighlightType.PRICE to listOf(
-                            "Affordable prices",
-                            "Great value for money",
-                            "Discounted offers",
-                        ),
-                        HighlightType.SHIPPING to listOf(
-                            "Fast and reliable shipping",
-                            "Free shipping options",
-                            "Express delivery",
-                        ),
-                        HighlightType.PACKAGING_AND_APPEARANCE to listOf(
-                            "Elegant packaging",
-                            "Attractive appearance",
-                            "Beautiful design",
-                        ),
-                        HighlightType.COMPETITIVENESS to listOf(
-                            "Competitive pricing",
-                            "Strong market presence",
-                            "Unbeatable deals",
-                        ),
+private class ProductAnalysisPreviewModelParameterProvider :
+    PreviewParameterProvider<ProductAnalysisPreviewModel> {
+    override val values: Sequence<ProductAnalysisPreviewModel>
+        get() = sequenceOf(
+            ProductAnalysisPreviewModel(),
+            ProductAnalysisPreviewModel(
+                analysisStatus = AnalysisStatus.NEEDS_ANALYSIS,
+            ),
+            ProductAnalysisPreviewModel(
+                analysisStatus = AnalysisStatus.REANALYZING,
+            ),
+            ProductAnalysisPreviewModel(
+                reviewGrade = null,
+            ),
+            ProductAnalysisPreviewModel(
+                highlights = sortedMapOf(
+                    HighlightType.QUALITY to listOf(
+                        "High quality",
+                        "Excellent craftsmanship",
                     ),
                 ),
-                onOptOutClick = {},
-                onReanalyzeClick = {},
-                onProductRecommendationsEnabledStateChange = {
-                    productRecommendationsEnabled.value = it
-                },
-                onReviewGradeLearnMoreClick = {},
-                onBylineLinkClick = {},
-            )
-        }
-    }
+            ),
+        )
 }
 
 @Composable
 @LightDarkPreview
-private fun ReanalyzeCardPreview() {
+private fun ProductAnalysisPreview(
+    @PreviewParameter(ProductAnalysisPreviewModelParameterProvider::class) model: ProductAnalysisPreviewModel,
+) {
     FirefoxTheme {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(color = FirefoxTheme.colors.layer1)
-                .padding(all = 16.dp),
+        ReviewQualityCheckScaffold(
+            onRequestDismiss = {},
         ) {
-            ReanalyzeCard(
+            var productRecommendationsEnabled by remember { mutableStateOf(model.productRecommendationsEnabled) }
+
+            ProductAnalysis(
+                productRecommendationsEnabled = productRecommendationsEnabled,
+                productAnalysis = model.productAnalysis,
+                onOptOutClick = {},
                 onReanalyzeClick = {},
+                onProductRecommendationsEnabledStateChange = {
+                    productRecommendationsEnabled = it
+                },
+                onReviewGradeLearnMoreClick = {},
+                onFooterLinkClick = {},
             )
         }
     }

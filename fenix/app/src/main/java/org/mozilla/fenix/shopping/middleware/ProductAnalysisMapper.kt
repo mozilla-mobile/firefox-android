@@ -10,35 +10,36 @@ import mozilla.components.concept.engine.shopping.ProductAnalysis
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.HighlightType
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState
+import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent.AnalysisStatus
 
 /**
  * Maps [ProductAnalysis] to [ProductReviewState].
  */
 fun ProductAnalysis?.toProductReviewState(): ProductReviewState =
     if (this == null) {
-        ProductReviewState.Error
+        ProductReviewState.Error.GenericError
     } else {
         when (this) {
             is GeckoProductAnalysis -> toProductReview()
-            else -> ProductReviewState.Error
+            else -> ProductReviewState.Error.GenericError
         }
     }
 
 private fun GeckoProductAnalysis.toProductReview(): ProductReviewState =
     if (productId == null) {
-        ProductReviewState.Error
+        ProductReviewState.NoAnalysisPresent()
     } else {
         val mappedRating = adjustedRating.toFloatOrNull()
         val mappedGrade = grade?.toGrade()
         val mappedHighlights = highlights?.toHighlights()?.toSortedMap()
 
         if (mappedGrade == null && mappedRating == null && mappedHighlights == null) {
-            ProductReviewState.NoAnalysisPresent
+            ProductReviewState.NoAnalysisPresent()
         } else {
             ProductReviewState.AnalysisPresent(
                 productId = productId!!,
                 reviewGrade = mappedGrade,
-                needsAnalysis = needsAnalysis,
+                analysisStatus = needsAnalysis.toAnalysisStatus(),
                 adjustedRating = mappedRating,
                 productUrl = analysisURL!!,
                 highlights = mappedHighlights,
@@ -51,6 +52,12 @@ private fun String.toGrade(): ReviewQualityCheckState.Grade? =
         ReviewQualityCheckState.Grade.valueOf(this)
     } catch (e: IllegalArgumentException) {
         null
+    }
+
+private fun Boolean.toAnalysisStatus(): AnalysisStatus =
+    when (this) {
+        true -> AnalysisStatus.NEEDS_ANALYSIS
+        false -> AnalysisStatus.UP_TO_DATE
     }
 
 private fun Highlight.toHighlights(): Map<HighlightType, List<String>>? =

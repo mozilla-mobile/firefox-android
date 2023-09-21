@@ -677,10 +677,11 @@ abstract class EngineSession(
             const val LOAD_FLAGS_FORCE_ALLOW_DATA_URI: Int = 1 shl 5
             const val LOAD_FLAGS_REPLACE_HISTORY: Int = 1 shl 6
             const val LOAD_FLAGS_BYPASS_LOAD_URI_DELEGATE: Int = 1 shl 7
+            const val ALLOW_ADDITIONAL_HEADERS: Int = 1 shl 15
             const val ALLOW_JAVASCRIPT_URL: Int = 1 shl 16
             internal const val ALL = BYPASS_CACHE + BYPASS_PROXY + EXTERNAL + ALLOW_POPUPS +
                 BYPASS_CLASSIFIER + LOAD_FLAGS_FORCE_ALLOW_DATA_URI + LOAD_FLAGS_REPLACE_HISTORY +
-                LOAD_FLAGS_BYPASS_LOAD_URI_DELEGATE + ALLOW_JAVASCRIPT_URL
+                LOAD_FLAGS_BYPASS_LOAD_URI_DELEGATE + ALLOW_ADDITIONAL_HEADERS + ALLOW_JAVASCRIPT_URL
 
             fun all() = LoadUrlFlags(ALL)
             fun none() = LoadUrlFlags(NONE)
@@ -851,7 +852,7 @@ abstract class EngineSession(
      * @param onResult callback invoked if the engine API returned a valid response. Please note
      * that the response can be null - which can indicate a bug, a miscommunication
      * or other unexpected failure.
-     * @param onError callback invoked if there was an error getting the response.
+     * @param onException callback invoked if there was an error getting the response.
      */
     abstract fun requestProductRecommendations(
         url: String,
@@ -862,12 +863,36 @@ abstract class EngineSession(
     /**
      * Requests the analysis results for a given product page URL.
      *
-     * @param onSuccess callback invoked if the engine API returns a valid response.
-     * @param onError callback invoked if there was an error getting the response.
+     * @param onResult callback invoked if the engine API returns a valid response.
+     * @param onException callback invoked if there was an error getting the response.
      */
     abstract fun requestProductAnalysis(
         url: String,
         onResult: (ProductAnalysis) -> Unit,
+        onException: (Throwable) -> Unit,
+    )
+
+    /**
+     * Requests the reanalysis of a product for a given product page URL.
+     *
+     * @param onResult callback invoked if the engine API returns a valid response.
+     * @param onException callback invoked if there was an error getting the response.
+     */
+    abstract fun reanalyzeProduct(
+        url: String,
+        onResult: (String) -> Unit,
+        onException: (Throwable) -> Unit,
+    )
+
+    /**
+     * Requests the status of a product analysis for a given product page URL.
+     *
+     * @param onResult callback invoked if the engine API returns a valid response.
+     * @param onException callback invoked if there was an error getting the response.
+     */
+    abstract fun requestAnalysisStatus(
+        url: String,
+        onResult: (String) -> Unit,
         onException: (Throwable) -> Unit,
     )
 

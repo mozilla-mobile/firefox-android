@@ -1,7 +1,10 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
+import io.gitlab.arturbosch.detekt.Detekt
+import io.gitlab.arturbosch.detekt.DetektCreateBaselineTask
 import org.gradle.internal.logging.text.StyledTextOutput.Style
 import org.gradle.internal.logging.text.StyledTextOutputFactory
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import static org.gradle.api.tasks.testing.TestResult.ResultType
 
 buildscript {
@@ -86,11 +89,11 @@ subprojects {
     apply plugin: 'jacoco'
 
     // Enable Kotlin warnings as errors for all modules
-    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    tasks.withType(KotlinCompile).configureEach {
         kotlinOptions.allWarningsAsErrors = true
     }
 
-    project.configurations.all {
+    project.configurations.configureEach {
         // Dependencies can't depend on a different major version of Glean than A-C itself.
         resolutionStrategy.eachDependency { details ->
             if (details.requested.group == 'org.mozilla.telemetry'
@@ -226,13 +229,9 @@ subprojects {
                     targetCompatibility JavaVersion.VERSION_17
                 }
 
-                tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
-                    kotlinOptions {
-                        jvmTarget = "17"
-                        freeCompilerArgs += [
-                            "-opt-in=kotlin.RequiresOptIn"
-                        ]
-                    }
+                tasks.withType(KotlinCompile).configureEach {
+                    kotlinOptions.jvmTarget = "17"
+                    kotlinOptions.freeCompilerArgs += ["-opt-in=kotlin.RequiresOptIn"]
                 }
             }
 
@@ -249,8 +248,8 @@ subprojects {
 
                     tasks.register("jacoco${buildType.name.capitalize()}TestReport", JacocoReport) {
                         reports {
-                            xml.enabled = true
-                            html.enabled = true
+                            xml.required = true
+                            html.required = true
                         }
 
                         def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*',
@@ -302,7 +301,7 @@ detekt {
     }
 }
 
-tasks.withType(io.gitlab.arturbosch.detekt.Detekt).configureEach() {
+tasks.withType(Detekt).configureEach() {
     // Custom detekt rules should be build before
     // See https://arturbosch.github.io/detekt/extensions.html#pitfalls
     dependsOn(":tooling-detekt:assemble")
@@ -322,7 +321,7 @@ tasks.withType(io.gitlab.arturbosch.detekt.Detekt).configureEach() {
 }
 
 // Apply same path exclusions as for the main task
-tasks.withType(io.gitlab.arturbosch.detekt.DetektCreateBaselineTask).configureEach() {
+tasks.withType(DetektCreateBaselineTask).configureEach() {
     exclude "**/src/androidTest/**"
     exclude "**/src/test/**"
     exclude "**/test/src/**"
