@@ -19,10 +19,12 @@ import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductR
  * Middleware that handles network requests for the review quality check feature.
  *
  * @property reviewQualityCheckService The service that handles the network requests.
+ * @property networkChecker The [NetworkChecker] instance to check the network status.
  * @property scope The [CoroutineScope] that will be used to launch coroutines.
  */
 class ReviewQualityCheckNetworkMiddleware(
     private val reviewQualityCheckService: ReviewQualityCheckService,
+    private val networkChecker: NetworkChecker,
     private val scope: CoroutineScope,
 ) : Middleware<ReviewQualityCheckState, ReviewQualityCheckAction> {
 
@@ -31,13 +33,13 @@ class ReviewQualityCheckNetworkMiddleware(
         next: (ReviewQualityCheckAction) -> Unit,
         action: ReviewQualityCheckAction,
     ) {
+        next(action)
         when (action) {
             is ReviewQualityCheckAction.NetworkAction -> processAction(context.store, action)
             else -> {
                 // no-op
             }
         }
-        next(action)
     }
 
     private fun processAction(
@@ -46,13 +48,18 @@ class ReviewQualityCheckNetworkMiddleware(
     ) {
         when (action) {
             FetchProductAnalysis, RetryProductAnalysis -> {
-                store.dispatch(ReviewQualityCheckAction.UpdateProductReview(ProductReviewState.Loading))
-
                 scope.launch {
-                    val analysis = reviewQualityCheckService.fetchProductReview()
-                    val productReviewState = analysis.toProductReviewState()
+                    val productReviewState = if (networkChecker.isConnected()) {
+                        reviewQualityCheckService.fetchProductReview().toProductReviewState()
+                    } else {
+                        ProductReviewState.Error.NetworkError
+                    }
                     store.dispatch(ReviewQualityCheckAction.UpdateProductReview(productReviewState))
                 }
+            }
+
+            ReviewQualityCheckAction.ReanalyzeProduct -> {
+                // Bug 1853311 - Integrate analyze and analysis_status
             }
         }
     }
