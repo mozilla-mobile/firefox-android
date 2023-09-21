@@ -265,7 +265,6 @@ class TabsUseCasesTest {
     }
 
     @Test
-<<<<<<< HEAD
     @Suppress("DEPRECATION")
     fun `AddNewPrivateTabUseCase will not load URL if flag is set to false`() {
         tabsUseCases.addPrivateTab("https://www.mozilla.org", startLoading = false)
@@ -321,7 +320,16 @@ class TabsUseCasesTest {
             flags = LoadUrlFlags.external(),
             startLoading = true,
             engineSession = session,
-=======
+        )
+
+        store.waitUntilIdle()
+
+        assertEquals(1, store.state.tabs.size)
+        assertEquals("https://www.mozilla.org", store.state.tabs[0].content.url)
+        assertSame(session, store.state.tabs[0].engineState.engineSession)
+    }
+
+    @Test
     fun `GIVEN a search is performed with load URL flags and additional headers WHEN adding a new tab THEN the resulting tab is loaded as a search result with the correct load flags and headers`() {
         val url = "https://www.mozilla.org"
         val flags = LoadUrlFlags.select(LoadUrlFlags.ALLOW_ADDITIONAL_HEADERS)
@@ -332,16 +340,11 @@ class TabsUseCasesTest {
             flags = flags,
             isSearch = true,
             additionalHeaders = additionalHeaders,
->>>>>>> c793b0e1b4 (Bug 1853065)
         )
 
         store.waitUntilIdle()
 
         assertEquals(1, store.state.tabs.size)
-<<<<<<< HEAD
-        assertEquals("https://www.mozilla.org", store.state.tabs[0].content.url)
-        assertSame(session, store.state.tabs[0].engineState.engineSession)
-=======
         assertTrue(store.state.tabs.single().content.isSearch)
         assertEquals(flags, store.state.tabs.single().engineState.initialLoadFlags)
         assertEquals(
@@ -354,7 +357,6 @@ class TabsUseCasesTest {
             flags = flags,
             additionalHeaders = additionalHeaders,
         )
->>>>>>> c793b0e1b4 (Bug 1853065)
     }
 
     @Test
