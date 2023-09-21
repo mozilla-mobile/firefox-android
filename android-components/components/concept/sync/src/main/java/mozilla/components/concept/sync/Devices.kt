@@ -37,9 +37,8 @@ interface DeviceConstellation : Observable<AccountEventsObserver> {
      * Perform actions necessary to finalize device initialization based on [authType].
      * @param authType Type of an authentication event we're experiencing.
      * @param config A [DeviceConfig] that describes current device.
-     * @return A boolean success flag.
      */
-    suspend fun finalizeDevice(authType: AuthType, config: DeviceConfig): ServiceResult
+    fun finalizeDevice(authType: AuthType, config: DeviceConfig)
 
     /**
      * Current state of the constellation. May be missing if state was never queried.

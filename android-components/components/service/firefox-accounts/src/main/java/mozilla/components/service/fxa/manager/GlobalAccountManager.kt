@@ -4,9 +4,7 @@
 
 package mozilla.components.service.fxa.manager
 
-import androidx.annotation.VisibleForTesting
 import java.lang.ref.WeakReference
-import java.util.concurrent.TimeUnit
 
 /**
  * A singleton which exposes an instance of [FxaAccountManager] for internal consumption.
@@ -23,13 +21,6 @@ internal object GlobalAccountManager {
         fun getTimeCheckPoint(): Long
     }
 
-    private val systemClock = object : Clock {
-        override fun getTimeCheckPoint(): Long {
-            // nanoTime to decouple from wall-time.
-            return TimeUnit.NANOSECONDS.toMillis(System.nanoTime())
-        }
-    }
-
     internal fun setInstance(am: FxaAccountManager) {
         instance = WeakReference(am)
         lastAuthErrorCheckPoint = 0
@@ -40,27 +31,7 @@ internal object GlobalAccountManager {
         instance = null
     }
 
-    internal suspend fun authError(operation: String, @VisibleForTesting clock: Clock = systemClock) {
-        val authErrorCheckPoint: Long = clock.getTimeCheckPoint()
-
-        val timeSinceLastAuthErrorMs: Long? = if (lastAuthErrorCheckPoint == 0L) {
-            null
-        } else {
-            authErrorCheckPoint - lastAuthErrorCheckPoint
-        }
-        lastAuthErrorCheckPoint = authErrorCheckPoint
-
-        if (timeSinceLastAuthErrorMs == null) {
-            // First error, start our count.
-            authErrorCountWithinWindow = 1
-        } else if (timeSinceLastAuthErrorMs <= AUTH_CHECK_CIRCUIT_BREAKER_RESET_MS) {
-            // Error within the reset time window, increment the count.
-            authErrorCountWithinWindow += 1
-        } else {
-            // Error outside the reset window, reset the count.
-            authErrorCountWithinWindow = 1
-        }
-
-        instance?.get()?.encounteredAuthError(operation, authErrorCountWithinWindow)
+    internal suspend fun authError(operation: String) {
+        instance?.get()?.encounteredAuthError(operation)
     }
 }

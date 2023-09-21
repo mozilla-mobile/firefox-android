@@ -77,6 +77,9 @@ fun AccessTokenInfo.into(): mozilla.components.concept.sync.AccessTokenInfo {
  * @throws IllegalStateException if [AccessTokenInfo] didn't have key information.
  */
 fun mozilla.components.concept.sync.AccessTokenInfo.asSyncAuthInfo(tokenServerUrl: String): SyncAuthInfo {
+    // Note: this should never happen anymore, since we send `requireScopedKey` when getting the
+    // access token.  If the key is missing, the app-services component should throw
+    // `FxaMissingScopedKeyException` before we get here.
     val keyInfo = this.key ?: throw AccessTokenUnexpectedlyWithoutKey()
 
     return SyncAuthInfo(

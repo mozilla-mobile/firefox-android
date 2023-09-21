@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
+import mozilla.appservices.fxaclient.contentUrl
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.browser.menu.view.MenuButton
 import mozilla.components.concept.sync.FxAEntryPoint
@@ -127,9 +128,9 @@ class HomeMenuView(
                 homeActivity.openToBrowserAndLoad(
                     searchTermOrURL =
                     if (context.settings().allowDomesticChinaFxaServer) {
-                        mozilla.appservices.fxaclient.Config.Server.CHINA.contentUrl + "/settings"
+                        mozilla.appservices.fxaclient.FxaServer.China.contentUrl() + "/settings"
                     } else {
-                        mozilla.appservices.fxaclient.Config.Server.RELEASE.contentUrl + "/settings"
+                        mozilla.appservices.fxaclient.FxaServer.Release.contentUrl() + "/settings"
                     },
                     newTab = true,
                     from = BrowserDirection.FromHome,

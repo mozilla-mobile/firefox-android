@@ -18,6 +18,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import mozilla.appservices.fxaclient.FxaServer
 import mozilla.components.concept.sync.Profile
 import mozilla.components.feature.qr.QrFeature
 import mozilla.components.lib.fetch.httpurlconnection.HttpURLConnectionClient
@@ -122,14 +123,14 @@ open class MainActivity : AppCompatActivity(), LoginFragment.OnLoginCompleteList
     private fun initAccount(): FirefoxAccount {
         getAuthenticatedAccount()?.let {
             launch {
-                it.getProfile(true)?.let { profile ->
+                it.getProfile(true).let { profile ->
                     displayProfile(profile)
                 }
             }
             return it
         }
 
-        val config = ServerConfig(CONFIG_URL, CLIENT_ID, REDIRECT_URL)
+        val config = ServerConfig(FxaServer.Release, CLIENT_ID, REDIRECT_URL, null)
         return FirefoxAccount(config)
     }
 
@@ -189,7 +190,7 @@ open class MainActivity : AppCompatActivity(), LoginFragment.OnLoginCompleteList
     private fun displayAndPersistProfile(code: String, state: String) {
         launch {
             account.completeOAuthFlow(code, state)
-            account.getProfile()?.let {
+            account.getProfile().let {
                 displayProfile(it)
             }
             account.toJSONString().let {

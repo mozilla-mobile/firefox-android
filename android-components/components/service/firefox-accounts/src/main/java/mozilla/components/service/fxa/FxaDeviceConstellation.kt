@@ -8,9 +8,10 @@ import android.content.Context
 import androidx.annotation.MainThread
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LifecycleOwner
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.withContext
-import mozilla.appservices.fxaclient.FxaException
+import mozilla.appservices.fxaclient.FxaAction
+import mozilla.appservices.fxaclient.FxaClient
 import mozilla.appservices.syncmanager.SyncTelemetry
 import mozilla.components.concept.base.crash.CrashReporting
 import mozilla.components.concept.sync.AccountEvent
@@ -23,11 +24,10 @@ import mozilla.components.concept.sync.DeviceConfig
 import mozilla.components.concept.sync.DeviceConstellation
 import mozilla.components.concept.sync.DeviceConstellationObserver
 import mozilla.components.concept.sync.DevicePushSubscription
-import mozilla.components.concept.sync.ServiceResult
 import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.base.observer.Observable
 import mozilla.components.support.base.observer.ObserverRegistry
-import mozilla.appservices.fxaclient.PersistedFirefoxAccount as FirefoxAccount
+import kotlin.coroutines.CoroutineContext
 
 internal sealed class FxaDeviceConstellationException : Exception() {
     /**
@@ -37,16 +37,15 @@ internal sealed class FxaDeviceConstellationException : Exception() {
 }
 
 /**
- * Provides an implementation of [DeviceConstellation] backed by a [FirefoxAccount].
+ * Provides an implementation of [DeviceConstellation] backed by an [FxaClient].
  */
 class FxaDeviceConstellation(
-    private val account: FirefoxAccount,
-    private val scope: CoroutineScope,
+    private val account: FxaClient,
+    private val coroutineContext: CoroutineContext,
     @get:VisibleForTesting
     internal val crashReporter: CrashReporting? = null,
 ) : DeviceConstellation, Observable<AccountEventsObserver> by ObserverRegistry() {
     private val logger = Logger("FxaDeviceConstellation")
-
     private val deviceObserverRegistry = ObserverRegistry<DeviceConstellationObserver>()
 
     @Volatile
@@ -54,69 +53,37 @@ class FxaDeviceConstellation(
 
     override fun state(): ConstellationState? = constellationState
 
-    @VisibleForTesting
-    internal enum class DeviceFinalizeAction {
-        Initialize,
-        EnsureCapabilities,
-        None,
-    }
-
-    @Suppress("ComplexMethod")
-    @Throws(FxaPanicException::class)
-    override suspend fun finalizeDevice(
-        authType: AuthType,
-        config: DeviceConfig,
-    ): ServiceResult = withContext(scope.coroutineContext) {
-        val finalizeAction = when (authType) {
+    override fun finalizeDevice(authType: AuthType, config: DeviceConfig) {
+        when (authType) {
             AuthType.Signin,
             AuthType.Signup,
             AuthType.Pairing,
             is AuthType.OtherExternal,
             AuthType.MigratedCopy,
-            -> DeviceFinalizeAction.Initialize
+            -> {
+                account.queueAction(
+                    FxaAction.InitializeDevice(
+                        config.name,
+                        config.type.into(),
+                        config.capabilities.map({ it.into() }).toList(),
+                    ),
+                )
+            }
             AuthType.Existing,
             AuthType.MigratedReuse,
-            -> DeviceFinalizeAction.EnsureCapabilities
-            AuthType.Recovered -> DeviceFinalizeAction.None
-        }
-
-        if (finalizeAction == DeviceFinalizeAction.None) {
-            ServiceResult.Ok
-        } else {
-            val capabilities = config.capabilities.map { it.into() }.toSet()
-            if (finalizeAction == DeviceFinalizeAction.Initialize) {
-                try {
-                    account.initializeDevice(config.name, config.type.into(), capabilities)
-                    ServiceResult.Ok
-                } catch (e: FxaPanicException) {
-                    throw e
-                } catch (e: FxaUnauthorizedException) {
-                    ServiceResult.AuthError
-                } catch (e: FxaException) {
-                    ServiceResult.OtherError
-                }
-            } else {
-                try {
-                    account.ensureCapabilities(capabilities)
-                    ServiceResult.Ok
-                } catch (e: FxaPanicException) {
-                    throw e
-                } catch (e: FxaUnauthorizedException) {
-                    // Unless we've added a new capability, in practice 'ensureCapabilities' isn't
-                    // actually expected to do any work: everything should have been done by initializeDevice.
-                    // So if it did, and failed, let's report this so that we're aware of this!
-                    // See https://github.com/mozilla-mobile/android-components/issues/8164
-                    crashReporter?.submitCaughtException(FxaDeviceConstellationException.EnsureCapabilitiesFailed())
-                    ServiceResult.AuthError
-                } catch (e: FxaException) {
-                    ServiceResult.OtherError
-                }
+            -> {
+                account.queueAction(
+                    FxaAction.EnsureCapabilities(
+                        config.capabilities.map({ it.into() }).toList(),
+                    ),
+                )
             }
+            else -> Unit
         }
     }
 
-    override suspend fun processRawEvent(payload: String) = withContext(scope.coroutineContext) {
-        handleFxaExceptions(logger, "processing raw commands") {
+    override suspend fun processRawEvent(payload: String) = withContext(coroutineContext) {
+        val result = handleFxaExceptions(logger, "processing raw commands") {
             val events = when (val accountEvent: AccountEvent = account.handlePushMessage(payload).into()) {
                 is AccountEvent.DeviceCommandIncoming -> account.pollDeviceCommands().map {
                     AccountEvent.DeviceCommandIncoming(command = it.into())
@@ -125,6 +92,7 @@ class FxaDeviceConstellation(
             }
             processEvents(events)
         }
+        result != null
     }
 
     @MainThread
@@ -137,68 +105,57 @@ class FxaDeviceConstellation(
         deviceObserverRegistry.register(observer, owner, autoPause)
     }
 
-    override suspend fun setDeviceName(name: String, context: Context) = withContext(scope.coroutineContext) {
-        val rename = handleFxaExceptions(logger, "changing device name") {
-            account.setDeviceDisplayName(name)
+    override suspend fun setDeviceName(name: String, context: Context): Boolean {
+        val result = CompletableDeferred<Boolean>()
+        account.queueAction(FxaAction.SetDeviceName(name, result))
+        val success = result.await()
+        if (success) {
+            FxaDeviceSettingsCache(context).updateCachedName(name)
         }
-        FxaDeviceSettingsCache(context).updateCachedName(name)
-        // See the latest device (name) changes after changing it.
-
-        rename && refreshDevices()
+        return success
     }
 
-    override suspend fun setDevicePushSubscription(
-        subscription: DevicePushSubscription,
-    ) = withContext(scope.coroutineContext) {
-        handleFxaExceptions(logger, "updating device push subscription") {
-            account.setDevicePushSubscription(
+    override suspend fun setDevicePushSubscription(subscription: DevicePushSubscription): Boolean {
+        val result = CompletableDeferred<Boolean>()
+        account.queueAction(
+            FxaAction.SetDevicePushSubscription(
                 subscription.endpoint,
                 subscription.publicKey,
                 subscription.authKey,
-            )
-        }
+                result,
+            ),
+        )
+        return result.await()
     }
 
     override suspend fun sendCommandToDevice(
         targetDeviceId: String,
         outgoingCommand: DeviceCommandOutgoing,
-    ) = withContext(scope.coroutineContext) {
-        val result = handleFxaExceptions(logger, "sending device command", { error -> error }) {
-            when (outgoingCommand) {
-                is DeviceCommandOutgoing.SendTab -> {
-                    account.sendSingleTab(targetDeviceId, outgoingCommand.title, outgoingCommand.url)
-                    val errors: List<Throwable> = SyncTelemetry.processFxaTelemetry(account.gatherTelemetry())
-                    for (error in errors) {
-                        crashReporter?.submitCaughtException(error)
-                    }
-                }
-                else -> logger.debug("Skipped sending unsupported command type: $outgoingCommand")
+    ) = withContext(coroutineContext) {
+        when (outgoingCommand) {
+            is DeviceCommandOutgoing.SendTab -> {
+                val result = CompletableDeferred<Boolean>()
+                account.queueAction(
+                    FxaAction.SendSingleTab(
+                        targetDeviceId,
+                        outgoingCommand.title,
+                        outgoingCommand.url,
+                        result,
+                    ),
+                )
+                result.await()
             }
-            null
-        }
-
-        if (result != null) {
-            when (result) {
-                // Don't submit network exceptions to our crash reporter. They're just noise.
-                is FxaException.Network -> {
-                    logger.warn("Failed to 'sendCommandToDevice' due to a network exception")
-                }
-                else -> {
-                    logger.warn("Failed to 'sendCommandToDevice'", result)
-                    crashReporter?.submitCaughtException(SendCommandException(result))
-                }
+            else -> {
+                logger.debug("Skipped sending unsupported command type: $outgoingCommand")
+                false
             }
-
-            false
-        } else {
-            true
         }
     }
 
     // Poll for missed commands. Commands are the only event-type that can be
     // polled for, although missed commands will be delivered as AccountEvents.
-    override suspend fun pollForCommands() = withContext(scope.coroutineContext) {
-        val events = handleFxaExceptions(logger, "polling for device commands", { null }) {
+    override suspend fun pollForCommands() = withContext(coroutineContext) {
+        val events = handleFxaExceptions(logger, "polling for device commands") {
             account.pollDeviceCommands().map { AccountEvent.DeviceCommandIncoming(command = it.into()) }
         }
 
@@ -219,7 +176,7 @@ class FxaDeviceConstellation(
     }
 
     override suspend fun refreshDevices(): Boolean {
-        return withContext(scope.coroutineContext) {
+        return withContext(coroutineContext) {
             logger.info("Refreshing device list...")
 
             // Attempt to fetch devices, or bail out on failure.
@@ -250,7 +207,6 @@ class FxaDeviceConstellation(
                 logger.info("Notifying observer about constellation updates.")
                 onDevicesUpdate(newState)
             }
-
             true
         }
     }
@@ -260,7 +216,7 @@ class FxaDeviceConstellation(
      * @return A list of all devices in the constellation, or `null` on failure.
      */
     private suspend fun fetchAllDevices(): List<Device>? {
-        return handleFxaExceptions(logger, "fetching all devices", { null }) {
+        return handleFxaExceptions(logger, "fetching all devices") {
             account.getDevices().map { it.into() }
         }
     }

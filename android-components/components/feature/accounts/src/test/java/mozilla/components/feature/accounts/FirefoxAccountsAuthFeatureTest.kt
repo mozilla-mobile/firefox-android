@@ -9,29 +9,31 @@ import android.os.Looper.getMainLooper
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.test.runTest
+import mozilla.appservices.fxaclient.FxaAction
+import mozilla.appservices.fxaclient.FxaServer
 import mozilla.components.concept.engine.request.RequestInterceptor
 import mozilla.components.concept.sync.AccountEventsObserver
-import mozilla.components.concept.sync.AuthFlowUrl
 import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.DeviceConfig
 import mozilla.components.concept.sync.DeviceType
-import mozilla.components.concept.sync.OAuthAccount
+import mozilla.components.concept.sync.FxAEntryPoint
 import mozilla.components.concept.sync.Profile
+import mozilla.components.service.fxa.FirefoxAccount
 import mozilla.components.service.fxa.FxaAuthData
-import mozilla.components.service.fxa.Server
 import mozilla.components.service.fxa.ServerConfig
 import mozilla.components.service.fxa.StorageWrapper
 import mozilla.components.service.fxa.manager.FxaAccountManager
 import mozilla.components.support.base.observer.ObserverRegistry
 import mozilla.components.support.test.any
+import mozilla.components.support.test.argumentCaptor
 import mozilla.components.support.test.mock
 import mozilla.components.support.test.robolectric.testContext
+import mozilla.components.support.test.whenever
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers.anyBoolean
-import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
@@ -43,13 +45,9 @@ internal class TestableStorageWrapper(
     manager: FxaAccountManager,
     accountEventObserverRegistry: ObserverRegistry<AccountEventsObserver>,
     serverConfig: ServerConfig,
-    private val block: () -> OAuthAccount = {
-        val account: OAuthAccount = mock()
-        `when`(account.deviceConstellation()).thenReturn(mock())
-        account
-    },
+    val mockAccount: FirefoxAccount,
 ) : StorageWrapper(manager, accountEventObserverRegistry, serverConfig) {
-    override fun obtainAccount(): OAuthAccount = block()
+    override fun obtainAccount(): FirefoxAccount = mockAccount
 }
 
 // Same as the actual account manager, except we get to control how FirefoxAccountShaped instances
@@ -61,12 +59,18 @@ class TestableFxaAccountManager(
     config: ServerConfig,
     scopes: Set<String>,
     coroutineContext: CoroutineContext,
-    block: () -> OAuthAccount = { mock() },
-) : FxaAccountManager(context, config, DeviceConfig("test", DeviceType.MOBILE, setOf()), null, scopes, null, coroutineContext) {
-    private val testableStorageWrapper = TestableStorageWrapper(this, accountEventObserverRegistry, serverConfig, block)
+) : FxaAccountManager(context, config, DeviceConfig("test", DeviceType.MOBILE, setOf()), null, scopes, null) {
+    val mockAccount: FirefoxAccount = mock<FirefoxAccount>().also {
+        whenever(it.clientCoroutineContext).thenReturn(coroutineContext)
+    }
+    private val testableStorageWrapper = TestableStorageWrapper(this, accountEventObserverRegistry, serverConfig, mockAccount)
     override fun getStorageWrapper(): StorageWrapper {
         return testableStorageWrapper
     }
+}
+
+val entryPoint: FxAEntryPoint = mock<FxAEntryPoint>().apply {
+    whenever(entryName).thenReturn("home-menu")
 }
 
 @RunWith(AndroidJUnit4::class)
@@ -88,9 +92,9 @@ class FirefoxAccountsAuthFeatureTest {
         ) { _, url ->
             authUrl.complete(url)
         }
-        feature.beginAuthentication(testContext, mock())
+        feature.beginAuthentication(testContext, entryPoint)
         authUrl.await()
-        assertEquals("auth://url", authUrl.getCompleted())
+        assertEquals("auth://url?state=test-state", authUrl.getCompleted())
     }
 
     @Config(sdk = [22])
@@ -107,9 +111,9 @@ class FirefoxAccountsAuthFeatureTest {
         ) { _, url ->
             authUrl.complete(url)
         }
-        feature.beginPairingAuthentication(testContext, "auth://pair", mock())
+        feature.beginPairingAuthentication(testContext, "auth://pair", entryPoint)
         authUrl.await()
-        assertEquals("auth://url", authUrl.getCompleted())
+        assertEquals("auth://url?state=test-state", authUrl.getCompleted())
     }
 
     @Config(sdk = [22])
@@ -127,7 +131,7 @@ class FirefoxAccountsAuthFeatureTest {
         ) { _, url ->
             authUrl.complete(url)
         }
-        feature.beginAuthentication(testContext, mock())
+        feature.beginAuthentication(testContext, entryPoint)
         authUrl.await()
         // Fallback url is invoked.
         assertEquals("https://accounts.firefox.com/signin", authUrl.getCompleted())
@@ -148,7 +152,7 @@ class FirefoxAccountsAuthFeatureTest {
         ) { _, url ->
             authUrl.complete(url)
         }
-        feature.beginPairingAuthentication(testContext, "auth://pair", mock())
+        feature.beginPairingAuthentication(testContext, "auth://pair", entryPoint)
         authUrl.await()
         // Fallback url is invoked.
         assertEquals("https://accounts.firefox.com/signin", authUrl.getCompleted())
@@ -246,24 +250,26 @@ class FirefoxAccountsAuthFeatureTest {
     private suspend fun prepareAccountManagerForSuccessfulAuthentication(
         coroutineContext: CoroutineContext,
     ): TestableFxaAccountManager {
-        val mockAccount: OAuthAccount = mock()
         val profile = Profile(uid = "testUID", avatar = null, email = "test@example.com", displayName = "test profile")
-
-        `when`(mockAccount.deviceConstellation()).thenReturn(mock())
-        `when`(mockAccount.getProfile(anyBoolean())).thenReturn(profile)
-        `when`(mockAccount.beginOAuthFlow(any(), any())).thenReturn(AuthFlowUrl("authState", "auth://url"))
-        `when`(mockAccount.beginPairingFlow(anyString(), any(), any())).thenReturn(AuthFlowUrl("authState", "auth://url"))
-        `when`(mockAccount.completeOAuthFlow(anyString(), anyString())).thenReturn(true)
-
         val manager = TestableFxaAccountManager(
             testContext,
-            ServerConfig(Server.RELEASE, "dummyId", "bad://url"),
+            ServerConfig(FxaServer.Release, "dummyId", "bad://url", null),
             setOf("test-scope"),
             coroutineContext,
-        ) {
-            mockAccount
+        )
+        manager.mockAccount.let {
+            `when`(it.deviceConstellation()).thenReturn(mock())
+            `when`(it.getProfile(anyBoolean())).thenReturn(profile)
+            val captor = argumentCaptor<FxaAction>()
+            `when`(it.queueAction(captor.capture())).thenAnswer {
+                val action = captor.value
+                when (action) {
+                    is FxaAction.BeginOAuthFlow -> action.result?.complete("auth://url?state=test-state")
+                    is FxaAction.BeginPairingFlow -> action.result?.complete("auth://url?state=test-state")
+                    else -> Unit
+                }
+            }
         }
-
         manager.start()
 
         return manager
@@ -273,24 +279,26 @@ class FirefoxAccountsAuthFeatureTest {
     private suspend fun prepareAccountManagerForFailedAuthentication(
         coroutineContext: CoroutineContext,
     ): TestableFxaAccountManager {
-        val mockAccount: OAuthAccount = mock()
         val profile = Profile(uid = "testUID", avatar = null, email = "test@example.com", displayName = "test profile")
-
-        `when`(mockAccount.getProfile(anyBoolean())).thenReturn(profile)
-        `when`(mockAccount.deviceConstellation()).thenReturn(mock())
-        `when`(mockAccount.beginOAuthFlow(any(), any())).thenReturn(null)
-        `when`(mockAccount.beginPairingFlow(anyString(), any(), any())).thenReturn(null)
-        `when`(mockAccount.completeOAuthFlow(anyString(), anyString())).thenReturn(true)
-
         val manager = TestableFxaAccountManager(
             testContext,
-            ServerConfig(Server.RELEASE, "dummyId", "bad://url"),
+            ServerConfig(FxaServer.Release, "dummyId", "bad://url", null),
             setOf("test-scope"),
             coroutineContext,
-        ) {
-            mockAccount
+        )
+        manager.mockAccount.let {
+            `when`(it.deviceConstellation()).thenReturn(mock())
+            `when`(it.getProfile(anyBoolean())).thenReturn(profile)
+            val captor = argumentCaptor<FxaAction>()
+            `when`(it.queueAction(captor.capture())).thenAnswer {
+                val action = captor.value
+                when (action) {
+                    is FxaAction.BeginOAuthFlow -> action.result?.complete(null)
+                    is FxaAction.BeginPairingFlow -> action.result?.complete(null)
+                    else -> Unit
+                }
+            }
         }
-
         manager.start()
 
         return manager

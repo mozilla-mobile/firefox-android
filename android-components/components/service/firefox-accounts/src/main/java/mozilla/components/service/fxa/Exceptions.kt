@@ -25,6 +25,11 @@ typealias FxaPanicException = mozilla.appservices.fxaclient.FxaException.Panic
 typealias FxaUnauthorizedException = mozilla.appservices.fxaclient.FxaException.Authentication
 
 /**
+ * Thrown when an access token is missing a required scoped key
+ */
+typealias FxaSyncScopedKeyMissingException = mozilla.appservices.fxaclient.FxaException.SyncScopedKeyMissing
+
+/**
  * Thrown when the Rust library hits an unexpected error that isn't a panic.
  * This may indicate library misuse, network errors, etc.
  */

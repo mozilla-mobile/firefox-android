@@ -11,50 +11,36 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.plus
-import mozilla.appservices.fxaclient.FxaException
+import mozilla.appservices.fxaclient.FxaAction
 import mozilla.appservices.fxaclient.IncomingDeviceCommand
 import mozilla.appservices.fxaclient.SendTabPayload
 import mozilla.appservices.fxaclient.TabHistoryEntry
-import mozilla.appservices.syncmanager.DeviceSettings
 import mozilla.components.concept.sync.AccountEvent
 import mozilla.components.concept.sync.AccountEventsObserver
-import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.ConstellationState
-import mozilla.components.concept.sync.DeviceCapability
 import mozilla.components.concept.sync.DeviceCommandIncoming
 import mozilla.components.concept.sync.DeviceCommandOutgoing
-import mozilla.components.concept.sync.DeviceConfig
 import mozilla.components.concept.sync.DeviceConstellationObserver
-import mozilla.components.concept.sync.DevicePushSubscription
-import mozilla.components.concept.sync.DeviceType
 import mozilla.components.concept.sync.TabData
 import mozilla.components.support.test.any
 import mozilla.components.support.test.argumentCaptor
 import mozilla.components.support.test.mock
-import mozilla.components.support.test.robolectric.testContext
 import mozilla.components.support.test.rule.MainCoroutineRule
 import mozilla.components.support.test.rule.runTestOnMain
 import org.junit.Assert
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
-import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mockito.doAnswer
-import org.mockito.Mockito.never
-import org.mockito.Mockito.reset
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
-import org.mockito.Mockito.verifyNoInteractions
 import org.mockito.Mockito.`when`
 import mozilla.appservices.fxaclient.AccountEvent as ASAccountEvent
 import mozilla.appservices.fxaclient.Device as NativeDevice
 import mozilla.appservices.fxaclient.DevicePushSubscription as NativeDevicePushSubscription
-import mozilla.appservices.fxaclient.PersistedFirefoxAccount as NativeFirefoxAccount
+import mozilla.appservices.fxaclient.FxaClient as NativeFirefoxAccount
 import mozilla.appservices.sync15.DeviceType as RustDeviceType
 
 @ExperimentalCoroutinesApi
@@ -69,99 +55,18 @@ class FxaDeviceConstellationTest {
     @Before
     fun setup() {
         account = mock()
+        val captor = argumentCaptor<FxaAction>()
+        `when`(account.queueAction(captor.capture())).thenAnswer {
+            val action = captor.value
+            when (action) {
+                is FxaAction.SetDeviceName -> action.result?.complete(true)
+                is FxaAction.SetDevicePushSubscription -> action.result?.complete(true)
+                is FxaAction.SendSingleTab -> action.result?.complete(true)
+                else -> Unit
+            }
+        }
         val scope = CoroutineScope(coroutinesTestRule.testDispatcher) + SupervisorJob()
-        constellation = FxaDeviceConstellation(account, scope, mock())
-    }
-
-    @Test
-    fun `finalize device`() = runTestOnMain {
-        fun expectedFinalizeAction(authType: AuthType): FxaDeviceConstellation.DeviceFinalizeAction = when (authType) {
-            AuthType.Existing -> FxaDeviceConstellation.DeviceFinalizeAction.EnsureCapabilities
-            AuthType.Signin -> FxaDeviceConstellation.DeviceFinalizeAction.Initialize
-            AuthType.Signup -> FxaDeviceConstellation.DeviceFinalizeAction.Initialize
-            AuthType.Pairing -> FxaDeviceConstellation.DeviceFinalizeAction.Initialize
-            is AuthType.OtherExternal -> FxaDeviceConstellation.DeviceFinalizeAction.Initialize
-            AuthType.MigratedCopy -> FxaDeviceConstellation.DeviceFinalizeAction.Initialize
-            AuthType.MigratedReuse -> FxaDeviceConstellation.DeviceFinalizeAction.EnsureCapabilities
-            AuthType.Recovered -> FxaDeviceConstellation.DeviceFinalizeAction.None
-        }
-        fun initAuthType(simpleClassName: String): AuthType = when (simpleClassName) {
-            "Existing" -> AuthType.Existing
-            "Signin" -> AuthType.Signin
-            "Signup" -> AuthType.Signup
-            "Pairing" -> AuthType.Pairing
-            "OtherExternal" -> AuthType.OtherExternal("test")
-            "MigratedCopy" -> AuthType.MigratedCopy
-            "MigratedReuse" -> AuthType.MigratedReuse
-            "Recovered" -> AuthType.Recovered
-            else -> throw AssertionError("Unknown AuthType: $simpleClassName")
-        }
-        val config = DeviceConfig("test name", DeviceType.TABLET, setOf(DeviceCapability.SEND_TAB))
-        AuthType::class.sealedSubclasses.map { initAuthType(it.simpleName!!) }.forEach {
-            constellation.finalizeDevice(it, config)
-            when (expectedFinalizeAction(it)) {
-                FxaDeviceConstellation.DeviceFinalizeAction.Initialize -> {
-                    verify(account).initializeDevice("test name", RustDeviceType.TABLET, setOf(mozilla.appservices.fxaclient.DeviceCapability.SEND_TAB))
-                }
-                FxaDeviceConstellation.DeviceFinalizeAction.EnsureCapabilities -> {
-                    verify(account).ensureCapabilities(setOf(mozilla.appservices.fxaclient.DeviceCapability.SEND_TAB))
-                }
-                FxaDeviceConstellation.DeviceFinalizeAction.None -> {
-                    verifyNoInteractions(account)
-                }
-            }
-            reset(account)
-        }
-    }
-
-    @Test
-    @ExperimentalCoroutinesApi
-    fun `updating device name`() = runTestOnMain {
-        val currentDevice = testDevice("currentTestDevice", true)
-        `when`(account.getDevices()).thenReturn(arrayOf(currentDevice))
-
-        // Can't update cached value in an empty cache
-        try {
-            constellation.setDeviceName("new name", testContext)
-            fail()
-        } catch (e: IllegalStateException) {}
-
-        val cache = FxaDeviceSettingsCache(testContext)
-        cache.setToCache(DeviceSettings("someId", "test name", RustDeviceType.MOBILE))
-
-        // No device state observer.
-        assertTrue(constellation.setDeviceName("new name", testContext))
-        verify(account, times(2)).setDeviceDisplayName("new name")
-
-        assertEquals(DeviceSettings("someId", "new name", RustDeviceType.MOBILE), cache.getCached())
-
-        // Set up the observer...
-        val observer = object : DeviceConstellationObserver {
-            var state: ConstellationState? = null
-
-            override fun onDevicesUpdate(constellation: ConstellationState) {
-                state = constellation
-            }
-        }
-        constellation.registerDeviceObserver(observer, startedLifecycleOwner(), false)
-
-        assertTrue(constellation.setDeviceName("another name", testContext))
-        verify(account).setDeviceDisplayName("another name")
-
-        assertEquals(DeviceSettings("someId", "another name", RustDeviceType.MOBILE), cache.getCached())
-
-        // Since we're faking the data, here we're just testing that observer is notified with the
-        // up-to-date constellation.
-        assertEquals(observer.state!!.currentDevice!!.displayName, "testName")
-    }
-
-    @Test
-    @ExperimentalCoroutinesApi
-    fun `set device push subscription`() = runTestOnMain {
-        val subscription = DevicePushSubscription("http://endpoint.com", "pk", "auth key")
-        constellation.setDevicePushSubscription(subscription)
-
-        verify(account).setDevicePushSubscription("http://endpoint.com", "pk", "auth key")
+        constellation = FxaDeviceConstellation(account, scope.coroutineContext, mock())
     }
 
     @Test
@@ -218,47 +123,15 @@ class FxaDeviceConstellationTest {
             ),
         )
 
-        verify(account).sendSingleTab("targetID", "Mozilla", "https://www.mozilla.org")
+        verify(account).queueAction(FxaAction.SendSingleTab("targetID", "Mozilla", "https://www.mozilla.org", any()))
     }
 
-    @Test
-    fun `send command to device will report exceptions`() = runTestOnMain {
-        val exception = FxaException.Other("")
-        val exceptionCaptor = argumentCaptor<SendCommandException>()
-        doAnswer { throw exception }.`when`(account).sendSingleTab(any(), any(), any())
-
-        val success = constellation.sendCommandToDevice(
-            "targetID",
-            DeviceCommandOutgoing.SendTab("Mozilla", "https://www.mozilla.org"),
-        )
-
-        assertFalse(success)
-        verify(constellation.crashReporter!!).submitCaughtException(exceptionCaptor.capture())
-        assertSame(exception, exceptionCaptor.value.cause)
-    }
-
-    @Test
-    fun `send command to device won't report network exceptions`() = runTestOnMain {
-        val exception = FxaException.Network("timeout!")
-        doAnswer { throw exception }.`when`(account).sendSingleTab(any(), any(), any())
-
-        val success = constellation.sendCommandToDevice(
-            "targetID",
-            DeviceCommandOutgoing.SendTab("Mozilla", "https://www.mozilla.org"),
-        )
-
-        assertFalse(success)
-        verify(constellation.crashReporter!!, never()).submitCaughtException(any())
-        Unit
-    }
-
-    @Test
     @ExperimentalCoroutinesApi
     fun `refreshing constellation`() = runTestOnMain {
         // No devices, no observers.
         `when`(account.getDevices()).thenReturn(emptyArray())
 
-        constellation.refreshDevices()
+        assertTrue(constellation.refreshDevices())
 
         val observer = object : DeviceConstellationObserver {
             var state: ConstellationState? = null
@@ -270,7 +143,7 @@ class FxaDeviceConstellationTest {
         constellation.registerDeviceObserver(observer, startedLifecycleOwner(), false)
 
         // No devices, with an observer.
-        constellation.refreshDevices()
+        assertTrue(constellation.refreshDevices())
         assertEquals(ConstellationState(null, listOf()), observer.state)
 
         val testDevice1 = testDevice("test1", false)
@@ -279,14 +152,14 @@ class FxaDeviceConstellationTest {
 
         // Single device, no current device.
         `when`(account.getDevices()).thenReturn(arrayOf(testDevice1))
-        constellation.refreshDevices()
+        assertTrue(constellation.refreshDevices())
 
         assertEquals(ConstellationState(null, listOf(testDevice1.into())), observer.state)
         assertEquals(ConstellationState(null, listOf(testDevice1.into())), constellation.state())
 
         // Current device, no other devices.
         `when`(account.getDevices()).thenReturn(arrayOf(currentDevice))
-        constellation.refreshDevices()
+        assertTrue(constellation.refreshDevices())
         assertEquals(ConstellationState(currentDevice.into(), listOf()), observer.state)
         assertEquals(ConstellationState(currentDevice.into(), listOf()), constellation.state())
 
@@ -298,7 +171,7 @@ class FxaDeviceConstellationTest {
                 testDevice2,
             ),
         )
-        constellation.refreshDevices()
+        assertTrue(constellation.refreshDevices())
 
         assertEquals(ConstellationState(currentDevice.into(), listOf(testDevice1.into(), testDevice2.into())), observer.state)
         assertEquals(ConstellationState(currentDevice.into(), listOf(testDevice1.into(), testDevice2.into())), constellation.state())
@@ -315,7 +188,7 @@ class FxaDeviceConstellationTest {
         `when`(account.pollDeviceCommands()).thenReturn(emptyArray())
         `when`(account.gatherTelemetry()).thenReturn("{}")
 
-        constellation.refreshDevices()
+        assertTrue(constellation.refreshDevices())
 
         verify(account, times(1)).pollDeviceCommands()
 
@@ -335,7 +208,7 @@ class FxaDeviceConstellationTest {
         `when`(account.pollDeviceCommands()).thenReturn(emptyArray())
         `when`(account.gatherTelemetry()).thenReturn("{}")
 
-        constellation.refreshDevices()
+        assertTrue(constellation.refreshDevices())
 
         verify(account, times(2)).pollDeviceCommands()
         assertEquals(ConstellationState(currentDeviceNoSub.into(), listOf(testDevice2.into())), constellation.state())
