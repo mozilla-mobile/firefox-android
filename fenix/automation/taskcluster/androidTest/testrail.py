@@ -11,6 +11,12 @@ except KeyError:
     print("ERROR: MOBILE_HEAD_REF env var not set")
     # sys.exit()
 
+try:
+    TEST_STATUS = os.environ.get('TEST_STATUS')
+    print(f"The TEST_STATUS is: {TEST_STATUS}")
+except KeyError:
+    print("ERROR: TEST_STATUS env var not set")
+
 def release_number(MOBILE_HEAD_REF):
     parts = MOBILE_HEAD_REF.split('_')
     return parts[1]
@@ -24,6 +30,14 @@ def create_milestone_name(product_name, release_type, release_version):
     milestone_name = f'{prefix} {product_name} {release_type} {release_version}'
     return milestone_name
 
+def test_status(TEST_STATUS):
+    if TEST_STATUS == 'PASS':
+        return True
+    elif TEST_STATUS == 'FAIL':
+        return False
+    else:
+        print(f"ERROR: TEST_STATUS value of {TEST_STATUS} is not valid.")
+        # sys.exit(1)
 class TestRail():
 
     def __init__(self):
@@ -157,3 +171,13 @@ if __name__ == "__main__":
     """
     x = release_number(MOBILE_HEAD_REF)
     print(x)
+    
+    if test_status(TEST_STATUS):
+        print("Creating Milestone...")
+        # milestone_name = create_milestone_name(product_name, release_type, release_version)
+        # testrail.milestone_add(testrail_project_id, milestone_name)
+        # test_run_name = create_test_run_name(product_name, release_type, release_version, milestone_id)
+        # testrail.test_run_add(testrail_project_id, testrail_milestone_id, test_run_name)
+        # testrail.test_results_add(testrail_project_id, testrail_test_run_id, testrail_test_case_id, testrail_test_status_id, testrail_test_comment)
+    else:
+        print("Tests failed")
