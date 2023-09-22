@@ -46,7 +46,6 @@ RUN apt-get update -qq \
 
 RUN pip3 install --upgrade pip
 RUN pip3 install taskcluster
-RUN pip3 install python-dotenv
 
 RUN locale-gen "$LANG"
 
