@@ -1,7 +1,7 @@
+from dotenv import load_dotenv
 import json
 import os
 import sys
-from dotenv import load_dotenv
 
 from lib.testrail_conn import APIClient
 
@@ -13,8 +13,18 @@ except KeyError:
 
 load_dotenv("test_status.env")
 
+for key, value in os.environ.items():
+    print(f"{key}={value}")
+
 TEST_STATUS = os.getenv("TEST_STATUS")
 print(f"Your TEST_STATUS value: {TEST_STATUS}")
+
+if not os.path.isfile("test_status.env"):
+    print("test_status.env path is incorrect.")
+else:
+    with open("test_status.env", "r") as file:
+        file_contents = file.read()
+        print(f"content of test_status.env:\n{file_contents}")
 
 def release_number(MOBILE_HEAD_REF):
     parts = MOBILE_HEAD_REF.split('_')
