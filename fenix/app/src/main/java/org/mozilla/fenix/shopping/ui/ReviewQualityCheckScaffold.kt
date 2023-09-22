@@ -61,7 +61,7 @@ fun ReviewQualityCheckScaffold(
     ) {
         BottomSheetHandle(
             onRequestDismiss = onRequestDismiss,
-            contentDescription = stringResource(R.string.browser_menu_review_quality_check_close),
+            contentDescription = stringResource(R.string.review_quality_check_close_handle_content_description),
             modifier = Modifier
                 .fillMaxWidth(BOTTOM_SHEET_HANDLE_WIDTH_PERCENT)
                 .align(Alignment.CenterHorizontally),
@@ -94,7 +94,7 @@ private fun Header() {
         Spacer(modifier = Modifier.width(10.dp))
 
         Text(
-            text = stringResource(R.string.review_quality_check),
+            text = stringResource(R.string.review_quality_check_feature_name),
             color = FirefoxTheme.colors.textPrimary,
             style = FirefoxTheme.typography.headline6,
         )

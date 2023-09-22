@@ -55,7 +55,8 @@ object FeatureFlags {
     /**
      * Enables compose on the top sites.
      */
-    const val composeTopSites = false
+    // const val composeTopSites = false
+    const val composeTopSites = true
 
     /**
      * Enables new search settings UI with two extra fragments, for managing the default engine
@@ -67,4 +68,10 @@ object FeatureFlags {
      * Enables the lib-state HistoryFragment refactor
      */
     val historyFragmentLibStateRefactor = Config.channel.isNightlyOrDebug
+
+    /**
+     * Allows users to enable translations.
+     * Preference to fully enable translations is pref_key_enable_translations.
+     */
+    val translations = Config.channel.isDebug
 }

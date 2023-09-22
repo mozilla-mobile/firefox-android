@@ -143,7 +143,9 @@ class FenixApplicationTest {
         every { settings.showPocketRecommendationsFeature } returns true
         every { settings.showContileFeature } returns true
         every { application.reportHomeScreenMetrics(settings) } just Runs
+        every { application.getDeviceTotalRAM() } returns 7L
         every { settings.inactiveTabsAreEnabled } returns true
+        every { application.isDeviceRamAboveThreshold } returns true
 
         assertTrue(settings.contileContextId.isEmpty())
         assertNull(TopSites.contextId.testGetValue())
@@ -153,7 +155,6 @@ class FenixApplicationTest {
             settings = settings,
             browsersCache = browsersCache,
             mozillaProductDetector = mozillaProductDetector,
-            isDeviceRamAboveThreshold = true,
         )
 
         // Verify that browser defaults metrics are set.
@@ -193,6 +194,7 @@ class FenixApplicationTest {
         assertEquals(expectedAppInstallSource, Metrics.installSource.testGetValue())
         assertEquals(true, Metrics.defaultWallpaper.testGetValue())
         assertEquals(true, Metrics.ramMoreThanThreshold.testGetValue())
+        assertEquals(7L, Metrics.deviceTotalRam.testGetValue())
 
         val contextId = TopSites.contextId.testGetValue()!!.toString()
 
