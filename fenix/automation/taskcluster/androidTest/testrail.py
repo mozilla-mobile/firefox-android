@@ -1,7 +1,7 @@
 import json
 import os
 import sys
-
+from dotenv import load_dotenv
 
 from lib.testrail_conn import APIClient
 
@@ -11,11 +11,10 @@ except KeyError:
     print("ERROR: MOBILE_HEAD_REF env var not set")
     # sys.exit()
 
-try:
-    TEST_STATUS = os.environ.get('TEST_STATUS')
-    print(f"The TEST_STATUS is: {TEST_STATUS}")
-except KeyError:
-    print("ERROR: TEST_STATUS env var not set")
+load_dotenv("test_status.env")
+
+TEST_STATUS = os.getenv("TEST_STATUS")
+print(f"Your TEST_STATUS value: {TEST_STATUS}")
 
 def release_number(MOBILE_HEAD_REF):
     parts = MOBILE_HEAD_REF.split('_')
