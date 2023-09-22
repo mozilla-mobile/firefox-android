@@ -109,7 +109,7 @@ function failure_check() {
         export TEST_STATUS="PASS"
     fi
 
-    echo "TEST_STATUS is: $TEST_STATUS"
+    echo "WITHIN SCRIPT: TEST_STATUS is: $TEST_STATUS"
 
     echo
     echo "RESULTS"
