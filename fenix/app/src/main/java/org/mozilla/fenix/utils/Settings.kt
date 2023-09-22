@@ -1211,19 +1211,21 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = true,
     )
 
-    fun addSearchWidgetInstalled(count: Int) {
+    /**
+     * Used in [SearchWidgetProvider] to update when the search widget
+     * exists on home screen or if it has been removed completely.
+     */
+    fun setSearchWidgetInstalled(installed: Boolean) {
         val key = appContext.getPreferenceKey(R.string.pref_key_search_widget_installed)
-        val newValue = preferences.getInt(key, 0) + count
         preferences.edit()
-            .putInt(key, newValue)
+            .putBoolean(key, installed)
             .apply()
     }
 
-    val searchWidgetInstalled: Boolean
-        get() = 0 < preferences.getInt(
-            appContext.getPreferenceKey(R.string.pref_key_search_widget_installed),
-            0,
-        )
+    val searchWidgetInstalled by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_search_widget_installed),
+        default = false,
+    )
 
     fun incrementNumTimesPrivateModeOpened() = numTimesPrivateModeOpened.increment()
 
@@ -1658,20 +1660,16 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     /**
-     * Indicates if juno onboarding feature is enabled.
-     */
-    val junoOnboardingEnabled: Boolean
-        get() = FxNimbus.features.junoOnboarding.value().enabled
-
-    /**
      * Returns whether juno onboarding should be shown to the user.
+     *
+     * @param hasUserBeenOnboarded Boolean to indicate whether the user has been onboarded.
      * @param isLauncherIntent Boolean to indicate whether the app was launched on tapping on the
      * app icon.
      */
     fun shouldShowJunoOnboarding(hasUserBeenOnboarded: Boolean, isLauncherIntent: Boolean): Boolean {
         return if (!hasUserBeenOnboarded && isLauncherIntent) {
             FxNimbus.features.junoOnboarding.recordExposure()
-            junoOnboardingEnabled
+            true
         } else {
             false
         }
