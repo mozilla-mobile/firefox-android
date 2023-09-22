@@ -36,6 +36,7 @@ RUN URL_FLANK_BIN="$($CURL --silent 'https://api.github.com/repos/Flank/flank/re
 # Used in parse-ui-test-fromfile.py
 RUN pip3 install junitparser
 RUN pip3 install beautifultable
+RUN pip3 install python-dotenv
 
 # run-task expects to run as root
 USER root
