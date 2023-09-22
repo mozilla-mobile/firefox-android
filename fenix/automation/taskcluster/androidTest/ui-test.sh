@@ -103,9 +103,13 @@ function failure_check() {
     echo
     if [[ $exitcode -ne 0 ]]; then
         echo "FAILURE: UI test run failed, please check above URL"
+        export TEST_STATUS="FAIL"
     else
-	      echo "All UI test(s) have passed!"
+	    echo "All UI test(s) have passed!"
+        export TEST_STATUS="PASS"
     fi
+
+    echo "TEST_STATUS is: $TEST_STATUS"
 
     echo
     echo "RESULTS"
