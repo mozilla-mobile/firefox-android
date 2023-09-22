@@ -10,9 +10,13 @@ try:
 except KeyError:
     print("ERROR: MOBILE_HEAD_REF env var not set")
     # sys.exit()
+print("before load_dotenv")
+for key, value in os.environ.items():
+    print(f"{key}={value}")
 
 load_dotenv("test_status.env")
 
+print("after load_dotenv")
 for key, value in os.environ.items():
     print(f"{key}={value}")
 
