@@ -155,17 +155,5 @@ if __name__ == "__main__":
         8. POST test results to testrail with test run with run results (TBD)
     else: abort
     """
-    testrail_project_id = "75"
-    # testrail_milestone_id = "729"
-    d = DemoClient()
-    d.setup(testrail_project_id)
-    # result = t.projects()
-    # print(result)
-    # result = t.milestones(testrail_project_id)
-    # print("-------", result)
-    # result = t.milestone(testrail_milestone_id)
-    # print("------", result)
-    # result = t.project(testrail_project_id)
-    # print("------", result)
     x = release_number(MOBILE_HEAD_REF)
     print(x)
