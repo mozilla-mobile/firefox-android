@@ -29,7 +29,6 @@ task-defaults:
         env:
             GOOGLE_APPLICATION_CREDENTIALS: '.firebase_token.json'
             TESTRAIL_TOKEN: '.my_token_here'
-            TEST_STATUS: ''
         artifacts:
             - name: public
               path: /builds/worker/artifacts
