@@ -1216,14 +1216,31 @@ class Settings(private val appContext: Context) : PreferencesHolder {
      * exists on home screen or if it has been removed completely.
      */
     fun setSearchWidgetInstalled(installed: Boolean) {
-        val key = appContext.getPreferenceKey(R.string.pref_key_search_widget_installed)
+        val key = appContext.getPreferenceKey(R.string.pref_key_search_widget_installed_2)
         preferences.edit()
             .putBoolean(key, installed)
             .apply()
     }
 
+    /**
+     * In Bug 1853113, we changed the type of [searchWidgetInstalled] from int to boolean without
+     * changing the pref key, now we have to migrate users that were using the previous type int
+     * to the new one boolean. The migration will only happens if pref_key_search_widget_installed
+     * is detected.
+     */
+    fun migrateSearchWidgetInstalledPrefIfNeeded() {
+        val oldKey = "pref_key_search_widget_installed"
+        val installedCount = preferences.getInt(oldKey, 0)
+
+        if (installedCount > 0) {
+            setSearchWidgetInstalled(true)
+            preferences.edit()
+                .remove(oldKey).apply()
+        }
+    }
+
     val searchWidgetInstalled by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_search_widget_installed),
+        appContext.getPreferenceKey(R.string.pref_key_search_widget_installed_2),
         default = false,
     )
 
@@ -1862,5 +1879,35 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var hiddenEnginesRestored: Boolean by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_hidden_engines_restored),
         default = false,
+    )
+
+    /**
+     * Indicates if Firefox Suggest is enabled.
+     */
+    var enableFxSuggest by lazyFeatureFlagPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_enable_fxsuggest),
+        default = { FxNimbus.features.fxSuggest.value().enabled },
+        featureFlag = FeatureFlags.fxSuggest,
+    )
+
+    /**
+     * Indicates if the user has chosen to show sponsored search suggestions in the awesomebar.
+     * The default value is computed lazily, and based on whether Firefox Suggest is enabled.
+     */
+    var showSponsoredSuggestions by lazyFeatureFlagPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_show_sponsored_suggestions),
+        default = { enableFxSuggest },
+        featureFlag = FeatureFlags.fxSuggest,
+    )
+
+    /**
+     * Indicates if the user has chosen to show search suggestions for web content in the
+     * awesomebar. The default value is computed lazily, and based on whether Firefox Suggest
+     * is enabled.
+     */
+    var showNonSponsoredSuggestions by lazyFeatureFlagPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_show_nonsponsored_suggestions),
+        default = { enableFxSuggest },
+        featureFlag = FeatureFlags.fxSuggest,
     )
 }
