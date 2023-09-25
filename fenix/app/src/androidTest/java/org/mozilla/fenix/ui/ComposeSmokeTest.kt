@@ -17,7 +17,6 @@ import mozilla.components.concept.engine.mediasession.MediaSession
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.IntentReceiverActivity
@@ -84,52 +83,6 @@ class ComposeSmokeTest {
     @After
     fun tearDown() {
         mockWebServer.shutdown()
-    }
-
-    // Verifies that deleting a Bookmarks folder also removes the item from inside it.
-    @Test
-    fun deleteNonEmptyBookmarkFolderTest() {
-        val website = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        browserScreen {
-            createBookmark(website.url)
-        }.openThreeDotMenu {
-        }.openBookmarks {
-            verifyBookmarkTitle("Test_Page_1")
-            createFolder("My Folder")
-            verifyFolderTitle("My Folder")
-        }.openThreeDotMenu("Test_Page_1") {
-        }.clickEdit {
-            clickParentFolderSelector()
-            selectFolder("My Folder")
-            navigateUp()
-            saveEditBookmark()
-            createFolder("My Folder 2")
-            verifyFolderTitle("My Folder 2")
-        }.openThreeDotMenu("My Folder 2") {
-        }.clickEdit {
-            clickParentFolderSelector()
-            selectFolder("My Folder")
-            navigateUp()
-            saveEditBookmark()
-        }.openThreeDotMenu("My Folder") {
-        }.clickDelete {
-            cancelFolderDeletion()
-            verifyFolderTitle("My Folder")
-        }.openThreeDotMenu("My Folder") {
-        }.clickDelete {
-            confirmDeletion()
-            verifyDeleteSnackBarText()
-            verifyBookmarkIsDeleted("My Folder")
-            verifyBookmarkIsDeleted("My Folder 2")
-            verifyBookmarkIsDeleted("Test_Page_1")
-            navigateUp()
-        }
-
-        browserScreen {
-        }.openThreeDotMenu {
-            verifyAddBookmarkButton()
-        }
     }
 
     @Test
@@ -265,7 +218,6 @@ class ComposeSmokeTest {
         }
     }
 
-    @Ignore("Failing, see https://bugzilla.mozilla.org/show_bug.cgi?id=1846941")
     @Test
     fun tabMediaControlButtonTest() {
         val audioTestPage = TestAssetHelper.getAudioPageAsset(mockWebServer)
