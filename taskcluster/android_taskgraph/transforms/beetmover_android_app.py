@@ -39,14 +39,9 @@ def make_task_description(config, tasks):
     for task in tasks:
         attributes = task["attributes"]
 
-        if attributes.get("apks"):
-            format = "apk"
-        else:
-            format = "aab"
-        label = "beetmover-{}-{}".format(format, task["name"])
-        description = "Beetmover {format} submission for build type '{build_type}'".format(
+        label = "beetmover-{}".format(task["name"])
+        description = "Beetmover submission for build type '{build_type}'".format(
             build_type=attributes.get("build-type"),
-            format=format,
         )
 
         if task.get("locale"):

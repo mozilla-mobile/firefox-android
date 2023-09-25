@@ -28,10 +28,11 @@ task-defaults:
             default: "project:mobile:firefox-android:releng:beetmover:bucket:dep"
 
 tasks:
-    beetmover-apks:
+    beetmover:
         from-deps:
             kinds:
                 - signing-apk
+                - signing-bundle
             with-attributes:
                 build-type:
                     - fenix-release
@@ -49,24 +50,3 @@ tasks:
                 by-build-type:
                     klar.*: BM-klar
                     default: BM
-    beetmover-aab:
-        from-deps:
-            kinds:
-                - signing-bundle
-            with-attributes:
-                build-type:
-                    - fenix-release
-                    - fenix-beta
-                    - fenix-nightly
-                    - focus-release
-                    - klar-release
-                    - focus-beta
-                    - focus-nightly
-            group-by:
-                attribute: build-type
-            copy-attributes: true
-        treeherder:
-            job-symbol:
-                by-build-type:
-                    klar.*: BM-klar-aab
-                    default: BM-aab
