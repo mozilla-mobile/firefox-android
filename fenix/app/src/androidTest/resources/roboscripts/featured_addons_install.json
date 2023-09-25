@@ -1,0 +1,474 @@
+[
+  {
+    "crawlStage": "crawl",
+    "contextDescriptor": {
+      "condition": "app_under_test_shown"
+    },
+    "actions": [
+      {
+        "eventType": "VIEW_CLICKED",
+        "elementDescriptors": [
+          {
+            "text": "Not now"
+          }
+        ]
+      },
+      {
+        "eventType": "VIEW_CLICKED",
+        "elementDescriptors": [
+          {
+            "text": "Not now"
+          }
+        ]
+      },
+      {
+        "eventType": "VIEW_CLICKED",
+        "timestamp": 1696357660119,
+        "replacementText": "",
+        "actionCode": -1,
+        "delayTime": 0,
+        "canScrollTo": false,
+        "elementDescriptors": [
+          {
+            "className": "mozilla.components.browser.menu.view.MenuButton",
+            "recyclerViewChildPosition": -1,
+            "adapterViewChildPosition": -1,
+            "groupViewChildPosition": 4,
+            "resourceId": "org.mozilla.fenix.debug:id/menuButton",
+            "contentDescription": "",
+            "text": ""
+          },
+          {
+            "className": "androidx.constraintlayout.widget.ConstraintLayout",
+            "recyclerViewChildPosition": -1,
+            "adapterViewChildPosition": -1,
+            "groupViewChildPosition": 3,
+            "resourceId": "org.mozilla.fenix.debug:id/toolbarLayout",
+            "contentDescription": "",
+            "text": ""
+          },
+          {
+            "className": "androidx.coordinatorlayout.widget.CoordinatorLayout",
+            "recyclerViewChildPosition": -1,
+            "adapterViewChildPosition": -1,
+            "groupViewChildPosition": 0,
+            "resourceId": "org.mozilla.fenix.debug:id/homeLayout",
+            "contentDescription": "",
+            "text": ""
+          }
+        ]
+      },
+      {
+        "eventType": "DELAYED_MESSAGE_POSTED",
+        "delayTime": 5000
+      },
+      {
+        "eventType": "VIEW_CLICKED",
+        "timestamp": 1696357664349,
+        "replacementText": "",
+        "actionCode": -1,
+        "delayTime": 0,
+        "canScrollTo": false,
+        "elementDescriptors": [
+          {
+            "className": "android.widget.LinearLayout",
+            "recyclerViewChildPosition": -1,
+            "adapterViewChildPosition": -1,
+            "groupViewChildPosition": 3,
+            "resourceId": "",
+            "contentDescription": "",
+            "text": ""
+          },
+          {
+            "className": "mozilla.components.browser.menu.view.DynamicWidthRecyclerView",
+            "recyclerViewChildPosition": -1,
+            "adapterViewChildPosition": -1,
+            "groupViewChildPosition": 0,
+            "resourceId": "org.mozilla.fenix.debug:id/mozac_browser_menu_recyclerView",
+            "contentDescription": "",
+            "text": ""
+          },
+          {
+            "className": "androidx.cardview.widget.CardView",
+            "recyclerViewChildPosition": -1,
+            "adapterViewChildPosition": -1,
+            "groupViewChildPosition": 0,
+            "resourceId": "org.mozilla.fenix.debug:id/mozac_browser_menu_menuView",
+            "contentDescription": "",
+            "text": ""
+          }
+        ]
+      },
+      {
+        "eventType": "VIEW_CLICKED",
+        "timestamp": 1696357673169,
+        "replacementText": "",
+        "actionCode": -1,
+        "delayTime": 0,
+        "canScrollTo": false,
+        "elementDescriptors": [
+          {
+            "className": "androidx.appcompat.widget.AppCompatImageView",
+            "recyclerViewChildPosition": -1,
+            "adapterViewChildPosition": -1,
+            "groupViewChildPosition": 2,
+            "resourceId": "org.mozilla.fenix.debug:id/add_button",
+            "contentDescription": "Install Add-on",
+            "text": ""
+          },
+          {
+            "className": "android.widget.RelativeLayout",
+            "recyclerViewChildPosition": -1,
+            "adapterViewChildPosition": -1,
+            "groupViewChildPosition": 1,
+            "resourceId": "org.mozilla.fenix.debug:id/add_on_item",
+            "contentDescription": "",
+            "text": ""
+          },
+          {
+            "className": "androidx.recyclerview.widget.RecyclerView",
+            "recyclerViewChildPosition": -1,
+            "adapterViewChildPosition": -1,
+            "groupViewChildPosition": 0,
+            "resourceId": "org.mozilla.fenix.debug:id/add_ons_list",
+            "contentDescription": "",
+            "text": ""
+          }
+        ]
+      },
+      {
+        "eventType": "VIEW_CLICKED",
+        "timestamp": 1696357678385,
+        "replacementText": "Add",
+        "actionCode": -1,
+        "delayTime": 0,
+        "canScrollTo": false,
+        "elementDescriptors": [
+          {
+            "className": "androidx.appcompat.widget.AppCompatButton",
+            "recyclerViewChildPosition": -1,
+            "adapterViewChildPosition": -1,
+            "groupViewChildPosition": 4,
+            "resourceId": "org.mozilla.fenix.debug:id/allow_button",
+            "contentDescription": "",
+            "text": "Add"
+          },
+          {
+            "className": "android.widget.RelativeLayout",
+            "recyclerViewChildPosition": -1,
+            "adapterViewChildPosition": -1,
+            "groupViewChildPosition": 0,
+            "resourceId": "",
+            "contentDescription": "",
+            "text": ""
+          },
+          {
+            "className": "android.widget.FrameLayout",
+            "recyclerViewChildPosition": -1,
+            "adapterViewChildPosition": -1,
+            "groupViewChildPosition": 0,
+            "resourceId": "android:id/content",
+            "contentDescription": "",
+            "text": ""
+          }
+        ]
+      },
+      {
+        "eventType": "VIEW_CLICKED",
+        "timestamp": 1696357683845,
+        "replacementText": "Okay, Got it",
+        "actionCode": -1,
+        "delayTime": 0,
+        "canScrollTo": false,
+        "elementDescriptors": [
+          {
+            "className": "androidx.appcompat.widget.AppCompatButton",
+            "recyclerViewChildPosition": -1,
+            "adapterViewChildPosition": -1,
+            "groupViewChildPosition": 5,
+            "resourceId": "org.mozilla.fenix.debug:id/confirm_button",
+            "contentDescription": "",
+            "text": "Okay, Got it"
+          },
+          {
+            "className": "android.widget.RelativeLayout",
+            "recyclerViewChildPosition": -1,
+            "adapterViewChildPosition": -1,
+            "groupViewChildPosition": 0,
+            "resourceId": "",
+            "contentDescription": "",
+            "text": ""
+          },
+          {
+            "className": "android.widget.FrameLayout",
+            "recyclerViewChildPosition": -1,
+            "adapterViewChildPosition": -1,
+            "groupViewChildPosition": 0,
+            "resourceId": "android:id/content",
+            "contentDescription": "",
+            "text": ""
+          }
+        ]
+      },
+      {
+        "eventType": "VIEW_CLICKED",
+        "timestamp": 1696357689725,
+        "replacementText": "",
+        "actionCode": -1,
+        "delayTime": 0,
+        "canScrollTo": false,
+        "elementDescriptors": [
+          {
+            "className": "androidx.appcompat.widget.AppCompatImageView",
+            "recyclerViewChildPosition": -1,
+            "adapterViewChildPosition": -1,
+            "groupViewChildPosition": 2,
+            "resourceId": "org.mozilla.fenix.debug:id/add_button",
+            "contentDescription": "Install Add-on",
+            "text": ""
+          },
+          {
+            "className": "android.widget.RelativeLayout",
+            "recyclerViewChildPosition": -1,
+            "adapterViewChildPosition": -1,
+            "groupViewChildPosition": 1,
+            "resourceId": "org.mozilla.fenix.debug:id/add_on_item",
+            "contentDescription": "",
+            "text": ""
+          },
+          {
+            "className": "androidx.recyclerview.widget.RecyclerView",
+            "recyclerViewChildPosition": -1,
+            "adapterViewChildPosition": -1,
+            "groupViewChildPosition": 0,
+            "resourceId": "org.mozilla.fenix.debug:id/add_ons_list",
+            "contentDescription": "",
+            "text": ""
+          }
+        ]
+      },
+      {
+        "eventType": "VIEW_CLICKED",
+        "timestamp": 1696357693816,
+        "replacementText": "Add",
+        "actionCode": -1,
+        "delayTime": 0,
+        "canScrollTo": false,
+        "elementDescriptors": [
+          {
+            "className": "androidx.appcompat.widget.AppCompatButton",
+            "recyclerViewChildPosition": -1,
+            "adapterViewChildPosition": -1,
+            "groupViewChildPosition": 4,
+            "resourceId": "org.mozilla.fenix.debug:id/allow_button",
+            "contentDescription": "",
+            "text": "Add"
+          },
+          {
+            "className": "android.widget.RelativeLayout",
+            "recyclerViewChildPosition": -1,
+            "adapterViewChildPosition": -1,
+            "groupViewChildPosition": 0,
+            "resourceId": "",
+            "contentDescription": "",
+            "text": ""
+          },
+          {
+            "className": "android.widget.FrameLayout",
+            "recyclerViewChildPosition": -1,
+            "adapterViewChildPosition": -1,
+            "groupViewChildPosition": 0,
+            "resourceId": "android:id/content",
+            "contentDescription": "",
+            "text": ""
+          }
+        ]
+      },
+      {
+        "eventType": "VIEW_CLICKED",
+        "timestamp": 1696357698371,
+        "replacementText": "Okay, Got it",
+        "actionCode": -1,
+        "delayTime": 0,
+        "canScrollTo": false,
+        "elementDescriptors": [
+          {
+            "className": "androidx.appcompat.widget.AppCompatButton",
+            "recyclerViewChildPosition": -1,
+            "adapterViewChildPosition": -1,
+            "groupViewChildPosition": 5,
+            "resourceId": "org.mozilla.fenix.debug:id/confirm_button",
+            "contentDescription": "",
+            "text": "Okay, Got it"
+          },
+          {
+            "className": "android.widget.RelativeLayout",
+            "recyclerViewChildPosition": -1,
+            "adapterViewChildPosition": -1,
+            "groupViewChildPosition": 0,
+            "resourceId": "",
+            "contentDescription": "",
+            "text": ""
+          },
+          {
+            "className": "android.widget.FrameLayout",
+            "recyclerViewChildPosition": -1,
+            "adapterViewChildPosition": -1,
+            "groupViewChildPosition": 0,
+            "resourceId": "android:id/content",
+            "contentDescription": "",
+            "text": ""
+          }
+        ]
+      },
+      {
+        "eventType": "VIEW_CLICKED",
+        "timestamp": 1696357706864,
+        "replacementText": "",
+        "actionCode": -1,
+        "delayTime": 0,
+        "canScrollTo": false,
+        "elementDescriptors": [
+          {
+            "className": "androidx.appcompat.widget.AppCompatImageView",
+            "recyclerViewChildPosition": -1,
+            "adapterViewChildPosition": -1,
+            "groupViewChildPosition": 2,
+            "resourceId": "org.mozilla.fenix.debug:id/add_button",
+            "contentDescription": "Install Add-on",
+            "text": ""
+          },
+          {
+            "className": "android.widget.RelativeLayout",
+            "recyclerViewChildPosition": -1,
+            "adapterViewChildPosition": -1,
+            "groupViewChildPosition": 4,
+            "resourceId": "org.mozilla.fenix.debug:id/add_on_item",
+            "contentDescription": "",
+            "text": ""
+          },
+          {
+            "className": "androidx.recyclerview.widget.RecyclerView",
+            "recyclerViewChildPosition": -1,
+            "adapterViewChildPosition": -1,
+            "groupViewChildPosition": 0,
+            "resourceId": "org.mozilla.fenix.debug:id/add_ons_list",
+            "contentDescription": "",
+            "text": ""
+          }
+        ]
+      },
+      {
+        "eventType": "VIEW_CLICKED",
+        "timestamp": 1696357712193,
+        "replacementText": "Add",
+        "actionCode": -1,
+        "delayTime": 0,
+        "canScrollTo": false,
+        "elementDescriptors": [
+          {
+            "className": "androidx.appcompat.widget.AppCompatButton",
+            "recyclerViewChildPosition": -1,
+            "adapterViewChildPosition": -1,
+            "groupViewChildPosition": 4,
+            "resourceId": "org.mozilla.fenix.debug:id/allow_button",
+            "contentDescription": "",
+            "text": "Add"
+          },
+          {
+            "className": "android.widget.RelativeLayout",
+            "recyclerViewChildPosition": -1,
+            "adapterViewChildPosition": -1,
+            "groupViewChildPosition": 0,
+            "resourceId": "",
+            "contentDescription": "",
+            "text": ""
+          },
+          {
+            "className": "android.widget.FrameLayout",
+            "recyclerViewChildPosition": -1,
+            "adapterViewChildPosition": -1,
+            "groupViewChildPosition": 0,
+            "resourceId": "android:id/content",
+            "contentDescription": "",
+            "text": ""
+          }
+        ]
+      },
+      {
+        "eventType": "VIEW_CLICKED",
+        "timestamp": 1696357715774,
+        "replacementText": "Okay, Got it",
+        "actionCode": -1,
+        "delayTime": 0,
+        "canScrollTo": false,
+        "elementDescriptors": [
+          {
+            "className": "androidx.appcompat.widget.AppCompatButton",
+            "recyclerViewChildPosition": -1,
+            "adapterViewChildPosition": -1,
+            "groupViewChildPosition": 5,
+            "resourceId": "org.mozilla.fenix.debug:id/confirm_button",
+            "contentDescription": "",
+            "text": "Okay, Got it"
+          },
+          {
+            "className": "android.widget.RelativeLayout",
+            "recyclerViewChildPosition": -1,
+            "adapterViewChildPosition": -1,
+            "groupViewChildPosition": 0,
+            "resourceId": "",
+            "contentDescription": "",
+            "text": ""
+          },
+          {
+            "className": "android.widget.FrameLayout",
+            "recyclerViewChildPosition": -1,
+            "adapterViewChildPosition": -1,
+            "groupViewChildPosition": 0,
+            "resourceId": "android:id/content",
+            "contentDescription": "",
+            "text": ""
+          }
+        ]
+      },
+      {
+        "eventType": "VIEW_CLICKED",
+        "timestamp": 1696357720073,
+        "replacementText": "",
+        "actionCode": -1,
+        "delayTime": 0,
+        "canScrollTo": false,
+        "elementDescriptors": [
+          {
+            "className": "androidx.appcompat.widget.AppCompatImageButton",
+            "recyclerViewChildPosition": -1,
+            "adapterViewChildPosition": -1,
+            "groupViewChildPosition": 2,
+            "resourceId": "",
+            "contentDescription": "Navigate up",
+            "text": ""
+          },
+          {
+            "className": "androidx.appcompat.widget.Toolbar",
+            "recyclerViewChildPosition": -1,
+            "adapterViewChildPosition": -1,
+            "groupViewChildPosition": 0,
+            "resourceId": "org.mozilla.fenix.debug:id/navigationToolbar",
+            "contentDescription": "",
+            "text": ""
+          },
+          {
+            "className": "org.mozilla.fenix.perf.HomeActivityRootLinearLayout",
+            "recyclerViewChildPosition": -1,
+            "adapterViewChildPosition": -1,
+            "groupViewChildPosition": 0,
+            "resourceId": "org.mozilla.fenix.debug:id/rootContainer",
+            "contentDescription": "",
+            "text": ""
+          }
+        ]
+      }
+    ]
+  }
+]

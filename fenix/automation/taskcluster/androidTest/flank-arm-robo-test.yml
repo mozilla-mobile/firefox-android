@@ -20,8 +20,8 @@ gcloud:
     - model: Pixel2.arm
       version: 27
       locale: en_US
-    - model: dreamlte
-      version: 28
+    - model: oriole
+      version: 31
       locale: en_US
     - model: oriole
       version: 31
@@ -31,6 +31,7 @@ gcloud:
       locale: en_US
 
   type: robo
+  robo-script: gs://mobile_test_assets/public/roboscripts/featured_addons_install.json
 
 flank:
   project: GOOGLE_PROJECT

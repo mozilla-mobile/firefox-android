@@ -329,7 +329,7 @@ tasks:
             shipping-product: fenix
             code-review: false
         description: Run Robo test on ARM devices
-        run-on-tasks-for: [github-push]
+        run-on-tasks-for: [github-pull-request, github-push]
         run-on-git-branches: [main]
         dependencies:
             signed-apk-debug-apk: signing-apk-fenix-debug
