@@ -9,7 +9,8 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent
+import org.mozilla.fenix.shopping.ProductAnalysisTestData
+import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent.AnalysisStatus
 
 class ReviewQualityCheckStateTest {
 
@@ -73,12 +74,9 @@ class ReviewQualityCheckStateTest {
     @Test
     fun `WHEN AnalysisPresent is created with grade, rating and highlights as null THEN exception is thrown`() {
         assertThrows(IllegalArgumentException::class.java) {
-            AnalysisPresent(
-                productId = "",
+            ProductAnalysisTestData.analysisPresent(
                 reviewGrade = null,
-                needsAnalysis = false,
                 adjustedRating = null,
-                productUrl = "",
                 highlights = null,
             )
         }
@@ -87,34 +85,25 @@ class ReviewQualityCheckStateTest {
     @Test
     fun `WHEN AnalysisPresent is created with at least one of grade, rating and highlights as not null THEN no exception is thrown`() {
         val ratingPresent = kotlin.runCatching {
-            AnalysisPresent(
-                productId = "1",
+            ProductAnalysisTestData.analysisPresent(
                 reviewGrade = null,
-                needsAnalysis = false,
                 adjustedRating = 1.2f,
-                productUrl = "",
                 highlights = null,
             )
         }
 
         val gradePresent = kotlin.runCatching {
-            AnalysisPresent(
-                productId = "2",
+            ProductAnalysisTestData.analysisPresent(
                 reviewGrade = ReviewQualityCheckState.Grade.A,
-                needsAnalysis = false,
                 adjustedRating = null,
-                productUrl = "",
                 highlights = null,
             )
         }
 
         val highlightsPresent = kotlin.runCatching {
-            AnalysisPresent(
-                productId = "2",
+            ProductAnalysisTestData.analysisPresent(
                 reviewGrade = null,
-                needsAnalysis = false,
                 adjustedRating = null,
-                productUrl = "",
                 highlights = sortedMapOf(
                     ReviewQualityCheckState.HighlightType.QUALITY to listOf(""),
                 ),
@@ -155,12 +144,7 @@ class ReviewQualityCheckStateTest {
                 "Unbeatable deals",
             ),
         )
-        val analysis = AnalysisPresent(
-            productId = "1",
-            reviewGrade = ReviewQualityCheckState.Grade.A,
-            needsAnalysis = false,
-            adjustedRating = 4.2f,
-            productUrl = "",
+        val analysis = ProductAnalysisTestData.analysisPresent(
             highlights = highlights,
         )
 
@@ -173,12 +157,7 @@ class ReviewQualityCheckStateTest {
         val highlights = sortedMapOf(
             ReviewQualityCheckState.HighlightType.PRICE to listOf("Affordable prices"),
         )
-        val analysis = AnalysisPresent(
-            productId = "1",
-            reviewGrade = ReviewQualityCheckState.Grade.A,
-            needsAnalysis = false,
-            adjustedRating = 4.2f,
-            productUrl = "",
+        val analysis = ProductAnalysisTestData.analysisPresent(
             highlights = highlights,
         )
 
@@ -194,12 +173,7 @@ class ReviewQualityCheckStateTest {
                 "Free shipping options",
             ),
         )
-        val analysis = AnalysisPresent(
-            productId = "1",
-            reviewGrade = ReviewQualityCheckState.Grade.A,
-            needsAnalysis = false,
-            adjustedRating = 4.2f,
-            productUrl = "",
+        val analysis = ProductAnalysisTestData.analysisPresent(
             highlights = highlights,
         )
 
@@ -216,12 +190,7 @@ class ReviewQualityCheckStateTest {
                 "Express delivery",
             ),
         )
-        val analysis = AnalysisPresent(
-            productId = "1",
-            reviewGrade = ReviewQualityCheckState.Grade.A,
-            needsAnalysis = false,
-            adjustedRating = 4.2f,
-            productUrl = "",
+        val analysis = ProductAnalysisTestData.analysisPresent(
             highlights = highlights,
         )
 
@@ -246,16 +215,58 @@ class ReviewQualityCheckStateTest {
                 "Unbeatable deals",
             ),
         )
-        val analysis = AnalysisPresent(
-            productId = "1",
-            reviewGrade = ReviewQualityCheckState.Grade.A,
-            needsAnalysis = false,
-            adjustedRating = 4.2f,
-            productUrl = "",
+        val analysis = ProductAnalysisTestData.analysisPresent(
             highlights = highlights,
         )
 
         assertTrue(analysis.showMoreButtonVisible)
         assertFalse(analysis.highlightsFadeVisible)
+    }
+
+    @Test
+    fun `WHEN AnalysisPresent is created with grade or rating as null THEN not enough reviews card is visible`() {
+        val analysisWithoutGrade = ProductAnalysisTestData.analysisPresent(
+            reviewGrade = null,
+            adjustedRating = 3.2f,
+            analysisStatus = AnalysisStatus.UP_TO_DATE,
+        )
+
+        val analysisWithoutRatings = ProductAnalysisTestData.analysisPresent(
+            reviewGrade = ReviewQualityCheckState.Grade.A,
+            adjustedRating = null,
+            analysisStatus = AnalysisStatus.UP_TO_DATE,
+        )
+
+        assertTrue(analysisWithoutGrade.notEnoughReviewsCardVisible)
+        assertTrue(analysisWithoutRatings.notEnoughReviewsCardVisible)
+    }
+
+    @Test
+    fun `WHEN AnalysisPresent is created with grade or rating as null and analysis status is needs analysis or reanalyzing THEN not enough reviews card is not visible`() {
+        val analysisWithoutGrade = ProductAnalysisTestData.analysisPresent(
+            reviewGrade = null,
+            adjustedRating = 3.2f,
+            analysisStatus = AnalysisStatus.NEEDS_ANALYSIS,
+        )
+
+        val analysisWithoutRatings = ProductAnalysisTestData.analysisPresent(
+            reviewGrade = ReviewQualityCheckState.Grade.A,
+            adjustedRating = null,
+            analysisStatus = AnalysisStatus.REANALYZING,
+        )
+
+        assertFalse(analysisWithoutGrade.notEnoughReviewsCardVisible)
+        assertFalse(analysisWithoutRatings.notEnoughReviewsCardVisible)
+    }
+
+    @Test
+    fun `WHEN AnalysisPresent is created with both grade and rating THEN not enough reviews card is not visible`() {
+        val analysis = ProductAnalysisTestData.analysisPresent(
+            reviewGrade = ReviewQualityCheckState.Grade.A,
+            adjustedRating = 3.2f,
+            analysisStatus = AnalysisStatus.UP_TO_DATE,
+        )
+
+        assertFalse(analysis.notEnoughReviewsCardVisible)
     }
 }

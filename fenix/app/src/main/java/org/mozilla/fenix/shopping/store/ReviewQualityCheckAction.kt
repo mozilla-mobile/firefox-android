@@ -54,10 +54,14 @@ sealed interface ReviewQualityCheckAction : Action {
 
     /**
      * Triggered as a result of a [PreferencesMiddlewareAction] to update the state.
+     *
+     * @property hasUserOptedIn True when user has opted in for shopping experience.
+     * @property isProductRecommendationsEnabled Reflects the user preference update to display
+     * recommended product. Null when product recommendations feature is disabled.
      */
     data class UpdateUserPreferences(
         val hasUserOptedIn: Boolean,
-        val isProductRecommendationsEnabled: Boolean,
+        val isProductRecommendationsEnabled: Boolean?,
     ) : UpdateAction
 
     /**
@@ -68,15 +72,40 @@ sealed interface ReviewQualityCheckAction : Action {
     /**
      * Triggered when the user has opted in to the review quality check feature and the UI is opened.
      */
-    object FetchProductAnalysis : NetworkAction
+    object FetchProductAnalysis : NetworkAction, UpdateAction
 
     /**
      * Triggered when the user retries to fetch product analysis after a failure.
      */
-    object RetryProductAnalysis : NetworkAction
+    object RetryProductAnalysis : NetworkAction, UpdateAction
 
     /**
-     * Triggered when opening a link from the review quality check feature.
+     * Triggered when the user triggers product re-analysis.
      */
-    data class OpenLink(val link: ReviewQualityCheckState.LinkType) : NavigationMiddlewareAction
+    object ReanalyzeProduct : NetworkAction, UpdateAction
+
+    /**
+     * Triggered when the user clicks on learn more link on the explainer card.
+     */
+    object OpenExplainerLearnMoreLink : NavigationMiddlewareAction
+
+    /**
+     * Triggered when the user clicks on the "Powered by" link in the footer.
+     */
+    object OpenPoweredByLink : NavigationMiddlewareAction
+
+    /**
+     * Triggered when the user clicks on learn more link on the opt in card.
+     */
+    object OpenOnboardingLearnMoreLink : NavigationMiddlewareAction
+
+    /**
+     * Triggered when the user clicks on terms and conditions link on the opt in card.
+     */
+    object OpenOnboardingTermsLink : NavigationMiddlewareAction
+
+    /**
+     * Triggered when the user clicks on privacy policy link on the opt in card.
+     */
+    object OpenOnboardingPrivacyPolicyLink : NavigationMiddlewareAction
 }

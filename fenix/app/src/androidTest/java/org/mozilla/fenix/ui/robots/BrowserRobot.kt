@@ -192,11 +192,11 @@ class BrowserRobot {
         )
     }
 
-    fun verifyContextMenuForLinksToOtherApps(containsURL: Uri) {
+    fun verifyContextMenuForLinksToOtherApps(containsURL: String) {
         // If the link is re-directing to an external app the "Open link in external app" option is available
         // If the link is not directing to another local asset the "Download link" option is not available
         assertItemContainingTextExists(
-            contextMenuLinkUrl(containsURL.toString()),
+            contextMenuLinkUrl(containsURL),
             contextMenuOpenLinkInNewTab,
             contextMenuOpenLinkInPrivateTab,
             contextMenuCopyLink,
@@ -882,6 +882,17 @@ class BrowserRobot {
         assertTrue(button.waitForExists(waitingTime))
     }
 
+    fun verifySurveyNoThanksButton() {
+        val button = mDevice.findObject(
+            UiSelector().text(
+                getStringResource(
+                    R.string.preferences_not_take_survey,
+                ),
+            ),
+        )
+        assertTrue(button.waitForExists(waitingTime))
+    }
+
     fun clickOpenLinksInAppsDismissCFRButton() =
         itemWithResIdContainingText(
             "$packageName:id/dismiss",
@@ -893,6 +904,18 @@ class BrowserRobot {
             UiSelector().text(
                 getStringResource(
                     R.string.preferences_take_survey,
+                ),
+            ),
+        )
+        button.waitForExists(waitingTime)
+        button.click()
+    }
+
+    fun clickNoThanksSurveyButton() {
+        val button = mDevice.findObject(
+            UiSelector().text(
+                getStringResource(
+                    R.string.preferences_not_take_survey,
                 ),
             ),
         )
@@ -1235,6 +1258,14 @@ class BrowserRobot {
             BrowserRobot().interact()
             return Transition()
         }
+
+        fun clickNoThanksSurveyButton(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
+            surveyNoThanksButton.waitForExists(waitingTime)
+            surveyNoThanksButton.click()
+
+            BrowserRobot().interact()
+            return Transition()
+        }
     }
 }
 
@@ -1387,3 +1418,6 @@ private val contextMenuOpenInExternalApp =
 
 private val surveyButton =
     itemContainingText(getStringResource(R.string.preferences_take_survey))
+
+private val surveyNoThanksButton =
+    itemContainingText(getStringResource(R.string.preferences_not_take_survey))

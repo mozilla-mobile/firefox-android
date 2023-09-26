@@ -16,8 +16,6 @@ import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import org.mozilla.fenix.BrowserDirection
-import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.shopping.di.ReviewQualityCheckMiddlewareProvider
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckStore
@@ -35,13 +33,7 @@ class ReviewQualityCheckFragment : BottomSheetDialogFragment() {
             middleware = ReviewQualityCheckMiddlewareProvider.provideMiddleware(
                 settings = requireComponents.settings,
                 browserStore = requireComponents.core.store,
-                openLink = { link, shouldOpenInNewTab ->
-                    (requireActivity() as HomeActivity).openToBrowserAndLoad(
-                        searchTermOrURL = link,
-                        newTab = shouldOpenInNewTab,
-                        from = BrowserDirection.FromReviewQualityCheck,
-                    )
-                },
+                context = requireContext().applicationContext,
                 scope = lifecycleScope,
             ),
         )

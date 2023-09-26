@@ -2224,7 +2224,9 @@
     <!-- Caption for recommended product section indicating this is an ad by Fakespot. First parameter is the Fakespot product name. -->
     <string name="review_quality_check_ad_caption" tools:ignore="UnusedResources">Quảng cáo bởi %s</string>
     <!-- Caption for review quality check panel. First parameter is for clickable text defined in review_quality_check_powered_by_link. -->
-    <string name="review_quality_check_powered_by" tools:ignore="UnusedResources">Trình kiểm tra đánh giá được cung cấp bởi %s.</string>
+    <string name="review_quality_check_powered_by" tools:ignore="UnusedResources" moz:RemovedIn="119">Trình kiểm tra đánh giá được cung cấp bởi %s.</string>
+    <!-- Caption for review quality check panel. First parameter is for clickable text defined in review_quality_check_powered_by_link. -->
+    <string name="review_quality_check_powered_by_2">Trình kiểm tra đánh giá được cung cấp bởi %s</string>
     <!-- Clickable text that links to Fakespot.com. First parameter is the Fakespot product name. In the phrase "Fakespot by Mozilla", "by" can be localized. Does not need to stay by. -->
     <string name="review_quality_check_powered_by_link" tools:ignore="UnusedResources">%s bởi Mozilla</string>
     <!-- Text for title of warning card informing the user that the current analysis is outdated. -->
@@ -2244,9 +2246,9 @@
     <!-- Title for warning card informing the user that the current product's re-analysis is still processing. -->
     <string name="review_quality_check_reanalysis_in_progress_warning_title" tools:ignore="UnusedResources">Đang kiểm tra chất lượng đánh giá</string>
     <!-- Title for warning card informing the user that the current product's analysis is still processing. -->
-    <string name="review_quality_check_analysis_in_progress_warning_title" tools:ignore="UnusedResources">Đang kiểm tra chất lượng đánh giá</string>
+    <string name="review_quality_check_analysis_in_progress_warning_title">Đang kiểm tra chất lượng đánh giá</string>
     <!-- Text for body of warning card informing the user that the current product's analysis is still processing. -->
-    <string name="review_quality_check_analysis_in_progress_warning_body" tools:ignore="UnusedResources">Quá trình này có thể mất khoảng 60 giây.</string>
+    <string name="review_quality_check_analysis_in_progress_warning_body">Quá trình này có thể mất khoảng 60 giây.</string>
     <!-- Title for info card displayed after the user reports a product is back in stock. -->
     <string name="review_quality_check_analysis_requested_info_title" tools:ignore="UnusedResources">Cảm ơn bạn đã báo cáo!</string>
     <!-- Text for body of info card displayed after the user reports a product is back in stock. -->
@@ -2272,11 +2274,11 @@
     <!-- Text for body of error card displayed to the user when the device is disconnected from the network. -->
     <string name="review_quality_check_no_connection_body" tools:ignore="UnusedResources">Hãy kiểm tra kết nối mạng của bạn rồi thử tải lại trang.</string>
     <!-- Title for card displayed to the user for products whose reviews were not analyzed yet. -->
-    <string name="review_quality_check_no_analysis_title" tools:ignore="UnusedResources">Chưa có thông tin về những đánh giá này</string>
+    <string name="review_quality_check_no_analysis_title">Chưa có thông tin về những đánh giá này</string>
     <!-- Text for the body of card displayed to the user for products whose reviews were not analyzed yet. -->
-    <string name="review_quality_check_no_analysis_body" tools:ignore="UnusedResources">Để biết liệu đánh giá của sản phẩm này có đáng tin cậy hay không, hãy kiểm tra chất lượng đánh giá. Chỉ mất khoảng 60 giây.</string>
+    <string name="review_quality_check_no_analysis_body">Để biết liệu đánh giá của sản phẩm này có đáng tin cậy hay không, hãy kiểm tra chất lượng đánh giá. Chỉ mất khoảng 60 giây.</string>
     <!-- Text for button from body of card displayed to the user for products whose reviews were not analyzed yet. Clicking this should trigger a product analysis. -->
-    <string name="review_quality_check_no_analysis_link" tools:ignore="UnusedResources">Kiểm tra chất lượng đánh giá</string>
+    <string name="review_quality_check_no_analysis_link">Kiểm tra chất lượng đánh giá</string>
     <!-- Headline for review quality check contextual onboarding card. -->
     <string name="review_quality_check_contextual_onboarding_title">Hãy thử hướng dẫn đáng tin cậy của chúng tôi để đánh giá sản phẩm</string>
     <!-- Description for review quality check contextual onboarding card. The first and last two parameters are for retailer names (e.g. Amazon, Walmart). The second parameter is for the name of the application (e.g. Firefox). -->
@@ -2306,9 +2308,9 @@
     <!-- Flag showing that the review quality check feature is work in progress. -->
     <string name="review_quality_check_beta_flag" tools:ignore="UnusedResources">Beta</string>
     <!-- Content description (not visible, for screen readers etc.) for opening browser menu button to open review quality check bottom sheet. -->
-    <string name="browser_menu_review_quality_check">Mở Kiểm tra chất lượng đánh giá</string>
+    <string name="review_quality_check_open_handle_content_description">Mở trình kiểm tra đánh giá</string>
     <!-- Content description (not visible, for screen readers etc.) for closing browser menu button to open review quality check bottom sheet. -->
-    <string name="browser_menu_review_quality_check_close">Đóng Kiểm tra chất lượng đánh giá</string>
+    <string name="review_quality_check_close_handle_content_description">Đóng trình kiểm tra đánh giá</string>
     <!-- Content description (not visible, for screen readers etc.) for review quality check star rating. First parameter is the number of stars (1-5) representing the rating. -->
     <string name="review_quality_check_star_rating_content_description">%1$s trên tổng số 5 sao</string>
     <!-- Text for minimize button from highlights card. When clicked the highlights card should reduce its size. -->
@@ -2319,6 +2321,13 @@
     <string name="review_quality_check_highlights_type_quality">Chất lượng</string>
     <!-- Text for highlights card price category header. Reviews shown under this header should refer the product's price. -->
     <string name="review_quality_check_highlights_type_price">Giá</string>
+
+    <!-- Text for highlights card shipping category header. Reviews shown under this header should refer the product's shipping. -->
+    <string name="review_quality_check_highlights_type_shipping">Phương thức giao hàng</string>
+    <!-- Text for highlights card packaging and appearance category header. Reviews shown under this header should refer the product's packaging and appearance. -->
+    <string name="review_quality_check_highlights_type_packaging_appearance">Đóng gói và ngoại hình</string>
+    <!-- Text for highlights card competitiveness category header. Reviews shown under this header should refer the product's competitiveness. -->
+    <string name="review_quality_check_highlights_type_competitiveness">Tính cạnh tranh</string>
 
     <!-- Accessibility services actions labels. These will be appended to accessibility actions like "Double tap to.." but not by or applications but by services like Talkback. -->
     <!-- Action label for elements that can be collapsed if interacting with them. Talkback will append this to say "Double tap to collapse". -->
