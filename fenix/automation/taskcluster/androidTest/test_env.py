@@ -18,8 +18,8 @@ try:
 except KeyError as e:
     raise ValueError(f"ERROR: Missing Environment Variable: {e}")
 
-def parse_release_number(MOBILE_HEAD_REF):
-    parts = MOBILE_HEAD_REF.split('_')
+def parse_release_number(VERSION_NUMBER):
+    parts = VERSION_NUMBER.split('_')
     return parts[1]
 
 def build_milestone_name(product_type, release_type, version_number):
@@ -82,7 +82,7 @@ if __name__ == "__main__":
     TEST_SUITE_ID = 45442 # Demo Suite
 
     testrail = TestRail()
-    milestone_name = build_milestone_name(PRODUCT_TYPE, RELEASE_TYPE, VERSION_NUMBER)
+    milestone_name = build_milestone_name(PRODUCT_TYPE, RELEASE_TYPE, parse_release_number(VERSION_NUMBER))
     milestone_description = build_milestone_description(milestone_name)
 
     # Create milestone for 'Firefox for FireTV' and store the ID
