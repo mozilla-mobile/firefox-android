@@ -79,7 +79,7 @@ if __name__ == "__main__":
         raise ValueError("Tests failed. Sending Slack Notification...")
 
     PROJECT_ID = 53 # Firefox for FireTV
-    TEST_SUITE_ID = 45442 # Demo Suite
+    TEST_SUITE_ID = 45442 # Demo Test Suite
 
     testrail = TestRail()
     milestone_name = build_milestone_name(PRODUCT_TYPE, RELEASE_TYPE, parse_release_number(VERSION_NUMBER))
