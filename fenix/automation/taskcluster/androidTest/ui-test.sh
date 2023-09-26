@@ -109,6 +109,7 @@ function failure_check() {
         echo "TEST_STATUS=PASS" >> test_dashboard.env
     fi
 
+    env
     echo "WITHIN SCRIPT: TEST_STATUS is: $TEST_STATUS"
     cat test_status.env
     echo

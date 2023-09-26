@@ -6,6 +6,9 @@ from datetime import datetime
 
 load_dotenv("test_dashboard.env")
 
+for key,value in os.environ.items():
+    print(f"{key}: {value}")
+
 try:
     PRODUCT_TYPE = os.environ["PRODUCT_TYPE"]
     RELEASE_TYPE = os.environ["RELEASE_TYPE"]
