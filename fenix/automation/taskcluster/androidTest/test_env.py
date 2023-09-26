@@ -1,12 +1,15 @@
 import os
+import textwrap
 from lib.testrail_conn import APIClient
 from dotenv import load_dotenv
 from datetime import datetime
 
-load_dotenv("test_status.env")
+load_dotenv("test_dashboard.env")
 
 try:
-    MOBILE_HEAD_REF = os.environ['MOBILE_HEAD_REF']
+    PRODUCT_TYPE = os.environ["PRODUCT_TYPE"]
+    RELEASE_TYPE = os.environ["RELEASE_TYPE"]
+    VERSION_NUMBER = os.environ['MOBILE_HEAD_REF']
     TEST_STATUS = os.environ["TEST_STATUS"]
 
     if TEST_STATUS not in ('PASS', 'FAIL'):
@@ -18,13 +21,13 @@ def parse_release_number(MOBILE_HEAD_REF):
     parts = MOBILE_HEAD_REF.split('_')
     return parts[1]
 
-def build_milestone_name():
-    pass
+def build_milestone_name(product_type, release_type, version_number):
+    return f"Automated smoke testing sign-off - {product_type} {release_type} {version_number}"
 
-def build_milestone_description():
+def build_milestone_description(milestone_name):
     current_date = datetime.now()
     formatted_date = current_date = current_date.strftime("%B %d, %Y")
-    description = f"""
+    return textwrap.dedent(f"""
         RELEASE: {milestone_name}\n\n\
         RELEASE_TAG_URL: https://github.com/mozilla-mobile/fenix/releases\n\n\
         RELEASE_DATE: {formatted_date}\n\n\
@@ -33,9 +36,9 @@ def build_milestone_description():
         QA_RECOMENTATION_VERBOSE: \n\n\
         TESTING_SUMMARY\n\n\
         Known issues: n/a\n\
-        New issue: n\a\n\
+        New issue: n/a\n\
         Verified issue: 
-    """
+    """)
 
 class TestRail():
 
@@ -75,8 +78,8 @@ if __name__ == "__main__":
         raise ValueError("Tests failed. Sending Slack Notification...")
 
     testrail = TestRail()
-    milestone_name = f"Automated smoke testing sign-off - Jackie's Demo - {parse_release_number(MOBILE_HEAD_REF)}"
-    milestone_description = "HELLO_WORLD:\r\nTWO:\r\nTHREE:"
+    milestone_name = build_milestone_name(PRODUCT_TYPE, RELEASE_TYPE, VERSION_NUMBER)
+    milestone_description = build_milestone_description(milestone_name)
 
     # Create milestone for Snippets Project and store the ID
     milestone_id = testrail.create_milestone(45, milestone_name, milestone_description)['id']
