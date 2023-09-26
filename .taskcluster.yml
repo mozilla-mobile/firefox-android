@@ -217,17 +217,41 @@ tasks:
                                 $if: 'tasks_for == "github-push"'
                                 then:
                                     - 'assume:repo:github.com/${repoFullName}:branch:${short_head_ref}'
+                                    - secrets:get:project/mobile/firefox-android/fenix/testrail
+                                    - secrets:get:project/mobile/firefox-android/fenix/firebase
+                                    - queue:route:tc-treeherder.v2.firefox-android-pr.53ec6a00344ef7b7c1298615ad658c1b22752556.0
+                                    - queue:route:checks
+                                    - queue:create-task:project:none
+                                    - queue:scheduler-id:mobile-level-1
                                 else:
                                     $if: 'isPullRequest'
                                     then:
                                         - 'assume:repo:github.com/${repoFullName}:${tasks_for[7:]}'
+                                        - secrets:get:project/mobile/firefox-android/fenix/testrail
+                                        - secrets:get:project/mobile/firefox-android/fenix/firebase
+                                        - queue:route:tc-treeherder.v2.firefox-android-pr.53ec6a00344ef7b7c1298615ad658c1b22752556.0
+                                        - queue:route:checks
+                                        - queue:create-task:project:none
+                                        - queue:scheduler-id:mobile-level-1
                                     else:
                                         $if: 'tasks_for == "action"'
                                         then:
                                             # when all actions are hooks, we can calculate this directly rather than using a variable
                                             - '${action.repo_scope}'
+                                            - secrets:get:project/mobile/firefox-android/fenix/testrail
+                                            - secrets:get:project/mobile/firefox-android/fenix/firebase
+                                            - queue:route:tc-treeherder.v2.firefox-android-pr.53ec6a00344ef7b7c1298615ad658c1b22752556.0
+                                            - queue:route:checks
+                                            - queue:create-task:project:none
+                                            - queue:scheduler-id:mobile-level-1
                                         else:
                                             - 'assume:repo:github.com/${repoFullName}:cron:${cron.job_name}'
+                                            - secrets:get:project/mobile/firefox-android/fenix/testrail
+                                            - secrets:get:project/mobile/firefox-android/fenix/firebase
+                                            - queue:route:tc-treeherder.v2.firefox-android-pr.53ec6a00344ef7b7c1298615ad658c1b22752556.0
+                                            - queue:route:checks
+                                            - queue:create-task:project:none
+                                            - queue:scheduler-id:mobile-level-1
 
                             requires: all-completed
                             priority: lowest
