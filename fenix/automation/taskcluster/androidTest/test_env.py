@@ -1,6 +1,7 @@
 import os
 from lib.testrail_conn import APIClient
 from dotenv import load_dotenv
+from datetime import datetime
 
 load_dotenv("test_status.env")
 
@@ -16,6 +17,25 @@ except KeyError as e:
 def parse_release_number(MOBILE_HEAD_REF):
     parts = MOBILE_HEAD_REF.split('_')
     return parts[1]
+
+def build_milestone_name():
+    pass
+
+def build_milestone_description():
+    current_date = datetime.now()
+    formatted_date = current_date = current_date.strftime("%B %d, %Y")
+    description = f"""
+        RELEASE: {milestone_name}\n\n\
+        RELEASE_TAG_URL: https://github.com/mozilla-mobile/fenix/releases\n\n\
+        RELEASE_DATE: {formatted_date}\n\n\
+        TESTING_STATUS: [GREEN]/[DONE]\n\n\
+        QA_RECOMMENDATION:[Ship it.]\n\n\
+        QA_RECOMENTATION_VERBOSE: \n\n\
+        TESTING_SUMMARY\n\n\
+        Known issues: n/a\n\
+        New issue: n\a\n\
+        Verified issue: 
+    """
 
 class TestRail():
 
