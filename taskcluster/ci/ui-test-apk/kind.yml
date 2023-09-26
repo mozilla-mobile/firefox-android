@@ -54,6 +54,8 @@ tasks:
         dependencies:
             signed-apk-debug-apk: signing-apk-fenix-debug
             signed-apk-android-test: signing-apk-fenix-android-test-debug
+        scopes:
+            - secrets:get:project/mobile/firefox-android/fenix/testrail
         run:
             secrets:
                 - name: project/mobile/firefox-android/fenix/firebase
