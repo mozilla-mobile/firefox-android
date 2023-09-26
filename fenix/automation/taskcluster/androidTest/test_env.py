@@ -1,3 +1,4 @@
+import json
 import os
 import textwrap
 from lib.testrail_conn import APIClient
@@ -9,11 +10,31 @@ load_dotenv("test_dashboard.env")
 for key,value in os.environ.items():
     print(f"{key}: {value}")
 
+with open("./testrail_credentials.json", "r") as file:
+    data = json.load(file)
+
+print(f"DATA: {data}")
+secret = data['testrailCredentials']
+tr_username = secret['username']
+tr_pw = secret['password']
+tr_host = secret['host']
+
+creds = os.environ.get('TESTRAIL_CREDENTIALS')
+print("testrail credentials: f{creds}")
+json_creds = json.loads(creds)
+s = json_creds['testrailCredentials']
+TESTRAIL_USERNAME = s['username']
+TESTRAIL_PASSWORD = s['password']
+TESTRAIL_HOST = s['host']
+
+print(f"u/n: {TESTRAIL_USERNAME}, host: {TESTRAIL_HOST}, pw: {TESTRAIL_PASSWORD}")
+
 try:
     PRODUCT_TYPE = os.environ["PRODUCT_TYPE"]
     RELEASE_TYPE = os.environ["RELEASE_TYPE"]
     VERSION_NUMBER = os.environ['MOBILE_HEAD_REF']
     TEST_STATUS = os.environ["TEST_STATUS"]
+
 
     if TEST_STATUS not in ('PASS', 'FAIL'):
         raise ValueError(f"ERROR: Invalid TEST_STATUS value: {TEST_STATUS}")
@@ -47,9 +68,12 @@ class TestRail():
 
     def __init__(self):
         try:
-            self.client = APIClient(os.environ['TESTRAIL_HOST'])
-            self.client.user = os.environ['TESTRAIL_USERNAME']
-            self.client.password = os.environ['TESTRAIL_PASSWORD']
+        #     self.client = APIClient(os.environ['TESTRAIL_HOST'])
+        #     self.client.user = os.environ['TESTRAIL_USERNAME']
+        #     self.client.password = os.environ['TESTRAIL_PASSWORD']
+            self.client = APIClient(TESTRAIL_HOST)
+            self.client.user = TESTRAIL_USERNAME
+            self.client.password = TESTRAIL_PASSWORD
         except KeyError as e:
             raise ValueError(f"ERROR: Missing Testrail Env Var: {e}")
     

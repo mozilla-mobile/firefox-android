@@ -16,7 +16,8 @@
 
 
 # If a command fails then do not proceed and fail this script too.
-set -e
+# set -e
+set -x
 
 #########################
 # The command line help #
@@ -110,8 +111,7 @@ function failure_check() {
     fi
 
     env
-    echo "WITHIN SCRIPT: TEST_STATUS is: $TEST_STATUS"
-    cat test_status.env
+    cat test_dashboard.env
     echo
     echo "RESULTS"
     echo
@@ -130,6 +130,9 @@ function failure_check() {
         --results "${RESULTS_DIR}"
 }
 
+env
+ls -Ra
+cat ./testrail_credentials.json
 echo
 echo "FLANK VERSION"
 echo

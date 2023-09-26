@@ -28,7 +28,7 @@ task-defaults:
         max-run-time: 7200
         env:
             GOOGLE_APPLICATION_CREDENTIALS: '.firebase_token.json'
-            TESTRAIL_TOKEN: '.my_token_here'
+            TESTRAIL_CREDENTIALS: '.testrail_credentials.json'
         artifacts:
             - name: public
               path: /builds/worker/artifacts
@@ -59,6 +59,10 @@ tasks:
                 - name: project/mobile/firefox-android/fenix/firebase
                   key: firebaseToken
                   path: .firebase_token.json
+                  json: true
+                - name: project/mobile/firefox-android/fenix/testrail
+                  key: testrailCredentials
+                  path: .testrail_credentials.json
                   json: true
             pre-commands:
                 - ["cd", "fenix"]
