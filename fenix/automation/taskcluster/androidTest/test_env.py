@@ -5,36 +5,13 @@ from lib.testrail_conn import APIClient
 from dotenv import load_dotenv
 from datetime import datetime
 
-load_dotenv("test_dashboard.env")
-
-for key,value in os.environ.items():
-    print(f"{key}: {value}")
-
-with open("./testrail_credentials.json", "r") as file:
-    data = json.load(file)
-
-print(f"DATA: {data}")
-secret = data['testrailCredentials']
-tr_username = secret['username']
-tr_pw = secret['password']
-tr_host = secret['host']
-
-creds = os.environ.get('TESTRAIL_CREDENTIALS')
-print("testrail credentials: f{creds}")
-json_creds = json.loads(creds)
-s = json_creds['testrailCredentials']
-TESTRAIL_USERNAME = s['username']
-TESTRAIL_PASSWORD = s['password']
-TESTRAIL_HOST = s['host']
-
-print(f"u/n: {TESTRAIL_USERNAME}, host: {TESTRAIL_HOST}, pw: {TESTRAIL_PASSWORD}")
+load_dotenv("test_dashboard.env") # Must contain the 4 env var in try-block
 
 try:
     PRODUCT_TYPE = os.environ["PRODUCT_TYPE"]
     RELEASE_TYPE = os.environ["RELEASE_TYPE"]
-    VERSION_NUMBER = os.environ['MOBILE_HEAD_REF']
+    VERSION_NUMBER = os.environ["MOBILE_HEAD_REF"]
     TEST_STATUS = os.environ["TEST_STATUS"]
-
 
     if TEST_STATUS not in ('PASS', 'FAIL'):
         raise ValueError(f"ERROR: Invalid TEST_STATUS value: {TEST_STATUS}")
@@ -55,8 +32,8 @@ def build_milestone_description(milestone_name):
         RELEASE: {milestone_name}\n\n\
         RELEASE_TAG_URL: https://github.com/mozilla-mobile/fenix/releases\n\n\
         RELEASE_DATE: {formatted_date}\n\n\
-        TESTING_STATUS: [GREEN]/[DONE]\n\n\
-        QA_RECOMMENDATION:[Ship it.]\n\n\
+        TESTING_STATUS: [ TBD ]\n\n\
+        QA_RECOMMENDATION:[ TBD ]\n\n\
         QA_RECOMENTATION_VERBOSE: \n\n\
         TESTING_SUMMARY\n\n\
         Known issues: n/a\n\
@@ -68,12 +45,9 @@ class TestRail():
 
     def __init__(self):
         try:
-        #     self.client = APIClient(os.environ['TESTRAIL_HOST'])
-        #     self.client.user = os.environ['TESTRAIL_USERNAME']
-        #     self.client.password = os.environ['TESTRAIL_PASSWORD']
-            self.client = APIClient(TESTRAIL_HOST)
-            self.client.user = TESTRAIL_USERNAME
-            self.client.password = TESTRAIL_PASSWORD
+            self.client = APIClient(os.environ['TESTRAIL_HOST'])
+            self.client.user = os.environ['TESTRAIL_USERNAME']
+            self.client.password = os.environ['TESTRAIL_PASSWORD']
         except KeyError as e:
             raise ValueError(f"ERROR: Missing Testrail Env Var: {e}")
     
@@ -88,9 +62,9 @@ class TestRail():
         return self.client.send_post(f'add_run/{testrail_project_id}', data)
     
     def update_test_cases_to_passed(self, testrail_project_id, testrail_run_id, testrail_suite_id):
-        test_cases = self.get_test_cases(testrail_project_id, testrail_suite_id)
+        test_cases = self._get_test_cases(testrail_project_id, testrail_suite_id)
         data = { "results": [{"case_id": test_case['id'], "status_id": 1} for test_case in test_cases]}
-        return testrail.update_test_run_results(testrail_run_id, data)
+        return testrail._update_test_run_results(testrail_run_id, data)
 
     # Private Methods
 
@@ -104,14 +78,17 @@ if __name__ == "__main__":
     if TEST_STATUS != 'PASS':
         raise ValueError("Tests failed. Sending Slack Notification...")
 
+    PROJECT_ID = 53 # Firefox for FireTV
+    TEST_SUITE_ID = 45442 # Demo Suite
+
     testrail = TestRail()
     milestone_name = build_milestone_name(PRODUCT_TYPE, RELEASE_TYPE, VERSION_NUMBER)
     milestone_description = build_milestone_description(milestone_name)
 
-    # Create milestone for Snippets Project and store the ID
-    milestone_id = testrail.create_milestone(45, milestone_name, milestone_description)['id']
+    # Create milestone for 'Firefox for FireTV' and store the ID
+    milestone_id = testrail.create_milestone(PROJECT_ID, milestone_name, milestone_description)['id']
 
     # Create test run for each Device/API and update test cases to 'passed'
     for test_run_name in ['Google Pixel 32(Android11)', 'Google Pixel2(Android9)']:
-        test_run_id = testrail.create_test_run(45, milestone_id, test_run_name, 45384)['id']
-        testrail.update_test_cases_to_passed(45, test_run_id, 45384)
+        test_run_id = testrail.create_test_run(PROJECT_ID, milestone_id, test_run_name, TEST_SUITE_ID)['id']
+        testrail.update_test_cases_to_passed(PROJECT_ID, test_run_id, TEST_SUITE_ID)
