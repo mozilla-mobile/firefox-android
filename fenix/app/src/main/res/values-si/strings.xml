@@ -14,7 +14,7 @@
     <!-- Content description (not visible, for screen readers etc.): "Private Browsing" menu button. -->
     <string name="content_description_disable_private_browsing_button">පෞද්. පිරික්සීම අබල කරන්න</string>
     <!-- Placeholder text shown in the search bar before a user enters text for the default engine -->
-    <string name="search_hint">සොයන්න හෝ ලිපිනය යොදන්න</string>
+    <string name="search_hint">සොයන්න හෝ ලිපිනය ලියන්න</string>
     <!-- Placeholder text shown in the search bar before a user enters text for a general engine -->
     <string name="search_hint_general_engine">වියමනහි සොයන්න</string>
     <!-- Placeholder text shown in search bar when using history search -->
@@ -86,6 +86,7 @@
     <string name="tcp_cfr_message">අපගේ ප්‍රබලම රහස්‍යතා විශේෂාංගය හරස්-අඩවි ලුහුබැඳීම් හුදකලා කරයි.</string>
     <!-- Text displayed that links to website containing documentation about the "Total cookie protection" feature. -->
     <string name="tcp_cfr_learn_more">පූර්ණ දත්තකඩ රැකවරණය ගැන දැනගන්න</string>
+
 
     <!-- Text for the info dialog when camera permissions have been denied but user tries to access a camera feature. -->
     <string name="camera_permissions_needed_message">රූගතයට ප්‍රවේශය අවශ්‍යයි. ඇන්ඩ්‍රොයිඩ් සැකසුම් වෙත ගොස්, අවසර මත තට්ටු කර ඉඩ දෙන්න තට්ටු කරන්න.</string>
@@ -217,6 +218,9 @@
     <!-- Content description for the Home screen button on the browser toolbar -->
     <string name="browser_toolbar_home">මුල් තිරය</string>
 
+    <!-- Content description (not visible, for screen readers etc.): Erase button: Erase the browsing
+         history and go back to the home screen. -->
+    <string name="browser_toolbar_erase">පිරික්සුම් ඉතිහාසය මකන්න</string>
     <!-- Locale Settings Fragment -->
     <!-- Content description for tick mark on selected language -->
     <string name="a11y_selected_locale_content_description">තෝරාගත් භාෂාව</string>
@@ -307,7 +311,7 @@
     <string name="juno_onboarding_default_browser_description" moz:RemovedIn="117" tools:ignore="UnusedResources">%1$s සැමවිට ලාභයට ඉහළින් මිනිසුන්ව තබයි. හරස්-අඩවි ලුහුබැඳීම් අවහිර කර ඔබගේ පෞද්ගලිකත්‍වය රැක දෙයි.\n\nඅපගේ %2$s හරහා තව දැනගන්න.</string>
     <!-- Description for set firefox as default browser screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
         Note: The word "Firefox" should NOT be translated -->
-    <string name="juno_onboarding_default_browser_description_nimbus" tools:ignore="UnusedResources">%1$s සැමවිට ලාභයට ඉහළින් මිනිසුන්ව තබයි. හරස්-අඩවි ලුහුබැඳීම් අවහිර කර ඔබගේ පෞද්ගලිකත්‍වය රැක දෙයි.\n\nඅපගේ පෞද්ගලිකත්‍ව දැන්වීම හරහා තව දැනගන්න.</string>
+    <string name="juno_onboarding_default_browser_description_nimbus" tools:ignore="UnusedResources">ෆයර්ෆොක්ස් සැමවිට ලාභයට ඉහළින් මිනිසුන්ව තබයි. හරස්-අඩවි ලුහුබැඳීම් අවහිර කර ඔබගේ පෞද්ගලිකත්‍වය රැක දෙයි.\n\nඅපගේ පෞද්ගලිකත්‍ව දැන්වීම හරහා තව දැනගන්න.</string>
     <!-- Text for the link to the privacy notice webpage for set as firefox default browser screen.
     This is part of the string with the key "juno_onboarding_default_browser_description". -->
     <string name="juno_onboarding_default_browser_description_link_text" tools:ignore="UnusedResources">පෞද්ගලිකත්‍ව දැන්වීම</string>
@@ -318,7 +322,7 @@
     <!-- Title for sign in to sync screen. -->
     <string name="juno_onboarding_sign_in_title" tools:ignore="UnusedResources">දුරකථනයෙන් පරිගණකයට සහ ආපසු</string>
     <!-- Description for sign in to sync screen. -->
-    <string name="juno_onboarding_sign_in_description" tools:ignore="UnusedResources">ඔබ නතර කළ තැනින් අතට ගැනීමට ඔබගේ අනෙකුත් උපාංගවලින් පටිති සහ මුරපද ගන්න.</string>
+    <string name="juno_onboarding_sign_in_description" tools:ignore="UnusedResources">ඔබ නතර කළ තැනින් අතට ගැනීමට ඔබගේ අනෙකුත් උපාංගවල පටිති සහ මුරපද අරගන්න.</string>
     <!-- Text for the button to sign in to sync on the device -->
     <string name="juno_onboarding_sign_in_positive_button" tools:ignore="UnusedResources">පිවිසෙන්න</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
@@ -339,6 +343,9 @@
     <string name="juno_onboarding_enable_notifications_positive_button" tools:ignore="UnusedResources">දැනුම්දීම් සක්‍රිය කරන්න</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
     <string name="juno_onboarding_enable_notifications_negative_button" tools:ignore="UnusedResources">දැන් නොවේ</string>
+
+    <!-- Text for the button to dismiss the screen and move on with the flow -->
+    <string name="juno_onboarding_add_search_widget_negative_button" tools:ignore="UnusedResources">දැන් නොවේ</string>
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. The first parameter is the name of the application.-->
@@ -369,6 +376,8 @@
     <string name="preferences_default_search_engine">පෙරනිමි සෙවුම් යන්ත්‍රය</string>
     <!-- Preference for settings related to Search -->
     <string name="preferences_search">සොයන්න</string>
+    <!-- Preference for settings related to Search engines -->
+    <string name="preferences_search_engines">සෙවුම් යන්ත්‍ර</string>
     <!-- Preference for settings related to Search address bar -->
     <string name="preferences_search_address_bar">ලිපින තීරුව</string>
     <!-- Preference link to rating Fenix on the Play Store -->
@@ -626,6 +635,10 @@
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is already installed -->
     <string name="addon_already_installed">එක්කහුව දැනටමත් ස්ථාපිතයි</string>
 
+    <!-- Add-on process crash dialog to user -->
+    <!-- Title of a dialog shown to the user when enough errors have occurred with addons and they need to be temporarily disabled -->
+    <string name="addon_process_crash_dialog_title" tools:ignore="UnusedResources">එක්කහුව තාවකාලිකව අබල කර ඇත</string>
+
     <!-- Account Preferences -->
     <!-- Preference for managing your account via accounts.firefox.com -->
     <string name="preferences_manage_account">ගිණුම කළමනාකරණය</string>
@@ -670,7 +683,7 @@
     <!-- Name of the "receive tabs" notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="fxa_received_tab_channel_name">ලැබුණු පටිති</string>
     <!-- Description of the "receive tabs" notification channel. Displayed in the "App notifications" system settings for the app -->
-    <string name="fxa_received_tab_channel_description">වෙනත් ෆයර්ෆොක්ස් උපාංගවලින් ලැබුණු පටිති සඳහා දැනුම්දීම්.</string>
+    <string name="fxa_received_tab_channel_description">වෙනත් ෆයර්ෆොක්ස් උපාංග වලින් ලැබුණු පටිති සඳහා දැනුම්දීම්.</string>
     <!--  The body for these is the URL of the tab received  -->
     <string name="fxa_tab_received_notification_name">පටිත්ත ලැබුණි</string>
     <!-- %s is the device name -->
@@ -1343,12 +1356,16 @@
     <!-- Subtitle for the tabs item in Delete browsing data, parameter will be replaced with the number of open tabs -->
     <string name="preferences_delete_browsing_data_tabs_subtitle">පටිති %d</string>
     <!-- Title for the data and history items in Delete browsing data -->
-    <string name="preferences_delete_browsing_data_browsing_data_title" moz:removedIn="118">පිරික්සුම් ඉතිහාසය හා අඩවි දත්ත</string>
+    <string name="preferences_delete_browsing_data_browsing_data_title" moz:removedIn="118" tools:ignore="UnusedResources">පිරික්සුම් ඉතිහාසය හා අඩවි දත්ත</string>
+    <!-- Title for the history item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_browsing_history_title">පිරික්සුම් ඉතිහාසය</string>
     <!-- Subtitle for the data and history items in delete browsing data, parameter will be replaced with the
         number of history items the user has -->
     <string name="preferences_delete_browsing_data_browsing_data_subtitle">ලිපින %d</string>
     <!-- Title for the cookies item in Delete browsing data -->
-    <string name="preferences_delete_browsing_data_cookies" moz:removedIn="118">දත්තකඩ</string>
+    <string name="preferences_delete_browsing_data_cookies" moz:removedIn="118" tools:ignore="UnusedResources">දත්තකඩ</string>
+    <!-- Title for the cookies and site data items in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_cookies_and_site_data">දත්තකඩ හා අඩවි දත්ත</string>
     <!-- Subtitle for the cookies item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_cookies_subtitle">ඔබව බොහෝ අඩවි වලින් නික්මවෙනු ඇත</string>
     <!-- Title for the cached images and files item in Delete browsing data -->
@@ -1371,7 +1388,7 @@
     <!-- Title text of a delete browsing data dialog. -->
     <string name="delete_history_prompt_title">මකා දමන කාල පරාසය</string>
     <!-- Body text of a delete browsing data dialog. -->
-    <string name="delete_history_prompt_body" moz:RemovedIn="130" tools:ignore="UnusedResources">ඉතිහාසය (අන් උපාංග වලින් සමමුහූර්ත ඉතිහාසය ද), දත්තකඩ හා වෙනත් පිරික්සුම් දත්ත ඉවත් කරයි.</string>
+    <string name="delete_history_prompt_body" moz:RemovedIn="130" tools:ignore="UnusedResources">ඉතිහාසය (අනෙකුත් උපාංග වලින් සමමුහූර්ත ඉතිහාසය ද), දත්තකඩ හා වෙනත් පිරික්සුම් දත්ත ඉවත් කරයි.</string>
     <!-- Body text of a delete browsing data dialog. -->
     <string name="delete_history_prompt_body_2">ඉතිහාසය ඉවත් කරයි (අන් උපාංග වෙතින් සමමුහූර්ත දෑ ඇතුළුව)</string>
     <!-- Radio button in the delete browsing data dialog to delete history items for the last hour. -->
@@ -1998,9 +2015,9 @@
     <!-- Text displayed when user has disabled tab syncing in Firefox Sync Account -->
     <string name="synced_tabs_enable_tab_syncing">පටිති සමමුහූර්තය සබල කරන්න.</string>
     <!-- Text displayed when user has no tabs that have been synced -->
-    <string name="synced_tabs_no_tabs">ඔබගේ අනෙකුත් උපාංගවල ෆයර්ෆොක්ස් හි පටිති කිසිවක් විවෘත කර නැත.</string>
+    <string name="synced_tabs_no_tabs">ඔබගේ අනෙකුත් උපාංගවල ෆයර්ෆොක්ස් පටිති කිසිවක් විවෘත කර නැත.</string>
     <!-- Text displayed in the synced tabs screen when a user is not signed in to Firefox Sync describing Synced Tabs -->
-    <string name="synced_tabs_sign_in_message">ඔබගේ අනෙකුත් උපාංග වලින් පටිති ලේඛනයක් බලන්න.</string>
+    <string name="synced_tabs_sign_in_message">ඔබගේ අනෙකුත් උපාංගවල පටිති ලේඛනය බලන්න.</string>
     <!-- Text displayed on a button in the synced tabs screen to link users to sign in when a user is not signed in to Firefox Sync -->
     <string name="synced_tabs_sign_in_button">සමමුහූර්තයට පිවිසෙන්න</string>
     <!-- The text displayed when a synced device has no tabs to show in the list of Synced Tabs. -->
@@ -2095,6 +2112,40 @@
 
     <!-- Snackbar button text to navigate to telemetry settings.-->
     <string name="experiments_snackbar_button">සැකසුම් වෙත යන්න</string>
+
+    <!-- Review quality check feature-->
+    <!-- Name for the review quality check feature used as title for the panel. -->
+    <string name="review_quality_check_feature_name">සමාලෝචන සෝදිසිකරු</string>
+    <!-- Text for learn more caption presenting a link with information about review quality. First parameter is for clickable text defined in review_quality_check_info_learn_more_link. -->
+    <string name="review_quality_check_info_learn_more">%s ගැන තව දැනගන්න.</string>
+    <!-- Text for title of settings section. -->
+    <string name="review_quality_check_settings_title">සැකසුම්</string>
+    <!-- Clickable text that links to review quality check recommended products support article. -->
+    <string name="review_quality_check_settings_recommended_products_learn_more" tools:ignore="UnusedResources">තව දැනගන්න</string>
+    <!-- Text for turning sidebar off button from review quality check settings section. -->
+    <string name="review_quality_check_settings_turn_off">සමාලෝචන සෝදිසිකරු අක්‍රිය කරන්න</string>
+    <!-- Title for info card displayed to the user when analysis finished updating. -->
+    <string name="review_quality_check_analysis_updated_confirmation_title" tools:ignore="UnusedResources">විශ්ලේෂණය යාවත්කාලීනයි</string>
+    <!-- Text for the action button from info card displayed to the user when analysis finished updating. -->
+    <string name="review_quality_check_analysis_updated_confirmation_action" tools:ignore="UnusedResources">තේරුණා</string>
+    <!-- Title for error card displayed to the user when an error occurred. -->
+    <string name="review_quality_check_generic_error_title">දැනට තොරතුරු නැත</string>
+    <!-- Clickable text from the contextual onboarding card that links to review quality check support article. -->
+    <string name="review_quality_check_contextual_onboarding_learn_more_link">තව දැනගන්න</string>
+    <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot privacy policy. -->
+    <string name="review_quality_check_contextual_onboarding_privacy_policy">පෞද්ගලිකත්‍ව ප්‍රතිපත්තිය</string>
+    <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot terms of use. -->
+    <string name="review_quality_check_contextual_onboarding_terms_use">භාවිත නියම</string>
+    <!-- Text for opt-out button from the review quality check contextual onboarding card. -->
+    <string name="review_quality_check_contextual_onboarding_secondary_button_text">දැන් නොවේ</string>
+    <!-- Flag showing that the review quality check feature is work in progress. -->
+    <string name="review_quality_check_beta_flag" tools:ignore="UnusedResources">බීටා</string>
+    <!-- Text for minimize button from highlights card. When clicked the highlights card should reduce its size. -->
+    <string name="review_quality_check_highlights_show_less">අඩුවෙන් පෙන්වන්න</string>
+    <!-- Text for maximize button from highlights card. When clicked the highlights card should expand to its full size. -->
+    <string name="review_quality_check_highlights_show_more">තව පෙන්වන්න</string>
+    <!-- Text for highlights card price category header. Reviews shown under this header should refer the product's price. -->
+    <string name="review_quality_check_highlights_type_price">මිල</string>
 
     <!-- Accessibility services actions labels. These will be appended to accessibility actions like "Double tap to.." but not by or applications but by services like Talkback. -->
     <!-- Action label for elements that can be collapsed if interacting with them. Talkback will append this to say "Double tap to collapse". -->

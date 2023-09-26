@@ -5,6 +5,7 @@
 package org.mozilla.fenix.shopping.store
 
 import mozilla.components.lib.state.Store
+import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent.AnalysisStatus
 
 /**
@@ -50,12 +51,12 @@ private fun mapStateForUpdateAction(
                     )
                 }
             } else {
-                ReviewQualityCheckState.NotOptedIn
+                ReviewQualityCheckState.NotOptedIn()
             }
         }
 
         ReviewQualityCheckAction.OptOut -> {
-            ReviewQualityCheckState.NotOptedIn
+            ReviewQualityCheckState.NotOptedIn()
         }
 
         ReviewQualityCheckAction.ToggleProductRecommendation -> {
@@ -74,20 +75,20 @@ private fun mapStateForUpdateAction(
 
         ReviewQualityCheckAction.FetchProductAnalysis, ReviewQualityCheckAction.RetryProductAnalysis -> {
             state.mapIfOptedIn {
-                it.copy(productReviewState = ReviewQualityCheckState.OptedIn.ProductReviewState.Loading)
+                it.copy(productReviewState = ProductReviewState.Loading)
             }
         }
 
         ReviewQualityCheckAction.ReanalyzeProduct -> {
             state.mapIfOptedIn {
                 when (it.productReviewState) {
-                    is ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent -> {
+                    is ProductReviewState.AnalysisPresent -> {
                         val productReviewState =
                             it.productReviewState.copy(analysisStatus = AnalysisStatus.REANALYZING)
                         it.copy(productReviewState = productReviewState)
                     }
 
-                    is ReviewQualityCheckState.OptedIn.ProductReviewState.NoAnalysisPresent -> {
+                    is ProductReviewState.NoAnalysisPresent -> {
                         it.copy(productReviewState = it.productReviewState.copy(isReanalyzing = true))
                     }
 

@@ -63,7 +63,7 @@
     <!-- The error message shown when the user's network connection is interrupted while connecting to a website. -->
     <string name="mozac_browser_errorpages_net_interrupt_message"><![CDATA[<p>დაკავშირება წარმატებული იყო, მაგრამ მოულოდნელად გაწყდა მონაცემთა გადმოტანისას. გთხოვთ, კვლავ სცადოთ.</p>
 <ul>
-        <li>საიტი დროებით მიუწვდომელი ან გადატვირთულია. სცადეთ ხელახლა, ცოტა ხანში.</li>
+        <li>საიტი დროებით მიუწვდომელი ან გადატვირთულია. სცადეთ ხელახლა ცოტა ხანში.</li>
         <li>თუ სხვა გვერდების გახსნასაც ვერ ახერხებთ, შეამოწმეთ მოწყობილობის ფიჭური ან WiFi-კავშირი.</li>
       </ul>]]></string>
 
@@ -84,7 +84,7 @@
 
     <!-- The error message shown when a website could not be reached. -->
     <string name="mozac_browser_errorpages_connection_failure_message"><![CDATA[<ul>
-        <li>საიტი დროებით მიუწვდომელი ან გადატვირთულია. სცადეთ ხელახლა, ცოტა ხანში.</li>
+        <li>საიტი დროებით მიუწვდომელი ან გადატვირთულია. სცადეთ ხელახლა ცოტა ხანში.</li>
         <li>თუ სხვა გვერდების გახსნასაც ვერ ახერხებთ, შეამოწმეთ მოწყობილობის ფიჭური ან WiFi-კავშირი.</li>
       </ul>]]></string>
 
@@ -126,7 +126,7 @@
     <!-- The error message shown when the Internet connection is disrupted while loading a website. -->
     <string name="mozac_browser_errorpages_net_reset_message"><![CDATA[<p>ქსელური ბმა გაწყდა კავშირის შეთანხმებისას. გთხოვთ კვლავ სცადოთ.</p>
       <ul>
-        <li>საიტი დროებით მიუწვდომელი ან გადატვირთულია. სცადეთ ხელახლა, ცოტა ხანში.</li>
+        <li>საიტი დროებით მიუწვდომელი ან გადატვირთულია. სცადეთ ხელახლა ცოტა ხანში.</li>
         <li>თუ სხვა გვერდების გახსნასაც ვერ ახერხებთ, შეამოწმეთ მოწყობილობის ფიჭური ან WiFi-კავშირი.</li>
       </ul>]]></string>
 
@@ -265,7 +265,7 @@
     <!-- The title of the error page for websites that do not support HTTPS when HTTPS-Only is turned on -->
     <string name="mozac_browser_errorpages_httpsonly_title">უსაფრთხო საიტი მიუწვდომელია</string>
     <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will be replaced with the URL of the website. -->
-    <string name="mozac_browser_errorpages_httpsonly_message"><![CDATA[თქვენ ჩართული გაქვთ მხოლოდ-HTTPS-რეჟიმი მაღალი უსაფრთხოებისთვის მაგრამ <em>%1$s</em> არაა წარმოდგენილი დაცული HTTPS-ვერსიით.]]></string>
+    <string name="mozac_browser_errorpages_httpsonly_message"><![CDATA[თქვენ ჩართული გაქვთ მხოლოდ-HTTPS-რეჟიმი გაუმჯობესებული უსაფრთხოებისთვის, მაგრამ <em>%1$s</em> არაა წარმოდგენილი დაცული HTTPS-ვერსიით.]]></string>
     <!-- Button on error page for websites that do not support HTTPS when HTTPS-Only is turned on. Clicking the button allows the user to nevertheless load the website using HTTP. -->
     <string name="mozac_browser_errorpages_httpsonly_button">გადასვლა HTTP-საიტზე</string>
 </resources>
