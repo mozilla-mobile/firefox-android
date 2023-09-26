@@ -1,5 +1,21 @@
 import os
 from lib.testrail_conn import APIClient
+from dotenv import load_dotenv
+
+load_dotenv("test_status.env")
+
+try:
+    MOBILE_HEAD_REF = os.environ['MOBILE_HEAD_REF']
+    TEST_STATUS = os.environ["TEST_STATUS"]
+
+    if TEST_STATUS not in ('PASS', 'FAIL'):
+        raise ValueError(f"ERROR: Invalid TEST_STATUS value: {TEST_STATUS}")
+except KeyError as e:
+    raise ValueError(f"ERROR: Missing Environment Variable: {e}")
+
+def parse_release_number(MOBILE_HEAD_REF):
+    parts = MOBILE_HEAD_REF.split('_')
+    return parts[1]
 
 class TestRail():
 
@@ -28,15 +44,18 @@ class TestRail():
 
     # Private Methods
 
-    def get_test_cases(self, testrail_project_id, testrail_test_suite_id):
+    def _get_test_cases(self, testrail_project_id, testrail_test_suite_id):
         return self.client.send_get(f'get_cases/{testrail_project_id}&suite_id={testrail_test_suite_id}')
     
-    def update_test_run_results(self, testrail_run_id, data):
+    def _update_test_run_results(self, testrail_run_id, data):
         return self.client.send_post(f'add_results_for_cases/{testrail_run_id}', data)
     
 if __name__ == "__main__":
+    if TEST_STATUS != 'PASS':
+        raise ValueError("Tests failed. Sending Slack Notification...")
+
     testrail = TestRail()
-    milestone_name = "Automated smoke testing sign-off - Jackie's Demo - 4"
+    milestone_name = f"Automated smoke testing sign-off - Jackie's Demo - {parse_release_number(MOBILE_HEAD_REF)}"
     milestone_description = "HELLO_WORLD:\r\nTWO:\r\nTHREE:"
 
     # Create milestone for Snippets Project and store the ID
