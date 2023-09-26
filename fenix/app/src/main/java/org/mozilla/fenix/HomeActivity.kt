@@ -367,7 +367,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             components.core.contileTopSitesUpdater.startPeriodicWork()
         }
 
-        if (settings().enableUnifiedSearchSettingsUI && !settings().hiddenEnginesRestored) {
+        if (!settings().hiddenEnginesRestored) {
             settings().hiddenEnginesRestored = true
             components.useCases.searchUseCases.restoreHiddenSearchEngines.invoke()
         }
