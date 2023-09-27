@@ -110,8 +110,8 @@ function failure_check() {
         echo "TEST_STATUS=PASS" >> test_dashboard.env
     fi
 
-    env
-    cat test_dashboard.env
+    echo "PRODUCT_TYPE=Firefox" >> test_dashboard.env
+    echo "RELEASE_TYPE=RC" >> test_dashboard.env
     echo
     echo "RESULTS"
     echo
@@ -132,7 +132,7 @@ function failure_check() {
 
 env
 ls -Ra
-cat ./testrail_credentials.json
+cat test_dashboard.env
 echo
 echo "FLANK VERSION"
 echo
