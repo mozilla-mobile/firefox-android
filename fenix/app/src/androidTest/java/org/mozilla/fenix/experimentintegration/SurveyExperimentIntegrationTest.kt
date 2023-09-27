@@ -37,6 +37,13 @@ class SurveyExperimentIntegrationTest {
 
     @After
     fun tearDown() {
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openExperimentsMenu {
+            verifyExperimentExists(experimentName)
+        }
+
         TestHelper.appContext.settings().showSecretDebugMenuThisSession = false
     }
 
@@ -47,13 +54,6 @@ class SurveyExperimentIntegrationTest {
         }.clickSurveyButton {
             verifyUrl(surveyURL)
         }
-
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openExperimentsMenu {
-            verifyExperimentExists(experimentName)
-        }
     }
 
     @Test
@@ -63,12 +63,15 @@ class SurveyExperimentIntegrationTest {
         }.clickNoThanksSurveyButton {
             verifyTabCounter("0")
         }
+    }
 
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openExperimentsMenu {
-            verifyExperimentExists(experimentName)
+    @Test
+    fun checkHomescreenSurveyDismissesCorrectly() {
+        browserScreen {
+            verifyHomeScreenSurveyCloseButton()
+        }.clickHomeScreenSurveyCloseButton {
+            verifyTabCounter("0")
+            verifySurveyButtonDoesNotExist()
         }
     }
 
