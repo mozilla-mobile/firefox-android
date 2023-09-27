@@ -101,4 +101,3 @@ if __name__ == "__main__":
     for test_run_name in ['Google Pixel 32(Android11)', 'Google Pixel2(Android9)']:
         test_run_id = testrail.create_test_run(PROJECT_ID, milestone_id, test_run_name, TEST_SUITE_ID)['id']
         testrail.update_test_cases_to_passed(PROJECT_ID, test_run_id, TEST_SUITE_ID)
-    raise Exception("Throwing Error to trigger slack notification")

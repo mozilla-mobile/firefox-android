@@ -43,9 +43,9 @@ task-defaults:
             - content: "faketoken"
               path: .adjust_token
     routes:
-        - notify.slack-channel.G016BC5FUHJ.on-resolved
+        - notify.slack-channel.G016BC5FUHJ.on-completed
     scopes:
-        - queue:route:notify.slack-channel.G016BC5FUHJ.on-resolved
+        - queue:route:notify.slack-channel.G016BC5FUHJ.on-completed
             - notify:slack-channel:G016BC5FUHJ
     extra:
         notify:
