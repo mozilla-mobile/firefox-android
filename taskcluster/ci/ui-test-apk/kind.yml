@@ -28,7 +28,6 @@ task-defaults:
         max-run-time: 7200
         env:
             GOOGLE_APPLICATION_CREDENTIALS: '.firebase_token.json'
-            TESTRAIL_CREDENTIALS: '.testrail_credentials.json'
         artifacts:
             - name: public
               path: /builds/worker/artifacts
@@ -43,6 +42,77 @@ task-defaults:
         dummy-secrets:
             - content: "faketoken"
               path: .adjust_token
+    routes:
+        - notify.slack-channel.G016BC5FUHJ
+    scopes:
+        - queue:route:notify.slack-channel.G016BC5FUHJ
+            - notify:slack-channel:G016BC5FUHJ
+    extra:
+        notify:
+            # slackText: 'https://firefox-ci-tc.services.mozilla.com/tasks/${status.taskId} | ${task.metadata.name} | ${task.metadata.source}'
+            slackBlocks: |
+                [
+                  {
+                    "type": "header",
+                    "text": {
+                      "type": "plain_text",
+                      "text": "firefox-android :tada: Testrail Release Milestone Creation :tada:\n "
+                    }
+                  },
+                  {
+                    "type": "divider"
+                  },
+                  {
+                     "type": "section",
+                     "text": {
+                         "type": "mrkdwn",
+                         "text": "*Task*: <https://firefox-ci-tc.services.mozilla.com/tasks/${status.taskId}|Taskcluster>"
+                    }
+                  },
+                  {
+                    "type": "section",
+                    "text": {
+                      "type": "mrkdwn",
+                      "text": "*Owner*: ${task.metadata.owner}"
+                    }
+                  },
+                  {
+                    "type": "section",
+                    "text": {
+                      "type": "mrkdwn",
+                      "text": "*Source*: <${task.payload.env.MOBILE_BASE_REPOSITORY}/commit/${task.payload.env.MOBILE_HEAD_REV}|Commit> :github:"
+                    }
+                  },
+                  {
+                    "type": "divider"
+                  },
+                  {
+                    "type": "section",
+                    "text": {
+                      "type": "mrkdwn",
+                      "text": "*Testrail Release Milestone*: <https://testrail.stage.mozaws.net/index.php?/projects/overview/53|Milestone> :clown-face:"
+                    }
+                  },
+                  {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": "Hello <@UXXXXXX> and <@UYYYYYY>, *Testrail Release Milestone* has been created"
+                    }
+                  },
+                  {
+                    "type": "divider"
+                  },
+                  {
+                    "type": "context",
+                    "elements": [
+                        {
+                            "type": "mrkdwn",
+                            "text": ":testops-notify: created by <https://mozilla-hub.atlassian.net/wiki/spaces/MTE/overview|Mobile Test Engineering>"
+                        }
+                    ]
+                  }
+                ]
 
 tasks:
     fenix-arm-debug:
