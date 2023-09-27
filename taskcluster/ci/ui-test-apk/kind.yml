@@ -60,7 +60,7 @@ tasks:
                   key: firebaseToken
                   path: .firebase_token.json
                   json: true
-                - name: project/mobile/firefox-android/fenix/testrail
+                - name: project/mobile/ci/testrail
                   key: testrailCredentials
                   path: .testrail_credentials.json
                   json: true
