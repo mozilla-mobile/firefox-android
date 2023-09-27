@@ -12,6 +12,20 @@ for key, value in os.environ.items():
     print(f"{key}: {value}")
 
 try:
+    with open('.testrail_credentials.json', 'r') as file:
+        data = json.load(file)
+        pretty_data = json.dumps(data, indent=4)
+        print(pretty_data)
+        secret = data['testrail_credentials']
+        TESTRAIL_HOST = secret['host']
+        TESTRAIL_USERNAME = secret['username']
+        TESTRAIL_PASSWORD = secret['password']
+        print("host: {TESTRAIL_HOST}, username: {TESTRAIL_USERNAME}, password: {TESTRAIL_PASSWORD}")
+
+except json.JSONDecodeError as e:
+    raise ValueError("Failed to load testrail credentials: {e}")
+
+try:
     PRODUCT_TYPE = os.environ["PRODUCT_TYPE"]
     RELEASE_TYPE = os.environ["RELEASE_TYPE"]
     VERSION_NUMBER = os.environ["MOBILE_HEAD_REF"]
@@ -49,9 +63,9 @@ class TestRail():
 
     def __init__(self):
         try:
-            self.client = APIClient(os.environ['TESTRAIL_HOST'])
-            self.client.user = os.environ['TESTRAIL_USERNAME']
-            self.client.password = os.environ['TESTRAIL_PASSWORD']
+            self.client = APIClient(TESTRAIL_HOST)
+            self.client.user = TESTRAIL_USERNAME
+            self.client.password = TESTRAIL_PASSWORD
         except KeyError as e:
             raise ValueError(f"ERROR: Missing Testrail Env Var: {e}")
     
