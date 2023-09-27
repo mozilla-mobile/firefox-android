@@ -93,6 +93,7 @@
     <!-- Text displayed that links to website containing documentation about the "Total cookie protection" feature. -->
     <string name="tcp_cfr_learn_more">Μάθετε για την Ολική προστασία cookie</string>
 
+
     <!-- Text for the info dialog when camera permissions have been denied but user tries to access a camera feature. -->
     <string name="camera_permissions_needed_message">Απαιτείται πρόσβαση στην κάμερα. Μεταβείτε στις Ρυθμίσεις Android, πατήστε «Δικαιώματα» και επιλέξτε «Να επιτρέπεται».</string>
     <!-- Text for the positive action button to go to Android Settings to grant permissions. -->
@@ -353,6 +354,9 @@
     <!-- Text for the button dismiss the screen and move on with the flow -->
     <string name="juno_onboarding_enable_notifications_negative_button" tools:ignore="UnusedResources">Όχι τώρα</string>
 
+    <!-- Text for the button to dismiss the screen and move on with the flow -->
+    <string name="juno_onboarding_add_search_widget_negative_button" tools:ignore="UnusedResources">Όχι τώρα</string>
+
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. The first parameter is the name of the application.-->
     <string name="search_widget_content_description_2">Άνοιγμα νέας καρτέλας %1$s</string>
@@ -384,6 +388,8 @@
     <string name="preferences_default_search_engine">Προεπιλεγμένη μηχανή αναζήτησης</string>
     <!-- Preference for settings related to Search -->
     <string name="preferences_search">Αναζήτηση</string>
+    <!-- Preference for settings related to Search engines -->
+    <string name="preferences_search_engines">Μηχανές αναζήτησης</string>
     <!-- Preference for settings related to Search address bar -->
     <string name="preferences_search_address_bar">Γραμμή διευθύνσεων</string>
     <!-- Preference link to rating Fenix on the Play Store -->
@@ -643,6 +649,16 @@
     <string name="addon_not_supported_error">Το πρόσθετο δεν υποστηρίζεται</string>
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is already installed -->
     <string name="addon_already_installed">Το πρόσθετο είναι ήδη εγκατεστημένο</string>
+
+    <!-- Add-on process crash dialog to user -->
+    <!-- Title of a dialog shown to the user when enough errors have occurred with addons and they need to be temporarily disabled -->
+    <string name="addon_process_crash_dialog_title" tools:ignore="UnusedResources">Τα πρόσθετα έχουν απενεργοποιηθεί προσωρινά</string>
+    <!-- The first parameter is the application name. This is a message shown to the user when too many errors have occurred with the addons process and they have been disabled. The user can decide if they would like to continue trying to start add-ons or if they'd rather continue without them. -->
+    <string name="addon_process_crash_dialog_message" tools:ignore="UnusedResources">Ένα ή περισσότερα πρόσθετα σταμάτησαν να λειτουργούν, καθιστώντας το σύστημά σας ασταθές. Το %1$s προσπάθησε ανεπιτυχώς να επανεκκινήσει τα πρόσθετα.\n\nΤα πρόσθετα δεν θα επανεκκινηθούν κατά τη διάρκεια της τρέχουσας συνεδρίας σας.\n\nΗ αφαίρεση ή η απενεργοποίηση των προσθέτων ενδέχεται να διορθώσει αυτό το ζήτημα.</string>
+    <!-- This will cause the add-ons to try restarting but the dialog will reappear if it is unsuccessful again -->
+    <string name="addon_process_crash_dialog_retry_button_text" tools:ignore="UnusedResources">Δοκιμάστε να επανεκκινήσετε τα πρόσθετα</string>
+    <!-- The user will continue with all add-ons disabled -->
+    <string name="addon_process_crash_dialog_disable_addons_button_text" tools:ignore="UnusedResources">Συνέχεια με ανενεργά πρόσθετα</string>
 
     <!-- Account Preferences -->
     <!-- Preference for managing your account via accounts.firefox.com -->
@@ -1223,7 +1239,9 @@
     <!-- Text for standard error snackbar dismiss button. -->
     <string name="standard_snackbar_error_dismiss">Απόρριψη</string>
     <!-- Text for error message when printing a page and it fails. -->
-    <string name="unable_to_print_error">Αδυναμία εκτύπωσης</string>
+    <string name="unable_to_print_error" moz:removedIn="121" tools:ignore="UnusedResources">Αδυναμία εκτύπωσης</string>
+    <!-- Text for error message when printing a page and it fails. -->
+    <string name="unable_to_print_page_error">Δεν είναι δυνατή η εκτύπωση αυτής της σελίδας</string>
     <!-- Text for the print feature in the share and browser menu -->
     <string name="menu_print">Εκτύπωση</string>
     <!-- Sub-header in the dialog to share a link to another sync device -->
@@ -1367,12 +1385,16 @@
     <!-- Subtitle for the tabs item in Delete browsing data, parameter will be replaced with the number of open tabs -->
     <string name="preferences_delete_browsing_data_tabs_subtitle">%d καρτέλες</string>
     <!-- Title for the data and history items in Delete browsing data -->
-    <string name="preferences_delete_browsing_data_browsing_data_title">Ιστορικό περιήγησης και δεδομένα ιστοτόπων</string>
+    <string name="preferences_delete_browsing_data_browsing_data_title" moz:removedIn="118" tools:ignore="UnusedResources">Ιστορικό περιήγησης και δεδομένα ιστοτόπων</string>
+    <!-- Title for the history item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_browsing_history_title">Ιστορικό περιήγησης</string>
     <!-- Subtitle for the data and history items in delete browsing data, parameter will be replaced with the
         number of history items the user has -->
     <string name="preferences_delete_browsing_data_browsing_data_subtitle">%d διευθύνσεις</string>
     <!-- Title for the cookies item in Delete browsing data -->
-    <string name="preferences_delete_browsing_data_cookies">Cookies</string>
+    <string name="preferences_delete_browsing_data_cookies" moz:removedIn="118" tools:ignore="UnusedResources">Cookies</string>
+    <!-- Title for the cookies and site data items in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_cookies_and_site_data">Cookies και δεδομένα ιστοτόπων</string>
     <!-- Subtitle for the cookies item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_cookies_subtitle">Θα αποσυνδεθείτε από τους περισσότερους ιστοτόπους</string>
     <!-- Title for the cached images and files item in Delete browsing data -->
@@ -1428,61 +1450,61 @@
 
     <!-- Onboarding -->
     <!-- Text for onboarding welcome header. -->
-    <string name="onboarding_header_2">Καλώς ήρθατε σε ένα καλύτερο διαδίκτυο</string>
+    <string name="onboarding_header_2" moz:RemovedIn="118" tools:ignore="UnusedResources">Καλώς ήρθατε σε ένα καλύτερο διαδίκτυο</string>
     <!-- Text for the onboarding welcome message. -->
-    <string name="onboarding_message">Ένα πρόγραμμα περιήγησης που δημιουργήθηκε για τους ανθρώπους, όχι το κέρδος.</string>
+    <string name="onboarding_message" moz:RemovedIn="118" tools:ignore="UnusedResources">Ένα πρόγραμμα περιήγησης που δημιουργήθηκε για τους ανθρώπους, όχι το κέρδος.</string>
     <!-- Text for the Firefox account onboarding sign in card header. -->
-    <string name="onboarding_account_sign_in_header">Συνεχίστε από εκεί που σταματήσατε</string>
+    <string name="onboarding_account_sign_in_header" moz:RemovedIn="118" tools:ignore="UnusedResources">Συνεχίστε από εκεί που σταματήσατε</string>
     <!-- Text for the button to learn more about signing in to your Firefox account. -->
-    <string name="onboarding_manual_sign_in_description">Συγχρονίστε καρτέλες και κωδικούς πρόσβασης με τις συσκευές σας για απρόσκοπτη εναλλαγή οθονών.</string>
+    <string name="onboarding_manual_sign_in_description" moz:RemovedIn="118" tools:ignore="UnusedResources">Συγχρονίστε καρτέλες και κωδικούς πρόσβασης με τις συσκευές σας για απρόσκοπτη εναλλαγή οθονών.</string>
     <!-- Text for the button to manually sign into Firefox account. -->
-    <string name="onboarding_firefox_account_sign_in">Σύνδεση</string>
+    <string name="onboarding_firefox_account_sign_in" moz:RemovedIn="118" tools:ignore="UnusedResources">Σύνδεση</string>
     <!-- text to display in the snackbar once account is signed-in -->
     <string name="onboarding_firefox_account_sync_is_on">Το Sync είναι ενεργό</string>
 
     <!-- Text for the tracking protection onboarding card header -->
-    <string name="onboarding_tracking_protection_header">Προστασία απορρήτου από προεπιλογή</string>
+    <string name="onboarding_tracking_protection_header" moz:RemovedIn="118" tools:ignore="UnusedResources">Προστασία απορρήτου από προεπιλογή</string>
     <!-- Text for the tracking protection card description. The first parameter is the name of the application.-->
-    <string name="onboarding_tracking_protection_description_old">Το %1$s εμποδίζει αυτόματα την καταγραφή της διαδικτυακής δραστηριότητάς σας από εταιρείες.</string>
+    <string name="onboarding_tracking_protection_description_old" moz:RemovedIn="118" tools:ignore="UnusedResources">Το %1$s εμποδίζει αυτόματα την καταγραφή της διαδικτυακής δραστηριότητάς σας από εταιρείες.</string>
     <!-- Text for the tracking protection card description. -->
-    <string name="onboarding_tracking_protection_description">Η Ολική προστασία cookie εμποδίζει τη χρήση των cookies από ιχνηλάτες που σας καταγράφουν μεταξύ ιστοτόπων.</string>
+    <string name="onboarding_tracking_protection_description" moz:RemovedIn="118" tools:ignore="UnusedResources">Η Ολική προστασία cookie εμποδίζει τη χρήση των cookies από ιχνηλάτες που σας καταγράφουν μεταξύ ιστοτόπων.</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
-    <string name="onboarding_tracking_protection_standard_button_2">Τυπική (προεπιλογή)</string>
+    <string name="onboarding_tracking_protection_standard_button_2" moz:RemovedIn="118" tools:ignore="UnusedResources">Τυπική (προεπιλογή)</string>
     <!-- text for standard blocking option button description -->
-    <string name="onboarding_tracking_protection_standard_button_description_3">Ισορροπία μεταξύ ιδιωτικότητας και επιδόσεων. Οι σελίδες φορτώνονται κανονικά.</string>
+    <string name="onboarding_tracking_protection_standard_button_description_3" moz:RemovedIn="118" tools:ignore="UnusedResources">Ισορροπία μεταξύ ιδιωτικότητας και επιδόσεων. Οι σελίδες φορτώνονται κανονικά.</string>
     <!-- text for tracking protection radio button option for strict level of blocking -->
-    <string name="onboarding_tracking_protection_strict_option">Αυστηρή</string>
+    <string name="onboarding_tracking_protection_strict_option" moz:RemovedIn="118" tools:ignore="UnusedResources">Αυστηρή</string>
     <!-- text for strict blocking option button description -->
-    <string name="onboarding_tracking_protection_strict_button_description_3">Φραγή περισσότερων ιχνηλατών για ταχύτερη φόρτωση σελίδων. Ορισμένες λειτουργίες της σελίδας ενδέχεται να δυσλειτουργούν.</string>
+    <string name="onboarding_tracking_protection_strict_button_description_3" moz:RemovedIn="118" tools:ignore="UnusedResources">Φραγή περισσότερων ιχνηλατών για ταχύτερη φόρτωση σελίδων. Ορισμένες λειτουργίες της σελίδας ενδέχεται να δυσλειτουργούν.</string>
     <!-- text for the toolbar position card header  -->
-    <string name="onboarding_toolbar_placement_header_1">Επιλογή τοποθεσίας γραμμής εργαλείων</string>
+    <string name="onboarding_toolbar_placement_header_1" moz:RemovedIn="118" tools:ignore="UnusedResources">Επιλογή τοποθεσίας γραμμής εργαλείων</string>
     <!-- Text for the toolbar position card description -->
-    <string name="onboarding_toolbar_placement_description">Διατηρήστε τη στο κάτω μέρος ή μετακινήστε τη στο πάνω μέρος.</string>
+    <string name="onboarding_toolbar_placement_description" moz:RemovedIn="118" tools:ignore="UnusedResources">Διατηρήστε τη στο κάτω μέρος ή μετακινήστε τη στο πάνω μέρος.</string>
     <!-- Text for the privacy notice onboarding card header -->
-    <string name="onboarding_privacy_notice_header_1">Εσείς ελέγχετε τα δεδομένα σας</string>
+    <string name="onboarding_privacy_notice_header_1" moz:RemovedIn="118" tools:ignore="UnusedResources">Εσείς ελέγχετε τα δεδομένα σας</string>
     <!-- Text for the privacy notice onboarding card description. -->
-    <string name="onboarding_privacy_notice_description">Το Firefox σάς επιτρέπει να ελέγχετε τι κοινοποιείτε στο διαδίκτυο και σε εμάς.</string>
+    <string name="onboarding_privacy_notice_description" moz:RemovedIn="118" tools:ignore="UnusedResources">Το Firefox σάς επιτρέπει να ελέγχετε τι κοινοποιείτε στο διαδίκτυο και σε εμάς.</string>
     <!-- Text for the button to read the privacy notice -->
-    <string name="onboarding_privacy_notice_read_button">Διαβάστε τη σημείωση απορρήτου μας</string>
+    <string name="onboarding_privacy_notice_read_button" moz:RemovedIn="118" tools:ignore="UnusedResources">Διαβάστε τη σημείωση απορρήτου μας</string>
 
     <!-- Text for the conclusion onboarding message -->
-    <string name="onboarding_conclusion_header">Θέλετε να ανοίξετε ένα καταπληκτικό διαδίκτυο;</string>
+    <string name="onboarding_conclusion_header" moz:RemovedIn="118" tools:ignore="UnusedResources">Θέλετε να ανοίξετε ένα καταπληκτικό διαδίκτυο;</string>
     <!-- text for the button to finish onboarding -->
-    <string name="onboarding_finish">Έναρξη περιήγησης</string>
+    <string name="onboarding_finish" moz:RemovedIn="118" tools:ignore="UnusedResources">Έναρξη περιήγησης</string>
 
     <!-- Onboarding theme -->
     <!-- text for the theme picker onboarding card header -->
-    <string name="onboarding_theme_picker_header">Επιλογή θέματος</string>
+    <string name="onboarding_theme_picker_header" moz:RemovedIn="118" tools:ignore="UnusedResources">Επιλογή θέματος</string>
     <!-- text for the theme picker onboarding card description -->
-    <string name="onboarding_theme_picker_description_2">Εξοικονομήστε μπαταρία και προστατέψτε τα μάτια σας με τη σκοτεινή λειτουργία.</string>
+    <string name="onboarding_theme_picker_description_2" moz:RemovedIn="118" tools:ignore="UnusedResources">Εξοικονομήστε μπαταρία και προστατέψτε τα μάτια σας με τη σκοτεινή λειτουργία.</string>
     <!-- Automatic theme setting (will follow device setting) -->
-    <string name="onboarding_theme_automatic_title">Αυτόματο</string>
+    <string name="onboarding_theme_automatic_title" moz:RemovedIn="118" tools:ignore="UnusedResources">Αυτόματο</string>
     <!-- Summary of automatic theme setting (will follow device setting) -->
-    <string name="onboarding_theme_automatic_summary">Προσαρμόζεται στις ρυθμίσεις της συσκευής σας</string>
+    <string name="onboarding_theme_automatic_summary" moz:RemovedIn="118" tools:ignore="UnusedResources">Προσαρμόζεται στις ρυθμίσεις της συσκευής σας</string>
     <!-- Theme setting for dark mode -->
-    <string name="onboarding_theme_dark_title">Σκουρόχρωμο θέμα</string>
+    <string name="onboarding_theme_dark_title" moz:RemovedIn="118" tools:ignore="UnusedResources">Σκουρόχρωμο θέμα</string>
     <!-- Theme setting for light mode -->
-    <string name="onboarding_theme_light_title">Ανοιχτόχρωμο θέμα</string>
+    <string name="onboarding_theme_light_title" moz:RemovedIn="118" tools:ignore="UnusedResources">Ανοιχτόχρωμο θέμα</string>
 
     <!-- Text shown in snackbar when multiple tabs have been sent to device -->
     <string name="sync_sent_tabs_snackbar">Οι καρτέλες απεστάλησαν!</string>
@@ -1935,7 +1957,9 @@
     <!-- Placeholder text shown in the Search Suggestion String TextField before a user enters text -->
     <string name="search_add_custom_engine_suggest_string_hint">URL API προτάσεων αναζήτησης</string>
     <!-- Description text for the Search Suggestion String TextField. The %s is part of the string -->
-    <string name="search_add_custom_engine_suggest_string_example" formatted="false">Αντικαταστήστε τον όρο αναζήτησης με «%s». Παρα΄δειγμα:\nhttp://suggestqueries.google.com/complete/search?client=firefox&amp;q=%s</string>
+    <string name="search_add_custom_engine_suggest_string_example" formatted="false" moz:RemovedIn="118" tools:ignore="UnusedResources">Αντικαταστήστε τον όρο αναζήτησης με «%s». Παρα΄δειγμα:\nhttp://suggestqueries.google.com/complete/search?client=firefox&amp;q=%s</string>
+    <!-- Description text for the Search Suggestion String TextField. The %s is part of the string -->
+    <string name="search_add_custom_engine_suggest_string_example_2" formatted="false">Αντικαταστήστε τον όρο αναζήτησης με «%s». Παράδειγμα:\nhttps://suggestqueries.google.com/complete/search?client=firefox&amp;q=%s</string>
     <!-- The text for the "Save" button for saving a custom search engine -->
     <string name="search_custom_engine_save_button">Αποθήκευση</string>
 
@@ -2151,6 +2175,86 @@
     <string name="experiments_snackbar">Ενεργοποιήστε την τηλεμετρία για την αποστολή δεδομένων.</string>
     <!-- Snackbar button text to navigate to telemetry settings.-->
     <string name="experiments_snackbar_button">Μετάβαση στις ρυθμίσεις</string>
+
+    <!-- Review quality check feature-->
+    <!-- Name for the review quality check feature used as title for the panel. -->
+    <string name="review_quality_check_feature_name">Έλεγχος κριτικών</string>
+    <!-- Summary for grades A and B for review quality check adjusted grading. -->
+    <string name="review_quality_check_grade_a_b_description">Αξιόπιστες κριτικές</string>
+    <!-- Summary for grade C for review quality check adjusted grading. -->
+    <string name="review_quality_check_grade_c_description">Μίγμα αξιόπιστων και αναξιόπιστων κριτικών</string>
+    <!-- Summary for grades D and F for review quality check adjusted grading. -->
+    <string name="review_quality_check_grade_d_f_description">Αναξιόπιστες κριτικές</string>
+    <!-- Text for title presenting the reliability of a product's reviews. -->
+    <string name="review_quality_check_grade_title">Πόσο αξιόπιστες είναι αυτές οι κριτικές;</string>
+    <!-- Title for when the rating has been updated by the review checker -->
+    <string name="review_quality_check_adjusted_rating_title">Προσαρμοσμένη βαθμολογία</string>
+    <!-- Text for learn more caption presenting a link with information about review quality. First parameter is for clickable text defined in review_quality_check_info_learn_more_link. -->
+    <string name="review_quality_check_info_learn_more">Μάθετε περισσότερα σχετικά με το %s.</string>
+    <!-- Clickable text that links to review quality check SuMo page. First parameter is the Fakespot product name. In the phrase "Fakespot by Mozilla", "by" can be localized. Does not need to stay by. -->
+    <string name="review_quality_check_info_learn_more_link">πώς το %s της Mozilla προσδιορίζει την ποιότητα των κριτικών</string>
+    <!-- Text for title of settings section. -->
+    <string name="review_quality_check_settings_title">Ρυθμίσεις</string>
+    <!-- Text for label for switch preference to show recommended products from review quality check settings section. -->
+    <string name="review_quality_check_settings_recommended_products">Εμφάνιση διαφημίσεων στον έλεγχο κριτικών</string>
+    <!-- Clickable text that links to review quality check recommended products support article. -->
+    <string name="review_quality_check_settings_recommended_products_learn_more" tools:ignore="UnusedResources">Μάθετε περισσότερα</string>
+    <!-- Text for turning sidebar off button from review quality check settings section. -->
+    <string name="review_quality_check_settings_turn_off">Απενεργοποίηση ελέγχου κριτικών</string>
+    <!-- Text for title of recommended product section. This is displayed above a product image, suggested as an alternative to the product reviewed. -->
+    <string name="review_quality_check_ad_title" tools:ignore="UnusedResources">Περισσότερες εναλλακτικές</string>
+    <!-- Caption for recommended product section indicating this is an ad by Fakespot. First parameter is the Fakespot product name. -->
+    <string name="review_quality_check_ad_caption" tools:ignore="UnusedResources">Διαφήμιση από το %s</string>
+    <!-- Clickable text that links to Fakespot.com. First parameter is the Fakespot product name. In the phrase "Fakespot by Mozilla", "by" can be localized. Does not need to stay by. -->
+    <string name="review_quality_check_powered_by_link" tools:ignore="UnusedResources">%s από τη Mozilla</string>
+    <!-- Text for title of warning card informing the user that the current analysis is outdated. -->
+    <string name="review_quality_check_outdated_analysis_warning_title" tools:ignore="UnusedResources">Νέες πληροφορίες προς έλεγχο</string>
+    <!-- Text for button from warning card informing the user that the current analysis is outdated. Clicking this should trigger the product's re-analysis. -->
+    <string name="review_quality_check_outdated_analysis_warning_action" tools:ignore="UnusedResources">Έλεγχος τώρα</string>
+    <!-- Title for warning card informing the user that the current product is currently not available. -->
+    <string name="review_quality_check_product_availability_warning_title" tools:ignore="UnusedResources">Το προϊόν δεν είναι διαθέσιμο</string>
+    <!-- Title for warning card informing the user that the current product's re-analysis is still processing. -->
+    <string name="review_quality_check_reanalysis_in_progress_warning_title">Έλεγχος ποιότητας κριτικής</string>
+    <!-- Title for warning card informing the user that the current product's analysis is still processing. -->
+    <string name="review_quality_check_analysis_in_progress_warning_title">Έλεγχος ποιότητας κριτικής</string>
+    <!-- Title for info card displayed after the user reports a product is back in stock. -->
+    <string name="review_quality_check_analysis_requested_info_title" tools:ignore="UnusedResources">Ευχαριστούμε για την αναφορά!</string>
+    <!-- Title for error card displayed to the user when the device is disconnected from the network. -->
+    <string name="review_quality_check_no_connection_title">Δεν υπάρχει σύνδεση στο δίκτυο</string>
+    <!-- Text for button from body of card displayed to the user for products whose reviews were not analyzed yet. Clicking this should trigger a product analysis. -->
+    <string name="review_quality_check_no_analysis_link">Έλεγχος ποιότητας κριτικής</string>
+    <!-- Clickable text from the contextual onboarding card that links to review quality check support article. -->
+    <string name="review_quality_check_contextual_onboarding_learn_more_link">Μάθετε περισσότερα</string>
+    <!-- Caption text to be displayed in review quality check contextual onboarding card above the opt-in button. First parameter is the Fakespot product name. Following parameters are for clickable texts defined in review_quality_check_contextual_onboarding_privacy_policy and review_quality_check_contextual_onboarding_terms_use. In the phrase "Fakespot by Mozilla", "by" can be localized. Does not need to stay by. -->
+    <string name="review_quality_check_contextual_onboarding_caption">Επιλέγοντας «Έναρξη δοκιμής», αποδέχεστε την %2$s και τους %3$s του %1$s, που παρέχεται από τη Mozilla.</string>
+    <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot privacy policy. -->
+    <string name="review_quality_check_contextual_onboarding_privacy_policy">πολιτική απορρήτου</string>
+    <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot terms of use. -->
+    <string name="review_quality_check_contextual_onboarding_terms_use">όρους χρήσης</string>
+    <!-- Text for opt-in button from the review quality check contextual onboarding card. -->
+    <string name="review_quality_check_contextual_onboarding_primary_button_text">Έναρξη δοκιμής</string>
+    <!-- Text for opt-out button from the review quality check contextual onboarding card. -->
+    <string name="review_quality_check_contextual_onboarding_secondary_button_text">Όχι τώρα</string>
+    <!-- Text displayed in the first CFR presenting the review quality check feature that opens the review checker when clicked. -->
+    <string name="review_quality_check_first_cfr_action" tools:ignore="UnusedResources">Δοκιμή ελέγχου κριτικών</string>
+    <!-- Flag showing that the review quality check feature is work in progress. -->
+    <string name="review_quality_check_beta_flag" tools:ignore="UnusedResources">Beta</string>
+    <!-- Content description (not visible, for screen readers etc.) for review quality check star rating. First parameter is the number of stars (1-5) representing the rating. -->
+    <string name="review_quality_check_star_rating_content_description">%1$s από 5 αστέρια</string>
+    <!-- Text for minimize button from highlights card. When clicked the highlights card should reduce its size. -->
+    <string name="review_quality_check_highlights_show_less">Εμφάνιση λιγότερων</string>
+    <!-- Text for maximize button from highlights card. When clicked the highlights card should expand to its full size. -->
+    <string name="review_quality_check_highlights_show_more">Εμφάνιση περισσότερων</string>
+    <!-- Text for highlights card quality category header. Reviews shown under this header should refer the product's quality. -->
+    <string name="review_quality_check_highlights_type_quality">Ποιότητα</string>
+    <!-- Text for highlights card price category header. Reviews shown under this header should refer the product's price. -->
+    <string name="review_quality_check_highlights_type_price">Τιμή</string>
+    <!-- Text for highlights card shipping category header. Reviews shown under this header should refer the product's shipping. -->
+    <string name="review_quality_check_highlights_type_shipping">Αποστολή</string>
+    <!-- Text for highlights card packaging and appearance category header. Reviews shown under this header should refer the product's packaging and appearance. -->
+    <string name="review_quality_check_highlights_type_packaging_appearance">Συσκευασία και εμφάνιση</string>
+    <!-- Text for highlights card competitiveness category header. Reviews shown under this header should refer the product's competitiveness. -->
+    <string name="review_quality_check_highlights_type_competitiveness">Ανταγωνισμός</string>
 
     <!-- Accessibility services actions labels. These will be appended to accessibility actions like "Double tap to.." but not by or applications but by services like Talkback. -->
     <!-- Action label for elements that can be collapsed if interacting with them. Talkback will append this to say "Double tap to collapse". -->

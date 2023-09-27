@@ -33,7 +33,11 @@ class HistoryListItemViewHolder(
 
     init {
         binding.recentlyClosedNavEmpty.recentlyClosedNav.setOnClickListener {
-            historyInteractor.onRecentlyClosedClicked()
+            if (FeatureFlags.historyFragmentLibStateRefactor) {
+                store.dispatch(HistoryFragmentAction.EnterRecentlyClosed)
+            } else {
+                historyInteractor.onRecentlyClosedClicked()
+            }
         }
 
         binding.historyLayout.overflowView.apply {
@@ -41,7 +45,11 @@ class HistoryListItemViewHolder(
             contentDescription = view.context.getString(R.string.history_delete_item)
             setOnClickListener {
                 val item = item ?: return@setOnClickListener
-                historyInteractor.onDeleteSome(setOf(item))
+                if (FeatureFlags.historyFragmentLibStateRefactor) {
+                    store.dispatch(HistoryFragmentAction.DeleteItems(setOf(item)))
+                } else {
+                    historyInteractor.onDeleteSome(setOf(item))
+                }
             }
         }
     }

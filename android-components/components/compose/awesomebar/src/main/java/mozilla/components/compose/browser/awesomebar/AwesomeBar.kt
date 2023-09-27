@@ -96,7 +96,8 @@ fun AwesomeBar(
 
         // This state does not need to be remembered, because it can change if the providers list changes.
         @SuppressLint("UnrememberedMutableState")
-        val suggestions = derivedStateOf { fetcher.state.value }.value.toSortedMap(compareByDescending { it.priority })
+        val suggestions = derivedStateOf { fetcher.state.value }.value.toList()
+            .sortedByDescending { it.first.priority }.toMap(LinkedHashMap())
 
         LaunchedEffect(text, fetcher) {
             fetcher.fetch(text)

@@ -9,12 +9,11 @@ buildscript {
         }
 
         gradlePluginPortal()
+    }
 
-        dependencies {
-            classpath "org.mozilla.telemetry:glean-gradle-plugin:${Versions.mozilla_glean}"
-            classpath ComponentsDependencies.plugin_ksp
-            classpath ComponentsDependencies.plugin_serialization
-        }
+    dependencies {
+        classpath "org.mozilla.telemetry:glean-gradle-plugin:${Versions.mozilla_glean}"
+        classpath  ComponentsDependencies.plugin_serialization
     }
 }
 
@@ -28,10 +27,9 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlinx-serialization'
 
 android {
-    compileSdkVersion config.compileSdkVersion
-
     defaultConfig {
         minSdkVersion config.minSdkVersion
+        compileSdk config.compileSdkVersion
         targetSdkVersion config.targetSdkVersion
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

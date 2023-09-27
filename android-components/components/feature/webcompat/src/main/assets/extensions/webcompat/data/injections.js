@@ -485,20 +485,6 @@ const AVAILABLE_INJECTIONS = [
     },
   },
   {
-    id: "bug1784302",
-    platform: "android",
-    domain: "open.toutiao.com",
-    bug: "1784302",
-    contentScripts: {
-      matches: ["*://open.toutiao.com/*"],
-      js: [
-        {
-          file: "injections/js/bug1784302-effectiveType-shim.js",
-        },
-      ],
-    },
-  },
-  {
     id: "bug1784141",
     platform: "android",
     domain: "aveeno.com and acuvue.com",
@@ -602,6 +588,7 @@ const AVAILABLE_INJECTIONS = [
         "*://*.securityproperties.com/*",
         "*://*.theloftsorlando.com/*",
         "*://*.vanallenapartments.com/*", // #120056
+        "*://*.waterfordapartmentstulsa.com/*", // #125870
       ],
       css: [
         {
@@ -704,6 +691,7 @@ const AVAILABLE_INJECTIONS = [
         "*://*.discountcoffee.co.uk/*", // 118757
         "*://torguard.net/*", // 120113
         "*://*.arcsivr.com/*", // 120716
+        "*://drafthouse.com/*", // 126385
       ],
       js: [
         {
@@ -1023,6 +1011,132 @@ const AVAILABLE_INJECTIONS = [
       css: [
         {
           file: "injections/css/bug1841991-wilton.com-flexbox-painting-order.css",
+        },
+      ],
+    },
+  },
+  {
+    id: "bug1848711",
+    platform: "android",
+    domain: "vio.com",
+    bug: "1848711",
+    contentScripts: {
+      matches: ["*://*.vio.com/*"],
+      css: [
+        {
+          file: "injections/css/bug1848711-vio.com-page-height.css",
+        },
+      ],
+    },
+  },
+  {
+    id: "bug1848713",
+    platform: "all",
+    domain: "cleanrider.com",
+    bug: "1848713",
+    contentScripts: {
+      matches: ["*://*.cleanrider.com/*"],
+      css: [
+        {
+          file: "injections/css/bug1848713-cleanrider.com-slider.css",
+        },
+      ],
+    },
+  },
+  {
+    id: "bug1848716",
+    platform: "desktop",
+    domain: "elal.com",
+    bug: "1848716",
+    contentScripts: {
+      matches: ["*://*.elal.com/*"],
+      css: [
+        {
+          file: "injections/css/bug1848716-elal.com-unsupported-banner.css",
+        },
+      ],
+    },
+  },
+  {
+    id: "bug1848849",
+    platform: "all",
+    domain: "theaa.com",
+    bug: "1848849",
+    contentScripts: {
+      matches: ["*://*.theaa.com/route-planner/*"],
+      css: [
+        {
+          file: "injections/css/bug1848849-theaa.com-printing-mode-fix.css",
+        },
+      ],
+    },
+  },
+  {
+    id: "bug1849019",
+    platform: "android",
+    domain: "axa-assistance.pl",
+    bug: "1849019",
+    contentScripts: {
+      matches: ["*://*.axa-assistance.pl/*"],
+      css: [
+        {
+          file: "injections/css/bug1849019-axa-assistance.pl-datepicker-fix.css",
+        },
+      ],
+    },
+  },
+  {
+    id: "bug1849058",
+    platform: "all",
+    domain: "nicochannel.jp",
+    bug: "1849058",
+    contentScripts: {
+      matches: ["*://nicochannel.jp/*", "*://gs-ch.com/*"],
+      js: [
+        {
+          file: "injections/js/bug1849058-nicochannel.jp-picture-in-picture-shim.js",
+        },
+      ],
+    },
+  },
+  {
+    id: "bug1849388",
+    platform: "android",
+    domain: "kucharkaprodceru.cz",
+    bug: "1849388",
+    contentScripts: {
+      matches: ["*://*.kucharkaprodceru.cz/*"],
+      css: [
+        {
+          file: "injections/css/bug1849388-kucharkaprodceru.cz-scroll-fix.css",
+        },
+      ],
+    },
+  },
+  {
+    id: "bug1855014",
+    platform: "android",
+    domain: "eksiseyler.com",
+    bug: "1855014",
+    contentScripts: {
+      matches: ["*://eksiseyler.com/*"],
+      js: [
+        {
+          file: "injections/js/bug1855014-eksiseyler.com.js",
+        },
+      ],
+    },
+  },
+  {
+    id: "bug1855071",
+    platform: "android",
+    domain: "www.meteoam.it",
+    bug: "1855071",
+    contentScripts: {
+      matches: ["*://www.meteoam.it/*"],
+      js: [
+        {
+          file: "injections/js/bug1855071-www.meteoam.it.js",
         },
       ],
     },

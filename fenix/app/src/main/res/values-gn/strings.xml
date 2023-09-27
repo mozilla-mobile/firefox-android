@@ -62,10 +62,25 @@
     <!-- Private Browsing -->
     <!-- Explanation for private browsing displayed to users on home view when they first enable private mode
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="private_browsing_placeholder_description_2">%1$s omopotĩ nde jeheka ha kundahára rembiasakue tendayke ñemiguápe emboty térã esẽenguévo ko tembipuru’ígui. Kóva nande kuaukáiramo jepe ñanduti rendápe térã ne ñanduti me’ẽhárape, nombohasýi eime ñemi hag̃ua opaite tapicha oipurúva ko mba’e’oka renondépe.</string>
+    <string name="private_browsing_placeholder_description_2">%1$s omopotĩ nde jeheka ha kundahára rembiasakue tendayke ñemiguápe emboty térã esẽenguévo ko tembiporu’ígui. Kóva nande kuaukáiramo jepe ñanduti rendápe térã ne ñanduti me’ẽhárape, nombohasýi eime ñemi hag̃ua opaite tapicha oiporúva ko mba’e’oka renondépe.</string>
     <string name="private_browsing_common_myths">
        Mombe’ugua’u kundahára ñemi rehegua
     </string>
+
+    <!-- True Private Browsing Mode -->
+    <!-- Title for info card on private homescreen in True Private Browsing Mode. -->
+    <string name="felt_privacy_desc_card_title">Ani eheja ko mba’e’oka rapykuere</string>
+
+    <!-- Explanation for private browsing displayed to users on home view when they first enable
+        private mode in our new Total Private Browsing mode.
+        The first parameter is the name of the app defined in app_name (for example: Firefox Nightly)
+        The second parameter is the clickable link text in felt_privacy_info_card_subtitle_link_text -->
+    <string name="felt_privacy_info_card_subtitle">%1$s ombogue kookie, tembiasakue ha mba’ekuaarã tendápe embotypávo ne rendayke ñemiguáva. %2$s</string>
+
+    <!-- Clickable portion of the explanation for private browsing that links the user to our
+        about privacy page.
+        This string is used in felt_privacy_info_card_subtitle as the second parameter.-->
+    <string name="felt_privacy_info_card_subtitle_link_text">Mávapa ohechakuaa che rembiapo</string>
 
     <!-- Private mode shortcut "contextual feature recommendation" (CFR) -->
     <!-- Text for the Private mode shortcut CFR message for adding a private mode shortcut to open private tabs from the Home screen -->
@@ -77,7 +92,7 @@
 
     <!-- Open in App "contextual feature recommendation" (CFR) -->
     <!-- Text for the info message. The first parameter is the name of the application.-->
-    <string name="open_in_app_cfr_info_message_2">Embohekokuaa %1$s ombojuruja hag̃ua ijehegui juajuha tembipuru’ípe.</string>
+    <string name="open_in_app_cfr_info_message_2">Embohekokuaa %1$s ombojuruja hag̃ua ijehegui juajuha tembiporu’ípe.</string>
     <!-- Text for the positive action button -->
     <string name="open_in_app_cfr_positive_button_text">Eho ñembohekópe</string>
     <!-- Text for the negative action button -->
@@ -88,6 +103,12 @@
     <string name="tcp_cfr_message">Ore rembiapo tekoñemigua iporãvéva omboyke tapykuehoha tendakuéra pa’ũme.</string>
     <!-- Text displayed that links to website containing documentation about the "Total cookie protection" feature. -->
     <string name="tcp_cfr_learn_more">Maranduve kookie ñemo’ã guasu rehegua</string>
+
+
+    <!-- Private browsing erase action "contextual feature recommendation" (CFR) -->
+    <!-- Text for the message displayed in the contextual feature recommendation popup promoting the erase private browsing feature. -->
+    <string name="erase_action_cfr_message">Eikutu ápe eñepyrũ hag̃ua tembiapo ñemigua. Embogue ne rembiasakue, kookie — opavave.</string>
+
 
     <!-- Text for the info dialog when camera permissions have been denied but user tries to access a camera feature. -->
     <string name="camera_permissions_needed_message">Eikotevẽ eike ta’ãngamýime. Eho Android ñembohekópe, eukutu ñemoneĩ ha moneĩ.</string>
@@ -211,7 +232,7 @@
     <!-- Browser menu button content description to close reader mode and return the user to the regular browser -->
     <string name="browser_menu_read_close">Moñe’ẽrã rechahágui ñesẽ</string>
     <!-- Browser menu button to open the current page in an external app -->
-    <string name="browser_menu_open_app_link">Embojuruja tembipuru’i</string>
+    <string name="browser_menu_open_app_link">Embojuruja tembiporu’i</string>
 
     <!-- Browser menu button to show reader view appearance controls e.g. the used font type and size -->
     <string name="browser_menu_customize_reader_view">Emboava moñe’ẽhára rechaha</string>
@@ -226,11 +247,14 @@
     <!-- Content description for the Home screen button on the browser toolbar -->
     <string name="browser_toolbar_home">Mba’erechaha ñepyrũgua</string>
 
+    <!-- Content description (not visible, for screen readers etc.): Erase button: Erase the browsing
+         history and go back to the home screen. -->
+    <string name="browser_toolbar_erase">Embogue kundahára rembiasakue</string>
     <!-- Locale Settings Fragment -->
     <!-- Content description for tick mark on selected language -->
     <string name="a11y_selected_locale_content_description">Ñe’ẽ poravopyre</string>
     <!-- Text for default locale item -->
-    <string name="default_locale_text">Eipuru mba’e’oka ñe’ẽ</string>
+    <string name="default_locale_text">Eiporu mba’e’oka ñe’ẽ</string>
     <!-- Placeholder text shown in the search bar before a user enters text -->
     <string name="locale_search_hint">Eheka ñe’ẽ</string>
 
@@ -296,7 +320,7 @@
     <string name="onboarding_home_enable_notifications_title">Marandu’i ne pytyvõta ejapovéta %s ndive</string>
     <!-- Enable notification pre permission dialog description with rationale
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="onboarding_home_enable_notifications_description">Embojuehe tendayke mba’e’oka pa’ũme, eñangareko ñemboguejýre, ehendu ñemoñe’ẽ mba’éichapa eipuruporãta %s rekorosã ñemigua ha ambue.</string>
+    <string name="onboarding_home_enable_notifications_description">Embojuehe tendayke mba’e’oka pa’ũme, eñangareko ñemboguejýre, ehendu ñemoñe’ẽ mba’éichapa eiporuporãta %s rekorosã ñemigua ha ambue.</string>
     <!-- Text for the button to request notification permission on the device -->
     <string name="onboarding_home_enable_notifications_positive_button">Ku’ejey</string>
     <!-- Text for the button to not request notification permission on the device and dismiss the dialog -->
@@ -340,14 +364,26 @@
     <string name="juno_onboarding_enable_notifications_title_nimbus" tools:ignore="UnusedResources">Marandu’i ne pytyvõta ejapove hag̃ua Firefox ndive</string>
     <!-- Description for enable notification permission screen.
         The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="juno_onboarding_enable_notifications_description" moz:RemovedIn="117" tools:ignore="UnusedResources">Emondo tendayke mba’e’oka pa’ũme, eñangareko ñemboguejýre ha ehecháta ñemoñe’ẽ eipuru porã hag̃ua %s.</string>
+    <string name="juno_onboarding_enable_notifications_description" moz:RemovedIn="117" tools:ignore="UnusedResources">Emondo tendayke mba’e’oka pa’ũme, eñangareko ñemboguejýre ha ehecháta ñemoñe’ẽ eiporu porã hag̃ua %s.</string>
     <!-- Description for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
        Note: The word "Firefox" should NOT be translated   -->
-    <string name="juno_onboarding_enable_notifications_description_nimbus" tools:ignore="UnusedResources">Emondo tendayke mba’e’oka pa’ũme, eñangareko ñemboguejýre ha ehecháta ñemoñe’ẽ eipuru porã hag̃ua Firefox.</string>
+    <string name="juno_onboarding_enable_notifications_description_nimbus" tools:ignore="UnusedResources">Emondo tendayke mba’e’oka pa’ũme, eñangareko ñemboguejýre ha ehecháta ñemoñe’ẽ eiporu porã hag̃ua Firefox.</string>
     <!-- Text for the button to request notification permission on the device -->
     <string name="juno_onboarding_enable_notifications_positive_button" tools:ignore="UnusedResources">Emyandy marandu’i</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
     <string name="juno_onboarding_enable_notifications_negative_button" tools:ignore="UnusedResources">Ani ko’ág̃a</string>
+
+    <!-- Title for add search widget screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_add_search_widget_title" tools:ignore="UnusedResources">Eipuru Firefox widget jehekaha</string>
+    <!-- Description for add search widget screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_add_search_widget_description" tools:ignore="UnusedResources">Firefox ndive ne mba’erechaha ñepyrũguápe, eikéta pya’e kundahárape omomba’éva tekoñemi ha ojoko umi tenda rapykuehoha.</string>
+    <!-- Text for the button to add search widget on the device used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_add_search_widget_positive_button" tools:ignore="UnusedResources">Embjuaju Firefox widget</string>
+    <!-- Text for the button to dismiss the screen and move on with the flow -->
+    <string name="juno_onboarding_add_search_widget_negative_button" tools:ignore="UnusedResources">Ani ko’ág̃a</string>
 
     <!-- Search Widget -->
     <!-- Content description for searching with a widget. The first parameter is the name of the application.-->
@@ -380,6 +416,8 @@
     <string name="preferences_default_search_engine">Hekaha mongu’eha ypykuéva</string>
     <!-- Preference for settings related to Search -->
     <string name="preferences_search">Heka</string>
+    <!-- Preference for settings related to Search engines -->
+    <string name="preferences_search_engines">Hekaha mongu’eha</string>
     <!-- Preference for settings related to Search address bar -->
     <string name="preferences_search_address_bar">Kundaharape renda</string>
     <!-- Preference link to rating Fenix on the Play Store -->
@@ -402,7 +440,7 @@
     <!-- Preference for allowing screenshots to be taken while in a private tab-->
     <string name="preferences_allow_screenshots_in_private_mode">Emoneĩ mba’erechaha japyhy kundaha ñemíme</string>
     <!-- Will inform the user of the risk of activating Allow screenshots in private browsing option -->
-    <string name="preferences_screenshots_in_private_mode_disclaimer">Oñemoneĩrõ, umi tendayke ñemigua ojehecháta oĩ vove heta tembipuru’i ijurujáva</string>
+    <string name="preferences_screenshots_in_private_mode_disclaimer">Oñemoneĩrõ, umi tendayke ñemigua ojehecháta oĩ vove heta tembiporu’i ijurujáva</string>
     <!-- Preference for adding private browsing shortcut -->
     <string name="preferences_add_private_browsing_shortcut">Embojuaju jeike pya’eha tendayke ñemiguáre</string>
     <!-- Preference for enabling "HTTPS-Only" mode -->
@@ -487,7 +525,7 @@
     <!-- Preference to override the Sync token server -->
     <string name="preferences_override_sync_tokenserver">Mohendahavusu Sync momba’etepyre</string>
     <!-- Toast shown after updating the FxA/Sync server override preferences -->
-    <string name="toast_override_fxa_sync_server_done">Account/Sync mba’ete moambuepyre. Esẽnguévo pe tembipuru’ígui emoambue hag̃ua…</string>
+    <string name="toast_override_fxa_sync_server_done">Account/Sync mba’ete moambuepyre. Esẽnguévo pe tembiporu’ígui emoambue hag̃ua…</string>
     <!-- Preference category for account information -->
     <string name="preferences_category_account">Mba’ete</string>
     <!-- Preference for changing where the toolbar is positioned -->
@@ -535,7 +573,7 @@
     <!-- Preference for enabling url autocomplete-->
     <string name="preferences_enable_autocomplete_urls">Moĩmbajehegui URLs</string>
     <!-- Preference for open links in third party apps -->
-    <string name="preferences_open_links_in_apps">Embojuruja juajuha tembipuru’ípe</string>
+    <string name="preferences_open_links_in_apps">Embojuruja juajuha tembiporu’ípe</string>
     <!-- Preference for open links in third party apps always open in apps option -->
     <string name="preferences_open_links_in_apps_always">Tapiaite</string>
     <!-- Preference for open links in third party apps ask before opening option -->
@@ -548,7 +586,7 @@
     <!-- Preference for enabling gecko engine logs -->
     <string name="preferences_enable_gecko_logs">Embojuruja Gecko jehaikue</string>
     <!-- Message to indicate users that we are quitting the application to apply the changes -->
-    <string name="quit_application">Asẽma tembipuru’ígui iñambuekuaa hag̃ua…</string>
+    <string name="quit_application">Asẽma tembiporu’ígui iñambuekuaa hag̃ua…</string>
 
     <!-- Preference for add_ons -->
     <string name="preferences_addons">Moĩmbaha</string>
@@ -571,10 +609,10 @@
     <!-- Hint displayed on input field for custom collection name -->
     <string name="customize_addon_collection_hint">Ñembyatyha réra</string>
     <!-- Hint displayed on input field for custom collection user ID-->
-    <string name="customize_addon_collection_user_hint">Ñembyatyha jára (puruhára ID)</string>
+    <string name="customize_addon_collection_user_hint">Ñembyatyha jára (poruhára ID)</string>
 
     <!-- Toast shown after confirming the custom add-on collection configuration -->
-    <string name="toast_customize_addon_collection_done">Moĩmbaha aty moambuepyre. Embotyhína tembipuru’i emoambuekuaa hag̃ua…</string>
+    <string name="toast_customize_addon_collection_done">Moĩmbaha aty moambuepyre. Embotyhína tembiporu’i emoambuekuaa hag̃ua…</string>
 
     <!-- Customize Home -->
     <!-- Header text for jumping back into the recent tab in customize the home screen -->
@@ -598,7 +636,7 @@
 
     <!-- Wallpapers -->
     <!-- Content description for various wallpapers. The first parameter is the name of the wallpaper -->
-    <string name="wallpapers_item_name_content_description">Mba’erechaha rugua mba’epuru: %1$s</string>
+    <string name="wallpapers_item_name_content_description">Mba’erechaha rugua mba’eporu: %1$s</string>
     <!-- Snackbar message for when wallpaper is selected -->
     <string name="wallpaper_updated_snackbar_message">¡Mba’erechaha rugua hekopyahupyréva!</string>
     <!-- Snackbar label for action to view selected wallpaper -->
@@ -628,7 +666,7 @@
     <!-- Description text for the artist series wallpapers. "Independent voices" is the name of the wallpaper collection -->
     <string name="wallpaper_artist_series_description">Voces Independientes ñembyaty.</string>
     <!-- Wallpaper onboarding dialog header text. -->
-    <string name="wallpapers_onboarding_dialog_title_text">Eipurukuaa sa’y sa’imi</string>
+    <string name="wallpapers_onboarding_dialog_title_text">Eiporukuaa sa’y sa’imi</string>
 
     <!-- Wallpaper onboarding dialog body text. -->
     <string name="wallpapers_onboarding_dialog_body_text">Eiporavo mba’erechaha rugua nde ehecharamóva.</string>
@@ -642,6 +680,16 @@
 
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is already installed -->
     <string name="addon_already_installed">Pe moĩmbaha oñemohendáma</string>
+
+    <!-- Add-on process crash dialog to user -->
+    <!-- Title of a dialog shown to the user when enough errors have occurred with addons and they need to be temporarily disabled -->
+    <string name="addon_process_crash_dialog_title" tools:ignore="UnusedResources">Umi tembiporu’i ojejoko sapy’ami</string>
+    <!-- The first parameter is the application name. This is a message shown to the user when too many errors have occurred with the addons process and they have been disabled. The user can decide if they would like to continue trying to start add-ons or if they'd rather continue without them. -->
+    <string name="addon_process_crash_dialog_message" tools:ignore="UnusedResources">Peteĩ térã hetave tembiporu’i ndoikoéima, péicha rupi apopyvusu ndoku’eporãi. %1$s omoñepyrũsejey tembiporu’i ha ndaikatúi.\n\nUmi tembiporu’i ndoku’emo’ãi ko tembiapo aja.\n\nEipe’a térã embotývo umi tembiporu’i ikatu omyatyrõ ko apañuãi.</string>
+    <!-- This will cause the add-ons to try restarting but the dialog will reappear if it is unsuccessful again -->
+    <string name="addon_process_crash_dialog_retry_button_text" tools:ignore="UnusedResources">Emoñepyrũ umi tembiporu’i</string>
+    <!-- The user will continue with all add-ons disabled -->
+    <string name="addon_process_crash_dialog_disable_addons_button_text" tools:ignore="UnusedResources">Eku’ejey tembiporu’i jokopyréva ndive</string>
 
     <!-- Account Preferences -->
     <!-- Preference for managing your account via accounts.firefox.com -->
@@ -707,9 +755,9 @@
     <string name="exceptions_empty_message_learn_more_link">Kuaave</string>
 
     <!-- Preference switch for usage and technical data collection -->
-    <string name="preference_usage_data">Jepuru ha mba’ekuaarã aporekogua</string>
+    <string name="preference_usage_data">Jeporu ha mba’ekuaarã aporekogua</string>
     <!-- Preference description for usage and technical data collection -->
-    <string name="preferences_usage_data_description">Emoherakuã mba’ekuaarã apopy, jepuru, hardware ha kundahára mboava Mozilla ndive orepytyvõ hag̃ua oikoporãvévo %1$s</string>
+    <string name="preferences_usage_data_description">Emoherakuã mba’ekuaarã apopy, jeporu, hardware ha kundahára mboava Mozilla ndive orepytyvõ hag̃ua oikoporãvévo %1$s</string>
     <!-- Preference switch for marketing data collection -->
     <string name="preferences_marketing_data">Mba’ekuaarã jehepyme’ẽrã</string>
     <!-- Preference description for marketing data collection -->
@@ -769,7 +817,7 @@
     <!-- Option in library to open Desktop Bookmarks "menu" page -->
     <string name="library_desktop_bookmarks_menu">Techaukaha Poravorã</string>
     <!-- Option in library to open Desktop Bookmarks "toolbar" page -->
-    <string name="library_desktop_bookmarks_toolbar">Techaukaha rembipuru renda</string>
+    <string name="library_desktop_bookmarks_toolbar">Techaukaha rembiporu renda</string>
     <!-- Option in library to open Desktop Bookmarks "unfiled" page -->
     <string name="library_desktop_bookmarks_unfiled">Ambue techaukahakuéra</string>
     <!-- Option in Library to open History page -->
@@ -866,10 +914,10 @@
 
     <!-- Inactive tabs -->
     <!-- Category header of a preference that allows a user to enable or disable the inactive tabs feature -->
-    <string name="preferences_inactive_tabs">Eguerova tendayke ituja ha ojepuru’ỹva</string>
+    <string name="preferences_inactive_tabs">Eguerova tendayke ituja ha ojeporu’ỹva</string>
 
     <!-- Title of inactive tabs preference -->
-    <string name="preferences_inactive_tabs_title">Umi tendayke ehecha’ỹa mokõi arapokõindýpe ohóma tenda ojepuru’ỹvape.</string>
+    <string name="preferences_inactive_tabs_title">Umi tendayke ehecha’ỹa mokõi arapokõindýpe ohóma tenda ojeporu’ỹvape.</string>
 
     <!-- Studies -->
     <!-- Title of the remove studies button -->
@@ -883,14 +931,14 @@
     <string name="studies_learn_more">Kuaave</string>
 
     <!-- Dialog message shown after removing a study -->
-    <string name="studies_restart_app">Ko tembipuru’i oñembotýta hekopyahu hag̃ua</string>
+    <string name="studies_restart_app">Ko tembiporu’i oñembotýta hekopyahu hag̃ua</string>
     <!-- Dialog button to confirm the removing a study. -->
     <string name="studies_restart_dialog_ok">MONEĨ</string>
     <!-- Dialog button text for canceling removing a study. -->
     <string name="studies_restart_dialog_cancel">Heja</string>
 
     <!-- Toast shown after turning on/off studies preferences -->
-    <string name="studies_toast_quit_application" tools:ignore="UnusedResources">Esẽke tembipuru’ígui iñambuekuaa hag̃ua…</string>
+    <string name="studies_toast_quit_application" tools:ignore="UnusedResources">Esẽke tembiporu’ígui iñambuekuaa hag̃ua…</string>
 
     <!-- Sessions -->
     <!-- Title for the list of tabs -->
@@ -1018,7 +1066,7 @@
     <!-- Confirmation message for a dialog confirming if the user wants to delete the selected folder -->
     <string name="bookmark_delete_folder_confirmation_dialog">¿Añetehápepa emboguetese ko marandurenda?</string>
     <!-- Confirmation message for a dialog confirming if the user wants to delete multiple items including folders. Parameter will be replaced by app name. -->
-    <string name="bookmark_delete_multiple_folders_confirmation_dialog">%s omboguéta umi mba’epuru poravopyre.</string>
+    <string name="bookmark_delete_multiple_folders_confirmation_dialog">%s omboguéta umi mba’eporu poravopyre.</string>
     <!-- Text for the cancel button on delete bookmark dialog -->
     <string name="bookmark_delete_negative">Heja</string>
     <!-- Screen title for adding a bookmarks folder -->
@@ -1243,7 +1291,7 @@
     <!-- Sub-header in the dialog to share a link to an app from the full list -->
     <string name="share_link_all_apps_subheader">Opaite tembiaporã</string>
     <!-- Sub-header in the dialog to share a link to an app from the most-recent sorted list -->
-    <string name="share_link_recent_apps_subheader">Ojepururamovéva</string>
+    <string name="share_link_recent_apps_subheader">Ojeporuramovéva</string>
     <!-- Text for the copy link action in the share screen. -->
     <string name="share_copy_link_to_clipboard">Emondo kuatiajohápe</string>
     <!-- Toast shown after copying link to clipboard -->
@@ -1265,7 +1313,7 @@
     <!-- Confirmation dialog button -->
     <string name="sync_confirmation_button">Kumbypyre</string>
     <!-- Share error message -->
-    <string name="share_error_snackbar">Ndaikatúi emoherakuã ko tembipuru’i ndive</string>
+    <string name="share_error_snackbar">Ndaikatúi emoherakuã ko tembiporu’i ndive</string>
     <!-- Add new device screen title -->
     <string name="sync_add_new_device_title">Emondo mba’e’okápe</string>
 
@@ -1291,7 +1339,7 @@
     The app name is in the text, due to limitations with localizing Nimbus experiments -->
     <string name="nimbus_notification_default_browser_text" tools:ignore="UnusedResources">Ejapo Firefox-gui kundahára ypyguáva</string>
     <!-- Title shown in the notification that pops up to re-engage the user -->
-    <string name="notification_re_engagement_title">Kundaha ñemi jepuru</string>
+    <string name="notification_re_engagement_title">Kundaha ñemi jeporu</string>
 
     <!-- Text shown in the notification that pops up to re-engage the user.
     %1$s is a placeholder that will be replaced by the app name. -->
@@ -1335,6 +1383,8 @@
     <string name="snackbar_private_tab_closed">Tendayke ñemigua mbotypyre</string>
     <!-- Text shown in snackbar when user closes all private tabs -->
     <string name="snackbar_private_tabs_closed">Tendayke ñemigua mbotypyre</string>
+    <!-- Text shown in snackbar when user erases their private browsing data -->
+    <string name="snackbar_private_data_deleted">Oñemboguéma kundahára mba’ekuaarã</string>
     <!-- Text shown in snackbar to undo deleting a tab, top site or collection -->
     <string name="snackbar_deleted_undo">MBOGUEVI</string>
     <!-- Text shown in snackbar when user removes a top site -->
@@ -1382,12 +1432,16 @@
     <!-- Subtitle for the tabs item in Delete browsing data, parameter will be replaced with the number of open tabs -->
     <string name="preferences_delete_browsing_data_tabs_subtitle">%d tendayke</string>
     <!-- Title for the data and history items in Delete browsing data -->
-    <string name="preferences_delete_browsing_data_browsing_data_title">Kundahára rembiasakue ha tenda mba’ekuaarã</string>
+    <string name="preferences_delete_browsing_data_browsing_data_title" moz:removedIn="118" tools:ignore="UnusedResources">Kundahára rembiasakue ha tenda mba’ekuaarã</string>
+    <!-- Title for the history item in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_browsing_history_title">Kundaha rembiasakue</string>
     <!-- Subtitle for the data and history items in delete browsing data, parameter will be replaced with the
         number of history items the user has -->
     <string name="preferences_delete_browsing_data_browsing_data_subtitle">%d kundaharape</string>
     <!-- Title for the cookies item in Delete browsing data -->
-    <string name="preferences_delete_browsing_data_cookies">Kookie</string>
+    <string name="preferences_delete_browsing_data_cookies" moz:removedIn="118" tools:ignore="UnusedResources">Kookie</string>
+    <!-- Title for the cookies and site data items in Delete browsing data -->
+    <string name="preferences_delete_browsing_data_cookies_and_site_data">Kookie ha tenda mba’ekuaarã</string>
     <!-- Subtitle for the cookies item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_cookies_subtitle">Oñembotýta tembiapo heta tendápe</string>
     <!-- Title for the cached images and files item in Delete browsing data -->
@@ -1445,61 +1499,61 @@
 
     <!-- Onboarding -->
     <!-- Text for onboarding welcome header. -->
-    <string name="onboarding_header_2">Eg̃uahẽporãite ñanduti iporãvévape</string>
+    <string name="onboarding_header_2" moz:RemovedIn="118" tools:ignore="UnusedResources">Eg̃uahẽporãite ñanduti iporãvévape</string>
     <!-- Text for the onboarding welcome message. -->
-    <string name="onboarding_message">Kundahára heñóiva tapichápe g̃uarã, ndaha’éi virurã.</string>
+    <string name="onboarding_message" moz:RemovedIn="118" tools:ignore="UnusedResources">Kundahára heñóiva tapichápe g̃uarã, ndaha’éi virurã.</string>
     <!-- Text for the Firefox account onboarding sign in card header. -->
-    <string name="onboarding_account_sign_in_header">Eku’ejey eheja haguégui</string>
+    <string name="onboarding_account_sign_in_header" moz:RemovedIn="118" tools:ignore="UnusedResources">Eku’ejey eheja haguégui</string>
     <!-- Text for the button to learn more about signing in to your Firefox account. -->
-    <string name="onboarding_manual_sign_in_description">Embojuehe tendayke ha ñe’ẽñemi mba’e’oka pa’ũme emoambue hag̃ua mba’erechaha oso’ỹre.</string>
+    <string name="onboarding_manual_sign_in_description" moz:RemovedIn="118" tools:ignore="UnusedResources">Embojuehe tendayke ha ñe’ẽñemi mba’e’oka pa’ũme emoambue hag̃ua mba’erechaha oso’ỹre.</string>
     <!-- Text for the button to manually sign into Firefox account. -->
-    <string name="onboarding_firefox_account_sign_in">Eñepyrũ tembiapo</string>
+    <string name="onboarding_firefox_account_sign_in" moz:RemovedIn="118" tools:ignore="UnusedResources">Eñepyrũ tembiapo</string>
     <!-- text to display in the snackbar once account is signed-in -->
     <string name="onboarding_firefox_account_sync_is_on">Sync oñemyandýma</string>
     <!-- Text for the tracking protection onboarding card header -->
-    <string name="onboarding_tracking_protection_header">Omo’ã ñemigua ijeheguiete</string>
+    <string name="onboarding_tracking_protection_header" moz:RemovedIn="118" tools:ignore="UnusedResources">Omo’ã ñemigua ijeheguiete</string>
     <!-- Text for the tracking protection card description. The first parameter is the name of the application.-->
-    <string name="onboarding_tracking_protection_description_old">%1$s ojoko ijehegui umi atyguasúpe ani ohapykueho ñanduti rupive kañyhápe.</string>
+    <string name="onboarding_tracking_protection_description_old" moz:RemovedIn="118" tools:ignore="UnusedResources">%1$s ojoko ijehegui umi atyguasúpe ani ohapykueho ñanduti rupive kañyhápe.</string>
     <!-- Text for the tracking protection card description. -->
-    <string name="onboarding_tracking_protection_description">Ñemo’ãmbaite kookie rovake omboyke tapykuehohápe oipurúvo kookie nde rapykueho hag̃ua ñandutípe.</string>
+    <string name="onboarding_tracking_protection_description" moz:RemovedIn="118" tools:ignore="UnusedResources">Ñemo’ãmbaite kookie rovake omboyke tapykuehohápe oipurúvo kookie nde rapykueho hag̃ua ñandutípe.</string>
     <!-- text for tracking protection radio button option for standard level of blocking -->
-    <string name="onboarding_tracking_protection_standard_button_2">Ypyguaite (ijypygua)</string>
+    <string name="onboarding_tracking_protection_standard_button_2" moz:RemovedIn="118" tools:ignore="UnusedResources">Ypyguaite (ijypygua)</string>
     <!-- text for standard blocking option button description -->
-    <string name="onboarding_tracking_protection_standard_button_description_3">Imbytéva ñemo’ã ha tembiapokuépe g̃uarã. Umi kuatiarogue henyhẽta hekoitépe.</string>
+    <string name="onboarding_tracking_protection_standard_button_description_3" moz:RemovedIn="118" tools:ignore="UnusedResources">Imbytéva ñemo’ã ha tembiapokuépe g̃uarã. Umi kuatiarogue henyhẽta hekoitépe.</string>
     <!-- text for tracking protection radio button option for strict level of blocking -->
-    <string name="onboarding_tracking_protection_strict_option">Mbaretépe</string>
+    <string name="onboarding_tracking_protection_strict_option" moz:RemovedIn="118" tools:ignore="UnusedResources">Mbaretépe</string>
     <!-- text for strict blocking option button description -->
-    <string name="onboarding_tracking_protection_strict_button_description_3">Ejoko tapykuehoha kuatiarogue henyhẽ pya’évape g̃uarã, hákatu ojavykuaáva peteĩva kuatiarogue rembiapoite.</string>
+    <string name="onboarding_tracking_protection_strict_button_description_3" moz:RemovedIn="118" tools:ignore="UnusedResources">Ejoko tapykuehoha kuatiarogue henyhẽ pya’évape g̃uarã, hákatu ojavykuaáva peteĩva kuatiarogue rembiapoite.</string>
     <!-- text for the toolbar position card header  -->
-    <string name="onboarding_toolbar_placement_header_1">Eiporavo tembipuru renda oĩha</string>
+    <string name="onboarding_toolbar_placement_header_1" moz:RemovedIn="118" tools:ignore="UnusedResources">Eiporavo tembiporu renda oĩha</string>
     <!-- Text for the toolbar position card description -->
-    <string name="onboarding_toolbar_placement_description">Ereko yvy gotyo térã emogu’e yvate gotyo.</string>
+    <string name="onboarding_toolbar_placement_description" moz:RemovedIn="118" tools:ignore="UnusedResources">Ereko yvy gotyo térã emogu’e yvate gotyo.</string>
 
     <!-- Text for the privacy notice onboarding card header -->
-    <string name="onboarding_privacy_notice_header_1">Ehechameme ne mba’ekuaarã</string>
+    <string name="onboarding_privacy_notice_header_1" moz:RemovedIn="118" tools:ignore="UnusedResources">Ehechameme ne mba’ekuaarã</string>
     <!-- Text for the privacy notice onboarding card description. -->
-    <string name="onboarding_privacy_notice_description">Firefox ome’ẽ ndéve pokatu emoherakuãva ñandutípe rehe ha emoherakuãva orendive avei.</string>
+    <string name="onboarding_privacy_notice_description" moz:RemovedIn="118" tools:ignore="UnusedResources">Firefox ome’ẽ ndéve pokatu emoherakuãva ñandutípe rehe ha emoherakuãva orendive avei.</string>
     <!-- Text for the button to read the privacy notice -->
-    <string name="onboarding_privacy_notice_read_button">Emoñe’ẽ ore marandu’i ñemigua</string>
+    <string name="onboarding_privacy_notice_read_button" moz:RemovedIn="118" tools:ignore="UnusedResources">Emoñe’ẽ ore marandu’i ñemigua</string>
 
     <!-- Text for the conclusion onboarding message -->
-    <string name="onboarding_conclusion_header">¿Embojurujakuaáma ñanduti oikoitéva?</string>
+    <string name="onboarding_conclusion_header" moz:RemovedIn="118" tools:ignore="UnusedResources">¿Embojurujakuaáma ñanduti oikoitéva?</string>
     <!-- text for the button to finish onboarding -->
-    <string name="onboarding_finish">Eñepyrũ eikundaha</string>
+    <string name="onboarding_finish" moz:RemovedIn="118" tools:ignore="UnusedResources">Eñepyrũ eikundaha</string>
 
     <!-- Onboarding theme -->
     <!-- text for the theme picker onboarding card header -->
-    <string name="onboarding_theme_picker_header">Eiporavo ne téma</string>
+    <string name="onboarding_theme_picker_header" moz:RemovedIn="118" tools:ignore="UnusedResources">Eiporavo ne téma</string>
     <!-- text for the theme picker onboarding card description -->
-    <string name="onboarding_theme_picker_description_2">Eipuru’ive batería ha emombytu’u nde resa iñypytũvévape.</string>
+    <string name="onboarding_theme_picker_description_2" moz:RemovedIn="118" tools:ignore="UnusedResources">Eiporu’ive batería ha emombytu’u nde resa iñypytũvévape.</string>
     <!-- Automatic theme setting (will follow device setting) -->
-    <string name="onboarding_theme_automatic_title">ijeheguietéva</string>
+    <string name="onboarding_theme_automatic_title" moz:RemovedIn="118" tools:ignore="UnusedResources">ijeheguietéva</string>
     <!-- Summary of automatic theme setting (will follow device setting) -->
-    <string name="onboarding_theme_automatic_summary">Ojokupyty ñemboheko ne mba’e’oka rehe</string>
+    <string name="onboarding_theme_automatic_summary" moz:RemovedIn="118" tools:ignore="UnusedResources">Ojokupyty ñemboheko ne mba’e’oka rehe</string>
     <!-- Theme setting for dark mode -->
-    <string name="onboarding_theme_dark_title">Téma ypytũva</string>
+    <string name="onboarding_theme_dark_title" moz:RemovedIn="118" tools:ignore="UnusedResources">Téma ypytũva</string>
     <!-- Theme setting for light mode -->
-    <string name="onboarding_theme_light_title">Téma hesakãva</string>
+    <string name="onboarding_theme_light_title" moz:RemovedIn="118" tools:ignore="UnusedResources">Téma hesakãva</string>
 
     <!-- Text shown in snackbar when multiple tabs have been sent to device -->
     <string name="sync_sent_tabs_snackbar">¡Tendayke mondopyre!</string>
@@ -1518,7 +1572,7 @@
     <!-- Text shown for settings option for sign with pairing -->
     <string name="sign_in_with_camera">Eñepyrũ tembiapo ne ra’ãngamýi ndive</string>
     <!-- Text shown for settings option for sign with email -->
-    <string name="sign_in_with_email">Eipuru ñandutiveve</string>
+    <string name="sign_in_with_email">Eiporu ñandutiveve</string>
     <!-- Text shown for settings option for create new account text.'Firefox' intentionally hardcoded here.-->
     <string name="sign_in_create_account_text"><![CDATA[¿Ndererekói mba’ete? <u>Emoheñói</u> embojuehe hag̃ua Firefox mba’e’oka ndive.]]></string>
     <!-- Text shown in confirmation dialog to sign out of account. The first parameter is the name of the app (e.g. Firefox Preview) -->
@@ -1600,9 +1654,9 @@
     <!-- Category of trackers (cross-site tracking cookies) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_cookies_title_2">Kookie tenda ojuasáva</string>
     <!-- Description of cross-site tracking cookies that can be blocked by Enhanced Tracking Protection -->
-    <string name="etp_cookies_description">Ejoko kookie oipurúva ñanduti marandugua ha mba’apohaguasu mba’ekuaarã resa’ỹijoha ombyatýva kundahára mba’ekuaarã oikévo tendápe.</string>
+    <string name="etp_cookies_description">Ejoko kookie oiporúva ñanduti marandugua ha mba’apohaguasu mba’ekuaarã resa’ỹijoha ombyatýva kundahára mba’ekuaarã oikévo tendápe.</string>
     <!-- Description of cross-site tracking cookies that can be blocked by Enhanced Tracking Protection -->
-    <string name="etp_cookies_description_2">Ñemo’ãmbaite kookie rovake oreko kookie tenda reimehápe g̃uarã, avei tapykuehoha ndojepurukuaái ohapykueho hag̃ua tendakuéra pa’ũme.</string>
+    <string name="etp_cookies_description_2">Ñemo’ãmbaite kookie rovake oreko kookie tenda reimehápe g̃uarã, avei tapykuehoha ndojeporukuaái ohapykueho hag̃ua tendakuéra pa’ũme.</string>
     <!-- Category of trackers (cryptominers) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_cryptominers_title">Criptominero</string>
 
@@ -1611,7 +1665,7 @@
     <!-- Category of trackers (fingerprinters) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_fingerprinters_title">Kuãhũ kuaaukaha</string>
     <!-- Description of fingerprinters that can be blocked by Enhanced Tracking Protection -->
-    <string name="etp_fingerprinters_description">Emboyke ani oñembyaty ne mba’ekuaarã ojehechakuaáva ne mba’e’oka rehegua ikatúva ojepuru ejehapykuehokuaa hag̃ua.</string>
+    <string name="etp_fingerprinters_description">Emboyke ani oñembyaty ne mba’ekuaarã ojehechakuaáva ne mba’e’oka rehegua ikatúva ojeporu ejehapykuehokuaa hag̃ua.</string>
     <!-- Category of trackers (tracking content) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_tracking_content_title">Tapykueho retepy</string>
     <!-- Description of tracking content that can be blocked by Enhanced Tracking Protection -->
@@ -1659,7 +1713,7 @@
     <!-- About page link text to open licensing information link -->
     <string name="about_licensing_information">Marandu ñemoneĩgua</string>
     <!-- About page link text to open a screen with libraries that are used -->
-    <string name="about_other_open_source_libraries">Arandukarenda roipurúva</string>
+    <string name="about_other_open_source_libraries">Arandukarenda roiporúva</string>
 
     <!-- Toast shown to the user when they are activating the secret dev menu
         The first parameter is number of long clicks left to enable the menu -->
@@ -1691,7 +1745,7 @@
     <string name="add_to_homescreen_text_placeholder">Jeike pya’eha réra</string>
 
     <!-- Describes the add to homescreen functionality -->
-    <string name="add_to_homescreen_description_2">Ikatu embojuaju ko ñanduti renda ne mba’e’oka mba’erechaha ñepyrũgua rehe eike hag̃ua ha eikundaha pya’eve, peteĩ tembipuru’ícharamo.</string>
+    <string name="add_to_homescreen_description_2">Ikatu embojuaju ko ñanduti renda ne mba’e’oka mba’erechaha ñepyrũgua rehe eike hag̃ua ha eikundaha pya’eve, peteĩ tembiporu’ícharamo.</string>
 
     <!-- Preference for managing the settings for logins and passwords in Fenix -->
     <string name="preferences_passwords_logins_and_passwords">Tembiapo ñepyrũ ha ñe’ẽñemi</string>
@@ -1705,12 +1759,12 @@
     <!-- Preference for autofilling saved logins in Firefox (in web content), %1$s will be replaced with the app name -->
     <string name="preferences_passwords_autofill2">Emyenyhẽjey %1$s-pe</string>
     <!-- Description for the preference for autofilling saved logins in Firefox (in web content), %1$s will be replaced with the app name -->
-    <string name="preferences_passwords_autofill_description">Emoĩmba ha eñongatu puruhára réra ha ñe’ẽñemi ñanduti rendápe eipuru aja %1$s.</string>
+    <string name="preferences_passwords_autofill_description">Emoĩmba ha eñongatu poruhára réra ha ñe’ẽñemi ñanduti rendápe eiporu aja %1$s.</string>
     <!-- Preference for autofilling logins from Fenix in other apps (e.g. autofilling the Twitter app) -->
     <string name="preferences_android_autofill">Emyanyhẽjey ambue apps-pe</string>
 
     <!-- Description for the preference for autofilling logins from Fenix in other apps (e.g. autofilling the Twitter app) -->
-    <string name="preferences_android_autofill_description">Emoĩmba ha eñongatu puruhára réra ha ñe’ẽñemi ambue tembipuru’ípe ne mba’e’oka pegua.</string>
+    <string name="preferences_android_autofill_description">Emoĩmba ha eñongatu poruhára réra ha ñe’ẽñemi ambue tembiporu’ípe ne mba’e’oka pegua.</string>
 
     <!-- Preference option for adding a login -->
     <string name="preferences_logins_add_login">Embojuaju jeike</string>
@@ -1738,21 +1792,21 @@
     <!-- The header for the site that a login is for -->
     <string name="preferences_passwords_saved_logins_site">Tenda</string>
     <!-- The header for the username for a login -->
-    <string name="preferences_passwords_saved_logins_username">Puruhára réra</string>
+    <string name="preferences_passwords_saved_logins_username">Poruhára réra</string>
     <!-- The header for the password for a login -->
     <string name="preferences_passwords_saved_logins_password">Ñe’ẽñemi</string>
     <!-- Shown in snackbar to tell user that the password has been copied -->
     <string name="logins_password_copied">Ñe’ẽñemi ohasáva kuatiajokohápe</string>
     <!-- Shown in snackbar to tell user that the username has been copied -->
-    <string name="logins_username_copied">Puruhára réra ohasáva kuatiajokohápe</string>
+    <string name="logins_username_copied">Poruhára réra ohasáva kuatiajokohápe</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a password in logins-->
     <string name="saved_logins_copy_password">Emonguatia ñe’ẽñemi</string>
     <!-- Content Description (for screenreaders etc) read for the button to clear a password while editing a login-->
     <string name="saved_logins_clear_password">Embogue ñe’ẽñemi</string>
     <!-- Content Description (for screenreaders etc) read for the button to copy a username in logins -->
-    <string name="saved_login_copy_username">Emonguatia puruhára réra</string>
+    <string name="saved_login_copy_username">Emonguatia poruhára réra</string>
     <!-- Content Description (for screenreaders etc) read for the button to clear a username while editing a login -->
-    <string name="saved_login_clear_username">Embogue puruhára réra</string>
+    <string name="saved_login_clear_username">Embogue poruhára réra</string>
     <!-- Content Description (for screenreaders etc) read for the button to clear the hostname field while creating a login -->
     <string name="saved_login_clear_hostname">Emopotĩ mohendahavusu réra</string>
     <!-- Content Description (for screenreaders etc) read for the button to open a site in logins -->
@@ -1764,9 +1818,9 @@
     <!-- Message displayed in biometric prompt displayed for authentication before allowing users to view their logins -->
     <string name="logins_biometric_prompt_message">Emyandyjey ehecha hag̃ua ne rembiapo ñepyrũ ñongatupyre</string>
     <!-- Title of warning dialog if users have no device authentication set up -->
-    <string name="logins_warning_dialog_title">Erekokuaa nde puruhára ha ñe’ẽñemi</string>
+    <string name="logins_warning_dialog_title">Erekokuaa nde poruhára ha ñe’ẽñemi</string>
     <!-- Message of warning dialog if users have no device authentication set up -->
-    <string name="logins_warning_dialog_message">Emboheko pe patrõ jokoháva mba’e’oka pegua, PIN térã ñe’ẽñemi emo’ã hag̃ua nde puruhára ha ñe’ẽñemi ñongatupyrépe jeike ambue orekórõ ne mba’e’oka.</string>
+    <string name="logins_warning_dialog_message">Emboheko pe patrõ jokoháva mba’e’oka pegua, PIN térã ñe’ẽñemi emo’ã hag̃ua nde poruhára ha ñe’ẽñemi ñongatupyrépe jeike ambue orekórõ ne mba’e’oka.</string>
     <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
     <string name="logins_warning_dialog_later">Upéi</string>
     <!-- Positive button to send users to set up a pin of warning dialog if users have no device authentication set up -->
@@ -1869,7 +1923,7 @@
     <string name="credit_cards_biometric_prompt_message_pin">Embojuruja ne mba’e’oka</string>
 
     <!-- Message displayed in biometric prompt for authentication, before allowing users to use their stored credit card information -->
-    <string name="credit_cards_biometric_prompt_unlock_message">Embojuruja eipuru hag̃ua kuatia’atã ñemurã marandu mbyatypyre</string>
+    <string name="credit_cards_biometric_prompt_unlock_message">Embojuruja eiporu hag̃ua kuatia’atã ñemurã marandu mbyatypyre</string>
 
     <!-- Title of the "Add address" screen -->
     <string name="addresses_add_address">Embojuaju kundaharape</string>
@@ -1945,7 +1999,7 @@
     <!-- Placeholder text shown in the Search String TextField before a user enters text -->
     <string name="search_add_custom_engine_search_string_hint">Jehekaha juajuha eipurútava</string>
     <!-- Placeholder text shown in the Search String TextField before a user enters text -->
-    <string name="search_add_custom_engine_search_string_hint_2">URL eipurukuaáva eheka hag̃ua</string>
+    <string name="search_add_custom_engine_search_string_hint_2">URL eiporukuaáva eheka hag̃ua</string>
     <!-- Description text for the Search String TextField. The %s is part of the string -->
     <string name="search_add_custom_engine_search_string_example" formatted="false">Emoambue porandu “%s” ndive. Techapyrã:https://www.google.com/search?q=%s</string>
 
@@ -1957,7 +2011,9 @@
     <!-- Placeholder text shown in the Search Suggestion String TextField before a user enters text -->
     <string name="search_add_custom_engine_suggest_string_hint">API URL ñemoñe’ẽ jehekarã</string>
     <!-- Description text for the Search Suggestion String TextField. The %s is part of the string -->
-    <string name="search_add_custom_engine_suggest_string_example" formatted="false">Emyengovia porandu “%s” ndive. Techapyrã:\nhttp://suggestqueries.google.com/complete/search?client=firefox&amp;q=%s</string>
+    <string name="search_add_custom_engine_suggest_string_example" formatted="false" moz:RemovedIn="118" tools:ignore="UnusedResources">Emyengovia porandu “%s” ndive. Techapyrã:\nhttp://suggestqueries.google.com/complete/search?client=firefox&amp;q=%s</string>
+    <!-- Description text for the Search Suggestion String TextField. The %s is part of the string -->
+    <string name="search_add_custom_engine_suggest_string_example_2" formatted="false">Emyengovia porandu “%s” ndive. Techapyrã:\nhttps://suggestqueries.google.com/complete/search?client=firefox&amp;q=%s</string>
     <!-- The text for the "Save" button for saving a custom search engine -->
     <string name="search_custom_engine_save_button">Ñongatu</string>
 
@@ -2027,7 +2083,7 @@
     <!--  The editable text field for a login's web address. -->
     <string name="saved_login_hostname_description">Moñe’ẽha kora isako’ikuaáava ñanduti kundaharape rembiapo ñepyrũme.</string>
     <!--  The editable text field for a login's username. -->
-    <string name="saved_login_username_description">Moñe’ẽha kora isako’ikuaáava puruhára réra rembiapo ñepyrũme.</string>
+    <string name="saved_login_username_description">Moñe’ẽha kora isako’ikuaáava poruhára réra rembiapo ñepyrũme.</string>
     <!--  The editable text field for a login's password. -->
     <string name="saved_login_password_description">Moñe’ẽha kora isako’ikuaáava ñe’ẽñemi rembiapo ñepyrũme.</string>
     <!--  The button description to save changes to an edited login. -->
@@ -2039,7 +2095,7 @@
     <!--  The error message in add/edit login view when password field is blank. -->
     <string name="saved_login_password_required">Tekotevẽ ñe’ẽñemi</string>
     <!--  The error message in add login view when username field is blank. -->
-    <string name="saved_login_username_required">Puruhára réra jerurepyre</string>
+    <string name="saved_login_username_required">Poruhára réra jerurepyre</string>
     <!--  The error message in add login view when hostname field is blank. -->
     <string name="saved_login_hostname_required" tools:ignore="UnusedResources">Mohendahavusu réra jerurepyre</string>
     <!-- Voice search button content description  -->
@@ -2048,7 +2104,7 @@
     <string name="voice_search_explainer">Eñe’ẽ ko’ág̃a</string>
 
     <!--  The error message in edit login view when a duplicate username exists. -->
-    <string name="saved_login_duplicate">Oĩma tembiapo ñepyrũ puruhára réra peichagua</string>
+    <string name="saved_login_duplicate">Oĩma tembiapo ñepyrũ poruhára réra peichagua</string>
 
     <!-- This is the hint text that is shown inline on the hostname field of the create new login page. 'https://www.example.com' intentionally hardcoded here -->
     <string name="add_login_hostname_hint_text">https://www.example.com</string>
@@ -2109,14 +2165,14 @@
 
     <!-- Inactive tabs in the tabs tray -->
     <!-- Title text displayed in the tabs tray when a tab has been unused for 14 days. -->
-    <string name="inactive_tabs_title">Tendayke ojepuru’ỹva</string>
+    <string name="inactive_tabs_title">Tendayke ojeporu’ỹva</string>
     <!-- Content description for closing all inactive tabs -->
-    <string name="inactive_tabs_delete_all">Embotypaite tendayke ojepuru’ỹva</string>
+    <string name="inactive_tabs_delete_all">Embotypaite tendayke ojeporu’ỹva</string>
 
     <!-- Content description for expanding the inactive tabs section. -->
-    <string name="inactive_tabs_expand_content_description">Emyasãi tendayke ojepuru’ỹva</string>
+    <string name="inactive_tabs_expand_content_description">Emyasãi tendayke ojeporu’ỹva</string>
     <!-- Content description for collapsing the inactive tabs section. -->
-    <string name="inactive_tabs_collapse_content_description">Emomichĩ tendayke ojepuru’ỹva</string>
+    <string name="inactive_tabs_collapse_content_description">Emomichĩ tendayke ojeporu’ỹva</string>
 
     <!-- Inactive tabs auto-close message in the tabs tray -->
     <!-- The header text of the auto-close message when the user is asked if they want to turn on the auto-closing of inactive tabs. -->
@@ -2175,6 +2231,130 @@
     <string name="experiments_snackbar">Embojuruja telemetry emondo hag̃ua mba’ekuaarã.</string>
     <!-- Snackbar button text to navigate to telemetry settings.-->
     <string name="experiments_snackbar_button">Eho ñembohekópe</string>
+
+    <!-- Review quality check feature-->
+    <!-- Name for the review quality check feature used as title for the panel. -->
+    <string name="review_quality_check_feature_name">Marandu’i rechajeyha</string>
+    <!-- Summary for grades A and B for review quality check adjusted grading. -->
+    <string name="review_quality_check_grade_a_b_description">Marandu’i jeroviaha</string>
+    <!-- Summary for grade C for review quality check adjusted grading. -->
+    <string name="review_quality_check_grade_c_description">Ojehe’a hechajey jerovia ha jerovia’ỹva</string>
+    <!-- Summary for grades D and F for review quality check adjusted grading. -->
+    <string name="review_quality_check_grade_d_f_description">Hechajeyha jerovia’ỹva</string>
+    <!-- Text for title presenting the reliability of a product's reviews. -->
+    <string name="review_quality_check_grade_title">Ejerovia añetépa ko’ã hechajeýre</string>
+    <!-- Title for when the rating has been updated by the review checker -->
+    <string name="review_quality_check_adjusted_rating_title">Ñeha’ãmby ha’etéva</string>
+    <!-- Description for a product's adjusted star rating. The text presents that the product's reviews which were evaluated as unreliable were removed from the adjusted rating. -->
+    <string name="review_quality_check_adjusted_rating_description">Oñemboguéta marandu’i jerovia’ỹha</string>
+    <!-- Title for list of highlights from a product's review emphasizing a product's important traits. -->
+    <string name="review_quality_check_highlights_title">Mba’e iporãva marandu’i osẽramóvare</string>
+    <!-- Title for section explaining how we analyze the reliability of a product's reviews. -->
+    <string name="review_quality_check_explanation_title">Mba’éichapa jaikuaáta marandu’i iporãha</string>
+    <!-- Paragraph explaining how we analyze the reliability of a product's reviews. First parameter is the Fakespot product name. In the phrase "Fakespot by Mozilla", "by" can be localized. Does not need to stay by. -->
+    <string name="review_quality_check_explanation_body_reliability">Roipuru tembiporupyahu IA %s Mozilla rupive rohesa’ỹijo hag̃ua iporãpa marandu’i apopyregua. Ñehesa’ỹijo oipytyvõta roha’ã hag̃ua marandu’i porãngue, ndaha’éi apopyre porãngue.</string>
+    <!-- Paragraph explaining the grading system we use to classify the reliability of a product's reviews. -->
+    <string name="review_quality_check_info_review_grade_header" tools:ignore="UnusedResources"><![CDATA[Rome’ẽ marandu’i peteĩteĩva apopyrépe <b>papapy tai ndive</b> A guive F peve.]]></string>
+    <!-- Description explaining grades A and B for review quality check adjusted grading. -->
+    <string name="review_quality_check_info_grade_info_AB">Hechajey jeroviaha. Roguerovia marandu’i ouha joguaharaitégui ohejáva umi marandu’i oñanduháicha ha ñaña’ỹre.</string>
+    <!-- Description explaining grade C for review quality check adjusted grading. -->
+    <string name="review_quality_check_info_grade_info_C">Roikuaa oĩha marandu’i jeroviaha ha jerovia’ỹha.</string>
+    <!-- Description explaining grades D and F for review quality check adjusted grading. -->
+    <string name="review_quality_check_info_grade_info_DF">Marandu’i jerovia’iveha. Roikuaa marandu’i ikatuha japu térã ou hechajeyhára iñañávagui.</string>
+    <!-- Text for learn more caption presenting a link with information about review quality. First parameter is for clickable text defined in review_quality_check_info_learn_more_link. -->
+    <string name="review_quality_check_info_learn_more">Eikuaave ko’ãvare %s.</string>
+    <!-- Clickable text that links to review quality check SuMo page. First parameter is the Fakespot product name. In the phrase "Fakespot by Mozilla", "by" can be localized. Does not need to stay by. -->
+    <string name="review_quality_check_info_learn_more_link">mba’éichapa %s Mozilla mba’e ohechaukáta marandu’i iporãha</string>
+    <!-- Text for title of settings section. -->
+    <string name="review_quality_check_settings_title">Ñemboheko</string>
+    <!-- Text for label for switch preference to show recommended products from review quality check settings section. -->
+    <string name="review_quality_check_settings_recommended_products">Ehechauka ñemurã marandu’i rechajeyhápe</string>
+    <!-- Clickable text that links to review quality check recommended products support article. -->
+    <string name="review_quality_check_settings_recommended_products_learn_more" tools:ignore="UnusedResources">Eikuaave</string>
+    <!-- Text for turning sidebar off button from review quality check settings section. -->
+    <string name="review_quality_check_settings_turn_off">Eipe’a marandu’i rechajeyha</string>
+    <!-- Text for title of recommended product section. This is displayed above a product image, suggested as an alternative to the product reviewed. -->
+    <string name="review_quality_check_ad_title" tools:ignore="UnusedResources">Ehecha emomba’e hag̃ua</string>
+    <!-- Caption for recommended product section indicating this is an ad by Fakespot. First parameter is the Fakespot product name. -->
+    <string name="review_quality_check_ad_caption" tools:ignore="UnusedResources">Ñemurã %s</string>
+
+    <!-- Caption for review quality check panel. First parameter is for clickable text defined in review_quality_check_powered_by_link. -->
+    <string name="review_quality_check_powered_by" tools:ignore="UnusedResources" moz:RemovedIn="119">Marandu’i rechajeyhápe oiko %s rupive.</string>
+    <!-- Caption for review quality check panel. First parameter is for clickable text defined in review_quality_check_powered_by_link. -->
+    <string name="review_quality_check_powered_by_2">Marandu’i rechajeyhápe oiko %s rupive.</string>
+    <!-- Clickable text that links to Fakespot.com. First parameter is the Fakespot product name. In the phrase "Fakespot by Mozilla", "by" can be localized. Does not need to stay by. -->
+    <string name="review_quality_check_powered_by_link" tools:ignore="UnusedResources">%s Mozilla mba’e</string>
+    <!-- Text for title of warning card informing the user that the current analysis is outdated. -->
+    <string name="review_quality_check_outdated_analysis_warning_title" tools:ignore="UnusedResources">Marandu pyahu ehechajey hag̃ua</string>
+    <!-- Text for button from warning card informing the user that the current analysis is outdated. Clicking this should trigger the product's re-analysis. -->
+    <string name="review_quality_check_outdated_analysis_warning_action" tools:ignore="UnusedResources">Ehechajey ko’ág̃a</string>
+    <!-- Title for warning card informing the user that the current product does not have enough reviews for a review analysis. -->
+    <string name="review_quality_check_no_reviews_warning_title">Noĩri gueteri heta marandu’i</string>
+    <!-- Title for warning card informing the user that the current product is currently not available. -->
+    <string name="review_quality_check_product_availability_warning_title" tools:ignore="UnusedResources">Apopyre ndojeporukuaái</string>
+    <!-- Clickable text for warning card informing the user that the current product is currently not available. Clicking this should inform the server that the product is available. -->
+    <string name="review_quality_check_product_availability_warning_action" tools:ignore="UnusedResources">Emombe’u ko apopyre ojeporukuaajeymaha</string>
+    <!-- Title for warning card informing the user that the current product's re-analysis is still processing. -->
+    <string name="review_quality_check_reanalysis_in_progress_warning_title">Ehechajey marandu’i porãngue</string>
+    <!-- Title for warning card informing the user that the current product's analysis is still processing. -->
+    <string name="review_quality_check_analysis_in_progress_warning_title">Ehechajey marandu’i porãngue</string>
+    <!-- Text for body of warning card informing the user that the current product's analysis is still processing. -->
+    <string name="review_quality_check_analysis_in_progress_warning_body">Kóva ipukukuaa 60 aravo’ive rupi.</string>
+    <!-- Title for info card displayed after the user reports a product is back in stock. -->
+    <string name="review_quality_check_analysis_requested_info_title" tools:ignore="UnusedResources">¡Aguyje emomarandúre!</string>
+    <!-- Title for info card displayed when the user review checker while on a product that Fakespot does not analyze (e.g. gift cards, music). -->
+    <string name="review_quality_check_not_analyzable_info_title">Ndorohechajeykuaái ko marandu’i.</string>
+    <!-- Title for info card displayed when another user reported the displayed product is back in stock. -->
+    <string name="review_quality_check_analysis_requested_other_user_info_title" tools:ignore="UnusedResources">Marandu ojeporupotáma</string>
+    <!-- Title for info card displayed to the user when analysis finished updating. -->
+    <string name="review_quality_check_analysis_updated_confirmation_title" tools:ignore="UnusedResources">Ñehesa’ỹijo hekopyahúma</string>
+    <!-- Text for the action button from info card displayed to the user when analysis finished updating. -->
+    <string name="review_quality_check_analysis_updated_confirmation_action" tools:ignore="UnusedResources">Aikumby</string>
+    <!-- Title for error card displayed to the user when an error occurred. -->
+    <string name="review_quality_check_generic_error_title">Ndaipóri marandu ko’ág̃aite</string>
+    <!-- Title for error card displayed to the user when the device is disconnected from the network. -->
+    <string name="review_quality_check_no_connection_title">Ndaikatúi eike ñandutípe</string>
+    <!-- Title for card displayed to the user for products whose reviews were not analyzed yet. -->
+    <string name="review_quality_check_no_analysis_title">Ndaipóri mba’eve ko’ã marandu’i rehegua</string>
+    <!-- Text for button from body of card displayed to the user for products whose reviews were not analyzed yet. Clicking this should trigger a product analysis. -->
+    <string name="review_quality_check_no_analysis_link">Ehechajey marandu’i porãngue</string>
+    <!-- Clickable text from the contextual onboarding card that links to review quality check support article. -->
+    <string name="review_quality_check_contextual_onboarding_learn_more_link">Eikuaave</string>
+    <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot privacy policy. -->
+    <string name="review_quality_check_contextual_onboarding_privacy_policy">temiñemi porureko</string>
+    <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot terms of use. -->
+    <string name="review_quality_check_contextual_onboarding_terms_use">temiñemi jeporurã</string>
+    <!-- Text for opt-in button from the review quality check contextual onboarding card. -->
+    <string name="review_quality_check_contextual_onboarding_primary_button_text">Héẽ, eipuru</string>
+    <!-- Text for opt-out button from the review quality check contextual onboarding card. -->
+    <string name="review_quality_check_contextual_onboarding_secondary_button_text">Ani ko’ág̃a</string>
+    <!-- Text displayed in the first CFR presenting the review quality check feature that opens the review checker when clicked. -->
+    <string name="review_quality_check_first_cfr_action" tools:ignore="UnusedResources">Eipuru hechajey rechaha</string>
+    <!-- Text displayed in the second CFR presenting the review quality check feature that opens the review checker when clicked. -->
+    <string name="review_quality_check_second_cfr_action" tools:ignore="UnusedResources">Embojuruja marandu’i rechajeyha</string>
+    <!-- Flag showing that the review quality check feature is work in progress. -->
+    <string name="review_quality_check_beta_flag" tools:ignore="UnusedResources">Beta</string>
+    <!-- Content description (not visible, for screen readers etc.) for opening browser menu button to open review quality check bottom sheet. -->
+    <string name="review_quality_check_open_handle_content_description">Embojuruja marandu’i rechajeyha</string>
+    <!-- Content description (not visible, for screen readers etc.) for closing browser menu button to open review quality check bottom sheet. -->
+    <string name="review_quality_check_close_handle_content_description">Emboty marandu’i rechajeyha</string>
+    <!-- Content description (not visible, for screen readers etc.) for review quality check star rating. First parameter is the number of stars (1-5) representing the rating. -->
+    <string name="review_quality_check_star_rating_content_description">%1$s 5 mbyjáva</string>
+    <!-- Text for minimize button from highlights card. When clicked the highlights card should reduce its size. -->
+    <string name="review_quality_check_highlights_show_less">Ehechauka’ive</string>
+    <!-- Text for maximize button from highlights card. When clicked the highlights card should expand to its full size. -->
+    <string name="review_quality_check_highlights_show_more">Ehechaukave</string>
+    <!-- Text for highlights card quality category header. Reviews shown under this header should refer the product's quality. -->
+    <string name="review_quality_check_highlights_type_quality">Mba’eporã</string>
+    <!-- Text for highlights card price category header. Reviews shown under this header should refer the product's price. -->
+    <string name="review_quality_check_highlights_type_price">Tepy</string>
+    <!-- Text for highlights card shipping category header. Reviews shown under this header should refer the product's shipping. -->
+    <string name="review_quality_check_highlights_type_shipping">Ñemuhaguasu</string>
+    <!-- Text for highlights card packaging and appearance category header. Reviews shown under this header should refer the product's packaging and appearance. -->
+    <string name="review_quality_check_highlights_type_packaging_appearance">Mbyapeha ha jehecharã</string>
+
+    <!-- Text for highlights card competitiveness category header. Reviews shown under this header should refer the product's competitiveness. -->
+    <string name="review_quality_check_highlights_type_competitiveness">Katupyryrasa</string>
 
     <!-- Accessibility services actions labels. These will be appended to accessibility actions like "Double tap to.." but not by or applications but by services like Talkback. -->
     <!-- Action label for elements that can be collapsed if interacting with them. Talkback will append this to say "Double tap to collapse". -->

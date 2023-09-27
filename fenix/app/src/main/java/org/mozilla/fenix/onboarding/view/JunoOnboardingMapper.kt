@@ -4,7 +4,6 @@
 
 package org.mozilla.fenix.onboarding.view
 
-import androidx.compose.ui.layout.ContentScale
 import org.mozilla.fenix.compose.LinkTextState
 import org.mozilla.fenix.nimbus.OnboardingCardData
 import org.mozilla.fenix.nimbus.OnboardingCardType
@@ -13,12 +12,21 @@ import org.mozilla.fenix.settings.SupportUtils
 /**
  * Returns a list of all the required Nimbus 'cards' that have been converted to [OnboardingPageUiData].
  */
-internal fun Collection<OnboardingCardData>.toPageUiData(showNotificationPage: Boolean): List<OnboardingPageUiData> =
+internal fun Collection<OnboardingCardData>.toPageUiData(
+    showNotificationPage: Boolean,
+    showAddWidgetPage: Boolean,
+): List<OnboardingPageUiData> =
     filter {
-        if (it.cardType == OnboardingCardType.NOTIFICATION_PERMISSION) {
-            showNotificationPage
-        } else {
-            true
+        when (it.cardType) {
+            OnboardingCardType.NOTIFICATION_PERMISSION -> {
+                it.enabled && showNotificationPage
+            }
+            OnboardingCardType.ADD_SEARCH_WIDGET -> {
+                it.enabled && showAddWidgetPage
+            }
+            else -> {
+                it.enabled
+            }
         }
     }.sortedBy { it.ordering }
         .map { it.toPageUiData() }
@@ -26,7 +34,6 @@ internal fun Collection<OnboardingCardData>.toPageUiData(showNotificationPage: B
 private fun OnboardingCardData.toPageUiData() = OnboardingPageUiData(
     type = cardType.toPageUiDataType(),
     imageRes = imageRes.resourceId,
-    imageResContentScale = imageIsIllustration.toContentScale(),
     title = title,
     description = body,
     linkText = linkText,
@@ -34,16 +41,11 @@ private fun OnboardingCardData.toPageUiData() = OnboardingPageUiData(
     secondaryButtonLabel = secondaryButtonLabel,
 )
 
-private fun Boolean.toContentScale() = if (this) {
-    ContentScale.Fit
-} else {
-    ContentScale.Crop
-}
-
 private fun OnboardingCardType.toPageUiDataType() = when (this) {
     OnboardingCardType.DEFAULT_BROWSER -> OnboardingPageUiData.Type.DEFAULT_BROWSER
     OnboardingCardType.SYNC_SIGN_IN -> OnboardingPageUiData.Type.SYNC_SIGN_IN
     OnboardingCardType.NOTIFICATION_PERMISSION -> OnboardingPageUiData.Type.NOTIFICATION_PERMISSION
+    OnboardingCardType.ADD_SEARCH_WIDGET -> OnboardingPageUiData.Type.ADD_SEARCH_WIDGET
 }
 
 /**
@@ -60,11 +62,20 @@ internal fun mapToOnboardingPageState(
     onSignInSkipClick: () -> Unit,
     onNotificationPermissionButtonClick: () -> Unit,
     onNotificationPermissionSkipClick: () -> Unit,
+    onAddFirefoxWidgetClick: () -> Unit,
+    onAddFirefoxWidgetSkipClick: () -> Unit,
 ): OnboardingPageState = when (onboardingPageUiData.type) {
     OnboardingPageUiData.Type.DEFAULT_BROWSER -> createOnboardingPageState(
         onboardingPageUiData = onboardingPageUiData,
         onPositiveButtonClick = onMakeFirefoxDefaultClick,
         onNegativeButtonClick = onMakeFirefoxDefaultSkipClick,
+        onUrlClick = onPrivacyPolicyClick,
+    )
+
+    OnboardingPageUiData.Type.ADD_SEARCH_WIDGET -> createOnboardingPageState(
+        onboardingPageUiData = onboardingPageUiData,
+        onPositiveButtonClick = onAddFirefoxWidgetClick,
+        onNegativeButtonClick = onAddFirefoxWidgetSkipClick,
         onUrlClick = onPrivacyPolicyClick,
     )
 

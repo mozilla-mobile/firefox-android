@@ -13,6 +13,7 @@ import org.junit.Before
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
+import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.RetryTestRule
@@ -62,7 +63,6 @@ class ComposeHomeScreenTest {
     @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1844580")
     @Test
     fun homeScreenItemsTest() {
-        homeScreen {}.dismissOnboarding()
         homeScreen {
             verifyHomeWordmark()
             verifyHomePrivateBrowsingButton()
@@ -85,7 +85,6 @@ class ComposeHomeScreenTest {
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/244199
     @Test
     fun privateBrowsingHomeScreenItemsTest() {
-        homeScreen { }.dismissOnboarding()
         homeScreen { }.togglePrivateBrowsingMode()
 
         homeScreen {
@@ -96,6 +95,7 @@ class ComposeHomeScreenTest {
     }
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1364362
+    @SmokeTest
     @Test
     fun verifyJumpBackInSectionTest() {
         activityTestRule.activityRule.applySettingsExceptions {

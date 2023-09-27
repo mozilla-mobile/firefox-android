@@ -73,6 +73,12 @@ object InitAction : BrowserAction()
 object RestoreCompleteAction : BrowserAction()
 
 /**
+ * [BrowserAction] implementation for updating state related to whether the extensions process
+ * spawning has been disabled and a popup is necessary.
+ */
+data class ExtensionProcessDisabledPopupAction(val showPopup: Boolean) : BrowserAction()
+
+/**
  * [BrowserAction] implementations to react to system events.
  */
 sealed class SystemAction : BrowserAction() {
@@ -423,11 +429,6 @@ sealed class ContentAction : BrowserAction() {
      * Removes the icon of the [ContentState] with the given [sessionId].
      */
     data class RemoveIconAction(val sessionId: String) : ContentAction()
-
-    /**
-     * Removes the thumbnail of the [ContentState] with the given [sessionId].
-     */
-    data class RemoveThumbnailAction(val sessionId: String) : ContentAction()
 
     /**
      * Updates the URL of the [ContentState] with the given [sessionId].
@@ -1532,6 +1533,11 @@ sealed class SearchAction : BrowserAction() {
         val searchEngineId: String,
         val isEnabled: Boolean,
     ) : SearchAction()
+
+    /**
+     * Restores hidden engines from [SearchState.hiddenSearchEngines] back to [SearchState.regionSearchEngines]
+     */
+    object RestoreHiddenSearchEnginesAction : SearchAction()
 }
 
 /**

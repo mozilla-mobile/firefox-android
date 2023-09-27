@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.experimentintegration
 
+import android.content.pm.ActivityInfo
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -22,7 +23,12 @@ class SurveyExperimentIntegrationTest {
     private val experimentName = "Viewpoint"
 
     @get:Rule
-    val activityTestRule = HomeActivityTestRule()
+    val activityTestRule = HomeActivityTestRule(
+        isJumpBackInCFREnabled = false,
+        isPWAsPromptEnabled = false,
+        isTCPCFREnabled = false,
+        isDeleteSitePermissionsEnabled = true,
+    )
 
     @Before
     fun setUp() {
@@ -38,13 +44,40 @@ class SurveyExperimentIntegrationTest {
     fun checkSurveyNavigatesCorrectly() {
         browserScreen {
             verifySurveyButton()
-        }.clickSurveyButton {}
+        }.clickSurveyButton {
+            verifyUrl(surveyURL)
+        }
 
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
         }.openExperimentsMenu {
             verifyExperimentExists(experimentName)
+        }
+    }
+
+    @Test
+    fun checkSurveyNoThanksNavigatesCorrectly() {
+        browserScreen {
+            verifySurveyNoThanksButton()
+        }.clickNoThanksSurveyButton {
+            verifyTabCounter("0")
+        }
+
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openExperimentsMenu {
+            verifyExperimentExists(experimentName)
+        }
+    }
+
+    @Test
+    fun checkSurveyLandscapeLooksCorrect() {
+        activityTestRule.activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+        browserScreen {
+            verifySurveyNoThanksButton()
+            verifySurveyButton()
         }
     }
 }

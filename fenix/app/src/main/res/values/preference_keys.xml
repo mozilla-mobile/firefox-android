@@ -25,7 +25,7 @@
     <string name="pref_key_delete_browsing_data_on_quit" translatable="false">pref_key_delete_browsing_data_on_quit</string>
     <string name="pref_key_delete_open_tabs_on_quit" translatable="false">pref_key_delete_open_tabs_on_quit</string>
     <string name="pref_key_delete_browsing_history_on_quit" translatable="false">pref_key_delete_browsing_history_on_quit</string>
-    <string name="pref_key_delete_cookies_on_quit" translatable="false">pref_key_delete_cookies_on_quit</string>
+    <string name="pref_key_delete_cookies_and_site_data_on_quit" translatable="false">pref_key_delete_cookies_and_site_data_on_quit</string>
     <string name="pref_key_delete_caches_on_quit" translatable="false">pref_key_delete_caches_on_quit</string>
     <string name="pref_key_delete_permissions_on_quit" translatable="false">pref_key_delete_permissions_on_quit</string>
     <string name="pref_key_delete_downloads_on_quit" translatable="false">pref_key_delete_downloads_on_quit</string>
@@ -75,6 +75,8 @@
     <string name="pref_key_is_first_splash_screen_shown" translatable="false">pref_key_is_first_splash_screen_shown</string>
     <string name="pref_key_nimbus_last_fetch" translatable="false">pref_key_nimbus_last_fetch</string>
     <string name="pref_key_home_blocklist">pref_key_home_blocklist</string>
+    <string name="pref_key_hidden_engines_restored" translatable="false">pref_key_hidden_engines_restored</string>
+    <string name="pref_key_enable_fxsuggest" translatable="false">pref_key_fxsuggest_enabled</string>
 
     <!-- Data Choices -->
     <string name="pref_key_telemetry" translatable="false">pref_key_telemetry</string>
@@ -93,7 +95,7 @@
     <string name="pref_key_sign_out" translatable="false">pref_key_sign_out</string>
     <string name="pref_key_sync_sign_in" translatable="false">pref_key_sync_sign_in</string>
     <string name="pref_key_push_project_id" translatable="false">project_id</string>
-    <string name="pref_key_search_widget_installed" translatable="false">pref_key_search_widget_installed</string>
+    <string name="pref_key_search_widget_installed_2" translatable="false">pref_key_search_widget_installed_2</string>
     <string name="pref_key_saved_logins_sorting_strategy" translatable="false">pref_key_saved_logins_sorting_strategy</string>
     <!-- Key for credit cards sync preference in the account settings fragment -->
     <string name="pref_key_sync_credit_cards" translatable="false">pref_key_sync_credit_cards</string>
@@ -112,6 +114,8 @@
     <string name="pref_key_show_search_suggestions_in_private_onboarding" translatable="false">pref_key_show_search_suggestions_in_privateonboarding</string>
     <string name="pref_key_show_voice_search" translatable="false">pref_key_show_voice_search</string>
     <string name="pref_key_enable_autocomplete_urls" translatable="false">pref_key_enable_domain_autocomplete</string>
+    <string name="pref_key_show_sponsored_suggestions" translatable="false">pref_key_show_sponsored_suggestions</string>
+    <string name="pref_key_show_nonsponsored_suggestions" translatable="false">pref_key_show_nonsponsored_suggestions</string>
 
     <!-- Site Permissions Settings -->
     <string name="pref_key_site_permissions_description" translatable="false">pref_key_site_permissions_description</string>
@@ -249,8 +253,6 @@
     <string name="pref_key_show_top_sites" translatable="false">pref_key_show_top_sites</string>
     <!-- Whether or not the sponsored shortcuts are shown along with the top recent sites shortcuts -->
     <string name="pref_key_enable_contile" translatable="false">pref_key_enable_contile</string>
-    <!-- Whether or not the Task Continuity enhancements are shown -->
-    <string name="pref_key_enable_task_continuity" translatable="false">pref_key_enable_task_continuity</string>
     <!-- Query containing the search parameters to be hidden from the top frecent sites  -->
     <string name="pref_key_frecency_filter_query" translatable="false">pref_key_frecency_filter_query</string>
 
@@ -275,6 +277,8 @@
     <string name="pref_key_should_show_home_onboarding_dialog" translatable="false">pref_key_should_show_home_onboarding_dialog</string>
     <!-- A value  of `true` means the total cookie protection popup has not been shown yet -->
     <string name="pref_key_should_show_total_cookie_protection_popup" translatable="false">pref_key_should_show_total_cookie_protection_popup</string>
+    <!-- A value  of `true` means the erase action popup has not been shown yet -->
+    <string name="pref_key_should_show_erase_action_popup" translatable="false">pref_key_should_show_erase_action_popup</string>
 
     <string name="pref_key_debug_settings" translatable="false">pref_key_debug_settings</string>
 
@@ -351,6 +355,7 @@
     <string name="pref_key_custom_sponsored_stories_city" translatable="false">pref_key_custom_sponsored_stories_city</string>
     <string name="pref_key_enable_compose_top_sites" translatable="false">pref_key_enable_compose_top_sites</string>
     <string name="pref_key_enable_shopping_experience" translatable="false">pref_key_enable_shopping_experience</string>
+    <string name="pref_key_enable_translations" translatable="false">pref_key_enable_translations</string>
 
     <!-- Growth Data -->
     <string name="pref_key_growth_set_as_default" translatable="false">pref_key_growth_set_as_default</string>
@@ -369,4 +374,6 @@
     <!--Shopping -->
     <string name="pref_key_is_review_quality_check_enabled">pref_key_is_review_quality_check_enabled</string>
     <string name="pref_key_is_review_quality_check_product_recommendations_enabled">pref_key_is_review_quality_check_product_recommendations_enabled</string>
+    <string name="pref_key_should_show_review_quality_cfr">pref_key_should_show_review_quality_cfr</string>
+    <string name="pref_key_should_show_review_quality_opt_in_time">pref_key_should_show_review_quality_opt_in_time</string>
 </resources>

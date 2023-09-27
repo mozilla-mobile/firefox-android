@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 import mozilla.components.lib.state.Middleware
 import mozilla.components.lib.state.MiddlewareContext
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ext.navigateSafe
 import org.mozilla.fenix.library.history.History
 import org.mozilla.fenix.library.history.HistoryFragmentAction
 import org.mozilla.fenix.library.history.HistoryFragmentDirections
@@ -27,6 +28,7 @@ import org.mozilla.fenix.library.history.HistoryFragmentState
 class HistoryNavigationMiddleware(
     private val navController: NavController,
     private val openToBrowser: (item: History.Regular) -> Unit,
+    private val onBackPressed: () -> Unit,
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.Main),
 ) : Middleware<HistoryFragmentState, HistoryFragmentAction> {
     override fun invoke(
@@ -40,6 +42,18 @@ class HistoryNavigationMiddleware(
         next(action)
         scope.launch {
             when (action) {
+                is HistoryFragmentAction.EnterRecentlyClosed -> {
+                    navController.navigate(
+                        HistoryFragmentDirections.actionGlobalRecentlyClosed(),
+                        NavOptions.Builder().setPopUpTo(R.id.recentlyClosedFragment, true).build(),
+                    )
+                }
+                is HistoryFragmentAction.BackPressed -> {
+                    // When editing, we override the back pressed event to update the mode.
+                    if (currentState.mode !is HistoryFragmentState.Mode.Editing) {
+                        onBackPressed()
+                    }
+                }
                 is HistoryFragmentAction.HistoryItemClicked -> {
                     if (currentState.mode.selectedItems.isEmpty()) {
                         when (val item = action.item) {
@@ -58,6 +72,12 @@ class HistoryNavigationMiddleware(
                             else -> Unit
                         }
                     }
+                }
+                is HistoryFragmentAction.SearchClicked -> {
+                    navController.navigateSafe(
+                        R.id.historyFragment,
+                        HistoryFragmentDirections.actionGlobalSearchDialog(null),
+                    )
                 }
                 else -> Unit
             }

@@ -8,7 +8,6 @@ import androidx.core.net.toUri
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
-import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.Constants.PackageName.GMAIL_APP
 import org.mozilla.fenix.helpers.Constants.PackageName.PHONE_APP
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
@@ -17,6 +16,7 @@ import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdAndText
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithText
 import org.mozilla.fenix.helpers.TestHelper
+import org.mozilla.fenix.helpers.TestHelper.assertExternalAppOpens
 import org.mozilla.fenix.helpers.TestHelper.assertNativeAppOpens
 import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.ui.robots.addToHomeScreen
@@ -59,7 +59,6 @@ class PwaTest {
         }
     }
 
-    @Ignore("Failing, see https://bugzilla.mozilla.org/show_bug.cgi?id=1807275")
     @Test
     fun emailLinkPWATest() {
         navigationToolbar {
@@ -72,7 +71,7 @@ class PwaTest {
         }.openHomeScreenShortcut(shortcutTitle) {
             clickPageObject(itemContainingText("Email link"))
             clickPageObject(itemWithResIdAndText("android:id/button1", "OPEN"))
-            assertNativeAppOpens(GMAIL_APP, emailLink)
+            assertExternalAppOpens(GMAIL_APP)
         }
     }
 
@@ -92,7 +91,6 @@ class PwaTest {
         }
     }
 
-    @SmokeTest
     @Test
     fun appLikeExperiencePWATest() {
         navigationToolbar {

@@ -4,12 +4,16 @@
 
 package org.mozilla.fenix.shopping.di
 
+import android.content.Context
 import kotlinx.coroutines.CoroutineScope
 import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.feature.tabs.TabsUseCases
+import org.mozilla.fenix.shopping.middleware.DefaultNetworkChecker
+import org.mozilla.fenix.shopping.middleware.DefaultReviewQualityCheckPreferences
+import org.mozilla.fenix.shopping.middleware.DefaultReviewQualityCheckService
+import org.mozilla.fenix.shopping.middleware.ReviewQualityCheckNavigationMiddleware
 import org.mozilla.fenix.shopping.middleware.ReviewQualityCheckNetworkMiddleware
-import org.mozilla.fenix.shopping.middleware.ReviewQualityCheckPreferencesImpl
 import org.mozilla.fenix.shopping.middleware.ReviewQualityCheckPreferencesMiddleware
-import org.mozilla.fenix.shopping.middleware.ReviewQualityCheckServiceImpl
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckMiddleware
 import org.mozilla.fenix.utils.Settings
 
@@ -23,31 +27,50 @@ object ReviewQualityCheckMiddlewareProvider {
      *
      * @param settings The [Settings] instance to use.
      * @param browserStore The [BrowserStore] instance to access state.
+     * @param context The [Context] instance to use.
      * @param scope The [CoroutineScope] to use for launching coroutines.
      */
     fun provideMiddleware(
         settings: Settings,
         browserStore: BrowserStore,
+        context: Context,
         scope: CoroutineScope,
     ): List<ReviewQualityCheckMiddleware> =
         listOf(
             providePreferencesMiddleware(settings, scope),
-            provideNetworkMiddleware(browserStore, scope),
+            provideNetworkMiddleware(browserStore, context, scope),
+            provideNavigationMiddleware(
+                TabsUseCases.SelectOrAddUseCase(browserStore),
+                context,
+                scope,
+            ),
         )
 
     private fun providePreferencesMiddleware(
         settings: Settings,
         scope: CoroutineScope,
     ) = ReviewQualityCheckPreferencesMiddleware(
-        reviewQualityCheckPreferences = ReviewQualityCheckPreferencesImpl(settings),
+        reviewQualityCheckPreferences = DefaultReviewQualityCheckPreferences(settings),
         scope = scope,
     )
 
     private fun provideNetworkMiddleware(
         browserStore: BrowserStore,
+        context: Context,
         scope: CoroutineScope,
     ) = ReviewQualityCheckNetworkMiddleware(
-        reviewQualityCheckService = ReviewQualityCheckServiceImpl(browserStore),
+        reviewQualityCheckService = DefaultReviewQualityCheckService(browserStore),
+        networkChecker = DefaultNetworkChecker(context),
+        scope = scope,
+    )
+
+    private fun provideNavigationMiddleware(
+        selectOrAddUseCase: TabsUseCases.SelectOrAddUseCase,
+        context: Context,
+        scope: CoroutineScope,
+    ) = ReviewQualityCheckNavigationMiddleware(
+        selectOrAddUseCase = selectOrAddUseCase,
+        context = context,
         scope = scope,
     )
 }

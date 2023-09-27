@@ -33,6 +33,7 @@ class ReviewQualityCheckFragment : BottomSheetDialogFragment() {
             middleware = ReviewQualityCheckMiddlewareProvider.provideMiddleware(
                 settings = requireComponents.settings,
                 browserStore = requireComponents.core.store,
+                context = requireContext().applicationContext,
                 scope = lifecycleScope,
             ),
         )
