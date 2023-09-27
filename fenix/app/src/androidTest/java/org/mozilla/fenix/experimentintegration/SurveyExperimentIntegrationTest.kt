@@ -37,14 +37,16 @@ class SurveyExperimentIntegrationTest {
 
     @After
     fun tearDown() {
+        TestHelper.appContext.settings().showSecretDebugMenuThisSession = false
+    }
+
+    fun checkExperimentExists() {
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
         }.openExperimentsMenu {
             verifyExperimentExists(experimentName)
         }
-
-        TestHelper.appContext.settings().showSecretDebugMenuThisSession = false
     }
 
     @Test
@@ -54,6 +56,8 @@ class SurveyExperimentIntegrationTest {
         }.clickSurveyButton {
             verifyUrl(surveyURL)
         }
+
+        checkExperimentExists()
     }
 
     @Test
@@ -63,6 +67,8 @@ class SurveyExperimentIntegrationTest {
         }.clickNoThanksSurveyButton {
             verifyTabCounter("0")
         }
+
+        checkExperimentExists()
     }
 
     @Test
@@ -73,6 +79,8 @@ class SurveyExperimentIntegrationTest {
             verifyTabCounter("0")
             verifySurveyButtonDoesNotExist()
         }
+
+        checkExperimentExists()
     }
 
     @Test
@@ -82,5 +90,7 @@ class SurveyExperimentIntegrationTest {
             verifySurveyNoThanksButton()
             verifySurveyButton()
         }
+
+        checkExperimentExists()
     }
 }
