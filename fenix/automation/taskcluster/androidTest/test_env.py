@@ -12,10 +12,9 @@ for key, value in os.environ.items():
 
 try:
     with open('.testrail_credentials.json', 'r') as file:
-        data = json.load(file)
-        pretty_data = json.dumps(data, indent=4)
+        secret = json.load(file)
+        pretty_data = json.dumps(secret, indent=4)
         print(pretty_data)
-        secret = data['testrailCredentials']
         TESTRAIL_HOST = secret['host']
         TESTRAIL_USERNAME = secret['username']
         TESTRAIL_PASSWORD = secret['password']
