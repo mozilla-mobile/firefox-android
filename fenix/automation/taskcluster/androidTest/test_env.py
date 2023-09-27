@@ -7,6 +7,10 @@ from datetime import datetime
 
 load_dotenv("test_dashboard.env") # Must contain the 4 env var in try-block
 
+for key, value in os.environ.items():
+    print("ENV VARS:")
+    print(f"{key}: {value}")
+
 try:
     PRODUCT_TYPE = os.environ["PRODUCT_TYPE"]
     RELEASE_TYPE = os.environ["RELEASE_TYPE"]

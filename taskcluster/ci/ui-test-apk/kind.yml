@@ -54,13 +54,6 @@ tasks:
         dependencies:
             signed-apk-debug-apk: signing-apk-fenix-debug
             signed-apk-android-test: signing-apk-fenix-android-test-debug
-        scopes:
-            - secrets:get:project/mobile/firefox-android/fenix/testrail
-            - secrets:get:project/mobile/firefox-android/fenix/firebase
-            - queue:route:tc-treeherder.v2.firefox-android-pr.53ec6a00344ef7b7c1298615ad658c1b22752556.0
-            - queue:route:checks
-            - queue:create-task:project:none
-            - queue:scheduler-id:mobile-level-1
         run:
             secrets:
                 - name: project/mobile/firefox-android/fenix/firebase
