@@ -7,19 +7,12 @@ from datetime import datetime
 
 load_dotenv("test_dashboard.env") # Must contain the 4 env var in try-block
 
-for key, value in os.environ.items():
-    print(f"{key}: {value}")
-
 try:
     with open('.testrail_credentials.json', 'r') as file:
         secret = json.load(file)
-        pretty_data = json.dumps(secret, indent=4)
-        print(pretty_data)
         TESTRAIL_HOST = secret['host']
         TESTRAIL_USERNAME = secret['username']
         TESTRAIL_PASSWORD = secret['password']
-        print("host: {TESTRAIL_HOST}, username: {TESTRAIL_USERNAME}, password: {TESTRAIL_PASSWORD}")
-
 except json.JSONDecodeError as e:
     raise ValueError("Failed to load testrail credentials: {e}")
 
