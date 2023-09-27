@@ -75,10 +75,7 @@ fun ReviewQualityCheckInfoCard(
                 ReviewQualityCheckInfoType.Info,
                 ReviewQualityCheckInfoType.AnalysisUpdate,
                 -> {
-                    InfoCardIcon(
-                        iconId = R.drawable.mozac_ic_information_fill_24,
-                        modifier = Modifier.size(24.dp),
-                    )
+                    InfoCardIcon(iconId = R.drawable.mozac_ic_information_fill_24)
                 }
 
                 ReviewQualityCheckInfoType.Loading -> {
@@ -110,7 +107,7 @@ fun ReviewQualityCheckInfoCard(
 
                     LinkText(
                         text = it.first,
-                        linkTextState = it.second,
+                        linkTextStates = listOf(it.second),
                         style = FirefoxTheme.typography.body2.copy(
                             color = FirefoxTheme.colors.textPrimary,
                         ),
