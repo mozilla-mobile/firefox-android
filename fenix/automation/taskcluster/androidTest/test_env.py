@@ -7,9 +7,7 @@ from datetime import datetime
 
 load_dotenv("test_dashboard.env") # Must contain the 4 env var in try-block
 
-# print stuff
 for key, value in os.environ.items():
-    print("ENV VARS:")
     print(f"{key}: {value}")
 
 try:
@@ -17,7 +15,7 @@ try:
         data = json.load(file)
         pretty_data = json.dumps(data, indent=4)
         print(pretty_data)
-        secret = data['testrail_credentials']
+        secret = data['testrailCredentials']
         TESTRAIL_HOST = secret['host']
         TESTRAIL_USERNAME = secret['username']
         TESTRAIL_PASSWORD = secret['password']

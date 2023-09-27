@@ -111,7 +111,7 @@ function failure_check() {
     fi
 
     echo "PRODUCT_TYPE=Firefox" >> test_dashboard.env
-    echo "RELEASE_TYPE=RC" >> test_dashboard.env
+    echo "RELEASE_TYPE=RC-Taskcluster-" >> test_dashboard.env
     echo
     echo "RESULTS"
     echo
