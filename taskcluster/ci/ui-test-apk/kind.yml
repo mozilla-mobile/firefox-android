@@ -45,8 +45,8 @@ task-defaults:
     routes:
         - notify.slack-channel.G016BC5FUHJ.on-success
     scopes:
-        - queue:route:notify.slack-channel.G016BC5FUHJ
-            - notify:slack-channel:G016BC5FUHJ.on-success
+        - queue:route:notify.slack-channel.G016BC5FUHJ.on-success
+            - notify:slack-channel:G016BC5FUHJ
     extra:
         notify:
             # slackText: 'https://firefox-ci-tc.services.mozilla.com/tasks/${status.taskId} | ${task.metadata.name} | ${task.metadata.source}'
