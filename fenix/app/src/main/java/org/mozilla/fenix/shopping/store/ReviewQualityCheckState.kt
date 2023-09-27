@@ -21,8 +21,19 @@ sealed interface ReviewQualityCheckState : State {
 
     /**
      * The state when the user has not opted in for the feature.
+     *
+     * @property productVendors List of vendors to be displayed in order in the onboarding UI.
      */
-    object NotOptedIn : ReviewQualityCheckState
+    data class NotOptedIn(
+        val productVendors: List<ProductVendor> = enumValues<ProductVendor>().toList(),
+    ) : ReviewQualityCheckState
+
+    /**
+     * Supported product retailers.
+     */
+    enum class ProductVendor {
+        AMAZON, BEST_BUY, WALMART,
+    }
 
     /**
      * The state when the user has opted in for the feature.
@@ -134,21 +145,6 @@ sealed interface ReviewQualityCheckState : State {
      */
     enum class HighlightType {
         QUALITY, PRICE, SHIPPING, PACKAGING_AND_APPEARANCE, COMPETITIVENESS
-    }
-
-    /**
-     * Types of links that can be opened from the review quality check feature.
-     */
-    sealed class LinkType {
-        /**
-         * Opens a link to analyze a product.
-         */
-        data class AnalyzeLink(val url: String) : LinkType()
-
-        /**
-         * Opens an external "Learn more" link.
-         */
-        data class ExternalLink(val url: String) : LinkType()
     }
 
     /**

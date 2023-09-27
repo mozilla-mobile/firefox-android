@@ -86,7 +86,6 @@ import org.mozilla.experiments.nimbus.initializeTooling
 import org.mozilla.fenix.GleanMetrics.AppIcon
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.Metrics
-import org.mozilla.fenix.GleanMetrics.PlayStoreAttribution
 import org.mozilla.fenix.GleanMetrics.SplashScreen
 import org.mozilla.fenix.GleanMetrics.StartOnHome
 import org.mozilla.fenix.addons.AddonDetailsFragmentDirections
@@ -242,7 +241,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         components.strictMode.attachListenerToDisablePenaltyDeath(supportFragmentManager)
         MarkersFragmentLifecycleCallbacks.register(supportFragmentManager, components.core.engine)
 
-        PlayStoreAttribution.deferredDeeplinkTime.start()
         maybeShowSplashScreen()
 
         // There is disk read violations on some devices such as samsung and pixel for android 9/10
@@ -308,6 +306,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             if (savedInstanceState == null) {
                 navigateToHome()
             }
+
             if (!shouldStartOnHome() && shouldNavigateToBrowserOnColdStart(savedInstanceState)) {
                 navigateToBrowserOnColdStart()
             } else {
@@ -317,6 +316,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             if (settings().showHomeOnboardingDialog && components.fenixOnboarding.userHasBeenOnboarded()) {
                 navHost.navController.navigate(NavGraphDirections.actionGlobalHomeOnboardingDialog())
             }
+
             showNotificationPermissionPromptIfRequired()
         }
 
@@ -413,10 +413,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
      * Show the pre permission dialog to the user once if the notification are not enabled.
      */
     private fun showNotificationPermissionPromptIfRequired() {
-        if (settings().junoOnboardingEnabled) {
-            return
-        }
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
             !NotificationManagerCompat.from(applicationContext).areNotificationsEnabledSafe() &&
             settings().numberOfAppLaunches <= 1
@@ -558,8 +554,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
                 "finishing" to isFinishing.toString(),
             ),
         )
-
-        PlayStoreAttribution.deferredDeeplinkTime.cancel()
     }
 
     final override fun onPause() {
@@ -1003,8 +997,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             SettingsFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromBookmarks ->
             BookmarkFragmentDirections.actionGlobalBrowser(customTabSessionId)
-        BrowserDirection.FromBookmarkSearchDialog ->
-            SearchDialogFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromHistory ->
             HistoryFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromHistorySearchDialog ->

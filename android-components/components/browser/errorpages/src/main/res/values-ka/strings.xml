@@ -169,7 +169,7 @@
     <!-- In the example, the two URLs in markup do not need to be translated. -->
     <string name="mozac_browser_errorpages_unknown_host_message"><![CDATA[<p>მითითებულ მისამართზე, ბრაუზერმა სერვერი ვერ მოიძია.</p>
       <ul>
-        <li>შეცდომა ხომ არ დაუშვით, აკრეფისას, მაგ.
+        <li>შეცდომა ხომ არ დაუშვით აკრეფისას, მაგ.
           <strong>ww</strong>.example.com კი არა, უნდა იყოს
           <strong>www</strong>.example.com.</li>
         <li>თუ სხვა გვერდების გახსნასაც ვერ ახერხებთ, შეამოწმეთ მოწყობილობის ფიჭური ან WiFi-კავშირი.</li>
@@ -265,7 +265,7 @@
     <!-- The title of the error page for websites that do not support HTTPS when HTTPS-Only is turned on -->
     <string name="mozac_browser_errorpages_httpsonly_title">უსაფრთხო საიტი მიუწვდომელია</string>
     <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will be replaced with the URL of the website. -->
-    <string name="mozac_browser_errorpages_httpsonly_message"><![CDATA[თქვენ ჩართული გაქვთ მხოლოდ-HTTPS-რეჟიმი მაღალი უსაფრთხოებისთვის მაგრამ <em>%1$s</em> არაა წარმოდგენილი დაცული HTTPS-ვერსიით.]]></string>
+    <string name="mozac_browser_errorpages_httpsonly_message"><![CDATA[თქვენ ჩართული გაქვთ მხოლოდ-HTTPS-რეჟიმი გაუმჯობესებული უსაფრთხოებისთვის, მაგრამ <em>%1$s</em> არაა წარმოდგენილი დაცული HTTPS-ვერსიით.]]></string>
     <!-- Button on error page for websites that do not support HTTPS when HTTPS-Only is turned on. Clicking the button allows the user to nevertheless load the website using HTTP. -->
     <string name="mozac_browser_errorpages_httpsonly_button">გადასვლა HTTP-საიტზე</string>
 </resources>
