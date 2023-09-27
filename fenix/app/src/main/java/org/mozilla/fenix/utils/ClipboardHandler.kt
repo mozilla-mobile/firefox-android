@@ -81,6 +81,7 @@ class ClipboardHandler(val context: Context) {
         }
 
     /**
+     * Returns a possible URL from the actual content of the clipboard, be aware this is a sensitive
      * API as from Android 12 and above, accessing it will trigger a notification letting the user
      * know the app has accessed the clipboard, make sure when you call this API that users are
      * completely aware that we are accessing the clipboard.
