@@ -30,7 +30,6 @@ enum class BrowserDirection(@IdRes val fragmentId: Int) {
     FromTrackingProtectionDialog(R.id.trackingProtectionPanelDialogFragment),
     FromSavedLoginsFragment(R.id.savedLoginsFragment),
     FromAddNewDeviceFragment(R.id.addNewDeviceFragment),
-    FromAddSearchEngineFragment(R.id.addSearchEngineFragment),
     FromSaveSearchEngineFragment(R.id.saveSearchEngineFragment),
     FromAddonDetailsFragment(R.id.addonDetailsFragment),
     FromStudiesFragment(R.id.studiesFragment),

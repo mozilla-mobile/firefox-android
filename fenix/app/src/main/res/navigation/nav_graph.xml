@@ -1234,9 +1234,6 @@
             android:name="org.mozilla.fenix.settings.search.SearchEngineFragment"
             android:label="@string/preferences_search">
             <action
-                android:id="@+id/action_searchEngineFragment_to_addSearchEngineFragment"
-                app:destination="@+id/addSearchEngineFragment" />
-            <action
                 android:id="@+id/action_searchEngineFragment_to_defaultEngineFragment"
                 app:destination="@+id/defaultEngineFragment" />
             <action
@@ -1266,10 +1263,6 @@
                 app:argType="string"
                 app:nullable="true"/>
         </fragment>
-        <fragment
-            android:id="@+id/addSearchEngineFragment"
-            android:name="org.mozilla.fenix.settings.search.AddSearchEngineFragment"
-            tools:layout="@layout/fragment_add_search_engine" />
     </navigation>
 
     <navigation
