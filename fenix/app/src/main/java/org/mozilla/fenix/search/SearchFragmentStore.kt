@@ -225,11 +225,6 @@ sealed class SearchFragmentAction : Action {
     data class SearchTabsEngineSelected(val engine: SearchEngine) : SearchFragmentAction()
 
     /**
-     * Action when search engine picker is selected.
-     */
-    data class ShowSearchShortcutEnginePicker(val show: Boolean) : SearchFragmentAction()
-
-    /**
      * Action when allow search suggestion in private mode hint is tapped.
      */
     data class AllowSearchSuggestionsInPrivateModePrompt(val show: Boolean) : SearchFragmentAction()
@@ -359,8 +354,6 @@ private fun searchStateReducer(state: SearchFragmentState, action: SearchFragmen
                 showSessionSuggestionsForCurrentEngine = false,
                 showAllSessionSuggestions = true,
             )
-        is SearchFragmentAction.ShowSearchShortcutEnginePicker ->
-            state.copy(showSearchShortcuts = action.show && state.areShortcutsAvailable)
         is SearchFragmentAction.UpdateQuery ->
             state.copy(query = action.query)
         is SearchFragmentAction.AllowSearchSuggestionsInPrivateModePrompt ->
