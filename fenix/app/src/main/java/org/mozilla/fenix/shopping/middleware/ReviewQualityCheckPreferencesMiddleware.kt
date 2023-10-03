@@ -15,8 +15,11 @@ import org.mozilla.fenix.shopping.store.ReviewQualityCheckState
 /**
  * Middleware for getting and setting review quality check user preferences.
  *
- * @param reviewQualityCheckPreferences The [ReviewQualityCheckPreferences] instance to use.
- * @param scope The [CoroutineScope] to use for launching coroutines.
+ * @property reviewQualityCheckPreferences The [ReviewQualityCheckPreferences] instance to get and
+ * set preferences for the review quality check feature.
+ * @property reviewQualityCheckVendorsService The [ReviewQualityCheckVendorsService] instance for
+ * getting the list of product vendors.
+ * @property scope The [CoroutineScope] to use for launching coroutines.
  */
 class ReviewQualityCheckPreferencesMiddleware(
     private val reviewQualityCheckPreferences: ReviewQualityCheckPreferences,
@@ -53,7 +56,10 @@ class ReviewQualityCheckPreferencesMiddleware(
                         reviewQualityCheckPreferences.productRecommendationsEnabled()
 
                     val updateUserPreferences = if (hasUserOptedIn) {
-                        ReviewQualityCheckAction.OptInCompleted(isProductRecommendationsEnabled)
+                        ReviewQualityCheckAction.OptInCompleted(
+                            isProductRecommendationsEnabled = isProductRecommendationsEnabled,
+                            productVendor = reviewQualityCheckVendorsService.productVendor(),
+                        )
                     } else {
                         val productVendors = reviewQualityCheckVendorsService.productVendors()
                         ReviewQualityCheckAction.OptOutCompleted(productVendors)
@@ -67,7 +73,10 @@ class ReviewQualityCheckPreferencesMiddleware(
                     val isProductRecommendationsEnabled =
                         reviewQualityCheckPreferences.productRecommendationsEnabled()
                     store.dispatch(
-                        ReviewQualityCheckAction.OptInCompleted(isProductRecommendationsEnabled),
+                        ReviewQualityCheckAction.OptInCompleted(
+                            isProductRecommendationsEnabled = isProductRecommendationsEnabled,
+                            productVendor = reviewQualityCheckVendorsService.productVendor(),
+                        ),
                     )
 
                     // Update the preference
