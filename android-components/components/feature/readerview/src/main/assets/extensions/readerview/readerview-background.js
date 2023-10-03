@@ -17,11 +17,11 @@ browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
        });
        break;
      case 'addSerializedDoc':
-        storage.session.set(sender.contextId.toString(), message.doc);
+        browser.storage.session.set(sender.contextId.toString(), message.doc);
         break;
      case 'getSerializedDoc':
-       let doc = await storage.session.get(message.id);
-       storage.session.delete(message.id);
+       let doc = await browser.storage.session.get(message.id);
+       browser.storage.session.remove(message.id);
        sendResponse(doc);
        break;
      default:
