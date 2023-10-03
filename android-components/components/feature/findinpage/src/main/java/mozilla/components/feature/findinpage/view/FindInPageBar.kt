@@ -79,7 +79,7 @@ class FindInPageBar @JvmOverloads constructor(
     }
 
     internal fun onQueryChange(newQuery: String) {
-        if (newQuery.isNotBlank()) {
+        if (newQuery.length > 1) {
             listener?.onFindAll(newQuery)
         } else {
             resultsCountTextView.text = ""
@@ -153,7 +153,7 @@ class FindInPageBar @JvmOverloads constructor(
         val nextButton = findViewById<AppCompatImageButton>(R.id.find_in_page_next_btn)
         nextButton.setIconTintIfNotDefaultValue(styling.buttonsTint)
         nextButton.setOnClickListener {
-            if (queryEditText.text.isNotEmpty()) {
+            if (queryEditText.text.length > 1) {
                 listener?.onNextResult()
             }
         }
@@ -163,7 +163,7 @@ class FindInPageBar @JvmOverloads constructor(
         val previousButton = findViewById<AppCompatImageButton>(R.id.find_in_page_prev_btn)
         previousButton.setIconTintIfNotDefaultValue(styling.buttonsTint)
         previousButton.setOnClickListener {
-            if (queryEditText.text.isNotEmpty()) {
+            if (queryEditText.text.length > 1) {
                 listener?.onPreviousResult()
             }
         }
