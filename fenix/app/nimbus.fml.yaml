@@ -277,6 +277,12 @@ features:
         description: If true, the extensions process is enabled.
         type: Boolean
         default: false
+    defaults:
+      - channels:
+          - developer
+          - nightly
+        value:
+          enabled: true
 
   growth-data:
     description: A feature measuring campaign growth data
@@ -326,6 +332,10 @@ features:
         description: "A map of metric base-identifiers to booleans representing the state of the 'enabled' flag for that metric."
         type: Map<String, Boolean>
         default: {}
+      enable-event-timestamps:
+        description: "Enables precise event timestamps for Glean events"
+        type: Boolean
+        default: false
 
   splash-screen:
     description: "A feature that extends splash screen duration, allowing additional data fetching time for the app's initial run."
@@ -344,6 +354,10 @@ features:
     variables:
       enabled:
         description: if true, the shopping experience feature is shown to the user.
+        type: Boolean
+        default: false
+      product-recommendations:
+        description: if true, recommended products feature is enabled to be shown to the user based on their preference.
         type: Boolean
         default: false
     defaults:
@@ -382,6 +396,24 @@ features:
         description: The channel Id param name with arg.
         type: Map<String, String>
         default: {}
+
+  fx-suggest:
+    description: A feature that provides Firefox Suggest search suggestions.
+    variables:
+      enabled:
+        description: >
+          Whether the feature is enabled. When Firefox Suggest is enabled,
+          Firefox will download and store new search suggestions in the
+          background, and show additional Search settings to control which
+          suggestions appear in the awesomebar. When Firefox Suggest is
+          disabled, Firefox will not download new suggestions, and hide the
+          additional Search settings.
+        type: Boolean
+        default: false
+    defaults:
+      - channel: developer
+        value:
+          enabled: true
 types:
   objects: {}
 
@@ -422,7 +454,7 @@ types:
       variants:
         feature-ui:
           description: An integer either 0 or 1 indicating if the UI for cookie banner handling should be visible,
-            0 to hide the UI and 1 to show the UI. The actual UI is composed by cookie banner section 
+            0 to hide the UI and 1 to show the UI. The actual UI is composed by cookie banner section
             in the settings page, the toolbar section and the re-engagement dialog.
         feature-setting-value:
           description: An integer either 0 or 1 indicating if cookie banner setting should be enabled or disabled,

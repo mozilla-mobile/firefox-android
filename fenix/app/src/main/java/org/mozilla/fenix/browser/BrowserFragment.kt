@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -37,9 +38,11 @@ import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifAnyChanged
 import org.mozilla.fenix.GleanMetrics.ReaderMode
+import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.TabCollectionStorage
+import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.toolbar.BrowserToolbarView
 import org.mozilla.fenix.components.toolbar.ToolbarMenu
 import org.mozilla.fenix.ext.components
@@ -96,17 +99,30 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
             )
         }
 
-        val homeAction = BrowserToolbar.Button(
-            imageDrawable = AppCompatResources.getDrawable(
-                context,
-                R.drawable.mozac_ic_home_24,
-            )!!,
-            contentDescription = context.getString(R.string.browser_toolbar_home),
-            iconTintColorResource = ThemeManager.resolveAttribute(R.attr.textPrimary, context),
-            listener = browserToolbarInteractor::onHomeButtonClicked,
-        )
+        val isPrivate = (activity as HomeActivity).browsingModeManager.mode.isPrivate
+        val leadingAction = if (isPrivate && context.settings().feltPrivateBrowsingEnabled) {
+            BrowserToolbar.Button(
+                imageDrawable = AppCompatResources.getDrawable(
+                    context,
+                    R.drawable.mozac_ic_data_clearance_24,
+                )!!,
+                contentDescription = context.getString(R.string.browser_toolbar_erase),
+                iconTintColorResource = ThemeManager.resolveAttribute(R.attr.textPrimary, context),
+                listener = browserToolbarInteractor::onEraseButtonClicked,
+            )
+        } else {
+            BrowserToolbar.Button(
+                imageDrawable = AppCompatResources.getDrawable(
+                    context,
+                    R.drawable.mozac_ic_home_24,
+                )!!,
+                contentDescription = context.getString(R.string.browser_toolbar_home),
+                iconTintColorResource = ThemeManager.resolveAttribute(R.attr.textPrimary, context),
+                listener = browserToolbarInteractor::onHomeButtonClicked,
+            )
+        }
 
-        browserToolbarView.view.addNavigationAction(homeAction)
+        browserToolbarView.view.addNavigationAction(leadingAction)
 
         updateToolbarActions(isTablet = resources.getBoolean(R.bool.tablet))
 
@@ -206,16 +222,21 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
             BrowserToolbar.ToggleButton(
                 image = AppCompatResources.getDrawable(
                     context,
-                    R.drawable.ic_shopping_cart,
-                )!!,
+                    R.drawable.mozac_ic_shopping_24,
+                )!!.apply {
+                    setTint(ContextCompat.getColor(context, R.color.fx_mobile_text_color_primary))
+                },
                 imageSelected = AppCompatResources.getDrawable(
                     context,
-                    R.drawable.ic_shopping_cart,
+                    R.drawable.ic_shopping_selected,
                 )!!,
-                contentDescription = context.getString(R.string.browser_menu_review_quality_check),
-                contentDescriptionSelected = context.getString(R.string.browser_menu_review_quality_check_close),
+                contentDescription = context.getString(R.string.review_quality_check_open_handle_content_description),
+                contentDescriptionSelected =
+                context.getString(R.string.review_quality_check_close_handle_content_description),
                 visible = { reviewQualityCheckAvailable },
-                listener = {
+                listener = { _ ->
+                    requireComponents.appStore.dispatch(AppAction.ShoppingSheetStateUpdated(expanded = true))
+
                     findNavController().navigate(
                         BrowserFragmentDirections.actionBrowserFragmentToReviewQualityCheckDialogFragment(),
                     )
@@ -226,11 +247,18 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
 
         reviewQualityCheckFeature.set(
             feature = ReviewQualityCheckFeature(
+                appStore = requireComponents.appStore,
                 browserStore = context.components.core.store,
                 shoppingExperienceFeature = DefaultShoppingExperienceFeature(
                     settings = requireContext().settings(),
                 ),
-                onAvailabilityChange = { reviewQualityCheckAvailable = it },
+                onAvailabilityChange = {
+                    reviewQualityCheckAvailable = it
+                    safeInvalidateBrowserToolbarView()
+                },
+                onBottomSheetCollapsed = {
+                    reviewQualityCheck.setSelected(selected = false, notifyListener = false)
+                },
             ),
             owner = this,
             view = view,

@@ -7,6 +7,7 @@ package org.mozilla.fenix.shopping
 import mozilla.components.browser.engine.gecko.shopping.GeckoProductAnalysis
 import mozilla.components.browser.engine.gecko.shopping.Highlight
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState
+import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent.AnalysisStatus
 import java.util.SortedMap
 
 object ProductAnalysisTestData {
@@ -15,7 +16,7 @@ object ProductAnalysisTestData {
         productId: String? = "1",
         analysisURL: String = "https://test.com",
         grade: String? = "A",
-        adjustedRating: Double = 4.5,
+        adjustedRating: Double? = 4.5,
         needsAnalysis: Boolean = false,
         lastAnalysisTime: Long = 0L,
         deletedProductReported: Boolean = false,
@@ -38,7 +39,7 @@ object ProductAnalysisTestData {
         productUrl: String = "https://test.com",
         reviewGrade: ReviewQualityCheckState.Grade? = ReviewQualityCheckState.Grade.A,
         adjustedRating: Float? = 4.5f,
-        needsAnalysis: Boolean = false,
+        analysisStatus: AnalysisStatus = AnalysisStatus.UP_TO_DATE,
         highlights: SortedMap<ReviewQualityCheckState.HighlightType, List<String>>? = null,
     ): ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent =
         ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent(
@@ -46,7 +47,7 @@ object ProductAnalysisTestData {
             productUrl = productUrl,
             reviewGrade = reviewGrade,
             adjustedRating = adjustedRating,
-            needsAnalysis = needsAnalysis,
+            analysisStatus = analysisStatus,
             highlights = highlights,
         )
 }

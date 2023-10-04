@@ -80,17 +80,18 @@ import mozilla.components.support.utils.BrowsersCache
 import mozilla.components.support.utils.ManufacturerCodes
 import mozilla.components.support.utils.SafeIntent
 import mozilla.components.support.utils.toSafeIntent
-import mozilla.components.support.webextensions.WebExtensionPopupFeature
+import mozilla.components.support.webextensions.WebExtensionPopupObserver
 import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.experiments.nimbus.initializeTooling
 import org.mozilla.fenix.GleanMetrics.AppIcon
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.Metrics
-import org.mozilla.fenix.GleanMetrics.PlayStoreAttribution
 import org.mozilla.fenix.GleanMetrics.SplashScreen
 import org.mozilla.fenix.GleanMetrics.StartOnHome
 import org.mozilla.fenix.addons.AddonDetailsFragmentDirections
 import org.mozilla.fenix.addons.AddonPermissionsDetailsFragmentDirections
+import org.mozilla.fenix.addons.AddonsManagementFragmentDirections
+import org.mozilla.fenix.addons.ExtensionProcessDisabledController
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
@@ -189,8 +190,12 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
     private var isToolbarInflated = false
 
-    private val webExtensionPopupFeature by lazy {
-        WebExtensionPopupFeature(components.core.store, ::openPopup)
+    private val webExtensionPopupObserver by lazy {
+        WebExtensionPopupObserver(components.core.store, ::openPopup)
+    }
+
+    private val extensionProcessDisabledPopupObserver by lazy {
+        ExtensionProcessDisabledController(this@HomeActivity, components.core.store)
     }
 
     private val serviceWorkerSupport by lazy {
@@ -237,7 +242,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         components.strictMode.attachListenerToDisablePenaltyDeath(supportFragmentManager)
         MarkersFragmentLifecycleCallbacks.register(supportFragmentManager, components.core.engine)
 
-        PlayStoreAttribution.deferredDeeplinkTime.start()
         maybeShowSplashScreen()
 
         // There is disk read violations on some devices such as samsung and pixel for android 9/10
@@ -303,6 +307,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             if (savedInstanceState == null) {
                 navigateToHome()
             }
+
             if (!shouldStartOnHome() && shouldNavigateToBrowserOnColdStart(savedInstanceState)) {
                 navigateToBrowserOnColdStart()
             } else {
@@ -312,6 +317,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             if (settings().showHomeOnboardingDialog && components.fenixOnboarding.userHasBeenOnboarded()) {
                 navHost.navController.navigate(NavGraphDirections.actionGlobalHomeOnboardingDialog())
             }
+
             showNotificationPermissionPromptIfRequired()
         }
 
@@ -341,7 +347,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         }
         supportActionBar?.hide()
 
-        lifecycle.addObservers(webExtensionPopupFeature, serviceWorkerSupport)
+        lifecycle.addObservers(webExtensionPopupObserver, extensionProcessDisabledPopupObserver, serviceWorkerSupport)
 
         if (shouldAddToRecentsScreen(intent)) {
             intent.removeExtra(START_IN_RECENTS_SCREEN)
@@ -360,6 +366,11 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
         if (settings().showContileFeature) {
             components.core.contileTopSitesUpdater.startPeriodicWork()
+        }
+
+        if (settings().enableUnifiedSearchSettingsUI && !settings().hiddenEnginesRestored) {
+            settings().hiddenEnginesRestored = true
+            components.useCases.searchUseCases.restoreHiddenSearchEngines.invoke()
         }
 
         // To assess whether the Pocket stories are to be downloaded or not multiple SharedPreferences
@@ -403,10 +414,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
      * Show the pre permission dialog to the user once if the notification are not enabled.
      */
     private fun showNotificationPermissionPromptIfRequired() {
-        if (settings().junoOnboardingEnabled) {
-            return
-        }
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
             !NotificationManagerCompat.from(applicationContext).areNotificationsEnabledSafe() &&
             settings().numberOfAppLaunches <= 1
@@ -548,8 +555,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
                 "finishing" to isFinishing.toString(),
             ),
         )
-
-        PlayStoreAttribution.deferredDeeplinkTime.cancel()
     }
 
     final override fun onPause() {
@@ -939,7 +944,18 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
      * Navigates to the browser fragment and loads a URL or performs a search (depending on the
      * value of [searchTermOrURL]).
      *
+     * @param searchTermOrURL The entered search term to search or URL to be loaded.
+     * @param newTab Whether or not to load the URL in a new tab.
+     * @param from The [BrowserDirection] to indicate which fragment the browser is being
+     * opened from.
+     * @param customTabSessionId Optional custom tab session ID if navigating from a custom tab.
+     * @param engine Optional [SearchEngine] to use when performing a search.
+     * @param forceSearch Whether or not to force performing a search.
      * @param flags Flags that will be used when loading the URL (not applied to searches).
+     * @param requestDesktopMode Whether or not to request the desktop mode for the session.
+     * @param historyMetadata The [HistoryMetadataKey] of the new tab in case this tab
+     * was opened from history.
+     * @param additionalHeaders The extra headers to use when loading the URL.
      */
     @Suppress("LongParameterList")
     fun openToBrowserAndLoad(
@@ -952,9 +968,19 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         flags: EngineSession.LoadUrlFlags = EngineSession.LoadUrlFlags.none(),
         requestDesktopMode: Boolean = false,
         historyMetadata: HistoryMetadataKey? = null,
+        additionalHeaders: Map<String, String>? = null,
     ) {
         openToBrowser(from, customTabSessionId)
-        load(searchTermOrURL, newTab, engine, forceSearch, flags, requestDesktopMode, historyMetadata)
+        load(
+            searchTermOrURL = searchTermOrURL,
+            newTab = newTab,
+            engine = engine,
+            forceSearch = forceSearch,
+            flags = flags,
+            requestDesktopMode = requestDesktopMode,
+            historyMetadata = historyMetadata,
+            additionalHeaders = additionalHeaders,
+        )
     }
 
     fun openToBrowser(from: BrowserDirection, customTabSessionId: String? = null) {
@@ -982,12 +1008,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             SettingsFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromBookmarks ->
             BookmarkFragmentDirections.actionGlobalBrowser(customTabSessionId)
-        BrowserDirection.FromBookmarkSearchDialog ->
-            SearchDialogFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromHistory ->
             HistoryFragmentDirections.actionGlobalBrowser(customTabSessionId)
-        BrowserDirection.FromHistorySearchDialog ->
-            SearchDialogFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromHistoryMetadataGroup ->
             HistoryMetadataGroupFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromTrackingProtectionExceptions ->
@@ -1028,14 +1050,23 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         BrowserDirection.FromReviewQualityCheck -> ReviewQualityCheckFragmentDirections.actionGlobalBrowser(
             customTabSessionId,
         )
+        BrowserDirection.FromAddonsManagementFragment -> AddonsManagementFragmentDirections.actionGlobalBrowser(
+            customTabSessionId,
+        )
     }
 
     /**
      * Loads a URL or performs a search (depending on the value of [searchTermOrURL]).
      *
+     * @param searchTermOrURL The entered search term to search or URL to be loaded.
+     * @param newTab Whether or not to load the URL in a new tab.
+     * @param engine Optional [SearchEngine] to use when performing a search.
+     * @param forceSearch Whether or not to force performing a search.
      * @param flags Flags that will be used when loading the URL (not applied to searches).
+     * @param requestDesktopMode Whether or not to request the desktop mode for the session.
      * @param historyMetadata The [HistoryMetadataKey] of the new tab in case this tab
      * was opened from history.
+     * @param additionalHeaders The extra headers to use when loading the URL.
      */
     private fun load(
         searchTermOrURL: String,
@@ -1045,6 +1076,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         flags: EngineSession.LoadUrlFlags = EngineSession.LoadUrlFlags.none(),
         requestDesktopMode: Boolean = false,
         historyMetadata: HistoryMetadataKey? = null,
+        additionalHeaders: Map<String, String>? = null,
     ) {
         val startTime = components.core.engine.profiler?.getProfilerTime()
         val mode = browsingModeManager.mode
@@ -1084,13 +1116,20 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
                     components.useCases.searchUseCases.newTabSearch
                 }
                 searchUseCase.invoke(
-                    searchTermOrURL,
-                    SessionState.Source.Internal.UserEntered,
-                    true,
+                    searchTerms = searchTermOrURL,
+                    source = SessionState.Source.Internal.UserEntered,
+                    selected = true,
                     searchEngine = engine,
+                    flags = flags,
+                    additionalHeaders = additionalHeaders,
                 )
             } else {
-                components.useCases.searchUseCases.defaultSearch.invoke(searchTermOrURL, engine)
+                components.useCases.searchUseCases.defaultSearch.invoke(
+                    searchTerms = searchTermOrURL,
+                    searchEngine = engine,
+                    flags = flags,
+                    additionalHeaders = additionalHeaders,
+                )
             }
         }
 

@@ -2,22 +2,21 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
+apply plugin: 'com.google.devtools.ksp'
 
 android {
-    compileSdkVersion config.compileSdkVersion
-
     defaultConfig {
         minSdkVersion config.minSdkVersion
+        compileSdk config.compileSdkVersion
         targetSdkVersion config.targetSdkVersion
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        kapt {
-            arguments {
-                arg("room.schemaLocation", "$projectDir/schemas".toString())
-            }
+        ksp {
+            arg("room.schemaLocation", "$projectDir/schemas".toString())
         }
 
         javaCompileOptions {
@@ -41,10 +40,8 @@ android {
     namespace 'mozilla.components.feature.pwa'
 }
 
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
-    kotlinOptions {
-        freeCompilerArgs += "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
-    }
+tasks.withType(KotlinCompile).configureEach {
+    kotlinOptions.freeCompilerArgs += "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
 }
 
 dependencies {
@@ -69,7 +66,7 @@ dependencies {
     implementation ComponentsDependencies.kotlin_coroutines
 
     implementation ComponentsDependencies.androidx_room_runtime
-    kapt ComponentsDependencies.androidx_room_compiler
+    ksp ComponentsDependencies.androidx_room_compiler
 
     testImplementation project(':support-test')
     testImplementation project(':support-test-libstate')

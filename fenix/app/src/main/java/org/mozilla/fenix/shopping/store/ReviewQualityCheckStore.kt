@@ -5,6 +5,8 @@
 package org.mozilla.fenix.shopping.store
 
 import mozilla.components.lib.state.Store
+import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState
+import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent.AnalysisStatus
 
 /**
  * Store for review quality check feature.
@@ -39,26 +41,26 @@ private fun mapStateForUpdateAction(
     action: ReviewQualityCheckAction.UpdateAction,
 ): ReviewQualityCheckState {
     return when (action) {
-        is ReviewQualityCheckAction.UpdateUserPreferences -> {
-            if (action.hasUserOptedIn) {
-                if (state is ReviewQualityCheckState.OptedIn) {
-                    state.copy(productRecommendationsPreference = action.isProductRecommendationsEnabled)
-                } else {
-                    ReviewQualityCheckState.OptedIn(
-                        productRecommendationsPreference = action.isProductRecommendationsEnabled,
-                    )
-                }
+        is ReviewQualityCheckAction.OptInCompleted -> {
+            if (state is ReviewQualityCheckState.OptedIn) {
+                state.copy(productRecommendationsPreference = action.isProductRecommendationsEnabled)
             } else {
-                ReviewQualityCheckState.NotOptedIn
+                ReviewQualityCheckState.OptedIn(
+                    productRecommendationsPreference = action.isProductRecommendationsEnabled,
+                    productVendor = action.productVendor,
+                )
             }
+        }
+        is ReviewQualityCheckAction.OptOutCompleted -> {
+            ReviewQualityCheckState.NotOptedIn(action.productVendors)
         }
 
         ReviewQualityCheckAction.OptOut -> {
-            ReviewQualityCheckState.NotOptedIn
+            ReviewQualityCheckState.NotOptedIn()
         }
 
         ReviewQualityCheckAction.ToggleProductRecommendation -> {
-            if (state is ReviewQualityCheckState.OptedIn) {
+            if (state is ReviewQualityCheckState.OptedIn && state.productRecommendationsPreference != null) {
                 state.copy(productRecommendationsPreference = !state.productRecommendationsPreference)
             } else {
                 state
@@ -66,10 +68,34 @@ private fun mapStateForUpdateAction(
         }
 
         is ReviewQualityCheckAction.UpdateProductReview -> {
-            if (state is ReviewQualityCheckState.OptedIn) {
-                state.copy(productReviewState = action.productReviewState)
-            } else {
-                state
+            state.mapIfOptedIn {
+                it.copy(productReviewState = action.productReviewState)
+            }
+        }
+
+        ReviewQualityCheckAction.FetchProductAnalysis, ReviewQualityCheckAction.RetryProductAnalysis -> {
+            state.mapIfOptedIn {
+                it.copy(productReviewState = ProductReviewState.Loading)
+            }
+        }
+
+        ReviewQualityCheckAction.ReanalyzeProduct -> {
+            state.mapIfOptedIn {
+                when (it.productReviewState) {
+                    is ProductReviewState.AnalysisPresent -> {
+                        val productReviewState =
+                            it.productReviewState.copy(analysisStatus = AnalysisStatus.REANALYZING)
+                        it.copy(productReviewState = productReviewState)
+                    }
+
+                    is ProductReviewState.NoAnalysisPresent -> {
+                        it.copy(productReviewState = it.productReviewState.copy(isReanalyzing = true))
+                    }
+
+                    else -> {
+                        it
+                    }
+                }
             }
         }
     }

@@ -73,6 +73,12 @@ object InitAction : BrowserAction()
 object RestoreCompleteAction : BrowserAction()
 
 /**
+ * [BrowserAction] implementation for updating state related to whether the extensions process
+ * spawning has been disabled and a popup is necessary.
+ */
+data class ExtensionProcessDisabledPopupAction(val showPopup: Boolean) : BrowserAction()
+
+/**
  * [BrowserAction] implementations to react to system events.
  */
 sealed class SystemAction : BrowserAction() {
@@ -423,11 +429,6 @@ sealed class ContentAction : BrowserAction() {
      * Removes the icon of the [ContentState] with the given [sessionId].
      */
     data class RemoveIconAction(val sessionId: String) : ContentAction()
-
-    /**
-     * Removes the thumbnail of the [ContentState] with the given [sessionId].
-     */
-    data class RemoveThumbnailAction(val sessionId: String) : ContentAction()
 
     /**
      * Updates the URL of the [ContentState] with the given [sessionId].
@@ -861,12 +862,12 @@ sealed class CookieBannerAction : BrowserAction() {
 }
 
 /**
- * [BrowserAction] implementations related to updating the [SessionState.ShoppingProduct]
+ * [BrowserAction] implementations related to updating the [SessionState.isProductUrl]
  * of a single [SessionState] inside [BrowserState]
  */
 sealed class ShoppingProductAction : BrowserAction() {
     /**
-     * Updates the [SessionState.ShoppingProduct] state or a a single [SessionState].
+     * Updates the [SessionState.isProductUrl] state for the non private tab with the given [tabId].
      */
     data class UpdateProductUrlStatusAction(val tabId: String, val isProductUrl: Boolean) :
         ShoppingProductAction()
@@ -1532,6 +1533,11 @@ sealed class SearchAction : BrowserAction() {
         val searchEngineId: String,
         val isEnabled: Boolean,
     ) : SearchAction()
+
+    /**
+     * Restores hidden engines from [SearchState.hiddenSearchEngines] back to [SearchState.regionSearchEngines]
+     */
+    object RestoreHiddenSearchEnginesAction : SearchAction()
 }
 
 /**

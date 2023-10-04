@@ -6,6 +6,7 @@ package org.mozilla.fenix.shopping.ui
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -41,8 +42,21 @@ fun ReviewQualityCheckBottomSheet(
         when (val state = reviewQualityCheckState) {
             is ReviewQualityCheckState.NotOptedIn -> {
                 ReviewQualityCheckContextualOnboarding(
+                    productVendors = state.productVendors,
                     onPrimaryButtonClick = {
                         store.dispatch(ReviewQualityCheckAction.OptIn)
+                    },
+                    onLearnMoreClick = {
+                        onRequestDismiss()
+                        store.dispatch(ReviewQualityCheckAction.OpenOnboardingLearnMoreLink)
+                    },
+                    onPrivacyPolicyClick = {
+                        onRequestDismiss()
+                        store.dispatch(ReviewQualityCheckAction.OpenOnboardingPrivacyPolicyLink)
+                    },
+                    onTermsOfUseClick = {
+                        onRequestDismiss()
+                        store.dispatch(ReviewQualityCheckAction.OpenOnboardingTermsLink)
                     },
                     onSecondaryButtonClick = onRequestDismiss,
                 )
@@ -55,15 +69,19 @@ fun ReviewQualityCheckBottomSheet(
                         onRequestDismiss()
                         store.dispatch(ReviewQualityCheckAction.OptOut)
                     },
+                    onReanalyzeClick = {
+                        store.dispatch(ReviewQualityCheckAction.ReanalyzeProduct)
+                    },
                     onProductRecommendationsEnabledStateChange = {
                         store.dispatch(ReviewQualityCheckAction.ToggleProductRecommendation)
                     },
-                    onReviewGradeLearnMoreClick = { url ->
-                        store.dispatch(
-                            ReviewQualityCheckAction.OpenLink(
-                                ReviewQualityCheckState.LinkType.ExternalLink(url),
-                            ),
-                        )
+                    onReviewGradeLearnMoreClick = {
+                        onRequestDismiss()
+                        store.dispatch(ReviewQualityCheckAction.OpenExplainerLearnMoreLink)
+                    },
+                    onFooterLinkClick = {
+                        onRequestDismiss()
+                        store.dispatch(ReviewQualityCheckAction.OpenPoweredByLink)
                     },
                 )
             }
@@ -80,11 +98,14 @@ fun ReviewQualityCheckBottomSheet(
 }
 
 @Composable
+@Suppress("LongParameterList")
 private fun ProductReview(
     state: ReviewQualityCheckState.OptedIn,
     onOptOutClick: () -> Unit,
+    onReanalyzeClick: () -> Unit,
     onProductRecommendationsEnabledStateChange: (Boolean) -> Unit,
-    onReviewGradeLearnMoreClick: (String) -> Unit,
+    onReviewGradeLearnMoreClick: () -> Unit,
+    onFooterLinkClick: () -> Unit,
 ) {
     Crossfade(
         targetState = state.productReviewState,
@@ -95,14 +116,26 @@ private fun ProductReview(
                 ProductAnalysis(
                     productRecommendationsEnabled = state.productRecommendationsPreference,
                     productAnalysis = productReviewState,
+                    productVendor = state.productVendor,
                     onOptOutClick = onOptOutClick,
+                    onReanalyzeClick = onReanalyzeClick,
                     onProductRecommendationsEnabledStateChange = onProductRecommendationsEnabledStateChange,
                     onReviewGradeLearnMoreClick = onReviewGradeLearnMoreClick,
+                    onFooterLinkClick = onFooterLinkClick,
                 )
             }
 
             is ReviewQualityCheckState.OptedIn.ProductReviewState.Error -> {
-                // Bug 1840113
+                ProductAnalysisError(
+                    error = productReviewState,
+                    productRecommendationsEnabled = state.productRecommendationsPreference,
+                    productVendor = state.productVendor,
+                    onReviewGradeLearnMoreClick = onReviewGradeLearnMoreClick,
+                    onOptOutClick = onOptOutClick,
+                    onProductRecommendationsEnabledStateChange = onProductRecommendationsEnabledStateChange,
+                    onFooterLinkClick = onFooterLinkClick,
+                    modifier = Modifier.fillMaxWidth(),
+                )
             }
 
             is ReviewQualityCheckState.OptedIn.ProductReviewState.Loading -> {
@@ -110,7 +143,16 @@ private fun ProductReview(
             }
 
             is ReviewQualityCheckState.OptedIn.ProductReviewState.NoAnalysisPresent -> {
-                // Bug 1840333
+                NoAnalysis(
+                    isAnalyzing = productReviewState.isReanalyzing,
+                    productRecommendationsEnabled = state.productRecommendationsPreference,
+                    productVendor = state.productVendor,
+                    onAnalyzeClick = onReanalyzeClick,
+                    onReviewGradeLearnMoreClick = onReviewGradeLearnMoreClick,
+                    onOptOutClick = onOptOutClick,
+                    onProductRecommendationsEnabledStateChange = onProductRecommendationsEnabledStateChange,
+                    modifier = Modifier.fillMaxWidth(),
+                )
             }
         }
     }

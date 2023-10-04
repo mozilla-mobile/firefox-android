@@ -4,21 +4,32 @@
 
 package org.mozilla.fenix.shopping.middleware
 
+import android.content.Context
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.lib.state.Middleware
 import mozilla.components.lib.state.MiddlewareContext
+import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckAction
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState
+
+private const val POWERED_BY_URL =
+    "https://www.fakespot.com/review-checker?utm_source=review-checker" +
+        "&utm_campaign=fakespot-by-mozilla&utm_medium=inproduct&utm_term=core-sheet"
+private const val PRIVACY_POLICY_URL = "https://www.fakespot.com/privacy-policy"
+private const val TERMS_OF_USE_URL = "https://www.fakespot.com/terms"
 
 /**
  * Middleware that handles navigation events for the review quality check feature.
  *
- * @property openLink Callback used to open an url.
+ * @property selectOrAddUseCase UseCase instance used to open new tabs.
+ * @property context Context used to get SUMO urls.
  * @property scope [CoroutineScope] used to launch coroutines.
  */
 class ReviewQualityCheckNavigationMiddleware(
-    private val openLink: (String, Boolean) -> Unit,
+    private val selectOrAddUseCase: TabsUseCases.SelectOrAddUseCase,
+    private val context: Context,
     private val scope: CoroutineScope,
 ) : Middleware<ReviewQualityCheckState, ReviewQualityCheckAction> {
 
@@ -39,13 +50,32 @@ class ReviewQualityCheckNavigationMiddleware(
     private fun processAction(
         action: ReviewQualityCheckAction.NavigationMiddlewareAction,
     ) = scope.launch {
-        when (action) {
-            is ReviewQualityCheckAction.OpenLink -> {
-                when (action.link) {
-                    is ReviewQualityCheckState.LinkType.ExternalLink -> openLink(action.link.url, true)
-                    is ReviewQualityCheckState.LinkType.AnalyzeLink -> openLink(action.link.url, false)
-                }
-            }
-        }
+        selectOrAddUseCase.invoke(actionToUrl(action))
+    }
+
+    /**
+     * Used to find the corresponding url to the open link action.
+     *
+     * @param action Used to find the corresponding url.
+     */
+    private fun actionToUrl(
+        action: ReviewQualityCheckAction.NavigationMiddlewareAction,
+    ) = when (action) {
+        // Placeholder SUMO urls to be used until the Fakespot SUMO pages are added in 1854277
+        is ReviewQualityCheckAction.OpenExplainerLearnMoreLink -> SupportUtils.getSumoURLForTopic(
+            context,
+            SupportUtils.SumoTopic.HELP,
+        )
+
+        is ReviewQualityCheckAction.OpenOnboardingTermsLink -> TERMS_OF_USE_URL
+
+        is ReviewQualityCheckAction.OpenOnboardingLearnMoreLink -> SupportUtils.getSumoURLForTopic(
+            context,
+            SupportUtils.SumoTopic.HELP,
+        )
+
+        is ReviewQualityCheckAction.OpenOnboardingPrivacyPolicyLink -> PRIVACY_POLICY_URL
+
+        is ReviewQualityCheckAction.OpenPoweredByLink -> POWERED_BY_URL
     }
 }

@@ -31,10 +31,24 @@ class AddonsManagementViewTest {
     private var showPermissionDialog: (Addon) -> Unit = { permissionDialogDisplayed = true }
     private var permissionDialogDisplayed = false
 
+    private var onMoreAddonsButtonClicked: () -> Unit = { moreAddonsButtonClicked = true }
+    private var moreAddonsButtonClicked = false
+
+    private var onLearnMoreLinkClicked: (AddonsManagerAdapterDelegate.LearnMoreLinks, Addon) -> Unit = {
+            _: AddonsManagerAdapterDelegate.LearnMoreLinks, _: Addon ->
+        learnMoreLinkClicked = true
+    }
+    private var learnMoreLinkClicked = false
+
     @Before
     fun setup() {
         MockKAnnotations.init(this)
-        managementView = AddonsManagementView(navController, showPermissionDialog)
+        managementView = AddonsManagementView(
+            navController,
+            showPermissionDialog,
+            onMoreAddonsButtonClicked,
+            onLearnMoreLinkClicked,
+        )
     }
 
     @Test
@@ -127,5 +141,18 @@ class AddonsManagementViewTest {
         verify {
             navController.navigate(directionsEq(expected))
         }
+    }
+
+    @Test
+    fun `onFindMoreAddonsButtonClicked calls onMoreAddonsButtonClicked`() {
+        managementView.onFindMoreAddonsButtonClicked()
+        assertTrue(moreAddonsButtonClicked)
+    }
+
+    @Test
+    fun `onLearnMoreLinkClicked calls onLearnMore`() {
+        val addon: Addon = mockk()
+        managementView.onLearnMoreLinkClicked(AddonsManagerAdapterDelegate.LearnMoreLinks.BLOCKLISTED_ADDON, addon)
+        assertTrue(learnMoreLinkClicked)
     }
 }
