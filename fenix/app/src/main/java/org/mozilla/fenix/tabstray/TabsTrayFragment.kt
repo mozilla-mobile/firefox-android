@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -246,6 +247,9 @@ class TabsTrayFragment : AppCompatDialogFragment() {
                             requireComponents.settings.showSecretDebugMenuThisSession,
                         shouldShowTabAutoCloseBanner = requireContext().settings().shouldShowAutoCloseTabsBanner &&
                             requireContext().settings().canShowCfr,
+                        shouldShowInactiveTabsCFR = true ||
+                            (requireContext().settings().shouldShowInactiveTabsOnboardingPopup &&
+                            requireContext().settings().canShowCfr),
                         shouldShowInactiveTabsAutoCloseDialog =
                         requireContext().settings()::shouldShowInactiveTabsAutoCloseDialog,
                         onTabPageClick = { page ->
@@ -305,6 +309,21 @@ class TabsTrayFragment : AppCompatDialogFragment() {
                             requireContext().settings().lastCfrShownTimeInMillis = System.currentTimeMillis()
                         },
                         onMove = tabsTrayInteractor::onTabsMove,
+                        onDismissInactiveTabsCFR = {
+                            requireContext().settings().shouldShowInactiveTabsOnboardingPopup = false
+                            TabsTray.inactiveTabsCfrDismissed.record(
+                                NoExtras(),
+                            )
+                            Log.d("DREVLA", "onCreateView: Tab dismissed from TabsTrayFragment")
+                        },
+                        onActionInactiveTabsCFR = {
+                            requireContext().settings().shouldShowInactiveTabsOnboardingPopup = false
+                            navigationInteractor.onTabSettingsClicked()
+                            TabsTray.inactiveTabsCfrSettings.record(
+                                NoExtras(),
+                            )
+                            Log.d("DREVLA", "onCreateView: Tab action from TabsTrayFragment")
+                        },
                     )
                 }
             }
@@ -420,6 +439,7 @@ class TabsTrayFragment : AppCompatDialogFragment() {
                 lifecycleOwner = viewLifecycleOwner,
                 store = tabsTrayStore,
                 trayInteractor = tabsTrayInteractor,
+                navigationInteractor = navigationInteractor,
             )
 
             tabsTrayCtaBinding.set(
@@ -645,6 +665,7 @@ class TabsTrayFragment : AppCompatDialogFragment() {
         lifecycleOwner: LifecycleOwner,
         store: TabsTrayStore,
         trayInteractor: TabsTrayInteractor,
+        navigationInteractor: NavigationInteractor,
     ) {
         tabsTrayBinding.tabsTray.apply {
             adapter = TrayPagerAdapter(
@@ -652,6 +673,7 @@ class TabsTrayFragment : AppCompatDialogFragment() {
                 lifecycleOwner = lifecycleOwner,
                 tabsTrayStore = store,
                 interactor = trayInteractor,
+                navigationInteractor = navigationInteractor,
                 browserStore = requireComponents.core.store,
                 appStore = requireComponents.appStore,
             )

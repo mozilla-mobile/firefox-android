@@ -9,6 +9,7 @@ package org.mozilla.fenix.tabstray.inactivetabs
 import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,13 +32,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import mozilla.components.browser.state.state.ContentState
 import mozilla.components.browser.state.state.TabSessionState
+import mozilla.components.compose.cfr.CFRPopup
+import mozilla.components.compose.cfr.CFRPopupForCompose
+import mozilla.components.compose.cfr.CFRPopupProperties
 import org.mozilla.fenix.R
 import org.mozilla.fenix.compose.button.TextButton
 import org.mozilla.fenix.compose.list.ExpandableListHeader
@@ -54,12 +61,15 @@ private val ROUNDED_CORNER_SHAPE = RoundedCornerShape(8.dp)
  * @param inactiveTabs List of [TabSessionState] to display.
  * @param expanded Whether to show the inactive tabs section expanded or collapsed.
  * @param showAutoCloseDialog Whether to show the auto close inactive tabs dialog.
+ * @param showInactiveTabsCFR Whether to show the Inactive Tabs CFR.
  * @param onHeaderClick Called when the user clicks on the inactive tabs section header.
  * @param onDeleteAllButtonClick Called when the user clicks on the delete all inactive tabs button.
  * @param onAutoCloseDismissClick Called when the user clicks on the auto close dialog's dismiss button.
  * @param onEnableAutoCloseClick Called when the user clicks on the auto close dialog's enable button.
  * @param onTabClick Called when the user clicks on a specific inactive tab.
  * @param onTabCloseClick Called when the user clicks on a specific inactive tab's close button.
+ * @param onDismissInactiveTabsCFR Invoked after tapping "X" button on Inactive Tabs CFR.
+ * @param onActionInactiveTabsCFR Invoked after tapping "Turn off in settings" Action Text on Inactive Tabs CFR.
  */
 @Composable
 @Suppress("LongParameterList")
@@ -67,12 +77,15 @@ fun InactiveTabsList(
     inactiveTabs: List<TabSessionState>,
     expanded: Boolean,
     showAutoCloseDialog: Boolean,
+    showInactiveTabsCFR: Boolean,
     onHeaderClick: (Boolean) -> Unit,
     onDeleteAllButtonClick: () -> Unit,
     onAutoCloseDismissClick: () -> Unit,
     onEnableAutoCloseClick: () -> Unit,
     onTabClick: (TabSessionState) -> Unit,
     onTabCloseClick: (TabSessionState) -> Unit,
+    onDismissInactiveTabsCFR: () -> Unit,
+    onActionInactiveTabsCFR: () -> Unit,
 ) {
     Card(
         modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
@@ -90,6 +103,9 @@ fun InactiveTabsList(
                 expanded = expanded,
                 onClick = { onHeaderClick(!expanded) },
                 onDeleteAllClick = onDeleteAllButtonClick,
+                showInactiveTabsCFR = showInactiveTabsCFR,
+                onDismissInactiveTabsCFR = onDismissInactiveTabsCFR,
+                onActionInactiveTabsCFR = onActionInactiveTabsCFR,
             )
 
             if (expanded) {
@@ -128,17 +144,74 @@ fun InactiveTabsList(
 }
 
 /**
+ * Create the CFR needed to inform the user about inactive tabs.
+ */
+@Composable
+@Suppress("MagicNumber")
+fun CreateInactiveTabCFR(
+    onDismissInactiveTabsCFR: () -> Unit,
+    onActionInactiveTabsCFR: () -> Unit,
+) {
+    CFRPopupForCompose(
+        alignment = Alignment.TopCenter,
+        offset = IntOffset(0, 100),
+        properties = CFRPopupProperties(
+            popupBodyColors = listOf(
+                FirefoxTheme.colors.gradientEnd.toArgb(),
+                FirefoxTheme.colors.gradientStart.toArgb(),
+            ),
+            dismissButtonColor = FirefoxTheme.colors.iconOnColor.toArgb(),
+            indicatorDirection = CFRPopup.IndicatorDirection.UP,
+            popupVerticalOffset = (-25).dp, // Offset to point the arrow at the header of the list.
+        ),
+        onDismiss = {
+            onDismissInactiveTabsCFR()
+        },
+        text = {
+            FirefoxTheme {
+                Text(
+                    text = stringResource(R.string.tab_tray_inactive_onboarding_message),
+                    color = FirefoxTheme.colors.textOnColorPrimary,
+                    style = FirefoxTheme.typography.body1,
+                )
+            }
+        },
+        action = {
+            FirefoxTheme {
+                Text(
+                    text = stringResource(R.string.tab_tray_inactive_onboarding_button_text),
+                    color = FirefoxTheme.colors.textOnColorPrimary,
+                    modifier = Modifier.clickable {
+                        onActionInactiveTabsCFR()
+                    },
+                    style = FirefoxTheme.typography.body1.copy(
+                        textDecoration = TextDecoration.Underline,
+                    ),
+                )
+            }
+        },
+    )
+}
+
+/**
  * Collapsible header for the Inactive Tabs section.
  *
  * @param expanded Whether the section is expanded.
  * @param onClick Called when the user clicks on the header.
  * @param onDeleteAllClick Called when the user clicks on the delete all button.
+ * @param showInactiveTabsCFR Whether to show the Inactive Tabs CFR.
+ * @param onDismissInactiveTabsCFR Invoked after tapping "X" button on Inactive Tabs CFR.
+ * @param onActionInactiveTabsCFR Invoked after tapping "Turn off in settings" Action Text on Inactive Tabs CFR.
  */
 @Composable
+@Suppress("LongParameterList")
 private fun InactiveTabsHeader(
     expanded: Boolean,
     onClick: () -> Unit,
     onDeleteAllClick: () -> Unit,
+    showInactiveTabsCFR: Boolean,
+    onDismissInactiveTabsCFR: () -> Unit,
+    onActionInactiveTabsCFR: () -> Unit,
 ) {
     ExpandableListHeader(
         headerText = stringResource(R.string.inactive_tabs_title),
@@ -157,6 +230,10 @@ private fun InactiveTabsHeader(
                 contentDescription = stringResource(R.string.inactive_tabs_delete_all),
                 tint = FirefoxTheme.colors.iconPrimary,
             )
+        }
+
+        if (showInactiveTabsCFR) {
+            CreateInactiveTabCFR(onDismissInactiveTabsCFR, onActionInactiveTabsCFR)
         }
     }
 }
@@ -255,12 +332,15 @@ private fun InactiveTabsListPreview() {
                 inactiveTabs = generateFakeInactiveTabsList(),
                 expanded = expanded,
                 showAutoCloseDialog = showAutoClosePrompt,
+                showInactiveTabsCFR = false,
                 onHeaderClick = { expanded = !expanded },
                 onDeleteAllButtonClick = {},
                 onAutoCloseDismissClick = { showAutoClosePrompt = !showAutoClosePrompt },
                 onEnableAutoCloseClick = { showAutoClosePrompt = !showAutoClosePrompt },
                 onTabClick = {},
                 onTabCloseClick = {},
+                onDismissInactiveTabsCFR = {},
+                onActionInactiveTabsCFR = {},
             )
         }
     }
