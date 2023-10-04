@@ -18,6 +18,7 @@ import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import org.mozilla.fenix.GleanMetrics.History
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.theme.FirefoxTheme
@@ -63,6 +64,7 @@ class AwesomeBarWrapper @JvmOverloads constructor(
                     groupTitle = ThemeManager.resolveAttributeColor(R.attr.textSecondary),
                 ),
                 onSuggestionClicked = { suggestion ->
+                    context.components.appStore.dispatch(AppAction.AwesomeBarAction.SuggestionClicked(suggestion))
                     suggestion.onSuggestionClicked?.invoke()
                     when {
                         suggestion.flags.contains(AwesomeBar.Suggestion.Flag.HISTORY) -> {
@@ -73,6 +75,9 @@ class AwesomeBarWrapper @JvmOverloads constructor(
                 },
                 onAutoComplete = { suggestion ->
                     onEditSuggestionListener?.invoke(suggestion.editSuggestion!!)
+                },
+                onVisibilityStateUpdated = {
+                    context.components.appStore.dispatch(AppAction.AwesomeBarAction.VisibilityStateUpdated(it))
                 },
                 onScroll = { hideKeyboard() },
                 profiler = context.components.core.engine.profiler,

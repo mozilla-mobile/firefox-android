@@ -66,6 +66,12 @@ class FxSuggestSuggestionProvider(
                     fullKeyword = suggestion.fullKeyword,
                     isSponsored = true,
                     icon = suggestion.icon,
+                    impressionInfo = FxSuggestImpressionInfo.Amp(
+                        blockId = suggestion.blockId,
+                        impressionUrl = suggestion.impressionUrl,
+                        advertiser = suggestion.advertiser.lowercase(),
+                        iabCategory = suggestion.iabCategory,
+                    ),
                 )
                 is Suggestion.Wikipedia -> SuggestionDetails(
                     title = suggestion.title,
@@ -90,8 +96,26 @@ class FxSuggestSuggestionProvider(
                 onSuggestionClicked = {
                     loadUrlUseCase.invoke(details.url)
                 },
+                metadata = buildMap {
+                    details.impressionInfo?.let { put("impressionInfo", it) }
+                },
             )
         }
+}
+
+/**
+ * Impression information for a Firefox Suggest search suggestion.
+ */
+sealed interface FxSuggestImpressionInfo {
+    /**
+     * An impression for a sponsored [Suggestion] from adMarketplace.
+     */
+    data class Amp(
+        val blockId: Long,
+        val impressionUrl: String,
+        val advertiser: String,
+        val iabCategory: String,
+    ) : FxSuggestImpressionInfo
 }
 
 internal data class SuggestionDetails(
@@ -100,4 +124,5 @@ internal data class SuggestionDetails(
     val fullKeyword: String,
     val isSponsored: Boolean,
     val icon: List<UByte>?,
+    val impressionInfo: FxSuggestImpressionInfo? = null,
 )

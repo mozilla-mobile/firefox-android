@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.components.appstate
 
+import mozilla.components.concept.awesomebar.AwesomeBar
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.lib.crash.Crash.NativeCodeCrash
@@ -237,5 +238,28 @@ sealed class AppAction : Action {
          * analysed.
          */
         data class RemoveFromProductAnalysed(val productPageUrl: String) : ShoppingAction()
+    }
+
+    /**
+     * [Actions]s related to interactions with the [AwesomeBar].
+     */
+    sealed class AwesomeBarAction : AppAction() {
+        /**
+         * Indicates that the suggestions displayed in the [AwesomeBar] have changed.
+         */
+        data class VisibilityStateUpdated(val visibilityState: AwesomeBar.VisibilityState) : AwesomeBarAction()
+
+        /**
+         * Indicates that the user clicked a [suggestion] in the [AwesomeBar].
+         */
+        data class SuggestionClicked(val suggestion: AwesomeBar.Suggestion) : AwesomeBarAction()
+
+        /**
+         * Indicates that the user has finished engaging with the [AwesomeBar].
+         *
+         * An [abandoned] engagement means that the user dismissed the [AwesomeBar] without either clicking on a
+         * suggestion, or entering a search term or URL.
+         */
+        data class EngagementFinished(val abandoned: Boolean) : AwesomeBarAction()
     }
 }

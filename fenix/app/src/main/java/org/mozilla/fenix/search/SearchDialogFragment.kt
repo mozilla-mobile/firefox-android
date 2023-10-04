@@ -215,6 +215,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                 fragmentStore = store,
                 navController = findNavController(),
                 settings = requireContext().settings(),
+                appStore = requireComponents.appStore,
                 dismissDialog = {
                     dialogHandledAction = true
                     dismissAllowingStateLoss()

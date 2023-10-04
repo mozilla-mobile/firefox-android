@@ -25,7 +25,9 @@ import org.mozilla.fenix.GleanMetrics.SearchShortcuts
 import org.mozilla.fenix.GleanMetrics.UnifiedSearch
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.Core
+import org.mozilla.fenix.components.appstate.AppAction.AwesomeBarAction
 import org.mozilla.fenix.components.metrics.MetricsUtils
 import org.mozilla.fenix.crashes.CrashListActivity
 import org.mozilla.fenix.ext.application
@@ -69,6 +71,7 @@ class SearchDialogController(
     private val fragmentStore: SearchFragmentStore,
     private val navController: NavController,
     private val settings: Settings,
+    private val appStore: AppStore,
     private val dismissDialog: () -> Unit,
     private val clearToolbarFocus: () -> Unit,
     private val focusToolbar: () -> Unit,
@@ -88,11 +91,13 @@ class SearchDialogController(
                 // fennec users may be used to navigating to "about:crashes". So we intercept this here
                 // and open the crash list activity instead.
                 activity.startActivity(Intent(activity, CrashListActivity::class.java))
+                appStore.dispatch(AwesomeBarAction.EngagementFinished(abandoned = false))
             }
             "about:addons" -> {
                 val directions =
                     SearchDialogFragmentDirections.actionGlobalAddonsManagementFragment()
                 navController.navigateSafe(R.id.searchDialogFragment, directions)
+                appStore.dispatch(AwesomeBarAction.EngagementFinished(abandoned = false))
             }
             "moz://a" -> openSearchOrUrl(
                 SupportUtils.getMozillaPageUrl(SupportUtils.MozillaPage.MANIFESTO),
@@ -101,6 +106,8 @@ class SearchDialogController(
             else ->
                 if (url.isNotBlank()) {
                     openSearchOrUrl(url, fromHomeScreen)
+                } else {
+                    appStore.dispatch(AwesomeBarAction.EngagementFinished(abandoned = true))
                 }
         }
         dismissDialog()
@@ -143,11 +150,14 @@ class SearchDialogController(
                 searchAccessPoint,
             )
         }
+
+        appStore.dispatch(AwesomeBarAction.EngagementFinished(abandoned = false))
     }
 
     override fun handleEditingCancelled() {
         clearToolbarFocus()
         dismissDialogAndGoBack()
+        appStore.dispatch(AwesomeBarAction.EngagementFinished(abandoned = true))
     }
 
     override fun handleTextChanged(text: String) {
@@ -193,6 +203,8 @@ class SearchDialogController(
         )
 
         Events.enteredUrl.record(Events.EnteredUrlExtra(autocomplete = false))
+
+        appStore.dispatch(AwesomeBarAction.EngagementFinished(abandoned = false))
     }
 
     override fun handleSearchTermsTapped(searchTerms: String) {
@@ -228,6 +240,8 @@ class SearchDialogController(
                 searchAccessPoint,
             )
         }
+
+        appStore.dispatch(AwesomeBarAction.EngagementFinished(abandoned = false))
     }
 
     override fun handleSearchShortcutEngineSelected(searchEngine: SearchEngine) {
@@ -280,6 +294,7 @@ class SearchDialogController(
         clearToolbarFocus()
         val directions = SearchDialogFragmentDirections.actionGlobalSearchEngineFragment()
         navController.navigateSafe(R.id.searchDialogFragment, directions)
+        appStore.dispatch(AwesomeBarAction.EngagementFinished(abandoned = true))
     }
 
     override fun handleExistingSessionSelected(tabId: String) {
@@ -290,6 +305,8 @@ class SearchDialogController(
         activity.openToBrowser(
             from = BrowserDirection.FromSearchDialog,
         )
+
+        appStore.dispatch(AwesomeBarAction.EngagementFinished(abandoned = false))
     }
 
     /**
@@ -309,6 +326,7 @@ class SearchDialogController(
     override fun handleSearchEngineSuggestionClicked(searchEngine: SearchEngine) {
         clearToolbar()
         handleSearchShortcutEngineSelected(searchEngine)
+        appStore.dispatch(AwesomeBarAction.EngagementFinished(abandoned = false))
     }
 
     override fun handleMenuItemTapped(item: SearchSelectorMenu.Item) {
@@ -327,6 +345,7 @@ class SearchDialogController(
             setMessage(spannableText)
             setNegativeButton(R.string.camera_permissions_needed_negative_button_text) { _, _ ->
                 dismissDialog()
+                appStore.dispatch(AwesomeBarAction.EngagementFinished(abandoned = true))
             }
             setPositiveButton(R.string.camera_permissions_needed_positive_button_text) {
                     dialog: DialogInterface, _ ->
@@ -345,6 +364,7 @@ class SearchDialogController(
                 intent.data = uri
                 dialog.cancel()
                 activity.startActivity(intent)
+                appStore.dispatch(AwesomeBarAction.EngagementFinished(abandoned = true))
             }
             create().withCenterAlignedButtons()
         }
