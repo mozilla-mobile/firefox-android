@@ -70,7 +70,7 @@ fun CookieBannerReEngagementDialogCompose(
     onNotNowButtonClicked: () -> Unit,
 ) {
     Dialog(
-        properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = false),
+        properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false),
         onDismissRequest = onNotNowButtonClicked,
     ) {
         Surface(
@@ -89,7 +89,7 @@ fun CookieBannerReEngagementDialogCompose(
                     onClick = onCloseButtonClicked,
                 ) {
                     Icon(
-                        painter = painterResource(R.drawable.mozac_ic_close),
+                        painter = painterResource(R.drawable.mozac_ic_cross_24),
                         contentDescription = stringResource(R.string.content_description_close_button),
                         tint = FirefoxTheme.colors.iconPrimary,
                     )

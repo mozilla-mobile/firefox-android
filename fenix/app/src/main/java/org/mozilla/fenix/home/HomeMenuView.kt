@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.browser.menu.view.MenuButton
+import mozilla.components.concept.sync.FxAEntryPoint
 import mozilla.components.service.glean.private.NoExtras
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.GleanMetrics.Events
@@ -22,6 +23,7 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.accounts.AccountState
+import org.mozilla.fenix.components.accounts.FenixFxAEntryPoint
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.settings.SupportUtils
@@ -35,13 +37,13 @@ import org.mozilla.fenix.GleanMetrics.HomeMenu as HomeMenuMetrics
  * Helper class for building the [HomeMenu].
  *
  * @property view The [View] to attach the snackbar to.
- * @property context  An Android [Context].
+ * @property context An Android [Context].
  * @property lifecycleOwner [LifecycleOwner] for the view.
  * @property homeActivity [HomeActivity] used to open URLs in a new tab.
  * @property navController [NavController] used for navigation.
  * @property menuButton The [MenuButton] that will be used to create a menu when the button is
  * clicked.
- * @property hideOnboardingIfNeeded Lambda invoked to dismiss onboarding.
+ * @property fxaEntrypoint The source entry point to FxA.
  */
 @Suppress("LongParameterList")
 class HomeMenuView(
@@ -51,7 +53,7 @@ class HomeMenuView(
     private val homeActivity: HomeActivity,
     private val navController: NavController,
     private val menuButton: WeakReference<MenuButton>,
-    private val hideOnboardingIfNeeded: () -> Unit,
+    private val fxaEntrypoint: FxAEntryPoint = FenixFxAEntryPoint.HomeMenu,
 ) {
 
     /**
@@ -75,15 +77,18 @@ class HomeMenuView(
     }
 
     /**
+     * Dismisses the menu.
+     */
+    fun dismissMenu() {
+        menuButton.get()?.dismissMenu()
+    }
+
+    /**
      * Callback invoked when a menu item is tapped on.
      */
     @Suppress("LongMethod", "ComplexMethod")
     @VisibleForTesting(otherwise = PRIVATE)
     internal fun onItemTapped(item: HomeMenu.Item) {
-        if (item !is HomeMenu.Item.DesktopMode) {
-            hideOnboardingIfNeeded()
-        }
-
         when (item) {
             HomeMenu.Item.Settings -> {
                 HomeMenuMetrics.settingsItemClicked.record(NoExtras())
@@ -108,9 +113,13 @@ class HomeMenuView(
                         AccountState.AUTHENTICATED ->
                             HomeFragmentDirections.actionGlobalAccountSettingsFragment()
                         AccountState.NEEDS_REAUTHENTICATION ->
-                            HomeFragmentDirections.actionGlobalAccountProblemFragment()
+                            HomeFragmentDirections.actionGlobalAccountProblemFragment(
+                                entrypoint = fxaEntrypoint as FenixFxAEntryPoint,
+                            )
                         AccountState.NO_ACCOUNT ->
-                            HomeFragmentDirections.actionGlobalTurnOnSync()
+                            HomeFragmentDirections.actionGlobalTurnOnSync(
+                                entrypoint = fxaEntrypoint as FenixFxAEntryPoint,
+                            )
                     },
                 )
             }
@@ -159,7 +168,7 @@ class HomeMenuView(
                 Events.whatsNewTapped.record(NoExtras())
 
                 homeActivity.openToBrowserAndLoad(
-                    searchTermOrURL = SupportUtils.getWhatsNewUrl(context),
+                    searchTermOrURL = SupportUtils.WHATS_NEW_URL,
                     newTab = true,
                     from = BrowserDirection.FromHome,
                 )
@@ -180,7 +189,9 @@ class HomeMenuView(
             HomeMenu.Item.ReconnectSync -> {
                 navController.nav(
                     R.id.homeFragment,
-                    HomeFragmentDirections.actionGlobalAccountProblemFragment(),
+                    HomeFragmentDirections.actionGlobalAccountProblemFragment(
+                        entrypoint = fxaEntrypoint as FenixFxAEntryPoint,
+                    ),
                 )
             }
             HomeMenu.Item.Extensions -> {

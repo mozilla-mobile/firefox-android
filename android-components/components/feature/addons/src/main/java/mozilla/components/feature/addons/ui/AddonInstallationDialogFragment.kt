@@ -6,6 +6,7 @@ package mozilla.components.feature.addons.ui
 
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.content.DialogInterface
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
@@ -32,8 +33,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import mozilla.components.feature.addons.Addon
+import mozilla.components.feature.addons.AddonsProvider
 import mozilla.components.feature.addons.R
-import mozilla.components.feature.addons.amo.AddonCollectionProvider
 import mozilla.components.feature.addons.databinding.MozacFeatureAddonsFragmentDialogAddonInstalledBinding
 import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.ktx.android.content.appName
@@ -68,9 +69,14 @@ class AddonInstallationDialogFragment : AppCompatDialogFragment() {
     var onConfirmButtonClicked: ((Addon, Boolean) -> Unit)? = null
 
     /**
-     * Reference to the application's [AddonCollectionProvider] to fetch add-on icons.
+     * A lambda called when the dialog is dismissed.
      */
-    var addonCollectionProvider: AddonCollectionProvider? = null
+    var onDismissed: (() -> Unit)? = null
+
+    /**
+     * Reference to the application's [AddonsProvider] to fetch add-on icons.
+     */
+    var addonsProvider: AddonsProvider? = null
 
     private val safeArguments get() = requireNotNull(arguments)
 
@@ -108,6 +114,11 @@ class AddonInstallationDialogFragment : AppCompatDialogFragment() {
     override fun onStop() {
         super.onStop()
         iconJob?.cancel()
+    }
+
+    override fun onCancel(dialog: DialogInterface) {
+        super.onCancel(dialog)
+        onDismissed?.invoke()
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -214,7 +225,7 @@ class AddonInstallationDialogFragment : AppCompatDialogFragment() {
     internal fun fetchIcon(addon: Addon, iconView: ImageView, scope: CoroutineScope = this.scope): Job {
         return scope.launch {
             try {
-                val iconBitmap = addonCollectionProvider?.getAddonIconBitmap(addon)
+                val iconBitmap = addonsProvider?.getAddonIconBitmap(addon)
                 iconBitmap?.let {
                     scope.launch(Dispatchers.Main) {
                         safeArguments.putParcelable(KEY_ICON, it)
@@ -229,7 +240,7 @@ class AddonInstallationDialogFragment : AppCompatDialogFragment() {
                     iconView.setImageDrawable(
                         ContextCompat.getDrawable(
                             context,
-                            iconsR.drawable.mozac_ic_extensions,
+                            iconsR.drawable.mozac_ic_extension_24,
                         ),
                     )
                 }
@@ -256,16 +267,19 @@ class AddonInstallationDialogFragment : AppCompatDialogFragment() {
         /**
          * Returns a new instance of [AddonInstallationDialogFragment].
          * @param addon The addon to show in the dialog.
+         * @param addonsProvider An add-ons provider.
          * @param promptsStyling Styling properties for the dialog.
+         * @param onDismissed A lambda called when the dialog is dismissed.
          * @param onConfirmButtonClicked A lambda called when the confirm button is clicked.
          */
         fun newInstance(
             addon: Addon,
-            addonCollectionProvider: AddonCollectionProvider,
+            addonsProvider: AddonsProvider,
             promptsStyling: PromptsStyling? = PromptsStyling(
                 gravity = Gravity.BOTTOM,
                 shouldWidthMatchParent = true,
             ),
+            onDismissed: (() -> Unit)? = null,
             onConfirmButtonClicked: ((Addon, Boolean) -> Unit)? = null,
         ): AddonInstallationDialogFragment {
             val fragment = AddonInstallationDialogFragment()
@@ -289,8 +303,9 @@ class AddonInstallationDialogFragment : AppCompatDialogFragment() {
                 }
             }
             fragment.onConfirmButtonClicked = onConfirmButtonClicked
+            fragment.onDismissed = onDismissed
             fragment.arguments = arguments
-            fragment.addonCollectionProvider = addonCollectionProvider
+            fragment.addonsProvider = addonsProvider
             return fragment
         }
     }

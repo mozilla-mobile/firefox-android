@@ -80,4 +80,18 @@ class DefaultBrowserToolbarInteractorTest {
 
         verify { browserToolbarController.handleHomeButtonClick() }
     }
+
+    @Test
+    fun onEraseButtonClicked() {
+        interactor.onEraseButtonClicked()
+
+        verify { browserToolbarController.handleEraseButtonClick() }
+    }
+
+    @Test
+    fun onShoppingCfrActionClicked() {
+        interactor.onShoppingCfrActionClicked()
+
+        verify { browserToolbarController.handleShoppingCfrActionClick() }
+    }
 }

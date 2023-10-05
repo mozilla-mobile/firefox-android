@@ -7,7 +7,7 @@ package org.mozilla.fenix.tabstray.browser.compose
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.ViewTreeLifecycleOwner
+import androidx.lifecycle.setViewTreeLifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import androidx.savedstate.SavedStateRegistryOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
@@ -20,8 +20,8 @@ import org.mozilla.fenix.theme.Theme
 /**
  * [RecyclerView.ViewHolder] used for Jetpack Compose UI content .
  *
- * @param composeView [ComposeView] which will be populated with Jetpack Compose UI content.
- * @param viewLifecycleOwner [LifecycleOwner] life cycle owner for the view.
+ * @property composeView [ComposeView] which will be populated with Jetpack Compose UI content.
+ * @property viewLifecycleOwner [LifecycleOwner] life cycle owner for the view.
  */
 abstract class ComposeAbstractTabViewHolder(
     private val composeView: ComposeView,
@@ -44,7 +44,7 @@ abstract class ComposeAbstractTabViewHolder(
             }
         }
 
-        ViewTreeLifecycleOwner.set(composeView, viewLifecycleOwner)
+        composeView.setViewTreeLifecycleOwner(viewLifecycleOwner)
         composeView.setViewTreeSavedStateRegistryOwner(
             viewLifecycleOwner as SavedStateRegistryOwner,
         )

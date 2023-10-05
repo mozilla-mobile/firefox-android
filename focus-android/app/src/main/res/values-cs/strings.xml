@@ -53,7 +53,7 @@
     <string name="menu_remove_from_shortcuts">Odebrat ze zkratek</string>
 
     <!-- Menu item: Shows information about features and changes that are new to this version -->
-    <string name="menu_whats_new">Co je nového</string>
+    <string name="menu_whats_new" moz:RemovedIn="116" tools:ignore="UnusedResources">Co je nového</string>
     <string name="menu_settings">Nastavení</string>
     <string name="menu_about">O nás</string>
     <string name="menu_help">Nápověda</string>
@@ -308,6 +308,12 @@
     <!-- Preference Title: Biometrics can be used to unlock Focus if the previous session's data was not erased by the user. -->
     <string name="preference_security_biometric">Odemknout aplikaci otiskem prstu</string>
 
+    <!-- Preference Summary: Biometrics (iris scan, fingerprint, or facial scan) can be used to unlock Focus if the app had a URL
+        open when the app was last run to ensure that only the phone's owner can view a previous session.
+        %s will be replaced by the app name (e.g. Firefox Focus)
+        Shortcuts is a feature that allows the user to pin his favorite websites to Focus home screen so he can quickly access them-->
+    <string name="preference_security_biometric_summary2">Odemkněte pomocí otisku prstu, pokud jste přidali Zkratky nebo pokud je webová stránka již otevřena v %s.</string>
+
     <!-- Preference Title: Secure Mode is a setting that prevents the app's content to show up in the "recent apps" screen
          and prevents the user from taking screenshots or casting the app to other displays. -->
     <string name="preference_privacy_secure_mode">Nenápadnost</string>
@@ -345,6 +351,15 @@
 
     <!-- In-app link (in settings) to Focus privacy notice. -->
     <string name="preference_privacy_notice">Zásady ochrany osobních údajů</string>
+
+    <!-- In-app link (in settings) to Focus licensing information. -->
+    <string name="preference_licensing_info">Informace o licenci</string>
+
+    <!-- Link to Focus licensing information from other libraries that we use. -->
+    <string name="preference_libraries_we_use">Knihovny, které používáme</string>
+
+    <!-- Open Source Licenses page title. The first parameter is the app name -->
+    <string name="open_source_licenses_title">%s | OSS knihovny</string>
 
     <!-- Item in Preferences that shows the about page. Parameter 1 is the app name, i.e. Firefox Focus/Firefox Klar. -->
     <string name="preference_about">O aplikaci %1$s</string>
@@ -475,7 +490,10 @@
 
 
 
-  <string name="error_hostLookup_title">Server nebyl nalezen</string>
+  <!-- Snackbar that will be displayed after a website has been added to shortcuts. -->
+    <string name="snackbar_added_to_shortcuts">Přidáno do zkratek</string>
+
+    <string name="error_hostLookup_title">Server nebyl nalezen</string>
 
 
 
@@ -698,6 +716,9 @@
     <!-- Text for indicating cookie banner handling is on this site, this is shown as part of the protections panel with the tracking protection toggle. -->
     <string name="cookie_banner_exception_item_description_state_on">ZAPNUTO pro tento web</string>
 
+    <!-- Text for indicating cookie reducer is not supported on the current site, this is shown as part of the protections panel with the tracking protection toggle. -->
+    <string name="cookie_banner_exception_site_not_supported">Server není aktuálně podporován</string>
+
     <!-- Text for indicating cookie banner handling is off this site, this is shown as part of the protections panel with the tracking protection toggle. -->
     <string name="cookie_banner_exception_item_description_state_off">VYPNUTO pro tento web</string>
 
@@ -716,11 +737,30 @@
     <!-- Title text for a detail explanation indicating cookie banner handling is off this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site. -->
     <string name="cookie_banner_exception_panel_title_state_off_for_site">Chcete vypnout omezení cookie lišt pro %1$s?</string>
 
+    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The placeholder will be updated with the app name. -->
+    <string name="cookie_banner_exception_panel_description_state_on_for_site">%1$s smaže cookies tohoto webu a stránku znovu načte. Vymazání všech cookies může způsobit vaše odhlášení nebo třeba vyprázdnění nákupního koše.</string>
+
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The placeholder will be updated with the app name. -->
     <string name="cookie_banner_exception_panel_description_state_off_for_site2">%1$s se může pokusit automaticky odmítnout žádosti o povolení cookies.</string>
 
-    <!-- CFR for Cookie Banner (Banner Info Message). This text should be the same as the settings text from "cfr_for_cookie_banner". The text should be underlined and should redirect the user to the cookie banner settings screen. -->
-    <string name="cfr_for_cookie_banner_underline_settings" moz:RemovedIn="111" tools:ignore="UnusedResources">nastavení</string>
+    <!-- Long text for a detail explanation indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_description_site_is_not_supported">Na tomto webu v tuto chvíli není omezení cookie lišt podporováno. Chcete náš tým požádat o kontrolu této stránky a za účelem budoucího přidání podpory?</string>
+
+    <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_site_is_not_supported_cancel_button">Zrušit</string>
+
+    <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_site_is_not_supported_request_support_button">Požádat o přidání podpory</string>
+
+    <!-- Label for the snackBar, after the user reports with success a website where cookie banner reducer did not work -->
+    <string name="cookie_banner_report_a_site_snackbar_label">Žádost o přidání podpory tohoto serveru byla odeslána.</string>
+
+    <!-- Label for cookie banner item from tracking protection, after the user reports with success a website where cookie banner reducer did not work -->
+    <string name="cookie_banner_the_site_was_reported">Žádost o přidání podpory tohoto serveru byla odeslána.</string>
+
+    <!-- Contextual Feature Recommendation Popups -->
+    <!-- CFR for Cookie Banner (Banner Info Message). %1$s will be replaced by the app name, %2$s will be an active link using the string cfr_cookie_banner_link as text. -->
+    <string name="cfr_cookie_banner">%1$s se pokouší odmítnout požadavky na soubory cookie, aby odmítl otravné bannery cookie.\n\nSpravujte předvolby lišt cookie v %2$s.</string>
     <!-- CFR for Cookie Banner (Banner Info Message). This string is used as text for a link in cfr_cookie_banner and takes the user to the app settings. -->
     <string name="cfr_cookie_banner_link">nastavení</string>
 
@@ -810,6 +850,9 @@
 
     <!-- Title text for biometric prompt pop-up -->
     <string name="biometric_prompt_title">Potvrďte pomocí otisku prstu</string>
+
+    <!-- Subtitle text for biometric prompt pop-up -->
+    <string name="biometric_prompt_subtitle">Pro pokračování aktuální relace můžete použít otisk prstu.</string>
 
     <!-- Button for the fingerprint authentication dialog box that is shown to the user when sharing a link to the app
     while the user has biometric authentication enabled. When pressed, the user's previous session is cleared, and the shared link is opened. -->
@@ -983,16 +1026,29 @@
 
 
     <!-- The title of the error page for websites that do not support HTTPS when HTTPS-Only is turned on  -->
-    <string name="errorpage_httpsonly_title" moz:RemovedIn="111" tools:ignore="UnusedResources">Požadovaný web nepodporuje HTTPS</string>
-
-    <!-- The title of the error page for websites that do not support HTTPS when HTTPS-Only is turned on  -->
     <string name="errorpage_httpsonly_title2">Tento server nepodporuje HTTPS</string>
 
-    <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will get replaced with the name of the app (e.g. "Firefox Focus") -->
-    <string name="errorpage_httpsonly_message" moz:RemovedIn="111" tools:ignore="UnusedResources">Ve výchozím nastavení navazuje %1$s bezpečné spojení pomocí protokolu HTTPS. Pro více informací nebo změnu tohoto nastavení přejděte do Nastavení &gt; Soukromí a zabezpečení &gt; Zabezpečení.</string>
+    <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will get replaced with the name of the app (e.g. "Firefox Focus").
+        Contains a button that will redirect the user to Privacy & Security Screen-->
+    <string name="errorpage_httpsonly_message2"><![CDATA[%1$s se pro větší bezpečnost pokouší používat zabezpečené připojení skrze protokol HTTPS vždy, kdy je to možné.
+<a href="%2$s">Dozvědět se více</a><br/><br/>
+Toto nastavení můžete změnit v části Nastavení -> Soukromí a zabezpečení > Zabezpečení.]]></string>
 
     <!-- The document title and heading of the error page shown when a website has an invalid or expired SSL certificate. -->
     <string name="mozac_browser_errorpages_security_bad_cert_title">Spojení není zabezpečené</string>
+
+     <!-- The error message shown when a website has an invalid or expired SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_message"><![CDATA[
+    Tato chyba může být způsobena chybnou konfigurací serveru nebo někým, kdo se snaží vydávat za server. <br/><br/>
+    Pokud jste se k tomuto serveru už v minulosti úspěšně připojili, je možná chyba jenom dočasná, a můžete to zkusit znovu později.
+    ]]></string>
+
+    <!-- The advanced certificate information shown when a website has an invalid SSL certificate. The %1$s will be replaced by the app name and %2$s will be replaced by website URL. It's only shown when a website has an invalid SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_techInfo"><![CDATA[
+        <label>Někdo se může snažit vydávat za zmiňovaný server a pokračovaní může být riskantní.</label>
+        <br><br>
+        <label>%1$s serveru <b>%2$s</b> nedůvěřuje, protože vydavatel zaslaného certifikátu je neznámý, certifikát je podepsaný sám sebou nebo server neposílá správné mezilehlé certifikáty.</label>
+    ]]></string>
 
      <!-- Sessions List -->
     <!-- Content description (not visible, for screen readers etc.): Button that closes a tab n the sessions list -->
@@ -1038,6 +1094,10 @@
     of the app (e.g. &quot;Focus&quot;) --&gt;
     <!-- Banner Info Message than will appear when user first enters in the app. The location is at the toolbar. -->
     <string name="cfr_for_start_browsing">Začněte svou relaci anonymního prohlížení a my budeme průběžně blokovat sledovací prvky a jiné zlé věci.</string>
+
+    <!-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
+    of the app (e.g. "Focus") -->
+    <string name="promote_search_widget_dialog_subtitle">Necháme vás v anonymním prohlížení, ale příště můžete začít rychleji pomocí widgetu %1$s na Domovské obrazovce.</string>
 
     <!-- This is te text from add search widget to home screen button .The button is located on
     promote search widget dialog. -->

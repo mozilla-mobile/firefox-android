@@ -91,7 +91,6 @@ class DeepLinkTest {
 
     @Test
     fun openCollections() {
-        robot.openHomeScreen { /* do nothing */ }.dismissOnboarding()
         robot.openCollections {
             verifyCollectionsHeader()
         }
@@ -123,7 +122,7 @@ class DeepLinkTest {
     @Test
     fun openSettingsTrackingProtection() {
         robot.openSettingsTrackingProtection {
-            verifyEnhancedTrackingProtectionHeader()
+            verifyEnhancedTrackingProtectionSummary()
         }
     }
 

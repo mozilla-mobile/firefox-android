@@ -6,20 +6,12 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion config.compileSdkVersion
-
     defaultConfig {
         minSdkVersion config.minSdkVersion
+        compileSdk config.compileSdkVersion
         targetSdkVersion config.targetSdkVersion
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-    }
-
-    lint {
-        // Lint reports (falsely) a bunch of unused resources for this project. Those resources
-        // are references from Kotlin code and it looks like Android lint can't see those references
-        // yet. Let's disable this check and retry once a newer SDK is available.
-        disable 'UnusedResources'
     }
 
     buildTypes {
@@ -43,7 +35,6 @@ dependencies {
 
     testImplementation ComponentsDependencies.androidx_test_junit
     testImplementation ComponentsDependencies.testing_robolectric
-    testImplementation ComponentsDependencies.testing_mockito
 }
 
 apply from: '../../../android-lint.gradle'

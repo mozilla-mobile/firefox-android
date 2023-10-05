@@ -7,7 +7,7 @@ package org.mozilla.fenix.crashes
 import android.view.ViewGroup.MarginLayoutParams
 import androidx.navigation.NavController
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.mapNotNull
 import mozilla.components.browser.state.selector.findTabOrCustomTabOrSelectedTab
 import mozilla.components.browser.state.selector.normalTabs
@@ -17,7 +17,6 @@ import mozilla.components.browser.state.state.EngineState
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.lib.state.helpers.AbstractBinding
-import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.utils.Settings
@@ -25,17 +24,17 @@ import org.mozilla.fenix.utils.Settings
 /**
  * Helper for observing [BrowserStore] and show an in-app crash reporter for tabs with content crashes.
  *
- * @param browserStore [BrowserStore] observed for any changes related to [EngineState.crashed].
- * @param appStore [AppStore] that tracks all content crashes in the current app session until the user
+ * @property browserStore [BrowserStore] observed for any changes related to [EngineState.crashed].
+ * @property appStore [AppStore] that tracks all content crashes in the current app session until the user
  * decides to either send or dismiss all crash reports.
- * @param toolbar [BrowserToolbar] that will be expanded when showing the in-app crash reporter.
- * @param isToolbarPlacedAtTop [Boolean] based allowing the in-app crash reporter to be shown as
+ * @property toolbar [BrowserToolbar] that will be expanded when showing the in-app crash reporter.
+ * @property isToolbarPlacedAtTop [Boolean] based allowing the in-app crash reporter to be shown as
  * immediately below or above the toolbar.
- * @param crashReporterView [CrashContentView] which will be shown if the current tab is marked as crashed.
- * @param components [Components] allowing interactions with other app features.
- * @param settings [Settings] allowing to check whether crash reporting is enabled or not.
- * @param navController [NavController] used to navigate to other parts of the app.
- * @param sessionId [String] Id of the tab or custom tab which should be observed for [EngineState.crashed]
+ * @property crashReporterView [CrashContentView] which will be shown if the current tab is marked as crashed.
+ * @property components [Components] allowing interactions with other app features.
+ * @property settings [Settings] allowing to check whether crash reporting is enabled or not.
+ * @property navController [NavController] used to navigate to other parts of the app.
+ * @property sessionId [String] Id of the tab or custom tab which should be observed for [EngineState.crashed]
  * depending on which [crashReporterView] will be shown or hidden.
  */
 
@@ -53,7 +52,7 @@ class CrashContentIntegration(
 ) : AbstractBinding<BrowserState>(browserStore) {
     override suspend fun onState(flow: Flow<BrowserState>) {
         flow.mapNotNull { state -> state.findTabOrCustomTabOrSelectedTab(sessionId) }
-            .ifChanged { tab -> tab.engineState.crashed }
+            .distinctUntilChangedBy { tab -> tab.engineState.crashed }
             .collect { tab ->
                 if (tab.engineState.crashed) {
                     toolbar.expand()

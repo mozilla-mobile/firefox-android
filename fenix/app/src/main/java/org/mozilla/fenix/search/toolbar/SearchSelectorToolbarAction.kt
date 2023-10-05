@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.VisibleForTesting
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -18,9 +19,9 @@ import mozilla.components.browser.state.search.SearchEngine
 import mozilla.components.concept.menu.Orientation
 import mozilla.components.concept.toolbar.Toolbar
 import mozilla.components.lib.state.ext.flow
+import mozilla.components.support.ktx.android.content.getColorFromAttr
 import mozilla.components.support.ktx.android.content.res.resolveAttribute
 import mozilla.components.support.ktx.android.view.toScope
-import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.GleanMetrics.UnifiedSearch
 import org.mozilla.fenix.R
@@ -31,6 +32,7 @@ import org.mozilla.fenix.search.SearchDialogFragmentStore
  * A [Toolbar.Action] implementation that shows a [SearchSelector].
  *
  * @property store [SearchDialogFragmentStore] containing the complete state of the search dialog.
+ * @property defaultSearchEngine The user selected or default [SearchEngine].
  * @property menu An instance of [SearchSelectorMenu] to display a popup menu for the search
  * selections.
  */
@@ -86,10 +88,17 @@ class SearchSelectorToolbarAction(
                 store.flow()
                     .map { state -> state.searchEngineSource.searchEngine }
                     .filterNotNull()
-                    .ifChanged()
+                    .distinctUntilChanged()
                     .collect { searchEngine ->
                         view.setIcon(
-                            icon = searchEngine.getScaledIcon(view.context),
+                            icon = searchEngine.getScaledIcon(view.context).apply {
+                                // Setting tint manually for icons that were converted from Drawable
+                                // to Bitmap. Search Engine icons are stored as Bitmaps, hence
+                                // theming/attribute mechanism won't work.
+                                if (searchEngine.type == SearchEngine.Type.APPLICATION) {
+                                    setTint(view.context.getColorFromAttr(R.attr.textPrimary))
+                                }
+                            },
                             contentDescription = searchEngine.name,
                         )
                     }

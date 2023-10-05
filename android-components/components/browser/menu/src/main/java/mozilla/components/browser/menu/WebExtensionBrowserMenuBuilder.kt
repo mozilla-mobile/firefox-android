@@ -92,6 +92,7 @@ class WebExtensionBrowserMenuBuilder(
     ): List<BrowserMenuItem> {
         val addonsMenuItem = if (filteredExtensionMenuItems.isNotEmpty()) {
             val backPressMenuItem = BackPressMenuItem(
+                contentDescription = context.getString(R.string.action_bar_up_description),
                 label = context.getString(R.string.mozac_browser_menu_addons),
                 imageResource = style.backPressMenuItemDrawableRes,
                 iconTintColorResource = style.webExtIconTintColorResource,
@@ -159,8 +160,8 @@ class WebExtensionBrowserMenuBuilder(
         @ColorRes
         val webExtIconTintColorResource: Int = NO_ID,
         @DrawableRes
-        val backPressMenuItemDrawableRes: Int = iconsR.drawable.mozac_ic_back,
+        val backPressMenuItemDrawableRes: Int = iconsR.drawable.mozac_ic_back_24,
         @DrawableRes
-        val addonsManagerMenuItemDrawableRes: Int = iconsR.drawable.mozac_ic_extensions,
+        val addonsManagerMenuItemDrawableRes: Int = iconsR.drawable.mozac_ic_extension_24,
     )
 }

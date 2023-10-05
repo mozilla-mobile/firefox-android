@@ -91,7 +91,7 @@ class QuickSettingsSheetDialogFragment : FenixDialogFragment() {
             permissionHighlights = args.permissionHighlights,
             sessionId = args.sessionId,
             isTrackingProtectionEnabled = args.isTrackingProtectionEnabled,
-            isCookieHandlingEnabled = args.isCookieHandlingEnabled,
+            cookieBannerUIMode = args.cookieBannerUIMode,
         )
 
         quickSettingsController = DefaultQuickSettingsController(
@@ -117,7 +117,12 @@ class QuickSettingsSheetDialogFragment : FenixDialogFragment() {
         websitePermissionsView =
             WebsitePermissionsView(binding.websitePermissionsLayout, interactor)
         protectionsView =
-            ProtectionsView(binding.trackingProtectionLayout, interactor, context.settings())
+            ProtectionsView(
+                binding.trackingProtectionLayout,
+                binding.trackingProtectionDivider,
+                interactor,
+                context.settings(),
+            )
         clearSiteDataView = ClearSiteDataView(
             context = context,
             ioScope = viewLifecycleOwner.lifecycleScope + Dispatchers.IO,

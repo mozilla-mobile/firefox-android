@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
@@ -62,7 +66,7 @@
         <activity-alias
             android:name="${applicationId}.App"
             android:exported="true"
-            android:targetActivity=".HomeActivity">
+            android:targetActivity=".${targetActivity}">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -95,6 +99,7 @@
 
         <activity
             android:name=".HomeActivity"
+            android:theme="@style/SplashScreen"
             android:exported="true"
             android:configChanges="keyboard|keyboardHidden|mcc|mnc|orientation|screenSize|layoutDirection|smallestScreenSize|screenLayout"
             android:launchMode="singleTask"
@@ -143,6 +148,9 @@
                     android:host="urls_history"/>
             </intent-filter>
         </activity>
+
+        <activity android:name=".MozillaOnlineHomeActivity"
+                android:exported="false"/>
 
         <activity android:name=".home.mozonline.PrivacyContentDisplayActivity"
                 android:exported="false"/>
@@ -284,7 +292,7 @@
             android:theme="@style/DialogActivityTheme" />
 
         <activity
-            android:name=".gleanplumb.NotificationClickedReceiverActivity"
+            android:name=".messaging.NotificationClickedReceiverActivity"
             android:exported="false" />
 
         <service
@@ -310,7 +318,6 @@
             tools:ignore="ExportedService">
             <intent-filter>
                 <action android:name="android.support.customtabs.action.CustomTabsService" />
-                <category android:name="androidx.browser.trusted.category.TrustedWebActivities" />
             </intent-filter>
         </service>
 
@@ -329,11 +336,18 @@
                 android:resource="@xml/search_widget_info" />
         </receiver>
 
+        <receiver android:name=".onboarding.WidgetPinnedReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="org.mozilla.fenix.onboarding.WidgetPinnedReceiver.widgetPinned"/>
+            </intent-filter>
+        </receiver>
+
         <service android:name=".session.PrivateNotificationService"
                 android:exported="false" />
 
         <service
-            android:name=".gleanplumb.NotificationDismissedService"
+            android:name=".messaging.NotificationDismissedService"
             android:exported="false" />
 
         <service

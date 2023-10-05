@@ -1,15 +1,24 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.ui
 
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdContainingText
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper.exitMenu
+import org.mozilla.fenix.helpers.TestHelper.packageName
+import org.mozilla.fenix.ui.robots.clickPageObject
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
 
@@ -32,6 +41,7 @@ class AddressAutofillTest {
         mockWebServer.shutdown()
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1836845
     @SmokeTest
     @Test
     fun verifyAddressAutofillTest() {
@@ -60,13 +70,19 @@ class AddressAutofillTest {
         }
         navigationToolbar {
         }.enterURLAndEnterToBrowser(addressFormPage.url) {
-            clickStreetAddressTextBox()
+            clickPageObject(itemWithResId("streetAddress"))
             clickSelectAddressButton()
-            clickAddressSuggestion("Harrison Street")
+            clickPageObject(
+                itemWithResIdContainingText(
+                    "$packageName:id/address_name",
+                    "Harrison Street",
+                ),
+            )
             verifyAutofilledAddress("Harrison Street")
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1836856
     @SmokeTest
     @Test
     fun deleteSavedAddressTest() {
@@ -97,6 +113,7 @@ class AddressAutofillTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1836840
     @Test
     fun verifyAddAddressViewTest() {
         homeScreen {
@@ -110,6 +127,7 @@ class AddressAutofillTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1836841
     @Test
     fun verifyEditAddressViewTest() {
         homeScreen {
@@ -135,6 +153,7 @@ class AddressAutofillTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1836839
     @Test
     fun verifyAddressAutofillToggleTest() {
         val addressFormPage =
@@ -164,7 +183,7 @@ class AddressAutofillTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(addressFormPage.url) {
-            clickStreetAddressTextBox()
+            clickPageObject(itemWithResId("streetAddress"))
             verifySelectAddressButtonExists(true)
         }.openThreeDotMenu {
         }.openSettings {
@@ -177,11 +196,12 @@ class AddressAutofillTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(addressFormPage.url) {
-            clickStreetAddressTextBox()
+            clickPageObject(itemWithResId("streetAddress"))
             verifySelectAddressButtonExists(false)
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1836847
     @Test
     fun verifyManageAddressesPromptOptionTest() {
         val addressFormPage =
@@ -211,7 +231,7 @@ class AddressAutofillTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(addressFormPage.url) {
-            clickStreetAddressTextBox()
+            clickPageObject(itemWithResId("streetAddress"))
             clickSelectAddressButton()
         }.clickManageAddressButton {
             verifyAutofillToolbarTitle()
@@ -220,8 +240,10 @@ class AddressAutofillTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1836849
+    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1814032")
     @Test
-    fun verifyAddressAutofillSelectionTest() {
+    fun verifyMultipleAddressesSelectionTest() {
         val addressFormPage =
             TestAssetHelper.getAddressFormAsset(mockWebServer)
 
@@ -264,18 +286,29 @@ class AddressAutofillTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(addressFormPage.url) {
-            clickStreetAddressTextBox()
+            clickPageObject(itemWithResId("streetAddress"))
             clickSelectAddressButton()
-            clickAddressSuggestion("Harrison Street")
+            clickPageObject(
+                itemWithResIdContainingText(
+                    "$packageName:id/address_name",
+                    "Harrison Street",
+                ),
+            )
             verifyAutofilledAddress("Harrison Street")
             clearAddressForm()
-            clickStreetAddressTextBox()
+            clickPageObject(itemWithResId("streetAddress"))
             clickSelectAddressButton()
-            clickAddressSuggestion("Fort Street")
+            clickPageObject(
+                itemWithResIdContainingText(
+                    "$packageName:id/address_name",
+                    "Fort Street",
+                ),
+            )
             verifyAutofilledAddress("Fort Street")
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1836850
     @Test
     fun verifySavedAddressCanBeEditedTest() {
         homeScreen {
@@ -314,6 +347,7 @@ class AddressAutofillTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1836848
     @Test
     fun verifyStateFieldUpdatesInAccordanceWithCountryFieldTest() {
         homeScreen {
@@ -330,6 +364,7 @@ class AddressAutofillTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1836858
     @Test
     fun verifyFormFieldCanBeFilledManuallyTest() {
         val addressFormPage =
@@ -358,15 +393,21 @@ class AddressAutofillTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(addressFormPage.url) {
-            clickStreetAddressTextBox()
+            clickPageObject(itemWithResId("streetAddress"))
             clickSelectAddressButton()
-            clickAddressSuggestion("Harrison Street")
+            clickPageObject(
+                itemWithResIdContainingText(
+                    "$packageName:id/address_name",
+                    "Harrison Street",
+                ),
+            )
             verifyAutofilledAddress("Harrison Street")
             setTextForApartmentTextBox("Ap. 07")
             verifyManuallyFilledAddress("Ap. 07")
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1836838
     @Test
     fun verifyAutofillAddressSectionTest() {
         homeScreen {

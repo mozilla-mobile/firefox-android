@@ -4,7 +4,6 @@
 
 package mozilla.components.browser.state.engine.middleware
 
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import mozilla.components.browser.state.action.EngineAction
 import mozilla.components.browser.state.action.TabListAction
 import mozilla.components.browser.state.selector.findTab
@@ -23,12 +22,10 @@ import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.mockito.Mockito.anyString
 import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
 
-@RunWith(AndroidJUnit4::class)
 class LinkingMiddlewareTest {
     @get:Rule
     val coroutinesTestRule = MainCoroutineRule()
@@ -51,6 +48,35 @@ class LinkingMiddlewareTest {
         dispatcher.scheduler.advanceUntilIdle()
 
         verify(engineSession).loadUrl(tab.content.url)
+    }
+
+    @Test
+    fun `loads URL with load URL flags and additional headers after linking`() {
+        val middleware = LinkingMiddleware(scope)
+
+        val loadFlags = EngineSession.LoadUrlFlags.external()
+        val additionalHeaders = mapOf("X-Extra-Header" to "true")
+        val tab = createTab(
+            url = "https://www.mozilla.org",
+            id = "1",
+            initialLoadFlags = loadFlags,
+            initialAdditionalHeaders = additionalHeaders,
+        )
+        val store = BrowserStore(
+            initialState = BrowserState(tabs = listOf(tab)),
+            middleware = listOf(middleware),
+        )
+
+        val engineSession: EngineSession = mock()
+        store.dispatch(EngineAction.LinkEngineSessionAction(tab.id, engineSession)).joinBlocking()
+
+        dispatcher.scheduler.advanceUntilIdle()
+
+        verify(engineSession).loadUrl(
+            url = tab.content.url,
+            flags = loadFlags,
+            additionalHeaders = additionalHeaders,
+        )
     }
 
     @Test

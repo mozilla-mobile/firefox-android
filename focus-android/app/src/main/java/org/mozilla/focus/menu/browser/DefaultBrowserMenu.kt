@@ -47,7 +47,7 @@ class DefaultBrowserMenu(
 
     override val menuToolbar by lazy {
         val back = BrowserMenuItemToolbar.TwoStateButton(
-            primaryImageResource = R.drawable.mozac_ic_back,
+            primaryImageResource = R.drawable.mozac_ic_back_24,
             primaryContentDescription = context.getString(R.string.content_description_back),
             primaryImageTintResource = context.theme.resolveAttribute(R.attr.primaryText),
             isInPrimaryState = {
@@ -61,7 +61,7 @@ class DefaultBrowserMenu(
         }
 
         val forward = BrowserMenuItemToolbar.TwoStateButton(
-            primaryImageResource = R.drawable.mozac_ic_forward,
+            primaryImageResource = R.drawable.mozac_ic_forward_24,
             primaryContentDescription = context.getString(R.string.content_description_forward),
             primaryImageTintResource = context.theme.resolveAttribute(R.attr.primaryText),
             isInPrimaryState = {
@@ -75,7 +75,7 @@ class DefaultBrowserMenu(
         }
 
         val refresh = BrowserMenuItemToolbar.TwoStateButton(
-            primaryImageResource = R.drawable.mozac_ic_refresh,
+            primaryImageResource = R.drawable.mozac_ic_arrow_clockwise_24,
             primaryContentDescription = context.getString(R.string.content_description_reload),
             primaryImageTintResource = context.theme.resolveAttribute(R.attr.primaryText),
             isInPrimaryState = {
@@ -94,7 +94,7 @@ class DefaultBrowserMenu(
             }
         }
         val share = BrowserMenuItemToolbar.Button(
-            imageResource = R.drawable.mozac_ic_share,
+            imageResource = R.drawable.mozac_ic_share_android_24,
             contentDescription = context.getString(R.string.menu_share),
             iconTintColorResource = context.theme.resolveAttribute(R.attr.primaryText),
             listener = {
@@ -108,9 +108,9 @@ class DefaultBrowserMenu(
 
         val shortcuts = TwoStateBrowserMenuImageText(
             primaryLabel = context.getString(R.string.menu_add_to_shortcuts),
-            primaryStateIconResource = R.drawable.mozac_ic_pin,
+            primaryStateIconResource = R.drawable.mozac_ic_pin_24,
             secondaryLabel = context.getString(R.string.menu_remove_from_shortcuts),
-            secondaryStateIconResource = R.drawable.mozac_ic_pin_remove,
+            secondaryStateIconResource = R.drawable.mozac_ic_pin_slash_24,
             isInPrimaryState = {
                 appStore.state.topSites.find { it.url == selectedSession?.content?.url } == null &&
                     selectedSession?.content?.url != null && appStore.state.topSites.size < TOP_SITES_MAX_LIMIT
@@ -128,13 +128,13 @@ class DefaultBrowserMenu(
 
         val findInPage = BrowserMenuImageText(
             label = context.getString(R.string.find_in_page),
-            imageResource = R.drawable.mozac_ic_search,
+            imageResource = R.drawable.mozac_ic_search_24,
         ) {
             onItemTapped.invoke(ToolbarMenu.Item.FindInPage)
         }
 
         val desktopMode = BrowserMenuImageSwitch(
-            imageResource = R.drawable.mozac_ic_device_desktop,
+            imageResource = R.drawable.mozac_ic_device_desktop_24,
             label = context.getString(R.string.preference_performance_request_desktop_site2),
             initialState = {
                 selectedSession?.content?.desktopMode ?: false
@@ -154,7 +154,7 @@ class DefaultBrowserMenu(
 
         val addToHomescreen = BrowserMenuImageText(
             label = context.getString(R.string.menu_add_to_home_screen),
-            imageResource = R.drawable.mozac_ic_add_to_home_screen,
+            imageResource = R.drawable.mozac_ic_add_to_home_screen_24,
         ) {
             onItemTapped.invoke(ToolbarMenu.Item.AddToHomeScreen)
         }
@@ -169,7 +169,7 @@ class DefaultBrowserMenu(
 
         val settings = BrowserMenuImageText(
             label = context.getString(R.string.menu_settings),
-            imageResource = R.drawable.mozac_ic_settings,
+            imageResource = R.drawable.mozac_ic_settings_24,
             textColorResource = context.theme.resolveAttribute(R.attr.primaryText),
         ) {
             onItemTapped.invoke(ToolbarMenu.Item.Settings)

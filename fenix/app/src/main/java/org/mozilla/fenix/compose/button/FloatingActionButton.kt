@@ -22,7 +22,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import org.mozilla.fenix.R
@@ -34,6 +33,7 @@ import org.mozilla.fenix.theme.FirefoxTheme
  *
  * @param icon [Painter] icon to be displayed inside the action button.
  * @param modifier [Modifier] to be applied to the action button.
+ * @param contentDescription The content description to describe the icon.
  * @param label Text to be displayed next to the icon.
  * @param onClick Invoked when the button is clicked.
  */
@@ -47,7 +47,7 @@ fun FloatingActionButton(
 ) {
     FloatingActionButton(
         onClick = onClick,
-        modifier = Modifier.testTag("button.fab").then(modifier),
+        modifier = modifier,
         backgroundColor = FirefoxTheme.colors.actionPrimary,
         contentColor = FirefoxTheme.colors.textActionPrimary,
     ) {

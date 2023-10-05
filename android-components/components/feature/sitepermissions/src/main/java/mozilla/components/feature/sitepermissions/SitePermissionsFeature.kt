@@ -16,6 +16,7 @@ import androidx.fragment.app.FragmentManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -62,11 +63,11 @@ import mozilla.components.lib.state.ext.flowScoped
 import mozilla.components.support.base.feature.LifecycleAwareFeature
 import mozilla.components.support.base.feature.OnNeedToRequestPermissions
 import mozilla.components.support.base.feature.PermissionsFeature
+import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.ktx.android.content.isPermissionGranted
 import mozilla.components.support.ktx.kotlin.getOrigin
 import mozilla.components.support.ktx.kotlin.stripDefaultPort
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.filterChanged
-import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import java.security.InvalidParameterException
 import mozilla.components.ui.icons.R as iconsR
 
@@ -98,7 +99,8 @@ internal const val STORAGE_ACCESS_DOCUMENTATION_URL =
 @Suppress("TooManyFunctions", "LargeClass", "LongParameterList")
 class SitePermissionsFeature(
     private val context: Context,
-    private var sessionId: String? = null,
+    @set:VisibleForTesting
+    internal var sessionId: String? = null,
     private val storage: SitePermissionsStorage = OnDiskSitePermissionsStorage(context),
     var sitePermissionsRules: SitePermissionsRules? = null,
     private val fragmentManager: FragmentManager,
@@ -113,6 +115,8 @@ class SitePermissionsFeature(
     internal val selectOrAddUseCase by lazy {
         SelectOrAddUseCase(store)
     }
+
+    private val logger = Logger("SitePermissionsFeature")
 
     internal val ioCoroutineScope by lazy { coroutineScopeInitializer() }
 
@@ -142,7 +146,7 @@ class SitePermissionsFeature(
         loadingScope = store.flowScoped { flow ->
             flow.mapNotNull { state ->
                 state.findTabOrCustomTabOrSelectedTab(sessionId)
-            }.ifChanged { it.content.loading }.collect { tab ->
+            }.distinctUntilChangedBy { it.content.loading }.collect { tab ->
                 if (tab.content.loading) {
                     // Clears stale permission indicators in the toolbar,
                     // after the session starts loading.
@@ -427,8 +431,15 @@ class SitePermissionsFeature(
             return null
         }
 
-        val private: Boolean = store.state.findTabOrCustomTabOrSelectedTab(sessionId)?.content?.private
-            ?: throw IllegalStateException("Unable to find session for $sessionId or selected session")
+        val private: Boolean? =
+            store.state.findTabOrCustomTabOrSelectedTab(sessionId)?.content?.private
+
+        if (private == null) {
+            logger.error("Unable to find a tab for $sessionId rejecting the prompt request")
+            permissionRequest.reject()
+            consumePermissionRequest(permissionRequest)
+            return null
+        }
 
         val permissionFromStorage = withContext(coroutineScope.coroutineContext) {
             storage.findSitePermissionsBy(origin, private = private)
@@ -734,7 +745,7 @@ class SitePermissionsFeature(
                 host,
                 permissionRequest,
                 R.string.mozac_feature_sitepermissions_camera_and_microphone,
-                iconsR.drawable.mozac_ic_microphone,
+                iconsR.drawable.mozac_ic_microphone_24,
                 showDoNotAskAgainCheckBox = shouldShowDoNotAskAgainCheckBox,
                 shouldSelectRememberChoice = dialogConfig?.shouldPreselectDoNotAskAgain
                     ?: DialogConfig.DEFAULT_PRESELECT_DO_NOT_ASK_AGAIN,
@@ -758,7 +769,7 @@ class SitePermissionsFeature(
                     host,
                     permissionRequest,
                     R.string.mozac_feature_sitepermissions_location_title,
-                    iconsR.drawable.mozac_ic_location,
+                    iconsR.drawable.mozac_ic_location_24,
                     showDoNotAskAgainCheckBox = shouldShowDoNotAskAgainCheckBox,
                     shouldSelectRememberChoice = dialogConfig?.shouldPreselectDoNotAskAgain
                         ?: DialogConfig.DEFAULT_PRESELECT_DO_NOT_ASK_AGAIN,
@@ -770,7 +781,7 @@ class SitePermissionsFeature(
                     host,
                     permissionRequest,
                     R.string.mozac_feature_sitepermissions_notification_title,
-                    iconsR.drawable.mozac_ic_notification,
+                    iconsR.drawable.mozac_ic_notification_24,
                     showDoNotAskAgainCheckBox = false,
                     shouldSelectRememberChoice = false,
                     isNotificationRequest = true,
@@ -782,7 +793,7 @@ class SitePermissionsFeature(
                     host,
                     permissionRequest,
                     R.string.mozac_feature_sitepermissions_microfone_title,
-                    iconsR.drawable.mozac_ic_microphone,
+                    iconsR.drawable.mozac_ic_microphone_24,
                     showDoNotAskAgainCheckBox = shouldShowDoNotAskAgainCheckBox,
                     shouldSelectRememberChoice = dialogConfig?.shouldPreselectDoNotAskAgain
                         ?: DialogConfig.DEFAULT_PRESELECT_DO_NOT_ASK_AGAIN,
@@ -794,7 +805,7 @@ class SitePermissionsFeature(
                     host,
                     permissionRequest,
                     R.string.mozac_feature_sitepermissions_camera_title,
-                    iconsR.drawable.mozac_ic_video,
+                    iconsR.drawable.mozac_ic_camera_24,
                     showDoNotAskAgainCheckBox = shouldShowDoNotAskAgainCheckBox,
                     shouldSelectRememberChoice = dialogConfig?.shouldPreselectDoNotAskAgain
                         ?: DialogConfig.DEFAULT_PRESELECT_DO_NOT_ASK_AGAIN,
@@ -806,7 +817,7 @@ class SitePermissionsFeature(
                     host,
                     permissionRequest,
                     R.string.mozac_feature_sitepermissions_persistent_storage_title,
-                    iconsR.drawable.mozac_ic_storage,
+                    iconsR.drawable.mozac_ic_storage_24,
                     showDoNotAskAgainCheckBox = false,
                     shouldSelectRememberChoice = true,
                 )
@@ -817,7 +828,7 @@ class SitePermissionsFeature(
                     host,
                     permissionRequest,
                     R.string.mozac_feature_sitepermissions_media_key_system_access_title,
-                    iconsR.drawable.mozac_ic_link,
+                    iconsR.drawable.mozac_ic_link_24,
                     showDoNotAskAgainCheckBox = false,
                     shouldSelectRememberChoice = true,
                 )
@@ -890,7 +901,7 @@ class SitePermissionsFeature(
         return SitePermissionsDialogFragment.newInstance(
             sessionId = currentSession.id,
             title = title,
-            titleIcon = iconsR.drawable.mozac_ic_cookies,
+            titleIcon = iconsR.drawable.mozac_ic_cookies_24,
             message = message,
             negativeButtonText = negativeButtonText,
             permissionRequestId = permissionRequest.id,

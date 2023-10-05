@@ -5,9 +5,11 @@
 package org.mozilla.fenix.home
 
 import androidx.navigation.NavController
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
+import io.mockk.verifyOrder
 import mozilla.components.browser.state.selector.normalTabs
 import mozilla.components.browser.state.selector.privateTabs
 import mozilla.components.browser.state.state.BrowserState
@@ -24,11 +26,13 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.GleanMetrics.StartOnHome
+import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
 import org.mozilla.fenix.ext.nav
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.utils.Settings
 
@@ -69,6 +73,8 @@ class TabCounterViewTest {
 
     @Test
     fun `WHEN tab counter is clicked THEN navigate to tabs tray and record metrics`() {
+        every { navController.currentDestination?.id } returns R.id.homeFragment
+
         assertNull(StartOnHome.openTabsTray.testGetValue())
 
         tabCounter.performClick()
@@ -78,7 +84,7 @@ class TabCounterViewTest {
         verify {
             navController.nav(
                 R.id.homeFragment,
-                HomeFragmentDirections.actionGlobalTabsTrayFragment(),
+                NavGraphDirections.actionGlobalTabsTrayFragment(),
             )
         }
     }
@@ -99,6 +105,8 @@ class TabCounterViewTest {
 
     @Test
     fun `WHEN tab counter is updated THEN set the tab counter to the correct number of tabs`() {
+        every { testContext.settings() } returns settings
+
         val browserState = BrowserState(
             tabs = listOf(
                 createTab(url = "https://www.mozilla.org", id = "mozilla"),
@@ -120,6 +128,47 @@ class TabCounterViewTest {
 
         verify {
             tabCounter.setCountWithAnimation(browserState.privateTabs.size)
+        }
+    }
+
+    @Test
+    fun `WHEN state updated while in private mode THEN call toggleCounterMask(true)`() {
+        every { settings.feltPrivateBrowsingEnabled } returns true
+        every { testContext.settings() } returns settings
+        val browserState = BrowserState(
+            tabs = listOf(
+                createTab(url = "https://www.mozilla.org", id = "mozilla"),
+                createTab(url = "https://www.firefox.com", id = "firefox"),
+                createTab(url = "https://getpocket.com", private = true, id = "getpocket"),
+            ),
+            selectedTabId = "mozilla",
+        )
+
+        browsingModeManager.mode = BrowsingMode.Private
+        tabCounterView.update(browserState)
+
+        verifyOrder {
+            tabCounter.toggleCounterMask(true)
+        }
+    }
+
+    @Test
+    fun `WHEN state updated while in normal mode THEN call toggleCounterMask(false)`() {
+        every { settings.feltPrivateBrowsingEnabled } returns true
+        every { testContext.settings() } returns settings
+        val browserState = BrowserState(
+            tabs = listOf(
+                createTab(url = "https://www.mozilla.org", id = "mozilla"),
+                createTab(url = "https://www.firefox.com", id = "firefox"),
+                createTab(url = "https://getpocket.com", private = true, id = "getpocket"),
+            ),
+            selectedTabId = "mozilla",
+        )
+
+        tabCounterView.update(browserState)
+
+        verifyOrder {
+            tabCounter.toggleCounterMask(false)
         }
     }
 }

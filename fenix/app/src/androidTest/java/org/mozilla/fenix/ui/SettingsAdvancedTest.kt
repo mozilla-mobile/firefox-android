@@ -4,23 +4,23 @@
 
 package org.mozilla.fenix.ui
 
+import androidx.core.net.toUri
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
-import mozilla.components.concept.engine.utils.EngineReleaseChannel
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
-import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
-import org.mozilla.fenix.helpers.Constants.PackageName.YOUTUBE_APP
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
+import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdAndText
 import org.mozilla.fenix.helpers.TestAssetHelper
-import org.mozilla.fenix.helpers.TestHelper.assertNativeAppOpens
+import org.mozilla.fenix.helpers.TestHelper.assertYoutubeAppOpens
 import org.mozilla.fenix.helpers.TestHelper.exitMenu
-import org.mozilla.fenix.helpers.TestHelper.runWithCondition
+import org.mozilla.fenix.ui.robots.clickPageObject
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
 
@@ -30,10 +30,13 @@ import org.mozilla.fenix.ui.robots.navigationToolbar
  */
 
 class SettingsAdvancedTest {
-    /* ktlint-disable no-blank-line-before-rbrace */ // This imposes unreadable grouping.
-
     private lateinit var mDevice: UiDevice
     private lateinit var mockWebServer: MockWebServer
+    private val youTubeSchemaLink = itemContainingText("Youtube schema link")
+    private val youTubeFullLink = itemContainingText("Youtube full link")
+    private val playStoreLink = itemContainingText("Playstore link")
+    private val playStoreUrl = "play.google.com"
+    private val youTubePage = "vnd.youtube://".toUri()
 
     @get:Rule
     val activityIntentTestRule = HomeActivityIntentTestRule.withDefaultSettingsOverrides()
@@ -52,9 +55,10 @@ class SettingsAdvancedTest {
         mockWebServer.shutdown()
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2092699
     // Walks through settings menu and sub-menus to ensure all items are present
     @Test
-    fun settingsAdvancedItemsTest() {
+    fun verifyAdvancedSettingsSectionItemsTest() {
         // ADVANCED
         homeScreen {
         }.openThreeDotMenu {
@@ -73,348 +77,256 @@ class SettingsAdvancedTest {
         }
     }
 
-    @SmokeTest
-    @Test
-    fun verifyOpenLinkInAppViewTest() {
-        runWithCondition(
-            // Returns the GeckoView channel set for the current version, if a feature is limited to Nightly or Beta.
-            // Once this feature lands in RC we should remove the wrapper.
-            activityIntentTestRule.activity.components.core.engine.version.releaseChannel == EngineReleaseChannel.NIGHTLY ||
-                activityIntentTestRule.activity.components.core.engine.version.releaseChannel == EngineReleaseChannel.BETA,
-        ) {
-            homeScreen {
-            }.openThreeDotMenu {
-            }.openSettings {
-                verifyOpenLinksInAppsButton()
-                verifySettingsOptionSummary("Open links in apps", "Never")
-            }.openOpenLinksInAppsMenu {
-                verifyOpenLinksInAppsView("Never")
-            }
-        }
-    }
-
-    @SmokeTest
-    @Test
-    fun verifyOpenLinkInAppViewInPrivateBrowsingTest() {
-        runWithCondition(
-            // Returns the GeckoView channel set for the current version, if a feature is limited to Nightly or Beta.
-            // Once this feature lands in RC we should remove the wrapper.
-            activityIntentTestRule.activity.components.core.engine.version.releaseChannel == EngineReleaseChannel.NIGHTLY ||
-                activityIntentTestRule.activity.components.core.engine.version.releaseChannel == EngineReleaseChannel.BETA,
-        ) {
-            homeScreen {
-            }.togglePrivateBrowsingMode()
-
-            homeScreen {
-            }.openThreeDotMenu {
-            }.openSettings {
-                verifyOpenLinksInAppsButton()
-                verifySettingsOptionSummary("Open links in apps", "Never")
-            }.openOpenLinksInAppsMenu {
-                verifyOpenLinksInAppsView("Never")
-            }
-        }
-    }
-
-    // Assumes Play Store is installed and enabled
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2121046
+    // Assumes Youtube is installed and enabled
     @SmokeTest
     @Test
     fun neverOpenLinkInAppTest() {
-        runWithCondition(
-            // Returns the GeckoView channel set for the current version, if a feature is limited to Nightly or Beta.
-            // Once this feature lands in RC we should remove the wrapper.
-            activityIntentTestRule.activity.components.core.engine.version.releaseChannel == EngineReleaseChannel.NIGHTLY ||
-                activityIntentTestRule.activity.components.core.engine.version.releaseChannel == EngineReleaseChannel.BETA,
-        ) {
-            val defaultWebPage = TestAssetHelper.getExternalLinksAsset(mockWebServer)
+        val externalLinksPage = TestAssetHelper.getExternalLinksAsset(mockWebServer)
 
-            homeScreen {
-            }.openThreeDotMenu {
-            }.openSettings {
-                verifyOpenLinksInAppsButton()
-                verifySettingsOptionSummary("Open links in apps", "Never")
-            }.openOpenLinksInAppsMenu {
-                verifyOpenLinksInAppsView("Never")
-            }
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+            verifyOpenLinksInAppsButton()
+            verifySettingsOptionSummary("Open links in apps", "Never")
+        }.openOpenLinksInAppsMenu {
+            verifyOpenLinksInAppsView("Never")
+        }
 
-            exitMenu()
+        exitMenu()
 
-            navigationToolbar {
-            }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-                clickLinkMatchingText("Youtube link")
-                waitForPageToLoad()
-                verifyUrl("youtube.com")
-            }
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(externalLinksPage.url) {
+            clickPageObject(playStoreLink)
+            waitForPageToLoad()
+            verifyUrl(playStoreUrl)
         }
     }
 
-    // Assumes Play Store is installed and enabled
-    @SmokeTest
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2121052
+    // Assumes Youtube is installed and enabled
     @Test
     fun privateBrowsingNeverOpenLinkInAppTest() {
-        runWithCondition(
-            // Returns the GeckoView channel set for the current version, if a feature is limited to Nightly or Beta.
-            // Once this feature lands in RC we should remove the wrapper.
-            activityIntentTestRule.activity.components.core.engine.version.releaseChannel == EngineReleaseChannel.NIGHTLY ||
-                activityIntentTestRule.activity.components.core.engine.version.releaseChannel == EngineReleaseChannel.BETA,
-        ) {
-            val defaultWebPage = TestAssetHelper.getExternalLinksAsset(mockWebServer)
+        val externalLinksPage = TestAssetHelper.getExternalLinksAsset(mockWebServer)
 
-            homeScreen {
-            }.togglePrivateBrowsingMode()
+        homeScreen {
+        }.togglePrivateBrowsingMode()
 
-            homeScreen {
-            }.openThreeDotMenu {
-            }.openSettings {
-                verifyOpenLinksInAppsButton()
-                verifySettingsOptionSummary("Open links in apps", "Never")
-            }.openOpenLinksInAppsMenu {
-                verifyOpenLinksInAppsView("Never")
-            }
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+            verifyOpenLinksInAppsButton()
+            verifySettingsOptionSummary("Open links in apps", "Never")
+        }.openOpenLinksInAppsMenu {
+            verifyPrivateOpenLinksInAppsView("Never")
+        }
 
-            exitMenu()
+        exitMenu()
 
-            navigationToolbar {
-            }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-                clickLinkMatchingText("Youtube link")
-                waitForPageToLoad()
-                verifyUrl("youtube.com")
-            }
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(externalLinksPage.url) {
+            clickPageObject(playStoreLink)
+            waitForPageToLoad()
+            verifyUrl(playStoreUrl)
         }
     }
 
-    // Assumes Play Store is installed and enabled
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2121045
+    // Assumes Youtube is installed and enabled
     @SmokeTest
     @Test
-    fun cancelOpeningLinkInAppTest() {
-        runWithCondition(
-            // Returns the GeckoView channel set for the current version, if a feature is limited to Nightly or Beta.
-            // Once this feature lands in RC we should remove the wrapper.
-            activityIntentTestRule.activity.components.core.engine.version.releaseChannel == EngineReleaseChannel.NIGHTLY ||
-                activityIntentTestRule.activity.components.core.engine.version.releaseChannel == EngineReleaseChannel.BETA,
-        ) {
-            val defaultWebPage = TestAssetHelper.getExternalLinksAsset(mockWebServer)
+    fun askBeforeOpeningLinkInAppCancelTest() {
+        val externalLinksPage = TestAssetHelper.getExternalLinksAsset(mockWebServer)
 
-            homeScreen {
-            }.openThreeDotMenu {
-            }.openSettings {
-                verifyOpenLinksInAppsButton()
-                verifySettingsOptionSummary("Open links in apps", "Never")
-            }.openOpenLinksInAppsMenu {
-                verifyOpenLinksInAppsView("Never")
-                clickOpenLinkInAppOption("Ask before opening")
-                verifySelectedOpenLinksInAppOption("Ask before opening")
-            }.goBack {
-                verifySettingsOptionSummary("Open links in apps", "Ask before opening")
-            }
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+            verifyOpenLinksInAppsButton()
+            verifySettingsOptionSummary("Open links in apps", "Never")
+        }.openOpenLinksInAppsMenu {
+            verifyOpenLinksInAppsView("Never")
+            clickOpenLinkInAppOption("Ask before opening")
+            verifySelectedOpenLinksInAppOption("Ask before opening")
+        }.goBack {
+            verifySettingsOptionSummary("Open links in apps", "Ask before opening")
+        }
 
-            exitMenu()
+        exitMenu()
 
-            navigationToolbar {
-            }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-                clickLinkMatchingText("Youtube link")
-                verifyOpenLinkInAnotherAppPrompt()
-                cancelOpenLinkInAnotherApp()
-                waitForPageToLoad()
-                verifyUrl("youtube.com")
-            }
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(externalLinksPage.url) {
+            clickPageObject(youTubeFullLink)
+            verifyOpenLinkInAnotherAppPrompt()
+            clickPageObject(itemWithResIdAndText("android:id/button2", "CANCEL"))
+            waitForPageToLoad()
+            verifyUrl("youtube")
         }
     }
 
-    // Assumes Play Store is installed and enabled
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2288347
+    // Assumes Youtube is installed and enabled
     @SmokeTest
     @Test
-    fun privateBrowsingCancelOpeningLinkInAppTest() {
-        runWithCondition(
-            // Returns the GeckoView channel set for the current version, if a feature is limited to Nightly or Beta.
-            // Once this feature lands in RC we should remove the wrapper.
-            activityIntentTestRule.activity.components.core.engine.version.releaseChannel == EngineReleaseChannel.NIGHTLY ||
-                activityIntentTestRule.activity.components.core.engine.version.releaseChannel == EngineReleaseChannel.BETA,
-        ) {
-            val defaultWebPage = TestAssetHelper.getExternalLinksAsset(mockWebServer)
+    fun askBeforeOpeningLinkInAppOpenTest() {
+        val externalLinksPage = TestAssetHelper.getExternalLinksAsset(mockWebServer)
 
-            homeScreen {
-            }.togglePrivateBrowsingMode()
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+            verifyOpenLinksInAppsButton()
+            verifySettingsOptionSummary("Open links in apps", "Never")
+        }.openOpenLinksInAppsMenu {
+            verifyOpenLinksInAppsView("Never")
+            clickOpenLinkInAppOption("Ask before opening")
+            verifySelectedOpenLinksInAppOption("Ask before opening")
+        }.goBack {
+            verifySettingsOptionSummary("Open links in apps", "Ask before opening")
+        }
 
-            homeScreen {
-            }.openThreeDotMenu {
-            }.openSettings {
-                verifyOpenLinksInAppsButton()
-                verifySettingsOptionSummary("Open links in apps", "Never")
-            }.openOpenLinksInAppsMenu {
-                verifyOpenLinksInAppsView("Never")
-                clickOpenLinkInAppOption("Ask before opening")
-                verifySelectedOpenLinksInAppOption("Ask before opening")
-            }.goBack {
-                verifySettingsOptionSummary("Open links in apps", "Ask before opening")
-            }
+        exitMenu()
 
-            exitMenu()
-
-            navigationToolbar {
-            }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-                clickLinkMatchingText("Youtube link")
-                verifyPrivateBrowsingOpenLinkInAnotherAppPrompt("youtube.com")
-                cancelOpenLinkInAnotherApp()
-                waitForPageToLoad()
-                verifyUrl("youtube.com")
-            }
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(externalLinksPage.url) {
+            clickPageObject(youTubeSchemaLink)
+            verifyOpenLinkInAnotherAppPrompt()
+            clickPageObject(itemWithResIdAndText("android:id/button1", "OPEN"))
+            mDevice.waitForIdle()
+            assertYoutubeAppOpens()
         }
     }
 
-    // Assumes Play Store is installed and enabled
-    @SmokeTest
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2121051
+    // Assumes Youtube is installed and enabled
     @Test
-    fun askBeforeOpeningLinkInAppTest() {
-        runWithCondition(
-            // Returns the GeckoView channel set for the current version, if a feature is limited to Nightly or Beta.
-            // Once this feature lands in RC we should remove the wrapper.
-            activityIntentTestRule.activity.components.core.engine.version.releaseChannel == EngineReleaseChannel.NIGHTLY ||
-                activityIntentTestRule.activity.components.core.engine.version.releaseChannel == EngineReleaseChannel.BETA,
-        ) {
-            val defaultWebPage = TestAssetHelper.getExternalLinksAsset(mockWebServer)
+    fun privateBrowsingAskBeforeOpeningLinkInAppCancelTest() {
+        val externalLinksPage = TestAssetHelper.getExternalLinksAsset(mockWebServer)
 
-            homeScreen {
-            }.openThreeDotMenu {
-            }.openSettings {
-                verifyOpenLinksInAppsButton()
-                verifySettingsOptionSummary("Open links in apps", "Never")
-            }.openOpenLinksInAppsMenu {
-                verifyOpenLinksInAppsView("Never")
-                clickOpenLinkInAppOption("Ask before opening")
-                verifySelectedOpenLinksInAppOption("Ask before opening")
-            }.goBack {
-                verifySettingsOptionSummary("Open links in apps", "Ask before opening")
-            }
+        homeScreen {
+        }.togglePrivateBrowsingMode()
 
-            exitMenu()
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+            verifyOpenLinksInAppsButton()
+            verifySettingsOptionSummary("Open links in apps", "Never")
+        }.openOpenLinksInAppsMenu {
+            verifyPrivateOpenLinksInAppsView("Never")
+            clickOpenLinkInAppOption("Ask before opening")
+            verifySelectedOpenLinksInAppOption("Ask before opening")
+        }.goBack {
+            verifySettingsOptionSummary("Open links in apps", "Ask before opening")
+        }
 
-            navigationToolbar {
-            }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-                clickLinkMatchingText("Youtube link")
-                verifyOpenLinkInAnotherAppPrompt()
-                confirmOpenLinkInAnotherApp()
-                mDevice.waitForIdle()
-                assertNativeAppOpens(YOUTUBE_APP, defaultWebPage.url.toString())
-            }
+        exitMenu()
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(externalLinksPage.url) {
+            clickPageObject(youTubeFullLink)
+            verifyPrivateBrowsingOpenLinkInAnotherAppPrompt(
+                url = "youtube",
+                pageObject = youTubeFullLink,
+            )
+            clickPageObject(itemWithResIdAndText("android:id/button2", "CANCEL"))
+            waitForPageToLoad()
+            verifyUrl("youtube")
         }
     }
 
-    // Assumes Play Store is installed and enabled
-    @SmokeTest
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2288350
+    // Assumes Youtube is installed and enabled
     @Test
-    fun privateBrowsingAskBeforeOpeningLinkInAppTest() {
-        runWithCondition(
-            // Returns the GeckoView channel set for the current version, if a feature is limited to Nightly or Beta.
-            // Once this feature lands in RC we should remove the wrapper.
-            activityIntentTestRule.activity.components.core.engine.version.releaseChannel == EngineReleaseChannel.NIGHTLY ||
-                activityIntentTestRule.activity.components.core.engine.version.releaseChannel == EngineReleaseChannel.BETA,
-        ) {
-            val defaultWebPage = TestAssetHelper.getExternalLinksAsset(mockWebServer)
+    fun privateBrowsingAskBeforeOpeningLinkInAppOpenTest() {
+        val externalLinksPage = TestAssetHelper.getExternalLinksAsset(mockWebServer)
 
-            homeScreen {
-            }.togglePrivateBrowsingMode()
+        homeScreen {
+        }.togglePrivateBrowsingMode()
 
-            homeScreen {
-            }.openThreeDotMenu {
-            }.openSettings {
-                verifyOpenLinksInAppsButton()
-                verifySettingsOptionSummary("Open links in apps", "Never")
-            }.openOpenLinksInAppsMenu {
-                verifyOpenLinksInAppsView("Never")
-                clickOpenLinkInAppOption("Ask before opening")
-                verifySelectedOpenLinksInAppOption("Ask before opening")
-            }.goBack {
-                verifySettingsOptionSummary("Open links in apps", "Ask before opening")
-            }
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+            verifyOpenLinksInAppsButton()
+            verifySettingsOptionSummary("Open links in apps", "Never")
+        }.openOpenLinksInAppsMenu {
+            verifyPrivateOpenLinksInAppsView("Never")
+            clickOpenLinkInAppOption("Ask before opening")
+            verifySelectedOpenLinksInAppOption("Ask before opening")
+        }.goBack {
+            verifySettingsOptionSummary("Open links in apps", "Ask before opening")
+        }
 
-            exitMenu()
+        exitMenu()
 
-            navigationToolbar {
-            }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-                clickLinkMatchingText("Youtube link")
-                verifyPrivateBrowsingOpenLinkInAnotherAppPrompt("youtube.com")
-                confirmOpenLinkInAnotherApp()
-                mDevice.waitForIdle()
-                assertNativeAppOpens(YOUTUBE_APP, defaultWebPage.url.toString())
-            }
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(externalLinksPage.url) {
+            clickPageObject(youTubeSchemaLink)
+            verifyPrivateBrowsingOpenLinkInAnotherAppPrompt(
+                url = "youtube",
+                pageObject = youTubeSchemaLink,
+            )
+            clickPageObject(itemWithResIdAndText("android:id/button1", "OPEN"))
+            mDevice.waitForIdle()
+            assertYoutubeAppOpens()
         }
     }
 
-    // Assumes Play Store is installed and enabled
-    @SmokeTest
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1058618
+    // Assumes Youtube is installed and enabled
     @Test
     fun alwaysOpenLinkInAppTest() {
-        runWithCondition(
-            // Returns the GeckoView channel set for the current version, if a feature is limited to Nightly or Beta.
-            // Once this feature lands in RC we should remove the wrapper.
-            activityIntentTestRule.activity.components.core.engine.version.releaseChannel == EngineReleaseChannel.NIGHTLY ||
-                activityIntentTestRule.activity.components.core.engine.version.releaseChannel == EngineReleaseChannel.BETA,
-        ) {
-            val defaultWebPage = TestAssetHelper.getExternalLinksAsset(mockWebServer)
+        val externalLinksPage = TestAssetHelper.getExternalLinksAsset(mockWebServer)
 
-            homeScreen {
-            }.openThreeDotMenu {
-            }.openSettings {
-                verifyOpenLinksInAppsButton()
-                verifySettingsOptionSummary("Open links in apps", "Never")
-            }.openOpenLinksInAppsMenu {
-                verifyOpenLinksInAppsView("Never")
-                clickOpenLinkInAppOption("Always")
-                verifySelectedOpenLinksInAppOption("Always")
-            }.goBack {
-                verifySettingsOptionSummary("Open links in apps", "Always")
-            }
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+            verifyOpenLinksInAppsButton()
+            verifySettingsOptionSummary("Open links in apps", "Never")
+        }.openOpenLinksInAppsMenu {
+            verifyOpenLinksInAppsView("Never")
+            clickOpenLinkInAppOption("Always")
+            verifySelectedOpenLinksInAppOption("Always")
+        }.goBack {
+            verifySettingsOptionSummary("Open links in apps", "Always")
+        }
 
-            exitMenu()
+        exitMenu()
 
-            navigationToolbar {
-            }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-                clickLinkMatchingText("Youtube link")
-                mDevice.waitForIdle()
-                assertNativeAppOpens(YOUTUBE_APP, defaultWebPage.url.toString())
-            }
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(externalLinksPage.url) {
+            clickPageObject(youTubeSchemaLink)
+            mDevice.waitForIdle()
+            assertYoutubeAppOpens()
         }
     }
 
-    // Assumes Play Store is installed and enabled
-    @SmokeTest
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1058617
     @Test
-    fun privateBrowsingAlwaysOpenLinkInAppTest() {
-        runWithCondition(
-            // Returns the GeckoView channel set for the current version, if a feature is limited to Nightly or Beta.
-            // Once this feature lands in RC we should remove the wrapper.
-            activityIntentTestRule.activity.components.core.engine.version.releaseChannel == EngineReleaseChannel.NIGHTLY ||
-                activityIntentTestRule.activity.components.core.engine.version.releaseChannel == EngineReleaseChannel.BETA,
-        ) {
-            val defaultWebPage = TestAssetHelper.getExternalLinksAsset(mockWebServer)
+    fun dismissOpenLinksInAppCFRTest() {
+        activityIntentTestRule.applySettingsExceptions {
+            it.isOpenInAppBannerEnabled = true
+        }
 
-            homeScreen {
-            }.togglePrivateBrowsingMode()
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(youTubePage) {
+            waitForPageToLoad()
+            verifyOpenLinksInAppsCFRExists(true)
+            clickOpenLinksInAppsDismissCFRButton()
+            verifyOpenLinksInAppsCFRExists(false)
+        }
+    }
 
-            homeScreen {
-            }.openThreeDotMenu {
-            }.openSettings {
-                verifyOpenLinksInAppsButton()
-                verifySettingsOptionSummary("Open links in apps", "Never")
-            }.openOpenLinksInAppsMenu {
-                verifyOpenLinksInAppsView("Never")
-                clickOpenLinkInAppOption("Always")
-                verifySelectedOpenLinksInAppOption("Always")
-            }.goBack {
-                verifySettingsOptionSummary("Open links in apps", "Always")
-            }
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2288331
+    @Test
+    fun goToSettingsFromOpenLinksInAppCFRTest() {
+        activityIntentTestRule.applySettingsExceptions {
+            it.isOpenInAppBannerEnabled = true
+        }
 
-            exitMenu()
-
-            navigationToolbar {
-            }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-                clickLinkMatchingText("Youtube link")
-                verifyPrivateBrowsingOpenLinkInAnotherAppPrompt("youtube.com")
-                confirmOpenLinkInAnotherApp()
-                mDevice.waitForIdle()
-                assertNativeAppOpens(YOUTUBE_APP, defaultWebPage.url.toString())
-            }
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(youTubePage) {
+            waitForPageToLoad()
+            verifyOpenLinksInAppsCFRExists(true)
+        }.clickOpenLinksInAppsGoToSettingsCFRButton {
+            verifyOpenLinksInAppsButton()
         }
     }
 }

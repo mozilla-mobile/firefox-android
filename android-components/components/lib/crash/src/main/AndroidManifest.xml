@@ -7,7 +7,9 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
-    <application>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <application android:supportsRtl="true">
         <activity android:name=".prompt.CrashReporterActivity"
             android:process=":mozilla.components.lib.crash.CrashReporter"
             android:exported="false"

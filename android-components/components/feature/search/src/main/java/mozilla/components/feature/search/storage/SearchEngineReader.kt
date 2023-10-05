@@ -10,6 +10,7 @@ import android.net.Uri
 import android.util.AtomicFile
 import android.util.Base64
 import mozilla.components.browser.state.search.SearchEngine
+import mozilla.components.feature.search.middleware.SearchExtraParams
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException
 import org.xmlpull.v1.XmlPullParserFactory
@@ -44,9 +45,11 @@ internal val GENERAL_SEARCH_ENGINE_IDS = setOf(
  * A simple XML reader for search engine plugins.
  *
  * @param type the [SearchEngine.Type] that the read [SearchEngine]s will get assigned.
+ * @param searchExtraParams Optional search extra params.
  */
 internal class SearchEngineReader(
     private val type: SearchEngine.Type,
+    private val searchExtraParams: SearchExtraParams? = null,
 ) {
     private class SearchEngineBuilder(
         private val type: SearchEngine.Type,
@@ -137,7 +140,17 @@ internal class SearchEngineReader(
         val template = parser.getAttributeValue(null, "template")
         val rel = parser.getAttributeValue(null, "rel")
 
-        val url = readUri(parser, template).toString()
+        val url = buildString {
+            append(readUri(parser, template))
+            searchExtraParams?.let {
+                with(it) {
+                    if (builder.name == searchEngineName) {
+                        featureEnablerParam?.let { append("&$featureEnablerName=$it") }
+                        append("&$channelIdName=$channelIdParam")
+                    }
+                }
+            }
+        }
 
         if (type == URL_TYPE_SEARCH_HTML) {
             // Prefer mobile URIs.

@@ -434,7 +434,7 @@ class ContentActionTest {
     fun `UpdateHitResultAction updates hit result`() {
         assertNull(tab.content.hitResult)
 
-        val hitResult1: HitResult = mock()
+        val hitResult1: HitResult = HitResult.UNKNOWN("file://foo")
 
         store.dispatch(
             ContentAction.UpdateHitResultAction(tab.id, hitResult1),
@@ -442,7 +442,7 @@ class ContentActionTest {
 
         assertEquals(hitResult1, tab.content.hitResult)
 
-        val hitResult2: HitResult = mock()
+        val hitResult2: HitResult = HitResult.UNKNOWN("file://bar")
 
         store.dispatch(
             ContentAction.UpdateHitResultAction(tab.id, hitResult2),
@@ -453,7 +453,7 @@ class ContentActionTest {
 
     @Test
     fun `ConsumeHitResultAction removes hit result`() {
-        val hitResult: HitResult = mock()
+        val hitResult: HitResult = HitResult.UNKNOWN("file://foo")
 
         store.dispatch(
             ContentAction.UpdateHitResultAction(tab.id, hitResult),
@@ -472,7 +472,7 @@ class ContentActionTest {
     fun `UpdatePromptRequestAction updates requests`() {
         assertTrue(tab.content.promptRequests.isEmpty())
 
-        val promptRequest1: PromptRequest = mock()
+        val promptRequest1: PromptRequest = mock<PromptRequest.SingleChoice>()
 
         store.dispatch(
             ContentAction.UpdatePromptRequestAction(tab.id, promptRequest1),
@@ -481,7 +481,7 @@ class ContentActionTest {
         assertEquals(1, tab.content.promptRequests.size)
         assertEquals(promptRequest1, tab.content.promptRequests[0])
 
-        val promptRequest2: PromptRequest = mock()
+        val promptRequest2: PromptRequest = mock<PromptRequest.MultipleChoice>()
 
         store.dispatch(
             ContentAction.UpdatePromptRequestAction(tab.id, promptRequest2),
@@ -494,7 +494,7 @@ class ContentActionTest {
 
     @Test
     fun `ConsumePromptRequestAction removes request`() {
-        val promptRequest: PromptRequest = mock()
+        val promptRequest: PromptRequest = mock<PromptRequest.SingleChoice>()
 
         store.dispatch(
             ContentAction.UpdatePromptRequestAction(tab.id, promptRequest),
@@ -851,5 +851,22 @@ class ContentActionTest {
         ).joinBlocking()
 
         assertNull(tab.content.appIntent)
+    }
+
+    @Test
+    fun `CheckForFormDataAction updates hasFormData`() {
+        assertFalse(tab.content.hasFormData)
+
+        store.dispatch(
+            ContentAction.UpdateHasFormDataAction(tab.id, true),
+        ).joinBlocking()
+
+        assertTrue(tab.content.hasFormData)
+
+        store.dispatch(
+            ContentAction.UpdateHasFormDataAction(tab.id, false),
+        ).joinBlocking()
+
+        assertFalse(tab.content.hasFormData)
     }
 }

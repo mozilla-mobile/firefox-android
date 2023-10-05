@@ -39,6 +39,7 @@ class BreadcrumbTest {
                 context = testContext,
                 services = listOf(mock()),
                 shouldPrompt = CrashReporter.Prompt.NEVER,
+                notificationsDelegate = mock(),
             ).install(testContext),
         )
 
@@ -75,6 +76,7 @@ class BreadcrumbTest {
                 context = testContext,
                 services = listOf(mock()),
                 shouldPrompt = CrashReporter.Prompt.NEVER,
+                notificationsDelegate = mock(),
             ).install(testContext),
         )
 
@@ -125,11 +127,12 @@ class BreadcrumbTest {
                 context = testContext,
                 services = listOf(mock()),
                 shouldPrompt = CrashReporter.Prompt.NEVER,
+                notificationsDelegate = mock(),
             ).install(testContext),
         )
 
         val beginDate = Date()
-        sleep(100) /* make sure time elapsed */
+        sleep(100) // make sure time elapsed
         reporter.recordCrashBreadcrumb(
             Breadcrumb(
                 testMessage,
@@ -139,7 +142,7 @@ class BreadcrumbTest {
                 testType,
             ),
         )
-        sleep(100) /* make sure time elapsed */
+        sleep(100) // make sure time elapsed
         val afterDate = Date()
 
         reporter.crashBreadcrumbsCopy().elementAt(0).let {

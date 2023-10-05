@@ -16,6 +16,7 @@ import mozilla.components.concept.storage.Address
 import mozilla.components.concept.storage.UpdatableAddressFields
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import mozilla.components.support.ktx.android.view.showKeyboard
+import mozilla.components.ui.widgets.withCenterAlignedButtons
 import org.mozilla.fenix.GleanMetrics.Addresses
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.FragmentAddressEditorBinding
@@ -30,10 +31,10 @@ import org.mozilla.fenix.settings.address.toCountryCode
 /**
  * An address editor for adding or updating an address.
  *
- * @param binding The binding used to display the view.
- * @param interactor [AddressEditorInteractor] used to respond to any user interactions.
- * @param region If the [RegionState] is available, it will be used to set the country when adding a new address.
- * @param address An [Address] to edit.
+ * @property binding The binding used to display the view.
+ * @property interactor [AddressEditorInteractor] used to respond to any user interactions.
+ * @property region If the [RegionState] is available, it will be used to set the country when adding a new address.
+ * @property address An [Address] to edit.
  */
 class AddressEditorView(
     private val binding: FragmentAddressEditorBinding,
@@ -120,7 +121,7 @@ class AddressEditorView(
                 interactor.onDeleteAddress(guid)
                 Addresses.deleted.add()
             }
-            create()
+            create().withCenterAlignedButtons()
         }.show()
     }
 

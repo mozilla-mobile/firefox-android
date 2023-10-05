@@ -84,6 +84,8 @@ import org.mozilla.geckoview.GeckoSession.ContentDelegate.ContextElement.TYPE_AU
 import org.mozilla.geckoview.GeckoSession.ContentDelegate.ContextElement.TYPE_IMAGE
 import org.mozilla.geckoview.GeckoSession.ContentDelegate.ContextElement.TYPE_NONE
 import org.mozilla.geckoview.GeckoSession.ContentDelegate.ContextElement.TYPE_VIDEO
+import org.mozilla.geckoview.GeckoSession.GeckoPrintException
+import org.mozilla.geckoview.GeckoSession.GeckoPrintException.ERROR_PRINT_SETTINGS_SERVICE_NOT_AVAILABLE
 import org.mozilla.geckoview.GeckoSession.PermissionDelegate.ContentPermission.VALUE_ALLOW
 import org.mozilla.geckoview.GeckoSession.PermissionDelegate.ContentPermission.VALUE_DENY
 import org.mozilla.geckoview.GeckoSession.PermissionDelegate.PERMISSION_STORAGE_ACCESS
@@ -121,6 +123,7 @@ class GeckoEngineSessionTest {
     private lateinit var mediaDelegate: ArgumentCaptor<GeckoSession.MediaDelegate>
     private lateinit var contentDelegate: ArgumentCaptor<GeckoSession.ContentDelegate>
     private lateinit var permissionDelegate: ArgumentCaptor<GeckoSession.PermissionDelegate>
+    private lateinit var scrollDelegate: ArgumentCaptor<GeckoSession.ScrollDelegate>
     private lateinit var contentBlockingDelegate: ArgumentCaptor<ContentBlocking.Delegate>
     private lateinit var historyDelegate: ArgumentCaptor<GeckoSession.HistoryDelegate>
 
@@ -151,6 +154,7 @@ class GeckoEngineSessionTest {
         mediaDelegate = ArgumentCaptor.forClass(GeckoSession.MediaDelegate::class.java)
         contentDelegate = ArgumentCaptor.forClass(GeckoSession.ContentDelegate::class.java)
         permissionDelegate = ArgumentCaptor.forClass(GeckoSession.PermissionDelegate::class.java)
+        scrollDelegate = ArgumentCaptor.forClass(GeckoSession.ScrollDelegate::class.java)
         contentBlockingDelegate = ArgumentCaptor.forClass(ContentBlocking.Delegate::class.java)
         historyDelegate = ArgumentCaptor.forClass(GeckoSession.HistoryDelegate::class.java)
 
@@ -163,6 +167,7 @@ class GeckoEngineSessionTest {
         verify(geckoSession).progressDelegate = progressDelegate.capture()
         verify(geckoSession).contentDelegate = contentDelegate.capture()
         verify(geckoSession).permissionDelegate = permissionDelegate.capture()
+        verify(geckoSession).scrollDelegate = scrollDelegate.capture()
         verify(geckoSession).contentBlockingDelegate = contentBlockingDelegate.capture()
         verify(geckoSession).historyDelegate = historyDelegate.capture()
         verify(geckoSession).mediaDelegate = mediaDelegate.capture()
@@ -289,6 +294,7 @@ class GeckoEngineSessionTest {
         var observedCanGoBack = false
         var observedCanGoForward = false
         var cookieBanner = CookieBannerHandlingStatus.HANDLED
+        var displaysProduct = false
         engineSession.register(
             object : EngineSession.Observer {
                 override fun onLocationChange(url: String) { observedUrl = url }
@@ -299,6 +305,9 @@ class GeckoEngineSessionTest {
                 override fun onCookieBannerChange(status: CookieBannerHandlingStatus) {
                     cookieBanner = status
                 }
+                override fun onProductUrlChange(isProductUrl: Boolean) {
+                    displaysProduct = isProductUrl
+                }
             },
         )
 
@@ -307,6 +316,8 @@ class GeckoEngineSessionTest {
         navigationDelegate.value.onLocationChange(mock(), "http://mozilla.org", emptyList())
         assertEquals("http://mozilla.org", observedUrl)
         assertEquals(CookieBannerHandlingStatus.NO_DETECTED, cookieBanner)
+        // TO DO: add a positive test case after a test endpoint is implemented in desktop (Bug 1846341)
+        assertEquals(false, displaysProduct)
 
         navigationDelegate.value.onCanGoBack(mock(), true)
         assertEquals(true, observedCanGoBack)
@@ -329,6 +340,8 @@ class GeckoEngineSessionTest {
         val response = WebResponse.Builder("https://download.mozilla.org/image.png")
             .addHeader(Headers.Names.CONTENT_TYPE, "image/png")
             .addHeader(Headers.Names.CONTENT_LENGTH, "42")
+            .skipConfirmation(true)
+            .requestExternalApp(true)
             .body(mock())
             .build()
 
@@ -344,6 +357,82 @@ class GeckoEngineSessionTest {
             cookie = eq(null),
             userAgent = eq(null),
             isPrivate = eq(true),
+            skipConfirmation = eq(true),
+            openInApp = eq(true),
+            response = captor.capture(),
+        )
+
+        assertNotNull(captor.value)
+    }
+
+    @Test
+    fun contentDelegateNotifiesObserverAboutDownloadsWithMalformedContentLength() {
+        val engineSession = GeckoEngineSession(
+            mock(),
+            geckoSessionProvider = geckoSessionProvider,
+            privateMode = true,
+        )
+
+        val observer: EngineSession.Observer = mock()
+        engineSession.register(observer)
+
+        val response = WebResponse.Builder("https://download.mozilla.org/image.png")
+            .addHeader(Headers.Names.CONTENT_TYPE, "image/png")
+            .addHeader(Headers.Names.CONTENT_LENGTH, "42,42")
+            .body(mock())
+            .build()
+
+        val captor = argumentCaptor<Response>()
+        captureDelegates()
+        contentDelegate.value.onExternalResponse(mock(), response)
+
+        verify(observer).onExternalResource(
+            url = eq("https://download.mozilla.org/image.png"),
+            fileName = eq("image.png"),
+            contentLength = eq(null),
+            contentType = eq("image/png"),
+            cookie = eq(null),
+            userAgent = eq(null),
+            isPrivate = eq(true),
+            skipConfirmation = eq(false),
+            openInApp = eq(false),
+            response = captor.capture(),
+        )
+
+        assertNotNull(captor.value)
+    }
+
+    @Test
+    fun contentDelegateNotifiesObserverAboutDownloadsWithEmptyContentLength() {
+        val engineSession = GeckoEngineSession(
+            mock(),
+            geckoSessionProvider = geckoSessionProvider,
+            privateMode = true,
+        )
+
+        val observer: EngineSession.Observer = mock()
+        engineSession.register(observer)
+
+        val response = WebResponse.Builder("https://download.mozilla.org/image.png")
+            .addHeader(Headers.Names.CONTENT_TYPE, "image/png")
+            .addHeader(Headers.Names.CONTENT_LENGTH, "")
+            .body(mock())
+            .build()
+
+        val captor = argumentCaptor<Response>()
+        captureDelegates()
+        contentDelegate.value.onExternalResponse(mock(), response)
+
+        verify(observer).onExternalResource(
+            url = eq("https://download.mozilla.org/image.png"),
+            fileName = eq("image.png"),
+            contentLength = eq(null),
+            contentType = eq("image/png"),
+            cookie = eq(null),
+            userAgent = eq(null),
+            isPrivate = eq(true),
+            skipConfirmation = eq(false),
+            openInApp = eq(false),
             response = captor.capture(),
         )
 
@@ -445,6 +534,41 @@ class GeckoEngineSessionTest {
     }
 
     @Test
+    fun scrollDelegateNotifiesObservers() {
+        val engineSession = GeckoEngineSession(
+            mock(),
+            geckoSessionProvider = geckoSessionProvider,
+        )
+
+        val observedScrollChanges: MutableList<Pair<Int, Int>> = mutableListOf()
+        engineSession.register(
+            object : EngineSession.Observer {
+                override fun onScrollChange(scrollX: Int, scrollY: Int) {
+                    observedScrollChanges.add(Pair(scrollX, scrollY))
+                }
+            },
+        )
+
+        captureDelegates()
+
+        scrollDelegate.value.onScrollChanged(
+            geckoSession,
+            1234,
+            4321,
+        )
+
+        scrollDelegate.value.onScrollChanged(
+            geckoSession,
+            2345,
+            5432,
+        )
+
+        assertEquals(2, observedScrollChanges.size)
+        assertEquals(Pair(1234, 4321), observedScrollChanges[0])
+        assertEquals(Pair(2345, 5432), observedScrollChanges[1])
+    }
+
+    @Test
     fun loadUrl() {
         val engineSession = GeckoEngineSession(mock(), geckoSessionProvider = geckoSessionProvider)
         val parentEngineSession = GeckoEngineSession(mock(), geckoSessionProvider = geckoSessionProvider)
@@ -467,7 +591,18 @@ class GeckoEngineSessionTest {
         val extraHeaders = mapOf("X-Extra-Header" to "true")
         engineSession.loadUrl("http://www.mozilla.org", additionalHeaders = extraHeaders)
         verify(geckoSession).load(
-            GeckoSession.Loader().uri("http://www.mozilla.org").additionalHeaders(extraHeaders),
+            GeckoSession.Loader().uri("http://www.mozilla.org").additionalHeaders(extraHeaders)
+                .headerFilter(GeckoSession.HEADER_FILTER_CORS_SAFELISTED),
+        )
+
+        engineSession.loadUrl(
+            "http://www.mozilla.org",
+            flags = LoadUrlFlags.select(LoadUrlFlags.ALLOW_ADDITIONAL_HEADERS),
+            additionalHeaders = extraHeaders,
+        )
+        verify(geckoSession).load(
+            GeckoSession.Loader().uri("http://www.mozilla.org").additionalHeaders(extraHeaders)
+                .headerFilter(GeckoSession.HEADER_FILTER_CORS_SAFELISTED),
         )
     }
 
@@ -517,6 +652,23 @@ class GeckoEngineSessionTest {
         verify(geckoSession).load(
             GeckoSession.Loader().data("ahr0cdovl21vemlsbgeub3jn==".toByteArray(), "text/html"),
         )
+    }
+
+    @Test
+    fun `getGeckoFlags returns only gecko load flags`() {
+        val flags = LoadUrlFlags.select(LoadUrlFlags.all().getGeckoFlags())
+
+        assertFalse(flags.contains(LoadUrlFlags.NONE))
+        assertTrue(flags.contains(LoadUrlFlags.BYPASS_CACHE))
+        assertTrue(flags.contains(LoadUrlFlags.BYPASS_PROXY))
+        assertTrue(flags.contains(LoadUrlFlags.EXTERNAL))
+        assertTrue(flags.contains(LoadUrlFlags.ALLOW_POPUPS))
+        assertTrue(flags.contains(LoadUrlFlags.BYPASS_CLASSIFIER))
+        assertTrue(flags.contains(LoadUrlFlags.LOAD_FLAGS_FORCE_ALLOW_DATA_URI))
+        assertTrue(flags.contains(LoadUrlFlags.LOAD_FLAGS_REPLACE_HISTORY))
+        assertTrue(flags.contains(LoadUrlFlags.LOAD_FLAGS_BYPASS_LOAD_URI_DELEGATE))
+        assertFalse(flags.contains(LoadUrlFlags.ALLOW_ADDITIONAL_HEADERS))
+        assertFalse(flags.contains(LoadUrlFlags.ALLOW_JAVASCRIPT_URL))
     }
 
     @Test
@@ -2369,6 +2521,241 @@ class GeckoEngineSessionTest {
     }
 
     @Test
+    fun `checkForPdfViewer should correctly process a GV response`() {
+        val engineSession = GeckoEngineSession(
+            mock(),
+            geckoSessionProvider = geckoSessionProvider,
+        )
+        var onResultCalled = false
+        var onExceptionCalled = false
+
+        val ruleResult = GeckoResult<Boolean>()
+        whenever(geckoSession.isPdfJs).thenReturn(ruleResult)
+
+        engineSession.checkForPdfViewer(
+            onResult = { onResultCalled = true },
+            onException = { onExceptionCalled = true },
+        )
+
+        ruleResult.complete(true)
+        shadowOf(getMainLooper()).idle()
+
+        assertTrue(onResultCalled)
+        assertFalse(onExceptionCalled)
+    }
+
+    @Test
+    fun `WHEN session onProductUrlChange is successful THEN notify of completion`() {
+        val engineSession = GeckoEngineSession(mock(), geckoSessionProvider = geckoSessionProvider)
+        val delegate = engineSession.createContentDelegate()
+        var productUrlStatus = false
+        engineSession.register(
+            object : EngineSession.Observer {
+                override fun onProductUrlChange(isProductUrl: Boolean) {
+                    productUrlStatus = isProductUrl
+                }
+            },
+        )
+
+        delegate.onProductUrl(geckoSession)
+
+        assertTrue(productUrlStatus)
+        assertEquals(true, productUrlStatus)
+    }
+
+    @Test
+    fun `WHEN session requestProductAnalysis is successful with analysis object THEN notify of completion`() {
+        val engineSession = GeckoEngineSession(mock(), geckoSessionProvider = geckoSessionProvider)
+        var onResultCalled = false
+        var onExceptionCalled = false
+
+        val ruleResult = GeckoResult<GeckoSession.ReviewAnalysis>()
+        whenever(geckoSession.requestAnalysis("mozilla.com")).thenReturn(ruleResult)
+
+        engineSession.requestProductAnalysis(
+            "mozilla.com",
+            onResult = { onResultCalled = true },
+            onException = { onExceptionCalled = true },
+        )
+
+        val productId = "banana"
+        val grade = "A"
+        val adjustedRating = 4.5
+        val lastAnalysisTime = 12345.toLong()
+        val analysisURL = "https://analysis.com"
+        val analysisObject = GeckoSession.ReviewAnalysis.Builder(productId)
+            .grade(grade)
+            .adjustedRating(adjustedRating)
+            .analysisUrl(analysisURL)
+            .needsAnalysis(true)
+            .highlights(null)
+            .lastAnalysisTime(lastAnalysisTime)
+            .deletedProductReported(true)
+            .deletedProduct(true)
+            .build()
+
+        ruleResult.complete(analysisObject)
+        shadowOf(getMainLooper()).idle()
+
+        assertTrue(onResultCalled)
+        assertFalse(onExceptionCalled)
+    }
+
+    @Test
+    fun `WHEN requestProductAnalysis is not successful THEN onException callback for error is called`() {
+        val engineSession = GeckoEngineSession(mock(), geckoSessionProvider = geckoSessionProvider)
+        var onResultCalled = false
+        var onExceptionCalled = false
+
+        val ruleResult = GeckoResult<GeckoSession.ReviewAnalysis>()
+        whenever(geckoSession.requestAnalysis("mozilla.com")).thenReturn(ruleResult)
+
+        engineSession.requestProductAnalysis(
+            "mozilla.com",
+            onResult = { onResultCalled = true },
+            onException = { onExceptionCalled = true },
+        )
+
+        ruleResult.completeExceptionally(IOException())
+        shadowOf(getMainLooper()).idle()
+
+        assertFalse(onResultCalled)
+        assertTrue(onExceptionCalled)
+    }
+
+    @Test
+    fun `WHEN session requestProductRecommendations is successful with empty list THEN notify of completion`() {
+        val engineSession = GeckoEngineSession(mock(), geckoSessionProvider = geckoSessionProvider)
+        var onResultCalled = false
+        var onExceptionCalled = false
+
+        val ruleResult = GeckoResult<List<GeckoSession.Recommendation>>()
+        whenever(geckoSession.requestRecommendations("mozilla.com")).thenReturn(ruleResult)
+
+        engineSession.requestProductRecommendations(
+            "mozilla.com",
+            onResult = { onResultCalled = true },
+            onException = { onExceptionCalled = true },
+        )
+
+        ruleResult.complete(emptyList())
+        shadowOf(getMainLooper()).idle()
+
+        assertTrue(onResultCalled)
+        assertFalse(onExceptionCalled)
+    }
+
+    @Test
+    fun `WHEN session requestProductRecommendations is successful with Recommendation THEN notify of completion`() {
+        val engineSession = GeckoEngineSession(mock(), geckoSessionProvider = geckoSessionProvider)
+        var onResultCalled = false
+        var onExceptionCalled = false
+
+        val ruleResult = GeckoResult<List<GeckoSession.Recommendation>>()
+        whenever(geckoSession.requestRecommendations("mozilla.com")).thenReturn(ruleResult)
+
+        engineSession.requestProductRecommendations(
+            "mozilla.com",
+            onResult = { onResultCalled = true },
+            onException = { onExceptionCalled = true },
+        )
+
+        val recommendationUrl = "https://recommendation.com"
+        val adjustedRating = 3.5
+        val imageUrl = "http://image.com"
+        val aid = "banana"
+        val name = "apple"
+        val grade = "C"
+        val price = "450"
+        val currency = "USD"
+
+        val recommendationObject = GeckoSession.Recommendation.Builder(recommendationUrl)
+            .adjustedRating(adjustedRating)
+            .sponsored(true)
+            .imageUrl(imageUrl)
+            .aid(aid)
+            .name(name)
+            .grade(grade)
+            .price(price)
+            .currency(currency)
+            .build()
+
+        ruleResult.complete(listOf(recommendationObject))
+        shadowOf(getMainLooper()).idle()
+
+        assertTrue(onResultCalled)
+        assertFalse(onExceptionCalled)
+    }
+
+    @Test
+    fun `WHEN requestProductRecommendations is not successful THEN onException callback for error is called`() {
+        val engineSession = GeckoEngineSession(mock(), geckoSessionProvider = geckoSessionProvider)
+        var onResultCalled = false
+        var onExceptionCalled = false
+
+        val ruleResult = GeckoResult<List<GeckoSession.Recommendation>>()
+        whenever(geckoSession.requestRecommendations("mozilla.com")).thenReturn(ruleResult)
+
+        engineSession.requestProductRecommendations(
+            "mozilla.com",
+            onResult = { onResultCalled = true },
+            onException = { onExceptionCalled = true },
+        )
+
+        ruleResult.completeExceptionally(IOException())
+        shadowOf(getMainLooper()).idle()
+
+        assertFalse(onResultCalled)
+        assertTrue(onExceptionCalled)
+    }
+
+    @Test
+    fun `WHEN session reanalyzeProduct is successful THEN notify of completion`() {
+        val engineSession = GeckoEngineSession(mock(), geckoSessionProvider = geckoSessionProvider)
+        var onResultCalled = false
+        var onExceptionCalled = false
+
+        val mUrl = "https://m.example.com"
+        val geckoResult = GeckoResult<String?>()
+        geckoResult.complete("COMPLETED")
+        whenever(geckoSession.requestCreateAnalysis(mUrl))
+            .thenReturn(geckoResult)
+
+        engineSession.reanalyzeProduct(
+            mUrl,
+            onResult = { onResultCalled = true },
+            onException = { onExceptionCalled = true },
+        )
+
+        shadowOf(getMainLooper()).idle()
+        assertTrue(onResultCalled)
+        assertFalse(onExceptionCalled)
+    }
+
+    @Test
+    fun `WHEN session requestAnalysisStatus is successful THEN notify of completion`() {
+        val engineSession = GeckoEngineSession(mock(), geckoSessionProvider = geckoSessionProvider)
+        var onResultCalled = false
+        var onExceptionCalled = false
+
+        val mUrl = "https://m.example.com"
+        val geckoResult = GeckoResult<String?>()
+        geckoResult.complete("COMPLETED")
+        whenever(geckoSession.requestAnalysisCreationStatus(mUrl))
+            .thenReturn(geckoResult)
+
+        engineSession.requestAnalysisStatus(
+            mUrl,
+            onResult = { onResultCalled = true },
+            onException = { onExceptionCalled = true },
+        )
+
+        shadowOf(getMainLooper()).idle()
+        assertTrue(onResultCalled)
+        assertFalse(onExceptionCalled)
+    }
+
+    @Test
     fun containsFormData() {
         val engineSession = GeckoEngineSession(runtime = mock(), geckoSessionProvider = geckoSessionProvider)
         var formData = false
@@ -3724,6 +4111,8 @@ class GeckoEngineSessionTest {
                     cookie: String?,
                     userAgent: String?,
                     isPrivate: Boolean,
+                    skipConfirmation: Boolean,
+                    openInApp: Boolean,
                     response: Response?,
                 ) {
                     assertEquals("PDF response is always a success.", RESPONSE_CODE_SUCCESS, response!!.status)
@@ -3756,6 +4145,8 @@ class GeckoEngineSessionTest {
                     cookie: String?,
                     userAgent: String?,
                     isPrivate: Boolean,
+                    skipConfirmation: Boolean,
+                    openInApp: Boolean,
                     response: Response?,
                 ) {
                     assert(false) { "We should not notify observers." }
@@ -3773,6 +4164,75 @@ class GeckoEngineSessionTest {
 
         // When we receive an exception from the GeckoResult.
         engineSession.requestPdfToDownload()
+        shadowOf(getMainLooper()).idle()
+    }
+
+    @Test
+    fun `setDisplayMode sets same display mode value`() {
+        val geckoSetting = mock<GeckoSessionSettings>()
+        val geckoSession = mock<GeckoSession>()
+
+        val engineSession = GeckoEngineSession(
+            mock(),
+            geckoSessionProvider = geckoSessionProvider,
+        )
+
+        whenever(geckoSession.settings).thenReturn(geckoSetting)
+
+        engineSession.geckoSession = geckoSession
+
+        engineSession.setDisplayMode(WebAppManifest.DisplayMode.FULLSCREEN)
+        verify(geckoSetting, atLeastOnce()).setDisplayMode(GeckoSessionSettings.DISPLAY_MODE_FULLSCREEN)
+
+        engineSession.setDisplayMode(WebAppManifest.DisplayMode.STANDALONE)
+        verify(geckoSetting, atLeastOnce()).setDisplayMode(GeckoSessionSettings.DISPLAY_MODE_STANDALONE)
+
+        engineSession.setDisplayMode(WebAppManifest.DisplayMode.MINIMAL_UI)
+        verify(geckoSetting, atLeastOnce()).setDisplayMode(GeckoSessionSettings.DISPLAY_MODE_MINIMAL_UI)
+
+        engineSession.setDisplayMode(WebAppManifest.DisplayMode.BROWSER)
+        verify(geckoSetting, atLeastOnce()).setDisplayMode(GeckoSessionSettings.DISPLAY_MODE_BROWSER)
+    }
+
+    fun `WHEN requestPrintContent is successful THEN notify of completion`() {
+        val engineSession = GeckoEngineSession(
+            runtime = mock(),
+            geckoSessionProvider = geckoSessionProvider,
+        )
+        whenever(geckoSession.didPrintPageContent()).thenReturn(GeckoResult.fromValue(true))
+
+        engineSession.register(object : EngineSession.Observer {
+            override fun onPrintFinish() {
+                assert(true) { "We should notify of a successful print." }
+            }
+
+            override fun onPrintException(isPrint: Boolean, throwable: Throwable) {
+                assert(false) { "We should not notify of an exception." } }
+        })
+        engineSession.requestPrintContent()
+        shadowOf(getMainLooper()).idle()
+    }
+
+    @Test
+    fun `WHEN requestPrintContent has an exception THEN do nothing`() {
+        val engineSession = GeckoEngineSession(
+            runtime = mock(),
+            geckoSessionProvider = geckoSessionProvider,
+        )
+        class MockGeckoPrintException() : GeckoPrintException()
+        whenever(geckoSession.didPrintPageContent()).thenReturn(GeckoResult.fromException(MockGeckoPrintException()))
+
+        engineSession.register(object : EngineSession.Observer {
+            override fun onPrintFinish() {
+                assert(false) { "We should not notify of a successful print." }
+            }
+
+            override fun onPrintException(isPrint: Boolean, throwable: Throwable) {
+                assert(true) { "An exception should occur." }
+                assertEquals("A GeckoPrintException occurred.", ERROR_PRINT_SETTINGS_SERVICE_NOT_AVAILABLE, (throwable as GeckoPrintException).code)
+            }
+        })
+        engineSession.requestPrintContent()
         shadowOf(getMainLooper()).idle()
     }
 

@@ -25,8 +25,6 @@ import org.mozilla.fenix.ui.robots.homeScreen
  */
 
 class SettingsAboutTest {
-    /* ktlint-disable no-blank-line-before-rbrace */ // This imposes unreadable grouping.
-
     private lateinit var mDevice: UiDevice
     private lateinit var mockWebServer: MockWebServer
 
@@ -51,23 +49,22 @@ class SettingsAboutTest {
         mockWebServer.shutdown()
     }
 
-    // Walks through settings menu and sub-menus to ensure all items are present
+    // Walks through the About settings menu to ensure all items are present
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2092700
     @Test
-    fun settingsAboutItemsTest() {
-        // ABOUT
+    fun verifyAboutSettingsItemsTest() {
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
-            // ABOUT
             verifyAboutHeading()
             verifyRateOnGooglePlay()
             verifyAboutFirefoxPreview()
         }
     }
 
-    // ABOUT
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/246966
     @Test
-    fun verifyRateOnGooglePlayRedirect() {
+    fun verifyRateOnGooglePlayButton() {
         activityIntentTestRule.applySettingsExceptions {
             it.isTCPCFREnabled = false
         }
@@ -83,8 +80,9 @@ class SettingsAboutTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/246961
     @Test
-    fun verifyAboutFirefoxPreview() {
+    fun verifyAboutFirefoxMenuItems() {
         activityIntentTestRule.applySettingsExceptions {
             it.isJumpBackInCFREnabled = false
             it.isTCPCFREnabled = false
@@ -93,7 +91,7 @@ class SettingsAboutTest {
         }.openThreeDotMenu {
         }.openSettings {
         }.openAboutFirefoxPreview {
-            verifyAboutFirefoxPreview()
+            verifyAboutFirefoxPreviewInfo()
         }
     }
 }

@@ -28,7 +28,6 @@ import org.mozilla.fenix.ext.bookmarkStorage
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.navigateSafe
-import org.mozilla.fenix.utils.Settings
 
 @VisibleForTesting
 internal const val WARN_OPEN_ALL_SIZE = 15
@@ -84,9 +83,8 @@ class DefaultBookmarkController(
     private val showSnackbar: (String) -> Unit,
     private val deleteBookmarkNodes: (Set<BookmarkNode>, BookmarkRemoveType) -> Unit,
     private val deleteBookmarkFolder: (Set<BookmarkNode>) -> Unit,
-    private val showTabTray: () -> Unit,
+    private val showTabTray: (Boolean) -> Unit,
     private val warnLargeOpenAll: (Int, () -> Unit) -> Unit,
-    private val settings: Settings,
 ) : BookmarkController {
 
     private val resources: Resources = activity.resources
@@ -163,7 +161,7 @@ class DefaultBookmarkController(
 
     override fun handleOpeningBookmark(item: BookmarkNode, mode: BrowsingMode) {
         openInNewTab(item.url!!, mode)
-        showTabTray()
+        showTabTray(mode.isPrivate)
     }
 
     private fun extractURLsFromTree(node: BookmarkNode): MutableList<String> {
@@ -199,7 +197,7 @@ class DefaultBookmarkController(
                 }
                 activity.browsingModeManager.mode =
                     BrowsingMode.fromBoolean(mode == BrowsingMode.Private)
-                showTabTray()
+                showTabTray(mode.isPrivate)
             }
 
             // Warn user if more than maximum number of bookmarks are being opened
@@ -256,13 +254,10 @@ class DefaultBookmarkController(
     }
 
     override fun handleSearch() {
-        val directions = if (settings.showUnifiedSearchFeature) {
-            BookmarkFragmentDirections.actionGlobalSearchDialog(sessionId = null)
-        } else {
-            BookmarkFragmentDirections.actionBookmarkFragmentToBookmarkSearchDialogFragment()
-        }
-
-        navController.navigateSafe(R.id.bookmarkFragment, directions)
+        navController.navigateSafe(
+            R.id.bookmarkFragment,
+            BookmarkFragmentDirections.actionGlobalSearchDialog(sessionId = null),
+        )
     }
 
     private fun openInNewTabAndShow(

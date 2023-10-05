@@ -72,8 +72,8 @@ class WebExtensionBrowserMenuBuilderTest {
 
         val store = BrowserStore(BrowserState(extensions = extensions))
         val style = WebExtensionBrowserMenuBuilder.Style(
-            addonsManagerMenuItemDrawableRes = iconsR.drawable.mozac_ic_extensions,
-            backPressMenuItemDrawableRes = iconsR.drawable.mozac_ic_back,
+            addonsManagerMenuItemDrawableRes = iconsR.drawable.mozac_ic_extension_24,
+            backPressMenuItemDrawableRes = iconsR.drawable.mozac_ic_back_24,
         )
         val builder = WebExtensionBrowserMenuBuilder(
             listOf(mockMenuItem()),

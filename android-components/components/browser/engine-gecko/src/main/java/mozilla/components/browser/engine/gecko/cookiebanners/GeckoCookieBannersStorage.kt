@@ -21,6 +21,7 @@ import org.mozilla.geckoview.StorageController
  */
 class GeckoCookieBannersStorage(
     runtime: GeckoRuntime,
+    private val reportSiteDomainsRepository: ReportSiteDomainsRepository,
 ) : CookieBannersStorage {
 
     private val geckoStorage: StorageController = runtime.storageController
@@ -31,6 +32,14 @@ class GeckoCookieBannersStorage(
         privateBrowsing: Boolean,
     ) {
         setGeckoException(uri, DISABLED, privateBrowsing)
+    }
+
+    override suspend fun isSiteDomainReported(siteDomain: String): Boolean {
+        return reportSiteDomainsRepository.isSiteDomainReported(siteDomain)
+    }
+
+    override suspend fun saveSiteDomain(siteDomain: String) {
+        reportSiteDomainsRepository.saveSiteDomain(siteDomain)
     }
 
     override suspend fun addPersistentExceptionInPrivateMode(uri: String) {
@@ -96,8 +105,9 @@ class GeckoCookieBannersStorage(
                 )
             }
         } catch (e: Exception) {
-            if ((e.message ?: "").contains("NS_ERROR_INSUFFICIENT_DOMAIN_LEVELS")) {
-                // This normally happen on internal sites like about:config
+            // This normally happen on internal sites like about:config or ip sites.
+            val disabledErrors = listOf("NS_ERROR_INSUFFICIENT_DOMAIN_LEVELS", "NS_ERROR_HOST_IS_IP_ADDRESS")
+            if (disabledErrors.any { (e.message ?: "").contains(it) }) {
                 Logger("GeckoCookieBannersStorage").error("Unable to query cookie banners exception", e)
                 DISABLED
             } else {

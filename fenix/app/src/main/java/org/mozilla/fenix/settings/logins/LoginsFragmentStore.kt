@@ -53,6 +53,9 @@ class LoginsFragmentStore(initialState: LoginsListState) :
 sealed class LoginsAction : Action {
     data class FilterLogins(val newText: String?) : LoginsAction()
     data class UpdateLoginsList(val list: List<SavedLogin>) : LoginsAction()
+    data class AddLogin(val newLogin: SavedLogin) : LoginsAction()
+    data class UpdateLogin(val loginId: String, val newLogin: SavedLogin) : LoginsAction()
+    data class DeleteLogin(val loginId: String) : LoginsAction()
     object LoginsListUpToDate : LoginsAction()
     data class UpdateCurrentLogin(val item: SavedLogin) : LoginsAction()
     data class SortLogins(val sortingStrategy: SortingStrategy) : LoginsAction()
@@ -61,14 +64,17 @@ sealed class LoginsAction : Action {
 }
 
 /**
- * The state for the Saved Logins Screen
- * @property loginList Filterable list of logins to display
- * @property currentItem The last item that was opened into the detail view
- * @property searchedForText String used by the user to filter logins
- * @property sortingStrategy sorting strategy selected by the user (Currently we support
- * sorting alphabetically and by last used)
- * @property highlightedItem The current selected sorting strategy from the sort menu
- * @property duplicateLogin Duplicate login for the current add/save login form
+ * The state for the Saved Logins Screen.
+ *
+ * @property isLoading Whether or not the list of logins are being loaded.
+ * @property loginList Filterable list of [SavedLogin]s that persist in storage.
+ * @property filteredItems Filtered list of [SavedLogin]s to display.
+ * @property currentItem The last item that was opened in the detail view.
+ * @property searchedForText String used by the user to filter logins.
+ * @property sortingStrategy Sorting strategy selected by the user. Currently, we support
+ * sorting alphabetically and by last used.
+ * @property highlightedItem The current selected sorting strategy from the sort menu.
+ * @property duplicateLogin Duplicate login for the current add/save login form.
  */
 data class LoginsListState(
     val isLoading: Boolean = false,
@@ -106,6 +112,34 @@ private fun savedLoginsStateReducer(
                 isLoading = false,
                 loginList = action.list,
                 filteredItems = state.sortingStrategy(action.list),
+            )
+        }
+        is LoginsAction.AddLogin -> {
+            val updatedLogins = state.loginList + action.newLogin
+            state.copy(
+                isLoading = false,
+                loginList = updatedLogins,
+                filteredItems = state.sortingStrategy(updatedLogins),
+            )
+        }
+        is LoginsAction.UpdateLogin -> {
+            val updatedLogins = state.loginList.map {
+                when (it.guid == action.loginId) {
+                    true -> action.newLogin
+                    false -> it
+                }
+            }
+            state.copy(
+                isLoading = false,
+                loginList = updatedLogins,
+                filteredItems = state.sortingStrategy(updatedLogins),
+            )
+        }
+        is LoginsAction.DeleteLogin -> {
+            val updatedLogins = state.loginList.filterNot { it.guid == action.loginId }
+            state.copy(
+                loginList = updatedLogins,
+                filteredItems = state.sortingStrategy(updatedLogins),
             )
         }
         is LoginsAction.FilterLogins -> {

@@ -25,6 +25,7 @@ import mozilla.components.feature.awesomebar.provider.SearchEngineSuggestionProv
 import mozilla.components.feature.awesomebar.provider.SearchSuggestionProvider
 import mozilla.components.feature.awesomebar.provider.SearchTermSuggestionsProvider
 import mozilla.components.feature.awesomebar.provider.SessionSuggestionProvider
+import mozilla.components.feature.fxsuggest.FxSuggestSuggestionProvider
 import mozilla.components.feature.search.SearchUseCases
 import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.feature.syncedtabs.DeviceIndicators
@@ -122,6 +123,7 @@ class AwesomeBarView(
                 loadUrlUseCase,
                 components.core.icons,
                 engineForSpeculativeConnects,
+                showEditSuggestion = false,
                 suggestionsHeader = activity.getString(R.string.firefox_suggest_header),
             )
 
@@ -133,6 +135,7 @@ class AwesomeBarView(
                 icons = components.core.icons,
                 engine = engineForSpeculativeConnects,
                 maxNumberOfSuggestions = METADATA_SUGGESTION_LIMIT,
+                showEditSuggestion = false,
                 suggestionsHeader = activity.getString(R.string.firefox_suggest_header),
             )
 
@@ -316,9 +319,19 @@ class AwesomeBarView(
             providersToAdd.add(getLocalTabsProvider(state.searchEngineSource, true))
         }
 
-        if (!activity.settings().showUnifiedSearchFeature) {
-            providersToAdd.add(searchEngineSuggestionProvider)
+        if (state.showSponsoredSuggestions || state.showNonSponsoredSuggestions) {
+            providersToAdd.add(
+                FxSuggestSuggestionProvider(
+                    resources = activity.resources,
+                    loadUrlUseCase = loadUrlUseCase,
+                    includeSponsoredSuggestions = state.showSponsoredSuggestions,
+                    includeNonSponsoredSuggestions = state.showNonSponsoredSuggestions,
+                    suggestionsHeader = activity.getString(R.string.firefox_suggest_header),
+                ),
+            )
         }
+
+        providersToAdd.add(searchEngineSuggestionProvider)
 
         return providersToAdd
     }
@@ -337,7 +350,7 @@ class AwesomeBarView(
     internal fun getHistoryProvidersForSearchEngine(
         searchEngineSource: SearchEngineSource,
     ): AwesomeBar.SuggestionProvider? {
-        val searchEngineHostFilter = searchEngineSource.searchEngine?.resultsUrl?.host ?: return null
+        val searchEngineUriFilter = searchEngineSource.searchEngine?.resultsUrl ?: return null
 
         return if (activity.settings().historyMetadataUIFeature) {
             CombinedHistorySuggestionProvider(
@@ -347,8 +360,9 @@ class AwesomeBarView(
                 icons = components.core.icons,
                 engine = engineForSpeculativeConnects,
                 maxNumberOfSuggestions = METADATA_SUGGESTION_LIMIT,
+                showEditSuggestion = false,
                 suggestionsHeader = activity.getString(R.string.firefox_suggest_header),
-                resultsHostFilter = searchEngineHostFilter,
+                resultsUriFilter = searchEngineUriFilter,
             )
         } else {
             HistoryStorageSuggestionProvider(
@@ -357,8 +371,9 @@ class AwesomeBarView(
                 icons = components.core.icons,
                 engine = engineForSpeculativeConnects,
                 maxNumberOfSuggestions = METADATA_SUGGESTION_LIMIT,
+                showEditSuggestion = false,
                 suggestionsHeader = activity.getString(R.string.firefox_suggest_header),
-                resultsHostFilter = searchEngineHostFilter,
+                resultsUriFilter = searchEngineUriFilter,
             )
         }
     }
@@ -489,8 +504,8 @@ class AwesomeBarView(
         searchEngineSource: SearchEngineSource,
         filterByCurrentEngine: Boolean = false,
     ): SessionSuggestionProvider {
-        val searchEngineHostFilter = when (filterByCurrentEngine) {
-            true -> searchEngineSource.searchEngine?.resultsUrl?.host
+        val searchEngineUriFilter = when (filterByCurrentEngine) {
+            true -> searchEngineSource.searchEngine?.resultsUrl
             false -> null
         }
 
@@ -502,7 +517,7 @@ class AwesomeBarView(
             getDrawable(activity, R.drawable.ic_search_results_tab),
             excludeSelectedSession = !fromHomeFragment,
             suggestionsHeader = activity.getString(R.string.firefox_suggest_header),
-            resultsHostFilter = searchEngineHostFilter,
+            resultsUriFilter = searchEngineUriFilter,
         )
     }
 
@@ -521,7 +536,7 @@ class AwesomeBarView(
         filterByCurrentEngine: Boolean = false,
     ): BookmarksStorageSuggestionProvider {
         val searchEngineHostFilter = when (filterByCurrentEngine) {
-            true -> searchEngineSource.searchEngine?.resultsUrl?.host
+            true -> searchEngineSource.searchEngine?.resultsUrl
             false -> null
         }
 
@@ -531,8 +546,9 @@ class AwesomeBarView(
             icons = components.core.icons,
             indicatorIcon = getDrawable(activity, R.drawable.ic_search_results_bookmarks),
             engine = engineForSpeculativeConnects,
+            showEditSuggestion = false,
             suggestionsHeader = activity.getString(R.string.firefox_suggest_header),
-            resultsHostFilter = searchEngineHostFilter,
+            resultsUriFilter = searchEngineHostFilter,
         )
     }
 
@@ -548,6 +564,8 @@ class AwesomeBarView(
         val showAllSyncedTabsSuggestions: Boolean,
         val showSessionSuggestionsForCurrentEngine: Boolean,
         val showAllSessionSuggestions: Boolean,
+        val showSponsoredSuggestions: Boolean,
+        val showNonSponsoredSuggestions: Boolean,
         val searchEngineSource: SearchEngineSource,
     )
 
@@ -581,5 +599,7 @@ fun SearchFragmentState.toSearchProviderState() = AwesomeBarView.SearchProviderS
     showAllSyncedTabsSuggestions = showAllSyncedTabsSuggestions,
     showSessionSuggestionsForCurrentEngine = showSessionSuggestionsForCurrentEngine,
     showAllSessionSuggestions = showAllSessionSuggestions,
+    showSponsoredSuggestions = showSponsoredSuggestions,
+    showNonSponsoredSuggestions = showNonSponsoredSuggestions,
     searchEngineSource = searchEngineSource,
 )

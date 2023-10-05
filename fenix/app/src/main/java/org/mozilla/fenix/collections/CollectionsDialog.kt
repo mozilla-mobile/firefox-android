@@ -5,9 +5,12 @@
 package org.mozilla.fenix.collections
 
 import android.content.Context
+import android.content.DialogInterface
 import android.view.LayoutInflater
+import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
+import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.MainScope
@@ -15,6 +18,7 @@ import kotlinx.coroutines.launch
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.support.ktx.android.view.showKeyboard
+import mozilla.components.ui.widgets.withCenterAlignedButtons
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.ext.getDefaultCollectionNumber
@@ -36,6 +40,8 @@ typealias OnNegativeButtonClick = () -> Unit
 /**
  * A data class for creating a dialog to prompt adding/creating a collection. See also [show].
  *
+ * @property storage An instance of [TabCollectionStorage] to retrieve and modify collections.
+ * @property sessionList List of [TabSessionState] to add to a collection.
  * @property onPositiveButtonClick Invoked when a user clicks on a confirmation button in the dialog.
  * @property onNegativeButtonClick Invoked when a user clicks on a cancel button in the dialog.
  */
@@ -80,7 +86,7 @@ fun CollectionsDialog.show(
             dialog.cancel()
         }
 
-    val dialog = builder.create()
+    val dialog = builder.create().withCenterAlignedButtons()
     val collectionNames =
         arrayOf(context.getString(R.string.tab_tray_add_new_collection)) + collections
     val collectionsListAdapter = CollectionsListAdapter(collectionNames) {
@@ -110,13 +116,13 @@ internal fun CollectionsDialog.showAddNewDialog(
     )
     collectionNameEditText.increaseTapArea(context.resources.getDimension(R.dimen.tap_increase_2).toInt())
 
-    AlertDialog.Builder(context)
+    val dialog = AlertDialog.Builder(context)
         .setTitle(R.string.tab_tray_add_new_collection)
         .setView(layout).setPositiveButton(R.string.create_collection_positive) { dialog, _ ->
 
             MainScope().launch {
                 val id = storage.createCollection(
-                    collectionNameEditText.text.toString(),
+                    collectionNameEditText.text.toString().trim(),
                     sessionList,
                 )
                 onPositiveButtonClick.invoke(id, true)
@@ -128,9 +134,19 @@ internal fun CollectionsDialog.showAddNewDialog(
             onNegativeButtonClick.invoke()
             dialog.cancel()
         }
-        .create()
-        .show()
+        .create().withCenterAlignedButtons()
+
+    collectionNameEditText.doOnTextChanged { text, _, _, _ ->
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).isClickable = text.toString().isNotBlank()
+    }
+
+    dialog.show()
 
     collectionNameEditText.setSelection(0, collectionNameEditText.text.length)
     collectionNameEditText.showKeyboard()
+
+    collectionNameEditText.setOnEditorActionListener { _, actionId, _ ->
+        val text = collectionNameEditText.text.toString()
+        actionId == EditorInfo.IME_ACTION_DONE && text.isBlank()
+    }
 }

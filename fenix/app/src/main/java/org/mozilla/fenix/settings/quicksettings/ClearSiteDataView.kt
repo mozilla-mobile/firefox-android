@@ -18,6 +18,7 @@ import androidx.navigation.NavController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import mozilla.components.ui.widgets.withCenterAlignedButtons
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.QuicksettingsClearSiteDataBinding
 import org.mozilla.fenix.ext.components
@@ -35,9 +36,13 @@ interface ClearSiteDataViewInteractor {
 /**
  * MVI View to access the dialog to clear site cookies and data.
  *
- * @param containerView [ViewGroup] in which this View will inflate itself.
- * @param interactor [TrackingProtectionInteractor] which will have delegated to all user
+ * @property context An Android [Context].
+ * @property ioScope [CoroutineScope] with an IO dispatcher used for structured concurrency.
+ * @property containerView [ViewGroup] in which this View will inflate itself.
+ * @property containerDivider Divider [View] to manipulate.
+ * @property interactor [ClearSiteDataViewInteractor] which will have delegated to all user
  * interactions.
+ * @property navController [NavController] used for navigation.
  */
 class ClearSiteDataView(
     val context: Context,
@@ -107,7 +112,7 @@ class ClearSiteDataView(
                 it.dismiss()
                 interactor.onClearSiteDataClicked(baseDomain)
             }
-            create()
+            create().withCenterAlignedButtons()
         }.show()
     }
 }

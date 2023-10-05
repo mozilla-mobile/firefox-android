@@ -1,6 +1,6 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
-* License, v. 2.0. If a copy of the MPL was not distributed with this
-* file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package org.mozilla.fenix.home.intent
 
@@ -8,8 +8,6 @@ import android.content.Intent
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.os.Build.VERSION_CODES.M
-import android.os.Build.VERSION_CODES.N
-import android.os.Build.VERSION_CODES.P
 import androidx.core.net.toUri
 import androidx.navigation.NavController
 import io.mockk.Called
@@ -28,6 +26,7 @@ import org.mozilla.fenix.BuildConfig.DEEP_LINK_SCHEME
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
+import org.mozilla.fenix.components.accounts.FenixFxAEntryPoint
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.settings.SupportUtils
 import org.robolectric.annotation.Config
@@ -121,7 +120,13 @@ class HomeDeepLinkIntentProcessorTest {
         assertTrue(processorHome.process(testIntent("turn_on_sync"), navController, out))
 
         verify { activity wasNot Called }
-        verify { navController.navigate(NavGraphDirections.actionGlobalTurnOnSync()) }
+        verify {
+            navController.navigate(
+                NavGraphDirections.actionGlobalTurnOnSync(
+                    entrypoint = FenixFxAEntryPoint.DeepLink,
+                ),
+            )
+        }
         verify { out wasNot Called }
     }
 
@@ -239,16 +244,6 @@ class HomeDeepLinkIntentProcessorTest {
     }
 
     @Test
-    @Config(minSdk = N, maxSdk = P)
-    fun `process make_default_browser deep link for above API 23`() {
-        assertTrue(processorHome.process(testIntent("make_default_browser"), navController, out))
-
-        verify { activity.startActivity(any()) }
-        verify { navController wasNot Called }
-        verify { out wasNot Called }
-    }
-
-    @Test
     @Config(maxSdk = M)
     fun `process make_default_browser deep link for API 23 and below`() {
         val packageManager: PackageManager = mockk()
@@ -262,9 +257,8 @@ class HomeDeepLinkIntentProcessorTest {
 
         assertTrue(processorHome.process(testIntent("make_default_browser"), navController, out))
 
-        val searchTermOrURL = SupportUtils.getSumoURLForTopic(
-            activity,
-            SupportUtils.SumoTopic.SET_AS_DEFAULT_BROWSER,
+        val searchTermOrURL = SupportUtils.getGenericSumoURLForTopic(
+            topic = SupportUtils.SumoTopic.SET_AS_DEFAULT_BROWSER,
         )
 
         verify {
