@@ -14,7 +14,7 @@ RUN apt-get install -y jq \
 USER worker:worker
 
 ENV GOOGLE_SDK_DOWNLOAD ./gcloud.tar.gz
-ENV GOOGLE_SDK_VERSION 233
+ENV GOOGLE_SDK_VERSION 407
 
 ENV TEST_TOOLS /builds/worker/test-tools
 ENV PATH ${PATH}:${TEST_TOOLS}:${TEST_TOOLS}/google-cloud-sdk/bin
@@ -32,6 +32,10 @@ RUN curl https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud
 RUN URL_FLANK_BIN="$($CURL --silent 'https://api.github.com/repos/Flank/flank/releases/48276753' | jq -r '.assets[] | select(.browser_download_url | test("flank.jar")) .browser_download_url')" \
     && $CURL --output "${TEST_TOOLS}/flank.jar" "${URL_FLANK_BIN}" \
     && chmod +x "${TEST_TOOLS}/flank.jar"
+
+# Used in parse-ui-test-fromfile.py
+RUN pip3 install junitparser
+RUN pip3 install beautifultable
 
 # run-task expects to run as root
 USER root

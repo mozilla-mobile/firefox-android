@@ -88,8 +88,10 @@ class ToolbarActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
 
         ToolbarAutocompleteFeature(binding.toolbar).apply {
-            this.addDomainProvider(shippedDomainsProvider)
-            this.addDomainProvider(customDomainsProvider)
+            updateAutocompleteProviders(
+                providers = listOf(shippedDomainsProvider, customDomainsProvider),
+                refreshAutocomplete = false,
+            )
         }
     }
 
@@ -128,7 +130,7 @@ class ToolbarActivity : AppCompatActivity() {
         // //////////////////////////////////////////////////////////////////////////////////////////
 
         val back = BrowserToolbar.Button(
-            resources.getThemedDrawable(iconsR.drawable.mozac_ic_back)!!,
+            resources.getThemedDrawable(iconsR.drawable.mozac_ic_back_24)!!,
             "Back",
         ) {
             simulateReload()
@@ -137,7 +139,7 @@ class ToolbarActivity : AppCompatActivity() {
         binding.toolbar.addNavigationAction(back)
 
         val forward = BrowserToolbar.Button(
-            resources.getThemedDrawable(iconsR.drawable.mozac_ic_forward)!!,
+            resources.getThemedDrawable(iconsR.drawable.mozac_ic_forward_24)!!,
             "Forward",
         ) {
             simulateReload()
@@ -150,7 +152,7 @@ class ToolbarActivity : AppCompatActivity() {
         // //////////////////////////////////////////////////////////////////////////////////////////
 
         val reload = BrowserToolbar.TwoStateButton(
-            primaryImage = resources.getThemedDrawable(iconsR.drawable.mozac_ic_refresh)!!,
+            primaryImage = resources.getThemedDrawable(iconsR.drawable.mozac_ic_arrow_clockwise_24)!!,
             primaryContentDescription = "Reload",
             secondaryImage = resources.getThemedDrawable(iconsR.drawable.mozac_ic_stop)!!,
             secondaryContentDescription = "Stop",
@@ -199,12 +201,12 @@ class ToolbarActivity : AppCompatActivity() {
 
         val share = TextMenuCandidate(
             "Share",
-            start = DrawableMenuIcon(this, iconsR.drawable.mozac_ic_share),
+            start = DrawableMenuIcon(this, iconsR.drawable.mozac_ic_share_android_24),
         ) { /* Do nothing */ }
 
         val search = TextMenuCandidate(
             "Search",
-            start = DrawableMenuIcon(this, iconsR.drawable.mozac_ic_search),
+            start = DrawableMenuIcon(this, iconsR.drawable.mozac_ic_search_24),
         ) { /* Do nothing */ }
 
         binding.toolbar.display.menuController = BrowserMenuController(Side.START).apply {
@@ -234,7 +236,7 @@ class ToolbarActivity : AppCompatActivity() {
         // //////////////////////////////////////////////////////////////////////////////////////////
 
         val forward = BrowserMenuItemToolbar.Button(
-            iconsR.drawable.mozac_ic_forward,
+            iconsR.drawable.mozac_ic_forward_24,
             "Forward",
             isEnabled = { canGoForward() },
         ) {
@@ -242,7 +244,7 @@ class ToolbarActivity : AppCompatActivity() {
         }
 
         val reload = BrowserMenuItemToolbar.TwoStateButton(
-            primaryImageResource = iconsR.drawable.mozac_ic_refresh,
+            primaryImageResource = iconsR.drawable.mozac_ic_arrow_clockwise_24,
             primaryContentDescription = "Reload",
             secondaryImageResource = iconsR.drawable.mozac_ic_stop,
             secondaryContentDescription = "Stop",
@@ -380,7 +382,7 @@ class ToolbarActivity : AppCompatActivity() {
             ContextCompat.getDrawable(this, R.drawable.fenix_url_background),
         )
         binding.toolbar.edit.setIcon(
-            ContextCompat.getDrawable(this, iconsR.drawable.mozac_ic_search)!!,
+            ContextCompat.getDrawable(this, iconsR.drawable.mozac_ic_search_24)!!,
             "Search",
         )
 
@@ -428,7 +430,7 @@ class ToolbarActivity : AppCompatActivity() {
 
         binding.toolbar.url = "https://www.mozilla.org/en-US/firefox/mobile/"
 
-        val drawableIcon = ContextCompat.getDrawable(this, iconsR.drawable.mozac_ic_close)
+        val drawableIcon = ContextCompat.getDrawable(this, iconsR.drawable.mozac_ic_cross_24)
 
         drawableIcon?.apply {
             setTint(0xFF20123a.toInt())
@@ -442,7 +444,7 @@ class ToolbarActivity : AppCompatActivity() {
             binding.toolbar.addNavigationAction(button)
         }
 
-        val drawable = ContextCompat.getDrawable(this, iconsR.drawable.mozac_ic_share)?.apply {
+        val drawable = ContextCompat.getDrawable(this, iconsR.drawable.mozac_ic_share_android_24)?.apply {
             setTint(0xFF20123a.toInt())
         }
 

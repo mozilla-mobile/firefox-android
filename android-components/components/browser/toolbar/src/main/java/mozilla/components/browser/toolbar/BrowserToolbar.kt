@@ -165,6 +165,10 @@ class BrowserToolbar @JvmOverloads constructor(
         edit.setAutocompleteListener(filter)
     }
 
+    override fun refreshAutocomplete() {
+        edit.refreshAutocompleteSuggestion()
+    }
+
     init {
         addView(display.rootView)
         addView(edit.rootView)
@@ -333,13 +337,23 @@ class BrowserToolbar @JvmOverloads constructor(
 
     /**
      * Switches to URL editing mode.
+     *
+     * @param cursorPlacement Where the cursor should be placed after focusing on the URL input field.
      */
-    override fun editMode() {
+    override fun editMode(cursorPlacement: Toolbar.CursorPlacement) {
         val urlValue = if (searchTerms.isEmpty()) url else searchTerms
         edit.updateUrl(urlValue.toString(), false)
         updateState(State.EDIT)
         edit.focus()
-        edit.selectAll()
+
+        when (cursorPlacement) {
+            Toolbar.CursorPlacement.ALL -> {
+                edit.selectAll()
+            }
+            Toolbar.CursorPlacement.END -> {
+                edit.selectEnd()
+            }
+        }
     }
 
     /**
@@ -591,7 +605,7 @@ private class AsyncAutocompleteDelegate(
         // Process results on the UI dispatcher.
         CoroutineScope(coroutineContext).launch {
             // Ignore this result if the query is stale.
-            if (result.input == urlView.originalText) {
+            if (result.input == urlView.originalText.lowercase()) {
                 urlView.applyAutocompleteResult(
                     InlineAutocompleteEditText.AutocompleteResult(
                         text = result.text,

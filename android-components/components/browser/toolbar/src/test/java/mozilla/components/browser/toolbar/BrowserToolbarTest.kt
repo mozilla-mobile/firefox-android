@@ -126,7 +126,7 @@ class BrowserToolbarTest {
         toolbar.url = "https://www.mozilla.org"
 
         verify(display).url = "https://www.mozilla.org"
-        verify(edit, never()).updateUrl(ArgumentMatchers.anyString(), ArgumentMatchers.anyBoolean(), ArgumentMatchers.anyBoolean())
+        verify(edit, never()).updateUrl(ArgumentMatchers.anyString(), ArgumentMatchers.anyBoolean(), ArgumentMatchers.anyBoolean(), ArgumentMatchers.anyBoolean())
     }
 
     @Test
@@ -849,6 +849,17 @@ class BrowserToolbarTest {
     }
 
     @Test
+    fun `WHEN an attempt to refresh autocomplete suggestions is made THEN forward the call to edit toolbar`() {
+        val toolbar = BrowserToolbar(testContext)
+        toolbar.edit = mock()
+        toolbar.setAutocompleteListener { _, _ -> }
+
+        toolbar.refreshAutocomplete()
+
+        verify(toolbar.edit).refreshAutocompleteSuggestion()
+    }
+
+    @Test
     fun `onStop is forwarded to display toolbar`() {
         val toolbar = BrowserToolbar(testContext)
         toolbar.display = mock()
@@ -946,5 +957,19 @@ class BrowserToolbarTest {
 
         toolbar.setSearchTerms("")
         verify(toolbar.edit.editListener)?.onTextChanged("")
+    }
+
+    @Test
+    fun `WHEN switching to edit mode AND the cursor placement parameter is specified THEN call the correct method to place the cursor`() {
+        val toolbar = BrowserToolbar(testContext)
+        toolbar.edit = spy(toolbar.edit)
+
+        toolbar.editMode(Toolbar.CursorPlacement.ALL)
+
+        verify(toolbar.edit).selectAll()
+
+        toolbar.editMode(Toolbar.CursorPlacement.END)
+
+        verify(toolbar.edit).selectEnd()
     }
 }

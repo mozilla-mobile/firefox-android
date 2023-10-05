@@ -4,6 +4,9 @@
 
 package mozilla.components.feature.awesomebar.provider
 
+import android.net.Uri
+import androidx.annotation.VisibleForTesting
+import androidx.core.net.toUri
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import mozilla.components.browser.icons.BrowserIcons
@@ -13,12 +16,19 @@ import mozilla.components.concept.storage.HistoryMetadata
 import mozilla.components.concept.storage.HistoryMetadataStorage
 import mozilla.components.concept.storage.HistoryStorage
 import mozilla.components.feature.session.SessionUseCases
+import mozilla.components.support.ktx.android.net.sameHostWithoutMobileSubdomainAs
 import java.util.UUID
 
 /**
  * Return 5 history suggestions by default.
  */
 const val DEFAULT_COMBINED_SUGGESTION_LIMIT = 5
+
+/**
+ * Default suggestions limit multiplier when needing to filter results by an external url filter.
+ */
+@VisibleForTesting
+internal const val COMBINED_HISTORY_RESULTS_TO_FILTER_SCALE_FACTOR = 10
 
 /**
  * A [AwesomeBar.SuggestionProvider] implementation that combines suggestions from
@@ -41,6 +51,7 @@ const val DEFAULT_COMBINED_SUGGESTION_LIMIT = 5
  * defaults to [DEFAULT_COMBINED_SUGGESTION_LIMIT].
  * @param showEditSuggestion optional parameter to specify if the suggestion should show the edit button
  * @param suggestionsHeader optional parameter to specify if the suggestion should have a header
+ * @param resultsUriFilter Optional filter for the host url of the suggestions to show.
  */
 @Suppress("LongParameterList")
 class CombinedHistorySuggestionProvider(
@@ -50,8 +61,9 @@ class CombinedHistorySuggestionProvider(
     private val icons: BrowserIcons? = null,
     internal val engine: Engine? = null,
     internal var maxNumberOfSuggestions: Int = DEFAULT_COMBINED_SUGGESTION_LIMIT,
-    private val showEditSuggestion: Boolean = true,
+    @get:VisibleForTesting val showEditSuggestion: Boolean = true,
     private val suggestionsHeader: String? = null,
+    @get:VisibleForTesting val resultsUriFilter: Uri? = null,
 ) : AwesomeBar.SuggestionProvider {
     override val id: String = UUID.randomUUID().toString()
 
@@ -60,24 +72,25 @@ class CombinedHistorySuggestionProvider(
     }
 
     override suspend fun onInputChanged(text: String): List<AwesomeBar.Suggestion> = coroutineScope {
-        historyStorage.cancelReads()
-        historyMetadataStorage.cancelReads()
+        historyStorage.cancelReads(text)
+        historyMetadataStorage.cancelReads(text)
 
         if (text.isBlank()) {
             return@coroutineScope emptyList()
         }
 
         val metadataSuggestionsAsync = async {
-            historyMetadataStorage
-                .queryHistoryMetadata(text, maxNumberOfSuggestions)
-                .filter { it.totalViewTime > 0 }
-                .into(this@CombinedHistorySuggestionProvider, icons, loadUrlUseCase, showEditSuggestion)
+            when (resultsUriFilter) {
+                null -> getMetadataSuggestions(text)
+                else -> getMetadataSuggestionsFromHost(resultsUriFilter, text)
+            }
         }
+
         val historySuggestionsAsync = async {
-            historyStorage.getSuggestions(text, maxNumberOfSuggestions)
-                .sortedByDescending { it.score }
-                .distinctBy { it.id }
-                .into(this@CombinedHistorySuggestionProvider, icons, loadUrlUseCase, showEditSuggestion)
+            when (resultsUriFilter) {
+                null -> getHistorySuggestions(text)
+                else -> getHistorySuggestionsFromHost(resultsUriFilter, text)
+            }
         }
 
         val metadataSuggestions = metadataSuggestionsAsync.await()
@@ -115,9 +128,66 @@ class CombinedHistorySuggestionProvider(
     }
 
     /**
+     * Get the maximum number of suggestions that will be provided.
+     */
+    @VisibleForTesting
+    fun getMaxNumberOfSuggestions() = maxNumberOfSuggestions
+
+    /**
      * Reset maximum number of suggestions to default.
      */
     fun resetToDefaultMaxSuggestions() {
         maxNumberOfSuggestions = DEFAULT_COMBINED_SUGGESTION_LIMIT
     }
+
+    /**
+     * Get up to [maxNumberOfSuggestions] history metadata suggestions matching [query].
+     *
+     * @param query String to filter bookmarks' title or URL by.
+     */
+    private suspend fun getMetadataSuggestions(query: String) = historyMetadataStorage
+        .queryHistoryMetadata(query, maxNumberOfSuggestions)
+        .filter { it.totalViewTime > 0 }
+        .into(this@CombinedHistorySuggestionProvider, icons, loadUrlUseCase, showEditSuggestion)
+
+    /**
+     * Get up to [maxNumberOfSuggestions] history metadata suggestions matching [query] from the indicated [url].
+     *
+     * @param query String to filter history entry's title or URL by.
+     * @param url URL host to filter all history entry's URL host by.
+     */
+    private suspend fun getMetadataSuggestionsFromHost(url: Uri, query: String) = historyMetadataStorage
+        .queryHistoryMetadata(query, maxNumberOfSuggestions * COMBINED_HISTORY_RESULTS_TO_FILTER_SCALE_FACTOR)
+        .filter {
+            it.totalViewTime > 0 && it.key.url.toUri().sameHostWithoutMobileSubdomainAs(url)
+        }
+        .take(maxNumberOfSuggestions)
+        .into(this@CombinedHistorySuggestionProvider, icons, loadUrlUseCase, showEditSuggestion)
+
+    /**
+     * Get up to [maxNumberOfSuggestions] history suggestions matching [query].
+     *
+     * @param query String to filter history entry's title or URL by.
+     */
+    private suspend fun getHistorySuggestions(query: String) = historyStorage
+        .getSuggestions(query, maxNumberOfSuggestions)
+        .sortedByDescending { it.score }
+        .distinctBy { it.id }
+        .into(this@CombinedHistorySuggestionProvider, icons, loadUrlUseCase, showEditSuggestion)
+
+    /**
+     * Get up to [maxNumberOfSuggestions] history metadata suggestions matching [query] from the indicated [url].
+     *
+     * @param query String to filter history entry's title or URL by.
+     * @param url URL host to filter all bookmarks' URL host by.
+     */
+    private suspend fun getHistorySuggestionsFromHost(url: Uri, query: String) = historyStorage
+        .getSuggestions(query, maxNumberOfSuggestions * COMBINED_HISTORY_RESULTS_TO_FILTER_SCALE_FACTOR)
+        .distinctBy { it.id }
+        .sortedByDescending { it.score }
+        .filter {
+            it.url.toUri().sameHostWithoutMobileSubdomainAs(url)
+        }
+        .take(maxNumberOfSuggestions)
+        .into(this@CombinedHistorySuggestionProvider, icons, loadUrlUseCase, showEditSuggestion)
 }

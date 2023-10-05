@@ -11,6 +11,7 @@ import androidx.annotation.StringRes
 import androidx.annotation.StyleRes
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AlertDialog
+import mozilla.components.ui.widgets.withCenterAlignedButtons
 
 /**
  * This is the default implementation of the [RedirectDialogFragment].
@@ -32,8 +33,8 @@ class SimpleRedirectDialogFragment : RedirectDialogFragment() {
         }
 
         return with(requireBundle()) {
-            val fileName = getString(KEY_INTENT_URL, "")
-            val dialogTitleText = getInt(KEY_TITLE_TEXT, R.string.mozac_feature_applinks_confirm_dialog_title)
+            val dialogTitleText = getInt(KEY_TITLE_TEXT, R.string.mozac_feature_applinks_normal_confirm_dialog_title)
+            val dialogMessageString = getString(KEY_MESSAGE_STRING, "")
             val positiveButtonText = getInt(KEY_POSITIVE_TEXT, R.string.mozac_feature_applinks_confirm_dialog_confirm)
             val negativeButtonText = getInt(KEY_NEGATIVE_TEXT, R.string.mozac_feature_applinks_confirm_dialog_deny)
             val themeResId = getInt(KEY_THEME_ID, 0)
@@ -41,7 +42,7 @@ class SimpleRedirectDialogFragment : RedirectDialogFragment() {
 
             getBuilder(themeResId)
                 .setTitle(dialogTitleText)
-                .setMessage(fileName)
+                .setMessage(dialogMessageString)
                 .setPositiveButton(positiveButtonText) { _, _ ->
                     onConfirmRedirect()
                 }
@@ -50,6 +51,7 @@ class SimpleRedirectDialogFragment : RedirectDialogFragment() {
                 }
                 .setCancelable(cancelable)
                 .create()
+                .withCenterAlignedButtons()
         }
     }
 
@@ -58,7 +60,8 @@ class SimpleRedirectDialogFragment : RedirectDialogFragment() {
          * A builder method for creating a [SimpleRedirectDialogFragment]
          */
         fun newInstance(
-            @StringRes dialogTitleText: Int = R.string.mozac_feature_applinks_confirm_dialog_title,
+            @StringRes dialogTitleText: Int = R.string.mozac_feature_applinks_normal_confirm_dialog_title,
+            dialogMessageString: String = "",
             @StringRes positiveButtonText: Int = R.string.mozac_feature_applinks_confirm_dialog_confirm,
             @StringRes negativeButtonText: Int = R.string.mozac_feature_applinks_confirm_dialog_deny,
             @StyleRes themeResId: Int = 0,
@@ -69,6 +72,8 @@ class SimpleRedirectDialogFragment : RedirectDialogFragment() {
 
             with(arguments) {
                 putInt(KEY_TITLE_TEXT, dialogTitleText)
+
+                putString(KEY_MESSAGE_STRING, dialogMessageString)
 
                 putInt(KEY_POSITIVE_TEXT, positiveButtonText)
 
@@ -90,6 +95,8 @@ class SimpleRedirectDialogFragment : RedirectDialogFragment() {
         const val KEY_NEGATIVE_TEXT = "KEY_NEGATIVE_TEXT"
 
         const val KEY_TITLE_TEXT = "KEY_TITLE_TEXT"
+
+        const val KEY_MESSAGE_STRING = "KEY_MESSAGE_STRING"
 
         const val KEY_THEME_ID = "KEY_THEME_ID"
 

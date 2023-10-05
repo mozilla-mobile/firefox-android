@@ -53,7 +53,6 @@
     <string name="menu_remove_from_shortcuts">მოცილება მალსახმობებიდან</string>
 
     <!-- Menu item: Shows information about features and changes that are new to this version -->
-    <string name="menu_whats_new">რა სიახლეებია</string>
     <string name="menu_settings">პარამეტრები</string>
     <string name="menu_about">შესახებ</string>
     <string name="menu_help">დახმარება</string>
@@ -353,6 +352,15 @@
     <!-- In-app link (in settings) to Focus privacy notice. -->
     <string name="preference_privacy_notice">პირადი მონაცემების დაცვა</string>
 
+    <!-- In-app link (in settings) to Focus licensing information. -->
+    <string name="preference_licensing_info">ლიცენზიის შესახებ</string>
+
+    <!-- Link to Focus licensing information from other libraries that we use. -->
+    <string name="preference_libraries_we_use">ბიბლიოთეკები, რომელთაც ვიყენებთ</string>
+
+    <!-- Open Source Licenses page title. The first parameter is the app name -->
+    <string name="open_source_licenses_title">%s | OSS-ბიბლიოთეკები</string>
+
     <!-- Item in Preferences that shows the about page. Parameter 1 is the app name, i.e. Firefox Focus/Firefox Klar. -->
     <string name="preference_about">%1$s-ის შესახებ</string>
 
@@ -482,7 +490,10 @@
 
 
 
-  <string name="error_hostLookup_title">გვერდი ვერ მოიძებნა</string>
+  <!-- Snackbar that will be displayed after a website has been added to shortcuts. -->
+    <string name="snackbar_added_to_shortcuts">მალსახმობებში დაემატა!</string>
+
+    <string name="error_hostLookup_title">გვერდი ვერ მოიძებნა</string>
 
 
 
@@ -536,7 +547,7 @@
     <!-- First run tour (Default browser): Title -->
     <string name="firstrun_defaultbrowser_title">გააძლიერეთ პირადი მონაცემების დაცვა</string>
     <!-- First run tour (Default browser): Text. -->
-    <string name="firstrun_defaultbrowser_text2">პირადი მონაცემების უსაფრთხოება ახალ დონეზეა აყვანილი. შეზღუდეთ სარეკლამო და სხვა შიგთავსი, რომლითაც საიტებზე თქვენი დევნაა შესაძლებელი და შეამცირეთ გვერდების ჩატვირთვის დრო.</string>
+    <string name="firstrun_defaultbrowser_text2">პირადი მონაცემების უსაფრთხოება ახალ სიმაღლეზეა აყვანილი. შეზღუდეთ სარეკლამო და სხვა შიგთავსი, რომლითაც საიტებზე თქვენი დევნაა შესაძლებელი და შეამცირეთ გვერდების ჩატვირთვის დრო.</string>
 
     <!-- First run tour (Search): Title -->
     <string name="firstrun_search_title">მოიძიეთ გვერდები, თქვენებურად</string>
@@ -672,7 +683,7 @@
     <string name="preference_performance_request_desktop_site2">სრული საიტი</string>
 
     <!-- Displayed after a user long presses on the URL in a custom tab to copy the URL -->
-    <string name="custom_tab_copy_url_action">URL-ს ასლი მზადაა</string>
+    <string name="custom_tab_copy_url_action">ბმული აღებულია</string>
 
     <!-- Description of what a user may find in the Advanced Setting category, used for debugging -->
     <string name="preference_advanced_summary">შემმუშავებლის ხელსაწყოები</string>
@@ -701,11 +712,59 @@
     <!--  Preference summary inside Cookie banner reduction screen. Here you can set the cookie banner option to disabled or reject_all. -->
     <string name="cookie_banner_reject_all_option_summary">ნაკლებად იხილეთ ამომხტარი აბრები ფუნთუშის მოთხოვნების ავტომატურად უარყოფით, როცა კი შესაძლებელი იქნება.</string>
 
-    <!--  Checkbox Preference title inside Cookie banner reduction screen. Here you can set the cookie banner option to reject_or_accept_all or reject_all. -->
-    <string name="cookie_banner_further_reduce_option_title">ფუნთუშის მოთხოვნების მეტად შემცირება</string>
+    <!-- Preference for removing cookie/consent banners from sites automatically, this is shown as part of the protections panel with the tracking protection toggle. -->--&gt;
+    <string name="cookie_banner_exception_item_title">ფუნთუშის მოთხოვნების შემცირება</string>
 
-    <!--  Checkbox Preference summary inside Cookie banner reduction screen. Here you can set the cookie banner option to reject_or_accept_all or reject_all. -->
-    <string name="cookie_banner_further_reduce_option_summary">ფუნთუშის ამომხტარ მოთხოვნებზე თანხმობით მეტი აბრა მოცილდება.</string>
+    <!-- Text for indicating cookie banner handling is on this site, this is shown as part of the protections panel with the tracking protection toggle. -->
+    <string name="cookie_banner_exception_item_description_state_on">ჩართ. ამ საიტზე</string>
+
+    <!-- Text for indicating cookie reducer is not supported on the current site, this is shown as part of the protections panel with the tracking protection toggle. -->
+    <string name="cookie_banner_exception_site_not_supported">საიტი ჯერ არაა მხარდაჭერილი</string>
+
+    <!-- Text for indicating cookie banner handling is off this site, this is shown as part of the protections panel with the tracking protection toggle. -->
+    <string name="cookie_banner_exception_item_description_state_off">გამორთ. ამ საიტზე</string>
+
+    <!-- Preference for removing cookie/consent banners from sites automatically, this is shown when the user enters in details after he clicks on the item from protection panel. -->
+    <string name="cookie_banner_exception_panel_switch_title">ფუნთუშის მოთხოვნების შემცირება</string>
+
+    <!-- Text for indicating cookie banner handling is off this site, this is shown when the user enters in details after he clicks on the item from protection panel. -->
+    <string name="cookie_banner_exception_panel_switch_state_off">გამორთ. ამ საიტზე</string>
+
+    <!-- Text for indicating cookie banner handling is on this site, this is shown when the user enters in details after he clicks on the item from protection panel. -->
+    <string name="cookie_banner_exception_panel_switch_state_on">ჩართ. ამ საიტზე</string>
+
+    <!-- Title text for a detail explanation indicating cookie banner handling is on this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site. -->
+    <string name="cookie_banner_exception_panel_title_state_on_for_site">ჩაირთოს ფუნთუშის მოთხოვნების შემცირება საიტზე %1$s?</string>
+
+    <!-- Title text for a detail explanation indicating cookie banner handling is off this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site. -->
+    <string name="cookie_banner_exception_panel_title_state_off_for_site">გამოირთოს ფუნთუშის მოთხოვნების შემცირება საიტზე %1$s?</string>
+
+    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The placeholder will be updated with the app name. -->
+    <string name="cookie_banner_exception_panel_description_state_on_for_site">%1$s გაასუფთავებს ამ საიტის ფუნთუშებს და განაახლებს გვერდს. ყველა ფუნთუშის წაშლით შეიძლება გამოხვიდეთ ანგარიშებიდან და დაცარიელდეს საყიდლების კალათა.</string>
+
+    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The placeholder will be updated with the app name. -->
+    <string name="cookie_banner_exception_panel_description_state_off_for_site2">%1$s ეცდება თავადვე უარყოს ფუნთუშების მოთხოვნები.</string>
+
+    <!-- Long text for a detail explanation indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_description_site_is_not_supported">საიტზე ამჟამად არაა მხარდაჭერილი ფუნთუშების ნებართვების არიდება. გსურთ სთხოვოთ ჩვენს გუნდს, გადახედოს ამ ვებსაიტს და გახადოს მომავალში მხარდაჭერილი?</string>
+
+    <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_site_is_not_supported_cancel_button">გაუქმება</string>
+
+    <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_site_is_not_supported_request_support_button">მხარდაჭერის მოთხოვნა</string>
+
+    <!-- Label for the snackBar, after the user reports with success a website where cookie banner reducer did not work -->
+    <string name="cookie_banner_report_a_site_snackbar_label">მხარდაჭერის მოთხოვნა საიტისთვის გადაგზავნილია.</string>
+
+    <!-- Label for cookie banner item from tracking protection, after the user reports with success a website where cookie banner reducer did not work -->
+    <string name="cookie_banner_the_site_was_reported">მხარდაჭერის მოთხოვნა საიტისთვის გადაგზავნილია.</string>
+
+    <!-- Contextual Feature Recommendation Popups -->
+    <!-- CFR for Cookie Banner (Banner Info Message). %1$s will be replaced by the app name, %2$s will be an active link using the string cfr_cookie_banner_link as text. -->
+    <string name="cfr_cookie_banner">%1$s ცდილობს უარყოს ფუნთუშების მოთხოვნები მომაბეზრებელი აბრების მოსაცილებლად.\n\nფუნთუშების აბრების სამართავად იხილეთ %2$s.</string>
+    <!-- CFR for Cookie Banner (Banner Info Message). This string is used as text for a link in cfr_cookie_banner and takes the user to the app settings. -->
+    <string name="cfr_cookie_banner_link">პარამეტრები</string>
 
     <!-- Preference for autoplay -->
     <string name="preference_autoplay">თვითგაშვება</string>
@@ -863,8 +922,11 @@
     <!-- Label for the button in the snackbar that switches to the newly opened tab -->
     <string name="open_new_tab_snackbar">გადართვა</string>
 
+    <!-- Text displayed in a notification when the user enters full screen mode -->
+    <string name="full_screen_notification">სრულ ეკრანზე გაშლა</string>
+
     <!-- Preference for switching to a new tab immediately after opening -->
-    <string name="preference_open_new_tab">ბმულის ახალ ჩანართში გახსნისას მაშინვე მასზე გადასვლა</string>
+    <string name="preference_open_new_tab">ბმულის გახსნისას ახალ ჩანართში მაშინვე მასზე გადასვლა</string>
 
     <!-- Preference title for safe browsing which when enabled, blocks dangerous or deceptive webpages that may include phishing or malware -->
     <string name="preference_safe_browsing_title">შესაძლო საფრთხის მქონე და თაღლითური საიტების შეზღუდვა</string>
@@ -875,7 +937,7 @@
     <string name="preference_https_only_title">მხოლოდ-HTTPS-რეჟიმი</string>
 
     <!-- Description of the preference to enable "HTTPS-Only" mode. -->
-    <string name="preference_https_only_summary3">თავადვე შეეცდება დაუკავშირდეს საიტებს დაშიფრული HTTPS-ოქმით, მეტი უსაფრთხოებისთვის.</string>
+    <string name="preference_https_only_summary3">თავადვე შეეცდება დაუკავშირდეს საიტებს დაშიფრული HTTPS-ოქმით მეტი უსაფრთხოებისთვის.</string>
 
     <!-- Preference for exceptions tracking protection -->
     <string name="preference_exceptions">გამონაკლისები</string>
@@ -965,11 +1027,31 @@
 
 
     <!-- The title of the error page for websites that do not support HTTPS when HTTPS-Only is turned on  -->
-    <string name="errorpage_httpsonly_title">მოთხოვნილ საიტზე არაა მხარდაჭერილი HTTPS</string>
-    <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will get replaced with the name of the app (e.g. "Firefox Focus") -->
-    <string name="errorpage_httpsonly_message">ნაგულისხმევად, %1$s ეცდება დაუკავშირდეს HTTPS-ით, მეტი უსაფრთხოებისთვის. ამ პარამეტრის შესაცვლელად ან უკეთ გასაცნობად, იხილეთ პარამეტრები &gt; პირადულობა და უსაფრთხოება &gt; უსაფრთხოება.</string>
+    <string name="errorpage_httpsonly_title2">ამ საიტზე მხარდაუჭერელია HTTPS</string>
 
-    <!-- Sessions List -->
+    <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will get replaced with the name of the app (e.g. "Firefox Focus").
+        Contains a button that will redirect the user to Privacy & Security Screen-->
+    <string name="errorpage_httpsonly_message2"><![CDATA[%1$s ცდილობს გამოიყენოს HTTPS-კავშირი, როცა კი შესაძლებელია უსაფრთხოებისთვის.
+     <a href="%2$s">ვრცლად</a> <br/><br/>
+     შესაცვლელად იხილეთ პარამეტრები > პირადულობა და უსაფრთხოება > უსაფრთხოება.]]></string>
+
+    <!-- The document title and heading of the error page shown when a website has an invalid or expired SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_title">დაუცველი კავშირი</string>
+
+    <!-- The error message shown when a website has an invalid or expired SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_message"><![CDATA[
+    ამას შესაძლოა, საიტის გაუმართაობა ან სხვა საიტად გასაღების მცდელობა იწვევდეს. <br/><br/>
+    თუ აღნიშნულ საიტს მანამდე წარმატებით უკავშირდებოდით, ხარვეზი შეიძლება დროებითი იყოს.
+    ]]></string>
+
+     <!-- The advanced certificate information shown when a website has an invalid SSL certificate. The %1$s will be replaced by the app name and %2$s will be replaced by website URL. It's only shown when a website has an invalid SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_techInfo"><![CDATA[
+        <label>შესაძლოა, ვიღაც ამ საიტის სხვა საიტად გასაღებას ცდილობდეს და ჯობია, აღარ განაგრძოთ.</label>
+        <br><br>
+        <label>%1$s არ ენდობა <b>%2$s</b>-ს, რადგან მისი უსაფრთხოების სერტიფიკატის გამომცემი უცნობია, შეიძლება თავადვე აქვთ ხელმოწერილი ან სერვერი სათანადოდ არ აგზავნის შუალედურ სერტიფიკატებს.</label>
+    ]]></string>
+
+     <!-- Sessions List -->
     <!-- Content description (not visible, for screen readers etc.): Button that closes a tab n the sessions list -->
     <string name="close_tab">ჩანართის დახურვა</string>
 
@@ -995,13 +1077,18 @@
 
     !-- Content description (not visible, for screen readers etc.): This is the description for the
     close button from promote search widget dialog. --&gt;
+    <!-- Content description (not visible, for screen readers etc.): This is the description for the
+    close button from promote search widget dialog. -->
     <string name="promote_search_widget_dialog_content_description">დახურვა</string>
 
     !-- Content description (not visible, for screen readers etc.): This is the description for
     picture of search widget from promote search widget dialog. --&gt;
+    <!-- Content description (not visible, for screen readers etc.): This is the description for
+    picture of search widget from promote search widget dialog. -->
     <string name="promote_search_widget_dialog_picture_content_description">ვიჯეტის ძიება</string>
 
     !-- This is the title of promote search widget dialog. --&gt;
+    <!-- This is the title of promote search widget dialog. -->
     <string name="promote_search_widget_dialog_title">დათვალიერების ისტორია გასუფთავებულია! 🎉</string>
 
     !-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
@@ -1011,13 +1098,19 @@
 
     !-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
     of the app (e.g. &quot;Focus&quot;) --&gt;
+    <!-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
+    of the app (e.g. "Focus") -->
     <string name="promote_search_widget_dialog_subtitle">ახლა გადადით პირად ფანჯარაზე, თუმცა შემდეგ ჯერზე სწრაფად გახსნისთვის გამოიყენეთ %1$s-ვიჯეტი მთავარი ეკრანიდან.</string>
 
     !-- This is te text from add search widget to home screen button .The button is located on
     promote search widget dialog. --&gt;
+    <!-- This is te text from add search widget to home screen button .The button is located on
+    promote search widget dialog. -->
     <string name="promote_search_widget_button_text">ვიჯეტის დამატება მთავარ ეკრანზე</string>
 
     !-- This is te text of the snackbar that appears after the search widget was added successfully
     to the home screen. --&gt;
+    <!-- This is te text of the snackbar that appears after the search widget was added successfully
+    to the home screen. -->
     <string name="promote_search_widget_snackbar_message">ვიჯეტი დამატებულია მთავარ ეკრანზე</string>
 </resources>

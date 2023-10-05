@@ -52,7 +52,7 @@
         android:scaleType="centerInside"
         android:background="@null"
         android:contentDescription="@string/mozac_feature_downloads_button_close"
-        app:srcCompat="@drawable/mozac_ic_close"
+        app:srcCompat="@drawable/mozac_ic_cross_24"
         app:tint="?android:attr/textColorPrimary"
         tools:textColor="#000000" />
 
@@ -60,6 +60,7 @@
         android:id="@+id/filename"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:maxHeight="160dp"
         android:layout_below="@id/title"
         android:layout_alignBaseline="@id/icon"
         android:layout_marginStart="3dp"
@@ -68,6 +69,7 @@
         android:paddingStart="5dp"
         android:paddingTop="4dp"
         android:paddingEnd="5dp"
+        android:scrollbars="vertical"
         android:textColor="?android:attr/textColorPrimary"
         tools:text="@tools:sample/lorem/random"
         tools:textColor="#000000" />
@@ -85,5 +87,6 @@
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
         android:text="@string/mozac_feature_downloads_dialog_download"
+        android:textAlignment="center"
         android:textAllCaps="false" />
 </RelativeLayout>

@@ -2,14 +2,15 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion config.compileSdkVersion
-
     defaultConfig {
         minSdkVersion config.minSdkVersion
+        compileSdk config.compileSdkVersion
         targetSdkVersion config.targetSdkVersion
     }
 
@@ -27,12 +28,13 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = Versions.compose_compiler
     }
+
+    namespace 'mozilla.components.compose.browser.awesomebar'
+
 }
 
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
-    kotlinOptions {
-        freeCompilerArgs += "-Xjvm-default=all"
-    }
+tasks.withType(KotlinCompile).configureEach {
+    kotlinOptions.freeCompilerArgs += "-Xjvm-default=all"
 }
 
 dependencies {
@@ -42,21 +44,21 @@ dependencies {
     implementation project(":support-utils")
     implementation project(":ui-icons")
 
-    implementation Dependencies.kotlin_stdlib
-    implementation Dependencies.kotlin_coroutines
+    implementation ComponentsDependencies.kotlin_coroutines
 
-    implementation Dependencies.androidx_core_ktx
-    implementation Dependencies.androidx_compose_ui
-    implementation Dependencies.androidx_compose_ui_tooling
-    implementation Dependencies.androidx_compose_foundation
-    implementation Dependencies.androidx_compose_material
+    implementation ComponentsDependencies.androidx_core_ktx
+    implementation ComponentsDependencies.androidx_compose_ui
+    implementation ComponentsDependencies.androidx_compose_ui_tooling_preview
+    implementation ComponentsDependencies.androidx_compose_foundation
+    implementation ComponentsDependencies.androidx_compose_material
+
+    debugImplementation ComponentsDependencies.androidx_compose_ui_tooling
 
     testImplementation project(':support-test')
-    testImplementation Dependencies.androidx_compose_ui_test
-    testImplementation Dependencies.androidx_test_core
-    testImplementation Dependencies.androidx_test_junit
-    testImplementation Dependencies.testing_robolectric
-    testImplementation Dependencies.testing_mockito
+    testImplementation ComponentsDependencies.androidx_compose_ui_test
+    testImplementation ComponentsDependencies.androidx_test_core
+    testImplementation ComponentsDependencies.androidx_test_junit
+    testImplementation ComponentsDependencies.testing_robolectric
 }
 
 apply from: '../../../android-lint.gradle'

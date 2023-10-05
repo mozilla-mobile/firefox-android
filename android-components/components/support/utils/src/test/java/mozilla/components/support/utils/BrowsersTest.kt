@@ -30,7 +30,7 @@ class BrowsersTest {
         val browsers = Browsers.all(testContext)
 
         assertNull(browsers.defaultBrowser)
-        assertNull(browsers.firefoxBrandedBrowser)
+        assertNull(browsers.mozillaBrandedBrowser)
         assertFalse(browsers.hasFirefoxBrandedBrowserInstalled)
         assertTrue(browsers.installedBrowsers.isEmpty())
         assertFalse(browsers.hasThirdPartyDefaultBrowser)
@@ -50,8 +50,8 @@ class BrowsersTest {
         assertNotNull(browsers.defaultBrowser)
         assertEquals(Browsers.KnownBrowser.FIREFOX.packageName, browsers.defaultBrowser!!.packageName)
 
-        assertNotNull(browsers.firefoxBrandedBrowser)
-        assertEquals(Browsers.KnownBrowser.FIREFOX.packageName, browsers.firefoxBrandedBrowser!!.packageName)
+        assertNotNull(browsers.mozillaBrandedBrowser)
+        assertEquals(Browsers.KnownBrowser.FIREFOX.packageName, browsers.mozillaBrandedBrowser!!.packageName)
 
         assertTrue(browsers.hasFirefoxBrandedBrowserInstalled)
 
@@ -82,8 +82,8 @@ class BrowsersTest {
         assertNotNull(browsers.defaultBrowser)
         assertEquals(Browsers.KnownBrowser.REFERENCE_BROWSER.packageName, browsers.defaultBrowser!!.packageName)
 
-        assertNotNull(browsers.firefoxBrandedBrowser)
-        assertEquals(Browsers.KnownBrowser.FIREFOX.packageName, browsers.firefoxBrandedBrowser!!.packageName)
+        assertNotNull(browsers.mozillaBrandedBrowser)
+        assertEquals(Browsers.KnownBrowser.FIREFOX.packageName, browsers.mozillaBrandedBrowser!!.packageName)
 
         assertTrue(browsers.hasFirefoxBrandedBrowserInstalled)
 
@@ -105,6 +105,18 @@ class BrowsersTest {
         assertFalse(browsers.isInstalled(Browsers.KnownBrowser.FIREFOX_BETA))
         assertFalse(browsers.isInstalled(Browsers.KnownBrowser.ANDROID_STOCK_BROWSER))
         assertFalse(browsers.isInstalled(Browsers.KnownBrowser.UC_BROWSER))
+
+        assertTrue(browsers.isInstalled(Browsers.KnownBrowser.REFERENCE_BROWSER.packageName))
+        assertTrue(browsers.isInstalled(Browsers.KnownBrowser.FIREFOX_NIGHTLY.packageName))
+        assertTrue(browsers.isInstalled(Browsers.KnownBrowser.FIREFOX.packageName))
+        assertTrue(browsers.isInstalled(Browsers.KnownBrowser.CHROME.packageName))
+        assertTrue(browsers.isInstalled(Browsers.KnownBrowser.REFERENCE_BROWSER.packageName))
+        assertTrue(browsers.isInstalled(Browsers.KnownBrowser.DUCKDUCKGO.packageName))
+
+        assertFalse(browsers.isInstalled(Browsers.KnownBrowser.CHROME_BETA.packageName))
+        assertFalse(browsers.isInstalled(Browsers.KnownBrowser.FIREFOX_BETA.packageName))
+        assertFalse(browsers.isInstalled(Browsers.KnownBrowser.ANDROID_STOCK_BROWSER.packageName))
+        assertFalse(browsers.isInstalled(Browsers.KnownBrowser.UC_BROWSER.packageName))
     }
 
     @Test
@@ -117,7 +129,7 @@ class BrowsersTest {
         val browsers = Browsers.all(testContext)
 
         assertEquals(Browsers.KnownBrowser.FIREFOX_BETA.packageName, browsers.defaultBrowser!!.packageName)
-        assertEquals(Browsers.KnownBrowser.FIREFOX_BETA.packageName, browsers.firefoxBrandedBrowser!!.packageName)
+        assertEquals(Browsers.KnownBrowser.FIREFOX_BETA.packageName, browsers.mozillaBrandedBrowser!!.packageName)
         assertTrue(browsers.hasFirefoxBrandedBrowserInstalled)
         assertTrue(browsers.isFirefoxDefaultBrowser)
     }
@@ -132,7 +144,7 @@ class BrowsersTest {
         val browsers = Browsers.all(testContext)
 
         assertEquals(Browsers.KnownBrowser.FIREFOX_NIGHTLY.packageName, browsers.defaultBrowser!!.packageName)
-        assertEquals(Browsers.KnownBrowser.FIREFOX_NIGHTLY.packageName, browsers.firefoxBrandedBrowser!!.packageName)
+        assertEquals(Browsers.KnownBrowser.FIREFOX_NIGHTLY.packageName, browsers.mozillaBrandedBrowser!!.packageName)
         assertTrue(browsers.hasFirefoxBrandedBrowserInstalled)
         assertTrue(browsers.isFirefoxDefaultBrowser)
     }
@@ -147,7 +159,7 @@ class BrowsersTest {
         val browsers = Browsers.all(testContext)
 
         assertEquals(Browsers.KnownBrowser.FIREFOX_AURORA.packageName, browsers.defaultBrowser!!.packageName)
-        assertEquals(Browsers.KnownBrowser.FIREFOX_AURORA.packageName, browsers.firefoxBrandedBrowser!!.packageName)
+        assertEquals(Browsers.KnownBrowser.FIREFOX_AURORA.packageName, browsers.mozillaBrandedBrowser!!.packageName)
         assertTrue(browsers.hasFirefoxBrandedBrowserInstalled)
         assertTrue(browsers.isFirefoxDefaultBrowser)
     }
@@ -162,7 +174,7 @@ class BrowsersTest {
         val browsers = Browsers.all(testContext)
 
         assertEquals(Browsers.KnownBrowser.FIREFOX_FDROID.packageName, browsers.defaultBrowser!!.packageName)
-        assertEquals(Browsers.KnownBrowser.FIREFOX_FDROID.packageName, browsers.firefoxBrandedBrowser!!.packageName)
+        assertEquals(Browsers.KnownBrowser.FIREFOX_FDROID.packageName, browsers.mozillaBrandedBrowser!!.packageName)
         assertTrue(browsers.hasFirefoxBrandedBrowserInstalled)
         assertTrue(browsers.isFirefoxDefaultBrowser)
     }
@@ -195,7 +207,7 @@ class BrowsersTest {
         val browsers = Browsers.all(testContext)
 
         assertEquals("org.example.unknown.browser", browsers.defaultBrowser!!.packageName)
-        assertNull(browsers.firefoxBrandedBrowser)
+        assertNull(browsers.mozillaBrandedBrowser)
         assertFalse(browsers.hasFirefoxBrandedBrowserInstalled)
         assertEquals(2, browsers.installedBrowsers.size)
         assertTrue(browsers.hasThirdPartyDefaultBrowser)
@@ -225,7 +237,7 @@ class BrowsersTest {
         val browsers = Browsers.all(testContext)
 
         assertNull(browsers.defaultBrowser)
-        assertEquals(Browsers.KnownBrowser.FIREFOX.packageName, browsers.firefoxBrandedBrowser!!.packageName)
+        assertEquals(Browsers.KnownBrowser.FIREFOX.packageName, browsers.mozillaBrandedBrowser!!.packageName)
         assertTrue(browsers.hasFirefoxBrandedBrowserInstalled)
         browsers.installedBrowsers.forEach { println(it.packageName + " : " + it.exported) }
         assertEquals(2, browsers.installedBrowsers.size)
@@ -255,7 +267,7 @@ class BrowsersTest {
         val browsers = Browsers.all(testContext)
 
         assertNull(browsers.defaultBrowser)
-        assertEquals(Browsers.KnownBrowser.FIREFOX.packageName, browsers.firefoxBrandedBrowser!!.packageName)
+        assertEquals(Browsers.KnownBrowser.FIREFOX.packageName, browsers.mozillaBrandedBrowser!!.packageName)
         assertTrue(browsers.hasFirefoxBrandedBrowserInstalled)
         browsers.installedBrowsers.forEach { println(it.packageName + " : " + it.exported) }
         assertFalse(browsers.hasThirdPartyDefaultBrowser)
@@ -266,7 +278,7 @@ class BrowsersTest {
         val browsers = Browsers.forUrl(testContext, SAMPLE_BROWSER_HTTP_URL)
 
         assertNull(browsers.defaultBrowser)
-        assertNull(browsers.firefoxBrandedBrowser)
+        assertNull(browsers.mozillaBrandedBrowser)
         assertFalse(browsers.hasFirefoxBrandedBrowserInstalled)
         assertTrue(browsers.installedBrowsers.isEmpty())
         assertFalse(browsers.hasThirdPartyDefaultBrowser)
@@ -286,8 +298,8 @@ class BrowsersTest {
         assertNotNull(browsers.defaultBrowser)
         assertEquals(Browsers.KnownBrowser.FIREFOX.packageName, browsers.defaultBrowser!!.packageName)
 
-        assertNotNull(browsers.firefoxBrandedBrowser)
-        assertEquals(Browsers.KnownBrowser.FIREFOX.packageName, browsers.firefoxBrandedBrowser!!.packageName)
+        assertNotNull(browsers.mozillaBrandedBrowser)
+        assertEquals(Browsers.KnownBrowser.FIREFOX.packageName, browsers.mozillaBrandedBrowser!!.packageName)
 
         assertTrue(browsers.hasFirefoxBrandedBrowserInstalled)
 
@@ -308,7 +320,7 @@ class BrowsersTest {
         val browsers = Browsers.forUrl(testContext, "not-a-uri")
 
         assertNull(browsers.defaultBrowser)
-        assertNull(browsers.firefoxBrandedBrowser)
+        assertNull(browsers.mozillaBrandedBrowser)
         assertFalse(browsers.hasFirefoxBrandedBrowserInstalled)
         assertTrue(browsers.installedBrowsers.isEmpty())
         assertFalse(browsers.hasThirdPartyDefaultBrowser)

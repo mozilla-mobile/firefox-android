@@ -7,7 +7,6 @@ package mozilla.components.browser.thumbnails.loader
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.widget.ImageView
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Job
 import mozilla.components.browser.thumbnails.R
@@ -19,13 +18,10 @@ import mozilla.components.support.test.mock
 import mozilla.components.support.test.rule.MainCoroutineRule
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.mockito.Mockito.doReturn
 import org.mockito.Mockito.never
 import org.mockito.Mockito.spy
 import org.mockito.Mockito.verify
-
-@RunWith(AndroidJUnit4::class)
 class ThumbnailLoaderTest {
 
     @get:Rule
@@ -38,7 +34,7 @@ class ThumbnailLoaderTest {
         val view: ImageView = mock()
         val storage: ThumbnailStorage = mock()
         val loader = spy(ThumbnailLoader(storage))
-        val request = ImageLoadRequest("123", 100)
+        val request = ImageLoadRequest("123", 100, false)
 
         doReturn(result).`when`(storage).loadThumbnail(request)
 
@@ -63,7 +59,7 @@ class ThumbnailLoaderTest {
         val error: Drawable = mock()
         val storage: ThumbnailStorage = mock()
         val loader = spy(ThumbnailLoader(storage))
-        val request = ImageLoadRequest("123", 100)
+        val request = ImageLoadRequest("123", 100, false)
 
         doReturn(result).`when`(storage).loadThumbnail(request)
 
@@ -83,7 +79,7 @@ class ThumbnailLoaderTest {
         val previousJob: Job = mock()
         val storage: ThumbnailStorage = mock()
         val loader = spy(ThumbnailLoader(storage))
-        val request = ImageLoadRequest("123", 100)
+        val request = ImageLoadRequest("123", 100, false)
 
         doReturn(previousJob).`when`(view).getTag(R.id.mozac_browser_thumbnails_tag_job)
         doReturn(result).`when`(storage).loadThumbnail(request)

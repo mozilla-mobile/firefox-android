@@ -3,8 +3,7 @@
    - License, v. 2.0. If a copy of the MPL was not distributed with this
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="org.mozilla.samples.browser">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
@@ -152,14 +151,13 @@
             tools:ignore="ExportedService">
             <intent-filter>
                 <action android:name="android.support.customtabs.action.CustomTabsService" />
-                <category android:name="androidx.browser.trusted.category.TrustedWebActivities" />
-                <category android:name="androidx.browser.trusted.category.NavBarColorCustomization" />
             </intent-filter>
         </service>
 
         <service android:name=".downloads.DownloadService" />
 
         <service android:name=".media.MediaSessionService"
+            android:foregroundServiceType="mediaPlayback"
             android:exported="false" />
 
     </application>

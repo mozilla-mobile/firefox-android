@@ -7,10 +7,9 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-parcelize'
 
 android {
-    compileSdkVersion config.compileSdkVersion
-
     defaultConfig {
         minSdkVersion config.minSdkVersion
+        compileSdk config.compileSdkVersion
         targetSdkVersion config.targetSdkVersion
     }
 
@@ -20,20 +19,21 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    namespace 'mozilla.components.concept.storage'
 }
 
 dependencies {
     // Necessary because we use 'suspend'. Fun fact: this module will compile just fine without this
     // dependency, but it will crash at runtime.
     // Included via 'api' because this module is unusable without coroutines.
-    api Dependencies.kotlin_coroutines
+    api ComponentsDependencies.kotlin_coroutines
 
     implementation project(':support-ktx')
-    implementation Dependencies.androidx_annotation
+    implementation ComponentsDependencies.androidx_annotation
 
     testImplementation project(':support-test')
-    testImplementation Dependencies.testing_junit
-    testImplementation Dependencies.testing_mockito
+    testImplementation ComponentsDependencies.testing_junit
 }
 
 apply from: '../../../android-lint.gradle'

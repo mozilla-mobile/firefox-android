@@ -54,7 +54,7 @@
     <string name="menu_remove_from_shortcuts">Forigi el ŝparvojoj</string>
 
     <!-- Menu item: Shows information about features and changes that are new to this version -->
-    <string name="menu_whats_new">Novaĵoj</string>
+    <string name="menu_whats_new" moz:RemovedIn="116" tools:ignore="UnusedResources">Novaĵoj</string>
     <string name="menu_settings">Agordoj</string>
     <string name="menu_about">Pri</string>
     <string name="menu_help">Helpo</string>
@@ -354,6 +354,15 @@
     <!-- In-app link (in settings) to Focus privacy notice. -->
     <string name="preference_privacy_notice">Rimarko pri privateco</string>
 
+    <!-- In-app link (in settings) to Focus licensing information. -->
+    <string name="preference_licensing_info">Permesila informo</string>
+
+    <!-- Link to Focus licensing information from other libraries that we use. -->
+    <string name="preference_libraries_we_use">Bibliotekoj uzataj de ni</string>
+
+    <!-- Open Source Licenses page title. The first parameter is the app name -->
+    <string name="open_source_licenses_title">%s | Malfermitkodaj bibliotekoj</string>
+
     <!-- Item in Preferences that shows the about page. Parameter 1 is the app name, i.e. Firefox Focus/Firefox Klar. -->
     <string name="preference_about">Pri %1$s</string>
 
@@ -483,7 +492,10 @@
 
 
 
-  <string name="error_hostLookup_title">Servilo ne trovita</string>
+  <!-- Snackbar that will be displayed after a website has been added to shortcuts. -->
+    <string name="snackbar_added_to_shortcuts">Aldonita al ŝparvojoj!</string>
+
+    <string name="error_hostLookup_title">Servilo ne trovita</string>
 
 
 
@@ -700,11 +712,60 @@
     <!--  Preference summary inside Cookie banner reduction screen. Here you can set the cookie banner option to disabled or reject_all. -->
     <string name="cookie_banner_reject_all_option_summary">Montri malpli da anoncoj per aŭtomata rifuzo de kuketaj petoj, kiam tio eblas.</string>
 
-    <!--  Checkbox Preference title inside Cookie banner reduction screen. Here you can set the cookie banner option to reject_or_accept_all or reject_all. -->
-    <string name="cookie_banner_further_reduce_option_title">Pluredukti kuketajn anoncojn</string>
+    <!-- Preference for removing cookie/consent banners from sites automatically, this is shown as part of the protections panel with the tracking protection toggle. -->--&gt;
+    <string name="cookie_banner_exception_item_title">Redukto de kuketaj anoncoj</string>
 
-    <!--  Checkbox Preference summary inside Cookie banner reduction screen. Here you can set the cookie banner option to reject_or_accept_all or reject_all. -->
-    <string name="cookie_banner_further_reduce_option_summary">Petoj de kuketaj anoncoj estos akceptitaj por ignori pliajn anoncojn.</string>
+    <!-- Text for indicating cookie banner handling is on this site, this is shown as part of the protections panel with the tracking protection toggle. -->
+    <string name="cookie_banner_exception_item_description_state_on">Ŝaltita por tiu ĉi retejo</string>
+
+    <!-- Text for indicating cookie reducer is not supported on the current site, this is shown as part of the protections panel with the tracking protection toggle. -->
+    <string name="cookie_banner_exception_site_not_supported">Retejo nuntempe ne subtenata</string>
+
+    <!-- Text for indicating cookie banner handling is off this site, this is shown as part of the protections panel with the tracking protection toggle. -->
+    <string name="cookie_banner_exception_item_description_state_off">Malŝaltita por tiu ĉi retejo</string>
+
+    <!-- Preference for removing cookie/consent banners from sites automatically, this is shown when the user enters in details after he clicks on the item from protection panel. -->
+    <string name="cookie_banner_exception_panel_switch_title">Redukto de kuketaj anoncoj</string>
+
+    <!-- Text for indicating cookie banner handling is off this site, this is shown when the user enters in details after he clicks on the item from protection panel. -->
+    <string name="cookie_banner_exception_panel_switch_state_off">Malŝaltita por tiu ĉi retejo</string>
+
+    <!-- Text for indicating cookie banner handling is on this site, this is shown when the user enters in details after he clicks on the item from protection panel. -->
+    <string name="cookie_banner_exception_panel_switch_state_on">Ŝaltita por tiu ĉi retejo</string>
+
+    <!-- Title text for a detail explanation indicating cookie banner handling is on this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site. -->
+    <string name="cookie_banner_exception_panel_title_state_on_for_site">Ĉu ŝalti la redukton de kuketaj anoncoj en %1$s?</string>
+
+    <!-- Title text for a detail explanation indicating cookie banner handling is off this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site. -->
+    <string name="cookie_banner_exception_panel_title_state_off_for_site">Ĉu malŝalti la redukton de kuketaj anoncoj en %1$s?</string>
+
+    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The placeholder will be updated with the app name. -->
+    <string name="cookie_banner_exception_panel_description_state_on_for_site">%1$s forigos la kuketojn de tiuj ĉi retejo kaj reŝargos la paĝon. Forigo de ĉiuj kuketoj povas fini seancojn aŭ malplenigi aĉetumĉarojn.</string>
+
+    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The placeholder will be updated with the app name. -->
+    <string name="cookie_banner_exception_panel_description_state_off_for_site2">%1$s povas aŭtomate rifuzi kuketajn petojn.</string>
+
+    <!-- Long text for a detail explanation indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_description_site_is_not_supported">Tiu ĉi retejo ne estas subtenata de la redukto de kuketaj anoncoj. Ĉu vi ŝatus peti al ni revizii tiun ĉi retejon, por subteni ĝin estontece?</string>
+
+    <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_site_is_not_supported_cancel_button">Nuligi</string>
+
+    <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_site_is_not_supported_request_support_button">Peti subtenon</string>
+
+    <!-- Label for the snackBar, after the user reports with success a website where cookie banner reducer did not work -->
+    <string name="cookie_banner_report_a_site_snackbar_label">La peto pri subteno de retejo estis sendita.</string>
+
+    <!-- Label for cookie banner item from tracking protection, after the user reports with success a website where cookie banner reducer did not work -->
+    <string name="cookie_banner_the_site_was_reported">La peto pri subteno de retejo estis sendita.</string>
+
+    <!-- Contextual Feature Recommendation Popups -->
+    <!-- CFR for Cookie Banner (Banner Info Message). %1$s will be replaced by the app name, %2$s will be an active link using the string cfr_cookie_banner_link as text. -->
+    <string name="cfr_cookie_banner">%1$s klopodas rifuzi kuketajn petojn por ignori ĝenajn anoncojn.\n\nAdministru viajn preferojn pri kuketaj anoncoj en %2$s.</string>
+
+    <!-- CFR for Cookie Banner (Banner Info Message). This string is used as text for a link in cfr_cookie_banner and takes the user to the app settings. -->
+    <string name="cfr_cookie_banner_link">agordoj</string>
 
     <!-- Preference for autoplay -->
     <string name="preference_autoplay">Aŭtomata ludado</string>
@@ -862,6 +923,9 @@
     <!-- Label for the button in the snackbar that switches to the newly opened tab -->
     <string name="open_new_tab_snackbar">Ŝanĝi</string>
 
+    <!-- Text displayed in a notification when the user enters full screen mode -->
+    <string name="full_screen_notification">Plenekrana reĝimo aktiva</string>
+
     <!-- Preference for switching to a new tab immediately after opening -->
     <string name="preference_open_new_tab">Iri tuj al la ligilo en nova langeto</string>
 
@@ -965,11 +1029,29 @@
     <string name="preference_follow_device_theme">Uzi la etoson de la aparato</string>
 
     <!-- The title of the error page for websites that do not support HTTPS when HTTPS-Only is turned on  -->
-    <string name="errorpage_httpsonly_title">La retejo petita de vi ne subtenas HTTPS</string>
-    <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will get replaced with the name of the app (e.g. "Firefox Focus") -->
-    <string name="errorpage_httpsonly_message">%1$s klopodas norme konekti per HTTPS por pli sekura aliro. Por ŝanĝi tiun ĉi agordon aŭ por trovi pli da informo iru al Agordoj &gt; Privateco kaj sekureco &gt; Sekureco.</string>
+    <string name="errorpage_httpsonly_title2">Tiu ĉi retejo ne subtenas HTTPS</string>
 
-    <!-- Sessions List -->
+     <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will get replaced with the name of the app (e.g. "Firefox Focus").
+        Contains a button that will redirect the user to Privacy & Security Screen-->
+    <string name="errorpage_httpsonly_message2"><![CDATA[%1$s klopodas uzi konekton HTTPS, kiam tio eblas, pro sekureco.
+     <a href="%2$s">Pli da informo</a> <br/><br/>
+     Ŝanĝu tiun ĉi agordon en Agordoj > Privateco kaj sekureco > Sekureco.]]></string>
+
+    <!-- The document title and heading of the error page shown when a website has an invalid or expired SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_title">Nesekura konekto</string>
+
+    <!-- The error message shown when a website has an invalid or expired SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_message"><![CDATA[
+    Tio povus esti problemo kun la agordoj de la servilo, aŭ iu kiu klopodas trompe ŝajnigi esti tiu servilo. <br/><br/>
+    Se vi sukcese konektiĝis al tiu ĉi servilo en la pasinto, la eraro povas esti momenta.    ]]></string>
+
+    <!-- The advanced certificate information shown when a website has an invalid SSL certificate. The %1$s will be replaced by the app name and %2$s will be replaced by website URL. It's only shown when a website has an invalid SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_techInfo"><![CDATA[<label>Iu povus voli trompe aspekti kiel tiu retejo, kaj daŭrigo estas riska.</label>
+        <br><br>
+<label>%1$s ne fidas <b>%2$s</b> ĉar la eldoninto de ĝia atestilo estas nekonata, la atestilo estas memsubskribita aŭ la servilo ne sendas la ĝustajn perajn atestilojn.</label>
+]]></string>
+
+     <!-- Sessions List -->
     <!-- Content description (not visible, for screen readers etc.): Button that closes a tab n the sessions list -->
     <string name="close_tab">Fermi langeton</string>
 
@@ -995,13 +1077,18 @@
 
     !-- Content description (not visible, for screen readers etc.): This is the description for the
     close button from promote search widget dialog. --&gt;
+    <!-- Content description (not visible, for screen readers etc.): This is the description for the
+    close button from promote search widget dialog. -->
     <string name="promote_search_widget_dialog_content_description">Fermi</string>
 
     !-- Content description (not visible, for screen readers etc.): This is the description for
     picture of search widget from promote search widget dialog. --&gt;
+    <!-- Content description (not visible, for screen readers etc.): This is the description for
+    picture of search widget from promote search widget dialog. -->
     <string name="promote_search_widget_dialog_picture_content_description">Serĉila komponanto</string>
 
     !-- This is the title of promote search widget dialog. --&gt;
+    <!-- This is the title of promote search widget dialog. -->
     <string name="promote_search_widget_dialog_title">Retuma historio viŝita! 🎉</string>
 
     !-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
@@ -1011,13 +1098,19 @@
 
     !-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
     of the app (e.g. &quot;Focus&quot;) --&gt;
+    <!-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
+    of the app (e.g. "Focus") -->
     <string name="promote_search_widget_dialog_subtitle">Plu retumu private, sed venontfoje komencu tion pli rapide per komponanto de %1$s en via hejmekrano.</string>
 
     !-- This is te text from add search widget to home screen button .The button is located on
     promote search widget dialog. --&gt;
+    <!-- This is te text from add search widget to home screen button .The button is located on
+    promote search widget dialog. -->
     <string name="promote_search_widget_button_text">Aldoni komponanton al hejmekrano</string>
 
     !-- This is te text of the snackbar that appears after the search widget was added successfully
     to the home screen. --&gt;
+    <!-- This is te text of the snackbar that appears after the search widget was added successfully
+    to the home screen. -->
     <string name="promote_search_widget_snackbar_message">Komponanto aldonita al hejmekrano</string>
 </resources>

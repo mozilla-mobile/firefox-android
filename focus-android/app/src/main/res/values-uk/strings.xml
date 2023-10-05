@@ -353,6 +353,15 @@
     <!-- In-app link (in settings) to Focus privacy notice. -->
     <string name="preference_privacy_notice">Повідомлення про приватність</string>
 
+    <!-- In-app link (in settings) to Focus licensing information. -->
+    <string name="preference_licensing_info">Інформація про ліцензію</string>
+
+    <!-- Link to Focus licensing information from other libraries that we use. -->
+    <string name="preference_libraries_we_use">Бібліотеки, які ми використовуємо</string>
+
+    <!-- Open Source Licenses page title. The first parameter is the app name -->
+    <string name="open_source_licenses_title">%s | Вільні бібліотеки</string>
+
     <!-- Item in Preferences that shows the about page. Parameter 1 is the app name, i.e. Firefox Focus/Firefox Klar. -->
     <string name="preference_about">Про %1$s</string>
 
@@ -482,7 +491,10 @@
 
 
 
-  <string name="error_hostLookup_title">Сервер не знайдено</string>
+  <!-- Snackbar that will be displayed after a website has been added to shortcuts. -->
+    <string name="snackbar_added_to_shortcuts">Додано до ярликів!</string>
+
+    <string name="error_hostLookup_title">Сервер не знайдено</string>
 
 
 
@@ -701,17 +713,14 @@
     <!--  Preference summary inside Cookie banner reduction screen. Here you can set the cookie banner option to disabled or reject_all. -->
     <string name="cookie_banner_reject_all_option_summary">Переглядайте менше банерів, автоматично відхиляючи запити на збереження кук, коли це можливо.</string>
 
-    <!--  Checkbox Preference title inside Cookie banner reduction screen. Here you can set the cookie banner option to reject_or_accept_all or reject_all. -->
-    <string name="cookie_banner_further_reduce_option_title">Подальше зменшення банерів кук</string>
-
-    <!--  Checkbox Preference summary inside Cookie banner reduction screen. Here you can set the cookie banner option to reject_or_accept_all or reject_all. -->
-    <string name="cookie_banner_further_reduce_option_summary">Банери запитів на збереження кук будуть прийняті, щоб відхилити більше банерів.</string>
-
     <!-- Preference for removing cookie/consent banners from sites automatically, this is shown as part of the protections panel with the tracking protection toggle. -->--&gt;
     <string name="cookie_banner_exception_item_title">Зменшення кількості банерів кук</string>
 
     <!-- Text for indicating cookie banner handling is on this site, this is shown as part of the protections panel with the tracking protection toggle. -->
     <string name="cookie_banner_exception_item_description_state_on">УВІМКНЕНО для цього сайту</string>
+
+    <!-- Text for indicating cookie reducer is not supported on the current site, this is shown as part of the protections panel with the tracking protection toggle. -->
+    <string name="cookie_banner_exception_site_not_supported">Сайт наразі не підтримується</string>
 
     <!-- Text for indicating cookie banner handling is off this site, this is shown as part of the protections panel with the tracking protection toggle. -->
     <string name="cookie_banner_exception_item_description_state_off">ВИМКНЕНО для цього сайту</string>
@@ -735,7 +744,29 @@
     <string name="cookie_banner_exception_panel_description_state_on_for_site">%1$s очистить куки цього сайту та оновить сторінку. Очищення всіх кук може призвести до виходу з облікових записів або спорожнення кошика для покупок.</string>
 
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The placeholder will be updated with the app name. -->
-    <string name="cookie_banner_exception_panel_description_state_off_for_site">%1$s може спробувати автоматично відхилити запити на розміщення кук. Якщо опція відхилення недоступна, %1$s може погодитися на всі куки, щоб закрити банер.</string>
+    <string name="cookie_banner_exception_panel_description_state_off_for_site2">%1$s може намагатися автоматично відхиляти запити на збереження кук.</string>
+
+    <!-- Long text for a detail explanation indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_description_site_is_not_supported">Цей сайт наразі не підтримується функцією зменшення кількості банерів кук. Хочете звернутися до нашої команди, щоб ми розглянули можливість додати підтримку цього вебсайту майбутньому?</string>
+
+    <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_site_is_not_supported_cancel_button">Скасувати</string>
+
+    <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_site_is_not_supported_request_support_button">Звернутися по підтримку</string>
+
+    <!-- Label for the snackBar, after the user reports with success a website where cookie banner reducer did not work -->
+    <string name="cookie_banner_report_a_site_snackbar_label">Запит на підтримку сайту надіслано.</string>
+
+    <!-- Label for cookie banner item from tracking protection, after the user reports with success a website where cookie banner reducer did not work -->
+    <string name="cookie_banner_the_site_was_reported">Запит на підтримку сайту надіслано.</string>
+
+    <!-- Contextual Feature Recommendation Popups -->
+    <!-- CFR for Cookie Banner (Banner Info Message). %1$s will be replaced by the app name, %2$s will be an active link using the string cfr_cookie_banner_link as text. -->
+    <string name="cfr_cookie_banner">%1$s намагається відхиляти запити про збереження кук, щоб уникнути надокучливих банерів кук.\n\nКеруйте поведінкою банерів кук в %2$s.</string>
+
+    <!-- CFR for Cookie Banner (Banner Info Message). This string is used as text for a link in cfr_cookie_banner and takes the user to the app settings. -->
+    <string name="cfr_cookie_banner_link">налаштуваннях</string>
 
     <!-- Preference for autoplay -->
     <string name="preference_autoplay">Автовідтворення</string>
@@ -816,7 +847,7 @@
     <string name="studies_completed">Завершено</string>
 
     <!-- Preference to enable remote debugging of the app via USB or Wi-Fi -->
-    <string name="preference_remote_debugging">Віддалене зневадження через USB/Wi-Fi</string>
+    <string name="preference_remote_debugging">Віддалене налагодження через USB/Wi-Fi</string>
 
     <!-- Text Button for show biometric prompt -->
     <string name="show_biometric_button_text">Розблокувати</string>
@@ -892,6 +923,9 @@
 
     <!-- Label for the button in the snackbar that switches to the newly opened tab -->
     <string name="open_new_tab_snackbar">Перемкнути</string>
+
+    <!-- Text displayed in a notification when the user enters full screen mode -->
+    <string name="full_screen_notification">Вхід у повноекранний режим</string>
 
     <!-- Preference for switching to a new tab immediately after opening -->
     <string name="preference_open_new_tab">Негайно перемикати на посилання в новій вкладці</string>
@@ -995,11 +1029,31 @@
 
 
     <!-- The title of the error page for websites that do not support HTTPS when HTTPS-Only is turned on  -->
-    <string name="errorpage_httpsonly_title">Запитаний сайт не підтримує HTTPS</string>
-    <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will get replaced with the name of the app (e.g. "Firefox Focus") -->
-    <string name="errorpage_httpsonly_message">Типово, %1$s намагається встановити з’єднання за протоколом HTTPS для підвищення безпеки. Щоб змінити цей параметр чи дізнатися більше, перейдіть в Налаштування &gt; Приватність і безпека &gt; Безпека.</string>
+    <string name="errorpage_httpsonly_title2">Цей сайт не підтримує HTTPS</string>
 
-    <!-- Sessions List -->
+    <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will get replaced with the name of the app (e.g. "Firefox Focus").
+        Contains a button that will redirect the user to Privacy & Security Screen-->
+    <string name="errorpage_httpsonly_message2"><![CDATA[%1$s намагається використовувати HTTPS-з’єднання, коли це можливо для підвищення безпеки.
+     <a href="%2$s">Докладніше</a> <br/><br/>
+     Змініть це налаштування перейшовши до Налаштування > Приватність і безпека > Безпека.]]></string>
+
+    <!-- The document title and heading of the error page shown when a website has an invalid or expired SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_title">Незахищене зʼєднання</string>
+
+    <!-- The error message shown when a website has an invalid or expired SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_message"><![CDATA[
+    Це може бути проблема з конфігурацією сервера, або, можливо, хтось намагається імітувати той сервер. <br/><br/>
+    Якщо ви раніше отримували доступ до цього сервера, то це може бути тимчасова помилка.
+    ]]></string>
+
+    <!-- The advanced certificate information shown when a website has an invalid SSL certificate. The %1$s will be replaced by the app name and %2$s will be replaced by website URL. It's only shown when a website has an invalid SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_techInfo"><![CDATA[
+        <label>Хтось може намагатися видати себе за сайт. Подальший перехід може бути ризикованим.</label>
+        <br><br>
+        <label>%1$s не довіряє <b>%2$s</b>, тому що видавець його сертифіката невідомий, сертифікат самопідписаний, або сервер не надсилає правильні посередницькі сертифікати</label>
+    ]]></string>
+
+     <!-- Sessions List -->
     <!-- Content description (not visible, for screen readers etc.): Button that closes a tab n the sessions list -->
     <string name="close_tab">Закрити вкладку</string>
 
@@ -1025,13 +1079,18 @@
 
     !-- Content description (not visible, for screen readers etc.): This is the description for the
     close button from promote search widget dialog. --&gt;
+    <!-- Content description (not visible, for screen readers etc.): This is the description for the
+    close button from promote search widget dialog. -->
     <string name="promote_search_widget_dialog_content_description">Закрити</string>
 
     !-- Content description (not visible, for screen readers etc.): This is the description for
     picture of search widget from promote search widget dialog. --&gt;
+    <!-- Content description (not visible, for screen readers etc.): This is the description for
+    picture of search widget from promote search widget dialog. -->
     <string name="promote_search_widget_dialog_picture_content_description">Віджет пошуку</string>
 
     !-- This is the title of promote search widget dialog. --&gt;
+    <!-- This is the title of promote search widget dialog. -->
     <string name="promote_search_widget_dialog_title">Історію перегляду очищено! 🎉</string>
 
     !-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
@@ -1041,13 +1100,19 @@
 
     !-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
     of the app (e.g. &quot;Focus&quot;) --&gt;
+    <!-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
+    of the app (e.g. "Focus") -->
     <string name="promote_search_widget_dialog_subtitle">Ми залишимо вас у режимі приватного перегляду, але наступного разу розпочніть роботу швидше за допомогою віджета %1$s на головному екрані.</string>
 
     !-- This is te text from add search widget to home screen button .The button is located on
     promote search widget dialog. --&gt;
+    <!-- This is te text from add search widget to home screen button .The button is located on
+    promote search widget dialog. -->
     <string name="promote_search_widget_button_text">Додати віджет на головний екран</string>
 
     !-- This is te text of the snackbar that appears after the search widget was added successfully
     to the home screen. --&gt;
+    <!-- This is te text of the snackbar that appears after the search widget was added successfully
+    to the home screen. -->
     <string name="promote_search_widget_snackbar_message">Віджет додано на головний екран</string>
 </resources>

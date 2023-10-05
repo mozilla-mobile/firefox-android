@@ -4,17 +4,14 @@
 
 package mozilla.components.service.pocket
 
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import mozilla.components.service.pocket.helpers.assertClassVisibility
 import mozilla.components.support.base.worker.Frequency
 import mozilla.components.support.test.mock
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
-import org.junit.runner.RunWith
 import kotlin.reflect.KVisibility
 
-@RunWith(AndroidJUnit4::class)
 class PocketStoriesConfigTest {
     @Test
     fun `GIVEN a PocketStoriesConfig THEN its visibility is internal`() {
@@ -52,5 +49,14 @@ class PocketStoriesConfigTest {
     @Test
     fun `GIVEN a Frequency THEN its visibility is internal`() {
         assertClassVisibility(Frequency::class, KVisibility.PUBLIC)
+    }
+
+    @Test
+    fun `WHEN instantiating a PocketStoriesConfig THEN sponsoredStoriesParams default value is used`() {
+        val config = PocketStoriesConfig(mock())
+
+        assertEquals(DEFAULT_SPONSORED_STORIES_SITE_ID, config.sponsoredStoriesParams.siteId)
+        assertEquals("", config.sponsoredStoriesParams.country)
+        assertEquals("", config.sponsoredStoriesParams.city)
     }
 }

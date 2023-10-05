@@ -1,8 +1,6 @@
-/*
- * This Source Code Form is subject to the terms of the Mozilla Public
- *  License, v. 2.0. If a copy of the MPL was not distributed with this
- *  file, You can obtain one at http://mozilla.org/MPL/2.0/.
- */
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package mozilla.components.browser.engine.gecko.ext
 
@@ -34,11 +32,19 @@ class TrackingProtectionPolicyKtTest {
         assertEquals(setting.cookiePurging, policy.cookiePurging)
         assertEquals(EngineSession.CookieBannerHandlingMode.DISABLED.mode, setting.cookieBannerMode)
         assertEquals(EngineSession.CookieBannerHandlingMode.REJECT_ALL.mode, setting.cookieBannerModePrivateBrowsing)
+        assertFalse(setting.cookieBannerDetectOnlyMode)
 
-        val policyWithSafeBrowsing = TrackingProtectionPolicy.recommended().toContentBlockingSetting(emptyArray(), cookieBannerSetting, cookieBannerSettingPrivateBrowsing)
+        val policyWithSafeBrowsing =
+            TrackingProtectionPolicy.recommended().toContentBlockingSetting(
+                safeBrowsingPolicy = emptyArray(),
+                cookieBannerHandlingMode = cookieBannerSetting,
+                cookieBannerHandlingModePrivateBrowsing = cookieBannerSettingPrivateBrowsing,
+                cookieBannerHandlingDetectOnlyMode = true,
+            )
         assertEquals(0, policyWithSafeBrowsing.safeBrowsingCategories)
         assertEquals(cookieBannerSetting.mode, policyWithSafeBrowsing.cookieBannerMode)
         assertEquals(cookieBannerSettingPrivateBrowsing.mode, policyWithSafeBrowsing.cookieBannerModePrivateBrowsing)
+        assertTrue(policyWithSafeBrowsing.cookieBannerDetectOnlyMode)
     }
 
     @Test

@@ -5,15 +5,30 @@ treeherder:
         Fetch: Fetch and store content
         I: Docker Image Builds
         TL: Toolchain builds for Linux 64-bits
+        buildconfig: Make sure the content of .buildconfig.yml matches what gradle knows about its projects
         compare-locales: Validate strings.xml with compare-locales
         detekt: detekt linter
         ktlint: ktlint linter
         lint: gradle lint linter
 
+        focus: Focus general tasks no matter the variant
         focus-beta: Focus beta-related tasks
         focus-debug: Focus builds made for testing
         focus-nightly: Focus nightly-related tasks
         focus-release: Focus production-related tasks
+
+        fenix: Fenix general tasks no matter the variant
+        fenix-beta: Fenix beta-related tasks
+        fenix-debug: Fenix builds made for testing
+        fenix-nightly: Fenix nightly-related tasks
+        fenix-nightlySim: Nightly-related tasks that run on each github push
+        fenix-release: Fenix production-related tasks
+
+        Btime: Raptor-Browsertime tests with Fission enabled
+        Btime-nofis: Raptor-Browsertime tests with Fission disabled
+        forPerformanceTest: Builds made for Raptor and other performance tests
+        Rap: Raptor tests
+        Rap-P: Raptor power tests
 
         # This list is based on .buildconfig.yml except the exceptions down below
         browser-domains: browser-domains
@@ -55,6 +70,7 @@ treeherder:
         feature-customtabs: feature-customtabs
         feature-downloads: feature-downloads
         feature-findinpage: feature-findinpage
+        feature-fxsuggest: feature-fxsuggest
         feature-intent: feature-intent
         feature-logins: feature-logins
         feature-media: feature-media
@@ -112,12 +128,12 @@ treeherder:
         support-base: support-base
         support-images: support-images
         support-ktx: support-ktx
+        support-license: support-license
         support-locale: support-locale
         support-migration: support-migration
         support-rusthttp: support-rusthttp
         support-rusterrors: support-rusterrors
         support-rustlog: support-rustlog
-        support-sync-telemetry: support-sync-telemetry
         support-test-appservices: support-test-appservices
         support-test-fakes: support-test-fakes
         support-test-libstate: support-test-libstate
@@ -126,8 +142,6 @@ treeherder:
         support-webextensions: support-webextensions
         tooling-detekt: tooling-detekt
         tooling-fetch-tests: tooling-fetch-tests
-        tooling-glean-gradle: tooling-glean-gradle
-        tooling-nimbus-gradle: tooling-nimbus-gradle
         tooling-lint: tooling-lint
         ui-autocomplete: ui-autocomplete
         ui-colors: ui-colors
@@ -137,8 +151,8 @@ treeherder:
         ui-widgets: ui-widgets
 
         # These ones are too long to fit in 25 chars
-        lib-fetch-httpurlconnect: lib-fetch-httpurlconnection
-        feature-webcompat-report: feature-webcompat-reporter
+        lib-fetch-httpurlconnecti: lib-fetch-httpurlconnection
+        feature-webcompat-reporte: feature-webcompat-reporter
 
         # Groups aren't generated off buildconfig.yml:
         samples-browser: samples-browser
@@ -162,7 +176,9 @@ taskgraph:
         mobile:
             name: firefox-android
     cached-task-prefix: mobile.v2.firefox-android
-    decision-parameters: 'android_taskgraph:get_decision_parameters'
+    decision-parameters: 'android_taskgraph.parameters:get_decision_parameters'
+    index-path-regexes:
+        - '(mobile\.v3.[^.]*\.).*'
 
 workers:
     aliases:
@@ -176,10 +192,16 @@ workers:
             implementation: docker-worker
             os: linux
             worker-type: b-linux-large-gcp
+        b-android-xlarge:
+            provisioner: 'mobile-{level}'
+            implementation: docker-worker
+            os: linux
+            worker-type: b-linux-xlarge-gcp
         beetmover:
             provisioner: scriptworker-k8s
             implementation: scriptworker-beetmover
             os: scriptworker
+            # Note: if dep bucket is wanted, *temporarily* switch to 'mobile-1-beetmover-dev'
             worker-type: 'mobile-{level}-beetmover'
         dep-signing:
             provisioner: scriptworker-k8s
@@ -225,6 +247,11 @@ workers:
             implementation: scriptworker-tree
             os: scriptworker
             worker-type: 'mobile-{level}-tree'
+        t-bitbar.*:
+            provisioner: proj-autophone
+            implementation: generic-worker
+            os: linux-bitbar
+            worker-type: 'gecko-{alias}'
 
 scriptworker:
     scope-prefix: project:mobile:firefox-android:releng
@@ -233,5 +260,11 @@ release-promotion:
     flavors:
         promote:
             target-tasks-method: promote
+        push:
+            target-tasks-method: push
         ship:
             target-tasks-method: ship
+    rebuild-kinds:
+        - docker-image
+        - fetch
+        - toolchain

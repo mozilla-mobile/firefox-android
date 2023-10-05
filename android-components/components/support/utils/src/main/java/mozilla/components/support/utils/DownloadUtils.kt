@@ -162,7 +162,6 @@ object DownloadUtils {
      * which unfortunately does not implement RFC 5987.
      */
 
-    @Suppress("Deprecation")
     @JvmStatic
     fun guessFileName(
         contentDisposition: String?,
@@ -176,7 +175,7 @@ object DownloadUtils {
         val sanitizedMimeType = sanitizeMimeType(mimeType)
 
         val fileName = if (extractedFileName.contains('.')) {
-            if (GENERIC_CONTENT_TYPES.contains(mimeType)) {
+            if (GENERIC_CONTENT_TYPES.contains(sanitizedMimeType)) {
                 extractedFileName
             } else {
                 changeExtension(extractedFileName, sanitizedMimeType)
@@ -210,14 +209,16 @@ object DownloadUtils {
      * Checks if the file exists so as not to overwrite one already in the destination directory
      */
     fun uniqueFileName(directory: File, fileName: String): String {
-        var fileExtension = ".${fileName.substringAfterLast(".")}"
-
-        // Check if an extension was found or not
-        if (fileExtension == ".$fileName") { fileExtension = "" }
-
-        val baseFileName = fileName.replace(fileExtension, "")
-
         var potentialFileName = File(directory, fileName)
+        val baseFileName = potentialFileName.nameWithoutExtension
+        val fileExtension = potentialFileName.extension.let {
+            if (it.isNotEmpty()) {
+                ".$it"
+            } else {
+                it
+            }
+        }
+
         var copyVersionNumber = 1
 
         while (potentialFileName.exists()) {
@@ -235,10 +236,14 @@ object DownloadUtils {
      * This is primarily useful for connecting the "Save to PDF" feature response to downloads.
      */
     fun makePdfContentDisposition(filename: String): String {
-        return filename
-            .take(MAX_FILE_NAME_LENGTH)
+        val pdfExtension = ".pdf"
+        return if (filename.endsWith(pdfExtension)) {
+            filename.substringBeforeLast('.')
+        } else {
+            filename
+        }.take(MAX_FILE_NAME_LENGTH - pdfExtension.length)
             .run {
-                "attachment; filename=$this.pdf;"
+                "attachment; filename=$this$pdfExtension;"
             }
     }
 
@@ -251,7 +256,7 @@ object DownloadUtils {
         }
 
         // If all the other http-related approaches failed, use the plain uri
-        if (filename == null) {
+        if (filename.isNullOrEmpty()) {
             // If there is a query string strip it, same as desktop browsers
             val decodedUrl: String? = Uri.decode(url)?.substringBefore('?')
             if (decodedUrl?.endsWith('/') == false) {
@@ -331,26 +336,27 @@ object DownloadUtils {
     /**
      * Compare the filename extension with the mime type and change it if necessary.
      */
-    private fun changeExtension(filename: String, mimeType: String?): String {
-        var extension: String? = null
-        val dotIndex = filename.lastIndexOf('.')
+    private fun changeExtension(filename: String, providedMimeType: String?): String {
+        val file = File(filename)
+        val mimeTypeMap = MimeTypeMap.getSingleton()
+        val extensionFromMimeType =
+            mimeTypeMap.getExtensionFromMimeType(providedMimeType)
+        if (providedMimeType == null || extensionFromMimeType == null) return filename
 
-        if (mimeType != null) {
-            val mimeTypeMap = MimeTypeMap.getSingleton()
-            // Compare the last segment of the extension against the mime type.
-            // If there's a mismatch, discard the entire extension.
-            val typeFromExt = mimeTypeMap.getMimeTypeFromExtension(filename.substringAfterLast('.'))
-            if (typeFromExt?.equals(mimeType, ignoreCase = true) != false) {
-                extension = mimeTypeMap.getExtensionFromMimeType(mimeType)?.let { ".$it" }
-                // Check if the extension needs to be changed
-                if (extension != null && filename.endsWith(extension, ignoreCase = true)) {
-                    return filename
-                }
-            }
-        }
+        val mimeTypeFromFilename = mimeTypeMap.getMimeTypeFromExtension(file.extension) ?: ""
 
-        return if (extension != null) {
-            filename.substring(0, dotIndex) + extension
+        val fileHasPossibleExtension = filename.contains(extensionFromMimeType, ignoreCase = true)
+        val isFileMimeTypeDifferentFromProvidedMimeType =
+            !mimeTypeFromFilename.equals(
+                providedMimeType,
+                ignoreCase = true,
+            )
+
+        // Mimetypes could have multiple possible file extensions, for example: text/html could have
+        // either .htm or .html extensions. Since [getExtensionFromMimeType]
+        // we try to only rename when there is a clear indication the existing extension is wrong.
+        return if (isFileMimeTypeDifferentFromProvidedMimeType && !fileHasPossibleExtension) {
+            return "${file.nameWithoutExtension}.$extensionFromMimeType"
         } else {
             filename
         }

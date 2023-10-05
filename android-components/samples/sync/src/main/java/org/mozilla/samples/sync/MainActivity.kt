@@ -132,7 +132,7 @@ class MainActivity :
 
         findViewById<View>(R.id.buttonSignIn).setOnClickListener {
             launch {
-                accountManager.beginAuthentication()?.let { openWebView(it) }
+                accountManager.beginAuthentication(entrypoint = SampleFxAEntryPoint.HomeMenu)?.let { openWebView(it) }
             }
         }
 
@@ -308,6 +308,10 @@ class MainActivity :
                             txtView.text = "The device ${it.deviceId} disconnected"
                         }
                     }
+                    is AccountEvent.Unknown -> {
+                        // Unknown events are ignored to allow supporting new
+                        // account events
+                    }
                 }
             }
         }
@@ -398,7 +402,6 @@ class MainActivity :
                     when (error) {
                         AuthFlowError.FailedToBeginAuth -> "Failed to begin authentication"
                         AuthFlowError.FailedToCompleteAuth -> "Failed to complete authentication"
-                        AuthFlowError.FailedToMigrate -> "Failed to migrate"
                     },
                 )
             }

@@ -6,14 +6,13 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion config.compileSdkVersion
-
     defaultConfig {
         minSdkVersion config.minSdkVersion
+        compileSdk config.compileSdkVersion
         targetSdkVersion config.targetSdkVersion
     }
 
-    lintOptions {
+    lint {
         warningsAsErrors true
         abortOnError true
     }
@@ -25,25 +24,25 @@ android {
             consumerProguardFiles 'proguard-rules-consumer.pro'
         }
     }
+
+    namespace 'mozilla.components.support.rustlog'
 }
 
 dependencies {
-    implementation Dependencies.mozilla_rustlog
+    implementation ComponentsDependencies.mozilla_appservices_rust_log_forwarder
 
-    implementation Dependencies.kotlin_stdlib
-    implementation Dependencies.kotlin_coroutines
+    implementation ComponentsDependencies.kotlin_coroutines
     // Log.Priority is in the public api.
     api project(':support-base')
 
-    testImplementation Dependencies.mozilla_rustlog
+    testImplementation ComponentsDependencies.mozilla_appservices_rust_log_forwarder
     testImplementation project(':support-test')
 
-    testImplementation Dependencies.mozilla_full_megazord_forUnitTests
+    testImplementation ComponentsDependencies.mozilla_appservices_full_megazord_forUnitTests
 
-    testImplementation Dependencies.testing_junit
-    testImplementation Dependencies.androidx_test_junit
-    testImplementation Dependencies.testing_robolectric
-    testImplementation Dependencies.testing_mockito
+    testImplementation ComponentsDependencies.testing_junit
+    testImplementation ComponentsDependencies.androidx_test_junit
+    testImplementation ComponentsDependencies.testing_robolectric
 }
 
 apply from: '../../../android-lint.gradle'

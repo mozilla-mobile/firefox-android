@@ -12,23 +12,28 @@ transforms:
 
 kind-dependencies:
     - toolchain
+    - external-gradle-dependencies
 
 
 task-defaults:
     attributes:
         build-type: debug
         code-review: true
+    # TODO port this in transforms
+    dependencies:
+        external-gradle-dependencies: external-gradle-dependencies-test-components
     fetches:
         toolchain:
             - android-sdk-linux
-            - android-gradle-dependencies
+        external-gradle-dependencies:
+            - external-gradle-dependencies.tar.xz
     run:
         # TODO Generate APKs in a build task instead
         gradlew: ['clean', 'assembleGecko', 'assembleAndroidTest', 'assembleDebug']
         pre-gradlew:
             - ["cd", "android-components"]
         secrets:
-            - name: project/mobile/firefox-android/firebase
+            - name: project/mobile/firefox-android/android-components/firebase
               key: firebaseToken
               path: .firebase_token.json
               json: true
@@ -54,12 +59,6 @@ task-defaults:
         max-run-time: 2400
     optimization:
         skip-unless-changed:
-            - android-components/build.gradle
-            - android-components/settings.gradle
-            - android-components/buildSrc.*
-            - android-components/gradle.properties
-            - android-components/gradle/wrapper/gradle-wrapper.properties
-            - android-components/plugins/dependencies/**
             - android-components/automation/taskcluster/androidTest/ui-test.sh
             # More paths are dynamically added by transforms
 

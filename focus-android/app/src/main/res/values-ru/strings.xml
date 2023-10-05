@@ -20,7 +20,7 @@
     <!-- "Snackbar" shown after the user has pressed the 'erase' button at the end of a browsing session -->
     <string name="feedback_erase">Ваша история посещения сайтов была стёрта.</string>
 
-    <string name="feedback_erase2">История веб-сёрфинга удалена</string>
+    <string name="feedback_erase2">История просмотра сети удалена</string>
 
     <!-- "Snackbar" shown after the user has pressed the 'erase' button at the end of a custom tab browsing session -->
     <string name="feedback_erase_custom_tab">История просмотров вкладки была стёрта.</string>
@@ -55,8 +55,8 @@
 
     <!-- Menu item: Shows information about features and changes that are new to this version -->
     <string name="menu_whats_new">Что нового</string>
-    <string name="menu_settings">Параметры</string>
-    <string name="menu_about">О программе</string>
+    <string name="menu_settings">Настройки</string>
+    <string name="menu_about">О приложении</string>
     <string name="menu_help">Справка</string>
     <string name="menu_rights">Ваши права</string>
 
@@ -89,7 +89,7 @@
          so that the user doesn't forget about the website still being open. This text is shown in
          the notification. Clicking the notification will have the same effect as clicking the "erase"
          button in the application. -->
-    <string name="notification_erase_text">Удалить историю веб-сёрфинга</string>
+    <string name="notification_erase_text">Удалить историю просмотра сети</string>
 
     <!-- Notification action to open Focus and resume the current browsing session. -->
     <string name="notification_action_open">Открыть</string>
@@ -105,7 +105,7 @@
     <!-- The same as 'shortcut_erase_short_label' but more descriptive. The launcher shows this
          instead of the short title when it has enough space. Android recommends a maximum length
          of 25 characters. -->
-    <string name="shortcut_erase_long_label">Удалить историю веб-сёрфинга</string>
+    <string name="shortcut_erase_long_label">Удалить историю просмотра сети</string>
 
 
     <!-- On Android 7+ users can add a shortcut for erasing the browsing history to the home screen.
@@ -141,7 +141,7 @@
     <string name="about_content"><![CDATA[<p>%1$s даёт вам контроль.</p>
 <p>Используйте его как приватный браузер:
   <ul>
-    <li>Ищите и занимайтесь веб-сёрфингом</li>
+    <li>Ищите и просматривайте сеть</li>
     <li>Блокируйте трекеры (или измените настройки, чтобы разрешить их)</li>
     <li>Стирайте и удаляйте куки, историю поиска и просмотра</li>
   </ul>
@@ -168,7 +168,7 @@
     <string name="preference_category_tracking_protection3">Улучшенная защита от отслеживания</string>
 
     <!-- Preference category for settings related to controlling web content -->
-    <string name="preference_category_web_content">Веб-содержимое</string>
+    <string name="preference_category_web_content">Сетевое содержимое</string>
 
     <!-- Preference category: stealth settings for while switching apps -->
     <string name="preference_category_switching_apps">Смена приложений</string>
@@ -354,6 +354,15 @@
     <!-- In-app link (in settings) to Focus privacy notice. -->
     <string name="preference_privacy_notice">Политика приватности</string>
 
+    <!-- In-app link (in settings) to Focus licensing information. -->
+    <string name="preference_licensing_info">Сведения о лицензии</string>
+
+    <!-- Link to Focus licensing information from other libraries that we use. -->
+    <string name="preference_libraries_we_use">Используемые библиотеки</string>
+
+    <!-- Open Source Licenses page title. The first parameter is the app name -->
+    <string name="open_source_licenses_title">%s | Свободные библиотеки</string>
+
     <!-- Item in Preferences that shows the about page. Parameter 1 is the app name, i.e. Firefox Focus/Firefox Klar. -->
     <string name="preference_about">О %1$s</string>
 
@@ -423,7 +432,7 @@
 
     <!-- This text is not visible. Instead it will be read by the accessibility service once we
      finished loading a website -->
-    <string name="accessibility_announcement_loading_finished">Веб-сайт загружен</string>
+    <string name="accessibility_announcement_loading_finished">Сайт загружен</string>
 
     <!-- Content description (not visible, for screen readers etc.): "Three dot" menu button. -->
     <string name="content_description_menu">Дополнительно</string>
@@ -436,7 +445,7 @@
     <string name="content_description_forward">Вперёд</string>
 
     <!-- Content description (not visible, for screen readers etc.): Reload current website -->
-    <string name="content_description_reload">Перезагрузить веб-сайт</string>
+    <string name="content_description_reload">Перезагрузить сайт</string>
 
     <!-- Content description (not visible, for screen readers etc.): Navigate back (browsing history) -->
     <string name="content_description_back">Перейти назад</string>
@@ -483,7 +492,10 @@
 
 
 
-  <string name="error_hostLookup_title">Сервер не найден</string>
+  <!-- Snackbar that will be displayed after a website has been added to shortcuts. -->
+    <string name="snackbar_added_to_shortcuts">Добавлено в ярлыки!</string>
+
+    <string name="error_hostLookup_title">Сервер не найден</string>
 
 
 
@@ -594,7 +606,7 @@
     <string name="notification_browsing_session_channel_description">Уведомления позволяют стереть ваш сеанс в %1$s одним касанием. Вам не нужно открывать приложение или видеть, что запущено в вашем браузере.</string>
 
     <!-- Label for a button in the "tabs tray" to erase the browsing history (closes all tabs and removes associated data). -->
-    <string name="tabs_tray_action_erase">Удалить историю веб-сёрфинга</string>
+    <string name="tabs_tray_action_erase">Удалить историю просмотра сети</string>
 
     <!-- If the user decides to open the current page in another browser and if Firefox is not installed then we show this
       item in the list of browsers. Clicking it will open the app store installed on the device (usually that's Google Play). -->
@@ -602,7 +614,7 @@
 
     <!-- Text shown in the "Your rights" screen.
     %1$s will be replaced with the name of the app (e.g. Firefox Focus)-->
-    <string name="your_rights_content1"><![CDATA[%1$s является бесплатной программой с открытым исходным кодом, созданной Mozilla и другими участниками.]]></string>
+    <string name="your_rights_content1"><![CDATA[%1$s является бесплатным приложением с открытым исходным кодом, созданным Mozilla и другими участниками.]]></string>
 
 
 
@@ -626,7 +638,7 @@
     %1$s will be replaced with the name of the app (e.g. Firefox Focus)
     %2$s will be replaced with a URL linking to the GPL
     %3$s will be replaced with a URL linking to the tracking protection wiki page (e.g. https://wiki.mozilla.org/Security/Tracking_protection#Lists) -->
-    <string name="your_rights_content5"><![CDATA[%1$s также использует списки блокировки от Disconnect, Inc. как отдельные и независимые работы на условиях <a href="%2$s">Генеральной публичной лицензии GNU версии 3</a>, доступные <a href="%3$s">здесь</a>.]]></string>
+    <string name="your_rights_content5"><![CDATA[%1$s также использует списки блокировки от Disconnect, Inc. как отдельные и независимые работы на условиях <a href="%2$s">Основной общественной лицензии GNU 3-ей версии</a>, доступные <a href="%3$s">здесь</a>.]]></string>
 
     <!-- Text shown in prompts for GeckoView -->
     <string name="gv_prompt_username_hint">Имя пользователя</string>
@@ -673,7 +685,7 @@
     <string name="preference_performance_request_desktop_site2">Версия для ПК</string>
 
     <!-- Displayed after a user long presses on the URL in a custom tab to copy the URL -->
-    <string name="custom_tab_copy_url_action">URL скопирован</string>
+    <string name="custom_tab_copy_url_action">Ссылка скопирована</string>
 
     <!-- Description of what a user may find in the Advanced Setting category, used for debugging -->
     <string name="preference_advanced_summary">Инструменты разработчика</string>
@@ -702,11 +714,60 @@
     <!--  Preference summary inside Cookie banner reduction screen. Here you can set the cookie banner option to disabled or reject_all. -->
     <string name="cookie_banner_reject_all_option_summary">Уменьшите число уведомлений, по возможности автоматически отклоняя запросы на использование кук.</string>
 
-    <!--  Checkbox Preference title inside Cookie banner reduction screen. Here you can set the cookie banner option to reject_or_accept_all or reject_all. -->
-    <string name="cookie_banner_further_reduce_option_title">Дальнейшее уменьшение числа уведомлений о куках</string>
+    <!-- Preference for removing cookie/consent banners from sites automatically, this is shown as part of the protections panel with the tracking protection toggle. -->--&gt;
+    <string name="cookie_banner_exception_item_title">Снижение числа уведомлений о куках</string>
 
-    <!--  Checkbox Preference summary inside Cookie banner reduction screen. Here you can set the cookie banner option to reject_or_accept_all or reject_all. -->
-    <string name="cookie_banner_further_reduce_option_summary">Принимайте запросы уведомлений о куках для отклонения большего числа уведомлений.</string>
+    <!-- Text for indicating cookie banner handling is on this site, this is shown as part of the protections panel with the tracking protection toggle. -->
+    <string name="cookie_banner_exception_item_description_state_on">ВКЛЮЧЕНО для этого сайта</string>
+
+    <!-- Text for indicating cookie reducer is not supported on the current site, this is shown as part of the protections panel with the tracking protection toggle. -->
+    <string name="cookie_banner_exception_site_not_supported">В настоящее время сайт не поддерживается</string>
+
+    <!-- Text for indicating cookie banner handling is off this site, this is shown as part of the protections panel with the tracking protection toggle. -->
+    <string name="cookie_banner_exception_item_description_state_off">ОТКЛЮЧЕНО для этого сайта</string>
+
+    <!-- Preference for removing cookie/consent banners from sites automatically, this is shown when the user enters in details after he clicks on the item from protection panel. -->
+    <string name="cookie_banner_exception_panel_switch_title">Снижение числа уведомлений о куках</string>
+
+    <!-- Text for indicating cookie banner handling is off this site, this is shown when the user enters in details after he clicks on the item from protection panel. -->
+    <string name="cookie_banner_exception_panel_switch_state_off">ОТКЛЮЧЕНО для этого сайта</string>
+
+    <!-- Text for indicating cookie banner handling is on this site, this is shown when the user enters in details after he clicks on the item from protection panel. -->
+    <string name="cookie_banner_exception_panel_switch_state_on">ВКЛЮЧЕНО для этого сайта</string>
+
+    <!-- Title text for a detail explanation indicating cookie banner handling is on this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site. -->
+    <string name="cookie_banner_exception_panel_title_state_on_for_site">Включить Снижение числа уведомлений о куках для %1$s?</string>
+
+    <!-- Title text for a detail explanation indicating cookie banner handling is off this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site. -->
+    <string name="cookie_banner_exception_panel_title_state_off_for_site">Отключить Снижение числа уведомлений о куках для %1$s?</string>
+
+    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The placeholder will be updated with the app name. -->
+    <string name="cookie_banner_exception_panel_description_state_on_for_site">%1$s удалит куки этого сайта и обновит страницу. Удаление всех кук может привести к выходу из системы или к пропаже покупок из корзины.</string>
+
+    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The placeholder will be updated with the app name. -->
+    <string name="cookie_banner_exception_panel_description_state_off_for_site2">%1$s может попытаться автоматически отклонить запросы на использование кук.</string>
+
+    <!-- Long text for a detail explanation indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_description_site_is_not_supported">Этот сайт в настоящее время не поддерживается функцией Уменьшения числа уведомлений о куках. Вы хотите, чтобы наша команда проверила этот веб-сайт и добавила поддержку в будущем?</string>
+
+    <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_site_is_not_supported_cancel_button">Отмена</string>
+
+    <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_site_is_not_supported_request_support_button">Запросить поддержку</string>
+
+    <!-- Label for the snackBar, after the user reports with success a website where cookie banner reducer did not work -->
+    <string name="cookie_banner_report_a_site_snackbar_label">Запрос на поддержку сайта отправлен.</string>
+
+    <!-- Label for cookie banner item from tracking protection, after the user reports with success a website where cookie banner reducer did not work -->
+    <string name="cookie_banner_the_site_was_reported">Запрос на поддержку сайта отправлен.</string>
+
+    <!-- Contextual Feature Recommendation Popups -->
+    <!-- CFR for Cookie Banner (Banner Info Message). %1$s will be replaced by the app name, %2$s will be an active link using the string cfr_cookie_banner_link as text. -->
+    <string name="cfr_cookie_banner">%1$s пытается отклонить запросы кук, чтобы убрать надоедливые уведомления о куках.\n\nУправляйте настройками уведомлений о куках в %2$s.</string>
+
+    <!-- CFR for Cookie Banner (Banner Info Message). This string is used as text for a link in cfr_cookie_banner and takes the user to the app settings. -->
+    <string name="cfr_cookie_banner_link">настройках</string>
 
     <!-- Preference for autoplay -->
     <string name="preference_autoplay">Автовоспроизведение</string>
@@ -739,7 +800,7 @@
     <string name="preference_phone_feature_notification">Уведомления</string>
 
     <!-- Preference for altering the EME access for all websites -->
-    <string name="preference_phone_feature_media_key_system_access">Защищённое DRM содержимое</string>
+    <string name="preference_phone_feature_media_key_system_access">Защищённое авторским правом содержимое</string>
 
     <!-- Label that indicates that a permission must be asked always -->
     <string name="preference_option_phone_feature_ask_to_allow">Всегда спрашивать</string>
@@ -757,13 +818,13 @@
     <string name="preference_allow_audio_video_autoplay">Разрешить аудио и видео</string>
 
     <!-- Preference for block autoplay audio only-->
-    <string name="preference_block_autoplay_audio_only">Блокировать только аудио</string>
+    <string name="preference_block_autoplay_audio_only">Блокировать только звук</string>
 
     <!-- Preference summary for block autoplay audio only-->
-    <string name="preference_block_autoplay_audio_only_summary">Рекомендуется</string>
+    <string name="preference_block_autoplay_audio_only_summary">Желательно</string>
 
     <!-- Preference for block autoplay audio and video-->
-    <string name="preference_block_autoplay_audio_video">Блокировать аудио и видео</string>
+    <string name="preference_block_autoplay_audio_video">Блокировать звуки и видео</string>
 
     <!-- Preference for studies -->
     <string name="preference_studies">Исследования</string>
@@ -864,6 +925,9 @@
     <!-- Label for the button in the snackbar that switches to the newly opened tab -->
     <string name="open_new_tab_snackbar">Перейти</string>
 
+    <!-- Text displayed in a notification when the user enters full screen mode -->
+    <string name="full_screen_notification">Вход в полноэкранный режим</string>
+
     <!-- Preference for switching to a new tab immediately after opening -->
     <string name="preference_open_new_tab">Сразу переходить на новую вкладку</string>
 
@@ -917,7 +981,7 @@
     <!-- Category of trackers (advertising) that can be blocked by Enhanced Tracking Protection -->
     <string name="advertising">Реклама</string>
     <!-- Category of trackers (social media) that can be blocked by Enhanced Tracking Protection -->
-    <string name="social">Социальные сети</string>
+    <string name="social">Соцсети</string>
     <!-- Category of trackers (analytics) that can be blocked by Enhanced Tracking Protection -->
     <string name="analytics">Аналитика</string>
     <!-- Preference title for enhanced tracking protection settings -->
@@ -950,7 +1014,7 @@
 
     <!-- Text for context menu additional note.
     %1$s is a placeholder for the app name. -->
-    <string name="contextmenu_erased_images_note2">Сохранённые и отправленные фотографии &lt;b&gt;не будут&lt;/b&gt; удалены, когда вы сотрёте историю %1$s</string>
+    <string name="contextmenu_erased_images_note2">Сохранённые и отправленные изображения &lt;b&gt;не будут&lt;/b&gt; удалены, когда вы сотрёте историю %1$s</string>
 
     <!-- Theme Preferences -->
     <!-- Preference category for changing default theme to dark or light mode -->
@@ -966,12 +1030,31 @@
 
 
     <!-- The title of the error page for websites that do not support HTTPS when HTTPS-Only is turned on  -->
-    <string name="errorpage_httpsonly_title">Запрошенный вами сайт не поддерживает HTTPS</string>
+    <string name="errorpage_httpsonly_title2">Этот сайт не поддерживает HTTPS</string>
 
-    <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will get replaced with the name of the app (e.g. "Firefox Focus") -->
-    <string name="errorpage_httpsonly_message">По умолчанию %1$s пытается соединиться по протоколу HTTPS для повышения безопасности. Чтобы изменить этот параметр или узнать больше, перейдите в «Параметры» &gt; «Приватность и защита» &gt; «Защита».</string>
+    <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will get replaced with the name of the app (e.g. "Firefox Focus").
+        Contains a button that will redirect the user to Privacy & Security Screen-->
+    <string name="errorpage_httpsonly_message2"><![CDATA[%1$s пытается использовать HTTPS-соединение, когда это возможно, для повышения безопасности.
+     <a href="%2$s">Подробнее</a> <br/><br/>
+     Измените эту настройку в меню «Настройки» > «Приватность и защита» > «Защита».]]></string>
 
-    <!-- Sessions List -->
+    <!-- The document title and heading of the error page shown when a website has an invalid or expired SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_title">Незащищённое соединение</string>
+
+    <!-- The error message shown when a website has an invalid or expired SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_message"><![CDATA[
+    Это может быть проблемой с конфигурацией сервера или же кто-то пытается подменить нужный вам сервер другим. <br/><br/>
+    Если в прошлом вы успешно соединялись с этим сервером, то, возможно, эта ошибка является временной.
+    ]]></string>
+
+     <!-- The advanced certificate information shown when a website has an invalid SSL certificate. The %1$s will be replaced by the app name and %2$s will be replaced by website URL. It's only shown when a website has an invalid SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_techInfo"><![CDATA[
+        <label>Возможно, кто-то пытается подменить нужный вам сайт другим, поэтому продолжение может быть рискованным.</label>
+        <br><br>
+        <label>%1$s не может доверять <b>%2$s</b>, потому что издатель его сертификата неизвестен, сертификат подписан самим сайтом или его сервер не отправляет правильные промежуточные сертификаты.</label>
+    ]]></string>
+
+     <!-- Sessions List -->
     <!-- Content description (not visible, for screen readers etc.): Button that closes a tab n the sessions list -->
     <string name="close_tab">Закрыть вкладку</string>
 
@@ -997,13 +1080,18 @@
 
     !-- Content description (not visible, for screen readers etc.): This is the description for the
     close button from promote search widget dialog. --&gt;
+    <!-- Content description (not visible, for screen readers etc.): This is the description for the
+    close button from promote search widget dialog. -->
     <string name="promote_search_widget_dialog_content_description">Закрыть</string>
 
     !-- Content description (not visible, for screen readers etc.): This is the description for
     picture of search widget from promote search widget dialog. --&gt;
+    <!-- Content description (not visible, for screen readers etc.): This is the description for
+    picture of search widget from promote search widget dialog. -->
     <string name="promote_search_widget_dialog_picture_content_description">Виджет поиска</string>
 
     !-- This is the title of promote search widget dialog. --&gt;
+    <!-- This is the title of promote search widget dialog. -->
     <string name="promote_search_widget_dialog_title">История веб-сёрфинга удалена! 🎉</string>
 
     !-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
@@ -1013,13 +1101,19 @@
 
     !-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
     of the app (e.g. &quot;Focus&quot;) --&gt;
+    <!-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
+    of the app (e.g. "Focus") -->
     <string name="promote_search_widget_dialog_subtitle">Мы оставим вас в приватном просмотре, но в следующий раз можно войти в него быстрее с помощью виджета %1$s на Домашнем экране.</string>
 
     !-- This is te text from add search widget to home screen button .The button is located on
     promote search widget dialog. --&gt;
+    <!-- This is te text from add search widget to home screen button .The button is located on
+    promote search widget dialog. -->
     <string name="promote_search_widget_button_text">Добавить виджет на домашний экран</string>
 
     !-- This is te text of the snackbar that appears after the search widget was added successfully
     to the home screen. --&gt;
+    <!-- This is te text of the snackbar that appears after the search widget was added successfully
+    to the home screen. -->
     <string name="promote_search_widget_snackbar_message">Виджет добавлен на домашний экран</string>
 </resources>

@@ -13,7 +13,7 @@
     <string name="action_save">Cadw</string>
 
     <!-- This text is shown in the URL bar when it's empty -->
-    <string name="urlbar_hint">Chwilio neu gyfeiriad</string>
+    <string name="urlbar_hint">Chwilio neu gyfeiriad gwe</string>
 
     <string name="teaser">Pori preifat awtomatig.\nPori. Dileu. Eto.</string>
 
@@ -36,7 +36,7 @@
     <!-- Menu item: Switch to another browser to open the currently visible page. %1$s will be
       replaced with the name of the browser like: "Open in Firefox" or "Open in Chrome". Some
       links can be opened by native apps that aren't a browser, e.g. "Open in YouTube" -->
-    <string name="menu_open_with_default_browser2">Agor gyda %1$s</string>
+    <string name="menu_open_with_default_browser2">Agor yn %1$s</string>
 
     <!-- Menu item: Switch to another browser to open the currently visible page. This menu item
       will be shown if there are multiple browsers and we do not know which one is the default
@@ -45,7 +45,7 @@
     <string name="menu_open_with_a_browser2">Agor yn…</string>
 
     <!-- Menu item: Add the current page as a shortcut to the device's home screen (launcher). -->
-    <string name="menu_add_to_home_screen">Ychwanegu i\'r sgrin Cartref</string>
+    <string name="menu_add_to_home_screen">Ychwanegu i’r sgrin Cartref</string>
 
     <!-- Menu item: Add the current site as a shortcut on the Home screen -->
     <string name="menu_add_to_shortcuts">Ychwanegu at y Llwybrau Byr</string>
@@ -88,7 +88,7 @@
          so that the user doesn't forget about the website still being open. This text is shown in
          the notification. Clicking the notification will have the same effect as clicking the "erase"
          button in the application. -->
-    <string name="notification_erase_text">Dileu\'r hanes pori</string>
+    <string name="notification_erase_text">Dileu hanes pori</string>
 
     <!-- Notification action to open Focus and resume the current browsing session. -->
     <string name="notification_action_open">Agor</string>
@@ -104,7 +104,7 @@
     <!-- The same as 'shortcut_erase_short_label' but more descriptive. The launcher shows this
          instead of the short title when it has enough space. Android recommends a maximum length
          of 25 characters. -->
-    <string name="shortcut_erase_long_label">Dileu\'r hanes pori</string>
+    <string name="shortcut_erase_long_label">Dileu hanes pori</string>
 
 
     <!-- On Android 7+ users can add a shortcut for erasing the browsing history to the home screen.
@@ -354,6 +354,15 @@
     <!-- In-app link (in settings) to Focus privacy notice. -->
     <string name="preference_privacy_notice">Hysbysiad Preifatrwydd</string>
 
+    <!-- In-app link (in settings) to Focus licensing information. -->
+    <string name="preference_licensing_info">Manylion trwyddedu</string>
+
+    <!-- Link to Focus licensing information from other libraries that we use. -->
+    <string name="preference_libraries_we_use">Llyfrgelloedd rydym yn eu defnyddio</string>
+
+    <!-- Open Source Licenses page title. The first parameter is the app name -->
+    <string name="open_source_licenses_title">%s| Llyfrgelloedd OSS</string>
+
     <!-- Item in Preferences that shows the about page. Parameter 1 is the app name, i.e. Firefox Focus/Firefox Klar. -->
     <string name="preference_about">Ynghylch %1$s</string>
 
@@ -381,7 +390,7 @@
     <string name="action_option_add_search_engine">Ychwanegu peiriant chwilio</string>
 
     <string name="search_add_manually_name_hint">Enw peiriant chwilio</string>
-    <string name="search_add_manually_string">Llinyn chwilio i\'w ddefnyddio</string>
+    <string name="search_add_manually_string">Llinyn chwilio i’w ddefnyddio</string>
     <string name="search_add_manually_save">Cadw</string>
 
     <!-- Example of search engine url -->
@@ -406,7 +415,7 @@
 
     <!-- Content description (not visible, for screen readers etc.): Erase button: Erase the browsing
      history and go back to the home screen. -->
-    <string name="content_description_erase">Dileu\'r hanes pori</string>
+    <string name="content_description_erase">Dileu hanes pori</string>
 
     <!-- If the user has multiple tabs open we will show an addition "floating action button" showing how many tabs are open.
      This string is not displayed and read only by screenreaders. %1$s will be replaced with the number of open tabs. This
@@ -483,7 +492,10 @@
 
 
 
-  <string name="error_hostLookup_title">Heb ganfod gweinydd</string>
+  <!-- Snackbar that will be displayed after a website has been added to shortcuts. -->
+    <string name="snackbar_added_to_shortcuts">Ychwanegwyd at y llwybrau byr!</string>
+
+    <string name="error_hostLookup_title">Heb ganfod gweinydd</string>
 
 
 
@@ -636,7 +648,7 @@
 
     <!-- Text shown in Security Information Popup -->
     <!-- Text to denote secure or insecure connection -->
-    <string name="security_popup_secure_connection">Cysylltiad Diogel</string>
+    <string name="security_popup_secure_connection">Mae’r Cysylltiad yn Ddiogel</string>
     <string name="security_popup_insecure_connection">Cysylltiad Anniogel</string>
     <!-- %1$s will be replaced with organization that granted the SSL certificate -->
     <string name="security_popup_security_verified">Dilyswyd gan: %1$s</string>
@@ -656,14 +668,14 @@
     <string name="find_in_page_result">%1$d/%2$d</string>
     <!-- String to be read by the accessibility service presenting the number of results found in the page
         and the position the user is at. The first argument is the position, the second argument is the total -->
-    <string name="accessibility_find_in_page_result">%1$d allan o %2$d</string>
+    <string name="accessibility_find_in_page_result">%1$d o %2$d</string>
 
     <!-- String to be read by the accessibility service when focusing the next result button -->
     <string name="accessibility_next_result">Canfod y canlyniad nesaf</string>
     <!-- String to be read by the accessibility service when focusing the previous result button -->
     <string name="accessibility_previous_result">Canfod y canlyniad blaenorol</string>
     <!-- String to be read by the accessibility service when focusing the dismiss button in the "find in page" UI -->
-    <string name="accessibility_dismiss_find_in_page">Cau\'r canfod yn y dudalen</string>
+    <string name="accessibility_dismiss_find_in_page">Cau’r canfod ar y dudalen</string>
 
 
 
@@ -674,7 +686,7 @@
     <string name="preference_performance_request_desktop_site2">Gwefan bwrdd gwaith</string>
 
     <!-- Displayed after a user long presses on the URL in a custom tab to copy the URL -->
-    <string name="custom_tab_copy_url_action">URL wedi\'i gopïo</string>
+    <string name="custom_tab_copy_url_action">URL wedi’i gopïo</string>
 
     <!-- Description of what a user may find in the Advanced Setting category, used for debugging -->
     <string name="preference_advanced_summary">Offer datblygwyr</string>
@@ -689,7 +701,7 @@
     <string name="preference_site_permissions">Caniatâd gwefan</string>
 
     <!--  Preference for cookie banner. The name of the item from settings screen and the title of the cookie banner screen. -->
-    <string name="preferences_cookie_banner">Llai o Faneri Cwcis</string>
+    <string name="preferences_cookie_banner">Cyfyngu Baneri Cwcis</string>
 
     <!--  Preference summary for the cookie banner. If the cookie banner option is not disabled. -->
     <string name="preferences_cookie_banner_summary_on">Ymlaen</string>
@@ -698,16 +710,65 @@
     <string name="preferences_cookie_banner_summary_off">Diffodd</string>
 
     <!--  Title preference inside Cookie banner reduction screen. Here you can set the cookie banner option to disabled or reject_all. -->
-    <string name="cookie_banner_reject_all_option_title">Llai o Faneri Cwcis</string>
+    <string name="cookie_banner_reject_all_option_title">Cyfyngu Baneri Cwcis</string>
 
     <!--  Preference summary inside Cookie banner reduction screen. Here you can set the cookie banner option to disabled or reject_all. -->
     <string name="cookie_banner_reject_all_option_summary">Gweld llai o faneri trwy wrthod ceisiadau cwcis yn awtomatig, pan fo modd.</string>
 
-    <!--  Checkbox Preference title inside Cookie banner reduction screen. Here you can set the cookie banner option to reject_or_accept_all or reject_all. -->
-    <string name="cookie_banner_further_reduce_option_title">Llai fyth o faneri cwcis</string>
+    <!-- Preference for removing cookie/consent banners from sites automatically, this is shown as part of the protections panel with the tracking protection toggle. -->--&gt;
+    <string name="cookie_banner_exception_item_title">Cyfyngu Baneri Cwcis</string>
 
-    <!--  Checkbox Preference summary inside Cookie banner reduction screen. Here you can set the cookie banner option to reject_or_accept_all or reject_all. -->
-    <string name="cookie_banner_further_reduce_option_summary">Bydd ceisiadau baneri cwci yn cael eu derbyn er mwyn cau rhagor o faneri.</string>
+    <!-- Text for indicating cookie banner handling is on this site, this is shown as part of the protections panel with the tracking protection toggle. -->
+    <string name="cookie_banner_exception_item_description_state_on">YMLAEN ar gyfer y wefan hon</string>
+
+    <!-- Text for indicating cookie reducer is not supported on the current site, this is shown as part of the protections panel with the tracking protection toggle. -->
+    <string name="cookie_banner_exception_site_not_supported">Nid yw’r wefan yn cael ei chefnogi ar hyn o bryd</string>
+
+    <!-- Text for indicating cookie banner handling is off this site, this is shown as part of the protections panel with the tracking protection toggle. -->
+    <string name="cookie_banner_exception_item_description_state_off">DIFFODD ar gyfer y wefan hon</string>
+
+    <!-- Preference for removing cookie/consent banners from sites automatically, this is shown when the user enters in details after he clicks on the item from protection panel. -->
+    <string name="cookie_banner_exception_panel_switch_title">Cyfyngu Baneri Cwcis</string>
+
+    <!-- Text for indicating cookie banner handling is off this site, this is shown when the user enters in details after he clicks on the item from protection panel. -->
+    <string name="cookie_banner_exception_panel_switch_state_off">DIFFODD ar gyfer y wefan hon</string>
+
+    <!-- Text for indicating cookie banner handling is on this site, this is shown when the user enters in details after he clicks on the item from protection panel. -->
+    <string name="cookie_banner_exception_panel_switch_state_on">YMLAEN ar gyfer y wefan hon</string>
+
+    <!-- Title text for a detail explanation indicating cookie banner handling is on this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site. -->
+    <string name="cookie_banner_exception_panel_title_state_on_for_site">Troi Llai o Faneri Cwcis ymlaen ar %1$s?</string>
+
+    <!-- Title text for a detail explanation indicating cookie banner handling is off this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site. -->
+    <string name="cookie_banner_exception_panel_title_state_off_for_site">Diffodd Llai o Faneri Cwcis ar %1$s?</string>
+
+    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The placeholder will be updated with the app name. -->
+    <string name="cookie_banner_exception_panel_description_state_on_for_site">Bydd %1$s yn clirio cwcis y wefan hon ac yn adnewyddu’r dudalen. Gall clirio pob cwci eich allgofnodi neu wagio eich certiau siopa.</string>
+
+    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The placeholder will be updated with the app name. -->
+    <string name="cookie_banner_exception_panel_description_state_off_for_site2">Gall %1$s geisio gwrthod ceisiadau cwcis yn awtomatig.</string>
+
+    <!-- Long text for a detail explanation indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_description_site_is_not_supported">Nid yw’r wefan hon yn cael ei chefnogi ar hyn o bryd gan Llai o Faneri Cwcis. Hoffech chi ofyn i’n tîm adolygu’r wefan hon ac ychwanegu cefnogaeth yn y dyfodol?</string>
+
+    <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_site_is_not_supported_cancel_button">Diddymu</string>
+
+    <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_site_is_not_supported_request_support_button">Gofyn am gymorth</string>
+
+    <!-- Label for the snackBar, after the user reports with success a website where cookie banner reducer did not work -->
+    <string name="cookie_banner_report_a_site_snackbar_label">Cais i’r wefan cymorth wedi’i gyflwyno.</string>
+
+    <!-- Label for cookie banner item from tracking protection, after the user reports with success a website where cookie banner reducer did not work -->
+    <string name="cookie_banner_the_site_was_reported">Cais i’r wefan cymorth wedi’i gyflwyno.</string>
+
+    <!-- Contextual Feature Recommendation Popups -->
+    <!-- CFR for Cookie Banner (Banner Info Message). %1$s will be replaced by the app name, %2$s will be an active link using the string cfr_cookie_banner_link as text. -->
+    <string name="cfr_cookie_banner">Mae %1$s yn ceisio gwrthod ceisiadau cwci i gau baneri cwci annifyr.\n\nRheolwch ddewisiadau baneri cwci yn y %2$s.</string>
+
+    <!-- CFR for Cookie Banner (Banner Info Message). This string is used as text for a link in cfr_cookie_banner and takes the user to the app settings. -->
+    <string name="cfr_cookie_banner_link">gosodiadau</string>
 
     <!-- Preference for autoplay -->
     <string name="preference_autoplay">Awtochwarae</string>
@@ -722,7 +783,7 @@
     <string name="phone_feature_blocked_step_permissions"><![CDATA[2. Tapiwch <b>Caniatâd</b>]]></string>
 
     <!-- Button label that take the user to the Android App setting -->
-    <string name="phone_feature_go_to_settings">Ewch i Gosodiadau</string>
+    <string name="phone_feature_go_to_settings">Mynd i’r gosodiadau</string>
 
     <!-- Third step for allowing a permission. The placeholder will be updated by, for example, "Camera" -->
     <string name="phone_feature_blocked_step_feature"><![CDATA[3. Toglo <b>%1$s</b> i YMLAEN]]></string>
@@ -860,10 +921,13 @@
     <string name="tip_disable_tips2">Diffodd awgrymiadau ar y sgrin cychwyn</string>
 
     <!-- Label for the snackbar when a user opens a new tab -->
-    <string name="new_tab_opened_snackbar">Tab newydd wedi\'i agor</string>
+    <string name="new_tab_opened_snackbar">Tab newydd wedi ei agor</string>
 
     <!-- Label for the button in the snackbar that switches to the newly opened tab -->
     <string name="open_new_tab_snackbar">Newid</string>
+
+    <!-- Text displayed in a notification when the user enters full screen mode -->
+    <string name="full_screen_notification">Mynd i’r sgrin lawn</string>
 
     <!-- Preference for switching to a new tab immediately after opening -->
     <string name="preference_open_new_tab">Newid i ddolen mewn tab newydd ar unwaith</string>
@@ -924,9 +988,9 @@
     <!-- Preference title for enhanced tracking protection settings -->
     <string name="enhanced_tracking_protection">Diogelwch Uwch Rhag Tracio</string>
     <!-- Enhanced tracking protection preference description when the tracking protection is disabled for this site-->
-    <string name="enhanced_tracking_protection_state_off">Mae diogelu I FFWRDD ar y wefan hon</string>
+    <string name="enhanced_tracking_protection_state_off">Mae diogelu I FFWRDD ar gyfer y wefan hon</string>
     <!-- Enhanced tracking protection preference description when the tracking protection is enabled for this site-->
-    <string name="enhanced_tracking_protection_state_on">Mae diogelu YMLAEN ar y wefan hon</string>
+    <string name="enhanced_tracking_protection_state_on">Mae diogelu YMLAEN ar gyfer y wefan hon</string>
     <!-- Label that indicates a site is using a secure connection -->
     <string name="secure_connection">Cysylltiad yn ddiogel</string>
     <!-- Label that indicates a site is using a insecure connection -->
@@ -967,11 +1031,31 @@
 
 
     <!-- The title of the error page for websites that do not support HTTPS when HTTPS-Only is turned on  -->
-    <string name="errorpage_httpsonly_title">Nid yw’r wefan y gofynnoch amdani yn cefnogi HTTPS</string>
-    <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will get replaced with the name of the app (e.g. "Firefox Focus") -->
-    <string name="errorpage_httpsonly_message">Drwy ragosodiad, mae %1$s yn ceisio cysylltu gan ddefnyddio HTTPS er mwyn cynyddu diogelwch. I newid y gosodiad hwn neu i ddysgu ragor, ewch i Gosodiadau &gt; Preifatrwydd a Diogelwch &gt; Diogelwch.</string>
+    <string name="errorpage_httpsonly_title2">Nid yw’r wefan hon yn cefnogi HTTPS</string>
 
-    <!-- Sessions List -->
+    <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will get replaced with the name of the app (e.g. "Firefox Focus").
+        Contains a button that will redirect the user to Privacy & Security Screen-->
+    <string name="errorpage_httpsonly_message2"><![CDATA[Mae %1$s yn ceisio defnyddio cysylltiad HTTPS pryd bynnag y bo modd i fod yn fwy diogel.
+     <a href="%2$s">Dysgu rhagor</a> <br/><br/>
+     Newidiwch y gosodiad hwn yn Gosodiadau > Preifatrwydd a Diogelwch > Diogelwch.]]></string>
+
+    <!-- The document title and heading of the error page shown when a website has an invalid or expired SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_title">Nid yw’r cysylltiad yn ddiogel</string>
+
+    <!-- The error message shown when a website has an invalid or expired SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_message"><![CDATA[
+    Gall hyn fod yn broblem gyda ffurfweddiad y gweinydd, neu gall fod yn rhywun sy’n ceisio dynwared y gweinydd. <br/><br/>
+    Os ydych wedi cysylltu â’r gweinydd hwn yn llwyddiannus yn y gorffennol, gall y gwall fod yn un dros dro.
+    ]]></string>
+
+    <!-- The advanced certificate information shown when a website has an invalid SSL certificate. The %1$s will be replaced by the app name and %2$s will be replaced by website URL. It's only shown when a website has an invalid SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_techInfo"><![CDATA[
+        <label>Gall rhywun fod yn ceisio dynwared y wefan a gall mynd ymlaen fod yn beryglus.</label>
+        <br><br>
+        <label> Nid yw %1$s yn ymddiried yn <b>%2$s</b> oherwydd bod cyhoeddwr ei dystysgrif yn anhysbys, maer dystysgrif wedi’i hunan-lofnodi, neu nid yw’r gweinydd yn anfon y tystysgrifau canolradd cywir.</label>
+    ]]></string>
+
+     <!-- Sessions List -->
     <!-- Content description (not visible, for screen readers etc.): Button that closes a tab n the sessions list -->
     <string name="close_tab">Cau tab</string>
 
@@ -997,13 +1081,18 @@
 
     !-- Content description (not visible, for screen readers etc.): This is the description for
     picture of search widget from promote search widget dialog. --&gt;
+    <!-- Content description (not visible, for screen readers etc.): This is the description for the
+    close button from promote search widget dialog. -->
     <string name="promote_search_widget_dialog_content_description">Cau</string>
 
     !-- Content description (not visible, for screen readers etc.): This is the description for
     picture of search widget from promote search widget dialog. --&gt;
+    <!-- Content description (not visible, for screen readers etc.): This is the description for
+    picture of search widget from promote search widget dialog. -->
     <string name="promote_search_widget_dialog_picture_content_description">Chwilio teclyn</string>
 
     !-- This is the title of promote search widget dialog. --&gt;
+    <!-- This is the title of promote search widget dialog. -->
     <string name="promote_search_widget_dialog_title">Hanes pori wedi’i glirio! 🎉</string>
 
     !-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
@@ -1013,13 +1102,19 @@
 
     !-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
     of the app (e.g. &quot;Focus&quot;) --&gt;
+    <!-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
+    of the app (e.g. "Focus") -->
     <string name="promote_search_widget_dialog_subtitle">Byddwn yn eich gadael i’ch pori preifat, ond yn cael cychwyn cyflymach y tro nesaf gyda’r teclyn %1$s ar eich sgrin Cartref.</string>
 
     !-- This is te text from add search widget to home screen button .The button is located on
     promote search widget dialog. --&gt;
+    <!-- This is te text from add search widget to home screen button .The button is located on
+    promote search widget dialog. -->
     <string name="promote_search_widget_button_text">Ychwanegu teclyn i’r sgrin cartref</string>
 
     !-- This is te text of the snackbar that appears after the search widget was added successfully
     to the home screen. --&gt;
+    <!-- This is te text of the snackbar that appears after the search widget was added successfully
+    to the home screen. -->
     <string name="promote_search_widget_snackbar_message">Teclyn wedi’i ychwanegu i’r sgrin cartref</string>
 </resources>

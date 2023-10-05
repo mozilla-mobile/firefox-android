@@ -12,8 +12,10 @@ import androidx.work.WorkManager
 import androidx.work.testing.WorkManagerTestInitHelper
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runTest
 import mozilla.appservices.places.PlacesReaderConnection
 import mozilla.appservices.places.PlacesWriterConnection
+import mozilla.appservices.places.uniffi.InternalException
 import mozilla.appservices.places.uniffi.PlacesApiException
 import mozilla.appservices.places.uniffi.VisitObservation
 import mozilla.components.concept.storage.DocumentType
@@ -31,6 +33,7 @@ import mozilla.components.support.test.mock
 import mozilla.components.support.test.robolectric.testContext
 import mozilla.components.support.test.rule.MainCoroutineRule
 import mozilla.components.support.test.rule.runTestOnMain
+import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.core.Is.`is`
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -38,10 +41,10 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
-import org.junit.Assert.assertThat
 import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -466,7 +469,7 @@ class PlacesHistoryStorageTest {
     }
 
     @Test
-    fun `store uses a different reader for autocomplete suggestions`() {
+    fun `store uses a different reader for autocomplete suggestions`() = runTest {
         val connection: RustPlacesConnection = mock()
         doReturn(mock<PlacesReaderConnection>()).`when`(connection).reader()
         doReturn(mock<PlacesReaderConnection>()).`when`(connection).newReader()
@@ -542,6 +545,7 @@ class PlacesHistoryStorageTest {
         assertEquals(0, visits.size)
     }
 
+    @Ignore("Disabled: https://bugzilla.mozilla.org/show_bug.cgi?id=1853687")
     @Test
     fun `store can delete by 'range'`() = runTestOnMain {
         history.recordVisit("http://www.mozilla.org/1", PageVisit(VisitType.TYPED))
@@ -784,9 +788,49 @@ class PlacesHistoryStorageTest {
         assertTrue(result is SyncStatus.Error)
     }
 
-    @Test(expected = PlacesApiException::class)
+    @Test
+    fun `storage does not re-throw unexpected places exceptions`() = runTestOnMain {
+        val exception = PlacesApiException.UnexpectedPlacesException("unexpected exception")
+        val conn = object : Connection {
+            override fun reader(): PlacesReaderConnection {
+                fail()
+                return mock()
+            }
+
+            override fun newReader(): PlacesReaderConnection {
+                fail()
+                return mock()
+            }
+
+            override fun writer(): PlacesWriterConnection {
+                fail()
+                return mock()
+            }
+
+            override fun syncHistory(syncInfo: SyncAuthInfo) {
+                throw exception
+            }
+
+            override fun syncBookmarks(syncInfo: SyncAuthInfo) {
+                fail()
+            }
+
+            override fun close() {
+                fail()
+            }
+
+            override fun registerWithSyncManager() {
+                fail()
+            }
+        }
+        val storage = MockingPlacesHistoryStorage(conn)
+        val result = storage.sync(SyncAuthInfo("kid", "token", 123L, "key", "serverUrl"))
+        assertTrue(result is SyncStatus.Error)
+    }
+
+    @Test(expected = InternalException::class)
     fun `storage re-throws sync panics`() = runTestOnMain {
-        val exception = PlacesApiException.UnexpectedPlacesException("test panic")
+        val exception = InternalException("sync paniced")
         val conn = object : Connection {
             override fun reader(): PlacesReaderConnection {
                 fail()
@@ -919,6 +963,7 @@ class PlacesHistoryStorageTest {
         }
     }
 
+    @Ignore("Disabled: https://bugzilla.mozilla.org/show_bug.cgi?id=1853687")
     @Test
     fun `get history metadata between`() = runTestOnMain {
         assertEquals(0, history.getHistoryMetadataBetween(-1, 0).size)

@@ -29,10 +29,12 @@ import mozilla.components.browser.state.state.WebExtensionState
 import mozilla.components.browser.state.state.content.DownloadState
 import mozilla.components.browser.state.state.content.FindResultState
 import mozilla.components.browser.state.state.content.ShareInternetResourceState
+import mozilla.components.browser.state.state.extension.WebExtensionPromptRequest
 import mozilla.components.browser.state.state.recover.RecoverableTab
 import mozilla.components.browser.state.state.recover.TabState
 import mozilla.components.concept.engine.Engine
 import mozilla.components.concept.engine.EngineSession
+import mozilla.components.concept.engine.EngineSession.CookieBannerHandlingStatus
 import mozilla.components.concept.engine.EngineSessionState
 import mozilla.components.concept.engine.HitResult
 import mozilla.components.concept.engine.content.blocking.Tracker
@@ -69,6 +71,12 @@ object InitAction : BrowserAction()
  * [BrowserAction] to indicate that restoring [BrowserState] is complete.
  */
 object RestoreCompleteAction : BrowserAction()
+
+/**
+ * [BrowserAction] implementation for updating state related to whether the extensions process
+ * spawning has been disabled and a popup is necessary.
+ */
+data class ExtensionProcessDisabledPopupAction(val showPopup: Boolean) : BrowserAction()
 
 /**
  * [BrowserAction] implementations to react to system events.
@@ -423,11 +431,6 @@ sealed class ContentAction : BrowserAction() {
     data class RemoveIconAction(val sessionId: String) : ContentAction()
 
     /**
-     * Removes the thumbnail of the [ContentState] with the given [sessionId].
-     */
-    data class RemoveThumbnailAction(val sessionId: String) : ContentAction()
-
-    /**
      * Updates the URL of the [ContentState] with the given [sessionId].
      */
     data class UpdateUrlAction(val sessionId: String, val url: String) : ContentAction()
@@ -538,6 +541,16 @@ sealed class ContentAction : BrowserAction() {
      */
     data class UpdateSearchTermsAction(val sessionId: String, val searchTerms: String) :
         ContentAction()
+
+    /**
+     * Updates the isSearch state and optionally the search engine name of the [ContentState] with
+     * the given [sessionId].
+     */
+    data class UpdateIsSearchAction(
+        val sessionId: String,
+        val isSearch: Boolean,
+        val searchEngineName: String? = null,
+    ) : ContentAction()
 
     /**
      * Updates the [SecurityInfoState] of the [ContentState] with the given [sessionId].
@@ -784,6 +797,22 @@ sealed class ContentAction : BrowserAction() {
      * Updates whether the toolbar should be forced to expand or have it follow the default behavior.
      */
     data class UpdateExpandedToolbarStateAction(val sessionId: String, val expanded: Boolean) : ContentAction()
+
+    /**
+     * Updates the [ContentState] with the provided [tabId] to the appropriate priority based on any
+     * existing form data.
+     */
+    data class UpdateHasFormDataAction(val tabId: String, val containsFormData: Boolean) : ContentAction()
+
+    /**
+     * Lowers priority of the [tabId] to default after certain period of time
+     */
+    data class UpdatePriorityToDefaultAfterTimeoutAction(val tabId: String) : ContentAction()
+
+    /**
+     * Indicates the given [tabId] was unable to be checked for form data.
+     */
+    data class CheckForFormDataExceptionAction(val tabId: String, val throwable: Throwable) : ContentAction()
 }
 
 /**
@@ -821,6 +850,30 @@ sealed class TrackingProtectionAction : BrowserAction() {
 }
 
 /**
+ * [BrowserAction] implementations related to updating the [SessionState.cookieBanner] of a single [SessionState] inside
+ * [BrowserState].
+ */
+sealed class CookieBannerAction : BrowserAction() {
+    /**
+     * Updates the [SessionState.cookieBanner] state or a a single [SessionState].
+     */
+    data class UpdateStatusAction(val tabId: String, val status: CookieBannerHandlingStatus) :
+        CookieBannerAction()
+}
+
+/**
+ * [BrowserAction] implementations related to updating the [SessionState.isProductUrl]
+ * of a single [SessionState] inside [BrowserState]
+ */
+sealed class ShoppingProductAction : BrowserAction() {
+    /**
+     * Updates the [SessionState.isProductUrl] state for the non private tab with the given [tabId].
+     */
+    data class UpdateProductUrlStatusAction(val tabId: String, val isProductUrl: Boolean) :
+        ShoppingProductAction()
+}
+
+/**
  * [BrowserAction] implementations related to updating [BrowserState.extensions] and
  * [TabSessionState.extensionState].
  */
@@ -829,6 +882,17 @@ sealed class WebExtensionAction : BrowserAction() {
      * Updates [BrowserState.extensions] to register the given [extension] as installed.
      */
     data class InstallWebExtensionAction(val extension: WebExtensionState) : WebExtensionAction()
+
+    /**
+     * Updates [BrowserState.webExtensionPromptRequest] give the given [promptRequest].
+     */
+    data class UpdatePromptRequestWebExtensionAction(val promptRequest: WebExtensionPromptRequest) :
+        WebExtensionAction()
+
+    /**
+     * Removes the actual [WebExtensionPromptRequest] of the [BrowserState].
+     */
+    object ConsumePromptRequestWebExtensionAction : WebExtensionAction()
 
     /**
      * Removes all state of the uninstalled extension from [BrowserState.extensions]
@@ -1010,9 +1074,40 @@ sealed class EngineAction : BrowserAction() {
     ) : EngineAction(), ActionWithTab
 
     /**
+     * Indicates the given [tabId] is to print the page content.
+     */
+    data class PrintContentAction(
+        override val tabId: String,
+    ) : EngineAction(), ActionWithTab
+
+    /**
+     * Indicates the given [tabId] completed printing the page content.
+     */
+    data class PrintContentCompletedAction(
+        override val tabId: String,
+    ) : EngineAction(), ActionWithTab
+
+    /**
+     * Indicates the given [tabId] was unable to print the page content.
+     * [isPrint] indicates if it is in response to a print (true) or PDF saving (false).
+     */
+    data class PrintContentExceptionAction(
+        override val tabId: String,
+        val isPrint: Boolean,
+        val throwable: Throwable,
+    ) : EngineAction(), ActionWithTab
+
+    /**
      * Navigates back in the tab with the given [tabId].
      */
     data class SaveToPdfAction(
+        override val tabId: String,
+    ) : EngineAction(), ActionWithTab
+
+    /**
+     * Indicates the given [tabId] was successful in generating a requested PDF page.
+     */
+    data class SaveToPdfCompleteAction(
         override val tabId: String,
     ) : EngineAction(), ActionWithTab
 
@@ -1153,6 +1248,11 @@ sealed class ReaderAction : BrowserAction() {
         ReaderAction()
 
     /**
+     * Updates the [ReaderState.scrollY].
+     */
+    data class UpdateReaderScrollYAction(val tabId: String, val scrollY: Int) : ReaderAction()
+
+    /**
      * Clears the [ReaderState.activeUrl].
      */
     data class ClearReaderActiveUrlAction(val tabId: String) : ReaderAction()
@@ -1290,6 +1390,28 @@ sealed class ShareInternetResourceAction : BrowserAction() {
 }
 
 /**
+ * [BrowserAction] implementations related to updating the session state of internet resources to be copied.
+ */
+sealed class CopyInternetResourceAction : BrowserAction() {
+    /**
+     * Starts the copying process of an Internet resource.
+     */
+    data class AddCopyAction(
+        val tabId: String,
+        val internetResource: ShareInternetResourceState,
+    ) : CopyInternetResourceAction()
+
+    /**
+     * Previous copy request is considered completed.
+     * File was successfully copied / user may have aborted the process or the operation
+     * may have failed. In either case the previous copy request is considered completed.
+     */
+    data class ConsumeCopyAction(
+        val tabId: String,
+    ) : CopyInternetResourceAction()
+}
+
+/**
  * [BrowserAction] implementations related to updating [BrowserState.containers]
  */
 sealed class ContainerAction : BrowserAction() {
@@ -1341,8 +1463,9 @@ sealed class SearchAction : BrowserAction() {
 
     /**
      * Sets the [RegionState] (region of the user).
+     * distribution is a [String] that specifies a set of default search engines if available
      */
-    data class SetRegionAction(val regionState: RegionState) : SearchAction()
+    data class SetRegionAction(val regionState: RegionState, val distribution: String? = null) : SearchAction()
 
     /**
      * Sets the list of search engines and default search engine IDs.
@@ -1351,6 +1474,7 @@ sealed class SearchAction : BrowserAction() {
         val regionSearchEngines: List<SearchEngine>,
         val customSearchEngines: List<SearchEngine>,
         val hiddenSearchEngines: List<SearchEngine>,
+        val disabledSearchEngineIds: List<String>,
         val additionalSearchEngines: List<SearchEngine>,
         val additionalAvailableSearchEngines: List<SearchEngine>,
         val userSelectedSearchEngineId: String?,
@@ -1401,6 +1525,19 @@ sealed class SearchAction : BrowserAction() {
      * back to [SearchState.additionalAvailableSearchEngines].
      */
     data class RemoveAdditionalSearchEngineAction(val searchEngineId: String) : SearchAction()
+
+    /**
+     * Updates [SearchState.disabledSearchEngineIds] list inside [BrowserState.search].
+     */
+    data class UpdateDisabledSearchEngineIdsAction(
+        val searchEngineId: String,
+        val isEnabled: Boolean,
+    ) : SearchAction()
+
+    /**
+     * Restores hidden engines from [SearchState.hiddenSearchEngines] back to [SearchState.regionSearchEngines]
+     */
+    object RestoreHiddenSearchEnginesAction : SearchAction()
 }
 
 /**
@@ -1420,4 +1557,20 @@ sealed class DebugAction : BrowserAction() {
      */
     @DelicateAction
     data class UpdateCreatedAtAction(val tabId: String, val createdAt: Long) : DebugAction()
+}
+
+/**
+ * [BrowserAction] implementations related to the application lifecycle.
+ */
+sealed class AppLifecycleAction : BrowserAction() {
+
+    /**
+     * The application has received an ON_RESUME event.
+     */
+    object ResumeAction : AppLifecycleAction()
+
+    /**
+     * The application has received an ON_PAUSE event.
+     */
+    object PauseAction : AppLifecycleAction()
 }

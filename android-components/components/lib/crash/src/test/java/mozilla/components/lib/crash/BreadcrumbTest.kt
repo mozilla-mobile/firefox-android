@@ -39,6 +39,7 @@ class BreadcrumbTest {
                 context = testContext,
                 services = listOf(mock()),
                 shouldPrompt = CrashReporter.Prompt.NEVER,
+                notificationsDelegate = mock(),
             ).install(testContext),
         )
 
@@ -52,12 +53,14 @@ class BreadcrumbTest {
             ),
         )
 
-        assertEquals(reporter.crashBreadcrumbs.elementAt(0).message, testMessage)
-        assertEquals(reporter.crashBreadcrumbs.elementAt(0).data, testData)
-        assertEquals(reporter.crashBreadcrumbs.elementAt(0).category, testCategory)
-        assertEquals(reporter.crashBreadcrumbs.elementAt(0).level, testLevel)
-        assertEquals(reporter.crashBreadcrumbs.elementAt(0).type, testType)
-        assertNotNull(reporter.crashBreadcrumbs.elementAt(0).date)
+        reporter.crashBreadcrumbsCopy().elementAt(0).let {
+            assertEquals(it.message, testMessage)
+            assertEquals(it.data, testData)
+            assertEquals(it.category, testCategory)
+            assertEquals(it.level, testLevel)
+            assertEquals(it.type, testType)
+            assertNotNull(it.date)
+        }
     }
 
     @Test
@@ -73,6 +76,7 @@ class BreadcrumbTest {
                 context = testContext,
                 services = listOf(mock()),
                 shouldPrompt = CrashReporter.Prompt.NEVER,
+                notificationsDelegate = mock(),
             ).install(testContext),
         )
 
@@ -85,7 +89,7 @@ class BreadcrumbTest {
                 testType,
             ),
         )
-        assertEquals(reporter.crashBreadcrumbs.size, 1)
+        assertEquals(reporter.crashBreadcrumbsCopy().size, 1)
 
         reporter.recordCrashBreadcrumb(
             Breadcrumb(
@@ -96,7 +100,7 @@ class BreadcrumbTest {
                 testType,
             ),
         )
-        assertEquals(reporter.crashBreadcrumbs.size, 2)
+        assertEquals(reporter.crashBreadcrumbsCopy().size, 2)
 
         reporter.recordCrashBreadcrumb(
             Breadcrumb(
@@ -107,7 +111,7 @@ class BreadcrumbTest {
                 testType,
             ),
         )
-        assertEquals(reporter.crashBreadcrumbs.size, 3)
+        assertEquals(reporter.crashBreadcrumbsCopy().size, 3)
     }
 
     @Test
@@ -123,11 +127,12 @@ class BreadcrumbTest {
                 context = testContext,
                 services = listOf(mock()),
                 shouldPrompt = CrashReporter.Prompt.NEVER,
+                notificationsDelegate = mock(),
             ).install(testContext),
         )
 
         val beginDate = Date()
-        sleep(100) /* make sure time elapsed */
+        sleep(100) // make sure time elapsed
         reporter.recordCrashBreadcrumb(
             Breadcrumb(
                 testMessage,
@@ -137,11 +142,13 @@ class BreadcrumbTest {
                 testType,
             ),
         )
-        sleep(100) /* make sure time elapsed */
+        sleep(100) // make sure time elapsed
         val afterDate = Date()
 
-        assertTrue(reporter.crashBreadcrumbs.elementAt(0).date.after(beginDate))
-        assertTrue(reporter.crashBreadcrumbs.elementAt(0).date.before(afterDate))
+        reporter.crashBreadcrumbsCopy().elementAt(0).let {
+            assertTrue(it.date.after(beginDate))
+            assertTrue(it.date.before(afterDate))
+        }
 
         val date = Date()
         reporter.recordCrashBreadcrumb(
@@ -154,7 +161,10 @@ class BreadcrumbTest {
                 date,
             ),
         )
-        assertEquals(reporter.crashBreadcrumbs.elementAt(1).date.compareTo(date), 0)
+
+        reporter.crashBreadcrumbsCopy().elementAt(1).let {
+            assertEquals(it.date.compareTo(date), 0)
+        }
     }
 
     @Test

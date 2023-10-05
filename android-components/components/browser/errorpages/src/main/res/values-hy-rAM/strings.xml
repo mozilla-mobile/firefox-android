@@ -43,7 +43,7 @@
     <!-- The error message shown when a website uses HSTS. -->
     <string name="mozac_browser_errorpages_security_bad_hsts_cert_message"><![CDATA[
       <ul>
-         <li>Էջը, որ փորձում եք դիտել, հնարավոր չէ ցուցադրե, քանի որ կայքը պահանջում է անվտանգ կապակցում:</li>
+         <li>Էջը, որ փորձում եք դիտել, հնարավոր չէ ցուցադրել, քանի որ կայքը պահանջում է անվտանգ կապակցում:</li>
          <li>Ամենայն հավանականությամբ՝ խնդիրը կայքի հետ է և դուք ոչինչ չեք կարող անել այն ուղղելու համար:</li>
          <li>Խնդրի մասին կարող եք ծանուցել կայքի վարիչին:</li>
       </ul>
@@ -52,9 +52,6 @@
     <!-- The text shown inside the advanced button used to expand the advanced options. It's only shown when a website uses HSTS. -->
     <string name="mozac_browser_errorpages_security_bad_hsts_cert_advanced">Լրացուցիչ…</string>
 
-    <!-- The advanced certificate information shown when a website uses HSTS. The %1$s will be replaced by the website URL and %2$s will be replaced by the app name. It's only shown when a website uses HSTS. -->
-    <string moz:removedIn="104" name="mozac_browser_errorpages_security_bad_hsts_cert_techInfo" tools:ignore="UnusedResources"><![CDATA[
-        <label> <b>%1$s</b>-ը ունի անվտանգության քաղաքականություն, որը կոչվում է HTTP Strict Transport Security (HSTS): Այն նշանակում է, որ <b>%2$s</b>-ը կարող է միայն անվտանգ կապակցում անել: Տվյալ կայքը այցելելու համար դուք չեք կարող բացառություն սահմանել:]]></string>
     <!-- The advanced certificate information shown when a website uses HSTS. The %1$s will be replaced by the website URL and %2$s will be replaced by the app name. It's only shown when a website uses HSTS. -->
     <string name="mozac_browser_errorpages_security_bad_hsts_cert_techInfo2"><![CDATA[
         <label> <b>%1$s</b>-ը ունի անվտանգության քաղաքականություն, որը կոչվում է HTTP Strict Transport Security (HSTS), ինչը նշանակում է, որ <b>%2$s</b>-ը կարող է դրան միմիայն անվտանգ կապակցվել: Դուք չեք կարող բացառություն ավելացնել տվյալ էջն այցելելու համար: </label>

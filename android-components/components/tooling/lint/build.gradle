@@ -2,30 +2,25 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 apply plugin: 'java-library'
 apply plugin: 'kotlin'
 
-targetCompatibility = JavaVersion.VERSION_1_8
-sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_17
+sourceCompatibility = JavaVersion.VERSION_17
 
 dependencies {
-  compileOnly Dependencies.tools_lintapi
-  compileOnly Dependencies.tools_lintchecks
+  compileOnly ComponentsDependencies.tools_lintapi
+  compileOnly ComponentsDependencies.tools_lintchecks
 
-  // Force the usage of /our/ Kotlin version and not what we get transitively from the lint
-  // dependencies. Otherwise we end up with a warning that there are multiple versions on the
-  // classpath.
-  compileOnly Dependencies.kotlin_stdlib
-  compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${Versions.kotlin}"
-  compileOnly Dependencies.kotlin_reflect
-  testImplementation Dependencies.kotlin_stdlib
-  testImplementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${Versions.kotlin}"
-  testImplementation Dependencies.kotlin_reflect
+  compileOnly ComponentsDependencies.kotlin_reflect
+  testImplementation ComponentsDependencies.kotlin_reflect
 
-  testImplementation Dependencies.tools_lint
-  testImplementation Dependencies.tools_linttests
-  testImplementation Dependencies.testing_junit
-  testImplementation Dependencies.testing_mockito
+  testImplementation ComponentsDependencies.tools_lint
+  testImplementation ComponentsDependencies.tools_linttests
+  testImplementation ComponentsDependencies.testing_junit
+  testImplementation ComponentsDependencies.testing_mockito
 }
 
 jar {
@@ -47,4 +42,8 @@ tasks.register("assembleAndroidTest") {
     // Do nothing. Like the `lint` task above this is just a dummy task so that this module
     // behaves like our others and we do not need to special case it in automation.
   }
+}
+
+tasks.withType(KotlinCompile).configureEach {
+  kotlinOptions.jvmTarget = "17"
 }

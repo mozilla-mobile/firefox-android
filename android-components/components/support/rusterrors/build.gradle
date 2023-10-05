@@ -6,14 +6,13 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion config.compileSdkVersion
-
     defaultConfig {
         minSdkVersion config.minSdkVersion
+        compileSdk config.compileSdkVersion
         targetSdkVersion config.targetSdkVersion
     }
 
-    lintOptions {
+    lint {
         warningsAsErrors true
         abortOnError true
     }
@@ -25,12 +24,14 @@ android {
             consumerProguardFiles 'proguard-rules-consumer.pro'
         }
     }
+
+    namespace 'mozilla.components.support.rusterrors'
 }
 
 dependencies {
-    implementation Dependencies.mozilla_errorsupport
-    implementation Dependencies.kotlin_stdlib
-    implementation Dependencies.kotlin_coroutines
+    implementation ComponentsDependencies.mozilla_appservices_errorsupport
+
+    implementation ComponentsDependencies.kotlin_coroutines
     implementation project(':support-base')
 }
 

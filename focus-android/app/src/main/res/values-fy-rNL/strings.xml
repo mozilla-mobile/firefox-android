@@ -353,6 +353,15 @@
     <!-- In-app link (in settings) to Focus privacy notice. -->
     <string name="preference_privacy_notice">Privacyferklearring</string>
 
+    <!-- In-app link (in settings) to Focus licensing information. -->
+    <string name="preference_licensing_info">Lisinsje-ynformaasje</string>
+
+    <!-- Link to Focus licensing information from other libraries that we use. -->
+    <string name="preference_libraries_we_use">Brûkte biblioteken</string>
+
+    <!-- Open Source Licenses page title. The first parameter is the app name -->
+    <string name="open_source_licenses_title">%s | OSS-biblioteken</string>
+
     <!-- Item in Preferences that shows the about page. Parameter 1 is the app name, i.e. Firefox Focus/Firefox Klar. -->
     <string name="preference_about">Oer %1$s</string>
 
@@ -482,7 +491,10 @@
 
 
 
-  <string name="error_hostLookup_title">Server net fûn</string>
+  <!-- Snackbar that will be displayed after a website has been added to shortcuts. -->
+    <string name="snackbar_added_to_shortcuts">Tafoege oan fluchkeppelingen!</string>
+
+    <string name="error_hostLookup_title">Server net fûn</string>
 
 
 
@@ -702,17 +714,14 @@
     <!--  Preference summary inside Cookie banner reduction screen. Here you can set the cookie banner option to disabled or reject_all. -->
     <string name="cookie_banner_reject_all_option_summary">Sjoch minder banners troch, wannear mooglik, cookiefersiken automatysk te wegerjen.</string>
 
-    <!--  Checkbox Preference title inside Cookie banner reduction screen. Here you can set the cookie banner option to reject_or_accept_all or reject_all. -->
-    <string name="cookie_banner_further_reduce_option_title">Cookiebanners fierder redusearje</string>
-
-    <!--  Checkbox Preference summary inside Cookie banner reduction screen. Here you can set the cookie banner option to reject_or_accept_all or reject_all. -->
-    <string name="cookie_banner_further_reduce_option_summary">Cookiebannerfersiken wurde akseptearre om mear banners fuort te smiten.</string>
-
     <!-- Preference for removing cookie/consent banners from sites automatically, this is shown as part of the protections panel with the tracking protection toggle. -->--&gt;
     <string name="cookie_banner_exception_item_title">Reduksje fan cookiebanners</string>
 
     <!-- Text for indicating cookie banner handling is on this site, this is shown as part of the protections panel with the tracking protection toggle. -->
     <string name="cookie_banner_exception_item_description_state_on">OAN foar dizze website</string>
+
+    <!-- Text for indicating cookie reducer is not supported on the current site, this is shown as part of the protections panel with the tracking protection toggle. -->
+    <string name="cookie_banner_exception_site_not_supported">Website wurdt op dit stuit net stipe</string>
 
     <!-- Text for indicating cookie banner handling is off this site, this is shown as part of the protections panel with the tracking protection toggle. -->
     <string name="cookie_banner_exception_item_description_state_off">ÚT foar dizze website</string>
@@ -736,7 +745,29 @@
     <string name="cookie_banner_exception_panel_description_state_on_for_site">%1$s wisket de cookies foar dizze website en fernijt de side. As alle cookies wiske wurde, wurde jo mooglik ôfmeld of wurde winkelweintsjes lege.</string>
 
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The placeholder will be updated with the app name. -->
-    <string name="cookie_banner_exception_panel_description_state_off_for_site">%1$s kin probearje om automatysk cookie-oanfragen te wegerjen. As der gjin wegeringsopsje beskikber is, akseptearret %1$s mooglik alle cookies om de banner te sluten.</string>
+    <string name="cookie_banner_exception_panel_description_state_off_for_site2">%1$s kin probearje om cookiefersiken automatysk te wegerjen.</string>
+
+    <!-- Long text for a detail explanation indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_description_site_is_not_supported">Dizze website wurdt op it stuit net stipe troch Reduksje fan cookiebanners. Wolle jo ús team freegje om dizze website te beoardielen en yn de takomst stipe ta te foegjen?</string>
+
+    <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_site_is_not_supported_cancel_button">Annulearje</string>
+
+    <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_site_is_not_supported_request_support_button">Stipe oanfreegje</string>
+
+    <!-- Label for the snackBar, after the user reports with success a website where cookie banner reducer did not work -->
+    <string name="cookie_banner_report_a_site_snackbar_label">Fersyk om te websitestipe yntsjinne.</string>
+
+    <!-- Label for cookie banner item from tracking protection, after the user reports with success a website where cookie banner reducer did not work -->
+    <string name="cookie_banner_the_site_was_reported">Fersyk om te websitestipe yntsjinne.</string>
+
+    <!-- Contextual Feature Recommendation Popups -->
+    <!-- CFR for Cookie Banner (Banner Info Message). %1$s will be replaced by the app name, %2$s will be an active link using the string cfr_cookie_banner_link as text. -->
+    <string name="cfr_cookie_banner">%1$s probearret cookiefersiken ôf te wizen om ferfelende cookiebanners fuort te heljen.\n\nBehear foarkarren foar cookiebanners yn %2$s.</string>
+
+    <!-- CFR for Cookie Banner (Banner Info Message). This string is used as text for a link in cfr_cookie_banner and takes the user to the app settings. -->
+    <string name="cfr_cookie_banner_link">ynstellingen</string>
 
     <!-- Preference for autoplay -->
     <string name="preference_autoplay">Automatysk ôfspylje</string>
@@ -894,6 +925,9 @@
     <!-- Label for the button in the snackbar that switches to the newly opened tab -->
     <string name="open_new_tab_snackbar">Wikselje</string>
 
+    <!-- Text displayed in a notification when the user enters full screen mode -->
+    <string name="full_screen_notification">Folslein skerm wurdt iepene</string>
+
     <!-- Preference for switching to a new tab immediately after opening -->
     <string name="preference_open_new_tab">Wikselje daliks nei keppeling yn nij ljepblêd</string>
 
@@ -996,11 +1030,31 @@
 
 
     <!-- The title of the error page for websites that do not support HTTPS when HTTPS-Only is turned on  -->
-    <string name="errorpage_httpsonly_title">De troch jo opfrege website stipet gjin HTTPS</string>
-    <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will get replaced with the name of the app (e.g. "Firefox Focus") -->
-    <string name="errorpage_httpsonly_message">Standert probearret %1$s ferbining te meitsjen fia HTTPS foar in bettere befeiliging. Gean nei Ynstellingen &gt; Privacy &amp; Befeiliging &gt; Befeiliging om dizze ynstelling te wizigjen of foar mear ynformaasje.</string>
+    <string name="errorpage_httpsonly_title2">Dizze website stipet gjin HTTPS</string>
 
-    <!-- Sessions List -->
+    <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will get replaced with the name of the app (e.g. "Firefox Focus").
+        Contains a button that will redirect the user to Privacy & Security Screen-->
+    <string name="errorpage_httpsonly_message2"><![CDATA[%1$s probearret wêr mooglik in HTTPS-ferbining te brûken foar mear feilichheid.
+<a href="%2$s">Mear ynfo</a> <br/><br/>
+Wizigje dizze ynstelling yn Ynstellingen > Privacy en befeiliging > Befeiliging.]]></string>
+
+    <!-- The document title and heading of the error page shown when a website has an invalid or expired SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_title">Ferbining net befeilige</string>
+
+    <!-- The error message shown when a website has an invalid or expired SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_message"><![CDATA[
+Dit kin in probleem wêze mei de konfiguraasje fan de server, of it kin ien wêze dy’t probearret harren foar te dwaan as de server.<br/><br/>
+As jo earder al mei súkses ferbining hân hawwe mei dizze server, kin de flater mooglik tydlik wêze.
+ ]]></string>
+
+    <!-- The advanced certificate information shown when a website has an invalid SSL certificate. The %1$s will be replaced by the app name and %2$s will be replaced by website URL. It's only shown when a website has an invalid SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_techInfo"><![CDATA[
+        <label>Ien kin probearje de website nei te dwaan en trochgean kin risikofol wêze.</label>
+        <br><br>
+        <label>%1$s fertrout <b>%2$s</b> net, omdat de sertifikaatútjouwer ûnbekend is, it sertifikaat selsûndertekene is, of de server net de krekte yntermediêre sertifikaten ferstjoert.</label>
+    ]]></string>
+
+     <!-- Sessions List -->
     <!-- Content description (not visible, for screen readers etc.): Button that closes a tab n the sessions list -->
     <string name="close_tab">Ljepblêd slute</string>
 
@@ -1026,13 +1080,18 @@
 
     !-- Content description (not visible, for screen readers etc.): This is the description for
     picture of search widget from promote search widget dialog. --&gt;
+    <!-- Content description (not visible, for screen readers etc.): This is the description for the
+    close button from promote search widget dialog. -->
     <string name="promote_search_widget_dialog_content_description">Slute</string>
 
     !-- Content description (not visible, for screen readers etc.): This is the description for
     picture of search widget from promote search widget dialog. --&gt;
+    <!-- Content description (not visible, for screen readers etc.): This is the description for
+    picture of search widget from promote search widget dialog. -->
     <string name="promote_search_widget_dialog_picture_content_description">Syk-widget</string>
 
     !-- This is the title of promote search widget dialog. --&gt;
+    <!-- This is the title of promote search widget dialog. -->
     <string name="promote_search_widget_dialog_title">Navigaasjeskiednis wiske! 🎉</string>
 
     !-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
@@ -1042,13 +1101,19 @@
 
     !-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
     of the app (e.g. &quot;Focus&quot;) --&gt;
+    <!-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
+    of the app (e.g. "Focus") -->
     <string name="promote_search_widget_dialog_subtitle">Wy litte jo trochgean mei priveenavigaasje, mar krij in folgjende kear in fluggere start mei de %1$s-widget op jo startskerm.</string>
 
     !-- This is te text from add search widget to home screen button .The button is located on
     promote search widget dialog. --&gt;
+    <!-- This is te text from add search widget to home screen button .The button is located on
+    promote search widget dialog. -->
     <string name="promote_search_widget_button_text">Widget oan startskerm tafoegje</string>
 
     !-- This is te text of the snackbar that appears after the search widget was added successfully
     to the home screen. --&gt;
+    <!-- This is te text of the snackbar that appears after the search widget was added successfully
+    to the home screen. -->
     <string name="promote_search_widget_snackbar_message">Widget oan startskerm tafoege</string>
 </resources>

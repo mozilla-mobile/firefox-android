@@ -7,6 +7,7 @@ package mozilla.components.lib.push.firebase
 import android.content.Context
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
+import com.google.android.gms.common.util.VisibleForTesting
 import com.google.firebase.FirebaseApp
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -14,15 +15,10 @@ import com.google.firebase.messaging.RemoteMessage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import mozilla.components.concept.push.EncryptedPushMessage
 import mozilla.components.concept.push.PushError
 import mozilla.components.concept.push.PushProcessor
 import mozilla.components.concept.push.PushService
-import mozilla.components.concept.push.PushService.Companion.MESSAGE_KEY_BODY
 import mozilla.components.concept.push.PushService.Companion.MESSAGE_KEY_CHANNEL_ID
-import mozilla.components.concept.push.PushService.Companion.MESSAGE_KEY_CRYPTO_KEY
-import mozilla.components.concept.push.PushService.Companion.MESSAGE_KEY_ENCODING
-import mozilla.components.concept.push.PushService.Companion.MESSAGE_KEY_SALT
 import mozilla.components.support.base.log.logger.Logger
 import java.io.IOException
 import kotlin.coroutines.CoroutineContext
@@ -35,6 +31,10 @@ abstract class AbstractFirebasePushService(
 ) : FirebaseMessagingService(), PushService {
 
     private val logger = Logger("AbstractFirebasePushService")
+
+    @VisibleForTesting
+    internal val googleApiAvailability: GoogleApiAvailability
+        get() = GoogleApiAvailability.getInstance()
 
     /**
      * Initializes Firebase and starts the messaging service if not already started and enables auto-start as well.
@@ -62,23 +62,15 @@ abstract class AbstractFirebasePushService(
             logger.info("Processing message with chId: $chId")
         }
 
-        val encryptedMessage = EncryptedPushMessage(
-            channelId = chId,
-            encoding = message.data[MESSAGE_KEY_ENCODING],
-            body = message.data[MESSAGE_KEY_BODY],
-            salt = message.data[MESSAGE_KEY_SALT],
-            cryptoKey = message.data[MESSAGE_KEY_CRYPTO_KEY],
-        )
-
         // In case of any errors, let the PushProcessor handle this exception. Instead of crashing
         // here, just drop the message on the floor. This is fine, since we don't really need to
         // "recover" from a bad incoming message.
         // PushProcessor will submit relevant issues via a CrashReporter as appropriate.
         try {
-            PushProcessor.requireInstance.onMessageReceived(encryptedMessage)
+            PushProcessor.requireInstance.onMessageReceived(message.data)
         } catch (e: IllegalStateException) {
             // Re-throw 'requireInstance' exceptions.
-            throw(e)
+            throw (e)
         } catch (e: Exception) {
             PushProcessor.requireInstance.onError(PushError.Rust(e))
         }
@@ -106,6 +98,6 @@ abstract class AbstractFirebasePushService(
     }
 
     override fun isServiceAvailable(context: Context): Boolean {
-        return GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context) == ConnectionResult.SUCCESS
+        return googleApiAvailability.isGooglePlayServicesAvailable(context) == ConnectionResult.SUCCESS
     }
 }

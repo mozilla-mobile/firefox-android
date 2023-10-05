@@ -9,6 +9,8 @@ import android.content.ComponentName
 import android.content.Intent
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.concept.base.crash.CrashReporting
+import mozilla.components.support.base.android.NotificationsDelegate
 import mozilla.components.support.test.mock
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.Assert.assertEquals
@@ -93,4 +95,6 @@ class AbstractMediaSessionServiceTest {
 
 class FakeMediaService : AbstractMediaSessionService() {
     public override val store: BrowserStore = mock()
+    public override val crashReporter: CrashReporting = mock()
+    public override val notificationsDelegate: NotificationsDelegate = mock()
 }

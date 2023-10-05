@@ -38,7 +38,7 @@
         <label>Веб-сайты подтверждают свою подлинность с помощью сертификатов. %1$s не может доверять <b>%2$s</b>, потому что издатель его сертификата неизвестен, сертификат подписан самим сайтом или его сервер не отправляет правильные промежуточные сертификаты.</label>
     ]]></string>
     <!-- The text shown inside the advanced options button used to go back. It's only shown if the user has expanded the advanced options. -->
-    <string name="mozac_browser_errorpages_security_bad_cert_back">Назад (рекомендуется)</string>
+    <string name="mozac_browser_errorpages_security_bad_cert_back">Назад (желательно)</string>
     <!-- The text shown inside the advanced options button used to bypass the invalid SSL certificate. It's only shown if the user has expanded the advanced options. -->
     <string name="mozac_browser_errorpages_security_bad_cert_accept_temporary">Принять риск и продолжить</string>
 
@@ -57,10 +57,6 @@
     <!-- The text shown inside the advanced button used to expand the advanced options. It's only shown when a website uses HSTS. -->
     <string name="mozac_browser_errorpages_security_bad_hsts_cert_advanced">Дополнительно…</string>
 
-    <!-- The advanced certificate information shown when a website uses HSTS. The %1$s will be replaced by the website URL and %2$s will be replaced by the app name. It's only shown when a website uses HSTS. -->
-    <string moz:removedIn="104" name="mozac_browser_errorpages_security_bad_hsts_cert_techInfo" tools:ignore="UnusedResources"><![CDATA[
-        <label> <b>%1$s</b> использует политику безопасности под названием Форсированное безопасное соединение HTTP (HSTS), согласно которой <b>%2$s</b> может соединяться с ним только с помощью безопасного соединения. Вы не можете добавить исключение для посещения этого сайта.
-    ]]></string>
     <!-- The advanced certificate information shown when a website uses HSTS. The %1$s will be replaced by the website URL and %2$s will be replaced by the app name. It's only shown when a website uses HSTS. -->
     <string name="mozac_browser_errorpages_security_bad_hsts_cert_techInfo2"><![CDATA[
         <label> <b>%1$s</b> использует политику безопасности под названием Форсированное безопасное соединение HTTP (HSTS), согласно которой <b>%2$s</b> может соединяться с ним только с помощью безопасного соединения. Вы не можете добавить исключение для посещения этого сайта. </label>

@@ -127,28 +127,28 @@ tasks:
                   then: ${event.action}
                   else: 'UNDEFINED'
           in:
-              $if: >
-                  tasks_for in ["action", "cron"]
-                  || (isPullRequest && pullRequestAction in ["opened", "reopened", "synchronize"])
-                  || (tasks_for == "github-push" && head_ref[:10] != "refs/tags/" && head_ref != "staging.tmp" && head_ref != "trying.tmp") && (head_ref[:8] != "mergify/")
-              then:
-                  $let:
-                      level:
-                          $if: >
-                              tasks_for in ["github-push", "action", "cron"] && repoUrl == canonicalRepo
-                          then: '3'
-                          else: '1'
+              $let:
+                  level:
+                      $if: >
+                          tasks_for in ["github-push", "action", "cron"] && repoUrl == canonicalRepo
+                      then: '3'
+                      else: '1'
 
-                      short_base_ref:
-                          $if: 'base_ref[:11] == "refs/heads/"'
-                          then: {$eval: 'base_ref[11:]'}
-                          else: ${base_ref}
+                  short_base_ref:
+                      $if: 'base_ref[:11] == "refs/heads/"'
+                      then: {$eval: 'base_ref[11:]'}
+                      else: ${base_ref}
 
-                      short_head_ref:
-                          $if: 'head_ref[:11] == "refs/heads/"'
-                          then: {$eval: 'head_ref[11:]'}
-                          else: ${head_ref}
-                  in:
+                  short_head_ref:
+                      $if: 'head_ref[:11] == "refs/heads/"'
+                      then: {$eval: 'head_ref[11:]'}
+                      else: ${head_ref}
+              in:
+                  $if: >
+                      tasks_for in ["action", "cron"]
+                      || (isPullRequest && pullRequestAction in ["opened", "reopened", "synchronize"])
+                      || (tasks_for == "github-push" && head_ref[:10] != "refs/tags/" && short_head_ref != "staging.tmp" && short_head_ref != "trying.tmp" && short_head_ref[:8] != "mergify/")
+                  then:
                       $mergeDeep:
                           - $if: 'tasks_for != "action"'
                             then:
@@ -234,8 +234,6 @@ tasks:
                             retries: 5
 
                             payload:
-                                cache:
-                                    "${trustDomain}-level-${level}-gradle-decision-cache": /builds/worker/.gradle
                                 env:
                                     # run-task uses these to check out the source; the inputs
                                     # to `mach taskgraph decision` are all on the command line.
@@ -250,7 +248,6 @@ tasks:
                                           MOBILE_REPOSITORY_TYPE: git
                                           MOZ_AUTOMATION: "1"
                                           REPOSITORIES: {$json: {mobile: "firefox-android"}}
-                                          TASKCLUSTER_CACHES: /builds/worker/.gradle
                                         - $if: 'isPullRequest'
                                           then:
                                               MOBILE_PULL_REQUEST_NUMBER: '${event.pull_request.number}'
@@ -266,7 +263,7 @@ tasks:
                                 # Note: This task is built server side without the context or tooling that
                                 # exist in tree so we must hard code the hash
                                 image:
-                                    mozillareleases/taskgraph:decision-mobile-c0fca789e58f5458999ac9780a45897340f96f2a273c3c5ea1d2be438ab5223b@sha256:e9f387c9049db80281eaed73c7173b653be195423cdd58300f71d9796d8f1ac7
+                                    mozillareleases/taskgraph:decision-10068f116a3800a829ddba367136a95bef5634e06f77e051859586202c93b18a@sha256:a74ed430fd80ebb647bb4a5b019523cf5f69246ed2c2603386dbc8f7200c8140
 
                                 maxRunTime: 1800
 

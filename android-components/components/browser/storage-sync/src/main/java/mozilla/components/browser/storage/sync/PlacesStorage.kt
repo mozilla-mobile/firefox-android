@@ -43,6 +43,12 @@ abstract class PlacesStorage(
         @VisibleForTesting internal set
     private val storageDir by lazy { context.filesDir }
 
+    /**
+     * Cache of the last value with which [cancelReads] was called.
+     * Used to check whether a new call to [cancelReads] should trigger a cancellation or not.
+     */
+    private var lastCancelledQuery = ""
+
     abstract val logger: Logger
 
     internal open val places: Connection by lazy {
@@ -94,6 +100,23 @@ abstract class PlacesStorage(
     }
 
     /**
+     * Cleans up pending read operations of a specific query.
+     *
+     * @param nextQuery Previous query to cancel reads for.
+     * Calling cancel multiple times for the same query has effect only the first time.
+     * Use this in scenarios where the same instance is used in multiple scenarios to prevent cases
+     * in which a general cancel operation for one scenario cancels other reads for the same query.
+     * If the value is an empty string all current reads are immediately cancelled.
+     */
+    override fun cancelReads(nextQuery: String) {
+        if (nextQuery.isEmpty() || lastCancelledQuery != nextQuery) {
+            lastCancelledQuery = nextQuery
+            interruptCurrentReads()
+            readScope.coroutineContext.cancelChildren()
+        }
+    }
+
+    /**
      * Stop all current write operations.
      * Allows immediately dismissing all write operations and clearing the write queue.
      */
@@ -122,8 +145,6 @@ abstract class PlacesStorage(
     protected inline fun handlePlacesExceptions(operation: String, block: () -> Unit) {
         try {
             block()
-        } catch (e: PlacesApiException.UnexpectedPlacesException) {
-            throw e
         } catch (e: PlacesApiException.OperationInterrupted) {
             logger.debug("Ignoring expected OperationInterrupted exception when running $operation", e)
         } catch (e: PlacesApiException.UrlParseFailed) {
@@ -151,8 +172,6 @@ abstract class PlacesStorage(
     ): T {
         return try {
             block()
-        } catch (e: PlacesApiException.UnexpectedPlacesException) {
-            throw e
         } catch (e: PlacesApiException.OperationInterrupted) {
             logger.debug("Ignoring expected OperationInterrupted exception when running $operation", e)
             default
@@ -170,6 +189,8 @@ abstract class PlacesStorage(
     /**
      * Runs a [syncBlock], re-throwing any panics that may be encountered.
      * @return [SyncStatus.Ok] on success, or [SyncStatus.Error] on non-panic [PlacesApiException].
+     * (Note that a panic is represented by an mozilla.appservices.places.uniffi.InternalException,
+     * which isn't part of the [PlacesApiException] error hierarchy)
      */
     protected inline fun syncAndHandleExceptions(syncBlock: () -> Unit): SyncStatus {
         return try {
@@ -177,12 +198,8 @@ abstract class PlacesStorage(
             syncBlock()
             logger.debug("Successfully synced.")
             SyncStatus.Ok
-
-            // Order of these catches matters: UnexpectedPlacesException extends PlacesException
-        } catch (e: PlacesApiException.UnexpectedPlacesException) {
-            logger.error("Places panic while syncing", e)
-            throw e
         } catch (e: PlacesApiException) {
+            crashReporter?.submitCaughtException(e)
             logger.error("Places exception while syncing", e)
             SyncStatus.Error(e)
         }

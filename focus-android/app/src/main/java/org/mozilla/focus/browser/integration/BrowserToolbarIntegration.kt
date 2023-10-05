@@ -8,14 +8,20 @@ import android.graphics.Color
 import android.widget.LinearLayout
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.appcompat.widget.AppCompatEditText
 import androidx.compose.material.Text
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.children
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.mapNotNull
 import mozilla.components.browser.state.selector.findCustomTabOrSelectedTab
 import mozilla.components.browser.state.store.BrowserStore
@@ -32,20 +38,23 @@ import mozilla.components.feature.toolbar.ToolbarPresenter
 import mozilla.components.lib.state.ext.flowScoped
 import mozilla.components.support.base.feature.LifecycleAwareFeature
 import mozilla.components.support.ktx.android.view.hideKeyboard
-import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import org.mozilla.focus.GleanMetrics.TabCount
 import org.mozilla.focus.GleanMetrics.TrackingProtection
 import org.mozilla.focus.R
+import org.mozilla.focus.cookiebanner.CookieBannerOption
 import org.mozilla.focus.ext.components
 import org.mozilla.focus.ext.isCustomTab
 import org.mozilla.focus.ext.isTablet
+import org.mozilla.focus.ext.requireComponents
 import org.mozilla.focus.ext.settings
 import org.mozilla.focus.fragment.BrowserFragment
 import org.mozilla.focus.menu.browser.CustomTabMenu
 import org.mozilla.focus.nimbus.FocusNimbus
 import org.mozilla.focus.state.AppAction
+import org.mozilla.focus.state.Screen
 import org.mozilla.focus.telemetry.TelemetryWrapper
 import org.mozilla.focus.ui.theme.focusTypography
+import org.mozilla.focus.utils.ClickableSubstringLink
 
 @Suppress("LongParameterList", "LargeClass", "TooManyFunctions")
 class BrowserToolbarIntegration(
@@ -75,13 +84,17 @@ class BrowserToolbarIntegration(
 
     @VisibleForTesting
     internal var trackingProtectionCfrScope: CoroutineScope? = null
+
+    @VisibleForTesting
+    internal var cookieBannerCfrScope: CoroutineScope? = null
+
     private var tabsCounterScope: CoroutineScope? = null
     private var customTabsFeature: CustomTabsToolbarFeature? = null
     private var navigationButtonsIntegration: NavigationButtonsIntegration? = null
     private val eraseAction = BrowserToolbar.Button(
         imageDrawable = AppCompatResources.getDrawable(
             toolbar.context,
-            R.drawable.mozac_ic_delete,
+            R.drawable.mozac_ic_delete_24,
         )!!,
         contentDescription = toolbar.context.getString(R.string.content_description_erase),
         iconTintColorResource = R.color.primaryText,
@@ -123,6 +136,7 @@ class BrowserToolbarIntegration(
 
             setOnSiteSecurityClickedListener {
                 TrackingProtection.toolbarShieldClicked.add()
+                fragment.initCookieBanner()
                 fragment.showTrackingProtectionPanel()
             }
 
@@ -136,21 +150,22 @@ class BrowserToolbarIntegration(
             icons = icons.copy(
                 trackingProtectionTrackersBlocked = AppCompatResources.getDrawable(
                     context,
-                    R.drawable.mozac_ic_shield,
+                    R.drawable.mozac_ic_shield_24,
                 )!!,
                 trackingProtectionNothingBlocked = AppCompatResources.getDrawable(
                     context,
-                    R.drawable.mozac_ic_shield,
+                    R.drawable.mozac_ic_shield_24,
                 )!!,
                 trackingProtectionException = AppCompatResources.getDrawable(
                     context,
-                    R.drawable.mozac_ic_shield_disabled,
+                    R.drawable.mozac_ic_shield_slash_24,
                 )!!,
             )
         }
 
         toolbar.display.setOnTrackingProtectionClickedListener {
             TrackingProtection.toolbarShieldClicked.add()
+            fragment.initCookieBanner()
             fragment.showTrackingProtectionPanel()
         }
 
@@ -207,7 +222,7 @@ class BrowserToolbarIntegration(
 
     private fun setBrowserActionButtons() {
         tabsCounterScope = store.flowScoped { flow ->
-            flow.ifChanged { state -> state.tabs.size > 1 }
+            flow.distinctUntilChangedBy { state -> state.tabs.size > 1 }
                 .collect { state ->
                     if (state.tabs.size > 1) {
                         toolbar.addBrowserAction(tabsAction)
@@ -228,6 +243,15 @@ class BrowserToolbarIntegration(
             setBrowserActionButtons()
             observeEraseCfr()
         }
+
+        if (fragment.requireContext().settings.shouldShowCookieBannerCfr &&
+            fragment.requireContext().settings.isCookieBannerEnable &&
+            fragment.requireContext().settings.getCurrentCookieBannerOptionFromSharePref() ==
+            CookieBannerOption.CookieBannerRejectAll()
+        ) {
+            observeCookieBannerCfr()
+        }
+
         observeTrackingProtectionCfr()
     }
 
@@ -235,7 +259,7 @@ class BrowserToolbarIntegration(
     internal fun observeEraseCfr() {
         eraseTabsCfrScope = fragment.components?.appStore?.flowScoped { flow ->
             flow.mapNotNull { state -> state.showEraseTabsCfr }
-                .ifChanged()
+                .distinctUntilChanged()
                 .collect { showEraseCfr ->
                     if (showEraseCfr) {
                         val eraseActionView =
@@ -284,10 +308,73 @@ class BrowserToolbarIntegration(
     }
 
     @VisibleForTesting
+    internal fun observeCookieBannerCfr() {
+        cookieBannerCfrScope = fragment.components?.appStore?.flowScoped { flow ->
+            flow.mapNotNull { state -> state.showCookieBannerCfr }
+                .distinctUntilChanged()
+                .collect { showCookieBannerCfr ->
+                    if (showCookieBannerCfr) {
+                        CFRPopup(
+                            anchor = toolbar.findViewById<AppCompatEditText>(R.id.mozac_browser_toolbar_background),
+                            properties = CFRPopupProperties(
+                                popupWidth = 256.dp,
+                                popupAlignment = CFRPopup.PopupAlignment.BODY_TO_ANCHOR_START,
+                                popupBodyColors = listOf(
+                                    ContextCompat.getColor(
+                                        fragment.requireContext(),
+                                        R.color.cfr_pop_up_shape_end_color,
+                                    ),
+                                    ContextCompat.getColor(
+                                        fragment.requireContext(),
+                                        R.color.cfr_pop_up_shape_start_color,
+                                    ),
+                                ),
+                                dismissButtonColor = ContextCompat.getColor(
+                                    fragment.requireContext(),
+                                    R.color.cardview_light_background,
+                                ),
+                                popupVerticalOffset = 0.dp,
+                                indicatorArrowStartOffset = 10.dp,
+                            ),
+                            onDismiss = { onDismissCookieBannerCfr() },
+                            text = {
+                                val textCookieBannerCfr = stringResource(
+                                    id = R.string.cfr_cookie_banner,
+                                    LocalContext.current.getString(R.string.onboarding_short_app_name),
+                                    LocalContext.current.getString(R.string.cfr_cookie_banner_link),
+                                )
+                                ClickableSubstringLink(
+                                    text = textCookieBannerCfr,
+                                    style = focusTypography.cfrCookieBannerTextStyle,
+                                    linkTextDecoration = TextDecoration.Underline,
+                                    clickableStartIndex = textCookieBannerCfr.indexOf(
+                                        LocalContext.current.getString(
+                                            R.string.cfr_cookie_banner_link,
+                                        ),
+                                    ),
+                                    clickableEndIndex = textCookieBannerCfr.length,
+                                    onClick = {
+                                        fragment.requireComponents.appStore.dispatch(
+                                            AppAction.OpenSettings(Screen.Settings.Page.CookieBanner),
+                                        )
+                                        onDismissCookieBannerCfr()
+                                    },
+                                )
+                            },
+                        ).apply {
+                            show()
+                            stopObserverCookieBannerCfrChanges()
+                        }
+                    }
+                }
+        }
+    }
+
+    @VisibleForTesting
     internal fun observeTrackingProtectionCfr() {
         trackingProtectionCfrScope = fragment.components?.appStore?.flowScoped { flow ->
             flow.mapNotNull { state -> state.showTrackingProtectionCfrForTab }
-                .ifChanged()
+                .distinctUntilChanged()
                 .collect { showTrackingProtectionCfrForTab ->
                     if (showTrackingProtectionCfrForTab[store.state.selectedTabId] == true) {
                         CFRPopup(
@@ -329,9 +416,24 @@ class BrowserToolbarIntegration(
         }
     }
 
+    private fun onDismissCookieBannerCfr() {
+        fragment.components?.appStore?.dispatch(
+            AppAction.ShowCookieBannerCfrChange(
+                false,
+            ),
+        )
+        fragment.requireContext().settings.shouldShowCookieBannerCfr = false
+    }
+
     private fun onDismissTrackingProtectionCfr() {
         store.state.selectedTabId?.let {
-            fragment.components?.appStore?.dispatch(AppAction.ShowTrackingProtectionCfrChange(mapOf(it to false)))
+            fragment.components?.appStore?.dispatch(
+                AppAction.ShowTrackingProtectionCfrChange(
+                    mapOf(
+                        it to false,
+                    ),
+                ),
+            )
         }
         fragment.requireContext().settings.shouldShowCfrForTrackingProtection = false
         FocusNimbus.features.onboarding.recordExposure()
@@ -342,7 +444,7 @@ class BrowserToolbarIntegration(
     internal fun observerSecurityIndicatorChanges() {
         securityIndicatorScope = store.flowScoped { flow ->
             flow.mapNotNull { state -> state.findCustomTabOrSelectedTab(customTabId) }
-                .ifChanged { tab -> tab.content.securityInfo }
+                .distinctUntilChangedBy { tab -> tab.content.securityInfo }
                 .collect {
                     val secure = it.content.securityInfo.secure
                     val url = it.content.url
@@ -367,6 +469,7 @@ class BrowserToolbarIntegration(
         tabsCounterScope?.cancel()
         stopObserverEraseTabsCfrChanges()
         stopObserverTrackingProtectionCfrChanges()
+        stopObserverCookieBannerCfrChanges()
     }
 
     @VisibleForTesting
@@ -382,6 +485,11 @@ class BrowserToolbarIntegration(
     @VisibleForTesting
     internal fun stopObserverSecurityIndicatorChanges() {
         securityIndicatorScope?.cancel()
+    }
+
+    @VisibleForTesting
+    internal fun stopObserverCookieBannerCfrChanges() {
+        cookieBannerCfrScope?.cancel()
     }
 
     @VisibleForTesting

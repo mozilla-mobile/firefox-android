@@ -10,20 +10,14 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.provider.Settings
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
-import androidx.annotation.VisibleForTesting
-import androidx.core.os.bundleOf
-import mozilla.components.feature.search.widget.BaseVoiceSearchActivity
 import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.utils.Browsers
+import mozilla.components.support.utils.ext.navigateToDefaultBrowserAppsSettings
 import org.mozilla.focus.ext.settings
 import org.mozilla.focus.state.AppAction
 import org.mozilla.focus.state.AppStore
-import org.mozilla.focus.utils.ManufacturerCodes
-import org.mozilla.focus.utils.SupportUtils
-import org.mozilla.focus.widget.DefaultBrowserPreference
 
 interface OnboardingController {
     fun handleFinishOnBoarding()
@@ -53,11 +47,6 @@ class DefaultOnboardingController(
     }
 
     override fun handleMakeFocusDefaultBrowserButtonClicked(activityResultLauncher: ActivityResultLauncher<Intent>) {
-        if (ManufacturerCodes.isHuawei) {
-            SupportUtils.openDefaultBrowserSumoPage(context)
-            handleFinishOnBoarding()
-            return
-        }
         val isDefault = Browsers.all(context).isDefaultBrowser
         if (isDefault) {
             handleFinishOnBoarding()
@@ -88,40 +77,24 @@ class DefaultOnboardingController(
                         try {
                             activityResultLauncher.launch(it.createRequestRoleIntent(RoleManager.ROLE_BROWSER))
                         } catch (e: ActivityNotFoundException) {
-                            Logger(BaseVoiceSearchActivity.TAG).error(
+                            Logger(TAG).error(
                                 "ActivityNotFoundException " +
                                     e.message.toString(),
                             )
                             handleFinishOnBoarding()
                         }
                     } else {
-                        navigateToDefaultBrowserAppsSettings()
+                        context.navigateToDefaultBrowserAppsSettings()
                     }
                 }
             }
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.N -> {
-                navigateToDefaultBrowserAppsSettings()
+                context.navigateToDefaultBrowserAppsSettings()
             }
         }
     }
 
-    @VisibleForTesting
-    fun navigateToDefaultBrowserAppsSettings() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            val intent = Intent(Settings.ACTION_MANAGE_DEFAULT_APPS_SETTINGS).apply {
-                this.putExtra(
-                    DefaultBrowserPreference.SETTINGS_SELECT_OPTION_KEY,
-                    DefaultBrowserPreference.DEFAULT_BROWSER_APP_OPTION,
-                )
-                this.putExtra(
-                    DefaultBrowserPreference.SETTINGS_SHOW_FRAGMENT_ARGS,
-                    bundleOf(
-                        DefaultBrowserPreference.SETTINGS_SELECT_OPTION_KEY to
-                            DefaultBrowserPreference.DEFAULT_BROWSER_APP_OPTION,
-                    ),
-                )
-            }
-            context.startActivity(intent)
-        }
+    companion object {
+        const val TAG = "OnboardingController"
     }
 }

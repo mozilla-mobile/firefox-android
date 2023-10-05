@@ -7,6 +7,7 @@ package org.mozilla.focus.browser.integration
 import android.app.Activity
 import android.os.Build
 import android.view.View
+import android.widget.Toast
 import androidx.annotation.VisibleForTesting
 import androidx.core.view.isVisible
 import mozilla.components.browser.state.store.BrowserStore
@@ -16,8 +17,9 @@ import mozilla.components.feature.session.FullScreenFeature
 import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.support.base.feature.LifecycleAwareFeature
 import mozilla.components.support.base.feature.UserInteractionHandler
-import mozilla.components.support.ktx.android.view.enterToImmersiveMode
+import mozilla.components.support.ktx.android.view.enterImmersiveMode
 import mozilla.components.support.ktx.android.view.exitImmersiveMode
+import org.mozilla.focus.R
 import org.mozilla.focus.ext.disableDynamicBehavior
 import org.mozilla.focus.ext.enableDynamicBehavior
 import org.mozilla.focus.ext.hide
@@ -57,6 +59,10 @@ class FullScreenIntegration(
             enterBrowserFullscreen()
             statusBar.isVisible = false
 
+            Toast
+                .makeText(activity, R.string.full_screen_notification, Toast.LENGTH_SHORT)
+                .show()
+
             switchToImmersiveMode()
         } else {
             // If the video is in PiP, but is not in fullscreen anymore we should move the task containing
@@ -89,7 +95,7 @@ class FullScreenIntegration(
      */
     @VisibleForTesting
     internal fun switchToImmersiveMode() {
-        activity.enterToImmersiveMode()
+        activity.enterImmersiveMode()
     }
 
     /**

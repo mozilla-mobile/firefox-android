@@ -40,6 +40,8 @@
     <string name="mozac_feature_addons_permissions_clipboard_write_description">Asupkeun data ti papan klip</string>
     <!-- Description for declarativeNetRequest permission. -->
     <string name="mozac_feature_addons_permissions_declarative_net_request_description">Peungpeuk kontén dina kaca mana waé</string>
+    <!-- Description for declarativeNetRequestFeedback permission. -->
+    <string name="mozac_feature_addons_permissions_declarative_net_request_feedback_description">Baca jujutan langlangan anjeun</string>
     <!-- Description for downloads permission. -->
     <string name="mozac_feature_addons_permissions_downloads_description">Undeur berkas sarta baca jeung ropéa jujutan undeur panyungsi</string>
     <!-- Description for downloads_open permission. -->
@@ -168,6 +170,8 @@
     <string name="mozac_feature_addons_successfully_installed">Laksana masang %1$s</string>
     <!-- Text shown after failed to install an add-on. %1$s is the add-on name. -->
     <string name="mozac_feature_addons_failed_to_install">Gagal masang %1$s</string>
+    <!-- Text shown when attempting to install a blocklisted add-on. %1$s is the add-on name. -->
+    <string name="mozac_feature_addons_blocklisted">%1$s teu bisa dipasang alatan hariwang bisi ngabalukarkeun masalah stabilitas atawa kaamanan</string>
     <!-- Text shown after successfully enabled an add-on. %1$s is the add-on name. -->
     <string name="mozac_feature_addons_successfully_enabled">Laksana ngaktipkeun %1$s</string>
     <!-- Text shown after failed to enable an add-on. %1$s is the add-on name. -->

@@ -8,7 +8,7 @@ import androidx.annotation.VisibleForTesting
 import androidx.annotation.VisibleForTesting.Companion.PRIVATE
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 import mozilla.components.browser.state.selector.findCustomTabOrSelectedTab
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.SessionState
@@ -18,7 +18,6 @@ import mozilla.components.concept.toolbar.Toolbar.Highlight
 import mozilla.components.concept.toolbar.Toolbar.SiteTrackingProtection
 import mozilla.components.feature.toolbar.internal.URLRenderer
 import mozilla.components.lib.state.ext.flowScoped
-import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 
 /**
  * Presenter implementation for a toolbar implementation in order to update the toolbar whenever
@@ -28,6 +27,7 @@ class ToolbarPresenter(
     private val toolbar: Toolbar,
     private val store: BrowserStore,
     private val customTabId: String? = null,
+    private val shouldDisplaySearchTerms: Boolean = false,
     urlRenderConfiguration: ToolbarFeature.UrlRenderConfiguration? = null,
 ) {
     @VisibleForTesting
@@ -42,7 +42,7 @@ class ToolbarPresenter(
         renderer.start()
 
         scope = store.flowScoped { flow ->
-            flow.ifChanged { it.findCustomTabOrSelectedTab(customTabId) }
+            flow.distinctUntilChangedBy { it.findCustomTabOrSelectedTab(customTabId) }
                 .collect { state ->
                     render(state)
                 }
@@ -59,7 +59,11 @@ class ToolbarPresenter(
         val tab = state.findCustomTabOrSelectedTab(customTabId)
 
         if (tab != null) {
-            renderer.post(tab.content.url)
+            if (shouldDisplaySearchTerms && tab.content.searchTerms.isNotBlank()) {
+                toolbar.url = tab.content.searchTerms
+            } else {
+                renderer.post(tab.content.url)
+            }
 
             toolbar.setSearchTerms(tab.content.searchTerms)
             toolbar.displayProgress(tab.content.progress)

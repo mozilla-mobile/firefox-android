@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:moz="http://schemas.android.com/apk/res-auto">
     <!-- Description for privacy add-on permission. -->
     <string name="mozac_feature_addons_permissions_privacy_description">Lenn ha kemmañ arventennoù ar vuhez prevez</string>
     <!-- Description for all_urls add-on permission. -->
@@ -40,6 +40,8 @@
     <string name="mozac_feature_addons_permissions_clipboard_write_description">Enankañ roadennoù er golver</string>
     <!-- Description for declarativeNetRequest permission. -->
     <string name="mozac_feature_addons_permissions_declarative_net_request_description">Stankañ danvezioù war forzh peseurt pajenn</string>
+    <!-- Description for declarativeNetRequestFeedback permission. -->
+    <string name="mozac_feature_addons_permissions_declarative_net_request_feedback_description">Lenn ho roll istor merdeiñ</string>
     <!-- Description for downloads permission. -->
     <string name="mozac_feature_addons_permissions_downloads_description">Pellgargañ restroù, lenn ha kemmañ roll istor pellgargadennoù ar merdeer</string>
     <!-- Description for downloads_open permission. -->
@@ -168,6 +170,8 @@
     <string name="mozac_feature_addons_successfully_installed">Staliet %1$s gant berzh</string>
     <!-- Text shown after failed to install an add-on. %1$s is the add-on name. -->
     <string name="mozac_feature_addons_failed_to_install">Cʼhwitadenn war staliadur %1$s</string>
+    <!-- Text shown when attempting to install a blocklisted add-on. %1$s is the add-on name. -->
+    <string name="mozac_feature_addons_blocklisted" moz:removedIn="119" tools:ignore="UnusedResources">%1$s n’hall ket bezañ staliet rak gallout a ra degas ur riskl bras a-fet stabilded pe diogelroez</string>
     <!-- Text shown after successfully enabled an add-on. %1$s is the add-on name. -->
     <string name="mozac_feature_addons_successfully_enabled">Gweredekaet %1$s gant berzh</string>
     <!-- Text shown after failed to enable an add-on. %1$s is the add-on name. -->

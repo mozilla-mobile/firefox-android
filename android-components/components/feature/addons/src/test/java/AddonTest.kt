@@ -5,7 +5,12 @@
 package mozilla.components.feature.addons
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import mozilla.components.concept.engine.webextension.DisabledFlags
+import mozilla.components.concept.engine.webextension.Metadata
+import mozilla.components.concept.engine.webextension.WebExtension
+import mozilla.components.support.test.mock
 import mozilla.components.support.test.robolectric.testContext
+import mozilla.components.support.test.whenever
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -30,6 +35,7 @@ class AddonTest {
                 "clipboardRead",
                 "clipboardWrite",
                 "declarativeNetRequest",
+                "declarativeNetRequestFeedback",
                 "downloads",
                 "downloads.open",
                 "find",
@@ -61,6 +67,7 @@ class AddonTest {
             R.string.mozac_feature_addons_permissions_clipboard_read_description,
             R.string.mozac_feature_addons_permissions_clipboard_write_description,
             R.string.mozac_feature_addons_permissions_declarative_net_request_description,
+            R.string.mozac_feature_addons_permissions_declarative_net_request_feedback_description,
             R.string.mozac_feature_addons_permissions_downloads_description,
             R.string.mozac_feature_addons_permissions_downloads_open_description,
             R.string.mozac_feature_addons_permissions_find_description,
@@ -346,5 +353,85 @@ class AddonTest {
             val stringId = Addon.localizeURLAccessPermission(it)
             assertEquals(R.string.mozac_feature_addons_permissions_all_urls_description, stringId)
         }
+    }
+
+    @Test
+    fun `newFromWebExtension - must return an Addon instance`() {
+        val version = "1.2.3"
+        val permissions = listOf("scripting", "activeTab")
+        val hostPermissions = listOf("https://example.org/")
+        val name = "some name"
+        val description = "some description"
+        val extension: WebExtension = mock()
+        val metadata: Metadata = mock()
+        whenever(extension.id).thenReturn("some-id")
+        whenever(extension.url).thenReturn("some-url")
+        whenever(extension.getMetadata()).thenReturn(metadata)
+        whenever(metadata.version).thenReturn(version)
+        whenever(metadata.permissions).thenReturn(permissions)
+        whenever(metadata.hostPermissions).thenReturn(hostPermissions)
+        whenever(metadata.name).thenReturn(name)
+        whenever(metadata.description).thenReturn(description)
+        whenever(metadata.disabledFlags).thenReturn(DisabledFlags.select(0))
+        whenever(metadata.baseUrl).thenReturn("some-base-url")
+
+        val addon = Addon.newFromWebExtension(extension)
+
+        assertEquals("some-id", addon.id)
+        assertEquals("some-url", addon.siteUrl)
+        assertEquals("some-url", addon.downloadUrl)
+        assertEquals(permissions + hostPermissions, addon.permissions)
+        assertEquals("", addon.updatedAt)
+        assertEquals("some name", addon.translatableName[Addon.DEFAULT_LOCALE])
+        assertEquals("some description", addon.translatableDescription[Addon.DEFAULT_LOCALE])
+        assertEquals("some description", addon.translatableSummary[Addon.DEFAULT_LOCALE])
+    }
+
+    @Test
+    fun `isDisabledAsBlocklisted - true if installed state disabled status equals to BLOCKLISTED and otherwise false`() {
+        val addon = Addon(id = "id")
+        val blockListedAddon = addon.copy(
+            installedState = Addon.InstalledState(
+                id = "id",
+                version = "1.0",
+                optionsPageUrl = "",
+                disabledReason = Addon.DisabledReason.BLOCKLISTED,
+            ),
+        )
+
+        assertFalse(addon.isDisabledAsBlocklisted())
+        assertTrue(blockListedAddon.isDisabledAsBlocklisted())
+    }
+
+    @Test
+    fun `isDisabledAsNotCorrectlySigned - true if installed state disabled status equals to NOT_CORRECTLY_SIGNED and otherwise false`() {
+        val addon = Addon(id = "id")
+        val blockListedAddon = addon.copy(
+            installedState = Addon.InstalledState(
+                id = "id",
+                version = "1.0",
+                optionsPageUrl = "",
+                disabledReason = Addon.DisabledReason.NOT_CORRECTLY_SIGNED,
+            ),
+        )
+
+        assertFalse(addon.isDisabledAsNotCorrectlySigned())
+        assertTrue(blockListedAddon.isDisabledAsNotCorrectlySigned())
+    }
+
+    @Test
+    fun `isDisabledAsIncompatible - true if installed state disabled status equals to INCOMPATIBLE and otherwise false`() {
+        val addon = Addon(id = "id")
+        val blockListedAddon = addon.copy(
+            installedState = Addon.InstalledState(
+                id = "id",
+                version = "1.0",
+                optionsPageUrl = "",
+                disabledReason = Addon.DisabledReason.INCOMPATIBLE,
+            ),
+        )
+
+        assertFalse(addon.isDisabledAsIncompatible())
+        assertTrue(blockListedAddon.isDisabledAsIncompatible())
     }
 }

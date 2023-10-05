@@ -53,7 +53,6 @@
     <string name="menu_remove_from_shortcuts">移除快捷方式</string>
 
     <!-- Menu item: Shows information about features and changes that are new to this version -->
-    <string name="menu_whats_new">新版变化</string>
     <string name="menu_settings">设置</string>
     <string name="menu_about">关于</string>
     <string name="menu_help">帮助</string>
@@ -353,6 +352,15 @@
     <!-- In-app link (in settings) to Focus privacy notice. -->
     <string name="preference_privacy_notice">隐私声明</string>
 
+    <!-- In-app link (in settings) to Focus licensing information. -->
+    <string name="preference_licensing_info">许可信息</string>
+
+    <!-- Link to Focus licensing information from other libraries that we use. -->
+    <string name="preference_libraries_we_use">我们使用的开源库</string>
+
+    <!-- Open Source Licenses page title. The first parameter is the app name -->
+    <string name="open_source_licenses_title">%s | 开源软件库</string>
+
     <!-- Item in Preferences that shows the about page. Parameter 1 is the app name, i.e. Firefox Focus/Firefox Klar. -->
     <string name="preference_about">关于 %1$s</string>
 
@@ -418,11 +426,11 @@
 
     <!-- This text is not visible. Instead it will be read by the accessibility service once we start
      loading a website -->
-    <string name="accessibility_announcement_loading">正在载入</string>
+    <string name="accessibility_announcement_loading">正在加载</string>
 
     <!-- This text is not visible. Instead it will be read by the accessibility service once we
      finished loading a website -->
-    <string name="accessibility_announcement_loading_finished">网站已载入</string>
+    <string name="accessibility_announcement_loading_finished">网站已加载</string>
 
     <!-- Content description (not visible, for screen readers etc.): "Three dot" menu button. -->
     <string name="content_description_menu">更多选项</string>
@@ -435,13 +443,13 @@
     <string name="content_description_forward">浏览下一页</string>
 
     <!-- Content description (not visible, for screen readers etc.): Reload current website -->
-    <string name="content_description_reload">重新载入网站</string>
+    <string name="content_description_reload">重新加载网站</string>
 
     <!-- Content description (not visible, for screen readers etc.): Navigate back (browsing history) -->
     <string name="content_description_back">浏览上一页</string>
 
     <!-- Content description (not visible, for screen readers etc.): Stop loading the current website. This button will turn into the refresh button once loading has been completed (see content_description_reload) -->
-    <string name="content_description_stop">停止载入网站</string>
+    <string name="content_description_stop">停止加载网站</string>
 
     <!-- Content description (not visible, for screen readers etc.): Custom Tab exit button - closes the custom tab and returns to the previous app. -->
     <string name="content_description_customtab_exit">返回之前的应用</string>
@@ -482,7 +490,10 @@
 
 
 
-  <string name="error_hostLookup_title">找不到服务器</string>
+  <!-- Snackbar that will be displayed after a website has been added to shortcuts. -->
+    <string name="snackbar_added_to_shortcuts">快捷方式已添加！</string>
+
+    <string name="error_hostLookup_title">找不到服务器</string>
 
 
 
@@ -536,7 +547,7 @@
     <!-- First run tour (Default browser): Title -->
     <string name="firstrun_defaultbrowser_title">强化您的隐私</string>
     <!-- First run tour (Default browser): Text. -->
-    <string name="firstrun_defaultbrowser_text2">隐私浏览模式变得更强大了。能拦截广告，还能拦截在不同网站跟踪您，又拖慢网页载入的内容。</string>
+    <string name="firstrun_defaultbrowser_text2">隐私浏览模式变得更强大了。能拦截广告，还能拦截在不同网站跟踪您，又拖慢网页加载的内容。</string>
 
     <!-- First run tour (Search): Title -->
     <string name="firstrun_search_title">用你的方式搜你所寻</string>
@@ -701,11 +712,60 @@
     <!--  Preference summary inside Cookie banner reduction screen. Here you can set the cookie banner option to disabled or reject_all. -->
     <string name="cookie_banner_reject_all_option_summary">尽可能自动拒绝 Cookie 请求，减少横幅出现频率。</string>
 
-    <!--  Checkbox Preference title inside Cookie banner reduction screen. Here you can set the cookie banner option to reject_or_accept_all or reject_all. -->
-    <string name="cookie_banner_further_reduce_option_title">进一步减少 Cookie 横幅</string>
+    <!-- Preference for removing cookie/consent banners from sites automatically, this is shown as part of the protections panel with the tracking protection toggle. -->--&gt;
+    <string name="cookie_banner_exception_item_title">减少 Cookie 横幅</string>
 
-    <!--  Checkbox Preference summary inside Cookie banner reduction screen. Here you can set the cookie banner option to reject_or_accept_all or reject_all. -->
-    <string name="cookie_banner_further_reduce_option_summary">将接受 Cookie 横幅请求以自动关闭更多横幅。</string>
+    <!-- Text for indicating cookie banner handling is on this site, this is shown as part of the protections panel with the tracking protection toggle. -->
+    <string name="cookie_banner_exception_item_description_state_on">在该网站开启</string>
+
+    <!-- Text for indicating cookie reducer is not supported on the current site, this is shown as part of the protections panel with the tracking protection toggle. -->
+    <string name="cookie_banner_exception_site_not_supported">暂不支持该网站</string>
+
+    <!-- Text for indicating cookie banner handling is off this site, this is shown as part of the protections panel with the tracking protection toggle. -->
+    <string name="cookie_banner_exception_item_description_state_off">在该网站关闭</string>
+
+    <!-- Preference for removing cookie/consent banners from sites automatically, this is shown when the user enters in details after he clicks on the item from protection panel. -->
+    <string name="cookie_banner_exception_panel_switch_title">减少 Cookie 横幅</string>
+
+    <!-- Text for indicating cookie banner handling is off this site, this is shown when the user enters in details after he clicks on the item from protection panel. -->
+    <string name="cookie_banner_exception_panel_switch_state_off">在该网站关闭</string>
+
+    <!-- Text for indicating cookie banner handling is on this site, this is shown when the user enters in details after he clicks on the item from protection panel. -->
+    <string name="cookie_banner_exception_panel_switch_state_on">在该网站开启</string>
+
+    <!-- Title text for a detail explanation indicating cookie banner handling is on this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site. -->
+    <string name="cookie_banner_exception_panel_title_state_on_for_site">要为 %1$s 开启“减少 Cookie 横幅”功能吗？</string>
+
+    <!-- Title text for a detail explanation indicating cookie banner handling is off this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site. -->
+    <string name="cookie_banner_exception_panel_title_state_off_for_site">要为 %1$s 关闭“减少 Cookie 横幅”功能吗？</string>
+
+    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The placeholder will be updated with the app name. -->
+    <string name="cookie_banner_exception_panel_description_state_on_for_site">%1$s 将清除此网站的 Cookie 并刷新页面。清除 Cookie 可能会导致您退出登录，或清空购物车。</string>
+
+    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The placeholder will be updated with the app name. -->
+    <string name="cookie_banner_exception_panel_description_state_off_for_site2">%1$s 会尝试自动拒绝 Cookie 请求。</string>
+
+    <!-- Long text for a detail explanation indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_description_site_is_not_supported">“减少 Cookie 横幅”功能暂不支持此网站。您希望请求我们的团队调查此网站以在将来完成支持吗？</string>
+
+    <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_site_is_not_supported_cancel_button">取消</string>
+
+    <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_site_is_not_supported_request_support_button">请求支持</string>
+
+    <!-- Label for the snackBar, after the user reports with success a website where cookie banner reducer did not work -->
+    <string name="cookie_banner_report_a_site_snackbar_label">请求已提交。</string>
+
+    <!-- Label for cookie banner item from tracking protection, after the user reports with success a website where cookie banner reducer did not work -->
+    <string name="cookie_banner_the_site_was_reported">请求已提交。</string>
+
+    <!-- Contextual Feature Recommendation Popups -->
+    <!-- CFR for Cookie Banner (Banner Info Message). %1$s will be replaced by the app name, %2$s will be an active link using the string cfr_cookie_banner_link as text. -->
+    <string name="cfr_cookie_banner">%1$s 会尝试拒绝 Cookie 请求以消除恼人的 Cookie 横幅。\n\n您可以在 %2$s 中管理 Cookie 横幅的首选项。</string>
+
+    <!-- CFR for Cookie Banner (Banner Info Message). This string is used as text for a link in cfr_cookie_banner and takes the user to the app settings. -->
+    <string name="cfr_cookie_banner_link">设置</string>
 
     <!-- Preference for autoplay -->
     <string name="preference_autoplay">自动播放</string>
@@ -869,6 +929,9 @@
     <!-- Label for the button in the snackbar that switches to the newly opened tab -->
     <string name="open_new_tab_snackbar">切换</string>
 
+    <!-- Text displayed in a notification when the user enters full screen mode -->
+    <string name="full_screen_notification">进入全屏模式</string>
+
     <!-- Preference for switching to a new tab immediately after opening -->
     <string name="preference_open_new_tab">立即显示新建打开的链接</string>
 
@@ -972,12 +1035,31 @@
 
 
     <!-- The title of the error page for websites that do not support HTTPS when HTTPS-Only is turned on  -->
-    <string name="errorpage_httpsonly_title">您请求的网站不支持 HTTPS</string>
+    <string name="errorpage_httpsonly_title2">此站点不支持 HTTPS</string>
 
-    <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will get replaced with the name of the app (e.g. "Firefox Focus") -->
-    <string name="errorpage_httpsonly_message">默认情况下，%1$s 会尝试使用 HTTPS 进行连接以增强安全性。可到“设置 &gt; 隐私与安全 &gt; 安全”更改此设置或了解更多信息。</string>
+    <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will get replaced with the name of the app (e.g. "Firefox Focus").
+        Contains a button that will redirect the user to Privacy & Security Screen-->
+    <string name="errorpage_httpsonly_message2"><![CDATA[%1$s 尽可能尝试使用 HTTPS 连接以提高安全性。
+     <a href="%2$s">了解更多</a> <br/><br/>
+     通过“设置”>“隐私与安全”>“安全”更改此设置。]]></string>
 
-    <!-- Sessions List -->
+    <!-- The document title and heading of the error page shown when a website has an invalid or expired SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_title">连接不安全</string>
+
+    <!-- The error message shown when a website has an invalid or expired SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_message"><![CDATA[
+    这可能是服务器配置的问题，也可能是有人试图冒充服务器。 <br/><br/>
+    如果您过去曾成功连接到此服务器，则该错误可能是暂时的。
+    ]]></string>
+
+    <!-- The advanced certificate information shown when a website has an invalid SSL certificate. The %1$s will be replaced by the app name and %2$s will be replaced by website URL. It's only shown when a website has an invalid SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_techInfo"><![CDATA[
+        <label>可能有人试图冒充该网站，继续访问可能会有风险。</label>
+        <br><br>
+        <label>%1$s 不信任 <b>%2$s</b>，因为其证书颁发者未知、证书为自签名的，或者服务器未发送正确的中间证书。</label>
+    ]]></string>
+
+     <!-- Sessions List -->
     <!-- Content description (not visible, for screen readers etc.): Button that closes a tab n the sessions list -->
     <string name="close_tab">关闭标签页</string>
 
@@ -1003,13 +1085,18 @@
 
     !-- Content description (not visible, for screen readers etc.): This is the description for the
     close button from promote search widget dialog. --&gt;
+    <!-- Content description (not visible, for screen readers etc.): This is the description for the
+    close button from promote search widget dialog. -->
     <string name="promote_search_widget_dialog_content_description">关闭</string>
 
     !-- Content description (not visible, for screen readers etc.): This is the description for
     picture of search widget from promote search widget dialog. --&gt;
-    <string name="promote_search_widget_dialog_picture_content_description">搜索小部件</string>
+    <!-- Content description (not visible, for screen readers etc.): This is the description for
+    picture of search widget from promote search widget dialog. -->
+    <string name="promote_search_widget_dialog_picture_content_description">搜索小组件</string>
 
     !-- This is the title of promote search widget dialog. --&gt;
+    <!-- This is the title of promote search widget dialog. -->
     <string name="promote_search_widget_dialog_title">浏览历史已清除！🎉</string>
 
     !-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
@@ -1019,13 +1106,19 @@
 
     !-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
     of the app (e.g. &quot;Focus&quot;) --&gt;
-    <string name="promote_search_widget_dialog_subtitle">开始隐私浏览吧。想更快发起搜索，下次可以直接点按主屏幕上的 %1$s 小部件。</string>
+    <!-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
+    of the app (e.g. "Focus") -->
+    <string name="promote_search_widget_dialog_subtitle">开始隐私浏览吧。想更快发起搜索，下次可以直接点按主屏幕上的 %1$s 小组件。</string>
 
     !-- This is te text from add search widget to home screen button .The button is located on
     promote search widget dialog. --&gt;
-    <string name="promote_search_widget_button_text">将小部件添加至主屏幕</string>
+    <!-- This is te text from add search widget to home screen button .The button is located on
+    promote search widget dialog. -->
+    <string name="promote_search_widget_button_text">将小组件添加至主屏幕</string>
 
     !-- This is te text of the snackbar that appears after the search widget was added successfully
     to the home screen. --&gt;
-    <string name="promote_search_widget_snackbar_message">小部件已添加至主屏幕</string>
+    <!-- This is te text of the snackbar that appears after the search widget was added successfully
+    to the home screen. -->
+    <string name="promote_search_widget_snackbar_message">小组件已添加至主屏幕</string>
 </resources>

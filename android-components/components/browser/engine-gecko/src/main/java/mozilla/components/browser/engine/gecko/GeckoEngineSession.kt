@@ -20,19 +20,28 @@ import mozilla.components.browser.engine.gecko.media.GeckoMediaDelegate
 import mozilla.components.browser.engine.gecko.mediasession.GeckoMediaSessionDelegate
 import mozilla.components.browser.engine.gecko.permission.GeckoPermissionRequest
 import mozilla.components.browser.engine.gecko.prompt.GeckoPromptDelegate
+import mozilla.components.browser.engine.gecko.shopping.GeckoProductAnalysis
+import mozilla.components.browser.engine.gecko.shopping.GeckoProductRecommendation
+import mozilla.components.browser.engine.gecko.shopping.Highlight
 import mozilla.components.browser.engine.gecko.window.GeckoWindowRequest
 import mozilla.components.browser.errorpages.ErrorType
 import mozilla.components.concept.engine.EngineSession
+import mozilla.components.concept.engine.EngineSession.LoadUrlFlags.Companion.ALLOW_ADDITIONAL_HEADERS
 import mozilla.components.concept.engine.EngineSession.LoadUrlFlags.Companion.ALLOW_JAVASCRIPT_URL
+import mozilla.components.concept.engine.EngineSession.LoadUrlFlags.Companion.EXTERNAL
+import mozilla.components.concept.engine.EngineSession.LoadUrlFlags.Companion.LOAD_FLAGS_BYPASS_LOAD_URI_DELEGATE
 import mozilla.components.concept.engine.EngineSessionState
 import mozilla.components.concept.engine.HitResult
 import mozilla.components.concept.engine.Settings
 import mozilla.components.concept.engine.content.blocking.Tracker
 import mozilla.components.concept.engine.history.HistoryItem
 import mozilla.components.concept.engine.history.HistoryTrackingDelegate
+import mozilla.components.concept.engine.manifest.WebAppManifest
 import mozilla.components.concept.engine.manifest.WebAppManifestParser
 import mozilla.components.concept.engine.request.RequestInterceptor
 import mozilla.components.concept.engine.request.RequestInterceptor.InterceptionResponse
+import mozilla.components.concept.engine.shopping.ProductAnalysis
+import mozilla.components.concept.engine.shopping.ProductRecommendation
 import mozilla.components.concept.engine.window.WindowRequest
 import mozilla.components.concept.fetch.Headers.Names.CONTENT_DISPOSITION
 import mozilla.components.concept.fetch.Headers.Names.CONTENT_LENGTH
@@ -64,6 +73,7 @@ import org.mozilla.geckoview.GeckoRuntime
 import org.mozilla.geckoview.GeckoSession
 import org.mozilla.geckoview.GeckoSession.NavigationDelegate
 import org.mozilla.geckoview.GeckoSession.PermissionDelegate.ContentPermission
+import org.mozilla.geckoview.GeckoSession.Recommendation
 import org.mozilla.geckoview.GeckoSessionSettings
 import org.mozilla.geckoview.WebRequestError
 import org.mozilla.geckoview.WebResponse
@@ -110,6 +120,7 @@ class GeckoEngineSession(
 
     internal var job: Job = Job()
     private var canGoBack: Boolean = false
+    private var canGoForward: Boolean = false
 
     /**
      * See [EngineSession.settings]
@@ -166,6 +177,8 @@ class GeckoEngineSession(
         flags: LoadUrlFlags,
         additionalHeaders: Map<String, String>?,
     ) {
+        notifyObservers { onLoadUrl() }
+
         val scheme = Uri.parse(url).normalizeScheme().scheme
         if (BLOCKED_SCHEMES.contains(scheme) && !shouldLoadJSSchemes(scheme, flags)) {
             logger.error("URL scheme not allowed. Aborting load.")
@@ -181,8 +194,13 @@ class GeckoEngineSession(
             .flags(flags.getGeckoFlags())
 
         if (additionalHeaders != null) {
+            val headerFilter = if (flags.contains(ALLOW_ADDITIONAL_HEADERS)) {
+                GeckoSession.HEADER_FILTER_UNRESTRICTED_UNSAFE
+            } else {
+                GeckoSession.HEADER_FILTER_CORS_SAFELISTED
+            }
             loader.additionalHeaders(additionalHeaders)
-                .headerFilter(GeckoSession.HEADER_FILTER_CORS_SAFELISTED)
+                .headerFilter(headerFilter)
         }
 
         if (parent != null) {
@@ -210,6 +228,7 @@ class GeckoEngineSession(
             "base64" -> geckoSession.load(GeckoSession.Loader().data(data.toByteArray(), mimeType))
             else -> geckoSession.load(GeckoSession.Loader().data(data, mimeType))
         }
+        notifyObservers { onLoadData() }
     }
 
     /**
@@ -257,6 +276,10 @@ class GeckoEngineSession(
                     )
                 }
 
+                notifyObservers {
+                    onSaveToPdfComplete()
+                }
+
                 GeckoResult()
             },
             { throwable ->
@@ -264,6 +287,29 @@ class GeckoEngineSession(
                 logger.error("Save to PDF failed.", throwable)
                 notifyObservers {
                     onSaveToPdfException(throwable)
+                }
+                GeckoResult()
+            },
+        )
+    }
+
+    /**
+     * See [EngineSession.requestPrintContent]
+     */
+    override fun requestPrintContent() {
+        geckoSession.didPrintPageContent().then(
+            { finishedPrinting ->
+                if (finishedPrinting == true) {
+                    notifyObservers {
+                        onPrintFinish()
+                    }
+                }
+                GeckoResult<Void>()
+            },
+            { throwable ->
+                logger.error("Printing failed.", throwable)
+                notifyObservers {
+                    onPrintException(true, throwable)
                 }
                 GeckoResult()
             },
@@ -304,6 +350,9 @@ class GeckoEngineSession(
      */
     override fun goForward(userInteraction: Boolean) {
         geckoSession.goForward(userInteraction)
+        if (canGoForward) {
+            notifyObservers { onNavigateForward() }
+        }
     }
 
     /**
@@ -311,6 +360,7 @@ class GeckoEngineSession(
      */
     override fun goToHistoryIndex(index: Int) {
         geckoSession.gotoHistoryIndex(index)
+        notifyObservers { onGotoHistoryIndex() }
     }
 
     /**
@@ -431,6 +481,37 @@ class GeckoEngineSession(
     }
 
     /**
+     * See [EngineSession.hasCookieBannerRuleForSession]
+     */
+    override fun hasCookieBannerRuleForSession(
+        onResult: (Boolean) -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {
+        geckoSession.hasCookieBannerRuleForBrowsingContextTree().then(
+            { response ->
+                if (response == null) {
+                    logger.error(
+                        "Invalid value: unable to get response from hasCookieBannerRuleForBrowsingContextTree.",
+                    )
+                    onException(
+                        java.lang.IllegalStateException(
+                            "Invalid value: unable to get response from hasCookieBannerRuleForBrowsingContextTree.",
+                        ),
+                    )
+                    return@then GeckoResult()
+                }
+                onResult(response)
+                GeckoResult<Boolean>()
+            },
+            { throwable ->
+                logger.error("Checking for cookie banner rule failed.", throwable)
+                onException(throwable)
+                GeckoResult()
+            },
+        )
+    }
+
+    /**
      * Checks and returns a non-mobile version of the url.
      */
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
@@ -514,6 +595,234 @@ class GeckoEngineSession(
     }
 
     /**
+     * See [EngineSession.setDisplayMode].
+     */
+    override fun setDisplayMode(displayMode: WebAppManifest.DisplayMode) {
+        geckoSession.settings.displayMode = when (displayMode) {
+            WebAppManifest.DisplayMode.MINIMAL_UI -> GeckoSessionSettings.DISPLAY_MODE_MINIMAL_UI
+            WebAppManifest.DisplayMode.FULLSCREEN -> GeckoSessionSettings.DISPLAY_MODE_FULLSCREEN
+            WebAppManifest.DisplayMode.STANDALONE -> GeckoSessionSettings.DISPLAY_MODE_STANDALONE
+            else -> GeckoSessionSettings.DISPLAY_MODE_BROWSER
+        }
+    }
+
+    /**
+     * See [EngineSession.checkForFormData].
+     */
+    override fun checkForFormData() {
+        geckoSession.containsFormData().then(
+            { result ->
+                if (result == null) {
+                    logger.error("No result from GeckoView containsFormData.")
+                    return@then GeckoResult<Boolean>()
+                }
+                notifyObservers { onCheckForFormData(result) }
+                GeckoResult<Boolean>()
+            },
+            { throwable ->
+                notifyObservers {
+                    onCheckForFormDataException(throwable)
+                }
+                GeckoResult<Boolean>()
+            },
+        )
+    }
+
+    /**
+     * Checks if a PDF viewer is being used on the current page or not via GeckoView session.
+     */
+    override fun checkForPdfViewer(
+        onResult: (Boolean) -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {
+        geckoSession.isPdfJs.then(
+            { response ->
+                if (response == null) {
+                    logger.error(
+                        "Invalid value: No result from GeckoView if a PDF viewer is used.",
+                    )
+                    onException(
+                        IllegalStateException(
+                            "Invalid value: No result from GeckoView if a PDF viewer is used.",
+                        ),
+                    )
+                    return@then GeckoResult()
+                }
+                onResult(response)
+                GeckoResult<Boolean>()
+            },
+            { throwable ->
+                logger.error("Checking for PDF viewer failed.", throwable)
+                onException(throwable)
+                GeckoResult()
+            },
+        )
+    }
+
+    /**
+     * See [EngineSession.requestProductRecommendations]
+     */
+    override fun requestProductRecommendations(
+        url: String,
+        onResult: (List<ProductRecommendation>) -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {
+        geckoSession.requestRecommendations(url).then({
+                response: List<Recommendation>? ->
+            if (response == null) {
+                logger.error("Invalid value: unable to get analysis result from Gecko Engine.")
+                onException(
+                    java.lang.IllegalStateException(
+                        "Invalid value: unable to get analysis result from Gecko Engine.",
+                    ),
+                )
+                return@then GeckoResult()
+            }
+
+            val productRecommendations = response.map { it: Recommendation ->
+                GeckoProductRecommendation(
+                    it.url,
+                    it.analysisUrl,
+                    it.adjustedRating,
+                    it.sponsored,
+                    it.imageUrl,
+                    it.aid,
+                    it.name,
+                    it.grade,
+                    it.price,
+                    it.currency,
+                )
+            }
+            onResult(productRecommendations)
+            GeckoResult<GeckoProductRecommendation>()
+        }, {
+                throwable: Throwable ->
+            logger.error("Requesting product analysis failed.", throwable)
+            onException(throwable)
+            GeckoResult()
+        })
+    }
+
+    /**
+     * See [EngineSession.requestProductAnalysis]
+     */
+    @Suppress("ComplexCondition")
+    override fun requestProductAnalysis(
+        url: String,
+        onResult: (ProductAnalysis) -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {
+        geckoSession.requestAnalysis(url).then({
+                response ->
+            if (response == null) {
+                logger.error(
+                    "Invalid value: unable to get analysis result from Gecko Engine.",
+                )
+                onException(
+                    java.lang.IllegalStateException(
+                        "Invalid value: unable to get analysis result from Gecko Engine.",
+                    ),
+                )
+                return@then GeckoResult()
+            }
+
+            val highlights = if (
+                response.highlights?.quality == null &&
+                response.highlights?.price == null &&
+                response.highlights?.shipping == null &&
+                response.highlights?.appearance == null &&
+                response.highlights?.competitiveness == null
+            ) {
+                null
+            } else {
+                Highlight(
+                    response.highlights?.quality?.toList(),
+                    response.highlights?.price?.toList(),
+                    response.highlights?.shipping?.toList(),
+                    response.highlights?.appearance?.toList(),
+                    response.highlights?.competitiveness?.toList(),
+                )
+            }
+
+            val analysisResult = GeckoProductAnalysis(
+                response.productId,
+                response.analysisURL,
+                response.grade,
+                response.adjustedRating,
+                response.needsAnalysis,
+                response.lastAnalysisTime,
+                response.deletedProductReported,
+                response.deletedProduct,
+                highlights,
+            )
+
+            onResult(analysisResult)
+            GeckoResult<ProductAnalysis>()
+        }, {
+                throwable ->
+            logger.error("Requesting product analysis failed.", throwable)
+            onException(throwable)
+            GeckoResult()
+        })
+    }
+
+    /**
+     * See [EngineSession.reanalyzeProduct]
+     */
+    override fun reanalyzeProduct(
+        url: String,
+        onResult: (String) -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {
+        geckoSession.requestCreateAnalysis(url).then({
+                response ->
+            val errorMessage = "Invalid value: unable to reanalyze product from Gecko Engine."
+            if (response == null) {
+                logger.error(errorMessage)
+                onException(
+                    java.lang.IllegalStateException(errorMessage),
+                )
+                return@then GeckoResult()
+            }
+            onResult(response)
+            GeckoResult<String>()
+        }, {
+                throwable ->
+            logger.error("Request to reanalyze product failed.", throwable)
+            onException(throwable)
+            GeckoResult()
+        })
+    }
+
+    /**
+     * See [EngineSession.requestAnalysisStatus]
+     */
+    override fun requestAnalysisStatus(
+        url: String,
+        onResult: (String) -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {
+        geckoSession.requestAnalysisCreationStatus(url).then({
+                response ->
+            val errorMessage = "Invalid value: unable to request analysis status from Gecko Engine."
+            if (response == null) {
+                logger.error(errorMessage)
+                onException(
+                    java.lang.IllegalStateException(errorMessage),
+                )
+                return@then GeckoResult()
+            }
+            onResult(response)
+            GeckoResult<String>()
+        }, {
+                throwable ->
+            logger.error("Request for product analysis status failed.", throwable)
+            onException(throwable)
+            GeckoResult()
+        })
+    }
+
+    /**
      * Purges the history for the session (back and forward history).
      */
     override fun purgeHistory() {
@@ -569,6 +878,12 @@ class GeckoEngineSession(
             notifyObservers {
                 onExcludedOnTrackingProtectionChange(isIgnoredForTrackingProtection())
             }
+            // Re-set the status of cookie banner handling when the user navigates to another site.
+            notifyObservers {
+                onCookieBannerChange(CookieBannerHandlingStatus.NO_DETECTED)
+            }
+            // Reset the status of current page being product or not when user navigates away.
+            notifyObservers { onProductUrlChange(false) }
             notifyObservers { onLocationChange(url) }
         }
 
@@ -623,6 +938,7 @@ class GeckoEngineSession(
 
         override fun onCanGoForward(session: GeckoSession, canGoForward: Boolean) {
             notifyObservers { onNavigationStateChange(canGoForward = canGoForward) }
+            this@GeckoEngineSession.canGoForward = canGoForward
         }
 
         override fun onCanGoBack(session: GeckoSession, canGoBack: Boolean) {
@@ -659,6 +975,10 @@ class GeckoEngineSession(
             request: NavigationDelegate.LoadRequest,
             isSubframeRequest: Boolean,
         ): InterceptionResponse? {
+            if (request.hasUserGesture) {
+                lastLoadRequestUri = ""
+            }
+
             val interceptor = settings.requestInterceptor
             val interceptionResponse = if (
                 interceptor != null && (!request.isDirectNavigation || interceptor.interceptsAppInitiatedRequests())
@@ -678,7 +998,10 @@ class GeckoEngineSession(
                 )?.apply {
                     when (this) {
                         is InterceptionResponse.Content -> loadData(data, mimeType, encoding)
-                        is InterceptionResponse.Url -> loadUrl(url, flags = LoadUrlFlags.external())
+                        is InterceptionResponse.Url -> loadUrl(
+                            url = url,
+                            flags = LoadUrlFlags.select(EXTERNAL, LOAD_FLAGS_BYPASS_LOAD_URI_DELEGATE),
+                        )
                         is InterceptionResponse.AppIntent -> {
                             appRedirectUrl = lastLoadRequestUri
                             notifyObservers {
@@ -696,14 +1019,9 @@ class GeckoEngineSession(
 
             if (interceptionResponse !is InterceptionResponse.AppIntent) {
                 appRedirectUrl = ""
-                lastLoadRequestUri = request.uri
             }
 
-            // TODO fix root cause: https://github.com/mozilla-mobile/android-components/issues/12894
-            if (interceptor != null && interceptor.interceptsAppInitiatedRequests()) {
-                lastLoadRequestUri = request.uri
-            }
-
+            lastLoadRequestUri = request.uri
             return interceptionResponse
         }
     }
@@ -884,6 +1202,18 @@ class GeckoEngineSession(
 
     @Suppress("ComplexMethod", "NestedBlockDepth")
     internal fun createContentDelegate() = object : GeckoSession.ContentDelegate {
+        override fun onCookieBannerDetected(session: GeckoSession) {
+            notifyObservers { onCookieBannerChange(CookieBannerHandlingStatus.DETECTED) }
+        }
+
+        override fun onCookieBannerHandled(session: GeckoSession) {
+            notifyObservers { onCookieBannerChange(CookieBannerHandlingStatus.HANDLED) }
+        }
+
+        override fun onProductUrl(session: GeckoSession) {
+            notifyObservers { onProductUrlChange(true) }
+        }
+
         override fun onFirstComposite(session: GeckoSession) = Unit
 
         override fun onFirstContentfulPaint(session: GeckoSession) {
@@ -923,7 +1253,7 @@ class GeckoEngineSession(
         override fun onExternalResponse(session: GeckoSession, webResponse: WebResponse) {
             with(webResponse) {
                 val contentType = headers[CONTENT_TYPE]?.trim()
-                val contentLength = headers[CONTENT_LENGTH]?.trim()?.toLong()
+                val contentLength = headers[CONTENT_LENGTH]?.trim()?.toLongOrNull()
                 val contentDisposition = headers[CONTENT_DISPOSITION]?.trim()
                 val url = uri
                 val fileName = DownloadUtils.guessFileName(
@@ -933,7 +1263,6 @@ class GeckoEngineSession(
                     mimeType = contentType,
                 )
                 val response = webResponse.toResponse()
-
                 notifyObservers {
                     onExternalResource(
                         url = url,
@@ -942,6 +1271,8 @@ class GeckoEngineSession(
                         fileName = fileName.sanitizeFileName(),
                         response = response,
                         isPrivate = privateMode,
+                        openInApp = webResponse.requestExternalApp,
+                        skipConfirmation = webResponse.skipConfirmation,
                     )
                 }
             }
@@ -1152,6 +1483,7 @@ class GeckoEngineSession(
     private fun createScrollDelegate() = object : GeckoSession.ScrollDelegate {
         override fun onScrollChanged(session: GeckoSession, scrollX: Int, scrollY: Int) {
             this@GeckoEngineSession.scrollY = scrollY
+            notifyObservers { onScrollChange(scrollX, scrollY) }
         }
     }
 
@@ -1274,8 +1606,16 @@ class GeckoEngineSession(
  * Provides all gecko flags ignoring flags that only exists on AC.
  **/
 @VisibleForTesting
-internal fun EngineSession.LoadUrlFlags.getGeckoFlags(): Int = if (contains(ALLOW_JAVASCRIPT_URL)) {
-    value - ALLOW_JAVASCRIPT_URL
-} else {
-    value
+internal fun EngineSession.LoadUrlFlags.getGeckoFlags(): Int {
+    var newValue = value
+
+    if (contains(ALLOW_ADDITIONAL_HEADERS)) {
+        newValue -= ALLOW_ADDITIONAL_HEADERS
+    }
+
+    if (contains(ALLOW_JAVASCRIPT_URL)) {
+        newValue -= ALLOW_JAVASCRIPT_URL
+    }
+
+    return newValue
 }

@@ -1,19 +1,19 @@
 plugins {
-    id "com.jetbrains.python.envs" version "0.0.26"
+    id "com.jetbrains.python.envs" version "$python_envs_plugin"
 }
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-parcelize'
 apply plugin: 'jacoco'
+apply plugin: 'com.google.android.gms.oss-licenses-plugin'
 apply from: "$project.rootDir/tools/gradle/versionCode.gradle"
 
-import com.android.build.OutputFile
+import com.android.build.api.variant.FilterConfiguration
 import groovy.json.JsonOutput
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 android {
-    compileSdkVersion 33
-
     if (project.hasProperty("testBuildType")) {
         // Allowing to configure the test build type via command line flag (./gradlew -PtestBuildType=beta ..)
         // in order to run UI tests against other build variants than debug in automation.
@@ -22,26 +22,27 @@ android {
 
     defaultConfig {
         applicationId "org.mozilla"
-        minSdkVersion 21
-        targetSdkVersion 32
+        minSdkVersion config.minSdkVersion
+        compileSdk config.compileSdkVersion
+        targetSdkVersion config.targetSdkVersion
         versionCode 11 // This versionCode is "frozen" for local builds. For "release" builds we
                        // override this with a generated versionCode at build time.
         // The versionName is dynamically overridden for all the build variants at build time.
         versionName Config.generateDebugVersionName()
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments clearPackageData: 'true'
+        // See override in release builds for why it's blank.
+        buildConfigField "String", "GIT_HASH", "\"\""
 
         vectorDrawables.useSupportLibrary = true
-
-        multiDexEnabled true
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
-    lintOptions {
+    lint {
         lintConfig file("lint.xml")
     }
 
@@ -56,6 +57,7 @@ android {
             minifyEnabled !project.hasProperty("disableOptimization")
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             matchingFallbacks = ['release']
+            buildConfigField "String", "GIT_HASH", "\"${Config.getGitHash()}\""
 
             if (gradle.hasProperty("localProperties.autosignReleaseWithDebugKey")) {
                 println ("All builds will be automatically signed with the debug key")
@@ -98,10 +100,10 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = FocusVersions.google_compose_compiler
+        kotlinCompilerExtensionVersion = Versions.compose_compiler
     }
 
-    flavorDimensions "product"
+    flavorDimensions.add("product")
 
     productFlavors {
         // In most countries we are Firefox Focus - but in some we need to be Firefox Klar
@@ -155,35 +157,35 @@ android {
         focusNightly.root = 'src/focusNightly'
         klarNightly.root = 'src/klarNightly'
     }
-
     packagingOptions {
-        pickFirst 'META-INF/atomicfu.kotlin_module'
-        pickFirst 'META-INF/proguard/coroutines.pro'
+        resources {
+            pickFirsts += ['META-INF/atomicfu.kotlin_module', 'META-INF/proguard/coroutines.pro']
+        }
     }
+
+
+    namespace 'org.mozilla.focus'
 }
 
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
-        kotlinOptions {
-            allWarningsAsErrors = true
-            freeCompilerArgs += "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
-            freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
-            freeCompilerArgs += "-Xjvm-default=all"
-            jvmTarget = '1.8'
-        }
+tasks.withType(KotlinCompile).configureEach {
+    kotlinOptions.allWarningsAsErrors = true
+    kotlinOptions.freeCompilerArgs += [
+            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+            "-opt-in=kotlin.RequiresOptIn",
+            "-Xjvm-default=all"
+    ]
+    kotlinOptions.jvmTarget = '17'
 }
 
 // -------------------------------------------------------------------------------------------------
 // Generate Kotlin code for the Focus Glean metrics.
 // -------------------------------------------------------------------------------------------------
 apply plugin: "org.mozilla.telemetry.glean-gradle-plugin"
-apply plugin: "org.mozilla.components.nimbus-gradle-plugin"
+apply plugin: "org.mozilla.appservices.nimbus-gradle-plugin"
 
 nimbus {
     // The path to the Nimbus feature manifest file
     manifestFile = "nimbus.fml.yaml"
-    // The fully qualified class name for the generated features.
-    // If the classname begins with a '.' this is taken as a suffix to the app's package name
-    destinationClass = ".nimbus.FocusNimbus"
     // Map from the variant name to the channel as experimenter and nimbus understand it.
     // If nimbus's channels were accurately set up well for this project, then this
     // shouldn't be needed.
@@ -203,52 +205,35 @@ nimbus {
     experimenterManifest = ".experimenter.yaml"
 }
 
-configurations {
-    // There's an interaction between Gradle's resolution of dependencies with different types
-    // (@jar, @aar) for `implementation` and `testImplementation` and with Android Studio's built-in
-    // JUnit test runner.  The runtime classpath in the built-in JUnit test runner gets the
-    // dependency from the `implementation`, which is type @aar, and therefore the JNA dependency
-    // doesn't provide the JNI dispatch libraries in the correct Java resource directories.  I think
-    // what's happening is that @aar type in `implementation` resolves to the @jar type in
-    // `testImplementation`, and that it wins the dependency resolution battle.
-    //
-    // A workaround is to add a new configuration which depends on the @jar type and to reference
-    // the underlying JAR file directly in `testImplementation`.  This JAR file doesn't resolve to
-    // the @aar type in `implementation`.  This works when invoked via `gradle`, but also sets the
-    // correct runtime classpath when invoked with Android Studio's built-in JUnit test runner.
-    // Success!
-    jnaForTest
-}
-
 dependencies {
-    implementation FocusDependencies.androidx_appcompat
-    implementation FocusDependencies.androidx_browser
-    implementation FocusDependencies.androidx_cardview
-    implementation FocusDependencies.androidx_compose_ui
-    implementation FocusDependencies.androidx_compose_ui_tooling
-    implementation FocusDependencies.androidx_compose_foundation
-    implementation FocusDependencies.androidx_compose_material
-    implementation FocusDependencies.androidx_compose_runtime_livedata
-    implementation FocusDependencies.androidx_constraint_layout
+    implementation ComponentsDependencies.androidx_appcompat
+    implementation ComponentsDependencies.androidx_browser
+    implementation ComponentsDependencies.androidx_cardview
+    implementation ComponentsDependencies.androidx_compose_ui
+    implementation ComponentsDependencies.androidx_compose_ui_tooling
+    implementation ComponentsDependencies.androidx_compose_foundation
+    implementation ComponentsDependencies.androidx_compose_material
+    implementation ComponentsDependencies.androidx_compose_runtime_livedata
+    implementation ComponentsDependencies.androidx_constraintlayout
     implementation FocusDependencies.androidx_constraint_layout_compose
-    implementation FocusDependencies.androidx_core_ktx
-    implementation FocusDependencies.androidx_fragment
-    implementation FocusDependencies.androidx_lifecycle_process
-    implementation FocusDependencies.androidx_lifecycle_viewmodel
-    implementation FocusDependencies.androidx_palette
-    implementation FocusDependencies.androidx_preference
-    implementation FocusDependencies.androidx_recyclerview
-    implementation FocusDependencies.androidx_savedstate
+    implementation ComponentsDependencies.androidx_core_ktx
+    implementation ComponentsDependencies.androidx_fragment
+    implementation ComponentsDependencies.androidx_lifecycle_process
+    implementation ComponentsDependencies.androidx_lifecycle_viewmodel
+    implementation ComponentsDependencies.androidx_palette
+    implementation ComponentsDependencies.androidx_preferences
+    implementation ComponentsDependencies.androidx_recyclerview
+    implementation ComponentsDependencies.androidx_savedstate
     implementation FocusDependencies.androidx_splashscreen
     implementation FocusDependencies.androidx_transition
-    implementation FocusDependencies.androidx_work_ktx
+    implementation ComponentsDependencies.androidx_work_runtime
+    implementation ComponentsDependencies.androidx_data_store_preferences
 
-    implementation FocusDependencies.google_accompanist_insets_ui
     implementation FocusDependencies.google_play
 
-    implementation FocusDependencies.google_material
+    implementation ComponentsDependencies.google_material
 
-    implementation FocusDependencies.sentry
+    implementation ComponentsDependencies.thirdparty_sentry_latest
 
     implementation project(':browser-engine-gecko')
     implementation project(':browser-domains')
@@ -296,11 +281,13 @@ dependencies {
     implementation project(':support-utils')
     implementation project(':support-rusthttp')
     implementation project(':support-rustlog')
+    implementation project(':support-license')
 
     implementation project(':ui-autocomplete')
     implementation project(':ui-colors')
     implementation project(':ui-icons')
     implementation project(':ui-tabcounter')
+    implementation project(':ui-widgets')
     implementation project(':feature-webcompat')
     implementation project(':feature-webcompat-reporter')
     implementation project(':support-webextensions')
@@ -309,27 +296,25 @@ dependencies {
 
     implementation project(':service-telemetry')
 
-    implementation FocusDependencies.kotlin_coroutines
-    debugImplementation FocusDependencies.leakcanary
+    implementation ComponentsDependencies.kotlin_coroutines
+    debugImplementation ComponentsDependencies.leakcanary
 
     focusImplementation FocusDependencies.adjust
     focusImplementation FocusDependencies.install_referrer // Required by Adjust
 
-    jnaForTest FocusDependencies.jna
-    testImplementation files(configurations.jnaForTest.copyRecursive().files)
     testImplementation "org.mozilla.telemetry:glean-native-forUnitTests:${project.ext.glean_version}"
 
     testImplementation FocusDependencies.testing_junit_api
     testRuntimeOnly FocusDependencies.testing_junit_engine
     testImplementation FocusDependencies.testing_junit_params
-    testImplementation FocusDependencies.testing_robolectric
-    testImplementation FocusDependencies.testing_mockito
-    testImplementation FocusDependencies.testing_coroutines
-    testImplementation FocusDependencies.androidx_work_testing
-    testImplementation FocusDependencies.androidx_arch_core_testing
+    testImplementation ComponentsDependencies.testing_robolectric
+    testImplementation ComponentsDependencies.testing_mockito
+    testImplementation ComponentsDependencies.testing_coroutines
+    testImplementation ComponentsDependencies.androidx_work_testing
+    testImplementation ComponentsDependencies.androidx_arch_core_testing
     testImplementation project(':support-test')
     testImplementation project(':support-test-libstate')
-    androidTestImplementation FocusDependencies.espresso_core, {
+    androidTestImplementation ComponentsDependencies.androidx_espresso_core, {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
     androidTestImplementation FocusDependencies.espresso_idling_resource
@@ -338,12 +323,13 @@ dependencies {
     }
     androidTestImplementation FocusDependencies.espresso_intents
 
+
     androidTestImplementation FocusDependencies.testing_mockwebserver
     testImplementation FocusDependencies.testing_mockwebserver
     testImplementation project(':lib-fetch-okhttp')
 
     androidTestImplementation FocusDependencies.fastlane
-    implementation FocusDependencies.falcon // Required by fastlane
+    androidTestImplementation FocusDependencies.falcon // Required by fastlane
 
     androidTestImplementation FocusDependencies.espresso_contrib, {
         exclude module: 'appcompat-v7'
@@ -353,14 +339,14 @@ dependencies {
         exclude module: 'design'
         exclude module: 'espresso-core'
     }
-    testImplementation FocusDependencies.androidx_test_core
-    testImplementation FocusDependencies.androidx_test_runner
-    testImplementation FocusDependencies.androidx_test_rules
+    testImplementation ComponentsDependencies.androidx_test_core
+    testImplementation ComponentsDependencies.androidx_test_runner
+    testImplementation ComponentsDependencies.androidx_test_rules
 
-    androidTestImplementation FocusDependencies.androidx_test_core_ktx
-    androidTestImplementation FocusDependencies.androidx_junit_ktx
-    androidTestImplementation FocusDependencies.androidx_uiautomator
-    androidTestImplementation FocusDependencies.androidx_test_runner
+    androidTestImplementation ComponentsDependencies.androidx_test_core
+    androidTestImplementation ComponentsDependencies.androidx_test_junit
+    androidTestImplementation ComponentsDependencies.androidx_test_uiautomator
+    androidTestImplementation ComponentsDependencies.androidx_test_runner
     androidTestUtil FocusDependencies.androidx_orchestrator
 
 }
@@ -368,7 +354,7 @@ dependencies {
 //  Dynamically set versionCode (See tools/build/versionCode.gradle
 // -------------------------------------------------------------------------------------------------
 
-android.applicationVariants.all { variant ->
+android.applicationVariants.configureEach { variant ->
     def buildType = variant.buildType.name
 
     println("----------------------------------------------")
@@ -391,7 +377,7 @@ android.applicationVariants.all { variant ->
         // with ARM compatibility mode.
 
         variant.outputs.each { output ->
-            def abi = output.getFilter(OutputFile.ABI)
+            def abi = output.getFilter(FilterConfiguration.FilterType.ABI.name())
             // We use the same version code generator, that we inherited from Fennec, across all channels - even on
             // channels that never shipped a Fennec build.
 
@@ -424,7 +410,7 @@ android.applicationVariants.all { variant ->
 // MLS: Read token from local file if it exists (Only release builds)
 // -------------------------------------------------------------------------------------------------
 
-android.applicationVariants.all {
+android.applicationVariants.configureEach {
     print("MLS token: ")
     try {
         def token = new File("${rootDir}/.mls_token").text.trim()
@@ -440,7 +426,7 @@ android.applicationVariants.all {
 // Adjust: Read token from local file if it exists (Only release builds)
 // -------------------------------------------------------------------------------------------------
 
-android.applicationVariants.all { variant ->
+android.applicationVariants.configureEach { variant ->
     def variantName = variant.getName()
 
     print("Adjust token: ")
@@ -469,7 +455,7 @@ android.applicationVariants.all { variant ->
 // Sentry: Read token from local file if it exists (Only release builds)
 // -------------------------------------------------------------------------------------------------
 
-android.applicationVariants.all {
+android.applicationVariants.configureEach {
     print("Sentry token: ")
     try {
         def token = new File("${rootDir}/.sentry_token").text.trim()
@@ -531,7 +517,7 @@ def getEnabledLocales() {
 // -------------------------------------------------------------------------------------------------
 
 print("Nimbus endpoint: ")
-android.applicationVariants.all { variant ->
+android.applicationVariants.configureEach { variant ->
     def variantName = variant.getName()
 
     if (!variantName.contains("Debug")) {
@@ -554,9 +540,9 @@ android.applicationVariants.all { variant ->
 }
 
 def generatedLocaleListDir = 'src/main/java/org/mozilla/focus/generated'
-def generatedLocaleListFilename = 'LocaleList.java'
+def generatedLocaleListFilename = 'LocalesList.kt'
 
-task generateLocaleList {
+tasks.register('generateLocaleList') {
     doLast {
         def dir = file(generatedLocaleListDir)
         dir.mkdir()
@@ -564,20 +550,30 @@ task generateLocaleList {
 
         localeList.delete()
         localeList.createNewFile()
-        localeList << "package org.mozilla.focus.generated;" << "\n" << "\n"
-        localeList << "import java.util.Arrays;" << "\n"
-        localeList << "import java.util.Collections;" << "\n"
-        localeList << "import java.util.List;" << "\n"
+        localeList << "package org.mozilla.focus.generated" << "\n" << "\n"
+        localeList << "import java.util.Collections" << "\n"
         localeList << "\n"
-        localeList << "public class LocaleList {" << "\n"
-        // findbugs doesn't like "public static final String[]", see http://findbugs.sourceforge.net/bugDescriptions.html#MS_MUTABLE_ARRAY
-        localeList << "    public static final List<String> BUNDLED_LOCALES = Collections.unmodifiableList(Arrays.asList(new String[] { "
-        localeList << getEnabledLocales().join(", ") + " }));" << "\n"
+        localeList << "/**"
+        localeList << "\n"
+        localeList << " * Provides a list of bundled locales based on the language files in the res folder."
+        localeList << "\n"
+        localeList << " */"
+        localeList << "\n"
+        localeList << "object LocalesList {" << "\n"
+        localeList << "    " << "val BUNDLED_LOCALES: List<String> = Collections.unmodifiableList("
+        localeList << "\n"
+        localeList << "        " << "listOf("
+        localeList << "\n"
+        localeList << "            "
+        localeList << getEnabledLocales().join(",\n" + "            ")
+        localeList << ",\n"
+        localeList << "        )," << "\n"
+        localeList << "    )" << "\n"
         localeList << "}" << "\n"
     }
 }
 
-tasks.whenTaskAdded { task ->
+tasks.configureEach { task ->
     if (name.contains("compile")) {
         task.dependsOn generateLocaleList
     }
@@ -588,17 +584,18 @@ clean.doLast {
 }
 
 if (project.hasProperty("coverage")) {
-    tasks.withType(Test) {
+    tasks.withType(Test).configureEach {
         jacoco.includeNoLocationClasses = true
+        jacoco.excludes = ['jdk.internal.*']
     }
 
-    android.applicationVariants.all { variant ->
-        task "jacoco${variant.name.capitalize()}TestReport"(type: JacocoReport,
-                dependsOn: ["test${variant.name.capitalize()}UnitTest"]) {
+    android.applicationVariants.configureEach { variant ->
+        tasks.register("jacoco${variant.name.capitalize()}TestReport", JacocoReport) {
 
+            dependsOn(["test${variant.name.capitalize()}UnitTest"])
             reports {
-                html.enabled true
-                xml.enabled true
+                html.required = true
+                xml.required = true
             }
 
             def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*',
@@ -607,11 +604,11 @@ if (project.hasProperty("coverage")) {
             def javaTree = fileTree(dir: "$project.buildDir/intermediates/classes/${variant.flavorName}/${variant.buildType.name}",
                     excludes: fileFilter)
             def mainSrc = "$project.projectDir/src/main/java"
-            sourceDirectories = files([mainSrc])
-            classDirectories = files([kotlinTree, javaTree])
-            executionData = fileTree(dir: project.buildDir, includes: [
+            sourceDirectories.setFrom(files([mainSrc]))
+            classDirectories.setFrom(files([kotlinTree, javaTree]))
+            executionData.setFrom(fileTree(dir: project.buildDir, includes: [
                     "jacoco/test${variant.name.capitalize()}UnitTest.exec", 'outputs/code-coverage/connected/*coverage.ec'
-            ])
+            ]))
         }
     }
 
@@ -623,16 +620,6 @@ if (project.hasProperty("coverage")) {
             }
         }
     }
-}
-
-if (gradle.hasProperty('localProperties.autoPublish.android-components.dir')) {
-    ext.acSrcDir = gradle."localProperties.autoPublish.android-components.dir"
-    apply from: "../${acSrcDir}/substitute-local-ac.gradle"
-}
-
-if (gradle.hasProperty('localProperties.autoPublish.application-services.dir')) {
-    ext.appServicesSrcDir = gradle."localProperties.autoPublish.application-services.dir"
-    apply from: "../${appServicesSrcDir}/build-scripts/substitute-local-appservices.gradle"
 }
 
 if (gradle.hasProperty('localProperties.autoPublish.glean.dir')) {
@@ -648,7 +635,7 @@ tasks.register('printVariants') {
     doLast {
         def variants = android.applicationVariants.collect { variant -> [
             apks: variant.outputs.collect { output -> [
-                abi: output.getFilter(com.android.build.VariantOutput.FilterType.ABI),
+                abi: output.getFilter(FilterConfiguration.FilterType.ABI.name()),
                 fileName: output.outputFile.name
             ]},
             build_type: variant.buildType.name,

@@ -4,6 +4,7 @@
 
 package mozilla.components.feature.awesomebar.provider
 
+import androidx.core.net.toUri
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -33,7 +34,7 @@ import java.util.UUID
 @RunWith(AndroidJUnit4::class)
 class BookmarksStorageSuggestionProviderTest {
 
-    private val bookmarks = testableBookmarksStorage()
+    private val bookmarks = TestableBookmarksStorage()
 
     private val newItem = BookmarkNode(
         BookmarkNodeType.ITEM,
@@ -60,7 +61,8 @@ class BookmarksStorageSuggestionProviderTest {
 
         provider.onInputChanged("")
 
-        verify(provider.bookmarksStorage).cancelReads()
+        verify(provider.bookmarksStorage, never()).cancelReads()
+        verify(provider.bookmarksStorage).cancelReads("")
     }
 
     @Test
@@ -72,7 +74,8 @@ class BookmarksStorageSuggestionProviderTest {
 
         provider.onInputChanged("moz")
 
-        orderVerifier.verify(provider.bookmarksStorage).cancelReads()
+        orderVerifier.verify(provider.bookmarksStorage, never()).cancelReads()
+        orderVerifier.verify(provider.bookmarksStorage).cancelReads("moz")
         orderVerifier.verify(provider.bookmarksStorage).searchBookmarks(eq("moz"), anyInt())
     }
 
@@ -157,8 +160,58 @@ class BookmarksStorageSuggestionProviderTest {
         verify(engine, times(1)).speculativeConnect(eq(suggestions[0].description!!))
     }
 
+    @Test
+    fun `GIVEN no external filter WHEN querying bookmarks THEN query a low number of results`() = runTest {
+        val bookmarksSpy = spy(bookmarks)
+        val provider = BookmarksStorageSuggestionProvider(
+            bookmarksStorage = bookmarksSpy,
+            loadUrlUseCase = mock(),
+        )
+
+        provider.onInputChanged("moz")
+
+        verify(bookmarksSpy).searchBookmarks("moz", BOOKMARKS_SUGGESTION_LIMIT)
+    }
+
+    @Test
+    fun `GIVEN a results host filter WHEN querying bookmarks THEN query more than the usual default results for the host url`() = runTest {
+        val bookmarksSpy = spy(bookmarks)
+        val provider = BookmarksStorageSuggestionProvider(
+            bookmarksStorage = bookmarksSpy,
+            loadUrlUseCase = mock(),
+            resultsUriFilter = "https://www.test.com".toUri(),
+        )
+
+        provider.onInputChanged("moz")
+
+        verify(bookmarksSpy).searchBookmarks(
+            "moz",
+            BOOKMARKS_SUGGESTION_LIMIT * BOOKMARKS_RESULTS_TO_FILTER_SCALE_FACTOR,
+        )
+    }
+
+    @Test
+    fun `GIVEN a results host filter WHEN querying bookmarks THEN return only the results that pass through the filter`() = runTest {
+        val bookmarksSpy = spy(bookmarks)
+        val provider = BookmarksStorageSuggestionProvider(
+            bookmarksStorage = bookmarksSpy,
+            loadUrlUseCase = mock(),
+            resultsUriFilter = "https://mozilla.com".toUri(),
+        )
+
+        bookmarks.addItem("Other", "https://mozilla.com/firefox", newItem.title!!, null)
+        bookmarks.addItem("Test", "https://mozilla.com/focus", newItem.title!!, null)
+        bookmarks.addItem("Mozilla", "https://mozilla.org/firefox", newItem.title!!, null)
+
+        val suggestions = provider.onInputChanged("moz")
+
+        assertEquals(2, suggestions.size)
+        assertTrue(suggestions.map { it.description }.contains("https://mozilla.com/firefox"))
+        assertTrue(suggestions.map { it.description }.contains("https://mozilla.com/focus"))
+    }
+
     @SuppressWarnings
-    class testableBookmarksStorage : BookmarksStorage {
+    class TestableBookmarksStorage : BookmarksStorage {
         val bookmarkMap: HashMap<String, BookmarkNode> = hashMapOf()
 
         override suspend fun warmUp() {
@@ -262,6 +315,10 @@ class BookmarksStorageSuggestionProviderTest {
         }
 
         override fun cancelReads() {
+            // no-op
+        }
+
+        override fun cancelReads(nextQuery: String) {
             // no-op
         }
     }

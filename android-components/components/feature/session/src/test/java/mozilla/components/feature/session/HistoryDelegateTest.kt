@@ -4,10 +4,8 @@
 
 package mozilla.components.feature.session
 
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.test.runTest
 import mozilla.components.concept.storage.FrecencyThresholdOption
-import mozilla.components.concept.storage.HistoryAutocompleteResult
 import mozilla.components.concept.storage.HistoryStorage
 import mozilla.components.concept.storage.PageObservation
 import mozilla.components.concept.storage.PageVisit
@@ -15,16 +13,16 @@ import mozilla.components.concept.storage.SearchResult
 import mozilla.components.concept.storage.TopFrecentSiteInfo
 import mozilla.components.concept.storage.VisitInfo
 import mozilla.components.concept.storage.VisitType
+import mozilla.components.concept.toolbar.AutocompleteProvider
+import mozilla.components.concept.toolbar.AutocompleteResult
 import mozilla.components.support.test.mock
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.mockito.Mockito.verify
 
-@RunWith(AndroidJUnit4::class)
 class HistoryDelegateTest {
 
     @Test
@@ -93,7 +91,7 @@ class HistoryDelegateTest {
         assertTrue(storage.canAddUriCalled)
     }
 
-    private class TestHistoryStorage : HistoryStorage {
+    private class TestHistoryStorage : HistoryStorage, AutocompleteProvider {
         var getVisitedListCalled = false
         var getVisitedPlainCalled = false
         var canAddUriCalled = false
@@ -145,7 +143,7 @@ class HistoryDelegateTest {
             return listOf()
         }
 
-        override fun getAutocompleteSuggestion(query: String): HistoryAutocompleteResult? {
+        override suspend fun getAutocompleteSuggestion(query: String): AutocompleteResult? {
             fail()
             return null
         }
@@ -187,6 +185,10 @@ class HistoryDelegateTest {
         }
 
         override fun cancelReads() {
+            fail()
+        }
+
+        override fun cancelReads(nextQuery: String) {
             fail()
         }
     }

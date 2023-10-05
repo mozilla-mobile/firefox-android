@@ -8,7 +8,7 @@
     <string name="mozac_browser_errorpages_generic_title">Kërkesa Nuk Plotësohet Dot</string>
     <!-- The error message shown when a website cannot be loaded for an unknown reason. -->
     <string name="mozac_browser_errorpages_generic_message"><![CDATA[
-      <p>Hëpërhë nuk ka të dhëna shtesë gati rreth këtij problemi apo gabimi.</p>
+      <p>Hëpërhë s’ka hollësi shtesë të gatshme rreth këtij problemi apo gabimi.</p>
     ]]></string>
 
     <!-- The document title and heading of the error page shown when a website sends back unusual and incorrect credentials for an SSL certificate. -->
@@ -17,7 +17,7 @@
     <!-- The error message shown when a website sends back unusual and incorrect credentials for an SSL certificate. -->
     <string name="mozac_browser_errorpages_security_ssl_message"><![CDATA[      <ul>
         <li>Faqja që po provoni të shihni s’shfaqet dot, ngaqë mirëfilltësia e të dhënave të marra s’u vërtetua dot.</li>
-        <li>Ju lutemi, lidhuni me të zotët e sajtit për t’u bërë të ditur këtë problem.</li>
+        <li>Ju lutemi, lidhuni me të zotët e sajtit, për t’u bërë të ditur këtë problem.</li>
       </ul>]]></string>
 
     <!-- The document title and heading of the error page shown when a website sends has an invalid or expired SSL certificate. -->
@@ -25,7 +25,7 @@
     <!-- The error message shown when a website sends has an invalid or expired SSL certificate. -->
     <string name="mozac_browser_errorpages_security_bad_cert_message"><![CDATA[      <ul>
         <li>Mund të jetë problem i formësimit të shërbyesit, ose mundet që dikush të jetë duke imituar shërbyesin.</li>
-        <li>Nëse në të kaluarën jeni lidhur me sukses te ky shërbyes, gabimi mund të jetë i përkohshëm, dhe mund të riprovonit më vonë.</li>
+        <li>Nëse në të kaluarën jeni lidhur me sukses te ky shërbyes, gabimi mund të jetë i përkohshëm dhe mund të riprovonit më vonë.</li>
       </ul>]]></string>
 
     <!-- The text shown inside the advanced button used to expand the advanced options. It's only shown when a website has an invalid SSL certificate. -->
@@ -56,10 +56,6 @@
     <string name="mozac_browser_errorpages_security_bad_hsts_cert_advanced">Të mëtejshme…</string>
 
     <!-- The advanced certificate information shown when a website uses HSTS. The %1$s will be replaced by the website URL and %2$s will be replaced by the app name. It's only shown when a website uses HSTS. -->
-    <string moz:removedIn="104" name="mozac_browser_errorpages_security_bad_hsts_cert_techInfo" tools:ignore="UnusedResources"><![CDATA[
-        <label><b>%1$s</b> përmban një rregull sigurie të quajtur HTTP Strict Transport Security (HSTS), që do të thotë se <b>%2$s</b>-i mund të lidhet me të vetëm nën mënyrë të sigurt. S’shtoni dot një përjashtim që të vizitoni këtë sajt.
-    ]]></string>
-    <!-- The advanced certificate information shown when a website uses HSTS. The %1$s will be replaced by the website URL and %2$s will be replaced by the app name. It's only shown when a website uses HSTS. -->
     <string name="mozac_browser_errorpages_security_bad_hsts_cert_techInfo2"><![CDATA[
         <label><b>%1$s</b> përmban një rregull sigurie të quajtur HTTP Strict Transport Security (HSTS), që do të thotë se <b>%2$s</b>-i mund të lidhet me të vetëm nën mënyrë të sigurt. S’shtoni dot një përjashtim që të vizitoni këtë sajt. </label>
     ]]></string>
@@ -72,8 +68,8 @@
     <!-- The error message shown when the user's network connection is interrupted while connecting to a website. -->
     <string name="mozac_browser_errorpages_net_interrupt_message"><![CDATA[      <p>Shfletuesi u lidh me sukses, por lidhja u ndërpre teksa shpërnguleshin të dhëna. Ju lutemi, riprovoni.</p>
       <ul>
-        <li>Sajti mund të jetë përkohësisht jashtë funksionimi ose shumë i zënë. Riprovoni pas pak çastesh.</li>
-        <li>Nëse s’jeni në gjendje të ngarkoni çfarëdo faqe, kontrolloni lidhjen me rrjetin celular ose Wi-Fi të pajisjes tuaj.</li>
+        <li>Sajti mund të jetë përkohësisht jashtë funksionimi, ose shumë i zënë. Riprovoni pas pak çastesh.</li>
+        <li>Nëse s’jeni në gjendje të ngarkoni çfarëdo faqe, kontrolloni lidhjen me rrjetin celular, ose Wi-Fi të pajisjes tuaj.</li>
       </ul>]]></string>
 
     <!-- The document title and heading of the error page shown when a website takes too long to load. -->
@@ -82,10 +78,10 @@
     <!-- The error message shown when a website took long to load. -->
     <string name="mozac_browser_errorpages_net_timeout_message"><![CDATA[<p>Sajti i kërkuar s’iu përgjigj kërkesës për lidhje dhe shfletuesi reshti së prituri për përgjigje.</p>
       <ul>
-        <li>Mundet që shërbyesi është duke u përballur me kërkesë të madhe ose mundet të jetë përkohësisht jashtë loje? Riprovoni më vonë.</li>
+        <li>Mundet që shërbyesi është duke u përballur me kërkesë të madhe, ose mundet të jetë përkohësisht jashtë loje? Riprovoni më vonë.</li>
         <li>S’jeni në gjendje të shfletoni sajte të tjerë? Kontrolloni lidhjen në rrjet të pajisjes.</li>
-        <li>A është pajisja ose rrjeti juaj i mbrojtur me një <em>firewall</em> apo ndërmjetës? Rregullime të pasakta mund të prekin shfletimin në Web.</li>
-        <li>Keni ende vështirësi? Për ndihmë, lidhuni me administruesin e rrjetit tuaj ose me furnizuesin e Internetit.</li>
+        <li>A është pajisja, ose rrjeti juaj i mbrojtur me një <em>firewall</em> apo ndërmjetës? Rregullime të pasakta mund të prekin shfletimin në Web.</li>
+        <li>Keni ende vështirësi? Për ndihmë, lidhuni me administruesin e rrjetit tuaj, ose me furnizuesin e Internetit.</li>
       </ul>]]></string>
 
     <!-- The document title and heading of the error page shown when a website could not be reached. -->
@@ -93,7 +89,7 @@
     <!-- The error message shown when a website could not be reached. -->
     <string name="mozac_browser_errorpages_connection_failure_message"><![CDATA[      <ul>
         <li>Sajti mund të jetë përkohësisht jashtë funksionimit ose shumë i zënë. Riprovoni pas pak çastesh.</li>
-        <li>Nëse s’jeni në gjendje të ngarkoni çfarëdo faqe, kontrolloni lidhjen me rrjetin celular ose Wi-Fi të pajisjes tuaj.</li>
+        <li>Nëse s’jeni në gjendje të ngarkoni çfarëdo faqe, kontrolloni lidhjen me rrjetin celular, ose Wi-Fi të pajisjes tuaj.</li>
       </ul>]]></string>
 
     <!-- The document title and heading of the error page shown when a website responds in an unexpected way and the browser cannot continue. -->
@@ -107,7 +103,7 @@
     <!-- The error message shown when the browser gets stuck in an infinite loop when loading a website. -->
     <string name="mozac_browser_errorpages_redirect_loop_message"><![CDATA[<p>Shfletuesi ka reshtur së provuari të marrë objektin e kërkuar. Sajti po e ridrejton kërkesën në një mënyrë që s’do të plotësohet kurrë.</p>
       <ul>
-        <li>I keni çaktivizuar apo bllokuar cookie-t e nevojshme për këtë sajt?</li>
+        <li>I keni çaktivizuar apo bllokuar cookie-t e domosdoshme për këtë sajt?</li>
         <li>Nëse pranimi i cookie-ve s’e zgjidh problemin, ka të ngjarë të jetë çështje formësimi shërbyesi dhe jo e pajisjes tuaj.</li>
       </ul>]]></string>
 
@@ -131,8 +127,8 @@
     <!-- The error message shown when the Internet connection is disrupted while loading a website. -->
     <string name="mozac_browser_errorpages_net_reset_message"><![CDATA[<p>Ndërlidhja me rrjetin u ndërpre teksa negociohej një lidhje. Ju lutemi, riprovoni.</p>
       <ul>
-        <li>Sajti mund të jetë përkohësisht jashtë funksionimi ose shumë i zënë. Riprovoni pas pak çastesh.</li>
-        <li>Nëse s’jeni në gjendje të ngarkoni çfarëdo faqe, kontrolloni lidhjen me rrjetin celular ose Wi-Fi të pajisjes tuaj.</li>
+        <li>Sajti mund të jetë përkohësisht jashtë funksionimi, ose shumë i zënë. Riprovoni pas pak çastesh.</li>
+        <li>Nëse s’jeni në gjendje të ngarkoni çfarëdo faqe, kontrolloni lidhjen me rrjetin celular, ose Wi-Fi të pajisjes tuaj.</li>
       </ul>]]></string>
 
     <!-- The document title and heading of the error page shown when the browser refuses to load a type of file that is considered unsafe. -->
@@ -141,7 +137,7 @@
     <!-- The error message shown when the browser refuses to load a type of file that is considered unsafe. -->
     <string name="mozac_browser_errorpages_unsafe_content_type_message"><![CDATA[
       <ul>
-        <li>Ju lutemi, lidhuni me të zotët e sajtit për t’u bërë të ditur këtë problem.</li>
+        <li>Ju lutemi, lidhuni me të zotët e sajtit, për t’u bërë të ditur këtë problem.</li>
       </ul>
     ]]></string>
 
@@ -164,7 +160,7 @@
     <!-- The document title and heading of an error page. -->
     <string name="mozac_browser_errorpages_invalid_content_encoding_title">Gabim Kodimi Lënde</string>
 
-    <string name="mozac_browser_errorpages_invalid_content_encoding_message"><![CDATA[      <p>Faqja që po rrekeni të shihni s’shfaqet dot, sepse përdor një formë ngjeshjeje të mangët ose të pambuluar.</p>
+    <string name="mozac_browser_errorpages_invalid_content_encoding_message"><![CDATA[      <p>Faqja që po rrekeni të shihni s’shfaqet dot, sepse përdor një formë ngjeshjeje të mangët, ose të pambuluar.</p>
       <ul>
         <li>Ju lutemi, lidhuni me të zotët e sajtit për t’u njoftuar këtë problem.</li>
       </ul>]]></string>
@@ -177,13 +173,13 @@
         <li>Kontrolloni adresën për gabime shkrimi, bie fjala,
           <strong>ww</strong>.example.com në vend të 
           <strong>www</strong>.example.com.</li>
-        <li>Nëse s’jeni në gjendje të ngarkoni çfarëdo faqe, kontrolloni lidhjen e pajisjes tuaj me rrjetin celular ose atë Wi-Fi.</li>
+        <li>Nëse s’jeni në gjendje të ngarkoni çfarëdo faqe, kontrolloni lidhjen e pajisjes tuaj me rrjetin celular, ose atë Wi-Fi.</li>
       </ul>]]></string>
 
     <!-- The document title and heading of an error page. -->
     <string name="mozac_browser_errorpages_no_internet_title">Pa lidhje internet</string>
     <!-- The main body text of this error page. It will be shown beneath the title -->
-    <string name="mozac_browser_errorpages_no_internet_message">Kontrolloni lidhjen tuaj në rrjet ose provoni të ringarkoni faqen pas pak çastesh.</string>
+    <string name="mozac_browser_errorpages_no_internet_message">Kontrolloni lidhjen tuaj në rrjet, ose provoni të ringarkoni faqen pas pak çastesh.</string>
     <!-- Text that will show up on the button at the bottom of the error page -->
     <string name="mozac_browser_errorpages_no_internet_refresh_button">Ringarkoje</string>
 
@@ -219,7 +215,7 @@
 
     <string name="mozac_browser_errorpages_file_not_found_message"><![CDATA[
       <ul>
-        <li>Mundet që objekti të jetë riemërtuar, hequr ose shpërngulur gjetkë?</li>
+        <li>Mundet që objekti të jetë riemërtuar, hequr, ose shpërngulur gjetkë?</li>
         <li>A ka ndonjë gabim shkrimi apo gabim tjetër tipografik te adresa?</li>
         <li>A keni leje të mjafta hyrjeje për te objekti i kërkuar?</li>
       </ul>
@@ -242,7 +238,7 @@
       <ul>
         <li>Është i saktë formësimi i shfletuesit për ndërmjetësin? Kontrolloni rregullimet dhe riprovoni.</li>
         <li>A lejon shërbimi ndërmjetës lidhje prej këtij rrjeti?</li>
-        <li>Keni ende vështirësi? Për ndihmë, lidhuni me administruesin e rrjetit tuaj ose me furnizuesin e Internetit.</li>
+        <li>Keni ende vështirësi? Për ndihmë, lidhuni me administruesin e rrjetit tuaj, ose me furnizuesin e Internetit.</li>
       </ul>
     ]]></string>
 
@@ -253,7 +249,7 @@
       <ul>
         <li>Është i saktë formësimi i shfletuesit për ndërmjetësin? Kontrolloni rregullimet dhe riprovoni.</li>
         <li>A është e lidhur pajisja te një rrjet aktiv?</li>
-        <li>Keni ende vështirësi? Për ndihmë, lidhuni me administruesin e rrjetit tuaj ose me furnizuesin e Internetit.</li>
+        <li>Keni ende vështirësi? Për ndihmë, lidhuni me administruesin e rrjetit tuaj, ose me furnizuesin e Internetit.</li>
       </ul>]]></string>
 
     <!-- The document title and heading of an error page. -->

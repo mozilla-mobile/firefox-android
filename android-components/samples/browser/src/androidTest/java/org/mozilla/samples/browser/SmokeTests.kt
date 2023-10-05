@@ -14,16 +14,15 @@ import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.rules.ActivityScenarioRule
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import mozilla.components.support.android.test.rules.WebserverRule
 import org.junit.Assert.assertTrue
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 import java.util.concurrent.TimeUnit
 
 private const val INITIAL_WAIT_SECONDS = 5L
@@ -33,7 +32,6 @@ private const val WAIT_FOR_WEB_CONTENT_SECONDS = 15L
  * A collection of "smoke tests" to verify that the basic browsing functionality is working.
  */
 
-@RunWith(AndroidJUnit4::class)
 @LargeTest
 class SmokeTests {
     @get:Rule
@@ -60,6 +58,7 @@ class SmokeTests {
         }
     }
 
+    @Ignore("Intermittent: https://bugzilla.mozilla.org/show_bug.cgi?id=1794873")
     @Test
     fun loadWebsitesInMultipleTabsTest() {
         // Disable on API21 - https://github.com/mozilla-mobile/android-components/issues/6482

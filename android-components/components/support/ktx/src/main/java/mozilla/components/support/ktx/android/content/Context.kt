@@ -7,6 +7,7 @@ package mozilla.components.support.ktx.android.content
 import android.app.ActivityManager
 import android.content.ActivityNotFoundException
 import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.Intent.ACTION_DIAL
@@ -72,6 +73,7 @@ fun Context.isOSOnLowMemory(): Boolean {
 fun Context.isPermissionGranted(permission: Iterable<String>): Boolean {
     return permission.all { checkSelfPermission(this, it) == PERMISSION_GRANTED }
 }
+
 fun Context.isPermissionGranted(vararg permission: String): Boolean {
     return isPermissionGranted(permission.asIterable())
 }
@@ -123,8 +125,11 @@ fun Context.share(text: String, subject: String = getString(R.string.mozac_suppo
 /**
  * Shares content via [ACTION_SEND] intent.
  *
- * @param text the data to be shared [EXTRA_TEXT]
- * @param subject of the intent [EXTRA_TEXT]
+ * @param filePath Path of the copied file.
+ * @param contentType Content type (MIME type) to indicate the media type of the resource.
+ * @param subject of the intent [EXTRA_SUBJECT]
+ * @param message of the intent [EXTRA_TEXT]
+ *
  * @return true it is able to share false otherwise.
  */
 fun Context.shareMedia(
@@ -133,11 +138,7 @@ fun Context.shareMedia(
     subject: String? = null,
     message: String? = null,
 ): Boolean {
-    val contentUri = FileProvider.getUriForFile(
-        this,
-        "${applicationContext.packageName}.feature.downloads.fileprovider", // (packageName + FILE_PROVIDER_EXTENSION)
-        File(filePath),
-    )
+    val contentUri = getContentUriForFile(filePath)
 
     val intent = Intent().apply {
         action = ACTION_SEND
@@ -169,6 +170,34 @@ fun Context.shareMedia(
         false
     }
 }
+
+/**
+ * Creates a content URI for the given [filePath] to add to the device clipboard and maybe displays
+ * confirmation feedback.
+ *
+ * @param filePath Path of the copied file.
+ * @param onCopyConfirmation The confirmation action of copying an image.
+ */
+fun Context.copyImage(
+    filePath: String,
+    onCopyConfirmation: () -> Unit,
+) {
+    val contentUri = getContentUriForFile(filePath)
+
+    val clipData = ClipData.newUri(contentResolver, "Copied media URI", contentUri)
+    getClipboardManager().setPrimaryClip(clipData)
+
+    onCopyConfirmation.invoke()
+}
+
+private fun Context.getContentUriForFile(filePath: String) = FileProvider.getUriForFile(
+    this,
+    "${applicationContext.packageName}.feature.downloads.fileprovider", // (packageName + FILE_PROVIDER_EXTENSION)
+    File(filePath),
+)
+
+private fun Context.getClipboardManager() =
+    getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
 
 /**
  * Emails content via [ACTION_SENDTO] intent.

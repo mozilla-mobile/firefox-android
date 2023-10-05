@@ -268,7 +268,7 @@ class MozillaSocorroService(
         sendPart(gzipOs, boundary, "BuildID", buildId, nameSet)
         sendPart(gzipOs, boundary, "Vendor", vendor, nameSet)
         sendPart(gzipOs, boundary, "Breadcrumbs", breadcrumbs, nameSet)
-        sendPart(gzipOs, boundary, "useragent_locale", Locale.getDefault().toString(), nameSet)
+        sendPart(gzipOs, boundary, "useragent_locale", Locale.getDefault().toLanguageTag(), nameSet)
         sendPart(gzipOs, boundary, "DistributionID", distributionId, nameSet)
 
         extrasFilePath?.let {
@@ -531,7 +531,7 @@ class MozillaSocorroService(
 
                 val jsonObject = JSONObject(input)
                 for (key in jsonObject.keys()) {
-                    if (!ignoreKeys.contains(key)) {
+                    if (!key.isNullOrEmpty() && !ignoreKeys.contains(key)) {
                         resultMap[key] = jsonUnescape(jsonObject.getString(key))
                     }
                 }
@@ -552,10 +552,16 @@ class MozillaSocorroService(
         return resultMap
     }
 
-    private fun getExceptionStackTrace(throwable: Throwable, isCaughtException: Boolean): String {
-        return when (isCaughtException) {
-            true -> "$LIB_CRASH_INFO_PREFIX ${throwable.getStacktraceAsString()}"
-            false -> throwable.getStacktraceAsString()
+    @Suppress("TooGenericExceptionCaught")
+    // printStackTrace() can throw a NullPointerException exception even if throwable is not null
+    private fun getExceptionStackTrace(throwable: Throwable, isCaughtException: Boolean): String? {
+        return try {
+            when (isCaughtException) {
+                true -> "$LIB_CRASH_INFO_PREFIX ${throwable.getStacktraceAsString()}"
+                false -> throwable.getStacktraceAsString()
+            }
+        } catch (e: NullPointerException) {
+            null
         }
     }
 }

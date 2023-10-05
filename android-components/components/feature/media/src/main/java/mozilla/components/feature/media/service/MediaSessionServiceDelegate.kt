@@ -4,24 +4,28 @@
 
 package mozilla.components.feature.media.service
 
+import android.app.ForegroundServiceStartNotAllowedException
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.media.AudioManager
+import android.os.Build
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import androidx.annotation.VisibleForTesting
-import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import mozilla.components.browser.state.state.SessionState
 import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.concept.base.crash.CrashReporting
 import mozilla.components.concept.engine.mediasession.MediaSession
+import mozilla.components.feature.media.ext.getArtistOrUrl
+import mozilla.components.feature.media.ext.getNonPrivateIcon
 import mozilla.components.feature.media.ext.getTitleOrUrl
-import mozilla.components.feature.media.ext.nonPrivateUrl
 import mozilla.components.feature.media.ext.toPlaybackState
 import mozilla.components.feature.media.facts.emitNotificationPauseFact
 import mozilla.components.feature.media.facts.emitNotificationPlayFact
@@ -31,9 +35,13 @@ import mozilla.components.feature.media.facts.emitStateStopFact
 import mozilla.components.feature.media.focus.AudioFocus
 import mozilla.components.feature.media.notification.MediaNotification
 import mozilla.components.feature.media.session.MediaSessionCallback
+import mozilla.components.support.base.android.NotificationsDelegate
 import mozilla.components.support.base.ids.SharedIdsHelper
 import mozilla.components.support.base.log.logger.Logger
+import mozilla.components.support.utils.ext.registerReceiverCompat
 import mozilla.components.support.utils.ext.stopForegroundCompat
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 
 @VisibleForTesting
 internal class BecomingNoisyReceiver(private val controller: MediaSession.Controller?) : BroadcastReceiver() {
@@ -59,11 +67,10 @@ internal class MediaSessionServiceDelegate(
     @get:VisibleForTesting internal var context: Context,
     @get:VisibleForTesting internal val service: AbstractMediaSessionService,
     @get:VisibleForTesting internal val store: BrowserStore,
+    @get:VisibleForTesting internal val crashReporter: CrashReporting?,
+    @get:VisibleForTesting internal val notificationsDelegate: NotificationsDelegate,
 ) : MediaSessionDelegate {
     private val logger = Logger("MediaSessionService")
-
-    @VisibleForTesting
-    internal var notificationManager = NotificationManagerCompat.from(context)
 
     @VisibleForTesting
     internal var notificationHelper = MediaNotification(context, service::class.java)
@@ -175,15 +182,40 @@ internal class MediaSessionServiceDelegate(
     internal fun updateNotification(sessionState: SessionState) {
         notificationScope?.launch {
             val notification = notificationHelper.create(sessionState, mediaSession)
-            notificationManager.notify(notificationId, notification)
+            notificationsDelegate.notify(
+                notificationId = notificationId,
+                notification = notification,
+            )
         }
     }
 
     @VisibleForTesting
-    internal fun startForeground(sessionState: SessionState) {
-        notificationScope?.launch {
+    @Suppress("TooGenericExceptionCaught")
+    internal fun startForeground(
+        sessionState: SessionState,
+        coroutineContext: CoroutineContext = EmptyCoroutineContext,
+    ) {
+        notificationScope?.launch(coroutineContext) {
             val notification = notificationHelper.create(sessionState, mediaSession)
-            service.startForeground(notificationId, notification)
+            try {
+                service.startForeground(notificationId, notification)
+            } catch (e: Exception) {
+                if (
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+                    e is ForegroundServiceStartNotAllowedException
+                ) {
+                    // We should not encounter this exception if `android:foregroundServiceType="mediaPlayback"`
+                    // is added to the service. The crash reporter loses the stack trace for this
+                    // exception so we want to be able to track this crash independently to ensure
+                    // this case is fixed and be able to determine if there are other cases where we
+                    // might be trying to start foreground services from the background.
+                    // https://bugzilla.mozilla.org/show_bug.cgi?id=1802620
+                    crashReporter?.submitCaughtException(e)
+                } else {
+                    throw e
+                }
+            }
+
             isForegroundService = true
         }
     }
@@ -192,19 +224,25 @@ internal class MediaSessionServiceDelegate(
     internal fun updateMediaSession(sessionState: SessionState) {
         mediaSession.setPlaybackState(sessionState.mediaSessionState?.toPlaybackState())
         mediaSession.isActive = true
-        mediaSession.setMetadata(
-            MediaMetadataCompat.Builder()
-                .putString(
-                    MediaMetadataCompat.METADATA_KEY_TITLE,
-                    sessionState.getTitleOrUrl(context),
-                )
-                .putString(
-                    MediaMetadataCompat.METADATA_KEY_ARTIST,
-                    sessionState.nonPrivateUrl,
-                )
-                .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, -1)
-                .build(),
-        )
+        notificationScope?.launch {
+            mediaSession.setMetadata(
+                MediaMetadataCompat.Builder()
+                    .putString(
+                        MediaMetadataCompat.METADATA_KEY_TITLE,
+                        sessionState.getTitleOrUrl(context, sessionState.mediaSessionState?.metadata?.title),
+                    )
+                    .putString(
+                        MediaMetadataCompat.METADATA_KEY_ARTIST,
+                        sessionState.getArtistOrUrl(sessionState.mediaSessionState?.metadata?.artist),
+                    )
+                    .putBitmap(
+                        MediaMetadataCompat.METADATA_KEY_ART,
+                        sessionState.getNonPrivateIcon(sessionState.mediaSessionState?.metadata?.getArtwork),
+                    )
+                    .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, -1)
+                    .build(),
+            )
+        }
     }
 
     @VisibleForTesting
@@ -220,7 +258,18 @@ internal class MediaSessionServiceDelegate(
         }
 
         noisyAudioStreamReceiver = BecomingNoisyReceiver(state.mediaSessionState?.controller)
-        context.registerReceiver(noisyAudioStreamReceiver, intentFilter)
+        noisyAudioStreamReceiver?.let {
+            registerBecomingNoisyListener(it)
+        }
+    }
+
+    @VisibleForTesting
+    internal fun registerBecomingNoisyListener(broadcastReceiver: BroadcastReceiver) {
+        context.registerReceiverCompat(
+            broadcastReceiver,
+            intentFilter,
+            ContextCompat.RECEIVER_NOT_EXPORTED,
+        )
     }
 
     @VisibleForTesting
@@ -237,7 +286,8 @@ internal class MediaSessionServiceDelegate(
         // Explicitly cancel media notification.
         // Otherwise, when media is paused, with [STOP_FOREGROUND_DETACH] notification behavior,
         // the notification will persist even after service is stopped and destroyed.
-        notificationManager.cancel(notificationId)
+        notificationsDelegate.notificationManagerCompat.cancel(notificationId)
+        unregisterBecomingNoisyListenerIfNeeded()
         service.stopSelf()
     }
 

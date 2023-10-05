@@ -352,6 +352,15 @@
     <!-- In-app link (in settings) to Focus privacy notice. -->
     <string name="preference_privacy_notice">Жекелік ескертуі</string>
 
+    <!-- In-app link (in settings) to Focus licensing information. -->
+    <string name="preference_licensing_info">Лицензиялық ақпарат</string>
+
+    <!-- Link to Focus licensing information from other libraries that we use. -->
+    <string name="preference_libraries_we_use">Біз пайдаланатын библиотекалар</string>
+
+    <!-- Open Source Licenses page title. The first parameter is the app name -->
+    <string name="open_source_licenses_title">%s | Ашық библиотекалар</string>
+
     <!-- Item in Preferences that shows the about page. Parameter 1 is the app name, i.e. Firefox Focus/Firefox Klar. -->
     <string name="preference_about">%1$s туралы</string>
 
@@ -480,7 +489,10 @@
 
 
 
-  <string name="error_hostLookup_title">Сервер табылмады</string>
+  <!-- Snackbar that will be displayed after a website has been added to shortcuts. -->
+    <string name="snackbar_added_to_shortcuts">Жарлықтарға қосылды!</string>
+
+    <string name="error_hostLookup_title">Сервер табылмады</string>
 
 
 
@@ -697,17 +709,14 @@
     <!--  Preference summary inside Cookie banner reduction screen. Here you can set the cookie banner option to disabled or reject_all. -->
     <string name="cookie_banner_reject_all_option_summary">Cookie сұрауларын мүмкіндігінше автоматты түрде қабылдамау арқылы баннерлерді азырақ көріңіз.</string>
 
-    <!--  Checkbox Preference title inside Cookie banner reduction screen. Here you can set the cookie banner option to reject_or_accept_all or reject_all. -->
-    <string name="cookie_banner_further_reduce_option_title">Cookie баннерлерін одан сайын азайту</string>
-
-    <!--  Checkbox Preference summary inside Cookie banner reduction screen. Here you can set the cookie banner option to reject_or_accept_all or reject_all. -->
-    <string name="cookie_banner_further_reduce_option_summary">Cookie баннері сұраулары көбірек баннерлерді жабу үшін қабылданады.</string>
-
     <!-- Preference for removing cookie/consent banners from sites automatically, this is shown as part of the protections panel with the tracking protection toggle. -->--&gt;
     <string name="cookie_banner_exception_item_title">Cookie баннерлерін азайту</string>
 
     <!-- Text for indicating cookie banner handling is on this site, this is shown as part of the protections panel with the tracking protection toggle. -->
     <string name="cookie_banner_exception_item_description_state_on">Бұл сайт үшін іске қосылған</string>
+
+    <!-- Text for indicating cookie reducer is not supported on the current site, this is shown as part of the protections panel with the tracking protection toggle. -->
+    <string name="cookie_banner_exception_site_not_supported">Сайтқа ағымдағы уақытта қолдау жоқ</string>
 
     <!-- Text for indicating cookie banner handling is off this site, this is shown as part of the protections panel with the tracking protection toggle. -->
     <string name="cookie_banner_exception_item_description_state_off">Бұл сайт үшін сөндірілген</string>
@@ -731,7 +740,29 @@
     <string name="cookie_banner_exception_panel_description_state_on_for_site">%1$s осы сайттың cookie файлдарын тазартып, бетті жаңартады. Барлық cookie файлдарын тазарту салдарынан сіз сайттан шығуыңыз мүмкін немесе дүкен себеттері тазартылуы мүмкін.</string>
 
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The placeholder will be updated with the app name. -->
-    <string name="cookie_banner_exception_panel_description_state_off_for_site">%1$s cookie сұрауларын автоматты түрде тайдыру әрекетін жасайды. Тайдыру опциясы қол жетімді болмаса, %1$s баннерді жабу үшін барлық cookie файлдарын қабылдауы мүмкін.</string>
+    <string name="cookie_banner_exception_panel_description_state_off_for_site2">%1$s cookie сұрауларын автоматты түрде қабылдамау әрекетін жасай алады.</string>
+
+    <!-- Long text for a detail explanation indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_description_site_is_not_supported">Бұл сайтқа қазіргі уақытта Cookie баннерлерін азайту қолдау көрсетпейді. Біздің топтан осы веб-сайтты қарап шығуды және болашақта қолдау көрсетуді сұрағыңыз келе ме?</string>
+
+    <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_site_is_not_supported_cancel_button">Бас тарту</string>
+
+    <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_site_is_not_supported_request_support_button">Қолдау сұрау</string>
+
+    <!-- Label for the snackBar, after the user reports with success a website where cookie banner reducer did not work -->
+    <string name="cookie_banner_report_a_site_snackbar_label">Сайтқа қолдау көрсетуге сұраным жіберілді.</string>
+
+    <!-- Label for cookie banner item from tracking protection, after the user reports with success a website where cookie banner reducer did not work -->
+    <string name="cookie_banner_the_site_was_reported">Сайтқа қолдау көрсетуге сұраным жіберілді.</string>
+
+    <!-- Contextual Feature Recommendation Popups -->
+    <!-- CFR for Cookie Banner (Banner Info Message). %1$s will be replaced by the app name, %2$s will be an active link using the string cfr_cookie_banner_link as text. -->
+    <string name="cfr_cookie_banner">%1$s мазаңызды алатын cookie баннерлерін болдырмау үшін cookie сұранымдарын қабылдамау талабын жасайды.\n\n%2$s ішінде cookie баннерлері опцияларын өзгертуге болады.</string>
+
+    <!-- CFR for Cookie Banner (Banner Info Message). This string is used as text for a link in cfr_cookie_banner and takes the user to the app settings. -->
+    <string name="cfr_cookie_banner_link">баптаулар</string>
 
     <!-- Preference for autoplay -->
     <string name="preference_autoplay">Автоойнату</string>
@@ -889,6 +920,9 @@
     <!-- Label for the button in the snackbar that switches to the newly opened tab -->
     <string name="open_new_tab_snackbar">Ауысу</string>
 
+    <!-- Text displayed in a notification when the user enters full screen mode -->
+    <string name="full_screen_notification">Толық экран режиміне өту</string>
+
     <!-- Preference for switching to a new tab immediately after opening -->
     <string name="preference_open_new_tab">Жаңа бетке тура ауысу</string>
 
@@ -991,11 +1025,31 @@
 
 
     <!-- The title of the error page for websites that do not support HTTPS when HTTPS-Only is turned on  -->
-    <string name="errorpage_httpsonly_title">Сіз сұраған сайт HTTPS хаттамасын қолдамайды</string>
-    <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will get replaced with the name of the app (e.g. "Firefox Focus") -->
-    <string name="errorpage_httpsonly_message">Бастапұы баптаулар бойынша, %1$s қауіпсіздікті арттыру үшін HTTPS арқылы байланысуға әрекеттенеді. Бұл параметрді өзгерту немесе қосымша ақпарат алу үшін Параметрлер &gt; Жекелік және қауіпсіздік &gt; Қауіпсіздік тармағына өтіңіз.</string>
+    <string name="errorpage_httpsonly_title2">Бұл сайт HTTPS хаттамасын қолдамайды</string>
 
-    <!-- Sessions List -->
+    <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will get replaced with the name of the app (e.g. "Firefox Focus").
+        Contains a button that will redirect the user to Privacy & Security Screen-->
+    <string name="errorpage_httpsonly_message2"><![CDATA[%1$s көбірек қауіпсіздік үшін мүмкін болған кезде HTTPS байланысын қолдануға тырысады.
+     <a href="%2$s">Көбірек білу</a> <br/><br/>
+     Бұл баптауды Баптаулар > Жекелік және қауіпсіздік > Қауіпсіздік ішінде өзгертуге болады.]]></string>
+
+    <!-- The document title and heading of the error page shown when a website has an invalid or expired SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_title">Байланыс қауіпсіз емес</string>
+
+    <!-- The error message shown when a website has an invalid or expired SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_message"><![CDATA[
+    Бұл сервердің қатесі болуы мүмкін, немесе біреу сізге керек серверді басқасымен ауыстырғысы келеді. <br/><br/>
+    Осыған дейін осы серверге сәтті қосылған болсаңыз, осы қате уақытша болуы мүмкін.
+    ]]></string>
+
+    <!-- The advanced certificate information shown when a website has an invalid SSL certificate. The %1$s will be replaced by the app name and %2$s will be replaced by website URL. It's only shown when a website has an invalid SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_techInfo"><![CDATA[
+        <label>Біреу бұл сайтты еліктеу талабын жасап жатқаны мүмкін, сондықтан жалғастыру қауіпті болуы мүмкін.</label>
+        <br><br>
+        <label>%1$s қолданбасы <b>%2$s</b> адресіне сенбейді, өйткені сертификат шығарушысы белгісіз, сертификат қолтаңбасы өздігінен қойылған, немесе сервер жарамды аралық сертификаттарды жібермеген.</label>
+    ]]></string>
+
+     <!-- Sessions List -->
     <!-- Content description (not visible, for screen readers etc.): Button that closes a tab n the sessions list -->
     <string name="close_tab">Бетті жабу</string>
 
@@ -1021,13 +1075,18 @@
 
     !-- Content description (not visible, for screen readers etc.): This is the description for the
     close button from promote search widget dialog. --&gt;
+    <!-- Content description (not visible, for screen readers etc.): This is the description for the
+    close button from promote search widget dialog. -->
     <string name="promote_search_widget_dialog_content_description">Жабу</string>
 
     !-- Content description (not visible, for screen readers etc.): This is the description for
     picture of search widget from promote search widget dialog. --&gt;
+    <!-- Content description (not visible, for screen readers etc.): This is the description for
+    picture of search widget from promote search widget dialog. -->
     <string name="promote_search_widget_dialog_picture_content_description">Іздеу виджеті</string>
 
     !-- This is the title of promote search widget dialog. --&gt;
+    <!-- This is the title of promote search widget dialog. -->
     <string name="promote_search_widget_dialog_title">Шолу тарихы тазартылды! 🎉</string>
 
     !-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
@@ -1037,13 +1096,19 @@
 
     !-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
     of the app (e.g. &quot;Focus&quot;) --&gt;
+    <!-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
+    of the app (e.g. "Focus") -->
     <string name="promote_search_widget_dialog_subtitle">Біз сізді жеке шолуға қалдырамыз, бірақ келесі жолы негізгі экрандағы %1$s виджетімен жылдамырақ бастауға болады.</string>
 
     !-- This is te text from add search widget to home screen button .The button is located on
     promote search widget dialog. --&gt;
+    <!-- This is te text from add search widget to home screen button .The button is located on
+    promote search widget dialog. -->
     <string name="promote_search_widget_button_text">Виджетті үй экранына қосу</string>
 
     !-- This is te text of the snackbar that appears after the search widget was added successfully
     to the home screen. --&gt;
+    <!-- This is te text of the snackbar that appears after the search widget was added successfully
+    to the home screen. -->
     <string name="promote_search_widget_snackbar_message">Виджетті үй экранына қосылды</string>
 </resources>

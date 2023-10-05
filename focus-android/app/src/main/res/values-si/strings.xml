@@ -13,7 +13,7 @@
     <string name="action_save">සුරකින්න</string>
 
     <!-- This text is shown in the URL bar when it's empty -->
-    <string name="urlbar_hint">සොයන්න හෝ ලිපිනය යොදන්න</string>
+    <string name="urlbar_hint">සොයන්න හෝ ලිපිනය ලියන්න</string>
 
     <string name="teaser">ස්වයංක්‍රීය පෞද්. පිරික්සීම.\nපිරික්සන්න. මකන්න. නැවතත්.</string>
 
@@ -54,11 +54,10 @@
     <string name="menu_remove_from_shortcuts">කෙටිමං වෙතින් ඉවත් කරන්න</string>
 
     <!-- Menu item: Shows information about features and changes that are new to this version -->
-    <string name="menu_whats_new">අළුත් දෑ</string>
     <string name="menu_settings">සැකසුම්</string>
     <string name="menu_about">පිළිබඳව</string>
     <string name="menu_help">උදව්</string>
-    <string name="menu_rights">ඔබේ අයිතීන්</string>
+    <string name="menu_rights">ඔබගේ අයිතීන්</string>
 
     <!-- Menu item: This is the label for a menu entry that shows how many trackers have been blocked
          for the currently loaded website. The number of blocked trackers is shown below this label.
@@ -122,8 +121,21 @@
 
 
     <!-- This is the label of an action we offer when the user selects text in other third-party apps.
-         Clicking this action will launch Focus and perform a search in the default search engine. -->
-    <string name="text_selection_search_action">පෞද්ගලිකව සොයන්න</string>
+         Focus is hard coded since we can't use variables in this context.
+         Do not translate or transliterate Focus.-->
+    <string name="text_selection_search_action_focus">ෆෝකස්හි සොයන්න</string>
+    <!-- This is the label of an action we offer when the user selects text in other third-party apps.
+             Klar is hard coded since we can't use variables in this context.
+             Do not translate or transliterate Klar.-->
+    <string name="text_selection_search_action_klar">ක්ලාර්හි සොයන්න</string>
+    <!-- This is the label of an action we offer when the user selects text in other third-party apps.
+            Focus Beta is hard coded since we can't use variables in this context.
+            Do not translate or transliterate Focus Beta.-->
+    <string name="text_selection_search_action_focus_beta">ෆෝකස් බීටා හි සොයන්න</string>
+    <!-- This is the label of an action we offer when the user selects text in other third-party apps.
+          Focus Nightly is hard coded since we can't use variables in this context.
+          Do not translate or transliterate Focus Nightly.-->
+    <string name="text_selection_search_action_focus_nightly">ෆෝකස් නයිට්ලි හි සොයන්න</string>
 
     <!-- Content of about focus. Argument 1 is the app name (Firefox Focus/Firefox Klar/etc).
          Argument 2 is the url for the learn-more link. -->
@@ -347,6 +359,15 @@
     <!-- In-app link (in settings) to Focus privacy notice. -->
     <string name="preference_privacy_notice">පෞද්ගලිකත්‍ව දැන්වීම</string>
 
+    <!-- In-app link (in settings) to Focus licensing information. -->
+    <string name="preference_licensing_info">බලපත්‍රදායක තොරතුරු</string>
+
+    <!-- Link to Focus licensing information from other libraries that we use. -->
+    <string name="preference_libraries_we_use">අපි භාවිතා කරන එකතු</string>
+
+    <!-- Open Source Licenses page title. The first parameter is the app name -->
+    <string name="open_source_licenses_title">%s | OSS එකතු</string>
+
     <!-- Item in Preferences that shows the about page. Parameter 1 is the app name, i.e. Firefox Focus/Firefox Klar. -->
     <string name="preference_about">%1$s ගැන</string>
 
@@ -369,10 +390,6 @@
 
     <!-- Explanation text above the list of search engines-->
     <string name="preference_select_preferred_engine">ප්‍රියතම යන්ත්‍රය තෝරන්න:</string>
-
-    <!-- Title: Homescreen tips settings toggle to determine whether or not tips are displayed when
-     a user first launches the app. -->
-    <string moz:removedIn="105" name="preference_homescreen_tips" tools:ignore="UnusedResources">මුල් තිර ඉඟි පෙන්වන්න</string>
 
     <!-- Clickable action text that shows when user long-presses on a search engine search field (this is similar to paste or copy when long-pressing a text field) -->
     <string name="action_option_add_search_engine">සෙවුම් යන්ත්‍රයක් යොදන්න</string>
@@ -472,11 +489,10 @@
     <!-- Snackbar action to immediately open the successfully downloaded file. -->
     <string name="download_snackbar_open">අරින්න</string>
 
-    <string name="error_hostLookup_title">සේවාදායකය හමු නොවුණි</string>
+    <!-- Snackbar that will be displayed after a website has been added to shortcuts. -->
+    <string name="snackbar_added_to_shortcuts">කෙටිමං වෙත එක් කෙරිණි!</string>
 
-    <!-- Onboarding: Title -->
-    <!-- %1$s will be replaced by the app name and build variant(e.g. Firefox Focus, Firefox Klar Nightly) -->
-    <string moz:removedIn="106" name="onboarding_title">%1$s වෙත පිළිගනිමු!</string>
+    <string name="error_hostLookup_title">සේවාදායකය හමු නොවුණි</string>
 
     <!-- Content description (not visible, for screen readers etc.): This is the description for the close button from the new onboarding flow screen one and two -->
     <string name="onboarding_close_button_content_description">වසන්න</string>
@@ -508,31 +524,6 @@
     <!-- New Onboarding flow second screen skip onboarding button label-->
     <string name="onboarding_second_screen_skip_button_text">මඟහරින්න</string>
 
-
-    <!-- Onboarding: Description -->
-    <string moz:removedIn="106" name="onboarding_description">ඔබට අවශ්‍ය විට ඊළඟ මට්ටමේ පෞද්. පිරික්සුම</string>
-
-    <!-- Onboarding: Incognito Title -->
-    <string moz:removedIn="106" name="onboarding_incognito_title">අප්‍රසිද්ධියට අදෘශ්‍යමානය හමුවන තැන</string>
-
-    <!-- Onboarding: Incognito Description -->
-    <!-- Text %s will be replaced with the name of the app (e.g. Focus, Klar) -->
-    <string moz:removedIn="106" name="onboarding_incognito_description">%s යනු තිළෑලි අති-ප්‍රබල ලුහුබැඳීම් හා දත්තකඩ රැකවරණය සහිත පෞද්ගලිකත්‍වය මූලික වූ අතිරික්සුවකි.</string>
-
-    <!-- Onboarding: History Title -->
-    <string moz:removedIn="106" name="onboarding_history_title">සිදු නොවූ ලෙසින් පිරික්සන්න</string>
-
-    <!-- Onboarding: History Description -->
-    <string moz:removedIn="106" name="onboarding_history_description2">එක් තට්ටුවකින් ඔබගේ පිරික්සුම් ඉතිහාසය හා දත්තකඩ මකා දමයි — සහ දැන්වීම් ඔබව ලුහුබැඳීම නවත්වයි.</string>
-
-    <!-- Onboarding: Protection Title -->
-    <string moz:removedIn="106" name="onboarding_protection_title">ඕනෑම තත්‍වයකට උචිත පෞද්ගලිකත්‍වය</string>
-
-    <!-- Onboarding: Protection Description -->
-    <string moz:removedIn="106" name="onboarding_protection_description">ඔබගේ පිරික්සීම වෙනස් විය යුතු නම්, ඔබගේ පෞද්ගලිකත්‍ව සැකසුම් තුළින් සීරුමාරු කරන්න.</string>
-
-    <!-- Onboarding: Start browsing -->
-    <string moz:removedIn="106" name="onboarding_start_browsing">පිරික්සුම අරඹන්න</string>
 
     <!-- First run tour (Default browser): Title -->
     <string name="firstrun_defaultbrowser_title">ඔබගේ පෞද්ගලිකත්‍වය බලගන්වන්න</string>
@@ -635,7 +626,7 @@
     <string name="security_popup_secure_connection">ආරක්‍ෂිත සම්බන්ධතාවයකි</string>
     <string name="security_popup_insecure_connection">ආනාරක්‍ෂිත සම්බන්ධතාවයකි</string>
     <!-- %1$s will be replaced with organization that granted the SSL certificate -->
-    <string name="security_popup_security_verified">තහවුරු කළේ: %1$s</string>
+    <string name="security_popup_security_verified">සත්‍යාපනය: %1$s</string>
 
     <!-- Content Description of Security Icon in toolbar -->
     <string name="site_security_icon_content_description">අඩවියේ ආරක්‍ෂාව</string>
@@ -684,6 +675,76 @@
     <!-- Preference for site permissions -->
     <string name="preference_site_permissions">අඩවි අවසර</string>
 
+    <!--  Preference for cookie banner. The name of the item from settings screen and the title of the cookie banner screen. -->
+    <string name="preferences_cookie_banner">දත්තකඩ පතාක අවකරණය</string>
+
+    <!--  Preference summary for the cookie banner. If the cookie banner option is not disabled. -->
+    <string name="preferences_cookie_banner_summary_on">සක්‍රියයි</string>
+
+    <!--  Preference summary for the cookie banner. If the cookie banner option is disabled. -->
+    <string name="preferences_cookie_banner_summary_off">අක්‍රියයි</string>
+
+    <!--  Title preference inside Cookie banner reduction screen. Here you can set the cookie banner option to disabled or reject_all. -->
+    <string name="cookie_banner_reject_all_option_title">දත්තකඩ පතාක අවකරණය</string>
+
+    <!--  Preference summary inside Cookie banner reduction screen. Here you can set the cookie banner option to disabled or reject_all. -->
+    <string name="cookie_banner_reject_all_option_summary">පිළිවන් විට දත්තකඩ ඉල්ලීම් ස්වයංක්‍රීයව ඉවතලීමෙන් පතාක අඩුවෙන් පෙන්වයි.</string>
+
+    <!-- Preference for removing cookie/consent banners from sites automatically, this is shown as part of the protections panel with the tracking protection toggle. -->--&gt;
+    <string name="cookie_banner_exception_item_title">දත්තකඩ පතාක අවකරණය</string>
+
+    <!-- Text for indicating cookie banner handling is on this site, this is shown as part of the protections panel with the tracking protection toggle. -->
+    <string name="cookie_banner_exception_item_description_state_on">මෙම අඩවියට සක්‍රියයි</string>
+
+    <!-- Text for indicating cookie reducer is not supported on the current site, this is shown as part of the protections panel with the tracking protection toggle. -->
+    <string name="cookie_banner_exception_site_not_supported">අඩවියට සහාය නොදක්වයි</string>
+
+    <!-- Text for indicating cookie banner handling is off this site, this is shown as part of the protections panel with the tracking protection toggle. -->
+    <string name="cookie_banner_exception_item_description_state_off">මෙම අඩවියට අක්‍රියයි</string>
+
+    <!-- Preference for removing cookie/consent banners from sites automatically, this is shown when the user enters in details after he clicks on the item from protection panel. -->
+    <string name="cookie_banner_exception_panel_switch_title">දත්තකඩ පතාක අවකරණය</string>
+
+    <!-- Text for indicating cookie banner handling is off this site, this is shown when the user enters in details after he clicks on the item from protection panel. -->
+    <string name="cookie_banner_exception_panel_switch_state_off">මෙම අඩවියට අක්‍රියයි</string>
+
+    <!-- Text for indicating cookie banner handling is on this site, this is shown when the user enters in details after he clicks on the item from protection panel. -->
+    <string name="cookie_banner_exception_panel_switch_state_on">මෙම අඩවියට සක්‍රියයි</string>
+
+    <!-- Title text for a detail explanation indicating cookie banner handling is on this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site. -->
+    <string name="cookie_banner_exception_panel_title_state_on_for_site">%1$s සඳහා දත්තකඩ පතාක අවකරණය සක්‍රිය කරන්නද?</string>
+
+    <!-- Title text for a detail explanation indicating cookie banner handling is off this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site. -->
+    <string name="cookie_banner_exception_panel_title_state_off_for_site">%1$s සඳහා දත්තකඩ පතාක අවකරණය අක්‍රිය කරන්නද?</string>
+
+    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The placeholder will be updated with the app name. -->
+    <string name="cookie_banner_exception_panel_description_state_on_for_site">%1$s මෙම අඩවියේ දත්තකඩ ඉවත් කර පිටුව නැවුම් කරයි. සියළුම දත්තකඩ මැකීමෙන් බඩු කරත්ත හිස් වීමට හෝ ඔබව නික්මවීමට ඉඩ ඇත.</string>
+
+    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The placeholder will be updated with the app name. -->
+    <string name="cookie_banner_exception_panel_description_state_off_for_site2">%1$s මඟින් දත්තකඩ ඉල්ලීම් ස්වයංක්‍රීයව ඉවතලීමට හැකිය.</string>
+
+    <!-- Long text for a detail explanation indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_description_site_is_not_supported">මෙම අඩවිය දැනට දත්තකඩ පතාක අවකරණයට සහාය නොදක්වයි. මෙම වියමන අඩවිය සමාලෝචනය කර අනාගතයේදී සහාය දක්වන ලෙස අපගේ කණ්ඩායමට දැන්වීමට කැමතිද?</string>
+
+    <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_site_is_not_supported_cancel_button">අවලංගු</string>
+
+    <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_site_is_not_supported_request_support_button">සහාය ඉල්ලන්න</string>
+
+    <!-- Label for the snackBar, after the user reports with success a website where cookie banner reducer did not work -->
+    <string name="cookie_banner_report_a_site_snackbar_label">අඩවිය සඳහා සහාය ඉල්ලීම යොමු කෙරිණි.</string>
+
+    <!-- Label for cookie banner item from tracking protection, after the user reports with success a website where cookie banner reducer did not work -->
+    <string name="cookie_banner_the_site_was_reported">අඩවිය සඳහා සහාය ඉල්ලීම යොමු කෙරිණි.</string>
+
+    <!-- Contextual Feature Recommendation Popups -->
+    <!-- CFR for Cookie Banner (Banner Info Message). %1$s will be replaced by the app name, %2$s will be an active link using the string cfr_cookie_banner_link as text. -->
+    <string name="cfr_cookie_banner">කරදරකාරී දත්තකඩ පතාක ඉවතලීම සඳහා දත්තකඩ ඉල්ලීම් ප්‍රතික්‍ෂේප කිරීමට %1$s උත්සාහ කරයි.\n\n%2$s තුළ දත්තකඩ පතාක අභිප්‍රේත කළමනාකරණය කරන්න.</string>
+
+    <!-- CFR for Cookie Banner (Banner Info Message). This string is used as text for a link in cfr_cookie_banner and takes the user to the app settings. -->
+    <string name="cfr_cookie_banner_link">සැකසුම්</string>
+
     <!-- Preference for autoplay -->
     <string name="preference_autoplay">ස්වයං වාදනය</string>
 
@@ -724,7 +785,7 @@
     <string name="preference_option_phone_feature_blocked">අවහිරයි</string>
 
     <!-- Label that indicates that a permission must be allowed -->
-    <string name="preference_option_phone_feature_allowed">ඉඩ දුන්</string>
+    <string name="preference_option_phone_feature_allowed">ඉඩ දී ඇත</string>
 
     <!--Label that indicates a permission is by the Android OS-->
     <string name="phone_feature_blocked_by_android">ඇන්ඩ්‍රොයිඩ් මගින් අවහිරයි</string>
@@ -765,10 +826,6 @@
     <!-- Preference to enable remote debugging of the app via USB or Wi-Fi -->
     <string name="preference_remote_debugging">USB/වයි-ෆයි හරහා දුරස්ථ නිදොස්කරණය</string>
 
-    <!-- Title for the fingerprint authentication dialog box that is shown to the user when opening the app.
-     %1$s is replaced with the app name -->
-    <string moz:removedIn="103" name="biometric_auth_title">%1$s අගුළු හරින්න</string>
-
     <!-- Text Button for show biometric prompt -->
     <string name="show_biometric_button_text">අගුළු හරින්න</string>
 
@@ -776,14 +833,7 @@
     <string name="biometric_prompt_title">ඇඟිලි සටහන භාවිතයෙන් තහවුරු කරන්න</string>
 
     <!-- Subtitle text for biometric prompt pop-up -->
-    <string name="biometric_prompt_subtitle">වත්මන් වාරය සමඟ ඉදිරියට යාමට ඔබගේ ඇඟිලි සටහන භාවිතා කළ හැකිය.</string>
-
-    <!-- Description for the fingerprint authentication dialog box that is shown to the user when opening the app -->
-    <string moz:removedIn="103" name="biometric_auth_description">ඉදිරියට යාමට ඇඟිලි සටහන් සංවේදකය ස්පර්ශ කරන්න.</string>
-
-    <!-- New session button for the fingerprint authentication dialog box that is shown to the user when opening the app.
-     When pressed, the user's previous session is cleared, and authentication is not required. -->
-    <string moz:removedIn="103" name="biometric_auth_new_session">නව වාරය</string>
+    <string name="biometric_prompt_subtitle">වත්මන් වාරය සමඟ ඉදිරියට යාමට ඔබගේ ඇඟිලි සටහන භාවිතා කිරීමට හැකිය.</string>
 
     <!-- Button for the fingerprint authentication dialog box that is shown to the user when sharing a link to the app
     while the user has biometric authentication enabled. When pressed, the user's previous session is cleared, and the shared link is opened. -->
@@ -826,11 +876,6 @@
     <string name="tip_disable_tracking_protection">අඩවිය අනපේක්‍ෂිත ලෙස හැසිරෙන්නේද?\n
     ලුහුබැඳීමේ රැකවරණය අක්‍රිය කර බලන්න</string>
 
-    <!-- Tip displayed on home view explaining how to disable enhanced tracking protection
-The new line here must be kept as the second half of the string is clickable for the user. -->
-    <string moz:removedIn="105" name="tip_disable_tracking_protection3" tools:ignore="UnusedResources">අඩවියේ අන්තර්ගතය මඟහැරී හෝ අමුතු ලෙස ක්‍රියා කරයි ද?\n
-    දියුණු කළ ලුහුබැඳීමේ රැකවරණය අක්‍රිය කර බලන්න</string>
-
     <!-- Tip displayed on home view explaining how to add sites to homescreen
     Argument 1 will be replaced with a line break in the application.-->
     <string name="tip_add_to_homescreen"><![CDATA[ඔබ නිතර භාවිතා කරන අඩවි වෙත එක් තට්ටුවකින් ප්‍රවේශ වන්න%1$s වට්ටෝරුව > මුල් තිරයට යොදන්න]]></string>
@@ -854,34 +899,17 @@ The new line here must be kept as the second half of the string is clickable for
    පිටුවක ඇති ඕනෑම සබැඳියක් මද වේලාවක් ඔබන්න
     </string>
 
-    <!-- Tip displayed on home view explaining how to request the desktop version of a website.
-      %1$s is a placeholder for the app name. -->
-    <string moz:removedIn="105" name="tip_request_desktop2" tools:ignore="UnusedResources">අඩවියක පූර්ණ අනුවාදය බැලීමට අවශ්‍යද?\n
-   %1$s වට්ටෝරුවෙන් වැඩතල අඩවියට මාරු වන්න</string>
-
     <!-- Tip displayed on home view explaining how to add a custom autocomplete URL -->
     <string name="tip_disable_tips2">ආරම්භක තිරය මත ඉඟි අක්‍රිය කරන්න</string>
-
-    <!-- Tip displayed on the home view explaining how to use the Allowlist feature.
-     "Allowlist" is a replacement for the word whitelist. -->
-    <string moz:removedIn="105" name="tip_explain_allowlist3" tools:ignore="UnusedResources">ඔබ විශ්වාස කරන අඩවියක් සඳහා දියුණු කළ ලුහුබැඳීමේ රැකවරණය අක්‍රිය කළ යුතුද?\n
-   එය සැකසුම් තුළ ඉඩදෙන ලේඛනයට යොදන්න
-    </string>
-
-    <!-- Tip displayed on the home view about the changes in the new release.
-    %1$s is a placeholder for the app name -->
-    <string moz:removedIn="105" name="tip_fresh_look" tools:ignore="UnusedResources">ඇයි ඔව්, අපට නැවුම් නව පෙනුමක් තිබේ!\n මෙය ගැන සහ %1$s ආශ්‍රිත වෙනත් යාවත්කාල ගැන තව කියවන්න.</string>
-
-    <!-- Tip displayed on the home view about shortcuts
-    %1$s is a placeholder for the app name -->
-    <string moz:removedIn="105" name="tip_about_shortcuts" tools:ignore="UnusedResources">ඔබ නිතර ගොඩවදින අඩවි සඳහා කෙටිමං සාදන්න:\n
-   %1$s වට්ටෝරුවෙන් කෙටිමං වෙත යොදන්න තෝරන්න</string>
 
     <!-- Label for the snackbar when a user opens a new tab -->
     <string name="new_tab_opened_snackbar">නව පටිත්තක් විවෘතයි</string>
 
     <!-- Label for the button in the snackbar that switches to the newly opened tab -->
     <string name="open_new_tab_snackbar">මාරු වන්න</string>
+
+    <!-- Text displayed in a notification when the user enters full screen mode -->
+    <string name="full_screen_notification">පූර්ණ තිර ප්‍රකාරයට ඇතුල් වෙමින්</string>
 
     <!-- Preference for switching to a new tab immediately after opening -->
     <string name="preference_open_new_tab">වහාම නව පටිත්තක සබැඳියට මාරු වන්න</string>
@@ -978,18 +1006,36 @@ The new line here must be kept as the second half of the string is clickable for
     <string name="preference_follow_device_theme">උපාංගයේ තේමාව</string>
 
     <!-- The title of the error page for websites that do not support HTTPS when HTTPS-Only is turned on  -->
-    <string name="errorpage_httpsonly_title">ඔබ ඉල්ලූ අඩවිය HTTPS සඳහා සහය නොදක්වයි</string>
+    <string name="errorpage_httpsonly_title2">අඩවිය HTTPS සඳහා සහය නොදක්වයි</string>
 
-    <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will get replaced with the name of the app (e.g. "Firefox Focus") -->
-    <string name="errorpage_httpsonly_message">පෙරනිමි ලෙස, ඉහළ ආරක්‍ෂාවක් සඳහා HTTPS භාවිතයෙන් සම්බන්ධ වීමට %1$s උත්සාහ කරයි. මෙම සැකසුම වෙනස් කිරීමට හෝ තව දැන ගැනීමට, සැකසුම් &gt; පෞද්ගලිකත්‍වය හා ආරක්‍ෂාව &gt; ආරක්‍ෂාව වෙත යන්න.</string>
+    <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will get replaced with the name of the app (e.g. "Firefox Focus").
+        Contains a button that will redirect the user to Privacy & Security Screen-->
+    <string name="errorpage_httpsonly_message2"><![CDATA[වැඩි ආරක්‍ෂාවක් සඳහා %1$s හැකි සෑම විටම HTTPS සම්බන්ධතාවයක් භාවිතයට උත්සාහ කරයි.
+ <a href="%2$s">තව දැනගන්න</a> <br/><br/>
+ සැකසුම් > පෞද්ගලිකත්‍වය හා ආරක්‍ෂාව > ආරක්‍ෂාව හරහා සැකසුම වෙනස් කරන්න.]]></string>
 
-    <!-- Sessions List -->
+    <!-- The document title and heading of the error page shown when a website has an invalid or expired SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_title">සම්බන්ධතාවය අනාරක්‍ෂිතයි</string>
+
+     <!-- The error message shown when a website has an invalid or expired SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_message"><![CDATA[
+ මෙය සේවාදායකයේ වින්‍යාසයෙහි ගැටළුවක් විය හැකිය, හෝ යමෙක් සේවාදායකය ලෙස වංචනිකව පෙනී සිටීමට තැත් කරනවා විය හැකිය. <br/><br/>
+ ඔබ පෙර දී මෙම සේවාදායකයට සාර්ථකව සම්බන්ධ වී ඇත්නම්, මෙය තාවකාලික දෝෂයක් විය හැකිය.
+ ]]></string>
+
+    <!-- The advanced certificate information shown when a website has an invalid SSL certificate. The %1$s will be replaced by the app name and %2$s will be replaced by website URL. It's only shown when a website has an invalid SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_techInfo"><![CDATA[
+ <label>යමෙක් වංචනිකව මෙම අඩවිය හසුරුවීමට තැත් කරන හෙයින් ඉදිරියට යාම අවදානම් සහගතය.</label>
+ <br><br>
+ <label><b>%2$s</b> හි සහතිකයේ නිකුත්කරු නොදන්නා නිසා %1$s එය විශ්වාස නොකරයි, සහතිකය ස්වයං-අත්සන් කර හෝ සේවාදායකය නිවැරදි අතරමැදි සහතිකය එවන්නේ නැත.</label>
+ ]]></string>
+
+     <!-- Sessions List -->
     <!-- Content description (not visible, for screen readers etc.): Button that closes a tab n the sessions list -->
     <string name="close_tab">පටිත්ත වසන්න</string>
 
     <!-- Contextual Feature Recommendation Popups -->
     <!-- CFR for Toolbar Shield Icon (Banner Info Message) -->
-    <string moz:removedIn="104" name="cfr_for_toolbar_shield_icon">මෙම අඩවිය ඔබව ලුහුබැඳීමට තැත් කරන බව පෙනේ. අඩවි සැකසුම් හා ලුහුබැඳීම් අවහිර කිරීමේ සංඛ්‍යාලේඛන සඳහා පලිහ ඔබන්න.</string>
     <string name="cfr_for_toolbar_shield_icon2">ඒවා ලැබුණා! අපි මෙම අඩවිය ඔබ ගැන ඔත්තු බැලීම නැවැත්තුවෙමු. අපි අවහිර කරන දෑ බැලීමට පලිහ මත තට්ටු කරන්න.</string>
 
     <!-- Content description (not visible, for screen readers etc.): Button that closes the CFR popup -->
@@ -1004,18 +1050,25 @@ The new line here must be kept as the second half of the string is clickable for
     <string name="tool_tip_dismiss_button_content_description">ඉවතලන්න</string>
 
     <!-- CFR for Toolbar Delete Icon (Banner Info Message) -->
-    <string moz:removedIn="105" name="cfr_for_toolbar_delete_icon" tools:ignore="UnusedResources">කුණු බඳුන මත තට්ටු කිරීමෙන් මෙම වාරයෙන් ඔබගේ පෞද්. දත්ත, පිරික්සුම් ඉතිහාසය සහ තවත් දෑ ඉවත් කළ හැකිය. උත්සාහ කර බලන්න!</string>
     <string name="cfr_for_toolbar_delete_icon2">ඉතිහාසය, දත්තකඩ, හා අනෙකුත් දෑ — සියල්ල කුණු කූඩයට දැමීමට මෙහි තට්ටු කරන්න — සහ නව පටිත්තකින් නැවුම්ව අරඹන්න.</string>
 
     <!-- Promote SearchWidget Dialog -->
 
     !-- Content description (not visible, for screen readers etc.): This is the description for the
     close button from promote search widget dialog. --&gt;
+    <!-- Content description (not visible, for screen readers etc.): This is the description for the
+    close button from promote search widget dialog. -->
     <string name="promote_search_widget_dialog_content_description">වසන්න</string>
 
     !-- Content description (not visible, for screen readers etc.): This is the description for
     picture of search widget from promote search widget dialog. --&gt;
+    <!-- This is the title of promote search widget dialog. -->
     <string name="promote_search_widget_dialog_title">පිරික්සුම් ඉතිහාසය මැකිණි! 🎉</string>
+
+    !-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
+    of the app (e.g. &quot;Focus&quot;) --&gt;
+    <!-- Banner Info Message than will appear when user first enters in the app. The location is at the toolbar. -->
+    <string name="cfr_for_start_browsing">ඔබගේ පෞද්ගලික පිරික්සුම් වාරය අරඹන්න, ඔබ යන හැටියට ලුහුබැඳීම් සහ වෙනත් නරක දෑ අවහිර කෙරේ.</string>
 
     !-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
     of the app (e.g. &quot;Focus&quot;) --&gt;

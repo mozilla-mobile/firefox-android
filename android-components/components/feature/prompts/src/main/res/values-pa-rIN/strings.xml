@@ -40,7 +40,7 @@
     <string name="mozac_feature_prompt_login_add_username_headline">ਵਰਤੋਂਕਾਰ-ਨਾਂ ਨੂੰ ਸੰਭਾਲੇ ਪਾਸਵਰਡ ਵਿੱਚ ਜੋੜਨਾ ਹੈ?</string>
     <!-- Text for a label for the field when prompt requesting a text is shown. -->
     <!-- For more info take a look here https://developer.mozilla.org/en-US/docs/Web/API/Window/prompt -->
-    <string name="mozac_feature_prompts_content_description_input_label">ਲਿਖਤ ਦਰਜ ਕਰਨ ਲਈ ਖੇਤਰ ਲਈ ਲੇਬਲ</string>
+    <string name="mozac_feature_prompts_content_description_input_label">ਲਿਖਣ ਵਾਲੇ ਖਾਨੇ ਵਿੱਚ ਜਾਣ ਲਈ ਲੇਬਲ</string>
     <!-- Title of a color picker dialog, this text is shown above a color picker. -->
     <string name="mozac_feature_prompts_choose_a_color">ਰੰਗ ਚੁਣੋ</string>
     <!-- Text of a confirm button in dialog requesting to open a new window. -->
@@ -52,7 +52,7 @@
     <!-- Body text of the dialog shown when a user is leaving a website and there is still data not saved yet. -->
     <string name="mozac_feature_prompt_before_unload_dialog_body">ਕੀ ਤੁਸੀਂ ਇਹ ਸਾਈਟ ਛੱਡਣਾ ਚਾਹੁੰਦੇ ਹੋ? ਤੁਹਾਡੇ ਵਲੋਂ ਦਿੱਤਾ ਡਾਟਾ ਸੰਭਾਲਿਆ ਨਹੀਂ ਵੀ ਗਿਆ ਹੋ ਸਕਦਾ ਹੈ</string>
     <!-- Stay button of the dialog shown when a user is leaving a website and there is still data not saved yet, this indicates that the user wants to stay in the website. -->
-    <string name="mozac_feature_prompts_before_unload_stay">ਰਹੋ</string>
+    <string name="mozac_feature_prompts_before_unload_stay">ਇੱਥੇ ਹੀ ਰਹੋ</string>
     <!-- Leave button of the dialog shown when a user is leaving a website and there is still data not saved yet, this indicates that the user wants to leave in the website. -->
     <string name="mozac_feature_prompts_before_unload_leave">ਛੱਡੋ</string>
     <!-- Title of the month chooser dialog. -->
@@ -119,8 +119,6 @@
 
     <!-- Address Autofill -->
     <!-- Header for the select address prompt to allow users to fill a form with a saved address. -->
-    <string moz:removedIn="104" name="mozac_feature_prompts_select_address" tools:ignore="UnusedResources">ਸਿਰਨਾਵੇਂ ਚੁਣੋ</string>
-    <!-- Header for the select address prompt to allow users to fill a form with a saved address. -->
     <string name="mozac_feature_prompts_select_address_2">ਸਿਰਨਾਵਾਂ ਚੁਣੋ</string>
     <!-- Content description for expanding the select addresses options in the select address prompt. -->
     <string name="mozac_feature_prompts_expand_address_content_description">ਸੁਝਾਏ ਸਿਰਨਾਵਿਆਂ ਨੂੰ ਫੈਲਾਓ</string>
@@ -128,4 +126,20 @@
     <string name="mozac_feature_prompts_collapse_address_content_description">ਸੁਝਾਏ ਸਿਰਨਾਵਿਆਂ ਨੂੰ ਸਮੇਟੋ</string>
     <!-- Text for the manage addresses button. -->
     <string name="mozac_feature_prompts_manage_address">ਸਿਰਨਾਵਿਆਂ ਦਾ ਇੰਤਜ਼ਾਮ ਕਰੋ</string>
+
+    <!-- Federated Credential Management prompts -->
+    <!--Content description for the Account picture in the Select Account FedCM prompt -->
+    <string name="mozac_feature_prompts_account_picture">ਖਾਤੇ ਦੀ ਤਸਵੀਰ</string>
+    <!-- Title of the Identity Credential provider dialog choose. -->
+    <string name="mozac_feature_prompts_identity_credentials_choose_provider">ਲਾਗਇਨ ਪੂਰਕ ਚੁਣੋ</string>
+    <!-- Title of an account picker dialog for identity credentials. -->
+    <string name="mozac_feature_prompts_identity_credentials_choose_account" moz:removedIn="119" tools:ignore="UnusedResources">ਖਾਤਾ ਚੁਣੋ</string>
+    <!-- Title of an account picker dialog for identity credentials. The %1$s will be replaced with the name of the provider -->
+    <string name="mozac_feature_prompts_identity_credentials_choose_account_for_provider">%1$s ਖਾਤੇ ਨਾਲ ਸਾਈਨ ਇਨ ਕਰੋ</string>
+    <!-- Title of the Identity Credential privacy policy dialog title. The %1$s will be replaced with the name of the provider. -->
+    <string name="mozac_feature_prompts_identity_credentials_privacy_policy_title">%1$s ਨੂੰ ਲਾਗਇਨ ਪੂਰਕ ਵਜੋਂ ਵਰਤੋਂ</string>
+    <!-- Title of the Identity Credential privacy policy dialog description. The %1$s will be replaced with the name of the provider, %2$s will be replaced with the account, %3$s will be replaced with the privacy policy url and  %4$s will be replaced with the terms of service. -->
+    <string name="mozac_feature_prompts_identity_credentials_privacy_policy_description"><![CDATA[%1$s ਵਿੱਚ %2$s ਖਾਤੇ ਨਾਲ ਲਾਗਇਨ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ, ਜੋ ਕਿ <a href="%3$s">ਪਰਦੇਦਾਰੀ ਨੀਤੀ</a> ਅਤੇ <a href="%4$s">ਸੇਵਾ ਦੀਆਂ ਸ਼ਰਤਾਂ</a> ਦੇ ਅਧੀਨ ਹੈ।]]></string>
+    <!-- Title of the Identity Credential provider dialog choose. -->
+    <string name="mozac_feature_prompts_identity_credentials_continue">ਜਾਰੀ ਰੱਖੋ</string>
 </resources>

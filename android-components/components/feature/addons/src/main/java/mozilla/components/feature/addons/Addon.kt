@@ -10,6 +10,7 @@ import android.graphics.Bitmap
 import android.os.Parcelable
 import androidx.core.net.toUri
 import kotlinx.parcelize.Parcelize
+import mozilla.components.concept.engine.webextension.WebExtension
 
 /**
  * Represents an add-on based on the AMO store:
@@ -98,6 +99,7 @@ data class Addon(
      * defaults to false.
      * @property supported Indicates if this [Addon] is supported by the browser or not, defaults
      * to true.
+     * @property disabledReason Indicates why the [Addon] was disabled.
      * @property optionsPageUrl the URL of the page displaying the
      * options page (options_ui in the extension's manifest).
      * @property allowedInPrivateBrowsing true if this addon should be allowed to run in private
@@ -114,10 +116,41 @@ data class Addon(
         val openOptionsPageInTab: Boolean = false,
         val enabled: Boolean = false,
         val supported: Boolean = true,
-        val disabledAsUnsupported: Boolean = false,
+        val disabledReason: DisabledReason? = null,
         val allowedInPrivateBrowsing: Boolean = false,
         val icon: Bitmap? = null,
     ) : Parcelable
+
+    /**
+     * Enum containing all reasons why an [Addon] was disabled.
+     */
+    enum class DisabledReason {
+
+        /**
+         * The [Addon] was disabled because it is unsupported.
+         */
+        UNSUPPORTED,
+
+        /**
+         * The [Addon] was disabled because is it is blocklisted.
+         */
+        BLOCKLISTED,
+
+        /**
+         * The [Addon] was disabled by the user.
+         */
+        USER_REQUESTED,
+
+        /**
+         * The [Addon] was disabled because it isn't correctly signed.
+         */
+        NOT_CORRECTLY_SIGNED,
+
+        /**
+         * The [Addon] was disabled because it isn't compatible with the application version.
+         */
+        INCOMPATIBLE,
+    }
 
     /**
      * Returns a list of localized Strings per each item on the [permissions] list.
@@ -148,7 +181,24 @@ data class Addon(
      * addon can be disabled as unsupported and later become supported, so
      * both [isSupported] and [isDisabledAsUnsupported] can be true.
      */
-    fun isDisabledAsUnsupported() = installedState?.disabledAsUnsupported == true
+    fun isDisabledAsUnsupported() = installedState?.disabledReason == DisabledReason.UNSUPPORTED
+
+    /**
+     * Returns whether or not this [Addon] is currently disabled because it is part of
+     * the blocklist. This is based on the installed extension state in the engine.
+     */
+    fun isDisabledAsBlocklisted() = installedState?.disabledReason == DisabledReason.BLOCKLISTED
+
+    /**
+     * Returns whether this [Addon] is currently disabled because it isn't correctly signed.
+     */
+    fun isDisabledAsNotCorrectlySigned() = installedState?.disabledReason == DisabledReason.NOT_CORRECTLY_SIGNED
+
+    /**
+     * Returns whether this [Addon] is currently disabled because it isn't compatible
+     * with the application version.
+     */
+    fun isDisabledAsIncompatible() = installedState?.disabledReason == DisabledReason.INCOMPATIBLE
 
     /**
      * Returns whether or not this [Addon] is allowed in private browsing mode.
@@ -175,6 +225,7 @@ data class Addon(
         /**
          * A map of permissions to translation string ids.
          */
+        @Suppress("MaxLineLength")
         val permissionToTranslation = mapOf(
             "privacy" to R.string.mozac_feature_addons_permissions_privacy_description,
             "<all_urls>" to R.string.mozac_feature_addons_permissions_all_urls_description,
@@ -187,6 +238,7 @@ data class Addon(
             "clipboardRead" to R.string.mozac_feature_addons_permissions_clipboard_read_description,
             "clipboardWrite" to R.string.mozac_feature_addons_permissions_clipboard_write_description,
             "declarativeNetRequest" to R.string.mozac_feature_addons_permissions_declarative_net_request_description,
+            "declarativeNetRequestFeedback" to R.string.mozac_feature_addons_permissions_declarative_net_request_feedback_description,
             "downloads" to R.string.mozac_feature_addons_permissions_downloads_description,
             "downloads.open" to R.string.mozac_feature_addons_permissions_downloads_open_description,
             "find" to R.string.mozac_feature_addons_permissions_find_description,
@@ -224,6 +276,35 @@ data class Addon(
             }
 
             return localizedNormalPermissions + localizedUrlAccessPermissions
+        }
+
+        /**
+         * Creates an [Addon] object from a [WebExtension] one. The resulting object might have an installed state when
+         * the second method's argument is used.
+         *
+         * @param extension a WebExtension instance.
+         * @param installedState optional - an installed state.
+         */
+        fun newFromWebExtension(extension: WebExtension, installedState: InstalledState? = null): Addon {
+            val name = extension.getMetadata()?.name ?: extension.id
+            val description = extension.getMetadata()?.description ?: extension.id
+            val permissions = extension.getMetadata()?.permissions.orEmpty() +
+                extension.getMetadata()?.hostPermissions.orEmpty()
+
+            return Addon(
+                id = extension.id,
+                version = extension.getMetadata()?.version.orEmpty(),
+                permissions = permissions,
+                downloadUrl = extension.url,
+                siteUrl = extension.url,
+                translatableName = mapOf(Addon.DEFAULT_LOCALE to name),
+                translatableDescription = mapOf(Addon.DEFAULT_LOCALE to description),
+                // We don't have a summary when we create an add-on from a WebExtension instance so let's
+                // re-use description...
+                translatableSummary = mapOf(Addon.DEFAULT_LOCALE to description),
+                updatedAt = "",
+                installedState = installedState,
+            )
         }
 
         @Suppress("MaxLineLength")

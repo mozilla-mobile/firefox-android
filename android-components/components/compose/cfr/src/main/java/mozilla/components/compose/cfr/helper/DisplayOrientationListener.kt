@@ -5,9 +5,9 @@
 package mozilla.components.compose.cfr.helper
 
 import android.content.Context
-import android.content.pm.ActivityInfo
 import android.hardware.display.DisplayManager
 import android.hardware.display.DisplayManager.DisplayListener
+import android.os.Build
 import androidx.annotation.VisibleForTesting
 
 /**
@@ -22,13 +22,13 @@ import androidx.annotation.VisibleForTesting
  * No updates will be triggered if the "Auto-rotate" functionality is disabled for the device.
  */
 internal class DisplayOrientationListener(
-    context: Context,
+    private val context: Context,
     val onDisplayRotationChanged: () -> Unit,
 ) : DisplayListener {
     private val displayManager = context.getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
 
     @VisibleForTesting
-    internal var currentOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+    internal var currentOrientation = getCurrentOrientation()
 
     /**
      * Start listening for display orientation changes.
@@ -50,11 +50,16 @@ internal class DisplayOrientationListener(
     override fun onDisplayRemoved(displayId: Int) = Unit
 
     override fun onDisplayChanged(displayId: Int) {
-        val display = displayManager.getDisplay(displayId)
+        val newOrientation = getCurrentOrientation(displayId)
 
-        if (display.rotation != currentOrientation) {
-            currentOrientation = display.rotation
+        if (newOrientation != this.currentOrientation) {
+            this.currentOrientation = newOrientation
             onDisplayRotationChanged()
         }
+    }
+
+    private fun getCurrentOrientation(displayId: Int = 0): Int = when (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        true -> context.resources.configuration.orientation
+        false -> displayManager.getDisplay(displayId)?.rotation ?: currentOrientation
     }
 }

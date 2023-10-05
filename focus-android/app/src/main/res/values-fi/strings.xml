@@ -353,6 +353,15 @@
     <!-- In-app link (in settings) to Focus privacy notice. -->
     <string name="preference_privacy_notice">Tietosuojakäytäntö</string>
 
+    <!-- In-app link (in settings) to Focus licensing information. -->
+    <string name="preference_licensing_info">Lisenssitiedot</string>
+
+    <!-- Link to Focus licensing information from other libraries that we use. -->
+    <string name="preference_libraries_we_use">Käyttämämme kirjastot</string>
+
+    <!-- Open Source Licenses page title. The first parameter is the app name -->
+    <string name="open_source_licenses_title">%s | Avoimen lähdekoodin kirjastot</string>
+
     <!-- Item in Preferences that shows the about page. Parameter 1 is the app name, i.e. Firefox Focus/Firefox Klar. -->
     <string name="preference_about">Tietoja: %1$s</string>
 
@@ -483,7 +492,10 @@
 
 
 
-  <string name="error_hostLookup_title">Palvelinta ei löytynyt</string>
+  <!-- Snackbar that will be displayed after a website has been added to shortcuts. -->
+    <string name="snackbar_added_to_shortcuts">Lisätty pikavalintoihin!</string>
+
+    <string name="error_hostLookup_title">Palvelinta ei löytynyt</string>
 
 
 
@@ -701,17 +713,14 @@
     <!--  Preference summary inside Cookie banner reduction screen. Here you can set the cookie banner option to disabled or reject_all. -->
     <string name="cookie_banner_reject_all_option_summary">Näe vähemmän banneri-ilmoituksia hylkäämällä evästepyynnöt automaattisesti, kun mahdollista.</string>
 
-    <!--  Checkbox Preference title inside Cookie banner reduction screen. Here you can set the cookie banner option to reject_or_accept_all or reject_all. -->
-    <string name="cookie_banner_further_reduce_option_title">Vähennä evästeilmoituksia vielä enemmän</string>
-
-    <!--  Checkbox Preference summary inside Cookie banner reduction screen. Here you can set the cookie banner option to reject_or_accept_all or reject_all. -->
-    <string name="cookie_banner_further_reduce_option_summary">Evästepyyntöilmoitukset hyväksytään, jotta banneri-ilmoituksia ei näytettäisi.</string>
-
     <!-- Preference for removing cookie/consent banners from sites automatically, this is shown as part of the protections panel with the tracking protection toggle. -->--&gt;
     <string name="cookie_banner_exception_item_title">Evästeilmoitusten vähennys</string>
 
     <!-- Text for indicating cookie banner handling is on this site, this is shown as part of the protections panel with the tracking protection toggle. -->
     <string name="cookie_banner_exception_item_description_state_on">KÄYTÖSSÄ tällä sivustolla</string>
+
+    <!-- Text for indicating cookie reducer is not supported on the current site, this is shown as part of the protections panel with the tracking protection toggle. -->
+    <string name="cookie_banner_exception_site_not_supported">Sivusto ei ole tuettu tällä hetkellä</string>
 
     <!-- Text for indicating cookie banner handling is off this site, this is shown as part of the protections panel with the tracking protection toggle. -->
     <string name="cookie_banner_exception_item_description_state_off">EI KÄYTÖSSÄ tällä sivustolla</string>
@@ -735,7 +744,29 @@
     <string name="cookie_banner_exception_panel_description_state_on_for_site">%1$s poistaa tämän sivuston evästeet ja päivittää sivun. Kaikkien evästeiden poistaminen saattaa kirjata sinut ulos tai tyhjentää ostoskorit.</string>
 
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The placeholder will be updated with the app name. -->
-    <string name="cookie_banner_exception_panel_description_state_off_for_site">%1$s voi yrittää automaattisesti hylätä evästepyynnöt. Jos hylkäysvaihtoehto ei ole käytettävissä, %1$s voi hyväksyä kaikki evästeet evästeilmoitusten poistamiseksi näkyvistä.</string>
+    <string name="cookie_banner_exception_panel_description_state_off_for_site2">%1$s voi yrittää hylätä automaattisesti evästepyynnöt.</string>
+
+    <!-- Long text for a detail explanation indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_description_site_is_not_supported">Evästeilmoitusten vähennys ei tällä hetkellä tue tätä sivustoa. Haluatko pyytää tiimiämme tarkistamaan tämän sivuston ja lisäämään tuen tulevaisuudessa?</string>
+
+    <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_site_is_not_supported_cancel_button">Peruuta</string>
+
+    <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_site_is_not_supported_request_support_button">Pyydä tukea</string>
+
+    <!-- Label for the snackBar, after the user reports with success a website where cookie banner reducer did not work -->
+    <string name="cookie_banner_report_a_site_snackbar_label">Pyyntö tukea tätä sivustoa lähetetty.</string>
+
+    <!-- Label for cookie banner item from tracking protection, after the user reports with success a website where cookie banner reducer did not work -->
+    <string name="cookie_banner_the_site_was_reported">Pyyntö tukea tätä sivustoa lähetetty.</string>
+
+    <!-- Contextual Feature Recommendation Popups -->
+    <!-- CFR for Cookie Banner (Banner Info Message). %1$s will be replaced by the app name, %2$s will be an active link using the string cfr_cookie_banner_link as text. -->
+    <string name="cfr_cookie_banner">%1$s yrittää hylätä evästepyynnöt ja siten piilottaa ärsyttävät evästeilmoitukset.\n\nHallinnoi evästeilmoitusasetuksia %2$s.</string>
+
+    <!-- CFR for Cookie Banner (Banner Info Message). This string is used as text for a link in cfr_cookie_banner and takes the user to the app settings. -->
+    <string name="cfr_cookie_banner_link">asetuksissa</string>
 
     <!-- Preference for autoplay -->
     <string name="preference_autoplay">Automaattinen toisto</string>
@@ -893,6 +924,9 @@
     <!-- Label for the button in the snackbar that switches to the newly opened tab -->
     <string name="open_new_tab_snackbar">Vaihda</string>
 
+    <!-- Text displayed in a notification when the user enters full screen mode -->
+    <string name="full_screen_notification">Siirrytään koko näytön tilaan</string>
+
     <!-- Preference for switching to a new tab immediately after opening -->
     <string name="preference_open_new_tab">Siirry välilehteen heti linkin avaamisen jälkeen</string>
 
@@ -994,12 +1028,31 @@
 
 
     <!-- The title of the error page for websites that do not support HTTPS when HTTPS-Only is turned on  -->
-    <string name="errorpage_httpsonly_title">Pyytämäsi sivusto ei tue HTTPS:ää</string>
+    <string name="errorpage_httpsonly_title2">Tämä sivusto ei tue HTTPS:ää</string>
 
-    <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will get replaced with the name of the app (e.g. "Firefox Focus") -->
-    <string name="errorpage_httpsonly_message">Oletusarvoisesti %1$s yrittää muodostaa yhteyden HTTPS:llä paremman tietoturvan vuoksi. Voit muuttaa tämän asetuksen ja saada lisätietoja siirtymällä kohtaan Asetukset &gt; Tietosuoja ja turvallisuus &gt; Turvallisuus.</string>
+    <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will get replaced with the name of the app (e.g. "Firefox Focus").
+        Contains a button that will redirect the user to Privacy & Security Screen-->
+    <string name="errorpage_httpsonly_message2"><![CDATA[%1$s yrittää käyttää HTTPS aina kun mahdollista turvallisuuden lisäämiseksi.
+     <a href="%2$s">Lue lisää</a> <br/><br/>
+     Muuta tätä asetusta kohdassa Asetukset > Tietosuoja ja turvallisuus > Turvallisuus.]]></string>
 
-    <!-- Sessions List -->
+    <!-- The document title and heading of the error page shown when a website has an invalid or expired SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_title">Yhteys ei ole suojattu</string>
+
+     <!-- The error message shown when a website has an invalid or expired SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_message"><![CDATA[
+    Ongelma voi johtua palvelimen asetuksista tai jonkin toisen palvelimen vilpillisestä yrityksestä tekeytyä palvelimeksi. <br/><br/>
+    Jos yhteyden muodostaminen palvelimeen on aiemmin onnistunut, vika voi olla väliaikainen.
+    ]]></string>
+
+     <!-- The advanced certificate information shown when a website has an invalid SSL certificate. The %1$s will be replaced by the app name and %2$s will be replaced by website URL. It's only shown when a website has an invalid SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_techInfo"><![CDATA[
+        <label>Jokin toinen osapuoli saattaa tekeytyä sivustoksi, jatkaminen voi olla riskialtista.</label>
+        <br><br>
+        <label>%1$s ei luota sivustoon <b>%2$s</b>, koska sen varmenteen myöntäjä on tuntematon, varmenne on itse allekirjoitettu tai palvelin ei lähetä oikeita välivarmenteita.</label>
+    ]]></string>
+
+     <!-- Sessions List -->
     <!-- Content description (not visible, for screen readers etc.): Button that closes a tab n the sessions list -->
     <string name="close_tab">Sulje välilehti</string>
 
@@ -1025,13 +1078,18 @@
 
     !-- Content description (not visible, for screen readers etc.): This is the description for the
     close button from promote search widget dialog. --&gt;
+    <!-- Content description (not visible, for screen readers etc.): This is the description for the
+    close button from promote search widget dialog. -->
     <string name="promote_search_widget_dialog_content_description">Sulje</string>
 
     !-- Content description (not visible, for screen readers etc.): This is the description for
     picture of search widget from promote search widget dialog. --&gt;
+    <!-- Content description (not visible, for screen readers etc.): This is the description for
+    picture of search widget from promote search widget dialog. -->
     <string name="promote_search_widget_dialog_picture_content_description">Hakuwidget</string>
 
     !-- This is the title of promote search widget dialog. --&gt;
+    <!-- This is the title of promote search widget dialog. -->
     <string name="promote_search_widget_dialog_title">Selaushistoria tyhjennetty! 🎉</string>
 
     !-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
@@ -1041,13 +1099,19 @@
 
     !-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
     of the app (e.g. &quot;Focus&quot;) --&gt;
+    <!-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
+    of the app (e.g. "Focus") -->
     <string name="promote_search_widget_dialog_subtitle">Annamme sinulle rauhan yksityiseen selailuun, mutta halutessasi saat nopeamman lähdön ensi kerralla lisäämällä %1$s-widgetin aloitusnäytöllesi.</string>
 
     !-- This is te text from add search widget to home screen button .The button is located on
     promote search widget dialog. --&gt;
+    <!-- This is te text from add search widget to home screen button .The button is located on
+    promote search widget dialog. -->
     <string name="promote_search_widget_button_text">Lisää widget aloitusnäyttöön</string>
 
     !-- This is te text of the snackbar that appears after the search widget was added successfully
     to the home screen. --&gt;
+    <!-- This is te text of the snackbar that appears after the search widget was added successfully
+    to the home screen. -->
     <string name="promote_search_widget_snackbar_message">Widget lisätty aloitusnäyttöön</string>
 </resources>

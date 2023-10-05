@@ -11,16 +11,20 @@ transforms:
 
 kind-dependencies:
     - toolchain
+    - external-gradle-dependencies
 
 
 task-defaults:
     attributes:
         code-review: true
         retrigger: true
+    dependencies:
+        external-gradle-dependencies: external-gradle-dependencies-lint-components
     fetches:
         toolchain:
             - android-sdk-linux
-            - android-gradle-dependencies
+        external-gradle-dependencies:
+            - external-gradle-dependencies.tar.xz
     run:
         use-caches: false
     run-on-tasks-for:
@@ -34,12 +38,13 @@ task-defaults:
     worker-type: b-android
     worker:
         docker-image: {in-tree: base}
-        max-run-time: 600
+        max-run-time: 1200
     optimization:
         skip-unless-changed:
             - "android-components/**"
 
 tasks-from:
+    - buildconfig.yml
     - compare-locales.yml
     - detekt.yml
     - ktlint.yml

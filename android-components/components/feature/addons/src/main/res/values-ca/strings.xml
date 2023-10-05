@@ -38,6 +38,10 @@
     <string name="mozac_feature_addons_permissions_clipboard_read_description">Obtenir les dades del porta-retalls</string>
     <!-- Description for clipboard_write permission. -->
     <string name="mozac_feature_addons_permissions_clipboard_write_description">Afegir dades al porta-retalls</string>
+    <!-- Description for declarativeNetRequest permission. -->
+    <string name="mozac_feature_addons_permissions_declarative_net_request_description">Blocar el contingut de qualsevol pàgina</string>
+    <!-- Description for declarativeNetRequestFeedback permission. -->
+    <string name="mozac_feature_addons_permissions_declarative_net_request_feedback_description">Llegir l’historial de navegació</string>
     <!-- Description for downloads permission. -->
     <string name="mozac_feature_addons_permissions_downloads_description">Baixar els fitxers i modificar l’historial de baixades del navegador</string>
     <!-- Description for downloads_open permission. -->
@@ -166,6 +170,8 @@
     <string name="mozac_feature_addons_successfully_installed">%1$s s’ha instal·lat correctament</string>
     <!-- Text shown after failed to install an add-on. %1$s is the add-on name. -->
     <string name="mozac_feature_addons_failed_to_install">No s’ha pogut instal·lar %1$s</string>
+    <!-- Text shown when attempting to install a blocklisted add-on. %1$s is the add-on name. -->
+    <string name="mozac_feature_addons_blocklisted">No s\'ha pogut instal·lar el complement %1$s perquè té un risc elevat de provocar problemes d\'estabilitat o de seguretat</string>
     <!-- Text shown after successfully enabled an add-on. %1$s is the add-on name. -->
     <string name="mozac_feature_addons_successfully_enabled">%1$s s’ha activat correctament</string>
     <!-- Text shown after failed to enable an add-on. %1$s is the add-on name. -->

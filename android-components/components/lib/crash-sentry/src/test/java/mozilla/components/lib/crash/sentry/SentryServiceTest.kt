@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package mozilla.components.lib.crash.sentry
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -22,6 +26,7 @@ import mozilla.components.concept.base.crash.Breadcrumb as MozillaBreadcrumb
 
 @RunWith(AndroidJUnit4::class)
 class SentryServiceTest {
+    class TestException : Exception()
 
     @Before
     fun setup() {
@@ -85,6 +90,7 @@ class SentryServiceTest {
             extrasPath = "",
             processType = Crash.NativeCodeCrash.PROCESS_TYPE_MAIN,
             breadcrumbs = breadcrumbs,
+            remoteType = null,
         )
 
         service.report(nativeCrash)
@@ -111,6 +117,7 @@ class SentryServiceTest {
             extrasPath = "",
             processType = Crash.NativeCodeCrash.PROCESS_TYPE_FOREGROUND_CHILD,
             breadcrumbs = breadcrumbs,
+            remoteType = null,
         )
 
         service.report(nativeCrash)
@@ -137,6 +144,7 @@ class SentryServiceTest {
             extrasPath = "",
             processType = Crash.NativeCodeCrash.PROCESS_TYPE_BACKGROUND_CHILD,
             breadcrumbs = breadcrumbs,
+            remoteType = null,
         )
 
         service.report(nativeCrash)
@@ -163,6 +171,7 @@ class SentryServiceTest {
             extrasPath = "",
             processType = Crash.NativeCodeCrash.PROCESS_TYPE_FOREGROUND_CHILD,
             breadcrumbs = breadcrumbs,
+            remoteType = null,
         )
 
         val result = service.report(nativeCrash)
@@ -188,6 +197,7 @@ class SentryServiceTest {
             extrasPath = "",
             processType = Crash.NativeCodeCrash.PROCESS_TYPE_MAIN,
             breadcrumbs = breadcrumbs,
+            remoteType = null,
         )
 
         val result = service.createMessage(nativeCrash)

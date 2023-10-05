@@ -10,24 +10,24 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.AttributeSet
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import mozilla.components.browser.state.state.WebExtensionState
 import mozilla.components.concept.engine.EngineView
 import mozilla.components.feature.contextmenu.ext.DefaultSelectionActionDelegate
 import mozilla.components.feature.intent.ext.getSessionId
 import mozilla.components.support.base.feature.UserInteractionHandler
+import mozilla.components.support.locale.LocaleAwareAppCompatActivity
 import mozilla.components.support.utils.SafeIntent
-import mozilla.components.support.webextensions.WebExtensionPopupFeature
+import mozilla.components.support.webextensions.WebExtensionPopupObserver
 import org.mozilla.samples.browser.addons.WebExtensionActionPopupActivity
 import org.mozilla.samples.browser.ext.components
 
 /**
  * Activity that holds the [BrowserFragment].
  */
-open class BrowserActivity : AppCompatActivity(), ComponentCallbacks2 {
-    private val webExtensionPopupFeature by lazy {
-        WebExtensionPopupFeature(components.store, ::openPopup)
+open class BrowserActivity : LocaleAwareAppCompatActivity(), ComponentCallbacks2 {
+    private val webExtensionPopupObserver by lazy {
+        WebExtensionPopupObserver(components.store, ::openPopup)
     }
 
     /**
@@ -48,8 +48,9 @@ open class BrowserActivity : AppCompatActivity(), ComponentCallbacks2 {
             }
         }
 
-        lifecycle.addObserver(webExtensionPopupFeature)
+        lifecycle.addObserver(webExtensionPopupObserver)
         components.historyStorage.registerStorageMaintenanceWorker()
+        components.notificationsDelegate.bindToActivity(this)
     }
 
     override fun onBackPressed() {
@@ -59,7 +60,7 @@ open class BrowserActivity : AppCompatActivity(), ComponentCallbacks2 {
             }
         }
 
-        super.getOnBackPressedDispatcher().onBackPressed()
+        onBackPressedDispatcher.onBackPressed()
     }
 
     override fun onCreateView(parent: View?, name: String, context: Context, attrs: AttributeSet): View? =
@@ -79,5 +80,10 @@ open class BrowserActivity : AppCompatActivity(), ComponentCallbacks2 {
         intent.putExtra("web_extension_name", webExtensionState.name)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         startActivity(intent)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        components.notificationsDelegate.unBindActivity(this)
     }
 }

@@ -18,18 +18,23 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import mozilla.components.compose.cfr.CFRPopup.IndicatorDirection.DOWN
 import mozilla.components.compose.cfr.CFRPopup.IndicatorDirection.UP
-import mozilla.components.ui.icons.R
+import mozilla.components.ui.icons.R as iconsR
 
 /**
  * Complete content of the popup.
@@ -45,10 +50,12 @@ import mozilla.components.ui.icons.R
  * @param text [Text] already styled and ready to be shown in the popup.
  * @param action Optional other composable to show just below the popup text.
  */
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 @Suppress("LongParameterList", "LongMethod")
 fun CFRPopupContent(
     popupBodyColors: List<Int>,
+    showDismissButton: Boolean,
     dismissButtonColor: Int,
     indicatorDirection: CFRPopup.IndicatorDirection,
     indicatorArrowStartOffset: Dp,
@@ -102,7 +109,7 @@ fun CFRPopupContent(
             ) {
                 Box(
                     modifier = Modifier.padding(
-                        end = 24.dp, // 8.dp extra padding to the "X" icon
+                        end = if (showDismissButton) 24.dp else 16.dp, // 8.dp extra padding to the "X" icon
                     ),
                 ) {
                     text()
@@ -112,28 +119,34 @@ fun CFRPopupContent(
             }
         }
 
-        IconButton(
-            onClick = { onDismiss(true) },
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(
-                    end = 6.dp,
-                )
-                .size(48.dp),
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.mozac_ic_close_20),
-                contentDescription = "Test",
+        if (showDismissButton) {
+            IconButton(
+                onClick = { onDismiss(true) },
                 modifier = Modifier
-                    // Following alignment and padding are intended to visually align the middle
-                    // of the "X" button with the top of the text.
-                    .align(Alignment.Center)
+                    .align(Alignment.TopEnd)
                     .padding(
-                        top = if (indicatorDirection == CFRPopup.IndicatorDirection.UP) 9.dp else 0.dp,
+                        end = 6.dp,
                     )
-                    .size(24.dp),
-                tint = Color(dismissButtonColor),
-            )
+                    .size(48.dp)
+                    .semantics {
+                        testTagsAsResourceId = true
+                        testTag = "cfr.dismiss"
+                    },
+            ) {
+                Icon(
+                    painter = painterResource(iconsR.drawable.mozac_ic_cross_20),
+                    contentDescription = stringResource(R.string.mozac_cfr_dismiss_button_content_description),
+                    modifier = Modifier
+                        // Following alignment and padding are intended to visually align the middle
+                        // of the "X" button with the top of the text.
+                        .align(Alignment.Center)
+                        .padding(
+                            top = if (indicatorDirection == CFRPopup.IndicatorDirection.UP) 9.dp else 0.dp,
+                        )
+                        .size(24.dp),
+                    tint = Color(dismissButtonColor),
+                )
+            }
         }
     }
 }
@@ -146,6 +159,7 @@ fun CFRPopupContent(
 private fun CFRPopupAbovePreview() {
     CFRPopupContent(
         popupBodyColors = listOf(Color.Cyan.toArgb(), Color.Blue.toArgb()),
+        showDismissButton = true,
         dismissButtonColor = Color.Black.toArgb(),
         indicatorDirection = DOWN,
         indicatorArrowStartOffset = CFRPopup.DEFAULT_INDICATOR_START_OFFSET.dp,
@@ -162,6 +176,7 @@ private fun CFRPopupAbovePreview() {
 private fun CFRPopupBelowPreview() {
     CFRPopupContent(
         popupBodyColors = listOf(Color.Cyan.toArgb(), Color.Blue.toArgb()),
+        showDismissButton = true,
         dismissButtonColor = Color.Black.toArgb(),
         indicatorDirection = UP,
         indicatorArrowStartOffset = CFRPopup.DEFAULT_INDICATOR_START_OFFSET.dp,

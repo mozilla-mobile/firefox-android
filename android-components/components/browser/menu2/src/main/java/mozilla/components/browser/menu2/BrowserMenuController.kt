@@ -4,10 +4,14 @@
 
 package mozilla.components.browser.menu2
 
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.PopupWindow
-import mozilla.components.browser.menu2.ext.displayPopup
+import androidx.annotation.VisibleForTesting
+import androidx.core.widget.PopupWindowCompat
+import mozilla.components.browser.menu2.ext.MenuPositioningData
+import mozilla.components.browser.menu2.ext.inferMenuPositioningData
 import mozilla.components.browser.menu2.view.MenuView
 import mozilla.components.concept.menu.MenuController
 import mozilla.components.concept.menu.MenuStyle
@@ -37,16 +41,10 @@ class BrowserMenuController(
         notifyObservers { onDismiss() }
     }
 
-    /**
-     * @param anchor The view on which to pin the popup window.
-     * @param orientation The preferred orientation to show the popup window.
-     * @param forceOrientation When set to true, the orientation will be respected even when the
-     * menu doesn't fully fit.
-     */
     override fun show(
         anchor: View,
         orientation: Orientation?,
-        forceOrientation: Boolean,
+        autoDismiss: Boolean,
     ): PopupWindow {
         val view = MenuView(anchor.context).apply {
             // Show nested list if present, or the standard menu candidates list.
@@ -55,11 +53,29 @@ class BrowserMenuController(
             style?.let { setStyle(it) }
         }
 
+        if (autoDismiss) {
+            // Monitor for changes to the parent layout and dismiss pop up if displayed, else the menu
+            // could be displayed in the wrong position. For example, if the menu is displayed and the
+            // device orientation changes from portrait to landscape and vice versa.
+            anchor.rootView.addOnLayoutChangeListener { _, _, _, right, bottom, _, _, oldRight, oldBottom ->
+                if (bottom != oldBottom || right != oldRight) {
+                    dismiss()
+                }
+            }
+        }
+
         return MenuPopupWindow(view).apply {
             view.onDismiss = ::dismiss
             view.onReopenMenu = ::reopenMenu
             setOnDismissListener(menuDismissListener)
-            displayPopup(view, anchor, orientation, forceOrientation)
+            inferMenuPositioningData(
+                containerView = view,
+                anchor = anchor,
+                style = style,
+                orientation = orientation,
+            )?.let {
+                displayPopup(it)
+            }
         }.also {
             currentPopupInfo = PopupMenuInfo(
                 window = it,
@@ -86,9 +102,15 @@ class BrowserMenuController(
             view.submitList(null)
             // Display the new nested list
             view.submitList(nested?.subMenuItems ?: menuCandidates)
-
-            // Reopen the menu
-            displayPopup(view, info.anchor, info.orientation)
+            // Attempt tp reopen the menu
+            inferMenuPositioningData(
+                containerView = view,
+                anchor = info.anchor,
+                style = style,
+                orientation = info.orientation,
+            )?.let {
+                displayPopup(it)
+            }
         }
         currentPopupInfo = info.copy(nested = nested)
     }
@@ -138,4 +160,18 @@ class BrowserMenuController(
         val orientation: Orientation?,
         val nested: NestedMenuCandidate? = null,
     )
+}
+
+/**
+ * Show a [PopupWindow] given the positioning data.
+ */
+@VisibleForTesting
+internal fun PopupWindow.displayPopup(positioningData: MenuPositioningData) {
+    inputMethodMode = PopupWindow.INPUT_METHOD_NOT_NEEDED
+
+    animationStyle = positioningData.animation
+    height = positioningData.containerHeight
+
+    PopupWindowCompat.setOverlapAnchor(this, true)
+    showAtLocation(positioningData.anchor, Gravity.NO_GRAVITY, positioningData.x, positioningData.y)
 }

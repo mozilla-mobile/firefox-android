@@ -8,11 +8,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import mozilla.components.browser.session.storage.RecoverableBrowserState
 import mozilla.components.browser.session.storage.SessionStorage
+import mozilla.components.browser.state.action.ContentAction
 import mozilla.components.browser.state.action.EngineAction
 import mozilla.components.browser.state.action.RestoreCompleteAction
 import mozilla.components.browser.state.action.TabListAction
 import mozilla.components.browser.state.action.UndoAction
 import mozilla.components.browser.state.selector.findNormalOrPrivateTabByUrl
+import mozilla.components.browser.state.selector.findNormalOrPrivateTabByUrlIgnoringFragment
 import mozilla.components.browser.state.selector.findTab
 import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.browser.state.state.SessionState
@@ -121,7 +123,11 @@ class TabsUseCases(
          * @param url The URL to be loaded in the new tab.
          * @param flags the [LoadUrlFlags] to use when loading the provided URL.
          */
-        override fun invoke(url: String, flags: LoadUrlFlags, additionalHeaders: Map<String, String>?) {
+        override fun invoke(
+            url: String,
+            flags: LoadUrlFlags,
+            additionalHeaders: Map<String, String>?,
+        ) {
             this.invoke(url, selectTab = true, startLoading = true, parentId = null, flags = flags)
         }
 
@@ -141,6 +147,9 @@ class TabsUseCases(
          * @param private Whether or not the new tab should be private.
          * @param historyMetadata the [HistoryMetadataKey] of the new tab in case this tab
          * was opened from history.
+         * @param isSearch whether or not the provided URL is the result of a search.
+         * @param searchEngineName The search engine name.
+         * @param additionalHeaders The extra headers to use when loading the provided URL.
          * @return The ID of the created tab.
          */
         @Suppress("LongParameterList")
@@ -156,6 +165,9 @@ class TabsUseCases(
             searchTerms: String = "",
             private: Boolean = false,
             historyMetadata: HistoryMetadataKey? = null,
+            isSearch: Boolean = false,
+            searchEngineName: String? = null,
+            additionalHeaders: Map<String, String>? = null,
         ): String {
             val tab = createTab(
                 url = url,
@@ -166,85 +178,23 @@ class TabsUseCases(
                 engineSession = engineSession,
                 searchTerms = searchTerms,
                 initialLoadFlags = flags,
+                initialAdditionalHeaders = additionalHeaders,
                 historyMetadata = historyMetadata,
             )
 
             store.dispatch(TabListAction.AddTabAction(tab, select = selectTab))
 
-            // If an engine session is specified then loading will have already started when linking
-            // the tab to its engine session. Otherwise we ask to load the URL here.
-            if (startLoading && engineSession == null) {
-                store.dispatch(
-                    EngineAction.LoadUrlAction(
-                        tab.id,
-                        url,
-                        flags,
-                    ),
-                )
-            }
-
-            return tab.id
-        }
-    }
-
-    @Deprecated("Use AddNewTabUseCase and the private flag")
-    class AddNewPrivateTabUseCase internal constructor(
-        private val store: BrowserStore,
-    ) : LoadUrlUseCase {
-
-        /**
-         * Adds a new private tab and loads the provided URL.
-         *
-         * @param url The URL to be loaded in the new private tab.
-         * @param flags the [LoadUrlFlags] to use when loading the provided URL.
-         */
-        override fun invoke(url: String, flags: LoadUrlFlags, additionalHeaders: Map<String, String>?) {
-            this.invoke(url, selectTab = true, startLoading = true, parentId = null, flags = flags)
-        }
-
-        /**
-         * Adds a new private tab and loads the provided URL.
-         *
-         * @param url The URL to be loaded in the new tab.
-         * @param selectTab True (default) if the new tab should be selected immediately.
-         * @param startLoading True (default) if the new tab should start loading immediately.
-         * @param parentId the id of the parent tab to use for the newly created tab.
-         * @param flags the [LoadUrlFlags] to use when loading the provided URL.
-         * @param engineSession (optional) engine session to use for this tab.
-         * @param searchTerms (optional) search terms that were used to create this tab.
-         * @return The ID of the created tab.
-         */
-        @Suppress("LongParameterList")
-        operator fun invoke(
-            url: String = "about:blank",
-            selectTab: Boolean = true,
-            startLoading: Boolean = true,
-            parentId: String? = null,
-            flags: LoadUrlFlags = LoadUrlFlags.none(),
-            engineSession: EngineSession? = null,
-            source: SessionState.Source = SessionState.Source.Internal.NewTab,
-            searchTerms: String? = null,
-        ): String {
-            val tab = createTab(
-                url = url,
-                private = true,
-                source = source,
-                parent = parentId?.let { store.state.findTab(it) },
-                engineSession = engineSession,
-                searchTerms = searchTerms ?: "",
-                initialLoadFlags = flags,
-            )
-
-            store.dispatch(TabListAction.AddTabAction(tab, select = selectTab))
+            store.dispatch(ContentAction.UpdateIsSearchAction(tab.id, isSearch, searchEngineName))
 
             // If an engine session is specified then loading will have already started when linking
             // the tab to its engine session. Otherwise we ask to load the URL here.
             if (startLoading && engineSession == null) {
                 store.dispatch(
                     EngineAction.LoadUrlAction(
-                        tab.id,
-                        url,
-                        flags,
+                        tabId = tab.id,
+                        url = url,
+                        flags = flags,
+                        additionalHeaders = additionalHeaders,
                     ),
                 )
             }
@@ -333,7 +283,11 @@ class TabsUseCases(
          */
         operator fun invoke(tabs: List<RecoverableTab>, selectTabId: String? = null) {
             store.dispatch(
-                TabListAction.RestoreAction(tabs, selectTabId, TabListAction.RestoreAction.RestoreLocation.BEGINNING),
+                TabListAction.RestoreAction(
+                    tabs,
+                    selectTabId,
+                    TabListAction.RestoreAction.RestoreLocation.BEGINNING,
+                ),
             )
         }
 
@@ -426,6 +380,8 @@ class TabsUseCases(
          * @param private Whether or not this session should use private mode.
          * @param source The origin of a session to describe how and why it was created.
          * @param flags The [LoadUrlFlags] to use when loading the provided URL.
+         * @param ignoreFragment Whether to ignore the fragment identifier of the url while
+         * comparing with existing tabs.
          * @return The ID of the selected or created tab.
          */
         operator fun invoke(
@@ -433,8 +389,13 @@ class TabsUseCases(
             private: Boolean = false,
             source: SessionState.Source = SessionState.Source.Internal.NewTab,
             flags: LoadUrlFlags = LoadUrlFlags.none(),
+            ignoreFragment: Boolean = false,
         ): String {
-            val existingTab = store.state.findNormalOrPrivateTabByUrl(url, private)
+            val existingTab = if (ignoreFragment) {
+                store.state.findNormalOrPrivateTabByUrlIgnoringFragment(url, private)
+            } else {
+                store.state.findNormalOrPrivateTabByUrl(url, private)
+            }
 
             return if (existingTab != null) {
                 store.dispatch(TabListAction.SelectTabAction(existingTab.id))
@@ -541,10 +502,6 @@ class TabsUseCases(
     val selectTab: SelectTabUseCase by lazy { DefaultSelectTabUseCase(store) }
     val removeTab: RemoveTabUseCase by lazy { DefaultRemoveTabUseCase(store) }
     val addTab: AddNewTabUseCase by lazy { AddNewTabUseCase(store) }
-
-    @Deprecated("Use addTab and the private flag")
-    @Suppress("DEPRECATION")
-    val addPrivateTab: AddNewPrivateTabUseCase by lazy { AddNewPrivateTabUseCase(store) }
     val removeAllTabs: RemoveAllTabsUseCase by lazy { RemoveAllTabsUseCase(store) }
     val removeTabs: RemoveTabsUseCase by lazy { RemoveTabsUseCase(store) }
     val removeNormalTabs: RemoveNormalTabsUseCase by lazy { RemoveNormalTabsUseCase(store) }

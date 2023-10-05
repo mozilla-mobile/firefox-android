@@ -14,6 +14,7 @@
         android:id="@+id/mozac_feature_readerview_font_group"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:minHeight="66dp"
         android:orientation="horizontal"
         android:gravity="center"
         android:layout_marginEnd="8dp"
@@ -28,33 +29,40 @@
             style="@style/RadioButtonSelectedTextStyle"
             android:text="@string/mozac_feature_readerview_sans_serif_font"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:fontFamily="sans-serif"
-            android:gravity="center"
+            android:textAlignment="center"
             android:contentDescription="@string/mozac_feature_readerview_sans_serif_font_desc"
-            android:textSize="20sp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            app:autoSizeMaxTextSize="24sp"
+            app:autoSizeMinTextSize="14sp"
+            app:autoSizeStepGranularity="2sp"
+            app:autoSizeTextType="uniform" />
 
         <androidx.appcompat.widget.AppCompatRadioButton
             android:id="@+id/mozac_feature_readerview_font_serif"
             style="@style/RadioButtonSelectedTextStyle"
             android:text="@string/mozac_feature_readerview_serif_font"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:fontFamily="serif"
-            android:gravity="center"
+            android:textAlignment="center"
             android:contentDescription="@string/mozac_feature_readerview_serif_font_desc"
-            android:textSize="20sp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            app:autoSizeMaxTextSize="24sp"
+            app:autoSizeMinTextSize="14sp"
+            app:autoSizeStepGranularity="2sp"
+            app:autoSizeTextType="uniform" />
     </RadioGroup>
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/mozac_feature_readerview_font_size_decrease"
         android:text="@string/mozac_feature_readerview_negative_sign"
+        android:textAlignment="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -72,6 +80,7 @@
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/mozac_feature_readerview_font_size_increase"
         android:text="@string/mozac_feature_readerview_positive_sign"
+        android:textAlignment="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -113,7 +122,6 @@
             android:layout_marginEnd="8dp"
             android:layout_weight="1"
             android:textAlignment="center"
-            android:gravity="center"
             android:contentDescription="@string/mozac_feature_readerview_dark_color_scheme_desc" />
 
         <androidx.appcompat.widget.AppCompatRadioButton
@@ -127,7 +135,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_weight="1"
-            android:gravity="center"
+            android:textAlignment="center"
             android:contentDescription="@string/mozac_feature_readerview_sepia_color_scheme_desc" />
 
         <androidx.appcompat.widget.AppCompatRadioButton
@@ -141,7 +149,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:layout_weight="1"
-            android:gravity="center"
+            android:textAlignment="center"
             android:contentDescription="@string/mozac_feature_readerview_light_color_scheme_desc" />
     </RadioGroup>
 </merge>

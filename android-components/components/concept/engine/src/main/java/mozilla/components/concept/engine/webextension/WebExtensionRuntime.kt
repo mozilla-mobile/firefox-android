@@ -147,4 +147,16 @@ interface WebExtensionRuntime {
         onSuccess: ((WebExtension) -> Unit) = { },
         onError: ((Throwable) -> Unit) = { },
     ): Unit = throw UnsupportedOperationException("Web extension support is not available in this engine")
+
+    /**
+     * Enable the extensions process spawning.
+     */
+    fun enableExtensionProcessSpawning(): Unit =
+        throw UnsupportedOperationException("Enabling extension process spawning is not available in this engine")
+
+    /**
+     * Disable the extensions process spawning.
+     */
+    fun disableExtensionProcessSpawning(): Unit =
+        throw UnsupportedOperationException("Disabling extension process spawning is not available in this engine")
 }

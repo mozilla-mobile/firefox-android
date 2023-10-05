@@ -9,14 +9,13 @@ import androidx.annotation.GuardedBy
 import androidx.annotation.VisibleForTesting
 import io.sentry.Breadcrumb
 import io.sentry.Sentry
-import io.sentry.SentryEvent
 import io.sentry.SentryLevel
-import io.sentry.SentryOptions.BeforeSendCallback
 import io.sentry.android.core.SentryAndroid
 import io.sentry.protocol.SentryId
 import mozilla.components.Build
-import mozilla.components.concept.base.crash.RustCrashReport
 import mozilla.components.lib.crash.Crash
+import mozilla.components.lib.crash.sentry.eventprocessors.AddMechanismEventProcessor
+import mozilla.components.lib.crash.sentry.eventprocessors.RustCrashEventProcessor
 import mozilla.components.lib.crash.service.CrashReporterService
 import java.util.Locale
 import mozilla.components.concept.base.crash.Breadcrumb as MozillaBreadcrumb
@@ -35,6 +34,7 @@ import mozilla.components.concept.base.crash.Breadcrumb as MozillaBreadcrumb
  * @param sendEventForNativeCrashes Allows configuring if native crashes should be submitted. Disabled by default.
  * @param sentryProjectUrl Base URL of the Sentry web interface pointing to the app/project.
  * @param sendCaughtExceptions Allows configuring if caught exceptions should be submitted. Enabled by default.
+ * @param autoInitializeSentry Initializes the Sentry SDK immediately on service creation.
  */
 class SentryService(
     private val applicationContext: Context,
@@ -109,9 +109,15 @@ class SentryService(
         }
     }
 
+    /**
+     * Initializes Sentry if needed.
+     *
+     * N.B: We've temporarily made this public so that Fenix can initialize Sentry on startup.
+     * As a result of https://bugzilla.mozilla.org/show_bug.cgi?id=1853059 we will have a better way
+     * to control how / when Sentry gets initialized and we will make this internal again.
+     */
     @Synchronized
-    @VisibleForTesting
-    internal fun initIfNeeded() {
+    fun initIfNeeded() {
         if (isInitialized) {
             return
         }
@@ -134,27 +140,8 @@ class SentryService(
             options.isEnableNdk = false
             options.dsn = dsn
             options.environment = environment
-            options.beforeSend = BeforeSendCallback { event, _ ->
-                val throwable = event.throwable
-                if (throwable is RustCrashReport) {
-                    alterEventForRustCrash(event, throwable)
-                }
-                event
-            }
-        }
-    }
-
-    private fun alterEventForRustCrash(event: SentryEvent, crash: RustCrashReport) {
-        event.fingerprints = listOf(crash.typeName)
-        // Sentry supports multiple exceptions in an event, modify
-        // the top-level one controls how the event is displayed
-        //
-        // It's technically possible for the event to have a null
-        // or empty exception list, but that shouldn't happen in
-        // practice.
-        event.exceptions?.firstOrNull()?.let { sentryException ->
-            sentryException.type = crash.typeName
-            sentryException.value = crash.message
+            options.addEventProcessor(RustCrashEventProcessor())
+            options.addEventProcessor(AddMechanismEventProcessor())
         }
     }
 

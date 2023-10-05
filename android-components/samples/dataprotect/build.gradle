@@ -2,12 +2,11 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion config.compileSdkVersion
-
     defaultConfig {
         applicationId "org.mozilla.samples.dataprotect"
 
         minSdkVersion config.minSdkVersion
+        compileSdk config.compileSdkVersion
         targetSdkVersion config.targetSdkVersion
         versionCode 1
         versionName "1.0"
@@ -21,15 +20,16 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    namespace 'org.mozilla.samples.dataprotect'
 }
 
 dependencies {
     implementation project(':support-ktx')
     implementation project(':lib-dataprotect')
 
-    implementation Dependencies.kotlin_stdlib
-    implementation Dependencies.kotlin_coroutines
+    implementation ComponentsDependencies.kotlin_coroutines
 
-    implementation Dependencies.androidx_appcompat
-    implementation Dependencies.androidx_recyclerview
+    implementation ComponentsDependencies.androidx_appcompat
+    implementation ComponentsDependencies.androidx_recyclerview
 }

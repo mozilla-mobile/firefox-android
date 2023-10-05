@@ -22,13 +22,12 @@ pull_request_rules:
       queue:
         method: rebase
         name: default
-        rebase_fallback: none
   - name: L10N - Auto Merge
     conditions:
-      - author~=(mozilla-l10n-automation-bot|github-actions\[bot\])
+      - author=github-actions[bot]
       - status-success=complete-pr
-      - files~=^(android-components|focus-android)/(.+/strings\.xml|l10n\.toml)
-      - -files~=^(?!(android-components|focus-android)/(.+/strings\.xml|l10n\.toml)).+$
+      - files~=^(android-components|fenix|focus-android)/(.+/strings\.xml|l10n\.toml)
+      - -files~=^(?!(android-components|fenix|focus-android)/(.+/strings\.xml|l10n\.toml)).+$
     actions:
       review:
         type: APPROVE
@@ -36,13 +35,13 @@ pull_request_rules:
       queue:
         method: rebase
         name: default
-        rebase_fallback: none
   - name: Release automation
     conditions:
       - author=github-actions[bot]
       - status-success=complete-pr
-      - files~=^android-components/(\.buildconfig\.yml|.+/NimbusGradlePlugin\.groovy|plugins/dependencies/src/main/java/(Gecko|DependenciesPlugin)\.kt|buildSrc/src/main/java/Gecko\.kt)
-      - -files~=^(?!android-components/(\.buildconfig\.yml|.+/NimbusGradlePlugin\.groovy|plugins/dependencies/src/main/java/(Gecko|DependenciesPlugin)\.kt|buildSrc/src/main/java/Gecko\.kt)).+$
+      - status-success=complete-push
+      - files~=^android-components/(\.buildconfig\.yml|plugins/dependencies/src/main/java/(ApplicationServices|DependenciesPlugin|Gecko)\.kt)
+      - -files~=^(?!android-components/(\.buildconfig\.yml|plugins/dependencies/src/main/java/(ApplicationServices|DependenciesPlugin|Gecko)\.kt)).+$
     actions:
       review:
         type: APPROVE
@@ -50,7 +49,6 @@ pull_request_rules:
       queue:
         method: rebase
         name: default
-        rebase_fallback: none
       delete_head_branch:
         force: false
   - name: Needs landing - Rebase
@@ -65,7 +63,6 @@ pull_request_rules:
       queue:
         method: rebase
         name: default
-        rebase_fallback: none
   - name: Needs landing - Squash
     conditions:
       - status-success=complete-pr
@@ -78,4 +75,3 @@ pull_request_rules:
       queue:
         method: squash
         name: default
-        rebase_fallback: none

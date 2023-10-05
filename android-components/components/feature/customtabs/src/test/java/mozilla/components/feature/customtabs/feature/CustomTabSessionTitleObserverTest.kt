@@ -4,7 +4,6 @@
 
 package mozilla.components.feature.customtabs.feature
 
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import mozilla.components.browser.state.state.CustomTabSessionState
 import mozilla.components.browser.state.state.createCustomTab
 import mozilla.components.concept.toolbar.AutocompleteDelegate
@@ -13,11 +12,9 @@ import mozilla.components.support.test.ThrowProperty
 import mozilla.components.support.test.mock
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
 
-@RunWith(AndroidJUnit4::class)
 class CustomTabSessionTitleObserverTest {
 
     @Test
@@ -93,7 +90,7 @@ class CustomTabSessionTitleObserverTest {
         override fun removeEditActionEnd(action: Toolbar.Action) = Unit
         override fun setOnEditListener(listener: Toolbar.OnEditListener) = Unit
         override fun displayMode() = Unit
-        override fun editMode() = Unit
+        override fun editMode(cursorPlacement: Toolbar.CursorPlacement) = Unit
         override fun dismissMenu() = Unit
         override fun enableScrolling() = Unit
         override fun disableScrolling() = Unit

@@ -40,7 +40,7 @@ class CustomTabMenu(
 
     override val menuToolbar by lazy {
         val back = BrowserMenuItemToolbar.TwoStateButton(
-            primaryImageResource = R.drawable.mozac_ic_back,
+            primaryImageResource = R.drawable.mozac_ic_back_24,
             primaryContentDescription = context.getString(R.string.content_description_back),
             primaryImageTintResource = context.theme.resolveAttribute(R.attr.primaryText),
             isInPrimaryState = {
@@ -54,7 +54,7 @@ class CustomTabMenu(
         }
 
         val forward = BrowserMenuItemToolbar.TwoStateButton(
-            primaryImageResource = R.drawable.mozac_ic_forward,
+            primaryImageResource = R.drawable.mozac_ic_forward_24,
             primaryContentDescription = context.getString(R.string.content_description_forward),
             primaryImageTintResource = context.theme.resolveAttribute(R.attr.primaryText),
             isInPrimaryState = {
@@ -68,7 +68,7 @@ class CustomTabMenu(
         }
 
         val refresh = BrowserMenuItemToolbar.TwoStateButton(
-            primaryImageResource = R.drawable.mozac_ic_refresh,
+            primaryImageResource = R.drawable.mozac_ic_arrow_clockwise_24,
             primaryContentDescription = context.getString(R.string.content_description_reload),
             primaryImageTintResource = context.theme.resolveAttribute(R.attr.primaryText),
             isInPrimaryState = {
@@ -92,13 +92,13 @@ class CustomTabMenu(
     private val menuItems by lazy {
         val findInPage = BrowserMenuImageText(
             label = context.getString(R.string.find_in_page),
-            imageResource = R.drawable.mozac_ic_search,
+            imageResource = R.drawable.mozac_ic_search_24,
         ) {
             onItemTapped.invoke(ToolbarMenu.CustomTabItem.FindInPage)
         }
 
         val desktopMode = BrowserMenuImageSwitch(
-            imageResource = R.drawable.mozac_ic_device_desktop,
+            imageResource = R.drawable.mozac_ic_device_desktop_24,
             label = context.getString(R.string.preference_performance_request_desktop_site2),
             initialState = {
                 selectedSession?.content?.desktopMode ?: true
@@ -114,7 +114,7 @@ class CustomTabMenu(
 
         val addToHomescreen = BrowserMenuImageText(
             label = context.getString(R.string.menu_add_to_home_screen),
-            imageResource = R.drawable.mozac_ic_add_to_home_screen,
+            imageResource = R.drawable.mozac_ic_add_to_home_screen_24,
         ) {
             onItemTapped.invoke(ToolbarMenu.CustomTabItem.AddToHomeScreen)
         }

@@ -23,14 +23,11 @@ internal object ContentStateReducer {
     /**
      * [ContentAction] Reducer function for modifying a specific [ContentState] of a [SessionState].
      */
-    @Suppress("LongMethod")
+    @Suppress("LongMethod", "ThrowsCount")
     fun reduce(state: BrowserState, action: ContentAction): BrowserState {
         return when (action) {
             is ContentAction.RemoveIconAction -> updateContentState(state, action.sessionId) {
                 it.copy(icon = null)
-            }
-            is ContentAction.RemoveThumbnailAction -> {
-                throw IllegalStateException("You need to add ThumbnailsMiddleware to your BrowserStore. ($action)")
             }
             is ContentAction.UpdateUrlAction -> updateContentState(state, action.sessionId) {
                 it.copy(
@@ -79,6 +76,9 @@ internal object ContentStateReducer {
             }
             is ContentAction.UpdateSearchTermsAction -> updateContentState(state, action.sessionId) {
                 it.copy(searchTerms = action.searchTerms)
+            }
+            is ContentAction.UpdateIsSearchAction -> updateContentState(state, action.sessionId) {
+                it.copy(isSearch = action.isSearch)
             }
             is ContentAction.UpdateSecurityInfoAction -> updateContentState(state, action.sessionId) {
                 it.copy(securityInfo = action.securityInfo)
@@ -298,6 +298,14 @@ internal object ContentStateReducer {
             }
             is ContentAction.UpdateExpandedToolbarStateAction -> updateContentState(state, action.sessionId) {
                 it.copy(showToolbarAsExpanded = action.expanded)
+            }
+            is ContentAction.UpdateHasFormDataAction -> updateContentState(state, action.tabId) {
+                it.copy(hasFormData = action.containsFormData)
+            }
+            is ContentAction.UpdatePriorityToDefaultAfterTimeoutAction,
+            is ContentAction.CheckForFormDataExceptionAction,
+            -> {
+                throw IllegalStateException("You need to add SessionPrioritizationMiddleware. ($action)")
             }
         }
     }

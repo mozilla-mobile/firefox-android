@@ -65,7 +65,7 @@
          Next to this label is a switch that allows the user to temporarily enable / disable the
          blocking of trackers for the current browsing session - for example if the current website
          doesn't work correctly with blocked content. -->
-    <string name="menu_trackers_blocked_title">ਟਰੈਕਰਾਂ \\\'ਤੇ ਪਾਬੰਦੀ ਲਗਾਈ</string>
+    <string name="menu_trackers_blocked_title">ਟਰੈਕਰਾਂ ਉੱਤੇ ਪਾਬੰਦੀ ਲਗਾਈ</string>
 
     <!-- Menu item: This is the subtitle for the Trackers blocked menu entry that shows how many
     trackers have been blocked for the currently loaded website.  -->
@@ -150,7 +150,7 @@
 <a href="%2$s">ਹੋਰ ਜਾਣੋ</a></p>]]></string>
 
     <!-- Header for the Privacy and Security settings menu -->
-    <string name="preference_privacy_and_security_header">ਨਿੱਜੀ ਤੇ ਸੁਰੱਖਿਆ</string>
+    <string name="preference_privacy_and_security_header">ਪਰਦੇਦਾਰੀ ਤੇ ਸੁਰੱਖਿਆ</string>
 
     <!-- Preference summary for settings related to privacy and security -->
     <string name="preference_privacy_and_security_summary">ਟਰੈਕਿੰਗ, ਕੂਕੀਜ਼, ਡਾਟਾ ਚੋਣਾਂ</string>
@@ -292,7 +292,7 @@
     <string name="preference_privacy_block_ads_summary">ਕੁਝ ਇਸ਼ਤਿਹਾਰ ਸਾਈਟ ਦੇ ਦੌਰੇ ਨੂੰ ਟਰੈਕ ਕਰਦੇ ਹਨ, ਭਾਵੇਂ ਤੁਸੀਂ ਇਸ਼ਤਿਹਾਰਾਂ ਤੇ ਨਹੀਂ ਕਲਿਕ ਕਰਦੇ</string>
     <string name="preference_privacy_block_analytics">ਵਿਸ਼ਲੇਸ਼ਣ ਟਰੈਕਰਾਂ ਤੇ ਪਾਬੰਦੀ ਲਗਾਓ</string>
     <string name="preference_privacy_block_analytics_summary">ਟੇਪਿੰਗ ਅਤੇ ਸਕ੍ਰੌਲਿੰਗ ਵਰਗੀਆਂ ਗਤੀਵਿਧੀਆਂ ਇਕੱਤਰ ਕਰਨ, ਵਿਸ਼ਲੇਸ਼ਣ ਕਰਨ ਅਤੇ ਮਾਪਣ ਲਈ ਵਰਤਿਆ ਜਾਂਦਾ ਹੈ</string>
-    <string name="preference_privacy_block_social">ਸਮਾਜਿਕ ਟਰੈਕਰਾਂ \'ਤੇ ਪਾਬੰਦੀ ਲਗਾਓ</string>
+    <string name="preference_privacy_block_social">ਸਮਾਜਿਕ ਟਰੈਕਰ ਉੱਤੇ ਪਾਬੰਦੀ ਲਾਓ</string>
     <string name="preference_privacy_block_social_summary">ਸਾਈਟਾਂ ਉੱਤੇ ਤੁਹਾਡੇ ਵਲੋਂ ਖੋਲ੍ਹਣ ਨੂੰ ਟਰੈਕ ਕਰਨ ਅਤੇ ਸਾਂਝਾ ਕਰਨ ਵਾਲੇ ਬਟਨਾਂ ਵਾਗੂੰ ਕੰਮ ਕਰਨ ਲਈ ਜੋੜਿਆ ਗਿਆ</string>
     <string name="preference_privacy_block_content">ਹੋਰ ਸਮੱਗਰੀ ਟਰੈਕਰਾਂ \'ਤੇ ਪਾਬੰਦੀ ਲਗਾਓ</string>
     <string name="preference_privacy_block_content_summary2">ਸਮਰੱਥ ਬਣਾਉਣ ਨਾਲ ਕੁਝ ਪੰਨੇ ਅਚਾਨਕ ਵਿਹਾਰ ਕਰ ਸਕਦੇ ਹਨ</string>
@@ -342,7 +342,7 @@
       %1$s will be replaced by the app name (e.g. Firefox Focus) -->
     <string name="preference_default_browser2">%1$s ਨੂੰ ਮੂਲ ਬਰਾਊਜ਼ਰ ਬਣਾਓ</string>
 
-    <string name="preference_category_mozilla">ਮੋਜ਼ੀਲਾ</string>
+    <string name="preference_category_mozilla">Mozilla</string>
     <string name="preference_mozilla_telemetry2">ਵਰਤੋਂ ਸਬੰਧੀ ਡੇਟਾ ਭੇਜੋ</string>
 
     <!-- A link to SUMO at the end of the summary (preference_mozilla_telemetry_summary2) of the "Send anonymous usage data" setting. -->
@@ -353,6 +353,15 @@
 
     <!-- In-app link (in settings) to Focus privacy notice. -->
     <string name="preference_privacy_notice">ਪਰਦੇਦਾਰੀ ਸੂਚਨਾ</string>
+
+    <!-- In-app link (in settings) to Focus licensing information. -->
+    <string name="preference_licensing_info">ਲਸੰਸ ਬਾਰੇ ਜਾਣਕਾਰੀ</string>
+
+    <!-- Link to Focus licensing information from other libraries that we use. -->
+    <string name="preference_libraries_we_use">ਸਾਡੇ ਵਲੋਂ ਵਰਤੀਆਂ ਲਾਇਬਰੇਰੀਆਂ</string>
+
+    <!-- Open Source Licenses page title. The first parameter is the app name -->
+    <string name="open_source_licenses_title">%s | OSS ਲਾਇਬਰੇਰੀਆਂ</string>
 
     <!-- Item in Preferences that shows the about page. Parameter 1 is the app name, i.e. Firefox Focus/Firefox Klar. -->
     <string name="preference_about">%1$s ਦੇ ਬਾਰੇ</string>
@@ -380,7 +389,7 @@
     <!-- Clickable action text that shows when user long-presses on a search engine search field (this is similar to paste or copy when long-pressing a text field) -->
     <string name="action_option_add_search_engine">ਖੋਜ ਇੰਜਣ ਨੂੰ ਜੋੜੋ</string>
 
-    <string name="search_add_manually_name_hint">ਖੋਜ ਇੰਜਣ ਨਾਂਮ</string>
+    <string name="search_add_manually_name_hint">ਖੋਜ ਇੰਜਣ ਦਾ ਨਾਂ</string>
     <string name="search_add_manually_string">ਵਰਤਣ ਲਈ ਖੋਜ ਸਤਰ</string>
     <string name="search_add_manually_save">ਸੰਭਾਲੋ</string>
 
@@ -392,7 +401,7 @@
     <string name="search_add_error_empty_name">ਖੋਜ ਇੰਜਣ ਨਾਂ ਦਿਓ</string>
     <string name="search_add_error_duplicate_name">ਇੱਕ ਇੰਸਟਾਲ ਕੀਤੇ ਖੋਜ ਇੰਜਣ ਪਹਿਲਾਂ ਹੀ ਉਹ ਨਾਂ ਵਰਤ ਰਿਹਾ ਹੈ।</string>
 
-    <string name="search_add_error_empty_search">ਖੋਜ ਸਤਰ ਦਾਖਲ ਕਰੋ</string>
+    <string name="search_add_error_empty_search">ਖੋਜ ਸਤਰ ਦਿਓ</string>
 
     <string name="search_add_error_format">ਜਾਂਚ ਕਰੋ ਕਿ ਖੋਜ ਲਾਈਨ ਮਿਲਦੀ ਹੈ ਉਦਾਹਰਨ ਫਾਰਮੈਟ</string>
 
@@ -482,7 +491,10 @@
 
 
 
-  <string name="error_hostLookup_title">ਸਰਵਰ ਨਹੀਂ ਲੱਭਿਆ</string>
+  <!-- Snackbar that will be displayed after a website has been added to shortcuts. -->
+    <string name="snackbar_added_to_shortcuts">ਸ਼ਾਰਟਕੱਟਾਂ ਵਿੱਚ ਜੋੜਿਆ!</string>
+
+    <string name="error_hostLookup_title">ਸਰਵਰ ਨਹੀਂ ਲੱਭਿਆ</string>
 
 
 
@@ -695,11 +707,60 @@
     <!--  Preference summary inside Cookie banner reduction screen. Here you can set the cookie banner option to disabled or reject_all. -->
     <string name="cookie_banner_reject_all_option_summary">ਜਦ ਵੀ ਸੰਭਵ ਹੋਵੇ ਤਾਂ ਕੂਕੀ ਬੇਨਤੀਆਂ ਨੂੰ ਆਪਣੇ-ਆਪ ਖਾਰਜ ਘੱਟ ਬੈਨਰ ਵੇਖੋ।</string>
 
-    <!--  Checkbox Preference title inside Cookie banner reduction screen. Here you can set the cookie banner option to reject_or_accept_all or reject_all. -->
-    <string name="cookie_banner_further_reduce_option_title">ਹੋਰ ਕੂਕੀ ਬੈਨਰਾਂ ਨੂੰ ਘਟਾਓ</string>
+    <!-- Preference for removing cookie/consent banners from sites automatically, this is shown as part of the protections panel with the tracking protection toggle. -->--&gt;
+    <string name="cookie_banner_exception_item_title">ਕੂਕੀ ਬੈਨਰ ਘਟਾਉਣਾ</string>
 
-    <!--  Checkbox Preference summary inside Cookie banner reduction screen. Here you can set the cookie banner option to reject_or_accept_all or reject_all. -->
-    <string name="cookie_banner_further_reduce_option_summary">ਕੂਕੀ ਬੈਨਰ ਬੇਨਤੀਆਂ ਹੋਰ ਬੈਨਰ ਖਾਰਜ ਕਰਨ ਲਈ ਮਨਜ਼ੂਰ ਕੀਤਾ ਜਾਵੇਗਾ।</string>
+    <!-- Text for indicating cookie banner handling is on this site, this is shown as part of the protections panel with the tracking protection toggle. -->
+    <string name="cookie_banner_exception_item_description_state_on">ਇਸ ਸਾਈਟ ਲਈ ਚਾਲੂ</string>
+
+    <!-- Text for indicating cookie reducer is not supported on the current site, this is shown as part of the protections panel with the tracking protection toggle. -->
+    <string name="cookie_banner_exception_site_not_supported">ਸਾਈਟ ਇਸ ਵੇਲੇ ਸਹਾਇਕ ਨਹੀਂ ਹੈ</string>
+
+    <!-- Text for indicating cookie banner handling is off this site, this is shown as part of the protections panel with the tracking protection toggle. -->
+    <string name="cookie_banner_exception_item_description_state_off">ਇਸ ਸਾਈਟ ਲਈ ਬੰਦ</string>
+
+    <!-- Preference for removing cookie/consent banners from sites automatically, this is shown when the user enters in details after he clicks on the item from protection panel. -->
+    <string name="cookie_banner_exception_panel_switch_title">ਕੂਕੀ ਬੈਨਰ ਘਟਾਉਣਾ</string>
+
+    <!-- Text for indicating cookie banner handling is off this site, this is shown when the user enters in details after he clicks on the item from protection panel. -->
+    <string name="cookie_banner_exception_panel_switch_state_off">ਇਸ ਸਾਈਟ ਲਈ ਬੰਦ</string>
+
+    <!-- Text for indicating cookie banner handling is on this site, this is shown when the user enters in details after he clicks on the item from protection panel. -->
+    <string name="cookie_banner_exception_panel_switch_state_on">ਇਸ ਸਾਈਟ ਲਈ ਚਾਲੂ</string>
+
+    <!-- Title text for a detail explanation indicating cookie banner handling is on this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site. -->
+    <string name="cookie_banner_exception_panel_title_state_on_for_site">%1$s ਲਈ ਕੂਕੀ ਬੈਨਰ ਘਟਾਉਣ ਨੂੰ ਚਾਲੂ ਕਰਨਾ ਹੈ?</string>
+
+    <!-- Title text for a detail explanation indicating cookie banner handling is off this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site. -->
+    <string name="cookie_banner_exception_panel_title_state_off_for_site">%1$s ਲਈ ਕੂਕੀ ਬੈਨਰ ਘਟਾਉਣ ਨੂੰ ਬੰਦ ਕਰਨਾ ਹੈ?</string>
+
+    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The placeholder will be updated with the app name. -->
+    <string name="cookie_banner_exception_panel_description_state_on_for_site">%1$s ਇਸ ਸਾਈਟ ਦੀਆਂ ਕੁਕੀਆਂ ਨੂੰ ਸਾਫ਼ ਕਰ ਕੇ ਵਰਕੇ ਨੂੰ ਸੱਜਰਾ ਕਰ ਦੇਵੇਗਾ। ਸਾਰੀਆਂ ਕੁਕੀਆਂ ਨੂੰ ਸਾਫ਼ ਕਰਨ ਨਾਲ ਤੁਸੀਂ ਸਾਈਨ ਆਊਟ ਹੋ ਸਕਦੇ ਹੋ ਜਾਂ ਖਰੀਦਦਾਰੀ ਵਾਲੀ ਟੋਕਰੀ ਖਾਲੀ ਹੋ ਸਕਦੀ ਹੈ।</string>
+
+    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The placeholder will be updated with the app name. -->
+    <string name="cookie_banner_exception_panel_description_state_off_for_site2">%1$s ਕੂਕੀ ਬੇਨਤੀਆਂ ਨੂੰ ਆਪਣੇ-ਆਪ ਹੀ ਰੱਦ ਕਰਨ ਦੀ ਕੋਸ਼ਿਸ ਕਰ ਸਕਦਾ ਹੈ।</string>
+
+    <!-- Long text for a detail explanation indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_description_site_is_not_supported">ਇਹ ਸਾਈਟ ਇਸ ਵੇਲੇ ਕੂਕੀ ਬੈਨਰ ਘਟਾਉਣ ਲਈ ਸਹਾਇਕ ਨਹੀਂ ਹੈ। ਕੀ ਤੁਸੀਂ ਇਸ ਵੈਬਸਾਈਟ ਦੀ ਪੜਤਾਲ ਕਰਨ ਅਤੇ ਭਵਿੱਖ ਵਿੱਚ ਸਹਿਯੋਗ ਜੋੜਨ ਲਈ ਸਾਡੀ ਟੀਮ ਨੂੰ ਬੇਨਤੀ ਕਰਨਾ ਚਾਹੋਗੇ?</string>
+
+    <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_site_is_not_supported_cancel_button">ਰੱਦ ਕਰੋ</string>
+
+    <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_site_is_not_supported_request_support_button">ਸਹਿਯੋਗ ਲਈ ਬੇਨਤੀ</string>
+
+    <!-- Label for the snackBar, after the user reports with success a website where cookie banner reducer did not work -->
+    <string name="cookie_banner_report_a_site_snackbar_label">ਸਹਿਯੋਗ ਸਾਈਟ ਲਈ ਬੇਨਤੀ ਕੀਤੀ ਗਈ ਹੈ।</string>
+
+    <!-- Label for cookie banner item from tracking protection, after the user reports with success a website where cookie banner reducer did not work -->
+    <string name="cookie_banner_the_site_was_reported">ਸਹਿਯੋਗ ਸਾਈਟ ਲਈ ਬੇਨਤੀ ਕੀਤੀ ਗਈ ਹੈ।</string>
+
+    <!-- Contextual Feature Recommendation Popups -->
+    <!-- CFR for Cookie Banner (Banner Info Message). %1$s will be replaced by the app name, %2$s will be an active link using the string cfr_cookie_banner_link as text. -->
+    <string name="cfr_cookie_banner">%1$s ਨੇ ਖਿਝਾਊ ਕੂਕੀ ਬੈਨਰ ਖਾਰਜ ਕਰਨ ਲਈ ਕੂਕੀ ਬੇਨਤੀਆਂ ਨੂੰ ਰੱਦ ਕਰਨ ਦੀ ਕੋਸ਼ਿਸ ਕੀਤੀ ਹੈ।\n\%2$s ਵਿੱਚੋਂ ਕੂਕੀ ਬੈਨਰ ਪਸੰਦਾਂ ਦਾ ਇੰਤਜ਼ਾਮ ਕਰੋ।</string>
+
+    <!-- CFR for Cookie Banner (Banner Info Message). This string is used as text for a link in cfr_cookie_banner and takes the user to the app settings. -->
+    <string name="cfr_cookie_banner_link">ਸੈਟਿੰਗਾਂ</string>
 
     <!-- Preference for autoplay -->
     <string name="preference_autoplay">ਆਪੇ-ਚਲਾਓ</string>
@@ -861,6 +922,9 @@
     <!-- Label for the button in the snackbar that switches to the newly opened tab -->
     <string name="open_new_tab_snackbar">ਬਦਲੋ</string>
 
+    <!-- Text displayed in a notification when the user enters full screen mode -->
+    <string name="full_screen_notification">ਪੂਰੀ ਸਕਰੀਨ ਢੰਗ ਵਿੱਚ ਜਾ ਰਿਹਾ ਹੈ</string>
+
     <!-- Preference for switching to a new tab immediately after opening -->
     <string name="preference_open_new_tab">ਲਿੰਕ ਨੂੰ ਤੁਰੰਤ ਨੂੰ ਨਵੀਂ ਟੈਬ ਵਿੱਚ ਬਦਲੋ</string>
 
@@ -963,11 +1027,31 @@
 
 
     <!-- The title of the error page for websites that do not support HTTPS when HTTPS-Only is turned on  -->
-    <string name="errorpage_httpsonly_title">ਤੁਹਾਡੇ ਵਲੋਂ ਮੰਗ ਕੀਤੀ ਸਾਈਟ HTTPS ਲਈ ਸਹਾਇਕ ਨਹੀਂ ਹੈ</string>
-    <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will get replaced with the name of the app (e.g. "Firefox Focus") -->
-    <string name="errorpage_httpsonly_message">ਮੂਲ ਰੂਪ ਵਿੱਚ %1$s ਵਾਧਾ ਕੀਤੀ ਸੁਰੱਖਿਆ ਲਈ HTTPS ਵਰਤਕੇ ਕਨੈਕਟ ਕਰਨ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰਦਾ ਹੈ। ਇਹ ਸੈਟਿੰਗ ਨੂੰ ਬਦਲਣ ਜਾਂ ਹੋਰ ਸਿੱਖਣ ਲਈ ਸੈਟਿੰਗ &gt; ਪਰਦੇਦਾਰੀ ਤੇ ਸੁਰੱਖਿਆ &gt;  ਸੁਰੱਖਿਆ ਉੱਤੇ ਜਾਓ।</string>
+    <string name="errorpage_httpsonly_title2">ਇਹ ਸਾਈਟ HTTPS ਲਈ ਸਹਾਇਕ ਨਹੀਂ ਹੈ</string>
 
-    <!-- Sessions List -->
+    <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will get replaced with the name of the app (e.g. "Firefox Focus").
+        Contains a button that will redirect the user to Privacy & Security Screen-->
+    <string name="errorpage_httpsonly_message2"><![CDATA[%1$s ਜਦੋਂ ਵੀ ਸੰਭਵ ਹੋ ਸਕੇ ਜ਼ਿਆਦਾ ਸੁਰੱਖਿਆ ਲਈ HTTPS ਵਰਤਣ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰਦਾ ਹੈ।
+ <a href="%2$s">ਹੋਰ ਜਾਣੋ</a><br/><br/>
+ ਇਸ ਸੈਟਿੰਗ ਨੂੰ ਸੈਟਿੰਗਾਂ > ਪਰਦੇਦਾਰੀ ਤੇ ਸੁਰੱਖਿਆ > ਸੁਰੱਖਿਆ ਵਿੱਚੋਂ ਬਦਲੋ।]]></string>
+
+    <!-- The document title and heading of the error page shown when a website has an invalid or expired SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_title">ਕਨੈਕਸ਼ਨ ਸੁਰੱਖਿਅਤ ਨਹੀਂ ਹੈ</string>
+
+    <!-- The error message shown when a website has an invalid or expired SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_message"><![CDATA[
+    ਇਹ ਸਰਵਰ ਦੀ ਸੰਰਚਨਾ ਨਾਲ ਸਮੱਸਿਆ ਹੋ ਸਕਦੀ ਹੈ ਜਾਂ ਕੋਈ ਸਰਵਰ ਦੀ ਨਕਲ ਕਰਨ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰਦਾ ਹੋ ਸਕਦਾ ਹੈ। <br/><br/>
+    ਜੇ ਤੁਸੀਂ ਇਸ ਸਰਵਰ ਨਾਲ ਪਹਿਲਾਂ ਕਾਮਯਾਬੀ ਨਾਲ ਕਨੈਕਟ ਹੋ ਚੁੱਕੇ ਹੋ ਤਾਂ ਇਹ ਆਰਜ਼ੀ ਗਲਤੀ ਹੋ ਸਕਦੀ ਹੈ।
+    ]]></string>
+
+    <!-- The advanced certificate information shown when a website has an invalid SSL certificate. The %1$s will be replaced by the app name and %2$s will be replaced by website URL. It's only shown when a website has an invalid SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_techInfo"><![CDATA[
+        <label>ਕੋਈ ਸਾਈਟ ਦੀ ਨਕਲ ਕਰਦਾ ਹੋ ਸਕਦਾ ਹੈ ਅਤੇ ਜਾਰੀ ਰੱਖਣਾ ਖ਼ਤਰਨਾਕ ਹੋ ਸਕਦਾ ਹੈ।</label>
+        <br><br>
+        <label>%1$s <b>%2$s</b> ਉੱਤੇ ਭਰੋਸਾ ਨਹੀਂ ਕਰਦਾ ਹੈ, ਕਿਉਂਕਿ ਇਹ ਸਰਟੀਫਿਕੇਟ ਨੂੰ ਜਾਰੀ ਕਰਨ ਵਾਲਾ ਅਣਪਛਾਤਾ ਹੈ, ਸਰਟੀਫਿਕੇਟ ਖੁਦ-ਦਸਤਖਤੀ ਹੈ ਜਾਂ ਸਰਵਰ ਠੀਕ ਵਿਚਕਾਰਲੇ ਸਰਟੀਫਿਕੇਟ ਨਹੀਂ ਭੇਜ ਰਿਹਾ ਹੈ।</label>
+    ]]></string>
+
+     <!-- Sessions List -->
     <!-- Content description (not visible, for screen readers etc.): Button that closes a tab n the sessions list -->
     <string name="close_tab">ਟੈਬ ਬੰਦ ਕਰੋ</string>
 
@@ -993,13 +1077,18 @@
 
     !-- Content description (not visible, for screen readers etc.): This is the description for the
     close button from promote search widget dialog. --&gt;
+    <!-- Content description (not visible, for screen readers etc.): This is the description for the
+    close button from promote search widget dialog. -->
     <string name="promote_search_widget_dialog_content_description">ਬੰਦ ਕਰੋ</string>
 
     !-- Content description (not visible, for screen readers etc.): This is the description for
     picture of search widget from promote search widget dialog. --&gt;
+    <!-- Content description (not visible, for screen readers etc.): This is the description for
+    picture of search widget from promote search widget dialog. -->
     <string name="promote_search_widget_dialog_picture_content_description">ਖੋਜ ਵਿਜੈੱਟ</string>
 
     !-- This is the title of promote search widget dialog. --&gt;
+    <!-- This is the title of promote search widget dialog. -->
     <string name="promote_search_widget_dialog_title">ਬਰਾਊਜ਼ਿੰਗ ਅਤੀਤ ਮਿਟਾਇਆ ਗਿਆ! 🎉</string>
 
     !-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
@@ -1009,13 +1098,19 @@
 
     !-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
     of the app (e.g. &quot;Focus&quot;) --&gt;
+    <!-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
+    of the app (e.g. "Focus") -->
     <string name="promote_search_widget_dialog_subtitle">ਹੁਣ ਤੁਸੀਂ ਆਪਣੀ ਨਿੱਜੀ ਬਰਾਊਜ਼ਿੰਗ ਕਰੋ, ਪਰ ਅਗਲੀ ਵਾਰ ਫ਼ੌਰਨ ਸ਼ੁਰੂ ਕਰਨ ਲਈ ਆਪਣੀ ਮੁੱਖ ਸਕਰੀਨ ਤੋਂ %1$s ਵਿਜੈਟ ਵਰਤ ਸਕਦੇ ਹੋ।</string>
 
     !-- This is te text from add search widget to home screen button .The button is located on
     promote search widget dialog. --&gt;
+    <!-- This is te text from add search widget to home screen button .The button is located on
+    promote search widget dialog. -->
     <string name="promote_search_widget_button_text">ਵਿਜੈੱਟ ਨੂੰ ਮੁੱਖ ਸਕਰੀਨ ਉੱਤੇ ਜੋੜੋ</string>
 
     !-- This is te text of the snackbar that appears after the search widget was added successfully
     to the home screen. --&gt;
+    <!-- This is te text of the snackbar that appears after the search widget was added successfully
+    to the home screen. -->
     <string name="promote_search_widget_snackbar_message">ਵਿਜੈੱਟ ਮੁੱਖ ਸਕਰੀਨ ਉੱਤੇ ਜੋੜਿਆ ਗਿਆ</string>
 </resources>

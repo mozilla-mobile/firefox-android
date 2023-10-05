@@ -11,6 +11,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Ignore
@@ -511,6 +512,61 @@ class StringTest {
         assertFalse("63.245.215.20".isIpv6())
     }
     // END test cases borrowed from FFTV
+
+    @Test
+    fun testStripCommonSubdomains() {
+        assertEquals("mozilla.org", ("mozilla.org").stripCommonSubdomains())
+        assertEquals("mozilla.org", ("www.mozilla.org").stripCommonSubdomains())
+        assertEquals("mozilla.org", ("m.mozilla.org").stripCommonSubdomains())
+        assertEquals("mozilla.org", ("mobile.mozilla.org").stripCommonSubdomains())
+        assertEquals("random.mozilla.org", ("random.mozilla.org").stripCommonSubdomains())
+    }
+
+    @Test
+    fun `GIVEN an invalid base64 image string WHEN converting it into bitmap THEN the result is null`() {
+        val invalidBase64BitmapString = "aa"
+        assertNull(invalidBase64BitmapString.base64ToBitmap())
+    }
+
+    @Test
+    fun `GIVEN a valid base64 png string WHEN converting it into bitmap THEN the result is not null and no exception is thrown`() {
+        val validBase64BitmapString = "data:image/png;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs="
+        assertNotNull(validBase64BitmapString.base64ToBitmap())
+    }
+
+    @Test
+    fun `GIVEN a valid base64 image string WHEN converting it into bitmap THEN the result is not null and no exception is thrown`() {
+        val validBase64JpegString = "data:image/jpeg;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs="
+        val validBase64JpgString = "data:image/jpg;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs="
+        val validBase64AnythingString = "data:image/anything;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs="
+        assertNotNull(validBase64JpegString.base64ToBitmap())
+        assertNotNull(validBase64JpgString.base64ToBitmap())
+        assertNotNull(validBase64AnythingString.base64ToBitmap())
+    }
+
+    @Test
+    fun `GIVEN invalid base64 image strings WHEN converting them into bitmap THEN the result is null`() {
+        val invalidBase64String = "R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs="
+        val invalidBase64String2 = "data:image/jpg;base64;R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs="
+        val invalidBase64String3 = "image/jpg;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs="
+        assertNull(invalidBase64String.base64ToBitmap())
+        assertNull(invalidBase64String2.base64ToBitmap())
+        assertNull(invalidBase64String3.base64ToBitmap())
+    }
+
+    @Test
+    fun `GIVEN a valid or invalid base64 image string WHEN extracting its raw content string THEN the result is correct`() {
+        val validBase64JpegString = "data:image/jpeg;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs="
+        val validBase64JpgString = "data:image/jpeg;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs="
+        val validBase64PngString = "data:image/jpeg;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs="
+        val invalidBase64String = "R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs="
+        val invalidBase64String2 = "data:image/jpeg;base64;R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs="
+        assertEquals("R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=", validBase64JpegString.extractBase6RawString())
+        assertEquals("R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=", validBase64JpgString.extractBase6RawString())
+        assertEquals("R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=", validBase64PngString.extractBase6RawString())
+        assertNull(invalidBase64String.extractBase6RawString())
+        assertNull(invalidBase64String2.extractBase6RawString())
+    }
 
     private infix fun String.shortenedShouldBecome(expect: String) {
         assertEquals(expect, this.shortened())

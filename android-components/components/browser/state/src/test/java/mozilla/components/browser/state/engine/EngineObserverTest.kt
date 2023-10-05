@@ -11,7 +11,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.test.runTest
 import mozilla.components.browser.state.action.BrowserAction
 import mozilla.components.browser.state.action.ContentAction
+import mozilla.components.browser.state.action.CookieBannerAction
 import mozilla.components.browser.state.action.CrashAction
+import mozilla.components.browser.state.action.ReaderAction
 import mozilla.components.browser.state.action.TabListAction
 import mozilla.components.browser.state.action.TrackingProtectionAction
 import mozilla.components.browser.state.selector.findTab
@@ -25,6 +27,7 @@ import mozilla.components.browser.state.state.content.FindResultState
 import mozilla.components.browser.state.state.createTab
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.EngineSession
+import mozilla.components.concept.engine.EngineSession.CookieBannerHandlingStatus.HANDLED
 import mozilla.components.concept.engine.EngineSessionState
 import mozilla.components.concept.engine.HitResult
 import mozilla.components.concept.engine.Settings
@@ -34,6 +37,8 @@ import mozilla.components.concept.engine.manifest.WebAppManifest
 import mozilla.components.concept.engine.mediasession.MediaSession
 import mozilla.components.concept.engine.permission.PermissionRequest
 import mozilla.components.concept.engine.prompt.PromptRequest
+import mozilla.components.concept.engine.shopping.ProductAnalysis
+import mozilla.components.concept.engine.shopping.ProductRecommendation
 import mozilla.components.concept.engine.window.WindowRequest
 import mozilla.components.concept.fetch.Response
 import mozilla.components.support.test.libstate.ext.waitUntilIdle
@@ -52,6 +57,7 @@ import org.mockito.Mockito.verify
 
 @RunWith(AndroidJUnit4::class)
 class EngineObserverTest {
+    // TO DO: add tests for product URL after a test endpoint is implemented in desktop (Bug 1846341)
     @Test
     fun engineSessionObserver() {
         val engineSession = object : EngineSession() {
@@ -66,6 +72,35 @@ class EngineObserverTest {
             override fun toggleDesktopMode(enable: Boolean, reload: Boolean) {
                 notifyObservers { onDesktopModeChange(enable) }
             }
+            override fun hasCookieBannerRuleForSession(
+                onResult: (Boolean) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+            override fun checkForPdfViewer(
+                onResult: (Boolean) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+            override fun requestProductAnalysis(
+                url: String,
+                onResult: (ProductAnalysis) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+
+            override fun requestProductRecommendations(
+                url: String,
+                onResult: (List<ProductRecommendation>) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+            override fun reanalyzeProduct(
+                url: String,
+                onResult: (String) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+            override fun requestAnalysisStatus(
+                url: String,
+                onResult: (String) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
             override fun findAll(text: String) {}
             override fun findNext(forward: Boolean) {}
             override fun clearFindMatches() {}
@@ -78,6 +113,7 @@ class EngineObserverTest {
                 notifyObservers { onNavigationStateChange(true, true) }
             }
             override fun requestPdfToDownload() = Unit
+            override fun requestPrintContent() = Unit
             override fun loadUrl(
                 url: String,
                 parent: EngineSession?,
@@ -122,6 +158,35 @@ class EngineObserverTest {
             override fun restoreState(state: EngineSessionState): Boolean { return false }
             override fun updateTrackingProtection(policy: TrackingProtectionPolicy) {}
             override fun toggleDesktopMode(enable: Boolean, reload: Boolean) {}
+            override fun hasCookieBannerRuleForSession(
+                onResult: (Boolean) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+            override fun checkForPdfViewer(
+                onResult: (Boolean) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+            override fun requestProductAnalysis(
+                url: String,
+                onResult: (ProductAnalysis) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+
+            override fun requestProductRecommendations(
+                url: String,
+                onResult: (List<ProductRecommendation>) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+            override fun reanalyzeProduct(
+                url: String,
+                onResult: (String) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+            override fun requestAnalysisStatus(
+                url: String,
+                onResult: (String) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
             override fun findAll(text: String) {}
             override fun findNext(forward: Boolean) {}
             override fun clearFindMatches() {}
@@ -129,6 +194,7 @@ class EngineObserverTest {
             override fun purgeHistory() {}
             override fun loadData(data: String, mimeType: String, encoding: String) {}
             override fun requestPdfToDownload() = Unit
+            override fun requestPrintContent() = Unit
             override fun loadUrl(
                 url: String,
                 parent: EngineSession?,
@@ -174,6 +240,36 @@ class EngineObserverTest {
             override fun restoreState(state: EngineSessionState): Boolean { return false }
             override fun updateTrackingProtection(policy: TrackingProtectionPolicy) {}
             override fun toggleDesktopMode(enable: Boolean, reload: Boolean) {}
+            override fun hasCookieBannerRuleForSession(
+                onResult: (Boolean) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+            override fun checkForPdfViewer(
+                onResult: (Boolean) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+
+            override fun requestProductRecommendations(
+                url: String,
+                onResult: (List<ProductRecommendation>) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+
+            override fun requestProductAnalysis(
+                url: String,
+                onResult: (ProductAnalysis) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+            override fun reanalyzeProduct(
+                url: String,
+                onResult: (String) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+            override fun requestAnalysisStatus(
+                url: String,
+                onResult: (String) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
             override fun loadUrl(
                 url: String,
                 parent: EngineSession?,
@@ -182,6 +278,7 @@ class EngineObserverTest {
             ) {}
             override fun loadData(data: String, mimeType: String, encoding: String) {}
             override fun requestPdfToDownload() = Unit
+            override fun requestPrintContent() = Unit
             override fun findAll(text: String) {}
             override fun findNext(forward: Boolean) {}
             override fun clearFindMatches() {}
@@ -223,6 +320,21 @@ class EngineObserverTest {
             TrackingProtectionAction.ToggleExclusionListAction(
                 "mozilla",
                 true,
+            ),
+        )
+    }
+
+    @Test
+    fun `WHEN onCookieBannerChange is called THEN dispatch an CookieBannerAction UpdateStatusAction`() {
+        val store: BrowserStore = mock()
+        val observer = EngineObserver("mozilla", store)
+
+        observer.onCookieBannerChange(HANDLED)
+
+        verify(store).dispatch(
+            CookieBannerAction.UpdateStatusAction(
+                "mozilla",
+                HANDLED,
             ),
         )
     }
@@ -838,7 +950,7 @@ class EngineObserverTest {
 
     @Test
     fun engineObserverHandlesPromptRequest() {
-        val promptRequest: PromptRequest = mock()
+        val promptRequest: PromptRequest = mock<PromptRequest.SingleChoice>()
         val store: BrowserStore = mock()
         val observer = EngineObserver("tab-id", store)
 
@@ -853,7 +965,7 @@ class EngineObserverTest {
 
     @Test
     fun engineObserverHandlesOnPromptUpdate() {
-        val promptRequest: PromptRequest = mock()
+        val promptRequest: PromptRequest = mock<PromptRequest.SingleChoice>()
         val store: BrowserStore = mock()
         val observer = EngineObserver("tab-id", store)
         val previousPromptUID = "prompt-uid"
@@ -1308,26 +1420,6 @@ class EngineObserverTest {
     }
 
     @Test
-    fun `onLoadRequest clears search terms for requests triggered by redirect`() {
-        val url = "https://www.mozilla.org"
-
-        val middleware = CaptureActionsMiddleware<BrowserState, BrowserAction>()
-        val store = BrowserStore(
-            middleware = listOf(middleware),
-        )
-
-        val observer = EngineObserver("test-id", store)
-        observer.onLoadRequest(url = url, triggeredByRedirect = true, triggeredByWebContent = false)
-
-        store.waitUntilIdle()
-
-        middleware.assertFirstAction(ContentAction.UpdateSearchTermsAction::class) { action ->
-            assertEquals("", action.searchTerms)
-            assertEquals("test-id", action.sessionId)
-        }
-    }
-
-    @Test
     @Suppress("DEPRECATION") // Session observable is deprecated
     fun `onLoadRequest notifies session observers`() {
         val url = "https://www.mozilla.org"
@@ -1391,6 +1483,108 @@ class EngineObserverTest {
     }
 
     @Test
+    fun `WHEN navigating forward THEN search terms are cleared`() {
+        val middleware = CaptureActionsMiddleware<BrowserState, BrowserAction>()
+        val store = BrowserStore(
+            middleware = listOf(middleware),
+        )
+
+        val observer = EngineObserver("test-id", store)
+        observer.onNavigateForward()
+        store.waitUntilIdle()
+
+        middleware.assertFirstAction(ContentAction.UpdateSearchTermsAction::class) { action ->
+            assertEquals("", action.searchTerms)
+            assertEquals("test-id", action.sessionId)
+        }
+    }
+
+    @Test
+    fun `WHEN navigating to history index THEN search terms are cleared`() {
+        val middleware = CaptureActionsMiddleware<BrowserState, BrowserAction>()
+        val store = BrowserStore(
+            middleware = listOf(middleware),
+        )
+
+        val observer = EngineObserver("test-id", store)
+        observer.onGotoHistoryIndex()
+        store.waitUntilIdle()
+
+        middleware.assertFirstAction(ContentAction.UpdateSearchTermsAction::class) { action ->
+            assertEquals("", action.searchTerms)
+            assertEquals("test-id", action.sessionId)
+        }
+    }
+
+    @Test
+    fun `WHEN loading data THEN the search terms are cleared`() {
+        val middleware = CaptureActionsMiddleware<BrowserState, BrowserAction>()
+        val store = BrowserStore(
+            middleware = listOf(middleware),
+        )
+
+        val observer = EngineObserver("test-id", store)
+        observer.onLoadData()
+        store.waitUntilIdle()
+
+        middleware.assertFirstAction(ContentAction.UpdateSearchTermsAction::class) { action ->
+            assertEquals("", action.searchTerms)
+            assertEquals("test-id", action.sessionId)
+        }
+    }
+
+    @Test
+    fun `GIVEN a search is not performed WHEN loading the URL THEN the search terms are cleared`() {
+        val middleware = CaptureActionsMiddleware<BrowserState, BrowserAction>()
+        val store = BrowserStore(
+            initialState = BrowserState(
+                tabs = listOf(
+                    createTab("https://www.mozilla.org", id = "mozilla"),
+                ),
+            ),
+            middleware = listOf(middleware),
+        )
+
+        store.dispatch(ContentAction.UpdateIsSearchAction("mozilla", false))
+        store.waitUntilIdle()
+
+        val observer = EngineObserver("test-id", store)
+        observer.onLoadUrl()
+        store.waitUntilIdle()
+
+        middleware.assertLastAction(ContentAction.UpdateSearchTermsAction::class) { action ->
+            assertEquals("", action.searchTerms)
+            assertEquals("test-id", action.sessionId)
+        }
+    }
+
+    @Test
+    fun `GIVEN a search is performed WHEN loading the URL THEN the search terms are cleared`() {
+        val middleware = CaptureActionsMiddleware<BrowserState, BrowserAction>()
+        val store = BrowserStore(
+            initialState = BrowserState(
+                tabs = listOf(
+                    createTab("https://www.mozilla.org", id = "test-id"),
+                ),
+            ),
+            middleware = listOf(middleware),
+        )
+
+        store.dispatch(ContentAction.UpdateIsSearchAction("test-id", true))
+        store.waitUntilIdle()
+
+        val observer = EngineObserver("test-id", store)
+        observer.onLoadUrl()
+        store.waitUntilIdle()
+
+        middleware.assertNotDispatched(ContentAction.UpdateSearchTermsAction::class)
+        middleware.assertLastAction(ContentAction.UpdateIsSearchAction::class) { action ->
+            assertEquals(false, action.isSearch)
+            assertEquals("test-id", action.sessionId)
+        }
+    }
+
+    @Test
     fun `onHistoryStateChanged dispatches UpdateHistoryStateAction`() {
         val store: BrowserStore = mock()
         val observer = EngineObserver("test-id", store)
@@ -1420,6 +1614,21 @@ class EngineObserverTest {
                     HistoryItem("Mozilla", "http://mozilla.org"),
                 ),
                 currentIndex = 1,
+            ),
+        )
+    }
+
+    @Test
+    fun `onScrollChange dispatches UpdateReaderScrollYAction`() {
+        val store: BrowserStore = mock()
+        whenever(store.state).thenReturn(mock())
+        val observer = EngineObserver("tab-id", store)
+
+        observer.onScrollChange(4321, 1234)
+        verify(store).dispatch(
+            ReaderAction.UpdateReaderScrollYAction(
+                "tab-id",
+                1234,
             ),
         )
     }

@@ -4,7 +4,9 @@
 
 package mozilla.components.feature.awesomebar.provider
 
+import android.net.Uri
 import androidx.annotation.VisibleForTesting
+import androidx.core.net.toUri
 import mozilla.components.browser.icons.BrowserIcons
 import mozilla.components.browser.icons.IconRequest
 import mozilla.components.concept.awesomebar.AwesomeBar
@@ -13,12 +15,19 @@ import mozilla.components.concept.storage.HistoryStorage
 import mozilla.components.concept.storage.SearchResult
 import mozilla.components.feature.awesomebar.facts.emitHistorySuggestionClickedFact
 import mozilla.components.feature.session.SessionUseCases
+import mozilla.components.support.ktx.android.net.sameHostWithoutMobileSubdomainAs
 import java.util.UUID
 
 /**
  * Return 20 history suggestions by default.
  */
 const val DEFAULT_HISTORY_SUGGESTION_LIMIT = 20
+
+/**
+ * Default suggestions limit multiplier when needing to filter results by an external url filter.
+ */
+@VisibleForTesting
+internal const val HISTORY_RESULTS_TO_FILTER_SCALE_FACTOR = 10
 
 /**
  * A [AwesomeBar.SuggestionProvider] implementation that provides suggestions based on the browsing
@@ -36,6 +45,7 @@ const val DEFAULT_HISTORY_SUGGESTION_LIMIT = 20
  * defaults to [DEFAULT_HISTORY_SUGGESTION_LIMIT]
  * @param showEditSuggestion optional parameter to specify if the suggestion should show the edit button
  * @param suggestionsHeader optional parameter to specify if the suggestion should have a header
+ * @param resultsUriFilter Optional filter for the host url of the suggestions to show.
  */
 class HistoryStorageSuggestionProvider(
     @get:VisibleForTesting internal val historyStorage: HistoryStorage,
@@ -43,8 +53,9 @@ class HistoryStorageSuggestionProvider(
     private val icons: BrowserIcons? = null,
     internal val engine: Engine? = null,
     @get:VisibleForTesting internal var maxNumberOfSuggestions: Int = DEFAULT_HISTORY_SUGGESTION_LIMIT,
-    private val showEditSuggestion: Boolean = true,
+    @get:VisibleForTesting val showEditSuggestion: Boolean = true,
     private val suggestionsHeader: String? = null,
+    @get:VisibleForTesting val resultsUriFilter: Uri? = null,
 ) : AwesomeBar.SuggestionProvider {
 
     override val id: String = UUID.randomUUID().toString()
@@ -54,18 +65,16 @@ class HistoryStorageSuggestionProvider(
     }
 
     override suspend fun onInputChanged(text: String): List<AwesomeBar.Suggestion> {
-        historyStorage.cancelReads()
+        historyStorage.cancelReads(text)
 
         if (text.isEmpty()) {
             return emptyList()
         }
 
-        // In case of duplicates we want to pick the suggestion with the highest score.
-        // See: https://github.com/mozilla/application-services/issues/970
-        val suggestions = historyStorage.getSuggestions(text, maxNumberOfSuggestions)
-            .sortedByDescending { it.score }
-            .distinctBy { it.id }
-            .take(maxNumberOfSuggestions)
+        val suggestions = when (resultsUriFilter) {
+            null -> getHistorySuggestions(text)
+            else -> getHistorySuggestionsFromHost(resultsUriFilter, text)
+        }
 
         suggestions.firstOrNull()?.url?.let { url -> engine?.speculativeConnect(url) }
 
@@ -84,11 +93,45 @@ class HistoryStorageSuggestionProvider(
     }
 
     /**
+     * Get the maximum number of suggestions that will be provided.
+     */
+    @VisibleForTesting
+    fun getMaxNumberOfSuggestions() = maxNumberOfSuggestions
+
+    /**
      * Reset maximum number of suggestions to default.
      */
     fun resetToDefaultMaxSuggestions() {
         maxNumberOfSuggestions = DEFAULT_HISTORY_SUGGESTION_LIMIT
     }
+
+    /**
+     * Get up to [maxNumberOfSuggestions] history suggestions matching [query]].
+     *
+     * @param query String to filter history entry's title or URL by.
+     */
+    private fun getHistorySuggestions(query: String) = historyStorage
+        .getSuggestions(query, maxNumberOfSuggestions)
+        // In case of duplicates we want to pick the suggestion with the highest score.
+        // See: https://github.com/mozilla/application-services/issues/970
+        .sortedByDescending { it.score }
+        .distinctBy { it.id }
+        .take(maxNumberOfSuggestions)
+
+    /**
+     * Get up to [maxNumberOfSuggestions] history suggestions matching [query] from the indicated [url].
+     *
+     * @param query String to filter history entry's title or URL by.
+     * @param url URL host to filter all history entry's URL host by.
+     */
+    private fun getHistorySuggestionsFromHost(url: Uri, query: String) = historyStorage
+        .getSuggestions(query, maxNumberOfSuggestions * HISTORY_RESULTS_TO_FILTER_SCALE_FACTOR)
+        .sortedByDescending { it.score }
+        .distinctBy { it.id }
+        .filter {
+            it.url.toUri().sameHostWithoutMobileSubdomainAs(url)
+        }
+        .take(maxNumberOfSuggestions)
 }
 
 internal suspend fun Iterable<SearchResult>.into(

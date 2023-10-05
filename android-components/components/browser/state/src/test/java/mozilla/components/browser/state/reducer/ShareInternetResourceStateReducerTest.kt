@@ -12,7 +12,6 @@ import mozilla.components.browser.state.state.content.ShareInternetResourceState
 import mozilla.components.concept.fetch.Response
 import mozilla.components.support.test.mock
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -57,16 +56,5 @@ class ShareInternetResourceStateReducerTest {
         val result = reducer.reduce(state, action)
 
         assertNull(result.tabs[0].content.share)
-    }
-
-    @Test
-    fun `updateTheContentState will return a new BrowserState with updated ContentState`() {
-        val initialContentState = ContentState("emptyStateUrl")
-        val browserState = BrowserState(tabs = listOf(TabSessionState("tabId", initialContentState)))
-
-        val result = updateTheContentState(browserState, "tabId") { it.copy(url = "updatedUrl") }
-
-        assertFalse(browserState == result)
-        assertEquals("updatedUrl", result.tabs[0].content.url)
     }
 }

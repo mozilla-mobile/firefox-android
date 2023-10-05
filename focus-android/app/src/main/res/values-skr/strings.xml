@@ -361,6 +361,15 @@
     <!-- In-app link (in settings) to Focus privacy notice. -->
     <string name="preference_privacy_notice">رازداری نوٹس</string>
 
+    <!-- In-app link (in settings) to Focus licensing information. -->
+    <string name="preference_licensing_info">لائسنس ڄاݨکاری</string>
+
+    <!-- Link to Focus licensing information from other libraries that we use. -->
+    <string name="preference_libraries_we_use">لائبریریاں جہڑیاں اساں ورتیندوں</string>
+
+    <!-- Open Source Licenses page title. The first parameter is the app name -->
+    <string name="open_source_licenses_title">OSS | %s لائبریریاں</string>
+
     <!-- Item in Preferences that shows the about page. Parameter 1 is the app name, i.e. Firefox Focus/Firefox Klar. -->
     <string name="preference_about">%1$s دے بارے</string>
 
@@ -483,6 +492,9 @@
 
     <!-- Snackbar action to immediately open the successfully downloaded file. -->
     <string name="download_snackbar_open">کھولو</string>
+
+    <!-- Snackbar that will be displayed after a website has been added to shortcuts. -->
+    <string name="snackbar_added_to_shortcuts">شارٹ کٹاں وچ شامل تھی ڳیا!</string>
 
     <string name="error_hostLookup_title">سرور کائنی لبھا</string>
 
@@ -685,17 +697,14 @@
     <!--  Preference summary inside Cookie banner reduction screen. Here you can set the cookie banner option to disabled or reject_all. -->
     <string name="cookie_banner_reject_all_option_summary">جہڑے ویلے ممکن ہووے، کوکی ارداساں کوں آپݨے آپ مسترد کرتے گھٹ بینر ݙکھاؤ۔</string>
 
-    <!--  Checkbox Preference title inside Cookie banner reduction screen. Here you can set the cookie banner option to reject_or_accept_all or reject_all. -->
-    <string name="cookie_banner_further_reduce_option_title">کوکی بینراں کوں ٻیا گھٹاؤ</string>
-
-    <!--  Checkbox Preference summary inside Cookie banner reduction screen. Here you can set the cookie banner option to reject_or_accept_all or reject_all. -->
-    <string name="cookie_banner_further_reduce_option_summary">ٻئے بینراں کوں فارغ کرݨ کیتے کوکی بینراں دیاں ارداساں قبول کیتیاں ویسن۔ </string>
-
     <!-- Preference for removing cookie/consent banners from sites automatically, this is shown as part of the protections panel with the tracking protection toggle. -->--&gt;
     <string name="cookie_banner_exception_item_title">کوکی بینر گھٹاوݨ</string>
 
     <!-- Text for indicating cookie banner handling is on this site, this is shown as part of the protections panel with the tracking protection toggle. -->
     <string name="cookie_banner_exception_item_description_state_on">ایں سائٹ کیتے چالو کرو</string>
+
+    <!-- Text for indicating cookie reducer is not supported on the current site, this is shown as part of the protections panel with the tracking protection toggle. -->
+    <string name="cookie_banner_exception_site_not_supported">سائٹ فی الحال سہارا تھئی کائنی</string>
 
     <!-- Text for indicating cookie banner handling is off this site, this is shown as part of the protections panel with the tracking protection toggle. -->
     <string name="cookie_banner_exception_item_description_state_off">ایں سائٹ کیتے بند کرو</string>
@@ -719,7 +728,29 @@
     <string name="cookie_banner_exception_panel_description_state_on_for_site">%1$s ایں سائٹ دیاں کوکیاں صاف کریسی تے ورقہ تازہ کریسی۔ساریاں کوکیاں صاف کرݨ نال تساں سائن آوٹ تھی سڳدے ہو یا تہاݙی خریداری ریڑھی خالی تھی ویسی۔</string>
 
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The placeholder will be updated with the app name. -->
-    <string name="cookie_banner_exception_panel_description_state_off_for_site">%1$s آپݨے آپ کوکی بینراں دی درخواست کوں مسترد کرݨ دی کوشش کریندا ہے. اگر مسترد کرݨ دا آپشن موجودکائنی ، تاں %1$s ساری کوکیز کوں بینر ختم کرݨ پاروں قبول کر سڳدا ہے. </string>
+    <string name="cookie_banner_exception_panel_description_state_off_for_site2">%1$s آپݨے آپ کوکی ارداساں کوں مسترد کرݨ دی کوشش کر سڳدے۔</string>
+
+    <!-- Long text for a detail explanation indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_description_site_is_not_supported">ایہ سائٹ کوکی بینر گھٹاوݨ ولوں حمایت یافتہ کائنی۔ بھلا تساں ساݙی ٹیم کوں ایں ویب سائٹ تے نظرثانی کرݨ تے مستقبل وچ سپورٹ شامل کرݨ کیتے ارداس کرݨ پسند کریسو؟</string>
+
+    <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_site_is_not_supported_cancel_button">منسوخ</string>
+
+    <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_site_is_not_supported_request_support_button">سپورٹ کیتے ارداس کرو</string>
+
+    <!-- Label for the snackBar, after the user reports with success a website where cookie banner reducer did not work -->
+    <string name="cookie_banner_report_a_site_snackbar_label">سپورٹ سائٹ دی ارداس جمع کرا ݙتی ڳئی ہے۔</string>
+
+    <!-- Label for cookie banner item from tracking protection, after the user reports with success a website where cookie banner reducer did not work -->
+    <string name="cookie_banner_the_site_was_reported">سپورٹ سائٹ دی ارداس جمع کرا ݙتی ڳئی ہے۔</string>
+
+    <!-- Contextual Feature Recommendation Popups -->
+    <!-- CFR for Cookie Banner (Banner Info Message). %1$s will be replaced by the app name, %2$s will be an active link using the string cfr_cookie_banner_link as text. -->
+    <string name="cfr_cookie_banner">%1$s پریشان کن کوکی بینراں کوں برخواست کرݨ دیاں کوکی ارداساں کوں مسترد کرݨ دی کوشش کریندے۔ \n\n %2$s وچ کوکی بینر ترجیحاں دا بندوبست کرو۔</string>
+
+    <!-- CFR for Cookie Banner (Banner Info Message). This string is used as text for a link in cfr_cookie_banner and takes the user to the app settings. -->
+    <string name="cfr_cookie_banner_link">ترتیباں</string>
 
     <!-- Preference for autoplay -->
     <string name="preference_autoplay">آٹو پلے</string>
@@ -884,6 +915,9 @@
     <!-- Label for the button in the snackbar that switches to the newly opened tab -->
     <string name="open_new_tab_snackbar">سوئچ کرو</string>
 
+    <!-- Text displayed in a notification when the user enters full screen mode -->
+    <string name="full_screen_notification">پوری سکرین موڈ وچ داخل تھیندا پئے</string>
+
     <!-- Preference for switching to a new tab immediately after opening -->
     <string name="preference_open_new_tab">فوری طور تے نویں ٹیب وچ لنک تے سوئچ کرو</string>
 
@@ -982,12 +1016,29 @@
     <string name="preference_follow_device_theme">ڈیوائس تھیم تے عمل کرو</string>
 
     <!-- The title of the error page for websites that do not support HTTPS when HTTPS-Only is turned on  -->
-    <string name="errorpage_httpsonly_title">جہڑی سائٹ دی تساں ارداس کیتی ہے ایچ ٹی ٹی پی ایس کوں سہارا کائنی ݙیندی</string>
+    <string name="errorpage_httpsonly_title2">ایہ سائٹ ایچ ٹی ٹی پی ایس کوں سہارا کائنی ݙیندی</string>
 
-    <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will get replaced with the name of the app (e.g. "Firefox Focus") -->
-    <string name="errorpage_httpsonly_message">ڈیفالٹ نال، ایچ ٹی ٹی پی ایس ورتیندے ہوئے ودھائی سلامتی کیتے %1$s کنکٹ کرݨ دی کوشش کریندے۔ ایہ ترتیب وٹاوݨ کیتے یا ٻیا سکھݨ کیتے، ترتیباں &gt; رازداری تے سلامتی &gt; سلامتی تے ون٘ڄو۔ </string>
+     <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will get replaced with the name of the app (e.g. "Firefox Focus").
+        Contains a button that will redirect the user to Privacy & Security Screen-->
+    <string name="errorpage_httpsonly_message2"><![CDATA[ڄݙݨ ممکن ہووے ودھیک سلامتی سانگے %1$s ایچ ٹی ٹی پی ایس کنکشن ورتݨ دی کوشش کریندے۔
+ <a href="%2$s">ٻیا سکھو</a><br/><br/>
+  ایہ ترتیباں وٹاؤ، ترتیباں > رازداری &amp; سلامتی > سلامتی۔]]></string>
 
-    <!-- Sessions List -->
+    <!-- The document title and heading of the error page shown when a website has an invalid or expired SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_title">ناقابل بھروسا کنکشن</string>
+
+     <!-- The error message shown when a website has an invalid or expired SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_message"><![CDATA[
+   ایہ سرور دی کنفیگریشن وِچ مسئلہ تھی سڳدا ہے، یا ایہ تھی سڳدا ہے جو کوئی سرور دی نقل کرݨ دی کوشش کریندا پیا ہووے۔ <br/><br/>
+    جے تساں پچھوکڑ وِچ ایں سرور نال کامیابی دے نال جڑ چکے او، تاں غلطی عارضی تھی سڳدی ہے، تے تساں بعد اِچ دوبارہ کوشش کر سڳدے او۔ 
+    ]]></string>
+
+    <!-- The advanced certificate information shown when a website has an invalid SSL certificate. The %1$s will be replaced by the app name and %2$s will be replaced by website URL. It's only shown when a website has an invalid SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_techInfo"><![CDATA[<label>تھی  سڳدا ہے جو کوئی سائٹ دی نقل بݨاوݨ دی کوشش کریندا پیا ہووے تے  جاری رکھݨ نال خدشہ تھی سڳدے۔</label>
+        <br><br>
+        <label> %1$s، ایں <b>%2$s</b> تے  بھروسہ کائنی کریندا کیوں جو سرٹیفکیٹ جاری کرݨ آلا نامعلوم ہے، سرٹیفکیٹ تے  خود آپ دستخط کیتے ہوئے ہن یا سرور صحیح درمیانی سرٹیفیکیٹ کائنی پٹھیندا پیا۔</label>]]></string>
+
+     <!-- Sessions List -->
     <!-- Content description (not visible, for screen readers etc.): Button that closes a tab n the sessions list -->
     <string name="close_tab">ٹیب بند کرو</string>
 
@@ -1013,14 +1064,19 @@
 
     !-- Content description (not visible, for screen readers etc.): This is the description for the
     close button from promote search widget dialog. --&gt;
+    <!-- Content description (not visible, for screen readers etc.): This is the description for the
+    close button from promote search widget dialog. -->
     <string name="promote_search_widget_dialog_content_description">بند کرو</string>
 
     !-- Content description (not visible, for screen readers etc.): This is the description for
     picture of search widget from promote search widget dialog. --&gt;
+    <!-- Content description (not visible, for screen readers etc.): This is the description for
+    picture of search widget from promote search widget dialog. -->
     <string name="promote_search_widget_dialog_picture_content_description">ویجٹ ڳولو</string>
 
     !-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
     of the app (e.g. &quot;Focus&quot;) --&gt;
+    <!-- This is the title of promote search widget dialog. -->
     <string name="promote_search_widget_dialog_title">براؤزنگ تاریخ صاف تھی ڳئی! 🎉</string>
 
     !-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
@@ -1030,13 +1086,19 @@
 
     !-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
     of the app (e.g. &quot;Focus&quot;) --&gt;
+    <!-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
+    of the app (e.g. "Focus") -->
     <string name="promote_search_widget_dialog_subtitle">اساں تہاکوں تہاݙی نجی براؤزنگ تے چھوڑ ݙیسوں، پر تساں اڳلی واری آپݨی ہوم سکرین تے %1$s ویجٹ نال تکھیرا شروع کرو۔ </string>
 
     !-- This is te text from add search widget to home screen button .The button is located on
     promote search widget dialog. --&gt;
+    <!-- This is te text from add search widget to home screen button .The button is located on
+    promote search widget dialog. -->
     <string name="promote_search_widget_button_text">ہوم سکرین تے ویجٹ شامل کرو</string>
 
     !-- This is te text of the snackbar that appears after the search widget was added successfully
     to the home screen. --&gt;
+    <!-- This is te text of the snackbar that appears after the search widget was added successfully
+    to the home screen. -->
     <string name="promote_search_widget_snackbar_message">ہوم سکرین تے ویجٹ شامل تھی ڳیا</string>
 </resources>

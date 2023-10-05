@@ -251,68 +251,47 @@ class TabsUseCasesTest {
     }
 
     @Test
-    @Suppress("DEPRECATION")
-    fun `AddNewPrivateTabUseCase will not load URL if flag is set to false`() {
-        tabsUseCases.addPrivateTab("https://www.mozilla.org", startLoading = false)
-
-        store.waitUntilIdle()
-        assertEquals(1, store.state.tabs.size)
-        assertEquals("https://www.mozilla.org", store.state.tabs[0].content.url)
-        verify(engineSession, never()).loadUrl(anyString(), any(), any(), any())
-    }
-
-    @Test
-    @Suppress("DEPRECATION")
-    fun `AddNewPrivateTabUseCase will load URL if flag is set to true`() {
-        tabsUseCases.addPrivateTab("https://www.mozilla.org", startLoading = true)
-
-        // Wait for CreateEngineSessionAction and middleware
-        store.waitUntilIdle()
-        dispatcher.scheduler.advanceUntilIdle()
-
-        // Wait for LinkEngineSessionAction and middleware
-        store.waitUntilIdle()
-        dispatcher.scheduler.advanceUntilIdle()
-
-        assertEquals(1, store.state.tabs.size)
-        assertEquals("https://www.mozilla.org", store.state.tabs[0].content.url)
-        verify(engineSession, times(1)).loadUrl("https://www.mozilla.org")
-    }
-
-    @Test
-    @Suppress("DEPRECATION")
-    fun `AddNewPrivateTabUseCase forwards load flags to engine`() {
-        tabsUseCases.addPrivateTab.invoke("https://www.mozilla.org", flags = LoadUrlFlags.external(), startLoading = true)
-
-        // Wait for CreateEngineSessionAction and middleware
-        store.waitUntilIdle()
-        dispatcher.scheduler.advanceUntilIdle()
-
-        // Wait for LinkEngineSessionAction and middleware
-        store.waitUntilIdle()
-        dispatcher.scheduler.advanceUntilIdle()
-
-        assertEquals(1, store.state.tabs.size)
-        assertEquals("https://www.mozilla.org", store.state.tabs[0].content.url)
-        verify(engineSession, times(1)).loadUrl("https://www.mozilla.org", null, LoadUrlFlags.external(), null)
-    }
-
-    @Test
-    @Suppress("DEPRECATION")
-    fun `AddNewPrivateTabUseCase uses provided engine session`() {
-        val session: EngineSession = mock()
-        tabsUseCases.addPrivateTab.invoke(
+    fun `GIVEN a search is performed WHEN adding a new tab THEN the resulting tab is flagged as the result of a search`() {
+        tabsUseCases.addTab.invoke(
             "https://www.mozilla.org",
             flags = LoadUrlFlags.external(),
-            startLoading = true,
-            engineSession = session,
+            isSearch = true,
         )
 
         store.waitUntilIdle()
 
         assertEquals(1, store.state.tabs.size)
-        assertEquals("https://www.mozilla.org", store.state.tabs[0].content.url)
-        assertSame(session, store.state.tabs[0].engineState.engineSession)
+        assertEquals(true, store.state.tabs.single().content.isSearch)
+    }
+
+    @Test
+    fun `GIVEN a search is performed with load URL flags and additional headers WHEN adding a new tab THEN the resulting tab is loaded as a search result with the correct load flags and headers`() {
+        val url = "https://www.mozilla.org"
+        val flags = LoadUrlFlags.select(LoadUrlFlags.ALLOW_ADDITIONAL_HEADERS)
+        val additionalHeaders = mapOf("X-Extra-Header" to "true")
+
+        tabsUseCases.addTab.invoke(
+            url = url,
+            flags = flags,
+            isSearch = true,
+            additionalHeaders = additionalHeaders,
+        )
+
+        store.waitUntilIdle()
+
+        assertEquals(1, store.state.tabs.size)
+        assertTrue(store.state.tabs.single().content.isSearch)
+        assertEquals(flags, store.state.tabs.single().engineState.initialLoadFlags)
+        assertEquals(
+            additionalHeaders,
+            store.state.tabs.single().engineState.initialAdditionalHeaders,
+        )
+
+        verify(engineSession, times(1)).loadUrl(
+            url = url,
+            flags = flags,
+            additionalHeaders = additionalHeaders,
+        )
     }
 
     @Test
@@ -460,6 +439,42 @@ class TabsUseCasesTest {
 
         assertEquals(2, store.state.tabs.size)
         assertNotNull(store.state.findNormalOrPrivateTabByUrl("https://firefox.com", false))
+        assertEquals(store.state.selectedTabId, tabID)
+    }
+
+    @Test
+    fun `selectOrAddTab selects already existing tab with matching url when ignoreFragment is set to true`() {
+        val tab = createTab("https://mozilla.org")
+        val otherTab = createTab("https://firefox.com")
+
+        store.dispatch(TabListAction.AddTabAction(otherTab)).joinBlocking()
+        store.dispatch(TabListAction.AddTabAction(tab)).joinBlocking()
+
+        assertEquals(otherTab, store.state.selectedTab)
+        assertEquals(2, store.state.tabs.size)
+
+        val actualTabId = tabsUseCases.selectOrAddTab(url = "https://mozilla.org/#welcome", ignoreFragment = true)
+        store.waitUntilIdle()
+
+        assertEquals(2, store.state.tabs.size)
+        assertEquals(tab, store.state.selectedTab)
+        assertEquals(store.state.selectedTabId, actualTabId)
+    }
+
+    @Test
+    fun `selectOrAddTab adds new tab if no matching existing tab could be found with ignoreFragment set to true`() {
+        val tab = createTab("https://mozilla.org")
+
+        store.dispatch(TabListAction.AddTabAction(tab)).joinBlocking()
+
+        assertEquals(tab.id, store.state.selectedTabId)
+        assertEquals(tab, store.state.selectedTab)
+        assertEquals(1, store.state.tabs.size)
+
+        val tabID = tabsUseCases.selectOrAddTab(url = "https://firefox.com", ignoreFragment = true)
+        store.waitUntilIdle()
+
+        assertEquals(2, store.state.tabs.size)
         assertEquals(store.state.selectedTabId, tabID)
     }
 

@@ -353,6 +353,15 @@
     <!-- In-app link (in settings) to Focus privacy notice. -->
     <string name="preference_privacy_notice">ນະໂຍບາຍຄວາມເປັນສ່ວນຕົວ</string>
 
+    <!-- In-app link (in settings) to Focus licensing information. -->
+    <string name="preference_licensing_info">ຂໍ້ມູນກ່ຽວກັບລາຍເຊັນ</string>
+
+    <!-- Link to Focus licensing information from other libraries that we use. -->
+    <string name="preference_libraries_we_use">ໄລແບຣລີທີ່ພວກເຮົານຳໃຊ້</string>
+
+    <!-- Open Source Licenses page title. The first parameter is the app name -->
+    <string name="open_source_licenses_title">%s | ໄລບຣາລີ OSS</string>
+
     <!-- Item in Preferences that shows the about page. Parameter 1 is the app name, i.e. Firefox Focus/Firefox Klar. -->
     <string name="preference_about">ກ່ຽວກັບ %1$s</string>
 
@@ -482,7 +491,10 @@
 
 
 
-  <string name="error_hostLookup_title">ບໍ່ພົບເຊີເວີ</string>
+  <!-- Snackbar that will be displayed after a website has been added to shortcuts. -->
+    <string name="snackbar_added_to_shortcuts">ເພີ່ມໃສ່ທາງລັດແລ້ວ!</string>
+
+    <string name="error_hostLookup_title">ບໍ່ພົບເຊີເວີ</string>
 
 
 
@@ -701,17 +713,14 @@
     <!--  Preference summary inside Cookie banner reduction screen. Here you can set the cookie banner option to disabled or reject_all. -->
     <string name="cookie_banner_reject_all_option_summary">ເບິ່ງປ້າຍໂຄສະນາຫນ້ອຍລົງໂດຍການປະຕິເສດຄໍາຮ້ອງຂໍຄຸກກີໂດຍອັດຕະໂນມັດ, ເມື່ອເປັນໄປໄດ້.</string>
 
-    <!--  Checkbox Preference title inside Cookie banner reduction screen. Here you can set the cookie banner option to reject_or_accept_all or reject_all. -->
-    <string name="cookie_banner_further_reduce_option_title">ຫຼຸດຜ່ອນປ້າຍໂຄສະນາຄຸກກີຕື່ມອີກ</string>
-
-    <!--  Checkbox Preference summary inside Cookie banner reduction screen. Here you can set the cookie banner option to reject_or_accept_all or reject_all. -->
-    <string name="cookie_banner_further_reduce_option_summary">ຄຳຮ້ອງຂໍປ້າຍໂຄສະນາຄຸກກີຈະຖືກຍອມຮັບເພື່ອປິດປ້າຍໂຄສະນາເພີ່ມເຕີມ.</string>
-
     <!-- Preference for removing cookie/consent banners from sites automatically, this is shown as part of the protections panel with the tracking protection toggle. -->--&gt;
     <string name="cookie_banner_exception_item_title">ການຫຼຸດປ້າຍໂຄສະນາຄຸກກີ</string>
 
     <!-- Text for indicating cookie banner handling is on this site, this is shown as part of the protections panel with the tracking protection toggle. -->
     <string name="cookie_banner_exception_item_description_state_on">ເປີດສໍາລັບເວັບໄຊທ໌ນີ້</string>
+
+    <!-- Text for indicating cookie reducer is not supported on the current site, this is shown as part of the protections panel with the tracking protection toggle. -->
+    <string name="cookie_banner_exception_site_not_supported">ຕອນນີ້ບໍ່ຮອງຮັບເວັບໄຊ</string>
 
     <!-- Text for indicating cookie banner handling is off this site, this is shown as part of the protections panel with the tracking protection toggle. -->
     <string name="cookie_banner_exception_item_description_state_off">ປິດສຳລັບເວັບໄຊນີ້</string>
@@ -735,7 +744,29 @@
     <string name="cookie_banner_exception_panel_description_state_on_for_site">%1$s ຈະລຶບລ້າງຄຸກກີ້ຂອງເວັບໄຊນີ້ ແລະໂຫຼດໜ້ານີ້ຄືນໃໝ່. ການລຶບລ້າງຄຸກກີ້ທັງໝົດອາດເຮັດໃຫ້ເຈົ້າອອກຈາກລະບົບ ຫຼືກະຕ່າຊື້ເຄື່ອງຫວ່າງເປົ່າ.</string>
 
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The placeholder will be updated with the app name. -->
-    <string name="cookie_banner_exception_panel_description_state_off_for_site">%1$s ສາມາດພະຍາຍາມປະຕິເສດການຮ້ອງຂໍຄຸກກີໂດຍອັດຕະໂນມັດ. ຖ້າຕົວເລືອກການປະຕິເສດບໍ່ສາມາດໃຊ້ໄດ້, %1$s ອາດຈະຍອມຮັບ cookies ທັງໝົດເພື່ອປິດປ້າຍໂຄສະນາ.</string>
+    <string name="cookie_banner_exception_panel_description_state_off_for_site2">%1$s ສາມາດພະຍາຍາມປະຕິເສດການຮ້ອງຂໍຄຸກກີໂດຍອັດຕະໂນມັດ.</string>
+
+    <!-- Long text for a detail explanation indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_description_site_is_not_supported">ຕອນນີ້ເວັບໄຊນີ້ບໍ່ຮອງຮັບການຫຼຸດປ້າຍໂຄສະນາຄຸກກີ. ທ່ານຕ້ອງການຂໍໃຫ້ທີມງານຂອງພວກເຮົາທົບທວນຄືນເວັບໄຊທ໌ນີ້ແລະເພີ່ມການສະຫນັບສະຫນູນໃນອະນາຄົດບໍ?</string>
+
+    <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_site_is_not_supported_cancel_button">ຍົກເລີກ</string>
+
+    <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_site_is_not_supported_request_support_button">ຮ້ອງຂໍການຊ່ວຍເຫຼືອ</string>
+
+    <!-- Label for the snackBar, after the user reports with success a website where cookie banner reducer did not work -->
+    <string name="cookie_banner_report_a_site_snackbar_label">ຮ້ອງຂໍໃຫ້ສະຫນັບສະຫນູນເວັບໄຊທີ່ສົ່ງ.</string>
+
+    <!-- Label for cookie banner item from tracking protection, after the user reports with success a website where cookie banner reducer did not work -->
+    <string name="cookie_banner_the_site_was_reported">ຮ້ອງຂໍໃຫ້ສະຫນັບສະຫນູນເວັບໄຊທີ່ສົ່ງ.</string>
+
+    <!-- Contextual Feature Recommendation Popups -->
+    <!-- CFR for Cookie Banner (Banner Info Message). %1$s will be replaced by the app name, %2$s will be an active link using the string cfr_cookie_banner_link as text. -->
+    <string name="cfr_cookie_banner">%1$s ພະຍາຍາມປະຕິເສດການຮ້ອງຂໍຄຸກກີເພື່ອປິດປ້າຍໂຄສະນາຄຸກກີທີ່ໜ້າລຳຄານ.\n\nຈັດການການຕັ້ງຄ່າປ້າຍໂຄສະນາຄຸກກີໃນ %2$s.</string>
+
+    <!-- CFR for Cookie Banner (Banner Info Message). This string is used as text for a link in cfr_cookie_banner and takes the user to the app settings. -->
+    <string name="cfr_cookie_banner_link">ການຕັ້ງຄ່າ</string>
 
     <!-- Preference for autoplay -->
     <string name="preference_autoplay">ຫຼິ້ນອັດຕະໂນມັດ</string>
@@ -829,7 +860,7 @@
 
     <!-- Button for the fingerprint authentication dialog box that is shown to the user when sharing a link to the app
     while the user has biometric authentication enabled. When pressed, the user's previous session is cleared, and the shared link is opened. -->
-    <string name="biometric_auth_open_link_new_session"></string>
+    <string name="biometric_auth_open_link_new_session">ເປີດລິ້ງໃນເຊດຊັນໃໝ່</string>
 
     <!-- Description for the fingerprint authentication image. Used for accessibility purposes. -->
     <string name="biometric_auth_image_description">ໄອຄອນລາຍນິ້ວມື</string>
@@ -892,6 +923,9 @@
 
     <!-- Label for the button in the snackbar that switches to the newly opened tab -->
     <string name="open_new_tab_snackbar">ສະລັບ</string>
+
+    <!-- Text displayed in a notification when the user enters full screen mode -->
+    <string name="full_screen_notification">ເຂົ້າສູ່ໂມດເຕັມຫນ້າຈໍ</string>
 
     <!-- Preference for switching to a new tab immediately after opening -->
     <string name="preference_open_new_tab">ສະລັບໄປຫາແທັບໃຫມ່ທັນທີ</string>
@@ -996,12 +1030,31 @@
     <string name="preference_follow_device_theme">ຕາມຊຸດຕົກແຕ່ງອຸປະກອນ</string>
 
     <!-- The title of the error page for websites that do not support HTTPS when HTTPS-Only is turned on  -->
-    <string name="errorpage_httpsonly_title">ເວັບໄຊທີ່ທ່ານຮ້ອງຂໍບໍ່ຮອງຮັບ HTTPS</string>
+    <string name="errorpage_httpsonly_title2">ເວັບໄຊນີ້ບໍ່ຮອງຮັບ HTTPS</string>
 
-    <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will get replaced with the name of the app (e.g. "Firefox Focus") -->
-    <string name="errorpage_httpsonly_message">ໂດຍຄ່າເລີ່ມຕົ້ນ, %1$s ພະຍາຍາມເຊື່ອມຕໍ່ໂດຍໃຊ້ HTTPS ເພື່ອຄວາມປອດໄພທີ່ເພີ່ມຂຶ້ນ. ເພື່ອປ່ຽນການຕັ້ງຄ່ານີ້ ຫຼືເພື່ອສຶກສາເພີ່ມເຕີມ, ໃຫ້ໄປທີ່ການຕັ້ງຄ່າ &gt; ຄວາມເປັນສ່ວນຕົວ ແລະຄວາມປອດໄພ &gt; ຄວາມປອດໄພ.</string>
+    <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will get replaced with the name of the app (e.g. "Firefox Focus").
+        Contains a button that will redirect the user to Privacy & Security Screen-->
+    <string name="errorpage_httpsonly_message2"><![CDATA[%1$s ພະຍາຍາມໃຊ້ການເຊື່ອມຕໍ່ HTTPS ທຸກຄັ້ງທີ່ເປັນໄປໄດ້ເພື່ອຄວາມປອດໄພຫຼາຍຂຶ້ນ.
+     <a href="%2$s">ສຶກສາເພີ່ມເຕີມ</a> <br/><br/>
+     ປ່ຽນການຕັ້ງຄ່ານີ້ໃນການຕັ້ງຄ່າ > ຄວາມເປັນສ່ວນຕົວ & amp; ຄວາມປອດໄພ > ຄວາມປອດໄພ.]]></string>
 
-    <!-- Sessions List -->
+    <!-- The document title and heading of the error page shown when a website has an invalid or expired SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_title">ການເຊື່ອມຕໍ່ບໍ່ປອດໄພ</string>
+
+    <!-- The error message shown when a website has an invalid or expired SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_message"><![CDATA[
+ສິງນີ້ອາດຈະເປັນບັນຫາທີ່ເກີດມາຈາກການຄອນຟິກເຊີເວີຜິດ ຫລື ມັນອາດຈະເກີດມາຈາກການທີ່ມີບາງຄົນພະຍາຍາມປອມແປງເຊີເວີ.<br/><br/>
+ຖ້າຫາກວ່າທ່ານເຄີຍເຊື່ອມຕໍ່ກັບເຊີເວີນີ້ໄດ້ສຳເລັດມາກ່ອນ ຂໍ້ຜິດພາດນີ້ອາດຈະເກີດຂື້ນພຽງຊົ່ວຄາວ ແລະ ທ່ານສາມາດລອງເຂົ້າໃຫມ່ໃນພາຍຫລັງ.
+]]></string>
+
+    <!-- The advanced certificate information shown when a website has an invalid SSL certificate. The %1$s will be replaced by the app name and %2$s will be replaced by website URL. It's only shown when a website has an invalid SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_techInfo"><![CDATA[
+        <label>ມີບາງຄົນອາດຈະກຳລັງປອມແປງເວັບໄຊທ ແລະ ທ່ານບໍ່ຄວນຈະເຂົ້າໄປ.</label>
+        <br><br>
+        <label>ເວັບໄຊທຈະຢັ້ງຢືນຕົວຕົນຜ່ານທາງໃບຮັບຮອງ. %1$s ບໍ່ຫນ້າເຊື່ອຖື <b>%2$s</b> ເພາະວ່າຜູ້ອອກໃບຮັບຮອງຂອງພວກເຂົາແມ່ນບໍເປັນທີ່ຮູ້ຈັກ, ໃບຮັບຮອງແມ່ນສ້າງຂື້ນມາເອງ ຫລື ເຊີເວີບໍ່ໄດ້ສົ່ງໃບຮັບຮອງທີ່ຖືກຕ້ອງມາໃຫ້.</label>
+    ]]></string>
+
+     <!-- Sessions List -->
     <!-- Content description (not visible, for screen readers etc.): Button that closes a tab n the sessions list -->
     <string name="close_tab">ປິດແທັບ</string>
 
@@ -1027,13 +1080,18 @@
 
     !-- Content description (not visible, for screen readers etc.): This is the description for
     picture of search widget from promote search widget dialog. --&gt;
+    <!-- Content description (not visible, for screen readers etc.): This is the description for the
+    close button from promote search widget dialog. -->
     <string name="promote_search_widget_dialog_content_description">ປິດ</string>
 
     !-- Content description (not visible, for screen readers etc.): This is the description for
     picture of search widget from promote search widget dialog. --&gt;
+    <!-- Content description (not visible, for screen readers etc.): This is the description for
+    picture of search widget from promote search widget dialog. -->
     <string name="promote_search_widget_dialog_picture_content_description">ຊອກຫາ widget</string>
 
     !-- This is the title of promote search widget dialog. --&gt;
+    <!-- This is the title of promote search widget dialog. -->
     <string name="promote_search_widget_dialog_title">ລຶບລ້າງປະຫວັດການທ່ອງເວັບແລ້ວ! 🎉</string>
 
     !-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
@@ -1043,13 +1101,19 @@
 
     !-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
     of the app (e.g. &quot;Focus&quot;) --&gt;
+    <!-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
+    of the app (e.g. "Focus") -->
     <string name="promote_search_widget_dialog_subtitle">ພວກເຮົາຈະປ່ອຍໃຫ້ທ່ານຊອກຫາແບບສ່ວນຕົວຂອງທ່ານ, ແຕ່ເລີ່ມຕົ້ນໄວຂຶ້ນໃນຄັ້ງຕໍ່ໄປດ້ວຍວິດເຈັດ %1$s ໃນໜ້າຈໍຫຼັກຂອງທ່ານ.</string>
 
     !-- This is te text from add search widget to home screen button .The button is located on
     promote search widget dialog. --&gt;
+    <!-- This is te text from add search widget to home screen button .The button is located on
+    promote search widget dialog. -->
     <string name="promote_search_widget_button_text">ເພີ່ມ widget ໃສ່ຫນ້າຈໍຫຼັກ</string>
 
     !-- This is te text of the snackbar that appears after the search widget was added successfully
     to the home screen. --&gt;
+    <!-- This is te text of the snackbar that appears after the search widget was added successfully
+    to the home screen. -->
     <string name="promote_search_widget_snackbar_message">ເພີ່ມວິດເຈັດໃສ່ໜ້າຈໍຫຼັກແລ້ວ</string>
 </resources>

@@ -8,10 +8,14 @@ import android.content.Intent
 import android.os.Environment
 import mozilla.components.browser.state.action.BrowserAction
 import mozilla.components.browser.state.action.ContentAction
+import mozilla.components.browser.state.action.CookieBannerAction
 import mozilla.components.browser.state.action.CrashAction
 import mozilla.components.browser.state.action.EngineAction
 import mozilla.components.browser.state.action.MediaSessionAction
+import mozilla.components.browser.state.action.ReaderAction
+import mozilla.components.browser.state.action.ShoppingProductAction
 import mozilla.components.browser.state.action.TrackingProtectionAction
+import mozilla.components.browser.state.selector.findTabOrCustomTab
 import mozilla.components.browser.state.state.AppIntentState
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.LoadRequestState
@@ -42,8 +46,33 @@ internal class EngineObserver(
     private val tabId: String,
     private val store: Store<BrowserState, BrowserAction>,
 ) : EngineSession.Observer {
+
+    override fun onScrollChange(scrollX: Int, scrollY: Int) {
+        store.dispatch(ReaderAction.UpdateReaderScrollYAction(tabId, scrollY))
+    }
+
     override fun onNavigateBack() {
         store.dispatch(ContentAction.UpdateSearchTermsAction(tabId, ""))
+    }
+
+    override fun onNavigateForward() {
+        store.dispatch(ContentAction.UpdateSearchTermsAction(tabId, ""))
+    }
+
+    override fun onGotoHistoryIndex() {
+        store.dispatch(ContentAction.UpdateSearchTermsAction(tabId, ""))
+    }
+
+    override fun onLoadData() {
+        store.dispatch(ContentAction.UpdateSearchTermsAction(tabId, ""))
+    }
+
+    override fun onLoadUrl() {
+        if (store.state.findTabOrCustomTab(tabId)?.content?.isSearch == true) {
+            store.dispatch(ContentAction.UpdateIsSearchAction(tabId, false))
+        } else {
+            store.dispatch(ContentAction.UpdateSearchTermsAction(tabId, ""))
+        }
     }
 
     override fun onFirstContentfulPaint() {
@@ -64,7 +93,7 @@ internal class EngineObserver(
         triggeredByRedirect: Boolean,
         triggeredByWebContent: Boolean,
     ) {
-        if (triggeredByRedirect || triggeredByWebContent) {
+        if (triggeredByWebContent) {
             store.dispatch(ContentAction.UpdateSearchTermsAction(tabId, ""))
         }
 
@@ -132,6 +161,14 @@ internal class EngineObserver(
         store.dispatch(TrackingProtectionAction.ToggleAction(tabId, enabled))
     }
 
+    override fun onCookieBannerChange(status: EngineSession.CookieBannerHandlingStatus) {
+        store.dispatch(CookieBannerAction.UpdateStatusAction(tabId, status))
+    }
+
+    override fun onProductUrlChange(isProductUrl: Boolean) {
+        store.dispatch(ShoppingProductAction.UpdateProductUrlStatusAction(tabId, isProductUrl))
+    }
+
     override fun onLongPress(hitResult: HitResult) {
         store.dispatch(
             ContentAction.UpdateHitResultAction(tabId, hitResult),
@@ -163,6 +200,8 @@ internal class EngineObserver(
         cookie: String?,
         userAgent: String?,
         isPrivate: Boolean,
+        skipConfirmation: Boolean,
+        openInApp: Boolean,
         response: Response?,
     ) {
         // We want to avoid negative contentLength values
@@ -178,6 +217,8 @@ internal class EngineObserver(
             userAgent,
             Environment.DIRECTORY_DOWNLOADS,
             private = isPrivate,
+            skipConfirmation = skipConfirmation,
+            openInApp = openInApp,
             response = response,
         )
 
@@ -403,5 +444,25 @@ internal class EngineObserver(
 
     override fun onSaveToPdfException(throwable: Throwable) {
         store.dispatch(EngineAction.SaveToPdfExceptionAction(tabId, throwable))
+    }
+
+    override fun onPrintFinish() {
+        store.dispatch(EngineAction.PrintContentCompletedAction(tabId))
+    }
+
+    override fun onPrintException(isPrint: Boolean, throwable: Throwable) {
+        store.dispatch(EngineAction.PrintContentExceptionAction(tabId, isPrint, throwable))
+    }
+
+    override fun onSaveToPdfComplete() {
+        store.dispatch(EngineAction.SaveToPdfCompleteAction(tabId))
+    }
+
+    override fun onCheckForFormData(containsFormData: Boolean) {
+        store.dispatch(ContentAction.UpdateHasFormDataAction(tabId, containsFormData))
+    }
+
+    override fun onCheckForFormDataException(throwable: Throwable) {
+        store.dispatch(ContentAction.CheckForFormDataExceptionAction(tabId, throwable))
     }
 }

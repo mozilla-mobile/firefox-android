@@ -145,7 +145,7 @@
     <li>Xóa cookie cũng như lịch sử tìm kiếm và duyệt web khi xong phiên làm việc</li>
   </ul>
 </p>
-<p>%1$s được sản xuất bởi Mozilla. Nhiệm vụ của chúng tôi là thúc đẩy một Internet lành mạnh, cởi mở.<br/>
+<p>%1$s được sáng lập bởi Mozilla. Nhiệm vụ của chúng tôi là thúc đẩy một Internet lành mạnh, cởi mở.<br/>
 <a href="%2$s">Tìm hiểu thêm</a></p>]]></string>
 
     <!-- Header for the Privacy and Security settings menu -->
@@ -353,6 +353,15 @@
     <!-- In-app link (in settings) to Focus privacy notice. -->
     <string name="preference_privacy_notice">Chính sách riêng tư</string>
 
+    <!-- In-app link (in settings) to Focus licensing information. -->
+    <string name="preference_licensing_info">Thông tin giấy phép</string>
+
+    <!-- Link to Focus licensing information from other libraries that we use. -->
+    <string name="preference_libraries_we_use">Thư viện mà chúng tôi sử dụng</string>
+
+    <!-- Open Source Licenses page title. The first parameter is the app name -->
+    <string name="open_source_licenses_title">%s | Thư viện OSS</string>
+
     <!-- Item in Preferences that shows the about page. Parameter 1 is the app name, i.e. Firefox Focus/Firefox Klar. -->
     <string name="preference_about">Thông tin về %1$s</string>
 
@@ -482,7 +491,10 @@
 
 
 
-  <string name="error_hostLookup_title">Không tìm thấy máy chủ</string>
+  <!-- Snackbar that will be displayed after a website has been added to shortcuts. -->
+    <string name="snackbar_added_to_shortcuts">Đã thêm vào lối tắt!</string>
+
+    <string name="error_hostLookup_title">Không tìm thấy máy chủ</string>
 
 
 
@@ -701,17 +713,14 @@
     <!--  Preference summary inside Cookie banner reduction screen. Here you can set the cookie banner option to disabled or reject_all. -->
     <string name="cookie_banner_reject_all_option_summary">Xem ít biểu ngữ hơn bằng cách tự động từ chối yêu cầu cookie, khi có thể.</string>
 
-    <!--  Checkbox Preference title inside Cookie banner reduction screen. Here you can set the cookie banner option to reject_or_accept_all or reject_all. -->
-    <string name="cookie_banner_further_reduce_option_title">Giảm thêm biểu ngữ cookie</string>
-
-    <!--  Checkbox Preference summary inside Cookie banner reduction screen. Here you can set the cookie banner option to reject_or_accept_all or reject_all. -->
-    <string name="cookie_banner_further_reduce_option_summary">Yêu cầu biểu ngữ cookie sẽ được chấp nhận để loại bỏ nhiều biểu ngữ hơn.</string>
-
     <!-- Preference for removing cookie/consent banners from sites automatically, this is shown as part of the protections panel with the tracking protection toggle. -->--&gt;
     <string name="cookie_banner_exception_item_title">Giảm biểu ngữ cookie</string>
 
     <!-- Text for indicating cookie banner handling is on this site, this is shown as part of the protections panel with the tracking protection toggle. -->
     <string name="cookie_banner_exception_item_description_state_on">BẬT cho trang web này</string>
+
+    <!-- Text for indicating cookie reducer is not supported on the current site, this is shown as part of the protections panel with the tracking protection toggle. -->
+    <string name="cookie_banner_exception_site_not_supported">Trang web hiện không được hỗ trợ</string>
 
     <!-- Text for indicating cookie banner handling is off this site, this is shown as part of the protections panel with the tracking protection toggle. -->
     <string name="cookie_banner_exception_item_description_state_off">TẮT cho trang web này</string>
@@ -735,7 +744,28 @@
     <string name="cookie_banner_exception_panel_description_state_on_for_site">%1$s sẽ xóa cookie của trang web này và làm mới trang. Xóa tất cả cookie có thể khiến bạn đăng xuất hoặc làm trống giỏ hàng.</string>
 
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The placeholder will be updated with the app name. -->
-    <string name="cookie_banner_exception_panel_description_state_off_for_site">%1$s có thể thử tự động từ chối yêu cầu cookie. Nếu không có tùy chọn từ chối, %1$s có thể chấp nhận tất cả cookie để loại bỏ biểu ngữ.</string>
+    <string name="cookie_banner_exception_panel_description_state_off_for_site2">%1$s có thể thử tự động từ chối yêu cầu cookie.</string>
+
+    <!-- Long text for a detail explanation indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_description_site_is_not_supported">Trang web này hiện không được hỗ trợ bởi Giảm biểu ngữ cookie. Bạn có muốn yêu cầu nhóm của chúng tôi xem xét trang web này và thêm hỗ trợ trong tương lai không?</string>
+
+    <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_site_is_not_supported_cancel_button">Hủy bỏ</string>
+
+    <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_site_is_not_supported_request_support_button">Yêu cầu hỗ trợ</string>
+
+    <!-- Label for the snackBar, after the user reports with success a website where cookie banner reducer did not work -->
+    <string name="cookie_banner_report_a_site_snackbar_label">Đã gửi yêu cầu hỗ trợ trang web.</string>
+
+    <!-- Label for cookie banner item from tracking protection, after the user reports with success a website where cookie banner reducer did not work -->
+    <string name="cookie_banner_the_site_was_reported">Đã gửi yêu cầu hỗ trợ trang web.</string>
+
+    <!-- Contextual Feature Recommendation Popups -->
+    <!-- CFR for Cookie Banner (Banner Info Message). %1$s will be replaced by the app name, %2$s will be an active link using the string cfr_cookie_banner_link as text. -->
+    <string name="cfr_cookie_banner">%1$s cố gắng từ chối yêu cầu cookie để loại bỏ biểu ngữ cookie gây phiền nhiễu.\n\nQuản lý tùy chỉnh biểu ngữ cookie trong %2$s.</string>
+    <!-- CFR for Cookie Banner (Banner Info Message). This string is used as text for a link in cfr_cookie_banner and takes the user to the app settings. -->
+    <string name="cfr_cookie_banner_link">cài đặt</string>
 
     <!-- Preference for autoplay -->
     <string name="preference_autoplay">Tự động phát</string>
@@ -893,6 +923,9 @@
     <!-- Label for the button in the snackbar that switches to the newly opened tab -->
     <string name="open_new_tab_snackbar">Chuyển</string>
 
+    <!-- Text displayed in a notification when the user enters full screen mode -->
+    <string name="full_screen_notification">Đã vào chế độ toàn màn hình</string>
+
     <!-- Preference for switching to a new tab immediately after opening -->
     <string name="preference_open_new_tab">Chuyển sang liên kết trong thẻ mới ngay lập tức</string>
 
@@ -996,11 +1029,31 @@
 
 
     <!-- The title of the error page for websites that do not support HTTPS when HTTPS-Only is turned on  -->
-    <string name="errorpage_httpsonly_title">Trang web bạn yêu cầu không hỗ trợ HTTPS</string>
-    <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will get replaced with the name of the app (e.g. "Firefox Focus") -->
-    <string name="errorpage_httpsonly_message">Theo mặc định, %1$s cố gắng kết nối bằng HTTPS để tăng cường bảo mật. Để thay đổi cài đặt này hoặc để tìm hiểu thêm, hãy đi đến Cài đặt &gt; Quyền riêng tư &amp; bảo mật &gt; Bảo mật.</string>
+    <string name="errorpage_httpsonly_title2">Trang web này không hỗ trợ HTTPS</string>
 
-    <!-- Sessions List -->
+    <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will get replaced with the name of the app (e.g. "Firefox Focus").
+        Contains a button that will redirect the user to Privacy & Security Screen-->
+    <string name="errorpage_httpsonly_message2"><![CDATA[%1$s đã thử kết nối HTTPS bất cứ khi nào có thể để bảo mật hơn.
+     <a href="%2$s">Tìm hiểu thêm</a> <br/><br/>
+     Thay đổi cài đặt này trong Cài đặt > Riêng tư &amp; bảo mật > Bảo mật.]]></string>
+
+    <!-- The document title and heading of the error page shown when a website has an invalid or expired SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_title">Kết nối không an toàn</string>
+
+    <!-- The error message shown when a website has an invalid or expired SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_message"><![CDATA[
+    Đây có thể là sự cố với cấu hình của máy chủ hoặc có thể là ai đó đang cố mạo danh máy chủ. <br/><br/>
+    Nếu trước đây bạn đã kết nối thành công với máy chủ này, lỗi có thể là tạm thời.
+    ]]></string>
+
+    <!-- The advanced certificate information shown when a website has an invalid SSL certificate. The %1$s will be replaced by the app name and %2$s will be replaced by website URL. It's only shown when a website has an invalid SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_techInfo"><![CDATA[
+        <label>Ai đó có thể đang cố mạo danh trang web và việc tiếp tục có thể gặp rủi ro.</label>
+        <br><br>
+        <label>%1$s không tin tưởng <b>%2$s</b> bởi vì tổ chức phát hành chứng chỉ của nó không xác định, chứng chỉ tự ký hoặc máy chủ không gửi đúng chứng chỉ trung gian.</label>
+    ]]></string>
+
+     <!-- Sessions List -->
     <!-- Content description (not visible, for screen readers etc.): Button that closes a tab n the sessions list -->
     <string name="close_tab">Đóng thẻ</string>
 
@@ -1026,13 +1079,18 @@
 
     !-- Content description (not visible, for screen readers etc.): This is the description for the
     close button from promote search widget dialog. --&gt;
+    <!-- Content description (not visible, for screen readers etc.): This is the description for the
+    close button from promote search widget dialog. -->
     <string name="promote_search_widget_dialog_content_description">Đóng</string>
 
     !-- Content description (not visible, for screen readers etc.): This is the description for
     picture of search widget from promote search widget dialog. --&gt;
+    <!-- Content description (not visible, for screen readers etc.): This is the description for
+    picture of search widget from promote search widget dialog. -->
     <string name="promote_search_widget_dialog_picture_content_description">Widget tìm kiếm</string>
 
     !-- This is the title of promote search widget dialog. --&gt;
+    <!-- This is the title of promote search widget dialog. -->
     <string name="promote_search_widget_dialog_title">Đã xóa lịch sử duyệt web! 🎉</string>
 
     !-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
@@ -1042,13 +1100,19 @@
 
     !-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
     of the app (e.g. &quot;Focus&quot;) --&gt;
+    <!-- This is the subtitle of promote search widget dialog. %1$s will get replaced with the name
+    of the app (e.g. "Focus") -->
     <string name="promote_search_widget_dialog_subtitle">Chúng tôi sẽ để bạn ở chế độ duyệt web riêng tư, nhưng hãy bắt đầu nhanh hơn vào lần sau với tiện ích %1$s trên màn hình chính của bạn.</string>
 
     !-- This is te text from add search widget to home screen button .The button is located on
     promote search widget dialog. --&gt;
+    <!-- This is te text from add search widget to home screen button .The button is located on
+    promote search widget dialog. -->
     <string name="promote_search_widget_button_text">Thêm widget vào màn hình chính</string>
 
     !-- This is te text of the snackbar that appears after the search widget was added successfully
     to the home screen. --&gt;
+    <!-- This is te text of the snackbar that appears after the search widget was added successfully
+    to the home screen. -->
     <string name="promote_search_widget_snackbar_message">Đã thêm widget vào màn hình chính</string>
 </resources>

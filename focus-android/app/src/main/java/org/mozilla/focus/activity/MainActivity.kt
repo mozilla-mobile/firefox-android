@@ -4,6 +4,7 @@
 
 package org.mozilla.focus.activity
 
+import android.Manifest.permission.POST_NOTIFICATIONS
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
@@ -14,6 +15,7 @@ import android.util.AttributeSet
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewTreeObserver
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
@@ -22,14 +24,17 @@ import androidx.core.view.isVisible
 import androidx.preference.PreferenceManager
 import mozilla.components.browser.state.selector.privateTabs
 import mozilla.components.concept.engine.EngineView
+import mozilla.components.feature.search.widget.BaseVoiceSearchActivity
 import mozilla.components.lib.auth.canUseBiometricFeature
 import mozilla.components.lib.crash.Crash
 import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.ktx.android.content.getColorFromAttr
-import mozilla.components.support.ktx.android.view.getWindowInsetsController
+import mozilla.components.support.ktx.android.view.createWindowInsetsController
 import mozilla.components.support.locale.LocaleAwareAppCompatActivity
 import mozilla.components.support.utils.SafeIntent
+import mozilla.components.support.utils.StatusBarUtils
+import org.mozilla.experiments.nimbus.initializeTooling
 import org.mozilla.focus.GleanMetrics.AppOpened
 import org.mozilla.focus.GleanMetrics.Notifications
 import org.mozilla.focus.R
@@ -45,13 +50,13 @@ import org.mozilla.focus.navigation.MainActivityNavigation
 import org.mozilla.focus.navigation.Navigator
 import org.mozilla.focus.searchwidget.ExternalIntentNavigation
 import org.mozilla.focus.session.IntentProcessor
+import org.mozilla.focus.session.PrivateNotificationFeature
 import org.mozilla.focus.shortcut.HomeScreen
 import org.mozilla.focus.state.AppAction
 import org.mozilla.focus.state.Screen
 import org.mozilla.focus.telemetry.TelemetryWrapper
 import org.mozilla.focus.telemetry.startuptelemetry.StartupPathProvider
 import org.mozilla.focus.telemetry.startuptelemetry.StartupTypeTelemetry
-import org.mozilla.focus.utils.StatusBarUtils
 import org.mozilla.focus.utils.SupportUtils
 
 private const val REQUEST_TIME_OUT = 2000L
@@ -71,8 +76,18 @@ open class MainActivity : LocaleAwareAppCompatActivity() {
     private lateinit var startupTypeTelemetry: StartupTypeTelemetry
     private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!
+    private lateinit var privateNotificationFeature: PrivateNotificationFeature
+    private val notificationPermission =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            when {
+                granted -> {
+                    privateNotificationFeature.start()
+                }
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        components.experiments.initializeTooling(applicationContext, intent)
         installSplashScreen()
 
         updateSecureWindowFlags()
@@ -135,6 +150,24 @@ open class MainActivity : LocaleAwareAppCompatActivity() {
             .apply()
 
         AppReviewUtils.showAppReview(this)
+
+        privateNotificationFeature = PrivateNotificationFeature(
+            context = applicationContext,
+            browserStore = components.store,
+            permissionRequestHandler = { requestNotificationPermission() },
+        ).also {
+            it.start()
+        }
+
+        components.notificationsDelegate.bindToActivity(this)
+    }
+
+    private fun requestNotificationPermission() {
+        privateNotificationFeature.stop()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            notificationPermission.launch(POST_NOTIFICATIONS)
+        }
     }
 
     private fun setSplashScreenPreDrawListener(safeIntent: SafeIntent) {
@@ -176,8 +209,9 @@ open class MainActivity : LocaleAwareAppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-
-        TelemetryWrapper.startSession()
+        if (TelemetryWrapper.isTelemetryEnabled(this)) {
+            TelemetryWrapper.startSession()
+        }
         checkBiometricStillValid()
     }
 
@@ -192,8 +226,9 @@ open class MainActivity : LocaleAwareAppCompatActivity() {
         urlInputFragment?.cancelAnimation()
 
         super.onPause()
-
-        TelemetryWrapper.stopSession()
+        if (TelemetryWrapper.isTelemetryEnabled(this)) {
+            TelemetryWrapper.stopSession()
+        }
     }
 
     override fun onStop() {
@@ -213,7 +248,7 @@ open class MainActivity : LocaleAwareAppCompatActivity() {
         startupPathProvider.onIntentReceived(intent)
         val intent = SafeIntent(unsafeIntent)
 
-        handleAppNavigation(intent)
+        handleAppRestoreFromBackground(intent)
 
         if (intent.dataString.equals(SupportUtils.OPEN_WITH_DEFAULT_BROWSER_URL)) {
             components.appStore.dispatch(
@@ -248,6 +283,30 @@ open class MainActivity : LocaleAwareAppCompatActivity() {
         }
 
         super.onNewIntent(unsafeIntent)
+    }
+
+    private fun handleAppRestoreFromBackground(intent: SafeIntent) {
+        if (!intent.extras?.getString(BaseVoiceSearchActivity.SPEECH_PROCESSING).isNullOrEmpty()) {
+            handleAppNavigation(intent)
+            return
+        }
+        when (components.appStore.state.screen) {
+            is Screen.Settings -> components.appStore.dispatch(
+                AppAction.OpenSettings(
+                    page =
+                    (components.appStore.state.screen as Screen.Settings).page,
+                ),
+            )
+            is Screen.SitePermissionOptionsScreen -> components.appStore.dispatch(
+                AppAction.OpenSitePermissionOptionsScreen(
+                    sitePermission =
+                    (components.appStore.state.screen as Screen.SitePermissionOptionsScreen).sitePermission,
+                ),
+            )
+            else -> {
+                handleAppNavigation(intent)
+            }
+        }
     }
 
     private fun handleAppNavigation(intent: SafeIntent) {
@@ -322,7 +381,7 @@ open class MainActivity : LocaleAwareAppCompatActivity() {
             return
         }
 
-        super.getOnBackPressedDispatcher().onBackPressed()
+        onBackPressedDispatcher.onBackPressed()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -352,14 +411,14 @@ open class MainActivity : LocaleAwareAppCompatActivity() {
     private fun updateLightSystemBars() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             window.statusBarColor = getColorFromAttr(android.R.attr.statusBarColor)
-            window.getWindowInsetsController().isAppearanceLightStatusBars = true
+            window.createWindowInsetsController().isAppearanceLightStatusBars = true
         } else {
             window.statusBarColor = Color.BLACK
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // API level can display handle light navigation bar color
-            window.getWindowInsetsController().isAppearanceLightNavigationBars = true
+            window.createWindowInsetsController().isAppearanceLightNavigationBars = true
             window.navigationBarColor = ContextCompat.getColor(this, android.R.color.transparent)
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -371,12 +430,12 @@ open class MainActivity : LocaleAwareAppCompatActivity() {
 
     private fun clearLightSystemBars() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            window.getWindowInsetsController().isAppearanceLightStatusBars = false
+            window.createWindowInsetsController().isAppearanceLightStatusBars = false
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // API level can display handle light navigation bar color
-            window.getWindowInsetsController().isAppearanceLightNavigationBars = false
+            window.createWindowInsetsController().isAppearanceLightNavigationBars = false
         }
     }
 
@@ -409,6 +468,12 @@ open class MainActivity : LocaleAwareAppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+
+        if (this::privateNotificationFeature.isInitialized) {
+            privateNotificationFeature.stop()
+        }
+
+        components.notificationsDelegate.unBindActivity(this)
     }
 
     enum class AppOpenType(val type: String) {
