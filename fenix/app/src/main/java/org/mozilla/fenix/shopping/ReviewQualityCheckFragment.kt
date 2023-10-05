@@ -5,6 +5,7 @@
 package org.mozilla.fenix.shopping
 
 import android.app.Dialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +17,8 @@ import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
+import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.shopping.di.ReviewQualityCheckMiddlewareProvider
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckStore
@@ -28,6 +31,8 @@ import org.mozilla.fenix.theme.FirefoxTheme
 class ReviewQualityCheckFragment : BottomSheetDialogFragment() {
 
     private var behavior: BottomSheetBehavior<View>? = null
+    private val bottomSheetStateFeature =
+        ViewBoundFeatureWrapper<ReviewQualityCheckBottomSheetStateFeature>()
     private val store by lazy {
         ReviewQualityCheckStore(
             middleware = ReviewQualityCheckMiddlewareProvider.provideMiddleware(
@@ -65,5 +70,21 @@ class ReviewQualityCheckFragment : BottomSheetDialogFragment() {
                 )
             }
         }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        bottomSheetStateFeature.set(
+            feature = ReviewQualityCheckBottomSheetStateFeature(store) {
+                behavior?.state = BottomSheetBehavior.STATE_EXPANDED
+            },
+            owner = viewLifecycleOwner,
+            view = view,
+        )
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        requireComponents.appStore.dispatch(AppAction.ShoppingSheetStateUpdated(expanded = false))
     }
 }

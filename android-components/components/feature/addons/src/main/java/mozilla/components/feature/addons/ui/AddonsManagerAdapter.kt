@@ -37,6 +37,8 @@ import mozilla.components.feature.addons.ui.CustomViewHolder.FooterViewHolder
 import mozilla.components.feature.addons.ui.CustomViewHolder.SectionViewHolder
 import mozilla.components.feature.addons.ui.CustomViewHolder.UnsupportedSectionViewHolder
 import mozilla.components.support.base.log.logger.Logger
+import mozilla.components.support.ktx.android.content.appName
+import mozilla.components.support.ktx.android.content.appVersionName
 import mozilla.components.support.ktx.android.content.res.resolveAttribute
 import java.io.IOException
 import mozilla.components.ui.icons.R as iconsR
@@ -136,6 +138,7 @@ class AddonsManagerAdapter(
         val userCountView = view.findViewById<TextView>(R.id.users_count)
         val addButton = view.findViewById<ImageView>(R.id.add_button)
         val allowedInPrivateBrowsingLabel = view.findViewById<ImageView>(R.id.allowed_in_private_browsing_label)
+        val statusErrorView = view.findViewById<View>(R.id.add_on_status_error)
         return AddonViewHolder(
             view,
             iconView,
@@ -146,6 +149,7 @@ class AddonsManagerAdapter(
             userCountView,
             addButton,
             allowedInPrivateBrowsingLabel,
+            statusErrorView,
         )
     }
 
@@ -218,7 +222,12 @@ class AddonsManagerAdapter(
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    internal fun bindAddon(holder: AddonViewHolder, addon: Addon) {
+    internal fun bindAddon(
+        holder: AddonViewHolder,
+        addon: Addon,
+        appName: String = holder.itemView.context.appName,
+        appVersion: String = holder.itemView.context.appVersionName,
+    ) {
         val context = holder.itemView.context
         addon.rating?.let {
             val userCount = context.getString(R.string.mozac_feature_addons_user_rating_count_2)
@@ -235,12 +244,13 @@ class AddonsManagerAdapter(
             holder.userCountView.text = String.format(userCount, getFormattedAmount(it.reviews))
         }
 
-        holder.titleView.text =
-            if (addon.translatableName.isNotEmpty()) {
-                addon.translateName(context)
-            } else {
-                addon.id
-            }
+        val addonName = if (addon.translatableName.isNotEmpty()) {
+            addon.translateName(context)
+        } else {
+            addon.id
+        }
+
+        holder.titleView.text = addonName
 
         if (addon.translatableSummary.isNotEmpty()) {
             holder.summaryView.text = addon.translateSummary(context)
@@ -261,11 +271,45 @@ class AddonsManagerAdapter(
         }
 
         holder.allowedInPrivateBrowsingLabel.isVisible = addon.isAllowedInPrivateBrowsing()
-        style?.maybeSetPrivateBrowsingLabelDrawale(holder.allowedInPrivateBrowsingLabel)
+        style?.maybeSetPrivateBrowsingLabelDrawable(holder.allowedInPrivateBrowsingLabel)
 
         fetchIcon(addon, holder.iconView)
         style?.maybeSetAddonNameTextColor(holder.titleView)
         style?.maybeSetAddonSummaryTextColor(holder.summaryView)
+
+        val statusErrorMessage = holder.statusErrorView.findViewById<TextView>(R.id.add_on_status_error_message)
+        val statusErrorLearnMoreLink = holder.statusErrorView.findViewById<TextView>(
+            R.id.add_on_status_error_learn_more_link,
+        )
+        if (addon.isDisabledAsBlocklisted()) {
+            statusErrorMessage.text = context.getString(R.string.mozac_feature_addons_status_blocklisted, addonName)
+            statusErrorLearnMoreLink.setOnClickListener {
+                addonsManagerDelegate.onLearnMoreLinkClicked(
+                    AddonsManagerAdapterDelegate.LearnMoreLinks.BLOCKLISTED_ADDON,
+                    addon,
+                )
+            }
+            holder.statusErrorView.isVisible = true
+        } else if (addon.isDisabledAsNotCorrectlySigned()) {
+            statusErrorMessage.text = context.getString(R.string.mozac_feature_addons_status_unsigned, addonName)
+            statusErrorLearnMoreLink.setOnClickListener {
+                addonsManagerDelegate.onLearnMoreLinkClicked(
+                    AddonsManagerAdapterDelegate.LearnMoreLinks.ADDON_NOT_CORRECTLY_SIGNED,
+                    addon,
+                )
+            }
+            holder.statusErrorView.isVisible = true
+        } else if (addon.isDisabledAsIncompatible()) {
+            statusErrorMessage.text = context.getString(
+                R.string.mozac_feature_addons_status_incompatible,
+                addonName,
+                appName,
+                appVersion,
+            )
+            holder.statusErrorView.isVisible = true
+            // There is no link when the add-on is disabled because it isn't compatible with the application version.
+            statusErrorLearnMoreLink.isVisible = false
+        }
     }
 
     @Suppress("MagicNumber")
@@ -416,7 +460,7 @@ class AddonsManagerAdapter(
             }
         }
 
-        internal fun maybeSetPrivateBrowsingLabelDrawale(imageView: ImageView) {
+        internal fun maybeSetPrivateBrowsingLabelDrawable(imageView: ImageView) {
             addonAllowPrivateBrowsingLabelDrawableRes?.let {
                 imageView.setImageDrawable(ContextCompat.getDrawable(imageView.context, it))
             }

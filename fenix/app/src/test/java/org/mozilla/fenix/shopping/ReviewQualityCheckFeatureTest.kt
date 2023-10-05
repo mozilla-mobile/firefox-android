@@ -16,6 +16,10 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
+import org.mozilla.fenix.components.AppStore
+import org.mozilla.fenix.components.appstate.AppAction
+import org.mozilla.fenix.components.appstate.AppState
+import org.mozilla.fenix.shopping.fake.FakeShoppingExperienceFeature
 
 class ReviewQualityCheckFeatureTest {
 
@@ -26,11 +30,13 @@ class ReviewQualityCheckFeatureTest {
     fun `WHEN feature is not enabled THEN callback returns false`() {
         var availability: Boolean? = null
         val tested = ReviewQualityCheckFeature(
+            appStore = AppStore(),
             browserStore = BrowserStore(),
             shoppingExperienceFeature = FakeShoppingExperienceFeature(enabled = false),
             onAvailabilityChange = {
                 availability = it
             },
+            onBottomSheetStateChange = {},
         )
 
         tested.start()
@@ -52,6 +58,7 @@ class ReviewQualityCheckFeatureTest {
                 selectedTabId = tab.id,
             )
             val tested = ReviewQualityCheckFeature(
+                appStore = AppStore(),
                 browserStore = BrowserStore(
                     initialState = browserState,
                 ),
@@ -59,6 +66,7 @@ class ReviewQualityCheckFeatureTest {
                 onAvailabilityChange = {
                     availability = it
                 },
+                onBottomSheetStateChange = {},
             )
 
             tested.start()
@@ -80,6 +88,7 @@ class ReviewQualityCheckFeatureTest {
                 selectedTabId = tab.id,
             )
             val tested = ReviewQualityCheckFeature(
+                appStore = AppStore(),
                 browserStore = BrowserStore(
                     initialState = browserState,
                 ),
@@ -87,6 +96,7 @@ class ReviewQualityCheckFeatureTest {
                 onAvailabilityChange = {
                     availability = it
                 },
+                onBottomSheetStateChange = {},
             )
 
             tested.start()
@@ -115,11 +125,13 @@ class ReviewQualityCheckFeatureTest {
                 ),
             )
             val tested = ReviewQualityCheckFeature(
+                appStore = AppStore(),
                 browserStore = browserStore,
                 shoppingExperienceFeature = FakeShoppingExperienceFeature(),
                 onAvailabilityChange = {
                     availability = it
                 },
+                onBottomSheetStateChange = {},
             )
 
             tested.start()
@@ -151,11 +163,13 @@ class ReviewQualityCheckFeatureTest {
                 ),
             )
             val tested = ReviewQualityCheckFeature(
+                appStore = AppStore(),
                 browserStore = browserStore,
                 shoppingExperienceFeature = FakeShoppingExperienceFeature(),
                 onAvailabilityChange = {
                     availability = it
                 },
+                onBottomSheetStateChange = {},
             )
 
             tested.start()
@@ -189,12 +203,14 @@ class ReviewQualityCheckFeatureTest {
             )
 
             val tested = ReviewQualityCheckFeature(
+                appStore = AppStore(),
                 browserStore = browserStore,
                 shoppingExperienceFeature = FakeShoppingExperienceFeature(),
                 onAvailabilityChange = {
                     availability = it
                     availabilityCount++
                 },
+                onBottomSheetStateChange = {},
             )
 
             tested.start()
@@ -205,12 +221,82 @@ class ReviewQualityCheckFeatureTest {
             assertEquals(1, availabilityCount)
             assertFalse(availability!!)
         }
-}
 
-class FakeShoppingExperienceFeature(
-    private val enabled: Boolean = true,
-) : ShoppingExperienceFeature {
+    @Test
+    fun `WHEN the shopping sheet is collapsed THEN the callback is called with false`() {
+        val appStore = AppStore(
+            initialState = AppState(
+                shoppingSheetExpanded = true,
+            ),
+        )
+        var isExpanded: Boolean? = null
+        val tested = ReviewQualityCheckFeature(
+            appStore = appStore,
+            browserStore = BrowserStore(),
+            shoppingExperienceFeature = FakeShoppingExperienceFeature(),
+            onAvailabilityChange = {},
+            onBottomSheetStateChange = {
+                isExpanded = it
+            },
+        )
 
-    override val isEnabled: Boolean
-        get() = enabled
+        tested.start()
+
+        appStore.dispatch(AppAction.ShoppingSheetStateUpdated(expanded = false)).joinBlocking()
+
+        assertFalse(isExpanded!!)
+    }
+
+    @Test
+    fun `WHEN the shopping sheet is expanded THEN the collapsed callback is called with true`() {
+        val appStore = AppStore(
+            initialState = AppState(
+                shoppingSheetExpanded = false,
+            ),
+        )
+        var isExpanded: Boolean? = null
+        val tested = ReviewQualityCheckFeature(
+            appStore = appStore,
+            browserStore = BrowserStore(),
+            shoppingExperienceFeature = FakeShoppingExperienceFeature(),
+            onAvailabilityChange = {},
+            onBottomSheetStateChange = {
+                isExpanded = it
+            },
+        )
+
+        tested.start()
+
+        appStore.dispatch(AppAction.ShoppingSheetStateUpdated(expanded = true)).joinBlocking()
+
+        assertTrue(isExpanded!!)
+    }
+
+    @Test
+    fun `WHEN the feature is restarted THEN first emission is collected to set the tint`() {
+        val appStore = AppStore(
+            initialState = AppState(
+                shoppingSheetExpanded = false,
+            ),
+        )
+        var isExpanded: Boolean? = null
+        val tested = ReviewQualityCheckFeature(
+            appStore = appStore,
+            browserStore = BrowserStore(),
+            shoppingExperienceFeature = FakeShoppingExperienceFeature(),
+            onAvailabilityChange = {},
+            onBottomSheetStateChange = {
+                isExpanded = it
+            },
+        )
+
+        tested.start()
+        tested.stop()
+
+        // emulate emission
+        appStore.dispatch(AppAction.ShoppingSheetStateUpdated(expanded = false)).joinBlocking()
+
+        tested.start()
+        assertFalse(isExpanded!!)
+    }
 }

@@ -51,7 +51,9 @@ import java.util.SortedMap
  *
  * @param productRecommendationsEnabled The current state of the product recommendations toggle.
  * @param productAnalysis The product analysis to display.
+ * @param productVendor The vendor of the product.
  * @param onOptOutClick Invoked when the user opts out of the review quality check feature.
+ * @param onReanalyzeClick Invoked when the user clicks to re-analyze a product.
  * @param onProductRecommendationsEnabledStateChange Invoked when the user changes the product
  * recommendations toggle state.
  * @param onReviewGradeLearnMoreClick Invoked when the user clicks to learn more about review grades.
@@ -63,6 +65,7 @@ import java.util.SortedMap
 fun ProductAnalysis(
     productRecommendationsEnabled: Boolean?,
     productAnalysis: AnalysisPresent,
+    productVendor: ReviewQualityCheckState.ProductVendor,
     onOptOutClick: () -> Unit,
     onReanalyzeClick: () -> Unit,
     onProductRecommendationsEnabledStateChange: (Boolean) -> Unit,
@@ -121,6 +124,7 @@ fun ProductAnalysis(
         }
 
         ReviewQualityInfoCard(
+            productVendor = productVendor,
             modifier = Modifier.fillMaxWidth(),
             onLearnMoreClick = onReviewGradeLearnMoreClick,
         )
@@ -379,6 +383,7 @@ private enum class Highlight(
 private class ProductAnalysisPreviewModel(
     val productRecommendationsEnabled: Boolean?,
     val productAnalysis: AnalysisPresent,
+    val productVendor: ReviewQualityCheckState.ProductVendor,
 ) {
     constructor(
         productRecommendationsEnabled: Boolean? = false,
@@ -416,6 +421,7 @@ private class ProductAnalysisPreviewModel(
         ),
         recommendedProductState: ReviewQualityCheckState.RecommendedProductState =
             ReviewQualityCheckState.RecommendedProductState.Initial,
+        productVendor: ReviewQualityCheckState.ProductVendor = ReviewQualityCheckState.ProductVendor.AMAZON,
     ) : this(
         productRecommendationsEnabled = productRecommendationsEnabled,
         productAnalysis = AnalysisPresent(
@@ -427,6 +433,7 @@ private class ProductAnalysisPreviewModel(
             highlights = highlights,
             recommendedProductState = recommendedProductState,
         ),
+        productVendor = productVendor,
     )
 }
 
@@ -469,6 +476,7 @@ private fun ProductAnalysisPreview(
             ProductAnalysis(
                 productRecommendationsEnabled = productRecommendationsEnabled,
                 productAnalysis = model.productAnalysis,
+                productVendor = model.productVendor,
                 onOptOutClick = {},
                 onReanalyzeClick = {},
                 onProductRecommendationsEnabledStateChange = {
