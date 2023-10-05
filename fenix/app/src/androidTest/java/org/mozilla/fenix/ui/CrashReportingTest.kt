@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.ui
 
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
@@ -13,8 +17,11 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper.getStringResource
+import org.mozilla.fenix.helpers.TestHelper.packageName
+import org.mozilla.fenix.ui.robots.clickPageObject
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
 
@@ -69,12 +76,11 @@ class CrashReportingTest {
 
         navigationToolbar {
         }.openTabCrashReporter {
-            clickTabCrashedRestoreButton()
+            clickPageObject(itemWithResId("$packageName:id/restoreTabButton"))
             verifyPageContent(website.content)
         }
     }
 
-    @Ignore("Failure: https://bugzilla.mozilla.org/show_bug.cgi?id=1812075")
     @SmokeTest
     @Test
     fun useAppWhileTabIsCrashedTest() {

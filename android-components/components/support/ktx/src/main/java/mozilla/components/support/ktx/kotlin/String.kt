@@ -6,13 +6,18 @@
 
 package mozilla.components.support.ktx.kotlin
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.InetAddresses
 import android.net.Uri
 import android.os.Build
+import android.util.Base64
 import android.util.Patterns
 import android.webkit.URLUtil
+import androidx.annotation.VisibleForTesting
 import androidx.core.net.toUri
 import mozilla.components.lib.publicsuffixlist.PublicSuffixList
+import mozilla.components.support.ktx.android.net.commonPrefixes
 import mozilla.components.support.ktx.android.net.hostWithoutCommonPrefixes
 import mozilla.components.support.ktx.util.URLStringUtils
 import java.io.File
@@ -381,6 +386,16 @@ fun String.getRepresentativeCharacter(): String {
 }
 
 /**
+ * Strips common mobile subdomains from a [String].
+ */
+fun String.stripCommonSubdomains(): String {
+    for (prefix in commonPrefixes) {
+        if (this.startsWith(prefix)) return this.substring(prefix.length)
+    }
+    return this
+}
+
+/**
  * Returns the last 4 digits from a formatted credit card number string.
  */
 fun String.last4Digits(): String {
@@ -393,4 +408,26 @@ fun String.last4Digits(): String {
  */
 fun String.trimmed(): String {
     return this.take(MAX_URI_LENGTH)
+}
+
+/**
+ * Returns a bitmap from its base64 representation.
+ * Returns null if the string is not a valid base64 representation of a bitmap
+ */
+fun String.base64ToBitmap(): Bitmap? =
+    extractBase6RawString()?.let { rawString ->
+        val raw = Base64.decode(rawString, Base64.DEFAULT)
+        BitmapFactory.decodeByteArray(raw, 0, raw.size)
+    }
+
+@VisibleForTesting
+internal fun String.extractBase6RawString(): String? {
+    // Regex that identifies if the strings starts with:
+    // "(data:image/[ANY_FORMAT];base64,"
+    // For example, "data:image/png;base64,"
+    val base64BitmapRegex = "(data:image/[^;]+;base64,)(.*)".toRegex()
+    return base64BitmapRegex.find(this)?.let {
+        val (_, contentString) = it.destructured
+        contentString
+    }
 }

@@ -8,8 +8,6 @@ from copy import deepcopy
 from datetime import datetime
 
 import jsone
-
-from ..release_promotion import read_version_file
 from taskgraph.util.memoize import memoize
 from taskgraph.util.schema import resolve_keyed_by
 from taskgraph.util.taskcluster import get_artifact_prefix
@@ -260,10 +258,10 @@ def generate_beetmover_artifact_map(config, job, **kwargs):
             for key in platforms.keys():
                 resolve_keyed_by(platforms, key, job["label"], platform=platform)
 
-        version = read_version_file()
+        version = config.params["version"]
         upload_date = datetime.fromtimestamp(config.params["build_date"])
 
-        if job["attributes"]["build-type"] == "fenix-nightly":
+        if job["attributes"].get("nightly-task"):
             folder_prefix = upload_date.strftime("%Y/%m/%Y-%m-%d-%H-%M-%S-")
             # TODO: Remove this when version.txt has versioning fixed
             version = version.split("-")[0]

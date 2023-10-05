@@ -63,10 +63,6 @@
     <string name="mozac_browser_errorpages_security_bad_hsts_cert_advanced">Avantiate…</string>
 
     <!-- The advanced certificate information shown when a website uses HSTS. The %1$s will be replaced by the website URL and %2$s will be replaced by the app name. It's only shown when a website uses HSTS. -->
-    <string moz:removedIn="104" name="mozac_browser_errorpages_security_bad_hsts_cert_techInfo" tools:ignore="UnusedResources"><![CDATA[
-        <label> <b>%1$s</b> ha un politica de securitate appellate HTTP Strict Transport Security (HSTS), le qual significa que <b>%2$s</b> solo pote connecter se a illo de maniera secur. Tu non pote adder un exception pro visitar iste sito.
-    ]]></string>
-    <!-- The advanced certificate information shown when a website uses HSTS. The %1$s will be replaced by the website URL and %2$s will be replaced by the app name. It's only shown when a website uses HSTS. -->
     <string name="mozac_browser_errorpages_security_bad_hsts_cert_techInfo2"><![CDATA[
         <label> <b>%1$s</b> ha un politica de securitate appellate HTTP Strict Transport Security (HSTS), le qual significa que <b>%2$s</b> solo pote connecter se a illo de maniera secur. Tu non pote adder un exception pro visitar iste sito. </label>
     ]]></string>

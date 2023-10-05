@@ -29,6 +29,7 @@ import mozilla.components.support.ktx.android.content.longPreference
 import mozilla.components.support.ktx.android.content.stringPreference
 import mozilla.components.support.ktx.android.content.stringSetPreference
 import mozilla.components.support.locale.LocaleManager
+import mozilla.components.support.utils.BrowsersCache
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.FeatureFlags
@@ -41,7 +42,6 @@ import org.mozilla.fenix.components.settings.lazyFeatureFlagPreference
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getPreferenceKey
-import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.nimbus.CookieBannersSection
 import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.nimbus.HomeScreenSection
@@ -61,7 +61,8 @@ private const val AUTOPLAY_USER_SETTING = "AUTOPLAY_USER_SETTING"
 
 /**
  * A simple wrapper for SharedPreferences that makes reading preference a little bit easier.
- * @param appContext Reference to application context.
+ *
+ * @property appContext Reference to application context.
  */
 @Suppress("LargeClass", "TooManyFunctions")
 class Settings(private val appContext: Context) : PreferencesHolder {
@@ -186,6 +187,41 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = "",
     )
 
+    var nimbusExperimentsFetched by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_nimbus_experiments_fetched),
+        default = false,
+    )
+
+    var utmParamsKnown by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_utm_params_known),
+        default = false,
+    )
+
+    var utmSource by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_utm_source),
+        default = "",
+    )
+
+    var utmMedium by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_utm_medium),
+        default = "",
+    )
+
+    var utmCampaign by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_utm_campaign),
+        default = "",
+    )
+
+    var utmTerm by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_utm_term),
+        default = "",
+    )
+
+    var utmContent by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_utm_content),
+        default = "",
+    )
+
     var contileContextId by stringPreference(
         appContext.getPreferenceKey(R.string.pref_key_contile_context_id),
         default = "",
@@ -295,7 +331,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = false,
     )
 
-    val isTelemetryEnabled by booleanPreference(
+    var isTelemetryEnabled by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_telemetry),
         default = true,
     )
@@ -403,6 +439,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var isFirstNimbusRun: Boolean by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_is_first_run),
         default = true,
+    )
+
+    var isFirstSplashScreenShown: Boolean by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_is_first_splash_screen_shown),
+        default = false,
     )
 
     var nimbusLastFetchTime: Long by longPreference(
@@ -523,9 +564,13 @@ class Settings(private val appContext: Context) : PreferencesHolder {
      * Get the display string for the current open links in apps setting
      */
     fun getOpenLinksInAppsString(): String =
-        when (appContext.settings().openLinksInExternalApp) {
+        when (openLinksInExternalApp) {
             appContext.getString(R.string.pref_key_open_links_in_apps_always) -> {
-                appContext.getString(R.string.preferences_open_links_in_apps_always)
+                if (lastKnownMode == BrowsingMode.Normal) {
+                    appContext.getString(R.string.preferences_open_links_in_apps_always)
+                } else {
+                    appContext.getString(R.string.preferences_open_links_in_apps_ask)
+                }
             }
             appContext.getString(R.string.pref_key_open_links_in_apps_ask) -> {
                 appContext.getString(R.string.preferences_open_links_in_apps_ask)
@@ -670,7 +715,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     /**
      * Indicates if the re-engagement notification feature is enabled
      */
-    public val reEngagementNotificationType: Int
+    val reEngagementNotificationType: Int
         get() =
             FxNimbus.features.reEngagementNotification.value().type
 
@@ -733,6 +778,15 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         appContext.getPreferenceKey(R.string.pref_key_should_show_total_cookie_protection_popup),
         featureFlag = true,
         default = { enabledTotalCookieProtectionCFR },
+    )
+
+    /**
+     * Indicates if the total cookie protection CRF should be shown.
+     */
+    var shouldShowEraseActionCFR by lazyFeatureFlagPreference(
+        appContext.getPreferenceKey(R.string.pref_key_should_show_erase_action_popup),
+        featureFlag = true,
+        default = { feltPrivateBrowsingEnabled },
     )
 
     val blockCookiesSelectionInCustomTrackingProtection by stringPreference(
@@ -842,10 +896,10 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = true,
     )
 
-    var shouldUseBottomToolbar by booleanPreference(
+    var shouldUseBottomToolbar by lazyFeatureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_toolbar_bottom),
-        // Default accessibility users to top toolbar
-        default = !touchExplorationIsEnabled && !switchServiceIsEnabled,
+        featureFlag = true,
+        default = { shouldDefaultToBottomToolbar() },
     )
 
     val toolbarPosition: ToolbarPosition
@@ -882,6 +936,18 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         get() {
             return touchExplorationIsEnabled || switchServiceIsEnabled
         }
+
+    val toolbarPositionTop: Boolean
+        get() = FxNimbus.features.toolbar.value().toolbarPositionTop
+
+    /**
+     * Checks if we should default to bottom toolbar.
+     */
+    fun shouldDefaultToBottomToolbar(): Boolean {
+        // Default accessibility users to top toolbar
+        return (!touchExplorationIsEnabled && !switchServiceIsEnabled) &&
+            !toolbarPositionTop
+    }
 
     fun getDeleteDataOnQuit(type: DeleteBrowsingDataOnQuitType): Boolean =
         preferences.getBoolean(type.getPreferenceKey(appContext), false)
@@ -1146,19 +1212,42 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = true,
     )
 
-    fun addSearchWidgetInstalled(count: Int) {
-        val key = appContext.getPreferenceKey(R.string.pref_key_search_widget_installed)
-        val newValue = preferences.getInt(key, 0) + count
+    /**
+     * Used in [SearchWidgetProvider] to update when the search widget
+     * exists on home screen or if it has been removed completely.
+     */
+    fun setSearchWidgetInstalled(installed: Boolean) {
+        val key = appContext.getPreferenceKey(R.string.pref_key_search_widget_installed_2)
         preferences.edit()
-            .putInt(key, newValue)
+            .putBoolean(key, installed)
             .apply()
     }
 
-    val searchWidgetInstalled: Boolean
-        get() = 0 < preferences.getInt(
-            appContext.getPreferenceKey(R.string.pref_key_search_widget_installed),
-            0,
-        )
+    /**
+     * In Bug 1853113, we changed the type of [searchWidgetInstalled] from int to boolean without
+     * changing the pref key, now we have to migrate users that were using the previous type int
+     * to the new one boolean. The migration will only happens if pref_key_search_widget_installed
+     * is detected.
+     */
+    fun migrateSearchWidgetInstalledPrefIfNeeded() {
+        val oldKey = "pref_key_search_widget_installed"
+        val installedCount = try {
+            preferences.getInt(oldKey, 0)
+        } catch (e: ClassCastException) {
+            0
+        }
+
+        if (installedCount > 0) {
+            setSearchWidgetInstalled(true)
+            preferences.edit()
+                .remove(oldKey).apply()
+        }
+    }
+
+    val searchWidgetInstalled by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_search_widget_installed_2),
+        default = false,
+    )
 
     fun incrementNumTimesPrivateModeOpened() = numTimesPrivateModeOpened.increment()
 
@@ -1199,11 +1288,12 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     /**
      * Check to see if we should open the link in an external app
      */
-    fun shouldOpenLinksInApp(): Boolean {
+    fun shouldOpenLinksInApp(isCustomTab: Boolean = false): Boolean {
         return when (openLinksInExternalApp) {
             appContext.getString(R.string.pref_key_open_links_in_apps_always) -> true
             appContext.getString(R.string.pref_key_open_links_in_apps_ask) -> true
-            appContext.getString(R.string.pref_key_open_links_in_apps_never) -> false
+            /* Some applications will not work if custom tab never open links in apps, return true if it's custom tab */
+            appContext.getString(R.string.pref_key_open_links_in_apps_never) -> isCustomTab
             else -> false
         }
     }
@@ -1258,6 +1348,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = "",
     )
 
+    var enableGeckoLogs by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_enable_gecko_logs),
+        default = Config.channel.isDebug,
+    )
+
     fun amoCollectionOverrideConfigured(): Boolean {
         return overrideAmoUser.isNotEmpty() || overrideAmoCollection.isNotEmpty()
     }
@@ -1274,6 +1369,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
 
     var openTabsCount by intPreference(
         appContext.getPreferenceKey(R.string.pref_key_open_tabs_count),
+        0,
+    )
+
+    var openPrivateTabsCount by intPreference(
+        appContext.getPreferenceKey(R.string.pref_key_open_private_tabs_count),
         0,
     )
 
@@ -1358,7 +1458,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
 
     var isPullToRefreshEnabledInBrowser by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_website_pull_to_refresh),
-        default = true,
+        default = Config.channel.isNightlyOrDebug,
     )
 
     var isDynamicToolbarEnabled by booleanPreference(
@@ -1548,20 +1648,12 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     /**
-     * Indicates if the Task Continuity enhancements are enabled.
-     */
-    var enableTaskContinuityEnhancements by booleanPreference(
-        key = appContext.getPreferenceKey(R.string.pref_key_enable_task_continuity),
-        default = true,
-    )
-
-    /**
      * Indicates if the Unified Search feature should be visible.
      */
     var showUnifiedSearchFeature by lazyFeatureFlagPreference(
         key = appContext.getPreferenceKey(R.string.pref_key_show_unified_search_2),
         default = { FxNimbus.features.unifiedSearch.value().enabled },
-        featureFlag = FeatureFlags.unifiedSearchFeature,
+        featureFlag = true,
     )
 
     /**
@@ -1578,7 +1670,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var notificationPrePermissionPromptEnabled by lazyFeatureFlagPreference(
         key = appContext.getPreferenceKey(R.string.pref_key_notification_pre_permission_prompt_enabled),
         default = { FxNimbus.features.prePermissionNotificationPrompt.value().enabled },
-        featureFlag = FeatureFlags.notificationPrePermissionPromptEnabled,
+        featureFlag = true,
     )
 
     /**
@@ -1590,20 +1682,57 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     /**
-     * Indicates if juno onboarding feature is enabled.
+     * Returns whether juno onboarding should be shown to the user.
+     *
+     * @param hasUserBeenOnboarded Boolean to indicate whether the user has been onboarded.
+     * @param isLauncherIntent Boolean to indicate whether the app was launched on tapping on the
+     * app icon.
      */
-    var junoOnboardingEnabled by lazyFeatureFlagPreference(
-        key = appContext.getPreferenceKey(R.string.pref_key_juno_onboarding_enabled),
-        default = { FxNimbus.features.junoOnboarding.value().enabled },
-        featureFlag = FeatureFlags.junoOnboardingEnabled,
+    fun shouldShowJunoOnboarding(hasUserBeenOnboarded: Boolean, isLauncherIntent: Boolean): Boolean {
+        return if (!hasUserBeenOnboarded && isLauncherIntent) {
+            FxNimbus.features.junoOnboarding.recordExposure()
+            true
+        } else {
+            false
+        }
+    }
+
+    val feltPrivateBrowsingEnabled: Boolean
+        get() {
+            FxNimbus.features.privateBrowsing.recordExposure()
+            return FxNimbus.features.privateBrowsing.value().feltPrivacyEnabled
+        }
+
+    /**
+     * Indicates if the review quality check feature is enabled by the user.
+     */
+    var isReviewQualityCheckEnabled by booleanPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_is_review_quality_check_enabled),
+        default = false,
     )
 
     /**
-     * Indicates if the juno onboarding has been shown to the user.
+     * Indicates if the review quality check product recommendations option is enabled by the user.
      */
-    var isJunoOnboardingShown by booleanPreference(
-        key = appContext.getPreferenceKey(R.string.pref_key_is_juno_onboarding_shown),
+    var isReviewQualityCheckProductRecommendationsEnabled by booleanPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_is_review_quality_check_product_recommendations_enabled),
         default = false,
+    )
+
+    /**
+     * Indicates if the review quality check CFR should be displayed to the user.
+     */
+    var shouldShowReviewQualityCheckCFR by booleanPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_should_show_review_quality_cfr),
+        default = true,
+    )
+
+    /**
+     * Time in milliseconds since the user first opted in the review quality check feature.
+     */
+    var reviewQualityCheckOptInTimeInMillis by longPreference(
+        appContext.getPreferenceKey(R.string.pref_key_should_show_review_quality_opt_in_time),
+        default = 0L,
     )
 
     /**
@@ -1687,5 +1816,103 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var enableTabsTrayToCompose by booleanPreference(
         key = appContext.getPreferenceKey(R.string.pref_key_enable_tabs_tray_to_compose),
         default = FeatureFlags.composeTabsTray,
+    )
+
+    /**
+     * Indicates if the Compose Top Sites are enabled.
+     */
+    var enableComposeTopSites by booleanPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_enable_compose_top_sites),
+        default = FeatureFlags.composeTopSites,
+    )
+
+    /**
+     * Indicates if the shopping experience feature is enabled.
+     */
+    val enableShoppingExperience by booleanPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_enable_shopping_experience),
+        default = FxNimbus.features.shoppingExperience.value().enabled,
+    )
+
+    /**
+     * Indicates if Firefox translations are enabled.
+     */
+    var enableTranslations by booleanPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_enable_translations),
+        default = false,
+    )
+
+    /**
+     * Adjust Activated User sent
+     */
+    var growthUserActivatedSent by booleanPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_growth_user_activated_sent),
+        default = false,
+    )
+
+    /**
+     * Indicates how many days in the first week user opened the app.
+     */
+    val growthEarlyUseCount = counterPreference(
+        appContext.getPreferenceKey(R.string.pref_key_growth_early_browse_count),
+        maxCount = 3,
+    )
+
+    var growthEarlyUseCountLastIncrement by longPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_growth_early_browse_count_last_increment),
+        default = 0L,
+    )
+
+    /**
+     * Indicates how many days in the first week user searched in the app.
+     */
+    var growthEarlySearchUsed by booleanPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_growth_early_search),
+        default = false,
+    )
+
+    /**
+     * Indicates if the new Search settings UI is enabled.
+     */
+    var enableUnifiedSearchSettingsUI: Boolean = showUnifiedSearchFeature && FeatureFlags.unifiedSearchSettings
+
+    /**
+     * Indicates if hidden engines were restored due to migration to unified search settings UI.
+     * Should be removed once we expect the majority of the users to migrate.
+     * Tracking: https://bugzilla.mozilla.org/show_bug.cgi?id=1850767
+     */
+    var hiddenEnginesRestored: Boolean by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_hidden_engines_restored),
+        default = false,
+    )
+
+    /**
+     * Indicates if Firefox Suggest is enabled.
+     */
+    var enableFxSuggest by lazyFeatureFlagPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_enable_fxsuggest),
+        default = { FxNimbus.features.fxSuggest.value().enabled },
+        featureFlag = FeatureFlags.fxSuggest,
+    )
+
+    /**
+     * Indicates if the user has chosen to show sponsored search suggestions in the awesomebar.
+     * The default value is computed lazily, and based on whether Firefox Suggest is enabled.
+     */
+    var showSponsoredSuggestions by lazyFeatureFlagPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_show_sponsored_suggestions),
+        default = { enableFxSuggest },
+        featureFlag = FeatureFlags.fxSuggest,
+    )
+
+    /**
+     * Indicates if the user has chosen to show search suggestions for web content in the
+     * awesomebar. The default value is computed lazily, and based on whether Firefox Suggest
+     * is enabled.
+     */
+    var showNonSponsoredSuggestions by lazyFeatureFlagPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_show_nonsponsored_suggestions),
+        default = { enableFxSuggest },
+        featureFlag = FeatureFlags.fxSuggest,
     )
 }

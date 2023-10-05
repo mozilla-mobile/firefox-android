@@ -589,7 +589,6 @@ const AVAILABLE_SHIMS = [
     ],
     contentScripts: [
       {
-        cookieStoreId: "firefox-private",
         js: "firebase.js",
         runAt: "document_start",
         matches: [
@@ -687,6 +686,7 @@ const AVAILABLE_SHIMS = [
       ["*://web.powerva.microsoft.com/*", "*://login.microsoftonline.com/*"],
       ["*://teams.microsoft.com/*", "*://login.microsoftonline.com/*"],
       ["*://*.teams.microsoft.us/*", "*://login.microsoftonline.us/*"],
+      ["*://www.msn.com/*", "*://login.microsoftonline.com/*"],
     ],
     contentScripts: [
       {
@@ -695,6 +695,7 @@ const AVAILABLE_SHIMS = [
           "*://web.powerva.microsoft.com/*",
           "*://teams.microsoft.com/*",
           "*://*.teams.microsoft.us/*",
+          "*://www.msn.com/*",
         ],
         runAt: "document_start",
       },
@@ -737,7 +738,7 @@ const AVAILABLE_SHIMS = [
     contentScripts: [
       {
         js: "crave-ca.js",
-        matches: ["*://account.bellmedia.ca/login*"],
+        matches: ["*://account.bellmedia.ca/login*service=crave*"],
         runAt: "document_start",
       },
     ],
@@ -862,9 +863,23 @@ const AVAILABLE_SHIMS = [
     contentScripts: [
       {
         js: "spotify-embed.js",
-        matches: ["*://open.spotify.com/embed/track/*"],
+        matches: ["*://open.spotify.com/embed/*"],
         runAt: "document_start",
         allFrames: true,
+      },
+    ],
+    onlyIfDFPIActive: true,
+  },
+  {
+    id: "tsn.ca",
+    platform: "all",
+    name: "tsn.ca login",
+    bug: "1802340",
+    contentScripts: [
+      {
+        js: "tsn-ca.js",
+        matches: ["*://account.bellmedia.ca/login*service=tsn*"],
+        runAt: "document_start",
       },
     ],
     onlyIfDFPIActive: true,

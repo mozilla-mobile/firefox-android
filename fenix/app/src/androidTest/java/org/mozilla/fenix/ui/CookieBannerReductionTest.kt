@@ -1,6 +1,11 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.ui
 
 import androidx.core.net.toUri
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
@@ -9,16 +14,18 @@ import org.mozilla.fenix.helpers.TestHelper.exitMenu
 import org.mozilla.fenix.helpers.TestHelper.restartApp
 import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.homeScreen
-import org.mozilla.fenix.ui.robots.navigationToolbar
 
 class CookieBannerReductionTest {
     @get:Rule
     val activityTestRule = HomeActivityIntentTestRule.withDefaultSettingsOverrides(skipOnboarding = true)
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1980504
+    // Bug causing flakiness https://bugzilla.mozilla.org/show_bug.cgi?id=1807440
+    @Ignore("Disabled: https://bugzilla.mozilla.org/show_bug.cgi?id=1852803")
     @SmokeTest
     @Test
-    fun verifyCookieBannerReductionTest() {
-        val webSite = "voetbal24.be"
+    fun verifyCookieBannerReductionFunctionalityTest() {
+        val webSite = "startsiden.no"
 
         homeScreen {
         }.openNavigationToolbar {
@@ -27,13 +34,13 @@ class CookieBannerReductionTest {
             verifyCookieBannerExists(exists = true)
         }.openThreeDotMenu {
         }.openSettings {
-            verifySettingsOptionSummary("Cookie Banner Reduction", "Off")
+            verifySettingsOptionSummary("Cookie banner reduction", "Off")
         }.openCookieBannerReductionSubMenu {
             verifyCookieBannerView(isCookieBannerReductionChecked = false)
             clickCookieBannerReductionToggle()
             verifyCheckedCookieBannerReductionToggle(isCookieBannerReductionChecked = true)
         }.goBack {
-            verifySettingsOptionSummary("Cookie Banner Reduction", "On")
+            verifySettingsOptionSummary("Cookie banner reduction", "On")
         }
 
         exitMenu()
@@ -56,55 +63,7 @@ class CookieBannerReductionTest {
         exitMenu()
 
         browserScreen {
-        }.openThreeDotMenu {
-        }.refreshPage {
-            verifyCookieBannerExists(exists = false)
-        }
-    }
-
-    @SmokeTest
-    @Test
-    fun verifyCookieBannerReductionInPrivateBrowsingTest() {
-        val webSite = "voetbal24.be"
-
-        homeScreen {
-        }.togglePrivateBrowsingMode()
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(webSite.toUri()) {
             waitForPageToLoad()
-            verifyCookieBannerExists(exists = true)
-        }.openThreeDotMenu {
-        }.openSettings {
-            verifySettingsOptionSummary("Cookie Banner Reduction", "Off")
-        }.openCookieBannerReductionSubMenu {
-            verifyCookieBannerView(isCookieBannerReductionChecked = false)
-            clickCookieBannerReductionToggle()
-            verifyCheckedCookieBannerReductionToggle(isCookieBannerReductionChecked = true)
-        }.goBack {
-            verifySettingsOptionSummary("Cookie Banner Reduction", "On")
-        }
-
-        exitMenu()
-
-        browserScreen {
-            verifyCookieBannerExists(exists = false)
-        }
-
-        restartApp(activityTestRule)
-
-        homeScreen {
-        }.openTabDrawer {
-        }.openTab("Voetbal24") {
-            verifyCookieBannerExists(exists = false)
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openCookieBannerReductionSubMenu {
-            clickCookieBannerReductionToggle()
-            verifyCheckedCookieBannerReductionToggle(false)
-            exitMenu()
-        }
-        browserScreen {
         }.openThreeDotMenu {
         }.refreshPage {
             verifyCookieBannerExists(exists = false)

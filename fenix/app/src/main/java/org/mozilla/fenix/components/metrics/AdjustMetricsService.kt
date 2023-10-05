@@ -11,6 +11,7 @@ import android.util.Log
 import com.adjust.sdk.Adjust
 import com.adjust.sdk.AdjustConfig
 import com.adjust.sdk.AdjustEvent
+import com.adjust.sdk.Constants.ADJUST_PREINSTALL_SYSTEM_PROPERTY_PATH
 import com.adjust.sdk.LogLevel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -41,17 +42,25 @@ class AdjustMetricsService(
             return
         }
 
+        System.setProperty(ADJUST_PREINSTALL_SYSTEM_PROPERTY_PATH, "/preload/etc/adjust.preinstall")
+
         val config = AdjustConfig(
             application,
             BuildConfig.ADJUST_TOKEN,
             AdjustConfig.ENVIRONMENT_PRODUCTION,
             true,
         )
+        config.setPreinstallTrackingEnabled(true)
 
         val installationPing = FirstSessionPing(application)
 
+        FirstSession.adjustAttributionTimespan.start()
         val timerId = FirstSession.adjustAttributionTime.start()
         config.setOnAttributionChangedListener {
+            if (!installationPing.wasAlreadyTriggered()) {
+                FirstSession.adjustAttributionTimespan.stop()
+            }
+
             FirstSession.adjustAttributionTime.stopAndAccumulate(timerId)
             if (!it.network.isNullOrEmpty()) {
                 application.applicationContext.settings().adjustNetwork =
@@ -80,6 +89,7 @@ class AdjustMetricsService(
     }
 
     override fun stop() {
+        FirstSession.adjustAttributionTimespan.cancel()
         Adjust.setEnabled(false)
         Adjust.gdprForgetMe(application.applicationContext)
     }
@@ -88,9 +98,13 @@ class AdjustMetricsService(
     override fun track(event: Event) {
         CoroutineScope(dispatcher).launch {
             try {
-                if (event is Event.GrowthData && storage.shouldTrack(event)) {
-                    Adjust.trackEvent(AdjustEvent(event.tokenName))
-                    storage.updateSentState(event)
+                if (event is Event.GrowthData) {
+                    if (storage.shouldTrack(event)) {
+                        Adjust.trackEvent(AdjustEvent(event.tokenName))
+                        storage.updateSentState(event)
+                    } else {
+                        storage.updatePersistentState(event)
+                    }
                 }
             } catch (e: Exception) {
                 crashReporter.submitCaughtException(e)

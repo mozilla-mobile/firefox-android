@@ -17,13 +17,17 @@ import androidx.core.net.toUri
 import androidx.fragment.app.FragmentManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.mapNotNull
 import mozilla.components.browser.state.selector.findTabOrCustomTabOrSelectedTab
 import mozilla.components.browser.state.state.SessionState
 import mozilla.components.browser.state.state.content.DownloadState
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.feature.downloads.DownloadDialogFragment.Companion.FRAGMENT_TAG
+import mozilla.components.feature.downloads.dialog.DeniedPermissionDialogFragment
 import mozilla.components.feature.downloads.ext.realFilenameOrGuessed
+import mozilla.components.feature.downloads.facts.emitPromptDismissedFact
+import mozilla.components.feature.downloads.facts.emitPromptDisplayedFact
 import mozilla.components.feature.downloads.manager.AndroidDownloadManager
 import mozilla.components.feature.downloads.manager.DownloadManager
 import mozilla.components.feature.downloads.manager.noop
@@ -31,14 +35,12 @@ import mozilla.components.feature.downloads.manager.onDownloadStopped
 import mozilla.components.feature.downloads.ui.DownloadAppChooserDialog
 import mozilla.components.feature.downloads.ui.DownloaderApp
 import mozilla.components.lib.state.ext.flowScoped
-import mozilla.components.support.base.dialog.DeniedPermissionDialogFragment
 import mozilla.components.support.base.feature.LifecycleAwareFeature
 import mozilla.components.support.base.feature.OnNeedToRequestPermissions
 import mozilla.components.support.base.feature.PermissionsFeature
 import mozilla.components.support.ktx.android.content.appName
 import mozilla.components.support.ktx.android.content.isPermissionGranted
 import mozilla.components.support.ktx.kotlin.isSameOriginAs
-import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import mozilla.components.support.utils.Browsers
 
 /**
@@ -147,7 +149,7 @@ class DownloadsFeature(
         // This prevents prompts from the previous page from covering content.
         dismissPromptScope = store.flowScoped { flow ->
             flow.mapNotNull { state -> state.findTabOrCustomTabOrSelectedTab(tabId) }
-                .ifChanged { it.content.url }
+                .distinctUntilChangedBy { it.content.url }
                 .collect {
                     val currentHost = previousTab?.content?.url
                     val newHost = it.content.url
@@ -168,7 +170,7 @@ class DownloadsFeature(
 
         scope = store.flowScoped { flow ->
             flow.mapNotNull { state -> state.findTabOrCustomTabOrSelectedTab(tabId) }
-                .ifChanged { it.content.download }
+                .distinctUntilChangedBy { it.content.download }
                 .collect { state ->
                     state.content.download?.let { downloadState ->
                         previousTab = state
@@ -236,10 +238,12 @@ class DownloadsFeature(
                         )
                         false
                     }
+
                     fragmentManager != null && !download.skipConfirmation -> {
                         showDownloadDialog(tab, download)
                         false
                     }
+
                     else -> {
                         useCases.consumeDownload(tab.id, download.id)
                         startDownload(download)
@@ -320,6 +324,7 @@ class DownloadsFeature(
         }
 
         if (!isAlreadyADownloadDialog() && fragmentManager != null && !fragmentManager.isDestroyed) {
+            emitPromptDisplayedFact()
             dialog.showNow(fragmentManager, FRAGMENT_TAG)
         }
     }
@@ -343,10 +348,12 @@ class DownloadsFeature(
         }
 
         appChooserDialog.onDismiss = {
+            emitPromptDismissedFact()
             useCases.cancelDownloadRequest.invoke(tab.id, download.id)
         }
 
         if (!isAlreadyAppDownloaderDialog() && fragmentManager != null && !fragmentManager.isDestroyed) {
+            emitPromptDisplayedFact()
             appChooserDialog.showNow(fragmentManager, DownloadAppChooserDialog.FRAGMENT_TAG)
         }
     }

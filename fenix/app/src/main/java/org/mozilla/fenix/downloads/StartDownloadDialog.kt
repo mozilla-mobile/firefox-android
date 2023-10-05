@@ -17,25 +17,24 @@ import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.annotation.VisibleForTesting
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.children
 import androidx.viewbinding.ViewBinding
+import mozilla.components.concept.base.crash.Breadcrumb
 import mozilla.components.feature.downloads.databinding.MozacDownloaderChooserPromptBinding
 import mozilla.components.feature.downloads.toMegabyteOrKilobyteString
 import mozilla.components.feature.downloads.ui.DownloaderApp
 import mozilla.components.feature.downloads.ui.DownloaderAppAdapter
-import mozilla.components.support.ktx.android.view.setNavigationBarTheme
-import mozilla.components.support.ktx.android.view.setStatusBarTheme
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.DialogScrimBinding
 import org.mozilla.fenix.databinding.StartDownloadDialogLayoutBinding
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 
 /**
  * Parent of all download views that can mimic a modal [Dialog].
  *
- * @param activity The [Activity] in which the dialog will be shown.
+ * @property activity The [Activity] in which the dialog will be shown.
  * Used to update the activity [Window] to best mimic a modal dialog.
  */
 abstract class StartDownloadDialog(
@@ -51,18 +50,15 @@ abstract class StartDownloadDialog(
     @VisibleForTesting
     internal var onDismiss: () -> Unit = {}
 
-    @VisibleForTesting
-    internal var initialNavigationBarColor = activity.window.navigationBarColor
-
-    @VisibleForTesting
-    internal var initialStatusBarColor = activity.window.statusBarColor
-
     /**
      * Show the download view.
      *
      * @param container The [ViewGroup] in which the download view will be inflated.
      */
     fun show(container: ViewGroup): StartDownloadDialog {
+        activity.components.analytics.crashReporter.recordCrashBreadcrumb(
+            Breadcrumb("StartDownloadDialog show"),
+        )
         this.container = container
 
         val dialogParent = container.parent as? ViewGroup
@@ -89,10 +85,6 @@ abstract class StartDownloadDialog(
             elevation = activity.resources.getDimension(R.dimen.browser_fragment_download_dialog_elevation)
             visibility = View.VISIBLE
         }
-
-        activity.window.setNavigationBarTheme(ContextCompat.getColor(activity, R.color.material_scrim_color))
-        activity.window.setStatusBarTheme(ContextCompat.getColor(activity, R.color.material_scrim_color))
-
         return this
     }
 
@@ -102,6 +94,9 @@ abstract class StartDownloadDialog(
      * @param callback The callback for when the view is dismissed.
      */
     fun onDismiss(callback: () -> Unit): StartDownloadDialog {
+        activity.components.analytics.crashReporter.recordCrashBreadcrumb(
+            Breadcrumb("StartDownloadDialog onDismiss"),
+        )
         this.onDismiss = callback
         return this
     }
@@ -120,9 +115,6 @@ abstract class StartDownloadDialog(
         enableSiblingsAccessibility(container?.parent as? ViewGroup)
 
         container?.visibility = View.GONE
-
-        activity.window.setNavigationBarTheme(initialNavigationBarColor)
-        activity.window.setStatusBarTheme(initialStatusBarColor)
 
         onDismiss()
     }
@@ -161,13 +153,13 @@ abstract class StartDownloadDialog(
 /**
  * A download view mimicking a modal dialog that allows the user to download a file with the current application.
  *
- * @param activity The [Activity] in which the dialog will be shown.
+ * @property activity The [Activity] in which the dialog will be shown.
  * Used to update the activity [Window] to best mimic a modal dialog.
- * @param filename Name of the file to be downloaded. It wil be shown without any modification.
- * @param contentSize Size of the file to be downloaded expressed as a number of bytes.
+ * @property filename Name of the file to be downloaded. It wil be shown without any modification.
+ * @property contentSize Size of the file to be downloaded expressed as a number of bytes.
  * It will automatically be parsed to the appropriate kilobyte or megabyte value before being shown.
- * @param positiveButtonAction Callback for when the user interacts with the dialog to start the download.
- * @param negativeButtonAction Callback for when the user interacts with the dialog to dismiss it.
+ * @property positiveButtonAction Callback for when the user interacts with the dialog to start the download.
+ * @property negativeButtonAction Callback for when the user interacts with the dialog to dismiss it.
  */
 class FirstPartyDownloadDialog(
     private val activity: Activity,
@@ -220,11 +212,11 @@ class FirstPartyDownloadDialog(
  * A download view mimicking a modal dialog that presents the user with a list of all apps
  * that can handle the download request.
  *
- * @param activity The [Activity] in which the dialog will be shown.
+ * @property activity The [Activity] in which the dialog will be shown.
  * Used to update the activity [Window] to best mimic a modal dialog.
- * @param downloaderApps List of all applications that can handle the download request.
- * @param onAppSelected Callback for when the user chooses a specific application to handle the download request.
- * @param negativeButtonAction Callback for when the user interacts with the dialog to dismiss it.
+ * @property downloaderApps List of all applications that can handle the download request.
+ * @property onAppSelected Callback for when the user chooses a specific application to handle the download request.
+ * @property negativeButtonAction Callback for when the user interacts with the dialog to dismiss it.
  */
 class ThirdPartyDownloadDialog(
     private val activity: Activity,

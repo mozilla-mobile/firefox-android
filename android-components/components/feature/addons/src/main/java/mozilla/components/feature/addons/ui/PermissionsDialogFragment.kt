@@ -33,6 +33,8 @@ private const val KEY_DIALOG_WIDTH_MATCH_PARENT = "KEY_DIALOG_WIDTH_MATCH_PARENT
 private const val KEY_POSITIVE_BUTTON_BACKGROUND_COLOR = "KEY_POSITIVE_BUTTON_BACKGROUND_COLOR"
 private const val KEY_POSITIVE_BUTTON_TEXT_COLOR = "KEY_POSITIVE_BUTTON_TEXT_COLOR"
 private const val KEY_POSITIVE_BUTTON_RADIUS = "KEY_POSITIVE_BUTTON_RADIUS"
+private const val KEY_FOR_OPTIONAL_PERMISSIONS = "KEY_FOR_OPTIONAL_PERMISSIONS"
+internal const val KEY_OPTIONAL_PERMISSIONS = "KEY_OPTIONAL_PERMISSIONS"
 private const val DEFAULT_VALUE = Int.MAX_VALUE
 
 /**
@@ -82,6 +84,16 @@ class PermissionsDialogFragment : AppCompatDialogFragment() {
                 DEFAULT_VALUE,
             )
 
+    /**
+     * This flag is used to adjust the permissions prompt for optional permissions (instead of asking
+     * users to grant the required permissions at install time, which is the default).
+     */
+    internal val forOptionalPermissions: Boolean
+        get() =
+            safeArguments.getBoolean(KEY_FOR_OPTIONAL_PERMISSIONS)
+
+    internal val optionalPermissions get() = requireNotNull(safeArguments.getStringArray(KEY_OPTIONAL_PERMISSIONS))
+
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val sheetDialog = Dialog(requireContext())
         sheetDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -106,8 +118,8 @@ class PermissionsDialogFragment : AppCompatDialogFragment() {
         return sheetDialog
     }
 
-    override fun onDismiss(dialog: DialogInterface) {
-        super.onDismiss(dialog)
+    override fun onCancel(dialog: DialogInterface) {
+        super.onCancel(dialog)
         onNegativeButtonClicked?.invoke()
     }
 
@@ -133,15 +145,23 @@ class PermissionsDialogFragment : AppCompatDialogFragment() {
             false,
         )
 
-        rootView.findViewById<TextView>(R.id.title).text =
-            requireContext().getString(
-                R.string.mozac_feature_addons_permissions_dialog_title,
-                addon.translateName(requireContext()),
-            )
+        rootView.findViewById<TextView>(R.id.title).text = requireContext().getString(
+            if (forOptionalPermissions) {
+                R.string.mozac_feature_addons_optional_permissions_dialog_title
+            } else {
+                R.string.mozac_feature_addons_permissions_dialog_title
+            },
+            addon.translateName(requireContext()),
+        )
         rootView.findViewById<TextView>(R.id.permissions).text = buildPermissionsText()
 
         val positiveButton = rootView.findViewById<Button>(R.id.allow_button)
         val negativeButton = rootView.findViewById<Button>(R.id.deny_button)
+
+        if (forOptionalPermissions) {
+            positiveButton.text = requireContext().getString(R.string.mozac_feature_addons_permissions_dialog_allow)
+            negativeButton.text = requireContext().getString(R.string.mozac_feature_addons_permissions_dialog_deny)
+        }
 
         positiveButton.setOnClickListener {
             onPositiveButtonClicked?.invoke(addon)
@@ -182,14 +202,26 @@ class PermissionsDialogFragment : AppCompatDialogFragment() {
 
     @VisibleForTesting
     internal fun buildPermissionsText(): String {
-        var permissionsText =
-            getString(R.string.mozac_feature_addons_permissions_dialog_subtitle) + "\n\n"
-        val permissions = addon.translatePermissions(requireContext())
-
-        permissions.forEachIndexed { index, item ->
-            val brakeLine = if (index + 1 != permissions.size) "\n\n" else ""
-            permissionsText += "• $item $brakeLine"
+        var permissionsText = ""
+        val permissions = if (forOptionalPermissions) {
+            Addon.localizePermissions(optionalPermissions.asList(), requireContext())
+        } else {
+            addon.translatePermissions(requireContext())
         }
+
+        if (permissions.isNotEmpty()) {
+            permissionsText += if (forOptionalPermissions) {
+                getString(R.string.mozac_feature_addons_optional_permissions_dialog_subtitle)
+            } else {
+                getString(R.string.mozac_feature_addons_permissions_dialog_subtitle)
+            }
+            permissionsText += "\n\n"
+            permissions.forEachIndexed { index, item ->
+                val brakeLine = if (index + 1 != permissions.size) "\n\n" else ""
+                permissionsText += "• $item $brakeLine"
+            }
+        }
+
         return permissionsText
     }
 
@@ -198,12 +230,18 @@ class PermissionsDialogFragment : AppCompatDialogFragment() {
         /**
          * Returns a new instance of [PermissionsDialogFragment].
          * @param addon The addon to show in the dialog.
+         * @param forOptionalPermissions Whether to show a permission dialog for optional permissions
+         * requested by the extension.
+         * @param optionalPermissions The optional permissions requested by the extension. Only used
+         * when [forOptionalPermissions] is true.
          * @param promptsStyling Styling properties for the dialog.
          * @param onPositiveButtonClicked A lambda called when the allow button is clicked.
          * @param onNegativeButtonClicked A lambda called when the deny button is clicked.
          */
         fun newInstance(
             addon: Addon,
+            forOptionalPermissions: Boolean = false,
+            optionalPermissions: List<String> = emptyList(),
             promptsStyling: PromptsStyling? = PromptsStyling(
                 gravity = Gravity.BOTTOM,
                 shouldWidthMatchParent = true,
@@ -216,6 +254,8 @@ class PermissionsDialogFragment : AppCompatDialogFragment() {
 
             arguments.apply {
                 putParcelable(KEY_ADDON, addon)
+                putBoolean(KEY_FOR_OPTIONAL_PERMISSIONS, forOptionalPermissions)
+                putStringArray(KEY_OPTIONAL_PERMISSIONS, optionalPermissions.toTypedArray())
 
                 promptsStyling?.gravity?.apply {
                     putInt(KEY_DIALOG_GRAVITY, this)

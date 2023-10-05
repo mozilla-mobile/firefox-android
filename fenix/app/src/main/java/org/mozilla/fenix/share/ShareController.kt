@@ -27,6 +27,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import mozilla.components.concept.engine.prompt.ShareData
 import mozilla.components.concept.sync.Device
+import mozilla.components.concept.sync.FxAEntryPoint
 import mozilla.components.concept.sync.TabData
 import mozilla.components.feature.accounts.push.SendTabUseCases
 import mozilla.components.feature.session.SessionUseCases
@@ -37,6 +38,7 @@ import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.SyncAccount
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
+import org.mozilla.fenix.components.accounts.FenixFxAEntryPoint
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.share.listadapters.AppShareOption
 
@@ -59,6 +61,11 @@ interface ShareController {
     fun handleShareToAllDevices(devices: List<Device>)
     fun handleSignIn()
 
+    /**
+     * Handles when a print action was requested.
+     */
+    fun handlePrint(tabId: String?)
+
     enum class Result {
         DISMISSED, SHARE_ERROR, SUCCESS
     }
@@ -67,13 +74,19 @@ interface ShareController {
 /**
  * Default behavior of [ShareController]. Other implementations are possible.
  *
- * @param context [Context] used for various Android interactions.
- * @param shareSubject desired message subject used when sharing through 3rd party apps, like email clients.
- * @param shareData the list of [ShareData]s that can be shared.
- * @param sendTabUseCases instance of [SendTabUseCases] which allows sending tabs to account devices.
- * @param snackbar - instance of [FenixSnackbar] for displaying styled snackbars
- * @param navController - [NavController] used for navigation.
- * @param dismiss - callback signalling sharing can be closed.
+ * @property context [Context] used for various Android interactions.
+ * @property shareSubject Desired message subject used when sharing through 3rd party apps, like email clients.
+ * @property shareData The list of [ShareData]s that can be shared.
+ * @property sendTabUseCases Instance of [SendTabUseCases] which allows sending tabs to account devices.
+ * @property saveToPdfUseCase Instance of [SessionUseCases.SaveToPdfUseCase] to generate a PDF of a given tab.
+ * @property printUseCase Instance of [SessionUseCases.PrintContentUseCase] to print content of a given tab.
+ * @property snackbar Instance of [FenixSnackbar] for displaying styled snackbars.
+ * @property navController [NavController] used for navigation.
+ * @property recentAppsStorage Instance of [RecentAppsStorage] for storing and retrieving the most recent apps.
+ * @property viewLifecycleScope [CoroutineScope] used for retrieving the most recent apps in the background.
+ * @property dispatcher Dispatcher used to execute suspending functions.
+ * @property fxaEntrypoint The entrypoint if we need to authenticate, it will be reported in telemetry.
+ * @property dismiss Callback signalling sharing can be closed.
  */
 @Suppress("TooManyFunctions", "LongParameterList")
 class DefaultShareController(
@@ -82,16 +95,20 @@ class DefaultShareController(
     private val shareData: List<ShareData>,
     private val sendTabUseCases: SendTabUseCases,
     private val saveToPdfUseCase: SessionUseCases.SaveToPdfUseCase,
+    private val printUseCase: SessionUseCases.PrintContentUseCase,
     private val snackbar: FenixSnackbar,
     private val navController: NavController,
     private val recentAppsStorage: RecentAppsStorage,
     private val viewLifecycleScope: CoroutineScope,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val fxaEntrypoint: FxAEntryPoint = FenixFxAEntryPoint.ShareMenu,
     private val dismiss: (ShareController.Result) -> Unit,
 ) : ShareController {
 
     override fun handleReauth() {
-        val directions = ShareFragmentDirections.actionGlobalAccountProblemFragment()
+        val directions = ShareFragmentDirections.actionGlobalAccountProblemFragment(
+            entrypoint = fxaEntrypoint as FenixFxAEntryPoint,
+        )
         navController.nav(R.id.shareFragment, directions)
         dismiss(ShareController.Result.DISMISSED)
     }
@@ -140,9 +157,14 @@ class DefaultShareController(
     }
 
     override fun handleSaveToPDF(tabId: String?) {
-        Events.saveToPdfTapped.record(NoExtras())
         handleShareClosed()
         saveToPdfUseCase.invoke(tabId)
+    }
+
+    override fun handlePrint(tabId: String?) {
+        Events.shareMenuAction.record(Events.ShareMenuActionExtra("print"))
+        handleShareClosed()
+        printUseCase.invoke(tabId)
     }
 
     override fun handleAddNewDevice() {
@@ -161,8 +183,10 @@ class DefaultShareController(
 
     override fun handleSignIn() {
         SyncAccount.signInToSendTab.record(NoExtras())
-        val directions =
-            ShareFragmentDirections.actionGlobalTurnOnSync(padSnackbar = true)
+        val directions = ShareFragmentDirections.actionGlobalTurnOnSync(
+            padSnackbar = true,
+            entrypoint = fxaEntrypoint as FenixFxAEntryPoint,
+        )
         navController.nav(R.id.shareFragment, directions)
         dismiss(ShareController.Result.DISMISSED)
     }

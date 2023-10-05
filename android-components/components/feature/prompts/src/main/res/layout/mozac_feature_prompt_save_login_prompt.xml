@@ -21,7 +21,7 @@
         android:layout_height="24dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/mozac_ic_globe"
+        app:srcCompat="@drawable/mozac_ic_globe_24"
         android:importantForAccessibility="no" />
 
     <androidx.appcompat.widget.AppCompatTextView
@@ -48,7 +48,7 @@
         android:gravity="center_vertical"
         android:textColor="?android:textColorPrimary"
         android:textSize="16sp"
-        app:drawableStartCompat="@drawable/mozac_ic_login"
+        app:drawableStartCompat="@drawable/mozac_ic_login_24"
         app:drawableTint="?android:textColorPrimary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/host_name"
@@ -115,6 +115,7 @@
         android:background="?android:attr/selectableItemBackground"
         android:letterSpacing="0"
         android:text="@string/mozac_feature_prompt_never_save"
+        android:textAlignment="center"
         android:textAllCaps="false"
         android:textColor="@color/button_state_list"
         android:textSize="14sp"
@@ -130,6 +131,7 @@
         android:layout_alignParentEnd="true"
         android:layout_marginTop="16dp"
         android:text="@string/mozac_feature_prompt_save_confirmation"
+        android:textAlignment="center"
         android:textAllCaps="false"
         android:textColor="?android:windowBackground"
         android:textSize="14sp"

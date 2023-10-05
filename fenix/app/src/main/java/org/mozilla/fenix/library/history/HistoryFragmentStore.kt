@@ -9,6 +9,7 @@ import kotlinx.parcelize.Parcelize
 import mozilla.components.concept.storage.HistoryMetadata
 import mozilla.components.concept.storage.HistoryMetadataKey
 import mozilla.components.lib.state.Action
+import mozilla.components.lib.state.Middleware
 import mozilla.components.lib.state.State
 import mozilla.components.lib.state.Store
 import mozilla.components.support.ktx.kotlin.tryGetHostFromUrl
@@ -110,8 +111,11 @@ fun HistoryMetadata.toHistoryMetadata(position: Int): History.Metadata {
 /**
  * The [Store] for holding the [HistoryFragmentState] and applying [HistoryFragmentAction]s.
  */
-class HistoryFragmentStore(initialState: HistoryFragmentState) :
-    Store<HistoryFragmentState, HistoryFragmentAction>(initialState, ::historyStateReducer)
+class HistoryFragmentStore(
+    initialState: HistoryFragmentState,
+    middleware: List<Middleware<HistoryFragmentState, HistoryFragmentAction>> = listOf(),
+) :
+    Store<HistoryFragmentState, HistoryFragmentAction>(initialState, ::historyStateReducer, middleware)
 
 /**
  * Actions to dispatch through the `HistoryStore` to modify `HistoryState` through the reducer.
@@ -120,6 +124,45 @@ sealed class HistoryFragmentAction : Action {
     object ExitEditMode : HistoryFragmentAction()
     data class AddItemForRemoval(val item: History) : HistoryFragmentAction()
     data class RemoveItemForRemoval(val item: History) : HistoryFragmentAction()
+
+    /**
+     * A [History] item has been clicked by a user.
+     *
+     * @property item The history item clicked.
+     */
+    data class HistoryItemClicked(val item: History) : HistoryFragmentAction()
+
+    /**
+     * A [History] item has been long-clicked by a user.
+     *
+     * @property item The history item long-clicked.
+     */
+    data class HistoryItemLongClicked(val item: History) : HistoryFragmentAction()
+
+    /**
+     * The user has indicated that a time range of history items should be deleted.
+     */
+    data class DeleteTimeRange(val timeFrame: RemoveTimeFrame?) : HistoryFragmentAction()
+
+    /**
+     * The user has indicated that a number of history items should be deleted.
+     */
+    data class DeleteItems(val items: Set<History>) : HistoryFragmentAction()
+
+    /**
+     * The user has clicked to enter the Recently Closed fragment.
+     */
+    object EnterRecentlyClosed : HistoryFragmentAction()
+
+    /**
+     * A back press event has been dispatched.
+     */
+    object BackPressed : HistoryFragmentAction()
+
+    /**
+     * The search menu item has been clicked.
+     */
+    object SearchClicked : HistoryFragmentAction()
 
     /**
      * Updates the empty state of [org.mozilla.fenix.library.history.HistoryView].
@@ -139,9 +182,14 @@ sealed class HistoryFragmentAction : Action {
 }
 
 /**
- * The state for the History Screen
+ * The state for the History Screen.
+ *
  * @property items List of History to display
  * @property mode Current Mode of History
+ * @property pendingDeletionItems The set of [PendingDeletionHistory] marked for removal.
+ * @property isEmpty Whether or not the screen is empty.
+ * @property isDeletingItems Whether or not the history items are currently in the process of being
+ * deleted.
  */
 data class HistoryFragmentState(
     val items: List<History>,
@@ -156,6 +204,16 @@ data class HistoryFragmentState(
         object Normal : Mode()
         object Syncing : Mode()
         data class Editing(override val selectedItems: Set<History>) : Mode()
+    }
+
+    companion object {
+        val initial = HistoryFragmentState(
+            items = listOf(),
+            mode = Mode.Normal,
+            pendingDeletionItems = emptySet(),
+            isEmpty = false,
+            isDeletingItems = false,
+        )
     }
 }
 
@@ -188,5 +246,52 @@ private fun historyStateReducer(
         is HistoryFragmentAction.UpdatePendingDeletionItems -> state.copy(
             pendingDeletionItems = action.pendingDeletionItems,
         )
+        is HistoryFragmentAction.HistoryItemClicked -> {
+            if (state.mode.selectedItems.isEmpty() || state.mode is HistoryFragmentState.Mode.Syncing) {
+                state
+            } else {
+                if (state.mode.selectedItems.contains(action.item)) {
+                    val selected = state.mode.selectedItems - action.item
+                    state.copy(
+                        mode = if (selected.isEmpty()) {
+                            HistoryFragmentState.Mode.Normal
+                        } else {
+                            HistoryFragmentState.Mode.Editing(selected)
+                        },
+                    )
+                } else {
+                    state.copy(
+                        mode = HistoryFragmentState.Mode.Editing(
+                            state.mode.selectedItems + action.item,
+                        ),
+                    )
+                }
+            }
+        }
+        is HistoryFragmentAction.HistoryItemLongClicked -> {
+            if (state.mode == HistoryFragmentState.Mode.Syncing) {
+                state
+            } else {
+                state.copy(
+                    mode = HistoryFragmentState.Mode.Editing(
+                        state.mode.selectedItems + action.item,
+                    ),
+                )
+            }
+        }
+        is HistoryFragmentAction.BackPressed -> {
+            if (state.mode is HistoryFragmentState.Mode.Editing) {
+                state.copy(mode = HistoryFragmentState.Mode.Normal)
+            } else {
+                state
+            }
+        }
+        // For deletion actions: the item list is handled through storage.
+        // Updates from storage are dispatched directly to the view.
+        is HistoryFragmentAction.DeleteItems,
+        is HistoryFragmentAction.DeleteTimeRange,
+        is HistoryFragmentAction.EnterRecentlyClosed,
+        is HistoryFragmentAction.SearchClicked,
+        -> state
     }
 }

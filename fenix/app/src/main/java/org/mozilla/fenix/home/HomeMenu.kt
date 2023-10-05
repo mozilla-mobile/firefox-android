@@ -24,7 +24,9 @@ import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.support.ktx.android.content.getColorFromAttr
+import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.Config
+import org.mozilla.fenix.GleanMetrics.AppMenu
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.accounts.AccountState
 import org.mozilla.fenix.components.accounts.FenixAccountManager
@@ -91,7 +93,7 @@ class HomeMenu(
     private val quitItem by lazy {
         BrowserMenuImageText(
             context.getString(R.string.delete_browsing_data_on_quit_action),
-            R.drawable.mozac_ic_quit,
+            R.drawable.mozac_ic_cross_circle_24,
             primaryTextColor,
         ) {
             onItemTapped.invoke(Item.Quit)
@@ -169,7 +171,7 @@ class HomeMenu(
 
         val helpItem = BrowserMenuImageText(
             context.getString(R.string.browser_menu_help),
-            R.drawable.mozac_ic_help,
+            R.drawable.mozac_ic_help_circle_24,
             primaryTextColor,
         ) {
             onItemTapped.invoke(Item.Help)
@@ -181,13 +183,14 @@ class HomeMenu(
             primaryTextColor,
         ) {
             onItemTapped.invoke(Item.CustomizeHome)
+            AppMenu.customizeHomepage.record(NoExtras())
         }
 
         // Use nimbus to set the icon and title.
         val nimbusValidation = FxNimbus.features.nimbusValidation.value()
         val settingsItem = BrowserMenuImageText(
             nimbusValidation.settingsTitle,
-            R.drawable.mozac_ic_settings,
+            R.drawable.mozac_ic_settings_24,
             primaryTextColor,
         ) {
             onItemTapped.invoke(Item.Settings)
@@ -204,12 +207,18 @@ class HomeMenu(
                 null
             }
 
+        // Since syncSignIn & accountAuth items take us to the same place -> we won't show them in the same time
+        // We will show syncSignIn item when the accountAuth item:
+        //    1. is not needed or
+        //    2. it is needed, but the account manager is not available yet
+        val syncSignInMenuItem = if (accountAuthItem == null) syncSignInMenuItem() else null
+
         val menuItems = listOfNotNull(
             bookmarksItem,
             historyItem,
             downloadsItem,
             extensionsItem,
-            syncSignInMenuItem(),
+            syncSignInMenuItem,
             accountAuthItem,
             if (Config.channel.isMozillaOnline) manageAccountAndDevicesItem else null,
             BrowserMenuDivider(),

@@ -4,7 +4,6 @@
 
 package mozilla.components.support.webextensions
 
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import mozilla.components.browser.state.action.ContentAction
 import mozilla.components.browser.state.action.CustomTabListAction
 import mozilla.components.browser.state.action.EngineAction
@@ -16,6 +15,7 @@ import mozilla.components.browser.state.state.SessionState
 import mozilla.components.browser.state.state.WebExtensionState
 import mozilla.components.browser.state.state.createCustomTab
 import mozilla.components.browser.state.state.createTab
+import mozilla.components.browser.state.state.extension.WebExtensionPromptRequest
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.Engine
 import mozilla.components.concept.engine.EngineSession
@@ -25,6 +25,7 @@ import mozilla.components.concept.engine.webextension.Metadata
 import mozilla.components.concept.engine.webextension.TabHandler
 import mozilla.components.concept.engine.webextension.WebExtension
 import mozilla.components.concept.engine.webextension.WebExtensionDelegate
+import mozilla.components.concept.engine.webextension.WebExtensionInstallException
 import mozilla.components.support.base.Component
 import mozilla.components.support.base.facts.processor.CollectionProcessor
 import mozilla.components.support.test.any
@@ -46,7 +47,6 @@ import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.mockito.Mockito.never
 import org.mockito.Mockito.reset
 import org.mockito.Mockito.spy
@@ -54,7 +54,6 @@ import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import mozilla.components.support.base.facts.Action as FactsAction
 
-@RunWith(AndroidJUnit4::class)
 class WebExtensionSupportTest {
 
     @get:Rule
@@ -387,6 +386,7 @@ class WebExtensionSupportTest {
         whenever(ext.id).thenReturn("extensionId")
         whenever(ext.url).thenReturn("url")
         whenever(ext.supportActions).thenReturn(true)
+        whenever(ext.isBuiltIn()).thenReturn(false)
 
         val delegateCaptor = argumentCaptor<WebExtensionDelegate>()
         WebExtensionSupport.initialize(engine, store)
@@ -397,6 +397,11 @@ class WebExtensionSupportTest {
         verify(store).dispatch(
             WebExtensionAction.InstallWebExtensionAction(
                 WebExtensionState(ext.id, ext.url, ext.getMetadata()?.name, ext.isEnabled()),
+            ),
+        )
+        verify(store).dispatch(
+            WebExtensionAction.UpdatePromptRequestWebExtensionAction(
+                WebExtensionPromptRequest.AfterInstallation.PostInstallation(ext),
             ),
         )
         assertEquals(ext, WebExtensionSupport.installedExtensions[ext.id])
@@ -415,13 +420,13 @@ class WebExtensionSupportTest {
         whenever(ext.hasActionHandler(engineSession)).thenReturn(true)
         whenever(ext.hasTabHandler(engineSession)).thenReturn(true)
 
-        store.dispatch(ContentAction.UpdateUrlAction(sessionId = "1", url = "https://www.firefox.com")).joinBlocking()
-        verify(ext, times(1)).registerActionHandler(eq(engineSession), actionHandlerCaptor.capture())
-        verify(ext, times(1)).registerTabHandler(eq(engineSession), tabHandlerCaptor.capture())
-
         actionHandlerCaptor.value.onBrowserAction(ext, engineSession, mock())
         verify(store, times(3)).dispatch(webExtensionActionCaptor.capture())
         assertEquals(ext.id, (webExtensionActionCaptor.allValues.last() as WebExtensionAction.UpdateTabBrowserAction).extensionId)
+
+        store.dispatch(ContentAction.UpdateUrlAction(sessionId = "1", url = "https://www.firefox.com")).joinBlocking()
+        verify(ext, times(1)).registerActionHandler(eq(engineSession), actionHandlerCaptor.capture())
+        verify(ext, times(1)).registerTabHandler(eq(engineSession), tabHandlerCaptor.capture())
 
         reset(store)
 
@@ -437,13 +442,20 @@ class WebExtensionSupportTest {
         val store = spy(BrowserStore())
         val engine: Engine = mock()
         val ext: WebExtension = mock()
+        val onPermissionsGranted: ((Boolean) -> Unit) = mock()
 
         val delegateCaptor = argumentCaptor<WebExtensionDelegate>()
         WebExtensionSupport.initialize(engine, store)
         verify(engine).registerWebExtensionDelegate(delegateCaptor.capture())
 
         // Verify they we confirm the permission request
-        assertTrue(delegateCaptor.value.onInstallPermissionRequest(ext))
+        delegateCaptor.value.onInstallPermissionRequest(ext, onPermissionsGranted)
+
+        verify(store).dispatch(
+            WebExtensionAction.UpdatePromptRequestWebExtensionAction(
+                WebExtensionPromptRequest.AfterInstallation.Permissions.Required(ext, onPermissionsGranted),
+            ),
+        )
     }
 
     @Test
@@ -472,6 +484,54 @@ class WebExtensionSupportTest {
         delegateCaptor.value.onUninstalled(ext)
         verify(store).dispatch(WebExtensionAction.UninstallWebExtensionAction(ext.id))
         assertNull(WebExtensionSupport.installedExtensions[ext.id])
+    }
+
+    @Test
+    fun `GIVEN BuiltIn extension WHEN calling onInstalled THEN do not show the PostInstallation prompt`() {
+        val store = spy(BrowserStore())
+
+        val engine: Engine = mock()
+        val ext: WebExtension = mock()
+        whenever(ext.id).thenReturn("extensionId")
+        whenever(ext.url).thenReturn("url")
+        whenever(ext.supportActions).thenReturn(true)
+        whenever(ext.isBuiltIn()).thenReturn(true)
+
+        val delegateCaptor = argumentCaptor<WebExtensionDelegate>()
+        WebExtensionSupport.initialize(engine, store)
+        verify(engine).registerWebExtensionDelegate(delegateCaptor.capture())
+
+        delegateCaptor.value.onInstalled(ext)
+        verify(store, times(0)).dispatch(
+            WebExtensionAction.UpdatePromptRequestWebExtensionAction(
+                WebExtensionPromptRequest.AfterInstallation.PostInstallation(ext),
+            ),
+        )
+    }
+
+    @Test
+    fun `GIVEN extension WHEN calling onInstallationFailedRequest THEN show the installation prompt error`() {
+        val store = spy(BrowserStore())
+        val engine: Engine = mock()
+        val ext: WebExtension = mock()
+        val exception = WebExtensionInstallException.Blocklisted(throwable = Exception())
+
+        whenever(ext.id).thenReturn("extensionId")
+        whenever(ext.url).thenReturn("url")
+        whenever(ext.supportActions).thenReturn(true)
+        whenever(ext.isBuiltIn()).thenReturn(false)
+
+        val delegateCaptor = argumentCaptor<WebExtensionDelegate>()
+        WebExtensionSupport.initialize(engine, store)
+        verify(engine).registerWebExtensionDelegate(delegateCaptor.capture())
+
+        delegateCaptor.value.onInstallationFailedRequest(ext, exception)
+
+        verify(store, times(1)).dispatch(
+            WebExtensionAction.UpdatePromptRequestWebExtensionAction(
+                WebExtensionPromptRequest.BeforeInstallation.InstallationFailed(ext, exception),
+            ),
+        )
     }
 
     @Test
@@ -825,6 +885,23 @@ class WebExtensionSupportTest {
     }
 
     @Test
+    fun `reacts to extensions process spawning disabled`() {
+        val store = BrowserStore()
+        val engine: Engine = mock()
+
+        assertFalse(store.state.showExtensionProcessDisabledPopup)
+        val delegateCaptor = argumentCaptor<WebExtensionDelegate>()
+        WebExtensionSupport.initialize(engine, store)
+
+        verify(engine).registerWebExtensionDelegate(delegateCaptor.capture())
+
+        delegateCaptor.value.onDisabledExtensionProcessSpawning()
+        store.waitUntilIdle()
+
+        assertTrue(store.state.showExtensionProcessDisabledPopup)
+    }
+
+    @Test
     fun `closes tabs from unsupported extensions`() {
         val store = BrowserStore(
             BrowserState(
@@ -907,5 +984,24 @@ class WebExtensionSupportTest {
         verify(ext).registerTabHandler(eq(customTabEngineSession), tabHandlerCaptor.capture())
         verify(ext).registerActionHandler(eq(engineSession), actionHandlerCaptor.capture())
         verify(ext).registerTabHandler(eq(engineSession), tabHandlerCaptor.capture())
+    }
+
+    @Test
+    fun `reacts to optional permissions request`() {
+        val store = spy(BrowserStore())
+        val engine: Engine = mock()
+        val ext: WebExtension = mock()
+        val permissions = listOf("perm1", "perm2")
+        val onPermissionsGranted: ((Boolean) -> Unit) = mock()
+        val delegateCaptor = argumentCaptor<WebExtensionDelegate>()
+        WebExtensionSupport.initialize(engine, store)
+        verify(engine).registerWebExtensionDelegate(delegateCaptor.capture())
+
+        delegateCaptor.value.onOptionalPermissionsRequest(ext, permissions, onPermissionsGranted)
+        verify(store).dispatch(
+            WebExtensionAction.UpdatePromptRequestWebExtensionAction(
+                WebExtensionPromptRequest.AfterInstallation.Permissions.Optional(ext, permissions, onPermissionsGranted),
+            ),
+        )
     }
 }

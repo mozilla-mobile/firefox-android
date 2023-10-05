@@ -1,17 +1,26 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.ui
 
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdContainingText
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper.bringAppToForeground
 import org.mozilla.fenix.helpers.TestHelper.exitMenu
+import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.TestHelper.putAppToBackground
+import org.mozilla.fenix.ui.robots.clickPageObject
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
 import java.time.LocalDate
@@ -53,6 +62,7 @@ class CreditCardAutofillTest {
         mockWebServer.shutdown()
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1512792
     @SmokeTest
     @Test
     fun verifyCreditCardAutofillTest() {
@@ -78,13 +88,19 @@ class CreditCardAutofillTest {
         }
         navigationToolbar {
         }.enterURLAndEnterToBrowser(creditCardFormPage.url) {
-            clickCreditCardNumberTextBox()
-            clickSelectCreditCardButton()
-            clickCreditCardSuggestion(MockCreditCard1.MOCK_LAST_CARD_DIGITS)
+            clickPageObject(itemWithResId("cardNumber"))
+            clickPageObject(itemWithResId("$packageName:id/select_credit_card_header"))
+            clickPageObject(
+                itemWithResIdContainingText(
+                    "$packageName:id/credit_card_number",
+                    MockCreditCard1.MOCK_LAST_CARD_DIGITS,
+                ),
+            )
             verifyAutofilledCreditCard(MockCreditCard1.MOCK_CREDIT_CARD_NUMBER)
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1512798
     @SmokeTest
     @Test
     fun deleteSavedCreditCardUsingToolbarButtonTest() {
@@ -103,34 +119,15 @@ class CreditCardAutofillTest {
             clickSecuredCreditCardsLaterButton()
             clickSavedCreditCard()
             clickDeleteCreditCardToolbarButton()
+            clickCancelDeleteCreditCardButton()
+            verifyEditCreditCardToolbarTitle()
+            clickDeleteCreditCardToolbarButton()
             clickConfirmDeleteCreditCardButton()
             verifyAddCreditCardsButton()
         }
     }
 
-    @SmokeTest
-    @Test
-    fun cancelDeleteSavedCreditCardUsingToolbarButtonTest() {
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openAutofillSubMenu {
-            clickAddCreditCardButton()
-            fillAndSaveCreditCard(
-                MockCreditCard1.MOCK_CREDIT_CARD_NUMBER,
-                MockCreditCard1.MOCK_NAME_ON_CARD,
-                MockCreditCard1.MOCK_EXPIRATION_MONTH,
-                MockCreditCard1.MOCK_EXPIRATION_YEAR,
-            )
-            clickManageSavedCreditCardsButton()
-            clickSecuredCreditCardsLaterButton()
-            clickSavedCreditCard()
-            clickDeleteCreditCardToolbarButton()
-            clickCancelDeleteCreditCardButton()
-            verifyEditCreditCardToolbarTitle()
-        }
-    }
-
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2271192
     @SmokeTest
     @Test
     fun deleteSavedCreditCardUsingMenuButtonTest() {
@@ -149,34 +146,15 @@ class CreditCardAutofillTest {
             clickSecuredCreditCardsLaterButton()
             clickSavedCreditCard()
             clickDeleteCreditCardMenuButton()
+            clickCancelDeleteCreditCardButton()
+            verifyEditCreditCardToolbarTitle()
+            clickDeleteCreditCardMenuButton()
             clickConfirmDeleteCreditCardButton()
             verifyAddCreditCardsButton()
         }
     }
 
-    @SmokeTest
-    @Test
-    fun cancelDeleteSavedCreditCardUsingMenuButtonTest() {
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openAutofillSubMenu {
-            clickAddCreditCardButton()
-            fillAndSaveCreditCard(
-                MockCreditCard1.MOCK_CREDIT_CARD_NUMBER,
-                MockCreditCard1.MOCK_NAME_ON_CARD,
-                MockCreditCard1.MOCK_EXPIRATION_MONTH,
-                MockCreditCard1.MOCK_EXPIRATION_YEAR,
-            )
-            clickManageSavedCreditCardsButton()
-            clickSecuredCreditCardsLaterButton()
-            clickSavedCreditCard()
-            clickDeleteCreditCardMenuButton()
-            clickCancelDeleteCreditCardButton()
-            verifyEditCreditCardToolbarTitle()
-        }
-    }
-
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1512788
     @Test
     fun verifyCreditCardsSectionTest() {
         homeScreen {
@@ -200,6 +178,7 @@ class CreditCardAutofillTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1859917
     @Test
     fun verifyManageCreditCardsPromptOptionTest() {
         val creditCardFormPage = TestAssetHelper.getCreditCardFormAsset(mockWebServer)
@@ -221,14 +200,15 @@ class CreditCardAutofillTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(creditCardFormPage.url) {
-            clickCreditCardNumberTextBox()
-            clickSelectCreditCardButton()
+            clickPageObject(itemWithResId("cardNumber"))
+            clickPageObject(itemWithResId("$packageName:id/select_credit_card_header"))
         }.clickManageCreditCardsButton {
         }.goBackToBrowser {
             verifySelectCreditCardPromptExists(false)
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1512790
     @Test
     fun verifyCreditCardsAutofillToggleTest() {
         val creditCardFormPage = TestAssetHelper.getCreditCardFormAsset(mockWebServer)
@@ -251,7 +231,7 @@ class CreditCardAutofillTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(creditCardFormPage.url) {
-            clickCreditCardNumberTextBox()
+            clickPageObject(itemWithResId("cardNumber"))
             verifySelectCreditCardPromptExists(true)
         }.openThreeDotMenu {
         }.openSettings {
@@ -264,11 +244,12 @@ class CreditCardAutofillTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(creditCardFormPage.url) {
-            clickCreditCardNumberTextBox()
+            clickPageObject(itemWithResId("cardNumber"))
             verifySelectCreditCardPromptExists(false)
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1512795
     @Test
     fun verifyEditCardsViewTest() {
         homeScreen {
@@ -304,6 +285,7 @@ class CreditCardAutofillTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1512796
     @Test
     fun verifyEditedCardIsSavedTest() {
         val creditCardFormPage = TestAssetHelper.getCreditCardFormAsset(mockWebServer)
@@ -339,15 +321,21 @@ class CreditCardAutofillTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(creditCardFormPage.url) {
-            clickCreditCardNumberTextBox()
-            clickSelectCreditCardButton()
-            clickCreditCardSuggestion(MockCreditCard2.MOCK_LAST_CARD_DIGITS)
+            clickPageObject(itemWithResId("cardNumber"))
+            clickPageObject(itemWithResId("$packageName:id/select_credit_card_header"))
+            clickPageObject(
+                itemWithResIdContainingText(
+                    "$packageName:id/credit_card_number",
+                    MockCreditCard2.MOCK_LAST_CARD_DIGITS,
+                ),
+            )
             verifyAutofilledCreditCard(MockCreditCard2.MOCK_CREDIT_CARD_NUMBER)
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1512797
     @Test
-    fun verifyCreditCardCannotBeSavedWithoutCardNumberTest() {
+    fun verifyCreditCardCannotBeSavedWithoutCardNumberOrNameTest() {
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
@@ -371,29 +359,7 @@ class CreditCardAutofillTest {
             clickSaveCreditCardToolbarButton()
             verifyEditCreditCardToolbarTitle()
             verifyCreditCardNumberErrorMessage()
-        }
-    }
-
-    @Test
-    fun verifyCreditCardCannotBeSavedWithoutNameOnCardTest() {
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openAutofillSubMenu {
-            verifyCreditCardsAutofillSection(true, false)
-            clickAddCreditCardButton()
-            fillAndSaveCreditCard(
-                MockCreditCard1.MOCK_CREDIT_CARD_NUMBER,
-                MockCreditCard1.MOCK_NAME_ON_CARD,
-                MockCreditCard1.MOCK_EXPIRATION_MONTH,
-                MockCreditCard1.MOCK_EXPIRATION_YEAR,
-            )
-            clickManageSavedCreditCardsButton()
-            clickSecuredCreditCardsLaterButton()
-            verifySavedCreditCardsSection(
-                MockCreditCard1.MOCK_LAST_CARD_DIGITS,
-                MockCreditCard1.MOCK_EXPIRATION_MONTH_AND_YEAR,
-            )
+        }.goBackToSavedCreditCards {
             clickSavedCreditCard()
             clearNameOnCreditCard()
             clickSaveCreditCardToolbarButton()
@@ -402,8 +368,9 @@ class CreditCardAutofillTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1512794
     @Test
-    fun verifyMultipleCreditCardsCanBeSavedTest() {
+    fun verifyMultipleCreditCardsCanBeAddedTest() {
         val creditCardFormPage = TestAssetHelper.getCreditCardFormAsset(mockWebServer)
 
         homeScreen {
@@ -441,19 +408,25 @@ class CreditCardAutofillTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(creditCardFormPage.url) {
-            clickCreditCardNumberTextBox()
-            clickSelectCreditCardButton()
+            clickPageObject(itemWithResId("cardNumber"))
+            clickPageObject(itemWithResId("$packageName:id/select_credit_card_header"))
             verifyCreditCardSuggestion(
                 MockCreditCard1.MOCK_LAST_CARD_DIGITS,
                 MockCreditCard2.MOCK_LAST_CARD_DIGITS,
             )
-            clickCreditCardSuggestion(MockCreditCard2.MOCK_LAST_CARD_DIGITS)
+            clickPageObject(
+                itemWithResIdContainingText(
+                    "$packageName:id/credit_card_number",
+                    MockCreditCard2.MOCK_LAST_CARD_DIGITS,
+                ),
+            )
             verifyAutofilledCreditCard(MockCreditCard2.MOCK_CREDIT_CARD_NUMBER)
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2271304
     @Test
-    fun verifyDoNotSaveCreditCardFromFormTest() {
+    fun verifyDoNotSaveCreditCardFromPromptTest() {
         val creditCardFormPage = TestAssetHelper.getCreditCardFormAsset(mockWebServer)
 
         navigationToolbar {
@@ -463,7 +436,7 @@ class CreditCardAutofillTest {
                 MockCreditCard1.MOCK_NAME_ON_CARD,
                 MockCreditCard1.MOCK_EXPIRATION_MONTH_AND_YEAR,
             )
-            clickCancelCreditCardPromptButton()
+            clickPageObject(itemWithResId("$packageName:id/save_cancel"))
             verifyUpdateOrSaveCreditCardPromptExists(exists = false)
         }.openThreeDotMenu {
         }.openSettings {
@@ -472,8 +445,9 @@ class CreditCardAutofillTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1779194
     @Test
-    fun verifySaveCreditCardFromFormTest() {
+    fun verifySaveCreditCardFromPromptTest() {
         val creditCardFormPage = TestAssetHelper.getCreditCardFormAsset(mockWebServer)
 
         navigationToolbar {
@@ -483,7 +457,7 @@ class CreditCardAutofillTest {
                 MockCreditCard1.MOCK_NAME_ON_CARD,
                 MockCreditCard1.MOCK_EXPIRATION_MONTH_AND_YEAR,
             )
-            clickUpdateOrSaveCreditCardPromptButton()
+            clickPageObject(itemWithResId("$packageName:id/save_confirm"))
             verifyUpdateOrSaveCreditCardPromptExists(exists = false)
         }.openThreeDotMenu {
         }.openSettings {
@@ -498,6 +472,7 @@ class CreditCardAutofillTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2271305
     @Test
     fun verifyCancelCreditCardUpdatePromptTest() {
         val creditCardFormPage = TestAssetHelper.getCreditCardFormAsset(mockWebServer)
@@ -523,13 +498,18 @@ class CreditCardAutofillTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(creditCardFormPage.url) {
-            clickCreditCardNumberTextBox()
-            clickSelectCreditCardButton()
-            clickCreditCardSuggestion(MockCreditCard2.MOCK_LAST_CARD_DIGITS)
+            clickPageObject(itemWithResId("cardNumber"))
+            clickPageObject(itemWithResId("$packageName:id/select_credit_card_header"))
+            clickPageObject(
+                itemWithResIdContainingText(
+                    "$packageName:id/credit_card_number",
+                    MockCreditCard2.MOCK_LAST_CARD_DIGITS,
+                ),
+            )
             verifyAutofilledCreditCard(MockCreditCard2.MOCK_CREDIT_CARD_NUMBER)
             changeCreditCardExpiryDate(MockCreditCard1.MOCK_EXPIRATION_MONTH_AND_YEAR)
             clickCreditCardFormSubmitButton()
-            clickCancelCreditCardPromptButton()
+            clickPageObject(itemWithResId("$packageName:id/save_cancel"))
             verifyUpdateOrSaveCreditCardPromptExists(false)
         }.openThreeDotMenu {
         }.openSettings {
@@ -543,6 +523,7 @@ class CreditCardAutofillTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1779195
     @Test
     fun verifyConfirmCreditCardUpdatePromptTest() {
         val creditCardFormPage = TestAssetHelper.getCreditCardFormAsset(mockWebServer)
@@ -568,13 +549,18 @@ class CreditCardAutofillTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(creditCardFormPage.url) {
-            clickCreditCardNumberTextBox()
-            clickSelectCreditCardButton()
-            clickCreditCardSuggestion(MockCreditCard2.MOCK_LAST_CARD_DIGITS)
+            clickPageObject(itemWithResId("cardNumber"))
+            clickPageObject(itemWithResId("$packageName:id/select_credit_card_header"))
+            clickPageObject(
+                itemWithResIdContainingText(
+                    "$packageName:id/credit_card_number",
+                    MockCreditCard2.MOCK_LAST_CARD_DIGITS,
+                ),
+            )
             verifyAutofilledCreditCard(MockCreditCard2.MOCK_CREDIT_CARD_NUMBER)
             changeCreditCardExpiryDate(MockCreditCard1.MOCK_EXPIRATION_MONTH_AND_YEAR)
             clickCreditCardFormSubmitButton()
-            clickUpdateOrSaveCreditCardPromptButton()
+            clickPageObject(itemWithResId("$packageName:id/save_confirm"))
             verifyUpdateOrSaveCreditCardPromptExists(false)
         }.openThreeDotMenu {
         }.openSettings {
@@ -588,34 +574,10 @@ class CreditCardAutofillTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1512791
+    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1854566")
     @Test
-    fun verifySavedCreditCardsRedirectionToAutofillAfterInterruptionTest() {
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openAutofillSubMenu {
-            verifyCreditCardsAutofillSection(true, false)
-            clickAddCreditCardButton()
-            fillAndSaveCreditCard(
-                MockCreditCard1.MOCK_CREDIT_CARD_NUMBER,
-                MockCreditCard1.MOCK_NAME_ON_CARD,
-                MockCreditCard1.MOCK_EXPIRATION_MONTH,
-                MockCreditCard1.MOCK_EXPIRATION_YEAR,
-            )
-            clickManageSavedCreditCardsButton()
-            clickSecuredCreditCardsLaterButton()
-            verifySavedCreditCardsSection(
-                MockCreditCard1.MOCK_LAST_CARD_DIGITS,
-                MockCreditCard1.MOCK_EXPIRATION_MONTH_AND_YEAR,
-            )
-            putAppToBackground()
-            bringAppToForeground()
-            verifyAutofillToolbarTitle()
-        }
-    }
-
-    @Test
-    fun verifyEditCreditCardRedirectionToAutofillAfterInterruptionTest() {
+    fun verifyCreditCardRedirectionsToAutofillSectionAfterInterruptionTest() {
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
@@ -631,6 +593,14 @@ class CreditCardAutofillTest {
             clickManageSavedCreditCardsButton()
             clickSecuredCreditCardsLaterButton()
             clickSavedCreditCard()
+            putAppToBackground()
+            bringAppToForeground()
+            verifyAutofillToolbarTitle()
+            clickManageSavedCreditCardsButton()
+            verifySavedCreditCardsSection(
+                MockCreditCard1.MOCK_LAST_CARD_DIGITS,
+                MockCreditCard1.MOCK_EXPIRATION_MONTH_AND_YEAR,
+            )
             putAppToBackground()
             bringAppToForeground()
             verifyAutofillToolbarTitle()

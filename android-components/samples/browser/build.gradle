@@ -6,11 +6,10 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion config.compileSdkVersion
-
     defaultConfig {
         applicationId "org.mozilla.samples.browser"
         minSdkVersion config.minSdkVersion
+        compileSdk config.compileSdkVersion
         targetSdkVersion config.targetSdkVersion
         versionCode 1
         versionName "1.0"
@@ -120,6 +119,7 @@ dependencies {
 
     implementation project(':ui-autocomplete')
     implementation project(':ui-tabcounter')
+    implementation project(':ui-widgets')
 
     // Add a dependency on service-glean to simplify the testing workflow
     // for engineers that want to test Gecko metrics exfiltrated via the Glean

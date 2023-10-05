@@ -53,7 +53,6 @@
     <string name="menu_remove_from_shortcuts">მოცილება მალსახმობებიდან</string>
 
     <!-- Menu item: Shows information about features and changes that are new to this version -->
-    <string name="menu_whats_new">რა სიახლეებია</string>
     <string name="menu_settings">პარამეტრები</string>
     <string name="menu_about">შესახებ</string>
     <string name="menu_help">დახმარება</string>
@@ -353,6 +352,15 @@
     <!-- In-app link (in settings) to Focus privacy notice. -->
     <string name="preference_privacy_notice">პირადი მონაცემების დაცვა</string>
 
+    <!-- In-app link (in settings) to Focus licensing information. -->
+    <string name="preference_licensing_info">ლიცენზიის შესახებ</string>
+
+    <!-- Link to Focus licensing information from other libraries that we use. -->
+    <string name="preference_libraries_we_use">ბიბლიოთეკები, რომელთაც ვიყენებთ</string>
+
+    <!-- Open Source Licenses page title. The first parameter is the app name -->
+    <string name="open_source_licenses_title">%s | OSS-ბიბლიოთეკები</string>
+
     <!-- Item in Preferences that shows the about page. Parameter 1 is the app name, i.e. Firefox Focus/Firefox Klar. -->
     <string name="preference_about">%1$s-ის შესახებ</string>
 
@@ -482,7 +490,10 @@
 
 
 
-  <string name="error_hostLookup_title">გვერდი ვერ მოიძებნა</string>
+  <!-- Snackbar that will be displayed after a website has been added to shortcuts. -->
+    <string name="snackbar_added_to_shortcuts">მალსახმობებში დაემატა!</string>
+
+    <string name="error_hostLookup_title">გვერდი ვერ მოიძებნა</string>
 
 
 
@@ -536,7 +547,7 @@
     <!-- First run tour (Default browser): Title -->
     <string name="firstrun_defaultbrowser_title">გააძლიერეთ პირადი მონაცემების დაცვა</string>
     <!-- First run tour (Default browser): Text. -->
-    <string name="firstrun_defaultbrowser_text2">პირადი მონაცემების უსაფრთხოება ახალ დონეზეა აყვანილი. შეზღუდეთ სარეკლამო და სხვა შიგთავსი, რომლითაც საიტებზე თქვენი დევნაა შესაძლებელი და შეამცირეთ გვერდების ჩატვირთვის დრო.</string>
+    <string name="firstrun_defaultbrowser_text2">პირადი მონაცემების უსაფრთხოება ახალ სიმაღლეზეა აყვანილი. შეზღუდეთ სარეკლამო და სხვა შიგთავსი, რომლითაც საიტებზე თქვენი დევნაა შესაძლებელი და შეამცირეთ გვერდების ჩატვირთვის დრო.</string>
 
     <!-- First run tour (Search): Title -->
     <string name="firstrun_search_title">მოიძიეთ გვერდები, თქვენებურად</string>
@@ -732,9 +743,6 @@
     <string name="cookie_banner_exception_panel_description_state_on_for_site">%1$s გაასუფთავებს ამ საიტის ფუნთუშებს და განაახლებს გვერდს. ყველა ფუნთუშის წაშლით შეიძლება გამოხვიდეთ ანგარიშებიდან და დაცარიელდეს საყიდლების კალათა.</string>
 
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The placeholder will be updated with the app name. -->
-    <string name="cookie_banner_exception_panel_description_state_off_for_site" moz:RemovedIn="111" tools:ignore="UnusedResources">%1$s თავადვე შეეცდება უარყოს ფუნთუშის მოთხოვნები. თუ უარყოფა ვერ ხერხდება, %1$s ყველა ფუნთუშაზე თანხმობით მოიცილებს ამომხტომ აბრას.</string>
-
-    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The placeholder will be updated with the app name. -->
     <string name="cookie_banner_exception_panel_description_state_off_for_site2">%1$s ეცდება თავადვე უარყოს ფუნთუშების მოთხოვნები.</string>
 
     <!-- Long text for a detail explanation indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
@@ -753,12 +761,8 @@
     <string name="cookie_banner_the_site_was_reported">მხარდაჭერის მოთხოვნა საიტისთვის გადაგზავნილია.</string>
 
     <!-- Contextual Feature Recommendation Popups -->
-    <!-- CFR for Cookie Banner (Banner Info Message). The placeholder will be updated with the app name. -->
-    <string name="cfr_for_cookie_banner" moz:RemovedIn="111" tools:ignore="UnusedResources">%1$s ცდილობს უარყოს ფუნთუშების მოთხოვნები მომაბეზრებელი აბრების მოსაცილებლად.\n\nფუნთუშების აბრების მართვა შეგიძლიათ პარამეტრებიდან.</string>
     <!-- CFR for Cookie Banner (Banner Info Message). %1$s will be replaced by the app name, %2$s will be an active link using the string cfr_cookie_banner_link as text. -->
     <string name="cfr_cookie_banner">%1$s ცდილობს უარყოს ფუნთუშების მოთხოვნები მომაბეზრებელი აბრების მოსაცილებლად.\n\nფუნთუშების აბრების სამართავად იხილეთ %2$s.</string>
-    <!-- CFR for Cookie Banner (Banner Info Message). This text should be the same as the settings text from "cfr_for_cookie_banner". The text should be underlined and should redirect the user to the cookie banner settings screen. -->
-    <string name="cfr_for_cookie_banner_underline_settings" moz:RemovedIn="111" tools:ignore="UnusedResources">პარამეტრები</string>
     <!-- CFR for Cookie Banner (Banner Info Message). This string is used as text for a link in cfr_cookie_banner and takes the user to the app settings. -->
     <string name="cfr_cookie_banner_link">პარამეტრები</string>
 
@@ -933,7 +937,7 @@
     <string name="preference_https_only_title">მხოლოდ-HTTPS-რეჟიმი</string>
 
     <!-- Description of the preference to enable "HTTPS-Only" mode. -->
-    <string name="preference_https_only_summary3">თავადვე შეეცდება დაუკავშირდეს საიტებს დაშიფრული HTTPS-ოქმით, მეტი უსაფრთხოებისთვის.</string>
+    <string name="preference_https_only_summary3">თავადვე შეეცდება დაუკავშირდეს საიტებს დაშიფრული HTTPS-ოქმით მეტი უსაფრთხოებისთვის.</string>
 
     <!-- Preference for exceptions tracking protection -->
     <string name="preference_exceptions">გამონაკლისები</string>
@@ -1023,13 +1027,7 @@
 
 
     <!-- The title of the error page for websites that do not support HTTPS when HTTPS-Only is turned on  -->
-    <string name="errorpage_httpsonly_title" moz:RemovedIn="111" tools:ignore="UnusedResources">მოთხოვნილ საიტზე არაა მხარდაჭერილი HTTPS</string>
-
-    <!-- The title of the error page for websites that do not support HTTPS when HTTPS-Only is turned on  -->
     <string name="errorpage_httpsonly_title2">ამ საიტზე მხარდაუჭერელია HTTPS</string>
-
-    <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will get replaced with the name of the app (e.g. "Firefox Focus") -->
-    <string name="errorpage_httpsonly_message" moz:RemovedIn="111" tools:ignore="UnusedResources">ნაგულისხმევად, %1$s ეცდება დაუკავშირდეს HTTPS-ით, მეტი უსაფრთხოებისთვის. ამ პარამეტრის შესაცვლელად ან უკეთ გასაცნობად, იხილეთ პარამეტრები &gt; პირადულობა და უსაფრთხოება &gt; უსაფრთხოება.</string>
 
     <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will get replaced with the name of the app (e.g. "Firefox Focus").
         Contains a button that will redirect the user to Privacy & Security Screen-->

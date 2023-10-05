@@ -29,9 +29,6 @@ internal object ContentStateReducer {
             is ContentAction.RemoveIconAction -> updateContentState(state, action.sessionId) {
                 it.copy(icon = null)
             }
-            is ContentAction.RemoveThumbnailAction -> {
-                throw IllegalStateException("You need to add ThumbnailsMiddleware to your BrowserStore. ($action)")
-            }
             is ContentAction.UpdateUrlAction -> updateContentState(state, action.sessionId) {
                 it.copy(
                     url = action.url,
@@ -302,7 +299,9 @@ internal object ContentStateReducer {
             is ContentAction.UpdateExpandedToolbarStateAction -> updateContentState(state, action.sessionId) {
                 it.copy(showToolbarAsExpanded = action.expanded)
             }
-            is ContentAction.CheckForFormDataAction,
+            is ContentAction.UpdateHasFormDataAction -> updateContentState(state, action.tabId) {
+                it.copy(hasFormData = action.containsFormData)
+            }
             is ContentAction.UpdatePriorityToDefaultAfterTimeoutAction,
             is ContentAction.CheckForFormDataExceptionAction,
             -> {

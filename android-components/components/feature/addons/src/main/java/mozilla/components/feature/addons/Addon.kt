@@ -10,13 +10,14 @@ import android.graphics.Bitmap
 import android.os.Parcelable
 import androidx.core.net.toUri
 import kotlinx.parcelize.Parcelize
+import mozilla.components.concept.engine.webextension.WebExtension
 
 /**
  * Represents an add-on based on the AMO store:
  * https://addons.mozilla.org/en-US/firefox/
  *
  * @property id The unique ID of this add-on.
- * @property authors List holding information about the add-on authors.
+ * @property author Information about the add-on author.
  * @property categories List of categories the add-on belongs to.
  * @property downloadId The unique ID of the latest version of the add-on (xpi) file.
  * @property downloadUrl The (absolute) URL to download the latest version of the add-on file.
@@ -41,7 +42,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class Addon(
     val id: String,
-    val authors: List<Author> = emptyList(),
+    val author: Author? = null,
     val categories: List<String> = emptyList(),
     val downloadId: String = "",
     val downloadUrl: String = "",
@@ -61,18 +62,14 @@ data class Addon(
     /**
      * Represents an add-on author.
      *
-     * @property id The id of the author (creator) of the add-on.
      * @property name The name of the author.
-     * @property url The link to the profile page for of the author.
-     * @property username The username of the author.
+     * @property url The link to the profile page of the author.
      */
     @SuppressLint("ParcelCreator")
     @Parcelize
     data class Author(
-        val id: String,
         val name: String,
         val url: String,
-        val username: String,
     ) : Parcelable
 
     /**
@@ -98,6 +95,7 @@ data class Addon(
      * defaults to false.
      * @property supported Indicates if this [Addon] is supported by the browser or not, defaults
      * to true.
+     * @property disabledReason Indicates why the [Addon] was disabled.
      * @property optionsPageUrl the URL of the page displaying the
      * options page (options_ui in the extension's manifest).
      * @property allowedInPrivateBrowsing true if this addon should be allowed to run in private
@@ -114,10 +112,41 @@ data class Addon(
         val openOptionsPageInTab: Boolean = false,
         val enabled: Boolean = false,
         val supported: Boolean = true,
-        val disabledAsUnsupported: Boolean = false,
+        val disabledReason: DisabledReason? = null,
         val allowedInPrivateBrowsing: Boolean = false,
         val icon: Bitmap? = null,
     ) : Parcelable
+
+    /**
+     * Enum containing all reasons why an [Addon] was disabled.
+     */
+    enum class DisabledReason {
+
+        /**
+         * The [Addon] was disabled because it is unsupported.
+         */
+        UNSUPPORTED,
+
+        /**
+         * The [Addon] was disabled because is it is blocklisted.
+         */
+        BLOCKLISTED,
+
+        /**
+         * The [Addon] was disabled by the user.
+         */
+        USER_REQUESTED,
+
+        /**
+         * The [Addon] was disabled because it isn't correctly signed.
+         */
+        NOT_CORRECTLY_SIGNED,
+
+        /**
+         * The [Addon] was disabled because it isn't compatible with the application version.
+         */
+        INCOMPATIBLE,
+    }
 
     /**
      * Returns a list of localized Strings per each item on the [permissions] list.
@@ -148,7 +177,24 @@ data class Addon(
      * addon can be disabled as unsupported and later become supported, so
      * both [isSupported] and [isDisabledAsUnsupported] can be true.
      */
-    fun isDisabledAsUnsupported() = installedState?.disabledAsUnsupported == true
+    fun isDisabledAsUnsupported() = installedState?.disabledReason == DisabledReason.UNSUPPORTED
+
+    /**
+     * Returns whether or not this [Addon] is currently disabled because it is part of
+     * the blocklist. This is based on the installed extension state in the engine.
+     */
+    fun isDisabledAsBlocklisted() = installedState?.disabledReason == DisabledReason.BLOCKLISTED
+
+    /**
+     * Returns whether this [Addon] is currently disabled because it isn't correctly signed.
+     */
+    fun isDisabledAsNotCorrectlySigned() = installedState?.disabledReason == DisabledReason.NOT_CORRECTLY_SIGNED
+
+    /**
+     * Returns whether this [Addon] is currently disabled because it isn't compatible
+     * with the application version.
+     */
+    fun isDisabledAsIncompatible() = installedState?.disabledReason == DisabledReason.INCOMPATIBLE
 
     /**
      * Returns whether or not this [Addon] is allowed in private browsing mode.
@@ -226,6 +272,43 @@ data class Addon(
             }
 
             return localizedNormalPermissions + localizedUrlAccessPermissions
+        }
+
+        /**
+         * Creates an [Addon] object from a [WebExtension] one. The resulting object might have an installed state when
+         * the second method's argument is used.
+         *
+         * @param extension a WebExtension instance.
+         * @param installedState optional - an installed state.
+         */
+        fun newFromWebExtension(extension: WebExtension, installedState: InstalledState? = null): Addon {
+            val name = extension.getMetadata()?.name ?: extension.id
+            val description = extension.getMetadata()?.description ?: extension.id
+            val permissions = extension.getMetadata()?.permissions.orEmpty() +
+                extension.getMetadata()?.hostPermissions.orEmpty()
+
+            val developerName = extension.getMetadata()?.developerName.orEmpty()
+            val author = if (developerName.isNotBlank()) {
+                Author(name = developerName, url = extension.getMetadata()?.developerUrl.orEmpty())
+            } else {
+                null
+            }
+
+            return Addon(
+                id = extension.id,
+                author = author,
+                version = extension.getMetadata()?.version.orEmpty(),
+                permissions = permissions,
+                downloadUrl = extension.url,
+                siteUrl = extension.url,
+                translatableName = mapOf(Addon.DEFAULT_LOCALE to name),
+                translatableDescription = mapOf(Addon.DEFAULT_LOCALE to description),
+                // We don't have a summary when we create an add-on from a WebExtension instance so let's
+                // re-use description...
+                translatableSummary = mapOf(Addon.DEFAULT_LOCALE to description),
+                updatedAt = "",
+                installedState = installedState,
+            )
         }
 
         @Suppress("MaxLineLength")

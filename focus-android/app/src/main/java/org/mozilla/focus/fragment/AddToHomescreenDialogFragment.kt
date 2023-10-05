@@ -1,5 +1,4 @@
-/* -*- Mode: Java; c-basic-offset: 4; tab-width: 4; indent-tabs-mode: nil; -*-
- * This Source Code Form is subject to the terms of the Mozilla Public
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -36,7 +35,7 @@ class AddToHomescreenDialogFragment : DialogFragment() {
     @Suppress("LongMethod")
     override fun onCreateDialog(bundle: Bundle?): AlertDialog {
         AddToHomeScreen.dialogDisplayed.record(NoExtras())
-        val url = requireArguments().getString(URL)
+        val url = requireArguments().getString(URL)!!
         val title = requireArguments().getString(TITLE)
         val blockingEnabled = requireArguments().getBoolean(BLOCKING_ENABLED)
         val requestDesktop = requireArguments().getBoolean(REQUEST_DESKTOP)
@@ -50,11 +49,11 @@ class AddToHomescreenDialogFragment : DialogFragment() {
         val iconView = dialogView.findViewById<ImageView>(R.id.homescreen_icon)
         requireContext().components.icons.loadIntoView(
             iconView,
-            IconRequest(url.toString(), isPrivate = true),
+            IconRequest(url, isPrivate = true),
         )
 
         val blockIcon = dialogView.findViewById<ImageView>(R.id.homescreen_dialog_block_icon)
-        blockIcon.setImageResource(R.drawable.mozac_ic_shield_disabled)
+        blockIcon.setImageResource(R.drawable.mozac_ic_shield_slash_24)
         val warning =
             dialogView.findViewById<ConstraintLayout>(R.id.homescreen_dialog_warning_layout)
         warning.isVisible = !blockingEnabled
@@ -74,7 +73,7 @@ class AddToHomescreenDialogFragment : DialogFragment() {
     private fun setButtons(
         parentView: View,
         editableTitle: EditText,
-        iconUrl: String?,
+        iconUrl: String,
         blockingEnabled: Boolean,
         requestDesktop: Boolean,
         initialTitle: String?,
@@ -94,7 +93,7 @@ class AddToHomescreenDialogFragment : DialogFragment() {
 
         addToHomescreenDialogConfirmButton.setOnClickListener {
             HomeScreen.installShortCut(
-                context,
+                requireContext(),
                 IconGenerator.generateLauncherIcon(requireContext(), iconUrl),
                 iconUrl,
                 editableTitle.text.toString().trim { it <= ' ' },

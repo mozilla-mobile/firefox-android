@@ -26,6 +26,8 @@
     <string name="app_services_abbreviation" translatable="false">AS</string>
     <!-- Name for the Pocket product -->
     <string name="pocket_product_name" translatable="false">Pocket</string>
+    <!-- Name for the Fakespot product -->
+    <string name="shopping_product_name" translatable="false">Fakespot</string>
 
     <!-- Secret Settings Strings -->
     <!-- Label for the secret settings preference -->
@@ -40,8 +42,6 @@
     <string name="preferences_nimbus_experiments">Nimbus Experiments</string>
     <!-- Label for using the nimbus collections preview -->
     <string name="preferences_nimbus_use_preview_collection">Use Nimbus Preview Collection (requires restart)</string>
-    <!-- Label for enabling the Task Continuity feature -->
-    <string name="preferences_debug_settings_task_continuity" translatable="false">Enable Task Continuity</string>
     <!-- Label for custom Glean server URL -->
     <string name="preferences_debug_settings_custom_glean_server_url" translatable="false">Custom Glean server URL (requires restart)</string>
     <!-- Label for custom Pocket sponsored stories settings -->
@@ -64,6 +64,14 @@
     <string name="preferences_sync_debug_quit_button_summary">Custom server changes will take effect on the next Firefox run.</string>
     <!-- Label for enabling the Tabs Tray to Compose changes -->
     <string name="preferences_debug_settings_tabs_tray_to_compose" translatable="false">Enable Tabs Tray to Compose rewrite</string>
+    <!-- Label for enabling the Compose Top Sites -->
+    <string name="preferences_debug_settings_compose_top_sites" translatable="false">Enable Compose Top Sites</string>
+    <!-- Label for enabling the shopping experience -->
+    <string name="preferences_debug_settings_shopping_experience" translatable="false">Enable Shopping Experience</string>
+    <!-- Label for enabling translations -->
+    <string name="preferences_debug_settings_translations" translatable="false">Enable Firefox Translations</string>
+    <!-- Label for enabling Firefox Suggest -->
+    <string name="preferences_debug_settings_fxsuggest" translatable="false">Enable Firefox Suggest</string>
 
     <!-- A secret menu option in the tabs tray for making a tab inactive for testing. -->
     <string name="inactive_tabs_menu_item">Make inactive</string>
@@ -106,4 +114,8 @@
     <string name="profiler_io_error">Something went wrong contacting the Profiler server.</string>
 
     <string name="profiler_uploaded_url_to_clipboard">URL copied to clipboard successfully</string>
+
+    <string name="review_quality_check_retailer_name_amazon">Amazon</string>
+    <string name="review_quality_check_retailer_name_bestbuy">Best Buy</string>
+    <string name="review_quality_check_retailer_name_walmart">Walmart</string>
 </resources>

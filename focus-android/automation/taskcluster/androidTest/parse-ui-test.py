@@ -2,11 +2,13 @@
 
 from __future__ import print_function
 
-import sys
 import argparse
-from pathlib import Path
 import json
+import sys
+from pathlib import Path
+
 import yaml
+
 
 def parse_args(cmdln_args):
     parser = argparse.ArgumentParser(description="Parse UI test logs an results")
@@ -41,8 +43,6 @@ def main():
 
     log = args.log.read()
     matrix_ids = json.loads(args.results.joinpath("matrix_ids.json").read_text())
-    #with args.results.joinpath("flank.yml") as f:
-    #    flank_config = yaml.safe_load(f)
 
     android_args = extract_android_args(log)
 
@@ -52,12 +52,17 @@ def main():
     print(yaml.safe_dump(android_args["gcloud"]["device"]))
 
     print("# Results\n")
-    print("| matrix | result | logs | details \n")
+    print("| Matrix | Result | Firebase Test Lab | Details\n")
     print("| --- | --- | --- | --- |\n")
     for matrix, matrix_result in matrix_ids.items():
-        print("| {matrixId} | {outcome} | [logs]({webLink}) | {axes[0][details]}\n".format(**matrix_result))
+        for axis in matrix_result["axes"]:
+            print(f"| {matrix_result['matrixId']} | {matrix_result['outcome']}"
+                  f"| [Firebase Test Lab]({matrix_result['webLink']}) | {axis['details']}\n")
+    print("---\n")
+    print("# References & Documentation\n")
+    print("* [Automated UI Testing Documentation](https://github.com/mozilla-mobile/shared-docs/blob/main/android/ui-testing.md)\n")
+    print("* Mobile Test Engineering on [Confluence](https://mozilla-hub.atlassian.net/wiki/spaces/MTE/overview) | [Slack](https://mozilla.slack.com/archives/C02KDDS9QM9) | [Alerts](https://mozilla.slack.com/archives/C0134KJ4JHL)\n")
 
 
 if __name__ == "__main__":
     main()
-

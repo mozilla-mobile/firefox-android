@@ -11,9 +11,12 @@ import mozilla.components.service.nimbus.ui.NimbusBranchesAdapterDelegate
 import org.mozilla.experiments.nimbus.Branch
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getRootView
+import org.mozilla.fenix.ext.navigateWithBreadcrumb
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.nimbus.NimbusBranchesAction
+import org.mozilla.fenix.nimbus.NimbusBranchesFragment
 import org.mozilla.fenix.nimbus.NimbusBranchesFragmentDirections
 import org.mozilla.fenix.nimbus.NimbusBranchesStore
 
@@ -21,10 +24,12 @@ import org.mozilla.fenix.nimbus.NimbusBranchesStore
  * [NimbusBranchesFragment] controller. This implements [NimbusBranchesAdapterDelegate] to handle
  * interactions with a Nimbus branch.
  *
- * @param nimbusBranchesStore An instance of [NimbusBranchesStore] for dispatching
+ * @property context An Android [Context].
+ * @property navController [NavController] used for navigation.
+ * @property nimbusBranchesStore An instance of [NimbusBranchesStore] for dispatching
  * [NimbusBranchesAction]s.
- * @param experiments An instance of [NimbusApi] for interacting with the Nimbus experiments.
- * @param experimentId The string experiment-id or "slug" for a Nimbus experiment.
+ * @property experiments An instance of [NimbusApi] for interacting with the Nimbus experiments.
+ * @property experimentId The string experiment-id or "slug" for a Nimbus experiment.
  */
 class NimbusBranchesController(
     private val context: Context,
@@ -51,9 +56,12 @@ class NimbusBranchesController(
                 )
                     .setText(snackbarText)
                     .setAction(buttonText) {
-                        navController.navigate(
-                            NimbusBranchesFragmentDirections
+                        navController.navigateWithBreadcrumb(
+                            directions = NimbusBranchesFragmentDirections
                                 .actionNimbusBranchesFragmentToDataChoicesFragment(),
+                            navigateFrom = "NimbusBranchesController",
+                            navigateTo = "ActionNimbusBranchesFragmentToDataChoicesFragment",
+                            crashReporter = context.components.analytics.crashReporter,
                         )
                     }
                     .show()

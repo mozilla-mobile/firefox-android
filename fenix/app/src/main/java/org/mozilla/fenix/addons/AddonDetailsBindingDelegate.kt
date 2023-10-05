@@ -13,9 +13,11 @@ import android.view.View
 import androidx.core.net.toUri
 import androidx.core.text.HtmlCompat
 import androidx.core.text.getSpans
+import androidx.core.view.isVisible
 import mozilla.components.feature.addons.Addon
 import mozilla.components.feature.addons.ui.translateDescription
 import mozilla.components.feature.addons.ui.updatedAtDate
+import mozilla.components.support.ktx.android.content.getColorFromAttr
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.FragmentAddOnDetailsBinding
 import java.text.DateFormat
@@ -25,9 +27,9 @@ import java.util.Locale
 interface AddonDetailsInteractor {
 
     /**
-     * Open the given addon siteUrl in the browser.
+     * Open the givne URL in the browser.
      */
-    fun openWebsite(addonSiteUrl: Uri)
+    fun openWebsite(url: Uri)
 
     /**
      * Display the updater dialog.
@@ -48,7 +50,7 @@ class AddonDetailsBindingDelegate(
 
     fun bind(addon: Addon) {
         bindDetails(addon)
-        bindAuthors(addon)
+        bindAuthor(addon)
         bindVersion(addon)
         bindLastUpdated(addon)
         bindWebsite(addon)
@@ -68,12 +70,25 @@ class AddonDetailsBindingDelegate(
     }
 
     private fun bindWebsite(addon: Addon) {
+        if (addon.siteUrl.isBlank()) {
+            binding.homePageLabel.isVisible = false
+            binding.homePageDivider.isVisible = false
+            return
+        }
+
         binding.homePageLabel.setOnClickListener {
             interactor.openWebsite(addon.siteUrl.toUri())
         }
     }
 
     private fun bindLastUpdated(addon: Addon) {
+        if (addon.updatedAt.isBlank()) {
+            binding.lastUpdatedLabel.isVisible = false
+            binding.lastUpdatedText.isVisible = false
+            binding.lastUpdatedDivider.isVisible = false
+            return
+        }
+
         binding.lastUpdatedText.text = dateFormatter.format(addon.updatedAtDate)
     }
 
@@ -94,8 +109,23 @@ class AddonDetailsBindingDelegate(
         }
     }
 
-    private fun bindAuthors(addon: Addon) {
-        binding.authorText.text = addon.authors.joinToString { author -> author.name }.trim()
+    private fun bindAuthor(addon: Addon) {
+        val author = addon.author
+        if (author == null || author.name.isBlank()) {
+            binding.authorLabel.isVisible = false
+            binding.authorText.isVisible = false
+            binding.authorDivider.isVisible = false
+            return
+        }
+
+        binding.authorText.text = author.name
+
+        if (author.url.isNotBlank()) {
+            binding.authorText.setTextColor(binding.root.context.getColorFromAttr(R.attr.textAccent))
+            binding.authorText.setOnClickListener {
+                interactor.openWebsite(author.url.toUri())
+            }
+        }
     }
 
     private fun bindDetails(addon: Addon) {

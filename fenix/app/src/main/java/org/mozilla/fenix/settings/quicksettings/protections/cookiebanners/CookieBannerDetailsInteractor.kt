@@ -17,6 +17,11 @@ interface CookieBannerDetailsInteractor {
      * Called whenever the user press the toggle widget.
      */
     fun onTogglePressed(vale: Boolean) = Unit
+
+    /**
+     * Called whenever the user press request support site domain.
+     */
+    fun handleRequestSiteSupportPressed()
 }
 
 /**
@@ -25,7 +30,7 @@ interface CookieBannerDetailsInteractor {
  * Implements callbacks for each of [CookieBannerPanelDialogFragment]'s Views declared possible user interactions,
  * delegates all such user events to the [CookieBannerDetailsController].
  *
- * @param controller [CookieBannerDetailsController] which will be delegated for all users interactions,
+ * @property controller [CookieBannerDetailsController] which will be delegated for all users interactions,
  * it expected to contain all business logic for how to act in response.
  */
 class DefaultCookieBannerDetailsInteractor(
@@ -38,5 +43,9 @@ class DefaultCookieBannerDetailsInteractor(
 
     override fun onTogglePressed(vale: Boolean) {
         controller.handleTogglePressed(vale)
+    }
+
+    override fun handleRequestSiteSupportPressed() {
+        controller.handleRequestSiteSupportPressed()
     }
 }

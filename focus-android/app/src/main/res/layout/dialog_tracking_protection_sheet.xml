@@ -44,8 +44,8 @@
             android:layout_marginTop="28dp"
             android:drawablePadding="20dp"
             android:gravity="center_vertical"
-            app:drawableEndCompat="@drawable/mozac_ic_arrowhead_right"
-            app:drawableStartCompat="@drawable/mozac_ic_lock"
+            app:drawableEndCompat="@drawable/mozac_ic_chevron_right_24"
+            app:drawableStartCompat="@drawable/mozac_ic_lock_24"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/site_title"
             tools:text="@string/secure_connection" />
@@ -67,7 +67,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/cookie_banner_exception"
             app:switchDescription="@string/enhanced_tracking_protection_state_on"
-            app:switchIcon="@drawable/mozac_ic_shield"
+            app:switchIcon="@drawable/mozac_ic_shield_24"
             app:switchTitle="@string/enhanced_tracking_protection" />
 
         <com.google.android.material.textview.MaterialTextView

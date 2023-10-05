@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.ui
 
 import android.content.res.Configuration
@@ -45,8 +49,9 @@ class SettingsCustomizeTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/344212
     @Test
-    fun changeThemeSettingTest() {
+    fun changeThemeOfTheAppTest() {
         // Goes through the settings and changes the default search engine, then verifies it changes.
         homeScreen {
         }.openThreeDotMenu {
@@ -60,6 +65,7 @@ class SettingsCustomizeTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/466571
     @Test
     fun setToolbarPositionTest() {
         homeScreen {
@@ -84,8 +90,9 @@ class SettingsCustomizeTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1058682
     @Test
-    fun swipeToolbarGesturePreferenceOffTest() {
+    fun turnOffSwipeToSwitchTabsPreferenceTest() {
         val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
         val secondWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 2)
 
@@ -110,6 +117,7 @@ class SettingsCustomizeTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1992289
     @Test
     fun pullToRefreshPreferenceTest() {
         homeScreen {
