@@ -27,9 +27,13 @@ fun ProductAnalysis?.toProductReviewState(): ProductReviewState =
 
 private fun GeckoProductAnalysis.toProductReview(): ProductReviewState =
     if (productId == null) {
-        ProductReviewState.NoAnalysisPresent()
+        if (needsAnalysis) {
+            ProductReviewState.NoAnalysisPresent()
+        } else {
+            ProductReviewState.Error.GenericError
+        }
     } else {
-        val mappedRating = adjustedRating.toFloatOrNull()
+        val mappedRating = adjustedRating?.toFloat()
         val mappedGrade = grade?.toGrade()
         val mappedHighlights = highlights?.toHighlights()?.toSortedMap()
 
@@ -75,18 +79,6 @@ private fun Highlight.highlightsForType(highlightType: HighlightType) =
         HighlightType.PACKAGING_AND_APPEARANCE -> appearance
         HighlightType.COMPETITIVENESS -> competitiveness
     }?.map { it.surroundWithQuotes() }
-
-/**
- * GeckoView sets 0.0 as default instead of null for adjusted rating. This maps 0.0 to null making
- * it easier for the UI layer to decide whether to display a UI element based on the presence of
- * value.
- */
-private fun Double.toFloatOrNull(): Float? =
-    if (this == 0.0) {
-        null
-    } else {
-        toFloat()
-    }
 
 private fun String.surroundWithQuotes(): String =
     "\"$this\""

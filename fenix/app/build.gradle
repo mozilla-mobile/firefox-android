@@ -280,9 +280,10 @@ android.applicationVariants.configureEach { variant ->
             def abi = output.getFilter(FilterConfiguration.FilterType.ABI.name())
             // If it is a Mozilla Online build, use a unified version code of armeabi-v7a
             def arch = (isMozillaOnline) ? "armeabi-v7a" : abi
+            def aab = project.hasProperty("aab")
             // We use the same version code generator, that we inherited from Fennec, across all channels - even on
             // channels that never shipped a Fennec build.
-            def versionCodeOverride = Config.generateFennecVersionCode(arch)
+            def versionCodeOverride = Config.generateFennecVersionCode(arch, aab)
 
             println("versionCode for $abi = $versionCodeOverride, isMozillaOnline = $isMozillaOnline")
 
@@ -517,6 +518,7 @@ dependencies {
     implementation project(':feature-contextmenu')
     implementation project(':feature-customtabs')
     implementation project(':feature-downloads')
+    implementation project(':feature-fxsuggest')
     implementation project(':feature-intent')
     implementation project(':feature-media')
     implementation project(':feature-prompts')
@@ -711,8 +713,8 @@ if (project.hasProperty("coverage")) {
             dependsOn "test${variant.name.capitalize()}UnitTest"
 
             reports {
-                xml.enabled  true
-                html.enabled  true
+                xml.required = true
+                html.required = true
             }
 
             def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*',

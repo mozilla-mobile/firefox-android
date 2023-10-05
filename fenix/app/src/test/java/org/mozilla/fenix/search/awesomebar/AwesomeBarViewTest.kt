@@ -24,6 +24,7 @@ import mozilla.components.feature.awesomebar.provider.SearchEngineSuggestionProv
 import mozilla.components.feature.awesomebar.provider.SearchSuggestionProvider
 import mozilla.components.feature.awesomebar.provider.SearchTermSuggestionsProvider
 import mozilla.components.feature.awesomebar.provider.SessionSuggestionProvider
+import mozilla.components.feature.fxsuggest.FxSuggestSuggestionProvider
 import mozilla.components.feature.syncedtabs.SyncedTabsStorageSuggestionProvider
 import mozilla.components.support.ktx.android.content.getColorFromAttr
 import org.junit.After
@@ -63,7 +64,6 @@ class AwesomeBarViewTest {
         every { any<Activity>().components.core.bookmarksStorage } returns mockk()
         every { any<Activity>().components.core.client } returns mockk()
         every { any<Activity>().components.backgroundServices.syncedTabsStorage } returns mockk()
-        every { any<Activity>().components.core.store.state.search } returns mockk(relaxed = true)
         every { any<Activity>().components.core.store.state.search } returns mockk(relaxed = true)
         every { any<Activity>().getColorFromAttr(any()) } returns 0
         every { AwesomeBarView.Companion.getDrawable(any(), any()) } returns mockk<VectorDrawable>(relaxed = true) {
@@ -851,6 +851,90 @@ class AwesomeBarViewTest {
     }
 
     @Test
+    fun `GIVEN sponsored suggestions are enabled WHEN configuring providers THEN add the Firefox Suggest suggestion provider`() {
+        val settings: Settings = mockk(relaxed = true)
+        every { activity.settings() } returns settings
+        val awesomeBarView = AwesomeBarView(
+            activity = activity,
+            interactor = mockk(),
+            view = mockk(),
+            fromHomeFragment = false,
+        )
+        val state = getSearchProviderState(
+            showSponsoredSuggestions = true,
+            showNonSponsoredSuggestions = false,
+        )
+
+        val result = awesomeBarView.getProvidersToAdd(state)
+
+        val fxSuggestProvider = result.firstOrNull { it is FxSuggestSuggestionProvider }
+        assertNotNull(fxSuggestProvider)
+    }
+
+    @Test
+    fun `GIVEN non-sponsored suggestions are enabled WHEN configuring providers THEN add the Firefox Suggest suggestion provider`() {
+        val settings: Settings = mockk(relaxed = true)
+        every { activity.settings() } returns settings
+        val awesomeBarView = AwesomeBarView(
+            activity = activity,
+            interactor = mockk(),
+            view = mockk(),
+            fromHomeFragment = false,
+        )
+        val state = getSearchProviderState(
+            showSponsoredSuggestions = false,
+            showNonSponsoredSuggestions = true,
+        )
+
+        val result = awesomeBarView.getProvidersToAdd(state)
+
+        val fxSuggestProvider = result.firstOrNull { it is FxSuggestSuggestionProvider }
+        assertNotNull(fxSuggestProvider)
+    }
+
+    @Test
+    fun `GIVEN sponsored and non-sponsored suggestions are enabled WHEN configuring providers THEN add the Firefox Suggest suggestion provider`() {
+        val settings: Settings = mockk(relaxed = true)
+        every { activity.settings() } returns settings
+        val awesomeBarView = AwesomeBarView(
+            activity = activity,
+            interactor = mockk(),
+            view = mockk(),
+            fromHomeFragment = false,
+        )
+        val state = getSearchProviderState(
+            showSponsoredSuggestions = true,
+            showNonSponsoredSuggestions = true,
+        )
+
+        val result = awesomeBarView.getProvidersToAdd(state)
+
+        val fxSuggestProvider = result.firstOrNull { it is FxSuggestSuggestionProvider }
+        assertNotNull(fxSuggestProvider)
+    }
+
+    @Test
+    fun `GIVEN sponsored and non-sponsored suggestions are disabled WHEN configuring providers THEN don't add the Firefox Suggest suggestion provider`() {
+        val settings: Settings = mockk(relaxed = true)
+        every { activity.settings() } returns settings
+        val awesomeBarView = AwesomeBarView(
+            activity = activity,
+            interactor = mockk(),
+            view = mockk(),
+            fromHomeFragment = false,
+        )
+        val state = getSearchProviderState(
+            showSponsoredSuggestions = false,
+            showNonSponsoredSuggestions = false,
+        )
+
+        val result = awesomeBarView.getProvidersToAdd(state)
+
+        val fxSuggestProvider = result.firstOrNull { it is FxSuggestSuggestionProvider }
+        assertNull(fxSuggestProvider)
+    }
+
+    @Test
     fun `GIVEN the current search engine's url is not known WHEN creating a history provider for that engine THEN return null`() {
         val engineSource = SearchEngineSource.None
 
@@ -1062,6 +1146,8 @@ private fun getSearchProviderState(
     showSessionSuggestionsForCurrentEngine: Boolean = true,
     showAllSessionSuggestions: Boolean = true,
     searchEngineSource: SearchEngineSource = SearchEngineSource.None,
+    showSponsoredSuggestions: Boolean = true,
+    showNonSponsoredSuggestions: Boolean = true,
 ) = SearchProviderState(
     showSearchShortcuts = showSearchShortcuts,
     showSearchTermHistory = showSearchTermHistory,
@@ -1074,5 +1160,7 @@ private fun getSearchProviderState(
     showAllSyncedTabsSuggestions = showAllSyncedTabsSuggestions,
     showSessionSuggestionsForCurrentEngine = showSessionSuggestionsForCurrentEngine,
     showAllSessionSuggestions = showAllSessionSuggestions,
+    showSponsoredSuggestions = showSponsoredSuggestions,
+    showNonSponsoredSuggestions = showNonSponsoredSuggestions,
     searchEngineSource = searchEngineSource,
 )

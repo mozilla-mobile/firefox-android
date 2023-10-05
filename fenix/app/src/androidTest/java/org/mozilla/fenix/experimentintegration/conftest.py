@@ -64,6 +64,8 @@ def gradlewbuild(gradlewbuild_log):
 def fixture_experiment_data(experiment_url):
     data = requests.get(experiment_url).json()
     for item in data["branches"][0]["features"][0]["value"]["messages"].values():
+        item["surface"] = "homescreen"
+        item["style"] = "URGENT"
         for count, trigger in enumerate(item["trigger"]):
             if "USER_EN_SPEAKER" not in trigger:
                 del(item["trigger"][count])
@@ -160,6 +162,7 @@ def fixture_setup_experiment(experiment_slug, json_data, gradlewbuild_log):
     def _(branch):
         logging.info(f"Testing experiment {experiment_slug}, BRANCH: {branch[0]}")
         command = f"nimbus-cli --app fenix --channel developer enroll {experiment_slug} --branch {branch[0]} --file {json_data} --reset-app"
+        logging.info(f"Running command {command}")
         try:
             out = subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT)
         except subprocess.CalledProcessError as e:

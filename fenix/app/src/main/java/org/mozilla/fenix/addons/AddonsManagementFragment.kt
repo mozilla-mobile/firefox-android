@@ -25,9 +25,12 @@ import mozilla.components.feature.addons.Addon
 import mozilla.components.feature.addons.AddonManager
 import mozilla.components.feature.addons.AddonManagerException
 import mozilla.components.feature.addons.ui.AddonsManagerAdapter
+import mozilla.components.feature.addons.ui.AddonsManagerAdapterDelegate
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
+import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
+import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.databinding.FragmentAddOnsManagementBinding
@@ -37,6 +40,7 @@ import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.extension.WebExtensionPromptFeature
+import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.theme.ThemeManager
 
 /**
@@ -98,6 +102,8 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
         val managementView = AddonsManagementView(
             navController = findNavController(),
             onInstallButtonClicked = ::installAddon,
+            onMoreAddonsButtonClicked = ::openAMO,
+            onLearnMoreClicked = ::openLearnMoreLink,
         )
 
         val recyclerView = binding?.addOnsList
@@ -257,7 +263,34 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
         }
     }
 
+    private fun openAMO() {
+        openLinkInNewTab(AMO_HOMEPAGE_FOR_ANDROID)
+    }
+
+    private fun openLearnMoreLink(link: AddonsManagerAdapterDelegate.LearnMoreLinks, addon: Addon) {
+        val url = when (link) {
+            AddonsManagerAdapterDelegate.LearnMoreLinks.BLOCKLISTED_ADDON ->
+                "${BuildConfig.AMO_BASE_URL}/android/blocked-addon/${addon.id}/"
+            AddonsManagerAdapterDelegate.LearnMoreLinks.ADDON_NOT_CORRECTLY_SIGNED ->
+                SupportUtils.getSumoURLForTopic(requireContext(), SupportUtils.SumoTopic.UNSIGNED_ADDONS)
+        }
+        openLinkInNewTab(url)
+    }
+
+    private fun openLinkInNewTab(url: String) {
+        (activity as HomeActivity).openToBrowserAndLoad(
+            searchTermOrURL = url,
+            newTab = true,
+            from = BrowserDirection.FromAddonsManagementFragment,
+        )
+    }
+
     companion object {
         private const val BUNDLE_KEY_INSTALL_EXTERNAL_ADDON_COMPLETE = "INSTALL_EXTERNAL_ADDON_COMPLETE"
+
+        // This is locale-less on purpose so that the content negotiation happens on the AMO side because the current
+        // user language might not be supported by AMO and/or the language might not be exactly what AMO is expecting
+        // (e.g. `en` instead of `en-US`).
+        private const val AMO_HOMEPAGE_FOR_ANDROID = "${BuildConfig.AMO_BASE_URL}/android/"
     }
 }

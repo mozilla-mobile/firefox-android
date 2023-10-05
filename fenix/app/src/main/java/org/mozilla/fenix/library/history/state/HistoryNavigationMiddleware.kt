@@ -12,10 +12,12 @@ import kotlinx.coroutines.launch
 import mozilla.components.lib.state.Middleware
 import mozilla.components.lib.state.MiddlewareContext
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ext.navigateSafe
 import org.mozilla.fenix.library.history.History
 import org.mozilla.fenix.library.history.HistoryFragmentAction
 import org.mozilla.fenix.library.history.HistoryFragmentDirections
 import org.mozilla.fenix.library.history.HistoryFragmentState
+import org.mozilla.fenix.library.history.HistoryFragmentStore
 
 /**
  * A [Middleware] for initiating navigation events based on [HistoryFragmentAction]s that are
@@ -23,6 +25,8 @@ import org.mozilla.fenix.library.history.HistoryFragmentState
  *
  * @property navController [NavController] for handling navigation events
  * @property openToBrowser Callback to open history items in a browser window.
+ * @property onBackPressed Callback to handle back press actions.
+ * @property scope [CoroutineScope] used to launch coroutines.
  */
 class HistoryNavigationMiddleware(
     private val navController: NavController,
@@ -71,6 +75,12 @@ class HistoryNavigationMiddleware(
                             else -> Unit
                         }
                     }
+                }
+                is HistoryFragmentAction.SearchClicked -> {
+                    navController.navigateSafe(
+                        R.id.historyFragment,
+                        HistoryFragmentDirections.actionGlobalSearchDialog(null),
+                    )
                 }
                 else -> Unit
             }
