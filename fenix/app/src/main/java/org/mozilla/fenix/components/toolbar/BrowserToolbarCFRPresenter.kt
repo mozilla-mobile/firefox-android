@@ -60,13 +60,14 @@ private const val CFR_MINIMUM_NUMBER_OPENED_TABS = 5
 /**
  * Delegate for handling all the business logic for showing CFRs in the toolbar.
  *
- * @param context used for various Android interactions.
- * @param browserStore will be observed for tabs updates
- * @param settings used to read and write persistent user settings
- * @param toolbar will serve as anchor for the CFRs
- * @param sessionId optional custom tab id used to identify the custom tab in which to show a CFR.
- * @param onShoppingCfrActionClicked Triggered when the user taps on the shopping CFR action.
- * @param shoppingExperienceFeature Used to determine if [ShoppingExperienceFeature] is enabled.
+ * @property context used for various Android interactions.
+ * @property browserStore will be observed for tabs updates
+ * @property settings used to read and write persistent user settings
+ * @property toolbar will serve as anchor for the CFRs
+ * @property isPrivate Whether or not the session is private.
+ * @property sessionId optional custom tab id used to identify the custom tab in which to show a CFR.
+ * @property onShoppingCfrActionClicked Triggered when the user taps on the shopping CFR action.
+ * @property shoppingExperienceFeature Used to determine if [ShoppingExperienceFeature] is enabled.
  */
 class BrowserToolbarCFRPresenter(
     private val context: Context,
@@ -99,7 +100,7 @@ class BrowserToolbarCFRPresenter(
                         .transformWhile { progress ->
                             emit(progress)
                             progress != 100
-                        }.filter { it == 100 }.collect {
+                        }.filter { popup == null && it == 100 }.collect {
                             scope?.cancel()
                             showTcpCfr()
                         }
@@ -112,7 +113,7 @@ class BrowserToolbarCFRPresenter(
                         .filter { it.isProductUrl && it.content.progress == 100 && !it.content.loading }
                         .distinctUntilChanged()
                         .map { toolbar.findViewById<View>(R.id.mozac_browser_toolbar_page_actions).isVisible }
-                        .filter { it }
+                        .filter { popup == null && it }
                         .firstOrNull()
 
                     if (shouldShowCfr == true) {
@@ -134,7 +135,7 @@ class BrowserToolbarCFRPresenter(
                             emit(progress)
                             progress != 100
                         }
-                        .filter { it == 100 }
+                        .filter { popup == null && it == 100 }
                         .collect {
                             scope?.cancel()
                             showEraseCfr()
