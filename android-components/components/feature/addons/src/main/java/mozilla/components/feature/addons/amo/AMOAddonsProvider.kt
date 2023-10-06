@@ -413,18 +413,17 @@ internal fun JSONObject.getAddonsFromCollection(language: String? = null): List<
 
 internal fun JSONObject.toAddon(language: String? = null): Addon {
     return with(this) {
-        val download = getDownload()
         val safeLanguage = language?.lowercase(Locale.getDefault())
         val summary = getSafeTranslations("summary", safeLanguage)
         val isLanguageInTranslations = summary.containsKey(safeLanguage)
         Addon(
             id = getSafeString("guid"),
-            authors = getAuthors(),
+            author = getAuthor(),
             categories = getCategories(),
             createdAt = getSafeString("created"),
-            updatedAt = getSafeString("last_updated"),
-            downloadId = download?.getDownloadId() ?: "",
-            downloadUrl = download?.getDownloadUrl() ?: "",
+            updatedAt = getCurrentVersionCreated(),
+            downloadId = getDownloadId(),
+            downloadUrl = getDownloadUrl(),
             version = getCurrentVersion(),
             permissions = getPermissions(),
             translatableName = getSafeTranslations("name", safeLanguage),
@@ -469,47 +468,47 @@ internal fun JSONObject.getCategories(): List<String> {
 }
 
 internal fun JSONObject.getPermissions(): List<String> {
-    val fileJson = getJSONObject("current_version")
-        .getSafeJSONArray("files")
-        .getJSONObject(0)
-
-    val permissionsJson = fileJson.getSafeJSONArray("permissions")
+    val permissionsJson = getFile()?.getSafeJSONArray("permissions") ?: JSONArray()
     return (0 until permissionsJson.length()).map { index ->
         permissionsJson.getString(index)
     }
 }
 
 internal fun JSONObject.getCurrentVersion(): String {
-    return optJSONObject("current_version")?.getSafeString("version") ?: ""
+    return getJSONObject("current_version").getSafeString("version")
 }
 
-internal fun JSONObject.getDownload(): JSONObject? {
-    return (
-        getJSONObject("current_version")
-            .optJSONArray("files")
-            ?.getJSONObject(0)
-        )
+internal fun JSONObject.getFile(): JSONObject? {
+    return getJSONObject("current_version")
+        .getSafeJSONArray("files")
+        .optJSONObject(0)
 }
 
 internal fun JSONObject.getDownloadId(): String {
-    return getSafeString("id")
+    return getFile()?.getSafeString("id").orEmpty()
+}
+
+internal fun JSONObject.getCurrentVersionCreated(): String {
+    // We want to return: `current_version.files[0].created`.
+    return getFile()?.getSafeString("created").orEmpty()
 }
 
 internal fun JSONObject.getDownloadUrl(): String {
-    return getSafeString("url")
+    return getFile()?.getSafeString("url").orEmpty()
 }
 
-internal fun JSONObject.getAuthors(): List<Addon.Author> {
+internal fun JSONObject.getAuthor(): Addon.Author? {
     val authorsJson = getSafeJSONArray("authors")
-    return (0 until authorsJson.length()).map { index ->
-        val authorJson = authorsJson.getJSONObject(index)
+    // We only consider the first author in the AMO API response, mainly because Gecko does the same.
+    val authorJson = authorsJson.optJSONObject(0)
 
+    return if (authorJson != null) {
         Addon.Author(
-            id = authorJson.getSafeString("id"),
             name = authorJson.getSafeString("name"),
-            username = authorJson.getSafeString("username"),
             url = authorJson.getSafeString("url"),
         )
+    } else {
+        null
     }
 }
 
