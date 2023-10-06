@@ -370,15 +370,16 @@ android.applicationVariants.configureEach { variant ->
 
         // The Google Play Store does not allow multiple APKs for the same app that all have the
         // same version code. Therefore we need to have different version codes for our ARM and x86
-        // builds.
+        // builds. See https://developer.android.com/studio/publish/versioning
 
         // Our generated version code now has a length of 9 (See tools/gradle/versionCode.gradle).
         // Our x86 builds need a higher version code to avoid installing ARM builds on an x86 device
         // with ARM compatibility mode.
 
         // AAB builds need a version code that is distinct from any APK builds. Since AAB and APK
-        // builds may run in parallel, the difference must be outside of the time-based portion
-        // of the version code: We change the first digit, the constant "3" to "4".
+        // builds may run in parallel, AAB and APK version codes might be based on the same
+        // (minute granularity) time of day. To avoid conflicts, we ensure the minute portion
+        // of the version code is even for APKs and odd for AABs.
 
         variant.outputs.each { output ->
             def abi = output.getFilter(FilterConfiguration.FilterType.ABI.name())
@@ -386,18 +387,24 @@ android.applicationVariants.configureEach { variant ->
             // We use the same version code generator, that we inherited from Fennec, across all channels - even on
             // channels that never shipped a Fennec build.
 
+            // ensure baseVersionCode is an even number
+            if (baseVersionCode % 2) {
+                baseVersionCode = baseVersionCode + 1
+            }
+
             def versionCodeOverride = baseVersionCode
 
             if (aab) {
-                versionCodeOverride = ("4" + String.valueOf(versionCodeOverride).substring(1)) as int
+                // AAB version code is odd
+                versionCodeOverride = versionCodeOverride + 1
                 println("versionCode for AAB = $versionCodeOverride")
             } else {
                 if (abi == "x86_64") {
-                    versionCodeOverride = versionCodeOverride + 3
+                    versionCodeOverride = versionCodeOverride + 6
                 } else if (abi == "x86") {
-                    versionCodeOverride = versionCodeOverride + 2
+                    versionCodeOverride = versionCodeOverride + 4
                 } else if (abi == "arm64-v8a") {
-                    versionCodeOverride = versionCodeOverride + 1
+                    versionCodeOverride = versionCodeOverride + 2
                 } else if (abi == "armeabi-v7a") {
                     versionCodeOverride = versionCodeOverride + 0
                 } else {
