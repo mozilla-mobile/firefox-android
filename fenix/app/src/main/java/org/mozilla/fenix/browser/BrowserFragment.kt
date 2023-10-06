@@ -38,6 +38,7 @@ import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifAnyChanged
 import org.mozilla.fenix.GleanMetrics.ReaderMode
+import org.mozilla.fenix.GleanMetrics.Shopping
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
@@ -240,6 +241,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                     findNavController().navigate(
                         BrowserFragmentDirections.actionBrowserFragmentToReviewQualityCheckDialogFragment(),
                     )
+                    Shopping.addressBarIconClicked.record()
                 },
             )
 
@@ -253,11 +255,14 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                     settings = requireContext().settings(),
                 ),
                 onAvailabilityChange = {
+                    if (!reviewQualityCheckAvailable && it) {
+                        Shopping.addressBarIconDisplayed.record()
+                    }
                     reviewQualityCheckAvailable = it
                     safeInvalidateBrowserToolbarView()
                 },
-                onBottomSheetCollapsed = {
-                    reviewQualityCheck.setSelected(selected = false, notifyListener = false)
+                onBottomSheetStateChange = {
+                    reviewQualityCheck.setSelected(selected = it, notifyListener = false)
                 },
             ),
             owner = this,
