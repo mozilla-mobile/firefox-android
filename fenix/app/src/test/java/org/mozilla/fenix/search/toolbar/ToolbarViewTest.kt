@@ -87,6 +87,8 @@ class ToolbarViewTest {
         showAllSyncedTabsSuggestions = false,
         showSessionSuggestionsForCurrentEngine = false,
         showAllSessionSuggestions = false,
+        showSponsoredSuggestions = false,
+        showNonSponsoredSuggestions = false,
         searchAccessPoint = MetricsUtils.Source.NONE,
     )
 

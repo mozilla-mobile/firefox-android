@@ -32,6 +32,7 @@ import org.mozilla.fenix.helpers.MockBrowserDataHelper.createTabItem
 import org.mozilla.fenix.helpers.MockBrowserDataHelper.setCustomSearchEngine
 import org.mozilla.fenix.helpers.SearchDispatcher
 import org.mozilla.fenix.helpers.TestAssetHelper.getGenericAsset
+import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.helpers.TestHelper.appContext
 import org.mozilla.fenix.helpers.TestHelper.assertNativeAppOpens
 import org.mozilla.fenix.helpers.TestHelper.clickSnackbarButton
@@ -49,6 +50,7 @@ import org.mozilla.fenix.ui.robots.longClickPageObject
 import org.mozilla.fenix.ui.robots.multipleSelectionToolbar
 import org.mozilla.fenix.ui.robots.navigationToolbar
 import org.mozilla.fenix.ui.robots.searchScreen
+import java.util.Locale
 
 /**
  *  Tests for verifying the search fragment
@@ -173,9 +175,10 @@ class SearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1059459
     @SmokeTest
     @Test
-    fun scanButtonDenyPermissionTest() {
+    fun verifyQRScanningCameraAccessDialogTest() {
         val cameraManager = appContext.getSystemService(Context.CAMERA_SERVICE) as CameraManager
         assumeTrue(cameraManager.cameraIdList.isNotEmpty())
 
@@ -194,9 +197,10 @@ class SearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/235397
     @SmokeTest
     @Test
-    fun scanButtonAllowPermissionTest() {
+    fun scanQRCodeToOpenAWebpageTest() {
         val cameraManager = appContext.getSystemService(Context.CAMERA_SERVICE) as CameraManager
         assumeTrue(cameraManager.cameraIdList.isNotEmpty())
 
@@ -230,10 +234,11 @@ class SearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/235395
     // Verifies a temporary change of search engine from the Search shortcut menu
     @SmokeTest
     @Test
-    fun selectSearchEnginesShortcutTest() {
+    fun searchEnginesCanBeChangedTemporarilyFromSearchSelectorMenuTest() {
         val enginesList = listOf("DuckDuckGo", "Google", "Amazon.com", "Wikipedia", "Bing", "eBay")
 
         enginesList.forEach {
@@ -249,8 +254,9 @@ class SearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/233589
     @Test
-    fun accessSearchSettingFromSearchSelectorMenuTest() {
+    fun defaultSearchEnginesCanBeSetFromSearchSelectorMenuTest() {
         searchScreen {
             clickSearchSelectorButton()
         }.clickSearchEngineSettings {
@@ -266,8 +272,9 @@ class SearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/522918
     @Test
-    fun clearSearchTest() {
+    fun verifyClearSearchButtonTest() {
         homeScreen {
         }.openSearch {
             typeSearch(queryString)
@@ -276,10 +283,11 @@ class SearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1623441
     @Ignore("Test run timing out: https://github.com/mozilla-mobile/fenix/issues/27704")
     @SmokeTest
     @Test
-    fun searchGroupShowsInRecentlyVisitedTest() {
+    fun searchResultsOpenedInNewTabsGenerateSearchGroupsTest() {
         // setting our custom mockWebServer search URL
         val searchEngineName = "TestSearchEngine"
         setCustomSearchEngine(searchMockServer, searchEngineName)
@@ -304,9 +312,10 @@ class SearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1592229
     @Ignore("Test run timing out: https://github.com/mozilla-mobile/fenix/issues/27704")
     @Test
-    fun verifySearchGroupHistoryWithNoDuplicatesTest() {
+    fun verifyAPageIsAddedToASearchGroupOnlyOnceTest() {
         val firstPageUrl = getGenericAsset(searchMockServer, 1).url
         val secondPageUrl = getGenericAsset(searchMockServer, 2).url
         val originPageUrl =
@@ -349,9 +358,10 @@ class SearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1591782
     @Ignore("Failing due to known bug, see https://github.com/mozilla-mobile/fenix/issues/23818")
     @Test
-    fun searchGroupGeneratedInTheSameTabTest() {
+    fun searchGroupIsGeneratedWhenNavigatingInTheSameTabTest() {
         // setting our custom mockWebServer search URL
         val searchEngineName = "TestSearchEngine"
         setCustomSearchEngine(searchMockServer, searchEngineName)
@@ -372,9 +382,10 @@ class SearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1591781
     @SmokeTest
     @Test
-    fun noSearchGroupFromPrivateBrowsingTest() {
+    fun searchGroupIsNotGeneratedForLinksOpenedInPrivateTabsTest() {
         // setting our custom mockWebServer search URL
         val searchEngineName = "TestSearchEngine"
         setCustomSearchEngine(searchMockServer, searchEngineName)
@@ -403,10 +414,11 @@ class SearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1592269
     @Ignore("Test run timing out: https://github.com/mozilla-mobile/fenix/issues/27704")
     @SmokeTest
     @Test
-    fun deleteItemsFromSearchGroupHistoryTest() {
+    fun deleteIndividualHistoryItemsFromSearchGroupTest() {
         val firstPageUrl = getGenericAsset(searchMockServer, 1).url
         val secondPageUrl = getGenericAsset(searchMockServer, 2).url
         // setting our custom mockWebServer search URL
@@ -445,9 +457,10 @@ class SearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1592242
     @Ignore("Test run timing out: https://github.com/mozilla-mobile/fenix/issues/27704")
     @Test
-    fun deleteSearchGroupFromHistoryTest() {
+    fun deleteSearchGroupFromHomeScreenTest() {
         val firstPageUrl = getGenericAsset(searchMockServer, 1).url
         // setting our custom mockWebServer search URL
         val searchEngineName = "TestSearchEngine"
@@ -485,9 +498,10 @@ class SearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1592235
     @Ignore("Test run timing out: https://github.com/mozilla-mobile/fenix/issues/27704")
     @Test
-    fun reopenTabsFromSearchGroupTest() {
+    fun openAPageFromHomeScreenSearchGroupTest() {
         val firstPageUrl = getGenericAsset(searchMockServer, 1).url
         val secondPageUrl = getGenericAsset(searchMockServer, 2).url
         // setting our custom mockWebServer search URL
@@ -532,9 +546,10 @@ class SearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1592238
     @Ignore("Test run timing out: https://github.com/mozilla-mobile/fenix/issues/27704")
     @Test
-    fun sharePageFromASearchGroupTest() {
+    fun shareAPageFromHomeScreenSearchGroupTest() {
         val firstPageUrl = getGenericAsset(searchMockServer, 1).url
         // setting our custom mockWebServer search URL
         val searchEngineName = "TestSearchEngine"
@@ -570,6 +585,7 @@ class SearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1232633
     // Default search code for Google-US
     @Test
     fun defaultSearchCodeGoogleUS() {
@@ -590,6 +606,7 @@ class SearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1232637
     // Default search code for Bing-US
     @Test
     fun defaultSearchCodeBingUS() {
@@ -613,6 +630,7 @@ class SearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1232638
     // Default search code for DuckDuckGo-US
     @Test
     fun defaultSearchCodeDuckDuckGoUS() {
@@ -641,9 +659,10 @@ class SearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2154215
     @SmokeTest
     @Test
-    fun verifySearchHistoryWithBrowsingDataTest() {
+    fun verifyHistorySearchWithBrowsingHistoryTest() {
         val firstPageUrl = getGenericAsset(searchMockServer, 1)
         val secondPageUrl = getGenericAsset(searchMockServer, 2)
 
@@ -714,6 +733,7 @@ class SearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2230212
     @SmokeTest
     @Test
     fun searchHistoryNotRememberedInPrivateBrowsingTest() {
@@ -757,6 +777,31 @@ class SearchTest {
                     "test page 2",
                 ),
             )
+        }
+    }
+
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1232631
+    // Expected for app language set to Arabic
+    @Test
+    fun verifySearchEnginesFunctionalityUsingRTLLocaleTest() {
+        val arabicLocale = Locale("ar", "AR")
+
+        TestHelper.runWithSystemLocaleChanged(arabicLocale, activityTestRule.activityRule) {
+            homeScreen {
+            }.openSearch {
+                verifyTranslatedFocusedNavigationToolbar("ابحث أو أدخِل عنوانا")
+                clickSearchSelectorButton()
+                verifySearchShortcutListContains(
+                    "Google",
+                    "Bing",
+                    "Amazon.com",
+                    "DuckDuckGo",
+                    "ويكيبيديا (ar)",
+                )
+                selectTemporarySearchMethod("ويكيبيديا (ar)")
+            }.submitQuery("firefox") {
+                verifyUrl("firefox")
+            }
         }
     }
 }

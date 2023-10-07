@@ -288,7 +288,10 @@ object WebExtensionSupport {
                 ) {
                     store.dispatch(
                         WebExtensionAction.UpdatePromptRequestWebExtensionAction(
-                            WebExtensionPromptRequest.AfterInstallation.Permissions(extension, onPermissionsGranted),
+                            WebExtensionPromptRequest.AfterInstallation.Permissions.Required(
+                                extension,
+                                onPermissionsGranted,
+                            ),
                         ),
                     )
                 }
@@ -304,6 +307,22 @@ object WebExtensionSupport {
                         updated,
                         newPermissions,
                         onPermissionsGranted,
+                    )
+                }
+
+                override fun onOptionalPermissionsRequest(
+                    extension: WebExtension,
+                    permissions: List<String>,
+                    onPermissionsGranted: ((Boolean) -> Unit),
+                ) {
+                    store.dispatch(
+                        WebExtensionAction.UpdatePromptRequestWebExtensionAction(
+                            WebExtensionPromptRequest.AfterInstallation.Permissions.Optional(
+                                extension,
+                                permissions,
+                                onPermissionsGranted,
+                            ),
+                        ),
                     )
                 }
 

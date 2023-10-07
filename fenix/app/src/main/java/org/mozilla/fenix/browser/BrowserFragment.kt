@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -37,10 +38,12 @@ import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifAnyChanged
 import org.mozilla.fenix.GleanMetrics.ReaderMode
+import org.mozilla.fenix.GleanMetrics.Shopping
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.TabCollectionStorage
+import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.toolbar.BrowserToolbarView
 import org.mozilla.fenix.components.toolbar.ToolbarMenu
 import org.mozilla.fenix.ext.components
@@ -217,18 +220,28 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
 
     private fun initReviewQualityCheck(context: Context, view: View) {
         val reviewQualityCheck =
-            BrowserToolbar.Button(
-                imageDrawable = AppCompatResources.getDrawable(
+            BrowserToolbar.ToggleButton(
+                image = AppCompatResources.getDrawable(
                     context,
                     R.drawable.mozac_ic_shopping_24,
+                )!!.apply {
+                    setTint(ContextCompat.getColor(context, R.color.fx_mobile_text_color_primary))
+                },
+                imageSelected = AppCompatResources.getDrawable(
+                    context,
+                    R.drawable.ic_shopping_selected,
                 )!!,
                 contentDescription = context.getString(R.string.review_quality_check_open_handle_content_description),
-                iconTintColorResource = ThemeManager.resolveAttribute(R.attr.textPrimary, context),
+                contentDescriptionSelected =
+                context.getString(R.string.review_quality_check_close_handle_content_description),
                 visible = { reviewQualityCheckAvailable },
-                listener = {
+                listener = { _ ->
+                    requireComponents.appStore.dispatch(AppAction.ShoppingSheetStateUpdated(expanded = true))
+
                     findNavController().navigate(
                         BrowserFragmentDirections.actionBrowserFragmentToReviewQualityCheckDialogFragment(),
                     )
+                    Shopping.addressBarIconClicked.record()
                 },
             )
 
@@ -236,11 +249,21 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
 
         reviewQualityCheckFeature.set(
             feature = ReviewQualityCheckFeature(
+                appStore = requireComponents.appStore,
                 browserStore = context.components.core.store,
                 shoppingExperienceFeature = DefaultShoppingExperienceFeature(
                     settings = requireContext().settings(),
                 ),
-                onAvailabilityChange = { reviewQualityCheckAvailable = it },
+                onAvailabilityChange = {
+                    if (!reviewQualityCheckAvailable && it) {
+                        Shopping.addressBarIconDisplayed.record()
+                    }
+                    reviewQualityCheckAvailable = it
+                    safeInvalidateBrowserToolbarView()
+                },
+                onBottomSheetStateChange = {
+                    reviewQualityCheck.setSelected(selected = it, notifyListener = false)
+                },
             ),
             owner = this,
             view = view,

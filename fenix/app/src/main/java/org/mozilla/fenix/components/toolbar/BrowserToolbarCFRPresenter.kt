@@ -23,6 +23,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.transformWhile
@@ -35,6 +36,7 @@ import mozilla.components.compose.cfr.CFRPopup.PopupAlignment.INDICATOR_CENTERED
 import mozilla.components.compose.cfr.CFRPopupProperties
 import mozilla.components.lib.state.ext.flowScoped
 import mozilla.components.service.glean.private.NoExtras
+import org.mozilla.fenix.GleanMetrics.Shopping
 import org.mozilla.fenix.GleanMetrics.TrackingProtection
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
@@ -59,12 +61,14 @@ private const val CFR_MINIMUM_NUMBER_OPENED_TABS = 5
 /**
  * Delegate for handling all the business logic for showing CFRs in the toolbar.
  *
- * @param context used for various Android interactions.
- * @param browserStore will be observed for tabs updates
- * @param settings used to read and write persistent user settings
- * @param toolbar will serve as anchor for the CFRs
- * @param sessionId optional custom tab id used to identify the custom tab in which to show a CFR.
- * @param shoppingExperienceFeature Used to determine if [ShoppingExperienceFeature] is enabled.
+ * @property context used for various Android interactions.
+ * @property browserStore will be observed for tabs updates
+ * @property settings used to read and write persistent user settings
+ * @property toolbar will serve as anchor for the CFRs
+ * @property isPrivate Whether or not the session is private.
+ * @property sessionId optional custom tab id used to identify the custom tab in which to show a CFR.
+ * @property onShoppingCfrActionClicked Triggered when the user taps on the shopping CFR action.
+ * @property shoppingExperienceFeature Used to determine if [ShoppingExperienceFeature] is enabled.
  */
 class BrowserToolbarCFRPresenter(
     private val context: Context,
@@ -73,6 +77,7 @@ class BrowserToolbarCFRPresenter(
     private val toolbar: BrowserToolbar,
     private val isPrivate: Boolean,
     private val sessionId: String? = null,
+    private val onShoppingCfrActionClicked: () -> Unit,
     private val shoppingExperienceFeature: ShoppingExperienceFeature = DefaultShoppingExperienceFeature(
         context.settings(),
     ),
@@ -96,7 +101,7 @@ class BrowserToolbarCFRPresenter(
                         .transformWhile { progress ->
                             emit(progress)
                             progress != 100
-                        }.filter { it == 100 }.collect {
+                        }.filter { popup == null && it == 100 }.collect {
                             scope?.cancel()
                             showTcpCfr()
                         }
@@ -105,15 +110,18 @@ class BrowserToolbarCFRPresenter(
 
             ToolbarCFR.SHOPPING, ToolbarCFR.SHOPPING_OPTED_IN -> {
                 scope = browserStore.flowScoped { flow ->
-                    flow.mapNotNull { it.selectedTab }
+                    val shouldShowCfr: Boolean? = flow.mapNotNull { it.selectedTab }
                         .filter { it.isProductUrl && it.content.progress == 100 && !it.content.loading }
                         .distinctUntilChanged()
-                        .collect {
-                            if (toolbar.findViewById<View>(R.id.mozac_browser_toolbar_page_actions).isVisible) {
-                                scope?.cancel()
-                                showShoppingCFR(getCFRToShow() == ToolbarCFR.SHOPPING_OPTED_IN)
-                            }
-                        }
+                        .map { toolbar.findViewById<View>(R.id.mozac_browser_toolbar_page_actions).isVisible }
+                        .filter { popup == null && it }
+                        .firstOrNull()
+
+                    if (shouldShowCfr == true) {
+                        showShoppingCFR(getCFRToShow() == ToolbarCFR.SHOPPING_OPTED_IN)
+                    }
+
+                    scope?.cancel()
                 }
             }
 
@@ -128,7 +136,7 @@ class BrowserToolbarCFRPresenter(
                             emit(progress)
                             progress != 100
                         }
-                        .filter { it == 100 }
+                        .filter { popup == null && it == 100 }
                         .collect {
                             scope?.cancel()
                             showEraseCfr()
@@ -338,7 +346,28 @@ class BrowserToolbarCFRPresenter(
                     )
                 }
             },
+            action = {
+                FirefoxTheme {
+                    Text(
+                        text = if (shouldShowOptedInCFR) {
+                            stringResource(id = R.string.review_quality_check_second_cfr_action)
+                        } else {
+                            stringResource(id = R.string.review_quality_check_first_cfr_action)
+                        },
+                        color = FirefoxTheme.colors.textOnColorPrimary,
+                        modifier = Modifier
+                            .clickable {
+                                onShoppingCfrActionClicked()
+                                popup?.dismiss()
+                            },
+                        style = FirefoxTheme.typography.body2.copy(
+                            textDecoration = TextDecoration.Underline,
+                        ),
+                    )
+                }
+            },
         ).run {
+            Shopping.addressBarFeatureCalloutDisplayed.record()
             popup = this
             show()
         }
