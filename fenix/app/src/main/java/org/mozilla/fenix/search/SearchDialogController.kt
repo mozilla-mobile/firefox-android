@@ -167,6 +167,7 @@ class SearchDialogController(
             SearchFragmentAction.AllowSearchSuggestionsInPrivateModePrompt(
                 text.isNotEmpty() &&
                     activity.browsingModeManager.mode.isPrivate &&
+                    settings.shouldShowSearchSuggestions &&
                     !settings.shouldShowSearchSuggestionsInPrivate &&
                     !settings.showSearchSuggestionsInPrivateOnboardingFinished,
             ),
