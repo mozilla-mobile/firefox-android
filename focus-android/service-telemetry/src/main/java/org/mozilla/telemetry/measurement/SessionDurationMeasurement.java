@@ -6,9 +6,8 @@ package org.mozilla.telemetry.measurement;
 
 import android.content.SharedPreferences;
 import androidx.annotation.VisibleForTesting;
-
+import mozilla.components.support.base.log.logger.Logger;
 import org.mozilla.telemetry.config.TelemetryConfiguration;
-
 import java.util.concurrent.TimeUnit;
 
 public class SessionDurationMeasurement extends TelemetryMeasurement {
@@ -20,6 +19,7 @@ public class SessionDurationMeasurement extends TelemetryMeasurement {
 
     private boolean sessionStarted = false;
     private long timeAtSessionStartNano = -1;
+    private final Logger logger = new Logger("telemetry/measurement");
 
     public SessionDurationMeasurement(TelemetryConfiguration configuration) {
         super(FIELD_NAME);
@@ -27,13 +27,15 @@ public class SessionDurationMeasurement extends TelemetryMeasurement {
         this.configuration = configuration;
     }
 
-    public synchronized void recordSessionStart() {
+    public synchronized Boolean recordSessionStart() {
         if (sessionStarted) {
-            throw new IllegalStateException("Trying to start session but it is already started");
+            logger.error("Trying to start session but it is already started",null);
+            return true;
         }
 
         sessionStarted = true;
         timeAtSessionStartNano = getSystemTimeNano();
+        return false;
     }
 
     public synchronized boolean recordSessionEnd() {

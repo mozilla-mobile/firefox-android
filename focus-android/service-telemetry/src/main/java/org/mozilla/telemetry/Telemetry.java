@@ -161,9 +161,12 @@ public class Telemetry {
         }
 
         final TelemetryCorePingBuilder builder = (TelemetryCorePingBuilder) pingBuilders.get(TelemetryCorePingBuilder.TYPE);
-
-        builder.getSessionDurationMeasurement().recordSessionStart();
-        builder.getSessionCountMeasurement().countSession();
+        if (builder != null) {
+            boolean sessionAlreadyStarted = builder.getSessionDurationMeasurement().recordSessionStart();
+            if (!sessionAlreadyStarted) {
+                builder.getSessionCountMeasurement().countSession();
+            }
+        }
     }
 
     public Telemetry recordSessionEnd(Function0<Unit> onFailure) {
