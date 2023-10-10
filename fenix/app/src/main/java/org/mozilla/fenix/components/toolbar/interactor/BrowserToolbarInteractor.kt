@@ -37,6 +37,17 @@ interface BrowserToolbarInteractor {
      * Opens the shopping bottom sheet. Called when the user interacts with the shopping cfr action.
      */
     fun onShoppingCfrActionClicked()
+
+    /**
+     * Updates the settings for the shopping CFR. Called when the user dismisses the shopping cfr action.
+     */
+    fun onShoppingCfrDismiss()
+
+    /**
+     * Opens the translation bottom sheet. Called when the user interacts with the translation
+     * action.
+     */
+    fun onTranslationsButtonClicked()
 }
 
 /**
@@ -94,5 +105,13 @@ class DefaultBrowserToolbarInteractor(
 
     override fun onShoppingCfrActionClicked() {
         browserToolbarController.handleShoppingCfrActionClick()
+    }
+
+    override fun onShoppingCfrDismiss() {
+        browserToolbarController.handleShoppingCfrDismiss()
+    }
+
+    override fun onTranslationsButtonClicked() {
+        browserToolbarController.handleTranslationsButtonClick()
     }
 }
