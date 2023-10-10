@@ -16,7 +16,6 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
@@ -25,6 +24,7 @@ import mozilla.components.feature.addons.Addon
 import mozilla.components.feature.addons.AddonManager
 import mozilla.components.feature.addons.AddonManagerException
 import mozilla.components.feature.addons.ui.AddonsManagerAdapter
+import mozilla.components.feature.addons.ui.AddonsManagerAdapterDelegate
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.BuildConfig
@@ -39,6 +39,7 @@ import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.extension.WebExtensionPromptFeature
+import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.theme.ThemeManager
 
 /**
@@ -47,20 +48,10 @@ import org.mozilla.fenix.theme.ThemeManager
 @Suppress("TooManyFunctions", "LargeClass")
 class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) {
 
-    private val args by navArgs<AddonsManagementFragmentArgs>()
-
     private var binding: FragmentAddOnsManagementBinding? = null
 
     private val webExtensionPromptFeature = ViewBoundFeatureWrapper<WebExtensionPromptFeature>()
     private var addons: List<Addon> = emptyList()
-
-    private var installExternalAddonComplete: Boolean
-        set(value) {
-            arguments?.putBoolean(BUNDLE_KEY_INSTALL_EXTERNAL_ADDON_COMPLETE, value)
-        }
-        get() {
-            return arguments?.getBoolean(BUNDLE_KEY_INSTALL_EXTERNAL_ADDON_COMPLETE, false) ?: false
-        }
 
     private var adapter: AddonsManagerAdapter? = null
 
@@ -101,18 +92,16 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
             navController = findNavController(),
             onInstallButtonClicked = ::installAddon,
             onMoreAddonsButtonClicked = ::openAMO,
+            onLearnMoreClicked = ::openLearnMoreLink,
         )
 
         val recyclerView = binding?.addOnsList
         recyclerView?.layoutManager = LinearLayoutManager(requireContext())
         val shouldRefresh = adapter != null
 
-        // If the fragment was launched to install an "external" add-on from AMO, we deactivate
-        // the cache to get the most up-to-date list of add-ons to match against.
-        val allowCache = args.installAddonId == null || installExternalAddonComplete
         lifecycleScope.launch(IO) {
             try {
-                addons = requireContext().components.addonManager.getAddons(allowCache)
+                addons = requireContext().components.addonManager.getAddons()
                 // Add-ons that should be excluded in Mozilla Online builds
                 val excludedAddonIDs = if (Config.channel.isMozillaOnline &&
                     !BuildConfig.MOZILLA_ONLINE_ADDON_EXCLUSIONS.isNullOrEmpty()
@@ -125,11 +114,12 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
                     runIfFragmentIsAttached {
                         if (!shouldRefresh) {
                             adapter = AddonsManagerAdapter(
-                                requireContext().components.addonsProvider,
-                                managementView,
-                                addons,
+                                addonsProvider = requireContext().components.addonsProvider,
+                                addonsManagerDelegate = managementView,
+                                addons = addons,
                                 style = createAddonStyle(requireContext()),
-                                excludedAddonIDs,
+                                excludedAddonIDs = excludedAddonIDs,
+                                store = requireComponents.core.store,
                             )
                         }
                         binding?.addOnsProgressBar?.isVisible = false
@@ -138,12 +128,6 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
                         recyclerView?.adapter = adapter
                         if (shouldRefresh) {
                             adapter?.updateAddons(addons)
-                        }
-
-                        args.installAddonId?.let { addonIn ->
-                            if (!installExternalAddonComplete) {
-                                installExternalAddon(addons, addonIn)
-                            }
                         }
                     }
                 }
@@ -162,21 +146,6 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
                 }
             }
         }
-    }
-
-    @VisibleForTesting
-    internal fun installExternalAddon(supportedAddons: List<Addon>, installAddonId: String) {
-        val addonToInstall = supportedAddons.find { it.downloadId == installAddonId }
-        if (addonToInstall == null) {
-            showErrorSnackBar(getString(R.string.addon_not_supported_error))
-        } else {
-            if (addonToInstall.isInstalled()) {
-                showErrorSnackBar(getString(R.string.addon_already_installed))
-            } else {
-                installAddon(addonToInstall)
-            }
-        }
-        installExternalAddonComplete = true
     }
 
     @VisibleForTesting
@@ -261,19 +230,31 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
     }
 
     private fun openAMO() {
+        openLinkInNewTab(AMO_HOMEPAGE_FOR_ANDROID)
+    }
+
+    private fun openLearnMoreLink(link: AddonsManagerAdapterDelegate.LearnMoreLinks, addon: Addon) {
+        val url = when (link) {
+            AddonsManagerAdapterDelegate.LearnMoreLinks.BLOCKLISTED_ADDON ->
+                "${BuildConfig.AMO_BASE_URL}/android/blocked-addon/${addon.id}/"
+            AddonsManagerAdapterDelegate.LearnMoreLinks.ADDON_NOT_CORRECTLY_SIGNED ->
+                SupportUtils.getSumoURLForTopic(requireContext(), SupportUtils.SumoTopic.UNSIGNED_ADDONS)
+        }
+        openLinkInNewTab(url)
+    }
+
+    private fun openLinkInNewTab(url: String) {
         (activity as HomeActivity).openToBrowserAndLoad(
-            searchTermOrURL = AMO_HOMEPAGE_FOR_ANDROID,
+            searchTermOrURL = url,
             newTab = true,
-            from = BrowserDirection.FromGlobal,
+            from = BrowserDirection.FromAddonsManagementFragment,
         )
     }
 
     companion object {
-        private const val BUNDLE_KEY_INSTALL_EXTERNAL_ADDON_COMPLETE = "INSTALL_EXTERNAL_ADDON_COMPLETE"
-
         // This is locale-less on purpose so that the content negotiation happens on the AMO side because the current
         // user language might not be supported by AMO and/or the language might not be exactly what AMO is expecting
         // (e.g. `en` instead of `en-US`).
-        private const val AMO_HOMEPAGE_FOR_ANDROID = "https://addons.mozilla.org/android/"
+        private const val AMO_HOMEPAGE_FOR_ANDROID = "${BuildConfig.AMO_BASE_URL}/android/"
     }
 }

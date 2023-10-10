@@ -121,13 +121,7 @@
         app:destination="@id/bookmarkEditFragment" />
     <action
         android:id="@+id/action_global_addonsManagementFragment"
-        app:destination="@id/addons_management_graph">
-        <argument
-            android:name="installAddonId"
-            android:defaultValue="@null"
-            app:argType="string"
-            app:nullable="true" />
-    </action>
+        app:destination="@id/addons_management_graph" />
     <action
         android:id="@+id/action_global_trackingProtectionFragment"
         app:destination="@id/trackingProtectionFragment" />
@@ -311,6 +305,9 @@
         <action
             android:id="@+id/action_browserFragment_to_reviewQualityCheckDialogFragment"
             app:destination="@id/reviewQualityCheckFragment" />
+        <action
+            android:id="@+id/action_browserFragment_to_translationsDialogFragment"
+            app:destination="@id/translationsDialogFragment" />
     </fragment>
 
     <fragment
@@ -335,19 +332,7 @@
         android:name="org.mozilla.fenix.library.history.HistoryFragment"
         android:label="@string/library_history"
         tools:layout="@layout/fragment_history">
-
-        <action
-            android:id="@+id/action_global_history_search_dialog"
-            app:destination="@id/historySearchDialogFragment"
-            app:popUpTo="@id/historySearchDialogFragment"
-            app:popUpToInclusive="true" />
     </fragment>
-
-    <dialog
-        android:id="@+id/historySearchDialogFragment"
-        android:name="org.mozilla.fenix.library.history.HistorySearchDialogFragment"
-        tools:layout="@layout/fragment_history_search_dialog">
-    </dialog>
 
     <fragment
         android:id="@+id/historyMetadataGroupFragment"
@@ -382,18 +367,7 @@
         <action
             android:id="@+id/action_bookmarkFragment_to_bookmarkAddFolderFragment"
             app:destination="@id/bookmarkAddFolderFragment" />
-        <action
-            android:id="@+id/action_bookmarkFragment_to_bookmarkSearchDialogFragment"
-            app:destination="@id/bookmarkSearchDialogFragment"
-            app:popUpTo="@id/bookmarkSearchDialogFragment"
-            app:popUpToInclusive="true" />
     </fragment>
-
-    <dialog
-        android:id="@+id/bookmarkSearchDialogFragment"
-        android:name="org.mozilla.fenix.library.bookmarks.BookmarkSearchDialogFragment"
-        tools:layout="@layout/fragment_bookmark_search_dialog">
-    </dialog>
 
     <fragment
         android:id="@+id/bookmarkEditFragment"
@@ -447,6 +421,10 @@
     <dialog
         android:id="@+id/reviewQualityCheckFragment"
         android:name="org.mozilla.fenix.shopping.ReviewQualityCheckFragment"/>
+
+    <dialog
+        android:id="@+id/translationsDialogFragment"
+        android:name="org.mozilla.fenix.translations.TranslationsDialogFragment"/>
 
     <fragment
         android:id="@+id/savedLoginsAuthFragment"

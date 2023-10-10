@@ -25,6 +25,7 @@ import org.mozilla.fenix.shopping.store.ReviewQualityCheckStore
  * @param onRequestDismiss Invoked when a user action requests dismissal of the bottom sheet.
  * @param modifier The modifier to be applied to the Composable.
  */
+@Suppress("LongMethod")
 @Composable
 fun ReviewQualityCheckBottomSheet(
     store: ReviewQualityCheckStore,
@@ -42,10 +43,26 @@ fun ReviewQualityCheckBottomSheet(
         when (val state = reviewQualityCheckState) {
             is ReviewQualityCheckState.NotOptedIn -> {
                 ReviewQualityCheckContextualOnboarding(
+                    productVendors = state.productVendors,
                     onPrimaryButtonClick = {
                         store.dispatch(ReviewQualityCheckAction.OptIn)
                     },
-                    onSecondaryButtonClick = onRequestDismiss,
+                    onLearnMoreClick = {
+                        onRequestDismiss()
+                        store.dispatch(ReviewQualityCheckAction.OpenOnboardingLearnMoreLink)
+                    },
+                    onPrivacyPolicyClick = {
+                        onRequestDismiss()
+                        store.dispatch(ReviewQualityCheckAction.OpenOnboardingPrivacyPolicyLink)
+                    },
+                    onTermsOfUseClick = {
+                        onRequestDismiss()
+                        store.dispatch(ReviewQualityCheckAction.OpenOnboardingTermsLink)
+                    },
+                    onSecondaryButtonClick = {
+                        onRequestDismiss()
+                        store.dispatch(ReviewQualityCheckAction.NotNowClicked)
+                    },
                 )
             }
 
@@ -56,25 +73,31 @@ fun ReviewQualityCheckBottomSheet(
                         onRequestDismiss()
                         store.dispatch(ReviewQualityCheckAction.OptOut)
                     },
+                    onAnalyzeClick = {
+                        store.dispatch(ReviewQualityCheckAction.AnalyzeProduct)
+                    },
                     onReanalyzeClick = {
                         store.dispatch(ReviewQualityCheckAction.ReanalyzeProduct)
                     },
                     onProductRecommendationsEnabledStateChange = {
                         store.dispatch(ReviewQualityCheckAction.ToggleProductRecommendation)
                     },
-                    onReviewGradeLearnMoreClick = { url ->
-                        store.dispatch(
-                            ReviewQualityCheckAction.OpenLink(
-                                ReviewQualityCheckState.LinkType.ExternalLink(url),
-                            ),
-                        )
+                    onReviewGradeLearnMoreClick = {
+                        onRequestDismiss()
+                        store.dispatch(ReviewQualityCheckAction.OpenExplainerLearnMoreLink)
                     },
-                    onFooterLinkClick = { url ->
-                        store.dispatch(
-                            ReviewQualityCheckAction.OpenLink(
-                                ReviewQualityCheckState.LinkType.ExternalLink(url),
-                            ),
-                        )
+                    onFooterLinkClick = {
+                        onRequestDismiss()
+                        store.dispatch(ReviewQualityCheckAction.OpenPoweredByLink)
+                    },
+                    onExpandSettings = {
+                        store.dispatch(ReviewQualityCheckAction.ExpandSettingsClicked)
+                    },
+                    onNoAnalysisPresent = {
+                        store.dispatch(ReviewQualityCheckAction.NoAnalysisDisplayed)
+                    },
+                    onShowMoreRecentReviewsClicked = {
+                        store.dispatch(ReviewQualityCheckAction.ShowMoreRecentReviewsClicked)
                     },
                 )
             }
@@ -95,10 +118,14 @@ fun ReviewQualityCheckBottomSheet(
 private fun ProductReview(
     state: ReviewQualityCheckState.OptedIn,
     onOptOutClick: () -> Unit,
+    onAnalyzeClick: () -> Unit,
     onReanalyzeClick: () -> Unit,
     onProductRecommendationsEnabledStateChange: (Boolean) -> Unit,
-    onReviewGradeLearnMoreClick: (String) -> Unit,
-    onFooterLinkClick: (String) -> Unit,
+    onShowMoreRecentReviewsClicked: () -> Unit,
+    onNoAnalysisPresent: () -> Unit,
+    onExpandSettings: () -> Unit,
+    onReviewGradeLearnMoreClick: () -> Unit,
+    onFooterLinkClick: () -> Unit,
 ) {
     Crossfade(
         targetState = state.productReviewState,
@@ -109,9 +136,12 @@ private fun ProductReview(
                 ProductAnalysis(
                     productRecommendationsEnabled = state.productRecommendationsPreference,
                     productAnalysis = productReviewState,
+                    productVendor = state.productVendor,
                     onOptOutClick = onOptOutClick,
                     onReanalyzeClick = onReanalyzeClick,
                     onProductRecommendationsEnabledStateChange = onProductRecommendationsEnabledStateChange,
+                    onShowMoreRecentReviewsClicked = onShowMoreRecentReviewsClicked,
+                    onExpandSettings = onExpandSettings,
                     onReviewGradeLearnMoreClick = onReviewGradeLearnMoreClick,
                     onFooterLinkClick = onFooterLinkClick,
                 )
@@ -121,10 +151,12 @@ private fun ProductReview(
                 ProductAnalysisError(
                     error = productReviewState,
                     productRecommendationsEnabled = state.productRecommendationsPreference,
+                    productVendor = state.productVendor,
                     onReviewGradeLearnMoreClick = onReviewGradeLearnMoreClick,
                     onOptOutClick = onOptOutClick,
                     onProductRecommendationsEnabledStateChange = onProductRecommendationsEnabledStateChange,
                     onFooterLinkClick = onFooterLinkClick,
+                    onExpandSettings = onExpandSettings,
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
@@ -134,13 +166,19 @@ private fun ProductReview(
             }
 
             is ReviewQualityCheckState.OptedIn.ProductReviewState.NoAnalysisPresent -> {
+                LaunchedEffect(Unit) {
+                    onNoAnalysisPresent()
+                }
+
                 NoAnalysis(
-                    productRecommendationsEnabled = state.productRecommendationsPreference,
                     isAnalyzing = productReviewState.isReanalyzing,
-                    onAnalyzeClick = onReanalyzeClick,
+                    productRecommendationsEnabled = state.productRecommendationsPreference,
+                    productVendor = state.productVendor,
+                    onAnalyzeClick = onAnalyzeClick,
                     onReviewGradeLearnMoreClick = onReviewGradeLearnMoreClick,
                     onOptOutClick = onOptOutClick,
                     onProductRecommendationsEnabledStateChange = onProductRecommendationsEnabledStateChange,
+                    onExpandSettings = onExpandSettings,
                     modifier = Modifier.fillMaxWidth(),
                 )
             }

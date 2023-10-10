@@ -46,6 +46,15 @@ sealed class CustomViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val userCountView: TextView,
         val addButton: ImageView,
         val allowedInPrivateBrowsingLabel: ImageView,
+        val statusErrorView: View,
+    ) : CustomViewHolder(view)
+
+    /**
+     * A view holder for displaying a section above the list of add-ons.
+     */
+    class HeaderViewHolder(
+        view: View,
+        val restartButton: TextView,
     ) : CustomViewHolder(view)
 
     /**

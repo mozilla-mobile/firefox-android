@@ -800,13 +800,31 @@ class BrowserRobot {
         )
     }
 
-    fun verifyPrivateBrowsingOpenLinkInAnotherAppPrompt(url: String) =
-        assertItemContainingTextExists(
-            itemContainingText(
-                getStringResource(R.string.mozac_feature_applinks_confirm_dialog_title),
-            ),
-            itemContainingText(url),
-        )
+    fun verifyPrivateBrowsingOpenLinkInAnotherAppPrompt(url: String, pageObject: UiObject) {
+        for (i in 1..RETRY_COUNT) {
+            try {
+                assertItemContainingTextExists(
+                    itemContainingText(
+                        getStringResource(R.string.mozac_feature_applinks_confirm_dialog_title),
+                    ),
+                    itemContainingText(url),
+                )
+
+                break
+            } catch (e: AssertionError) {
+                if (i == RETRY_COUNT) {
+                    throw e
+                } else {
+                    browserScreen {
+                    }.openThreeDotMenu {
+                    }.refreshPage {
+                        waitForPageToLoad()
+                        clickPageObject(pageObject)
+                    }
+                }
+            }
+        }
+    }
 
     fun verifyFindInPageBar(exists: Boolean) =
         assertItemWithResIdExists(
@@ -882,12 +900,32 @@ class BrowserRobot {
         assertTrue(button.waitForExists(waitingTime))
     }
 
+    fun verifySurveyButtonDoesNotExist() {
+        val button = mDevice.findObject(
+            UiSelector().text(
+                getStringResource(
+                    R.string.preferences_take_survey,
+                ),
+            ),
+        )
+        assertTrue(button.waitUntilGone(waitingTime))
+    }
+
     fun verifySurveyNoThanksButton() {
         val button = mDevice.findObject(
             UiSelector().text(
                 getStringResource(
                     R.string.preferences_not_take_survey,
                 ),
+            ),
+        )
+        assertTrue(button.waitForExists(waitingTime))
+    }
+
+    fun verifyHomeScreenSurveyCloseButton() {
+        val button = mDevice.findObject(
+            UiSelector().descriptionContains(
+                "Close",
             ),
         )
         assertTrue(button.waitForExists(waitingTime))
@@ -910,7 +948,6 @@ class BrowserRobot {
         button.waitForExists(waitingTime)
         button.click()
     }
-
     fun clickNoThanksSurveyButton() {
         val button = mDevice.findObject(
             UiSelector().text(
@@ -1266,6 +1303,13 @@ class BrowserRobot {
             BrowserRobot().interact()
             return Transition()
         }
+        fun clickHomeScreenSurveyCloseButton(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
+            homescreenSurveyCloseButton.waitForExists(waitingTime)
+            homescreenSurveyCloseButton.click()
+
+            BrowserRobot().interact()
+            return Transition()
+        }
     }
 }
 
@@ -1421,3 +1465,6 @@ private val surveyButton =
 
 private val surveyNoThanksButton =
     itemContainingText(getStringResource(R.string.preferences_not_take_survey))
+
+private val homescreenSurveyCloseButton =
+    itemWithDescription("Close")

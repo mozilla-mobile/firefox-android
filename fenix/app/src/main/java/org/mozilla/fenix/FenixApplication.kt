@@ -82,6 +82,7 @@ import org.mozilla.fenix.GleanMetrics.Metrics
 import org.mozilla.fenix.GleanMetrics.PerfStartup
 import org.mozilla.fenix.GleanMetrics.Preferences
 import org.mozilla.fenix.GleanMetrics.SearchDefaultEngine
+import org.mozilla.fenix.GleanMetrics.ShoppingSettings
 import org.mozilla.fenix.GleanMetrics.TopSites
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.components.Core
@@ -203,6 +204,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             httpClient = ConceptFetchHttpUploader(
                 lazy(LazyThreadSafetyMode.NONE) { components.core.client },
             ),
+            enableEventTimestamps = FxNimbus.features.glean.value().enableEventTimestamps,
         )
 
         Glean.initialize(
@@ -615,19 +617,15 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
     }
 
     /**
-     * If unified search is enabled try to migrate the topic specific engine to the
-     * first general or custom search engine available.
+     * Migrate the topic specific engine to the first general or custom search engine available.
      */
-    @Suppress("NestedBlockDepth")
     private fun migrateTopicSpecificSearchEngines() {
-        if (settings().showUnifiedSearchFeature) {
-            components.core.store.state.search.selectedOrDefaultSearchEngine.let { currentSearchEngine ->
-                if (currentSearchEngine?.isGeneral == false) {
-                    components.core.store.state.search.searchEngines.firstOrNull() { nextSearchEngine ->
-                        nextSearchEngine.isGeneral
-                    }?.let {
-                        components.useCases.searchUseCases.selectSearchEngine(it)
-                    }
+        components.core.store.state.search.selectedOrDefaultSearchEngine.let { currentSearchEngine ->
+            if (currentSearchEngine?.isGeneral == false) {
+                components.core.store.state.search.searchEngines.firstOrNull { nextSearchEngine ->
+                    nextSearchEngine.isGeneral
+                }?.let {
+                    components.useCases.searchUseCases.selectSearchEngine(it)
                 }
             }
         }
@@ -859,6 +857,12 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             } catch (e: LoginsApiException) {
                 logger.error("Failed to fetch list of logins", e)
             }
+        }
+
+        with(ShoppingSettings) {
+            componentOptedOut.set(!settings.isReviewQualityCheckEnabled)
+            nimbusDisabledShopping.set(!FxNimbus.features.shoppingExperience.value().enabled)
+            userHasOnboarded.set(settings.reviewQualityCheckOptInTimeInMillis != 0L)
         }
     }
 

@@ -41,22 +41,22 @@ private fun mapStateForUpdateAction(
     action: ReviewQualityCheckAction.UpdateAction,
 ): ReviewQualityCheckState {
     return when (action) {
-        is ReviewQualityCheckAction.UpdateUserPreferences -> {
-            if (action.hasUserOptedIn) {
-                if (state is ReviewQualityCheckState.OptedIn) {
-                    state.copy(productRecommendationsPreference = action.isProductRecommendationsEnabled)
-                } else {
-                    ReviewQualityCheckState.OptedIn(
-                        productRecommendationsPreference = action.isProductRecommendationsEnabled,
-                    )
-                }
+        is ReviewQualityCheckAction.OptInCompleted -> {
+            if (state is ReviewQualityCheckState.OptedIn) {
+                state.copy(productRecommendationsPreference = action.isProductRecommendationsEnabled)
             } else {
-                ReviewQualityCheckState.NotOptedIn
+                ReviewQualityCheckState.OptedIn(
+                    productRecommendationsPreference = action.isProductRecommendationsEnabled,
+                    productVendor = action.productVendor,
+                )
             }
+        }
+        is ReviewQualityCheckAction.OptOutCompleted -> {
+            ReviewQualityCheckState.NotOptedIn(action.productVendors)
         }
 
         ReviewQualityCheckAction.OptOut -> {
-            ReviewQualityCheckState.NotOptedIn
+            ReviewQualityCheckState.NotOptedIn()
         }
 
         ReviewQualityCheckAction.ToggleProductRecommendation -> {
@@ -79,7 +79,7 @@ private fun mapStateForUpdateAction(
             }
         }
 
-        ReviewQualityCheckAction.ReanalyzeProduct -> {
+        ReviewQualityCheckAction.ReanalyzeProduct, ReviewQualityCheckAction.AnalyzeProduct -> {
             state.mapIfOptedIn {
                 when (it.productReviewState) {
                     is ProductReviewState.AnalysisPresent -> {
