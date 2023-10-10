@@ -38,11 +38,11 @@ abstract class ToolbarIntegration(
 
     val store = context.components.core.store
     private val toolbarPresenter: ToolbarPresenter = ToolbarPresenter(
-        toolbar,
-        store,
-        sessionId,
-        context.settings().showUnifiedSearchFeature,
-        ToolbarFeature.UrlRenderConfiguration(
+        toolbar = toolbar,
+        store = store,
+        customTabId = sessionId,
+        shouldDisplaySearchTerms = true,
+        urlRenderConfiguration = ToolbarFeature.UrlRenderConfiguration(
             context.components.publicSuffixList,
             ThemeManager.resolveAttribute(R.attr.textPrimary, context),
             renderStyle = renderStyle,
@@ -103,6 +103,7 @@ class DefaultToolbarIntegration(
         isPrivate = isPrivate,
         sessionId = sessionId,
         onShoppingCfrActionClicked = interactor::onShoppingCfrActionClicked,
+        onShoppingCfrDismiss = interactor::onShoppingCfrDismiss,
     )
 
     init {
