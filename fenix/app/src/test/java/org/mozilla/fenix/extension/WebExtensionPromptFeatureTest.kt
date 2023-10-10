@@ -14,7 +14,9 @@ import mozilla.components.browser.state.action.WebExtensionAction.UpdatePromptRe
 import mozilla.components.browser.state.state.extension.WebExtensionPromptRequest
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.webextension.WebExtensionInstallException
+import mozilla.components.feature.addons.Addon
 import mozilla.components.support.ktx.android.content.appVersionName
+import mozilla.components.support.test.any
 import mozilla.components.support.test.ext.joinBlocking
 import mozilla.components.support.test.robolectric.testContext
 import mozilla.components.support.test.rule.MainCoroutineRule
@@ -215,5 +217,84 @@ class WebExtensionPromptFeatureTest {
         )
 
         verify { webExtensionPromptFeature.showDialog(expectedTitle, expectedMessage) }
+    }
+
+    @Test
+    fun `WHEN PermissionsOptional is dispatched THEN handleOptionalPermissionsRequest is called`() {
+        webExtensionPromptFeature.start()
+
+        every { webExtensionPromptFeature.handleOptionalPermissionsRequest(any(), any()) } just runs
+
+        store.dispatch(
+            UpdatePromptRequestWebExtensionAction(
+                WebExtensionPromptRequest.AfterInstallation.Permissions.Optional(
+                    mockk(relaxed = true),
+                    mockk(),
+                    mockk(),
+                ),
+            ),
+        ).joinBlocking()
+
+        verify { webExtensionPromptFeature.handleOptionalPermissionsRequest(any(), any()) }
+    }
+
+    @Test
+    fun `WHEN calling handleOptionalPermissionsRequest with permissions THEN call showPermissionDialog`() {
+        val addon: Addon = mockk(relaxed = true)
+        val promptRequest = WebExtensionPromptRequest.AfterInstallation.Permissions.Optional(
+            extension = mockk(),
+            permissions = listOf("tabs"),
+            onConfirm = mockk(),
+        )
+
+        webExtensionPromptFeature.handleOptionalPermissionsRequest(addon = addon, promptRequest = promptRequest)
+
+        verify {
+            webExtensionPromptFeature.showPermissionDialog(
+                eq(addon),
+                eq(promptRequest),
+                eq(true),
+                eq(promptRequest.permissions),
+            )
+        }
+    }
+
+    @Test
+    fun `WHEN calling handleOptionalPermissionsRequest with a permission that doesn't have a description THEN do not call showPermissionDialog`() {
+        val addon: Addon = mockk(relaxed = true)
+        val onConfirm: ((Boolean) -> Unit) = mockk()
+        every { onConfirm(any()) } just runs
+        val promptRequest = WebExtensionPromptRequest.AfterInstallation.Permissions.Optional(
+            extension = mockk(),
+            // The "scripting" API permission doesn't have a description so we should not show a dialog for it.
+            permissions = listOf("scripting"),
+            onConfirm = onConfirm,
+        )
+
+        webExtensionPromptFeature.handleOptionalPermissionsRequest(addon = addon, promptRequest = promptRequest)
+
+        verify(exactly = 0) {
+            webExtensionPromptFeature.showPermissionDialog(any(), any(), any(), any())
+        }
+        verify(exactly = 1) { onConfirm(true) }
+    }
+
+    @Test
+    fun `WHEN calling handleOptionalPermissionsRequest with no permissions THEN do not call showPermissionDialog`() {
+        val addon: Addon = mockk(relaxed = true)
+        val onConfirm: ((Boolean) -> Unit) = mockk()
+        every { onConfirm(any()) } just runs
+        val promptRequest = WebExtensionPromptRequest.AfterInstallation.Permissions.Optional(
+            extension = mockk(),
+            permissions = emptyList(),
+            onConfirm = onConfirm,
+        )
+
+        webExtensionPromptFeature.handleOptionalPermissionsRequest(addon = addon, promptRequest = promptRequest)
+
+        verify(exactly = 0) {
+            webExtensionPromptFeature.showPermissionDialog(any(), any(), any(), any())
+        }
+        verify(exactly = 1) { onConfirm(true) }
     }
 }

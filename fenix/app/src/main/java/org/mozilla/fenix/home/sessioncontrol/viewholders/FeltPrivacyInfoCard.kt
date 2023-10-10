@@ -37,7 +37,7 @@ fun FeltPrivacyModeInfoCard(
     Card(
         modifier = Modifier
             .wrapContentHeight(),
-        backgroundColor = FirefoxTheme.colors.layerAccentNonOpaque,
+        backgroundColor = FirefoxTheme.colors.layer2,
         shape = RoundedCornerShape(8.dp),
         elevation = 5.dp,
     ) {
@@ -58,10 +58,12 @@ fun FeltPrivacyModeInfoCard(
                     stringResource(id = R.string.app_name),
                     stringResource(id = R.string.felt_privacy_info_card_subtitle_link_text),
                 ),
-                linkTextState = LinkTextState(
-                    text = stringResource(id = R.string.felt_privacy_info_card_subtitle_link_text),
-                    url = "",
-                    onClick = { onLearnMoreClick() },
+                linkTextStates = listOf(
+                    LinkTextState(
+                        text = stringResource(id = R.string.felt_privacy_info_card_subtitle_link_text),
+                        url = "",
+                        onClick = { onLearnMoreClick() },
+                    ),
                 ),
                 style = FirefoxTheme.typography.body2.copy(
                     color = FirefoxTheme.colors.textPrimary,

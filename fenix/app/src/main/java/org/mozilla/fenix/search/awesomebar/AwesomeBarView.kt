@@ -25,6 +25,7 @@ import mozilla.components.feature.awesomebar.provider.SearchEngineSuggestionProv
 import mozilla.components.feature.awesomebar.provider.SearchSuggestionProvider
 import mozilla.components.feature.awesomebar.provider.SearchTermSuggestionsProvider
 import mozilla.components.feature.awesomebar.provider.SessionSuggestionProvider
+import mozilla.components.feature.fxsuggest.FxSuggestSuggestionProvider
 import mozilla.components.feature.search.SearchUseCases
 import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.feature.syncedtabs.DeviceIndicators
@@ -318,6 +319,18 @@ class AwesomeBarView(
             providersToAdd.add(getLocalTabsProvider(state.searchEngineSource, true))
         }
 
+        if (state.showSponsoredSuggestions || state.showNonSponsoredSuggestions) {
+            providersToAdd.add(
+                FxSuggestSuggestionProvider(
+                    resources = activity.resources,
+                    loadUrlUseCase = loadUrlUseCase,
+                    includeSponsoredSuggestions = state.showSponsoredSuggestions,
+                    includeNonSponsoredSuggestions = state.showNonSponsoredSuggestions,
+                    suggestionsHeader = activity.getString(R.string.firefox_suggest_header),
+                ),
+            )
+        }
+
         providersToAdd.add(searchEngineSuggestionProvider)
 
         return providersToAdd
@@ -426,11 +439,7 @@ class AwesomeBarView(
                     engine,
                     shortcutSearchUseCase,
                     components.core.client,
-                    limit = if (activity.settings().showUnifiedSearchFeature) {
-                        METADATA_SHORTCUT_SUGGESTION_LIMIT
-                    } else {
-                        METADATA_SUGGESTION_LIMIT
-                    },
+                    limit = METADATA_SHORTCUT_SUGGESTION_LIMIT,
                     mode = SearchSuggestionProvider.Mode.MULTIPLE_SUGGESTIONS,
                     icon = searchBitmap,
                     engine = engineForSpeculativeConnects,
@@ -551,6 +560,8 @@ class AwesomeBarView(
         val showAllSyncedTabsSuggestions: Boolean,
         val showSessionSuggestionsForCurrentEngine: Boolean,
         val showAllSessionSuggestions: Boolean,
+        val showSponsoredSuggestions: Boolean,
+        val showNonSponsoredSuggestions: Boolean,
         val searchEngineSource: SearchEngineSource,
     )
 
@@ -584,5 +595,7 @@ fun SearchFragmentState.toSearchProviderState() = AwesomeBarView.SearchProviderS
     showAllSyncedTabsSuggestions = showAllSyncedTabsSuggestions,
     showSessionSuggestionsForCurrentEngine = showSessionSuggestionsForCurrentEngine,
     showAllSessionSuggestions = showAllSessionSuggestions,
+    showSponsoredSuggestions = showSponsoredSuggestions,
+    showNonSponsoredSuggestions = showNonSponsoredSuggestions,
     searchEngineSource = searchEngineSource,
 )

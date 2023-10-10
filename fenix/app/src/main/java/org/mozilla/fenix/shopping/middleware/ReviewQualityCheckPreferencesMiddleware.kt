@@ -15,11 +15,15 @@ import org.mozilla.fenix.shopping.store.ReviewQualityCheckState
 /**
  * Middleware for getting and setting review quality check user preferences.
  *
- * @param reviewQualityCheckPreferences The [ReviewQualityCheckPreferences] instance to use.
- * @param scope The [CoroutineScope] to use for launching coroutines.
+ * @property reviewQualityCheckPreferences The [ReviewQualityCheckPreferences] instance to get and
+ * set preferences for the review quality check feature.
+ * @property reviewQualityCheckVendorsService The [ReviewQualityCheckVendorsService] instance for
+ * getting the list of product vendors.
+ * @property scope The [CoroutineScope] to use for launching coroutines.
  */
 class ReviewQualityCheckPreferencesMiddleware(
     private val reviewQualityCheckPreferences: ReviewQualityCheckPreferences,
+    private val reviewQualityCheckVendorsService: ReviewQualityCheckVendorsService,
     private val scope: CoroutineScope,
 ) : ReviewQualityCheckMiddleware {
 
@@ -50,12 +54,17 @@ class ReviewQualityCheckPreferencesMiddleware(
                     val hasUserOptedIn = reviewQualityCheckPreferences.enabled()
                     val isProductRecommendationsEnabled =
                         reviewQualityCheckPreferences.productRecommendationsEnabled()
-                    store.dispatch(
-                        ReviewQualityCheckAction.UpdateUserPreferences(
-                            hasUserOptedIn = hasUserOptedIn,
+
+                    val updateUserPreferences = if (hasUserOptedIn) {
+                        ReviewQualityCheckAction.OptInCompleted(
                             isProductRecommendationsEnabled = isProductRecommendationsEnabled,
-                        ),
-                    )
+                            productVendor = reviewQualityCheckVendorsService.productVendor(),
+                        )
+                    } else {
+                        val productVendors = reviewQualityCheckVendorsService.productVendors()
+                        ReviewQualityCheckAction.OptOutCompleted(productVendors)
+                    }
+                    store.dispatch(updateUserPreferences)
                 }
             }
 
@@ -64,9 +73,9 @@ class ReviewQualityCheckPreferencesMiddleware(
                     val isProductRecommendationsEnabled =
                         reviewQualityCheckPreferences.productRecommendationsEnabled()
                     store.dispatch(
-                        ReviewQualityCheckAction.UpdateUserPreferences(
-                            hasUserOptedIn = true,
+                        ReviewQualityCheckAction.OptInCompleted(
                             isProductRecommendationsEnabled = isProductRecommendationsEnabled,
+                            productVendor = reviewQualityCheckVendorsService.productVendor(),
                         ),
                     )
 
