@@ -15,6 +15,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import mozilla.components.browser.state.state.BrowserState
+import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.feature.addons.Addon
 import mozilla.components.feature.addons.R
 import mozilla.components.feature.addons.amo.AMOAddonsProvider
@@ -51,6 +53,7 @@ class AddonsManagerAdapterTest {
     @get:Rule
     val coroutinesTestRule = MainCoroutineRule()
     private val scope = coroutinesTestRule.scope
+    private val dispatcher = coroutinesTestRule.testDispatcher
 
     // We must pass these variables to `bindAddon()` because looking up the version name
     // requires package info that we do not have in the test context.
@@ -64,7 +67,7 @@ class AddonsManagerAdapterTest {
 
     @Test
     fun `createListWithSections`() {
-        val adapter = AddonsManagerAdapter(mock(), mock(), emptyList())
+        val adapter = AddonsManagerAdapter(mock(), mock(), emptyList(), mock(), emptyList(), mock())
 
         val installedAddon: Addon = mock()
         val recommendedAddon: Addon = mock()
@@ -130,7 +133,7 @@ class AddonsManagerAdapterTest {
         val addon = mock<Addon>()
         val mockedImageView = spy(ImageView(testContext))
         val mockedAddonsProvider = mock<AMOAddonsProvider>()
-        val adapter = AddonsManagerAdapter(mockedAddonsProvider, mock(), emptyList())
+        val adapter = AddonsManagerAdapter(mockedAddonsProvider, mock(), emptyList(), mock(), emptyList(), mock())
         whenever(mockedAddonsProvider.getAddonIconBitmap(addon)).then {
             throw IOException("Request failed")
         }
@@ -149,7 +152,7 @@ class AddonsManagerAdapterTest {
         val bitmap = mock<Bitmap>()
         val mockedImageView = spy(ImageView(testContext))
         val mockedAddonsProvider = mock<AMOAddonsProvider>()
-        val adapter = AddonsManagerAdapter(mockedAddonsProvider, mock(), emptyList())
+        val adapter = AddonsManagerAdapter(mockedAddonsProvider, mock(), emptyList(), mock(), emptyList(), mock())
         whenever(mockedAddonsProvider.getAddonIconBitmap(addon)).thenReturn(bitmap)
 
         adapter.fetchIcon(addon, mockedImageView, scope).join()
@@ -163,7 +166,8 @@ class AddonsManagerAdapterTest {
         val bitmap = mock<Bitmap>()
         val mockedImageView = spy(ImageView(testContext))
         val mockedAddonsProvider = mock<AMOAddonsProvider>()
-        val adapter = spy(AddonsManagerAdapter(mockedAddonsProvider, mock(), emptyList()))
+        val adapter =
+            spy(AddonsManagerAdapter(mockedAddonsProvider, mock(), emptyList(), mock(), emptyList(), mock()))
         whenever(mockedAddonsProvider.getAddonIconBitmap(addon)).thenAnswer {
             runBlocking {
                 delay(1000)
@@ -185,7 +189,7 @@ class AddonsManagerAdapterTest {
         whenever(addon.installedState).thenReturn(installedState)
         val mockedImageView = spy(ImageView(testContext))
         val mockedAddonsProvider = mock<AMOAddonsProvider>()
-        val adapter = AddonsManagerAdapter(mockedAddonsProvider, mock(), emptyList())
+        val adapter = AddonsManagerAdapter(mockedAddonsProvider, mock(), emptyList(), mock(), emptyList(), mock())
         val captor = argumentCaptor<BitmapDrawable>()
         whenever(mockedAddonsProvider.getAddonIconBitmap(addon)).thenReturn(null)
 
@@ -219,7 +223,6 @@ class AddonsManagerAdapterTest {
         )
         val addon = Addon(
             id = "id",
-            authors = emptyList(),
             categories = emptyList(),
             downloadUrl = "downloadUrl",
             version = "version",
@@ -240,7 +243,7 @@ class AddonsManagerAdapterTest {
             addonNameTextColor = android.R.color.transparent,
             addonSummaryTextColor = android.R.color.white,
         )
-        val adapter = AddonsManagerAdapter(mock(), addonsManagerAdapterDelegate, emptyList(), style)
+        val adapter = AddonsManagerAdapter(mock(), addonsManagerAdapterDelegate, emptyList(), style, emptyList(), mock())
 
         adapter.bindAddon(addonViewHolder, addon, appName, appVersion)
 
@@ -270,7 +273,7 @@ class AddonsManagerAdapterTest {
             sectionsTextColor = android.R.color.black,
             sectionsTypeFace = mock(),
         )
-        val adapter = AddonsManagerAdapter(mock(), mock(), emptyList(), style)
+        val adapter = AddonsManagerAdapter(mock(), mock(), emptyList(), style, emptyList(), mock())
 
         adapter.bindSection(addonViewHolder, Section(R.string.mozac_feature_addons_disabled_section), position)
 
@@ -293,7 +296,7 @@ class AddonsManagerAdapterTest {
             sectionsTextColor = android.R.color.black,
             sectionsTypeFace = mock(),
         )
-        val adapter = AddonsManagerAdapter(mock(), mock(), emptyList(), style)
+        val adapter = AddonsManagerAdapter(mock(), mock(), emptyList(), style, emptyList(), mock())
 
         adapter.bindSection(addonViewHolder, Section(R.string.mozac_feature_addons_disabled_section), position)
 
@@ -313,7 +316,7 @@ class AddonsManagerAdapterTest {
             sectionsTextColor = android.R.color.black,
             sectionsTypeFace = mock(),
         )
-        val adapter = AddonsManagerAdapter(mock(), mock(), emptyList(), style)
+        val adapter = AddonsManagerAdapter(mock(), mock(), emptyList(), style, emptyList(), mock())
 
         adapter.bindSection(addonViewHolder, Section(R.string.mozac_feature_addons_disabled_section), position)
 
@@ -334,7 +337,7 @@ class AddonsManagerAdapterTest {
             sectionsTypeFace = mock(),
             visibleDividers = false,
         )
-        val adapter = AddonsManagerAdapter(mock(), mock(), emptyList(), style)
+        val adapter = AddonsManagerAdapter(mock(), mock(), emptyList(), style, emptyList(), mock())
 
         adapter.bindSection(addonViewHolder, Section(R.string.mozac_feature_addons_disabled_section), position)
 
@@ -362,7 +365,7 @@ class AddonsManagerAdapterTest {
             dividerHeight = dividerHeight,
         )
 
-        val adapter = AddonsManagerAdapter(mock(), mock(), emptyList(), style)
+        val adapter = AddonsManagerAdapter(mock(), mock(), emptyList(), style, emptyList(), mock())
 
         adapter.bindSection(addonViewHolder, Section(R.string.mozac_feature_addons_disabled_section), position)
 
@@ -393,7 +396,6 @@ class AddonsManagerAdapterTest {
         )
         val addon = Addon(
             id = "id",
-            authors = emptyList(),
             categories = emptyList(),
             downloadUrl = "downloadUrl",
             version = "version",
@@ -401,7 +403,7 @@ class AddonsManagerAdapterTest {
             createdAt = "",
             updatedAt = "",
         )
-        val adapter = AddonsManagerAdapter(mock(), addonsManagerAdapterDelegate, emptyList())
+        val adapter = AddonsManagerAdapter(mock(), addonsManagerAdapterDelegate, emptyList(), mock(), emptyList(), mock())
 
         adapter.bindAddon(addonViewHolder, addon, appName, appVersion)
         verify(titleView).setText("id")
@@ -412,7 +414,6 @@ class AddonsManagerAdapterTest {
     fun updateAddon() {
         var addon = Addon(
             id = "id",
-            authors = emptyList(),
             categories = emptyList(),
             downloadUrl = "downloadUrl",
             version = "version",
@@ -420,7 +421,7 @@ class AddonsManagerAdapterTest {
             createdAt = "",
             updatedAt = "",
         )
-        val adapter = spy(AddonsManagerAdapter(mock(), mock(), listOf(addon)))
+        val adapter = spy(AddonsManagerAdapter(mock(), mock(), listOf(addon), mock(), emptyList(), mock()))
 
         assertEquals(addon, adapter.addonsMap[addon.id])
 
@@ -435,7 +436,6 @@ class AddonsManagerAdapterTest {
     fun updateAddons() {
         var addon1 = Addon(
             id = "addon1",
-            authors = emptyList(),
             categories = emptyList(),
             downloadUrl = "downloadUrl",
             version = "version",
@@ -446,7 +446,6 @@ class AddonsManagerAdapterTest {
 
         val addon2 = Addon(
             id = "addon2",
-            authors = emptyList(),
             categories = emptyList(),
             downloadUrl = "downloadUrl",
             version = "version",
@@ -454,7 +453,8 @@ class AddonsManagerAdapterTest {
             createdAt = "",
             updatedAt = "",
         )
-        val adapter = spy(AddonsManagerAdapter(mock(), mock(), listOf(addon1, addon2)))
+        val adapter =
+            spy(AddonsManagerAdapter(mock(), mock(), listOf(addon1, addon2), mock(), emptyList(), mock()))
 
         assertEquals(addon1, adapter.addonsMap[addon1.id])
         assertEquals(addon2, adapter.addonsMap[addon2.id])
@@ -472,7 +472,6 @@ class AddonsManagerAdapterTest {
     fun differCallback() {
         var addon1 = Addon(
             id = "addon1",
-            authors = emptyList(),
             categories = emptyList(),
             downloadUrl = "downloadUrl",
             version = "version",
@@ -483,7 +482,6 @@ class AddonsManagerAdapterTest {
 
         var addon2 = Addon(
             id = "addon1",
-            authors = emptyList(),
             categories = emptyList(),
             downloadUrl = "downloadUrl",
             version = "version",
@@ -537,7 +535,15 @@ class AddonsManagerAdapterTest {
             ),
         )
         val unsupportedAddons = arrayListOf(unsupportedAddon, unsupportedAddonTwo)
-        val adapter = AddonsManagerAdapter(mock(), addonsManagerAdapterDelegate, unsupportedAddons)
+        val adapter = AddonsManagerAdapter(
+            mock(),
+            addonsManagerAdapterDelegate,
+            unsupportedAddons,
+            mock(),
+            emptyList(),
+            mock(),
+        )
+
         adapter.bindNotYetSupportedSection(unsupportedSectionViewHolder, mock())
         verify(unsupportedSectionViewHolder.descriptionView).setText(
             testContext.getString(R.string.mozac_feature_addons_unsupported_caption_plural, unsupportedAddons.size),
@@ -550,7 +556,8 @@ class AddonsManagerAdapterTest {
     @Test
     fun bindFooterButton() {
         val addonsManagerAdapterDelegate: AddonsManagerAdapterDelegate = mock()
-        val adapter = AddonsManagerAdapter(mock(), addonsManagerAdapterDelegate, emptyList())
+        val adapter = AddonsManagerAdapter(mock(), addonsManagerAdapterDelegate, emptyList(), mock(), emptyList(), mock())
+
         val view = View(testContext)
         val viewHolder = CustomViewHolder.FooterViewHolder(view)
         adapter.bindFooterButton(viewHolder)
@@ -560,10 +567,45 @@ class AddonsManagerAdapterTest {
     }
 
     @Test
+    fun bindHeaderButton() {
+        val store = BrowserStore(initialState = BrowserState(extensionsProcessDisabled = true))
+        val adapter = spy(AddonsManagerAdapter(mock(), mock(), emptyList(), mock(), emptyList(), store))
+
+        val restartButton = TextView(testContext)
+        val viewHolder = CustomViewHolder.HeaderViewHolder(View(testContext), restartButton)
+        adapter.bindHeaderButton(viewHolder)
+        assertEquals(1, adapter.currentList.size)
+
+        viewHolder.restartButton.performClick()
+        dispatcher.scheduler.advanceUntilIdle()
+
+        assertFalse(store.state.extensionsProcessDisabled)
+        verify(adapter).submitList(emptyList())
+    }
+
+    @Test
+    fun testNotificationShownWhenProcessIsDisabled() {
+        val store = BrowserStore(initialState = BrowserState(extensionsProcessDisabled = true))
+        val adapter = AddonsManagerAdapter(mock(), mock(), emptyList(), mock(), emptyList(), store)
+
+        val itemsWithSections = adapter.createListWithSections(emptyList())
+        assertEquals(AddonsManagerAdapter.HeaderSection, itemsWithSections.first())
+    }
+
+    @Test
+    fun testNotificationNotShownWhenProcessIsEnabled() {
+        val store = BrowserStore(initialState = BrowserState(extensionsProcessDisabled = false))
+        val adapter = AddonsManagerAdapter(mock(), mock(), emptyList(), mock(), emptyList(), store)
+
+        val itemsWithSections = adapter.createListWithSections(emptyList())
+        assertTrue(itemsWithSections.isEmpty())
+    }
+
+    @Test
     fun testFindMoreAddonsButtonIsHidden() {
         val addonsManagerAdapterDelegate: AddonsManagerAdapterDelegate = mock()
         whenever(addonsManagerAdapterDelegate.shouldShowFindMoreAddonsButton()).thenReturn(false)
-        val adapter = AddonsManagerAdapter(mock(), addonsManagerAdapterDelegate, emptyList())
+        val adapter = AddonsManagerAdapter(mock(), addonsManagerAdapterDelegate, emptyList(), mock(), emptyList(), mock())
 
         val itemsWithSections = adapter.createListWithSections(emptyList())
         assertTrue(itemsWithSections.isEmpty())
@@ -573,7 +615,7 @@ class AddonsManagerAdapterTest {
     fun testFindMoreAddonsButtonIsVisible() {
         val addonsManagerAdapterDelegate: AddonsManagerAdapterDelegate = mock()
         whenever(addonsManagerAdapterDelegate.shouldShowFindMoreAddonsButton()).thenReturn(true)
-        val adapter = AddonsManagerAdapter(mock(), addonsManagerAdapterDelegate, emptyList())
+        val adapter = AddonsManagerAdapter(mock(), addonsManagerAdapterDelegate, emptyList(), mock(), emptyList(), mock())
 
         val itemsWithSections = adapter.createListWithSections(emptyList())
         assertFalse(itemsWithSections.isEmpty())
@@ -610,7 +652,7 @@ class AddonsManagerAdapterTest {
         )
         val addonName = "some addon name"
         val addon = makeDisabledAddon(Addon.DisabledReason.BLOCKLISTED, addonName)
-        val adapter = AddonsManagerAdapter(mock(), addonsManagerAdapterDelegate, emptyList())
+        val adapter = AddonsManagerAdapter(mock(), addonsManagerAdapterDelegate, emptyList(), mock(), emptyList(), mock())
 
         adapter.bindAddon(addonViewHolder, addon, appName, appVersion)
 
@@ -653,7 +695,7 @@ class AddonsManagerAdapterTest {
             statusErrorView = statusErrorView,
         )
         val addon = makeDisabledAddon(Addon.DisabledReason.BLOCKLISTED)
-        val adapter = AddonsManagerAdapter(mock(), addonsManagerAdapterDelegate, emptyList())
+        val adapter = AddonsManagerAdapter(mock(), addonsManagerAdapterDelegate, emptyList(), mock(), emptyList(), mock())
 
         adapter.bindAddon(addonViewHolder, addon, appName, appVersion)
 
@@ -691,7 +733,7 @@ class AddonsManagerAdapterTest {
         )
         val addonName = "some addon name"
         val addon = makeDisabledAddon(Addon.DisabledReason.NOT_CORRECTLY_SIGNED, addonName)
-        val adapter = AddonsManagerAdapter(mock(), addonsManagerAdapterDelegate, emptyList())
+        val adapter = AddonsManagerAdapter(mock(), addonsManagerAdapterDelegate, emptyList(), mock(), emptyList(), mock())
 
         adapter.bindAddon(addonViewHolder, addon, appName, appVersion)
 
@@ -734,7 +776,7 @@ class AddonsManagerAdapterTest {
             statusErrorView = statusErrorView,
         )
         val addon = makeDisabledAddon(Addon.DisabledReason.NOT_CORRECTLY_SIGNED)
-        val adapter = AddonsManagerAdapter(mock(), addonsManagerAdapterDelegate, emptyList())
+        val adapter = AddonsManagerAdapter(mock(), addonsManagerAdapterDelegate, emptyList(), mock(), emptyList(), mock())
 
         adapter.bindAddon(addonViewHolder, addon, appName, appVersion)
 
@@ -772,7 +814,7 @@ class AddonsManagerAdapterTest {
         )
         val addonName = "some addon name"
         val addon = makeDisabledAddon(Addon.DisabledReason.INCOMPATIBLE, addonName)
-        val adapter = AddonsManagerAdapter(mock(), addonsManagerAdapterDelegate, emptyList())
+        val adapter = AddonsManagerAdapter(mock(), addonsManagerAdapterDelegate, emptyList(), mock(), emptyList(), mock())
 
         adapter.bindAddon(addonViewHolder, addon, appName, appVersion)
 
@@ -810,7 +852,7 @@ class AddonsManagerAdapterTest {
             statusErrorView = statusErrorView,
         )
         val addon = makeDisabledAddon(Addon.DisabledReason.INCOMPATIBLE)
-        val adapter = AddonsManagerAdapter(mock(), addonsManagerAdapterDelegate, emptyList())
+        val adapter = AddonsManagerAdapter(mock(), addonsManagerAdapterDelegate, emptyList(), mock(), emptyList(), mock())
 
         adapter.bindAddon(addonViewHolder, addon, appName, appVersion)
 
