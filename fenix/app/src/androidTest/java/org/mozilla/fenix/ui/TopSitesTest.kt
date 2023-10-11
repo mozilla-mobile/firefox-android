@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.ui
 
+import android.util.Log
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
@@ -85,7 +86,9 @@ class TopSitesTest {
         }.addToFirefoxHome {
             verifySnackBarText(getStringResource(R.string.snackbar_added_to_shortcuts))
         }.goToHomescreen {
+            Log.i("Andi", "Exit to home screen")
             verifyExistingTopSitesList()
+            Log.i("Andi", "Verified top sites list")
             verifyExistingTopSitesTabs(defaultWebPage.title)
         }.openTopSiteTabWithTitle(title = defaultWebPage.title) {
             verifyUrl(defaultWebPage.url.toString().replace("http://", ""))

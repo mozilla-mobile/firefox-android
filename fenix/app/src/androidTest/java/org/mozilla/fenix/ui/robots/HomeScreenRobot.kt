@@ -6,6 +6,7 @@
 
 package org.mozilla.fenix.ui.robots
 
+import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
@@ -194,6 +195,7 @@ class HomeScreenRobot {
     fun verifyNotExistingSponsoredTopSitesList() = assertSponsoredTopSitesNotDisplayed()
     fun verifyExistingTopSitesTabs(title: String) {
         homeScreenList().scrollIntoView(itemWithResId("$packageName:id/top_sites_list"))
+        Log.i("Andi", "verifyExistingTopSitesTabs: Scroll into view the top sites list")
         assertExistingTopSitesTabs(title)
     }
     fun verifySponsoredShortcutDetails(sponsoredShortcutTitle: String, position: Int) {
@@ -834,10 +836,12 @@ private fun assertExistingTopSitesTabs(title: String) {
             .resourceId("$packageName:id/top_site_title")
             .textContains(title),
     ).waitForExists(waitingTime)
+    Log.i("Andi", "assertExistingTopSitesTabs: Waited for top site: $title")
 
     onView(allOf(withId(R.id.top_sites_list)))
         .check(matches(hasDescendant(withText(title))))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+    Log.i("Andi", "assertExistingTopSitesTabs: Verified top site: $title")
 }
 
 private fun assertSponsoredShortcutLogoIsDisplayed(position: Int) =
