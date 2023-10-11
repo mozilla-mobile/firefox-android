@@ -419,7 +419,6 @@ internal fun JSONObject.toAddon(language: String? = null): Addon {
         Addon(
             id = getSafeString("guid"),
             author = getAuthor(),
-            categories = getCategories(),
             createdAt = getSafeString("created"),
             updatedAt = getCurrentVersionCreated(),
             downloadUrl = getDownloadUrl(),
@@ -431,6 +430,7 @@ internal fun JSONObject.toAddon(language: String? = null): Addon {
             iconUrl = getSafeString("icon_url"),
             siteUrl = getSafeString("url"),
             rating = getRating(),
+            ratingUrl = getSafeString("ratings_url"),
             defaultLocale = (
                 if (!safeLanguage.isNullOrEmpty() && isLanguageInTranslations) {
                     safeLanguage
@@ -451,18 +451,6 @@ internal fun JSONObject.getRating(): Addon.Rating? {
         )
     } else {
         null
-    }
-}
-
-internal fun JSONObject.getCategories(): List<String> {
-    val jsonCategories = optJSONObject("categories")
-    return if (jsonCategories == null) {
-        emptyList()
-    } else {
-        val jsonAndroidCategories = jsonCategories.getSafeJSONArray("android")
-        (0 until jsonAndroidCategories.length()).map { index ->
-            jsonAndroidCategories.getString(index)
-        }
     }
 }
 

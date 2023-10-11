@@ -373,7 +373,6 @@ class AMOAddonsProviderTest {
         val provider = AMOAddonsProvider(testContext, client = mockedClient)
         val addon = Addon(
             id = "id",
-            categories = mock(),
             downloadUrl = "https://example.com",
             version = "version",
             iconUrl = "https://example.com/image.png",
@@ -391,7 +390,6 @@ class AMOAddonsProviderTest {
         val provider = AMOAddonsProvider(testContext, client = mockedClient)
         val addon = Addon(
             id = "id",
-            categories = mock(),
             downloadUrl = "https://example.com",
             version = "version",
             iconUrl = "https://example.com/image.png",
@@ -941,6 +939,10 @@ class AMOAddonsProviderTest {
         // Ratings
         assertEquals(4.7825F, addon.rating!!.average, 0.7825F)
         assertEquals(15799, addon.rating!!.reviews)
+        assertEquals(
+            "https://addons.mozilla.org/en-US/firefox/addon/ublock-origin/reviews/",
+            addon.ratingUrl,
+        )
     }
 
     private fun prepareClient(
