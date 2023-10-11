@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import mozilla.components.browser.state.action.CustomTabListAction
 import mozilla.components.browser.state.action.EngineAction
-import mozilla.components.browser.state.action.ExtensionProcessDisabledPopupAction
+import mozilla.components.browser.state.action.ExtensionsProcessAction
 import mozilla.components.browser.state.action.TabListAction
 import mozilla.components.browser.state.action.WebExtensionAction
 import mozilla.components.browser.state.selector.allTabs
@@ -230,10 +230,13 @@ object WebExtensionSupport {
 
                 override fun onInstalled(extension: WebExtension) {
                     logger.debug("onInstalled ${extension.id}")
-                    registerInstalledExtension(store, extension)
                     // Built-in extensions are not installed by users, they are not aware of them
-                    // for this reason we don't show any UI related to built-in extensions.
-                    if (!extension.isBuiltIn()) {
+                    // for this reason we don't show any UI related to built-in extensions. Also,
+                    // when the add-on has already been installed, we don't need to show anything
+                    // either.
+                    val shouldDispatchAction = !installedExtensions.containsKey(extension.id) && !extension.isBuiltIn()
+                    registerInstalledExtension(store, extension)
+                    if (shouldDispatchAction) {
                         store.dispatch(
                             WebExtensionAction.UpdatePromptRequestWebExtensionAction(
                                 WebExtensionPromptRequest.AfterInstallation.PostInstallation(extension),
@@ -333,7 +336,7 @@ object WebExtensionSupport {
                 }
 
                 override fun onDisabledExtensionProcessSpawning() {
-                    store.dispatch(ExtensionProcessDisabledPopupAction(showPopup = true))
+                    store.dispatch(ExtensionsProcessAction.ShowPromptAction(show = true))
                 }
             },
         )

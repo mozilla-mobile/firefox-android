@@ -72,8 +72,10 @@
     <string name="mozac_feature_addons_permissions_devtools_description">Extender le instrumentos de disveloppamento pro acceder a tu datos in le schedas aperte</string>
     <!-- The version on of add-on. -->
     <string name="mozac_feature_addons_version">Version</string>
+    <!-- The author of an add-on. -->
+    <string name="mozac_feature_addons_author">Autor</string>
     <!-- The authors of an add-on. -->
-    <string name="mozac_feature_addons_authors">Autores</string>
+    <string name="mozac_feature_addons_authors" moz:removedIn="120" tools:ignore="UnusedResources">Autores</string>
     <!-- The last date that the add-on was updated. -->
     <string name="mozac_feature_addons_last_updated">Ultime actualisation</string>
     <!-- The developer website (Homepage) of the add-on. -->
@@ -114,10 +116,18 @@
     <string name="mozac_feature_addons_remove">Remover</string>
     <!-- This is the title of a dialog that asks the users if they to install or not an add-on. %1$s is the add-on name. -->
     <string name="mozac_feature_addons_permissions_dialog_title">Adder %1$s?</string>
+    <!-- This is the title of a dialog that asks the users to grant optional permissions. %1$s is the add-on name. -->
+    <string name="mozac_feature_addons_optional_permissions_dialog_title">%1$s require altere permissiones.</string>
     <!-- This is the subtitle of a dialog that asks the users if they want to install or not an add-on, the subtitle lists the permissions that this add-on requires, the permissions will dynamically be listed after the ":". -->
     <string name="mozac_feature_addons_permissions_dialog_subtitle">Illo require tu permission pro:</string>
+    <!-- This is the subtitle of a dialog that asks the users to grant optional permissions, the subtitle lists the permissions that this add-on requests, the permissions will dynamically be listed after the ":". -->
+    <string name="mozac_feature_addons_optional_permissions_dialog_subtitle">Illo vole:</string>
     <!-- This is a button to add (install) an add-on . -->
     <string name="mozac_feature_addons_permissions_dialog_add">Adder</string>
+    <!-- This is a button to allow the optional permissions requested by an add-on . -->
+    <string name="mozac_feature_addons_permissions_dialog_allow">Permitter</string>
+    <!-- This is a button to deny the optional permissions requested by an add-on . -->
+    <string name="mozac_feature_addons_permissions_dialog_deny">Denegar</string>
     <!-- This is a button to cancel the add-on installation . -->
     <string name="mozac_feature_addons_permissions_dialog_cancel">Cancellar</string>
     <!-- Accessibility content description to install add-on button. -->
@@ -133,7 +143,7 @@
     <!-- Label for add-ons sub menu item for add-ons manager-->
     <string name="mozac_feature_addons_addons_manager">Gestor de additivos</string>
     <!-- Button in the add-ons manager that opens AMO in a tab -->
-    <string name="mozac_feature_addons_find_more_addons_button_text">Trova plus additivos</string>
+    <string name="mozac_feature_addons_find_more_addons_button_text">Trovar plus additivos</string>
     <!-- The label of the allow button, this will be shown to the user when an add-on needs new permissions, with the button the user will indicate that they want to accept the new permissions and update the add-on-->
     <string name="mozac_feature_addons_updater_notification_allow_button">Permitter</string>
     <!-- The label of the deny button on a notification, this will be shown to the user when an add-on needs new permissions. Indicates the user denies the new permissions and prevents the add-on from be updated-->
@@ -179,7 +189,7 @@
     <!-- Text shown when attempting to install an add-on and the downloaded file is corrupted. -->
     <string name="mozac_feature_addons_failed_to_install_corrupt_error">Iste additivo non ha potite esser installate perque pare corrumpite.</string>
     <!-- Text shown when attempting to install an add-on and an error occurred because the extension was not signed. -->
-    <string name="mozac_feature_addons_failed_to_install_not_signed_error">Iste additivo non ha potite esser installate perque non verificate.</string>
+    <string name="mozac_feature_addons_failed_to_install_not_signed_error">Iste additivo non ha potite esser installate perque illo non ha essite verificate.</string>
     <!-- Text shown when attempting to install an add-on and an error occurred because the extension was incompatible. %1$s is the add-on name, %2$s is the app name and %3$s is the app version. -->
     <string name="mozac_feature_addons_failed_to_install_incompatible_error">%1$s non ha potite esser installate perque non es compatibile con %2$s %3$s.</string>
     <!-- Text shown when attempting to install a blocklisted add-on. %1$s is the add-on name. -->
