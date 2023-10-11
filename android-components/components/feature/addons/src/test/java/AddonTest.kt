@@ -24,7 +24,6 @@ class AddonTest {
     fun `translatePermissions - must return the expected string ids per permission category`() {
         val addon = Addon(
             id = "id",
-            authors = emptyList(),
             categories = emptyList(),
             downloadUrl = "downloadUrl",
             version = "version",
@@ -94,7 +93,6 @@ class AddonTest {
     fun `isInstalled - true if installed state present and otherwise false`() {
         val addon = Addon(
             id = "id",
-            authors = emptyList(),
             categories = emptyList(),
             downloadUrl = "downloadUrl",
             version = "version",
@@ -112,7 +110,6 @@ class AddonTest {
     fun `isEnabled - true if installed state enabled and otherwise false`() {
         val addon = Addon(
             id = "id",
-            authors = emptyList(),
             categories = emptyList(),
             downloadUrl = "downloadUrl",
             version = "version",
@@ -133,7 +130,6 @@ class AddonTest {
     fun `filterTranslations - only keeps specified translations`() {
         val addon = Addon(
             id = "id",
-            authors = emptyList(),
             categories = emptyList(),
             downloadUrl = "downloadUrl",
             version = "version",
@@ -374,6 +370,8 @@ class AddonTest {
         whenever(metadata.description).thenReturn(description)
         whenever(metadata.disabledFlags).thenReturn(DisabledFlags.select(0))
         whenever(metadata.baseUrl).thenReturn("some-base-url")
+        whenever(metadata.developerName).thenReturn("developer-name")
+        whenever(metadata.developerUrl).thenReturn("developer-url")
 
         val addon = Addon.newFromWebExtension(extension)
 
@@ -381,10 +379,12 @@ class AddonTest {
         assertEquals("some-url", addon.siteUrl)
         assertEquals("some-url", addon.downloadUrl)
         assertEquals(permissions + hostPermissions, addon.permissions)
-        assertEquals("1970-01-01T00:00:00Z", addon.updatedAt)
+        assertEquals("", addon.updatedAt)
         assertEquals("some name", addon.translatableName[Addon.DEFAULT_LOCALE])
         assertEquals("some description", addon.translatableDescription[Addon.DEFAULT_LOCALE])
         assertEquals("some description", addon.translatableSummary[Addon.DEFAULT_LOCALE])
+        assertEquals("developer-name", addon.author?.name)
+        assertEquals("developer-url", addon.author?.url)
     }
 
     @Test
@@ -401,5 +401,37 @@ class AddonTest {
 
         assertFalse(addon.isDisabledAsBlocklisted())
         assertTrue(blockListedAddon.isDisabledAsBlocklisted())
+    }
+
+    @Test
+    fun `isDisabledAsNotCorrectlySigned - true if installed state disabled status equals to NOT_CORRECTLY_SIGNED and otherwise false`() {
+        val addon = Addon(id = "id")
+        val blockListedAddon = addon.copy(
+            installedState = Addon.InstalledState(
+                id = "id",
+                version = "1.0",
+                optionsPageUrl = "",
+                disabledReason = Addon.DisabledReason.NOT_CORRECTLY_SIGNED,
+            ),
+        )
+
+        assertFalse(addon.isDisabledAsNotCorrectlySigned())
+        assertTrue(blockListedAddon.isDisabledAsNotCorrectlySigned())
+    }
+
+    @Test
+    fun `isDisabledAsIncompatible - true if installed state disabled status equals to INCOMPATIBLE and otherwise false`() {
+        val addon = Addon(id = "id")
+        val blockListedAddon = addon.copy(
+            installedState = Addon.InstalledState(
+                id = "id",
+                version = "1.0",
+                optionsPageUrl = "",
+                disabledReason = Addon.DisabledReason.INCOMPATIBLE,
+            ),
+        )
+
+        assertFalse(addon.isDisabledAsIncompatible())
+        assertTrue(blockListedAddon.isDisabledAsIncompatible())
     }
 }

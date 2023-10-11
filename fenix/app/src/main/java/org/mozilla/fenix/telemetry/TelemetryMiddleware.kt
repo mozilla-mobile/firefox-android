@@ -9,6 +9,7 @@ import mozilla.components.browser.state.action.BrowserAction
 import mozilla.components.browser.state.action.ContentAction
 import mozilla.components.browser.state.action.DownloadAction
 import mozilla.components.browser.state.action.EngineAction
+import mozilla.components.browser.state.action.ExtensionsProcessAction
 import mozilla.components.browser.state.action.TabListAction
 import mozilla.components.browser.state.selector.findTab
 import mozilla.components.browser.state.selector.findTabOrCustomTab
@@ -23,6 +24,7 @@ import mozilla.components.support.base.log.logger.Logger
 import mozilla.telemetry.glean.internal.TimerId
 import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.Config
+import org.mozilla.fenix.GleanMetrics.Addons
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.Metrics
 import org.mozilla.fenix.components.metrics.Event
@@ -37,8 +39,10 @@ private const val PROGRESS_COMPLETE = 100
 /**
  * [Middleware] to record telemetry in response to [BrowserAction]s.
  *
+ * @property context An Android [Context].
  * @property settings reference to the application [Settings].
- * @property metrics [MetricController] to pass events that have been mapped from actions
+ * @property metrics [MetricController] to pass events that have been mapped from actions.
+ * @property crashReporting An instance of [CrashReporting] to report caught exceptions.
  * @property nimbusSearchEngine The Nimbus search engine.
  * @property searchState Map that stores the [TabSessionState.id] & [TimerId].
  * @property timerId The [TimerId] for the [Metrics.searchPageLoadTime].
@@ -133,6 +137,12 @@ class TelemetryMiddleware(
                 } else {
                     Metrics.hasOpenTabs.set(false)
                 }
+            }
+            is ExtensionsProcessAction.EnabledAction -> {
+                Addons.extensionsProcessUiRetry.add()
+            }
+            is ExtensionsProcessAction.DisabledAction -> {
+                Addons.extensionsProcessUiDisable.add()
             }
             else -> {
                 // no-op

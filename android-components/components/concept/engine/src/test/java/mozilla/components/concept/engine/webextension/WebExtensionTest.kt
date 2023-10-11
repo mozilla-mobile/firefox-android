@@ -64,20 +64,42 @@ class WebExtensionTest {
     }
 
     @Test
-    fun `unsupported check`() {
+    fun `disabled checks`() {
         val extension: WebExtension = mock()
         assertFalse(extension.isUnsupported())
+        assertFalse(extension.isBlockListed())
+        assertFalse(extension.isDisabledUnsigned())
+        assertFalse(extension.isDisabledIncompatible())
 
         val metadata: Metadata = mock()
         whenever(extension.getMetadata()).thenReturn(metadata)
         assertFalse(extension.isUnsupported())
+        assertFalse(extension.isBlockListed())
+        assertFalse(extension.isDisabledUnsigned())
+        assertFalse(extension.isDisabledIncompatible())
 
         whenever(metadata.disabledFlags).thenReturn(DisabledFlags.select(DisabledFlags.BLOCKLIST))
         assertFalse(extension.isUnsupported())
         assertTrue(extension.isBlockListed())
+        assertFalse(extension.isDisabledUnsigned())
+        assertFalse(extension.isDisabledIncompatible())
 
         whenever(metadata.disabledFlags).thenReturn(DisabledFlags.select(DisabledFlags.APP_SUPPORT))
         assertTrue(extension.isUnsupported())
         assertFalse(extension.isBlockListed())
+        assertFalse(extension.isDisabledUnsigned())
+        assertFalse(extension.isDisabledIncompatible())
+
+        whenever(metadata.disabledFlags).thenReturn(DisabledFlags.select(DisabledFlags.SIGNATURE))
+        assertFalse(extension.isUnsupported())
+        assertFalse(extension.isBlockListed())
+        assertTrue(extension.isDisabledUnsigned())
+        assertFalse(extension.isDisabledIncompatible())
+
+        whenever(metadata.disabledFlags).thenReturn(DisabledFlags.select(DisabledFlags.APP_VERSION))
+        assertFalse(extension.isUnsupported())
+        assertFalse(extension.isBlockListed())
+        assertFalse(extension.isDisabledUnsigned())
+        assertTrue(extension.isDisabledIncompatible())
     }
 }

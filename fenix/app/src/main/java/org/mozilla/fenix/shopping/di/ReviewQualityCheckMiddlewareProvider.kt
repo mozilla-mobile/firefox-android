@@ -15,6 +15,7 @@ import org.mozilla.fenix.shopping.middleware.DefaultReviewQualityCheckVendorsSer
 import org.mozilla.fenix.shopping.middleware.ReviewQualityCheckNavigationMiddleware
 import org.mozilla.fenix.shopping.middleware.ReviewQualityCheckNetworkMiddleware
 import org.mozilla.fenix.shopping.middleware.ReviewQualityCheckPreferencesMiddleware
+import org.mozilla.fenix.shopping.middleware.ReviewQualityCheckTelemetryMiddleware
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckMiddleware
 import org.mozilla.fenix.utils.Settings
 
@@ -40,11 +41,8 @@ object ReviewQualityCheckMiddlewareProvider {
         listOf(
             providePreferencesMiddleware(settings, browserStore, scope),
             provideNetworkMiddleware(browserStore, context, scope),
-            provideNavigationMiddleware(
-                TabsUseCases.SelectOrAddUseCase(browserStore),
-                context,
-                scope,
-            ),
+            provideNavigationMiddleware(TabsUseCases.SelectOrAddUseCase(browserStore), context),
+            provideTelemetryMiddleware(),
         )
 
     private fun providePreferencesMiddleware(
@@ -70,10 +68,10 @@ object ReviewQualityCheckMiddlewareProvider {
     private fun provideNavigationMiddleware(
         selectOrAddUseCase: TabsUseCases.SelectOrAddUseCase,
         context: Context,
-        scope: CoroutineScope,
     ) = ReviewQualityCheckNavigationMiddleware(
         selectOrAddUseCase = selectOrAddUseCase,
         context = context,
-        scope = scope,
     )
+
+    private fun provideTelemetryMiddleware() = ReviewQualityCheckTelemetryMiddleware()
 }

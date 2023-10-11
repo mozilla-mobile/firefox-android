@@ -38,6 +38,7 @@ import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifAnyChanged
 import org.mozilla.fenix.GleanMetrics.ReaderMode
+import org.mozilla.fenix.GleanMetrics.Shopping
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
@@ -72,6 +73,8 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
 
     private var readerModeAvailable = false
     private var reviewQualityCheckAvailable = false
+    private var translationsAvailable = false
+
     private var pwaOnboardingObserver: PwaOnboardingObserver? = null
 
     private var forwardAction: BrowserToolbar.TwoStateButton? = null
@@ -150,6 +153,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
 
         browserToolbarView.view.addPageAction(readerModeAction)
 
+        initTranslationsAction(context)
         initReviewQualityCheck(context, view)
 
         thumbnailsFeature.set(
@@ -204,9 +208,11 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                 view = view,
             )
         }
+
         if (!context.settings().shouldUseCookieBanner && !context.settings().userOptOutOfReEngageCookieBannerDialog) {
             observeCookieBannerHandlingState(context.components.core.store)
         }
+
         standardSnackbarErrorBinding.set(
             feature = StandardSnackbarErrorBinding(
                 requireActivity(),
@@ -215,6 +221,33 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
             owner = viewLifecycleOwner,
             view = binding.root,
         )
+    }
+
+    private fun initTranslationsAction(context: Context) {
+        if (!context.settings().enableTranslations) {
+            return
+        }
+
+        val translationsAction =
+            BrowserToolbar.ToggleButton(
+                image = AppCompatResources.getDrawable(
+                    context,
+                    R.drawable.mozac_ic_translate_24,
+                )!!,
+                imageSelected =
+                AppCompatResources.getDrawable(
+                    context,
+                    R.drawable.mozac_ic_translate_24,
+                )!!,
+                contentDescription = "",
+                contentDescriptionSelected = "",
+                visible = {
+                    translationsAvailable || context.settings().enableTranslations
+                },
+                listener = { browserToolbarInteractor.onTranslationsButtonClicked() },
+            )
+
+        browserToolbarView.view.addPageAction(translationsAction)
     }
 
     private fun initReviewQualityCheck(context: Context, view: View) {
@@ -240,6 +273,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                     findNavController().navigate(
                         BrowserFragmentDirections.actionBrowserFragmentToReviewQualityCheckDialogFragment(),
                     )
+                    Shopping.addressBarIconClicked.record()
                 },
             )
 
@@ -252,9 +286,15 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                 shoppingExperienceFeature = DefaultShoppingExperienceFeature(
                     settings = requireContext().settings(),
                 ),
-                onAvailabilityChange = { reviewQualityCheckAvailable = it },
-                onBottomSheetCollapsed = {
-                    reviewQualityCheck.setSelected(selected = false, notifyListener = false)
+                onAvailabilityChange = {
+                    if (!reviewQualityCheckAvailable && it) {
+                        Shopping.addressBarIconDisplayed.record()
+                    }
+                    reviewQualityCheckAvailable = it
+                    safeInvalidateBrowserToolbarView()
+                },
+                onBottomSheetStateChange = {
+                    reviewQualityCheck.setSelected(selected = it, notifyListener = false)
                 },
             ),
             owner = this,

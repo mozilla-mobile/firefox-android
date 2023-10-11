@@ -453,7 +453,7 @@ class WebExtensionSupportTest {
 
         verify(store).dispatch(
             WebExtensionAction.UpdatePromptRequestWebExtensionAction(
-                WebExtensionPromptRequest.AfterInstallation.Permissions(ext, onPermissionsGranted),
+                WebExtensionPromptRequest.AfterInstallation.Permissions.Required(ext, onPermissionsGranted),
             ),
         )
     }
@@ -889,7 +889,7 @@ class WebExtensionSupportTest {
         val store = BrowserStore()
         val engine: Engine = mock()
 
-        assertFalse(store.state.showExtensionProcessDisabledPopup)
+        assertFalse(store.state.showExtensionsProcessDisabledPrompt)
         val delegateCaptor = argumentCaptor<WebExtensionDelegate>()
         WebExtensionSupport.initialize(engine, store)
 
@@ -898,7 +898,7 @@ class WebExtensionSupportTest {
         delegateCaptor.value.onDisabledExtensionProcessSpawning()
         store.waitUntilIdle()
 
-        assertTrue(store.state.showExtensionProcessDisabledPopup)
+        assertTrue(store.state.showExtensionsProcessDisabledPrompt)
     }
 
     @Test
@@ -984,5 +984,24 @@ class WebExtensionSupportTest {
         verify(ext).registerTabHandler(eq(customTabEngineSession), tabHandlerCaptor.capture())
         verify(ext).registerActionHandler(eq(engineSession), actionHandlerCaptor.capture())
         verify(ext).registerTabHandler(eq(engineSession), tabHandlerCaptor.capture())
+    }
+
+    @Test
+    fun `reacts to optional permissions request`() {
+        val store = spy(BrowserStore())
+        val engine: Engine = mock()
+        val ext: WebExtension = mock()
+        val permissions = listOf("perm1", "perm2")
+        val onPermissionsGranted: ((Boolean) -> Unit) = mock()
+        val delegateCaptor = argumentCaptor<WebExtensionDelegate>()
+        WebExtensionSupport.initialize(engine, store)
+        verify(engine).registerWebExtensionDelegate(delegateCaptor.capture())
+
+        delegateCaptor.value.onOptionalPermissionsRequest(ext, permissions, onPermissionsGranted)
+        verify(store).dispatch(
+            WebExtensionAction.UpdatePromptRequestWebExtensionAction(
+                WebExtensionPromptRequest.AfterInstallation.Permissions.Optional(ext, permissions, onPermissionsGranted),
+            ),
+        )
     }
 }

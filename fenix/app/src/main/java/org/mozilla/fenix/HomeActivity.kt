@@ -91,7 +91,7 @@ import org.mozilla.fenix.GleanMetrics.StartOnHome
 import org.mozilla.fenix.addons.AddonDetailsFragmentDirections
 import org.mozilla.fenix.addons.AddonPermissionsDetailsFragmentDirections
 import org.mozilla.fenix.addons.AddonsManagementFragmentDirections
-import org.mozilla.fenix.addons.ExtensionProcessDisabledController
+import org.mozilla.fenix.addons.ExtensionsProcessDisabledController
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
@@ -194,8 +194,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         WebExtensionPopupObserver(components.core.store, ::openPopup)
     }
 
-    private val extensionProcessDisabledPopupObserver by lazy {
-        ExtensionProcessDisabledController(this@HomeActivity, components.core.store)
+    private val extensionsProcessDisabledPromptObserver by lazy {
+        ExtensionsProcessDisabledController(this@HomeActivity, components.core.store)
     }
 
     private val serviceWorkerSupport by lazy {
@@ -347,7 +347,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         }
         supportActionBar?.hide()
 
-        lifecycle.addObservers(webExtensionPopupObserver, extensionProcessDisabledPopupObserver, serviceWorkerSupport)
+        lifecycle.addObservers(webExtensionPopupObserver, extensionsProcessDisabledPromptObserver, serviceWorkerSupport)
 
         if (shouldAddToRecentsScreen(intent)) {
             intent.removeExtra(START_IN_RECENTS_SCREEN)
@@ -368,7 +368,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             components.core.contileTopSitesUpdater.startPeriodicWork()
         }
 
-        if (settings().enableUnifiedSearchSettingsUI && !settings().hiddenEnginesRestored) {
+        if (!settings().hiddenEnginesRestored) {
             settings().hiddenEnginesRestored = true
             components.useCases.searchUseCases.restoreHiddenSearchEngines.invoke()
         }
@@ -944,7 +944,17 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
      * Navigates to the browser fragment and loads a URL or performs a search (depending on the
      * value of [searchTermOrURL]).
      *
+     * @param searchTermOrURL The entered search term to search or URL to be loaded.
+     * @param newTab Whether or not to load the URL in a new tab.
+     * @param from The [BrowserDirection] to indicate which fragment the browser is being
+     * opened from.
+     * @param customTabSessionId Optional custom tab session ID if navigating from a custom tab.
+     * @param engine Optional [SearchEngine] to use when performing a search.
+     * @param forceSearch Whether or not to force performing a search.
      * @param flags Flags that will be used when loading the URL (not applied to searches).
+     * @param requestDesktopMode Whether or not to request the desktop mode for the session.
+     * @param historyMetadata The [HistoryMetadataKey] of the new tab in case this tab
+     * was opened from history.
      * @param additionalHeaders The extra headers to use when loading the URL.
      */
     @Suppress("LongParameterList")
@@ -1048,7 +1058,12 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     /**
      * Loads a URL or performs a search (depending on the value of [searchTermOrURL]).
      *
+     * @param searchTermOrURL The entered search term to search or URL to be loaded.
+     * @param newTab Whether or not to load the URL in a new tab.
+     * @param engine Optional [SearchEngine] to use when performing a search.
+     * @param forceSearch Whether or not to force performing a search.
      * @param flags Flags that will be used when loading the URL (not applied to searches).
+     * @param requestDesktopMode Whether or not to request the desktop mode for the session.
      * @param historyMetadata The [HistoryMetadataKey] of the new tab in case this tab
      * was opened from history.
      * @param additionalHeaders The extra headers to use when loading the URL.

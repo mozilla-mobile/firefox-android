@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import mozilla.components.browser.state.action.CustomTabListAction
 import mozilla.components.browser.state.action.EngineAction
-import mozilla.components.browser.state.action.ExtensionProcessDisabledPopupAction
+import mozilla.components.browser.state.action.ExtensionsProcessAction
 import mozilla.components.browser.state.action.TabListAction
 import mozilla.components.browser.state.action.WebExtensionAction
 import mozilla.components.browser.state.selector.allTabs
@@ -288,7 +288,10 @@ object WebExtensionSupport {
                 ) {
                     store.dispatch(
                         WebExtensionAction.UpdatePromptRequestWebExtensionAction(
-                            WebExtensionPromptRequest.AfterInstallation.Permissions(extension, onPermissionsGranted),
+                            WebExtensionPromptRequest.AfterInstallation.Permissions.Required(
+                                extension,
+                                onPermissionsGranted,
+                            ),
                         ),
                     )
                 }
@@ -307,6 +310,22 @@ object WebExtensionSupport {
                     )
                 }
 
+                override fun onOptionalPermissionsRequest(
+                    extension: WebExtension,
+                    permissions: List<String>,
+                    onPermissionsGranted: ((Boolean) -> Unit),
+                ) {
+                    store.dispatch(
+                        WebExtensionAction.UpdatePromptRequestWebExtensionAction(
+                            WebExtensionPromptRequest.AfterInstallation.Permissions.Optional(
+                                extension,
+                                permissions,
+                                onPermissionsGranted,
+                            ),
+                        ),
+                    )
+                }
+
                 override fun onExtensionListUpdated() {
                     installedExtensions.clear()
                     store.dispatch(WebExtensionAction.UninstallAllWebExtensionsAction)
@@ -314,7 +333,7 @@ object WebExtensionSupport {
                 }
 
                 override fun onDisabledExtensionProcessSpawning() {
-                    store.dispatch(ExtensionProcessDisabledPopupAction(showPopup = true))
+                    store.dispatch(ExtensionsProcessAction.ShowPromptAction(show = true))
                 }
             },
         )

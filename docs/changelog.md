@@ -11,7 +11,8 @@ permalink: /changelog/
 * [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/.config.yml)
 
 * **browser-state**
-  * `SessionState.isProductUrl` is not affected for private tabs as shopping mode is disabled in private tabs. [Bug 1847063](https://bugzilla.mozilla.org/show_bug.cgi?id=1847063)  
+  * `SessionState.isProductUrl` is not affected for private tabs as shopping mode is disabled in private tabs. [Bug 1847063](https://bugzilla.mozilla.org/show_bug.cgi?id=1847063)
+  * `SessionState.isProductUrl` has been moved to `ContentState.isProductUrl`. [Bug 1857287](https://bugzilla.mozilla.org/show_bug.cgi?id=1857287)
 
 # 119.0
 * [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v118..releases_v119)
@@ -51,6 +52,10 @@ permalink: /changelog/
 * **concept-engine**
   * 🌟️️ Add `reanalyzeProduct` API to `EngineSession` to allow reanalyzing product from the engine. See more on [Bug 1853309](https://bugzilla.mozilla.org/show_bug.cgi?id=1853309).
   * 🌟️️ Add `requestAnalysisStatus` API to `EngineSession` to allow request product analysis status from the engine. See more on [Bug 1853309](https://bugzilla.mozilla.org/show_bug.cgi?id=1853309).
+
+* **support-ktx**
+  * ⚠️ **This is a breaking change**: the `enterToImmersiveMode()` in `Activity.kt` has been renamed to `enterImmersiveMode()`.
+  * ⚠️ **This is a breaking change**: the `getWindowInsetsController()` in `Window.kt` has been renamed to `createWindowInsetsController()`.
 
 # 118.0
 * [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v117..releases_v118)

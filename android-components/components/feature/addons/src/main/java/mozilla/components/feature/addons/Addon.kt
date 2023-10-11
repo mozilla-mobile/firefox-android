@@ -17,9 +17,8 @@ import mozilla.components.concept.engine.webextension.WebExtension
  * https://addons.mozilla.org/en-US/firefox/
  *
  * @property id The unique ID of this add-on.
- * @property authors List holding information about the add-on authors.
+ * @property author Information about the add-on author.
  * @property categories List of categories the add-on belongs to.
- * @property downloadId The unique ID of the latest version of the add-on (xpi) file.
  * @property downloadUrl The (absolute) URL to download the latest version of the add-on file.
  * @property version The add-on version e.g "1.23.0".
  * @property permissions List of the add-on permissions for this File.
@@ -42,9 +41,8 @@ import mozilla.components.concept.engine.webextension.WebExtension
 @Parcelize
 data class Addon(
     val id: String,
-    val authors: List<Author> = emptyList(),
+    val author: Author? = null,
     val categories: List<String> = emptyList(),
-    val downloadId: String = "",
     val downloadUrl: String = "",
     val version: String = "",
     val permissions: List<String> = emptyList(),
@@ -62,18 +60,14 @@ data class Addon(
     /**
      * Represents an add-on author.
      *
-     * @property id The id of the author (creator) of the add-on.
      * @property name The name of the author.
-     * @property url The link to the profile page for of the author.
-     * @property username The username of the author.
+     * @property url The link to the profile page of the author.
      */
     @SuppressLint("ParcelCreator")
     @Parcelize
     data class Author(
-        val id: String,
         val name: String,
         val url: String,
-        val username: String,
     ) : Parcelable
 
     /**
@@ -140,6 +134,16 @@ data class Addon(
          * The [Addon] was disabled by the user.
          */
         USER_REQUESTED,
+
+        /**
+         * The [Addon] was disabled because it isn't correctly signed.
+         */
+        NOT_CORRECTLY_SIGNED,
+
+        /**
+         * The [Addon] was disabled because it isn't compatible with the application version.
+         */
+        INCOMPATIBLE,
     }
 
     /**
@@ -178,6 +182,17 @@ data class Addon(
      * the blocklist. This is based on the installed extension state in the engine.
      */
     fun isDisabledAsBlocklisted() = installedState?.disabledReason == DisabledReason.BLOCKLISTED
+
+    /**
+     * Returns whether this [Addon] is currently disabled because it isn't correctly signed.
+     */
+    fun isDisabledAsNotCorrectlySigned() = installedState?.disabledReason == DisabledReason.NOT_CORRECTLY_SIGNED
+
+    /**
+     * Returns whether this [Addon] is currently disabled because it isn't compatible
+     * with the application version.
+     */
+    fun isDisabledAsIncompatible() = installedState?.disabledReason == DisabledReason.INCOMPATIBLE
 
     /**
      * Returns whether or not this [Addon] is allowed in private browsing mode.
@@ -270,8 +285,16 @@ data class Addon(
             val permissions = extension.getMetadata()?.permissions.orEmpty() +
                 extension.getMetadata()?.hostPermissions.orEmpty()
 
+            val developerName = extension.getMetadata()?.developerName.orEmpty()
+            val author = if (developerName.isNotBlank()) {
+                Author(name = developerName, url = extension.getMetadata()?.developerUrl.orEmpty())
+            } else {
+                null
+            }
+
             return Addon(
                 id = extension.id,
+                author = author,
                 version = extension.getMetadata()?.version.orEmpty(),
                 permissions = permissions,
                 downloadUrl = extension.url,
@@ -281,7 +304,7 @@ data class Addon(
                 // We don't have a summary when we create an add-on from a WebExtension instance so let's
                 // re-use description...
                 translatableSummary = mapOf(Addon.DEFAULT_LOCALE to description),
-                updatedAt = "1970-01-01T00:00:00Z",
+                updatedAt = "",
                 installedState = installedState,
             )
         }

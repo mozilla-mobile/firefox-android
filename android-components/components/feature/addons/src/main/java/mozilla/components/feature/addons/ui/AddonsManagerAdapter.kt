@@ -29,14 +29,19 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import mozilla.components.browser.state.action.ExtensionsProcessAction
+import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.feature.addons.Addon
 import mozilla.components.feature.addons.AddonsProvider
 import mozilla.components.feature.addons.R
 import mozilla.components.feature.addons.ui.CustomViewHolder.AddonViewHolder
 import mozilla.components.feature.addons.ui.CustomViewHolder.FooterViewHolder
+import mozilla.components.feature.addons.ui.CustomViewHolder.HeaderViewHolder
 import mozilla.components.feature.addons.ui.CustomViewHolder.SectionViewHolder
 import mozilla.components.feature.addons.ui.CustomViewHolder.UnsupportedSectionViewHolder
 import mozilla.components.support.base.log.logger.Logger
+import mozilla.components.support.ktx.android.content.appName
+import mozilla.components.support.ktx.android.content.appVersionName
 import mozilla.components.support.ktx.android.content.res.resolveAttribute
 import java.io.IOException
 import mozilla.components.ui.icons.R as iconsR
@@ -45,6 +50,7 @@ private const val VIEW_HOLDER_TYPE_SECTION = 0
 private const val VIEW_HOLDER_TYPE_NOT_YET_SUPPORTED_SECTION = 1
 private const val VIEW_HOLDER_TYPE_ADDON = 2
 private const val VIEW_HOLDER_TYPE_FOOTER = 3
+private const val VIEW_HOLDER_TYPE_HEADER = 4
 
 /**
  * An adapter for displaying add-on items. This will display information related to the state of
@@ -64,6 +70,7 @@ class AddonsManagerAdapter(
     addons: List<Addon>,
     private val style: Style? = null,
     private val excludedAddonIDs: List<String> = emptyList(),
+    private val store: BrowserStore,
 ) : ListAdapter<Any, CustomViewHolder>(DifferCallback) {
     private val scope = CoroutineScope(Dispatchers.IO)
     private val logger = Logger("AddonsManagerAdapter")
@@ -86,6 +93,7 @@ class AddonsManagerAdapter(
             VIEW_HOLDER_TYPE_SECTION -> createSectionViewHolder(parent)
             VIEW_HOLDER_TYPE_NOT_YET_SUPPORTED_SECTION -> createUnsupportedSectionViewHolder(parent)
             VIEW_HOLDER_TYPE_FOOTER -> createFooterSectionViewHolder(parent)
+            VIEW_HOLDER_TYPE_HEADER -> createHeaderSectionViewHolder(parent)
             else -> throw IllegalArgumentException("Unrecognized viewType")
         }
     }
@@ -108,6 +116,19 @@ class AddonsManagerAdapter(
             false,
         )
         return FooterViewHolder(view)
+    }
+
+    private fun createHeaderSectionViewHolder(parent: ViewGroup): CustomViewHolder {
+        val context = parent.context
+        val inflater = LayoutInflater.from(context)
+        val view = inflater.inflate(
+            R.layout.mozac_feature_addons_header_section_item,
+            parent,
+            false,
+        )
+        val restartButton = view.findViewById<TextView>(R.id.restart_button)
+
+        return HeaderViewHolder(view, restartButton)
     }
 
     private fun createUnsupportedSectionViewHolder(parent: ViewGroup): CustomViewHolder {
@@ -136,7 +157,7 @@ class AddonsManagerAdapter(
         val userCountView = view.findViewById<TextView>(R.id.users_count)
         val addButton = view.findViewById<ImageView>(R.id.add_button)
         val allowedInPrivateBrowsingLabel = view.findViewById<ImageView>(R.id.allowed_in_private_browsing_label)
-        val statusBlocklistedView = view.findViewById<View>(R.id.add_on_status_blocklisted)
+        val statusErrorView = view.findViewById<View>(R.id.add_on_status_error)
         return AddonViewHolder(
             view,
             iconView,
@@ -147,7 +168,7 @@ class AddonsManagerAdapter(
             userCountView,
             addButton,
             allowedInPrivateBrowsingLabel,
-            statusBlocklistedView,
+            statusErrorView,
         )
     }
 
@@ -157,6 +178,7 @@ class AddonsManagerAdapter(
             is Section -> VIEW_HOLDER_TYPE_SECTION
             is NotYetSupportedSection -> VIEW_HOLDER_TYPE_NOT_YET_SUPPORTED_SECTION
             is FooterSection -> VIEW_HOLDER_TYPE_FOOTER
+            is HeaderSection -> VIEW_HOLDER_TYPE_HEADER
             else -> throw IllegalArgumentException("items[position] has unrecognized type")
         }
     }
@@ -172,6 +194,7 @@ class AddonsManagerAdapter(
                 item as NotYetSupportedSection,
             )
             is FooterViewHolder -> bindFooterButton(holder)
+            is HeaderViewHolder -> bindHeaderButton(holder)
         }
     }
 
@@ -211,16 +234,27 @@ class AddonsManagerAdapter(
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    internal fun bindFooterButton(
-        holder: FooterViewHolder,
-    ) {
+    internal fun bindFooterButton(holder: FooterViewHolder) {
         holder.itemView.setOnClickListener {
             addonsManagerDelegate.onFindMoreAddonsButtonClicked()
         }
     }
 
+    internal fun bindHeaderButton(holder: HeaderViewHolder) {
+        holder.restartButton.setOnClickListener {
+            store.dispatch(ExtensionsProcessAction.EnabledAction)
+            // Remove the notification.
+            submitList(currentList.filter { item: Any -> item != HeaderSection })
+        }
+    }
+
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    internal fun bindAddon(holder: AddonViewHolder, addon: Addon) {
+    internal fun bindAddon(
+        holder: AddonViewHolder,
+        addon: Addon,
+        appName: String = holder.itemView.context.appName,
+        appVersion: String = holder.itemView.context.appVersionName,
+    ) {
         val context = holder.itemView.context
         addon.rating?.let {
             val userCount = context.getString(R.string.mozac_feature_addons_user_rating_count_2)
@@ -270,21 +304,38 @@ class AddonsManagerAdapter(
         style?.maybeSetAddonNameTextColor(holder.titleView)
         style?.maybeSetAddonSummaryTextColor(holder.summaryView)
 
+        val statusErrorMessage = holder.statusErrorView.findViewById<TextView>(R.id.add_on_status_error_message)
+        val statusErrorLearnMoreLink = holder.statusErrorView.findViewById<TextView>(
+            R.id.add_on_status_error_learn_more_link,
+        )
         if (addon.isDisabledAsBlocklisted()) {
-            holder.statusBlocklistedView.findViewById<TextView>(R.id.add_on_status_blocklisted_message).text =
-                context.getString(
-                    R.string.mozac_feature_addons_status_blocklisted,
-                    addonName,
-                )
-            holder.statusBlocklistedView.findViewById<TextView>(
-                R.id.add_on_status_blocklisted_learn_more_link,
-            ).setOnClickListener {
+            statusErrorMessage.text = context.getString(R.string.mozac_feature_addons_status_blocklisted, addonName)
+            statusErrorLearnMoreLink.setOnClickListener {
                 addonsManagerDelegate.onLearnMoreLinkClicked(
                     AddonsManagerAdapterDelegate.LearnMoreLinks.BLOCKLISTED_ADDON,
                     addon,
                 )
             }
-            holder.statusBlocklistedView.isVisible = true
+            holder.statusErrorView.isVisible = true
+        } else if (addon.isDisabledAsNotCorrectlySigned()) {
+            statusErrorMessage.text = context.getString(R.string.mozac_feature_addons_status_unsigned, addonName)
+            statusErrorLearnMoreLink.setOnClickListener {
+                addonsManagerDelegate.onLearnMoreLinkClicked(
+                    AddonsManagerAdapterDelegate.LearnMoreLinks.ADDON_NOT_CORRECTLY_SIGNED,
+                    addon,
+                )
+            }
+            holder.statusErrorView.isVisible = true
+        } else if (addon.isDisabledAsIncompatible()) {
+            statusErrorMessage.text = context.getString(
+                R.string.mozac_feature_addons_status_incompatible,
+                addonName,
+                appName,
+                appVersion,
+            )
+            holder.statusErrorView.isVisible = true
+            // There is no link when the add-on is disabled because it isn't compatible with the application version.
+            statusErrorLearnMoreLink.isVisible = false
         }
     }
 
@@ -348,6 +399,12 @@ class AddonsManagerAdapter(
             }
         }
 
+        // Calls are safe, except in tests since the store is mocked in most cases.
+        @Suppress("UNNECESSARY_SAFE_CALL")
+        if (store?.state?.extensionsProcessDisabled == true) {
+            itemsWithSections.add(HeaderSection)
+        }
+
         // Add installed section and addons if available
         if (installedAddons.isNotEmpty()) {
             itemsWithSections.add(Section(R.string.mozac_feature_addons_enabled, false))
@@ -389,6 +446,9 @@ class AddonsManagerAdapter(
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     internal object FooterSection
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    internal object HeaderSection
 
     /**
      * Allows to customize how items should look like.

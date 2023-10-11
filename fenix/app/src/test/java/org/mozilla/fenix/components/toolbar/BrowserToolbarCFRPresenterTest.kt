@@ -15,7 +15,6 @@ import io.mockk.verify
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import mozilla.components.browser.state.action.ContentAction
-import mozilla.components.browser.state.action.ShoppingProductAction
 import mozilla.components.browser.state.action.TabListAction
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.CustomTabSessionState
@@ -234,6 +233,7 @@ class BrowserToolbarCFRPresenterTest {
                 every { shouldShowReviewQualityCheckCFR } returns true
                 every { reviewQualityCheckOptInTimeInMillis } returns System.currentTimeMillis()
                 every { shouldShowEraseActionCFR } returns false
+                every { reviewQualityCheckCfrDisplayTimeInMillis } returns 0L
             },
         )
         every { presenter.showShoppingCFR(any()) } just Runs
@@ -245,7 +245,7 @@ class BrowserToolbarCFRPresenterTest {
         browserStore.dispatch(ContentAction.UpdateLoadingStateAction(tab.id, true)).joinBlocking()
         verify(exactly = 0) { presenter.showShoppingCFR(eq(false)) }
 
-        browserStore.dispatch(ShoppingProductAction.UpdateProductUrlStatusAction(tab.id, true)).joinBlocking()
+        browserStore.dispatch(ContentAction.UpdateProductUrlStateAction(tab.id, true)).joinBlocking()
         verify(exactly = 0) { presenter.showShoppingCFR(eq(false)) }
 
         browserStore.dispatch(ContentAction.UpdateProgressAction(tab.id, 100)).joinBlocking()
@@ -253,6 +253,37 @@ class BrowserToolbarCFRPresenterTest {
 
         browserStore.dispatch(ContentAction.UpdateLoadingStateAction(tab.id, false)).joinBlocking()
         verify { presenter.showShoppingCFR(eq(false)) }
+    }
+
+    @Test
+    fun `GIVEN the current tab is showing a product page WHEN the tab is not loading AND another CFR is shown THEN the shopping CFR is not shown`() {
+        val tab = createTab(url = "")
+        val browserStore = createBrowserStore(
+            tab = tab,
+            selectedTabId = tab.id,
+        )
+        val presenter = createPresenter(
+            browserStore = browserStore,
+            settings = mockk {
+                every { shouldShowTotalCookieProtectionCFR } returns false
+                every { shouldShowReviewQualityCheckCFR } returns true
+                every { reviewQualityCheckOptInTimeInMillis } returns System.currentTimeMillis()
+                every { shouldShowEraseActionCFR } returns false
+                every { reviewQualityCheckCfrDisplayTimeInMillis } returns 0L
+            },
+        )
+        every { presenter.popup } returns mockk()
+        every { presenter.showShoppingCFR(any()) } just Runs
+
+        presenter.start()
+
+        assertNotNull(presenter.scope)
+
+        browserStore.dispatch(ContentAction.UpdateProductUrlStateAction(tab.id, true)).joinBlocking()
+        verify(exactly = 0) { presenter.showShoppingCFR(eq(false)) }
+
+        browserStore.dispatch(ContentAction.UpdateProgressAction(tab.id, 100)).joinBlocking()
+        verify(exactly = 0) { presenter.showShoppingCFR(eq(false)) }
     }
 
     @Test
@@ -269,6 +300,7 @@ class BrowserToolbarCFRPresenterTest {
                 every { shouldShowReviewQualityCheckCFR } returns true
                 every { shouldShowEraseActionCFR } returns false
                 every { reviewQualityCheckOptInTimeInMillis } returns System.currentTimeMillis() - Settings.TWO_DAYS_MS
+                every { reviewQualityCheckCfrDisplayTimeInMillis } returns System.currentTimeMillis() - Settings.TWO_DAYS_MS
             },
             browserStore = browserStore,
         )
@@ -281,7 +313,7 @@ class BrowserToolbarCFRPresenterTest {
         browserStore.dispatch(ContentAction.UpdateLoadingStateAction(tab.id, true)).joinBlocking()
         verify(exactly = 0) { presenter.showShoppingCFR(eq(true)) }
 
-        browserStore.dispatch(ShoppingProductAction.UpdateProductUrlStatusAction(tab.id, true)).joinBlocking()
+        browserStore.dispatch(ContentAction.UpdateProductUrlStateAction(tab.id, true)).joinBlocking()
         verify(exactly = 0) { presenter.showShoppingCFR(eq(true)) }
 
         browserStore.dispatch(ContentAction.UpdateProgressAction(tab.id, 100)).joinBlocking()
@@ -308,6 +340,7 @@ class BrowserToolbarCFRPresenterTest {
                 every { shouldShowReviewQualityCheckCFR } returns true
                 every { shouldShowEraseActionCFR } returns false
                 every { reviewQualityCheckOptInTimeInMillis } returns System.currentTimeMillis() - Settings.TWO_DAYS_MS
+                every { reviewQualityCheckCfrDisplayTimeInMillis } returns System.currentTimeMillis() - Settings.TWO_DAYS_MS
             },
             browserStore = browserStore,
         )
@@ -317,12 +350,74 @@ class BrowserToolbarCFRPresenterTest {
 
         assertNotNull(presenter.scope)
 
-        browserStore.dispatch(ShoppingProductAction.UpdateProductUrlStatusAction(tab1.id, true)).joinBlocking()
+        browserStore.dispatch(ContentAction.UpdateProductUrlStateAction(tab1.id, true)).joinBlocking()
         browserStore.dispatch(ContentAction.UpdateProgressAction(tab1.id, 100)).joinBlocking()
         verify(exactly = 0) { presenter.showShoppingCFR(any()) }
 
         browserStore.dispatch(TabListAction.SelectTabAction(tab1.id)).joinBlocking()
-        verify(exactly = 1) { presenter.showShoppingCFR(any()) }
+        verify(exactly = 1) { presenter.showShoppingCFR(true) }
+    }
+
+    @Test
+    fun `GIVEN the first CFR was displayed less than 24h ago AND the user did not opt in to the shopping feature WHEN opening a loaded product page THEN no shopping CFR is shown`() {
+        val tab1 = createTab(url = "", id = "tab1")
+        val browserStore = BrowserStore(
+            initialState = BrowserState(
+                tabs = listOf(tab1),
+                selectedTabId = tab1.id,
+            ),
+        )
+
+        val presenter = createPresenter(
+            settings = mockk {
+                every { shouldShowTotalCookieProtectionCFR } returns false
+                every { shouldShowReviewQualityCheckCFR } returns true
+                every { shouldShowEraseActionCFR } returns false
+                every { reviewQualityCheckOptInTimeInMillis } returns 0L
+                every { reviewQualityCheckCfrDisplayTimeInMillis } returns System.currentTimeMillis() - 19 * 60 * 60 * 1000L
+            },
+            browserStore = browserStore,
+        )
+        every { presenter.showShoppingCFR(any()) } just Runs
+
+        presenter.start()
+
+        assertNull(presenter.scope)
+    }
+
+    @Test
+    fun `GIVEN the first CFR was displayed 24h ago AND the user did not opt in to the shopping feature WHEN opening a loaded product page THEN the first shopping CFR is shown`() {
+        val tab1 = createTab(url = "", id = "tab1")
+        val tab2 = createTab(url = "", id = "tab2")
+        val browserStore = BrowserStore(
+            initialState = BrowserState(
+                tabs = listOf(tab1, tab2),
+                selectedTabId = tab2.id,
+            ),
+        )
+
+        val presenter = createPresenter(
+            settings = mockk {
+                every { shouldShowTotalCookieProtectionCFR } returns false
+                every { shouldShowReviewQualityCheckCFR } returns true
+                every { shouldShowEraseActionCFR } returns false
+                every { reviewQualityCheckOptInTimeInMillis } returns 0L
+                every { reviewQualityCheckCfrDisplayTimeInMillis } returns System.currentTimeMillis() - Settings.ONE_DAY_MS
+            },
+            browserStore = browserStore,
+        )
+        every { presenter.showShoppingCFR(any()) } just Runs
+
+        presenter.start()
+
+        assertNotNull(presenter.scope)
+
+        browserStore.dispatch(ContentAction.UpdateProductUrlStateAction(tab1.id, true)).joinBlocking()
+        browserStore.dispatch(ContentAction.UpdateProgressAction(tab1.id, 100)).joinBlocking()
+        verify(exactly = 0) { presenter.showShoppingCFR(any()) }
+
+        browserStore.dispatch(TabListAction.SelectTabAction(tab1.id)).joinBlocking()
+        verify(exactly = 1) { presenter.showShoppingCFR(false) }
     }
 
     /**
@@ -384,6 +479,7 @@ class BrowserToolbarCFRPresenterTest {
             sessionId = sessionId,
             isPrivate = isPrivate,
             onShoppingCfrActionClicked = {},
+            onShoppingCfrDismiss = {},
             shoppingExperienceFeature = shoppingExperienceFeature,
         ),
     )
