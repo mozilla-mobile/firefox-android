@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AlertDialog
 import mozilla.components.browser.state.action.ExtensionProcessDisabledPopupAction
+import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.Engine
 import mozilla.components.support.test.argumentCaptor
@@ -21,10 +22,11 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.mock
-import org.mockito.Mockito.never
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.AppStore
+import org.mozilla.fenix.components.appstate.AppState
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 
 @RunWith(FenixRobolectricTestRunner::class)
@@ -35,79 +37,97 @@ class ExtensionProcessDisabledControllerTest {
     private val dispatcher = coroutinesTestRule.testDispatcher
 
     @Test
-    fun `WHEN showExtensionProcessDisabledPopup is true AND positive button clicked then enable extension process spawning`() {
-        val store = BrowserStore()
+    fun `WHEN showExtensionsProcessDisabledPrompt is true AND positive button clicked then enable extension process spawning`() {
+        val browserStore = BrowserStore()
         val engine: Engine = mock()
         val dialog: AlertDialog = mock()
-        val appName = "TestApp"
         val builder: AlertDialog.Builder = mock()
-        val controller = ExtensionProcessDisabledController(testContext, store, engine, builder, appName)
+        val controller = ExtensionProcessDisabledController(
+            context = testContext,
+            appStore = AppStore(AppState(isForeground = true)),
+            engine = engine,
+            browserStore = browserStore,
+            builder = builder,
+            appName = "TestApp",
+            )
         val buttonsContainerCaptor = argumentCaptor<View>()
 
         controller.start()
 
         whenever(builder.show()).thenReturn(dialog)
 
-        assertFalse(store.state.showExtensionProcessDisabledPopup)
+        assertFalse(browserStore.state.showExtensionProcessDisabledPopup)
 
-        store.dispatch(ExtensionProcessDisabledPopupAction(showPopup = true))
+        // Pretend the process has been disabled and we show the dialog.
+        browserStore.dispatch(ExtensionProcessDisabledPopupAction(showPopup = true))
         dispatcher.scheduler.advanceUntilIdle()
-        store.waitUntilIdle()
-        assertTrue(store.state.showExtensionProcessDisabledPopup)
+        browserStore.waitUntilIdle()
+        assertTrue(browserStore.state.showExtensionProcessDisabledPopup)
 
         verify(builder).setView(buttonsContainerCaptor.capture())
         verify(builder).show()
 
         buttonsContainerCaptor.value.findViewById<Button>(R.id.positive).performClick()
 
-        store.waitUntilIdle()
+        browserStore.waitUntilIdle()
 
-        verify(engine).enableExtensionProcessSpawning()
-        assertFalse(store.state.showExtensionProcessDisabledPopup)
+        assertFalse(browserStore.state.showExtensionProcessDisabledPopup)
         verify(dialog).dismiss()
     }
 
     @Test
-    fun `WHEN showExtensionProcessDisabledPopup is true AND negative button clicked then dismiss without enabling extension process spawning`() {
-        val store = BrowserStore()
+    fun `WHEN showExtensionsProcessDisabledPrompt is true AND negative button clicked then dismiss without enabling extension process spawning`() {
+        val browserStore = BrowserStore()
         val engine: Engine = mock()
-        val appName = "TestApp"
         val dialog: AlertDialog = mock()
         val builder: AlertDialog.Builder = mock()
-        val controller = ExtensionProcessDisabledController(testContext, store, engine, builder, appName)
+        val controller = ExtensionProcessDisabledController(
+            context = testContext,
+            appStore = AppStore(AppState(isForeground = true)),
+            engine = engine,
+            browserStore = browserStore,
+            builder = builder,
+            appName = "TestApp",
+            )
         val buttonsContainerCaptor = argumentCaptor<View>()
 
         controller.start()
 
         whenever(builder.show()).thenReturn(dialog)
 
-        assertFalse(store.state.showExtensionProcessDisabledPopup)
+        assertFalse(browserStore.state.showExtensionProcessDisabledPopup)
 
-        store.dispatch(ExtensionProcessDisabledPopupAction(showPopup = true))
+        // Pretend the process has been disabled and we show the dialog.
+        browserStore.dispatch(ExtensionProcessDisabledPopupAction(showPopup = true))
         dispatcher.scheduler.advanceUntilIdle()
-        store.waitUntilIdle()
-        assertTrue(store.state.showExtensionProcessDisabledPopup)
+        browserStore.waitUntilIdle()
+        assertTrue(browserStore.state.showExtensionProcessDisabledPopup)
 
         verify(builder).setView(buttonsContainerCaptor.capture())
         verify(builder).show()
 
         buttonsContainerCaptor.value.findViewById<Button>(R.id.negative).performClick()
 
-        store.waitUntilIdle()
+        browserStore.waitUntilIdle()
 
-        assertFalse(store.state.showExtensionProcessDisabledPopup)
-        verify(engine, never()).enableExtensionProcessSpawning()
+        assertFalse(browserStore.state.showExtensionProcessDisabledPopup)
         verify(dialog).dismiss()
     }
 
     @Test
     fun `WHEN dispatching the same event twice THEN the dialog should only be created once`() {
-        val store = BrowserStore()
+        val browserStore = BrowserStore()
         val engine: Engine = mock()
-        val appName = "TestApp"
         val dialog: AlertDialog = mock()
         val builder: AlertDialog.Builder = mock()
-        val controller = ExtensionProcessDisabledController(testContext, store, engine, builder, appName)
+        val controller = ExtensionProcessDisabledController(
+            context = testContext,
+            appStore = AppStore(AppState(isForeground = true)),
+            browserStore = browserStore,
+            engine = engine,
+            builder = builder,
+            appName = "TestApp",
+            )
         val buttonsContainerCaptor = argumentCaptor<View>()
 
         controller.start()
@@ -115,20 +135,40 @@ class ExtensionProcessDisabledControllerTest {
         whenever(builder.show()).thenReturn(dialog)
 
         // First dispatch...
-        store.dispatch(ExtensionProcessDisabledPopupAction(showPopup = true))
+        browserStore.dispatch(ExtensionProcessDisabledPopupAction(showPopup = true))
         dispatcher.scheduler.advanceUntilIdle()
-        store.waitUntilIdle()
+        browserStore.waitUntilIdle()
 
         // Second dispatch... without having dismissed the dialog before!
-        store.dispatch(ExtensionProcessDisabledPopupAction(showPopup = true))
+        browserStore.dispatch(ExtensionProcessDisabledPopupAction(showPopup = true))
         dispatcher.scheduler.advanceUntilIdle()
-        store.waitUntilIdle()
+        browserStore.waitUntilIdle()
 
         verify(builder).setView(buttonsContainerCaptor.capture())
         verify(builder, times(1)).show()
 
         // Click a button to dismiss the dialog.
         buttonsContainerCaptor.value.findViewById<Button>(R.id.negative).performClick()
-        store.waitUntilIdle()
+        browserStore.waitUntilIdle()
+    }
+
+    @Test
+    fun `WHEN app is backgrounded AND extension process spawning threshold is exceeded THEN kill the app`() {
+        val browserStore = BrowserStore(BrowserState())
+        val engine: Engine = mock()
+        val appStore = AppStore(AppState(isForeground = false))
+        val builder: AlertDialog.Builder = mock()
+        val appName = "TestApp"
+        val onKillApp: () -> Unit = mock()
+
+        val controller = ExtensionProcessDisabledController(testContext, browserStore, appStore, engine, builder, appName, onKillApp)
+
+        controller.start()
+
+        browserStore.dispatch(ExtensionProcessDisabledPopupAction(showPopup = true))
+        dispatcher.scheduler.advanceUntilIdle()
+        browserStore.waitUntilIdle()
+
+        verify(onKillApp).invoke()
     }
 }
