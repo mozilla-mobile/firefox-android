@@ -25,8 +25,7 @@ tasks:
                     - focus-release
                     - klar-release
                     - focus-beta
-                    # Fenix nightly now on AAB
-                    # - fenix-nightly
+                    - fenix-nightly
                     - fenix-release
                     - fenix-beta
             group-by:
