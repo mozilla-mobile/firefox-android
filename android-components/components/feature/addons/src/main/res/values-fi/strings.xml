@@ -72,8 +72,10 @@
     <string name="mozac_feature_addons_permissions_devtools_description">Laajenna kehitystyökaluja käyttämään avoimissa välilehdissä olevia tietoja</string>
     <!-- The version on of add-on. -->
     <string name="mozac_feature_addons_version">Versio</string>
+    <!-- The author of an add-on. -->
+    <string name="mozac_feature_addons_author">Tekijä</string>
     <!-- The authors of an add-on. -->
-    <string name="mozac_feature_addons_authors">Tekijät</string>
+    <string name="mozac_feature_addons_authors" moz:removedIn="120" tools:ignore="UnusedResources">Tekijät</string>
     <!-- The last date that the add-on was updated. -->
     <string name="mozac_feature_addons_last_updated">Viimeksi päivitetty</string>
     <!-- The developer website (Homepage) of the add-on. -->
@@ -114,10 +116,18 @@
     <string name="mozac_feature_addons_remove">Poista</string>
     <!-- This is the title of a dialog that asks the users if they to install or not an add-on. %1$s is the add-on name. -->
     <string name="mozac_feature_addons_permissions_dialog_title">Lisätäänkö %1$s?</string>
+    <!-- This is the title of a dialog that asks the users to grant optional permissions. %1$s is the add-on name. -->
+    <string name="mozac_feature_addons_optional_permissions_dialog_title">%1$s pyytää lisäoikeuksia.</string>
     <!-- This is the subtitle of a dialog that asks the users if they want to install or not an add-on, the subtitle lists the permissions that this add-on requires, the permissions will dynamically be listed after the ":". -->
     <string name="mozac_feature_addons_permissions_dialog_subtitle">Se vaatii seuraavat oikeudet:</string>
+    <!-- This is the subtitle of a dialog that asks the users to grant optional permissions, the subtitle lists the permissions that this add-on requests, the permissions will dynamically be listed after the ":". -->
+    <string name="mozac_feature_addons_optional_permissions_dialog_subtitle">Se haluaa:</string>
     <!-- This is a button to add (install) an add-on . -->
     <string name="mozac_feature_addons_permissions_dialog_add">Lisää</string>
+    <!-- This is a button to allow the optional permissions requested by an add-on . -->
+    <string name="mozac_feature_addons_permissions_dialog_allow">Salli</string>
+    <!-- This is a button to deny the optional permissions requested by an add-on . -->
+    <string name="mozac_feature_addons_permissions_dialog_deny">Estä</string>
     <!-- This is a button to cancel the add-on installation . -->
     <string name="mozac_feature_addons_permissions_dialog_cancel">Peruuta</string>
     <!-- Accessibility content description to install add-on button. -->
@@ -232,4 +242,8 @@
     <string name="mozac_feature_addons_status_learn_more">Lue lisää</string>
     <!-- Status message below an add-on in the add-ons manager when this add-on has been blocklisted. %1$s is the add-on name. -->
     <string name="mozac_feature_addons_status_blocklisted">%1$s on poistettu käytöstä turvallisuus- tai vakausongelmian vuoksi.</string>
+    <!-- Status message below an add-on in the add-ons manager when this add-on hasn't been signed correctly. %1$s is the add-on name. -->
+    <string name="mozac_feature_addons_status_unsigned">Lisäosaa %1$s ei voitu vahvistaa turvalliseksi, ja se on poistettu käytöstä.</string>
+    <!-- Status message below an add-on in the add-ons manager when this add-on isn't compatible with the application version. %1$s is the add-on name, %2$s is the app name and %3$s is the app version. -->
+    <string name="mozac_feature_addons_status_incompatible">Lisäosa %1$s ei ole yhteensopiva %2$sin version %3$s kanssa.</string>
 </resources>

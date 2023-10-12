@@ -29,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
@@ -36,6 +37,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import org.mozilla.fenix.R
+import org.mozilla.fenix.compose.Divider
 import org.mozilla.fenix.compose.annotation.LightDarkPreview
 import org.mozilla.fenix.compose.button.SecondaryButton
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState
@@ -45,6 +47,8 @@ import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductR
 import org.mozilla.fenix.shopping.store.forCompactMode
 import org.mozilla.fenix.theme.FirefoxTheme
 import java.util.SortedMap
+
+private val combinedParentHorizontalPadding = 32.dp
 
 /**
  * UI for review quality check content displaying product analysis.
@@ -58,6 +62,8 @@ import java.util.SortedMap
  * recommendations toggle state.
  * @param onReviewGradeLearnMoreClick Invoked when the user clicks to learn more about review grades.
  * @param onFooterLinkClick Invoked when the user clicks on the footer link.
+ * @param onShowMoreRecentReviewsClicked Invoked when the user clicks to show more recent reviews.
+ * @param onExpandSettings Invoked when the user expands the settings card.
  * @param modifier The modifier to be applied to the Composable.
  */
 @Composable
@@ -71,6 +77,8 @@ fun ProductAnalysis(
     onProductRecommendationsEnabledStateChange: (Boolean) -> Unit,
     onReviewGradeLearnMoreClick: () -> Unit,
     onFooterLinkClick: () -> Unit,
+    onShowMoreRecentReviewsClicked: () -> Unit,
+    onExpandSettings: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -119,6 +127,7 @@ fun ProductAnalysis(
                 highlights = productAnalysis.highlights,
                 highlightsFadeVisible = productAnalysis.highlightsFadeVisible,
                 showMoreButtonVisible = productAnalysis.showMoreButtonVisible,
+                onShowMoreRecentReviewsClicked = onShowMoreRecentReviewsClicked,
                 modifier = Modifier.fillMaxWidth(),
             )
         }
@@ -133,6 +142,7 @@ fun ProductAnalysis(
             productRecommendationsEnabled = productRecommendationsEnabled,
             onProductRecommendationsEnabledStateChange = onProductRecommendationsEnabledStateChange,
             onTurnOffReviewQualityCheckClick = onOptOutClick,
+            onExpandSettings = onExpandSettings,
             modifier = Modifier.fillMaxWidth(),
         )
 
@@ -205,10 +215,11 @@ private fun AdjustedProductRatingCard(
                 ),
             )
 
-            StarRating(value = rating)
+            StarRating(
+                value = rating,
+                modifier = Modifier.padding(bottom = 8.dp),
+            )
         }
-
-        Spacer(modifier = Modifier.height(8.dp))
 
         Text(
             text = stringResource(R.string.review_quality_check_adjusted_rating_description),
@@ -218,11 +229,13 @@ private fun AdjustedProductRatingCard(
     }
 }
 
+@Suppress("LongMethod")
 @Composable
 private fun HighlightsCard(
     highlights: Map<HighlightType, List<String>>,
     highlightsFadeVisible: Boolean,
     showMoreButtonVisible: Boolean,
+    onShowMoreRecentReviewsClicked: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     ReviewQualityCheckCard(modifier = modifier) {
@@ -295,13 +308,22 @@ private fun HighlightsCard(
         if (showMoreButtonVisible) {
             Spacer(modifier = Modifier.height(8.dp))
 
+            Divider(modifier = Modifier.extendWidthToParentBorder())
+
+            Spacer(modifier = Modifier.height(8.dp))
+
             SecondaryButton(
                 text = if (isExpanded) {
                     stringResource(R.string.review_quality_check_highlights_show_less)
                 } else {
                     stringResource(R.string.review_quality_check_highlights_show_more)
                 },
-                onClick = { isExpanded = isExpanded.not() },
+                onClick = {
+                    if (!isExpanded) {
+                        onShowMoreRecentReviewsClicked()
+                    }
+                    isExpanded = isExpanded.not()
+                },
             )
         }
     }
@@ -342,6 +364,17 @@ private fun HighlightTitle(highlightType: HighlightType) {
             color = FirefoxTheme.colors.textPrimary,
             style = FirefoxTheme.typography.headline8,
         )
+    }
+}
+
+private fun Modifier.extendWidthToParentBorder(): Modifier = this.layout { measurable, constraints ->
+    val placeable = measurable.measure(
+        constraints.copy(
+            maxWidth = constraints.maxWidth + combinedParentHorizontalPadding.roundToPx(),
+        ),
+    )
+    layout(placeable.width, placeable.height) {
+        placeable.place(0, 0)
     }
 }
 
@@ -484,6 +517,8 @@ private fun ProductAnalysisPreview(
                 },
                 onReviewGradeLearnMoreClick = {},
                 onFooterLinkClick = {},
+                onShowMoreRecentReviewsClicked = {},
+                onExpandSettings = {},
             )
         }
     }

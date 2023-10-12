@@ -453,7 +453,7 @@ class WebExtensionSupportTest {
 
         verify(store).dispatch(
             WebExtensionAction.UpdatePromptRequestWebExtensionAction(
-                WebExtensionPromptRequest.AfterInstallation.Permissions(ext, onPermissionsGranted),
+                WebExtensionPromptRequest.AfterInstallation.Permissions.Required(ext, onPermissionsGranted),
             ),
         )
     }
@@ -503,6 +503,30 @@ class WebExtensionSupportTest {
 
         delegateCaptor.value.onInstalled(ext)
         verify(store, times(0)).dispatch(
+            WebExtensionAction.UpdatePromptRequestWebExtensionAction(
+                WebExtensionPromptRequest.AfterInstallation.PostInstallation(ext),
+            ),
+        )
+    }
+
+    @Test
+    fun `GIVEN already installed extension WHEN calling onInstalled THEN do not show the PostInstallation prompt`() {
+        val store = spy(BrowserStore())
+
+        val engine: Engine = mock()
+        val ext: WebExtension = mock()
+        whenever(ext.id).thenReturn("extensionId")
+
+        val delegateCaptor = argumentCaptor<WebExtensionDelegate>()
+        WebExtensionSupport.initialize(engine, store)
+        verify(engine).registerWebExtensionDelegate(delegateCaptor.capture())
+
+        // We simulate a first install...
+        delegateCaptor.value.onInstalled(ext)
+        // ... and then an update, which also calls `onInstalled()`.
+        delegateCaptor.value.onInstalled(ext)
+
+        verify(store, times(1)).dispatch(
             WebExtensionAction.UpdatePromptRequestWebExtensionAction(
                 WebExtensionPromptRequest.AfterInstallation.PostInstallation(ext),
             ),
@@ -889,7 +913,7 @@ class WebExtensionSupportTest {
         val store = BrowserStore()
         val engine: Engine = mock()
 
-        assertFalse(store.state.showExtensionProcessDisabledPopup)
+        assertFalse(store.state.showExtensionsProcessDisabledPrompt)
         val delegateCaptor = argumentCaptor<WebExtensionDelegate>()
         WebExtensionSupport.initialize(engine, store)
 
@@ -898,7 +922,7 @@ class WebExtensionSupportTest {
         delegateCaptor.value.onDisabledExtensionProcessSpawning()
         store.waitUntilIdle()
 
-        assertTrue(store.state.showExtensionProcessDisabledPopup)
+        assertTrue(store.state.showExtensionsProcessDisabledPrompt)
     }
 
     @Test
@@ -1000,7 +1024,7 @@ class WebExtensionSupportTest {
         delegateCaptor.value.onOptionalPermissionsRequest(ext, permissions, onPermissionsGranted)
         verify(store).dispatch(
             WebExtensionAction.UpdatePromptRequestWebExtensionAction(
-                WebExtensionPromptRequest.AfterInstallation.OptionalPermissions(ext, permissions, onPermissionsGranted),
+                WebExtensionPromptRequest.AfterInstallation.Permissions.Optional(ext, permissions, onPermissionsGranted),
             ),
         )
     }
