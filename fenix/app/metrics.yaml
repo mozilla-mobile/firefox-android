@@ -10465,6 +10465,11 @@ shopping:
     type: event
     description: |
       The shopping bottom sheet was displayed.
+    extra_keys:
+      view:
+        description: |
+          State of the bottom sheet. Possible values are: `half` or `full`.
+        type: string
     send_in_pings:
       - events
     bugs:

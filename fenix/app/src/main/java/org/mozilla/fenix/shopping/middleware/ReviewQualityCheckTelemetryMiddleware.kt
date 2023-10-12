@@ -45,7 +45,11 @@ class ReviewQualityCheckTelemetryMiddleware : ReviewQualityCheckMiddleware {
 
         is ReviewQualityCheckAction.BottomSheetClosed -> Shopping.surfaceClosed.record()
 
-        is ReviewQualityCheckAction.BottomSheetDisplayed -> Shopping.surfaceDisplayed.record()
+        is ReviewQualityCheckAction.BottomSheetDisplayed -> {
+            Shopping.surfaceDisplayed.record(
+                Shopping.SurfaceDisplayedExtra(action.view.state),
+            )
+        }
 
         is ReviewQualityCheckAction.OpenExplainerLearnMoreLink -> {
             Shopping.surfaceReviewQualityExplainerUrlClicked.record()

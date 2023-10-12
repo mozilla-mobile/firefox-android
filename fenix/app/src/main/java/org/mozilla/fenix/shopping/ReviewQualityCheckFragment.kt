@@ -23,6 +23,7 @@ import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.shopping.di.ReviewQualityCheckMiddlewareProvider
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckAction
+import org.mozilla.fenix.shopping.store.ReviewQualityCheckState
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckStore
 import org.mozilla.fenix.shopping.ui.ReviewQualityCheckBottomSheet
 import org.mozilla.fenix.theme.FirefoxTheme
@@ -87,7 +88,14 @@ class ReviewQualityCheckFragment : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         bottomSheetStateFeature.set(
             feature = ReviewQualityCheckBottomSheetStateFeature(store) {
-                behavior?.state = BottomSheetBehavior.STATE_EXPANDED
+                if (it == BottomSheetViewState.FULL_VIEW) {
+                    behavior?.state = BottomSheetBehavior.STATE_EXPANDED
+                }
+                store.dispatch(
+                    ReviewQualityCheckAction.BottomSheetDisplayed(
+                        BottomSheetViewState.FULL_VIEW,
+                    ),
+                )
             },
             owner = viewLifecycleOwner,
             view = view,
