@@ -37,8 +37,14 @@ class WebExtensionPromptFeature(
     private val store: BrowserStore,
     private val context: Context,
     private val fragmentManager: FragmentManager,
-    private val onAddonChanged: (Addon) -> Unit = {},
 ) : LifecycleAwareFeature {
+
+    /**
+     * (optional) callback invoked when an add-on was updated due to an interaction with a
+     * [WebExtensionPromptRequest].
+     * Won't be needed after https://bugzilla.mozilla.org/show_bug.cgi?id=1858484.
+     */
+    var onAddonChanged: (Addon) -> Unit = {}
 
     /**
      * Whether or not an add-on installation is in progress.
@@ -72,9 +78,6 @@ class WebExtensionPromptFeature(
     }
 
     private fun handleAfterInstallationRequest(promptRequest: WebExtensionPromptRequest.AfterInstallation) {
-        // The install flow in Fenix relies on an [Addon] object so let's convert the (GeckoView)
-        // extension into a minimal add-on. The missing metadata will be fetched when the user
-        // opens the add-ons manager.
         val addon = Addon.newFromWebExtension(promptRequest.extension)
         when (promptRequest) {
             is WebExtensionPromptRequest.AfterInstallation.Permissions.Required -> handleRequiredPermissionRequest(
