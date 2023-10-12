@@ -6,6 +6,7 @@ package mozilla.components.browser.icons.utils
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Build
 import androidx.annotation.VisibleForTesting
 import com.jakewharton.disklrucache.DiskLruCache
@@ -182,4 +183,7 @@ class IconDiskCache :
     }
 }
 
-private fun createKey(rawKey: String): String = rawKey.sha1()
+/**
+ * Attempts to create a consistent key for the host with the given [url].
+ */
+private fun createKey(url: String): String = Uri.parse(url).host?.sha1() ?: url.sha1()

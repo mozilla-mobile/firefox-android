@@ -26,7 +26,7 @@ import java.io.OutputStream
 class IconDiskCacheTest {
 
     @Test
-    fun `Writing and reading resources`() {
+    fun `GIVEN read & write request URLs are the same THEN getResources returns the written resource`() {
         val cache = IconDiskCache()
 
         val resources = listOf(
@@ -58,11 +58,231 @@ class IconDiskCacheTest {
     }
 
     @Test
+    fun `GIVEN read & write request URLs are different with same host THEN getResources returns the written resource`() {
+        val cache = IconDiskCache()
+
+        val resources = listOf(
+            IconRequest.Resource(
+                url = "https://www.mozilla.org/icon64.png",
+                sizes = listOf(Size(64, 64)),
+                mimeType = "image/png",
+                type = IconRequest.Resource.Type.FAVICON,
+            ),
+            IconRequest.Resource(
+                url = "https://www.mozilla.org/icon128.png",
+                sizes = listOf(Size(128, 128)),
+                mimeType = "image/png",
+                type = IconRequest.Resource.Type.FAVICON,
+            ),
+            IconRequest.Resource(
+                url = "https://www.mozilla.org/icon128.png",
+                sizes = listOf(Size(180, 180)),
+                type = IconRequest.Resource.Type.APPLE_TOUCH_ICON,
+            ),
+        )
+
+        val request = IconRequest("https://www.mozilla.org/icon128", resources = resources)
+        cache.putResources(testContext, request)
+
+        val restoredResources = cache.getResources(
+            testContext,
+            request.copy(url = "https://www.mozilla.org/extra/icon64"),
+        )
+        assertEquals(3, restoredResources.size)
+        assertEquals(resources, restoredResources)
+    }
+
+    @Test
+    fun `GIVEN read & write request URLs are different THEN getResources returns an empty list`() {
+        val cache = IconDiskCache()
+
+        val resources = listOf(
+            IconRequest.Resource(
+                url = "https://www.mozilla.org/icon64.png",
+                sizes = listOf(Size(64, 64)),
+                mimeType = "image/png",
+                type = IconRequest.Resource.Type.FAVICON,
+            ),
+            IconRequest.Resource(
+                url = "https://www.mozilla.org/icon128.png",
+                sizes = listOf(Size(128, 128)),
+                mimeType = "image/png",
+                type = IconRequest.Resource.Type.FAVICON,
+            ),
+            IconRequest.Resource(
+                url = "https://www.mozilla.org/icon128.png",
+                sizes = listOf(Size(180, 180)),
+                type = IconRequest.Resource.Type.APPLE_TOUCH_ICON,
+            ),
+        )
+
+        val request = IconRequest("https://www.mozilla.org", resources = resources)
+        cache.putResources(testContext, request)
+
+        val restoredResources =
+            cache.getResources(testContext, request.copy(url = "https://www.firefox.org"))
+        assertEquals(emptyList<IconRequest.Resource>(), restoredResources)
+    }
+
+    @Test
+    fun `GIVEN read & write request URLs are the same & no host THEN getResources returns the written resource`() {
+        val cache = IconDiskCache()
+
+        val resources = listOf(
+            IconRequest.Resource(
+                url = "https://www.mozilla.org/icon64.png",
+                sizes = listOf(Size(64, 64)),
+                mimeType = "image/png",
+                type = IconRequest.Resource.Type.FAVICON,
+            ),
+            IconRequest.Resource(
+                url = "https://www.mozilla.org/icon128.png",
+                sizes = listOf(Size(128, 128)),
+                mimeType = "image/png",
+                type = IconRequest.Resource.Type.FAVICON,
+            ),
+            IconRequest.Resource(
+                url = "https://www.mozilla.org/icon128.png",
+                sizes = listOf(Size(180, 180)),
+                type = IconRequest.Resource.Type.APPLE_TOUCH_ICON,
+            ),
+        )
+
+        val request = IconRequest("mozilla", resources = resources)
+        cache.putResources(testContext, request)
+
+        val restoredResources = cache.getResources(testContext, request)
+        assertEquals(3, restoredResources.size)
+        assertEquals(resources, restoredResources)
+    }
+
+    @Test
     fun `Writing and reading bitmap bytes`() {
         val cache = IconDiskCache()
 
         val resource = IconRequest.Resource(
             url = "https://www.mozilla.org/icon64.png",
+            sizes = listOf(Size(64, 64)),
+            mimeType = "image/png",
+            type = IconRequest.Resource.Type.FAVICON,
+        )
+
+        val bitmap: Bitmap = mock()
+        `when`(bitmap.compress(any(), anyInt(), any())).thenAnswer {
+            @Suppress("DEPRECATION")
+            // Deprecation will be handled in https://github.com/mozilla-mobile/android-components/issues/9555
+            assertEquals(Bitmap.CompressFormat.WEBP, it.arguments[0] as Bitmap.CompressFormat)
+            assertEquals(90, it.arguments[1] as Int) // Quality
+
+            val stream = it.arguments[2] as OutputStream
+            stream.write("Hello World".toByteArray())
+            true
+        }
+
+        cache.putIconBitmap(testContext, resource, bitmap)
+
+        val data = cache.getIconData(testContext, resource)
+        assertNotNull(data!!)
+        assertEquals("Hello World", String(data))
+    }
+
+    @Test
+    fun `GIVEN read & write request URLs are the same THEN getIconData returns the written resource`() {
+        val cache = IconDiskCache()
+
+        val resource = IconRequest.Resource(
+            url = "https://www.mozilla.org/icon64.png",
+            sizes = listOf(Size(64, 64)),
+            mimeType = "image/png",
+            type = IconRequest.Resource.Type.FAVICON,
+        )
+
+        val bitmap: Bitmap = mock()
+        `when`(bitmap.compress(any(), anyInt(), any())).thenAnswer {
+            @Suppress("DEPRECATION")
+            // Deprecation will be handled in https://github.com/mozilla-mobile/android-components/issues/9555
+            assertEquals(Bitmap.CompressFormat.WEBP, it.arguments[0] as Bitmap.CompressFormat)
+            assertEquals(90, it.arguments[1] as Int) // Quality
+
+            val stream = it.arguments[2] as OutputStream
+            stream.write("Hello World".toByteArray())
+            true
+        }
+
+        cache.putIconBitmap(testContext, resource, bitmap)
+
+        val data = cache.getIconData(testContext, resource)
+        assertNotNull(data!!)
+        assertEquals("Hello World", String(data))
+    }
+
+    @Test
+    fun `GIVEN read & write request URLs are different with same host THEN getIconData returns the written resource`() {
+        val cache = IconDiskCache()
+
+        val resource = IconRequest.Resource(
+            url = "https://www.mozilla.org/icon64.png",
+            sizes = listOf(Size(64, 64)),
+            mimeType = "image/png",
+            type = IconRequest.Resource.Type.FAVICON,
+        )
+
+        val bitmap: Bitmap = mock()
+        `when`(bitmap.compress(any(), anyInt(), any())).thenAnswer {
+            @Suppress("DEPRECATION")
+            // Deprecation will be handled in https://github.com/mozilla-mobile/android-components/issues/9555
+            assertEquals(Bitmap.CompressFormat.WEBP, it.arguments[0] as Bitmap.CompressFormat)
+            assertEquals(90, it.arguments[1] as Int) // Quality
+
+            val stream = it.arguments[2] as OutputStream
+            stream.write("Hello World".toByteArray())
+            true
+        }
+
+        cache.putIconBitmap(testContext, resource, bitmap)
+
+        val data = cache.getIconData(
+            testContext,
+            resource.copy(url = "https://www.mozilla.org/extra/icon128.png"),
+        )
+        assertNotNull(data!!)
+        assertEquals("Hello World", String(data))
+    }
+
+    @Test
+    fun `GIVEN read & write request URLs are different THEN putIconBitmap returns null`() {
+        val cache = IconDiskCache()
+
+        val resource = IconRequest.Resource(
+            url = "https://www.mozilla.org/icon64.png",
+            sizes = listOf(Size(64, 64)),
+            mimeType = "image/png",
+            type = IconRequest.Resource.Type.FAVICON,
+        )
+
+        val bitmap: Bitmap = mock()
+        `when`(bitmap.compress(any(), anyInt(), any())).thenAnswer {
+            @Suppress("DEPRECATION")
+            // Deprecation will be handled in https://github.com/mozilla-mobile/android-components/issues/9555
+            assertEquals(Bitmap.CompressFormat.WEBP, it.arguments[0] as Bitmap.CompressFormat)
+            assertEquals(90, it.arguments[1] as Int) // Quality
+
+            val stream = it.arguments[2] as OutputStream
+            stream.write("Hello World".toByteArray())
+            true
+        }
+
+        cache.putIconBitmap(testContext, resource.copy(url = "https://www.firefox.org/icon64.png"), bitmap)
+
+        assertNull(cache.getIconData(testContext, resource))
+    }
+
+    @Test
+    fun `GIVEN read & write request URLs are the same & no host THEN getIconData returns the written resource`() {
+        val cache = IconDiskCache()
+
+        val resource = IconRequest.Resource(
+            url = "mozilla",
             sizes = listOf(Size(64, 64)),
             mimeType = "image/png",
             type = IconRequest.Resource.Type.FAVICON,
