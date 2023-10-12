@@ -292,7 +292,7 @@
     <!-- Home onboarding dialog sign into sync screen title text. -->
     <string name="onboarding_home_sync_title_3">ეკრანებს შორის გადართვა ჯერ არნახული სიმარტივით</string>
     <!-- Home onboarding dialog sign into sync screen description text. -->
-    <string name="onboarding_home_sync_description">განაგრძეთ, სადაც გაჩერდით სხვა მოწყობილობიდან ჩანართების წამოღებით ახლა უკვე საწყის გვერდზე.</string>
+    <string name="onboarding_home_sync_description">განაგრძეთ იქიდან, სადაც შეჩერდით, სხვა მოწყობილობიდან ჩანართების წამოღებით ახლა უკვე საწყის გვერდზე.</string>
     <!-- Text for the button to continue the onboarding on the home onboarding dialog. -->
     <string name="onboarding_home_get_started_button">დაიწყეთ</string>
     <!-- Text for the button to navigate to the sync sign in screen on the home onboarding dialog. -->
@@ -334,7 +334,7 @@
     <!-- Title for sign in to sync screen. -->
     <string name="juno_onboarding_sign_in_title" tools:ignore="UnusedResources">მოქნილად გადაერთეთ ტელეფონიდან ნოუთბუქზე და უკან</string>
     <!-- Description for sign in to sync screen. -->
-    <string name="juno_onboarding_sign_in_description" tools:ignore="UnusedResources">გამოიყოლეთ ჩანართები და სანიშნები სხვა მოწყობილობიდან, რომ განაგრძოთ იქიდანვე, სადაც გაჩერდით.</string>
+    <string name="juno_onboarding_sign_in_description" tools:ignore="UnusedResources">გამოიყოლეთ ჩანართები და სანიშნები სხვა მოწყობილობიდან, რომ განაგრძოთ იქიდანვე, სადაც შეჩერდით.</string>
     <!-- Text for the button to sign in to sync on the device -->
     <string name="juno_onboarding_sign_in_positive_button" tools:ignore="UnusedResources">შესვლა</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
@@ -498,11 +498,15 @@
     <!-- Preference for accessibility -->
     <string name="preferences_accessibility">ხელმისაწვდომობა</string>
     <!-- Preference to override the Firefox Account server -->
-    <string name="preferences_override_fxa_server">Firefox-ანგარიშის მითითებული სერვერი</string>
+    <string name="preferences_override_fxa_server" moz:RemovedIn="120" tools:ignore="UnusedResources">Firefox-ანგარიშის მითითებული სერვერი</string>
+    <!-- Preference to override the Mozilla account server -->
+    <string name="preferences_override_account_server">Mozilla-ანგარიშის მითითებული სერვერი</string>
     <!-- Preference to override the Sync token server -->
     <string name="preferences_override_sync_tokenserver">დასინქრონების მითითებული სერვერი</string>
     <!-- Toast shown after updating the FxA/Sync server override preferences -->
-    <string name="toast_override_fxa_sync_server_done">შეცვალა Firefox-ანგარიშის/სინქრონიზაციის სერვერი. პროგრამა დაიხურება ცვლილებების ასახვისთვის…</string>
+    <string name="toast_override_fxa_sync_server_done" moz:RemovedIn="120" tools:ignore="UnusedResources">შეცვალა Firefox-ანგარიშის/სინქრონიზაციის სერვერი. პროგრამა დაიხურება ცვლილებების ასახვისთვის…</string>
+    <!-- Toast shown after updating the Mozilla account/Sync server override preferences -->
+    <string name="toast_override_account_sync_server_done">Mozilla-ანგარიშის/სინქრონიზაციის სერვერი შეიცვალა. პროგრამა დაიხურება ცვლილებების ასახვისთვის…</string>
     <!-- Preference category for account information -->
     <string name="preferences_category_account">ანგარიში</string>
     <!-- Preference for changing where the toolbar is positioned -->
@@ -518,7 +522,9 @@
     <!-- Preference description for banner about signing in -->
     <string name="preferences_sign_in_description_2">შედით ანგარიშზე, რომ დაასინქრონოთ თქვენი ჩანართები, სანიშნები, პაროლები და სხვ.</string>
     <!-- Preference shown instead of account display name while account profile information isn't available yet. -->
-    <string name="preferences_account_default_name">Firefox-ანგარიში</string>
+    <string name="preferences_account_default_name" moz:RemovedIn="120" tools:ignore="UnusedResources">Firefox-ანგარიში</string>
+    <!-- Preference shown instead of account display name while account profile information isn't available yet. -->
+    <string name="preferences_account_default_name_2">Mozilla-ანგარიში</string>
     <!-- Preference text for account title when there was an error syncing FxA -->
     <string name="preferences_account_sync_error">ხელახლა დაკავშირება სინქრონიზაციის აღსადგენად</string>
     <!-- Preference for language -->
@@ -659,9 +665,9 @@
 
     <!-- Add-on Installation from AMO-->
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
-    <string name="addon_not_supported_error">დამატება არაა მხარდაჭერილი</string>
+    <string name="addon_not_supported_error" moz:removedIn="120" tools:ignore="UnusedResources">დამატება არაა მხარდაჭერილი</string>
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is already installed -->
-    <string name="addon_already_installed">დამატება უკვე ჩადგმულია</string>
+    <string name="addon_already_installed" moz:removedIn="120" tools:ignore="UnusedResources">დამატება უკვე ჩადგმულია</string>
 
     <!-- Add-on process crash dialog to user -->
     <!-- Title of a dialog shown to the user when enough errors have occurred with addons and they need to be temporarily disabled -->
@@ -1465,7 +1471,7 @@
     <!-- Text for the onboarding welcome message. -->
     <string name="onboarding_message" moz:RemovedIn="118" tools:ignore="UnusedResources">ბრაუზერი შექმნილი ხალხისთვის, და არა მოგებისთვის</string>
     <!-- Text for the Firefox account onboarding sign in card header. -->
-    <string name="onboarding_account_sign_in_header" moz:RemovedIn="118" tools:ignore="UnusedResources">განაგრძეთ იქიდან, სადაც გაჩერდით.</string>
+    <string name="onboarding_account_sign_in_header" moz:RemovedIn="118" tools:ignore="UnusedResources">განაგრძეთ იქიდან, სადაც შეჩერდით</string>
     <!-- Text for the button to learn more about signing in to your Firefox account. -->
     <string name="onboarding_manual_sign_in_description" moz:RemovedIn="118" tools:ignore="UnusedResources">დაასინქრონეთ ჩანართები და პაროლები მოწყობილობებს შორის შეუფერხებლად გადასვლისთვის.</string>
     <!-- Text for the button to manually sign into Firefox account. -->
@@ -2205,17 +2211,21 @@
     <!-- Paragraph explaining how we analyze the reliability of a product's reviews. First parameter is the Fakespot product name. In the phrase "Fakespot by Mozilla", "by" can be localized. Does not need to stay by. -->
     <string name="review_quality_check_explanation_body_reliability">ჩვენ ვიყენებთ ხელოვნური ინტელექტის შესაძლებლობებს Mozilla-ს საიტიდან %s მიმოხილვების სანდოობის გადასამოწმებლად. ეს მხოლოდ მიმოხილვის ხარისხის შეფასებაში დაგეხმარებათ და არა – ნაწარმის ხარისხის.</string>
     <!-- Paragraph explaining the grading system we use to classify the reliability of a product's reviews. -->
-    <string name="review_quality_check_info_review_grade_header" tools:ignore="UnusedResources"><![CDATA[გასაყიდ ნაწარმზე თითოეულ მიმოხილვას ეწერება <b>ნიშნები</b> A-დან F-მდე.]]></string>
+    <string name="review_quality_check_info_review_grade_header"><![CDATA[გასაყიდ ნაწარმზე თითოეულ მიმოხილვას ეწერება <b>ნიშნები</b> A-დან F-მდე.]]></string>
     <!-- Description explaining grades A and B for review quality check adjusted grading. -->
     <string name="review_quality_check_info_grade_info_AB">სანდო მიმოხილვები. მიგვაჩნია, რომ ეს მიმოხილვები, სავარაუდოდ, ნამდვილი მომხმარებლებისგანაა დატოვებული პატიოსნად და მიუკერძოებლად.</string>
+    <!-- Description explaining grades A and B for review quality check adjusted grading. -->
+    <string name="review_quality_check_info_grade_info_AB_2" moz:RemovedIn="120" tools:ignore="UnusedResources">მიგვაჩნია, რომ მიმოხილვები სანდო უნდა იყოს.</string>
     <!-- Description explaining grade C for review quality check adjusted grading. -->
     <string name="review_quality_check_info_grade_info_C">მიგვაჩნია, რომ შერეულადაა სანდო და არასანდო მიმოხილვები.</string>
     <!-- Description explaining grades D and F for review quality check adjusted grading. -->
     <string name="review_quality_check_info_grade_info_DF">არასანდო მიმოხილვები. მიგვაჩნია, რომ ეს მიმოხილვები, სავარაუდოდ, ყალბი ან მიკერძოებული მიმომხილველებისგანაა.</string>
+    <!-- Description explaining grades D and F for review quality check adjusted grading. -->
+    <string name="review_quality_check_info_grade_info_DF_2" moz:RemovedIn="120" tools:ignore="UnusedResources">მიგვაჩნია, რომ მიმოხილვები არაა სანდო.</string>
     <!-- Paragraph explaining how a product's adjusted grading is calculated. -->
     <string name="review_quality_check_explanation_body_adjusted_grading"><![CDATA[<b>შესწორებული შეფასება</b> ეყრდნობა მხოლოდ იმ მიმოხილვებს, რომლებიც სანდოდ მიგვაჩნია.]]></string>
     <!-- Paragraph explaining product review highlights. First parameter is the name of the retailer (e.g. Amazon). -->
-    <string name="review_quality_check_explanation_body_highlights" tools:ignore="UnusedResources"><![CDATA[<b>გამოსარჩევი</b> ბოლო 80 დღეში %s-ის მიმოხილვებიდან, რომლებიც სანდოდ მიგვაჩნია.]]></string>
+    <string name="review_quality_check_explanation_body_highlights"><![CDATA[<b>გამოსარჩევი</b> ბოლო 80 დღეში %s-ის მიმოხილვებიდან, რომლებიც სანდოდ მიგვაჩნია.]]></string>
     <!-- Text for learn more caption presenting a link with information about review quality. First parameter is for clickable text defined in review_quality_check_info_learn_more_link. -->
     <string name="review_quality_check_info_learn_more">უკეთ გაიცანით %s.</string>
     <!-- Clickable text that links to review quality check SuMo page. First parameter is the Fakespot product name. In the phrase "Fakespot by Mozilla", "by" can be localized. Does not need to stay by. -->

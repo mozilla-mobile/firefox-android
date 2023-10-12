@@ -29,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
@@ -36,6 +37,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import org.mozilla.fenix.R
+import org.mozilla.fenix.compose.Divider
 import org.mozilla.fenix.compose.annotation.LightDarkPreview
 import org.mozilla.fenix.compose.button.SecondaryButton
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState
@@ -46,16 +48,22 @@ import org.mozilla.fenix.shopping.store.forCompactMode
 import org.mozilla.fenix.theme.FirefoxTheme
 import java.util.SortedMap
 
+private val combinedParentHorizontalPadding = 32.dp
+
 /**
  * UI for review quality check content displaying product analysis.
  *
  * @param productRecommendationsEnabled The current state of the product recommendations toggle.
  * @param productAnalysis The product analysis to display.
+ * @param productVendor The vendor of the product.
  * @param onOptOutClick Invoked when the user opts out of the review quality check feature.
+ * @param onReanalyzeClick Invoked when the user clicks to re-analyze a product.
  * @param onProductRecommendationsEnabledStateChange Invoked when the user changes the product
  * recommendations toggle state.
  * @param onReviewGradeLearnMoreClick Invoked when the user clicks to learn more about review grades.
  * @param onFooterLinkClick Invoked when the user clicks on the footer link.
+ * @param onShowMoreRecentReviewsClicked Invoked when the user clicks to show more recent reviews.
+ * @param onExpandSettings Invoked when the user expands the settings card.
  * @param modifier The modifier to be applied to the Composable.
  */
 @Composable
@@ -63,11 +71,14 @@ import java.util.SortedMap
 fun ProductAnalysis(
     productRecommendationsEnabled: Boolean?,
     productAnalysis: AnalysisPresent,
+    productVendor: ReviewQualityCheckState.ProductVendor,
     onOptOutClick: () -> Unit,
     onReanalyzeClick: () -> Unit,
     onProductRecommendationsEnabledStateChange: (Boolean) -> Unit,
     onReviewGradeLearnMoreClick: () -> Unit,
     onFooterLinkClick: () -> Unit,
+    onShowMoreRecentReviewsClicked: () -> Unit,
+    onExpandSettings: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -116,11 +127,13 @@ fun ProductAnalysis(
                 highlights = productAnalysis.highlights,
                 highlightsFadeVisible = productAnalysis.highlightsFadeVisible,
                 showMoreButtonVisible = productAnalysis.showMoreButtonVisible,
+                onShowMoreRecentReviewsClicked = onShowMoreRecentReviewsClicked,
                 modifier = Modifier.fillMaxWidth(),
             )
         }
 
         ReviewQualityInfoCard(
+            productVendor = productVendor,
             modifier = Modifier.fillMaxWidth(),
             onLearnMoreClick = onReviewGradeLearnMoreClick,
         )
@@ -129,6 +142,7 @@ fun ProductAnalysis(
             productRecommendationsEnabled = productRecommendationsEnabled,
             onProductRecommendationsEnabledStateChange = onProductRecommendationsEnabledStateChange,
             onTurnOffReviewQualityCheckClick = onOptOutClick,
+            onExpandSettings = onExpandSettings,
             modifier = Modifier.fillMaxWidth(),
         )
 
@@ -201,10 +215,11 @@ private fun AdjustedProductRatingCard(
                 ),
             )
 
-            StarRating(value = rating)
+            StarRating(
+                value = rating,
+                modifier = Modifier.padding(bottom = 8.dp),
+            )
         }
-
-        Spacer(modifier = Modifier.height(8.dp))
 
         Text(
             text = stringResource(R.string.review_quality_check_adjusted_rating_description),
@@ -214,11 +229,13 @@ private fun AdjustedProductRatingCard(
     }
 }
 
+@Suppress("LongMethod")
 @Composable
 private fun HighlightsCard(
     highlights: Map<HighlightType, List<String>>,
     highlightsFadeVisible: Boolean,
     showMoreButtonVisible: Boolean,
+    onShowMoreRecentReviewsClicked: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     ReviewQualityCheckCard(modifier = modifier) {
@@ -291,13 +308,22 @@ private fun HighlightsCard(
         if (showMoreButtonVisible) {
             Spacer(modifier = Modifier.height(8.dp))
 
+            Divider(modifier = Modifier.extendWidthToParentBorder())
+
+            Spacer(modifier = Modifier.height(8.dp))
+
             SecondaryButton(
                 text = if (isExpanded) {
                     stringResource(R.string.review_quality_check_highlights_show_less)
                 } else {
                     stringResource(R.string.review_quality_check_highlights_show_more)
                 },
-                onClick = { isExpanded = isExpanded.not() },
+                onClick = {
+                    if (!isExpanded) {
+                        onShowMoreRecentReviewsClicked()
+                    }
+                    isExpanded = isExpanded.not()
+                },
             )
         }
     }
@@ -341,6 +367,17 @@ private fun HighlightTitle(highlightType: HighlightType) {
     }
 }
 
+private fun Modifier.extendWidthToParentBorder(): Modifier = this.layout { measurable, constraints ->
+    val placeable = measurable.measure(
+        constraints.copy(
+            maxWidth = constraints.maxWidth + combinedParentHorizontalPadding.roundToPx(),
+        ),
+    )
+    layout(placeable.width, placeable.height) {
+        placeable.place(0, 0)
+    }
+}
+
 private fun HighlightType.toHighlight() =
     when (this) {
         HighlightType.QUALITY -> Highlight.QUALITY
@@ -379,6 +416,7 @@ private enum class Highlight(
 private class ProductAnalysisPreviewModel(
     val productRecommendationsEnabled: Boolean?,
     val productAnalysis: AnalysisPresent,
+    val productVendor: ReviewQualityCheckState.ProductVendor,
 ) {
     constructor(
         productRecommendationsEnabled: Boolean? = false,
@@ -416,6 +454,7 @@ private class ProductAnalysisPreviewModel(
         ),
         recommendedProductState: ReviewQualityCheckState.RecommendedProductState =
             ReviewQualityCheckState.RecommendedProductState.Initial,
+        productVendor: ReviewQualityCheckState.ProductVendor = ReviewQualityCheckState.ProductVendor.AMAZON,
     ) : this(
         productRecommendationsEnabled = productRecommendationsEnabled,
         productAnalysis = AnalysisPresent(
@@ -427,6 +466,7 @@ private class ProductAnalysisPreviewModel(
             highlights = highlights,
             recommendedProductState = recommendedProductState,
         ),
+        productVendor = productVendor,
     )
 }
 
@@ -469,6 +509,7 @@ private fun ProductAnalysisPreview(
             ProductAnalysis(
                 productRecommendationsEnabled = productRecommendationsEnabled,
                 productAnalysis = model.productAnalysis,
+                productVendor = model.productVendor,
                 onOptOutClick = {},
                 onReanalyzeClick = {},
                 onProductRecommendationsEnabledStateChange = {
@@ -476,6 +517,8 @@ private fun ProductAnalysisPreview(
                 },
                 onReviewGradeLearnMoreClick = {},
                 onFooterLinkClick = {},
+                onShowMoreRecentReviewsClicked = {},
+                onExpandSettings = {},
             )
         }
     }

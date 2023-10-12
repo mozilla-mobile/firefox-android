@@ -90,7 +90,8 @@ import org.mozilla.fenix.GleanMetrics.SplashScreen
 import org.mozilla.fenix.GleanMetrics.StartOnHome
 import org.mozilla.fenix.addons.AddonDetailsFragmentDirections
 import org.mozilla.fenix.addons.AddonPermissionsDetailsFragmentDirections
-import org.mozilla.fenix.addons.ExtensionProcessDisabledController
+import org.mozilla.fenix.addons.AddonsManagementFragmentDirections
+import org.mozilla.fenix.addons.ExtensionsProcessDisabledController
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
@@ -107,6 +108,7 @@ import org.mozilla.fenix.ext.hasTopDestination
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.setNavigationIcon
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.extension.WebExtensionPromptFeature
 import org.mozilla.fenix.home.HomeFragmentDirections
 import org.mozilla.fenix.home.intent.AssistIntentProcessor
 import org.mozilla.fenix.home.intent.CrashReporterIntentProcessor
@@ -147,7 +149,6 @@ import org.mozilla.fenix.settings.logins.fragment.LoginDetailFragmentDirections
 import org.mozilla.fenix.settings.logins.fragment.SavedLoginsAuthFragmentDirections
 import org.mozilla.fenix.settings.quicksettings.protections.cookiebanners.dialog.CookieBannerReEngagementDialogUtils
 import org.mozilla.fenix.settings.search.AddSearchEngineFragmentDirections
-import org.mozilla.fenix.settings.search.EditCustomSearchEngineFragmentDirections
 import org.mozilla.fenix.settings.search.SaveSearchEngineFragmentDirections
 import org.mozilla.fenix.settings.studies.StudiesFragmentDirections
 import org.mozilla.fenix.settings.wallpaper.WallpaperSettingsFragmentDirections
@@ -193,8 +194,16 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         WebExtensionPopupObserver(components.core.store, ::openPopup)
     }
 
-    private val extensionProcessDisabledPopupObserver by lazy {
-        ExtensionProcessDisabledController(this@HomeActivity, components.core.store)
+    val webExtensionPromptFeature by lazy {
+        WebExtensionPromptFeature(
+            store = components.core.store,
+            context = this@HomeActivity,
+            fragmentManager = supportFragmentManager,
+        )
+    }
+
+    private val extensionsProcessDisabledPromptObserver by lazy {
+        ExtensionsProcessDisabledController(this@HomeActivity, components.core.store)
     }
 
     private val serviceWorkerSupport by lazy {
@@ -346,7 +355,12 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         }
         supportActionBar?.hide()
 
-        lifecycle.addObservers(webExtensionPopupObserver, extensionProcessDisabledPopupObserver, serviceWorkerSupport)
+        lifecycle.addObservers(
+            webExtensionPopupObserver,
+            extensionsProcessDisabledPromptObserver,
+            serviceWorkerSupport,
+            webExtensionPromptFeature,
+        )
 
         if (shouldAddToRecentsScreen(intent)) {
             intent.removeExtra(START_IN_RECENTS_SCREEN)
@@ -367,7 +381,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             components.core.contileTopSitesUpdater.startPeriodicWork()
         }
 
-        if (settings().enableUnifiedSearchSettingsUI && !settings().hiddenEnginesRestored) {
+        if (!settings().hiddenEnginesRestored) {
             settings().hiddenEnginesRestored = true
             components.useCases.searchUseCases.restoreHiddenSearchEngines.invoke()
         }
@@ -943,7 +957,17 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
      * Navigates to the browser fragment and loads a URL or performs a search (depending on the
      * value of [searchTermOrURL]).
      *
+     * @param searchTermOrURL The entered search term to search or URL to be loaded.
+     * @param newTab Whether or not to load the URL in a new tab.
+     * @param from The [BrowserDirection] to indicate which fragment the browser is being
+     * opened from.
+     * @param customTabSessionId Optional custom tab session ID if navigating from a custom tab.
+     * @param engine Optional [SearchEngine] to use when performing a search.
+     * @param forceSearch Whether or not to force performing a search.
      * @param flags Flags that will be used when loading the URL (not applied to searches).
+     * @param requestDesktopMode Whether or not to request the desktop mode for the session.
+     * @param historyMetadata The [HistoryMetadataKey] of the new tab in case this tab
+     * was opened from history.
      * @param additionalHeaders The extra headers to use when loading the URL.
      */
     @Suppress("LongParameterList")
@@ -1019,8 +1043,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             AddNewDeviceFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromAddSearchEngineFragment ->
             AddSearchEngineFragmentDirections.actionGlobalBrowser(customTabSessionId)
-        BrowserDirection.FromEditCustomSearchEngineFragment ->
-            EditCustomSearchEngineFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromSaveSearchEngineFragment ->
             SaveSearchEngineFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromAddonDetailsFragment ->
@@ -1039,12 +1061,20 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         BrowserDirection.FromReviewQualityCheck -> ReviewQualityCheckFragmentDirections.actionGlobalBrowser(
             customTabSessionId,
         )
+        BrowserDirection.FromAddonsManagementFragment -> AddonsManagementFragmentDirections.actionGlobalBrowser(
+            customTabSessionId,
+        )
     }
 
     /**
      * Loads a URL or performs a search (depending on the value of [searchTermOrURL]).
      *
+     * @param searchTermOrURL The entered search term to search or URL to be loaded.
+     * @param newTab Whether or not to load the URL in a new tab.
+     * @param engine Optional [SearchEngine] to use when performing a search.
+     * @param forceSearch Whether or not to force performing a search.
      * @param flags Flags that will be used when loading the URL (not applied to searches).
+     * @param requestDesktopMode Whether or not to request the desktop mode for the session.
      * @param historyMetadata The [HistoryMetadataKey] of the new tab in case this tab
      * was opened from history.
      * @param additionalHeaders The extra headers to use when loading the URL.

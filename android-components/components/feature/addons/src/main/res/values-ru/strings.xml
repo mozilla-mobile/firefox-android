@@ -25,7 +25,7 @@
     <!-- Description for tabs add-on permission. -->
     <string name="mozac_feature_addons_permissions_tabs_description">Доступ к вкладкам браузера</string>
     <!-- Description for unlimited_storage permission. -->
-    <string name="mozac_feature_addons_permissions_unlimited_storage_description">Хранение неограниченного количества данных на стороне клиента</string>
+    <string name="mozac_feature_addons_permissions_unlimited_storage_description">Хранение неограниченного объёма данных на стороне клиента</string>
     <!-- Description for navigation permission. -->
     <string name="mozac_feature_addons_permissions_web_navigation_description">Доступ к активности браузера во время навигации</string>
     <!-- Description for bookmarks permission. -->
@@ -72,8 +72,10 @@
     <string name="mozac_feature_addons_permissions_devtools_description">Расширение доступа инструментов разработчика к вашим данным в открытых вкладках</string>
     <!-- The version on of add-on. -->
     <string name="mozac_feature_addons_version">Версия</string>
+    <!-- The author of an add-on. -->
+    <string name="mozac_feature_addons_author">Автор</string>
     <!-- The authors of an add-on. -->
-    <string name="mozac_feature_addons_authors">Авторы</string>
+    <string name="mozac_feature_addons_authors" moz:removedIn="120" tools:ignore="UnusedResources">Авторы</string>
     <!-- The last date that the add-on was updated. -->
     <string name="mozac_feature_addons_last_updated">Последнее обновление</string>
     <!-- The developer website (Homepage) of the add-on. -->
@@ -114,10 +116,18 @@
     <string name="mozac_feature_addons_remove">Удалить</string>
     <!-- This is the title of a dialog that asks the users if they to install or not an add-on. %1$s is the add-on name. -->
     <string name="mozac_feature_addons_permissions_dialog_title">Добавить %1$s?</string>
+    <!-- This is the title of a dialog that asks the users to grant optional permissions. %1$s is the add-on name. -->
+    <string name="mozac_feature_addons_optional_permissions_dialog_title">%1$s запрашивает дополнительные разрешения.</string>
     <!-- This is the subtitle of a dialog that asks the users if they want to install or not an add-on, the subtitle lists the permissions that this add-on requires, the permissions will dynamically be listed after the ":". -->
     <string name="mozac_feature_addons_permissions_dialog_subtitle">Оно запрашивает разрешение на:</string>
+    <!-- This is the subtitle of a dialog that asks the users to grant optional permissions, the subtitle lists the permissions that this add-on requests, the permissions will dynamically be listed after the ":". -->
+    <string name="mozac_feature_addons_optional_permissions_dialog_subtitle">Оно хочет разрешение на:</string>
     <!-- This is a button to add (install) an add-on . -->
     <string name="mozac_feature_addons_permissions_dialog_add">Добавить</string>
+    <!-- This is a button to allow the optional permissions requested by an add-on . -->
+    <string name="mozac_feature_addons_permissions_dialog_allow">Разрешить</string>
+    <!-- This is a button to deny the optional permissions requested by an add-on . -->
+    <string name="mozac_feature_addons_permissions_dialog_deny">Отклонить</string>
     <!-- This is a button to cancel the add-on installation . -->
     <string name="mozac_feature_addons_permissions_dialog_cancel">Отмена</string>
     <!-- Accessibility content description to install add-on button. -->
@@ -228,4 +238,12 @@
     <string name="mozac_feature_addons_installed_dialog_description">Открыть его в меню</string>
     <!-- Confirmation button text for the dialog when add-on installation is completed. -->
     <string name="mozac_feature_addons_installed_dialog_okay_button">Ок, понятно</string>
+    <!-- "Learn more" link displayed below an add-on status message. -->
+    <string name="mozac_feature_addons_status_learn_more">Подробнее</string>
+    <!-- Status message below an add-on in the add-ons manager when this add-on has been blocklisted. %1$s is the add-on name. -->
+    <string name="mozac_feature_addons_status_blocklisted">%1$s отключено из-за проблем с безопасностью или стабильностью.</string>
+    <!-- Status message below an add-on in the add-ons manager when this add-on hasn't been signed correctly. %1$s is the add-on name. -->
+    <string name="mozac_feature_addons_status_unsigned">%1$s не удалось проверить на безопасность и был отключён.</string>
+    <!-- Status message below an add-on in the add-ons manager when this add-on isn't compatible with the application version. %1$s is the add-on name, %2$s is the app name and %3$s is the app version. -->
+    <string name="mozac_feature_addons_status_incompatible">%1$s не совместим с вашей версией %2$s (версия %3$s).</string>
 </resources>

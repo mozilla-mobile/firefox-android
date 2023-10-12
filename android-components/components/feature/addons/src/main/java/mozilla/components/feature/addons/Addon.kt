@@ -8,18 +8,25 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.Parcelable
+import androidx.annotation.VisibleForTesting
 import androidx.core.net.toUri
 import kotlinx.parcelize.Parcelize
+import mozilla.components.concept.engine.webextension.Metadata
 import mozilla.components.concept.engine.webextension.WebExtension
+import mozilla.components.support.base.log.logger.Logger
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.util.Locale
+import java.util.TimeZone
+
+val logger = Logger("Addon")
 
 /**
  * Represents an add-on based on the AMO store:
  * https://addons.mozilla.org/en-US/firefox/
  *
  * @property id The unique ID of this add-on.
- * @property authors List holding information about the add-on authors.
- * @property categories List of categories the add-on belongs to.
- * @property downloadId The unique ID of the latest version of the add-on (xpi) file.
+ * @property author Information about the add-on author.
  * @property downloadUrl The (absolute) URL to download the latest version of the add-on file.
  * @property version The add-on version e.g "1.23.0".
  * @property permissions List of the add-on permissions for this File.
@@ -37,14 +44,13 @@ import mozilla.components.concept.engine.webextension.WebExtension
  * @property installedState Holds the state of the installed web extension for this add-on. Null, if
  * the [Addon] is not installed.
  * @property defaultLocale Indicates which locale will be always available to display translatable fields.
+ * @property ratingUrl The link to the ratings page (user reviews) for this [Addon].
  */
 @SuppressLint("ParcelCreator")
 @Parcelize
 data class Addon(
     val id: String,
-    val authors: List<Author> = emptyList(),
-    val categories: List<String> = emptyList(),
-    val downloadId: String = "",
+    val author: Author? = null,
     val downloadUrl: String = "",
     val version: String = "",
     val permissions: List<String> = emptyList(),
@@ -58,22 +64,19 @@ data class Addon(
     val updatedAt: String = "",
     val installedState: InstalledState? = null,
     val defaultLocale: String = DEFAULT_LOCALE,
+    val ratingUrl: String = "",
 ) : Parcelable {
     /**
      * Represents an add-on author.
      *
-     * @property id The id of the author (creator) of the add-on.
      * @property name The name of the author.
-     * @property url The link to the profile page for of the author.
-     * @property username The username of the author.
+     * @property url The link to the profile page of the author.
      */
     @SuppressLint("ParcelCreator")
     @Parcelize
     data class Author(
-        val id: String,
         val name: String,
         val url: String,
-        val username: String,
     ) : Parcelable
 
     /**
@@ -140,6 +143,16 @@ data class Addon(
          * The [Addon] was disabled by the user.
          */
         USER_REQUESTED,
+
+        /**
+         * The [Addon] was disabled because it isn't correctly signed.
+         */
+        NOT_CORRECTLY_SIGNED,
+
+        /**
+         * The [Addon] was disabled because it isn't compatible with the application version.
+         */
+        INCOMPATIBLE,
     }
 
     /**
@@ -178,6 +191,17 @@ data class Addon(
      * the blocklist. This is based on the installed extension state in the engine.
      */
     fun isDisabledAsBlocklisted() = installedState?.disabledReason == DisabledReason.BLOCKLISTED
+
+    /**
+     * Returns whether this [Addon] is currently disabled because it isn't correctly signed.
+     */
+    fun isDisabledAsNotCorrectlySigned() = installedState?.disabledReason == DisabledReason.NOT_CORRECTLY_SIGNED
+
+    /**
+     * Returns whether this [Addon] is currently disabled because it isn't compatible
+     * with the application version.
+     */
+    fun isDisabledAsIncompatible() = installedState?.disabledReason == DisabledReason.INCOMPATIBLE
 
     /**
      * Returns whether or not this [Addon] is allowed in private browsing mode.
@@ -265,25 +289,71 @@ data class Addon(
          * @param installedState optional - an installed state.
          */
         fun newFromWebExtension(extension: WebExtension, installedState: InstalledState? = null): Addon {
-            val name = extension.getMetadata()?.name ?: extension.id
-            val description = extension.getMetadata()?.description ?: extension.id
-            val permissions = extension.getMetadata()?.permissions.orEmpty() +
-                extension.getMetadata()?.hostPermissions.orEmpty()
+            val metadata = extension.getMetadata()
+            val name = metadata?.name ?: extension.id
+            val description = metadata?.description ?: extension.id
+            val permissions = metadata?.permissions.orEmpty() +
+                metadata?.hostPermissions.orEmpty()
+            val averageRating = metadata?.averageRating ?: 0f
+            val reviewCount = metadata?.reviewCount ?: 0
+            val siteUrl = metadata?.homePageUrl.orEmpty()
+            val ratingUrl = metadata?.reviewUrl.orEmpty()
+            val developerName = metadata?.developerName.orEmpty()
+            val author = if (developerName.isNotBlank()) {
+                Author(name = developerName, url = metadata?.developerUrl.orEmpty())
+            } else {
+                null
+            }
 
             return Addon(
                 id = extension.id,
-                version = extension.getMetadata()?.version.orEmpty(),
+                author = author,
+                version = metadata?.version.orEmpty(),
                 permissions = permissions,
-                downloadUrl = extension.url,
-                siteUrl = extension.url,
-                translatableName = mapOf(Addon.DEFAULT_LOCALE to name),
-                translatableDescription = mapOf(Addon.DEFAULT_LOCALE to description),
+                downloadUrl = metadata?.downloadUrl.orEmpty(),
+                rating = Rating(averageRating, reviewCount),
+                siteUrl = siteUrl,
+                translatableName = mapOf(DEFAULT_LOCALE to name),
+                translatableDescription = mapOf(DEFAULT_LOCALE to metadata?.fullDescription.orEmpty()),
                 // We don't have a summary when we create an add-on from a WebExtension instance so let's
                 // re-use description...
-                translatableSummary = mapOf(Addon.DEFAULT_LOCALE to description),
-                updatedAt = "1970-01-01T00:00:00Z",
+                translatableSummary = mapOf(DEFAULT_LOCALE to description),
+                updatedAt = fromMetadataToAddonDate(metadata?.updateDate.orEmpty()),
+                ratingUrl = ratingUrl,
                 installedState = installedState,
             )
+        }
+
+        /**
+         * Returns a new [String] formatted in "yyyy-MM-dd'T'HH:mm:ss'Z'".
+         * [Metadata] uses "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'" which is in simplified 8601 format
+         * while [Addon] uses "yyyy-MM-dd'T'HH:mm:ss'Z'"
+         *
+         * @param inputDate The string data to be formatted.
+         */
+        @VisibleForTesting
+        internal fun fromMetadataToAddonDate(inputDate: String): String {
+            val updatedAt: String = try {
+                val zone = TimeZone.getTimeZone("GMT")
+                val metadataFormat =
+                    SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ROOT).apply {
+                        timeZone = zone
+                    }
+                val addonFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ROOT).apply {
+                    timeZone = zone
+                }
+                val formattedDate = metadataFormat.parse(inputDate)
+
+                if (formattedDate !== null) {
+                    addonFormat.format(formattedDate)
+                } else {
+                    ""
+                }
+            } catch (e: ParseException) {
+                logger.error("Unable to format $inputDate", e)
+                ""
+            }
+            return updatedAt
         }
 
         @Suppress("MaxLineLength")

@@ -500,11 +500,15 @@
     <!-- Preference for accessibility -->
     <string name="preferences_accessibility">Bjezbarjernosć</string>
     <!-- Preference to override the Firefox Account server -->
-    <string name="preferences_override_fxa_server">Swójski kontowy serwer Firefox</string>
+    <string name="preferences_override_fxa_server" moz:RemovedIn="120" tools:ignore="UnusedResources">Swójski kontowy serwer Firefox</string>
+    <!-- Preference to override the Mozilla account server -->
+    <string name="preferences_override_account_server">Swójski kontowy serwer Mozilla</string>
     <!-- Preference to override the Sync token server -->
     <string name="preferences_override_sync_tokenserver">Swójski synchronizowanski serwer</string>
     <!-- Toast shown after updating the FxA/Sync server override preferences -->
-    <string name="toast_override_fxa_sync_server_done">Kontowy resp. synchronizowanski serwer Firefox je so změnił. Nałoženje so kónči, zo bychu so změny nałožili…</string>
+    <string name="toast_override_fxa_sync_server_done" moz:RemovedIn="120" tools:ignore="UnusedResources">Kontowy resp. synchronizowanski serwer Firefox je so změnił. Nałoženje so kónči, zo bychu so změny nałožili…</string>
+    <!-- Toast shown after updating the Mozilla account/Sync server override preferences -->
+    <string name="toast_override_account_sync_server_done">Kontowy resp. synchronizowanski serwer Mozilla je so změnił. Nałoženje so kónči, zo bychu so změny nałožili…</string>
     <!-- Preference category for account information -->
     <string name="preferences_category_account">Konto</string>
     <!-- Preference for changing where the toolbar is positioned -->
@@ -520,7 +524,9 @@
     <!-- Preference description for banner about signing in -->
     <string name="preferences_sign_in_description_2">Zregistrujće so, zo byšće rajtarki, zapołožki, hesła a dalše synchronizował.</string>
     <!-- Preference shown instead of account display name while account profile information isn't available yet. -->
-    <string name="preferences_account_default_name">Konto Firefox</string>
+    <string name="preferences_account_default_name" moz:RemovedIn="120" tools:ignore="UnusedResources">Konto Firefox</string>
+    <!-- Preference shown instead of account display name while account profile information isn't available yet. -->
+    <string name="preferences_account_default_name_2">Konto Mozilla</string>
     <!-- Preference text for account title when there was an error syncing FxA -->
     <string name="preferences_account_sync_error">Zaso zwjazać, zo by ze synchronizaciju pokročowało</string>
     <!-- Preference for language -->
@@ -555,7 +561,7 @@
     <string name="preferences_show_sponsored_suggestions">Namjety wot sponsorow</string>
     <!-- Summary for preference to show sponsored Firefox Suggest search suggestions.
          The first parameter is the name of the application. -->
-    <string name="preferences_show_sponsored_suggestions_summary">Podpěrajće %1$s ze składnostnymi sponsorowanymi namjetami</string>
+    <string name="preferences_show_sponsored_suggestions_summary">Podpěrajće %1$s ze składnostnymi sponserowanymi namjetami</string>
     <!-- Preference title for switch preference to show Firefox Suggest search suggestions for web content.
          The first parameter is the name of the application. -->
     <string name="preferences_show_nonsponsored_suggestions">Namjety wot %1$s</string>
@@ -616,11 +622,11 @@
     <!-- Summary for the customize home screen section with Pocket. The first parameter is product name Pocket -->
     <string name="customize_toggle_pocket_summary">Nastawki spěchowane wot %s</string>
     <!-- Title for the customize home screen section with sponsored Pocket stories. -->
-    <string name="customize_toggle_pocket_sponsored">Sponsorowane stawizny</string>
+    <string name="customize_toggle_pocket_sponsored">Sponserowane stawizny</string>
     <!-- Title for the opening wallpaper settings screen -->
     <string name="customize_wallpapers">Pozadkowe wobrazy</string>
     <!-- Title for the customize home screen section with sponsored shortcuts. -->
-    <string name="customize_toggle_contile">Sponsorowane zwjazanja</string>
+    <string name="customize_toggle_contile">Sponserowane zwjazanja</string>
 
     <!-- Wallpapers -->
     <!-- Content description for various wallpapers. The first parameter is the name of the wallpaper -->
@@ -662,9 +668,9 @@
 
     <!-- Add-on Installation from AMO-->
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
-    <string name="addon_not_supported_error">Přidatk so njepodpěruje</string>
+    <string name="addon_not_supported_error" moz:removedIn="120" tools:ignore="UnusedResources">Přidatk so njepodpěruje</string>
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is already installed -->
-    <string name="addon_already_installed">Přidatk je hižo instalowany.</string>
+    <string name="addon_already_installed" moz:removedIn="120" tools:ignore="UnusedResources">Přidatk je hižo instalowany.</string>
 
     <!-- Add-on process crash dialog to user -->
     <!-- Title of a dialog shown to the user when enough errors have occurred with addons and they need to be temporarily disabled -->
@@ -679,6 +685,8 @@
     <!-- Account Preferences -->
     <!-- Preference for managing your account via accounts.firefox.com -->
     <string name="preferences_manage_account">Konto rjadować</string>
+    <!-- Summary of the preference for managing your account via accounts.firefox.com. -->
+    <string name="preferences_manage_account_summary">Změńće swoje hesło, rjadujće datowu zběrku abo zhašejće swoje konto</string>
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">Nětko synchronizować</string>
     <!-- Preference category for sync -->
@@ -2118,7 +2126,7 @@
     <!-- Text for the menu button to navigate to sponsors and privacy support articles. '&amp;' is replaced with the ampersand symbol: & -->
     <string name="top_sites_menu_sponsor_privacy">Naši sponsorojo a waša priwatnosć</string>
     <!-- Label text displayed for a sponsored top site. -->
-    <string name="top_sites_sponsored_label">Sponsorowany</string>
+    <string name="top_sites_sponsored_label">Sponserowany</string>
 
     <!-- Inactive tabs in the tabs tray -->
     <!-- Title text displayed in the tabs tray when a tab has been unused for 14 days. -->
@@ -2181,7 +2189,7 @@
     <string name="pocket_stories_feature_learn_more">Dalše informacije</string>
 
     <!-- Text indicating that the Pocket story that also displays this text is a sponsored story by other 3rd party entity. -->
-    <string name="pocket_stories_sponsor_indication">Sponsorowany</string>
+    <string name="pocket_stories_sponsor_indication">Sponserowany</string>
 
     <!-- Snackbar message for enrolling in a Nimbus experiment from the secret settings when Studies preference is Off.-->
     <string name="experiments_snackbar">Zmóžńće telemetriju, zo byšće daty słał.</string>
@@ -2211,17 +2219,21 @@
     <string name="review_quality_check_explanation_body_reliability">Wužiwamy technologiju KI z %s wot Mozilla, zo bychmy spušćomnosć produktowych pohódnoćenjow kontrolowali.
 To budźe jenož pomhać, kwalitu pohódnoćenjow posudźić, nic kwalitu produktow.</string>
     <!-- Paragraph explaining the grading system we use to classify the reliability of a product's reviews. -->
-    <string name="review_quality_check_info_review_grade_header" tools:ignore="UnusedResources"><![CDATA[Přirjadujemy pohódnoćenjam kóždeho produkta <b>pismikowu znamku</b> wot A do F.]]></string>
+    <string name="review_quality_check_info_review_grade_header"><![CDATA[Přirjadujemy pohódnoćenjam kóždeho produkta <b>pismikowu znamku</b> wot A do F.]]></string>
     <!-- Description explaining grades A and B for review quality check adjusted grading. -->
     <string name="review_quality_check_info_grade_info_AB">Spušćomne pohódnoćenja. Myslimy sej, zo pohódnoćenja su najskerje wot woprawdźitych kupcow, kotřiž su sprawne, bjezpředsudne pohódnoćenja zawostajili.</string>
+    <!-- Description explaining grades A and B for review quality check adjusted grading. -->
+    <string name="review_quality_check_info_grade_info_AB_2" moz:RemovedIn="120" tools:ignore="UnusedResources">Wěrimy, zo pohódnoćenja su spušćomne.</string>
     <!-- Description explaining grade C for review quality check adjusted grading. -->
     <string name="review_quality_check_info_grade_info_C">Wěrimy, zo je měšeńca spušćomnych a njespušćomnych pohódnoćenjow.</string>
     <!-- Description explaining grades D and F for review quality check adjusted grading. -->
     <string name="review_quality_check_info_grade_info_DF">Njespušćomne pohódnoćenja. Myslimy sej, zo pohódnoćenja su najskerje sfalšowane abo wot pohódnoćowacych z předsudkami.</string>
+    <!-- Description explaining grades D and F for review quality check adjusted grading. -->
+    <string name="review_quality_check_info_grade_info_DF_2" moz:RemovedIn="120" tools:ignore="UnusedResources">Wěrimy, zo pohódnoćenja spušćomne njejsu.</string>
     <!-- Paragraph explaining how a product's adjusted grading is calculated. -->
     <string name="review_quality_check_explanation_body_adjusted_grading"><![CDATA[<b>Přiměrjene hódnoćenje</b> jenož na pohódnoćenjach bazuje, kotrež mamy za spušćomne.]]></string>
     <!-- Paragraph explaining product review highlights. First parameter is the name of the retailer (e.g. Amazon). -->
-    <string name="review_quality_check_explanation_body_highlights" tools:ignore="UnusedResources"><![CDATA[<b>Wjerški</b> su z pohódnoćenjow %s w běhu poslednich 80 dnjow, kotrež mamy za spušćomne.]]></string>
+    <string name="review_quality_check_explanation_body_highlights"><![CDATA[<b>Wjerški</b> su z pohódnoćenjow %s w běhu poslednich 80 dnjow, kotrež mamy za spušćomne.]]></string>
     <!-- Text for learn more caption presenting a link with information about review quality. First parameter is for clickable text defined in review_quality_check_info_learn_more_link. -->
     <string name="review_quality_check_info_learn_more">Zhońće wjace wo %s.</string>
     <!-- Clickable text that links to review quality check SuMo page. First parameter is the Fakespot product name. In the phrase "Fakespot by Mozilla", "by" can be localized. Does not need to stay by. -->

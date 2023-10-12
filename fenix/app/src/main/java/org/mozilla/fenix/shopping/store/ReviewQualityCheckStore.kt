@@ -47,6 +47,7 @@ private fun mapStateForUpdateAction(
             } else {
                 ReviewQualityCheckState.OptedIn(
                     productRecommendationsPreference = action.isProductRecommendationsEnabled,
+                    productVendor = action.productVendor,
                 )
             }
         }
@@ -78,7 +79,7 @@ private fun mapStateForUpdateAction(
             }
         }
 
-        ReviewQualityCheckAction.ReanalyzeProduct -> {
+        ReviewQualityCheckAction.ReanalyzeProduct, ReviewQualityCheckAction.AnalyzeProduct -> {
             state.mapIfOptedIn {
                 when (it.productReviewState) {
                     is ProductReviewState.AnalysisPresent -> {

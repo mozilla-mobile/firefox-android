@@ -76,3 +76,9 @@ class DefaultReviewQualityCheckVendorsService(
         }
     }
 }
+
+/**
+ * Returns the first matching product vendor for the selected tab.
+ */
+fun ReviewQualityCheckVendorsService.productVendor(): ProductVendor =
+    productVendors().first()
