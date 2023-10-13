@@ -20,7 +20,7 @@ class ReviewQualityCheckBottomSheetStateFeatureTest {
     val coroutinesTestRule = MainCoroutineRule()
 
     @Test
-    fun `WHEN store state changes to not opted in from any other state THEN callback is not invoked`() {
+    fun `WHEN store state changes to not opted in from any other state THEN callback is invoked with half state`() {
         val store = ReviewQualityCheckStore(emptyList())
         var updatedState: BottomSheetViewState? = null
         val tested = ReviewQualityCheckBottomSheetStateFeature(
@@ -43,7 +43,7 @@ class ReviewQualityCheckBottomSheetStateFeatureTest {
     }
 
     @Test
-    fun `WHEN store state changes to not opted in from initial state THEN callback is invoked`() {
+    fun `WHEN store state changes to not opted in from initial state THEN callback is invoked with full state`() {
         val store = ReviewQualityCheckStore(emptyList())
         var updatedState: BottomSheetViewState? = null
         val tested = ReviewQualityCheckBottomSheetStateFeature(
@@ -57,6 +57,6 @@ class ReviewQualityCheckBottomSheetStateFeatureTest {
         tested.start()
         store.dispatch(ReviewQualityCheckAction.OptOutCompleted(emptyList())).joinBlocking()
 
-        assertEquals(BottomSheetViewState.HALF_VIEW, updatedState)
+        assertEquals(BottomSheetViewState.FULL_VIEW, updatedState)
     }
 }

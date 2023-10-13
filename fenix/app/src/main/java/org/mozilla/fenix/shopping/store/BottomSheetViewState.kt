@@ -13,3 +13,18 @@ enum class BottomSheetViewState(val state: String) {
     FULL_VIEW("full"),
     HALF_VIEW("half"),
 }
+
+/**
+ * The source of the bottom sheet dismiss.
+ *
+ * @property sourceName Name of the dismiss source to be used in review quality check telemetry.
+ */
+enum class BottomSheetDismissSource(val sourceName: String) {
+    BACK_PRESSED("back_pressed"),
+    SLIDE("sheet_slide"),
+    HANDLE_CLICKED("handle_clicked"),
+    CLICK_OUTSIDE("click_outside"),
+    LINK_OPENED("link_opened"),
+    OPT_OUT("opt_out"),
+    NOT_NOW("not_now"),
+}

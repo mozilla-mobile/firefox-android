@@ -130,8 +130,10 @@ sealed interface ReviewQualityCheckAction : Action {
 
     /**
      * Triggered when the bottom sheet is closed.
+     *
+     * @property source The source of dismissal.
      */
-    object BottomSheetClosed : TelemetryAction
+    data class BottomSheetClosed(val source: BottomSheetDismissSource) : TelemetryAction
 
     /**
      * Triggered when the bottom sheet is opened.
