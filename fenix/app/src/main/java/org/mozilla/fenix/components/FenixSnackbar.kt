@@ -161,7 +161,7 @@ class FenixSnackbar private constructor(
                         // can't intelligently position the snackbar on the upper most view.
                         // Ideally we should not pass ContentFrameLayout in, but it's the only
                         // way to display snackbars through a fragment transition.
-                        (view is ContentFrameLayout || !dynamicToolbarEnabled)
+                        (view is ContentFrameLayout || view is CoordinatorLayout || !dynamicToolbarEnabled)
                     ) {
                         toolbarHeight
                     } else {
