@@ -322,16 +322,9 @@
     <string name="onboarding_home_enable_notifications_negative_button">Nic něnto</string>
 
     <!-- Juno first user onboarding flow experiment, strings are marked unused as they are only referenced by Nimbus experiments. -->
-    <!-- Title for set firefox as default browser screen.
-        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="juno_onboarding_default_browser_title" moz:RemovedIn="117" tools:ignore="UnusedResources">Wužywajśo %s pó droze</string>
     <!-- Title for set firefox as default browser screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
         Note: The word "Firefox" should NOT be translated -->
     <string name="juno_onboarding_default_browser_title_nimbus" tools:ignore="UnusedResources">Wužywajśo Firefox pó droze</string>
-    <!-- Description for set firefox as default browser screen.
-        The first parameter is the Firefox brand name.
-        The second parameter is the string with key "juno_onboarding_default_browser_description_link_text". -->
-    <string name="juno_onboarding_default_browser_description" moz:RemovedIn="117" tools:ignore="UnusedResources">%1$s luźi nad wudobytki staja a blokěrujo sedła pśesegajuce slědowaki, aby wašu priwatnosć šćitał.\n\nDalšne informacije w našom %2$s.</string>
     <!-- Description for set firefox as default browser screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
         Note: The word "Firefox" should NOT be translated -->
     <string name="juno_onboarding_default_browser_description_nimbus" tools:ignore="UnusedResources">Firefox luźi nad wudobytki staja a blokěrujo sedła pśesegajuce slědowaki, aby wašu priwatnosć šćitał.\n\nDalšne informacije w našej powěźeńce priwatnosći.</string>
@@ -350,16 +343,10 @@
     <string name="juno_onboarding_sign_in_positive_button" tools:ignore="UnusedResources">Pśizjawiś</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
     <string name="juno_onboarding_sign_in_negative_button" tools:ignore="UnusedResources">Nic něnto</string>
-    <!-- Title for enable notification permission screen.
-        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="juno_onboarding_enable_notifications_title" moz:RemovedIn="117" tools:ignore="UnusedResources">Powěźeńki wam pomagaju, wěcej z %s cyniś</string>
 
     <!-- Title for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
         Note: The word "Firefox" should NOT be translated -->
     <string name="juno_onboarding_enable_notifications_title_nimbus" tools:ignore="UnusedResources">Powěźeńki wam pomagaju, wěcej z Firefox cyniś</string>
-    <!-- Description for enable notification permission screen.
-        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="juno_onboarding_enable_notifications_description" moz:RemovedIn="117" tools:ignore="UnusedResources">Sćelśo rejtariki mjazy rědami, zastojśo ześěgnjenja  a dostańśo pokaze, aby nejwěcej z %s wuwónoźeł.</string>
     <!-- Description for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
        Note: The word "Firefox" should NOT be translated   -->
     <string name="juno_onboarding_enable_notifications_description_nimbus" tools:ignore="UnusedResources">Sćelśo rejtariki mjazy rědami, zastojśo ześěgnjenja  a dostańśo pokaze, aby nejwěcej z Firefox wuwónoźeł.</string>
@@ -512,11 +499,15 @@
     <!-- Preference for accessibility -->
     <string name="preferences_accessibility">Bźezbariernosć</string>
     <!-- Preference to override the Firefox Account server -->
-    <string name="preferences_override_fxa_server">Swójski kontowy serwer Firefox</string>
+    <string name="preferences_override_fxa_server" moz:RemovedIn="120" tools:ignore="UnusedResources">Swójski kontowy serwer Firefox</string>
+    <!-- Preference to override the Mozilla account server -->
+    <string name="preferences_override_account_server">Swójski kontowy serwer Mozilla</string>
     <!-- Preference to override the Sync token server -->
     <string name="preferences_override_sync_tokenserver">Swójski synchronizěrowański serwer</string>
     <!-- Toast shown after updating the FxA/Sync server override preferences -->
-    <string name="toast_override_fxa_sync_server_done">Kontowy resp. synchronizěrowański serwer Firefox jo se změnił. Nałoženje se kóńcy, aby se změny nałožyli…</string>
+    <string name="toast_override_fxa_sync_server_done" moz:RemovedIn="120" tools:ignore="UnusedResources">Kontowy resp. synchronizěrowański serwer Firefox jo se změnił. Nałoženje se kóńcy, aby se změny nałožyli…</string>
+    <!-- Toast shown after updating the Mozilla account/Sync server override preferences -->
+    <string name="toast_override_account_sync_server_done">Kontowy resp. synchronizěrowański serwer Mozilla jo se změnił. Nałoženje se kóńcy, aby se změny nałožyli…</string>
     <!-- Preference category for account information -->
     <string name="preferences_category_account">Konto</string>
     <!-- Preference for changing where the toolbar is positioned -->
@@ -532,7 +523,9 @@
     <!-- Preference description for banner about signing in -->
     <string name="preferences_sign_in_description_2">Zregistrěrujśo se, aby rejtariki, cytańske znamjenja, gronidła a dalšne synchronizěrował.</string>
     <!-- Preference shown instead of account display name while account profile information isn't available yet. -->
-    <string name="preferences_account_default_name">Konto Firefox</string>
+    <string name="preferences_account_default_name" moz:RemovedIn="120" tools:ignore="UnusedResources">Konto Firefox</string>
+    <!-- Preference shown instead of account display name while account profile information isn't available yet. -->
+    <string name="preferences_account_default_name_2">Konto Mozilla</string>
     <!-- Preference text for account title when there was an error syncing FxA -->
     <string name="preferences_account_sync_error">Zasej zwězaś, aby ze synchronizaciju pókšacowało</string>
     <!-- Preference for language -->
@@ -544,7 +537,7 @@
     <!-- Preference for developers -->
     <string name="preferences_remote_debugging">Daloke pytanje zmólkow pśez USB</string>
     <!-- Preference title for switch preference to show search engines -->
-    <string name="preferences_show_search_engines">Pytnice pokazaś</string>
+    <string name="preferences_show_search_engines" moz:RemovedIn="120" tools:ignore="UnusedResources">Pytnice pokazaś</string>
     <!-- Preference title for switch preference to show search suggestions -->
     <string name="preferences_show_search_suggestions">Pytańske naraźenja pokazaś</string>
     <!-- Preference title for switch preference to show voice search button -->
@@ -563,6 +556,16 @@
     <string name="preferences_account_settings">Kontowe nastajenja</string>
     <!-- Preference for enabling url autocomplete-->
     <string name="preferences_enable_autocomplete_urls">URL awtomatiski wudopołniś</string>
+    <!-- Preference title for switch preference to show sponsored Firefox Suggest search suggestions -->
+    <string name="preferences_show_sponsored_suggestions">Naraźenja wót sponsorow</string>
+    <!-- Summary for preference to show sponsored Firefox Suggest search suggestions.
+         The first parameter is the name of the application. -->
+    <string name="preferences_show_sponsored_suggestions_summary">Pódprějśo %1$s z pśigóźbnymi sponserowanymi naraźenjami</string>
+    <!-- Preference title for switch preference to show Firefox Suggest search suggestions for web content.
+         The first parameter is the name of the application. -->
+    <string name="preferences_show_nonsponsored_suggestions">Naraźenja wót %1$s</string>
+    <!-- Summary for preference to show Firefox Suggest search suggestions for web content -->
+    <string name="preferences_show_nonsponsored_suggestions_summary">Wobstarajśo se naraźenja z weba nastupajucy wašo pytanje</string>
     <!-- Preference for open links in third party apps -->
     <string name="preferences_open_links_in_apps">Wótkaze w nałoženjach wócyniś</string>
 
@@ -664,9 +667,9 @@
 
     <!-- Add-on Installation from AMO-->
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
-    <string name="addon_not_supported_error">Dodank se njepódpěra</string>
+    <string name="addon_not_supported_error" moz:removedIn="120" tools:ignore="UnusedResources">Dodank se njepódpěra</string>
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is already installed -->
-    <string name="addon_already_installed">Dodank jo južo zainstalowany.</string>
+    <string name="addon_already_installed" moz:removedIn="120" tools:ignore="UnusedResources">Dodank jo južo zainstalowany.</string>
 
     <!-- Add-on process crash dialog to user -->
     <!-- Title of a dialog shown to the user when enough errors have occurred with addons and they need to be temporarily disabled -->
@@ -681,6 +684,8 @@
     <!-- Account Preferences -->
     <!-- Preference for managing your account via accounts.firefox.com -->
     <string name="preferences_manage_account">Konto zastojaś</string>
+    <!-- Summary of the preference for managing your account via accounts.firefox.com. -->
+    <string name="preferences_manage_account_summary">Změńśo swójo gronidło, zastojśo datowu zběrku abo lašujśo swójo konto</string>
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">Něnto synchronizěrowaś</string>
     <!-- Preference category for sync -->
@@ -1937,7 +1942,7 @@
     <!-- Content description (not visible, for screen readers etc.): Title for the button to add a search engine in the action bar -->
     <string name="search_engine_add_button_content_description">Pśidaś</string>
     <!-- Content description (not visible, for screen readers etc.): Title for the button to save a search engine in the action bar -->
-    <string name="search_engine_add_custom_search_engine_edit_button_content_description">Składowaś</string>
+    <string name="search_engine_add_custom_search_engine_edit_button_content_description" moz:RemovedIn="120" tools:ignore="UnusedResources">Składowaś</string>
     <!-- Text for the menu button to edit a search engine -->
     <string name="search_engine_edit">Wobźěłaś</string>
     <!-- Text for the menu button to delete a search engine -->
@@ -2178,7 +2183,7 @@
     <!-- Clickable text for opening an external link for more information about Pocket. -->
     <string name="pocket_stories_feature_learn_more">Dalšne informacije</string>
     <!-- Text indicating that the Pocket story that also displays this text is a sponsored story by other 3rd party entity. -->
-    <string name="pocket_stories_sponsor_indication">Sponsorowany</string>
+    <string name="pocket_stories_sponsor_indication">Sponserowany</string>
 
     <!-- Snackbar message for enrolling in a Nimbus experiment from the secret settings when Studies preference is Off.-->
     <string name="experiments_snackbar">Zmóžniśo telemetriju, aby daty słał.</string>
@@ -2187,7 +2192,9 @@
 
     <!-- Review quality check feature-->
     <!-- Name for the review quality check feature used as title for the panel. -->
-    <string name="review_quality_check_feature_name">Kontrola pógódnośenjow</string>
+    <string name="review_quality_check_feature_name" moz:RemovedIn="120" tools:ignore="UnusedResources">Kontrola pógódnośenjow</string>
+    <!-- Name for the review quality check feature used as title for the panel. -->
+    <string name="review_quality_check_feature_name_2">Kontrola pógódnośenjow</string>
     <!-- Summary for grades A and B for review quality check adjusted grading. -->
     <string name="review_quality_check_grade_a_b_description">Spušćobne pógódnośenja</string>
     <!-- Summary for grade C for review quality check adjusted grading. -->
@@ -2208,17 +2215,21 @@
     <string name="review_quality_check_explanation_body_reliability">Wužywamy technologiju KI z %s wót Mozilla, aby my spušćobnosć produktowych pógódnośenjow kontrolěrowali.
 To buźo jano pomagaś, kwalitu pógódnośenjow pósuźiś, nic kwalitu produktow.</string>
     <!-- Paragraph explaining the grading system we use to classify the reliability of a product's reviews. -->
-    <string name="review_quality_check_info_review_grade_header" tools:ignore="UnusedResources"><![CDATA[Pśirědujomy pógódnośenjam kuždego produkta <b>pismikowu cenzuru</b> wót A do F.]]></string>
+    <string name="review_quality_check_info_review_grade_header"><![CDATA[Pśirědujomy pógódnośenjam kuždego produkta <b>pismikowu cenzuru</b> wót A do F.]]></string>
     <!-- Description explaining grades A and B for review quality check adjusted grading. -->
     <string name="review_quality_check_info_grade_info_AB">Spušćobne pógódnośenja. Myslimy se, až pógódnośenja su nejskerjej wót wopšawdnych kupcow, kótarež su zawóstajili spšawne, bźezpśedsudkowe pógódnośenja.</string>
+    <!-- Description explaining grades A and B for review quality check adjusted grading. -->
+    <string name="review_quality_check_info_grade_info_AB_2" moz:RemovedIn="120" tools:ignore="UnusedResources">Wěrimy, až pógódnośenja su spušćobne.</string>
     <!-- Description explaining grade C for review quality check adjusted grading. -->
     <string name="review_quality_check_info_grade_info_C">Wěrimy, až dajo měšańcu spušćobnych a njespušćobnych pógódnośenjow.</string>
     <!-- Description explaining grades D and F for review quality check adjusted grading. -->
     <string name="review_quality_check_info_grade_info_DF">Njespušćobne pógódnośenja. Myslimy se, až pógódnośenja su nejskerjej sfalšowane abo wót pógódnośujucych z pśedsudkami.</string>
+    <!-- Description explaining grades D and F for review quality check adjusted grading. -->
+    <string name="review_quality_check_info_grade_info_DF_2" moz:RemovedIn="120" tools:ignore="UnusedResources">Wěrimy, až pógódnośenja njejsu spušćobne.</string>
     <!-- Paragraph explaining how a product's adjusted grading is calculated. -->
     <string name="review_quality_check_explanation_body_adjusted_grading"><![CDATA[<b>Pśiměrjone pógódnośowanje</b> jano na pógódnośenjach bazěrujo, kótarež mamy za spušćobne.]]></string>
     <!-- Paragraph explaining product review highlights. First parameter is the name of the retailer (e.g. Amazon). -->
-    <string name="review_quality_check_explanation_body_highlights" tools:ignore="UnusedResources"><![CDATA[<b>Wjerški</b> su z pógódnośenjow %s w běgu slědnych 80 dnjow, kótarež mamy za spušćobne.]]></string>
+    <string name="review_quality_check_explanation_body_highlights"><![CDATA[<b>Wjerški</b> su z pógódnośenjow %s w běgu slědnych 80 dnjow, kótarež mamy za spušćobne.]]></string>
     <!-- Text for learn more caption presenting a link with information about review quality. First parameter is for clickable text defined in review_quality_check_info_learn_more_link. -->
     <string name="review_quality_check_info_learn_more">Zgóńśo wěcej wó %s.</string>
     <!-- Clickable text that links to review quality check SuMo page. First parameter is the Fakespot product name. In the phrase "Fakespot by Mozilla", "by" can be localized. Does not need to stay by. -->
@@ -2228,7 +2239,9 @@ To buźo jano pomagaś, kwalitu pógódnośenjow pósuźiś, nic kwalitu produkt
     <!-- Text for label for switch preference to show recommended products from review quality check settings section. -->
     <string name="review_quality_check_settings_recommended_products">Wabjenje w kontroli pógódnośenjow pokazaś</string>
     <!-- Description for switch preference to show recommended products from review quality check settings section. First parameter is for clickable text defined in review_quality_check_settings_recommended_products_learn_more.-->
-    <string name="review_quality_check_settings_recommended_products_description" tools:ignore="UnusedResources">Buźośo wótergi wabjenje za relewantne produkty wiźeś. Wšykne wabjeńske anonse muse našym standardam za kwalitu pógódnośenjow wótpowědowaś. %s</string>
+    <string name="review_quality_check_settings_recommended_products_description" moz:RemovedIn="120" tools:ignore="UnusedResources">Buźośo wótergi wabjenje za relewantne produkty wiźeś. Wšykne wabjeńske anonse muse našym standardam za kwalitu pógódnośenjow wótpowědowaś. %s</string>
+    <!-- Description for switch preference to show recommended products from review quality check settings section. First parameter is for clickable text defined in review_quality_check_settings_recommended_products_learn_more.-->
+    <string name="review_quality_check_settings_recommended_products_description_2" tools:ignore="UnusedResources">Buźośo pśi góźbje wabjenje za relewantne produkty wiźeś. Wabimy jano za produkty ze spušćobnymi pógódnośenjami. %s</string>
     <!-- Clickable text that links to review quality check recommended products support article. -->
     <string name="review_quality_check_settings_recommended_products_learn_more" tools:ignore="UnusedResources">Dalšne informacije</string>
     <!-- Text for turning sidebar off button from review quality check settings section. -->
@@ -2248,17 +2261,19 @@ To buźo jano pomagaś, kwalitu pógódnośenjow pósuźiś, nic kwalitu produkt
     <!-- Text for button from warning card informing the user that the current analysis is outdated. Clicking this should trigger the product's re-analysis. -->
     <string name="review_quality_check_outdated_analysis_warning_action" tools:ignore="UnusedResources">Něnto kontrolěrowaś</string>
     <!-- Title for warning card informing the user that the current product does not have enough reviews for a review analysis. -->
-    <string name="review_quality_check_no_reviews_warning_title" tools:ignore="UnusedResources">Hyšći njejo dosć pógódnośenjow</string>
+    <string name="review_quality_check_no_reviews_warning_title">Hyšći njejo dosć pógódnośenjow</string>
     <!-- Text for body of warning card informing the user that the current product does not have enough reviews for a review analysis. -->
-    <string name="review_quality_check_no_reviews_warning_body" tools:ignore="UnusedResources">Gaž toś ten produkt ma wěcej pógódnośenjow, móžomy jich kwalitu kontrolěrowaś.</string>
+    <string name="review_quality_check_no_reviews_warning_body">Gaž toś ten produkt ma wěcej pógódnośenjow, móžomy jich kwalitu kontrolěrowaś.</string>
     <!-- Title for warning card informing the user that the current product is currently not available. -->
     <string name="review_quality_check_product_availability_warning_title" tools:ignore="UnusedResources">Produkt njejo k dispoziciji</string>
     <!-- Text for the body of warning card informing the user that the current product is currently not available. -->
     <string name="review_quality_check_product_availability_warning_body" tools:ignore="UnusedResources">Jolic wiźiśo, až toś ten produkt jo zasej na skłaźe, dajśo to k wěsći a buźomy na kontrolěrowanju pógódnośenjow źěłaś.</string>
     <!-- Clickable text for warning card informing the user that the current product is currently not available. Clicking this should inform the server that the product is available. -->
-    <string name="review_quality_check_product_availability_warning_action" tools:ignore="UnusedResources">K wěsći daś, až toś ten produkt jo zasej na skłaźe</string>
+    <string name="review_quality_check_product_availability_warning_action" moz:RemovedIn="120" tools:ignore="UnusedResources">K wěsći daś, až toś ten produkt jo zasej na skłaźe</string>
+    <!-- Clickable text for warning card informing the user that the current product is currently not available. Clicking this should inform the server that the product is available. -->
+    <string name="review_quality_check_product_availability_warning_action_2" tools:ignore="UnusedResources">K wěsći daś, až produkt jo na skłaźe</string>
     <!-- Title for warning card informing the user that the current product's re-analysis is still processing. -->
-    <string name="review_quality_check_reanalysis_in_progress_warning_title" tools:ignore="UnusedResources">Kontrola kwalitu pógódnośenjow</string>
+    <string name="review_quality_check_reanalysis_in_progress_warning_title">Kontrola kwalitu pógódnośenjow</string>
     <!-- Title for warning card informing the user that the current product's analysis is still processing. -->
     <string name="review_quality_check_analysis_in_progress_warning_title">Kontrola kwalitu pógódnośenjow</string>
     <!-- Text for body of warning card informing the user that the current product's analysis is still processing. -->
@@ -2269,9 +2284,9 @@ To buźo jano pomagaś, kwalitu pógódnośenjow pósuźiś, nic kwalitu produkt
     <!-- Text for body of info card displayed after the user reports a product is back in stock. -->
     <string name="review_quality_check_analysis_requested_info_body" tools:ignore="UnusedResources">My dejali w běgu 24 góźin informacije wó pógódnośenjach toś togo produkta měś. Pśiźćo pšosym mimo.</string>
     <!-- Title for info card displayed when the user review checker while on a product that Fakespot does not analyze (e.g. gift cards, music). -->
-    <string name="review_quality_check_not_analyzable_info_title" tools:ignore="UnusedResources">Njamóžomy toś te pógódnośenja pśeglědowaś</string>
+    <string name="review_quality_check_not_analyzable_info_title">Njamóžomy toś te pógódnośenja pśeglědowaś</string>
     <!-- Text for body of info card displayed when the user review checker while on a product that Fakespot does not analyze (e.g. gift cards, music). -->
-    <string name="review_quality_check_not_analyzable_info_body" tools:ignore="UnusedResources">Bóžko  njamóžomy kwalitu pógódnośenja za wěste produktowe typy kontrolěrowaś. Na pśikład za darjeńske kórty a tšugajuce wideo, muziku a graśa.</string>
+    <string name="review_quality_check_not_analyzable_info_body">Bóžko  njamóžomy kwalitu pógódnośenja za wěste produktowe typy kontrolěrowaś. Na pśikład za darjeńske kórty a tšugajuce wideo, muziku a graśa.</string>
     <!-- Title for info card displayed when another user reported the displayed product is back in stock. -->
     <string name="review_quality_check_analysis_requested_other_user_info_title" tools:ignore="UnusedResources">Informacije skóro pśidu</string>
     <!-- Text for body of info card displayed when another user reported the displayed product is back in stock. -->
@@ -2281,13 +2296,13 @@ To buźo jano pomagaś, kwalitu pógódnośenjow pósuźiś, nic kwalitu produkt
     <!-- Text for the action button from info card displayed to the user when analysis finished updating. -->
     <string name="review_quality_check_analysis_updated_confirmation_action" tools:ignore="UnusedResources">Som zrozměł</string>
     <!-- Title for error card displayed to the user when an error occurred. -->
-    <string name="review_quality_check_generic_error_title" tools:ignore="UnusedResources">Tuchylu informacije njejsu k dispoziciji</string>
+    <string name="review_quality_check_generic_error_title">Tuchylu informacije njejsu k dispoziciji</string>
     <!-- Text for body of error card displayed to the user when an error occurred. -->
-    <string name="review_quality_check_generic_error_body" tools:ignore="UnusedResources">Źěłamy na rozwězanju toś togo problema. Pśiźćo pšosym skóro zasej mimo.</string>
+    <string name="review_quality_check_generic_error_body">Źěłamy na rozwězanju toś togo problema. Pśiźćo pšosym skóro zasej mimo.</string>
     <!-- Title for error card displayed to the user when the device is disconnected from the network. -->
-    <string name="review_quality_check_no_connection_title" tools:ignore="UnusedResources">Žeden seśowy zwisk</string>
+    <string name="review_quality_check_no_connection_title">Žeden seśowy zwisk</string>
     <!-- Text for body of error card displayed to the user when the device is disconnected from the network. -->
-    <string name="review_quality_check_no_connection_body" tools:ignore="UnusedResources">Pśeglědajśo swój seśowy zwisk a wopytajśo pón bok znowego zacytaś.</string>
+    <string name="review_quality_check_no_connection_body">Pśeglědajśo swój seśowy zwisk a wopytajśo pón bok znowego zacytaś.</string>
     <!-- Title for card displayed to the user for products whose reviews were not analyzed yet. -->
     <string name="review_quality_check_no_analysis_title">Hyšći žedne informacije wó toś tych pógódnośenjach</string>
     <!-- Text for the body of card displayed to the user for products whose reviews were not analyzed yet. -->
@@ -2321,7 +2336,7 @@ To buźo jano pomagaś, kwalitu pógódnośenjow pósuźiś, nic kwalitu produkt
     <!-- Text displayed in the second CFR presenting the review quality check feature that opens the review checker when clicked. -->
     <string name="review_quality_check_second_cfr_action" tools:ignore="UnusedResources">Kontrolu pógódnośenjow wócyniś</string>
     <!-- Flag showing that the review quality check feature is work in progress. -->
-    <string name="review_quality_check_beta_flag" tools:ignore="UnusedResources">Beta</string>
+    <string name="review_quality_check_beta_flag">Beta</string>
     <!-- Content description (not visible, for screen readers etc.) for opening browser menu button to open review quality check bottom sheet. -->
     <string name="review_quality_check_open_handle_content_description">Kontrolu pógódnośenjow wócyniś</string>
     <!-- Content description (not visible, for screen readers etc.) for closing browser menu button to open review quality check bottom sheet. -->

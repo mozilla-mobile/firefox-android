@@ -80,7 +80,7 @@ class ComposeSearchTest {
     }
 
     @Test
-    fun searchBarItemsTest() {
+    fun verifySearchBarItemsTest() {
         navigationToolbar {
             verifyDefaultSearchEngine("Google")
             verifySearchBarPlaceholder("Search or enter address")
@@ -96,7 +96,7 @@ class ComposeSearchTest {
     }
 
     @Test
-    fun searchSelectorMenuItemsTest() {
+    fun verifySearchSelectorMenuItemsTest() {
         homeScreen {
         }.openSearch {
             verifySearchView()
@@ -110,7 +110,7 @@ class ComposeSearchTest {
     }
 
     @Test
-    fun searchPlaceholderForDefaultEnginesTest() {
+    fun verifySearchPlaceholderForGeneralDefaultSearchEnginesTest() {
         generalEnginesList.forEach {
             homeScreen {
             }.openSearch {
@@ -127,7 +127,7 @@ class ComposeSearchTest {
     }
 
     @Test
-    fun searchPlaceholderForOtherGeneralSearchEnginesTest() {
+    fun verifySearchPlaceholderForNotDefaultGeneralSearchEnginesTest() {
         val generalEnginesList = listOf("DuckDuckGo", "Bing")
 
         generalEnginesList.forEach {
@@ -141,7 +141,7 @@ class ComposeSearchTest {
     }
 
     @Test
-    fun searchPlaceholderForTopicSearchEngineTest() {
+    fun verifySearchPlaceholderForTopicSpecificSearchEnginesTest() {
         val topicEnginesList = listOf("Amazon.com", "Wikipedia", "eBay")
 
         topicEnginesList.forEach {
@@ -156,7 +156,7 @@ class ComposeSearchTest {
 
     @SmokeTest
     @Test
-    fun scanButtonDenyPermissionTest() {
+    fun verifyQRScanningCameraAccessDialogTest() {
         val cameraManager = TestHelper.appContext.getSystemService(Context.CAMERA_SERVICE) as CameraManager
         Assume.assumeTrue(cameraManager.cameraIdList.isNotEmpty())
 
@@ -177,7 +177,7 @@ class ComposeSearchTest {
 
     @SmokeTest
     @Test
-    fun scanButtonAllowPermissionTest() {
+    fun scanQRCodeToOpenAWebpageTest() {
         val cameraManager = TestHelper.appContext.getSystemService(Context.CAMERA_SERVICE) as CameraManager
         Assume.assumeTrue(cameraManager.cameraIdList.isNotEmpty())
 
@@ -190,7 +190,7 @@ class ComposeSearchTest {
     }
 
     @Test
-    fun scanButtonAvailableOnlyForGeneralSearchEnginesTest() {
+    fun verifyScanButtonAvailableOnlyForGeneralSearchEnginesTest() {
         generalEnginesList.forEach {
             homeScreen {
             }.openSearch {
@@ -213,7 +213,7 @@ class ComposeSearchTest {
     // Verifies a temporary change of search engine from the Search shortcut menu
     @SmokeTest
     @Test
-    fun selectSearchEnginesShortcutTest() {
+    fun searchEnginesCanBeChangedTemporarilyFromSearchSelectorMenuTest() {
         val enginesList = listOf("DuckDuckGo", "Google", "Amazon.com", "Wikipedia", "Bing", "eBay")
 
         enginesList.forEach {
@@ -230,7 +230,7 @@ class ComposeSearchTest {
     }
 
     @Test
-    fun accessSearchSettingFromSearchSelectorMenuTest() {
+    fun defaultSearchEnginesCanBeSetFromSearchSelectorMenuTest() {
         searchScreen {
             clickSearchSelectorButton()
         }.clickSearchEngineSettings {
@@ -247,7 +247,7 @@ class ComposeSearchTest {
     }
 
     @Test
-    fun clearSearchTest() {
+    fun verifyClearSearchButtonTest() {
         homeScreen {
         }.openSearch {
             typeSearch(queryString)
@@ -259,7 +259,7 @@ class ComposeSearchTest {
     @Ignore("Test run timing out: https://github.com/mozilla-mobile/fenix/issues/27704")
     @SmokeTest
     @Test
-    fun searchGroupShowsInRecentlyVisitedTest() {
+    fun searchResultsOpenedInNewTabsGenerateSearchGroupsTest() {
         val searchEngineName = "TestSearchEngine"
         // setting our custom mockWebServer search URL
         setCustomSearchEngine(searchMockServer, searchEngineName)
@@ -286,7 +286,7 @@ class ComposeSearchTest {
 
     @Ignore("Test run timing out: https://github.com/mozilla-mobile/fenix/issues/27704")
     @Test
-    fun verifySearchGroupHistoryWithNoDuplicatesTest() {
+    fun verifyAPageIsAddedToASearchGroupOnlyOnceTest() {
         val firstPageUrl = TestAssetHelper.getGenericAsset(searchMockServer, 1).url
         val secondPageUrl = TestAssetHelper.getGenericAsset(searchMockServer, 2).url
         val originPageUrl =
@@ -331,7 +331,7 @@ class ComposeSearchTest {
 
     @Ignore("Failing due to known bug, see https://github.com/mozilla-mobile/fenix/issues/23818")
     @Test
-    fun searchGroupGeneratedInTheSameTabTest() {
+    fun searchGroupIsGeneratedWhenNavigatingInTheSameTabTest() {
         // setting our custom mockWebServer search URL
         val searchEngineName = "TestSearchEngine"
         setCustomSearchEngine(searchMockServer, searchEngineName)
@@ -354,7 +354,7 @@ class ComposeSearchTest {
 
     @SmokeTest
     @Test
-    fun noSearchGroupFromPrivateBrowsingTest() {
+    fun searchGroupIsNotGeneratedForLinksOpenedInPrivateTabsTest() {
         // setting our custom mockWebServer search URL
         val searchEngineName = "TestSearchEngine"
         setCustomSearchEngine(searchMockServer, searchEngineName)
@@ -386,7 +386,7 @@ class ComposeSearchTest {
     @Ignore("Test run timing out: https://github.com/mozilla-mobile/fenix/issues/27704")
     @SmokeTest
     @Test
-    fun deleteItemsFromSearchGroupHistoryTest() {
+    fun deleteIndividualHistoryItemsFromSearchGroupTest() {
         val firstPageUrl = TestAssetHelper.getGenericAsset(searchMockServer, 1).url
         val secondPageUrl = TestAssetHelper.getGenericAsset(searchMockServer, 2).url
         // setting our custom mockWebServer search URL
@@ -427,7 +427,7 @@ class ComposeSearchTest {
 
     @Ignore("Test run timing out: https://github.com/mozilla-mobile/fenix/issues/27704")
     @Test
-    fun deleteSearchGroupFromHistoryTest() {
+    fun deleteSearchGroupFromHomeScreenTest() {
         val firstPageUrl = TestAssetHelper.getGenericAsset(searchMockServer, 1).url
         // setting our custom mockWebServer search URL
         val searchEngineName = "TestSearchEngine"
@@ -467,7 +467,7 @@ class ComposeSearchTest {
 
     @Ignore("Test run timing out: https://github.com/mozilla-mobile/fenix/issues/27704")
     @Test
-    fun reopenTabsFromSearchGroupTest() {
+    fun openAPageFromHomeScreenSearchGroupTest() {
         val firstPageUrl = TestAssetHelper.getGenericAsset(searchMockServer, 1).url
         val secondPageUrl = TestAssetHelper.getGenericAsset(searchMockServer, 2).url
 
@@ -515,7 +515,7 @@ class ComposeSearchTest {
 
     @Ignore("Test run timing out: https://github.com/mozilla-mobile/fenix/issues/27704")
     @Test
-    fun sharePageFromASearchGroupTest() {
+    fun shareAPageFromHomeScreenSearchGroupTest() {
         val firstPageUrl = TestAssetHelper.getGenericAsset(searchMockServer, 1).url
         // setting our custom mockWebServer search URL
         val searchEngineName = "TestSearchEngine"
@@ -628,9 +628,10 @@ class ComposeSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1850517
     // Test that verifies the Firefox Suggest results in a general search context
     @Test
-    fun firefoxSuggestHeaderForBrowsingDataSuggestionsTest() {
+    fun verifyFirefoxSuggestHeaderForBrowsingDataSuggestionsTest() {
         val firstPage = TestAssetHelper.getGenericAsset(searchMockServer, 1)
         val secondPage = TestAssetHelper.getGenericAsset(searchMockServer, 2)
 
@@ -652,8 +653,9 @@ class ComposeSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2154197
     @Test
-    fun verifySearchTabsItemsTest() {
+    fun verifyTabsSearchItemsTest() {
         navigationToolbar {
         }.clickUrlbar {
             clickSearchSelectorButton()
@@ -665,8 +667,9 @@ class ComposeSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2154198
     @Test
-    fun verifySearchTabsWithoutOpenTabsTest() {
+    fun verifyTabsSearchWithoutOpenTabsTest() {
         navigationToolbar {
         }.clickUrlbar {
             clickSearchSelectorButton()
@@ -678,9 +681,10 @@ class ComposeSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2154199
     @SmokeTest
     @Test
-    fun verifySearchTabsWithOpenTabsTest() {
+    fun verifyTabsSearchWithOpenTabsTest() {
         val firstPageUrl = TestAssetHelper.getGenericAsset(searchMockServer, 1)
         val secondPageUrl = TestAssetHelper.getGenericAsset(searchMockServer, 2)
 
@@ -713,8 +717,9 @@ class ComposeSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2154203
     @Test
-    fun verifySearchForBookmarksUITest() {
+    fun verifyBookmarksSearchItemsTest() {
         navigationToolbar {
         }.clickSearchSelectorButton {
             selectTemporarySearchMethod("Bookmarks")
@@ -725,8 +730,9 @@ class ComposeSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2154204
     @Test
-    fun bookmarkSearchWithNoBookmarksTest() {
+    fun verifyBookmarkSearchWithNoBookmarksTest() {
         navigationToolbar {
         }.clickSearchSelectorButton {
             selectTemporarySearchMethod("Bookmarks")
@@ -735,8 +741,9 @@ class ComposeSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2154206
     @Test
-    fun bookmarkSearchWhenBookmarksExistTest() {
+    fun verifyBookmarksSearchForBookmarkedItemsTest() {
         createBookmarkItem(url = "https://bookmarktest1.com", title = "Test1", position = 1u)
         createBookmarkItem(url = "https://bookmarktest2.com", title = "Test2", position = 2u)
 
@@ -762,8 +769,9 @@ class ComposeSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2154212
     @Test
-    fun verifySearchHistoryItemsTest() {
+    fun verifyHistorySearchItemsTest() {
         navigationToolbar {
         }.clickUrlbar {
             clickSearchSelectorButton()
@@ -775,8 +783,9 @@ class ComposeSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2154213
     @Test
-    fun verifySearchHistoryWithoutBrowsingDataTest() {
+    fun verifyHistorySearchWithoutBrowsingHistoryTest() {
         navigationToolbar {
         }.clickUrlbar {
             clickSearchSelectorButton()

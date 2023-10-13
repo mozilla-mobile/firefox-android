@@ -1,75 +1,56 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.shopping.middleware
 
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
+import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.support.test.ext.joinBlocking
 import mozilla.components.support.test.libstate.ext.waitUntilIdle
-import mozilla.components.support.test.rule.MainCoroutineRule
 import org.junit.Assert.assertEquals
-import org.junit.Rule
+import org.junit.Before
 import org.junit.Test
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckAction
-import org.mozilla.fenix.shopping.store.ReviewQualityCheckState
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckStore
 
 class ReviewQualityCheckNavigationMiddlewareTest {
 
-    @get:Rule
-    val coroutinesTestRule = MainCoroutineRule()
-    private val dispatcher = coroutinesTestRule.testDispatcher
-    private val scope = coroutinesTestRule.scope
+    private val sumoUrl = "https://support.mozilla.org/en-US/products/mobile"
+    private lateinit var store: ReviewQualityCheckStore
+    private lateinit var browserStore: BrowserStore
+    private lateinit var addTabUseCase: TabsUseCases.SelectOrAddUseCase
+    private lateinit var middleware: ReviewQualityCheckNavigationMiddleware
 
-    @Test
-    fun `WHEN opening an external link THEN the link should be opened in a new tab`() {
-        var isOpenedInSelectedTab = false
-        var isOpenedInNewTab = false
-        val store = ReviewQualityCheckStore(
-            middleware = listOf(
-                ReviewQualityCheckNavigationMiddleware(
-                    openLink = { _, openInNewTab ->
-                        if (openInNewTab) {
-                            isOpenedInNewTab = true
-                        } else {
-                            isOpenedInSelectedTab = true
-                        }
-                    },
-                    scope = scope,
-                ),
-            ),
+    @Before
+    fun setup() {
+        browserStore = BrowserStore()
+        addTabUseCase = mockk(relaxed = true)
+        middleware = ReviewQualityCheckNavigationMiddleware(
+            selectOrAddUseCase = addTabUseCase,
+            getReviewQualityCheckSumoUrl = mockk {
+                every { this@mockk.invoke() } returns sumoUrl
+            },
         )
-        store.waitUntilIdle()
-        dispatcher.scheduler.advanceUntilIdle()
-
-        store.dispatch(ReviewQualityCheckAction.OpenLink(ReviewQualityCheckState.LinkType.ExternalLink("www.mozilla.com"))).joinBlocking()
-        store.waitUntilIdle()
-
-        assertEquals(true, isOpenedInNewTab)
-        assertEquals(false, isOpenedInSelectedTab)
+        store = ReviewQualityCheckStore(
+            middleware = listOf(middleware),
+        )
     }
 
     @Test
-    fun `WHEN re-analzying a product THEN the link should be opened in the currently selected tab`() {
-        var isOpenedInSelectedTab = false
-        var isOpenedInNewTab = false
-        val store = ReviewQualityCheckStore(
-            middleware = listOf(
-                ReviewQualityCheckNavigationMiddleware(
-                    openLink = { _, openInNewTab ->
-                        if (openInNewTab) {
-                            isOpenedInNewTab = true
-                        } else {
-                            isOpenedInSelectedTab = true
-                        }
-                    },
-                    scope = scope,
-                ),
-            ),
-        )
+    fun `WHEN opening an external link THEN the link should be opened in a new tab`() {
+        val action = ReviewQualityCheckAction.OpenExplainerLearnMoreLink
         store.waitUntilIdle()
-        dispatcher.scheduler.advanceUntilIdle()
+        assertEquals(0, browserStore.state.tabs.size)
 
-        store.dispatch(ReviewQualityCheckAction.OpenLink(ReviewQualityCheckState.LinkType.AnalyzeLink("www.mozilla.com"))).joinBlocking()
+        store.dispatch(action).joinBlocking()
         store.waitUntilIdle()
 
-        assertEquals(true, isOpenedInSelectedTab)
-        assertEquals(false, isOpenedInNewTab)
+        verify {
+            addTabUseCase.invoke(sumoUrl)
+        }
     }
 }

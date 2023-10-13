@@ -27,7 +27,6 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 
 internal const val API_VERSION = "api/v4"
@@ -68,10 +67,6 @@ class AMOAddonsProvider(
     private val sortOption: SortOption = SortOption.POPULARITY_DESC,
     private val maxCacheAgeInMinutes: Long = -1,
 ) : AddonsProvider {
-
-    // This map acts as an in-memory cache for the installed add-ons.
-    @VisibleForTesting
-    internal val installedAddons = ConcurrentHashMap<String, Addon>()
 
     private val logger = Logger("AMOAddonsProvider")
 
@@ -137,77 +132,6 @@ class AMOAddonsProvider(
             }
             throw e
         }
-    }
-
-    /**
-     * Interacts with the search endpoint to provide a list of add-ons for a given list of GUIDs.
-     *
-     * See: https://addons-server.readthedocs.io/en/latest/topics/api/addons.html#search
-     *
-     * @param guids list of add-on GUIDs to retrieve.
-     * @param allowCache whether or not the result may be provided from a previously cached response,
-     * defaults to true.
-     * @param readTimeoutInSeconds optional timeout in seconds to use when fetching available
-     * add-ons from a remote endpoint. If not specified [DEFAULT_READ_TIMEOUT_IN_SECONDS] will
-     * be used.
-     * @param language indicates in which language the translatable fields should be in, if no
-     * matching language is found then a fallback translation is returned using the default
-     * language. When it is null all translations available will be returned.
-     * @throws IOException if the request failed, or could not be executed due to cancellation,
-     * a connectivity problem or a timeout.
-     */
-    @Throws(IOException::class)
-    @Suppress("NestedBlockDepth")
-    override suspend fun getAddonsByGUIDs(
-        guids: List<String>,
-        allowCache: Boolean,
-        readTimeoutInSeconds: Long?,
-        language: String?,
-    ): List<Addon> {
-        if (guids.isEmpty()) {
-            logger.warn("Attempted to retrieve add-ons with an empty list of GUIDs")
-            return emptyList()
-        }
-
-        if (allowCache && installedAddons.isNotEmpty()) {
-            val cachedAddons = installedAddons.findAddonsBy(guids, language ?: Locale.getDefault().language)
-            // We should only return the cached add-ons when all the requested
-            // GUIDs have been found in the cache.
-            if (cachedAddons.size == guids.size) {
-                return cachedAddons
-            }
-        }
-
-        val langParam = if (!language.isNullOrEmpty()) {
-            "&lang=$language"
-        } else {
-            ""
-        }
-
-        client.fetch(
-            Request(
-                url = "$serverURL/$API_VERSION/addons/search/?guid=${guids.joinToString(",")}" + langParam,
-                readTimeout = Pair(readTimeoutInSeconds ?: DEFAULT_READ_TIMEOUT_IN_SECONDS, TimeUnit.SECONDS),
-            ),
-        )
-            .use { response ->
-                if (response.isSuccess) {
-                    val responseBody = response.body.string(Charsets.UTF_8)
-                    return try {
-                        val addons = JSONObject(responseBody).getAddonsFromSearchResults(language)
-                        addons.forEach {
-                            installedAddons[it.id] = it
-                        }
-                        addons
-                    } catch (e: JSONException) {
-                        throw IOException(e)
-                    }
-                } else {
-                    val errorMessage = "Failed to get add-ons by GUIDs. Status code: ${response.status}"
-                    logger.error(errorMessage)
-                    throw IOException(errorMessage)
-                }
-            }
     }
 
     private fun fetchFeaturedAddons(readTimeoutInSeconds: Long?, language: String?): List<Addon> {
@@ -413,18 +337,15 @@ internal fun JSONObject.getAddonsFromCollection(language: String? = null): List<
 
 internal fun JSONObject.toAddon(language: String? = null): Addon {
     return with(this) {
-        val download = getDownload()
         val safeLanguage = language?.lowercase(Locale.getDefault())
         val summary = getSafeTranslations("summary", safeLanguage)
         val isLanguageInTranslations = summary.containsKey(safeLanguage)
         Addon(
             id = getSafeString("guid"),
-            authors = getAuthors(),
-            categories = getCategories(),
+            author = getAuthor(),
             createdAt = getSafeString("created"),
-            updatedAt = getSafeString("last_updated"),
-            downloadId = download?.getDownloadId() ?: "",
-            downloadUrl = download?.getDownloadUrl() ?: "",
+            updatedAt = getCurrentVersionCreated(),
+            downloadUrl = getDownloadUrl(),
             version = getCurrentVersion(),
             permissions = getPermissions(),
             translatableName = getSafeTranslations("name", safeLanguage),
@@ -433,6 +354,7 @@ internal fun JSONObject.toAddon(language: String? = null): Addon {
             iconUrl = getSafeString("icon_url"),
             siteUrl = getSafeString("url"),
             rating = getRating(),
+            ratingUrl = getSafeString("ratings_url"),
             defaultLocale = (
                 if (!safeLanguage.isNullOrEmpty() && isLanguageInTranslations) {
                     safeLanguage
@@ -456,60 +378,44 @@ internal fun JSONObject.getRating(): Addon.Rating? {
     }
 }
 
-internal fun JSONObject.getCategories(): List<String> {
-    val jsonCategories = optJSONObject("categories")
-    return if (jsonCategories == null) {
-        emptyList()
-    } else {
-        val jsonAndroidCategories = jsonCategories.getSafeJSONArray("android")
-        (0 until jsonAndroidCategories.length()).map { index ->
-            jsonAndroidCategories.getString(index)
-        }
-    }
-}
-
 internal fun JSONObject.getPermissions(): List<String> {
-    val fileJson = getJSONObject("current_version")
-        .getSafeJSONArray("files")
-        .getJSONObject(0)
-
-    val permissionsJson = fileJson.getSafeJSONArray("permissions")
+    val permissionsJson = getFile()?.getSafeJSONArray("permissions") ?: JSONArray()
     return (0 until permissionsJson.length()).map { index ->
         permissionsJson.getString(index)
     }
 }
 
 internal fun JSONObject.getCurrentVersion(): String {
-    return optJSONObject("current_version")?.getSafeString("version") ?: ""
+    return getJSONObject("current_version").getSafeString("version")
 }
 
-internal fun JSONObject.getDownload(): JSONObject? {
-    return (
-        getJSONObject("current_version")
-            .optJSONArray("files")
-            ?.getJSONObject(0)
-        )
+internal fun JSONObject.getFile(): JSONObject? {
+    return getJSONObject("current_version")
+        .getSafeJSONArray("files")
+        .optJSONObject(0)
 }
 
-internal fun JSONObject.getDownloadId(): String {
-    return getSafeString("id")
+internal fun JSONObject.getCurrentVersionCreated(): String {
+    // We want to return: `current_version.files[0].created`.
+    return getFile()?.getSafeString("created").orEmpty()
 }
 
 internal fun JSONObject.getDownloadUrl(): String {
-    return getSafeString("url")
+    return getFile()?.getSafeString("url").orEmpty()
 }
 
-internal fun JSONObject.getAuthors(): List<Addon.Author> {
+internal fun JSONObject.getAuthor(): Addon.Author? {
     val authorsJson = getSafeJSONArray("authors")
-    return (0 until authorsJson.length()).map { index ->
-        val authorJson = authorsJson.getJSONObject(index)
+    // We only consider the first author in the AMO API response, mainly because Gecko does the same.
+    val authorJson = authorsJson.optJSONObject(0)
 
+    return if (authorJson != null) {
         Addon.Author(
-            id = authorJson.getSafeString("id"),
             name = authorJson.getSafeString("name"),
-            username = authorJson.getSafeString("username"),
             url = authorJson.getSafeString("url"),
         )
+    } else {
+        null
     }
 }
 

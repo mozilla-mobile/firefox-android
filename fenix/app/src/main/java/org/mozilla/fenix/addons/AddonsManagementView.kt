@@ -7,7 +7,6 @@ package org.mozilla.fenix.addons
 import androidx.navigation.NavController
 import mozilla.components.feature.addons.Addon
 import mozilla.components.feature.addons.ui.AddonsManagerAdapterDelegate
-import org.mozilla.fenix.Config
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.navigateSafe
 
@@ -18,6 +17,7 @@ class AddonsManagementView(
     private val navController: NavController,
     private val onInstallButtonClicked: (Addon) -> Unit,
     private val onMoreAddonsButtonClicked: () -> Unit,
+    private val onLearnMoreClicked: (link: AddonsManagerAdapterDelegate.LearnMoreLinks, addon: Addon) -> Unit,
 ) : AddonsManagerAdapterDelegate {
 
     override fun onAddonItemClicked(addon: Addon) {
@@ -36,12 +36,14 @@ class AddonsManagementView(
         showNotYetSupportedAddonFragment(unsupportedAddons)
     }
 
-    override fun shouldShowFindMoreAddonsButton(): Boolean {
-        return !Config.channel.isRelease
-    }
+    override fun shouldShowFindMoreAddonsButton(): Boolean = true
 
     override fun onFindMoreAddonsButtonClicked() {
         onMoreAddonsButtonClicked()
+    }
+
+    override fun onLearnMoreLinkClicked(link: AddonsManagerAdapterDelegate.LearnMoreLinks, addon: Addon) {
+        onLearnMoreClicked(link, addon)
     }
 
     private fun showInstalledAddonDetailsFragment(addon: Addon) {

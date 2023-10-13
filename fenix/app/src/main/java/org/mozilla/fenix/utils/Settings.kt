@@ -61,7 +61,8 @@ private const val AUTOPLAY_USER_SETTING = "AUTOPLAY_USER_SETTING"
 
 /**
  * A simple wrapper for SharedPreferences that makes reading preference a little bit easier.
- * @param appContext Reference to application context.
+ *
+ * @property appContext Reference to application context.
  */
 @Suppress("LargeClass", "TooManyFunctions")
 class Settings(private val appContext: Context) : PreferencesHolder {
@@ -1724,6 +1725,14 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var shouldShowReviewQualityCheckCFR by booleanPreference(
         key = appContext.getPreferenceKey(R.string.pref_key_should_show_review_quality_cfr),
         default = true,
+    )
+
+    /**
+     * Time in milliseconds when the user was first presented the review quality check feature CFR.
+     */
+    var reviewQualityCheckCfrDisplayTimeInMillis by longPreference(
+        appContext.getPreferenceKey(R.string.pref_key_should_show_review_quality_cfr_displayed_time),
+        default = 0L,
     )
 
     /**

@@ -15,6 +15,7 @@ import org.mozilla.fenix.shopping.ProductAnalysisTestData
 import org.mozilla.fenix.shopping.fake.FakeNetworkChecker
 import org.mozilla.fenix.shopping.fake.FakeReviewQualityCheckPreferences
 import org.mozilla.fenix.shopping.fake.FakeReviewQualityCheckService
+import org.mozilla.fenix.shopping.fake.FakeReviewQualityCheckVendorsService
 import org.mozilla.fenix.shopping.middleware.AnalysisStatusDto
 import org.mozilla.fenix.shopping.middleware.NetworkChecker
 import org.mozilla.fenix.shopping.middleware.ReviewQualityCheckNetworkMiddleware
@@ -22,6 +23,7 @@ import org.mozilla.fenix.shopping.middleware.ReviewQualityCheckPreferences
 import org.mozilla.fenix.shopping.middleware.ReviewQualityCheckPreferencesMiddleware
 import org.mozilla.fenix.shopping.middleware.ReviewQualityCheckService
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent.AnalysisStatus
+import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.ProductVendor
 
 class ReviewQualityCheckStoreTest {
 
@@ -39,13 +41,26 @@ class ReviewQualityCheckStoreTest {
                         isEnabled = false,
                         isProductRecommendationsEnabled = false,
                     ),
+                    reviewQualityCheckVendorsService = FakeReviewQualityCheckVendorsService(
+                        productVendors = listOf(
+                            ProductVendor.BEST_BUY,
+                            ProductVendor.AMAZON,
+                            ProductVendor.WALMART,
+                        ),
+                    ),
                 ),
             )
             tested.waitUntilIdle()
             dispatcher.scheduler.advanceUntilIdle()
             tested.waitUntilIdle()
 
-            val expected = ReviewQualityCheckState.NotOptedIn
+            val expected = ReviewQualityCheckState.NotOptedIn(
+                productVendors = listOf(
+                    ProductVendor.BEST_BUY,
+                    ProductVendor.AMAZON,
+                    ProductVendor.WALMART,
+                ),
+            )
             assertEquals(expected, tested.state)
         }
 
@@ -68,7 +83,10 @@ class ReviewQualityCheckStoreTest {
             tested.waitUntilIdle()
             dispatcher.scheduler.advanceUntilIdle()
 
-            val expected = ReviewQualityCheckState.OptedIn(productRecommendationsPreference = false)
+            val expected = ReviewQualityCheckState.OptedIn(
+                productRecommendationsPreference = false,
+                productVendor = ProductVendor.BEST_BUY,
+            )
             assertEquals(expected, tested.state)
             assertEquals(true, cfrConditionUpdated)
         }
@@ -90,7 +108,7 @@ class ReviewQualityCheckStoreTest {
             tested.waitUntilIdle()
             dispatcher.scheduler.advanceUntilIdle()
 
-            val expected = ReviewQualityCheckState.NotOptedIn
+            val expected = ReviewQualityCheckState.NotOptedIn()
             assertEquals(expected, tested.state)
         }
 
@@ -109,7 +127,10 @@ class ReviewQualityCheckStoreTest {
             dispatcher.scheduler.advanceUntilIdle()
             tested.waitUntilIdle()
 
-            val expected = ReviewQualityCheckState.OptedIn(productRecommendationsPreference = null)
+            val expected = ReviewQualityCheckState.OptedIn(
+                productRecommendationsPreference = null,
+                productVendor = ProductVendor.BEST_BUY,
+            )
             assertEquals(expected, tested.state)
 
             // Even if toggle action is dispatched, state is not changed
@@ -135,7 +156,10 @@ class ReviewQualityCheckStoreTest {
             tested.waitUntilIdle()
             dispatcher.scheduler.advanceUntilIdle()
 
-            val expected = ReviewQualityCheckState.OptedIn(productRecommendationsPreference = true)
+            val expected = ReviewQualityCheckState.OptedIn(
+                productRecommendationsPreference = true,
+                productVendor = ProductVendor.BEST_BUY,
+            )
             assertEquals(expected, tested.state)
         }
 
@@ -156,7 +180,10 @@ class ReviewQualityCheckStoreTest {
             tested.waitUntilIdle()
             dispatcher.scheduler.advanceUntilIdle()
 
-            val expected = ReviewQualityCheckState.OptedIn(productRecommendationsPreference = false)
+            val expected = ReviewQualityCheckState.OptedIn(
+                productRecommendationsPreference = false,
+                productVendor = ProductVendor.BEST_BUY,
+            )
             assertEquals(expected, tested.state)
         }
 
@@ -182,6 +209,7 @@ class ReviewQualityCheckStoreTest {
             val expected = ReviewQualityCheckState.OptedIn(
                 productReviewState = ProductAnalysisTestData.analysisPresent(),
                 productRecommendationsPreference = false,
+                productVendor = ProductVendor.BEST_BUY,
             )
             assertEquals(expected, tested.state)
         }
@@ -206,6 +234,7 @@ class ReviewQualityCheckStoreTest {
             val expected = ReviewQualityCheckState.OptedIn(
                 productReviewState = ReviewQualityCheckState.OptedIn.ProductReviewState.Error.GenericError,
                 productRecommendationsPreference = false,
+                productVendor = ProductVendor.BEST_BUY,
             )
             assertEquals(expected, tested.state)
         }
@@ -230,6 +259,7 @@ class ReviewQualityCheckStoreTest {
             val expected = ReviewQualityCheckState.OptedIn(
                 productReviewState = ReviewQualityCheckState.OptedIn.ProductReviewState.Error.NetworkError,
                 productRecommendationsPreference = false,
+                productVendor = ProductVendor.BEST_BUY,
             )
             assertEquals(expected, tested.state)
         }
@@ -256,6 +286,7 @@ class ReviewQualityCheckStoreTest {
             val expected = ReviewQualityCheckState.OptedIn(
                 productReviewState = ReviewQualityCheckState.OptedIn.ProductReviewState.Error.GenericError,
                 productRecommendationsPreference = false,
+                productVendor = ProductVendor.BEST_BUY,
             )
             assertEquals(expected, tested.state)
         }
@@ -298,6 +329,7 @@ class ReviewQualityCheckStoreTest {
                     analysisStatus = AnalysisStatus.NEEDS_ANALYSIS,
                 ),
                 productRecommendationsPreference = false,
+                productVendor = ProductVendor.BEST_BUY,
             )
             assertEquals(expected, tested.state)
         }
@@ -326,34 +358,28 @@ class ReviewQualityCheckStoreTest {
             val expected = ReviewQualityCheckState.OptedIn(
                 productReviewState = ProductAnalysisTestData.analysisPresent(),
                 productRecommendationsPreference = false,
+                productVendor = ProductVendor.BEST_BUY,
             )
             assertEquals(expected, tested.state)
         }
 
     private fun provideReviewQualityCheckMiddleware(
-        reviewQualityCheckPreferences: ReviewQualityCheckPreferences,
-        reviewQualityCheckService: ReviewQualityCheckService? = null,
-        networkChecker: NetworkChecker? = null,
+        reviewQualityCheckPreferences: ReviewQualityCheckPreferences = FakeReviewQualityCheckPreferences(),
+        reviewQualityCheckVendorsService: FakeReviewQualityCheckVendorsService = FakeReviewQualityCheckVendorsService(),
+        reviewQualityCheckService: ReviewQualityCheckService = FakeReviewQualityCheckService(),
+        networkChecker: NetworkChecker = FakeNetworkChecker(),
     ): List<ReviewQualityCheckMiddleware> {
-        return if (reviewQualityCheckService != null && networkChecker != null) {
-            listOf(
-                ReviewQualityCheckPreferencesMiddleware(
-                    reviewQualityCheckPreferences = reviewQualityCheckPreferences,
-                    scope = this.scope,
-                ),
-                ReviewQualityCheckNetworkMiddleware(
-                    reviewQualityCheckService = reviewQualityCheckService,
-                    networkChecker = networkChecker,
-                    scope = this.scope,
-                ),
-            )
-        } else {
-            listOf(
-                ReviewQualityCheckPreferencesMiddleware(
-                    reviewQualityCheckPreferences = reviewQualityCheckPreferences,
-                    scope = this.scope,
-                ),
-            )
-        }
+        return listOf(
+            ReviewQualityCheckPreferencesMiddleware(
+                reviewQualityCheckPreferences = reviewQualityCheckPreferences,
+                reviewQualityCheckVendorsService = reviewQualityCheckVendorsService,
+                scope = this.scope,
+            ),
+            ReviewQualityCheckNetworkMiddleware(
+                reviewQualityCheckService = reviewQualityCheckService,
+                networkChecker = networkChecker,
+                scope = this.scope,
+            ),
+        )
     }
 }
