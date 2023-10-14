@@ -59,6 +59,11 @@ class WebURLFinderTest {
         )
         assertEquals("http://ß.de/", find("http://ß.de/ çnn.çơḿ"))
         assertEquals("htt-p://ß.de/", find("çnn.çơḿ htt-p://ß.de/"))
+        assertEquals(
+            "http://[2001:db8::1.2.3.4]:8080/inner#anchor&arg=1",
+            find("test.com http://[2001:db8::1.2.3.4]:8080/inner#anchor&arg=1"),
+        )
+        assertEquals("http://[::]", find("test.com http://[::]"))
     }
 
     @Test
@@ -68,6 +73,9 @@ class WebURLFinderTest {
         assertEquals("n-oscheme.com", find("n-oscheme.com example.com"))
         assertEquals("n-oscheme.com", find("----------n-oscheme.com "))
         assertEquals("n-oscheme.ç", find("----------n-oscheme.ç-----------------------"))
+
+        // We would ideally test "[::] example.com" here, but java.net.URI
+        // doesn't seem to accept IPv6 literals without a scheme.
     }
 
     @Test
