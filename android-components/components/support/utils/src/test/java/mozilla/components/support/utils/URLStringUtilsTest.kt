@@ -88,6 +88,18 @@ class URLStringUtilsTest {
         assertFalse(isURLLike("www.c-c-  "))
         assertFalse(isURLLike("3-3 "))
 
+        // IPv6 literals
+        assertTrue(isURLLike("[::]"))
+        assertTrue(isURLLike("[::1]"))
+        assertTrue(isURLLike("[1::]"))
+        assertTrue(isURLLike("[::]/"))
+        assertTrue(isURLLike("https:[::]"))
+        assertTrue(isURLLike("https://[::]"))
+        assertTrue(isURLLike("https://[::1]"))
+        assertTrue(isURLLike("https://[1::]"))
+        assertTrue(isURLLike("https://[2001:db8::1.2.3.4]/"))
+        assertTrue(isURLLike("[2001:db8::1.2.3.4]/"))
+
         // Examples from issues
         assertTrue(isURLLike("https://abc--cba.com/")) // #7096
     }
