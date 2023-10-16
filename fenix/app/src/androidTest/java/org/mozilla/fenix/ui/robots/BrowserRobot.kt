@@ -55,6 +55,7 @@ import org.mozilla.fenix.helpers.SessionLoadedIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeLong
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
+import org.mozilla.fenix.helpers.TestHelper.appName
 import org.mozilla.fenix.helpers.TestHelper.getStringResource
 import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.packageName
@@ -427,6 +428,12 @@ class BrowserRobot {
 
     fun changeCreditCardExpiryDate(expiryDate: String) =
         itemWithResId("expiryMonthAndYear").setText(expiryDate)
+
+    fun clickCreditCardNumberTextBox() {
+        mDevice.wait(Until.findObject(By.res("cardNumber")), waitingTime)
+        mDevice.findObject(By.res("cardNumber")).click()
+        mDevice.waitForWindowUpdate(appName, waitingTimeShort)
+    }
 
     fun clickCreditCardFormSubmitButton() =
         itemWithResId("submit").clickAndWaitForNewWindow(waitingTime)
@@ -1103,14 +1110,6 @@ class BrowserRobot {
 
             ComposeTabDrawerRobot(composeTestRule).interact()
             return ComposeTabDrawerRobot.Transition(composeTestRule)
-        }
-
-        fun openTabButtonShortcutsMenu(interact: NavigationToolbarRobot.() -> Unit): NavigationToolbarRobot.Transition {
-            mDevice.waitNotNull(Until.findObject(By.desc("Tabs")))
-            tabsCounter().click(LONG_CLICK_DURATION)
-
-            NavigationToolbarRobot().interact()
-            return NavigationToolbarRobot.Transition()
         }
 
         fun openNotificationShade(interact: NotificationRobot.() -> Unit): NotificationRobot.Transition {
