@@ -50,9 +50,7 @@ class IconDiskCache :
     private val iconDataCacheWriteLock = Any()
 
     override fun getResources(context: Context, request: IconRequest): List<IconRequest.Resource> {
-        val key = createKey(request.url)
-        val snapshot: DiskLruCache.Snapshot = getIconResourcesCache(context).get(key)
-            ?: return emptyList()
+        val snapshot = getIconResourcesCache(context).get(request.key()) ?: return emptyList()
 
         try {
             val data = snapshot.getInputStream(0).use {
@@ -72,9 +70,7 @@ class IconDiskCache :
     override fun putResources(context: Context, request: IconRequest) {
         try {
             synchronized(iconResourcesCacheWriteLock) {
-                val key = createKey(request.url)
-                val editor = getIconResourcesCache(context)
-                    .edit(key) ?: return
+                val editor = getIconResourcesCache(context).edit(request.key()) ?: return
 
                 val data = request.resources.toJSON().toString()
                 editor.set(0, data)
@@ -93,10 +89,7 @@ class IconDiskCache :
     }
 
     override fun getIconData(context: Context, resource: IconRequest.Resource): ByteArray? {
-        val key = createKey(resource.url)
-
-        val snapshot = getIconDataCache(context).get(key)
-            ?: return null
+        val snapshot = getIconDataCache(context).get(resource.key()) ?: return null
 
         return try {
             snapshot.getInputStream(0).use {
@@ -117,8 +110,7 @@ class IconDiskCache :
         }
         try {
             synchronized(iconDataCacheWriteLock) {
-                val editor = getIconDataCache(context)
-                    .edit(createKey(resource.url)) ?: return
+                val editor = getIconDataCache(context).edit(resource.key()) ?: return
 
                 editor.newOutputStream(0).use { stream ->
                     bitmap.compress(compressFormat, WEBP_QUALITY, stream)
@@ -184,6 +176,12 @@ class IconDiskCache :
 }
 
 /**
- * Attempts to create a consistent key for the host with the given [url].
+ * The [IconRequest] key should try to use the URL host to cover cases where requests have trailing
+ * URL data.
  */
-private fun createKey(url: String): String = Uri.parse(url).host?.sha1() ?: url.sha1()
+private fun IconRequest.key() = Uri.parse(url).host?.sha1() ?: url.sha1()
+
+/**
+ * The [IconRequest.Resource] key should be URL specific.
+ */
+private fun IconRequest.Resource.key() = url.sha1()

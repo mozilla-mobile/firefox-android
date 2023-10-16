@@ -26,7 +26,7 @@ import java.io.OutputStream
 class IconDiskCacheTest {
 
     @Test
-    fun `GIVEN read & write request URLs are the same THEN getResources returns the written resource`() {
+    fun `GIVEN read & write Request URLs are the same THEN getResources returns the Request Resources`() {
         val cache = IconDiskCache()
 
         val resources = listOf(
@@ -58,7 +58,7 @@ class IconDiskCacheTest {
     }
 
     @Test
-    fun `GIVEN read & write request URLs are different with same host THEN getResources returns the written resource`() {
+    fun `GIVEN read & write Request URLs are different with same host THEN getResources returns the Request Resources`() {
         val cache = IconDiskCache()
 
         val resources = listOf(
@@ -93,7 +93,7 @@ class IconDiskCacheTest {
     }
 
     @Test
-    fun `GIVEN read & write request URLs are different THEN getResources returns an empty list`() {
+    fun `GIVEN read & write Request URLs are different THEN getResources returns an empty list`() {
         val cache = IconDiskCache()
 
         val resources = listOf(
@@ -125,7 +125,7 @@ class IconDiskCacheTest {
     }
 
     @Test
-    fun `GIVEN read & write request URLs are the same & no host THEN getResources returns the written resource`() {
+    fun `GIVEN read & write Request URLs are the same & no host THEN getResources returns the Request Resources`() {
         val cache = IconDiskCache()
 
         val resources = listOf(
@@ -187,7 +187,7 @@ class IconDiskCacheTest {
     }
 
     @Test
-    fun `GIVEN read & write request URLs are the same THEN getIconData returns the written resource`() {
+    fun `GIVEN read & write Resource URLs are the same THEN getIconData returns the Resource`() {
         val cache = IconDiskCache()
 
         val resource = IconRequest.Resource(
@@ -217,7 +217,7 @@ class IconDiskCacheTest {
     }
 
     @Test
-    fun `GIVEN read & write request URLs are different with same host THEN getIconData returns the written resource`() {
+    fun `GIVEN read & write Resource URLs are different with same host THEN getIconData returns null`() {
         val cache = IconDiskCache()
 
         val resource = IconRequest.Resource(
@@ -245,12 +245,11 @@ class IconDiskCacheTest {
             testContext,
             resource.copy(url = "https://www.mozilla.org/extra/icon128.png"),
         )
-        assertNotNull(data!!)
-        assertEquals("Hello World", String(data))
+        assertNull(data)
     }
 
     @Test
-    fun `GIVEN read & write request URLs are different THEN putIconBitmap returns null`() {
+    fun `GIVEN read & write Resource URLs are different THEN putIconBitmap returns null`() {
         val cache = IconDiskCache()
 
         val resource = IconRequest.Resource(
