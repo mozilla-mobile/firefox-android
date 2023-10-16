@@ -444,6 +444,23 @@ android.applicationVariants.configureEach { variant ->
         buildConfigField 'String', 'POCKET_CONSUMER_KEY', '""'
         println("--")
     }
+
+// -------------------------------------------------------------------------------------------------
+// BuildConfig: Set flag to disable LeakCanary in debug (on CI builds)
+// -------------------------------------------------------------------------------------------------
+
+    if (isDebug) {
+        if (project.hasProperty("disableLeakCanary") || gradle.hasProperty("localProperties.disableLeakCanary")) {
+            buildConfigField "boolean", "LEAKCANARY", "false"
+            println("LeakCanary enabled in debug: false")
+        } else {
+            buildConfigField "boolean", "LEAKCANARY", "true"
+            println("LeakCanary enabled in debug: true")
+        }
+    } else {
+        buildConfigField "boolean", "LEAKCANARY", "false"
+    }
+
 }
 
 // Generate Kotlin code for the Fenix Glean metrics.
@@ -657,7 +674,7 @@ dependencies {
     androidTestImplementation ComponentsDependencies.androidx_test_junit
     androidTestImplementation ComponentsDependencies.androidx_work_testing
     androidTestImplementation FenixDependencies.androidx_benchmark_junit4
-    androidTestImplementation FenixDependencies.mockwebserver
+    androidTestImplementation ComponentsDependencies.testing_mockwebserver
     testImplementation project(':support-test')
     testImplementation project(':support-test-libstate')
     testImplementation ComponentsDependencies.androidx_test_junit
