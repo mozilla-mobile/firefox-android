@@ -550,7 +550,7 @@
     <!-- Preference for developers -->
     <string name="preferences_remote_debugging">USB ਰਾਹੀਂ ਰਿਮੋਟ ਡੀਬੱਗ ਕਰਨਾ</string>
     <!-- Preference title for switch preference to show search engines -->
-    <string name="preferences_show_search_engines">ਖੋਜ ਇੰਜਣ ਵੇਖੋ</string>
+    <string name="preferences_show_search_engines" moz:RemovedIn="120" tools:ignore="UnusedResources">ਖੋਜ ਇੰਜਣ ਵੇਖੋ</string>
     <!-- Preference title for switch preference to show search suggestions -->
     <string name="preferences_show_search_suggestions">ਖੋਜ ਸੁਝਾਅ ਵੇਖਾਓ</string>
     <!-- Preference title for switch preference to show voice search button -->
@@ -682,9 +682,9 @@
 
     <!-- Add-on Installation from AMO-->
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
-    <string name="addon_not_supported_error">ਐਡ-ਆਨ ਸਹਾਇਕ ਨਹੀਂ ਹੈ</string>
+    <string name="addon_not_supported_error" moz:removedIn="120" tools:ignore="UnusedResources">ਐਡ-ਆਨ ਸਹਾਇਕ ਨਹੀਂ ਹੈ</string>
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is already installed -->
-    <string name="addon_already_installed">ਐਡ-ਆਨ ਪਹਿਲਾਂ ਹੀ ਇੰਸਟਾਲ ਹੈ</string>
+    <string name="addon_already_installed" moz:removedIn="120" tools:ignore="UnusedResources">ਐਡ-ਆਨ ਪਹਿਲਾਂ ਹੀ ਇੰਸਟਾਲ ਹੈ</string>
 
     <!-- Add-on process crash dialog to user -->
     <!-- Title of a dialog shown to the user when enough errors have occurred with addons and they need to be temporarily disabled -->
@@ -699,6 +699,8 @@
     <!-- Account Preferences -->
     <!-- Preference for managing your account via accounts.firefox.com -->
     <string name="preferences_manage_account">ਖਾਤੇ ਦਾ ਇੰਤਜ਼ਾਮ ਕਰੋ</string>
+    <!-- Summary of the preference for managing your account via accounts.firefox.com. -->
+    <string name="preferences_manage_account_summary">ਆਪਣਾ ਪਾਸਵਰਡ ਬਦਲੋ, ਡਾਟਾ ਇਕੱਤਰ ਕਰਨ ਦਾ ਇੰਤਜ਼ਾਮ ਕਰੋ ਜਾਂ ਆਪਣੇ ਖਾਤੇ ਨੂੰ ਹਟਾਓ</string>
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">ਹੁਣੇ ਸਿੰਕ ਕਰੋ</string>
     <!-- Preference category for sync -->
@@ -1962,7 +1964,7 @@
     <!-- Content description (not visible, for screen readers etc.): Title for the button to add a search engine in the action bar -->
     <string name="search_engine_add_button_content_description">ਜੋੜੋ</string>
     <!-- Content description (not visible, for screen readers etc.): Title for the button to save a search engine in the action bar -->
-    <string name="search_engine_add_custom_search_engine_edit_button_content_description">ਸੰਭਾਲੋ</string>
+    <string name="search_engine_add_custom_search_engine_edit_button_content_description" moz:RemovedIn="120" tools:ignore="UnusedResources">ਸੰਭਾਲੋ</string>
     <!-- Text for the menu button to edit a search engine -->
     <string name="search_engine_edit">ਸੋਧੋ</string>
     <!-- Text for the menu button to delete a search engine -->
@@ -2211,7 +2213,9 @@
 
     <!-- Review quality check feature-->
     <!-- Name for the review quality check feature used as title for the panel. -->
-    <string name="review_quality_check_feature_name">ਰੀਵਿਊ ਚੈਕਰ</string>
+    <string name="review_quality_check_feature_name" moz:RemovedIn="120" tools:ignore="UnusedResources">ਰੀਵਿਊ ਚੈਕਰ</string>
+    <!-- Name for the review quality check feature used as title for the panel. -->
+    <string name="review_quality_check_feature_name_2">ਰੀਵਿਊ ਚੈਕਰ</string>
     <!-- Summary for grades A and B for review quality check adjusted grading. -->
     <string name="review_quality_check_grade_a_b_description">ਭਰੋਸੇਯੋਗ ਰੀਵਿਊ</string>
     <!-- Summary for grade C for review quality check adjusted grading. -->
@@ -2234,15 +2238,15 @@
     <!-- Paragraph explaining the grading system we use to classify the reliability of a product's reviews. -->
     <string name="review_quality_check_info_review_grade_header"><![CDATA[ਅਸੀਂ ਹਰ ਉਤਪਾਦ ਦੇ ਰੀਵਿਊ ਲਈ A ਤੋਂ F ਤੱਕ <b>ਅੱਖਰ ਅਧਾਰਿਤ ਦਰਜਾ</b> ਦਿੱਤਾ ਹੈ।]]></string>
     <!-- Description explaining grades A and B for review quality check adjusted grading. -->
-    <string name="review_quality_check_info_grade_info_AB" moz:RemovedIn="120" tools:ignore="UnusedResources">ਭਰੋਸੇਯੋਗ ਰੀਵਿਊ। ਅਸੀਂ ਮੰਨਦੇ ਹਾਂ ਕਿ ਰੀਵਿਊ ਅਸਲ ਗਾਹਕ ਵਲੋਂ ਹਨ, ਜਿਸ ਨੇ ਇਮਾਨਦਾਰੀ ਨਾਲ ਨਿਰਪੱਖ ਰੀਵਿਊ ਦਿੱਤੇ ਹਨ।</string>
+    <string name="review_quality_check_info_grade_info_AB">ਭਰੋਸੇਯੋਗ ਰੀਵਿਊ। ਅਸੀਂ ਮੰਨਦੇ ਹਾਂ ਕਿ ਰੀਵਿਊ ਅਸਲ ਗਾਹਕ ਵਲੋਂ ਹਨ, ਜਿਸ ਨੇ ਇਮਾਨਦਾਰੀ ਨਾਲ ਨਿਰਪੱਖ ਰੀਵਿਊ ਦਿੱਤੇ ਹਨ।</string>
     <!-- Description explaining grades A and B for review quality check adjusted grading. -->
-    <string name="review_quality_check_info_grade_info_AB_2">ਸਾਨੂੰ ਲੱਗਦਾ ਹੈ ਰੀਵਿਊ ਭਰੋਸੇਯੋਗ ਹਨ।</string>
+    <string name="review_quality_check_info_grade_info_AB_2" moz:RemovedIn="120" tools:ignore="UnusedResources">ਸਾਨੂੰ ਲੱਗਦਾ ਹੈ ਰੀਵਿਊ ਭਰੋਸੇਯੋਗ ਹਨ।</string>
     <!-- Description explaining grade C for review quality check adjusted grading. -->
     <string name="review_quality_check_info_grade_info_C">ਅਸੀਂ ਮੰਨਦੇ ਹਾਂ ਕਿ ਭਰੋਸੇਯੋਗ ਅਤੇ ਗ਼ੈਰ-ਭਰੋਸੇਯੋਗ ਰੀਵਿਊ ਰਲਵੇਂ ਰੂਪ ਵਿੱਚ ਹੁੰਦੇ ਹਨ।</string>
     <!-- Description explaining grades D and F for review quality check adjusted grading. -->
-    <string name="review_quality_check_info_grade_info_DF" moz:RemovedIn="120" tools:ignore="UnusedResources">ਗ਼ੈਰਭਰੋਸੇਯੋਗ ਰੀਵਿਊ। ਅਸੀਂ ਮੰਨਦੇ ਹਾਂ ਕਿ ਰੀਵਿਊ ਨਕਲੀ, ਫ਼ਰਜ਼ੀ ਹੋਣ ਜਾਂ ਪੱਖਪਾਤੀ ਰੀਵਿਊ ਦੇਣ ਵਾਲਿਆਂ ਵਲੋਂ ਹੋਣ ਸਕਦੇ ਹਨ।</string>
+    <string name="review_quality_check_info_grade_info_DF">ਗ਼ੈਰਭਰੋਸੇਯੋਗ ਰੀਵਿਊ। ਅਸੀਂ ਮੰਨਦੇ ਹਾਂ ਕਿ ਰੀਵਿਊ ਨਕਲੀ, ਫ਼ਰਜ਼ੀ ਹੋਣ ਜਾਂ ਪੱਖਪਾਤੀ ਰੀਵਿਊ ਦੇਣ ਵਾਲਿਆਂ ਵਲੋਂ ਹੋਣ ਸਕਦੇ ਹਨ।</string>
     <!-- Description explaining grades D and F for review quality check adjusted grading. -->
-    <string name="review_quality_check_info_grade_info_DF_2">ਸਾਨੂੰ ਲੱਗਦਾ ਹੈ ਰੀਵਿਊ ਭਰੋਸੇਯੋਗ ਨਹੀਂ ਹਨ।</string>
+    <string name="review_quality_check_info_grade_info_DF_2" moz:RemovedIn="120" tools:ignore="UnusedResources">ਸਾਨੂੰ ਲੱਗਦਾ ਹੈ ਰੀਵਿਊ ਭਰੋਸੇਯੋਗ ਨਹੀਂ ਹਨ।</string>
     <!-- Paragraph explaining how a product's adjusted grading is calculated. -->
     <string name="review_quality_check_explanation_body_adjusted_grading"><![CDATA[<b>ਅਡਜੱਸਟ ਕੀਤੀ ਰੇਟਿੰਗ</b> ਸਾਡੇ ਵਲੋਂ ਸਿਰਫ਼ ਭਰੋਸੇਯੋਗ ਮੰਨੇ ਗਏ ਰੀਵਿਊ ਦੇ ਆਧਾਰ ਉੱਤੇ ਹੈ।]]></string>
     <!-- Paragraph explaining product review highlights. First parameter is the name of the retailer (e.g. Amazon). -->
@@ -2256,7 +2260,9 @@
     <!-- Text for label for switch preference to show recommended products from review quality check settings section. -->
     <string name="review_quality_check_settings_recommended_products">ਰੀਵਿਊ ਚੈਕਰ ਵਿੱਚ ਇਸ਼ਤਿਹਾਰ ਵੇਖਾਓ</string>
     <!-- Description for switch preference to show recommended products from review quality check settings section. First parameter is for clickable text defined in review_quality_check_settings_recommended_products_learn_more.-->
-    <string name="review_quality_check_settings_recommended_products_description" tools:ignore="UnusedResources">ਤੁਸੀਂ ਕਦੇ-ਕਦਾਈ ਸੰਬੰਧਿਤ ਉਤਪਾਦਾਂ ਦੇ ਇਸ਼ਤਿਹਾਰ ਵੇਖੋਗੇ। ਸਾਰੇ ਇਸ਼ਤਿਹਾਰ ਸਾਡੇ ਰੀਵਿਊ ਕੁਆਲਟੀ ਮਿਆਰਾਂ ਤੇ ਖਰ੍ਹੇ ਉਤਰਨੇ ਚਾਹੀਦੇ ਹਨ। %s</string>
+    <string name="review_quality_check_settings_recommended_products_description" moz:RemovedIn="120" tools:ignore="UnusedResources">ਤੁਸੀਂ ਕਦੇ-ਕਦਾਈ ਸੰਬੰਧਿਤ ਉਤਪਾਦਾਂ ਦੇ ਇਸ਼ਤਿਹਾਰ ਵੇਖੋਗੇ। ਸਾਰੇ ਇਸ਼ਤਿਹਾਰ ਸਾਡੇ ਰੀਵਿਊ ਕੁਆਲਟੀ ਮਿਆਰਾਂ ਤੇ ਖਰ੍ਹੇ ਉਤਰਨੇ ਚਾਹੀਦੇ ਹਨ। %s</string>
+    <!-- Description for switch preference to show recommended products from review quality check settings section. First parameter is for clickable text defined in review_quality_check_settings_recommended_products_learn_more.-->
+    <string name="review_quality_check_settings_recommended_products_description_2" tools:ignore="UnusedResources">ਤੁਸੀਂ ਢੁੱਕਵੇਂ ਉਤਪਾਦਾਂ ਲਈ ਕਦੇ ਕਦਾਈ ਇਸ਼ਤਿਹਾਰ ਵੇਖੋਗੇ। ਅਸੀਂ ਭਰੋਸੇਯੋਗ ਉਤਪਾਦਾਂ ਲਈ ਹੀ ਇਸ਼ਤਿਹਾਰ ਦੇਵਾਂਗੇ। %s</string>
     <!-- Clickable text that links to review quality check recommended products support article. -->
     <string name="review_quality_check_settings_recommended_products_learn_more" tools:ignore="UnusedResources">ਹੋਰ ਜਾਣੋ</string>
     <!-- Text for turning sidebar off button from review quality check settings section. -->
@@ -2284,7 +2290,9 @@
     <!-- Text for the body of warning card informing the user that the current product is currently not available. -->
     <string name="review_quality_check_product_availability_warning_body" tools:ignore="UnusedResources">ਜੇ ਤੁਹਾਨੂੰ ਉਹ ਉਤਪਾਦ ਵਾਪਸ ਸਟਾਕ ਵਿੱਚ ਮਿਲੇ ਤਾਂ ਸਾਨੂੰ ਇਸ ਬਾਰੇ ਦੱਸਿਓ ਅਤੇ ਅਸੀਂ ਰੀਵਿਊ ਦੀ ਜਾਂਚ ਕਰਾਂਗੇ।</string>
     <!-- Clickable text for warning card informing the user that the current product is currently not available. Clicking this should inform the server that the product is available. -->
-    <string name="review_quality_check_product_availability_warning_action" tools:ignore="UnusedResources">ਇਸ ਉਤਪਾਦ ਦੇ ਸਟਾਕ ਵਿੱਚ ਵਾਪਸ ਹੋਣ ਦੀ ਜਾਣਕਾਰੀ ਦਿਓ</string>
+    <string name="review_quality_check_product_availability_warning_action" moz:RemovedIn="120" tools:ignore="UnusedResources">ਇਸ ਉਤਪਾਦ ਦੇ ਸਟਾਕ ਵਿੱਚ ਵਾਪਸ ਹੋਣ ਦੀ ਜਾਣਕਾਰੀ ਦਿਓ</string>
+    <!-- Clickable text for warning card informing the user that the current product is currently not available. Clicking this should inform the server that the product is available. -->
+    <string name="review_quality_check_product_availability_warning_action_2" tools:ignore="UnusedResources">ਉਤਪਾਦ ਸਟਾਕ ਵਿੱਚ ਹੋਣ ਦੀ ਰਿਪੋਰਟ ਕਰੋ</string>
     <!-- Title for warning card informing the user that the current product's re-analysis is still processing. -->
     <string name="review_quality_check_reanalysis_in_progress_warning_title">ਰੀਵਿਊ ਕੁਆਲਟੀ ਦੀ ਜਾਂਚ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ</string>
     <!-- Title for warning card informing the user that the current product's analysis is still processing. -->

@@ -27,7 +27,7 @@ import java.util.Locale
 interface AddonDetailsInteractor {
 
     /**
-     * Open the givne URL in the browser.
+     * Open the given URL in the browser.
      */
     fun openWebsite(url: Uri)
 
@@ -53,31 +53,37 @@ class AddonDetailsBindingDelegate(
         bindAuthor(addon)
         bindVersion(addon)
         bindLastUpdated(addon)
-        bindWebsite(addon)
+        bindHomepage(addon)
         bindRating(addon)
     }
 
     private fun bindRating(addon: Addon) {
         addon.rating?.let { rating ->
             val resources = binding.root.resources
-            val ratingContentDescription =
-                resources.getString(R.string.mozac_feature_addons_rating_content_description)
+            val ratingContentDescription = resources.getString(R.string.mozac_feature_addons_rating_content_description)
             binding.ratingView.contentDescription = String.format(ratingContentDescription, rating.average)
             binding.ratingView.rating = rating.average
 
-            binding.usersCount.text = numberFormatter.format(rating.reviews)
+            binding.reviewCount.text = numberFormatter.format(rating.reviews)
+
+            if (addon.ratingUrl.isNotBlank()) {
+                binding.reviewCount.setTextColor(binding.root.context.getColorFromAttr(R.attr.textAccent))
+                binding.reviewCount.setOnClickListener {
+                    interactor.openWebsite(addon.ratingUrl.toUri())
+                }
+            }
         }
     }
 
-    private fun bindWebsite(addon: Addon) {
-        if (addon.siteUrl.isBlank()) {
+    private fun bindHomepage(addon: Addon) {
+        if (addon.homepageUrl.isBlank()) {
             binding.homePageLabel.isVisible = false
             binding.homePageDivider.isVisible = false
             return
         }
 
         binding.homePageLabel.setOnClickListener {
-            interactor.openWebsite(addon.siteUrl.toUri())
+            interactor.openWebsite(addon.homepageUrl.toUri())
         }
     }
 
