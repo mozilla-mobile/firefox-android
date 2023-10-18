@@ -6,6 +6,7 @@ package mozilla.components.feature.fxsuggest
 
 import android.content.res.Resources
 import mozilla.appservices.suggest.Suggestion
+import mozilla.appservices.suggest.SuggestionProvider
 import mozilla.appservices.suggest.SuggestionQuery
 import mozilla.components.concept.awesomebar.AwesomeBar
 import mozilla.components.feature.session.SessionUseCases
@@ -36,11 +37,18 @@ class FxSuggestSuggestionProvider(
         if (text.isEmpty()) {
             emptyList()
         } else {
+            val providers = buildList() {
+                if (includeSponsoredSuggestions) {
+                    add(SuggestionProvider.AMP)
+                }
+                if (includeNonSponsoredSuggestions) {
+                    add(SuggestionProvider.WIKIPEDIA)
+                }
+            }
             GlobalFxSuggestDependencyProvider.requireStorage().query(
                 SuggestionQuery(
                     keyword = text,
-                    includeSponsored = includeSponsoredSuggestions,
-                    includeNonSponsored = includeNonSponsoredSuggestions,
+                    providers = providers,
                 ),
             ).into()
         }
@@ -73,7 +81,7 @@ class FxSuggestSuggestionProvider(
                 icon = details.icon?.let {
                     it.toUByteArray().asByteArray().toBitmap()
                 },
-                title = "${details.fullKeyword} — ${details.title}",
+                title = details.title,
                 description = if (details.isSponsored) {
                     resources.getString(R.string.sponsored_suggestion_description)
                 } else {

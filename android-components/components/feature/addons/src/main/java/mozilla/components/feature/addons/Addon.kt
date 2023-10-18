@@ -37,7 +37,7 @@ val logger = Logger("Addon")
  * @property translatableSummary A map containing the different translations for the add-on name,
  * where the key is the language and the value is the actual translated text.
  * @property iconUrl The URL to icon for the add-on.
- * @property siteUrl The (absolute) add-on detail URL.
+ * @property homepageUrl The add-on homepage.
  * @property rating The rating information of this add-on.
  * @property createdAt The date the add-on was created.
  * @property updatedAt The date of the last time the add-on was updated by its developer(s).
@@ -45,6 +45,7 @@ val logger = Logger("Addon")
  * the [Addon] is not installed.
  * @property defaultLocale Indicates which locale will be always available to display translatable fields.
  * @property ratingUrl The link to the ratings page (user reviews) for this [Addon].
+ * @property detailUrl The link to the detail page for this [Addon].
  */
 @SuppressLint("ParcelCreator")
 @Parcelize
@@ -58,13 +59,14 @@ data class Addon(
     val translatableDescription: Map<String, String> = emptyMap(),
     val translatableSummary: Map<String, String> = emptyMap(),
     val iconUrl: String = "",
-    val siteUrl: String = "",
+    val homepageUrl: String = "",
     val rating: Rating? = null,
     val createdAt: String = "",
     val updatedAt: String = "",
     val installedState: InstalledState? = null,
     val defaultLocale: String = DEFAULT_LOCALE,
     val ratingUrl: String = "",
+    val detailUrl: String = "",
 ) : Parcelable {
     /**
      * Represents an add-on author.
@@ -296,7 +298,7 @@ data class Addon(
                 metadata?.hostPermissions.orEmpty()
             val averageRating = metadata?.averageRating ?: 0f
             val reviewCount = metadata?.reviewCount ?: 0
-            val siteUrl = metadata?.homePageUrl.orEmpty()
+            val homepageUrl = metadata?.homepageUrl.orEmpty()
             val ratingUrl = metadata?.reviewUrl.orEmpty()
             val developerName = metadata?.developerName.orEmpty()
             val author = if (developerName.isNotBlank()) {
@@ -304,6 +306,7 @@ data class Addon(
             } else {
                 null
             }
+            val detailUrl = metadata?.detailUrl.orEmpty()
 
             return Addon(
                 id = extension.id,
@@ -312,7 +315,7 @@ data class Addon(
                 permissions = permissions,
                 downloadUrl = metadata?.downloadUrl.orEmpty(),
                 rating = Rating(averageRating, reviewCount),
-                siteUrl = siteUrl,
+                homepageUrl = homepageUrl,
                 translatableName = mapOf(DEFAULT_LOCALE to name),
                 translatableDescription = mapOf(DEFAULT_LOCALE to metadata?.fullDescription.orEmpty()),
                 // We don't have a summary when we create an add-on from a WebExtension instance so let's
@@ -320,6 +323,7 @@ data class Addon(
                 translatableSummary = mapOf(DEFAULT_LOCALE to description),
                 updatedAt = fromMetadataToAddonDate(metadata?.updateDate.orEmpty()),
                 ratingUrl = ratingUrl,
+                detailUrl = detailUrl,
                 installedState = installedState,
             )
         }

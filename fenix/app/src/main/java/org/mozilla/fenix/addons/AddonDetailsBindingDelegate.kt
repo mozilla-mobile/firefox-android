@@ -53,8 +53,9 @@ class AddonDetailsBindingDelegate(
         bindAuthor(addon)
         bindVersion(addon)
         bindLastUpdated(addon)
-        bindWebsite(addon)
+        bindHomepage(addon)
         bindRating(addon)
+        bindDetailUrl(addon)
     }
 
     private fun bindRating(addon: Addon) {
@@ -75,15 +76,15 @@ class AddonDetailsBindingDelegate(
         }
     }
 
-    private fun bindWebsite(addon: Addon) {
-        if (addon.siteUrl.isBlank()) {
+    private fun bindHomepage(addon: Addon) {
+        if (addon.homepageUrl.isBlank()) {
             binding.homePageLabel.isVisible = false
             binding.homePageDivider.isVisible = false
             return
         }
 
         binding.homePageLabel.setOnClickListener {
-            interactor.openWebsite(addon.siteUrl.toUri())
+            interactor.openWebsite(addon.homepageUrl.toUri())
         }
     }
 
@@ -165,5 +166,17 @@ class AddonDetailsBindingDelegate(
         }
         spannableStringBuilder.setSpan(clickable, start, end, flags)
         spannableStringBuilder.removeSpan(link)
+    }
+
+    private fun bindDetailUrl(addon: Addon) {
+        if (addon.detailUrl.isBlank()) {
+            binding.detailUrl.isVisible = false
+            binding.detailUrlDivider.isVisible = false
+            return
+        }
+
+        binding.detailUrl.setOnClickListener {
+            interactor.openWebsite(addon.detailUrl.toUri())
+        }
     }
 }
