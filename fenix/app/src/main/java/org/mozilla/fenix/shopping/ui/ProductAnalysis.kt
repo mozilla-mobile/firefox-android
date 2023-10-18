@@ -29,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
@@ -36,6 +37,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import org.mozilla.fenix.R
+import org.mozilla.fenix.compose.Divider
 import org.mozilla.fenix.compose.annotation.LightDarkPreview
 import org.mozilla.fenix.compose.button.SecondaryButton
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState
@@ -45,6 +47,8 @@ import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductR
 import org.mozilla.fenix.shopping.store.forCompactMode
 import org.mozilla.fenix.theme.FirefoxTheme
 import java.util.SortedMap
+
+private val combinedParentHorizontalPadding = 32.dp
 
 /**
  * UI for review quality check content displaying product analysis.
@@ -93,15 +97,6 @@ fun ProductAnalysis(
             AnalysisStatus.UP_TO_DATE -> {
                 // no-op
             }
-        }
-
-        if (productAnalysis.notEnoughReviewsCardVisible) {
-            ReviewQualityCheckInfoCard(
-                title = stringResource(id = R.string.review_quality_check_no_reviews_warning_title),
-                description = stringResource(id = R.string.review_quality_check_no_reviews_warning_body),
-                type = ReviewQualityCheckInfoType.Info,
-                modifier = Modifier.fillMaxWidth(),
-            )
         }
 
         if (productAnalysis.reviewGrade != null) {
@@ -211,10 +206,11 @@ private fun AdjustedProductRatingCard(
                 ),
             )
 
-            StarRating(value = rating)
+            StarRating(
+                value = rating,
+                modifier = Modifier.padding(bottom = 8.dp),
+            )
         }
-
-        Spacer(modifier = Modifier.height(8.dp))
 
         Text(
             text = stringResource(R.string.review_quality_check_adjusted_rating_description),
@@ -303,6 +299,10 @@ private fun HighlightsCard(
         if (showMoreButtonVisible) {
             Spacer(modifier = Modifier.height(8.dp))
 
+            Divider(modifier = Modifier.extendWidthToParentBorder())
+
+            Spacer(modifier = Modifier.height(8.dp))
+
             SecondaryButton(
                 text = if (isExpanded) {
                     stringResource(R.string.review_quality_check_highlights_show_less)
@@ -355,6 +355,17 @@ private fun HighlightTitle(highlightType: HighlightType) {
             color = FirefoxTheme.colors.textPrimary,
             style = FirefoxTheme.typography.headline8,
         )
+    }
+}
+
+private fun Modifier.extendWidthToParentBorder(): Modifier = this.layout { measurable, constraints ->
+    val placeable = measurable.measure(
+        constraints.copy(
+            maxWidth = constraints.maxWidth + combinedParentHorizontalPadding.roundToPx(),
+        ),
+    )
+    layout(placeable.width, placeable.height) {
+        placeable.place(0, 0)
     }
 }
 

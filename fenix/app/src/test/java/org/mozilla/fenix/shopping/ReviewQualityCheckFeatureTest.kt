@@ -5,6 +5,7 @@
 package org.mozilla.fenix.shopping
 
 import kotlinx.coroutines.test.runTest
+import mozilla.components.browser.state.action.ContentAction
 import mozilla.components.browser.state.action.TabListAction
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.createTab
@@ -13,12 +14,14 @@ import mozilla.components.support.test.ext.joinBlocking
 import mozilla.components.support.test.rule.MainCoroutineRule
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.components.AppStore
-import org.mozilla.fenix.components.appstate.AppAction
+import org.mozilla.fenix.components.appstate.AppAction.ShoppingAction
 import org.mozilla.fenix.components.appstate.AppState
+import org.mozilla.fenix.components.appstate.shopping.ShoppingState
 import org.mozilla.fenix.shopping.fake.FakeShoppingExperienceFeature
 
 class ReviewQualityCheckFeatureTest {
@@ -75,6 +78,39 @@ class ReviewQualityCheckFeatureTest {
         }
 
     @Test
+    fun `WHEN feature is enabled and selected tab is not yet loaded THEN callback returns false`() =
+        runTest {
+            var availability: Boolean? = null
+            val tab = createTab(
+                url = "https://www.mozilla.org",
+                id = "test-tab",
+                isProductUrl = true,
+            ).let {
+                it.copy(content = it.content.copy(loading = true))
+            }
+
+            val browserState = BrowserState(
+                tabs = listOf(tab),
+                selectedTabId = tab.id,
+            )
+            val tested = ReviewQualityCheckFeature(
+                appStore = AppStore(),
+                browserStore = BrowserStore(
+                    initialState = browserState,
+                ),
+                shoppingExperienceFeature = FakeShoppingExperienceFeature(),
+                onAvailabilityChange = {
+                    availability = it
+                },
+                onBottomSheetStateChange = {},
+            )
+
+            tested.start()
+
+            assertFalse(availability!!)
+        }
+
+    @Test
     fun `WHEN feature is enabled and selected tab is a product page THEN callback returns true`() =
         runTest {
             var availability: Boolean? = null
@@ -97,6 +133,7 @@ class ReviewQualityCheckFeatureTest {
                     availability = it
                 },
                 onBottomSheetStateChange = {},
+                debounceTimeoutMillis = { 0 },
             )
 
             tested.start()
@@ -132,6 +169,7 @@ class ReviewQualityCheckFeatureTest {
                     availability = it
                 },
                 onBottomSheetStateChange = {},
+                debounceTimeoutMillis = { 0 },
             )
 
             tested.start()
@@ -170,6 +208,7 @@ class ReviewQualityCheckFeatureTest {
                     availability = it
                 },
                 onBottomSheetStateChange = {},
+                debounceTimeoutMillis = { 0 },
             )
 
             tested.start()
@@ -178,6 +217,62 @@ class ReviewQualityCheckFeatureTest {
             browserStore.dispatch(TabListAction.SelectTabAction(tab2.id)).joinBlocking()
 
             assertFalse(availability!!)
+        }
+
+    @Test
+    fun `WHEN feature is enabled and isProductUrl updates a lot THEN callback is only invoked when isProductUrl settles`() =
+        runTest {
+            val availability = mutableListOf<Boolean>()
+            val tab1 = createTab(
+                url = "https://www.shopping.org",
+                id = "tab1",
+                isProductUrl = false,
+            )
+            val browserStore = BrowserStore(
+                initialState = BrowserState(
+                    tabs = listOf(tab1),
+                    selectedTabId = tab1.id,
+                ),
+            )
+            val tested = ReviewQualityCheckFeature(
+                appStore = AppStore(),
+                browserStore = browserStore,
+                shoppingExperienceFeature = FakeShoppingExperienceFeature(),
+                onAvailabilityChange = {
+                    availability.add(it)
+                },
+                onBottomSheetStateChange = {},
+            )
+
+            tested.start()
+            assertEquals(listOf(false), availability)
+
+            browserStore.dispatch(
+                ContentAction.UpdateProductUrlStateAction(
+                    tabId = tab1.id,
+                    isProductUrl = true,
+                ),
+            ).joinBlocking()
+
+            browserStore.dispatch(
+                ContentAction.UpdateProductUrlStateAction(
+                    tabId = tab1.id,
+                    isProductUrl = false,
+                ),
+            ).joinBlocking()
+
+            browserStore.dispatch(
+                ContentAction.UpdateProductUrlStateAction(
+                    tabId = tab1.id,
+                    isProductUrl = true,
+                ),
+            ).joinBlocking()
+
+            testScheduler.advanceTimeBy(250)
+
+            // The first true is never emitted because it is debounced
+            assertNotEquals(listOf(false, true, false, true), availability)
+            assertEquals(listOf(false, false, true), availability)
         }
 
     @Test
@@ -226,7 +321,7 @@ class ReviewQualityCheckFeatureTest {
     fun `WHEN the shopping sheet is collapsed THEN the callback is called with false`() {
         val appStore = AppStore(
             initialState = AppState(
-                shoppingSheetExpanded = true,
+                shoppingState = ShoppingState(shoppingSheetExpanded = true),
             ),
         )
         var isExpanded: Boolean? = null
@@ -242,7 +337,7 @@ class ReviewQualityCheckFeatureTest {
 
         tested.start()
 
-        appStore.dispatch(AppAction.ShoppingSheetStateUpdated(expanded = false)).joinBlocking()
+        appStore.dispatch(ShoppingAction.ShoppingSheetStateUpdated(expanded = false)).joinBlocking()
 
         assertFalse(isExpanded!!)
     }
@@ -251,7 +346,7 @@ class ReviewQualityCheckFeatureTest {
     fun `WHEN the shopping sheet is expanded THEN the collapsed callback is called with true`() {
         val appStore = AppStore(
             initialState = AppState(
-                shoppingSheetExpanded = false,
+                shoppingState = ShoppingState(shoppingSheetExpanded = false),
             ),
         )
         var isExpanded: Boolean? = null
@@ -267,7 +362,7 @@ class ReviewQualityCheckFeatureTest {
 
         tested.start()
 
-        appStore.dispatch(AppAction.ShoppingSheetStateUpdated(expanded = true)).joinBlocking()
+        appStore.dispatch(ShoppingAction.ShoppingSheetStateUpdated(expanded = true)).joinBlocking()
 
         assertTrue(isExpanded!!)
     }
@@ -276,7 +371,7 @@ class ReviewQualityCheckFeatureTest {
     fun `WHEN the feature is restarted THEN first emission is collected to set the tint`() {
         val appStore = AppStore(
             initialState = AppState(
-                shoppingSheetExpanded = false,
+                shoppingState = ShoppingState(shoppingSheetExpanded = false),
             ),
         )
         var isExpanded: Boolean? = null
@@ -294,7 +389,7 @@ class ReviewQualityCheckFeatureTest {
         tested.stop()
 
         // emulate emission
-        appStore.dispatch(AppAction.ShoppingSheetStateUpdated(expanded = false)).joinBlocking()
+        appStore.dispatch(ShoppingAction.ShoppingSheetStateUpdated(expanded = false)).joinBlocking()
 
         tested.start()
         assertFalse(isExpanded!!)

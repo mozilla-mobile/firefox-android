@@ -68,14 +68,29 @@ class AddonDetailsBindingDelegateTest {
         )
         assertEquals("4.30/5", binding.ratingView.contentDescription)
         assertEquals(4.5f, binding.ratingView.rating)
-        assertEquals("100", binding.usersCount.text)
+        assertEquals("100", binding.reviewCount.text)
     }
 
     @Test
-    fun `bind addons website`() {
+    fun `bind addons rating with review url`() {
         detailsBindingDelegate.bind(
             baseAddon.copy(
-                siteUrl = "https://mozilla.org",
+                rating = Addon.Rating(average = 4.3f, reviews = 100),
+                ratingUrl = "https://example.org/",
+            ),
+        )
+        assertEquals("100", binding.reviewCount.text)
+
+        binding.reviewCount.performClick()
+
+        verify { interactor.openWebsite(Uri.parse("https://example.org/")) }
+    }
+
+    @Test
+    fun `bind addons homepage`() {
+        detailsBindingDelegate.bind(
+            baseAddon.copy(
+                homepageUrl = "https://mozilla.org",
             ),
         )
 
@@ -172,9 +187,29 @@ class AddonDetailsBindingDelegateTest {
 
     @Test
     fun `bind without a home page`() {
-        detailsBindingDelegate.bind(baseAddon.copy(siteUrl = ""))
+        detailsBindingDelegate.bind(baseAddon.copy(homepageUrl = ""))
 
         assertFalse(binding.homePageLabel.isVisible)
         assertFalse(binding.homePageDivider.isVisible)
+    }
+
+    @Test
+    fun `bind add-on detail url`() {
+        detailsBindingDelegate.bind(baseAddon.copy(detailUrl = "https://example.org"))
+
+        assertTrue(binding.detailUrl.isVisible)
+        assertTrue(binding.detailUrlDivider.isVisible)
+
+        binding.detailUrl.performClick()
+
+        verify { interactor.openWebsite(Uri.parse("https://example.org")) }
+    }
+
+    @Test
+    fun `bind add-on without a detail url`() {
+        detailsBindingDelegate.bind(baseAddon.copy(detailUrl = ""))
+
+        assertFalse(binding.detailUrl.isVisible)
+        assertFalse(binding.detailUrlDivider.isVisible)
     }
 }

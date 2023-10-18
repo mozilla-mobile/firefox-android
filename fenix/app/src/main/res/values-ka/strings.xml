@@ -292,7 +292,7 @@
     <!-- Home onboarding dialog sign into sync screen title text. -->
     <string name="onboarding_home_sync_title_3">ეკრანებს შორის გადართვა ჯერ არნახული სიმარტივით</string>
     <!-- Home onboarding dialog sign into sync screen description text. -->
-    <string name="onboarding_home_sync_description">განაგრძეთ, სადაც გაჩერდით სხვა მოწყობილობიდან ჩანართების წამოღებით ახლა უკვე საწყის გვერდზე.</string>
+    <string name="onboarding_home_sync_description">განაგრძეთ იქიდან, სადაც შეჩერდით, სხვა მოწყობილობიდან ჩანართების წამოღებით ახლა უკვე საწყის გვერდზე.</string>
     <!-- Text for the button to continue the onboarding on the home onboarding dialog. -->
     <string name="onboarding_home_get_started_button">დაიწყეთ</string>
     <!-- Text for the button to navigate to the sync sign in screen on the home onboarding dialog. -->
@@ -334,7 +334,7 @@
     <!-- Title for sign in to sync screen. -->
     <string name="juno_onboarding_sign_in_title" tools:ignore="UnusedResources">მოქნილად გადაერთეთ ტელეფონიდან ნოუთბუქზე და უკან</string>
     <!-- Description for sign in to sync screen. -->
-    <string name="juno_onboarding_sign_in_description" tools:ignore="UnusedResources">გამოიყოლეთ ჩანართები და სანიშნები სხვა მოწყობილობიდან, რომ განაგრძოთ იქიდანვე, სადაც გაჩერდით.</string>
+    <string name="juno_onboarding_sign_in_description" tools:ignore="UnusedResources">გამოიყოლეთ ჩანართები და სანიშნები სხვა მოწყობილობიდან, რომ განაგრძოთ იქიდანვე, სადაც შეჩერდით.</string>
     <!-- Text for the button to sign in to sync on the device -->
     <string name="juno_onboarding_sign_in_positive_button" tools:ignore="UnusedResources">შესვლა</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
@@ -428,7 +428,7 @@
     <!-- Preference for removing cookie/consent banners from sites automatically. See reduce_cookie_banner_summary for additional context. -->
     <string name="preferences_cookie_banner_reduction">ფუნთუშის მოთხოვნების შემცირება</string>
     <!-- Preference for rejecting or removing as many cookie/consent banners as possible on sites. See reduce_cookie_banner_summary for additional context. -->
-    <string name="reduce_cookie_banner_option">შეამცირეთ ფუნთუშის მოთხოვნები</string>
+    <string name="reduce_cookie_banner_option">ფუნთუშის მოთხოვნების შემცირება</string>
     <!-- Summary of cookie banner handling preference if the setting disabled is set to off -->
     <string name="reduce_cookie_banner_option_off">გამორთ.</string>
     <!-- Summary of cookie banner handling preference if the setting enabled is set to on -->
@@ -537,7 +537,7 @@
     <string name="preferences_remote_debugging">დაშორებული USB-გამართვა</string>
 
     <!-- Preference title for switch preference to show search engines -->
-    <string name="preferences_show_search_engines">საძიებო სისტემების ჩვენება</string>
+    <string name="preferences_show_search_engines" moz:RemovedIn="120" tools:ignore="UnusedResources">საძიებო სისტემების ჩვენება</string>
     <!-- Preference title for switch preference to show search suggestions -->
     <string name="preferences_show_search_suggestions">ძიების შემოთავაზების ჩვენება</string>
     <!-- Preference title for switch preference to show voice search button -->
@@ -665,9 +665,9 @@
 
     <!-- Add-on Installation from AMO-->
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
-    <string name="addon_not_supported_error">დამატება არაა მხარდაჭერილი</string>
+    <string name="addon_not_supported_error" moz:removedIn="120" tools:ignore="UnusedResources">დამატება არაა მხარდაჭერილი</string>
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is already installed -->
-    <string name="addon_already_installed">დამატება უკვე ჩადგმულია</string>
+    <string name="addon_already_installed" moz:removedIn="120" tools:ignore="UnusedResources">დამატება უკვე ჩადგმულია</string>
 
     <!-- Add-on process crash dialog to user -->
     <!-- Title of a dialog shown to the user when enough errors have occurred with addons and they need to be temporarily disabled -->
@@ -682,6 +682,8 @@
     <!-- Account Preferences -->
     <!-- Preference for managing your account via accounts.firefox.com -->
     <string name="preferences_manage_account">ანგარიშის მართვა</string>
+    <!-- Summary of the preference for managing your account via accounts.firefox.com. -->
+    <string name="preferences_manage_account_summary">შეცვალეთ თქვენი პაროლი, მართეთ მონაცემთა აღრიცხვა ან წაშალეთ თქვენი ანგარიში</string>
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">დასინქრონება ახლავე</string>
     <!-- Preference category for sync -->
@@ -1471,7 +1473,7 @@
     <!-- Text for the onboarding welcome message. -->
     <string name="onboarding_message" moz:RemovedIn="118" tools:ignore="UnusedResources">ბრაუზერი შექმნილი ხალხისთვის, და არა მოგებისთვის</string>
     <!-- Text for the Firefox account onboarding sign in card header. -->
-    <string name="onboarding_account_sign_in_header" moz:RemovedIn="118" tools:ignore="UnusedResources">განაგრძეთ იქიდან, სადაც გაჩერდით.</string>
+    <string name="onboarding_account_sign_in_header" moz:RemovedIn="118" tools:ignore="UnusedResources">განაგრძეთ იქიდან, სადაც შეჩერდით</string>
     <!-- Text for the button to learn more about signing in to your Firefox account. -->
     <string name="onboarding_manual_sign_in_description" moz:RemovedIn="118" tools:ignore="UnusedResources">დაასინქრონეთ ჩანართები და პაროლები მოწყობილობებს შორის შეუფერხებლად გადასვლისთვის.</string>
     <!-- Text for the button to manually sign into Firefox account. -->
@@ -1940,7 +1942,7 @@
     <!-- Content description (not visible, for screen readers etc.): Title for the button to add a search engine in the action bar -->
     <string name="search_engine_add_button_content_description">დამატება</string>
     <!-- Content description (not visible, for screen readers etc.): Title for the button to save a search engine in the action bar -->
-    <string name="search_engine_add_custom_search_engine_edit_button_content_description">შენახვა</string>
+    <string name="search_engine_add_custom_search_engine_edit_button_content_description" moz:RemovedIn="120" tools:ignore="UnusedResources">შენახვა</string>
     <!-- Text for the menu button to edit a search engine -->
     <string name="search_engine_edit">ჩასწორება</string>
     <!-- Text for the menu button to delete a search engine -->
@@ -2191,7 +2193,9 @@
 
     <!-- Review quality check feature-->
     <!-- Name for the review quality check feature used as title for the panel. -->
-    <string name="review_quality_check_feature_name">მიმოხილვის შემმოწმებელი</string>
+    <string name="review_quality_check_feature_name" moz:RemovedIn="120" tools:ignore="UnusedResources">მიმოხილვის შემმოწმებელი</string>
+    <!-- Name for the review quality check feature used as title for the panel. -->
+    <string name="review_quality_check_feature_name_2">მიმოხილვის შემმოწმებელი</string>
     <!-- Summary for grades A and B for review quality check adjusted grading. -->
     <string name="review_quality_check_grade_a_b_description">სანდო მიმოხილვები</string>
     <!-- Summary for grade C for review quality check adjusted grading. -->
@@ -2213,15 +2217,15 @@
     <!-- Paragraph explaining the grading system we use to classify the reliability of a product's reviews. -->
     <string name="review_quality_check_info_review_grade_header"><![CDATA[გასაყიდ ნაწარმზე თითოეულ მიმოხილვას ეწერება <b>ნიშნები</b> A-დან F-მდე.]]></string>
     <!-- Description explaining grades A and B for review quality check adjusted grading. -->
-    <string name="review_quality_check_info_grade_info_AB" moz:RemovedIn="120" tools:ignore="UnusedResources">სანდო მიმოხილვები. მიგვაჩნია, რომ ეს მიმოხილვები, სავარაუდოდ, ნამდვილი მომხმარებლებისგანაა დატოვებული პატიოსნად და მიუკერძოებლად.</string>
+    <string name="review_quality_check_info_grade_info_AB">სანდო მიმოხილვები. მიგვაჩნია, რომ ეს მიმოხილვები, სავარაუდოდ, ნამდვილი მომხმარებლებისგანაა დატოვებული პატიოსნად და მიუკერძოებლად.</string>
     <!-- Description explaining grades A and B for review quality check adjusted grading. -->
-    <string name="review_quality_check_info_grade_info_AB_2">მიგვაჩნია, რომ მიმოხილვები სანდო უნდა იყოს.</string>
+    <string name="review_quality_check_info_grade_info_AB_2" moz:RemovedIn="120" tools:ignore="UnusedResources">მიგვაჩნია, რომ მიმოხილვები სანდო უნდა იყოს.</string>
     <!-- Description explaining grade C for review quality check adjusted grading. -->
     <string name="review_quality_check_info_grade_info_C">მიგვაჩნია, რომ შერეულადაა სანდო და არასანდო მიმოხილვები.</string>
     <!-- Description explaining grades D and F for review quality check adjusted grading. -->
-    <string name="review_quality_check_info_grade_info_DF" moz:RemovedIn="120" tools:ignore="UnusedResources">არასანდო მიმოხილვები. მიგვაჩნია, რომ ეს მიმოხილვები, სავარაუდოდ, ყალბი ან მიკერძოებული მიმომხილველებისგანაა.</string>
+    <string name="review_quality_check_info_grade_info_DF">არასანდო მიმოხილვები. მიგვაჩნია, რომ ეს მიმოხილვები, სავარაუდოდ, ყალბი ან მიკერძოებული მიმომხილველებისგანაა.</string>
     <!-- Description explaining grades D and F for review quality check adjusted grading. -->
-    <string name="review_quality_check_info_grade_info_DF_2">მიგვაჩნია, რომ მიმოხილვები არაა სანდო.</string>
+    <string name="review_quality_check_info_grade_info_DF_2" moz:RemovedIn="120" tools:ignore="UnusedResources">მიგვაჩნია, რომ მიმოხილვები არაა სანდო.</string>
     <!-- Paragraph explaining how a product's adjusted grading is calculated. -->
     <string name="review_quality_check_explanation_body_adjusted_grading"><![CDATA[<b>შესწორებული შეფასება</b> ეყრდნობა მხოლოდ იმ მიმოხილვებს, რომლებიც სანდოდ მიგვაჩნია.]]></string>
     <!-- Paragraph explaining product review highlights. First parameter is the name of the retailer (e.g. Amazon). -->
@@ -2235,8 +2239,10 @@
     <!-- Text for label for switch preference to show recommended products from review quality check settings section. -->
     <string name="review_quality_check_settings_recommended_products">რეკლამების ჩვენება მიმოხილვის შემმოწმებელში</string>
     <!-- Description for switch preference to show recommended products from review quality check settings section. First parameter is for clickable text defined in review_quality_check_settings_recommended_products_learn_more.-->
-    <string name="review_quality_check_settings_recommended_products_description" tools:ignore="UnusedResources">დროდადრო იხილავთ რეკლამებს ნაწარმის შესაბამისად. ყველა რეკლამა უნდა აკმაყოფილებდეს მიმოხილვის ხარისხის ჩვენს მოთხოვნებს. %s
+    <string name="review_quality_check_settings_recommended_products_description" moz:RemovedIn="120" tools:ignore="UnusedResources">დროდადრო იხილავთ რეკლამებს ნაწარმის შესაბამისად. ყველა რეკლამა უნდა აკმაყოფილებდეს მიმოხილვის ხარისხის ჩვენს მოთხოვნებს. %s
 </string>
+    <!-- Description for switch preference to show recommended products from review quality check settings section. First parameter is for clickable text defined in review_quality_check_settings_recommended_products_learn_more.-->
+    <string name="review_quality_check_settings_recommended_products_description_2" tools:ignore="UnusedResources">დროდადრო იხილავთ რეკლამებს  ნაწარმის შესაბამისად. ჩვენ მხოლოდ სანდო მიმოხილვების მქონეს გთავაზობთ. %s</string>
     <!-- Clickable text that links to review quality check recommended products support article. -->
     <string name="review_quality_check_settings_recommended_products_learn_more" tools:ignore="UnusedResources">ვრცლად</string>
     <!-- Text for turning sidebar off button from review quality check settings section. -->
@@ -2264,7 +2270,9 @@
     <!-- Text for the body of warning card informing the user that the current product is currently not available. -->
     <string name="review_quality_check_product_availability_warning_body" tools:ignore="UnusedResources">თუ ნახავთ, რომ ნაწარმი დააბრუნეს გასაყიდად, მოგვახსენეთ და ვიმუშავებთ მიმოხილვების შესამოწმებლად.</string>
     <!-- Clickable text for warning card informing the user that the current product is currently not available. Clicking this should inform the server that the product is available. -->
-    <string name="review_quality_check_product_availability_warning_action" tools:ignore="UnusedResources">მოხსენება ნაწარმის გასაყიდად დაბრუნებისას</string>
+    <string name="review_quality_check_product_availability_warning_action" moz:RemovedIn="120" tools:ignore="UnusedResources">მოხსენება ნაწარმის გასაყიდად დაბრუნებისას</string>
+    <!-- Clickable text for warning card informing the user that the current product is currently not available. Clicking this should inform the server that the product is available. -->
+    <string name="review_quality_check_product_availability_warning_action_2" tools:ignore="UnusedResources">მოხსენება გასაყიდი პროდუქტისა</string>
     <!-- Title for warning card informing the user that the current product's re-analysis is still processing. -->
     <string name="review_quality_check_reanalysis_in_progress_warning_title">მოწმდება მიმოხილვის ხარისხი</string>
     <!-- Title for warning card informing the user that the current product's analysis is still processing. -->

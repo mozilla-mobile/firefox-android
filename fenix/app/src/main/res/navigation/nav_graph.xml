@@ -305,6 +305,9 @@
         <action
             android:id="@+id/action_browserFragment_to_reviewQualityCheckDialogFragment"
             app:destination="@id/reviewQualityCheckFragment" />
+        <action
+            android:id="@+id/action_browserFragment_to_translationsDialogFragment"
+            app:destination="@id/translationsDialogFragment" />
     </fragment>
 
     <fragment
@@ -418,6 +421,10 @@
     <dialog
         android:id="@+id/reviewQualityCheckFragment"
         android:name="org.mozilla.fenix.shopping.ReviewQualityCheckFragment"/>
+
+    <dialog
+        android:id="@+id/translationsDialogFragment"
+        android:name="org.mozilla.fenix.translations.TranslationsDialogFragment"/>
 
     <fragment
         android:id="@+id/savedLoginsAuthFragment"
@@ -1231,9 +1238,6 @@
                 android:id="@+id/action_searchEngineFragment_to_addSearchEngineFragment"
                 app:destination="@+id/addSearchEngineFragment" />
             <action
-                android:id="@+id/action_searchEngineFragment_to_editCustomSearchEngineFragment"
-                app:destination="@+id/editCustomSearchEngineFragment" />
-            <action
                 android:id="@+id/action_searchEngineFragment_to_defaultEngineFragment"
                 app:destination="@+id/defaultEngineFragment" />
             <action
@@ -1267,14 +1271,6 @@
             android:id="@+id/addSearchEngineFragment"
             android:name="org.mozilla.fenix.settings.search.AddSearchEngineFragment"
             tools:layout="@layout/fragment_add_search_engine" />
-        <fragment
-            android:id="@+id/editCustomSearchEngineFragment"
-            android:name="org.mozilla.fenix.settings.search.EditCustomSearchEngineFragment"
-            tools:layout="@layout/fragment_add_search_engine">
-            <argument
-                android:name="searchEngineIdentifier"
-                app:argType="string" />
-        </fragment>
     </navigation>
 
     <navigation

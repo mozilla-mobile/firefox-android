@@ -73,10 +73,24 @@ object InitAction : BrowserAction()
 object RestoreCompleteAction : BrowserAction()
 
 /**
- * [BrowserAction] implementation for updating state related to whether the extensions process
- * spawning has been disabled and a popup is necessary.
+ * [BrowserAction] implementations to react to extensions process events.
  */
-data class ExtensionProcessDisabledPopupAction(val showPopup: Boolean) : BrowserAction()
+sealed class ExtensionsProcessAction : BrowserAction() {
+    /**
+     * [BrowserAction] to indicate when the crash prompt should be displayed to the user.
+     */
+    data class ShowPromptAction(val show: Boolean) : ExtensionsProcessAction()
+
+    /**
+     * [BrowserAction] to indicate that the process has been re-enabled by the user.
+     */
+    object EnabledAction : ExtensionsProcessAction()
+
+    /**
+     * [BrowserAction] to indicate that the process has been left disabled by the user.
+     */
+    object DisabledAction : ExtensionsProcessAction()
+}
 
 /**
  * [BrowserAction] implementations to react to system events.
@@ -813,6 +827,14 @@ sealed class ContentAction : BrowserAction() {
      * Indicates the given [tabId] was unable to be checked for form data.
      */
     data class CheckForFormDataExceptionAction(val tabId: String, val throwable: Throwable) : ContentAction()
+
+    /**
+     * Updates the [ContentState.isProductUrl] state for the non private tab with the given [tabId].
+     */
+    data class UpdateProductUrlStateAction(
+        val tabId: String,
+        val isProductUrl: Boolean,
+    ) : ContentAction()
 }
 
 /**
@@ -859,18 +881,6 @@ sealed class CookieBannerAction : BrowserAction() {
      */
     data class UpdateStatusAction(val tabId: String, val status: CookieBannerHandlingStatus) :
         CookieBannerAction()
-}
-
-/**
- * [BrowserAction] implementations related to updating the [SessionState.isProductUrl]
- * of a single [SessionState] inside [BrowserState]
- */
-sealed class ShoppingProductAction : BrowserAction() {
-    /**
-     * Updates the [SessionState.isProductUrl] state for the non private tab with the given [tabId].
-     */
-    data class UpdateProductUrlStatusAction(val tabId: String, val isProductUrl: Boolean) :
-        ShoppingProductAction()
 }
 
 /**
