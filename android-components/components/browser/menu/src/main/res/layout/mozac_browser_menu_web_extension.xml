@@ -28,8 +28,8 @@
         android:layout_height="@dimen/mozac_browser_menu_item_container_layout_height"
         android:gravity="center_vertical"
         android:textAlignment="viewStart"
-        android:paddingEnd="16dp"
-        android:paddingStart="16dp"
+        android:paddingStart="@dimen/mozac_browser_menu_item_image_text_label_padding_start"
+        android:paddingEnd="@dimen/mozac_browser_menu_item_image_text_label_padding_start"
         android:clickable="false"
         tools:ignore="RtlCompat"
         tools:text="uBlock Origin" />
