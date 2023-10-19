@@ -27,6 +27,9 @@ permalink: /changelog/
   * `SessionState.isProductUrl` is not affected for private tabs as shopping mode is disabled in private tabs. [Bug 1847063](https://bugzilla.mozilla.org/show_bug.cgi?id=1847063)
   * `SessionState.isProductUrl` has been moved to `ContentState.isProductUrl`. [Bug 1857287](https://bugzilla.mozilla.org/show_bug.cgi?id=1857287)
 
+* **support-utils**
+  * Recognize IPv6 literals in the address bar. [Bug 1803465](https://bugzilla.mozilla.org/show_bug.cgi?id=1803465)
+
 # 119.0
 * [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v118..releases_v119)
 * [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/releases_v119/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
