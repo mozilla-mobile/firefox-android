@@ -143,8 +143,6 @@ class Core(
             httpsOnlyMode = context.settings().getHttpsOnlyMode(),
             cookieBannerHandlingModePrivateBrowsing = context.settings().getCookieBannerHandlingPrivateMode(),
             cookieBannerHandlingMode = context.settings().getCookieBannerHandling(),
-            cookieBannerHandlingDetectOnlyMode = context.settings()
-                .shouldShowCookieBannerReEngagementDialog(),
         )
 
         GeckoEngine(
