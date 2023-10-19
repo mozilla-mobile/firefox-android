@@ -7,6 +7,7 @@ package mozilla.components.feature.fxsuggest
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.test.runTest
 import mozilla.appservices.suggest.Suggestion
+import mozilla.appservices.suggest.SuggestionProvider
 import mozilla.appservices.suggest.SuggestionQuery
 import mozilla.components.support.test.any
 import mozilla.components.support.test.eq
@@ -112,16 +113,15 @@ class FxSuggestSuggestionProviderTest {
             eq(
                 SuggestionQuery(
                     keyword = "la",
-                    includeSponsored = true,
-                    includeNonSponsored = true,
+                    providers = listOf(SuggestionProvider.AMP, SuggestionProvider.WIKIPEDIA),
                 ),
             ),
         )
         assertEquals(2, suggestions.size)
-        assertEquals("lasagna — Lasagna Come Out Tomorrow", suggestions[0].title)
+        assertEquals("Lasagna Come Out Tomorrow", suggestions[0].title)
         assertEquals(testContext.resources.getString(R.string.sponsored_suggestion_description), suggestions[0].description)
         assertNotNull(suggestions[0].icon)
-        assertEquals("las — Las Vegas", suggestions[1].title)
+        assertEquals("Las Vegas", suggestions[1].title)
         assertNull(suggestions[1].description)
         assertNull(suggestions[1].icon)
     }
@@ -168,13 +168,12 @@ class FxSuggestSuggestionProviderTest {
             eq(
                 SuggestionQuery(
                     keyword = "la",
-                    includeSponsored = false,
-                    includeNonSponsored = true,
+                    providers = listOf(SuggestionProvider.WIKIPEDIA),
                 ),
             ),
         )
         assertEquals(1, suggestions.size)
-        assertEquals("las — Las Vegas", suggestions.first().title)
+        assertEquals("Las Vegas", suggestions.first().title)
         assertNull(suggestions.first().description)
         assertNull(suggestions.first().icon)
     }
@@ -212,13 +211,12 @@ class FxSuggestSuggestionProviderTest {
             eq(
                 SuggestionQuery(
                     keyword = "la",
-                    includeSponsored = true,
-                    includeNonSponsored = false,
+                    providers = listOf(SuggestionProvider.AMP),
                 ),
             ),
         )
         assertEquals(1, suggestions.size)
-        assertEquals("lasagna — Lasagna Come Out Tomorrow", suggestions.first().title)
+        assertEquals("Lasagna Come Out Tomorrow", suggestions.first().title)
         assertEquals(testContext.resources.getString(R.string.sponsored_suggestion_description), suggestions.first().description)
     }
 }

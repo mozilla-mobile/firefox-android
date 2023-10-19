@@ -546,7 +546,7 @@
     <!-- Preference for developers -->
     <string name="preferences_remote_debugging">Ñemopotĩ okayguáva USB rupi</string>
     <!-- Preference title for switch preference to show search engines -->
-    <string name="preferences_show_search_engines">Ehechauka hekaha mongu’eha</string>
+    <string name="preferences_show_search_engines" moz:RemovedIn="120" tools:ignore="UnusedResources">Ehechauka hekaha mongu’eha</string>
     <!-- Preference title for switch preference to show search suggestions -->
     <string name="preferences_show_search_suggestions">Ehechauka ñemoñe’ẽ jehekarã</string>
     <!-- Preference title for switch preference to show voice search button -->
@@ -1985,7 +1985,7 @@
     <!-- Content description (not visible, for screen readers etc.): Title for the button to add a search engine in the action bar -->
     <string name="search_engine_add_button_content_description">Mbojuaju</string>
     <!-- Content description (not visible, for screen readers etc.): Title for the button to save a search engine in the action bar -->
-    <string name="search_engine_add_custom_search_engine_edit_button_content_description">Ñongatu</string>
+    <string name="search_engine_add_custom_search_engine_edit_button_content_description" moz:RemovedIn="120" tools:ignore="UnusedResources">Ñongatu</string>
     <!-- Text for the menu button to edit a search engine -->
     <string name="search_engine_edit">Mbosako’i</string>
     <!-- Text for the menu button to delete a search engine -->
@@ -2239,7 +2239,9 @@
 
     <!-- Review quality check feature-->
     <!-- Name for the review quality check feature used as title for the panel. -->
-    <string name="review_quality_check_feature_name">Marandu’i rechajeyha</string>
+    <string name="review_quality_check_feature_name" moz:RemovedIn="120" tools:ignore="UnusedResources">Marandu’i rechajeyha</string>
+    <!-- Name for the review quality check feature used as title for the panel. -->
+    <string name="review_quality_check_feature_name_2">Marandu’i rechajeyha</string>
     <!-- Summary for grades A and B for review quality check adjusted grading. -->
     <string name="review_quality_check_grade_a_b_description">Marandu’i jeroviaha</string>
     <!-- Summary for grade C for review quality check adjusted grading. -->
@@ -2283,7 +2285,9 @@
     <!-- Text for label for switch preference to show recommended products from review quality check settings section. -->
     <string name="review_quality_check_settings_recommended_products">Ehechauka ñemurã marandu’i rechajeyhápe</string>
     <!-- Description for switch preference to show recommended products from review quality check settings section. First parameter is for clickable text defined in review_quality_check_settings_recommended_products_learn_more.-->
-    <string name="review_quality_check_settings_recommended_products_description" tools:ignore="UnusedResources">Ehecháta ñemurã sapy’agua apopyre iporãvagui. Opaite ñemurã ojapova’erã oipotaháicha jehechajey porãverã. %s</string>
+    <string name="review_quality_check_settings_recommended_products_description" moz:RemovedIn="120" tools:ignore="UnusedResources">Ehecháta ñemurã sapy’agua apopyre iporãvagui. Opaite ñemurã ojapova’erã oipotaháicha jehechajey porãverã. %s</string>
+    <!-- Description for switch preference to show recommended products from review quality check settings section. First parameter is for clickable text defined in review_quality_check_settings_recommended_products_learn_more.-->
+    <string name="review_quality_check_settings_recommended_products_description_2" tools:ignore="UnusedResources">Ehecháta ñemurã sapy’apy’a apopyre oikóva rehegua. Romyasãi ñemurã apopyre jeroviaha añoite. %s</string>
     <!-- Clickable text that links to review quality check recommended products support article. -->
     <string name="review_quality_check_settings_recommended_products_learn_more" tools:ignore="UnusedResources">Eikuaave</string>
     <!-- Text for turning sidebar off button from review quality check settings section. -->
@@ -2312,7 +2316,9 @@
     <!-- Text for the body of warning card informing the user that the current product is currently not available. -->
     <string name="review_quality_check_product_availability_warning_body" tools:ignore="UnusedResources">Ehechárõ ko apopyre ojejoguakuaajeýma, oremomarandu ha romba’apóta hekopyahu hag̃ua ñehesa’ijo.</string>
     <!-- Clickable text for warning card informing the user that the current product is currently not available. Clicking this should inform the server that the product is available. -->
-    <string name="review_quality_check_product_availability_warning_action" tools:ignore="UnusedResources">Emombe’u ko apopyre ojeporukuaajeymaha</string>
+    <string name="review_quality_check_product_availability_warning_action" moz:RemovedIn="120" tools:ignore="UnusedResources">Emombe’u ko apopyre ojeporukuaajeymaha</string>
+    <!-- Clickable text for warning card informing the user that the current product is currently not available. Clicking this should inform the server that the product is available. -->
+    <string name="review_quality_check_product_availability_warning_action_2" tools:ignore="UnusedResources">Emomarandu apopyre ojeporukuaaha</string>
     <!-- Title for warning card informing the user that the current product's re-analysis is still processing. -->
     <string name="review_quality_check_reanalysis_in_progress_warning_title">Ehechajey marandu’i porãngue</string>
     <!-- Title for warning card informing the user that the current product's analysis is still processing. -->
@@ -2351,6 +2357,10 @@
     <string name="review_quality_check_no_analysis_link">Ehechajey marandu’i porãngue</string>
     <!-- Headline for review quality check contextual onboarding card. -->
     <string name="review_quality_check_contextual_onboarding_title">Eiporu ore marandu’i jeguataha rechajey jeroviápe</string>
+    <!-- Description for review quality check contextual onboarding card. The first and last two parameters are for retailer names (e.g. Amazon, Walmart). The second parameter is for the name of the application (e.g. Firefox). -->
+    <string name="review_quality_check_contextual_onboarding_description">Ehechajey iporãha umi marandu’i apopyre rehegua %1$s ndive ejogua mboyve. Pe marandu’i rechajeyha, %2$s mba’epyahúva, ojuaju kundahaite ndive. Avei ojeporu %3$s ha %4$s ndive.</string>
+    <!-- Paragraph presenting review quality check feature. First parameter is the Fakespot product name. Second parameter is for clickable text defined in review_quality_check_contextual_onboarding_learn_more_link. In the phrase "Fakespot by Mozilla", "by" can be localized. Does not need to stay by. -->
+    <string name="review_quality_check_contextual_onboarding_learn_more">Erekóvo tembiporupyahu %1$s Mozilla mba’e, roipytyvõta emboyke hag̃ua marandu’ivai ha hekotee’ỹva. Ore IA iporãmeme ñemo’ã hag̃ua emba’ejogua aja. %2$s</string>
     <!-- Clickable text from the contextual onboarding card that links to review quality check support article. -->
     <string name="review_quality_check_contextual_onboarding_learn_more_link">Eikuaave</string>
     <!-- Caption text to be displayed in review quality check contextual onboarding card above the opt-in button. First parameter is the Fakespot product name. Following parameters are for clickable texts defined in review_quality_check_contextual_onboarding_privacy_policy and review_quality_check_contextual_onboarding_terms_use. In the phrase "Fakespot by Mozilla", "by" can be localized. Does not need to stay by. -->

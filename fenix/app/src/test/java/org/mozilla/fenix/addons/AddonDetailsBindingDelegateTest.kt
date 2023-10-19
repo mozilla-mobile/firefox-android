@@ -87,10 +87,10 @@ class AddonDetailsBindingDelegateTest {
     }
 
     @Test
-    fun `bind addons website`() {
+    fun `bind addons homepage`() {
         detailsBindingDelegate.bind(
             baseAddon.copy(
-                siteUrl = "https://mozilla.org",
+                homepageUrl = "https://mozilla.org",
             ),
         )
 
@@ -187,9 +187,29 @@ class AddonDetailsBindingDelegateTest {
 
     @Test
     fun `bind without a home page`() {
-        detailsBindingDelegate.bind(baseAddon.copy(siteUrl = ""))
+        detailsBindingDelegate.bind(baseAddon.copy(homepageUrl = ""))
 
         assertFalse(binding.homePageLabel.isVisible)
         assertFalse(binding.homePageDivider.isVisible)
+    }
+
+    @Test
+    fun `bind add-on detail url`() {
+        detailsBindingDelegate.bind(baseAddon.copy(detailUrl = "https://example.org"))
+
+        assertTrue(binding.detailUrl.isVisible)
+        assertTrue(binding.detailUrlDivider.isVisible)
+
+        binding.detailUrl.performClick()
+
+        verify { interactor.openWebsite(Uri.parse("https://example.org")) }
+    }
+
+    @Test
+    fun `bind add-on without a detail url`() {
+        detailsBindingDelegate.bind(baseAddon.copy(detailUrl = ""))
+
+        assertFalse(binding.detailUrl.isVisible)
+        assertFalse(binding.detailUrlDivider.isVisible)
     }
 }
