@@ -3,7 +3,7 @@
 gcloud:
   results-bucket: fenix_test_artifacts
   record-video: false
-  timeout: 10m
+  timeout: 15m
   async: false
 
   app: /app/path
@@ -14,11 +14,11 @@ gcloud:
     clearPackageData: true
 
   device:
-    - model: Pixel2.arm
-      version: 26
+    - model: redfin
+      version: 30
       locale: en_US
-    - model: Pixel2.arm
-      version: 27
+    - model: OnePlus9Pro
+      version: 33
       locale: en_US
     - model: dreamlte
       version: 28
@@ -28,6 +28,27 @@ gcloud:
       locale: en_US
     - model: x1q
       version: 29
+      locale: en_US
+    - model: a51
+      version: 31
+      locale: en_US
+    - model: b0q
+      version: 33
+      locale: en_US
+    - model: b4q
+      version: 33
+      locale: en_US
+    - model: bluejay
+      version: 32
+      locale: en_US
+    - model: cheetah
+      version: 33
+      locale: en_US
+    - model: f2q
+      version: 30
+      locale: en_US
+    - model: q2q
+      version: 31
       locale: en_US
 
   type: robo
