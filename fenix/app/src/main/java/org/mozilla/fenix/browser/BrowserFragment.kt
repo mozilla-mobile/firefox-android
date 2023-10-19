@@ -467,6 +467,11 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
         pwaOnboardingObserver?.stop()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        isTablet = false
+    }
+
     private fun updateHistoryMetadata() {
         getCurrentTab()?.let { tab ->
             (tab as? TabSessionState)?.historyMetadata?.let {
