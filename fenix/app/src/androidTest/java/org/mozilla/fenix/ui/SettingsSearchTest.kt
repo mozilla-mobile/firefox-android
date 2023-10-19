@@ -590,7 +590,7 @@ class SettingsSearchTest {
         }.openSettings {
         }.openSearchSubMenu {
             openManageShortcutsMenu()
-            verifyToolbarText("Manage search shortcuts")
+            verifyToolbarText("Manage alternative search engines")
             verifyEnginesShortcutsListHeader()
             verifyManageShortcutsList(activityTestRule)
             verifySearchShortcutChecked(
