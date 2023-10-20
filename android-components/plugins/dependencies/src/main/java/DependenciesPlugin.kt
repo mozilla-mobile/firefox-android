@@ -50,7 +50,7 @@ object Versions {
 
     // see https://android-developers.googleblog.com/2022/06/independent-versioning-of-Jetpack-Compose-libraries.html
     // for Jetpack Compose libraries versioning
-    const val compose_version = "1.5.3"
+    const val compose_version = "1.5.4"
     const val compose_compiler = "1.4.8"
 
     object AndroidX {
@@ -67,7 +67,7 @@ object Versions {
         const val core = "1.12.0"
         const val drawerlayout = "1.2.0"
         const val fragment = "1.6.1"
-        const val recyclerview = "1.3.1"
+        const val recyclerview = "1.3.2"
         const val test = "1.5.0"
         const val test_ext = "1.1.5"
         const val test_runner = "1.5.2"
@@ -89,7 +89,7 @@ object Versions {
     }
 
     object Firebase {
-        const val messaging = "23.2.1"
+        const val messaging = "23.3.0"
     }
 }
 
