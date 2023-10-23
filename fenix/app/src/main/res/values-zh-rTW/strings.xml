@@ -75,7 +75,12 @@
         private mode in our new Total Private Browsing mode.
         The first parameter is the name of the app defined in app_name (for example: Firefox Nightly)
         The second parameter is the clickable link text in felt_privacy_info_card_subtitle_link_text -->
-    <string name="felt_privacy_info_card_subtitle">%1$s 會在您關閉所有隱私瀏覽視窗後，清除您的 Cookie、瀏覽紀錄、網站資料。%2$s</string>
+    <string name="felt_privacy_info_card_subtitle" moz:removedIn="120" tools:ignore="UnusedResources">%1$s 會在您關閉所有隱私瀏覽視窗後，清除您的 Cookie、瀏覽紀錄、網站資料。%2$s</string>
+    <!-- Explanation for private browsing displayed to users on home view when they first enable
+        private mode in our new Total Private Browsing mode.
+        The first parameter is the name of the app defined in app_name (for example: Firefox Nightly)
+        The second parameter is the clickable link text in felt_privacy_info_card_subtitle_link_text -->
+    <string name="felt_privacy_info_card_subtitle_2">%1$s 會在關閉所有隱私瀏覽分頁後，清除您的 Cookie、瀏覽紀錄、網站資料。%2$s</string>
     <!-- Clickable portion of the explanation for private browsing that links the user to our
         about privacy page.
         This string is used in felt_privacy_info_card_subtitle as the second parameter.-->
@@ -331,10 +336,14 @@
     <!-- Juno first user onboarding flow experiment, strings are marked unused as they are only referenced by Nimbus experiments. -->
     <!-- Title for set firefox as default browser screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
         Note: The word "Firefox" should NOT be translated -->
-    <string name="juno_onboarding_default_browser_title_nimbus" tools:ignore="UnusedResources">將 Firefox 設為主力瀏覽器</string>
+    <string name="juno_onboarding_default_browser_title_nimbus" moz:removedIn="120" tools:ignore="UnusedResources">將 Firefox 設為主力瀏覽器</string>
+    <!-- Title for set firefox as default browser screen used by Nimbus experiments. -->
+    <string name="juno_onboarding_default_browser_title_nimbus_2">我們希望確保您上網安全</string>
     <!-- Description for set firefox as default browser screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
         Note: The word "Firefox" should NOT be translated -->
-    <string name="juno_onboarding_default_browser_description_nimbus" tools:ignore="UnusedResources">Firefox 將人們看得比利潤更重要，並且透過封鎖跨網站追蹤器等機制來捍衛您的隱私。\n\n可到我們的隱私權公告了解更多資訊。</string>
+    <string name="juno_onboarding_default_browser_description_nimbus" moz:removedIn="120" tools:ignore="UnusedResources">Firefox 將人們看得比利潤更重要，並且透過封鎖跨網站追蹤器等機制來捍衛您的隱私。\n\n可到我們的隱私權公告了解更多資訊。</string>
+    <!-- Description for set firefox as default browser screen used by Nimbus experiments. -->
+    <string name="juno_onboarding_default_browser_description_nimbus_2">這套由非營利組織打造的瀏覽器，可幫助防止企業在網路上偷偷追蹤您。\n\n到我們的隱私權公告了解更多資訊。</string>
     <!-- Text for the link to the privacy notice webpage for set as firefox default browser screen.
     This is part of the string with the key "juno_onboarding_default_browser_description". -->
     <string name="juno_onboarding_default_browser_description_link_text" tools:ignore="UnusedResources">隱私權公告</string>
@@ -343,19 +352,30 @@
     <!-- Text for the button dismiss the screen and move on with the flow -->
     <string name="juno_onboarding_default_browser_negative_button" tools:ignore="UnusedResources">現在不要</string>
     <!-- Title for sign in to sync screen. -->
-    <string name="juno_onboarding_sign_in_title" tools:ignore="UnusedResources">在手機與筆電間快速切換</string>
+    <string name="juno_onboarding_sign_in_title" moz:removedIn="120" tools:ignore="UnusedResources">在手機與筆電間快速切換</string>
+    <!-- Title for sign in to sync screen. -->
+    <string name="juno_onboarding_sign_in_title_2">在不同裝置間切換時保持加密</string>
     <!-- Description for sign in to sync screen. -->
-    <string name="juno_onboarding_sign_in_description" tools:ignore="UnusedResources">同步您其他裝置上的分頁與密碼，從中斷的地方繼續上網。</string>
+    <string name="juno_onboarding_sign_in_description" moz:removedIn="120" tools:ignore="UnusedResources">同步您其他裝置上的分頁與密碼，從中斷的地方繼續上網。</string>
+    <!-- Description for sign in to sync screen. Nimbus experiments do not support string placeholders.
+     Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_sign_in_description_2">登入並同步資料後就更安全了，Firefox 會加密您的密碼、書籤等資料再同步。</string>
     <!-- Text for the button to sign in to sync on the device -->
     <string name="juno_onboarding_sign_in_positive_button" tools:ignore="UnusedResources">登入</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
     <string name="juno_onboarding_sign_in_negative_button" tools:ignore="UnusedResources">現在不要</string>
     <!-- Title for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
         Note: The word "Firefox" should NOT be translated -->
-    <string name="juno_onboarding_enable_notifications_title_nimbus" tools:ignore="UnusedResources">透過通知，可幫助您使用 Firefox 做到更多事</string>
+    <string name="juno_onboarding_enable_notifications_title_nimbus" moz:removedIn="120" tools:ignore="UnusedResources">透過通知，可幫助您使用 Firefox 做到更多事</string>
+    <!-- Title for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_enable_notifications_title_nimbus_2">透過通知功能，讓您使用 Firefox 更安全</string>
     <!-- Description for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
-       Note: The word "Firefox" should NOT be translated   -->
-    <string name="juno_onboarding_enable_notifications_description_nimbus" tools:ignore="UnusedResources">在不同裝置間發送分頁標籤、管理下載項目並獲得能完整發揮 Firefox 威力的使用秘訣。</string>
+       Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_enable_notifications_description_nimbus" moz:removedIn="120" tools:ignore="UnusedResources">在不同裝置間發送分頁標籤、管理下載項目並獲得能完整發揮 Firefox 威力的使用秘訣。</string>
+    <!-- Description for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+       Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_enable_notifications_description_nimbus_2">在您的不同裝置間，安全地傳送分頁，並且探索 Firefox 當中其他保護隱私權的相關功能。</string>
     <!-- Text for the button to request notification permission on the device -->
     <string name="juno_onboarding_enable_notifications_positive_button" tools:ignore="UnusedResources">開啟通知</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
@@ -395,7 +415,9 @@
     <!-- Preference category for settings related to changing the default search engine -->
     <string name="preferences_category_select_default_search_engine">選擇一套</string>
     <!-- Preference for settings related to managing search shortcuts for the quick search menu -->
-    <string name="preferences_manage_search_shortcuts">管理搜尋捷徑</string>
+    <string name="preferences_manage_search_shortcuts" moz:removedIn="120" tools:ignore="UnusedResources">管理搜尋捷徑</string>
+    <!-- Preference for settings related to managing search shortcuts for the quick search menu -->
+    <string name="preferences_manage_search_shortcuts_2">管理其他搜尋引擎</string>
     <!-- Summary for preference for settings related to managing search shortcuts for the quick search menu -->
     <string name="preferences_manage_search_shortcuts_summary">編輯搜尋選單中要出現的搜尋引擎</string>
     <!-- Preference category for settings related to managing search shortcuts for the quick search menu -->
@@ -406,8 +428,16 @@
     <string name="preferences_search">搜尋</string>
     <!-- Preference for settings related to Search engines -->
     <string name="preferences_search_engines">搜尋引擎</string>
+    <!-- Preference for settings related to Search engines suggestions-->
+    <string name="preferences_search_engines_suggestions">來自其他搜尋引擎的建議</string>
     <!-- Preference for settings related to Search address bar -->
-    <string name="preferences_search_address_bar">網址列</string>
+    <string name="preferences_search_address_bar" moz:removedIn="120" tools:ignore="UnusedResources">網址列</string>
+    <!-- Preference Category for settings related to Search address bar -->
+    <string name="preferences_settings_address_bar">網址列偏好設定</string>
+    <!-- Preference Category for settings to Firefox Suggest -->
+    <string name="preference_search_address_bar_fx_suggest">網址列 - Firefox Suggest</string>
+    <!-- Preference link to Learn more about Firefox Suggest -->
+    <string name="preference_search_learn_about_fx_suggest">了解 Firefox Suggest 的相關資訊</string>
     <!-- Preference link to rating Fenix on the Play Store -->
     <string name="preferences_rate">到 Google Play 打分數</string>
     <!-- Preference linking to about page for Fenix
@@ -547,7 +577,7 @@
     <!-- Preference for developers -->
     <string name="preferences_remote_debugging">透過 USB 進行遠端除錯</string>
     <!-- Preference title for switch preference to show search engines -->
-    <string name="preferences_show_search_engines">顯示搜尋引擎</string>
+    <string name="preferences_show_search_engines" moz:RemovedIn="120" tools:ignore="UnusedResources">顯示搜尋引擎</string>
     <!-- Preference title for switch preference to show search suggestions -->
     <string name="preferences_show_search_suggestions">顯示搜尋建議</string>
     <!-- Preference title for switch preference to show voice search button -->
@@ -678,9 +708,9 @@
 
     <!-- Add-on Installation from AMO-->
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
-    <string name="addon_not_supported_error">不支援的附加元件</string>
+    <string name="addon_not_supported_error" moz:removedIn="120" tools:ignore="UnusedResources">不支援的附加元件</string>
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is already installed -->
-    <string name="addon_already_installed">已經安裝的附加元件</string>
+    <string name="addon_already_installed" moz:removedIn="120" tools:ignore="UnusedResources">已經安裝的附加元件</string>
 
     <!-- Add-on process crash dialog to user -->
     <!-- Title of a dialog shown to the user when enough errors have occurred with addons and they need to be temporarily disabled -->
@@ -695,6 +725,8 @@
     <!-- Account Preferences -->
     <!-- Preference for managing your account via accounts.firefox.com -->
     <string name="preferences_manage_account">管理帳號</string>
+    <!-- Summary of the preference for managing your account via accounts.firefox.com. -->
+    <string name="preferences_manage_account_summary">更改密碼、管理資料收集或刪除帳號</string>
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">立即同步</string>
     <!-- Preference category for sync -->
@@ -995,9 +1027,9 @@
     <!-- Hint for adding name of a collection -->
     <string name="collection_name_hint">收藏集名稱</string>
     <!-- Text for the menu button to rename a top site -->
-	<string name="rename_top_site">重新命名</string>
-	<!-- Text for the menu button to remove a top site -->
-	<string name="remove_top_site">移除</string>
+    <string name="rename_top_site">重新命名</string>
+    <!-- Text for the menu button to remove a top site -->
+    <string name="remove_top_site">移除</string>
 
     <!-- Text for the menu button to delete a top site from history -->
     <string name="delete_from_history">從瀏覽紀錄刪除</string>
@@ -1973,26 +2005,26 @@
     <!-- Title of the Edit search engine screen -->
     <string name="search_engine_edit_custom_search_engine_title">編輯搜尋引擎</string>
     <!-- Content description (not visible, for screen readers etc.): Title for the button to add a search engine in the action bar -->
-    <string name="search_engine_add_button_content_description">新增</string>
+    <string name="search_engine_add_button_content_description" moz:RemovedIn="120" tools:ignore="UnusedResources">新增</string>
     <!-- Content description (not visible, for screen readers etc.): Title for the button to save a search engine in the action bar -->
-    <string name="search_engine_add_custom_search_engine_edit_button_content_description">儲存</string>
+    <string name="search_engine_add_custom_search_engine_edit_button_content_description" moz:RemovedIn="120" tools:ignore="UnusedResources">儲存</string>
     <!-- Text for the menu button to edit a search engine -->
     <string name="search_engine_edit">編輯</string>
     <!-- Text for the menu button to delete a search engine -->
     <string name="search_engine_delete">刪除</string>
 
     <!-- Text for the button to create a custom search engine on the Add search engine screen -->
-    <string name="search_add_custom_engine_label_other">其他</string>
+    <string name="search_add_custom_engine_label_other" moz:RemovedIn="120" tools:ignore="UnusedResources">其他</string>
     <!-- Label for the TextField in which user enters custom search engine name -->
     <string name="search_add_custom_engine_name_label">名稱</string>
     <!-- Placeholder text shown in the Search Engine Name TextField before a user enters text -->
-    <string name="search_add_custom_engine_name_hint">名稱</string>
+    <string name="search_add_custom_engine_name_hint" moz:RemovedIn="120" tools:ignore="UnusedResources">名稱</string>
     <!-- Placeholder text shown in the Search Engine Name text field before a user enters text -->
     <string name="search_add_custom_engine_name_hint_2">搜尋引擎名稱</string>
     <!-- Label for the TextField in which user enters custom search engine URL -->
     <string name="search_add_custom_engine_url_label">搜尋字串</string>
     <!-- Placeholder text shown in the Search String TextField before a user enters text -->
-    <string name="search_add_custom_engine_search_string_hint">要使用的搜尋字串</string>
+    <string name="search_add_custom_engine_search_string_hint" moz:RemovedIn="120" tools:ignore="UnusedResources">要使用的搜尋字串</string>
     <!-- Placeholder text shown in the Search String TextField before a user enters text -->
     <string name="search_add_custom_engine_search_string_hint_2">用來搜尋的網址</string>
     <!-- Description text for the Search String TextField. The %s is part of the string -->
@@ -2138,14 +2170,14 @@
 
     <!-- Label for the preference to show the shortcuts for the most visited top sites on the homepage -->
     <string name="top_sites_toggle_top_recent_sites_4">捷徑</string>
-	<!-- Title text displayed in the rename top site dialog. -->
-	<string name="top_sites_rename_dialog_title">名稱</string>
+    <!-- Title text displayed in the rename top site dialog. -->
+    <string name="top_sites_rename_dialog_title">名稱</string>
     <!-- Hint for renaming title of a shortcut -->
     <string name="shortcut_name_hint">捷徑名稱</string>
-	<!-- Button caption to confirm the renaming of the top site. -->
-	<string name="top_sites_rename_dialog_ok">確定</string>
-	<!-- Dialog button text for canceling the rename top site prompt. -->
-	<string name="top_sites_rename_dialog_cancel">取消</string>
+    <!-- Button caption to confirm the renaming of the top site. -->
+    <string name="top_sites_rename_dialog_ok">確定</string>
+    <!-- Dialog button text for canceling the rename top site prompt. -->
+    <string name="top_sites_rename_dialog_cancel">取消</string>
 
     <!-- Text for the menu button to open the homepage settings. -->
     <string name="top_sites_menu_settings">設定</string>
@@ -2224,7 +2256,9 @@
 
     <!-- Review quality check feature-->
     <!-- Name for the review quality check feature used as title for the panel. -->
-    <string name="review_quality_check_feature_name">商品評論檢查器</string>
+    <string name="review_quality_check_feature_name" moz:RemovedIn="120" tools:ignore="UnusedResources">商品評論檢查器</string>
+    <!-- Name for the review quality check feature used as title for the panel. -->
+    <string name="review_quality_check_feature_name_2">商品評論檢查器</string>
     <!-- Summary for grades A and B for review quality check adjusted grading. -->
     <string name="review_quality_check_grade_a_b_description">可靠的評論</string>
     <!-- Summary for grade C for review quality check adjusted grading. -->
@@ -2268,7 +2302,9 @@
     <!-- Text for label for switch preference to show recommended products from review quality check settings section. -->
     <string name="review_quality_check_settings_recommended_products">在商品評論檢查器中顯示廣告</string>
     <!-- Description for switch preference to show recommended products from review quality check settings section. First parameter is for clickable text defined in review_quality_check_settings_recommended_products_learn_more.-->
-    <string name="review_quality_check_settings_recommended_products_description" tools:ignore="UnusedResources">您會偶而看到相關商品的廣告，所有廣告都必須符合我們的審核評論品質標準。%s</string>
+    <string name="review_quality_check_settings_recommended_products_description" moz:RemovedIn="120" tools:ignore="UnusedResources">您會偶而看到相關商品的廣告，所有廣告都必須符合我們的審核評論品質標準。%s</string>
+    <!-- Description for switch preference to show recommended products from review quality check settings section. First parameter is for clickable text defined in review_quality_check_settings_recommended_products_learn_more.-->
+    <string name="review_quality_check_settings_recommended_products_description_2" tools:ignore="UnusedResources">您會偶爾看到相關產品的廣告。我們只會為評論可靠的產品進行宣傳。 %s</string>
     <!-- Clickable text that links to review quality check recommended products support article. -->
     <string name="review_quality_check_settings_recommended_products_learn_more" tools:ignore="UnusedResources">了解更多</string>
     <!-- Text for turning sidebar off button from review quality check settings section. -->
@@ -2296,7 +2332,9 @@
     <!-- Text for the body of warning card informing the user that the current product is currently not available. -->
     <string name="review_quality_check_product_availability_warning_body" tools:ignore="UnusedResources">若您發現此產品又上架了，請回報給我們，我們將盡快檢查評論內容。</string>
     <!-- Clickable text for warning card informing the user that the current product is currently not available. Clicking this should inform the server that the product is available. -->
-    <string name="review_quality_check_product_availability_warning_action" tools:ignore="UnusedResources">回報此商品已重新上架</string>
+    <string name="review_quality_check_product_availability_warning_action" moz:RemovedIn="120" tools:ignore="UnusedResources">回報此商品已重新上架</string>
+    <!-- Clickable text for warning card informing the user that the current product is currently not available. Clicking this should inform the server that the product is available. -->
+    <string name="review_quality_check_product_availability_warning_action_2" tools:ignore="UnusedResources">回報產品已有庫存</string>
     <!-- Title for warning card informing the user that the current product's re-analysis is still processing. -->
     <string name="review_quality_check_reanalysis_in_progress_warning_title">正在檢查評論品質</string>
     <!-- Title for warning card informing the user that the current product's analysis is still processing. -->

@@ -25,7 +25,7 @@ class DefaultReviewQualityCheckServiceTest {
     val coroutinesTestRule = MainCoroutineRule()
 
     @Test
-    fun `GIVEN fetch is called WHEN onResult is invoked THEN product analysis returns the same data`() =
+    fun `GIVEN fetch is called WHEN onResult is invoked with the expected type THEN product analysis returns the same data`() =
         runTest {
             val engineSession = mockk<EngineSession>()
             val expected = ProductAnalysisTestData.productAnalysis()

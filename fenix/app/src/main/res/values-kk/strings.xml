@@ -71,7 +71,12 @@
         private mode in our new Total Private Browsing mode.
         The first parameter is the name of the app defined in app_name (for example: Firefox Nightly)
         The second parameter is the clickable link text in felt_privacy_info_card_subtitle_link_text -->
-    <string name="felt_privacy_info_card_subtitle">Барлық жеке терезелерді жапқанда, %1$s cookie файлдарын, тарихты және сайт деректерін өшіреді. %2$s</string>
+    <string name="felt_privacy_info_card_subtitle" moz:removedIn="120" tools:ignore="UnusedResources">Барлық жеке терезелерді жапқанда, %1$s cookie файлдарын, тарихты және сайт деректерін өшіреді. %2$s</string>
+    <!-- Explanation for private browsing displayed to users on home view when they first enable
+        private mode in our new Total Private Browsing mode.
+        The first parameter is the name of the app defined in app_name (for example: Firefox Nightly)
+        The second parameter is the clickable link text in felt_privacy_info_card_subtitle_link_text -->
+    <string name="felt_privacy_info_card_subtitle_2">Барлық жеке беттерді жапқанда, %1$s cookie файлдарын, тарихты және сайт деректерін өшіреді. %2$s</string>
     <!-- Clickable portion of the explanation for private browsing that links the user to our
         about privacy page.
         This string is used in felt_privacy_info_card_subtitle as the second parameter.-->
@@ -323,10 +328,14 @@
     <!-- Juno first user onboarding flow experiment, strings are marked unused as they are only referenced by Nimbus experiments. -->
     <!-- Title for set firefox as default browser screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
         Note: The word "Firefox" should NOT be translated -->
-    <string name="juno_onboarding_default_browser_title_nimbus" tools:ignore="UnusedResources">Firefox-ты негізгі браузер етіп орнатыңыз</string>
+    <string name="juno_onboarding_default_browser_title_nimbus" moz:removedIn="120" tools:ignore="UnusedResources">Firefox-ты негізгі браузер етіп орнатыңыз</string>
+    <!-- Title for set firefox as default browser screen used by Nimbus experiments. -->
+    <string name="juno_onboarding_default_browser_title_nimbus_2">Біз сіздің қауіпсіздігіңізді қамтамасыз етуді жақсы көреміз</string>
     <!-- Description for set firefox as default browser screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
         Note: The word "Firefox" should NOT be translated -->
-    <string name="juno_onboarding_default_browser_description_nimbus" tools:ignore="UnusedResources">Firefox сайтаралық трекерлерді блоктау арқылы адамдарды табыстан жоғары қояды және жекелігіңізді қорғайды.\n\nТолығырақ ақпаратты жекелік хабарламамыздан алыңыз.</string>
+    <string name="juno_onboarding_default_browser_description_nimbus" moz:removedIn="120" tools:ignore="UnusedResources">Firefox сайтаралық трекерлерді блоктау арқылы адамдарды табыстан жоғары қояды және жекелігіңізді қорғайды.\n\nТолығырақ ақпаратты жекелік хабарламамыздан алыңыз.</string>
+    <!-- Description for set firefox as default browser screen used by Nimbus experiments. -->
+    <string name="juno_onboarding_default_browser_description_nimbus_2">Коммерциялық емес ұйымы қолдау көрсететін браузеріміз компаниялардың сізді интернетте жасырын бақылап отыруын тоқтатуға көмектеседі.\n\nЖекелік ескертуімізден толығырақ ақпарат алыңыз.</string>
     <!-- Text for the link to the privacy notice webpage for set as firefox default browser screen.
     This is part of the string with the key "juno_onboarding_default_browser_description". -->
     <string name="juno_onboarding_default_browser_description_link_text" tools:ignore="UnusedResources">жекелік ескертуі</string>
@@ -335,19 +344,30 @@
     <!-- Text for the button dismiss the screen and move on with the flow -->
     <string name="juno_onboarding_default_browser_negative_button" tools:ignore="UnusedResources">Қазір емес</string>
     <!-- Title for sign in to sync screen. -->
-    <string name="juno_onboarding_sign_in_title" tools:ignore="UnusedResources">Телефоннан ноутбукке және кері өтіңіз</string>
+    <string name="juno_onboarding_sign_in_title" moz:removedIn="120" tools:ignore="UnusedResources">Телефоннан ноутбукке және кері өтіңіз</string>
+    <!-- Title for sign in to sync screen. -->
+    <string name="juno_onboarding_sign_in_title_2">Құрылғылар арасында өткенде шифрленген күйде қала беріңіз</string>
     <!-- Description for sign in to sync screen. -->
-    <string name="juno_onboarding_sign_in_description" tools:ignore="UnusedResources">Тоқтаған жерден жалғастыру үшін басқа құрылғыларыңыздан беттер мен парольдерді алыңыз.</string>
+    <string name="juno_onboarding_sign_in_description" moz:removedIn="120" tools:ignore="UnusedResources">Тоқтаған жерден жалғастыру үшін басқа құрылғыларыңыздан беттер мен парольдерді алыңыз.</string>
+    <!-- Description for sign in to sync screen. Nimbus experiments do not support string placeholders.
+     Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_sign_in_description_2">Жүйеге кіріп, синхрондалған кезде қауіпсіз боласыз. Firefox сіздің парольдерді, бетбелгілерді және т.б. шифрлейді.</string>
     <!-- Text for the button to sign in to sync on the device -->
     <string name="juno_onboarding_sign_in_positive_button" tools:ignore="UnusedResources">Кіру</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
     <string name="juno_onboarding_sign_in_negative_button" tools:ignore="UnusedResources">Қазір емес</string>
     <!-- Title for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
         Note: The word "Firefox" should NOT be translated -->
-    <string name="juno_onboarding_enable_notifications_title_nimbus" tools:ignore="UnusedResources">Хабарландырулар Firefox арқылы көбірек жұмыс бітіруге көмектеседі</string>
+    <string name="juno_onboarding_enable_notifications_title_nimbus" moz:removedIn="120" tools:ignore="UnusedResources">Хабарландырулар Firefox арқылы көбірек жұмыс бітіруге көмектеседі</string>
+    <!-- Title for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_enable_notifications_title_nimbus_2">Хабарландырулар Firefox көмегімен қауіпсіз болып қалуға көмектеседі</string>
     <!-- Description for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
-       Note: The word "Firefox" should NOT be translated   -->
-    <string name="juno_onboarding_enable_notifications_description_nimbus" tools:ignore="UnusedResources">Құрылғылар арасында беттерді жіберіңіз, жүктемелеріңізді басқарыңыз және Firefox мүмкіндігін барынша пайдалану туралы кеңестер алыңыз.</string>
+       Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_enable_notifications_description_nimbus" moz:removedIn="120" tools:ignore="UnusedResources">Құрылғылар арасында беттерді жіберіңіз, жүктемелеріңізді басқарыңыз және Firefox мүмкіндігін барынша пайдалану туралы кеңестер алыңыз.</string>
+    <!-- Description for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+       Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_enable_notifications_description_nimbus_2">Құрылғылар арасында беттерді қауіпсіз жіберіңіз және Firefox қолданбасының басқа жекелік мүмкіндіктерін өзіңіз үшін ашыңыз.</string>
     <!-- Text for the button to request notification permission on the device -->
     <string name="juno_onboarding_enable_notifications_positive_button" tools:ignore="UnusedResources">Хабарламаларды іске қосу</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
@@ -386,7 +406,9 @@
     <!-- Preference category for settings related to changing the default search engine -->
     <string name="preferences_category_select_default_search_engine">Біреуін таңдаңыз</string>
     <!-- Preference for settings related to managing search shortcuts for the quick search menu -->
-    <string name="preferences_manage_search_shortcuts">Іздеу жарлықтарын басқару</string>
+    <string name="preferences_manage_search_shortcuts" moz:removedIn="120" tools:ignore="UnusedResources">Іздеу жарлықтарын басқару</string>
+    <!-- Preference for settings related to managing search shortcuts for the quick search menu -->
+    <string name="preferences_manage_search_shortcuts_2">Балама іздеу жүйелерін басқару</string>
     <!-- Summary for preference for settings related to managing search shortcuts for the quick search menu -->
     <string name="preferences_manage_search_shortcuts_summary">Іздеу мәзірінде көрінетін іздеу жүйелерін түзету</string>
     <!-- Preference category for settings related to managing search shortcuts for the quick search menu -->
@@ -398,8 +420,16 @@
 
     <!-- Preference for settings related to Search engines -->
     <string name="preferences_search_engines">Іздеу жүйелері</string>
+    <!-- Preference for settings related to Search engines suggestions-->
+    <string name="preferences_search_engines_suggestions">Іздеу жүйелерінен ұсыныстар</string>
     <!-- Preference for settings related to Search address bar -->
-    <string name="preferences_search_address_bar">Адрес жолағы</string>
+    <string name="preferences_search_address_bar" moz:removedIn="120" tools:ignore="UnusedResources">Адрес жолағы</string>
+    <!-- Preference Category for settings related to Search address bar -->
+    <string name="preferences_settings_address_bar">Адрес жолағының баптаулары</string>
+    <!-- Preference Category for settings to Firefox Suggest -->
+    <string name="preference_search_address_bar_fx_suggest">Адрес жолағы - Firefox Suggest</string>
+    <!-- Preference link to Learn more about Firefox Suggest -->
+    <string name="preference_search_learn_about_fx_suggest">Firefox Suggest туралы көбірек білу</string>
     <!-- Preference link to rating Fenix on the Play Store -->
     <string name="preferences_rate">Google Play ішінде бағалау</string>
     <!-- Preference linking to about page for Fenix
@@ -540,7 +570,7 @@
     <!-- Preference for developers -->
     <string name="preferences_remote_debugging">USB арқылы қашықтан жөндеу</string>
     <!-- Preference title for switch preference to show search engines -->
-    <string name="preferences_show_search_engines">Іздеу жүйелерін көрсету</string>
+    <string name="preferences_show_search_engines" moz:RemovedIn="120" tools:ignore="UnusedResources">Іздеу жүйелерін көрсету</string>
     <!-- Preference title for switch preference to show search suggestions -->
     <string name="preferences_show_search_suggestions">Іздеу ұсыныстарын көрсету</string>
     <!-- Preference title for switch preference to show voice search button -->
@@ -668,9 +698,9 @@
 
     <!-- Add-on Installation from AMO-->
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
-    <string name="addon_not_supported_error">Қосымшаға қолдау жоқ</string>
+    <string name="addon_not_supported_error" moz:removedIn="120" tools:ignore="UnusedResources">Қосымшаға қолдау жоқ</string>
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is already installed -->
-    <string name="addon_already_installed">Қосымша орнатылған болып тұр</string>
+    <string name="addon_already_installed" moz:removedIn="120" tools:ignore="UnusedResources">Қосымша орнатылған болып тұр</string>
 
     <!-- Add-on process crash dialog to user -->
     <!-- Title of a dialog shown to the user when enough errors have occurred with addons and they need to be temporarily disabled -->
@@ -686,6 +716,8 @@
     <!-- Account Preferences -->
     <!-- Preference for managing your account via accounts.firefox.com -->
     <string name="preferences_manage_account">Тіркелгіні басқару</string>
+    <!-- Summary of the preference for managing your account via accounts.firefox.com. -->
+    <string name="preferences_manage_account_summary">Пароліңізді өзгерту, деректер жинағын басқару немесе тіркелгіңізді өшіру</string>
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">Қазір синхрондау</string>
     <!-- Preference category for sync -->
@@ -980,9 +1012,9 @@
     <!-- Hint for adding name of a collection -->
     <string name="collection_name_hint">Жинақ атауы</string>
     <!-- Text for the menu button to rename a top site -->
-	<string name="rename_top_site">Атын өзгерту</string>
-	<!-- Text for the menu button to remove a top site -->
-	<string name="remove_top_site">Өшіру</string>
+    <string name="rename_top_site">Атын өзгерту</string>
+    <!-- Text for the menu button to remove a top site -->
+    <string name="remove_top_site">Өшіру</string>
 
     <!-- Text for the menu button to delete a top site from history -->
     <string name="delete_from_history">Тарихтан өшіру</string>
@@ -1938,26 +1970,26 @@
     <!-- Title of the Edit search engine screen -->
     <string name="search_engine_edit_custom_search_engine_title">Іздеу жүйесін түзету</string>
     <!-- Content description (not visible, for screen readers etc.): Title for the button to add a search engine in the action bar -->
-    <string name="search_engine_add_button_content_description">Қосу</string>
+    <string name="search_engine_add_button_content_description" moz:RemovedIn="120" tools:ignore="UnusedResources">Қосу</string>
     <!-- Content description (not visible, for screen readers etc.): Title for the button to save a search engine in the action bar -->
-    <string name="search_engine_add_custom_search_engine_edit_button_content_description">Сақтау</string>
+    <string name="search_engine_add_custom_search_engine_edit_button_content_description" moz:RemovedIn="120" tools:ignore="UnusedResources">Сақтау</string>
     <!-- Text for the menu button to edit a search engine -->
     <string name="search_engine_edit">Түзету</string>
     <!-- Text for the menu button to delete a search engine -->
     <string name="search_engine_delete">Өшіру</string>
 
     <!-- Text for the button to create a custom search engine on the Add search engine screen -->
-    <string name="search_add_custom_engine_label_other">Басқа</string>
+    <string name="search_add_custom_engine_label_other" moz:RemovedIn="120" tools:ignore="UnusedResources">Басқа</string>
     <!-- Label for the TextField in which user enters custom search engine name -->
     <string name="search_add_custom_engine_name_label">Аты</string>
     <!-- Placeholder text shown in the Search Engine Name TextField before a user enters text -->
-    <string name="search_add_custom_engine_name_hint">Атауы</string>
+    <string name="search_add_custom_engine_name_hint" moz:RemovedIn="120" tools:ignore="UnusedResources">Атауы</string>
     <!-- Placeholder text shown in the Search Engine Name text field before a user enters text -->
     <string name="search_add_custom_engine_name_hint_2">Іздеу жүйесінің атауы</string>
     <!-- Label for the TextField in which user enters custom search engine URL -->
     <string name="search_add_custom_engine_url_label">Іздеу жолының URL адресі</string>
     <!-- Placeholder text shown in the Search String TextField before a user enters text -->
-    <string name="search_add_custom_engine_search_string_hint">Қолданылатын іздеу жолы</string>
+    <string name="search_add_custom_engine_search_string_hint" moz:RemovedIn="120" tools:ignore="UnusedResources">Қолданылатын іздеу жолы</string>
     <!-- Placeholder text shown in the Search String TextField before a user enters text -->
     <string name="search_add_custom_engine_search_string_hint_2">Іздеу үшін пайдаланылатын URL</string>
     <!-- Description text for the Search String TextField. The %s is part of the string -->
@@ -2103,14 +2135,14 @@
 
     <!-- Label for the preference to show the shortcuts for the most visited top sites on the homepage -->
     <string name="top_sites_toggle_top_recent_sites_4">Жарлықтар</string>
-	<!-- Title text displayed in the rename top site dialog. -->
-	<string name="top_sites_rename_dialog_title">Аты</string>
+    <!-- Title text displayed in the rename top site dialog. -->
+    <string name="top_sites_rename_dialog_title">Аты</string>
     <!-- Hint for renaming title of a shortcut -->
     <string name="shortcut_name_hint">Жарлық атауы</string>
-	<!-- Button caption to confirm the renaming of the top site. -->
-	<string name="top_sites_rename_dialog_ok">ОК</string>
-	<!-- Dialog button text for canceling the rename top site prompt. -->
-	<string name="top_sites_rename_dialog_cancel">Бас тарту</string>
+    <!-- Button caption to confirm the renaming of the top site. -->
+    <string name="top_sites_rename_dialog_ok">ОК</string>
+    <!-- Dialog button text for canceling the rename top site prompt. -->
+    <string name="top_sites_rename_dialog_cancel">Бас тарту</string>
 
     <!-- Text for the menu button to open the homepage settings. -->
     <string name="top_sites_menu_settings">Баптаулар</string>
@@ -2189,7 +2221,9 @@
 
     <!-- Review quality check feature-->
     <!-- Name for the review quality check feature used as title for the panel. -->
-    <string name="review_quality_check_feature_name">Пікірлерді тексеру құралы</string>
+    <string name="review_quality_check_feature_name" moz:RemovedIn="120" tools:ignore="UnusedResources">Пікірлерді тексеру құралы</string>
+    <!-- Name for the review quality check feature used as title for the panel. -->
+    <string name="review_quality_check_feature_name_2">Пікірлерді тексеру</string>
     <!-- Summary for grades A and B for review quality check adjusted grading. -->
     <string name="review_quality_check_grade_a_b_description">Сенімді пікірлер</string>
     <!-- Summary for grade C for review quality check adjusted grading. -->
@@ -2211,15 +2245,15 @@
     <!-- Paragraph explaining the grading system we use to classify the reliability of a product's reviews. -->
     <string name="review_quality_check_info_review_grade_header"><![CDATA[Әрбір өнім пікіріне біз A мен F арасындағы <b>әріптік баға</b> береміз.]]></string>
     <!-- Description explaining grades A and B for review quality check adjusted grading. -->
-    <string name="review_quality_check_info_grade_info_AB" moz:RemovedIn="120" tools:ignore="UnusedResources">Сенімді пікірлер. Бұл пікірлерді шын, бейтарап пікірлер қалдырған шынайы тұтынушылар жазған деп санаймыз.</string>
+    <string name="review_quality_check_info_grade_info_AB">Сенімді пікірлер. Бұл пікірлерді шын, бейтарап пікірлер қалдырған шынайы тұтынушылар жазған деп санаймыз.</string>
     <!-- Description explaining grades A and B for review quality check adjusted grading. -->
-    <string name="review_quality_check_info_grade_info_AB_2">Пікірлер сенімді деп есептейміз.</string>
+    <string name="review_quality_check_info_grade_info_AB_2" moz:RemovedIn="120" tools:ignore="UnusedResources">Пікірлер сенімді деп есептейміз.</string>
     <!-- Description explaining grade C for review quality check adjusted grading. -->
     <string name="review_quality_check_info_grade_info_C">Осында сенімді және сенімсіз пікірлер араласқан деп санаймыз.</string>
     <!-- Description explaining grades D and F for review quality check adjusted grading. -->
-    <string name="review_quality_check_info_grade_info_DF" moz:RemovedIn="120" tools:ignore="UnusedResources">Сенімсіз пікірлер. Бұл пікірлер жалған немесе біржақты шолушылар қалдырды деп санаймыз.</string>
+    <string name="review_quality_check_info_grade_info_DF">Сенімсіз пікірлер. Бұл пікірлер жалған немесе біржақты шолушылар қалдырды деп санаймыз.</string>
     <!-- Description explaining grades D and F for review quality check adjusted grading. -->
-    <string name="review_quality_check_info_grade_info_DF_2">Пікірлер сенімсіз деп есептейміз.</string>
+    <string name="review_quality_check_info_grade_info_DF_2" moz:RemovedIn="120" tools:ignore="UnusedResources">Пікірлер сенімсіз деп есептейміз.</string>
     <!-- Paragraph explaining how a product's adjusted grading is calculated. -->
     <string name="review_quality_check_explanation_body_adjusted_grading"><![CDATA[<b>Түзетілген рейтинг</b> тек біз сенімді деп есептейтін пікірлерге негізделген.]]></string>
     <!-- Paragraph explaining product review highlights. First parameter is the name of the retailer (e.g. Amazon). -->
@@ -2233,7 +2267,9 @@
     <!-- Text for label for switch preference to show recommended products from review quality check settings section. -->
     <string name="review_quality_check_settings_recommended_products">Пікірлерді тексеру құралында жарнаманы көрсету</string>
     <!-- Description for switch preference to show recommended products from review quality check settings section. First parameter is for clickable text defined in review_quality_check_settings_recommended_products_learn_more.-->
-    <string name="review_quality_check_settings_recommended_products_description" tools:ignore="UnusedResources">Сәйкес өнімдерге арналған жарнамаларды анда-санда көретін боласыз. Барлық жарнамалар біздің пікір сапа стандарттарына сай болуы керек. %s</string>
+    <string name="review_quality_check_settings_recommended_products_description" moz:RemovedIn="120" tools:ignore="UnusedResources">Сәйкес өнімдерге арналған жарнамаларды анда-санда көретін боласыз. Барлық жарнамалар біздің пікір сапа стандарттарына сай болуы керек. %s</string>
+    <!-- Description for switch preference to show recommended products from review quality check settings section. First parameter is for clickable text defined in review_quality_check_settings_recommended_products_learn_more.-->
+    <string name="review_quality_check_settings_recommended_products_description_2" tools:ignore="UnusedResources">Сәйкес өнімдерге арналған кездейсоқ жарнамаларды көресіз. Біз тек сенімді пікірлері бар өнімдерді жарнамалаймыз. %s</string>
     <!-- Clickable text that links to review quality check recommended products support article. -->
     <string name="review_quality_check_settings_recommended_products_learn_more" tools:ignore="UnusedResources">Көбірек білу</string>
     <!-- Text for turning sidebar off button from review quality check settings section. -->
@@ -2261,7 +2297,9 @@
     <!-- Text for the body of warning card informing the user that the current product is currently not available. -->
     <string name="review_quality_check_product_availability_warning_body" tools:ignore="UnusedResources">Бұл өнімнің қоймаға қайта оралғанын көрсеңіз, оны бізге хабарлаңыз, біз пікірлерді тексереміз.</string>
     <!-- Clickable text for warning card informing the user that the current product is currently not available. Clicking this should inform the server that the product is available. -->
-    <string name="review_quality_check_product_availability_warning_action" tools:ignore="UnusedResources">Бұл өнімнің қоймаға оралғанын хабарлау</string>
+    <string name="review_quality_check_product_availability_warning_action" moz:RemovedIn="120" tools:ignore="UnusedResources">Бұл өнімнің қоймаға оралғанын хабарлау</string>
+    <!-- Clickable text for warning card informing the user that the current product is currently not available. Clicking this should inform the server that the product is available. -->
+    <string name="review_quality_check_product_availability_warning_action_2" tools:ignore="UnusedResources">Өнімнің қоймада бар болғанын хабарлау</string>
     <!-- Title for warning card informing the user that the current product's re-analysis is still processing. -->
     <string name="review_quality_check_reanalysis_in_progress_warning_title">Пікір сапасын тексеру</string>
     <!-- Title for warning card informing the user that the current product's analysis is still processing. -->

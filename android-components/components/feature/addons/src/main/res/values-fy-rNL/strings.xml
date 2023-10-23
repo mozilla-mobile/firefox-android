@@ -72,8 +72,10 @@
     <string name="mozac_feature_addons_permissions_devtools_description">Untwikkelersark útwreidzje om jo gegevens yn iepen ljepblêden te benaderjen</string>
     <!-- The version on of add-on. -->
     <string name="mozac_feature_addons_version">Ferzje</string>
+    <!-- The author of an add-on. -->
+    <string name="mozac_feature_addons_author">Auteur</string>
     <!-- The authors of an add-on. -->
-    <string name="mozac_feature_addons_authors">Skriuwers</string>
+    <string name="mozac_feature_addons_authors" moz:removedIn="120" tools:ignore="UnusedResources">Skriuwers</string>
     <!-- The last date that the add-on was updated. -->
     <string name="mozac_feature_addons_last_updated">Lêst bywurke</string>
     <!-- The developer website (Homepage) of the add-on. -->
@@ -82,6 +84,8 @@
     <string name="mozac_feature_addons_learn_more">Mear ynfo oer tastimmingen</string>
     <!-- The rating of the add-on. -->
     <string name="mozac_feature_addons_rating">Wurdearring</string>
+    <!-- A link that points to the detail page of the add-on. -->
+    <string name="mozac_feature_addons_more_info_link">Mear oer dizze add-on</string>
     <!-- The settings of the add-on. -->
     <string name="mozac_feature_addons_settings">Ynstellingen</string>
     <!-- Indicates the add-on is enabled. -->
@@ -114,10 +118,18 @@
     <string name="mozac_feature_addons_remove">Fuortsmite</string>
     <!-- This is the title of a dialog that asks the users if they to install or not an add-on. %1$s is the add-on name. -->
     <string name="mozac_feature_addons_permissions_dialog_title">%1$s tafoegje?</string>
+    <!-- This is the title of a dialog that asks the users to grant optional permissions. %1$s is the add-on name. -->
+    <string name="mozac_feature_addons_optional_permissions_dialog_title">%1$s freget oanfoljende tastimmingen.</string>
     <!-- This is the subtitle of a dialog that asks the users if they want to install or not an add-on, the subtitle lists the permissions that this add-on requires, the permissions will dynamically be listed after the ":". -->
     <string name="mozac_feature_addons_permissions_dialog_subtitle">Dit fereasket jo tastimming foar it folgjende:</string>
+    <!-- This is the subtitle of a dialog that asks the users to grant optional permissions, the subtitle lists the permissions that this add-on requests, the permissions will dynamically be listed after the ":". -->
+    <string name="mozac_feature_addons_optional_permissions_dialog_subtitle">De add-on wol:</string>
     <!-- This is a button to add (install) an add-on . -->
     <string name="mozac_feature_addons_permissions_dialog_add">Tafoegje</string>
+    <!-- This is a button to allow the optional permissions requested by an add-on . -->
+    <string name="mozac_feature_addons_permissions_dialog_allow">Tastean</string>
+    <!-- This is a button to deny the optional permissions requested by an add-on . -->
+    <string name="mozac_feature_addons_permissions_dialog_deny">Wegerje</string>
     <!-- This is a button to cancel the add-on installation . -->
     <string name="mozac_feature_addons_permissions_dialog_cancel">Annulearje</string>
     <!-- Accessibility content description to install add-on button. -->
@@ -132,6 +144,12 @@
     <string name="mozac_feature_addons_addons">Add-ons</string>
     <!-- Label for add-ons sub menu item for add-ons manager-->
     <string name="mozac_feature_addons_addons_manager">Add-onbehearder</string>
+    <!-- The title of the "crash" notification in the add-ons manager -->
+    <string name="mozac_feature_addons_manager_notification_title_text">Add-ons binne tydlik útskeakele</string>
+    <!-- The content of the "crash" notification in the add-ons manager -->
+    <string name="mozac_feature_addons_manager_notification_content_text">Ien of mear add-ons wurkje net mear, wêrtroch jo systeem ynstabyl wurdt.</string>
+    <!-- Button to re-enable the add-ons in the "crash" notification -->
+    <string name="mozac_feature_addons_manager_notification_restart_button">Add-ons opnij starte</string>
     <!-- Button in the add-ons manager that opens AMO in a tab -->
     <string name="mozac_feature_addons_find_more_addons_button_text">Mear add-ons sykje</string>
     <!-- The label of the allow button, this will be shown to the user when an add-on needs new permissions, with the button the user will indicate that they want to accept the new permissions and update the add-on-->

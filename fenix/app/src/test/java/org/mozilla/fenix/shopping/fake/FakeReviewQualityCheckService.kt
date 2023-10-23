@@ -12,6 +12,7 @@ class FakeReviewQualityCheckService(
     private val productAnalysis: (Int) -> ProductAnalysis? = { null },
     private val reanalysis: AnalysisStatusDto? = null,
     private val status: AnalysisStatusDto? = null,
+    private val selectedTabUrl: String? = null,
 ) : ReviewQualityCheckService {
 
     private var analysisCount = 0
@@ -25,4 +26,6 @@ class FakeReviewQualityCheckService(
     override suspend fun reanalyzeProduct(): AnalysisStatusDto? = reanalysis
 
     override suspend fun analysisStatus(): AnalysisStatusDto? = status
+
+    override fun selectedTabUrl(): String? = selectedTabUrl
 }

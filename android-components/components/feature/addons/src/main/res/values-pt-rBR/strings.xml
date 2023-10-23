@@ -72,8 +72,10 @@
     <string name="mozac_feature_addons_permissions_devtools_description">Estender as ferramentas do desenvolvedor para acessar seus dados nas abas abertas</string>
     <!-- The version on of add-on. -->
     <string name="mozac_feature_addons_version">Versão</string>
+    <!-- The author of an add-on. -->
+    <string name="mozac_feature_addons_author">Autor</string>
     <!-- The authors of an add-on. -->
-    <string name="mozac_feature_addons_authors">Autores</string>
+    <string name="mozac_feature_addons_authors" moz:removedIn="120" tools:ignore="UnusedResources">Autores</string>
     <!-- The last date that the add-on was updated. -->
     <string name="mozac_feature_addons_last_updated">Última atualização</string>
     <!-- The developer website (Homepage) of the add-on. -->
@@ -82,6 +84,8 @@
     <string name="mozac_feature_addons_learn_more">Saiba mais sobre permissões</string>
     <!-- The rating of the add-on. -->
     <string name="mozac_feature_addons_rating">Avaliação</string>
+    <!-- A link that points to the detail page of the add-on. -->
+    <string name="mozac_feature_addons_more_info_link">Mais detalhes sobre esta extensão</string>
     <!-- The settings of the add-on. -->
     <string name="mozac_feature_addons_settings">Configurações</string>
     <!-- Indicates the add-on is enabled. -->
@@ -114,10 +118,18 @@
     <string name="mozac_feature_addons_remove">Remover</string>
     <!-- This is the title of a dialog that asks the users if they to install or not an add-on. %1$s is the add-on name. -->
     <string name="mozac_feature_addons_permissions_dialog_title">Adicionar %1$s?</string>
+    <!-- This is the title of a dialog that asks the users to grant optional permissions. %1$s is the add-on name. -->
+    <string name="mozac_feature_addons_optional_permissions_dialog_title">%1$s requer permissões adicionais.</string>
     <!-- This is the subtitle of a dialog that asks the users if they want to install or not an add-on, the subtitle lists the permissions that this add-on requires, the permissions will dynamically be listed after the ":". -->
     <string name="mozac_feature_addons_permissions_dialog_subtitle">Requer sua permissão para:</string>
+    <!-- This is the subtitle of a dialog that asks the users to grant optional permissions, the subtitle lists the permissions that this add-on requests, the permissions will dynamically be listed after the ":". -->
+    <string name="mozac_feature_addons_optional_permissions_dialog_subtitle">A extensão quer:</string>
     <!-- This is a button to add (install) an add-on . -->
     <string name="mozac_feature_addons_permissions_dialog_add">Adicionar</string>
+    <!-- This is a button to allow the optional permissions requested by an add-on . -->
+    <string name="mozac_feature_addons_permissions_dialog_allow">Permitir</string>
+    <!-- This is a button to deny the optional permissions requested by an add-on . -->
+    <string name="mozac_feature_addons_permissions_dialog_deny">Negar</string>
     <!-- This is a button to cancel the add-on installation . -->
     <string name="mozac_feature_addons_permissions_dialog_cancel">Cancelar</string>
     <!-- Accessibility content description to install add-on button. -->
@@ -132,6 +144,12 @@
     <string name="mozac_feature_addons_addons">Extensões</string>
     <!-- Label for add-ons sub menu item for add-ons manager-->
     <string name="mozac_feature_addons_addons_manager">Gerenciador de extensões</string>
+    <!-- The title of the "crash" notification in the add-ons manager -->
+    <string name="mozac_feature_addons_manager_notification_title_text">Extensões estão temporariamente desativadas</string>
+    <!-- The content of the "crash" notification in the add-ons manager -->
+    <string name="mozac_feature_addons_manager_notification_content_text">Uma ou mais extensões pararam de funcionar, tornando o sistema instável.</string>
+    <!-- Button to re-enable the add-ons in the "crash" notification -->
+    <string name="mozac_feature_addons_manager_notification_restart_button">Reiniciar extensões</string>
     <!-- Button in the add-ons manager that opens AMO in a tab -->
     <string name="mozac_feature_addons_find_more_addons_button_text">Encontrar mais extensões</string>
     <!-- The label of the allow button, this will be shown to the user when an add-on needs new permissions, with the button the user will indicate that they want to accept the new permissions and update the add-on-->

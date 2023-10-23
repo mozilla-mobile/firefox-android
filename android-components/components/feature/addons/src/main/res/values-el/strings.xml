@@ -72,8 +72,10 @@
     <string name="mozac_feature_addons_permissions_devtools_description">Επέκταση εργαλείων προγραμματιστή για πρόσβαση στα δεδομένα σας στις ανοιχτές καρτέλες</string>
     <!-- The version on of add-on. -->
     <string name="mozac_feature_addons_version">Έκδοση</string>
+    <!-- The author of an add-on. -->
+    <string name="mozac_feature_addons_author">Δημιουργός</string>
     <!-- The authors of an add-on. -->
-    <string name="mozac_feature_addons_authors">Δημιουργοί</string>
+    <string name="mozac_feature_addons_authors" moz:removedIn="120" tools:ignore="UnusedResources">Δημιουργοί</string>
     <!-- The last date that the add-on was updated. -->
     <string name="mozac_feature_addons_last_updated">Τελευταία ενημέρωση</string>
     <!-- The developer website (Homepage) of the add-on. -->
@@ -82,6 +84,8 @@
     <string name="mozac_feature_addons_learn_more">Μάθετε περισσότερα σχετικά με τα δικαιώματα</string>
     <!-- The rating of the add-on. -->
     <string name="mozac_feature_addons_rating">Αξιολόγηση</string>
+    <!-- A link that points to the detail page of the add-on. -->
+    <string name="mozac_feature_addons_more_info_link">Περισσότερα για αυτό το πρόσθετο</string>
     <!-- The settings of the add-on. -->
     <string name="mozac_feature_addons_settings">Ρυθμίσεις</string>
     <!-- Indicates the add-on is enabled. -->
@@ -114,10 +118,18 @@
     <string name="mozac_feature_addons_remove">Αφαίρεση</string>
     <!-- This is the title of a dialog that asks the users if they to install or not an add-on. %1$s is the add-on name. -->
     <string name="mozac_feature_addons_permissions_dialog_title">Προσθήκη του %1$s;</string>
+    <!-- This is the title of a dialog that asks the users to grant optional permissions. %1$s is the add-on name. -->
+    <string name="mozac_feature_addons_optional_permissions_dialog_title">Το %1$s απαιτεί επιπρόσθετα δικαιώματα.</string>
     <!-- This is the subtitle of a dialog that asks the users if they want to install or not an add-on, the subtitle lists the permissions that this add-on requires, the permissions will dynamically be listed after the ":". -->
     <string name="mozac_feature_addons_permissions_dialog_subtitle">Απαιτεί την άδειά σας για:</string>
+    <!-- This is the subtitle of a dialog that asks the users to grant optional permissions, the subtitle lists the permissions that this add-on requests, the permissions will dynamically be listed after the ":". -->
+    <string name="mozac_feature_addons_optional_permissions_dialog_subtitle">Θέλει να:</string>
     <!-- This is a button to add (install) an add-on . -->
     <string name="mozac_feature_addons_permissions_dialog_add">Προσθήκη</string>
+    <!-- This is a button to allow the optional permissions requested by an add-on . -->
+    <string name="mozac_feature_addons_permissions_dialog_allow">Αποδοχή</string>
+    <!-- This is a button to deny the optional permissions requested by an add-on . -->
+    <string name="mozac_feature_addons_permissions_dialog_deny">Άρνηση</string>
     <!-- This is a button to cancel the add-on installation . -->
     <string name="mozac_feature_addons_permissions_dialog_cancel">Ακύρωση</string>
     <!-- Accessibility content description to install add-on button. -->
@@ -132,6 +144,12 @@
     <string name="mozac_feature_addons_addons">Πρόσθετα</string>
     <!-- Label for add-ons sub menu item for add-ons manager-->
     <string name="mozac_feature_addons_addons_manager">Διαχείριση προσθέτων</string>
+    <!-- The title of the "crash" notification in the add-ons manager -->
+    <string name="mozac_feature_addons_manager_notification_title_text">Τα πρόσθετα έχουν απενεργοποιηθεί προσωρινά</string>
+    <!-- The content of the "crash" notification in the add-ons manager -->
+    <string name="mozac_feature_addons_manager_notification_content_text">Ένα ή περισσότερα πρόσθετα σταμάτησαν να λειτουργούν, καθιστώντας το σύστημά σας ασταθές.</string>
+    <!-- Button to re-enable the add-ons in the "crash" notification -->
+    <string name="mozac_feature_addons_manager_notification_restart_button">Επανεκκίνηση προσθέτων</string>
     <!-- Button in the add-ons manager that opens AMO in a tab -->
     <string name="mozac_feature_addons_find_more_addons_button_text">Εύρεση περισσότερων προσθέτων</string>
     <!-- The label of the allow button, this will be shown to the user when an add-on needs new permissions, with the button the user will indicate that they want to accept the new permissions and update the add-on-->

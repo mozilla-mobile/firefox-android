@@ -72,8 +72,10 @@
     <string name="mozac_feature_addons_permissions_devtools_description">讓開發者工具可存取您在開啟分頁中的資料</string>
     <!-- The version on of add-on. -->
     <string name="mozac_feature_addons_version">版本</string>
+    <!-- The author of an add-on. -->
+    <string name="mozac_feature_addons_author">作者</string>
     <!-- The authors of an add-on. -->
-    <string name="mozac_feature_addons_authors">作者</string>
+    <string name="mozac_feature_addons_authors" moz:removedIn="120" tools:ignore="UnusedResources">作者</string>
     <!-- The last date that the add-on was updated. -->
     <string name="mozac_feature_addons_last_updated">最近更新</string>
     <!-- The developer website (Homepage) of the add-on. -->
@@ -82,6 +84,8 @@
     <string name="mozac_feature_addons_learn_more">了解權限的更多資訊</string>
     <!-- The rating of the add-on. -->
     <string name="mozac_feature_addons_rating">評分</string>
+    <!-- A link that points to the detail page of the add-on. -->
+    <string name="mozac_feature_addons_more_info_link">關於此附加元件的更多資訊</string>
     <!-- The settings of the add-on. -->
     <string name="mozac_feature_addons_settings">設定</string>
     <!-- Indicates the add-on is enabled. -->
@@ -114,10 +118,18 @@
     <string name="mozac_feature_addons_remove">移除</string>
     <!-- This is the title of a dialog that asks the users if they to install or not an add-on. %1$s is the add-on name. -->
     <string name="mozac_feature_addons_permissions_dialog_title">要安裝 %1$s 嗎？</string>
+    <!-- This is the title of a dialog that asks the users to grant optional permissions. %1$s is the add-on name. -->
+    <string name="mozac_feature_addons_optional_permissions_dialog_title">%1$s 要求更多權限。</string>
     <!-- This is the subtitle of a dialog that asks the users if they want to install or not an add-on, the subtitle lists the permissions that this add-on requires, the permissions will dynamically be listed after the ":". -->
     <string name="mozac_feature_addons_permissions_dialog_subtitle">要求下列權限:</string>
+    <!-- This is the subtitle of a dialog that asks the users to grant optional permissions, the subtitle lists the permissions that this add-on requests, the permissions will dynamically be listed after the ":". -->
+    <string name="mozac_feature_addons_optional_permissions_dialog_subtitle">它想要：</string>
     <!-- This is a button to add (install) an add-on . -->
     <string name="mozac_feature_addons_permissions_dialog_add">新增</string>
+    <!-- This is a button to allow the optional permissions requested by an add-on . -->
+    <string name="mozac_feature_addons_permissions_dialog_allow">允許</string>
+    <!-- This is a button to deny the optional permissions requested by an add-on . -->
+    <string name="mozac_feature_addons_permissions_dialog_deny">拒絕</string>
     <!-- This is a button to cancel the add-on installation . -->
     <string name="mozac_feature_addons_permissions_dialog_cancel">取消</string>
     <!-- Accessibility content description to install add-on button. -->
@@ -132,6 +144,12 @@
     <string name="mozac_feature_addons_addons">附加元件</string>
     <!-- Label for add-ons sub menu item for add-ons manager-->
     <string name="mozac_feature_addons_addons_manager">附加元件管理員</string>
+    <!-- The title of the "crash" notification in the add-ons manager -->
+    <string name="mozac_feature_addons_manager_notification_title_text">已暫時停用附加元件</string>
+    <!-- The content of the "crash" notification in the add-ons manager -->
+    <string name="mozac_feature_addons_manager_notification_content_text">有一套或多套附加元件停止運作，讓您的系統不穩定。</string>
+    <!-- Button to re-enable the add-ons in the "crash" notification -->
+    <string name="mozac_feature_addons_manager_notification_restart_button">重新啟動附加元件</string>
     <!-- Button in the add-ons manager that opens AMO in a tab -->
     <string name="mozac_feature_addons_find_more_addons_button_text">看更多附加元件！</string>
     <!-- The label of the allow button, this will be shown to the user when an add-on needs new permissions, with the button the user will indicate that they want to accept the new permissions and update the add-on-->

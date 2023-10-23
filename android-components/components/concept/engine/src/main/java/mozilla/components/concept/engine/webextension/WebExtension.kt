@@ -392,7 +392,7 @@ data class Metadata(
      * Url of extension's homepage:
      * https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/homepage_url
      */
-    val homePageUrl: String?,
+    val homepageUrl: String?,
 
     /**
      * Options page:
@@ -418,10 +418,58 @@ data class Metadata(
     val baseUrl: String,
 
     /**
+     * The full description of this extension.
+     */
+    val fullDescription: String?,
+
+    /**
+     * The URL used to install this extension.
+     */
+    val downloadUrl: String?,
+
+    /**
+     * The string representation of the date that this extension was most recently updated
+     * (simplified ISO 8601 format).
+     */
+    val updateDate: String?,
+
+    /**
+     * The average rating of this extension.
+     */
+    val averageRating: Float,
+
+    /**
+     * The link to the review page for this extension.
+     */
+    val reviewUrl: String?,
+
+    /**
+     * The average rating of this extension.
+     */
+    val reviewCount: Int,
+
+    /**
+     * The creator name of this extension.
+     * https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/developer
+     */
+    val creatorName: String?,
+
+    /**
+     * The creator url of this extension.
+     * https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/developer
+     */
+    val creatorUrl: String?,
+
+    /**
      * Whether or not this extension is temporary i.e. installed using a debug tool
      * such as web-ext, and won't be retained when the application exits.
      */
     val temporary: Boolean = false,
+
+    /**
+     * The URL to the detail page of this extension.
+     */
+    val detailUrl: String?,
 )
 
 /**

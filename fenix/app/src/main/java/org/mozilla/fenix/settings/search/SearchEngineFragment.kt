@@ -13,6 +13,8 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
 import mozilla.components.browser.state.state.selectedOrDefaultSearchEngine
 import mozilla.components.support.ktx.android.view.hideKeyboard
+import org.mozilla.fenix.BrowserDirection
+import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getPreferenceKey
@@ -20,28 +22,25 @@ import org.mozilla.fenix.ext.navigateWithBreadcrumb
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.settings.SharedPreferenceUpdater
+import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.settings.requirePreference
 import org.mozilla.gecko.search.SearchWidgetProvider
 
 class SearchEngineFragment : PreferenceFragmentCompat() {
 
-    private var unifiedSearchUI = false
-
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        unifiedSearchUI = requireContext().settings().enableUnifiedSearchSettingsUI
         setPreferencesFromResource(
-            if (unifiedSearchUI) R.xml.search_settings_preferences else R.xml.search_preferences,
+            R.xml.search_settings_preferences,
             rootKey,
         )
 
-        // Visibility should be set before the view has been created, to avoid visual glitches.
-        requirePreference<SwitchPreference>(R.string.pref_key_show_search_engine_shortcuts).apply {
-            isVisible = !context.settings().showUnifiedSearchFeature
-        }
         requirePreference<SwitchPreference>(R.string.pref_key_show_sponsored_suggestions).apply {
             isVisible = context.settings().enableFxSuggest
         }
         requirePreference<SwitchPreference>(R.string.pref_key_show_nonsponsored_suggestions).apply {
+            isVisible = context.settings().enableFxSuggest
+        }
+        requirePreference<Preference>(R.string.pref_key_learn_about_fx_suggest).apply {
             isVisible = context.settings().enableFxSuggest
         }
 
@@ -54,11 +53,9 @@ class SearchEngineFragment : PreferenceFragmentCompat() {
         view?.hideKeyboard()
         showToolbar(getString(R.string.preferences_search))
 
-        if (unifiedSearchUI) {
-            with(requirePreference<Preference>(R.string.pref_key_default_search_engine)) {
-                summary =
-                    requireContext().components.core.store.state.search.selectedOrDefaultSearchEngine?.name
-            }
+        with(requirePreference<Preference>(R.string.pref_key_default_search_engine)) {
+            summary =
+                requireContext().components.core.store.state.search.selectedOrDefaultSearchEngine?.name
         }
 
         val searchSuggestionsPreference =
@@ -74,11 +71,6 @@ class SearchEngineFragment : PreferenceFragmentCompat() {
         val searchSuggestionsInPrivatePreference =
             requirePreference<CheckBoxPreference>(R.string.pref_key_show_search_suggestions_in_private).apply {
                 isChecked = context.settings().shouldShowSearchSuggestionsInPrivate
-            }
-
-        val showSearchShortcuts =
-            requirePreference<SwitchPreference>(R.string.pref_key_show_search_engine_shortcuts).apply {
-                isChecked = context.settings().shouldShowSearchShortcuts
             }
 
         val showHistorySuggestions =
@@ -125,7 +117,6 @@ class SearchEngineFragment : PreferenceFragmentCompat() {
             }
 
         searchSuggestionsPreference.onPreferenceChangeListener = SharedPreferenceUpdater()
-        showSearchShortcuts.onPreferenceChangeListener = SharedPreferenceUpdater()
         showHistorySuggestions.onPreferenceChangeListener = SharedPreferenceUpdater()
         showBookmarkSuggestions.onPreferenceChangeListener = SharedPreferenceUpdater()
         showSyncedTabsSuggestions.onPreferenceChangeListener = SharedPreferenceUpdater()
@@ -157,18 +148,6 @@ class SearchEngineFragment : PreferenceFragmentCompat() {
 
     override fun onPreferenceTreeClick(preference: Preference): Boolean {
         when (preference.key) {
-            getPreferenceKey(R.string.pref_key_add_search_engine) -> {
-                val directions = SearchEngineFragmentDirections
-                    .actionSearchEngineFragmentToAddSearchEngineFragment()
-                context?.let {
-                    findNavController().navigateWithBreadcrumb(
-                        directions = directions,
-                        navigateFrom = "SearchEngineFragment",
-                        navigateTo = "ActionSearchEngineFragmentToAddSearchEngineFragment",
-                        it.components.analytics.crashReporter,
-                    )
-                }
-            }
             getPreferenceKey(R.string.pref_key_default_search_engine) -> {
                 val directions = SearchEngineFragmentDirections
                     .actionSearchEngineFragmentToDefaultEngineFragment()
@@ -185,6 +164,15 @@ class SearchEngineFragment : PreferenceFragmentCompat() {
                         it.components.analytics.crashReporter,
                     )
                 }
+            }
+            getPreferenceKey(R.string.pref_key_learn_about_fx_suggest) -> {
+                (activity as HomeActivity).openToBrowserAndLoad(
+                    searchTermOrURL = SupportUtils.getGenericSumoURLForTopic(
+                        SupportUtils.SumoTopic.FX_SUGGEST,
+                    ),
+                    newTab = true,
+                    from = BrowserDirection.FromSearchEngineFragment,
+                )
             }
         }
 

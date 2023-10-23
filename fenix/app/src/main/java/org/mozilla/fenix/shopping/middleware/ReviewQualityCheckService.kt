@@ -38,6 +38,11 @@ interface ReviewQualityCheckService {
      * @return [AnalysisStatusDto] if the request succeeds, null otherwise.
      */
     suspend fun analysisStatus(): AnalysisStatusDto?
+
+    /**
+     * Returns the selected tab url.
+     */
+    fun selectedTabUrl(): String?
 }
 
 /**
@@ -74,7 +79,7 @@ class DefaultReviewQualityCheckService(
                 tab.engineState.engineSession?.reanalyzeProduct(
                     url = tab.content.url,
                     onResult = {
-                        continuation.resume(it.asEnumOrDefault<AnalysisStatusDto>())
+                        continuation.resume(it.asEnumOrDefault(AnalysisStatusDto.OTHER))
                     },
                     onException = {
                         logger.error("Error starting reanalysis", it)
@@ -91,7 +96,7 @@ class DefaultReviewQualityCheckService(
                 tab.engineState.engineSession?.requestAnalysisStatus(
                     url = tab.content.url,
                     onResult = {
-                        continuation.resume(it.asEnumOrDefault<AnalysisStatusDto>())
+                        continuation.resume(it.asEnumOrDefault(AnalysisStatusDto.OTHER))
                     },
                     onException = {
                         logger.error("Error fetching analysis status", it)
@@ -101,6 +106,9 @@ class DefaultReviewQualityCheckService(
             }
         }
     }
+
+    override fun selectedTabUrl(): String? =
+        browserStore.state.selectedTab?.content?.url
 
     private inline fun <reified T : Enum<T>> String.asEnumOrDefault(defaultValue: T? = null): T? =
         enumValues<T>().firstOrNull { it.name.equals(this, ignoreCase = true) } ?: defaultValue
@@ -126,17 +134,7 @@ enum class AnalysisStatusDto {
     COMPLETED,
 
     /**
-     * Product can not be analyzed.
+     * Any other status.
      */
-    NOT_ANALYZABLE,
-
-    /**
-     * Current analysis status with provided params not found.
-     */
-    NOT_FOUND,
-
-    /**
-     * Wrong product params provided.
-     */
-    UNPROCESSABLE,
+    OTHER,
 }

@@ -72,8 +72,10 @@
     <string name="mozac_feature_addons_permissions_devtools_description">Estyn offer datblygwyr i gael mynediad i’ch data mewn tabiau agored</string>
     <!-- The version on of add-on. -->
     <string name="mozac_feature_addons_version">Fersiwn</string>
+    <!-- The author of an add-on. -->
+    <string name="mozac_feature_addons_author">Awdur</string>
     <!-- The authors of an add-on. -->
-    <string name="mozac_feature_addons_authors">Awduron</string>
+    <string name="mozac_feature_addons_authors" moz:removedIn="120" tools:ignore="UnusedResources">Awduron</string>
     <!-- The last date that the add-on was updated. -->
     <string name="mozac_feature_addons_last_updated">Diweddarwyd diwethaf</string>
     <!-- The developer website (Homepage) of the add-on. -->
@@ -82,6 +84,8 @@
     <string name="mozac_feature_addons_learn_more">Dysgu rhagor am ganiatâd</string>
     <!-- The rating of the add-on. -->
     <string name="mozac_feature_addons_rating">Graddio</string>
+    <!-- A link that points to the detail page of the add-on. -->
+    <string name="mozac_feature_addons_more_info_link">Rhagor am yr ychwanegyn hwn</string>
     <!-- The settings of the add-on. -->
     <string name="mozac_feature_addons_settings">Gosodiadau</string>
     <!-- Indicates the add-on is enabled. -->
@@ -114,10 +118,18 @@
     <string name="mozac_feature_addons_remove">Tynnu</string>
     <!-- This is the title of a dialog that asks the users if they to install or not an add-on. %1$s is the add-on name. -->
     <string name="mozac_feature_addons_permissions_dialog_title">Ychwanegu %1$s?</string>
+    <!-- This is the title of a dialog that asks the users to grant optional permissions. %1$s is the add-on name. -->
+    <string name="mozac_feature_addons_optional_permissions_dialog_title">Mae %1$s yn gofyn am ganiatâd ychwanegol.</string>
     <!-- This is the subtitle of a dialog that asks the users if they want to install or not an add-on, the subtitle lists the permissions that this add-on requires, the permissions will dynamically be listed after the ":". -->
     <string name="mozac_feature_addons_permissions_dialog_subtitle">Mae angen eich caniatâd i:</string>
+    <!-- This is the subtitle of a dialog that asks the users to grant optional permissions, the subtitle lists the permissions that this add-on requests, the permissions will dynamically be listed after the ":". -->
+    <string name="mozac_feature_addons_optional_permissions_dialog_subtitle">Y mae eisiau:</string>
     <!-- This is a button to add (install) an add-on . -->
     <string name="mozac_feature_addons_permissions_dialog_add">Ychwanegu</string>
+    <!-- This is a button to allow the optional permissions requested by an add-on . -->
+    <string name="mozac_feature_addons_permissions_dialog_allow">Caniatáu</string>
+    <!-- This is a button to deny the optional permissions requested by an add-on . -->
+    <string name="mozac_feature_addons_permissions_dialog_deny">Gwrthod</string>
     <!-- This is a button to cancel the add-on installation . -->
     <string name="mozac_feature_addons_permissions_dialog_cancel">Diddymu</string>
     <!-- Accessibility content description to install add-on button. -->
@@ -132,6 +144,12 @@
     <string name="mozac_feature_addons_addons">Ychwanegion</string>
     <!-- Label for add-ons sub menu item for add-ons manager-->
     <string name="mozac_feature_addons_addons_manager">Rheolwr Ychwanegion</string>
+    <!-- The title of the "crash" notification in the add-ons manager -->
+    <string name="mozac_feature_addons_manager_notification_title_text">Mae ychwanegion wedi’u hanalluogi dros dro</string>
+    <!-- The content of the "crash" notification in the add-ons manager -->
+    <string name="mozac_feature_addons_manager_notification_content_text">Rhoddodd un neu fwy o ategion y gorau i weithio, gan wneud eich system yn ansefydlog.</string>
+    <!-- Button to re-enable the add-ons in the "crash" notification -->
+    <string name="mozac_feature_addons_manager_notification_restart_button">Ailgychwyn ychwanegion</string>
     <!-- Button in the add-ons manager that opens AMO in a tab -->
     <string name="mozac_feature_addons_find_more_addons_button_text">Canfod rhagor o ychwanegion</string>
     <!-- The label of the allow button, this will be shown to the user when an add-on needs new permissions, with the button the user will indicate that they want to accept the new permissions and update the add-on-->
@@ -147,7 +165,7 @@
     <!-- Name of the "notification channel" used for displaying a notification for updating an add-on. See https://developer.android.com/training/notify-user/channels -->
     <string name="mozac_feature_addons_updater_notification_channel">Diweddariadau Ychwanegion</string>
     <!-- Name of the "notification channel" used for displaying a notification for new supported add-ons. See https://developer.android.com/training/notify-user/channels -->
-    <string name="mozac_feature_addons_supported_checker_notification_channel">Gwiriwr ychwanegion sy’n cael eu cynnal</string>
+    <string name="mozac_feature_addons_supported_checker_notification_channel">Gwirydd ychwanegion sy’n cael eu cynnal</string>
     <!-- The tile of the notification, this will be shown to the user when one newly supported add-on is available.-->
     <string name="mozac_feature_addons_supported_checker_notification_title">Ychwanegion newydd ar gael</string>
     <!-- The tile of the notification, this will be shown to the user when more than one newly supported add-ons are available.-->

@@ -72,8 +72,10 @@
     <string name="mozac_feature_addons_permissions_devtools_description">შემმუშავებლის ხელსაწყოებით თქვენს მონაცემებთან წვდომა გახსნილ ჩანართებში</string>
     <!-- The version on of add-on. -->
     <string name="mozac_feature_addons_version">ვერსია</string>
+    <!-- The author of an add-on. -->
+    <string name="mozac_feature_addons_author">შემქმნელი</string>
     <!-- The authors of an add-on. -->
-    <string name="mozac_feature_addons_authors">შემქმნელები</string>
+    <string name="mozac_feature_addons_authors" moz:removedIn="120" tools:ignore="UnusedResources">შემქმნელები</string>
     <!-- The last date that the add-on was updated. -->
     <string name="mozac_feature_addons_last_updated">ბოლო განახლება</string>
     <!-- The developer website (Homepage) of the add-on. -->
@@ -82,6 +84,8 @@
     <string name="mozac_feature_addons_learn_more">ვრცლად ნებართვების შესახებ</string>
     <!-- The rating of the add-on. -->
     <string name="mozac_feature_addons_rating">შეფასება</string>
+    <!-- A link that points to the detail page of the add-on. -->
+    <string name="mozac_feature_addons_more_info_link">ვრცლად ამ დამატების შესახებ</string>
     <!-- The settings of the add-on. -->
     <string name="mozac_feature_addons_settings">პარამეტრები</string>
     <!-- Indicates the add-on is enabled. -->
@@ -114,10 +118,18 @@
     <string name="mozac_feature_addons_remove">მოცილება</string>
     <!-- This is the title of a dialog that asks the users if they to install or not an add-on. %1$s is the add-on name. -->
     <string name="mozac_feature_addons_permissions_dialog_title">ჩაიდგას %1$s?</string>
+    <!-- This is the title of a dialog that asks the users to grant optional permissions. %1$s is the add-on name. -->
+    <string name="mozac_feature_addons_optional_permissions_dialog_title">%1$s საჭიროებს დამატებით ნებართვებს.</string>
     <!-- This is the subtitle of a dialog that asks the users if they want to install or not an add-on, the subtitle lists the permissions that this add-on requires, the permissions will dynamically be listed after the ":". -->
     <string name="mozac_feature_addons_permissions_dialog_subtitle">მოთხოვნილი უფლებები:</string>
+    <!-- This is the subtitle of a dialog that asks the users to grant optional permissions, the subtitle lists the permissions that this add-on requests, the permissions will dynamically be listed after the ":". -->
+    <string name="mozac_feature_addons_optional_permissions_dialog_subtitle">მოთხოვნილია:</string>
     <!-- This is a button to add (install) an add-on . -->
     <string name="mozac_feature_addons_permissions_dialog_add">ჩადგმა</string>
+    <!-- This is a button to allow the optional permissions requested by an add-on . -->
+    <string name="mozac_feature_addons_permissions_dialog_allow">ნებართვა</string>
+    <!-- This is a button to deny the optional permissions requested by an add-on . -->
+    <string name="mozac_feature_addons_permissions_dialog_deny">უარყოფა</string>
     <!-- This is a button to cancel the add-on installation . -->
     <string name="mozac_feature_addons_permissions_dialog_cancel">გაუქმება</string>
     <!-- Accessibility content description to install add-on button. -->
@@ -132,6 +144,12 @@
     <string name="mozac_feature_addons_addons">დამატებები</string>
     <!-- Label for add-ons sub menu item for add-ons manager-->
     <string name="mozac_feature_addons_addons_manager">დამატებების მმართველი</string>
+    <!-- The title of the "crash" notification in the add-ons manager -->
+    <string name="mozac_feature_addons_manager_notification_title_text">დამატებები დროებით ამორთულია</string>
+    <!-- The content of the "crash" notification in the add-ons manager -->
+    <string name="mozac_feature_addons_manager_notification_content_text">ერთმა ან რამდენიმე დამატებამ შეწყვიტა მუშაობა, რაც სისტემას არამდგრადობას იწვევს.</string>
+    <!-- Button to re-enable the add-ons in the "crash" notification -->
+    <string name="mozac_feature_addons_manager_notification_restart_button">დამატებების კვლავგაშვება</string>
     <!-- Button in the add-ons manager that opens AMO in a tab -->
     <string name="mozac_feature_addons_find_more_addons_button_text">სხვა დამატებების მონახვა</string>
     <!-- The label of the allow button, this will be shown to the user when an add-on needs new permissions, with the button the user will indicate that they want to accept the new permissions and update the add-on-->
