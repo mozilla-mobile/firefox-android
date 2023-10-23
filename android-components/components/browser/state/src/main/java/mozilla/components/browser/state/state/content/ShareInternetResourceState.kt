@@ -14,6 +14,7 @@ import mozilla.components.concept.fetch.Response
  * @property private Indicates if the share operation initiated from a private session.
  * @property response A response object associated with this request, when provided can be
  * used instead of performing a manual a download.
+ * @property referrerUrl An optional url of the referrer.
  */
 data class ShareInternetResourceState(
     val url: String,
