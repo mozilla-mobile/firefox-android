@@ -83,9 +83,6 @@
     <ID>UndocumentedPublicClass:BookmarkFragmentStore.kt$BookmarkFragmentStore : Store</ID>
     <ID>UndocumentedPublicClass:BookmarkItemMenu.kt$BookmarkItemMenu</ID>
     <ID>UndocumentedPublicClass:BookmarkItemMenu.kt$BookmarkItemMenu$Item</ID>
-    <ID>UndocumentedPublicClass:BookmarkSearchController.kt$BookmarkSearchDialogController : BookmarkSearchController</ID>
-    <ID>UndocumentedPublicClass:BookmarkSearchDialogFragment.kt$BookmarkSearchDialogFragment : AppCompatDialogFragmentUserInteractionHandler</ID>
-    <ID>UndocumentedPublicClass:BookmarkSearchFragmentStore.kt$BookmarkSearchFragmentAction$UpdateQuery : BookmarkSearchFragmentAction</ID>
     <ID>UndocumentedPublicClass:BookmarkView.kt$BookmarkView : LibraryPageViewUserInteractionHandler</ID>
     <ID>UndocumentedPublicClass:BookmarksUseCase.kt$BookmarksUseCase$AddBookmarksUseCase</ID>
     <ID>UndocumentedPublicClass:BottomSpacerViewHolder.kt$BottomSpacerViewHolder : ViewHolder</ID>
@@ -135,7 +132,6 @@
     <ID>UndocumentedPublicClass:DeleteBrowsingDataOnQuitFragment.kt$DeleteBrowsingDataOnQuitFragment : PreferenceFragmentCompat</ID>
     <ID>UndocumentedPublicClass:DeleteBrowsingDataOnQuitType.kt$DeleteBrowsingDataOnQuitType</ID>
     <ID>UndocumentedPublicClass:DesktopFolders.kt$DesktopFolders</ID>
-    <ID>UndocumentedPublicClass:Do.kt$Do</ID>
     <ID>UndocumentedPublicClass:DownloadAdapter.kt$DownloadAdapter : AdapterSelectionHolder</ID>
     <ID>UndocumentedPublicClass:DownloadController.kt$DefaultDownloadController : DownloadController</ID>
     <ID>UndocumentedPublicClass:DownloadController.kt$DownloadController</ID>
@@ -255,9 +251,7 @@
     <ID>UndocumentedPublicClass:MetricsService.kt$MetricServiceType</ID>
     <ID>UndocumentedPublicClass:MetricsService.kt$MetricsService</ID>
     <ID>UndocumentedPublicClass:MetricsUtils.kt$MetricsUtils</ID>
-    <ID>UndocumentedPublicClass:Mode.kt$CurrentMode : AccountObserver</ID>
     <ID>UndocumentedPublicClass:Mode.kt$Mode$Normal : Mode</ID>
-    <ID>UndocumentedPublicClass:Mode.kt$Mode$Onboarding : Mode</ID>
     <ID>UndocumentedPublicClass:Mode.kt$Mode$Private : Mode</ID>
     <ID>UndocumentedPublicClass:MozillaProductDetector.kt$MozillaProductDetector</ID>
     <ID>UndocumentedPublicClass:MozillaProductDetector.kt$MozillaProductDetector$MozillaProducts</ID>
@@ -265,15 +259,6 @@
     <ID>UndocumentedPublicClass:NoCollectionsMessageViewHolder.kt$NoCollectionsMessageViewHolder : ViewHolder</ID>
     <ID>UndocumentedPublicClass:NormalBrowserTrayList.kt$NormalBrowserTrayList : AbstractBrowserTrayList</ID>
     <ID>UndocumentedPublicClass:OnSharedPreferenceChangeListener.kt$OnSharedPreferenceChangeListener : OnSharedPreferenceChangeListenerDefaultLifecycleObserver</ID>
-    <ID>UndocumentedPublicClass:OnboardingFinishViewHolder.kt$OnboardingFinishViewHolder : ViewHolder</ID>
-    <ID>UndocumentedPublicClass:OnboardingHeaderViewHolder.kt$OnboardingHeaderViewHolder : ViewHolder</ID>
-    <ID>UndocumentedPublicClass:OnboardingManualSignInViewHolder.kt$OnboardingManualSignInViewHolder : ViewHolder</ID>
-    <ID>UndocumentedPublicClass:OnboardingPrivacyNoticeViewHolder.kt$OnboardingPrivacyNoticeViewHolder : ViewHolder</ID>
-    <ID>UndocumentedPublicClass:OnboardingRadioButton.kt$OnboardingRadioButton : AppCompatRadioButtonGroupableRadioButton</ID>
-    <ID>UndocumentedPublicClass:OnboardingSectionHeaderViewHolder.kt$OnboardingSectionHeaderViewHolder : ViewHolder</ID>
-    <ID>UndocumentedPublicClass:OnboardingThemePickerViewHolder.kt$OnboardingThemePickerViewHolder : ViewHolder</ID>
-    <ID>UndocumentedPublicClass:OnboardingToolbarPositionPickerViewHolder.kt$OnboardingToolbarPositionPickerViewHolder : ViewHolder</ID>
-    <ID>UndocumentedPublicClass:OnboardingTrackingProtectionViewHolder.kt$OnboardingTrackingProtectionViewHolder : ViewHolder</ID>
     <ID>UndocumentedPublicClass:PagedHistoryProvider.kt$HistoryDB$Group : HistoryDB</ID>
     <ID>UndocumentedPublicClass:PagedHistoryProvider.kt$HistoryDB$Metadata : HistoryDB</ID>
     <ID>UndocumentedPublicClass:PagedHistoryProvider.kt$HistoryDB$Regular : HistoryDB</ID>
@@ -345,14 +330,6 @@
     <ID>UndocumentedPublicClass:SessionControlAdapter.kt$AdapterItem$CustomizeHomeButton : AdapterItem</ID>
     <ID>UndocumentedPublicClass:SessionControlAdapter.kt$AdapterItem$NimbusMessageCard : AdapterItem</ID>
     <ID>UndocumentedPublicClass:SessionControlAdapter.kt$AdapterItem$NoCollectionsMessage : AdapterItem</ID>
-    <ID>UndocumentedPublicClass:SessionControlAdapter.kt$AdapterItem$OnboardingFinish : AdapterItem</ID>
-    <ID>UndocumentedPublicClass:SessionControlAdapter.kt$AdapterItem$OnboardingHeader : AdapterItem</ID>
-    <ID>UndocumentedPublicClass:SessionControlAdapter.kt$AdapterItem$OnboardingManualSignIn : AdapterItem</ID>
-    <ID>UndocumentedPublicClass:SessionControlAdapter.kt$AdapterItem$OnboardingPrivacyNotice : AdapterItem</ID>
-    <ID>UndocumentedPublicClass:SessionControlAdapter.kt$AdapterItem$OnboardingSectionHeader : AdapterItem</ID>
-    <ID>UndocumentedPublicClass:SessionControlAdapter.kt$AdapterItem$OnboardingThemePicker : AdapterItem</ID>
-    <ID>UndocumentedPublicClass:SessionControlAdapter.kt$AdapterItem$OnboardingToolbarPositionPicker : AdapterItem</ID>
-    <ID>UndocumentedPublicClass:SessionControlAdapter.kt$AdapterItem$OnboardingTrackingProtection : AdapterItem</ID>
     <ID>UndocumentedPublicClass:SessionControlAdapter.kt$AdapterItem$PocketCategoriesItem : AdapterItem</ID>
     <ID>UndocumentedPublicClass:SessionControlAdapter.kt$AdapterItem$PocketRecommendationsFooterItem : AdapterItem</ID>
     <ID>UndocumentedPublicClass:SessionControlAdapter.kt$AdapterItem$PocketStoriesItem : AdapterItem</ID>
@@ -503,7 +480,6 @@
     <ID>UndocumentedPublicFunction:AddonPermissionDetailsBindingDelegate.kt$AddonPermissionDetailsBindingDelegate$fun bind(addon: Addon)</ID>
     <ID>UndocumentedPublicFunction:AppRequestInterceptor.kt$AppRequestInterceptor$fun setNavigationController(navController: NavController)</ID>
     <ID>UndocumentedPublicFunction:AppViewHolder.kt$AppViewHolder$fun bind(item: AppShareOption)</ID>
-    <ID>UndocumentedPublicFunction:AwesomeBarView.kt$AwesomeBarView$fun update(state: BookmarkSearchFragmentState)</ID>
     <ID>UndocumentedPublicFunction:AwesomeBarView.kt$AwesomeBarView$fun update(state: HistorySearchFragmentState)</ID>
     <ID>UndocumentedPublicFunction:AwesomeBarView.kt$AwesomeBarView$fun update(state: SearchFragmentState)</ID>
     <ID>UndocumentedPublicFunction:AwesomeBarView.kt$AwesomeBarView$fun updateSuggestionProvidersVisibility( state: SearchProviderState, )</ID>
@@ -530,10 +506,6 @@
     <ID>UndocumentedPublicFunction:BookmarkController.kt$BookmarkController$fun handleSelectionModeSwitch()</ID>
     <ID>UndocumentedPublicFunction:BookmarkFragmentStore.kt$operator fun BookmarkNode.contains(item: BookmarkNode): Boolean</ID>
     <ID>UndocumentedPublicFunction:BookmarkNodeViewHolder.kt$BookmarkNodeViewHolder$fun bind( item: BookmarkNode, mode: BookmarkFragmentState.Mode, payload: BookmarkPayload, )</ID>
-    <ID>UndocumentedPublicFunction:BookmarkSearchController.kt$BookmarkSearchController$fun handleEditingCancelled()</ID>
-    <ID>UndocumentedPublicFunction:BookmarkSearchController.kt$BookmarkSearchController$fun handleTextChanged(text: String)</ID>
-    <ID>UndocumentedPublicFunction:BookmarkSearchController.kt$BookmarkSearchController$fun handleUrlTapped(url: String, flags: LoadUrlFlags = LoadUrlFlags.none())</ID>
-    <ID>UndocumentedPublicFunction:BookmarkSearchFragmentStore.kt$fun createInitialBookmarkSearchFragmentState(): BookmarkSearchFragmentState</ID>
     <ID>UndocumentedPublicFunction:BookmarkView.kt$BookmarkView$fun update(state: BookmarkFragmentState)</ID>
     <ID>UndocumentedPublicFunction:BrowserAnimator.kt$BrowserAnimator$fun beginAnimateInIfNecessary()</ID>
     <ID>UndocumentedPublicFunction:BrowserAnimator.kt$BrowserAnimator.Companion$fun getToolbarNavOptions(context: Context): NavOptions</ID>
@@ -598,9 +570,9 @@
     <ID>UndocumentedPublicFunction:DefaultToolbarMenu.kt$DefaultToolbarMenu$@VisibleForTesting(otherwise = PRIVATE) fun canInstall(): Boolean</ID>
     <ID>UndocumentedPublicFunction:DefaultToolbarMenu.kt$DefaultToolbarMenu$@VisibleForTesting(otherwise = PRIVATE) fun shouldShowOpenInApp(): Boolean</ID>
     <ID>UndocumentedPublicFunction:DefaultToolbarMenu.kt$DefaultToolbarMenu$@VisibleForTesting(otherwise = PRIVATE) fun shouldShowReaderViewCustomization(): Boolean</ID>
-    <ID>UndocumentedPublicFunction:DeleteBrowsingDataController.kt$DeleteBrowsingDataController$suspend fun deleteBrowsingData()</ID>
+    <ID>UndocumentedPublicFunction:DeleteBrowsingDataController.kt$DeleteBrowsingDataController$suspend fun deleteBrowsingHistory()</ID>
     <ID>UndocumentedPublicFunction:DeleteBrowsingDataController.kt$DeleteBrowsingDataController$suspend fun deleteCachedFiles()</ID>
-    <ID>UndocumentedPublicFunction:DeleteBrowsingDataController.kt$DeleteBrowsingDataController$suspend fun deleteCookies()</ID>
+    <ID>UndocumentedPublicFunction:DeleteBrowsingDataController.kt$DeleteBrowsingDataController$suspend fun deleteCookiesAndSiteData()</ID>
     <ID>UndocumentedPublicFunction:DeleteBrowsingDataController.kt$DeleteBrowsingDataController$suspend fun deleteDownloads()</ID>
     <ID>UndocumentedPublicFunction:DeleteBrowsingDataController.kt$DeleteBrowsingDataController$suspend fun deleteSitePermissions()</ID>
     <ID>UndocumentedPublicFunction:DeleteBrowsingDataController.kt$DeleteBrowsingDataController$suspend fun deleteTabs()</ID>
@@ -634,7 +606,6 @@
     <ID>UndocumentedPublicFunction:FenixDialogFragment.kt$FenixDialogFragment$fun inflateRootView(container: ViewGroup? = null): View</ID>
     <ID>UndocumentedPublicFunction:FenixOnboarding.kt$FenixOnboarding$fun finish()</ID>
     <ID>UndocumentedPublicFunction:FenixOnboarding.kt$FenixOnboarding$fun userHasBeenOnboarded(): Boolean</ID>
-    <ID>UndocumentedPublicFunction:FenixSnackbar.kt$FenixSnackbar$fun setAction(text: String, action: () -&gt; Unit)</ID>
     <ID>UndocumentedPublicFunction:FenixSnackbar.kt$FenixSnackbar$fun setAppropriateBackground(isError: Boolean)</ID>
     <ID>UndocumentedPublicFunction:FenixSnackbar.kt$FenixSnackbar$fun setLength(duration: Int)</ID>
     <ID>UndocumentedPublicFunction:FenixSnackbar.kt$FenixSnackbar$fun setText(text: String)</ID>
@@ -712,8 +683,6 @@
     <ID>UndocumentedPublicFunction:MetricsService.kt$MetricsService$fun start()</ID>
     <ID>UndocumentedPublicFunction:MetricsService.kt$MetricsService$fun stop()</ID>
     <ID>UndocumentedPublicFunction:MetricsService.kt$MetricsService$fun track(event: Event)</ID>
-    <ID>UndocumentedPublicFunction:Mode.kt$CurrentMode$fun emitModeChanges()</ID>
-    <ID>UndocumentedPublicFunction:Mode.kt$CurrentMode$fun getCurrentMode()</ID>
     <ID>UndocumentedPublicFunction:Mode.kt$Mode.Companion$fun fromBrowsingMode(browsingMode: BrowsingMode)</ID>
     <ID>UndocumentedPublicFunction:MozillaProductDetector.kt$MozillaProductDetector$fun getInstalledMozillaProducts(context: Context): List&lt;String&gt;</ID>
     <ID>UndocumentedPublicFunction:MozillaProductDetector.kt$MozillaProductDetector$fun packageIsInstalled(context: Context, packageName: String): Boolean</ID>
@@ -721,9 +690,6 @@
     <ID>UndocumentedPublicFunction:NavController.kt$fun NavController.navigateSafe( @IdRes resId: Int, directions: NavDirections, )</ID>
     <ID>UndocumentedPublicFunction:NimbusBranchesView.kt$NimbusBranchesView$fun update(state: NimbusBranchesState)</ID>
     <ID>UndocumentedPublicFunction:NotificationManager.kt$NotificationManager$fun showReceivedTabs(context: Context, device: Device?, tabs: List&lt;TabData&gt;)</ID>
-    <ID>UndocumentedPublicFunction:OnboardingRadioButton.kt$OnboardingRadioButton$fun addIllustration(illustration: ImageView)</ID>
-    <ID>UndocumentedPublicFunction:OnboardingRadioButton.kt$OnboardingRadioButton$fun onClickListener(listener: () -&gt; Unit)</ID>
-    <ID>UndocumentedPublicFunction:OnboardingSectionHeaderViewHolder.kt$OnboardingSectionHeaderViewHolder$fun bind(labelBuilder: (Context) -&gt; String)</ID>
     <ID>UndocumentedPublicFunction:PagerIndicator.kt$fun Context.dpToPx(value: Float): Int</ID>
     <ID>UndocumentedPublicFunction:PagerIndicator.kt$fun View.dpToPx(value: Float): Int</ID>
     <ID>UndocumentedPublicFunction:PasswordRevealHelper.kt$fun togglePasswordReveal(passwordText: TextView, revealPasswordButton: ImageButton)</ID>
@@ -807,7 +773,6 @@
     <ID>UndocumentedPublicFunction:SessionControlAdapter.kt$AdapterItem$open fun contentsSameAs(other: AdapterItem)</ID>
     <ID>UndocumentedPublicFunction:SessionControlView.kt$SessionControlView$fun update(state: AppState, shouldReportMetrics: Boolean = false)</ID>
     <ID>UndocumentedPublicFunction:Settings.kt$Settings$@VisibleForTesting(otherwise = PRIVATE) fun setStrictETP()</ID>
-    <ID>UndocumentedPublicFunction:Settings.kt$Settings$fun addSearchWidgetInstalled(count: Int)</ID>
     <ID>UndocumentedPublicFunction:Settings.kt$Settings$fun amoCollectionOverrideConfigured(): Boolean</ID>
     <ID>UndocumentedPublicFunction:Settings.kt$Settings$fun getDeleteDataOnQuit(type: DeleteBrowsingDataOnQuitType): Boolean</ID>
     <ID>UndocumentedPublicFunction:Settings.kt$Settings$fun getSitePermissionsCustomSettingsRules(): SitePermissionsRules</ID>
@@ -889,7 +854,6 @@
     <ID>UndocumentedPublicFunction:TabLayout.kt$fun TabLayout.isPrivateModeSelected(): Boolean</ID>
     <ID>UndocumentedPublicFunction:TabLayout.kt$fun TabLayout.isSyncedModeSelected(): Boolean</ID>
     <ID>UndocumentedPublicFunction:TabLayoutMediator.kt$TabLayoutMediator$fun selectTabAtPosition(position: Int)</ID>
-    <ID>UndocumentedPublicFunction:TabPreview.kt$TabPreview$fun loadPreviewThumbnail(thumbnailId: String)</ID>
     <ID>UndocumentedPublicFunction:TabSessionState.kt$fun TabSessionState.isActive(maxActiveTime: Long): Boolean</ID>
     <ID>UndocumentedPublicFunction:TabsTrayStore.kt$Page.Companion$fun positionToPage(position: Int): Page</ID>
     <ID>UndocumentedPublicFunction:ThemeManager.kt$ThemeManager$fun applyStatusBarTheme(window: Window, context: Context)</ID>
@@ -899,7 +863,6 @@
     <ID>UndocumentedPublicFunction:ToolbarIntegration.kt$ToolbarIntegration$fun invalidateMenu()</ID>
     <ID>UndocumentedPublicFunction:ToolbarPopupWindow.kt$ToolbarPopupWindow$fun show( view: WeakReference&lt;View&gt;, customTabId: String? = null, handlePasteAndGo: (String) -&gt; Unit, handlePaste: (String) -&gt; Unit, copyVisible: Boolean = true, )</ID>
     <ID>UndocumentedPublicFunction:ToolbarView.kt$ToolbarView$fun update(searchState: SearchFragmentState)</ID>
-    <ID>UndocumentedPublicFunction:ToolbarView.kt$ToolbarView$fun update(state: BookmarkSearchFragmentState)</ID>
     <ID>UndocumentedPublicFunction:ToolbarView.kt$ToolbarView$fun update(state: HistorySearchFragmentState)</ID>
     <ID>UndocumentedPublicFunction:TopPlaceholderViewHolder.kt$TopPlaceholderViewHolder$fun bind()</ID>
     <ID>UndocumentedPublicFunction:TopSiteItemViewHolder.kt$TopSiteItemViewHolder$fun bind(topSite: TopSite, position: Int)</ID>

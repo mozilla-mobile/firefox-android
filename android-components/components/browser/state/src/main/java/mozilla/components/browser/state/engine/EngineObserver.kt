@@ -164,6 +164,10 @@ internal class EngineObserver(
         store.dispatch(CookieBannerAction.UpdateStatusAction(tabId, status))
     }
 
+    override fun onProductUrlChange(isProductUrl: Boolean) {
+        store.dispatch(ContentAction.UpdateProductUrlStateAction(tabId, isProductUrl))
+    }
+
     override fun onLongPress(hitResult: HitResult) {
         store.dispatch(
             ContentAction.UpdateHitResultAction(tabId, hitResult),

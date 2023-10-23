@@ -4,13 +4,12 @@
 
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
+apply plugin: 'com.google.devtools.ksp'
 
 android {
-    compileSdkVersion config.compileSdkVersion
-
     defaultConfig {
         minSdkVersion config.minSdkVersion
+        compileSdk config.compileSdkVersion
         targetSdkVersion config.targetSdkVersion
     }
 
@@ -36,6 +35,7 @@ dependencies {
     implementation project(':concept-menu')
     implementation project(':browser-menu2')
     implementation project(':support-base')
+    implementation project(':ui-colors')
     implementation project(':ui-icons')
 
     testImplementation project(":support-test")

@@ -28,6 +28,7 @@ import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.service.nimbus.messaging.Message
 import mozilla.components.support.ktx.android.view.showKeyboard
+import mozilla.components.ui.widgets.withCenterAlignedButtons
 import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.GleanMetrics.Collections
@@ -82,7 +83,7 @@ interface SessionControlController {
     /**
      * @see [CollectionInteractor.onCollectionRemoveTab]
      */
-    fun handleCollectionRemoveTab(collection: TabCollection, tab: ComponentTab, wasSwiped: Boolean)
+    fun handleCollectionRemoveTab(collection: TabCollection, tab: ComponentTab)
 
     /**
      * @see [CollectionInteractor.onCollectionShareTabsClicked]
@@ -243,7 +244,6 @@ class DefaultSessionControlController(
     override fun handleCollectionRemoveTab(
         collection: TabCollection,
         tab: ComponentTab,
-        wasSwiped: Boolean,
     ) {
         Collections.tabRemoved.record(NoExtras())
 
@@ -312,7 +312,7 @@ class DefaultSessionControlController(
                 setNegativeButton(R.string.top_sites_rename_dialog_cancel) { dialog, _ ->
                     dialog.cancel()
                 }
-            }.show().also {
+            }.show().withCenterAlignedButtons().also {
                 topSiteLabelEditText.setSelection(0, topSiteLabelEditText.text.length)
                 topSiteLabelEditText.showKeyboard()
             }
@@ -345,8 +345,6 @@ class DefaultSessionControlController(
     }
 
     override fun handleSelectTopSite(topSite: TopSite, position: Int) {
-        TopSites.openInNewTab.record(NoExtras())
-
         when (topSite) {
             is TopSite.Default -> TopSites.openDefault.record(NoExtras())
             is TopSite.Frecent -> TopSites.openFrecency.record(NoExtras())
@@ -375,16 +373,30 @@ class DefaultSessionControlController(
             )
         }
 
-        val tabId = addTabUseCase.invoke(
-            url = appendSearchAttributionToUrlIfNeeded(topSite.url),
-            selectTab = true,
-            startLoading = true,
-        )
+        val existingTabForUrl = when (topSite) {
+            is TopSite.Frecent, is TopSite.Pinned -> {
+                store.state.tabs.firstOrNull { topSite.url == it.content.url }
+            }
 
-        if (settings.openNextTabInDesktopMode) {
-            activity.handleRequestDesktopMode(tabId)
+            else -> null
         }
-        activity.openToBrowser(BrowserDirection.FromHome)
+
+        if (existingTabForUrl == null) {
+            TopSites.openInNewTab.record(NoExtras())
+
+            val tabId = addTabUseCase.invoke(
+                url = appendSearchAttributionToUrlIfNeeded(topSite.url),
+                selectTab = true,
+                startLoading = true,
+            )
+
+            if (settings.openNextTabInDesktopMode) {
+                activity.handleRequestDesktopMode(tabId)
+            }
+        } else {
+            selectTabUseCase.invoke(existingTabForUrl.id)
+        }
+        navController.navigate(R.id.browserFragment)
     }
 
     @VisibleForTesting

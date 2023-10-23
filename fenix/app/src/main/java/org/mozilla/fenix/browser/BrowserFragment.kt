@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -37,9 +38,12 @@ import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifAnyChanged
 import org.mozilla.fenix.GleanMetrics.ReaderMode
+import org.mozilla.fenix.GleanMetrics.Shopping
+import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.TabCollectionStorage
+import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.toolbar.BrowserToolbarView
 import org.mozilla.fenix.components.toolbar.ToolbarMenu
 import org.mozilla.fenix.ext.components
@@ -50,6 +54,7 @@ import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.settings.quicksettings.protections.cookiebanners.dialog.CookieBannerReEngagementDialogUtils
 import org.mozilla.fenix.settings.quicksettings.protections.cookiebanners.getCookieBannerUIMode
+import org.mozilla.fenix.shopping.DefaultShoppingExperienceFeature
 import org.mozilla.fenix.shopping.ReviewQualityCheckFeature
 import org.mozilla.fenix.shortcut.PwaOnboardingObserver
 import org.mozilla.fenix.theme.ThemeManager
@@ -68,6 +73,8 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
 
     private var readerModeAvailable = false
     private var reviewQualityCheckAvailable = false
+    private var translationsAvailable = false
+
     private var pwaOnboardingObserver: PwaOnboardingObserver? = null
 
     private var forwardAction: BrowserToolbar.TwoStateButton? = null
@@ -95,17 +102,30 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
             )
         }
 
-        val homeAction = BrowserToolbar.Button(
-            imageDrawable = AppCompatResources.getDrawable(
-                context,
-                R.drawable.mozac_ic_home_24,
-            )!!,
-            contentDescription = context.getString(R.string.browser_toolbar_home),
-            iconTintColorResource = ThemeManager.resolveAttribute(R.attr.textPrimary, context),
-            listener = browserToolbarInteractor::onHomeButtonClicked,
-        )
+        val isPrivate = (activity as HomeActivity).browsingModeManager.mode.isPrivate
+        val leadingAction = if (isPrivate && context.settings().feltPrivateBrowsingEnabled) {
+            BrowserToolbar.Button(
+                imageDrawable = AppCompatResources.getDrawable(
+                    context,
+                    R.drawable.mozac_ic_data_clearance_24,
+                )!!,
+                contentDescription = context.getString(R.string.browser_toolbar_erase),
+                iconTintColorResource = ThemeManager.resolveAttribute(R.attr.textPrimary, context),
+                listener = browserToolbarInteractor::onEraseButtonClicked,
+            )
+        } else {
+            BrowserToolbar.Button(
+                imageDrawable = AppCompatResources.getDrawable(
+                    context,
+                    R.drawable.mozac_ic_home_24,
+                )!!,
+                contentDescription = context.getString(R.string.browser_toolbar_home),
+                iconTintColorResource = ThemeManager.resolveAttribute(R.attr.textPrimary, context),
+                listener = browserToolbarInteractor::onHomeButtonClicked,
+            )
+        }
 
-        browserToolbarView.view.addNavigationAction(homeAction)
+        browserToolbarView.view.addNavigationAction(leadingAction)
 
         updateToolbarActions(isTablet = resources.getBoolean(R.bool.tablet))
 
@@ -133,6 +153,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
 
         browserToolbarView.view.addPageAction(readerModeAction)
 
+        initTranslationsAction(context)
         initReviewQualityCheck(context, view)
 
         thumbnailsFeature.set(
@@ -187,9 +208,11 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                 view = view,
             )
         }
+
         if (!context.settings().shouldUseCookieBanner && !context.settings().userOptOutOfReEngageCookieBannerDialog) {
             observeCookieBannerHandlingState(context.components.core.store)
         }
+
         standardSnackbarErrorBinding.set(
             feature = StandardSnackbarErrorBinding(
                 requireActivity(),
@@ -200,24 +223,59 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
         )
     }
 
+    private fun initTranslationsAction(context: Context) {
+        if (!context.settings().enableTranslations) {
+            return
+        }
+
+        val translationsAction =
+            BrowserToolbar.ToggleButton(
+                image = AppCompatResources.getDrawable(
+                    context,
+                    R.drawable.mozac_ic_translate_24,
+                )!!,
+                imageSelected =
+                AppCompatResources.getDrawable(
+                    context,
+                    R.drawable.mozac_ic_translate_24,
+                )!!,
+                contentDescription = "",
+                contentDescriptionSelected = "",
+                visible = {
+                    translationsAvailable || context.settings().enableTranslations
+                },
+                listener = { browserToolbarInteractor.onTranslationsButtonClicked() },
+            )
+
+        browserToolbarView.view.addPageAction(translationsAction)
+    }
+
     private fun initReviewQualityCheck(context: Context, view: View) {
         val reviewQualityCheck =
             BrowserToolbar.ToggleButton(
                 image = AppCompatResources.getDrawable(
                     context,
-                    R.drawable.ic_shopping_cart,
-                )!!,
+                    R.drawable.mozac_ic_shopping_24,
+                )!!.apply {
+                    setTint(ContextCompat.getColor(context, R.color.fx_mobile_text_color_primary))
+                },
                 imageSelected = AppCompatResources.getDrawable(
                     context,
-                    R.drawable.ic_shopping_cart,
+                    R.drawable.ic_shopping_selected,
                 )!!,
-                contentDescription = context.getString(R.string.browser_menu_review_quality_check),
-                contentDescriptionSelected = context.getString(R.string.browser_menu_review_quality_check_close),
+                contentDescription = context.getString(R.string.review_quality_check_open_handle_content_description),
+                contentDescriptionSelected =
+                context.getString(R.string.review_quality_check_close_handle_content_description),
                 visible = { reviewQualityCheckAvailable },
-                listener = {
+                listener = { _ ->
+                    requireComponents.appStore.dispatch(
+                        AppAction.ShoppingAction.ShoppingSheetStateUpdated(expanded = true),
+                    )
+
                     findNavController().navigate(
                         BrowserFragmentDirections.actionBrowserFragmentToReviewQualityCheckDialogFragment(),
                     )
+                    Shopping.addressBarIconClicked.record()
                 },
             )
 
@@ -225,7 +283,21 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
 
         reviewQualityCheckFeature.set(
             feature = ReviewQualityCheckFeature(
-                onAvailabilityChange = { reviewQualityCheckAvailable = it },
+                appStore = requireComponents.appStore,
+                browserStore = context.components.core.store,
+                shoppingExperienceFeature = DefaultShoppingExperienceFeature(
+                    settings = requireContext().settings(),
+                ),
+                onAvailabilityChange = {
+                    if (!reviewQualityCheckAvailable && it) {
+                        Shopping.addressBarIconDisplayed.record()
+                    }
+                    reviewQualityCheckAvailable = it
+                    safeInvalidateBrowserToolbarView()
+                },
+                onBottomSheetStateChange = {
+                    reviewQualityCheck.setSelected(selected = it, notifyListener = false)
+                },
             ),
             owner = this,
             view = view,

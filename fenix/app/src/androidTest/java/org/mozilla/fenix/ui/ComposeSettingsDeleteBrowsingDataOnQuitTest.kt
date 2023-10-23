@@ -68,7 +68,7 @@ class ComposeSettingsDeleteBrowsingDataOnQuitTest {
     }
 
     @Test
-    fun deleteBrowsingDataOnQuitSettingsItemsTest() {
+    fun deleteBrowsingDataOnQuitSettingTest() {
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
@@ -120,7 +120,36 @@ class ComposeSettingsDeleteBrowsingDataOnQuitTest {
     }
 
     @Test
-    fun deleteHistoryAndSiteStorageOnQuitTest() {
+    fun deleteBrowsingHistoryOnQuitTest() {
+        val genericPage =
+            getStorageTestAsset(mockWebServer, "generic1.html")
+
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openSettingsSubMenuDeleteBrowsingDataOnQuit {
+            clickDeleteBrowsingOnQuitButtonSwitch()
+            exitMenu()
+        }
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(genericPage.url) {
+        }.goToHomescreen {
+        }.openThreeDotMenu {
+            clickQuit()
+            restartApp(composeTestRule.activityRule)
+        }
+
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openHistory {
+            verifyEmptyHistoryView()
+            exitMenu()
+        }
+    }
+
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/416051
+    @Test
+    fun deleteCookiesAndSiteDataOnQuitTest() {
         val storageWritePage =
             getStorageTestAsset(mockWebServer, "storage_write.html")
         val storageCheckPage =
@@ -143,12 +172,6 @@ class ComposeSettingsDeleteBrowsingDataOnQuitTest {
             restartApp(composeTestRule.activityRule)
         }
 
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openHistory {
-            verifyEmptyHistoryView()
-            exitMenu()
-        }
         navigationToolbar {
         }.enterURLAndEnterToBrowser(storageCheckPage.url) {
             verifyPageContent("Session storage empty")
@@ -176,7 +199,7 @@ class ComposeSettingsDeleteBrowsingDataOnQuitTest {
         }.clickDownloadLink("smallZip.zip") {
             verifyDownloadPrompt("smallZip.zip")
         }.clickDownload {
-            verifyDownloadNotificationPopup()
+            verifyDownloadCompleteNotificationPopup()
         }.closeCompletedDownloadPrompt {
         }.goToHomescreen {
         }.openThreeDotMenu {

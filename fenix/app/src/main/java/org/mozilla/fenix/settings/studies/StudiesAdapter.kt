@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.google.android.material.button.MaterialButton
 import mozilla.components.service.nimbus.messaging.MESSAGING_FEATURE_ID
+import mozilla.components.ui.widgets.withCenterAlignedButtons
 import org.mozilla.experiments.nimbus.internal.EnrolledExperiment
 import org.mozilla.fenix.R
 import org.mozilla.fenix.settings.studies.CustomViewHolder.SectionViewHolder
@@ -36,7 +37,7 @@ private const val VIEW_HOLDER_TYPE_STUDY = 1
  * @param studies The list of studies.
  *  * @property studiesDelegate Delegate that will provides method for handling
  * the studies actions items.
- * @param shouldSubmitOnInit The sole purpose of this property is to prevent the submitList function
+ * @property shouldSubmitOnInit The sole purpose of this property is to prevent the submitList function
  * to run on init, it should only be used from tests.
  */
 @Suppress("LargeClass")
@@ -141,7 +142,7 @@ class StudiesAdapter(
             .setTitle(R.string.preference_experiments_2)
             .setMessage(R.string.studies_restart_app)
             .setCancelable(false)
-        val alertDialog: AlertDialog = builder.create()
+        val alertDialog: AlertDialog = builder.create().withCenterAlignedButtons()
         alertDialog.show()
         return alertDialog
     }
@@ -173,7 +174,8 @@ class StudiesAdapter(
 
     /**
      * Removes the portion of the list that contains the provided [study].
-     * @property study The study to be removed.
+     *
+     * @param study The study to be removed.
      */
     fun removeStudy(study: EnrolledExperiment) {
         studiesMap.remove(study.slug)

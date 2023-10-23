@@ -37,13 +37,13 @@ import org.mozilla.fenix.GleanMetrics.HomeMenu as HomeMenuMetrics
  * Helper class for building the [HomeMenu].
  *
  * @property view The [View] to attach the snackbar to.
- * @property context  An Android [Context].
+ * @property context An Android [Context].
  * @property lifecycleOwner [LifecycleOwner] for the view.
  * @property homeActivity [HomeActivity] used to open URLs in a new tab.
  * @property navController [NavController] used for navigation.
  * @property menuButton The [MenuButton] that will be used to create a menu when the button is
  * clicked.
- * @property hideOnboardingIfNeeded Lambda invoked to dismiss onboarding.
+ * @property fxaEntrypoint The source entry point to FxA.
  */
 @Suppress("LongParameterList")
 class HomeMenuView(
@@ -53,7 +53,6 @@ class HomeMenuView(
     private val homeActivity: HomeActivity,
     private val navController: NavController,
     private val menuButton: WeakReference<MenuButton>,
-    private val hideOnboardingIfNeeded: () -> Unit = {},
     private val fxaEntrypoint: FxAEntryPoint = FenixFxAEntryPoint.HomeMenu,
 ) {
 
@@ -90,10 +89,6 @@ class HomeMenuView(
     @Suppress("LongMethod", "ComplexMethod")
     @VisibleForTesting(otherwise = PRIVATE)
     internal fun onItemTapped(item: HomeMenu.Item) {
-        if (item !is HomeMenu.Item.DesktopMode) {
-            hideOnboardingIfNeeded()
-        }
-
         when (item) {
             HomeMenu.Item.Settings -> {
                 HomeMenuMetrics.settingsItemClicked.record(NoExtras())
@@ -159,6 +154,7 @@ class HomeMenuView(
                 )
             }
             HomeMenu.Item.Help -> {
+                HomeMenuMetrics.helpTapped.record(NoExtras())
                 homeActivity.openToBrowserAndLoad(
                     searchTermOrURL = SupportUtils.getSumoURLForTopic(
                         context = context,

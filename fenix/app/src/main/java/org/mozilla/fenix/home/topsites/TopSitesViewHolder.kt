@@ -8,10 +8,12 @@ import android.view.View
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
 import androidx.lifecycle.LifecycleOwner
-import mozilla.components.lib.state.ext.observeAsState
+import mozilla.components.lib.state.ext.observeAsComposableState
+import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.components.components
 import org.mozilla.fenix.compose.ComposeViewHolder
 import org.mozilla.fenix.home.sessioncontrol.TopSiteInteractor
+import org.mozilla.fenix.perf.StartupTimeline
 import org.mozilla.fenix.wallpapers.WallpaperState
 
 /**
@@ -19,7 +21,7 @@ import org.mozilla.fenix.wallpapers.WallpaperState
  *
  * @param composeView [ComposeView] which will be populated with Jetpack Compose UI content.
  * @param viewLifecycleOwner [LifecycleOwner] to which this Composable will be tied to.
- * @param interactor [TopSiteInteractor] which will have delegated to all user top sites
+ * @property interactor [TopSiteInteractor] which will have delegated to all user top sites
  * interactions.
  */
 class TopSitesViewHolder(
@@ -31,23 +33,29 @@ class TopSitesViewHolder(
     @Composable
     override fun Content() {
         val topSites =
-            components.appStore.observeAsState(emptyList()) { state -> state.topSites }.value
+            components.appStore.observeAsComposableState { state -> state.topSites }.value
         val wallpaperState = components.appStore
-            .observeAsState(WallpaperState.default) { state -> state.wallpaperState }.value
+            .observeAsComposableState { state -> state.wallpaperState }.value
+            ?: WallpaperState.default
 
-        TopSites(
-            topSites = topSites,
-            topSiteColors = TopSiteColors.colors(wallpaperState = wallpaperState),
-            onTopSiteClick = { topSite ->
-                interactor.onSelectTopSite(topSite, topSites.indexOf(topSite))
-            },
-            onTopSiteLongClick = interactor::onTopSiteLongClicked,
-            onOpenInPrivateTabClicked = interactor::onOpenInPrivateTabClicked,
-            onRenameTopSiteClicked = interactor::onRenameTopSiteClicked,
-            onRemoveTopSiteClicked = interactor::onRemoveTopSiteClicked,
-            onSettingsClicked = interactor::onSettingsClicked,
-            onSponsorPrivacyClicked = interactor::onSponsorPrivacyClicked,
-        )
+        topSites?.let {
+            TopSites(
+                topSites = it,
+                topSiteColors = TopSiteColors.colors(wallpaperState = wallpaperState),
+                onTopSiteClick = { topSite ->
+                    interactor.onSelectTopSite(topSite, it.indexOf(topSite))
+                },
+                onTopSiteLongClick = interactor::onTopSiteLongClicked,
+                onOpenInPrivateTabClicked = interactor::onOpenInPrivateTabClicked,
+                onRenameTopSiteClicked = interactor::onRenameTopSiteClicked,
+                onRemoveTopSiteClicked = interactor::onRemoveTopSiteClicked,
+                onSettingsClicked = interactor::onSettingsClicked,
+                onSponsorPrivacyClicked = interactor::onSponsorPrivacyClicked,
+                onTopSitesItemBound = {
+                    StartupTimeline.onTopSitesItemBound(activity = composeView.context as HomeActivity)
+                },
+            )
+        }
     }
 
     companion object {

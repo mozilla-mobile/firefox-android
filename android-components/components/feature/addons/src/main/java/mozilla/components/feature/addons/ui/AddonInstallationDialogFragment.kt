@@ -33,8 +33,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import mozilla.components.feature.addons.Addon
+import mozilla.components.feature.addons.AddonsProvider
 import mozilla.components.feature.addons.R
-import mozilla.components.feature.addons.amo.AddonCollectionProvider
 import mozilla.components.feature.addons.databinding.MozacFeatureAddonsFragmentDialogAddonInstalledBinding
 import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.ktx.android.content.appName
@@ -43,7 +43,7 @@ import mozilla.components.support.utils.ext.getParcelableCompat
 import java.io.IOException
 import mozilla.components.ui.icons.R as iconsR
 
-@VisibleForTesting internal const val KEY_INSTALLED_ADDON = "KEY_ADDON"
+@VisibleForTesting internal const val KEY_INSTALLED_ADDON = "KEY_INSTALLED_ADDON"
 private const val KEY_DIALOG_GRAVITY = "KEY_DIALOG_GRAVITY"
 private const val KEY_DIALOG_WIDTH_MATCH_PARENT = "KEY_DIALOG_WIDTH_MATCH_PARENT"
 private const val KEY_CONFIRM_BUTTON_BACKGROUND_COLOR = "KEY_CONFIRM_BUTTON_BACKGROUND_COLOR"
@@ -74,13 +74,13 @@ class AddonInstallationDialogFragment : AppCompatDialogFragment() {
     var onDismissed: (() -> Unit)? = null
 
     /**
-     * Reference to the application's [AddonCollectionProvider] to fetch add-on icons.
+     * Reference to the application's [AddonsProvider] to fetch add-on icons.
      */
-    var addonCollectionProvider: AddonCollectionProvider? = null
+    var addonsProvider: AddonsProvider? = null
 
     private val safeArguments get() = requireNotNull(arguments)
 
-    internal val addon get() = requireNotNull(safeArguments.getParcelableCompat(KEY_ADDON, Addon::class.java))
+    internal val addon get() = requireNotNull(safeArguments.getParcelableCompat(KEY_INSTALLED_ADDON, Addon::class.java))
     private var allowPrivateBrowsing: Boolean = false
 
     internal val confirmButtonRadius
@@ -225,7 +225,7 @@ class AddonInstallationDialogFragment : AppCompatDialogFragment() {
     internal fun fetchIcon(addon: Addon, iconView: ImageView, scope: CoroutineScope = this.scope): Job {
         return scope.launch {
             try {
-                val iconBitmap = addonCollectionProvider?.getAddonIconBitmap(addon)
+                val iconBitmap = addonsProvider?.getAddonIconBitmap(addon)
                 iconBitmap?.let {
                     scope.launch(Dispatchers.Main) {
                         safeArguments.putParcelable(KEY_ICON, it)
@@ -267,13 +267,14 @@ class AddonInstallationDialogFragment : AppCompatDialogFragment() {
         /**
          * Returns a new instance of [AddonInstallationDialogFragment].
          * @param addon The addon to show in the dialog.
+         * @param addonsProvider An add-ons provider.
          * @param promptsStyling Styling properties for the dialog.
          * @param onDismissed A lambda called when the dialog is dismissed.
          * @param onConfirmButtonClicked A lambda called when the confirm button is clicked.
          */
         fun newInstance(
             addon: Addon,
-            addonCollectionProvider: AddonCollectionProvider,
+            addonsProvider: AddonsProvider,
             promptsStyling: PromptsStyling? = PromptsStyling(
                 gravity = Gravity.BOTTOM,
                 shouldWidthMatchParent = true,
@@ -304,7 +305,7 @@ class AddonInstallationDialogFragment : AppCompatDialogFragment() {
             fragment.onConfirmButtonClicked = onConfirmButtonClicked
             fragment.onDismissed = onDismissed
             fragment.arguments = arguments
-            fragment.addonCollectionProvider = addonCollectionProvider
+            fragment.addonsProvider = addonsProvider
             return fragment
         }
     }

@@ -56,7 +56,7 @@ interface SessionState {
      * Represents the origin of a session to describe how and why it was created.
      * @param id A unique identifier, exists for serialization purposes.
      */
-    @Suppress("UNUSED_PARAMETER", "MagicNumber")
+    @Suppress("MagicNumber")
     sealed class Source(val id: Int) {
         companion object {
             /**

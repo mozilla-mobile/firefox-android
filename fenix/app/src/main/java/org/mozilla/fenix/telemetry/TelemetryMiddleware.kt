@@ -9,6 +9,7 @@ import mozilla.components.browser.state.action.BrowserAction
 import mozilla.components.browser.state.action.ContentAction
 import mozilla.components.browser.state.action.DownloadAction
 import mozilla.components.browser.state.action.EngineAction
+import mozilla.components.browser.state.action.ExtensionsProcessAction
 import mozilla.components.browser.state.action.TabListAction
 import mozilla.components.browser.state.selector.findTab
 import mozilla.components.browser.state.selector.findTabOrCustomTab
@@ -20,27 +21,40 @@ import mozilla.components.concept.base.crash.CrashReporting
 import mozilla.components.lib.state.Middleware
 import mozilla.components.lib.state.MiddlewareContext
 import mozilla.components.support.base.log.logger.Logger
+import mozilla.telemetry.glean.internal.TimerId
 import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.Config
+import org.mozilla.fenix.GleanMetrics.Addons
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.Metrics
 import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.utils.Settings
 import org.mozilla.fenix.GleanMetrics.EngineTab as EngineMetrics
+
+private const val PROGRESS_COMPLETE = 100
 
 /**
  * [Middleware] to record telemetry in response to [BrowserAction]s.
  *
+ * @property context An Android [Context].
  * @property settings reference to the application [Settings].
- * @property metrics [MetricController] to pass events that have been mapped from actions
+ * @property metrics [MetricController] to pass events that have been mapped from actions.
+ * @property crashReporting An instance of [CrashReporting] to report caught exceptions.
+ * @property nimbusSearchEngine The Nimbus search engine.
+ * @property searchState Map that stores the [TabSessionState.id] & [TimerId].
+ * @property timerId The [TimerId] for the [Metrics.searchPageLoadTime].
  */
 class TelemetryMiddleware(
     private val context: Context,
     private val settings: Settings,
     private val metrics: MetricController,
     private val crashReporting: CrashReporting? = null,
+    private val nimbusSearchEngine: String = FxNimbus.features.searchExtraParams.value().searchEngine,
+    private val searchState: MutableMap<String, TimerId> = mutableMapOf(),
+    private val timerId: TimerId = Metrics.searchPageLoadTime.start(),
 ) : Middleware<BrowserState, BrowserAction> {
 
     private val logger = Logger("TelemetryMiddleware")
@@ -54,11 +68,33 @@ class TelemetryMiddleware(
         // Pre process actions
 
         when (action) {
+            is ContentAction.UpdateIsSearchAction -> {
+                if (action.isSearch && nimbusSearchEngine.isNotEmpty() &&
+                    (action.searchEngineName == nimbusSearchEngine)
+                ) {
+                    searchState[action.sessionId] = timerId
+                }
+            }
             is ContentAction.UpdateLoadingStateAction -> {
                 context.state.findTab(action.sessionId)?.let { tab ->
+                    val hasFinishedLoading = tab.content.loading && !action.loading
+
                     // Record UriOpened event when a non-private page finishes loading
-                    if (tab.content.loading && !action.loading) {
+                    if (hasFinishedLoading) {
                         Events.normalAndPrivateUriCount.add()
+
+                        val progressCompleted = tab.content.progress == PROGRESS_COMPLETE
+                        if (progressCompleted) {
+                            searchState[action.sessionId]?.let {
+                                Metrics.searchPageLoadTime.stopAndAccumulate(it)
+                            }
+                        } else {
+                            searchState[action.sessionId]?.let {
+                                Metrics.searchPageLoadTime.cancel(it)
+                            }
+                        }
+
+                        searchState.remove(action.sessionId)
                     }
                 }
             }
@@ -101,6 +137,12 @@ class TelemetryMiddleware(
                 } else {
                     Metrics.hasOpenTabs.set(false)
                 }
+            }
+            is ExtensionsProcessAction.EnabledAction -> {
+                Addons.extensionsProcessUiRetry.add()
+            }
+            is ExtensionsProcessAction.DisabledAction -> {
+                Addons.extensionsProcessUiDisable.add()
             }
             else -> {
                 // no-op

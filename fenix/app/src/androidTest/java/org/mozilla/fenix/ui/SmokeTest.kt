@@ -12,8 +12,6 @@ import androidx.core.net.toUri
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.ActivityTestRule
 import androidx.test.uiautomator.UiDevice
-import mozilla.components.browser.state.store.BrowserStore
-import mozilla.components.concept.engine.mediasession.MediaSession
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
@@ -22,17 +20,13 @@ import org.junit.Test
 import org.mozilla.fenix.IntentReceiverActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.customannotations.SmokeTest
-import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
-import org.mozilla.fenix.helpers.MatcherHelper.itemWithText
 import org.mozilla.fenix.helpers.RetryTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
-import org.mozilla.fenix.helpers.TestHelper.assertYoutubeAppOpens
 import org.mozilla.fenix.helpers.TestHelper.registerAndCleanupIdlingResources
 import org.mozilla.fenix.helpers.ViewVisibilityIdlingResource
 import org.mozilla.fenix.ui.robots.browserScreen
-import org.mozilla.fenix.ui.robots.clickPageObject
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
 
@@ -47,8 +41,6 @@ import org.mozilla.fenix.ui.robots.navigationToolbar
 class SmokeTest {
     private lateinit var mDevice: UiDevice
     private lateinit var mockWebServer: MockWebServer
-    private val customMenuItem = "TestMenuItem"
-    private lateinit var browserStore: BrowserStore
 
     @get:Rule(order = 0)
     val activityTestRule = AndroidComposeTestRule(
@@ -69,10 +61,6 @@ class SmokeTest {
 
     @Before
     fun setUp() {
-        // Initializing this as part of class construction, below the rule would throw a NPE
-        // So we are initializing this here instead of in all related tests.
-        browserStore = activityTestRule.activity.components.core.store
-
         mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
         mockWebServer = MockWebServer().apply {
             dispatcher = AndroidAssetDispatcher()
@@ -83,94 +71,6 @@ class SmokeTest {
     @After
     fun tearDown() {
         mockWebServer.shutdown()
-    }
-
-    /* Verifies the nav bar:
-     - opening a web page
-     - the existence of nav bar items
-     - editing the url bar
-     - the tab drawer button
-     - opening a new search and dismissing the nav bar
-     */
-    @Test
-    fun verifyBasicNavigationToolbarFunctionality() {
-        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        homeScreen {
-            navigationToolbar {
-            }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-                mDevice.waitForIdle()
-                verifyNavURLBarItems()
-            }.openNavigationToolbar {
-            }.goBackToWebsite {
-            }.openTabDrawer {
-                verifyExistingTabList()
-            }.openNewTab {
-            }.dismissSearchBar {
-                verifyHomeScreen()
-            }
-        }
-    }
-
-    // Device or AVD requires a Google Services Android OS installation with Play Store installed
-    // Verifies the Open in app button when an app is installed
-    @Test
-    fun mainMenuOpenInAppTest() {
-        val youtubeURL = "https://m.youtube.com/user/mozilla?cbrd=1"
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(youtubeURL.toUri()) {
-            verifyNotificationDotOnMainMenu()
-        }.openThreeDotMenu {
-        }.clickOpenInApp {
-            assertYoutubeAppOpens()
-        }
-    }
-
-    // Verifies that deleting a Bookmarks folder also removes the item from inside it.
-    @Test
-    fun deleteNonEmptyBookmarkFolderTest() {
-        val website = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        browserScreen {
-            createBookmark(website.url)
-        }.openThreeDotMenu {
-        }.openBookmarks {
-            verifyBookmarkTitle("Test_Page_1")
-            createFolder("My Folder")
-            verifyFolderTitle("My Folder")
-        }.openThreeDotMenu("Test_Page_1") {
-        }.clickEdit {
-            clickParentFolderSelector()
-            selectFolder("My Folder")
-            navigateUp()
-            saveEditBookmark()
-            createFolder("My Folder 2")
-            verifyFolderTitle("My Folder 2")
-        }.openThreeDotMenu("My Folder 2") {
-        }.clickEdit {
-            clickParentFolderSelector()
-            selectFolder("My Folder")
-            navigateUp()
-            saveEditBookmark()
-        }.openThreeDotMenu("My Folder") {
-        }.clickDelete {
-            cancelFolderDeletion()
-            verifyFolderTitle("My Folder")
-        }.openThreeDotMenu("My Folder") {
-        }.clickDelete {
-            confirmDeletion()
-            verifyDeleteSnackBarText()
-            verifyBookmarkIsDeleted("My Folder")
-            verifyBookmarkIsDeleted("My Folder 2")
-            verifyBookmarkIsDeleted("Test_Page_1")
-            navigateUp()
-        }
-
-        browserScreen {
-        }.openThreeDotMenu {
-            verifyAddBookmarkButton()
-        }
     }
 
     @Test
@@ -202,64 +102,6 @@ class SmokeTest {
                 sharedUrlsString,
                 "$firstWebsiteTitle, $secondWebsiteTitle",
             )
-        }
-    }
-
-    @Test
-    fun emptyTabsTrayViewPrivateBrowsingTest() {
-        navigationToolbar {
-        }.openTabTray {
-        }.toggleToPrivateTabs() {
-            verifyNormalBrowsingButtonIsSelected(false)
-            verifyPrivateBrowsingButtonIsSelected(true)
-            verifySyncedTabsButtonIsSelected(false)
-            verifyNoOpenTabsInPrivateBrowsing()
-            verifyPrivateBrowsingNewTabButton()
-            verifyTabTrayOverflowMenu(true)
-            verifyEmptyTabsTrayMenuButtons()
-        }
-    }
-
-    @Test
-    fun privateTabsTrayWithOpenedTabTest() {
-        val website = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        homeScreen {
-        }.togglePrivateBrowsingMode()
-
-        homeScreen {
-        }.openNavigationToolbar {
-        }.enterURLAndEnterToBrowser(website.url) {
-        }.openTabDrawer {
-            verifyNormalBrowsingButtonIsSelected(false)
-            verifyPrivateBrowsingButtonIsSelected(true)
-            verifySyncedTabsButtonIsSelected(false)
-            verifyTabTrayOverflowMenu(true)
-            verifyTabsTrayCounter()
-            verifyExistingTabList()
-            verifyExistingOpenTabs(website.title)
-            verifyCloseTabsButton(website.title)
-            verifyOpenedTabThumbnail()
-            verifyPrivateBrowsingNewTabButton()
-        }
-    }
-
-    // Test running on beta/release builds in CI:
-    // caution when making changes to it, so they don't block the builds
-    @Test
-    fun noHistoryInPrivateBrowsingTest() {
-        val website = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        homeScreen {
-        }.togglePrivateBrowsingMode()
-
-        homeScreen {
-        }.openNavigationToolbar {
-        }.enterURLAndEnterToBrowser(website.url) {
-            mDevice.waitForIdle()
-        }.openThreeDotMenu {
-        }.openHistory {
-            verifyEmptyHistoryView()
         }
     }
 
@@ -318,118 +160,6 @@ class SmokeTest {
             verifyAppearanceColorDark(true)
             verifyAppearanceColorLight(true)
             verifyAppearanceColorSepia(true)
-        }
-    }
-
-    @Test
-    fun tabMediaControlButtonTest() {
-        val audioTestPage = TestAssetHelper.getAudioPageAsset(mockWebServer)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(audioTestPage.url) {
-            mDevice.waitForIdle()
-            clickPageObject(itemWithText("Play"))
-            assertPlaybackState(browserStore, MediaSession.PlaybackState.PLAYING)
-        }.openTabDrawer {
-            verifyTabMediaControlButtonState("Pause")
-            clickTabMediaControlButton("Pause")
-            verifyTabMediaControlButtonState("Play")
-        }.openTab(audioTestPage.title) {
-            assertPlaybackState(browserStore, MediaSession.PlaybackState.PAUSED)
-        }
-    }
-
-    // For API>23
-    // Verifies the default browser switch opens the system default apps menu.
-    @Test
-    fun changeDefaultBrowserSetting() {
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-            verifyDefaultBrowserToggle(false)
-            clickDefaultBrowserSwitch()
-            verifyAndroidDefaultAppsMenuAppears()
-        }
-        // Dismiss the request
-        mDevice.pressBack()
-    }
-
-    @Test
-    fun goToHomeScreenBottomToolbarTest() {
-        val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(genericURL.url) {
-            mDevice.waitForIdle()
-        }.goToHomescreen {
-            verifyHomeScreen()
-        }
-    }
-
-    @Test
-    fun goToHomeScreenTopToolbarTest() {
-        val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openCustomizeSubMenu {
-            clickTopToolbarToggle()
-        }.goBack {
-        }.goBack {
-        }.openNavigationToolbar {
-        }.enterURLAndEnterToBrowser(genericURL.url) {
-            mDevice.waitForIdle()
-        }.goToHomescreen {
-            verifyHomeScreen()
-        }
-    }
-
-    @Test
-    fun goToHomeScreenBottomToolbarPrivateModeTest() {
-        val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        homeScreen {
-            togglePrivateBrowsingModeOnOff()
-        }
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(genericURL.url) {
-            mDevice.waitForIdle()
-        }.goToHomescreen {
-            verifyHomeScreen()
-        }
-    }
-
-    @Test
-    fun goToHomeScreenTopToolbarPrivateModeTest() {
-        val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        homeScreen {
-            togglePrivateBrowsingModeOnOff()
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openCustomizeSubMenu {
-            clickTopToolbarToggle()
-        }.goBack {
-        }.goBack {
-        }.openNavigationToolbar {
-        }.enterURLAndEnterToBrowser(genericURL.url) {
-            mDevice.waitForIdle()
-        }.goToHomescreen {
-            verifyHomeScreen()
-        }
-    }
-
-    @Test
-    fun tabsSettingsMenuItemsTest() {
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openTabsSubMenu {
-            verifyTabViewOptions()
-            verifyCloseTabsOptions()
-            verifyMoveOldTabsToInactiveOptions()
         }
     }
 }

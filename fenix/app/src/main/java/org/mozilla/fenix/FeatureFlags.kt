@@ -64,7 +64,13 @@ object FeatureFlags {
     const val unifiedSearchSettings = true
 
     /**
-     * Enables printing from the share and primary menu.
+     * Allows users to enable translations.
+     * Preference to fully enable translations is pref_key_enable_translations.
      */
-    val print = Config.channel.isNightlyOrDebug
+    val translations = Config.channel.isDebug
+
+    /**
+     * Allows users to enable Firefox Suggest.
+     */
+    val fxSuggest = Config.channel.isNightlyOrDebug
 }

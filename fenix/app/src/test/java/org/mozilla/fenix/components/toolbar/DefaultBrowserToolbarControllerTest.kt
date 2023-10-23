@@ -53,6 +53,7 @@ import org.mozilla.fenix.browser.readermode.ReaderModeController
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
+import org.mozilla.fenix.home.HomeFragment
 import org.mozilla.fenix.home.HomeScreenViewModel
 
 @RunWith(FenixRobolectricTestRunner::class)
@@ -364,6 +365,51 @@ class DefaultBrowserToolbarControllerTest {
 
         verify { navController.navigate(BrowserFragmentDirections.actionGlobalHome()) }
         assertNotNull(Events.browserToolbarHomeTapped.testGetValue())
+    }
+
+    @Test
+    fun handleEraseButtonClicked() {
+        assertNull(Events.browserToolbarEraseTapped.testGetValue())
+        val controller = createController()
+        controller.handleEraseButtonClick()
+
+        verify {
+            homeViewModel.sessionToDelete = HomeFragment.ALL_PRIVATE_TABS
+            navController.navigate(BrowserFragmentDirections.actionGlobalHome())
+        }
+        assertNotNull(Events.browserToolbarEraseTapped.testGetValue())
+    }
+
+    @Test
+    fun handleShoppingCfrActionClick() {
+        val controller = createController()
+        every { activity.settings().reviewQualityCheckCfrDisplayTimeInMillis } returns System.currentTimeMillis()
+
+        controller.handleShoppingCfrActionClick()
+
+        verify {
+            activity.settings().shouldShowReviewQualityCheckCFR = false
+            navController.navigate(BrowserFragmentDirections.actionBrowserFragmentToReviewQualityCheckDialogFragment())
+        }
+    }
+
+    @Test
+    fun handleShoppingCfrDismiss() {
+        val controller = createController()
+        every { activity.settings().reviewQualityCheckCfrDisplayTimeInMillis } returns System.currentTimeMillis()
+
+        controller.handleShoppingCfrDismiss()
+
+        assertFalse(activity.settings().shouldShowReviewQualityCheckCFR)
+    }
+
+    fun handleTranslationsButtonClick() {
+        val controller = createController()
+        controller.handleTranslationsButtonClick()
+
+        verify {
+            navController.navigate(BrowserFragmentDirections.actionBrowserFragmentToTranslationsDialogFragment())
+        }
     }
 
     private fun createController(

@@ -1,6 +1,9 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.onboarding.view
 
-import androidx.compose.ui.layout.ContentScale
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -17,32 +20,51 @@ class JunoOnboardingMapperTest {
         HomeActivityIntentTestRule.withDefaultSettingsOverrides(skipOnboarding = true)
 
     @Test
-    fun showNotificationTrue_pagesToDisplay_returnsSortedListOfAllConvertedPages() {
+    fun showNotificationTrue_showAddWidgetFalse_pagesToDisplay_returnsSortedListOfAllConvertedPages_withoutAddWidgetPage() {
         val expected = listOf(defaultBrowserPageUiData, syncPageUiData, notificationPageUiData)
-        assertEquals(expected, unsortedAllKnownCardData.toPageUiData(true))
+        assertEquals(expected, unsortedAllKnownCardData.toPageUiData(true, false))
     }
 
     @Test
-    fun showNotificationFalse_pagesToDisplay_returnsSortedListOfConvertedPagesWithoutNotificationPage() {
+    fun showNotificationFalse_showAddWidgetFalse_pagesToDisplay_returnsSortedListOfConvertedPages_withoutNotificationPage_and_addWidgetPage() {
         val expected = listOf(defaultBrowserPageUiData, syncPageUiData)
-        assertEquals(expected, unsortedAllKnownCardData.toPageUiData(false))
+        assertEquals(expected, unsortedAllKnownCardData.toPageUiData(false, false))
+    }
+
+    @Test
+    fun showNotificationFalse_showAddWidgetTrue_pagesToDisplay_returnsSortedListOfAllConvertedPages_withoutNotificationPage() {
+        val expected = listOf(defaultBrowserPageUiData, addSearchWidgetPageUiData, syncPageUiData)
+        assertEquals(expected, unsortedAllKnownCardData.toPageUiData(false, true))
+    }
+
+    @Test
+    fun showNotificationTrue_and_showAddWidgetTrue_pagesToDisplay_returnsSortedListOfConvertedPages() {
+        val expected = listOf(defaultBrowserPageUiData, addSearchWidgetPageUiData, syncPageUiData, notificationPageUiData)
+        assertEquals(expected, unsortedAllKnownCardData.toPageUiData(true, true))
     }
 }
 
 private val defaultBrowserPageUiData = OnboardingPageUiData(
     type = OnboardingPageUiData.Type.DEFAULT_BROWSER,
     imageRes = R.drawable.ic_onboarding_welcome,
-    imageResContentScale = ContentScale.Fit,
     title = "default browser title",
     description = "default browser body with link text",
     linkText = "link text",
     primaryButtonLabel = "default browser primary button text",
     secondaryButtonLabel = "default browser secondary button text",
 )
+private val addSearchWidgetPageUiData = OnboardingPageUiData(
+    type = OnboardingPageUiData.Type.ADD_SEARCH_WIDGET,
+    imageRes = R.drawable.ic_onboarding_search_widget,
+    title = "add search widget title",
+    description = "add search widget body with link text",
+    linkText = "link text",
+    primaryButtonLabel = "add search widget primary button text",
+    secondaryButtonLabel = "add search widget secondary button text",
+)
 private val syncPageUiData = OnboardingPageUiData(
     type = OnboardingPageUiData.Type.SYNC_SIGN_IN,
     imageRes = R.drawable.ic_onboarding_sync,
-    imageResContentScale = ContentScale.Fit,
     title = "sync title",
     description = "sync body",
     primaryButtonLabel = "sync primary button text",
@@ -51,7 +73,6 @@ private val syncPageUiData = OnboardingPageUiData(
 private val notificationPageUiData = OnboardingPageUiData(
     type = OnboardingPageUiData.Type.NOTIFICATION_PERMISSION,
     imageRes = R.drawable.ic_notification_permission,
-    imageResContentScale = ContentScale.Crop,
     title = "notification title",
     description = "notification body",
     primaryButtonLabel = "notification primary button text",
@@ -61,7 +82,6 @@ private val notificationPageUiData = OnboardingPageUiData(
 private val defaultBrowserCardData = OnboardingCardData(
     cardType = OnboardingCardType.DEFAULT_BROWSER,
     imageRes = R.drawable.ic_onboarding_welcome,
-    imageIsIllustration = true,
     title = StringHolder(null, "default browser title"),
     body = StringHolder(null, "default browser body with link text"),
     linkText = StringHolder(null, "link text"),
@@ -69,10 +89,19 @@ private val defaultBrowserCardData = OnboardingCardData(
     secondaryButtonLabel = StringHolder(null, "default browser secondary button text"),
     ordering = 10,
 )
+private val addSearchWidgetCardData = OnboardingCardData(
+    cardType = OnboardingCardType.ADD_SEARCH_WIDGET,
+    imageRes = R.drawable.ic_onboarding_search_widget,
+    title = StringHolder(null, "add search widget title"),
+    body = StringHolder(null, "add search widget body with link text"),
+    linkText = StringHolder(null, "link text"),
+    primaryButtonLabel = StringHolder(null, "add search widget primary button text"),
+    secondaryButtonLabel = StringHolder(null, "add search widget secondary button text"),
+    ordering = 15,
+)
 private val syncCardData = OnboardingCardData(
     cardType = OnboardingCardType.SYNC_SIGN_IN,
     imageRes = R.drawable.ic_onboarding_sync,
-    imageIsIllustration = true,
     title = StringHolder(null, "sync title"),
     body = StringHolder(null, "sync body"),
     primaryButtonLabel = StringHolder(null, "sync primary button text"),
@@ -82,7 +111,6 @@ private val syncCardData = OnboardingCardData(
 private val notificationCardData = OnboardingCardData(
     cardType = OnboardingCardType.NOTIFICATION_PERMISSION,
     imageRes = R.drawable.ic_notification_permission,
-    imageIsIllustration = false,
     title = StringHolder(null, "notification title"),
     body = StringHolder(null, "notification body"),
     primaryButtonLabel = StringHolder(null, "notification primary button text"),
@@ -94,4 +122,5 @@ private val unsortedAllKnownCardData = listOf(
     syncCardData,
     notificationCardData,
     defaultBrowserCardData,
+    addSearchWidgetCardData,
 )

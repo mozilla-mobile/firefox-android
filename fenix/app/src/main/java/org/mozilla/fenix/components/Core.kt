@@ -141,7 +141,7 @@ class Core(
                 R.color.fx_mobile_layer_color_1,
             ),
             httpsOnlyMode = context.settings().getHttpsOnlyMode(),
-            cookieBannerHandlingModePrivateBrowsing = context.settings().getCookieBannerHandling(),
+            cookieBannerHandlingModePrivateBrowsing = context.settings().getCookieBannerHandlingPrivateMode(),
             cookieBannerHandlingMode = context.settings().getCookieBannerHandling(),
             cookieBannerHandlingDetectOnlyMode = context.settings()
                 .shouldShowCookieBannerReEngagementDialog(),
@@ -210,7 +210,7 @@ class Core(
     }
 
     val sessionStorage: SessionStorage by lazyMonitored {
-        SessionStorage(context, engine = engine)
+        SessionStorage(context, engine, crashReporter)
     }
 
     private val locationService: LocationService by lazyMonitored {
@@ -286,11 +286,7 @@ class Core(
         BrowserStore(
             initialState = BrowserState(
                 search = SearchState(
-                    applicationSearchEngines = if (context.settings().showUnifiedSearchFeature) {
-                        applicationSearchEngines
-                    } else {
-                        emptyList()
-                    },
+                    applicationSearchEngines = applicationSearchEngines,
                 ),
             ),
             middleware = middlewareList + EngineMiddleware.create(

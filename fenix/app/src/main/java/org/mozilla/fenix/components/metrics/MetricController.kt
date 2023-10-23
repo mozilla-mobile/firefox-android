@@ -16,10 +16,13 @@ import mozilla.components.feature.awesomebar.provider.HistoryStorageSuggestionPr
 import mozilla.components.feature.awesomebar.provider.SearchSuggestionProvider
 import mozilla.components.feature.awesomebar.provider.SessionSuggestionProvider
 import mozilla.components.feature.contextmenu.facts.ContextMenuFacts
+import mozilla.components.feature.fxsuggest.FxSuggestClickInfo
+import mozilla.components.feature.fxsuggest.facts.FxSuggestFacts
 import mozilla.components.feature.media.facts.MediaFacts
 import mozilla.components.feature.prompts.dialog.LoginDialogFacts
 import mozilla.components.feature.prompts.facts.AddressAutofillDialogFacts
 import mozilla.components.feature.prompts.facts.CreditCardAutofillDialogFacts
+import mozilla.components.feature.prompts.facts.LoginAutofillDialogFacts
 import mozilla.components.feature.pwa.ProgressiveWebAppFacts
 import mozilla.components.feature.search.telemetry.ads.AdsTelemetry
 import mozilla.components.feature.search.telemetry.incontent.InContentTelemetry
@@ -45,16 +48,20 @@ import org.mozilla.fenix.GleanMetrics.ContextMenu
 import org.mozilla.fenix.GleanMetrics.ContextualMenu
 import org.mozilla.fenix.GleanMetrics.CreditCards
 import org.mozilla.fenix.GleanMetrics.Events
+import org.mozilla.fenix.GleanMetrics.FxSuggest
 import org.mozilla.fenix.GleanMetrics.LoginDialog
+import org.mozilla.fenix.GleanMetrics.Logins
 import org.mozilla.fenix.GleanMetrics.MediaNotification
 import org.mozilla.fenix.GleanMetrics.MediaState
 import org.mozilla.fenix.GleanMetrics.PerfAwesomebar
+import org.mozilla.fenix.GleanMetrics.Pings
 import org.mozilla.fenix.GleanMetrics.ProgressiveWebApp
 import org.mozilla.fenix.GleanMetrics.SitePermissions
 import org.mozilla.fenix.GleanMetrics.Sync
 import org.mozilla.fenix.GleanMetrics.SyncedTabs
 import org.mozilla.fenix.search.awesomebar.ShortcutsSuggestionProvider
 import org.mozilla.fenix.utils.Settings
+import java.util.UUID
 import mozilla.components.compose.browser.awesomebar.AwesomeBarFacts as ComposeAwesomeBarFacts
 
 interface MetricController {
@@ -197,6 +204,13 @@ internal class ReleaseMetricController(
         Component.FEATURE_PROMPTS to AddressAutofillDialogFacts.Items.AUTOFILL_ADDRESS_PROMPT_DISMISSED ->
             Addresses.autofillPromptDismissed.record(NoExtras())
 
+        Component.FEATURE_PROMPTS to LoginAutofillDialogFacts.Items.AUTOFILL_LOGIN_PERFORMED ->
+            Logins.autofilled.record(NoExtras())
+        Component.FEATURE_PROMPTS to LoginAutofillDialogFacts.Items.AUTOFILL_LOGIN_PROMPT_SHOWN ->
+            Logins.autofillPromptShown.record(NoExtras())
+        Component.FEATURE_PROMPTS to LoginAutofillDialogFacts.Items.AUTOFILL_LOGIN_PROMPT_DISMISSED ->
+            Logins.autofillPromptDismissed.record(NoExtras())
+
         Component.FEATURE_AUTOFILL to AutofillFacts.Items.AUTOFILL_REQUEST -> {
             val hasMatchingLogins =
                 metadata?.get(AutofillFacts.Metadata.HAS_MATCHING_LOGINS) as Boolean?
@@ -226,6 +240,9 @@ internal class ReleaseMetricController(
             } else {
                 AndroidAutofill.unlockCancelled.record(NoExtras())
             }
+        }
+        Component.FEATURE_AUTOFILL to AutofillFacts.Items.AUTOFILL_LOGIN_PASSWORD_DETECTED -> {
+            Logins.passwordDetected.record(NoExtras())
         }
         Component.FEATURE_SYNCEDTABS to SyncedTabsFacts.Items.SYNCED_TABS_SUGGESTION_CLICKED -> {
             SyncedTabs.syncedTabsSuggestionClicked.record(NoExtras())
@@ -261,6 +278,19 @@ internal class ReleaseMetricController(
                 CONTEXT_MENU_SHARE -> ContextualMenu.shareTapped.record(NoExtras())
                 else -> Unit
             }
+        }
+
+        Component.FEATURE_FXSUGGEST to FxSuggestFacts.Items.AMP_SUGGESTION_CLICKED -> {
+            (metadata?.get(FxSuggestFacts.MetadataKeys.CLICK_INFO) as? FxSuggestClickInfo.Amp)?.let {
+                FxSuggest.pingType.set("fxsuggest-click")
+                FxSuggest.blockId.set(it.blockId)
+                FxSuggest.advertiser.set(it.advertiser)
+                FxSuggest.reportingUrl.set(it.clickUrl)
+                FxSuggest.iabCategory.set(it.iabCategory)
+                FxSuggest.contextId.set(UUID.fromString(it.contextId))
+                Pings.fxSuggest.submit()
+            }
+            Unit
         }
 
         Component.FEATURE_PWA to ProgressiveWebAppFacts.Items.HOMESCREEN_ICON_TAP -> {

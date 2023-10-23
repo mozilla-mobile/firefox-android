@@ -307,7 +307,10 @@ fun PocketStories(
                         },
                     ) {
                         if (story == placeholderStory) {
-                            ListItemTabLargePlaceholder(stringResource(R.string.pocket_stories_placeholder_text)) {
+                            ListItemTabLargePlaceholder(
+                                text = stringResource(R.string.pocket_stories_placeholder_text),
+                                backgroundColor = backgroundColor,
+                            ) {
                                 onDiscoverMoreClicked("https://getpocket.com/explore?$POCKET_FEATURE_UTM_KEY_VALUE")
                             }
                         } else if (story is PocketRecommendedStory) {
@@ -504,6 +507,7 @@ fun PocketStoriesCategories(
  * @param linkTextColor [Color] of the link text.
  */
 @OptIn(ExperimentalComposeUiApi::class)
+@Suppress("Deprecation")
 @Composable
 fun PoweredByPocketHeader(
     onLearnMoreClicked: (String) -> Unit,

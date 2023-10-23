@@ -73,6 +73,26 @@ object InitAction : BrowserAction()
 object RestoreCompleteAction : BrowserAction()
 
 /**
+ * [BrowserAction] implementations to react to extensions process events.
+ */
+sealed class ExtensionsProcessAction : BrowserAction() {
+    /**
+     * [BrowserAction] to indicate when the crash prompt should be displayed to the user.
+     */
+    data class ShowPromptAction(val show: Boolean) : ExtensionsProcessAction()
+
+    /**
+     * [BrowserAction] to indicate that the process has been re-enabled by the user.
+     */
+    object EnabledAction : ExtensionsProcessAction()
+
+    /**
+     * [BrowserAction] to indicate that the process has been left disabled by the user.
+     */
+    object DisabledAction : ExtensionsProcessAction()
+}
+
+/**
  * [BrowserAction] implementations to react to system events.
  */
 sealed class SystemAction : BrowserAction() {
@@ -425,11 +445,6 @@ sealed class ContentAction : BrowserAction() {
     data class RemoveIconAction(val sessionId: String) : ContentAction()
 
     /**
-     * Removes the thumbnail of the [ContentState] with the given [sessionId].
-     */
-    data class RemoveThumbnailAction(val sessionId: String) : ContentAction()
-
-    /**
      * Updates the URL of the [ContentState] with the given [sessionId].
      */
     data class UpdateUrlAction(val sessionId: String, val url: String) : ContentAction()
@@ -542,10 +557,14 @@ sealed class ContentAction : BrowserAction() {
         ContentAction()
 
     /**
-     * Updates the isSearch state of the [ContentState] with the given [sessionId].
+     * Updates the isSearch state and optionally the search engine name of the [ContentState] with
+     * the given [sessionId].
      */
-    data class UpdateIsSearchAction(val sessionId: String, val isSearch: Boolean) :
-        ContentAction()
+    data class UpdateIsSearchAction(
+        val sessionId: String,
+        val isSearch: Boolean,
+        val searchEngineName: String? = null,
+    ) : ContentAction()
 
     /**
      * Updates the [SecurityInfoState] of the [ContentState] with the given [sessionId].
@@ -808,6 +827,14 @@ sealed class ContentAction : BrowserAction() {
      * Indicates the given [tabId] was unable to be checked for form data.
      */
     data class CheckForFormDataExceptionAction(val tabId: String, val throwable: Throwable) : ContentAction()
+
+    /**
+     * Updates the [ContentState.isProductUrl] state for the non private tab with the given [tabId].
+     */
+    data class UpdateProductUrlStateAction(
+        val tabId: String,
+        val isProductUrl: Boolean,
+    ) : ContentAction()
 }
 
 /**
@@ -1516,6 +1543,11 @@ sealed class SearchAction : BrowserAction() {
         val searchEngineId: String,
         val isEnabled: Boolean,
     ) : SearchAction()
+
+    /**
+     * Restores hidden engines from [SearchState.hiddenSearchEngines] back to [SearchState.regionSearchEngines]
+     */
+    object RestoreHiddenSearchEnginesAction : SearchAction()
 }
 
 /**

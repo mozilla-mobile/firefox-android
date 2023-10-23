@@ -5,28 +5,34 @@ features:
     description: A feature that shows juno onboarding flow.
 
     variables:
-      enabled:
-        description: if true, juno onboarding is shown to the user.
-        type: Boolean
-        default: false
       cards:
         description: Collection of user facing onboarding cards.
         type: Map<String, OnboardingCardData>
         default:
             default-browser:
               card-type: default-browser
-              title: juno_onboarding_default_browser_title_nimbus
+              title: juno_onboarding_default_browser_title_nimbus_2
               ordering: 10
-              body: juno_onboarding_default_browser_description_nimbus
+              body: juno_onboarding_default_browser_description_nimbus_2
               link-text: juno_onboarding_default_browser_description_link_text
               image-res: ic_onboarding_welcome
               primary-button-label: juno_onboarding_default_browser_positive_button
               secondary-button-label: juno_onboarding_default_browser_negative_button
 
+            add-search-widget:
+              card-type: add-search-widget
+              enabled: false
+              title: juno_onboarding_add_search_widget_title
+              body: juno_onboarding_add_search_widget_description
+              image-res: ic_onboarding_search_widget
+              ordering: 15
+              primary-button-label: juno_onboarding_add_search_widget_positive_button
+              secondary-button-label: juno_onboarding_add_search_widget_negative_button
+
             sync-sign-in:
               card-type: sync-sign-in
-              title: juno_onboarding_sign_in_title
-              body: juno_onboarding_sign_in_description
+              title: juno_onboarding_sign_in_title_2
+              body: juno_onboarding_sign_in_description_2
               image-res: ic_onboarding_sync
               ordering: 20
               primary-button-label: juno_onboarding_sign_in_positive_button
@@ -34,20 +40,12 @@ features:
 
             notification-permission:
               card-type: notification-permission
-              title: juno_onboarding_enable_notifications_title_nimbus
-              body: juno_onboarding_enable_notifications_description_nimbus
+              title: juno_onboarding_enable_notifications_title_nimbus_2
+              body: juno_onboarding_enable_notifications_description_nimbus_2
               image-res: ic_notification_permission
               ordering: 30
               primary-button-label: juno_onboarding_enable_notifications_positive_button
               secondary-button-label: juno_onboarding_enable_notifications_negative_button
-
-    defaults:
-      - channel: developer
-        value:
-          enabled: false
-      - channel: nightly
-        value:
-          enabled: true
 
 objects:
 
@@ -59,6 +57,10 @@ objects:
         description: The type of the card.
         # This should never be defaulted.
         default: default-browser
+      enabled:
+        type: Boolean
+        description: If true, this card is shown to the user.
+        default: true
       title:
         type: Text
         description: The title text displayed to the user.
@@ -81,10 +83,6 @@ objects:
         description: The resource id of the image to be displayed.
         # This should never be defaulted.
         default: ic_onboarding_welcome
-      image-is-illustration:
-        type: Boolean
-        description: True if the image type is an illustration.
-        default: true
       ordering:
         type: Int
         description: Used to sequence the cards.
@@ -112,3 +110,5 @@ enums:
         description: Allows user to sync with a Firefox account.
       notification-permission:
         description: Allows user to enable notification permission.
+      add-search-widget:
+        description: Allows user to add search widget to homescreen.

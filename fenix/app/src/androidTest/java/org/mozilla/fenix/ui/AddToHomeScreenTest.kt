@@ -1,33 +1,31 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.ui
 
-import androidx.core.net.toUri
+import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
-import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
-import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
+import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.ui.robots.browserScreen
-import org.mozilla.fenix.ui.robots.clickPageObject
 import org.mozilla.fenix.ui.robots.homeScreen
-import org.mozilla.fenix.ui.robots.navigationToolbar
 import org.mozilla.fenix.ui.robots.searchScreen
 
 class AddToHomeScreenTest {
     private lateinit var mockWebServer: MockWebServer
-    private val downloadTestPage =
-        "https://storage.googleapis.com/mobile_test_assets/test_app/downloads.html"
-    private val pdfFileName = "washington.pdf"
-    private val pdfFileURL = "storage.googleapis.com/mobile_test_assets/public/washington.pdf"
-    private val pdfFileContent = "Washington Crossing the Delaware"
 
     @get:Rule
-    val activityIntentTestRule = HomeActivityIntentTestRule.withDefaultSettingsOverrides()
+    val composeTestRule =
+        AndroidComposeTestRule(HomeActivityTestRule.withDefaultSettingsOverrides()) { it.activity }
 
     @Before
     fun setUp() {
@@ -72,42 +70,22 @@ class AddToHomeScreenTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/414970
+    @Ignore("Failure, more details at: https://bugzilla.mozilla.org/show_bug.cgi?id=1830005")
     @SmokeTest
     @Test
-    fun addPrivateBrowsingShortcutTest() {
-        homeScreen {
-        }.dismissOnboarding()
-
+    fun addPrivateBrowsingShortcutFromHomeScreenCFRTest() {
         homeScreen {
         }.triggerPrivateBrowsingShortcutPrompt {
-            verifyNoThanksPrivateBrowsingShortcutButton()
-            verifyAddPrivateBrowsingShortcutButton()
-            clickAddPrivateBrowsingShortcutButton()
+            verifyNoThanksPrivateBrowsingShortcutButton(composeTestRule)
+            verifyAddPrivateBrowsingShortcutButton(composeTestRule)
+            clickAddPrivateBrowsingShortcutButton(composeTestRule)
             clickAddAutomaticallyButton()
         }.openHomeScreenShortcut("Private ${TestHelper.appName}") {}
         searchScreen {
             verifySearchView()
         }.dismissSearchBar {
             verifyCommonMythsLink()
-        }
-    }
-
-    @SmokeTest
-    @Test
-    fun addPDFToHomeScreenTest() {
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(downloadTestPage.toUri()) {
-            clickPageObject(itemContainingText(pdfFileName))
-            verifyUrl(pdfFileURL)
-            verifyPageContent(pdfFileContent)
-        }.openThreeDotMenu {
-            expandMenu()
-        }.openAddToHomeScreen {
-            verifyShortcutTextFieldTitle(pdfFileName)
-            clickAddShortcutButton()
-            clickAddAutomaticallyButton()
-        }.openHomeScreenShortcut(pdfFileName) {
-            verifyUrl(pdfFileURL)
         }
     }
 }

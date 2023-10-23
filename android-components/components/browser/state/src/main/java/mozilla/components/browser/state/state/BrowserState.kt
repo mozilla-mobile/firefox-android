@@ -49,4 +49,6 @@ data class BrowserState(
     val undoHistory: UndoHistoryState = UndoHistoryState(),
     val restoreComplete: Boolean = false,
     val locale: Locale? = null,
+    val showExtensionsProcessDisabledPrompt: Boolean = false,
+    val extensionsProcessDisabled: Boolean = false,
 ) : State

@@ -12,6 +12,8 @@ import mozilla.components.concept.engine.content.blocking.Tracker
 import mozilla.components.concept.engine.history.HistoryItem
 import mozilla.components.concept.engine.mediasession.MediaSession
 import mozilla.components.concept.engine.permission.PermissionRequest
+import mozilla.components.concept.engine.shopping.ProductAnalysis
+import mozilla.components.concept.engine.shopping.ProductRecommendation
 import mozilla.components.concept.engine.window.WindowRequest
 import mozilla.components.support.test.mock
 import org.junit.Assert.assertEquals
@@ -809,15 +811,22 @@ class EngineSessionTest {
         assertTrue(LoadUrlFlags.all().contains(LoadUrlFlags.select(LoadUrlFlags.BYPASS_CLASSIFIER).value))
         assertTrue(LoadUrlFlags.all().contains(LoadUrlFlags.select(LoadUrlFlags.LOAD_FLAGS_FORCE_ALLOW_DATA_URI).value))
         assertTrue(LoadUrlFlags.all().contains(LoadUrlFlags.select(LoadUrlFlags.LOAD_FLAGS_REPLACE_HISTORY).value))
+        assertTrue(LoadUrlFlags.all().contains(LoadUrlFlags.select(LoadUrlFlags.LOAD_FLAGS_BYPASS_LOAD_URI_DELEGATE).value))
+        assertTrue(LoadUrlFlags.all().contains(LoadUrlFlags.select(LoadUrlFlags.ALLOW_ADDITIONAL_HEADERS).value))
+        assertTrue(LoadUrlFlags.all().contains(LoadUrlFlags.select(LoadUrlFlags.ALLOW_JAVASCRIPT_URL).value))
 
         val flags = LoadUrlFlags.select(LoadUrlFlags.EXTERNAL)
         assertTrue(flags.contains(LoadUrlFlags.EXTERNAL))
+        assertFalse(flags.contains(LoadUrlFlags.NONE))
         assertFalse(flags.contains(LoadUrlFlags.ALLOW_POPUPS))
         assertFalse(flags.contains(LoadUrlFlags.BYPASS_CACHE))
         assertFalse(flags.contains(LoadUrlFlags.BYPASS_CLASSIFIER))
         assertFalse(flags.contains(LoadUrlFlags.BYPASS_PROXY))
         assertFalse(flags.contains(LoadUrlFlags.LOAD_FLAGS_FORCE_ALLOW_DATA_URI))
         assertFalse(flags.contains(LoadUrlFlags.LOAD_FLAGS_REPLACE_HISTORY))
+        assertFalse(flags.contains(LoadUrlFlags.LOAD_FLAGS_BYPASS_LOAD_URI_DELEGATE))
+        assertFalse(flags.contains(LoadUrlFlags.ALLOW_ADDITIONAL_HEADERS))
+        assertFalse(flags.contains(LoadUrlFlags.ALLOW_JAVASCRIPT_URL))
     }
 
     @Test
@@ -995,6 +1004,30 @@ open class DummyEngineSession : EngineSession() {
 
     override fun checkForPdfViewer(
         onResult: (Boolean) -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {}
+
+    override fun requestProductRecommendations(
+        url: String,
+        onResult: (List<ProductRecommendation>) -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {}
+
+    override fun requestProductAnalysis(
+        url: String,
+        onResult: (ProductAnalysis) -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {}
+
+    override fun reanalyzeProduct(
+        url: String,
+        onResult: (String) -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {}
+
+    override fun requestAnalysisStatus(
+        url: String,
+        onResult: (String) -> Unit,
         onException: (Throwable) -> Unit,
     ) {}
 

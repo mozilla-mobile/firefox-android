@@ -33,6 +33,7 @@ import java.util.concurrent.TimeUnit
 /**
  * Delegate to handle layout updates and dispatch actions related to the recent synced tab.
  *
+ * @property context An Android [Context].
  * @property appStore Store to dispatch actions to when synced tabs are updated or errors encountered.
  * @property syncStore Store to observe for changes to Sync and account status.
  * @property storage Storage layer for synced tabs.
@@ -154,7 +155,7 @@ class RecentSyncedTabFeature(
                 AppAction.RecentSyncedTabStateChange(RecentSyncedTabState.None),
             )
         } else {
-            recordMetrics(syncedTabs.first(), lastSyncedTabs?.first(), syncStartId)
+            recordMetrics(syncedTabs.first(), lastSyncedTabs?.first())
             appStore.dispatch(
                 AppAction.RecentSyncedTabStateChange(RecentSyncedTabState.Success(syncedTabs)),
             )
@@ -171,10 +172,12 @@ class RecentSyncedTabFeature(
     private fun recordMetrics(
         tab: RecentSyncedTab,
         lastSyncedTab: RecentSyncedTab?,
-        syncStartId: GleanTimerId?,
     ) {
         RecentSyncedTabs.recentSyncedTabShown[tab.deviceType.name.lowercase()].add()
-        syncStartId?.let { RecentSyncedTabs.recentSyncedTabTimeToLoad.stopAndAccumulate(it) }
+        syncStartId?.let {
+            RecentSyncedTabs.recentSyncedTabTimeToLoad.stopAndAccumulate(it)
+            syncStartId = null
+        }
         if (tab == lastSyncedTab) {
             RecentSyncedTabs.latestSyncedTabIsStale.add()
         }
@@ -222,10 +225,11 @@ sealed class RecentSyncedTabState {
 /**
  * A tab that was recently viewed on a synced device.
  *
- * @param deviceDisplayName The device the tab was viewed on.
- * @param title The title of the tab.
- * @param url The url of the tab.
- * @param previewImageUrl The url used to retrieve the preview image of the tab.
+ * @property deviceDisplayName The device the tab was viewed on.
+ * @property deviceType The type of a device the tab was viewed on - mobile, desktop.
+ * @property title The title of the tab.
+ * @property url The url of the tab.
+ * @property previewImageUrl The url used to retrieve the preview image of the tab.
  */
 data class RecentSyncedTab(
     val deviceDisplayName: String,
@@ -238,8 +242,8 @@ data class RecentSyncedTab(
 /**
  * Class representing a tab from a synced device.
  *
- * @param device The synced [Device].
- * @param tab The tab from the synced device.
+ * @property device The synced [Device].
+ * @property tab The tab from the synced device.
  */
 private data class SyncedDeviceTab(
     val device: Device,

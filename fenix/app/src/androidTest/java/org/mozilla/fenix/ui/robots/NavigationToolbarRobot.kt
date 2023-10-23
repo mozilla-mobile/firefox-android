@@ -8,6 +8,7 @@ package org.mozilla.fenix.ui.robots
 
 import android.net.Uri
 import android.os.Build
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.IdlingRegistry
@@ -32,7 +33,9 @@ import org.hamcrest.CoreMatchers.not
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
+import org.mozilla.fenix.helpers.Constants
 import org.mozilla.fenix.helpers.Constants.LONG_CLICK_DURATION
+import org.mozilla.fenix.helpers.HomeActivityComposeTestRule
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdContainingText
 import org.mozilla.fenix.helpers.SessionLoadedIdlingResource
@@ -41,8 +44,10 @@ import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
 import org.mozilla.fenix.helpers.TestHelper.getStringResource
 import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.packageName
+import org.mozilla.fenix.helpers.TestHelper.waitForObjects
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
+import org.mozilla.fenix.tabstray.TabsTrayTestTag
 
 /**
  * Implementation of Robot Pattern for the URL toolbar.
@@ -128,11 +133,9 @@ class NavigationToolbarRobot {
     // New unified search UI selector
     fun verifyDefaultSearchEngine(engineName: String) =
         assertTrue(
-            mDevice.findObject(
-                UiSelector()
-                    .resourceId("$packageName:id/search_selector")
-                    .childSelector(UiSelector().description(engineName)),
-            ).waitForExists(waitingTime),
+            searchSelectorButton
+                .getChild(UiSelector().description(engineName))
+                .waitForExists(waitingTime),
         )
 
     fun verifyTextSelectionOptions(vararg textSelectionOptions: String) {
@@ -143,23 +146,6 @@ class NavigationToolbarRobot {
 
     class Transition {
         private lateinit var sessionLoadedIdlingResource: SessionLoadedIdlingResource
-
-        fun goBackToWebsite(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
-            openEditURLView()
-            clearAddressBarButton().click()
-            assertTrue(
-                mDevice.findObject(
-                    UiSelector()
-                        .resourceId("$packageName:id/mozac_browser_toolbar_edit_url_view")
-                        .textContains(""),
-                ).waitForExists(waitingTime),
-            )
-
-            goBackButton()
-
-            BrowserRobot().interact()
-            return BrowserRobot.Transition()
-        }
 
         fun enterURLAndEnterToBrowser(
             url: Uri,
@@ -183,6 +169,19 @@ class NavigationToolbarRobot {
                     ).waitForExists(waitingTime),
                 )
             }
+
+            BrowserRobot().interact()
+            return BrowserRobot.Transition()
+        }
+
+        fun enterURLAndEnterToBrowserForTCPCFR(
+            url: Uri,
+            interact: BrowserRobot.() -> Unit,
+        ): BrowserRobot.Transition {
+            openEditURLView()
+
+            awesomeBar().setText(url.toString())
+            mDevice.pressEnter()
 
             BrowserRobot().interact()
             return BrowserRobot.Transition()
@@ -226,6 +225,37 @@ class NavigationToolbarRobot {
             return TabDrawerRobot.Transition()
         }
 
+        fun openComposeTabDrawer(composeTestRule: HomeActivityComposeTestRule, interact: ComposeTabDrawerRobot.() -> Unit): ComposeTabDrawerRobot.Transition {
+            for (i in 1..Constants.RETRY_COUNT) {
+                try {
+                    mDevice.waitForObjects(
+                        mDevice.findObject(
+                            UiSelector()
+                                .resourceId("$packageName:id/mozac_browser_toolbar_browser_actions"),
+                        ),
+                        waitingTime,
+                    )
+
+                    tabTrayButton().click()
+
+                    composeTestRule.onNodeWithTag(TabsTrayTestTag.tabsTray).assertExists()
+
+                    break
+                } catch (e: AssertionError) {
+                    if (i == Constants.RETRY_COUNT) {
+                        throw e
+                    } else {
+                        mDevice.waitForIdle()
+                    }
+                }
+            }
+
+            composeTestRule.onNodeWithTag(TabsTrayTestTag.fab).assertExists()
+
+            ComposeTabDrawerRobot(composeTestRule).interact()
+            return ComposeTabDrawerRobot.Transition(composeTestRule)
+        }
+
         fun visitLinkFromClipboard(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
             if (clearAddressBarButton().waitForExists(waitingTimeShort)) {
                 clearAddressBarButton().click()
@@ -251,14 +281,23 @@ class NavigationToolbarRobot {
             return BrowserRobot.Transition()
         }
 
-        fun goBack(interact: HomeScreenRobot.() -> Unit): HomeScreenRobot.Transition {
-            goBackButton()
+        fun goBackToHomeScreen(interact: HomeScreenRobot.() -> Unit): HomeScreenRobot.Transition {
+            mDevice.pressBack()
+            mDevice.waitForWindowUpdate(packageName, waitingTimeShort)
 
             HomeScreenRobot().interact()
             return HomeScreenRobot.Transition()
         }
 
-        fun closeTabFromShortcutsMenu(interact: NavigationToolbarRobot.() -> Unit): NavigationToolbarRobot.Transition {
+        fun openTabButtonShortcutsMenu(interact: NavigationToolbarRobot.() -> Unit): Transition {
+            mDevice.waitNotNull(Until.findObject(By.desc("Tabs")))
+            tabsCounter().click(LONG_CLICK_DURATION)
+
+            NavigationToolbarRobot().interact()
+            return Transition()
+        }
+
+        fun closeTabFromShortcutsMenu(interact: NavigationToolbarRobot.() -> Unit): Transition {
             mDevice.waitForIdle(waitingTime)
 
             onView(withId(R.id.mozac_browser_menu_recyclerView))
@@ -272,10 +311,10 @@ class NavigationToolbarRobot {
                 )
 
             NavigationToolbarRobot().interact()
-            return NavigationToolbarRobot.Transition()
+            return Transition()
         }
 
-        fun openTabFromShortcutsMenu(interact: SearchRobot.() -> Unit): SearchRobot.Transition {
+        fun openNewTabFromShortcutsMenu(interact: SearchRobot.() -> Unit): SearchRobot.Transition {
             mDevice.waitForIdle(waitingTime)
 
             onView(withId(R.id.mozac_browser_menu_recyclerView))
@@ -319,6 +358,14 @@ class NavigationToolbarRobot {
             SearchRobot().interact()
             return SearchRobot.Transition()
         }
+
+        fun clickSearchSelectorButton(interact: SearchRobot.() -> Unit): SearchRobot.Transition {
+            searchSelectorButton.waitForExists(waitingTime)
+            searchSelectorButton.click()
+
+            SearchRobot().interact()
+            return SearchRobot.Transition()
+        }
     }
 }
 
@@ -358,9 +405,10 @@ private fun awesomeBar() =
     mDevice.findObject(UiSelector().resourceId("$packageName:id/mozac_browser_toolbar_edit_url_view"))
 private fun threeDotButton() = onView(withId(R.id.mozac_browser_toolbar_menu))
 private fun tabTrayButton() = onView(withId(R.id.tab_button))
+private fun tabsCounter() =
+    mDevice.findObject(By.res("$packageName:id/counter_root"))
 private fun fillLinkButton() = onView(withId(R.id.fill_link_from_clipboard))
 private fun clearAddressBarButton() = itemWithResId("$packageName:id/mozac_browser_toolbar_clear_view")
-private fun goBackButton() = mDevice.pressBack()
 private fun readerViewToggle() =
     onView(withParent(withId(R.id.mozac_browser_toolbar_page_actions)))
 
@@ -405,6 +453,9 @@ private fun assertCloseReaderViewDetected(visible: Boolean) {
         },
     )
 }
+
+private val searchSelectorButton =
+    mDevice.findObject(UiSelector().resourceId("$packageName:id/search_selector"))
 
 inline fun runWithIdleRes(ir: IdlingResource?, pendingCheck: () -> Unit) {
     try {
