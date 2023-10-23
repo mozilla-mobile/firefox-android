@@ -11,11 +11,10 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.semantics.onClick
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.UrlAnnotation
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -49,6 +48,7 @@ data class LinkTextState(
  * @param linkTextColor [Color] applied to the clickable part of the text.
  * @param linkTextDecoration [TextDecoration] applied to the clickable part of the text.
  */
+@OptIn(ExperimentalTextApi::class)
 @Composable
 fun LinkText(
     text: String,
@@ -67,46 +67,21 @@ fun LinkText(
         linkTextDecoration,
     )
 
-    // When using UrlAnnotation, talkback shows links in a separate dialog and
-    // opens them in the default browser. Since this component allows the caller to define the
-    // onClick behaviour - e.g. to open the link in in-app custom tab, here StringAnnotation is used
-    // and modifier is enabled with Role.Button when screen reader is enabled.
     ClickableText(
         text = annotatedString,
         style = style,
-        modifier = Modifier.semantics(mergeDescendants = true) {
-            onClick {
-                linkTextStates.firstOrNull()?.let {
-                    it.onClick(it.url)
-                }
-
-                return@onClick true
-            }
-        },
         onClick = { charOffset ->
-            onTextClick(annotatedString, charOffset, linkTextStates)
+            annotatedString
+                .getUrlAnnotations(charOffset, charOffset)
+                .firstOrNull()?.let { annotation ->
+                    val annotationUrl = annotation.item.url
+                    linkTextStates.find { it.url == annotationUrl }?.onClick?.invoke(annotationUrl)
+                }
         },
     )
 }
 
-@VisibleForTesting
-internal fun onTextClick(
-    annotatedString: AnnotatedString,
-    charOffset: Int,
-    linkTextStates: List<LinkTextState>,
-) {
-    val range: AnnotatedString.Range<String>? =
-        annotatedString.getStringAnnotations(URL_TAG, charOffset, charOffset).firstOrNull()
-    range?.let { stringAnnotation ->
-        val linkTextState = linkTextStates.firstOrNull {
-            it.text == stringAnnotation.item
-        }
-        linkTextState?.let {
-            it.onClick(it.url)
-        }
-    }
-}
-
+@OptIn(ExperimentalTextApi::class)
 @VisibleForTesting
 internal fun buildUrlAnnotatedString(
     text: String,
@@ -129,8 +104,14 @@ internal fun buildUrlAnnotatedString(
             end = endIndex,
         )
 
+        addUrlAnnotation(
+            urlAnnotation = UrlAnnotation(it.url),
+            start = startIndex,
+            end = endIndex,
+        )
+
         addStringAnnotation(
-            tag = URL_TAG,
+            tag = URL_TAG + "_${it.text}",
             annotation = it.text,
             start = startIndex,
             end = endIndex,

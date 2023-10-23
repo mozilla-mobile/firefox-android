@@ -14,6 +14,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -26,12 +27,12 @@ import org.mozilla.fenix.compose.LinkText
 import org.mozilla.fenix.compose.LinkTextState
 import org.mozilla.fenix.compose.annotation.LightDarkPreview
 import org.mozilla.fenix.compose.button.PrimaryButton
+import org.mozilla.fenix.shopping.middleware.GetReviewQualityCheckSumoUrl
+import org.mozilla.fenix.shopping.middleware.ReviewQualityCheckNavigationMiddleware
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.ProductVendor
 import org.mozilla.fenix.shopping.ui.ext.displayName
 import org.mozilla.fenix.theme.FirefoxTheme
-
-const val PLACEHOLDER_URL = "www.fakespot.com"
 
 /**
  * A placeholder UI for review quality check contextual onboarding. The actual UI will be
@@ -87,7 +88,7 @@ fun ReviewQualityCheckContextualOnboarding(
             linkTextStates = listOf(
                 LinkTextState(
                     text = learnMoreText,
-                    url = PLACEHOLDER_URL,
+                    url = GetReviewQualityCheckSumoUrl(LocalContext.current).invoke(),
                     onClick = {
                         onLearnMoreClick()
                     },
@@ -111,14 +112,14 @@ fun ReviewQualityCheckContextualOnboarding(
             linkTextStates = listOf(
                 LinkTextState(
                     text = privacyPolicyText,
-                    url = PLACEHOLDER_URL,
+                    url = ReviewQualityCheckNavigationMiddleware.PRIVACY_POLICY_URL,
                     onClick = {
                         onPrivacyPolicyClick()
                     },
                 ),
                 LinkTextState(
                     text = termsOfUseText,
-                    url = PLACEHOLDER_URL,
+                    url = ReviewQualityCheckNavigationMiddleware.TERMS_OF_USE_URL,
                     onClick = {
                         onTermsOfUseClick()
                     },
