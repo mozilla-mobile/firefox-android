@@ -16,7 +16,7 @@ import mozilla.components.feature.awesomebar.provider.HistoryStorageSuggestionPr
 import mozilla.components.feature.awesomebar.provider.SearchSuggestionProvider
 import mozilla.components.feature.awesomebar.provider.SessionSuggestionProvider
 import mozilla.components.feature.contextmenu.facts.ContextMenuFacts
-import mozilla.components.feature.fxsuggest.FxSuggestClickInfo
+import mozilla.components.feature.fxsuggest.FxSuggestInteractionInfo
 import mozilla.components.feature.fxsuggest.facts.FxSuggestFacts
 import mozilla.components.feature.media.facts.MediaFacts
 import mozilla.components.feature.prompts.dialog.LoginDialogFacts
@@ -281,16 +281,37 @@ internal class ReleaseMetricController(
         }
 
         Component.FEATURE_FXSUGGEST to FxSuggestFacts.Items.AMP_SUGGESTION_CLICKED -> {
-            (metadata?.get(FxSuggestFacts.MetadataKeys.CLICK_INFO) as? FxSuggestClickInfo.Amp)?.let {
-                FxSuggest.pingType.set("fxsuggest-click")
+            FxSuggest.pingType.set("fxsuggest-click")
+            FxSuggest.isClicked.set(true)
+            (metadata?.get(FxSuggestFacts.MetadataKeys.POSITION) as? Long)?.let {
+                FxSuggest.position.set(it)
+            }
+            (metadata?.get(FxSuggestFacts.MetadataKeys.INTERACTION_INFO) as? FxSuggestInteractionInfo.Amp)?.let {
                 FxSuggest.blockId.set(it.blockId)
                 FxSuggest.advertiser.set(it.advertiser)
-                FxSuggest.reportingUrl.set(it.clickUrl)
+                FxSuggest.reportingUrl.set(it.reportingUrl)
                 FxSuggest.iabCategory.set(it.iabCategory)
                 FxSuggest.contextId.set(UUID.fromString(it.contextId))
-                Pings.fxSuggest.submit()
             }
-            Unit
+            Pings.fxSuggest.submit()
+        }
+
+        Component.FEATURE_FXSUGGEST to FxSuggestFacts.Items.AMP_SUGGESTION_IMPRESSED -> {
+            FxSuggest.pingType.set("fxsuggest-impression")
+            (metadata?.get(FxSuggestFacts.MetadataKeys.IS_CLICKED) as? Boolean)?.let {
+                FxSuggest.isClicked.set(it)
+            }
+            (metadata?.get(FxSuggestFacts.MetadataKeys.POSITION) as? Long)?.let {
+                FxSuggest.position.set(it)
+            }
+            (metadata?.get(FxSuggestFacts.MetadataKeys.INTERACTION_INFO) as? FxSuggestInteractionInfo.Amp)?.let {
+                FxSuggest.blockId.set(it.blockId)
+                FxSuggest.advertiser.set(it.advertiser)
+                FxSuggest.reportingUrl.set(it.reportingUrl)
+                FxSuggest.iabCategory.set(it.iabCategory)
+                FxSuggest.contextId.set(UUID.fromString(it.contextId))
+            }
+            Pings.fxSuggest.submit()
         }
 
         Component.FEATURE_PWA to ProgressiveWebAppFacts.Items.HOMESCREEN_ICON_TAP -> {
