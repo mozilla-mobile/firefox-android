@@ -10,6 +10,9 @@ permalink: /changelog/
 * [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/Gecko.kt)
 * [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/.config.yml)
 
+* **support-utils**
+  * Recognize IPv6 literals in the address bar. [Bug 1803465](https://bugzilla.mozilla.org/show_bug.cgi?id=1803465)
+
 # 120.0
 * [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v119..releases_v120)
 * [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/releases_v120/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
@@ -26,9 +29,6 @@ permalink: /changelog/
 * **browser-state**
   * `SessionState.isProductUrl` is not affected for private tabs as shopping mode is disabled in private tabs. [Bug 1847063](https://bugzilla.mozilla.org/show_bug.cgi?id=1847063)
   * `SessionState.isProductUrl` has been moved to `ContentState.isProductUrl`. [Bug 1857287](https://bugzilla.mozilla.org/show_bug.cgi?id=1857287)
-
-* **support-utils**
-  * Recognize IPv6 literals in the address bar. [Bug 1803465](https://bugzilla.mozilla.org/show_bug.cgi?id=1803465)
 
 # 119.0
 * [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v118..releases_v119)
