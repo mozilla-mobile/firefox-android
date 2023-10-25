@@ -4,7 +4,7 @@
 
 package org.mozilla.fenix.shopping.middleware
 
-import mozilla.components.browser.engine.gecko.shopping.Highlight
+import mozilla.components.concept.engine.shopping.Highlight
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.mozilla.fenix.shopping.ProductAnalysisTestData
@@ -15,7 +15,7 @@ import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductR
 class ProductAnalysisMapperTest {
 
     @Test
-    fun `WHEN GeckoProductAnalysis has data THEN it is mapped to AnalysisPresent`() {
+    fun `WHEN ProductAnalysis has data THEN it is mapped to AnalysisPresent`() {
         val actual = ProductAnalysisTestData.productAnalysis(
             productId = "id1",
             grade = "C",
@@ -50,7 +50,7 @@ class ProductAnalysisMapperTest {
     }
 
     @Test
-    fun `WHEN GeckoProductAnalysis has data with some missing highlights THEN it is mapped to AnalysisPresent with the non null highlights`() {
+    fun `WHEN ProductAnalysis has data with some missing highlights THEN it is mapped to AnalysisPresent with the non null highlights`() {
         val actual = ProductAnalysisTestData.productAnalysis(
             productId = "id1",
             grade = "C",
@@ -83,7 +83,7 @@ class ProductAnalysisMapperTest {
     }
 
     @Test
-    fun `WHEN GeckoProductAnalysis has an invalid grade THEN it is mapped to AnalysisPresent with grade as null`() {
+    fun `WHEN ProductAnalysis has an invalid grade THEN it is mapped to AnalysisPresent with grade as null`() {
         val actual = ProductAnalysisTestData.productAnalysis(
             productId = "id1",
             grade = "?",
@@ -272,6 +272,17 @@ class ProductAnalysisMapperTest {
                 HighlightType.COMPETITIVENESS to listOf("\"competitiveness\""),
             ),
         )
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `WHEN page not supported is true THEN it is mapped to unsupported product error `() {
+        val actual = ProductAnalysisTestData.productAnalysis(
+            pageNotSupported = true,
+        ).toProductReviewState()
+
+        val expected = ReviewQualityCheckState.OptedIn.ProductReviewState.Error.UnsupportedProductTypeError
 
         assertEquals(expected, actual)
     }

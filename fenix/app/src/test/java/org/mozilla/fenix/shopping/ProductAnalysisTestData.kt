@@ -4,10 +4,11 @@
 
 package org.mozilla.fenix.shopping
 
-import mozilla.components.browser.engine.gecko.shopping.GeckoProductAnalysis
-import mozilla.components.browser.engine.gecko.shopping.Highlight
+import mozilla.components.concept.engine.shopping.Highlight
+import mozilla.components.concept.engine.shopping.ProductAnalysis
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent.AnalysisStatus
+import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.RecommendedProductState
 import java.util.SortedMap
 
 object ProductAnalysisTestData {
@@ -23,7 +24,7 @@ object ProductAnalysisTestData {
         deletedProductReported: Boolean = false,
         deletedProduct: Boolean = false,
         highlights: Highlight? = null,
-    ): GeckoProductAnalysis = GeckoProductAnalysis(
+    ): ProductAnalysis = ProductAnalysis(
         productId = productId,
         analysisURL = analysisURL,
         grade = grade,
@@ -43,6 +44,7 @@ object ProductAnalysisTestData {
         adjustedRating: Float? = 4.5f,
         analysisStatus: AnalysisStatus = AnalysisStatus.UP_TO_DATE,
         highlights: SortedMap<ReviewQualityCheckState.HighlightType, List<String>>? = null,
+        recommendedProductState: RecommendedProductState = RecommendedProductState.Initial,
     ): ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent =
         ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent(
             productId = productId,
@@ -51,5 +53,6 @@ object ProductAnalysisTestData {
             adjustedRating = adjustedRating,
             analysisStatus = analysisStatus,
             highlights = highlights,
+            recommendedProductState = recommendedProductState,
         )
 }

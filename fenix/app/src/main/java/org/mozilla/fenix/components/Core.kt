@@ -40,6 +40,7 @@ import mozilla.components.concept.fetch.Client
 import mozilla.components.feature.awesomebar.provider.SessionAutocompleteProvider
 import mozilla.components.feature.customtabs.store.CustomTabsServiceStore
 import mozilla.components.feature.downloads.DownloadMiddleware
+import mozilla.components.feature.fxsuggest.facts.FxSuggestFactsMiddleware
 import mozilla.components.feature.logins.exceptions.LoginExceptionStorage
 import mozilla.components.feature.media.MediaSessionFeature
 import mozilla.components.feature.media.middleware.LastMediaAccessMiddleware
@@ -141,10 +142,8 @@ class Core(
                 R.color.fx_mobile_layer_color_1,
             ),
             httpsOnlyMode = context.settings().getHttpsOnlyMode(),
-            cookieBannerHandlingModePrivateBrowsing = context.settings().getCookieBannerHandling(),
+            cookieBannerHandlingModePrivateBrowsing = context.settings().getCookieBannerHandlingPrivateMode(),
             cookieBannerHandlingMode = context.settings().getCookieBannerHandling(),
-            cookieBannerHandlingDetectOnlyMode = context.settings()
-                .shouldShowCookieBannerReEngagementDialog(),
         )
 
         GeckoEngine(
@@ -281,6 +280,7 @@ class Core(
                 HistoryMetadataMiddleware(historyMetadataService),
                 SessionPrioritizationMiddleware(),
                 SaveToPDFMiddleware(context),
+                FxSuggestFactsMiddleware(),
             )
 
         BrowserStore(
