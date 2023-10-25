@@ -278,7 +278,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                 shoppingExperienceFeature = DefaultShoppingExperienceFeature(
                     settings = requireContext().settings(),
                 ),
-                onAvailabilityChange = {
+                onIconVisibilityChange = {
                     if (!reviewQualityCheckAvailable && it) {
                         Shopping.addressBarIconDisplayed.record()
                     }
@@ -287,6 +287,9 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                 },
                 onBottomSheetStateChange = {
                     reviewQualityCheck.setSelected(selected = it, notifyListener = false)
+                },
+                onProductPageDetected = {
+                    Shopping.productPageVisits.add()
                 },
             ),
             owner = this,
@@ -455,6 +458,11 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
         updateLastBrowseActivity()
         updateHistoryMetadata()
         pwaOnboardingObserver?.stop()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        isTablet = false
     }
 
     private fun updateHistoryMetadata() {

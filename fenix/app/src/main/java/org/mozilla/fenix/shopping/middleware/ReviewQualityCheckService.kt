@@ -6,10 +6,10 @@ package org.mozilla.fenix.shopping.middleware
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import mozilla.components.browser.engine.gecko.shopping.GeckoProductAnalysis
 import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.shopping.ProductAnalysis
+import mozilla.components.concept.engine.shopping.ProductRecommendation
 import mozilla.components.support.base.log.logger.Logger
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -24,7 +24,7 @@ interface ReviewQualityCheckService {
      *
      * @return [ProductAnalysis] if the request succeeds, null otherwise.
      */
-    suspend fun fetchProductReview(): GeckoProductAnalysis?
+    suspend fun fetchProductReview(): ProductAnalysis?
 
     /**
      * Triggers a reanalysis of the product review for the current tab.
@@ -44,6 +44,13 @@ interface ReviewQualityCheckService {
      * Returns the selected tab url.
      */
     fun selectedTabUrl(): String?
+
+    /**
+     * Fetches product recommendations related to the product user is browsing in the current tab.
+     *
+     * @return [ProductRecommendation] if request succeeds, null otherwise.
+     */
+    suspend fun productRecommendation(): ProductRecommendation?
 }
 
 /**
@@ -57,16 +64,13 @@ class DefaultReviewQualityCheckService(
 
     private val logger = Logger("DefaultReviewQualityCheckService")
 
-    override suspend fun fetchProductReview(): GeckoProductAnalysis? = withContext(Dispatchers.Main) {
+    override suspend fun fetchProductReview(): ProductAnalysis? = withContext(Dispatchers.Main) {
         suspendCoroutine { continuation ->
             browserStore.state.selectedTab?.let { tab ->
                 tab.engineState.engineSession?.requestProductAnalysis(
                     url = tab.content.url,
                     onResult = {
-                        when (it) {
-                            is GeckoProductAnalysis -> continuation.resume(it)
-                            else -> continuation.resume(null)
-                        }
+                        continuation.resume(it)
                     },
                     onException = {
                         logger.error("Error fetching product review", it)
@@ -114,8 +118,25 @@ class DefaultReviewQualityCheckService(
     override fun selectedTabUrl(): String? =
         browserStore.state.selectedTab?.content?.url
 
-    private inline fun <reified T : Enum<T>> String.asEnumOrDefault(defaultValue: T? = null): T? =
-        enumValues<T>().firstOrNull { it.name.equals(this, ignoreCase = true) } ?: defaultValue
+    override suspend fun productRecommendation(): ProductRecommendation? =
+        withContext(Dispatchers.Main) {
+            suspendCoroutine { continuation ->
+                browserStore.state.selectedTab?.let { tab ->
+                    tab.engineState.engineSession?.requestProductRecommendations(
+                        url = tab.content.url,
+                        onResult = {
+                            // Return the first available recommendation since ui requires only
+                            // one recommendation.
+                            continuation.resume(it.firstOrNull())
+                        },
+                        onException = {
+                            logger.error("Error fetching product recommendation", it)
+                            continuation.resume(null)
+                        },
+                    )
+                }
+            }
+        }
 }
 
 /**
