@@ -5,6 +5,7 @@
 package mozilla.components.support.locale
 
 import android.content.Context
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import androidx.annotation.VisibleForTesting
@@ -18,6 +19,7 @@ open class LocaleAwareAppCompatActivity : AppCompatActivity() {
         val newContext = LocaleManager.updateResources(base)
         val contextWrapper = ActivityContextWrapper(newContext, base)
         super.attachBaseContext(contextWrapper)
+        super.applyOverrideConfiguration(Configuration())
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
