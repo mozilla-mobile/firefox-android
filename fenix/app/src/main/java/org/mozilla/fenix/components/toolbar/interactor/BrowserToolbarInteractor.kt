@@ -27,6 +27,27 @@ interface BrowserToolbarInteractor {
      * Navigates to the Home screen. Called when a user taps on the Home button.
      */
     fun onHomeButtonClicked()
+
+    /**
+     * Deletes all tabs and navigates to the Home screen. Called when a user taps on the erase button.
+     */
+    fun onEraseButtonClicked()
+
+    /**
+     * Opens the shopping bottom sheet. Called when the user interacts with the shopping cfr action.
+     */
+    fun onShoppingCfrActionClicked()
+
+    /**
+     * Updates the settings for the shopping CFR. Called when the user dismisses the shopping cfr action.
+     */
+    fun onShoppingCfrDismiss()
+
+    /**
+     * Opens the translation bottom sheet. Called when the user interacts with the translation
+     * action.
+     */
+    fun onTranslationsButtonClicked()
 }
 
 /**
@@ -76,5 +97,21 @@ class DefaultBrowserToolbarInteractor(
 
     override fun onHomeButtonClicked() {
         browserToolbarController.handleHomeButtonClick()
+    }
+
+    override fun onEraseButtonClicked() {
+        browserToolbarController.handleEraseButtonClick()
+    }
+
+    override fun onShoppingCfrActionClicked() {
+        browserToolbarController.handleShoppingCfrActionClick()
+    }
+
+    override fun onShoppingCfrDismiss() {
+        browserToolbarController.handleShoppingCfrDismiss()
+    }
+
+    override fun onTranslationsButtonClicked() {
+        browserToolbarController.handleTranslationsButtonClick()
     }
 }

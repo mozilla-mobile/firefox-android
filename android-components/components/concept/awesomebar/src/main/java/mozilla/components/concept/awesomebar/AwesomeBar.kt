@@ -73,6 +73,17 @@ interface AwesomeBar {
     fun setOnEditSuggestionListener(listener: (String) -> Unit)
 
     /**
+     * Information about the [Suggestion]s that are currently displayed by the [AwesomeBar].
+     */
+    data class VisibilityState(
+        /**
+         * An ordered map of the currently visible [SuggestionProviderGroup]s, and the visible [Suggestion]s in each
+         * group. The groups and their suggestions are ordered top to bottom.
+         */
+        val visibleProviderGroups: Map<SuggestionProviderGroup, List<Suggestion>> = emptyMap(),
+    )
+
+    /**
      * A [Suggestion] to be displayed by an [AwesomeBar] implementation.
      *
      * @property provider The provider this suggestion came from.
@@ -91,6 +102,8 @@ interface AwesomeBar {
      * @property onChipClicked A callback to be executed when a [Chip] was clicked by the user.
      * @property score A score used to rank suggestions of this provider against each other. A suggestion with a higher
      * score will be shown on top of suggestions with a lower score.
+     * @property metadata Opaque metadata associated with this [Suggestion]. A [SuggestionProvider] can use this field
+     * to pass additional information about this suggestion.
      */
     data class Suggestion(
         val provider: SuggestionProvider,
@@ -105,6 +118,7 @@ interface AwesomeBar {
         val onSuggestionClicked: (() -> Unit)? = null,
         val onChipClicked: ((Chip) -> Unit)? = null,
         val score: Int = 0,
+        val metadata: Map<String, Any>? = null,
     ) {
         /**
          * Chips are compact actions that are shown as part of a suggestion. For example a [Suggestion] from a search
@@ -121,6 +135,7 @@ interface AwesomeBar {
          */
         enum class Flag {
             BOOKMARK,
+            HISTORY,
             OPEN_TAB,
             CLIPBOARD,
             SYNC_TAB,

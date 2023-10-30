@@ -21,6 +21,8 @@ task-defaults:
         path: '/builds/worker/checkouts/vcs/{source_project_name}/app/build/outputs/bundle/{variant_name}/app-{gradle_build}-{gradle_build_type}.aab'
     run:
         gradle-package-command: bundle
+        gradle-extra-options:
+            - -Paab
 
 
 tasks:
@@ -91,6 +93,7 @@ tasks:
         dependencies:
             external-gradle-dependencies: external-gradle-dependencies-focus
         description: 'Focus release AAB build from source code'
+        include-shippable-secrets: true
         include-release-version: true
         run:
             gradle-build-type: release
@@ -109,6 +112,7 @@ tasks:
         dependencies:
             external-gradle-dependencies: external-gradle-dependencies-focus
         description: 'Klar release AAB build from source code'
+        include-shippable-secrets: true
         include-release-version: true
         run:
             gradle-build-type: release
@@ -127,6 +131,7 @@ tasks:
         dependencies:
             external-gradle-dependencies: external-gradle-dependencies-fenix
         description: 'Fenix release AAB build from source code'
+        include-shippable-secrets: true
         include-release-version: true
         run:
             gradle-build-type: release
@@ -145,6 +150,7 @@ tasks:
         dependencies:
             external-gradle-dependencies: external-gradle-dependencies-focus
         description: 'Focus nightly AAB build from source code'
+        include-shippable-secrets: true
         include-nightly-version: true
         run:
             gradle-build-type: nightly
@@ -162,6 +168,7 @@ tasks:
         dependencies:
             external-gradle-dependencies: external-gradle-dependencies-fenix
         description: 'Fenix nightly AAB build from source code'
+        include-shippable-secrets: true
         include-nightly-version: true
         run:
             gradle-build-type: nightly
@@ -179,6 +186,7 @@ tasks:
         dependencies:
             external-gradle-dependencies: external-gradle-dependencies-focus
         description: 'Focus beta AAB build from source code'
+        include-shippable-secrets: true
         include-release-version: true
         run:
             gradle-build-type: beta
@@ -197,6 +205,7 @@ tasks:
         dependencies:
             external-gradle-dependencies: external-gradle-dependencies-fenix
         description: 'Fenix beta AAB build from source code'
+        include-shippable-secrets: true
         include-release-version: true
         run:
             gradle-build-type: beta

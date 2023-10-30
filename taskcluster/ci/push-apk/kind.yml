@@ -8,7 +8,7 @@ transforms:
     - taskgraph.transforms.from_deps
     - android_taskgraph.transforms.upstream_artifacts
     - android_taskgraph.transforms.treeherder
-    - android_taskgraph.transforms.push_apk
+    - android_taskgraph.transforms.push_android_app
     - taskgraph.transforms.task
 
 kind-dependencies:

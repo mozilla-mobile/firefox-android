@@ -9,9 +9,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
 import androidx.lifecycle.LifecycleOwner
 import mozilla.components.lib.state.ext.observeAsComposableState
+import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.components.components
 import org.mozilla.fenix.compose.ComposeViewHolder
 import org.mozilla.fenix.home.sessioncontrol.TopSiteInteractor
+import org.mozilla.fenix.perf.StartupTimeline
 import org.mozilla.fenix.wallpapers.WallpaperState
 
 /**
@@ -19,7 +21,7 @@ import org.mozilla.fenix.wallpapers.WallpaperState
  *
  * @param composeView [ComposeView] which will be populated with Jetpack Compose UI content.
  * @param viewLifecycleOwner [LifecycleOwner] to which this Composable will be tied to.
- * @param interactor [TopSiteInteractor] which will have delegated to all user top sites
+ * @property interactor [TopSiteInteractor] which will have delegated to all user top sites
  * interactions.
  */
 class TopSitesViewHolder(
@@ -49,6 +51,9 @@ class TopSitesViewHolder(
                 onRemoveTopSiteClicked = interactor::onRemoveTopSiteClicked,
                 onSettingsClicked = interactor::onSettingsClicked,
                 onSponsorPrivacyClicked = interactor::onSponsorPrivacyClicked,
+                onTopSitesItemBound = {
+                    StartupTimeline.onTopSitesItemBound(activity = composeView.context as HomeActivity)
+                },
             )
         }
     }

@@ -5,6 +5,7 @@
 package org.mozilla.fenix.settings.quicksettings.protections
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.background
@@ -39,13 +40,15 @@ import org.mozilla.fenix.utils.Settings
  * MVI View that displays the tracking protection, cookie banner handling toggles and the navigation
  * to additional tracking protection details.
  *
- * @param containerView [ViewGroup] in which this View will inflate itself.
- * @param interactor [ProtectionsInteractor] which will have delegated to all user
- * @param settings [Settings] application settings.
- * interactions.
+ * @property containerView [ViewGroup] in which this View will inflate itself.
+ * @property trackingProtectionDivider trackingProtectionDivider The divider line between tracking protection layout
+ * and other views from [QuickSettingsSheetDialogFragment].
+ * @property interactor [ProtectionsInteractor] which will have delegated to all user interactions.
+ * @property settings [Settings] application settings.
  */
 class ProtectionsView(
     val containerView: ViewGroup,
+    private val trackingProtectionDivider: View,
     val interactor: ProtectionsInteractor,
     val settings: Settings,
 ) {
@@ -63,11 +66,21 @@ class ProtectionsView(
         binding.trackingProtectionDetails.setOnClickListener {
             interactor.onTrackingProtectionDetailsClicked()
         }
+        updateDividerVisibility()
+    }
+
+    private fun updateDividerVisibility() {
+        trackingProtectionDivider.isVisible = !(
+            !binding.trackingProtectionSwitch.isVisible &&
+                !binding.trackingProtectionDetails.isVisible &&
+                !binding.cookieBannerItem.isVisible
+            )
     }
 
     @VisibleForTesting
     internal fun updateDetailsSection(show: Boolean) {
         binding.trackingProtectionDetails.isVisible = show
+        updateDividerVisibility()
     }
 
     private fun bindTrackingProtectionInfo(isTrackingProtectionEnabled: Boolean) {

@@ -28,6 +28,8 @@ import android.util.Log
 import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.compose.ui.test.junit4.AndroidComposeTestRule
+import androidx.test.core.app.launchActivity
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.IdlingRegistry
@@ -187,9 +189,11 @@ object TestHelper {
         val storageVolume: StorageVolume = storageVolumes[0]
         val file = File(storageVolume.directory!!.path + "/Download/" + fileName)
         try {
-            file.delete()
-            Log.d("TestLog", "File delete try 1")
-            assertFalse("The file was not deleted", file.exists())
+            if (file.exists()) {
+                file.delete()
+                Log.d("TestLog", "File delete try 1")
+                assertFalse("The file was not deleted", file.exists())
+            }
         } catch (e: AssertionError) {
             file.delete()
             Log.d("TestLog", "File delete retried")
@@ -478,6 +482,26 @@ object TestHelper {
     fun runWithCondition(condition: Boolean, testBlock: () -> Unit) {
         if (condition) {
             testBlock()
+        }
+    }
+
+    /**
+     * Wrapper to launch the app using the launcher intent.
+     */
+    fun runWithLauncherIntent(
+        activityTestRule: AndroidComposeTestRule<HomeActivityIntentTestRule, HomeActivity>,
+        testBlock: () -> Unit,
+    ) {
+        val launcherIntent = Intent(Intent.ACTION_MAIN).apply {
+            addCategory(Intent.CATEGORY_LAUNCHER)
+        }
+
+        activityTestRule.activityRule.withIntent(launcherIntent).launchActivity(launcherIntent)
+
+        try {
+            testBlock()
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 

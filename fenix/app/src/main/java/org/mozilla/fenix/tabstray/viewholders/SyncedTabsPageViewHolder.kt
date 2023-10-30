@@ -8,7 +8,6 @@ import android.view.View
 import androidx.compose.ui.platform.ComposeView
 import androidx.recyclerview.widget.RecyclerView
 import mozilla.components.lib.state.ext.observeAsComposableState
-import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.tabstray.SyncedTabsInteractor
 import org.mozilla.fenix.tabstray.TabsTrayState
 import org.mozilla.fenix.tabstray.TabsTrayStore
@@ -19,9 +18,9 @@ import org.mozilla.fenix.theme.Theme
 /**
  * Temporary ViewHolder to render [SyncedTabsList] until all of the Tabs Tray is written in Compose.
  *
- * @param composeView Root ComposeView passed-in from TrayPagerAdapter.
- * @param tabsTrayStore Store used as a Composable State to listen for changes to [TabsTrayState.syncedTabs].
- * @param interactor [SyncedTabsInteractor] used to respond to interactions with synced tabs.
+ * @property composeView Root ComposeView passed-in from TrayPagerAdapter.
+ * @property tabsTrayStore Store used as a Composable State to listen for changes to [TabsTrayState.syncedTabs].
+ * @property interactor [SyncedTabsInteractor] used to respond to interactions with synced tabs.
  */
 class SyncedTabsPageViewHolder(
     private val composeView: ComposeView,
@@ -35,7 +34,6 @@ class SyncedTabsPageViewHolder(
             FirefoxTheme(theme = Theme.getTheme(allowPrivateTheme = false)) {
                 SyncedTabsList(
                     syncedTabs = tabs ?: emptyList(),
-                    taskContinuityEnabled = composeView.context.settings().enableTaskContinuityEnhancements,
                     onTabClick = interactor::onSyncedTabClicked,
                 )
             }

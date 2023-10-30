@@ -49,6 +49,7 @@ import mozilla.components.concept.engine.webextension.EnableSource
 import mozilla.components.concept.engine.webextension.TabHandler
 import mozilla.components.concept.engine.webextension.WebExtension
 import mozilla.components.concept.engine.webextension.WebExtensionDelegate
+import mozilla.components.concept.engine.webextension.WebExtensionInstallException
 import mozilla.components.concept.engine.webextension.WebExtensionRuntime
 import mozilla.components.concept.engine.webnotifications.WebNotificationDelegate
 import mozilla.components.concept.engine.webpush.WebPushDelegate
@@ -344,8 +345,22 @@ class GeckoEngine(
                     GeckoWebExtension(current, runtime),
                     GeckoWebExtension(updated, runtime),
                     newPermissions.toList() + newOrigins.toList(),
-                ) {
-                        allow ->
+                ) { allow ->
+                    if (allow) result.complete(AllowOrDeny.ALLOW) else result.complete(AllowOrDeny.DENY)
+                }
+                return result
+            }
+
+            override fun onOptionalPrompt(
+                extension: org.mozilla.geckoview.WebExtension,
+                permissions: Array<out String>,
+                origins: Array<out String>,
+            ): GeckoResult<AllowOrDeny>? {
+                val result = GeckoResult<AllowOrDeny>()
+                webExtensionDelegate.onOptionalPermissionsRequest(
+                    GeckoWebExtension(extension, runtime),
+                    permissions.toList() + origins.toList(),
+                ) { allow ->
                     if (allow) result.complete(AllowOrDeny.ALLOW) else result.complete(AllowOrDeny.DENY)
                 }
                 return result
@@ -376,6 +391,18 @@ class GeckoEngine(
                 webExtensionDelegate.onInstalled(installedExtension)
                 installedExtension.registerActionHandler(webExtensionActionHandler)
                 installedExtension.registerTabHandler(webExtensionTabHandler, defaultSettings)
+            }
+
+            override fun onInstallationFailed(
+                extension: org.mozilla.geckoview.WebExtension?,
+                installException: org.mozilla.geckoview.WebExtension.InstallException,
+            ) {
+                val exception =
+                    GeckoWebExtensionException.createWebExtensionException(installException)
+                webExtensionDelegate.onInstallationFailedRequest(
+                    extension.toSafeWebExtension(),
+                    exception as WebExtensionInstallException,
+                )
             }
         }
 
@@ -501,6 +528,13 @@ class GeckoEngine(
      */
     override fun enableExtensionProcessSpawning() {
         runtime.webExtensionController.enableExtensionProcessSpawning()
+    }
+
+    /**
+     * See [Engine.disableExtensionProcessSpawning].
+     */
+    override fun disableExtensionProcessSpawning() {
+        runtime.webExtensionController.disableExtensionProcessSpawning()
     }
 
     /**
@@ -722,6 +756,26 @@ class GeckoEngine(
                 field = value
             }
 
+        override var cookieBannerHandlingGlobalRules: Boolean = false
+            set(value) {
+                with(runtime.settings.contentBlocking) {
+                    if (this.cookieBannerGlobalRulesEnabled != value) {
+                        this.cookieBannerGlobalRulesEnabled = value
+                    }
+                }
+                field = value
+            }
+
+        override var cookieBannerHandlingGlobalRulesSubFrames: Boolean = false
+            set(value) {
+                with(runtime.settings.contentBlocking) {
+                    if (this.cookieBannerGlobalRulesSubFramesEnabled != value) {
+                        this.cookieBannerGlobalRulesSubFramesEnabled = value
+                    }
+                }
+                field = value
+            }
+
         override var remoteDebuggingEnabled: Boolean
             get() = runtime.settings.remoteDebuggingEnabled
             set(value) { runtime.settings.remoteDebuggingEnabled = value }
@@ -929,6 +983,17 @@ class GeckoEngine(
             cookiesHasBeenBlocked = cookiesHasBeenBlocked,
             unBlockedBySmartBlock = this.blockingData.any { it.unBlockedBySmartBlock() },
         )
+    }
+
+    internal fun org.mozilla.geckoview.WebExtension?.toSafeWebExtension(): GeckoWebExtension? {
+        return if (this != null) {
+            GeckoWebExtension(
+                this,
+                runtime,
+            )
+        } else {
+            null
+        }
     }
 }
 

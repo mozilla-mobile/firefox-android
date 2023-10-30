@@ -64,7 +64,13 @@ object FeatureFlags {
     const val unifiedSearchSettings = true
 
     /**
-     * Enables the lib-state HistoryFragment refactor
+     * Allows users to enable translations.
+     * Preference to fully enable translations is pref_key_enable_translations.
      */
-    val historyFragmentLibStateRefactor = Config.channel.isNightlyOrDebug
+    val translations = Config.channel.isDebug
+
+    /**
+     * Allows users to enable Firefox Suggest.
+     */
+    const val fxSuggest = true
 }

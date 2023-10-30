@@ -14,11 +14,11 @@ buildscript {
                 url "https://maven-default.stage.mozaws.net/maven2"
             }
         }
+    }
 
-        dependencies {
-            classpath "${ApplicationServicesConfig.groupId}:tooling-nimbus-gradle:${ApplicationServicesConfig.version}"
-            classpath "org.mozilla.telemetry:glean-gradle-plugin:${Versions.mozilla_glean}"
-        }
+    dependencies {
+        classpath "${ApplicationServicesConfig.groupId}:tooling-nimbus-gradle:${ApplicationServicesConfig.version}"
+        classpath "org.mozilla.telemetry:glean-gradle-plugin:${Versions.mozilla_glean}"
     }
 }
 
@@ -30,10 +30,9 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion config.compileSdkVersion
-
     defaultConfig {
         minSdkVersion config.minSdkVersion
+        compileSdk config.compileSdkVersion
         targetSdkVersion config.targetSdkVersion
     }
 

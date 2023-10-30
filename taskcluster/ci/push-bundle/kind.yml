@@ -1,0 +1,58 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+---
+loader: taskgraph.loader.transform:loader
+
+transforms:
+    - taskgraph.transforms.from_deps
+    - android_taskgraph.transforms.upstream_artifacts
+    - android_taskgraph.transforms.treeherder
+    - android_taskgraph.transforms.push_android_app
+    - taskgraph.transforms.task
+
+kind-dependencies:
+    - signing-bundle
+    - startup-test
+
+tasks:
+    push-bundle:
+        description: Publish Fenix AABs
+        from-deps:
+            with-attributes:
+                build-type:
+                    - fenix-nightly
+                    # coming soon!
+                    # - fenix-beta
+                    # - fenix-release
+            group-by:
+                attribute: build-type
+            copy-attributes: true
+        worker-type: push-apk
+        run-on-tasks-for: []
+        worker:
+            certificate-alias:
+                by-build-type:
+                    fenix-nightly: fenix-nightly
+                    fenix-beta: fenix-beta
+                    fenix-release: fenix-release
+            commit: true
+            channel:
+                by-build-type:
+                    fenix-nightly: fenix-aab-nightly
+                    fenix-beta: fenix-beta
+                    fenix-release: fenix-release
+            dep:
+                by-level:
+                    '3': false
+                    default: true
+            product: fenix
+        shipping-phase: push
+        treeherder:
+            job-symbol: gp-aab
+            kind: build
+        routes:
+            by-level:
+                '3':
+                  - "notify.email.release-mgmt@mozilla.com.on-failed"
+                'default': []

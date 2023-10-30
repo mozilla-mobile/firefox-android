@@ -210,6 +210,14 @@ class SettingsRobot {
             return HomeScreenRobot.Transition()
         }
 
+        fun goBackToOnboardingScreen(interact: HomeScreenRobot.() -> Unit): HomeScreenRobot.Transition {
+            mDevice.pressBack()
+            mDevice.waitForIdle(waitingTimeShort)
+
+            HomeScreenRobot().interact()
+            return HomeScreenRobot.Transition()
+        }
+
         fun goBackToBrowser(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
             goBackButton().click()
 
@@ -428,8 +436,7 @@ class SettingsRobot {
 
         fun openExperimentsMenu(interact: SettingsSubMenuExperimentsRobot.() -> Unit): SettingsSubMenuExperimentsRobot.Transition {
             scrollToElementByText("Nimbus Experiments")
-            fun nimbusExperimentsButton() = mDevice.findObject(textContains("Nimbus Experiments"))
-            nimbusExperimentsButton().click()
+            onView(withText(getStringResource(R.string.preferences_nimbus_experiments))).click()
 
             SettingsSubMenuExperimentsRobot().interact()
             return SettingsSubMenuExperimentsRobot.Transition()

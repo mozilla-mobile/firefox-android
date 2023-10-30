@@ -10,17 +10,17 @@ import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
+import org.mozilla.fenix.helpers.Constants.PackageName.YOUTUBE_APP
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithText
 import org.mozilla.fenix.helpers.RetryTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
-import org.mozilla.fenix.helpers.TestHelper.assertYoutubeAppOpens
+import org.mozilla.fenix.helpers.TestHelper.assertExternalAppOpens
 import org.mozilla.fenix.helpers.TestHelper.clickSnackbarButton
 import org.mozilla.fenix.ui.robots.clickContextMenuItem
 import org.mozilla.fenix.ui.robots.clickPageObject
@@ -69,8 +69,9 @@ class ContextMenusTest {
         mockWebServer.shutdown()
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/243837
     @Test
-    fun verifyContextOpenLinkNewTab() {
+    fun verifyOpenLinkNewTabContextMenuOptionTest() {
         val pageLinks =
             TestAssetHelper.getGenericAsset(mockWebServer, 4)
         val genericURL =
@@ -92,8 +93,9 @@ class ContextMenusTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/244655
     @Test
-    fun verifyContextOpenLinkPrivateTab() {
+    fun verifyOpenLinkInNewPrivateTabContextMenuOptionTest() {
         val pageLinks =
             TestAssetHelper.getGenericAsset(mockWebServer, 4)
         val genericURL =
@@ -114,8 +116,9 @@ class ContextMenusTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/243832
     @Test
-    fun verifyContextCopyLink() {
+    fun verifyCopyLinkContextMenuOptionTest() {
         val pageLinks =
             TestAssetHelper.getGenericAsset(mockWebServer, 4)
         val genericURL =
@@ -134,31 +137,9 @@ class ContextMenusTest {
         }
     }
 
-    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1807268")
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/243838
     @Test
-    fun verifyContextCopyLinkNotDisplayedAfterApplied() {
-        val pageLinks = TestAssetHelper.getGenericAsset(mockWebServer, 4)
-        val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 3)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(pageLinks.url) {
-            longClickPageObject(itemWithText("Link 3"))
-            verifyContextMenuForLocalHostLinks(genericURL.url)
-            clickContextMenuItem("Copy link")
-            verifySnackBarText("Link copied to clipboard")
-        }.openNavigationToolbar {
-        }.visitLinkFromClipboard {
-            verifyUrl(genericURL.url.toString())
-        }.openTabDrawer {
-        }.openNewTab {
-        }
-        navigationToolbar {
-            verifyClipboardSuggestionsAreDisplayed(shouldBeDisplayed = false)
-        }
-    }
-
-    @Test
-    fun verifyContextShareLink() {
+    fun verifyShareLinkContextMenuOptionTest() {
         val pageLinks =
             TestAssetHelper.getGenericAsset(mockWebServer, 4)
         val genericURL =
@@ -176,8 +157,9 @@ class ContextMenusTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/243833
     @Test
-    fun verifyContextOpenImageNewTab() {
+    fun verifyOpenImageNewTabContextMenuOptionTest() {
         val pageLinks =
             TestAssetHelper.getGenericAsset(mockWebServer, 4)
         val imageResource =
@@ -195,8 +177,9 @@ class ContextMenusTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/243834
     @Test
-    fun verifyContextCopyImageLocation() {
+    fun verifyCopyImageLocationContextMenuOptionTest() {
         val pageLinks =
             TestAssetHelper.getGenericAsset(mockWebServer, 4)
         val imageResource =
@@ -215,8 +198,9 @@ class ContextMenusTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/243835
     @Test
-    fun verifyContextSaveImage() {
+    fun verifySaveImageContextMenuOptionTest() {
         val pageLinks =
             TestAssetHelper.getGenericAsset(mockWebServer, 4)
         val imageResource =
@@ -231,15 +215,16 @@ class ContextMenusTest {
         }
 
         downloadRobot {
-            verifyDownloadNotificationPopup()
+            verifyDownloadCompleteNotificationPopup()
         }.clickOpen("image/jpeg") {} // verify open intent is matched with associated data type
         downloadRobot {
             verifyPhotosAppOpens()
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/352050
     @Test
-    fun verifyContextMixedVariations() {
+    fun verifyContextMenuLinkVariationsTest() {
         val pageLinks =
             TestAssetHelper.getGenericAsset(mockWebServer, 4)
         val genericURL =
@@ -261,8 +246,9 @@ class ContextMenusTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2333840
     @Test
-    fun verifyContextMixedVariationsInPDFTest() {
+    fun verifyPDFContextMenuLinkVariationsTest() {
         val genericURL =
             TestAssetHelper.getGenericAsset(mockWebServer, 3)
 
@@ -281,16 +267,17 @@ class ContextMenusTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/832094
     @Test
-    fun verifyContextOpenLinkInAppTest() {
+    fun verifyOpenLinkInAppContextMenuOptionTest() {
         val defaultWebPage = TestAssetHelper.getExternalLinksAsset(mockWebServer)
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-            longClickPageObject(itemContainingText("Youtube link"))
-            verifyContextMenuForLinksToOtherApps("youtube.com".toUri())
+            longClickPageObject(itemContainingText("Youtube full link"))
+            verifyContextMenuForLinksToOtherApps("youtube.com")
             clickContextMenuItem("Open link in external app")
-            assertYoutubeAppOpens()
+            assertExternalAppOpens(YOUTUBE_APP)
         }
     }
 }

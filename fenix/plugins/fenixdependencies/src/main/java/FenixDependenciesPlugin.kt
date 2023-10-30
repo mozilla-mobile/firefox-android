@@ -22,20 +22,17 @@ object FenixVersions {
     const val androidx_benchmark = "1.1.1"
     const val androidx_profileinstaller = "1.3.1"
     const val androidx_legacy = "1.0.0"
-    const val androidx_lifecycle = "2.6.1"
     const val androidx_navigation = "2.5.3"
     const val androidx_splash_screen = "1.0.1"
     const val androidx_transition = "1.4.1"
     const val androidx_datastore = "1.0.0"
     const val google_accompanist = "0.30.1"
 
-    const val adjust = "4.33.0"
+    const val adjust = "4.35.1"
     const val installreferrer = "2.2"
 
     const val junit = "5.9.3"
     const val mockk = "1.13.7"
-
-    const val mockwebserver = "4.11.0"
 
     const val google_ads_id_version = "16.0.0"
 
@@ -58,7 +55,6 @@ object FenixDependencies {
     const val androidx_profileinstaller = "androidx.profileinstaller:profileinstaller:${FenixVersions.androidx_profileinstaller}"
     const val androidx_activity_ktx = "androidx.activity:activity-ktx:${FenixVersions.androidx_activity}"
     const val androidx_legacy = "androidx.legacy:legacy-support-v4:${FenixVersions.androidx_legacy}"
-    const val androidx_lifecycle_common = "androidx.lifecycle:lifecycle-common:${FenixVersions.androidx_lifecycle}"
     const val androidx_safeargs = "androidx.navigation:navigation-safe-args-gradle-plugin:${FenixVersions.androidx_navigation}"
     const val androidx_navigation_fragment = "androidx.navigation:navigation-fragment-ktx:${FenixVersions.androidx_navigation}"
     const val androidx_navigation_ui = "androidx.navigation:navigation-ui:${FenixVersions.androidx_navigation}"
@@ -94,8 +90,6 @@ object FenixDependencies {
     // Truth is unused
     // Test services is unused
     // --- END AndroidX test dependencies --- //
-
-    const val mockwebserver = "com.squareup.okhttp3:mockwebserver:${FenixVersions.mockwebserver}"
 
     const val google_ads_id = "com.google.android.gms:play-services-ads-identifier:${FenixVersions.google_ads_id_version}"
 

@@ -9,6 +9,8 @@ import kotlinx.coroutines.withContext
 import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.shopping.ProductAnalysis
+import mozilla.components.concept.engine.shopping.ProductRecommendation
+import mozilla.components.support.base.log.logger.Logger
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -23,6 +25,32 @@ interface ReviewQualityCheckService {
      * @return [ProductAnalysis] if the request succeeds, null otherwise.
      */
     suspend fun fetchProductReview(): ProductAnalysis?
+
+    /**
+     * Triggers a reanalysis of the product review for the current tab.
+     *
+     * @return [AnalysisStatusDto] if the request succeeds, null otherwise.
+     */
+    suspend fun reanalyzeProduct(): AnalysisStatusDto?
+
+    /**
+     * Fetches the status of the product review for the current tab.
+     *
+     * @return [AnalysisStatusDto] if the request succeeds, null otherwise.
+     */
+    suspend fun analysisStatus(): AnalysisStatusDto?
+
+    /**
+     * Returns the selected tab url.
+     */
+    fun selectedTabUrl(): String?
+
+    /**
+     * Fetches product recommendations related to the product user is browsing in the current tab.
+     *
+     * @return [ProductRecommendation] if request succeeds, null otherwise.
+     */
+    suspend fun productRecommendation(): ProductRecommendation?
 }
 
 /**
@@ -30,19 +58,108 @@ interface ReviewQualityCheckService {
  *
  * @property browserStore Reference to the application's [BrowserStore] to access state.
  */
-class ReviewQualityCheckServiceImpl(
+class DefaultReviewQualityCheckService(
     private val browserStore: BrowserStore,
 ) : ReviewQualityCheckService {
+
+    private val logger = Logger("DefaultReviewQualityCheckService")
 
     override suspend fun fetchProductReview(): ProductAnalysis? = withContext(Dispatchers.Main) {
         suspendCoroutine { continuation ->
             browserStore.state.selectedTab?.let { tab ->
                 tab.engineState.engineSession?.requestProductAnalysis(
                     url = tab.content.url,
-                    onResult = { continuation.resume(it) },
-                    onException = { continuation.resume(null) },
+                    onResult = {
+                        continuation.resume(it)
+                    },
+                    onException = {
+                        logger.error("Error fetching product review", it)
+                        continuation.resume(null)
+                    },
                 )
             }
         }
     }
+
+    override suspend fun reanalyzeProduct(): AnalysisStatusDto? = withContext(Dispatchers.Main) {
+        suspendCoroutine { continuation ->
+            browserStore.state.selectedTab?.let { tab ->
+                tab.engineState.engineSession?.reanalyzeProduct(
+                    url = tab.content.url,
+                    onResult = {
+                        continuation.resume(it.asEnumOrDefault(AnalysisStatusDto.OTHER))
+                    },
+                    onException = {
+                        logger.error("Error starting reanalysis", it)
+                        continuation.resume(null)
+                    },
+                )
+            }
+        }
+    }
+
+    override suspend fun analysisStatus(): AnalysisStatusDto? = withContext(Dispatchers.Main) {
+        suspendCoroutine { continuation ->
+            browserStore.state.selectedTab?.let { tab ->
+                tab.engineState.engineSession?.requestAnalysisStatus(
+                    url = tab.content.url,
+                    onResult = {
+                        continuation.resume(it.asEnumOrDefault(AnalysisStatusDto.OTHER))
+                    },
+                    onException = {
+                        logger.error("Error fetching analysis status", it)
+                        continuation.resume(null)
+                    },
+                )
+            }
+        }
+    }
+
+    override fun selectedTabUrl(): String? =
+        browserStore.state.selectedTab?.content?.url
+
+    override suspend fun productRecommendation(): ProductRecommendation? =
+        withContext(Dispatchers.Main) {
+            suspendCoroutine { continuation ->
+                browserStore.state.selectedTab?.let { tab ->
+                    tab.engineState.engineSession?.requestProductRecommendations(
+                        url = tab.content.url,
+                        onResult = {
+                            // Return the first available recommendation since ui requires only
+                            // one recommendation.
+                            continuation.resume(it.firstOrNull())
+                        },
+                        onException = {
+                            logger.error("Error fetching product recommendation", it)
+                            continuation.resume(null)
+                        },
+                    )
+                }
+            }
+        }
+}
+
+/**
+ * Enum that represents the status of the product review analysis.
+ */
+enum class AnalysisStatusDto {
+    /**
+     * Analysis is waiting to be picked up.
+     */
+    PENDING,
+
+    /**
+     * Analysis is in progress.
+     */
+    IN_PROGRESS,
+
+    /**
+     * Analysis is completed.
+     */
+    COMPLETED,
+
+    /**
+     * Any other status.
+     */
+    OTHER,
 }

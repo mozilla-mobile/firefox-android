@@ -35,7 +35,11 @@ const val DEFAULT_MAX_LINES = 2
  * @param text The button text to be displayed.
  * @param textColor [Color] to apply to the button text.
  * @param backgroundColor The background [Color] of the button.
+ * @param modifier [Modifier] to be applied to the layout.
+ * @param enabled Controls the enabled state of the button.
+ * When false, this button will not be clickable.
  * @param icon Optional [Painter] used to display a [Icon] before the button text.
+ * @param iconModifier [Modifier] to be applied to the icon.
  * @param tint Tint [Color] to be applied to the icon.
  * @param onClick Invoked when the user clicks on the button.
  */
@@ -44,7 +48,10 @@ private fun Button(
     text: String,
     textColor: Color,
     backgroundColor: Color,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     icon: Painter? = null,
+    iconModifier: Modifier = Modifier,
     tint: Color,
     onClick: () -> Unit,
 ) {
@@ -53,7 +60,8 @@ private fun Button(
 
     androidx.compose.material.Button(
         onClick = onClick,
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier,
+        enabled = enabled,
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
         elevation = ButtonDefaults.elevation(defaultElevation = 0.dp, pressedElevation = 0.dp),
         colors = ButtonDefaults.outlinedButtonColors(
@@ -64,6 +72,7 @@ private fun Button(
             Icon(
                 painter = painter,
                 contentDescription = null,
+                modifier = iconModifier,
                 tint = tint,
             )
 
@@ -84,24 +93,34 @@ private fun Button(
  * Primary button.
  *
  * @param text The button text to be displayed.
+ * @param modifier [Modifier] to be applied to the layout.
+ * @param enabled Controls the enabled state of the button.
+ * When false, this button will not be clickable
  * @param textColor [Color] to apply to the button text.
  * @param backgroundColor The background [Color] of the button.
  * @param icon Optional [Painter] used to display an [Icon] before the button text.
+ * @param iconModifier [Modifier] to be applied to the icon.
  * @param onClick Invoked when the user clicks on the button.
  */
 @Composable
 fun PrimaryButton(
     text: String,
+    modifier: Modifier = Modifier.fillMaxWidth(),
+    enabled: Boolean = true,
     textColor: Color = FirefoxTheme.colors.textActionPrimary,
     backgroundColor: Color = FirefoxTheme.colors.actionPrimary,
     icon: Painter? = null,
+    iconModifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
     Button(
         text = text,
         textColor = textColor,
         backgroundColor = backgroundColor,
+        modifier = modifier,
+        enabled = enabled,
         icon = icon,
+        iconModifier = iconModifier,
         tint = FirefoxTheme.colors.iconActionPrimary,
         onClick = onClick,
     )
@@ -111,24 +130,34 @@ fun PrimaryButton(
  * Secondary button.
  *
  * @param text The button text to be displayed.
+ * @param modifier [Modifier] to be applied to the layout.
+ * @param enabled Controls the enabled state of the button.
+ * When false, this button will not be clickable
  * @param textColor [Color] to apply to the button text.
  * @param backgroundColor The background [Color] of the button.
  * @param icon Optional [Painter] used to display an [Icon] before the button text.
+ * @param iconModifier [Modifier] to be applied to the icon.
  * @param onClick Invoked when the user clicks on the button.
  */
 @Composable
 fun SecondaryButton(
     text: String,
+    modifier: Modifier = Modifier.fillMaxWidth(),
+    enabled: Boolean = true,
     textColor: Color = FirefoxTheme.colors.textActionSecondary,
     backgroundColor: Color = FirefoxTheme.colors.actionSecondary,
     icon: Painter? = null,
+    iconModifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
     Button(
         text = text,
         textColor = textColor,
         backgroundColor = backgroundColor,
+        modifier = modifier,
+        enabled = enabled,
         icon = icon,
+        iconModifier = iconModifier,
         tint = FirefoxTheme.colors.iconActionSecondary,
         onClick = onClick,
     )
@@ -138,24 +167,34 @@ fun SecondaryButton(
  * Tertiary button.
  *
  * @param text The button text to be displayed.
+ * @param modifier [Modifier] to be applied to the layout.
+ * @param enabled Controls the enabled state of the button.
+ * When false, this button will not be clickable
  * @param textColor [Color] to apply to the button text.
  * @param backgroundColor The background [Color] of the button.
  * @param icon Optional [Painter] used to display an [Icon] before the button text.
+ * @param iconModifier [Modifier] to be applied to the icon.
  * @param onClick Invoked when the user clicks on the button.
  */
 @Composable
 fun TertiaryButton(
     text: String,
+    modifier: Modifier = Modifier.fillMaxWidth(),
+    enabled: Boolean = true,
     textColor: Color = FirefoxTheme.colors.textActionTertiary,
     backgroundColor: Color = FirefoxTheme.colors.actionTertiary,
     icon: Painter? = null,
+    iconModifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
     Button(
         text = text,
         textColor = textColor,
         backgroundColor = backgroundColor,
+        modifier = modifier,
+        enabled = enabled,
         icon = icon,
+        iconModifier = iconModifier,
         tint = FirefoxTheme.colors.iconActionTertiary,
         onClick = onClick,
     )
@@ -165,24 +204,34 @@ fun TertiaryButton(
  * Destructive button.
  *
  * @param text The button text to be displayed.
+ * @param modifier [Modifier] to be applied to the layout.
+ * @param enabled Controls the enabled state of the button.
+ * When false, this button will not be clickable
  * @param textColor [Color] to apply to the button text.
  * @param backgroundColor The background [Color] of the button.
  * @param icon Optional [Painter] used to display an [Icon] before the button text.
+ * @param iconModifier [Modifier] to be applied to the icon.
  * @param onClick Invoked when the user clicks on the button.
  */
 @Composable
 fun DestructiveButton(
     text: String,
+    modifier: Modifier = Modifier.fillMaxWidth(),
+    enabled: Boolean = true,
     textColor: Color = FirefoxTheme.colors.textWarningButton,
     backgroundColor: Color = FirefoxTheme.colors.actionSecondary,
     icon: Painter? = null,
+    iconModifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
     Button(
         text = text,
         textColor = textColor,
         backgroundColor = backgroundColor,
+        modifier = modifier,
+        enabled = enabled,
         icon = icon,
+        iconModifier = iconModifier,
         tint = FirefoxTheme.colors.iconWarningButton,
         onClick = onClick,
     )

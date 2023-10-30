@@ -15,7 +15,6 @@ import mozilla.components.service.fxa.manager.FxaAccountManager
 import mozilla.components.support.base.feature.LifecycleAwareFeature
 import mozilla.components.support.base.observer.Observable
 import mozilla.components.support.base.observer.ObserverRegistry
-import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.tabstray.FloatingActionButtonBinding
 import org.mozilla.fenix.tabstray.TabsTrayAction
 import org.mozilla.fenix.tabstray.TabsTrayStore
@@ -25,9 +24,9 @@ import org.mozilla.fenix.tabstray.ext.toSyncedTabsListItem
 /**
  * TabsTrayFragment delegate to handle all layout updates needed to display synced tabs and any errors.
  *
- * @param store [TabsTrayStore]
- * @param context Fragment context.
- * @param navController The controller used to handle any navigation necessary for error scenarios.
+ * @property store An instance of [TabsTrayStore] used to manage the tabs tray state.
+ * @property context Fragment context.
+ * @property navController The controller used to handle any navigation necessary for error scenarios.
  * @param storage An instance of [SyncedTabsStorage] used for retrieving synced tabs.
  * @param accountManager An instance of [FxaAccountManager] used for synced tabs authentication.
  * @param lifecycleOwner View lifecycle owner used to determine when to cancel UI jobs.
@@ -92,9 +91,7 @@ class SyncedTabsIntegration(
     override fun displaySyncedTabs(syncedTabs: List<SyncedDeviceTabs>) {
         store.dispatch(
             TabsTrayAction.UpdateSyncedTabs(
-                syncedTabs.toComposeList(
-                    context.settings().enableTaskContinuityEnhancements,
-                ),
+                syncedTabs.toComposeList(),
             ),
         )
     }
