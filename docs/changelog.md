@@ -4,11 +4,34 @@ title: Changelog
 permalink: /changelog/
 ---
 
-# 119.0 (In Development)
-* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v118..main)
+# 121.0 (In Development)
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v120..main)
 * [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
 * [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/Gecko.kt)
 * [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/.config.yml)
+
+# 120.0
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v119..releases_v120)
+* [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/releases_v120/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
+* [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/releases_v120/android-components/plugins/dependencies/src/main/java/Gecko.kt)
+* [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/releases_v120/android-components/.config.yml)
+
+* **feature-tabs**
+  * Adds parameter to `TabCounterToolbarButton` to show the mask while in private browsing mode.
+
+* **feature-readerview**
+  * Adds `UUIDCreator` to `ReaderViewFeature` to create UUIDs for cache keys.
+  * Moves the implementation of presenting Reader Mode from the content scripts to `ReaderViewFeature`
+
+* **browser-state**
+  * `SessionState.isProductUrl` is not affected for private tabs as shopping mode is disabled in private tabs. [Bug 1847063](https://bugzilla.mozilla.org/show_bug.cgi?id=1847063)
+  * `SessionState.isProductUrl` has been moved to `ContentState.isProductUrl`. [Bug 1857287](https://bugzilla.mozilla.org/show_bug.cgi?id=1857287)
+
+# 119.0
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v118..releases_v119)
+* [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/releases_v119/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
+* [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/releases_v119/android-components/plugins/dependencies/src/main/java/Gecko.kt)
+* [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/releases_v119/android-components/.config.yml)
 
 * **feature-tabs**
   * Removed deprecated `TabsUseCases.AddNewPrivateTabUseCase`. [Bug 1853070](https://bugzilla.mozilla.org/show_bug.cgi?id=1853070)
@@ -43,14 +66,20 @@ permalink: /changelog/
   * 🌟️️ Add `reanalyzeProduct` API to `EngineSession` to allow reanalyzing product from the engine. See more on [Bug 1853309](https://bugzilla.mozilla.org/show_bug.cgi?id=1853309).
   * 🌟️️ Add `requestAnalysisStatus` API to `EngineSession` to allow request product analysis status from the engine. See more on [Bug 1853309](https://bugzilla.mozilla.org/show_bug.cgi?id=1853309).
 
+* **support-ktx**
+  * ⚠️ **This is a breaking change**: the `enterToImmersiveMode()` in `Activity.kt` has been renamed to `enterImmersiveMode()`.
+  * ⚠️ **This is a breaking change**: the `getWindowInsetsController()` in `Window.kt` has been renamed to `createWindowInsetsController()`.
+
 # 118.0
 * [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v117..releases_v118)
 * [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/releases_v118/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
 * [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/releases_v118/android-components/plugins/dependencies/src/main/java/Gecko.kt)
 * [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/releases_v118/android-components/.config.yml)
 
+* **browser-state**
+  🌟️️ Add `isProductUrl` to `SessionState` instance to indicate whether or not a product page of a given session state is being displayed. See more on [Bug 1842638](https://bugzilla.mozilla.org/show_bug.cgi?id=1842638).
+
 * **concept-engine**
-  * 🌟️️ Add `ProductUrlStatus` to `SessionState` instance to indicate whether or not a product page of a given session state is being displayed. See more on [Bug 1842638](https://bugzilla.mozilla.org/show_bug.cgi?id=1842638).
   * 🌟️️ Add `requestProductAnalysis` API to `EngineSession` to allow request product analysis result from the engine. See more on [Bug 1840692](https://bugzilla.mozilla.org/show_bug.cgi?id=1840692).
   * 🌟️️ Add `requestProductRecommendations` API to `EngineSession` to allow request product recommendations from the engine. See more on [Bug 1840693](https://bugzilla.mozilla.org/show_bug.cgi?id=1840693).
 

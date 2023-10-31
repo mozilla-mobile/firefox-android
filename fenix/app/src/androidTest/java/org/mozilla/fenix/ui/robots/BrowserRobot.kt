@@ -55,6 +55,7 @@ import org.mozilla.fenix.helpers.SessionLoadedIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeLong
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
+import org.mozilla.fenix.helpers.TestHelper.appName
 import org.mozilla.fenix.helpers.TestHelper.getStringResource
 import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.packageName
@@ -428,6 +429,12 @@ class BrowserRobot {
     fun changeCreditCardExpiryDate(expiryDate: String) =
         itemWithResId("expiryMonthAndYear").setText(expiryDate)
 
+    fun clickCreditCardNumberTextBox() {
+        mDevice.wait(Until.findObject(By.res("cardNumber")), waitingTime)
+        mDevice.findObject(By.res("cardNumber")).click()
+        mDevice.waitForWindowUpdate(appName, waitingTimeShort)
+    }
+
     fun clickCreditCardFormSubmitButton() =
         itemWithResId("submit").clickAndWaitForNewWindow(waitingTime)
 
@@ -800,13 +807,31 @@ class BrowserRobot {
         )
     }
 
-    fun verifyPrivateBrowsingOpenLinkInAnotherAppPrompt(url: String) =
-        assertItemContainingTextExists(
-            itemContainingText(
-                getStringResource(R.string.mozac_feature_applinks_confirm_dialog_title),
-            ),
-            itemContainingText(url),
-        )
+    fun verifyPrivateBrowsingOpenLinkInAnotherAppPrompt(url: String, pageObject: UiObject) {
+        for (i in 1..RETRY_COUNT) {
+            try {
+                assertItemContainingTextExists(
+                    itemContainingText(
+                        getStringResource(R.string.mozac_feature_applinks_confirm_dialog_title),
+                    ),
+                    itemContainingText(url),
+                )
+
+                break
+            } catch (e: AssertionError) {
+                if (i == RETRY_COUNT) {
+                    throw e
+                } else {
+                    browserScreen {
+                    }.openThreeDotMenu {
+                    }.refreshPage {
+                        waitForPageToLoad()
+                        clickPageObject(pageObject)
+                    }
+                }
+            }
+        }
+    }
 
     fun verifyFindInPageBar(exists: Boolean) =
         assertItemWithResIdExists(
@@ -882,12 +907,32 @@ class BrowserRobot {
         assertTrue(button.waitForExists(waitingTime))
     }
 
+    fun verifySurveyButtonDoesNotExist() {
+        val button = mDevice.findObject(
+            UiSelector().text(
+                getStringResource(
+                    R.string.preferences_take_survey,
+                ),
+            ),
+        )
+        assertTrue(button.waitUntilGone(waitingTime))
+    }
+
     fun verifySurveyNoThanksButton() {
         val button = mDevice.findObject(
             UiSelector().text(
                 getStringResource(
                     R.string.preferences_not_take_survey,
                 ),
+            ),
+        )
+        assertTrue(button.waitForExists(waitingTime))
+    }
+
+    fun verifyHomeScreenSurveyCloseButton() {
+        val button = mDevice.findObject(
+            UiSelector().descriptionContains(
+                "Close",
             ),
         )
         assertTrue(button.waitForExists(waitingTime))
@@ -910,7 +955,6 @@ class BrowserRobot {
         button.waitForExists(waitingTime)
         button.click()
     }
-
     fun clickNoThanksSurveyButton() {
         val button = mDevice.findObject(
             UiSelector().text(
@@ -1066,14 +1110,6 @@ class BrowserRobot {
 
             ComposeTabDrawerRobot(composeTestRule).interact()
             return ComposeTabDrawerRobot.Transition(composeTestRule)
-        }
-
-        fun openTabButtonShortcutsMenu(interact: NavigationToolbarRobot.() -> Unit): NavigationToolbarRobot.Transition {
-            mDevice.waitNotNull(Until.findObject(By.desc("Tabs")))
-            tabsCounter().click(LONG_CLICK_DURATION)
-
-            NavigationToolbarRobot().interact()
-            return NavigationToolbarRobot.Transition()
         }
 
         fun openNotificationShade(interact: NotificationRobot.() -> Unit): NotificationRobot.Transition {
@@ -1266,6 +1302,13 @@ class BrowserRobot {
             BrowserRobot().interact()
             return Transition()
         }
+        fun clickHomeScreenSurveyCloseButton(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
+            homescreenSurveyCloseButton.waitForExists(waitingTime)
+            homescreenSurveyCloseButton.click()
+
+            BrowserRobot().interact()
+            return Transition()
+        }
     }
 }
 
@@ -1421,3 +1464,6 @@ private val surveyButton =
 
 private val surveyNoThanksButton =
     itemContainingText(getStringResource(R.string.preferences_not_take_survey))
+
+private val homescreenSurveyCloseButton =
+    itemWithDescription("Close")

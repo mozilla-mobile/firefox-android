@@ -17,6 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.mozilla.fenix.R
 import org.mozilla.fenix.compose.annotation.LightDarkPreview
+import org.mozilla.fenix.shopping.store.ReviewQualityCheckState
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState
 import org.mozilla.fenix.theme.FirefoxTheme
 
@@ -25,11 +26,13 @@ import org.mozilla.fenix.theme.FirefoxTheme
  *
  * @param error The error state to display.
  * @param productRecommendationsEnabled The current state of the product recommendations toggle.
+ * @param productVendor The vendor of the product.
  * @param onReviewGradeLearnMoreClick Invoked when the user clicks to learn more about review grades.
  * @param onOptOutClick Invoked when the user opts out of the review quality check feature.
  * @param onProductRecommendationsEnabledStateChange Invoked when the user changes the product
  * recommendations toggle state.
  * @param onFooterLinkClick Invoked when the user clicks on the footer link.
+ * @param onExpandSettings Invoked when the user expands the settings card.
  * @param modifier Modifier to apply to the layout.
  */
 @Composable
@@ -37,10 +40,12 @@ import org.mozilla.fenix.theme.FirefoxTheme
 fun ProductAnalysisError(
     error: ProductReviewState.Error,
     productRecommendationsEnabled: Boolean?,
-    onReviewGradeLearnMoreClick: (String) -> Unit,
+    productVendor: ReviewQualityCheckState.ProductVendor,
+    onReviewGradeLearnMoreClick: () -> Unit,
     onOptOutClick: () -> Unit,
     onProductRecommendationsEnabledStateChange: (Boolean) -> Unit,
-    onFooterLinkClick: (String) -> Unit,
+    onFooterLinkClick: () -> Unit,
+    onExpandSettings: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -75,6 +80,14 @@ fun ProductAnalysisError(
                     ReviewQualityCheckInfoType.Info,
                 )
             }
+
+            ProductReviewState.Error.NotEnoughReviews -> {
+                Triple(
+                    R.string.review_quality_check_no_reviews_warning_title,
+                    R.string.review_quality_check_no_reviews_warning_body,
+                    ReviewQualityCheckInfoType.Info,
+                )
+            }
         }
 
         ReviewQualityCheckInfoCard(
@@ -85,6 +98,7 @@ fun ProductAnalysisError(
         )
 
         ReviewQualityInfoCard(
+            productVendor = productVendor,
             onLearnMoreClick = onReviewGradeLearnMoreClick,
         )
 
@@ -92,6 +106,7 @@ fun ProductAnalysisError(
             productRecommendationsEnabled = productRecommendationsEnabled,
             onProductRecommendationsEnabledStateChange = onProductRecommendationsEnabledStateChange,
             onTurnOffReviewQualityCheckClick = onOptOutClick,
+            onExpandSettings = onExpandSettings,
             modifier = Modifier.fillMaxWidth(),
         )
 
@@ -114,10 +129,12 @@ private fun ProductAnalysisErrorPreview() {
             ProductAnalysisError(
                 error = ProductReviewState.Error.NetworkError,
                 productRecommendationsEnabled = true,
+                productVendor = ReviewQualityCheckState.ProductVendor.AMAZON,
                 onReviewGradeLearnMoreClick = {},
                 onOptOutClick = {},
                 onProductRecommendationsEnabledStateChange = {},
                 onFooterLinkClick = {},
+                onExpandSettings = {},
                 modifier = Modifier.fillMaxWidth(),
             )
         }

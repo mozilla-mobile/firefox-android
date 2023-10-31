@@ -10,19 +10,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import mozilla.components.browser.state.selector.findCustomTabOrSelectedTab
 import mozilla.components.browser.state.selector.findTab
 import mozilla.components.browser.state.state.SessionState
 import mozilla.components.browser.state.state.TabSessionState
-import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.browser.thumbnails.BrowserThumbnails
 import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.concept.engine.permission.SitePermissions
@@ -31,16 +29,16 @@ import mozilla.components.feature.contextmenu.ContextMenuCandidate
 import mozilla.components.feature.readerview.ReaderViewFeature
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.tabs.WindowFeature
-import mozilla.components.lib.state.ext.consumeFlow
 import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
-import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifAnyChanged
 import org.mozilla.fenix.GleanMetrics.ReaderMode
+import org.mozilla.fenix.GleanMetrics.Shopping
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.TabCollectionStorage
+import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.toolbar.BrowserToolbarView
 import org.mozilla.fenix.components.toolbar.ToolbarMenu
 import org.mozilla.fenix.ext.components
@@ -49,7 +47,6 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.nimbus.FxNimbus
-import org.mozilla.fenix.settings.quicksettings.protections.cookiebanners.dialog.CookieBannerReEngagementDialogUtils
 import org.mozilla.fenix.settings.quicksettings.protections.cookiebanners.getCookieBannerUIMode
 import org.mozilla.fenix.shopping.DefaultShoppingExperienceFeature
 import org.mozilla.fenix.shopping.ReviewQualityCheckFeature
@@ -70,6 +67,8 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
 
     private var readerModeAvailable = false
     private var reviewQualityCheckAvailable = false
+    private var translationsAvailable = false
+
     private var pwaOnboardingObserver: PwaOnboardingObserver? = null
 
     private var forwardAction: BrowserToolbar.TwoStateButton? = null
@@ -148,6 +147,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
 
         browserToolbarView.view.addPageAction(readerModeAction)
 
+        initTranslationsAction(context)
         initReviewQualityCheck(context, view)
 
         thumbnailsFeature.set(
@@ -202,9 +202,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                 view = view,
             )
         }
-        if (!context.settings().shouldUseCookieBanner && !context.settings().userOptOutOfReEngageCookieBannerDialog) {
-            observeCookieBannerHandlingState(context.components.core.store)
-        }
+
         standardSnackbarErrorBinding.set(
             feature = StandardSnackbarErrorBinding(
                 requireActivity(),
@@ -215,20 +213,59 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
         )
     }
 
+    private fun initTranslationsAction(context: Context) {
+        if (!context.settings().enableTranslations) {
+            return
+        }
+
+        val translationsAction =
+            BrowserToolbar.ToggleButton(
+                image = AppCompatResources.getDrawable(
+                    context,
+                    R.drawable.mozac_ic_translate_24,
+                )!!,
+                imageSelected =
+                AppCompatResources.getDrawable(
+                    context,
+                    R.drawable.mozac_ic_translate_24,
+                )!!,
+                contentDescription = "",
+                contentDescriptionSelected = "",
+                visible = {
+                    translationsAvailable || context.settings().enableTranslations
+                },
+                listener = { browserToolbarInteractor.onTranslationsButtonClicked() },
+            )
+
+        browserToolbarView.view.addPageAction(translationsAction)
+    }
+
     private fun initReviewQualityCheck(context: Context, view: View) {
         val reviewQualityCheck =
-            BrowserToolbar.Button(
-                imageDrawable = AppCompatResources.getDrawable(
+            BrowserToolbar.ToggleButton(
+                image = AppCompatResources.getDrawable(
                     context,
                     R.drawable.mozac_ic_shopping_24,
+                )!!.apply {
+                    setTint(ContextCompat.getColor(context, R.color.fx_mobile_text_color_primary))
+                },
+                imageSelected = AppCompatResources.getDrawable(
+                    context,
+                    R.drawable.ic_shopping_selected,
                 )!!,
                 contentDescription = context.getString(R.string.review_quality_check_open_handle_content_description),
-                iconTintColorResource = ThemeManager.resolveAttribute(R.attr.textPrimary, context),
+                contentDescriptionSelected =
+                context.getString(R.string.review_quality_check_close_handle_content_description),
                 visible = { reviewQualityCheckAvailable },
-                listener = {
+                listener = { _ ->
+                    requireComponents.appStore.dispatch(
+                        AppAction.ShoppingAction.ShoppingSheetStateUpdated(expanded = true),
+                    )
+
                     findNavController().navigate(
                         BrowserFragmentDirections.actionBrowserFragmentToReviewQualityCheckDialogFragment(),
                     )
+                    Shopping.addressBarIconClicked.record()
                 },
             )
 
@@ -236,11 +273,24 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
 
         reviewQualityCheckFeature.set(
             feature = ReviewQualityCheckFeature(
+                appStore = requireComponents.appStore,
                 browserStore = context.components.core.store,
                 shoppingExperienceFeature = DefaultShoppingExperienceFeature(
                     settings = requireContext().settings(),
                 ),
-                onAvailabilityChange = { reviewQualityCheckAvailable = it },
+                onIconVisibilityChange = {
+                    if (!reviewQualityCheckAvailable && it) {
+                        Shopping.addressBarIconDisplayed.record()
+                    }
+                    reviewQualityCheckAvailable = it
+                    safeInvalidateBrowserToolbarView()
+                },
+                onBottomSheetStateChange = {
+                    reviewQualityCheck.setSelected(selected = it, notifyListener = false)
+                },
+                onProductPageDetected = {
+                    Shopping.productPageVisits.add()
+                },
             ),
             owner = this,
             view = view,
@@ -410,6 +460,11 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
         pwaOnboardingObserver?.stop()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        isTablet = false
+    }
+
     private fun updateHistoryMetadata() {
         getCurrentTab()?.let { tab ->
             (tab as? TabSessionState)?.historyMetadata?.let {
@@ -547,23 +602,5 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
     @VisibleForTesting
     internal fun updateLastBrowseActivity() {
         requireContext().settings().lastBrowseActivity = System.currentTimeMillis()
-    }
-
-    private fun observeCookieBannerHandlingState(store: BrowserStore) {
-        consumeFlow(store) { flow ->
-            flow.mapNotNull { state ->
-                state.findCustomTabOrSelectedTab(customTabSessionId)
-            }.ifAnyChanged { tab ->
-                arrayOf(
-                    tab.cookieBanner,
-                )
-            }.collect {
-                CookieBannerReEngagementDialogUtils.tryToShowReEngagementDialog(
-                    settings = requireContext().settings(),
-                    status = it.cookieBanner,
-                    navController = findNavController(),
-                )
-            }
-        }
     }
 }

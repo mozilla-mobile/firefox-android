@@ -61,7 +61,8 @@ private const val AUTOPLAY_USER_SETTING = "AUTOPLAY_USER_SETTING"
 
 /**
  * A simple wrapper for SharedPreferences that makes reading preference a little bit easier.
- * @param appContext Reference to application context.
+ *
+ * @property appContext Reference to application context.
  */
 @Suppress("LargeClass", "TooManyFunctions")
 class Settings(private val appContext: Context) : PreferencesHolder {
@@ -615,49 +616,23 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = { cookieBannersSection[CookieBannersSection.FEATURE_SETTING_VALUE] == 1 },
     )
 
-    var userOptOutOfReEngageCookieBannerDialog by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_cookie_banner_re_engage_dialog_dismissed),
-        default = false,
-    )
-
-    var lastInteractionWithReEngageCookieBannerDialogInMs by longPreference(
-        appContext.getPreferenceKey(
-            R.string.pref_key_cookie_banner_re_engage_dialog_last_interaction_in_ms,
-        ),
-        default = 0L,
-    )
-
-    var cookieBannerDetectedPreviously by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_cookie_banner_first_banner_detected),
-        default = false,
+    var shouldUseCookieBannerPrivateMode by lazyFeatureFlagPreference(
+        appContext.getPreferenceKey(R.string.pref_key_cookie_banner_private_mode),
+        featureFlag = true,
+        default = { cookieBannersSection[CookieBannersSection.FEATURE_SETTING_VALUE_PBM] == 1 },
     )
 
     val shouldShowCookieBannerUI: Boolean
         get() = cookieBannersSection[CookieBannersSection.FEATURE_UI] == 1
 
-    /**
-     * Indicates after how many hours a cookie banner dialog should be shown again
-     */
-    @VisibleForTesting
-    internal val timerForCookieBannerDialog: Long
-        get() = 60 * 60 * 1000L *
-            (cookieBannersSection[CookieBannersSection.DIALOG_RE_ENGAGE_TIME] ?: 4)
+    val shouldEnableCookieBannerDetectOnly: Boolean
+        get() = cookieBannersSection[CookieBannersSection.FEATURE_SETTING_DETECT_ONLY] == 1
 
-    /**
-     * Indicates if we should should show the cookie banner dialog that invites the user to turn-on
-     * the setting.
-     */
-    fun shouldShowCookieBannerReEngagementDialog(): Boolean {
-        val shouldShowDialog =
-            shouldShowCookieBannerUI && cookieBannerReEngagementDialogShowsCount.underMaxCount() &&
-                !userOptOutOfReEngageCookieBannerDialog && !shouldUseCookieBanner
-        return if (shouldShowDialog) {
-            !cookieBannerDetectedPreviously ||
-                timeNowInMillis() - lastInteractionWithReEngageCookieBannerDialogInMs >= timerForCookieBannerDialog
-        } else {
-            false
-        }
-    }
+    val shouldEnableCookieBannerGlobalRules: Boolean
+        get() = cookieBannersSection[CookieBannersSection.FEATURE_SETTING_GLOBAL_RULES] == 1
+
+    val shouldEnableCookieBannerGlobalRulesSubFrame: Boolean
+        get() = cookieBannersSection[CookieBannersSection.FEATURE_SETTING_GLOBAL_RULES_SUB_FRAMES] == 1
 
     /**
      * Declared as a function for performance purposes. This could be declared as a variable using
@@ -1727,6 +1702,14 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     /**
+     * Time in milliseconds when the user was first presented the review quality check feature CFR.
+     */
+    var reviewQualityCheckCfrDisplayTimeInMillis by longPreference(
+        appContext.getPreferenceKey(R.string.pref_key_should_show_review_quality_cfr_displayed_time),
+        default = 0L,
+    )
+
+    /**
      * Time in milliseconds since the user first opted in the review quality check feature.
      */
     var reviewQualityCheckOptInTimeInMillis by longPreference(
@@ -1753,21 +1736,23 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     fun getCookieBannerHandling(): CookieBannerHandlingMode {
         return when (shouldUseCookieBanner) {
             true -> CookieBannerHandlingMode.REJECT_ALL
-            false -> if (shouldShowCookieBannerReEngagementDialog()) {
-                CookieBannerHandlingMode.REJECT_ALL
-            } else {
+            false -> {
                 CookieBannerHandlingMode.DISABLED
             }
         }
     }
 
     /**
-     *  Times that the cookie banner re-engagement dialog has been shown.
+     * Get the current mode for cookie banner handling
      */
-    val cookieBannerReEngagementDialogShowsCount = counterPreference(
-        appContext.getPreferenceKey(R.string.pref_key_cookie_banner_re_engagement_dialog_shows_counter),
-        maxCount = 2,
-    )
+    fun getCookieBannerHandlingPrivateMode(): CookieBannerHandlingMode {
+        return when (shouldUseCookieBannerPrivateMode) {
+            true -> CookieBannerHandlingMode.REJECT_ALL
+            false -> {
+                CookieBannerHandlingMode.DISABLED
+            }
+        }
+    }
 
     var setAsDefaultGrowthSent by booleanPreference(
         key = appContext.getPreferenceKey(R.string.pref_key_growth_set_as_default),

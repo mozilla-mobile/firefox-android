@@ -5,10 +5,7 @@
 package mozilla.components.feature.addons.ui
 
 import android.annotation.SuppressLint
-import android.graphics.Bitmap
 import android.graphics.Typeface
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.TransitionDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,37 +18,33 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.annotation.VisibleForTesting
 import androidx.core.content.ContextCompat
+import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import mozilla.components.browser.state.action.ExtensionsProcessAction
+import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.feature.addons.Addon
-import mozilla.components.feature.addons.AddonsProvider
 import mozilla.components.feature.addons.R
 import mozilla.components.feature.addons.ui.CustomViewHolder.AddonViewHolder
 import mozilla.components.feature.addons.ui.CustomViewHolder.FooterViewHolder
+import mozilla.components.feature.addons.ui.CustomViewHolder.HeaderViewHolder
 import mozilla.components.feature.addons.ui.CustomViewHolder.SectionViewHolder
 import mozilla.components.feature.addons.ui.CustomViewHolder.UnsupportedSectionViewHolder
-import mozilla.components.support.base.log.logger.Logger
-import mozilla.components.support.ktx.android.content.res.resolveAttribute
-import java.io.IOException
-import mozilla.components.ui.icons.R as iconsR
+import mozilla.components.support.ktx.android.content.appName
+import mozilla.components.support.ktx.android.content.appVersionName
 
 private const val VIEW_HOLDER_TYPE_SECTION = 0
 private const val VIEW_HOLDER_TYPE_NOT_YET_SUPPORTED_SECTION = 1
 private const val VIEW_HOLDER_TYPE_ADDON = 2
 private const val VIEW_HOLDER_TYPE_FOOTER = 3
+private const val VIEW_HOLDER_TYPE_HEADER = 4
 
 /**
  * An adapter for displaying add-on items. This will display information related to the state of
  * an add-on such as recommended, unsupported or installed. In addition, it will perform actions
  * such as installing an add-on.
  *
- * @property addonsProvider An add-ons provider.
  * @property addonsManagerDelegate Delegate that will provides method for handling the add-on items.
  * @param addons The list of add-ons to display.
  * @property style Indicates how items should look like.
@@ -59,15 +52,12 @@ private const val VIEW_HOLDER_TYPE_FOOTER = 3
  */
 @Suppress("LargeClass")
 class AddonsManagerAdapter(
-    private val addonsProvider: AddonsProvider,
     private val addonsManagerDelegate: AddonsManagerAdapterDelegate,
     addons: List<Addon>,
     private val style: Style? = null,
     private val excludedAddonIDs: List<String> = emptyList(),
+    private val store: BrowserStore,
 ) : ListAdapter<Any, CustomViewHolder>(DifferCallback) {
-    private val scope = CoroutineScope(Dispatchers.IO)
-    private val logger = Logger("AddonsManagerAdapter")
-
     /**
      * Represents all the add-ons that will be distributed in multiple headers like
      * enabled, recommended and unsupported, this help have the data source of the items,
@@ -86,7 +76,20 @@ class AddonsManagerAdapter(
             VIEW_HOLDER_TYPE_SECTION -> createSectionViewHolder(parent)
             VIEW_HOLDER_TYPE_NOT_YET_SUPPORTED_SECTION -> createUnsupportedSectionViewHolder(parent)
             VIEW_HOLDER_TYPE_FOOTER -> createFooterSectionViewHolder(parent)
+            VIEW_HOLDER_TYPE_HEADER -> createHeaderSectionViewHolder(parent)
             else -> throw IllegalArgumentException("Unrecognized viewType")
+        }
+    }
+
+    override fun onViewRecycled(holder: CustomViewHolder) {
+        super.onViewRecycled(holder)
+        when (holder) {
+            is AddonViewHolder -> {
+                // Prevent the previous icon from showing while scrolling.
+                holder.iconView.setImageBitmap(null)
+            }
+
+            else -> {}
         }
     }
 
@@ -108,6 +111,19 @@ class AddonsManagerAdapter(
             false,
         )
         return FooterViewHolder(view)
+    }
+
+    private fun createHeaderSectionViewHolder(parent: ViewGroup): CustomViewHolder {
+        val context = parent.context
+        val inflater = LayoutInflater.from(context)
+        val view = inflater.inflate(
+            R.layout.mozac_feature_addons_header_section_item,
+            parent,
+            false,
+        )
+        val restartButton = view.findViewById<TextView>(R.id.restart_button)
+
+        return HeaderViewHolder(view, restartButton)
     }
 
     private fun createUnsupportedSectionViewHolder(parent: ViewGroup): CustomViewHolder {
@@ -133,9 +149,10 @@ class AddonsManagerAdapter(
         val summaryView = view.findViewById<TextView>(R.id.add_on_description)
         val ratingView = view.findViewById<RatingBar>(R.id.rating)
         val ratingAccessibleView = view.findViewById<TextView>(R.id.rating_accessibility)
-        val userCountView = view.findViewById<TextView>(R.id.users_count)
+        val reviewCountView = view.findViewById<TextView>(R.id.review_count)
         val addButton = view.findViewById<ImageView>(R.id.add_button)
         val allowedInPrivateBrowsingLabel = view.findViewById<ImageView>(R.id.allowed_in_private_browsing_label)
+        val statusErrorView = view.findViewById<View>(R.id.add_on_status_error)
         return AddonViewHolder(
             view,
             iconView,
@@ -143,9 +160,10 @@ class AddonsManagerAdapter(
             summaryView,
             ratingView,
             ratingAccessibleView,
-            userCountView,
+            reviewCountView,
             addButton,
             allowedInPrivateBrowsingLabel,
+            statusErrorView,
         )
     }
 
@@ -155,6 +173,7 @@ class AddonsManagerAdapter(
             is Section -> VIEW_HOLDER_TYPE_SECTION
             is NotYetSupportedSection -> VIEW_HOLDER_TYPE_NOT_YET_SUPPORTED_SECTION
             is FooterSection -> VIEW_HOLDER_TYPE_FOOTER
+            is HeaderSection -> VIEW_HOLDER_TYPE_HEADER
             else -> throw IllegalArgumentException("items[position] has unrecognized type")
         }
     }
@@ -170,6 +189,7 @@ class AddonsManagerAdapter(
                 item as NotYetSupportedSection,
             )
             is FooterViewHolder -> bindFooterButton(holder)
+            is HeaderViewHolder -> bindHeaderButton(holder)
         }
     }
 
@@ -209,19 +229,30 @@ class AddonsManagerAdapter(
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    internal fun bindFooterButton(
-        holder: FooterViewHolder,
-    ) {
+    internal fun bindFooterButton(holder: FooterViewHolder) {
         holder.itemView.setOnClickListener {
             addonsManagerDelegate.onFindMoreAddonsButtonClicked()
         }
     }
 
+    internal fun bindHeaderButton(holder: HeaderViewHolder) {
+        holder.restartButton.setOnClickListener {
+            store.dispatch(ExtensionsProcessAction.EnabledAction)
+            // Remove the notification.
+            submitList(currentList.filter { item: Any -> item != HeaderSection })
+        }
+    }
+
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    internal fun bindAddon(holder: AddonViewHolder, addon: Addon) {
+    internal fun bindAddon(
+        holder: AddonViewHolder,
+        addon: Addon,
+        appName: String = holder.itemView.context.appName,
+        appVersion: String = holder.itemView.context.appVersionName,
+    ) {
         val context = holder.itemView.context
         addon.rating?.let {
-            val userCount = context.getString(R.string.mozac_feature_addons_user_rating_count_2)
+            val reviewCount = context.getString(R.string.mozac_feature_addons_user_rating_count_2)
             val ratingContentDescription =
                 String.format(
                     context.getString(R.string.mozac_feature_addons_rating_content_description),
@@ -232,15 +263,16 @@ class AddonsManagerAdapter(
             // for contentDescription for the TalkBack feature
             holder.ratingAccessibleView.text = ratingContentDescription
             holder.ratingView.rating = it.average
-            holder.userCountView.text = String.format(userCount, getFormattedAmount(it.reviews))
+            holder.reviewCountView.text = String.format(reviewCount, getFormattedAmount(it.reviews))
         }
 
-        holder.titleView.text =
-            if (addon.translatableName.isNotEmpty()) {
-                addon.translateName(context)
-            } else {
-                addon.id
-            }
+        val addonName = if (addon.translatableName.isNotEmpty()) {
+            addon.translateName(context)
+        } else {
+            addon.id
+        }
+
+        holder.titleView.text = addonName
 
         if (addon.translatableSummary.isNotEmpty()) {
             holder.summaryView.text = addon.translateSummary(context)
@@ -253,7 +285,7 @@ class AddonsManagerAdapter(
             addonsManagerDelegate.onAddonItemClicked(addon)
         }
 
-        holder.addButton.isVisible = !addon.isInstalled()
+        holder.addButton.isInvisible = addon.isInstalled()
         holder.addButton.setOnClickListener {
             if (!addon.isInstalled()) {
                 addonsManagerDelegate.onInstallAddonButtonClicked(addon)
@@ -261,52 +293,45 @@ class AddonsManagerAdapter(
         }
 
         holder.allowedInPrivateBrowsingLabel.isVisible = addon.isAllowedInPrivateBrowsing()
-        style?.maybeSetPrivateBrowsingLabelDrawale(holder.allowedInPrivateBrowsingLabel)
+        style?.maybeSetPrivateBrowsingLabelDrawable(holder.allowedInPrivateBrowsingLabel)
 
-        fetchIcon(addon, holder.iconView)
+        holder.iconView.setIcon(addon)
+
         style?.maybeSetAddonNameTextColor(holder.titleView)
         style?.maybeSetAddonSummaryTextColor(holder.summaryView)
-    }
 
-    @Suppress("MagicNumber")
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    internal fun fetchIcon(addon: Addon, iconView: ImageView, scope: CoroutineScope = this.scope): Job {
-        return scope.launch {
-            try {
-                // We calculate how much time takes to fetch an icon,
-                // if takes less than a second, we assume it comes
-                // from a cache and we don't show any transition animation.
-                val startTime = System.currentTimeMillis()
-                val iconBitmap = addonsProvider.getAddonIconBitmap(addon)
-                val timeToFetch: Double = (System.currentTimeMillis() - startTime) / 1000.0
-                val isFromCache = timeToFetch < 1
-                if (iconBitmap != null) {
-                    scope.launch(Main) {
-                        if (isFromCache) {
-                            iconView.setImageDrawable(BitmapDrawable(iconView.resources, iconBitmap))
-                        } else {
-                            setWithCrossFadeAnimation(iconView, iconBitmap)
-                        }
-                    }
-                } else if (addon.installedState?.icon != null) {
-                    scope.launch(Main) {
-                        iconView.setImageDrawable(BitmapDrawable(iconView.resources, addon.installedState.icon))
-                    }
-                }
-            } catch (e: IOException) {
-                scope.launch(Main) {
-                    val context = iconView.context
-                    val att = context.theme.resolveAttribute(android.R.attr.textColorPrimary)
-                    iconView.setColorFilter(ContextCompat.getColor(context, att))
-                    iconView.setImageDrawable(
-                        ContextCompat.getDrawable(
-                            context,
-                            iconsR.drawable.mozac_ic_extension_24,
-                        ),
-                    )
-                }
-                logger.error("Attempt to fetch the ${addon.id} icon failed", e)
+        val statusErrorMessage = holder.statusErrorView.findViewById<TextView>(R.id.add_on_status_error_message)
+        val statusErrorLearnMoreLink = holder.statusErrorView.findViewById<TextView>(
+            R.id.add_on_status_error_learn_more_link,
+        )
+        if (addon.isDisabledAsBlocklisted()) {
+            statusErrorMessage.text = context.getString(R.string.mozac_feature_addons_status_blocklisted, addonName)
+            statusErrorLearnMoreLink.setOnClickListener {
+                addonsManagerDelegate.onLearnMoreLinkClicked(
+                    AddonsManagerAdapterDelegate.LearnMoreLinks.BLOCKLISTED_ADDON,
+                    addon,
+                )
             }
+            holder.statusErrorView.isVisible = true
+        } else if (addon.isDisabledAsNotCorrectlySigned()) {
+            statusErrorMessage.text = context.getString(R.string.mozac_feature_addons_status_unsigned, addonName)
+            statusErrorLearnMoreLink.setOnClickListener {
+                addonsManagerDelegate.onLearnMoreLinkClicked(
+                    AddonsManagerAdapterDelegate.LearnMoreLinks.ADDON_NOT_CORRECTLY_SIGNED,
+                    addon,
+                )
+            }
+            holder.statusErrorView.isVisible = true
+        } else if (addon.isDisabledAsIncompatible()) {
+            statusErrorMessage.text = context.getString(
+                R.string.mozac_feature_addons_status_incompatible,
+                addonName,
+                appName,
+                appVersion,
+            )
+            holder.statusErrorView.isVisible = true
+            // There is no link when the add-on is disabled because it isn't compatible with the application version.
+            statusErrorLearnMoreLink.isVisible = false
         }
     }
 
@@ -326,6 +351,12 @@ class AddonsManagerAdapter(
                 addon.inInstalledSection() -> installedAddons.add(addon)
                 addon.inDisabledSection() -> disabledAddons.add(addon)
             }
+        }
+
+        // Calls are safe, except in tests since the store is mocked in most cases.
+        @Suppress("UNNECESSARY_SAFE_CALL")
+        if (store?.state?.extensionsProcessDisabled == true) {
+            itemsWithSections.add(HeaderSection)
         }
 
         // Add installed section and addons if available
@@ -369,6 +400,9 @@ class AddonsManagerAdapter(
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     internal object FooterSection
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    internal object HeaderSection
 
     /**
      * Allows to customize how items should look like.
@@ -416,7 +450,7 @@ class AddonsManagerAdapter(
             }
         }
 
-        internal fun maybeSetPrivateBrowsingLabelDrawale(imageView: ImageView) {
+        internal fun maybeSetPrivateBrowsingLabelDrawable(imageView: ImageView) {
             addonAllowPrivateBrowsingLabelDrawableRes?.let {
                 imageView.setImageDrawable(ContextCompat.getDrawable(imageView.context, it))
             }
@@ -466,16 +500,6 @@ class AddonsManagerAdapter(
         @SuppressLint("DiffUtilEquals")
         override fun areContentsTheSame(oldItem: Any, newItem: Any): Boolean {
             return oldItem == newItem
-        }
-    }
-
-    internal fun setWithCrossFadeAnimation(image: ImageView, bitmap: Bitmap, durationMillis: Int = 1700) {
-        with(image) {
-            val bitmapDrawable = BitmapDrawable(context.resources, bitmap)
-            val animation = TransitionDrawable(arrayOf(drawable, bitmapDrawable))
-            animation.isCrossFadeEnabled = true
-            setImageDrawable(animation)
-            animation.startTransition(durationMillis)
         }
     }
 }

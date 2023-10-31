@@ -71,7 +71,9 @@ class SettingsAdvancedTest {
             verifyExternalDownloadManagerButton()
             verifyExternalDownloadManagerToggle(false)
             verifyLeakCanaryButton()
-            verifyLeakCanaryToggle(true)
+            // LeakCanary is disabled in UI tests.
+            // See BuildConfig.LEAKCANARY.
+            verifyLeakCanaryToggle(false)
             verifyRemoteDebuggingButton()
             verifyRemoteDebuggingToggle(false)
         }
@@ -222,7 +224,10 @@ class SettingsAdvancedTest {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(externalLinksPage.url) {
             clickPageObject(youTubeFullLink)
-            verifyPrivateBrowsingOpenLinkInAnotherAppPrompt("youtube")
+            verifyPrivateBrowsingOpenLinkInAnotherAppPrompt(
+                url = "youtube",
+                pageObject = youTubeFullLink,
+            )
             clickPageObject(itemWithResIdAndText("android:id/button2", "CANCEL"))
             waitForPageToLoad()
             verifyUrl("youtube")
@@ -256,7 +261,10 @@ class SettingsAdvancedTest {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(externalLinksPage.url) {
             clickPageObject(youTubeSchemaLink)
-            verifyPrivateBrowsingOpenLinkInAnotherAppPrompt("youtube")
+            verifyPrivateBrowsingOpenLinkInAnotherAppPrompt(
+                url = "youtube",
+                pageObject = youTubeSchemaLink,
+            )
             clickPageObject(itemWithResIdAndText("android:id/button1", "OPEN"))
             mDevice.waitForIdle()
             assertYoutubeAppOpens()

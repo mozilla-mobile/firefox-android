@@ -46,6 +46,7 @@ import androidx.navigation.fragment.navArgs
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import mozilla.components.browser.state.action.AwesomeBarAction
 import mozilla.components.browser.state.search.SearchEngine
 import mozilla.components.browser.state.state.searchEngines
 import mozilla.components.browser.state.state.selectedOrDefaultSearchEngine
@@ -236,7 +237,6 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             getPreviousDestination()?.destination?.id == R.id.homeFragment
 
         toolbarView = ToolbarView(
-            requireContext(),
             requireContext().settings(),
             requireComponents,
             interactor,
@@ -492,11 +492,8 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             toolbarView.update(it)
             awesomeBarView.update(it)
 
-            if (showUnifiedSearchFeature) {
-                addSearchSelector()
-                updateQrButton(it)
-            }
-
+            addSearchSelector()
+            updateQrButton(it)
             updateVoiceSearchButton()
         }
     }
@@ -638,6 +635,9 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
         hideDeviceKeyboard()
+        if (!dialogHandledAction) {
+            requireComponents.core.store.dispatch(AwesomeBarAction.EngagementFinished(abandoned = true))
+        }
     }
 
     override fun onBackPressed(): Boolean {

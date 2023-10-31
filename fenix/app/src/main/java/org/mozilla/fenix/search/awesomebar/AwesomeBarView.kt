@@ -57,7 +57,6 @@ class AwesomeBarView(
     private val engineForSpeculativeConnects: Engine?
     private val defaultHistoryStorageProvider: HistoryStorageSuggestionProvider
     private val defaultCombinedHistoryProvider: CombinedHistorySuggestionProvider
-    private val fxSuggestProvider: FxSuggestSuggestionProvider?
     private val shortcutsEnginePickerProvider: ShortcutsSuggestionProvider
     private val defaultSearchSuggestionProvider: SearchSuggestionProvider
     private val defaultSearchActionProvider: SearchActionProvider
@@ -139,18 +138,6 @@ class AwesomeBarView(
                 showEditSuggestion = false,
                 suggestionsHeader = activity.getString(R.string.firefox_suggest_header),
             )
-
-        fxSuggestProvider = if (activity.settings().enableFxSuggest) {
-            FxSuggestSuggestionProvider(
-                resources = activity.resources,
-                loadUrlUseCase = loadUrlUseCase,
-                includeSponsoredSuggestions = activity.settings().showSponsoredSuggestions,
-                includeNonSponsoredSuggestions = activity.settings().showNonSponsoredSuggestions,
-                suggestionsHeader = activity.getString(R.string.firefox_suggest_header),
-            )
-        } else {
-            null
-        }
 
         val searchBitmap = getDrawable(activity, R.drawable.ic_search)!!.apply {
             colorFilter = createBlendModeColorFilterCompat(primaryTextColor, SRC_IN)
@@ -332,9 +319,20 @@ class AwesomeBarView(
             providersToAdd.add(getLocalTabsProvider(state.searchEngineSource, true))
         }
 
-        providersToAdd.add(searchEngineSuggestionProvider)
+        if (state.showSponsoredSuggestions || state.showNonSponsoredSuggestions) {
+            providersToAdd.add(
+                FxSuggestSuggestionProvider(
+                    resources = activity.resources,
+                    loadUrlUseCase = loadUrlUseCase,
+                    includeSponsoredSuggestions = state.showSponsoredSuggestions,
+                    includeNonSponsoredSuggestions = state.showNonSponsoredSuggestions,
+                    suggestionsHeader = activity.getString(R.string.firefox_suggest_header),
+                    contextId = activity.settings().contileContextId,
+                ),
+            )
+        }
 
-        fxSuggestProvider?.let { providersToAdd.add(it) }
+        providersToAdd.add(searchEngineSuggestionProvider)
 
         return providersToAdd
     }
@@ -442,11 +440,7 @@ class AwesomeBarView(
                     engine,
                     shortcutSearchUseCase,
                     components.core.client,
-                    limit = if (activity.settings().showUnifiedSearchFeature) {
-                        METADATA_SHORTCUT_SUGGESTION_LIMIT
-                    } else {
-                        METADATA_SUGGESTION_LIMIT
-                    },
+                    limit = METADATA_SHORTCUT_SUGGESTION_LIMIT,
                     mode = SearchSuggestionProvider.Mode.MULTIPLE_SUGGESTIONS,
                     icon = searchBitmap,
                     engine = engineForSpeculativeConnects,
@@ -567,6 +561,8 @@ class AwesomeBarView(
         val showAllSyncedTabsSuggestions: Boolean,
         val showSessionSuggestionsForCurrentEngine: Boolean,
         val showAllSessionSuggestions: Boolean,
+        val showSponsoredSuggestions: Boolean,
+        val showNonSponsoredSuggestions: Boolean,
         val searchEngineSource: SearchEngineSource,
     )
 
@@ -600,5 +596,7 @@ fun SearchFragmentState.toSearchProviderState() = AwesomeBarView.SearchProviderS
     showAllSyncedTabsSuggestions = showAllSyncedTabsSuggestions,
     showSessionSuggestionsForCurrentEngine = showSessionSuggestionsForCurrentEngine,
     showAllSessionSuggestions = showAllSessionSuggestions,
+    showSponsoredSuggestions = showSponsoredSuggestions,
+    showNonSponsoredSuggestions = showNonSponsoredSuggestions,
     searchEngineSource = searchEngineSource,
 )

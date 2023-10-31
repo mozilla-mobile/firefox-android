@@ -322,16 +322,9 @@
     <string name="onboarding_home_enable_notifications_negative_button">Не зараз</string>
 
     <!-- Juno first user onboarding flow experiment, strings are marked unused as they are only referenced by Nimbus experiments. -->
-    <!-- Title for set firefox as default browser screen.
-        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="juno_onboarding_default_browser_title" moz:RemovedIn="117" tools:ignore="UnusedResources">Зрабіце %s сваім паўсядзённым браўзерам</string>
     <!-- Title for set firefox as default browser screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
         Note: The word "Firefox" should NOT be translated -->
     <string name="juno_onboarding_default_browser_title_nimbus" tools:ignore="UnusedResources">Зрабіце Firefox сваім паўсядзённым браўзерам</string>
-    <!-- Description for set firefox as default browser screen.
-        The first parameter is the Firefox brand name.
-        The second parameter is the string with key "juno_onboarding_default_browser_description_link_text". -->
-    <string name="juno_onboarding_default_browser_description" moz:RemovedIn="117" tools:ignore="UnusedResources">%1$s ставіць людзей вышэй за прыбытак і абараняе вашу прыватнасць, блакуючы міжсайтавыя трэкеры.\n\nДаведайцеся больш у нашым %2$s.</string>
     <!-- Description for set firefox as default browser screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
         Note: The word "Firefox" should NOT be translated -->
     <string name="juno_onboarding_default_browser_description_nimbus" tools:ignore="UnusedResources">Firefox ставіць людзей вышэй за прыбытак і абараняе вашу прыватнасць, блакуючы міжсайтавыя трэкеры.\n\nДаведайцеся больш у нашым паведамленні аб прыватнасці.</string>
@@ -350,16 +343,10 @@
     <string name="juno_onboarding_sign_in_positive_button" tools:ignore="UnusedResources">Увайсці</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
     <string name="juno_onboarding_sign_in_negative_button" tools:ignore="UnusedResources">Не зараз</string>
-    <!-- Title for enable notification permission screen.
-        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="juno_onboarding_enable_notifications_title" moz:RemovedIn="117" tools:ignore="UnusedResources">Апавяшчэнні дапамогуць вам зрабіць больш з %s</string>
 
     <!-- Title for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
         Note: The word "Firefox" should NOT be translated -->
     <string name="juno_onboarding_enable_notifications_title_nimbus" tools:ignore="UnusedResources">Апавяшчэнні дапамогуць вам зрабіць больш з Firefox</string>
-    <!-- Description for enable notification permission screen.
-        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
-    <string name="juno_onboarding_enable_notifications_description" moz:RemovedIn="117" tools:ignore="UnusedResources">Адпраўляйце карткі паміж прыладамі, кіруйце сцягваннямі і атрымлівайце парады, як максімальна выкарыстоўваць %s.</string>
     <!-- Description for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
        Note: The word "Firefox" should NOT be translated   -->
     <string name="juno_onboarding_enable_notifications_description_nimbus" tools:ignore="UnusedResources">Адпраўляйце карткі паміж прыладамі, кіруйце сцягваннямі і атрымлівайце парады, як максімальна выкарыстоўваць Firefox.</string>
@@ -514,11 +501,15 @@
     <!-- Preference for accessibility -->
     <string name="preferences_accessibility">Даступнасць</string>
     <!-- Preference to override the Firefox Account server -->
-    <string name="preferences_override_fxa_server">Уласны сервер уліковых запісаў Firefox</string>
+    <string name="preferences_override_fxa_server" moz:RemovedIn="120" tools:ignore="UnusedResources">Уласны сервер уліковых запісаў Firefox</string>
+    <!-- Preference to override the Mozilla account server -->
+    <string name="preferences_override_account_server">Уласны сервер уліковых запісаў Mozilla</string>
     <!-- Preference to override the Sync token server -->
     <string name="preferences_override_sync_tokenserver">Уласны сервер сінхранізацыі</string>
     <!-- Toast shown after updating the FxA/Sync server override preferences -->
-    <string name="toast_override_fxa_sync_server_done">Сервер уліковага запісу Firefox/сінхранізацыі зменены. Выхад з праграмы, каб прымяніць змены…</string>
+    <string name="toast_override_fxa_sync_server_done" moz:RemovedIn="120" tools:ignore="UnusedResources">Сервер уліковага запісу Firefox/сінхранізацыі зменены. Выхад з праграмы, каб прымяніць змены…</string>
+    <!-- Toast shown after updating the Mozilla account/Sync server override preferences -->
+    <string name="toast_override_account_sync_server_done">Сервер уліковых запісаў Mozilla/сінхранізацыі зменены. Выхад з праграмы, каб прымяніць змены…</string>
     <!-- Preference category for account information -->
     <string name="preferences_category_account">Уліковы запіс</string>
     <!-- Preference for changing where the toolbar is positioned -->
@@ -535,7 +526,9 @@
     <!-- Preference description for banner about signing in -->
     <string name="preferences_sign_in_description_2">Увайсці, каб сінхранізаваць карткі, закладкі, паролі і іншае.</string>
     <!-- Preference shown instead of account display name while account profile information isn't available yet. -->
-    <string name="preferences_account_default_name">Уліковы запіс Firefox</string>
+    <string name="preferences_account_default_name" moz:RemovedIn="120" tools:ignore="UnusedResources">Уліковы запіс Firefox</string>
+    <!-- Preference shown instead of account display name while account profile information isn't available yet. -->
+    <string name="preferences_account_default_name_2">Уліковы запіс Mozilla</string>
     <!-- Preference text for account title when there was an error syncing FxA -->
     <string name="preferences_account_sync_error">Падключыцеся, каб аднавіць сінхранізацыю</string>
     <!-- Preference for language -->
@@ -547,7 +540,7 @@
     <!-- Preference for developers -->
     <string name="preferences_remote_debugging">Аддаленая адладка праз USB</string>
     <!-- Preference title for switch preference to show search engines -->
-    <string name="preferences_show_search_engines">Паказаць пашукавікі</string>
+    <string name="preferences_show_search_engines" moz:RemovedIn="120" tools:ignore="UnusedResources">Паказаць пашукавікі</string>
     <!-- Preference title for switch preference to show search suggestions -->
     <string name="preferences_show_search_suggestions">Паказваць пошукавыя прапановы</string>
     <!-- Preference title for switch preference to show voice search button -->
@@ -566,6 +559,16 @@
     <string name="preferences_account_settings">Налады ўліковага запісу</string>
     <!-- Preference for enabling url autocomplete-->
     <string name="preferences_enable_autocomplete_urls">Аўтазапаўненне URL-адрасоў</string>
+    <!-- Preference title for switch preference to show sponsored Firefox Suggest search suggestions -->
+    <string name="preferences_show_sponsored_suggestions">Прапановы ад спонсараў</string>
+    <!-- Summary for preference to show sponsored Firefox Suggest search suggestions.
+         The first parameter is the name of the application. -->
+    <string name="preferences_show_sponsored_suggestions_summary">Падтрымаць %1$s выпадковымі спонсарскімі прапановамі</string>
+    <!-- Preference title for switch preference to show Firefox Suggest search suggestions for web content.
+         The first parameter is the name of the application. -->
+    <string name="preferences_show_nonsponsored_suggestions">Прапановы ад %1$s</string>
+    <!-- Summary for preference to show Firefox Suggest search suggestions for web content -->
+    <string name="preferences_show_nonsponsored_suggestions_summary">Атрымлівайце прапановы з інтэрнэту, звязаныя з вашым пошукам</string>
     <!-- Preference for open links in third party apps -->
     <string name="preferences_open_links_in_apps">Адкрываць спасылкі ў праграмах</string>
     <!-- Preference for open links in third party apps always open in apps option -->
@@ -668,9 +671,9 @@
 
     <!-- Add-on Installation from AMO-->
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
-    <string name="addon_not_supported_error">Дадатак не падтрымліваецца</string>
+    <string name="addon_not_supported_error" moz:removedIn="120" tools:ignore="UnusedResources">Дадатак не падтрымліваецца</string>
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is already installed -->
-    <string name="addon_already_installed">Дадатак ужо ўсталяваны</string>
+    <string name="addon_already_installed" moz:removedIn="120" tools:ignore="UnusedResources">Дадатак ужо ўсталяваны</string>
 
     <!-- Add-on process crash dialog to user -->
     <!-- Title of a dialog shown to the user when enough errors have occurred with addons and they need to be temporarily disabled -->
@@ -685,6 +688,8 @@
     <!-- Account Preferences -->
     <!-- Preference for managing your account via accounts.firefox.com -->
     <string name="preferences_manage_account">Кіраванне ўліковым запісам</string>
+    <!-- Summary of the preference for managing your account via accounts.firefox.com. -->
+    <string name="preferences_manage_account_summary">Зменіць пароль, кіраваць зборам дадзеных або выдаліць свой уліковы запіс</string>
     <!-- Preference for triggering sync -->
     <string name="preferences_sync_now">Сінхранізаваць</string>
     <!-- Preference category for sync -->
@@ -1961,7 +1966,7 @@
     <!-- Content description (not visible, for screen readers etc.): Title for the button to add a search engine in the action bar -->
     <string name="search_engine_add_button_content_description">Дадаць</string>
     <!-- Content description (not visible, for screen readers etc.): Title for the button to save a search engine in the action bar -->
-    <string name="search_engine_add_custom_search_engine_edit_button_content_description">Захаваць</string>
+    <string name="search_engine_add_custom_search_engine_edit_button_content_description" moz:RemovedIn="120" tools:ignore="UnusedResources">Захаваць</string>
 
     <!-- Text for the menu button to edit a search engine -->
     <string name="search_engine_edit">Змяніць</string>
@@ -2218,7 +2223,9 @@
 
     <!-- Review quality check feature-->
     <!-- Name for the review quality check feature used as title for the panel. -->
-    <string name="review_quality_check_feature_name">Праверка водгукаў</string>
+    <string name="review_quality_check_feature_name" moz:RemovedIn="120" tools:ignore="UnusedResources">Праверка водгукаў</string>
+    <!-- Name for the review quality check feature used as title for the panel. -->
+    <string name="review_quality_check_feature_name_2">Праверка водгукаў</string>
     <!-- Summary for grades A and B for review quality check adjusted grading. -->
     <string name="review_quality_check_grade_a_b_description">Надзейныя водгукі</string>
     <!-- Summary for grade C for review quality check adjusted grading. -->
@@ -2238,17 +2245,21 @@
     <!-- Paragraph explaining how we analyze the reliability of a product's reviews. First parameter is the Fakespot product name. In the phrase "Fakespot by Mozilla", "by" can be localized. Does not need to stay by. -->
     <string name="review_quality_check_explanation_body_reliability">Мы выкарыстоўваем тэхналогію штучнага інтэлекту ад %s ад Mozilla для праверкі надзейнасці водгукаў на прадукцыю. Гэты аналіз дапаможа вам ацаніць толькі якасць водгуку, а не якасць прадукту.</string>
     <!-- Paragraph explaining the grading system we use to classify the reliability of a product's reviews. -->
-    <string name="review_quality_check_info_review_grade_header" tools:ignore="UnusedResources"><![CDATA[Кожнаму водгуку на прадукт мы прысвойваем <b>літарную адзнаку</b> ад A да F.]]></string>
+    <string name="review_quality_check_info_review_grade_header"><![CDATA[Кожнаму водгуку на прадукт мы прысвойваем <b>літарную адзнаку</b> ад A да F.]]></string>
     <!-- Description explaining grades A and B for review quality check adjusted grading. -->
     <string name="review_quality_check_info_grade_info_AB">Надзейныя водгукі. Мы лічым, што водгукі, хутчэй за ўсё, ад сапраўдных кліентаў, якія пакінулі сумленныя, непрадузятыя водгукі.</string>
+    <!-- Description explaining grades A and B for review quality check adjusted grading. -->
+    <string name="review_quality_check_info_grade_info_AB_2" moz:RemovedIn="120" tools:ignore="UnusedResources">Мы лічым, што водгукі надзейныя.</string>
     <!-- Description explaining grade C for review quality check adjusted grading. -->
     <string name="review_quality_check_info_grade_info_C">Мы лічым, што тут ёсць сумесь надзейных і ненадзейных водгукаў.</string>
     <!-- Description explaining grades D and F for review quality check adjusted grading. -->
     <string name="review_quality_check_info_grade_info_DF">Ненадзейныя водгукі. Мы лічым, што агляды, хутчэй за ўсё, падробленыя або ад неаб\'ектыўных аглядальнікаў.</string>
+    <!-- Description explaining grades D and F for review quality check adjusted grading. -->
+    <string name="review_quality_check_info_grade_info_DF_2" moz:RemovedIn="120" tools:ignore="UnusedResources">Мы лічым, што водгукі ненадзейныя.</string>
     <!-- Paragraph explaining how a product's adjusted grading is calculated. -->
     <string name="review_quality_check_explanation_body_adjusted_grading"><![CDATA[<b>Скарэкціраваны рэйтынг</b> заснаваны толькі на водгуках, якія мы лічым надзейнымі.]]></string>
     <!-- Paragraph explaining product review highlights. First parameter is the name of the retailer (e.g. Amazon). -->
-    <string name="review_quality_check_explanation_body_highlights" tools:ignore="UnusedResources"><![CDATA[<b>Асноўныя моманты</b> з водгукаў пра %s за апошнія 80 дзён, якія мы лічым надзейнымі.]]></string>
+    <string name="review_quality_check_explanation_body_highlights"><![CDATA[<b>Асноўныя моманты</b> з водгукаў пра %s за апошнія 80 дзён, якія мы лічым надзейнымі.]]></string>
     <!-- Text for learn more caption presenting a link with information about review quality. First parameter is for clickable text defined in review_quality_check_info_learn_more_link. -->
     <string name="review_quality_check_info_learn_more">Даведайцеся больш пра %s.</string>
     <!-- Clickable text that links to review quality check SuMo page. First parameter is the Fakespot product name. In the phrase "Fakespot by Mozilla", "by" can be localized. Does not need to stay by. -->
@@ -2258,7 +2269,9 @@
     <!-- Text for label for switch preference to show recommended products from review quality check settings section. -->
     <string name="review_quality_check_settings_recommended_products">Паказваць рэкламу ў сродку праверкі водгукаў</string>
     <!-- Description for switch preference to show recommended products from review quality check settings section. First parameter is for clickable text defined in review_quality_check_settings_recommended_products_learn_more.-->
-    <string name="review_quality_check_settings_recommended_products_description" tools:ignore="UnusedResources">Вы будзеце час ад часу бачыць рэкламу адпаведных тавараў. Усе аб’явы павінны адпавядаць нашым стандартам якасці водгукаў. %s</string>
+    <string name="review_quality_check_settings_recommended_products_description" moz:RemovedIn="120" tools:ignore="UnusedResources">Вы будзеце час ад часу бачыць рэкламу адпаведных тавараў. Усе аб’явы павінны адпавядаць нашым стандартам якасці водгукаў. %s</string>
+    <!-- Description for switch preference to show recommended products from review quality check settings section. First parameter is for clickable text defined in review_quality_check_settings_recommended_products_learn_more.-->
+    <string name="review_quality_check_settings_recommended_products_description_2" tools:ignore="UnusedResources">Вы будзеце час ад часу бачыць рэкламу адпаведных тавараў. Мы рэкламуем прадукты толькі з надзейнымі водгукамі. %s</string>
     <!-- Clickable text that links to review quality check recommended products support article. -->
     <string name="review_quality_check_settings_recommended_products_learn_more" tools:ignore="UnusedResources">Падрабязней</string>
     <!-- Text for turning sidebar off button from review quality check settings section. -->
@@ -2278,29 +2291,31 @@
     <!-- Text for button from warning card informing the user that the current analysis is outdated. Clicking this should trigger the product's re-analysis. -->
     <string name="review_quality_check_outdated_analysis_warning_action" tools:ignore="UnusedResources">Праверыць зараз</string>
     <!-- Title for warning card informing the user that the current product does not have enough reviews for a review analysis. -->
-    <string name="review_quality_check_no_reviews_warning_title" tools:ignore="UnusedResources">Пакуль недастаткова водгукаў</string>
+    <string name="review_quality_check_no_reviews_warning_title">Пакуль недастаткова водгукаў</string>
     <!-- Text for body of warning card informing the user that the current product does not have enough reviews for a review analysis. -->
-    <string name="review_quality_check_no_reviews_warning_body" tools:ignore="UnusedResources">Калі на гэты прадукт будзе больш водгукаў, мы зможам праверыць іх якасць.</string>
+    <string name="review_quality_check_no_reviews_warning_body">Калі на гэты прадукт будзе больш водгукаў, мы зможам праверыць іх якасць.</string>
     <!-- Title for warning card informing the user that the current product is currently not available. -->
     <string name="review_quality_check_product_availability_warning_title" tools:ignore="UnusedResources">Прадукт недаступны</string>
     <!-- Text for the body of warning card informing the user that the current product is currently not available. -->
     <string name="review_quality_check_product_availability_warning_body" tools:ignore="UnusedResources">Калі вы ўбачыце гэты прадукт ізноў у наяўнасці, паведаміце нам пра гэта, і мы будзем правяраць водгукі.</string>
     <!-- Clickable text for warning card informing the user that the current product is currently not available. Clicking this should inform the server that the product is available. -->
-    <string name="review_quality_check_product_availability_warning_action" tools:ignore="UnusedResources">Паведаміць, што гэты прадукт ізноў у наяўнасці</string>
+    <string name="review_quality_check_product_availability_warning_action" moz:RemovedIn="120" tools:ignore="UnusedResources">Паведаміць, што гэты прадукт ізноў у наяўнасці</string>
+    <!-- Clickable text for warning card informing the user that the current product is currently not available. Clicking this should inform the server that the product is available. -->
+    <string name="review_quality_check_product_availability_warning_action_2" tools:ignore="UnusedResources">Паведаміць, што прадукт ёсць у наяўнасці</string>
     <!-- Title for warning card informing the user that the current product's re-analysis is still processing. -->
-    <string name="review_quality_check_reanalysis_in_progress_warning_title" tools:ignore="UnusedResources">Праверка якасці водгукаў</string>
+    <string name="review_quality_check_reanalysis_in_progress_warning_title">Праверка якасці водгукаў</string>
     <!-- Title for warning card informing the user that the current product's analysis is still processing. -->
-    <string name="review_quality_check_analysis_in_progress_warning_title" tools:ignore="UnusedResources">Праверка якасці водгукаў</string>
+    <string name="review_quality_check_analysis_in_progress_warning_title">Праверка якасці водгукаў</string>
     <!-- Text for body of warning card informing the user that the current product's analysis is still processing. -->
-    <string name="review_quality_check_analysis_in_progress_warning_body" tools:ignore="UnusedResources">Гэта можа заняць каля 60 секунд.</string>
+    <string name="review_quality_check_analysis_in_progress_warning_body">Гэта можа заняць каля 60 секунд.</string>
     <!-- Title for info card displayed after the user reports a product is back in stock. -->
     <string name="review_quality_check_analysis_requested_info_title" tools:ignore="UnusedResources">Дзякуй за паведамленне!</string>
     <!-- Text for body of info card displayed after the user reports a product is back in stock. -->
     <string name="review_quality_check_analysis_requested_info_body" tools:ignore="UnusedResources">Мы павінны атрымаць інфармацыю аб водгуках аб гэтым прадукце на працягу 24 гадзін. Праверце зноў пазней.</string>
     <!-- Title for info card displayed when the user review checker while on a product that Fakespot does not analyze (e.g. gift cards, music). -->
-    <string name="review_quality_check_not_analyzable_info_title" tools:ignore="UnusedResources">Мы не можам праверыць гэтыя водгукі</string>
+    <string name="review_quality_check_not_analyzable_info_title">Мы не можам праверыць гэтыя водгукі</string>
     <!-- Text for body of info card displayed when the user review checker while on a product that Fakespot does not analyze (e.g. gift cards, music). -->
-    <string name="review_quality_check_not_analyzable_info_body" tools:ignore="UnusedResources">На жаль, мы не можам праверыць якасць водгукаў для некаторых відаў прадукцыі. Напрыклад, падарункавыя карты і струменевае відэа, музыка і гульні.</string>
+    <string name="review_quality_check_not_analyzable_info_body">На жаль, мы не можам праверыць якасць водгукаў для некаторых відаў прадукцыі. Напрыклад, падарункавыя карты і струменевае відэа, музыка і гульні.</string>
     <!-- Title for info card displayed when another user reported the displayed product is back in stock. -->
     <string name="review_quality_check_analysis_requested_other_user_info_title" tools:ignore="UnusedResources">Інфармацыя хутка будзе</string>
     <!-- Text for body of info card displayed when another user reported the displayed product is back in stock. -->
@@ -2310,19 +2325,19 @@
     <!-- Text for the action button from info card displayed to the user when analysis finished updating. -->
     <string name="review_quality_check_analysis_updated_confirmation_action" tools:ignore="UnusedResources">Зразумела</string>
     <!-- Title for error card displayed to the user when an error occurred. -->
-    <string name="review_quality_check_generic_error_title" tools:ignore="UnusedResources">Зараз інфармацыя адсутнічае</string>
+    <string name="review_quality_check_generic_error_title">Зараз інфармацыя адсутнічае</string>
     <!-- Text for body of error card displayed to the user when an error occurred. -->
-    <string name="review_quality_check_generic_error_body" tools:ignore="UnusedResources">Мы працуем над вырашэннем праблемы. Калі ласка, праверце пазней.</string>
+    <string name="review_quality_check_generic_error_body">Мы працуем над вырашэннем праблемы. Калі ласка, праверце пазней.</string>
     <!-- Title for error card displayed to the user when the device is disconnected from the network. -->
-    <string name="review_quality_check_no_connection_title" tools:ignore="UnusedResources">Няма падключэння да сеткі</string>
+    <string name="review_quality_check_no_connection_title">Няма падключэння да сеткі</string>
     <!-- Text for body of error card displayed to the user when the device is disconnected from the network. -->
-    <string name="review_quality_check_no_connection_body" tools:ignore="UnusedResources">Праверце падключэнне да сеткі, потым паспрабуйце абнавіць старонку.</string>
+    <string name="review_quality_check_no_connection_body">Праверце падключэнне да сеткі, потым паспрабуйце абнавіць старонку.</string>
     <!-- Title for card displayed to the user for products whose reviews were not analyzed yet. -->
-    <string name="review_quality_check_no_analysis_title" tools:ignore="UnusedResources">Інфармацыі аб гэтых водгуках пакуль няма</string>
+    <string name="review_quality_check_no_analysis_title">Інфармацыі аб гэтых водгуках пакуль няма</string>
     <!-- Text for the body of card displayed to the user for products whose reviews were not analyzed yet. -->
-    <string name="review_quality_check_no_analysis_body" tools:ignore="UnusedResources">Каб даведацца, ці надзейныя водгукі аб гэтым прадукце, праверце якасць водгукаў. Гэта зойме ўсяго каля 60 секунд.</string>
+    <string name="review_quality_check_no_analysis_body">Каб даведацца, ці надзейныя водгукі аб гэтым прадукце, праверце якасць водгукаў. Гэта зойме ўсяго каля 60 секунд.</string>
     <!-- Text for button from body of card displayed to the user for products whose reviews were not analyzed yet. Clicking this should trigger a product analysis. -->
-    <string name="review_quality_check_no_analysis_link" tools:ignore="UnusedResources">Праверыць якасць водгукаў</string>
+    <string name="review_quality_check_no_analysis_link">Праверыць якасць водгукаў</string>
     <!-- Headline for review quality check contextual onboarding card. -->
     <string name="review_quality_check_contextual_onboarding_title">Паспрабуйце наш надзейны даведнік па водгуках на прадукты</string>
     <!-- Description for review quality check contextual onboarding card. The first and last two parameters are for retailer names (e.g. Amazon, Walmart). The second parameter is for the name of the application (e.g. Firefox). -->
@@ -2350,11 +2365,11 @@
     <!-- Text displayed in the second CFR presenting the review quality check feature that opens the review checker when clicked. -->
     <string name="review_quality_check_second_cfr_action" tools:ignore="UnusedResources">Адкрыць сродак праверкі водгукаў</string>
     <!-- Flag showing that the review quality check feature is work in progress. -->
-    <string name="review_quality_check_beta_flag" tools:ignore="UnusedResources">Бэта</string>
+    <string name="review_quality_check_beta_flag">Бэта</string>
     <!-- Content description (not visible, for screen readers etc.) for opening browser menu button to open review quality check bottom sheet. -->
-    <string name="browser_menu_review_quality_check">Адкрыць праверку якасці водгукаў</string>
+    <string name="review_quality_check_open_handle_content_description">Адкрыць сродак праверкі водгукаў</string>
     <!-- Content description (not visible, for screen readers etc.) for closing browser menu button to open review quality check bottom sheet. -->
-    <string name="browser_menu_review_quality_check_close">Закрыць праверку якасці водгукаў</string>
+    <string name="review_quality_check_close_handle_content_description">Закрыць сродак праверкі водгукаў</string>
     <!-- Content description (not visible, for screen readers etc.) for review quality check star rating. First parameter is the number of stars (1-5) representing the rating. -->
     <string name="review_quality_check_star_rating_content_description">%1$s з 5 зорак</string>
     <!-- Text for minimize button from highlights card. When clicked the highlights card should reduce its size. -->

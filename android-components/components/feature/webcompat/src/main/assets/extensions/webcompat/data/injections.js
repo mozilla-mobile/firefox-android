@@ -141,28 +141,6 @@ const AVAILABLE_INJECTIONS = [
     },
   },
   {
-    id: "bug1605611",
-    platform: "android",
-    domain: "maps.google.com",
-    bug: "1605611",
-    contentScripts: {
-      matches: InterventionHelpers.matchPatternsForGoogle(
-        "*://www.google.",
-        "/maps*"
-      ),
-      css: [
-        {
-          file: "injections/css/bug1605611-maps.google.com-directions-time.css",
-        },
-      ],
-      js: [
-        {
-          file: "injections/js/bug1605611-maps.google.com-directions-time.js",
-        },
-      ],
-    },
-  },
-  {
     id: "bug1610344",
     platform: "all",
     domain: "directv.com.co",
@@ -485,6 +463,23 @@ const AVAILABLE_INJECTIONS = [
     },
   },
   {
+    id: "bug1859617",
+    platform: "all",
+    domain: "Sites relying on there being no window.InstallTrigger",
+    bug: "1859617",
+    contentScripts: {
+      matches: [
+        "*://*.stallionexpress.ca/*", // Bug 1859617
+      ],
+      js: [
+        {
+          file: "injections/js/bug1859617-installtrigger-removal-shim.js",
+        },
+      ],
+      allFrames: true,
+    },
+  },
+  {
     id: "bug1784141",
     platform: "android",
     domain: "aveeno.com and acuvue.com",
@@ -640,20 +635,6 @@ const AVAILABLE_INJECTIONS = [
     },
   },
   {
-    id: "bug1799994",
-    platform: "desktop",
-    domain: "www.vivobarefoot.com",
-    bug: "1799994",
-    contentScripts: {
-      matches: ["*://www.vivobarefoot.com/*"],
-      css: [
-        {
-          file: "injections/css/bug1799994-www.vivobarefoot.com-product-filters-fix.css",
-        },
-      ],
-    },
-  },
-  {
     id: "bug1800000",
     platform: "desktop",
     domain: "www.honda.co.uk",
@@ -691,6 +672,7 @@ const AVAILABLE_INJECTIONS = [
         "*://*.discountcoffee.co.uk/*", // 118757
         "*://torguard.net/*", // 120113
         "*://*.arcsivr.com/*", // 120716
+        "*://drafthouse.com/*", // 126385
       ],
       js: [
         {
@@ -796,20 +778,6 @@ const AVAILABLE_INJECTIONS = [
       css: [
         {
           file: "injections/css/bug1829949-tomshardware.com-scrollbar-width.css",
-        },
-      ],
-    },
-  },
-  {
-    id: "bug1829952",
-    platform: "android",
-    domain: "eventer.co.il",
-    bug: "1829952",
-    contentScripts: {
-      matches: ["*://*.eventer.co.il/*"],
-      css: [
-        {
-          file: "injections/css/bug1829952-eventer.co.il-button-height.css",
         },
       ],
     },
@@ -1108,6 +1076,34 @@ const AVAILABLE_INJECTIONS = [
       css: [
         {
           file: "injections/css/bug1849388-kucharkaprodceru.cz-scroll-fix.css",
+        },
+      ],
+    },
+  },
+  {
+    id: "bug1855014",
+    platform: "android",
+    domain: "eksiseyler.com",
+    bug: "1855014",
+    contentScripts: {
+      matches: ["*://eksiseyler.com/*"],
+      js: [
+        {
+          file: "injections/js/bug1855014-eksiseyler.com.js",
+        },
+      ],
+    },
+  },
+  {
+    id: "bug1855071",
+    platform: "android",
+    domain: "www.meteoam.it",
+    bug: "1855071",
+    contentScripts: {
+      matches: ["*://www.meteoam.it/*"],
+      js: [
+        {
+          file: "injections/js/bug1855071-www.meteoam.it.js",
         },
       ],
     },

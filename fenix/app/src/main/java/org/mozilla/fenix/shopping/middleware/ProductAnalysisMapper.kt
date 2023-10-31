@@ -4,8 +4,7 @@
 
 package org.mozilla.fenix.shopping.middleware
 
-import mozilla.components.browser.engine.gecko.shopping.GeckoProductAnalysis
-import mozilla.components.browser.engine.gecko.shopping.Highlight
+import mozilla.components.concept.engine.shopping.Highlight
 import mozilla.components.concept.engine.shopping.ProductAnalysis
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.HighlightType
@@ -15,30 +14,29 @@ import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductR
 /**
  * Maps [ProductAnalysis] to [ProductReviewState].
  */
-fun ProductAnalysis?.toProductReviewState(): ProductReviewState =
-    if (this == null) {
-        ProductReviewState.Error.GenericError
-    } else {
-        when (this) {
-            is GeckoProductAnalysis -> toProductReview()
-            else -> ProductReviewState.Error.GenericError
-        }
-    }
+fun ProductAnalysis?.toProductReviewState(isInitialAnalysis: Boolean = true): ProductReviewState =
+    this?.toProductReview(isInitialAnalysis) ?: ProductReviewState.Error.GenericError
 
-private fun GeckoProductAnalysis.toProductReview(): ProductReviewState =
-    if (productId == null) {
+private fun ProductAnalysis.toProductReview(isInitialAnalysis: Boolean): ProductReviewState =
+    if (pageNotSupported) {
+        ProductReviewState.Error.UnsupportedProductTypeError
+    } else if (productId == null) {
         if (needsAnalysis) {
             ProductReviewState.NoAnalysisPresent()
         } else {
             ProductReviewState.Error.GenericError
         }
     } else {
-        val mappedRating = adjustedRating.toFloatOrNull()
-        val mappedGrade = grade?.toGrade()
+        val mappedRating = adjustedRating?.toFloat()
+        val mappedGrade = grade?.asEnumOrDefault<ReviewQualityCheckState.Grade>()
         val mappedHighlights = highlights?.toHighlights()?.toSortedMap()
 
         if (mappedGrade == null && mappedRating == null && mappedHighlights == null) {
-            ProductReviewState.NoAnalysisPresent()
+            if (isInitialAnalysis) {
+                ProductReviewState.NoAnalysisPresent()
+            } else {
+                ProductReviewState.Error.NotEnoughReviews
+            }
         } else {
             ProductReviewState.AnalysisPresent(
                 productId = productId!!,
@@ -49,13 +47,6 @@ private fun GeckoProductAnalysis.toProductReview(): ProductReviewState =
                 highlights = mappedHighlights,
             )
         }
-    }
-
-private fun String.toGrade(): ReviewQualityCheckState.Grade? =
-    try {
-        ReviewQualityCheckState.Grade.valueOf(this)
-    } catch (e: IllegalArgumentException) {
-        null
     }
 
 private fun Boolean.toAnalysisStatus(): AnalysisStatus =
@@ -79,18 +70,6 @@ private fun Highlight.highlightsForType(highlightType: HighlightType) =
         HighlightType.PACKAGING_AND_APPEARANCE -> appearance
         HighlightType.COMPETITIVENESS -> competitiveness
     }?.map { it.surroundWithQuotes() }
-
-/**
- * GeckoView sets 0.0 as default instead of null for adjusted rating. This maps 0.0 to null making
- * it easier for the UI layer to decide whether to display a UI element based on the presence of
- * value.
- */
-private fun Double.toFloatOrNull(): Float? =
-    if (this == 0.0) {
-        null
-    } else {
-        toFloat()
-    }
 
 private fun String.surroundWithQuotes(): String =
     "\"$this\""

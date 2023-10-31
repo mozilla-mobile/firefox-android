@@ -21,8 +21,19 @@ sealed interface ReviewQualityCheckState : State {
 
     /**
      * The state when the user has not opted in for the feature.
+     *
+     * @property productVendors List of vendors to be displayed in order in the onboarding UI.
      */
-    object NotOptedIn : ReviewQualityCheckState
+    data class NotOptedIn(
+        val productVendors: List<ProductVendor> = enumValues<ProductVendor>().toList(),
+    ) : ReviewQualityCheckState
+
+    /**
+     * Supported product retailers.
+     */
+    enum class ProductVendor {
+        AMAZON, BEST_BUY, WALMART,
+    }
 
     /**
      * The state when the user has opted in for the feature.
@@ -31,10 +42,12 @@ sealed interface ReviewQualityCheckState : State {
      * @property productRecommendationsPreference User preference whether to show product
      * recommendations. True if product recommendations should be shown. Null indicates that product
      * recommendations are disabled.
+     * @property productVendor The vendor of the product.
      */
     data class OptedIn(
         val productReviewState: ProductReviewState = ProductReviewState.Loading,
         val productRecommendationsPreference: Boolean?,
+        val productVendor: ProductVendor,
     ) : ReviewQualityCheckState {
 
         /**
@@ -59,6 +72,11 @@ sealed interface ReviewQualityCheckState : State {
                  * Denotes a product is not supported.
                  */
                 object UnsupportedProductTypeError : Error
+
+                /**
+                 * Denotes a product does not have enough reviews to be analyzed.
+                 */
+                object NotEnoughReviews : Error
 
                 /**
                  * Denotes a generic error has occurred.
@@ -107,11 +125,6 @@ sealed interface ReviewQualityCheckState : State {
                     highlights != null && showMoreButtonVisible &&
                         highlights.forCompactMode().entries.first().value.size > 1
 
-                val notEnoughReviewsCardVisible: Boolean =
-                    (reviewGrade == null || adjustedRating == null) &&
-                        analysisStatus != AnalysisStatus.NEEDS_ANALYSIS &&
-                        analysisStatus != AnalysisStatus.REANALYZING
-
                 /**
                  * The status of the product analysis.
                  */
@@ -137,21 +150,6 @@ sealed interface ReviewQualityCheckState : State {
     }
 
     /**
-     * Types of links that can be opened from the review quality check feature.
-     */
-    sealed class LinkType {
-        /**
-         * Opens a link to analyze a product.
-         */
-        data class AnalyzeLink(val url: String) : LinkType()
-
-        /**
-         * Opens an external "Learn more" link.
-         */
-        data class ExternalLink(val url: String) : LinkType()
-    }
-
-    /**
      * The state of the recommended product.
      */
     sealed interface RecommendedProductState {
@@ -173,6 +171,7 @@ sealed interface ReviewQualityCheckState : State {
         /**
          * The state when the recommended product is available.
          *
+         * @property aid The unique identifier of the product.
          * @property name The name of the product.
          * @property productUrl The url of the product.
          * @property imageUrl The url of the image of the product.
@@ -183,6 +182,7 @@ sealed interface ReviewQualityCheckState : State {
          * @property analysisUrl The url of the analysis of the product.
          */
         data class Product(
+            val aid: String,
             val name: String,
             val productUrl: String,
             val imageUrl: String,

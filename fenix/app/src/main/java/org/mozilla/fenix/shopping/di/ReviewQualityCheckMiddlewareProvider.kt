@@ -7,12 +7,17 @@ package org.mozilla.fenix.shopping.di
 import android.content.Context
 import kotlinx.coroutines.CoroutineScope
 import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.feature.tabs.TabsUseCases
+import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.shopping.middleware.DefaultNetworkChecker
 import org.mozilla.fenix.shopping.middleware.DefaultReviewQualityCheckPreferences
 import org.mozilla.fenix.shopping.middleware.DefaultReviewQualityCheckService
+import org.mozilla.fenix.shopping.middleware.DefaultReviewQualityCheckVendorsService
+import org.mozilla.fenix.shopping.middleware.GetReviewQualityCheckSumoUrl
 import org.mozilla.fenix.shopping.middleware.ReviewQualityCheckNavigationMiddleware
 import org.mozilla.fenix.shopping.middleware.ReviewQualityCheckNetworkMiddleware
 import org.mozilla.fenix.shopping.middleware.ReviewQualityCheckPreferencesMiddleware
+import org.mozilla.fenix.shopping.middleware.ReviewQualityCheckTelemetryMiddleware
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckMiddleware
 import org.mozilla.fenix.utils.Settings
 
@@ -26,47 +31,53 @@ object ReviewQualityCheckMiddlewareProvider {
      *
      * @param settings The [Settings] instance to use.
      * @param browserStore The [BrowserStore] instance to access state.
+     * @param appStore The [AppStore] instance to access state.
      * @param context The [Context] instance to use.
-     * @param openLink Opens a link. The callback is invoked with the URL [String] parameter and
-     * whether or not it should open in a new or the currently selected tab [Boolean] parameter.
      * @param scope The [CoroutineScope] to use for launching coroutines.
      */
     fun provideMiddleware(
         settings: Settings,
         browserStore: BrowserStore,
+        appStore: AppStore,
         context: Context,
-        openLink: (String, Boolean) -> Unit,
         scope: CoroutineScope,
     ): List<ReviewQualityCheckMiddleware> =
         listOf(
-            providePreferencesMiddleware(settings, scope),
-            provideNetworkMiddleware(browserStore, context, scope),
-            provideNavigationMiddleware(openLink, scope),
+            providePreferencesMiddleware(settings, browserStore, scope),
+            provideNetworkMiddleware(browserStore, appStore, context, scope),
+            provideNavigationMiddleware(TabsUseCases.SelectOrAddUseCase(browserStore), context),
+            provideTelemetryMiddleware(),
         )
 
     private fun providePreferencesMiddleware(
         settings: Settings,
+        browserStore: BrowserStore,
         scope: CoroutineScope,
     ) = ReviewQualityCheckPreferencesMiddleware(
         reviewQualityCheckPreferences = DefaultReviewQualityCheckPreferences(settings),
+        reviewQualityCheckVendorsService = DefaultReviewQualityCheckVendorsService(browserStore),
         scope = scope,
     )
 
     private fun provideNetworkMiddleware(
         browserStore: BrowserStore,
+        appStore: AppStore,
         context: Context,
         scope: CoroutineScope,
     ) = ReviewQualityCheckNetworkMiddleware(
         reviewQualityCheckService = DefaultReviewQualityCheckService(browserStore),
         networkChecker = DefaultNetworkChecker(context),
+        appStore = appStore,
         scope = scope,
     )
 
     private fun provideNavigationMiddleware(
-        openLink: (String, Boolean) -> Unit,
-        scope: CoroutineScope,
+        selectOrAddUseCase: TabsUseCases.SelectOrAddUseCase,
+        context: Context,
     ) = ReviewQualityCheckNavigationMiddleware(
-        openLink = openLink,
-        scope = scope,
+        selectOrAddUseCase = selectOrAddUseCase,
+        GetReviewQualityCheckSumoUrl(context),
     )
+
+    private fun provideTelemetryMiddleware() = ReviewQualityCheckTelemetryMiddleware()
 }

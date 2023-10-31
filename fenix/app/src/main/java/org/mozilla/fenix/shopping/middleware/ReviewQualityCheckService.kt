@@ -9,6 +9,7 @@ import kotlinx.coroutines.withContext
 import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.shopping.ProductAnalysis
+import mozilla.components.concept.engine.shopping.ProductRecommendation
 import mozilla.components.support.base.log.logger.Logger
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -38,6 +39,18 @@ interface ReviewQualityCheckService {
      * @return [AnalysisStatusDto] if the request succeeds, null otherwise.
      */
     suspend fun analysisStatus(): AnalysisStatusDto?
+
+    /**
+     * Returns the selected tab url.
+     */
+    fun selectedTabUrl(): String?
+
+    /**
+     * Fetches product recommendations related to the product user is browsing in the current tab.
+     *
+     * @return [ProductRecommendation] if request succeeds, null otherwise.
+     */
+    suspend fun productRecommendation(): ProductRecommendation?
 }
 
 /**
@@ -74,7 +87,7 @@ class DefaultReviewQualityCheckService(
                 tab.engineState.engineSession?.reanalyzeProduct(
                     url = tab.content.url,
                     onResult = {
-                        continuation.resume(it.asEnumOrDefault<AnalysisStatusDto>())
+                        continuation.resume(it.asEnumOrDefault(AnalysisStatusDto.OTHER))
                     },
                     onException = {
                         logger.error("Error starting reanalysis", it)
@@ -91,7 +104,7 @@ class DefaultReviewQualityCheckService(
                 tab.engineState.engineSession?.requestAnalysisStatus(
                     url = tab.content.url,
                     onResult = {
-                        continuation.resume(it.asEnumOrDefault<AnalysisStatusDto>())
+                        continuation.resume(it.asEnumOrDefault(AnalysisStatusDto.OTHER))
                     },
                     onException = {
                         logger.error("Error fetching analysis status", it)
@@ -102,8 +115,28 @@ class DefaultReviewQualityCheckService(
         }
     }
 
-    private inline fun <reified T : Enum<T>> String.asEnumOrDefault(defaultValue: T? = null): T? =
-        enumValues<T>().firstOrNull { it.name.equals(this, ignoreCase = true) } ?: defaultValue
+    override fun selectedTabUrl(): String? =
+        browserStore.state.selectedTab?.content?.url
+
+    override suspend fun productRecommendation(): ProductRecommendation? =
+        withContext(Dispatchers.Main) {
+            suspendCoroutine { continuation ->
+                browserStore.state.selectedTab?.let { tab ->
+                    tab.engineState.engineSession?.requestProductRecommendations(
+                        url = tab.content.url,
+                        onResult = {
+                            // Return the first available recommendation since ui requires only
+                            // one recommendation.
+                            continuation.resume(it.firstOrNull())
+                        },
+                        onException = {
+                            logger.error("Error fetching product recommendation", it)
+                            continuation.resume(null)
+                        },
+                    )
+                }
+            }
+        }
 }
 
 /**
@@ -126,17 +159,7 @@ enum class AnalysisStatusDto {
     COMPLETED,
 
     /**
-     * Product can not be analyzed.
+     * Any other status.
      */
-    NOT_ANALYZABLE,
-
-    /**
-     * Current analysis status with provided params not found.
-     */
-    NOT_FOUND,
-
-    /**
-     * Wrong product params provided.
-     */
-    UNPROCESSABLE,
+    OTHER,
 }

@@ -99,7 +99,7 @@ import mozilla.components.support.base.feature.ActivityResultHandler
 import mozilla.components.support.base.feature.PermissionsFeature
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
-import mozilla.components.support.ktx.android.view.enterToImmersiveMode
+import mozilla.components.support.ktx.android.view.enterImmersiveMode
 import mozilla.components.support.ktx.android.view.exitImmersiveMode
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import mozilla.components.support.ktx.kotlin.getOrigin
@@ -148,7 +148,6 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.secure
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.extension.WebExtensionPromptFeature
 import org.mozilla.fenix.home.HomeScreenViewModel
 import org.mozilla.fenix.home.SharedViewModel
 import org.mozilla.fenix.perf.MarkersFragmentLifecycleCallbacks
@@ -210,7 +209,6 @@ abstract class BaseBrowserFragment :
     private val fullScreenFeature = ViewBoundFeatureWrapper<FullScreenFeature>()
     private val swipeRefreshFeature = ViewBoundFeatureWrapper<SwipeRefreshFeature>()
     private val webchannelIntegration = ViewBoundFeatureWrapper<FxaWebChannelFeature>()
-    private val webExtensionPromptFeature = ViewBoundFeatureWrapper<WebExtensionPromptFeature>()
     private val sitePermissionWifiIntegration =
         ViewBoundFeatureWrapper<SitePermissionsWifiIntegration>()
     private val secureWindowFeature = ViewBoundFeatureWrapper<SecureWindowFeature>()
@@ -922,16 +920,6 @@ abstract class BaseBrowserFragment :
             owner = this,
             view = view,
         )
-
-        webExtensionPromptFeature.set(
-            feature = WebExtensionPromptFeature(
-                store = requireComponents.core.store,
-                context = requireContext(),
-                fragmentManager = parentFragmentManager,
-            ),
-            owner = this,
-            view = view,
-        )
         initializeEngineView(toolbarHeight)
     }
 
@@ -1508,7 +1496,7 @@ abstract class BaseBrowserFragment :
             Toast
                 .makeText(requireContext(), R.string.full_screen_notification, Toast.LENGTH_SHORT)
                 .show()
-            activity?.enterToImmersiveMode()
+            activity?.enterImmersiveMode()
             (view as? SwipeGestureLayout)?.isSwipeEnabled = false
             browserToolbarView.collapse()
             browserToolbarView.view.isVisible = false

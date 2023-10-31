@@ -55,19 +55,13 @@ object FeatureFlags {
     /**
      * Enables compose on the top sites.
      */
-    // const val composeTopSites = false
-    const val composeTopSites = true
+    const val composeTopSites = false
 
     /**
      * Enables new search settings UI with two extra fragments, for managing the default engine
      * and managing search shortcuts in the quick search menu.
      */
     const val unifiedSearchSettings = true
-
-    /**
-     * Enables the lib-state HistoryFragment refactor
-     */
-    val historyFragmentLibStateRefactor = Config.channel.isNightlyOrDebug
 
     /**
      * Allows users to enable translations.
@@ -78,5 +72,10 @@ object FeatureFlags {
     /**
      * Allows users to enable Firefox Suggest.
      */
-    val fxSuggest = Config.channel.isDebug
+    const val fxSuggest = true
+
+    /**
+     * Enable Meta attribution.
+     */
+    val metaAttributionEnabled = Config.channel.isNightlyOrDebug
 }

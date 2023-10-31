@@ -7,6 +7,7 @@ package mozilla.components.feature.fxsuggest
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.test.runTest
 import mozilla.appservices.suggest.Suggestion
+import mozilla.appservices.suggest.SuggestionProvider
 import mozilla.appservices.suggest.SuggestionQuery
 import mozilla.components.support.test.any
 import mozilla.components.support.test.eq
@@ -112,18 +113,19 @@ class FxSuggestSuggestionProviderTest {
             eq(
                 SuggestionQuery(
                     keyword = "la",
-                    includeSponsored = true,
-                    includeNonSponsored = true,
+                    providers = listOf(SuggestionProvider.AMP, SuggestionProvider.WIKIPEDIA),
                 ),
             ),
         )
         assertEquals(2, suggestions.size)
-        assertEquals("lasagna — Lasagna Come Out Tomorrow", suggestions[0].title)
+        assertEquals("Lasagna Come Out Tomorrow", suggestions[0].title)
         assertEquals(testContext.resources.getString(R.string.sponsored_suggestion_description), suggestions[0].description)
         assertNotNull(suggestions[0].icon)
-        assertEquals("las — Las Vegas", suggestions[1].title)
+        assertTrue(suggestions[0].metadata.isNullOrEmpty())
+        assertEquals("Las Vegas", suggestions[1].title)
         assertNull(suggestions[1].description)
         assertNull(suggestions[1].icon)
+        assertTrue(suggestions[1].metadata.isNullOrEmpty())
     }
 
     @Test
@@ -160,6 +162,7 @@ class FxSuggestSuggestionProviderTest {
             loadUrlUseCase = mock(),
             includeNonSponsoredSuggestions = true,
             includeSponsoredSuggestions = false,
+            contextId = "c303282d-f2e6-46ca-a04a-35d3d873712d",
         )
 
         val suggestions = provider.onInputChanged("la")
@@ -168,15 +171,15 @@ class FxSuggestSuggestionProviderTest {
             eq(
                 SuggestionQuery(
                     keyword = "la",
-                    includeSponsored = false,
-                    includeNonSponsored = true,
+                    providers = listOf(SuggestionProvider.WIKIPEDIA),
                 ),
             ),
         )
         assertEquals(1, suggestions.size)
-        assertEquals("las — Las Vegas", suggestions.first().title)
+        assertEquals("Las Vegas", suggestions.first().title)
         assertNull(suggestions.first().description)
         assertNull(suggestions.first().icon)
+        assertTrue(suggestions.first().metadata.isNullOrEmpty())
     }
 
     @Test
@@ -204,6 +207,7 @@ class FxSuggestSuggestionProviderTest {
             loadUrlUseCase = mock(),
             includeNonSponsoredSuggestions = false,
             includeSponsoredSuggestions = true,
+            contextId = "c303282d-f2e6-46ca-a04a-35d3d873712d",
         )
 
         val suggestions = provider.onInputChanged("la")
@@ -212,13 +216,29 @@ class FxSuggestSuggestionProviderTest {
             eq(
                 SuggestionQuery(
                     keyword = "la",
-                    includeSponsored = true,
-                    includeNonSponsored = false,
+                    providers = listOf(SuggestionProvider.AMP),
                 ),
             ),
         )
         assertEquals(1, suggestions.size)
-        assertEquals("lasagna — Lasagna Come Out Tomorrow", suggestions.first().title)
+        assertEquals("Lasagna Come Out Tomorrow", suggestions.first().title)
         assertEquals(testContext.resources.getString(R.string.sponsored_suggestion_description), suggestions.first().description)
+        suggestions.first().metadata?.let {
+            assertEquals(setOf(FxSuggestSuggestionProvider.MetadataKeys.CLICK_INFO, FxSuggestSuggestionProvider.MetadataKeys.IMPRESSION_INFO), it.keys)
+
+            val clickInfo = requireNotNull(it[FxSuggestSuggestionProvider.MetadataKeys.CLICK_INFO] as? FxSuggestInteractionInfo.Amp)
+            assertEquals(0, clickInfo.blockId)
+            assertEquals("good place eats", clickInfo.advertiser)
+            assertEquals("https://example.com/click_url", clickInfo.reportingUrl)
+            assertEquals("8 - Food & Drink", clickInfo.iabCategory)
+            assertEquals("c303282d-f2e6-46ca-a04a-35d3d873712d", clickInfo.contextId)
+
+            val impressionInfo = requireNotNull(it[FxSuggestSuggestionProvider.MetadataKeys.IMPRESSION_INFO] as? FxSuggestInteractionInfo.Amp)
+            assertEquals(0, impressionInfo.blockId)
+            assertEquals("good place eats", impressionInfo.advertiser)
+            assertEquals("https://example.com/impression_url", impressionInfo.reportingUrl)
+            assertEquals("8 - Food & Drink", impressionInfo.iabCategory)
+            assertEquals("c303282d-f2e6-46ca-a04a-35d3d873712d", impressionInfo.contextId)
+        }
     }
 }

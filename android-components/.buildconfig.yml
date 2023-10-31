@@ -19,6 +19,7 @@ projects:
     upstream_dependencies:
     - browser-errorpages
     - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -72,6 +73,7 @@ projects:
     upstream_dependencies:
     - browser-errorpages
     - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -94,6 +96,7 @@ projects:
     upstream_dependencies:
     - browser-errorpages
     - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -133,6 +136,7 @@ projects:
     - browser-state
     - browser-tabstray
     - browser-thumbnails
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -165,6 +169,7 @@ projects:
     publish: true
     upstream_dependencies:
     - browser-errorpages
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -200,6 +205,7 @@ projects:
     upstream_dependencies:
     - browser-errorpages
     - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -222,6 +228,7 @@ projects:
     upstream_dependencies:
     - browser-errorpages
     - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -245,6 +252,7 @@ projects:
     - browser-menu
     - browser-menu2
     - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -289,6 +297,7 @@ projects:
     upstream_dependencies:
     - browser-errorpages
     - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -325,6 +334,7 @@ projects:
     upstream_dependencies:
     - browser-errorpages
     - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -348,6 +358,7 @@ projects:
     - browser-state
     - browser-tabstray
     - browser-thumbnails
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -491,6 +502,7 @@ projects:
     - browser-state
     - browser-tabstray
     - browser-thumbnails
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -541,6 +553,7 @@ projects:
     upstream_dependencies:
     - browser-errorpages
     - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -551,6 +564,7 @@ projects:
     - support-base
     - support-ktx
     - support-test
+    - support-test-libstate
     - support-utils
     - support-webextensions
     - tooling-lint
@@ -564,6 +578,7 @@ projects:
     upstream_dependencies:
     - browser-errorpages
     - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -632,6 +647,7 @@ projects:
     - support-base
     - support-images
     - support-ktx
+    - support-remotesettings
     - support-test
     - support-utils
     - tooling-lint
@@ -646,6 +662,7 @@ projects:
     upstream_dependencies:
     - browser-errorpages
     - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -671,6 +688,7 @@ projects:
     - browser-state
     - browser-tabstray
     - browser-thumbnails
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -688,6 +706,7 @@ projects:
     - support-base
     - support-images
     - support-ktx
+    - support-remotesettings
     - support-test
     - support-test-libstate
     - support-utils
@@ -709,6 +728,7 @@ projects:
     - browser-tabstray
     - browser-thumbnails
     - browser-toolbar
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -727,6 +747,7 @@ projects:
     - support-base
     - support-images
     - support-ktx
+    - support-remotesettings
     - support-test
     - support-test-libstate
     - support-utils
@@ -743,6 +764,7 @@ projects:
     upstream_dependencies:
     - browser-errorpages
     - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -767,6 +789,7 @@ projects:
     upstream_dependencies:
     - browser-errorpages
     - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -812,6 +835,7 @@ projects:
     - browser-state
     - browser-tabstray
     - browser-thumbnails
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -828,6 +852,7 @@ projects:
     - support-base
     - support-images
     - support-ktx
+    - support-remotesettings
     - support-test
     - support-test-libstate
     - support-utils
@@ -846,6 +871,7 @@ projects:
     - browser-state
     - browser-tabstray
     - browser-thumbnails
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -876,6 +902,7 @@ projects:
     upstream_dependencies:
     - browser-errorpages
     - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -896,6 +923,7 @@ projects:
     upstream_dependencies:
     - browser-errorpages
     - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -921,6 +949,7 @@ projects:
     - browser-state
     - browser-tabstray
     - browser-thumbnails
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -969,6 +998,7 @@ projects:
     - browser-tabstray
     - browser-thumbnails
     - browser-toolbar
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -988,6 +1018,7 @@ projects:
     - support-base
     - support-images
     - support-ktx
+    - support-remotesettings
     - support-test
     - support-test-libstate
     - support-utils
@@ -1016,6 +1047,7 @@ projects:
     - browser-errorpages
     - browser-menu
     - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -1039,6 +1071,7 @@ projects:
     - browser-errorpages
     - browser-session-storage
     - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -1067,6 +1100,7 @@ projects:
     - browser-state
     - browser-tabstray
     - browser-thumbnails
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -1082,6 +1116,7 @@ projects:
     - support-base
     - support-images
     - support-ktx
+    - support-remotesettings
     - support-test
     - support-test-fakes
     - support-test-libstate
@@ -1102,6 +1137,7 @@ projects:
     - browser-state
     - browser-tabstray
     - browser-thumbnails
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -1132,6 +1168,7 @@ projects:
     upstream_dependencies:
     - browser-errorpages
     - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -1172,6 +1209,7 @@ projects:
     - browser-state
     - browser-tabstray
     - browser-thumbnails
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -1233,6 +1271,7 @@ projects:
     - browser-state
     - browser-tabstray
     - browser-thumbnails
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -1268,6 +1307,7 @@ projects:
     - browser-state
     - browser-tabstray
     - browser-thumbnails
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -1297,6 +1337,7 @@ projects:
     - browser-domains
     - browser-errorpages
     - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -1353,6 +1394,7 @@ projects:
     upstream_dependencies:
     - browser-errorpages
     - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -1374,6 +1416,7 @@ projects:
     upstream_dependencies:
     - browser-errorpages
     - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -1399,6 +1442,7 @@ projects:
     - browser-state
     - browser-tabstray
     - browser-thumbnails
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -1417,6 +1461,7 @@ projects:
     - support-base
     - support-images
     - support-ktx
+    - support-remotesettings
     - support-test
     - support-utils
     - tooling-lint
@@ -1591,6 +1636,7 @@ projects:
     - support-images
     - support-ktx
     - support-locale
+    - support-remotesettings
     - support-rustlog
     - support-utils
     - support-webextensions
@@ -1640,6 +1686,7 @@ projects:
     - support-images
     - support-ktx
     - support-locale
+    - support-remotesettings
     - support-rusthttp
     - support-utils
     - tooling-lint
@@ -1703,6 +1750,7 @@ projects:
     upstream_dependencies:
     - browser-errorpages
     - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -1794,6 +1842,7 @@ projects:
     - browser-menu2
     - browser-state
     - browser-toolbar
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -1897,6 +1946,7 @@ projects:
     upstream_dependencies:
     - browser-errorpages
     - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -2014,6 +2064,7 @@ projects:
     upstream_dependencies:
     - browser-errorpages
     - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -2027,6 +2078,17 @@ projects:
     - support-utils
     - tooling-lint
     - ui-icons
+  support-remotesettings:
+    description: A component to help fetch data from remote servers.
+    path: components/support/remotesettings
+    publish: true
+    upstream_dependencies:
+    - concept-base
+    - lib-publicsuffixlist
+    - support-base
+    - support-ktx
+    - support-utils
+    - tooling-lint
   support-rusterrors:
     description: A bridge for reporting Rust errors to Sentry/Glean
     path: components/support/rusterrors
@@ -2117,6 +2179,7 @@ projects:
     upstream_dependencies:
     - browser-errorpages
     - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
