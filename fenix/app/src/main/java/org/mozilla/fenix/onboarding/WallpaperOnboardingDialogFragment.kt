@@ -42,7 +42,7 @@ class WallpaperOnboardingDialogFragment : BottomSheetDialogFragment() {
     }
 
     private val wallpaperUseCases by lazy {
-        requireComponents.useCases.wallpaperUseCases
+        requireComponents.wallpaperUseCases
     }
 
     @SuppressLint("SourceLockedOrientationActivity")

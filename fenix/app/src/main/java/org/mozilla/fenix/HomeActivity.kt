@@ -215,6 +215,10 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         supportFragmentManager.findFragmentById(R.id.container) as NavHostFragment
     }
 
+    private val navigationBinding by lazy {
+        AppNavigationBinding(components.appStore, navHost.navController)
+    }
+
     private val externalSourceIntentProcessors by lazy {
         listOf(
             HomeDeepLinkIntentProcessor(this),
@@ -359,6 +363,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             extensionsProcessDisabledPromptObserver,
             serviceWorkerSupport,
             webExtensionPromptFeature,
+            navigationBinding,
         )
 
         if (shouldAddToRecentsScreen(intent)) {
@@ -563,6 +568,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
                 "finishing" to isFinishing.toString(),
             ),
         )
+
+        navigationBinding.stop()
     }
 
     final override fun onPause() {

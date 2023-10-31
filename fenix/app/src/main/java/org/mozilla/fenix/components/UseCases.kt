@@ -44,9 +44,6 @@ class UseCases(
     private val topSitesStorage: TopSitesStorage,
     private val bookmarksStorage: BookmarksStorage,
     private val historyStorage: HistoryStorage,
-    appStore: AppStore,
-    client: Client,
-    strictMode: StrictModeManager,
 ) {
     /**
      * Use cases that provide engine interactions for a given browser session.
@@ -107,15 +104,4 @@ class UseCases(
      * Use cases that provide bookmark management.
      */
     val bookmarksUseCases by lazyMonitored { BookmarksUseCase(bookmarksStorage, historyStorage) }
-
-    val wallpaperUseCases by lazyMonitored {
-        // Required to even access context.filesDir property and to retrieve current locale
-        val (rootStorageDirectory, currentLocale) = strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
-            val rootStorageDirectory = context.filesDir
-            val currentLocale = LocaleManager.getCurrentLocale(context)?.toLanguageTag()
-                ?: LocaleManager.getSystemDefault().toLanguageTag()
-            rootStorageDirectory to currentLocale
-        }
-        WallpapersUseCases(context, appStore, client, rootStorageDirectory, currentLocale)
-    }
 }

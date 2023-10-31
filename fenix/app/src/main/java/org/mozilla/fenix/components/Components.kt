@@ -7,6 +7,7 @@ package org.mozilla.fenix.components
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
+import android.os.StrictMode
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.NotificationManagerCompat
@@ -19,6 +20,9 @@ import mozilla.components.feature.autofill.AutofillConfiguration
 import mozilla.components.lib.publicsuffixlist.PublicSuffixList
 import mozilla.components.support.base.android.NotificationsDelegate
 import mozilla.components.support.base.worker.Frequency
+import mozilla.components.support.locale.LocaleManager
+import org.mozilla.fenix.AppNavigationBinding
+import org.mozilla.fenix.AppTabMiddleware
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.FeatureFlags
@@ -27,6 +31,7 @@ import org.mozilla.fenix.autofill.AutofillConfirmActivity
 import org.mozilla.fenix.autofill.AutofillSearchActivity
 import org.mozilla.fenix.autofill.AutofillUnlockActivity
 import org.mozilla.fenix.components.appstate.AppState
+import org.mozilla.fenix.components.appstate.Screen
 import org.mozilla.fenix.components.metrics.MetricsMiddleware
 import org.mozilla.fenix.datastore.pocketStoriesSelectedCategoriesDataStore
 import org.mozilla.fenix.ext.asRecentTabs
@@ -46,6 +51,7 @@ import org.mozilla.fenix.perf.StrictModeManager
 import org.mozilla.fenix.perf.lazyMonitored
 import org.mozilla.fenix.utils.ClipboardHandler
 import org.mozilla.fenix.utils.Settings
+import org.mozilla.fenix.wallpapers.WallpapersUseCases
 import org.mozilla.fenix.wifi.WifiConnectionMonitor
 import java.util.concurrent.TimeUnit
 
@@ -85,10 +91,18 @@ class Components(private val context: Context) {
             core.topSitesStorage,
             core.bookmarksStorage,
             core.historyStorage,
-            appStore,
-            core.client,
-            strictMode,
         )
+    }
+
+    val wallpaperUseCases by lazyMonitored {
+        // Required to even access context.filesDir property and to retrieve current locale
+        val (rootStorageDirectory, currentLocale) = strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
+            val rootStorageDirectory = context.filesDir
+            val currentLocale = LocaleManager.getCurrentLocale(context)?.toLanguageTag()
+                ?: LocaleManager.getSystemDefault().toLanguageTag()
+            rootStorageDirectory to currentLocale
+        }
+        WallpapersUseCases(context, appStore, core.client, rootStorageDirectory, currentLocale)
     }
 
     private val notificationManagerCompat = NotificationManagerCompat.from(context)
@@ -212,6 +226,7 @@ class Components(private val context: Context) {
                     emptyList()
                 },
                 recentHistory = emptyList(),
+                screen = Screen.Home,
             ).run { filterState(blocklistHandler) },
             middlewares = listOf(
                 BlocklistMiddleware(blocklistHandler),
@@ -223,6 +238,14 @@ class Components(private val context: Context) {
                     messagingStorage = analytics.messagingStorage,
                 ),
                 MetricsMiddleware(metrics = analytics.metrics),
+                AppTabMiddleware(
+                    core.store,
+                    settings,
+                    useCases.tabsUseCases,
+                    useCases.sessionUseCases,
+                    useCases.searchUseCases,
+                    core.engine.profiler
+                ),
             ),
         )
     }

@@ -1012,7 +1012,7 @@ class HomeFragment : Fragment() {
                     // qualified type to load the image
                     val wallpaper = Wallpaper.Default.copy(name = wallpaperName)
                     val wallpaperImage =
-                        requireComponents.useCases.wallpaperUseCases.loadBitmap(wallpaper)
+                        requireComponents.wallpaperUseCases.loadBitmap(wallpaper)
                     wallpaperImage?.let {
                         it.scaleToBottomOfView(binding.wallpaperImageView)
                         binding.wallpaperImageView.isVisible = true

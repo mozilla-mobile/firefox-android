@@ -15,6 +15,7 @@ import org.mozilla.fenix.GleanMetrics.Pocket
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.appstate.AppAction
+import org.mozilla.fenix.components.appstate.Screen
 
 /**
  * Contract for how all user interactions with the Pocket stories feature are to be handled.
@@ -149,7 +150,12 @@ internal class DefaultPocketStoriesController(
         storyClicked: PocketStory,
         storyPosition: Pair<Int, Int>,
     ) {
-        homeActivity.openToBrowserAndLoad(storyClicked.url, true, BrowserDirection.FromHome)
+//        homeActivity.openToBrowserAndLoad(storyClicked.url, true, BrowserDirection.FromHome)
+        appStore.dispatch(AppAction.ChangeScreen(Screen.Browser(
+            searchTermOrURL = storyClicked.url,
+            newTab = true,
+            from = BrowserDirection.FromHome
+        )))
 
         when (storyClicked) {
             is PocketRecommendedStory -> {

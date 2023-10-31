@@ -30,6 +30,7 @@ import org.mozilla.fenix.wallpapers.Wallpaper
  * [Action] implementation related to [AppStore].
  */
 sealed class AppAction : Action {
+    data class ChangeScreen(val screen: Screen) : AppAction()
     data class UpdateInactiveExpanded(val expanded: Boolean) : AppAction()
 
     /**

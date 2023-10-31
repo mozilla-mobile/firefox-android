@@ -4,7 +4,10 @@
 
 package org.mozilla.fenix.components.appstate
 
+import mozilla.components.browser.state.search.SearchEngine
+import mozilla.components.concept.engine.EngineSession
 import mozilla.components.concept.storage.BookmarkNode
+import mozilla.components.concept.storage.HistoryMetadataKey
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.lib.crash.Crash.NativeCodeCrash
@@ -12,6 +15,7 @@ import mozilla.components.lib.state.State
 import mozilla.components.service.pocket.PocketStory
 import mozilla.components.service.pocket.PocketStory.PocketRecommendedStory
 import mozilla.components.service.pocket.PocketStory.PocketSponsoredStory
+import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.browser.StandardSnackbarError
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.appstate.shopping.ShoppingState
@@ -79,4 +83,22 @@ data class AppState(
     val wallpaperState: WallpaperState = WallpaperState.default,
     val standardSnackbarError: StandardSnackbarError? = null,
     val shoppingState: ShoppingState = ShoppingState(),
+    val screen: Screen = Screen.Home,
 ) : State
+
+sealed class Screen {
+
+    object Home : Screen()
+    data class Browser(
+        val searchTermOrURL: String,
+        val newTab: Boolean,
+        val from: BrowserDirection,
+        val customTabSessionId: String? = null,
+        val engine: SearchEngine? = null,
+        val forceSearch: Boolean = false,
+        val flags: EngineSession.LoadUrlFlags = EngineSession.LoadUrlFlags.none(),
+        val requestDesktopMode: Boolean = false,
+        val historyMetadata: HistoryMetadataKey? = null,
+        val additionalHeaders: Map<String, String>? = null,
+    ) : Screen()
+}

@@ -35,7 +35,7 @@ class WallpaperSettingsFragment : Fragment() {
     }
 
     private val wallpaperUseCases by lazy {
-        requireComponents.useCases.wallpaperUseCases
+        requireComponents.wallpaperUseCases
     }
 
     override fun onCreateView(
