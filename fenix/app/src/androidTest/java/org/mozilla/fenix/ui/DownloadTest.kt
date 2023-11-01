@@ -13,17 +13,17 @@ import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
+import org.mozilla.fenix.helpers.AppAndSystemHelper.assertExternalAppOpens
+import org.mozilla.fenix.helpers.AppAndSystemHelper.deleteDownloadedFileOnStorage
+import org.mozilla.fenix.helpers.AppAndSystemHelper.setNetworkEnabled
 import org.mozilla.fenix.helpers.Constants.PackageName.GOOGLE_APPS_PHOTOS
 import org.mozilla.fenix.helpers.Constants.PackageName.GOOGLE_DOCS
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithText
 import org.mozilla.fenix.helpers.TestAssetHelper
-import org.mozilla.fenix.helpers.TestHelper.assertExternalAppOpens
 import org.mozilla.fenix.helpers.TestHelper.clickSnackbarButton
-import org.mozilla.fenix.helpers.TestHelper.deleteDownloadedFileOnStorage
 import org.mozilla.fenix.helpers.TestHelper.exitMenu
 import org.mozilla.fenix.helpers.TestHelper.mDevice
-import org.mozilla.fenix.helpers.TestHelper.setNetworkEnabled
 import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.clickPageObject
 import org.mozilla.fenix.ui.robots.downloadRobot
@@ -210,28 +210,6 @@ class DownloadTest {
         deleteDownloadedFileOnStorage(downloadFile)
     }
 
-    // Save PDF file from the share overlay
-    @SmokeTest
-    @Test
-    fun saveAndOpenPdfTest() {
-        val genericURL =
-            TestAssetHelper.getGenericAsset(mockWebServer, 3)
-        downloadFile = "pdfForm.pdf"
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(genericURL.url) {
-            clickPageObject(itemWithText("PDF form file"))
-        }.openThreeDotMenu {
-        }.clickShareButton {
-        }.clickSaveAsPDF {
-            verifyDownloadPrompt(downloadFile)
-        }.clickDownload {
-        }.clickOpen("application/pdf") {
-            assertExternalAppOpens(GOOGLE_DOCS)
-        }
-        deleteDownloadedFileOnStorage(downloadFile)
-    }
-
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1114970
     @Test
     fun deleteDownloadedFileTest() {
@@ -342,6 +320,7 @@ class DownloadTest {
         deleteDownloadedFileOnStorage(downloadFile)
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/457112
     @Ignore("Failing: https://bugzilla.mozilla.org/show_bug.cgi?id=1840994")
     @Test
     fun systemNotificationCantBeDismissedWhileInProgressTest() {
@@ -371,6 +350,7 @@ class DownloadTest {
         deleteDownloadedFileOnStorage(downloadFile)
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2299297
     @Test
     fun notificationCanBeDismissedIfDownloadIsInterruptedTest() {
         // Clear the "Firefox Fenix default browser notification"
@@ -404,6 +384,7 @@ class DownloadTest {
         deleteDownloadedFileOnStorage(downloadFile)
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1632384
     @Test
     fun warningWhenClosingPrivateTabsWhileDownloadingTest() {
         downloadFile = "1GB.zip"
@@ -466,9 +447,11 @@ class DownloadTest {
         deleteDownloadedFileOnStorage(downloadFile)
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2048448
     // Save edited PDF file from the share overlay
+    @SmokeTest
     @Test
-    fun saveEditedPdfTest() {
+    fun saveAsPdfFunctionalityTest() {
         val genericURL =
             TestAssetHelper.getGenericAsset(mockWebServer, 3)
         downloadFile = "pdfForm.pdf"
