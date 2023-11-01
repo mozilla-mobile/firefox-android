@@ -25,6 +25,8 @@ import org.mozilla.fenix.browser.BrowserAnimator.Companion.getToolbarNavOptions
 import org.mozilla.fenix.browser.BrowserFragmentDirections
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.readermode.ReaderModeController
+import org.mozilla.fenix.components.appstate.AppAction
+import org.mozilla.fenix.components.appstate.Screen
 import org.mozilla.fenix.components.toolbar.interactor.BrowserToolbarInteractor
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
@@ -195,9 +197,7 @@ class DefaultBrowserToolbarController(
     override fun handleHomeButtonClick() {
         Events.browserToolbarHomeTapped.record(NoExtras())
         browserAnimator.captureEngineViewAndDrawStatically {
-            navController.navigate(
-                BrowserFragmentDirections.actionGlobalHome(),
-            )
+            activity.components.appStore.dispatch(AppAction.ChangeScreen(Screen.Home))
         }
     }
 

@@ -395,6 +395,6 @@ class BrowserToolbarCFRPresenter(
 /**
  * The CFR to be shown in the toolbar.
  */
-private enum class ToolbarCFR {
+internal enum class ToolbarCFR {
     TCP, SHOPPING, SHOPPING_OPTED_IN, ERASE, NONE
 }

@@ -27,9 +27,6 @@ fun NavController.nav(@IdRes id: Int?, directions: NavDirections, navOptions: Na
 }
 
 fun NavController.alreadyOnDestination(@IdRes destId: Int?): Boolean {
-    listOf("").let {
-
-    }
     return destId?.let { currentDestination?.id == it || popBackStack(it, false) } ?: false
 }
 

@@ -28,6 +28,7 @@ import org.mozilla.fenix.customtabs.CustomTabToolbarIntegration
 import org.mozilla.fenix.customtabs.CustomTabToolbarMenu
 import org.mozilla.fenix.ext.bookmarkStorage
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.shopping.DefaultShoppingExperienceFeature
 import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.utils.Settings
 import org.mozilla.fenix.utils.ToolbarPopupWindow
@@ -58,6 +59,7 @@ class BrowserToolbarView(
         .findViewById(R.id.toolbar)
 
     val toolbarIntegration: ToolbarIntegration
+    private val browserFragmentStore: BrowserFragmentStore
 
     @VisibleForTesting
     internal val isPwaTabOrTwaTab: Boolean
@@ -181,6 +183,20 @@ class BrowserToolbarView(
                     interactor = interactor,
                 )
             }
+
+            browserFragmentStore = BrowserFragmentStore(
+                initialState = BrowserFragmentState(),
+                middleware = listOf(ToolbarCfrMiddleware(
+                    components.core.store,
+                    view,
+                    components.settings,
+                    DefaultShoppingExperienceFeature(),
+                    customTabSession?.id,
+                    {},
+                    {},
+                    {},
+                )),
+            )
         }
     }
 

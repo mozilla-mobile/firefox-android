@@ -7,13 +7,17 @@
 package org.mozilla.fenix.components.toolbar
 
 import mozilla.components.lib.state.Action
+import mozilla.components.lib.state.Middleware
 import mozilla.components.lib.state.State
 import mozilla.components.lib.state.Store
 
 // The state that used to live in this class was moved into another component in #4281. Keeping
 // the shell of this file because we will need to expand it as we add additional features to
 // the browser.
-class BrowserFragmentStore(initialState: BrowserFragmentState) :
+class BrowserFragmentStore(
+    initialState: BrowserFragmentState,
+    middleware: List<Middleware<BrowserFragmentState, BrowserFragmentAction>>
+) :
     Store<BrowserFragmentState, BrowserFragmentAction>(initialState, ::browserStateReducer)
 
 /**
@@ -21,7 +25,9 @@ class BrowserFragmentStore(initialState: BrowserFragmentState) :
  */
 class BrowserFragmentState : State
 
-sealed class BrowserFragmentAction : Action
+sealed class BrowserFragmentAction : Action {
+    object Init : BrowserFragmentAction()
+}
 
 /**
  * Reducers for [BrowserFragmentStore].

@@ -260,12 +260,6 @@ abstract class BaseBrowserFragment :
         val originalContext = ActivityContextWrapper.getOriginalContext(activity)
         binding.engineView.setActivityContext(originalContext)
 
-        browserFragmentStore = StoreProvider.get(this) {
-            BrowserFragmentStore(
-                BrowserFragmentState(),
-            )
-        }
-
         startForResult = registerForActivityResult { result ->
             listOf(
                 promptsFeature,

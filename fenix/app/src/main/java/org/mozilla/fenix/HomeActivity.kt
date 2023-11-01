@@ -568,8 +568,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
                 "finishing" to isFinishing.toString(),
             ),
         )
-
-        navigationBinding.stop()
     }
 
     final override fun onPause() {
