@@ -339,8 +339,8 @@ class BrowserToolbarCFRPresenter(
                 } else {
                     CFRPopup.IndicatorDirection.DOWN
                 },
-                dismissOnBackPress = false,
-                dismissOnClickOutside = false,
+                dismissOnBackPress = true,
+                dismissOnClickOutside = true,
             ),
             onDismiss = {
                 when (it) {
