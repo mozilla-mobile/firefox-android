@@ -10,7 +10,6 @@ import android.content.Context
 import android.os.Build
 import android.os.PersistableBundle
 import android.view.textclassifier.TextClassifier
-import androidx.annotation.VisibleForTesting
 import androidx.core.content.getSystemService
 import mozilla.components.support.ktx.kotlin.MAX_URI_LENGTH
 import mozilla.components.support.utils.SafeUrl
@@ -22,11 +21,15 @@ private const val MIME_TYPE_TEXT_HTML = "text/html"
 private const val MIME_TYPE_TEXT_URL = "text/x-moz-url"
 
 /**
- * A clipboard utility class that allows copying and pasting links/text to & from the clipboard
+ * A clipboard utility class that allows copying and pasting links/text to & from the clipboard.
  */
-class ClipboardHandler(val context: Context) {
-    private val clipboard = context.getSystemService<ClipboardManager>()!!
-
+class ClipboardHandler(
+    private val context: Context,
+    private val clipboard: ClipboardManager = context.getSystemService<ClipboardManager>()!!,
+    private val safeUrl: SafeUrl = SafeUrl,
+    private val bestWebUrlFunc: (String) -> String? = { url: String -> WebURLFinder(url).bestWebURL() },
+    private val isWebUrlFunc: (String) -> Boolean = { url: String -> WebURLFinder.isWebURL(url) },
+) {
     /**
      * Provides access to the current content of the clipboard, be aware this is a sensitive
      * API as from Android 12 and above, accessing it will trigger a notification letting the user
@@ -35,25 +38,14 @@ class ClipboardHandler(val context: Context) {
      * See for more details https://github.com/mozilla-mobile/fenix/issues/22271.
      */
     var text: String?
-        get() {
-            if (clipboard.isPrimaryClipEmpty()) {
-                return null
-            }
-            if (containsText()) {
-                return firstSafePrimaryClipItemText
-            }
-            return null
+        get() = when {
+            !isSupportedMimeType() -> null
+            primaryClipTextIsUrl() -> firstSafePrimaryClipItemUrl()
+            containsText() -> firstPrimaryClipItem()?.text?.toString()
+            else -> null
         }
         set(value) {
-            val clipData = ClipData.newPlainText("Text", value)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                clipData.apply {
-                    description.extras = PersistableBundle().apply {
-                        putBoolean("android.content.extra.IS_SENSITIVE", false)
-                    }
-                }
-            }
-            clipboard.setPrimaryClip(clipData)
+            setPrimaryClipData(value, false)
         }
 
     /**
@@ -69,16 +61,20 @@ class ClipboardHandler(val context: Context) {
             return text
         }
         set(value) {
-            val clipData = ClipData.newPlainText("Text", value)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                clipData.apply {
-                    description.extras = PersistableBundle().apply {
-                        putBoolean("android.content.extra.IS_SENSITIVE", true)
-                    }
+            setPrimaryClipData(value, true)
+        }
+
+    private fun setPrimaryClipData(value: String?, isSensitive: Boolean) {
+        val clipData = ClipData.newPlainText("Text", value)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            clipData.apply {
+                description.extras = PersistableBundle().apply {
+                    putBoolean("android.content.extra.IS_SENSITIVE", isSensitive)
                 }
             }
-            clipboard.setPrimaryClip(clipData)
         }
+        clipboard.setPrimaryClip(clipData)
+    }
 
     /**
      * Returns a possible URL from the actual content of the clipboard, be aware this is a sensitive
@@ -87,27 +83,29 @@ class ClipboardHandler(val context: Context) {
      * completely aware that we are accessing the clipboard.
      * See for more details https://github.com/mozilla-mobile/fenix/issues/22271.
      */
-    fun extractURL(): String? {
-        return text?.let {
-            if (it.length > MAX_URI_LENGTH) {
-                return null
-            }
-
-            val finder = WebURLFinder(it)
-            finder.bestWebURL()
+    fun extractURL() = text?.let {
+        if (it.isValidUrl()) {
+            bestWebUrlFunc(it)
+        } else {
+            null
         }
     }
 
     /**
-     * Returns whether or not the clipboard data contains text.
-     * We cannot rely on `isPrimaryClipEmpty()` since it triggers a clipboard access system notification.
+     * Checks whether [text] is a valid URL based on the given constraints.
      */
-    fun containsText(): Boolean {
-        return clipboard.isPrimaryClipHtmlText() ||
-            clipboard.isPrimaryClipPlainText() ||
-            clipboard.isPrimaryClipUrlText()
-    }
+    private fun String.isValidUrl() = primaryClipTextIsUrl() && isValidUriLength()
 
+    private fun String.isValidUriLength() = length <= MAX_URI_LENGTH
+
+    /**
+     * Returns whether or not the clipboard data mime type is plain text or HTML.
+     */
+    fun containsText() = mimeTypeIsHtmlText() || mimeTypeIsPlainText()
+
+    /**
+     * Returns whether or not the clipboard data is a URL.
+     */
     @Suppress("MagicNumber")
     internal fun containsURL(): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -125,23 +123,20 @@ class ClipboardHandler(val context: Context) {
         }
     }
 
-    private fun ClipboardManager.isPrimaryClipPlainText() =
-        primaryClipDescription?.hasMimeType(MIME_TYPE_TEXT_PLAIN) ?: false
+    private fun isSupportedMimeType() =
+        mimeTypeIsPlainText() || mimeTypeIsHtmlText() || mimeTypeIsUrlText()
 
-    private fun ClipboardManager.isPrimaryClipHtmlText() =
-        primaryClipDescription?.hasMimeType(MIME_TYPE_TEXT_HTML) ?: false
+    private fun mimeTypeIsPlainText() = primaryClipIsMimeType(MIME_TYPE_TEXT_PLAIN)
 
-    private fun ClipboardManager.isPrimaryClipUrlText() =
-        primaryClipDescription?.hasMimeType(MIME_TYPE_TEXT_URL) ?: false
+    private fun mimeTypeIsHtmlText() = primaryClipIsMimeType(MIME_TYPE_TEXT_HTML)
 
-    /**
-     * Returns whether or not the clipboard has any clip data.
-     * Reads the clip data, be aware this is a sensitive API as from Android 12 and above,
-     * accessing it will trigger a notification letting the user know the app has accessed the clipboard,
-     * make sure when you call this API that users are completely aware that we are accessing the clipboard.
-     * See https://github.com/mozilla-mobile/fenix/issues/22271 for more details.
-     */
-    private fun ClipboardManager.isPrimaryClipEmpty() = primaryClip?.itemCount == 0
+    private fun mimeTypeIsUrlText() = primaryClipIsMimeType(MIME_TYPE_TEXT_URL)
+
+    private fun primaryClipTextIsUrl() =
+        mimeTypeIsUrlText() || firstPrimaryClipItem()?.let { isWebUrlFunc(it.text.toString()) } ?: false
+
+    private fun primaryClipIsMimeType(mimeType: String) =
+        clipboard.primaryClipDescription?.hasMimeType(mimeType) ?: false
 
     /**
      * Returns a [ClipData.Item] from the Android clipboard.
@@ -152,15 +147,13 @@ class ClipboardHandler(val context: Context) {
      * or various exceptions for certain vendors, due to modifications made to the Android clipboard code.
      */
     @Suppress("TooGenericExceptionCaught")
-    private val ClipboardManager.firstPrimaryClipItem: ClipData.Item?
-        get() = try {
-            primaryClip?.getItemAt(0)
-        } catch (exception: Exception) {
-            logger.error("Fetching clipboard content failed with: $exception")
-            null
-        }
+    private fun firstPrimaryClipItem(): ClipData.Item? = try {
+        clipboard.primaryClip?.getItemAt(0)
+    } catch (exception: Exception) {
+        logger.error("Fetching clipboard content failed with: $exception")
+        null
+    }
 
-    @VisibleForTesting
-    internal val firstSafePrimaryClipItemText: String?
-        get() = SafeUrl.stripUnsafeUrlSchemes(context, clipboard.firstPrimaryClipItem?.text)
+    private fun firstSafePrimaryClipItemUrl() =
+        firstPrimaryClipItem()?.let { safeUrl.stripUnsafeUrlSchemes(context, it.text) }
 }
