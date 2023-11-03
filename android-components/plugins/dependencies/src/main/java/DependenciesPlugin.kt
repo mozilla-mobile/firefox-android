@@ -21,9 +21,9 @@ object Versions {
 
     const val junit = "4.13.2"
     const val robolectric = "4.11.1"
-    const val mockito = "5.6.0"
+    const val mockito = "5.7.0"
     const val maven_ant_tasks = "2.1.3"
-    const val jacoco = "0.8.10"
+    const val jacoco = "0.8.11"
     const val okhttp = "4.11.0"
 
     const val android_gradle_plugin = "7.4.2"
