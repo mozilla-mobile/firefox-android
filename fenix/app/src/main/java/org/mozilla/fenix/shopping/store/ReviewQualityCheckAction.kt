@@ -6,6 +6,7 @@ package org.mozilla.fenix.shopping.store
 
 import mozilla.components.lib.state.Action
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState
+import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.RecommendedProductState
 
 /**
  * Actions for review quality check feature.
@@ -79,9 +80,16 @@ sealed interface ReviewQualityCheckAction : Action {
     ) : UpdateAction, TelemetryAction
 
     /**
-     * Triggered as a result of a [NetworkAction] to update the state.
+     * Triggered as a result of a [NetworkAction] to update the [ProductReviewState].
      */
     data class UpdateProductReview(val productReviewState: ProductReviewState) : UpdateAction
+
+    /**
+     * Triggered as a result of a [NetworkAction] to update the [RecommendedProductState].
+     */
+    data class UpdateRecommendedProduct(
+        val recommendedProductState: RecommendedProductState,
+    ) : UpdateAction
 
     /**
      * Triggered when the user has opted in to the review quality check feature and the UI is opened.
@@ -153,9 +161,14 @@ sealed interface ReviewQualityCheckAction : Action {
     object ShowMoreRecentReviewsClicked : TelemetryAction
 
     /**
-     * Triggered when the user expands the settings card.
+     * Triggered when the user expands or collapses the settings card.
      */
-    object ExpandSettingsClicked : TelemetryAction
+    object ExpandCollapseSettings : TelemetryAction, UpdateAction
+
+    /**
+     * Triggered when the user expands or collapses the info card.
+     */
+    object ExpandCollapseInfo : UpdateAction
 
     /**
      * Triggered when the No analysis card is displayed to the user.
@@ -166,4 +179,11 @@ sealed interface ReviewQualityCheckAction : Action {
      * Triggered when the user reports a product is back in stock.
      */
     object ReportProductBackInStock : TelemetryAction
+
+    /**
+     * Triggered when the user clicks on the recommended product.
+     *
+     * @property productUrl The product's link to open.
+     */
+    data class OpenRecommendedProduct(val productUrl: String) : NavigationMiddlewareAction
 }

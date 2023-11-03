@@ -14,9 +14,9 @@ import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
+import org.mozilla.fenix.helpers.AppAndSystemHelper.runWithSystemLocaleChanged
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
-import org.mozilla.fenix.helpers.TestHelper.runWithSystemLocaleChanged
 import org.mozilla.fenix.ui.robots.navigationToolbar
 import java.util.Locale
 
@@ -56,6 +56,7 @@ class ComposeNavigationToolbarTest {
         mockWebServer.shutdown()
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/987326
     // Swipes the nav bar left/right to switch between tabs
     @SmokeTest
     @Test
@@ -75,6 +76,7 @@ class ComposeNavigationToolbarTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/987327
     // Because it requires changing system prefs, this test will run only on Debug builds
     @Test
     fun swipeToSwitchTabInRTLTest() {

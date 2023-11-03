@@ -26,6 +26,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.never
 import org.mockito.Mockito.spy
+import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import java.io.File
 import java.io.IOException
@@ -139,7 +140,7 @@ class AMOAddonsProviderTest {
 
         // Ratings
         assertEquals(4.7003F, addon.rating!!.average, 0.7003F)
-        assertEquals(13324, addon.rating!!.reviews)
+        assertEquals(4433, addon.rating!!.reviews)
 
         verify(client).fetch(
             Request(
@@ -237,7 +238,8 @@ class AMOAddonsProviderTest {
         whenever(provider.getCacheLastUpdated(testContext, null, useFallbackFile = false)).thenReturn(Date().time)
         whenever(provider.cacheExpired(testContext, null, useFallbackFile = false)).thenReturn(false)
         whenever(provider.readFromDiskCache(null, useFallbackFile = false)).thenReturn(cachedAddons)
-        assertSame(cachedAddons, provider.getFeaturedAddons(allowCache = true))
+        whenever(provider.readFromDiskCache(null, useFallbackFile = false)).thenReturn(cachedAddons)
+        assertEquals(cachedAddons, provider.getFeaturedAddons(allowCache = true))
     }
 
     @Test
@@ -359,7 +361,7 @@ class AMOAddonsProviderTest {
     }
 
     @Test
-    fun `getAddonIconBitmap - with a successful status will return a bitmap`() = runTest {
+    fun `loadIconAsync - with a successful status will return a bitmap`() = runTest {
         val mockedClient = mock<Client>()
         val mockedResponse = mock<Response>()
         val stream: InputStream = javaClass.getResourceAsStream("/png/mozac.png")!!.buffered()
@@ -370,33 +372,33 @@ class AMOAddonsProviderTest {
         whenever(mockedClient.fetch(any())).thenReturn(mockedResponse)
 
         val provider = AMOAddonsProvider(testContext, client = mockedClient)
-        val addon = Addon(
-            id = "id",
-            downloadUrl = "https://example.com",
-            version = "version",
-            iconUrl = "https://example.com/image.png",
-            createdAt = "0",
-            updatedAt = "0",
-        )
 
-        val bitmap = provider.getAddonIconBitmap(addon)
+        val bitmap = provider.loadIconAsync("id", "https://example.com/image.png").await()
         assertTrue(bitmap is Bitmap)
     }
 
     @Test
-    fun `getAddonIconBitmap - with an unsuccessful status will return null`() = runTest {
+    fun `loadIconAsync - will return bitmap from the cache when available`() = runTest {
+        val mockedClient = mock<Client>()
+        val expectedIcon = mock<Bitmap>()
+
+        val provider = AMOAddonsProvider(testContext, client = mockedClient)
+
+        provider.iconsCache["id"] = expectedIcon
+
+        val bitmap = provider.loadIconAsync("id", "https://example.com/image.png").await()
+
+        verify(mockedClient, times(0)).fetch(any())
+        assertEquals(expectedIcon, bitmap)
+        assertTrue(bitmap is Bitmap)
+    }
+
+    @Test
+    fun `loadIconAsync - with an unsuccessful status will return null`() = runTest {
         val mockedClient = prepareClient(status = 500)
         val provider = AMOAddonsProvider(testContext, client = mockedClient)
-        val addon = Addon(
-            id = "id",
-            downloadUrl = "https://example.com",
-            version = "version",
-            iconUrl = "https://example.com/image.png",
-            createdAt = "0",
-            updatedAt = "0",
-        )
 
-        val bitmap = provider.getAddonIconBitmap(addon)
+        val bitmap = provider.loadIconAsync("id", "https://example.com/image.png").await()
         assertNull(bitmap)
     }
 
@@ -643,7 +645,7 @@ class AMOAddonsProviderTest {
         )
         // Ratings
         assertEquals(4.7825F, addon.rating!!.average, 0.7825F)
-        assertEquals(15799, addon.rating!!.reviews)
+        assertEquals(4101, addon.rating!!.reviews)
         assertEquals(
             "https://addons.mozilla.org/en-US/firefox/addon/ublock-origin/reviews/",
             addon.ratingUrl,

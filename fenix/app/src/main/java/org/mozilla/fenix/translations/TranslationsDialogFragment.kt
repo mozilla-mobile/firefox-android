@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import org.mozilla.fenix.R
@@ -39,7 +40,14 @@ class TranslationsDialogFragment : BottomSheetDialogFragment() {
     ): View = ComposeView(requireContext()).apply {
         setContent {
             FirefoxTheme {
-                TranslationsDialogBottomSheet()
+                TranslationsDialogBottomSheet(
+                    onSettingClicked = {
+                        findNavController().popBackStack()
+                        findNavController().navigate(
+                            TranslationsDialogFragmentDirections.actionGlobalToTranslationOptionsDialogFragment(),
+                        )
+                    },
+                )
             }
         }
     }
