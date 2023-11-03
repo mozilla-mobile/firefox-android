@@ -20,10 +20,10 @@ object Versions {
     const val python_envs_plugin = "0.0.31"
 
     const val junit = "4.13.2"
-    const val robolectric = "4.10.3"
-    const val mockito = "5.6.0"
+    const val robolectric = "4.11.1"
+    const val mockito = "5.7.0"
     const val maven_ant_tasks = "2.1.3"
-    const val jacoco = "0.8.10"
+    const val jacoco = "0.8.11"
     const val okhttp = "4.11.0"
 
     const val android_gradle_plugin = "7.4.2"
@@ -31,7 +31,7 @@ object Versions {
     // This has to be synced to the gradlew plugin version. See
     // http://googlesamples.github.io/android-custom-lint-rules/api-guide/example.md.html#example:samplelintcheckgithubproject/lintversion?
     const val lint = "30.4.2"
-    const val detekt = "1.23.1"
+    const val detekt = "1.23.3"
     const val ktlint = "0.49.1"
 
     const val sentry_latest = "6.27.0"
@@ -66,7 +66,7 @@ object Versions {
         const val coordinatorlayout = "1.2.0"
         const val core = "1.12.0"
         const val drawerlayout = "1.2.0"
-        const val fragment = "1.6.1"
+        const val fragment = "1.6.2"
         const val recyclerview = "1.3.2"
         const val test = "1.5.0"
         const val test_ext = "1.1.5"
