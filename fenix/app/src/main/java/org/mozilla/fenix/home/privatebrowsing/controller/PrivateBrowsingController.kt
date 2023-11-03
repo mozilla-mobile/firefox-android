@@ -42,8 +42,11 @@ class DefaultPrivateBrowsingController(
 ) : PrivateBrowsingController {
 
     override fun handleLearnMoreClicked() {
+        val learnMoreURL = SupportUtils.getGenericSumoURLForTopic(SupportUtils.SumoTopic.PRIVATE_BROWSING_MYTHS) +
+            "?as=u&utm_source=inproduct"
+
         activity.openToBrowserAndLoad(
-            searchTermOrURL = SupportUtils.getGenericSumoURLForTopic(SupportUtils.SumoTopic.PRIVATE_BROWSING_MYTHS),
+            searchTermOrURL = learnMoreURL,
             newTab = true,
             from = BrowserDirection.FromHome,
         )
