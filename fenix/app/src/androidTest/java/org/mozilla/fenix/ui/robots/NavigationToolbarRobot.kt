@@ -35,13 +35,13 @@ import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.Constants
 import org.mozilla.fenix.helpers.Constants.LONG_CLICK_DURATION
+import org.mozilla.fenix.helpers.DataGenerationHelper.getStringResource
 import org.mozilla.fenix.helpers.HomeActivityComposeTestRule
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdContainingText
 import org.mozilla.fenix.helpers.SessionLoadedIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
-import org.mozilla.fenix.helpers.TestHelper.getStringResource
 import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.TestHelper.waitForObjects
@@ -146,23 +146,6 @@ class NavigationToolbarRobot {
 
     class Transition {
         private lateinit var sessionLoadedIdlingResource: SessionLoadedIdlingResource
-
-        fun goBackToWebsite(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
-            openEditURLView()
-            clearAddressBarButton().click()
-            assertTrue(
-                mDevice.findObject(
-                    UiSelector()
-                        .resourceId("$packageName:id/mozac_browser_toolbar_edit_url_view")
-                        .textContains(""),
-                ).waitForExists(waitingTime),
-            )
-
-            goBackButton()
-
-            BrowserRobot().interact()
-            return BrowserRobot.Transition()
-        }
 
         fun enterURLAndEnterToBrowser(
             url: Uri,
@@ -298,8 +281,9 @@ class NavigationToolbarRobot {
             return BrowserRobot.Transition()
         }
 
-        fun goBack(interact: HomeScreenRobot.() -> Unit): HomeScreenRobot.Transition {
-            goBackButton()
+        fun goBackToHomeScreen(interact: HomeScreenRobot.() -> Unit): HomeScreenRobot.Transition {
+            mDevice.pressBack()
+            mDevice.waitForWindowUpdate(packageName, waitingTimeShort)
 
             HomeScreenRobot().interact()
             return HomeScreenRobot.Transition()
@@ -425,7 +409,6 @@ private fun tabsCounter() =
     mDevice.findObject(By.res("$packageName:id/counter_root"))
 private fun fillLinkButton() = onView(withId(R.id.fill_link_from_clipboard))
 private fun clearAddressBarButton() = itemWithResId("$packageName:id/mozac_browser_toolbar_clear_view")
-private fun goBackButton() = mDevice.pressBack()
 private fun readerViewToggle() =
     onView(withParent(withId(R.id.mozac_browser_toolbar_page_actions)))
 

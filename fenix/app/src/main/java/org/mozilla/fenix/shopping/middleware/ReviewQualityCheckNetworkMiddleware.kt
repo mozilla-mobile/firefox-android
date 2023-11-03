@@ -6,7 +6,7 @@ package org.mozilla.fenix.shopping.middleware
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import mozilla.components.browser.engine.gecko.shopping.GeckoProductAnalysis
+import mozilla.components.concept.engine.shopping.ProductAnalysis
 import mozilla.components.lib.state.MiddlewareContext
 import mozilla.components.lib.state.Store
 import org.mozilla.fenix.components.AppStore
@@ -14,18 +14,20 @@ import org.mozilla.fenix.components.appstate.AppAction.ShoppingAction
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckAction
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckAction.FetchProductAnalysis
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckAction.RetryProductAnalysis
+import org.mozilla.fenix.shopping.store.ReviewQualityCheckAction.UpdateRecommendedProduct
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckMiddleware
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent.AnalysisStatus
+import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.RecommendedProductState
 
 /**
  * Middleware that handles network requests for the review quality check feature.
  *
- * @property reviewQualityCheckService The service that handles the network requests.
- * @property networkChecker The [NetworkChecker] instance to check the network status.
- * @property appStore The [AppStore] instance to access state and dispatch [ShoppingAction]s.
- * @property scope The [CoroutineScope] that will be used to launch coroutines.
+ * @param reviewQualityCheckService The service that handles the network requests.
+ * @param networkChecker The [NetworkChecker] instance to check the network status.
+ * @param appStore The [AppStore] instance to access state and dispatch [ShoppingAction]s.
+ * @param scope The [CoroutineScope] that will be used to launch coroutines.
  */
 class ReviewQualityCheckNetworkMiddleware(
     private val reviewQualityCheckService: ReviewQualityCheckService,
@@ -71,6 +73,10 @@ class ReviewQualityCheckNetworkMiddleware(
                             productReviewState = productReviewState,
                             productAnalysis = productAnalysis,
                         )
+                    }
+
+                    if (productReviewState is ProductReviewState.AnalysisPresent) {
+                        store.updateRecommendedProductState()
                     }
                 }
 
@@ -138,7 +144,7 @@ class ReviewQualityCheckNetworkMiddleware(
     private fun Store<ReviewQualityCheckState, ReviewQualityCheckAction>.restoreAnalysingStateIfRequired(
         productPageUrl: String,
         productReviewState: ProductReviewState,
-        productAnalysis: GeckoProductAnalysis?,
+        productAnalysis: ProductAnalysis?,
     ) {
         if (productReviewState.isAnalysisPresentOrNoAnalysisPresent() &&
             productAnalysis?.needsAnalysis == true &&
@@ -150,4 +156,16 @@ class ReviewQualityCheckNetworkMiddleware(
 
     private fun ProductReviewState.isAnalysisPresentOrNoAnalysisPresent() =
         this is ProductReviewState.AnalysisPresent || this is ProductReviewState.NoAnalysisPresent
+
+    private suspend fun Store<ReviewQualityCheckState, ReviewQualityCheckAction>.updateRecommendedProductState() {
+        val currentState = state
+        if (currentState is ReviewQualityCheckState.OptedIn &&
+            currentState.productRecommendationsPreference == true
+        ) {
+            dispatch(UpdateRecommendedProduct(RecommendedProductState.Loading))
+            reviewQualityCheckService.productRecommendation().toRecommendedProductState().also {
+                dispatch(UpdateRecommendedProduct(it))
+            }
+        }
+    }
 }

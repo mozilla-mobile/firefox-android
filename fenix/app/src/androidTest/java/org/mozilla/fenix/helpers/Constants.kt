@@ -4,7 +4,7 @@
 
 package org.mozilla.fenix.helpers
 
-import org.mozilla.fenix.helpers.TestHelper.getSponsoredShortcutTitle
+import org.mozilla.fenix.helpers.DataGenerationHelper.getSponsoredShortcutTitle
 
 object Constants {
 
@@ -18,6 +18,7 @@ object Constants {
         const val GMAIL_APP = "com.google.android.gm"
         const val PHONE_APP = "com.android.dialer"
         const val ANDROID_SETTINGS = "com.android.settings"
+        const val PRINT_SPOOLER = "com.android.printspooler"
     }
 
     const val SPEECH_RECOGNITION = "android.speech.action.RECOGNIZE_SPEECH"

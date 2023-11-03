@@ -756,6 +756,26 @@ class GeckoEngine(
                 field = value
             }
 
+        override var cookieBannerHandlingGlobalRules: Boolean = false
+            set(value) {
+                with(runtime.settings.contentBlocking) {
+                    if (this.cookieBannerGlobalRulesEnabled != value) {
+                        this.cookieBannerGlobalRulesEnabled = value
+                    }
+                }
+                field = value
+            }
+
+        override var cookieBannerHandlingGlobalRulesSubFrames: Boolean = false
+            set(value) {
+                with(runtime.settings.contentBlocking) {
+                    if (this.cookieBannerGlobalRulesSubFramesEnabled != value) {
+                        this.cookieBannerGlobalRulesSubFramesEnabled = value
+                    }
+                }
+                field = value
+            }
+
         override var remoteDebuggingEnabled: Boolean
             get() = runtime.settings.remoteDebuggingEnabled
             set(value) { runtime.settings.remoteDebuggingEnabled = value }
@@ -859,6 +879,8 @@ class GeckoEngine(
             this.cookieBannerHandlingMode = it.cookieBannerHandlingMode
             this.cookieBannerHandlingModePrivateBrowsing = it.cookieBannerHandlingModePrivateBrowsing
             this.cookieBannerHandlingDetectOnlyMode = it.cookieBannerHandlingDetectOnlyMode
+            this.cookieBannerHandlingGlobalRules = it.cookieBannerHandlingGlobalRules
+            this.cookieBannerHandlingGlobalRulesSubFrames = it.cookieBannerHandlingGlobalRulesSubFrames
         }
     }
 

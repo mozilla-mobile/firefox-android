@@ -44,13 +44,13 @@ import org.mozilla.fenix.theme.ThemeManager
 
 /**
  * Builds the toolbar object used with the 3-dot menu in the browser fragment.
- * @property context a [Context] for accessing system resources.
- * @property store reference to the application's [BrowserStore].
+ * @param context a [Context] for accessing system resources.
+ * @param store reference to the application's [BrowserStore].
  * @param hasAccountProblem If true, there was a problem signing into the Firefox account.
- * @property onItemTapped Called when a menu item is tapped.
- * @property lifecycleOwner View lifecycle owner used to determine when to cancel UI jobs.
- * @property bookmarksStorage Used to check if a page is bookmarked.
- * @property pinnedSiteStorage Used to check if the current url is a pinned site.
+ * @param onItemTapped Called when a menu item is tapped.
+ * @param lifecycleOwner View lifecycle owner used to determine when to cancel UI jobs.
+ * @param bookmarksStorage Used to check if a page is bookmarked.
+ * @param pinnedSiteStorage Used to check if the current url is a pinned site.
  * @property isPinningSupported true if the launcher supports adding shortcuts.
  */
 @Suppress("LargeClass", "LongParameterList", "TooManyFunctions")
@@ -182,7 +182,7 @@ open class DefaultToolbarMenu(
 
     private val installToHomescreen = BrowserMenuHighlightableItem(
         label = context.getString(R.string.browser_menu_install_on_homescreen),
-        startImageResource = R.drawable.mozac_ic_add_to_home_screen_24,
+        startImageResource = R.drawable.mozac_ic_add_to_homescreen_24,
         iconTintColorResource = primaryTextColor(),
         highlight = BrowserMenuHighlight.LowPriority(
             label = context.getString(R.string.browser_menu_install_on_homescreen),
@@ -271,7 +271,7 @@ open class DefaultToolbarMenu(
 
     private val addToHomeScreenItem = BrowserMenuImageText(
         label = context.getString(R.string.browser_menu_add_to_homescreen),
-        imageResource = R.drawable.mozac_ic_add_to_home_screen_24,
+        imageResource = R.drawable.mozac_ic_add_to_homescreen_24,
         iconTintColorResource = primaryTextColor(),
         isCollapsingMenuLimit = true,
     ) {
