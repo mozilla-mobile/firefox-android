@@ -7,6 +7,7 @@ package org.mozilla.fenix.utils
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.net.Uri
 import android.os.Build
 import android.os.PersistableBundle
 import android.view.textclassifier.TextClassifier
@@ -89,7 +90,8 @@ class ClipboardHandler(val context: Context) {
      */
     fun extractURL(): String? {
         return text?.let {
-            if (it.length > MAX_URI_LENGTH) {
+            val scheme = Uri.parse(it).scheme
+            if (it.length > MAX_URI_LENGTH || scheme !in arrayOf("http", "https")) {
                 return null
             }
 
@@ -119,7 +121,8 @@ class ClipboardHandler(val context: Context) {
                 } catch (e: IllegalStateException) {
                     0F
                 }
-            score >= 0.7F
+            val scheme = Uri.parse(clipboard.primaryClip?.getItemAt(0)?.text.toString()).scheme
+            score >= 0.7F && scheme in arrayOf("http", "https")
         } else {
             !extractURL().isNullOrEmpty()
         }
