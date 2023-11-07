@@ -67,7 +67,7 @@ private const val CFR_MINIMUM_NUMBER_OPENED_TABS = 5
  * @property isPrivate Whether or not the session is private.
  * @property sessionId optional custom tab id used to identify the custom tab in which to show a CFR.
  * @property onShoppingCfrActionClicked Triggered when the user taps on the shopping CFR action.
- * @property onShoppingCfrDismiss Triggered when the user closes the shopping CFR using the "X" button.
+ * @property onShoppingCfrDisplayed Triggered when CFR is displayed to the user.
  * @property shoppingExperienceFeature Used to determine if [ShoppingExperienceFeature] is enabled.
  */
 @Suppress("LongParameterList")
@@ -79,7 +79,7 @@ class BrowserToolbarCFRPresenter(
     private val isPrivate: Boolean,
     private val sessionId: String? = null,
     private val onShoppingCfrActionClicked: () -> Unit,
-    private val onShoppingCfrDismiss: () -> Unit,
+    private val onShoppingCfrDisplayed: () -> Unit,
     private val shoppingExperienceFeature: ShoppingExperienceFeature = DefaultShoppingExperienceFeature(),
 ) {
     @VisibleForTesting
@@ -347,14 +347,7 @@ class BrowserToolbarCFRPresenter(
                 dismissOnBackPress = true,
                 dismissOnClickOutside = true,
             ),
-            onDismiss = {
-                when (it) {
-                    true -> {
-                        onShoppingCfrDismiss()
-                    }
-                    false -> {}
-                }
-            },
+            onDismiss = {},
             text = {
                 FirefoxTheme {
                     Text(
@@ -391,6 +384,7 @@ class BrowserToolbarCFRPresenter(
         ).run {
             Shopping.addressBarFeatureCalloutDisplayed.record()
             popup = this
+            onShoppingCfrDisplayed()
             show()
         }
     }

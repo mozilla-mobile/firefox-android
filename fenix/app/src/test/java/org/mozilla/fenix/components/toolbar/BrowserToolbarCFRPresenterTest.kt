@@ -479,7 +479,7 @@ class BrowserToolbarCFRPresenterTest {
             sessionId = sessionId,
             isPrivate = isPrivate,
             onShoppingCfrActionClicked = {},
-            onShoppingCfrDismiss = {},
+            onShoppingCfrDisplayed = {},
             shoppingExperienceFeature = shoppingExperienceFeature,
         ),
     )
