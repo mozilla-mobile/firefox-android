@@ -7489,6 +7489,25 @@ first_session:
         - Performance
         - Attribution
 play_store_attribution:
+  install_referrer_response:
+    type: text
+    send_in_pings:
+      - first-session
+    description: |
+      The full install referrer response.
+    bugs:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1862737
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-android/pull/4343
+    data_sensitivity:
+      # - technical
+      - web_activity # This is a workaround so we can use Text type for technical data.
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: never
+    metadata:
+      tags:
+        - Attribution
   source:
     type: string
     send_in_pings:
@@ -10859,6 +10878,25 @@ shopping:
       - https://bugzilla.mozilla.org/show_bug.cgi?id=1854501
     data_reviews:
       - https://github.com/mozilla-mobile/firefox-android/pull/4120#issuecomment-1768423370
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: never
+    metadata:
+      tags:
+        - Shopping
+  surface_powered_by_fakespot_link_clicked:
+    type: event
+    description: |
+      The user clicked the "Fakespot by Mozilla" link at the bottom of review checker
+      sheet.
+    send_in_pings:
+      - events
+    bugs:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1862775
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-android/pull/4354#issuecomment-1794341141
     data_sensitivity:
       - interaction
     notification_emails:
