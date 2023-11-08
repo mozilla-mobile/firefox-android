@@ -168,7 +168,6 @@ class BrowserToolbarCFRPresenterTest {
         val presenter = createPresenter(
             settings = mockk {
                 every { shouldShowTotalCookieProtectionCFR } returns false
-                every { shouldShowCookieBannerReEngagementDialog() } returns false
                 every { shouldShowReviewQualityCheckCFR } returns false
                 every { shouldShowEraseActionCFR } returns false
             },
@@ -359,7 +358,7 @@ class BrowserToolbarCFRPresenterTest {
     }
 
     @Test
-    fun `GIVEN the first CFR was displayed less than 24h ago AND the user did not opt in to the shopping feature WHEN opening a loaded product page THEN no shopping CFR is shown`() {
+    fun `GIVEN the first CFR was displayed less than 12h ago AND the user did not opt in to the shopping feature WHEN opening a loaded product page THEN no shopping CFR is shown`() {
         val tab1 = createTab(url = "", id = "tab1")
         val browserStore = BrowserStore(
             initialState = BrowserState(
@@ -374,7 +373,7 @@ class BrowserToolbarCFRPresenterTest {
                 every { shouldShowReviewQualityCheckCFR } returns true
                 every { shouldShowEraseActionCFR } returns false
                 every { reviewQualityCheckOptInTimeInMillis } returns 0L
-                every { reviewQualityCheckCfrDisplayTimeInMillis } returns System.currentTimeMillis() - 19 * 60 * 60 * 1000L
+                every { reviewQualityCheckCfrDisplayTimeInMillis } returns System.currentTimeMillis() - (11 * 60 * 60 * 1000L)
             },
             browserStore = browserStore,
         )
@@ -386,7 +385,7 @@ class BrowserToolbarCFRPresenterTest {
     }
 
     @Test
-    fun `GIVEN the first CFR was displayed 24h ago AND the user did not opt in to the shopping feature WHEN opening a loaded product page THEN the first shopping CFR is shown`() {
+    fun `GIVEN the first CFR was displayed 12h ago AND the user did not opt in to the shopping feature WHEN opening a loaded product page THEN the first shopping CFR is shown`() {
         val tab1 = createTab(url = "", id = "tab1")
         val tab2 = createTab(url = "", id = "tab2")
         val browserStore = BrowserStore(
@@ -402,7 +401,7 @@ class BrowserToolbarCFRPresenterTest {
                 every { shouldShowReviewQualityCheckCFR } returns true
                 every { shouldShowEraseActionCFR } returns false
                 every { reviewQualityCheckOptInTimeInMillis } returns 0L
-                every { reviewQualityCheckCfrDisplayTimeInMillis } returns System.currentTimeMillis() - Settings.ONE_DAY_MS
+                every { reviewQualityCheckCfrDisplayTimeInMillis } returns System.currentTimeMillis() - Settings.TWELVE_HOURS_MS
             },
             browserStore = browserStore,
         )
@@ -429,7 +428,7 @@ class BrowserToolbarCFRPresenterTest {
         browserStore: BrowserStore = mockk(),
         settings: Settings = mockk {
             every { shouldShowTotalCookieProtectionCFR } returns true
-            every { shouldShowCookieBannerReEngagementDialog() } returns false
+            every { openTabsCount } returns 5
             every { shouldShowReviewQualityCheckCFR } returns false
             every { shouldShowEraseActionCFR } returns false
         },
@@ -456,8 +455,8 @@ class BrowserToolbarCFRPresenterTest {
         browserStore: BrowserStore = mockk(),
         settings: Settings = mockk(relaxed = true) {
             every { shouldShowTotalCookieProtectionCFR } returns true
-            every { shouldShowCookieBannerReEngagementDialog() } returns false
             every { shouldShowEraseActionCFR } returns true
+            every { openTabsCount } returns 5
             every { shouldShowReviewQualityCheckCFR } returns true
         },
         toolbar: BrowserToolbar = mockk {
@@ -479,7 +478,7 @@ class BrowserToolbarCFRPresenterTest {
             sessionId = sessionId,
             isPrivate = isPrivate,
             onShoppingCfrActionClicked = {},
-            onShoppingCfrDismiss = {},
+            onShoppingCfrDisplayed = {},
             shoppingExperienceFeature = shoppingExperienceFeature,
         ),
     )

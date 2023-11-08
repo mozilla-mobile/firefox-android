@@ -6,6 +6,7 @@
 
 package org.mozilla.fenix.ui.robots
 
+import android.util.Log
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.swipeDown
@@ -30,6 +31,7 @@ import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.Constants.LONG_CLICK_DURATION
 import org.mozilla.fenix.helpers.Constants.RETRY_COUNT
+import org.mozilla.fenix.helpers.DataGenerationHelper.getStringResource
 import org.mozilla.fenix.helpers.MatcherHelper.assertCheckedItemWithResIdAndTextExists
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemContainingTextExists
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithDescriptionExists
@@ -37,11 +39,11 @@ import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithResIdAndTextExists
 import org.mozilla.fenix.helpers.MatcherHelper.checkedItemWithResIdAndText
 import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithDescription
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdAndText
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithText
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeLong
-import org.mozilla.fenix.helpers.TestHelper.getStringResource
 import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.click
@@ -173,6 +175,11 @@ class ThreeDotMenuMainRobot {
                 }
             }
         }
+    }
+
+    fun verifyTrackersBlockedByUblock() {
+        assertTrue(itemWithResId("$packageName:id/badge_text").waitForExists(waitingTime))
+        assertTrue(itemWithResId("$packageName:id/badge_text").text.toInt() > 0)
     }
 
     fun clickQuit() {
@@ -315,8 +322,10 @@ class ThreeDotMenuMainRobot {
 
         fun refreshPage(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
             refreshButton.also {
+                Log.i("MozTestLog", "refreshPage: Looking for refresh button")
                 it.waitForExists(waitingTime)
                 it.click()
+                Log.i("MozTestLog", "refreshPage: Clicked the refresh button")
             }
 
             BrowserRobot().interact()
@@ -469,6 +478,16 @@ class ThreeDotMenuMainRobot {
             ShareOverlayRobot().interact()
             return ShareOverlayRobot.Transition()
         }
+
+        fun clickPrintButton(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
+            threeDotMenuRecyclerView().perform(swipeUp())
+            threeDotMenuRecyclerView().perform(swipeUp())
+            printButton.waitForExists(waitingTime)
+            printButton.click()
+
+            BrowserRobot().interact()
+            return BrowserRobot.Transition()
+        }
     }
 }
 private fun threeDotMenuRecyclerView() =
@@ -596,3 +615,4 @@ private val backButton = itemWithDescription(getStringResource(R.string.browser_
 private val forwardButton = itemWithDescription(getStringResource(R.string.browser_menu_forward))
 private val shareButton = itemWithDescription(getStringResource(R.string.share_button_content_description))
 private val refreshButton = itemWithDescription(getStringResource(R.string.browser_menu_refresh))
+private val printButton = itemWithText("Print")

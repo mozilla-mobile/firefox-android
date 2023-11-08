@@ -35,22 +35,24 @@ import mozilla.components.feature.webcompat.reporter.WebCompatReporterFeature
 import mozilla.components.lib.state.ext.flowScoped
 import mozilla.components.support.ktx.android.content.getColorFromAttr
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifAnyChanged
+import org.mozilla.fenix.Config
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.accounts.FenixAccountManager
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.theme.ThemeManager
+import org.mozilla.fenix.utils.Settings
 
 /**
  * Builds the toolbar object used with the 3-dot menu in the browser fragment.
- * @property context a [Context] for accessing system resources.
- * @property store reference to the application's [BrowserStore].
+ * @param context a [Context] for accessing system resources.
+ * @param store reference to the application's [BrowserStore].
  * @param hasAccountProblem If true, there was a problem signing into the Firefox account.
- * @property onItemTapped Called when a menu item is tapped.
- * @property lifecycleOwner View lifecycle owner used to determine when to cancel UI jobs.
- * @property bookmarksStorage Used to check if a page is bookmarked.
- * @property pinnedSiteStorage Used to check if the current url is a pinned site.
+ * @param onItemTapped Called when a menu item is tapped.
+ * @param lifecycleOwner View lifecycle owner used to determine when to cancel UI jobs.
+ * @param bookmarksStorage Used to check if a page is bookmarked.
+ * @param pinnedSiteStorage Used to check if the current url is a pinned site.
  * @property isPinningSupported true if the launcher supports adding shortcuts.
  */
 @Suppress("LargeClass", "LongParameterList", "TooManyFunctions")
@@ -168,6 +170,19 @@ open class DefaultToolbarMenu(
         selectedSession != null && isPinningSupported &&
             context.components.useCases.webAppUseCases.isInstallable()
 
+    /**
+     * Should the "Open in regular tab" menu item be visible?
+     */
+    @VisibleForTesting(otherwise = PRIVATE)
+    fun shouldShowOpenInRegularTab(): Boolean = selectedSession?.let { session ->
+        // This feature is gated behind Nightly for the time being.
+        Config.channel.isNightlyOrDebug &&
+            // This feature is explicitly for users opening links in private tabs.
+            context.settings().openLinksInAPrivateTab &&
+            // and is only visible in private tabs.
+            session.content.private
+    } ?: false
+
     @VisibleForTesting(otherwise = PRIVATE)
     fun shouldShowOpenInApp(): Boolean = selectedSession?.let { session ->
         val appLink = context.components.useCases.appLinksUseCases.appLinkRedirect
@@ -182,7 +197,7 @@ open class DefaultToolbarMenu(
 
     private val installToHomescreen = BrowserMenuHighlightableItem(
         label = context.getString(R.string.browser_menu_install_on_homescreen),
-        startImageResource = R.drawable.mozac_ic_add_to_home_screen_24,
+        startImageResource = R.drawable.mozac_ic_add_to_homescreen_24,
         iconTintColorResource = primaryTextColor(),
         highlight = BrowserMenuHighlight.LowPriority(
             label = context.getString(R.string.browser_menu_install_on_homescreen),
@@ -243,6 +258,13 @@ open class DefaultToolbarMenu(
         onItemTapped.invoke(ToolbarMenu.Item.RequestDesktop(checked))
     }
 
+    private val openInRegularTabItem = BrowserMenuImageText(
+        label = context.getString(R.string.browser_menu_open_in_regular_tab),
+        imageResource = R.drawable.ic_open_in_regular_tab,
+    ) {
+        onItemTapped.invoke(ToolbarMenu.Item.OpenInRegularTab)
+    }
+
     private val customizeReaderView = BrowserMenuImageText(
         label = context.getString(R.string.browser_menu_customize_reader_view),
         imageResource = R.drawable.ic_readermode_appearance,
@@ -271,7 +293,7 @@ open class DefaultToolbarMenu(
 
     private val addToHomeScreenItem = BrowserMenuImageText(
         label = context.getString(R.string.browser_menu_add_to_homescreen),
-        imageResource = R.drawable.mozac_ic_add_to_home_screen_24,
+        imageResource = R.drawable.mozac_ic_add_to_homescreen_24,
         iconTintColorResource = primaryTextColor(),
         isCollapsingMenuLimit = true,
     ) {
@@ -384,6 +406,7 @@ open class DefaultToolbarMenu(
                 BrowserMenuDivider(),
                 findInPageItem,
                 desktopSiteItem,
+                openInRegularTabItem.apply { visible = ::shouldShowOpenInRegularTab },
                 customizeReaderView.apply { visible = ::shouldShowReaderViewCustomization },
                 openInApp.apply { visible = ::shouldShowOpenInApp },
                 reportSiteIssuePlaceholder,

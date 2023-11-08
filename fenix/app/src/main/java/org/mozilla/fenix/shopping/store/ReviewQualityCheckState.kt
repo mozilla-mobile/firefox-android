@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.shopping.store
 
+import androidx.compose.runtime.Immutable
 import mozilla.components.lib.state.State
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.HighlightType
 import java.util.SortedMap
@@ -43,11 +44,15 @@ sealed interface ReviewQualityCheckState : State {
      * recommendations. True if product recommendations should be shown. Null indicates that product
      * recommendations are disabled.
      * @property productVendor The vendor of the product.
+     * @property isSettingsExpanded Whether or not the settings card is expanded.
+     * @property isInfoExpanded Whether or not the info card is expanded.
      */
     data class OptedIn(
         val productReviewState: ProductReviewState = ProductReviewState.Loading,
         val productRecommendationsPreference: Boolean?,
         val productVendor: ProductVendor,
+        val isSettingsExpanded: Boolean = false,
+        val isInfoExpanded: Boolean = false,
     ) : ReviewQualityCheckState {
 
         /**
@@ -102,6 +107,7 @@ sealed interface ReviewQualityCheckState : State {
              * @property highlights Optional highlights based on recent reviews of the product.
              * @property recommendedProductState The state of the recommended product.
              */
+            @Immutable
             data class AnalysisPresent(
                 val productId: String,
                 val reviewGrade: Grade?,
@@ -159,18 +165,9 @@ sealed interface ReviewQualityCheckState : State {
         object Initial : RecommendedProductState
 
         /**
-         * The state when the recommended product is loading.
-         */
-        object Loading : RecommendedProductState
-
-        /**
-         * The state when an error has occurred while fetching the recommended product.
-         */
-        object Error : RecommendedProductState
-
-        /**
          * The state when the recommended product is available.
          *
+         * @property aid The unique identifier of the product.
          * @property name The name of the product.
          * @property productUrl The url of the product.
          * @property imageUrl The url of the image of the product.
@@ -181,6 +178,7 @@ sealed interface ReviewQualityCheckState : State {
          * @property analysisUrl The url of the analysis of the product.
          */
         data class Product(
+            val aid: String,
             val name: String,
             val productUrl: String,
             val imageUrl: String,

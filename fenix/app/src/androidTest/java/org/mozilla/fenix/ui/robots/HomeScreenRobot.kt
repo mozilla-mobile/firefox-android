@@ -52,6 +52,7 @@ import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.Constants.LISTS_MAXSWIPES
 import org.mozilla.fenix.helpers.Constants.LONG_CLICK_DURATION
+import org.mozilla.fenix.helpers.DataGenerationHelper.getStringResource
 import org.mozilla.fenix.helpers.HomeActivityComposeTestRule
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemContainingTextExists
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithDescriptionExists
@@ -65,7 +66,6 @@ import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdAndText
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
 import org.mozilla.fenix.helpers.TestHelper.appName
-import org.mozilla.fenix.helpers.TestHelper.getStringResource
 import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.TestHelper.scrollToElementByText
@@ -146,6 +146,58 @@ class HomeScreenRobot {
                 .assertIsDisplayed()
         }
     }
+
+    fun verifyFirstOnboardingCard(composeTestRule: ComposeTestRule) {
+        composeTestRule.also {
+            it.onNodeWithText(
+                getStringResource(R.string.juno_onboarding_default_browser_title_nimbus_2),
+            ).assertExists()
+
+            it.onNodeWithText(
+                getStringResource(R.string.juno_onboarding_default_browser_description_nimbus_2),
+            ).assertExists()
+
+            it.onNodeWithText(
+                getStringResource(R.string.juno_onboarding_default_browser_positive_button),
+            ).assertExists()
+
+            it.onNodeWithText(
+                getStringResource(R.string.juno_onboarding_default_browser_negative_button),
+            ).assertExists()
+        }
+    }
+
+    fun verifySecondOnboardingCard(composeTestRule: ComposeTestRule) {
+        composeTestRule.also {
+            it.onNodeWithText(
+                getStringResource(R.string.juno_onboarding_sign_in_title_2),
+            ).assertExists()
+
+            it.onNodeWithText(
+                getStringResource(R.string.juno_onboarding_sign_in_description_2),
+            ).assertExists()
+
+            it.onNodeWithText(
+                getStringResource(R.string.juno_onboarding_sign_in_positive_button),
+            ).assertExists()
+
+            it.onNodeWithText(
+                getStringResource(R.string.juno_onboarding_sign_in_negative_button),
+            ).assertExists()
+        }
+    }
+
+    fun clickNotNowOnboardingButton(composeTestRule: ComposeTestRule) =
+        composeTestRule.onNodeWithText(
+            getStringResource(R.string.juno_onboarding_default_browser_negative_button),
+        ).performClick()
+
+    fun swipeSecondOnboardingCardToRight() =
+        mDevice.findObject(
+            UiSelector().textContains(
+                getStringResource(R.string.juno_onboarding_sign_in_title_2),
+            ),
+        ).swipeRight(3)
 
     fun clickGetStartedButton(testRule: ComposeTestRule) =
         testRule.onNodeWithText(getStringResource(R.string.onboarding_home_get_started_button)).performClick()
@@ -771,6 +823,30 @@ class HomeScreenRobot {
 
             BrowserRobot().interact()
             return BrowserRobot.Transition()
+        }
+
+        fun clickSetAsDefaultBrowserOnboardingButton(
+            composeTestRule: ComposeTestRule,
+            interact: SettingsRobot.() -> Unit,
+        ): SettingsRobot.Transition {
+            composeTestRule.onNodeWithText(
+                getStringResource(R.string.juno_onboarding_default_browser_positive_button),
+            ).performClick()
+
+            SettingsRobot().interact()
+            return SettingsRobot.Transition()
+        }
+
+        fun clickSignInOnboardingButton(
+            composeTestRule: ComposeTestRule,
+            interact: SyncSignInRobot.() -> Unit,
+        ): SyncSignInRobot.Transition {
+            composeTestRule.onNodeWithText(
+                getStringResource(R.string.juno_onboarding_sign_in_positive_button),
+            ).performClick()
+
+            SyncSignInRobot().interact()
+            return SyncSignInRobot.Transition()
         }
     }
 }

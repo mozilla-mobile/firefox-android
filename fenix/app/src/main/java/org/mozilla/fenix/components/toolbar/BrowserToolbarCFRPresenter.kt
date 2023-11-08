@@ -40,7 +40,6 @@ import org.mozilla.fenix.GleanMetrics.Shopping
 import org.mozilla.fenix.GleanMetrics.TrackingProtection
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.settings.SupportUtils.SumoTopic.TOTAL_COOKIE_PROTECTION
 import org.mozilla.fenix.shopping.DefaultShoppingExperienceFeature
@@ -56,20 +55,22 @@ private const val CFR_TO_ANCHOR_VERTICAL_PADDING = -6
 /**
  * The minimum number of opened tabs to show the Total Cookie Protection CFR.
  */
-private const val CFR_MINIMUM_NUMBER_OPENED_TABS = 5
+internal var CFR_MINIMUM_NUMBER_OPENED_TABS = 5
+    @VisibleForTesting
+    internal set
 
 /**
  * Delegate for handling all the business logic for showing CFRs in the toolbar.
  *
- * @property context used for various Android interactions.
- * @property browserStore will be observed for tabs updates
- * @property settings used to read and write persistent user settings
- * @property toolbar will serve as anchor for the CFRs
- * @property isPrivate Whether or not the session is private.
- * @property sessionId optional custom tab id used to identify the custom tab in which to show a CFR.
- * @property onShoppingCfrActionClicked Triggered when the user taps on the shopping CFR action.
- * @property onShoppingCfrDismiss Triggered when the user closes the shopping CFR using the "X" button.
- * @property shoppingExperienceFeature Used to determine if [ShoppingExperienceFeature] is enabled.
+ * @param context used for various Android interactions.
+ * @param browserStore will be observed for tabs updates
+ * @param settings used to read and write persistent user settings
+ * @param toolbar will serve as anchor for the CFRs
+ * @param isPrivate Whether or not the session is private.
+ * @param sessionId optional custom tab id used to identify the custom tab in which to show a CFR.
+ * @param onShoppingCfrActionClicked Triggered when the user taps on the shopping CFR action.
+ * @param onShoppingCfrDisplayed Triggered when CFR is displayed to the user.
+ * @param shoppingExperienceFeature Used to determine if [ShoppingExperienceFeature] is enabled.
  */
 @Suppress("LongParameterList")
 class BrowserToolbarCFRPresenter(
@@ -80,10 +81,8 @@ class BrowserToolbarCFRPresenter(
     private val isPrivate: Boolean,
     private val sessionId: String? = null,
     private val onShoppingCfrActionClicked: () -> Unit,
-    private val onShoppingCfrDismiss: () -> Unit,
-    private val shoppingExperienceFeature: ShoppingExperienceFeature = DefaultShoppingExperienceFeature(
-        context.settings(),
-    ),
+    private val onShoppingCfrDisplayed: () -> Unit,
+    private val shoppingExperienceFeature: ShoppingExperienceFeature = DefaultShoppingExperienceFeature(),
 ) {
     @VisibleForTesting
     internal var scope: CoroutineScope? = null
@@ -153,23 +152,28 @@ class BrowserToolbarCFRPresenter(
         }
     }
 
+    /**
+     * Decides which Shopping CFR needs to be displayed depending on
+     * participation of user in Review Checker and time elapsed
+     * from last CFR display.
+     */
     private fun whichShoppingCFR(): ToolbarCFR {
         fun Long.isInitialized(): Boolean = this != 0L
-        fun Long.afterOneDay(): Boolean = this.isInitialized() &&
-            System.currentTimeMillis() - this > Settings.ONE_DAY_MS
+        fun Long.afterTwelveHours(): Boolean = this.isInitialized() &&
+            System.currentTimeMillis() - this > Settings.TWELVE_HOURS_MS
 
         val optInTime = settings.reviewQualityCheckOptInTimeInMillis
         val firstCfrShownTime = settings.reviewQualityCheckCfrDisplayTimeInMillis
 
         return when {
-            // First CFR should be displayed on first product page visit
+            // Try Review Checker CFR should be displayed on first product page visit
             !firstCfrShownTime.isInitialized() ->
                 ToolbarCFR.SHOPPING
-            // First CFR should be displayed again 24 hours later only for not opted in users
-            !optInTime.isInitialized() && firstCfrShownTime.afterOneDay() ->
+            // Try Review Checker CFR should be displayed again 12 hours later only for not opted in users
+            !optInTime.isInitialized() && firstCfrShownTime.afterTwelveHours() ->
                 ToolbarCFR.SHOPPING
-            // Second CFR should be shown 24 hours after opt in
-            optInTime.afterOneDay() ->
+            // Already Opted In CFR should be shown 12 hours after opt in
+            optInTime.afterTwelveHours() ->
                 ToolbarCFR.SHOPPING_OPTED_IN
             else -> {
                 ToolbarCFR.NONE
@@ -183,8 +187,7 @@ class BrowserToolbarCFRPresenter(
         }
 
         settings.shouldShowTotalCookieProtectionCFR && (
-            !settings.shouldShowCookieBannerReEngagementDialog() ||
-                settings.openTabsCount >= CFR_MINIMUM_NUMBER_OPENED_TABS
+            settings.openTabsCount >= CFR_MINIMUM_NUMBER_OPENED_TABS
             ) -> ToolbarCFR.TCP
 
         shoppingExperienceFeature.isEnabled &&
@@ -342,17 +345,10 @@ class BrowserToolbarCFRPresenter(
                 } else {
                     CFRPopup.IndicatorDirection.DOWN
                 },
-                dismissOnBackPress = false,
-                dismissOnClickOutside = false,
+                dismissOnBackPress = true,
+                dismissOnClickOutside = true,
             ),
-            onDismiss = {
-                when (it) {
-                    true -> {
-                        onShoppingCfrDismiss()
-                    }
-                    false -> {}
-                }
-            },
+            onDismiss = {},
             text = {
                 FirefoxTheme {
                     Text(
@@ -389,6 +385,7 @@ class BrowserToolbarCFRPresenter(
         ).run {
             Shopping.addressBarFeatureCalloutDisplayed.record()
             popup = this
+            onShoppingCfrDisplayed()
             show()
         }
     }

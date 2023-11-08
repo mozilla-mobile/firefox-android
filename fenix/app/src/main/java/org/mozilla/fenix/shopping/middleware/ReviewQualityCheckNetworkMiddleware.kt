@@ -14,6 +14,7 @@ import org.mozilla.fenix.components.appstate.AppAction.ShoppingAction
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckAction
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckAction.FetchProductAnalysis
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckAction.RetryProductAnalysis
+import org.mozilla.fenix.shopping.store.ReviewQualityCheckAction.UpdateRecommendedProduct
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckMiddleware
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState
@@ -22,10 +23,10 @@ import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductR
 /**
  * Middleware that handles network requests for the review quality check feature.
  *
- * @property reviewQualityCheckService The service that handles the network requests.
- * @property networkChecker The [NetworkChecker] instance to check the network status.
- * @property appStore The [AppStore] instance to access state and dispatch [ShoppingAction]s.
- * @property scope The [CoroutineScope] that will be used to launch coroutines.
+ * @param reviewQualityCheckService The service that handles the network requests.
+ * @param networkChecker The [NetworkChecker] instance to check the network status.
+ * @param appStore The [AppStore] instance to access state and dispatch [ShoppingAction]s.
+ * @param scope The [CoroutineScope] that will be used to launch coroutines.
  */
 class ReviewQualityCheckNetworkMiddleware(
     private val reviewQualityCheckService: ReviewQualityCheckService,
@@ -71,6 +72,10 @@ class ReviewQualityCheckNetworkMiddleware(
                             productReviewState = productReviewState,
                             productAnalysis = productAnalysis,
                         )
+                    }
+
+                    if (productReviewState is ProductReviewState.AnalysisPresent) {
+                        store.updateRecommendedProductState()
                     }
                 }
 
@@ -119,6 +124,14 @@ class ReviewQualityCheckNetworkMiddleware(
                         appStore.dispatch(ShoppingAction.RemoveFromProductAnalysed(it))
                     }
                 }
+
+                is ReviewQualityCheckAction.RecommendedProductClick -> {
+                    reviewQualityCheckService.recordRecommendedProductClick(action.productAid)
+                }
+
+                is ReviewQualityCheckAction.RecommendedProductImpression -> {
+                    reviewQualityCheckService.recordRecommendedProductImpression(action.productAid)
+                }
             }
         }
     }
@@ -150,4 +163,15 @@ class ReviewQualityCheckNetworkMiddleware(
 
     private fun ProductReviewState.isAnalysisPresentOrNoAnalysisPresent() =
         this is ProductReviewState.AnalysisPresent || this is ProductReviewState.NoAnalysisPresent
+
+    private suspend fun Store<ReviewQualityCheckState, ReviewQualityCheckAction>.updateRecommendedProductState() {
+        val currentState = state
+        if (currentState is ReviewQualityCheckState.OptedIn &&
+            currentState.productRecommendationsPreference == true
+        ) {
+            reviewQualityCheckService.productRecommendation().toRecommendedProductState().also {
+                dispatch(UpdateRecommendedProduct(it))
+            }
+        }
+    }
 }

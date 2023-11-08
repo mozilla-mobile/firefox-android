@@ -40,6 +40,8 @@ import mozilla.components.concept.engine.request.RequestInterceptor.Interception
 import mozilla.components.concept.engine.shopping.Highlight
 import mozilla.components.concept.engine.shopping.ProductAnalysis
 import mozilla.components.concept.engine.shopping.ProductRecommendation
+import mozilla.components.concept.engine.translate.TranslationOperation
+import mozilla.components.concept.engine.translate.TranslationOptions
 import mozilla.components.concept.engine.window.WindowRequest
 import mozilla.components.concept.fetch.Headers.Names.CONTENT_DISPOSITION
 import mozilla.components.concept.fetch.Headers.Names.CONTENT_LENGTH
@@ -77,6 +79,7 @@ import org.mozilla.geckoview.WebRequestError
 import org.mozilla.geckoview.WebResponse
 import java.util.Locale
 import kotlin.coroutines.CoroutineContext
+import org.mozilla.geckoview.TranslationsController.SessionTranslation as GeckoViewTranslateSession
 
 /**
  * Gecko-based EngineSession implementation.
@@ -817,6 +820,134 @@ class GeckoEngineSession(
                 throwable ->
             logger.error("Request for product analysis status failed.", throwable)
             onException(throwable)
+            GeckoResult()
+        })
+    }
+
+    /**
+     * See [EngineSession.sendClickAttributionEvent]
+     */
+    override fun sendClickAttributionEvent(
+        aid: String,
+        onResult: (Boolean) -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {
+        geckoSession.sendClickAttributionEvent(aid).then({
+                response ->
+            val errorMessage = "Invalid value: unable to send click attribution event through Gecko Engine."
+            if (response == null) {
+                logger.error(errorMessage)
+                onException(
+                    java.lang.IllegalStateException(errorMessage),
+                )
+                return@then GeckoResult()
+            }
+            onResult(response)
+            GeckoResult<Boolean>()
+        }, {
+                throwable ->
+            logger.error("Sending click attribution event failed.", throwable)
+            onException(throwable)
+            GeckoResult()
+        })
+    }
+
+    /**
+     * See [EngineSession.sendImpressionAttributionEvent]
+     */
+    override fun sendImpressionAttributionEvent(
+        aid: String,
+        onResult: (Boolean) -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {
+        geckoSession.sendImpressionAttributionEvent(aid).then({
+                response ->
+            val errorMessage = "Invalid value: unable to send impression attribution event through Gecko Engine."
+            if (response == null) {
+                logger.error(errorMessage)
+                onException(
+                    java.lang.IllegalStateException(errorMessage),
+                )
+                return@then GeckoResult()
+            }
+            onResult(response)
+            GeckoResult<Boolean>()
+        }, {
+                throwable ->
+            logger.error("Sending impression attribution event failed.", throwable)
+            onException(throwable)
+            GeckoResult()
+        })
+    }
+
+    /**
+     * Convenience method for the error when session translation is not available.
+     */
+    private fun sessionTranslationNotAvailable(): Throwable {
+        val errorMessage = "A translation session coordinator is not available."
+        logger.error(errorMessage)
+        return IllegalStateException(errorMessage)
+    }
+
+    /**
+     * See [EngineSession.requestTranslate]
+     */
+    override fun requestTranslate(
+        fromLanguage: String,
+        toLanguage: String,
+        options: TranslationOptions?,
+    ) {
+        if (geckoSession.sessionTranslation == null) {
+            notifyObservers {
+                onTranslateException(TranslationOperation.TRANSLATE, sessionTranslationNotAvailable())
+            }
+            return
+        }
+
+        var geckoOptions: GeckoViewTranslateSession.TranslationOptions? = null
+        if (options != null) {
+            geckoOptions =
+                GeckoViewTranslateSession.TranslationOptions.Builder()
+                    .downloadModel(options.downloadModel).build()
+        }
+
+        geckoSession.sessionTranslation!!.translate(fromLanguage, toLanguage, geckoOptions).then({
+            notifyObservers {
+                onTranslateComplete(TranslationOperation.TRANSLATE)
+            }
+            GeckoResult<Void>()
+        }, {
+                throwable ->
+            logger.error("Request for translation failed: ", throwable)
+            notifyObservers {
+                onTranslateException(TranslationOperation.TRANSLATE, throwable)
+            }
+            GeckoResult()
+        })
+    }
+
+    /**
+     * See [EngineSession.requestTranslationRestore]
+     */
+    override fun requestTranslationRestore() {
+        if (geckoSession.sessionTranslation == null) {
+            notifyObservers {
+                onTranslateException(TranslationOperation.RESTORE, sessionTranslationNotAvailable())
+            }
+            return
+        }
+
+        geckoSession.sessionTranslation!!.restoreOriginalPage().then({
+            notifyObservers {
+                onTranslateComplete(TranslationOperation.RESTORE)
+            }
+            GeckoResult<Void>()
+        }, {
+                throwable ->
+            logger.error("Request for translation failed: ", throwable)
+            notifyObservers {
+                onTranslateException(TranslationOperation.RESTORE, throwable)
+            }
             GeckoResult()
         })
     }
