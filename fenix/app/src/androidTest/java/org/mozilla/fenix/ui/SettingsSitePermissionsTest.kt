@@ -380,7 +380,7 @@ class SettingsSitePermissionsTest {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(permissionsTestPage.toUri()) {
         }.clickGetLocationButton {
-            verifyLocationPermissionPrompt(testPageSubstring)
+            verifyLocationPermissionPrompt(url = testPageSubstring, exists = true)
             pressBack()
         }
         browserScreen {

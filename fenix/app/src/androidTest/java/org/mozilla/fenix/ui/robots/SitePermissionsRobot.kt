@@ -74,14 +74,21 @@ class SitePermissionsRobot {
         assertTrue(allowPagePermissionButton.text.equals("Allow"))
     }
 
-    fun verifyLocationPermissionPrompt(url: String) {
+    fun verifyLocationPermissionPrompt(url: String, exists: Boolean) {
         try {
-            assertTrue(
-                mDevice.findObject(UiSelector().text("Allow $url to use your location?"))
-                    .waitForExists(waitingTime),
-            )
-            assertTrue(denyPagePermissionButton.text.equals("Don’t allow"))
-            assertTrue(allowPagePermissionButton.text.equals("Allow"))
+            if (exists) {
+                assertTrue(
+                    mDevice.findObject(UiSelector().text("Allow $url to use your location?"))
+                        .waitForExists(waitingTime),
+                )
+                assertTrue(denyPagePermissionButton.text.equals("Don’t allow"))
+                assertTrue(allowPagePermissionButton.text.equals("Allow"))
+            } else {
+                assertFalse(
+                    mDevice.findObject(UiSelector().text("Allow $url to use your location?"))
+                        .waitForExists(waitingTime),
+                )
+            }
         } catch (e: AssertionError) {
             browserScreen {
             }.openThreeDotMenu {
@@ -215,6 +222,11 @@ class SitePermissionsRobot {
             return BrowserRobot.Transition()
         }
     }
+}
+
+fun sitePermissionsRobot(interact: SitePermissionsRobot.() -> Unit): SitePermissionsRobot.Transition {
+    SitePermissionsRobot().interact()
+    return SitePermissionsRobot.Transition()
 }
 
 // Page permission prompts buttons
