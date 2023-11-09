@@ -105,9 +105,12 @@ fun ReviewQualityCheckBottomSheet(
                     onShowMoreRecentReviewsClicked = {
                         store.dispatch(ReviewQualityCheckAction.ShowMoreRecentReviewsClicked)
                     },
-                    onRecommendedProductClick = {
+                    onRecommendedProductClick = { aid, url ->
                         onRequestDismiss(BottomSheetDismissSource.LINK_OPENED)
-                        store.dispatch(ReviewQualityCheckAction.OpenRecommendedProduct(it))
+                        store.dispatch(ReviewQualityCheckAction.RecommendedProductClick(aid, url))
+                    },
+                    onProductRecommendationImpression = { aid ->
+                        store.dispatch(ReviewQualityCheckAction.RecommendedProductImpression(productAid = aid))
                     },
                 )
             }
@@ -137,7 +140,8 @@ private fun ProductReview(
     onInfoExpandToggleClick: () -> Unit,
     onReviewGradeLearnMoreClick: () -> Unit,
     onFooterLinkClick: () -> Unit,
-    onRecommendedProductClick: (String) -> Unit,
+    onRecommendedProductClick: (aid: String, url: String) -> Unit,
+    onProductRecommendationImpression: (aid: String) -> Unit,
 ) {
     Crossfade(
         targetState = state.productReviewState,
@@ -160,6 +164,7 @@ private fun ProductReview(
                     onReviewGradeLearnMoreClick = onReviewGradeLearnMoreClick,
                     onFooterLinkClick = onFooterLinkClick,
                     onRecommendedProductClick = onRecommendedProductClick,
+                    onRecommendedProductImpression = onProductRecommendationImpression,
                 )
             }
 

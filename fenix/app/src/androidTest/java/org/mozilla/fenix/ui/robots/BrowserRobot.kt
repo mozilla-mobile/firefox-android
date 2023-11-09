@@ -15,6 +15,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.ViewInteraction
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.PickerActions
@@ -41,6 +42,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.Constants.LONG_CLICK_DURATION
 import org.mozilla.fenix.helpers.Constants.RETRY_COUNT
+import org.mozilla.fenix.helpers.Constants.TAG
 import org.mozilla.fenix.helpers.DataGenerationHelper.getStringResource
 import org.mozilla.fenix.helpers.HomeActivityComposeTestRule
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemContainingTextExists
@@ -69,8 +71,8 @@ class BrowserRobot {
     private lateinit var sessionLoadedIdlingResource: SessionLoadedIdlingResource
 
     fun waitForPageToLoad() {
-        progressBar.waitUntilGone(waitingTime)
-        Log.i("MozTestLog", "waitForPageToLoad: The page was loaded, the progress bar is gone")
+        progressBar().waitUntilGone(waitingTime)
+        Log.i(TAG, "waitForPageToLoad: The page was loaded, the progress bar is gone")
     }
 
     fun verifyCurrentPrivateSession(context: Context) {
@@ -108,7 +110,6 @@ class BrowserRobot {
      *  document.querySelector('#testContent').innerText == expectedText
      *
      */
-
     fun verifyPageContent(expectedText: String) {
         sessionLoadedIdlingResource = SessionLoadedIdlingResource()
 
@@ -189,10 +190,10 @@ class BrowserRobot {
         // If the link is not re-directing to an external app the "Open link in external app" option is not available
         assertItemContainingTextExists(
             contextMenuLinkUrl(containsURL.toString()),
-            contextMenuOpenLinkInNewTab,
-            contextMenuOpenLinkInPrivateTab,
-            contextMenuCopyLink,
-            contextMenuShareLink,
+            contextMenuOpenLinkInNewTab(),
+            contextMenuOpenLinkInPrivateTab(),
+            contextMenuCopyLink(),
+            contextMenuShareLink(),
         )
     }
 
@@ -201,12 +202,12 @@ class BrowserRobot {
         // If the link is not directing to another local asset the "Download link" option is not available
         assertItemContainingTextExists(
             contextMenuLinkUrl(containsURL),
-            contextMenuOpenLinkInNewTab,
-            contextMenuOpenLinkInPrivateTab,
-            contextMenuCopyLink,
-            contextMenuDownloadLink,
-            contextMenuShareLink,
-            contextMenuOpenInExternalApp,
+            contextMenuOpenLinkInNewTab(),
+            contextMenuOpenLinkInPrivateTab(),
+            contextMenuCopyLink(),
+            contextMenuDownloadLink(),
+            contextMenuShareLink(),
+            contextMenuOpenInExternalApp(),
         )
     }
 
@@ -215,11 +216,11 @@ class BrowserRobot {
         // If the link is not re-directing to an external app the "Open link in external app" option is not available
         assertItemContainingTextExists(
             contextMenuLinkUrl(containsURL.toString()),
-            contextMenuOpenLinkInNewTab,
-            contextMenuOpenLinkInPrivateTab,
-            contextMenuCopyLink,
-            contextMenuDownloadLink,
-            contextMenuShareLink,
+            contextMenuOpenLinkInNewTab(),
+            contextMenuOpenLinkInPrivateTab(),
+            contextMenuCopyLink(),
+            contextMenuDownloadLink(),
+            contextMenuShareLink(),
         )
     }
 
@@ -381,9 +382,9 @@ class BrowserRobot {
     fun clickSuggestedLoginsButton() {
         for (i in 1..RETRY_COUNT) {
             try {
-                mDevice.waitForObjects(suggestedLogins)
-                suggestedLogins.click()
-                mDevice.waitForObjects(suggestedLogins)
+                mDevice.waitForObjects(suggestedLogins())
+                suggestedLogins().click()
+                mDevice.waitForObjects(suggestedLogins())
                 break
             } catch (e: UiObjectNotFoundException) {
                 if (i == RETRY_COUNT) {
@@ -410,8 +411,8 @@ class BrowserRobot {
     fun clickSelectAddressButton() {
         for (i in 1..RETRY_COUNT) {
             try {
-                assertTrue(selectAddressButton.waitForExists(waitingTime))
-                selectAddressButton.clickAndWaitForNewWindow(waitingTime)
+                assertTrue(selectAddressButton().waitForExists(waitingTime))
+                selectAddressButton().clickAndWaitForNewWindow(waitingTime)
 
                 break
             } catch (e: AssertionError) {
@@ -427,7 +428,7 @@ class BrowserRobot {
         }
     }
 
-    fun verifySelectAddressButtonExists(exists: Boolean) = assertItemWithResIdExists(selectAddressButton, exists = exists)
+    fun verifySelectAddressButtonExists(exists: Boolean) = assertItemWithResIdExists(selectAddressButton(), exists = exists)
 
     fun changeCreditCardExpiryDate(expiryDate: String) =
         itemWithResId("expiryMonthAndYear").setText(expiryDate)
@@ -460,7 +461,7 @@ class BrowserRobot {
         )
 
     fun verifySelectCreditCardPromptExists(exists: Boolean) =
-        assertItemWithResIdExists(selectCreditCardButton, exists = exists)
+        assertItemWithResIdExists(selectCreditCardButton(), exists = exists)
 
     fun verifyCreditCardSuggestion(vararg creditCardNumbers: String) {
         for (creditCardNumber in creditCardNumbers) {
@@ -621,7 +622,7 @@ class BrowserRobot {
         }
     }
 
-    fun selectTime(hour: Int, minute: Int) =
+    fun selectTime(hour: Int, minute: Int): ViewInteraction =
         onView(
             isAssignableFrom(TimePicker::class.java),
         ).inRoot(
@@ -629,6 +630,11 @@ class BrowserRobot {
         ).perform(PickerActions.setTime(hour, minute))
 
     fun verifySelectedDate() {
+        val currentDate = LocalDate.now()
+        val currentDay = currentDate.dayOfMonth
+        val currentMonth = currentDate.month
+        val currentYear = currentDate.year
+
         for (i in 1..RETRY_COUNT) {
             try {
                 assertTrue(
@@ -658,6 +664,8 @@ class BrowserRobot {
     }
 
     fun verifyNoDateIsSelected() {
+        val currentDate = LocalDate.now()
+
         assertFalse(
             mDevice.findObject(
                 UiSelector()
@@ -781,7 +789,7 @@ class BrowserRobot {
     fun verifyCookieBannerExists(exists: Boolean) {
         for (i in 1..RETRY_COUNT) {
             try {
-                assertItemWithResIdExists(cookieBanner, exists = exists)
+                assertItemWithResIdExists(cookieBanner(), exists = exists)
                 break
             } catch (e: AssertionError) {
                 if (i == RETRY_COUNT) {
@@ -795,7 +803,7 @@ class BrowserRobot {
                 }
             }
         }
-        assertItemWithResIdExists(cookieBanner, exists = exists)
+        assertItemWithResIdExists(cookieBanner(), exists = exists)
     }
 
     fun verifyOpenLinkInAnotherAppPrompt() {
@@ -892,7 +900,7 @@ class BrowserRobot {
                     browserScreen {
                     }.openThreeDotMenu {
                     }.refreshPage {
-                        progressBar.waitUntilGone(waitingTimeLong)
+                        waitForPageToLoad()
                     }
                 }
             }
@@ -1034,9 +1042,9 @@ class BrowserRobot {
     class Transition {
         fun openThreeDotMenu(interact: ThreeDotMenuMainRobot.() -> Unit): ThreeDotMenuMainRobot.Transition {
             mDevice.waitForIdle(waitingTime)
-            Log.i("MozTestLog", "openThreeDotMenu: Device was idle for $waitingTime")
+            Log.i(TAG, "openThreeDotMenu: Device was idle for $waitingTime")
             threeDotButton().perform(click())
-            Log.i("MozTestLog", "openThreeDotMenu: Clicked the main menu button")
+            Log.i(TAG, "openThreeDotMenu: Clicked the main menu button")
 
             ThreeDotMenuMainRobot().interact()
             return ThreeDotMenuMainRobot.Transition()
@@ -1293,23 +1301,24 @@ class BrowserRobot {
         }
 
         fun clickSurveyButton(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
-            surveyButton.waitForExists(waitingTime)
-            surveyButton.click()
+            surveyButton().waitForExists(waitingTime)
+            surveyButton().click()
 
             BrowserRobot().interact()
             return Transition()
         }
 
         fun clickNoThanksSurveyButton(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
-            surveyNoThanksButton.waitForExists(waitingTime)
-            surveyNoThanksButton.click()
+            surveyNoThanksButton().waitForExists(waitingTime)
+            surveyNoThanksButton().click()
 
             BrowserRobot().interact()
             return Transition()
         }
+
         fun clickHomeScreenSurveyCloseButton(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
-            homescreenSurveyCloseButton.waitForExists(waitingTime)
-            homescreenSurveyCloseButton.click()
+            homescreenSurveyCloseButton().waitForExists(waitingTime)
+            homescreenSurveyCloseButton().click()
 
             BrowserRobot().interact()
             return Transition()
@@ -1322,9 +1331,9 @@ fun browserScreen(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
     return BrowserRobot.Transition()
 }
 
-fun navURLBar() = itemWithResId("$packageName:id/toolbar")
+private fun navURLBar() = itemWithResId("$packageName:id/toolbar")
 
-fun searchBar() = itemWithResId("$packageName:id/mozac_browser_toolbar_url_view")
+private fun searchBar() = itemWithResId("$packageName:id/mozac_browser_toolbar_url_view")
 
 fun homeScreenButton() = onView(withContentDescription(R.string.browser_toolbar_home))
 
@@ -1333,45 +1342,41 @@ private fun threeDotButton() = onView(withContentDescription("Menu"))
 private fun tabsCounter() =
     mDevice.findObject(By.res("$packageName:id/counter_root"))
 
-private val progressBar =
+private fun progressBar() =
     itemWithResId("$packageName:id/mozac_browser_toolbar_progress")
 
-private val suggestedLogins = itemWithResId("$packageName:id/loginSelectBar")
-private val selectAddressButton = itemWithResId("$packageName:id/select_address_header")
-private val selectCreditCardButton = itemWithResId("$packageName:id/select_credit_card_header")
+private fun suggestedLogins() = itemWithResId("$packageName:id/loginSelectBar")
+private fun selectAddressButton() = itemWithResId("$packageName:id/select_address_header")
+private fun selectCreditCardButton() = itemWithResId("$packageName:id/select_credit_card_header")
 
 private fun creditCardSuggestion(creditCardNumber: String) =
-    mDevice.findObject(
-        UiSelector()
-            .resourceId("$packageName:id/credit_card_number")
-            .textContains(creditCardNumber),
-    )
+    itemWithResIdAndText("$packageName:id/credit_card_number", "$creditCardNumber")
 
 private fun siteSecurityToolbarButton() =
     itemWithResId("$packageName:id/mozac_browser_toolbar_security_indicator")
 
 fun clickPageObject(item: UiObject) {
     for (i in 1..RETRY_COUNT) {
-        Log.i("MozTestLog", "clickPageObject: For loop i = $i")
+        Log.i(TAG, "clickPageObject: For loop i = $i")
         try {
-            Log.i("MozTestLog", "clickPageObject: Try block")
+            Log.i(TAG, "clickPageObject: Try block")
             item.waitForExists(waitingTime)
             item.click()
-            Log.i("MozTestLog", "clickPageObject: Clicked ${item.selector}")
+            Log.i(TAG, "clickPageObject: Clicked ${item.selector}")
 
             break
         } catch (e: UiObjectNotFoundException) {
-            Log.i("MozTestLog", "clickPageObject: Catch block")
+            Log.i(TAG, "clickPageObject: Catch block")
             if (i == RETRY_COUNT) {
                 throw e
             } else {
                 browserScreen {
-                    Log.i("MozTestLog", "clickPageObject: Browser screen")
+                    Log.i(TAG, "clickPageObject: Browser screen")
                 }.openThreeDotMenu {
-                    Log.i("MozTestLog", "clickPageObject: Opened main menu")
+                    Log.i(TAG, "clickPageObject: Opened main menu")
                 }.refreshPage {
-                    progressBar.waitUntilGone(waitingTime)
-                    Log.i("MozTestLog", "clickPageObject: Page refreshed, progress bar is gone")
+                    waitForPageToLoad()
+                    Log.i(TAG, "clickPageObject: Page refreshed, progress bar is gone")
                 }
             }
         }
@@ -1392,7 +1397,7 @@ fun longClickPageObject(item: UiObject) {
                 browserScreen {
                 }.openThreeDotMenu {
                 }.refreshPage {
-                    progressBar.waitUntilGone(waitingTime)
+                    waitForPageToLoad()
                 }
             }
         }
@@ -1424,7 +1429,7 @@ fun setPageObjectText(webPageItem: UiObject, text: String) {
                 browserScreen {
                 }.openThreeDotMenu {
                 }.refreshPage {
-                    progressBar.waitUntilGone(waitingTime)
+                    waitForPageToLoad()
                 }
             }
         }
@@ -1436,11 +1441,7 @@ fun clearTextFieldItem(item: UiObject) {
     item.clearTextField()
 }
 
-private val currentDate = LocalDate.now()
-private val currentDay = currentDate.dayOfMonth
-private val currentMonth = currentDate.month
-private val currentYear = currentDate.year
-private val cookieBanner = itemWithResId("startsiden-gdpr-disclaimer")
+private fun cookieBanner() = itemWithResId("startsiden-gdpr-disclaimer")
 
 // Context menu items
 // Link URL
@@ -1448,34 +1449,34 @@ private fun contextMenuLinkUrl(linkUrl: String) =
     itemContainingText(linkUrl)
 
 // Open link in new tab option
-private val contextMenuOpenLinkInNewTab =
+private fun contextMenuOpenLinkInNewTab() =
     itemContainingText(getStringResource(R.string.mozac_feature_contextmenu_open_link_in_new_tab))
 
 // Open link in private tab option
-private val contextMenuOpenLinkInPrivateTab =
+private fun contextMenuOpenLinkInPrivateTab() =
     itemContainingText(getStringResource(R.string.mozac_feature_contextmenu_open_link_in_private_tab))
 
 // Copy link option
-private val contextMenuCopyLink =
+private fun contextMenuCopyLink() =
     itemContainingText(getStringResource(R.string.mozac_feature_contextmenu_copy_link))
 
 // Download link option
-private val contextMenuDownloadLink =
+private fun contextMenuDownloadLink() =
     itemContainingText(getStringResource(R.string.mozac_feature_contextmenu_download_link))
 
 // Share link option
-private val contextMenuShareLink =
+private fun contextMenuShareLink() =
     itemContainingText(getStringResource(R.string.mozac_feature_contextmenu_share_link))
 
 // Open in external app option
-private val contextMenuOpenInExternalApp =
+private fun contextMenuOpenInExternalApp() =
     itemContainingText(getStringResource(R.string.mozac_feature_contextmenu_open_link_in_external_app))
 
-private val surveyButton =
+private fun surveyButton() =
     itemContainingText(getStringResource(R.string.preferences_take_survey))
 
-private val surveyNoThanksButton =
+private fun surveyNoThanksButton() =
     itemContainingText(getStringResource(R.string.preferences_not_take_survey))
 
-private val homescreenSurveyCloseButton =
+private fun homescreenSurveyCloseButton() =
     itemWithDescription("Close")

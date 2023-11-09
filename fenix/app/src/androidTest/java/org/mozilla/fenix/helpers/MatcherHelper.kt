@@ -4,10 +4,12 @@
 
 package org.mozilla.fenix.helpers
 
+import android.util.Log
 import androidx.test.uiautomator.UiObject
 import androidx.test.uiautomator.UiSelector
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
+import org.mozilla.fenix.helpers.Constants.TAG
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
 import org.mozilla.fenix.helpers.TestHelper.mDevice
@@ -17,17 +19,25 @@ import org.mozilla.fenix.helpers.TestHelper.mDevice
  */
 object MatcherHelper {
 
-    fun itemWithResId(resourceId: String) =
-        mDevice.findObject(UiSelector().resourceId(resourceId))
+    fun itemWithResId(resourceId: String): UiObject {
+        Log.i(TAG, "Looking for item with resource id: $resourceId")
+        return mDevice.findObject(UiSelector().resourceId(resourceId))
+    }
 
-    fun itemContainingText(itemText: String) =
-        mDevice.findObject(UiSelector().textContains(itemText))
+    fun itemContainingText(itemText: String): UiObject {
+        Log.i(TAG, "Looking for item with text: $itemText")
+        return mDevice.findObject(UiSelector().textContains(itemText))
+    }
 
-    fun itemWithText(itemText: String) =
-        mDevice.findObject(UiSelector().text(itemText))
+    fun itemWithText(itemText: String): UiObject {
+        Log.i(TAG, "Looking for item with text: $itemText")
+        return mDevice.findObject(UiSelector().text(itemText))
+    }
 
-    fun itemWithDescription(description: String) =
-        mDevice.findObject(UiSelector().descriptionContains(description))
+    fun itemWithDescription(description: String): UiObject {
+        Log.i(TAG, "Looking for item with description: $description")
+        return mDevice.findObject(UiSelector().descriptionContains(description))
+    }
 
     fun checkedItemWithResId(resourceId: String, isChecked: Boolean) =
         mDevice.findObject(UiSelector().resourceId(resourceId).checked(isChecked))
@@ -53,10 +63,12 @@ object MatcherHelper {
         if (exists) {
             for (appItem in appItems) {
                 assertTrue(appItem.waitForExists(waitingTime))
+                Log.i(TAG, "assertItemWithResIdExists: Verified ${appItem.selector} exists")
             }
         } else {
             for (appItem in appItems) {
                 assertFalse(appItem.waitForExists(waitingTimeShort))
+                Log.i(TAG, "assertItemWithResIdExists: Verified ${appItem.selector} does not exist")
             }
         }
     }
@@ -65,8 +77,10 @@ object MatcherHelper {
         for (appItem in appItems) {
             if (exists) {
                 assertTrue(appItem.waitForExists(waitingTime))
+                Log.i(TAG, "assertItemContainingTextExists: Verified ${appItem.selector} exists")
             } else {
                 assertFalse(appItem.waitForExists(waitingTimeShort))
+                Log.i(TAG, "assertItemContainingTextExists: Verified ${appItem.selector} does not exist")
             }
         }
     }
@@ -75,8 +89,10 @@ object MatcherHelper {
         for (appItem in appItems) {
             if (exists) {
                 assertTrue(appItem.waitForExists(waitingTime))
+                Log.i(TAG, "assertItemContainingTextExists: Verified ${appItem.selector} exists")
             } else {
                 assertFalse(appItem.waitForExists(waitingTimeShort))
+                Log.i(TAG, "assertItemContainingTextExists: Verified ${appItem.selector} does not exist")
             }
         }
     }
