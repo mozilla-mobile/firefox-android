@@ -308,6 +308,56 @@ class ReviewQualityCheckStoreTest {
         }
 
     @Test
+    fun `GIVEN the user has opted in the feature WHEN the user expands highlights card THEN state should reflect that`() =
+        runTest {
+            val tested = ReviewQualityCheckStore(
+                initialState = ReviewQualityCheckState.OptedIn(
+                    productRecommendationsPreference = null,
+                    productVendor = ProductVendor.BEST_BUY,
+                    isHighlightsExpanded = false,
+                ),
+                middleware = emptyList(),
+            )
+            tested.waitUntilIdle()
+            dispatcher.scheduler.advanceUntilIdle()
+            tested.dispatch(ReviewQualityCheckAction.ExpandCollapseHighlights).joinBlocking()
+            tested.waitUntilIdle()
+            dispatcher.scheduler.advanceUntilIdle()
+
+            val expected = ReviewQualityCheckState.OptedIn(
+                productRecommendationsPreference = null,
+                productVendor = ProductVendor.BEST_BUY,
+                isHighlightsExpanded = true,
+            )
+            assertEquals(expected, tested.state)
+        }
+
+    @Test
+    fun `GIVEN the user has opted in the feature WHEN the user collapses highlights card THEN state should reflect that`() =
+        runTest {
+            val tested = ReviewQualityCheckStore(
+                initialState = ReviewQualityCheckState.OptedIn(
+                    productRecommendationsPreference = null,
+                    productVendor = ProductVendor.BEST_BUY,
+                    isHighlightsExpanded = true,
+                ),
+                middleware = emptyList(),
+            )
+            tested.waitUntilIdle()
+            dispatcher.scheduler.advanceUntilIdle()
+            tested.dispatch(ReviewQualityCheckAction.ExpandCollapseHighlights).joinBlocking()
+            tested.waitUntilIdle()
+            dispatcher.scheduler.advanceUntilIdle()
+
+            val expected = ReviewQualityCheckState.OptedIn(
+                productRecommendationsPreference = null,
+                productVendor = ProductVendor.BEST_BUY,
+                isHighlightsExpanded = false,
+            )
+            assertEquals(expected, tested.state)
+        }
+
+    @Test
     fun `GIVEN the user has opted in the feature WHEN a product analysis is fetched successfully THEN state should reflect that`() =
         runTest {
             val tested = ReviewQualityCheckStore(
@@ -686,7 +736,7 @@ class ReviewQualityCheckStoreTest {
         }
 
     @Test
-    fun `GIVEN product recommendations are enabled WHEN a product analysis is fetched successfully and product recommendation fails THEN product recommendations state should be error`() =
+    fun `GIVEN product recommendations are enabled WHEN a product analysis is fetched successfully and product recommendation fails THEN product recommendations state should be initial`() =
         runTest {
             val tested = ReviewQualityCheckStore(
                 middleware = provideReviewQualityCheckMiddleware(
@@ -709,7 +759,7 @@ class ReviewQualityCheckStoreTest {
 
             val expected = ReviewQualityCheckState.OptedIn(
                 productReviewState = ProductAnalysisTestData.analysisPresent(
-                    recommendedProductState = ReviewQualityCheckState.RecommendedProductState.Error,
+                    recommendedProductState = ReviewQualityCheckState.RecommendedProductState.Initial,
                 ),
                 productRecommendationsPreference = true,
                 productVendor = ProductVendor.BEST_BUY,
@@ -741,6 +791,77 @@ class ReviewQualityCheckStoreTest {
             dispatcher.scheduler.advanceUntilIdle()
 
             captureActionsMiddleware.assertNotDispatched(ReviewQualityCheckAction.UpdateRecommendedProduct::class)
+        }
+
+    @Test
+    fun `GIVEN product recommendations are enabled WHEN recommended product is clicked THEN click event is recorded`() =
+        runTest {
+            var productClicked: String? = null
+            val tested = ReviewQualityCheckStore(
+                middleware = provideReviewQualityCheckMiddleware(
+                    reviewQualityCheckPreferences = FakeReviewQualityCheckPreferences(
+                        isEnabled = true,
+                        isProductRecommendationsEnabled = true,
+                    ),
+                    reviewQualityCheckService = FakeReviewQualityCheckService(
+                        productAnalysis = { ProductAnalysisTestData.productAnalysis() },
+                        productRecommendation = ProductRecommendationTestData.productRecommendation(
+                            aid = "342",
+                        ),
+                        recordClick = {
+                            productClicked = it
+                        },
+                    ),
+                ),
+            )
+            tested.waitUntilIdle()
+            dispatcher.scheduler.advanceUntilIdle()
+            tested.waitUntilIdle()
+            tested.dispatch(ReviewQualityCheckAction.FetchProductAnalysis).joinBlocking()
+            tested.waitUntilIdle()
+            dispatcher.scheduler.advanceUntilIdle()
+            tested.dispatch(
+                ReviewQualityCheckAction.RecommendedProductClick(
+                    productAid = "342",
+                    productUrl = "https://test.com",
+                ),
+            ).joinBlocking()
+
+            assertEquals("342", productClicked)
+        }
+
+    @Test
+    fun `GIVEN product recommendations are enabled WHEN recommended product is viewed THEN impression event is recorded`() =
+        runTest {
+            var productViewed: String? = null
+            val tested = ReviewQualityCheckStore(
+                middleware = provideReviewQualityCheckMiddleware(
+                    reviewQualityCheckPreferences = FakeReviewQualityCheckPreferences(
+                        isEnabled = true,
+                        isProductRecommendationsEnabled = true,
+                    ),
+                    reviewQualityCheckService = FakeReviewQualityCheckService(
+                        productAnalysis = { ProductAnalysisTestData.productAnalysis() },
+                        productRecommendation = ProductRecommendationTestData.productRecommendation(
+                            aid = "342",
+                        ),
+                        recordImpression = {
+                            productViewed = it
+                        },
+                    ),
+                ),
+            )
+            tested.waitUntilIdle()
+            dispatcher.scheduler.advanceUntilIdle()
+            tested.waitUntilIdle()
+            tested.dispatch(ReviewQualityCheckAction.FetchProductAnalysis).joinBlocking()
+            tested.waitUntilIdle()
+            dispatcher.scheduler.advanceUntilIdle()
+            tested.dispatch(
+                ReviewQualityCheckAction.RecommendedProductImpression(productAid = "342"),
+            ).joinBlocking()
+
+            assertEquals("342", productViewed)
         }
 
     private fun provideReviewQualityCheckMiddleware(

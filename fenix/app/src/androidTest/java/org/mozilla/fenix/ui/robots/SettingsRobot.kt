@@ -8,6 +8,7 @@ package org.mozilla.fenix.ui.robots
 
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.ViewInteraction
@@ -46,6 +47,7 @@ import org.mozilla.fenix.helpers.AppAndSystemHelper.isPackageInstalled
 import org.mozilla.fenix.helpers.Constants.LISTS_MAXSWIPES
 import org.mozilla.fenix.helpers.Constants.PackageName.GOOGLE_PLAY_SERVICES
 import org.mozilla.fenix.helpers.Constants.RETRY_COUNT
+import org.mozilla.fenix.helpers.Constants.TAG
 import org.mozilla.fenix.helpers.DataGenerationHelper.getStringResource
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemContainingTextExists
 import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
@@ -106,9 +108,6 @@ class SettingsRobot {
     fun verifyPrivacyHeading() = assertPrivacyHeading()
 
     fun verifyHTTPSOnlyModeButton() = assertHTTPSOnlyModeButton()
-    fun verifyCookieBannerReductionButton() =
-        onView(withText(R.string.preferences_cookie_banner_reduction)).check(matches(isDisplayed()))
-
     fun verifyEnhancedTrackingProtectionButton() = assertEnhancedTrackingProtectionButton()
     fun verifyLoginsAndPasswordsButton() = assertLoginsAndPasswordsButton()
     fun verifyPrivateBrowsingButton() = assertPrivateBrowsingButton()
@@ -272,8 +271,10 @@ class SettingsRobot {
         fun openAutofillSubMenu(interact: SettingsSubMenuAutofillRobot.() -> Unit): SettingsSubMenuAutofillRobot.Transition {
             mDevice.findObject(UiSelector().textContains(getStringResource(R.string.preferences_autofill)))
                 .also {
+                    Log.i(TAG, "openAutofillSubMenu: Looking for \"Autofill\" settings button")
                     it.waitForExists(waitingTime)
                     it.click()
+                    Log.i(TAG, "openAutofillSubMenu: Clicked \"Autofill\" settings button")
                 }
 
             SettingsSubMenuAutofillRobot().interact()
@@ -317,14 +318,6 @@ class SettingsRobot {
 
             SettingsSubMenuSetDefaultBrowserRobot().interact()
             return SettingsSubMenuSetDefaultBrowserRobot.Transition()
-        }
-
-        fun openCookieBannerReductionSubMenu(interact: SettingsSubMenuCookieBannerReductionRobot.() -> Unit): SettingsSubMenuCookieBannerReductionRobot.Transition {
-            scrollToElementByText(getStringResource(R.string.preferences_cookie_banner_reduction))
-            itemContainingText(getStringResource(R.string.preferences_cookie_banner_reduction)).click()
-
-            SettingsSubMenuCookieBannerReductionRobot().interact()
-            return SettingsSubMenuCookieBannerReductionRobot.Transition()
         }
 
         fun openEnhancedTrackingProtectionSubMenu(interact: SettingsSubMenuEnhancedTrackingProtectionRobot.() -> Unit): SettingsSubMenuEnhancedTrackingProtectionRobot.Transition {

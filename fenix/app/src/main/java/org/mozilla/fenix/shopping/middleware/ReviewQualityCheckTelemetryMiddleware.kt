@@ -78,8 +78,11 @@ class ReviewQualityCheckTelemetryMiddleware : ReviewQualityCheckMiddleware {
                 Shopping.surfaceNotNowClicked.record()
             }
 
-            is ReviewQualityCheckAction.ShowMoreRecentReviewsClicked -> {
-                Shopping.surfaceShowMoreRecentReviewsClicked.record()
+            is ReviewQualityCheckAction.ExpandCollapseHighlights -> {
+                val state = store.state
+                if (state is ReviewQualityCheckState.OptedIn && state.isHighlightsExpanded) {
+                    Shopping.surfaceShowMoreRecentReviewsClicked.record()
+                }
             }
 
             is ReviewQualityCheckAction.ExpandCollapseSettings -> {
@@ -107,6 +110,10 @@ class ReviewQualityCheckTelemetryMiddleware : ReviewQualityCheckMiddleware {
 
             is ReviewQualityCheckAction.OptOutCompleted -> {
                 Shopping.surfaceOnboardingDisplayed.record()
+            }
+
+            is ReviewQualityCheckAction.OpenPoweredByLink -> {
+                Shopping.surfacePoweredByFakespotLinkClicked.record()
             }
         }
     }

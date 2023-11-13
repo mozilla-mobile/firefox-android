@@ -382,6 +382,10 @@ class GeckoEngine(
                 webExtensionDelegate.onEnabled(GeckoWebExtension(extension, runtime))
             }
 
+            override fun onReady(extension: org.mozilla.geckoview.WebExtension) {
+                webExtensionDelegate.onReady(GeckoWebExtension(extension, runtime))
+            }
+
             override fun onUninstalled(extension: org.mozilla.geckoview.WebExtension) {
                 webExtensionDelegate.onUninstalled(GeckoWebExtension(extension, runtime))
             }
@@ -771,6 +775,53 @@ class GeckoEngine(
                 with(runtime.settings.contentBlocking) {
                     if (this.cookieBannerGlobalRulesSubFramesEnabled != value) {
                         this.cookieBannerGlobalRulesSubFramesEnabled = value
+                    }
+                }
+                field = value
+            }
+
+        override var queryParameterStripping: Boolean = false
+            set(value) {
+                with(runtime.settings.contentBlocking) {
+                    if (this.queryParameterStrippingEnabled != value) {
+                        this.queryParameterStrippingEnabled = value
+                    }
+                }
+                field = value
+            }
+
+        override var queryParameterStrippingPrivateBrowsing: Boolean = false
+            set(value) {
+                with(runtime.settings.contentBlocking) {
+                    if (this.queryParameterStrippingPrivateBrowsingEnabled != value) {
+                        this.queryParameterStrippingPrivateBrowsingEnabled = value
+                    }
+                }
+                field = value
+            }
+
+        @Suppress("SpreadOperator")
+        override var queryParameterStrippingAllowList: String = ""
+            set(value) {
+                with(runtime.settings.contentBlocking) {
+                    if (this.queryParameterStrippingAllowList.joinToString() != value) {
+                        this.setQueryParameterStrippingAllowList(
+                            *value.split(",")
+                                .toTypedArray(),
+                        )
+                    }
+                }
+                field = value
+            }
+
+        @Suppress("SpreadOperator")
+        override var queryParameterStrippingStripList: String = ""
+            set(value) {
+                with(runtime.settings.contentBlocking) {
+                    if (this.queryParameterStrippingStripList.joinToString() != value) {
+                        this.setQueryParameterStrippingStripList(
+                            *value.split(",").toTypedArray(),
+                        )
                     }
                 }
                 field = value

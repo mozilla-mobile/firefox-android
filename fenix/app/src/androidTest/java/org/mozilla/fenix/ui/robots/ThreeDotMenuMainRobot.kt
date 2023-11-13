@@ -6,6 +6,7 @@
 
 package org.mozilla.fenix.ui.robots
 
+import android.util.Log
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.swipeDown
@@ -30,6 +31,7 @@ import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.Constants.LONG_CLICK_DURATION
 import org.mozilla.fenix.helpers.Constants.RETRY_COUNT
+import org.mozilla.fenix.helpers.Constants.TAG
 import org.mozilla.fenix.helpers.DataGenerationHelper.getStringResource
 import org.mozilla.fenix.helpers.MatcherHelper.assertCheckedItemWithResIdAndTextExists
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemContainingTextExists
@@ -195,8 +197,11 @@ class ThreeDotMenuMainRobot {
             // such as the Pixel 2, we require two swipes to display the "Settings" menu item
             // at the bottom. On larger devices, the second swipe is a no-op.
             threeDotMenuRecyclerView().perform(swipeUp())
+            Log.i(TAG, "openSettings: Swiped up the main menu once")
             threeDotMenuRecyclerView().perform(swipeUp())
+            Log.i(TAG, "openSettings: Swiped up the main menu twice")
             settingsButton(localizedText).click()
+            Log.i(TAG, "openSettings: Clicked main menu $localizedText button")
 
             SettingsRobot().interact()
             return SettingsRobot.Transition()
@@ -321,8 +326,10 @@ class ThreeDotMenuMainRobot {
 
         fun refreshPage(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
             refreshButton.also {
+                Log.i(TAG, "refreshPage: Looking for refresh button")
                 it.waitForExists(waitingTime)
                 it.click()
+                Log.i(TAG, "refreshPage: Clicked the refresh button")
             }
 
             BrowserRobot().interact()

@@ -60,9 +60,9 @@ interface BrowserToolbarController {
     fun handleShoppingCfrActionClick()
 
     /**
-     * @see [BrowserToolbarInteractor.onShoppingCfrDismiss]
+     * @see [BrowserToolbarInteractor.onShoppingCfrDisplayed]
      */
-    fun handleShoppingCfrDismiss()
+    fun handleShoppingCfrDisplayed()
 
     /**
      * @see [BrowserToolbarInteractor.onTranslationsButtonClicked]
@@ -211,13 +211,12 @@ class DefaultBrowserToolbarController(
     }
 
     override fun handleShoppingCfrActionClick() {
-        updateShoppingCfrSettings()
         navController.navigate(
             BrowserFragmentDirections.actionBrowserFragmentToReviewQualityCheckDialogFragment(),
         )
     }
 
-    override fun handleShoppingCfrDismiss() {
+    override fun handleShoppingCfrDisplayed() {
         updateShoppingCfrSettings()
     }
 
@@ -237,7 +236,7 @@ class DefaultBrowserToolbarController(
      * As described in: https://bugzilla.mozilla.org/show_bug.cgi?id=1861173#c0
      */
     private fun updateShoppingCfrSettings() = with(activity.settings()) {
-        reviewQualityCheckCFRClosedCounter.inc()
+        reviewQualityCheckCFRClosedCounter++
         if (reviewQualityCheckCfrDisplayTimeInMillis != 0L &&
             reviewQualityCheckCFRClosedCounter >= MAX_DISPLAY_NUMBER_SHOPPING_CFR
         ) {
