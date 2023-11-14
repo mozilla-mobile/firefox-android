@@ -262,4 +262,8 @@ internal class TelemetryAccountObserver(
         SyncAuth.signOut.record(NoExtras())
         context.settings().signedInFxaAccount = false
     }
+
+    override fun onAccountDeleted() {
+        context.settings().signedInFxaAccount = false
+    }
 }

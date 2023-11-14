@@ -68,14 +68,18 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
         }
 
         override fun onLoggedOut() {
-            viewLifecycleOwner.lifecycleScope.launch {
-                findNavController().popBackStack()
+            forceCloseAndClearData()
+        }
+    }
 
-                // Remove the device name when we log out.
-                context?.let {
-                    val deviceNameKey = it.getPreferenceKey(R.string.pref_key_sync_device_name)
-                    preferenceManager.sharedPreferences?.edit()?.remove(deviceNameKey)?.apply()
-                }
+    private fun forceCloseAndClearData() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            findNavController().popBackStack()
+
+            // Remove the device name when we log out.
+            context?.let {
+                val deviceNameKey = it.getPreferenceKey(R.string.pref_key_sync_device_name)
+                preferenceManager.sharedPreferences?.edit()?.remove(deviceNameKey)?.apply()
             }
         }
     }
@@ -83,6 +87,12 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
     override fun onResume() {
         super.onResume()
         showToolbar(getString(R.string.preferences_account_settings))
+
+        // The user might have deleted the account through the "manage account" tab, in which case
+        // the account settings fragment should not be shown.
+        if (accountManager.accountProfile() == null) {
+            forceCloseAndClearData()
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
