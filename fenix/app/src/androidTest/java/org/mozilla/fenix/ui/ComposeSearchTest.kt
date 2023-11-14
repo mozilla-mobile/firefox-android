@@ -17,6 +17,10 @@ import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
+import org.mozilla.fenix.helpers.AppAndSystemHelper.assertNativeAppOpens
+import org.mozilla.fenix.helpers.AppAndSystemHelper.denyPermission
+import org.mozilla.fenix.helpers.AppAndSystemHelper.grantSystemPermission
+import org.mozilla.fenix.helpers.AppAndSystemHelper.verifyKeyboardVisibility
 import org.mozilla.fenix.helpers.Constants
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.MatcherHelper
@@ -27,7 +31,6 @@ import org.mozilla.fenix.helpers.SearchDispatcher
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.helpers.TestHelper.exitMenu
-import org.mozilla.fenix.helpers.TestHelper.verifyKeyboardVisibility
 import org.mozilla.fenix.ui.robots.clickContextMenuItem
 import org.mozilla.fenix.ui.robots.clickPageObject
 import org.mozilla.fenix.ui.robots.homeScreen
@@ -78,13 +81,14 @@ class ComposeSearchTest {
         searchMockServer.shutdown()
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2154189
     @Test
     fun verifySearchBarItemsTest() {
         navigationToolbar {
             verifyDefaultSearchEngine("Google")
             verifySearchBarPlaceholder("Search or enter address")
         }.clickUrlbar {
-            TestHelper.verifyKeyboardVisibility(isExpectedToBeVisible = true)
+            verifyKeyboardVisibility(isExpectedToBeVisible = true)
             verifyScanButtonVisibility(visible = true)
             verifyVoiceSearchButtonVisibility(enabled = true)
             verifySearchBarPlaceholder("Search or enter address")
@@ -94,6 +98,7 @@ class ComposeSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2154190
     @Test
     fun verifySearchSelectorMenuItemsTest() {
         homeScreen {
@@ -108,6 +113,7 @@ class ComposeSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2154194
     @Test
     fun verifySearchPlaceholderForGeneralDefaultSearchEnginesTest() {
         generalEnginesList.forEach {
@@ -125,6 +131,7 @@ class ComposeSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2154195
     @Test
     fun verifySearchPlaceholderForNotDefaultGeneralSearchEnginesTest() {
         val generalEnginesList = listOf("DuckDuckGo", "Bing")
@@ -139,6 +146,7 @@ class ComposeSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2154196
     @Test
     fun verifySearchPlaceholderForTopicSpecificSearchEnginesTest() {
         val topicEnginesList = listOf("Amazon.com", "Wikipedia", "eBay")
@@ -153,6 +161,7 @@ class ComposeSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1059459
     @SmokeTest
     @Test
     fun verifyQRScanningCameraAccessDialogTest() {
@@ -162,7 +171,7 @@ class ComposeSearchTest {
         homeScreen {
         }.openSearch {
             clickScanButton()
-            TestHelper.denyPermission()
+            denyPermission()
             clickScanButton()
             clickDismissPermissionRequiredDialog()
         }
@@ -170,10 +179,11 @@ class ComposeSearchTest {
         }.openSearch {
             clickScanButton()
             clickGoToPermissionsSettings()
-            TestHelper.assertNativeAppOpens(Constants.PackageName.ANDROID_SETTINGS)
+            assertNativeAppOpens(Constants.PackageName.ANDROID_SETTINGS)
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/235397
     @SmokeTest
     @Test
     fun scanQRCodeToOpenAWebpageTest() {
@@ -183,11 +193,12 @@ class ComposeSearchTest {
         homeScreen {
         }.openSearch {
             clickScanButton()
-            TestHelper.grantSystemPermission()
+            grantSystemPermission()
             verifyScannerOpen()
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2154191
     @Test
     fun verifyScanButtonAvailableOnlyForGeneralSearchEnginesTest() {
         generalEnginesList.forEach {
@@ -209,6 +220,7 @@ class ComposeSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/235395
     // Verifies a temporary change of search engine from the Search shortcut menu
     @SmokeTest
     @Test
@@ -228,6 +240,7 @@ class ComposeSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/233589
     @Test
     fun defaultSearchEnginesCanBeSetFromSearchSelectorMenuTest() {
         searchScreen {
@@ -245,6 +258,7 @@ class ComposeSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/522918
     @Test
     fun verifyClearSearchButtonTest() {
         homeScreen {
@@ -255,6 +269,7 @@ class ComposeSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1623441
     @Ignore("Test run timing out: https://github.com/mozilla-mobile/fenix/issues/27704")
     @SmokeTest
     @Test
@@ -283,6 +298,7 @@ class ComposeSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1592229
     @Ignore("Test run timing out: https://github.com/mozilla-mobile/fenix/issues/27704")
     @Test
     fun verifyAPageIsAddedToASearchGroupOnlyOnceTest() {
@@ -328,6 +344,7 @@ class ComposeSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1591782
     @Ignore("Failing due to known bug, see https://github.com/mozilla-mobile/fenix/issues/23818")
     @Test
     fun searchGroupIsGeneratedWhenNavigatingInTheSameTabTest() {
@@ -351,6 +368,7 @@ class ComposeSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1591781
     @SmokeTest
     @Test
     fun searchGroupIsNotGeneratedForLinksOpenedInPrivateTabsTest() {
@@ -382,6 +400,7 @@ class ComposeSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1592269
     @Ignore("Test run timing out: https://github.com/mozilla-mobile/fenix/issues/27704")
     @SmokeTest
     @Test
@@ -424,6 +443,7 @@ class ComposeSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1592242
     @Ignore("Test run timing out: https://github.com/mozilla-mobile/fenix/issues/27704")
     @Test
     fun deleteSearchGroupFromHomeScreenTest() {
@@ -464,6 +484,7 @@ class ComposeSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1592235
     @Ignore("Test run timing out: https://github.com/mozilla-mobile/fenix/issues/27704")
     @Test
     fun openAPageFromHomeScreenSearchGroupTest() {
@@ -512,6 +533,7 @@ class ComposeSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1592238
     @Ignore("Test run timing out: https://github.com/mozilla-mobile/fenix/issues/27704")
     @Test
     fun shareAPageFromHomeScreenSearchGroupTest() {
@@ -550,6 +572,7 @@ class ComposeSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1232633
     // Default search code for Google-US
     @Test
     fun defaultSearchCodeGoogleUS() {
@@ -570,6 +593,7 @@ class ComposeSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1232637
     // Default search code for Bing-US
     @Test
     fun defaultSearchCodeBingUS() {
@@ -599,6 +623,7 @@ class ComposeSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1232638
     // Default search code for DuckDuckGo-US
     @Test
     fun defaultSearchCodeDuckDuckGoUS() {

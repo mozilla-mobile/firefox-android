@@ -112,6 +112,26 @@ sealed interface ReviewQualityCheckAction : Action {
     object AnalyzeProduct : NetworkAction, UpdateAction, TelemetryAction
 
     /**
+     * Triggered when the user clicks on the recommended product.
+     *
+     * @property productAid The product's aid.
+     * @property productUrl The product's link to open.
+     */
+    data class RecommendedProductClick(
+        val productAid: String,
+        val productUrl: String,
+    ) : NavigationMiddlewareAction, NetworkAction
+
+    /**
+     * Triggered when the user views the recommended product.
+     *
+     * @property productAid The product's aid.
+     */
+    data class RecommendedProductImpression(
+        val productAid: String,
+    ) : NetworkAction
+
+    /**
      * Triggered when the user clicks on learn more link on the explainer card.
      */
     object OpenExplainerLearnMoreLink : NavigationMiddlewareAction, TelemetryAction
@@ -119,7 +139,7 @@ sealed interface ReviewQualityCheckAction : Action {
     /**
      * Triggered when the user clicks on the "Powered by" link in the footer.
      */
-    object OpenPoweredByLink : NavigationMiddlewareAction
+    object OpenPoweredByLink : NavigationMiddlewareAction, TelemetryAction
 
     /**
      * Triggered when the user clicks on learn more link on the opt in card.
@@ -158,12 +178,17 @@ sealed interface ReviewQualityCheckAction : Action {
     /**
      * Triggered when the user expands the recent reviews card.
      */
-    object ShowMoreRecentReviewsClicked : TelemetryAction
+    object ExpandCollapseHighlights : TelemetryAction, UpdateAction
 
     /**
-     * Triggered when the user expands the settings card.
+     * Triggered when the user expands or collapses the settings card.
      */
-    object ExpandSettingsClicked : TelemetryAction
+    object ExpandCollapseSettings : TelemetryAction, UpdateAction
+
+    /**
+     * Triggered when the user expands or collapses the info card.
+     */
+    object ExpandCollapseInfo : UpdateAction
 
     /**
      * Triggered when the No analysis card is displayed to the user.
@@ -174,11 +199,4 @@ sealed interface ReviewQualityCheckAction : Action {
      * Triggered when the user reports a product is back in stock.
      */
     object ReportProductBackInStock : TelemetryAction
-
-    /**
-     * Triggered when the user clicks on the recommended product.
-     *
-     * @property productUrl The product's link to open.
-     */
-    data class OpenRecommendedProduct(val productUrl: String) : NavigationMiddlewareAction
 }

@@ -12,14 +12,14 @@ import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
+import org.mozilla.fenix.helpers.AppAndSystemHelper.bringAppToForeground
+import org.mozilla.fenix.helpers.AppAndSystemHelper.putAppToBackground
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdContainingText
 import org.mozilla.fenix.helpers.TestAssetHelper
-import org.mozilla.fenix.helpers.TestHelper.bringAppToForeground
 import org.mozilla.fenix.helpers.TestHelper.exitMenu
 import org.mozilla.fenix.helpers.TestHelper.packageName
-import org.mozilla.fenix.helpers.TestHelper.putAppToBackground
 import org.mozilla.fenix.ui.robots.clickPageObject
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
@@ -369,6 +369,7 @@ class CreditCardAutofillTest {
     }
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1512794
+    @Ignore("Failing, see https://bugzilla.mozilla.org/show_bug.cgi?id=1853625")
     @Test
     fun verifyMultipleCreditCardsCanBeAddedTest() {
         val creditCardFormPage = TestAssetHelper.getCreditCardFormAsset(mockWebServer)

@@ -161,8 +161,6 @@
     <string name="pref_key_https_only_in_private_tabs" translatable="false">pref_key_https_only_in_private_tabs</string>
 
     <!-- Cookie Banner Reduction Settings-->
-    <string name="pref_key_cookie_banner_settings" translatable="false">pref_key_cookie_banner_settings</string>
-    <string name="pref_key_cookie_banner_v1" translatable="false">pref_key_cookie_banner_v1</string>
     <string name="pref_key_cookie_banner_private_mode" translatable="false">pref_key_cookie_banner_private_mode</string>
 
     <!-- Tracking Protection Settings -->
@@ -277,6 +275,8 @@
     <string name="pref_key_should_show_total_cookie_protection_popup" translatable="false">pref_key_should_show_total_cookie_protection_popup</string>
     <!-- A value  of `true` means the erase action popup has not been shown yet -->
     <string name="pref_key_should_show_erase_action_popup" translatable="false">pref_key_should_show_erase_action_popup</string>
+    <!-- A value  of `true` means the cookie banners handling action popup has not been shown yet -->
+    <string name="pref_key_should_show_cookie_banners_action_popup" translatable="false">pref_key_should_show_cookie_banners_action_popup</string>
 
     <string name="pref_key_debug_settings" translatable="false">pref_key_debug_settings</string>
 
@@ -352,7 +352,6 @@
     <string name="pref_key_custom_sponsored_stories_country" translatable="false">pref_key_custom_sponsored_stories_country</string>
     <string name="pref_key_custom_sponsored_stories_city" translatable="false">pref_key_custom_sponsored_stories_city</string>
     <string name="pref_key_enable_compose_top_sites" translatable="false">pref_key_enable_compose_top_sites</string>
-    <string name="pref_key_enable_shopping_experience" translatable="false">pref_key_enable_shopping_experience</string>
     <string name="pref_key_enable_translations" translatable="false">pref_key_enable_translations</string>
 
     <!-- Growth Data -->
@@ -375,4 +374,5 @@
     <string name="pref_key_should_show_review_quality_cfr">pref_key_should_show_review_quality_cfr</string>
     <string name="pref_key_should_show_review_quality_opt_in_time">pref_key_should_show_review_quality_opt_in_time</string>
     <string name="pref_key_should_show_review_quality_cfr_displayed_time">pref_key_should_show_review_quality_cfr_displayed_time</string>
+    <string name="pref_key_review_quality_cfr_shown_counter">pref_key_review_quality_cfr_shown_counter</string>
 </resources>

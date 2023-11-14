@@ -121,10 +121,12 @@ class FxSuggestSuggestionProviderTest {
         assertEquals("Lasagna Come Out Tomorrow", suggestions[0].title)
         assertEquals(testContext.resources.getString(R.string.sponsored_suggestion_description), suggestions[0].description)
         assertNotNull(suggestions[0].icon)
+        assertEquals(Int.MIN_VALUE, suggestions[0].score)
         assertTrue(suggestions[0].metadata.isNullOrEmpty())
         assertEquals("Las Vegas", suggestions[1].title)
         assertNull(suggestions[1].description)
         assertNull(suggestions[1].icon)
+        assertEquals(Int.MIN_VALUE, suggestions[1].score)
         assertTrue(suggestions[1].metadata.isNullOrEmpty())
     }
 
@@ -179,7 +181,16 @@ class FxSuggestSuggestionProviderTest {
         assertEquals("Las Vegas", suggestions.first().title)
         assertNull(suggestions.first().description)
         assertNull(suggestions.first().icon)
-        assertTrue(suggestions.first().metadata.isNullOrEmpty())
+        assertEquals(Int.MIN_VALUE, suggestions.first().score)
+        suggestions.first().metadata?.let {
+            assertEquals(setOf(FxSuggestSuggestionProvider.MetadataKeys.CLICK_INFO, FxSuggestSuggestionProvider.MetadataKeys.IMPRESSION_INFO), it.keys)
+
+            val clickInfo = requireNotNull(it[FxSuggestSuggestionProvider.MetadataKeys.CLICK_INFO] as? FxSuggestInteractionInfo.Wikipedia)
+            assertEquals("c303282d-f2e6-46ca-a04a-35d3d873712d", clickInfo.contextId)
+
+            val impressionInfo = requireNotNull(it[FxSuggestSuggestionProvider.MetadataKeys.IMPRESSION_INFO] as? FxSuggestInteractionInfo.Wikipedia)
+            assertEquals("c303282d-f2e6-46ca-a04a-35d3d873712d", impressionInfo.contextId)
+        }
     }
 
     @Test
@@ -223,6 +234,7 @@ class FxSuggestSuggestionProviderTest {
         assertEquals(1, suggestions.size)
         assertEquals("Lasagna Come Out Tomorrow", suggestions.first().title)
         assertEquals(testContext.resources.getString(R.string.sponsored_suggestion_description), suggestions.first().description)
+        assertEquals(Int.MIN_VALUE, suggestions.first().score)
         suggestions.first().metadata?.let {
             assertEquals(setOf(FxSuggestSuggestionProvider.MetadataKeys.CLICK_INFO, FxSuggestSuggestionProvider.MetadataKeys.IMPRESSION_INFO), it.keys)
 

@@ -93,18 +93,24 @@ fun ReviewQualityCheckBottomSheet(
                         onRequestDismiss(BottomSheetDismissSource.LINK_OPENED)
                         store.dispatch(ReviewQualityCheckAction.OpenPoweredByLink)
                     },
-                    onExpandSettings = {
-                        store.dispatch(ReviewQualityCheckAction.ExpandSettingsClicked)
+                    onSettingsExpandToggleClick = {
+                        store.dispatch(ReviewQualityCheckAction.ExpandCollapseSettings)
+                    },
+                    onInfoExpandToggleClick = {
+                        store.dispatch(ReviewQualityCheckAction.ExpandCollapseInfo)
                     },
                     onNoAnalysisPresent = {
                         store.dispatch(ReviewQualityCheckAction.NoAnalysisDisplayed)
                     },
-                    onShowMoreRecentReviewsClicked = {
-                        store.dispatch(ReviewQualityCheckAction.ShowMoreRecentReviewsClicked)
+                    onHighlightsExpandToggleClick = {
+                        store.dispatch(ReviewQualityCheckAction.ExpandCollapseHighlights)
                     },
-                    onRecommendedProductClick = {
+                    onRecommendedProductClick = { aid, url ->
                         onRequestDismiss(BottomSheetDismissSource.LINK_OPENED)
-                        store.dispatch(ReviewQualityCheckAction.OpenRecommendedProduct(it))
+                        store.dispatch(ReviewQualityCheckAction.RecommendedProductClick(aid, url))
+                    },
+                    onProductRecommendationImpression = { aid ->
+                        store.dispatch(ReviewQualityCheckAction.RecommendedProductImpression(productAid = aid))
                     },
                 )
             }
@@ -128,12 +134,14 @@ private fun ProductReview(
     onAnalyzeClick: () -> Unit,
     onReanalyzeClick: () -> Unit,
     onProductRecommendationsEnabledStateChange: (Boolean) -> Unit,
-    onShowMoreRecentReviewsClicked: () -> Unit,
+    onHighlightsExpandToggleClick: () -> Unit,
     onNoAnalysisPresent: () -> Unit,
-    onExpandSettings: () -> Unit,
+    onSettingsExpandToggleClick: () -> Unit,
+    onInfoExpandToggleClick: () -> Unit,
     onReviewGradeLearnMoreClick: () -> Unit,
     onFooterLinkClick: () -> Unit,
-    onRecommendedProductClick: (String) -> Unit,
+    onRecommendedProductClick: (aid: String, url: String) -> Unit,
+    onProductRecommendationImpression: (aid: String) -> Unit,
 ) {
     Crossfade(
         targetState = state.productReviewState,
@@ -145,14 +153,19 @@ private fun ProductReview(
                     productRecommendationsEnabled = state.productRecommendationsPreference,
                     productAnalysis = productReviewState,
                     productVendor = state.productVendor,
+                    isSettingsExpanded = state.isSettingsExpanded,
+                    isInfoExpanded = state.isInfoExpanded,
+                    isHighlightsExpanded = state.isHighlightsExpanded,
                     onOptOutClick = onOptOutClick,
                     onReanalyzeClick = onReanalyzeClick,
                     onProductRecommendationsEnabledStateChange = onProductRecommendationsEnabledStateChange,
-                    onShowMoreRecentReviewsClicked = onShowMoreRecentReviewsClicked,
-                    onExpandSettings = onExpandSettings,
+                    onHighlightsExpandToggleClick = onHighlightsExpandToggleClick,
+                    onSettingsExpandToggleClick = onSettingsExpandToggleClick,
+                    onInfoExpandToggleClick = onInfoExpandToggleClick,
                     onReviewGradeLearnMoreClick = onReviewGradeLearnMoreClick,
                     onFooterLinkClick = onFooterLinkClick,
                     onRecommendedProductClick = onRecommendedProductClick,
+                    onRecommendedProductImpression = onProductRecommendationImpression,
                 )
             }
 
@@ -161,11 +174,14 @@ private fun ProductReview(
                     error = productReviewState,
                     productRecommendationsEnabled = state.productRecommendationsPreference,
                     productVendor = state.productVendor,
+                    isSettingsExpanded = state.isSettingsExpanded,
+                    isInfoExpanded = state.isInfoExpanded,
                     onReviewGradeLearnMoreClick = onReviewGradeLearnMoreClick,
                     onOptOutClick = onOptOutClick,
                     onProductRecommendationsEnabledStateChange = onProductRecommendationsEnabledStateChange,
                     onFooterLinkClick = onFooterLinkClick,
-                    onExpandSettings = onExpandSettings,
+                    onSettingsExpandToggleClick = onSettingsExpandToggleClick,
+                    onInfoExpandToggleClick = onInfoExpandToggleClick,
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
@@ -181,13 +197,17 @@ private fun ProductReview(
 
                 NoAnalysis(
                     isAnalyzing = productReviewState.isReanalyzing,
+                    onAnalyzeClick = onAnalyzeClick,
                     productRecommendationsEnabled = state.productRecommendationsPreference,
                     productVendor = state.productVendor,
-                    onAnalyzeClick = onAnalyzeClick,
+                    isSettingsExpanded = state.isSettingsExpanded,
+                    isInfoExpanded = state.isInfoExpanded,
                     onReviewGradeLearnMoreClick = onReviewGradeLearnMoreClick,
                     onOptOutClick = onOptOutClick,
                     onProductRecommendationsEnabledStateChange = onProductRecommendationsEnabledStateChange,
-                    onExpandSettings = onExpandSettings,
+                    onSettingsExpandToggleClick = onSettingsExpandToggleClick,
+                    onInfoExpandToggleClick = onInfoExpandToggleClick,
+                    onFooterLinkClick = onFooterLinkClick,
                     modifier = Modifier.fillMaxWidth(),
                 )
             }

@@ -232,7 +232,38 @@ features:
             "jump-back-in-cfr": true,
           }
         }
-
+  query-parameter-stripping:
+    description: Features for query parameter stripping.
+    variables:
+      sections-enabled:
+        description: "This property provides a lookup table of whether or not the given section should be enabled."
+        type: Map<QueryParameterStrippingSection, String>
+        default:
+          {
+            "query-parameter-stripping": "0",
+            "query-parameter-stripping-pmb": "0",
+            "query-parameter-stripping-allow-list": "",
+            "query-parameter-stripping-strip-list": "",
+          }
+    defaults:
+      - channel: developer
+        value: {
+          "sections-enabled": {
+            "query-parameter-stripping": "0",
+            "query-parameter-stripping-pmb": "0",
+            "query-parameter-stripping-allow-list": "",
+            "query-parameter-stripping-strip-list": "",
+          }
+        }
+      - channel: nightly
+        value: {
+          "sections-enabled": {
+            "query-parameter-stripping": "0",
+            "query-parameter-stripping-pmb": "0",
+            "query-parameter-stripping-allow-list": "",
+            "query-parameter-stripping-strip-list": "",
+          }
+        }
   cookie-banners:
     description: Features for cookie banner handling.
     variables:
@@ -241,9 +272,12 @@ features:
         type: Map<CookieBannersSection, Int>
         default:
           {
-            "feature-ui": 0,
+            "feature-ui": 1,
             "feature-setting-value": 0,
-            "feature-setting-value-pbm": 0
+            "feature-setting-value-pbm": 0,
+            "feature-setting-detect-only": 0,
+            "feature-setting-global-rules": 0,
+            "feature-setting-global-rules-sub-frames": 0,
           }
     defaults:
       - channel: developer
@@ -251,7 +285,10 @@ features:
           "sections-enabled": {
             "feature-ui": 1,
             "feature-setting-value": 0,
-            "feature-setting-value-pbm": 0
+            "feature-setting-value-pbm": 0,
+            "feature-setting-detect-only": 0,
+            "feature-setting-global-rules": 0,
+            "feature-setting-global-rules-sub-frames": 0,
           }
         }
       - channel: nightly
@@ -259,7 +296,10 @@ features:
           "sections-enabled": {
             "feature-ui": 1,
             "feature-setting-value": 0,
-            "feature-setting-value-pbm": 0
+            "feature-setting-value-pbm": 0,
+            "feature-setting-detect-only": 0,
+            "feature-setting-global-rules": 0,
+            "feature-setting-global-rules-sub-frames": 0,
           }
         }
   unified-search:
@@ -358,6 +398,7 @@ features:
       - channel: developer
         value:
           enabled: true
+          product-recommendations: true
 
   print:
     description: A feature for printing from the share or browser menu.
@@ -459,6 +500,35 @@ types:
         feature-setting-value-pbm:
           description: An integer either 0 or 1 indicating if cookie banner setting should be enabled or disabled,
             0 for setting the value to disabled, 1  for enabling the setting with the value reject_all.
+        feature-setting-detect-only:
+          description: An integer either 0 or 1 indicating if cookie banner detect only mode
+            should be enabled or disabled. 0 for setting to be disabled, and 1 for enabling the setting.
+        feature-setting-global-rules:
+          description: An integer either 0 or 1 indicating if cookie banner global rules
+            should be enabled or disabled. 0 for setting to be disabled, and 1 for enabling the setting.
+        feature-setting-global-rules-sub-frames:
+          description: An integer either 0 or 1 indicating if cookie banner global rules sub-frames
+            should be enabled or disabled. 0 for setting to be disabled, and 1 for enabling the setting.
+
+    QueryParameterStrippingSection:
+      description: The identifiers for the options for the Query Parameter Stripping feature.
+      variants:
+        query-parameter-stripping:
+          description: An integer either 0 or 1 indicating if query parameter stripping
+            should be enabled or disabled in normal mode. 0 for setting to be disabled,
+            and 1 for enabling the setting.
+        query-parameter-stripping-pmb:
+          description: An integer either 0 or 1 indicating if query parameter stripping
+            should be enabled or disabled in private mode. 0 for setting to be disabled,
+            and 1 for enabling the setting.
+        query-parameter-stripping-allow-list:
+          description: An string separated by commas indicating the sites where should
+            from query stripping should be exempted.
+        query-parameter-stripping-strip-list:
+          description: An string separated by commas indicating the list of query params
+            to be stripped from URIs. This list will be merged with records
+            coming from RemoteSettings.
+
     OnboardingPanel:
       description: The types of onboarding panels in the onboarding page
       variants:

@@ -207,6 +207,8 @@
     <string name="browser_menu_library">Biblioteka</string>
     <!-- Browser menu toggle that requests a desktop site -->
     <string name="browser_menu_desktop_site">Desktopowe sydło</string>
+    <!-- Browser menu button that reopens a private tab as a regular tab -->
+    <string name="browser_menu_open_in_regular_tab">W normalnym rajtarku wočinić</string>
     <!-- Browser menu toggle that adds a shortcut to the site on the device home screen. -->
     <string name="browser_menu_add_to_homescreen">Startowej wobrazowce přidać</string>
     <!-- Browser menu toggle that installs a Progressive Web App shortcut to the site on the device home screen. -->
@@ -263,7 +265,7 @@
     <!-- Button in the search view that lets a user search by scanning a QR code -->
     <string name="search_scan_button">Skenować</string>
     <!-- Button in the search view that lets a user change their search engine -->
-    <string name="search_engine_button">Pytawa</string>
+    <string name="search_engine_button" moz:RemovedIn="121" tools:ignore="UnusedResources">Pytawa</string>
     <!-- Button in the search view when shortcuts are displayed that takes a user to the search engine settings -->
     <string name="search_shortcuts_engine_settings">Nastajenja pytawy</string>
     <!-- Button in the search view that lets a user navigate to the site in their clipboard -->
@@ -458,16 +460,20 @@
     <string name="preferences_https_only_title">Modus Jenož-HTTPS</string>
 
     <!-- Preference for removing cookie/consent banners from sites automatically. See reduce_cookie_banner_summary for additional context. -->
-    <string name="preferences_cookie_banner_reduction">Redukowanje plackowych chorhojow</string>
+    <string name="preferences_cookie_banner_reduction" moz:RemovedIn="121" tools:ignore="UnusedResources">Redukowanje plackowych chorhojow</string>
+    <!-- Label for cookie banner section in quick settings panel. -->
+    <string name="cookie_banner_blocker">Blokowak plackowych chorhojow</string>
+    <!-- Preference for removing cookie/consent banners from sites automatically in private mode. See reduce_cookie_banner_summary for additional context. -->
+    <string name="preferences_cookie_banner_reduction_private_mode">Blokowak plackowych chorhojow w priwatnym modusu</string>
     <!-- Preference for rejecting or removing as many cookie/consent banners as possible on sites. See reduce_cookie_banner_summary for additional context. -->
-    <string name="reduce_cookie_banner_option">Plackowe chorhoje redukować</string>
+    <string name="reduce_cookie_banner_option" moz:RemovedIn="121" tools:ignore="UnusedResources">Plackowe chorhoje redukować</string>
 
     <!-- Summary of cookie banner handling preference if the setting disabled is set to off -->
-    <string name="reduce_cookie_banner_option_off">Wupinjeny</string>
+    <string name="reduce_cookie_banner_option_off" moz:RemovedIn="121" tools:ignore="UnusedResources">Wupinjeny</string>
     <!-- Summary of cookie banner handling preference if the setting enabled is set to on -->
-    <string name="reduce_cookie_banner_option_on">Zapinjeny</string>
+    <string name="reduce_cookie_banner_option_on" moz:RemovedIn="121" tools:ignore="UnusedResources">Zapinjeny</string>
     <!-- Summary for the preference for rejecting all cookies whenever possible. The first parameter is the application name -->
-    <string name="reduce_cookie_banner_summary_1">%1$s awtomatisce pospytuje, plackowe naprašowanja na plackowych chorhojach wotpokazać.</string>
+    <string name="reduce_cookie_banner_summary_1" moz:RemovedIn="121" tools:ignore="UnusedResources">%1$s awtomatisce pospytuje, plackowe naprašowanja na plackowych chorhojach wotpokazać.</string>
     <!-- Text for indicating cookie banner handling is off this site, this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_off_for_site">Za tute sydło znjemóžnjeny</string>
     <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
@@ -485,27 +491,35 @@
     <!-- Text for indicating cookie banner handling is currently not supported for this site, this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_unsupported_site">Sydło so tuchwilu njepodpěruje</string>
     <!-- Title text for a detail explanation indicating cookie banner handling is on this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
-    <string name="reduce_cookie_banner_details_panel_title_on_for_site">Redukowanje plackowych chorhojow za %1$s zmóžnić?</string>
+    <string name="reduce_cookie_banner_details_panel_title_on_for_site" moz:RemovedIn="121" tools:ignore="UnusedResources">Redukowanje plackowych chorhojow za %1$s zmóžnić?</string>
+    <!-- Title text for a detail explanation indicating cookie banner handling is on this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
+    <string name="reduce_cookie_banner_details_panel_title_on_for_site_1">Blokowak plackowych chorhojow za %1$s zmóžnić?</string>
     <!-- Title text for a detail explanation indicating cookie banner handling is off this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
-    <string name="reduce_cookie_banner_details_panel_title_off_for_site">Redukowanje plackowych chorhojow za %1$s znjemóžnić?</string>
+    <string name="reduce_cookie_banner_details_panel_title_off_for_site" moz:RemovedIn="121" tools:ignore="UnusedResources">Redukowanje plackowych chorhojow za %1$s znjemóžnić?</string>
+    <!-- Title text for a detail explanation indicating cookie banner handling is off this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
+    <string name="reduce_cookie_banner_details_panel_title_off_for_site_1">Blokowak plackowych chorhojow za %1$s znjemóžnić?</string>
     <!-- Title text for a detail explanation indicating cookie banner reducer didn't work for the current site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name-->
     <string name="reduce_cookie_banner_details_panel_title_unsupported_site_request_2">%1$s njemóže plackowe naprašowanja na tutym sydle awtomatisce wotpokazać. Móžeće próstwu wo podpěru tutoho sydła w přichodźe pósłać.</string>
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
-    <string name="reduce_cookie_banner_details_panel_description_off_for_site">%1$s placki sydła zhaša a budźe stronu aktualizować. Zhašenje wšěch plackow móže was přizjewić abo nakupowanske wozyčki wuprózdnić.</string>
+    <string name="reduce_cookie_banner_details_panel_description_off_for_site" moz:RemovedIn="121" tools:ignore="UnusedResources">%1$s placki sydła zhaša a budźe stronu aktualizować. Zhašenje wšěch plackow móže was přizjewić abo nakupowanske wozyčki wuprózdnić.</string>
+    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
+    <string name="reduce_cookie_banner_details_panel_description_off_for_site_1">Při znjemóžnjenju %1$s placki zhaša a tute sydło znowa začita. To móže was wotzjewić abo nakupowanske koše wuprózdnić.</string>
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
-    <string name="reduce_cookie_banner_details_panel_description_on_for_site_2">%1$s pospytuje wšě plackowe naprašowanja na podpěranych sydłach awtomatisce wotpokazać.</string>
+    <string name="reduce_cookie_banner_details_panel_description_on_for_site_2" moz:RemovedIn="121" tools:ignore="UnusedResources">%1$s pospytuje wšě plackowe naprašowanja na podpěranych sydłach awtomatisce wotpokazać.</string>
+    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
+    <string name="reduce_cookie_banner_details_panel_description_on_for_site_3">Zmóžńće tute nastajenje a %1$s spyta, wšě plackowe chorhoje na tutym sydle awtomatisce wotpokazać.</string>
     <!-- Title text for the cookie banner re-engagement dialog. The first parameter is the application name. -->
-    <string name="reduce_cookie_banner_dialog_title">%1$s dowolić, plackowe chorhoje wotpokazać?</string>
+    <string name="reduce_cookie_banner_dialog_title" moz:RemovedIn="121" tools:ignore="UnusedResources">%1$s dowolić, plackowe chorhoje wotpokazać?</string>
     <!-- Body text for the cookie banner re-engagement dialog use. The first parameter is the application name. -->
-    <string name="reduce_cookie_banner_dialog_body">%1$s móže wjele naprašowanjow wo plackowych chorhojach awtomatisce wotpokazać.</string>
+    <string name="reduce_cookie_banner_dialog_body" moz:RemovedIn="121" tools:ignore="UnusedResources">%1$s móže wjele naprašowanjow wo plackowych chorhojach awtomatisce wotpokazać.</string>
     <!-- Remind me later text button for the onboarding dialog -->
-    <string name="reduce_cookie_banner_dialog_not_now_button">Nic nětko</string>
+    <string name="reduce_cookie_banner_dialog_not_now_button" moz:RemovedIn="121" tools:ignore="UnusedResources">Nic nětko</string>
 
     <!-- Snack text for the cookie banner dialog, after user hit the dismiss banner button -->
-    <string name="reduce_cookie_banner_dialog_snackbar_text">Budźeće mjenje plackowych naprašowanjow widźeć</string>
+    <string name="reduce_cookie_banner_dialog_snackbar_text" moz:RemovedIn="121" tools:ignore="UnusedResources">Budźeće mjenje plackowych naprašowanjow widźeć</string>
 
     <!-- Change setting text button, for the cookie banner re-engagement dialog -->
-    <string name="reduce_cookie_banner_dialog_change_setting_button">Dowolić</string>
+    <string name="reduce_cookie_banner_dialog_change_setting_button" moz:RemovedIn="121" tools:ignore="UnusedResources">Dowolić</string>
 
     <!-- Description of the preference to enable "HTTPS-Only" mode. -->
     <string name="preferences_https_only_summary">Pospytuje z pomocu zaklučowanskeho protokola HTTPS za powyšenu wěstotu awtomatisce ze sydłami zwjazać.</string>
@@ -677,16 +691,10 @@
 
     <!-- Text for classic wallpapers title. The first parameter is the Firefox name. -->
     <string name="wallpaper_classic_title">Klasiski %s</string>
-    <!-- Text for limited edition wallpapers title. -->
-    <string name="wallpaper_limited_edition_title" moz:RemovedIn="118" tools:ignore="UnusedResources">Limitowana edicija</string>
     <!-- Text for artist series wallpapers title. "Artist series" represents a collection of artist collaborated wallpapers. -->
     <string name="wallpaper_artist_series_title">Serija wuměłcow</string>
-    <!-- Description text for the limited edition wallpapers with learn more link. The first parameter is the learn more string defined in wallpaper_learn_more-->
-    <string name="wallpaper_limited_edition_description_with_learn_more" moz:RemovedIn="118" tools:ignore="UnusedResources">Nowa zběrka „Njewotwisne hłosy“. %s</string>
     <!-- Description text for the artist series wallpapers with learn more link. The first parameter is the learn more string defined in wallpaper_learn_more. "Independent voices" is the name of the wallpaper collection -->
     <string name="wallpaper_artist_series_description_with_learn_more">Zběrka Njewotwisne hłosy. %s</string>
-    <!-- Description text for the limited edition wallpapers. -->
-    <string name="wallpaper_limited_edition_description" moz:RemovedIn="118" tools:ignore="UnusedResources">Nowa zběrka „Njewotwisne hłosy“.</string>
     <!-- Description text for the artist series wallpapers. "Independent voices" is the name of the wallpaper collection -->
     <string name="wallpaper_artist_series_description">Zběrka Njewotwisne hłosy.</string>
     <!-- Wallpaper onboarding dialog header text. -->
@@ -695,6 +703,15 @@
     <string name="wallpapers_onboarding_dialog_body_text">Wubjerće pozadkowy wobraz, kotryž so wam spodoba.</string>
     <!-- Wallpaper onboarding dialog learn more button text. The button navigates to the wallpaper settings screen. -->
     <string name="wallpapers_onboarding_dialog_explore_more_button_text">Wuslědźće dalše pozadkowe wobrazy</string>
+
+    <!-- Add-ons general availability nimbus message-->
+    <!-- Title of the Nimbus message for add-ons general availability-->
+    <string name="addon_ga_message_title" tools:ignore="UnusedResources">Nowe přidatki nětko k dispoziciji</string>
+
+    <!-- Body of the Nimbus message for add-ons general availability. 'Firefox' intentionally hardcoded here-->
+    <string name="addon_ga_message_body" tools:ignore="UnusedResources">Wupruwujće přez 100 nowych rozšěrjenjow, z kotrymiž móžeće Firefox swojim přećach přiměrić.</string>
+    <!-- Button text of the Nimbus message for add-ons general availability. -->
+    <string name="addon_ga_message_button" tools:ignore="UnusedResources">Přidatki wuslědźić</string>
 
     <!-- Add-on Installation from AMO-->
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
@@ -1443,14 +1460,11 @@
     <!-- Subtitle for the tabs item in Delete browsing data, parameter will be replaced with the number of open tabs -->
     <string name="preferences_delete_browsing_data_tabs_subtitle">Rajtarki: %d</string>
     <!-- Title for the data and history items in Delete browsing data -->
-    <string name="preferences_delete_browsing_data_browsing_data_title" moz:removedIn="118" tools:ignore="UnusedResources">Přehladowanska historija a sydłowe daty</string>
     <!-- Title for the history item in Delete browsing data -->
     <string name="preferences_delete_browsing_data_browsing_history_title">Přehladowanska historija</string>
     <!-- Subtitle for the data and history items in delete browsing data, parameter will be replaced with the
         number of history items the user has -->
     <string name="preferences_delete_browsing_data_browsing_data_subtitle">Adresy: %d</string>
-    <!-- Title for the cookies item in Delete browsing data -->
-    <string name="preferences_delete_browsing_data_cookies" moz:removedIn="118" tools:ignore="UnusedResources">Placki</string>
     <!-- Title for the cookies and site data items in Delete browsing data -->
     <string name="preferences_delete_browsing_data_cookies_and_site_data">Placki a sydłowe daty</string>
     <!-- Subtitle for the cookies item in Delete browsing data -->
@@ -1507,63 +1521,10 @@
     <string name="delete_history_group_snackbar">Skupina je so zhašała</string>
 
     <!-- Onboarding -->
-    <!-- Text for onboarding welcome header. -->
-    <string name="onboarding_header_2" moz:RemovedIn="118" tools:ignore="UnusedResources">Witajće k lěpšemu internetej</string>
-    <!-- Text for the onboarding welcome message. -->
-    <string name="onboarding_message" moz:RemovedIn="118" tools:ignore="UnusedResources">Wobhladowak za ludźi, nic za dobytk.</string>
-    <!-- Text for the Firefox account onboarding sign in card header. -->
-    <string name="onboarding_account_sign_in_header" moz:RemovedIn="118" tools:ignore="UnusedResources">Čińće tam dale, hdźež sće přestał</string>
-    <!-- Text for the button to learn more about signing in to your Firefox account. -->
-    <string name="onboarding_manual_sign_in_description" moz:RemovedIn="118" tools:ignore="UnusedResources">Synchronizujće rajtarki a hesła přez graty za bjezposrědnju wuměnu wobrazowki.</string>
-    <!-- Text for the button to manually sign into Firefox account. -->
-    <string name="onboarding_firefox_account_sign_in" moz:RemovedIn="118" tools:ignore="UnusedResources">Přizjewić</string>
     <!-- text to display in the snackbar once account is signed-in -->
     <string name="onboarding_firefox_account_sync_is_on">Synchronizacija je zmóžnjena</string>
-    <!-- Text for the tracking protection onboarding card header -->
-    <string name="onboarding_tracking_protection_header" moz:RemovedIn="118" tools:ignore="UnusedResources">Škit priwatnosće po standardźe</string>
-    <!-- Text for the tracking protection card description. The first parameter is the name of the application.-->
-    <string name="onboarding_tracking_protection_description_old" moz:RemovedIn="118" tools:ignore="UnusedResources">%1$s awtomatisce zadźěwa tomu, zo předewzaća wam skradźu po webje slěduja.</string>
-    <!-- Text for the tracking protection card description. -->
-    <string name="onboarding_tracking_protection_description" moz:RemovedIn="118" tools:ignore="UnusedResources">Z dospołnym plackowym škitom, zo byšće tomu zadźěwał, zo přesćěhowaki placki wužiwaja, zo bychu was přez sydła přesćěhowali.</string>
-    <!-- text for tracking protection radio button option for standard level of blocking -->
-    <string name="onboarding_tracking_protection_standard_button_2" moz:RemovedIn="118" tools:ignore="UnusedResources">Standard</string>
-    <!-- text for standard blocking option button description -->
-    <string name="onboarding_tracking_protection_standard_button_description_3" moz:RemovedIn="118" tools:ignore="UnusedResources">Wuwaženy za priwatnosć a wukon. Strony so normalnje začitaja.</string>
-    <!-- text for tracking protection radio button option for strict level of blocking -->
-    <string name="onboarding_tracking_protection_strict_option" moz:RemovedIn="118" tools:ignore="UnusedResources">Striktny</string>
-    <!-- text for strict blocking option button description -->
-    <string name="onboarding_tracking_protection_strict_button_description_3" moz:RemovedIn="118" tools:ignore="UnusedResources">Blokuje dalše přesćěhowaki, zo bychu so strony spěšnišo začitali, ale někotre strony snano korektnje njefunguja.</string>
-    <!-- text for the toolbar position card header  -->
-    <string name="onboarding_toolbar_placement_header_1" moz:RemovedIn="118" tools:ignore="UnusedResources">Wubjerće poziciju za swoju symbolowu lajstu</string>
-    <!-- Text for the toolbar position card description -->
-    <string name="onboarding_toolbar_placement_description" moz:RemovedIn="118" tools:ignore="UnusedResources">Deleka wostajić abo horje přesunyć.</string>
-    <!-- Text for the privacy notice onboarding card header -->
-    <string name="onboarding_privacy_notice_header_1" moz:RemovedIn="118" tools:ignore="UnusedResources">Kontrolujeće swoje daty</string>
-    <!-- Text for the privacy notice onboarding card description. -->
-    <string name="onboarding_privacy_notice_description" moz:RemovedIn="118" tools:ignore="UnusedResources">Firefox wam kontrolu wo tym da, što online dźěliće a što z nami.</string>
-    <!-- Text for the button to read the privacy notice -->
-    <string name="onboarding_privacy_notice_read_button" moz:RemovedIn="118" tools:ignore="UnusedResources">Čitajće naš zdźělenku priwatnosće</string>
-
-    <!-- Text for the conclusion onboarding message -->
-    <string name="onboarding_conclusion_header" moz:RemovedIn="118" tools:ignore="UnusedResources">Sće hotowy wobdźiwajomny internet wotkryć?</string>
-    <!-- text for the button to finish onboarding -->
-    <string name="onboarding_finish" moz:RemovedIn="118" tools:ignore="UnusedResources">Přehladowanje započeć</string>
 
     <!-- Onboarding theme -->
-    <!-- text for the theme picker onboarding card header -->
-    <string name="onboarding_theme_picker_header" moz:RemovedIn="118" tools:ignore="UnusedResources">Wubjerće swoju drastu</string>
-    <!-- text for the theme picker onboarding card description -->
-    <string name="onboarding_theme_picker_description_2" moz:RemovedIn="118" tools:ignore="UnusedResources">Zmóžńće ćmowy modus, zo byšće swoju bateriju a swoje woči šonował.</string>
-    <!-- Automatic theme setting (will follow device setting) -->
-    <string name="onboarding_theme_automatic_title" moz:RemovedIn="118" tools:ignore="UnusedResources">Awtomatiski</string>
-
-    <!-- Summary of automatic theme setting (will follow device setting) -->
-    <string name="onboarding_theme_automatic_summary" moz:RemovedIn="118" tools:ignore="UnusedResources">Přiměrja so wašim gratowym nastajenjam</string>
-    <!-- Theme setting for dark mode -->
-    <string name="onboarding_theme_dark_title" moz:RemovedIn="118" tools:ignore="UnusedResources">Ćmowa drasta</string>
-    <!-- Theme setting for light mode -->
-    <string name="onboarding_theme_light_title" moz:RemovedIn="118" tools:ignore="UnusedResources">Swětła drasta</string>
-
     <!-- Text shown in snackbar when multiple tabs have been sent to device -->
     <string name="sync_sent_tabs_snackbar">Rajtarki wotpósłane!</string>
     <!-- Text shown in snackbar when one tab has been sent to device  -->
@@ -2010,8 +1971,6 @@
     <!-- Placeholder text shown in the Search Suggestion String TextField before a user enters text -->
     <string name="search_add_custom_engine_suggest_string_hint">URL za API za pytanske namjety</string>
     <!-- Description text for the Search Suggestion String TextField. The %s is part of the string -->
-    <string name="search_add_custom_engine_suggest_string_example" formatted="false" moz:RemovedIn="118" tools:ignore="UnusedResources">Wuměńće wotprašowanje z “%s”. Na přikład:\nhttp://suggestqueries.google.com/complete/search?client=firefox&amp;q=%s</string>
-    <!-- Description text for the Search Suggestion String TextField. The %s is part of the string -->
     <string name="search_add_custom_engine_suggest_string_example_2" formatted="false">Wuměńće wotprašowanje z “%s”. Na přikład:\nhttps://suggestqueries.google.com/complete/search?client=firefox&amp;q=%s</string>
     <!-- The text for the "Save" button for saving a custom search engine -->
     <string name="search_custom_engine_save_button">Składować</string>
@@ -2269,7 +2228,9 @@ To budźe jenož pomhać, kwalitu pohódnoćenjow posudźić, nic kwalitu produk
     <!-- Text for learn more caption presenting a link with information about review quality. First parameter is for clickable text defined in review_quality_check_info_learn_more_link. -->
     <string name="review_quality_check_info_learn_more">Zhońće wjace wo %s.</string>
     <!-- Clickable text that links to review quality check SuMo page. First parameter is the Fakespot product name. In the phrase "Fakespot by Mozilla", "by" can be localized. Does not need to stay by. -->
-    <string name="review_quality_check_info_learn_more_link">kak %s wot Mozilla kwalitu pohódnoćenja postaja</string>
+    <string name="review_quality_check_info_learn_more_link" moz:RemovedIn="121" tools:ignore="UnusedResources">kak %s wot Mozilla kwalitu pohódnoćenja postaja</string>
+    <!-- Clickable text that links to review quality check SuMo page. First parameter is the Fakespot product name. -->
+    <string name="review_quality_check_info_learn_more_link_2">kak %s kwalitu pohódnoćenja postaja</string>
     <!-- Text for title of settings section. -->
     <string name="review_quality_check_settings_title">Nastajenja</string>
     <!-- Text for label for switch preference to show recommended products from review quality check settings section. -->
@@ -2353,11 +2314,17 @@ To budźe jenož pomhać, kwalitu pohódnoćenjow posudźić, nic kwalitu produk
     <!-- Clickable text from the contextual onboarding card that links to review quality check support article. -->
     <string name="review_quality_check_contextual_onboarding_learn_more_link">Dalše informacije</string>
     <!-- Caption text to be displayed in review quality check contextual onboarding card above the opt-in button. First parameter is the Fakespot product name. Following parameters are for clickable texts defined in review_quality_check_contextual_onboarding_privacy_policy and review_quality_check_contextual_onboarding_terms_use. In the phrase "Fakespot by Mozilla", "by" can be localized. Does not need to stay by. -->
-    <string name="review_quality_check_contextual_onboarding_caption">Hdyž „Haj, wupruwować“ wuběraće, zwoliće do %2$s a %3$s Mozilla za %1$s. </string>
+    <string name="review_quality_check_contextual_onboarding_caption" moz:RemovedIn="121" tools:ignore="UnusedResources">Hdyž „Haj, wupruwować“ wuběraće, zwoliće do %2$s a %3$s Mozilla za %1$s. </string>
+    <!-- Caption text to be displayed in review quality check contextual onboarding card above the opt-in button. Parameter is the Fakespot product name. After the colon, what appears are two links, each on their own line. The first link is to a Privacy policy (review_quality_check_contextual_onboarding_privacy_policy_2). The second link is to Terms of use (review_quality_check_contextual_onboarding_terms_use_2). -->
+    <string name="review_quality_check_contextual_onboarding_caption_2">Hdyž „Haj, wupruwować“ wuběraće, zwoliće do slědowaceho wot %1$s:</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot privacy policy. -->
-    <string name="review_quality_check_contextual_onboarding_privacy_policy">prawidła priwatnosće</string>
+    <string name="review_quality_check_contextual_onboarding_privacy_policy" moz:RemovedIn="121" tools:ignore="UnusedResources">prawidła priwatnosće</string>
+    <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot privacy policy. -->
+    <string name="review_quality_check_contextual_onboarding_privacy_policy_2">Prawidła priwatnosće</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot terms of use. -->
-    <string name="review_quality_check_contextual_onboarding_terms_use">wužiwanske wuměnjenja</string>
+    <string name="review_quality_check_contextual_onboarding_terms_use" moz:RemovedIn="121" tools:ignore="UnusedResources">wužiwanske wuměnjenja</string>
+    <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot terms of use. -->
+    <string name="review_quality_check_contextual_onboarding_terms_use_2">Wužiwanske wuměnjenja</string>
     <!-- Text for opt-in button from the review quality check contextual onboarding card. -->
     <string name="review_quality_check_contextual_onboarding_primary_button_text">Haj, wupruwować</string>
     <!-- Text for opt-out button from the review quality check contextual onboarding card. -->
@@ -2397,8 +2364,12 @@ To budźe jenož pomhać, kwalitu pohódnoćenjow posudźić, nic kwalitu produk
     <!-- Accessibility services actions labels. These will be appended to accessibility actions like "Double tap to.." but not by or applications but by services like Talkback. -->
     <!-- Action label for elements that can be collapsed if interacting with them. Talkback will append this to say "Double tap to collapse". -->
     <string name="a11y_action_label_collapse">schować</string>
+    <!-- Current state for elements that can be collapsed if interacting with them. Talkback will dictate this after a state change. -->
+    <string name="a11y_state_label_collapsed">sfałdowany</string>
     <!-- Action label for elements that can be expanded if interacting with them. Talkback will append this to say "Double tap to expand". -->
     <string name="a11y_action_label_expand">pokazać</string>
+    <!-- Current state for elements that can be expanded if interacting with them. Talkback will dictate this after a state change. -->
+    <string name="a11y_state_label_expanded">rozfałdowany</string>
     <!-- Action label for links to a website containing documentation about a wallpaper collection. Talkback will append this to say "Double tap to open link to learn more about this collection". -->
     <string name="a11y_action_label_wallpaper_collection_learn_more">wočińće wotkaz, zo byšće wjace wo tutej zběrce zhonił</string>
     <!-- Action label for links that point to an article. Talkback will append this to say "Double tap to read the article". -->

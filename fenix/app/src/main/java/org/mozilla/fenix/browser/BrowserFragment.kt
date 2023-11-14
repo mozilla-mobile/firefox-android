@@ -223,9 +223,10 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                 image = AppCompatResources.getDrawable(
                     context,
                     R.drawable.mozac_ic_translate_24,
-                )!!,
-                imageSelected =
-                AppCompatResources.getDrawable(
+                )!!.apply {
+                    setTint(ContextCompat.getColor(context, R.color.fx_mobile_text_color_primary))
+                },
+                imageSelected = AppCompatResources.getDrawable(
                     context,
                     R.drawable.mozac_ic_translate_24,
                 )!!,
@@ -275,9 +276,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
             feature = ReviewQualityCheckFeature(
                 appStore = requireComponents.appStore,
                 browserStore = context.components.core.store,
-                shoppingExperienceFeature = DefaultShoppingExperienceFeature(
-                    settings = requireContext().settings(),
-                ),
+                shoppingExperienceFeature = DefaultShoppingExperienceFeature(),
                 onIconVisibilityChange = {
                     if (!reviewQualityCheckAvailable && it) {
                         Shopping.addressBarIconDisplayed.record()
