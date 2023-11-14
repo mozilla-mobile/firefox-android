@@ -64,6 +64,7 @@ internal enum class ProgressState {
     CompletingAuthentication,
     RecoveringFromAuthProblem,
     LoggingOut,
+    DeletingAccount,
 }
 
 internal sealed class Event {
@@ -79,6 +80,7 @@ internal sealed class Event {
         object AccessTokenKeyError : Account()
 
         object Logout : Account()
+        object Delete : Account()
     }
 
     internal sealed class Progress : Event() {
@@ -97,6 +99,7 @@ internal sealed class Event {
         object RecoveredFromAuthenticationProblem : Progress()
 
         object LoggedOut : Progress()
+        object AccountDeleted : Progress()
 
         data class CompletedAuthentication(val authType: AuthType) : Progress()
     }
@@ -120,6 +123,7 @@ internal fun State.next(event: Event): State? = when (this) {
             is Event.Account.AuthenticationError -> State.Active(ProgressState.RecoveringFromAuthProblem)
             is Event.Account.AccessTokenKeyError -> State.Idle(AccountState.AuthenticationProblem)
             is Event.Account.Logout -> State.Active(ProgressState.LoggingOut)
+            is Event.Account.Delete -> State.Active(ProgressState.DeletingAccount)
             else -> null
         }
         AccountState.AuthenticationProblem -> when (event) {
@@ -155,6 +159,10 @@ internal fun State.next(event: Event): State? = when (this) {
         }
         ProgressState.LoggingOut -> when (event) {
             Event.Progress.LoggedOut -> State.Idle(AccountState.NotAuthenticated)
+            else -> null
+        }
+        ProgressState.DeletingAccount -> when (event) {
+            Event.Progress.AccountDeleted -> State.Idle(AccountState.NotAuthenticated)
             else -> null
         }
     }

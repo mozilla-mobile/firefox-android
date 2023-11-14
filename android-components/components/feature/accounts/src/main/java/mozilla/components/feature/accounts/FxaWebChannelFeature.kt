@@ -157,6 +157,7 @@ class FxaWebChannelFeature(
                 WebChannelCommand.CAN_LINK_ACCOUNT -> processCanLinkAccountCommand(messageId)
                 WebChannelCommand.FXA_STATUS -> processFxaStatusCommand(accountManager, messageId, fxaCapabilities)
                 WebChannelCommand.OAUTH_LOGIN -> processOauthLoginCommand(accountManager, payload)
+                WebChannelCommand.DELETE -> processDeleteCommand(accountManager)
             }
             response?.let { port.postMessage(it) }
         }
@@ -197,6 +198,7 @@ class FxaWebChannelFeature(
             CAN_LINK_ACCOUNT,
             OAUTH_LOGIN,
             FXA_STATUS,
+            DELETE,
         }
 
         // For all possible messages and their meaning/payloads, see:
@@ -220,6 +222,11 @@ class FxaWebChannelFeature(
          * current Firefox Account (if present).
          */
         private const val COMMAND_STATUS = "fxaccounts:fxa_status"
+
+        /**
+         * Gets triggered when a user deletes the account.
+         */
+        private const val COMMAND_DELETE = "fxaccounts:delete"
 
         /**
          * Handles the [COMMAND_CAN_LINK_ACCOUNT] event from the web-channel.
@@ -363,11 +370,23 @@ class FxaWebChannelFeature(
             return null
         }
 
+        /**
+         * Handles the [COMMAND_DELETE] event from the web-channel.
+         */
+        private fun processDeleteCommand(accountManager: FxaAccountManager) : JSONObject? {
+            CoroutineScope(Dispatchers.Main).launch {
+                accountManager.onAccountDeleted()
+            }
+
+            return null
+        }
+
         private fun String.toWebChannelCommand(): WebChannelCommand? {
             return when (this) {
                 COMMAND_CAN_LINK_ACCOUNT -> WebChannelCommand.CAN_LINK_ACCOUNT
                 COMMAND_OAUTH_LOGIN -> WebChannelCommand.OAUTH_LOGIN
                 COMMAND_STATUS -> WebChannelCommand.FXA_STATUS
+                COMMAND_DELETE -> WebChannelCommand.DELETE
                 else -> {
                     logger.warn("Unrecognized WebChannel command: $this")
                     null
