@@ -62,12 +62,12 @@ object MatcherHelper {
     fun assertItemWithResIdExists(vararg appItems: UiObject, exists: Boolean = true) {
         if (exists) {
             for (appItem in appItems) {
-                assertTrue(appItem.waitForExists(waitingTime))
+                assertTrue("${appItem.selector} does not exist", appItem.waitForExists(waitingTime))
                 Log.i(TAG, "assertItemWithResIdExists: Verified ${appItem.selector} exists")
             }
         } else {
             for (appItem in appItems) {
-                assertFalse(appItem.waitForExists(waitingTimeShort))
+                assertFalse("${appItem.selector} exists", appItem.waitForExists(waitingTimeShort))
                 Log.i(TAG, "assertItemWithResIdExists: Verified ${appItem.selector} does not exist")
             }
         }
@@ -76,10 +76,10 @@ object MatcherHelper {
     fun assertItemContainingTextExists(vararg appItems: UiObject, exists: Boolean = true) {
         for (appItem in appItems) {
             if (exists) {
-                assertTrue(appItem.waitForExists(waitingTime))
+                assertTrue("${appItem.selector} does not exist", appItem.waitForExists(waitingTime))
                 Log.i(TAG, "assertItemContainingTextExists: Verified ${appItem.selector} exists")
             } else {
-                assertFalse(appItem.waitForExists(waitingTimeShort))
+                assertFalse("${appItem.selector} exists", appItem.waitForExists(waitingTimeShort))
                 Log.i(TAG, "assertItemContainingTextExists: Verified ${appItem.selector} does not exist")
             }
         }
@@ -88,18 +88,24 @@ object MatcherHelper {
     fun assertItemWithDescriptionExists(vararg appItems: UiObject, exists: Boolean = true) {
         for (appItem in appItems) {
             if (exists) {
-                assertTrue(appItem.waitForExists(waitingTime))
+                assertTrue("${appItem.selector} does not exist", appItem.waitForExists(waitingTime))
                 Log.i(TAG, "assertItemContainingTextExists: Verified ${appItem.selector} exists")
             } else {
-                assertFalse(appItem.waitForExists(waitingTimeShort))
+                assertFalse("${appItem.selector} exists", appItem.waitForExists(waitingTimeShort))
                 Log.i(TAG, "assertItemContainingTextExists: Verified ${appItem.selector} does not exist")
             }
         }
     }
 
-    fun assertCheckedItemWithResIdExists(vararg appItems: UiObject) {
+    fun assertCheckedItemWithResIdExists(vararg appItems: UiObject, exists: Boolean = true) {
         for (appItem in appItems) {
-            assertTrue(appItem.waitForExists(waitingTime))
+            if (exists) {
+                assertTrue("${appItem.selector} does not exist", appItem.waitForExists(waitingTime))
+                Log.i(TAG, "assertCheckedItemWithResIdExists: Verified ${appItem.selector} exists")
+            } else {
+                assertFalse("${appItem.selector} exists", appItem.waitForExists(waitingTimeShort))
+                Log.i(TAG, "assertItemContainingTextExists: Verified ${appItem.selector} does not exist")
+            }
         }
     }
 
@@ -118,9 +124,11 @@ object MatcherHelper {
     fun assertItemWithResIdAndTextExists(vararg appItems: UiObject, exists: Boolean = true) {
         for (appItem in appItems) {
             if (exists) {
-                assertTrue(appItem.waitForExists(waitingTime))
+                assertTrue("${appItem.selector} does not exist", appItem.waitForExists(waitingTime))
+                Log.i(TAG, "assertItemWithResIdExists: Verified ${appItem.selector} exists")
             } else {
-                assertFalse(appItem.waitForExists(waitingTimeShort))
+                assertFalse("${appItem.selector} exists", appItem.waitForExists(waitingTimeShort))
+                Log.i(TAG, "assertItemWithResIdExists: Verified ${appItem.selector} does not exist")
             }
         }
     }
