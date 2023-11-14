@@ -26,7 +26,6 @@ import androidx.test.uiautomator.UiObjectNotFoundException
 import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
 import org.hamcrest.Matchers.allOf
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.Constants.LONG_CLICK_DURATION
@@ -37,6 +36,7 @@ import org.mozilla.fenix.helpers.MatcherHelper.assertCheckedItemWithResIdAndText
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemContainingTextExists
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithDescriptionExists
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithResIdAndTextExists
+import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithResIdExists
 import org.mozilla.fenix.helpers.MatcherHelper.checkedItemWithResIdAndText
 import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithDescription
@@ -159,10 +159,7 @@ class ThreeDotMenuMainRobot {
     fun verifyAddonAvailableInMainMenu(addonName: String) {
         for (i in 1..RETRY_COUNT) {
             try {
-                assertTrue(
-                    "Addon not listed in the Add-ons sub-menu",
-                    mDevice.findObject(UiSelector().textContains(addonName)).waitForExists(waitingTime),
-                )
+                assertItemContainingTextExists(itemContainingText(addonName))
                 break
             } catch (e: AssertionError) {
                 if (i == RETRY_COUNT) {
@@ -179,7 +176,7 @@ class ThreeDotMenuMainRobot {
     }
 
     fun verifyTrackersBlockedByUblock() {
-        assertTrue(itemWithResId("$packageName:id/badge_text").waitForExists(waitingTime))
+        assertItemWithResIdExists(itemWithResId("$packageName:id/badge_text"))
         assertTrue(itemWithResId("$packageName:id/badge_text").text.toInt() > 0)
     }
 
@@ -209,7 +206,9 @@ class ThreeDotMenuMainRobot {
 
         fun openDownloadsManager(interact: DownloadRobot.() -> Unit): DownloadRobot.Transition {
             threeDotMenuRecyclerView().perform(swipeDown())
+            Log.i(TAG, "openDownloadsManager: Swiped up main menu")
             downloadsButton.click()
+            Log.i(TAG, "openDownloadsManager: Clicked main menu \"DOWNLOADS\" button")
 
             DownloadRobot().interact()
             return DownloadRobot.Transition()
@@ -229,7 +228,7 @@ class ThreeDotMenuMainRobot {
             mDevice.waitNotNull(Until.findObject(By.text("Bookmarks")), waitingTime)
 
             bookmarksButton.click()
-            assertTrue(mDevice.findObject(UiSelector().resourceId("$packageName:id/bookmark_list")).waitForExists(waitingTime))
+            assertItemWithResIdExists(itemWithResId("$packageName:id/bookmark_list"))
 
             BookmarksRobot().interact()
             return BookmarksRobot.Transition()
@@ -310,6 +309,7 @@ class ThreeDotMenuMainRobot {
 
         fun clickShareButton(interact: ShareOverlayRobot.() -> Unit): ShareOverlayRobot.Transition {
             shareButton.click()
+            Log.i(TAG, "clickShareButton: Clicked main menu share button")
             mDevice.waitNotNull(Until.findObject(By.text("ALL ACTIONS")), waitingTime)
 
             ShareOverlayRobot().interact()
@@ -529,13 +529,13 @@ private fun assertReaderViewAppearanceButton(visible: Boolean) {
             threeDotMenuRecyclerView().perform(swipeUp())
             maxSwipes--
         }
-        assertTrue(readerViewAppearanceToggle().exists())
+        assertItemContainingTextExists(readerViewAppearanceToggle())
     } else {
         while (!readerViewAppearanceToggle().exists() && maxSwipes != 0) {
             threeDotMenuRecyclerView().perform(swipeUp())
             maxSwipes--
         }
-        assertFalse(readerViewAppearanceToggle().exists())
+        assertItemContainingTextExists(readerViewAppearanceToggle(), exists = false)
     }
 }
 
