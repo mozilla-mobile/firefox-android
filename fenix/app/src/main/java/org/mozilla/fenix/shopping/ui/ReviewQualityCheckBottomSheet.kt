@@ -102,12 +102,15 @@ fun ReviewQualityCheckBottomSheet(
                     onNoAnalysisPresent = {
                         store.dispatch(ReviewQualityCheckAction.NoAnalysisDisplayed)
                     },
-                    onShowMoreRecentReviewsClicked = {
-                        store.dispatch(ReviewQualityCheckAction.ShowMoreRecentReviewsClicked)
+                    onHighlightsExpandToggleClick = {
+                        store.dispatch(ReviewQualityCheckAction.ExpandCollapseHighlights)
                     },
-                    onRecommendedProductClick = {
+                    onRecommendedProductClick = { aid, url ->
                         onRequestDismiss(BottomSheetDismissSource.LINK_OPENED)
-                        store.dispatch(ReviewQualityCheckAction.OpenRecommendedProduct(it))
+                        store.dispatch(ReviewQualityCheckAction.RecommendedProductClick(aid, url))
+                    },
+                    onProductRecommendationImpression = { aid ->
+                        store.dispatch(ReviewQualityCheckAction.RecommendedProductImpression(productAid = aid))
                     },
                 )
             }
@@ -131,13 +134,14 @@ private fun ProductReview(
     onAnalyzeClick: () -> Unit,
     onReanalyzeClick: () -> Unit,
     onProductRecommendationsEnabledStateChange: (Boolean) -> Unit,
-    onShowMoreRecentReviewsClicked: () -> Unit,
+    onHighlightsExpandToggleClick: () -> Unit,
     onNoAnalysisPresent: () -> Unit,
     onSettingsExpandToggleClick: () -> Unit,
     onInfoExpandToggleClick: () -> Unit,
     onReviewGradeLearnMoreClick: () -> Unit,
     onFooterLinkClick: () -> Unit,
-    onRecommendedProductClick: (String) -> Unit,
+    onRecommendedProductClick: (aid: String, url: String) -> Unit,
+    onProductRecommendationImpression: (aid: String) -> Unit,
 ) {
     Crossfade(
         targetState = state.productReviewState,
@@ -151,15 +155,17 @@ private fun ProductReview(
                     productVendor = state.productVendor,
                     isSettingsExpanded = state.isSettingsExpanded,
                     isInfoExpanded = state.isInfoExpanded,
+                    isHighlightsExpanded = state.isHighlightsExpanded,
                     onOptOutClick = onOptOutClick,
                     onReanalyzeClick = onReanalyzeClick,
                     onProductRecommendationsEnabledStateChange = onProductRecommendationsEnabledStateChange,
-                    onShowMoreRecentReviewsClicked = onShowMoreRecentReviewsClicked,
+                    onHighlightsExpandToggleClick = onHighlightsExpandToggleClick,
                     onSettingsExpandToggleClick = onSettingsExpandToggleClick,
                     onInfoExpandToggleClick = onInfoExpandToggleClick,
                     onReviewGradeLearnMoreClick = onReviewGradeLearnMoreClick,
                     onFooterLinkClick = onFooterLinkClick,
                     onRecommendedProductClick = onRecommendedProductClick,
+                    onRecommendedProductImpression = onProductRecommendationImpression,
                 )
             }
 
