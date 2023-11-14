@@ -51,10 +51,6 @@ class SearchDialogInteractor(
         searchController.handleSearchShortcutEngineSelected(searchEngine)
     }
 
-    override fun onClickSearchEngineSettings() {
-        searchController.handleClickSearchEngineSettings()
-    }
-
     override fun onExistingSessionSelected(tabId: String) {
         searchController.handleExistingSessionSelected(tabId)
     }

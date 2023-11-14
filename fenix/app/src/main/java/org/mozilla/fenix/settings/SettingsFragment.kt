@@ -126,7 +126,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
             requireContext().getString(R.string.pref_key_search_bookmarks),
             requireContext().getString(R.string.pref_key_search_browsing_history),
             requireContext().getString(R.string.pref_key_show_clipboard_suggestions),
-            requireContext().getString(R.string.pref_key_show_search_engine_shortcuts),
             requireContext().getString(R.string.pref_key_open_links_in_a_private_tab),
             requireContext().getString(R.string.pref_key_sync_logins),
             requireContext().getString(R.string.pref_key_sync_bookmarks),

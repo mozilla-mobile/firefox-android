@@ -62,7 +62,6 @@ class AwesomeBarView(
     private val engineForSpeculativeConnects: Engine?
     private val defaultHistoryStorageProvider: HistoryStorageSuggestionProvider
     private val defaultCombinedHistoryProvider: CombinedHistorySuggestionProvider
-    private val shortcutsEnginePickerProvider: ShortcutsSuggestionProvider
     private val defaultSearchSuggestionProvider: SearchSuggestionProvider
     private val defaultSearchActionProvider: SearchActionProvider
     private val searchEngineSuggestionProvider: SearchEngineSuggestionProvider
@@ -178,14 +177,6 @@ class AwesomeBarView(
                 suggestionsHeader = getSearchEngineSuggestionsHeader(),
             )
 
-        shortcutsEnginePickerProvider =
-            ShortcutsSuggestionProvider(
-                store = components.core.store,
-                context = activity,
-                selectShortcutEngine = interactor::onSearchShortcutEngineSelected,
-                selectShortcutEngineSettings = interactor::onClickSearchEngineSettings,
-            )
-
         searchEngineSuggestionProvider =
             SearchEngineSuggestionProvider(
                 context = activity,
@@ -236,7 +227,7 @@ class AwesomeBarView(
 
     fun update(state: SearchFragmentState) {
         // Do not make suggestions based on user's current URL unless it's a search shortcut
-        if (state.query.isNotEmpty() && state.query == state.url && !state.showSearchShortcuts) {
+        if (state.query.isNotEmpty() && state.query == state.url) {
             return
         }
 
@@ -247,11 +238,6 @@ class AwesomeBarView(
         state: SearchProviderState,
     ) {
         view.removeAllProviders()
-
-        if (state.showSearchShortcuts) {
-            handleDisplayShortcutsProviders()
-            return
-        }
 
         for (provider in getProvidersToAdd(state)) {
             view.addProviders(provider)
@@ -435,10 +421,6 @@ class AwesomeBarView(
         )
     }
 
-    private fun handleDisplayShortcutsProviders() {
-        view.addProviders(shortcutsEnginePickerProvider)
-    }
-
     private fun getSuggestionProviderForEngine(engine: SearchEngine): List<AwesomeBar.SuggestionProvider> {
         return searchSuggestionProviderMap.getOrPut(engine) {
             val components = activity.components
@@ -568,7 +550,6 @@ class AwesomeBarView(
         }
 
     data class SearchProviderState(
-        val showSearchShortcuts: Boolean,
         val showSearchTermHistory: Boolean,
         val showHistorySuggestionsForCurrentEngine: Boolean,
         val showAllHistorySuggestions: Boolean,
@@ -638,7 +619,6 @@ class AwesomeBarView(
 }
 
 fun SearchFragmentState.toSearchProviderState() = AwesomeBarView.SearchProviderState(
-    showSearchShortcuts = showSearchShortcuts,
     showSearchTermHistory = showSearchTermHistory,
     showHistorySuggestionsForCurrentEngine = showHistorySuggestionsForCurrentEngine,
     showAllHistorySuggestions = showAllHistorySuggestions,

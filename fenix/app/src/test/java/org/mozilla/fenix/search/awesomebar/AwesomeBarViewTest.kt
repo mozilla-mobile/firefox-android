@@ -313,7 +313,6 @@ class AwesomeBarViewTest {
         }
         every { activity.settings() } returns settings
         val state = getSearchProviderState(
-            showSearchShortcuts = false,
             showHistorySuggestionsForCurrentEngine = false,
             showBookmarksSuggestionsForCurrentEngine = false,
             showSyncedTabsSuggestionsForCurrentEngine = false,
@@ -339,7 +338,6 @@ class AwesomeBarViewTest {
         }
         every { activity.settings() } returns settings
         val state = getSearchProviderState(
-            showSearchShortcuts = false,
             showHistorySuggestionsForCurrentEngine = false,
             showBookmarksSuggestionsForCurrentEngine = false,
             showSyncedTabsSuggestionsForCurrentEngine = false,
@@ -365,7 +363,6 @@ class AwesomeBarViewTest {
         }
         every { activity.settings() } returns settings
         val state = getSearchProviderState(
-            showSearchShortcuts = false,
             showHistorySuggestionsForCurrentEngine = false,
             showAllHistorySuggestions = false,
             showBookmarksSuggestionsForCurrentEngine = false,
@@ -397,7 +394,6 @@ class AwesomeBarViewTest {
         }
         every { activity.settings() } returns settings
         val state = getSearchProviderState(
-            showSearchShortcuts = false,
             showHistorySuggestionsForCurrentEngine = false,
             showAllHistorySuggestions = false,
             showBookmarksSuggestionsForCurrentEngine = false,
@@ -429,7 +425,6 @@ class AwesomeBarViewTest {
         }
         every { activity.settings() } returns settings
         val state = getSearchProviderState(
-            showSearchShortcuts = false,
             showAllHistorySuggestions = false,
             showAllBookmarkSuggestions = false,
             showAllSyncedTabsSuggestions = false,
@@ -459,7 +454,6 @@ class AwesomeBarViewTest {
         }
         every { activity.settings() } returns settings
         val state = getSearchProviderState(
-            showSearchShortcuts = false,
             showAllHistorySuggestions = false,
             showAllBookmarkSuggestions = false,
             showAllSyncedTabsSuggestions = false,
@@ -489,7 +483,6 @@ class AwesomeBarViewTest {
         }
         every { activity.settings() } returns settings
         val state = getSearchProviderState(
-            showSearchShortcuts = false,
             showSearchTermHistory = false,
             showHistorySuggestionsForCurrentEngine = false,
             showBookmarksSuggestionsForCurrentEngine = false,
@@ -519,7 +512,6 @@ class AwesomeBarViewTest {
         }
         every { activity.settings() } returns settings
         val state = getSearchProviderState(
-            showSearchShortcuts = false,
             showSearchTermHistory = false,
             showHistorySuggestionsForCurrentEngine = false,
             showBookmarksSuggestionsForCurrentEngine = false,
@@ -549,7 +541,6 @@ class AwesomeBarViewTest {
         }
         every { activity.settings() } returns settings
         val state = getSearchProviderState(
-            showSearchShortcuts = false,
             showSearchTermHistory = false,
             showHistorySuggestionsForCurrentEngine = false,
             showAllHistorySuggestions = false,
@@ -577,7 +568,6 @@ class AwesomeBarViewTest {
         }
         every { activity.settings() } returns settings
         val state = getSearchProviderState(
-            showSearchShortcuts = false,
             showSearchTermHistory = false,
             showHistorySuggestionsForCurrentEngine = false,
             showAllHistorySuggestions = false,
@@ -605,7 +595,6 @@ class AwesomeBarViewTest {
         }
         every { activity.settings() } returns settings
         val state = getSearchProviderState(
-            showSearchShortcuts = false,
             showSearchTermHistory = false,
             showHistorySuggestionsForCurrentEngine = false,
             showAllHistorySuggestions = false,
@@ -635,7 +624,6 @@ class AwesomeBarViewTest {
         }
         every { activity.settings() } returns settings
         val state = getSearchProviderState(
-            showSearchShortcuts = false,
             showSearchTermHistory = false,
             showHistorySuggestionsForCurrentEngine = false,
             showAllHistorySuggestions = false,
@@ -1079,7 +1067,6 @@ class AwesomeBarViewTest {
         every { activity.browsingModeManager.mode } returns BrowsingMode.Normal
         val state = getSearchProviderState(
             showHistorySuggestionsForCurrentEngine = false,
-            showSearchShortcuts = false,
             showAllHistorySuggestions = false,
             showBookmarksSuggestionsForCurrentEngine = false,
             showAllBookmarkSuggestions = false,
@@ -1452,7 +1439,6 @@ class AwesomeBarViewTest {
  * Get a default [SearchProviderState] that by default will ask for all types of suggestions.
  */
 private fun getSearchProviderState(
-    showSearchShortcuts: Boolean = true,
     showSearchTermHistory: Boolean = true,
     showHistorySuggestionsForCurrentEngine: Boolean = true,
     showAllHistorySuggestions: Boolean = true,
@@ -1467,7 +1453,6 @@ private fun getSearchProviderState(
     showSponsoredSuggestions: Boolean = true,
     showNonSponsoredSuggestions: Boolean = true,
 ) = SearchProviderState(
-    showSearchShortcuts = showSearchShortcuts,
     showSearchTermHistory = showSearchTermHistory,
     showHistorySuggestionsForCurrentEngine = showHistorySuggestionsForCurrentEngine,
     showAllHistorySuggestions = showAllHistorySuggestions,

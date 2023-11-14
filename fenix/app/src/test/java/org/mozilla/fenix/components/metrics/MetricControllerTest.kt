@@ -54,7 +54,6 @@ import org.mozilla.fenix.GleanMetrics.SitePermissions
 import org.mozilla.fenix.GleanMetrics.SyncedTabs
 import org.mozilla.fenix.components.metrics.ReleaseMetricController.Companion
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
-import org.mozilla.fenix.search.awesomebar.ShortcutsSuggestionProvider
 import org.mozilla.fenix.utils.Settings
 import mozilla.components.compose.browser.awesomebar.AwesomeBarFacts as ComposeAwesomeBarFacts
 
@@ -252,22 +251,6 @@ class MetricControllerTest {
         }
 
         assertNotNull(PerfAwesomebar.clipboardSuggestions.testGetValue())
-
-        // Verify shortcut based suggestions
-        metadata = mapOf(
-            ComposeAwesomeBarFacts.MetadataKeys.DURATION_PAIR to Pair(
-                mockk<ShortcutsSuggestionProvider>(),
-                duration,
-            ),
-        )
-        fact = fact.copy(metadata = metadata)
-        assertNull(PerfAwesomebar.shortcutsSuggestions.testGetValue())
-
-        with(controller) {
-            fact.process()
-        }
-
-        assertNotNull(PerfAwesomebar.shortcutsSuggestions.testGetValue())
     }
 
     @Test
