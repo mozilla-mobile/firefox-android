@@ -15,7 +15,9 @@ import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.IntentReceiverActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.customtabs.EXTRA_IS_SANDBOX_CUSTOM_TAB
-import org.mozilla.fenix.settings.account.AuthIntentReceiverActivity
+import org.mozilla.fenix.settings.account.AccountCustomTabActivity
+import org.mozilla.fenix.settings.account.AccountCustomTabActivity.Companion.MODE_INTENT_KEY
+import org.mozilla.fenix.settings.account.AccountIntentReceiverActivity
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
 import java.util.Locale
@@ -112,8 +114,19 @@ object SupportUtils {
         .setClassName(context, IntentReceiverActivity::class.java.name)
         .setPackage(context.packageName)
 
-    fun createAuthCustomTabIntent(context: Context, url: String): Intent =
-        createCustomTabIntent(context, url).setClassName(context, AuthIntentReceiverActivity::class.java.name)
+    /**
+     * Custom tab that is supposed to be used with Firefox account.
+     * Supports automatic closure on authentication or account deletion.
+     */
+    fun createAccountCustomTabIntent(
+        context: Context,
+        url: String,
+        mode: AccountCustomTabActivity.Companion.Mode,
+    ): Intent =
+        createCustomTabIntent(context, url).setClassName(
+            context,
+            AccountIntentReceiverActivity::class.java.name,
+        ).putExtra(MODE_INTENT_KEY, mode)
 
     /**
      * Custom tab that cannot open the content in Firefox directly.

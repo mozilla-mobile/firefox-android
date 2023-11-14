@@ -269,14 +269,14 @@
             />
 
         <activity
-            android:name=".settings.account.AuthCustomTabActivity"
+            android:name=".settings.account.AccountCustomTabActivity"
             android:autoRemoveFromRecents="false"
             android:configChanges="keyboard|keyboardHidden|mcc|mnc|orientation|screenSize|layoutDirection|smallestScreenSize|screenLayout"
             android:exported="false"
             android:taskAffinity=""
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
 
-        <activity android:name=".settings.account.AuthIntentReceiverActivity"
+        <activity android:name=".settings.account.AccountIntentReceiverActivity"
             android:exported="false" />
 
         <activity android:name=".autofill.AutofillUnlockActivity"

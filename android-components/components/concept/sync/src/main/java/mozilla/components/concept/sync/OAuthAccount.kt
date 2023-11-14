@@ -293,6 +293,11 @@ interface AccountObserver {
     fun onLoggedOut() = Unit
 
     /**
+     * Account has been deleted.
+     */
+    fun onAccountDeleted() = Unit
+
+    /**
      * Account was successfully authenticated.
      *
      * @param account An authenticated instance of a [OAuthAccount].

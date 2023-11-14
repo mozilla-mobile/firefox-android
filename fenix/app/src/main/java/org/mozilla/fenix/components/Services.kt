@@ -14,6 +14,7 @@ import mozilla.components.service.fxa.manager.FxaAccountManager
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.perf.lazyMonitored
 import org.mozilla.fenix.settings.SupportUtils
+import org.mozilla.fenix.settings.account.AccountCustomTabActivity.Companion.Mode.AUTHENTICATION
 
 /**
  * Component group which encapsulates foreground-friendly services.
@@ -25,7 +26,7 @@ class Services(
     val accountsAuthFeature by lazyMonitored {
         FirefoxAccountsAuthFeature(accountManager, FxaServer.REDIRECT_URL) { context, authUrl ->
             CoroutineScope(Dispatchers.Main).launch {
-                val intent = SupportUtils.createAuthCustomTabIntent(context, authUrl)
+                val intent = SupportUtils.createAccountCustomTabIntent(context, authUrl, AUTHENTICATION)
                 context.startActivity(intent)
             }
         }

@@ -17,7 +17,7 @@ import org.mozilla.fenix.ext.settings
 /**
  * Processes incoming intents and sends them to the corresponding activity.
  */
-class AuthIntentReceiverActivity : Activity() {
+class AccountIntentReceiverActivity : Activity() {
 
     @VisibleForTesting
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,7 +35,7 @@ class AuthIntentReceiverActivity : Activity() {
                 components.intentProcessors.customTabIntentProcessor.process(intent)
             }
 
-            intent.setClassName(applicationContext, AuthCustomTabActivity::class.java.name)
+            intent.setClassName(applicationContext, AccountCustomTabActivity::class.java.name)
             intent.putExtra(HomeActivity.OPEN_TO_BROWSER, true)
 
             startActivity(intent)
