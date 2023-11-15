@@ -279,6 +279,16 @@ class HomeMenu(
                             )
                         }
                     }
+
+                    override fun onAccountDeleted() {
+                        lifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+                            onMenuBuilderChanged(
+                                BrowserMenuBuilder(
+                                    menuItems,
+                                ),
+                            )
+                        }
+                    }
                 },
                 lifecycleOwner,
             )
