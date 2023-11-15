@@ -373,7 +373,7 @@ class FxaWebChannelFeature(
         /**
          * Handles the [COMMAND_DELETE] event from the web-channel.
          */
-        private fun processDeleteCommand(accountManager: FxaAccountManager, payload: JSONObject) : JSONObject? {
+        private fun processDeleteCommand(accountManager: FxaAccountManager, payload: JSONObject): JSONObject? {
             return try {
                 val data = payload.getJSONObject("data")
                 val uid = data.getString("uid")

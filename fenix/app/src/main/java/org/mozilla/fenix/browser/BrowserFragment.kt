@@ -25,7 +25,6 @@ import mozilla.components.browser.thumbnails.BrowserThumbnails
 import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.concept.engine.permission.SitePermissions
 import mozilla.components.concept.sync.AccountObserver
-import mozilla.components.feature.addons.ui.translateName
 import mozilla.components.feature.app.links.AppLinksUseCases
 import mozilla.components.feature.contextmenu.ContextMenuCandidate
 import mozilla.components.feature.readerview.ReaderViewFeature
@@ -42,6 +41,7 @@ import org.mozilla.fenix.addons.showSnackBar
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.appstate.AppAction
+import org.mozilla.fenix.components.maybeShowAccountDeletedSnackBar
 import org.mozilla.fenix.components.toolbar.BrowserToolbarView
 import org.mozilla.fenix.components.toolbar.ToolbarMenu
 import org.mozilla.fenix.ext.components
@@ -511,6 +511,8 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
     override fun onResume() {
         super.onResume()
         requireComponents.core.tabCollectionStorage.register(collectionStorageObserver, this)
+
+        maybeShowAccountDeletedSnackBar(requireContext(), binding.dynamicSnackbarContainer)
     }
 
     override fun onBackPressed(): Boolean {

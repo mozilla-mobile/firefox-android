@@ -265,5 +265,6 @@ internal class TelemetryAccountObserver(
 
     override fun onAccountDeleted() {
         context.settings().signedInFxaAccount = false
+        context.settings().shouldShowAccountDeletedSnackbar = true
     }
 }

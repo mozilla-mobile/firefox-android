@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.components
 
+import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.util.TypedValue
@@ -240,5 +241,30 @@ private class FenixSnackbarCallback(
         private const val defaultYTranslation = 0f
         private const val animateInDuration = 200L
         private const val animateOutDuration = 150L
+    }
+}
+
+/**
+ * Shows the Fenix Snackbar in the given view along with the provided text.
+ *
+ * @param containerView A [View] used to determine a parent for the [FenixSnackbar].
+ * @param context Used to access settings and string resources.
+ */
+fun maybeShowAccountDeletedSnackBar(
+    context: Context,
+    containerView: View,
+    anchorView: View? = null,
+) {
+    if (context.settings().shouldShowAccountDeletedSnackbar) {
+        FenixSnackbar.make(
+            view = containerView,
+            duration = FenixSnackbar.LENGTH_SHORT,
+            isDisplayedWithBrowserToolbar = true,
+        )
+            .setText(context.getString(R.string.snackbar_account_deleted))
+            .setAnchorView(anchorView)
+            .show()
+
+        context.settings().shouldShowAccountDeletedSnackbar = false
     }
 }
