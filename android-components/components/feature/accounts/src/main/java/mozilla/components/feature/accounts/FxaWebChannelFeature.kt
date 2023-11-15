@@ -386,6 +386,7 @@ class FxaWebChannelFeature(
                 null
             } catch (e: JSONException) {
                 // TODO ideally, this should log to Sentry.
+                // https://bugzilla.mozilla.org/show_bug.cgi?id=1864975
                 logger.error("Error while processing WebChannel fxaccounts:delete command", e)
                 null
             }

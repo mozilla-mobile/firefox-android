@@ -23,6 +23,7 @@ class StateKtTest {
                     is Event.Account.AuthenticationError -> State.Active(ProgressState.RecoveringFromAuthProblem)
                     Event.Account.AccessTokenKeyError -> State.Idle(AccountState.AuthenticationProblem)
                     Event.Account.Logout -> State.Active(ProgressState.LoggingOut)
+                    Event.Account.Delete -> State.Active(ProgressState.DeletingAccount)
                     else -> null
                 }
                 AccountState.AuthenticationProblem -> when (event) {
@@ -58,6 +59,11 @@ class StateKtTest {
                     Event.Progress.LoggedOut -> State.Idle(AccountState.NotAuthenticated)
                     else -> null
                 }
+
+                ProgressState.DeletingAccount -> when (event) {
+                    Event.Progress.AccountDeleted -> State.Idle(AccountState.NotAuthenticated)
+                    else -> null
+                }
             }
         }
 
@@ -73,10 +79,12 @@ class StateKtTest {
             "AuthenticationError" -> Event.Account.AuthenticationError("fxa op")
             "AccessTokenKeyError" -> Event.Account.AccessTokenKeyError
             "Logout" -> Event.Account.Logout
+            "Delete" -> Event.Account.Delete
             "AccountNotFound" -> Event.Progress.AccountNotFound
             "AccountRestored" -> Event.Progress.AccountRestored
             "AuthData" -> Event.Progress.AuthData(mock())
             "LoggedOut" -> Event.Progress.LoggedOut
+            "AccountDeleted" -> Event.Progress.AccountDeleted
             "FailedToRecoverFromAuthenticationProblem" -> Event.Progress.FailedToRecoverFromAuthenticationProblem
             "RecoveredFromAuthenticationProblem" -> Event.Progress.RecoveredFromAuthenticationProblem
             "CompletedAuthentication" -> Event.Progress.CompletedAuthentication(mock<AuthType.Existing>())
