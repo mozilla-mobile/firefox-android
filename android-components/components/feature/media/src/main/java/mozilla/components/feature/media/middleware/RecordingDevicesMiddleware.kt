@@ -132,17 +132,17 @@ internal sealed class RecordingState {
         get() = this !is None
 
     object CameraAndMicrophone : RecordingState() {
-        override val iconResource = iconsR.drawable.mozac_ic_video
+        override val iconResource = iconsR.drawable.mozac_ic_camera_24
         override val titleResource = R.string.mozac_feature_media_sharing_camera_and_microphone
     }
 
     object Camera : RecordingState() {
-        override val iconResource = iconsR.drawable.mozac_ic_video
+        override val iconResource = iconsR.drawable.mozac_ic_camera_24
         override val titleResource = R.string.mozac_feature_media_sharing_camera
     }
 
     object Microphone : RecordingState() {
-        override val iconResource = iconsR.drawable.mozac_ic_microphone
+        override val iconResource = iconsR.drawable.mozac_ic_microphone_24
         override val titleResource = R.string.mozac_feature_media_sharing_microphone
     }
 

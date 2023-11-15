@@ -11,13 +11,12 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import org.hamcrest.CoreMatchers.allOf
 import org.mozilla.fenix.R
+import org.mozilla.fenix.helpers.DataGenerationHelper.getStringResource
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemContainingTextExists
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithDescriptionExists
 import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithDescription
-import org.mozilla.fenix.helpers.TestHelper.getStringResource
 import org.mozilla.fenix.helpers.TestHelper.mDevice
-import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.isChecked
 
 /**
@@ -30,6 +29,16 @@ class SettingsSubMenuOpenLinksInAppsRobot {
         assertItemContainingTextExists(
             itemContainingText(getStringResource(R.string.preferences_open_links_in_apps)),
             itemContainingText(getStringResource(R.string.preferences_open_links_in_apps_always)),
+            itemContainingText(getStringResource(R.string.preferences_open_links_in_apps_ask)),
+            itemContainingText(getStringResource(R.string.preferences_open_links_in_apps_never)),
+        )
+        verifySelectedOpenLinksInAppOption(selectedOpenLinkInAppsOption)
+    }
+
+    fun verifyPrivateOpenLinksInAppsView(selectedOpenLinkInAppsOption: String) {
+        assertItemWithDescriptionExists(goBackButton)
+        assertItemContainingTextExists(
+            itemContainingText(getStringResource(R.string.preferences_open_links_in_apps)),
             itemContainingText(getStringResource(R.string.preferences_open_links_in_apps_ask)),
             itemContainingText(getStringResource(R.string.preferences_open_links_in_apps_never)),
         )

@@ -1,7 +1,7 @@
 # Contributing code to Mozilla's Android projects
 Thank you for taking the time to contribute to one of Mozilla's Android
 projects! 🔥 🦊 ❤️ 🤖! 🎉 👍 For a full list of projects, see
-[the README](../README.md#android).
+[the README](../../../README.md).
 
 Before contributing, please review our [Community Participation Guidelines].
 
@@ -70,7 +70,7 @@ the issue you're fixing.*
 intended to fix.
   - If your PR closes an issue, include `Closes #...` in one of your commit messages. This
   will automatically close the linked issue ([more info][auto close]).
-  - If your PR has to go through a longer process, for example QA verification, use the 
+  - If your PR has to go through a longer process, for example QA verification, use the
   `For #...` syntax to allow the linked issue to be closed at a later, more appropriate time.
 - Prefer "micro commits".
   - A micro commit is a small commit that generally changes one thing.
@@ -101,6 +101,17 @@ by the core team. When merging, we use GitHub's "Rebase and merge":
 
 ## Writing tests
 To learn more about how our tests are structured, see [testing.md](testing.md).
+
+## Stale PRs
+If changes are requested in your patch and there is no indication of further activity within 2 weeks,
+we may close your PR in order to keep our repo in a manageable state. This does not mean we are not
+interested in your patch! Once the requested changes are made, feel free to re-open the PR.
+
+Conversely, if your PR is not receiving attention from the organization, here are a few strategies
+for escalating it:
+- Make sure your PR has the `needs-review` label.
+- Tag specific reviewers. Look for people that recently touched the file, that are active in other patches, or the component triage owner for the associated bug in Bugzilla.
+- Reach out to us on [Matrix](https://matrix.to/#/#fenix:mozilla.org).
 
 [Community Participation Guidelines]: https://www.mozilla.org/en-US/about/governance/policies/participation/
 [fa good first]: https://github.com/mozilla-mobile/focus-android/labels/good%20first%20issue

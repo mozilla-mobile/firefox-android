@@ -10,7 +10,9 @@ import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LifecycleOwner
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.withContext
+import mozilla.appservices.fxaclient.FxaClient
 import mozilla.appservices.fxaclient.FxaException
+import mozilla.appservices.syncmanager.SyncTelemetry
 import mozilla.components.concept.base.crash.CrashReporting
 import mozilla.components.concept.sync.AccountEvent
 import mozilla.components.concept.sync.AccountEventsObserver
@@ -26,8 +28,6 @@ import mozilla.components.concept.sync.ServiceResult
 import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.base.observer.Observable
 import mozilla.components.support.base.observer.ObserverRegistry
-import mozilla.components.support.sync.telemetry.SyncTelemetry
-import mozilla.appservices.fxaclient.PersistedFirefoxAccount as FirefoxAccount
 
 internal sealed class FxaDeviceConstellationException : Exception() {
     /**
@@ -37,10 +37,10 @@ internal sealed class FxaDeviceConstellationException : Exception() {
 }
 
 /**
- * Provides an implementation of [DeviceConstellation] backed by a [FirefoxAccount].
+ * Provides an implementation of [DeviceConstellation] backed by a [FxaClient
  */
 class FxaDeviceConstellation(
-    private val account: FirefoxAccount,
+    private val account: FxaClient,
     private val scope: CoroutineScope,
     @get:VisibleForTesting
     internal val crashReporter: CrashReporting? = null,
@@ -117,7 +117,13 @@ class FxaDeviceConstellation(
 
     override suspend fun processRawEvent(payload: String) = withContext(scope.coroutineContext) {
         handleFxaExceptions(logger, "processing raw commands") {
-            processEvents(account.handlePushMessage(payload).map { it.into() })
+            val events = when (val accountEvent: AccountEvent = account.handlePushMessage(payload).into()) {
+                is AccountEvent.DeviceCommandIncoming -> account.pollDeviceCommands().map {
+                    AccountEvent.DeviceCommandIncoming(command = it.into())
+                }
+                else -> listOf(accountEvent)
+            }
+            processEvents(events)
         }
     }
 
@@ -161,7 +167,10 @@ class FxaDeviceConstellation(
             when (outgoingCommand) {
                 is DeviceCommandOutgoing.SendTab -> {
                     account.sendSingleTab(targetDeviceId, outgoingCommand.title, outgoingCommand.url)
-                    SyncTelemetry.processFxaTelemetry(account.gatherTelemetry(), crashReporter)
+                    val errors: List<Throwable> = SyncTelemetry.processFxaTelemetry(account.gatherTelemetry())
+                    for (error in errors) {
+                        crashReporter?.submitCaughtException(error)
+                    }
                 }
                 else -> logger.debug("Skipped sending unsupported command type: $outgoingCommand")
             }
@@ -197,7 +206,10 @@ class FxaDeviceConstellation(
             false
         } else {
             processEvents(events)
-            SyncTelemetry.processFxaTelemetry(account.gatherTelemetry(), crashReporter)
+            val errors: List<Throwable> = SyncTelemetry.processFxaTelemetry(account.gatherTelemetry())
+            for (error in errors) {
+                crashReporter?.submitCaughtException(error)
+            }
             true
         }
     }

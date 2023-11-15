@@ -26,15 +26,18 @@ import org.mozilla.fenix.trackingprotection.ProtectionsState
  * MVI View that knows how to display cookie banner handling details for a site.
  *
  * @param container [ViewGroup] in which this View will inflate itself.
+ * @param context An Android [Context].
+ * @param ioScope [CoroutineScope] with an IO dispatcher used for structured concurrency.
  * @param publicSuffixList To show short url.
  * @param interactor [CookieBannerDetailsInteractor] which will have delegated to all user interactions.
+ * @param onDismiss Lambda invoked to dismiss the cookie banner.
  */
 class CookieBannerHandlingDetailsView(
     container: ViewGroup,
     private val context: Context,
     private val ioScope: CoroutineScope,
     private val publicSuffixList: PublicSuffixList,
-    val interactor: CookieBannerDetailsInteractor,
+    private val interactor: CookieBannerDetailsInteractor,
     private val onDismiss: () -> Unit,
 ) {
     val binding = ComponentCookieBannerDetailsPanelBinding.inflate(
@@ -92,15 +95,15 @@ class CookieBannerHandlingDetailsView(
                 val shortUrl = data.toShortUrl(publicSuffixList)
                 val title = when (state) {
                     CookieBannerUIMode.ENABLE -> context.getString(
-                        R.string.reduce_cookie_banner_details_panel_title_off_for_site,
+                        R.string.reduce_cookie_banner_details_panel_title_off_for_site_1,
                         shortUrl,
                     )
                     CookieBannerUIMode.DISABLE -> context.getString(
-                        R.string.reduce_cookie_banner_details_panel_title_on_for_site,
+                        R.string.reduce_cookie_banner_details_panel_title_on_for_site_1,
                         shortUrl,
                     )
                     CookieBannerUIMode.SITE_NOT_SUPPORTED -> context.getString(
-                        R.string.cookie_banner_handling_details_site_is_not_supported_title,
+                        R.string.cookie_banner_handling_details_site_is_not_supported_title_2,
                     )
                     else -> ""
                 }
@@ -114,15 +117,16 @@ class CookieBannerHandlingDetailsView(
         val appName = context.getString(R.string.app_name)
         val description = when (state) {
             CookieBannerUIMode.ENABLE -> context.getString(
-                R.string.reduce_cookie_banner_details_panel_description_off_for_site,
+                R.string.reduce_cookie_banner_details_panel_description_off_for_site_1,
                 appName,
             )
             CookieBannerUIMode.DISABLE -> context.getString(
-                R.string.reduce_cookie_banner_details_panel_description_on_for_site_2,
+                R.string.reduce_cookie_banner_details_panel_description_on_for_site_3,
                 appName,
             )
             CookieBannerUIMode.SITE_NOT_SUPPORTED -> context.getString(
-                R.string.reduce_cookie_banner_details_panel_title_unsupported_site_request,
+                R.string.reduce_cookie_banner_details_panel_title_unsupported_site_request_2,
+                appName,
             )
             else -> ""
         }

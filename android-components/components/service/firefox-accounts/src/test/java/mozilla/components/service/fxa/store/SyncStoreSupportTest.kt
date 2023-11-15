@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package mozilla.components.service.fxa.store
 
 import androidx.lifecycle.LifecycleOwner
@@ -8,6 +12,7 @@ import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.Avatar
 import mozilla.components.concept.sync.ConstellationState
 import mozilla.components.concept.sync.DeviceConstellation
@@ -103,7 +108,7 @@ class SyncStoreSupportTest {
             whenever(deviceConstellation()).thenReturn(constellation)
         }
 
-        accountObserver.onAuthenticated(account, mock())
+        accountObserver.onAuthenticated(account, mock<AuthType.Existing>())
         runCurrent()
 
         verify(constellation).registerDeviceObserver(constellationObserver, lifecycleOwner, autoPause)
@@ -120,7 +125,7 @@ class SyncStoreSupportTest {
             whenever(getProfile()).thenReturn(profile)
         }
 
-        accountObserver.onAuthenticated(account, mock())
+        accountObserver.onAuthenticated(account, mock<AuthType.Existing>())
         runCurrent()
 
         val expected = Account(
@@ -143,7 +148,7 @@ class SyncStoreSupportTest {
             whenever(getProfile()).thenReturn(null)
         }
 
-        accountObserver.onAuthenticated(account, mock())
+        accountObserver.onAuthenticated(account, mock<AuthType.Existing>())
         runCurrent()
 
         store.waitUntilIdle()
@@ -156,7 +161,7 @@ class SyncStoreSupportTest {
             whenever(deviceConstellation()).thenReturn(mock())
             whenever(getProfile()).thenReturn(null)
         }
-        accountObserver.onAuthenticated(account, mock())
+        accountObserver.onAuthenticated(account, mock<AuthType.Existing>())
         runCurrent()
 
         accountObserver.onLoggedOut()

@@ -19,7 +19,6 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.FileProvider
 import androidx.core.content.getSystemService
 import androidx.core.net.toUri
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
@@ -102,6 +101,7 @@ import java.io.InputStream
 import kotlin.random.Random
 
 @RunWith(AndroidJUnit4::class)
+@Config(shadows = [ShadowFileProvider::class])
 class AbstractFetchDownloadServiceTest {
 
     @Rule @JvmField
@@ -122,7 +122,6 @@ class AbstractFetchDownloadServiceTest {
 
     private lateinit var notificationsDelegate: NotificationsDelegate
 
-    @Mock private lateinit var broadcastManager: LocalBroadcastManager
     private lateinit var service: AbstractFetchDownloadService
 
     private lateinit var shadowNotificationService: ShadowNotificationManager
@@ -142,7 +141,6 @@ class AbstractFetchDownloadServiceTest {
             },
         )
 
-        doReturn(broadcastManager).`when`(service).broadcastManager
         doReturn(testContext).`when`(service).context
         doNothing().`when`(service).useFileStream(any(), anyBoolean(), any())
         doReturn(true).`when`(notificationManagerCompat).areNotificationsEnabled()
@@ -215,6 +213,26 @@ class AbstractFetchDownloadServiceTest {
         verify(service).handleDownloadIntent(download)
         verify(service, never()).handleRemovePrivateDownloadIntent(download)
     }
+
+    @Test
+    fun `WHEN a try again intent is received THEN handleDownloadIntent must be called`() =
+        runTest(testsDispatcher) {
+            val download = DownloadState("https://example.com/file.txt", "file.txt")
+            val downloadIntent = Intent(ACTION_TRY_AGAIN)
+
+            doNothing().`when`(service).handleRemovePrivateDownloadIntent(any())
+            doNothing().`when`(service).handleDownloadIntent(any())
+
+            downloadIntent.putExtra(EXTRA_DOWNLOAD_ID, download.id)
+            val newDownloadState = download.copy(status = DOWNLOADING)
+            browserStore.dispatch(DownloadAction.AddDownloadAction(newDownloadState)).joinBlocking()
+
+            service.onStartCommand(downloadIntent, 0, 0)
+
+            verify(service).handleDownloadIntent(newDownloadState)
+            assertEquals(newDownloadState.status, DOWNLOADING)
+            verify(service, never()).handleRemovePrivateDownloadIntent(newDownloadState)
+        }
 
     @Test
     fun `WHEN a remove download intent is received THEN handleRemoveDownloadIntent must be called`() = runTest(testsDispatcher) {
@@ -1514,7 +1532,6 @@ class AbstractFetchDownloadServiceTest {
     }
 
     @Test
-    @Config(sdk = [Build.VERSION_CODES.P], shadows = [ShadowFileProvider::class])
     fun `WHEN a download is completed and the scoped storage is not used it MUST be added manually to the download system database`() = runTest(testsDispatcher) {
         val download = DownloadState(
             url = "http://www.mozilla.org",
@@ -1635,7 +1652,6 @@ class AbstractFetchDownloadServiceTest {
     }
 
     @Test
-    @Config(sdk = [Build.VERSION_CODES.P], shadows = [ShadowFileProvider::class])
     @Suppress("Deprecation")
     fun `do not pass non-http(s) url to addCompletedDownload`() = runTest(testsDispatcher) {
         val download = DownloadState(
@@ -1663,7 +1679,6 @@ class AbstractFetchDownloadServiceTest {
     }
 
     @Test
-    @Config(sdk = [Build.VERSION_CODES.P], shadows = [ShadowFileProvider::class])
     @Suppress("Deprecation")
     fun `GIVEN a download that throws an exception WHEN adding to the system database THEN handle the exception`() =
         runTest(testsDispatcher) {
@@ -1701,7 +1716,6 @@ class AbstractFetchDownloadServiceTest {
         }
 
     @Test
-    @Config(sdk = [Build.VERSION_CODES.P], shadows = [ShadowFileProvider::class])
     @Suppress("Deprecation")
     fun `pass http(s) url to addCompletedDownload`() = runTest(testsDispatcher) {
         val download = DownloadState(
@@ -1729,7 +1743,6 @@ class AbstractFetchDownloadServiceTest {
     }
 
     @Test
-    @Config(sdk = [Build.VERSION_CODES.P], shadows = [ShadowFileProvider::class])
     @Suppress("Deprecation")
     fun `always call addCompletedDownload with a not empty or null mimeType`() = runTest(testsDispatcher) {
         val service = spy(
@@ -2013,7 +2026,6 @@ class AbstractFetchDownloadServiceTest {
     // The String version just overloads and delegates the Uri one but being in a companion object we cannot
     // verify the delegation so we are left to verify the result to prevent any regressions.
     @Test
-    @Config(shadows = [ShadowFileProvider::class])
     fun `getSafeContentType2 - WHEN the file content type is available THEN use it`() {
         val contentTypeFromFile = "application/pdf; qs=0.001"
         val spyContext = spy(testContext)
@@ -2028,7 +2040,6 @@ class AbstractFetchDownloadServiceTest {
     }
 
     @Test
-    @Config(shadows = [ShadowFileProvider::class])
     fun `getSafeContentType2 - WHEN the file content type is not available THEN use the provided content type`() {
         val contentType = " application/pdf "
         val spyContext = spy(testContext)
@@ -2045,7 +2056,6 @@ class AbstractFetchDownloadServiceTest {
     }
 
     @Test
-    @Config(shadows = [ShadowFileProvider::class])
     fun `getSafeContentType2 - WHEN none of the provided content types are available THEN return a generic content type`() {
         val spyContext = spy(testContext)
         val contentResolver = mock<ContentResolver>()
@@ -2063,6 +2073,7 @@ class AbstractFetchDownloadServiceTest {
     // Hard to test #getFilePathUri since it only returns the result of a certain Android api call.
     // But let's try.
     @Test
+    @Config(shadows = [DefaultFileProvider::class]) // use default implementation just for this test
     fun `getFilePathUri - WHEN called without a registered provider THEN exception is thrown`() {
         // There is no app registered provider that could expose a file from the filesystem of the machine running this test.
         // Peeking into the exception would indicate whether the code really called "FileProvider.getUriForFile" as expected.
@@ -2078,7 +2089,6 @@ class AbstractFetchDownloadServiceTest {
     }
 
     @Test
-    @Config(shadows = [ShadowFileProvider::class])
     fun `getFilePathUri - WHEN called THEN return a file provider path for the filePath`() {
         // Test that the String filePath is passed to the provider from which we expect a Uri path
         val result = AbstractFetchDownloadService.getFilePathUri(testContext, "location/test.txt")
@@ -2098,3 +2108,6 @@ object ShadowFileProvider {
         file: File,
     ) = "content://authority/random/location/${file.name}".toUri()
 }
+
+@Implements(FileProvider::class)
+object DefaultFileProvider

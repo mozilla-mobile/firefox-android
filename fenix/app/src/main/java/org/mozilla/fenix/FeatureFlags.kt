@@ -48,32 +48,34 @@ object FeatureFlags {
     }
 
     /**
-     * Enables the Unified Search feature.
-     */
-    val unifiedSearchFeature = Config.channel.isNightlyOrDebug
-
-    /**
      * Enables compose on the tabs tray items.
      */
-    const val composeTabsTray = false
+    val composeTabsTray = Config.channel.isNightlyOrDebug || Config.channel.isBeta
 
     /**
-     * Enables the wallpaper v2 enhancements.
+     * Enables compose on the top sites.
      */
-    const val wallpaperV2Enabled = true
+    const val composeTopSites = false
 
     /**
-     * Enables the save to PDF feature.
+     * Enables new search settings UI with two extra fragments, for managing the default engine
+     * and managing search shortcuts in the quick search menu.
      */
-    const val saveToPDF = true
+    const val unifiedSearchSettings = true
 
     /**
-     * Enables the notification pre permission prompt.
+     * Allows users to enable translations.
+     * Preference to fully enable translations is pref_key_enable_translations.
      */
-    const val notificationPrePermissionPromptEnabled = true
+    val translations = Config.channel.isDebug
 
     /**
-     * Enables the redesigned onboarding.
+     * Allows users to enable Firefox Suggest.
      */
-    const val junoOnboardingEnabled = false
+    const val fxSuggest = true
+
+    /**
+     * Enable Meta attribution.
+     */
+    val metaAttributionEnabled = Config.channel.isNightlyOrDebug
 }

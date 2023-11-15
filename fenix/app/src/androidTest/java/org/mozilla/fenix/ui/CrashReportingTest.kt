@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.ui
 
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
@@ -12,9 +16,12 @@ import org.junit.Test
 import org.mozilla.fenix.R
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
+import org.mozilla.fenix.helpers.DataGenerationHelper.getStringResource
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
 import org.mozilla.fenix.helpers.TestAssetHelper
-import org.mozilla.fenix.helpers.TestHelper.getStringResource
+import org.mozilla.fenix.helpers.TestHelper.packageName
+import org.mozilla.fenix.ui.robots.clickPageObject
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
 
@@ -47,8 +54,9 @@ class CrashReportingTest {
         mockWebServer.shutdown()
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/308906
     @Test
-    fun closeTabCrashedReporterTest() {
+    fun closeTabFromCrashedTabReporterTest() {
         homeScreen {
         }.openNavigationToolbar {
         }.openTabCrashReporter {
@@ -58,9 +66,10 @@ class CrashReportingTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2336134
     @Ignore("Test failure caused by: https://github.com/mozilla-mobile/fenix/issues/19964")
     @Test
-    fun restoreTabCrashedReporterTest() {
+    fun restoreTabFromTabCrashedReporterTest() {
         val website = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         homeScreen {
@@ -69,12 +78,12 @@ class CrashReportingTest {
 
         navigationToolbar {
         }.openTabCrashReporter {
-            clickTabCrashedRestoreButton()
+            clickPageObject(itemWithResId("$packageName:id/restoreTabButton"))
             verifyPageContent(website.content)
         }
     }
 
-    @Ignore("Failure: https://bugzilla.mozilla.org/show_bug.cgi?id=1812075")
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1681928
     @SmokeTest
     @Test
     fun useAppWhileTabIsCrashedTest() {
@@ -100,37 +109,6 @@ class CrashReportingTest {
         }.closeTabDrawer {
         }.goToHomescreen {
             verifyExistingTopSitesList()
-        }.openThreeDotMenu {
-            verifySettingsButton()
-        }
-    }
-
-    @SmokeTest
-    @Test
-    fun privateBrowsingUseAppWhileTabIsCrashedTest() {
-        val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-        val secondWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 2)
-
-        homeScreen {
-            togglePrivateBrowsingModeOnOff()
-        }.openNavigationToolbar {
-        }.enterURLAndEnterToBrowser(firstWebPage.url) {
-            mDevice.waitForIdle()
-        }.openTabDrawer {
-        }.openNewTab {
-        }.submitQuery(secondWebPage.url.toString()) {
-            waitForPageToLoad()
-        }
-
-        navigationToolbar {
-        }.openTabCrashReporter {
-            verifyPageContent(tabCrashMessage)
-        }.openTabDrawer {
-            verifyExistingOpenTabs(firstWebPage.title)
-            verifyExistingOpenTabs(secondWebPage.title)
-        }.closeTabDrawer {
-        }.goToHomescreen {
-            verifyCommonMythsLink()
         }.openThreeDotMenu {
             verifySettingsButton()
         }

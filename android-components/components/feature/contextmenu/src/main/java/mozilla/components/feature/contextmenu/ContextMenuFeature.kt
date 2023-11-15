@@ -10,7 +10,7 @@ import androidx.annotation.VisibleForTesting.Companion.PRIVATE
 import androidx.fragment.app.FragmentManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.map
 import mozilla.components.browser.state.selector.findTabOrCustomTab
 import mozilla.components.browser.state.selector.findTabOrCustomTabOrSelectedTab
@@ -18,10 +18,11 @@ import mozilla.components.browser.state.state.SessionState
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.EngineView
 import mozilla.components.concept.engine.HitResult
+import mozilla.components.feature.contextmenu.facts.emitCancelMenuFact
 import mozilla.components.feature.contextmenu.facts.emitClickFact
+import mozilla.components.feature.contextmenu.facts.emitDisplayFact
 import mozilla.components.lib.state.ext.flowScoped
 import mozilla.components.support.base.feature.LifecycleAwareFeature
-import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 
 @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
 internal const val FRAGMENT_TAG = "mozac_feature_contextmenu_dialog"
@@ -62,7 +63,7 @@ class ContextMenuFeature(
     override fun start() {
         scope = store.flowScoped { flow ->
             flow.map { state -> state.findTabOrCustomTabOrSelectedTab(tabId) }
-                .ifChanged { it?.content?.hitResult }
+                .distinctUntilChangedBy { it?.content?.hitResult }
                 .collect { state ->
                     val hitResult = state?.content?.hitResult
                     if (hitResult != null) {
@@ -109,10 +110,12 @@ class ContextMenuFeature(
 
         val fragment = ContextMenuFragment.create(tab, hitResult.getLink(), ids, labels, additionalNote(hitResult))
         fragment.feature = this
+        emitDisplayFact(labels.joinToString())
         fragment.show(fragmentManager, FRAGMENT_TAG)
     }
 
     private fun hideContextMenu() {
+        emitCancelMenuFact()
         fragmentManager.findFragmentByTag(FRAGMENT_TAG)?.let { fragment ->
             fragmentManager.beginTransaction()
                 .remove(fragment)

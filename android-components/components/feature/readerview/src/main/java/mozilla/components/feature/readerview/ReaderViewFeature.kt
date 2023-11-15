@@ -10,6 +10,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.mapNotNull
+import mozilla.components.browser.state.action.EngineAction
 import mozilla.components.browser.state.action.ReaderAction
 import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.browser.state.state.TabSessionState
@@ -29,9 +30,12 @@ import mozilla.components.support.ktx.kotlinx.coroutines.flow.filterChanged
 import mozilla.components.support.webextensions.WebExtensionController
 import org.json.JSONObject
 import java.lang.ref.WeakReference
+import java.net.URLEncoder
 import java.util.Locale
+import java.util.UUID
 
 typealias onReaderViewStatusChange = (available: Boolean, active: Boolean) -> Unit
+typealias UUIDCreator = () -> String
 
 /**
  * Feature implementation that provides a reader view for the selected
@@ -52,10 +56,13 @@ class ReaderViewFeature(
     private val engine: Engine,
     private val store: BrowserStore,
     controlsView: ReaderViewControlsView,
+    private val createUUID: UUIDCreator = { UUID.randomUUID().toString() },
     private val onReaderViewStatusChange: onReaderViewStatusChange = { _, _ -> Unit },
 ) : LifecycleAwareFeature, UserInteractionHandler {
 
     private var scope: CoroutineScope? = null
+
+    @VisibleForTesting var readerBaseUrl: String? = null
 
     @VisibleForTesting
     // This is an internal var to make it mutable for unit testing purposes only
@@ -124,13 +131,21 @@ class ReaderViewFeature(
      * Shows the reader view UI.
      */
     fun showReaderView(session: TabSessionState? = store.state.selectedTab) {
-        session?.let { it ->
+        session?.let {
             if (!it.readerState.active) {
+                val id = createUUID()
                 extensionController.sendContentMessage(
-                    createShowReaderMessage(config),
+                    createCachePageMessage(id),
                     it.engineState.engineSession,
                     READER_VIEW_CONTENT_PORT,
                 )
+
+                val readerUrl = extensionController.createReaderUrl(it.content.url, id) ?: run {
+                    Logger.error("FeatureReaderView unable to create ReaderUrl.")
+                    return@let
+                }
+
+                store.dispatch(EngineAction.LoadUrlAction(it.id, readerUrl))
                 store.dispatch(ReaderAction.UpdateReaderActiveAction(it.id, true))
             }
         }
@@ -220,6 +235,12 @@ class ReaderViewFeature(
         extensionController.install(
             engine,
             onSuccess = {
+                it.getMetadata()?.run {
+                    readerBaseUrl = baseUrl
+                } ?: run {
+                    Logger.error("ReaderView extension missing Metadata")
+                }
+
                 feature.get()?.connectReaderViewContentScript()
             },
         )
@@ -264,12 +285,22 @@ class ReaderViewFeature(
                 val baseUrl = message.getString(BASE_URL_RESPONSE_MESSAGE_KEY)
                 store.dispatch(ReaderAction.UpdateReaderBaseUrlAction(sessionId, baseUrl))
 
-                port.postMessage(createShowReaderMessage(config.get()))
+                port.postMessage(createShowReaderMessage(config.get(), store.state.selectedTab?.readerState?.scrollY))
 
                 val activeUrl = message.getString(ACTIVE_URL_RESPONSE_MESSAGE_KEY)
                 store.dispatch(ReaderAction.UpdateReaderActiveUrlAction(sessionId, activeUrl))
             }
         }
+    }
+
+    private fun WebExtensionController.createReaderUrl(url: String, id: String): String? {
+        val colorScheme = config.colorScheme.name.lowercase(Locale.ROOT)
+        // Encode the original page url, otherwise when the readerview page will try to
+        // parse the url and retrieve the readerview url params (ir and colorScheme)
+        // the parser may get confused because the original webpage url being interpolated
+        // may also include its own search params non-escaped (See Bug 1860490).
+        val encodedUrl = URLEncoder.encode(url, "UTF-8")
+        return readerBaseUrl?.let { it + "readerview.html?url=$encodedUrl&id=$id&colorScheme=$colorScheme" }
     }
 
     @VisibleForTesting
@@ -291,6 +322,7 @@ class ReaderViewFeature(
         // Change the font type: {"action": "setFontType", "value": "sans-serif"}
         // Show reader view: {"action": "show", "value": {"fontSize": 3, "fontType": "serif", "colorScheme": "dark"}}
         internal const val ACTION_MESSAGE_KEY = "action"
+        internal const val ACTION_CACHE_PAGE = "cachePage"
         internal const val ACTION_SHOW = "show"
         internal const val ACTION_HIDE = "hide"
         internal const val ACTION_CHECK_READER_STATE = "checkReaderState"
@@ -301,6 +333,8 @@ class ReaderViewFeature(
         internal const val ACTION_VALUE_SHOW_FONT_SIZE = "fontSize"
         internal const val ACTION_VALUE_SHOW_FONT_TYPE = "fontType"
         internal const val ACTION_VALUE_SHOW_COLOR_SCHEME = "colorScheme"
+        internal const val ACTION_VALUE_SCROLLY = "scrollY"
+        internal const val ACTION_VALUE_ID = "id"
         internal const val READERABLE_RESPONSE_MESSAGE_KEY = "readerable"
         internal const val BASE_URL_RESPONSE_MESSAGE_KEY = "baseUrl"
         internal const val ACTIVE_URL_RESPONSE_MESSAGE_KEY = "activeUrl"
@@ -316,7 +350,13 @@ class ReaderViewFeature(
             return JSONObject().put(ACTION_MESSAGE_KEY, ACTION_CHECK_READER_STATE)
         }
 
-        internal fun createShowReaderMessage(config: ReaderViewConfig?): JSONObject {
+        internal fun createCachePageMessage(id: String): JSONObject {
+            return JSONObject()
+                .put(ACTION_MESSAGE_KEY, ACTION_CACHE_PAGE)
+                .put(ACTION_VALUE_ID, id)
+        }
+
+        internal fun createShowReaderMessage(config: ReaderViewConfig?, scrollY: Int? = null): JSONObject {
             if (config == null) {
                 logger.warn("No config provided. Falling back to default values.")
             }
@@ -328,7 +368,9 @@ class ReaderViewFeature(
                 .put(ACTION_VALUE_SHOW_FONT_SIZE, fontSize)
                 .put(ACTION_VALUE_SHOW_FONT_TYPE, fontType.value.lowercase(Locale.ROOT))
                 .put(ACTION_VALUE_SHOW_COLOR_SCHEME, colorScheme.name.lowercase(Locale.ROOT))
-
+            if (scrollY != null) {
+                configJson.put(ACTION_VALUE_SCROLLY, scrollY)
+            }
             return JSONObject()
                 .put(ACTION_MESSAGE_KEY, ACTION_SHOW)
                 .put(ACTION_VALUE, configJson)

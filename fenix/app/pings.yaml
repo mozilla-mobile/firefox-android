@@ -21,9 +21,11 @@ activation:
 
 first-session:
   description: |
-    This ping is intended to capture the source of the app install
-    on the first session.
+    **THIS IS NOT A GENERIC FIRST USE PING** This ping is intended to capture
+    Adjust attribution. Use of this ping for other analyses will result in
+    undesirable outcomes.
   include_client_id: true
+  send_if_empty: true
   bugs:
     - https://github.com/mozilla-mobile/fenix/issues/7295
   data_reviews:
@@ -63,24 +65,6 @@ spoc:
   notification_emails:
     - android-probes@mozilla.com
 
-client-deduplication:
-  description: |
-    Contains data to help identify if client IDs are being regenerated
-    erroneously.
-  include_client_id: true
-  reasons:
-    active: |
-      The ping is being sent when the app is coming to the foreground.
-    inactive: |
-      The ping is being sent when the app is going to the background.
-  bugs:
-    - https://bugzilla.mozilla.org/show_bug.cgi?id=1817029
-  data_reviews:
-    - https://bugzilla.mozilla.org/show_bug.cgi?id=1813195#c11
-  notification_emails:
-    - android-probes@mozilla.com
-    - fbertsch@mozilla.com
-
 cookie-banner-report-site:
   description: |
     This ping is needed when the cookie banner reducer doesn't work on
@@ -93,3 +77,17 @@ cookie-banner-report-site:
     - https://github.com/mozilla-mobile/firefox-android/pull/1298#pullrequestreview-1350344223
   notification_emails:
     - android-probes@mozilla.com
+fx-suggest:
+  description: |
+    A ping representing a single event occurring with or to a Firefox Suggestion.
+    Distinguishable by its `ping_type`.
+    Does not contain a `client_id`, preferring a `context_id` instead.
+  include_client_id: false
+  bugs:
+    - https://bugzilla.mozilla.org/show_bug.cgi?id=1857092
+  data_reviews:
+    - https://github.com/mozilla-mobile/firefox-android/pull/3958#issuecomment-1758607927
+  notification_emails:
+    - lina@mozilla.com
+    - ttran@mozilla.com
+    - najiang@mozilla.com

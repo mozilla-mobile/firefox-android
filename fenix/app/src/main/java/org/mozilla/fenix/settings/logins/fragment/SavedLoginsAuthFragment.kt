@@ -26,9 +26,12 @@ import mozilla.components.feature.autofill.preference.AutofillPreference
 import mozilla.components.service.fxa.SyncEngine
 import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
+import mozilla.components.ui.widgets.withCenterAlignedButtons
 import org.mozilla.fenix.GleanMetrics.Logins
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.accounts.FenixFxAEntryPoint
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.navigateWithBreadcrumb
 import org.mozilla.fenix.ext.registerForActivityResult
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
@@ -158,12 +161,16 @@ class SavedLoginsAuthFragment : PreferenceFragmentCompat() {
                 .getString(R.string.preferences_passwords_sync_logins),
             onSyncSignInClicked = {
                 val directions =
-                    SavedLoginsAuthFragmentDirections.actionSavedLoginsAuthFragmentToTurnOnSyncFragment()
+                    SavedLoginsAuthFragmentDirections.actionSavedLoginsAuthFragmentToTurnOnSyncFragment(
+                        entrypoint = FenixFxAEntryPoint.SavedLogins,
+                    )
                 findNavController().navigate(directions)
             },
             onReconnectClicked = {
                 val directions =
-                    SavedLoginsAuthFragmentDirections.actionGlobalAccountProblemFragment()
+                    SavedLoginsAuthFragmentDirections.actionGlobalAccountProblemFragment(
+                        entrypoint = FenixFxAEntryPoint.SavedLogins,
+                    )
                 findNavController().navigate(directions)
             },
         )
@@ -210,7 +217,7 @@ class SavedLoginsAuthFragment : PreferenceFragmentCompat() {
                 val intent = Intent(ACTION_SECURITY_SETTINGS)
                 startActivity(intent)
             }
-            create()
+            create().withCenterAlignedButtons()
         }.show().secure(activity)
         context.settings().incrementSecureWarningCount()
     }
@@ -240,7 +247,12 @@ class SavedLoginsAuthFragment : PreferenceFragmentCompat() {
     private fun navigateToSaveLoginSettingFragment() {
         val directions =
             SavedLoginsAuthFragmentDirections.actionSavedLoginsAuthFragmentToSavedLoginsSettingFragment()
-        findNavController().navigate(directions)
+        findNavController().navigateWithBreadcrumb(
+            directions = directions,
+            navigateFrom = "SavedLoginsAuthFragment",
+            navigateTo = "ActionSavedLoginsAuthFragmentToSavedLoginsSettingFragment",
+            crashReporter = requireComponents.analytics.crashReporter,
+        )
     }
 
     private fun navigateToLoginExceptionFragment() {

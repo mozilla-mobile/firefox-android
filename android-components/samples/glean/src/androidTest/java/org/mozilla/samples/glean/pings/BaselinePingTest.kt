@@ -7,7 +7,6 @@ package org.mozilla.samples.glean.pings
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.rules.ActivityScenarioRule
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import mozilla.components.service.glean.testing.GleanTestLocalServer
@@ -20,7 +19,6 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.mozilla.samples.glean.MainActivity
 import java.io.BufferedReader
 import java.io.ByteArrayInputStream
@@ -53,7 +51,6 @@ fun RecordedRequest.getPlainBody(): String {
     }
 }
 
-@RunWith(AndroidJUnit4::class)
 class BaselinePingTest {
     private val server = createMockWebServer()
 
@@ -72,13 +69,13 @@ class BaselinePingTest {
      */
     private fun createMockWebServer(): MockWebServer {
         val server = MockWebServer()
-        server.setDispatcher(
+        server.dispatcher =
             object : Dispatcher() {
                 override fun dispatch(request: RecordedRequest): MockResponse {
                     return MockResponse().setBody("OK")
                 }
-            },
-        )
+            }
+
         return server
     }
 
@@ -91,7 +88,7 @@ class BaselinePingTest {
         do {
             attempts += 1
             val request = server.takeRequest(20L, TimeUnit.SECONDS)
-            val docType = request.path.split("/")[3]
+            val docType = request?.path?.split("/")?.get(3)
             if (pingName == docType) {
                 val parsedPayload = JSONObject(request.getPlainBody())
                 if (pingReason == null) {

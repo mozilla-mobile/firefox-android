@@ -5,6 +5,7 @@
 package org.mozilla.fenix.components
 
 import androidx.fragment.app.Fragment
+import kotlinx.coroutines.CoroutineScope
 import mozilla.components.lib.state.Action
 import mozilla.components.lib.state.State
 import mozilla.components.lib.state.Store
@@ -51,7 +52,7 @@ class StoreProviderTest {
         val fragment = createAddedTestFragment { Fragment() }
 
         var createCalled = false
-        val createStore = {
+        val createStore: (CoroutineScope) -> Store<BasicState, Action> = {
             createCalled = true
             basicStore
         }
@@ -61,6 +62,30 @@ class StoreProviderTest {
 
         createCalled = false
         StoreProvider.get(fragment, createStore)
+        assertFalse(createCalled)
+    }
+
+    @Test
+    fun `WHEN store is created lazily THEN createStore is only invoked on access`() {
+        val fragment = createAddedTestFragment { Fragment() }
+
+        var createCalled = false
+        val createStore: (CoroutineScope) -> Store<BasicState, Action> = {
+            createCalled = true
+            basicStore
+        }
+
+        val store by fragment.lazyStore(createStore)
+        // The store is not created yet.
+        assertFalse(createCalled)
+
+        assertEquals(basicStore, store)
+        // The store is only created when it's used.
+        assertTrue(createCalled)
+
+        // The store is not created again.
+        createCalled = false
+        fragment.lazyStore(createStore).value
         assertFalse(createCalled)
     }
 }

@@ -5,7 +5,9 @@
 package mozilla.components.browser.state.state
 
 import mozilla.components.browser.state.state.content.DownloadState
+import mozilla.components.browser.state.state.extension.WebExtensionPromptRequest
 import mozilla.components.browser.state.state.recover.TabState
+import mozilla.components.concept.awesomebar.AwesomeBar
 import mozilla.components.lib.state.State
 import java.util.Locale
 
@@ -23,6 +25,7 @@ import java.util.Locale
  * @property extensions A map of extension IDs and web extensions of all installed web extensions.
  * The extensions here represent the default values for all [BrowserState.extensions] and can
  * be overridden per [SessionState].
+ * @property webExtensionPromptRequest the actual active web extension prompt request.
  * @property activeWebExtensionTabId the ID of the tab that is marked active for web extensions
  * to support tabs.query({active: true}).
  * @property search the state of search for this browser state.
@@ -31,6 +34,7 @@ import java.util.Locale
  * @property restoreComplete Whether or not restoring [BrowserState] has completed. This can be used
  * on application startup e.g. as an indicator that tabs have been restored.
  * @property locale The current locale of the app. Will be null when following the system default.
+ * @property awesomeBarState Holds state for interactions with the [AwesomeBar].
  */
 data class BrowserState(
     val tabs: List<TabSessionState> = emptyList(),
@@ -40,10 +44,14 @@ data class BrowserState(
     val selectedTabId: String? = null,
     val containers: Map<String, ContainerState> = emptyMap(),
     val extensions: Map<String, WebExtensionState> = emptyMap(),
+    val webExtensionPromptRequest: WebExtensionPromptRequest? = null,
     val activeWebExtensionTabId: String? = null,
     val downloads: Map<String, DownloadState> = emptyMap(),
     val search: SearchState = SearchState(),
     val undoHistory: UndoHistoryState = UndoHistoryState(),
     val restoreComplete: Boolean = false,
     val locale: Locale? = null,
+    val showExtensionsProcessDisabledPrompt: Boolean = false,
+    val extensionsProcessDisabled: Boolean = false,
+    val awesomeBarState: AwesomeBarState = AwesomeBarState(),
 ) : State

@@ -8,7 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LifecycleOwner
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import mozilla.components.browser.state.selector.getNormalOrPrivateTabs
 import mozilla.components.browser.state.selector.selectedTab
@@ -18,7 +18,6 @@ import mozilla.components.concept.toolbar.Toolbar
 import mozilla.components.feature.tabs.R
 import mozilla.components.lib.state.ext.flowScoped
 import mozilla.components.support.ktx.android.content.res.resolveAttribute
-import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import mozilla.components.ui.tabcounter.TabCounter
 import mozilla.components.ui.tabcounter.TabCounterMenu
 import java.lang.ref.WeakReference
@@ -33,6 +32,7 @@ open class TabCounterToolbarButton(
     private val showTabs: () -> Unit,
     private val store: BrowserStore,
     private val menu: TabCounterMenu? = null,
+    private val showMaskInPrivateMode: Boolean = false,
 ) : Toolbar.Action {
 
     private var reference = WeakReference<TabCounter>(null)
@@ -40,7 +40,7 @@ open class TabCounterToolbarButton(
     override fun createView(parent: ViewGroup): View {
         store.flowScoped(lifecycleOwner) { flow ->
             flow.map { state -> getTabCount(state) }
-                .ifChanged()
+                .distinctUntilChanged()
                 .collect {
                         tabs ->
                     updateCount(tabs)
@@ -71,6 +71,8 @@ open class TabCounterToolbarButton(
             )
 
             contentDescription = parent.context.getString(R.string.mozac_feature_tabs_toolbar_tabs_button)
+
+            toggleCounterMask(showMaskInPrivateMode && isPrivate(store))
         }
 
         // Set selectableItemBackgroundBorderless

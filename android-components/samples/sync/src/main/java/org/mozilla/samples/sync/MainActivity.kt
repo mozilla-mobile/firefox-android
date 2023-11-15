@@ -15,6 +15,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import mozilla.appservices.fxaclient.FxaServer
 import mozilla.components.browser.storage.sync.PlacesBookmarksStorage
 import mozilla.components.browser.storage.sync.PlacesHistoryStorage
 import mozilla.components.concept.storage.BookmarkNode
@@ -37,7 +38,6 @@ import mozilla.components.lib.dataprotect.SecureAbove22Preferences
 import mozilla.components.lib.fetch.httpurlconnection.HttpURLConnectionClient
 import mozilla.components.service.fxa.FxaAuthData
 import mozilla.components.service.fxa.PeriodicSyncConfig
-import mozilla.components.service.fxa.Server
 import mozilla.components.service.fxa.ServerConfig
 import mozilla.components.service.fxa.SyncConfig
 import mozilla.components.service.fxa.SyncEngine
@@ -86,7 +86,7 @@ class MainActivity :
     private val accountManager by lazy {
         FxaAccountManager(
             this,
-            ServerConfig(Server.RELEASE, CLIENT_ID, REDIRECT_URL),
+            ServerConfig(FxaServer.Release, CLIENT_ID, REDIRECT_URL),
             DeviceConfig(
                 name = "A-C Sync Sample - ${System.currentTimeMillis()}",
                 type = DeviceType.MOBILE,
@@ -132,7 +132,7 @@ class MainActivity :
 
         findViewById<View>(R.id.buttonSignIn).setOnClickListener {
             launch {
-                accountManager.beginAuthentication()?.let { openWebView(it) }
+                accountManager.beginAuthentication(entrypoint = SampleFxAEntryPoint.HomeMenu)?.let { openWebView(it) }
             }
         }
 
@@ -307,6 +307,10 @@ class MainActivity :
                         } else {
                             txtView.text = "The device ${it.deviceId} disconnected"
                         }
+                    }
+                    is AccountEvent.Unknown -> {
+                        // Unknown events are ignored to allow supporting new
+                        // account events
                     }
                 }
             }

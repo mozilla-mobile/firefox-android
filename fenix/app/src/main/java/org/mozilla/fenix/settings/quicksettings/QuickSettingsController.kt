@@ -94,15 +94,18 @@ interface QuickSettingsController {
  * @param context [Context] used for various Android interactions.
  * @param quickSettingsStore [QuickSettingsFragmentStore] holding the State for all Views displayed
  * in this Controller's Fragment.
+ * @param browserStore The application's [BrowserStore].
  * @param ioScope [CoroutineScope] with an IO dispatcher used for structured concurrency.
  * @param navController NavController] used for navigation.
- * @param sitePermissions [SitePermissions]? list of website permissions and their status.
+ * @property sessionId ID of the session to manipulate.
+ * @property sitePermissions [SitePermissions]? list of website permissions and their status.
  * @param settings [Settings] application settings.
  * @param permissionStorage [PermissionStorage] app state for website permissions exception.
  * @param reload [ReloadUrlUseCase] callback allowing for reloading the current web page.
  * @param requestRuntimePermissions [OnNeedToRequestPermissions] callback allowing for requesting
  * specific Android runtime permissions.
  * @param displayPermissions callback for when [WebsitePermissionsView] needs to be displayed.
+ * @param engine An [Engine] instance used for clearing the browsing data.
  */
 @Suppress("TooManyFunctions", "LongParameterList")
 class DefaultQuickSettingsController(
@@ -120,6 +123,7 @@ class DefaultQuickSettingsController(
     private val displayPermissions: () -> Unit,
     private val engine: Engine = context.components.core.engine,
 ) : QuickSettingsController {
+
     override fun handlePermissionsShown() {
         displayPermissions()
     }
@@ -170,7 +174,7 @@ class DefaultQuickSettingsController(
             }
             val sitePermissions =
                 autoplayValue.createSitePermissionsFromCustomRules(origin, settings)
-            handleAutoplayAdd(sitePermissions)
+            handleAutoplayAdd(sitePermissions, tab?.content?.private ?: false)
             sitePermissions
         } else {
             val newPermission = autoplayValue.updateSitePermissions(permissions)
@@ -298,9 +302,9 @@ class DefaultQuickSettingsController(
     }
 
     @VisibleForTesting
-    internal fun handleAutoplayAdd(sitePermissions: SitePermissions) {
+    internal fun handleAutoplayAdd(sitePermissions: SitePermissions, private: Boolean) {
         ioScope.launch {
-            permissionStorage.add(sitePermissions)
+            permissionStorage.add(sitePermissions, private)
             reload(sessionId)
         }
     }

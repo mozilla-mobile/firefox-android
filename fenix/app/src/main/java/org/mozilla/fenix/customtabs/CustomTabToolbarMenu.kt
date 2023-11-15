@@ -31,6 +31,8 @@ import java.util.Locale
 
 /**
  * Builds the toolbar object used with the 3-dot menu in the custom tab browser fragment.
+ *
+ * @param context An Android [Context].
  * @param store reference to the application's [BrowserStore].
  * @param sessionId ID of the open custom tab session.
  * @param shouldReverseItems If true, reverse the menu items.
@@ -55,7 +57,7 @@ class CustomTabToolbarMenu(
 
     override val menuToolbar by lazy {
         val back = BrowserMenuItemToolbar.TwoStateButton(
-            primaryImageResource = mozilla.components.ui.icons.R.drawable.mozac_ic_back,
+            primaryImageResource = mozilla.components.ui.icons.R.drawable.mozac_ic_back_24,
             primaryContentDescription = context.getString(R.string.browser_menu_back),
             primaryImageTintResource = primaryTextColor(),
             isInPrimaryState = {
@@ -72,7 +74,7 @@ class CustomTabToolbarMenu(
         }
 
         val forward = BrowserMenuItemToolbar.TwoStateButton(
-            primaryImageResource = mozilla.components.ui.icons.R.drawable.mozac_ic_forward,
+            primaryImageResource = mozilla.components.ui.icons.R.drawable.mozac_ic_forward_24,
             primaryContentDescription = context.getString(R.string.browser_menu_forward),
             primaryImageTintResource = primaryTextColor(),
             isInPrimaryState = {
@@ -89,7 +91,7 @@ class CustomTabToolbarMenu(
         }
 
         val refresh = BrowserMenuItemToolbar.TwoStateButton(
-            primaryImageResource = mozilla.components.ui.icons.R.drawable.mozac_ic_refresh,
+            primaryImageResource = mozilla.components.ui.icons.R.drawable.mozac_ic_arrow_clockwise_24,
             primaryContentDescription = context.getString(R.string.browser_menu_refresh),
             primaryImageTintResource = primaryTextColor(),
             isInPrimaryState = {
@@ -144,7 +146,7 @@ class CustomTabToolbarMenu(
 
     private val findInPage = BrowserMenuImageText(
         label = context.getString(R.string.browser_menu_find_in_page),
-        imageResource = R.drawable.mozac_ic_search,
+        imageResource = R.drawable.mozac_ic_search_24,
         iconTintColorResource = primaryTextColor(),
     ) {
         onItemTapped.invoke(ToolbarMenu.Item.FindInPage)

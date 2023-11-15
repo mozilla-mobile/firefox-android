@@ -30,9 +30,11 @@ import mozilla.components.lib.crash.Crash
 import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.ktx.android.content.getColorFromAttr
-import mozilla.components.support.ktx.android.view.getWindowInsetsController
+import mozilla.components.support.ktx.android.view.createWindowInsetsController
 import mozilla.components.support.locale.LocaleAwareAppCompatActivity
 import mozilla.components.support.utils.SafeIntent
+import mozilla.components.support.utils.StatusBarUtils
+import org.mozilla.experiments.nimbus.initializeTooling
 import org.mozilla.focus.GleanMetrics.AppOpened
 import org.mozilla.focus.GleanMetrics.Notifications
 import org.mozilla.focus.R
@@ -55,7 +57,6 @@ import org.mozilla.focus.state.Screen
 import org.mozilla.focus.telemetry.TelemetryWrapper
 import org.mozilla.focus.telemetry.startuptelemetry.StartupPathProvider
 import org.mozilla.focus.telemetry.startuptelemetry.StartupTypeTelemetry
-import org.mozilla.focus.utils.StatusBarUtils
 import org.mozilla.focus.utils.SupportUtils
 
 private const val REQUEST_TIME_OUT = 2000L
@@ -86,6 +87,7 @@ open class MainActivity : LocaleAwareAppCompatActivity() {
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        components.experiments.initializeTooling(applicationContext, intent)
         installSplashScreen()
 
         updateSecureWindowFlags()
@@ -379,7 +381,7 @@ open class MainActivity : LocaleAwareAppCompatActivity() {
             return
         }
 
-        super.getOnBackPressedDispatcher().onBackPressed()
+        onBackPressedDispatcher.onBackPressed()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -409,14 +411,14 @@ open class MainActivity : LocaleAwareAppCompatActivity() {
     private fun updateLightSystemBars() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             window.statusBarColor = getColorFromAttr(android.R.attr.statusBarColor)
-            window.getWindowInsetsController().isAppearanceLightStatusBars = true
+            window.createWindowInsetsController().isAppearanceLightStatusBars = true
         } else {
             window.statusBarColor = Color.BLACK
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // API level can display handle light navigation bar color
-            window.getWindowInsetsController().isAppearanceLightNavigationBars = true
+            window.createWindowInsetsController().isAppearanceLightNavigationBars = true
             window.navigationBarColor = ContextCompat.getColor(this, android.R.color.transparent)
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -428,12 +430,12 @@ open class MainActivity : LocaleAwareAppCompatActivity() {
 
     private fun clearLightSystemBars() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            window.getWindowInsetsController().isAppearanceLightStatusBars = false
+            window.createWindowInsetsController().isAppearanceLightStatusBars = false
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // API level can display handle light navigation bar color
-            window.getWindowInsetsController().isAppearanceLightNavigationBars = false
+            window.createWindowInsetsController().isAppearanceLightNavigationBars = false
         }
     }
 
@@ -466,7 +468,11 @@ open class MainActivity : LocaleAwareAppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
-        privateNotificationFeature.stop()
+
+        if (this::privateNotificationFeature.isInitialized) {
+            privateNotificationFeature.stop()
+        }
+
         components.notificationsDelegate.unBindActivity(this)
     }
 

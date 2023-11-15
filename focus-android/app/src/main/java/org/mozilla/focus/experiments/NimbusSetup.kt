@@ -13,7 +13,6 @@ import org.json.JSONObject
 import org.mozilla.experiments.nimbus.NimbusInterface
 import org.mozilla.experiments.nimbus.internal.NimbusException
 import org.mozilla.focus.BuildConfig
-import org.mozilla.focus.GleanMetrics.NimbusExperiments
 import org.mozilla.focus.R
 import org.mozilla.focus.ext.components
 import org.mozilla.focus.ext.settings
@@ -70,13 +69,9 @@ fun createNimbus(context: Context, urlString: String?): NimbusApi {
         initialExperiments = R.raw.initial_experiments
         timeoutLoadingExperiment = TIME_OUT_LOADING_EXPERIMENT_FROM_DISK_MS
         usePreviewCollection = context.settings.shouldUseNimbusPreview
+        sharedPreferences = context.settings.preferences
         isFirstRun = isAppFirstRun
-        onCreateCallback = { nimbus ->
-            FocusNimbus.initialize { nimbus }
-        }
-        onApplyCallback = {
-            FocusNimbus.invalidateCachedValues()
-        }
+        featureManifest = FocusNimbus
     }.build(appInfo)
 }
 
@@ -89,14 +84,12 @@ internal fun finishNimbusInitialization(experiments: NimbusApi) =
             register(
                 object : NimbusInterface.Observer {
                     override fun onExperimentsFetched() {
-                        NimbusExperiments.nimbusInitialFetch.stop()
                         applyPendingExperiments()
                         // Remove lingering observer when we're done fetching experiments on startup.
                         unregister(this)
                     }
                 },
             )
-            NimbusExperiments.nimbusInitialFetch.start()
         }
         fetchExperiments()
     }

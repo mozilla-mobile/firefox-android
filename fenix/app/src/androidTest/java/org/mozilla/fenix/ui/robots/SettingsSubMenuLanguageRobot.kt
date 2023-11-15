@@ -10,9 +10,11 @@ import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.uiautomator.UiScrollable
 import androidx.test.uiautomator.UiSelector
-import junit.framework.TestCase.assertTrue
 import org.hamcrest.CoreMatchers
 import org.mozilla.fenix.R
+import org.mozilla.fenix.helpers.MatcherHelper.assertItemContainingTextExists
+import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithResIdExists
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithText
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.packageName
@@ -31,16 +33,14 @@ class SettingsSubMenuLanguageRobot {
         language(languageName).click()
     }
 
-    fun verifyLanguageHeaderIsTranslated(translation: String) =
-        assertTrue(mDevice.findObject(UiSelector().text(translation)).waitForExists(waitingTime))
+    fun verifyLanguageHeaderIsTranslated(translation: String) = assertItemContainingTextExists(itemWithText(translation))
 
     fun verifySelectedLanguage(language: String) {
         languagesList.waitForExists(waitingTime)
-        assertTrue(
+        assertItemWithResIdExists(
             languagesList
                 .getChildByText(UiSelector().text(language), language, true)
-                .getFromParent(UiSelector().resourceId("$packageName:id/locale_selected_icon"))
-                .waitForExists(waitingTime),
+                .getFromParent(UiSelector().resourceId("$packageName:id/locale_selected_icon")),
         )
     }
 
@@ -53,17 +53,14 @@ class SettingsSubMenuLanguageRobot {
         searchBar.text = text
     }
 
-    fun verifySearchResultsContains(languageName: String) {
-        assertTrue(language(languageName).waitForExists(waitingTime))
-    }
+    fun verifySearchResultsContains(languageName: String) =
+        assertItemContainingTextExists(language(languageName))
 
     fun clearSearchBar() {
         onView(withId(R.id.search_close_btn)).click()
     }
 
-    fun verifyLanguageListIsDisplayed() {
-        assertTrue(languagesList.waitForExists(waitingTime))
-    }
+    fun verifyLanguageListIsDisplayed() = assertItemWithResIdExists(languagesList)
 
     class Transition {
 

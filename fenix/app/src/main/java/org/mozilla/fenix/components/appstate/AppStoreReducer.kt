@@ -9,6 +9,7 @@ import mozilla.components.service.pocket.PocketStory.PocketRecommendedStory
 import mozilla.components.service.pocket.PocketStory.PocketSponsoredStory
 import mozilla.components.service.pocket.ext.recordNewImpression
 import org.mozilla.fenix.components.AppStore
+import org.mozilla.fenix.components.appstate.shopping.ShoppingStateReducer
 import org.mozilla.fenix.ext.filterOutTab
 import org.mozilla.fenix.ext.getFilteredStories
 import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesSelectedCategory
@@ -130,7 +131,8 @@ internal object AppStoreReducer {
             )
         }
         is AppAction.PocketStoriesCategoriesChange -> {
-            val updatedCategoriesState = state.copy(pocketStoriesCategories = action.storiesCategories)
+            val updatedCategoriesState =
+                state.copy(pocketStoriesCategories = action.storiesCategories)
             // Whenever categories change stories to be displayed needs to also be changed.
             updatedCategoriesState.copy(
                 pocketStories = updatedCategoriesState.getFilteredStories(),
@@ -220,7 +222,18 @@ internal object AppStoreReducer {
             val wallpaperState = state.wallpaperState.copy(availableWallpapers = wallpapers)
             state.copy(wallpaperState = wallpaperState)
         }
-        is AppAction.ResumedMetricsAction -> state
+        is AppAction.AppLifecycleAction.ResumeAction -> {
+            state.copy(isForeground = true)
+        }
+        is AppAction.AppLifecycleAction.PauseAction -> {
+            state.copy(isForeground = false)
+        }
+
+        is AppAction.UpdateStandardSnackbarErrorAction -> state.copy(
+            standardSnackbarError = action.standardSnackbarError,
+        )
+
+        is AppAction.ShoppingAction -> ShoppingStateReducer.reduce(state, action)
     }
 }
 

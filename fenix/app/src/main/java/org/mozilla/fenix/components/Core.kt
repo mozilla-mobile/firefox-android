@@ -11,10 +11,12 @@ import android.os.StrictMode
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
+import androidx.datastore.preferences.preferencesDataStore
 import mozilla.components.browser.domains.autocomplete.BaseDomainAutocompleteProvider
 import mozilla.components.browser.domains.autocomplete.ShippedDomainsProvider
 import mozilla.components.browser.engine.gecko.GeckoEngine
 import mozilla.components.browser.engine.gecko.cookiebanners.GeckoCookieBannersStorage
+import mozilla.components.browser.engine.gecko.cookiebanners.ReportSiteDomainsRepository
 import mozilla.components.browser.engine.gecko.fetch.GeckoViewFetchClient
 import mozilla.components.browser.engine.gecko.permission.GeckoSitePermissionsStorage
 import mozilla.components.browser.icons.BrowserIcons
@@ -38,6 +40,7 @@ import mozilla.components.concept.fetch.Client
 import mozilla.components.feature.awesomebar.provider.SessionAutocompleteProvider
 import mozilla.components.feature.customtabs.store.CustomTabsServiceStore
 import mozilla.components.feature.downloads.DownloadMiddleware
+import mozilla.components.feature.fxsuggest.facts.FxSuggestFactsMiddleware
 import mozilla.components.feature.logins.exceptions.LoginExceptionStorage
 import mozilla.components.feature.media.MediaSessionFeature
 import mozilla.components.feature.media.middleware.LastMediaAccessMiddleware
@@ -50,6 +53,7 @@ import mozilla.components.feature.recentlyclosed.RecentlyClosedMiddleware
 import mozilla.components.feature.recentlyclosed.RecentlyClosedTabsStorage
 import mozilla.components.feature.search.ext.createApplicationSearchEngine
 import mozilla.components.feature.search.middleware.AdsTelemetryMiddleware
+import mozilla.components.feature.search.middleware.SearchExtraParams
 import mozilla.components.feature.search.middleware.SearchMiddleware
 import mozilla.components.feature.search.region.RegionMiddleware
 import mozilla.components.feature.search.telemetry.ads.AdsTelemetry
@@ -93,6 +97,7 @@ import org.mozilla.fenix.historymetadata.DefaultHistoryMetadataService
 import org.mozilla.fenix.historymetadata.HistoryMetadataMiddleware
 import org.mozilla.fenix.historymetadata.HistoryMetadataService
 import org.mozilla.fenix.media.MediaSessionService
+import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.perf.StrictModeManager
 import org.mozilla.fenix.perf.lazyMonitored
 import org.mozilla.fenix.settings.SupportUtils
@@ -137,10 +142,11 @@ class Core(
                 R.color.fx_mobile_layer_color_1,
             ),
             httpsOnlyMode = context.settings().getHttpsOnlyMode(),
-            cookieBannerHandlingModePrivateBrowsing = context.settings().getCookieBannerHandling(),
             cookieBannerHandlingMode = context.settings().getCookieBannerHandling(),
-            cookieBannerHandlingDetectOnlyMode = context.settings()
-                .shouldShowCookieBannerReEngagementDialog(),
+            cookieBannerHandlingModePrivateBrowsing = context.settings().getCookieBannerHandlingPrivateMode(),
+            cookieBannerHandlingDetectOnlyMode = context.settings().shouldEnableCookieBannerDetectOnly,
+            cookieBannerHandlingGlobalRules = context.settings().shouldEnableCookieBannerGlobalRules,
+            cookieBannerHandlingGlobalRulesSubFrames = context.settings().shouldEnableCookieBannerGlobalRulesSubFrame,
         )
 
         GeckoEngine(
@@ -190,14 +196,23 @@ class Core(
         )
     }
 
-    val cookieBannersStorage by lazyMonitored { GeckoCookieBannersStorage(geckoRuntime) }
+    private val Context.dataStore by preferencesDataStore(
+        name = ReportSiteDomainsRepository.REPORT_SITE_DOMAINS_REPOSITORY_NAME,
+    )
+
+    val cookieBannersStorage by lazyMonitored {
+        GeckoCookieBannersStorage(
+            geckoRuntime,
+            ReportSiteDomainsRepository(context.dataStore),
+        )
+    }
 
     val geckoSitePermissionsStorage by lazyMonitored {
         GeckoSitePermissionsStorage(geckoRuntime, OnDiskSitePermissionsStorage(context))
     }
 
     val sessionStorage: SessionStorage by lazyMonitored {
-        SessionStorage(context, engine = engine)
+        SessionStorage(context, engine, crashReporter)
     }
 
     private val locationService: LocationService by lazyMonitored {
@@ -235,20 +250,31 @@ class Core(
      * The [BrowserStore] holds the global [BrowserState].
      */
     val store by lazyMonitored {
+        val searchExtraParamsNimbus = FxNimbus.features.searchExtraParams.value()
+        val searchExtraParams = searchExtraParamsNimbus.takeIf { it.enabled }?.run {
+            SearchExtraParams(
+                searchEngine,
+                featureEnabler.keys.firstOrNull(),
+                featureEnabler.values.firstOrNull(),
+                channelId.keys.first(),
+                channelId.values.first(),
+            )
+        }
         val middlewareList =
             mutableListOf(
                 LastAccessMiddleware(),
                 RecentlyClosedMiddleware(recentlyClosedTabsStorage, RECENTLY_CLOSED_MAX),
                 DownloadMiddleware(context, DownloadService::class.java),
                 ReaderViewMiddleware(),
-                TelemetryMiddleware(context.settings(), metrics, crashReporter),
+                TelemetryMiddleware(context, context.settings(), metrics, crashReporter),
                 ThumbnailsMiddleware(thumbnailStorage),
                 UndoMiddleware(context.getUndoDelay()),
                 RegionMiddleware(context, locationService),
                 SearchMiddleware(
-                    context,
+                    context = context,
                     additionalBundledSearchEngineIds = listOf("reddit", "youtube"),
                     migration = SearchMigration(context),
+                    searchExtraParams = searchExtraParams,
                 ),
                 RecordingDevicesMiddleware(context, context.components.notificationsDelegate),
                 PromptMiddleware(),
@@ -257,16 +283,13 @@ class Core(
                 HistoryMetadataMiddleware(historyMetadataService),
                 SessionPrioritizationMiddleware(),
                 SaveToPDFMiddleware(context),
+                FxSuggestFactsMiddleware(),
             )
 
         BrowserStore(
             initialState = BrowserState(
                 search = SearchState(
-                    applicationSearchEngines = if (context.settings().showUnifiedSearchFeature) {
-                        applicationSearchEngines
-                    } else {
-                        emptyList()
-                    },
+                    applicationSearchEngines = applicationSearchEngines,
                 ),
             ),
             middleware = middlewareList + EngineMiddleware.create(

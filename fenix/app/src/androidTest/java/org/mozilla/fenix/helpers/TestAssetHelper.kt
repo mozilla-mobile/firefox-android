@@ -81,6 +81,12 @@ object TestAssetHelper {
         return TestAsset(url, "", "")
     }
 
+    fun getPdfFormAsset(server: MockWebServer): TestAsset {
+        val url = server.url("resources/pdfForm.pdf").toString().toUri()!!
+
+        return TestAsset(url, "", "")
+    }
+
     fun getSaveLoginAsset(server: MockWebServer): TestAsset {
         val url = server.url("pages/password.html").toString().toUri()!!
 
@@ -123,6 +129,14 @@ object TestAssetHelper {
         val url = server.url("pages/videoMediaPage.html").toString().toUri()!!
         val title = "Video_Test_Page"
         val content = "Page content: video player"
+
+        return TestAsset(url, content, title)
+    }
+
+    fun getMutedVideoPageAsset(server: MockWebServer): TestAsset {
+        val url = server.url("pages/mutedVideoPage.html").toString().toUri()!!
+        val title = "Muted_Video_Test_Page"
+        val content = "Page content: muted video player"
 
         return TestAsset(url, content, title)
     }

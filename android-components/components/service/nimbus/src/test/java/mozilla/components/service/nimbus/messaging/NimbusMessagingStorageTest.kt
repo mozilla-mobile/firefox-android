@@ -25,6 +25,7 @@ import org.mockito.Mock
 import org.mockito.Mockito.doReturn
 import org.mockito.Mockito.never
 import org.mockito.Mockito.spy
+import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
@@ -88,6 +89,11 @@ class NimbusMessagingStorageTest {
     fun tearDown() {
         malformedWasReported = false
         malformedMessageIds.clear()
+    }
+
+    @Test
+    fun `WHEN calling getCoenrollingFeatureIds THEN messaging is in that list`() {
+        assertTrue(FxNimbusMessaging.getCoenrollingFeatureIds().contains(MESSAGING_FEATURE_ID))
     }
 
     @Test
@@ -379,54 +385,6 @@ class NimbusMessagingStorageTest {
     }
 
     @Test
-    fun `GIVEN a null or black expression WHEN calling isMessageUnderExperiment THEN return false`() {
-        val message = Message(
-            "id",
-            mock(),
-            action = "action",
-            mock(),
-            emptyList(),
-            Message.Metadata("id"),
-        )
-
-        val result = storage.isMessageUnderExperiment(message, null)
-
-        assertFalse(result)
-    }
-
-    @Test
-    fun `GIVEN messages id that ends with - WHEN calling isMessageUnderExperiment THEN return true`() {
-        val message = Message(
-            "end-",
-            mock(),
-            action = "action",
-            mock(),
-            emptyList(),
-            Message.Metadata("end-"),
-        )
-
-        val result = storage.isMessageUnderExperiment(message, "end-")
-
-        assertTrue(result)
-    }
-
-    @Test
-    fun `GIVEN message under experiment WHEN calling isMessageUnderExperiment THEN return true`() {
-        val message = Message(
-            "same-id",
-            mock(),
-            action = "action",
-            mock(),
-            emptyList(),
-            Message.Metadata("same-id"),
-        )
-
-        val result = storage.isMessageUnderExperiment(message, "same-id")
-
-        assertTrue(result)
-    }
-
-    @Test
     fun `GIVEN an eligible message WHEN calling isMessageEligible THEN return true`() {
         val helper: GleanPlumbMessageHelper = mock()
         val message = Message(
@@ -443,6 +401,15 @@ class NimbusMessagingStorageTest {
         val result = storage.isMessageEligible(message, helper)
 
         assertTrue(result)
+    }
+
+    @Test
+    fun `GIVEN a malformed message key WHEN calling reportMalformedMessage THEN record a malformed feature event`() {
+        val key = "malformed-message"
+        storage.reportMalformedMessage(key)
+
+        assertTrue(malformedWasReported)
+        verify(featuresInterface).recordMalformedConfiguration("messaging", key)
     }
 
     @Test
@@ -542,7 +509,6 @@ class NimbusMessagingStorageTest {
         )
 
         doReturn(true).`when`(spiedStorage).isMessageEligible(any(), any(), any())
-        doReturn(false).`when`(spiedStorage).isMessageUnderExperiment(any(), any())
 
         val result = spiedStorage.getNextMessage(HOMESCREEN, listOf(message))
 
@@ -550,9 +516,10 @@ class NimbusMessagingStorageTest {
     }
 
     @Test
-    fun `GIVEN a message under experiment WHEN calling getNextMessage THEN call recordExposure`() {
+    fun `GIVEN a message under experiment WHEN calling getNextMessage THEN call recordExposureEvent`() {
         val spiedStorage = spy(storage)
-        val messageData: MessageData = createMessageData(isControl = false)
+        val experiment = "my-experiment"
+        val messageData: MessageData = createMessageData(isControl = false, experiment = experiment)
 
         val message = Message(
             "same-id",
@@ -564,18 +531,56 @@ class NimbusMessagingStorageTest {
         )
 
         doReturn(true).`when`(spiedStorage).isMessageEligible(any(), any(), any())
-        doReturn(true).`when`(spiedStorage).isMessageUnderExperiment(any(), any())
 
         val result = spiedStorage.getNextMessage(HOMESCREEN, listOf(message))
 
-        verify(featuresInterface).recordExposureEvent("messaging")
+        verify(featuresInterface).recordExposureEvent("messaging", experiment)
         assertEquals(message.id, result!!.id)
     }
 
     @Test
     fun `GIVEN a control message WHEN calling getNextMessage THEN return the next eligible message`() {
         val spiedStorage = spy(storage)
+        val experiment = "my-experiment"
         val messageData: MessageData = createMessageData()
+        val controlMessageData: MessageData = createMessageData(isControl = true, experiment = experiment)
+
+        doReturn(SHOW_NEXT_MESSAGE).`when`(spiedStorage).getOnControlBehavior()
+
+        val message = Message(
+            "id",
+            messageData,
+            action = "action",
+            mock(),
+            listOf("trigger"),
+            Message.Metadata("same-id"),
+        )
+
+        val controlMessage = Message(
+            "control-id",
+            controlMessageData,
+            action = "action",
+            mock(),
+            listOf("trigger"),
+            Message.Metadata("same-id"),
+        )
+
+        doReturn(true).`when`(spiedStorage).isMessageEligible(any(), any(), any())
+
+        val result = spiedStorage.getNextMessage(
+            HOMESCREEN,
+            listOf(controlMessage, message),
+        )
+
+        verify(messagingFeature).recordExperimentExposure(experiment)
+        assertEquals(message.id, result!!.id)
+    }
+
+    @Test
+    fun `GIVEN a malformed control message WHEN calling getNextMessage THEN return the next eligible message`() {
+        val spiedStorage = spy(storage)
+        val messageData: MessageData = createMessageData()
+        // the message isControl, but has no experiment property.
         val controlMessageData: MessageData = createMessageData(isControl = true)
 
         doReturn(SHOW_NEXT_MESSAGE).`when`(spiedStorage).getOnControlBehavior()
@@ -599,15 +604,71 @@ class NimbusMessagingStorageTest {
         )
 
         doReturn(true).`when`(spiedStorage).isMessageEligible(any(), any(), any())
-        doReturn(true).`when`(spiedStorage).isMessageUnderExperiment(any(), any())
 
         val result = spiedStorage.getNextMessage(
             HOMESCREEN,
             listOf(controlMessage, message),
         )
 
-        verify(messagingFeature).recordExposure()
+        verify(messagingFeature).recordMalformedConfiguration("control-id")
+
         assertEquals(message.id, result!!.id)
+    }
+
+    @Test
+    fun `GIVEN a control message WHEN calling getNextMessage THEN return the next eligible message with the correct surface`() {
+        val spiedStorage = spy(storage)
+        val experiment = "my-experiment"
+        val messageData: MessageData = createMessageData()
+        val incorrectMessageData: MessageData = createMessageData(surface = NOTIFICATION)
+        val controlMessageData: MessageData = createMessageData(isControl = true, experiment = experiment)
+
+        doReturn(SHOW_NEXT_MESSAGE).`when`(spiedStorage).getOnControlBehavior()
+
+        val message = Message(
+            "id",
+            messageData,
+            action = "action",
+            mock(),
+            listOf("trigger"),
+            Message.Metadata("same-id"),
+        )
+
+        val incorrectMessage = Message(
+            "incorrect-id",
+            incorrectMessageData,
+            action = "action",
+            mock(),
+            listOf("trigger"),
+            Message.Metadata("same-id"),
+        )
+
+        val controlMessage = Message(
+            "control-id",
+            controlMessageData,
+            action = "action",
+            mock(),
+            listOf("trigger"),
+            Message.Metadata("same-id"),
+        )
+
+        doReturn(true).`when`(spiedStorage).isMessageEligible(any(), any(), any())
+
+        var result = spiedStorage.getNextMessage(
+            HOMESCREEN,
+            listOf(controlMessage, incorrectMessage, message),
+        )
+
+        verify(messagingFeature, times(1)).recordExperimentExposure(experiment)
+        assertEquals(message.id, result!!.id)
+
+        result = spiedStorage.getNextMessage(
+            HOMESCREEN,
+            listOf(controlMessage, incorrectMessage),
+        )
+
+        verify(messagingFeature, times(2)).recordExperimentExposure(experiment)
+        assertNull(result)
     }
 
     @Test
@@ -621,7 +682,7 @@ class NimbusMessagingStorageTest {
         )
 
         // We should not be using the feature holder until getMessages is called.
-        verify(messagingFeature, never()).value(any())
+        verify(messagingFeature, never()).value()
     }
 
     @Test
@@ -696,6 +757,7 @@ class NimbusMessagingStorageTest {
         triggers: List<String> = listOf("trigger-1"),
         surface: MessageSurfaceId = HOMESCREEN,
         isControl: Boolean = false,
+        experiment: String? = null,
     ) = MessageData(
         action = Res.string(action),
         style = style,
@@ -703,6 +765,7 @@ class NimbusMessagingStorageTest {
         surface = surface,
         isControl = isControl,
         text = Res.string(text),
+        experiment = experiment,
     )
 
     private fun createMessagingFeature(
@@ -724,7 +787,7 @@ class NimbusMessagingStorageTest {
         )
         val featureInterface: FeaturesInterface = mock()
         // "messaging" is a hard coded value generated from Nimbus.
-        val messagingFeature = FeatureHolder({ featureInterface }, "messaging") {
+        val messagingFeature = FeatureHolder({ featureInterface }, "messaging") { _, _ ->
             messaging
         }
         messagingFeature.withCachedValue(messaging)

@@ -31,7 +31,7 @@ class NimbusSystemTest {
 
     // By default this comes from the generated Nimbus features.
     val config = NimbusSystem(
-        refreshIntervalForeground = 60, /* minutes */
+        refreshIntervalForeground = 60, // minutes
     )
 
     class NimbusUnderTest(override val context: Context) : NimbusInterface {
@@ -99,5 +99,66 @@ class NimbusSystemTest {
             config,
         )
         assertTrue(nimbus.isFetching)
+    }
+
+    @Test
+    fun `GIVEN a nimbus object calling maybeFetchExperiments WHEN using a preview collection THEN always call fetchExperiments`() {
+        var currentTime = 0L
+        fun assertFetchEveryTime() {
+            nimbus.maybeFetchExperiments(
+                context,
+                config,
+                currentTime,
+            )
+            assertTrue(nimbus.isFetching)
+            assertEquals(lastTimeSlot.captured, 0L)
+            nimbus.isFetching = false
+        }
+
+        // Using usePreview, we call fetch every time we call maybeFetch.
+        every { settings.nimbusUsePreview } returns true
+        currentTime = Settings.ONE_HOUR_MS
+        assertFetchEveryTime()
+
+        currentTime += Settings.ONE_MINUTE_MS
+        assertFetchEveryTime()
+
+        currentTime += Settings.ONE_MINUTE_MS
+        assertFetchEveryTime()
+
+        // Now turn preview collection off.
+        // We should fetch exactly once…
+        every { settings.nimbusUsePreview } returns false
+
+        currentTime += Settings.ONE_MINUTE_MS
+        nimbus.maybeFetchExperiments(
+            context,
+            config,
+            currentTime,
+        )
+        assertTrue(nimbus.isFetching)
+        assertEquals(lastTimeSlot.captured, currentTime)
+        nimbus.isFetching = false
+        every { settings.nimbusLastFetchTime } returns currentTime
+
+        // … and then back off. We show here that the next call to maybeFetch
+        // doesn't call fetch.
+        currentTime += Settings.ONE_MINUTE_MS
+        nimbus.maybeFetchExperiments(
+            context,
+            config,
+            currentTime,
+        )
+        assertFalse(nimbus.isFetching)
+
+        // Now wait, another hour, and we've reset the behaviour back to normal operation.
+        currentTime += Settings.ONE_HOUR_MS + Settings.ONE_MINUTE_MS
+        nimbus.maybeFetchExperiments(
+            context,
+            config,
+            currentTime,
+        )
+        assertTrue(nimbus.isFetching)
+        assertEquals(lastTimeSlot.captured, currentTime)
     }
 }

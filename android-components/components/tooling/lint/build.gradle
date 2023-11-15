@@ -2,11 +2,13 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 apply plugin: 'java-library'
 apply plugin: 'kotlin'
 
-targetCompatibility = JavaVersion.VERSION_11
-sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_17
+sourceCompatibility = JavaVersion.VERSION_17
 
 dependencies {
   compileOnly ComponentsDependencies.tools_lintapi
@@ -42,8 +44,6 @@ tasks.register("assembleAndroidTest") {
   }
 }
 
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
-  kotlinOptions {
-    jvmTarget = "11"
-  }
+tasks.withType(KotlinCompile).configureEach {
+  kotlinOptions.jvmTarget = "17"
 }

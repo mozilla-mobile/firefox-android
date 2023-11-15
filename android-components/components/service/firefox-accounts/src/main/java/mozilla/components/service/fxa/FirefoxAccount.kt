@@ -10,21 +10,22 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.withContext
+import mozilla.appservices.fxaclient.FxaClient
 import mozilla.components.concept.base.crash.CrashReporting
 import mozilla.components.concept.sync.AuthFlowUrl
 import mozilla.components.concept.sync.DeviceConstellation
+import mozilla.components.concept.sync.FxAEntryPoint
 import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.concept.sync.StatePersistenceCallback
 import mozilla.components.support.base.log.logger.Logger
-import mozilla.appservices.fxaclient.PersistedFirefoxAccount as InternalFxAcct
 
-typealias PersistCallback = mozilla.appservices.fxaclient.PersistedFirefoxAccount.PersistCallback
+typealias PersistCallback = mozilla.appservices.fxaclient.FxaClient.PersistCallback
 
 /**
  * FirefoxAccount represents the authentication state of a client.
  */
 class FirefoxAccount internal constructor(
-    private val inner: InternalFxAcct,
+    private val inner: FxaClient,
     crashReporter: CrashReporting? = null,
 ) : OAuthAccount {
     private val job = SupervisorJob()
@@ -35,7 +36,7 @@ class FirefoxAccount internal constructor(
     /**
      * Why this exists: in the `init` block below you'll notice that we register a persistence callback
      * as soon as we initialize this object. Essentially, we _always_ have a persistence callback
-     * registered with [InternalFxAcct]. However, our own lifecycle is such that we will not know
+     * registered with [FxaClient]. However, our own lifecycle is such that we will not know
      * how to actually persist account state until sometime after this object has been created.
      * Currently, we're expecting [FxaAccountManager] to configure a real callback.
      * This wrapper exists to facilitate that flow of events.
@@ -55,7 +56,7 @@ class FirefoxAccount internal constructor(
             val callback = persistenceCallback
 
             if (callback == null) {
-                logger.warn("InternalFxAcct tried persist state, but persistence callback is not set")
+                logger.warn("FxaClient tried persist state, but persistence callback is not set")
             } else {
                 logger.debug("Logging state to $callback")
                 callback.persist(data)
@@ -81,7 +82,7 @@ class FirefoxAccount internal constructor(
     constructor(
         config: ServerConfig,
         crashReporter: CrashReporting? = null,
-    ) : this(InternalFxAcct(config), crashReporter)
+    ) : this(FxaClient(config), crashReporter)
 
     override fun close() {
         job.cancel()
@@ -93,9 +94,12 @@ class FirefoxAccount internal constructor(
         persistCallback.setCallback(callback)
     }
 
-    override suspend fun beginOAuthFlow(scopes: Set<String>, entryPoint: String) = withContext(scope.coroutineContext) {
+    override suspend fun beginOAuthFlow(
+        scopes: Set<String>,
+        entryPoint: FxAEntryPoint,
+    ) = withContext(scope.coroutineContext) {
         handleFxaExceptions(logger, "begin oauth flow", { null }) {
-            val url = inner.beginOAuthFlow(scopes.toTypedArray(), entryPoint)
+            val url = inner.beginOAuthFlow(scopes.toTypedArray(), entryPoint.entryName)
             val state = Uri.parse(url).getQueryParameter("state")!!
             AuthFlowUrl(state, url)
         }
@@ -104,13 +108,13 @@ class FirefoxAccount internal constructor(
     override suspend fun beginPairingFlow(
         pairingUrl: String,
         scopes: Set<String>,
-        entryPoint: String,
+        entryPoint: FxAEntryPoint,
     ) = withContext(scope.coroutineContext) {
         // Eventually we should specify this as a param here, but for now, let's
         // use a generic value (it's used only for server-side telemetry, so the
         // actual value doesn't matter much)
         handleFxaExceptions(logger, "begin oauth pairing flow", { null }) {
-            val url = inner.beginPairingFlow(pairingUrl, scopes.toTypedArray(), entryPoint)
+            val url = inner.beginPairingFlow(pairingUrl, scopes.toTypedArray(), entryPoint.entryName)
             val state = Uri.parse(url).getQueryParameter("state")!!
             AuthFlowUrl(state, url)
         }
@@ -149,6 +153,12 @@ class FirefoxAccount internal constructor(
     override suspend fun getTokenServerEndpointURL() = withContext(scope.coroutineContext) {
         handleFxaExceptions(logger, "getTokenServerEndpointURL", { null }) {
             inner.getTokenServerEndpointURL()
+        }
+    }
+
+    override suspend fun getManageAccountURL(entryPoint: FxAEntryPoint): String? {
+        return handleFxaExceptions(logger, "getManageAccountURL", { null }) {
+            inner.getManageAccountURL(entryPoint.entryName)
         }
     }
 
@@ -240,7 +250,7 @@ class FirefoxAccount internal constructor(
             crashReporter: CrashReporting?,
             persistCallback: PersistCallback? = null,
         ): FirefoxAccount {
-            return FirefoxAccount(InternalFxAcct.fromJSONString(json, persistCallback), crashReporter)
+            return FirefoxAccount(FxaClient.fromJSONString(json, persistCallback), crashReporter)
         }
     }
 }

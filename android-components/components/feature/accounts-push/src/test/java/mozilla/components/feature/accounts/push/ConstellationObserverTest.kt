@@ -1,13 +1,10 @@
-/*
- * This Source Code Form is subject to the terms of the Mozilla Public
- *  License, v. 2.0. If a copy of the MPL was not distributed with this
- *  file, You can obtain one at http://mozilla.org/MPL/2.0/.
- */
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 package mozilla.components.feature.accounts.push
 
 import android.content.Context
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import mozilla.components.concept.base.crash.CrashReporting
 import mozilla.components.concept.sync.ConstellationState
@@ -26,7 +23,6 @@ import mozilla.components.support.test.rule.runTestOnMain
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.verifyNoInteractions
 import org.mockito.Mockito.verifyNoMoreInteractions
@@ -34,7 +30,6 @@ import org.mockito.Mockito.`when`
 import org.mockito.stubbing.OngoingStubbing
 
 @ExperimentalCoroutinesApi // for runTestOnMain
-@RunWith(AndroidJUnit4::class)
 class ConstellationObserverTest {
 
     private val push: AutoPushFeature = mock()

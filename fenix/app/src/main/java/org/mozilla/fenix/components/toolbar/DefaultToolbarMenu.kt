@@ -35,11 +35,14 @@ import mozilla.components.feature.webcompat.reporter.WebCompatReporterFeature
 import mozilla.components.lib.state.ext.flowScoped
 import mozilla.components.support.ktx.android.content.getColorFromAttr
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifAnyChanged
+import org.mozilla.fenix.Config
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.accounts.FenixAccountManager
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.theme.ThemeManager
+import org.mozilla.fenix.utils.Settings
 
 /**
  * Builds the toolbar object used with the 3-dot menu in the browser fragment.
@@ -50,7 +53,7 @@ import org.mozilla.fenix.theme.ThemeManager
  * @param lifecycleOwner View lifecycle owner used to determine when to cancel UI jobs.
  * @param bookmarksStorage Used to check if a page is bookmarked.
  * @param pinnedSiteStorage Used to check if the current url is a pinned site.
- * @param isPinningSupported true if the launcher supports adding shortcuts.
+ * @property isPinningSupported true if the launcher supports adding shortcuts.
  */
 @Suppress("LargeClass", "LongParameterList", "TooManyFunctions")
 open class DefaultToolbarMenu(
@@ -70,12 +73,14 @@ open class DefaultToolbarMenu(
 
     private val shouldDeleteDataOnQuit = context.settings().shouldDeleteBrowsingDataOnQuit
     private val shouldUseBottomToolbar = context.settings().shouldUseBottomToolbar
+    private val shouldShowTopSites = context.settings().showTopSitesFeature
     private val accountManager = FenixAccountManager(context)
 
     private val selectedSession: TabSessionState?
         get() = store.state.selectedTab
 
     override val menuBuilder by lazy {
+        FxNimbus.features.print.recordExposure()
         WebExtensionBrowserMenuBuilder(
             items = coreMenuItems,
             endOfMenuAlwaysVisible = shouldUseBottomToolbar,
@@ -93,7 +98,7 @@ open class DefaultToolbarMenu(
 
     override val menuToolbar by lazy {
         val back = BrowserMenuItemToolbar.TwoStateButton(
-            primaryImageResource = mozilla.components.ui.icons.R.drawable.mozac_ic_back,
+            primaryImageResource = mozilla.components.ui.icons.R.drawable.mozac_ic_back_24,
             primaryContentDescription = context.getString(R.string.browser_menu_back),
             primaryImageTintResource = primaryTextColor(),
             isInPrimaryState = {
@@ -107,7 +112,7 @@ open class DefaultToolbarMenu(
         }
 
         val forward = BrowserMenuItemToolbar.TwoStateButton(
-            primaryImageResource = mozilla.components.ui.icons.R.drawable.mozac_ic_forward,
+            primaryImageResource = mozilla.components.ui.icons.R.drawable.mozac_ic_forward_24,
             primaryContentDescription = context.getString(R.string.browser_menu_forward),
             primaryImageTintResource = primaryTextColor(),
             isInPrimaryState = {
@@ -121,7 +126,7 @@ open class DefaultToolbarMenu(
         }
 
         val refresh = BrowserMenuItemToolbar.TwoStateButton(
-            primaryImageResource = mozilla.components.ui.icons.R.drawable.mozac_ic_refresh,
+            primaryImageResource = mozilla.components.ui.icons.R.drawable.mozac_ic_arrow_clockwise_24,
             primaryContentDescription = context.getString(R.string.browser_menu_refresh),
             primaryImageTintResource = primaryTextColor(),
             isInPrimaryState = {
@@ -165,6 +170,19 @@ open class DefaultToolbarMenu(
         selectedSession != null && isPinningSupported &&
             context.components.useCases.webAppUseCases.isInstallable()
 
+    /**
+     * Should the "Open in regular tab" menu item be visible?
+     */
+    @VisibleForTesting(otherwise = PRIVATE)
+    fun shouldShowOpenInRegularTab(): Boolean = selectedSession?.let { session ->
+        // This feature is gated behind Nightly for the time being.
+        Config.channel.isNightlyOrDebug &&
+            // This feature is explicitly for users opening links in private tabs.
+            context.settings().openLinksInAPrivateTab &&
+            // and is only visible in private tabs.
+            session.content.private
+    } ?: false
+
     @VisibleForTesting(otherwise = PRIVATE)
     fun shouldShowOpenInApp(): Boolean = selectedSession?.let { session ->
         val appLink = context.components.useCases.appLinksUseCases.appLinkRedirect
@@ -179,7 +197,7 @@ open class DefaultToolbarMenu(
 
     private val installToHomescreen = BrowserMenuHighlightableItem(
         label = context.getString(R.string.browser_menu_install_on_homescreen),
-        startImageResource = R.drawable.mozac_ic_add_to_home_screen,
+        startImageResource = R.drawable.mozac_ic_add_to_homescreen_24,
         iconTintColorResource = primaryTextColor(),
         highlight = BrowserMenuHighlight.LowPriority(
             label = context.getString(R.string.browser_menu_install_on_homescreen),
@@ -224,7 +242,7 @@ open class DefaultToolbarMenu(
 
     private val findInPageItem = BrowserMenuImageText(
         label = context.getString(R.string.browser_menu_find_in_page),
-        imageResource = R.drawable.mozac_ic_search,
+        imageResource = R.drawable.mozac_ic_search_24,
         iconTintColorResource = primaryTextColor(),
     ) {
         onItemTapped.invoke(ToolbarMenu.Item.FindInPage)
@@ -238,6 +256,13 @@ open class DefaultToolbarMenu(
         },
     ) { checked ->
         onItemTapped.invoke(ToolbarMenu.Item.RequestDesktop(checked))
+    }
+
+    private val openInRegularTabItem = BrowserMenuImageText(
+        label = context.getString(R.string.browser_menu_open_in_regular_tab),
+        imageResource = R.drawable.ic_open_in_regular_tab,
+    ) {
+        onItemTapped.invoke(ToolbarMenu.Item.OpenInRegularTab)
     }
 
     private val customizeReaderView = BrowserMenuImageText(
@@ -268,7 +293,7 @@ open class DefaultToolbarMenu(
 
     private val addToHomeScreenItem = BrowserMenuImageText(
         label = context.getString(R.string.browser_menu_add_to_homescreen),
-        imageResource = R.drawable.mozac_ic_add_to_home_screen,
+        imageResource = R.drawable.mozac_ic_add_to_homescreen_24,
         iconTintColorResource = primaryTextColor(),
         isCollapsingMenuLimit = true,
     ) {
@@ -301,10 +326,18 @@ open class DefaultToolbarMenu(
         onItemTapped.invoke(ToolbarMenu.Item.SaveToCollection)
     }
 
+    private val printPageItem = BrowserMenuImageText(
+        label = context.getString(R.string.menu_print),
+        imageResource = R.drawable.ic_print,
+        iconTintColorResource = primaryTextColor(),
+    ) {
+        onItemTapped.invoke(ToolbarMenu.Item.PrintContent)
+    }
+
     @VisibleForTesting
     internal val settingsItem = BrowserMenuHighlightableItem(
         label = context.getString(R.string.browser_menu_settings),
-        startImageResource = R.drawable.mozac_ic_settings,
+        startImageResource = R.drawable.mozac_ic_settings_24,
         iconTintColorResource = if (hasAccountProblem) {
             ThemeManager.resolveAttribute(R.attr.syncDisconnected, context)
         } else {
@@ -344,7 +377,7 @@ open class DefaultToolbarMenu(
 
     private val deleteDataOnQuit = BrowserMenuImageText(
         label = context.getString(R.string.delete_browsing_data_on_quit_action),
-        imageResource = R.drawable.mozac_ic_quit,
+        imageResource = R.drawable.mozac_ic_cross_circle_24,
         iconTintColorResource = primaryTextColor(),
     ) {
         onItemTapped.invoke(ToolbarMenu.Item.Quit)
@@ -373,14 +406,16 @@ open class DefaultToolbarMenu(
                 BrowserMenuDivider(),
                 findInPageItem,
                 desktopSiteItem,
+                openInRegularTabItem.apply { visible = ::shouldShowOpenInRegularTab },
                 customizeReaderView.apply { visible = ::shouldShowReaderViewCustomization },
                 openInApp.apply { visible = ::shouldShowOpenInApp },
                 reportSiteIssuePlaceholder,
                 BrowserMenuDivider(),
                 addToHomeScreenItem.apply { visible = ::canAddToHomescreen },
                 installToHomescreen.apply { visible = ::canInstall },
-                addRemoveTopSitesItem,
+                if (shouldShowTopSites) addRemoveTopSitesItem else null,
                 saveToCollectionItem,
+                if (FxNimbus.features.print.value().browserPrintEnabled) printPageItem else null,
                 BrowserMenuDivider(),
                 settingsItem,
                 if (shouldDeleteDataOnQuit) deleteDataOnQuit else null,

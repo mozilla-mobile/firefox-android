@@ -28,6 +28,7 @@ import org.mozilla.fenix.GleanMetrics.HomeScreen
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.accounts.AccountState
+import org.mozilla.fenix.components.accounts.FenixFxAEntryPoint
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
@@ -66,7 +67,6 @@ class HomeMenuViewTest {
             homeActivity = homeActivity,
             navController = navController,
             menuButton = WeakReference(menuButton),
-            hideOnboardingIfNeeded = {},
         )
     }
 
@@ -127,7 +127,9 @@ class HomeMenuViewTest {
         verify {
             navController.nav(
                 R.id.homeFragment,
-                HomeFragmentDirections.actionGlobalAccountProblemFragment(),
+                HomeFragmentDirections.actionGlobalAccountProblemFragment(
+                    entrypoint = FenixFxAEntryPoint.HomeMenu,
+                ),
             )
         }
 
@@ -136,7 +138,7 @@ class HomeMenuViewTest {
         verify {
             navController.nav(
                 R.id.homeFragment,
-                HomeFragmentDirections.actionGlobalTurnOnSync(),
+                HomeFragmentDirections.actionGlobalTurnOnSync(entrypoint = FenixFxAEntryPoint.HomeMenu),
             )
         }
     }
@@ -178,8 +180,12 @@ class HomeMenuViewTest {
     }
 
     @Test
-    fun `WHEN Help menu item is tapped THEN open the browser to the SUMO help page`() {
+    fun `WHEN Help menu item is tapped THEN open the browser to the SUMO help page  and record metrics`() {
+        assertNull(HomeMenuMetrics.helpTapped.testGetValue())
+
         homeMenuView.onItemTapped(HomeMenu.Item.Help)
+
+        assertNotNull(HomeMenuMetrics.helpTapped.testGetValue())
 
         verify {
             homeActivity.openToBrowserAndLoad(
@@ -219,7 +225,9 @@ class HomeMenuViewTest {
         verify {
             navController.nav(
                 R.id.homeFragment,
-                HomeFragmentDirections.actionGlobalAccountProblemFragment(),
+                HomeFragmentDirections.actionGlobalAccountProblemFragment(
+                    entrypoint = FenixFxAEntryPoint.HomeMenu,
+                ),
             )
         }
     }

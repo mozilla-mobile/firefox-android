@@ -2,23 +2,22 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-parcelize'
 
-apply plugin: 'kotlin-kapt'
+apply plugin: 'com.google.devtools.ksp'
 
 android {
-    compileSdkVersion config.compileSdkVersion
-
     defaultConfig {
         minSdkVersion config.minSdkVersion
+        compileSdk config.compileSdkVersion
         targetSdkVersion config.targetSdkVersion
 
-        kapt {
-            arguments {
-                arg("room.schemaLocation", "$projectDir/schemas".toString())
-            }
+        ksp {
+            arg("room.schemaLocation", "$projectDir/schemas".toString())
         }
 
         javaCompileOptions {
@@ -38,9 +37,6 @@ android {
     lint {
         warningsAsErrors true
         abortOnError true
-
-        // https://github.com/mozilla-mobile/android-components/issues/10642
-        disable 'UnusedResources'
     }
 
     buildFeatures {
@@ -50,10 +46,8 @@ android {
     namespace 'mozilla.components.feature.addons'
 }
 
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
-    kotlinOptions {
-        freeCompilerArgs += "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
-    }
+tasks.withType(KotlinCompile).configureEach {
+    kotlinOptions.freeCompilerArgs += "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
 }
 
 dependencies {
@@ -66,7 +60,7 @@ dependencies {
     implementation ComponentsDependencies.androidx_work_runtime
 
     implementation ComponentsDependencies.androidx_room_runtime
-    kapt ComponentsDependencies.androidx_room_compiler
+    ksp ComponentsDependencies.androidx_room_compiler
 
     implementation project(':ui-colors')
     implementation project(':ui-icons')
@@ -81,10 +75,10 @@ dependencies {
     implementation project(':support-utils')
 
     testImplementation project(':support-test')
+    testImplementation project(':support-test-libstate')
     testImplementation ComponentsDependencies.androidx_test_core
     testImplementation ComponentsDependencies.androidx_test_junit
     testImplementation ComponentsDependencies.testing_robolectric
-    testImplementation ComponentsDependencies.testing_mockito
     testImplementation ComponentsDependencies.androidx_work_testing
     testImplementation ComponentsDependencies.testing_coroutines
 }

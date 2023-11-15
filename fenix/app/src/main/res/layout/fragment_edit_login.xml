@@ -142,7 +142,7 @@
         app:layout_constraintBottom_toBottomOf="@id/inputLayoutUsername"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/inputLayoutUsername"
-        app:srcCompat="@drawable/mozac_ic_clear" />
+        app:srcCompat="@drawable/mozac_ic_cross_circle_fill_24" />
 
     <TextView
         android:id="@+id/passwordHeader"
@@ -214,7 +214,7 @@
         app:layout_constraintBottom_toBottomOf="@id/inputLayoutPassword"
         app:layout_constraintEnd_toStartOf="@id/clearPasswordTextButton"
         app:layout_constraintTop_toTopOf="@id/inputLayoutPassword"
-        app:srcCompat="@drawable/mozac_ic_password_reveal" />
+        app:srcCompat="@drawable/mozac_ic_eye_24" />
 
     <ImageButton
         android:id="@+id/clearPasswordTextButton"
@@ -226,5 +226,5 @@
         app:layout_constraintBottom_toBottomOf="@id/revealPasswordButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/revealPasswordButton"
-        app:srcCompat="@drawable/mozac_ic_clear" />
+        app:srcCompat="@drawable/mozac_ic_cross_circle_fill_24" />
 </androidx.constraintlayout.widget.ConstraintLayout>

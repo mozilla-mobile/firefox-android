@@ -15,7 +15,7 @@ import org.mozilla.fenix.library.history.History
 import org.mozilla.fenix.library.history.HistoryItemTimeGroup
 import org.mozilla.fenix.utils.Settings.Companion.SEARCH_GROUP_MINIMUM_SITES
 
-private const val BUFFER_TIME = 15000 /* 15 seconds in ms */
+private const val BUFFER_TIME = 15000 // 15 seconds in ms
 
 /**
  * Class representing a history entry.
@@ -81,7 +81,8 @@ interface PagedHistoryProvider {
 }
 
 /**
- * @param historyStorage
+ * @param historyStorage An instance [PlacesHistoryStorage] that provides read/write methods for
+ * history data.
  */
 class DefaultPagedHistoryProvider(
     private val historyStorage: PlacesHistoryStorage,
@@ -91,7 +92,6 @@ class DefaultPagedHistoryProvider(
      * Types of visits we currently do not display in the History UI.
      */
     private val excludedVisitTypes = listOf(
-        VisitType.NOT_A_VISIT,
         VisitType.DOWNLOAD,
         VisitType.REDIRECT_PERMANENT,
         VisitType.REDIRECT_TEMPORARY,

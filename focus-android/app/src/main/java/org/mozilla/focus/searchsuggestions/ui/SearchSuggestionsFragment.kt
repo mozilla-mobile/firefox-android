@@ -12,7 +12,7 @@ import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -35,10 +35,11 @@ class SearchSuggestionsFragment : Fragment(), CoroutineScope {
 
     private var _binding: FragmentSearchSuggestionsBinding? = null
     private val binding get() = _binding!!
-    lateinit var searchSuggestionsViewModel: SearchSuggestionsViewModel
 
     private val defaultSearchEngineName: String
         get() = requireComponents.store.defaultSearchEngineName()
+
+    private val searchSuggestionsViewModel: SearchSuggestionsViewModel by activityViewModels()
 
     override fun onResume() {
         super.onResume()
@@ -60,30 +61,6 @@ class SearchSuggestionsFragment : Fragment(), CoroutineScope {
         _binding = null
     }
 
-    @Suppress("DEPRECATION") // https://github.com/mozilla-mobile/focus-android/issues/4958
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        searchSuggestionsViewModel = ViewModelProvider(requireParentFragment())
-            .get(SearchSuggestionsViewModel::class.java)
-
-        searchSuggestionsViewModel.state.observe(
-            viewLifecycleOwner,
-        ) { state ->
-            binding.enableSearchSuggestionsContainer.isVisible = false
-            binding.noSuggestionsContainer.isVisible = false
-
-            when (state) {
-                is State.ReadyForSuggestions -> { /* Handled by Jetpack Compose implementation */
-                }
-                is State.NoSuggestionsAPI ->
-                    binding.noSuggestionsContainer.isVisible = state.givePrompt
-                is State.Disabled ->
-                    binding.enableSearchSuggestionsContainer.isVisible = state.givePrompt
-            }
-        }
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -95,6 +72,22 @@ class SearchSuggestionsFragment : Fragment(), CoroutineScope {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        searchSuggestionsViewModel.state.observe(
+            viewLifecycleOwner,
+        ) { state ->
+            binding.enableSearchSuggestionsContainer.isVisible = false
+            binding.noSuggestionsContainer.isVisible = false
+
+            when (state) {
+                is State.ReadyForSuggestions -> { // Handled by Jetpack Compose implementation
+                }
+                is State.NoSuggestionsAPI ->
+                    binding.noSuggestionsContainer.isVisible = state.givePrompt
+                is State.Disabled ->
+                    binding.enableSearchSuggestionsContainer.isVisible = state.givePrompt
+            }
+        }
 
         val appName = resources.getString(R.string.app_name)
 

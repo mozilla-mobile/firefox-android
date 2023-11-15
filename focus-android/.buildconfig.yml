@@ -57,9 +57,9 @@ projects:
     - support-ktx
     - support-license
     - support-locale
+    - support-remotesettings
     - support-rusthttp
     - support-rustlog
-    - support-sync-telemetry
     - support-test
     - support-test-libstate
     - support-utils

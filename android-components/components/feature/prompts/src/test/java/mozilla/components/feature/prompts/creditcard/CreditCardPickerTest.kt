@@ -4,7 +4,6 @@
 
 package mozilla.components.feature.prompts.creditcard
 
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import mozilla.components.browser.state.action.ContentAction
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.ContentState
@@ -21,11 +20,9 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
 
-@RunWith(AndroidJUnit4::class)
 class CreditCardPickerTest {
 
     private lateinit var store: BrowserStore
@@ -105,7 +102,7 @@ class CreditCardPickerTest {
     @Test
     fun `GIVEN a custom tab and a prompt request WHEN handleSelectCreditCardRequest is called THEN the prompt is shown with the provided request credit cards`() {
         val customTabContent: ContentState = mock()
-        val customTab = CustomTabSessionState("custom-tab", customTabContent, mock(), mock())
+        val customTab = CustomTabSessionState(id = "custom-tab", content = customTabContent, trackingProtection = mock(), config = mock())
 
         whenever(customTabContent.promptRequests).thenReturn(listOf(promptRequest))
         whenever(state.customTabs).thenReturn(listOf(customTab))

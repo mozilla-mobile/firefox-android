@@ -9,6 +9,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import io.mockk.mockk
 import mozilla.components.concept.sync.AuthType
+import mozilla.components.service.fxa.FirefoxAccount
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Assert.assertTrue
@@ -21,7 +22,6 @@ import org.mozilla.fenix.helpers.Experimentation
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.RetryTestRule
 import org.mozilla.fenix.helpers.TestHelper.appContext
-import org.mozilla.fenix.ui.robots.homeScreen
 
 class NimbusEventTest {
     private lateinit var mDevice: UiDevice
@@ -55,8 +55,6 @@ class NimbusEventTest {
 
     @Test
     fun homeScreenNimbusEventsTest() {
-        homeScreen { }.dismissOnboarding()
-
         Experimentation.withHelper {
             assertTrue(evalJexl("'app_opened'|eventSum('Days', 28, 0) > 0"))
         }
@@ -65,7 +63,8 @@ class NimbusEventTest {
     @Test
     fun telemetryAccountObserverTest() {
         val observer = TelemetryAccountObserver(appContext)
-        observer.onAuthenticated(mockk(), AuthType.Signin)
+        // replacing interface mock with implementation mock.
+        observer.onAuthenticated(mockk<FirefoxAccount>(), AuthType.Signin)
 
         Experimentation.withHelper {
             assertTrue(evalJexl("'sync_auth.sign_in'|eventSum('Days', 28, 0) > 0"))

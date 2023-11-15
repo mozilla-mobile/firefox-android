@@ -6,10 +6,9 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion config.compileSdkVersion
-
     defaultConfig {
         minSdkVersion config.minSdkVersion
+        compileSdk config.compileSdkVersion
         targetSdkVersion config.targetSdkVersion
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -41,7 +40,7 @@ dependencies {
     implementation project(':ui-icons')
 
     implementation ComponentsDependencies.androidx_compose_ui
-    implementation ComponentsDependencies.androidx_compose_ui_tooling
+    implementation ComponentsDependencies.androidx_compose_ui_tooling_preview
     implementation ComponentsDependencies.androidx_compose_foundation
     implementation ComponentsDependencies.androidx_compose_material
     implementation ComponentsDependencies.androidx_core
@@ -49,11 +48,13 @@ dependencies {
     implementation ComponentsDependencies.androidx_lifecycle_runtime
     implementation ComponentsDependencies.androidx_savedstate
 
+    debugImplementation ComponentsDependencies.androidx_compose_ui_tooling
+
     testImplementation project(':support-test')
+    testImplementation ComponentsDependencies.testing_coroutines
     testImplementation ComponentsDependencies.androidx_test_core
     testImplementation ComponentsDependencies.androidx_test_junit
     testImplementation ComponentsDependencies.testing_junit
-    testImplementation ComponentsDependencies.testing_mockito
     testImplementation ComponentsDependencies.testing_robolectric
 }
 

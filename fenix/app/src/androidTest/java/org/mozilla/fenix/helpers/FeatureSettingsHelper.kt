@@ -68,14 +68,19 @@ interface FeatureSettingsHelper {
     var etpPolicy: ETPPolicy
 
     /**
-     * Enable or disable cookie banner reduction dialog.
-     */
-    var isCookieBannerReductionDialogEnabled: Boolean
-
-    /**
      * Enable or disable open in app banner.
      */
     var isOpenInAppBannerEnabled: Boolean
+
+    /**
+     * Enable or disable the Tabs Tray to Compose rewrite.
+     */
+    var tabsTrayRewriteEnabled: Boolean
+
+    /**
+     * Enable or disable the Top Sites to Compose rewrite.
+     */
+    var composeTopSitesEnabled: Boolean
 
     fun applyFlagUpdates()
 

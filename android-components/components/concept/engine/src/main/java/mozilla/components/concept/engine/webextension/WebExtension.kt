@@ -392,7 +392,7 @@ data class Metadata(
      * Url of extension's homepage:
      * https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/homepage_url
      */
-    val homePageUrl: String?,
+    val homepageUrl: String?,
 
     /**
      * Options page:
@@ -418,10 +418,58 @@ data class Metadata(
     val baseUrl: String,
 
     /**
+     * The full description of this extension.
+     */
+    val fullDescription: String?,
+
+    /**
+     * The URL used to install this extension.
+     */
+    val downloadUrl: String?,
+
+    /**
+     * The string representation of the date that this extension was most recently updated
+     * (simplified ISO 8601 format).
+     */
+    val updateDate: String?,
+
+    /**
+     * The average rating of this extension.
+     */
+    val averageRating: Float,
+
+    /**
+     * The link to the review page for this extension.
+     */
+    val reviewUrl: String?,
+
+    /**
+     * The average rating of this extension.
+     */
+    val reviewCount: Int,
+
+    /**
+     * The creator name of this extension.
+     * https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/developer
+     */
+    val creatorName: String?,
+
+    /**
+     * The creator url of this extension.
+     * https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/developer
+     */
+    val creatorUrl: String?,
+
+    /**
      * Whether or not this extension is temporary i.e. installed using a debug tool
      * such as web-ext, and won't be retained when the application exits.
      */
     val temporary: Boolean = false,
+
+    /**
+     * The URL to the detail page of this extension.
+     */
+    val detailUrl: String?,
 )
 
 /**
@@ -449,6 +497,8 @@ class DisabledFlags internal constructor(val value: Int) {
         const val USER: Int = 1 shl 1
         const val BLOCKLIST: Int = 1 shl 2
         const val APP_SUPPORT: Int = 1 shl 3
+        const val SIGNATURE: Int = 1 shl 4
+        const val APP_VERSION: Int = 1 shl 5
 
         /**
          * Selects a combination of flags.
@@ -475,7 +525,83 @@ fun WebExtension.isUnsupported(): Boolean {
 }
 
 /**
+ * Returns whether or not the extension is disabled because it has been blocklisted.
+ */
+fun WebExtension.isBlockListed(): Boolean {
+    val flags = getMetadata()?.disabledFlags
+    return flags?.contains(DisabledFlags.BLOCKLIST) == true
+}
+
+/**
+ * Returns whether the extension is disabled because it isn't correctly signed.
+ */
+fun WebExtension.isDisabledUnsigned(): Boolean {
+    val flags = getMetadata()?.disabledFlags
+    return flags?.contains(DisabledFlags.SIGNATURE) == true
+}
+
+/**
+ * Returns whether the extension is disabled because it isn't compatible with the application version.
+ */
+fun WebExtension.isDisabledIncompatible(): Boolean {
+    val flags = getMetadata()?.disabledFlags
+    return flags?.contains(DisabledFlags.APP_VERSION) == true
+}
+
+/**
  * An unexpected event that occurs when trying to perform an action on the extension like
  * (but not exclusively) installing/uninstalling, removing or updating.
  */
 open class WebExtensionException(throwable: Throwable, open val isRecoverable: Boolean = true) : Exception(throwable)
+
+/**
+ * An unexpected event that occurs when installing an extension.
+ */
+sealed class WebExtensionInstallException(
+    open val extensionName: String? = null,
+    throwable: Throwable,
+    override val isRecoverable: Boolean = true,
+) : WebExtensionException(throwable) {
+    /**
+     * The extension install was canceled by the user.
+     */
+    class UserCancelled(override val extensionName: String? = null, throwable: Throwable) :
+        WebExtensionInstallException(throwable = throwable)
+
+    /**
+     * The extension install was cancelled because the extension is blocklisted.
+     */
+    class Blocklisted(override val extensionName: String? = null, throwable: Throwable) :
+        WebExtensionInstallException(throwable = throwable)
+
+    /**
+     * The extension install was cancelled because the downloaded file
+     * seems to be corrupted in some way.
+     */
+    class CorruptFile(throwable: Throwable) :
+        WebExtensionInstallException(throwable = throwable, extensionName = null)
+
+    /**
+     * The extension install was cancelled because the file must be signed and isn't.
+     */
+    class NotSigned(throwable: Throwable) :
+        WebExtensionInstallException(throwable = throwable, extensionName = null)
+
+    /**
+     * The extension install was cancelled because it is incompatible.
+     */
+    class Incompatible(override val extensionName: String? = null, throwable: Throwable) :
+        WebExtensionInstallException(throwable = throwable)
+
+    /**
+     *  The extension install failed because of a network error.
+     */
+    class NetworkFailure(override val extensionName: String? = null, throwable: Throwable) :
+        WebExtensionInstallException(throwable = throwable)
+
+    /**
+     * The extension install failed with an unknown error.
+     */
+    class Unknown(override val extensionName: String? = null, throwable: Throwable) :
+        WebExtensionInstallException(throwable = throwable)
+}

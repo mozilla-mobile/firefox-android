@@ -4,19 +4,30 @@
 
 package mozilla.components.feature.addons
 
+import android.graphics.Bitmap
 import android.os.Handler
 import android.os.HandlerThread
 import androidx.annotation.VisibleForTesting
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.android.asCoroutineDispatcher
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.CancellableOperation
+import mozilla.components.concept.engine.webextension.DisabledFlags
 import mozilla.components.concept.engine.webextension.EnableSource
 import mozilla.components.concept.engine.webextension.WebExtension
 import mozilla.components.concept.engine.webextension.WebExtensionRuntime
+import mozilla.components.concept.engine.webextension.isBlockListed
+import mozilla.components.concept.engine.webextension.isDisabledIncompatible
+import mozilla.components.concept.engine.webextension.isDisabledUnsigned
 import mozilla.components.concept.engine.webextension.isUnsupported
 import mozilla.components.feature.addons.update.AddonUpdater
 import mozilla.components.feature.addons.update.AddonUpdater.Status
@@ -46,8 +57,15 @@ class AddonManager(
     @VisibleForTesting
     internal val pendingAddonActions = newSetFromMap(ConcurrentHashMap<CompletableDeferred<Unit>, Boolean>())
 
+    @VisibleForTesting
+    internal val iconLoadingScope = CoroutineScope(Dispatchers.IO)
+
+    // Acts as an in-memory cache for the fetched addon's icons.
+    @VisibleForTesting
+    internal val iconsCache = ConcurrentHashMap<String, Bitmap>()
+
     /**
-     * Returns the list of all installed and recommended add-ons.
+     * Returns the list of all installed and featured add-ons.
      *
      * @param waitForPendingActions whether or not to wait (suspend, but not
      * block) until all pending add-on actions (install/uninstall/enable/disable)
@@ -70,55 +88,31 @@ class AddonManager(
                 pendingAddonActions.awaitAll()
             }
 
-            // Get all available/supported addons from provider and add state if installed.
+            // Get all the featured add-ons not installed from provider.
             // NB: We're keeping translations only for the default locale.
-            val userLanguage = Locale.getDefault().language
-            val locales = listOf(userLanguage)
-            val supportedAddons = addonsProvider.getAvailableAddons(allowCache, language = userLanguage)
-                .map {
-                        addon ->
-                    addon.filterTranslations(locales)
-                }
-                .map { addon ->
-                    installedExtensions[addon.id]?.let {
-                        addon.copy(installedState = it.toInstalledState())
-                    } ?: addon
-                }
+            var featuredAddons = emptyList<Addon>()
+            try {
+                val userLanguage = Locale.getDefault().language
+                val locales = listOf(userLanguage)
+                featuredAddons =
+                    addonsProvider.getFeaturedAddons(allowCache, language = userLanguage)
+                        .filter { addon -> !installedExtensions.containsKey(addon.id) }
+                        .map { addon -> addon.filterTranslations(locales) }
+            } catch (throwable: Throwable) {
+                // Do not throw when we fail to fetch the featured add-ons since there can be installed add-ons.
+                logger.warn("Failed to get the featured add-ons", throwable)
+            }
 
-            val supportedAddonIds = supportedAddons.map { it.id }
-
-            // Get all installed addons that are not yet supported.
-            val unsupportedAddons = installedExtensions
-                .filterKeys { !supportedAddonIds.contains(it) }
+            // Build a list of installed extensions that are not built-in extensions.
+            val installedAddons = installedExtensions
                 .filterValues { !it.isBuiltIn() }
-                .map { extensionEntry ->
-                    val extension: WebExtension = extensionEntry.value
-                    val name = extension.getMetadata()?.name ?: extension.id
-                    val description = extension.getMetadata()?.description ?: extension.id
-
-                    // Temporary add-ons should be treated as supported
-                    val installedState = if (extension.getMetadata()?.temporary == true) {
-                        val icon = withContext(getIconDispatcher()) {
-                            extension.loadIcon(TEMPORARY_ADDON_ICON_SIZE)
-                        }
-                        extension.toInstalledState().copy(icon = icon)
-                    } else {
-                        extension.toInstalledState().copy(enabled = false, supported = false)
-                    }
-
-                    Addon(
-                        id = extension.id,
-                        translatableName = mapOf(Addon.DEFAULT_LOCALE to name),
-                        translatableDescription = mapOf(Addon.DEFAULT_LOCALE to description),
-                        // We don't have a summary for unsupported add-ons, let's re-use description
-                        translatableSummary = mapOf(Addon.DEFAULT_LOCALE to description),
-                        siteUrl = extension.url,
-                        installedState = installedState,
-                        updatedAt = "1970-01-01T00:00:00Z",
-                    )
+                .map {
+                    val extension = it.value
+                    val installedState = toInstalledState(extension)
+                    Addon.newFromWebExtension(extension, installedState)
                 }
 
-            return supportedAddons + unsupportedAddons
+            return featuredAddons + installedAddons
         } catch (throwable: Throwable) {
             throw AddonManagerException(throwable)
         }
@@ -151,7 +145,9 @@ class AddonManager(
             id = addon.id,
             url = addon.downloadUrl,
             onSuccess = { ext ->
-                val installedAddon = addon.copy(installedState = ext.toInstalledState())
+                val installedState = toInstalledState(ext)
+                val installedAddon = Addon.newFromWebExtension(ext, installedState)
+                    .copy(iconUrl = addon.iconUrl)
                 addonUpdater.registerForFutureUpdates(installedAddon.id)
                 completePendingAddonAction(pendingAction)
                 onSuccess(installedAddon)
@@ -221,7 +217,7 @@ class AddonManager(
             extension,
             source = source,
             onSuccess = { ext ->
-                val enabledAddon = addon.copy(installedState = ext.toInstalledState())
+                val enabledAddon = addon.copy(installedState = toInstalledState(ext))
                 completePendingAddonAction(pendingAction)
                 onSuccess(enabledAddon)
             },
@@ -257,7 +253,7 @@ class AddonManager(
             extension,
             source,
             onSuccess = { ext ->
-                val disabledAddon = addon.copy(installedState = ext.toInstalledState())
+                val disabledAddon = addon.copy(installedState = toInstalledState(ext))
                 completePendingAddonAction(pendingAction)
                 onSuccess(disabledAddon)
             },
@@ -293,7 +289,7 @@ class AddonManager(
             extension,
             allowed,
             onSuccess = { ext ->
-                val modifiedAddon = addon.copy(installedState = ext.toInstalledState())
+                val modifiedAddon = addon.copy(installedState = toInstalledState(ext))
                 completePendingAddonAction(pendingAction)
                 onSuccess(modifiedAddon)
             },
@@ -344,6 +340,64 @@ class AddonManager(
         pendingAddonActions.remove(action)
     }
 
+    /**
+     * Converts a [WebExtension] to [Addon.InstalledState].
+     */
+    fun toInstalledState(extension: WebExtension): Addon.InstalledState {
+        val metadata = extension.getMetadata()
+        val cachedIcon = iconsCache[extension.id]
+        return Addon.InstalledState(
+            id = extension.id,
+            version = metadata?.version ?: "",
+            optionsPageUrl = metadata?.optionsPageUrl,
+            openOptionsPageInTab = metadata?.openOptionsPageInTab ?: false,
+            enabled = extension.isEnabled(),
+            disabledReason = extension.getDisabledReason(),
+            allowedInPrivateBrowsing = extension.isAllowedInPrivateBrowsing(),
+            icon = cachedIcon ?: loadIcon(extension)?.also {
+                iconsCache[extension.id] = it
+            },
+        )
+    }
+
+    @VisibleForTesting
+    @Suppress("TooGenericExceptionCaught")
+    internal fun loadIcon(extension: WebExtension): Bitmap? {
+        // As we are loading the icon from the xpi file this operation should be quick.
+        // If the operation takes a long time,  we proceed to return early,
+        // and load the icon in background.
+        return runBlocking(getIconDispatcher()) {
+            try {
+                val icon = withTimeoutOrNull(ADDON_ICON_RETRIEVE_TIMEOUT) {
+                    extension.loadIcon(ADDON_ICON_SIZE)
+                }
+                logger.info("Icon for extension ${extension.id} loaded successfully")
+                icon
+            } catch (e: TimeoutCancellationException) {
+                // If the icon is too big, we delegate the task to be done in background.
+                // Eventually, we load the icon and keep it in cache for sequential loads.
+                tryLoadIconInBackground(extension)
+                logger.error("Failed load icon for extension ${extension.id}", e)
+                null
+            } catch (e: Exception) {
+                null
+            }
+        }
+    }
+
+    @VisibleForTesting
+    internal fun tryLoadIconInBackground(extension: WebExtension) {
+        logger.info("Trying to load icon for extension ${extension.id} in background")
+        iconLoadingScope.launch {
+            withContext(getIconDispatcher()) {
+                extension.loadIcon(ADDON_ICON_SIZE)
+            }?.also {
+                logger.info("Icon for extension ${extension.id} loaded in background successfully")
+                iconsCache[extension.id] = it
+            }
+        }
+    }
+
     @VisibleForTesting
     internal fun getIconDispatcher(): CoroutineDispatcher {
         val iconThread = HandlerThread("IconThread").also {
@@ -357,8 +411,10 @@ class AddonManager(
         // granted to built-in extensions:
         val BLOCKED_PERMISSIONS = listOf("geckoViewAddons", "nativeMessaging")
 
-        // Size of the icon to load for temporary extensions
-        const val TEMPORARY_ADDON_ICON_SIZE = 48
+        // Size of the icon to load for extensions
+        const val ADDON_ICON_SIZE = 48
+
+        private const val ADDON_ICON_RETRIEVE_TIMEOUT = 1000L
     }
 }
 
@@ -367,13 +423,18 @@ class AddonManager(
  */
 class AddonManagerException(throwable: Throwable) : Exception(throwable)
 
-private fun WebExtension.toInstalledState() =
-    Addon.InstalledState(
-        id = id,
-        version = getMetadata()?.version ?: "",
-        optionsPageUrl = getMetadata()?.optionsPageUrl,
-        openOptionsPageInTab = getMetadata()?.openOptionsPageInTab ?: false,
-        enabled = isEnabled(),
-        disabledAsUnsupported = isUnsupported(),
-        allowedInPrivateBrowsing = isAllowedInPrivateBrowsing(),
-    )
+internal fun WebExtension.getDisabledReason(): Addon.DisabledReason? {
+    return if (isBlockListed()) {
+        Addon.DisabledReason.BLOCKLISTED
+    } else if (isDisabledUnsigned()) {
+        Addon.DisabledReason.NOT_CORRECTLY_SIGNED
+    } else if (isDisabledIncompatible()) {
+        Addon.DisabledReason.INCOMPATIBLE
+    } else if (isUnsupported()) {
+        Addon.DisabledReason.UNSUPPORTED
+    } else if (getMetadata()?.disabledFlags?.contains(DisabledFlags.USER) == true) {
+        Addon.DisabledReason.USER_REQUESTED
+    } else {
+        null
+    }
+}

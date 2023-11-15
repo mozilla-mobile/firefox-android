@@ -1,5 +1,5 @@
 plugins {
-    id "com.jetbrains.python.envs" version "0.0.26"
+    id "com.jetbrains.python.envs" version "$python_envs_plugin"
 }
 
 apply plugin: 'com.android.application'
@@ -9,12 +9,11 @@ apply plugin: 'jacoco'
 apply plugin: 'com.google.android.gms.oss-licenses-plugin'
 apply from: "$project.rootDir/tools/gradle/versionCode.gradle"
 
-import com.android.build.OutputFile
+import com.android.build.api.variant.FilterConfiguration
 import groovy.json.JsonOutput
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 android {
-    compileSdkVersion 33
-
     if (project.hasProperty("testBuildType")) {
         // Allowing to configure the test build type via command line flag (./gradlew -PtestBuildType=beta ..)
         // in order to run UI tests against other build variants than debug in automation.
@@ -23,8 +22,9 @@ android {
 
     defaultConfig {
         applicationId "org.mozilla"
-        minSdkVersion 21
-        targetSdkVersion 33
+        minSdkVersion config.minSdkVersion
+        compileSdk config.compileSdkVersion
+        targetSdkVersion config.targetSdkVersion
         versionCode 11 // This versionCode is "frozen" for local builds. For "release" builds we
                        // override this with a generated versionCode at build time.
         // The versionName is dynamically overridden for all the build variants at build time.
@@ -35,13 +35,11 @@ android {
         buildConfigField "String", "GIT_HASH", "\"\""
 
         vectorDrawables.useSupportLibrary = true
-
-        multiDexEnabled true
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     lint {
@@ -102,10 +100,10 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = FocusVersions.google_compose_compiler
+        kotlinCompilerExtensionVersion = Versions.compose_compiler
     }
 
-    flavorDimensions "product"
+    flavorDimensions.add("product")
 
     productFlavors {
         // In most countries we are Firefox Focus - but in some we need to be Firefox Klar
@@ -169,14 +167,14 @@ android {
     namespace 'org.mozilla.focus'
 }
 
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
-        kotlinOptions {
-            allWarningsAsErrors = true
-            freeCompilerArgs += "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
-            freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
-            freeCompilerArgs += "-Xjvm-default=all"
-            jvmTarget = '11'
-        }
+tasks.withType(KotlinCompile).configureEach {
+    kotlinOptions.allWarningsAsErrors = true
+    kotlinOptions.freeCompilerArgs += [
+            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+            "-opt-in=kotlin.RequiresOptIn",
+            "-Xjvm-default=all"
+    ]
+    kotlinOptions.jvmTarget = '17'
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -208,34 +206,34 @@ nimbus {
 }
 
 dependencies {
-    implementation FocusDependencies.androidx_appcompat
-    implementation FocusDependencies.androidx_browser
-    implementation FocusDependencies.androidx_cardview
-    implementation FocusDependencies.androidx_compose_ui
-    implementation FocusDependencies.androidx_compose_ui_tooling
-    implementation FocusDependencies.androidx_compose_foundation
-    implementation FocusDependencies.androidx_compose_material
-    implementation FocusDependencies.androidx_compose_runtime_livedata
-    implementation FocusDependencies.androidx_constraint_layout
+    implementation ComponentsDependencies.androidx_appcompat
+    implementation ComponentsDependencies.androidx_browser
+    implementation ComponentsDependencies.androidx_cardview
+    implementation ComponentsDependencies.androidx_compose_ui
+    implementation ComponentsDependencies.androidx_compose_ui_tooling
+    implementation ComponentsDependencies.androidx_compose_foundation
+    implementation ComponentsDependencies.androidx_compose_material
+    implementation ComponentsDependencies.androidx_compose_runtime_livedata
+    implementation ComponentsDependencies.androidx_constraintlayout
     implementation FocusDependencies.androidx_constraint_layout_compose
-    implementation FocusDependencies.androidx_core_ktx
-    implementation FocusDependencies.androidx_fragment
-    implementation FocusDependencies.androidx_lifecycle_process
-    implementation FocusDependencies.androidx_lifecycle_viewmodel
-    implementation FocusDependencies.androidx_palette
-    implementation FocusDependencies.androidx_preference
-    implementation FocusDependencies.androidx_recyclerview
-    implementation FocusDependencies.androidx_savedstate
+    implementation ComponentsDependencies.androidx_core_ktx
+    implementation ComponentsDependencies.androidx_fragment
+    implementation ComponentsDependencies.androidx_lifecycle_process
+    implementation ComponentsDependencies.androidx_lifecycle_viewmodel
+    implementation ComponentsDependencies.androidx_palette
+    implementation ComponentsDependencies.androidx_preferences
+    implementation ComponentsDependencies.androidx_recyclerview
+    implementation ComponentsDependencies.androidx_savedstate
     implementation FocusDependencies.androidx_splashscreen
     implementation FocusDependencies.androidx_transition
-    implementation FocusDependencies.androidx_work_ktx
+    implementation ComponentsDependencies.androidx_work_runtime
+    implementation ComponentsDependencies.androidx_data_store_preferences
 
-    implementation FocusDependencies.google_accompanist_insets_ui
     implementation FocusDependencies.google_play
 
-    implementation FocusDependencies.google_material
+    implementation ComponentsDependencies.google_material
 
-    implementation FocusDependencies.sentry
+    implementation ComponentsDependencies.thirdparty_sentry
 
     implementation project(':browser-engine-gecko')
     implementation project(':browser-domains')
@@ -298,8 +296,8 @@ dependencies {
 
     implementation project(':service-telemetry')
 
-    implementation FocusDependencies.kotlin_coroutines
-    debugImplementation FocusDependencies.leakcanary
+    implementation ComponentsDependencies.kotlin_coroutines
+    debugImplementation ComponentsDependencies.leakcanary
 
     focusImplementation FocusDependencies.adjust
     focusImplementation FocusDependencies.install_referrer // Required by Adjust
@@ -309,14 +307,14 @@ dependencies {
     testImplementation FocusDependencies.testing_junit_api
     testRuntimeOnly FocusDependencies.testing_junit_engine
     testImplementation FocusDependencies.testing_junit_params
-    testImplementation FocusDependencies.testing_robolectric
-    testImplementation FocusDependencies.testing_mockito
-    testImplementation FocusDependencies.testing_coroutines
-    testImplementation FocusDependencies.androidx_work_testing
-    testImplementation FocusDependencies.androidx_arch_core_testing
+    testImplementation ComponentsDependencies.testing_robolectric
+    testImplementation ComponentsDependencies.testing_mockito
+    testImplementation ComponentsDependencies.testing_coroutines
+    testImplementation ComponentsDependencies.androidx_work_testing
+    testImplementation ComponentsDependencies.androidx_arch_core_testing
     testImplementation project(':support-test')
     testImplementation project(':support-test-libstate')
-    androidTestImplementation FocusDependencies.espresso_core, {
+    androidTestImplementation ComponentsDependencies.androidx_espresso_core, {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
     androidTestImplementation FocusDependencies.espresso_idling_resource
@@ -325,8 +323,9 @@ dependencies {
     }
     androidTestImplementation FocusDependencies.espresso_intents
 
-    androidTestImplementation FocusDependencies.testing_mockwebserver
-    testImplementation FocusDependencies.testing_mockwebserver
+
+    androidTestImplementation ComponentsDependencies.testing_mockwebserver
+    testImplementation ComponentsDependencies.testing_mockwebserver
     testImplementation project(':lib-fetch-okhttp')
 
     androidTestImplementation FocusDependencies.fastlane
@@ -340,14 +339,14 @@ dependencies {
         exclude module: 'design'
         exclude module: 'espresso-core'
     }
-    testImplementation FocusDependencies.androidx_test_core
-    testImplementation FocusDependencies.androidx_test_runner
-    testImplementation FocusDependencies.androidx_test_rules
+    testImplementation ComponentsDependencies.androidx_test_core
+    testImplementation ComponentsDependencies.androidx_test_runner
+    testImplementation ComponentsDependencies.androidx_test_rules
 
-    androidTestImplementation FocusDependencies.androidx_test_core_ktx
-    androidTestImplementation FocusDependencies.androidx_junit_ktx
-    androidTestImplementation FocusDependencies.androidx_uiautomator
-    androidTestImplementation FocusDependencies.androidx_test_runner
+    androidTestImplementation ComponentsDependencies.androidx_test_core
+    androidTestImplementation ComponentsDependencies.androidx_test_junit
+    androidTestImplementation ComponentsDependencies.androidx_test_uiautomator
+    androidTestImplementation ComponentsDependencies.androidx_test_runner
     androidTestUtil FocusDependencies.androidx_orchestrator
 
 }
@@ -355,7 +354,7 @@ dependencies {
 //  Dynamically set versionCode (See tools/build/versionCode.gradle
 // -------------------------------------------------------------------------------------------------
 
-android.applicationVariants.all { variant ->
+android.applicationVariants.configureEach { variant ->
     def buildType = variant.buildType.name
 
     println("----------------------------------------------")
@@ -371,29 +370,47 @@ android.applicationVariants.all { variant ->
 
         // The Google Play Store does not allow multiple APKs for the same app that all have the
         // same version code. Therefore we need to have different version codes for our ARM and x86
-        // builds.
+        // builds. See https://developer.android.com/studio/publish/versioning
 
         // Our generated version code now has a length of 9 (See tools/gradle/versionCode.gradle).
         // Our x86 builds need a higher version code to avoid installing ARM builds on an x86 device
         // with ARM compatibility mode.
 
+        // AAB builds need a version code that is distinct from any APK builds. Since AAB and APK
+        // builds may run in parallel, AAB and APK version codes might be based on the same
+        // (minute granularity) time of day. To avoid conflicts, we ensure the minute portion
+        // of the version code is even for APKs and odd for AABs.
+
         variant.outputs.each { output ->
-            def abi = output.getFilter(OutputFile.ABI)
+            def abi = output.getFilter(FilterConfiguration.FilterType.ABI.name())
+            def aab = project.hasProperty("aab")
             // We use the same version code generator, that we inherited from Fennec, across all channels - even on
             // channels that never shipped a Fennec build.
 
+            // ensure baseVersionCode is an even number
+            if (baseVersionCode % 2) {
+                baseVersionCode = baseVersionCode + 1
+            }
+
             def versionCodeOverride = baseVersionCode
 
-            if (abi == "x86_64") {
-                versionCodeOverride = versionCodeOverride + 3
-            } else if (abi == "x86") {
-                versionCodeOverride = versionCodeOverride + 2
-            } else if (abi == "arm64-v8a") {
+            if (aab) {
+                // AAB version code is odd
                 versionCodeOverride = versionCodeOverride + 1
-            } else if (abi == "armeabi-v7a") {
-                versionCodeOverride = versionCodeOverride + 0
+                println("versionCode for AAB = $versionCodeOverride")
             } else {
-                throw new RuntimeException("Unknown ABI: " + abi)
+                if (abi == "x86_64") {
+                    versionCodeOverride = versionCodeOverride + 6
+                } else if (abi == "x86") {
+                    versionCodeOverride = versionCodeOverride + 4
+                } else if (abi == "arm64-v8a") {
+                    versionCodeOverride = versionCodeOverride + 2
+                } else if (abi == "armeabi-v7a") {
+                    versionCodeOverride = versionCodeOverride + 0
+                } else {
+                    throw new RuntimeException("Unknown ABI: " + abi)
+                }
+                println("versionCode for $abi = $versionCodeOverride")
             }
 
             if (versionName != null) {
@@ -401,7 +418,6 @@ android.applicationVariants.all { variant ->
             }
             output.versionCodeOverride = versionCodeOverride
 
-            println("versionCode for $abi = $versionCodeOverride")
         }
 
     }
@@ -411,7 +427,7 @@ android.applicationVariants.all { variant ->
 // MLS: Read token from local file if it exists (Only release builds)
 // -------------------------------------------------------------------------------------------------
 
-android.applicationVariants.all {
+android.applicationVariants.configureEach {
     print("MLS token: ")
     try {
         def token = new File("${rootDir}/.mls_token").text.trim()
@@ -427,7 +443,7 @@ android.applicationVariants.all {
 // Adjust: Read token from local file if it exists (Only release builds)
 // -------------------------------------------------------------------------------------------------
 
-android.applicationVariants.all { variant ->
+android.applicationVariants.configureEach { variant ->
     def variantName = variant.getName()
 
     print("Adjust token: ")
@@ -456,7 +472,7 @@ android.applicationVariants.all { variant ->
 // Sentry: Read token from local file if it exists (Only release builds)
 // -------------------------------------------------------------------------------------------------
 
-android.applicationVariants.all {
+android.applicationVariants.configureEach {
     print("Sentry token: ")
     try {
         def token = new File("${rootDir}/.sentry_token").text.trim()
@@ -518,7 +534,7 @@ def getEnabledLocales() {
 // -------------------------------------------------------------------------------------------------
 
 print("Nimbus endpoint: ")
-android.applicationVariants.all { variant ->
+android.applicationVariants.configureEach { variant ->
     def variantName = variant.getName()
 
     if (!variantName.contains("Debug")) {
@@ -541,9 +557,9 @@ android.applicationVariants.all { variant ->
 }
 
 def generatedLocaleListDir = 'src/main/java/org/mozilla/focus/generated'
-def generatedLocaleListFilename = 'LocaleList.java'
+def generatedLocaleListFilename = 'LocalesList.kt'
 
-task generateLocaleList {
+tasks.register('generateLocaleList') {
     doLast {
         def dir = file(generatedLocaleListDir)
         dir.mkdir()
@@ -551,20 +567,30 @@ task generateLocaleList {
 
         localeList.delete()
         localeList.createNewFile()
-        localeList << "package org.mozilla.focus.generated;" << "\n" << "\n"
-        localeList << "import java.util.Arrays;" << "\n"
-        localeList << "import java.util.Collections;" << "\n"
-        localeList << "import java.util.List;" << "\n"
+        localeList << "package org.mozilla.focus.generated" << "\n" << "\n"
+        localeList << "import java.util.Collections" << "\n"
         localeList << "\n"
-        localeList << "public class LocaleList {" << "\n"
-        // findbugs doesn't like "public static final String[]", see http://findbugs.sourceforge.net/bugDescriptions.html#MS_MUTABLE_ARRAY
-        localeList << "    public static final List<String> BUNDLED_LOCALES = Collections.unmodifiableList(Arrays.asList(new String[] { "
-        localeList << getEnabledLocales().join(", ") + " }));" << "\n"
+        localeList << "/**"
+        localeList << "\n"
+        localeList << " * Provides a list of bundled locales based on the language files in the res folder."
+        localeList << "\n"
+        localeList << " */"
+        localeList << "\n"
+        localeList << "object LocalesList {" << "\n"
+        localeList << "    " << "val BUNDLED_LOCALES: List<String> = Collections.unmodifiableList("
+        localeList << "\n"
+        localeList << "        " << "listOf("
+        localeList << "\n"
+        localeList << "            "
+        localeList << getEnabledLocales().join(",\n" + "            ")
+        localeList << ",\n"
+        localeList << "        )," << "\n"
+        localeList << "    )" << "\n"
         localeList << "}" << "\n"
     }
 }
 
-tasks.whenTaskAdded { task ->
+tasks.configureEach { task ->
     if (name.contains("compile")) {
         task.dependsOn generateLocaleList
     }
@@ -575,18 +601,18 @@ clean.doLast {
 }
 
 if (project.hasProperty("coverage")) {
-    tasks.withType(Test) {
+    tasks.withType(Test).configureEach {
         jacoco.includeNoLocationClasses = true
         jacoco.excludes = ['jdk.internal.*']
     }
 
-    android.applicationVariants.all { variant ->
-        task "jacoco${variant.name.capitalize()}TestReport"(type: JacocoReport,
-                dependsOn: ["test${variant.name.capitalize()}UnitTest"]) {
+    android.applicationVariants.configureEach { variant ->
+        tasks.register("jacoco${variant.name.capitalize()}TestReport", JacocoReport) {
 
+            dependsOn(["test${variant.name.capitalize()}UnitTest"])
             reports {
-                html.enabled true
-                xml.enabled true
+                html.required = true
+                xml.required = true
             }
 
             def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*',
@@ -613,11 +639,6 @@ if (project.hasProperty("coverage")) {
     }
 }
 
-if (gradle.hasProperty('localProperties.autoPublish.application-services.dir')) {
-    ext.appServicesSrcDir = gradle."localProperties.autoPublish.application-services.dir"
-    apply from: "../${appServicesSrcDir}/build-scripts/substitute-local-appservices.gradle"
-}
-
 if (gradle.hasProperty('localProperties.autoPublish.glean.dir')) {
     ext.gleanSrcDir = gradle."localProperties.autoPublish.glean.dir"
     apply from: "../${gleanSrcDir}/build-scripts/substitute-local-glean.gradle"
@@ -631,7 +652,7 @@ tasks.register('printVariants') {
     doLast {
         def variants = android.applicationVariants.collect { variant -> [
             apks: variant.outputs.collect { output -> [
-                abi: output.getFilter(com.android.build.VariantOutput.FilterType.ABI),
+                abi: output.getFilter(FilterConfiguration.FilterType.ABI.name()),
                 fileName: output.outputFile.name
             ]},
             build_type: variant.buildType.name,

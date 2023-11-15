@@ -66,7 +66,6 @@ class FetchDownloadManagerTest {
             testContext,
             store,
             MockDownloadService::class,
-            broadcastManager,
             notificationsDelegate = notificationsDelegate,
         )
     }
@@ -97,12 +96,11 @@ class FetchDownloadManagerTest {
 
     @Test
     fun `calling tryAgain starts the download again`() {
-        val context: Context = mock()
+        val context = spy(testContext)
         downloadManager = FetchDownloadManager(
             context,
             store,
             MockDownloadService::class,
-            broadcastManager,
             notificationsDelegate = notificationsDelegate,
         )
         var downloadStopped = false
@@ -155,7 +153,6 @@ class FetchDownloadManagerTest {
             context,
             store,
             MockDownloadService::class,
-            broadcastManager,
             notificationsDelegate = notificationsDelegate,
         )
         grantPermissions()
@@ -178,6 +175,16 @@ class FetchDownloadManagerTest {
     fun `trying to download a file with a blob scheme should trigger a download`() {
         val validBlobDownload =
             download.copy(url = "blob:https://ipv4.download.thinkbroadband.com/5MB.zip")
+        grantPermissions()
+
+        val id = downloadManager.download(validBlobDownload)!!
+        assertNotNull(id)
+    }
+
+    @Test
+    fun `trying to download a file with a moz-extension scheme should trigger a download`() {
+        val validBlobDownload =
+            download.copy(url = "moz-extension://db84fb8b-909c-4270-8567-0e947ffe379f/readerview.html?id=1&url=https%3A%2F%2Fmozilla.org")
         grantPermissions()
 
         val id = downloadManager.download(validBlobDownload)!!
@@ -266,7 +273,8 @@ class FetchDownloadManagerTest {
         val intent = Intent(ACTION_DOWNLOAD_COMPLETE)
         intent.putExtra(EXTRA_DOWNLOAD_ID, id)
         intent.putExtra(EXTRA_DOWNLOAD_STATUS, DownloadState.Status.FAILED)
-        broadcastManager.sendBroadcast(intent)
+
+        testContext.sendBroadcast(intent)
     }
 
     private fun notifyDownloadCompleted(id: String) {
@@ -274,7 +282,7 @@ class FetchDownloadManagerTest {
         intent.putExtra(EXTRA_DOWNLOAD_ID, id)
         intent.putExtra(EXTRA_DOWNLOAD_STATUS, DownloadState.Status.COMPLETED)
 
-        broadcastManager.sendBroadcast(intent)
+        testContext.sendBroadcast(intent)
     }
 
     private fun grantPermissions() {

@@ -1,9 +1,3 @@
-/*
- * This Source Code Form is subject to the terms of the Mozilla Public
- *  License, v. 2.0. If a copy of the MPL was not distributed with this
- *  file, You can obtain one at http://mozilla.org/MPL/2.0/.
- */
-
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
@@ -122,7 +116,7 @@ class SyncedTabsStorageTest {
         // Run the flow.
         store.dispatch(TabListAction.RemoveAllPrivateTabsAction).joinBlocking()
 
-        verify(tabsStorage, never()).store(listOf() /* any() is not working so we send garbage */)
+        verify(tabsStorage, never()).store(listOf()) // any() is not working so we send garbage
     }
 
     @Test

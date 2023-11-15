@@ -2,7 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-FROM ubuntu:18.04
+FROM ubuntu:22.04
 
 # Add worker user
 RUN mkdir /builds && \
@@ -30,16 +30,15 @@ RUN apt-get update -qq \
     # We need to install tzdata before all of the other packages. Otherwise it will show an interactive dialog
     # which we cannot navigate while building the Docker image.
     && apt-get install -y tzdata \
-    && apt-get install -y openjdk-11-jdk \
+    && apt-get install -y openjdk-17-jdk \
                           wget \
                           expect \
                           git \
                           curl \
-                          python \
-                          python-pip \
                           python3 \
                           python3-pip \
                           python3-yaml \
+                          libgit2-dev \
                           locales \
                           unzip \
 			  mercurial \

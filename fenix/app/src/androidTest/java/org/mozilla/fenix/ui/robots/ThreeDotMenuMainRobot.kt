@@ -6,6 +6,7 @@
 
 package org.mozilla.fenix.ui.robots
 
+import android.util.Log
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.swipeDown
@@ -25,25 +26,30 @@ import androidx.test.uiautomator.UiObjectNotFoundException
 import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
 import org.hamcrest.Matchers.allOf
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
+import org.mozilla.fenix.helpers.Constants.LONG_CLICK_DURATION
 import org.mozilla.fenix.helpers.Constants.RETRY_COUNT
+import org.mozilla.fenix.helpers.Constants.TAG
+import org.mozilla.fenix.helpers.DataGenerationHelper.getStringResource
 import org.mozilla.fenix.helpers.MatcherHelper.assertCheckedItemWithResIdAndTextExists
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemContainingTextExists
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithDescriptionExists
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithResIdAndTextExists
+import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithResIdExists
 import org.mozilla.fenix.helpers.MatcherHelper.checkedItemWithResIdAndText
 import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithDescription
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdAndText
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithText
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeLong
-import org.mozilla.fenix.helpers.TestHelper.getStringResource
 import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
+import org.mozilla.fenix.nimbus.FxNimbus
 
 /**
  * Implementation of Robot Pattern for the three dot (main) menu.
@@ -59,6 +65,14 @@ class ThreeDotMenuMainRobot {
     fun verifyCloseAllTabsButton() = assertCloseAllTabsButton()
     fun verifyReaderViewAppearance(visible: Boolean) = assertReaderViewAppearanceButton(visible)
 
+    fun verifyQuitButtonExists() {
+        // Need to double swipe the menu, to make this button visible.
+        // In case it reaches the end, the second swipe is no-op.
+        expandMenu()
+        expandMenu()
+        assertItemContainingTextExists(itemWithText("Quit"))
+    }
+
     fun expandMenu() {
         onView(withId(R.id.mozac_browser_menu_menuView)).perform(swipeUp())
     }
@@ -67,7 +81,8 @@ class ThreeDotMenuMainRobot {
     fun verifySelectTabs() = assertSelectTabsButton()
 
     fun verifyFindInPageButton() = assertItemContainingTextExists(findInPageButton)
-    fun verifyAddToShortcutsButton() = assertItemContainingTextExists(addToShortcutsButton)
+    fun verifyAddToShortcutsButton(shouldExist: Boolean) =
+        assertItemContainingTextExists(addToShortcutsButton, exists = shouldExist)
     fun verifyRemoveFromShortcutsButton() = assertRemoveFromShortcutsButton()
     fun verifyShareTabsOverlay() = assertShareTabsOverlay()
 
@@ -91,10 +106,17 @@ class ThreeDotMenuMainRobot {
             addToHomeScreenButton,
             addToShortcutsButton,
             saveToCollectionButton,
-            settingsButton(),
         )
         assertCheckedItemWithResIdAndTextExists(addBookmarkButton)
         assertCheckedItemWithResIdAndTextExists(desktopSiteToggle(isRequestDesktopSiteEnabled))
+        // Swipe to second part of menu
+        expandMenu()
+        assertItemContainingTextExists(
+            settingsButton(),
+        )
+        if (FxNimbus.features.print.value().browserPrintEnabled) {
+            assertItemContainingTextExists(printContentButton)
+        }
         assertItemWithDescriptionExists(
             backButton,
             forwardButton,
@@ -137,10 +159,7 @@ class ThreeDotMenuMainRobot {
     fun verifyAddonAvailableInMainMenu(addonName: String) {
         for (i in 1..RETRY_COUNT) {
             try {
-                assertTrue(
-                    "Addon not listed in the Add-ons sub-menu",
-                    mDevice.findObject(UiSelector().textContains(addonName)).waitForExists(waitingTime),
-                )
+                assertItemContainingTextExists(itemContainingText(addonName))
                 break
             } catch (e: AssertionError) {
                 if (i == RETRY_COUNT) {
@@ -156,6 +175,16 @@ class ThreeDotMenuMainRobot {
         }
     }
 
+    fun verifyTrackersBlockedByUblock() {
+        assertItemWithResIdExists(itemWithResId("$packageName:id/badge_text"))
+        assertTrue(itemWithResId("$packageName:id/badge_text").text.toInt() > 0)
+    }
+
+    fun clickQuit() {
+        expandMenu()
+        onView(withText("Quit")).click()
+    }
+
     class Transition {
         fun openSettings(
             localizedText: String = getStringResource(R.string.browser_menu_settings),
@@ -165,8 +194,11 @@ class ThreeDotMenuMainRobot {
             // such as the Pixel 2, we require two swipes to display the "Settings" menu item
             // at the bottom. On larger devices, the second swipe is a no-op.
             threeDotMenuRecyclerView().perform(swipeUp())
+            Log.i(TAG, "openSettings: Swiped up the main menu once")
             threeDotMenuRecyclerView().perform(swipeUp())
+            Log.i(TAG, "openSettings: Swiped up the main menu twice")
             settingsButton(localizedText).click()
+            Log.i(TAG, "openSettings: Clicked main menu $localizedText button")
 
             SettingsRobot().interact()
             return SettingsRobot.Transition()
@@ -174,7 +206,9 @@ class ThreeDotMenuMainRobot {
 
         fun openDownloadsManager(interact: DownloadRobot.() -> Unit): DownloadRobot.Transition {
             threeDotMenuRecyclerView().perform(swipeDown())
+            Log.i(TAG, "openDownloadsManager: Swiped up main menu")
             downloadsButton.click()
+            Log.i(TAG, "openDownloadsManager: Clicked main menu \"DOWNLOADS\" button")
 
             DownloadRobot().interact()
             return DownloadRobot.Transition()
@@ -194,10 +228,17 @@ class ThreeDotMenuMainRobot {
             mDevice.waitNotNull(Until.findObject(By.text("Bookmarks")), waitingTime)
 
             bookmarksButton.click()
-            assertTrue(mDevice.findObject(UiSelector().resourceId("$packageName:id/bookmark_list")).waitForExists(waitingTime))
+            assertItemWithResIdExists(itemWithResId("$packageName:id/bookmark_list"))
 
             BookmarksRobot().interact()
             return BookmarksRobot.Transition()
+        }
+
+        fun clickNewTabButton(interact: SearchRobot.() -> Unit): SearchRobot.Transition {
+            normalBrowsingNewTabButton.click()
+
+            SearchRobot().interact()
+            return SearchRobot.Transition()
         }
 
         fun openHistory(interact: HistoryRobot.() -> Unit): HistoryRobot.Transition {
@@ -268,6 +309,7 @@ class ThreeDotMenuMainRobot {
 
         fun clickShareButton(interact: ShareOverlayRobot.() -> Unit): ShareOverlayRobot.Transition {
             shareButton.click()
+            Log.i(TAG, "clickShareButton: Clicked main menu share button")
             mDevice.waitNotNull(Until.findObject(By.text("ALL ACTIONS")), waitingTime)
 
             ShareOverlayRobot().interact()
@@ -283,7 +325,20 @@ class ThreeDotMenuMainRobot {
         }
 
         fun refreshPage(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
-            refreshButton.click()
+            refreshButton.also {
+                Log.i(TAG, "refreshPage: Looking for refresh button")
+                it.waitForExists(waitingTime)
+                it.click()
+                Log.i(TAG, "refreshPage: Clicked the refresh button")
+            }
+
+            BrowserRobot().interact()
+            return BrowserRobot.Transition()
+        }
+
+        fun forceRefreshPage(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
+            mDevice.findObject(By.desc(getStringResource(R.string.browser_menu_refresh)))
+                .click(LONG_CLICK_DURATION)
 
             BrowserRobot().interact()
             return BrowserRobot.Transition()
@@ -427,6 +482,16 @@ class ThreeDotMenuMainRobot {
             ShareOverlayRobot().interact()
             return ShareOverlayRobot.Transition()
         }
+
+        fun clickPrintButton(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
+            threeDotMenuRecyclerView().perform(swipeUp())
+            threeDotMenuRecyclerView().perform(swipeUp())
+            printButton.waitForExists(waitingTime)
+            printButton.click()
+
+            BrowserRobot().interact()
+            return BrowserRobot.Transition()
+        }
     }
 }
 private fun threeDotMenuRecyclerView() =
@@ -464,13 +529,13 @@ private fun assertReaderViewAppearanceButton(visible: Boolean) {
             threeDotMenuRecyclerView().perform(swipeUp())
             maxSwipes--
         }
-        assertTrue(readerViewAppearanceToggle().exists())
+        assertItemContainingTextExists(readerViewAppearanceToggle())
     } else {
         while (!readerViewAppearanceToggle().exists() && maxSwipes != 0) {
             threeDotMenuRecyclerView().perform(swipeUp())
             maxSwipes--
         }
-        assertFalse(readerViewAppearanceToggle().exists())
+        assertItemContainingTextExists(readerViewAppearanceToggle(), exists = false)
     }
 }
 
@@ -549,7 +614,9 @@ private val reportSiteIssueButton = itemContainingText("Report Site Issue")
 private val addToHomeScreenButton = itemContainingText(getStringResource(R.string.browser_menu_add_to_homescreen))
 private val addToShortcutsButton = itemContainingText(getStringResource(R.string.browser_menu_add_to_shortcuts))
 private val saveToCollectionButton = itemContainingText(getStringResource(R.string.browser_menu_save_to_collection_2))
+private val printContentButton = itemContainingText(getStringResource(R.string.menu_print))
 private val backButton = itemWithDescription(getStringResource(R.string.browser_menu_back))
 private val forwardButton = itemWithDescription(getStringResource(R.string.browser_menu_forward))
 private val shareButton = itemWithDescription(getStringResource(R.string.share_button_content_description))
 private val refreshButton = itemWithDescription(getStringResource(R.string.browser_menu_refresh))
+private val printButton = itemWithText("Print")

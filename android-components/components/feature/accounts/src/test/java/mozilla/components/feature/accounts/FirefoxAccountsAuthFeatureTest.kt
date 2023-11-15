@@ -9,6 +9,7 @@ import android.os.Looper.getMainLooper
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.test.runTest
+import mozilla.appservices.fxaclient.FxaServer
 import mozilla.components.concept.engine.request.RequestInterceptor
 import mozilla.components.concept.sync.AccountEventsObserver
 import mozilla.components.concept.sync.AuthFlowUrl
@@ -18,7 +19,6 @@ import mozilla.components.concept.sync.DeviceType
 import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.concept.sync.Profile
 import mozilla.components.service.fxa.FxaAuthData
-import mozilla.components.service.fxa.Server
 import mozilla.components.service.fxa.ServerConfig
 import mozilla.components.service.fxa.StorageWrapper
 import mozilla.components.service.fxa.manager.FxaAccountManager
@@ -88,7 +88,7 @@ class FirefoxAccountsAuthFeatureTest {
         ) { _, url ->
             authUrl.complete(url)
         }
-        feature.beginAuthentication(testContext)
+        feature.beginAuthentication(testContext, mock())
         authUrl.await()
         assertEquals("auth://url", authUrl.getCompleted())
     }
@@ -107,7 +107,7 @@ class FirefoxAccountsAuthFeatureTest {
         ) { _, url ->
             authUrl.complete(url)
         }
-        feature.beginPairingAuthentication(testContext, "auth://pair")
+        feature.beginPairingAuthentication(testContext, "auth://pair", mock())
         authUrl.await()
         assertEquals("auth://url", authUrl.getCompleted())
     }
@@ -127,7 +127,7 @@ class FirefoxAccountsAuthFeatureTest {
         ) { _, url ->
             authUrl.complete(url)
         }
-        feature.beginAuthentication(testContext)
+        feature.beginAuthentication(testContext, mock())
         authUrl.await()
         // Fallback url is invoked.
         assertEquals("https://accounts.firefox.com/signin", authUrl.getCompleted())
@@ -148,7 +148,7 @@ class FirefoxAccountsAuthFeatureTest {
         ) { _, url ->
             authUrl.complete(url)
         }
-        feature.beginPairingAuthentication(testContext, "auth://pair")
+        feature.beginPairingAuthentication(testContext, "auth://pair", mock())
         authUrl.await()
         // Fallback url is invoked.
         assertEquals("https://accounts.firefox.com/signin", authUrl.getCompleted())
@@ -251,13 +251,13 @@ class FirefoxAccountsAuthFeatureTest {
 
         `when`(mockAccount.deviceConstellation()).thenReturn(mock())
         `when`(mockAccount.getProfile(anyBoolean())).thenReturn(profile)
-        `when`(mockAccount.beginOAuthFlow(any(), anyString())).thenReturn(AuthFlowUrl("authState", "auth://url"))
-        `when`(mockAccount.beginPairingFlow(anyString(), any(), anyString())).thenReturn(AuthFlowUrl("authState", "auth://url"))
+        `when`(mockAccount.beginOAuthFlow(any(), any())).thenReturn(AuthFlowUrl("authState", "auth://url"))
+        `when`(mockAccount.beginPairingFlow(anyString(), any(), any())).thenReturn(AuthFlowUrl("authState", "auth://url"))
         `when`(mockAccount.completeOAuthFlow(anyString(), anyString())).thenReturn(true)
 
         val manager = TestableFxaAccountManager(
             testContext,
-            ServerConfig(Server.RELEASE, "dummyId", "bad://url"),
+            ServerConfig(FxaServer.Release, "dummyId", "bad://url"),
             setOf("test-scope"),
             coroutineContext,
         ) {
@@ -278,13 +278,13 @@ class FirefoxAccountsAuthFeatureTest {
 
         `when`(mockAccount.getProfile(anyBoolean())).thenReturn(profile)
         `when`(mockAccount.deviceConstellation()).thenReturn(mock())
-        `when`(mockAccount.beginOAuthFlow(any(), anyString())).thenReturn(null)
-        `when`(mockAccount.beginPairingFlow(anyString(), any(), anyString())).thenReturn(null)
+        `when`(mockAccount.beginOAuthFlow(any(), any())).thenReturn(null)
+        `when`(mockAccount.beginPairingFlow(anyString(), any(), any())).thenReturn(null)
         `when`(mockAccount.completeOAuthFlow(anyString(), anyString())).thenReturn(true)
 
         val manager = TestableFxaAccountManager(
             testContext,
-            ServerConfig(Server.RELEASE, "dummyId", "bad://url"),
+            ServerConfig(FxaServer.Release, "dummyId", "bad://url"),
             setOf("test-scope"),
             coroutineContext,
         ) {

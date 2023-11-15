@@ -106,7 +106,8 @@ class SendCrashReportServiceTest {
             true,
             "/data/data/org.mozilla.samples.browser/files/mozilla/Crash Reports/pending/3ba5f665-8422-dc8e-a88e-fc65c081d304.extra",
             Crash.NativeCodeCrash.PROCESS_TYPE_FOREGROUND_CHILD,
-            arrayListOf(),
+            breadcrumbs = arrayListOf(),
+            remoteType = null,
         )
 
         val intent = Intent("org.mozilla.gecko.ACTION_CRASHED")
@@ -150,7 +151,16 @@ class SendCrashReportServiceTest {
 
     @Test
     fun `notification tag and id is added to the report intent`() {
-        val crash: Crash = mock()
+        val crash: Crash = Crash.NativeCodeCrash(
+            123,
+            "",
+            true,
+            "",
+            Crash.NativeCodeCrash.PROCESS_TYPE_MAIN,
+            breadcrumbs = arrayListOf(),
+            remoteType = null,
+        )
+
         val intent = SendCrashReportService.createReportIntent(testContext, crash, "test_tag", 123)
 
         assertEquals(intent.getStringExtra(NOTIFICATION_TAG_KEY), "test_tag")

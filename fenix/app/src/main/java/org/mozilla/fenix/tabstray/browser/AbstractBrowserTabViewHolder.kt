@@ -50,7 +50,8 @@ import org.mozilla.fenix.tabstray.ext.toDisplayTitle
  * @param itemView [View] that displays a "tab".
  * @param imageLoader [ImageLoader] used to load tab thumbnails.
  * @param trayStore [TabsTrayStore] containing the complete state of tabs tray and methods to update that.
- * @param featureName [String] representing the name of the feature displaying tabs. Used in telemetry reporting.
+ * @param selectionHolder [SelectionHolder] instance containing the selected tabs in the tabs tray.
+ * @property featureName [String] representing the name of the feature displaying tabs. Used in telemetry reporting.
  * @param store [BrowserStore] containing the complete state of the browser and methods to update that.
  */
 @Suppress("LongParameterList")
@@ -111,12 +112,13 @@ abstract class AbstractBrowserTabViewHolder(
             }
         }
 
-        loadIntoThumbnailView(thumbnailView, tab.id)
+        loadIntoThumbnailView(thumbnailView, tab.id, tab.content.private)
     }
 
     override fun showTabIsMultiSelectEnabled(selectedMaskView: View?, isSelected: Boolean) {
         selectedMaskView?.isVisible = isSelected
         closeView.isInvisible = trayStore.state.mode is TabsTrayState.Mode.Select
+        closeView.isClickable = trayStore.state.mode !is TabsTrayState.Mode.Select
     }
 
     private fun updateFavicon(tab: TabSessionState) {
@@ -201,8 +203,8 @@ abstract class AbstractBrowserTabViewHolder(
         }
     }
 
-    private fun loadIntoThumbnailView(thumbnailView: ImageView, id: String) {
-        imageLoader.loadIntoView(thumbnailView, ImageLoadRequest(id, thumbnailSize))
+    private fun loadIntoThumbnailView(thumbnailView: ImageView, id: String, isPrivate: Boolean) {
+        imageLoader.loadIntoView(thumbnailView, ImageLoadRequest(id, thumbnailSize, isPrivate))
     }
 
     private fun setSelectionInteractor(
@@ -211,7 +213,7 @@ abstract class AbstractBrowserTabViewHolder(
         interactor: TabsTrayInteractor,
     ) {
         itemView.setOnClickListener {
-            interactor.onMultiSelectClicked(item, featureName)
+            interactor.onTabSelected(item, featureName)
         }
 
         itemView.setOnLongClickListener {

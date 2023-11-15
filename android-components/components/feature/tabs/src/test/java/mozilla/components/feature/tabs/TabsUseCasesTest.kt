@@ -35,6 +35,7 @@ import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertSame
+import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
@@ -265,68 +266,33 @@ class TabsUseCasesTest {
     }
 
     @Test
-    @Suppress("DEPRECATION")
-    fun `AddNewPrivateTabUseCase will not load URL if flag is set to false`() {
-        tabsUseCases.addPrivateTab("https://www.mozilla.org", startLoading = false)
+    fun `GIVEN a search is performed with load URL flags and additional headers WHEN adding a new tab THEN the resulting tab is loaded as a search result with the correct load flags and headers`() {
+        val url = "https://www.mozilla.org"
+        val flags = LoadUrlFlags.select(LoadUrlFlags.ALLOW_ADDITIONAL_HEADERS)
+        val additionalHeaders = mapOf("X-Extra-Header" to "true")
 
-        store.waitUntilIdle()
-        assertEquals(1, store.state.tabs.size)
-        assertEquals("https://www.mozilla.org", store.state.tabs[0].content.url)
-        verify(engineSession, never()).loadUrl(anyString(), any(), any(), any())
-    }
-
-    @Test
-    @Suppress("DEPRECATION")
-    fun `AddNewPrivateTabUseCase will load URL if flag is set to true`() {
-        tabsUseCases.addPrivateTab("https://www.mozilla.org", startLoading = true)
-
-        // Wait for CreateEngineSessionAction and middleware
-        store.waitUntilIdle()
-        dispatcher.scheduler.advanceUntilIdle()
-
-        // Wait for LinkEngineSessionAction and middleware
-        store.waitUntilIdle()
-        dispatcher.scheduler.advanceUntilIdle()
-
-        assertEquals(1, store.state.tabs.size)
-        assertEquals("https://www.mozilla.org", store.state.tabs[0].content.url)
-        verify(engineSession, times(1)).loadUrl("https://www.mozilla.org")
-    }
-
-    @Test
-    @Suppress("DEPRECATION")
-    fun `AddNewPrivateTabUseCase forwards load flags to engine`() {
-        tabsUseCases.addPrivateTab.invoke("https://www.mozilla.org", flags = LoadUrlFlags.external(), startLoading = true)
-
-        // Wait for CreateEngineSessionAction and middleware
-        store.waitUntilIdle()
-        dispatcher.scheduler.advanceUntilIdle()
-
-        // Wait for LinkEngineSessionAction and middleware
-        store.waitUntilIdle()
-        dispatcher.scheduler.advanceUntilIdle()
-
-        assertEquals(1, store.state.tabs.size)
-        assertEquals("https://www.mozilla.org", store.state.tabs[0].content.url)
-        verify(engineSession, times(1)).loadUrl("https://www.mozilla.org", null, LoadUrlFlags.external(), null)
-    }
-
-    @Test
-    @Suppress("DEPRECATION")
-    fun `AddNewPrivateTabUseCase uses provided engine session`() {
-        val session: EngineSession = mock()
-        tabsUseCases.addPrivateTab.invoke(
-            "https://www.mozilla.org",
-            flags = LoadUrlFlags.external(),
-            startLoading = true,
-            engineSession = session,
+        tabsUseCases.addTab.invoke(
+            url = url,
+            flags = flags,
+            isSearch = true,
+            additionalHeaders = additionalHeaders,
         )
 
         store.waitUntilIdle()
 
         assertEquals(1, store.state.tabs.size)
-        assertEquals("https://www.mozilla.org", store.state.tabs[0].content.url)
-        assertSame(session, store.state.tabs[0].engineState.engineSession)
+        assertTrue(store.state.tabs.single().content.isSearch)
+        assertEquals(flags, store.state.tabs.single().engineState.initialLoadFlags)
+        assertEquals(
+            additionalHeaders,
+            store.state.tabs.single().engineState.initialAdditionalHeaders,
+        )
+
+        verify(engineSession, times(1)).loadUrl(
+            url = url,
+            flags = flags,
+            additionalHeaders = additionalHeaders,
+        )
     }
 
     @Test
@@ -614,5 +580,53 @@ class TabsUseCasesTest {
         store.waitUntilIdle()
         assertEquals("https://firefox.com", store.state.tabs[0].content.url)
         assertEquals("https://mozilla.org", store.state.tabs[1].content.url)
+    }
+
+    @Test
+    fun `MigratePrivateTabUseCase will migrate a private tab`() {
+        val tab = createTab("https://mozilla.org", private = true)
+        store.dispatch(TabListAction.AddTabAction(tab)).joinBlocking()
+        assertEquals(1, store.state.tabs.size)
+        assertEquals(true, store.state.tabs[0].content.private)
+
+        tabsUseCases.migratePrivateTabUseCase(tab.id)
+        store.waitUntilIdle()
+        // Still only 1 tab and that tab still has the same URL...
+        assertEquals(1, store.state.tabs.size)
+        assertEquals("https://mozilla.org", store.state.tabs[0].content.url)
+        // But it's no longer private and has a different tabId.
+        assertEquals(false, store.state.tabs[0].content.private)
+        assertNotEquals(store.state.tabs[0].id, tab.id)
+    }
+
+    @Test
+    fun `MigratePrivateTabUseCase will respect alternativeUrl`() {
+        // This (obviously!) isn't a real reader-mode URL, but is fine for the purposes of this test.
+        val tab = createTab("https://mozilla.org/reader-mode", private = true)
+        store.dispatch(TabListAction.AddTabAction(tab)).joinBlocking()
+
+        tabsUseCases.migratePrivateTabUseCase(store.state.tabs[0].id, "https://mozilla.org/not-reader-mode")
+        store.waitUntilIdle()
+        // Still only 1 tab with our alternative URL
+        assertEquals(1, store.state.tabs.size)
+        assertEquals("https://mozilla.org/not-reader-mode", store.state.tabs[0].content.url)
+        assertEquals(false, store.state.tabs[0].content.private)
+    }
+
+    @Test
+    fun `MigratePrivateTabUseCase will fail on a regular tab`() {
+        val tab = createTab("https://mozilla.org")
+        store.dispatch(TabListAction.AddTabAction(tab)).joinBlocking()
+        assertEquals(1, store.state.tabs.size)
+        assertThrows(IllegalArgumentException::class.java) {
+            tabsUseCases.migratePrivateTabUseCase(tab.id)
+        }
+    }
+
+    @Test
+    fun `MigratePrivateTabUseCase will fail if the tab can't be found`() {
+        assertThrows(IllegalStateException::class.java) {
+            tabsUseCases.migratePrivateTabUseCase("invalid-tab-id")
+        }
     }
 }

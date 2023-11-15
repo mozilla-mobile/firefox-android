@@ -97,7 +97,7 @@ class CookieBannerHandlingDetailsViewTest {
 
             val expectedText =
                 testContext.getString(
-                    R.string.reduce_cookie_banner_details_panel_title_off_for_site,
+                    R.string.reduce_cookie_banner_details_panel_title_off_for_site_1,
                     "mozilla.org",
                 )
 
@@ -115,7 +115,7 @@ class CookieBannerHandlingDetailsViewTest {
 
             val expectedText =
                 testContext.getString(
-                    R.string.cookie_banner_handling_details_site_is_not_supported_title,
+                    R.string.cookie_banner_handling_details_site_is_not_supported_title_2,
                 )
 
             assertEquals(expectedText, view.binding.title.text)
@@ -137,7 +137,7 @@ class CookieBannerHandlingDetailsViewTest {
 
             val expectedText =
                 testContext.getString(
-                    R.string.reduce_cookie_banner_details_panel_title_on_for_site,
+                    R.string.reduce_cookie_banner_details_panel_title_on_for_site_1,
                     "mozilla.org",
                 )
 
@@ -161,7 +161,7 @@ class CookieBannerHandlingDetailsViewTest {
 
         val expectedText =
             testContext.getString(
-                R.string.reduce_cookie_banner_details_panel_description_off_for_site,
+                R.string.reduce_cookie_banner_details_panel_description_off_for_site_1,
                 testContext.getString(R.string.app_name),
             )
 
@@ -172,9 +172,11 @@ class CookieBannerHandlingDetailsViewTest {
     fun `GIVEN cookie banner handling mode is site not supported WHEN biding description THEN description view must have the expected string`() {
         view.bindDescription(state = CookieBannerUIMode.SITE_NOT_SUPPORTED)
 
+        val appName = testContext.getString(R.string.app_name)
         val expectedText =
             testContext.getString(
-                R.string.reduce_cookie_banner_details_panel_title_unsupported_site_request,
+                R.string.reduce_cookie_banner_details_panel_title_unsupported_site_request_2,
+                appName,
             )
 
         assertEquals(expectedText, view.binding.details.text)
@@ -187,7 +189,7 @@ class CookieBannerHandlingDetailsViewTest {
         val appName = testContext.getString(R.string.app_name)
         val expectedText =
             testContext.getString(
-                R.string.reduce_cookie_banner_details_panel_description_on_for_site_2,
+                R.string.reduce_cookie_banner_details_panel_description_on_for_site_3,
                 appName,
                 appName,
             )

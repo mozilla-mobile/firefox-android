@@ -103,7 +103,7 @@ fun CookieBannerReducerItem(
     ) {
         val painter =
             if (cookieBannerReducerStatus is CookieBannerReducerStatus.NoException) {
-                painterResource(id = R.drawable.mozac_ic_cookies)
+                painterResource(id = R.drawable.mozac_ic_cookies_24)
             } else {
                 painterResource(id = R.drawable.ic_cookies_disable)
             }
@@ -150,7 +150,7 @@ fun CookieBannerReducerItem(
                     .padding(end = 0.dp)
                     .size(24.dp),
                 tint = focusColors.onPrimary,
-                painter = painterResource(id = R.drawable.mozac_ic_arrowhead_right),
+                painter = painterResource(id = R.drawable.mozac_ic_chevron_right_24),
                 contentDescription = null,
             )
         }

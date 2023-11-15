@@ -14,6 +14,7 @@ import android.os.Build
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import androidx.annotation.VisibleForTesting
+import androidx.core.content.ContextCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -22,8 +23,9 @@ import mozilla.components.browser.state.state.SessionState
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.base.crash.CrashReporting
 import mozilla.components.concept.engine.mediasession.MediaSession
+import mozilla.components.feature.media.ext.getArtistOrUrl
+import mozilla.components.feature.media.ext.getNonPrivateIcon
 import mozilla.components.feature.media.ext.getTitleOrUrl
-import mozilla.components.feature.media.ext.nonPrivateUrl
 import mozilla.components.feature.media.ext.toPlaybackState
 import mozilla.components.feature.media.facts.emitNotificationPauseFact
 import mozilla.components.feature.media.facts.emitNotificationPlayFact
@@ -36,6 +38,7 @@ import mozilla.components.feature.media.session.MediaSessionCallback
 import mozilla.components.support.base.android.NotificationsDelegate
 import mozilla.components.support.base.ids.SharedIdsHelper
 import mozilla.components.support.base.log.logger.Logger
+import mozilla.components.support.utils.ext.registerReceiverCompat
 import mozilla.components.support.utils.ext.stopForegroundCompat
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
@@ -221,19 +224,25 @@ internal class MediaSessionServiceDelegate(
     internal fun updateMediaSession(sessionState: SessionState) {
         mediaSession.setPlaybackState(sessionState.mediaSessionState?.toPlaybackState())
         mediaSession.isActive = true
-        mediaSession.setMetadata(
-            MediaMetadataCompat.Builder()
-                .putString(
-                    MediaMetadataCompat.METADATA_KEY_TITLE,
-                    sessionState.getTitleOrUrl(context),
-                )
-                .putString(
-                    MediaMetadataCompat.METADATA_KEY_ARTIST,
-                    sessionState.nonPrivateUrl,
-                )
-                .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, -1)
-                .build(),
-        )
+        notificationScope?.launch {
+            mediaSession.setMetadata(
+                MediaMetadataCompat.Builder()
+                    .putString(
+                        MediaMetadataCompat.METADATA_KEY_TITLE,
+                        sessionState.getTitleOrUrl(context, sessionState.mediaSessionState?.metadata?.title),
+                    )
+                    .putString(
+                        MediaMetadataCompat.METADATA_KEY_ARTIST,
+                        sessionState.getArtistOrUrl(sessionState.mediaSessionState?.metadata?.artist),
+                    )
+                    .putBitmap(
+                        MediaMetadataCompat.METADATA_KEY_ART,
+                        sessionState.getNonPrivateIcon(sessionState.mediaSessionState?.metadata?.getArtwork),
+                    )
+                    .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, -1)
+                    .build(),
+            )
+        }
     }
 
     @VisibleForTesting
@@ -249,7 +258,18 @@ internal class MediaSessionServiceDelegate(
         }
 
         noisyAudioStreamReceiver = BecomingNoisyReceiver(state.mediaSessionState?.controller)
-        context.registerReceiver(noisyAudioStreamReceiver, intentFilter)
+        noisyAudioStreamReceiver?.let {
+            registerBecomingNoisyListener(it)
+        }
+    }
+
+    @VisibleForTesting
+    internal fun registerBecomingNoisyListener(broadcastReceiver: BroadcastReceiver) {
+        context.registerReceiverCompat(
+            broadcastReceiver,
+            intentFilter,
+            ContextCompat.RECEIVER_NOT_EXPORTED,
+        )
     }
 
     @VisibleForTesting
@@ -267,6 +287,7 @@ internal class MediaSessionServiceDelegate(
         // Otherwise, when media is paused, with [STOP_FOREGROUND_DETACH] notification behavior,
         // the notification will persist even after service is stopped and destroyed.
         notificationsDelegate.notificationManagerCompat.cancel(notificationId)
+        unregisterBecomingNoisyListenerIfNeeded()
         service.stopSelf()
     }
 

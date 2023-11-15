@@ -18,14 +18,19 @@ projects:
     publish: true
     upstream_dependencies:
     - browser-errorpages
+    - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
     - concept-storage
     - lib-publicsuffixlist
+    - lib-state
     - service-glean
+    - service-nimbus
     - support-base
     - support-ktx
+    - support-locale
     - support-test
     - support-utils
     - tooling-fetch-tests
@@ -68,6 +73,7 @@ projects:
     upstream_dependencies:
     - browser-errorpages
     - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -90,6 +96,7 @@ projects:
     upstream_dependencies:
     - browser-errorpages
     - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -129,6 +136,7 @@ projects:
     - browser-state
     - browser-tabstray
     - browser-thumbnails
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -140,10 +148,12 @@ projects:
     - feature-tabs
     - lib-publicsuffixlist
     - lib-state
+    - service-nimbus
     - support-android-test
     - support-base
     - support-images
     - support-ktx
+    - support-locale
     - support-test
     - support-test-fakes
     - support-test-libstate
@@ -159,6 +169,7 @@ projects:
     publish: true
     upstream_dependencies:
     - browser-errorpages
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -178,15 +189,12 @@ projects:
     publish: true
     upstream_dependencies:
     - concept-base
-    - concept-fetch
     - concept-storage
     - concept-sync
     - concept-toolbar
     - lib-publicsuffixlist
-    - service-glean
     - support-base
     - support-ktx
-    - support-sync-telemetry
     - support-test
     - support-utils
     - tooling-lint
@@ -197,6 +205,7 @@ projects:
     upstream_dependencies:
     - browser-errorpages
     - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -219,6 +228,7 @@ projects:
     upstream_dependencies:
     - browser-errorpages
     - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -242,6 +252,7 @@ projects:
     - browser-menu
     - browser-menu2
     - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -286,6 +297,7 @@ projects:
     upstream_dependencies:
     - browser-errorpages
     - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -322,6 +334,7 @@ projects:
     upstream_dependencies:
     - browser-errorpages
     - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -345,6 +358,7 @@ projects:
     - browser-state
     - browser-tabstray
     - browser-thumbnails
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -488,6 +502,7 @@ projects:
     - browser-state
     - browser-tabstray
     - browser-thumbnails
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -502,11 +517,9 @@ projects:
     - lib-publicsuffixlist
     - lib-state
     - service-firefox-accounts
-    - service-glean
     - support-base
     - support-images
     - support-ktx
-    - support-sync-telemetry
     - support-test
     - support-utils
     - support-webextensions
@@ -520,7 +533,6 @@ projects:
     publish: true
     upstream_dependencies:
     - concept-base
-    - concept-fetch
     - concept-push
     - concept-storage
     - concept-sync
@@ -529,10 +541,8 @@ projects:
     - lib-publicsuffixlist
     - lib-state
     - service-firefox-accounts
-    - service-glean
     - support-base
     - support-ktx
-    - support-sync-telemetry
     - support-test
     - support-utils
     - tooling-lint
@@ -543,6 +553,7 @@ projects:
     upstream_dependencies:
     - browser-errorpages
     - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -553,6 +564,7 @@ projects:
     - support-base
     - support-ktx
     - support-test
+    - support-test-libstate
     - support-utils
     - support-webextensions
     - tooling-lint
@@ -566,6 +578,7 @@ projects:
     upstream_dependencies:
     - browser-errorpages
     - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -580,7 +593,9 @@ projects:
     - support-test-libstate
     - support-utils
     - tooling-lint
+    - ui-colors
     - ui-icons
+    - ui-widgets
   feature-autofill:
     description: Component adding support for Android`s Autofill framework.
     path: components/feature/autofill
@@ -597,6 +612,9 @@ projects:
     - support-test
     - support-utils
     - tooling-lint
+    - ui-colors
+    - ui-icons
+    - ui-widgets
   feature-awesomebar:
     description: Component connecting a concept-toolbar with a concept-awesomebar.
     path: components/feature/awesomebar
@@ -625,12 +643,11 @@ projects:
     - lib-fetch-httpurlconnection
     - lib-publicsuffixlist
     - lib-state
-    - service-glean
     - service-location
     - support-base
     - support-images
     - support-ktx
-    - support-sync-telemetry
+    - support-remotesettings
     - support-test
     - support-utils
     - tooling-lint
@@ -645,6 +662,7 @@ projects:
     upstream_dependencies:
     - browser-errorpages
     - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -670,6 +688,7 @@ projects:
     - browser-state
     - browser-tabstray
     - browser-thumbnails
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -687,6 +706,7 @@ projects:
     - support-base
     - support-images
     - support-ktx
+    - support-remotesettings
     - support-test
     - support-test-libstate
     - support-utils
@@ -708,6 +728,7 @@ projects:
     - browser-tabstray
     - browser-thumbnails
     - browser-toolbar
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -726,6 +747,7 @@ projects:
     - support-base
     - support-images
     - support-ktx
+    - support-remotesettings
     - support-test
     - support-test-libstate
     - support-utils
@@ -742,6 +764,7 @@ projects:
     upstream_dependencies:
     - browser-errorpages
     - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -755,7 +778,9 @@ projects:
     - support-test-libstate
     - support-utils
     - tooling-lint
+    - ui-colors
     - ui-icons
+    - ui-widgets
   feature-findinpage:
     description: Feature that will subscribe to the selected session and show an UI
       for results of find in page.
@@ -764,10 +789,33 @@ projects:
     upstream_dependencies:
     - browser-errorpages
     - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
     - concept-storage
+    - lib-publicsuffixlist
+    - lib-state
+    - support-base
+    - support-ktx
+    - support-test
+    - support-utils
+    - tooling-lint
+    - ui-icons
+  feature-fxsuggest:
+    description: A component for accessing Firefox Suggest search suggestions.
+    path: components/feature/fxsuggest
+    publish: true
+    upstream_dependencies:
+    - browser-errorpages
+    - browser-state
+    - concept-awesomebar
+    - concept-base
+    - concept-engine
+    - concept-fetch
+    - concept-storage
+    - concept-toolbar
+    - feature-session
     - lib-publicsuffixlist
     - lib-state
     - support-base
@@ -787,6 +835,7 @@ projects:
     - browser-state
     - browser-tabstray
     - browser-thumbnails
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -803,6 +852,7 @@ projects:
     - support-base
     - support-images
     - support-ktx
+    - support-remotesettings
     - support-test
     - support-test-libstate
     - support-utils
@@ -816,23 +866,35 @@ projects:
     publish: true
     upstream_dependencies:
     - browser-errorpages
+    - browser-menu2
+    - browser-session-storage
     - browser-state
+    - browser-tabstray
+    - browser-thumbnails
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
+    - concept-menu
     - concept-storage
+    - concept-tabstray
     - concept-toolbar
     - feature-prompts
     - feature-session
+    - feature-tabs
     - lib-publicsuffixlist
     - lib-state
     - support-android-test
     - support-base
+    - support-images
     - support-ktx
     - support-test
     - support-utils
     - tooling-lint
+    - ui-colors
     - ui-icons
+    - ui-tabcounter
+    - ui-widgets
   feature-media:
     description: Feature component for website media related features.
     path: components/feature/media
@@ -840,6 +902,7 @@ projects:
     upstream_dependencies:
     - browser-errorpages
     - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -860,6 +923,7 @@ projects:
     upstream_dependencies:
     - browser-errorpages
     - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -880,23 +944,35 @@ projects:
     publish: true
     upstream_dependencies:
     - browser-errorpages
+    - browser-menu2
+    - browser-session-storage
     - browser-state
+    - browser-tabstray
+    - browser-thumbnails
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
+    - concept-menu
     - concept-storage
+    - concept-tabstray
     - concept-toolbar
     - feature-session
+    - feature-tabs
     - lib-publicsuffixlist
     - lib-state
     - support-android-test
     - support-base
+    - support-images
     - support-ktx
     - support-test
     - support-test-libstate
     - support-utils
     - tooling-lint
+    - ui-colors
     - ui-icons
+    - ui-tabcounter
+    - ui-widgets
   feature-push:
     description: Feature that implements push notifications with a supported push
       service.
@@ -922,6 +998,7 @@ projects:
     - browser-tabstray
     - browser-thumbnails
     - browser-toolbar
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -941,6 +1018,7 @@ projects:
     - support-base
     - support-images
     - support-ktx
+    - support-remotesettings
     - support-test
     - support-test-libstate
     - support-utils
@@ -969,6 +1047,7 @@ projects:
     - browser-errorpages
     - browser-menu
     - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -992,6 +1071,7 @@ projects:
     - browser-errorpages
     - browser-session-storage
     - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -1020,6 +1100,7 @@ projects:
     - browser-state
     - browser-tabstray
     - browser-thumbnails
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -1035,6 +1116,7 @@ projects:
     - support-base
     - support-images
     - support-ktx
+    - support-remotesettings
     - support-test
     - support-test-fakes
     - support-test-libstate
@@ -1055,6 +1137,7 @@ projects:
     - browser-state
     - browser-tabstray
     - browser-thumbnails
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -1066,9 +1149,11 @@ projects:
     - feature-tabs
     - lib-publicsuffixlist
     - lib-state
+    - service-nimbus
     - support-base
     - support-images
     - support-ktx
+    - support-locale
     - support-test
     - support-utils
     - tooling-lint
@@ -1083,6 +1168,7 @@ projects:
     upstream_dependencies:
     - browser-errorpages
     - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -1123,6 +1209,7 @@ projects:
     - browser-state
     - browser-tabstray
     - browser-thumbnails
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -1165,11 +1252,9 @@ projects:
     - lib-publicsuffixlist
     - lib-state
     - service-firefox-accounts
-    - service-glean
     - support-base
     - support-images
     - support-ktx
-    - support-sync-telemetry
     - support-test
     - support-utils
     - tooling-lint
@@ -1186,6 +1271,7 @@ projects:
     - browser-state
     - browser-tabstray
     - browser-thumbnails
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -1221,6 +1307,7 @@ projects:
     - browser-state
     - browser-tabstray
     - browser-thumbnails
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -1250,6 +1337,7 @@ projects:
     - browser-domains
     - browser-errorpages
     - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -1271,16 +1359,13 @@ projects:
     upstream_dependencies:
     - browser-storage-sync
     - concept-base
-    - concept-fetch
     - concept-storage
     - concept-sync
     - concept-toolbar
     - lib-publicsuffixlist
-    - service-glean
     - support-android-test
     - support-base
     - support-ktx
-    - support-sync-telemetry
     - support-test
     - support-utils
     - tooling-lint
@@ -1309,6 +1394,7 @@ projects:
     upstream_dependencies:
     - browser-errorpages
     - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -1330,6 +1416,7 @@ projects:
     upstream_dependencies:
     - browser-errorpages
     - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -1355,6 +1442,7 @@ projects:
     - browser-state
     - browser-tabstray
     - browser-thumbnails
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -1373,6 +1461,7 @@ projects:
     - support-base
     - support-images
     - support-ktx
+    - support-remotesettings
     - support-test
     - support-utils
     - tooling-lint
@@ -1540,14 +1629,15 @@ projects:
     - service-digitalassetlinks
     - service-glean
     - service-location
+    - service-nimbus
     - service-sync-logins
     - support-android-test
     - support-base
     - support-images
     - support-ktx
     - support-locale
+    - support-remotesettings
     - support-rustlog
-    - support-sync-telemetry
     - support-utils
     - support-webextensions
     - tooling-lint
@@ -1584,17 +1674,20 @@ projects:
     - concept-tabstray
     - concept-toolbar
     - feature-awesomebar
+    - feature-fxsuggest
     - feature-search
     - feature-session
     - feature-tabs
     - lib-publicsuffixlist
     - lib-state
-    - service-glean
     - service-location
+    - service-nimbus
     - support-base
     - support-images
     - support-ktx
-    - support-sync-telemetry
+    - support-locale
+    - support-remotesettings
+    - support-rusthttp
     - support-utils
     - tooling-lint
     - ui-colors
@@ -1643,12 +1736,10 @@ projects:
     - lib-publicsuffixlist
     - lib-state
     - service-firefox-accounts
-    - service-glean
     - support-base
     - support-ktx
     - support-rusthttp
     - support-rustlog
-    - support-sync-telemetry
     - support-utils
     - tooling-lint
   samples-glean:
@@ -1659,6 +1750,7 @@ projects:
     upstream_dependencies:
     - browser-errorpages
     - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -1714,7 +1806,6 @@ projects:
     - support-ktx
     - support-rusthttp
     - support-rustlog
-    - support-sync-telemetry
     - support-utils
     - tooling-lint
   samples-sync-logins:
@@ -1737,7 +1828,6 @@ projects:
     - support-ktx
     - support-rusthttp
     - support-rustlog
-    - support-sync-telemetry
     - support-utils
     - tooling-lint
   samples-toolbar:
@@ -1752,6 +1842,7 @@ projects:
     - browser-menu2
     - browser-state
     - browser-toolbar
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -1783,10 +1874,8 @@ projects:
     - concept-toolbar
     - feature-top-sites
     - lib-publicsuffixlist
-    - service-glean
     - support-base
     - support-ktx
-    - support-sync-telemetry
     - support-test
     - support-utils
     - tooling-lint
@@ -1809,16 +1898,13 @@ projects:
     publish: true
     upstream_dependencies:
     - concept-base
-    - concept-fetch
     - concept-storage
     - concept-sync
     - lib-dataprotect
     - lib-publicsuffixlist
     - lib-state
-    - service-glean
     - support-base
     - support-ktx
-    - support-sync-telemetry
     - support-test
     - support-test-libstate
     - support-utils
@@ -1860,6 +1946,7 @@ projects:
     upstream_dependencies:
     - browser-errorpages
     - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -1918,7 +2005,6 @@ projects:
     - service-glean
     - support-base
     - support-ktx
-    - support-sync-telemetry
     - support-utils
     - tooling-lint
   support-android-test:
@@ -1978,6 +2064,7 @@ projects:
     upstream_dependencies:
     - browser-errorpages
     - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -1991,6 +2078,17 @@ projects:
     - support-utils
     - tooling-lint
     - ui-icons
+  support-remotesettings:
+    description: A component to help fetch data from remote servers.
+    path: components/support/remotesettings
+    publish: true
+    upstream_dependencies:
+    - concept-base
+    - lib-publicsuffixlist
+    - support-base
+    - support-ktx
+    - support-utils
+    - tooling-lint
   support-rusterrors:
     description: A bridge for reporting Rust errors to Sentry/Glean
     path: components/support/rusterrors
@@ -2016,20 +2114,6 @@ projects:
     - concept-base
     - support-base
     - support-test
-    - tooling-lint
-  support-sync-telemetry:
-    description: A collection of sync-related telemetry helper classes and ping descriptions.
-    path: components/support/sync-telemetry
-    publish: true
-    upstream_dependencies:
-    - concept-base
-    - concept-fetch
-    - lib-publicsuffixlist
-    - service-glean
-    - support-base
-    - support-ktx
-    - support-test
-    - support-utils
     - tooling-lint
   support-test:
     description: A collection of helpers for testing components (local unit tests).
@@ -2095,6 +2179,7 @@ projects:
     upstream_dependencies:
     - browser-errorpages
     - browser-state
+    - concept-awesomebar
     - concept-base
     - concept-engine
     - concept-fetch
@@ -2167,6 +2252,7 @@ projects:
     - support-test
     - support-utils
     - tooling-lint
+    - ui-colors
     - ui-icons
   ui-widgets:
     description: The standard set of Mozilla widgets.

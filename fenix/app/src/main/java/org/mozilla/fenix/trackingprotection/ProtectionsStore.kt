@@ -42,7 +42,7 @@ sealed class ProtectionsAction : Action {
     /**
      * Toggles the enabled state of cookie banner handling protection.
      *
-     * @param cookieBannerUIMode the current status of the cookie banner handling mode.
+     * @property cookieBannerUIMode the current status of the cookie banner handling mode.
      */
     data class ToggleCookieBannerHandlingProtectionEnabled(val cookieBannerUIMode: CookieBannerUIMode) :
         ProtectionsAction()
@@ -50,7 +50,7 @@ sealed class ProtectionsAction : Action {
     /**
      * Reports a site domain where cookie banner reducer didn't work.
      *
-     * @param url to report.
+     * @property url to report.
      */
     data class RequestReportSiteDomain(
         val url: String,
@@ -168,7 +168,7 @@ enum class CookieBannerUIMode(
      * for adding support for cookie banner handling for the domain.
      */
     REQUEST_UNSUPPORTED_SITE_SUBMITTED(
-        R.string.reduce_cookie_banner_unsupported_site_request_submitted,
+        R.string.reduce_cookie_banner_unsupported_site_request_submitted_2,
         R.drawable.ic_cookies_disabled,
     ),
 

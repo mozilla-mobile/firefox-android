@@ -18,6 +18,9 @@ import mozilla.components.service.nimbus.NimbusApi
 import mozilla.components.service.nimbus.messaging.FxNimbusMessaging
 import mozilla.components.service.nimbus.messaging.NimbusMessagingStorage
 import mozilla.components.service.nimbus.messaging.OnDiskMessageMetadataStorage
+import mozilla.components.support.ktx.android.content.isMainProcess
+import mozilla.components.support.utils.BrowsersCache
+import mozilla.components.support.utils.RunWhenReadyQueue
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.HomeActivity
@@ -26,14 +29,15 @@ import org.mozilla.fenix.ReleaseChannel
 import org.mozilla.fenix.components.metrics.AdjustMetricsService
 import org.mozilla.fenix.components.metrics.DefaultMetricsStorage
 import org.mozilla.fenix.components.metrics.GleanMetricsService
+import org.mozilla.fenix.components.metrics.InstallReferrerMetricsService
 import org.mozilla.fenix.components.metrics.MetricController
 import org.mozilla.fenix.components.metrics.MetricsStorage
+import org.mozilla.fenix.crashes.CrashFactCollector
 import org.mozilla.fenix.experiments.createNimbus
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.messaging.CustomAttributeProvider
 import org.mozilla.fenix.perf.lazyMonitored
-import org.mozilla.fenix.utils.BrowsersCache
 import org.mozilla.geckoview.BuildConfig.MOZ_APP_BUILDID
 import org.mozilla.geckoview.BuildConfig.MOZ_APP_VENDOR
 import org.mozilla.geckoview.BuildConfig.MOZ_APP_VERSION
@@ -44,6 +48,7 @@ import org.mozilla.geckoview.BuildConfig.MOZ_UPDATE_CHANNEL
  */
 class Analytics(
     private val context: Context,
+    private val runWhenReadyQueue: RunWhenReadyQueue,
 ) {
     val crashReporter: CrashReporter by lazyMonitored {
         val services = mutableListOf<CrashReporterService>()
@@ -72,6 +77,13 @@ class Analytics(
                 sendCaughtExceptions = shouldSendCaughtExceptions,
                 sentryProjectUrl = getSentryProjectUrl(),
             )
+
+            // We only want to initialize Sentry on startup on the main process.
+            if (context.isMainProcess()) {
+                runWhenReadyQueue.runIfReadyOrQueue {
+                    sentryService.initIfNeeded()
+                }
+            }
 
             services.add(sentryService)
         }
@@ -119,6 +131,10 @@ class Analytics(
         )
     }
 
+    val crashFactCollector: CrashFactCollector by lazyMonitored {
+        CrashFactCollector(crashReporter)
+    }
+
     val metricsStorage: MetricsStorage by lazyMonitored {
         DefaultMetricsStorage(
             context = context,
@@ -136,6 +152,7 @@ class Analytics(
                     storage = metricsStorage,
                     crashReporter = crashReporter,
                 ),
+                InstallReferrerMetricsService(context),
             ),
             isDataTelemetryEnabled = { context.settings().isTelemetryEnabled },
             isMarketingDataTelemetryEnabled = { context.settings().isMarketingTelemetryEnabled },

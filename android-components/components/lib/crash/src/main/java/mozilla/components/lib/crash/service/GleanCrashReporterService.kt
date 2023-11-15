@@ -89,12 +89,16 @@ class GleanCrashReporterService(
             val timeMillis: Long,
             val startup: Boolean,
             val reason: Pings.crashReasonCodes,
+            val cause: String = "os_fault",
+            val remoteType: String = "",
         ) : GleanCrashAction() {
             override fun submit() {
                 GleanCrash.uptime.setRawNanos(uptimeNanos)
                 GleanCrash.processType.set(processType)
+                GleanCrash.remoteType.set(remoteType)
                 GleanCrash.time.set(Date(timeMillis))
                 GleanCrash.startup.set(startup)
+                GleanCrash.cause.set(cause)
                 Pings.crash.submit(reason)
             }
         }
@@ -235,6 +239,17 @@ class GleanCrashReporterService(
 
     override fun record(crash: Crash.UncaughtExceptionCrash) {
         recordCrashAction(GleanCrashAction.Count(UNCAUGHT_EXCEPTION_KEY))
+        recordCrashAction(
+            GleanCrashAction.Ping(
+                uptimeNanos = uptime(),
+                processType = "main",
+                remoteType = "",
+                timeMillis = crash.timestamp,
+                startup = false,
+                reason = Pings.crashReasonCodes.crash,
+                cause = "java_exception",
+            ),
+        )
     }
 
     override fun record(crash: Crash.NativeCodeCrash) {
@@ -263,9 +278,11 @@ class GleanCrashReporterService(
                     Crash.NativeCodeCrash.PROCESS_TYPE_FOREGROUND_CHILD -> "content"
                     else -> "main"
                 },
+                remoteType = crash.remoteType ?: "",
                 timeMillis = crash.timestamp,
                 startup = false,
                 reason = Pings.crashReasonCodes.crash,
+                cause = "os_fault",
             ),
         )
     }

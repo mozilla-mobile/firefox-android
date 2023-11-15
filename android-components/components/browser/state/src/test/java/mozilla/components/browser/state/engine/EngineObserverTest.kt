@@ -13,8 +13,10 @@ import mozilla.components.browser.state.action.BrowserAction
 import mozilla.components.browser.state.action.ContentAction
 import mozilla.components.browser.state.action.CookieBannerAction
 import mozilla.components.browser.state.action.CrashAction
+import mozilla.components.browser.state.action.ReaderAction
 import mozilla.components.browser.state.action.TabListAction
 import mozilla.components.browser.state.action.TrackingProtectionAction
+import mozilla.components.browser.state.action.TranslationsAction
 import mozilla.components.browser.state.selector.findTab
 import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.browser.state.state.AppIntentState
@@ -36,6 +38,10 @@ import mozilla.components.concept.engine.manifest.WebAppManifest
 import mozilla.components.concept.engine.mediasession.MediaSession
 import mozilla.components.concept.engine.permission.PermissionRequest
 import mozilla.components.concept.engine.prompt.PromptRequest
+import mozilla.components.concept.engine.shopping.ProductAnalysis
+import mozilla.components.concept.engine.shopping.ProductRecommendation
+import mozilla.components.concept.engine.translate.TranslationOperation
+import mozilla.components.concept.engine.translate.TranslationOptions
 import mozilla.components.concept.engine.window.WindowRequest
 import mozilla.components.concept.fetch.Response
 import mozilla.components.support.test.libstate.ext.waitUntilIdle
@@ -54,6 +60,7 @@ import org.mockito.Mockito.verify
 
 @RunWith(AndroidJUnit4::class)
 class EngineObserverTest {
+    // TO DO: add tests for product URL after a test endpoint is implemented in desktop (Bug 1846341)
     @Test
     fun engineSessionObserver() {
         val engineSession = object : EngineSession() {
@@ -72,6 +79,47 @@ class EngineObserverTest {
                 onResult: (Boolean) -> Unit,
                 onException: (Throwable) -> Unit,
             ) {}
+            override fun checkForPdfViewer(
+                onResult: (Boolean) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+            override fun requestProductAnalysis(
+                url: String,
+                onResult: (ProductAnalysis) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+
+            override fun requestProductRecommendations(
+                url: String,
+                onResult: (List<ProductRecommendation>) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+            override fun reanalyzeProduct(
+                url: String,
+                onResult: (String) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+            override fun requestAnalysisStatus(
+                url: String,
+                onResult: (String) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+            override fun sendClickAttributionEvent(
+                aid: String,
+                onResult: (Boolean) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+            override fun sendImpressionAttributionEvent(
+                aid: String,
+                onResult: (Boolean) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+            override fun requestTranslate(
+                fromLanguage: String,
+                toLanguage: String,
+                options: TranslationOptions?,
+            ) {}
+            override fun requestTranslationRestore() {}
             override fun findAll(text: String) {}
             override fun findNext(forward: Boolean) {}
             override fun clearFindMatches() {}
@@ -84,6 +132,7 @@ class EngineObserverTest {
                 notifyObservers { onNavigationStateChange(true, true) }
             }
             override fun requestPdfToDownload() = Unit
+            override fun requestPrintContent() = Unit
             override fun loadUrl(
                 url: String,
                 parent: EngineSession?,
@@ -132,6 +181,47 @@ class EngineObserverTest {
                 onResult: (Boolean) -> Unit,
                 onException: (Throwable) -> Unit,
             ) {}
+            override fun checkForPdfViewer(
+                onResult: (Boolean) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+            override fun requestProductAnalysis(
+                url: String,
+                onResult: (ProductAnalysis) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+
+            override fun requestProductRecommendations(
+                url: String,
+                onResult: (List<ProductRecommendation>) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+            override fun reanalyzeProduct(
+                url: String,
+                onResult: (String) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+            override fun requestAnalysisStatus(
+                url: String,
+                onResult: (String) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+            override fun sendClickAttributionEvent(
+                aid: String,
+                onResult: (Boolean) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+            override fun sendImpressionAttributionEvent(
+                aid: String,
+                onResult: (Boolean) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+            override fun requestTranslate(
+                fromLanguage: String,
+                toLanguage: String,
+                options: TranslationOptions?,
+            ) {}
+            override fun requestTranslationRestore() {}
             override fun findAll(text: String) {}
             override fun findNext(forward: Boolean) {}
             override fun clearFindMatches() {}
@@ -139,6 +229,7 @@ class EngineObserverTest {
             override fun purgeHistory() {}
             override fun loadData(data: String, mimeType: String, encoding: String) {}
             override fun requestPdfToDownload() = Unit
+            override fun requestPrintContent() = Unit
             override fun loadUrl(
                 url: String,
                 parent: EngineSession?,
@@ -188,6 +279,48 @@ class EngineObserverTest {
                 onResult: (Boolean) -> Unit,
                 onException: (Throwable) -> Unit,
             ) {}
+            override fun checkForPdfViewer(
+                onResult: (Boolean) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+
+            override fun requestProductRecommendations(
+                url: String,
+                onResult: (List<ProductRecommendation>) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+
+            override fun requestProductAnalysis(
+                url: String,
+                onResult: (ProductAnalysis) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+            override fun reanalyzeProduct(
+                url: String,
+                onResult: (String) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+            override fun requestAnalysisStatus(
+                url: String,
+                onResult: (String) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+            override fun sendClickAttributionEvent(
+                aid: String,
+                onResult: (Boolean) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+            override fun sendImpressionAttributionEvent(
+                aid: String,
+                onResult: (Boolean) -> Unit,
+                onException: (Throwable) -> Unit,
+            ) {}
+            override fun requestTranslate(
+                fromLanguage: String,
+                toLanguage: String,
+                options: TranslationOptions?,
+            ) {}
+            override fun requestTranslationRestore() {}
             override fun loadUrl(
                 url: String,
                 parent: EngineSession?,
@@ -196,6 +329,7 @@ class EngineObserverTest {
             ) {}
             override fun loadData(data: String, mimeType: String, encoding: String) {}
             override fun requestPdfToDownload() = Unit
+            override fun requestPrintContent() = Unit
             override fun findAll(text: String) {}
             override fun findNext(forward: Boolean) {}
             override fun clearFindMatches() {}
@@ -253,6 +387,31 @@ class EngineObserverTest {
                 "mozilla",
                 HANDLED,
             ),
+        )
+    }
+
+    @Test
+    fun `WHEN onTranslateComplete is called THEN dispatch a TranslationsAction TranslateSuccessAction`() {
+        val store: BrowserStore = mock()
+        val observer = EngineObserver("mozilla", store)
+
+        observer.onTranslateComplete(operation = TranslationOperation.TRANSLATE)
+
+        verify(store).dispatch(
+            TranslationsAction.TranslateSuccessAction("mozilla", operation = TranslationOperation.TRANSLATE),
+        )
+    }
+
+    @Test
+    fun `WHEN onTranslateException is called THEN dispatch a TranslationsAction TranslateExceptionAction`() {
+        val store: BrowserStore = mock()
+        val observer = EngineObserver("mozilla", store)
+        val exception = Exception()
+
+        observer.onTranslateException(operation = TranslationOperation.TRANSLATE, exception)
+
+        verify(store).dispatch(
+            TranslationsAction.TranslateExceptionAction("mozilla", operation = TranslationOperation.TRANSLATE, exception),
         )
     }
 
@@ -867,7 +1026,7 @@ class EngineObserverTest {
 
     @Test
     fun engineObserverHandlesPromptRequest() {
-        val promptRequest: PromptRequest = mock()
+        val promptRequest: PromptRequest = mock<PromptRequest.SingleChoice>()
         val store: BrowserStore = mock()
         val observer = EngineObserver("tab-id", store)
 
@@ -882,7 +1041,7 @@ class EngineObserverTest {
 
     @Test
     fun engineObserverHandlesOnPromptUpdate() {
-        val promptRequest: PromptRequest = mock()
+        val promptRequest: PromptRequest = mock<PromptRequest.SingleChoice>()
         val store: BrowserStore = mock()
         val observer = EngineObserver("tab-id", store)
         val previousPromptUID = "prompt-uid"
@@ -1531,6 +1690,21 @@ class EngineObserverTest {
                     HistoryItem("Mozilla", "http://mozilla.org"),
                 ),
                 currentIndex = 1,
+            ),
+        )
+    }
+
+    @Test
+    fun `onScrollChange dispatches UpdateReaderScrollYAction`() {
+        val store: BrowserStore = mock()
+        whenever(store.state).thenReturn(mock())
+        val observer = EngineObserver("tab-id", store)
+
+        observer.onScrollChange(4321, 1234)
+        verify(store).dispatch(
+            ReaderAction.UpdateReaderScrollYAction(
+                "tab-id",
+                1234,
             ),
         )
     }

@@ -14,14 +14,14 @@ import org.mozilla.fenix.FenixApplication
 import org.mozilla.fenix.R
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
+import org.mozilla.fenix.helpers.AppAndSystemHelper.registerAndCleanupIdlingResources
+import org.mozilla.fenix.helpers.AppAndSystemHelper.runWithSystemLocaleChanged
+import org.mozilla.fenix.helpers.DataGenerationHelper.getStringResource
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.RecyclerViewIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper.getLoremIpsumAsset
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeLong
-import org.mozilla.fenix.helpers.TestHelper.getStringResource
 import org.mozilla.fenix.helpers.TestHelper.mDevice
-import org.mozilla.fenix.helpers.TestHelper.registerAndCleanupIdlingResources
-import org.mozilla.fenix.helpers.TestHelper.runWithSystemLocaleChanged
 import org.mozilla.fenix.ui.robots.checkTextSizeOnWebsite
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.util.FRENCH_LANGUAGE_HEADER
@@ -35,7 +35,6 @@ import java.util.Locale
  *
  */
 class SettingsGeneralTest {
-    /* ktlint-disable no-blank-line-before-rbrace */ // This imposes unreadable grouping.
     private lateinit var mockWebServer: MockWebServer
 
     @get:Rule
@@ -54,8 +53,9 @@ class SettingsGeneralTest {
         mockWebServer.shutdown()
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2092697
     @Test
-    fun settingsGeneralItemsTests() {
+    fun verifyGeneralSettingsItemsTest() {
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
@@ -77,8 +77,10 @@ class SettingsGeneralTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/344213
+    @SmokeTest
     @Test
-    fun changeAccessibiltySettings() {
+    fun verifyFontSizingChangeTest() {
         // Goes through the settings and changes the default text on a webpage, then verifies if the text has changed.
         val fenixApp = activityIntentTestRule.activity.applicationContext as FenixApplication
         val webpage = getLoremIpsumAsset(mockWebServer).url
@@ -107,9 +109,10 @@ class SettingsGeneralTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/516079
     @SmokeTest
     @Test
-    fun switchLanguageTest() {
+    fun setAppLanguageDifferentThanSystemLanguageTest() {
         val enLanguageHeaderText = getStringResource(R.string.preferences_language)
 
         homeScreen {
@@ -132,6 +135,7 @@ class SettingsGeneralTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/516080
     @Test
     fun searchInLanguagesListTest() {
         val systemLocaleDefault = getStringResource(R.string.default_locale_text)
@@ -153,10 +157,11 @@ class SettingsGeneralTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/516078
     // Because it requires changing system prefs, this test will run only on Debug builds
     @Ignore("Failing due to app translation bug, see: https://github.com/mozilla-mobile/fenix/issues/26729")
     @Test
-    fun frenchSystemLocaleTest() {
+    fun verifyFollowDeviceLanguageTest() {
         val frenchLocale = Locale("fr", "FR")
 
         runWithSystemLocaleChanged(frenchLocale, activityIntentTestRule) {
@@ -172,35 +177,18 @@ class SettingsGeneralTest {
         }
     }
 
-    @SmokeTest
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1360557
     @Test
-    fun verifyHomepageOptionSummaryUpdatesTest() {
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-            verifySettingsOptionSummary("Homepage", "Open on homepage after four hours")
-        }.openHomepageSubMenu {
-            verifySelectedOpeningScreenOption("Homepage after four hours of inactivity")
-            clickOpeningScreenOption("Homepage")
-            verifySelectedOpeningScreenOption("Homepage")
-        }.goBack {
-            verifySettingsOptionSummary("Homepage", "Open on homepage")
-        }.openHomepageSubMenu {
-            clickOpeningScreenOption("Last tab")
-            verifySelectedOpeningScreenOption("Last tab")
-        }.goBack {
-            verifySettingsOptionSummary("Homepage", "Open on last tab")
-        }
-    }
-
-    @Test
-    fun verifyTabsOptionSummaryUpdatesTest() {
+    fun tabsSettingsMenuItemsTest() {
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
             verifyTabsButton()
             verifySettingsOptionSummary("Tabs", "Close manually")
         }.openTabsSubMenu {
+            verifyTabViewOptions()
+            verifyCloseTabsOptions()
+            verifyMoveOldTabsToInactiveOptions()
             verifySelectedCloseTabsOption("Never")
             clickClosedTabsOption("After one day")
             verifySelectedCloseTabsOption("After one day")
@@ -217,5 +205,22 @@ class SettingsGeneralTest {
         }.goBack {
             verifySettingsOptionSummary("Tabs", "Close after one month")
         }
+    }
+
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/243583
+    // For API>23
+    // Verifies the default browser switch opens the system default apps menu.
+    @SmokeTest
+    @Test
+    fun changeDefaultBrowserSetting() {
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+            verifyDefaultBrowserToggle(false)
+            clickDefaultBrowserSwitch()
+            verifyAndroidDefaultAppsMenuAppears()
+        }
+        // Dismiss the request
+        mDevice.pressBack()
     }
 }
