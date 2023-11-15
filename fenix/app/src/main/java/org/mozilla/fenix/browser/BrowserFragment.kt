@@ -500,6 +500,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                                 binding.dynamicSnackbarContainer,
                                 getString(R.string.snackbar_account_deleted),
                             )
+                            requireContext().settings().shouldShowAccountDeletedSnackbar = false
                         }
                     }
                 },

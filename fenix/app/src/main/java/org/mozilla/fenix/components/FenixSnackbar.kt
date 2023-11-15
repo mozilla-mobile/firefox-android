@@ -247,8 +247,9 @@ private class FenixSnackbarCallback(
 /**
  * Shows the Fenix Snackbar in the given view along with the provided text.
  *
- * @param containerView A [View] used to determine a parent for the [FenixSnackbar].
  * @param context Used to access settings and string resources.
+ * @param containerView A [View] used to determine a parent for the [FenixSnackbar].
+ * @param anchorView An optional [View] used as an anchor for the [FenixSnackbar].
  */
 fun maybeShowAccountDeletedSnackBar(
     context: Context,

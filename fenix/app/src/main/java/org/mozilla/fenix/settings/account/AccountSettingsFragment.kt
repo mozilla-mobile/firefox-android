@@ -68,11 +68,11 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
         }
 
         override fun onLoggedOut() {
-            forceCloseAndClearData()
+            closeAndClearData()
         }
     }
 
-    private fun forceCloseAndClearData() {
+    private fun closeAndClearData() {
         viewLifecycleOwner.lifecycleScope.launch {
             findNavController().popBackStack()
 
@@ -91,7 +91,7 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
         // The user might have deleted the account through the "manage account" tab, in which case
         // the account settings fragment should not be shown.
         if (accountManager.accountProfile() == null) {
-            forceCloseAndClearData()
+            closeAndClearData()
         }
     }
 

@@ -422,7 +422,7 @@ open class FxaAccountManager(
      * Should be called once the user deletes the account.
      * It clears the account data and notifies the observers that account has been deleted.
      */
-    suspend fun onAccountDeleted() = withContext(coroutineContext) { processQueue(Event.Account.Delete) }
+    suspend fun handleAccountDeletion() = withContext(coroutineContext) { processQueue(Event.Account.Delete) }
 
     /**
      * Register a [AccountEventsObserver] to monitor events relevant to an account/device.

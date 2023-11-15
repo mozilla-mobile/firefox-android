@@ -1,0 +1,64 @@
+{
+  "version": 3,
+  "artifactType": {
+    "type": "APK",
+    "kind": "Directory"
+  },
+  "applicationId": "org.mozilla.fenix",
+  "variantName": "fenixNightly",
+  "elements": [
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
+          "value": "x86_64"
+        }
+      ],
+      "attributes": [],
+      "versionCode": 2015963399,
+      "versionName": "117.0a1",
+      "outputFile": "app-fenix-x86_64-nightly.apk"
+    },
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
+          "value": "x86"
+        }
+      ],
+      "attributes": [],
+      "versionCode": 2015963397,
+      "versionName": "117.0a1",
+      "outputFile": "app-fenix-x86-nightly.apk"
+    },
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
+          "value": "armeabi-v7a"
+        }
+      ],
+      "attributes": [],
+      "versionCode": 2015963393,
+      "versionName": "117.0a1",
+      "outputFile": "app-fenix-armeabi-v7a-nightly.apk"
+    },
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
+          "value": "arm64-v8a"
+        }
+      ],
+      "attributes": [],
+      "versionCode": 2015963395,
+      "versionName": "117.0a1",
+      "outputFile": "app-fenix-arm64-v8a-nightly.apk"
+    }
+  ],
+  "elementType": "File"
+}
