@@ -1361,6 +1361,8 @@
     <string name="snackbar_deleted_undo">UNDO</string>
     <!-- Text shown in snackbar when user removes a top site -->
     <string name="snackbar_top_site_removed">Site removed</string>
+    <!-- Text shown in snackbar when user deletes the signed in account -->
+    <string name="snackbar_account_deleted">Account deleted</string>
     <!-- QR code scanner prompt which appears after scanning a code, but before navigating to it
         First parameter is the name of the app, second parameter is the URL or text scanned-->
     <string name="qr_scanner_confirmation_dialog_message">Allow %1$s to open %2$s</string>

@@ -157,7 +157,7 @@ class FxaWebChannelFeature(
                 WebChannelCommand.CAN_LINK_ACCOUNT -> processCanLinkAccountCommand(messageId)
                 WebChannelCommand.FXA_STATUS -> processFxaStatusCommand(accountManager, messageId, fxaCapabilities)
                 WebChannelCommand.OAUTH_LOGIN -> processOauthLoginCommand(accountManager, payload)
-                WebChannelCommand.DELETE -> processDeleteCommand(accountManager)
+                WebChannelCommand.DELETE -> processDeleteCommand(accountManager, payload)
             }
             response?.let { port.postMessage(it) }
         }
@@ -373,12 +373,22 @@ class FxaWebChannelFeature(
         /**
          * Handles the [COMMAND_DELETE] event from the web-channel.
          */
-        private fun processDeleteCommand(accountManager: FxaAccountManager) : JSONObject? {
-            CoroutineScope(Dispatchers.Main).launch {
-                accountManager.onAccountDeleted()
-            }
+        private fun processDeleteCommand(accountManager: FxaAccountManager, payload: JSONObject) : JSONObject? {
+            return try {
+                val data = payload.getJSONObject("data")
+                val uid = data.getString("uid")
+                if (uid.isNotEmpty() && uid == accountManager.accountProfile()?.uid) {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        accountManager.onAccountDeleted()
+                    }
+                }
 
-            return null
+                null
+            } catch (e: JSONException) {
+                // TODO ideally, this should log to Sentry.
+                logger.error("Error while processing WebChannel fxaccounts:delete command", e)
+                null
+            }
         }
 
         private fun String.toWebChannelCommand(): WebChannelCommand? {

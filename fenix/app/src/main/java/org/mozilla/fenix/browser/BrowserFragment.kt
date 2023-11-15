@@ -24,6 +24,8 @@ import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.thumbnails.BrowserThumbnails
 import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.concept.engine.permission.SitePermissions
+import mozilla.components.concept.sync.AccountObserver
+import mozilla.components.feature.addons.ui.translateName
 import mozilla.components.feature.app.links.AppLinksUseCases
 import mozilla.components.feature.contextmenu.ContextMenuCandidate
 import mozilla.components.feature.readerview.ReaderViewFeature
@@ -36,6 +38,7 @@ import org.mozilla.fenix.GleanMetrics.ReaderMode
 import org.mozilla.fenix.GleanMetrics.Shopping
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.addons.showSnackBar
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.appstate.AppAction
@@ -449,6 +452,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
         }
 
         subscribeToTabCollections()
+        subscribeToAccountManager()
         updateLastBrowseActivity()
     }
 
@@ -478,6 +482,29 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
         }.also { observer ->
             requireComponents.core.tabCollectionStorage.getCollections()
                 .observe(viewLifecycleOwner, observer)
+        }
+    }
+
+    private fun subscribeToAccountManager() {
+        requireComponents.backgroundServices.accountManagerAvailableQueue.runIfReadyOrQueue {
+            // By the time this code runs, we may not be attached to a context or have a view lifecycle owner.
+            if ((this@BrowserFragment).view?.context == null) {
+                return@runIfReadyOrQueue
+            }
+
+            requireComponents.backgroundServices.accountManager.register(
+                object : AccountObserver {
+                    override fun onAccountDeleted() {
+                        runIfFragmentIsAttached {
+                            showSnackBar(
+                                binding.dynamicSnackbarContainer,
+                                getString(R.string.snackbar_account_deleted),
+                            )
+                        }
+                    }
+                },
+                owner = this@BrowserFragment.viewLifecycleOwner,
+            )
         }
     }
 
