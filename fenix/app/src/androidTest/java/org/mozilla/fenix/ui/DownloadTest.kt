@@ -201,7 +201,7 @@ class DownloadTest {
         downloadRobot {
             openPageAndDownloadFile(url = downloadTestPage.toUri(), downloadFile = firstDownloadedFile)
             verifyDownloadedFileName(firstDownloadedFile)
-        }.closeCompletedDownloadPrompt {
+        }.closeDownloadPrompt {
         }.clickDownloadLink(secondDownloadedFile) {
             verifyDownloadPrompt(secondDownloadedFile)
         }.clickDownload {
@@ -278,6 +278,7 @@ class DownloadTest {
     }
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2299297
+    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1842154")
     @Test
     fun notificationCanBeDismissedIfDownloadIsInterruptedTest() {
         downloadRobot {

@@ -64,10 +64,16 @@ sealed interface ReviewQualityCheckAction : Action {
      * @property isProductRecommendationsEnabled Reflects the user preference update to display
      * recommended product. Null when product recommendations feature is disabled.
      * @property productVendor The vendor of the product.
+     * @property isHighlightsExpanded Whether the highlights card should be expanded.
+     * @property isInfoExpanded Whether the info card should be expanded.
+     * @property isSettingsExpanded Whether the settings card should be expanded.
      */
     data class OptInCompleted(
         val isProductRecommendationsEnabled: Boolean?,
         val productVendor: ReviewQualityCheckState.ProductVendor,
+        val isHighlightsExpanded: Boolean,
+        val isInfoExpanded: Boolean,
+        val isSettingsExpanded: Boolean,
     ) : UpdateAction
 
     /**
@@ -110,6 +116,26 @@ sealed interface ReviewQualityCheckAction : Action {
      * Triggered when the user clicks on the analyze button
      */
     object AnalyzeProduct : NetworkAction, UpdateAction, TelemetryAction
+
+    /**
+     * Triggered when the user clicks on the recommended product.
+     *
+     * @property productAid The product's aid.
+     * @property productUrl The product's link to open.
+     */
+    data class RecommendedProductClick(
+        val productAid: String,
+        val productUrl: String,
+    ) : NavigationMiddlewareAction, NetworkAction
+
+    /**
+     * Triggered when the user views the recommended product.
+     *
+     * @property productAid The product's aid.
+     */
+    data class RecommendedProductImpression(
+        val productAid: String,
+    ) : NetworkAction
 
     /**
      * Triggered when the user clicks on learn more link on the explainer card.
@@ -158,17 +184,17 @@ sealed interface ReviewQualityCheckAction : Action {
     /**
      * Triggered when the user expands the recent reviews card.
      */
-    object ShowMoreRecentReviewsClicked : TelemetryAction
+    object ExpandCollapseHighlights : TelemetryAction, UpdateAction, PreferencesMiddlewareAction
 
     /**
      * Triggered when the user expands or collapses the settings card.
      */
-    object ExpandCollapseSettings : TelemetryAction, UpdateAction
+    object ExpandCollapseSettings : TelemetryAction, UpdateAction, PreferencesMiddlewareAction
 
     /**
      * Triggered when the user expands or collapses the info card.
      */
-    object ExpandCollapseInfo : UpdateAction
+    object ExpandCollapseInfo : UpdateAction, PreferencesMiddlewareAction
 
     /**
      * Triggered when the No analysis card is displayed to the user.
@@ -179,11 +205,4 @@ sealed interface ReviewQualityCheckAction : Action {
      * Triggered when the user reports a product is back in stock.
      */
     object ReportProductBackInStock : TelemetryAction
-
-    /**
-     * Triggered when the user clicks on the recommended product.
-     *
-     * @property productUrl The product's link to open.
-     */
-    data class OpenRecommendedProduct(val productUrl: String) : NavigationMiddlewareAction
 }
