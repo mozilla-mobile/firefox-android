@@ -28,13 +28,11 @@ object FenixVersions {
     const val androidx_datastore = "1.0.0"
     const val google_accompanist = "0.30.1"
 
-    const val adjust = "4.33.0"
+    const val adjust = "4.35.1"
     const val installreferrer = "2.2"
 
     const val junit = "5.9.3"
     const val mockk = "1.13.7"
-
-    const val mockwebserver = "4.11.0"
 
     const val google_ads_id_version = "16.0.0"
 
@@ -92,8 +90,6 @@ object FenixDependencies {
     // Truth is unused
     // Test services is unused
     // --- END AndroidX test dependencies --- //
-
-    const val mockwebserver = "com.squareup.okhttp3:mockwebserver:${FenixVersions.mockwebserver}"
 
     const val google_ads_id = "com.google.android.gms:play-services-ads-identifier:${FenixVersions.google_ads_id_version}"
 

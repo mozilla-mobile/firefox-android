@@ -25,22 +25,24 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withParent
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.uiautomator.By
+import androidx.test.uiautomator.UiScrollable
 import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.CoreMatchers.instanceOf
-import org.hamcrest.CoreMatchers.not
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.Constants.RETRY_COUNT
+import org.mozilla.fenix.helpers.Constants.TAG
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
+import org.mozilla.fenix.helpers.MatcherHelper.assertItemContainingTextExists
+import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithResIdExists
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithText
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeLong
-import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
 import org.mozilla.fenix.helpers.TestHelper.appName
 import org.mozilla.fenix.helpers.TestHelper.mDevice
+import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.TestHelper.restartApp
 import org.mozilla.fenix.helpers.TestHelper.scrollToElementByText
 import org.mozilla.fenix.helpers.click
@@ -51,6 +53,9 @@ import org.mozilla.fenix.helpers.ext.waitNotNull
  */
 
 class SettingsSubMenuAddonsManagerRobot {
+    fun verifyAddonsListIsDisplayed(shouldBeDisplayed: Boolean) =
+        assertItemWithResIdExists(addonsList(), exists = shouldBeDisplayed)
+
     fun verifyAddonPermissionPrompt(addonName: String) {
         mDevice.waitNotNull(Until.findObject(By.text("Add $addonName?")), waitingTime)
 
@@ -67,36 +72,47 @@ class SettingsSubMenuAddonsManagerRobot {
     }
 
     fun clickInstallAddon(addonName: String) {
-        mDevice.waitNotNull(
-            Until.findObject(By.textContains(addonName)),
-            waitingTime,
+        Log.i(TAG, "clickInstallAddon: Looking for $addonName install button")
+        addonsList().waitForExists(waitingTime)
+        addonsList().scrollIntoView(
+            mDevice.findObject(
+                UiSelector()
+                    .resourceId("$packageName:id/details_container")
+                    .childSelector(UiSelector().text(addonName)),
+            ),
         )
-
-        installButtonForAddon(addonName)
-            .check(matches(isCompletelyDisplayed()))
-            .perform(click())
+        addonsList().ensureFullyVisible(
+            mDevice.findObject(
+                UiSelector()
+                    .resourceId("$packageName:id/details_container")
+                    .childSelector(UiSelector().text(addonName)),
+            ),
+        )
+        Log.i(TAG, "clickInstallAddon: Found $addonName install button")
+        installButtonForAddon(addonName).click()
+        Log.i(TAG, "clickInstallAddon: Clicked Install $addonName button")
     }
 
     fun verifyAddonInstallCompleted(addonName: String, activityTestRule: HomeActivityIntentTestRule) {
         for (i in 1..RETRY_COUNT) {
             try {
-                assertFalse(
-                    mDevice.findObject(UiSelector().text("Failed to install $addonName"))
-                        .waitForExists(waitingTimeShort),
-                )
+                assertItemContainingTextExists(itemWithText("Okay, Got it"), waitingTime = waitingTimeLong)
 
-                assertTrue(
-                    mDevice.findObject(UiSelector().text("Okay, Got it"))
-                        .waitForExists(waitingTimeLong),
-                )
                 break
             } catch (e: AssertionError) {
                 if (i == RETRY_COUNT) {
                     throw e
                 } else {
-                    Log.e("TestLog", "Addon failed to install on try #$i")
+                    Log.i(TAG, "verifyAddonInstallCompleted: $addonName failed to install on try #$i")
                     restartApp(activityTestRule)
-                    installAddon(addonName)
+                    homeScreen {
+                    }.openThreeDotMenu {
+                    }.openAddonsManagerMenu {
+                        scrollToElementByText(addonName)
+                        clickInstallAddon(addonName)
+                        verifyAddonPermissionPrompt(addonName)
+                        acceptPermissionToInstallAddon()
+                    }
                 }
             }
         }
@@ -135,21 +151,18 @@ class SettingsSubMenuAddonsManagerRobot {
     fun verifyAddonCanBeInstalled(addonName: String) = assertAddonCanBeInstalled(addonName)
 
     fun selectAllowInPrivateBrowsing() {
-        assertTrue(
-            "Addon install confirmation prompt not displayed",
-            mDevice.findObject(UiSelector().text("Allow in private browsing"))
-                .waitForExists(waitingTimeLong),
-        )
+        assertItemContainingTextExists(itemWithText("Allow in private browsing"), waitingTime = waitingTimeLong)
         onView(withId(R.id.allow_in_private_browsing)).click()
     }
 
-    fun installAddon(addonName: String) {
+    fun installAddon(addonName: String, activityTestRule: HomeActivityIntentTestRule) {
         homeScreen {
         }.openThreeDotMenu {
         }.openAddonsManagerMenu {
             clickInstallAddon(addonName)
             verifyAddonPermissionPrompt(addonName)
             acceptPermissionToInstallAddon()
+            verifyAddonInstallCompleted(addonName, activityTestRule)
         }
     }
 
@@ -195,11 +208,6 @@ class SettingsSubMenuAddonsManagerRobot {
             ),
         )
 
-    private fun assertAddonIsEnabled(addonName: String) {
-        installButtonForAddon(addonName)
-            .check(matches(not(isCompletelyDisplayed())))
-    }
-
     private fun assertAddonIsInstalled(addonName: String) {
         onView(
             allOf(
@@ -207,7 +215,7 @@ class SettingsSubMenuAddonsManagerRobot {
                 isDescendantOfA(withId(R.id.add_on_item)),
                 hasSibling(hasDescendant(withText(addonName))),
             ),
-        ).check(matches(withEffectiveVisibility(Visibility.GONE)))
+        ).check(matches(withEffectiveVisibility(Visibility.INVISIBLE)))
     }
 
     private fun cancelInstall() {
@@ -250,7 +258,7 @@ class SettingsSubMenuAddonsManagerRobot {
                         hasDescendant(withText("uBlock Origin")),
                         hasDescendant(withText("Finally, an efficient wide-spectrum content blocker. Easy on CPU and memory.")),
                         hasDescendant(withId(R.id.rating)),
-                        hasDescendant(withId(R.id.users_count)),
+                        hasDescendant(withId(R.id.review_count)),
                     ),
                 ),
                 hasDescendant(withId(R.id.add_button)),
@@ -282,3 +290,6 @@ fun addonsMenu(interact: SettingsSubMenuAddonsManagerRobot.() -> Unit): Settings
     SettingsSubMenuAddonsManagerRobot().interact()
     return SettingsSubMenuAddonsManagerRobot.Transition()
 }
+
+private fun addonsList() =
+    UiScrollable(UiSelector().resourceId("$packageName:id/add_ons_list")).setAsVerticalList()

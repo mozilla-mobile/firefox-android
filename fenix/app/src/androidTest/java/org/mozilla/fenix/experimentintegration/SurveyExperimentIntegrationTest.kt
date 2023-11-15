@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.experimentintegration
 
+import android.content.pm.ActivityInfo
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -22,7 +23,12 @@ class SurveyExperimentIntegrationTest {
     private val experimentName = "Viewpoint"
 
     @get:Rule
-    val activityTestRule = HomeActivityTestRule()
+    val activityTestRule = HomeActivityTestRule(
+        isJumpBackInCFREnabled = false,
+        isPWAsPromptEnabled = false,
+        isTCPCFREnabled = false,
+        isDeleteSitePermissionsEnabled = true,
+    )
 
     @Before
     fun setUp() {
@@ -34,17 +40,57 @@ class SurveyExperimentIntegrationTest {
         TestHelper.appContext.settings().showSecretDebugMenuThisSession = false
     }
 
-    @Test
-    fun checkSurveyNavigatesCorrectly() {
-        browserScreen {
-            verifySurveyButton()
-        }.clickSurveyButton {}
-
+    fun checkExperimentExists() {
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
         }.openExperimentsMenu {
             verifyExperimentExists(experimentName)
         }
+    }
+
+    @Test
+    fun checkSurveyNavigatesCorrectly() {
+        browserScreen {
+            verifySurveyButton()
+        }.clickSurveyButton {
+            verifyUrl(surveyURL)
+        }
+
+        checkExperimentExists()
+    }
+
+    @Test
+    fun checkSurveyNoThanksNavigatesCorrectly() {
+        browserScreen {
+            verifySurveyNoThanksButton()
+        }.clickNoThanksSurveyButton {
+            verifyTabCounter("0")
+        }
+
+        checkExperimentExists()
+    }
+
+    @Test
+    fun checkHomescreenSurveyDismissesCorrectly() {
+        browserScreen {
+            verifyHomeScreenSurveyCloseButton()
+        }.clickHomeScreenSurveyCloseButton {
+            verifyTabCounter("0")
+            verifySurveyButtonDoesNotExist()
+        }
+
+        checkExperimentExists()
+    }
+
+    @Test
+    fun checkSurveyLandscapeLooksCorrect() {
+        activityTestRule.activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+        browserScreen {
+            verifySurveyNoThanksButton()
+            verifySurveyButton()
+        }
+
+        checkExperimentExists()
     }
 }

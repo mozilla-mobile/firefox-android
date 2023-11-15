@@ -14,6 +14,9 @@ import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
+import org.mozilla.fenix.helpers.AppAndSystemHelper.runWithSystemLocaleChanged
+import org.mozilla.fenix.helpers.AppAndSystemHelper.setSystemLocale
+import org.mozilla.fenix.helpers.DataGenerationHelper.setTextToClipBoard
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.MockBrowserDataHelper.addCustomSearchEngine
 import org.mozilla.fenix.helpers.MockBrowserDataHelper.createBookmarkItem
@@ -23,12 +26,10 @@ import org.mozilla.fenix.helpers.TestAssetHelper.getGenericAsset
 import org.mozilla.fenix.helpers.TestHelper.appContext
 import org.mozilla.fenix.helpers.TestHelper.exitMenu
 import org.mozilla.fenix.helpers.TestHelper.restartApp
-import org.mozilla.fenix.helpers.TestHelper.runWithSystemLocaleChanged
-import org.mozilla.fenix.helpers.TestHelper.setSystemLocale
-import org.mozilla.fenix.helpers.TestHelper.setTextToClipBoard
 import org.mozilla.fenix.helpers.TestHelper.verifySnackBarText
 import org.mozilla.fenix.ui.robots.EngineShortcut
 import org.mozilla.fenix.ui.robots.homeScreen
+import org.mozilla.fenix.ui.robots.navigationToolbar
 import org.mozilla.fenix.ui.robots.searchScreen
 import java.util.Locale
 
@@ -65,8 +66,9 @@ class SettingsSearchTest {
         mockWebServer.shutdown()
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2203333
     @Test
-    fun searchSettingsItemsTest() {
+    fun verifySearchSettingsMenuItemsTest() {
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
@@ -89,8 +91,9 @@ class SettingsSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2203307
     @Test
-    fun defaultSearchEnginesSettingsItemsTest() {
+    fun verifyDefaultSearchEnginesSettingsItemsTest() {
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
@@ -103,9 +106,10 @@ class SettingsSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2203308
     @SmokeTest
     @Test
-    fun selectNewDefaultSearchEngine() {
+    fun verifyTheDefaultSearchEngineCanBeChangedTest() {
         // Goes through the settings and changes the default search engine, then verifies it has changed.
         defaultSearchEngineList.forEach {
             homeScreen {
@@ -122,8 +126,9 @@ class SettingsSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/233586
     @Test
-    fun toggleSearchAutocomplete() {
+    fun verifyUrlAutocompleteToggleTest() {
         homeScreen {
         }.openSearch {
             typeSearch("mo")
@@ -143,8 +148,9 @@ class SettingsSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/361817
     @Test
-    fun toggleOffHistorySearchSuggestionsTest() {
+    fun disableSearchBrowsingHistorySuggestionsToggleTest() {
         val websiteURL = getGenericAsset(mockWebServer, 1).url.toString()
 
         createHistoryItem(websiteURL)
@@ -168,8 +174,9 @@ class SettingsSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/412926
     @Test
-    fun toggleOffBookmarksSearchSuggestionsTest() {
+    fun disableSearchBookmarksToggleTest() {
         val website = getGenericAsset(mockWebServer, 1)
 
         createBookmarkItem(website.url.toString(), website.title, 1u)
@@ -196,10 +203,11 @@ class SettingsSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2203309
     // Verifies setting as default a customized search engine name and URL
     @SmokeTest
     @Test
-    fun addCustomDefaultSearchEngineTest() {
+    fun verifyCustomSearchEngineCanBeAddedFromSearchEngineMenuTest() {
         val customSearchEngine = object {
             val title = "TestSearchEngine"
             val url = "http://localhost:${searchMockServer.port}/searchResults.html?search=%s"
@@ -234,8 +242,9 @@ class SettingsSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2203335
     @Test
-    fun addSearchEngineToManageShortcutsListTest() {
+    fun addCustomSearchEngineToManageShortcutsListTest() {
         val customSearchEngine = object {
             val title = "TestSearchEngine"
             val url = "http://localhost:${searchMockServer.port}/searchResults.html?search=%s"
@@ -256,8 +265,9 @@ class SettingsSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2203343
     @Test
-    fun addSearchEngineLearnMoreLinksTest() {
+    fun verifyLearnMoreLinksFromAddSearchEngineSectionTest() {
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
@@ -280,6 +290,7 @@ class SettingsSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2203310
     @Test
     fun editCustomSearchEngineTest() {
         val customSearchEngine = object {
@@ -309,9 +320,10 @@ class SettingsSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2203312
     @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1848623")
     @Test
-    fun errorForInvalidSearchEngineStringsTest() {
+    fun verifyErrorMessagesForInvalidSearchEngineUrlsTest() {
         val customSearchEngine = object {
             val title = "TestSearchEngine"
             val badTemplateUrl = "http://localhost:${searchMockServer.port}/searchResults.html?search="
@@ -341,6 +353,7 @@ class SettingsSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2203313
     @Test
     fun deleteCustomSearchEngineTest() {
         val customSearchEngineTitle = "TestSearchEngine"
@@ -375,6 +388,7 @@ class SettingsSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2203339
     @Test
     fun deleteCustomSearchShortcutTest() {
         val customSearchEngineTitle = "TestSearchEngine"
@@ -402,13 +416,14 @@ class SettingsSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/233588
     // Test running on beta/release builds in CI:
     // caution when making changes to it, so they don't block the builds
     // Goes through the settings and changes the search suggestion toggle, then verifies it changes.
     @Ignore("Failing, see: https://github.com/mozilla-mobile/fenix/issues/23817")
     @SmokeTest
     @Test
-    fun toggleSearchSuggestionsTest() {
+    fun verifyShowSearchSuggestionsToggleTest() {
         homeScreen {
         }.openSearch {
             typeSearch("mozilla ")
@@ -430,9 +445,10 @@ class SettingsSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/464420
     // Tests the "Don't allow" option from private mode search suggestions onboarding dialog
     @Test
-    fun blockSearchSuggestionsInPrivateModeOnboardingTest() {
+    fun doNotAllowSearchSuggestionsInPrivateBrowsingTest() {
         homeScreen {
             togglePrivateBrowsingModeOnOff()
         }.openSearch {
@@ -443,9 +459,10 @@ class SettingsSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1957063
     // Tests the "Allow" option from private mode search suggestions onboarding dialog
     @Test
-    fun allowSearchSuggestionsInPrivateModeOnboardingTest() {
+    fun allowSearchSuggestionsInPrivateBrowsingTest() {
         homeScreen {
             togglePrivateBrowsingModeOnOff()
         }.openSearch {
@@ -470,8 +487,9 @@ class SettingsSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/888673
     @Test
-    fun toggleVoiceSearchTest() {
+    fun verifyShowVoiceSearchToggleTest() {
         homeScreen {
         }.openSearch {
             verifyVoiceSearchButtonVisibility(true)
@@ -489,8 +507,10 @@ class SettingsSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/412927
+    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1807268")
     @Test
-    fun toggleShowClipboardSuggestionsTest() {
+    fun verifyShowClipboardSuggestionsToggleTest() {
         val link = "https://www.mozilla.org/en-US/"
         setTextToClipBoard(appContext, link)
 
@@ -498,6 +518,21 @@ class SettingsSearchTest {
         }.openNavigationToolbar {
             verifyClipboardSuggestionsAreDisplayed(link, true)
         }.visitLinkFromClipboard {
+            waitForPageToLoad()
+        }.openTabDrawer {
+        }.openNewTab {
+        }
+        navigationToolbar {
+            // After visiting the link from clipboard it shouldn't be displayed again
+            verifyClipboardSuggestionsAreDisplayed(shouldBeDisplayed = false)
+        }.goBackToHomeScreen {
+            setTextToClipBoard(appContext, link)
+        }.openTabDrawer {
+        }.openNewTab {
+        }
+        navigationToolbar {
+            verifyClipboardSuggestionsAreDisplayed(link, true)
+        }.goBackToHomeScreen {
         }.openThreeDotMenu {
         }.openSettings {
         }.openSearchSubMenu {
@@ -507,37 +542,17 @@ class SettingsSearchTest {
             exitMenu()
         }
         homeScreen {
-        }.openNavigationToolbar {
+        }.openTabDrawer {
+        }.openNewTab {
+        }
+        navigationToolbar {
             verifyClipboardSuggestionsAreDisplayed(link, false)
         }
     }
 
-    // Expected for app language set to Arabic
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2233337
     @Test
-    fun verifySearchEnginesWithRTLLocale() {
-        val arabicLocale = Locale("ar", "AR")
-
-        runWithSystemLocaleChanged(arabicLocale, activityTestRule.activityRule) {
-            homeScreen {
-            }.openSearch {
-                verifyTranslatedFocusedNavigationToolbar("ابحث أو أدخِل عنوانا")
-                clickSearchSelectorButton()
-                verifySearchShortcutListContains(
-                    "Google",
-                    "Bing",
-                    "Amazon.com",
-                    "DuckDuckGo",
-                    "ويكيبيديا (ar)",
-                )
-                selectTemporarySearchMethod("ويكيبيديا (ar)")
-            }.submitQuery("firefox") {
-                verifyUrl("firefox")
-            }
-        }
-    }
-
-    @Test
-    fun searchEnginesListRespectLocaleTest() {
+    fun verifyTheSearchEnginesListsRespectTheLocaleTest() {
         runWithSystemLocaleChanged(Locale.CHINA, activityTestRule.activityRule) {
             // Checking search engines for CH locale
             homeScreen {
@@ -567,14 +582,15 @@ class SettingsSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2203334
     @Test
-    fun manageSearchShortcutsSettingsItemsTest() {
+    fun verifyManageSearchShortcutsSettingsItemsTest() {
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
         }.openSearchSubMenu {
             openManageShortcutsMenu()
-            verifyToolbarText("Manage search shortcuts")
+            verifyToolbarText("Manage alternative search engines")
             verifyEnginesShortcutsListHeader()
             verifyManageShortcutsList(activityTestRule)
             verifySearchShortcutChecked(
@@ -590,9 +606,10 @@ class SettingsSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2203340
     @SmokeTest
     @Test
-    fun changeSearchShortcutsListTest() {
+    fun verifySearchShortcutChangesAreReflectedInSearchSelectorMenuTest() {
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {

@@ -32,14 +32,30 @@ interface BrowserToolbarInteractor {
      * Deletes all tabs and navigates to the Home screen. Called when a user taps on the erase button.
      */
     fun onEraseButtonClicked()
+
+    /**
+     * Opens the shopping bottom sheet. Called when the user interacts with the shopping cfr action.
+     */
+    fun onShoppingCfrActionClicked()
+
+    /**
+     * Updates the settings for the shopping CFR. Called when the user is shown the CFR.
+     */
+    fun onShoppingCfrDisplayed()
+
+    /**
+     * Opens the translation bottom sheet. Called when the user interacts with the translation
+     * action.
+     */
+    fun onTranslationsButtonClicked()
 }
 
 /**
  * The default implementation of [BrowserToolbarInteractor].
  *
- * @property browserToolbarController [BrowserToolbarController] to which user actions can be
+ * @param browserToolbarController [BrowserToolbarController] to which user actions can be
  * delegated for all interactions on the browser toolbar.
- * @property menuController [BrowserToolbarMenuController] to which user actions can be delegated
+ * @param menuController [BrowserToolbarMenuController] to which user actions can be delegated
  * for all interactions on the the browser toolbar menu.
  */
 class DefaultBrowserToolbarInteractor(
@@ -85,5 +101,17 @@ class DefaultBrowserToolbarInteractor(
 
     override fun onEraseButtonClicked() {
         browserToolbarController.handleEraseButtonClick()
+    }
+
+    override fun onShoppingCfrActionClicked() {
+        browserToolbarController.handleShoppingCfrActionClick()
+    }
+
+    override fun onShoppingCfrDisplayed() {
+        browserToolbarController.handleShoppingCfrDisplayed()
+    }
+
+    override fun onTranslationsButtonClicked() {
+        browserToolbarController.handleTranslationsButtonClick()
     }
 }

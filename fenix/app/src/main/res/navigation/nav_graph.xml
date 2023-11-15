@@ -121,13 +121,7 @@
         app:destination="@id/bookmarkEditFragment" />
     <action
         android:id="@+id/action_global_addonsManagementFragment"
-        app:destination="@id/addons_management_graph">
-        <argument
-            android:name="installAddonId"
-            android:defaultValue="@null"
-            app:argType="string"
-            app:nullable="true" />
-    </action>
+        app:destination="@id/addons_management_graph" />
     <action
         android:id="@+id/action_global_trackingProtectionFragment"
         app:destination="@id/trackingProtectionFragment" />
@@ -170,7 +164,12 @@
     <action
         android:id="@+id/action_global_tabSettingsFragment"
         app:destination="@id/tabsSettingsFragment" />
-
+    <action
+        android:id="@+id/action_global_to_translationOptionsDialogFragment"
+        app:destination="@id/translationOptionsDialogFragment" />
+    <action
+        android:id="@+id/action_global_to_translationSettingsFragment"
+        app:destination="@id/translationSettingsFragment" />
     <dialog
         android:id="@+id/tabsTrayFragment"
         android:name="org.mozilla.fenix.tabstray.TabsTrayFragment">
@@ -306,11 +305,11 @@
             android:id="@+id/action_browserFragment_to_quickSettingsSheetDialogFragment"
             app:destination="@id/quickSettingsSheetDialogFragment" />
         <action
-            android:id="@+id/action_browserFragment_to_cookieBannerDialogFragment"
-            app:destination="@id/cookieBannerDialogFragment" />
-        <action
             android:id="@+id/action_browserFragment_to_reviewQualityCheckDialogFragment"
             app:destination="@id/reviewQualityCheckFragment" />
+        <action
+            android:id="@+id/action_browserFragment_to_translationsDialogFragment"
+            app:destination="@id/translationsDialogFragment" />
     </fragment>
 
     <fragment
@@ -335,19 +334,7 @@
         android:name="org.mozilla.fenix.library.history.HistoryFragment"
         android:label="@string/library_history"
         tools:layout="@layout/fragment_history">
-
-        <action
-            android:id="@+id/action_global_history_search_dialog"
-            app:destination="@id/historySearchDialogFragment"
-            app:popUpTo="@id/historySearchDialogFragment"
-            app:popUpToInclusive="true" />
     </fragment>
-
-    <dialog
-        android:id="@+id/historySearchDialogFragment"
-        android:name="org.mozilla.fenix.library.history.HistorySearchDialogFragment"
-        tools:layout="@layout/fragment_history_search_dialog">
-    </dialog>
 
     <fragment
         android:id="@+id/historyMetadataGroupFragment"
@@ -382,18 +369,7 @@
         <action
             android:id="@+id/action_bookmarkFragment_to_bookmarkAddFolderFragment"
             app:destination="@id/bookmarkAddFolderFragment" />
-        <action
-            android:id="@+id/action_bookmarkFragment_to_bookmarkSearchDialogFragment"
-            app:destination="@id/bookmarkSearchDialogFragment"
-            app:popUpTo="@id/bookmarkSearchDialogFragment"
-            app:popUpToInclusive="true" />
     </fragment>
-
-    <dialog
-        android:id="@+id/bookmarkSearchDialogFragment"
-        android:name="org.mozilla.fenix.library.bookmarks.BookmarkSearchDialogFragment"
-        tools:layout="@layout/fragment_bookmark_search_dialog">
-    </dialog>
 
     <fragment
         android:id="@+id/bookmarkEditFragment"
@@ -447,6 +423,18 @@
     <dialog
         android:id="@+id/reviewQualityCheckFragment"
         android:name="org.mozilla.fenix.shopping.ReviewQualityCheckFragment"/>
+
+    <dialog
+        android:id="@+id/translationsDialogFragment"
+        android:name="org.mozilla.fenix.translations.TranslationsDialogFragment"/>
+
+    <dialog
+        android:id="@+id/translationOptionsDialogFragment"
+        android:name="org.mozilla.fenix.translations.TranslationOptionsDialogFragment" />
+
+    <fragment
+        android:id="@+id/translationSettingsFragment"
+        android:name="org.mozilla.fenix.translations.TranslationSettingsFragment" />
 
     <fragment
         android:id="@+id/savedLoginsAuthFragment"
@@ -605,13 +593,6 @@
         <action
             android:id="@+id/action_settingsFragment_to_httpsOnlyFragment"
             app:destination="@id/httpsOnlyFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
-        <action
-            android:id="@+id/action_settingsFragment_to_cookieBannerFragment"
-            app:destination="@id/cookieBannerFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
@@ -853,10 +834,6 @@
         android:name="org.mozilla.fenix.settings.HttpsOnlyFragment"
         android:label="@string/preferences_https_only_title" />
     <fragment
-        android:id="@+id/cookieBannerFragment"
-        android:name="org.mozilla.fenix.settings.CookieBannersFragment"
-        android:label="@string/preferences_cookie_banner_reduction" />
-    <fragment
         android:id="@+id/sponsoredStoriesSettings"
         android:name="org.mozilla.fenix.settings.SponsoredStoriesSettingsFragment"
         android:label="@string/preferences_debug_settings_custom_sponsored_stories_parameters" />
@@ -992,9 +969,6 @@
             android:name="cookieBannerUIMode"
             app:argType="org.mozilla.fenix.trackingprotection.CookieBannerUIMode" />
     </dialog>
-    <dialog
-        android:id="@+id/cookieBannerDialogFragment"
-        android:name="org.mozilla.fenix.settings.quicksettings.protections.cookiebanners.dialog.CookieBannerReEngagementDialog" />
     <fragment
         android:id="@+id/accountProblemFragment"
         android:name="org.mozilla.fenix.settings.account.AccountProblemFragment">
@@ -1257,12 +1231,6 @@
             android:name="org.mozilla.fenix.settings.search.SearchEngineFragment"
             android:label="@string/preferences_search">
             <action
-                android:id="@+id/action_searchEngineFragment_to_addSearchEngineFragment"
-                app:destination="@+id/addSearchEngineFragment" />
-            <action
-                android:id="@+id/action_searchEngineFragment_to_editCustomSearchEngineFragment"
-                app:destination="@+id/editCustomSearchEngineFragment" />
-            <action
                 android:id="@+id/action_searchEngineFragment_to_defaultEngineFragment"
                 app:destination="@+id/defaultEngineFragment" />
             <action
@@ -1291,18 +1259,6 @@
                 android:name="searchEngineIdentifier"
                 app:argType="string"
                 app:nullable="true"/>
-        </fragment>
-        <fragment
-            android:id="@+id/addSearchEngineFragment"
-            android:name="org.mozilla.fenix.settings.search.AddSearchEngineFragment"
-            tools:layout="@layout/fragment_add_search_engine" />
-        <fragment
-            android:id="@+id/editCustomSearchEngineFragment"
-            android:name="org.mozilla.fenix.settings.search.EditCustomSearchEngineFragment"
-            tools:layout="@layout/fragment_add_search_engine">
-            <argument
-                android:name="searchEngineIdentifier"
-                app:argType="string" />
         </fragment>
     </navigation>
 

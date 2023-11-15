@@ -88,7 +88,7 @@ class ComposeHomeScreenTest {
         homeScreen { }.togglePrivateBrowsingMode()
 
         homeScreen {
-            verifyPrivateBrowsingHomeScreen()
+            verifyPrivateBrowsingHomeScreenItems()
         }.openCommonMythsLink {
             verifyUrl("common-myths-about-private-browsing")
         }
@@ -143,22 +143,6 @@ class ComposeHomeScreenTest {
 
         homeScreen {
             verifyJumpBackInSectionIsNotDisplayed()
-        }
-    }
-
-    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1569867
-    @Test
-    fun verifyJumpBackInContextualHintTest() {
-        activityTestRule.activityRule.applySettingsExceptions {
-            it.isJumpBackInCFREnabled = true
-        }
-
-        val genericPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(genericPage.url) {
-        }.goToHomescreen {
-            verifyJumpBackInMessage(activityTestRule)
         }
     }
 

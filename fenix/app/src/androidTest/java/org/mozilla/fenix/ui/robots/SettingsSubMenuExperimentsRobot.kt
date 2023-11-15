@@ -8,6 +8,10 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.uiautomator.UiSelector
 import org.mozilla.fenix.R
+import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithResIdExists
+import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
+import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.click
 
 /**
@@ -41,5 +45,27 @@ class SettingsSubMenuExperimentsRobot {
 
         checkNotNull(experiment)
     }
+
+    fun verifyExperimentEnrolled(title: String) {
+        itemContainingText(title).click()
+        assertItemWithResIdExists(checkIcon())
+        goBackButton().click()
+    }
+
+    fun verifyExperimentNotEnrolled(title: String) {
+        itemContainingText(title).click()
+        assertItemWithResIdExists(checkIcon(), exists = false)
+        goBackButton().click()
+    }
+
+    fun unenrollfromExperiment(title: String) {
+        val branch = itemWithResId("$packageName:id/nimbus_branch_name")
+
+        itemContainingText(title).click()
+        assertItemWithResIdExists(checkIcon())
+        branch.click()
+        assertItemWithResIdExists(checkIcon(), exists = false)
+    }
 }
 private fun goBackButton() = onView(withContentDescription(R.string.action_bar_up_description))
+private fun checkIcon() = itemWithResId("$packageName:id/selected_icon")

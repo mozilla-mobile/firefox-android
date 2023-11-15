@@ -42,6 +42,13 @@ interface WebExtensionDelegate {
     fun onDisabled(extension: WebExtension) = Unit
 
     /**
+     * Invoked when a web extension was started successfully.
+     *
+     * @param extension The extension that has completed its startup.
+     */
+    fun onReady(extension: WebExtension) = Unit
+
+    /**
      * Invoked when a web extension in private browsing allowed is set.
      *
      * @param extension the modified [WebExtension] instance.
@@ -111,6 +118,18 @@ interface WebExtensionDelegate {
     ) = Unit
 
     /**
+     * Invoked whenever the installation of a [WebExtension] failed.
+     *
+     * @param extension extension the extension that failed to be installed. It can be null when the
+     * extension couldn't be downloaded or the extension couldn't be parsed for example.
+     * @param exception the reason why the installation failed.
+     */
+    fun onInstallationFailedRequest(
+        extension: WebExtension?,
+        exception: WebExtensionInstallException,
+    ) = Unit
+
+    /**
      * Invoked when a web extension has changed its permissions while trying to update to a
      * new version. This requires user interaction as the updated extension will not be installed,
      * until the user grants the new permissions.
@@ -125,6 +144,20 @@ interface WebExtensionDelegate {
         current: WebExtension,
         updated: WebExtension,
         newPermissions: List<String>,
+        onPermissionsGranted: ((Boolean) -> Unit),
+    ) = Unit
+
+    /**
+     * Invoked when a web extension requests optional permissions. This requires user interaction since the
+     * user needs to grant or revoke these optional permissions.
+     *
+     * @param extension The [WebExtension].
+     * @param permissions The list of all the optional permissions.
+     * @param onPermissionsGranted A callback to indicate if the optional permissions have been granted or not.
+     */
+    fun onOptionalPermissionsRequest(
+        extension: WebExtension,
+        permissions: List<String>,
         onPermissionsGranted: ((Boolean) -> Unit),
     ) = Unit
 

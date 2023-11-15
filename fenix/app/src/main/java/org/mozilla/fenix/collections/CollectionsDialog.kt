@@ -22,6 +22,7 @@ import mozilla.components.ui.widgets.withCenterAlignedButtons
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.ext.getDefaultCollectionNumber
+import org.mozilla.fenix.ext.increaseTapArea
 
 /**
  * A lambda that is invoked when a confirmation button in a [CollectionsDialog] is clicked.
@@ -39,6 +40,8 @@ typealias OnNegativeButtonClick = () -> Unit
 /**
  * A data class for creating a dialog to prompt adding/creating a collection. See also [show].
  *
+ * @property storage An instance of [TabCollectionStorage] to retrieve and modify collections.
+ * @property sessionList List of [TabSessionState] to add to a collection.
  * @property onPositiveButtonClick Invoked when a user clicks on a confirmation button in the dialog.
  * @property onNegativeButtonClick Invoked when a user clicks on a cancel button in the dialog.
  */
@@ -111,6 +114,7 @@ internal fun CollectionsDialog.showAddNewDialog(
             collectionsStorage.cachedTabCollections.getDefaultCollectionNumber(),
         ),
     )
+    collectionNameEditText.increaseTapArea(context.resources.getDimension(R.dimen.tap_increase_2).toInt())
 
     val dialog = AlertDialog.Builder(context)
         .setTitle(R.string.tab_tray_add_new_collection)

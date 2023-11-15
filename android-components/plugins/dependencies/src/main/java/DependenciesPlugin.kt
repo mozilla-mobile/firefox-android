@@ -20,33 +20,30 @@ object Versions {
     const val python_envs_plugin = "0.0.31"
 
     const val junit = "4.13.2"
-    const val robolectric = "4.10.3"
-    const val mockito = "5.5.0"
+    const val robolectric = "4.11.1"
+    const val mockito = "5.7.0"
     const val maven_ant_tasks = "2.1.3"
-    const val jacoco = "0.8.10"
-
-    // TO-DO: These could be kept in sync in the future
-    const val mockwebserver = "3.10.0"
-    const val okhttp = "3.13.1"
+    const val jacoco = "0.8.11"
+    const val okhttp = "4.11.0"
+    const val coil = "2.4.0"
 
     const val android_gradle_plugin = "7.4.2"
 
     // This has to be synced to the gradlew plugin version. See
     // http://googlesamples.github.io/android-custom-lint-rules/api-guide/example.md.html#example:samplelintcheckgithubproject/lintversion?
     const val lint = "30.4.2"
-    const val detekt = "1.23.1"
+    const val detekt = "1.23.3"
     const val ktlint = "0.49.1"
 
-    const val sentry_latest = "6.27.0"
+    const val sentry = "6.33.1"
 
-    // zxing 3.4+ requires a minimum API of 24 or higher
-    const val zxing = "3.3.3"
+    const val zxing = "3.5.2"
 
     const val disklrucache = "2.0.2"
     const val leakcanary = "2.12"
 
     // DO NOT MODIFY MANUALLY. This is auto-updated along with GeckoView.
-    const val mozilla_glean = "53.2.0"
+    const val mozilla_glean = "55.0.0"
 
     const val material = "1.9.0"
     const val ksp = "1.0.11"
@@ -54,7 +51,7 @@ object Versions {
 
     // see https://android-developers.googleblog.com/2022/06/independent-versioning-of-Jetpack-Compose-libraries.html
     // for Jetpack Compose libraries versioning
-    const val compose_version = "1.5.1"
+    const val compose_version = "1.5.4"
     const val compose_compiler = "1.4.8"
 
     object AndroidX {
@@ -70,8 +67,8 @@ object Versions {
         const val coordinatorlayout = "1.2.0"
         const val core = "1.12.0"
         const val drawerlayout = "1.2.0"
-        const val fragment = "1.6.1"
-        const val recyclerview = "1.3.1"
+        const val fragment = "1.6.2"
+        const val recyclerview = "1.3.2"
         const val test = "1.5.0"
         const val test_ext = "1.1.5"
         const val test_runner = "1.5.2"
@@ -93,7 +90,7 @@ object Versions {
     }
 
     object Firebase {
-        const val messaging = "23.1.2"
+        const val messaging = "23.3.0"
     }
 }
 
@@ -107,7 +104,7 @@ object ComponentsDependencies {
     const val testing_junit = "junit:junit:${Versions.junit}"
     const val testing_robolectric = "org.robolectric:robolectric:${Versions.robolectric}"
     const val testing_mockito = "org.mockito:mockito-core:${Versions.mockito}"
-    const val testing_mockwebserver = "com.squareup.okhttp3:mockwebserver:${Versions.mockwebserver}"
+    const val testing_mockwebserver = "com.squareup.okhttp3:mockwebserver:${Versions.okhttp}"
     const val testing_coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.coroutines}"
     const val testing_maven_ant_tasks = "org.apache.maven:maven-ant-tasks:${Versions.maven_ant_tasks}"
     const val testing_leakcanary = "com.squareup.leakcanary:leakcanary-android-instrumentation:${Versions.leakcanary}"
@@ -189,6 +186,7 @@ object ComponentsDependencies {
     val mozilla_appservices_logins = "${ApplicationServicesConfig.groupId}:logins:${ApplicationServicesConfig.version}"
     val mozilla_appservices_places = "${ApplicationServicesConfig.groupId}:places:${ApplicationServicesConfig.version}"
     val mozilla_appservices_syncmanager = "${ApplicationServicesConfig.groupId}:syncmanager:${ApplicationServicesConfig.version}"
+    val mozilla_remote_settings = "${ApplicationServicesConfig.groupId}:remotesettings:${ApplicationServicesConfig.version}"
     val mozilla_appservices_push = "${ApplicationServicesConfig.groupId}:push:${ApplicationServicesConfig.version}"
     val mozilla_appservices_tabs = "${ApplicationServicesConfig.groupId}:tabs:${ApplicationServicesConfig.version}"
     val mozilla_appservices_suggest = "${ApplicationServicesConfig.groupId}:suggest:${ApplicationServicesConfig.version}"
@@ -202,9 +200,17 @@ object ComponentsDependencies {
 
     const val thirdparty_okhttp = "com.squareup.okhttp3:okhttp:${Versions.okhttp}"
     const val thirdparty_okhttp_urlconnection = "com.squareup.okhttp3:okhttp-urlconnection:${Versions.okhttp}"
-    const val thirdparty_sentry_latest = "io.sentry:sentry-android:${Versions.sentry_latest}"
+    const val thirdparty_sentry = "io.sentry:sentry-android:${Versions.sentry}"
     const val thirdparty_zxing = "com.google.zxing:core:${Versions.zxing}"
     const val thirdparty_disklrucache = "com.jakewharton:disklrucache:${Versions.disklrucache}"
+    /**
+     *  ⚠️️ DO NOT use any NETWORK based operations provided by the Coil library.
+     *  ⚠️️ The Coil library should be used for DECODING data only.
+     *
+     *  Fenix is using SvgDecoder.kt for SVG decoding. However this dependency will also expose other
+     *  API features that Fenix should not use.
+     */
+    const val thirdparty_coil_svg = "io.coil-kt:coil-svg:${Versions.coil}"
 
     const val firebase_messaging = "com.google.firebase:firebase-messaging:${Versions.Firebase.messaging}"
 }

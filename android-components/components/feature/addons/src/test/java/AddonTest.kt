@@ -13,6 +13,8 @@ import mozilla.components.support.test.robolectric.testContext
 import mozilla.components.support.test.whenever
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -24,8 +26,6 @@ class AddonTest {
     fun `translatePermissions - must return the expected string ids per permission category`() {
         val addon = Addon(
             id = "id",
-            authors = emptyList(),
-            categories = emptyList(),
             downloadUrl = "downloadUrl",
             version = "version",
             permissions = listOf(
@@ -94,8 +94,6 @@ class AddonTest {
     fun `isInstalled - true if installed state present and otherwise false`() {
         val addon = Addon(
             id = "id",
-            authors = emptyList(),
-            categories = emptyList(),
             downloadUrl = "downloadUrl",
             version = "version",
             permissions = emptyList(),
@@ -112,8 +110,6 @@ class AddonTest {
     fun `isEnabled - true if installed state enabled and otherwise false`() {
         val addon = Addon(
             id = "id",
-            authors = emptyList(),
-            categories = emptyList(),
             downloadUrl = "downloadUrl",
             version = "version",
             permissions = emptyList(),
@@ -133,8 +129,6 @@ class AddonTest {
     fun `filterTranslations - only keeps specified translations`() {
         val addon = Addon(
             id = "id",
-            authors = emptyList(),
-            categories = emptyList(),
             downloadUrl = "downloadUrl",
             version = "version",
             permissions = emptyList(),
@@ -374,16 +368,132 @@ class AddonTest {
         whenever(metadata.description).thenReturn(description)
         whenever(metadata.disabledFlags).thenReturn(DisabledFlags.select(0))
         whenever(metadata.baseUrl).thenReturn("some-base-url")
+        whenever(metadata.developerName).thenReturn("developer-name")
+        whenever(metadata.developerUrl).thenReturn("developer-url")
+        whenever(metadata.fullDescription).thenReturn("fullDescription")
+        whenever(metadata.homepageUrl).thenReturn("some-url")
+        whenever(metadata.downloadUrl).thenReturn("some-download-url")
+        whenever(metadata.updateDate).thenReturn("1970-01-01T00:00:00Z")
+        whenever(metadata.reviewUrl).thenReturn("some-review-url")
+        whenever(metadata.reviewCount).thenReturn(0)
+        whenever(metadata.averageRating).thenReturn(0f)
+        whenever(metadata.detailUrl).thenReturn("detail-url")
 
         val addon = Addon.newFromWebExtension(extension)
-
         assertEquals("some-id", addon.id)
-        assertEquals("some-url", addon.siteUrl)
-        assertEquals("some-url", addon.downloadUrl)
+        assertEquals("some-url", addon.homepageUrl)
+        assertEquals("some-download-url", addon.downloadUrl)
         assertEquals(permissions + hostPermissions, addon.permissions)
-        assertEquals("1970-01-01T00:00:00Z", addon.updatedAt)
+        assertEquals("", addon.updatedAt)
         assertEquals("some name", addon.translatableName[Addon.DEFAULT_LOCALE])
-        assertEquals("some description", addon.translatableDescription[Addon.DEFAULT_LOCALE])
+        assertEquals("fullDescription", addon.translatableDescription[Addon.DEFAULT_LOCALE])
         assertEquals("some description", addon.translatableSummary[Addon.DEFAULT_LOCALE])
+        assertEquals("developer-name", addon.author?.name)
+        assertEquals("developer-url", addon.author?.url)
+        assertEquals("some-download-url", addon.downloadUrl)
+        assertEquals("some-review-url", addon.ratingUrl)
+        assertEquals(0, addon.rating!!.reviews)
+        assertEquals("detail-url", addon.detailUrl)
+    }
+
+    @Test
+    fun `fromMetadataToAddonDate - must return an valid addon formatted date`() {
+        val expectedDate = "2023-09-28T00:37:43Z"
+        val inputDate = "2023-09-28T00:37:43.983Z"
+
+        val result = Addon.fromMetadataToAddonDate(inputDate)
+
+        assertEquals(expectedDate, result)
+    }
+
+    @Test
+    fun `fromMetadataToAddonDate - must return  handle invalid date formats`() {
+        val expectedDate = ""
+        val inputDate = "202xd3-09-28T00:37:43.98993Z"
+
+        val result = Addon.fromMetadataToAddonDate(inputDate)
+
+        assertEquals(expectedDate, result)
+    }
+
+    @Test
+    fun `fromMetadataToAddonDate - must return empty strings`() {
+        val expectedDate = ""
+        val inputDate = ""
+
+        val result = Addon.fromMetadataToAddonDate(inputDate)
+
+        assertEquals(expectedDate, result)
+    }
+
+    @Test
+    fun `isDisabledAsBlocklisted - true if installed state disabled status equals to BLOCKLISTED and otherwise false`() {
+        val addon = Addon(id = "id")
+        val blockListedAddon = addon.copy(
+            installedState = Addon.InstalledState(
+                id = "id",
+                version = "1.0",
+                optionsPageUrl = "",
+                disabledReason = Addon.DisabledReason.BLOCKLISTED,
+            ),
+        )
+
+        assertFalse(addon.isDisabledAsBlocklisted())
+        assertTrue(blockListedAddon.isDisabledAsBlocklisted())
+    }
+
+    @Test
+    fun `isDisabledAsNotCorrectlySigned - true if installed state disabled status equals to NOT_CORRECTLY_SIGNED and otherwise false`() {
+        val addon = Addon(id = "id")
+        val blockListedAddon = addon.copy(
+            installedState = Addon.InstalledState(
+                id = "id",
+                version = "1.0",
+                optionsPageUrl = "",
+                disabledReason = Addon.DisabledReason.NOT_CORRECTLY_SIGNED,
+            ),
+        )
+
+        assertFalse(addon.isDisabledAsNotCorrectlySigned())
+        assertTrue(blockListedAddon.isDisabledAsNotCorrectlySigned())
+    }
+
+    @Test
+    fun `isDisabledAsIncompatible - true if installed state disabled status equals to INCOMPATIBLE and otherwise false`() {
+        val addon = Addon(id = "id")
+        val blockListedAddon = addon.copy(
+            installedState = Addon.InstalledState(
+                id = "id",
+                version = "1.0",
+                optionsPageUrl = "",
+                disabledReason = Addon.DisabledReason.INCOMPATIBLE,
+            ),
+        )
+
+        assertFalse(addon.isDisabledAsIncompatible())
+        assertTrue(blockListedAddon.isDisabledAsIncompatible())
+    }
+
+    @Test
+    fun `provideIcon - should provide the icon from either addon or installedState`() {
+        val addonWithoutIcon = Addon(id = "id")
+
+        assertNull(addonWithoutIcon.icon)
+        assertNull(addonWithoutIcon.installedState?.icon)
+        assertNull(addonWithoutIcon.provideIcon())
+
+        val addonWithIcon = addonWithoutIcon.copy(icon = mock())
+
+        assertNotNull(addonWithIcon.icon)
+        assertNull(addonWithIcon.installedState?.icon)
+        assertNotNull(addonWithIcon.provideIcon())
+
+        val addonWithInstalledStateIcon = addonWithoutIcon.copy(
+            installedState = Addon.InstalledState("id", "1.0", "", icon = mock()),
+        )
+
+        assertNull(addonWithInstalledStateIcon.icon)
+        assertNotNull(addonWithInstalledStateIcon.installedState?.icon)
+        assertNotNull(addonWithInstalledStateIcon.provideIcon())
     }
 }

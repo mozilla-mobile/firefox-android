@@ -33,10 +33,10 @@ class FeatureSettingsHelperDelegate() : FeatureSettingsHelper {
         isTCPCFREnabled = settings.shouldShowTotalCookieProtectionCFR,
         isWallpaperOnboardingEnabled = settings.showWallpaperOnboarding,
         isDeleteSitePermissionsEnabled = settings.deleteSitePermissions,
-        isCookieBannerReductionDialogEnabled = !settings.userOptOutOfReEngageCookieBannerDialog,
         isOpenInAppBannerEnabled = settings.shouldShowOpenInAppBanner,
         etpPolicy = getETPPolicy(settings),
         tabsTrayRewriteEnabled = settings.enableTabsTrayToCompose,
+        composeTopSitesEnabled = settings.enableComposeTopSites,
     )
 
     /**
@@ -62,10 +62,10 @@ class FeatureSettingsHelperDelegate() : FeatureSettingsHelper {
     override var isRecentlyVisitedFeatureEnabled: Boolean by updatedFeatureFlags::isRecentlyVisitedFeatureEnabled
     override var isPWAsPromptEnabled: Boolean by updatedFeatureFlags::isPWAsPromptEnabled
     override var isTCPCFREnabled: Boolean by updatedFeatureFlags::isTCPCFREnabled
-    override var isCookieBannerReductionDialogEnabled: Boolean by updatedFeatureFlags::isCookieBannerReductionDialogEnabled
     override var isOpenInAppBannerEnabled: Boolean by updatedFeatureFlags::isOpenInAppBannerEnabled
     override var etpPolicy: ETPPolicy by updatedFeatureFlags::etpPolicy
     override var tabsTrayRewriteEnabled: Boolean by updatedFeatureFlags::tabsTrayRewriteEnabled
+    override var composeTopSitesEnabled: Boolean by updatedFeatureFlags::composeTopSitesEnabled
 
     override fun applyFlagUpdates() {
         applyFeatureFlags(updatedFeatureFlags)
@@ -88,9 +88,9 @@ class FeatureSettingsHelperDelegate() : FeatureSettingsHelper {
         settings.shouldShowTotalCookieProtectionCFR = featureFlags.isTCPCFREnabled
         settings.showWallpaperOnboarding = featureFlags.isWallpaperOnboardingEnabled
         settings.deleteSitePermissions = featureFlags.isDeleteSitePermissionsEnabled
-        settings.userOptOutOfReEngageCookieBannerDialog = !featureFlags.isCookieBannerReductionDialogEnabled
         settings.shouldShowOpenInAppBanner = featureFlags.isOpenInAppBannerEnabled
         settings.enableTabsTrayToCompose = featureFlags.tabsTrayRewriteEnabled
+        settings.enableComposeTopSites = featureFlags.composeTopSitesEnabled
         setETPPolicy(featureFlags.etpPolicy)
     }
 }
@@ -106,10 +106,10 @@ private data class FeatureFlags(
     var isTCPCFREnabled: Boolean,
     var isWallpaperOnboardingEnabled: Boolean,
     var isDeleteSitePermissionsEnabled: Boolean,
-    var isCookieBannerReductionDialogEnabled: Boolean,
     var isOpenInAppBannerEnabled: Boolean,
     var etpPolicy: ETPPolicy,
     var tabsTrayRewriteEnabled: Boolean,
+    var composeTopSitesEnabled: Boolean,
 )
 
 internal fun getETPPolicy(settings: Settings): ETPPolicy {

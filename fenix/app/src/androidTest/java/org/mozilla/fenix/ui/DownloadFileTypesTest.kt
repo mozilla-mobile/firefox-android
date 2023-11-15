@@ -5,13 +5,15 @@
 package org.mozilla.fenix.ui
 
 import androidx.core.net.toUri
+import org.junit.After
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import org.mozilla.fenix.customannotations.SmokeTest
+import org.mozilla.fenix.helpers.AppAndSystemHelper.clearDownloadsFolder
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
-import org.mozilla.fenix.ui.robots.navigationToolbar
+import org.mozilla.fenix.ui.robots.downloadRobot
 
 /**
  *  Test for verifying downloading a list of different file types:
@@ -28,6 +30,12 @@ class DownloadFileTypesTest(fileName: String) {
     @get:Rule
     val activityTestRule = HomeActivityIntentTestRule.withDefaultSettingsOverrides()
 
+    @After
+    fun tearDown() {
+        // Check and clear the downloads folder
+        clearDownloadsFolder()
+    }
+
     companion object {
         // Creating test data. The test will take each file name as a parameter and run it individually.
         @JvmStatic
@@ -41,19 +49,18 @@ class DownloadFileTypesTest(fileName: String) {
             "videoSample.webm",
             "CSVfile.csv",
             "XMLfile.xml",
+            "tAJwqaWjJsXS8AhzSninBMCfIZbHBGgcc001lx5DIdDwIcfEgQ6vE5Gb5VgAled17DFZ2A7ZDOHA0NpQPHXXFt.svg",
         )
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/251028
     @SmokeTest
     @Test
-    fun downloadMultipleFileTypesTest() {
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(downloadTestPage.toUri()) {
-        }.clickDownloadLink(downloadFile) {
-            verifyDownloadPrompt(downloadFile)
-        }.clickDownload {
-            verifyDownloadNotificationPopup()
-        }.closeCompletedDownloadPrompt {
+    fun allFilesAppearInDownloadsMenuTest() {
+        downloadRobot {
+            openPageAndDownloadFile(url = downloadTestPage.toUri(), downloadFile = downloadFile)
+            verifyDownloadCompleteNotificationPopup()
+        }.closeDownloadPrompt {
         }.openThreeDotMenu {
         }.openDownloadsManager {
             waitForDownloadsListToExist()

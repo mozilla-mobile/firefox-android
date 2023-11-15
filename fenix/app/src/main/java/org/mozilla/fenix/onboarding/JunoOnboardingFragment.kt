@@ -5,7 +5,10 @@
 package org.mozilla.fenix.onboarding
 
 import android.annotation.SuppressLint
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
 import android.content.Context
+import android.content.IntentFilter
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
@@ -18,10 +21,13 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.Fragment
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.fragment.findNavController
+import mozilla.components.service.nimbus.evalJexlSafe
 import mozilla.components.support.base.ext.areNotificationsEnabledSafe
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.accounts.FenixFxAEntryPoint
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.hideToolbar
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.openSetDefaultBrowserOption
@@ -34,14 +40,21 @@ import org.mozilla.fenix.onboarding.view.telemetrySequenceId
 import org.mozilla.fenix.onboarding.view.toPageUiData
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.theme.FirefoxTheme
+import org.mozilla.gecko.search.SearchWidgetProvider
 
 /**
  * Fragment displaying the juno onboarding flow.
  */
 class JunoOnboardingFragment : Fragment() {
 
-    private val pagesToDisplay by lazy { pagesToDisplay(shouldShowNotificationPage(requireContext())) }
+    private val pagesToDisplay by lazy {
+        pagesToDisplay(
+            canShowNotificationPage(requireContext()),
+            canShowAddWidgetCard(),
+        )
+    }
     private val telemetryRecorder by lazy { JunoOnboardingTelemetryRecorder() }
+    private val pinAppWidgetReceiver = WidgetPinnedReceiver()
 
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,6 +62,9 @@ class JunoOnboardingFragment : Fragment() {
         if (isNotATablet()) {
             activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
+        val filter = IntentFilter(WidgetPinnedReceiver.ACTION)
+        LocalBroadcastManager.getInstance(requireContext())
+            .registerReceiver(pinAppWidgetReceiver, filter)
     }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -74,6 +90,7 @@ class JunoOnboardingFragment : Fragment() {
         if (isNotATablet()) {
             activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         }
+        LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(pinAppWidgetReceiver)
     }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -141,6 +158,19 @@ class JunoOnboardingFragment : Fragment() {
                     pagesToDisplay.sequencePosition(OnboardingPageUiData.Type.NOTIFICATION_PERMISSION),
                 )
             },
+            onAddFirefoxWidgetClick = {
+                telemetryRecorder.onAddSearchWidgetClick(
+                    pagesToDisplay.telemetrySequenceId(),
+                    pagesToDisplay.sequencePosition(OnboardingPageUiData.Type.ADD_SEARCH_WIDGET),
+                )
+                showAddSearchWidgetDialog()
+            },
+            onSkipFirefoxWidgetClick = {
+                telemetryRecorder.onSkipAddWidgetClick(
+                    pagesToDisplay.telemetrySequenceId(),
+                    pagesToDisplay.sequencePosition(OnboardingPageUiData.Type.ADD_SEARCH_WIDGET),
+                )
+            },
             onFinish = {
                 onFinish(
                     sequenceId = pagesToDisplay.telemetrySequenceId(),
@@ -157,6 +187,19 @@ class JunoOnboardingFragment : Fragment() {
         )
     }
 
+    private fun showAddSearchWidgetDialog() {
+        // Requesting to pin app widget is only available for Android 8.0 and above
+        if (canShowAddWidgetCard()) {
+            val appWidgetManager = AppWidgetManager.getInstance(activity)
+            val searchWidgetProvider =
+                ComponentName(requireActivity(), SearchWidgetProvider::class.java)
+            if (appWidgetManager.isRequestPinAppWidgetSupported) {
+                val successCallback = WidgetPinnedReceiver.getPendingIntent(requireContext())
+                appWidgetManager.requestPinAppWidget(searchWidgetProvider, null, successCallback)
+            }
+        }
+    }
+
     private fun onFinish(sequenceId: String, sequencePosition: String) {
         requireComponents.fenixOnboarding.finish()
         findNavController().nav(
@@ -169,12 +212,26 @@ class JunoOnboardingFragment : Fragment() {
         )
     }
 
-    private fun shouldShowNotificationPage(context: Context) =
+    private fun canShowNotificationPage(context: Context) =
         !NotificationManagerCompat.from(context.applicationContext)
             .areNotificationsEnabledSafe() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
 
+    private fun canShowAddWidgetCard() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+
     private fun isNotATablet() = !resources.getBoolean(R.bool.tablet)
 
-    private fun pagesToDisplay(showNotificationPage: Boolean): List<OnboardingPageUiData> =
-        FxNimbus.features.junoOnboarding.value().cards.values.toPageUiData(showNotificationPage)
+    private fun pagesToDisplay(
+        showNotificationPage: Boolean,
+        showAddWidgetPage: Boolean,
+    ): List<OnboardingPageUiData> {
+        val junoOnboardingFeature = FxNimbus.features.junoOnboarding.value()
+        val jexlConditions = junoOnboardingFeature.conditions
+        val jexlHelper = requireContext().components.analytics.messagingStorage.helper
+
+        return FxNimbus.features.junoOnboarding.value().cards.values.toPageUiData(
+            showNotificationPage,
+            showAddWidgetPage,
+            jexlConditions,
+        ) { condition -> jexlHelper.evalJexlSafe(condition) }
+    }
 }

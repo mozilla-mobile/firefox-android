@@ -45,6 +45,8 @@ import mozilla.components.concept.engine.mediasession.MediaSession
 import mozilla.components.concept.engine.permission.PermissionRequest
 import mozilla.components.concept.engine.prompt.PromptRequest
 import mozilla.components.concept.engine.search.SearchRequest
+import mozilla.components.concept.engine.translate.TranslationOperation
+import mozilla.components.concept.engine.translate.TranslationOptions
 import mozilla.components.concept.engine.webextension.WebExtensionBrowserAction
 import mozilla.components.concept.engine.webextension.WebExtensionPageAction
 import mozilla.components.concept.engine.window.WindowRequest
@@ -73,10 +75,24 @@ object InitAction : BrowserAction()
 object RestoreCompleteAction : BrowserAction()
 
 /**
- * [BrowserAction] implementation for updating state related to whether the extensions process
- * spawning has been disabled and a popup is necessary.
+ * [BrowserAction] implementations to react to extensions process events.
  */
-data class ExtensionProcessDisabledPopupAction(val showPopup: Boolean) : BrowserAction()
+sealed class ExtensionsProcessAction : BrowserAction() {
+    /**
+     * [BrowserAction] to indicate when the crash prompt should be displayed to the user.
+     */
+    data class ShowPromptAction(val show: Boolean) : ExtensionsProcessAction()
+
+    /**
+     * [BrowserAction] to indicate that the process has been re-enabled by the user.
+     */
+    object EnabledAction : ExtensionsProcessAction()
+
+    /**
+     * [BrowserAction] to indicate that the process has been left disabled by the user.
+     */
+    object DisabledAction : ExtensionsProcessAction()
+}
 
 /**
  * [BrowserAction] implementations to react to system events.
@@ -813,6 +829,67 @@ sealed class ContentAction : BrowserAction() {
      * Indicates the given [tabId] was unable to be checked for form data.
      */
     data class CheckForFormDataExceptionAction(val tabId: String, val throwable: Throwable) : ContentAction()
+
+    /**
+     * Updates the [ContentState.isProductUrl] state for the non private tab with the given [tabId].
+     */
+    data class UpdateProductUrlStateAction(
+        val tabId: String,
+        val isProductUrl: Boolean,
+    ) : ContentAction()
+}
+
+/**
+ * [BrowserAction] implementations related to translating a web content page.
+ */
+sealed class TranslationsAction : BrowserAction() {
+    /**
+     * Used to translate the page for a given [tabId].
+     *
+     * @property tabId The ID of the tab the [EngineSession] should be linked to.
+     * @property fromLanguage The BCP 47 language tag that the page should be translated from.
+     * @property toLanguage The BCP 47 language tag that the page should be translated to.
+     * @property options Options for how the translation should be processed.
+     */
+    data class TranslateAction(
+        override val tabId: String,
+        val fromLanguage: String,
+        val toLanguage: String,
+        val options: TranslationOptions?,
+    ) : TranslationsAction(), ActionWithTab
+
+    /**
+     * Indicates the given [tabId] should restore the original pre-translated content.
+     *
+     * @property tabId The ID of the tab the [EngineSession] should be linked to.
+     */
+    data class TranslateRestoreAction(
+        override val tabId: String,
+    ) : TranslationsAction(), ActionWithTab
+
+    /**
+     * Indicates the given [tabId] was successful in translating or restoring the page.
+     *
+     * @property tabId The ID of the tab the [EngineSession] should be linked to.
+     * @property operation The translation operation that was successful.
+     */
+    data class TranslateSuccessAction(
+        override val tabId: String,
+        val operation: TranslationOperation,
+    ) : TranslationsAction(), ActionWithTab
+
+    /**
+     * Indicates the given [tabId] was unable to translate or restore the page.
+     *
+     * @property tabId The ID of the tab the [EngineSession] should be linked to.
+     * @property operation The translation operation that failed.
+     * @property throwable The throwable for error handling.
+     */
+    data class TranslateExceptionAction(
+        override val tabId: String,
+        val operation: TranslationOperation,
+        val throwable: Throwable,
+    ) : TranslationsAction(), ActionWithTab
 }
 
 /**
@@ -859,18 +936,6 @@ sealed class CookieBannerAction : BrowserAction() {
      */
     data class UpdateStatusAction(val tabId: String, val status: CookieBannerHandlingStatus) :
         CookieBannerAction()
-}
-
-/**
- * [BrowserAction] implementations related to updating the [SessionState.ShoppingProduct]
- * of a single [SessionState] inside [BrowserState]
- */
-sealed class ShoppingProductAction : BrowserAction() {
-    /**
-     * Updates the [SessionState.ShoppingProduct] state or a a single [SessionState].
-     */
-    data class UpdateProductUrlStatusAction(val tabId: String, val isProductUrl: Boolean) :
-        ShoppingProductAction()
 }
 
 /**

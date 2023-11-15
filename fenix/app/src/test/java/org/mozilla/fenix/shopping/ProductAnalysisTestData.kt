@@ -4,10 +4,12 @@
 
 package org.mozilla.fenix.shopping
 
-import mozilla.components.browser.engine.gecko.shopping.GeckoProductAnalysis
-import mozilla.components.browser.engine.gecko.shopping.Highlight
+import mozilla.components.concept.engine.shopping.Highlight
+import mozilla.components.concept.engine.shopping.ProductAnalysis
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState
-import java.util.SortedMap
+import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent.AnalysisStatus
+import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent.HighlightsInfo
+import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.RecommendedProductState
 
 object ProductAnalysisTestData {
 
@@ -15,18 +17,20 @@ object ProductAnalysisTestData {
         productId: String? = "1",
         analysisURL: String = "https://test.com",
         grade: String? = "A",
-        adjustedRating: Double = 4.5,
+        adjustedRating: Double? = 4.5,
         needsAnalysis: Boolean = false,
+        pageNotSupported: Boolean = false,
         lastAnalysisTime: Long = 0L,
         deletedProductReported: Boolean = false,
         deletedProduct: Boolean = false,
         highlights: Highlight? = null,
-    ): GeckoProductAnalysis = GeckoProductAnalysis(
+    ): ProductAnalysis = ProductAnalysis(
         productId = productId,
         analysisURL = analysisURL,
         grade = grade,
         adjustedRating = adjustedRating,
         needsAnalysis = needsAnalysis,
+        pageNotSupported = pageNotSupported,
         lastAnalysisTime = lastAnalysisTime,
         deletedProductReported = deletedProductReported,
         deletedProduct = deletedProduct,
@@ -38,15 +42,17 @@ object ProductAnalysisTestData {
         productUrl: String = "https://test.com",
         reviewGrade: ReviewQualityCheckState.Grade? = ReviewQualityCheckState.Grade.A,
         adjustedRating: Float? = 4.5f,
-        needsAnalysis: Boolean = false,
-        highlights: SortedMap<ReviewQualityCheckState.HighlightType, List<String>>? = null,
+        analysisStatus: AnalysisStatus = AnalysisStatus.UP_TO_DATE,
+        highlightsInfo: HighlightsInfo? = null,
+        recommendedProductState: RecommendedProductState = RecommendedProductState.Initial,
     ): ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent =
         ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent(
             productId = productId,
             productUrl = productUrl,
             reviewGrade = reviewGrade,
             adjustedRating = adjustedRating,
-            needsAnalysis = needsAnalysis,
-            highlights = highlights,
+            analysisStatus = analysisStatus,
+            highlightsInfo = highlightsInfo,
+            recommendedProductState = recommendedProductState,
         )
 }

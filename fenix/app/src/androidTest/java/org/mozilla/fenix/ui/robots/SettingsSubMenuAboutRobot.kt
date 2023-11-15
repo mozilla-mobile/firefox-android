@@ -26,16 +26,14 @@ import androidx.test.uiautomator.UiSelector
 import mozilla.components.support.utils.ext.getPackageInfoCompat
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.containsString
-import org.junit.Assert.assertTrue
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.Constants.LISTS_MAXSWIPES
-import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
+import org.mozilla.fenix.helpers.MatcherHelper.assertItemContainingTextExists
+import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
 import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.helpers.TestHelper.appName
-import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.packageName
-import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.settings.SupportUtils
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
@@ -48,8 +46,12 @@ import java.util.Date
  * Implementation of Robot Pattern for the settings search sub menu.
  */
 class SettingsSubMenuAboutRobot {
-
-    fun verifyAboutFirefoxPreview() = assertFirefoxPreviewPage()
+    fun verifyAboutFirefoxPreviewInfo() {
+        assertVersionNumber()
+        assertProductCompany()
+        assertCurrentTimestamp()
+        verifyTheLinksList()
+    }
 
     class Transition {
         fun goBack(interact: SettingsRobot.() -> Unit): SettingsRobot.Transition {
@@ -61,13 +63,6 @@ class SettingsSubMenuAboutRobot {
     }
 }
 
-private fun assertFirefoxPreviewPage() {
-    assertVersionNumber()
-    assertProductCompany()
-    assertCurrentTimestamp()
-    verifyListElements()
-}
-
 private fun navigateBackToAboutPage(itemToInteract: () -> Unit) {
     navigationToolbar {
     }.openThreeDotMenu {
@@ -77,7 +72,7 @@ private fun navigateBackToAboutPage(itemToInteract: () -> Unit) {
     }
 }
 
-private fun verifyListElements() {
+private fun verifyTheLinksList() {
     assertAboutToolbar()
     assertWhatIsNewInFirefoxPreview()
     navigateBackToAboutPage(::assertSupport)
@@ -160,11 +155,7 @@ private fun assertCrashes() {
         .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
         .perform(click())
 
-    assertTrue(
-        mDevice.findObject(
-            UiSelector().textContains("No crash reports have been submitted."),
-        ).waitForExists(waitingTime),
-    )
+    assertItemContainingTextExists(itemContainingText("No crash reports have been submitted."))
 
     for (i in 1..3) {
         Espresso.pressBack()
