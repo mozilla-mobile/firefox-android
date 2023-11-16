@@ -288,8 +288,8 @@ class DownloadTest {
 
         browserScreen {
         }.openNotificationShade {
-            verifySystemNotificationExists("Download failed")
             expandNotificationMessage()
+            verifySystemNotificationExists("Download failed")
             swipeDownloadNotification("Left", true)
             verifySystemNotificationDoesNotExist("Firefox Fenix")
         }.closeNotificationTray {}
