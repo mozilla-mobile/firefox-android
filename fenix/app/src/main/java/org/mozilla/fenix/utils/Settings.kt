@@ -619,8 +619,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var shouldUseCookieBannerPrivateMode by lazyFeatureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_cookie_banner_private_mode),
         featureFlag = true,
-        default = { cookieBannersSection[CookieBannersSection.FEATURE_SETTING_VALUE_PBM] == 1 },
+        default = { shouldUseCookieBannerPrivateModeDefaultValue },
     )
+
+    val shouldUseCookieBannerPrivateModeDefaultValue: Boolean
+        get() = cookieBannersSection[CookieBannersSection.FEATURE_SETTING_VALUE_PBM] == 1
 
     val shouldUseCookieBanner: Boolean
         get() = cookieBannersSection[CookieBannersSection.FEATURE_SETTING_VALUE] == 1
@@ -776,6 +779,15 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         appContext.getPreferenceKey(R.string.pref_key_should_show_erase_action_popup),
         featureFlag = true,
         default = { feltPrivateBrowsingEnabled },
+    )
+
+    /**
+     * Indicates if the cookie banners CRF should be shown.
+     */
+    var shouldShowCookieBannersCFR by lazyFeatureFlagPreference(
+        appContext.getPreferenceKey(R.string.pref_key_should_show_cookie_banners_action_popup),
+        featureFlag = true,
+        default = { shouldShowCookieBannerUI },
     )
 
     val blockCookiesSelectionInCustomTrackingProtection by stringPreference(
