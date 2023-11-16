@@ -122,7 +122,7 @@ class SettingsAddonsTest {
 
         val uBlockAddon = "uBlock Origin"
         val tampermonkeyAddon = "Tampermonkey"
-        val privacyBadgerAddon = "Privacy Badger"
+        val darkReaderAddon = "Dark Reader"
         val trackingProtectionPage = getEnhancedTrackingProtectionAsset(mockWebServer)
 
         addonsMenu {
@@ -130,7 +130,7 @@ class SettingsAddonsTest {
             closeAddonInstallCompletePrompt()
             installAddon(tampermonkeyAddon, activityTestRule)
             closeAddonInstallCompletePrompt()
-            installAddon(privacyBadgerAddon, activityTestRule)
+            installAddon(darkReaderAddon, activityTestRule)
             closeAddonInstallCompletePrompt()
         }.goBack {
         }.openNavigationToolbar {

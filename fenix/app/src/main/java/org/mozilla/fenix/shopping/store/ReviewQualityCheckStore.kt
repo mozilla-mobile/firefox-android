@@ -46,11 +46,19 @@ private fun mapStateForUpdateAction(
     return when (action) {
         is ReviewQualityCheckAction.OptInCompleted -> {
             if (state is ReviewQualityCheckState.OptedIn) {
-                state.copy(productRecommendationsPreference = action.isProductRecommendationsEnabled)
+                state.copy(
+                    productRecommendationsPreference = action.isProductRecommendationsEnabled,
+                    isHighlightsExpanded = action.isHighlightsExpanded,
+                    isInfoExpanded = action.isInfoExpanded,
+                    isSettingsExpanded = action.isSettingsExpanded,
+                )
             } else {
                 ReviewQualityCheckState.OptedIn(
                     productRecommendationsPreference = action.isProductRecommendationsEnabled,
                     productVendor = action.productVendor,
+                    isHighlightsExpanded = action.isHighlightsExpanded,
+                    isInfoExpanded = action.isInfoExpanded,
+                    isSettingsExpanded = action.isSettingsExpanded,
                 )
             }
         }
@@ -72,6 +80,12 @@ private fun mapStateForUpdateAction(
         ReviewQualityCheckAction.ExpandCollapseInfo -> {
             state.mapIfOptedIn {
                 it.copy(isInfoExpanded = !it.isInfoExpanded)
+            }
+        }
+
+        ReviewQualityCheckAction.ExpandCollapseHighlights -> {
+            state.mapIfOptedIn {
+                it.copy(isHighlightsExpanded = !it.isHighlightsExpanded)
             }
         }
 

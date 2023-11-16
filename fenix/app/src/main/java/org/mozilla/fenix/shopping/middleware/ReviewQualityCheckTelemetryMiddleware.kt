@@ -4,18 +4,25 @@
 
 package org.mozilla.fenix.shopping.middleware
 
+import mozilla.components.browser.state.selector.selectedTab
+import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.lib.state.MiddlewareContext
 import mozilla.components.lib.state.Store
 import org.mozilla.fenix.GleanMetrics.Shopping
 import org.mozilla.fenix.GleanMetrics.ShoppingSettings
+import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckAction
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckMiddleware
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState
+import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent.AnalysisStatus
 
 /**
  * Middleware that captures telemetry events for the review quality check feature.
  */
-class ReviewQualityCheckTelemetryMiddleware : ReviewQualityCheckMiddleware {
+class ReviewQualityCheckTelemetryMiddleware(
+    private val browserStore: BrowserStore,
+    private val appStore: AppStore,
+) : ReviewQualityCheckMiddleware {
 
     override fun invoke(
         context: MiddlewareContext<ReviewQualityCheckState, ReviewQualityCheckAction>,
@@ -78,8 +85,11 @@ class ReviewQualityCheckTelemetryMiddleware : ReviewQualityCheckMiddleware {
                 Shopping.surfaceNotNowClicked.record()
             }
 
-            is ReviewQualityCheckAction.ShowMoreRecentReviewsClicked -> {
-                Shopping.surfaceShowMoreRecentReviewsClicked.record()
+            is ReviewQualityCheckAction.ExpandCollapseHighlights -> {
+                val state = store.state
+                if (state is ReviewQualityCheckState.OptedIn && state.isHighlightsExpanded) {
+                    Shopping.surfaceShowMoreRecentReviewsClicked.record()
+                }
             }
 
             is ReviewQualityCheckAction.ExpandCollapseSettings -> {
@@ -91,6 +101,14 @@ class ReviewQualityCheckTelemetryMiddleware : ReviewQualityCheckMiddleware {
 
             is ReviewQualityCheckAction.NoAnalysisDisplayed -> {
                 Shopping.surfaceNoReviewReliabilityAvailable.record()
+            }
+
+            is ReviewQualityCheckAction.UpdateProductReview -> {
+                val productPageUrl = browserStore.state.selectedTab?.content?.url
+                val state = store.state
+                if (state.isStaleAnalysis() && !isProductInAnalysis(productPageUrl)) {
+                    Shopping.surfaceStaleAnalysisShown.record()
+                }
             }
 
             is ReviewQualityCheckAction.AnalyzeProduct -> {
@@ -114,4 +132,14 @@ class ReviewQualityCheckTelemetryMiddleware : ReviewQualityCheckMiddleware {
             }
         }
     }
+
+    private fun ReviewQualityCheckState.isStaleAnalysis(): Boolean =
+        this is ReviewQualityCheckState.OptedIn &&
+            this.productReviewState is ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent &&
+            this.productReviewState.analysisStatus == AnalysisStatus.NEEDS_ANALYSIS
+
+    private fun isProductInAnalysis(
+        productPageUrl: String?,
+    ): Boolean =
+        appStore.state.shoppingState.productsInAnalysis.contains(productPageUrl)
 }
