@@ -116,4 +116,97 @@ class WebURLFinderTest {
         assertFalse(isWebURL("javascript:alert('Hi')"))
         assertFalse(isWebURL("JAVascript:alert('Hi')"))
     }
+
+    @Test
+    fun isUrlLikeEmulated() {
+        // autolinkWebUrlPattern uses a copy of the regex from URLStringUtils,
+        // so here we emulate isURLLike() and copy its tests.
+        val isURLLike: (String) -> Boolean = { find(it) == it.trim() }
+
+        // All cases that behave differently are annotated with INVERT().
+        val INVERT: (Boolean) -> Boolean = { !it }
+
+        assertFalse(isURLLike("inurl:mozilla.org advanced search"))
+        assertFalse(isURLLike("sf: help"))
+        assertFalse(isURLLike("mozilla./~"))
+        assertFalse(isURLLike("cnn.com politics"))
+
+        assertTrue(isURLLike("about:config"))
+        assertTrue(isURLLike("about:config:8000"))
+        assertTrue(INVERT(isURLLike("file:///home/user/myfile.html")))
+        assertTrue(INVERT(isURLLike("file://////////////home//user/myfile.html")))
+        assertTrue(INVERT(isURLLike("file://C:\\Users\\user\\myfile.html")))
+        assertTrue(isURLLike("http://192.168.255.255"))
+        assertTrue(isURLLike("link.unknown"))
+        assertTrue(isURLLike("3.14.2019"))
+        assertTrue(isURLLike("3-four.14.2019"))
+        assertTrue(isURLLike(" cnn.com "))
+        assertTrue(isURLLike(" cnn.com"))
+        assertTrue(isURLLike("cnn.com "))
+        assertTrue(isURLLike("mozilla.com/~userdir"))
+        assertTrue(isURLLike("my-domain.com"))
+        assertTrue(isURLLike("http://faß.de//"))
+        assertTrue(isURLLike("cnn.cơḿ"))
+        assertTrue(isURLLike("cnn.çơḿ"))
+
+        assertTrue(isURLLike("c-c.com"))
+        assertTrue(isURLLike("c-c-c-c.c-c-c"))
+        assertTrue(isURLLike("c-http://c.com"))
+        assertTrue(isURLLike("about-mozilla:mozilla"))
+        assertTrue(isURLLike("c-http.d-x"))
+        assertTrue(isURLLike("www.c.-"))
+        assertTrue(isURLLike("3-3.3"))
+        assertTrue(isURLLike("www.c-c.-"))
+
+        assertFalse(isURLLike(" -://x.com "))
+        assertFalse(isURLLike("  -x.com"))
+        assertFalse(isURLLike("http://www-.com"))
+        assertFalse(isURLLike("www.c-c-  "))
+        assertFalse(isURLLike("3-3 "))
+
+        val validIPv6Literals = listOf(
+            "[::]",
+            "[::1]",
+            "[1::]",
+            "[1:2:3:4:5:6:7:8]",
+            "[2001:db8::1.2.3.4]",
+            "[::1]:8080",
+        )
+
+        validIPv6Literals.forEach { url ->
+            assertTrue(INVERT(isURLLike(url)))
+            assertTrue(INVERT(isURLLike("$url/")))
+            assertTrue(isURLLike("https://$url"))
+            assertTrue(isURLLike("https://$url/"))
+            assertTrue(isURLLike("https:$url"))
+            assertTrue(isURLLike("http://$url"))
+            assertTrue(isURLLike("http://$url/"))
+            assertTrue(isURLLike("http:$url"))
+        }
+
+        assertFalse(isURLLike("::1"))
+        assertFalse(isURLLike(":::"))
+        assertFalse(isURLLike("[[http://]]"))
+        assertFalse(isURLLike("[[["))
+        assertFalse(isURLLike("[[[:"))
+        assertFalse(isURLLike("[[[:/"))
+        assertFalse(isURLLike("http://]]]"))
+
+        assertTrue(isURLLike("fe80::"))
+        assertTrue(isURLLike("x:["))
+
+        assertTrue(INVERT(isURLLike("[:::")))
+        assertTrue(INVERT(isURLLike("http://[::")))
+        assertTrue(INVERT(isURLLike("http://[::/path")))
+        assertTrue(INVERT(isURLLike("http://[::?query")))
+        assertTrue(INVERT(isURLLike("[[http://banana]]")))
+        assertTrue(INVERT(isURLLike("http://[[[")))
+        assertTrue(INVERT(isURLLike("[[[::")))
+        assertTrue(INVERT(isURLLike("[[[::/")))
+        assertTrue(INVERT(isURLLike("http://[1.2.3]")))
+        assertTrue(INVERT(isURLLike("https://[1:2:3:4:5:6:7]/")))
+        assertTrue(INVERT(isURLLike("https://[1:2:3:4:5:6:7:8:9]/")))
+
+        assertTrue(isURLLike("https://abc--cba.com/"))
+    }
 }
