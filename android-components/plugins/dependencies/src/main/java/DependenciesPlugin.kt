@@ -59,7 +59,7 @@ object Versions {
         const val annotation = "1.7.0"
         const val appcompat = "1.6.1"
         const val autofill = "1.1.0"
-        const val browser = "1.6.0"
+        const val browser = "1.7.0"
         const val biometric = "1.1.0"
         const val cardview = "1.0.0"
         const val compose = compose_version
@@ -178,7 +178,7 @@ object ComponentsDependencies {
     const val tools_detekt_api = "io.gitlab.arturbosch.detekt:detekt-api:${Versions.detekt}"
     const val tools_detekt_test = "io.gitlab.arturbosch.detekt:detekt-test:${Versions.detekt}"
 
-    val mozilla_geckoview = "org.mozilla.geckoview:${Gecko.channel().artifactName}:${Gecko.version()}"
+    val mozilla_geckoview = "org.mozilla.geckoview:${Gecko.channel.artifactName}:${Gecko.version}"
     val mozilla_appservices_fxaclient = "${ApplicationServicesConfig.groupId}:fxaclient:${ApplicationServicesConfig.version}"
     val mozilla_appservices_nimbus = "${ApplicationServicesConfig.groupId}:nimbus:${ApplicationServicesConfig.version}"
     const val mozilla_glean_forUnitTests = "org.mozilla.telemetry:glean-native-forUnitTests:${Versions.mozilla_glean}"
