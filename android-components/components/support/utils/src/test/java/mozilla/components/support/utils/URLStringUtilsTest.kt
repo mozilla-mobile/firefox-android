@@ -104,9 +104,11 @@ class URLStringUtilsTest {
             assertTrue(isURLLike("https://$url"))
             assertTrue(isURLLike("https://$url/"))
             assertTrue(isURLLike("https:$url"))
+            assertTrue(isURLLike("https:$url/"))
             assertTrue(isURLLike("http://$url"))
             assertTrue(isURLLike("http://$url/"))
             assertTrue(isURLLike("http:$url"))
+            assertTrue(isURLLike("http:$url/"))
         }
 
         // Invalid IPv6 literals correctly recognized as invalid.

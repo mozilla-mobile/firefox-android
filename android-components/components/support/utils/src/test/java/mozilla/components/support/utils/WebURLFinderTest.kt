@@ -121,7 +121,9 @@ class WebURLFinderTest {
     fun isUrlLikeEmulated() {
         // autolinkWebUrlPattern uses a copy of the regex from URLStringUtils,
         // so here we emulate isURLLike() and copy its tests.
-        val isURLLike: (String) -> Boolean = { find(it) == it.trim() }
+        val isURLLike: (String) -> Boolean = {
+            find("random_text $it other_random_text") == it.trim()
+        }
 
         // All cases that behave differently are annotated with INVERT().
         val INVERT: (Boolean) -> Boolean = { !it }
@@ -179,9 +181,11 @@ class WebURLFinderTest {
             assertTrue(isURLLike("https://$url"))
             assertTrue(isURLLike("https://$url/"))
             assertTrue(isURLLike("https:$url"))
+            assertTrue(isURLLike("https:$url/"))
             assertTrue(isURLLike("http://$url"))
             assertTrue(isURLLike("http://$url/"))
             assertTrue(isURLLike("http:$url"))
+            assertTrue(isURLLike("http:$url/"))
         }
 
         assertFalse(isURLLike("::1"))
