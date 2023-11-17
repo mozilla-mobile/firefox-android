@@ -199,7 +199,7 @@ class SettingsSitePermissionsTest {
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2095124
     @Test
-    fun verifyAutoplayAllowAudioVideoSettingOnNotMutedVideoTestTest() {
+    fun verifyAutoplayAllowAudioVideoSettingOnNotMutedVideoTest() {
         val genericPage = getGenericAsset(mockWebServer, 1)
         val videoTestPage = getVideoPageAsset(mockWebServer)
 
