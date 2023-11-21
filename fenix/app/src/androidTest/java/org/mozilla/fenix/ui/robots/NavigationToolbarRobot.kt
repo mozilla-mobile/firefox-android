@@ -38,8 +38,8 @@ import org.mozilla.fenix.helpers.Constants.LONG_CLICK_DURATION
 import org.mozilla.fenix.helpers.Constants.TAG
 import org.mozilla.fenix.helpers.DataGenerationHelper.getStringResource
 import org.mozilla.fenix.helpers.HomeActivityComposeTestRule
-import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithResIdAndTextExists
-import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithResIdExists
+import org.mozilla.fenix.helpers.MatcherHelper.assertItemTextEquals
+import org.mozilla.fenix.helpers.MatcherHelper.assertUIObjectExists
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdAndText
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdContainingText
@@ -81,19 +81,15 @@ class NavigationToolbarRobot {
         readerViewToggle().click()
     }
 
-    fun verifyClipboardSuggestionsAreDisplayed(link: String = "", shouldBeDisplayed: Boolean) {
-        assertItemWithResIdExists(
+    fun verifyClipboardSuggestionsAreDisplayed(link: String = "", shouldBeDisplayed: Boolean) =
+        assertUIObjectExists(
             itemWithResId("$packageName:id/fill_link_from_clipboard"),
-            exists = shouldBeDisplayed,
-        )
-        assertItemWithResIdAndTextExists(
             itemWithResIdAndText(
                 "$packageName:id/clipboard_url",
                 link,
             ),
             exists = shouldBeDisplayed,
         )
-    }
 
     fun longClickEditModeToolbar() =
         mDevice.findObject(By.res("$packageName:id/mozac_browser_toolbar_edit_url_view")).click(LONG_CLICK_DURATION)
@@ -117,14 +113,12 @@ class NavigationToolbarRobot {
     // New unified search UI selector
     fun verifySearchBarPlaceholder(text: String) {
         urlBar().waitForExists(waitingTime)
-        assertTrue(
-            urlBar().text == text,
-        )
+        assertItemTextEquals(urlBar(), expectedText = text)
     }
 
     // New unified search UI selector
     fun verifyDefaultSearchEngine(engineName: String) =
-        assertItemWithResIdExists(
+        assertUIObjectExists(
             searchSelectorButton.getChild(UiSelector().description(engineName)),
         )
 

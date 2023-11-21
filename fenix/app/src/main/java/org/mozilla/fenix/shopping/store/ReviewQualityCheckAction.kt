@@ -88,7 +88,7 @@ sealed interface ReviewQualityCheckAction : Action {
     /**
      * Triggered as a result of a [NetworkAction] to update the [ProductReviewState].
      */
-    data class UpdateProductReview(val productReviewState: ProductReviewState) : UpdateAction
+    data class UpdateProductReview(val productReviewState: ProductReviewState) : UpdateAction, TelemetryAction
 
     /**
      * Triggered as a result of a [NetworkAction] to update the [RecommendedProductState].
@@ -111,6 +111,12 @@ sealed interface ReviewQualityCheckAction : Action {
      * Triggered when the user triggers product re-analysis.
      */
     object ReanalyzeProduct : NetworkAction, UpdateAction, TelemetryAction
+
+    /**
+     * Triggered when the product was previously known to be in reanalysis
+     * process when the sheet was closed and the state should be restored.
+     */
+    object RestoreReanalysis : NetworkAction, UpdateAction
 
     /**
      * Triggered when the user clicks on the analyze button
