@@ -619,8 +619,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var shouldUseCookieBannerPrivateMode by lazyFeatureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_cookie_banner_private_mode),
         featureFlag = true,
-        default = { cookieBannersSection[CookieBannersSection.FEATURE_SETTING_VALUE_PBM] == 1 },
+        default = { shouldUseCookieBannerPrivateModeDefaultValue },
     )
+
+    val shouldUseCookieBannerPrivateModeDefaultValue: Boolean
+        get() = cookieBannersSection[CookieBannersSection.FEATURE_SETTING_VALUE_PBM] == 1
 
     val shouldUseCookieBanner: Boolean
         get() = cookieBannersSection[CookieBannersSection.FEATURE_SETTING_VALUE] == 1
@@ -1861,6 +1864,14 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var growthUserActivatedSent by booleanPreference(
         key = appContext.getPreferenceKey(R.string.pref_key_growth_user_activated_sent),
         default = false,
+    )
+
+    /**
+     * Font List Telemetry Ping Sent
+     */
+    var numFontListSent by intPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_num_font_list_sent),
+        default = 0,
     )
 
     /**

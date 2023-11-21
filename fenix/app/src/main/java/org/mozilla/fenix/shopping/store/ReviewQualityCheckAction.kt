@@ -64,10 +64,16 @@ sealed interface ReviewQualityCheckAction : Action {
      * @property isProductRecommendationsEnabled Reflects the user preference update to display
      * recommended product. Null when product recommendations feature is disabled.
      * @property productVendor The vendor of the product.
+     * @property isHighlightsExpanded Whether the highlights card should be expanded.
+     * @property isInfoExpanded Whether the info card should be expanded.
+     * @property isSettingsExpanded Whether the settings card should be expanded.
      */
     data class OptInCompleted(
         val isProductRecommendationsEnabled: Boolean?,
         val productVendor: ReviewQualityCheckState.ProductVendor,
+        val isHighlightsExpanded: Boolean,
+        val isInfoExpanded: Boolean,
+        val isSettingsExpanded: Boolean,
     ) : UpdateAction
 
     /**
@@ -82,7 +88,7 @@ sealed interface ReviewQualityCheckAction : Action {
     /**
      * Triggered as a result of a [NetworkAction] to update the [ProductReviewState].
      */
-    data class UpdateProductReview(val productReviewState: ProductReviewState) : UpdateAction
+    data class UpdateProductReview(val productReviewState: ProductReviewState) : UpdateAction, TelemetryAction
 
     /**
      * Triggered as a result of a [NetworkAction] to update the [RecommendedProductState].
@@ -105,6 +111,12 @@ sealed interface ReviewQualityCheckAction : Action {
      * Triggered when the user triggers product re-analysis.
      */
     object ReanalyzeProduct : NetworkAction, UpdateAction, TelemetryAction
+
+    /**
+     * Triggered when the product was previously known to be in reanalysis
+     * process when the sheet was closed and the state should be restored.
+     */
+    object RestoreReanalysis : NetworkAction, UpdateAction
 
     /**
      * Triggered when the user clicks on the analyze button
@@ -178,17 +190,17 @@ sealed interface ReviewQualityCheckAction : Action {
     /**
      * Triggered when the user expands the recent reviews card.
      */
-    object ExpandCollapseHighlights : TelemetryAction, UpdateAction
+    object ExpandCollapseHighlights : TelemetryAction, UpdateAction, PreferencesMiddlewareAction
 
     /**
      * Triggered when the user expands or collapses the settings card.
      */
-    object ExpandCollapseSettings : TelemetryAction, UpdateAction
+    object ExpandCollapseSettings : TelemetryAction, UpdateAction, PreferencesMiddlewareAction
 
     /**
      * Triggered when the user expands or collapses the info card.
      */
-    object ExpandCollapseInfo : UpdateAction
+    object ExpandCollapseInfo : UpdateAction, PreferencesMiddlewareAction
 
     /**
      * Triggered when the No analysis card is displayed to the user.

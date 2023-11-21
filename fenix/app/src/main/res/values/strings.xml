@@ -498,8 +498,8 @@
     <string name="reduce_cookie_banner_dialog_snackbar_text" moz:RemovedIn="121" tools:ignore="UnusedResources">You’ll see fewer cookie requests</string>
     <!-- Change setting text button, for the cookie banner re-engagement dialog -->
     <string name="reduce_cookie_banner_dialog_change_setting_button" moz:RemovedIn="121" tools:ignore="UnusedResources">Allow</string>
-    <!--Title for the cookie banner re-engagement CFR -->
-    <string name="cookie_banner_cfr_title">Firefox just refused cookies for you</string>
+    <!--Title for the cookie banner re-engagement CFR, the placeholder is replaced with app name -->
+    <string name="cookie_banner_cfr_title">%1$s just refused cookies for you</string>
     <!--Message for the cookie banner re-engagement CFR -->
     <string name="cookie_banner_cfr_message">Less distractions, less cookies tracking you on this site.</string>
 
@@ -2162,8 +2162,6 @@
     <!-- Caption for recommended product section indicating this is an ad by Fakespot. First parameter is the Fakespot product name. -->
     <string name="review_quality_check_ad_caption" tools:ignore="UnusedResources">Ad by %s</string>
     <!-- Caption for review quality check panel. First parameter is for clickable text defined in review_quality_check_powered_by_link. -->
-    <string name="review_quality_check_powered_by" tools:ignore="UnusedResources" moz:RemovedIn="119">Review checker is powered by %s.</string>
-    <!-- Caption for review quality check panel. First parameter is for clickable text defined in review_quality_check_powered_by_link. -->
     <string name="review_quality_check_powered_by_2">Review checker is powered by %s</string>
     <!-- Clickable text that links to Fakespot.com. First parameter is the Fakespot product name. In the phrase "Fakespot by Mozilla", "by" can be localized. Does not need to stay by. -->
     <string name="review_quality_check_powered_by_link" tools:ignore="UnusedResources">%s by Mozilla</string>
@@ -2289,4 +2287,6 @@
     <string name="a11y_action_label_read_article">read the article</string>
     <!-- Action label for links to the Firefox Pocket website. Talkback will append this to say "Double tap to open link to learn more". -->
     <string name="a11y_action_label_pocket_learn_more">open link to learn more</string>
+    <!-- Talkback will announce the heading element as "Heading". -->
+    <string name="a11y_heading">%s, Heading</string>
 </resources>

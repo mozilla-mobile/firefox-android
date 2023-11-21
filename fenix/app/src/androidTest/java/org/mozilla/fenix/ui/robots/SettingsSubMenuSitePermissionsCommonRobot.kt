@@ -14,12 +14,11 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.uiautomator.UiSelector
 import org.hamcrest.CoreMatchers.allOf
-import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.DataGenerationHelper.getStringResource
-import org.mozilla.fenix.helpers.MatcherHelper.assertItemContainingTextExists
-import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithDescriptionExists
+import org.mozilla.fenix.helpers.MatcherHelper.assertUIObjectExists
 import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithClassName
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithDescription
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
@@ -27,7 +26,6 @@ import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.assertIsChecked
 import org.mozilla.fenix.helpers.click
-import org.mozilla.fenix.helpers.isChecked
 
 /**
  * Implementation of Robot Pattern for the settings Site Permissions sub menu.
@@ -136,31 +134,27 @@ class SettingsSubMenuSitePermissionsCommonRobot {
     }
 
     fun verifySystemGrantedPermission(permissionCategory: String) {
-        assertTrue(
-            mDevice.findObject(
-                UiSelector().className("android.widget.RelativeLayout"),
-            ).getChild(
-                UiSelector()
-                    .resourceId("android:id/title")
-                    .textContains(permissionCategory),
-            ).waitForExists(waitingTime),
-        )
-
-        assertTrue(
-            mDevice.findObject(
-                UiSelector().className("android.widget.RelativeLayout"),
-            ).getChild(
-                UiSelector()
-                    .resourceId("android:id/summary")
-                    .textContains("Only while app is in use"),
-            ).waitForExists(waitingTime),
+        assertUIObjectExists(
+            itemWithClassName("android.widget.RelativeLayout")
+                .getChild(
+                    UiSelector()
+                        .resourceId("android:id/title")
+                        .textContains(permissionCategory),
+                ),
+            itemWithClassName("android.widget.RelativeLayout")
+                .getChild(
+                    UiSelector()
+                        .resourceId("android:id/summary")
+                        .textContains("Only while app is in use"),
+                ),
         )
     }
 
-    fun verifyNotificationToolbar() {
-        assertItemContainingTextExists(itemContainingText(getStringResource(R.string.preference_phone_feature_notification)))
-        assertItemWithDescriptionExists(itemWithDescription(getStringResource(R.string.action_bar_up_description)))
-    }
+    fun verifyNotificationToolbar() =
+        assertUIObjectExists(
+            itemContainingText(getStringResource(R.string.preference_phone_feature_notification)),
+            itemWithDescription(getStringResource(R.string.action_bar_up_description)),
+        )
 
     fun selectAutoplayOption(text: String) {
         when (text) {
@@ -239,12 +233,12 @@ private fun assertCheckAutoPayRadioButtonDefault() {
 
 private fun assertBlockedByAndroid() {
     blockedByAndroidContainer().waitForExists(waitingTime)
-    assertItemContainingTextExists(itemContainingText(getStringResource(R.string.phone_feature_blocked_by_android)))
+    assertUIObjectExists(itemContainingText(getStringResource(R.string.phone_feature_blocked_by_android)))
 }
 
 private fun assertUnblockedByAndroid() {
     blockedByAndroidContainer().waitUntilGone(waitingTime)
-    assertItemContainingTextExists(itemContainingText(getStringResource(R.string.phone_feature_blocked_by_android)), exists = false)
+    assertUIObjectExists(itemContainingText(getStringResource(R.string.phone_feature_blocked_by_android)), exists = false)
 }
 
 private fun blockedByAndroidContainer() = mDevice.findObject(UiSelector().resourceId("$packageName:id/permissions_blocked_container"))

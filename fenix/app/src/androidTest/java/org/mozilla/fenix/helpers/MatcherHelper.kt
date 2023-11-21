@@ -39,103 +39,111 @@ object MatcherHelper {
         return mDevice.findObject(UiSelector().descriptionContains(description))
     }
 
-    fun checkedItemWithResId(resourceId: String, isChecked: Boolean) =
-        mDevice.findObject(UiSelector().resourceId(resourceId).checked(isChecked))
+    fun itemWithIndex(index: Int): UiObject {
+        Log.i(TAG, "Looking for item with index: $index")
+        return mDevice.findObject(UiSelector().index(index))
+    }
 
-    fun checkedItemWithResIdAndText(resourceId: String, text: String, isChecked: Boolean) =
-        mDevice.findObject(
+    fun itemWithClassName(className: String): UiObject {
+        Log.i(TAG, "Looking for item with class name: $className")
+        return mDevice.findObject(UiSelector().className(className))
+    }
+
+    fun itemWithResIdAndIndex(resourceId: String, index: Int): UiObject {
+        Log.i(TAG, "Looking for item with resource id: $resourceId and index: $index")
+        return mDevice.findObject(UiSelector().resourceId(resourceId).index(index))
+    }
+
+    fun itemWithClassNameAndIndex(className: String, index: Int): UiObject {
+        Log.i(TAG, "Looking for item with class name: $className and index: $index")
+        return mDevice.findObject(UiSelector().className(className).index(index))
+    }
+
+    fun checkedItemWithResId(resourceId: String, isChecked: Boolean): UiObject {
+        Log.i(TAG, "Looking for checked item with resource id: $resourceId")
+        return mDevice.findObject(UiSelector().resourceId(resourceId).checked(isChecked))
+    }
+
+    fun checkedItemWithResIdAndText(resourceId: String, text: String, isChecked: Boolean): UiObject {
+        Log.i(TAG, "Looking for checked item with resource id: $resourceId and text: $text")
+        return mDevice.findObject(
             UiSelector()
                 .resourceId(resourceId)
                 .textContains(text)
                 .checked(isChecked),
         )
-
-    fun itemWithResIdAndDescription(resourceId: String, description: String) =
-        mDevice.findObject(UiSelector().resourceId(resourceId).descriptionContains(description))
-
-    fun itemWithResIdAndText(resourceId: String, text: String) =
-        mDevice.findObject(UiSelector().resourceId(resourceId).text(text))
-
-    fun itemWithResIdContainingText(resourceId: String, text: String) =
-        mDevice.findObject(UiSelector().resourceId(resourceId).textContains(text))
-
-    fun assertItemWithResIdExists(vararg appItems: UiObject, exists: Boolean = true) {
-        if (exists) {
-            for (appItem in appItems) {
-                assertTrue("${appItem.selector} does not exist", appItem.waitForExists(waitingTime))
-                Log.i(TAG, "assertItemWithResIdExists: Verified ${appItem.selector} exists")
-            }
-        } else {
-            for (appItem in appItems) {
-                assertFalse("${appItem.selector} exists", appItem.waitForExists(waitingTimeShort))
-                Log.i(TAG, "assertItemWithResIdExists: Verified ${appItem.selector} does not exist")
-            }
-        }
     }
 
-    fun assertItemContainingTextExists(vararg appItems: UiObject, exists: Boolean = true) {
+    fun itemWithResIdAndDescription(resourceId: String, description: String): UiObject {
+        Log.i(TAG, "Looking for item with resource id: $resourceId and description: $description")
+        return mDevice.findObject(UiSelector().resourceId(resourceId).descriptionContains(description))
+    }
+
+    fun itemWithResIdAndText(resourceId: String, text: String): UiObject {
+        Log.i(TAG, "Looking for item with resource id: $resourceId and text: $text")
+        return mDevice.findObject(UiSelector().resourceId(resourceId).text(text))
+    }
+
+    fun itemWithResIdContainingText(resourceId: String, text: String): UiObject {
+        Log.i(TAG, "Looking for item with resource id: $resourceId and containing text: $text")
+        return mDevice.findObject(UiSelector().resourceId(resourceId).textContains(text))
+    }
+
+    fun assertUIObjectExists(
+        vararg appItems: UiObject,
+        exists: Boolean = true,
+        waitingTime: Long = TestAssetHelper.waitingTime,
+    ) {
         for (appItem in appItems) {
             if (exists) {
                 assertTrue("${appItem.selector} does not exist", appItem.waitForExists(waitingTime))
-                Log.i(TAG, "assertItemContainingTextExists: Verified ${appItem.selector} exists")
+                Log.i(TAG, "assertUIObjectExists: Verified ${appItem.selector} exists")
             } else {
                 assertFalse("${appItem.selector} exists", appItem.waitForExists(waitingTimeShort))
-                Log.i(TAG, "assertItemContainingTextExists: Verified ${appItem.selector} does not exist")
+                Log.i(TAG, "assertUIObjectExists: Verified ${appItem.selector} does not exist")
             }
         }
     }
 
-    fun assertItemWithDescriptionExists(vararg appItems: UiObject, exists: Boolean = true) {
+    fun assertUIObjectIsGone(vararg appItems: UiObject) {
         for (appItem in appItems) {
-            if (exists) {
-                assertTrue("${appItem.selector} does not exist", appItem.waitForExists(waitingTime))
-                Log.i(TAG, "assertItemContainingTextExists: Verified ${appItem.selector} exists")
+            assertTrue("${appItem.selector} is not gone", appItem.waitUntilGone(waitingTime))
+            Log.i(TAG, "assertUIObjectIsGone: Verified ${appItem.selector} is gone")
+        }
+    }
+
+    fun assertItemTextEquals(vararg appItems: UiObject, expectedText: String, isEqual: Boolean = true) {
+        for (appItem in appItems) {
+            if (isEqual) {
+                assertTrue(
+                    "${appItem.selector} text does not equal to $expectedText",
+                    appItem.text.equals(expectedText),
+                )
+                Log.i(TAG, "assertItemTextEquals: Verified ${appItem.selector} text equals to $expectedText")
             } else {
-                assertFalse("${appItem.selector} exists", appItem.waitForExists(waitingTimeShort))
-                Log.i(TAG, "assertItemContainingTextExists: Verified ${appItem.selector} does not exist")
+                assertFalse(
+                    "${appItem.selector} text equals to $expectedText",
+                    appItem.text.equals(expectedText),
+                )
+                Log.i(TAG, "assertItemTextEquals: Verified ${appItem.selector} text does not equal to $expectedText")
             }
         }
     }
 
-    fun assertCheckedItemWithResIdExists(vararg appItems: UiObject, exists: Boolean = true) {
+    fun assertItemTextContains(vararg appItems: UiObject, itemText: String) {
         for (appItem in appItems) {
-            if (exists) {
-                assertTrue("${appItem.selector} does not exist", appItem.waitForExists(waitingTime))
-                Log.i(TAG, "assertCheckedItemWithResIdExists: Verified ${appItem.selector} exists")
-            } else {
-                assertFalse("${appItem.selector} exists", appItem.waitForExists(waitingTimeShort))
-                Log.i(TAG, "assertItemContainingTextExists: Verified ${appItem.selector} does not exist")
-            }
-        }
-    }
-
-    fun assertCheckedItemWithResIdAndTextExists(vararg appItems: UiObject) {
-        for (appItem in appItems) {
-            assertTrue(appItem.waitForExists(waitingTime))
-        }
-    }
-
-    fun assertItemWithResIdAndDescriptionExists(vararg appItems: UiObject) {
-        for (appItem in appItems) {
-            assertTrue(appItem.waitForExists(waitingTime))
-        }
-    }
-
-    fun assertItemWithResIdAndTextExists(vararg appItems: UiObject, exists: Boolean = true) {
-        for (appItem in appItems) {
-            if (exists) {
-                assertTrue("${appItem.selector} does not exist", appItem.waitForExists(waitingTime))
-                Log.i(TAG, "assertItemWithResIdExists: Verified ${appItem.selector} exists")
-            } else {
-                assertFalse("${appItem.selector} exists", appItem.waitForExists(waitingTimeShort))
-                Log.i(TAG, "assertItemWithResIdExists: Verified ${appItem.selector} does not exist")
-            }
+            assertTrue(
+                "${appItem.selector} text does not contain $itemText",
+                appItem.text.contains(itemText),
+            )
+            Log.i(TAG, "assertItemTextContains: Verified ${appItem.selector} text contains $itemText")
         }
     }
 
     fun assertItemIsEnabledAndVisible(vararg appItems: UiObject) {
         for (appItem in appItems) {
             assertTrue(appItem.waitForExists(waitingTime) && appItem.isEnabled)
+            Log.i(TAG, "assertItemIsEnabledAndVisible: Verified ${appItem.selector} is visible and enabled")
         }
     }
 }

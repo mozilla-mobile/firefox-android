@@ -10,9 +10,9 @@ import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.uiautomator.UiSelector
-import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
-import org.mozilla.fenix.helpers.MatcherHelper.assertItemContainingTextExists
+import org.mozilla.fenix.helpers.MatcherHelper.assertItemTextEquals
+import org.mozilla.fenix.helpers.MatcherHelper.assertUIObjectExists
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithText
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestHelper.mDevice
@@ -22,57 +22,57 @@ import org.mozilla.fenix.helpers.click
 class SitePermissionsRobot {
     fun verifyMicrophonePermissionPrompt(url: String) {
         try {
-            assertItemContainingTextExists(itemWithText("Allow $url to use your microphone?"))
-            assertTrue(denyPagePermissionButton.text.equals("Don’t allow"))
-            assertTrue(allowPagePermissionButton.text.equals("Allow"))
+            assertUIObjectExists(itemWithText("Allow $url to use your microphone?"))
+            assertItemTextEquals(denyPagePermissionButton, expectedText = "Don’t allow")
+            assertItemTextEquals(allowPagePermissionButton, expectedText = "Allow")
         } catch (e: AssertionError) {
             browserScreen {
             }.openThreeDotMenu {
             }.refreshPage {
             }.clickStartMicrophoneButton {
-                assertItemContainingTextExists(itemWithText("Allow $url to use your microphone?"))
-                assertTrue(denyPagePermissionButton.text.equals("Don’t allow"))
-                assertTrue(allowPagePermissionButton.text.equals("Allow"))
+                assertUIObjectExists(itemWithText("Allow $url to use your microphone?"))
+                assertItemTextEquals(denyPagePermissionButton, expectedText = "Don’t allow")
+                assertItemTextEquals(allowPagePermissionButton, expectedText = "Allow")
             }
         }
     }
 
     fun verifyCameraPermissionPrompt(url: String) {
         try {
-            assertItemContainingTextExists(itemWithText("Allow $url to use your camera?"))
-            assertTrue(denyPagePermissionButton.text.equals("Don’t allow"))
-            assertTrue(allowPagePermissionButton.text.equals("Allow"))
+            assertUIObjectExists(itemWithText("Allow $url to use your camera?"))
+            assertItemTextEquals(denyPagePermissionButton, expectedText = "Don’t allow")
+            assertItemTextEquals(allowPagePermissionButton, expectedText = "Allow")
         } catch (e: AssertionError) {
             browserScreen {
             }.openThreeDotMenu {
             }.refreshPage {
             }.clickStartCameraButton {
-                assertItemContainingTextExists(itemWithText("Allow $url to use your camera?"))
-                assertTrue(denyPagePermissionButton.text.equals("Don’t allow"))
-                assertTrue(allowPagePermissionButton.text.equals("Allow"))
+                assertUIObjectExists(itemWithText("Allow $url to use your camera?"))
+                assertItemTextEquals(denyPagePermissionButton, expectedText = "Don’t allow")
+                assertItemTextEquals(allowPagePermissionButton, expectedText = "Allow")
             }
         }
     }
 
     fun verifyAudioVideoPermissionPrompt(url: String) {
-        assertItemContainingTextExists(itemWithText("Allow $url to use your camera and microphone?"))
-        assertTrue(denyPagePermissionButton.text.equals("Don’t allow"))
-        assertTrue(allowPagePermissionButton.text.equals("Allow"))
+        assertUIObjectExists(itemWithText("Allow $url to use your camera and microphone?"))
+        assertItemTextEquals(denyPagePermissionButton, expectedText = "Don’t allow")
+        assertItemTextEquals(allowPagePermissionButton, expectedText = "Allow")
     }
 
     fun verifyLocationPermissionPrompt(url: String) {
         try {
-            assertItemContainingTextExists(itemWithText("Allow $url to use your location?"))
-            assertTrue(denyPagePermissionButton.text.equals("Don’t allow"))
-            assertTrue(allowPagePermissionButton.text.equals("Allow"))
+            assertUIObjectExists(itemWithText("Allow $url to use your location?"))
+            assertItemTextEquals(denyPagePermissionButton, expectedText = "Don’t allow")
+            assertItemTextEquals(allowPagePermissionButton, expectedText = "Allow")
         } catch (e: AssertionError) {
             browserScreen {
             }.openThreeDotMenu {
             }.refreshPage {
             }.clickGetLocationButton {
-                assertItemContainingTextExists(itemWithText("Allow $url to use your location?"))
-                assertTrue(denyPagePermissionButton.text.equals("Don’t allow"))
-                assertTrue(allowPagePermissionButton.text.equals("Allow"))
+                assertUIObjectExists(itemWithText("Allow $url to use your location?"))
+                assertItemTextEquals(denyPagePermissionButton, expectedText = "Don’t allow")
+                assertItemTextEquals(allowPagePermissionButton, expectedText = "Allow")
             }
         }
     }
@@ -80,56 +80,56 @@ class SitePermissionsRobot {
     fun verifyNotificationsPermissionPrompt(url: String, blocked: Boolean = false) {
         if (!blocked) {
             try {
-                assertItemContainingTextExists(itemWithText("Allow $url to send notifications?"))
-                assertTrue(denyPagePermissionButton.text.equals("Never"))
-                assertTrue(allowPagePermissionButton.text.equals("Always"))
+                assertUIObjectExists(itemWithText("Allow $url to send notifications?"))
+                assertItemTextEquals(denyPagePermissionButton, expectedText = "Never")
+                assertItemTextEquals(allowPagePermissionButton, expectedText = "Always")
             } catch (e: AssertionError) {
                 browserScreen {
                 }.openThreeDotMenu {
                 }.refreshPage {
                 }.clickOpenNotificationButton {
-                    assertItemContainingTextExists(itemWithText("Allow $url to send notifications?"))
-                    assertTrue(denyPagePermissionButton.text.equals("Never"))
-                    assertTrue(allowPagePermissionButton.text.equals("Always"))
+                    assertUIObjectExists(itemWithText("Allow $url to send notifications?"))
+                    assertItemTextEquals(denyPagePermissionButton, expectedText = "Never")
+                    assertItemTextEquals(allowPagePermissionButton, expectedText = "Always")
                 }
             }
         } else {
             /* if "Never" was selected in a previous step, or if the app is not allowed,
                the Notifications permission prompt won't be displayed anymore */
-            assertItemContainingTextExists(itemWithText("Allow $url to send notifications?"), exists = false)
+            assertUIObjectExists(itemWithText("Allow $url to send notifications?"), exists = false)
         }
     }
 
     fun verifyPersistentStoragePermissionPrompt(url: String) {
         try {
-            assertItemContainingTextExists(itemWithText("Allow $url to store data in persistent storage?"))
-            assertTrue(denyPagePermissionButton.text.equals("Don’t allow"))
-            assertTrue(allowPagePermissionButton.text.equals("Allow"))
+            assertUIObjectExists(itemWithText("Allow $url to store data in persistent storage?"))
+            assertItemTextEquals(denyPagePermissionButton, expectedText = "Don’t allow")
+            assertItemTextEquals(allowPagePermissionButton, expectedText = "Allow")
         } catch (e: AssertionError) {
             browserScreen {
             }.openThreeDotMenu {
             }.refreshPage {
             }.clickRequestPersistentStorageAccessButton {
-                assertItemContainingTextExists(itemWithText("Allow $url to store data in persistent storage?"))
-                assertTrue(denyPagePermissionButton.text.equals("Don’t allow"))
-                assertTrue(allowPagePermissionButton.text.equals("Allow"))
+                assertUIObjectExists(itemWithText("Allow $url to store data in persistent storage?"))
+                assertItemTextEquals(denyPagePermissionButton, expectedText = "Don’t allow")
+                assertItemTextEquals(allowPagePermissionButton, expectedText = "Allow")
             }
         }
     }
 
     fun verifyDRMContentPermissionPrompt(url: String) {
         try {
-            assertItemContainingTextExists(itemWithText("Allow $url to store data in persistent storage?"))
-            assertTrue(denyPagePermissionButton.text.equals("Don’t allow"))
-            assertTrue(allowPagePermissionButton.text.equals("Allow"))
+            assertUIObjectExists(itemWithText("Allow $url to store data in persistent storage?"))
+            assertItemTextEquals(denyPagePermissionButton, expectedText = "Don’t allow")
+            assertItemTextEquals(allowPagePermissionButton, expectedText = "Allow")
         } catch (e: AssertionError) {
             browserScreen {
             }.openThreeDotMenu {
             }.refreshPage {
             }.clickRequestDRMControlledContentAccessButton {
-                assertItemContainingTextExists(itemWithText("Allow $url to store data in persistent storage?"))
-                assertTrue(denyPagePermissionButton.text.equals("Don’t allow"))
-                assertTrue(allowPagePermissionButton.text.equals("Allow"))
+                assertUIObjectExists(itemWithText("Allow $url to store data in persistent storage?"))
+                assertItemTextEquals(denyPagePermissionButton, expectedText = "Don’t allow")
+                assertItemTextEquals(allowPagePermissionButton, expectedText = "Allow")
             }
         }
     }

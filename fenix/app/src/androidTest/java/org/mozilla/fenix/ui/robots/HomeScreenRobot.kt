@@ -48,7 +48,6 @@ import org.hamcrest.CoreMatchers.containsString
 import org.hamcrest.CoreMatchers.instanceOf
 import org.hamcrest.Matchers
 import org.junit.Assert
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.Constants.LISTS_MAXSWIPES
@@ -56,14 +55,14 @@ import org.mozilla.fenix.helpers.Constants.LONG_CLICK_DURATION
 import org.mozilla.fenix.helpers.Constants.TAG
 import org.mozilla.fenix.helpers.DataGenerationHelper.getStringResource
 import org.mozilla.fenix.helpers.HomeActivityComposeTestRule
-import org.mozilla.fenix.helpers.MatcherHelper.assertItemContainingTextExists
-import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithDescriptionExists
-import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithResIdAndTextExists
-import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithResIdExists
+import org.mozilla.fenix.helpers.MatcherHelper.assertUIObjectExists
+import org.mozilla.fenix.helpers.MatcherHelper.assertUIObjectIsGone
 import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithDescription
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithIndex
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdAndDescription
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdAndIndex
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdAndText
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdContainingText
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithText
@@ -87,40 +86,38 @@ class HomeScreenRobot {
             " service provider, it makes it easier to keep what you do online private from anyone" +
             " else who uses this device."
 
-    fun verifyNavigationToolbar() = assertItemWithResIdExists(navigationToolbar)
+    fun verifyNavigationToolbar() = assertUIObjectExists(navigationToolbar)
 
-    fun verifyHomeScreen() = assertItemWithResIdExists(homeScreen)
+    fun verifyHomeScreen() = assertUIObjectExists(homeScreen)
 
     fun verifyPrivateBrowsingHomeScreenItems() {
         verifyHomeScreenAppBarItems()
-        assertItemContainingTextExists(itemContainingText(privateSessionMessage))
+        assertUIObjectExists(itemContainingText(privateSessionMessage))
         verifyCommonMythsLink()
     }
 
     fun verifyHomeScreenAppBarItems() =
-        assertItemWithResIdExists(homeScreen, privateBrowsingButton, homepageWordmark)
+        assertUIObjectExists(homeScreen, privateBrowsingButton, homepageWordmark)
 
-    fun verifyNavigationToolbarItems(numberOfOpenTabs: String = "0") {
-        assertItemWithResIdExists(navigationToolbar, menuButton)
-        assertItemWithResIdAndTextExists(tabCounter(numberOfOpenTabs))
-    }
+    fun verifyNavigationToolbarItems(numberOfOpenTabs: String = "0") =
+        assertUIObjectExists(navigationToolbar, menuButton, tabCounter(numberOfOpenTabs))
 
-    fun verifyHomePrivateBrowsingButton() = assertItemWithResIdExists(privateBrowsingButton)
-    fun verifyHomeMenuButton() = assertItemWithResIdExists(menuButton)
+    fun verifyHomePrivateBrowsingButton() = assertUIObjectExists(privateBrowsingButton)
+    fun verifyHomeMenuButton() = assertUIObjectExists(menuButton)
     fun verifyTabButton() = assertTabButton()
     fun verifyCollectionsHeader() = assertCollectionsHeader()
     fun verifyNoCollectionsText() = assertNoCollectionsText()
     fun verifyHomeWordmark() {
         homeScreenList().scrollToBeginning(3)
-        assertItemWithResIdExists(homepageWordmark)
+        assertUIObjectExists(homepageWordmark)
     }
     fun verifyHomeComponent() = assertHomeComponent()
 
     fun verifyTabCounter(numberOfOpenTabs: String) =
-        assertItemWithResIdAndTextExists(tabCounter(numberOfOpenTabs))
+        assertUIObjectExists(tabCounter(numberOfOpenTabs))
 
     fun verifyWallpaperImageApplied(isEnabled: Boolean) =
-        assertItemWithResIdExists(itemWithResId("$packageName:id/wallpaperImageView"), exists = isEnabled)
+        assertUIObjectExists(itemWithResId("$packageName:id/wallpaperImageView"), exists = isEnabled)
 
     // Upgrading users onboarding dialog
     fun verifyUpgradingUserOnboardingFirstScreen(testRule: ComposeTestRule) {
@@ -216,20 +213,18 @@ class HomeScreenRobot {
             .performClick()
 
     fun verifyCommonMythsLink() =
-        assertItemContainingTextExists(itemContainingText(getStringResource(R.string.private_browsing_common_myths)))
+        assertUIObjectExists(itemContainingText(getStringResource(R.string.private_browsing_common_myths)))
 
     fun verifyExistingTopSitesList() = assertExistingTopSitesList()
     fun verifyNotExistingTopSitesList(title: String) = assertNotExistingTopSitesList(title)
     fun verifySponsoredShortcutDoesNotExist(sponsoredShortcutTitle: String, position: Int) =
-        assertFalse(
-            mDevice.findObject(
-                UiSelector()
-                    .resourceId("$packageName:id/top_site_item")
-                    .index(position - 1),
-            ).getChild(
-                UiSelector()
-                    .textContains(sponsoredShortcutTitle),
-            ).waitForExists(waitingTimeShort),
+        assertUIObjectExists(
+            itemWithResIdAndIndex("$packageName:id/top_site_item", index = position - 1)
+                .getChild(
+                    UiSelector()
+                        .textContains(sponsoredShortcutTitle),
+                ),
+            exists = false,
         )
     fun verifyNotExistingSponsoredTopSitesList() = assertSponsoredTopSitesNotDisplayed()
     fun verifyExistingTopSitesTabs(title: String) {
@@ -245,10 +240,10 @@ class HomeScreenRobot {
 
     fun verifyJumpBackInSectionIsDisplayed() {
         scrollToElementByText(getStringResource(R.string.recent_tabs_header))
-        assertItemContainingTextExists(itemContainingText(getStringResource(R.string.recent_tabs_header)))
+        assertUIObjectExists(itemContainingText(getStringResource(R.string.recent_tabs_header)))
     }
     fun verifyJumpBackInSectionIsNotDisplayed() =
-        assertItemContainingTextExists(itemContainingText(getStringResource(R.string.recent_tabs_header)), exists = false)
+        assertUIObjectExists(itemContainingText(getStringResource(R.string.recent_tabs_header)), exists = false)
     fun verifyJumpBackInItemTitle(testRule: ComposeTestRule, itemTitle: String) =
         assertJumpBackInItemTitle(testRule, itemTitle)
     fun verifyJumpBackInItemWithUrl(testRule: ComposeTestRule, itemUrl: String) =
@@ -262,15 +257,14 @@ class HomeScreenRobot {
         // checks if the search group exists in the Recently visited section
         if (shouldBeDisplayed) {
             scrollToElementByText("Recently visited")
-            assertItemContainingTextExists(
+            assertUIObjectExists(
                 itemContainingText(searchTerm)
                     .getFromParent(UiSelector().text("$groupSize sites")),
             )
         } else {
-            assertTrue(
-                mDevice.findObject(UiSelector().text(searchTerm))
-                    .getFromParent(UiSelector().text("$groupSize sites"))
-                    .waitUntilGone(waitingTimeShort),
+            assertUIObjectIsGone(
+                itemContainingText(searchTerm)
+                    .getFromParent(UiSelector().text("$groupSize sites")),
             )
         }
     }
@@ -278,9 +272,9 @@ class HomeScreenRobot {
     // Collections elements
     fun verifyCollectionIsDisplayed(title: String, collectionExists: Boolean = true) {
         if (collectionExists) {
-            assertItemContainingTextExists(itemContainingText(title))
+            assertUIObjectExists(itemContainingText(title))
         } else {
-            assertTrue(mDevice.findObject(UiSelector().text(title)).waitUntilGone(waitingTime))
+            assertUIObjectIsGone(itemWithText(title))
         }
     }
 
@@ -303,10 +297,10 @@ class HomeScreenRobot {
     fun verifyThoughtProvokingStories(enabled: Boolean) {
         if (enabled) {
             scrollToElementByText(getStringResource(R.string.pocket_stories_header_1))
-            assertItemContainingTextExists(itemContainingText(getStringResource(R.string.pocket_stories_header_1)))
+            assertUIObjectExists(itemContainingText(getStringResource(R.string.pocket_stories_header_1)))
         } else {
             homeScreenList().scrollToEnd(LISTS_MAXSWIPES)
-            assertItemContainingTextExists(itemContainingText(getStringResource(R.string.pocket_stories_header_1)), exists = false)
+            assertUIObjectExists(itemContainingText(getStringResource(R.string.pocket_stories_header_1)), exists = false)
         }
     }
 
@@ -320,12 +314,7 @@ class HomeScreenRobot {
         for (position in 0..8) {
             pocketStoriesList
                 .scrollIntoView(UiSelector().index(position))
-
-            assertTrue(
-                "Pocket story item at position $position not found.",
-                mDevice.findObject(UiSelector().index(position))
-                    .waitForExists(waitingTimeShort),
-            )
+            assertUIObjectExists(itemWithIndex(position))
         }
     }
 
@@ -347,16 +336,16 @@ class HomeScreenRobot {
     fun verifyDiscoverMoreStoriesButton() {
         pocketStoriesList
             .scrollIntoView(UiSelector().text("Discover more"))
-        assertItemContainingTextExists(itemWithText("Discover more"))
+        assertUIObjectExists(itemWithText("Discover more"))
     }
 
     fun verifyStoriesByTopic(enabled: Boolean) {
         if (enabled) {
             scrollToElementByText(getStringResource(R.string.pocket_stories_categories_header))
-            assertItemContainingTextExists(itemContainingText(getStringResource(R.string.pocket_stories_categories_header)))
+            assertUIObjectExists(itemContainingText(getStringResource(R.string.pocket_stories_categories_header)))
         } else {
             homeScreenList().scrollToEnd(LISTS_MAXSWIPES)
-            assertItemContainingTextExists(itemContainingText(getStringResource(R.string.pocket_stories_categories_header)), exists = false)
+            assertUIObjectExists(itemContainingText(getStringResource(R.string.pocket_stories_categories_header)), exists = false)
         }
     }
 
@@ -382,16 +371,16 @@ class HomeScreenRobot {
 
     fun verifyPoweredByPocket() {
         homeScreenList().scrollIntoView(mDevice.findObject(UiSelector().resourceId("pocket.header")))
-        assertItemWithResIdAndTextExists(itemWithResId("pocket.header.title"))
+        assertUIObjectExists(itemWithResId("pocket.header.title"))
     }
 
     fun verifyCustomizeHomepageButton(enabled: Boolean) {
         if (enabled) {
             scrollToElementByText(getStringResource(R.string.browser_menu_customize_home_1))
-            assertItemContainingTextExists(itemContainingText("Customize homepage"))
+            assertUIObjectExists(itemContainingText("Customize homepage"))
         } else {
             homeScreenList().scrollToEnd(LISTS_MAXSWIPES)
-            assertItemContainingTextExists(itemContainingText("Customize homepage"), exists = false)
+            assertUIObjectExists(itemContainingText("Customize homepage"), exists = false)
         }
     }
 
@@ -678,9 +667,9 @@ class HomeScreenRobot {
         }
 
         fun expandCollection(title: String, interact: CollectionRobot.() -> Unit): CollectionRobot.Transition {
-            assertItemContainingTextExists(itemContainingText(title))
+            assertUIObjectExists(itemContainingText(title))
             itemContainingText(title).clickAndWaitForNewWindow(waitingTimeShort)
-            assertItemWithDescriptionExists(itemWithDescription(getStringResource(R.string.remove_tab_from_collection)))
+            assertUIObjectExists(itemWithDescription(getStringResource(R.string.remove_tab_from_collection)))
 
             CollectionRobot().interact()
             return CollectionRobot.Transition()
@@ -855,7 +844,7 @@ private fun assertHomeComponent() =
 private fun threeDotButton() = onView(allOf(withId(R.id.menuButton)))
 
 private fun assertExistingTopSitesList() =
-    assertItemWithResIdExists(itemWithResId("$packageName:id/top_sites_list"))
+    assertUIObjectExists(itemWithResId("$packageName:id/top_sites_list"))
 
 private fun assertExistingTopSitesTabs(title: String) {
     mDevice.findObject(
@@ -870,44 +859,35 @@ private fun assertExistingTopSitesTabs(title: String) {
 }
 
 private fun assertSponsoredShortcutLogoIsDisplayed(position: Int) =
-    assertTrue(
-        mDevice.findObject(
-            UiSelector()
-                .resourceId("$packageName:id/top_site_item")
-                .index(position - 1),
-        ).getChild(
-            UiSelector()
-                .resourceId("$packageName:id/favicon_card"),
-        ).waitForExists(waitingTime),
+    assertUIObjectExists(
+        itemWithResIdAndIndex(resourceId = "$packageName:id/top_site_item", index = position - 1)
+            .getChild(
+                UiSelector()
+                    .resourceId("$packageName:id/favicon_card"),
+            ),
     )
 
 private fun assertSponsoredSubtitleIsDisplayed(position: Int) =
-    assertTrue(
-        mDevice.findObject(
-            UiSelector()
-                .resourceId("$packageName:id/top_site_item")
-                .index(position - 1),
-        ).getChild(
-            UiSelector()
-                .resourceId("$packageName:id/top_site_subtitle"),
-        ).waitForExists(waitingTime),
+    assertUIObjectExists(
+        itemWithResIdAndIndex(resourceId = "$packageName:id/top_site_item", index = position - 1)
+            .getChild(
+                UiSelector()
+                    .resourceId("$packageName:id/top_site_subtitle"),
+            ),
     )
 
 private fun assertSponsoredShortcutTitle(sponsoredShortcutTitle: String, position: Int) =
-    assertTrue(
-        mDevice.findObject(
-            UiSelector()
-                .resourceId("$packageName:id/top_site_item")
-                .index(position - 1),
-        ).getChild(
-            UiSelector()
-                .textContains(sponsoredShortcutTitle),
-        ).waitForExists(waitingTime),
+    assertUIObjectExists(
+        itemWithResIdAndIndex(resourceId = "$packageName:id/top_site_item", index = position - 1)
+            .getChild(
+                UiSelector()
+                    .textContains(sponsoredShortcutTitle),
+            ),
     )
 
 private fun assertNotExistingTopSitesList(title: String) {
     mDevice.findObject(UiSelector().text(title)).waitUntilGone(waitingTime)
-    assertItemWithResIdAndTextExists(
+    assertUIObjectExists(
         itemWithResIdContainingText(
             "$packageName:id/top_site_title",
             title,
@@ -917,7 +897,7 @@ private fun assertNotExistingTopSitesList(title: String) {
 }
 
 private fun assertSponsoredTopSitesNotDisplayed() =
-    assertItemWithResIdAndTextExists(
+    assertUIObjectExists(
         itemWithResIdContainingText(
             "$packageName:id/top_site_subtitle",
             getStringResource(R.string.top_sites_sponsored_label),
@@ -943,16 +923,16 @@ private fun assertJumpBackInItemWithUrl(testRule: ComposeTestRule, itemUrl: Stri
     testRule.onNodeWithTag("recent.tab.url", useUnmergedTree = true).assert(hasText(itemUrl))
 
 private fun assertJumpBackInShowAllButton() =
-    assertItemContainingTextExists(itemContainingText(getStringResource(R.string.recent_tabs_show_all)))
+    assertUIObjectExists(itemContainingText(getStringResource(R.string.recent_tabs_show_all)))
 
 private fun assertRecentlyVisitedSectionIsDisplayed(exists: Boolean) =
-    assertItemContainingTextExists(itemContainingText(getStringResource(R.string.history_metadata_header_2)), exists = exists)
+    assertUIObjectExists(itemContainingText(getStringResource(R.string.history_metadata_header_2)), exists = exists)
 
 private fun assertRecentBookmarksSectionIsDisplayed(exists: Boolean) =
-    assertItemContainingTextExists(itemContainingText(getStringResource(R.string.recently_saved_title)), exists = exists)
+    assertUIObjectExists(itemContainingText(getStringResource(R.string.recently_saved_title)), exists = exists)
 
 private fun assertPocketSectionIsDisplayed(exists: Boolean) =
-    assertItemContainingTextExists(itemContainingText(getStringResource(R.string.pocket_stories_header_1)), exists = exists)
+    assertUIObjectExists(itemContainingText(getStringResource(R.string.pocket_stories_header_1)), exists = exists)
 
 private fun saveTabsToCollectionButton() = onView(withId(R.id.add_tabs_to_collections_button))
 
