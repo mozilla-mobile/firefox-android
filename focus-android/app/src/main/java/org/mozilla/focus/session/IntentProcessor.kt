@@ -63,6 +63,25 @@ class IntentProcessor(
         createSessionFromIntent(context, intent)
     }
 
+
+    private fun getAdditionalHeaders(intent: SafeIntent): Map<String, String>? {
+        val pairs = intent.getBundleExtra(Browser.EXTRA_HEADERS)
+        val headers = mutableMapOf<String, String>()
+        pairs?.keySet()?.forEach { key ->
+            val header = pairs.getString(key)
+            if (header != null) {
+                headers[key] = header
+            } else {
+                throw IllegalArgumentException("getAdditionalHeaders() intent bundle contains wrong key value pair")
+            }
+        }
+        return if (headers.isEmpty()) {
+            null
+        } else {
+            headers
+        }
+    }
+
     @Suppress("ComplexMethod", "ReturnCount")
     private fun createSessionFromIntent(context: Context, intent: SafeIntent): Result {
         when (intent.action) {
@@ -157,6 +176,7 @@ class IntentProcessor(
                     createCustomTabConfigFromIntent(intent.unsafe, context.resources),
                     private = true,
                     source = source,
+                    additionalHeaders = getAdditionalHeaders(intent)
                 ),
             )
         } else {
@@ -166,6 +186,7 @@ class IntentProcessor(
                     source = source,
                     selectTab = true,
                     private = true,
+                    additionalHeaders = getAdditionalHeaders(intent)
                 ),
             )
         }
@@ -183,6 +204,7 @@ class IntentProcessor(
                 createCustomTabConfigFromIntent(intent.unsafe, context.resources),
                 private = true,
                 source = source,
+                additionalHeaders = getAdditionalHeaders(intent)
             )
             Pair(Result.CustomTab(tabId), tabId)
         } else {
@@ -190,6 +212,7 @@ class IntentProcessor(
                 url,
                 source = source,
                 private = true,
+                additionalHeaders = getAdditionalHeaders(intent)
             )
             Pair(Result.Tab(tabId), tabId)
         }

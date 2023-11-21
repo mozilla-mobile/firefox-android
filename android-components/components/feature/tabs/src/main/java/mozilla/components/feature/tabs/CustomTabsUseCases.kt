@@ -39,13 +39,17 @@ class CustomTabsUseCases(
             additionalHeaders: Map<String, String>? = null,
             source: SessionState.Source,
         ): String {
-            val loadUrlFlags = EngineSession.LoadUrlFlags.external()
+            var loadUrlFlags = EngineSession.LoadUrlFlags.external()
+            if (additionalHeaders != null) {
+                loadUrlFlags = EngineSession.LoadUrlFlags.select(loadUrlFlags.value, EngineSession.LoadUrlFlags.ALLOW_ADDITIONAL_HEADERS)
+            }
             val tab = createCustomTab(
                 url = url,
                 private = private,
                 source = source,
                 config = customTabConfig,
                 initialLoadFlags = loadUrlFlags,
+                initialAdditionalHeaders = additionalHeaders
             )
 
             store.dispatch(CustomTabListAction.AddCustomTabAction(tab))
