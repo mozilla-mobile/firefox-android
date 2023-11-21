@@ -15,58 +15,76 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import org.mozilla.fenix.R
-import org.mozilla.fenix.compose.ClickableSubstringLink
+import org.mozilla.fenix.compose.LinkText
+import org.mozilla.fenix.compose.LinkTextState
 import org.mozilla.fenix.compose.annotation.LightDarkPreview
 import org.mozilla.fenix.compose.parseHtml
-import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState
+import org.mozilla.fenix.shopping.ui.ext.displayName
 import org.mozilla.fenix.theme.FirefoxTheme
 
 /**
  * Info card UI containing an explanation of the review quality.
  *
+ * @param productVendor The vendor of the product.
+ * @param isExpanded Whether or not the card is expanded.
  * @param modifier Modifier to apply to the layout.
+ * @param onExpandToggleClick Invoked when the user expands or collapses the card.
  * @param onLearnMoreClick Invoked when the user clicks to learn more about review grades.
  */
 @Composable
 fun ReviewQualityInfoCard(
+    productVendor: ReviewQualityCheckState.ProductVendor,
+    isExpanded: Boolean,
     modifier: Modifier = Modifier,
-    onLearnMoreClick: (String) -> Unit,
+    onExpandToggleClick: () -> Unit,
+    onLearnMoreClick: () -> Unit,
 ) {
     ReviewQualityCheckExpandableCard(
         title = stringResource(id = R.string.review_quality_check_explanation_title),
         modifier = modifier,
+        isExpanded = isExpanded,
+        onExpandToggleClick = onExpandToggleClick,
     ) {
         ReviewQualityInfo(
+            productVendor = productVendor,
             modifier = Modifier.fillMaxWidth(),
             onLearnMoreClick = onLearnMoreClick,
         )
     }
 }
 
-@Suppress("Deprecation")
+@Suppress("LongMethod")
 @Composable
 private fun ReviewQualityInfo(
+    productVendor: ReviewQualityCheckState.ProductVendor,
     modifier: Modifier = Modifier,
-    onLearnMoreClick: (String) -> Unit,
+    onLearnMoreClick: () -> Unit,
 ) {
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
+        val letterGradeText =
+            stringResource(id = R.string.review_quality_check_info_review_grade_header)
         val adjustedGradingText =
             stringResource(id = R.string.review_quality_check_explanation_body_adjusted_grading)
-        // Any and all text formatting (bullets, inline substring bolding, etc.) will be handled as
-        // follow-up when the copy is finalized.
-        // Bug 1848219
+        val highlightsText = stringResource(
+            id = R.string.review_quality_check_explanation_body_highlights,
+            productVendor.displayName(),
+        )
+
         Text(
             text = stringResource(
                 id = R.string.review_quality_check_explanation_body_reliability,
@@ -76,28 +94,10 @@ private fun ReviewQualityInfo(
             style = FirefoxTheme.typography.body2,
         )
 
-        val link = stringResource(
-            id = R.string.review_quality_check_info_learn_more_link,
-            stringResource(R.string.shopping_product_name),
-        )
-        val text = stringResource(R.string.review_quality_check_info_learn_more, link)
-        val context = LocalContext.current
-        val linkStartIndex = text.indexOf(link)
-        val linkEndIndex = linkStartIndex + link.length
-        ClickableSubstringLink(
-            text = text,
-            textStyle = FirefoxTheme.typography.body2,
-            clickableStartIndex = linkStartIndex,
-            clickableEndIndex = linkEndIndex,
-            onClick = {
-                onLearnMoreClick(
-                    // Placeholder Sumo page
-                    SupportUtils.getSumoURLForTopic(
-                        context,
-                        SupportUtils.SumoTopic.HELP,
-                    ),
-                )
-            },
+        Text(
+            text = remember(letterGradeText) { parseHtml(letterGradeText) },
+            color = FirefoxTheme.colors.textPrimary,
+            style = FirefoxTheme.typography.body2,
         )
 
         ReviewGradingScaleInfo(
@@ -128,6 +128,35 @@ private fun ReviewQualityInfo(
             text = remember(adjustedGradingText) { parseHtml(adjustedGradingText) },
             color = FirefoxTheme.colors.textPrimary,
             style = FirefoxTheme.typography.body2,
+        )
+
+        Text(
+            text = remember(highlightsText) { parseHtml(highlightsText) },
+            color = FirefoxTheme.colors.textPrimary,
+            style = FirefoxTheme.typography.body2,
+        )
+
+        val link = stringResource(
+            id = R.string.review_quality_check_info_learn_more_link_2,
+            stringResource(R.string.shopping_product_name),
+        )
+        val text = stringResource(R.string.review_quality_check_info_learn_more, link)
+        LinkText(
+            text = text,
+            linkTextStates = listOf(
+                LinkTextState(
+                    text = link,
+                    url = "",
+                    onClick = {
+                        onLearnMoreClick()
+                    },
+                ),
+            ),
+            style = FirefoxTheme.typography.body2.copy(
+                color = FirefoxTheme.colors.textPrimary,
+            ),
+            linkTextColor = FirefoxTheme.colors.textAccent,
+            linkTextDecoration = TextDecoration.Underline,
         )
     }
 }
@@ -169,27 +198,14 @@ private fun ReviewQualityInfoCardPreview() {
                 .background(color = FirefoxTheme.colors.layer1)
                 .padding(all = 16.dp),
         ) {
-            ReviewQualityInfoCard(
-                modifier = Modifier.fillMaxWidth(),
-                onLearnMoreClick = {},
-            )
-        }
-    }
-}
+            var isInfoExpanded by remember { mutableStateOf(true) }
 
-@Composable
-@LightDarkPreview
-private fun ReviewQualityInfoPreview() {
-    FirefoxTheme {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(color = FirefoxTheme.colors.layer1)
-                .padding(all = 16.dp),
-        ) {
-            ReviewQualityInfo(
+            ReviewQualityInfoCard(
+                productVendor = ReviewQualityCheckState.ProductVendor.AMAZON,
+                isExpanded = isInfoExpanded,
                 modifier = Modifier.fillMaxWidth(),
                 onLearnMoreClick = {},
+                onExpandToggleClick = { isInfoExpanded = !isInfoExpanded },
             )
         }
     }

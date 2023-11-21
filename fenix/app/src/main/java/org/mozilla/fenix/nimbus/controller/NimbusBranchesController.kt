@@ -16,6 +16,7 @@ import org.mozilla.fenix.ext.getRootView
 import org.mozilla.fenix.ext.navigateWithBreadcrumb
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.nimbus.NimbusBranchesAction
+import org.mozilla.fenix.nimbus.NimbusBranchesFragment
 import org.mozilla.fenix.nimbus.NimbusBranchesFragmentDirections
 import org.mozilla.fenix.nimbus.NimbusBranchesStore
 
@@ -23,6 +24,8 @@ import org.mozilla.fenix.nimbus.NimbusBranchesStore
  * [NimbusBranchesFragment] controller. This implements [NimbusBranchesAdapterDelegate] to handle
  * interactions with a Nimbus branch.
  *
+ * @param context An Android [Context].
+ * @param navController [NavController] used for navigation.
  * @param nimbusBranchesStore An instance of [NimbusBranchesStore] for dispatching
  * [NimbusBranchesAction]s.
  * @param experiments An instance of [NimbusApi] for interacting with the Nimbus experiments.

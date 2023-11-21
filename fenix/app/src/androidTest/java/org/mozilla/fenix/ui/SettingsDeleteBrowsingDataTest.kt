@@ -13,15 +13,15 @@ import org.junit.Test
 import org.mozilla.fenix.R
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
+import org.mozilla.fenix.helpers.AppAndSystemHelper.setNetworkEnabled
+import org.mozilla.fenix.helpers.DataGenerationHelper.getStringResource
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestAssetHelper.getStorageTestAsset
 import org.mozilla.fenix.helpers.TestHelper.exitMenu
-import org.mozilla.fenix.helpers.TestHelper.getStringResource
 import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.restartApp
-import org.mozilla.fenix.helpers.TestHelper.setNetworkEnabled
 import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.clickPageObject
 import org.mozilla.fenix.ui.robots.homeScreen
@@ -52,6 +52,7 @@ class SettingsDeleteBrowsingDataTest {
         mockWebServer.shutdown()
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/937561
     @Test
     fun deleteBrowsingDataOptionStatesTest() {
         homeScreen {
@@ -110,8 +111,9 @@ class SettingsDeleteBrowsingDataTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/517811
     @Test
-    fun deleteTabsDataWithNoOpenTabsTest() {
+    fun deleteOpenTabsBrowsingDataWithNoOpenTabsTest() {
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
@@ -127,9 +129,10 @@ class SettingsDeleteBrowsingDataTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/353531
     @SmokeTest
     @Test
-    fun deleteTabsDataTest() {
+    fun deleteOpenTabsBrowsingDataTest() {
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         navigationToolbar {
@@ -159,6 +162,7 @@ class SettingsDeleteBrowsingDataTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/378864
     @SmokeTest
     @Test
     fun deleteBrowsingHistoryTest() {
@@ -189,6 +193,7 @@ class SettingsDeleteBrowsingDataTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/416041
     @SmokeTest
     @Test
     fun deleteCookiesAndSiteDataTest() {
@@ -227,6 +232,7 @@ class SettingsDeleteBrowsingDataTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/416042
     @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1807268")
     @SmokeTest
     @Test

@@ -32,7 +32,7 @@ private const val VIEW_HOLDER_TYPE_STUDY = 1
  * An adapter for displaying studies items. This will display information related to the state of
  * a study such as active. In addition, it will perform actions such as removing a study.
  *
- * @property studiesDelegate Delegate that will provides method for handling
+ * @param studiesDelegate Delegate that will provides method for handling
  * the studies actions items.
  * @param studies The list of studies.
  *  * @property studiesDelegate Delegate that will provides method for handling
@@ -174,7 +174,8 @@ class StudiesAdapter(
 
     /**
      * Removes the portion of the list that contains the provided [study].
-     * @property study The study to be removed.
+     *
+     * @param study The study to be removed.
      */
     fun removeStudy(study: EnrolledExperiment) {
         studiesMap.remove(study.slug)

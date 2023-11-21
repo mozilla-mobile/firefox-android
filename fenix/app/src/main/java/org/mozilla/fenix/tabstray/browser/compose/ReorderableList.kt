@@ -77,9 +77,9 @@ fun createListReorderState(
  * @param hapticFeedback [HapticFeedback] used for performing haptic feedback on item long press.
  * @param touchSlop Distance in pixels the user can wander until we consider they started dragging.
  * @param onMove Callback to be invoked when switching between two items.
+ * @param ignoredItems List of keys for non-draggable items.
  * @param onLongPress Optional callback to be invoked when long pressing an item.
  * @param onExitLongPress Optional callback to be invoked when the item is dragged after long press.
- * @param ignoredItems List of keys for non-draggable items.
  */
 @Suppress("LongParameterList")
 class ListReorderState internal constructor(

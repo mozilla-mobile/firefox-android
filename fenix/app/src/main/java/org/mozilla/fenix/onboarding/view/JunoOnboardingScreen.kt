@@ -39,7 +39,6 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.components.components
 import org.mozilla.fenix.compose.PagerIndicator
 import org.mozilla.fenix.compose.annotation.LightDarkPreview
-import org.mozilla.fenix.onboarding.JunoOnboardingTelemetryRecorder
 import org.mozilla.fenix.onboarding.WidgetPinnedReceiver.WidgetPinnedState
 import org.mozilla.fenix.theme.FirefoxTheme
 
@@ -80,7 +79,6 @@ fun JunoOnboardingScreen(
     val pagerState = rememberPagerState(pageCount = { pagesToDisplay.size })
     val isSignedIn: State<Boolean?> = components.backgroundServices.syncStore
         .observeAsComposableState { it.account != null }
-    val telemetryRecorder by lazy { JunoOnboardingTelemetryRecorder() }
     val widgetPinnedFlow: StateFlow<Boolean> = WidgetPinnedState.isPinned
     val isWidgetPinnedState by widgetPinnedFlow.collectAsState()
 
@@ -115,10 +113,6 @@ fun JunoOnboardingScreen(
     LaunchedEffect(isWidgetPinnedState) {
         if (isWidgetPinnedState) {
             scrollToNextPageOrDismiss()
-            telemetryRecorder.onAddSearchWidgetClick(
-                pagesToDisplay.telemetrySequenceId(),
-                pagesToDisplay.sequencePosition(OnboardingPageUiData.Type.ADD_SEARCH_WIDGET),
-            )
         }
     }
 
@@ -273,8 +267,8 @@ private fun defaultPreviewPages() = listOf(
     OnboardingPageUiData(
         type = OnboardingPageUiData.Type.DEFAULT_BROWSER,
         imageRes = R.drawable.ic_onboarding_welcome,
-        title = stringResource(R.string.juno_onboarding_default_browser_title_nimbus),
-        description = stringResource(R.string.juno_onboarding_default_browser_description_nimbus),
+        title = stringResource(R.string.juno_onboarding_default_browser_title_nimbus_2),
+        description = stringResource(R.string.juno_onboarding_default_browser_description_nimbus_2),
         linkText = stringResource(R.string.juno_onboarding_default_browser_description_link_text),
         primaryButtonLabel = stringResource(R.string.juno_onboarding_default_browser_positive_button),
         secondaryButtonLabel = stringResource(R.string.juno_onboarding_default_browser_negative_button),
@@ -282,16 +276,16 @@ private fun defaultPreviewPages() = listOf(
     OnboardingPageUiData(
         type = OnboardingPageUiData.Type.SYNC_SIGN_IN,
         imageRes = R.drawable.ic_onboarding_sync,
-        title = stringResource(R.string.juno_onboarding_sign_in_title),
-        description = stringResource(R.string.juno_onboarding_sign_in_description),
+        title = stringResource(R.string.juno_onboarding_sign_in_title_2),
+        description = stringResource(R.string.juno_onboarding_sign_in_description_2),
         primaryButtonLabel = stringResource(R.string.juno_onboarding_sign_in_positive_button),
         secondaryButtonLabel = stringResource(R.string.juno_onboarding_sign_in_negative_button),
     ),
     OnboardingPageUiData(
         type = OnboardingPageUiData.Type.NOTIFICATION_PERMISSION,
         imageRes = R.drawable.ic_notification_permission,
-        title = stringResource(R.string.juno_onboarding_enable_notifications_title_nimbus),
-        description = stringResource(R.string.juno_onboarding_enable_notifications_description_nimbus),
+        title = stringResource(R.string.juno_onboarding_enable_notifications_title_nimbus_2),
+        description = stringResource(R.string.juno_onboarding_enable_notifications_description_nimbus_2),
         primaryButtonLabel = stringResource(R.string.juno_onboarding_enable_notifications_positive_button),
         secondaryButtonLabel = stringResource(R.string.juno_onboarding_enable_notifications_negative_button),
     ),

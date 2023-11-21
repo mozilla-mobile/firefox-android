@@ -10,11 +10,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.AbstractComposeView
+import mozilla.components.browser.state.action.AwesomeBarAction
 import mozilla.components.compose.browser.awesomebar.AwesomeBar
 import mozilla.components.compose.browser.awesomebar.AwesomeBarDefaults
 import mozilla.components.compose.browser.awesomebar.AwesomeBarOrientation
 import mozilla.components.concept.awesomebar.AwesomeBar
+import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.support.ktx.android.view.hideKeyboard
+import org.mozilla.fenix.GleanMetrics.BookmarksManagement
+import org.mozilla.fenix.GleanMetrics.History
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
@@ -61,11 +65,23 @@ class AwesomeBarWrapper @JvmOverloads constructor(
                     groupTitle = ThemeManager.resolveAttributeColor(R.attr.textSecondary),
                 ),
                 onSuggestionClicked = { suggestion ->
+                    context.components.core.store.dispatch(AwesomeBarAction.SuggestionClicked(suggestion))
                     suggestion.onSuggestionClicked?.invoke()
+                    when {
+                        suggestion.flags.contains(AwesomeBar.Suggestion.Flag.HISTORY) -> {
+                            History.searchResultTapped.record(NoExtras())
+                        }
+                        suggestion.flags.contains(AwesomeBar.Suggestion.Flag.BOOKMARK) -> {
+                            BookmarksManagement.searchResultTapped.record(NoExtras())
+                        }
+                    }
                     onStopListener?.invoke()
                 },
                 onAutoComplete = { suggestion ->
                     onEditSuggestionListener?.invoke(suggestion.editSuggestion!!)
+                },
+                onVisibilityStateUpdated = {
+                    context.components.core.store.dispatch(AwesomeBarAction.VisibilityStateUpdated(it))
                 },
                 onScroll = { hideKeyboard() },
                 profiler = context.components.core.engine.profiler,

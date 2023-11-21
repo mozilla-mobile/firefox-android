@@ -42,6 +42,13 @@ interface WebExtensionDelegate {
     fun onDisabled(extension: WebExtension) = Unit
 
     /**
+     * Invoked when a web extension was started successfully.
+     *
+     * @param extension The extension that has completed its startup.
+     */
+    fun onReady(extension: WebExtension) = Unit
+
+    /**
      * Invoked when a web extension in private browsing allowed is set.
      *
      * @param extension the modified [WebExtension] instance.
@@ -137,6 +144,20 @@ interface WebExtensionDelegate {
         current: WebExtension,
         updated: WebExtension,
         newPermissions: List<String>,
+        onPermissionsGranted: ((Boolean) -> Unit),
+    ) = Unit
+
+    /**
+     * Invoked when a web extension requests optional permissions. This requires user interaction since the
+     * user needs to grant or revoke these optional permissions.
+     *
+     * @param extension The [WebExtension].
+     * @param permissions The list of all the optional permissions.
+     * @param onPermissionsGranted A callback to indicate if the optional permissions have been granted or not.
+     */
+    fun onOptionalPermissionsRequest(
+        extension: WebExtension,
+        permissions: List<String>,
         onPermissionsGranted: ((Boolean) -> Unit),
     ) = Unit
 

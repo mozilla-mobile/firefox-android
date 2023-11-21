@@ -22,13 +22,13 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
+import org.mozilla.fenix.helpers.AppAndSystemHelper.registerAndCleanupIdlingResources
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.MockBrowserDataHelper
 import org.mozilla.fenix.helpers.RecyclerViewIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper.exitMenu
 import org.mozilla.fenix.helpers.TestHelper.longTapSelectItem
-import org.mozilla.fenix.helpers.TestHelper.registerAndCleanupIdlingResources
 import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.historyMenu
 import org.mozilla.fenix.ui.robots.homeScreen
@@ -73,8 +73,9 @@ class HistoryTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/243285
     @Test
-    fun noHistoryItemsInCacheTest() {
+    fun verifyEmptyHistoryMenuTest() {
         homeScreen {
         }.openThreeDotMenu {
             verifyHistoryButton()
@@ -84,10 +85,12 @@ class HistoryTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2302742
     // Test running on beta/release builds in CI:
     // caution when making changes to it, so they don't block the builds
+    @SmokeTest
     @Test
-    fun visitedUrlHistoryTest() {
+    fun verifyHistoryMenuWithHistoryItemsTest() {
         val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         navigationToolbar {
@@ -103,32 +106,14 @@ class HistoryTest {
                 verifyVisitedTimeTitle()
                 verifyFirstTestPageTitle("Test_Page_1")
                 verifyTestPageUrl(firstWebPage.url)
+                verifyDeleteHistoryItemButton("Test_Page_1")
             }
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/243288
     @Test
     fun deleteHistoryItemTest() {
-        val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(firstWebPage.url) {
-            mDevice.waitForIdle()
-        }.openThreeDotMenu {
-        }.openHistory {
-            verifyHistoryListExists()
-            registerAndCleanupIdlingResources(
-                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.history_list), 1),
-            ) {
-                clickDeleteHistoryButton(firstWebPage.url.toString())
-            }
-            verifyDeleteSnackbarText("Deleted")
-            verifyEmptyHistoryView()
-        }
-    }
-
-    @Test
-    fun undoDeleteHistoryItemTest() {
         val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         navigationToolbar {
@@ -145,32 +130,13 @@ class HistoryTest {
             verifyUndoDeleteSnackBarButton()
             clickUndoDeleteButton()
             verifyHistoryItemExists(true, firstWebPage.url.toString())
+            clickDeleteHistoryButton(firstWebPage.url.toString())
+            verifyDeleteSnackbarText("Deleted")
+            verifyEmptyHistoryView()
         }
     }
 
-    @SmokeTest
-    @Test
-    fun cancelDeleteAllHistoryTest() {
-        val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(firstWebPage.url) {
-            mDevice.waitForIdle()
-        }.openThreeDotMenu {
-        }.openHistory {
-            verifyHistoryListExists()
-            registerAndCleanupIdlingResources(
-                RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.history_list), 1),
-            ) {
-                clickDeleteAllHistoryButton()
-            }
-            verifyDeleteConfirmationMessage()
-            selectEverythingOption()
-            cancelDeleteHistory()
-            verifyHistoryItemExists(true, firstWebPage.url.toString())
-        }
-    }
-
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1848881
     @SmokeTest
     @Test
     fun deleteAllHistoryTest() {
@@ -189,13 +155,18 @@ class HistoryTest {
             }
             verifyDeleteConfirmationMessage()
             selectEverythingOption()
+            cancelDeleteHistory()
+            verifyHistoryItemExists(true, firstWebPage.url.toString())
+            clickDeleteAllHistoryButton()
+            verifyDeleteConfirmationMessage()
+            selectEverythingOption()
             confirmDeleteAllHistory()
             verifyDeleteSnackbarText("Browsing data deleted")
             verifyEmptyHistoryView()
         }
     }
 
-    @SmokeTest
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/339690
     @Test
     fun historyMultiSelectionToolbarItemsTest() {
         val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -223,9 +194,10 @@ class HistoryTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/339696
     @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1807268")
     @Test
-    fun openHistoryInNewTabTest() {
+    fun openMultipleSelectedHistoryItemsInANewTabTest() {
         val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         navigationToolbar {
@@ -253,8 +225,9 @@ class HistoryTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/346098
     @Test
-    fun openHistoryInPrivateTabTest() {
+    fun openMultipleSelectedHistoryItemsInPrivateTabTest() {
         val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         navigationToolbar {
@@ -278,8 +251,9 @@ class HistoryTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/346099
     @Test
-    fun deleteMultipleSelectionTest() {
+    fun deleteMultipleSelectedHistoryItemsTest() {
         val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
         val secondWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 2)
 
@@ -312,8 +286,9 @@ class HistoryTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/339701
     @Test
-    fun shareButtonTest() {
+    fun shareMultipleSelectedHistoryItemsTest() {
         val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         navigationToolbar {
@@ -338,6 +313,7 @@ class HistoryTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1715627
     @Test
     fun verifySearchHistoryViewTest() {
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -380,6 +356,7 @@ class HistoryTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1715631
     @Test
     fun verifyVoiceSearchInHistoryTest() {
         homeScreen {
@@ -392,6 +369,7 @@ class HistoryTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1715632
     @Test
     fun verifySearchForHistoryItemsTest() {
         val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -421,6 +399,7 @@ class HistoryTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1715634
     @Test
     fun verifyDeletedHistoryItemsCanNotBeSearchedTest() {
         val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -464,6 +443,41 @@ class HistoryTest {
             // Search for a valid term
             typeSearch("generic")
             verifySuggestionsAreNotDisplayed(activityTestRule, thirdWebPage.url.toString())
+        }
+    }
+
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/903590
+    // Test running on beta/release builds in CI:
+    // caution when making changes to it, so they don't block the builds
+    @SmokeTest
+    @Test
+    fun noHistoryInPrivateBrowsingTest() {
+        val website = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        homeScreen {
+        }.togglePrivateBrowsingMode()
+
+        homeScreen {
+        }.openNavigationToolbar {
+        }.enterURLAndEnterToBrowser(website.url) {
+            mDevice.waitForIdle()
+        }.openThreeDotMenu {
+        }.openHistory {
+            verifyEmptyHistoryView()
+        }
+    }
+
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/243287
+    @Test
+    fun openHistoryItemTest() {
+        val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
+        }.openThreeDotMenu {
+        }.openHistory {
+        }.openWebsite(defaultWebPage.url) {
+            verifyUrl(defaultWebPage.url.toString())
         }
     }
 }

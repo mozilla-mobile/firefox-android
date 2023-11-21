@@ -4,15 +4,15 @@
 
 package org.mozilla.fenix.compose
 
+import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
@@ -20,7 +20,6 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
-import mozilla.components.support.ktx.android.content.isScreenReaderEnabled
 import org.mozilla.fenix.theme.FirefoxTheme
 
 /**
@@ -45,7 +44,7 @@ data class LinkTextState(
  * A composable for displaying text that contains a clickable link text.
  *
  * @param text The complete text.
- * @param linkTextState The clickable part of the text.
+ * @param linkTextStates The clickable part of the text.
  * @param style [TextStyle] applied to the text.
  * @param linkTextColor [Color] applied to the clickable part of the text.
  * @param linkTextDecoration [TextDecoration] applied to the clickable part of the text.
@@ -53,37 +52,20 @@ data class LinkTextState(
 @Composable
 fun LinkText(
     text: String,
-    linkTextState: LinkTextState,
+    linkTextStates: List<LinkTextState>,
     style: TextStyle = FirefoxTheme.typography.body2.copy(
         textAlign = TextAlign.Center,
         color = FirefoxTheme.colors.textSecondary,
     ),
     linkTextColor: Color = FirefoxTheme.colors.textAccent,
-    linkTextDecoration: TextDecoration? = null,
+    linkTextDecoration: TextDecoration = TextDecoration.None,
 ) {
-    val context = LocalContext.current
-    val annotatedString = buildAnnotatedString {
-        val startIndex = text.indexOf(linkTextState.text, ignoreCase = true)
-        val endIndex = startIndex + linkTextState.text.length
-
-        append(text)
-
-        addStyle(
-            style = SpanStyle(
-                color = linkTextColor,
-                textDecoration = linkTextDecoration,
-            ),
-            start = startIndex,
-            end = endIndex,
-        )
-
-        addStringAnnotation(
-            tag = URL_TAG,
-            annotation = linkTextState.url,
-            start = startIndex,
-            end = endIndex,
-        )
-    }
+    val annotatedString = buildUrlAnnotatedString(
+        text,
+        linkTextStates,
+        linkTextColor,
+        linkTextDecoration,
+    )
 
     // When using UrlAnnotation, talkback shows links in a separate dialog and
     // opens them in the default browser. Since this component allows the caller to define the
@@ -92,22 +74,68 @@ fun LinkText(
     ClickableText(
         text = annotatedString,
         style = style,
-        modifier = Modifier.clickable(
-            enabled = context.isScreenReaderEnabled,
-            role = Role.Button,
-            onClickLabel = linkTextState.text,
-            onClick = { linkTextState.onClick(linkTextState.url) },
-        ),
-        onClick = {
-            if (!context.isScreenReaderEnabled) {
-                val range: AnnotatedString.Range<String>? =
-                    annotatedString.getStringAnnotations(URL_TAG, it, it).firstOrNull()
-                range?.let { stringAnnotation ->
-                    linkTextState.onClick(stringAnnotation.item)
+        modifier = Modifier.semantics(mergeDescendants = true) {
+            onClick {
+                linkTextStates.firstOrNull()?.let {
+                    it.onClick(it.url)
                 }
+
+                return@onClick true
             }
         },
+        onClick = { charOffset ->
+            onTextClick(annotatedString, charOffset, linkTextStates)
+        },
     )
+}
+
+@VisibleForTesting
+internal fun onTextClick(
+    annotatedString: AnnotatedString,
+    charOffset: Int,
+    linkTextStates: List<LinkTextState>,
+) {
+    val range: AnnotatedString.Range<String>? =
+        annotatedString.getStringAnnotations(URL_TAG, charOffset, charOffset).firstOrNull()
+    range?.let { stringAnnotation ->
+        val linkTextState = linkTextStates.firstOrNull {
+            it.text == stringAnnotation.item
+        }
+        linkTextState?.let {
+            it.onClick(it.url)
+        }
+    }
+}
+
+@VisibleForTesting
+internal fun buildUrlAnnotatedString(
+    text: String,
+    linkTextStates: List<LinkTextState>,
+    color: Color,
+    decoration: TextDecoration,
+) = buildAnnotatedString {
+    append(text)
+
+    linkTextStates.forEach {
+        val startIndex = text.indexOf(it.text, ignoreCase = true)
+        val endIndex = startIndex + it.text.length
+
+        addStyle(
+            style = SpanStyle(
+                color = color,
+                textDecoration = decoration,
+            ),
+            start = startIndex,
+            end = endIndex,
+        )
+
+        addStringAnnotation(
+            tag = URL_TAG,
+            annotation = it.text,
+            start = startIndex,
+            end = endIndex,
+        )
+    }
 }
 
 @Preview
@@ -120,7 +148,7 @@ private fun LinkTextEndPreview() {
     )
     FirefoxTheme {
         Box(modifier = Modifier.background(color = FirefoxTheme.colors.layer1)) {
-            LinkText(text = "This is normal text, click here", linkTextState = state)
+            LinkText(text = "This is normal text, click here", linkTextStates = listOf(state))
         }
     }
 }
@@ -135,7 +163,7 @@ private fun LinkTextMiddlePreview() {
     )
     FirefoxTheme {
         Box(modifier = Modifier.background(color = FirefoxTheme.colors.layer1)) {
-            LinkText(text = "This is clickable text, followed by normal text", linkTextState = state)
+            LinkText(text = "This is clickable text, followed by normal text", linkTextStates = listOf(state))
         }
     }
 }
@@ -152,7 +180,7 @@ private fun LinkTextStyledPreview() {
         Box(modifier = Modifier.background(color = FirefoxTheme.colors.layer1)) {
             LinkText(
                 text = "This is clickable text, in a different style",
-                linkTextState = state,
+                linkTextStates = listOf(state),
                 style = FirefoxTheme.typography.headline5,
             )
         }
@@ -171,10 +199,34 @@ private fun LinkTextClickStyledPreview() {
         Box(modifier = Modifier.background(color = FirefoxTheme.colors.layer1)) {
             LinkText(
                 text = "This is clickable text, with underlined text",
-                linkTextState = state,
+                linkTextStates = listOf(state),
                 style = FirefoxTheme.typography.headline5,
                 linkTextColor = FirefoxTheme.colors.textOnColorSecondary,
                 linkTextDecoration = TextDecoration.Underline,
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun MultipleLinksPreview() {
+    val state1 = LinkTextState(
+        text = "clickable text",
+        url = "www.mozilla.com",
+        onClick = {},
+    )
+
+    val state2 = LinkTextState(
+        text = "another clickable text",
+        url = "www.mozilla.com",
+        onClick = {},
+    )
+    FirefoxTheme {
+        Box(modifier = Modifier.background(color = FirefoxTheme.colors.layer1)) {
+            LinkText(
+                text = "This is clickable text, followed by normal text, followed by another clickable text",
+                linkTextStates = listOf(state1, state2),
             )
         }
     }

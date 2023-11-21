@@ -21,7 +21,6 @@
     <dimen name="tab_corner_radius">8dp</dimen>
     <dimen name="preference_icon_drawable_size">24dp</dimen>
     <dimen name="search_bar_search_engine_icon_padding">12dp</dimen>
-    <dimen name="search_bar_search_icon_margin">28dp</dimen>
     <dimen name="search_engine_engine_icon_margin">12dp</dimen>
     <dimen name="search_engine_engine_icon_top_margin">14dp</dimen>
     <dimen name="search_engine_radio_button_height">48dp</dimen>
@@ -94,11 +93,6 @@
     <dimen name="search_fragment_clipboard_item_height">56dp</dimen>
     <dimen name="search_fragment_clipboard_item_horizontal_margin">8dp</dimen>
     <dimen name="search_fragment_clipboard_item_title_margin_start">8dp</dimen>
-    <dimen name="search_fragment_pill_height">40dp</dimen>
-    <dimen name="search_fragment_pill_padding_start">20dp</dimen>
-    <dimen name="search_fragment_pill_padding_end">16dp</dimen>
-    <dimen name="search_fragment_pill_padding_vertical">4dp</dimen>
-    <dimen name="search_fragment_scan_button_margin_end">8dp</dimen>
 
     <dimen name="search_fragment_clipboard_title_text_size">15sp</dimen>
 
@@ -185,6 +179,6 @@
 
     <!-- a11y -->
     <dimen name="accessibility_min_height">48dp</dimen>
-
     <dimen name="tap_increase_16">16dp</dimen>
+    <dimen name="tap_increase_2">2dp</dimen>
 </resources>

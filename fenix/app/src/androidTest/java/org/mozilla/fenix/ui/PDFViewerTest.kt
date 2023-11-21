@@ -14,6 +14,8 @@ import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
+import org.mozilla.fenix.helpers.AppAndSystemHelper.assertExternalAppOpens
+import org.mozilla.fenix.helpers.AppAndSystemHelper.clearDownloadsFolder
 import org.mozilla.fenix.helpers.Constants.PackageName.GOOGLE_DOCS
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.MatcherHelper
@@ -21,8 +23,6 @@ import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdAndText
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithText
 import org.mozilla.fenix.helpers.TestAssetHelper.getGenericAsset
-import org.mozilla.fenix.helpers.TestHelper.assertExternalAppOpens
-import org.mozilla.fenix.helpers.TestHelper.deleteDownloadedFileOnStorage
 import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.ui.robots.clickPageObject
 import org.mozilla.fenix.ui.robots.navigationToolbar
@@ -50,11 +50,15 @@ class PDFViewerTest {
     @After
     fun tearDown() {
         mockWebServer.shutdown()
+
+        // Check and clear the downloads folder
+        clearDownloadsFolder()
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2048140
     @SmokeTest
     @Test
-    fun openPDFInBrowserTest() {
+    fun verifyPDFFileIsOpenedInTheSameTabTest() {
         val genericURL =
             getGenericAsset(mockWebServer, 3)
 
@@ -62,11 +66,13 @@ class PDFViewerTest {
         }.enterURLAndEnterToBrowser(genericURL.url) {
             clickPageObject(itemContainingText("PDF form file"))
             verifyPageContent("Washington Crossing the Delaware")
+            verifyTabCounter("1")
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2159718
     @Test
-    fun pdfViewerOpenInAppTest() {
+    fun verifyPDFViewerOpenInAppButtonTest() {
         val genericURL = getGenericAsset(mockWebServer, 3)
 
         navigationToolbar {
@@ -78,9 +84,10 @@ class PDFViewerTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2145448
     // Download PDF file using the download toolbar button
     @Test
-    fun pdfViewerDownloadButtonTest() {
+    fun verifyPDFViewerDownloadButtonTest() {
         val genericURL = getGenericAsset(mockWebServer, 3)
         val downloadFile = "pdfForm.pdf"
 
@@ -92,7 +99,6 @@ class PDFViewerTest {
         }.clickOpen("application/pdf") {
             assertExternalAppOpens(GOOGLE_DOCS)
         }
-        deleteDownloadedFileOnStorage(downloadFile)
     }
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2283305

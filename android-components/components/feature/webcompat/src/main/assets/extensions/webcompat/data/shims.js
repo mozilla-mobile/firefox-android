@@ -327,10 +327,7 @@ const AVAILABLE_SHIMS = [
     bug: "1773110",
     runFirst: "private-browsing-web-api-fixes.js",
     matches: [
-      "*://*.imgur.com/js/vendor.*.bundle.js",
-      "*://*.imgur.io/js/vendor.*.bundle.js",
-      "*://www.rva311.com/static/js/main.*.chunk.js",
-      "*://web-assets.toggl.com/app/assets/scripts/*.js", // bug 1783919
+      "*://*.imgur.io/js/vendor.*.js", // Mobile: imgur.io (bug 1742344); desktop: imgur.com (unaffected)
     ],
     onlyIfPrivateBrowsing: true,
   },
@@ -883,6 +880,20 @@ const AVAILABLE_SHIMS = [
       },
     ],
     onlyIfDFPIActive: true,
+  },
+  {
+    id: "emeraude.my.salesforce.com",
+    platform: "all",
+    name: "Salesforce IndexedDB Script Access",
+    bug: "1855139",
+    contentScripts: [
+      {
+        js: "salesforce.js",
+        matches: ["*://emeraude.my.salesforce.com/*"],
+        runAt: "document_start",
+        allFrames: true,
+      },
+    ],
   },
 ];
 

@@ -18,7 +18,8 @@ import mozilla.components.browser.state.state.extension.WebExtensionPromptReques
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.webextension.WebExtensionInstallException
 import mozilla.components.feature.addons.Addon
-import mozilla.components.feature.addons.toInstalledState
+import mozilla.components.feature.addons.AddonManager
+import mozilla.components.feature.addons.ui.AddonDialogFragment
 import mozilla.components.feature.addons.ui.AddonInstallationDialogFragment
 import mozilla.components.feature.addons.ui.PermissionsDialogFragment
 import mozilla.components.lib.state.ext.flowScoped
@@ -36,9 +37,16 @@ import java.lang.ref.WeakReference
 class WebExtensionPromptFeature(
     private val store: BrowserStore,
     private val context: Context,
+    private val addonManager: AddonManager = context.components.addonManager,
     private val fragmentManager: FragmentManager,
-    private val onAddonChanged: (Addon) -> Unit = {},
 ) : LifecycleAwareFeature {
+
+    /**
+     * (optional) callback invoked when an add-on was updated due to an interaction with a
+     * [WebExtensionPromptRequest].
+     * Won't be needed after https://bugzilla.mozilla.org/show_bug.cgi?id=1858484.
+     */
+    var onAddonChanged: (Addon) -> Unit = {}
 
     /**
      * Whether or not an add-on installation is in progress.
@@ -71,18 +79,23 @@ class WebExtensionPromptFeature(
         tryToReAttachButtonHandlersToPreviousDialog()
     }
 
-    private fun handleAfterInstallationRequest(promptRequest: WebExtensionPromptRequest.AfterInstallation) {
-        // The install flow in Fenix relies on an [Addon] object so let's convert the (GeckoView)
-        // extension into a minimal add-on. The missing metadata will be fetched when the user
-        // opens the add-ons manager.
-        val addon = Addon.newFromWebExtension(promptRequest.extension)
+    @VisibleForTesting
+    internal fun handleAfterInstallationRequest(promptRequest: WebExtensionPromptRequest.AfterInstallation) {
+        val installedState = addonManager.toInstalledState(promptRequest.extension)
+        val addon = Addon.newFromWebExtension(promptRequest.extension, installedState)
         when (promptRequest) {
-            is WebExtensionPromptRequest.AfterInstallation.Permissions -> handlePermissionRequest(
+            is WebExtensionPromptRequest.AfterInstallation.Permissions.Required -> handleRequiredPermissionRequest(
                 addon,
                 promptRequest,
             )
+
+            is WebExtensionPromptRequest.AfterInstallation.Permissions.Optional -> handleOptionalPermissionsRequest(
+                addon,
+                promptRequest,
+            )
+
             is WebExtensionPromptRequest.AfterInstallation.PostInstallation -> handlePostInstallationRequest(
-                addon.copy(installedState = promptRequest.extension.toInstalledState()),
+                addon,
             )
         }
     }
@@ -104,14 +117,31 @@ class WebExtensionPromptFeature(
         showPostInstallationDialog(addon)
     }
 
-    private fun handlePermissionRequest(
+    private fun handleRequiredPermissionRequest(
         addon: Addon,
-        promptRequest: WebExtensionPromptRequest.AfterInstallation.Permissions,
+        promptRequest: WebExtensionPromptRequest.AfterInstallation.Permissions.Required,
     ) {
-        if (hasExistingPermissionDialogFragment()) return
+        showPermissionDialog(addon = addon, promptRequest = promptRequest)
+    }
+
+    @VisibleForTesting
+    internal fun handleOptionalPermissionsRequest(
+        addon: Addon,
+        promptRequest: WebExtensionPromptRequest.AfterInstallation.Permissions.Optional,
+    ) {
+        val shouldGrantWithoutPrompt = Addon.localizePermissions(promptRequest.permissions, context).isEmpty()
+
+        // If we don't have any promptable permissions, just proceed.
+        if (shouldGrantWithoutPrompt) {
+            handlePermissions(promptRequest, granted = true)
+            return
+        }
+
         showPermissionDialog(
-            addon,
-            promptRequest,
+            addon = addon,
+            promptRequest = promptRequest,
+            forOptionalPermissions = true,
+            optionalPermissions = promptRequest.permissions,
         )
     }
 
@@ -186,36 +216,38 @@ class WebExtensionPromptFeature(
     internal fun showPermissionDialog(
         addon: Addon,
         promptRequest: WebExtensionPromptRequest.AfterInstallation.Permissions,
+        forOptionalPermissions: Boolean = false,
+        optionalPermissions: List<String> = emptyList(),
     ) {
-        if (!isInstallationInProgress && !hasExistingPermissionDialogFragment()) {
-            val dialog = PermissionsDialogFragment.newInstance(
-                addon = addon,
-                promptsStyling = PermissionsDialogFragment.PromptsStyling(
-                    gravity = Gravity.BOTTOM,
-                    shouldWidthMatchParent = true,
-                    positiveButtonBackgroundColor = ThemeManager.resolveAttribute(
-                        R.attr.accent,
-                        context,
-                    ),
-                    positiveButtonTextColor = ThemeManager.resolveAttribute(
-                        R.attr.textOnColorPrimary,
-                        context,
-                    ),
-                    positiveButtonRadius =
-                    (context.resources.getDimensionPixelSize(R.dimen.tab_corner_radius)).toFloat(),
-                ),
-                onPositiveButtonClicked = {
-                    handleApprovedPermissions(promptRequest)
-                },
-                onNegativeButtonClicked = {
-                    handleDeniedPermissions(promptRequest)
-                },
-            )
-            dialog.show(
-                fragmentManager,
-                PERMISSIONS_DIALOG_FRAGMENT_TAG,
-            )
+        if (isInstallationInProgress || hasExistingPermissionDialogFragment()) {
+            return
         }
+
+        val dialog = PermissionsDialogFragment.newInstance(
+            addon = addon,
+            forOptionalPermissions = forOptionalPermissions,
+            optionalPermissions = optionalPermissions,
+            promptsStyling = AddonDialogFragment.PromptsStyling(
+                gravity = Gravity.BOTTOM,
+                shouldWidthMatchParent = true,
+                confirmButtonBackgroundColor = ThemeManager.resolveAttribute(
+                    R.attr.accent,
+                    context,
+                ),
+                confirmButtonTextColor = ThemeManager.resolveAttribute(
+                    R.attr.textOnColorPrimary,
+                    context,
+                ),
+                confirmButtonRadius =
+                (context.resources.getDimensionPixelSize(R.dimen.tab_corner_radius)).toFloat(),
+            ),
+            onPositiveButtonClicked = { handlePermissions(promptRequest, granted = true) },
+            onNegativeButtonClicked = { handlePermissions(promptRequest, granted = false) },
+        )
+        dialog.show(
+            fragmentManager,
+            PERMISSIONS_DIALOG_FRAGMENT_TAG,
+        )
     }
 
     private fun tryToReAttachButtonHandlersToPreviousDialog() {
@@ -225,14 +257,14 @@ class WebExtensionPromptFeature(
                     if (promptRequest is WebExtensionPromptRequest.AfterInstallation.Permissions &&
                         addon.id == promptRequest.extension.id
                     ) {
-                        handleApprovedPermissions(promptRequest)
+                        handlePermissions(promptRequest, granted = true)
                     }
                 }
             }
             dialog.onNegativeButtonClicked = {
                 store.state.webExtensionPromptRequest?.let { promptRequest ->
                     if (promptRequest is WebExtensionPromptRequest.AfterInstallation.Permissions) {
-                        handleDeniedPermissions(promptRequest)
+                        handlePermissions(promptRequest, granted = false)
                     }
                 }
             }
@@ -260,13 +292,11 @@ class WebExtensionPromptFeature(
         }
     }
 
-    private fun handleDeniedPermissions(promptRequest: WebExtensionPromptRequest.AfterInstallation.Permissions) {
-        promptRequest.onConfirm(false)
-        consumePromptRequest()
-    }
-
-    private fun handleApprovedPermissions(promptRequest: WebExtensionPromptRequest.AfterInstallation.Permissions) {
-        promptRequest.onConfirm(true)
+    private fun handlePermissions(
+        promptRequest: WebExtensionPromptRequest.AfterInstallation.Permissions,
+        granted: Boolean,
+    ) {
+        promptRequest.onConfirm(granted)
         consumePromptRequest()
     }
 
@@ -296,8 +326,6 @@ class WebExtensionPromptFeature(
 
     private fun showPostInstallationDialog(addon: Addon) {
         if (!isInstallationInProgress && !hasExistingAddonPostInstallationDialogFragment()) {
-            val addonsProvider = context.components.addonsProvider
-
             // Fragment may not be attached to the context anymore during onConfirmButtonClicked handling,
             // but we still want to be able to process user selection of the 'allowInPrivateBrowsing' pref.
             // This is a best-effort attempt to do so - retain a weak reference to the application context
@@ -307,8 +335,7 @@ class WebExtensionPromptFeature(
 
             val dialog = AddonInstallationDialogFragment.newInstance(
                 addon = addon,
-                addonsProvider = addonsProvider,
-                promptsStyling = AddonInstallationDialogFragment.PromptsStyling(
+                promptsStyling = AddonDialogFragment.PromptsStyling(
                     gravity = Gravity.BOTTOM,
                     shouldWidthMatchParent = true,
                     confirmButtonBackgroundColor = ThemeManager.resolveAttribute(

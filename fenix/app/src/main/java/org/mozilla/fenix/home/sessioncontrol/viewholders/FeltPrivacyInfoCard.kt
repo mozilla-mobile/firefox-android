@@ -8,6 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -36,8 +37,9 @@ fun FeltPrivacyModeInfoCard(
 ) {
     Card(
         modifier = Modifier
-            .wrapContentHeight(),
-        backgroundColor = FirefoxTheme.colors.layerAccentNonOpaque,
+            .wrapContentHeight()
+            .fillMaxWidth(),
+        backgroundColor = FirefoxTheme.colors.layer2,
         shape = RoundedCornerShape(8.dp),
         elevation = 5.dp,
     ) {
@@ -54,18 +56,21 @@ fun FeltPrivacyModeInfoCard(
 
             LinkText(
                 text = stringResource(
-                    id = R.string.felt_privacy_info_card_subtitle,
+                    id = R.string.felt_privacy_info_card_subtitle_2,
                     stringResource(id = R.string.app_name),
                     stringResource(id = R.string.felt_privacy_info_card_subtitle_link_text),
                 ),
-                linkTextState = LinkTextState(
-                    text = stringResource(id = R.string.felt_privacy_info_card_subtitle_link_text),
-                    url = "",
-                    onClick = { onLearnMoreClick() },
+                linkTextStates = listOf(
+                    LinkTextState(
+                        text = stringResource(id = R.string.felt_privacy_info_card_subtitle_link_text),
+                        url = "",
+                        onClick = { onLearnMoreClick() },
+                    ),
                 ),
                 style = FirefoxTheme.typography.body2.copy(
                     color = FirefoxTheme.colors.textPrimary,
                 ),
+                linkTextColor = FirefoxTheme.colors.textPrimary,
                 linkTextDecoration = TextDecoration.Underline,
             )
         }

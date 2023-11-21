@@ -26,7 +26,7 @@ import org.mozilla.fenix.ext.loadIntoView
 class ConnectionDetailsView(
     container: ViewGroup,
     private val icons: BrowserIcons,
-    val interactor: WebSiteInfoInteractor,
+    private val interactor: WebSiteInfoInteractor,
 ) {
     val binding = ConnectionDetailsWebsiteInfoBinding.inflate(
         LayoutInflater.from(container.context),

@@ -40,12 +40,11 @@ import org.mozilla.fenix.utils.Settings
  * MVI View that displays the tracking protection, cookie banner handling toggles and the navigation
  * to additional tracking protection details.
  *
- * @param containerView [ViewGroup] in which this View will inflate itself.
+ * @property containerView [ViewGroup] in which this View will inflate itself.
  * @param trackingProtectionDivider trackingProtectionDivider The divider line between tracking protection layout
  * and other views from [QuickSettingsSheetDialogFragment].
- * @param interactor [ProtectionsInteractor] which will have delegated to all user
- * @param settings [Settings] application settings.
- * interactions.
+ * @property interactor [ProtectionsInteractor] which will have delegated to all user interactions.
+ * @property settings [Settings] application settings.
  */
 class ProtectionsView(
     val containerView: ViewGroup,
@@ -61,7 +60,8 @@ class ProtectionsView(
         bindTrackingProtectionInfo(state.isTrackingProtectionEnabled)
         bindCookieBannerProtection(state.cookieBannerUIMode)
         binding.trackingProtectionSwitch.isVisible = settings.shouldUseTrackingProtection
-        binding.cookieBannerItem.isVisible = shouldShowCookieBanner &&
+        val isPrivateSession = state.tab?.content?.private == true
+        binding.cookieBannerItem.isVisible = isPrivateSession && shouldShowCookieBanner &&
             state.cookieBannerUIMode != CookieBannerUIMode.HIDE
 
         binding.trackingProtectionDetails.setOnClickListener {
@@ -99,11 +99,11 @@ class ProtectionsView(
     )
 
     private val shouldShowCookieBanner: Boolean
-        get() = settings.shouldShowCookieBannerUI && settings.shouldUseCookieBanner
+        get() = settings.shouldShowCookieBannerUI && settings.shouldUseCookieBannerPrivateMode
 
     private fun bindCookieBannerProtection(cookieBannerMode: CookieBannerUIMode) {
         val context = binding.cookieBannerItem.context
-        val label = context.getString(R.string.preferences_cookie_banner_reduction)
+        val label = context.getString(R.string.cookie_banner_blocker)
 
         binding.cookieBannerItem.apply {
             setContent {

@@ -123,11 +123,6 @@ interface HistoryStorage : Storage {
      * @param timestamp A unix timestamp, milliseconds, of a visit to be removed.
      */
     suspend fun deleteVisit(url: String, timestamp: Long)
-
-    /**
-     * Prune history storage, removing stale history.
-     */
-    suspend fun prune()
 }
 
 /**
@@ -210,8 +205,6 @@ data class VisitInfo(
  */
 @Suppress("MagicNumber")
 enum class VisitType(val type: Int) {
-    // Internal visit type used for meta data updates. Doesn't represent an actual page visit.
-    NOT_A_VISIT(-1),
 
     // User followed a link.
     LINK(1),

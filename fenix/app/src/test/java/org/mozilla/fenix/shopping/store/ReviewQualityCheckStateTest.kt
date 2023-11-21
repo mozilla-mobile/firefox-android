@@ -5,9 +5,12 @@
 package org.mozilla.fenix.shopping.store
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertThrows
+import org.junit.Assert.assertTrue
 import org.junit.Test
-import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent
+import org.mozilla.fenix.shopping.ProductAnalysisTestData
+import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent.HighlightsInfo
 
 class ReviewQualityCheckStateTest {
 
@@ -40,6 +43,7 @@ class ReviewQualityCheckStateTest {
                 "Unbeatable deals",
             ),
         )
+        val highlightsInfo = HighlightsInfo(highlights)
 
         val expected = mapOf(
             ReviewQualityCheckState.HighlightType.QUALITY to listOf(
@@ -48,7 +52,7 @@ class ReviewQualityCheckStateTest {
             ),
         )
 
-        assertEquals(expected, highlights.forCompactMode())
+        assertEquals(expected, highlightsInfo.highlightsForCompactMode)
     }
 
     @Test
@@ -58,6 +62,7 @@ class ReviewQualityCheckStateTest {
                 "Affordable prices",
             ),
         )
+        val highlightsInfo = HighlightsInfo(highlights)
 
         val expected = mapOf(
             ReviewQualityCheckState.HighlightType.PRICE to listOf(
@@ -65,19 +70,16 @@ class ReviewQualityCheckStateTest {
             ),
         )
 
-        assertEquals(expected, highlights.forCompactMode())
+        assertEquals(expected, highlightsInfo.highlightsForCompactMode)
     }
 
     @Test
     fun `WHEN AnalysisPresent is created with grade, rating and highlights as null THEN exception is thrown`() {
         assertThrows(IllegalArgumentException::class.java) {
-            AnalysisPresent(
-                productId = "",
+            ProductAnalysisTestData.analysisPresent(
                 reviewGrade = null,
-                needsAnalysis = false,
                 adjustedRating = null,
-                productUrl = "",
-                highlights = null,
+                highlightsInfo = null,
             )
         }
     }
@@ -85,36 +87,27 @@ class ReviewQualityCheckStateTest {
     @Test
     fun `WHEN AnalysisPresent is created with at least one of grade, rating and highlights as not null THEN no exception is thrown`() {
         val ratingPresent = kotlin.runCatching {
-            AnalysisPresent(
-                productId = "1",
+            ProductAnalysisTestData.analysisPresent(
                 reviewGrade = null,
-                needsAnalysis = false,
                 adjustedRating = 1.2f,
-                productUrl = "",
-                highlights = null,
+                highlightsInfo = null,
             )
         }
 
         val gradePresent = kotlin.runCatching {
-            AnalysisPresent(
-                productId = "2",
+            ProductAnalysisTestData.analysisPresent(
                 reviewGrade = ReviewQualityCheckState.Grade.A,
-                needsAnalysis = false,
                 adjustedRating = null,
-                productUrl = "",
-                highlights = null,
+                highlightsInfo = null,
             )
         }
 
         val highlightsPresent = kotlin.runCatching {
-            AnalysisPresent(
-                productId = "2",
+            ProductAnalysisTestData.analysisPresent(
                 reviewGrade = null,
-                needsAnalysis = false,
                 adjustedRating = null,
-                productUrl = "",
-                highlights = sortedMapOf(
-                    ReviewQualityCheckState.HighlightType.QUALITY to listOf(""),
+                highlightsInfo = HighlightsInfo(
+                    mapOf(ReviewQualityCheckState.HighlightType.QUALITY to listOf("")),
                 ),
             )
         }
@@ -122,5 +115,113 @@ class ReviewQualityCheckStateTest {
         assert(ratingPresent.isSuccess)
         assert(gradePresent.isSuccess)
         assert(highlightsPresent.isSuccess)
+    }
+
+    @Test
+    fun `WHEN AnalysisPresent has more than 2 highlights snippets THEN show more button and highlights fade are visible`() {
+        val highlights = mapOf(
+            ReviewQualityCheckState.HighlightType.QUALITY to listOf(
+                "High quality",
+                "Excellent craftsmanship",
+                "Superior materials",
+            ),
+            ReviewQualityCheckState.HighlightType.PRICE to listOf(
+                "Affordable prices",
+                "Great value for money",
+                "Discounted offers",
+            ),
+            ReviewQualityCheckState.HighlightType.SHIPPING to listOf(
+                "Fast and reliable shipping",
+                "Free shipping options",
+                "Express delivery",
+            ),
+            ReviewQualityCheckState.HighlightType.PACKAGING_AND_APPEARANCE to listOf(
+                "Elegant packaging",
+                "Attractive appearance",
+                "Beautiful design",
+            ),
+            ReviewQualityCheckState.HighlightType.COMPETITIVENESS to listOf(
+                "Competitive pricing",
+                "Strong market presence",
+                "Unbeatable deals",
+            ),
+        )
+        val analysis = ProductAnalysisTestData.analysisPresent(
+            highlightsInfo = HighlightsInfo(highlights),
+        )
+
+        assertTrue(analysis.highlightsInfo!!.highlightsFadeVisible)
+        assertTrue(analysis.highlightsInfo!!.showMoreButtonVisible)
+    }
+
+    @Test
+    fun `WHEN AnalysisPresent has exactly 1 highlights snippet THEN show more button and highlights fade are not visible`() {
+        val highlights = mapOf(
+            ReviewQualityCheckState.HighlightType.PRICE to listOf("Affordable prices"),
+        )
+        val analysis = ProductAnalysisTestData.analysisPresent(
+            highlightsInfo = HighlightsInfo(highlights),
+        )
+
+        assertFalse(analysis.highlightsInfo!!.highlightsFadeVisible)
+        assertFalse(analysis.highlightsInfo!!.showMoreButtonVisible)
+    }
+
+    @Test
+    fun `WHEN AnalysisPresent has exactly 2 highlights snippets THEN show more button and highlights fade are not visible`() {
+        val highlights = mapOf(
+            ReviewQualityCheckState.HighlightType.SHIPPING to listOf(
+                "Fast and reliable shipping",
+                "Free shipping options",
+            ),
+        )
+        val analysis = ProductAnalysisTestData.analysisPresent(
+            highlightsInfo = HighlightsInfo(highlights),
+        )
+
+        assertFalse(analysis.highlightsInfo!!.highlightsFadeVisible)
+        assertFalse(analysis.highlightsInfo!!.showMoreButtonVisible)
+    }
+
+    @Test
+    fun `WHEN AnalysisPresent has a single highlights section and the section has more than 2 snippets THEN show more button and highlights fade are visible`() {
+        val highlights = mapOf(
+            ReviewQualityCheckState.HighlightType.SHIPPING to listOf(
+                "Fast and reliable shipping",
+                "Free shipping options",
+                "Express delivery",
+            ),
+        )
+        val analysis = ProductAnalysisTestData.analysisPresent(
+            highlightsInfo = HighlightsInfo(highlights),
+        )
+
+        assertTrue(analysis.highlightsInfo!!.highlightsFadeVisible)
+        assertTrue(analysis.highlightsInfo!!.showMoreButtonVisible)
+    }
+
+    @Test
+    fun `WHEN AnalysisPresent has only 1 highlight snippet for the first category and more for others THEN show more button is visible and highlights fade is not visible`() {
+        val highlights = mapOf(
+            ReviewQualityCheckState.HighlightType.QUALITY to listOf(
+                "High quality",
+            ),
+            ReviewQualityCheckState.HighlightType.PACKAGING_AND_APPEARANCE to listOf(
+                "Elegant packaging",
+                "Attractive appearance",
+                "Beautiful design",
+            ),
+            ReviewQualityCheckState.HighlightType.COMPETITIVENESS to listOf(
+                "Competitive pricing",
+                "Strong market presence",
+                "Unbeatable deals",
+            ),
+        )
+        val analysis = ProductAnalysisTestData.analysisPresent(
+            highlightsInfo = HighlightsInfo(highlights),
+        )
+
+        assertTrue(analysis.highlightsInfo!!.showMoreButtonVisible)
+        assertFalse(analysis.highlightsInfo!!.highlightsFadeVisible)
     }
 }

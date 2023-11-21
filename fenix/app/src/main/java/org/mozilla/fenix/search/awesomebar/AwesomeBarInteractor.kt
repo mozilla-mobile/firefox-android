@@ -16,6 +16,7 @@ interface AwesomeBarInteractor {
     /**
      * Called whenever a suggestion containing a URL is tapped
      * @param url the url the suggestion was providing
+     * @param flags the [LoadUrlFlags] to use when loading the provided url.
      */
     fun onUrlTapped(url: String, flags: LoadUrlFlags = LoadUrlFlags.none())
 
@@ -46,11 +47,6 @@ interface AwesomeBarInteractor {
      * Called whenever an existing session is selected from the sessionSuggestionProvider
      */
     fun onExistingSessionSelected(tabId: String)
-
-    /**
-     * Called whenever the Shortcuts button is clicked
-     */
-    fun onSearchShortcutsButtonClicked()
 
     /**
      * Called whenever search engine suggestion is tapped

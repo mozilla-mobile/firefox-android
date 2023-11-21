@@ -17,6 +17,8 @@ import mozilla.components.concept.engine.permission.PermissionRequest
 import mozilla.components.concept.engine.prompt.PromptRequest
 import mozilla.components.concept.engine.shopping.ProductAnalysis
 import mozilla.components.concept.engine.shopping.ProductRecommendation
+import mozilla.components.concept.engine.translate.TranslationOperation
+import mozilla.components.concept.engine.translate.TranslationOptions
 import mozilla.components.concept.engine.window.WindowRequest
 import mozilla.components.concept.fetch.Response
 import mozilla.components.support.base.observer.Observable
@@ -329,6 +331,21 @@ abstract class EngineSession(
          * @param throwable The throwable from the exception.
          */
         fun onCheckForFormDataException(throwable: Throwable) = Unit
+
+        /**
+         * Event to indicate that the translation operation completed successfully.
+         *
+         * @param operation The operation that the translation engine completed.
+         */
+        fun onTranslateComplete(operation: TranslationOperation) = Unit
+
+        /**
+         * Event to indicate that the translation operation was unsuccessful.
+         *
+         * @param operation The operation that the translation engine attempted.
+         * @param throwable The exception that occurred during the operation.
+         */
+        fun onTranslateException(operation: TranslationOperation, throwable: Throwable) = Unit
     }
 
     /**
@@ -475,6 +492,11 @@ abstract class EngineSession(
             MOZILLA_SOCIAL(1 shl 8),
 
             /**
+             * Blocks email trackers.
+             */
+            EMAIL(1 shl 9),
+
+            /**
              * Blocks content like scripts and sub-resources.
              */
             SCRIPTS_AND_SUB_RESOURCES(1 shl 31),
@@ -485,9 +507,9 @@ abstract class EngineSession(
             ),
 
             /**
-             * Combining the [RECOMMENDED] categories plus [SCRIPTS_AND_SUB_RESOURCES].
+             * Combining the [RECOMMENDED] categories plus [SCRIPTS_AND_SUB_RESOURCES] & getAntiTracking[EMAIL].
              */
-            STRICT(RECOMMENDED.id + SCRIPTS_AND_SUB_RESOURCES.id),
+            STRICT(RECOMMENDED.id + SCRIPTS_AND_SUB_RESOURCES.id + EMAIL.id),
         }
 
         companion object {
@@ -645,7 +667,7 @@ abstract class EngineSession(
             useForRegularSessions = false,
             cookiePolicy = cookiePolicy,
             cookiePolicyPrivateMode = cookiePolicyPrivateMode,
-            strictSocialTrackingProtection = strictSocialTrackingProtection,
+            strictSocialTrackingProtection = false,
             cookiePurging = cookiePurging,
         )
 
@@ -677,10 +699,11 @@ abstract class EngineSession(
             const val LOAD_FLAGS_FORCE_ALLOW_DATA_URI: Int = 1 shl 5
             const val LOAD_FLAGS_REPLACE_HISTORY: Int = 1 shl 6
             const val LOAD_FLAGS_BYPASS_LOAD_URI_DELEGATE: Int = 1 shl 7
+            const val ALLOW_ADDITIONAL_HEADERS: Int = 1 shl 15
             const val ALLOW_JAVASCRIPT_URL: Int = 1 shl 16
             internal const val ALL = BYPASS_CACHE + BYPASS_PROXY + EXTERNAL + ALLOW_POPUPS +
                 BYPASS_CLASSIFIER + LOAD_FLAGS_FORCE_ALLOW_DATA_URI + LOAD_FLAGS_REPLACE_HISTORY +
-                LOAD_FLAGS_BYPASS_LOAD_URI_DELEGATE + ALLOW_JAVASCRIPT_URL
+                LOAD_FLAGS_BYPASS_LOAD_URI_DELEGATE + ALLOW_ADDITIONAL_HEADERS + ALLOW_JAVASCRIPT_URL
 
             fun all() = LoadUrlFlags(ALL)
             fun none() = LoadUrlFlags(NONE)
@@ -851,7 +874,7 @@ abstract class EngineSession(
      * @param onResult callback invoked if the engine API returned a valid response. Please note
      * that the response can be null - which can indicate a bug, a miscommunication
      * or other unexpected failure.
-     * @param onError callback invoked if there was an error getting the response.
+     * @param onException callback invoked if there was an error getting the response.
      */
     abstract fun requestProductRecommendations(
         url: String,
@@ -862,14 +885,81 @@ abstract class EngineSession(
     /**
      * Requests the analysis results for a given product page URL.
      *
-     * @param onSuccess callback invoked if the engine API returns a valid response.
-     * @param onError callback invoked if there was an error getting the response.
+     * @param onResult callback invoked if the engine API returns a valid response.
+     * @param onException callback invoked if there was an error getting the response.
      */
     abstract fun requestProductAnalysis(
         url: String,
         onResult: (ProductAnalysis) -> Unit,
         onException: (Throwable) -> Unit,
     )
+
+    /**
+     * Requests the reanalysis of a product for a given product page URL.
+     *
+     * @param onResult callback invoked if the engine API returns a valid response.
+     * @param onException callback invoked if there was an error getting the response.
+     */
+    abstract fun reanalyzeProduct(
+        url: String,
+        onResult: (String) -> Unit,
+        onException: (Throwable) -> Unit,
+    )
+
+    /**
+     * Requests the status of a product analysis for a given product page URL.
+     *
+     * @param onResult callback invoked if the engine API returns a valid response.
+     * @param onException callback invoked if there was an error getting the response.
+     */
+    abstract fun requestAnalysisStatus(
+        url: String,
+        onResult: (String) -> Unit,
+        onException: (Throwable) -> Unit,
+    )
+
+    /**
+     * Sends a click attribution event for a given product aid.
+     *
+     * @param onResult callback invoked if the engine API returns a valid response.
+     * @param onException callback invoked if there was an error getting the response.
+     */
+    abstract fun sendClickAttributionEvent(
+        aid: String,
+        onResult: (Boolean) -> Unit,
+        onException: (Throwable) -> Unit,
+    )
+
+    /**
+     * Sends an impression attribution event for a given product aid.
+     *
+     * @param onResult callback invoked if the engine API returns a valid response.
+     * @param onException callback invoked if there was an error getting the response.
+     */
+    abstract fun sendImpressionAttributionEvent(
+        aid: String,
+        onResult: (Boolean) -> Unit,
+        onException: (Throwable) -> Unit,
+    )
+
+    /**
+     * Requests the [EngineSession] to translate the current session's contents.
+     *
+     * @param fromLanguage The BCP 47 language tag that the page should be translated from.
+     * @param toLanguage The BCP 47 language tag that the page should be translated to.
+     * @param options Options for how the translation should be processed.
+     */
+    abstract fun requestTranslate(
+        fromLanguage: String,
+        toLanguage: String,
+        options: TranslationOptions?,
+    )
+
+    /**
+     * Requests the [EngineSession] to restore the current session's contents.
+     * Will be a no-op on the Gecko side if the page is not translated.
+     */
+    abstract fun requestTranslationRestore()
 
     /**
      * Finds and highlights all occurrences of the provided String and highlights them asynchronously.

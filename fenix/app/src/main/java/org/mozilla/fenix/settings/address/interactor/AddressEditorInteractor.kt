@@ -39,6 +39,7 @@ interface AddressEditorInteractor {
      * Updates the provided address in the autofill storage. Called when a user
      * taps on the update menu item or "Update" button.
      *
+     * @param guid The unique identifier for the [Address] record to update.
      * @param addressFields A [UpdatableAddressFields] record to add.
      */
     fun onUpdateAddress(guid: String, addressFields: UpdatableAddressFields)
