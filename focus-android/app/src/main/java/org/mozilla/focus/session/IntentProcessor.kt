@@ -7,6 +7,7 @@ package org.mozilla.focus.session
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.provider.Browser
 import android.text.TextUtils
 import mozilla.components.browser.state.state.SessionState
 import mozilla.components.feature.customtabs.createCustomTabConfigFromIntent
