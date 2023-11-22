@@ -10,6 +10,9 @@ permalink: /changelog/
 * [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/Gecko.kt)
 * [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/.config.yml)
 
+* **support-utils**
+  * Recognize IPv6 literals in the address bar. [Bug 1803465](https://bugzilla.mozilla.org/show_bug.cgi?id=1803465)
+
 # 121.0
 * [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v120..releases_v121)
 * [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/releases_v121/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
@@ -27,9 +30,6 @@ permalink: /changelog/
 
 * **feature-search**
   * `RegionManager` now uses the cached result from it's `LocationService`. [Bug 1854988](https://bugzilla.mozilla.org/show_bug.cgi?id=1854988)
-
-* **support-utils**
-  * Recognize IPv6 literals in the address bar. [Bug 1803465](https://bugzilla.mozilla.org/show_bug.cgi?id=1803465)
 
 # 120.0
 * [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v119..releases_v120)
@@ -56,7 +56,7 @@ permalink: /changelog/
 
 * **feature-tabs**
   * Removed deprecated `TabsUseCases.AddNewPrivateTabUseCase`. [Bug 1853070](https://bugzilla.mozilla.org/show_bug.cgi?id=1853070)
-  
+
 * **lib-crash-sentry**
   * `SentryService.initIfNeeded` is now public. [bug #1851676](https://bugzilla.mozilla.org/show_bug.cgi?id=1851676)
 
