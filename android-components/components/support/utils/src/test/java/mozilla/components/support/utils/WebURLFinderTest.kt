@@ -135,9 +135,6 @@ class WebURLFinderTest {
             find("random_text $it other_random_text") == it.trim()
         }
 
-        // All cases that behave differently are annotated with INVERT().
-        val INVERT: (Boolean) -> Boolean = { !it }
-
         assertFalse(isURLLike("inurl:mozilla.org advanced search"))
         assertFalse(isURLLike("sf: help"))
         assertFalse(isURLLike("mozilla./~"))
@@ -145,9 +142,13 @@ class WebURLFinderTest {
 
         assertTrue(isURLLike("about:config"))
         assertTrue(isURLLike("about:config:8000"))
-        assertTrue(INVERT(isURLLike("file:///home/user/myfile.html")))
-        assertTrue(INVERT(isURLLike("file://////////////home//user/myfile.html")))
-        assertTrue(INVERT(isURLLike("file://C:\\Users\\user\\myfile.html")))
+
+        // These cases differ from the original isUrlLike test because
+        // file:// is rejected by isInvalidUriScheme.
+        assertFalse(isURLLike("file:///home/user/myfile.html"))
+        assertFalse(isURLLike("file://////////////home//user/myfile.html"))
+        assertFalse(isURLLike("file://C:\\Users\\user\\myfile.html"))
+
         assertTrue(isURLLike("http://192.168.255.255"))
         assertTrue(isURLLike("link.unknown"))
         assertTrue(isURLLike("3.14.2019"))
@@ -186,8 +187,11 @@ class WebURLFinderTest {
         )
 
         validIPv6Literals.forEach { url ->
-            assertTrue(INVERT(isURLLike(url)))
-            assertTrue(INVERT(isURLLike("$url/")))
+            // These cases differ from the original isUrlLike test because
+            // java.net.URI doesn't recognize bare IPv6 literals.
+            assertFalse(isURLLike(url))
+            assertFalse(isURLLike("$url/"))
+
             assertTrue(isURLLike("https://$url"))
             assertTrue(isURLLike("https://$url/"))
             assertTrue(isURLLike("https:$url"))
@@ -209,17 +213,20 @@ class WebURLFinderTest {
         assertTrue(isURLLike("fe80::"))
         assertTrue(isURLLike("x:["))
 
-        assertTrue(INVERT(isURLLike("[:::")))
-        assertTrue(INVERT(isURLLike("http://[::")))
-        assertTrue(INVERT(isURLLike("http://[::/path")))
-        assertTrue(INVERT(isURLLike("http://[::?query")))
-        assertTrue(INVERT(isURLLike("[[http://banana]]")))
-        assertTrue(INVERT(isURLLike("http://[[[")))
-        assertTrue(INVERT(isURLLike("[[[::")))
-        assertTrue(INVERT(isURLLike("[[[::/")))
-        assertTrue(INVERT(isURLLike("http://[1.2.3]")))
-        assertTrue(INVERT(isURLLike("https://[1:2:3:4:5:6:7]/")))
-        assertTrue(INVERT(isURLLike("https://[1:2:3:4:5:6:7:8:9]/")))
+        // These cases differ from the original isUrlLike test because
+        // the regex is just an approximation. When bug 1685152 is fixed,
+        // the original isURLLike will also return false.
+        assertFalse(isURLLike("[:::"))
+        assertFalse(isURLLike("http://[::"))
+        assertFalse(isURLLike("http://[::/path"))
+        assertFalse(isURLLike("http://[::?query"))
+        assertFalse(isURLLike("[[http://banana]]"))
+        assertFalse(isURLLike("http://[[["))
+        assertFalse(isURLLike("[[[::"))
+        assertFalse(isURLLike("[[[::/"))
+        assertFalse(isURLLike("http://[1.2.3]"))
+        assertFalse(isURLLike("https://[1:2:3:4:5:6:7]/"))
+        assertFalse(isURLLike("https://[1:2:3:4:5:6:7:8:9]/"))
 
         assertTrue(isURLLike("https://abc--cba.com/"))
     }
