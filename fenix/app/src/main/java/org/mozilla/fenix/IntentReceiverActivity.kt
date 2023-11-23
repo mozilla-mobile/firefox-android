@@ -7,6 +7,7 @@ package org.mozilla.fenix
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.StrictMode
@@ -126,7 +127,8 @@ class IntentReceiverActivity : Activity() {
             return
         }
         // NB: referrer can be spoofed by the calling application. Use with caution.
-        val r = referrer ?: return
+        val r = tryGettingReferrer() ?: return
+
         intent.putExtra(EXTRA_ACTIVITY_REFERRER_PACKAGE, r.host)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // Category is supported for API>=26.
@@ -138,6 +140,25 @@ class IntentReceiverActivity : Activity() {
                     // At least we tried.
                 }
             }
+        }
+    }
+
+    @Suppress("TooGenericExceptionCaught")
+    private fun tryGettingReferrer(): Uri? {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP_MR1) {
+            return null
+        }
+
+        return try {
+            referrer
+        } catch (e: RuntimeException) {
+            try {
+                referrer
+            } catch (e: Exception) {
+                null
+            }
+        } catch (e: Exception) {
+            null
         }
     }
 }
