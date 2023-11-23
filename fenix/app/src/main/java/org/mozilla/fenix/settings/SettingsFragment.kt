@@ -401,6 +401,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 SettingsFragmentDirections.actionSettingsFragmentToNimbusExperimentsFragment()
             }
             resources.getString(R.string.pref_key_install_local_addon) -> {
+                Addons.openInstallAddonFromFile.record(mozilla.components.service.glean.private.NoExtras())
                 addonFilePicker.launch()
                 null
             }

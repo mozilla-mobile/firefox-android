@@ -8009,6 +8009,22 @@ addons:
     metadata:
       tags:
         - WebExtensions
+  open_install_addon_from_file:
+    type: event
+    description: |
+      A user tapped "Install add-on from file" from the Settings
+    bugs:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1866293
+    data_reviews:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1866293
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: never
+    metadata:
+      tags:
+        - WebExtensions
 perf.startup:
   cold_main_app_to_first_frame:
     type: timing_distribution
