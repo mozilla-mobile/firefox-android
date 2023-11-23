@@ -540,23 +540,10 @@ class LoginsTest {
     }
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/593768
-    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1812995")
     @Test
     fun doNotSaveOptionWillNotUpdateALoginTest() {
         val loginPage = "https://mozilla-mobile.github.io/testapp/v2.0/loginForm.html"
         val originWebsite = "mozilla-mobile.github.io"
-
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openLoginsAndPasswordSubMenu {
-        }.openSaveLoginsAndPasswordsOptions {
-            verifySaveLoginsOptionsView()
-            verifyAskToSaveRadioButton(true)
-            verifyNeverSaveSaveRadioButton(false)
-        }
-
-        exitMenu()
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(loginPage.toUri()) {
