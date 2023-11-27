@@ -419,6 +419,12 @@ open class FxaAccountManager(
     suspend fun logout() = withContext(coroutineContext) { processQueue(Event.Account.Logout) }
 
     /**
+     * Should be called once the user deletes the account.
+     * It clears the account data and notifies the observers that account has been deleted.
+     */
+    suspend fun onAccountDeleted() = withContext(coroutineContext) { processQueue(Event.Account.Delete) }
+
+    /**
      * Register a [AccountEventsObserver] to monitor events relevant to an account/device.
      */
     fun registerForAccountEvents(observer: AccountEventsObserver, owner: LifecycleOwner, autoPause: Boolean) {
@@ -495,6 +501,9 @@ open class FxaAccountManager(
             Event.Progress.FailedToCompleteAuth -> {
                 notifyObservers { onFlowError(AuthFlowError.FailedToCompleteAuth) }
             }
+            Event.Progress.AccountDeleted -> {
+                notifyObservers { onAccountDeleted() }
+            }
             else -> Unit
         }
         AccountState.Authenticated -> when (via) {
@@ -538,6 +547,10 @@ open class FxaAccountManager(
         ProgressState.LoggingOut -> {
             resetAccount()
             Event.Progress.LoggedOut
+        }
+        ProgressState.DeletingAccount -> {
+            resetAccount()
+            Event.Progress.AccountDeleted
         }
         ProgressState.BeginningAuthentication -> when (via) {
             is Event.Account.BeginPairingFlow, is Event.Account.BeginEmailFlow -> {

@@ -362,6 +362,8 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     val shouldShowSecurityPinWarning: Boolean
         get() = secureWarningCount.underMaxCount()
 
+    var shouldShowAccountDeletedSnackbar: Boolean = false
+
     var shouldShowPrivacyPopWindow by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_privacy_pop_window),
         default = true,

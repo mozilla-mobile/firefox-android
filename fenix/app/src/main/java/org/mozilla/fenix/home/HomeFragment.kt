@@ -86,6 +86,7 @@ import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.PrivateShortcutCreateManager
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.appstate.AppAction
+import org.mozilla.fenix.components.maybeShowAccountDeletedSnackBar
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.databinding.FragmentHomeBinding
 import org.mozilla.fenix.ext.components
@@ -825,6 +826,8 @@ class HomeFragment : Fragment() {
         // triggered to cause an automatic update on warm start (no tab selection occurs). So we
         // update it manually here.
         requireComponents.useCases.sessionUseCases.updateLastAccess()
+
+        maybeShowAccountDeletedSnackBar(requireContext(), requireView(), snackbarAnchorView)
     }
 
     override fun onPause() {
