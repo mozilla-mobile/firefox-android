@@ -316,8 +316,27 @@ open class DefaultComponents(private val applicationContext: Context) {
             SimpleBrowserMenuItem("Save to PDF") {
                 sessionUseCases.saveToPdf.invoke()
             },
+
+            SimpleBrowserMenuItem("Translate (auto)") {
+                var detectedFrom =
+                    store.state.selectedTab?.translationsState?.translationEngineState
+                        ?.detectedLanguages?.documentLangTag
+                        ?: "en"
+                var detectedTo =
+                    store.state.selectedTab?.translationsState?.translationEngineState
+                        ?.detectedLanguages?.userPreferredLangTag
+                        ?: "en"
+                sessionUseCases.translate.invoke(
+                    fromLanguage = detectedFrom,
+                    toLanguage = detectedTo,
+                    options = null,
+                )
+            },
             SimpleBrowserMenuItem("Print") {
                 sessionUseCases.printContent.invoke()
+            },
+            SimpleBrowserMenuItem("Restore after Translate") {
+                sessionUseCases.translateRestore.invoke()
             },
             SimpleBrowserMenuItem("Restore after crash") {
                 sessionUseCases.crashRecovery.invoke()

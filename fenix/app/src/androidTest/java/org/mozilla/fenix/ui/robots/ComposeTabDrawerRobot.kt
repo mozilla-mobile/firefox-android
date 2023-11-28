@@ -39,16 +39,15 @@ import androidx.test.espresso.action.GeneralLocation
 import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.matcher.ViewMatchers
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import junit.framework.TestCase
 import org.hamcrest.Matcher
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.Constants
+import org.mozilla.fenix.helpers.DataGenerationHelper.getStringResource
 import org.mozilla.fenix.helpers.HomeActivityComposeTestRule
-import org.mozilla.fenix.helpers.MatcherHelper.assertItemContainingTextExists
+import org.mozilla.fenix.helpers.MatcherHelper.assertUIObjectExists
 import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
-import org.mozilla.fenix.helpers.TestHelper.getStringResource
 import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.clickAtLocationInView
 import org.mozilla.fenix.helpers.idlingresource.BottomSheetBehaviorStateIdlingResource
@@ -87,7 +86,7 @@ class ComposeTabDrawerRobot(private val composeTestRule: HomeActivityComposeTest
 
     fun verifySyncedTabsListWhenUserIsNotSignedIn() {
         verifySyncedTabsList()
-        assertItemContainingTextExists(
+        assertUIObjectExists(
             itemContainingText(getStringResource(R.string.synced_tabs_sign_in_message)),
             itemContainingText(getStringResource(R.string.sync_sign_in)),
             itemContainingText(getStringResource(R.string.tab_drawer_fab_sync)),
@@ -109,8 +108,9 @@ class ComposeTabDrawerRobot(private val composeTestRule: HomeActivityComposeTest
 
     fun verifyNoExistingOpenTabs(vararg titles: String) {
         titles.forEach { title ->
-            TestCase.assertFalse(
-                itemContainingText(title).waitForExists(TestAssetHelper.waitingTimeShort),
+            assertUIObjectExists(
+                itemContainingText(title),
+                exists = false,
             )
         }
     }

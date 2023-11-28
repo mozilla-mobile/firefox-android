@@ -12,6 +12,7 @@ import android.text.SpannableString
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AlertDialog
 import androidx.navigation.NavController
+import mozilla.components.browser.state.action.AwesomeBarAction
 import mozilla.components.browser.state.search.SearchEngine
 import mozilla.components.browser.state.state.selectedOrDefaultSearchEngine
 import mozilla.components.browser.state.store.BrowserStore
@@ -21,7 +22,6 @@ import mozilla.components.support.ktx.kotlin.isUrl
 import mozilla.components.ui.widgets.withCenterAlignedButtons
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.GleanMetrics.Events
-import org.mozilla.fenix.GleanMetrics.SearchShortcuts
 import org.mozilla.fenix.GleanMetrics.UnifiedSearch
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
@@ -51,7 +51,6 @@ interface SearchController {
     fun handleSearchShortcutEngineSelected(searchEngine: SearchEngine)
     fun handleClickSearchEngineSettings()
     fun handleExistingSessionSelected(tabId: String)
-    fun handleSearchShortcutsButtonClicked()
     fun handleCameraPermissionsNeeded()
     fun handleSearchEngineSuggestionClicked(searchEngine: SearchEngine)
 
@@ -88,11 +87,13 @@ class SearchDialogController(
                 // fennec users may be used to navigating to "about:crashes". So we intercept this here
                 // and open the crash list activity instead.
                 activity.startActivity(Intent(activity, CrashListActivity::class.java))
+                store.dispatch(AwesomeBarAction.EngagementFinished(abandoned = false))
             }
             "about:addons" -> {
                 val directions =
                     SearchDialogFragmentDirections.actionGlobalAddonsManagementFragment()
                 navController.navigateSafe(R.id.searchDialogFragment, directions)
+                store.dispatch(AwesomeBarAction.EngagementFinished(abandoned = false))
             }
             "moz://a" -> openSearchOrUrl(
                 SupportUtils.getMozillaPageUrl(SupportUtils.MozillaPage.MANIFESTO),
@@ -101,6 +102,8 @@ class SearchDialogController(
             else ->
                 if (url.isNotBlank()) {
                     openSearchOrUrl(url, fromHomeScreen)
+                } else {
+                    store.dispatch(AwesomeBarAction.EngagementFinished(abandoned = true))
                 }
         }
         dismissDialog()
@@ -143,6 +146,8 @@ class SearchDialogController(
                 searchAccessPoint,
             )
         }
+
+        store.dispatch(AwesomeBarAction.EngagementFinished(abandoned = false))
     }
 
     override fun handleEditingCancelled() {
@@ -151,18 +156,7 @@ class SearchDialogController(
     }
 
     override fun handleTextChanged(text: String) {
-        // Display the search shortcuts on each entry of the search fragment (see #5308)
-        val textMatchesCurrentUrl = fragmentStore.state.url == text
-        val textMatchesCurrentSearch = fragmentStore.state.searchTerms == text
-
         fragmentStore.dispatch(SearchFragmentAction.UpdateQuery(text))
-        fragmentStore.dispatch(
-            SearchFragmentAction.ShowSearchShortcutEnginePicker(
-                !settings.showUnifiedSearchFeature &&
-                    (textMatchesCurrentUrl || textMatchesCurrentSearch || text.isEmpty()) &&
-                    settings.shouldShowSearchShortcuts,
-            ),
-        )
 
         // For felt private browsing mode we're no longer going to prompt the user to enable search
         // suggestions while using private browsing mode. The preference to enable them will still
@@ -193,6 +187,8 @@ class SearchDialogController(
         )
 
         Events.enteredUrl.record(Events.EnteredUrlExtra(autocomplete = false))
+
+        store.dispatch(AwesomeBarAction.EngagementFinished(abandoned = false))
     }
 
     override fun handleSearchTermsTapped(searchTerms: String) {
@@ -228,6 +224,8 @@ class SearchDialogController(
                 searchAccessPoint,
             )
         }
+
+        store.dispatch(AwesomeBarAction.EngagementFinished(abandoned = false))
     }
 
     override fun handleSearchShortcutEngineSelected(searchEngine: SearchEngine) {
@@ -264,22 +262,14 @@ class SearchDialogController(
             }
         }
 
-        if (settings.showUnifiedSearchFeature) {
-            UnifiedSearch.engineSelected.record(UnifiedSearch.EngineSelectedExtra(searchEngine.telemetryName()))
-        } else {
-            SearchShortcuts.selected.record(SearchShortcuts.SelectedExtra(searchEngine.telemetryName()))
-        }
-    }
-
-    override fun handleSearchShortcutsButtonClicked() {
-        val isOpen = fragmentStore.state.showSearchShortcuts
-        fragmentStore.dispatch(SearchFragmentAction.ShowSearchShortcutEnginePicker(!isOpen))
+        UnifiedSearch.engineSelected.record(UnifiedSearch.EngineSelectedExtra(searchEngine.telemetryName()))
     }
 
     override fun handleClickSearchEngineSettings() {
         clearToolbarFocus()
         val directions = SearchDialogFragmentDirections.actionGlobalSearchEngineFragment()
         navController.navigateSafe(R.id.searchDialogFragment, directions)
+        store.dispatch(AwesomeBarAction.EngagementFinished(abandoned = true))
     }
 
     override fun handleExistingSessionSelected(tabId: String) {
@@ -290,6 +280,8 @@ class SearchDialogController(
         activity.openToBrowser(
             from = BrowserDirection.FromSearchDialog,
         )
+
+        store.dispatch(AwesomeBarAction.EngagementFinished(abandoned = false))
     }
 
     /**
@@ -345,6 +337,9 @@ class SearchDialogController(
                 intent.data = uri
                 dialog.cancel()
                 activity.startActivity(intent)
+            }
+            setOnDismissListener {
+                store.dispatch(AwesomeBarAction.EngagementFinished(abandoned = true))
             }
             create().withCenterAlignedButtons()
         }

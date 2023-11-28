@@ -14,14 +14,14 @@ gcloud:
     clearPackageData: true
 
   device:
-    - model: Pixel2.arm
-      version: 26
+    - model: java
+      version: 30
       locale: en_US
     - model: Pixel2.arm
       version: 27
       locale: en_US
-    - model: dreamlte
-      version: 28
+    - model: redfin
+      version: 30
       locale: en_US
     - model: oriole
       version: 31

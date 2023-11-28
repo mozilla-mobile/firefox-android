@@ -13,7 +13,6 @@ import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.home.Mode
 import org.mozilla.fenix.home.privatebrowsing.interactor.PrivateBrowsingInteractor
 import org.mozilla.fenix.settings.SupportUtils
 
@@ -42,8 +41,11 @@ class DefaultPrivateBrowsingController(
 ) : PrivateBrowsingController {
 
     override fun handleLearnMoreClicked() {
+        val learnMoreURL = SupportUtils.getGenericSumoURLForTopic(SupportUtils.SumoTopic.PRIVATE_BROWSING_MYTHS) +
+            "?as=u&utm_source=inproduct"
+
         activity.openToBrowserAndLoad(
-            searchTermOrURL = SupportUtils.getGenericSumoURLForTopic(SupportUtils.SumoTopic.PRIVATE_BROWSING_MYTHS),
+            searchTermOrURL = learnMoreURL,
             newTab = true,
             from = BrowserDirection.FromHome,
         )
@@ -55,7 +57,7 @@ class DefaultPrivateBrowsingController(
         }
 
         appStore.dispatch(
-            AppAction.ModeChange(Mode.fromBrowsingMode(newMode)),
+            AppAction.ModeChange(newMode),
         )
 
         if (navController.currentDestination?.id == R.id.searchDialogFragment) {

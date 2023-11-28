@@ -13,11 +13,11 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.uiautomator.UiSelector
 import mozilla.components.support.ktx.kotlin.tryGetHostFromUrl
-import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
+import org.mozilla.fenix.helpers.DataGenerationHelper.getStringResource
+import org.mozilla.fenix.helpers.MatcherHelper.assertUIObjectExists
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
-import org.mozilla.fenix.helpers.TestHelper.getStringResource
 import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.packageName
 
@@ -41,23 +41,27 @@ class SiteSecurityRobot {
 
 private fun assertQuickActionSheet(url: String = "", isConnectionSecure: Boolean) {
     quickActionSheet().waitForExists(waitingTime)
-    assertTrue(quickActionSheetUrl(url.tryGetHostFromUrl()).waitForExists(waitingTime))
-    assertTrue(quickActionSheetSecurityInfo(isConnectionSecure).waitForExists(waitingTime))
-    assertTrue(quickActionSheetTrackingProtectionSwitch().waitForExists(waitingTime))
-    assertTrue(quickActionSheetClearSiteData().waitForExists(waitingTime))
+    assertUIObjectExists(
+        quickActionSheetUrl(url.tryGetHostFromUrl()),
+        quickActionSheetSecurityInfo(isConnectionSecure),
+        quickActionSheetTrackingProtectionSwitch(),
+        quickActionSheetClearSiteData(),
+    )
 }
 
 private fun assertSecureConnectionSubMenu(pageTitle: String = "", url: String = "", isConnectionSecure: Boolean) {
     secureConnectionSubMenu().waitForExists(waitingTime)
-    assertTrue(secureConnectionSubMenuPageTitle(pageTitle).waitForExists(waitingTime))
-    assertTrue(secureConnectionSubMenuPageUrl(url).waitForExists(waitingTime))
-    assertTrue(secureConnectionSubMenuLockIcon().waitForExists(waitingTime))
-    assertTrue(secureConnectionSubMenuSecurityInfo(isConnectionSecure).waitForExists(waitingTime))
-    assertTrue(secureConnectionSubMenuCertificateInfo().waitForExists(waitingTime))
+    assertUIObjectExists(
+        secureConnectionSubMenuPageTitle(pageTitle),
+        secureConnectionSubMenuPageUrl(url),
+        secureConnectionSubMenuSecurityInfo(isConnectionSecure),
+        secureConnectionSubMenuLockIcon(),
+        secureConnectionSubMenuCertificateInfo(),
+    )
 }
 
 private fun assertClearSiteDataPrompt(url: String) {
-    assertTrue(clearSiteDataPrompt(url).waitForExists(waitingTime))
+    assertUIObjectExists(clearSiteDataPrompt(url))
     cancelClearSiteDataButton.check(matches(isDisplayed()))
     deleteSiteDataButton.check(matches(isDisplayed()))
 }

@@ -23,7 +23,7 @@ suspend fun CookieBannersStorage.getCookieBannerUIMode(
     context: Context,
     tab: SessionState,
 ): CookieBannerUIMode {
-    return if (context.settings().shouldUseCookieBanner) {
+    return if (context.settings().shouldUseCookieBannerPrivateMode) {
         val isSiteDomainReported = withContext(Dispatchers.IO) {
             val host = tab.content.url.toUri().host.orEmpty()
             val siteDomain = context.components.publicSuffixList.getPublicSuffixPlusOne(host).await()
@@ -39,7 +39,7 @@ suspend fun CookieBannersStorage.getCookieBannerUIMode(
         }
 
         if (hasException) {
-            CookieBannerUIMode.DISABLE
+            CookieBannerUIMode.SITE_NOT_SUPPORTED
         } else {
             withContext(Dispatchers.Main) {
                 tab.isCookieBannerSupported()

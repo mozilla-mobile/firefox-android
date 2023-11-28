@@ -4,11 +4,41 @@ title: Changelog
 permalink: /changelog/
 ---
 
-# 120.0 (In Development)
-* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v119..main)
+# 122.0 (In Development)
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v121..main)
 * [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
 * [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/Gecko.kt)
 * [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/.config.yml)
+
+* **feature-media**
+  * Added `FOREGROUND_SERVICE_MEDIA_PLAYBACK` permission to the `AndroidManifest.xml`.
+
+* **support-utils**
+  * Recognize IPv6 literals in the address bar. [Bug 1803465](https://bugzilla.mozilla.org/show_bug.cgi?id=1803465)
+
+# 121.0
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v120..releases_v121)
+* [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/releases_v121/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
+* [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/releases_v121/android-components/plugins/dependencies/src/main/java/Gecko.kt)
+* [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/releases_v121/android-components/.config.yml)
+
+* **browser-state**:
+  * Added `TranslationsState` to track translation and translation restoration status. [Bug 1844523](https://bugzilla.mozilla.org/show_bug.cgi?id=1844523)
+
+* **browser-engine-gecko**:
+  * Added support for translating and restoring a translated page on the engine. [Bug 1844523](https://bugzilla.mozilla.org/show_bug.cgi?id=1844523)
+
+* **service-location**
+  * Added a cache lifetime to `MozillaLocationService`. [Bug 1855562](https://bugzilla.mozilla.org/show_bug.cgi?id=1855562)
+
+* **feature-search**
+  * `RegionManager` now uses the cached result from it's `LocationService`. [Bug 1854988](https://bugzilla.mozilla.org/show_bug.cgi?id=1854988)
+
+# 120.0
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v119..releases_v120)
+* [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/releases_v120/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
+* [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/releases_v120/android-components/plugins/dependencies/src/main/java/Gecko.kt)
+* [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/releases_v120/android-components/.config.yml)
 
 * **feature-tabs**
   * Adds parameter to `TabCounterToolbarButton` to show the mask while in private browsing mode.
@@ -29,7 +59,7 @@ permalink: /changelog/
 
 * **feature-tabs**
   * Removed deprecated `TabsUseCases.AddNewPrivateTabUseCase`. [Bug 1853070](https://bugzilla.mozilla.org/show_bug.cgi?id=1853070)
-  
+
 * **lib-crash-sentry**
   * `SentryService.initIfNeeded` is now public. [bug #1851676](https://bugzilla.mozilla.org/show_bug.cgi?id=1851676)
 
@@ -59,6 +89,7 @@ permalink: /changelog/
 * **concept-engine**
   * 🌟️️ Add `reanalyzeProduct` API to `EngineSession` to allow reanalyzing product from the engine. See more on [Bug 1853309](https://bugzilla.mozilla.org/show_bug.cgi?id=1853309).
   * 🌟️️ Add `requestAnalysisStatus` API to `EngineSession` to allow request product analysis status from the engine. See more on [Bug 1853309](https://bugzilla.mozilla.org/show_bug.cgi?id=1853309).
+  * 🌟️️ Add `sendClickAttributionEvent` and `sendImpressionAttributionEvent` API to `EngineSession` to allow sending attribution events. See more on [Bug 1853309](https://bugzilla.mozilla.org/show_bug.cgi?id=1853309).
 
 * **support-ktx**
   * ⚠️ **This is a breaking change**: the `enterToImmersiveMode()` in `Activity.kt` has been renamed to `enterImmersiveMode()`.
@@ -1084,7 +1115,7 @@ permalink: /changelog/
   * Added handling of biometric authentication for a credit card selection prompt request. [#10369](https://github.com/mozilla-mobile/android-components/pull/10369)
 
 * **concept-engine**
-  * 🌟️ `getBlockedSchemes()` now exposes the list of url shemes that the engine won't load.
+  * 🌟️ `getBlockedSchemes()` now exposes the list of url schemes that the engine won't load.
   * Adds a new `CreditCard` data class which is a parallel of GeckoView's `Autocomplete.CreditCard`. [#10205](https://github.com/mozilla-mobile/android-components/issues/10205)
   * Adds a new `SelectCreditCard` in `PromptRequest` to display a prompt for selecting a credit card to autocomplete. [#10205](https://github.com/mozilla-mobile/android-components/issues/10205)
 
@@ -4486,7 +4517,7 @@ permalink: /changelog/
 
   ```kotlin
   import mozilla.components.support.rusthttp.RustHttpConfig
-  // Note: other implementions of `Client` from concept-fetch are fine as well.
+  // Note: other implementations of `Client` from concept-fetch are fine as well.
   import mozilla.components.lib.fetch.httpurlconnection.HttpURLConnectionClient
   // some point before calling rust code that makes HTTP requests.
   RustHttpConfig.setClient(lazy { HttpURLConnectionClient() })

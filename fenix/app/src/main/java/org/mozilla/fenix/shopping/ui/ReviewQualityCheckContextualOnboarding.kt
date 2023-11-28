@@ -16,6 +16,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -29,9 +32,10 @@ import org.mozilla.fenix.compose.button.PrimaryButton
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.ProductVendor
 import org.mozilla.fenix.shopping.ui.ext.displayName
+import org.mozilla.fenix.shopping.ui.ext.headingResource
 import org.mozilla.fenix.theme.FirefoxTheme
 
-const val PLACEHOLDER_URL = "www.fakespot.com"
+private const val MAX_SUPPORTED_VENDORS_PER_TLD = 3
 
 /**
  * A placeholder UI for review quality check contextual onboarding. The actual UI will be
@@ -57,15 +61,21 @@ fun ReviewQualityCheckContextualOnboarding(
     val learnMoreText =
         stringResource(id = R.string.review_quality_check_contextual_onboarding_learn_more_link)
     val privacyPolicyText =
-        stringResource(id = R.string.review_quality_check_contextual_onboarding_privacy_policy)
+        stringResource(id = R.string.review_quality_check_contextual_onboarding_privacy_policy_2)
     val termsOfUseText =
-        stringResource(id = R.string.review_quality_check_contextual_onboarding_terms_use)
+        stringResource(id = R.string.review_quality_check_contextual_onboarding_terms_use_2)
+    val titleContentDescription =
+        headingResource(R.string.review_quality_check_contextual_onboarding_title)
 
     ReviewQualityCheckCard(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = stringResource(R.string.review_quality_check_contextual_onboarding_title),
             color = FirefoxTheme.colors.textPrimary,
             style = FirefoxTheme.typography.headline5,
+            modifier = Modifier.semantics {
+                heading()
+                contentDescription = titleContentDescription
+            },
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -76,7 +86,7 @@ fun ReviewQualityCheckContextualOnboarding(
             style = FirefoxTheme.typography.body2,
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         LinkText(
             text = stringResource(
@@ -87,7 +97,7 @@ fun ReviewQualityCheckContextualOnboarding(
             linkTextStates = listOf(
                 LinkTextState(
                     text = learnMoreText,
-                    url = PLACEHOLDER_URL,
+                    url = "",
                     onClick = {
                         onLearnMoreClick()
                     },
@@ -99,39 +109,52 @@ fun ReviewQualityCheckContextualOnboarding(
             linkTextDecoration = TextDecoration.Underline,
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            text = stringResource(
+                id = R.string.review_quality_check_contextual_onboarding_caption_2,
+                stringResource(id = R.string.shopping_product_name),
+            ),
+            color = FirefoxTheme.colors.textPrimary,
+            style = FirefoxTheme.typography.caption,
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         LinkText(
-            text = stringResource(
-                id = R.string.review_quality_check_contextual_onboarding_caption,
-                stringResource(id = R.string.shopping_product_name),
-                privacyPolicyText,
-                termsOfUseText,
-            ),
+            text = privacyPolicyText,
             linkTextStates = listOf(
                 LinkTextState(
                     text = privacyPolicyText,
-                    url = PLACEHOLDER_URL,
+                    url = "",
                     onClick = {
                         onPrivacyPolicyClick()
                     },
                 ),
+            ),
+            style = FirefoxTheme.typography.body2,
+            linkTextDecoration = TextDecoration.Underline,
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        LinkText(
+            text = termsOfUseText,
+            linkTextStates = listOf(
                 LinkTextState(
                     text = termsOfUseText,
-                    url = PLACEHOLDER_URL,
+                    url = "",
                     onClick = {
                         onTermsOfUseClick()
                     },
                 ),
             ),
-            style = FirefoxTheme.typography.caption
-                .copy(
-                    color = FirefoxTheme.colors.textSecondary,
-                ),
+            style = FirefoxTheme.typography.body2,
             linkTextDecoration = TextDecoration.Underline,
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         Image(
             painter = painterResource(id = R.drawable.shopping_onboarding),
@@ -142,7 +165,7 @@ fun ReviewQualityCheckContextualOnboarding(
                 .padding(all = 16.dp),
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         PrimaryButton(
             text = stringResource(R.string.review_quality_check_contextual_onboarding_primary_button_text),
@@ -171,13 +194,22 @@ private fun createDescriptionString(
 ) = buildAnnotatedString {
     val retailerNames = retailers.map { it.displayName() }
 
-    val description = stringResource(
-        id = R.string.review_quality_check_contextual_onboarding_description,
-        retailerNames[0],
-        stringResource(R.string.app_name),
-        retailerNames[1],
-        retailerNames[2],
-    )
+    val description = if (retailers.size == MAX_SUPPORTED_VENDORS_PER_TLD) {
+        stringResource(
+            id = R.string.review_quality_check_contextual_onboarding_description,
+            retailerNames[0],
+            stringResource(R.string.app_name),
+            retailerNames[1],
+            retailerNames[2],
+        )
+    } else {
+        stringResource(
+            id = R.string.review_quality_check_contextual_onboarding_description_one_vendor,
+            retailerNames.first(),
+            stringResource(R.string.app_name),
+        )
+    }
+
     append(description)
 
     retailerNames.forEach { retailer ->

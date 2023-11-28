@@ -20,21 +20,22 @@ object Versions {
     const val python_envs_plugin = "0.0.31"
 
     const val junit = "4.13.2"
-    const val robolectric = "4.10.3"
-    const val mockito = "5.6.0"
+    const val robolectric = "4.11.1"
+    const val mockito = "5.7.0"
     const val maven_ant_tasks = "2.1.3"
-    const val jacoco = "0.8.10"
+    const val jacoco = "0.8.11"
     const val okhttp = "4.11.0"
+    const val coil = "2.4.0"
 
     const val android_gradle_plugin = "7.4.2"
 
     // This has to be synced to the gradlew plugin version. See
     // http://googlesamples.github.io/android-custom-lint-rules/api-guide/example.md.html#example:samplelintcheckgithubproject/lintversion?
     const val lint = "30.4.2"
-    const val detekt = "1.23.1"
+    const val detekt = "1.23.3"
     const val ktlint = "0.49.1"
 
-    const val sentry_latest = "6.27.0"
+    const val sentry = "6.33.1"
 
     const val zxing = "3.5.2"
 
@@ -42,7 +43,7 @@ object Versions {
     const val leakcanary = "2.12"
 
     // DO NOT MODIFY MANUALLY. This is auto-updated along with GeckoView.
-    const val mozilla_glean = "54.0.0"
+    const val mozilla_glean = "55.0.0"
 
     const val material = "1.9.0"
     const val ksp = "1.0.11"
@@ -58,7 +59,7 @@ object Versions {
         const val annotation = "1.7.0"
         const val appcompat = "1.6.1"
         const val autofill = "1.1.0"
-        const val browser = "1.6.0"
+        const val browser = "1.7.0"
         const val biometric = "1.1.0"
         const val cardview = "1.0.0"
         const val compose = compose_version
@@ -66,7 +67,7 @@ object Versions {
         const val coordinatorlayout = "1.2.0"
         const val core = "1.12.0"
         const val drawerlayout = "1.2.0"
-        const val fragment = "1.6.1"
+        const val fragment = "1.6.2"
         const val recyclerview = "1.3.2"
         const val test = "1.5.0"
         const val test_ext = "1.1.5"
@@ -199,9 +200,17 @@ object ComponentsDependencies {
 
     const val thirdparty_okhttp = "com.squareup.okhttp3:okhttp:${Versions.okhttp}"
     const val thirdparty_okhttp_urlconnection = "com.squareup.okhttp3:okhttp-urlconnection:${Versions.okhttp}"
-    const val thirdparty_sentry_latest = "io.sentry:sentry-android:${Versions.sentry_latest}"
+    const val thirdparty_sentry = "io.sentry:sentry-android:${Versions.sentry}"
     const val thirdparty_zxing = "com.google.zxing:core:${Versions.zxing}"
     const val thirdparty_disklrucache = "com.jakewharton:disklrucache:${Versions.disklrucache}"
+    /**
+     *  ⚠️️ DO NOT use any NETWORK based operations provided by the Coil library.
+     *  ⚠️️ The Coil library should be used for DECODING data only.
+     *
+     *  Fenix is using SvgDecoder.kt for SVG decoding. However this dependency will also expose other
+     *  API features that Fenix should not use.
+     */
+    const val thirdparty_coil_svg = "io.coil-kt:coil-svg:${Versions.coil}"
 
     const val firebase_messaging = "com.google.firebase:firebase-messaging:${Versions.Firebase.messaging}"
 }
