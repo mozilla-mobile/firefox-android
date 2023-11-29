@@ -359,7 +359,7 @@ class GeckoWebExtension(
                 description = it.description,
                 developerName = it.creatorName,
                 developerUrl = it.creatorUrl,
-                homePageUrl = it.homepageUrl,
+                homepageUrl = it.homepageUrl,
                 creatorName = it.creatorName,
                 creatorUrl = it.creatorUrl,
                 reviewUrl = it.reviewUrl,
@@ -372,6 +372,7 @@ class GeckoWebExtension(
                 openOptionsPageInTab = it.openOptionsPageInTab,
                 baseUrl = it.baseUrl,
                 temporary = it.temporary,
+                detailUrl = it.amoListingUrl,
             )
         }
     }

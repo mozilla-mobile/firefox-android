@@ -87,6 +87,8 @@
     <string name="mozac_feature_addons_learn_more">Learn more about permissions</string>
     <!-- The rating of the add-on. -->
     <string name="mozac_feature_addons_rating">Rating</string>
+    <!-- A link that points to the detail page of the add-on. -->
+    <string name="mozac_feature_addons_more_info_link">More about this add-on</string>
     <!-- The settings of the add-on. -->
     <string name="mozac_feature_addons_settings">Settings</string>
     <!-- Indicates the add-on is enabled. -->
@@ -203,8 +205,6 @@
     <string name="mozac_feature_addons_failed_to_install_incompatible_error">%1$s could not be installed because it is not compatible with %2$s %3$s.</string>
     <!-- Text shown when attempting to install a blocklisted add-on. %1$s is the add-on name. -->
     <string name="mozac_feature_addons_blocklisted_1">%1$s could not be installed because it has a high risk of causing stability or security problems.</string>
-    <!-- Text shown when attempting to install a blocklisted add-on. %1$s is the add-on name. -->
-    <string name="mozac_feature_addons_blocklisted" moz:removedIn="119" tools:ignore="UnusedResources">%1$s could not be installed because it has a high risk of causing stability or security problems</string>
     <!-- Text shown after successfully enabled an add-on. %1$s is the add-on name. -->
     <string name="mozac_feature_addons_successfully_enabled">Successfully enabled %1$s</string>
     <!-- Text shown after failed to enable an add-on. %1$s is the add-on name. -->

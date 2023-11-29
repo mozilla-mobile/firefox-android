@@ -15,11 +15,11 @@ import org.junit.Test
 import org.mozilla.fenix.R
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
+import org.mozilla.fenix.helpers.DataGenerationHelper.generateRandomString
+import org.mozilla.fenix.helpers.DataGenerationHelper.getStringResource
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper.getGenericAsset
 import org.mozilla.fenix.helpers.TestHelper.clickSnackbarButton
-import org.mozilla.fenix.helpers.TestHelper.generateRandomString
-import org.mozilla.fenix.helpers.TestHelper.getStringResource
 import org.mozilla.fenix.helpers.TestHelper.waitUntilSnackbarGone
 import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.homeScreenWithComposeTopSites
@@ -60,9 +60,10 @@ class ComposeTopSitesTest {
         mockWebServer.shutdown()
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/532598
     @SmokeTest
     @Test
-    fun verifyAddToFirefoxHome() {
+    fun addAWebsiteAsATopSiteTest() {
         val defaultWebPage = getGenericAsset(mockWebServer, 1)
 
         navigationToolbar {
@@ -78,8 +79,9 @@ class ComposeTopSitesTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/532599
     @Test
-    fun verifyOpenTopSiteNormalTab() {
+    fun openTopSiteInANewTabTest() {
         val defaultWebPage = getGenericAsset(mockWebServer, 1)
 
         navigationToolbar {
@@ -105,8 +107,9 @@ class ComposeTopSitesTest {
         mDevice.pressBack()
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/532600
     @Test
-    fun verifyOpenTopSitePrivateTab() {
+    fun openTopSiteInANewPrivateTabTest() {
         val defaultWebPage = getGenericAsset(mockWebServer, 1)
 
         navigationToolbar {
@@ -126,8 +129,9 @@ class ComposeTopSitesTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1110321
     @Test
-    fun verifyRenameTopSite() {
+    fun renameATopSiteTest() {
         val defaultWebPage = getGenericAsset(mockWebServer, 1)
         val newPageTitle = generateRandomString(5)
 
@@ -150,29 +154,9 @@ class ComposeTopSitesTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/532601
     @Test
-    fun verifyRemoveTopSite() {
-        val defaultWebPage = getGenericAsset(mockWebServer, 1)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(defaultWebPage.url) {
-        }.openThreeDotMenu {
-            expandMenu()
-            verifyAddToShortcutsButton(true)
-        }.addToFirefoxHome {
-            verifySnackBarText(getStringResource(R.string.snackbar_added_to_shortcuts))
-        }.goToHomescreenWithComposeTopSites(composeTestRule) {
-            verifyExistingTopSitesList()
-            verifyExistingTopSiteItem(defaultWebPage.title)
-        }.openContextMenuOnTopSitesWithTitle(defaultWebPage.title) {
-            verifyTopSiteContextMenuItems()
-        }.removeTopSite {
-            verifyNotExistingTopSiteItem(defaultWebPage.title)
-        }
-    }
-
-    @Test
-    fun verifyUndoRemoveTopSite() {
+    fun removeTopSiteUsingMenuButtonTest() {
         val defaultWebPage = getGenericAsset(mockWebServer, 1)
 
         navigationToolbar {
@@ -190,11 +174,16 @@ class ComposeTopSitesTest {
         }.removeTopSite {
             clickSnackbarButton("UNDO")
             verifyExistingTopSiteItem(defaultWebPage.title)
+        }.openContextMenuOnTopSitesWithTitle(defaultWebPage.title) {
+            verifyTopSiteContextMenuItems()
+        }.removeTopSite {
+            verifyNotExistingTopSiteItem(defaultWebPage.title)
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2323641
     @Test
-    fun verifyRemoveTopSiteFromMainMenu() {
+    fun removeTopSiteFromMainMenuTest() {
         val defaultWebPage = getGenericAsset(mockWebServer, 1)
 
         navigationToolbar {
@@ -216,9 +205,10 @@ class ComposeTopSitesTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/561582
     // Expected for en-us defaults
     @Test
-    fun verifyDefaultTopSitesList() {
+    fun verifyENLocalesDefaultTopSitesListTest() {
         homeScreenWithComposeTopSites(composeTestRule) {
             verifyExistingTopSitesList()
             val topSitesTitles = arrayListOf("Google", "Top Articles", "Wikipedia")
@@ -228,6 +218,7 @@ class ComposeTopSitesTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1050642
     @SmokeTest
     @Test
     fun addAndRemoveMostViewedTopSiteTest() {

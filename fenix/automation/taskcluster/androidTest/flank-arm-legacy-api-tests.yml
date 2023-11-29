@@ -31,7 +31,7 @@ gcloud:
     - class org.mozilla.fenix.ui.HistoryTest#noHistoryInPrivateBrowsingTest
     - class org.mozilla.fenix.ui.TabbedBrowsingTest#openNewTabTest
     - class org.mozilla.fenix.ui.TabbedBrowsingTest#openNewPrivateTabTest
-    - class org.mozilla.fenix.ui.TopSitesTest#verifyOpenTopSiteNormalTab
+    - class org.mozilla.fenix.ui.TopSitesTest#openTopSiteInANewTabTest
     - class org.mozilla.fenix.ui.BookmarksTest#addBookmarkTest
 
   device:
@@ -41,8 +41,8 @@ gcloud:
     - model: Pixel2.arm
       version: 27
       locale: en_US
-    - model: blueline
-      version: 28
+    - model: redfin
+      version: 30
       locale: en_US
     - model: x1q
       version: 29

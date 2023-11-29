@@ -392,7 +392,7 @@ data class Metadata(
      * Url of extension's homepage:
      * https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/homepage_url
      */
-    val homePageUrl: String?,
+    val homepageUrl: String?,
 
     /**
      * Options page:
@@ -465,6 +465,11 @@ data class Metadata(
      * such as web-ext, and won't be retained when the application exits.
      */
     val temporary: Boolean = false,
+
+    /**
+     * The URL to the detail page of this extension.
+     */
+    val detailUrl: String?,
 )
 
 /**

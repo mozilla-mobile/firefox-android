@@ -60,12 +60,6 @@ class SecretSettingsFragment : PreferenceFragmentCompat() {
             onPreferenceChangeListener = SharedPreferenceUpdater()
         }
 
-        requirePreference<SwitchPreference>(R.string.pref_key_enable_shopping_experience).apply {
-            isVisible = Config.channel.isNightlyOrDebug
-            isChecked = context.settings().enableShoppingExperience
-            onPreferenceChangeListener = SharedPreferenceUpdater()
-        }
-
         requirePreference<SwitchPreference>(R.string.pref_key_enable_translations).apply {
             isVisible = FeatureFlags.translations
             isChecked = context.settings().enableTranslations
@@ -90,6 +84,12 @@ class SecretSettingsFragment : PreferenceFragmentCompat() {
                     return true
                 }
             }
+        }
+
+        requirePreference<SwitchPreference>(R.string.pref_key_should_enable_felt_privacy).apply {
+            isVisible = true
+            isChecked = context.settings().feltPrivateBrowsingEnabled
+            onPreferenceChangeListener = SharedPreferenceUpdater()
         }
 
         // for performance reasons, this is only available in Nightly or Debug builds

@@ -103,7 +103,7 @@ class DefaultToolbarIntegration(
         isPrivate = isPrivate,
         sessionId = sessionId,
         onShoppingCfrActionClicked = interactor::onShoppingCfrActionClicked,
-        onShoppingCfrDismiss = interactor::onShoppingCfrDismiss,
+        onShoppingCfrDisplayed = interactor::onShoppingCfrDisplayed,
     )
 
     init {
@@ -138,6 +138,7 @@ class DefaultToolbarIntegration(
             },
             store = store,
             menu = tabCounterMenu,
+            showMaskInPrivateMode = context.settings().feltPrivateBrowsingEnabled,
         )
 
         val tabCount = if (isPrivate) {

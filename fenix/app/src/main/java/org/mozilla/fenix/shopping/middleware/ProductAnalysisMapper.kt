@@ -4,37 +4,34 @@
 
 package org.mozilla.fenix.shopping.middleware
 
-import mozilla.components.browser.engine.gecko.shopping.GeckoProductAnalysis
-import mozilla.components.browser.engine.gecko.shopping.Highlight
+import mozilla.components.concept.engine.shopping.Highlight
 import mozilla.components.concept.engine.shopping.ProductAnalysis
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.HighlightType
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent.AnalysisStatus
+import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent.HighlightsInfo
 
 /**
  * Maps [ProductAnalysis] to [ProductReviewState].
  */
 fun ProductAnalysis?.toProductReviewState(): ProductReviewState =
-    if (this == null) {
-        ProductReviewState.Error.GenericError
-    } else {
-        when (this) {
-            is GeckoProductAnalysis -> toProductReview()
-            else -> ProductReviewState.Error.GenericError
-        }
-    }
+    this?.toProductReview() ?: ProductReviewState.Error.GenericError
 
-private fun GeckoProductAnalysis.toProductReview(): ProductReviewState =
-    if (productId == null) {
+private fun ProductAnalysis.toProductReview(): ProductReviewState =
+    if (pageNotSupported) {
+        ProductReviewState.Error.UnsupportedProductTypeError
+    } else if (productId == null) {
         if (needsAnalysis) {
             ProductReviewState.NoAnalysisPresent()
         } else {
             ProductReviewState.Error.GenericError
         }
+    } else if (notEnoughReviews && !needsAnalysis) {
+        ProductReviewState.Error.NotEnoughReviews
     } else {
         val mappedRating = adjustedRating?.toFloat()
-        val mappedGrade = grade?.toGrade()
+        val mappedGrade = grade?.asEnumOrDefault<ReviewQualityCheckState.Grade>()
         val mappedHighlights = highlights?.toHighlights()?.toSortedMap()
 
         if (mappedGrade == null && mappedRating == null && mappedHighlights == null) {
@@ -46,16 +43,9 @@ private fun GeckoProductAnalysis.toProductReview(): ProductReviewState =
                 analysisStatus = needsAnalysis.toAnalysisStatus(),
                 adjustedRating = mappedRating,
                 productUrl = analysisURL!!,
-                highlights = mappedHighlights,
+                highlightsInfo = mappedHighlights?.let { HighlightsInfo(it) },
             )
         }
-    }
-
-private fun String.toGrade(): ReviewQualityCheckState.Grade? =
-    try {
-        ReviewQualityCheckState.Grade.valueOf(this)
-    } catch (e: IllegalArgumentException) {
-        null
     }
 
 private fun Boolean.toAnalysisStatus(): AnalysisStatus =

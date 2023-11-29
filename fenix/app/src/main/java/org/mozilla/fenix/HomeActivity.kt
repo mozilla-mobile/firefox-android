@@ -98,6 +98,7 @@ import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
 import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.metrics.BreadcrumbsRecorder
 import org.mozilla.fenix.components.metrics.GrowthDataWorker
+import org.mozilla.fenix.components.metrics.fonts.FontEnumerationWorker
 import org.mozilla.fenix.databinding.ActivityHomeBinding
 import org.mozilla.fenix.exceptions.trackingprotection.TrackingProtectionExceptionsFragmentDirections
 import org.mozilla.fenix.experiments.ResearchSurfaceDialogFragment
@@ -140,16 +141,14 @@ import org.mozilla.fenix.perf.StartupTimeline
 import org.mozilla.fenix.perf.StartupTypeTelemetry
 import org.mozilla.fenix.search.SearchDialogFragmentDirections
 import org.mozilla.fenix.session.PrivateNotificationService
-import org.mozilla.fenix.settings.CookieBannersFragmentDirections
 import org.mozilla.fenix.settings.HttpsOnlyFragmentDirections
 import org.mozilla.fenix.settings.SettingsFragmentDirections
 import org.mozilla.fenix.settings.TrackingProtectionFragmentDirections
 import org.mozilla.fenix.settings.about.AboutFragmentDirections
 import org.mozilla.fenix.settings.logins.fragment.LoginDetailFragmentDirections
 import org.mozilla.fenix.settings.logins.fragment.SavedLoginsAuthFragmentDirections
-import org.mozilla.fenix.settings.quicksettings.protections.cookiebanners.dialog.CookieBannerReEngagementDialogUtils
-import org.mozilla.fenix.settings.search.AddSearchEngineFragmentDirections
 import org.mozilla.fenix.settings.search.SaveSearchEngineFragmentDirections
+import org.mozilla.fenix.settings.search.SearchEngineFragmentDirections
 import org.mozilla.fenix.settings.studies.StudiesFragmentDirections
 import org.mozilla.fenix.settings.wallpaper.WallpaperSettingsFragmentDirections
 import org.mozilla.fenix.share.AddNewDeviceFragmentDirections
@@ -203,7 +202,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     }
 
     private val extensionsProcessDisabledPromptObserver by lazy {
-        ExtensionsProcessDisabledController(this@HomeActivity, components.core.store)
+        ExtensionsProcessDisabledController(this@HomeActivity)
     }
 
     private val serviceWorkerSupport by lazy {
@@ -523,6 +522,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             }
 
             GrowthDataWorker.sendActivatedSignalIfNeeded(applicationContext)
+            FontEnumerationWorker.sendActivatedSignalIfNeeded(applicationContext)
             ReEngagementNotificationWorker.setReEngagementNotificationIfNeeded(applicationContext)
             MessageNotificationWorker.setMessageNotificationWorker(applicationContext)
         }
@@ -531,10 +531,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         // and the user changes the system language
         // More details here: https://github.com/mozilla-mobile/fenix/pull/27793#discussion_r1029892536
         components.core.store.dispatch(SearchAction.RefreshSearchEnginesAction)
-        CookieBannerReEngagementDialogUtils.tryToEnableDetectOnlyModeIfNeeded(
-            components.settings,
-            components.core.engine.settings,
-        )
     }
 
     override fun onStart() {
@@ -1027,8 +1023,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             HistoryMetadataGroupFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromTrackingProtectionExceptions ->
             TrackingProtectionExceptionsFragmentDirections.actionGlobalBrowser(customTabSessionId)
-        BrowserDirection.FromCookieBanner ->
-            CookieBannersFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromHttpsOnlyMode ->
             HttpsOnlyFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromAbout ->
@@ -1041,8 +1035,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             SavedLoginsAuthFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromAddNewDeviceFragment ->
             AddNewDeviceFragmentDirections.actionGlobalBrowser(customTabSessionId)
-        BrowserDirection.FromAddSearchEngineFragment ->
-            AddSearchEngineFragmentDirections.actionGlobalBrowser(customTabSessionId)
+        BrowserDirection.FromSearchEngineFragment ->
+            SearchEngineFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromSaveSearchEngineFragment ->
             SaveSearchEngineFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromAddonDetailsFragment ->

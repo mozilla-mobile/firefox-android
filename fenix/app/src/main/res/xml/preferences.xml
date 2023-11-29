@@ -102,11 +102,11 @@
             app:iconSpaceReserved="false"
             android:title="@string/preferences_https_only_title" />
 
-        <androidx.preference.Preference
-            android:key="@string/pref_key_cookie_banner_settings"
+        <org.mozilla.fenix.settings.cookiebannerhandling.CustomCBHSwitchPreference
+            android:key="@string/pref_key_cookie_banner_private_mode"
             app:iconSpaceReserved="false"
-            android:title="@string/preferences_cookie_banner_reduction"
-            app:isPreferenceVisible="false" />
+            app:isPreferenceVisible="false"
+            android:title="@string/preferences_cookie_banner_reduction_private_mode" />
 
         <androidx.preference.Preference
             android:key="@string/pref_key_tracking_protection_settings"
@@ -166,7 +166,6 @@
             android:title="@string/preferences_external_download_manager" />
 
         <androidx.preference.SwitchPreference
-            android:defaultValue="true"
             android:key="@string/pref_key_leakcanary"
             android:title="@string/preference_leakcanary"
             app:iconSpaceReserved="false"

@@ -12,14 +12,14 @@ import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
+import org.mozilla.fenix.helpers.AppAndSystemHelper.bringAppToForeground
+import org.mozilla.fenix.helpers.AppAndSystemHelper.putAppToBackground
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdContainingText
 import org.mozilla.fenix.helpers.TestAssetHelper
-import org.mozilla.fenix.helpers.TestHelper.bringAppToForeground
 import org.mozilla.fenix.helpers.TestHelper.exitMenu
 import org.mozilla.fenix.helpers.TestHelper.packageName
-import org.mozilla.fenix.helpers.TestHelper.putAppToBackground
 import org.mozilla.fenix.ui.robots.clickPageObject
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
@@ -88,7 +88,7 @@ class CreditCardAutofillTest {
         }
         navigationToolbar {
         }.enterURLAndEnterToBrowser(creditCardFormPage.url) {
-            clickPageObject(itemWithResId("cardNumber"))
+            clickCreditCardNumberTextBox()
             clickPageObject(itemWithResId("$packageName:id/select_credit_card_header"))
             clickPageObject(
                 itemWithResIdContainingText(
@@ -200,7 +200,7 @@ class CreditCardAutofillTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(creditCardFormPage.url) {
-            clickPageObject(itemWithResId("cardNumber"))
+            clickCreditCardNumberTextBox()
             clickPageObject(itemWithResId("$packageName:id/select_credit_card_header"))
         }.clickManageCreditCardsButton {
         }.goBackToBrowser {
@@ -231,7 +231,7 @@ class CreditCardAutofillTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(creditCardFormPage.url) {
-            clickPageObject(itemWithResId("cardNumber"))
+            clickCreditCardNumberTextBox()
             verifySelectCreditCardPromptExists(true)
         }.openThreeDotMenu {
         }.openSettings {
@@ -244,7 +244,7 @@ class CreditCardAutofillTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(creditCardFormPage.url) {
-            clickPageObject(itemWithResId("cardNumber"))
+            clickCreditCardNumberTextBox()
             verifySelectCreditCardPromptExists(false)
         }
     }
@@ -321,7 +321,7 @@ class CreditCardAutofillTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(creditCardFormPage.url) {
-            clickPageObject(itemWithResId("cardNumber"))
+            clickCreditCardNumberTextBox()
             clickPageObject(itemWithResId("$packageName:id/select_credit_card_header"))
             clickPageObject(
                 itemWithResIdContainingText(
@@ -408,7 +408,7 @@ class CreditCardAutofillTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(creditCardFormPage.url) {
-            clickPageObject(itemWithResId("cardNumber"))
+            clickCreditCardNumberTextBox()
             clickPageObject(itemWithResId("$packageName:id/select_credit_card_header"))
             verifyCreditCardSuggestion(
                 MockCreditCard1.MOCK_LAST_CARD_DIGITS,
@@ -498,7 +498,7 @@ class CreditCardAutofillTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(creditCardFormPage.url) {
-            clickPageObject(itemWithResId("cardNumber"))
+            clickCreditCardNumberTextBox()
             clickPageObject(itemWithResId("$packageName:id/select_credit_card_header"))
             clickPageObject(
                 itemWithResIdContainingText(
@@ -549,7 +549,7 @@ class CreditCardAutofillTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(creditCardFormPage.url) {
-            clickPageObject(itemWithResId("cardNumber"))
+            clickCreditCardNumberTextBox()
             clickPageObject(itemWithResId("$packageName:id/select_credit_card_header"))
             clickPageObject(
                 itemWithResIdContainingText(

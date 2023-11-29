@@ -8,6 +8,7 @@ package org.mozilla.fenix.ui.robots
 
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.ViewInteraction
@@ -40,20 +41,20 @@ import junit.framework.AssertionFailedError
 import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.endsWith
 import org.hamcrest.Matchers.allOf
-import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
+import org.mozilla.fenix.helpers.AppAndSystemHelper.isPackageInstalled
 import org.mozilla.fenix.helpers.Constants.LISTS_MAXSWIPES
 import org.mozilla.fenix.helpers.Constants.PackageName.GOOGLE_PLAY_SERVICES
 import org.mozilla.fenix.helpers.Constants.RETRY_COUNT
-import org.mozilla.fenix.helpers.MatcherHelper.assertItemContainingTextExists
+import org.mozilla.fenix.helpers.Constants.TAG
+import org.mozilla.fenix.helpers.DataGenerationHelper.getStringResource
+import org.mozilla.fenix.helpers.MatcherHelper.assertUIObjectExists
 import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithText
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
 import org.mozilla.fenix.helpers.TestHelper.appName
-import org.mozilla.fenix.helpers.TestHelper.getStringResource
 import org.mozilla.fenix.helpers.TestHelper.hasCousin
-import org.mozilla.fenix.helpers.TestHelper.isPackageInstalled
 import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.TestHelper.scrollToElementByText
@@ -76,7 +77,7 @@ class SettingsRobot {
     fun verifyAccessibilityButton() = assertAccessibilityButton()
     fun verifySetAsDefaultBrowserButton() = assertSetAsDefaultBrowserButton()
     fun verifyTabsButton() =
-        assertItemContainingTextExists(itemContainingText(getStringResource(R.string.preferences_tabs)))
+        assertUIObjectExists(itemContainingText(getStringResource(R.string.preferences_tabs)))
     fun verifyHomepageButton() = assertHomepageButton()
     fun verifyAutofillButton() = assertAutofillButton()
     fun verifyLanguageButton() = assertLanguageButton()
@@ -106,9 +107,6 @@ class SettingsRobot {
     fun verifyPrivacyHeading() = assertPrivacyHeading()
 
     fun verifyHTTPSOnlyModeButton() = assertHTTPSOnlyModeButton()
-    fun verifyCookieBannerReductionButton() =
-        onView(withText(R.string.preferences_cookie_banner_reduction)).check(matches(isDisplayed()))
-
     fun verifyEnhancedTrackingProtectionButton() = assertEnhancedTrackingProtectionButton()
     fun verifyLoginsAndPasswordsButton() = assertLoginsAndPasswordsButton()
     fun verifyPrivateBrowsingButton() = assertPrivateBrowsingButton()
@@ -188,8 +186,8 @@ class SettingsRobot {
     // ABOUT SECTION
     fun verifyAboutHeading() = assertAboutHeading()
 
-    fun verifyRateOnGooglePlay() = assertTrue(rateOnGooglePlayHeading().waitForExists(waitingTime))
-    fun verifyAboutFirefoxPreview() = assertTrue(aboutFirefoxHeading().waitForExists(waitingTime))
+    fun verifyRateOnGooglePlay() = assertUIObjectExists(rateOnGooglePlayHeading())
+    fun verifyAboutFirefoxPreview() = assertUIObjectExists(aboutFirefoxHeading())
     fun verifyGooglePlayRedirect() = assertGooglePlayRedirect()
 
     fun verifySettingsOptionSummary(setting: String, summary: String) {
@@ -205,6 +203,14 @@ class SettingsRobot {
     class Transition {
         fun goBack(interact: HomeScreenRobot.() -> Unit): HomeScreenRobot.Transition {
             goBackButton().click()
+
+            HomeScreenRobot().interact()
+            return HomeScreenRobot.Transition()
+        }
+
+        fun goBackToOnboardingScreen(interact: HomeScreenRobot.() -> Unit): HomeScreenRobot.Transition {
+            mDevice.pressBack()
+            mDevice.waitForIdle(waitingTimeShort)
 
             HomeScreenRobot().interact()
             return HomeScreenRobot.Transition()
@@ -264,8 +270,10 @@ class SettingsRobot {
         fun openAutofillSubMenu(interact: SettingsSubMenuAutofillRobot.() -> Unit): SettingsSubMenuAutofillRobot.Transition {
             mDevice.findObject(UiSelector().textContains(getStringResource(R.string.preferences_autofill)))
                 .also {
+                    Log.i(TAG, "openAutofillSubMenu: Looking for \"Autofill\" settings button")
                     it.waitForExists(waitingTime)
                     it.click()
+                    Log.i(TAG, "openAutofillSubMenu: Clicked \"Autofill\" settings button")
                 }
 
             SettingsSubMenuAutofillRobot().interact()
@@ -309,14 +317,6 @@ class SettingsRobot {
 
             SettingsSubMenuSetDefaultBrowserRobot().interact()
             return SettingsSubMenuSetDefaultBrowserRobot.Transition()
-        }
-
-        fun openCookieBannerReductionSubMenu(interact: SettingsSubMenuCookieBannerReductionRobot.() -> Unit): SettingsSubMenuCookieBannerReductionRobot.Transition {
-            scrollToElementByText(getStringResource(R.string.preferences_cookie_banner_reduction))
-            itemContainingText(getStringResource(R.string.preferences_cookie_banner_reduction)).click()
-
-            SettingsSubMenuCookieBannerReductionRobot().interact()
-            return SettingsSubMenuCookieBannerReductionRobot.Transition()
         }
 
         fun openEnhancedTrackingProtectionSubMenu(interact: SettingsSubMenuEnhancedTrackingProtectionRobot.() -> Unit): SettingsSubMenuEnhancedTrackingProtectionRobot.Transition {
@@ -428,8 +428,7 @@ class SettingsRobot {
 
         fun openExperimentsMenu(interact: SettingsSubMenuExperimentsRobot.() -> Unit): SettingsSubMenuExperimentsRobot.Transition {
             scrollToElementByText("Nimbus Experiments")
-            fun nimbusExperimentsButton() = mDevice.findObject(textContains("Nimbus Experiments"))
-            nimbusExperimentsButton().click()
+            onView(withText(getStringResource(R.string.preferences_nimbus_experiments))).click()
 
             SettingsSubMenuExperimentsRobot().interact()
             return SettingsSubMenuExperimentsRobot.Transition()
@@ -640,10 +639,7 @@ private fun aboutFirefoxHeading(): UiObject {
     for (i in 1..RETRY_COUNT) {
         try {
             settingsList().scrollToEnd(LISTS_MAXSWIPES)
-            assertTrue(
-                mDevice.findObject(UiSelector().text("About $appName"))
-                    .waitForExists(waitingTime),
-            )
+            assertUIObjectExists(itemWithText("About $appName"))
 
             break
         } catch (e: AssertionError) {

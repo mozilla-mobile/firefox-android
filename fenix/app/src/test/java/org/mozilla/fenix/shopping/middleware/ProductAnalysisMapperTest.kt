@@ -4,19 +4,19 @@
 
 package org.mozilla.fenix.shopping.middleware
 
-import mozilla.components.browser.engine.gecko.shopping.Highlight
-import mozilla.components.concept.engine.shopping.ProductAnalysis
+import mozilla.components.concept.engine.shopping.Highlight
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.mozilla.fenix.shopping.ProductAnalysisTestData
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.HighlightType
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent.AnalysisStatus
+import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent.HighlightsInfo
 
 class ProductAnalysisMapperTest {
 
     @Test
-    fun `WHEN GeckoProductAnalysis has data THEN it is mapped to AnalysisPresent`() {
+    fun `WHEN ProductAnalysis has data THEN it is mapped to AnalysisPresent`() {
         val actual = ProductAnalysisTestData.productAnalysis(
             productId = "id1",
             grade = "C",
@@ -38,12 +38,14 @@ class ProductAnalysisMapperTest {
             analysisStatus = AnalysisStatus.UP_TO_DATE,
             adjustedRating = 3.4f,
             productUrl = "https://example.com",
-            highlights = sortedMapOf(
-                HighlightType.QUALITY to listOf("\"quality\""),
-                HighlightType.PRICE to listOf("\"price\""),
-                HighlightType.SHIPPING to listOf("\"shipping\""),
-                HighlightType.PACKAGING_AND_APPEARANCE to listOf("\"appearance\""),
-                HighlightType.COMPETITIVENESS to listOf("\"competitiveness\""),
+            highlightsInfo = HighlightsInfo(
+                mapOf(
+                    HighlightType.QUALITY to listOf("\"quality\""),
+                    HighlightType.PRICE to listOf("\"price\""),
+                    HighlightType.SHIPPING to listOf("\"shipping\""),
+                    HighlightType.PACKAGING_AND_APPEARANCE to listOf("\"appearance\""),
+                    HighlightType.COMPETITIVENESS to listOf("\"competitiveness\""),
+                ),
             ),
         )
 
@@ -51,7 +53,7 @@ class ProductAnalysisMapperTest {
     }
 
     @Test
-    fun `WHEN GeckoProductAnalysis has data with some missing highlights THEN it is mapped to AnalysisPresent with the non null highlights`() {
+    fun `WHEN ProductAnalysis has data with some missing highlights THEN it is mapped to AnalysisPresent with the non null highlights`() {
         val actual = ProductAnalysisTestData.productAnalysis(
             productId = "id1",
             grade = "C",
@@ -73,10 +75,12 @@ class ProductAnalysisMapperTest {
             analysisStatus = AnalysisStatus.NEEDS_ANALYSIS,
             adjustedRating = 3.4f,
             productUrl = "https://example.com",
-            highlights = sortedMapOf(
-                HighlightType.QUALITY to listOf("\"quality\""),
-                HighlightType.PACKAGING_AND_APPEARANCE to listOf("\"appearance\""),
-                HighlightType.COMPETITIVENESS to listOf("\"competitiveness\""),
+            highlightsInfo = HighlightsInfo(
+                mapOf(
+                    HighlightType.QUALITY to listOf("\"quality\""),
+                    HighlightType.PACKAGING_AND_APPEARANCE to listOf("\"appearance\""),
+                    HighlightType.COMPETITIVENESS to listOf("\"competitiveness\""),
+                ),
             ),
         )
 
@@ -84,7 +88,7 @@ class ProductAnalysisMapperTest {
     }
 
     @Test
-    fun `WHEN GeckoProductAnalysis has an invalid grade THEN it is mapped to AnalysisPresent with grade as null`() {
+    fun `WHEN ProductAnalysis has an invalid grade THEN it is mapped to AnalysisPresent with grade as null`() {
         val actual = ProductAnalysisTestData.productAnalysis(
             productId = "id1",
             grade = "?",
@@ -137,6 +141,55 @@ class ProductAnalysisMapperTest {
     }
 
     @Test
+    fun `WHEN there are not enough reviews and no analysis needed THEN not enough reviews card is visible`() {
+        val actual = ProductAnalysisTestData.productAnalysis(
+            notEnoughReviews = true,
+            needsAnalysis = false,
+        ).toProductReviewState()
+
+        val expected = ReviewQualityCheckState.OptedIn.ProductReviewState.Error.NotEnoughReviews
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `WHEN there are enough reviews and no analysis needed THEN it is mapped to AnalysisPresent`() {
+        val actual = ProductAnalysisTestData.productAnalysis(
+            notEnoughReviews = false,
+            needsAnalysis = false,
+        ).toProductReviewState()
+
+        val expected = ProductAnalysisTestData.analysisPresent(
+            productId = "1",
+            reviewGrade = ReviewQualityCheckState.Grade.A,
+            analysisStatus = AnalysisStatus.UP_TO_DATE,
+            adjustedRating = 4.5f,
+            productUrl = "https://test.com",
+        )
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `WHEN there are not enough reviews and analysis is needed THEN it is mapped to AnalysisPresent with NEEDS_ANALYSIS status`() {
+        val actual = ProductAnalysisTestData.productAnalysis(
+            notEnoughReviews = true,
+            needsAnalysis = true,
+        ).toProductReviewState()
+
+        val expected = ProductAnalysisTestData.analysisPresent(
+            productId = "1",
+            reviewGrade = ReviewQualityCheckState.Grade.A,
+            analysisStatus = AnalysisStatus.NEEDS_ANALYSIS,
+            adjustedRating = 4.5f,
+            productUrl = "https://test.com",
+            highlightsInfo = null,
+        )
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
     fun `WHEN grade, rating and highlights are all null THEN it is mapped to no analysis present`() {
         val actual =
             ProductAnalysisTestData.productAnalysis(
@@ -150,13 +203,134 @@ class ProductAnalysisMapperTest {
     }
 
     @Test
-    fun `WHEN ProductAnalysis is not GeckoProductAnalysis THEN it is mapped to Error`() {
-        val randomAnalysis = object : ProductAnalysis {
-            override val productId: String = "id1"
-        }
+    fun `WHEN only rating is available THEN it is mapped to AnalysisPresent`() {
+        val actual = ProductAnalysisTestData.productAnalysis(
+            grade = null,
+            adjustedRating = 3.5,
+            highlights = null,
+        ).toProductReviewState()
 
-        val actual = randomAnalysis.toProductReviewState()
-        val expected = ReviewQualityCheckState.OptedIn.ProductReviewState.Error.GenericError
+        val expected = ProductAnalysisTestData.analysisPresent(
+            reviewGrade = null,
+            adjustedRating = 3.5f,
+            highlightsInfo = null,
+        )
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `WHEN only grade is available THEN it is mapped to AnalysisPresent`() {
+        val actual = ProductAnalysisTestData.productAnalysis(
+            grade = "B",
+            adjustedRating = null,
+            highlights = null,
+        ).toProductReviewState()
+
+        val expected = ProductAnalysisTestData.analysisPresent(
+            reviewGrade = ReviewQualityCheckState.Grade.B,
+            adjustedRating = null,
+            highlightsInfo = null,
+        )
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `WHEN only highlights are available THEN it is mapped to AnalysisPresent`() {
+        val actual = ProductAnalysisTestData.productAnalysis(
+            grade = null,
+            adjustedRating = null,
+            highlights = Highlight(
+                quality = listOf("quality"),
+                price = null,
+                shipping = null,
+                appearance = listOf("appearance"),
+                competitiveness = listOf("competitiveness"),
+            ),
+        ).toProductReviewState()
+
+        val expected = ProductAnalysisTestData.analysisPresent(
+            reviewGrade = null,
+            adjustedRating = null,
+            highlightsInfo = HighlightsInfo(
+                mapOf(
+                    HighlightType.QUALITY to listOf("\"quality\""),
+                    HighlightType.PACKAGING_AND_APPEARANCE to listOf("\"appearance\""),
+                    HighlightType.COMPETITIVENESS to listOf("\"competitiveness\""),
+                ),
+            ),
+        )
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `WHEN highlights and grade are available THEN it is mapped to AnalysisPresent`() {
+        val actual = ProductAnalysisTestData.productAnalysis(
+            grade = "B",
+            adjustedRating = null,
+            highlights = Highlight(
+                quality = listOf("quality"),
+                price = null,
+                shipping = null,
+                appearance = listOf("appearance"),
+                competitiveness = listOf("competitiveness"),
+            ),
+        ).toProductReviewState()
+
+        val expected = ProductAnalysisTestData.analysisPresent(
+            reviewGrade = ReviewQualityCheckState.Grade.B,
+            adjustedRating = null,
+            highlightsInfo = HighlightsInfo(
+                mapOf(
+                    HighlightType.QUALITY to listOf("\"quality\""),
+                    HighlightType.PACKAGING_AND_APPEARANCE to listOf("\"appearance\""),
+                    HighlightType.COMPETITIVENESS to listOf("\"competitiveness\""),
+                ),
+            ),
+        )
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `WHEN highlights and rating are available THEN it is mapped to AnalysisPresent`() {
+        val actual = ProductAnalysisTestData.productAnalysis(
+            grade = null,
+            adjustedRating = 3.4,
+            highlights = Highlight(
+                quality = listOf("quality"),
+                price = null,
+                shipping = null,
+                appearance = listOf("appearance"),
+                competitiveness = listOf("competitiveness"),
+            ),
+        ).toProductReviewState()
+
+        val expected = ProductAnalysisTestData.analysisPresent(
+            reviewGrade = null,
+            adjustedRating = 3.4f,
+            highlightsInfo = HighlightsInfo(
+                mapOf(
+                    HighlightType.QUALITY to listOf("\"quality\""),
+                    HighlightType.PACKAGING_AND_APPEARANCE to listOf("\"appearance\""),
+                    HighlightType.COMPETITIVENESS to listOf("\"competitiveness\""),
+                ),
+            ),
+        )
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `WHEN page not supported is true THEN it is mapped to unsupported product error `() {
+        val actual = ProductAnalysisTestData.productAnalysis(
+            pageNotSupported = true,
+        ).toProductReviewState()
+
+        val expected =
+            ReviewQualityCheckState.OptedIn.ProductReviewState.Error.UnsupportedProductTypeError
 
         assertEquals(expected, actual)
     }

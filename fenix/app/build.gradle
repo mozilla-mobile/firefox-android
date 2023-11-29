@@ -214,6 +214,23 @@ android {
         targetCompatibility JavaVersion.VERSION_17
     }
 
+    bundle {
+        // Profiler issues require us to temporarily package native code compressed to
+        // match the previous APK packaging.
+        // https://bugzilla.mozilla.org/show_bug.cgi?id=1865634
+        packagingOptions {
+            jniLibs {
+                it.useLegacyPackaging = true
+            }
+        }
+
+        language {
+            // Because we have runtime language selection we will keep all strings and languages
+            // in the base APKs.
+            enableSplit = false
+        }
+    }
+
     lint {
         lintConfig file("lint.xml")
         baseline file("lint-baseline.xml")
@@ -444,6 +461,23 @@ android.applicationVariants.configureEach { variant ->
         buildConfigField 'String', 'POCKET_CONSUMER_KEY', '""'
         println("--")
     }
+
+// -------------------------------------------------------------------------------------------------
+// BuildConfig: Set flag to disable LeakCanary in debug (on CI builds)
+// -------------------------------------------------------------------------------------------------
+
+    if (isDebug) {
+        if (project.hasProperty("disableLeakCanary") || gradle.hasProperty("localProperties.disableLeakCanary")) {
+            buildConfigField "boolean", "LEAKCANARY", "false"
+            println("LeakCanary enabled in debug: false")
+        } else {
+            buildConfigField "boolean", "LEAKCANARY", "true"
+            println("LeakCanary enabled in debug: true")
+        }
+    } else {
+        buildConfigField "boolean", "LEAKCANARY", "false"
+    }
+
 }
 
 // Generate Kotlin code for the Fenix Glean metrics.
@@ -468,6 +502,8 @@ nimbus {
     // It will be fetched by Experimenter (the Nimbus experiment website)
     // and used to inform experiment configuration.
     experimenterManifest = ".experimenter.yaml"
+    applicationServicesDir = gradle.hasProperty('localProperties.autoPublish.application-services.dir')
+            ? gradle.getProperty('localProperties.autoPublish.application-services.dir') : null
 }
 
 tasks.withType(KotlinCompile).configureEach {
@@ -484,7 +520,7 @@ dependencies {
     implementation ComponentsDependencies.androidx_coordinatorlayout
     implementation FenixDependencies.google_accompanist_drawablepainter
 
-    implementation ComponentsDependencies.thirdparty_sentry_latest
+    implementation ComponentsDependencies.thirdparty_sentry
 
     implementation project(':compose-awesomebar')
     implementation project(':compose-cfr')
@@ -657,7 +693,7 @@ dependencies {
     androidTestImplementation ComponentsDependencies.androidx_test_junit
     androidTestImplementation ComponentsDependencies.androidx_work_testing
     androidTestImplementation FenixDependencies.androidx_benchmark_junit4
-    androidTestImplementation FenixDependencies.mockwebserver
+    androidTestImplementation ComponentsDependencies.testing_mockwebserver
     testImplementation project(':support-test')
     testImplementation project(':support-test-libstate')
     testImplementation ComponentsDependencies.androidx_test_junit
