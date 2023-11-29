@@ -157,8 +157,6 @@ class HomeFragment : Fragment() {
         )
     }
 
-    private val browsingModeManager get() = (activity as HomeActivity).browsingModeManager
-
     private val collectionStorageObserver = object : TabCollectionStorage.Observer {
         @SuppressLint("NotifyDataSetChanged")
         override fun onCollectionRenamed(tabCollection: TabCollection, title: String) {
@@ -253,8 +251,6 @@ class HomeFragment : Fragment() {
             orientationChange = false,
             orientation = requireContext().resources.configuration.orientation,
         )
-
-        components.appStore.dispatch(AppAction.ModeChange(browsingModeManager.mode))
 
         lifecycleScope.launch(IO) {
             if (requireContext().settings().showPocketRecommendationsFeature) {
@@ -516,16 +512,13 @@ class HomeFragment : Fragment() {
      * doesn't get run right away which means that we won't draw on the first layout pass.
      */
     private fun updateSessionControlView() {
-        if (browsingModeManager.mode == BrowsingMode.Private) {
-            binding.root.consumeFrom(requireContext().components.appStore, viewLifecycleOwner) {
-                sessionControlView?.update(it)
-            }
-        } else {
+        if (requireContext().components.appStore.state.mode == BrowsingMode.Normal) {
+            // In normal mode, hydrate data for first layout pass immediately so we don't have to
+            // wait for result of observation below
             sessionControlView?.update(requireContext().components.appStore.state)
-
-            binding.root.consumeFrom(requireContext().components.appStore, viewLifecycleOwner) {
-                sessionControlView?.update(it, shouldReportMetrics = true)
-            }
+        }
+        binding.root.consumeFrom(requireContext().components.appStore, viewLifecycleOwner) {
+            sessionControlView?.update(it, shouldReportMetrics = it.mode != BrowsingMode.Private)
         }
     }
 
@@ -553,7 +546,7 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         HomeScreen.homeScreenDisplayed.record(NoExtras())
         HomeScreen.homeScreenViewCount.add()
-        if (!browsingModeManager.mode.isPrivate) {
+        if (!requireComponents.appStore.state.mode.isPrivate) {
             HomeScreen.standardHomepageViewCount.add()
         }
 
@@ -571,14 +564,17 @@ class HomeFragment : Fragment() {
 
         tabCounterView = TabCounterView(
             context = requireContext(),
-            browsingModeManager = browsingModeManager,
+            browsingModeManager = (activity as HomeActivity).browsingModeManager,
             navController = findNavController(),
             tabCounter = binding.tabButton,
         )
 
         toolbarView?.build()
 
-        PrivateBrowsingButtonView(binding.privateBrowsingButton, browsingModeManager) { newMode ->
+        PrivateBrowsingButtonView(
+            button = binding.privateBrowsingButton,
+            mode = requireComponents.appStore.state.mode,
+        ) { newMode ->
             sessionControlInteractor.onPrivateModeButtonClicked(newMode)
             Homepage.privateModeIconTapped.record(mozilla.telemetry.glean.private.NoExtras())
         }
@@ -783,7 +779,7 @@ class HomeFragment : Fragment() {
             )
         }
 
-        if (browsingModeManager.mode.isPrivate &&
+        if (requireComponents.appStore.state.mode.isPrivate &&
             // We will be showing the search dialog and don't want to show the CFR while the dialog shows
             !bundleArgs.getBoolean(FOCUS_ON_ADDRESS_BAR) &&
             context.settings().shouldShowPrivateModeCfr
@@ -822,7 +818,7 @@ class HomeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        if (browsingModeManager.mode == BrowsingMode.Private) {
+        if (requireComponents.appStore.state.mode == BrowsingMode.Private) {
             activity?.window?.setBackgroundDrawableResource(R.drawable.private_home_background_gradient)
         }
 
@@ -838,7 +834,7 @@ class HomeFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        if (browsingModeManager.mode == BrowsingMode.Private) {
+        if (requireComponents.appStore.state.mode == BrowsingMode.Private) {
             activity?.window?.setBackgroundDrawable(
                 ColorDrawable(
                     ContextCompat.getColor(
@@ -992,7 +988,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun showCollectionsPlaceholder(browserState: BrowserState) {
-        val tabCount = if (browsingModeManager.mode.isPrivate) {
+        val tabCount = if (requireComponents.appStore.state.mode.isPrivate) {
             browserState.privateTabs.size
         } else {
             browserState.normalTabs.size

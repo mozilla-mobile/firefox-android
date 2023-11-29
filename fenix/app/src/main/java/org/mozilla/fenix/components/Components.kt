@@ -20,6 +20,7 @@ import mozilla.components.feature.downloads.manager.FetchDownloadManager
 import mozilla.components.lib.publicsuffixlist.PublicSuffixList
 import mozilla.components.support.base.android.NotificationsDelegate
 import mozilla.components.support.base.worker.Frequency
+import org.mozilla.fenix.BrowsingModePersistenceMiddleware
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.FeatureFlags
@@ -234,6 +235,9 @@ class Components(private val context: Context) {
                     messagingStorage = analytics.messagingStorage,
                 ),
                 MetricsMiddleware(metrics = analytics.metrics),
+                BrowsingModePersistenceMiddleware(
+                    settings = settings,
+                ),
             ),
         )
     }

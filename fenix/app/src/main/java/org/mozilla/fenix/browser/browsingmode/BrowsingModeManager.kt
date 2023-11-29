@@ -4,6 +4,8 @@
 
 package org.mozilla.fenix.browser.browsingmode
 
+import org.mozilla.fenix.components.AppStore
+import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.utils.Settings
 
 /**
@@ -17,6 +19,11 @@ enum class BrowsingMode {
      */
     val isPrivate get() = this == Private
 
+    val inverted get() = when (this) {
+        Private -> Normal
+        Normal -> Private
+    }
+
     companion object {
 
         /**
@@ -29,6 +36,19 @@ enum class BrowsingMode {
 
 interface BrowsingModeManager {
     var mode: BrowsingMode
+}
+
+/**
+ * Wraps an [appStore] and keeps its [AppState.mode] in sync with external changes.
+ */
+class AppStoreBrowsingModeManagerWrapper(
+    private val appStore: AppStore,
+) : BrowsingModeManager {
+    override var mode: BrowsingMode
+        get() = appStore.state.mode
+        set(value) {
+            appStore.dispatch(AppAction.ModeChange(value))
+        }
 }
 
 /**

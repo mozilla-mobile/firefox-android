@@ -32,6 +32,19 @@ import org.mozilla.fenix.wallpapers.Wallpaper
  * [Action] implementation related to [AppStore].
  */
 sealed class AppAction : Action {
+    /**
+     * [AppAction] dispatched to indicate that the store is initialized and
+     * ready to use. This action is dispatched automatically before any other
+     * action is processed. Its main purpose is to trigger initialization logic
+     * in middlewares. The action itself should have no effect on the [AppState].
+     */
+    object Init : AppAction()
+
+    /**
+     * The browsing [mode] has been loaded from a persistence layer.
+     */
+    data class BrowsingModeLoaded(val mode: BrowsingMode) : AppAction()
+
     data class UpdateInactiveExpanded(val expanded: Boolean) : AppAction()
 
     /**
@@ -266,5 +279,15 @@ sealed class AppAction : Action {
         data class ProductRecommendationImpression(
             val key: ShoppingState.ProductRecommendationImpressionKey,
         ) : ShoppingAction()
+    }
+
+    /**
+     * Actions related to Intents.
+     */
+    sealed class IntentAction : AppAction() {
+        /**
+         * Private browsing mode should be entered.
+         */
+        object EnterPrivateBrowsing : IntentAction()
     }
 }
