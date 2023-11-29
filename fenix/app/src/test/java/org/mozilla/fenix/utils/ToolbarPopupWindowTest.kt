@@ -39,6 +39,22 @@ class ToolbarPopupWindowTest {
         store = BrowserStore(BrowserState(tabs = listOf(regularTab), selectedTabId = regularTab.id))
         assertEquals("http://firefox.com", ToolbarPopupWindow.getUrlForClipboard(store))
 
+        // Non-ASCII custom tab to test url decoding
+        val UTF8CustomTabSession = createCustomTab("https://ru.wikipedia.org/wiki/Браузер")
+        store = BrowserStore(BrowserState(customTabs = listOf(UTF8CustomTabSession)))
+        assertEquals(
+            "https://ru.wikipedia.org/wiki/Браузер",
+            ToolbarPopupWindow.getUrlForClipboard(store, UTF8CustomTabSession.id),
+        )
+
+        // Non-ASCII regular tab to test url decoding
+        val URF8regularTab = createTab(url = "https://ru.wikipedia.org/wiki/Заглавная_страница")
+        store = BrowserStore(BrowserState(tabs = listOf(URF8regularTab), selectedTabId = URF8regularTab.id))
+        assertEquals(
+            "https://ru.wikipedia.org/wiki/Заглавная_страница",
+            ToolbarPopupWindow.getUrlForClipboard(store),
+        )
+
         // Reader Tab
         val readerTab = createTab(
             url = "moz-extension://1234",
