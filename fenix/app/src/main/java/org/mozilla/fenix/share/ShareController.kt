@@ -248,7 +248,7 @@ class DefaultShareController(
             // https://github.com/mozilla-mobile/android-components/issues/2879
             Uri.parse(url).getQueryParameter("url") ?: url
         } else {
-            url
+            Uri.decode(url)
         }
     }
 
