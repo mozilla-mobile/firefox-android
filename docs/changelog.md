@@ -13,6 +13,9 @@ permalink: /changelog/
 * **concept-engine**
   * Add `reportBackInStock` API to `EngineSession` to allow reporting a shopping product is back in stock. [Bug 1858947](https://bugzilla.mozilla.org/show_bug.cgi?id=1858947)
 
+* **feature-share**
+  * URLs are now decoded when sharing and copying to clipboard. [Bug 1867184](https://bugzilla.mozilla.org/show_bug.cgi?id=1867184)
+
 * **feature-media**
   * Added `FOREGROUND_SERVICE_MEDIA_PLAYBACK` permission to the `AndroidManifest.xml`.
 
