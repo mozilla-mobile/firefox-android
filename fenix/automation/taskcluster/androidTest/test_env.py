@@ -85,7 +85,7 @@ class TestRail():
     
 if __name__ == "__main__":
     if TEST_STATUS != 'PASS':
-        raise ValueError("Tests failed. Sending Slack Notification...")
+        raise ValueError("Tests failed. Sending Slack Notification....")
 
     PROJECT_ID = 53 # Firefox for FireTV
     TEST_SUITE_ID = 45442 # Demo Test Suite
