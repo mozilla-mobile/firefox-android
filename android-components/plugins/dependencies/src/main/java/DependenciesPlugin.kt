@@ -35,7 +35,7 @@ object Versions {
     const val detekt = "1.23.3"
     const val ktlint = "0.49.1"
 
-    const val sentry = "6.33.1"
+    const val sentry = "6.34.0"
 
     const val zxing = "3.5.2"
 
@@ -79,7 +79,7 @@ object Versions {
         const val palette = "1.0.0"
         const val preferences = "1.2.1"
         const val lifecycle = "2.6.2"
-        const val media = "1.6.0"
+        const val media = "1.7.0"
         const val navigation = "2.5.3"
         const val work = "2.7.1"
         const val arch = "2.2.0"
