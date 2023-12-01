@@ -98,6 +98,7 @@ import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
 import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.metrics.BreadcrumbsRecorder
 import org.mozilla.fenix.components.metrics.GrowthDataWorker
+import org.mozilla.fenix.components.metrics.fonts.FontEnumerationWorker
 import org.mozilla.fenix.databinding.ActivityHomeBinding
 import org.mozilla.fenix.exceptions.trackingprotection.TrackingProtectionExceptionsFragmentDirections
 import org.mozilla.fenix.experiments.ResearchSurfaceDialogFragment
@@ -140,7 +141,6 @@ import org.mozilla.fenix.perf.StartupTimeline
 import org.mozilla.fenix.perf.StartupTypeTelemetry
 import org.mozilla.fenix.search.SearchDialogFragmentDirections
 import org.mozilla.fenix.session.PrivateNotificationService
-import org.mozilla.fenix.settings.CookieBannersFragmentDirections
 import org.mozilla.fenix.settings.HttpsOnlyFragmentDirections
 import org.mozilla.fenix.settings.SettingsFragmentDirections
 import org.mozilla.fenix.settings.TrackingProtectionFragmentDirections
@@ -522,6 +522,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             }
 
             GrowthDataWorker.sendActivatedSignalIfNeeded(applicationContext)
+            FontEnumerationWorker.sendActivatedSignalIfNeeded(applicationContext)
             ReEngagementNotificationWorker.setReEngagementNotificationIfNeeded(applicationContext)
             MessageNotificationWorker.setMessageNotificationWorker(applicationContext)
         }
@@ -1022,8 +1023,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             HistoryMetadataGroupFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromTrackingProtectionExceptions ->
             TrackingProtectionExceptionsFragmentDirections.actionGlobalBrowser(customTabSessionId)
-        BrowserDirection.FromCookieBanner ->
-            CookieBannersFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromHttpsOnlyMode ->
             HttpsOnlyFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromAbout ->

@@ -31,15 +31,19 @@ import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.not
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.Constants
 import org.mozilla.fenix.helpers.Constants.LONG_CLICK_DURATION
+import org.mozilla.fenix.helpers.Constants.TAG
 import org.mozilla.fenix.helpers.DataGenerationHelper.getStringResource
 import org.mozilla.fenix.helpers.HomeActivityComposeTestRule
+import org.mozilla.fenix.helpers.MatcherHelper.assertItemTextEquals
+import org.mozilla.fenix.helpers.MatcherHelper.assertUIObjectExists
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdAndText
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdContainingText
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithText
 import org.mozilla.fenix.helpers.SessionLoadedIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
@@ -77,32 +81,15 @@ class NavigationToolbarRobot {
         readerViewToggle().click()
     }
 
-    fun verifyClipboardSuggestionsAreDisplayed(link: String = "", shouldBeDisplayed: Boolean) {
-        when (shouldBeDisplayed) {
-            true -> {
-                assertTrue(
-                    mDevice.findObject(UiSelector().resourceId("$packageName:id/fill_link_from_clipboard"))
-                        .waitForExists(waitingTime),
-                )
-
-                assertTrue(
-                    mDevice.findObject(UiSelector().resourceId("$packageName:id/clipboard_url").text(link))
-                        .waitForExists(waitingTime),
-                )
-            }
-            false -> {
-                assertFalse(
-                    mDevice.findObject(UiSelector().resourceId("$packageName:id/fill_link_from_clipboard"))
-                        .waitForExists(waitingTimeShort),
-                )
-
-                assertFalse(
-                    mDevice.findObject(UiSelector().resourceId("$packageName:id/clipboard_url").text(link))
-                        .waitForExists(waitingTimeShort),
-                )
-            }
-        }
-    }
+    fun verifyClipboardSuggestionsAreDisplayed(link: String = "", shouldBeDisplayed: Boolean) =
+        assertUIObjectExists(
+            itemWithResId("$packageName:id/fill_link_from_clipboard"),
+            itemWithResIdAndText(
+                "$packageName:id/clipboard_url",
+                link,
+            ),
+            exists = shouldBeDisplayed,
+        )
 
     fun longClickEditModeToolbar() =
         mDevice.findObject(By.res("$packageName:id/mozac_browser_toolbar_edit_url_view")).click(LONG_CLICK_DURATION)
@@ -126,17 +113,13 @@ class NavigationToolbarRobot {
     // New unified search UI selector
     fun verifySearchBarPlaceholder(text: String) {
         urlBar().waitForExists(waitingTime)
-        assertTrue(
-            urlBar().text == text,
-        )
+        assertItemTextEquals(urlBar(), expectedText = text)
     }
 
     // New unified search UI selector
     fun verifyDefaultSearchEngine(engineName: String) =
-        assertTrue(
-            searchSelectorButton
-                .getChild(UiSelector().description(engineName))
-                .waitForExists(waitingTime),
+        assertUIObjectExists(
+            searchSelectorButton.getChild(UiSelector().description(engineName)),
         )
 
     fun verifyTextSelectionOptions(vararg textSelectionOptions: String) {
@@ -155,22 +138,18 @@ class NavigationToolbarRobot {
             sessionLoadedIdlingResource = SessionLoadedIdlingResource()
 
             openEditURLView()
-            Log.i("MozTestLog", "enterURLAndEnterToBrowser: Opened edit mode URL view")
+            Log.i(TAG, "enterURLAndEnterToBrowser: Opened edit mode URL view")
 
             awesomeBar().setText(url.toString())
-            Log.i("MozTestLog", "enterURLAndEnterToBrowser: Set toolbar text to: $url")
+            Log.i(TAG, "enterURLAndEnterToBrowser: Set toolbar text to: $url")
             mDevice.pressEnter()
-            Log.i("MozTestLog", "enterURLAndEnterToBrowser: Clicked enter on keyboard, submitted query")
+            Log.i(TAG, "enterURLAndEnterToBrowser: Clicked enter on keyboard, submitted query")
 
             runWithIdleRes(sessionLoadedIdlingResource) {
                 assertTrue(
-                    mDevice.findObject(
-                        UiSelector().resourceId("$packageName:id/browserLayout"),
-                    ).waitForExists(waitingTime) || mDevice.findObject(
-                        UiSelector().resourceId("$packageName:id/download_button"),
-                    ).waitForExists(waitingTime) || mDevice.findObject(
-                        UiSelector().text(getStringResource(R.string.tcp_cfr_message)),
-                    ).waitForExists(waitingTime),
+                    itemWithResId("$packageName:id/browserLayout").waitForExists(waitingTime) ||
+                        itemWithResId("$packageName:id/download_button").waitForExists(waitingTime) ||
+                        itemWithText(getStringResource(R.string.tcp_cfr_message)).waitForExists(waitingTime),
                 )
             }
 
@@ -294,8 +273,9 @@ class NavigationToolbarRobot {
         }
 
         fun openTabButtonShortcutsMenu(interact: NavigationToolbarRobot.() -> Unit): Transition {
-            mDevice.waitNotNull(Until.findObject(By.desc("Tabs")))
+            mDevice.waitNotNull(Until.findObject(By.res("$packageName:id/counter_root")))
             tabsCounter().click(LONG_CLICK_DURATION)
+            Log.i(TAG, "Tabs counter long-click successful.")
 
             NavigationToolbarRobot().interact()
             return Transition()
@@ -313,6 +293,7 @@ class NavigationToolbarRobot {
                         ViewActions.click(),
                     ),
                 )
+            Log.i(TAG, "Clicked the tab shortcut Close tab button.")
 
             NavigationToolbarRobot().interact()
             return Transition()
@@ -320,7 +301,7 @@ class NavigationToolbarRobot {
 
         fun openNewTabFromShortcutsMenu(interact: SearchRobot.() -> Unit): SearchRobot.Transition {
             mDevice.waitForIdle(waitingTime)
-
+            Log.i(TAG, "Looking for tab shortcut New tab button.")
             onView(withId(R.id.mozac_browser_menu_recyclerView))
                 .perform(
                     RecyclerViewActions.actionOnItem<RecyclerView.ViewHolder>(
@@ -330,6 +311,7 @@ class NavigationToolbarRobot {
                         ViewActions.click(),
                     ),
                 )
+            Log.i(TAG, "Clicked the tab shortcut New tab button.")
 
             SearchRobot().interact()
             return SearchRobot.Transition()
@@ -337,7 +319,7 @@ class NavigationToolbarRobot {
 
         fun openNewPrivateTabFromShortcutsMenu(interact: SearchRobot.() -> Unit): SearchRobot.Transition {
             mDevice.waitForIdle(waitingTime)
-
+            Log.i(TAG, "Looking for tab shortcut New private tab button.")
             onView(withId(R.id.mozac_browser_menu_recyclerView))
                 .perform(
                     RecyclerViewActions.actionOnItem<RecyclerView.ViewHolder>(
@@ -347,6 +329,7 @@ class NavigationToolbarRobot {
                         ViewActions.click(),
                     ),
                 )
+            Log.i(TAG, "Clicked the tab shortcut New private tab button.")
 
             SearchRobot().interact()
             return SearchRobot.Transition()
@@ -379,15 +362,11 @@ fun navigationToolbar(interact: NavigationToolbarRobot.() -> Unit): NavigationTo
 }
 
 fun openEditURLView() {
-    mDevice.waitNotNull(
-        Until.findObject(By.res("$packageName:id/toolbar")),
-        waitingTime,
-    )
+    urlBar().waitForExists(waitingTime)
     urlBar().click()
-    mDevice.waitNotNull(
-        Until.findObject(By.res("$packageName:id/mozac_browser_toolbar_edit_url_view")),
-        waitingTime,
-    )
+    Log.i(TAG, "openEditURLView: URL bar clicked.")
+    itemWithResId("$packageName:id/mozac_browser_toolbar_edit_url_view").waitForExists(waitingTime)
+    Log.i(TAG, "openEditURLView: Edit URL bar displayed.")
 }
 
 private fun assertNoHistoryBookmarks() {

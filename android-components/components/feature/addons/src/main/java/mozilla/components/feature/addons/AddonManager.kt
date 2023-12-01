@@ -119,42 +119,30 @@ class AddonManager(
     }
 
     /**
-     * Installs the provided [Addon].
+     * Installs an [Addon] from the provided [url].
      *
-     * @param addon the addon to install.
+     *  @param url the url pointing to either a resources path for locating the extension
+     *  within the APK file (e.g. resource://android/assets/extensions/my_web_ext) or to a
+     *  local (e.g. resource://android/assets/extensions/my_web_ext.xpi) or remote
+     *  (e.g. https://addons.mozilla.org/firefox/downloads/file/123/some_web_ext.xpi) XPI file.
      * @param onSuccess (optional) callback invoked if the addon was installed successfully,
      * providing access to the [Addon] object.
      * @param onError (optional) callback invoked if there was an error installing the addon.
      */
     fun installAddon(
-        addon: Addon,
+        url: String,
         onSuccess: ((Addon) -> Unit) = { },
-        onError: ((String, Throwable) -> Unit) = { _, _ -> },
+        onError: ((Throwable) -> Unit) = { _ -> },
     ): CancellableOperation {
-        // Verify the add-on doesn't require blocked permissions
-        // only available to built-in extensions
-        BLOCKED_PERMISSIONS.forEach { blockedPermission ->
-            if (addon.permissions.any { it.equals(blockedPermission, ignoreCase = true) }) {
-                onError(addon.id, IllegalArgumentException("Addon requires invalid permission $blockedPermission"))
-                return CancellableOperation.Noop()
-            }
-        }
-
         val pendingAction = addPendingAddonAction()
         return runtime.installWebExtension(
-            id = addon.id,
-            url = addon.downloadUrl,
+            url = url,
             onSuccess = { ext ->
-                val installedState = toInstalledState(ext)
-                val installedAddon = Addon.newFromWebExtension(ext, installedState)
-                    .copy(iconUrl = addon.iconUrl)
-                addonUpdater.registerForFutureUpdates(installedAddon.id)
-                completePendingAddonAction(pendingAction)
-                onSuccess(installedAddon)
+                onAddonInstalled(ext, pendingAction, onSuccess)
             },
-            onError = { id, throwable ->
+            onError = { throwable ->
                 completePendingAddonAction(pendingAction)
-                onError(id, throwable)
+                onError(throwable)
             },
         )
     }
@@ -406,11 +394,20 @@ class AddonManager(
         return Handler(iconThread.looper).asCoroutineDispatcher("WebExtensionIconDispatcher")
     }
 
-    companion object {
-        // List of invalid permissions for external add-ons i.e. permissions only
-        // granted to built-in extensions:
-        val BLOCKED_PERMISSIONS = listOf("geckoViewAddons", "nativeMessaging")
+    private fun onAddonInstalled(
+        ext: WebExtension,
+        pendingAction: CompletableDeferred<Unit>,
+        onSuccess: ((Addon) -> Unit),
+    ) {
+        val installedState = toInstalledState(ext)
+        val installedAddon = Addon.newFromWebExtension(ext, installedState)
 
+        addonUpdater.registerForFutureUpdates(installedAddon.id)
+        completePendingAddonAction(pendingAction)
+        onSuccess(installedAddon)
+    }
+
+    companion object {
         // Size of the icon to load for extensions
         const val ADDON_ICON_SIZE = 48
 

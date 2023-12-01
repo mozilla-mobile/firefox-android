@@ -164,12 +164,6 @@
     <action
         android:id="@+id/action_global_tabSettingsFragment"
         app:destination="@id/tabsSettingsFragment" />
-    <action
-        android:id="@+id/action_global_to_translationOptionsDialogFragment"
-        app:destination="@id/translationOptionsDialogFragment" />
-    <action
-        android:id="@+id/action_global_to_translationSettingsFragment"
-        app:destination="@id/translationSettingsFragment" />
     <dialog
         android:id="@+id/tabsTrayFragment"
         android:name="org.mozilla.fenix.tabstray.TabsTrayFragment">
@@ -309,7 +303,7 @@
             app:destination="@id/reviewQualityCheckFragment" />
         <action
             android:id="@+id/action_browserFragment_to_translationsDialogFragment"
-            app:destination="@id/translationsDialogFragment" />
+            app:destination="@id/translations_graph" />
     </fragment>
 
     <fragment
@@ -423,18 +417,6 @@
     <dialog
         android:id="@+id/reviewQualityCheckFragment"
         android:name="org.mozilla.fenix.shopping.ReviewQualityCheckFragment"/>
-
-    <dialog
-        android:id="@+id/translationsDialogFragment"
-        android:name="org.mozilla.fenix.translations.TranslationsDialogFragment"/>
-
-    <dialog
-        android:id="@+id/translationOptionsDialogFragment"
-        android:name="org.mozilla.fenix.translations.TranslationOptionsDialogFragment" />
-
-    <fragment
-        android:id="@+id/translationSettingsFragment"
-        android:name="org.mozilla.fenix.translations.TranslationSettingsFragment" />
 
     <fragment
         android:id="@+id/savedLoginsAuthFragment"
@@ -593,13 +575,6 @@
         <action
             android:id="@+id/action_settingsFragment_to_httpsOnlyFragment"
             app:destination="@id/httpsOnlyFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
-        <action
-            android:id="@+id/action_settingsFragment_to_cookieBannerFragment"
-            app:destination="@id/cookieBannerFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
@@ -840,10 +815,6 @@
         android:id="@+id/httpsOnlyFragment"
         android:name="org.mozilla.fenix.settings.HttpsOnlyFragment"
         android:label="@string/preferences_https_only_title" />
-    <fragment
-        android:id="@+id/cookieBannerFragment"
-        android:name="org.mozilla.fenix.settings.CookieBannersFragment"
-        android:label="@string/preferences_cookie_banner_reduction" />
     <fragment
         android:id="@+id/sponsoredStoriesSettings"
         android:name="org.mozilla.fenix.settings.SponsoredStoriesSettingsFragment"
@@ -1446,6 +1417,31 @@
                 android:id="@+id/action_editLoginFragment_to_loginDetailFragment"
                 app:destination="@id/loginDetailFragment"
                 app:popUpTo="@id/loginDetailFragment"
+                app:popUpToInclusive="true" />
+        </fragment>
+    </navigation>
+
+    <navigation
+        android:id="@+id/translations_graph"
+        app:startDestination="@id/translationsDialogFragment">
+        <dialog
+            android:id="@+id/translationsDialogFragment"
+            android:name="org.mozilla.fenix.translations.TranslationsDialogFragment">
+            <argument
+                android:name="translationsDialogAccessPoint"
+                android:defaultValue="Translations"
+                app:argType="org.mozilla.fenix.translations.TranslationsDialogAccessPoint" />
+            <action
+                android:id="@+id/action_translationsDialogFragment_to_translationSettingsFragment"
+                app:destination="@id/translationSettingsFragment" />
+        </dialog>
+        <fragment
+            android:id="@+id/translationSettingsFragment"
+            android:name="org.mozilla.fenix.translations.TranslationSettingsFragment">
+            <action
+                android:id="@+id/action_translationSettingsFragment_to_translationsDialogFragment"
+                app:destination="@id/translationsDialogFragment"
+                app:popUpTo="@id/translationSettingsFragment"
                 app:popUpToInclusive="true" />
         </fragment>
     </navigation>

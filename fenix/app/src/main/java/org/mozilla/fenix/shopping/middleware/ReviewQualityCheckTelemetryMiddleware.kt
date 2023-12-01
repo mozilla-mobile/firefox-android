@@ -11,6 +11,10 @@ import org.mozilla.fenix.GleanMetrics.ShoppingSettings
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckAction
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckMiddleware
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState
+import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent.AnalysisStatus
+
+private const val ACTION_ENABLED = "enabled"
+private const val ACTION_DISABLED = "disabled"
 
 /**
  * Middleware that captures telemetry events for the review quality check feature.
@@ -32,6 +36,7 @@ class ReviewQualityCheckTelemetryMiddleware : ReviewQualityCheckMiddleware {
         }
     }
 
+    @Suppress("LongMethod")
     private fun processAction(
         store: Store<ReviewQualityCheckState, ReviewQualityCheckAction>,
         action: ReviewQualityCheckAction.TelemetryAction,
@@ -78,8 +83,11 @@ class ReviewQualityCheckTelemetryMiddleware : ReviewQualityCheckMiddleware {
                 Shopping.surfaceNotNowClicked.record()
             }
 
-            is ReviewQualityCheckAction.ShowMoreRecentReviewsClicked -> {
-                Shopping.surfaceShowMoreRecentReviewsClicked.record()
+            is ReviewQualityCheckAction.ExpandCollapseHighlights -> {
+                val state = store.state
+                if (state is ReviewQualityCheckState.OptedIn && state.isHighlightsExpanded) {
+                    Shopping.surfaceShowMoreRecentReviewsClicked.record()
+                }
             }
 
             is ReviewQualityCheckAction.ExpandCollapseSettings -> {
@@ -91,6 +99,13 @@ class ReviewQualityCheckTelemetryMiddleware : ReviewQualityCheckMiddleware {
 
             is ReviewQualityCheckAction.NoAnalysisDisplayed -> {
                 Shopping.surfaceNoReviewReliabilityAvailable.record()
+            }
+
+            is ReviewQualityCheckAction.UpdateProductReview -> {
+                val state = store.state
+                if (state.isStaleAnalysis() && !action.restoreAnalysis) {
+                    Shopping.surfaceStaleAnalysisShown.record()
+                }
             }
 
             is ReviewQualityCheckAction.AnalyzeProduct -> {
@@ -112,6 +127,37 @@ class ReviewQualityCheckTelemetryMiddleware : ReviewQualityCheckMiddleware {
             is ReviewQualityCheckAction.OpenPoweredByLink -> {
                 Shopping.surfacePoweredByFakespotLinkClicked.record()
             }
+
+            is ReviewQualityCheckAction.RecommendedProductImpression -> {
+                Shopping.surfaceAdsImpression.record()
+            }
+
+            is ReviewQualityCheckAction.RecommendedProductClick -> {
+                Shopping.surfaceAdsClicked.record()
+            }
+
+            ReviewQualityCheckAction.ToggleProductRecommendation -> {
+                val state = store.state
+                if (state is ReviewQualityCheckState.OptedIn &&
+                    state.productRecommendationsPreference != null
+                ) {
+                    val toggleAction = if (state.productRecommendationsPreference) {
+                        ACTION_ENABLED
+                    } else {
+                        ACTION_DISABLED
+                    }
+                    Shopping.surfaceAdsSettingToggled.record(
+                        Shopping.SurfaceAdsSettingToggledExtra(
+                            action = toggleAction,
+                        ),
+                    )
+                }
+            }
         }
     }
+
+    private fun ReviewQualityCheckState.isStaleAnalysis(): Boolean =
+        this is ReviewQualityCheckState.OptedIn &&
+            this.productReviewState is ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent &&
+            this.productReviewState.analysisStatus == AnalysisStatus.NEEDS_ANALYSIS
 }

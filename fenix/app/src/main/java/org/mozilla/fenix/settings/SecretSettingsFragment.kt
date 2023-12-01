@@ -48,6 +48,12 @@ class SecretSettingsFragment : PreferenceFragmentCompat() {
             onPreferenceChangeListener = SharedPreferenceUpdater()
         }
 
+        requirePreference<SwitchPreference>(R.string.pref_key_toolbar_use_redesign_incomplete).apply {
+            isVisible = Config.channel.isDebug
+            isChecked = context.settings().enableIncompleteToolbarRedesign
+            onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
+
         requirePreference<SwitchPreference>(R.string.pref_key_enable_tabs_tray_to_compose).apply {
             isVisible = true
             isChecked = context.settings().enableTabsTrayToCompose
@@ -84,6 +90,12 @@ class SecretSettingsFragment : PreferenceFragmentCompat() {
                     return true
                 }
             }
+        }
+
+        requirePreference<SwitchPreference>(R.string.pref_key_should_enable_felt_privacy).apply {
+            isVisible = true
+            isChecked = context.settings().feltPrivateBrowsingEnabled
+            onPreferenceChangeListener = SharedPreferenceUpdater()
         }
 
         // for performance reasons, this is only available in Nightly or Debug builds

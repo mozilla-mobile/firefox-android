@@ -38,6 +38,7 @@
     <string name="pref_key_delete_browsing_data_on_quit_categories" translatable="false">pref_key_delete_browsing_data_on_quit_categories</string>
     <string name="pref_key_last_known_mode_private" translatable="false">pref_key_last_known_mode_private</string>
     <string name="pref_key_addons" translatable="false">pref_key_addons</string>
+    <string name="pref_key_install_local_addon" translatable="false">pref_key_install_local_addon</string>
     <string name="pref_key_override_amo_user" translatable="false">pref_key_override_amo_user</string>
     <string name="pref_key_override_amo_collection" translatable="false">pref_key_override_amo_collection</string>
     <string name="pref_key_enable_gecko_logs" translatable="false">pref_key_enable_gecko_logs</string>
@@ -137,6 +138,10 @@
     <string name="pref_key_toolbar_top" translatable="false">pref_key_toolbar_top</string>
     <string name="pref_key_toolbar_bottom" translatable="false">pref_key_toolbar_bottom</string>
 
+    <!-- Toolbar Redesign -->
+    <string name="pref_key_toolbar_use_redesign" translatable="false">pref_key_toolbar_use_redesign</string>
+    <string name="pref_key_toolbar_use_redesign_incomplete" translatable="false">pref_key_toolbar_use_redesign_incomplete</string>
+
     <!-- Privacy Pop Window -->
     <string name="pref_key_privacy_pop_window" translatable="false">pref_key_privacy_pop_window</string>
 
@@ -161,8 +166,6 @@
     <string name="pref_key_https_only_in_private_tabs" translatable="false">pref_key_https_only_in_private_tabs</string>
 
     <!-- Cookie Banner Reduction Settings-->
-    <string name="pref_key_cookie_banner_settings" translatable="false">pref_key_cookie_banner_settings</string>
-    <string name="pref_key_cookie_banner_v1" translatable="false">pref_key_cookie_banner_v1</string>
     <string name="pref_key_cookie_banner_private_mode" translatable="false">pref_key_cookie_banner_private_mode</string>
 
     <!-- Tracking Protection Settings -->
@@ -277,6 +280,10 @@
     <string name="pref_key_should_show_total_cookie_protection_popup" translatable="false">pref_key_should_show_total_cookie_protection_popup</string>
     <!-- A value  of `true` means the erase action popup has not been shown yet -->
     <string name="pref_key_should_show_erase_action_popup" translatable="false">pref_key_should_show_erase_action_popup</string>
+    <!-- A value  of `true` means that we will enable felt privacy features -->
+    <string name="pref_key_should_enable_felt_privacy" translatable="false">pref_key_should_enable_felt_privacy</string>
+    <!-- A value  of `true` means the cookie banners handling action popup has not been shown yet -->
+    <string name="pref_key_should_show_cookie_banners_action_popup" translatable="false">pref_key_should_show_cookie_banners_action_popup</string>
 
     <string name="pref_key_debug_settings" translatable="false">pref_key_debug_settings</string>
 
@@ -299,6 +306,8 @@
     <string name="pref_key_login_exceptions" translatable="false">pref_key_login_exceptions</string>
 
     <string name="pref_key_show_collections_placeholder_home" translatable="false">pref_key_show_collections_home</string>
+
+    <string name="pref_key_num_font_list_sent"  translatable="false">pref_key_num_font_list_sent</string>
 
     <!-- Adjust Activated User values-->
     <string name="pref_key_growth_user_activated_sent" translatable="false">pref_key_growth_user_activated_sent</string>

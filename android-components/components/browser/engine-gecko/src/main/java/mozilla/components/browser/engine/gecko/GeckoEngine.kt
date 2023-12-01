@@ -42,6 +42,12 @@ import mozilla.components.concept.engine.content.blocking.TrackingProtectionExce
 import mozilla.components.concept.engine.history.HistoryTrackingDelegate
 import mozilla.components.concept.engine.mediaquery.PreferredColorScheme
 import mozilla.components.concept.engine.serviceworker.ServiceWorkerDelegate
+import mozilla.components.concept.engine.translate.Language
+import mozilla.components.concept.engine.translate.LanguageModel
+import mozilla.components.concept.engine.translate.LanguageSetting
+import mozilla.components.concept.engine.translate.ModelManagementOptions
+import mozilla.components.concept.engine.translate.TranslationSupport
+import mozilla.components.concept.engine.translate.TranslationsRuntime
 import mozilla.components.concept.engine.utils.EngineVersion
 import mozilla.components.concept.engine.webextension.Action
 import mozilla.components.concept.engine.webextension.ActionHandler
@@ -66,6 +72,7 @@ import org.mozilla.geckoview.GeckoRuntime
 import org.mozilla.geckoview.GeckoRuntimeSettings
 import org.mozilla.geckoview.GeckoSession
 import org.mozilla.geckoview.GeckoWebExecutor
+import org.mozilla.geckoview.TranslationsController
 import org.mozilla.geckoview.WebExtensionController
 import org.mozilla.geckoview.WebNotification
 import java.lang.ref.WeakReference
@@ -81,7 +88,7 @@ class GeckoEngine(
     executorProvider: () -> GeckoWebExecutor = { GeckoWebExecutor(runtime) },
     override val trackingProtectionExceptionStore: TrackingProtectionExceptionStorage =
         GeckoTrackingProtectionExceptionStorage(runtime),
-) : Engine, WebExtensionRuntime {
+) : Engine, WebExtensionRuntime, TranslationsRuntime {
     private val executor by lazy { executorProvider.invoke() }
     private val localeUpdater = LocaleSettingUpdater(context, runtime)
 
@@ -219,48 +226,52 @@ class GeckoEngine(
     }
 
     /**
-     * See [Engine.installWebExtension].
+     * See [Engine.installBuiltInWebExtension].
      */
-    override fun installWebExtension(
+    override fun installBuiltInWebExtension(
         id: String,
         url: String,
         onSuccess: ((WebExtension) -> Unit),
-        onError: ((String, Throwable) -> Unit),
+        onError: ((Throwable) -> Unit),
     ): CancellableOperation {
-        val onInstallSuccess: ((org.mozilla.geckoview.WebExtension) -> Unit) = {
-            val installedExtension = GeckoWebExtension(it, runtime)
-            webExtensionDelegate?.onInstalled(installedExtension)
-            installedExtension.registerActionHandler(webExtensionActionHandler)
-            installedExtension.registerTabHandler(webExtensionTabHandler, defaultSettings)
-            onSuccess(installedExtension)
-        }
+        require(url.isResourceUrl()) { "url should be a resource url" }
 
-        val geckoResult = if (url.isResourceUrl()) {
-            runtime.webExtensionController.ensureBuiltIn(url, id).apply {
-                then(
-                    {
-                        onInstallSuccess(it!!)
-                        GeckoResult<Void>()
-                    },
-                    { throwable ->
-                        onError(id, GeckoWebExtensionException.createWebExtensionException(throwable))
-                        GeckoResult<Void>()
-                    },
-                )
-            }
-        } else {
-            runtime.webExtensionController.install(url).apply {
-                then(
-                    {
-                        onInstallSuccess(it!!)
-                        GeckoResult<Void>()
-                    },
-                    { throwable ->
-                        onError(id, GeckoWebExtensionException.createWebExtensionException(throwable))
-                        GeckoResult<Void>()
-                    },
-                )
-            }
+        val geckoResult = runtime.webExtensionController.ensureBuiltIn(url, id).apply {
+            then(
+                {
+                    onExtensionInstalled(it!!, onSuccess)
+                    GeckoResult<Void>()
+                },
+                { throwable ->
+                    onError(GeckoWebExtensionException.createWebExtensionException(throwable))
+                    GeckoResult<Void>()
+                },
+            )
+        }
+        return geckoResult.asCancellableOperation()
+    }
+
+    /**
+     * See [Engine.installWebExtension].
+     */
+    override fun installWebExtension(
+        url: String,
+        onSuccess: ((WebExtension) -> Unit),
+        onError: ((Throwable) -> Unit),
+    ): CancellableOperation {
+        require(!url.isResourceUrl()) { "url shouldn't be a resource url" }
+
+        val geckoResult = runtime.webExtensionController.install(url).apply {
+            then(
+                {
+                    onExtensionInstalled(it!!, onSuccess)
+                    GeckoResult<Void>()
+                },
+                { throwable ->
+                    onError(GeckoWebExtensionException.createWebExtensionException(throwable))
+                    GeckoResult<Void>()
+                },
+            )
         }
         return geckoResult.asCancellableOperation()
     }
@@ -380,6 +391,10 @@ class GeckoEngine(
 
             override fun onEnabled(extension: org.mozilla.geckoview.WebExtension) {
                 webExtensionDelegate.onEnabled(GeckoWebExtension(extension, runtime))
+            }
+
+            override fun onReady(extension: org.mozilla.geckoview.WebExtension) {
+                webExtensionDelegate.onReady(GeckoWebExtension(extension, runtime))
             }
 
             override fun onUninstalled(extension: org.mozilla.geckoview.WebExtension) {
@@ -642,6 +657,280 @@ class GeckoEngine(
             },
             {
                     throwable ->
+                onError(throwable)
+                GeckoResult<Void>()
+            },
+        )
+    }
+
+    /**
+     * Convenience method for handling unexpected null returns from GeckoView.
+     *
+     * @return A standard throwable for unexpected null values.
+     */
+    private fun translationsUnexpectedNull(): Throwable {
+        val errorMessage = "Unexpectedly returned a null value."
+        return IllegalStateException(errorMessage)
+    }
+
+    /**
+     * See [Engine.isTranslationsEngineSupported].
+     */
+    override fun isTranslationsEngineSupported(
+        onSuccess: (Boolean) -> Unit,
+        onError: (Throwable) -> Unit,
+    ) {
+        TranslationsController.RuntimeTranslation.isTranslationsEngineSupported().then(
+            {
+                if (it != null) {
+                    onSuccess(it)
+                } else {
+                    onError(translationsUnexpectedNull())
+                }
+                GeckoResult<Void>()
+            },
+            { throwable ->
+                onError(throwable)
+                GeckoResult<Void>()
+            },
+        )
+    }
+
+    /**
+     * See [Engine.getTranslationsPairDownloadSize].
+     */
+    override fun getTranslationsPairDownloadSize(
+        fromLanguage: String,
+        toLanguage: String,
+        onSuccess: (Long) -> Unit,
+        onError: (Throwable) -> Unit,
+    ) {
+        TranslationsController.RuntimeTranslation.checkPairDownloadSize(fromLanguage, toLanguage).then(
+            {
+                if (it != null) {
+                    onSuccess(it)
+                } else {
+                    onError(translationsUnexpectedNull())
+                }
+                GeckoResult<Void>()
+            },
+            { throwable ->
+                onError(throwable)
+                GeckoResult<Void>()
+            },
+        )
+    }
+
+    /**
+     * See [Engine.getTranslationsModelDownloadStates].
+     */
+    override fun getTranslationsModelDownloadStates(
+        onSuccess: (List<LanguageModel>) -> Unit,
+        onError: (Throwable) -> Unit,
+    ) {
+        TranslationsController.RuntimeTranslation.listModelDownloadStates().then(
+            {
+                if (it != null) {
+                    var listOfModels = mutableListOf<LanguageModel>()
+                    for (each in it) {
+                        var language = each.language?.let {
+                                language ->
+                            Language(language.code, each.language?.localizedDisplayName)
+                        }
+                        var model = LanguageModel(language, each.isDownloaded, each.size)
+                        listOfModels.add(model)
+                    }
+                    onSuccess(listOfModels)
+                } else {
+                    onError(translationsUnexpectedNull())
+                }
+                GeckoResult<Void>()
+            },
+            { throwable ->
+                onError(throwable)
+                GeckoResult<Void>()
+            },
+        )
+    }
+
+    /**
+     * See [Engine.getSupportedTranslationLanguages].
+     */
+    override fun getSupportedTranslationLanguages(
+        onSuccess: (TranslationSupport) -> Unit,
+        onError: (Throwable) -> Unit,
+    ) {
+        TranslationsController.RuntimeTranslation.listSupportedLanguages().then(
+            {
+                if (it != null) {
+                    var listOfFromLanguages = mutableListOf<Language>()
+                    var listOfToLanguages = mutableListOf<Language>()
+
+                    if (it.fromLanguages != null) {
+                        for (each in it.fromLanguages!!) {
+                            listOfFromLanguages.add(Language(each.code, each.localizedDisplayName))
+                        }
+                    }
+
+                    if (it.toLanguages != null) {
+                        for (each in it.toLanguages!!) {
+                            listOfToLanguages.add(Language(each.code, each.localizedDisplayName))
+                        }
+                    }
+
+                    onSuccess(TranslationSupport(listOfFromLanguages, listOfToLanguages))
+                } else {
+                    onError(translationsUnexpectedNull())
+                }
+                GeckoResult<Void>()
+            },
+            { throwable ->
+                onError(throwable)
+                GeckoResult<Void>()
+            },
+        )
+    }
+
+    /**
+     * See [Engine.manageTranslationsLanguageModel].
+     */
+    override fun manageTranslationsLanguageModel(
+        options: ModelManagementOptions,
+        onSuccess: () -> Unit,
+        onError: (Throwable) -> Unit,
+    ) {
+        val geckoOptions =
+            TranslationsController.RuntimeTranslation.ModelManagementOptions.Builder()
+                .operation(options.operation.toString())
+                .operationLevel(options.operationLevel.toString())
+
+        options.languageToManage?.let { geckoOptions.languageToManage(it) }
+
+        TranslationsController.RuntimeTranslation.manageLanguageModel(geckoOptions.build()).then(
+            {
+                onSuccess()
+                GeckoResult<Void>()
+            },
+            { throwable ->
+                onError(throwable)
+                GeckoResult<Void>()
+            },
+        )
+    }
+
+    /**
+     * See [Engine.getUserPreferredLanguages].
+     */
+    override fun getUserPreferredLanguages(
+        onSuccess: (List<String>) -> Unit,
+        onError: (Throwable) -> Unit,
+    ) {
+        TranslationsController.RuntimeTranslation.preferredLanguages().then(
+            {
+                if (it != null) {
+                    onSuccess(it)
+                } else {
+                    onError(translationsUnexpectedNull())
+                }
+
+                GeckoResult<Void>()
+            },
+            { throwable ->
+                onError(throwable)
+                GeckoResult<Void>()
+            },
+        )
+    }
+
+    /**
+     * See [Engine.getTranslationsOfferPopup].
+     */
+    override fun getTranslationsOfferPopup(): Boolean {
+        return runtime.settings.translationsOfferPopup
+    }
+
+    /**
+     * See [Engine.setTranslationsOfferPopup].
+     */
+    override fun setTranslationsOfferPopup(offer: Boolean) {
+        runtime.settings.translationsOfferPopup = offer
+    }
+
+    /**
+     * See [Engine.getLanguageSetting].
+     */
+    override fun getLanguageSetting(
+        languageCode: String,
+        onSuccess: (LanguageSetting) -> Unit,
+        onError: (Throwable) -> Unit,
+    ) {
+        TranslationsController.RuntimeTranslation.getLanguageSetting(languageCode).then(
+            {
+                if (it != null) {
+                    try {
+                        onSuccess(LanguageSetting.fromValue(it))
+                    } catch (e: IllegalArgumentException) {
+                        onError(e)
+                    }
+                } else {
+                    onError(translationsUnexpectedNull())
+                }
+
+                GeckoResult<Void>()
+            },
+            { throwable ->
+                onError(throwable)
+                GeckoResult<Void>()
+            },
+        )
+    }
+
+    /**
+     * See [Engine.setLanguageSetting].
+     */
+    override fun setLanguageSetting(
+        languageCode: String,
+        languageSetting: LanguageSetting,
+        onSuccess: () -> Unit,
+        onError: (Throwable) -> Unit,
+    ) {
+        TranslationsController.RuntimeTranslation.setLanguageSettings(languageCode, languageSetting.toString()).then(
+            {
+                onSuccess()
+                GeckoResult<Void>()
+            },
+            { throwable ->
+                onError(throwable)
+                GeckoResult<Void>()
+            },
+        )
+    }
+
+    /**
+     * See [Engine.getLanguageSettings].
+     */
+    override fun getLanguageSettings(
+        onSuccess: (Map<String, LanguageSetting>) -> Unit,
+        onError: (Throwable) -> Unit,
+    ) {
+        TranslationsController.RuntimeTranslation.getLanguageSettings().then(
+            {
+                if (it != null) {
+                    try {
+                        val result = mutableMapOf<String, LanguageSetting>()
+                        it.forEach { item ->
+                            result[item.key] = LanguageSetting.fromValue(item.value)
+                        }
+                        onSuccess(result)
+                    } catch (e: IllegalArgumentException) {
+                        onError(e)
+                    }
+                } else {
+                    onError(translationsUnexpectedNull())
+                }
+                GeckoResult<Void>()
+            },
+            { throwable ->
                 onError(throwable)
                 GeckoResult<Void>()
             },
@@ -1043,6 +1332,17 @@ class GeckoEngine(
         } else {
             null
         }
+    }
+
+    private fun onExtensionInstalled(
+        ext: org.mozilla.geckoview.WebExtension,
+        onSuccess: ((WebExtension) -> Unit),
+    ) {
+        val installedExtension = GeckoWebExtension(ext, runtime)
+        webExtensionDelegate?.onInstalled(installedExtension)
+        installedExtension.registerActionHandler(webExtensionActionHandler)
+        installedExtension.registerTabHandler(webExtensionTabHandler, defaultSettings)
+        onSuccess(installedExtension)
     }
 }
 

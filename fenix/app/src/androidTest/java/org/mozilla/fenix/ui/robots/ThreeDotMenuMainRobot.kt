@@ -26,16 +26,13 @@ import androidx.test.uiautomator.UiObjectNotFoundException
 import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
 import org.hamcrest.Matchers.allOf
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.Constants.LONG_CLICK_DURATION
 import org.mozilla.fenix.helpers.Constants.RETRY_COUNT
+import org.mozilla.fenix.helpers.Constants.TAG
 import org.mozilla.fenix.helpers.DataGenerationHelper.getStringResource
-import org.mozilla.fenix.helpers.MatcherHelper.assertCheckedItemWithResIdAndTextExists
-import org.mozilla.fenix.helpers.MatcherHelper.assertItemContainingTextExists
-import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithDescriptionExists
-import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithResIdAndTextExists
+import org.mozilla.fenix.helpers.MatcherHelper.assertUIObjectExists
 import org.mozilla.fenix.helpers.MatcherHelper.checkedItemWithResIdAndText
 import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithDescription
@@ -56,10 +53,10 @@ import org.mozilla.fenix.nimbus.FxNimbus
 @Suppress("ForbiddenComment")
 class ThreeDotMenuMainRobot {
     fun verifyShareAllTabsButton() = assertShareAllTabsButton()
-    fun verifySettingsButton() = assertItemContainingTextExists(settingsButton())
-    fun verifyHistoryButton() = assertItemContainingTextExists(historyButton)
+    fun verifySettingsButton() = assertUIObjectExists(settingsButton())
+    fun verifyHistoryButton() = assertUIObjectExists(historyButton)
     fun verifyThreeDotMenuExists() = threeDotMenuRecyclerViewExists()
-    fun verifyAddBookmarkButton() = assertItemWithResIdAndTextExists(addBookmarkButton)
+    fun verifyAddBookmarkButton() = assertUIObjectExists(addBookmarkButton)
     fun verifyEditBookmarkButton() = assertEditBookmarkButton()
     fun verifyCloseAllTabsButton() = assertCloseAllTabsButton()
     fun verifyReaderViewAppearance(visible: Boolean) = assertReaderViewAppearanceButton(visible)
@@ -69,7 +66,7 @@ class ThreeDotMenuMainRobot {
         // In case it reaches the end, the second swipe is no-op.
         expandMenu()
         expandMenu()
-        assertItemContainingTextExists(itemWithText("Quit"))
+        assertUIObjectExists(itemWithText("Quit"))
     }
 
     fun expandMenu() {
@@ -79,20 +76,20 @@ class ThreeDotMenuMainRobot {
     fun verifyShareTabButton() = assertShareTabButton()
     fun verifySelectTabs() = assertSelectTabsButton()
 
-    fun verifyFindInPageButton() = assertItemContainingTextExists(findInPageButton)
+    fun verifyFindInPageButton() = assertUIObjectExists(findInPageButton)
     fun verifyAddToShortcutsButton(shouldExist: Boolean) =
-        assertItemContainingTextExists(addToShortcutsButton, exists = shouldExist)
+        assertUIObjectExists(addToShortcutsButton, exists = shouldExist)
     fun verifyRemoveFromShortcutsButton() = assertRemoveFromShortcutsButton()
     fun verifyShareTabsOverlay() = assertShareTabsOverlay()
 
     fun verifyDesktopSiteModeEnabled(isRequestDesktopSiteEnabled: Boolean) {
         expandMenu()
-        assertCheckedItemWithResIdAndTextExists(desktopSiteToggle(isRequestDesktopSiteEnabled))
+        assertUIObjectExists(desktopSiteToggle(isRequestDesktopSiteEnabled))
     }
 
     fun verifyPageThreeDotMainMenuItems(isRequestDesktopSiteEnabled: Boolean) {
         expandMenu()
-        assertItemContainingTextExists(
+        assertUIObjectExists(
             normalBrowsingNewTabButton,
             bookmarksButton,
             historyButton,
@@ -105,18 +102,18 @@ class ThreeDotMenuMainRobot {
             addToHomeScreenButton,
             addToShortcutsButton,
             saveToCollectionButton,
+            addBookmarkButton,
+            desktopSiteToggle(isRequestDesktopSiteEnabled),
         )
-        assertCheckedItemWithResIdAndTextExists(addBookmarkButton)
-        assertCheckedItemWithResIdAndTextExists(desktopSiteToggle(isRequestDesktopSiteEnabled))
         // Swipe to second part of menu
         expandMenu()
-        assertItemContainingTextExists(
+        assertUIObjectExists(
             settingsButton(),
         )
         if (FxNimbus.features.print.value().browserPrintEnabled) {
-            assertItemContainingTextExists(printContentButton)
+            assertUIObjectExists(printContentButton)
         }
-        assertItemWithDescriptionExists(
+        assertUIObjectExists(
             backButton,
             forwardButton,
             shareButton,
@@ -125,7 +122,7 @@ class ThreeDotMenuMainRobot {
     }
 
     fun verifyHomeThreeDotMainMenuItems(isRequestDesktopSiteEnabled: Boolean) {
-        assertItemContainingTextExists(
+        assertUIObjectExists(
             bookmarksButton,
             historyButton,
             downloadsButton,
@@ -137,9 +134,8 @@ class ThreeDotMenuMainRobot {
             helpButton,
             customizeHomeButton,
             settingsButton(),
+            desktopSiteToggle(isRequestDesktopSiteEnabled),
         )
-
-        assertCheckedItemWithResIdAndTextExists(desktopSiteToggle(isRequestDesktopSiteEnabled))
     }
 
     private fun assertShareTabsOverlay() {
@@ -158,10 +154,7 @@ class ThreeDotMenuMainRobot {
     fun verifyAddonAvailableInMainMenu(addonName: String) {
         for (i in 1..RETRY_COUNT) {
             try {
-                assertTrue(
-                    "Addon not listed in the Add-ons sub-menu",
-                    mDevice.findObject(UiSelector().textContains(addonName)).waitForExists(waitingTime),
-                )
+                assertUIObjectExists(itemContainingText(addonName))
                 break
             } catch (e: AssertionError) {
                 if (i == RETRY_COUNT) {
@@ -178,7 +171,7 @@ class ThreeDotMenuMainRobot {
     }
 
     fun verifyTrackersBlockedByUblock() {
-        assertTrue(itemWithResId("$packageName:id/badge_text").waitForExists(waitingTime))
+        assertUIObjectExists(itemWithResId("$packageName:id/badge_text"))
         assertTrue(itemWithResId("$packageName:id/badge_text").text.toInt() > 0)
     }
 
@@ -196,8 +189,11 @@ class ThreeDotMenuMainRobot {
             // such as the Pixel 2, we require two swipes to display the "Settings" menu item
             // at the bottom. On larger devices, the second swipe is a no-op.
             threeDotMenuRecyclerView().perform(swipeUp())
+            Log.i(TAG, "openSettings: Swiped up the main menu once")
             threeDotMenuRecyclerView().perform(swipeUp())
+            Log.i(TAG, "openSettings: Swiped up the main menu twice")
             settingsButton(localizedText).click()
+            Log.i(TAG, "openSettings: Clicked main menu $localizedText button")
 
             SettingsRobot().interact()
             return SettingsRobot.Transition()
@@ -205,7 +201,9 @@ class ThreeDotMenuMainRobot {
 
         fun openDownloadsManager(interact: DownloadRobot.() -> Unit): DownloadRobot.Transition {
             threeDotMenuRecyclerView().perform(swipeDown())
+            Log.i(TAG, "openDownloadsManager: Swiped up main menu")
             downloadsButton.click()
+            Log.i(TAG, "openDownloadsManager: Clicked main menu \"DOWNLOADS\" button")
 
             DownloadRobot().interact()
             return DownloadRobot.Transition()
@@ -225,7 +223,7 @@ class ThreeDotMenuMainRobot {
             mDevice.waitNotNull(Until.findObject(By.text("Bookmarks")), waitingTime)
 
             bookmarksButton.click()
-            assertTrue(mDevice.findObject(UiSelector().resourceId("$packageName:id/bookmark_list")).waitForExists(waitingTime))
+            assertUIObjectExists(itemWithResId("$packageName:id/bookmark_list"))
 
             BookmarksRobot().interact()
             return BookmarksRobot.Transition()
@@ -306,6 +304,7 @@ class ThreeDotMenuMainRobot {
 
         fun clickShareButton(interact: ShareOverlayRobot.() -> Unit): ShareOverlayRobot.Transition {
             shareButton.click()
+            Log.i(TAG, "clickShareButton: Clicked main menu share button")
             mDevice.waitNotNull(Until.findObject(By.text("ALL ACTIONS")), waitingTime)
 
             ShareOverlayRobot().interact()
@@ -322,10 +321,10 @@ class ThreeDotMenuMainRobot {
 
         fun refreshPage(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
             refreshButton.also {
-                Log.i("MozTestLog", "refreshPage: Looking for refresh button")
+                Log.i(TAG, "refreshPage: Looking for refresh button")
                 it.waitForExists(waitingTime)
                 it.click()
-                Log.i("MozTestLog", "refreshPage: Clicked the refresh button")
+                Log.i(TAG, "refreshPage: Clicked the refresh button")
             }
 
             BrowserRobot().interact()
@@ -525,13 +524,13 @@ private fun assertReaderViewAppearanceButton(visible: Boolean) {
             threeDotMenuRecyclerView().perform(swipeUp())
             maxSwipes--
         }
-        assertTrue(readerViewAppearanceToggle().exists())
+        assertUIObjectExists(readerViewAppearanceToggle())
     } else {
         while (!readerViewAppearanceToggle().exists() && maxSwipes != 0) {
             threeDotMenuRecyclerView().perform(swipeUp())
             maxSwipes--
         }
-        assertFalse(readerViewAppearanceToggle().exists())
+        assertUIObjectExists(readerViewAppearanceToggle(), exists = false)
     }
 }
 

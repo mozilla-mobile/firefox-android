@@ -20,6 +20,7 @@ import mozilla.components.browser.engine.gecko.media.GeckoMediaDelegate
 import mozilla.components.browser.engine.gecko.mediasession.GeckoMediaSessionDelegate
 import mozilla.components.browser.engine.gecko.permission.GeckoPermissionRequest
 import mozilla.components.browser.engine.gecko.prompt.GeckoPromptDelegate
+import mozilla.components.browser.engine.gecko.translate.GeckoTranslateSessionDelegate
 import mozilla.components.browser.engine.gecko.window.GeckoWindowRequest
 import mozilla.components.browser.errorpages.ErrorType
 import mozilla.components.concept.engine.EngineSession
@@ -752,6 +753,7 @@ class GeckoEngineSession(
                 response.adjustedRating,
                 response.needsAnalysis,
                 response.pageNotSupported,
+                response.notEnoughReviews,
                 response.lastAnalysisTime,
                 response.deletedProductReported,
                 response.deletedProduct,
@@ -948,6 +950,62 @@ class GeckoEngineSession(
             notifyObservers {
                 onTranslateException(TranslationOperation.RESTORE, throwable)
             }
+            GeckoResult()
+        })
+    }
+
+    /**
+     * See [EngineSession.getNeverTranslateSiteSetting]
+     */
+    override fun getNeverTranslateSiteSetting(
+        onResult: (Boolean) -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {
+        if (geckoSession.sessionTranslation == null) {
+            onException(sessionTranslationNotAvailable())
+            return
+        }
+
+        geckoSession.sessionTranslation!!.neverTranslateSiteSetting.then({
+                response ->
+            if (response == null) {
+                val errorMessage = "Did not receive a site setting response."
+                logger.error(errorMessage)
+                onException(
+                    java.lang.IllegalStateException(errorMessage),
+                )
+                return@then GeckoResult()
+            }
+            onResult(response)
+            GeckoResult<Boolean>()
+        }, {
+                throwable ->
+            logger.error("Request for site translation preference failed: ", throwable)
+            onException(throwable)
+            GeckoResult()
+        })
+    }
+
+    /**
+     * See [EngineSession.setNeverTranslateSiteSetting]
+     */
+    override fun setNeverTranslateSiteSetting(
+        setting: Boolean,
+        onResult: () -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {
+        if (geckoSession.sessionTranslation == null) {
+            onException(sessionTranslationNotAvailable())
+            return
+        }
+
+        geckoSession.sessionTranslation!!.setNeverTranslateSiteSetting(setting).then({
+            onResult()
+            GeckoResult<Boolean>()
+        }, {
+                throwable ->
+            logger.error("Request for setting site translation preference failed: ", throwable)
+            onException(throwable)
             GeckoResult()
         })
     }
@@ -1682,6 +1740,7 @@ class GeckoEngineSession(
         geckoSession.historyDelegate = createHistoryDelegate()
         geckoSession.mediaSessionDelegate = GeckoMediaSessionDelegate(this)
         geckoSession.scrollDelegate = createScrollDelegate()
+        geckoSession.translationsSessionDelegate = GeckoTranslateSessionDelegate(this)
     }
 
     companion object {

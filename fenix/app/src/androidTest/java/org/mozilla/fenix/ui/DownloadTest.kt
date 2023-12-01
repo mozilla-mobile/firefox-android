@@ -201,7 +201,7 @@ class DownloadTest {
         downloadRobot {
             openPageAndDownloadFile(url = downloadTestPage.toUri(), downloadFile = firstDownloadedFile)
             verifyDownloadedFileName(firstDownloadedFile)
-        }.closeCompletedDownloadPrompt {
+        }.closeDownloadPrompt {
         }.clickDownloadLink(secondDownloadedFile) {
             verifyDownloadPrompt(secondDownloadedFile)
         }.clickDownload {
@@ -288,8 +288,8 @@ class DownloadTest {
 
         browserScreen {
         }.openNotificationShade {
-            verifySystemNotificationExists("Download failed")
             expandNotificationMessage()
+            verifySystemNotificationExists("Download failed")
             swipeDownloadNotification("Left", true)
             verifySystemNotificationDoesNotExist("Firefox Fenix")
         }.closeNotificationTray {}

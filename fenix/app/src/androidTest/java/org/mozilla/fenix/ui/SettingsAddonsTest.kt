@@ -17,6 +17,7 @@ import org.mozilla.fenix.helpers.AppAndSystemHelper.registerAndCleanupIdlingReso
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.RecyclerViewIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper.getEnhancedTrackingProtectionAsset
+import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.helpers.TestHelper.verifySnackBarText
 import org.mozilla.fenix.helpers.TestHelper.waitUntilSnackbarGone
 import org.mozilla.fenix.ui.robots.addonsMenu
@@ -122,7 +123,7 @@ class SettingsAddonsTest {
 
         val uBlockAddon = "uBlock Origin"
         val tampermonkeyAddon = "Tampermonkey"
-        val privacyBadgerAddon = "Privacy Badger"
+        val darkReaderAddon = "Dark Reader"
         val trackingProtectionPage = getEnhancedTrackingProtectionAsset(mockWebServer)
 
         addonsMenu {
@@ -130,7 +131,7 @@ class SettingsAddonsTest {
             closeAddonInstallCompletePrompt()
             installAddon(tampermonkeyAddon, activityTestRule)
             closeAddonInstallCompletePrompt()
-            installAddon(privacyBadgerAddon, activityTestRule)
+            installAddon(darkReaderAddon, activityTestRule)
             closeAddonInstallCompletePrompt()
         }.goBack {
         }.openNavigationToolbar {
@@ -148,6 +149,7 @@ class SettingsAddonsTest {
     @SmokeTest
     @Test
     fun verifyUBlockWorksInPrivateModeTest() {
+        TestHelper.appContext.settings().shouldShowCookieBannersCFR = false
         val addonName = "uBlock Origin"
 
         addonsMenu {
