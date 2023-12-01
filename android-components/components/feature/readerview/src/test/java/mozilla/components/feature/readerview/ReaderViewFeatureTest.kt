@@ -75,8 +75,8 @@ class ReaderViewFeatureTest {
         readerViewFeature.start()
 
         val onSuccess = argumentCaptor<((WebExtension) -> Unit)>()
-        val onError = argumentCaptor<((String, Throwable) -> Unit)>()
-        verify(engine, times(1)).installWebExtension(
+        val onError = argumentCaptor<((Throwable) -> Unit)>()
+        verify(engine, times(1)).installBuiltInWebExtension(
             eq(ReaderViewFeature.READER_VIEW_EXTENSION_ID),
             eq(ReaderViewFeature.READER_VIEW_EXTENSION_URL),
             onSuccess.capture(),
@@ -87,7 +87,7 @@ class ReaderViewFeatureTest {
 
         // Already installed, should not try to install again.
         readerViewFeature.start()
-        verify(engine, times(1)).installWebExtension(
+        verify(engine, times(1)).installBuiltInWebExtension(
             eq(ReaderViewFeature.READER_VIEW_EXTENSION_ID),
             eq(ReaderViewFeature.READER_VIEW_EXTENSION_URL),
             any(),
@@ -124,8 +124,8 @@ class ReaderViewFeatureTest {
         readerViewFeature.start()
 
         val onSuccess = argumentCaptor<((WebExtension) -> Unit)>()
-        val onError = argumentCaptor<((String, Throwable) -> Unit)>()
-        verify(engine, times(1)).installWebExtension(
+        val onError = argumentCaptor<((Throwable) -> Unit)>()
+        verify(engine, times(1)).installBuiltInWebExtension(
             eq(ReaderViewFeature.READER_VIEW_EXTENSION_ID),
             eq(ReaderViewFeature.READER_VIEW_EXTENSION_URL),
             onSuccess.capture(),
@@ -282,7 +282,7 @@ class ReaderViewFeatureTest {
         val readerViewFeature = ReaderViewFeature(testContext, engine, store, mock(), { "bbbbf5ce-3b0f-4f74-8a1f-986d89bffea7" })
         readerViewFeature.readerBaseUrl = "moz-extension://012345/"
         readerViewFeature.showReaderView()
-        verify(store).dispatch(EngineAction.LoadUrlAction(tab.id, "moz-extension://012345/readerview.html?url=https://www.mozilla.org&id=bbbbf5ce-3b0f-4f74-8a1f-986d89bffea7&colorScheme=light"))
+        verify(store).dispatch(EngineAction.LoadUrlAction(tab.id, "moz-extension://012345/readerview.html?url=https%3A%2F%2Fwww.mozilla.org&id=bbbbf5ce-3b0f-4f74-8a1f-986d89bffea7&colorScheme=light"))
         verify(store).dispatch(ReaderAction.UpdateReaderActiveAction(tab.id, true))
     }
 

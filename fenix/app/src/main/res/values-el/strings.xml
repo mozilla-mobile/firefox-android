@@ -79,6 +79,11 @@
         The first parameter is the name of the app defined in app_name (for example: Firefox Nightly)
         The second parameter is the clickable link text in felt_privacy_info_card_subtitle_link_text -->
     <string name="felt_privacy_info_card_subtitle" moz:removedIn="120" tools:ignore="UnusedResources">Το %1$s διαγράφει τα cookies, το ιστορικό και τα δεδομένα ιστοτόπων σας όταν κλείνετε όλα τα ιδιωτικά σας παράθυρα. %2$s</string>
+    <!-- Explanation for private browsing displayed to users on home view when they first enable
+        private mode in our new Total Private Browsing mode.
+        The first parameter is the name of the app defined in app_name (for example: Firefox Nightly)
+        The second parameter is the clickable link text in felt_privacy_info_card_subtitle_link_text -->
+    <string name="felt_privacy_info_card_subtitle_2">Το %1$s διαγράφει τα cookies, το ιστορικό και τα δεδομένα ιστοτόπων σας όταν κλείνετε όλες τις ιδιωτικές σας καρτέλες. %2$s</string>
     <!-- Clickable portion of the explanation for private browsing that links the user to our
         about privacy page.
         This string is used in felt_privacy_info_card_subtitle as the second parameter.-->
@@ -207,6 +212,8 @@
     <string name="browser_menu_library">Βιβλιοθήκη</string>
     <!-- Browser menu toggle that requests a desktop site -->
     <string name="browser_menu_desktop_site">Έκδοση υπολογιστή</string>
+    <!-- Browser menu button that reopens a private tab as a regular tab -->
+    <string name="browser_menu_open_in_regular_tab">Άνοιγμα σε κανονική καρτέλα</string>
     <!-- Browser menu toggle that adds a shortcut to the site on the device home screen. -->
     <string name="browser_menu_add_to_homescreen">Προσθήκη στην αρχική οθόνη</string>
     <!-- Browser menu toggle that installs a Progressive Web App shortcut to the site on the device home screen. -->
@@ -265,7 +272,7 @@
     <!-- Button in the search view that lets a user search by scanning a QR code -->
     <string name="search_scan_button">Σάρωση</string>
     <!-- Button in the search view that lets a user change their search engine -->
-    <string name="search_engine_button">Μηχανή αναζήτησης</string>
+    <string name="search_engine_button" moz:RemovedIn="121" tools:ignore="UnusedResources">Μηχανή αναζήτησης</string>
     <!-- Button in the search view when shortcuts are displayed that takes a user to the search engine settings -->
     <string name="search_shortcuts_engine_settings">Ρυθμίσεις μηχανής αναζήτησης</string>
     <!-- Button in the search view that lets a user navigate to the site in their clipboard -->
@@ -333,9 +340,13 @@
     <!-- Title for set firefox as default browser screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
         Note: The word "Firefox" should NOT be translated -->
     <string name="juno_onboarding_default_browser_title_nimbus" moz:removedIn="120" tools:ignore="UnusedResources">Ορίστε το FIrefox ως το προεπιλεγμένο πρόγραμμα περιήγησής σας</string>
+    <!-- Title for set firefox as default browser screen used by Nimbus experiments. -->
+    <string name="juno_onboarding_default_browser_title_nimbus_2">Μας αρέσει να σας προστατεύουμε</string>
     <!-- Description for set firefox as default browser screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
         Note: The word "Firefox" should NOT be translated -->
     <string name="juno_onboarding_default_browser_description_nimbus" moz:removedIn="120" tools:ignore="UnusedResources">Το Firefox θέτει σε προτεραιότητα τους ανθρώπους και όχι τα κέρδη, προστατεύοντας το απόρρητό σας με αποκλεισμό των ιχνηλατών μεταξύ ιστοτόπων.\n\nΜάθετε περισσότερα στη σημείωση απορρήτου μας.</string>
+    <!-- Description for set firefox as default browser screen used by Nimbus experiments. -->
+    <string name="juno_onboarding_default_browser_description_nimbus_2">Το πρόγραμμα περιήγησης του μη κερδοσκοπικού μας οργανισμού σταματά τις εταιρείες από το να σας ακολουθούν κρυφά σε όλο το διαδίκτυο.\n\nΜάθετε περισσότερα στη σημείωση απορρήτου μας.</string>
     <!-- Text for the link to the privacy notice webpage for set as firefox default browser screen.
     This is part of the string with the key "juno_onboarding_default_browser_description". -->
     <string name="juno_onboarding_default_browser_description_link_text" tools:ignore="UnusedResources">σημείωση απορρήτου</string>
@@ -345,8 +356,13 @@
     <string name="juno_onboarding_default_browser_negative_button" tools:ignore="UnusedResources">Όχι τώρα</string>
     <!-- Title for sign in to sync screen. -->
     <string name="juno_onboarding_sign_in_title" moz:removedIn="120" tools:ignore="UnusedResources">Εναλλαγή από τηλέφωνο σε υπολογιστή και αντίστροφα</string>
+    <!-- Title for sign in to sync screen. -->
+    <string name="juno_onboarding_sign_in_title_2">Διατηρήστε την κρυπτογράφηση κατά την εναλλαγή των συσκευών</string>
     <!-- Description for sign in to sync screen. -->
     <string name="juno_onboarding_sign_in_description" moz:removedIn="120" tools:ignore="UnusedResources">Λάβετε καρτέλες και κωδικούς πρόσβασης από τις άλλες συσκευές σας για να συνεχίσετε από εκεί που σταματήσατε.</string>
+    <!-- Description for sign in to sync screen. Nimbus experiments do not support string placeholders.
+     Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_sign_in_description_2">Όταν είστε συνδεδεμένοι και συγχρονισμένοι, είστε πιο ασφαλείς. Το Firefox κρυπτογραφεί τους κωδικούς πρόσβασης, τους σελιδοδείκτες σας και πολλά άλλα.</string>
     <!-- Text for the button to sign in to sync on the device -->
     <string name="juno_onboarding_sign_in_positive_button" tools:ignore="UnusedResources">Σύνδεση</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
@@ -354,9 +370,15 @@
     <!-- Title for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
         Note: The word "Firefox" should NOT be translated -->
     <string name="juno_onboarding_enable_notifications_title_nimbus" moz:removedIn="120" tools:ignore="UnusedResources">Οι ειδοποιήσεις σάς βοηθούν να κάνετε περισσότερα με το Firefox</string>
+    <!-- Title for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_enable_notifications_title_nimbus_2">Οι ειδοποιήσεις σάς βοηθούν να παραμένετε ασφαλείς με το Firefox</string>
     <!-- Description for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
        Note: The word "Firefox" should NOT be translated -->
     <string name="juno_onboarding_enable_notifications_description_nimbus" moz:removedIn="120" tools:ignore="UnusedResources">Αποστολή καρτελών μεταξύ συσκευών, διαχείριση λήψεων και λήψη συμβουλών για την αξιοποίηση του Firefox στο έπακρο.</string>
+    <!-- Description for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+       Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_enable_notifications_description_nimbus_2">Στείλτε με ασφάλεια καρτέλες μεταξύ των συσκευών σας και ανακαλύψτε άλλες λειτουργίες απορρήτου στο Firefox.</string>
     <!-- Text for the button to request notification permission on the device -->
     <string name="juno_onboarding_enable_notifications_positive_button" tools:ignore="UnusedResources">Ενεργοποίηση ειδοποιήσεων</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
@@ -397,8 +419,10 @@
     <string name="preferences_category_select_default_search_engine">Επιλέξτε μία</string>
     <!-- Preference for settings related to managing search shortcuts for the quick search menu -->
     <string name="preferences_manage_search_shortcuts" moz:removedIn="120" tools:ignore="UnusedResources">Διαχείριση συντομεύσεων αναζήτησης</string>
+    <!-- Preference for settings related to managing search shortcuts for the quick search menu -->
+    <string name="preferences_manage_search_shortcuts_2">Διαχείριση εναλλακτικών μηχανών αναζήτησης</string>
     <!-- Summary for preference for settings related to managing search shortcuts for the quick search menu -->
-    <string name="preferences_manage_search_shortcuts_summary">Επεξεργασία μηχανών που είναι ορατές στο μενού αναζήτησης</string>
+    <string name="preferences_manage_search_shortcuts_summary">Επεξεργαστείτε τις μηχανές που εμφανίζονται στο μενού αναζήτησης</string>
     <!-- Preference category for settings related to managing search shortcuts for the quick search menu -->
     <string name="preferences_category_engines_in_search_menu">Ορατές μηχανές στο μενού αναζήτησης</string>
     <!-- Preference for settings related to changing the default search engine -->
@@ -407,6 +431,8 @@
     <string name="preferences_search">Αναζήτηση</string>
     <!-- Preference for settings related to Search engines -->
     <string name="preferences_search_engines">Μηχανές αναζήτησης</string>
+    <!-- Preference for settings related to Search engines suggestions-->
+    <string name="preferences_search_engines_suggestions">Προτάσεις από μηχανές αναζήτησης</string>
     <!-- Preference for settings related to Search address bar -->
     <string name="preferences_search_address_bar" moz:removedIn="120" tools:ignore="UnusedResources">Γραμμή διευθύνσεων</string>
     <!-- Preference Category for settings related to Search address bar -->
@@ -433,25 +459,29 @@
     <!-- Preference for opening links in a private tab-->
     <string name="preferences_open_links_in_a_private_tab">Άνοιγμα συνδέσμων σε ιδιωτική καρτέλα</string>
     <!-- Preference for allowing screenshots to be taken while in a private tab-->
-    <string name="preferences_allow_screenshots_in_private_mode">Να επιτρέπονται στιγμιότυπα στην ιδιωτική περιήγηση</string>
+    <string name="preferences_allow_screenshots_in_private_mode">Στιγμιότυπα οθόνης στην ιδιωτική περιήγηση</string>
     <!-- Will inform the user of the risk of activating Allow screenshots in private browsing option -->
-    <string name="preferences_screenshots_in_private_mode_disclaimer">Αν επιτραπούν, οι ιδιωτικές καρτέλες θα είναι επίσης ορατές όταν είναι ανοιχτές πολλές εφαρμογές</string>
+    <string name="preferences_screenshots_in_private_mode_disclaimer">Αν ενεργοποιηθεί, οι ιδιωτικές καρτέλες θα είναι επίσης ορατές όταν είναι ανοικτές πολλές εφαρμογές</string>
     <!-- Preference for adding private browsing shortcut -->
     <string name="preferences_add_private_browsing_shortcut">Προσθήκη συντόμευσης ιδιωτικής περιήγησης</string>
     <!-- Preference for enabling "HTTPS-Only" mode -->
     <string name="preferences_https_only_title">Λειτουργία «Μόνο HTTPS»</string>
 
     <!-- Preference for removing cookie/consent banners from sites automatically. See reduce_cookie_banner_summary for additional context. -->
-    <string name="preferences_cookie_banner_reduction">Μείωση μηνυμάτων για cookies</string>
+    <string name="preferences_cookie_banner_reduction" moz:RemovedIn="121" tools:ignore="UnusedResources">Μείωση μηνυμάτων για cookies</string>
+    <!-- Label for cookie banner section in quick settings panel. -->
+    <string name="cookie_banner_blocker">Αποκλεισμός μηνυμάτων για cookie</string>
+    <!-- Preference for removing cookie/consent banners from sites automatically in private mode. See reduce_cookie_banner_summary for additional context. -->
+    <string name="preferences_cookie_banner_reduction_private_mode">Αποκλεισμός μηνυμάτων για cookie σε ιδιωτική περιήγηση</string>
     <!-- Preference for rejecting or removing as many cookie/consent banners as possible on sites. See reduce_cookie_banner_summary for additional context. -->
-    <string name="reduce_cookie_banner_option">Μείωση μηνυμάτων για cookies</string>
+    <string name="reduce_cookie_banner_option" moz:RemovedIn="121" tools:ignore="UnusedResources">Μείωση μηνυμάτων για cookies</string>
     <!-- Summary of cookie banner handling preference if the setting disabled is set to off -->
-    <string name="reduce_cookie_banner_option_off">Ανενεργή</string>
+    <string name="reduce_cookie_banner_option_off" moz:RemovedIn="121" tools:ignore="UnusedResources">Ανενεργή</string>
     <!-- Summary of cookie banner handling preference if the setting enabled is set to on -->
-    <string name="reduce_cookie_banner_option_on">Ενεργή</string>
+    <string name="reduce_cookie_banner_option_on" moz:RemovedIn="121" tools:ignore="UnusedResources">Ενεργή</string>
 
     <!-- Summary for the preference for rejecting all cookies whenever possible. The first parameter is the application name -->
-    <string name="reduce_cookie_banner_summary_1">Το %1$s προσπαθεί να απορρίπτει αυτόματα τα μηνύματα αιτημάτων για cookies.</string>
+    <string name="reduce_cookie_banner_summary_1" moz:RemovedIn="121" tools:ignore="UnusedResources">Το %1$s προσπαθεί να απορρίπτει αυτόματα τα μηνύματα αιτημάτων για cookies.</string>
     <!-- Text for indicating cookie banner handling is off this site, this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_off_for_site">Ανενεργή για αυτόν τον ιστότοπο</string>
     <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
@@ -469,28 +499,41 @@
     <!-- Text for indicating cookie banner handling is currently not supported for this site, this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_unsupported_site">Ο ιστότοπος δεν υποστηρίζεται</string>
     <!-- Title text for a detail explanation indicating cookie banner handling is on this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
-    <string name="reduce_cookie_banner_details_panel_title_on_for_site">Ενεργοποίηση μείωσης μηνυμάτων για cookies στο %1$s;</string>
+    <string name="reduce_cookie_banner_details_panel_title_on_for_site" moz:RemovedIn="121" tools:ignore="UnusedResources">Ενεργοποίηση μείωσης μηνυμάτων για cookies στο %1$s;</string>
+    <!-- Title text for a detail explanation indicating cookie banner handling is on this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
+    <string name="reduce_cookie_banner_details_panel_title_on_for_site_1">Ενεργοποίηση αποκλεισμού μηνυμάτων για cookie για το %1$s;</string>
     <!-- Title text for a detail explanation indicating cookie banner handling is off this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
-    <string name="reduce_cookie_banner_details_panel_title_off_for_site">Απενεργοποίηση μείωσης μηνυμάτων για cookies στο %1$s;</string>
+    <string name="reduce_cookie_banner_details_panel_title_off_for_site" moz:RemovedIn="121" tools:ignore="UnusedResources">Απενεργοποίηση μείωσης μηνυμάτων για cookies στο %1$s;</string>
 
+    <!-- Title text for a detail explanation indicating cookie banner handling is off this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
+    <string name="reduce_cookie_banner_details_panel_title_off_for_site_1">Απενεργοποίηση αποκλεισμού μηνυμάτων για cookie για το %1$s;</string>
     <!-- Title text for a detail explanation indicating cookie banner reducer didn't work for the current site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name-->
     <string name="reduce_cookie_banner_details_panel_title_unsupported_site_request_2">Το %1$s δεν μπορεί να απορρίψει αυτόματα τα αιτήματα για cookies σε αυτόν τον ιστότοπο. Μπορείτε να στείλετε ένα αίτημα για υποστήριξη αυτού του ιστοτόπου στο μέλλον.</string>
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
-    <string name="reduce_cookie_banner_details_panel_description_off_for_site">Το %1$s θα απαλείψει τα cookies του ιστοτόπου και θα ανανεώσει τη σελίδα. Η απαλοιφή όλων των cookies ενδέχεται να σας αποσυνδέσει ή να αδειάσει τα καλάθια αγορών.</string>
+    <string name="reduce_cookie_banner_details_panel_description_off_for_site" moz:RemovedIn="121" tools:ignore="UnusedResources">Το %1$s θα απαλείψει τα cookies του ιστοτόπου και θα ανανεώσει τη σελίδα. Η απαλοιφή όλων των cookies ενδέχεται να σας αποσυνδέσει ή να αδειάσει τα καλάθια αγορών.</string>
 
+    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
+    <string name="reduce_cookie_banner_details_panel_description_off_for_site_1">Απενεργοποιήστε το και το %1$s θα διαγράψει τα cookie και θα φορτώσει ξανά αυτόν τον ιστότοπο. Μπορεί να αποσυνδεθείτε ή να αδειάσουν τα καλάθια αγορών σας.</string>
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
-    <string name="reduce_cookie_banner_details_panel_description_on_for_site_2">Το %1$s προσπαθεί να απορρίψει αυτόματα όλα τα αιτήματα για cookies σε υποστηριζόμενους ιστότοπους.</string>
+    <string name="reduce_cookie_banner_details_panel_description_on_for_site_2" moz:RemovedIn="121" tools:ignore="UnusedResources">Το %1$s προσπαθεί να απορρίψει αυτόματα όλα τα αιτήματα για cookies σε υποστηριζόμενους ιστότοπους.</string>
+    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
+    <string name="reduce_cookie_banner_details_panel_description_on_for_site_3">Ενεργοποιήστε το και το %1$s θα προσπαθεί να απορρίπτει αυτόματα όλα τα μηνύματα για cookie σε αυτόν τον ιστότοπο.</string>
     <!-- Title text for the cookie banner re-engagement dialog. The first parameter is the application name. -->
-    <string name="reduce_cookie_banner_dialog_title" moz:RemovedIn="120" tools:ignore="UnusedResources">Να επιτρέπεται στο %1$s η απόρριψη μηνυμάτων για cookies;</string>
+    <string name="reduce_cookie_banner_dialog_title" moz:RemovedIn="121" tools:ignore="UnusedResources">Να επιτρέπεται στο %1$s η απόρριψη μηνυμάτων για cookies;</string>
     <!-- Body text for the cookie banner re-engagement dialog use. The first parameter is the application name. -->
-    <string name="reduce_cookie_banner_dialog_body" moz:RemovedIn="120" tools:ignore="UnusedResources">Το %1$s μπορεί να απορρίπτει αυτόματα πολλά μηνύματα αιτημάτων για cookies.</string>
+    <string name="reduce_cookie_banner_dialog_body" moz:RemovedIn="121" tools:ignore="UnusedResources">Το %1$s μπορεί να απορρίπτει αυτόματα πολλά μηνύματα αιτημάτων για cookies.</string>
     <!-- Remind me later text button for the onboarding dialog -->
-    <string name="reduce_cookie_banner_dialog_not_now_button" moz:RemovedIn="120" tools:ignore="UnusedResources">Όχι τώρα</string>
+    <string name="reduce_cookie_banner_dialog_not_now_button" moz:RemovedIn="121" tools:ignore="UnusedResources">Όχι τώρα</string>
     <!-- Snack text for the cookie banner dialog, after user hit the dismiss banner button -->
-    <string name="reduce_cookie_banner_dialog_snackbar_text" moz:RemovedIn="120" tools:ignore="UnusedResources">Θα βλέπετε λιγότερα αιτήματα για cookies</string>
+    <string name="reduce_cookie_banner_dialog_snackbar_text" moz:RemovedIn="121" tools:ignore="UnusedResources">Θα βλέπετε λιγότερα αιτήματα για cookies</string>
 
     <!-- Change setting text button, for the cookie banner re-engagement dialog -->
-    <string name="reduce_cookie_banner_dialog_change_setting_button" moz:RemovedIn="120" tools:ignore="UnusedResources">Αποδοχή</string>
+    <string name="reduce_cookie_banner_dialog_change_setting_button" moz:RemovedIn="121" tools:ignore="UnusedResources">Αποδοχή</string>
+
+    <!--Title for the cookie banner re-engagement CFR, the placeholder is replaced with app name -->
+    <string name="cookie_banner_cfr_title">Το %1$s μόλις αρνήθηκε τα cookie για εσάς</string>
+    <!--Message for the cookie banner re-engagement CFR -->
+    <string name="cookie_banner_cfr_message">Λιγότεροι περισπασμοί, λιγότερα cookie που σας παρακολουθούν σε αυτόν τον ιστότοπο.</string>
 
     <!-- Description of the preference to enable "HTTPS-Only" mode. -->
     <string name="preferences_https_only_summary">Προσπαθεί αυτόματα να συνδεθεί σε ιστοτόπους με το πρωτόκολλο κρυπτογράφησης HTTPS για αυξημένη ασφάλεια.</string>
@@ -577,12 +620,12 @@
     <string name="preferences_show_sponsored_suggestions">Προτάσεις από χορηγούς</string>
     <!-- Summary for preference to show sponsored Firefox Suggest search suggestions.
          The first parameter is the name of the application. -->
-    <string name="preferences_show_sponsored_suggestions_summary">Υποστήριξη του %1$s με περιστασιακές προτάσεις χορηγών</string>
+    <string name="preferences_show_sponsored_suggestions_summary">Υποστηρίξτε το %1$s με περιστασιακές προτάσεις χορηγών</string>
     <!-- Preference title for switch preference to show Firefox Suggest search suggestions for web content.
          The first parameter is the name of the application. -->
-    <string name="preferences_show_nonsponsored_suggestions">Προτάσεις από %1$s</string>
+    <string name="preferences_show_nonsponsored_suggestions">Προτάσεις από το %1$s</string>
     <!-- Summary for preference to show Firefox Suggest search suggestions for web content -->
-    <string name="preferences_show_nonsponsored_suggestions_summary">Λήψη προτάσεων σχετικά με την αναζήτησή σας από το διαδίκτυο</string>
+    <string name="preferences_show_nonsponsored_suggestions_summary">Λάβετε προτάσεις από το διαδίκτυο που σχετίζονται με την αναζήτησή σας</string>
     <!-- Preference for open links in third party apps -->
     <string name="preferences_open_links_in_apps">Άνοιγμα συνδέσμων σε εφαρμογές</string>
     <!-- Preference for open links in third party apps always open in apps option -->
@@ -605,9 +648,9 @@
     <string name="preferences_notifications">Ειδοποιήσεις</string>
 
     <!-- Summary for notification preference indicating notifications are allowed -->
-    <string name="notifications_allowed_summary">Επιτρέπεται</string>
+    <string name="notifications_allowed_summary">Επιτρέπονται</string>
     <!-- Summary for notification preference indicating notifications are not allowed -->
-    <string name="notifications_not_allowed_summary">Δεν επιτρέπεται</string>
+    <string name="notifications_not_allowed_summary">Δεν επιτρέπονται</string>
 
     <!-- Add-on Preferences -->
     <!-- Preference to customize the configured AMO (addons.mozilla.org) collection -->
@@ -677,6 +720,9 @@
     <!-- Wallpaper onboarding dialog learn more button text. The button navigates to the wallpaper settings screen. -->
     <string name="wallpapers_onboarding_dialog_explore_more_button_text">Εξερευνήστε περισσότερες ταπετσαρίες</string>
 
+    <!-- Add-ons general availability nimbus message-->
+    <!-- Title of the Nimbus message for add-ons general availability-->
+    <string name="addon_ga_message_title" tools:ignore="UnusedResources">Διατίθενται τώρα νέα πρόσθετα</string>
     <!-- Body of the Nimbus message for add-ons general availability. 'Firefox' intentionally hardcoded here-->
     <string name="addon_ga_message_body" tools:ignore="UnusedResources">Δείτε 100+ νέες επεκτάσεις που σας επιτρέπουν να κάνετε το Firefox δικό σας.</string>
     <!-- Button text of the Nimbus message for add-ons general availability. -->
@@ -922,7 +968,7 @@
     <!-- Category header of a preference that allows a user to enable or disable the inactive tabs feature -->
     <string name="preferences_inactive_tabs">Μετακίνηση παλαιών καρτελών στις ανενεργές</string>
     <!-- Title of inactive tabs preference -->
-    <string name="preferences_inactive_tabs_title">Οι καρτέλες που δεν έχετε προβάλει για δύο εβδομάδες μετακινούνται στην ενότητα «Ανενεργές».</string>
+    <string name="preferences_inactive_tabs_title">Μετακίνηση των καρτελών που δεν έχουν προβληθεί για δύο εβδομάδες στην ενότητα «Ανενεργές».</string>
 
     <!-- Studies -->
     <!-- Title of the remove studies button -->
@@ -1135,7 +1181,7 @@
 
     <!-- Site Permissions -->
     <!-- Button label that take the user to the Android App setting -->
-    <string name="phone_feature_go_to_settings">Μετάβαση στις Ρυθμίσεις</string>
+    <string name="phone_feature_go_to_settings">Μετάβαση στις ρυθμίσεις</string>
     <!-- Content description (not visible, for screen readers etc.): Quick settings sheet
         to give users access to site specific information / settings. For example:
         Secure settings status and a button to modify site permissions -->
@@ -1177,9 +1223,9 @@
     <!-- Label that indicates that a permission must be blocked -->
     <string name="preference_option_phone_feature_blocked">Φραγή</string>
     <!-- Label that indicates that a permission must be allowed -->
-    <string name="preference_option_phone_feature_allowed">Επιτρέπεται</string>
+    <string name="preference_option_phone_feature_allowed">Αποδοχή</string>
     <!--Label that indicates a permission is by the Android OS-->
-    <string name="phone_feature_blocked_by_android">Αποκλείστηκε από Android</string>
+    <string name="phone_feature_blocked_by_android">Αποκλείστηκε από το Android</string>
     <!-- Preference for showing a list of websites that the default configurations won't apply to them -->
     <string name="preference_exceptions">Εξαιρέσεις</string>
     <!-- Summary of tracking protection preference if tracking protection is set to off -->
@@ -1197,7 +1243,7 @@
     <!-- Label that indicates that video and audio autoplay is only allowed over Wi-Fi -->
     <string name="preference_option_autoplay_allowed_wifi_only2">Φραγή ήχου και βίντεο μόνο σε σύνδεση δεδομένων</string>
     <!-- Subtext that explains 'autoplay on Wi-Fi only' option -->
-    <string name="preference_option_autoplay_allowed_wifi_subtext">Η αναπαραγωγή ήχων/βίντεο θα γίνεται σε Wi-Fi</string>
+    <string name="preference_option_autoplay_allowed_wifi_subtext">Θα γίνεται αναπαραγωγή ήχου και βίντεο σε Wi-Fi</string>
     <!-- Label for global setting that indicates that video autoplay is allowed, but audio autoplay is blocked -->
     <string name="preference_option_autoplay_block_audio2">Φραγή ήχου μόνο</string>
     <!-- Label for site specific setting that indicates that video autoplay is allowed, but audio autoplay is blocked -->
@@ -1418,7 +1464,7 @@
     <string name="preference_accessibility_auto_size_2">Αυτόματο μέγεθος γραμματοσειράς</string>
 
     <!-- Summary for Accessibility Text Automatic Size Scaling Preference -->
-    <string name="preference_accessibility_auto_size_summary">Το μέγεθος θα καθορίζεται από τις ρυθμίσεις Android. Απενεργοποιήστε το για να διαχειριστείτε το μέγεθος από εδώ.</string>
+    <string name="preference_accessibility_auto_size_summary">Το μέγεθος θα καθορίζεται από τις ρυθμίσεις του Android. Απενεργοποιήστε το για να διαχειριστείτε το μέγεθος από εδώ.</string>
 
     <!-- Title for the Delete browsing data preference -->
     <string name="preferences_delete_browsing_data">Διαγραφή δεδομένων περιήγησης</string>
@@ -1531,7 +1577,7 @@
     <!-- Preference summary for enhanced tracking protection settings on/off switch -->
     <string name="preference_enhanced_tracking_protection_summary">Τώρα με Ολική προστασία cookie, η πιο ισχυρή μας φύλαξη ενάντια στους ιχνηλάτες μεταξύ ιστοτόπων.</string>
     <!-- Description of enhanced tracking protection. The parameter is the name of the application (For example: Firefox Fenix) -->
-    <string name="preference_enhanced_tracking_protection_explanation_2">Το %s σάς προστατεύει από τους περισσότερους, συνηθισμένους ιχνηλάτες που ακολουθούν ό,τι κάνετε στο διαδίκτυο.</string>
+    <string name="preference_enhanced_tracking_protection_explanation_2">Το %s σάς προστατεύει από τους περισσότερους, συνηθισμένους ιχνηλάτες που καταγράφουν ό,τι κάνετε στο διαδίκτυο.</string>
     <!-- Text displayed that links to website about enhanced tracking protection -->
     <string name="preference_enhanced_tracking_protection_explanation_learn_more">Μάθετε περισσότερα</string>
     <!-- Preference for enhanced tracking protection for the standard protection settings -->
@@ -1574,7 +1620,7 @@
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
     <string name="preference_enhanced_tracking_protection_custom_cryptominers">Cryptominer</string>
     <!-- Preference for enhanced tracking protection for the custom protection settings -->
-    <string name="preference_enhanced_tracking_protection_custom_fingerprinters">Fingerprinters</string>
+    <string name="preference_enhanced_tracking_protection_custom_fingerprinters">Fingerprinter</string>
     <!-- Button label for navigating to the Enhanced Tracking Protection details -->
     <string name="enhanced_tracking_protection_details">Λεπτομέρειες</string>
     <!-- Header for categories that are being being blocked by current Enhanced Tracking Protection settings -->
@@ -1598,7 +1644,7 @@
     <!-- Description of cryptominers that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_cryptominers_description">Εμποδίζει την πρόσβαση κακόβουλων σεναρίων εξόρυξης ψηφιακών νομισμάτων στη συσκευή σας.</string>
     <!-- Category of trackers (fingerprinters) that can be blocked by Enhanced Tracking Protection -->
-    <string name="etp_fingerprinters_title">Fingerprinters</string>
+    <string name="etp_fingerprinters_title">Fingerprinter</string>
     <!-- Description of fingerprinters that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_fingerprinters_description">Διακόπτει τη συλλογή μοναδικών, αναγνωριστικών δεδομένων της συσκευής σας που μπορούν να χρησιμοποιηθούν για σκοπούς καταγραφής.</string>
     <!-- Category of trackers (tracking content) that can be blocked by Enhanced Tracking Protection -->
@@ -1933,7 +1979,7 @@
     <!-- Placeholder text shown in the Search String TextField before a user enters text -->
     <string name="search_add_custom_engine_search_string_hint_2">URL για χρήση στην αναζήτηση</string>
     <!-- Description text for the Search String TextField. The %s is part of the string -->
-    <string name="search_add_custom_engine_search_string_example" formatted="false">Αντικαταστήστε το ερώτημα με “%s”. Παράδειγμα:\nhttps://www.google.com/search?q=%s</string>
+    <string name="search_add_custom_engine_search_string_example" formatted="false">Αντικαταστήστε τον όρο αναζήτησης με «%s». Παράδειγμα:\nhttps://www.google.com/search?q=%s</string>
 
     <!-- Accessibility description for the form in which details about the custom search engine are entered -->
     <string name="search_add_custom_engine_form_description">Λεπτομέρειες προσαρμοσμένης μηχανής αναζήτησης</string>
@@ -1941,7 +1987,7 @@
     <!-- Label for the TextField in which user enters custom search engine suggestion URL -->
     <string name="search_add_custom_engine_suggest_url_label">API προτάσεων αναζήτησης (προαιρετικό)</string>
     <!-- Placeholder text shown in the Search Suggestion String TextField before a user enters text -->
-    <string name="search_add_custom_engine_suggest_string_hint">URL API προτάσεων αναζήτησης</string>
+    <string name="search_add_custom_engine_suggest_string_hint">URL για το API προτάσεων αναζήτησης</string>
     <!-- Description text for the Search Suggestion String TextField. The %s is part of the string -->
     <string name="search_add_custom_engine_suggest_string_example_2" formatted="false">Αντικαταστήστε τον όρο αναζήτησης με «%s». Παράδειγμα:\nhttps://suggestqueries.google.com/complete/search?client=firefox&amp;q=%s</string>
     <!-- The text for the "Save" button for saving a custom search engine -->
@@ -1965,13 +2011,13 @@
     <string name="search_delete_search_engine_success_message">Το %s διαγράφηκε</string>
 
     <!-- Heading for the instructions to allow a permission -->
-    <string name="phone_feature_blocked_intro">Για να το επιτρέψετε:</string>
+    <string name="phone_feature_blocked_intro">Για να επιτρέψετε την πρόσβαση:</string>
     <!-- First step for the allowing a permission -->
-    <string name="phone_feature_blocked_step_settings">1. Μεταβείτε στις Ρυθμίσεις Android</string>
+    <string name="phone_feature_blocked_step_settings">1. Μεταβείτε στις ρυθμίσεις του Android</string>
     <!-- Second step for the allowing a permission -->
-    <string name="phone_feature_blocked_step_permissions"><![CDATA[2. Επιλέξτε <b>Άδειες</b>]]></string>
+    <string name="phone_feature_blocked_step_permissions"><![CDATA[2. Επιλέξτε <b>Δικαιώματα</b>]]></string>
     <!-- Third step for the allowing a permission (Fore example: Camera) -->
-    <string name="phone_feature_blocked_step_feature"><![CDATA[3. Ενεργοποιήστε το <b>%1$s</b>]]></string>
+    <string name="phone_feature_blocked_step_feature"><![CDATA[3. Ενεργοποιήστε την επιλογή <b>%1$s</b>]]></string>
 
     <!-- Label that indicates a site is using a secure connection -->
     <string name="quick_settings_sheet_secure_connection_2">Η σύνδεση είναι ασφαλής</string>
@@ -2049,7 +2095,7 @@
     <!-- Text displayed asking user to re-authenticate -->
     <string name="synced_tabs_reauth">Παρακαλούμε επαληθεύστε ξανά την ταυτότητά σας.</string>
     <!-- Text displayed when user has disabled tab syncing in Firefox Sync Account -->
-    <string name="synced_tabs_enable_tab_syncing">Παρακαλούμε ενεργοποιήστε το συγχρονισμό καρτελών.</string>
+    <string name="synced_tabs_enable_tab_syncing">Παρακαλούμε ενεργοποιήστε τον συγχρονισμό καρτελών.</string>
 
     <!-- Text displayed when user has no tabs that have been synced -->
     <string name="synced_tabs_no_tabs">Δεν έχετε καμία άλλη καρτέλα ανοικτή στο Firefox σε άλλες σας συσκευές.</string>
@@ -2168,7 +2214,7 @@
     <!-- Summary for grades A and B for review quality check adjusted grading. -->
     <string name="review_quality_check_grade_a_b_description">Αξιόπιστες κριτικές</string>
     <!-- Summary for grade C for review quality check adjusted grading. -->
-    <string name="review_quality_check_grade_c_description">Μίγμα αξιόπιστων και αναξιόπιστων κριτικών</string>
+    <string name="review_quality_check_grade_c_description">Συνδυασμός αξιόπιστων και αναξιόπιστων κριτικών</string>
     <!-- Summary for grades D and F for review quality check adjusted grading. -->
     <string name="review_quality_check_grade_d_f_description">Αναξιόπιστες κριτικές</string>
     <!-- Text for title presenting the reliability of a product's reviews. -->
@@ -2202,7 +2248,9 @@
     <!-- Text for learn more caption presenting a link with information about review quality. First parameter is for clickable text defined in review_quality_check_info_learn_more_link. -->
     <string name="review_quality_check_info_learn_more">Μάθετε περισσότερα σχετικά με το %s.</string>
     <!-- Clickable text that links to review quality check SuMo page. First parameter is the Fakespot product name. In the phrase "Fakespot by Mozilla", "by" can be localized. Does not need to stay by. -->
-    <string name="review_quality_check_info_learn_more_link">πώς το %s της Mozilla προσδιορίζει την ποιότητα των κριτικών</string>
+    <string name="review_quality_check_info_learn_more_link" moz:RemovedIn="121" tools:ignore="UnusedResources">πώς το %s της Mozilla προσδιορίζει την ποιότητα των κριτικών</string>
+    <!-- Clickable text that links to review quality check SuMo page. First parameter is the Fakespot product name. -->
+    <string name="review_quality_check_info_learn_more_link_2">πώς το %s προσδιορίζει την ποιότητα των κριτικών</string>
     <!-- Text for title of settings section. -->
     <string name="review_quality_check_settings_title">Ρυθμίσεις</string>
     <!-- Text for label for switch preference to show recommended products from review quality check settings section. -->
@@ -2286,11 +2334,17 @@
     <!-- Clickable text from the contextual onboarding card that links to review quality check support article. -->
     <string name="review_quality_check_contextual_onboarding_learn_more_link">Μάθετε περισσότερα</string>
     <!-- Caption text to be displayed in review quality check contextual onboarding card above the opt-in button. First parameter is the Fakespot product name. Following parameters are for clickable texts defined in review_quality_check_contextual_onboarding_privacy_policy and review_quality_check_contextual_onboarding_terms_use. In the phrase "Fakespot by Mozilla", "by" can be localized. Does not need to stay by. -->
-    <string name="review_quality_check_contextual_onboarding_caption">Επιλέγοντας «Έναρξη δοκιμής», αποδέχεστε την %2$s και τους %3$s του %1$s, που παρέχεται από τη Mozilla.</string>
+    <string name="review_quality_check_contextual_onboarding_caption" moz:RemovedIn="121" tools:ignore="UnusedResources">Επιλέγοντας «Έναρξη δοκιμής», αποδέχεστε την %2$s και τους %3$s του %1$s, που παρέχεται από τη Mozilla.</string>
+    <!-- Caption text to be displayed in review quality check contextual onboarding card above the opt-in button. Parameter is the Fakespot product name. After the colon, what appears are two links, each on their own line. The first link is to a Privacy policy (review_quality_check_contextual_onboarding_privacy_policy_2). The second link is to Terms of use (review_quality_check_contextual_onboarding_terms_use_2). -->
+    <string name="review_quality_check_contextual_onboarding_caption_2">Επιλέγοντας «Έναρξη δοκιμής», συμφωνείτε με τα ακόλουθα από το %1$s:</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot privacy policy. -->
-    <string name="review_quality_check_contextual_onboarding_privacy_policy">πολιτική απορρήτου</string>
+    <string name="review_quality_check_contextual_onboarding_privacy_policy" moz:RemovedIn="121" tools:ignore="UnusedResources">πολιτική απορρήτου</string>
+    <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot privacy policy. -->
+    <string name="review_quality_check_contextual_onboarding_privacy_policy_2">Πολιτική απορρήτου</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot terms of use. -->
-    <string name="review_quality_check_contextual_onboarding_terms_use">όρους χρήσης</string>
+    <string name="review_quality_check_contextual_onboarding_terms_use" moz:RemovedIn="121" tools:ignore="UnusedResources">όρους χρήσης</string>
+    <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot terms of use. -->
+    <string name="review_quality_check_contextual_onboarding_terms_use_2">Όροι χρήσης</string>
     <!-- Text for opt-in button from the review quality check contextual onboarding card. -->
     <string name="review_quality_check_contextual_onboarding_primary_button_text">Έναρξη δοκιμής</string>
     <!-- Text for opt-out button from the review quality check contextual onboarding card. -->
@@ -2329,8 +2383,12 @@
     <!-- Accessibility services actions labels. These will be appended to accessibility actions like "Double tap to.." but not by or applications but by services like Talkback. -->
     <!-- Action label for elements that can be collapsed if interacting with them. Talkback will append this to say "Double tap to collapse". -->
     <string name="a11y_action_label_collapse">σύμπτυξη</string>
+    <!-- Current state for elements that can be collapsed if interacting with them. Talkback will dictate this after a state change. -->
+    <string name="a11y_state_label_collapsed">συμπτυγμένο</string>
     <!-- Action label for elements that can be expanded if interacting with them. Talkback will append this to say "Double tap to expand". -->
     <string name="a11y_action_label_expand">ανάπτυξη</string>
+    <!-- Current state for elements that can be expanded if interacting with them. Talkback will dictate this after a state change. -->
+    <string name="a11y_state_label_expanded">αναπτυγμένο</string>
     <!-- Action label for links to a website containing documentation about a wallpaper collection. Talkback will append this to say "Double tap to open link to learn more about this collection". -->
     <string name="a11y_action_label_wallpaper_collection_learn_more">άνοιγμα συνδέσμου για περισσότερες πληροφορίες σχετικά με αυτήν τη συλλογή</string>
     <!-- Action label for links that point to an article. Talkback will append this to say "Double tap to read the article". -->

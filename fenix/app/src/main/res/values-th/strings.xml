@@ -205,6 +205,8 @@
     <string name="browser_menu_library">ห้องสมุด</string>
     <!-- Browser menu toggle that requests a desktop site -->
     <string name="browser_menu_desktop_site">ไซต์เดสก์ท็อป</string>
+    <!-- Browser menu button that reopens a private tab as a regular tab -->
+    <string name="browser_menu_open_in_regular_tab">เปิดในแท็บปกติ</string>
     <!-- Browser menu toggle that adds a shortcut to the site on the device home screen. -->
     <string name="browser_menu_add_to_homescreen">เพิ่มไปยังหน้าจอหลัก</string>
     <!-- Browser menu toggle that installs a Progressive Web App shortcut to the site on the device home screen. -->
@@ -261,7 +263,7 @@
     <!-- Button in the search view that lets a user search by scanning a QR code -->
     <string name="search_scan_button">สแกน</string>
     <!-- Button in the search view that lets a user change their search engine -->
-    <string name="search_engine_button">เครื่องมือค้นหา</string>
+    <string name="search_engine_button" moz:RemovedIn="121" tools:ignore="UnusedResources">เครื่องมือค้นหา</string>
     <!-- Button in the search view when shortcuts are displayed that takes a user to the search engine settings -->
     <string name="search_shortcuts_engine_settings">การตั้งค่าเครื่องมือค้นหา</string>
     <!-- Button in the search view that lets a user navigate to the site in their clipboard -->
@@ -335,6 +337,8 @@
     <!-- Description for set firefox as default browser screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
         Note: The word "Firefox" should NOT be translated -->
     <string name="juno_onboarding_default_browser_description_nimbus" moz:removedIn="120" tools:ignore="UnusedResources">Firefox ให้ความสำคัญกับผู้คนมากกว่าผลกำไรและปกป้องความเป็นส่วนตัวของคุณด้วยการปิดกั้นเครื่องมือติดตามข้ามไซต์\n\nเรียนรู้เพิ่มเติมในประกาศความเป็นส่วนตัวของเรา</string>
+    <!-- Description for set firefox as default browser screen used by Nimbus experiments. -->
+    <string name="juno_onboarding_default_browser_description_nimbus_2">เบราว์เซอร์ที่ได้รับการสนับสนุนจากองค์กรไม่แสวงหาผลกำไรของเราช่วยหยุดบริษัทต่าง ๆ ไม่ให้แอบติดตามคุณทางเว็บได้\n\nเรียนรู้เพิ่มเติมในประกาศความเป็นส่วนตัวของเรา</string>
     <!-- Text for the link to the privacy notice webpage for set as firefox default browser screen.
     This is part of the string with the key "juno_onboarding_default_browser_description". -->
     <string name="juno_onboarding_default_browser_description_link_text" tools:ignore="UnusedResources">ประกาศความเป็นส่วนตัว</string>
@@ -348,6 +352,9 @@
     <string name="juno_onboarding_sign_in_title_2">คงการเข้ารหัสเมื่อคุณเปลี่ยนจากอุปกรณ์เครื่องหนึ่งไปยังอีกเครื่องหนึ่ง</string>
     <!-- Description for sign in to sync screen. -->
     <string name="juno_onboarding_sign_in_description" moz:removedIn="120" tools:ignore="UnusedResources">นำแท็บและรหัสผ่านจากอุปกรณ์อื่น ๆ ของคุณเข้ามาเพื่อเรียกดูต่อจากที่คุณค้างไว้</string>
+    <!-- Description for sign in to sync screen. Nimbus experiments do not support string placeholders.
+     Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_sign_in_description_2">เมื่อคุณลงชื่อเข้าและซิงค์แล้ว คุณจะปลอดภัยยิ่งขึ้น Firefox จะเข้ารหัสลับรหัสผ่าน ที่คั่นหน้า และอื่น ๆ ของคุณ</string>
     <!-- Text for the button to sign in to sync on the device -->
     <string name="juno_onboarding_sign_in_positive_button" tools:ignore="UnusedResources">ลงชื่อเข้า</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
@@ -419,6 +426,10 @@
     <string name="preferences_search_engines_suggestions">คำแนะนำจากเครื่องมือค้นหา</string>
     <!-- Preference for settings related to Search address bar -->
     <string name="preferences_search_address_bar" moz:removedIn="120" tools:ignore="UnusedResources">แถบที่อยู่</string>
+    <!-- Preference Category for settings related to Search address bar -->
+    <string name="preferences_settings_address_bar">การกำหนดลักษณะแถบที่อยู่</string>
+    <!-- Preference Category for settings to Firefox Suggest -->
+    <string name="preference_search_address_bar_fx_suggest">แถบที่อยู่ - Firefox Suggest</string>
     <!-- Preference link to Learn more about Firefox Suggest -->
     <string name="preference_search_learn_about_fx_suggest">เรียนรู้เพิ่มเติมเกี่ยวกับ Firefox Suggest</string>
     <!-- Preference link to rating Fenix on the Play Store -->
@@ -449,16 +460,20 @@
     <string name="preferences_https_only_title">โหมด HTTPS-Only</string>
 
     <!-- Preference for removing cookie/consent banners from sites automatically. See reduce_cookie_banner_summary for additional context. -->
-    <string name="preferences_cookie_banner_reduction">การลดคุกกี้แบนเนอร์</string>
+    <string name="preferences_cookie_banner_reduction" moz:RemovedIn="121" tools:ignore="UnusedResources">การลดคุกกี้แบนเนอร์</string>
+    <!-- Label for cookie banner section in quick settings panel. -->
+    <string name="cookie_banner_blocker">ตัวปิดกั้นแบนเนอร์คุกกี้</string>
+    <!-- Preference for removing cookie/consent banners from sites automatically in private mode. See reduce_cookie_banner_summary for additional context. -->
+    <string name="preferences_cookie_banner_reduction_private_mode">ตัวปิดกั้นแบนเนอร์คุกกี้ในการเรียกดูแบบส่วนตัว</string>
     <!-- Preference for rejecting or removing as many cookie/consent banners as possible on sites. See reduce_cookie_banner_summary for additional context. -->
-    <string name="reduce_cookie_banner_option">ลดคุกกี้แบนเนอร์</string>
+    <string name="reduce_cookie_banner_option" moz:RemovedIn="121" tools:ignore="UnusedResources">ลดคุกกี้แบนเนอร์</string>
     <!-- Summary of cookie banner handling preference if the setting disabled is set to off -->
-    <string name="reduce_cookie_banner_option_off">ปิด</string>
+    <string name="reduce_cookie_banner_option_off" moz:RemovedIn="121" tools:ignore="UnusedResources">ปิด</string>
     <!-- Summary of cookie banner handling preference if the setting enabled is set to on -->
-    <string name="reduce_cookie_banner_option_on">เปิด</string>
+    <string name="reduce_cookie_banner_option_on" moz:RemovedIn="121" tools:ignore="UnusedResources">เปิด</string>
 
     <!-- Summary for the preference for rejecting all cookies whenever possible. The first parameter is the application name -->
-    <string name="reduce_cookie_banner_summary_1">%1$s จะพยายามปฏิเสธคำขอคุกกี้บนแบนเนอร์คุกกี้โดยอัตโนมัติ</string>
+    <string name="reduce_cookie_banner_summary_1" moz:RemovedIn="121" tools:ignore="UnusedResources">%1$s จะพยายามปฏิเสธคำขอคุกกี้บนแบนเนอร์คุกกี้โดยอัตโนมัติ</string>
     <!-- Text for indicating cookie banner handling is off this site, this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_off_for_site">ปิดสำหรับไซต์นี้</string>
     <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
@@ -477,28 +492,35 @@
     <!-- Text for indicating cookie banner handling is currently not supported for this site, this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_unsupported_site">ไม่รองรับไซต์ในขณะนี้</string>
     <!-- Title text for a detail explanation indicating cookie banner handling is on this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
-    <string name="reduce_cookie_banner_details_panel_title_on_for_site">ต้องการเปิดการลดแบนเนอร์คุกกี้สำหรับ %1$s หรือไม่?</string>
+    <string name="reduce_cookie_banner_details_panel_title_on_for_site" moz:RemovedIn="121" tools:ignore="UnusedResources">ต้องการเปิดการลดแบนเนอร์คุกกี้สำหรับ %1$s หรือไม่?</string>
+    <!-- Title text for a detail explanation indicating cookie banner handling is on this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
+    <string name="reduce_cookie_banner_details_panel_title_on_for_site_1">ต้องการเปิดตัวปิดกั้นแบนเนอร์คุกกี้สำหรับ %1$s หรือไม่?</string>
     <!-- Title text for a detail explanation indicating cookie banner handling is off this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
-    <string name="reduce_cookie_banner_details_panel_title_off_for_site">ต้องการปิดการลดแบนเนอร์คุกกี้สำหรับ %1$s หรือไม่?</string>
+    <string name="reduce_cookie_banner_details_panel_title_off_for_site" moz:RemovedIn="121" tools:ignore="UnusedResources">ต้องการปิดการลดแบนเนอร์คุกกี้สำหรับ %1$s หรือไม่?</string>
+    <!-- Title text for a detail explanation indicating cookie banner handling is off this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
+    <string name="reduce_cookie_banner_details_panel_title_off_for_site_1">ต้องการปิดตัวปิดกั้นแบนเนอร์คุกกี้สำหรับ %1$s หรือไม่?</string>
     <!-- Title text for a detail explanation indicating cookie banner reducer didn't work for the current site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name-->
     <string name="reduce_cookie_banner_details_panel_title_unsupported_site_request_2">%1$s ไม่สามารถปฏิเสธคำขอคุกกี้โดยอัตโนมัติบนไซต์นี้ คุณสามารถส่งคำขอให้รองรับไซต์นี้ในอนาคตได้</string>
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
-    <string name="reduce_cookie_banner_details_panel_description_off_for_site">%1$s จะล้างคุกกี้ของไซต์นี้และรีเฟรชหน้า การล้างคุกกี้ทั้งหมดอาจนำคุณออกจากระบบหรือล้างรถเข็นช็อปปิ้ง</string>
+    <string name="reduce_cookie_banner_details_panel_description_off_for_site" moz:RemovedIn="121" tools:ignore="UnusedResources">%1$s จะล้างคุกกี้ของไซต์นี้และรีเฟรชหน้า การล้างคุกกี้ทั้งหมดอาจนำคุณออกจากระบบหรือล้างรถเข็นช็อปปิ้ง</string>
 
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
-    <string name="reduce_cookie_banner_details_panel_description_on_for_site_2">%1$s จะพยายามปฏิเสธคำขอคุกกี้ทั้งหมดบนไซต์ที่รองรับโดยอัตโนมัติ</string>
+    <string name="reduce_cookie_banner_details_panel_description_on_for_site_2" moz:RemovedIn="121" tools:ignore="UnusedResources">%1$s จะพยายามปฏิเสธคำขอคุกกี้ทั้งหมดบนไซต์ที่รองรับโดยอัตโนมัติ</string>
     <!-- Title text for the cookie banner re-engagement dialog. The first parameter is the application name. -->
-    <string name="reduce_cookie_banner_dialog_title">อนุญาตให้ %1$s ปฏิเสธแบนเนอร์คุกกี้หรือไม่?</string>
+    <string name="reduce_cookie_banner_dialog_title" moz:RemovedIn="121" tools:ignore="UnusedResources">อนุญาตให้ %1$s ปฏิเสธแบนเนอร์คุกกี้หรือไม่?</string>
     <!-- Body text for the cookie banner re-engagement dialog use. The first parameter is the application name. -->
-    <string name="reduce_cookie_banner_dialog_body">%1$s สามารถปฏิเสธคำขอคุกกี้จำนวนมากได้โดยอัตโนมัติ</string>
+    <string name="reduce_cookie_banner_dialog_body" moz:RemovedIn="121" tools:ignore="UnusedResources">%1$s สามารถปฏิเสธคำขอคุกกี้จำนวนมากได้โดยอัตโนมัติ</string>
     <!-- Remind me later text button for the onboarding dialog -->
-    <string name="reduce_cookie_banner_dialog_not_now_button">ไม่ใช่ตอนนี้</string>
+    <string name="reduce_cookie_banner_dialog_not_now_button" moz:RemovedIn="121" tools:ignore="UnusedResources">ไม่ใช่ตอนนี้</string>
 
     <!-- Snack text for the cookie banner dialog, after user hit the dismiss banner button -->
-    <string name="reduce_cookie_banner_dialog_snackbar_text">คุณจะเห็นคำขอคุกกี้น้อยลง</string>
+    <string name="reduce_cookie_banner_dialog_snackbar_text" moz:RemovedIn="121" tools:ignore="UnusedResources">คุณจะเห็นคำขอคุกกี้น้อยลง</string>
 
     <!-- Change setting text button, for the cookie banner re-engagement dialog -->
-    <string name="reduce_cookie_banner_dialog_change_setting_button">อนุญาต</string>
+    <string name="reduce_cookie_banner_dialog_change_setting_button" moz:RemovedIn="121" tools:ignore="UnusedResources">อนุญาต</string>
+
+    <!--Message for the cookie banner re-engagement CFR -->
+    <string name="cookie_banner_cfr_message">รบกวนสมาธิน้อยลง คุกกี้ติดตามคุณน้อยลงบนเว็บไซต์นี้</string>
 
     <!-- Description of the preference to enable "HTTPS-Only" mode. -->
     <string name="preferences_https_only_summary">พยายามเชื่อมต่อกับเว็บไซต์โดยใช้โปรโตคอลการเข้ารหัส HTTPS โดยอัตโนมัติเพื่อเพิ่มความปลอดภัย</string>
@@ -684,6 +706,15 @@
     <string name="wallpapers_onboarding_dialog_body_text">เลือกวอลล์เปเปอร์ที่บ่งบอกความเป็นคุณ</string>
     <!-- Wallpaper onboarding dialog learn more button text. The button navigates to the wallpaper settings screen. -->
     <string name="wallpapers_onboarding_dialog_explore_more_button_text">สำรวจวอลล์เปเปอร์เพิ่มเติม</string>
+
+    <!-- Add-ons general availability nimbus message-->
+    <!-- Title of the Nimbus message for add-ons general availability-->
+    <string name="addon_ga_message_title" tools:ignore="UnusedResources">ส่วนเสริมใหม่ที่ใช้งานได้ในขณะนี้</string>
+
+    <!-- Body of the Nimbus message for add-ons general availability. 'Firefox' intentionally hardcoded here-->
+    <string name="addon_ga_message_body" tools:ignore="UnusedResources">ลองดูส่วนขยายใหม่กว่า 100 รายการที่ให้คุณสร้าง Firefox ในแบบของคุณเอง</string>
+    <!-- Button text of the Nimbus message for add-ons general availability. -->
+    <string name="addon_ga_message_button" tools:ignore="UnusedResources">สำรวจส่วนเสริม</string>
 
     <!-- Add-on Installation from AMO-->
     <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
@@ -2191,7 +2222,9 @@
     <!-- Text for learn more caption presenting a link with information about review quality. First parameter is for clickable text defined in review_quality_check_info_learn_more_link. -->
     <string name="review_quality_check_info_learn_more">เรียนรู้เพิ่มเติมเกี่ยวกับ %s</string>
     <!-- Clickable text that links to review quality check SuMo page. First parameter is the Fakespot product name. In the phrase "Fakespot by Mozilla", "by" can be localized. Does not need to stay by. -->
-    <string name="review_quality_check_info_learn_more_link">วิธีที่ %s โดย Mozilla พิจารณาคุณภาพบทวิจารณ์</string>
+    <string name="review_quality_check_info_learn_more_link" moz:RemovedIn="121" tools:ignore="UnusedResources">วิธีที่ %s โดย Mozilla พิจารณาคุณภาพบทวิจารณ์</string>
+    <!-- Clickable text that links to review quality check SuMo page. First parameter is the Fakespot product name. -->
+    <string name="review_quality_check_info_learn_more_link_2">วิธีที่  %s พิจารณาคุณภาพบทวิจารณ์</string>
     <!-- Text for title of settings section. -->
     <string name="review_quality_check_settings_title">การตั้งค่า</string>
     <!-- Text for label for switch preference to show recommended products from review quality check settings section. -->
@@ -2214,8 +2247,18 @@
     <string name="review_quality_check_no_reviews_warning_title">บทวิจารณ์ยังไม่เพียงพอ</string>
     <!-- Title for warning card informing the user that the current product is currently not available. -->
     <string name="review_quality_check_product_availability_warning_title" tools:ignore="UnusedResources">สินค้าไม่พร้อมจำหน่าย</string>
+    <!-- Clickable text for warning card informing the user that the current product is currently not available. Clicking this should inform the server that the product is available. -->
+    <string name="review_quality_check_product_availability_warning_action_2" tools:ignore="UnusedResources">รายงานสินค้ามีในสต็อก</string>
+    <!-- Title for warning card informing the user that the current product's re-analysis is still processing. -->
+    <string name="review_quality_check_reanalysis_in_progress_warning_title">กำลังตรวจสอบคุณภาพบทวิจารณ์</string>
+    <!-- Title for warning card informing the user that the current product's analysis is still processing. -->
+    <string name="review_quality_check_analysis_in_progress_warning_title">กำลังตรวจสอบคุณภาพบทวิจารณ์</string>
+    <!-- Text for body of warning card informing the user that the current product's analysis is still processing. -->
+    <string name="review_quality_check_analysis_in_progress_warning_body">การดำเนินการนี้อาจใช้เวลาประมาณ 60 วินาที</string>
     <!-- Title for info card displayed after the user reports a product is back in stock. -->
     <string name="review_quality_check_analysis_requested_info_title" tools:ignore="UnusedResources">ขอบคุณสำหรับการรายงาน!</string>
+    <!-- Title for info card displayed when the user review checker while on a product that Fakespot does not analyze (e.g. gift cards, music). -->
+    <string name="review_quality_check_not_analyzable_info_title">เราไม่สามารถตรวจสอบบทวิจารณ์เหล่านี้ได้</string>
     <!-- Title for info card displayed when another user reported the displayed product is back in stock. -->
     <string name="review_quality_check_analysis_requested_other_user_info_title" tools:ignore="UnusedResources">ข้อมูลจะมาเร็ว ๆ นี้</string>
     <!-- Title for info card displayed to the user when analysis finished updating. -->
@@ -2226,18 +2269,38 @@
     <string name="review_quality_check_generic_error_title">ไม่มีข้อมูลในขณะนี้</string>
     <!-- Title for error card displayed to the user when the device is disconnected from the network. -->
     <string name="review_quality_check_no_connection_title">ไม่มีการเชื่อมต่อเครือข่าย</string>
+    <!-- Text for body of error card displayed to the user when the device is disconnected from the network. -->
+    <string name="review_quality_check_no_connection_body">ตรวจสอบการเชื่อมต่อเครือข่ายของคุณแล้วลองโหลดหน้าใหม่</string>
+    <!-- Title for card displayed to the user for products whose reviews were not analyzed yet. -->
+    <string name="review_quality_check_no_analysis_title">ยังไม่มีข้อมูลเกี่ยวกับบทวิจารณ์เหล่านี้</string>
+    <!-- Text for button from body of card displayed to the user for products whose reviews were not analyzed yet. Clicking this should trigger a product analysis. -->
+    <string name="review_quality_check_no_analysis_link">ตรวจสอบคุณภาพบทวิจารณ์</string>
     <!-- Clickable text from the contextual onboarding card that links to review quality check support article. -->
     <string name="review_quality_check_contextual_onboarding_learn_more_link">เรียนรู้เพิ่มเติม</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot privacy policy. -->
-    <string name="review_quality_check_contextual_onboarding_privacy_policy">นโยบายความเป็นส่วนตัว</string>
+    <string name="review_quality_check_contextual_onboarding_privacy_policy" moz:RemovedIn="121" tools:ignore="UnusedResources">นโยบายความเป็นส่วนตัว</string>
+    <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot privacy policy. -->
+    <string name="review_quality_check_contextual_onboarding_privacy_policy_2">นโยบายความเป็นส่วนตัว</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot terms of use. -->
-    <string name="review_quality_check_contextual_onboarding_terms_use">เงื่อนไขการใช้งาน</string>
+    <string name="review_quality_check_contextual_onboarding_terms_use" moz:RemovedIn="121" tools:ignore="UnusedResources">เงื่อนไขการใช้งาน</string>
+    <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot terms of use. -->
+    <string name="review_quality_check_contextual_onboarding_terms_use_2">เงื่อนไขการใช้งาน</string>
     <!-- Text for opt-in button from the review quality check contextual onboarding card. -->
     <string name="review_quality_check_contextual_onboarding_primary_button_text">ใช่ลองดู</string>
     <!-- Text for opt-out button from the review quality check contextual onboarding card. -->
     <string name="review_quality_check_contextual_onboarding_secondary_button_text">ไม่ใช่ตอนนี้</string>
+    <!-- Text displayed in the first CFR presenting the review quality check feature that opens the review checker when clicked. -->
+    <string name="review_quality_check_first_cfr_action" tools:ignore="UnusedResources">ลองตัวตรวจสอบบทวิจารณ์</string>
+    <!-- Text for the second CFR presenting the review quality check feature. -->
+    <string name="review_quality_check_second_cfr_message">บทวิจารณ์เหล่านี้เชื่อถือได้หรือไม่? ตรวจสอบตอนนี้เพื่อดูคะแนนที่ปรับแล้ว</string>
+    <!-- Text displayed in the second CFR presenting the review quality check feature that opens the review checker when clicked. -->
+    <string name="review_quality_check_second_cfr_action" tools:ignore="UnusedResources">เปิดตัวตรวจสอบบทวิจารณ์</string>
     <!-- Flag showing that the review quality check feature is work in progress. -->
     <string name="review_quality_check_beta_flag">Beta</string>
+    <!-- Content description (not visible, for screen readers etc.) for opening browser menu button to open review quality check bottom sheet. -->
+    <string name="review_quality_check_open_handle_content_description">เปิดตัวตรวจสอบบทวิจารณ์</string>
+    <!-- Content description (not visible, for screen readers etc.) for closing browser menu button to open review quality check bottom sheet. -->
+    <string name="review_quality_check_close_handle_content_description">ปิดตัวตรวจสอบบทวิจารณ์</string>
     <!-- Content description (not visible, for screen readers etc.) for review quality check star rating. First parameter is the number of stars (1-5) representing the rating. -->
     <string name="review_quality_check_star_rating_content_description">%1$s จาก 5 ดาว</string>
     <!-- Text for minimize button from highlights card. When clicked the highlights card should reduce its size. -->
@@ -2258,8 +2321,12 @@
     <!-- Accessibility services actions labels. These will be appended to accessibility actions like "Double tap to.." but not by or applications but by services like Talkback. -->
     <!-- Action label for elements that can be collapsed if interacting with them. Talkback will append this to say "Double tap to collapse". -->
     <string name="a11y_action_label_collapse">ยุบ</string>
+    <!-- Current state for elements that can be collapsed if interacting with them. Talkback will dictate this after a state change. -->
+    <string name="a11y_state_label_collapsed">ยุบแล้ว</string>
     <!-- Action label for elements that can be expanded if interacting with them. Talkback will append this to say "Double tap to expand". -->
     <string name="a11y_action_label_expand">ขยาย</string>
+    <!-- Current state for elements that can be expanded if interacting with them. Talkback will dictate this after a state change. -->
+    <string name="a11y_state_label_expanded">ขยายอยู่</string>
     <!-- Action label for links to a website containing documentation about a wallpaper collection. Talkback will append this to say "Double tap to open link to learn more about this collection". -->
     <string name="a11y_action_label_wallpaper_collection_learn_more">เปิดลิงก์เพื่อเรียนรู้เพิ่มเติมเกี่ยวกับคอลเลกชันนี้</string>
     <!-- Action label for links that point to an article. Talkback will append this to say "Double tap to read the article". -->

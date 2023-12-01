@@ -48,10 +48,14 @@ class FxSuggestSuggestionProvider(
             emptyList()
         } else {
             val providers = buildList() {
-                if (includeSponsoredSuggestions) {
+                val availableSuggestionTypes = FxSuggestNimbus.features
+                    .awesomebarSuggestionProvider
+                    .value()
+                    .availableSuggestionTypes
+                if (includeSponsoredSuggestions && availableSuggestionTypes[SuggestionType.AMP] == true) {
                     add(SuggestionProvider.AMP)
                 }
-                if (includeNonSponsoredSuggestions) {
+                if (includeNonSponsoredSuggestions && availableSuggestionTypes[SuggestionType.WIKIPEDIA] == true) {
                     add(SuggestionProvider.WIKIPEDIA)
                 }
             }
@@ -95,20 +99,25 @@ class FxSuggestSuggestionProvider(
                         )
                     },
                 )
-                is Suggestion.Wikipedia -> SuggestionDetails(
-                    title = suggestion.title,
-                    url = suggestion.url,
-                    fullKeyword = suggestion.fullKeyword,
-                    isSponsored = false,
-                    icon = suggestion.icon,
-                )
+                is Suggestion.Wikipedia -> {
+                    val interactionInfo = contextId?.let {
+                        FxSuggestInteractionInfo.Wikipedia(contextId = it)
+                    }
+                    SuggestionDetails(
+                        title = suggestion.title,
+                        url = suggestion.url,
+                        fullKeyword = suggestion.fullKeyword,
+                        isSponsored = false,
+                        icon = suggestion.icon,
+                        clickInfo = interactionInfo,
+                        impressionInfo = interactionInfo,
+                    )
+                }
                 else -> return@mapNotNull null
             }
             AwesomeBar.Suggestion(
                 provider = this@FxSuggestSuggestionProvider,
-                icon = details.icon?.let {
-                    it.toUByteArray().asByteArray().toBitmap()
-                },
+                icon = details.icon?.toUByteArray()?.asByteArray()?.toBitmap(),
                 title = details.title,
                 description = if (details.isSponsored) {
                     resources.getString(R.string.sponsored_suggestion_description)
@@ -118,6 +127,7 @@ class FxSuggestSuggestionProvider(
                 onSuggestionClicked = {
                     loadUrlUseCase.invoke(details.url)
                 },
+                score = Int.MIN_VALUE,
                 metadata = buildMap {
                     details.clickInfo?.let { put(MetadataKeys.CLICK_INFO, it) }
                     details.impressionInfo?.let { put(MetadataKeys.IMPRESSION_INFO, it) }
@@ -155,6 +165,15 @@ sealed interface FxSuggestInteractionInfo {
         val advertiser: String,
         val reportingUrl: String,
         val iabCategory: String,
+        val contextId: String,
+    ) : FxSuggestInteractionInfo
+
+    /**
+     * Interaction information for a Firefox Suggest search suggestion from Wikipedia.
+     *
+     * @param contextId The contextual services user identifier.
+     */
+    data class Wikipedia(
         val contextId: String,
     ) : FxSuggestInteractionInfo
 }

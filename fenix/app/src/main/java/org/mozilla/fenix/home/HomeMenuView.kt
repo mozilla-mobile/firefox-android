@@ -12,6 +12,8 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
+import mozilla.appservices.fxaclient.FxaServer
+import mozilla.appservices.fxaclient.contentUrl
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.browser.menu.view.MenuButton
 import mozilla.components.concept.sync.FxAEntryPoint
@@ -36,14 +38,14 @@ import org.mozilla.fenix.GleanMetrics.HomeMenu as HomeMenuMetrics
 /**
  * Helper class for building the [HomeMenu].
  *
- * @property view The [View] to attach the snackbar to.
- * @property context An Android [Context].
- * @property lifecycleOwner [LifecycleOwner] for the view.
- * @property homeActivity [HomeActivity] used to open URLs in a new tab.
- * @property navController [NavController] used for navigation.
- * @property menuButton The [MenuButton] that will be used to create a menu when the button is
+ * @param view The [View] to attach the snackbar to.
+ * @param context An Android [Context].
+ * @param lifecycleOwner [LifecycleOwner] for the view.
+ * @param homeActivity [HomeActivity] used to open URLs in a new tab.
+ * @param navController [NavController] used for navigation.
+ * @param menuButton The [MenuButton] that will be used to create a menu when the button is
  * clicked.
- * @property fxaEntrypoint The source entry point to FxA.
+ * @param fxaEntrypoint The source entry point to FxA.
  */
 @Suppress("LongParameterList")
 class HomeMenuView(
@@ -127,9 +129,9 @@ class HomeMenuView(
                 homeActivity.openToBrowserAndLoad(
                     searchTermOrURL =
                     if (context.settings().allowDomesticChinaFxaServer) {
-                        mozilla.appservices.fxaclient.Config.Server.CHINA.contentUrl + "/settings"
+                        FxaServer.China.contentUrl() + "/settings"
                     } else {
-                        mozilla.appservices.fxaclient.Config.Server.RELEASE.contentUrl + "/settings"
+                        FxaServer.Release.contentUrl() + "/settings"
                     },
                     newTab = true,
                     from = BrowserDirection.FromHome,

@@ -84,6 +84,8 @@
     <string name="mozac_feature_addons_learn_more">Ɣer ugar ɣef tsurag</string>
     <!-- The rating of the add-on. -->
     <string name="mozac_feature_addons_rating">Tizmilin</string>
+    <!-- A link that points to the detail page of the add-on. -->
+    <string name="mozac_feature_addons_more_info_link">Ugar γef uzegrir-agi</string>
     <!-- The settings of the add-on. -->
     <string name="mozac_feature_addons_settings">Iɣewwaṛen</string>
     <!-- Indicates the add-on is enabled. -->
@@ -142,6 +144,10 @@
     <string name="mozac_feature_addons_addons">Izegrar</string>
     <!-- Label for add-ons sub menu item for add-ons manager-->
     <string name="mozac_feature_addons_addons_manager">Amsefrak n yizegrar</string>
+    <!-- The title of the "crash" notification in the add-ons manager -->
+    <string name="mozac_feature_addons_manager_notification_title_text">Azegrir yensa i kra n wakud</string>
+    <!-- Button to re-enable the add-ons in the "crash" notification -->
+    <string name="mozac_feature_addons_manager_notification_restart_button">Ales asenker n yizegrar</string>
     <!-- Button in the add-ons manager that opens AMO in a tab -->
     <string name="mozac_feature_addons_find_more_addons_button_text">Aff-d ugar n izegrar</string>
     <!-- The label of the allow button, this will be shown to the user when an add-on needs new permissions, with the button the user will indicate that they want to accept the new permissions and update the add-on-->
@@ -194,8 +200,6 @@
     <string name="mozac_feature_addons_failed_to_install_incompatible_error">%1$s ur yezmir ara ad yebded acku ur imṣaḍa ara d %2$s %3$s.</string>
     <!-- Text shown when attempting to install a blocklisted add-on. %1$s is the add-on name. -->
     <string name="mozac_feature_addons_blocklisted_1">%1$s ur yezmir ara ad yebded acku yella wugur meqqren n tɣellist akked urkad.</string>
-    <!-- Text shown when attempting to install a blocklisted add-on. %1$s is the add-on name. -->
-    <string name="mozac_feature_addons_blocklisted" moz:removedIn="119" tools:ignore="UnusedResources">%1$s ur yezmir ara ad yebded acku yella wugur meqqren n tɣellist akked urkad</string>
     <!-- Text shown after successfully enabled an add-on. %1$s is the add-on name. -->
     <string name="mozac_feature_addons_successfully_enabled">Irmed akken iwata %1$s</string>
     <!-- Text shown after failed to enable an add-on. %1$s is the add-on name. -->
@@ -242,4 +246,8 @@
     <string name="mozac_feature_addons_status_learn_more">Issin ugar</string>
     <!-- Status message below an add-on in the add-ons manager when this add-on has been blocklisted. %1$s is the add-on name. -->
     <string name="mozac_feature_addons_status_blocklisted">%1$s yensa ssebba n wuguren n tɣellist neɣ n uqeɛɛed.</string>
-    </resources>
+    <!-- Status message below an add-on in the add-ons manager when this add-on hasn't been signed correctly. %1$s is the add-on name. -->
+    <string name="mozac_feature_addons_status_unsigned">Azegrir %1$s yegguma ad yettusenqed d aɣellsan, dayen yensa.</string>
+    <!-- Status message below an add-on in the add-ons manager when this add-on isn't compatible with the application version. %1$s is the add-on name, %2$s is the app name and %3$s is the app version. -->
+    <string name="mozac_feature_addons_status_incompatible">Azegrir %1$s ur yemṣada ara akked lqem-ik·im n %2$s (lqem %3$s).</string>
+</resources>

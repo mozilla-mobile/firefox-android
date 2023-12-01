@@ -103,7 +103,6 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
                     runIfFragmentIsAttached {
                         if (!shouldRefresh) {
                             adapter = AddonsManagerAdapter(
-                                addonsProvider = requireContext().components.addonsProvider,
                                 addonsManagerDelegate = managementView,
                                 addons = addons,
                                 style = createAddonStyle(requireContext()),
@@ -177,14 +176,14 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
             binding?.let { announceForAccessibility(it.addonProgressOverlay.addOnsOverlayText.text) }
         }
         val installOperation = provideAddonManger().installAddon(
-            addon,
+            url = addon.downloadUrl,
             onSuccess = {
                 runIfFragmentIsAttached {
                     adapter?.updateAddon(it)
                     binding?.addonProgressOverlay?.overlayCardView?.visibility = View.GONE
                 }
             },
-            onError = { _, _ ->
+            onError = { _ ->
                 binding?.addonProgressOverlay?.overlayCardView?.visibility = View.GONE
             },
         )

@@ -17,7 +17,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.accessibility.AccessibilityManager
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.CallSuper
 import androidx.annotation.VisibleForTesting
@@ -76,6 +75,7 @@ import mozilla.components.feature.prompts.PromptFeature
 import mozilla.components.feature.prompts.PromptFeature.Companion.PIN_REQUEST
 import mozilla.components.feature.prompts.address.AddressDelegate
 import mozilla.components.feature.prompts.creditcard.CreditCardDelegate
+import mozilla.components.feature.prompts.dialog.FullScreenNotificationDialog
 import mozilla.components.feature.prompts.identitycredential.DialogColors
 import mozilla.components.feature.prompts.identitycredential.DialogColorsProvider
 import mozilla.components.feature.prompts.login.LoginDelegate
@@ -150,6 +150,7 @@ import org.mozilla.fenix.ext.secure
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.HomeScreenViewModel
 import org.mozilla.fenix.home.SharedViewModel
+import org.mozilla.fenix.library.bookmarks.BookmarksSharedViewModel
 import org.mozilla.fenix.perf.MarkersFragmentLifecycleCallbacks
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.settings.biometric.BiometricPromptFeature
@@ -230,6 +231,7 @@ abstract class BaseBrowserFragment :
 
     internal val sharedViewModel: SharedViewModel by activityViewModels()
     private val homeViewModel: HomeScreenViewModel by activityViewModels()
+    private val bookmarksSharedViewModel: BookmarksSharedViewModel by activityViewModels()
 
     private var currentStartDownloadDialog: StartDownloadDialog? = null
 
@@ -1414,7 +1416,7 @@ abstract class BaseBrowserFragment :
             // Save bookmark, then go to edit fragment
             try {
                 val guid = bookmarksStorage.addItem(
-                    BookmarkRoot.Mobile.id,
+                    bookmarksSharedViewModel.selectedFolder?.guid ?: BookmarkRoot.Mobile.id,
                     url = sessionUrl,
                     title = sessionTitle,
                     position = null,
@@ -1493,9 +1495,11 @@ abstract class BaseBrowserFragment :
         if (inFullScreen) {
             // Close find in page bar if opened
             findInPageIntegration.onBackPressed()
-            Toast
-                .makeText(requireContext(), R.string.full_screen_notification, Toast.LENGTH_SHORT)
-                .show()
+
+            FullScreenNotificationDialog(R.layout.full_screen_notification_dialog).show(
+                parentFragmentManager,
+            )
+
             activity?.enterImmersiveMode()
             (view as? SwipeGestureLayout)?.isSwipeEnabled = false
             browserToolbarView.collapse()

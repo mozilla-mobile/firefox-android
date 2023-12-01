@@ -11,12 +11,14 @@ import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductR
 /**
  * Store for review quality check feature.
  *
+ * @param initialState The initial state of the store.
  * @param middleware The list of middlewares to use.
  */
 class ReviewQualityCheckStore(
+    initialState: ReviewQualityCheckState = ReviewQualityCheckState.Initial,
     middleware: List<ReviewQualityCheckMiddleware>,
 ) : Store<ReviewQualityCheckState, ReviewQualityCheckAction>(
-    initialState = ReviewQualityCheckState.Initial,
+    initialState = initialState,
     middleware = middleware,
     reducer = ::reducer,
 ) {
@@ -44,11 +46,21 @@ private fun mapStateForUpdateAction(
     return when (action) {
         is ReviewQualityCheckAction.OptInCompleted -> {
             if (state is ReviewQualityCheckState.OptedIn) {
-                state.copy(productRecommendationsPreference = action.isProductRecommendationsEnabled)
+                state.copy(
+                    productRecommendationsPreference = action.isProductRecommendationsEnabled,
+                    productRecommendationsExposure = action.productRecommendationsExposure,
+                    isHighlightsExpanded = action.isHighlightsExpanded,
+                    isInfoExpanded = action.isInfoExpanded,
+                    isSettingsExpanded = action.isSettingsExpanded,
+                )
             } else {
                 ReviewQualityCheckState.OptedIn(
                     productRecommendationsPreference = action.isProductRecommendationsEnabled,
+                    productRecommendationsExposure = action.productRecommendationsExposure,
                     productVendor = action.productVendor,
+                    isHighlightsExpanded = action.isHighlightsExpanded,
+                    isInfoExpanded = action.isInfoExpanded,
+                    isSettingsExpanded = action.isSettingsExpanded,
                 )
             }
         }
@@ -59,6 +71,24 @@ private fun mapStateForUpdateAction(
 
         ReviewQualityCheckAction.OptOut -> {
             ReviewQualityCheckState.NotOptedIn()
+        }
+
+        ReviewQualityCheckAction.ExpandCollapseSettings -> {
+            state.mapIfOptedIn {
+                it.copy(isSettingsExpanded = !it.isSettingsExpanded)
+            }
+        }
+
+        ReviewQualityCheckAction.ExpandCollapseInfo -> {
+            state.mapIfOptedIn {
+                it.copy(isInfoExpanded = !it.isInfoExpanded)
+            }
+        }
+
+        ReviewQualityCheckAction.ExpandCollapseHighlights -> {
+            state.mapIfOptedIn {
+                it.copy(isHighlightsExpanded = !it.isHighlightsExpanded)
+            }
         }
 
         ReviewQualityCheckAction.ToggleProductRecommendation -> {
@@ -93,7 +123,10 @@ private fun mapStateForUpdateAction(
             }
         }
 
-        ReviewQualityCheckAction.ReanalyzeProduct, ReviewQualityCheckAction.AnalyzeProduct -> {
+        ReviewQualityCheckAction.ReanalyzeProduct,
+        ReviewQualityCheckAction.AnalyzeProduct,
+        ReviewQualityCheckAction.RestoreReanalysis,
+        -> {
             state.mapIfOptedIn {
                 when (it.productReviewState) {
                     is ProductReviewState.AnalysisPresent -> {
