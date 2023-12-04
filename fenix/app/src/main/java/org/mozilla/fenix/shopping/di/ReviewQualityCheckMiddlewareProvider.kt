@@ -9,6 +9,7 @@ import kotlinx.coroutines.CoroutineScope
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.feature.tabs.TabsUseCases
 import org.mozilla.fenix.components.AppStore
+import org.mozilla.fenix.shopping.DefaultShoppingExperienceFeature
 import org.mozilla.fenix.shopping.middleware.DefaultNetworkChecker
 import org.mozilla.fenix.shopping.middleware.DefaultReviewQualityCheckPreferences
 import org.mozilla.fenix.shopping.middleware.DefaultReviewQualityCheckService
@@ -44,9 +45,9 @@ object ReviewQualityCheckMiddlewareProvider {
     ): List<ReviewQualityCheckMiddleware> =
         listOf(
             providePreferencesMiddleware(settings, browserStore, appStore, scope),
-            provideNetworkMiddleware(browserStore, appStore, context, scope),
+            provideNetworkMiddleware(browserStore, context, scope),
             provideNavigationMiddleware(TabsUseCases.SelectOrAddUseCase(browserStore), context),
-            provideTelemetryMiddleware(browserStore, appStore),
+            provideTelemetryMiddleware(),
         )
 
     private fun providePreferencesMiddleware(
@@ -58,18 +59,17 @@ object ReviewQualityCheckMiddlewareProvider {
         reviewQualityCheckPreferences = DefaultReviewQualityCheckPreferences(settings),
         reviewQualityCheckVendorsService = DefaultReviewQualityCheckVendorsService(browserStore),
         appStore = appStore,
+        shoppingExperienceFeature = DefaultShoppingExperienceFeature(),
         scope = scope,
     )
 
     private fun provideNetworkMiddleware(
         browserStore: BrowserStore,
-        appStore: AppStore,
         context: Context,
         scope: CoroutineScope,
     ) = ReviewQualityCheckNetworkMiddleware(
         reviewQualityCheckService = DefaultReviewQualityCheckService(browserStore),
         networkChecker = DefaultNetworkChecker(context),
-        appStore = appStore,
         scope = scope,
     )
 
@@ -81,11 +81,6 @@ object ReviewQualityCheckMiddlewareProvider {
         GetReviewQualityCheckSumoUrl(context),
     )
 
-    private fun provideTelemetryMiddleware(
-        browserStore: BrowserStore,
-        appStore: AppStore,
-    ) = ReviewQualityCheckTelemetryMiddleware(
-        browserStore = browserStore,
-        appStore = appStore,
-    )
+    private fun provideTelemetryMiddleware() =
+        ReviewQualityCheckTelemetryMiddleware()
 }

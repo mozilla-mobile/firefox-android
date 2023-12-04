@@ -98,6 +98,7 @@ import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
 import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.metrics.BreadcrumbsRecorder
 import org.mozilla.fenix.components.metrics.GrowthDataWorker
+import org.mozilla.fenix.components.metrics.fonts.FontEnumerationWorker
 import org.mozilla.fenix.databinding.ActivityHomeBinding
 import org.mozilla.fenix.exceptions.trackingprotection.TrackingProtectionExceptionsFragmentDirections
 import org.mozilla.fenix.experiments.ResearchSurfaceDialogFragment
@@ -294,14 +295,14 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             it.start()
         }
 
-        if (settings().shouldShowJunoOnboarding(
+        if (settings().shouldShowOnboarding(
                 hasUserBeenOnboarded = components.fenixOnboarding.userHasBeenOnboarded(),
                 isLauncherIntent = intent.toSafeIntent().isLauncherIntent,
             )
         ) {
             // Unless activity is recreated due to config change, navigate to onboarding
             if (savedInstanceState == null) {
-                navHost.navController.navigate(NavGraphDirections.actionGlobalJunoOnboarding())
+                navHost.navController.navigate(NavGraphDirections.actionGlobalOnboarding())
             }
         } else {
             lifecycleScope.launch(IO) {
@@ -521,6 +522,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             }
 
             GrowthDataWorker.sendActivatedSignalIfNeeded(applicationContext)
+            FontEnumerationWorker.sendActivatedSignalIfNeeded(applicationContext)
             ReEngagementNotificationWorker.setReEngagementNotificationIfNeeded(applicationContext)
             MessageNotificationWorker.setMessageNotificationWorker(applicationContext)
         }
