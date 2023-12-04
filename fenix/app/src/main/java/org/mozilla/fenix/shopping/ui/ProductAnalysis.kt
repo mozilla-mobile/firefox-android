@@ -110,15 +110,15 @@ fun ProductAnalysis(
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         when (productAnalysis.analysisStatus) {
-            AnalysisStatus.NEEDS_ANALYSIS -> {
+            AnalysisStatus.NeedsAnalysis -> {
                 ReanalyzeCard(onReanalyzeClick = onReanalyzeClick)
             }
 
-            AnalysisStatus.REANALYZING -> {
+            is AnalysisStatus.Reanalyzing -> {
                 ReanalysisInProgressCard()
             }
 
-            AnalysisStatus.UP_TO_DATE -> {
+            AnalysisStatus.UpToDate -> {
                 // no-op
             }
         }
@@ -515,7 +515,7 @@ private class ProductAnalysisPreviewModel(
         productRecommendationsEnabled: Boolean? = false,
         productId: String = "123",
         reviewGrade: ReviewQualityCheckState.Grade? = ReviewQualityCheckState.Grade.B,
-        analysisStatus: AnalysisStatus = AnalysisStatus.UP_TO_DATE,
+        analysisStatus: AnalysisStatus = AnalysisStatus.UpToDate,
         adjustedRating: Float? = 3.6f,
         productUrl: String = "",
         highlightsInfo: HighlightsInfo = HighlightsInfo(
@@ -570,10 +570,10 @@ private class ProductAnalysisPreviewModelParameterProvider :
         get() = sequenceOf(
             ProductAnalysisPreviewModel(),
             ProductAnalysisPreviewModel(
-                analysisStatus = AnalysisStatus.NEEDS_ANALYSIS,
+                analysisStatus = AnalysisStatus.NeedsAnalysis,
             ),
             ProductAnalysisPreviewModel(
-                analysisStatus = AnalysisStatus.REANALYZING,
+                analysisStatus = AnalysisStatus.Reanalyzing(50.0f),
             ),
             ProductAnalysisPreviewModel(
                 reviewGrade = null,
