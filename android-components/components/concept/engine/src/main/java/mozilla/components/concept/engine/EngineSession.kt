@@ -16,6 +16,7 @@ import mozilla.components.concept.engine.mediasession.MediaSession
 import mozilla.components.concept.engine.permission.PermissionRequest
 import mozilla.components.concept.engine.prompt.PromptRequest
 import mozilla.components.concept.engine.shopping.ProductAnalysis
+import mozilla.components.concept.engine.shopping.ProductAnalysisStatus
 import mozilla.components.concept.engine.shopping.ProductRecommendation
 import mozilla.components.concept.engine.translate.TranslationEngineState
 import mozilla.components.concept.engine.translate.TranslationOperation
@@ -939,7 +940,7 @@ abstract class EngineSession(
      */
     abstract fun requestAnalysisStatus(
         url: String,
-        onResult: (String) -> Unit,
+        onResult: (ProductAnalysisStatus) -> Unit,
         onException: (Throwable) -> Unit,
     )
 
@@ -985,6 +986,23 @@ abstract class EngineSession(
      * Will be a no-op on the Gecko side if the page is not translated.
      */
     abstract fun requestTranslationRestore()
+
+    /**
+     * Requests the [EngineSession] retrieve the current site's never translate preference.
+     */
+    abstract fun getNeverTranslateSiteSetting(
+        onResult: (Boolean) -> Unit,
+        onException: (Throwable) -> Unit,
+    )
+
+    /**
+     * Requests the [EngineSession] to set the current site's never translate preference.
+     */
+    abstract fun setNeverTranslateSiteSetting(
+        setting: Boolean,
+        onResult: () -> Unit,
+        onException: (Throwable) -> Unit,
+    )
 
     /**
      * Finds and highlights all occurrences of the provided String and highlights them asynchronously.
