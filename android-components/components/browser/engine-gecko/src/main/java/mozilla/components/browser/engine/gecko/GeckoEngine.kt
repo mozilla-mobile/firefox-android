@@ -44,6 +44,7 @@ import mozilla.components.concept.engine.mediaquery.PreferredColorScheme
 import mozilla.components.concept.engine.serviceworker.ServiceWorkerDelegate
 import mozilla.components.concept.engine.translate.Language
 import mozilla.components.concept.engine.translate.LanguageModel
+import mozilla.components.concept.engine.translate.LanguageSetting
 import mozilla.components.concept.engine.translate.ModelManagementOptions
 import mozilla.components.concept.engine.translate.TranslationSupport
 import mozilla.components.concept.engine.translate.TranslationsRuntime
@@ -225,40 +226,29 @@ class GeckoEngine(
     }
 
     /**
-     * See [Engine.installWebExtension].
+     * See [Engine.installBuiltInWebExtension].
      */
-    override fun installWebExtension(
+    override fun installBuiltInWebExtension(
         id: String,
         url: String,
         onSuccess: ((WebExtension) -> Unit),
-        onError: ((String, Throwable) -> Unit),
+        onError: ((Throwable) -> Unit),
     ): CancellableOperation {
-        return if (url.isResourceUrl()) {
-            val geckoResult = runtime.webExtensionController.ensureBuiltIn(url, id).apply {
-                then(
-                    {
-                        onExtensionInstalled(it!!, onSuccess)
-                        GeckoResult<Void>()
-                    },
-                    { throwable ->
-                        onError(
-                            id,
-                            GeckoWebExtensionException.createWebExtensionException(throwable),
-                        )
-                        GeckoResult<Void>()
-                    },
-                )
-            }
-            geckoResult.asCancellableOperation()
-        } else {
-            this.installWebExtension(
-                url,
-                onSuccess,
-                onError = { throwable ->
-                    onError(id, throwable)
+        require(url.isResourceUrl()) { "url should be a resource url" }
+
+        val geckoResult = runtime.webExtensionController.ensureBuiltIn(url, id).apply {
+            then(
+                {
+                    onExtensionInstalled(it!!, onSuccess)
+                    GeckoResult<Void>()
+                },
+                { throwable ->
+                    onError(GeckoWebExtensionException.createWebExtensionException(throwable))
+                    GeckoResult<Void>()
                 },
             )
         }
+        return geckoResult.asCancellableOperation()
     }
 
     /**
@@ -269,6 +259,8 @@ class GeckoEngine(
         onSuccess: ((WebExtension) -> Unit),
         onError: ((Throwable) -> Unit),
     ): CancellableOperation {
+        require(!url.isResourceUrl()) { "url shouldn't be a resource url" }
+
         val geckoResult = runtime.webExtensionController.install(url).apply {
             then(
                 {
@@ -841,6 +833,101 @@ class GeckoEngine(
                     onError(translationsUnexpectedNull())
                 }
 
+                GeckoResult<Void>()
+            },
+            { throwable ->
+                onError(throwable)
+                GeckoResult<Void>()
+            },
+        )
+    }
+
+    /**
+     * See [Engine.getTranslationsOfferPopup].
+     */
+    override fun getTranslationsOfferPopup(): Boolean {
+        return runtime.settings.translationsOfferPopup
+    }
+
+    /**
+     * See [Engine.setTranslationsOfferPopup].
+     */
+    override fun setTranslationsOfferPopup(offer: Boolean) {
+        runtime.settings.translationsOfferPopup = offer
+    }
+
+    /**
+     * See [Engine.getLanguageSetting].
+     */
+    override fun getLanguageSetting(
+        languageCode: String,
+        onSuccess: (LanguageSetting) -> Unit,
+        onError: (Throwable) -> Unit,
+    ) {
+        TranslationsController.RuntimeTranslation.getLanguageSetting(languageCode).then(
+            {
+                if (it != null) {
+                    try {
+                        onSuccess(LanguageSetting.fromValue(it))
+                    } catch (e: IllegalArgumentException) {
+                        onError(e)
+                    }
+                } else {
+                    onError(translationsUnexpectedNull())
+                }
+
+                GeckoResult<Void>()
+            },
+            { throwable ->
+                onError(throwable)
+                GeckoResult<Void>()
+            },
+        )
+    }
+
+    /**
+     * See [Engine.setLanguageSetting].
+     */
+    override fun setLanguageSetting(
+        languageCode: String,
+        languageSetting: LanguageSetting,
+        onSuccess: () -> Unit,
+        onError: (Throwable) -> Unit,
+    ) {
+        TranslationsController.RuntimeTranslation.setLanguageSettings(languageCode, languageSetting.toString()).then(
+            {
+                onSuccess()
+                GeckoResult<Void>()
+            },
+            { throwable ->
+                onError(throwable)
+                GeckoResult<Void>()
+            },
+        )
+    }
+
+    /**
+     * See [Engine.getLanguageSettings].
+     */
+    override fun getLanguageSettings(
+        onSuccess: (Map<String, LanguageSetting>) -> Unit,
+        onError: (Throwable) -> Unit,
+    ) {
+        TranslationsController.RuntimeTranslation.getLanguageSettings().then(
+            {
+                if (it != null) {
+                    try {
+                        val result = mutableMapOf<String, LanguageSetting>()
+                        it.forEach { item ->
+                            result[item.key] = LanguageSetting.fromValue(item.value)
+                        }
+                        onSuccess(result)
+                    } catch (e: IllegalArgumentException) {
+                        onError(e)
+                    }
+                } else {
+                    onError(translationsUnexpectedNull())
+                }
                 GeckoResult<Void>()
             },
             { throwable ->
