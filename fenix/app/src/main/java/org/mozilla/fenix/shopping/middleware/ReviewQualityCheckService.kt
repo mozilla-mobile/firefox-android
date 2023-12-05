@@ -11,6 +11,7 @@ import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.shopping.ProductAnalysis
 import mozilla.components.concept.engine.shopping.ProductRecommendation
 import mozilla.components.support.base.log.logger.Logger
+import org.mozilla.fenix.GleanMetrics.Shopping
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -41,16 +42,11 @@ interface ReviewQualityCheckService {
     suspend fun analysisStatus(): AnalysisStatusDto?
 
     /**
-     * Returns the selected tab url.
-     */
-    fun selectedTabUrl(): String?
-
-    /**
      * Fetches product recommendations related to the product user is browsing in the current tab.
      *
      * @return [ProductRecommendation] if request succeeds, null otherwise.
      */
-    suspend fun productRecommendation(): ProductRecommendation?
+    suspend fun productRecommendation(shouldRecordAvailableTelemetry: Boolean): ProductRecommendation?
 
     /**
      * Sends a click attribution event for a given product aid.
@@ -114,7 +110,7 @@ class DefaultReviewQualityCheckService(
                 tab.engineState.engineSession?.requestAnalysisStatus(
                     url = tab.content.url,
                     onResult = {
-                        continuation.resume(it.asEnumOrDefault(AnalysisStatusDto.OTHER))
+                        continuation.resume(it.status.asEnumOrDefault(AnalysisStatusDto.OTHER))
                     },
                     onException = {
                         logger.error("Error fetching analysis status", it)
@@ -125,16 +121,20 @@ class DefaultReviewQualityCheckService(
         }
     }
 
-    override fun selectedTabUrl(): String? =
-        browserStore.state.selectedTab?.content?.url
-
-    override suspend fun productRecommendation(): ProductRecommendation? =
+    override suspend fun productRecommendation(shouldRecordAvailableTelemetry: Boolean): ProductRecommendation? =
         withContext(Dispatchers.Main) {
             suspendCoroutine { continuation ->
                 browserStore.state.selectedTab?.let { tab ->
                     tab.engineState.engineSession?.requestProductRecommendations(
                         url = tab.content.url,
                         onResult = {
+                            if (it.isEmpty()) {
+                                if (shouldRecordAvailableTelemetry) {
+                                    Shopping.surfaceNoAdsAvailable.record()
+                                }
+                            } else {
+                                Shopping.adsExposure.record()
+                            }
                             // Return the first available recommendation since ui requires only
                             // one recommendation.
                             continuation.resume(it.firstOrNull())

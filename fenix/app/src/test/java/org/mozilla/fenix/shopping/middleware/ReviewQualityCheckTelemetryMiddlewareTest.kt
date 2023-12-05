@@ -4,14 +4,11 @@
 
 package org.mozilla.fenix.shopping.middleware
 
-import mozilla.components.browser.state.state.BrowserState
-import mozilla.components.browser.state.state.createTab
-import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.service.glean.testing.GleanTestRule
 import mozilla.components.support.test.ext.joinBlocking
 import mozilla.components.support.test.libstate.ext.waitUntilIdle
 import mozilla.components.support.test.robolectric.testContext
-import org.junit.Assert
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Before
@@ -19,8 +16,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.GleanMetrics.Shopping
-import org.mozilla.fenix.components.AppStore
-import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.shopping.ProductAnalysisTestData
 import org.mozilla.fenix.shopping.store.BottomSheetDismissSource
@@ -37,16 +32,12 @@ class ReviewQualityCheckTelemetryMiddlewareTest {
     val gleanTestRule = GleanTestRule(testContext)
 
     private lateinit var store: ReviewQualityCheckStore
-    private lateinit var browserStore: BrowserStore
-    private lateinit var appStore: AppStore
 
     @Before
     fun setup() {
-        browserStore = BrowserStore()
-        appStore = AppStore()
         store = ReviewQualityCheckStore(
             middleware = listOf(
-                ReviewQualityCheckTelemetryMiddleware(browserStore, appStore),
+                ReviewQualityCheckTelemetryMiddleware(),
             ),
         )
         store.waitUntilIdle()
@@ -67,8 +58,8 @@ class ReviewQualityCheckTelemetryMiddlewareTest {
 
         assertNotNull(Shopping.surfaceClosed.testGetValue())
         val event = Shopping.surfaceClosed.testGetValue()!!
-        Assert.assertEquals(1, event.size)
-        Assert.assertEquals(BottomSheetDismissSource.CLICK_OUTSIDE.sourceName, event.single().extra?.getValue("source"))
+        assertEquals(1, event.size)
+        assertEquals(BottomSheetDismissSource.CLICK_OUTSIDE.sourceName, event.single().extra?.getValue("source"))
     }
 
     @Test
@@ -78,8 +69,8 @@ class ReviewQualityCheckTelemetryMiddlewareTest {
 
         assertNotNull(Shopping.surfaceDisplayed.testGetValue())
         val event = Shopping.surfaceDisplayed.testGetValue()!!
-        Assert.assertEquals(1, event.size)
-        Assert.assertEquals(BottomSheetViewState.HALF_VIEW.state, event.single().extra?.getValue("view"))
+        assertEquals(1, event.size)
+        assertEquals(BottomSheetViewState.HALF_VIEW.state, event.single().extra?.getValue("view"))
     }
 
     @Test
@@ -127,11 +118,12 @@ class ReviewQualityCheckTelemetryMiddlewareTest {
         val tested = ReviewQualityCheckStore(
             initialState = ReviewQualityCheckState.OptedIn(
                 productRecommendationsPreference = true,
+                productRecommendationsExposure = true,
                 productVendor = ReviewQualityCheckState.ProductVendor.AMAZON,
                 isHighlightsExpanded = false,
             ),
             middleware = listOf(
-                ReviewQualityCheckTelemetryMiddleware(browserStore, appStore),
+                ReviewQualityCheckTelemetryMiddleware(),
             ),
         )
         tested.waitUntilIdle()
@@ -146,11 +138,12 @@ class ReviewQualityCheckTelemetryMiddlewareTest {
         val tested = ReviewQualityCheckStore(
             initialState = ReviewQualityCheckState.OptedIn(
                 productRecommendationsPreference = true,
+                productRecommendationsExposure = true,
                 productVendor = ReviewQualityCheckState.ProductVendor.AMAZON,
                 isHighlightsExpanded = true,
             ),
             middleware = listOf(
-                ReviewQualityCheckTelemetryMiddleware(browserStore, appStore),
+                ReviewQualityCheckTelemetryMiddleware(),
             ),
         )
         tested.waitUntilIdle()
@@ -165,11 +158,12 @@ class ReviewQualityCheckTelemetryMiddlewareTest {
         val tested = ReviewQualityCheckStore(
             initialState = ReviewQualityCheckState.OptedIn(
                 productRecommendationsPreference = true,
+                productRecommendationsExposure = true,
                 productVendor = ReviewQualityCheckState.ProductVendor.AMAZON,
                 isSettingsExpanded = false,
             ),
             middleware = listOf(
-                ReviewQualityCheckTelemetryMiddleware(browserStore, appStore),
+                ReviewQualityCheckTelemetryMiddleware(),
             ),
         )
         tested.waitUntilIdle()
@@ -184,11 +178,12 @@ class ReviewQualityCheckTelemetryMiddlewareTest {
         val tested = ReviewQualityCheckStore(
             initialState = ReviewQualityCheckState.OptedIn(
                 productRecommendationsPreference = true,
+                productRecommendationsExposure = true,
                 productVendor = ReviewQualityCheckState.ProductVendor.AMAZON,
                 isSettingsExpanded = true,
             ),
             middleware = listOf(
-                ReviewQualityCheckTelemetryMiddleware(browserStore, appStore),
+                ReviewQualityCheckTelemetryMiddleware(),
             ),
         )
         tested.waitUntilIdle()
@@ -247,90 +242,133 @@ class ReviewQualityCheckTelemetryMiddlewareTest {
     }
 
     @Test
-    fun `GIVEN a product review has been updated WHEN stale analysis is present and product is not in analysis THEN the stale analysis event is recorded`() {
-        val productTab = createTab(
-            url = "pdp",
-        )
-        val browserState = BrowserState(
-            tabs = listOf(productTab),
-            selectedTabId = productTab.id,
-        )
-        val testedStore = ReviewQualityCheckStore(
-            initialState = ReviewQualityCheckState.OptedIn(
-                productReviewState = ProductAnalysisTestData.analysisPresent(
-                    analysisStatus = AnalysisPresent.AnalysisStatus.UP_TO_DATE,
-                ),
-                productRecommendationsPreference = false,
-                productVendor = ReviewQualityCheckState.ProductVendor.AMAZON,
-            ),
-            middleware = listOf(
-                ReviewQualityCheckTelemetryMiddleware(BrowserStore(browserState), appStore),
-            ),
-        )
+    fun `GIVEN a product review has been updated WHEN restore analysis is false THEN the stale analysis event is recorded`() {
         val productReviewState = ProductAnalysisTestData.analysisPresent(
             analysisStatus = AnalysisPresent.AnalysisStatus.NEEDS_ANALYSIS,
         )
 
-        testedStore.dispatch(ReviewQualityCheckAction.UpdateProductReview(productReviewState)).joinBlocking()
-        testedStore.waitUntilIdle()
+        val tested = ReviewQualityCheckStore(
+            initialState = ReviewQualityCheckState.OptedIn(
+                productRecommendationsPreference = null,
+                productRecommendationsExposure = true,
+                productVendor = ReviewQualityCheckState.ProductVendor.BEST_BUY,
+            ),
+            middleware = listOf(ReviewQualityCheckTelemetryMiddleware()),
+        )
+
+        tested.dispatch(
+            ReviewQualityCheckAction.UpdateProductReview(
+                productReviewState = productReviewState,
+                restoreAnalysis = false,
+            ),
+        ).joinBlocking()
+        tested.waitUntilIdle()
 
         assertNotNull(Shopping.surfaceStaleAnalysisShown.testGetValue())
     }
 
     @Test
-    fun `GIVEN a product review has been updated WHEN stale analysis is present and product is being analyzed THEN the stale analysis event is not recorded`() {
-        val productTab = createTab(
-            url = "pdp",
-        )
-        appStore.dispatch(AppAction.ShoppingAction.AddToProductAnalysed("pdp")).joinBlocking()
-        appStore.waitUntilIdle()
-        val browserState = BrowserState(
-            tabs = listOf(productTab),
-            selectedTabId = productTab.id,
-        )
-        val testedStore = ReviewQualityCheckStore(
-            middleware = listOf(
-                ReviewQualityCheckTelemetryMiddleware(BrowserStore(browserState), appStore),
-            ),
-        )
+    fun `GIVEN a product review has been updated WHEN restore analysis is true THEN the stale analysis event is not recorded`() {
         val productReviewState = ProductAnalysisTestData.analysisPresent(
             analysisStatus = AnalysisPresent.AnalysisStatus.NEEDS_ANALYSIS,
         )
+        val tested = ReviewQualityCheckStore(
+            initialState = ReviewQualityCheckState.OptedIn(
+                productRecommendationsPreference = null,
+                productRecommendationsExposure = true,
+                productVendor = ReviewQualityCheckState.ProductVendor.BEST_BUY,
+            ),
+            middleware = listOf(ReviewQualityCheckTelemetryMiddleware()),
+        )
 
-        testedStore.dispatch(ReviewQualityCheckAction.UpdateProductReview(productReviewState)).joinBlocking()
-        testedStore.waitUntilIdle()
+        tested.dispatch(
+            ReviewQualityCheckAction.UpdateProductReview(
+                productReviewState = productReviewState,
+                restoreAnalysis = true,
+            ),
+        ).joinBlocking()
+        tested.waitUntilIdle()
 
         assertNull(Shopping.surfaceStaleAnalysisShown.testGetValue())
     }
 
     @Test
     fun `GIVEN a product review has been updated WHEN it is not a stale analysis THEN the stale analysis event is not recorded`() {
-        val productTab = createTab(
-            url = "pdp",
-        )
-        val browserState = BrowserState(
-            tabs = listOf(productTab),
-            selectedTabId = productTab.id,
-        )
-        val testedStore = ReviewQualityCheckStore(
+        val productReviewState = ProductAnalysisTestData.analysisPresent()
+
+        val tested = ReviewQualityCheckStore(
             initialState = ReviewQualityCheckState.OptedIn(
-                productReviewState = ProductAnalysisTestData.analysisPresent(
-                    analysisStatus = AnalysisPresent.AnalysisStatus.NEEDS_ANALYSIS,
-                ),
-                productRecommendationsPreference = false,
-                productVendor = ReviewQualityCheckState.ProductVendor.AMAZON,
+                productRecommendationsPreference = null,
+                productRecommendationsExposure = true,
+                productVendor = ReviewQualityCheckState.ProductVendor.BEST_BUY,
             ),
-            middleware = listOf(
-                ReviewQualityCheckTelemetryMiddleware(BrowserStore(browserState), appStore),
-            ),
-        )
-        val productReviewState = ProductAnalysisTestData.analysisPresent(
-            analysisStatus = AnalysisPresent.AnalysisStatus.REANALYZING,
+            middleware = listOf(ReviewQualityCheckTelemetryMiddleware()),
         )
 
-        testedStore.dispatch(ReviewQualityCheckAction.UpdateProductReview(productReviewState)).joinBlocking()
-        testedStore.waitUntilIdle()
+        tested.dispatch(
+            ReviewQualityCheckAction.UpdateProductReview(
+                productReviewState = productReviewState,
+                restoreAnalysis = true,
+            ),
+        ).joinBlocking()
+        tested.waitUntilIdle()
 
         assertNull(Shopping.surfaceStaleAnalysisShown.testGetValue())
+    }
+
+    @Test
+    fun `WHEN a product recommendation is visible for more than one and a half seconds THEN ad impression telemetry probe is sent`() {
+        store.dispatch(ReviewQualityCheckAction.RecommendedProductImpression("")).joinBlocking()
+        store.waitUntilIdle()
+
+        assertNotNull(Shopping.surfaceAdsImpression.testGetValue())
+    }
+
+    @Test
+    fun `WHEN a product recommendation is clicked THEN the ad clicked telemetry probe is sent`() {
+        store.dispatch(ReviewQualityCheckAction.RecommendedProductClick("", "")).joinBlocking()
+        store.waitUntilIdle()
+
+        assertNotNull(Shopping.surfaceAdsClicked.testGetValue())
+    }
+
+    @Test
+    fun `GIVEN the user has opted in WHEN the user switches product recommendations on THEN send enabled product recommendations toggled telemetry probe`() {
+        val tested = ReviewQualityCheckStore(
+            initialState = ReviewQualityCheckState.OptedIn(
+                productRecommendationsPreference = false,
+                productRecommendationsExposure = true,
+                productVendor = ReviewQualityCheckState.ProductVendor.AMAZON,
+                isHighlightsExpanded = false,
+            ),
+            middleware = listOf(
+                ReviewQualityCheckTelemetryMiddleware(),
+            ),
+        )
+        tested.waitUntilIdle()
+        tested.dispatch(ReviewQualityCheckAction.ToggleProductRecommendation).joinBlocking()
+        tested.waitUntilIdle()
+
+        assertEquals("enabled", Shopping.surfaceAdsSettingToggled.testGetValue()!!.first().extra!!["action"])
+    }
+
+    @Test
+    fun `GIVEN the user has opted in WHEN the user switches product recommendations off THEN send disabled product recommendations toggled telemetry probe`() {
+        val tested = ReviewQualityCheckStore(
+            initialState = ReviewQualityCheckState.OptedIn(
+                productRecommendationsPreference = true,
+                productRecommendationsExposure = true,
+                productVendor = ReviewQualityCheckState.ProductVendor.AMAZON,
+                isHighlightsExpanded = false,
+            ),
+            middleware = listOf(
+                ReviewQualityCheckTelemetryMiddleware(),
+            ),
+        )
+        tested.waitUntilIdle()
+        tested.dispatch(ReviewQualityCheckAction.ToggleProductRecommendation).joinBlocking()
+        tested.waitUntilIdle()
+
+        assertEquals("disabled", Shopping.surfaceAdsSettingToggled.testGetValue()!!.first().extra!!["action"])
     }
 }

@@ -41,8 +41,8 @@ gcloud:
     - model: Pixel2.arm
       version: 27
       locale: en_US
-    - model: blueline
-      version: 28
+    - model: redfin
+      version: 30
       locale: en_US
     - model: x1q
       version: 29
