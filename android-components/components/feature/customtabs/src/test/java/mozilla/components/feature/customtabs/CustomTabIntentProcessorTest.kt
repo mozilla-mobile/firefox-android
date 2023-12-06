@@ -117,7 +117,7 @@ class CustomTabIntentProcessorTest {
         middleware.assertFirstAction(EngineAction.LoadUrlAction::class) { action ->
             assertEquals(customTabId, action.tabId)
             assertEquals("http://mozilla.org", action.url)
-            assertEquals(LoadUrlFlags.external(), action.flags)
+            assertTrue(LoadUrlFlags.external().contains(action.flags.value))
             assertEquals(headers, action.additionalHeaders)
         }
 

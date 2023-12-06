@@ -77,6 +77,7 @@ fun createCustomTab(
     private: Boolean = false,
     webAppManifest: WebAppManifest? = null,
     initialLoadFlags: EngineSession.LoadUrlFlags = EngineSession.LoadUrlFlags.none(),
+    initialAdditionalHeaders: Map<String, String>? = null
 ): CustomTabSessionState {
     return CustomTabSessionState(
         id = id,
@@ -94,6 +95,7 @@ fun createCustomTab(
             engineSession = engineSession,
             crashed = crashed,
             initialLoadFlags = initialLoadFlags,
+            initialAdditionalHeaders = initialAdditionalHeaders
         ),
     )
 }
