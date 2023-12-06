@@ -1951,15 +1951,4 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = { false },
         featureFlag = FeatureFlags.completeToolbarRedesignEnabled,
     )
-
-    /**
-     * Indicates if the user is shown incomplete new redesigned Toolbar UI components and behaviors.
-     *
-     * DEV ONLY
-     */
-    var enableIncompleteToolbarRedesign by lazyFeatureFlagPreference(
-        key = appContext.getPreferenceKey(R.string.pref_key_toolbar_use_redesign_incomplete),
-        default = { false },
-        featureFlag = FeatureFlags.incompleteToolbarRedesignEnabled,
-    )
 }

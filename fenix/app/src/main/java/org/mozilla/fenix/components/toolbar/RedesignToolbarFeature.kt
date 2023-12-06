@@ -28,15 +28,3 @@ class CompleteRedesignToolbarFeature(
     override val isEnabled: Boolean
         get() = settings.enableRedesignToolbar
 }
-
-/**
- * The incomplete portions of the redesigned Toolbar still in progress.
- *
- */
-class IncompleteRedesignToolbarFeature(
-    private val settings: Settings,
-) : RedesignToolbarFeature {
-
-    override val isEnabled: Boolean
-        get() = settings.enableIncompleteToolbarRedesign
-}
