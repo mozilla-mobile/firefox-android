@@ -77,5 +77,5 @@ object FeatureFlags {
     /**
      * Enable Meta attribution.
      */
-    val metaAttributionEnabled = Config.channel.isNightlyOrDebug
+    const val metaAttributionEnabled = true
 }
