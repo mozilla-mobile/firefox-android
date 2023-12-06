@@ -75,6 +75,11 @@ object FeatureFlags {
     const val fxSuggest = true
 
     /**
+     * Allows users to enable SuggestStrongPassword feature.
+     */
+    const val suggestStrongPassword = true
+
+    /**
      * Enable Meta attribution.
      */
     val metaAttributionEnabled = Config.channel.isNightlyOrDebug
