@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit
  *  - temporarily cache the downloaded resources
  *  - copy the resource to the device clipboard.
  *
- * with a 1 second timeout to ensure a smooth UX.
+ * with a 1 minute timeout to ensure a smooth UX.
  *
  * To finish the process in this small timeframe the feature is recommended to be used only for images.
  *
@@ -62,7 +62,7 @@ class CopyDownloadFeature(
     /**
      * At most time to allow for the file to be downloaded.
      */
-    private val operationTimeoutMs by lazy { TimeUnit.MINUTES.toMinutes(1) }
+    private val operationTimeoutMs by lazy { TimeUnit.MINUTES.toMillis(1) }
 
     override fun start() {
         scope = store.flowScoped { flow ->
