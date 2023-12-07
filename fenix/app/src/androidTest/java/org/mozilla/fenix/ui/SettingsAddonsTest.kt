@@ -115,20 +115,37 @@ class SettingsAddonsTest {
         }
     }
 
+    // TODO: Harden to dynamically install addons from position
+    //   in list of detected addons on screen instead of hard-coded values.
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/561600
+<<<<<<< HEAD
     // Installs uBlock add-on and checks that the app doesn't crash while loading pages with trackers
+=======
+    // Installs 2 add-on and checks that the app doesn't crash while navigating the app
+>>>>>>> ffd6bca179 (Bug 1868858 - Fix test failure SettingsAddonsTest.noCrashWithAddonInstalledTest)
     @SmokeTest
     @Test
     fun noCrashWithAddonInstalledTest() {
         // setting ETP to Strict mode to test it works with add-ons
         activityTestRule.activity.settings().setStrictETP()
 
+<<<<<<< HEAD
         val addonName = "uBlock Origin"
         val trackingProtectionPage = getEnhancedTrackingProtectionAsset(mockWebServer)
 
         addonsMenu {
             installAddon(addonName)
             verifyAddonInstallCompleted(addonName, activityTestRule)
+=======
+        val uBlockAddon = "uBlock Origin"
+        val darkReaderAddon = "Dark Reader"
+        val trackingProtectionPage = getEnhancedTrackingProtectionAsset(mockWebServer)
+
+        addonsMenu {
+            installAddon(uBlockAddon, activityTestRule)
+            closeAddonInstallCompletePrompt()
+            installAddon(darkReaderAddon, activityTestRule)
+>>>>>>> ffd6bca179 (Bug 1868858 - Fix test failure SettingsAddonsTest.noCrashWithAddonInstalledTest)
             closeAddonInstallCompletePrompt()
         }.goBack {
         }.openNavigationToolbar {
