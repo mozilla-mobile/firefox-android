@@ -17,7 +17,7 @@ buildscript {
 }
 
 plugins {
-    id "com.jetbrains.python.envs" version "$python_envs_plugin"
+    alias(libs.plugins.jetbrains.python.envs.plugin)
 }
 
 apply plugin: 'com.android.library'
@@ -56,17 +56,17 @@ dependencies {
     implementation project(':support-base')
     implementation project(':support-ktx')
 
-    implementation ComponentsDependencies.androidx_work_runtime
-    implementation ComponentsDependencies.kotlin_coroutines
+    implementation libs.androidx.work.runtime.ktx
+    implementation libs.kotlinx.coroutines.android
 
     testImplementation project(':support-test')
 
-    testImplementation ComponentsDependencies.androidx_test_core
-    testImplementation ComponentsDependencies.androidx_test_junit
-    testImplementation ComponentsDependencies.androidx_work_testing
+    testImplementation libs.androidx.test.core
+    testImplementation libs.androidx.test.junit.ktx
+    testImplementation libs.androidx.work.testing
     testImplementation ComponentsDependencies.mozilla_appservices_full_megazord_forUnitTests
-    testImplementation ComponentsDependencies.testing_coroutines
-    testImplementation ComponentsDependencies.testing_robolectric
+    testImplementation libs.kotlinx.coroutines.test
+    testImplementation libs.robolectric
 }
 
 apply from: '../../../android-lint.gradle'

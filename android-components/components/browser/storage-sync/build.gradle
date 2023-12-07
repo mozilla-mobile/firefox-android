@@ -39,21 +39,21 @@ dependencies {
     implementation project(':concept-toolbar')
     implementation project(':support-utils')
 
-    implementation ComponentsDependencies.androidx_work_runtime
+    implementation libs.androidx.work.runtime.ktx
     implementation ComponentsDependencies.mozilla_appservices_syncmanager
 
     testImplementation project(':support-test')
 
-    testImplementation ComponentsDependencies.androidx_test_core
-    testImplementation ComponentsDependencies.androidx_test_junit
-    testImplementation ComponentsDependencies.testing_robolectric
-    testImplementation ComponentsDependencies.testing_coroutines
-    testImplementation ComponentsDependencies.androidx_work_testing
-    testImplementation ComponentsDependencies.kotlin_reflect
+    testImplementation libs.androidx.test.core
+    testImplementation libs.androidx.test.junit.ktx
+    testImplementation libs.robolectric
+    testImplementation libs.kotlinx.coroutines.test
+    testImplementation libs.androidx.work.testing
+    testImplementation libs.kotlin.reflect
 
     testImplementation ComponentsDependencies.mozilla_appservices_places
     testImplementation ComponentsDependencies.mozilla_appservices_tabs
-    testImplementation ComponentsDependencies.testing_mockwebserver
+    testImplementation libs.mockwebserver
 
     testImplementation ComponentsDependencies.mozilla_appservices_full_megazord_forUnitTests
     testImplementation ComponentsDependencies.mozilla_glean_forUnitTests

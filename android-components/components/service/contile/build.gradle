@@ -23,19 +23,19 @@ android {
 }
 
 dependencies {
-    implementation ComponentsDependencies.kotlin_coroutines
-    implementation ComponentsDependencies.androidx_work_runtime
+    implementation libs.kotlinx.coroutines.android
+    implementation libs.androidx.work.runtime.ktx
 
     implementation project(':concept-fetch')
     implementation project(':support-ktx')
     implementation project(':support-base')
     implementation project(':feature-top-sites')
 
-    testImplementation ComponentsDependencies.androidx_test_core
-    testImplementation ComponentsDependencies.androidx_test_junit
-    testImplementation ComponentsDependencies.androidx_work_testing
-    testImplementation ComponentsDependencies.testing_robolectric
-    testImplementation ComponentsDependencies.testing_coroutines
+    testImplementation libs.androidx.test.core
+    testImplementation libs.androidx.test.junit.ktx
+    testImplementation libs.androidx.work.testing
+    testImplementation libs.robolectric
+    testImplementation libs.kotlinx.coroutines.test
 
     testImplementation project(':support-test')
 }

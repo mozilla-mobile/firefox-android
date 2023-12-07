@@ -15,7 +15,7 @@ buildscript {
 }
 
 plugins {
-    id "com.jetbrains.python.envs" version "$python_envs_plugin"
+    alias(libs.plugins.jetbrains.python.envs.plugin)
 }
 
 apply plugin: 'com.android.library'

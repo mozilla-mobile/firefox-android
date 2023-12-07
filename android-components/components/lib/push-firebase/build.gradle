@@ -23,18 +23,18 @@ android {
 }
 
 dependencies {
-    implementation ComponentsDependencies.kotlin_coroutines
+    implementation libs.kotlinx.coroutines.android
 
     implementation project(':concept-push')
     implementation project(':support-base')
 
-    api ComponentsDependencies.firebase_messaging
+    api libs.google.firebase.messaging
 
     testImplementation project(':support-test')
 
-    testImplementation ComponentsDependencies.androidx_test_core
-    testImplementation ComponentsDependencies.testing_junit
-    testImplementation ComponentsDependencies.testing_robolectric
+    testImplementation libs.androidx.test.core
+    testImplementation libs.junit
+    testImplementation libs.robolectric
 }
 
 apply from: '../../../android-lint.gradle'

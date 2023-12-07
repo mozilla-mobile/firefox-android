@@ -40,16 +40,16 @@ dependencies {
     implementation project(':support-ktx')
     implementation project(':ui-icons')
 
-    implementation ComponentsDependencies.androidx_core_ktx
+    implementation libs.androidx.core.ktx
 
-    implementation ComponentsDependencies.kotlin_coroutines
+    implementation libs.kotlinx.coroutines.android
 
     testImplementation project(':support-test')
 
-    testImplementation ComponentsDependencies.androidx_test_core
-    testImplementation ComponentsDependencies.androidx_test_junit
-    testImplementation ComponentsDependencies.testing_robolectric
-    testImplementation ComponentsDependencies.testing_coroutines
+    testImplementation libs.androidx.test.core
+    testImplementation libs.androidx.test.junit.ktx
+    testImplementation libs.robolectric
+    testImplementation libs.kotlinx.coroutines.test
 }
 
 apply from: '../../../android-lint.gradle'

@@ -33,8 +33,8 @@ tasks.withType(KotlinCompile).configureEach {
 }
 
 dependencies {
-    implementation ComponentsDependencies.kotlin_coroutines
-    implementation ComponentsDependencies.androidx_work_runtime
+    implementation libs.kotlinx.coroutines.android
+    implementation libs.androidx.work.runtime.ktx
 
     implementation project(':concept-engine')
     implementation project(":browser-state")
@@ -43,9 +43,9 @@ dependencies {
     implementation project(':support-ktx')
     implementation project(':support-webextensions')
 
-    testImplementation ComponentsDependencies.androidx_test_junit
-    testImplementation ComponentsDependencies.testing_robolectric
-    testImplementation ComponentsDependencies.testing_coroutines
+    testImplementation libs.androidx.test.junit.ktx
+    testImplementation libs.robolectric
+    testImplementation libs.kotlinx.coroutines.test
 
     testImplementation project(':support-test')
 }

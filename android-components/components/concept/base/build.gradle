@@ -30,13 +30,13 @@ android {
 }
 
 dependencies {
-    implementation ComponentsDependencies.kotlin_coroutines
+    implementation libs.kotlinx.coroutines.android
 
-    implementation ComponentsDependencies.androidx_annotation
+    implementation libs.androidx.annotation
 
-    testImplementation ComponentsDependencies.androidx_test_junit
-    testImplementation ComponentsDependencies.testing_robolectric
-    testImplementation ComponentsDependencies.testing_mockwebserver
+    testImplementation libs.androidx.test.junit.ktx
+    testImplementation libs.robolectric
+    testImplementation libs.mockwebserver
 
     testImplementation project(':support-test')
 }

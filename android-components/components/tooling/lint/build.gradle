@@ -11,16 +11,16 @@ targetCompatibility = JavaVersion.VERSION_17
 sourceCompatibility = JavaVersion.VERSION_17
 
 dependencies {
-  compileOnly ComponentsDependencies.tools_lintapi
-  compileOnly ComponentsDependencies.tools_lintchecks
+  compileOnly libs.tools.android.lint.api
+  compileOnly libs.tools.android.lint.checks
 
-  compileOnly ComponentsDependencies.kotlin_reflect
-  testImplementation ComponentsDependencies.kotlin_reflect
+  compileOnly libs.kotlin.reflect
+  testImplementation libs.kotlin.reflect
 
-  testImplementation ComponentsDependencies.tools_lint
-  testImplementation ComponentsDependencies.tools_linttests
-  testImplementation ComponentsDependencies.testing_junit
-  testImplementation ComponentsDependencies.testing_mockito
+  testImplementation libs.tools.android.lint
+  testImplementation libs.tools.android.lint.tests
+  testImplementation libs.junit
+  testImplementation libs.mockito
 }
 
 jar {

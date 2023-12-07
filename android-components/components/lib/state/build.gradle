@@ -28,7 +28,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = Versions.compose_compiler
+        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
     }
 
     namespace 'mozilla.components.lib.state'
@@ -41,25 +41,25 @@ tasks.withType(KotlinCompile).configureEach {
 }
 
 dependencies {
-    implementation ComponentsDependencies.kotlin_coroutines
-    implementation ComponentsDependencies.androidx_fragment
-    implementation ComponentsDependencies.androidx_compose_ui
-    implementation ComponentsDependencies.androidx_lifecycle_process
+    implementation libs.kotlinx.coroutines.android
+    implementation libs.androidx.fragment
+    implementation libs.androidx.compose.ui.base
+    implementation libs.androidx.lifecycle.process
 
     implementation project(':support-base')
     implementation project(':support-ktx')
 
     testImplementation project(':support-test')
 
-    testImplementation ComponentsDependencies.androidx_test_core
-    testImplementation ComponentsDependencies.androidx_test_junit
-    testImplementation ComponentsDependencies.androidx_compose_ui_test
-    testImplementation ComponentsDependencies.testing_robolectric
-    testImplementation ComponentsDependencies.testing_coroutines
+    testImplementation libs.androidx.test.core
+    testImplementation libs.androidx.test.junit.ktx
+    testImplementation libs.androidx.compose.ui.test.junit4
+    testImplementation libs.robolectric
+    testImplementation libs.kotlinx.coroutines.test
 
-    androidTestImplementation ComponentsDependencies.androidx_test_junit
-    androidTestImplementation ComponentsDependencies.androidx_compose_ui_test_manifest
-    androidTestImplementation ComponentsDependencies.androidx_compose_ui_test
+    androidTestImplementation libs.androidx.test.junit.ktx
+    androidTestImplementation libs.androidx.compose.ui.test.manifest
+    androidTestImplementation libs.androidx.compose.ui.test.junit4
 }
 
 apply from: '../../../android-lint.gradle'

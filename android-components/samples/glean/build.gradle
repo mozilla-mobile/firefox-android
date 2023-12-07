@@ -15,7 +15,7 @@ buildscript {
 }
 
 plugins {
-    id "com.jetbrains.python.envs" version "$python_envs_plugin"
+    alias(libs.plugins.jetbrains.python.envs.plugin)
 }
 
 apply plugin: 'com.android.application'
@@ -59,21 +59,21 @@ dependencies {
     implementation project(':support-rustlog')
     implementation project(':lib-fetch-httpurlconnection')
 
-    implementation ComponentsDependencies.kotlin_coroutines
+    implementation libs.kotlinx.coroutines.android
 
-    implementation ComponentsDependencies.androidx_appcompat
-    implementation ComponentsDependencies.androidx_browser
+    implementation libs.androidx.appcompat
+    implementation libs.androidx.browser
 
     implementation project(':samples-glean-library')
 
-    androidTestImplementation ComponentsDependencies.androidx_test_core
-    androidTestImplementation ComponentsDependencies.androidx_test_runner
-    androidTestImplementation ComponentsDependencies.androidx_test_rules
-    androidTestImplementation ComponentsDependencies.androidx_test_junit
-    androidTestImplementation ComponentsDependencies.androidx_test_uiautomator
-    androidTestImplementation ComponentsDependencies.androidx_espresso_core
-    androidTestImplementation ComponentsDependencies.androidx_work_testing
-    androidTestImplementation ComponentsDependencies.testing_mockwebserver
+    androidTestImplementation libs.androidx.test.core
+    androidTestImplementation libs.androidx.test.runner
+    androidTestImplementation libs.androidx.test.rules
+    androidTestImplementation libs.androidx.test.junit.ktx
+    androidTestImplementation libs.androidx.test.uiautomator
+    androidTestImplementation libs.espresso.core
+    androidTestImplementation libs.androidx.work.testing
+    androidTestImplementation libs.mockwebserver
 }
 
 apply plugin: "org.mozilla.telemetry.glean-gradle-plugin"

@@ -45,7 +45,7 @@ dependencies {
     implementation project(':support-utils')
     implementation project(':service-glean')
 
-    implementation ComponentsDependencies.kotlin_coroutines
+    implementation libs.kotlinx.coroutines.android
 }
 
 apply from: '../../../android-lint.gradle'

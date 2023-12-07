@@ -21,12 +21,12 @@ repositories {
 }
 
 dependencies {
-    compileOnly "com.android.tools.lint:lint-api:${Versions.lint}"
-    compileOnly "com.android.tools.lint:lint-checks:${Versions.lint}"
+    compileOnly libs.tools.android.lint.api
+    compileOnly libs.tools.android.lint.checks
 
     testImplementation "junit:junit:4.13.2"
-    testImplementation "com.android.tools.lint:lint:${Versions.lint}"
-    testImplementation "com.android.tools.lint:lint-tests:${Versions.lint}"
+    testImplementation libs.tools.android.lint.api
+    testImplementation libs.tools.android.lint.tests
 }
 
 jar {

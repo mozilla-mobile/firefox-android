@@ -31,7 +31,7 @@ android {
 dependencies {
     implementation ComponentsDependencies.mozilla_appservices_rust_log_forwarder
 
-    implementation ComponentsDependencies.kotlin_coroutines
+    implementation libs.kotlinx.coroutines.android
     // Log.Priority is in the public api.
     api project(':support-base')
 
@@ -40,9 +40,9 @@ dependencies {
 
     testImplementation ComponentsDependencies.mozilla_appservices_full_megazord_forUnitTests
 
-    testImplementation ComponentsDependencies.testing_junit
-    testImplementation ComponentsDependencies.androidx_test_junit
-    testImplementation ComponentsDependencies.testing_robolectric
+    testImplementation libs.junit
+    testImplementation libs.androidx.test.junit.ktx
+    testImplementation libs.robolectric
 }
 
 apply from: '../../../android-lint.gradle'

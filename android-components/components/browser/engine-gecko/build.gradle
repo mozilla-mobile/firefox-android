@@ -16,7 +16,7 @@ buildscript {
 }
 
 plugins {
-    id "com.jetbrains.python.envs" version "$python_envs_plugin"
+    alias(libs.plugins.jetbrains.python.envs.plugin)
 }
 
 apply plugin: 'com.android.library'
@@ -63,19 +63,19 @@ dependencies {
     implementation(project(':service-nimbus')) {
         exclude group: 'org.mozilla.telemetry', module: 'glean-native'
     }
-    implementation ComponentsDependencies.kotlin_coroutines
+    implementation libs.kotlinx.coroutines.android
 
     api ComponentsDependencies.mozilla_geckoview
 
-    implementation ComponentsDependencies.androidx_paging
-    implementation ComponentsDependencies.androidx_data_store_preferences
-    implementation ComponentsDependencies.androidx_lifecycle_livedata
+    implementation libs.androidx.paging
+    implementation libs.androidx.datastore.preferences
+    implementation libs.androidx.lifecycle.livedata
 
-    testImplementation ComponentsDependencies.androidx_test_core
-    testImplementation ComponentsDependencies.androidx_test_junit
-    testImplementation ComponentsDependencies.testing_robolectric
-    testImplementation ComponentsDependencies.testing_coroutines
-    testImplementation ComponentsDependencies.testing_mockwebserver
+    testImplementation libs.androidx.test.core
+    testImplementation libs.androidx.test.junit.ktx
+    testImplementation libs.robolectric
+    testImplementation libs.kotlinx.coroutines.test
+    testImplementation libs.mockwebserver
     testImplementation project(':support-test')
     testImplementation project(':tooling-fetch-tests')
 
@@ -83,11 +83,11 @@ dependencies {
     // if it wants to collect GeckoView telemetry through the Glean SDK.
     compileOnly project(":service-glean")
     testImplementation project(":service-glean")
-    testImplementation ComponentsDependencies.androidx_work_testing
+    testImplementation libs.androidx.work.testing
 
-    androidTestImplementation ComponentsDependencies.androidx_test_core
-    androidTestImplementation ComponentsDependencies.androidx_test_runner
-    androidTestImplementation ComponentsDependencies.androidx_test_rules
+    androidTestImplementation libs.androidx.test.core
+    androidTestImplementation libs.androidx.test.runner
+    androidTestImplementation libs.androidx.test.rules
     androidTestImplementation project(':tooling-fetch-tests')
 }
 

@@ -13,12 +13,12 @@ buildscript {
 
     dependencies {
         classpath "org.mozilla.telemetry:glean-gradle-plugin:${Versions.mozilla_glean}"
-        classpath  ComponentsDependencies.plugin_serialization
+        classpath  libs.kotlin.plugin.serialization
     }
 }
 
 plugins {
-    id "com.jetbrains.python.envs" version "$python_envs_plugin"
+    alias(libs.plugins.jetbrains.python.envs.plugin)
 }
 
 apply plugin: 'com.android.library'
@@ -61,32 +61,31 @@ android {
 }
 
 dependencies {
-    implementation ComponentsDependencies.kotlin_coroutines
-    implementation ComponentsDependencies.kotlin_json
-
-    implementation ComponentsDependencies.androidx_appcompat
-    implementation ComponentsDependencies.androidx_constraintlayout
-    implementation ComponentsDependencies.androidx_recyclerview
+    implementation libs.kotlinx.coroutines.android
+    implementation libs.kotlinx.serialization.json
+    implementation libs.androidx.appcompat
+    implementation libs.androidx.constraintlayout
+    implementation libs.androidx.recyclerview
 
     implementation project(':support-base')
     implementation project(':support-ktx')
     implementation project(':support-utils')
 
-    implementation ComponentsDependencies.androidx_room_runtime
-    ksp ComponentsDependencies.androidx_room_compiler
+    implementation libs.androidx.room.ktx
+    ksp libs.androidx.room.compiler
 
     // We only compile against GeckoView and Glean. It's up to the app to add those dependencies if it wants to
     // send crash reports to Socorro (GV).
     compileOnly project(":service-glean")
     testImplementation project(":service-glean")
-    testImplementation ComponentsDependencies.androidx_work_testing
+    testImplementation libs.androidx.work.testing
 
     testImplementation project(':support-test')
-    testImplementation ComponentsDependencies.androidx_test_core
-    testImplementation ComponentsDependencies.androidx_test_junit
-    testImplementation ComponentsDependencies.testing_robolectric
-    testImplementation ComponentsDependencies.testing_coroutines
-    testImplementation ComponentsDependencies.testing_mockwebserver
+    testImplementation libs.androidx.test.core
+    testImplementation libs.androidx.test.junit.ktx
+    testImplementation libs.robolectric
+    testImplementation libs.kotlinx.coroutines.test
+    testImplementation libs.mockwebserver
     testImplementation ComponentsDependencies.mozilla_glean_forUnitTests
 }
 

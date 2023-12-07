@@ -51,16 +51,16 @@ tasks.withType(KotlinCompile).configureEach {
 }
 
 dependencies {
-    implementation ComponentsDependencies.kotlin_coroutines
+    implementation libs.kotlinx.coroutines.android
 
-    implementation ComponentsDependencies.androidx_appcompat
-    implementation ComponentsDependencies.androidx_cardview
-    implementation ComponentsDependencies.androidx_core_ktx
-    implementation ComponentsDependencies.androidx_recyclerview
-    implementation ComponentsDependencies.androidx_work_runtime
+    implementation libs.androidx.appcompat
+    implementation libs.androidx.cardview
+    implementation libs.androidx.core.ktx
+    implementation libs.androidx.recyclerview
+    implementation libs.androidx.work.runtime.ktx
 
-    implementation ComponentsDependencies.androidx_room_runtime
-    ksp ComponentsDependencies.androidx_room_compiler
+    implementation libs.androidx.room.ktx
+    ksp libs.androidx.room.compiler
 
     implementation project(':ui-colors')
     implementation project(':ui-icons')
@@ -76,11 +76,11 @@ dependencies {
 
     testImplementation project(':support-test')
     testImplementation project(':support-test-libstate')
-    testImplementation ComponentsDependencies.androidx_test_core
-    testImplementation ComponentsDependencies.androidx_test_junit
-    testImplementation ComponentsDependencies.testing_robolectric
-    testImplementation ComponentsDependencies.androidx_work_testing
-    testImplementation ComponentsDependencies.testing_coroutines
+    testImplementation libs.androidx.test.core
+    testImplementation libs.androidx.test.junit.ktx
+    testImplementation libs.robolectric
+    testImplementation libs.androidx.work.testing
+    testImplementation libs.kotlinx.coroutines.test
 }
 
 apply from: '../../../android-lint.gradle'

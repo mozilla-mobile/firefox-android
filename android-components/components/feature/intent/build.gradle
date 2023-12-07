@@ -34,11 +34,11 @@ dependencies {
 
     testImplementation project(':support-test')
     testImplementation project(':support-test-libstate')
-    testImplementation ComponentsDependencies.androidx_browser
-    testImplementation ComponentsDependencies.androidx_test_junit
-    testImplementation ComponentsDependencies.testing_robolectric
-    testImplementation ComponentsDependencies.kotlin_coroutines
-    testImplementation ComponentsDependencies.testing_coroutines
+    testImplementation libs.androidx.browser
+    testImplementation libs.androidx.test.junit.ktx
+    testImplementation libs.robolectric
+    testImplementation libs.kotlinx.coroutines.android
+    testImplementation libs.kotlinx.coroutines.test
 }
 
 apply from: '../../../android-lint.gradle'

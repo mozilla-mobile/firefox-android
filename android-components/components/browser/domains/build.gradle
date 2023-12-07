@@ -26,13 +26,14 @@ android {
 
 dependencies {
     implementation project(':concept-toolbar')
-    implementation ComponentsDependencies.kotlin_coroutines
+    implementation libs.kotlinx.coroutines.android
 
     testImplementation project(':support-test')
 
-    testImplementation ComponentsDependencies.androidx_test_junit
-    testImplementation ComponentsDependencies.testing_robolectric
-    testImplementation ComponentsDependencies.testing_coroutines
+    testImplementation libs.androidx.test.junit.ktx
+
+    testImplementation libs.robolectric
+    testImplementation libs.kotlinx.coroutines.test
 }
 
 apply from: '../../../android-lint.gradle'

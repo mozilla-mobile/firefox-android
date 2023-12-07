@@ -9,11 +9,11 @@ targetCompatibility = JavaVersion.VERSION_17
 sourceCompatibility = JavaVersion.VERSION_17
 
 dependencies {
-    implementation ComponentsDependencies.tools_detekt_api
+    implementation libs.tools.detekt.api
 
-    testImplementation ComponentsDependencies.testing_junit
-    testImplementation ComponentsDependencies.tools_detekt_api
-    testImplementation ComponentsDependencies.tools_detekt_test
+    testImplementation libs.junit
+    testImplementation libs.tools.detekt.api
+    testImplementation libs.tools.detekt.test
 }
 
 tasks.register("lintRelease") {

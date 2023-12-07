@@ -38,7 +38,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = Versions.compose_compiler
+        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
     }
 
     namespace 'mozilla.components.browser.icons'
@@ -56,33 +56,33 @@ dependencies {
     implementation project(':support-images')
     implementation project(':support-ktx')
 
-    implementation ComponentsDependencies.androidx_annotation
-    implementation ComponentsDependencies.androidx_compose_material
-    implementation ComponentsDependencies.androidx_compose_ui
-    implementation ComponentsDependencies.androidx_core_ktx
-    implementation ComponentsDependencies.androidx_palette
+    implementation libs.androidx.annotation
+    implementation libs.androidx.compose.material
+    implementation libs.androidx.compose.ui.base
+    implementation libs.androidx.core.ktx
+    implementation libs.androidx.palette
 
-    implementation ComponentsDependencies.kotlin_coroutines
+    implementation libs.kotlinx.coroutines.android
 
-    implementation ComponentsDependencies.thirdparty_disklrucache
+    implementation libs.jakewharton.disklrucache
 
-    implementation ComponentsDependencies.thirdparty_coil_svg
+    implementation libs.coil.svg
 
     testImplementation project(':support-test')
     testImplementation project(':lib-fetch-httpurlconnection')
     testImplementation project(':lib-fetch-okhttp')
 
-    testImplementation ComponentsDependencies.androidx_test_core
-    testImplementation ComponentsDependencies.androidx_test_junit
-    testImplementation ComponentsDependencies.kotlin_reflect
-    testImplementation ComponentsDependencies.testing_mockwebserver
-    testImplementation ComponentsDependencies.testing_robolectric
-    testImplementation ComponentsDependencies.testing_coroutines
+    testImplementation libs.androidx.test.core
+    testImplementation libs.androidx.test.junit.ktx
+    testImplementation libs.kotlin.reflect
+    testImplementation libs.mockwebserver
+    testImplementation libs.robolectric
+    testImplementation libs.kotlinx.coroutines.test
 
-    androidTestImplementation ComponentsDependencies.androidx_test_core
-    androidTestImplementation ComponentsDependencies.androidx_test_runner
-    androidTestImplementation ComponentsDependencies.androidx_test_rules
-    androidTestImplementation ComponentsDependencies.testing_coroutines
+    androidTestImplementation libs.androidx.test.core
+    androidTestImplementation libs.androidx.test.runner
+    androidTestImplementation libs.androidx.test.rules
+    androidTestImplementation libs.kotlinx.coroutines.test
 }
 
 apply from: '../../../android-lint.gradle'

@@ -30,7 +30,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = Versions.compose_compiler
+        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
     }
 
     packagingOptions {
@@ -60,20 +60,20 @@ dependencies {
     // consumer to have to manually import "concept-fetch".
     api project(':concept-fetch')
 
-    implementation ComponentsDependencies.androidx_browser
-    implementation ComponentsDependencies.androidx_compose_ui
-    implementation ComponentsDependencies.kotlin_coroutines
+    implementation libs.androidx.browser
+    implementation libs.androidx.compose.ui.base
+    implementation libs.kotlinx.coroutines.android
 
     testImplementation project(':support-test')
     testImplementation project(':support-test-libstate')
-    testImplementation ComponentsDependencies.androidx_test_junit
-    testImplementation ComponentsDependencies.testing_junit
-    testImplementation ComponentsDependencies.testing_robolectric
-    testImplementation ComponentsDependencies.testing_coroutines
+    testImplementation libs.androidx.test.junit.ktx
+    testImplementation libs.junit
+    testImplementation libs.robolectric
+    testImplementation libs.kotlinx.coroutines.test
 
-    androidTestImplementation ComponentsDependencies.androidx_test_junit
-    androidTestImplementation ComponentsDependencies.androidx_compose_ui_test_manifest
-    androidTestImplementation ComponentsDependencies.androidx_compose_ui_test
+    androidTestImplementation libs.androidx.test.junit.ktx
+    androidTestImplementation libs.androidx.compose.ui.test.manifest
+    androidTestImplementation libs.androidx.compose.ui.test.junit4
 }
 
 apply from: '../../../android-lint.gradle'

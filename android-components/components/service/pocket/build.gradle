@@ -38,37 +38,37 @@ android {
 }
 
 dependencies {
-    implementation ComponentsDependencies.kotlin_coroutines
+    implementation libs.kotlinx.coroutines.android
 
-    implementation ComponentsDependencies.androidx_core_ktx
-    implementation ComponentsDependencies.androidx_work_runtime
-    implementation ComponentsDependencies.androidx_room_runtime
-    ksp ComponentsDependencies.androidx_room_compiler
+    implementation libs.androidx.core.ktx
+    implementation libs.androidx.work.runtime.ktx
+    implementation libs.androidx.room.ktx
+    ksp libs.androidx.room.compiler
 
     implementation project(':support-ktx')
     implementation project(':support-base')
     implementation project(':concept-fetch')
 
-    testImplementation ComponentsDependencies.kotlin_reflect
+    testImplementation libs.kotlin.reflect
 
-    testImplementation ComponentsDependencies.androidx_arch_core_testing
-    testImplementation ComponentsDependencies.androidx_test_core
-    testImplementation ComponentsDependencies.androidx_test_junit
-    testImplementation ComponentsDependencies.testing_coroutines
-    testImplementation ComponentsDependencies.testing_robolectric
-    testImplementation ComponentsDependencies.androidx_room_testing
-    testImplementation ComponentsDependencies.androidx_work_testing
+    testImplementation libs.androidx.arch.core.testing
+    testImplementation libs.androidx.test.core
+    testImplementation libs.androidx.test.junit.ktx
+    testImplementation libs.kotlinx.coroutines.test
+    testImplementation libs.robolectric
+    testImplementation libs.androidx.room.testing
+    testImplementation libs.androidx.work.testing
 
     testImplementation project(':support-test')
     testImplementation project(':lib-fetch-httpurlconnection')
 
     androidTestImplementation project(':support-android-test')
 
-    androidTestImplementation ComponentsDependencies.androidx_room_testing
-    androidTestImplementation ComponentsDependencies.androidx_arch_core_testing
-    androidTestImplementation ComponentsDependencies.androidx_test_core
-    androidTestImplementation ComponentsDependencies.androidx_test_runner
-    androidTestImplementation ComponentsDependencies.androidx_test_rules
+    androidTestImplementation libs.androidx.room.testing
+    androidTestImplementation libs.androidx.arch.core.testing
+    androidTestImplementation libs.androidx.test.core
+    androidTestImplementation libs.androidx.test.runner
+    androidTestImplementation libs.androidx.test.rules
 }
 
 apply from: '../../../android-lint.gradle'

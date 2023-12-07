@@ -8,12 +8,10 @@ pluginManagement {
     includeBuild("../android-components/plugins/config")
     includeBuild("../android-components/plugins/github")
     includeBuild("./plugins/apksize")
-    includeBuild("./plugins/fenixdependencies")
 }
 
 plugins {
     id 'ApkSizePlugin'
-    id 'FenixDependenciesPlugin'
     id "mozac.ConfigPlugin"
     id 'mozac.DependenciesPlugin'
     id 'mozac.GitHubPlugin'
@@ -25,6 +23,15 @@ include ':app'
 include ':mozilla-detekt-rules'
 include ':mozilla-lint-rules'
 include ':benchmark'
+
+
+dependencyResolutionManagement {
+    versionCatalogs {
+        libs {
+            from files('../android-components/gradle/libs.versions.toml')
+        }
+    }
+}
 
 gradle.projectsLoaded { ->
     // Disables A-C tests and lint when building Fenix.

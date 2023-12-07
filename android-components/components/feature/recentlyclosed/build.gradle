@@ -51,28 +51,28 @@ dependencies {
     implementation project(':support-ktx')
     implementation project(':support-base')
 
-    implementation ComponentsDependencies.kotlin_coroutines
+    implementation libs.kotlinx.coroutines.android
 
-    implementation ComponentsDependencies.androidx_room_runtime
-    implementation ComponentsDependencies.androidx_lifecycle_livedata
-    ksp ComponentsDependencies.androidx_room_compiler
+    implementation libs.androidx.room.ktx
+    implementation libs.androidx.lifecycle.livedata
+    ksp libs.androidx.room.compiler
 
     testImplementation project(':feature-session')
     testImplementation project(':support-test')
     testImplementation project(':support-test-libstate')
 
-    testImplementation ComponentsDependencies.androidx_test_core
-    testImplementation ComponentsDependencies.androidx_test_junit
-    testImplementation ComponentsDependencies.testing_coroutines
-    testImplementation ComponentsDependencies.testing_junit
-    testImplementation ComponentsDependencies.testing_robolectric
-    testImplementation ComponentsDependencies.kotlin_coroutines
-    testImplementation ComponentsDependencies.testing_coroutines
+    testImplementation libs.androidx.test.core
+    testImplementation libs.androidx.test.junit.ktx
+    testImplementation libs.kotlinx.coroutines.test
+    testImplementation libs.junit
+    testImplementation libs.robolectric
+    testImplementation libs.kotlinx.coroutines.android
+    testImplementation libs.kotlinx.coroutines.test
 
     androidTestImplementation project(':support-test-fakes')
 
-    androidTestImplementation ComponentsDependencies.androidx_test_core
-    androidTestImplementation ComponentsDependencies.androidx_test_runner
+    androidTestImplementation libs.androidx.test.core
+    androidTestImplementation libs.androidx.test.runner
 }
 
 apply from: '../../../android-lint.gradle'

@@ -23,7 +23,7 @@ buildscript {
 }
 
 plugins {
-    id "com.jetbrains.python.envs" version "$python_envs_plugin"
+    alias(libs.plugins.jetbrains.python.envs.plugin)
 }
 
 apply plugin: 'com.android.library'
@@ -64,13 +64,13 @@ dependencies {
         exclude group: 'org.mozilla.components', module: 'service-glean'
     }
 
-    implementation ComponentsDependencies.androidx_core_ktx
-    implementation ComponentsDependencies.androidx_constraintlayout
-    implementation ComponentsDependencies.androidx_coordinatorlayout
-    implementation ComponentsDependencies.androidx_recyclerview
-    implementation ComponentsDependencies.androidx_work_runtime
+    implementation libs.androidx.core.ktx
+    implementation libs.androidx.constraintlayout
+    implementation libs.androidx.coordinatorlayout
+    implementation libs.androidx.recyclerview
+    implementation libs.androidx.work.runtime.ktx
 
-    implementation ComponentsDependencies.kotlin_coroutines
+    implementation libs.kotlinx.coroutines.android
 
     implementation ComponentsDependencies.mozilla_appservices_nimbus
 
@@ -84,13 +84,13 @@ dependencies {
     compileOnly project(":service-glean")
 
     testImplementation ComponentsDependencies.mozilla_appservices_full_megazord_forUnitTests
-    testImplementation ComponentsDependencies.androidx_test_core
-    testImplementation ComponentsDependencies.androidx_test_junit
-    testImplementation ComponentsDependencies.testing_mockwebserver
-    testImplementation ComponentsDependencies.testing_robolectric
-    testImplementation ComponentsDependencies.testing_coroutines
+    testImplementation libs.androidx.test.core
+    testImplementation libs.androidx.test.junit.ktx
+    testImplementation libs.mockwebserver
+    testImplementation libs.robolectric
+    testImplementation libs.kotlinx.coroutines.test
     testImplementation ComponentsDependencies.mozilla_glean_forUnitTests
-    testImplementation ComponentsDependencies.androidx_work_testing
+    testImplementation libs.androidx.work.testing
     testImplementation project(':support-test')
     testImplementation project(":service-glean")
 }

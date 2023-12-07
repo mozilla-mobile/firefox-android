@@ -39,9 +39,9 @@ dependencies {
     implementation project(':support-base')
     implementation project(':support-utils')
 
-    implementation ComponentsDependencies.kotlin_coroutines
+    implementation libs.kotlinx.coroutines.android
 
-    implementation ComponentsDependencies.androidx_appcompat
-    implementation ComponentsDependencies.google_material
-    implementation ComponentsDependencies.androidx_recyclerview
+    implementation libs.androidx.appcompat
+    implementation libs.google.android.material
+    implementation libs.androidx.recyclerview
 }

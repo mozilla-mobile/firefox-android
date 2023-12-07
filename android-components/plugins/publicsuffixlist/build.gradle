@@ -19,8 +19,8 @@ repositories {
 }
 
 dependencies {
-    implementation ComponentsDependencies.thirdparty_okhttp
-    implementation ComponentsDependencies.thirdparty_okio
+    implementation libs.squareup.okhttp3.urlconnection
+    implementation libs.squareup.okio
 }
 
 gradlePlugin {

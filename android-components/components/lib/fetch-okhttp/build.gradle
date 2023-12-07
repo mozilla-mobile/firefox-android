@@ -24,17 +24,17 @@ android {
 }
 
 dependencies {
-    implementation ComponentsDependencies.kotlin_coroutines
+    implementation libs.kotlinx.coroutines.android
 
-    implementation ComponentsDependencies.thirdparty_okhttp
-    implementation ComponentsDependencies.thirdparty_okhttp_urlconnection
+    implementation libs.squareup.okhttp3
+    implementation libs.squareup.okhttp3.urlconnection
 
     implementation project(':concept-fetch')
 
     testImplementation project(':support-test')
 
-    testImplementation ComponentsDependencies.androidx_test_junit
-    testImplementation ComponentsDependencies.testing_robolectric
+    testImplementation libs.androidx.test.junit.ktx
+    testImplementation libs.robolectric
     testImplementation project(':tooling-fetch-tests')
 }
 

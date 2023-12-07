@@ -33,25 +33,25 @@ dependencies {
     implementation project(":support-utils")
     implementation project(':ui-widgets')
 
-    implementation ComponentsDependencies.androidx_annotation
-    implementation ComponentsDependencies.androidx_autofill
-    implementation ComponentsDependencies.androidx_biometric
-    implementation ComponentsDependencies.androidx_fragment
-    implementation ComponentsDependencies.androidx_lifecycle_runtime
-    implementation ComponentsDependencies.androidx_recyclerview
-    implementation ComponentsDependencies.androidx_core_ktx
-    implementation ComponentsDependencies.androidx_preferences
+    implementation libs.androidx.annotation
+    implementation libs.androidx.autofill
+    implementation libs.androidx.biometric
+    implementation libs.androidx.fragment
+    implementation libs.androidx.lifecycle.runtime
+    implementation libs.androidx.recyclerview
+    implementation libs.androidx.core.ktx
+    implementation libs.androidx.preference.ktx
 
-    implementation ComponentsDependencies.kotlin_coroutines
+    implementation libs.kotlinx.coroutines.android
 
     testImplementation project(':support-test')
     testImplementation project(':lib-fetch-okhttp')
 
-    testImplementation ComponentsDependencies.androidx_test_core
-    testImplementation ComponentsDependencies.androidx_test_junit
-    testImplementation ComponentsDependencies.testing_robolectric
-    testImplementation ComponentsDependencies.testing_coroutines
-    testImplementation ComponentsDependencies.testing_mockwebserver
+    testImplementation libs.androidx.test.core
+    testImplementation libs.androidx.test.junit.ktx
+    testImplementation libs.robolectric
+    testImplementation libs.kotlinx.coroutines.test
+    testImplementation libs.mockwebserver
 }
 
 apply from: '../../../android-lint.gradle'
