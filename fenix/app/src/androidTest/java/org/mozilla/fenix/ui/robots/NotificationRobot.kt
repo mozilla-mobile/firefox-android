@@ -19,7 +19,6 @@ import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
 import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.helpers.TestHelper.appName
 import org.mozilla.fenix.helpers.TestHelper.mDevice
-import org.mozilla.fenix.helpers.TestHelper.packageName
 import kotlin.AssertionError
 
 class NotificationRobot {
@@ -83,8 +82,7 @@ class NotificationRobot {
         for (i in 1..RETRY_COUNT) {
             Log.i(TAG, "clickPageObject: For loop i = $i")
             try {
-                assertUIObjectExists(downloadSystemNotificationButton(action))
-                downloadSystemNotificationButton(action).clickAndWaitForNewWindow(waitingTimeShort)
+                downloadSystemNotificationButton(action).click()
                 Log.i(TAG, "clickDownloadNotificationControlButton: Clicked app notification $action button and waits for a new window for $waitingTimeShort ms")
                 assertUIObjectExists(
                     downloadSystemNotificationButton(action),
@@ -97,8 +95,6 @@ class NotificationRobot {
                 if (i == RETRY_COUNT) {
                     throw e
                 }
-                mDevice.waitForWindowUpdate(packageName, waitingTimeShort)
-                Log.i(TAG, "clickDownloadNotificationControlButton: Waited $waitingTimeShort ms for window update")
             }
         }
     }
