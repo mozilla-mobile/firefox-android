@@ -131,8 +131,8 @@ class NestedGeckoViewTest {
         assertEquals(nestedWebView.nestedOffsetY, 6)
         assertEquals(nestedWebView.lastY, 6)
 
-        // onTouchEventForResult should be called only for ACTION_DOWN
-        verify(nestedWebView, times(0)).updateInputResult(any())
+        // onTouchEventForResult should be also called for ACTION_MOVE
+        verify(nestedWebView, times(1)).updateInputResult(any())
     }
 
     @Test
@@ -154,7 +154,7 @@ class NestedGeckoViewTest {
         // ACTION_CANCEL should not change the result.
         assertTrue(nestedWebView.inputResultDetail.isTouchHandledByBrowser())
 
-        // onTouchEventForResult should be called only for ACTION_DOWN
+        // onTouchEventForResult should never be called for ACTION_UP or ACTION_CANCEL
         verify(nestedWebView, times(0)).updateInputResult(any())
     }
 
