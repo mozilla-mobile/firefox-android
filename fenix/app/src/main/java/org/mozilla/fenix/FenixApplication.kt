@@ -28,6 +28,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import mozilla.appservices.Megazord
+import mozilla.appservices.autofill.AutofillApiException
 import mozilla.components.browser.state.action.SystemAction
 import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.browser.state.state.searchEngines
@@ -42,6 +43,7 @@ import mozilla.components.concept.storage.FrecencyThresholdOption
 import mozilla.components.feature.addons.migration.DefaultSupportedAddonsChecker
 import mozilla.components.feature.addons.update.GlobalAddonDependencyProvider
 import mozilla.components.feature.autofill.AutofillUseCases
+import mozilla.components.feature.fxsuggest.GlobalFxSuggestDependencyProvider
 import mozilla.components.feature.search.ext.buildSearchUrl
 import mozilla.components.feature.search.ext.waitForSelectedOrDefaultSearchEngine
 import mozilla.components.feature.top.sites.TopSitesFrecencyConfig
@@ -51,6 +53,7 @@ import mozilla.components.service.fxa.manager.SyncEnginesStorage
 import mozilla.components.service.glean.Glean
 import mozilla.components.service.glean.config.Configuration
 import mozilla.components.service.glean.net.ConceptFetchHttpUploader
+import mozilla.components.service.sync.logins.LoginsApiException
 import mozilla.components.support.base.ext.areNotificationsEnabledSafe
 import mozilla.components.support.base.ext.isNotificationChannelEnabled
 import mozilla.components.support.base.facts.register
@@ -79,6 +82,7 @@ import org.mozilla.fenix.GleanMetrics.Metrics
 import org.mozilla.fenix.GleanMetrics.PerfStartup
 import org.mozilla.fenix.GleanMetrics.Preferences
 import org.mozilla.fenix.GleanMetrics.SearchDefaultEngine
+import org.mozilla.fenix.GleanMetrics.ShoppingSettings
 import org.mozilla.fenix.GleanMetrics.TopSites
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.components.Core
@@ -110,19 +114,10 @@ import org.mozilla.fenix.utils.Settings.Companion.TOP_SITES_PROVIDER_MAX_THRESHO
 import org.mozilla.fenix.wallpapers.Wallpaper
 import java.util.UUID
 import java.util.concurrent.TimeUnit
+import kotlin.math.roundToLong
 
-/**
- * The actual RAM threshold is 2GB.
- *
- * To enable simpler reporting, we want to use the device's 'advertised' RAM.
- * As [ActivityManager.MemoryInfo.totalMem] is not the device's 'advertised' RAM spec & we cannot
- * access [ActivityManager.MemoryInfo.advertisedMem] across all Android versions, we will use a
- * proxy value of 1.6GB. This is based on 1.5GB with a small 'excess' buffer. We assert that all
- * values above this proxy value are 2GB or more.
- */
-private const val RAM_THRESHOLD_PROXY_GB = 1.6F
-
-private const val RAM_THRESHOLD_BYTES = RAM_THRESHOLD_PROXY_GB * (1e+9).toLong()
+private const val RAM_THRESHOLD_MEGABYTES = 1024
+private const val BYTES_TO_MEGABYTES_CONVERSION = 1024.0 * 1024.0
 
 /**
  *The main application class for Fenix. Records data to measure initialization performance.
@@ -135,6 +130,10 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
     }
 
     private val logger = Logger("FenixApplication")
+
+    internal val isDeviceRamAboveThreshold by lazy {
+        isDeviceRamAboveThreshold()
+    }
 
     open val components by lazy { Components(this) }
 
@@ -205,7 +204,11 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             httpClient = ConceptFetchHttpUploader(
                 lazy(LazyThreadSafetyMode.NONE) { components.core.client },
             ),
+            enableEventTimestamps = FxNimbus.features.glean.value().enableEventTimestamps,
         )
+
+        // Set the metric configuration from Nimbus.
+        Glean.setMetricsEnabledConfig(FxNimbus.features.glean.value().metricsEnabled)
 
         Glean.initialize(
             applicationContext = this,
@@ -213,9 +216,6 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             uploadEnabled = telemetryEnabled,
             buildInfo = GleanBuildInfo.buildInfo,
         )
-
-        // Set the metric configuration from Nimbus.
-        Glean.setMetricsEnabledConfig(FxNimbus.features.glean.value().metricsEnabled)
 
         // We avoid blocking the main thread on startup by setting startup metrics on the background thread.
         val store = components.core.store
@@ -284,6 +284,8 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         setupLeakCanary()
         startMetricsIfEnabled()
         setupPush()
+
+        GlobalFxSuggestDependencyProvider.initialize(components.fxSuggest.storage)
 
         visibilityLifecycleCallback = VisibilityLifecycleCallback(getSystemService())
         registerActivityLifecycleCallbacks(visibilityLifecycleCallback)
@@ -368,6 +370,16 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                         components.core.historyMetadataService.cleanup(
                             System.currentTimeMillis() - Core.HISTORY_METADATA_MAX_AGE_IN_MS,
                         )
+
+                        // If Firefox Suggest is enabled, register a worker to periodically ingest
+                        // new search suggestions. The worker requires us to have called
+                        // `GlobalFxSuggestDependencyProvider.initialize`, which we did before
+                        // scheduling these tasks. When disabled we stop the periodic work.
+                        if (settings().enableFxSuggest) {
+                            components.fxSuggest.ingestionScheduler.startPeriodicIngestion()
+                        } else {
+                            components.fxSuggest.ingestionScheduler.stopPeriodicIngestion()
+                        }
                     }
                 }
                 // Account manager initialization needs to happen on the main thread.
@@ -463,7 +475,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         // We need the push feature setup here to deliver messages in the case where the service
         // starts up the app first.
         components.push.feature?.let {
-            Logger.info("AutoPushFeature is configured, initializing it...")
+            logger.info("AutoPushFeature is configured, initializing it...")
 
             // Install the AutoPush singleton to receive messages.
             PushProcessor.install(it)
@@ -607,19 +619,15 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
     }
 
     /**
-     * If unified search is enabled try to migrate the topic specific engine to the
-     * first general or custom search engine available.
+     * Migrate the topic specific engine to the first general or custom search engine available.
      */
-    @Suppress("NestedBlockDepth")
     private fun migrateTopicSpecificSearchEngines() {
-        if (settings().showUnifiedSearchFeature) {
-            components.core.store.state.search.selectedOrDefaultSearchEngine.let { currentSearchEngine ->
-                if (currentSearchEngine?.isGeneral == false) {
-                    components.core.store.state.search.searchEngines.firstOrNull() { nextSearchEngine ->
-                        nextSearchEngine.isGeneral
-                    }?.let {
-                        components.useCases.searchUseCases.selectSearchEngine(it)
-                    }
+        components.core.store.state.search.selectedOrDefaultSearchEngine.let { currentSearchEngine ->
+            if (currentSearchEngine?.isGeneral == false) {
+                components.core.store.state.search.searchEngines.firstOrNull { nextSearchEngine ->
+                    nextSearchEngine.isGeneral
+                }?.let {
+                    components.useCases.searchUseCases.selectSearchEngine(it)
                 }
             }
         }
@@ -671,7 +679,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                 onUpdatePermissionRequest = components.addonUpdater::onUpdatePermissionRequest,
             )
         } catch (e: UnsupportedOperationException) {
-            Logger.error("Failed to initialize web extension support", e)
+            logger.error("Failed to initialize web extension support", e)
         }
     }
 
@@ -705,7 +713,6 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
         settings: Settings,
         browsersCache: BrowsersCache = BrowsersCache,
         mozillaProductDetector: MozillaProductDetector = MozillaProductDetector,
-        isDeviceRamAboveThreshold: Boolean = isDeviceRamAboveThreshold(),
     ) {
         setPreferenceMetrics(settings)
         with(Metrics) {
@@ -739,6 +746,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             adjustCreative.set(settings.adjustCreative)
             adjustNetwork.set(settings.adjustNetwork)
 
+            settings.migrateSearchWidgetInstalledPrefIfNeeded()
             searchWidgetInstalled.set(settings.searchWidgetInstalled)
 
             val openTabsCount = settings.openTabsCount
@@ -805,6 +813,7 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             )
 
             ramMoreThanThreshold.set(isDeviceRamAboveThreshold)
+            deviceTotalRam.set(getDeviceTotalRAM())
         }
 
         with(AndroidAutofill) {
@@ -836,24 +845,57 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
 
         @OptIn(DelicateCoroutinesApi::class)
         GlobalScope.launch(IO) {
-            val autoFillStorage = applicationContext.components.core.autofillStorage
-            Addresses.savedAll.set(autoFillStorage.getAllAddresses().size.toLong())
-            CreditCards.savedAll.set(autoFillStorage.getAllCreditCards().size.toLong())
+            try {
+                val autoFillStorage = applicationContext.components.core.autofillStorage
+                Addresses.savedAll.set(autoFillStorage.getAllAddresses().size.toLong())
+                CreditCards.savedAll.set(autoFillStorage.getAllCreditCards().size.toLong())
+            } catch (e: AutofillApiException) {
+                logger.error("Failed to fetch autofill data", e)
+            }
 
-            val lazyPasswordStorage = applicationContext.components.core.lazyPasswordsStorage
-            Logins.savedAll.set(lazyPasswordStorage.value.list().size.toLong())
+            try {
+                val passwordsStorage = applicationContext.components.core.passwordsStorage
+                Logins.savedAll.set(passwordsStorage.list().size.toLong())
+            } catch (e: LoginsApiException) {
+                logger.error("Failed to fetch list of logins", e)
+            }
+        }
+
+        with(ShoppingSettings) {
+            componentOptedOut.set(!settings.isReviewQualityCheckEnabled)
+            nimbusDisabledShopping.set(!FxNimbus.features.shoppingExperience.value().enabled)
+            userHasOnboarded.set(settings.reviewQualityCheckOptInTimeInMillis != 0L)
+            disabledAds.set(!settings.isReviewQualityCheckProductRecommendationsEnabled)
         }
     }
 
-    private fun deviceRamBytes(): Long {
+    @VisibleForTesting
+    internal fun getDeviceTotalRAM(): Long {
+        val memoryInfo = getMemoryInfo()
+        return if (SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            memoryInfo.advertisedMem
+        } else {
+            memoryInfo.totalMem
+        }
+    }
+
+    @VisibleForTesting
+    internal fun getMemoryInfo(): ActivityManager.MemoryInfo {
         val memoryInfo = ActivityManager.MemoryInfo()
         val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
         activityManager.getMemoryInfo(memoryInfo)
 
-        return memoryInfo.totalMem
+        return memoryInfo
     }
 
-    private fun isDeviceRamAboveThreshold() = deviceRamBytes() > RAM_THRESHOLD_BYTES
+    private fun deviceRamApproxMegabytes(): Long {
+        val deviceRamBytes = getMemoryInfo().totalMem
+        return deviceRamBytes.toRoundedMegabytes()
+    }
+
+    private fun Long.toRoundedMegabytes(): Long = (this / BYTES_TO_MEGABYTES_CONVERSION).roundToLong()
+
+    private fun isDeviceRamAboveThreshold() = deviceRamApproxMegabytes() > RAM_THRESHOLD_MEGABYTES
 
     @Suppress("ComplexMethod")
     private fun setPreferenceMetrics(

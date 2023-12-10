@@ -5,7 +5,6 @@
 package org.mozilla.fenix.onboarding.view
 
 import androidx.annotation.DrawableRes
-import androidx.compose.ui.layout.ContentScale
 import org.mozilla.fenix.nimbus.OnboardingCardData
 
 /**
@@ -14,7 +13,6 @@ import org.mozilla.fenix.nimbus.OnboardingCardData
 data class OnboardingPageUiData(
     val type: Type,
     @DrawableRes val imageRes: Int,
-    val imageResContentScale: ContentScale,
     val title: String,
     val description: String,
     val linkText: String? = null,
@@ -23,7 +21,8 @@ data class OnboardingPageUiData(
 ) {
     /**
      * Model for different types of Onboarding Pages.
-     * @param telemetryId Identifier for the page, used in telemetry.
+     *
+     * @property telemetryId Identifier for the page, used in telemetry.
      */
     enum class Type(
         val telemetryId: String,
@@ -33,6 +32,9 @@ data class OnboardingPageUiData(
         ),
         SYNC_SIGN_IN(
             telemetryId = "sync",
+        ),
+        ADD_SEARCH_WIDGET(
+            telemetryId = "search_widget",
         ),
         NOTIFICATION_PERMISSION(
             telemetryId = "notification",

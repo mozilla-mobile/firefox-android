@@ -14,14 +14,12 @@ class FocusDependenciesPlugin : Plugin<Settings> {
 
 object FocusVersions {
     object Adjust {
-        const val adjust = "4.33.0"
+        const val adjust = "4.35.1"
         const val install_referrer = "2.2"
     }
 
     object AndroidX {
-        const val compose = "1.4.3"
         const val constraint_layout_compose = "1.0.1"
-        const val preference = "1.2.0"
         const val splashscreen = "1.0.1"
         const val transition = "1.4.1"
     }
@@ -36,7 +34,6 @@ object FocusVersions {
         const val falcon = "2.2.0"
         const val fastlane = "2.1.1"
         const val junit = "5.9.3"
-        const val mockwebserver = "4.11.0"
     }
 
     object ThirdParty {
@@ -45,11 +42,9 @@ object FocusVersions {
 }
 
 object FocusDependencies {
-    const val androidx_compose_runtime_livedata = "androidx.compose.runtime:runtime-livedata:${FocusVersions.AndroidX.compose}"
     const val androidx_constraint_layout_compose =
         "androidx.constraintlayout:constraintlayout-compose:${FocusVersions.AndroidX.constraint_layout_compose}"
 
-    const val androidx_preference = "androidx.preference:preference-ktx:${FocusVersions.AndroidX.preference}"
     const val androidx_splashscreen = "androidx.core:core-splashscreen:${FocusVersions.AndroidX.splashscreen}"
     const val androidx_transition = "androidx.transition:transition:${FocusVersions.AndroidX.transition}"
 
@@ -66,7 +61,6 @@ object FocusDependencies {
     const val espresso_web = "androidx.test.espresso:espresso-web:${FocusVersions.Testing.androidx_espresso}"
     const val falcon = "com.jraska:falcon:${FocusVersions.Testing.falcon}"
     const val fastlane = "tools.fastlane:screengrab:${FocusVersions.Testing.fastlane}"
-    const val testing_mockwebserver = "com.squareup.okhttp3:mockwebserver:${FocusVersions.Testing.mockwebserver}"
 
     const val testing_junit_api = "org.junit.jupiter:junit-jupiter-api:${FocusVersions.Testing.junit}"
     const val testing_junit_engine = "org.junit.jupiter:junit-jupiter-engine:${FocusVersions.Testing.junit}"

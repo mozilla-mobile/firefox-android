@@ -14,7 +14,7 @@ RUN apt-get install -y jq \
 USER worker:worker
 
 ENV GOOGLE_SDK_DOWNLOAD ./gcloud.tar.gz
-ENV GOOGLE_SDK_VERSION 407
+ENV GOOGLE_SDK_VERSION 450
 
 ENV TEST_TOOLS /builds/worker/test-tools
 ENV PATH ${PATH}:${TEST_TOOLS}:${TEST_TOOLS}/google-cloud-sdk/bin
@@ -36,6 +36,9 @@ RUN URL_FLANK_BIN="$($CURL --silent 'https://api.github.com/repos/Flank/flank/re
 # Used in parse-ui-test-fromfile.py
 RUN pip3 install junitparser
 RUN pip3 install beautifultable
+
+# Used for env var ingest in testrail.py
+RUN pip3 install python-dotenv
 
 # run-task expects to run as root
 USER root

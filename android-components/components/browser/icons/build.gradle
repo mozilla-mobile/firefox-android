@@ -6,10 +6,9 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion config.compileSdkVersion
-
     defaultConfig {
         minSdkVersion config.minSdkVersion
+        compileSdk config.compileSdkVersion
         targetSdkVersion config.targetSdkVersion
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -66,6 +65,8 @@ dependencies {
     implementation ComponentsDependencies.kotlin_coroutines
 
     implementation ComponentsDependencies.thirdparty_disklrucache
+
+    implementation ComponentsDependencies.thirdparty_coil_svg
 
     testImplementation project(':support-test')
     testImplementation project(':lib-fetch-httpurlconnection')

@@ -12,7 +12,6 @@ import io.mockk.mockkStatic
 import io.mockk.spyk
 import io.mockk.unmockkStatic
 import io.mockk.verify
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import mozilla.components.browser.state.action.SearchAction
 import mozilla.components.browser.state.action.TabListAction
 import mozilla.components.browser.state.search.RegionState
@@ -54,6 +53,7 @@ import org.mozilla.fenix.GleanMetrics.RecentTabs
 import org.mozilla.fenix.GleanMetrics.TopSites
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.Analytics
 import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.TabCollectionStorage
@@ -75,7 +75,6 @@ import java.io.File
 import mozilla.components.feature.tab.collections.Tab as ComponentTab
 
 @RunWith(FenixRobolectricTestRunner::class) // For gleanTestRule
-@OptIn(ExperimentalCoroutinesApi::class)
 class DefaultSessionControlControllerTest {
 
     @get:Rule
@@ -139,7 +138,7 @@ class DefaultSessionControlControllerTest {
         every { appStore.state } returns AppState(
             collections = emptyList(),
             expandedCollections = emptySet(),
-            mode = Mode.Normal,
+            mode = BrowsingMode.Normal,
             topSites = emptyList(),
             showCollectionPlaceholder = true,
             recentTabs = emptyList(),
@@ -326,7 +325,7 @@ class DefaultSessionControlControllerTest {
             removeCollectionWithUndo = { collection ->
                 actualCollection = collection
             },
-        ).handleCollectionRemoveTab(expectedCollection, tab, false)
+        ).handleCollectionRemoveTab(expectedCollection, tab)
 
         assertNotNull(Collections.tabRemoved.testGetValue())
         val recordedEvents = Collections.tabRemoved.testGetValue()!!
@@ -340,7 +339,7 @@ class DefaultSessionControlControllerTest {
     fun `handleCollectionRemoveTab multiple tabs`() {
         val collection: TabCollection = mockk(relaxed = true)
         val tab: ComponentTab = mockk(relaxed = true)
-        createController().handleCollectionRemoveTab(collection, tab, false)
+        createController().handleCollectionRemoveTab(collection, tab)
 
         assertNotNull(Collections.tabRemoved.testGetValue())
         val recordedEvents = Collections.tabRemoved.testGetValue()!!
@@ -442,7 +441,7 @@ class DefaultSessionControlControllerTest {
                 startLoading = true,
             )
         }
-        verify { activity.openToBrowser(BrowserDirection.FromHome) }
+        verify { navController.navigate(R.id.browserFragment) }
     }
 
     @Test
@@ -470,7 +469,7 @@ class DefaultSessionControlControllerTest {
                 startLoading = true,
             )
         }
-        verify { activity.openToBrowser(BrowserDirection.FromHome) }
+        verify { navController.navigate(R.id.browserFragment) }
     }
 
     @Test
@@ -514,7 +513,7 @@ class DefaultSessionControlControllerTest {
                 startLoading = true,
             )
         }
-        verify { activity.openToBrowser(BrowserDirection.FromHome) }
+        verify { navController.navigate(R.id.browserFragment) }
     }
 
     @Test
@@ -563,7 +562,7 @@ class DefaultSessionControlControllerTest {
             )
         }
         verify { controller.submitTopSitesImpressionPing(topSite, position) }
-        verify { activity.openToBrowser(BrowserDirection.FromHome) }
+        verify { navController.navigate(R.id.browserFragment) }
     }
 
     @Test
@@ -677,7 +676,7 @@ class DefaultSessionControlControllerTest {
                 startLoading = true,
             )
         }
-        verify { activity.openToBrowser(BrowserDirection.FromHome) }
+        verify { navController.navigate(R.id.browserFragment) }
     }
 
     @Test
@@ -715,7 +714,7 @@ class DefaultSessionControlControllerTest {
                 startLoading = true,
             )
         }
-        verify { activity.openToBrowser(BrowserDirection.FromHome) }
+        verify { navController.navigate(R.id.browserFragment) }
     }
 
     @Test
@@ -765,7 +764,10 @@ class DefaultSessionControlControllerTest {
         )
         val controller = spyk(createController())
 
-        every { controller.getAvailableSearchEngines() } returns listOf(googleSearchEngine, duckDuckGoSearchEngine)
+        every { controller.getAvailableSearchEngines() } returns listOf(
+            googleSearchEngine,
+            duckDuckGoSearchEngine,
+        )
 
         try {
             mockkStatic("mozilla.components.browser.state.state.SearchStateKt")
@@ -815,7 +817,7 @@ class DefaultSessionControlControllerTest {
                 startLoading = true,
             )
         }
-        verify { activity.openToBrowser(BrowserDirection.FromHome) }
+        verify { navController.navigate(R.id.browserFragment) }
     }
 
     @Test
@@ -853,7 +855,7 @@ class DefaultSessionControlControllerTest {
                 startLoading = true,
             )
         }
-        verify { activity.openToBrowser(BrowserDirection.FromHome) }
+        verify { navController.navigate(R.id.browserFragment) }
     }
 
     @Test
@@ -891,7 +893,7 @@ class DefaultSessionControlControllerTest {
                 startLoading = true,
             )
         }
-        verify { activity.openToBrowser(BrowserDirection.FromHome) }
+        verify { navController.navigate(R.id.browserFragment) }
     }
 
     @Test
@@ -929,7 +931,7 @@ class DefaultSessionControlControllerTest {
                 startLoading = true,
             )
         }
-        verify { activity.openToBrowser(BrowserDirection.FromHome) }
+        verify { navController.navigate(R.id.browserFragment) }
     }
 
     @Test
@@ -966,7 +968,7 @@ class DefaultSessionControlControllerTest {
             )
         }
         verify { controller.submitTopSitesImpressionPing(topSite, position) }
-        verify { activity.openToBrowser(BrowserDirection.FromHome) }
+        verify { navController.navigate(R.id.browserFragment) }
     }
 
     @Test

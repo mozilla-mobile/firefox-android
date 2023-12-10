@@ -37,7 +37,6 @@ import mozilla.components.service.fxa.sync.setLastSynced
 import mozilla.components.support.ktx.android.content.getColorFromAttr
 import mozilla.components.ui.widgets.withCenterAlignedButtons
 import mozilla.telemetry.glean.private.NoExtras
-import org.mozilla.fenix.Config
 import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.GleanMetrics.SyncAccount
 import org.mozilla.fenix.R
@@ -74,7 +73,7 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
                 // Remove the device name when we log out.
                 context?.let {
                     val deviceNameKey = it.getPreferenceKey(R.string.pref_key_sync_device_name)
-                    preferenceManager.sharedPreferences.edit().remove(deviceNameKey).apply()
+                    preferenceManager.sharedPreferences?.edit()?.remove(deviceNameKey)?.apply()
                 }
             }
         }
@@ -128,9 +127,7 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
         accountManager = requireComponents.backgroundServices.accountManager
         accountManager.register(accountStateObserver, this, true)
 
-        // Manage account - only available on Nightly while we work on bug 1840492.
         val preferenceManageAccount = requirePreference<Preference>(R.string.pref_key_sync_manage_account)
-        preferenceManageAccount.isVisible = Config.channel.isNightlyOrDebug
         preferenceManageAccount.onPreferenceClickListener = getClickListenerForManageAccount()
 
         // Sign out
@@ -142,8 +139,10 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
         preferenceSyncNow.apply {
             onPreferenceClickListener = getClickListenerForSyncNow()
 
-            icon = icon.mutate().apply {
-                setTint(context.getColorFromAttr(R.attr.textPrimary))
+            icon?.let {
+                icon = it.mutate().apply {
+                    setTint(context.getColorFromAttr(R.attr.textPrimary))
+                }
             }
 
             // Current sync state
@@ -367,6 +366,7 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
                     ?.deviceConstellation()
                     ?.setDeviceName(newDeviceName, it)
             }
+            accountSettingsStore.dispatch(AccountSettingsFragmentAction.UpdateDeviceName(newDeviceName))
         }
         return true
     }
@@ -383,6 +383,7 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
                     }
                 }
             }
+            SyncAccount.manageAccount.record(NoExtras())
             true
         }
     }

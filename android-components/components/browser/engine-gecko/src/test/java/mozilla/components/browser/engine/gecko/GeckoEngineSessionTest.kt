@@ -35,6 +35,7 @@ import mozilla.components.concept.engine.history.HistoryTrackingDelegate
 import mozilla.components.concept.engine.manifest.WebAppManifest
 import mozilla.components.concept.engine.permission.PermissionRequest
 import mozilla.components.concept.engine.request.RequestInterceptor
+import mozilla.components.concept.engine.translate.TranslationOperation
 import mozilla.components.concept.engine.window.WindowRequest
 import mozilla.components.concept.fetch.Headers
 import mozilla.components.concept.fetch.Response
@@ -93,6 +94,7 @@ import org.mozilla.geckoview.GeckoSession.PermissionDelegate.PERMISSION_TRACKING
 import org.mozilla.geckoview.GeckoSession.ProgressDelegate.SecurityInformation
 import org.mozilla.geckoview.GeckoSessionSettings
 import org.mozilla.geckoview.SessionFinder
+import org.mozilla.geckoview.TranslationsController
 import org.mozilla.geckoview.WebRequestError
 import org.mozilla.geckoview.WebRequestError.ERROR_CATEGORY_UNKNOWN
 import org.mozilla.geckoview.WebRequestError.ERROR_MALFORMED_URI
@@ -591,7 +593,18 @@ class GeckoEngineSessionTest {
         val extraHeaders = mapOf("X-Extra-Header" to "true")
         engineSession.loadUrl("http://www.mozilla.org", additionalHeaders = extraHeaders)
         verify(geckoSession).load(
-            GeckoSession.Loader().uri("http://www.mozilla.org").additionalHeaders(extraHeaders),
+            GeckoSession.Loader().uri("http://www.mozilla.org").additionalHeaders(extraHeaders)
+                .headerFilter(GeckoSession.HEADER_FILTER_CORS_SAFELISTED),
+        )
+
+        engineSession.loadUrl(
+            "http://www.mozilla.org",
+            flags = LoadUrlFlags.select(LoadUrlFlags.ALLOW_ADDITIONAL_HEADERS),
+            additionalHeaders = extraHeaders,
+        )
+        verify(geckoSession).load(
+            GeckoSession.Loader().uri("http://www.mozilla.org").additionalHeaders(extraHeaders)
+                .headerFilter(GeckoSession.HEADER_FILTER_CORS_SAFELISTED),
         )
     }
 
@@ -603,11 +616,6 @@ class GeckoEngineSessionTest {
         engineSession.loadUrl("FILE://test.txt")
         verify(geckoSession, never()).load(GeckoSession.Loader().uri("file://test.txt"))
         verify(geckoSession, never()).load(GeckoSession.Loader().uri("FILE://test.txt"))
-
-        engineSession.loadUrl("content://authority/path/id")
-        engineSession.loadUrl("CoNtEnT://authority/path/id")
-        verify(geckoSession, never()).load(GeckoSession.Loader().uri("content://authority/path/id"))
-        verify(geckoSession, never()).load(GeckoSession.Loader().uri("CoNtEnT://authority/path/id"))
 
         engineSession.loadUrl("resource://package/test.text")
         engineSession.loadUrl("RESOURCE://package/test.text")
@@ -641,6 +649,23 @@ class GeckoEngineSessionTest {
         verify(geckoSession).load(
             GeckoSession.Loader().data("ahr0cdovl21vemlsbgeub3jn==".toByteArray(), "text/html"),
         )
+    }
+
+    @Test
+    fun `getGeckoFlags returns only gecko load flags`() {
+        val flags = LoadUrlFlags.select(LoadUrlFlags.all().getGeckoFlags())
+
+        assertFalse(flags.contains(LoadUrlFlags.NONE))
+        assertTrue(flags.contains(LoadUrlFlags.BYPASS_CACHE))
+        assertTrue(flags.contains(LoadUrlFlags.BYPASS_PROXY))
+        assertTrue(flags.contains(LoadUrlFlags.EXTERNAL))
+        assertTrue(flags.contains(LoadUrlFlags.ALLOW_POPUPS))
+        assertTrue(flags.contains(LoadUrlFlags.BYPASS_CLASSIFIER))
+        assertTrue(flags.contains(LoadUrlFlags.LOAD_FLAGS_FORCE_ALLOW_DATA_URI))
+        assertTrue(flags.contains(LoadUrlFlags.LOAD_FLAGS_REPLACE_HISTORY))
+        assertTrue(flags.contains(LoadUrlFlags.LOAD_FLAGS_BYPASS_LOAD_URI_DELEGATE))
+        assertFalse(flags.contains(LoadUrlFlags.ALLOW_ADDITIONAL_HEADERS))
+        assertFalse(flags.contains(LoadUrlFlags.ALLOW_JAVASCRIPT_URL))
     }
 
     @Test
@@ -1698,6 +1723,7 @@ class GeckoEngineSessionTest {
         assertEquals(GeckoAntiTracking.CRYPTOMINING, TrackingCategory.CRYPTOMINING.id)
         assertEquals(GeckoAntiTracking.FINGERPRINTING, TrackingCategory.FINGERPRINTING.id)
         assertEquals(GeckoAntiTracking.STP, TrackingCategory.MOZILLA_SOCIAL.id)
+        assertEquals(GeckoAntiTracking.EMAIL, TrackingCategory.EMAIL.id)
 
         assertEquals(GeckoCookieBehavior.ACCEPT_ALL, CookiePolicy.ACCEPT_ALL.id)
         assertEquals(
@@ -2514,6 +2540,551 @@ class GeckoEngineSessionTest {
 
         assertTrue(onResultCalled)
         assertFalse(onExceptionCalled)
+    }
+
+    @Test
+    fun `WHEN session onProductUrlChange is successful THEN notify of completion`() {
+        val engineSession = GeckoEngineSession(mock(), geckoSessionProvider = geckoSessionProvider)
+        val delegate = engineSession.createContentDelegate()
+        var productUrlStatus = false
+        engineSession.register(
+            object : EngineSession.Observer {
+                override fun onProductUrlChange(isProductUrl: Boolean) {
+                    productUrlStatus = isProductUrl
+                }
+            },
+        )
+
+        delegate.onProductUrl(geckoSession)
+
+        assertTrue(productUrlStatus)
+        assertEquals(true, productUrlStatus)
+    }
+
+    @Test
+    fun `WHEN session requestProductAnalysis is successful with analysis object THEN notify of completion`() {
+        val engineSession = GeckoEngineSession(mock(), geckoSessionProvider = geckoSessionProvider)
+        var onResultCalled = false
+        var onExceptionCalled = false
+
+        val ruleResult = GeckoResult<GeckoSession.ReviewAnalysis>()
+        whenever(geckoSession.requestAnalysis("mozilla.com")).thenReturn(ruleResult)
+
+        engineSession.requestProductAnalysis(
+            "mozilla.com",
+            onResult = { onResultCalled = true },
+            onException = { onExceptionCalled = true },
+        )
+
+        val productId = "banana"
+        val grade = "A"
+        val adjustedRating = 4.5
+        val lastAnalysisTime = 12345.toLong()
+        val analysisURL = "https://analysis.com"
+        val analysisObject = GeckoSession.ReviewAnalysis.Builder(productId)
+            .grade(grade)
+            .adjustedRating(adjustedRating)
+            .analysisUrl(analysisURL)
+            .needsAnalysis(true)
+            .pageNotSupported(false)
+            .notEnoughReviews(false)
+            .highlights(null)
+            .lastAnalysisTime(lastAnalysisTime)
+            .deletedProductReported(true)
+            .deletedProduct(true)
+            .build()
+
+        ruleResult.complete(analysisObject)
+        shadowOf(getMainLooper()).idle()
+
+        assertTrue(onResultCalled)
+        assertFalse(onExceptionCalled)
+    }
+
+    @Test
+    fun `WHEN requestProductAnalysis is not successful THEN onException callback for error is called`() {
+        val engineSession = GeckoEngineSession(mock(), geckoSessionProvider = geckoSessionProvider)
+        var onResultCalled = false
+        var onExceptionCalled = false
+
+        val ruleResult = GeckoResult<GeckoSession.ReviewAnalysis>()
+        whenever(geckoSession.requestAnalysis("mozilla.com")).thenReturn(ruleResult)
+
+        engineSession.requestProductAnalysis(
+            "mozilla.com",
+            onResult = { onResultCalled = true },
+            onException = { onExceptionCalled = true },
+        )
+
+        ruleResult.completeExceptionally(IOException())
+        shadowOf(getMainLooper()).idle()
+
+        assertFalse(onResultCalled)
+        assertTrue(onExceptionCalled)
+    }
+
+    @Test
+    fun `WHEN session requestProductRecommendations is successful with empty list THEN notify of completion`() {
+        val engineSession = GeckoEngineSession(mock(), geckoSessionProvider = geckoSessionProvider)
+        var onResultCalled = false
+        var onExceptionCalled = false
+
+        val ruleResult = GeckoResult<List<GeckoSession.Recommendation>>()
+        whenever(geckoSession.requestRecommendations("mozilla.com")).thenReturn(ruleResult)
+
+        engineSession.requestProductRecommendations(
+            "mozilla.com",
+            onResult = { onResultCalled = true },
+            onException = { onExceptionCalled = true },
+        )
+
+        ruleResult.complete(emptyList())
+        shadowOf(getMainLooper()).idle()
+
+        assertTrue(onResultCalled)
+        assertFalse(onExceptionCalled)
+    }
+
+    @Test
+    fun `WHEN session requestProductRecommendations is successful with Recommendation THEN notify of completion`() {
+        val engineSession = GeckoEngineSession(mock(), geckoSessionProvider = geckoSessionProvider)
+        var onResultCalled = false
+        var onExceptionCalled = false
+
+        val ruleResult = GeckoResult<List<GeckoSession.Recommendation>>()
+        whenever(geckoSession.requestRecommendations("mozilla.com")).thenReturn(ruleResult)
+
+        engineSession.requestProductRecommendations(
+            "mozilla.com",
+            onResult = { onResultCalled = true },
+            onException = { onExceptionCalled = true },
+        )
+
+        val recommendationUrl = "https://recommendation.com"
+        val adjustedRating = 3.5
+        val imageUrl = "http://image.com"
+        val aid = "banana"
+        val name = "apple"
+        val grade = "C"
+        val price = "450"
+        val currency = "USD"
+
+        val recommendationObject = GeckoSession.Recommendation.Builder(recommendationUrl)
+            .adjustedRating(adjustedRating)
+            .sponsored(true)
+            .imageUrl(imageUrl)
+            .aid(aid)
+            .name(name)
+            .grade(grade)
+            .price(price)
+            .currency(currency)
+            .build()
+
+        ruleResult.complete(listOf(recommendationObject))
+        shadowOf(getMainLooper()).idle()
+
+        assertTrue(onResultCalled)
+        assertFalse(onExceptionCalled)
+    }
+
+    @Test
+    fun `WHEN requestProductRecommendations is not successful THEN onException callback for error is called`() {
+        val engineSession = GeckoEngineSession(mock(), geckoSessionProvider = geckoSessionProvider)
+        var onResultCalled = false
+        var onExceptionCalled = false
+
+        val ruleResult = GeckoResult<List<GeckoSession.Recommendation>>()
+        whenever(geckoSession.requestRecommendations("mozilla.com")).thenReturn(ruleResult)
+
+        engineSession.requestProductRecommendations(
+            "mozilla.com",
+            onResult = { onResultCalled = true },
+            onException = { onExceptionCalled = true },
+        )
+
+        ruleResult.completeExceptionally(IOException())
+        shadowOf(getMainLooper()).idle()
+
+        assertFalse(onResultCalled)
+        assertTrue(onExceptionCalled)
+    }
+
+    @Test
+    fun `WHEN session reanalyzeProduct is successful THEN notify of completion`() {
+        val engineSession = GeckoEngineSession(mock(), geckoSessionProvider = geckoSessionProvider)
+        var onResultCalled = false
+        var onExceptionCalled = false
+
+        val mUrl = "https://m.example.com"
+        val geckoResult = GeckoResult<String?>()
+        geckoResult.complete("COMPLETED")
+        whenever(geckoSession.requestCreateAnalysis(mUrl))
+            .thenReturn(geckoResult)
+
+        engineSession.reanalyzeProduct(
+            mUrl,
+            onResult = { onResultCalled = true },
+            onException = { onExceptionCalled = true },
+        )
+
+        shadowOf(getMainLooper()).idle()
+        assertTrue(onResultCalled)
+        assertFalse(onExceptionCalled)
+    }
+
+    @Test
+    fun `WHEN session requestAnalysisStatus is successful THEN notify of completion`() {
+        val engineSession = GeckoEngineSession(mock(), geckoSessionProvider = geckoSessionProvider)
+        var onResultCalled = false
+        var onExceptionCalled = false
+
+        val mUrl = "https://m.example.com"
+        val geckoResult = GeckoResult<GeckoSession.AnalysisStatusResponse>()
+
+        val status = "in_progress"
+        val progress = 90.9
+        val analysisObject = GeckoSession.AnalysisStatusResponse.Builder(status)
+            .progress(progress)
+            .build()
+
+        geckoResult.complete(analysisObject)
+        whenever(geckoSession.requestAnalysisStatus(mUrl))
+            .thenReturn(geckoResult)
+
+        engineSession.requestAnalysisStatus(
+            mUrl,
+            onResult = { onResultCalled = true },
+            onException = { onExceptionCalled = true },
+        )
+
+        shadowOf(getMainLooper()).idle()
+        assertTrue(onResultCalled)
+        assertFalse(onExceptionCalled)
+    }
+
+    @Test
+    fun `WHEN session sendClickAttributionEvent is successful THEN notify of completion`() {
+        val engineSession = GeckoEngineSession(mock(), geckoSessionProvider = geckoSessionProvider)
+        var onResultCalled = false
+        var onExceptionCalled = false
+
+        val mAid = "AID"
+        val geckoResult = GeckoResult<Boolean?>()
+        geckoResult.complete(true)
+        whenever(geckoSession.sendClickAttributionEvent(mAid))
+            .thenReturn(geckoResult)
+
+        engineSession.sendClickAttributionEvent(
+            mAid,
+            onResult = { onResultCalled = true },
+            onException = { onExceptionCalled = true },
+        )
+
+        shadowOf(getMainLooper()).idle()
+        assertTrue(onResultCalled)
+        assertFalse(onExceptionCalled)
+    }
+
+    @Test
+    fun `WHEN session sendClickAttributionEvent is not successful THEN onException callback for error is called`() {
+        val engineSession = GeckoEngineSession(mock(), geckoSessionProvider = geckoSessionProvider)
+        var onResultCalled = false
+        var onExceptionCalled = false
+
+        val mAid = "AID"
+        val geckoResult = GeckoResult<Boolean?>()
+        whenever(geckoSession.sendClickAttributionEvent(mAid))
+            .thenReturn(geckoResult)
+
+        engineSession.sendClickAttributionEvent(
+            mAid,
+            onResult = { onResultCalled = true },
+            onException = { onExceptionCalled = true },
+        )
+
+        geckoResult.completeExceptionally(IOException())
+        shadowOf(getMainLooper()).idle()
+
+        assertFalse(onResultCalled)
+        assertTrue(onExceptionCalled)
+    }
+
+    @Test
+    fun `WHEN session sendImpressionAttributionEvent is successful THEN notify of completion`() {
+        val engineSession = GeckoEngineSession(mock(), geckoSessionProvider = geckoSessionProvider)
+        var onResultCalled = false
+        var onExceptionCalled = false
+
+        val mAid = "AID"
+        val geckoResult = GeckoResult<Boolean?>()
+        geckoResult.complete(true)
+        whenever(geckoSession.sendImpressionAttributionEvent(mAid))
+            .thenReturn(geckoResult)
+
+        engineSession.sendImpressionAttributionEvent(
+            mAid,
+            onResult = { onResultCalled = true },
+            onException = { onExceptionCalled = true },
+        )
+
+        shadowOf(getMainLooper()).idle()
+        assertTrue(onResultCalled)
+        assertFalse(onExceptionCalled)
+    }
+
+    @Test
+    fun `WHEN session sendImpressionAttributionEvent is not successful THEN onException callback for error is called`() {
+        val engineSession = GeckoEngineSession(mock(), geckoSessionProvider = geckoSessionProvider)
+        var onResultCalled = false
+        var onExceptionCalled = false
+
+        val mAid = "AID"
+        val geckoResult = GeckoResult<Boolean?>()
+        whenever(geckoSession.sendImpressionAttributionEvent(mAid))
+            .thenReturn(geckoResult)
+
+        engineSession.sendImpressionAttributionEvent(
+            mAid,
+            onResult = { onResultCalled = true },
+            onException = { onExceptionCalled = true },
+        )
+
+        geckoResult.completeExceptionally(IOException())
+        shadowOf(getMainLooper()).idle()
+
+        assertFalse(onResultCalled)
+        assertTrue(onExceptionCalled)
+    }
+
+    @Test
+    fun `WHEN session requestTranslate is successful THEN notify of completion`() {
+        val engineSession = GeckoEngineSession(mock(), geckoSessionProvider = geckoSessionProvider)
+        val mockedGeckoController: TranslationsController.SessionTranslation = mock()
+
+        val geckoResult = GeckoResult<Void>()
+        val fromLanguage = "en"
+        val toLanguage = "es"
+        val options = null
+
+        geckoResult.complete(null)
+        whenever(geckoSession.sessionTranslation).thenReturn(mockedGeckoController)
+        whenever(geckoSession.sessionTranslation!!.translate(fromLanguage, toLanguage, options)).thenReturn(geckoResult)
+
+        engineSession.register(object : EngineSession.Observer {
+            override fun onTranslateComplete(operation: TranslationOperation) {
+                assert(true) { "We should notify of a successful translation." }
+            }
+
+            override fun onTranslateException(
+                operation: TranslationOperation,
+                throwable: Throwable,
+            ) {
+                assert(false) { "We should not notify of a failure." }
+            }
+        })
+
+        engineSession.requestTranslate(
+            fromLanguage = fromLanguage,
+            toLanguage = toLanguage,
+            options = options,
+        )
+
+        shadowOf(getMainLooper()).idle()
+    }
+
+    @Test
+    fun `WHEN session requestTranslationRestore is successful THEN notify of completion`() {
+        val engineSession = GeckoEngineSession(mock(), geckoSessionProvider = geckoSessionProvider)
+        val mockedGeckoController: TranslationsController.SessionTranslation = mock()
+
+        val geckoResult = GeckoResult<Void>()
+        geckoResult.complete(null)
+        whenever(geckoSession.sessionTranslation).thenReturn(mockedGeckoController)
+        whenever(geckoSession.sessionTranslation!!.restoreOriginalPage()).thenReturn(geckoResult)
+
+        engineSession.register(object : EngineSession.Observer {
+            override fun onTranslateComplete(operation: TranslationOperation) {
+                assert(true) { "We should notify of a successful translation." }
+            }
+            override fun onTranslateException(
+                operation: TranslationOperation,
+                throwable: Throwable,
+            ) {
+                assert(false) { "We should not notify of a failure." }
+            }
+        })
+
+        engineSession.requestTranslationRestore()
+
+        shadowOf(getMainLooper()).idle()
+    }
+
+    @Test
+    fun `WHEN session requestTranslate is unsuccessful THEN notify of failure`() {
+        val engineSession = GeckoEngineSession(mock(), geckoSessionProvider = geckoSessionProvider)
+        val mockedGeckoController: TranslationsController.SessionTranslation = mock()
+
+        val geckoResult = GeckoResult<Void>()
+        val fromLanguage = "en"
+        val toLanguage = "es"
+        val options = null
+
+        geckoResult.completeExceptionally(Exception())
+        whenever(geckoSession.sessionTranslation).thenReturn(mockedGeckoController)
+        whenever(geckoSession.sessionTranslation!!.translate(fromLanguage, toLanguage, options)).thenReturn(geckoResult)
+
+        engineSession.register(object : EngineSession.Observer {
+            override fun onTranslateComplete(operation: TranslationOperation) {
+                assert(false) { "We should not notify of a successful translation." }
+            }
+
+            override fun onTranslateException(
+                operation: TranslationOperation,
+                throwable: Throwable,
+            ) {
+                assert(true) { "We should notify of a failure." }
+            }
+        })
+
+        engineSession.requestTranslate(
+            fromLanguage = fromLanguage,
+            toLanguage = toLanguage,
+            options = options,
+        )
+
+        shadowOf(getMainLooper()).idle()
+    }
+
+    @Test
+    fun `WHEN session requestTranslationRestore is unsuccessful THEN notify of failure`() {
+        val engineSession = GeckoEngineSession(mock(), geckoSessionProvider = geckoSessionProvider)
+        val mockedGeckoController: TranslationsController.SessionTranslation = mock()
+
+        val geckoResult = GeckoResult<Void>()
+        geckoResult.completeExceptionally(Exception())
+        whenever(geckoSession.sessionTranslation).thenReturn(mockedGeckoController)
+        whenever(geckoSession.sessionTranslation!!.restoreOriginalPage()).thenReturn(geckoResult)
+
+        engineSession.register(object : EngineSession.Observer {
+            override fun onTranslateComplete(operation: TranslationOperation) {
+                assert(false) { "We should not notify of a successful translation." }
+            }
+            override fun onTranslateException(
+                operation: TranslationOperation,
+                throwable: Throwable,
+            ) {
+                assert(true) { "We should notify of a failure." }
+            }
+        })
+
+        engineSession.requestTranslationRestore()
+
+        shadowOf(getMainLooper()).idle()
+    }
+
+    @Test
+    fun `WHEN session getNeverTranslateSiteSetting is successful THEN onResult should be called`() {
+        val engineSession = GeckoEngineSession(mock(), geckoSessionProvider = geckoSessionProvider)
+        val mockedGeckoController: TranslationsController.SessionTranslation = mock()
+
+        val geckoResult = GeckoResult<Boolean>()
+
+        whenever(geckoSession.sessionTranslation).thenReturn(mockedGeckoController)
+        whenever(geckoSession.sessionTranslation!!.neverTranslateSiteSetting).thenReturn(geckoResult)
+
+        var onResultCalled = false
+        var onExceptionCalled = false
+
+        engineSession.getNeverTranslateSiteSetting(
+            onResult = {
+                onResultCalled = true
+                assertTrue(it)
+            },
+            onException = { onExceptionCalled = true },
+        )
+
+        geckoResult.complete(true)
+        shadowOf(getMainLooper()).idle()
+
+        assertTrue(onResultCalled)
+        assertFalse(onExceptionCalled)
+    }
+
+    @Test
+    fun `WHEN session getNeverTranslateSiteSetting has an error THEN onException should be called`() {
+        val engineSession = GeckoEngineSession(mock(), geckoSessionProvider = geckoSessionProvider)
+        val mockedGeckoController: TranslationsController.SessionTranslation = mock()
+
+        val geckoResult = GeckoResult<Boolean>()
+
+        whenever(geckoSession.sessionTranslation).thenReturn(mockedGeckoController)
+        whenever(geckoSession.sessionTranslation!!.neverTranslateSiteSetting).thenReturn(geckoResult)
+
+        var onResultCalled = false
+        var onExceptionCalled = false
+
+        engineSession.getNeverTranslateSiteSetting(
+            onResult = { onResultCalled = true },
+            onException = { onExceptionCalled = true },
+        )
+
+        geckoResult.completeExceptionally(Exception())
+        shadowOf(getMainLooper()).idle()
+
+        assertFalse(onResultCalled)
+        assertTrue(onExceptionCalled)
+    }
+
+    @Test
+    fun `WHEN session setNeverTranslateSiteSetting is successful THEN onResult should be called`() {
+        val engineSession = GeckoEngineSession(mock(), geckoSessionProvider = geckoSessionProvider)
+        val mockedGeckoController: TranslationsController.SessionTranslation = mock()
+
+        val geckoResult = GeckoResult<Void>()
+
+        whenever(geckoSession.sessionTranslation).thenReturn(mockedGeckoController)
+        whenever(geckoSession.sessionTranslation!!.setNeverTranslateSiteSetting(any())).thenReturn(geckoResult)
+
+        var onResultCalled = false
+        var onExceptionCalled = false
+
+        engineSession.setNeverTranslateSiteSetting(
+            true,
+            onResult = { onResultCalled = true },
+            onException = { onExceptionCalled = true },
+        )
+
+        geckoResult.complete(null)
+        shadowOf(getMainLooper()).idle()
+
+        assertTrue(onResultCalled)
+        assertFalse(onExceptionCalled)
+    }
+
+    @Test
+    fun `WHEN session setNeverTranslateSiteSetting has an error THEN onException should be called`() {
+        val engineSession = GeckoEngineSession(mock(), geckoSessionProvider = geckoSessionProvider)
+        val mockedGeckoController: TranslationsController.SessionTranslation = mock()
+
+        val geckoResult = GeckoResult<Void>()
+
+        whenever(geckoSession.sessionTranslation).thenReturn(mockedGeckoController)
+        whenever(geckoSession.sessionTranslation!!.setNeverTranslateSiteSetting(any())).thenReturn(geckoResult)
+
+        var onResultCalled = false
+        var onExceptionCalled = false
+
+        engineSession.setNeverTranslateSiteSetting(
+            true,
+            onResult = { onResultCalled = true },
+            onException = { onExceptionCalled = true },
+        )
+
+        geckoResult.completeExceptionally(Exception())
+        shadowOf(getMainLooper()).idle()
+
+        assertFalse(onResultCalled)
+        assertTrue(onExceptionCalled)
     }
 
     @Test

@@ -13,13 +13,13 @@ import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.service.nimbus.messaging.Message
 import mozilla.components.service.pocket.PocketStory
+import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.appstate.AppState
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.shouldShowRecentSyncedTabs
 import org.mozilla.fenix.ext.shouldShowRecentTabs
-import org.mozilla.fenix.home.Mode
 import org.mozilla.fenix.home.recentbookmarks.RecentBookmark
 import org.mozilla.fenix.home.recentvisits.RecentlyVisitedItem
 import org.mozilla.fenix.messaging.FenixMessageSurfaceId
@@ -55,6 +55,7 @@ internal fun normalModeAdapterItems(
     }
 
     if (settings.showTopSitesFeature && topSites.isNotEmpty()) {
+        shouldShowCustomizeHome = true
         if (settings.enableComposeTopSites) {
             items.add(AdapterItem.TopSites)
         } else {
@@ -131,7 +132,7 @@ private fun showCollections(
 private fun privateModeAdapterItems() = listOf(AdapterItem.PrivateBrowsingDescription)
 
 private fun AppState.toAdapterList(settings: Settings): List<AdapterItem> = when (mode) {
-    is Mode.Normal -> normalModeAdapterItems(
+    BrowsingMode.Normal -> normalModeAdapterItems(
         settings,
         topSites,
         collections,
@@ -140,12 +141,12 @@ private fun AppState.toAdapterList(settings: Settings): List<AdapterItem> = when
         showCollectionPlaceholder,
         messaging.messageToShow[FenixMessageSurfaceId.HOMESCREEN],
         shouldShowRecentTabs(settings),
-        shouldShowRecentSyncedTabs(settings),
+        shouldShowRecentSyncedTabs(),
         recentHistory,
         pocketStories,
         firstFrameDrawn,
     )
-    is Mode.Private -> privateModeAdapterItems()
+    BrowsingMode.Private -> privateModeAdapterItems()
 }
 
 private fun collectionTabItems(collection: TabCollection) =
@@ -158,7 +159,7 @@ private fun collectionTabItems(collection: TabCollection) =
  *
  * @param containerView The [View] that is used to initialize the Home recycler view.
  * @param viewLifecycleOwner [LifecycleOwner] for the view.
- * @property interactor [SessionControlInteractor] which will have delegated to all user
+ * @param interactor [SessionControlInteractor] which will have delegated to all user
  * interactions.
  */
 class SessionControlView(

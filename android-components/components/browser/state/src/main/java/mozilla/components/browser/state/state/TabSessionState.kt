@@ -17,6 +17,7 @@ import java.util.UUID
  * @property id the ID of this tab and session.
  * @property content the [ContentState] of this tab.
  * @property trackingProtection the [TrackingProtectionState] of this tab.
+ * @property translationsState the [TranslationsState] of this tab.
  * @property cookieBanner the [CookieBannerHandlingStatus] of this tab.
  * @property parentId the parent ID of this tab or null if this tab has no
  * parent. The parent tab is usually the tab that initiated opening this
@@ -31,12 +32,12 @@ import java.util.UUID
  * @property lastMediaAccessState - [LastMediaAccessState] detailing the tab state when media started playing.
  * Requires [LastMediaAccessMiddleware] to update the value when playback starts.
  * @property restored Indicates if this page was restored from a persisted state.
- * @property isProductUrl has the product URL status of this tab.
  */
 data class TabSessionState(
     override val id: String = UUID.randomUUID().toString(),
     override val content: ContentState,
     override val trackingProtection: TrackingProtectionState = TrackingProtectionState(),
+    override val translationsState: TranslationsState = TranslationsState(),
     override val cookieBanner: CookieBannerHandlingStatus = CookieBannerHandlingStatus.NO_DETECTED,
     override val engineState: EngineState = EngineState(),
     override val extensionState: Map<String, WebExtensionState> = emptyMap(),
@@ -44,7 +45,6 @@ data class TabSessionState(
     override val contextId: String? = null,
     override val source: SessionState.Source = SessionState.Source.Internal.None,
     override val restored: Boolean = false,
-    override val isProductUrl: Boolean = false,
     val parentId: String? = null,
     val lastAccess: Long = 0L,
     val createdAt: Long = System.currentTimeMillis(),
@@ -57,22 +57,22 @@ data class TabSessionState(
         id: String,
         content: ContentState,
         trackingProtection: TrackingProtectionState,
+        translationsState: TranslationsState,
         engineState: EngineState,
         extensionState: Map<String, WebExtensionState>,
         mediaSessionState: MediaSessionState?,
         contextId: String?,
         cookieBanner: CookieBannerHandlingStatus,
-        isProductUrl: Boolean,
     ): SessionState = copy(
         id = id,
         content = content,
         trackingProtection = trackingProtection,
+        translationsState = translationsState,
         engineState = engineState,
         extensionState = extensionState,
         mediaSessionState = mediaSessionState,
         contextId = contextId,
         cookieBanner = cookieBanner,
-        isProductUrl = isProductUrl,
     )
 }
 
@@ -95,6 +95,7 @@ fun createTab(
     lastMediaAccessState: LastMediaAccessState = LastMediaAccessState(),
     source: SessionState.Source = SessionState.Source.Internal.None,
     restored: Boolean = false,
+    isProductUrl: Boolean = false,
     engineSession: EngineSession? = null,
     engineSessionState: EngineSessionState? = null,
     crashed: Boolean = false,
@@ -103,6 +104,7 @@ fun createTab(
     webAppManifest: WebAppManifest? = null,
     searchTerms: String = "",
     initialLoadFlags: EngineSession.LoadUrlFlags = EngineSession.LoadUrlFlags.none(),
+    initialAdditionalHeaders: Map<String, String>? = null,
     previewImageUrl: String? = null,
     hasFormData: Boolean = false,
 ): TabSessionState {
@@ -116,6 +118,7 @@ fun createTab(
             searchTerms = searchTerms,
             previewImageUrl = previewImageUrl,
             hasFormData = hasFormData,
+            isProductUrl = isProductUrl,
         ),
         parentId = parentId ?: parent?.id,
         extensionState = extensions,
@@ -131,6 +134,7 @@ fun createTab(
             engineSessionState = engineSessionState,
             crashed = crashed,
             initialLoadFlags = initialLoadFlags,
+            initialAdditionalHeaders = initialAdditionalHeaders,
         ),
         mediaSessionState = mediaSessionState,
         historyMetadata = historyMetadata,

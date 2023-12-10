@@ -14,11 +14,14 @@ import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.filter
 import androidx.compose.ui.test.hasAnyChild
+import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasParent
+import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.longClick
 import androidx.compose.ui.test.onAllNodesWithTag
+import androidx.compose.ui.test.onChildAt
 import androidx.compose.ui.test.onChildren
 import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -36,16 +39,15 @@ import androidx.test.espresso.action.GeneralLocation
 import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.matcher.ViewMatchers
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import junit.framework.TestCase
 import org.hamcrest.Matcher
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.Constants
+import org.mozilla.fenix.helpers.DataGenerationHelper.getStringResource
 import org.mozilla.fenix.helpers.HomeActivityComposeTestRule
-import org.mozilla.fenix.helpers.MatcherHelper.assertItemContainingTextExists
+import org.mozilla.fenix.helpers.MatcherHelper.assertUIObjectExists
 import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
-import org.mozilla.fenix.helpers.TestHelper.getStringResource
 import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.clickAtLocationInView
 import org.mozilla.fenix.helpers.idlingresource.BottomSheetBehaviorStateIdlingResource
@@ -84,7 +86,7 @@ class ComposeTabDrawerRobot(private val composeTestRule: HomeActivityComposeTest
 
     fun verifySyncedTabsListWhenUserIsNotSignedIn() {
         verifySyncedTabsList()
-        assertItemContainingTextExists(
+        assertUIObjectExists(
             itemContainingText(getStringResource(R.string.synced_tabs_sign_in_message)),
             itemContainingText(getStringResource(R.string.sync_sign_in)),
             itemContainingText(getStringResource(R.string.tab_drawer_fab_sync)),
@@ -98,10 +100,17 @@ class ComposeTabDrawerRobot(private val composeTestRule: HomeActivityComposeTest
         }
     }
 
+    fun verifyOpenTabsOrder(title: String, position: Int) =
+        composeTestRule.normalTabsList()
+            .onChildAt(position - 1)
+            .assert(hasTestTag(TabsTrayTestTag.tabItemRoot))
+            .assert(hasAnyChild(hasText(title)))
+
     fun verifyNoExistingOpenTabs(vararg titles: String) {
         titles.forEach { title ->
-            TestCase.assertFalse(
-                itemContainingText(title).waitForExists(TestAssetHelper.waitingTimeShort),
+            assertUIObjectExists(
+                itemContainingText(title),
+                exists = false,
             )
         }
     }
@@ -264,7 +273,9 @@ class ComposeTabDrawerRobot(private val composeTestRule: HomeActivityComposeTest
     /**
      * Verifies a tab's media button matches [action] when there is only one tab with media.
      */
+    @OptIn(ExperimentalTestApi::class)
     fun verifyTabMediaControlButtonState(action: String) {
+        composeTestRule.waitUntilAtLeastOneExists(hasContentDescription(action), waitingTime)
         composeTestRule.tabMediaControlButton(action)
             .assertExists()
     }
@@ -272,7 +283,9 @@ class ComposeTabDrawerRobot(private val composeTestRule: HomeActivityComposeTest
     /**
      * Clicks a tab's media button when there is only one tab with media.
      */
+    @OptIn(ExperimentalTestApi::class)
     fun clickTabMediaControlButton(action: String) {
+        composeTestRule.waitUntilAtLeastOneExists(hasContentDescription(action), waitingTime)
         composeTestRule.tabMediaControlButton(action)
             .performClick()
     }

@@ -36,6 +36,7 @@ import mozilla.components.concept.sync.AccountObserver
 import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.concept.sync.Profile
+import mozilla.components.feature.addons.ui.AddonFilePicker
 import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.support.ktx.android.view.showKeyboard
 import mozilla.components.ui.widgets.withCenterAlignedButtons
@@ -70,6 +71,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     private val args by navArgs<SettingsFragmentArgs>()
     private lateinit var accountUiView: AccountUiView
+    private lateinit var addonFilePicker: AddonFilePicker
     private val profilerViewModel: ProfilerViewModel by activityViewModels()
 
     @VisibleForTesting
@@ -107,6 +109,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
             updateFxAAllowDomesticChinaServerMenu = ::updateFxAAllowDomesticChinaServerMenu,
         )
 
+        addonFilePicker = AddonFilePicker(requireContext(), requireComponents.addonManager)
+        addonFilePicker.registerForResults(this)
+
         // It's important to update the account UI state in onCreate since that ensures we'll never
         // display an incorrect state in the UI. We take care to not also call it as part of onResume
         // if it was just called here (via the 'creatingFragment' flag).
@@ -135,8 +140,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
             requireContext().getString(R.string.pref_key_show_search_suggestions_in_private),
         )
 
-        preferenceManager.sharedPreferences
-            .registerOnSharedPreferenceChangeListener(this) { sharedPreferences, key ->
+        preferenceManager?.sharedPreferences
+            ?.registerOnSharedPreferenceChangeListener(this) { sharedPreferences, key ->
                 try {
                     if (key in booleanPreferenceTelemetryAllowList) {
                         val enabled = sharedPreferences.getBoolean(key, false)
@@ -178,9 +183,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
         requireView().findViewById<RecyclerView>(R.id.recycler_view)
             ?.hideInitialScrollBar(viewLifecycleOwner.lifecycleScope)
 
-        if (args.preferenceToScrollTo != null) {
-            scrollToPreference(args.preferenceToScrollTo)
+        args.preferenceToScrollTo?.let {
+            scrollToPreference(it)
         }
+
         // Consider finish of `onResume` to be the point at which we consider this fragment as 'created'.
         creatingFragment = false
     }
@@ -282,11 +288,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
             }
             resources.getString(R.string.pref_key_https_only_settings) -> {
                 SettingsFragmentDirections.actionSettingsFragmentToHttpsOnlyFragment()
-            }
-            resources.getString(R.string.pref_key_cookie_banner_settings) -> {
-                FxNimbus.features.cookieBanners.recordExposure()
-                CookieBanners.visitedSetting.record(mozilla.components.service.glean.private.NoExtras())
-                SettingsFragmentDirections.actionSettingsFragmentToCookieBannerFragment()
             }
             resources.getString(R.string.pref_key_accessibility) -> {
                 SettingsFragmentDirections.actionSettingsFragmentToAccessibilityFragment()
@@ -390,6 +391,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
             resources.getString(R.string.pref_key_nimbus_experiments) -> {
                 SettingsFragmentDirections.actionSettingsFragmentToNimbusExperimentsFragment()
             }
+            resources.getString(R.string.pref_key_install_local_addon) -> {
+                addonFilePicker.launch()
+                null
+            }
             resources.getString(R.string.pref_key_override_amo_collection) -> {
                 val context = requireContext()
                 val dialogView = LayoutInflater.from(context).inflate(R.layout.amo_collection_override_dialog, null)
@@ -492,6 +497,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 (requireContext().components.core.engine.profiler?.isProfilerActive() != null)
         }
         setupCookieBannerPreference()
+        setupInstallAddonFromFilePreference(requireContext().settings())
         setupAmoCollectionOverridePreference(requireContext().settings())
         setupGeckoLogsPreference(requireContext().settings())
         setupAllowDomesticChinaFxaServerPreference()
@@ -609,7 +615,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     updateFxAAllowDomesticChinaServerMenu()
                     Toast.makeText(
                         context,
-                        getString(R.string.toast_override_fxa_sync_server_done),
+                        getString(R.string.toast_override_account_sync_server_done),
                         Toast.LENGTH_LONG,
                     ).show()
                     Handler(Looper.getMainLooper()).postDelayed(
@@ -636,16 +642,17 @@ class SettingsFragment : PreferenceFragmentCompat() {
     @VisibleForTesting
     internal fun setupHomepagePreference() {
         with(requirePreference<Preference>(R.string.pref_key_home)) {
-            summary = context?.let {
-                when {
-                    it.settings().alwaysOpenTheHomepageWhenOpeningTheApp ->
-                        getString(R.string.opening_screen_homepage_summary)
-                    it.settings().openHomepageAfterFourHoursOfInactivity ->
-                        getString(R.string.opening_screen_after_four_hours_of_inactivity_summary)
-                    it.settings().alwaysOpenTheLastTabWhenOpeningTheApp ->
-                        getString(R.string.opening_screen_last_tab_summary)
-                    else -> null
-                }
+            summary = when {
+                context.settings().alwaysOpenTheHomepageWhenOpeningTheApp ->
+                    getString(R.string.opening_screen_homepage_summary)
+
+                context.settings().openHomepageAfterFourHoursOfInactivity ->
+                    getString(R.string.opening_screen_after_four_hours_of_inactivity_summary)
+
+                context.settings().alwaysOpenTheLastTabWhenOpeningTheApp ->
+                    getString(R.string.opening_screen_last_tab_summary)
+
+                else -> null
             }
         }
     }
@@ -661,30 +668,50 @@ class SettingsFragment : PreferenceFragmentCompat() {
     @VisibleForTesting
     internal fun setupTrackingProtectionPreference() {
         with(requirePreference<Preference>(R.string.pref_key_tracking_protection_settings)) {
-            summary = context?.let {
-                when {
-                    !it.settings().shouldUseTrackingProtection -> getString(R.string.tracking_protection_off)
-                    it.settings().useStandardTrackingProtection -> getString(R.string.tracking_protection_standard)
-                    it.settings().useStrictTrackingProtection -> getString(R.string.tracking_protection_strict)
-                    it.settings().useCustomTrackingProtection -> getString(R.string.tracking_protection_custom)
-                    else -> null
-                }
+            summary = when {
+                !context.settings().shouldUseTrackingProtection -> getString(R.string.tracking_protection_off)
+                context.settings().useStandardTrackingProtection -> getString(R.string.tracking_protection_standard)
+                context.settings().useStrictTrackingProtection -> getString(R.string.tracking_protection_strict)
+                context.settings().useCustomTrackingProtection -> getString(R.string.tracking_protection_custom)
+                else -> null
             }
         }
     }
 
     @VisibleForTesting
     internal fun setupCookieBannerPreference() {
-        with(requirePreference<Preference>(R.string.pref_key_cookie_banner_settings)) {
-            summary = context?.let {
-                isVisible = it.settings().shouldShowCookieBannerUI
+        FxNimbus.features.cookieBanners.recordExposure()
+        if (context?.settings()?.shouldShowCookieBannerUI == false) return
+        with(requirePreference<SwitchPreference>(R.string.pref_key_cookie_banner_private_mode)) {
+            isVisible = context.settings().shouldShowCookieBannerUI
 
-                if (it.settings().shouldUseCookieBanner) {
-                    getString(R.string.reduce_cookie_banner_option_on)
-                } else {
-                    getString(R.string.reduce_cookie_banner_option_off)
+            onPreferenceChangeListener = object : SharedPreferenceUpdater() {
+                override fun onPreferenceChange(
+                    preference: Preference,
+                    newValue: Any?,
+                ): Boolean {
+                    val metricTag = if (newValue == true) {
+                        "reject_all"
+                    } else {
+                        "disabled"
+                    }
+                    val engineSettings = requireContext().components.core.engine.settings
+                    val settings = requireContext().settings()
+                    settings.shouldUseCookieBannerPrivateMode = newValue as Boolean
+                    val mode = settings.getCookieBannerHandlingPrivateMode()
+                    engineSettings.cookieBannerHandlingModePrivateBrowsing = mode
+                    CookieBanners.settingChangedPmb.record(CookieBanners.SettingChangedPmbExtra(metricTag))
+                    requireContext().components.useCases.sessionUseCases.reload()
+                    return super.onPreferenceChange(preference, newValue)
                 }
             }
+        }
+    }
+
+    @VisibleForTesting
+    internal fun setupInstallAddonFromFilePreference(settings: Settings) {
+        with(requirePreference<Preference>(R.string.pref_key_install_local_addon)) {
+            isVisible = settings.showSecretDebugMenuThisSession
         }
     }
 

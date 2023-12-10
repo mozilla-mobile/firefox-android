@@ -140,6 +140,31 @@ sealed class HistoryFragmentAction : Action {
     data class HistoryItemLongClicked(val item: History) : HistoryFragmentAction()
 
     /**
+     * The user has indicated that a time range of history items should be deleted.
+     */
+    data class DeleteTimeRange(val timeFrame: RemoveTimeFrame?) : HistoryFragmentAction()
+
+    /**
+     * The user has indicated that a number of history items should be deleted.
+     */
+    data class DeleteItems(val items: Set<History>) : HistoryFragmentAction()
+
+    /**
+     * The user has clicked to enter the Recently Closed fragment.
+     */
+    object EnterRecentlyClosed : HistoryFragmentAction()
+
+    /**
+     * A back press event has been dispatched.
+     */
+    object BackPressed : HistoryFragmentAction()
+
+    /**
+     * The search menu item has been clicked.
+     */
+    object SearchClicked : HistoryFragmentAction()
+
+    /**
      * Updates the empty state of [org.mozilla.fenix.library.history.HistoryView].
      */
     data class ChangeEmptyState(val isEmpty: Boolean) : HistoryFragmentAction()
@@ -157,9 +182,14 @@ sealed class HistoryFragmentAction : Action {
 }
 
 /**
- * The state for the History Screen
+ * The state for the History Screen.
+ *
  * @property items List of History to display
  * @property mode Current Mode of History
+ * @property pendingDeletionItems The set of [PendingDeletionHistory] marked for removal.
+ * @property isEmpty Whether or not the screen is empty.
+ * @property isDeletingItems Whether or not the history items are currently in the process of being
+ * deleted.
  */
 data class HistoryFragmentState(
     val items: List<History>,
@@ -249,5 +279,19 @@ private fun historyStateReducer(
                 )
             }
         }
+        is HistoryFragmentAction.BackPressed -> {
+            if (state.mode is HistoryFragmentState.Mode.Editing) {
+                state.copy(mode = HistoryFragmentState.Mode.Normal)
+            } else {
+                state
+            }
+        }
+        // For deletion actions: the item list is handled through storage.
+        // Updates from storage are dispatched directly to the view.
+        is HistoryFragmentAction.DeleteItems,
+        is HistoryFragmentAction.DeleteTimeRange,
+        is HistoryFragmentAction.EnterRecentlyClosed,
+        is HistoryFragmentAction.SearchClicked,
+        -> state
     }
 }

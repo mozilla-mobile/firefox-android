@@ -15,18 +15,19 @@ import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Assume.assumeTrue
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
+import org.mozilla.fenix.helpers.AppAndSystemHelper.assertExternalAppOpens
+import org.mozilla.fenix.helpers.AppAndSystemHelper.grantSystemPermission
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
 import org.mozilla.fenix.helpers.MockLocationUpdatesRule
 import org.mozilla.fenix.helpers.RetryTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper.appContext
-import org.mozilla.fenix.helpers.TestHelper.assertExternalAppOpens
-import org.mozilla.fenix.helpers.TestHelper.grantSystemPermission
 import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.clickPageObject
 import org.mozilla.fenix.ui.robots.navigationToolbar
@@ -77,9 +78,10 @@ class SitePermissionsTest {
         mockWebServer.shutdown()
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2334295
     @SmokeTest
     @Test
-    fun audioVideoPermissionChoiceOnEachRequestTest() {
+    fun audioVideoPermissionWithoutRememberingTheDecisionTest() {
         assumeTrue(cameraManager.cameraIdList.isNotEmpty())
 
         navigationToolbar {
@@ -95,9 +97,10 @@ class SitePermissionsTest {
         }
     }
 
-    @SmokeTest
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2334294
+    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1815395")
     @Test
-    fun rememberBlockAudioVideoPermissionChoiceTest() {
+    fun blockAudioVideoPermissionRememberingTheDecisionTest() {
         assumeTrue(cameraManager.cameraIdList.isNotEmpty())
         assumeTrue(micManager.microphones.isNotEmpty())
 
@@ -118,9 +121,10 @@ class SitePermissionsTest {
         }
     }
 
-    @SmokeTest
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/251388
+    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1815395")
     @Test
-    fun rememberAllowAudioVideoPermissionChoiceTest() {
+    fun allowAudioVideoPermissionRememberingTheDecisionTest() {
         assumeTrue(cameraManager.cameraIdList.isNotEmpty())
         assumeTrue(micManager.microphones.isNotEmpty())
 
@@ -141,8 +145,9 @@ class SitePermissionsTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2334189
     @Test
-    fun microphonePermissionChoiceOnEachRequestTest() {
+    fun microphonePermissionWithoutRememberingTheDecisionTest() {
         assumeTrue(micManager.microphones.isNotEmpty())
 
         navigationToolbar {
@@ -158,8 +163,10 @@ class SitePermissionsTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2334190
+    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1815395")
     @Test
-    fun rememberBlockMicrophonePermissionChoiceTest() {
+    fun blockMicrophonePermissionRememberingTheDecisionTest() {
         assumeTrue(micManager.microphones.isNotEmpty())
 
         navigationToolbar {
@@ -179,8 +186,10 @@ class SitePermissionsTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/251387
+    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1815395")
     @Test
-    fun rememberAllowMicrophonePermissionChoiceTest() {
+    fun allowMicrophonePermissionRememberingTheDecisionTest() {
         assumeTrue(micManager.microphones.isNotEmpty())
 
         navigationToolbar {
@@ -200,8 +209,9 @@ class SitePermissionsTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2334076
     @Test
-    fun cameraPermissionChoiceOnEachRequestTest() {
+    fun cameraPermissionWithoutRememberingDecisionTest() {
         assumeTrue(cameraManager.cameraIdList.isNotEmpty())
 
         navigationToolbar {
@@ -217,8 +227,10 @@ class SitePermissionsTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2334077
+    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1815395")
     @Test
-    fun rememberBlockCameraPermissionChoiceTest() {
+    fun blockCameraPermissionRememberingTheDecisionTest() {
         assumeTrue(cameraManager.cameraIdList.isNotEmpty())
 
         navigationToolbar {
@@ -238,8 +250,10 @@ class SitePermissionsTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/251386
+    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1815395")
     @Test
-    fun rememberAllowCameraPermissionChoiceTest() {
+    fun allowCameraPermissionRememberingTheDecisionTest() {
         assumeTrue(cameraManager.cameraIdList.isNotEmpty())
 
         navigationToolbar {
@@ -259,8 +273,10 @@ class SitePermissionsTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2334074
+    @SmokeTest
     @Test
-    fun blockNotificationsPermissionPromptTest() {
+    fun blockNotificationsPermissionTest() {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(testPage.toUri()) {
         }.clickOpenNotificationButton {
@@ -275,8 +291,9 @@ class SitePermissionsTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/251380
     @Test
-    fun allowNotificationsPermissionPromptTest() {
+    fun allowNotificationsPermissionTest() {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(testPage.toUri()) {
         }.clickOpenNotificationButton {
@@ -286,6 +303,8 @@ class SitePermissionsTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/251385
+    @SmokeTest
     @Test
     fun allowLocationPermissionsTest() {
         mockLocationUpdatesRule.setMockLocation()
@@ -300,6 +319,7 @@ class SitePermissionsTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2334075
     @Test
     fun blockLocationPermissionsTest() {
         navigationToolbar {
@@ -311,6 +331,7 @@ class SitePermissionsTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2121537
     @SmokeTest
     @Test
     fun fileUploadPermissionTest() {

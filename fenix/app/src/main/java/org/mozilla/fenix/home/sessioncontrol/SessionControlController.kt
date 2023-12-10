@@ -83,7 +83,7 @@ interface SessionControlController {
     /**
      * @see [CollectionInteractor.onCollectionRemoveTab]
      */
-    fun handleCollectionRemoveTab(collection: TabCollection, tab: ComponentTab, wasSwiped: Boolean)
+    fun handleCollectionRemoveTab(collection: TabCollection, tab: ComponentTab)
 
     /**
      * @see [CollectionInteractor.onCollectionShareTabsClicked]
@@ -244,7 +244,6 @@ class DefaultSessionControlController(
     override fun handleCollectionRemoveTab(
         collection: TabCollection,
         tab: ComponentTab,
-        wasSwiped: Boolean,
     ) {
         Collections.tabRemoved.record(NoExtras())
 
@@ -394,11 +393,10 @@ class DefaultSessionControlController(
             if (settings.openNextTabInDesktopMode) {
                 activity.handleRequestDesktopMode(tabId)
             }
-            activity.openToBrowser(BrowserDirection.FromHome)
         } else {
             selectTabUseCase.invoke(existingTabForUrl.id)
-            navController.navigate(R.id.browserFragment)
         }
+        navController.navigate(R.id.browserFragment)
     }
 
     @VisibleForTesting

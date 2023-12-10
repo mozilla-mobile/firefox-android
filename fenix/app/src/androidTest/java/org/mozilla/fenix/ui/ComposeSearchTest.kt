@@ -17,9 +17,15 @@ import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
+import org.mozilla.fenix.helpers.AppAndSystemHelper.assertNativeAppOpens
+import org.mozilla.fenix.helpers.AppAndSystemHelper.denyPermission
+import org.mozilla.fenix.helpers.AppAndSystemHelper.grantSystemPermission
+import org.mozilla.fenix.helpers.AppAndSystemHelper.verifyKeyboardVisibility
 import org.mozilla.fenix.helpers.Constants
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.MatcherHelper
+import org.mozilla.fenix.helpers.MockBrowserDataHelper.createBookmarkItem
+import org.mozilla.fenix.helpers.MockBrowserDataHelper.createTabItem
 import org.mozilla.fenix.helpers.MockBrowserDataHelper.setCustomSearchEngine
 import org.mozilla.fenix.helpers.SearchDispatcher
 import org.mozilla.fenix.helpers.TestAssetHelper
@@ -75,13 +81,14 @@ class ComposeSearchTest {
         searchMockServer.shutdown()
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2154189
     @Test
-    fun searchBarItemsTest() {
+    fun verifySearchBarItemsTest() {
         navigationToolbar {
             verifyDefaultSearchEngine("Google")
             verifySearchBarPlaceholder("Search or enter address")
         }.clickUrlbar {
-            TestHelper.verifyKeyboardVisibility(isExpectedToBeVisible = true)
+            verifyKeyboardVisibility(isExpectedToBeVisible = true)
             verifyScanButtonVisibility(visible = true)
             verifyVoiceSearchButtonVisibility(enabled = true)
             verifySearchBarPlaceholder("Search or enter address")
@@ -91,8 +98,9 @@ class ComposeSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2154190
     @Test
-    fun searchSelectorMenuItemsTest() {
+    fun verifySearchSelectorMenuItemsTest() {
         homeScreen {
         }.openSearch {
             verifySearchView()
@@ -105,8 +113,9 @@ class ComposeSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2154194
     @Test
-    fun searchPlaceholderForDefaultEnginesTest() {
+    fun verifySearchPlaceholderForGeneralDefaultSearchEnginesTest() {
         generalEnginesList.forEach {
             homeScreen {
             }.openSearch {
@@ -122,8 +131,9 @@ class ComposeSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2154195
     @Test
-    fun searchPlaceholderForOtherGeneralSearchEnginesTest() {
+    fun verifySearchPlaceholderForNotDefaultGeneralSearchEnginesTest() {
         val generalEnginesList = listOf("DuckDuckGo", "Bing")
 
         generalEnginesList.forEach {
@@ -136,8 +146,9 @@ class ComposeSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2154196
     @Test
-    fun searchPlaceholderForTopicSearchEngineTest() {
+    fun verifySearchPlaceholderForTopicSpecificSearchEnginesTest() {
         val topicEnginesList = listOf("Amazon.com", "Wikipedia", "eBay")
 
         topicEnginesList.forEach {
@@ -150,16 +161,17 @@ class ComposeSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1059459
     @SmokeTest
     @Test
-    fun scanButtonDenyPermissionTest() {
+    fun verifyQRScanningCameraAccessDialogTest() {
         val cameraManager = TestHelper.appContext.getSystemService(Context.CAMERA_SERVICE) as CameraManager
         Assume.assumeTrue(cameraManager.cameraIdList.isNotEmpty())
 
         homeScreen {
         }.openSearch {
             clickScanButton()
-            TestHelper.denyPermission()
+            denyPermission()
             clickScanButton()
             clickDismissPermissionRequiredDialog()
         }
@@ -167,26 +179,28 @@ class ComposeSearchTest {
         }.openSearch {
             clickScanButton()
             clickGoToPermissionsSettings()
-            TestHelper.assertNativeAppOpens(Constants.PackageName.ANDROID_SETTINGS)
+            assertNativeAppOpens(Constants.PackageName.ANDROID_SETTINGS)
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/235397
     @SmokeTest
     @Test
-    fun scanButtonAllowPermissionTest() {
+    fun scanQRCodeToOpenAWebpageTest() {
         val cameraManager = TestHelper.appContext.getSystemService(Context.CAMERA_SERVICE) as CameraManager
         Assume.assumeTrue(cameraManager.cameraIdList.isNotEmpty())
 
         homeScreen {
         }.openSearch {
             clickScanButton()
-            TestHelper.grantSystemPermission()
+            grantSystemPermission()
             verifyScannerOpen()
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2154191
     @Test
-    fun scanButtonAvailableOnlyForGeneralSearchEnginesTest() {
+    fun verifyScanButtonAvailableOnlyForGeneralSearchEnginesTest() {
         generalEnginesList.forEach {
             homeScreen {
             }.openSearch {
@@ -206,10 +220,11 @@ class ComposeSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/235395
     // Verifies a temporary change of search engine from the Search shortcut menu
     @SmokeTest
     @Test
-    fun selectSearchEnginesShortcutTest() {
+    fun searchEnginesCanBeChangedTemporarilyFromSearchSelectorMenuTest() {
         val enginesList = listOf("DuckDuckGo", "Google", "Amazon.com", "Wikipedia", "Bing", "eBay")
 
         enginesList.forEach {
@@ -225,8 +240,9 @@ class ComposeSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/233589
     @Test
-    fun accessSearchSettingFromSearchSelectorMenuTest() {
+    fun defaultSearchEnginesCanBeSetFromSearchSelectorMenuTest() {
         searchScreen {
             clickSearchSelectorButton()
         }.clickSearchEngineSettings {
@@ -242,8 +258,9 @@ class ComposeSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/522918
     @Test
-    fun clearSearchTest() {
+    fun verifyClearSearchButtonTest() {
         homeScreen {
         }.openSearch {
             typeSearch(queryString)
@@ -252,10 +269,11 @@ class ComposeSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1623441
     @Ignore("Test run timing out: https://github.com/mozilla-mobile/fenix/issues/27704")
     @SmokeTest
     @Test
-    fun searchGroupShowsInRecentlyVisitedTest() {
+    fun searchResultsOpenedInNewTabsGenerateSearchGroupsTest() {
         val searchEngineName = "TestSearchEngine"
         // setting our custom mockWebServer search URL
         setCustomSearchEngine(searchMockServer, searchEngineName)
@@ -280,9 +298,10 @@ class ComposeSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1592229
     @Ignore("Test run timing out: https://github.com/mozilla-mobile/fenix/issues/27704")
     @Test
-    fun verifySearchGroupHistoryWithNoDuplicatesTest() {
+    fun verifyAPageIsAddedToASearchGroupOnlyOnceTest() {
         val firstPageUrl = TestAssetHelper.getGenericAsset(searchMockServer, 1).url
         val secondPageUrl = TestAssetHelper.getGenericAsset(searchMockServer, 2).url
         val originPageUrl =
@@ -325,9 +344,10 @@ class ComposeSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1591782
     @Ignore("Failing due to known bug, see https://github.com/mozilla-mobile/fenix/issues/23818")
     @Test
-    fun searchGroupGeneratedInTheSameTabTest() {
+    fun searchGroupIsGeneratedWhenNavigatingInTheSameTabTest() {
         // setting our custom mockWebServer search URL
         val searchEngineName = "TestSearchEngine"
         setCustomSearchEngine(searchMockServer, searchEngineName)
@@ -348,9 +368,10 @@ class ComposeSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1591781
     @SmokeTest
     @Test
-    fun noSearchGroupFromPrivateBrowsingTest() {
+    fun searchGroupIsNotGeneratedForLinksOpenedInPrivateTabsTest() {
         // setting our custom mockWebServer search URL
         val searchEngineName = "TestSearchEngine"
         setCustomSearchEngine(searchMockServer, searchEngineName)
@@ -379,10 +400,11 @@ class ComposeSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1592269
     @Ignore("Test run timing out: https://github.com/mozilla-mobile/fenix/issues/27704")
     @SmokeTest
     @Test
-    fun deleteItemsFromSearchGroupHistoryTest() {
+    fun deleteIndividualHistoryItemsFromSearchGroupTest() {
         val firstPageUrl = TestAssetHelper.getGenericAsset(searchMockServer, 1).url
         val secondPageUrl = TestAssetHelper.getGenericAsset(searchMockServer, 2).url
         // setting our custom mockWebServer search URL
@@ -421,9 +443,10 @@ class ComposeSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1592242
     @Ignore("Test run timing out: https://github.com/mozilla-mobile/fenix/issues/27704")
     @Test
-    fun deleteSearchGroupFromHistoryTest() {
+    fun deleteSearchGroupFromHomeScreenTest() {
         val firstPageUrl = TestAssetHelper.getGenericAsset(searchMockServer, 1).url
         // setting our custom mockWebServer search URL
         val searchEngineName = "TestSearchEngine"
@@ -461,9 +484,10 @@ class ComposeSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1592235
     @Ignore("Test run timing out: https://github.com/mozilla-mobile/fenix/issues/27704")
     @Test
-    fun reopenTabsFromSearchGroupTest() {
+    fun openAPageFromHomeScreenSearchGroupTest() {
         val firstPageUrl = TestAssetHelper.getGenericAsset(searchMockServer, 1).url
         val secondPageUrl = TestAssetHelper.getGenericAsset(searchMockServer, 2).url
 
@@ -509,9 +533,10 @@ class ComposeSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1592238
     @Ignore("Test run timing out: https://github.com/mozilla-mobile/fenix/issues/27704")
     @Test
-    fun sharePageFromASearchGroupTest() {
+    fun shareAPageFromHomeScreenSearchGroupTest() {
         val firstPageUrl = TestAssetHelper.getGenericAsset(searchMockServer, 1).url
         // setting our custom mockWebServer search URL
         val searchEngineName = "TestSearchEngine"
@@ -547,6 +572,7 @@ class ComposeSearchTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1232633
     // Default search code for Google-US
     @Test
     fun defaultSearchCodeGoogleUS() {
@@ -557,10 +583,17 @@ class ComposeSearchTest {
         }.openThreeDotMenu {
         }.openHistory {
             // Full URL no longer visible in the nav bar, so we'll check the history record
-            verifyHistoryItemExists(shouldExist = true, Constants.searchEngineCodes["Google"]!!)
+            // A search group is sometimes created when searching with Google (probably redirects)
+            try {
+                verifyHistoryItemExists(shouldExist = true, Constants.searchEngineCodes["Google"]!!)
+            } catch (e: AssertionError) {
+                openSearchGroup(queryString)
+                verifyHistoryItemExists(shouldExist = true, Constants.searchEngineCodes["Google"]!!)
+            }
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1232637
     // Default search code for Bing-US
     @Test
     fun defaultSearchCodeBingUS() {
@@ -580,10 +613,17 @@ class ComposeSearchTest {
         }.openThreeDotMenu {
         }.openHistory {
             // Full URL no longer visible in the nav bar, so we'll check the history record
-            verifyHistoryItemExists(shouldExist = true, Constants.searchEngineCodes["Bing"]!!)
+            // A search group is sometimes created when searching with Bing (probably redirects)
+            try {
+                verifyHistoryItemExists(shouldExist = true, Constants.searchEngineCodes["Bing"]!!)
+            } catch (e: AssertionError) {
+                openSearchGroup(queryString)
+                verifyHistoryItemExists(shouldExist = true, Constants.searchEngineCodes["Bing"]!!)
+            }
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1232638
     // Default search code for DuckDuckGo-US
     @Test
     fun defaultSearchCodeDuckDuckGoUS() {
@@ -609,6 +649,175 @@ class ComposeSearchTest {
                 openSearchGroup(queryString)
                 verifyHistoryItemExists(shouldExist = true, item = Constants.searchEngineCodes["DuckDuckGo"]!!)
             }
+        }
+    }
+
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1850517
+    // Test that verifies the Firefox Suggest results in a general search context
+    @Test
+    fun verifyFirefoxSuggestHeaderForBrowsingDataSuggestionsTest() {
+        val firstPage = TestAssetHelper.getGenericAsset(searchMockServer, 1)
+        val secondPage = TestAssetHelper.getGenericAsset(searchMockServer, 2)
+
+        createTabItem(firstPage.url.toString())
+        createBookmarkItem(secondPage.url.toString(), secondPage.title, 1u)
+
+        homeScreen {
+        }.openSearch {
+            typeSearch("generic")
+            verifySearchEngineSuggestionResults(
+                rule = activityTestRule,
+                searchSuggestions = arrayOf(
+                    "Firefox Suggest",
+                    firstPage.url.toString(),
+                    secondPage.url.toString(),
+                ),
+                searchTerm = "generic",
+            )
+        }
+    }
+
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2154197
+    @Test
+    fun verifyTabsSearchItemsTest() {
+        navigationToolbar {
+        }.clickUrlbar {
+            clickSearchSelectorButton()
+            selectTemporarySearchMethod("Tabs")
+            verifyKeyboardVisibility(isExpectedToBeVisible = true)
+            verifyScanButtonVisibility(visible = false)
+            verifyVoiceSearchButtonVisibility(enabled = true)
+            verifySearchBarPlaceholder(text = "Search tabs")
+        }
+    }
+
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2154198
+    @Test
+    fun verifyTabsSearchWithoutOpenTabsTest() {
+        navigationToolbar {
+        }.clickUrlbar {
+            clickSearchSelectorButton()
+            selectTemporarySearchMethod(searchEngineName = "Tabs")
+            typeSearch(searchTerm = "Mozilla")
+            verifySuggestionsAreNotDisplayed(rule = activityTestRule, "Mozilla")
+            clickClearButton()
+            verifySearchBarPlaceholder("Search tabs")
+        }
+    }
+
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2154199
+    @SmokeTest
+    @Test
+    fun verifyTabsSearchWithOpenTabsTest() {
+        val firstPageUrl = TestAssetHelper.getGenericAsset(searchMockServer, 1)
+        val secondPageUrl = TestAssetHelper.getGenericAsset(searchMockServer, 2)
+
+        createTabItem(firstPageUrl.url.toString())
+        createTabItem(secondPageUrl.url.toString())
+
+        navigationToolbar {
+        }.clickUrlbar {
+            clickSearchSelectorButton()
+            selectTemporarySearchMethod(searchEngineName = "Tabs")
+            typeSearch(searchTerm = "Mozilla")
+            verifySuggestionsAreNotDisplayed(rule = activityTestRule, "Mozilla")
+            clickClearButton()
+            typeSearch(searchTerm = "generic")
+            verifyTypedToolbarText("generic")
+            verifySearchEngineSuggestionResults(
+                rule = activityTestRule,
+                searchSuggestions = arrayOf(
+                    "Firefox Suggest",
+                    firstPageUrl.url.toString(),
+                    secondPageUrl.url.toString(),
+                ),
+                searchTerm = "generic",
+            )
+        }.clickSearchSuggestion(firstPageUrl.url.toString()) {
+            verifyTabCounter("2")
+        }.openComposeTabDrawer(activityTestRule) {
+            verifyOpenTabsOrder(position = 1, title = firstPageUrl.url.toString())
+            verifyOpenTabsOrder(position = 2, title = secondPageUrl.url.toString())
+        }
+    }
+
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2154203
+    @Test
+    fun verifyBookmarksSearchItemsTest() {
+        navigationToolbar {
+        }.clickSearchSelectorButton {
+            selectTemporarySearchMethod("Bookmarks")
+            verifySearchBarPlaceholder("Search bookmarks")
+            verifyKeyboardVisibility(isExpectedToBeVisible = true)
+            verifyScanButtonVisibility(visible = false)
+            verifyVoiceSearchButtonVisibility(enabled = true)
+        }
+    }
+
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2154204
+    @Test
+    fun verifyBookmarkSearchWithNoBookmarksTest() {
+        navigationToolbar {
+        }.clickSearchSelectorButton {
+            selectTemporarySearchMethod("Bookmarks")
+            typeSearch("test")
+            verifySuggestionsAreNotDisplayed(activityTestRule, "test")
+        }
+    }
+
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2154206
+    @Test
+    fun verifyBookmarksSearchForBookmarkedItemsTest() {
+        createBookmarkItem(url = "https://bookmarktest1.com", title = "Test1", position = 1u)
+        createBookmarkItem(url = "https://bookmarktest2.com", title = "Test2", position = 2u)
+
+        navigationToolbar {
+        }.clickSearchSelectorButton {
+            selectTemporarySearchMethod("Bookmarks")
+            typeSearch("test")
+            verifySearchEngineSuggestionResults(
+                activityTestRule,
+                searchSuggestions = arrayOf(
+                    "Firefox Suggest",
+                    "Test1",
+                    "https://bookmarktest1.com/",
+                    "Test2",
+                    "https://bookmarktest2.com/",
+                ),
+                searchTerm = "test",
+            )
+        }.dismissSearchBar {
+        }.openSearch {
+            typeSearch("mozilla ")
+            verifySuggestionsAreNotDisplayed(activityTestRule, "Test1", "Test2")
+        }
+    }
+
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2154212
+    @Test
+    fun verifyHistorySearchItemsTest() {
+        navigationToolbar {
+        }.clickUrlbar {
+            clickSearchSelectorButton()
+            selectTemporarySearchMethod("History")
+            verifyKeyboardVisibility(isExpectedToBeVisible = true)
+            verifyScanButtonVisibility(visible = false)
+            verifyVoiceSearchButtonVisibility(enabled = true)
+            verifySearchBarPlaceholder(text = "Search history")
+        }
+    }
+
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2154213
+    @Test
+    fun verifyHistorySearchWithoutBrowsingHistoryTest() {
+        navigationToolbar {
+        }.clickUrlbar {
+            clickSearchSelectorButton()
+            selectTemporarySearchMethod(searchEngineName = "History")
+            typeSearch(searchTerm = "Mozilla")
+            verifySuggestionsAreNotDisplayed(rule = activityTestRule, "Mozilla")
+            clickClearButton()
+            verifySearchBarPlaceholder("Search history")
         }
     }
 }

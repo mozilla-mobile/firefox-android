@@ -34,11 +34,29 @@
 
     <!-- The text shown inside the advanced button used to expand the advanced options. It's only shown when a website has an invalid SSL certificate. -->
     <string name="mozac_browser_errorpages_security_bad_cert_advanced">ئالىي…</string>
+    <!-- The advanced certificate information shown when a website sends has an invalid SSL certificate. The %1$s will be replaced by the app name and %2$s will be replaced by website URL. It's only shown when a website has an invalid SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_techInfo"><![CDATA[
+        <label>بەزىلەر تور بېكەتنى تەقلىد قىلىشقا ئۇرۇنغان بولۇشى مۇمكىن، سىز داۋاملاشتۇرماسلىقىڭىز كېرەك.</label>
+        <br> <br>
+        <label> تور بېكەتلەر گۇۋاھنامە ئارقىلىق ئۆزىنىڭ كىملىكىنى ئىسپاتلايدۇ. %1$s <b>%2$s</b> غا ئىشەنمەيدۇ ، چۈنكى ئۇنىڭ گۇۋاھنامىسىنى تارقاتقۇچى نامەلۇم، گۇۋاھنامىگە ئۆزى ئىمزا قويغان ياكى مۇلازىمېتىر توغرا بولغان ئارىلىق گۇۋاھنامىنى ئەۋەتمىگەن. </label>
+            ]]></string>
     <!-- The text shown inside the advanced options button used to go back. It's only shown if the user has expanded the advanced options. -->
     <string name="mozac_browser_errorpages_security_bad_cert_back">قايتىش (تەۋسىيە)</string>
 
     <!-- The text shown inside the advanced options button used to bypass the invalid SSL certificate. It's only shown if the user has expanded the advanced options. -->
     <string name="mozac_browser_errorpages_security_bad_cert_accept_temporary">خەتەرنى قوبۇل قىلىپ داۋاملاشتۇرۇش</string>
+
+    <!-- The document title and heading of the error page shown when a website uses HSTS. -->
+    <string name="mozac_browser_errorpages_security_bad_hsts_cert_title">بۇ تور بېكەت بىخەتەر ئۇلىنىشنى تەلەپ قىلىدۇ.</string>
+
+    <!-- The error message shown when a website uses HSTS. -->
+    <string name="mozac_browser_errorpages_security_bad_hsts_cert_message"><![CDATA[
+      <ul>
+         <li>سىز زىيارەت قىلماقچى بولغان بەتنى كۆرسەتكىلى بولمايدۇ، چۈنكى بۇ تور بېكەت بىخەتەر ئۇلىنىشنى تەلەپ قىلىدۇ.</li>
+         <li>مەسىلە تور بېكەتتە بولۇشى مۇمكىن، ئۇنى سىز ھەل قىلالمايسىز.</li>
+         <li>مەسىلىنى تور بېكەت باشقۇرغۇچىسىغا ئۇقتۇرۇپ قويالايسىز.</li>
+      </ul>
+    ]]></string>
 
     <!-- The text shown inside the advanced button used to expand the advanced options. It's only shown when a website uses HSTS. -->
     <string name="mozac_browser_errorpages_security_bad_hsts_cert_advanced">ئالىي…</string>
@@ -64,12 +82,23 @@
     <!-- The document title and heading of the error page shown when a website could not be reached. -->
     <string name="mozac_browser_errorpages_connection_failure_title">ئۇلىنالمىدى</string>
 
+    <!-- The error message shown when a website could not be reached. -->
+    <string name="mozac_browser_errorpages_connection_failure_message"><![CDATA[
+      <ul>
+        <li>تور بېكەتنى ۋاقتىنچە ئىشلەتكىلى بولمايدۇ ياكى مۇلازىمىتىر ئالدىراش بولۇشى مۇمكىن. سەل تۇرۇپ قايتا سىناڭ.</li>
+        <li>ئەگەر ھېچقانداق بەتنى يۈكلىيەلمىسىڭىز، ئۈسكۈنىڭىزنىڭ سانلىق مەلۇمات تورى ياكى Wi-Fi ئۇلىنىشىنى تەكشۈرۈڭ.</li>
+      </ul>
+    ]]></string>
+
     <!-- The document title and heading of the error page shown when a website responds in an unexpected way and the browser cannot continue. -->
     <string name="mozac_browser_errorpages_unknown_socket_type_title">كۈتۈلمىگەن مۇلازىمېتىر ئىنكاسى</string>
     <!-- The error message shown when a website responds in an unexpected way and the browser cannot continue. -->
     <string name="mozac_browser_errorpages_unknown_socket_type_message"><![CDATA[
  <p>تور بېكەتنىڭ تور تەلىپىگە قايتۇرغان ئىنكاسى مۆلچەردىكىگە ئۇيغۇن ئەمەس، تور كۆرگۈچ داۋاملاشتۇرۇشقا ئامالسىز.</p>
  ]]></string>
+
+    <!-- The document title and heading of the error page shown when the browser gets stuck in an infinite loop when loading a website. -->
+    <string name="mozac_browser_errorpages_redirect_loop_title">بۇ بەت توغرا قايتا نىشانلىيالمىدى</string>
 
     <!-- The document title and heading of the error page shown when a website cannot be loaded because the browser is in offline mode. -->
     <string name="mozac_browser_errorpages_offline_title">تورسىز ھالەت</string>
@@ -121,6 +150,9 @@
 
     <!-- The document title and heading of an error page. -->
     <string name="mozac_browser_errorpages_malformed_uri_title">ئىناۋەتسىز ئادرېس</string>
+    <string name="mozac_browser_errorpages_malformed_uri_message"><![CDATA[
+      <p>تەمىنلەنگەن ئادرېس تونۇيالايدىغان پىچىمدا ئەمەس. ئورۇن بالداقتىن خاتالىقنى تەكشۈرۈپ ئاندىن قايتا سىناڭ.</p>
+    ]]></string>
     <!-- The document title and heading of an error page. -->
     <string name="mozac_browser_errorpages_malformed_uri_title_alternative">ئادرېس ئىناۋەتسىز</string>
 
@@ -165,6 +197,8 @@
     <!-- The document title and heading of an error page. -->
     <string name="mozac_browser_errorpages_safe_phishing_uri_title">ئالدامچىلىق تور بېكىتى مەسىلىسى</string>
 
+    <!-- The title of the error page for websites that do not support HTTPS when HTTPS-Only is turned on -->
+    <string name="mozac_browser_errorpages_httpsonly_title">بىخەتەر تور بېكەتنى ئىشلەتكىلى بولمايدۇ</string>
     <!-- Button on error page for websites that do not support HTTPS when HTTPS-Only is turned on. Clicking the button allows the user to nevertheless load the website using HTTP. -->
     <string name="mozac_browser_errorpages_httpsonly_button">HTTP تور بېتىنى داۋاملاشتۇرۇش</string>
 </resources>

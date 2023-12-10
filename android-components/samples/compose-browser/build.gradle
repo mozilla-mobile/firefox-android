@@ -7,11 +7,10 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-parcelize'
 
 android {
-    compileSdkVersion config.compileSdkVersion
-
     defaultConfig {
         applicationId "org.mozilla.samples.compose.browser"
         minSdkVersion config.minSdkVersion
+        compileSdk config.compileSdkVersion
         targetSdkVersion config.targetSdkVersion
         versionCode 1
         versionName "1.0"
@@ -62,11 +61,13 @@ dependencies {
     implementation project(':compose-tabstray')
 
     implementation project(':feature-awesomebar')
+    implementation project(':feature-fxsuggest')
     implementation project(':feature-search')
     implementation project(':feature-session')
     implementation project(':feature-tabs')
 
     implementation project(':service-location')
+    implementation project(':support-rusthttp')
 
     implementation project(':ui-icons')
 

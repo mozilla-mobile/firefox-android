@@ -13,8 +13,8 @@ import mozilla.components.service.nimbus.messaging.MessageSurfaceId
 import mozilla.components.service.pocket.PocketStory
 import mozilla.components.service.pocket.PocketStory.PocketSponsoredStory
 import org.mozilla.fenix.browser.StandardSnackbarError
+import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.AppStore
-import org.mozilla.fenix.home.Mode
 import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesCategory
 import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesSelectedCategory
 import org.mozilla.fenix.home.recentbookmarks.RecentBookmark
@@ -42,7 +42,7 @@ sealed class AppAction : Action {
 
     data class Change(
         val topSites: List<TopSite>,
-        val mode: Mode,
+        val mode: BrowsingMode,
         val collections: List<TabCollection>,
         val showCollectionPlaceholder: Boolean,
         val recentTabs: List<RecentTab>,
@@ -56,7 +56,7 @@ sealed class AppAction : Action {
         AppAction()
 
     data class CollectionsChange(val collections: List<TabCollection>) : AppAction()
-    data class ModeChange(val mode: Mode) : AppAction()
+    data class ModeChange(val mode: BrowsingMode) : AppAction()
     data class TopSitesChange(val topSites: List<TopSite>) : AppAction()
     data class RecentTabsChange(val recentTabs: List<RecentTab>) : AppAction()
     data class RemoveRecentTab(val recentTab: RecentTab) : AppAction()
@@ -216,4 +216,39 @@ sealed class AppAction : Action {
     data class UpdateStandardSnackbarErrorAction(
         val standardSnackbarError: StandardSnackbarError?,
     ) : AppAction()
+
+    /**
+     * [AppAction]s related to shopping sheet state.
+     */
+    sealed class ShoppingAction : AppAction() {
+
+        /**
+         * [ShoppingAction] used to update the expansion state of the shopping sheet.
+         */
+        data class ShoppingSheetStateUpdated(val expanded: Boolean) : ShoppingAction()
+
+        /**
+         * [ShoppingAction] used to update the expansion state of the highlights card.
+         */
+        data class HighlightsCardExpanded(
+            val productPageUrl: String,
+            val expanded: Boolean,
+        ) : ShoppingAction()
+
+        /**
+         * [ShoppingAction] used to update the expansion state of the info card.
+         */
+        data class InfoCardExpanded(
+            val productPageUrl: String,
+            val expanded: Boolean,
+        ) : ShoppingAction()
+
+        /**
+         * [ShoppingAction] used to update the expansion state of the settings card.
+         */
+        data class SettingsCardExpanded(
+            val productPageUrl: String,
+            val expanded: Boolean,
+        ) : ShoppingAction()
+    }
 }

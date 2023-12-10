@@ -63,6 +63,7 @@ import mozilla.components.lib.state.ext.flowScoped
 import mozilla.components.support.base.feature.LifecycleAwareFeature
 import mozilla.components.support.base.feature.OnNeedToRequestPermissions
 import mozilla.components.support.base.feature.PermissionsFeature
+import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.ktx.android.content.isPermissionGranted
 import mozilla.components.support.ktx.kotlin.getOrigin
 import mozilla.components.support.ktx.kotlin.stripDefaultPort
@@ -70,7 +71,9 @@ import mozilla.components.support.ktx.kotlinx.coroutines.flow.filterChanged
 import java.security.InvalidParameterException
 import mozilla.components.ui.icons.R as iconsR
 
-internal const val FRAGMENT_TAG = "mozac_feature_sitepermissions_prompt_dialog"
+internal const val PROMPT_FRAGMENT_TAG = "mozac_feature_sitepermissions_prompt_dialog"
+
+private const val FULL_SCREEN_NOTIFICATION_TAG = "mozac_feature_prompts_full_screen_notification_dialog"
 
 @VisibleForTesting
 internal const val STORAGE_ACCESS_DOCUMENTATION_URL =
@@ -98,7 +101,8 @@ internal const val STORAGE_ACCESS_DOCUMENTATION_URL =
 @Suppress("TooManyFunctions", "LargeClass", "LongParameterList")
 class SitePermissionsFeature(
     private val context: Context,
-    private var sessionId: String? = null,
+    @set:VisibleForTesting
+    internal var sessionId: String? = null,
     private val storage: SitePermissionsStorage = OnDiskSitePermissionsStorage(context),
     var sitePermissionsRules: SitePermissionsRules? = null,
     private val fragmentManager: FragmentManager,
@@ -114,6 +118,8 @@ class SitePermissionsFeature(
         SelectOrAddUseCase(store)
     }
 
+    private val logger = Logger("SitePermissionsFeature")
+
     internal val ioCoroutineScope by lazy { coroutineScopeInitializer() }
 
     internal var coroutineScopeInitializer = {
@@ -124,7 +130,7 @@ class SitePermissionsFeature(
     private var loadingScope: CoroutineScope? = null
 
     override fun start() {
-        fragmentManager.findFragmentByTag(FRAGMENT_TAG)?.let { fragment ->
+        fragmentManager.findFragmentByTag(PROMPT_FRAGMENT_TAG)?.let { fragment ->
             // There's still a [SitePermissionsDialogFragment] visible from the last time. Re-attach
             // this feature so that the fragment can invoke the callback on this feature once the user
             // makes a selection. This can happen when the app was in the background and on resume
@@ -427,8 +433,15 @@ class SitePermissionsFeature(
             return null
         }
 
-        val private: Boolean = store.state.findTabOrCustomTabOrSelectedTab(sessionId)?.content?.private
-            ?: throw IllegalStateException("Unable to find session for $sessionId or selected session")
+        val private: Boolean? =
+            store.state.findTabOrCustomTabOrSelectedTab(sessionId)?.content?.private
+
+        if (private == null) {
+            logger.error("Unable to find a tab for $sessionId rejecting the prompt request")
+            permissionRequest.reject()
+            consumePermissionRequest(permissionRequest)
+            return null
+        }
 
         val permissionFromStorage = withContext(coroutineScope.coroutineContext) {
             storage.findSitePermissionsBy(origin, private = private)
@@ -439,8 +452,16 @@ class SitePermissionsFeature(
         } else {
             handleNoRuledFlow(permissionFromStorage, permissionRequest, origin)
         }
-        prompt?.show(fragmentManager, FRAGMENT_TAG)
-        return prompt
+
+        val fullScreenNotificationDisplayed =
+            fragmentManager.fragments.any { fragment -> fragment.tag == FULL_SCREEN_NOTIFICATION_TAG }
+
+        return if (fullScreenNotificationDisplayed || prompt == null) {
+            null
+        } else {
+            prompt.show(fragmentManager, PROMPT_FRAGMENT_TAG)
+            prompt
+        }
     }
 
     @VisibleForTesting

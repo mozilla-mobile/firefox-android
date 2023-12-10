@@ -10,9 +10,9 @@ import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.R
 import org.mozilla.fenix.customannotations.SmokeTest
+import org.mozilla.fenix.helpers.AppAndSystemHelper.setNetworkEnabled
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.TestHelper.packageName
-import org.mozilla.fenix.helpers.TestHelper.setNetworkEnabled
 import org.mozilla.fenix.helpers.TestHelper.verifyUrl
 import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.homeScreen
@@ -37,6 +37,7 @@ class NoNetworkAccessStartupTests {
     // Test running on beta/release builds in CI:
     // caution when making changes to it, so they don't block the builds
     // Based on STR from https://github.com/mozilla-mobile/fenix/issues/16886
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2240542
     @Test
     fun noNetworkConnectionStartupTest() {
         setNetworkEnabled(false)
@@ -44,13 +45,12 @@ class NoNetworkAccessStartupTests {
         activityTestRule.launchActivity(null)
 
         homeScreen {
-        }.dismissOnboarding()
-        homeScreen {
             verifyHomeScreen()
         }
     }
 
     // Based on STR from https://github.com/mozilla-mobile/fenix/issues/16886
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2240722
     @Test
     fun networkInterruptedFromBrowserToHomeTest() {
         val url = "example.com"
@@ -68,6 +68,7 @@ class NoNetworkAccessStartupTests {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2240723
     @Test
     fun testPageReloadAfterNetworkInterrupted() {
         val url = "example.com"
@@ -84,6 +85,7 @@ class NoNetworkAccessStartupTests {
         }.refreshPage { }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2240721
     @SmokeTest
     @Test
     fun testSignInPageWithNoNetworkConnection() {

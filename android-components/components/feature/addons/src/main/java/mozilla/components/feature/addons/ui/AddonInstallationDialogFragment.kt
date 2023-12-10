@@ -7,9 +7,7 @@ package mozilla.components.feature.addons.ui
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.DialogInterface
-import android.graphics.Bitmap
 import android.graphics.Color
-import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
@@ -19,50 +17,31 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.Button
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.annotation.ColorRes
 import androidx.annotation.VisibleForTesting
-import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.appcompat.widget.AppCompatCheckBox
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 import mozilla.components.feature.addons.Addon
 import mozilla.components.feature.addons.R
-import mozilla.components.feature.addons.amo.AddonCollectionProvider
 import mozilla.components.feature.addons.databinding.MozacFeatureAddonsFragmentDialogAddonInstalledBinding
-import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.ktx.android.content.appName
-import mozilla.components.support.ktx.android.content.res.resolveAttribute
 import mozilla.components.support.utils.ext.getParcelableCompat
-import java.io.IOException
-import mozilla.components.ui.icons.R as iconsR
 
-@VisibleForTesting internal const val KEY_INSTALLED_ADDON = "KEY_ADDON"
+@VisibleForTesting internal const val KEY_INSTALLED_ADDON = "KEY_INSTALLED_ADDON"
 private const val KEY_DIALOG_GRAVITY = "KEY_DIALOG_GRAVITY"
 private const val KEY_DIALOG_WIDTH_MATCH_PARENT = "KEY_DIALOG_WIDTH_MATCH_PARENT"
 private const val KEY_CONFIRM_BUTTON_BACKGROUND_COLOR = "KEY_CONFIRM_BUTTON_BACKGROUND_COLOR"
 private const val KEY_CONFIRM_BUTTON_TEXT_COLOR = "KEY_CONFIRM_BUTTON_TEXT_COLOR"
 private const val KEY_CONFIRM_BUTTON_RADIUS = "KEY_CONFIRM_BUTTON_RADIUS"
 
-@VisibleForTesting internal const val KEY_ICON = "KEY_ICON"
-
 private const val DEFAULT_VALUE = Int.MAX_VALUE
 
 /**
  * A dialog that shows [Addon] installation confirmation.
  */
-class AddonInstallationDialogFragment : AppCompatDialogFragment() {
-    private val scope = CoroutineScope(Dispatchers.IO)
-
-    @VisibleForTesting internal var iconJob: Job? = null
-    private val logger = Logger("AddonInstallationDialogFragment")
-
+class AddonInstallationDialogFragment : AddonDialogFragment() {
     /**
      * A lambda called when the confirm button is clicked.
      */
@@ -73,14 +52,7 @@ class AddonInstallationDialogFragment : AppCompatDialogFragment() {
      */
     var onDismissed: (() -> Unit)? = null
 
-    /**
-     * Reference to the application's [AddonCollectionProvider] to fetch add-on icons.
-     */
-    var addonCollectionProvider: AddonCollectionProvider? = null
-
-    private val safeArguments get() = requireNotNull(arguments)
-
-    internal val addon get() = requireNotNull(safeArguments.getParcelableCompat(KEY_ADDON, Addon::class.java))
+    internal val addon get() = requireNotNull(safeArguments.getParcelableCompat(KEY_INSTALLED_ADDON, Addon::class.java))
     private var allowPrivateBrowsing: Boolean = false
 
     internal val confirmButtonRadius
@@ -110,11 +82,6 @@ class AddonInstallationDialogFragment : AppCompatDialogFragment() {
                 KEY_CONFIRM_BUTTON_TEXT_COLOR,
                 DEFAULT_VALUE,
             )
-
-    override fun onStop() {
-        super.onStop()
-        iconJob?.cancel()
-    }
 
     override fun onCancel(dialog: DialogInterface) {
         super.onCancel(dialog)
@@ -176,12 +143,7 @@ class AddonInstallationDialogFragment : AppCompatDialogFragment() {
                 requireContext().appName,
             )
 
-        val icon = safeArguments.getParcelableCompat(KEY_ICON, Bitmap::class.java)
-        if (icon != null) {
-            binding.icon.setImageDrawable(BitmapDrawable(resources, icon))
-        } else {
-            iconJob = fetchIcon(addon, binding.icon)
-        }
+        loadIcon(addon = addon, iconView = binding.icon)
 
         val allowedInPrivateBrowsing = rootView.findViewById<AppCompatCheckBox>(R.id.allow_in_private_browsing)
         allowedInPrivateBrowsing.setOnCheckedChangeListener { _, isChecked ->
@@ -221,34 +183,6 @@ class AddonInstallationDialogFragment : AppCompatDialogFragment() {
         return rootView
     }
 
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    internal fun fetchIcon(addon: Addon, iconView: ImageView, scope: CoroutineScope = this.scope): Job {
-        return scope.launch {
-            try {
-                val iconBitmap = addonCollectionProvider?.getAddonIconBitmap(addon)
-                iconBitmap?.let {
-                    scope.launch(Dispatchers.Main) {
-                        safeArguments.putParcelable(KEY_ICON, it)
-                        iconView.setImageDrawable(BitmapDrawable(iconView.resources, it))
-                    }
-                }
-            } catch (e: IOException) {
-                scope.launch(Dispatchers.Main) {
-                    val context = iconView.context
-                    val att = context.theme.resolveAttribute(android.R.attr.textColorPrimary)
-                    iconView.setColorFilter(ContextCompat.getColor(context, att))
-                    iconView.setImageDrawable(
-                        ContextCompat.getDrawable(
-                            context,
-                            iconsR.drawable.mozac_ic_extension_24,
-                        ),
-                    )
-                }
-                logger.error("Attempt to fetch the ${addon.id} icon failed", e)
-            }
-        }
-    }
-
     override fun show(manager: FragmentManager, tag: String?) {
         // This dialog is shown as a result of an async operation (installing
         // an add-on). Once installation succeeds, the activity may already be
@@ -273,7 +207,6 @@ class AddonInstallationDialogFragment : AppCompatDialogFragment() {
          */
         fun newInstance(
             addon: Addon,
-            addonCollectionProvider: AddonCollectionProvider,
             promptsStyling: PromptsStyling? = PromptsStyling(
                 gravity = Gravity.BOTTOM,
                 shouldWidthMatchParent = true,
@@ -304,21 +237,7 @@ class AddonInstallationDialogFragment : AppCompatDialogFragment() {
             fragment.onConfirmButtonClicked = onConfirmButtonClicked
             fragment.onDismissed = onDismissed
             fragment.arguments = arguments
-            fragment.addonCollectionProvider = addonCollectionProvider
             return fragment
         }
     }
-
-    /**
-     * Styling for the addon installation dialog.
-     */
-    data class PromptsStyling(
-        val gravity: Int,
-        val shouldWidthMatchParent: Boolean = false,
-        @ColorRes
-        val confirmButtonBackgroundColor: Int? = null,
-        @ColorRes
-        val confirmButtonTextColor: Int? = null,
-        val confirmButtonRadius: Float? = null,
-    )
 }

@@ -26,8 +26,7 @@ import mozilla.components.concept.storage.Address
 import mozilla.components.concept.storage.CreditCardEntry
 import mozilla.components.concept.storage.Login
 import mozilla.components.concept.storage.LoginEntry
-import mozilla.components.support.base.log.logger.Logger
-import mozilla.components.support.ktx.android.net.getFileName
+import mozilla.components.support.ktx.android.net.toFileUri
 import mozilla.components.support.ktx.kotlin.toDate
 import mozilla.components.support.utils.TimePicker.shouldShowMillisecondsPicker
 import mozilla.components.support.utils.TimePicker.shouldShowSecondsPicker
@@ -48,9 +47,6 @@ import org.mozilla.geckoview.GeckoSession.PromptDelegate.IdentityCredential.Priv
 import org.mozilla.geckoview.GeckoSession.PromptDelegate.IdentityCredential.ProviderSelectorPrompt
 import org.mozilla.geckoview.GeckoSession.PromptDelegate.PromptResponse
 import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.io.InputStream
 import java.security.InvalidParameterException
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -63,6 +59,7 @@ typealias GECKO_AUTH_LEVEL = PromptDelegate.AuthPrompt.AuthOptions.Level
 typealias GECKO_PROMPT_FILE_TYPE = PromptDelegate.FilePrompt.Type
 typealias GECKO_PROMPT_PROVIDER_SELECTOR = ProviderSelectorPrompt.Provider
 typealias GECKO_PROMPT_ACCOUNT_SELECTOR = AccountSelectorPrompt.Account
+typealias GECKO_PROMPT_ACCOUNT_SELECTOR_PROVIDER = AccountSelectorPrompt.Provider
 typealias GECKO_PROMPT_CHOICE_TYPE = PromptDelegate.ChoicePrompt.Type
 typealias GECKO_PROMPT_FILE_CAPTURE = PromptDelegate.FilePrompt.Capture
 typealias GECKO_PROMPT_SHARE_RESULT = PromptDelegate.SharePrompt.Result
@@ -132,6 +129,7 @@ internal class GeckoPromptDelegate(private val geckoEngineSession: GeckoEngineSe
             onPromptRequest(
                 PromptRequest.IdentityCredential.SelectAccount(
                     accounts = prompt.accounts.map { it.toAccount() },
+                    provider = prompt.provider.let { it.toProvider() },
                     onConfirm = onConfirm,
                     onDismiss = onDismiss,
                 ),
@@ -451,7 +449,7 @@ internal class GeckoPromptDelegate(private val geckoEngineSession: GeckoEngineSe
 
         val onSelectMultiple: (Context, Array<Uri>) -> Unit = { context, uris ->
             val filesUris = uris.map {
-                it.toFileUri(context)
+                toFileUri(uri = it, context)
             }.toTypedArray()
             if (!prompt.isComplete) {
                 geckoResult.complete(prompt.confirm(context, filesUris))
@@ -460,7 +458,7 @@ internal class GeckoPromptDelegate(private val geckoEngineSession: GeckoEngineSe
 
         val onSelectSingle: (Context, Uri) -> Unit = { context, uri ->
             if (!prompt.isComplete) {
-                geckoResult.complete(prompt.confirm(context, uri.toFileUri(context)))
+                geckoResult.complete(prompt.confirm(context, toFileUri(uri, context)))
             }
         }
 
@@ -862,30 +860,9 @@ internal class GeckoPromptDelegate(private val geckoEngineSession: GeckoEngineSe
         return (this and mask) != 0
     }
 
-    private fun Uri.toFileUri(context: Context): Uri {
-        val contentResolver = context.contentResolver
-        val cacheUploadDirectory = java.io.File(context.cacheDir, "/uploads")
-
-        if (!cacheUploadDirectory.exists()) {
-            cacheUploadDirectory.mkdir()
-        }
-
-        val temporalFile = java.io.File(cacheUploadDirectory, getFileName(contentResolver))
-        try {
-            contentResolver.openInputStream(this)!!.use { inStream ->
-                copyFile(temporalFile, inStream)
-            }
-        } catch (e: IOException) {
-            Logger("GeckoPromptDelegate").warn("Could not convert uri to file uri", e)
-        }
-        return Uri.parse("file:///${temporalFile.absolutePath}")
-    }
-
     @VisibleForTesting
-    internal fun copyFile(temporalFile: File, inStream: InputStream): Long {
-        return FileOutputStream(temporalFile).use { outStream ->
-            inStream.copyTo(outStream)
-        }
+    internal fun toFileUri(uri: Uri, context: Context): Uri {
+        return uri.toFileUri(context, dirToCopy = "/uploads")
     }
 }
 
@@ -912,10 +889,15 @@ internal fun PromptDelegate.BasePrompt.dismissSafely(geckoResult: GeckoResult<Pr
 
 @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
 internal fun GECKO_PROMPT_PROVIDER_SELECTOR.toProvider(): Provider {
-    return Provider(id, icon, name)
+    return Provider(id, icon, name, domain)
 }
 
 @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
 internal fun GECKO_PROMPT_ACCOUNT_SELECTOR.toAccount(): Account {
     return Account(id, email, name, icon)
+}
+
+@VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+internal fun GECKO_PROMPT_ACCOUNT_SELECTOR_PROVIDER.toProvider(): Provider {
+    return Provider(0, icon, name, domain)
 }

@@ -53,7 +53,6 @@
     <string name="menu_remove_from_shortcuts">Hiqe nga Shkurtoret</string>
 
     <!-- Menu item: Shows information about features and changes that are new to this version -->
-    <string name="menu_whats_new" moz:RemovedIn="116" tools:ignore="UnusedResources">Ç’ka të Re</string>
     <string name="menu_settings">Rregullime</string>
     <string name="menu_about">Rreth</string>
     <string name="menu_help">Ndihmë</string>
@@ -303,7 +302,7 @@
     <string name="preference_privacy_should_block_cookies_third_party_tracker_cookies_option">Blloko vetëm cookie-t nga palë gjurmuese të treta</string>
     <string name="preference_privacy_should_block_cookies_third_party_only_option">Blloko vetëm cookie-t nga palë të treta</string>
 
-    <string name="preference_privacy_should_block_cookies_cross_site_option">Blloko cookies nga sajti në sajt</string>
+    <string name="preference_privacy_should_block_cookies_cross_site_option">Blloko “cookies” palësh të treta</string>
     <string name="preference_privacy_should_block_cookies_yes_option2">Po, ju lutem</string>
 
     <!-- Preference Title: Biometrics can be used to unlock Focus if the previous session's data was not erased by the user. -->
@@ -351,7 +350,7 @@
     <string name="preference_mozilla_telemetry_summary2">Mozilla rreket të grumbullojë vetëm sa na duhen për të ofruar dhe përmirësuar %1$s-in për këdo.</string>
 
     <!-- In-app link (in settings) to Focus privacy notice. -->
-    <string name="preference_privacy_notice">Shënim Mbi Privatësinë</string>
+    <string name="preference_privacy_notice">Shënim Privatësie</string>
 
     <!-- In-app link (in settings) to Focus licensing information. -->
     <string name="preference_licensing_info">Hollësi licencimi</string>
@@ -637,7 +636,7 @@
     %1$s will be replaced with the name of the app (e.g. Firefox Focus)
     %2$s will be replaced with a URL linking to the GPL
     %3$s will be replaced with a URL linking to the tracking protection wiki page (e.g. https://wiki.mozilla.org/Security/Tracking_protection#Lists) -->
-    <string name="your_rights_content5"><![CDATA[%1$s përdor gjithashtu një listë ndalimesh të furnizuar nga Disconnect, Inc., si vepra më vete dhe të pavarura, nën <a href="%2$s">GNU General Public License v3</a>, dhe të passhme prej <a href="%3$s">këtu</a>.]]></string>
+    <string name="your_rights_content5"><![CDATA[%1$s përdor gjithashtu një listë ndalimesh të furnizuar nga Disconnect, Inc., si vepra më vete dhe të pavarura, nën <a href="%2$s">GNU General Public License v3</a> dhe të passhme prej <a href="%3$s">këtu</a>.]]></string>
 
     <!-- Text shown in prompts for GeckoView -->
     <string name="gv_prompt_username_hint">Emër përdoruesi</string>
@@ -939,7 +938,7 @@
     <!-- Preference title for safe browsing which when enabled, blocks dangerous or deceptive webpages that may include phishing or malware -->
     <string name="preference_safe_browsing_title">Bllokoni sajte potencialisht të rrezikshëm dhe të rrejshëm</string>
     <!-- Preference summary for safe browsing which when enabled, blocks dangerous or deceptive webpages that may include phishing or malware -->
-    <string name="preference_safe_browsing_summary">Bllokoni sajte të raportuar si të rrejshëm dhe sulmesh, sajte malware-i, dhe sajte software-i të padëshiruar.</string>
+    <string name="preference_safe_browsing_summary">Bllokoni sajte të raportuar si të rrejshëm dhe sulmesh, sajte malware-i dhe sajte software-i të padëshiruar.</string>
 
     <!-- Title of the preference to enable "HTTPS-Only" mode -->
     <string name="preference_https_only_title">Mënyra Vetëm-HTTPS</string>

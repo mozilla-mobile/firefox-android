@@ -18,6 +18,21 @@
     <ID>MayBeConst:ManualAddSearchEnginePreference.kt$ManualAddSearchEnginePreference.Companion$private val SEARCH_ENGINE_NAME_KEY = "search-engine-name"</ID>
     <ID>MayBeConst:ManualAddSearchEnginePreference.kt$ManualAddSearchEnginePreference.Companion$private val SEARCH_QUERY_KEY = "search-query"</ID>
     <ID>MayBeConst:ManualAddSearchEnginePreference.kt$ManualAddSearchEnginePreference.Companion$private val SUPER_STATE_KEY = "super-state"</ID>
+    <ID>OutdatedDocumentation:AppAdapter.kt$AppAdapter : Adapter</ID>
+    <ID>OutdatedDocumentation:AppReviewUtils.kt$AppReviewUtils.Companion$fun addAppOpenings(context: Context)</ID>
+    <ID>OutdatedDocumentation:AppReviewUtils.kt$AppReviewUtils.Companion$fun showAppReview(activity: Activity)</ID>
+    <ID>OutdatedDocumentation:AppState.kt$AppState : State</ID>
+    <ID>OutdatedDocumentation:AppState.kt$Screen</ID>
+    <ID>OutdatedDocumentation:AppState.kt$Screen$Locked : Screen</ID>
+    <ID>OutdatedDocumentation:BlockedTrackersMiddleware.kt$BlockedTrackersMiddleware : Middleware</ID>
+    <ID>OutdatedDocumentation:DefaultTopSitesStorage.kt$DefaultTopSitesStorage : TopSitesStorageObservable</ID>
+    <ID>OutdatedDocumentation:FocusDialog.kt$@Suppress("LongParameterList") @Composable fun FocusDialog( dialogTitle: String, dialogTextComposable: @Composable (() -&gt; Unit)? = null, dialogText: String = "", onConfirmRequest: () -&gt; Unit, onDismissRequest: () -&gt; Unit, confirmButtonText: String = "null", dismissButtonText: String = "null", isConfirmButtonEnabled: Boolean = true, isDismissButtonEnabled: Boolean = true, isConfirmButtonVisible: Boolean = true, isDismissButtonVisible: Boolean = true, )</ID>
+    <ID>OutdatedDocumentation:HtmlLoader.kt$HtmlLoader$fun loadResourceFile( context: Context, @RawRes resourceID: Int, substitutionTable: Map&lt;String, String&gt;, ): String</ID>
+    <ID>OutdatedDocumentation:Language.kt$Language</ID>
+    <ID>OutdatedDocumentation:LanguageListItem.kt$LanguageListItem</ID>
+    <ID>OutdatedDocumentation:LanguageStorage.kt$LanguageStorage$fun saveCurrentLanguageInSharePref(languageTag: String)</ID>
+    <ID>OutdatedDocumentation:PrivateNotificationFeature.kt$PrivateNotificationFeature : LifecycleAwareFeature</ID>
+    <ID>OutdatedDocumentation:SitePermissionOptionsFragmentCompose.kt$@Composable fun OptionsPermissionList( optionsListItems: List&lt;SitePermissionOptionListItem&gt;, state: MutableState&lt;Int&gt;, permissionLabel: String?, goToPhoneSettings: () -&gt; Unit, componentPermissionBlockedByAndroidVisibility: Boolean, )</ID>
     <ID>UndocumentedPublicClass:AboutFragment.kt$AboutFragment : BaseSettingsLikeFragment</ID>
     <ID>UndocumentedPublicClass:AdvancedSettingsFragment.kt$AdvancedSettingsFragment : BaseSettingsFragmentOnSharedPreferenceChangeListener</ID>
     <ID>UndocumentedPublicClass:AppAction.kt$AppAction$NavigateUp : AppAction</ID>
@@ -212,8 +227,6 @@
     <ID>UndocumentedPublicClass:UrlInputFragment.kt$FocusCrashException : Exception</ID>
     <ID>UndocumentedPublicClass:ViewUtils.kt$ViewUtils</ID>
     <ID>UndocumentedPublicClass:VoiceSearchActivity.kt$VoiceSearchActivity : BaseVoiceSearchActivity</ID>
-    <ID>UndocumentedPublicClass:WhatsNewStorage.kt$SharedPreferenceWhatsNewStorage : WhatsNewStorage</ID>
-    <ID>UndocumentedPublicClass:WhatsNewVersion.kt$ContextWhatsNewVersion : WhatsNewVersion</ID>
     <ID>UndocumentedPublicFunction:AboutFragment.kt$@Composable fun ColumnScope.LearnMoreLink( learnMore: String, openLearnMore: () -&gt; Job, )</ID>
     <ID>UndocumentedPublicFunction:AddToHomescreenDialogFragment.kt$AddToHomescreenDialogFragment.Companion$fun newInstance( url: String, title: String, blockingEnabled: Boolean, requestDesktop: Boolean, ): AddToHomescreenDialogFragment</ID>
     <ID>UndocumentedPublicFunction:AdvancedSettingsFragment.kt$AdvancedSettingsFragment.Companion$fun newInstance(): AdvancedSettingsFragment</ID>
@@ -420,7 +433,6 @@
     <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun openSearchSettingsEvent()</ID>
     <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun openSelectionEvent()</ID>
     <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun openTabsTrayEvent()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun openWhatsNewEvent(highlighted: Boolean)</ID>
     <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun removeSearchEnginesEvent(selected: Int)</ID>
     <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun reportSiteIssueEvent()</ID>
     <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun respondToSearchSuggestionPrompt(enable: Boolean)</ID>
@@ -459,10 +471,6 @@
     <ID>UndocumentedPublicFunction:ViewUtils.kt$ViewUtils$fun hideKeyboard(view: View?)</ID>
     <ID>UndocumentedPublicFunction:ViewUtils.kt$ViewUtils$fun showKeyboard(view: View?)</ID>
     <ID>UndocumentedPublicFunction:VisibilityLifeCycleCallback.kt$VisibilityLifeCycleCallback.Companion$fun isInBackground(context: Context): Boolean</ID>
-    <ID>UndocumentedPublicFunction:WhatsNewStorage.kt$WhatsNewStorage$fun getSessionCounter(): Int</ID>
-    <ID>UndocumentedPublicFunction:WhatsNewStorage.kt$WhatsNewStorage$fun getVersion(): WhatsNewVersion?</ID>
-    <ID>UndocumentedPublicFunction:WhatsNewStorage.kt$WhatsNewStorage$fun setSessionCounter(sessionCount: Int)</ID>
-    <ID>UndocumentedPublicFunction:WhatsNewStorage.kt$WhatsNewStorage$fun setVersion(version: WhatsNewVersion)</ID>
     <ID>UnusedPrivateMember:TelemetryMiddleware.kt$TelemetryMiddleware$@Suppress("ComplexMethod") private fun generateOptions(customTabConfig: CustomTabConfig): List&lt;String&gt;</ID>
     <ID>UseRequire:FactsProcessor.kt$throw IllegalArgumentException("Fact is not a context menu fact")</ID>
     <ID>UtilityClassWithPublicConstructor:AppReviewUtils.kt$AppReviewUtils</ID>

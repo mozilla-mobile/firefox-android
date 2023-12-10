@@ -71,6 +71,42 @@ abstract class Settings {
     open var cookieBannerHandlingDetectOnlyMode: Boolean by UnsupportedSetting()
 
     /**
+     * Setting to control the cookie banner handling global rules feature.
+     */
+    open var cookieBannerHandlingGlobalRules: Boolean by UnsupportedSetting()
+
+    /**
+     * Setting to control the cookie banner handling global rules subFrames feature.
+     */
+    open var cookieBannerHandlingGlobalRulesSubFrames: Boolean by UnsupportedSetting()
+
+    /**
+     * Setting to control the cookie banner enables / disables the URL query string
+     * stripping in normal browsing mode which strips query parameters from loading
+     * URIs to prevent bounce (redirect) tracking.
+     */
+    open var queryParameterStripping: Boolean by UnsupportedSetting()
+
+    /**
+     * Setting to control the cookie banner enables / disables the URL query string
+     * stripping in private browsing mode which strips query parameters from loading
+     * URIs to prevent bounce (redirect) tracking.
+     */
+    open var queryParameterStrippingPrivateBrowsing: Boolean by UnsupportedSetting()
+
+    /**
+     * Setting to control the list that contains sites where should
+     * exempt from query stripping.
+     */
+    open var queryParameterStrippingAllowList: String by UnsupportedSetting()
+
+    /**
+     * Setting to control the list which contains query parameters that are needed to be stripped
+     * from  URIs. The query parameters are separated by a space.
+     */
+    open var queryParameterStrippingStripList: String by UnsupportedSetting()
+
+    /**
      * Setting to intercept and override requests.
      */
     open var requestInterceptor: RequestInterceptor? by UnsupportedSetting()
@@ -205,6 +241,11 @@ abstract class Settings {
      * Setting the HTTPS-Only mode for upgrading connections to HTTPS.
      */
     open var httpsOnlyMode: Engine.HttpsOnlyMode by UnsupportedSetting()
+
+    /**
+     * Setting to control whether Global Privacy Control isenabled.
+     */
+    open var globalPrivacyControlEnabled: Boolean by UnsupportedSetting()
 }
 
 /**
@@ -243,10 +284,17 @@ data class DefaultSettings(
     override var clearColor: Int? = null,
     override var enterpriseRootsEnabled: Boolean = false,
     override var httpsOnlyMode: Engine.HttpsOnlyMode = Engine.HttpsOnlyMode.DISABLED,
+    override var globalPrivacyControlEnabled: Boolean = false,
     override var cookieBannerHandlingMode: CookieBannerHandlingMode = CookieBannerHandlingMode.DISABLED,
     override var cookieBannerHandlingModePrivateBrowsing: CookieBannerHandlingMode =
         CookieBannerHandlingMode.DISABLED,
     override var cookieBannerHandlingDetectOnlyMode: Boolean = false,
+    override var cookieBannerHandlingGlobalRules: Boolean = false,
+    override var cookieBannerHandlingGlobalRulesSubFrames: Boolean = false,
+    override var queryParameterStripping: Boolean = false,
+    override var queryParameterStrippingPrivateBrowsing: Boolean = false,
+    override var queryParameterStrippingAllowList: String = "",
+    override var queryParameterStrippingStripList: String = "",
 ) : Settings()
 
 class UnsupportedSetting<T> {

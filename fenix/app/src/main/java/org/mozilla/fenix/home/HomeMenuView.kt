@@ -12,6 +12,8 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
+import mozilla.appservices.fxaclient.FxaServer
+import mozilla.appservices.fxaclient.contentUrl
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.browser.menu.view.MenuButton
 import mozilla.components.concept.sync.FxAEntryPoint
@@ -36,14 +38,14 @@ import org.mozilla.fenix.GleanMetrics.HomeMenu as HomeMenuMetrics
 /**
  * Helper class for building the [HomeMenu].
  *
- * @property view The [View] to attach the snackbar to.
- * @property context  An Android [Context].
- * @property lifecycleOwner [LifecycleOwner] for the view.
- * @property homeActivity [HomeActivity] used to open URLs in a new tab.
- * @property navController [NavController] used for navigation.
- * @property menuButton The [MenuButton] that will be used to create a menu when the button is
+ * @param view The [View] to attach the snackbar to.
+ * @param context An Android [Context].
+ * @param lifecycleOwner [LifecycleOwner] for the view.
+ * @param homeActivity [HomeActivity] used to open URLs in a new tab.
+ * @param navController [NavController] used for navigation.
+ * @param menuButton The [MenuButton] that will be used to create a menu when the button is
  * clicked.
- * @property hideOnboardingIfNeeded Lambda invoked to dismiss onboarding.
+ * @param fxaEntrypoint The source entry point to FxA.
  */
 @Suppress("LongParameterList")
 class HomeMenuView(
@@ -53,7 +55,6 @@ class HomeMenuView(
     private val homeActivity: HomeActivity,
     private val navController: NavController,
     private val menuButton: WeakReference<MenuButton>,
-    private val hideOnboardingIfNeeded: () -> Unit = {},
     private val fxaEntrypoint: FxAEntryPoint = FenixFxAEntryPoint.HomeMenu,
 ) {
 
@@ -75,6 +76,18 @@ class HomeMenuView(
                 ThemeManager.resolveAttribute(R.attr.textPrimary, context),
             ),
         )
+
+        menuButton.get()?.register(
+            object : mozilla.components.concept.menu.MenuButton.Observer {
+                override fun onShow() {
+                    // MenuButton used in [HomeMenuView] doesn't emit toolbar facts.
+                    // A wrapper is responsible for that, but we are using the button
+                    // directly, hence recording the event directly.
+                    // Should investigate further: https://bugzilla.mozilla.org/show_bug.cgi?id=1868207
+                    Events.toolbarMenuVisible.record(NoExtras())
+                }
+            },
+        )
     }
 
     /**
@@ -90,10 +103,6 @@ class HomeMenuView(
     @Suppress("LongMethod", "ComplexMethod")
     @VisibleForTesting(otherwise = PRIVATE)
     internal fun onItemTapped(item: HomeMenu.Item) {
-        if (item !is HomeMenu.Item.DesktopMode) {
-            hideOnboardingIfNeeded()
-        }
-
         when (item) {
             HomeMenu.Item.Settings -> {
                 HomeMenuMetrics.settingsItemClicked.record(NoExtras())
@@ -132,9 +141,9 @@ class HomeMenuView(
                 homeActivity.openToBrowserAndLoad(
                     searchTermOrURL =
                     if (context.settings().allowDomesticChinaFxaServer) {
-                        mozilla.appservices.fxaclient.Config.Server.CHINA.contentUrl + "/settings"
+                        FxaServer.China.contentUrl() + "/settings"
                     } else {
-                        mozilla.appservices.fxaclient.Config.Server.RELEASE.contentUrl + "/settings"
+                        FxaServer.Release.contentUrl() + "/settings"
                     },
                     newTab = true,
                     from = BrowserDirection.FromHome,
@@ -159,6 +168,7 @@ class HomeMenuView(
                 )
             }
             HomeMenu.Item.Help -> {
+                HomeMenuMetrics.helpTapped.record(NoExtras())
                 homeActivity.openToBrowserAndLoad(
                     searchTermOrURL = SupportUtils.getSumoURLForTopic(
                         context = context,

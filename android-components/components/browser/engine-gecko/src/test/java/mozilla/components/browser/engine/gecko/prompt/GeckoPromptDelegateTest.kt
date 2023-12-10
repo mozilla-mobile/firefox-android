@@ -57,7 +57,6 @@ import org.mozilla.geckoview.GeckoSession.PromptDelegate.FilePrompt.Capture.ANY
 import org.mozilla.geckoview.GeckoSession.PromptDelegate.FilePrompt.Capture.NONE
 import org.mozilla.geckoview.GeckoSession.PromptDelegate.FilePrompt.Capture.USER
 import org.robolectric.Shadows.shadowOf
-import java.io.FileInputStream
 import java.security.InvalidParameterException
 import java.util.Calendar
 import java.util.Calendar.YEAR
@@ -705,14 +704,13 @@ class GeckoPromptDelegateTest {
         val mockUri: Uri = mock()
 
         doReturn(contentResolver).`when`(context).contentResolver
-        doReturn(mock<FileInputStream>()).`when`(contentResolver).openInputStream(any())
 
         var filePickerRequest: PromptRequest.File = mock()
 
         val promptDelegate = spy(GeckoPromptDelegate(mockSession))
 
         // Prevent the file from being copied
-        doReturn(0L).`when`(promptDelegate).copyFile(any(), any())
+        doReturn(mockUri).`when`(promptDelegate).toFileUri(any(), any())
 
         mockSession.register(
             object : EngineSession.Observer {
@@ -1200,7 +1198,7 @@ class GeckoPromptDelegateTest {
             },
         )
 
-        val geckoProvider = GECKO_PROMPT_PROVIDER_SELECTOR(0, "name", "icon")
+        val geckoProvider = GECKO_PROMPT_PROVIDER_SELECTOR(0, "name", "icon", "domain")
         val acProvider = geckoProvider.toProvider()
         val geckoPrompt = geckoProviderSelectorPrompt(listOf(geckoProvider))
         var geckoResult = promptDelegate.onSelectIdentityCredentialProvider(mock(), geckoPrompt)
@@ -1254,8 +1252,9 @@ class GeckoPromptDelegateTest {
         )
 
         val geckoAccount = GECKO_PROMPT_ACCOUNT_SELECTOR(0, "foo@mozilla.org", "foo", "icon")
+        val provider = GECKO_PROMPT_ACCOUNT_SELECTOR_PROVIDER("name", "domain", "favicon")
         val acAccount = geckoAccount.toAccount()
-        val geckoPrompt = geckoAccountSelectorPrompt(listOf(geckoAccount))
+        val geckoPrompt = geckoAccountSelectorPrompt(listOf(geckoAccount), provider)
         var geckoResult = promptDelegate.onSelectIdentityCredentialAccount(mock(), geckoPrompt)
 
         geckoResult.accept {
@@ -1280,7 +1279,7 @@ class GeckoPromptDelegateTest {
         }
 
         // Verifying we are handling the dismiss correctly.
-        geckoResult = promptDelegate.onSelectIdentityCredentialAccount(mock(), geckoAccountSelectorPrompt(listOf(geckoAccount)))
+        geckoResult = promptDelegate.onSelectIdentityCredentialAccount(mock(), geckoAccountSelectorPrompt(listOf(geckoAccount), provider))
         geckoResult.accept {
             onDismissWasCalled = true
         }
@@ -2012,9 +2011,11 @@ class GeckoPromptDelegateTest {
 
     private fun geckoAccountSelectorPrompt(
         accounts: List<GECKO_PROMPT_ACCOUNT_SELECTOR> = emptyList(),
+        provider: GECKO_PROMPT_ACCOUNT_SELECTOR_PROVIDER,
     ): GeckoSession.PromptDelegate.IdentityCredential.AccountSelectorPrompt {
         val prompt: GeckoSession.PromptDelegate.IdentityCredential.AccountSelectorPrompt = mock()
         ReflectionUtils.setField(prompt, "accounts", accounts.toTypedArray())
+        ReflectionUtils.setField(prompt, "provider", provider)
         return prompt
     }
 

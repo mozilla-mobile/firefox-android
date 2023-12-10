@@ -26,9 +26,7 @@ import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.appstate.AppState
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.home.Mode
 import org.mozilla.fenix.home.privatebrowsing.controller.DefaultPrivateBrowsingController
-import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.utils.Settings
 
 class DefaultPrivateBrowsingControllerTest {
@@ -61,12 +59,13 @@ class DefaultPrivateBrowsingControllerTest {
 
     @Test
     fun `WHEN private browsing learn more link is clicked THEN open support page in browser`() {
+        val learnMoreURL = "https://support.mozilla.org/en-US/kb/common-myths-about-private-browsing?as=u&utm_source=inproduct"
+
         controller.handleLearnMoreClicked()
 
         verify {
             activity.openToBrowserAndLoad(
-                searchTermOrURL = SupportUtils.getGenericSumoURLForTopic
-                    (SupportUtils.SumoTopic.PRIVATE_BROWSING_MYTHS),
+                searchTermOrURL = learnMoreURL,
                 newTab = true,
                 from = BrowserDirection.FromHome,
             )
@@ -82,13 +81,12 @@ class DefaultPrivateBrowsingControllerTest {
         every { settings.incrementNumTimesPrivateModeOpened() } just Runs
 
         val newMode = BrowsingMode.Private
-        val hasBeenOnboarded = true
 
-        controller.handlePrivateModeButtonClicked(newMode, hasBeenOnboarded)
+        controller.handlePrivateModeButtonClicked(newMode)
 
         verify {
             settings.incrementNumTimesPrivateModeOpened()
-            AppAction.ModeChange(Mode.fromBrowsingMode(newMode))
+            AppAction.ModeChange(newMode)
         }
     }
 
@@ -110,13 +108,12 @@ class DefaultPrivateBrowsingControllerTest {
         store.dispatch(TabListAction.AddTabAction(tab, select = true)).joinBlocking()
 
         val newMode = BrowsingMode.Private
-        val hasBeenOnboarded = true
 
-        controller.handlePrivateModeButtonClicked(newMode, hasBeenOnboarded)
+        controller.handlePrivateModeButtonClicked(newMode)
 
         verify {
             settings.incrementNumTimesPrivateModeOpened()
-            AppAction.ModeChange(Mode.fromBrowsingMode(newMode))
+            AppAction.ModeChange(newMode)
             navController.navigate(
                 BrowserFragmentDirections.actionGlobalSearchDialog(
                     sessionId = null,
@@ -141,16 +138,15 @@ class DefaultPrivateBrowsingControllerTest {
         store.dispatch(TabListAction.AddTabAction(tab, select = true)).joinBlocking()
 
         val newMode = BrowsingMode.Normal
-        val hasBeenOnboarded = true
 
-        controller.handlePrivateModeButtonClicked(newMode, hasBeenOnboarded)
+        controller.handlePrivateModeButtonClicked(newMode)
 
         verify(exactly = 0) {
             settings.incrementNumTimesPrivateModeOpened()
         }
         verify {
             appStore.dispatch(
-                AppAction.ModeChange(Mode.fromBrowsingMode(newMode)),
+                AppAction.ModeChange(newMode),
             )
             navController.navigate(
                 BrowserFragmentDirections.actionGlobalSearchDialog(
