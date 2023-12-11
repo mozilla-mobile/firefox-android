@@ -16,6 +16,7 @@ import mozilla.components.concept.engine.mediasession.MediaSession
 import mozilla.components.concept.engine.permission.PermissionRequest
 import mozilla.components.concept.engine.prompt.PromptRequest
 import mozilla.components.concept.engine.shopping.ProductAnalysis
+import mozilla.components.concept.engine.shopping.ProductAnalysisStatus
 import mozilla.components.concept.engine.shopping.ProductRecommendation
 import mozilla.components.concept.engine.translate.TranslationEngineState
 import mozilla.components.concept.engine.translate.TranslationOperation
@@ -939,7 +940,7 @@ abstract class EngineSession(
      */
     abstract fun requestAnalysisStatus(
         url: String,
-        onResult: (String) -> Unit,
+        onResult: (ProductAnalysisStatus) -> Unit,
         onException: (Throwable) -> Unit,
     )
 
@@ -964,6 +965,18 @@ abstract class EngineSession(
     abstract fun sendImpressionAttributionEvent(
         aid: String,
         onResult: (Boolean) -> Unit,
+        onException: (Throwable) -> Unit,
+    )
+
+    /**
+     * Reports when a product is back in stock.
+     *
+     * @param onResult callback invoked if the engine API returns a valid response.
+     * @param onException callback invoked if there was an error getting the response.
+     */
+    abstract fun reportBackInStock(
+        url: String,
+        onResult: (String) -> Unit,
         onException: (Throwable) -> Unit,
     )
 

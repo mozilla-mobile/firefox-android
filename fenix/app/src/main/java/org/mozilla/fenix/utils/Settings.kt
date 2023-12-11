@@ -616,6 +616,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = true,
     )
 
+    var shouldEnableGlobalPrivacyControl by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_privacy_enable_global_privacy_control),
+        false,
+    )
+
     var shouldUseCookieBannerPrivateMode by lazyFeatureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_cookie_banner_private_mode),
         featureFlag = true,
@@ -1687,13 +1692,13 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     /**
-     * Returns whether juno onboarding should be shown to the user.
+     * Returns whether onboarding should be shown to the user.
      *
      * @param hasUserBeenOnboarded Boolean to indicate whether the user has been onboarded.
      * @param isLauncherIntent Boolean to indicate whether the app was launched on tapping on the
      * app icon.
      */
-    fun shouldShowJunoOnboarding(hasUserBeenOnboarded: Boolean, isLauncherIntent: Boolean): Boolean {
+    fun shouldShowOnboarding(hasUserBeenOnboarded: Boolean, isLauncherIntent: Boolean): Boolean {
         return if (!hasUserBeenOnboarded && isLauncherIntent) {
             FxNimbus.features.junoOnboarding.recordExposure()
             true
@@ -1948,7 +1953,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
      */
     var enableRedesignToolbar by lazyFeatureFlagPreference(
         key = appContext.getPreferenceKey(R.string.pref_key_toolbar_use_redesign),
-        default = { false },
+        default = { FeatureFlags.completeToolbarRedesignEnabled },
         featureFlag = FeatureFlags.completeToolbarRedesignEnabled,
     )
 

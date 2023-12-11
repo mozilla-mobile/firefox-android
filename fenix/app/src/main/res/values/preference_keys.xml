@@ -78,6 +78,7 @@
     <string name="pref_key_home_blocklist">pref_key_home_blocklist</string>
     <string name="pref_key_hidden_engines_restored" translatable="false">pref_key_hidden_engines_restored</string>
     <string name="pref_key_enable_fxsuggest" translatable="false">pref_key_fxsuggest_enabled</string>
+    <string name="pref_key_enable_debug_drawer" translatable="false">pref_key_enable_debug_drawer</string>
 
     <!-- Data Choices -->
     <string name="pref_key_telemetry" translatable="false">pref_key_telemetry</string>
@@ -217,6 +218,7 @@
     <string name="pref_key_open_links_in_apps_never" translatable="false">pref_key_open_links_in_apps_never</string>
     <string name="pref_key_external_download_manager" translatable="false">pref_key_external_download_manager</string>
     <string name="pref_key_allow_screenshots_in_private_mode" translatable="false">pref_key_allow_screenshots_in_private_mode</string>
+    <string name="pref_key_privacy_enable_global_privacy_control" translatable="false">pref_key_privacy_enable_global_privacy_control</string>
 
     <string name="pref_key_adjust_campaign" translatable="false">pref_key_adjust_campaign</string>
     <string name="pref_key_adjust_network" translatable="false">pref_key_adjust_network</string>

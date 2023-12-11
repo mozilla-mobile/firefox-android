@@ -11,6 +11,7 @@ import android.net.Uri
 import androidx.activity.result.ActivityResultCaller
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import mozilla.components.concept.engine.webextension.InstallationMethod
 import mozilla.components.feature.addons.Addon
 import mozilla.components.feature.addons.AddonManager
 import mozilla.components.support.base.log.logger.Logger
@@ -19,12 +20,10 @@ import mozilla.components.support.ktx.android.net.toFileUri
 /**
  * Allows to launch a file picker to select an add-on file.
  * @param context the application context
- * @param onInstallationFailed (optional) callback invoked if there was an error installing the add-on.
  */
 class AddonFilePicker(
     val context: Context,
     private val addonManager: AddonManager,
-    private val onInstallationFailed: (() -> Unit) = { },
 ) {
     internal lateinit var activityLauncher: ActivityResultLauncher<Array<String>>
     private val logger = Logger("AddonFilePicker")
@@ -59,11 +58,11 @@ class AddonFilePicker(
                 logger.info("Add-on from $fileUri installed successfully")
             }
             val onError: ((Throwable) -> Unit) = { throwable ->
-                onInstallationFailed()
                 logger.error("Unable to install add-on from $fileUri", throwable)
             }
             addonManager.installAddon(
                 fileUri,
+                InstallationMethod.FROM_FILE,
                 onSuccess,
                 onError,
             )
@@ -75,7 +74,6 @@ class AddonFilePicker(
 
 internal open class AddonOpenDocument : ActivityResultContracts.OpenDocument() {
     override fun createIntent(context: Context, input: Array<String>): Intent {
-        // We're restricting the mime type to XPI files, because that's expected by GeckoView currently.
-        return super.createIntent(context, arrayOf("application/x-xpinstall"))
+        return super.createIntent(context, arrayOf("application/x-xpinstall", "application/zip"))
     }
 }

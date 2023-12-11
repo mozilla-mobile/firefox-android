@@ -34,8 +34,8 @@
         app:popUpToInclusive="false" />
 
     <action
-        android:id="@+id/action_global_juno_onboarding"
-        app:destination="@id/junoOnboardingFragment"
+        android:id="@+id/action_global_onboarding"
+        app:destination="@id/onboardingFragment"
         app:popUpTo="@id/startupFragment"
         app:popUpToInclusive="true" />
 
@@ -187,12 +187,12 @@
     </fragment>
 
     <fragment
-        android:id="@+id/junoOnboardingFragment"
-        android:name="org.mozilla.fenix.onboarding.JunoOnboardingFragment">
+        android:id="@+id/onboardingFragment"
+        android:name="org.mozilla.fenix.onboarding.OnboardingFragment">
         <action
             android:id="@+id/action_home"
             app:destination="@id/homeFragment"
-            app:popUpTo="@id/junoOnboardingFragment"
+            app:popUpTo="@id/onboardingFragment"
             app:popUpToInclusive="true" />
     </fragment>
 
@@ -1443,6 +1443,40 @@
                 app:destination="@id/translationsDialogFragment"
                 app:popUpTo="@id/translationSettingsFragment"
                 app:popUpToInclusive="true" />
+            <action
+                android:id="@+id/action_translationSettingsFragment_to_neverTranslateSitePreferenceFragment"
+                app:destination="@id/neverTranslateSitePreferenceFragment" />
+            <action
+                android:id="@+id/action_translationSettingsFragment_to_automaticTranslationPreferenceFragment"
+                app:destination="@id/automaticTranslationPreferenceFragment" />
         </fragment>
+        <fragment
+            android:id="@+id/automaticTranslationPreferenceFragment"
+            android:name="org.mozilla.fenix.translations.preferences.automatic.AutomaticTranslationPreferenceFragment">
+            <action
+                android:id="@+id/action_automaticTranslationPreference_to_automaticTranslationOptionsPreference"
+                app:destination="@id/automaticTranslationOptionsPreferenceFragment" />
+        </fragment>
+        <fragment
+            android:id="@+id/automaticTranslationOptionsPreferenceFragment"
+            android:name="org.mozilla.fenix.translations.preferences.automatic.AutomaticTranslationOptionsPreferenceFragment">
+            <argument
+                android:name="selectedTranslationOptionPreference"
+                app:argType="org.mozilla.fenix.translations.preferences.automatic.AutomaticTranslationItemPreference" />
+        </fragment>
+        <fragment
+            android:id="@+id/neverTranslateSitePreferenceFragment"
+            android:name="org.mozilla.fenix.translations.preferences.nevertranslatesite.NeverTranslateSitePreferenceFragment">
+            <action
+                android:id="@+id/action_neverTranslateSitePreferenceFragment_to_neverTranslateSiteDialogPreferenceFragment"
+                app:destination="@id/neverTranslateSiteDialogPreferenceFragment" />
+        </fragment>
+        <dialog
+            android:id="@+id/neverTranslateSiteDialogPreferenceFragment"
+            android:name="org.mozilla.fenix.translations.preferences.nevertranslatesite.NeverTranslateSiteDialogPreferenceFragment">
+            <argument
+                android:name="websiteUrl"
+                app:argType="string" />
+        </dialog>
     </navigation>
 </navigation>

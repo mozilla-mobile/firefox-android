@@ -25,6 +25,7 @@ import mozilla.components.concept.engine.Settings
 import mozilla.components.concept.engine.history.HistoryTrackingDelegate
 import mozilla.components.concept.engine.request.RequestInterceptor
 import mozilla.components.concept.engine.shopping.ProductAnalysis
+import mozilla.components.concept.engine.shopping.ProductAnalysisStatus
 import mozilla.components.concept.engine.shopping.ProductRecommendation
 import mozilla.components.concept.engine.translate.TranslationOptions
 import kotlin.reflect.KProperty
@@ -463,7 +464,7 @@ class SystemEngineSession(
      */
     override fun requestAnalysisStatus(
         url: String,
-        onResult: (String) -> Unit,
+        onResult: (ProductAnalysisStatus) -> Unit,
         onException: (Throwable) -> Unit,
     ) {
         throw UnsupportedOperationException("Requesting product analysis status is not available in this engine")
@@ -489,6 +490,17 @@ class SystemEngineSession(
         onException: (Throwable) -> Unit,
     ) {
         throw UnsupportedOperationException("Sending impression attribution event is not available in this engine")
+    }
+
+    /**
+     * See [EngineSession.reportBackInStock]
+     */
+    override fun reportBackInStock(
+        url: String,
+        onResult: (String) -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {
+        throw UnsupportedOperationException("Reporting back in stock is not available in this engine")
     }
 
     /**

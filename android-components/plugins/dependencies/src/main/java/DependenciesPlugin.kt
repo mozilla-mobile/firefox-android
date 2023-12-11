@@ -21,18 +21,18 @@ object Versions {
 
     const val junit = "4.13.2"
     const val robolectric = "4.11.1"
-    const val mockito = "5.7.0"
+    const val mockito = "5.8.0"
     const val maven_ant_tasks = "2.1.3"
     const val jacoco = "0.8.11"
     const val okhttp = "4.11.0"
     const val coil = "2.4.0"
 
-    const val android_gradle_plugin = "7.4.2"
+    const val android_gradle_plugin = "8.0.2"
 
     // This has to be synced to the gradlew plugin version. See
     // http://googlesamples.github.io/android-custom-lint-rules/api-guide/example.md.html#example:samplelintcheckgithubproject/lintversion?
-    const val lint = "30.4.2"
-    const val detekt = "1.23.3"
+    const val lint = "31.0.2"
+    const val detekt = "1.23.4"
     const val ktlint = "0.49.1"
 
     const val sentry = "6.34.0"
@@ -90,7 +90,7 @@ object Versions {
     }
 
     object Firebase {
-        const val messaging = "23.3.0"
+        const val messaging = "23.3.1"
     }
 }
 
