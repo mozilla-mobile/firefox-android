@@ -11,6 +11,7 @@ import android.net.Uri
 import androidx.activity.result.ActivityResultCaller
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import mozilla.components.concept.engine.webextension.InstallationMethod
 import mozilla.components.feature.addons.Addon
 import mozilla.components.feature.addons.AddonManager
 import mozilla.components.support.base.log.logger.Logger
@@ -19,7 +20,6 @@ import mozilla.components.support.ktx.android.net.toFileUri
 /**
  * Allows to launch a file picker to select an add-on file.
  * @param context the application context
- * @param onInstallationFailed (optional) callback invoked if there was an error installing the add-on.
  */
 class AddonFilePicker(
     val context: Context,
@@ -62,6 +62,7 @@ class AddonFilePicker(
             }
             addonManager.installAddon(
                 fileUri,
+                InstallationMethod.FROM_FILE,
                 onSuccess,
                 onError,
             )

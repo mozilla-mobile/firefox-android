@@ -247,7 +247,7 @@ private fun AdjustedProductRatingCard(
         }
 
         Text(
-            text = stringResource(R.string.review_quality_check_adjusted_rating_description),
+            text = stringResource(R.string.review_quality_check_adjusted_rating_description_2),
             color = FirefoxTheme.colors.textPrimary,
             style = FirefoxTheme.typography.caption,
         )
@@ -359,7 +359,7 @@ private fun HighlightText(text: String) {
         Spacer(modifier = Modifier.width(32.dp))
 
         Text(
-            text = text,
+            text = stringResource(id = R.string.surrounded_with_quotes, text),
             color = FirefoxTheme.colors.textPrimary,
             style = FirefoxTheme.typography.body2,
         )

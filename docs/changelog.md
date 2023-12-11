@@ -10,11 +10,19 @@ permalink: /changelog/
 * [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/Gecko.kt)
 * [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/.config.yml)
 
+* **concept-engine**
+  * Add `reportBackInStock` API to `EngineSession` to allow reporting a shopping product is back in stock. [Bug 1858947](https://bugzilla.mozilla.org/show_bug.cgi?id=1858947)
+
 * **feature-media**
   * Added `FOREGROUND_SERVICE_MEDIA_PLAYBACK` permission to the `AndroidManifest.xml`.
 
 * **support-utils**
   * Recognize IPv6 literals in the address bar. [Bug 1803465](https://bugzilla.mozilla.org/show_bug.cgi?id=1803465)
+
+* **browser-engine-gecko**
+  * Enable nested scrolling on `GeckoEngineView` as required by `NestedGeckoView`. [Bug 1847305](https://bugzilla.mozilla.org/show_bug.cgi?id=1847305)
+  * `NestedGeckoView` now disallows touch interception until we receive a response from `GeckoView#onTouchEventForDetailResult`. [Bug 1847305](https://bugzilla.mozilla.org/show_bug.cgi?id=1847305)
+  * Add `globalPrivacyControlEnabled` setting to allow enabling Global Privacy Control in normal browsing. This is always enabled in private browsing. [Bug 1865357](https://bugzilla.mozilla.org/show_bug.cgi?id=1865357)
 
 # 121.0
 * [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v120..releases_v121)
