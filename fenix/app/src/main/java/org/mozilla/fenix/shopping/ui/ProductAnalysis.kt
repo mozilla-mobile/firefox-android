@@ -7,6 +7,7 @@ package org.mozilla.fenix.shopping.ui
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,6 +22,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -110,15 +112,15 @@ fun ProductAnalysis(
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         when (productAnalysis.analysisStatus) {
-            AnalysisStatus.NEEDS_ANALYSIS -> {
+            AnalysisStatus.NeedsAnalysis -> {
                 ReanalyzeCard(onReanalyzeClick = onReanalyzeClick)
             }
 
-            AnalysisStatus.REANALYZING -> {
+            is AnalysisStatus.Reanalyzing -> {
                 ReanalysisInProgressCard()
             }
 
-            AnalysisStatus.UP_TO_DATE -> {
+            AnalysisStatus.UpToDate -> {
                 // no-op
             }
         }
@@ -467,6 +469,8 @@ private fun ProductRecommendation(
                         url = product.imageUrl,
                         modifier = Modifier.size(productRecommendationImageSize),
                         targetSize = productRecommendationImageSize,
+                        placeholder = { ImagePlaceholder() },
+                        fallback = { ImagePlaceholder() },
                     )
 
                     Text(
@@ -506,6 +510,25 @@ private fun ProductRecommendation(
     }
 }
 
+@Composable
+private fun ImagePlaceholder() {
+    Box(
+        modifier = Modifier
+            .size(productRecommendationImageSize)
+            .background(
+                color = FirefoxTheme.colors.layer3,
+                shape = RoundedCornerShape(8.dp),
+            ),
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.ic_file_type_image),
+            contentDescription = null,
+            modifier = Modifier
+                .align(Alignment.Center),
+        )
+    }
+}
+
 private class ProductAnalysisPreviewModel(
     val productRecommendationsEnabled: Boolean?,
     val productAnalysis: AnalysisPresent,
@@ -515,7 +538,7 @@ private class ProductAnalysisPreviewModel(
         productRecommendationsEnabled: Boolean? = false,
         productId: String = "123",
         reviewGrade: ReviewQualityCheckState.Grade? = ReviewQualityCheckState.Grade.B,
-        analysisStatus: AnalysisStatus = AnalysisStatus.UP_TO_DATE,
+        analysisStatus: AnalysisStatus = AnalysisStatus.UpToDate,
         adjustedRating: Float? = 3.6f,
         productUrl: String = "",
         highlightsInfo: HighlightsInfo = HighlightsInfo(
@@ -570,10 +593,10 @@ private class ProductAnalysisPreviewModelParameterProvider :
         get() = sequenceOf(
             ProductAnalysisPreviewModel(),
             ProductAnalysisPreviewModel(
-                analysisStatus = AnalysisStatus.NEEDS_ANALYSIS,
+                analysisStatus = AnalysisStatus.NeedsAnalysis,
             ),
             ProductAnalysisPreviewModel(
-                analysisStatus = AnalysisStatus.REANALYZING,
+                analysisStatus = AnalysisStatus.Reanalyzing(50.0f),
             ),
             ProductAnalysisPreviewModel(
                 reviewGrade = null,
