@@ -86,11 +86,14 @@ import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.PrivateShortcutCreateManager
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.appstate.AppAction
+import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.components.metrics.MetricsHelperService.Companion.HOME_ANCHOR
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.databinding.FragmentHomeBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.containsQueryParameters
 import org.mozilla.fenix.ext.hideToolbar
+import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.scaleToBottomOfView
@@ -558,7 +561,10 @@ class HomeFragment : Fragment() {
             homeActivity = activity as HomeActivity,
             navController = findNavController(),
             menuButton = WeakReference(binding.menuButton),
-        ).also { it.build() }
+        ).also {
+            it.build()
+            view.context.metrics.track(Event.UsageData.SetMenuAnchorFragment(HOME_ANCHOR))
+        }
 
         tabCounterView = TabCounterView(
             context = requireContext(),

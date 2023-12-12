@@ -176,6 +176,11 @@ internal class ReleaseMetricController(
             }
             Unit
         }
+        Component.BROWSER_MENU to BrowserMenuFacts.Items.MENU_CLOSE_ITEM ->
+            track(Event.UsageData.CloseMenu)
+        Component.BROWSER_MENU to BrowserMenuFacts.Items.MENU_OPEN_ITEM ->
+            track(Event.UsageData.OpenMenu)
+
         Component.FEATURE_PROMPTS to CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_FORM_DETECTED ->
             CreditCards.formDetected.record(NoExtras())
         Component.FEATURE_PROMPTS to CreditCardAutofillDialogFacts.Items.AUTOFILL_CREDIT_CARD_SUCCESS ->

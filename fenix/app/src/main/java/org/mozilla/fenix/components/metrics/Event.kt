@@ -54,4 +54,29 @@ sealed class Event {
          */
         data class UserActivated(val fromSearch: Boolean) : GrowthData("imgpmr")
     }
+
+    /**
+     * Events related to metric probe calculations.
+     */
+    sealed class UsageData : Event() {
+        /**
+         * Event setting the anchor fragment for the menu.
+         */
+        data class SetMenuAnchorFragment(val anchorFragment: String) : UsageData()
+
+        /**
+         * Event recording when a menu is opened.
+         */
+        object OpenMenu : UsageData()
+
+        /**
+         * Event recording when a menu is closed.
+         */
+        object CloseMenu : UsageData()
+
+        /**
+         * Event recording when a menu item is interacted with.
+         */
+        object InteractedWithMenu : UsageData()
+    }
 }

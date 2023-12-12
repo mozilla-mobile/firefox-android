@@ -45,8 +45,10 @@ import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.accounts.AccountState
 import org.mozilla.fenix.components.accounts.FenixFxAEntryPoint
+import org.mozilla.fenix.components.metrics.Event
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getRootView
+import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.navigateSafe
 import org.mozilla.fenix.ext.openSetDefaultBrowserOption
@@ -422,6 +424,7 @@ class DefaultBrowserToolbarMenuController(
 
     @Suppress("ComplexMethod")
     private fun trackToolbarItemInteraction(item: ToolbarMenu.Item) {
+        activity.metrics.track(Event.UsageData.InteractedWithMenu)
         when (item) {
             is ToolbarMenu.Item.OpenInFenix ->
                 Events.browserMenuAction.record(Events.BrowserMenuActionExtra("open_in_fenix"))

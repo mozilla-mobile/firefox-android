@@ -17,6 +17,7 @@ import mozilla.components.browser.menu.BrowserMenu.Orientation
 import mozilla.components.browser.menu.BrowserMenuBuilder
 import mozilla.components.browser.menu.BrowserMenuHighlight
 import mozilla.components.browser.menu.R
+import mozilla.components.browser.menu.facts.emitMenuOpenedFact
 import mozilla.components.concept.menu.MenuButton
 import mozilla.components.concept.menu.MenuController
 import mozilla.components.concept.menu.candidate.HighPriorityHighlightEffect
@@ -153,6 +154,7 @@ class MenuButton @JvmOverloads constructor(
                 notifyObservers { onDismiss() }
             }
         }
+        emitMenuOpenedFact()
         notifyObservers { onShow() }
     }
 

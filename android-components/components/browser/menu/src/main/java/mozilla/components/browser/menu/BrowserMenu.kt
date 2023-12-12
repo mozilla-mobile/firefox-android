@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import mozilla.components.browser.menu.BrowserMenu.Orientation.DOWN
 import mozilla.components.browser.menu.BrowserMenu.Orientation.UP
+import mozilla.components.browser.menu.facts.emitMenuClosedFact
 import mozilla.components.browser.menu.view.DynamicWidthRecyclerView
 import mozilla.components.browser.menu.view.ExpandableLayout
 import mozilla.components.browser.menu.view.StickyItemPlacement
@@ -122,6 +123,7 @@ open class BrowserMenu internal constructor(
                 adapter.menu = null
                 currentPopup = null
                 isShown = false
+                emitMenuClosedFact()
                 onDismiss()
             }
 

@@ -18,6 +18,8 @@ class BrowserMenuFacts {
      */
     object Items {
         const val WEB_EXTENSION_MENU_ITEM = "web_extension_menu_item"
+        const val MENU_OPEN_ITEM = "menu_open_item"
+        const val MENU_CLOSE_ITEM = "menu_close_item"
     }
 }
 
@@ -41,5 +43,19 @@ internal fun emitOpenMenuItemFact(extensionId: String) {
         Action.CLICK,
         BrowserMenuFacts.Items.WEB_EXTENSION_MENU_ITEM,
         metadata = mapOf("id" to extensionId),
+    )
+}
+
+internal fun emitMenuOpenedFact() {
+    emitMenuFact(
+        Action.OPEN,
+        BrowserMenuFacts.Items.MENU_OPEN_ITEM,
+    )
+}
+
+internal fun emitMenuClosedFact() {
+    emitMenuFact(
+        Action.INTERACTION,
+        BrowserMenuFacts.Items.MENU_CLOSE_ITEM,
     )
 }

@@ -35,6 +35,7 @@ import org.mozilla.fenix.Config
 import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
+import org.mozilla.fenix.components.metrics.MetricsHelperService.Companion.BROWSER_ANCHOR
 import org.mozilla.fenix.components.metrics.MozillaProductDetector
 import org.mozilla.fenix.components.settings.counterPreference
 import org.mozilla.fenix.components.settings.featureFlagPreference
@@ -1916,6 +1917,16 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var hiddenEnginesRestored: Boolean by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_hidden_engines_restored),
         default = false,
+    )
+
+    var noOperationMenuOpen by booleanPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_usage_data_menu_no_operation_open),
+        default = false,
+    )
+
+    var anchorFragment by stringPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_usage_data_menu_anchor_fragment),
+        default = BROWSER_ANCHOR,
     )
 
     /**

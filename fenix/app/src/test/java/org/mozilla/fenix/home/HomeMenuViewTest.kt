@@ -27,8 +27,10 @@ import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.HomeScreen
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.Analytics
 import org.mozilla.fenix.components.accounts.AccountState
 import org.mozilla.fenix.components.accounts.FenixFxAEntryPoint
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
@@ -50,6 +52,7 @@ class HomeMenuViewTest {
     private lateinit var navController: NavController
     private lateinit var menuButton: MenuButton
     private lateinit var homeMenuView: HomeMenuView
+    private lateinit var analytics: Analytics
 
     @Before
     fun setup() {
@@ -57,6 +60,7 @@ class HomeMenuViewTest {
         lifecycleOwner = mockk(relaxed = true)
         homeActivity = mockk(relaxed = true)
         navController = mockk(relaxed = true)
+        analytics = mockk(relaxed = true)
 
         menuButton = spyk(MenuButton(testContext))
 
@@ -68,6 +72,8 @@ class HomeMenuViewTest {
             navController = navController,
             menuButton = WeakReference(menuButton),
         )
+
+        every { testContext.components.analytics } returns analytics
     }
 
     @Test

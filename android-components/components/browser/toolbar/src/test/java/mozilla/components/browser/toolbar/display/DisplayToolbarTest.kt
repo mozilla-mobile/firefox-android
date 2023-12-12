@@ -713,9 +713,9 @@ class DisplayToolbarTest {
 
             menuView.impl.performClick()
 
-            assertEquals(1, facts.size)
+            assertEquals(2, facts.size)
 
-            val fact = facts[0]
+            val fact = facts[1]
 
             assertEquals(Component.BROWSER_TOOLBAR, fact.component)
             assertEquals(Action.CLICK, fact.action)

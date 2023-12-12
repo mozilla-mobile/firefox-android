@@ -39,9 +39,12 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.appstate.AppAction
+import org.mozilla.fenix.components.metrics.Event
+import org.mozilla.fenix.components.metrics.MetricsHelperService.Companion.BROWSER_ANCHOR
 import org.mozilla.fenix.components.toolbar.BrowserToolbarView
 import org.mozilla.fenix.components.toolbar.ToolbarMenu
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.metrics
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
@@ -436,6 +439,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
         val context = requireContext()
         val settings = context.settings()
 
+        context.metrics.track(Event.UsageData.SetMenuAnchorFragment(BROWSER_ANCHOR))
         if (!settings.userKnowsAboutPwas) {
             pwaOnboardingObserver = PwaOnboardingObserver(
                 store = context.components.core.store,

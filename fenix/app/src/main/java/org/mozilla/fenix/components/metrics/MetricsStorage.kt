@@ -100,6 +100,7 @@ internal class DefaultMetricsStorage(
                 is Event.GrowthData.UserActivated -> {
                     hasUserReachedActivatedThreshold()
                 }
+                else -> false
             }
         }
 
@@ -126,6 +127,7 @@ internal class DefaultMetricsStorage(
             is Event.GrowthData.UserActivated -> {
                 settings.growthUserActivatedSent = true
             }
+            else -> Unit
         }
     }
 
