@@ -48,6 +48,7 @@ private fun mapStateForUpdateAction(
             if (state is ReviewQualityCheckState.OptedIn) {
                 state.copy(
                     productRecommendationsPreference = action.isProductRecommendationsEnabled,
+                    productRecommendationsExposure = action.productRecommendationsExposure,
                     isHighlightsExpanded = action.isHighlightsExpanded,
                     isInfoExpanded = action.isInfoExpanded,
                     isSettingsExpanded = action.isSettingsExpanded,
@@ -55,6 +56,7 @@ private fun mapStateForUpdateAction(
             } else {
                 ReviewQualityCheckState.OptedIn(
                     productRecommendationsPreference = action.isProductRecommendationsEnabled,
+                    productRecommendationsExposure = action.productRecommendationsExposure,
                     productVendor = action.productVendor,
                     isHighlightsExpanded = action.isHighlightsExpanded,
                     isInfoExpanded = action.isInfoExpanded,
@@ -129,12 +131,12 @@ private fun mapStateForUpdateAction(
                 when (it.productReviewState) {
                     is ProductReviewState.AnalysisPresent -> {
                         val productReviewState =
-                            it.productReviewState.copy(analysisStatus = AnalysisStatus.REANALYZING)
+                            it.productReviewState.copy(analysisStatus = AnalysisStatus.Reanalyzing(0f))
                         it.copy(productReviewState = productReviewState)
                     }
 
                     is ProductReviewState.NoAnalysisPresent -> {
-                        it.copy(productReviewState = it.productReviewState.copy(isReanalyzing = true))
+                        it.copy(productReviewState = it.productReviewState.copy(progress = 0f))
                     }
 
                     else -> {
@@ -156,6 +158,32 @@ private fun mapStateForUpdateAction(
                     )
                 } else {
                     it
+                }
+            }
+        }
+
+        is ReviewQualityCheckAction.UpdateAnalysisProgress -> {
+            state.mapIfOptedIn {
+                when (it.productReviewState) {
+                    is ProductReviewState.NoAnalysisPresent -> {
+                        it.copy(
+                            productReviewState = it.productReviewState.copy(
+                                progress = action.progress.toFloat(),
+                            ),
+                        )
+                    }
+
+                    is ProductReviewState.AnalysisPresent -> {
+                        it.copy(
+                            productReviewState = it.productReviewState.copy(
+                                analysisStatus = AnalysisStatus.Reanalyzing(action.progress.toFloat()),
+                            ),
+                        )
+                    }
+
+                    else -> {
+                        it
+                    }
                 }
             }
         }

@@ -41,6 +41,7 @@ sealed interface ReviewQualityCheckState : State {
      * @property productRecommendationsPreference User preference whether to show product
      * recommendations. True if product recommendations should be shown. Null indicates that product
      * recommendations are disabled.
+     * @property productRecommendationsExposure Whether product recommendations exposure is enabled.
      * @property productVendor The vendor of the product.
      * @property isSettingsExpanded Whether or not the settings card is expanded.
      * @property isInfoExpanded Whether or not the info card is expanded.
@@ -49,6 +50,7 @@ sealed interface ReviewQualityCheckState : State {
     data class OptedIn(
         val productReviewState: ProductReviewState = ProductReviewState.Loading,
         val productRecommendationsPreference: Boolean?,
+        val productRecommendationsExposure: Boolean,
         val productVendor: ProductVendor,
         val isSettingsExpanded: Boolean = false,
         val isInfoExpanded: Boolean = false,
@@ -91,10 +93,19 @@ sealed interface ReviewQualityCheckState : State {
 
             /**
              * Denotes no analysis is present for the product the user is browsing.
+             *
+             * @property progress The progress of the analysis, ranges from 0-100.
              */
             data class NoAnalysisPresent(
-                val isReanalyzing: Boolean = false,
-            ) : ProductReviewState
+                val progress: Float? = null,
+            ) : ProductReviewState {
+                /**
+                 * Normalized progress, ranges from 0-1.
+                 */
+                val normalizedProgress: Float? = progress?.div(100)
+
+                val isReanalyzing: Boolean = normalizedProgress != null && normalizedProgress < 100f
+            }
 
             /**
              * Denotes the state where analysis of the product is fetched and present.
@@ -151,10 +162,30 @@ sealed interface ReviewQualityCheckState : State {
                 }
 
                 /**
-                 * The status of the product analysis.
+                 * The state of the product analysis.
                  */
-                enum class AnalysisStatus {
-                    NEEDS_ANALYSIS, REANALYZING, UP_TO_DATE
+                sealed interface AnalysisStatus {
+                    /**
+                     * Denotes reanalysis is in progress.
+                     *
+                     * @property progress The progress of the analysis, ranges from 0-100.
+                     */
+                    data class Reanalyzing(val progress: Float) : AnalysisStatus {
+                        /**
+                         * Normalized progress ranging from 0-1f.
+                         */
+                        val normalizedProgress: Float = progress / 100f
+                    }
+
+                    /**
+                     * Denotes a product needs analysis.
+                     */
+                    object NeedsAnalysis : AnalysisStatus
+
+                    /**
+                     * Denotes a product analysis is up to date.
+                     */
+                    object UpToDate : AnalysisStatus
                 }
             }
         }

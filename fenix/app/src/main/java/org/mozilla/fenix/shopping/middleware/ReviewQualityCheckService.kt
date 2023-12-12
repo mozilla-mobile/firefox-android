@@ -11,6 +11,7 @@ import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.shopping.ProductAnalysis
 import mozilla.components.concept.engine.shopping.ProductRecommendation
 import mozilla.components.support.base.log.logger.Logger
+import org.mozilla.fenix.GleanMetrics.Shopping
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -36,21 +37,16 @@ interface ReviewQualityCheckService {
     /**
      * Fetches the status of the product review for the current tab.
      *
-     * @return [AnalysisStatusDto] if the request succeeds, null otherwise.
+     * @return [AnalysisStatusProgressDto] if the request succeeds, null otherwise.
      */
-    suspend fun analysisStatus(): AnalysisStatusDto?
-
-    /**
-     * Returns the selected tab url.
-     */
-    fun selectedTabUrl(): String?
+    suspend fun analysisStatus(): AnalysisStatusProgressDto?
 
     /**
      * Fetches product recommendations related to the product user is browsing in the current tab.
      *
      * @return [ProductRecommendation] if request succeeds, null otherwise.
      */
-    suspend fun productRecommendation(): ProductRecommendation?
+    suspend fun productRecommendation(shouldRecordAvailableTelemetry: Boolean): ProductRecommendation?
 
     /**
      * Sends a click attribution event for a given product aid.
@@ -72,6 +68,7 @@ class DefaultReviewQualityCheckService(
     private val browserStore: BrowserStore,
 ) : ReviewQualityCheckService {
 
+    private val recommendationsCache: MutableMap<String, ProductRecommendation> = mutableMapOf()
     private val logger = Logger("DefaultReviewQualityCheckService")
 
     override suspend fun fetchProductReview(): ProductAnalysis? = withContext(Dispatchers.Main) {
@@ -108,13 +105,18 @@ class DefaultReviewQualityCheckService(
         }
     }
 
-    override suspend fun analysisStatus(): AnalysisStatusDto? = withContext(Dispatchers.Main) {
+    override suspend fun analysisStatus(): AnalysisStatusProgressDto? = withContext(Dispatchers.Main) {
         suspendCoroutine { continuation ->
             browserStore.state.selectedTab?.let { tab ->
                 tab.engineState.engineSession?.requestAnalysisStatus(
                     url = tab.content.url,
                     onResult = {
-                        continuation.resume(it.asEnumOrDefault(AnalysisStatusDto.OTHER))
+                        continuation.resume(
+                            AnalysisStatusProgressDto(
+                                status = it.status.asEnumOrDefault(AnalysisStatusDto.OTHER)!!,
+                                progress = it.progress,
+                            ),
+                        )
                     },
                     onException = {
                         logger.error("Error fetching analysis status", it)
@@ -125,25 +127,38 @@ class DefaultReviewQualityCheckService(
         }
     }
 
-    override fun selectedTabUrl(): String? =
-        browserStore.state.selectedTab?.content?.url
-
-    override suspend fun productRecommendation(): ProductRecommendation? =
+    override suspend fun productRecommendation(shouldRecordAvailableTelemetry: Boolean): ProductRecommendation? =
         withContext(Dispatchers.Main) {
             suspendCoroutine { continuation ->
                 browserStore.state.selectedTab?.let { tab ->
-                    tab.engineState.engineSession?.requestProductRecommendations(
-                        url = tab.content.url,
-                        onResult = {
-                            // Return the first available recommendation since ui requires only
-                            // one recommendation.
-                            continuation.resume(it.firstOrNull())
-                        },
-                        onException = {
-                            logger.error("Error fetching product recommendation", it)
-                            continuation.resume(null)
-                        },
-                    )
+
+                    if (recommendationsCache.containsKey(tab.content.url)) {
+                        continuation.resume(recommendationsCache[tab.content.url])
+                    } else {
+                        tab.engineState.engineSession?.requestProductRecommendations(
+                            url = tab.content.url,
+                            onResult = {
+                                if (it.isEmpty()) {
+                                    if (shouldRecordAvailableTelemetry) {
+                                        Shopping.surfaceNoAdsAvailable.record()
+                                    }
+                                } else {
+                                    Shopping.adsExposure.record()
+                                }
+                                // Return the first available recommendation since ui requires only
+                                // one recommendation.
+                                continuation.resume(
+                                    it.firstOrNull()?.also { recommendation ->
+                                        recommendationsCache[tab.content.url] = recommendation
+                                    },
+                                )
+                            },
+                            onException = {
+                                logger.error("Error fetching product recommendation", it)
+                                continuation.resume(null)
+                            },
+                        )
+                    }
                 }
             }
         }
@@ -206,3 +221,14 @@ enum class AnalysisStatusDto {
      */
     OTHER,
 }
+
+/**
+ * Class that represents the analysis status response of the product review analysis.
+ *
+ * @property status Enum indicating the current status of the analysis
+ * @property progress Number indicating the progress of the analysis
+ */
+data class AnalysisStatusProgressDto(
+    val status: AnalysisStatusDto,
+    val progress: Double,
+)

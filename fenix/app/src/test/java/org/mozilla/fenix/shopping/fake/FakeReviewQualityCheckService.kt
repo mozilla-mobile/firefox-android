@@ -7,14 +7,14 @@ package org.mozilla.fenix.shopping.fake
 import mozilla.components.concept.engine.shopping.ProductAnalysis
 import mozilla.components.concept.engine.shopping.ProductRecommendation
 import org.mozilla.fenix.shopping.middleware.AnalysisStatusDto
+import org.mozilla.fenix.shopping.middleware.AnalysisStatusProgressDto
 import org.mozilla.fenix.shopping.middleware.ReviewQualityCheckService
 
 class FakeReviewQualityCheckService(
     private val productAnalysis: (Int) -> ProductAnalysis? = { null },
     private val reanalysis: AnalysisStatusDto? = null,
-    private val status: AnalysisStatusDto? = null,
-    private val selectedTabUrl: String? = null,
-    private val productRecommendation: ProductRecommendation? = null,
+    private val statusProgress: () -> AnalysisStatusProgressDto? = { null },
+    private val productRecommendation: () -> ProductRecommendation? = { null },
     private val recordClick: (String) -> Unit = {},
     private val recordImpression: (String) -> Unit = {},
 ) : ReviewQualityCheckService {
@@ -29,11 +29,13 @@ class FakeReviewQualityCheckService(
 
     override suspend fun reanalyzeProduct(): AnalysisStatusDto? = reanalysis
 
-    override suspend fun analysisStatus(): AnalysisStatusDto? = status
+    override suspend fun analysisStatus(): AnalysisStatusProgressDto? {
+        return statusProgress.invoke()
+    }
 
-    override fun selectedTabUrl(): String? = selectedTabUrl
-
-    override suspend fun productRecommendation(): ProductRecommendation? = productRecommendation
+    override suspend fun productRecommendation(shouldRecordAvailableTelemetry: Boolean): ProductRecommendation? {
+        return productRecommendation.invoke()
+    }
 
     override suspend fun recordRecommendedProductClick(productAid: String) {
         recordClick(productAid)

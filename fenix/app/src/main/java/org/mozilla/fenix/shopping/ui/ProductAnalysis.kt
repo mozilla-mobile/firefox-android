@@ -7,6 +7,7 @@ package org.mozilla.fenix.shopping.ui
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,6 +22,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -34,6 +36,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -51,6 +55,7 @@ import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductR
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent.AnalysisStatus
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent.HighlightsInfo
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.RecommendedProductState
+import org.mozilla.fenix.shopping.ui.ext.headingResource
 import org.mozilla.fenix.theme.FirefoxTheme
 
 private val combinedParentHorizontalPadding = 32.dp
@@ -107,15 +112,15 @@ fun ProductAnalysis(
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         when (productAnalysis.analysisStatus) {
-            AnalysisStatus.NEEDS_ANALYSIS -> {
+            AnalysisStatus.NeedsAnalysis -> {
                 ReanalyzeCard(onReanalyzeClick = onReanalyzeClick)
             }
 
-            AnalysisStatus.REANALYZING -> {
+            is AnalysisStatus.Reanalyzing -> {
                 ReanalysisInProgressCard()
             }
 
-            AnalysisStatus.UP_TO_DATE -> {
+            AnalysisStatus.UpToDate -> {
                 // no-op
             }
         }
@@ -203,7 +208,7 @@ private fun ReviewGradeCard(
     reviewGrade: ReviewQualityCheckState.Grade,
     modifier: Modifier = Modifier,
 ) {
-    ReviewQualityCheckCard(modifier = modifier.semantics(mergeDescendants = true) {}) {
+    ReviewQualityCheckCard(modifier = modifier.semantics(mergeDescendants = true) { heading() }) {
         Text(
             text = stringResource(R.string.review_quality_check_grade_title),
             color = FirefoxTheme.colors.textPrimary,
@@ -222,7 +227,7 @@ private fun AdjustedProductRatingCard(
     rating: Float,
     modifier: Modifier = Modifier,
 ) {
-    ReviewQualityCheckCard(modifier = modifier.semantics(mergeDescendants = true) {}) {
+    ReviewQualityCheckCard(modifier = modifier.semantics(mergeDescendants = true) { heading() }) {
         FlowRow(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.fillMaxWidth(),
@@ -244,7 +249,7 @@ private fun AdjustedProductRatingCard(
         }
 
         Text(
-            text = stringResource(R.string.review_quality_check_adjusted_rating_description),
+            text = stringResource(R.string.review_quality_check_adjusted_rating_description_2),
             color = FirefoxTheme.colors.textPrimary,
             style = FirefoxTheme.typography.caption,
         )
@@ -267,11 +272,16 @@ private fun HighlightsCard(
                 highlightsInfo.highlightsForCompactMode
             }
         }
+        val titleContentDescription = headingResource(id = R.string.review_quality_check_highlights_title)
 
         Text(
             text = stringResource(R.string.review_quality_check_highlights_title),
             color = FirefoxTheme.colors.textPrimary,
             style = FirefoxTheme.typography.headline8,
+            modifier = Modifier.semantics {
+                heading()
+                contentDescription = titleContentDescription
+            },
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -351,7 +361,7 @@ private fun HighlightText(text: String) {
         Spacer(modifier = Modifier.width(32.dp))
 
         Text(
-            text = text,
+            text = stringResource(id = R.string.surrounded_with_quotes, text),
             color = FirefoxTheme.colors.textPrimary,
             style = FirefoxTheme.typography.body2,
         )
@@ -437,6 +447,7 @@ private fun ProductRecommendation(
         ReviewQualityCheckCard(
             modifier = Modifier
                 .fillMaxWidth()
+                .semantics { heading() }
                 .clickable {
                     onClick(product.aid, product.productUrl)
                 }
@@ -458,6 +469,8 @@ private fun ProductRecommendation(
                         url = product.imageUrl,
                         modifier = Modifier.size(productRecommendationImageSize),
                         targetSize = productRecommendationImageSize,
+                        placeholder = { ImagePlaceholder() },
+                        fallback = { ImagePlaceholder() },
                     )
 
                     Text(
@@ -497,6 +510,25 @@ private fun ProductRecommendation(
     }
 }
 
+@Composable
+private fun ImagePlaceholder() {
+    Box(
+        modifier = Modifier
+            .size(productRecommendationImageSize)
+            .background(
+                color = FirefoxTheme.colors.layer3,
+                shape = RoundedCornerShape(8.dp),
+            ),
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.ic_file_type_image),
+            contentDescription = null,
+            modifier = Modifier
+                .align(Alignment.Center),
+        )
+    }
+}
+
 private class ProductAnalysisPreviewModel(
     val productRecommendationsEnabled: Boolean?,
     val productAnalysis: AnalysisPresent,
@@ -506,7 +538,7 @@ private class ProductAnalysisPreviewModel(
         productRecommendationsEnabled: Boolean? = false,
         productId: String = "123",
         reviewGrade: ReviewQualityCheckState.Grade? = ReviewQualityCheckState.Grade.B,
-        analysisStatus: AnalysisStatus = AnalysisStatus.UP_TO_DATE,
+        analysisStatus: AnalysisStatus = AnalysisStatus.UpToDate,
         adjustedRating: Float? = 3.6f,
         productUrl: String = "",
         highlightsInfo: HighlightsInfo = HighlightsInfo(
@@ -561,10 +593,10 @@ private class ProductAnalysisPreviewModelParameterProvider :
         get() = sequenceOf(
             ProductAnalysisPreviewModel(),
             ProductAnalysisPreviewModel(
-                analysisStatus = AnalysisStatus.NEEDS_ANALYSIS,
+                analysisStatus = AnalysisStatus.NeedsAnalysis,
             ),
             ProductAnalysisPreviewModel(
-                analysisStatus = AnalysisStatus.REANALYZING,
+                analysisStatus = AnalysisStatus.Reanalyzing(50.0f),
             ),
             ProductAnalysisPreviewModel(
                 reviewGrade = null,

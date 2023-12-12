@@ -617,11 +617,6 @@ class GeckoEngineSessionTest {
         verify(geckoSession, never()).load(GeckoSession.Loader().uri("file://test.txt"))
         verify(geckoSession, never()).load(GeckoSession.Loader().uri("FILE://test.txt"))
 
-        engineSession.loadUrl("content://authority/path/id")
-        engineSession.loadUrl("CoNtEnT://authority/path/id")
-        verify(geckoSession, never()).load(GeckoSession.Loader().uri("content://authority/path/id"))
-        verify(geckoSession, never()).load(GeckoSession.Loader().uri("CoNtEnT://authority/path/id"))
-
         engineSession.loadUrl("resource://package/test.text")
         engineSession.loadUrl("RESOURCE://package/test.text")
         verify(geckoSession, never()).load(GeckoSession.Loader().uri("resource://package/test.text"))
@@ -1728,6 +1723,7 @@ class GeckoEngineSessionTest {
         assertEquals(GeckoAntiTracking.CRYPTOMINING, TrackingCategory.CRYPTOMINING.id)
         assertEquals(GeckoAntiTracking.FINGERPRINTING, TrackingCategory.FINGERPRINTING.id)
         assertEquals(GeckoAntiTracking.STP, TrackingCategory.MOZILLA_SOCIAL.id)
+        assertEquals(GeckoAntiTracking.EMAIL, TrackingCategory.EMAIL.id)
 
         assertEquals(GeckoCookieBehavior.ACCEPT_ALL, CookiePolicy.ACCEPT_ALL.id)
         assertEquals(
@@ -2743,9 +2739,16 @@ class GeckoEngineSessionTest {
         var onExceptionCalled = false
 
         val mUrl = "https://m.example.com"
-        val geckoResult = GeckoResult<String?>()
-        geckoResult.complete("COMPLETED")
-        whenever(geckoSession.requestAnalysisCreationStatus(mUrl))
+        val geckoResult = GeckoResult<GeckoSession.AnalysisStatusResponse>()
+
+        val status = "in_progress"
+        val progress = 90.9
+        val analysisObject = GeckoSession.AnalysisStatusResponse.Builder(status)
+            .progress(progress)
+            .build()
+
+        geckoResult.complete(analysisObject)
+        whenever(geckoSession.requestAnalysisStatus(mUrl))
             .thenReturn(geckoResult)
 
         engineSession.requestAnalysisStatus(
@@ -2977,6 +2980,111 @@ class GeckoEngineSessionTest {
         engineSession.requestTranslationRestore()
 
         shadowOf(getMainLooper()).idle()
+    }
+
+    @Test
+    fun `WHEN session getNeverTranslateSiteSetting is successful THEN onResult should be called`() {
+        val engineSession = GeckoEngineSession(mock(), geckoSessionProvider = geckoSessionProvider)
+        val mockedGeckoController: TranslationsController.SessionTranslation = mock()
+
+        val geckoResult = GeckoResult<Boolean>()
+
+        whenever(geckoSession.sessionTranslation).thenReturn(mockedGeckoController)
+        whenever(geckoSession.sessionTranslation!!.neverTranslateSiteSetting).thenReturn(geckoResult)
+
+        var onResultCalled = false
+        var onExceptionCalled = false
+
+        engineSession.getNeverTranslateSiteSetting(
+            onResult = {
+                onResultCalled = true
+                assertTrue(it)
+            },
+            onException = { onExceptionCalled = true },
+        )
+
+        geckoResult.complete(true)
+        shadowOf(getMainLooper()).idle()
+
+        assertTrue(onResultCalled)
+        assertFalse(onExceptionCalled)
+    }
+
+    @Test
+    fun `WHEN session getNeverTranslateSiteSetting has an error THEN onException should be called`() {
+        val engineSession = GeckoEngineSession(mock(), geckoSessionProvider = geckoSessionProvider)
+        val mockedGeckoController: TranslationsController.SessionTranslation = mock()
+
+        val geckoResult = GeckoResult<Boolean>()
+
+        whenever(geckoSession.sessionTranslation).thenReturn(mockedGeckoController)
+        whenever(geckoSession.sessionTranslation!!.neverTranslateSiteSetting).thenReturn(geckoResult)
+
+        var onResultCalled = false
+        var onExceptionCalled = false
+
+        engineSession.getNeverTranslateSiteSetting(
+            onResult = { onResultCalled = true },
+            onException = { onExceptionCalled = true },
+        )
+
+        geckoResult.completeExceptionally(Exception())
+        shadowOf(getMainLooper()).idle()
+
+        assertFalse(onResultCalled)
+        assertTrue(onExceptionCalled)
+    }
+
+    @Test
+    fun `WHEN session setNeverTranslateSiteSetting is successful THEN onResult should be called`() {
+        val engineSession = GeckoEngineSession(mock(), geckoSessionProvider = geckoSessionProvider)
+        val mockedGeckoController: TranslationsController.SessionTranslation = mock()
+
+        val geckoResult = GeckoResult<Void>()
+
+        whenever(geckoSession.sessionTranslation).thenReturn(mockedGeckoController)
+        whenever(geckoSession.sessionTranslation!!.setNeverTranslateSiteSetting(any())).thenReturn(geckoResult)
+
+        var onResultCalled = false
+        var onExceptionCalled = false
+
+        engineSession.setNeverTranslateSiteSetting(
+            true,
+            onResult = { onResultCalled = true },
+            onException = { onExceptionCalled = true },
+        )
+
+        geckoResult.complete(null)
+        shadowOf(getMainLooper()).idle()
+
+        assertTrue(onResultCalled)
+        assertFalse(onExceptionCalled)
+    }
+
+    @Test
+    fun `WHEN session setNeverTranslateSiteSetting has an error THEN onException should be called`() {
+        val engineSession = GeckoEngineSession(mock(), geckoSessionProvider = geckoSessionProvider)
+        val mockedGeckoController: TranslationsController.SessionTranslation = mock()
+
+        val geckoResult = GeckoResult<Void>()
+
+        whenever(geckoSession.sessionTranslation).thenReturn(mockedGeckoController)
+        whenever(geckoSession.sessionTranslation!!.setNeverTranslateSiteSetting(any())).thenReturn(geckoResult)
+
+        var onResultCalled = false
+        var onExceptionCalled = false
+
+        engineSession.setNeverTranslateSiteSetting(
+            true,
+            onResult = { onResultCalled = true },
+            onException = { onExceptionCalled = true },
+        )
+
+        geckoResult.completeExceptionally(Exception())
+        shadowOf(getMainLooper()).idle()
+
+        assertFalse(onResultCalled)
+        assertTrue(onExceptionCalled)
     }
 
     @Test

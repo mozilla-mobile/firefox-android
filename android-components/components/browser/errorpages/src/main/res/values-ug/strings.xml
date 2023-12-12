@@ -49,9 +49,23 @@
     <!-- The document title and heading of the error page shown when a website uses HSTS. -->
     <string name="mozac_browser_errorpages_security_bad_hsts_cert_title">بۇ تور بېكەت بىخەتەر ئۇلىنىشنى تەلەپ قىلىدۇ.</string>
 
+    <!-- The error message shown when a website uses HSTS. -->
+    <string name="mozac_browser_errorpages_security_bad_hsts_cert_message"><![CDATA[
+      <ul>
+         <li>سىز زىيارەت قىلماقچى بولغان بەتنى كۆرسەتكىلى بولمايدۇ، چۈنكى بۇ تور بېكەت بىخەتەر ئۇلىنىشنى تەلەپ قىلىدۇ.</li>
+         <li>مەسىلە تور بېكەتتە بولۇشى مۇمكىن، ئۇنى سىز ھەل قىلالمايسىز.</li>
+         <li>مەسىلىنى تور بېكەت باشقۇرغۇچىسىغا ئۇقتۇرۇپ قويالايسىز.</li>
+      </ul>
+    ]]></string>
+
     <!-- The text shown inside the advanced button used to expand the advanced options. It's only shown when a website uses HSTS. -->
     <string name="mozac_browser_errorpages_security_bad_hsts_cert_advanced">ئالىي…</string>
 
+    <!-- The advanced certificate information shown when a website uses HSTS. The %1$s will be replaced by the website URL and %2$s will be replaced by the app name. It's only shown when a website uses HSTS. -->
+    <string name="mozac_browser_errorpages_security_bad_hsts_cert_techInfo2"><![CDATA[
+        <label><b>%1$s</b>نىڭ HTTP قاتتىق قاتناش بىخەتەرلىكى (HSTS) دەپ ئاتىلىدىغان بىخەتەرلىك سىياسىتى بار ، يەنى <b>%2$s </b> پەقەت بىخەتەر ئۇلىنالايدۇ. بۇ تور بېكەتنى زىيارەت قىلىش ئۈچۈن مۇستەسنا قوشالمايسىز. </label>
+            
+    ]]></string>
     <!-- The text shown inside the advanced options button used to go back. It's only shown if the user has expanded the advanced options. -->
     <string name="mozac_browser_errorpages_security_bad_hsts_cert_back">قايتىش</string>
 
@@ -72,6 +86,14 @@
 
     <!-- The document title and heading of the error page shown when a website could not be reached. -->
     <string name="mozac_browser_errorpages_connection_failure_title">ئۇلىنالمىدى</string>
+
+    <!-- The error message shown when a website could not be reached. -->
+    <string name="mozac_browser_errorpages_connection_failure_message"><![CDATA[
+      <ul>
+        <li>تور بېكەتنى ۋاقتىنچە ئىشلەتكىلى بولمايدۇ ياكى مۇلازىمىتىر ئالدىراش بولۇشى مۇمكىن. سەل تۇرۇپ قايتا سىناڭ.</li>
+        <li>ئەگەر ھېچقانداق بەتنى يۈكلىيەلمىسىڭىز، ئۈسكۈنىڭىزنىڭ سانلىق مەلۇمات تورى ياكى Wi-Fi ئۇلىنىشىنى تەكشۈرۈڭ.</li>
+      </ul>
+    ]]></string>
 
     <!-- The document title and heading of the error page shown when a website responds in an unexpected way and the browser cannot continue. -->
     <string name="mozac_browser_errorpages_unknown_socket_type_title">كۈتۈلمىگەن مۇلازىمېتىر ئىنكاسى</string>

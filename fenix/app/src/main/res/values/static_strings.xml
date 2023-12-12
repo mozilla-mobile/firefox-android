@@ -70,6 +70,12 @@
     <string name="preferences_debug_settings_translations" translatable="false">Enable Firefox Translations</string>
     <!-- Label for enabling Firefox Suggest -->
     <string name="preferences_debug_settings_fxsuggest" translatable="false">Enable Firefox Suggest</string>
+    <!-- Label for enabling Toolbar Redesign incomplete portions -->
+    <string name="preferences_debug_settings_toolbar_redesign" translatable="false">Enable Toolbar Redesign incomplete portions</string>
+    <!-- Label for enabling Felt Privacy -->
+    <string name="preferences_debug_felt_privacy" translatable="false">Enable Felt Privacy</string>
+    <!-- Label for enabling the Debug Drawer -->
+    <string name="preferences_debug_settings_debug_drawer" translatable="false">Enable Debug Drawer</string>
 
     <!-- A secret menu option in the tabs tray for making a tab inactive for testing. -->
     <string name="inactive_tabs_menu_item">Make inactive</string>
@@ -141,5 +147,4 @@
 
     <string name="translations_bottom_sheet_translating_in_progress">In progress</string>
     <string name="translations_bottom_sheet_translating_in_progress_content_description">Translating in Progress</string>
-
 </resources>

@@ -38,6 +38,7 @@
     <string name="pref_key_delete_browsing_data_on_quit_categories" translatable="false">pref_key_delete_browsing_data_on_quit_categories</string>
     <string name="pref_key_last_known_mode_private" translatable="false">pref_key_last_known_mode_private</string>
     <string name="pref_key_addons" translatable="false">pref_key_addons</string>
+    <string name="pref_key_install_local_addon" translatable="false">pref_key_install_local_addon</string>
     <string name="pref_key_override_amo_user" translatable="false">pref_key_override_amo_user</string>
     <string name="pref_key_override_amo_collection" translatable="false">pref_key_override_amo_collection</string>
     <string name="pref_key_enable_gecko_logs" translatable="false">pref_key_enable_gecko_logs</string>
@@ -77,6 +78,7 @@
     <string name="pref_key_home_blocklist">pref_key_home_blocklist</string>
     <string name="pref_key_hidden_engines_restored" translatable="false">pref_key_hidden_engines_restored</string>
     <string name="pref_key_enable_fxsuggest" translatable="false">pref_key_fxsuggest_enabled</string>
+    <string name="pref_key_enable_debug_drawer" translatable="false">pref_key_enable_debug_drawer</string>
 
     <!-- Data Choices -->
     <string name="pref_key_telemetry" translatable="false">pref_key_telemetry</string>
@@ -136,6 +138,10 @@
     <!-- Toolbar Settings -->
     <string name="pref_key_toolbar_top" translatable="false">pref_key_toolbar_top</string>
     <string name="pref_key_toolbar_bottom" translatable="false">pref_key_toolbar_bottom</string>
+
+    <!-- Toolbar Redesign -->
+    <string name="pref_key_toolbar_use_redesign" translatable="false">pref_key_toolbar_use_redesign</string>
+    <string name="pref_key_toolbar_use_redesign_incomplete" translatable="false">pref_key_toolbar_use_redesign_incomplete</string>
 
     <!-- Privacy Pop Window -->
     <string name="pref_key_privacy_pop_window" translatable="false">pref_key_privacy_pop_window</string>
@@ -212,6 +218,7 @@
     <string name="pref_key_open_links_in_apps_never" translatable="false">pref_key_open_links_in_apps_never</string>
     <string name="pref_key_external_download_manager" translatable="false">pref_key_external_download_manager</string>
     <string name="pref_key_allow_screenshots_in_private_mode" translatable="false">pref_key_allow_screenshots_in_private_mode</string>
+    <string name="pref_key_privacy_enable_global_privacy_control" translatable="false">pref_key_privacy_enable_global_privacy_control</string>
 
     <string name="pref_key_adjust_campaign" translatable="false">pref_key_adjust_campaign</string>
     <string name="pref_key_adjust_network" translatable="false">pref_key_adjust_network</string>
@@ -275,6 +282,8 @@
     <string name="pref_key_should_show_total_cookie_protection_popup" translatable="false">pref_key_should_show_total_cookie_protection_popup</string>
     <!-- A value  of `true` means the erase action popup has not been shown yet -->
     <string name="pref_key_should_show_erase_action_popup" translatable="false">pref_key_should_show_erase_action_popup</string>
+    <!-- A value  of `true` means that we will enable felt privacy features -->
+    <string name="pref_key_should_enable_felt_privacy" translatable="false">pref_key_should_enable_felt_privacy</string>
     <!-- A value  of `true` means the cookie banners handling action popup has not been shown yet -->
     <string name="pref_key_should_show_cookie_banners_action_popup" translatable="false">pref_key_should_show_cookie_banners_action_popup</string>
 
@@ -299,6 +308,8 @@
     <string name="pref_key_login_exceptions" translatable="false">pref_key_login_exceptions</string>
 
     <string name="pref_key_show_collections_placeholder_home" translatable="false">pref_key_show_collections_home</string>
+
+    <string name="pref_key_num_font_list_sent"  translatable="false">pref_key_num_font_list_sent</string>
 
     <!-- Adjust Activated User values-->
     <string name="pref_key_growth_user_activated_sent" translatable="false">pref_key_growth_user_activated_sent</string>
