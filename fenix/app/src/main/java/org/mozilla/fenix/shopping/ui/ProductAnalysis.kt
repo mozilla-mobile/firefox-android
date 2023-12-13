@@ -7,6 +7,7 @@ package org.mozilla.fenix.shopping.ui
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,6 +22,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -109,16 +111,16 @@ fun ProductAnalysis(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        when (productAnalysis.analysisStatus) {
-            AnalysisStatus.NEEDS_ANALYSIS -> {
+        when (val analysisStatus = productAnalysis.analysisStatus) {
+            is AnalysisStatus.NeedsAnalysis -> {
                 ReanalyzeCard(onReanalyzeClick = onReanalyzeClick)
             }
 
-            AnalysisStatus.REANALYZING -> {
-                ReanalysisInProgressCard()
+            is AnalysisStatus.Reanalyzing -> {
+                ReanalysisInProgress(analysisStatus)
             }
 
-            AnalysisStatus.UP_TO_DATE -> {
+            is AnalysisStatus.UpToDate -> {
                 // no-op
             }
         }
@@ -193,12 +195,27 @@ private fun ReanalyzeCard(
 }
 
 @Composable
-private fun ReanalysisInProgressCard() {
-    ReviewQualityCheckInfoCard(
-        title = stringResource(R.string.review_quality_check_reanalysis_in_progress_warning_title),
-        type = ReviewQualityCheckInfoType.Loading,
-        modifier = Modifier.fillMaxWidth(),
-    )
+private fun ReanalysisInProgress(reanalyzing: AnalysisStatus.Reanalyzing) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier.padding(vertical = 8.dp),
+    ) {
+        DeterminateProgressIndicator(
+            progress = reanalyzing.progress.normalizedProgress,
+            modifier = Modifier.size(24.dp),
+        )
+
+        Text(
+            text = stringResource(
+                id = R.string.review_quality_check_analysis_in_progress_warning_title_2,
+                reanalyzing.progress.formattedProgress,
+            ),
+            style = FirefoxTheme.typography.subtitle1,
+            color = FirefoxTheme.colors.textPrimary,
+            modifier = Modifier.fillMaxWidth(),
+        )
+    }
 }
 
 @Composable
@@ -247,7 +264,7 @@ private fun AdjustedProductRatingCard(
         }
 
         Text(
-            text = stringResource(R.string.review_quality_check_adjusted_rating_description),
+            text = stringResource(R.string.review_quality_check_adjusted_rating_description_2),
             color = FirefoxTheme.colors.textPrimary,
             style = FirefoxTheme.typography.caption,
         )
@@ -270,7 +287,8 @@ private fun HighlightsCard(
                 highlightsInfo.highlightsForCompactMode
             }
         }
-        val titleContentDescription = headingResource(id = R.string.review_quality_check_highlights_title)
+        val titleContentDescription =
+            headingResource(id = R.string.review_quality_check_highlights_title)
 
         Text(
             text = stringResource(R.string.review_quality_check_highlights_title),
@@ -359,7 +377,7 @@ private fun HighlightText(text: String) {
         Spacer(modifier = Modifier.width(32.dp))
 
         Text(
-            text = text,
+            text = stringResource(id = R.string.surrounded_with_quotes, text),
             color = FirefoxTheme.colors.textPrimary,
             style = FirefoxTheme.typography.body2,
         )
@@ -389,16 +407,17 @@ private fun HighlightTitle(highlightType: HighlightType) {
     }
 }
 
-private fun Modifier.extendWidthToParentBorder(): Modifier = this.layout { measurable, constraints ->
-    val placeable = measurable.measure(
-        constraints.copy(
-            maxWidth = constraints.maxWidth + combinedParentHorizontalPadding.roundToPx(),
-        ),
-    )
-    layout(placeable.width, placeable.height) {
-        placeable.place(0, 0)
+private fun Modifier.extendWidthToParentBorder(): Modifier =
+    this.layout { measurable, constraints ->
+        val placeable = measurable.measure(
+            constraints.copy(
+                maxWidth = constraints.maxWidth + combinedParentHorizontalPadding.roundToPx(),
+            ),
+        )
+        layout(placeable.width, placeable.height) {
+            placeable.place(0, 0)
+        }
     }
-}
 
 private fun HighlightType.toHighlight() =
     when (this) {
@@ -467,6 +486,8 @@ private fun ProductRecommendation(
                         url = product.imageUrl,
                         modifier = Modifier.size(productRecommendationImageSize),
                         targetSize = productRecommendationImageSize,
+                        placeholder = { ImagePlaceholder() },
+                        fallback = { ImagePlaceholder() },
                     )
 
                     Text(
@@ -506,6 +527,25 @@ private fun ProductRecommendation(
     }
 }
 
+@Composable
+private fun ImagePlaceholder() {
+    Box(
+        modifier = Modifier
+            .size(productRecommendationImageSize)
+            .background(
+                color = FirefoxTheme.colors.layer3,
+                shape = RoundedCornerShape(8.dp),
+            ),
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.ic_file_type_image),
+            contentDescription = null,
+            modifier = Modifier
+                .align(Alignment.Center),
+        )
+    }
+}
+
 private class ProductAnalysisPreviewModel(
     val productRecommendationsEnabled: Boolean?,
     val productAnalysis: AnalysisPresent,
@@ -515,7 +555,7 @@ private class ProductAnalysisPreviewModel(
         productRecommendationsEnabled: Boolean? = false,
         productId: String = "123",
         reviewGrade: ReviewQualityCheckState.Grade? = ReviewQualityCheckState.Grade.B,
-        analysisStatus: AnalysisStatus = AnalysisStatus.UP_TO_DATE,
+        analysisStatus: AnalysisStatus = AnalysisStatus.UpToDate,
         adjustedRating: Float? = 3.6f,
         productUrl: String = "",
         highlightsInfo: HighlightsInfo = HighlightsInfo(
@@ -570,10 +610,17 @@ private class ProductAnalysisPreviewModelParameterProvider :
         get() = sequenceOf(
             ProductAnalysisPreviewModel(),
             ProductAnalysisPreviewModel(
-                analysisStatus = AnalysisStatus.NEEDS_ANALYSIS,
+                analysisStatus = AnalysisStatus.NeedsAnalysis,
             ),
             ProductAnalysisPreviewModel(
-                analysisStatus = AnalysisStatus.REANALYZING,
+                analysisStatus = AnalysisStatus.Reanalyzing(
+                    ReviewQualityCheckState.OptedIn.ProductReviewState.Progress(40f),
+                ),
+            ),
+            ProductAnalysisPreviewModel(
+                analysisStatus = AnalysisStatus.Reanalyzing(
+                    ReviewQualityCheckState.OptedIn.ProductReviewState.Progress(95f),
+                ),
             ),
             ProductAnalysisPreviewModel(
                 reviewGrade = null,
