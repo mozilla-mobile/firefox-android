@@ -13,6 +13,7 @@ import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.IBinder
 import androidx.annotation.CallSuper
+import androidx.annotation.VisibleForTesting
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.VISIBILITY_SECRET
 import androidx.core.app.NotificationManagerCompat.IMPORTANCE_LOW
@@ -224,14 +225,17 @@ abstract class AbstractPrivateNotificationService(
 
         // List of Intent actions that will get ignored when they are in the root intent that gets
         // passed to onTaskRemoved().
-        private val ignoreTaskActions = listOf(
+        @VisibleForTesting
+        internal val ignoreTaskActions = listOf(
             "mozilla.components.feature.pwa.VIEW_PWA",
         )
 
         // List of Intent components classes that will get ignored when they are in the root intent
         // that gets passed to onTaskRemoved().
-        private val ignoreTaskComponentClasses = listOf(
+        @VisibleForTesting
+        internal val ignoreTaskComponentClasses = listOf(
             "org.mozilla.fenix.customtabs.ExternalAppBrowserActivity",
+            "org.mozilla.fenix.IntentReceiverActivity",
         )
     }
 }
