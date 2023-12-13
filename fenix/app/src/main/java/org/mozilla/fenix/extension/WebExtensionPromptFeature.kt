@@ -48,10 +48,6 @@ class WebExtensionPromptFeature(
      */
     var onAddonChanged: (Addon) -> Unit = {}
 
-    /**
-     * Whether or not an add-on installation is in progress.
-     */
-    private var isInstallationInProgress = false
     private var scope: CoroutineScope? = null
 
     /**
@@ -221,7 +217,7 @@ class WebExtensionPromptFeature(
         forOptionalPermissions: Boolean = false,
         optionalPermissions: List<String> = emptyList(),
     ) {
-        if (isInstallationInProgress || hasExistingPermissionDialogFragment()) {
+        if (hasExistingPermissionDialogFragment()) {
             return
         }
 
@@ -327,7 +323,7 @@ class WebExtensionPromptFeature(
     }
 
     private fun showPostInstallationDialog(addon: Addon) {
-        if (!isInstallationInProgress && !hasExistingAddonPostInstallationDialogFragment()) {
+        if (!hasExistingAddonPostInstallationDialogFragment()) {
             // Fragment may not be attached to the context anymore during onConfirmButtonClicked handling,
             // but we still want to be able to process user selection of the 'allowInPrivateBrowsing' pref.
             // This is a best-effort attempt to do so - retain a weak reference to the application context

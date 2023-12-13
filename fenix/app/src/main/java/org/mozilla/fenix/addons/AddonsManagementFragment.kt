@@ -192,10 +192,9 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
         binding?.addonProgressOverlay?.cancelButton?.setOnClickListener {
             lifecycleScope.launch(Dispatchers.Main) {
                 val safeBinding = binding
-                // Hide the installation progress overlay once cancellation is successful.
-                if (installOperation.cancel().await()) {
-                    safeBinding?.addonProgressOverlay?.overlayCardView?.visibility = View.GONE
-                }
+                // Hide the installation progress overlay once cancellation is finished.
+                installOperation.cancel().await()
+                safeBinding?.addonProgressOverlay?.overlayCardView?.visibility = View.GONE
             }
         }
     }

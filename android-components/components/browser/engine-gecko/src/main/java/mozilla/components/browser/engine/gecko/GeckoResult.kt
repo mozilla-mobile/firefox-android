@@ -11,6 +11,7 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.launch
 import mozilla.components.concept.engine.CancellableOperation
 import org.mozilla.geckoview.GeckoResult
+import java.lang.Exception
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.coroutines.resume
@@ -43,10 +44,15 @@ fun <T> GeckoResult<T>.asCancellableOperation(): CancellableOperation {
             val result = CompletableDeferred<Boolean>()
             geckoResult.cancel().then(
                 {
+                    // Notify the geckoResult that there were able to cancel the request
+                    if (it == null || it == false) {
+                        geckoResult.completeExceptionally(Exception("Unable to cancel"))
+                    }
                     result.complete(it ?: false)
                     GeckoResult<Void>()
                 },
                 { throwable ->
+                    geckoResult.completeExceptionally(throwable)
                     result.completeExceptionally(throwable)
                     GeckoResult<Void>()
                 },
