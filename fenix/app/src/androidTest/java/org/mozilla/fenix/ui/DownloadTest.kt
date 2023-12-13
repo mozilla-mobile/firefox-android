@@ -386,4 +386,31 @@ class DownloadTest {
             clickDownloadNotificationControlButton("CANCEL")
         }
     }
+
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/457111
+    @Test
+    fun restartDownloadFromSystemNotificationAfterConnectionIsInterruptedTest() {
+        downloadFile = "3GB.zip"
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(downloadTestPage.toUri()) {
+            waitForPageToLoad()
+        }.clickDownloadLink(downloadFile) {
+            verifyDownloadPrompt(downloadFile)
+            setNetworkEnabled(false)
+        }.clickDownload {
+            verifyDownloadFailedPrompt(downloadFile)
+        }
+
+        browserScreen {
+        }.openNotificationShade {
+            setNetworkEnabled(true)
+            expandNotificationMessage()
+            verifySystemNotificationExists("Download failed")
+            clickDownloadNotificationControlButton("TRY AGAIN")
+            expandNotificationMessage()
+            verifySystemNotificationDoesNotExist("Download failed")
+            clickDownloadNotificationControlButton("CANCEL")
+        }
+    }
 }
