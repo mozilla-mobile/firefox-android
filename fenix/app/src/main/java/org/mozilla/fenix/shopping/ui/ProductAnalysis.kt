@@ -36,6 +36,10 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.CollectionInfo
+import androidx.compose.ui.semantics.CollectionItemInfo
+import androidx.compose.ui.semantics.collectionInfo
+import androidx.compose.ui.semantics.collectionItemInfo
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
@@ -111,16 +115,16 @@ fun ProductAnalysis(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        when (productAnalysis.analysisStatus) {
-            AnalysisStatus.NeedsAnalysis -> {
+        when (val analysisStatus = productAnalysis.analysisStatus) {
+            is AnalysisStatus.NeedsAnalysis -> {
                 ReanalyzeCard(onReanalyzeClick = onReanalyzeClick)
             }
 
             is AnalysisStatus.Reanalyzing -> {
-                ReanalysisInProgressCard()
+                ReanalysisInProgress(analysisStatus)
             }
 
-            AnalysisStatus.UpToDate -> {
+            is AnalysisStatus.UpToDate -> {
                 // no-op
             }
         }
@@ -195,12 +199,27 @@ private fun ReanalyzeCard(
 }
 
 @Composable
-private fun ReanalysisInProgressCard() {
-    ReviewQualityCheckInfoCard(
-        title = stringResource(R.string.review_quality_check_reanalysis_in_progress_warning_title),
-        type = ReviewQualityCheckInfoType.Loading,
-        modifier = Modifier.fillMaxWidth(),
-    )
+private fun ReanalysisInProgress(reanalyzing: AnalysisStatus.Reanalyzing) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier.padding(vertical = 8.dp),
+    ) {
+        DeterminateProgressIndicator(
+            progress = reanalyzing.progress.normalizedProgress,
+            modifier = Modifier.size(24.dp),
+        )
+
+        Text(
+            text = stringResource(
+                id = R.string.review_quality_check_analysis_in_progress_warning_title_2,
+                reanalyzing.progress.formattedProgress,
+            ),
+            style = FirefoxTheme.typography.subtitle1,
+            color = FirefoxTheme.colors.textPrimary,
+            modifier = Modifier.fillMaxWidth(),
+        )
+    }
 }
 
 @Composable
@@ -272,7 +291,8 @@ private fun HighlightsCard(
                 highlightsInfo.highlightsForCompactMode
             }
         }
-        val titleContentDescription = headingResource(id = R.string.review_quality_check_highlights_title)
+        val titleContentDescription =
+            headingResource(id = R.string.review_quality_check_highlights_title)
 
         Text(
             text = stringResource(R.string.review_quality_check_highlights_title),
@@ -295,19 +315,52 @@ private fun HighlightsCard(
                     .fillMaxWidth()
                     .animateContentSize(animationSpec = spring()),
             ) {
-                highlightsToDisplay.forEach { highlight ->
-                    HighlightTitle(highlight.key)
+                highlightsToDisplay.onEachIndexed { indexHighlightTitle, highlight ->
+                    Box(
+                        modifier = Modifier.semantics {
+                            collectionInfo = CollectionInfo(rowCount = highlightsToDisplay.size, columnCount = 1)
+                        },
+                    ) {
+                        HighlightTitle(
+                            highlightType = highlight.key,
+                            modifier = Modifier.semantics {
+                                collectionItemInfo = CollectionItemInfo(
+                                    rowIndex = indexHighlightTitle,
+                                    rowSpan = 1,
+                                    columnIndex = 1,
+                                    columnSpan = 1,
+                                )
+                            },
+                        )
+                    }
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    highlight.value.forEach {
-                        HighlightText(it)
+                    Column(
+                        modifier = Modifier.semantics {
+                            collectionInfo =
+                                CollectionInfo(rowCount = highlight.value.size, columnCount = 1)
+                        },
+                    ) {
+                        highlight.value.onEachIndexed { index, text ->
+                            HighlightText(
+                                text = text,
+                                modifier = Modifier.semantics {
+                                    collectionItemInfo = CollectionItemInfo(
+                                        rowIndex = index,
+                                        rowSpan = 1,
+                                        columnIndex = 1,
+                                        columnSpan = 1,
+                                    )
+                                },
+                            )
 
-                        Spacer(modifier = Modifier.height(4.dp))
-                    }
+                            Spacer(modifier = Modifier.height(4.dp))
+                        }
 
-                    if (highlightsToDisplay.entries.last().key != highlight.key) {
-                        Spacer(modifier = Modifier.height(16.dp))
+                        if (highlightsToDisplay.entries.last().key != highlight.key) {
+                            Spacer(modifier = Modifier.height(16.dp))
+                        }
                     }
                 }
             }
@@ -354,9 +407,13 @@ private fun HighlightsCard(
 }
 
 @Composable
-private fun HighlightText(text: String) {
+private fun HighlightText(
+    text: String,
+    modifier: Modifier = Modifier,
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier,
     ) {
         Spacer(modifier = Modifier.width(32.dp))
 
@@ -369,9 +426,13 @@ private fun HighlightText(text: String) {
 }
 
 @Composable
-private fun HighlightTitle(highlightType: HighlightType) {
+private fun HighlightTitle(
+    highlightType: HighlightType,
+    modifier: Modifier = Modifier,
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier,
     ) {
         val highlight = remember(highlightType) { highlightType.toHighlight() }
 
@@ -391,16 +452,17 @@ private fun HighlightTitle(highlightType: HighlightType) {
     }
 }
 
-private fun Modifier.extendWidthToParentBorder(): Modifier = this.layout { measurable, constraints ->
-    val placeable = measurable.measure(
-        constraints.copy(
-            maxWidth = constraints.maxWidth + combinedParentHorizontalPadding.roundToPx(),
-        ),
-    )
-    layout(placeable.width, placeable.height) {
-        placeable.place(0, 0)
+private fun Modifier.extendWidthToParentBorder(): Modifier =
+    this.layout { measurable, constraints ->
+        val placeable = measurable.measure(
+            constraints.copy(
+                maxWidth = constraints.maxWidth + combinedParentHorizontalPadding.roundToPx(),
+            ),
+        )
+        layout(placeable.width, placeable.height) {
+            placeable.place(0, 0)
+        }
     }
-}
 
 private fun HighlightType.toHighlight() =
     when (this) {
@@ -596,7 +658,14 @@ private class ProductAnalysisPreviewModelParameterProvider :
                 analysisStatus = AnalysisStatus.NeedsAnalysis,
             ),
             ProductAnalysisPreviewModel(
-                analysisStatus = AnalysisStatus.Reanalyzing(50.0f),
+                analysisStatus = AnalysisStatus.Reanalyzing(
+                    ReviewQualityCheckState.OptedIn.ProductReviewState.Progress(40f),
+                ),
+            ),
+            ProductAnalysisPreviewModel(
+                analysisStatus = AnalysisStatus.Reanalyzing(
+                    ReviewQualityCheckState.OptedIn.ProductReviewState.Progress(95f),
+                ),
             ),
             ProductAnalysisPreviewModel(
                 reviewGrade = null,
