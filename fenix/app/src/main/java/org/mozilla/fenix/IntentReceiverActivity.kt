@@ -17,7 +17,7 @@ import mozilla.components.support.utils.EXTRA_ACTIVITY_REFERRER_CATEGORY
 import mozilla.components.support.utils.EXTRA_ACTIVITY_REFERRER_PACKAGE
 import mozilla.components.support.utils.ext.getApplicationInfoCompat
 import org.mozilla.fenix.GleanMetrics.Events
-import org.mozilla.fenix.HomeActivity.Companion.PRIVATE_BROWSING_MODE
+import org.mozilla.fenix.FenixActivity.Companion.PRIVATE_BROWSING_MODE
 import org.mozilla.fenix.components.IntentProcessorType
 import org.mozilla.fenix.components.getType
 import org.mozilla.fenix.ext.components
@@ -83,9 +83,9 @@ class IntentReceiverActivity : Activity() {
     internal fun launch(intent: Intent, intentProcessorType: IntentProcessorType) {
         intent.setClassName(applicationContext, intentProcessorType.activityClassName)
 
-        if (!intent.hasExtra(HomeActivity.OPEN_TO_BROWSER)) {
+        if (!intent.hasExtra(FenixActivity.OPEN_TO_BROWSER)) {
             intent.putExtra(
-                HomeActivity.OPEN_TO_BROWSER,
+                FenixActivity.OPEN_TO_BROWSER,
                 intentProcessorType.shouldOpenToBrowser(intent),
             )
         }

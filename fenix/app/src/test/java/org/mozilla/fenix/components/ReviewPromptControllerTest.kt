@@ -18,7 +18,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.GleanMetrics.ReviewPrompt
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -63,7 +63,7 @@ class ReviewPromptControllerTest {
         )
 
         controller.reviewPromptIsReady = true
-        controller.promptReview(HomeActivity())
+        controller.promptReview(FenixActivity())
 
         assertEquals(settings.lastReviewPromptTimeInMillis, 0L)
         assertFalse(promptWasCalled)
@@ -86,7 +86,7 @@ class ReviewPromptControllerTest {
         )
 
         controller.reviewPromptIsReady = true
-        controller.promptReview(HomeActivity())
+        controller.promptReview(FenixActivity())
         assertEquals(100L, settings.lastReviewPromptTimeInMillis)
         assertTrue(promptWasCalled)
     }
@@ -107,7 +107,7 @@ class ReviewPromptControllerTest {
             { promptWasCalled = true },
         )
 
-        controller.promptReview(HomeActivity())
+        controller.promptReview(FenixActivity())
         assertFalse(promptWasCalled)
     }
 
@@ -130,7 +130,7 @@ class ReviewPromptControllerTest {
         controller.reviewPromptIsReady = true
 
         assertTrue(controller.reviewPromptIsReady)
-        controller.promptReview(HomeActivity())
+        controller.promptReview(FenixActivity())
 
         assertFalse(controller.reviewPromptIsReady)
         assertTrue(promptWasCalled)

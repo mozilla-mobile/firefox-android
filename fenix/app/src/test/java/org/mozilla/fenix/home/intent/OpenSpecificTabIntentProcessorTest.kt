@@ -22,13 +22,13 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.BrowserDirection
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 
 @RunWith(FenixRobolectricTestRunner::class)
 class OpenSpecificTabIntentProcessorTest {
-    private lateinit var activity: HomeActivity
+    private lateinit var activity: FenixActivity
     private lateinit var navController: NavController
     private lateinit var out: Intent
     private lateinit var processor: OpenSpecificTabIntentProcessor

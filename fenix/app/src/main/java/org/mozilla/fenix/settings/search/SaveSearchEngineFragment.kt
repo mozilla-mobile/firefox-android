@@ -19,7 +19,7 @@ import kotlinx.coroutines.withContext
 import mozilla.components.browser.icons.IconRequest
 import mozilla.components.feature.search.ext.createSearchEngine
 import org.mozilla.fenix.BrowserDirection
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.databinding.FragmentSaveSearchEngineBinding
@@ -84,7 +84,7 @@ class SaveSearchEngineFragment : Fragment(R.layout.fragment_save_search_engine) 
         }
 
         val learnMoreListener: (View) -> Unit = {
-            (activity as HomeActivity).openToBrowserAndLoad(
+            (activity as FenixActivity).openToBrowserAndLoad(
                 searchTermOrURL = SupportUtils.getSumoURLForTopic(
                     requireContext(),
                     SupportUtils.SumoTopic.CUSTOM_SEARCH_ENGINES,

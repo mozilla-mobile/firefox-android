@@ -38,7 +38,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.FenixApplication
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.toolbar.BrowserToolbarView
 import org.mozilla.fenix.components.toolbar.ToolbarIntegration
@@ -57,7 +57,7 @@ class BrowserFragmentTest {
     private lateinit var testTab: TabSessionState
     private lateinit var browserFragment: BrowserFragment
     private lateinit var view: View
-    private lateinit var homeActivity: HomeActivity
+    private lateinit var fenixActivity: FenixActivity
     private lateinit var fenixApplication: FenixApplication
     private lateinit var context: Context
     private lateinit var lifecycleOwner: MockedLifecycleOwner
@@ -73,7 +73,7 @@ class BrowserFragmentTest {
         fenixApplication = mockk(relaxed = true)
         every { context.application } returns fenixApplication
 
-        homeActivity = mockk(relaxed = true)
+        fenixActivity = mockk(relaxed = true)
         view = mockk(relaxed = true)
         lifecycleOwner = MockedLifecycleOwner(Lifecycle.State.STARTED)
         navController = mockk(relaxed = true)
@@ -83,7 +83,7 @@ class BrowserFragmentTest {
         every { browserFragment.view } returns view
         every { browserFragment.isAdded } returns true
         every { browserFragment.browserToolbarView } returns mockk(relaxed = true)
-        every { browserFragment.activity } returns homeActivity
+        every { browserFragment.activity } returns fenixActivity
         every { browserFragment.lifecycle } returns lifecycleOwner.lifecycle
         every { context.components.fenixOnboarding } returns onboarding
 

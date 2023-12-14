@@ -12,7 +12,7 @@ import mozilla.components.concept.engine.EngineSession.LoadUrlFlags.Companion.AL
 import mozilla.components.feature.tabs.TabsUseCases
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.GleanMetrics.RecentBookmarks
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.appstate.AppAction
@@ -47,7 +47,7 @@ interface RecentBookmarksController {
  * The default implementation of [RecentBookmarksController].
  */
 class DefaultRecentBookmarksController(
-    private val activity: HomeActivity,
+    private val activity: FenixActivity,
     private val navController: NavController,
     private val appStore: AppStore,
     private val browserStore: BrowserStore,

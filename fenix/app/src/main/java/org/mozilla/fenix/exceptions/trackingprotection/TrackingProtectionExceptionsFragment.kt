@@ -10,7 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import mozilla.components.lib.state.ext.consumeFrom
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.databinding.FragmentExceptionsBinding
@@ -48,7 +48,7 @@ class TrackingProtectionExceptionsFragment : Fragment() {
             )
         }
         exceptionsInteractor = DefaultTrackingProtectionExceptionsInteractor(
-            activity = activity as HomeActivity,
+            activity = activity as FenixActivity,
             exceptionsStore = exceptionsStore,
             trackingProtectionUseCases = requireComponents.useCases.trackingProtectionUseCases,
         )

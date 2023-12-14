@@ -8,7 +8,7 @@ import android.app.Activity
 import android.app.Application
 import android.os.Bundle
 import mozilla.components.support.utils.RunWhenReadyQueue
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.IntentReceiverActivity
 import org.mozilla.fenix.settings.account.AuthIntentReceiverActivity
 import org.mozilla.fenix.widget.VoiceSearchActivity
@@ -48,7 +48,7 @@ class PerformanceActivityLifecycleCallbacks(
             return !isTransientActivity(activity)
         }
 
-        if (activity is HomeActivity) {
+        if (activity is FenixActivity) {
             // We should delay the visualCompletenessQueue when reaching the HomeActivity
             // to ensure all tasks are delayed until after visual completeness
             activity.setVisualCompletenessQueueReady()

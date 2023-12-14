@@ -7,7 +7,7 @@ package org.mozilla.fenix.exceptions.trackingprotection
 import mozilla.components.concept.engine.content.blocking.TrackingProtectionException
 import mozilla.components.feature.session.TrackingProtectionUseCases
 import org.mozilla.fenix.BrowserDirection
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.exceptions.ExceptionsInteractor
 import org.mozilla.fenix.openToBrowserAndLoad
 import org.mozilla.fenix.settings.SupportUtils
@@ -20,7 +20,7 @@ interface TrackingProtectionExceptionsInteractor : ExceptionsInteractor<Tracking
 }
 
 class DefaultTrackingProtectionExceptionsInteractor(
-    private val activity: HomeActivity,
+    private val activity: FenixActivity,
     private val exceptionsStore: ExceptionsFragmentStore,
     private val trackingProtectionUseCases: TrackingProtectionUseCases,
 ) : TrackingProtectionExceptionsInteractor {

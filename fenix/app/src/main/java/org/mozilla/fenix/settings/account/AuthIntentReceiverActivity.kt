@@ -10,7 +10,7 @@ import android.os.Bundle
 import androidx.annotation.VisibleForTesting
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 
@@ -36,7 +36,7 @@ class AuthIntentReceiverActivity : Activity() {
             }
 
             intent.setClassName(applicationContext, AuthCustomTabActivity::class.java.name)
-            intent.putExtra(HomeActivity.OPEN_TO_BROWSER, true)
+            intent.putExtra(FenixActivity.OPEN_TO_BROWSER, true)
 
             startActivity(intent)
 

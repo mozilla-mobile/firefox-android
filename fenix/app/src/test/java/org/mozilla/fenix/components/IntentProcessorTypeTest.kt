@@ -16,7 +16,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.customtabs.ExternalAppBrowserActivity
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
@@ -54,7 +54,7 @@ class IntentProcessorTypeTest {
         val type = testContext.components.intentProcessors.getType(processor)
 
         assertEquals(IntentProcessorType.NEW_TAB, type)
-        assertEquals(HomeActivity::class.java.name, type.activityClassName)
+        assertEquals(FenixActivity::class.java.name, type.activityClassName)
     }
 
     @Test
@@ -63,7 +63,7 @@ class IntentProcessorTypeTest {
         val type = testContext.components.intentProcessors.getType(processor)
 
         assertEquals(IntentProcessorType.NEW_TAB, type)
-        assertEquals(HomeActivity::class.java.name, type.activityClassName)
+        assertEquals(FenixActivity::class.java.name, type.activityClassName)
     }
 
     @Test
@@ -72,7 +72,7 @@ class IntentProcessorTypeTest {
         val type = testContext.components.intentProcessors.getType(processor)
 
         assertEquals(IntentProcessorType.NEW_TAB, type)
-        assertEquals(HomeActivity::class.java.name, type.activityClassName)
+        assertEquals(FenixActivity::class.java.name, type.activityClassName)
     }
 
     @Test
@@ -118,7 +118,7 @@ class IntentProcessorTypeTest {
         val type = testContext.components.intentProcessors.getType(processor)
 
         assertEquals(IntentProcessorType.EXTERNAL_DEEPLINK, type)
-        assertEquals(HomeActivity::class.java.name, type.activityClassName)
+        assertEquals(FenixActivity::class.java.name, type.activityClassName)
     }
 
     @Test
@@ -129,6 +129,6 @@ class IntentProcessorTypeTest {
         val type = testContext.components.intentProcessors.getType(processor)
 
         assertEquals(IntentProcessorType.OTHER, type)
-        assertEquals(HomeActivity::class.java.name, type.activityClassName)
+        assertEquals(FenixActivity::class.java.name, type.activityClassName)
     }
 }

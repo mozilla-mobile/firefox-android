@@ -10,7 +10,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import mozilla.components.ui.widgets.withCenterAlignedButtons
 import org.mozilla.fenix.BrowserDirection
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.FragmentAddNewDeviceBinding
 import org.mozilla.fenix.ext.showToolbar
@@ -32,7 +32,7 @@ class AddNewDeviceFragment : Fragment(R.layout.fragment_add_new_device) {
 
         val binding = FragmentAddNewDeviceBinding.bind(view)
         binding.learnButton.setOnClickListener {
-            (activity as HomeActivity).openToBrowserAndLoad(
+            (activity as FenixActivity).openToBrowserAndLoad(
                 searchTermOrURL = SupportUtils.getSumoURLForTopic(
                     requireContext(),
                     SupportUtils.SumoTopic.SEND_TABS,

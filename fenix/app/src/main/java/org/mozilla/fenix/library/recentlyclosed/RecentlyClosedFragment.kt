@@ -25,7 +25,7 @@ import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.GleanMetrics.RecentlyClosedTabs
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.StoreProvider
@@ -119,7 +119,7 @@ class RecentlyClosedFragment :
             navController = findNavController(),
             browserStore = requireComponents.core.store,
             recentlyClosedStore = recentlyClosedFragmentStore,
-            activity = activity as HomeActivity,
+            activity = activity as FenixActivity,
             tabsUseCases = requireComponents.useCases.tabsUseCases,
             recentlyClosedTabsStorage = requireComponents.core.recentlyClosedTabsStorage.value,
             lifecycleScope = lifecycleScope,
@@ -139,9 +139,9 @@ class RecentlyClosedFragment :
     }
 
     private fun openItem(url: String, mode: BrowsingMode? = null) {
-        mode?.let { (activity as HomeActivity).browsingModeManager.mode = it }
+        mode?.let { (activity as FenixActivity).browsingModeManager.mode = it }
 
-        (activity as HomeActivity).openToBrowserAndLoad(
+        (activity as FenixActivity).openToBrowserAndLoad(
             searchTermOrURL = url,
             newTab = true,
             from = BrowserDirection.FromRecentlyClosed,

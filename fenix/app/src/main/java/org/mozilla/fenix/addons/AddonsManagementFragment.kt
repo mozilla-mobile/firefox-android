@@ -29,7 +29,7 @@ import mozilla.components.feature.addons.ui.AddonsManagerAdapterDelegate
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.databinding.FragmentAddOnsManagementBinding
@@ -58,7 +58,7 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentAddOnsManagementBinding.bind(view)
         bindRecyclerView()
-        (activity as HomeActivity).webExtensionPromptFeature.onAddonChanged = {
+        (activity as FenixActivity).webExtensionPromptFeature.onAddonChanged = {
             runIfFragmentIsAttached {
                 adapter?.updateAddon(it)
             }
@@ -75,7 +75,7 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
         // letting go of the resources to avoid memory leak.
         adapter = null
         binding = null
-        (activity as HomeActivity).webExtensionPromptFeature.onAddonChanged = {}
+        (activity as FenixActivity).webExtensionPromptFeature.onAddonChanged = {}
     }
 
     private fun bindRecyclerView() {
@@ -235,7 +235,7 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
     }
 
     private fun openLinkInNewTab(url: String) {
-        (activity as HomeActivity).openToBrowserAndLoad(
+        (activity as FenixActivity).openToBrowserAndLoad(
             searchTermOrURL = url,
             newTab = true,
             from = BrowserDirection.FromAddonsManagementFragment,

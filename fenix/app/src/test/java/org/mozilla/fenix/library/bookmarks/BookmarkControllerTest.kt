@@ -39,7 +39,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.BrowserDirection
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.Services
@@ -59,7 +59,7 @@ class BookmarkControllerTest {
     private val navController: NavController = mockk(relaxed = true)
     private val sharedViewModel: BookmarksSharedViewModel = mockk()
     private val tabsUseCases: TabsUseCases = mockk()
-    private val homeActivity: HomeActivity = mockk(relaxed = true)
+    private val fenixActivity: FenixActivity = mockk(relaxed = true)
     private val services: Services = mockk(relaxed = true)
     private val addNewTabUseCase: TabsUseCases.AddNewTabUseCase = mockk(relaxed = true)
     private val navBackStackEntry: NavBackStackEntry = mockk(relaxed = true)
@@ -112,7 +112,7 @@ class BookmarkControllerTest {
 
     @Before
     fun setup() {
-        every { homeActivity.components.services } returns services
+        every { fenixActivity.components.services } returns services
         every { navController.currentDestination } returns NavDestination("").apply {
             id = R.id.bookmarkFragment
         }
@@ -141,7 +141,7 @@ class BookmarkControllerTest {
         createController().handleBookmarkTapped(item)
 
         verify {
-            homeActivity.openToBrowserAndLoad(
+            fenixActivity.openToBrowserAndLoad(
                 item.url!!,
                 false,
                 BrowserDirection.FromBookmarks,
@@ -159,7 +159,7 @@ class BookmarkControllerTest {
         createController().handleBookmarkTapped(item)
 
         verify {
-            homeActivity.openToBrowserAndLoad(
+            fenixActivity.openToBrowserAndLoad(
                 item.url!!,
                 true,
                 BrowserDirection.FromBookmarks,
@@ -170,13 +170,13 @@ class BookmarkControllerTest {
 
     @Test
     fun `WHEN handleBookmarkTapped is called with private browsing THEN load the bookmark in new tab`() {
-        every { homeActivity.browsingModeManager.mode } returns BrowsingMode.Private
+        every { fenixActivity.browsingModeManager.mode } returns BrowsingMode.Private
         val flags = EngineSession.LoadUrlFlags.select(EngineSession.LoadUrlFlags.ALLOW_JAVASCRIPT_URL)
 
         createController().handleBookmarkTapped(item)
 
         verify {
-            homeActivity.openToBrowserAndLoad(
+            fenixActivity.openToBrowserAndLoad(
                 item.url!!,
                 true,
                 BrowserDirection.FromBookmarks,
@@ -188,17 +188,17 @@ class BookmarkControllerTest {
     @Test
     fun `handleBookmarkTapped should respect browsing mode`() {
         // if in normal mode, should be in normal mode
-        every { homeActivity.browsingModeManager.mode } returns BrowsingMode.Normal
+        every { fenixActivity.browsingModeManager.mode } returns BrowsingMode.Normal
 
         val controller = createController()
         controller.handleBookmarkTapped(item)
-        assertEquals(BrowsingMode.Normal, homeActivity.browsingModeManager.mode)
+        assertEquals(BrowsingMode.Normal, fenixActivity.browsingModeManager.mode)
 
         // if in private mode, should be in private mode
-        every { homeActivity.browsingModeManager.mode } returns BrowsingMode.Private
+        every { fenixActivity.browsingModeManager.mode } returns BrowsingMode.Private
 
         controller.handleBookmarkTapped(item)
-        assertEquals(BrowsingMode.Private, homeActivity.browsingModeManager.mode)
+        assertEquals(BrowsingMode.Private, fenixActivity.browsingModeManager.mode)
     }
 
     @Test
@@ -223,7 +223,7 @@ class BookmarkControllerTest {
         createController().handleSelectionModeSwitch()
 
         verify {
-            homeActivity.invalidateOptionsMenu()
+            fenixActivity.invalidateOptionsMenu()
         }
     }
 
@@ -329,7 +329,7 @@ class BookmarkControllerTest {
         createController().handleBookmarkTapped(item)
 
         verify {
-            homeActivity.openToBrowserAndLoad(
+            fenixActivity.openToBrowserAndLoad(
                 item.url!!,
                 false,
                 BrowserDirection.FromBookmarks,
@@ -353,7 +353,7 @@ class BookmarkControllerTest {
         assertNotNull(openedToPrivateTabsPage)
         assertFalse(openedToPrivateTabsPage!!)
         verifyOrder {
-            homeActivity.browsingModeManager.mode = BrowsingMode.Normal
+            fenixActivity.browsingModeManager.mode = BrowsingMode.Normal
             addNewTabUseCase.invoke(item.url!!, private = false)
         }
     }
@@ -373,7 +373,7 @@ class BookmarkControllerTest {
         assertNotNull(openedToPrivateTabsPage)
         assertTrue(openedToPrivateTabsPage!!)
         verifyOrder {
-            homeActivity.browsingModeManager.mode = BrowsingMode.Private
+            fenixActivity.browsingModeManager.mode = BrowsingMode.Private
             addNewTabUseCase.invoke(item.url!!, private = true)
         }
     }
@@ -412,7 +412,7 @@ class BookmarkControllerTest {
             addNewTabUseCase.invoke(item.url!!, private = false)
             addNewTabUseCase.invoke(item.url!!, private = false)
             addNewTabUseCase.invoke(childItem.url!!, private = false)
-            homeActivity.browsingModeManager.mode = BrowsingMode.Normal
+            fenixActivity.browsingModeManager.mode = BrowsingMode.Normal
         }
     }
 
@@ -450,7 +450,7 @@ class BookmarkControllerTest {
             addNewTabUseCase.invoke(item.url!!, private = true)
             addNewTabUseCase.invoke(item.url!!, private = true)
             addNewTabUseCase.invoke(childItem.url!!, private = true)
-            homeActivity.browsingModeManager.mode = BrowsingMode.Private
+            fenixActivity.browsingModeManager.mode = BrowsingMode.Private
         }
     }
 
@@ -514,8 +514,8 @@ class BookmarkControllerTest {
 
     @Test
     fun `handleRequestSync dispatches actions in the correct order`() = runTestOnMain {
-        every { homeActivity.components.backgroundServices.accountManager } returns mockk(relaxed = true)
-        coEvery { homeActivity.bookmarkStorage.getBookmark(any()) } returns tree
+        every { fenixActivity.components.backgroundServices.accountManager } returns mockk(relaxed = true)
+        coEvery { fenixActivity.bookmarkStorage.getBookmark(any()) } returns tree
 
         createController().handleRequestSync()
 
@@ -547,7 +547,7 @@ class BookmarkControllerTest {
         warnLargeOpenAll: (Int, () -> Unit) -> Unit = { _: Int, _: () -> Unit -> },
     ): BookmarkController {
         return DefaultBookmarkController(
-            activity = homeActivity,
+            activity = fenixActivity,
             navController = navController,
             clipboardManager = clipboardManager,
             scope = scope,

@@ -43,7 +43,7 @@ import org.junit.runner.RunWith
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.UnifiedSearch
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.Core
@@ -61,7 +61,7 @@ import org.mozilla.fenix.utils.Settings
 class SearchDialogControllerTest {
 
     @MockK(relaxed = true)
-    private lateinit var activity: HomeActivity
+    private lateinit var activity: FenixActivity
 
     @MockK(relaxed = true)
     private lateinit var store: SearchDialogFragmentStore

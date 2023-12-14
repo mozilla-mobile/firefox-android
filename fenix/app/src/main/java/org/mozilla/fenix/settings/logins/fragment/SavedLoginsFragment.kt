@@ -25,7 +25,7 @@ import mozilla.components.concept.menu.MenuController
 import mozilla.components.concept.menu.Orientation
 import mozilla.components.lib.state.ext.consumeFrom
 import org.mozilla.fenix.BrowserDirection
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.SecureFragment
 import org.mozilla.fenix.components.StoreProvider
@@ -148,7 +148,7 @@ class SavedLoginsFragment : SecureFragment(), MenuProvider {
     override fun onPause() {
         toolbarChildContainer.removeAllViews()
         toolbarChildContainer.visibility = View.GONE
-        (activity as HomeActivity).getSupportActionBarAndInflateIfNecessary()
+        (activity as FenixActivity).getSupportActionBarAndInflateIfNecessary()
             .setDisplayShowTitleEnabled(true)
         sortingStrategyMenu.menuController.dismiss()
         sortLoginsMenuRoot.setOnClickListener(null)
@@ -165,12 +165,12 @@ class SavedLoginsFragment : SecureFragment(), MenuProvider {
         searchTermOrURL: String,
         newTab: Boolean,
         from: BrowserDirection,
-    ) = (activity as HomeActivity).openToBrowserAndLoad(searchTermOrURL, newTab, from)
+    ) = (activity as FenixActivity).openToBrowserAndLoad(searchTermOrURL, newTab, from)
 
     private fun initToolbar() {
         requireActivity().addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
         showToolbar(getString(R.string.preferences_passwords_saved_logins))
-        (activity as HomeActivity).getSupportActionBarAndInflateIfNecessary()
+        (activity as FenixActivity).getSupportActionBarAndInflateIfNecessary()
             .setDisplayShowTitleEnabled(false)
         toolbarChildContainer = initChildContainerFromToolbar()
         sortLoginsMenuRoot = inflateSortLoginsMenuRoot()
@@ -187,7 +187,7 @@ class SavedLoginsFragment : SecureFragment(), MenuProvider {
 
     private fun initChildContainerFromToolbar(): FrameLayout {
         val activity = activity as? AppCompatActivity
-        val toolbar = (activity as HomeActivity).findViewById<Toolbar>(R.id.navigationToolbar)
+        val toolbar = (activity as FenixActivity).findViewById<Toolbar>(R.id.navigationToolbar)
 
         return (toolbar.findViewById(R.id.toolbar_child_container) as FrameLayout).apply {
             visibility = View.VISIBLE

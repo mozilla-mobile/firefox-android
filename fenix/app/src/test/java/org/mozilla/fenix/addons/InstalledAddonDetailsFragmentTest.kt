@@ -23,7 +23,7 @@ import mozilla.components.support.test.robolectric.testContext
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.databinding.FragmentInstalledAddOnDetailsBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
@@ -152,7 +152,7 @@ class InstalledAddonDetailsFragmentTest {
     fun `GIVEN an add-on WHEN clicking the report button THEN a new tab is open`() {
         val addon = mockAddon()
         every { fragment.addon } returns addon
-        every { fragment.activity } returns mockk<HomeActivity>(relaxed = true)
+        every { fragment.activity } returns mockk<FenixActivity>(relaxed = true)
         val useCases = mockk<TabsUseCases>()
         val selectOrAddTab = mockk<TabsUseCases.SelectOrAddUseCase>()
         every { selectOrAddTab.invoke(any(), any(), any(), any(), any()) } returns "some-tab-id"
@@ -191,9 +191,9 @@ class InstalledAddonDetailsFragmentTest {
     fun `GIVEN an add-on and private browsing mode is used WHEN clicking the report button THEN a new private tab is open`() {
         val addon = mockAddon()
         every { fragment.addon } returns addon
-        val homeActivity = mockk<HomeActivity>(relaxed = true)
-        every { homeActivity.browsingModeManager.mode.isPrivate } returns true
-        every { fragment.activity } returns homeActivity
+        val fenixActivity = mockk<FenixActivity>(relaxed = true)
+        every { fenixActivity.browsingModeManager.mode.isPrivate } returns true
+        every { fragment.activity } returns fenixActivity
         val useCases = mockk<TabsUseCases>()
         val selectOrAddTab = mockk<TabsUseCases.SelectOrAddUseCase>()
         every { selectOrAddTab.invoke(any(), any(), any(), any(), any()) } returns "some-tab-id"

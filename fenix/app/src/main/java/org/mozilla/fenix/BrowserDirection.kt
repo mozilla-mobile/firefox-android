@@ -7,7 +7,7 @@ package org.mozilla.fenix
 import androidx.annotation.IdRes
 
 /**
- * Used with [HomeActivity.openToBrowser] to indicate which fragment
+ * Used with [FenixActivity.openToBrowser] to indicate which fragment
  * the browser is being opened from.
  *
  * @property fragmentId ID of the fragment opening the browser in the navigation graph.

@@ -14,7 +14,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.rule.ActivityTestRule
 import org.hamcrest.CoreMatchers.allOf
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.AppAndSystemHelper.registerAndCleanupIdlingResources
 import org.mozilla.fenix.helpers.ViewVisibilityIdlingResource
@@ -35,7 +35,7 @@ class SettingsSubMenuAddonsManagerAddonDetailedMenuRobot {
             return SettingsSubMenuAddonsManagerRobot.Transition()
         }
 
-        fun removeAddon(activityTestRule: ActivityTestRule<HomeActivity>, interact: SettingsSubMenuAddonsManagerRobot.() -> Unit): SettingsSubMenuAddonsManagerRobot.Transition {
+        fun removeAddon(activityTestRule: ActivityTestRule<FenixActivity>, interact: SettingsSubMenuAddonsManagerRobot.() -> Unit): SettingsSubMenuAddonsManagerRobot.Transition {
             registerAndCleanupIdlingResources(
                 ViewVisibilityIdlingResource(
                     activityTestRule.activity.findViewById(R.id.addon_container),

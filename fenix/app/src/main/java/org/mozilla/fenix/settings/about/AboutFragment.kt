@@ -19,7 +19,7 @@ import mozilla.components.support.utils.ext.getPackageInfoCompat
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.GleanMetrics.Events
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.crashes.CrashListActivity
 import org.mozilla.fenix.databinding.FragmentAboutBinding
@@ -176,7 +176,7 @@ class AboutFragment : Fragment(), AboutPageListener {
     }
 
     private fun openLinkInNormalTab(url: String) {
-        (activity as HomeActivity).openToBrowserAndLoad(
+        (activity as FenixActivity).openToBrowserAndLoad(
             searchTermOrURL = url,
             newTab = true,
             from = BrowserDirection.FromAbout,

@@ -34,7 +34,7 @@ import org.mozilla.fenix.ext.nav
  * @param additionalHeaders The extra headers to use when loading the URL.
  */
 @Suppress("LongParameterList")
-fun HomeActivity.openToBrowserAndLoad(
+fun FenixActivity.openToBrowserAndLoad(
     searchTermOrURL: String,
     newTab: Boolean,
     from: BrowserDirection,
@@ -59,7 +59,7 @@ fun HomeActivity.openToBrowserAndLoad(
     )
 }
 
-fun HomeActivity.openToBrowser(from: BrowserDirection, customTabSessionId: String? = null) {
+fun FenixActivity.openToBrowser(from: BrowserDirection, customTabSessionId: String? = null) {
     if (navHost.navController.alreadyOnDestination(R.id.browserFragment)) return
     @IdRes val fragmentId = if (from.fragmentId != 0) from.fragmentId else null
     val directions = getNavDirections(from, customTabSessionId)
@@ -81,7 +81,7 @@ fun HomeActivity.openToBrowser(from: BrowserDirection, customTabSessionId: Strin
  * was opened from history.
  * @param additionalHeaders The extra headers to use when loading the URL.
  */
-private fun HomeActivity.load(
+private fun FenixActivity.load(
     searchTermOrURL: String,
     newTab: Boolean,
     engine: SearchEngine?,

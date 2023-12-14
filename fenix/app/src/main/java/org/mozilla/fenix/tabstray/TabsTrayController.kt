@@ -29,7 +29,7 @@ import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.GleanMetrics.Collections
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.TabsTray
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
@@ -174,7 +174,7 @@ interface TabsTrayController : SyncedTabsController, InactiveTabsController, Tab
 /**
  * Default implementation of [TabsTrayController].
  *
- * @param activity [HomeActivity] used to perform top-level app actions.
+ * @param activity [FenixActivity] used to perform top-level app actions.
  * @param appStore [AppStore] used to dispatch any [AppAction].
  * @param tabsTrayStore [TabsTrayStore] used to read/update the [TabsTrayState].
  * @param browserStore [BrowserStore] used to read/update the current [BrowserState].
@@ -199,7 +199,7 @@ interface TabsTrayController : SyncedTabsController, InactiveTabsController, Tab
  */
 @Suppress("TooManyFunctions", "LongParameterList")
 class DefaultTabsTrayController(
-    private val activity: HomeActivity,
+    private val activity: FenixActivity,
     private val appStore: AppStore,
     private val tabsTrayStore: TabsTrayStore,
     private val browserStore: BrowserStore,

@@ -22,8 +22,8 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mozilla.fenix.HomeActivity
-import org.mozilla.fenix.HomeActivity.Companion.PRIVATE_BROWSING_MODE
+import org.mozilla.fenix.FenixActivity
+import org.mozilla.fenix.FenixActivity.Companion.PRIVATE_BROWSING_MODE
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.robolectric.Robolectric
@@ -62,7 +62,7 @@ class PrivateNotificationServiceTest {
 
         val intent = service.nextStartedActivity
         assertNotNull(intent)
-        assertEquals(ComponentName(testContext, HomeActivity::class.java), intent.component)
+        assertEquals(ComponentName(testContext, FenixActivity::class.java), intent.component)
         assertEquals(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK, intent.flags)
         assertEquals(true, intent.extras?.getBoolean(PRIVATE_BROWSING_MODE))
     }

@@ -13,7 +13,7 @@ import android.text.method.LinkMovementMethod
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import mozilla.components.ui.widgets.withCenterAlignedButtons
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.MetricServiceType
 import org.mozilla.fenix.ext.application
@@ -62,7 +62,7 @@ fun showPrivacyPopWindow(context: Context, activity: Activity) {
             context.components.analytics.metrics.start(MetricServiceType.Marketing)
             // Now that the privacy notice is accepted, application initialization can continue.
             context.application.initialize()
-            activity.startActivity(Intent(activity, HomeActivity::class.java))
+            activity.startActivity(Intent(activity, FenixActivity::class.java))
             activity.finish()
         }
         .setNeutralButton(
@@ -74,7 +74,7 @@ fun showPrivacyPopWindow(context: Context, activity: Activity) {
             context.components.analytics.metrics.start(MetricServiceType.Marketing)
             // Now that the privacy notice is accepted, application initialization can continue.
             context.application.initialize()
-            activity.startActivity(Intent(activity, HomeActivity::class.java))
+            activity.startActivity(Intent(activity, FenixActivity::class.java))
             activity.finish()
         }
         .setTitle(context.getString(R.string.privacy_notice_title))

@@ -93,7 +93,7 @@ class IntentReceiverActivityTest {
         val actualIntent = shadow.peekNextStartedActivity()
 
         assertNotNull(Events.openedLink.testGetValue())
-        assertEquals(HomeActivity::class.java.name, actualIntent.component?.className)
+        assertEquals(FenixActivity::class.java.name, actualIntent.component?.className)
         assertEquals(true, actualIntent.flags == FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY)
     }
 
@@ -116,7 +116,7 @@ class IntentReceiverActivityTest {
             val actualIntent = shadow.peekNextStartedActivity()
 
             assertNotNull(Events.openedLink.testGetValue())
-            assertEquals(HomeActivity::class.java.name, actualIntent.component?.className)
+            assertEquals(FenixActivity::class.java.name, actualIntent.component?.className)
         }
 
     @Test
@@ -135,9 +135,9 @@ class IntentReceiverActivityTest {
         val actualIntent = shadow.peekNextStartedActivity()
 
         assertNotNull(Events.openedLink.testGetValue())
-        assertEquals(HomeActivity::class.java.name, actualIntent.component?.className)
-        assertEquals(true, actualIntent.getBooleanExtra(HomeActivity.PRIVATE_BROWSING_MODE, false))
-        assertEquals(false, actualIntent.getBooleanExtra(HomeActivity.OPEN_TO_BROWSER, true))
+        assertEquals(FenixActivity::class.java.name, actualIntent.component?.className)
+        assertEquals(true, actualIntent.getBooleanExtra(FenixActivity.PRIVATE_BROWSING_MODE, false))
+        assertEquals(false, actualIntent.getBooleanExtra(FenixActivity.OPEN_TO_BROWSER, true))
     }
 
     @Test
@@ -153,8 +153,8 @@ class IntentReceiverActivityTest {
         val shadow = shadowOf(activity)
         val actualIntent = shadow.peekNextStartedActivity()
 
-        assertEquals(HomeActivity::class.java.name, actualIntent.component?.className)
-        assertEquals(false, actualIntent.getBooleanExtra(HomeActivity.PRIVATE_BROWSING_MODE, false))
+        assertEquals(FenixActivity::class.java.name, actualIntent.component?.className)
+        assertEquals(false, actualIntent.getBooleanExtra(FenixActivity.PRIVATE_BROWSING_MODE, false))
         assertNotNull(Events.openedLink.testGetValue())
     }
 
@@ -169,8 +169,8 @@ class IntentReceiverActivityTest {
         val shadow = shadowOf(activity)
         val actualIntent = shadow.peekNextStartedActivity()
 
-        assertEquals(HomeActivity::class.java.name, actualIntent.component?.className)
-        assertEquals(true, actualIntent.getBooleanExtra(HomeActivity.OPEN_TO_BROWSER, true))
+        assertEquals(FenixActivity::class.java.name, actualIntent.component?.className)
+        assertEquals(true, actualIntent.getBooleanExtra(FenixActivity.OPEN_TO_BROWSER, true))
         assertNotNull(Events.openedLink.testGetValue())
     }
 
@@ -194,8 +194,8 @@ class IntentReceiverActivityTest {
         val normalProcessor = intentProcessors.intentProcessor
         verify(exactly = 0) { normalProcessor.process(intent) }
         verify { intentProcessors.privateIntentProcessor.process(intent) }
-        assertEquals(HomeActivity::class.java.name, actualIntent.component?.className)
-        assertTrue(actualIntent.getBooleanExtra(HomeActivity.PRIVATE_BROWSING_MODE, false))
+        assertEquals(FenixActivity::class.java.name, actualIntent.component?.className)
+        assertTrue(actualIntent.getBooleanExtra(FenixActivity.PRIVATE_BROWSING_MODE, false))
         assertNotNull(Events.openedLink.testGetValue())
     }
 
@@ -221,7 +221,7 @@ class IntentReceiverActivityTest {
         coEvery { intentProcessors.privateIntentProcessor.process(any()) } returns true
 
         val intent = Intent()
-        intent.putExtra(HomeActivity.PRIVATE_BROWSING_MODE, true)
+        intent.putExtra(FenixActivity.PRIVATE_BROWSING_MODE, true)
 
         val activity = Robolectric.buildActivity(IntentReceiverActivity::class.java, intent).get()
         attachMocks(activity)
@@ -233,8 +233,8 @@ class IntentReceiverActivityTest {
         val normalProcessor = intentProcessors.intentProcessor
         verify(exactly = 0) { normalProcessor.process(intent) }
         verify { intentProcessors.privateIntentProcessor.process(intent) }
-        assertEquals(HomeActivity::class.java.name, actualIntent.component?.className)
-        assertTrue(actualIntent.getBooleanExtra(HomeActivity.PRIVATE_BROWSING_MODE, false))
+        assertEquals(FenixActivity::class.java.name, actualIntent.component?.className)
+        assertTrue(actualIntent.getBooleanExtra(FenixActivity.PRIVATE_BROWSING_MODE, false))
         assertNotNull(Events.openedLink.testGetValue())
     }
 
@@ -254,7 +254,7 @@ class IntentReceiverActivityTest {
         coVerify { intentProcessors.customTabIntentProcessor.process(intent) }
 
         assertEquals(ExternalAppBrowserActivity::class.java.name, intent.component!!.className)
-        assertTrue(intent.getBooleanExtra(HomeActivity.OPEN_TO_BROWSER, false))
+        assertTrue(intent.getBooleanExtra(FenixActivity.OPEN_TO_BROWSER, false))
         assertNotNull(Events.openedLink.testGetValue())
     }
 
@@ -275,7 +275,7 @@ class IntentReceiverActivityTest {
         coVerify { intentProcessors.privateCustomTabIntentProcessor.process(intent) }
 
         assertEquals(ExternalAppBrowserActivity::class.java.name, intent.component!!.className)
-        assertTrue(intent.getBooleanExtra(HomeActivity.OPEN_TO_BROWSER, false))
+        assertTrue(intent.getBooleanExtra(FenixActivity.OPEN_TO_BROWSER, false))
         assertNotNull(Events.openedLink.testGetValue())
     }
 
@@ -304,7 +304,7 @@ class IntentReceiverActivityTest {
         val shadow = shadowOf(activity)
         val actualIntent = shadow.peekNextStartedActivity()
 
-        assertEquals(HomeActivity::class.java.name, actualIntent.component?.className)
+        assertEquals(FenixActivity::class.java.name, actualIntent.component?.className)
     }
 
     private fun attachMocks(activity: Activity) {

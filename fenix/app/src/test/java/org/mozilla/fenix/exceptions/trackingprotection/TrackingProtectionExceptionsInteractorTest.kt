@@ -26,7 +26,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.BrowserDirection
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.settings.SupportUtils
 
@@ -35,7 +35,7 @@ class TrackingProtectionExceptionsInteractorTest {
 
     private lateinit var interactor: TrackingProtectionExceptionsInteractor
 
-    private val activity: HomeActivity = mockk(relaxed = true)
+    private val activity: FenixActivity = mockk(relaxed = true)
     private val engine: Engine = mockk(relaxed = true)
 
     private val results: List<TrackingProtectionException> = emptyList()

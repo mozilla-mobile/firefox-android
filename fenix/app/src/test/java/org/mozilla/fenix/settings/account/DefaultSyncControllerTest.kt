@@ -13,14 +13,14 @@ import io.mockk.spyk
 import io.mockk.verify
 import org.junit.Before
 import org.junit.Test
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 
 class DefaultSyncControllerTest {
 
     private lateinit var syncController: DefaultSyncController
 
     @MockK(relaxed = true)
-    private lateinit var activity: HomeActivity
+    private lateinit var activity: FenixActivity
 
     @Before
     fun setUp() {

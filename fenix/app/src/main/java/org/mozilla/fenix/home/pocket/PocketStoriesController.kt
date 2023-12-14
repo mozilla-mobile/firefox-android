@@ -12,7 +12,7 @@ import mozilla.components.service.pocket.ext.getCurrentFlightImpressions
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.GleanMetrics.Pings
 import org.mozilla.fenix.GleanMetrics.Pocket
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.openToBrowserAndLoad
@@ -69,11 +69,11 @@ interface PocketStoriesController {
 /**
  * Default behavior for handling all user interactions with the Pocket recommended stories feature.
  *
- * @param homeActivity [HomeActivity] used to open URLs in a new tab.
+ * @param fenixActivity [FenixActivity] used to open URLs in a new tab.
  * @param appStore [AppStore] from which to read the current Pocket recommendations and dispatch new actions on.
  */
 internal class DefaultPocketStoriesController(
-    private val homeActivity: HomeActivity,
+    private val fenixActivity: FenixActivity,
     private val appStore: AppStore,
 ) : PocketStoriesController {
     override fun handleStoryShown(
@@ -150,7 +150,7 @@ internal class DefaultPocketStoriesController(
         storyClicked: PocketStory,
         storyPosition: Pair<Int, Int>,
     ) {
-        homeActivity.openToBrowserAndLoad(storyClicked.url, true, BrowserDirection.FromHome)
+        fenixActivity.openToBrowserAndLoad(storyClicked.url, true, BrowserDirection.FromHome)
 
         when (storyClicked) {
             is PocketRecommendedStory -> {
@@ -176,12 +176,12 @@ internal class DefaultPocketStoriesController(
     }
 
     override fun handleLearnMoreClicked(link: String) {
-        homeActivity.openToBrowserAndLoad(link, true, BrowserDirection.FromHome)
+        fenixActivity.openToBrowserAndLoad(link, true, BrowserDirection.FromHome)
         Pocket.homeRecsLearnMoreClicked.record(NoExtras())
     }
 
     override fun handleDiscoverMoreClicked(link: String) {
-        homeActivity.openToBrowserAndLoad(link, true, BrowserDirection.FromHome)
+        fenixActivity.openToBrowserAndLoad(link, true, BrowserDirection.FromHome)
         Pocket.homeRecsDiscoverClicked.record(NoExtras())
     }
 }

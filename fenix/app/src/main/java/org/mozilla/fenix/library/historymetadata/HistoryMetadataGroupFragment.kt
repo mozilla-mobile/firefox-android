@@ -29,7 +29,7 @@ import mozilla.components.lib.state.ext.flowScoped
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.ktx.kotlin.toShortUrl
 import mozilla.components.ui.widgets.withCenterAlignedButtons
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.addons.showSnackBar
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
@@ -91,8 +91,8 @@ class HistoryMetadataGroupFragment :
 
         interactor = DefaultHistoryMetadataGroupInteractor(
             controller = DefaultHistoryMetadataGroupController(
-                historyStorage = (activity as HomeActivity).components.core.historyStorage,
-                browserStore = (activity as HomeActivity).components.core.store,
+                historyStorage = (activity as FenixActivity).components.core.historyStorage,
+                browserStore = (activity as FenixActivity).components.core.store,
                 appStore = requireContext().components.appStore,
                 store = historyMetadataGroupStore,
                 selectOrAddUseCase = requireComponents.useCases.tabsUseCases.selectOrAddTab,
@@ -188,7 +188,7 @@ class HistoryMetadataGroupFragment :
                     selectedItem.url
                 }
 
-                (activity as HomeActivity).apply {
+                (activity as FenixActivity).apply {
                     browsingModeManager.mode = BrowsingMode.Private
                     supportActionBar?.hide()
                 }

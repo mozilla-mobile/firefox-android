@@ -12,7 +12,7 @@ import org.mozilla.fenix.home.mozonline.showPrivacyPopWindow
 /**
  * This activity is specific to the Mozilla Online build and used to display
  * a privacy notice on first run. Once the privacy notice is accepted, and for
- * all subsequent launches, it will simply launch the Fenix [HomeActivity].
+ * all subsequent launches, it will simply launch the Fenix [FenixActivity].
  */
 class MozillaOnlineHomeActivity : AppCompatActivity() {
 
@@ -22,7 +22,7 @@ class MozillaOnlineHomeActivity : AppCompatActivity() {
         if ((this.application as FenixApplication).shouldShowPrivacyNotice()) {
             showPrivacyPopWindow(this.applicationContext, this)
         } else {
-            startActivity(Intent(this, HomeActivity::class.java))
+            startActivity(Intent(this, FenixActivity::class.java))
             finish()
         }
     }

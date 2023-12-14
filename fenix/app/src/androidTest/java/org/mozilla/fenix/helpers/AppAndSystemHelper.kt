@@ -36,7 +36,7 @@ import junit.framework.AssertionFailedError
 import org.junit.Assert
 import org.junit.Assert.assertEquals
 import org.mozilla.fenix.Config
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.customtabs.ExternalAppBrowserActivity
 import org.mozilla.fenix.helpers.Constants.PackageName.PIXEL_LAUNCHER
 import org.mozilla.fenix.helpers.Constants.PackageName.YOUTUBE_APP
@@ -250,7 +250,7 @@ object AppAndSystemHelper {
      * Runs the test in its testBlock.
      * Cleans up and sets the default locale after it's done.
      */
-    fun runWithSystemLocaleChanged(locale: Locale, testRule: ActivityTestRule<HomeActivity>, testBlock: () -> Unit) {
+    fun runWithSystemLocaleChanged(locale: Locale, testRule: ActivityTestRule<FenixActivity>, testBlock: () -> Unit) {
         if (Config.channel.isDebug) {
             /* Sets permission to change device language */
             PermissionRequester().apply {
@@ -348,7 +348,7 @@ object AppAndSystemHelper {
      * Wrapper to launch the app using the launcher intent.
      */
     fun runWithLauncherIntent(
-        activityTestRule: AndroidComposeTestRule<HomeActivityIntentTestRule, HomeActivity>,
+        activityTestRule: AndroidComposeTestRule<HomeActivityIntentTestRule, FenixActivity>,
         testBlock: () -> Unit,
     ) {
         val launcherIntent = Intent(Intent.ACTION_MAIN).apply {

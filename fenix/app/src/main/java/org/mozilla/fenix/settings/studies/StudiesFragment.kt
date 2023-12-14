@@ -10,7 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.databinding.SettingsStudiesBinding
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
@@ -32,7 +32,7 @@ class StudiesFragment : Fragment() {
     ): View {
         val experiments = requireComponents.analytics.experiments
         _binding = SettingsStudiesBinding.inflate(inflater, container, false)
-        val interactor = DefaultStudiesInteractor((activity as HomeActivity), experiments)
+        val interactor = DefaultStudiesInteractor((activity as FenixActivity), experiments)
         StudiesView(
             lifecycleScope,
             requireContext(),

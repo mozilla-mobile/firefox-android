@@ -78,7 +78,7 @@ import mozilla.components.ui.colors.PhotonColors
 import org.mozilla.fenix.GleanMetrics.HomeScreen
 import org.mozilla.fenix.GleanMetrics.Homepage
 import org.mozilla.fenix.GleanMetrics.PrivateBrowsingShortcutCfr
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.addons.showSnackBar
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
@@ -156,7 +156,7 @@ class HomeFragment : Fragment() {
         )
     }
 
-    private val browsingModeManager get() = (activity as HomeActivity).browsingModeManager
+    private val browsingModeManager get() = (activity as FenixActivity).browsingModeManager
 
     private val collectionStorageObserver = object : TabCollectionStorage.Observer {
         @SuppressLint("NotifyDataSetChanged")
@@ -243,7 +243,7 @@ class HomeFragment : Fragment() {
         val profilerStartTime = requireComponents.core.engine.profiler?.getProfilerTime()
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
-        val activity = activity as HomeActivity
+        val activity = activity as FenixActivity
         val components = requireComponents
 
         val currentWallpaperName = requireContext().settings().currentWallpaperName
@@ -356,7 +356,7 @@ class HomeFragment : Fragment() {
                 messageController = DefaultMessageController(
                     appStore = components.appStore,
                     messagingController = FenixNimbusMessagingController(components.analytics.messagingStorage),
-                    homeActivity = activity,
+                    fenixActivity = activity,
                 ),
                 store = store,
                 tabCollectionStorage = components.core.tabCollectionStorage,
@@ -399,7 +399,7 @@ class HomeFragment : Fragment() {
                 store = components.core.store,
             ),
             pocketStoriesController = DefaultPocketStoriesController(
-                homeActivity = activity,
+                fenixActivity = activity,
                 appStore = components.appStore,
             ),
             privateBrowsingController = DefaultPrivateBrowsingController(
@@ -555,7 +555,7 @@ class HomeFragment : Fragment() {
             view = view,
             context = view.context,
             lifecycleOwner = viewLifecycleOwner,
-            homeActivity = activity as HomeActivity,
+            fenixActivity = activity as FenixActivity,
             navController = findNavController(),
             menuButton = WeakReference(binding.menuButton),
         ).also { it.build() }
@@ -996,7 +996,7 @@ class HomeFragment : Fragment() {
 
     @VisibleForTesting
     internal fun shouldEnableWallpaper() =
-        (activity as? HomeActivity)?.themeManager?.currentTheme?.isPrivate?.not() ?: false
+        (activity as? FenixActivity)?.themeManager?.currentTheme?.isPrivate?.not() ?: false
 
     private fun applyWallpaper(wallpaperName: String, orientationChange: Boolean) {
         when {

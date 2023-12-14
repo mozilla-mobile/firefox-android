@@ -23,7 +23,7 @@ import org.junit.Before
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.PermissionStorage
 import org.mozilla.fenix.ext.components
@@ -41,7 +41,7 @@ class DeleteAndQuitTest {
     @get:Rule
     val coroutinesTestRule = MainCoroutineRule()
 
-    private val activity: HomeActivity = mockk(relaxed = true)
+    private val activity: FenixActivity = mockk(relaxed = true)
     private val settings: Settings = mockk(relaxed = true)
     private val tabUseCases: TabsUseCases = mockk(relaxed = true)
     private val historyStorage: PlacesHistoryStorage = mockk(relaxed = true)

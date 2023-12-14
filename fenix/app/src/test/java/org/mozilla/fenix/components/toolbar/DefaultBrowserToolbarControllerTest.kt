@@ -43,7 +43,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.ReaderMode
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BrowserAnimator
 import org.mozilla.fenix.browser.BrowserFragmentDirections
@@ -61,7 +61,7 @@ import org.mozilla.fenix.utils.Settings
 class DefaultBrowserToolbarControllerTest {
 
     @RelaxedMockK
-    private lateinit var activity: HomeActivity
+    private lateinit var activity: FenixActivity
 
     @MockK(relaxUnitFun = true)
     private lateinit var navController: NavController
@@ -456,7 +456,7 @@ class DefaultBrowserToolbarControllerTest {
     }
 
     private fun createController(
-        activity: HomeActivity = this.activity,
+        activity: FenixActivity = this.activity,
         customTabSessionId: String? = null,
     ) = DefaultBrowserToolbarController(
         store = store,

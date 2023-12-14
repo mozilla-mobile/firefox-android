@@ -23,7 +23,7 @@ import mozilla.components.support.ktx.android.view.hideKeyboard
 import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.GleanMetrics.SyncAuth
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.databinding.FragmentTurnOnSyncBinding
@@ -140,7 +140,7 @@ class TurnOnSyncFragment : Fragment(), AccountObserver {
         )
 
         interactor = DefaultSyncInteractor(
-            DefaultSyncController(activity = activity as HomeActivity),
+            DefaultSyncController(activity = activity as FenixActivity),
         )
 
         binding.createAccount.increaseTapArea(CREATE_ACCOUNT_EXTRA_DIPS)

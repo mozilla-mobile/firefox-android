@@ -21,7 +21,7 @@ import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.service.fxa.SyncEngine
 import mozilla.components.service.fxa.sync.SyncReason
 import org.mozilla.fenix.BrowserDirection
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.ext.bookmarkStorage
@@ -73,7 +73,7 @@ enum class BookmarkRemoveType {
 
 @Suppress("TooManyFunctions", "LongParameterList")
 class DefaultBookmarkController(
-    private val activity: HomeActivity,
+    private val activity: FenixActivity,
     private val navController: NavController,
     private val clipboardManager: ClipboardManager?,
     private val scope: CoroutineScope,

@@ -23,7 +23,7 @@ import mozilla.components.ui.widgets.withCenterAlignedButtons
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.UnifiedSearch
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.Core
 import org.mozilla.fenix.components.metrics.MetricsUtils
@@ -64,7 +64,7 @@ interface SearchController {
 
 @Suppress("TooManyFunctions", "LongParameterList")
 class SearchDialogController(
-    private val activity: HomeActivity,
+    private val activity: FenixActivity,
     private val store: BrowserStore,
     private val tabsUseCases: TabsUseCases,
     private val fragmentStore: SearchFragmentStore,

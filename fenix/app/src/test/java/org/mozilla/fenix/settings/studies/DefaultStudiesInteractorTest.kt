@@ -17,11 +17,11 @@ import org.junit.Before
 import org.junit.Test
 import org.mozilla.experiments.nimbus.internal.EnrolledExperiment
 import org.mozilla.fenix.BrowserDirection
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 
 class DefaultStudiesInteractorTest {
     @RelaxedMockK
-    private lateinit var activity: HomeActivity
+    private lateinit var activity: FenixActivity
 
     @RelaxedMockK
     private lateinit var experiments: NimbusApi

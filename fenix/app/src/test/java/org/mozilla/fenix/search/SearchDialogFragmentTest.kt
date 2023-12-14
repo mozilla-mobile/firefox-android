@@ -28,7 +28,7 @@ import org.junit.Assert.assertSame
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 
@@ -156,7 +156,7 @@ internal class SearchDialogFragmentTest {
 
     @Test
     fun `GIVEN app is in private mode WHEN search dialog is created THEN the dialog is secure`() {
-        val activity: HomeActivity = mockk(relaxed = true)
+        val activity: FenixActivity = mockk(relaxed = true)
         val fragment = spyk(SearchDialogFragment())
         val layoutParams = LayoutParams()
         layoutParams.flags = LayoutParams.FLAG_SECURE
@@ -175,7 +175,7 @@ internal class SearchDialogFragmentTest {
 
     @Test
     fun `GIVEN app is in normal mode WHEN search dialog is created THEN the dialog is not secure`() {
-        val activity: HomeActivity = mockk(relaxed = true)
+        val activity: FenixActivity = mockk(relaxed = true)
         val fragment = spyk(SearchDialogFragment())
         val layoutParams = LayoutParams()
         layoutParams.flags = LayoutParams.FLAG_SECURE

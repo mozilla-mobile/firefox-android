@@ -36,7 +36,7 @@ import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.GleanMetrics.TabsTray
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
@@ -145,7 +145,7 @@ class TabsTrayFragment : AppCompatDialogFragment() {
             TabsTrayState.Mode.Normal
         }
         val initialPage = args.page
-        val activity = activity as HomeActivity
+        val activity = activity as FenixActivity
 
         tabsTrayStore = StoreProvider.get(this) {
             TabsTrayStore(
@@ -410,7 +410,7 @@ class TabsTrayFragment : AppCompatDialogFragment() {
         }
 
         if (!requireContext().settings().enableTabsTrayToCompose) {
-            val activity = activity as HomeActivity
+            val activity = activity as FenixActivity
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
                 fabButtonBinding.newTabButton.accessibilityTraversalAfter =

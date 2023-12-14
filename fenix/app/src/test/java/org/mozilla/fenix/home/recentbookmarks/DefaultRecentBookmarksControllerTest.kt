@@ -29,7 +29,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.GleanMetrics.RecentBookmarks
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.home.HomeFragmentDirections
@@ -44,7 +44,7 @@ class DefaultRecentBookmarksControllerTest {
     @get:Rule
     val coroutinesTestRule = MainCoroutineRule()
 
-    private val activity: HomeActivity = mockk(relaxed = true)
+    private val activity: FenixActivity = mockk(relaxed = true)
     private val navController: NavController = mockk(relaxUnitFun = true)
     private val selectTabUseCase: TabsUseCases = mockk(relaxed = true)
     private val browserStore: BrowserStore = mockk(relaxed = true)

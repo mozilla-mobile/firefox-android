@@ -51,7 +51,7 @@ import org.mozilla.fenix.GleanMetrics.Pings
 import org.mozilla.fenix.GleanMetrics.RecentBookmarks
 import org.mozilla.fenix.GleanMetrics.RecentTabs
 import org.mozilla.fenix.GleanMetrics.TopSites
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.Analytics
@@ -83,7 +83,7 @@ class DefaultSessionControlControllerTest {
     @get:Rule
     val gleanTestRule = GleanTestRule(testContext)
 
-    private val activity: HomeActivity = mockk(relaxed = true)
+    private val activity: FenixActivity = mockk(relaxed = true)
     private val filesDir: File = mockk(relaxed = true)
     private val appStore: AppStore = mockk(relaxed = true)
     private val navController: NavController = mockk(relaxed = true)

@@ -26,7 +26,7 @@ import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.ui.widgets.withCenterAlignedButtons
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.GleanMetrics.Logins
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.SecureFragment
 import org.mozilla.fenix.components.FenixSnackbar
@@ -193,7 +193,7 @@ class LoginDetailFragment : SecureFragment(R.layout.fragment_login_detail), Menu
     }
 
     private fun navigateToBrowser(address: String) {
-        (activity as HomeActivity).openToBrowserAndLoad(
+        (activity as FenixActivity).openToBrowserAndLoad(
             address,
             newTab = true,
             from = BrowserDirection.FromLoginDetailFragment,

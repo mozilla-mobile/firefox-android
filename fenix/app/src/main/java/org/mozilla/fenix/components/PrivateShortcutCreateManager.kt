@@ -10,7 +10,7 @@ import android.content.Intent
 import androidx.core.content.pm.ShortcutInfoCompat
 import androidx.core.content.pm.ShortcutManagerCompat
 import androidx.core.graphics.drawable.IconCompat
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.home.intent.StartSearchIntentProcessor
 import org.mozilla.fenix.utils.IntentUtils
@@ -40,12 +40,12 @@ object PrivateShortcutCreateManager {
             )
             .setIcon(icon)
             .setIntent(
-                Intent(context, HomeActivity::class.java).apply {
+                Intent(context, FenixActivity::class.java).apply {
                     action = Intent.ACTION_VIEW
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    putExtra(HomeActivity.PRIVATE_BROWSING_MODE, true)
+                    putExtra(FenixActivity.PRIVATE_BROWSING_MODE, true)
                     putExtra(
-                        HomeActivity.OPEN_TO_SEARCH,
+                        FenixActivity.OPEN_TO_SEARCH,
                         StartSearchIntentProcessor.PRIVATE_BROWSING_PINNED_SHORTCUT,
                     )
                 },

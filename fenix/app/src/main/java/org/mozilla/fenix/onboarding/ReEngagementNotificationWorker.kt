@@ -17,7 +17,7 @@ import androidx.work.WorkerParameters
 import mozilla.components.support.base.ids.SharedIdsHelper
 import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.GleanMetrics.Events
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
@@ -67,7 +67,7 @@ class ReEngagementNotificationWorker(
     }
 
     private fun buildNotification(channelId: String): Notification {
-        val intent = Intent(applicationContext, HomeActivity::class.java)
+        val intent = Intent(applicationContext, FenixActivity::class.java)
         intent.putExtra(INTENT_RE_ENGAGEMENT_NOTIFICATION, true)
 
         val pendingIntent = PendingIntent.getActivity(

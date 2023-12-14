@@ -17,7 +17,7 @@ import androidx.core.text.getSpans
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import org.mozilla.fenix.BrowserDirection
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.SettingsHttpsOnlyBinding
 import org.mozilla.fenix.ext.components
@@ -102,7 +102,7 @@ class HttpsOnlyFragment : Fragment() {
         val linkClickListener: ClickableSpan = object : ClickableSpan() {
             override fun onClick(view: View) {
                 view.setOnClickListener {
-                    (activity as HomeActivity).openToBrowserAndLoad(
+                    (activity as FenixActivity).openToBrowserAndLoad(
                         searchTermOrURL = SupportUtils.getGenericSumoURLForTopic(
                             SupportUtils.SumoTopic.HTTPS_ONLY_MODE,
                         ),

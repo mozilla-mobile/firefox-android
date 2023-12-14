@@ -19,7 +19,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import mozilla.components.support.ktx.android.content.getColorFromAttr
 import mozilla.components.support.ktx.android.view.createWindowInsetsController
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.customtabs.ExternalAppBrowserActivity
@@ -133,7 +133,7 @@ class DefaultThemeManager(
                 field = value
 
                 val intent = activity.intent ?: Intent().also { activity.intent = it }
-                intent.putExtra(HomeActivity.PRIVATE_BROWSING_MODE, value == BrowsingMode.Private)
+                intent.putExtra(FenixActivity.PRIVATE_BROWSING_MODE, value == BrowsingMode.Private)
 
                 activity.recreate()
             }

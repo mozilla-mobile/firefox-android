@@ -23,7 +23,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.BuildConfig.DEEP_LINK_SCHEME
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.accounts.FenixFxAEntryPoint
@@ -33,7 +33,7 @@ import org.robolectric.annotation.Config
 
 @RunWith(FenixRobolectricTestRunner::class)
 class HomeDeepLinkIntentProcessorTest {
-    private lateinit var activity: HomeActivity
+    private lateinit var activity: FenixActivity
     private lateinit var navController: NavController
     private lateinit var out: Intent
     private lateinit var processorHome: HomeDeepLinkIntentProcessor

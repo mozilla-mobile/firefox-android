@@ -143,7 +143,7 @@ import java.util.Locale
  * - browser screen
  */
 @SuppressWarnings("TooManyFunctions", "LargeClass", "LongParameterList", "LongMethod")
-open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
+open class FenixActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     // DO NOT MOVE ANYTHING ABOVE THIS, GETTING INIT TIME IS CRITICAL
     // we need to store startup timestamp for warm startup. we cant directly store
     // inside AppStartupTelemetry since that class lives inside components and
@@ -168,13 +168,13 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     val webExtensionPromptFeature by lazy {
         WebExtensionPromptFeature(
             store = components.core.store,
-            context = this@HomeActivity,
+            context = this@FenixActivity,
             fragmentManager = supportFragmentManager,
         )
     }
 
     private val extensionsProcessDisabledPromptObserver by lazy {
-        ExtensionsProcessDisabledController(this@HomeActivity)
+        ExtensionsProcessDisabledController(this@FenixActivity)
     }
 
     private val serviceWorkerSupport by lazy {
@@ -952,7 +952,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         settings().openNextTabInDesktopMode = false
     }
 
-    private fun navigateToBrowserOnColdStart() {
+    internal fun navigateToBrowserOnColdStart() {
         // Normal tabs + cold start -> Should go back to browser if we had any tabs open when we left last
         // except for PBM + Cold Start there won't be any tabs since they're evicted so we never will navigate
         if (settings().shouldReturnToBrowser && !browsingModeManager.mode.isPrivate) {

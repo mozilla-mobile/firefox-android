@@ -25,7 +25,7 @@ import org.junit.runner.RunWith
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.HomeScreen
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.accounts.AccountState
 import org.mozilla.fenix.components.accounts.FenixFxAEntryPoint
@@ -46,7 +46,7 @@ class HomeMenuViewTest {
 
     private lateinit var view: View
     private lateinit var lifecycleOwner: LifecycleOwner
-    private lateinit var homeActivity: HomeActivity
+    private lateinit var fenixActivity: FenixActivity
     private lateinit var navController: NavController
     private lateinit var menuButton: MenuButton
     private lateinit var homeMenuView: HomeMenuView
@@ -55,7 +55,7 @@ class HomeMenuViewTest {
     fun setup() {
         view = mockk(relaxed = true)
         lifecycleOwner = mockk(relaxed = true)
-        homeActivity = mockk(relaxed = true)
+        fenixActivity = mockk(relaxed = true)
         navController = mockk(relaxed = true)
 
         menuButton = spyk(MenuButton(testContext))
@@ -64,7 +64,7 @@ class HomeMenuViewTest {
             view = view,
             context = testContext,
             lifecycleOwner = lifecycleOwner,
-            homeActivity = homeActivity,
+            fenixActivity = fenixActivity,
             navController = navController,
             menuButton = WeakReference(menuButton),
         )
@@ -188,7 +188,7 @@ class HomeMenuViewTest {
         assertNotNull(HomeMenuMetrics.helpTapped.testGetValue())
 
         verify {
-            homeActivity.openToBrowserAndLoad(
+            fenixActivity.openToBrowserAndLoad(
                 searchTermOrURL = SupportUtils.getSumoURLForTopic(
                     context = testContext,
                     topic = SupportUtils.SumoTopic.HELP,
@@ -210,7 +210,7 @@ class HomeMenuViewTest {
         verify {
             WhatsNew.userViewedWhatsNew(testContext)
 
-            homeActivity.openToBrowserAndLoad(
+            fenixActivity.openToBrowserAndLoad(
                 searchTermOrURL = SupportUtils.WHATS_NEW_URL,
                 newTab = true,
                 from = BrowserDirection.FromHome,

@@ -17,11 +17,11 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import mozilla.components.support.base.log.logger.Logger
 import org.mozilla.fenix.GleanMetrics.PerfStartup
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.perf.StartupPathProvider.StartupPath
 import org.mozilla.fenix.perf.StartupStateProvider.StartupState
 
-private val activityClass = HomeActivity::class.java
+private val activityClass = FenixActivity::class.java
 
 private val logger = Logger("StartupTypeTelemetry")
 
@@ -30,7 +30,7 @@ private val logger = Logger("StartupTypeTelemetry")
  * [Fenix perf glossary](https://wiki.mozilla.org/index.php?title=Performance/Fenix/Glossary)
  * for specific definitions.
  *
- * This should be a member variable of [HomeActivity] because its data is tied to the lifecycle of an
+ * This should be a member variable of [FenixActivity] because its data is tied to the lifecycle of an
  * Activity. Call [attachOnHomeActivityOnCreate] for this class to work correctly.
  *
  * N.B.: this class is lightly hardcoded to HomeActivity.

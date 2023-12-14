@@ -9,7 +9,7 @@ import androidx.navigation.NavController
 import mozilla.components.browser.state.selector.findTab
 import mozilla.components.feature.media.service.AbstractMediaSessionService
 import org.mozilla.fenix.BrowserDirection
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.openToBrowser
 
@@ -20,7 +20,7 @@ import org.mozilla.fenix.openToBrowser
  * extra string for the tab id - [AbstractMediaSessionService.Companion.EXTRA_TAB_ID]
  */
 class OpenSpecificTabIntentProcessor(
-    private val activity: HomeActivity,
+    private val activity: FenixActivity,
 ) : HomeIntentProcessor {
 
     override fun process(intent: Intent, navController: NavController, out: Intent): Boolean {

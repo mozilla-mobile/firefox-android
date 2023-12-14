@@ -12,7 +12,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.IntentReceiverActivity
 import org.mozilla.fenix.perf.AppStartReasonProvider.StartReason
 import org.mozilla.fenix.perf.StartupActivityLog.LogEntry
@@ -28,7 +28,7 @@ class StartupStateProviderTest {
 
     private lateinit var logEntries: MutableList<LogEntry>
 
-    private val homeActivityClass = HomeActivity::class.java
+    private val fenixActivityClass = FenixActivity::class.java
     private val irActivityClass = IntentReceiverActivity::class.java
 
     @Before
@@ -46,63 +46,63 @@ class StartupStateProviderTest {
     @Test
     fun `GIVEN the app started for an activity WHEN is cold start THEN cold start is true`() {
         forEachColdStartEntries { index ->
-            assertTrue("$index", provider.isColdStartForStartedActivity(homeActivityClass))
+            assertTrue("$index", provider.isColdStartForStartedActivity(fenixActivityClass))
         }
     }
 
     @Test
     fun `GIVEN the app started for an activity WHEN warm start THEN cold start is false`() {
         forEachWarmStartEntries { index ->
-            assertFalse("$index", provider.isColdStartForStartedActivity(homeActivityClass))
+            assertFalse("$index", provider.isColdStartForStartedActivity(fenixActivityClass))
         }
     }
 
     @Test
     fun `GIVEN the app started for an activity WHEN hot start THEN cold start is false`() {
         forEachHotStartEntries { index ->
-            assertFalse("$index", provider.isColdStartForStartedActivity(homeActivityClass))
+            assertFalse("$index", provider.isColdStartForStartedActivity(fenixActivityClass))
         }
     }
 
     @Test
     fun `GIVEN the app started for an activity WHEN is cold start THEN warm start is false`() {
         forEachColdStartEntries { index ->
-            assertFalse("$index", provider.isWarmStartForStartedActivity(homeActivityClass))
+            assertFalse("$index", provider.isWarmStartForStartedActivity(fenixActivityClass))
         }
     }
 
     @Test
     fun `GIVEN the app started for an activity WHEN is warm start THEN warm start is true`() {
         forEachWarmStartEntries { index ->
-            assertTrue("$index", provider.isWarmStartForStartedActivity(homeActivityClass))
+            assertTrue("$index", provider.isWarmStartForStartedActivity(fenixActivityClass))
         }
     }
 
     @Test
     fun `GIVEN the app started for an activity WHEN is hot start THEN warm start is false`() {
         forEachHotStartEntries { index ->
-            assertFalse("$index", provider.isWarmStartForStartedActivity(homeActivityClass))
+            assertFalse("$index", provider.isWarmStartForStartedActivity(fenixActivityClass))
         }
     }
 
     @Test
     fun `GIVEN the app started for an activity WHEN is cold start THEN hot start is false`() {
         forEachColdStartEntries { index ->
-            assertFalse("$index", provider.isHotStartForStartedActivity(homeActivityClass))
+            assertFalse("$index", provider.isHotStartForStartedActivity(fenixActivityClass))
         }
     }
 
     @Test
     fun `GIVEN the app started for an activity WHEN is warm start THEN hot start is false`() {
         forEachWarmStartEntries { index ->
-            assertFalse("$index", provider.isHotStartForStartedActivity(homeActivityClass))
+            assertFalse("$index", provider.isHotStartForStartedActivity(fenixActivityClass))
         }
     }
 
     @Test
     fun `GIVEN the app started for an activity WHEN is hot start THEN hot start is true`() {
         forEachHotStartEntries { index ->
-            assertTrue("$index", provider.isHotStartForStartedActivity(homeActivityClass))
+            assertTrue("$index", provider.isHotStartForStartedActivity(fenixActivityClass))
         }
     }
 
@@ -114,12 +114,12 @@ class StartupStateProviderTest {
                 LogEntry.ActivityCreated(irActivityClass),
                 LogEntry.ActivityStarted(irActivityClass),
                 LogEntry.AppStarted,
-                LogEntry.ActivityCreated(homeActivityClass),
-                LogEntry.ActivityStarted(homeActivityClass),
+                LogEntry.ActivityCreated(fenixActivityClass),
+                LogEntry.ActivityStarted(fenixActivityClass),
                 LogEntry.ActivityStopped(irActivityClass),
             ),
         )
-        assertFalse(provider.isColdStartForStartedActivity(homeActivityClass))
+        assertFalse(provider.isColdStartForStartedActivity(fenixActivityClass))
     }
 
     @Test
@@ -128,16 +128,16 @@ class StartupStateProviderTest {
         logEntries.addAll(
             listOf(
                 LogEntry.AppStopped,
-                LogEntry.ActivityStopped(homeActivityClass),
+                LogEntry.ActivityStopped(fenixActivityClass),
                 LogEntry.ActivityCreated(irActivityClass),
                 LogEntry.ActivityStarted(irActivityClass),
                 LogEntry.AppStarted,
-                LogEntry.ActivityCreated(homeActivityClass),
-                LogEntry.ActivityStarted(homeActivityClass),
+                LogEntry.ActivityCreated(fenixActivityClass),
+                LogEntry.ActivityStarted(fenixActivityClass),
                 LogEntry.ActivityStopped(irActivityClass),
             ),
         )
-        assertFalse(provider.isWarmStartForStartedActivity(homeActivityClass))
+        assertFalse(provider.isWarmStartForStartedActivity(fenixActivityClass))
     }
 
     @Test
@@ -146,15 +146,15 @@ class StartupStateProviderTest {
         logEntries.addAll(
             listOf(
                 LogEntry.AppStopped,
-                LogEntry.ActivityStopped(homeActivityClass),
+                LogEntry.ActivityStopped(fenixActivityClass),
                 LogEntry.ActivityCreated(irActivityClass),
                 LogEntry.ActivityStarted(irActivityClass),
                 LogEntry.AppStarted,
-                LogEntry.ActivityStarted(homeActivityClass),
+                LogEntry.ActivityStarted(fenixActivityClass),
                 LogEntry.ActivityStopped(irActivityClass),
             ),
         )
-        assertFalse(provider.isHotStartForStartedActivity(homeActivityClass))
+        assertFalse(provider.isHotStartForStartedActivity(fenixActivityClass))
     }
 
     @Test
@@ -163,40 +163,40 @@ class StartupStateProviderTest {
         // AIUI, we should never have more than one HomeActivity.
         logEntries.addAll(
             listOf(
-                LogEntry.ActivityCreated(homeActivityClass),
-                LogEntry.ActivityStarted(homeActivityClass),
+                LogEntry.ActivityCreated(fenixActivityClass),
+                LogEntry.ActivityStarted(fenixActivityClass),
                 LogEntry.AppStarted,
-                LogEntry.ActivityCreated(homeActivityClass),
-                LogEntry.ActivityStarted(homeActivityClass),
-                LogEntry.ActivityStopped(homeActivityClass),
+                LogEntry.ActivityCreated(fenixActivityClass),
+                LogEntry.ActivityStarted(fenixActivityClass),
+                LogEntry.ActivityStopped(fenixActivityClass),
             ),
         )
-        assertFalse(provider.isColdStartForStartedActivity(homeActivityClass))
+        assertFalse(provider.isColdStartForStartedActivity(fenixActivityClass))
     }
 
     @Test
     fun `GIVEN the app started for an activity WHEN an activity hasn't been created yet THEN start up is not cold`() {
-        assertFalse(provider.isColdStartForStartedActivity(homeActivityClass))
+        assertFalse(provider.isColdStartForStartedActivity(fenixActivityClass))
     }
 
     @Test
     fun `GIVEN the app started for an activity WHEN an activity hasn't started yet THEN start up is not cold`() {
         logEntries.addAll(
             listOf(
-                LogEntry.ActivityCreated(homeActivityClass),
+                LogEntry.ActivityCreated(fenixActivityClass),
             ),
         )
-        assertFalse(provider.isColdStartForStartedActivity(homeActivityClass))
+        assertFalse(provider.isColdStartForStartedActivity(fenixActivityClass))
     }
 
     @Test
     fun `GIVEN the app did not start for an activity WHEN is cold is checked THEN it returns false`() {
         every { startReasonProvider.reason } returns StartReason.NON_ACTIVITY
 
-        assertFalse(provider.isColdStartForStartedActivity(homeActivityClass))
+        assertFalse(provider.isColdStartForStartedActivity(fenixActivityClass))
 
         forEachColdStartEntries { index ->
-            assertFalse("$index", provider.isColdStartForStartedActivity(homeActivityClass))
+            assertFalse("$index", provider.isColdStartForStartedActivity(fenixActivityClass))
         }
     }
 
@@ -213,13 +213,13 @@ class StartupStateProviderTest {
 
     @Test
     fun `GIVEN the app has not been stopped WHEN an activity has not been created THEN it's not a warm start`() {
-        assertFalse(provider.isWarmStartForStartedActivity(homeActivityClass))
+        assertFalse(provider.isWarmStartForStartedActivity(fenixActivityClass))
     }
 
     @Test
     fun `GIVEN the app has been stopped WHEN an activity has not been created THEN it's not a warm start`() {
         logEntries.add(LogEntry.AppStopped)
-        assertFalse(provider.isWarmStartForStartedActivity(homeActivityClass))
+        assertFalse(provider.isWarmStartForStartedActivity(fenixActivityClass))
     }
 
     @Test
@@ -227,21 +227,21 @@ class StartupStateProviderTest {
         logEntries.addAll(
             listOf(
                 LogEntry.AppStopped,
-                LogEntry.ActivityCreated(homeActivityClass),
+                LogEntry.ActivityCreated(fenixActivityClass),
             ),
         )
-        assertFalse(provider.isWarmStartForStartedActivity(homeActivityClass))
+        assertFalse(provider.isWarmStartForStartedActivity(fenixActivityClass))
     }
 
     @Test
     fun `GIVEN the app has not been stopped WHEN an activity has not been created THEN it's not a hot start`() {
-        assertFalse(provider.isHotStartForStartedActivity(homeActivityClass))
+        assertFalse(provider.isHotStartForStartedActivity(fenixActivityClass))
     }
 
     @Test
     fun `GIVEN the app has been stopped WHEN an activity has not been created THEN it's not a hot start`() {
         logEntries.add(LogEntry.AppStopped)
-        assertFalse(provider.isHotStartForStartedActivity(homeActivityClass))
+        assertFalse(provider.isHotStartForStartedActivity(fenixActivityClass))
     }
 
     @Test
@@ -249,30 +249,30 @@ class StartupStateProviderTest {
         logEntries.addAll(
             listOf(
                 LogEntry.AppStopped,
-                LogEntry.ActivityCreated(homeActivityClass),
+                LogEntry.ActivityCreated(fenixActivityClass),
             ),
         )
-        assertFalse(provider.isHotStartForStartedActivity(homeActivityClass))
+        assertFalse(provider.isHotStartForStartedActivity(fenixActivityClass))
     }
 
     @Test
     fun `GIVEN the app started for an activity WHEN it is a cold start THEN get startup state is cold`() {
         forEachColdStartEntries { index ->
-            assertEquals("$index", StartupState.COLD, provider.getStartupStateForStartedActivity(homeActivityClass))
+            assertEquals("$index", StartupState.COLD, provider.getStartupStateForStartedActivity(fenixActivityClass))
         }
     }
 
     @Test
     fun `WHEN it is a warm start THEN get startup state is warm`() {
         forEachWarmStartEntries { index ->
-            assertEquals("$index", StartupState.WARM, provider.getStartupStateForStartedActivity(homeActivityClass))
+            assertEquals("$index", StartupState.WARM, provider.getStartupStateForStartedActivity(fenixActivityClass))
         }
     }
 
     @Test
     fun `WHEN it is a hot start THEN get startup state is hot`() {
         forEachHotStartEntries { index ->
-            assertEquals("$index", StartupState.HOT, provider.getStartupStateForStartedActivity(homeActivityClass))
+            assertEquals("$index", StartupState.HOT, provider.getStartupStateForStartedActivity(fenixActivityClass))
         }
     }
 
@@ -283,13 +283,13 @@ class StartupStateProviderTest {
                 LogEntry.ActivityCreated(irActivityClass),
                 LogEntry.ActivityStarted(irActivityClass),
                 LogEntry.AppStarted,
-                LogEntry.ActivityCreated(homeActivityClass),
-                LogEntry.ActivityStarted(homeActivityClass),
+                LogEntry.ActivityCreated(fenixActivityClass),
+                LogEntry.ActivityStarted(fenixActivityClass),
                 LogEntry.ActivityStopped(irActivityClass),
             ),
         )
 
-        assertEquals(StartupState.UNKNOWN, provider.getStartupStateForStartedActivity(homeActivityClass))
+        assertEquals(StartupState.UNKNOWN, provider.getStartupStateForStartedActivity(fenixActivityClass))
     }
 
     private fun forEachColdStartEntries(block: (index: Int) -> Unit) {
@@ -298,16 +298,16 @@ class StartupStateProviderTest {
         // MAIN: open HomeActivity directly.
         val coldStartEntries = listOf(
             listOf(
-                LogEntry.ActivityCreated(homeActivityClass),
-                LogEntry.ActivityStarted(homeActivityClass),
+                LogEntry.ActivityCreated(fenixActivityClass),
+                LogEntry.ActivityStarted(fenixActivityClass),
                 LogEntry.AppStarted,
 
                 // VIEW: open non-drawing IntentReceiverActivity, then HomeActivity.
             ),
             listOf(
                 LogEntry.ActivityCreated(irActivityClass),
-                LogEntry.ActivityCreated(homeActivityClass),
-                LogEntry.ActivityStarted(homeActivityClass),
+                LogEntry.ActivityCreated(fenixActivityClass),
+                LogEntry.ActivityStarted(fenixActivityClass),
                 LogEntry.AppStarted,
             ),
         )
@@ -324,45 +324,45 @@ class StartupStateProviderTest {
         val warmStartEntries = listOf(
             listOf(
                 LogEntry.AppStopped,
-                LogEntry.ActivityStopped(homeActivityClass),
-                LogEntry.ActivityCreated(homeActivityClass),
-                LogEntry.ActivityStarted(homeActivityClass),
+                LogEntry.ActivityStopped(fenixActivityClass),
+                LogEntry.ActivityCreated(fenixActivityClass),
+                LogEntry.ActivityStarted(fenixActivityClass),
                 LogEntry.AppStarted,
 
                 // untruncated MAIN: open HomeActivity directly.
             ),
             listOf(
-                LogEntry.ActivityCreated(homeActivityClass),
-                LogEntry.ActivityStarted(homeActivityClass),
+                LogEntry.ActivityCreated(fenixActivityClass),
+                LogEntry.ActivityStarted(fenixActivityClass),
                 LogEntry.AppStarted,
                 LogEntry.AppStopped,
-                LogEntry.ActivityStopped(homeActivityClass),
-                LogEntry.ActivityCreated(homeActivityClass),
-                LogEntry.ActivityStarted(homeActivityClass),
+                LogEntry.ActivityStopped(fenixActivityClass),
+                LogEntry.ActivityCreated(fenixActivityClass),
+                LogEntry.ActivityStarted(fenixActivityClass),
                 LogEntry.AppStarted,
 
                 // truncated VIEW: open non-drawing IntentReceiverActivity, then HomeActivity.
             ),
             listOf(
                 LogEntry.AppStopped,
-                LogEntry.ActivityStopped(homeActivityClass),
+                LogEntry.ActivityStopped(fenixActivityClass),
                 LogEntry.ActivityCreated(irActivityClass),
-                LogEntry.ActivityCreated(homeActivityClass),
-                LogEntry.ActivityStarted(homeActivityClass),
+                LogEntry.ActivityCreated(fenixActivityClass),
+                LogEntry.ActivityStarted(fenixActivityClass),
                 LogEntry.AppStarted,
 
                 // untruncated VIEW: open non-drawing IntentReceiverActivity, then HomeActivity.
             ),
             listOf(
                 LogEntry.ActivityCreated(irActivityClass),
-                LogEntry.ActivityCreated(homeActivityClass),
-                LogEntry.ActivityStarted(homeActivityClass),
+                LogEntry.ActivityCreated(fenixActivityClass),
+                LogEntry.ActivityStarted(fenixActivityClass),
                 LogEntry.AppStarted,
                 LogEntry.AppStopped,
-                LogEntry.ActivityStopped(homeActivityClass),
+                LogEntry.ActivityStopped(fenixActivityClass),
                 LogEntry.ActivityCreated(irActivityClass),
-                LogEntry.ActivityCreated(homeActivityClass),
-                LogEntry.ActivityStarted(homeActivityClass),
+                LogEntry.ActivityCreated(fenixActivityClass),
+                LogEntry.ActivityStarted(fenixActivityClass),
                 LogEntry.AppStarted,
             ),
         )
@@ -379,41 +379,41 @@ class StartupStateProviderTest {
         val hotStartEntries = listOf(
             listOf(
                 LogEntry.AppStopped,
-                LogEntry.ActivityStopped(homeActivityClass),
-                LogEntry.ActivityStarted(homeActivityClass),
+                LogEntry.ActivityStopped(fenixActivityClass),
+                LogEntry.ActivityStarted(fenixActivityClass),
                 LogEntry.AppStarted,
 
                 // untruncated MAIN: open HomeActivity directly.
             ),
             listOf(
-                LogEntry.ActivityCreated(homeActivityClass),
-                LogEntry.ActivityStarted(homeActivityClass),
+                LogEntry.ActivityCreated(fenixActivityClass),
+                LogEntry.ActivityStarted(fenixActivityClass),
                 LogEntry.AppStarted,
                 LogEntry.AppStopped,
-                LogEntry.ActivityStopped(homeActivityClass),
-                LogEntry.ActivityStarted(homeActivityClass),
+                LogEntry.ActivityStopped(fenixActivityClass),
+                LogEntry.ActivityStarted(fenixActivityClass),
                 LogEntry.AppStarted,
 
                 // truncated VIEW: open non-drawing IntentReceiverActivity, then HomeActivity.
             ),
             listOf(
                 LogEntry.AppStopped,
-                LogEntry.ActivityStopped(homeActivityClass),
+                LogEntry.ActivityStopped(fenixActivityClass),
                 LogEntry.ActivityCreated(irActivityClass),
-                LogEntry.ActivityStarted(homeActivityClass),
+                LogEntry.ActivityStarted(fenixActivityClass),
                 LogEntry.AppStarted,
 
                 // untruncated VIEW: open non-drawing IntentReceiverActivity, then HomeActivity.
             ),
             listOf(
                 LogEntry.ActivityCreated(irActivityClass),
-                LogEntry.ActivityCreated(homeActivityClass),
-                LogEntry.ActivityStarted(homeActivityClass),
+                LogEntry.ActivityCreated(fenixActivityClass),
+                LogEntry.ActivityStarted(fenixActivityClass),
                 LogEntry.AppStarted,
                 LogEntry.AppStopped,
-                LogEntry.ActivityStopped(homeActivityClass),
+                LogEntry.ActivityStopped(fenixActivityClass),
                 LogEntry.ActivityCreated(irActivityClass),
-                LogEntry.ActivityStarted(homeActivityClass),
+                LogEntry.ActivityStarted(fenixActivityClass),
                 LogEntry.AppStarted,
             ),
         )

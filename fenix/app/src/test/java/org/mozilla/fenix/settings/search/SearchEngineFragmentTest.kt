@@ -20,7 +20,7 @@ import mozilla.components.browser.state.state.selectedOrDefaultSearchEngine
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
@@ -45,7 +45,7 @@ class SearchEngineFragmentTest {
             val fragment = spyk(SearchEngineFragment()) {
                 every { context } returns testContext
                 every { isAdded } returns true
-                every { activity } returns mockk<HomeActivity>(relaxed = true)
+                every { activity } returns mockk<FenixActivity>(relaxed = true)
             }
             val voiceSearchPreferenceKey = testContext.getString(R.string.pref_key_show_voice_search)
             val voiceSearchPreference = spyk(SwitchPreference(testContext)) {

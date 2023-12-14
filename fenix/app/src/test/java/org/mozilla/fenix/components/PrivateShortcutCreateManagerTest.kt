@@ -20,7 +20,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.home.intent.StartSearchIntentProcessor
@@ -76,9 +76,9 @@ class PrivateShortcutCreateManagerTest {
     private fun `assert homeActivity intent is built correctly`(intent: Intent) {
         assertEquals(Intent.ACTION_VIEW, intent.action)
         assertEquals(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK, intent.flags)
-        assertEquals(HomeActivity::class.qualifiedName, intent.component?.className)
-        assertEquals(true, intent.extras?.getBoolean(HomeActivity.PRIVATE_BROWSING_MODE))
-        assertEquals(StartSearchIntentProcessor.PRIVATE_BROWSING_PINNED_SHORTCUT, intent.extras?.getString(HomeActivity.OPEN_TO_SEARCH))
+        assertEquals(FenixActivity::class.qualifiedName, intent.component?.className)
+        assertEquals(true, intent.extras?.getBoolean(FenixActivity.PRIVATE_BROWSING_MODE))
+        assertEquals(StartSearchIntentProcessor.PRIVATE_BROWSING_PINNED_SHORTCUT, intent.extras?.getString(FenixActivity.OPEN_TO_SEARCH))
     }
 
     private fun `assert homeScreenIntent is built correctly`(intent: Intent) {

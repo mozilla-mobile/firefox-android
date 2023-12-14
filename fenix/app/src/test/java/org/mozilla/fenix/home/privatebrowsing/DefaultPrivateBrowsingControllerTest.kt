@@ -17,7 +17,7 @@ import mozilla.components.support.test.ext.joinBlocking
 import org.junit.Before
 import org.junit.Test
 import org.mozilla.fenix.BrowserDirection
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BrowserFragmentDirections
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
@@ -31,7 +31,7 @@ import org.mozilla.fenix.utils.Settings
 
 class DefaultPrivateBrowsingControllerTest {
 
-    private val activity: HomeActivity = mockk(relaxed = true)
+    private val activity: FenixActivity = mockk(relaxed = true)
     private val appStore: AppStore = mockk(relaxed = true)
     private val navController: NavController = mockk(relaxed = true)
     private val settings: Settings = mockk(relaxed = true)

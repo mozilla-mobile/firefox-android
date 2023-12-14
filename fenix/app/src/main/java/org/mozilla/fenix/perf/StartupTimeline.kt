@@ -5,7 +5,7 @@
 package org.mozilla.fenix.perf
 
 import androidx.annotation.UiThread
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.home.topsites.TopSiteItemViewHolder
 import org.mozilla.fenix.perf.StartupTimeline.onApplicationInit
 import org.mozilla.fenix.perf.StartupTimelineStateMachine.StartupActivity
@@ -44,7 +44,7 @@ object StartupTimeline {
         advanceState(StartupActivity.INTENT_RECEIVER)
     }
 
-    fun onActivityCreateEndHome(activity: HomeActivity) {
+    fun onActivityCreateEndHome(activity: FenixActivity) {
         advanceState(StartupActivity.HOME)
         reportFullyDrawn.onActivityCreateEndHome(state, activity)
     }
@@ -57,7 +57,7 @@ object StartupTimeline {
     /**
      * Instruments "visually complete" cold startup time to homescreen for use with FNPRMS.
      */
-    fun onTopSitesItemBound(activity: HomeActivity) {
+    fun onTopSitesItemBound(activity: FenixActivity) {
         reportFullyDrawn.onTopSitesItemBound(state, activity)
     }
 

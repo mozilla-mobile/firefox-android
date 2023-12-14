@@ -61,7 +61,7 @@ import org.junit.runner.RunWith
 import org.mozilla.fenix.GleanMetrics.Collections
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.ReaderMode
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BrowserAnimator
@@ -90,7 +90,7 @@ class DefaultBrowserToolbarMenuControllerTest {
 
     @MockK private lateinit var snackbarParent: ViewGroup
 
-    @RelaxedMockK private lateinit var activity: HomeActivity
+    @RelaxedMockK private lateinit var activity: FenixActivity
 
     @RelaxedMockK private lateinit var navController: NavController
 
@@ -827,7 +827,7 @@ class DefaultBrowserToolbarMenuControllerTest {
     private fun createController(
         scope: CoroutineScope,
         store: BrowserStore,
-        activity: HomeActivity = this.activity,
+        activity: FenixActivity = this.activity,
         customTabSessionId: String? = null,
         findInPageLauncher: () -> Unit = { },
         bookmarkTapped: (String, String) -> Unit = { _, _ -> },

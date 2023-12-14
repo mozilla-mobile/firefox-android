@@ -14,7 +14,7 @@ import mozilla.components.browser.state.selector.findCustomTab
 import mozilla.components.browser.state.state.SessionState
 import mozilla.components.feature.intent.ext.getSessionId
 import mozilla.components.support.utils.SafeIntent
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.ext.components
 
 const val EXTRA_IS_SANDBOX_CUSTOM_TAB = "org.mozilla.fenix.customtabs.EXTRA_IS_SANDBOX_CUSTOM_TAB"
@@ -24,7 +24,7 @@ const val EXTRA_IS_SANDBOX_CUSTOM_TAB = "org.mozilla.fenix.customtabs.EXTRA_IS_S
  * such as custom tabs and progressive web apps.
  */
 @Suppress("TooManyFunctions")
-open class ExternalAppBrowserActivity : HomeActivity() {
+open class ExternalAppBrowserActivity : FenixActivity() {
     override fun onResume() {
         super.onResume()
 

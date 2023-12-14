@@ -6,7 +6,7 @@ package org.mozilla.fenix.home.privatebrowsing.controller
 
 import androidx.navigation.NavController
 import org.mozilla.fenix.BrowserDirection
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BrowserFragmentDirections
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
@@ -36,7 +36,7 @@ interface PrivateBrowsingController {
  * The default implementation of [PrivateBrowsingController].
  */
 class DefaultPrivateBrowsingController(
-    private val activity: HomeActivity,
+    private val activity: FenixActivity,
     private val appStore: AppStore,
     private val navController: NavController,
 ) : PrivateBrowsingController {

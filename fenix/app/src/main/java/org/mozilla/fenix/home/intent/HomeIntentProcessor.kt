@@ -8,7 +8,7 @@ import android.content.Intent
 import androidx.navigation.NavController
 
 /**
- * Processor for Android intents received in [org.mozilla.fenix.HomeActivity].
+ * Processor for Android intents received in [org.mozilla.fenix.FenixActivity].
  */
 interface HomeIntentProcessor {
 

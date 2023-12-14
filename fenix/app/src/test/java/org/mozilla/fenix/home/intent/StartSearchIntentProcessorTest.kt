@@ -18,7 +18,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.GleanMetrics.SearchWidget
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.MetricsUtils
@@ -43,7 +43,7 @@ class StartSearchIntentProcessorTest {
     @Test
     fun `do not process when search extra is false`() {
         val intent = Intent().apply {
-            removeExtra(HomeActivity.OPEN_TO_SEARCH)
+            removeExtra(FenixActivity.OPEN_TO_SEARCH)
         }
         StartSearchIntentProcessor().process(intent, navController, out)
 
@@ -54,7 +54,7 @@ class StartSearchIntentProcessorTest {
     @Test
     fun `process search intents`() {
         val intent = Intent().apply {
-            putExtra(HomeActivity.OPEN_TO_SEARCH, StartSearchIntentProcessor.SEARCH_WIDGET)
+            putExtra(FenixActivity.OPEN_TO_SEARCH, StartSearchIntentProcessor.SEARCH_WIDGET)
         }
         StartSearchIntentProcessor().process(intent, navController, out)
         val options = navOptions {
@@ -76,6 +76,6 @@ class StartSearchIntentProcessorTest {
                 options,
             )
         }
-        verify { out.removeExtra(HomeActivity.OPEN_TO_SEARCH) }
+        verify { out.removeExtra(FenixActivity.OPEN_TO_SEARCH) }
     }
 }

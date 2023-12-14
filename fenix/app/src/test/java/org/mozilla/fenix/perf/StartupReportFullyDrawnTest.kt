@@ -22,7 +22,7 @@ import mozilla.components.support.test.robolectric.testContext
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.TopSiteItemBinding
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
@@ -33,7 +33,7 @@ import org.mozilla.fenix.perf.StartupTimelineStateMachine.StartupState
 @RunWith(FenixRobolectricTestRunner::class)
 class StartupReportFullyDrawnTest {
 
-    @MockK private lateinit var activity: HomeActivity
+    @MockK private lateinit var activity: FenixActivity
     private lateinit var holder: TopSiteItemViewHolder
 
     @MockK(relaxed = true)

@@ -9,7 +9,7 @@ import android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import mozilla.components.feature.intent.processing.IntentProcessor
 import mozilla.components.support.utils.SafeIntent
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 
 /**
  * Intent processor that will handle intents for the password manager shortcut
@@ -29,7 +29,7 @@ class PasswordManagerIntentProcessor : IntentProcessor {
             return false
         }
 
-        intent.putExtra(HomeActivity.OPEN_PASSWORD_MANAGER, true)
+        intent.putExtra(FenixActivity.OPEN_PASSWORD_MANAGER, true)
         intent.flags = intent.flags or FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_CLEAR_TASK
         return true
     }

@@ -40,7 +40,7 @@ import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifAnyChanged
 import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.GleanMetrics.TrackingProtection
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.databinding.FragmentTrackingProtectionBinding
@@ -57,7 +57,7 @@ class TrackingProtectionPanelDialogFragment : AppCompatDialogFragment(), UserInt
     private fun inflateRootView(container: ViewGroup? = null): View {
         val contextThemeWrapper = ContextThemeWrapper(
             activity,
-            (activity as HomeActivity).themeManager.currentThemeResource,
+            (activity as FenixActivity).themeManager.currentThemeResource,
         )
         return LayoutInflater.from(contextThemeWrapper).inflate(
             R.layout.fragment_tracking_protection,
@@ -156,7 +156,7 @@ class TrackingProtectionPanelDialogFragment : AppCompatDialogFragment(), UserInt
     }
 
     private fun handleLearnMoreClicked() {
-        (activity as HomeActivity).openToBrowserAndLoad(
+        (activity as FenixActivity).openToBrowserAndLoad(
             searchTermOrURL = SupportUtils.getGenericSumoURLForTopic(
                 SupportUtils.SumoTopic.SMARTBLOCK,
             ),

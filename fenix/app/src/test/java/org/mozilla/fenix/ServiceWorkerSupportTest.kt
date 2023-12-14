@@ -21,7 +21,7 @@ import org.junit.Test
 import org.mozilla.fenix.ext.components
 
 class ServiceWorkerSupportTest {
-    private lateinit var activity: HomeActivity
+    private lateinit var activity: FenixActivity
     private lateinit var feature: ServiceWorkerSupportFeature
     private lateinit var engine: GeckoEngine
     private lateinit var addNewTabUseCase: AddNewTabUseCase

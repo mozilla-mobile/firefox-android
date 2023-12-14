@@ -21,7 +21,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.GleanMetrics.Events
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
@@ -51,7 +51,7 @@ class ReEngagementIntentProcessorTest {
     fun `WHEN re-engagement notification type is type A THEN load target URL`() {
         val navController: NavController = mockk(relaxed = true)
         val out: Intent = mockk()
-        val activity: HomeActivity = mockk(relaxed = true)
+        val activity: FenixActivity = mockk(relaxed = true)
         val browsingModeManager: BrowsingModeManager = mockk(relaxed = true)
         val settings: Settings = mockk(relaxed = true)
 
@@ -91,7 +91,7 @@ class ReEngagementIntentProcessorTest {
     fun `WHEN re-engagement notification type is 2 THEN open search dialog`() {
         val navController: NavController = mockk(relaxed = true)
         val out: Intent = mockk()
-        val activity: HomeActivity = mockk(relaxed = true)
+        val activity: FenixActivity = mockk(relaxed = true)
         val browsingModeManager: BrowsingModeManager = mockk(relaxed = true)
         val settings: Settings = mockk(relaxed = true)
 

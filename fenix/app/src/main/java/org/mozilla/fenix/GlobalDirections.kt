@@ -9,7 +9,7 @@ import mozilla.appservices.places.BookmarkRoot
 import org.mozilla.fenix.components.accounts.FenixFxAEntryPoint
 
 /**
- * Used with [HomeActivity] global navigation to indicate which fragment is being opened.
+ * Used with [FenixActivity] global navigation to indicate which fragment is being opened.
  *
  * @property navDirections NavDirections to navigate to destination
  * @property destinationId fragment ID of the fragment being navigated to

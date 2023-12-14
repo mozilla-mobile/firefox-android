@@ -9,7 +9,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:id="@+id/rootContainer"
-    tools:context=".HomeActivity">
+    tools:context=".FenixActivity">
 
     <ViewStub
         android:id="@+id/navigationToolbarStub"

@@ -76,7 +76,7 @@ import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.GleanMetrics.Awesomebar
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.VoiceSearch
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.Core.Companion.BOOKMARKS_SEARCH_ENGINE_ID
 import org.mozilla.fenix.components.Core.Companion.HISTORY_SEARCH_ENGINE_ID
@@ -178,7 +178,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                 this@SearchDialogFragment.onBackPressed()
             }
         }.apply {
-            if ((requireActivity() as HomeActivity).browsingModeManager.mode.isPrivate) {
+            if ((requireActivity() as FenixActivity).browsingModeManager.mode.isPrivate) {
                 this.secure(requireActivity())
             }
         }
@@ -193,7 +193,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
     ): View {
         val args by navArgs<SearchDialogFragmentArgs>()
         _binding = FragmentSearchDialogBinding.inflate(inflater, container, false)
-        val activity = requireActivity() as HomeActivity
+        val activity = requireActivity() as FenixActivity
         val isPrivate = activity.browsingModeManager.mode.isPrivate
 
         store = SearchDialogFragmentStore(
@@ -390,7 +390,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             } else {
                 view.hideKeyboard()
                 toolbarView.view.clearFocus()
-                (activity as HomeActivity)
+                (activity as FenixActivity)
                     .openToBrowserAndLoad(
                         searchTermOrURL = clipboardUrl,
                         newTab = store.state.tabId == null,
@@ -404,7 +404,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             val searchSuggestionHintBinding = SearchSuggestionsHintBinding.bind(inflated)
 
             searchSuggestionHintBinding.learnMore.setOnClickListener {
-                (activity as HomeActivity)
+                (activity as FenixActivity)
                     .openToBrowserAndLoad(
                         searchTermOrURL = SupportUtils.getGenericSumoURLForTopic(
                             SupportUtils.SumoTopic.SEARCH_SUGGESTION,
@@ -661,7 +661,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                                 dialog.cancel()
                             }
                             setPositiveButton(R.string.qr_scanner_dialog_positive) { dialog: DialogInterface, _ ->
-                                (activity as? HomeActivity)?.openToBrowserAndLoad(
+                                (activity as? FenixActivity)?.openToBrowserAndLoad(
                                     searchTermOrURL = normalizedUrl,
                                     newTab = store.state.tabId == null,
                                     from = BrowserDirection.FromSearchDialog,
@@ -904,7 +904,7 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             } else {
                 val clipboardUrl = context?.components?.clipboardHandler?.extractURL()
 
-                if (clipboardUrl != null && !((activity as HomeActivity).browsingModeManager.mode.isPrivate)) {
+                if (clipboardUrl != null && !((activity as FenixActivity).browsingModeManager.mode.isPrivate)) {
                     requireComponents.core.engine.speculativeConnect(clipboardUrl)
                 }
                 binding.clipboardUrl.text = clipboardUrl

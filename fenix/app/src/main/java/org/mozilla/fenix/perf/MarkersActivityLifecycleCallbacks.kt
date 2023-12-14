@@ -7,14 +7,14 @@ package org.mozilla.fenix.perf
 import android.app.Activity
 import android.os.Bundle
 import mozilla.components.concept.engine.Engine
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.IntentReceiverActivity
 import org.mozilla.fenix.android.DefaultActivityLifecycleCallbacks
 
 /**
  * Adds a profiler marker for each activity lifecycle callbacks. The callbacks are called by the
  * super method (e.g. [Activity.onCreate] so the markers occur sometime during the execution of
- * our implementation (e.g. [org.mozilla.fenix.HomeActivity.onCreate]) rather than at the beginning
+ * our implementation (e.g. [org.mozilla.fenix.FenixActivity.onCreate]) rather than at the beginning
  * or end of that method.
  */
 class MarkersActivityLifecycleCallbacks(
@@ -28,7 +28,7 @@ class MarkersActivityLifecycleCallbacks(
     override fun onActivityCreated(activity: Activity, bundle: Bundle?) {
         if (shouldSkip() ||
             // These methods are manually instrumented with duration.
-            activity is HomeActivity ||
+            activity is FenixActivity ||
             activity is IntentReceiverActivity
         ) {
             return
@@ -39,7 +39,7 @@ class MarkersActivityLifecycleCallbacks(
     override fun onActivityStarted(activity: Activity) {
         if (shouldSkip() ||
             // These methods are manually instrumented with duration.
-            activity is HomeActivity
+            activity is FenixActivity
         ) {
             return
         }

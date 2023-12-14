@@ -12,7 +12,7 @@ import org.mozilla.fenix.home.HomeFragment
  * graph. It contains no layout and is fast to create compared to our
  * [HomeFragment], which would otherwise be the start destination.
  *
- * When our [HomeActivity] is created we make a decision which fragment
+ * When our [FenixActivity] is created we make a decision which fragment
  * to navigate to, which makes sure we only render the [HomeFragment]
  * as needed.
  */

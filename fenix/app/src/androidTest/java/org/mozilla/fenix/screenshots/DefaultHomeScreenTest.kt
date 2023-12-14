@@ -14,7 +14,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.ui.robots.homeScreen
@@ -28,7 +28,7 @@ class DefaultHomeScreenTest : ScreenshotTest() {
     val localeTestRule = LocaleTestRule()
 
     @get:Rule
-    var mActivityTestRule: ActivityTestRule<HomeActivity> = HomeActivityTestRule()
+    var mActivityTestRule: ActivityTestRule<FenixActivity> = HomeActivityTestRule()
 
     @Before
     fun setUp() {

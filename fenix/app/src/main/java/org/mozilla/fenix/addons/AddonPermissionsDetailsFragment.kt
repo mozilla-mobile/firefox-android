@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import mozilla.components.feature.addons.ui.translateName
 import org.mozilla.fenix.BrowserDirection
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.FragmentAddOnPermissionsBinding
 import org.mozilla.fenix.ext.showToolbar
@@ -40,7 +40,7 @@ class AddonPermissionsDetailsFragment :
     }
 
     override fun openWebsite(addonSiteUrl: Uri) {
-        (activity as HomeActivity).openToBrowserAndLoad(
+        (activity as FenixActivity).openToBrowserAndLoad(
             searchTermOrURL = addonSiteUrl.toString(),
             newTab = true,
             from = BrowserDirection.FromAddonPermissionsDetailsFragment,

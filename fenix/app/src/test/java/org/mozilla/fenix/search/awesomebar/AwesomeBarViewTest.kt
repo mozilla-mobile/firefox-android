@@ -36,7 +36,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.Core.Companion
 import org.mozilla.fenix.ext.components
@@ -48,7 +48,7 @@ import org.mozilla.fenix.utils.Settings
 
 @RunWith(FenixRobolectricTestRunner::class)
 class AwesomeBarViewTest {
-    private var activity: HomeActivity = mockk(relaxed = true)
+    private var activity: FenixActivity = mockk(relaxed = true)
     private lateinit var awesomeBarView: AwesomeBarView
 
     @Before

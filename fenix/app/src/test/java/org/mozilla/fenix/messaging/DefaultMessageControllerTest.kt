@@ -17,7 +17,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.appstate.AppAction.MessagingAction.MessageClicked
@@ -29,7 +29,7 @@ class DefaultMessageControllerTest {
     @get:Rule
     val gleanTestRule = GleanTestRule(testContext)
 
-    private val homeActivity: HomeActivity = mockk(relaxed = true)
+    private val fenixActivity: FenixActivity = mockk(relaxed = true)
     private val messagingController: NimbusMessagingController = mockk(relaxed = true)
     private lateinit var defaultMessageController: DefaultMessageController
     private val appStore: AppStore = mockk(relaxed = true)
@@ -39,7 +39,7 @@ class DefaultMessageControllerTest {
         defaultMessageController = DefaultMessageController(
             messagingController = messagingController,
             appStore = appStore,
-            homeActivity = homeActivity,
+            fenixActivity = fenixActivity,
         )
     }
 
@@ -52,7 +52,7 @@ class DefaultMessageControllerTest {
         defaultMessageController.onMessagePressed(message)
 
         verify { messagingController.processMessageActionToUri(message) }
-        verify { homeActivity.processIntent(any()) }
+        verify { fenixActivity.processIntent(any()) }
         verify { appStore.dispatch(MessageClicked(message)) }
     }
 

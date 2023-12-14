@@ -43,7 +43,7 @@ import mozilla.components.support.ktx.kotlin.toShortUrl
 import mozilla.components.ui.widgets.withCenterAlignedButtons
 import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.GleanMetrics.BookmarksManagement
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.NavHostActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
@@ -94,7 +94,7 @@ class BookmarkFragment : LibraryPageFragment<BookmarkNode>(), UserInteractionHan
 
         _bookmarkInteractor = BookmarkFragmentInteractor(
             bookmarksController = DefaultBookmarkController(
-                activity = requireActivity() as HomeActivity,
+                activity = requireActivity() as FenixActivity,
                 navController = findNavController(),
                 clipboardManager = requireContext().getSystemService(),
                 scope = viewLifecycleOwner.lifecycleScope,

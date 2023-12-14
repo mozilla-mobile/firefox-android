@@ -38,7 +38,7 @@ import org.mozilla.fenix.GleanMetrics.Pocket
 import org.mozilla.fenix.GleanMetrics.RecentBookmarks
 import org.mozilla.fenix.GleanMetrics.RecentTabs
 import org.mozilla.fenix.GleanMetrics.TopSites
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.collections.SaveCollectionStep
@@ -180,7 +180,7 @@ interface SessionControlController {
 
 @Suppress("TooManyFunctions", "LargeClass", "LongParameterList")
 class DefaultSessionControlController(
-    private val activity: HomeActivity,
+    private val activity: FenixActivity,
     private val settings: Settings,
     private val engine: Engine,
     private val messageController: MessageController,

@@ -18,7 +18,7 @@ import androidx.core.os.bundleOf
 import mozilla.components.concept.base.crash.Breadcrumb
 import mozilla.components.concept.engine.EngineSession
 import org.mozilla.fenix.BrowserDirection
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.openToBrowserAndLoad
 import org.mozilla.fenix.settings.SupportUtils
@@ -148,7 +148,7 @@ private fun Activity.openDefaultBrowserSumoPage(
             ),
         )
     } else {
-        (this as HomeActivity).openToBrowserAndLoad(
+        (this as FenixActivity).openToBrowserAndLoad(
             searchTermOrURL = sumoDefaultBrowserUrl,
             newTab = true,
             from = from,

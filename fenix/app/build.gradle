@@ -68,7 +68,7 @@ android {
 
         // This allows overriding the target activity for MozillaOnline builds, which happens
         // as part of the defaultConfig below.
-        def targetActivity = "HomeActivity"
+        def targetActivity = "FenixActivity"
 
         // Build flag for "Mozilla Online" variants. See `Config.isMozillaOnline`.
         if (project.hasProperty("mozillaOnline") || gradle.hasProperty("localProperties.mozillaOnline")) {

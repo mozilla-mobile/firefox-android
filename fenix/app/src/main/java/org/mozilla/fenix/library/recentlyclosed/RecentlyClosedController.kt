@@ -17,7 +17,7 @@ import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.service.glean.private.NoExtras
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.GleanMetrics.RecentlyClosedTabs
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.openToBrowser
@@ -43,7 +43,7 @@ class DefaultRecentlyClosedController(
     private val recentlyClosedStore: RecentlyClosedFragmentStore,
     private val recentlyClosedTabsStorage: RecentlyClosedTabsStorage,
     private val tabsUseCases: TabsUseCases,
-    private val activity: HomeActivity,
+    private val activity: FenixActivity,
     private val lifecycleScope: CoroutineScope,
     private val openToBrowser: (url: String, mode: BrowsingMode?) -> Unit,
 ) : RecentlyClosedController {

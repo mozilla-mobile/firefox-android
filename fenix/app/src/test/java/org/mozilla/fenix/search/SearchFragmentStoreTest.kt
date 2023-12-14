@@ -27,7 +27,7 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.components.Components
@@ -38,7 +38,7 @@ class SearchFragmentStoreTest {
 
     @MockK private lateinit var searchEngine: SearchEngine
 
-    @MockK private lateinit var activity: HomeActivity
+    @MockK private lateinit var activity: FenixActivity
 
     @MockK(relaxed = true)
     private lateinit var components: Components

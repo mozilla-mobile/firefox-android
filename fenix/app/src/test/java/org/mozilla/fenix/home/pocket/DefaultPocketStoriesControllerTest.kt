@@ -26,7 +26,7 @@ import org.junit.runner.RunWith
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.GleanMetrics.Pings
 import org.mozilla.fenix.GleanMetrics.Pocket
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.appstate.AppState
@@ -229,13 +229,13 @@ class DefaultPocketStoriesControllerTest {
             timeToRead = 0,
             timesShown = 123,
         )
-        val homeActivity: HomeActivity = mockk(relaxed = true)
-        val controller = DefaultPocketStoriesController(homeActivity, mockk())
+        val fenixActivity: FenixActivity = mockk(relaxed = true)
+        val controller = DefaultPocketStoriesController(fenixActivity, mockk())
         assertNull(Pocket.homeRecsStoryClicked.testGetValue())
 
         controller.handleStoryClicked(story, 1 to 2)
 
-        verify { homeActivity.openToBrowserAndLoad(story.url, true, BrowserDirection.FromHome) }
+        verify { fenixActivity.openToBrowserAndLoad(story.url, true, BrowserDirection.FromHome) }
 
         assertNotNull(Pocket.homeRecsStoryClicked.testGetValue())
         val event = Pocket.homeRecsStoryClicked.testGetValue()!!
@@ -261,8 +261,8 @@ class DefaultPocketStoriesControllerTest {
             priority = 3,
             caps = mockk(relaxed = true),
         )
-        val homeActivity: HomeActivity = mockk(relaxed = true)
-        val controller = DefaultPocketStoriesController(homeActivity, mockk())
+        val fenixActivity: FenixActivity = mockk(relaxed = true)
+        val controller = DefaultPocketStoriesController(fenixActivity, mockk())
         var wasPingSent = false
         assertNull(Pocket.homeRecsSpocClicked.testGetValue())
         mockkStatic("mozilla.components.service.pocket.ext.PocketStoryKt") {
@@ -277,7 +277,7 @@ class DefaultPocketStoriesControllerTest {
 
             controller.handleStoryClicked(storyClicked, 2 to 3)
 
-            verify { homeActivity.openToBrowserAndLoad(storyClicked.url, true, BrowserDirection.FromHome) }
+            verify { fenixActivity.openToBrowserAndLoad(storyClicked.url, true, BrowserDirection.FromHome) }
             assertNotNull(Pocket.homeRecsSpocClicked.testGetValue())
             assertEquals(1, Pocket.homeRecsSpocClicked.testGetValue()!!.size)
             val data = Pocket.homeRecsSpocClicked.testGetValue()!!.single().extra
@@ -291,13 +291,13 @@ class DefaultPocketStoriesControllerTest {
     @Test
     fun `WHEN discover more is clicked then open that using HomeActivity and record telemetry`() {
         val link = "http://getpocket.com/explore"
-        val homeActivity: HomeActivity = mockk(relaxed = true)
-        val controller = DefaultPocketStoriesController(homeActivity, mockk())
+        val fenixActivity: FenixActivity = mockk(relaxed = true)
+        val controller = DefaultPocketStoriesController(fenixActivity, mockk())
         assertNull(Pocket.homeRecsDiscoverClicked.testGetValue())
 
         controller.handleDiscoverMoreClicked(link)
 
-        verify { homeActivity.openToBrowserAndLoad(link, true, BrowserDirection.FromHome) }
+        verify { fenixActivity.openToBrowserAndLoad(link, true, BrowserDirection.FromHome) }
         assertNotNull(Pocket.homeRecsDiscoverClicked.testGetValue())
         assertEquals(1, Pocket.homeRecsDiscoverClicked.testGetValue()!!.size)
         assertNull(Pocket.homeRecsDiscoverClicked.testGetValue()!!.single().extra)
@@ -306,13 +306,13 @@ class DefaultPocketStoriesControllerTest {
     @Test
     fun `WHEN learn more is clicked then open that using HomeActivity and record telemetry`() {
         val link = "https://www.mozilla.org/en-US/firefox/pocket/"
-        val homeActivity: HomeActivity = mockk(relaxed = true)
-        val controller = DefaultPocketStoriesController(homeActivity, mockk())
+        val fenixActivity: FenixActivity = mockk(relaxed = true)
+        val controller = DefaultPocketStoriesController(fenixActivity, mockk())
         assertNull(Pocket.homeRecsLearnMoreClicked.testGetValue())
 
         controller.handleLearnMoreClicked(link)
 
-        verify { homeActivity.openToBrowserAndLoad(link, true, BrowserDirection.FromHome) }
+        verify { fenixActivity.openToBrowserAndLoad(link, true, BrowserDirection.FromHome) }
         assertNotNull(Pocket.homeRecsLearnMoreClicked.testGetValue())
         assertNull(Pocket.homeRecsLearnMoreClicked.testGetValue()!!.single().extra)
     }
@@ -320,39 +320,39 @@ class DefaultPocketStoriesControllerTest {
     @Test
     fun `WHEN a story is clicked THEN its link is opened`() {
         val story = PocketRecommendedStory("", "url", "", "", "", 0, 0)
-        val homeActivity: HomeActivity = mockk(relaxed = true)
-        val controller = DefaultPocketStoriesController(homeActivity, mockk())
+        val fenixActivity: FenixActivity = mockk(relaxed = true)
+        val controller = DefaultPocketStoriesController(fenixActivity, mockk())
 
         controller.handleStoryClicked(story, 1 to 2)
 
         verifyOrder {
-            homeActivity.openToBrowserAndLoad(story.url, true, BrowserDirection.FromHome)
+            fenixActivity.openToBrowserAndLoad(story.url, true, BrowserDirection.FromHome)
         }
     }
 
     @Test
     fun `WHEN discover more is clicked THEN its link is opened`() {
         val link = "https://discoverMore.link"
-        val homeActivity: HomeActivity = mockk(relaxed = true)
-        val controller = DefaultPocketStoriesController(homeActivity, mockk())
+        val fenixActivity: FenixActivity = mockk(relaxed = true)
+        val controller = DefaultPocketStoriesController(fenixActivity, mockk())
 
         controller.handleDiscoverMoreClicked(link)
 
         verifyOrder {
-            homeActivity.openToBrowserAndLoad(link, true, BrowserDirection.FromHome)
+            fenixActivity.openToBrowserAndLoad(link, true, BrowserDirection.FromHome)
         }
     }
 
     @Test
     fun `WHEN learn more link is clicked THEN that link is opened`() {
         val link = "https://learnMore.link"
-        val homeActivity: HomeActivity = mockk(relaxed = true)
-        val controller = DefaultPocketStoriesController(homeActivity, mockk())
+        val fenixActivity: FenixActivity = mockk(relaxed = true)
+        val controller = DefaultPocketStoriesController(fenixActivity, mockk())
 
         controller.handleLearnMoreClicked(link)
 
         verifyOrder {
-            homeActivity.openToBrowserAndLoad(link, true, BrowserDirection.FromHome)
+            fenixActivity.openToBrowserAndLoad(link, true, BrowserDirection.FromHome)
         }
     }
 }

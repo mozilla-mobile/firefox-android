@@ -20,7 +20,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mozilla.fenix.HomeActivity.Companion.PRIVATE_BROWSING_MODE
+import org.mozilla.fenix.FenixActivity.Companion.PRIVATE_BROWSING_MODE
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.ext.components
@@ -30,13 +30,13 @@ import org.mozilla.fenix.helpers.perf.TestStrictModeManager
 import org.mozilla.fenix.utils.Settings
 
 @RunWith(FenixRobolectricTestRunner::class)
-class HomeActivityTest {
+class FenixActivityTest {
 
-    private lateinit var activity: HomeActivity
+    private lateinit var activity: FenixActivity
 
     @Before
     fun setup() {
-        activity = spyk(HomeActivity())
+        activity = spyk(FenixActivity())
     }
 
     @Test

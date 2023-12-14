@@ -25,7 +25,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.GleanMetrics.PerfStartup
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.perf.StartupPathProvider.StartupPath
 import org.mozilla.fenix.perf.StartupStateProvider.StartupState
 
@@ -36,7 +36,7 @@ private val validTelemetryLabels = run {
     allStates.crossProduct(allPaths) { state, path -> "${state}_$path" }.toSet()
 }
 
-private val activityClass = HomeActivity::class.java
+private val activityClass = FenixActivity::class.java
 
 @RunWith(AndroidJUnit4::class)
 class StartupTypeTelemetryTest {

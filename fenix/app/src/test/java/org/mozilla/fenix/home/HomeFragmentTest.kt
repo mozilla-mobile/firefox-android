@@ -30,7 +30,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.mozilla.fenix.FenixApplication
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.Core
 import org.mozilla.fenix.ext.application
@@ -122,7 +122,7 @@ class HomeFragmentTest {
     }
 
     fun `GIVEN the user is in normal mode WHEN checking if should enable wallpaper THEN return true`() {
-        val activity: HomeActivity = mockk {
+        val activity: FenixActivity = mockk {
             every { themeManager.currentTheme.isPrivate } returns false
         }
         every { homeFragment.activity } returns activity
@@ -132,7 +132,7 @@ class HomeFragmentTest {
 
     @Test
     fun `GIVEN the user is in private mode WHEN checking if should enable wallpaper THEN return false`() {
-        val activity: HomeActivity = mockk {
+        val activity: FenixActivity = mockk {
             every { themeManager.currentTheme.isPrivate } returns true
         }
         every { homeFragment.activity } returns activity

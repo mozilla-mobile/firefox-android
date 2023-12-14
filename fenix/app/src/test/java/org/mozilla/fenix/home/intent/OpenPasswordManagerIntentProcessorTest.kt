@@ -14,7 +14,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
@@ -23,7 +23,7 @@ import org.mozilla.fenix.shortcut.PasswordManagerIntentProcessor
 @RunWith(FenixRobolectricTestRunner::class)
 class OpenPasswordManagerIntentProcessorTest {
 
-    private lateinit var activity: HomeActivity
+    private lateinit var activity: FenixActivity
     private lateinit var navController: NavController
     private lateinit var out: Intent
     private lateinit var processor: OpenPasswordManagerIntentProcessor
@@ -62,13 +62,13 @@ class OpenPasswordManagerIntentProcessorTest {
     fun `GIVEN an intent with correct action and extra boolean WHEN it is processed THEN navigate should be called`() {
         val intent = Intent().apply {
             action = PasswordManagerIntentProcessor.Companion.ACTION_OPEN_PASSWORD_MANAGER
-            putExtra(HomeActivity.OPEN_PASSWORD_MANAGER, true)
+            putExtra(FenixActivity.OPEN_PASSWORD_MANAGER, true)
         }
 
         assertTrue(processor.process(intent, navController, out))
 
         verify { navController.nav(null, NavGraphDirections.actionGlobalSavedLoginsAuthFragment()) }
-        verify { out.removeExtra(HomeActivity.OPEN_PASSWORD_MANAGER) }
+        verify { out.removeExtra(FenixActivity.OPEN_PASSWORD_MANAGER) }
     }
 
     companion object {

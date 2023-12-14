@@ -11,7 +11,7 @@ import mozilla.components.concept.engine.EngineSession
 import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.GleanMetrics.Events
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
@@ -29,7 +29,7 @@ import org.mozilla.fenix.utils.Settings
  * notification.
  */
 class ReEngagementIntentProcessor(
-    private val activity: HomeActivity,
+    private val activity: FenixActivity,
     private val settings: Settings,
 ) : HomeIntentProcessor {
 

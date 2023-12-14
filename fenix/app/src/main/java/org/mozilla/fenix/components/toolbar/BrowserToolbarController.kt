@@ -18,7 +18,7 @@ import mozilla.components.support.ktx.kotlin.isUrl
 import mozilla.components.ui.tabcounter.TabCounterMenu
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.ReaderMode
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BrowserAnimator
 import org.mozilla.fenix.browser.BrowserAnimator.Companion.getToolbarNavOptions
@@ -77,7 +77,7 @@ private const val MAX_DISPLAY_NUMBER_SHOPPING_CFR = 3
 class DefaultBrowserToolbarController(
     private val store: BrowserStore,
     private val tabsUseCases: TabsUseCases,
-    private val activity: HomeActivity,
+    private val activity: FenixActivity,
     private val navController: NavController,
     private val readerModeController: ReaderModeController,
     private val engineView: EngineView,

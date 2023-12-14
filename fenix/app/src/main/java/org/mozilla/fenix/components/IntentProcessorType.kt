@@ -6,7 +6,7 @@ package org.mozilla.fenix.components
 
 import android.content.Intent
 import mozilla.components.feature.intent.processing.IntentProcessor
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.customtabs.ExternalAppBrowserActivity
 
 enum class IntentProcessorType {
@@ -18,7 +18,7 @@ enum class IntentProcessorType {
     val activityClassName: String
         get() = when (this) {
             EXTERNAL_APP -> ExternalAppBrowserActivity::class.java.name
-            NEW_TAB, EXTERNAL_DEEPLINK, OTHER -> HomeActivity::class.java.name
+            NEW_TAB, EXTERNAL_DEEPLINK, OTHER -> FenixActivity::class.java.name
         }
 
     /**

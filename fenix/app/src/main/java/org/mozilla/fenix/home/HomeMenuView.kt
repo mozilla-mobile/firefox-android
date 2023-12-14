@@ -21,7 +21,7 @@ import mozilla.components.service.glean.private.NoExtras
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.HomeScreen
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.accounts.AccountState
@@ -42,7 +42,7 @@ import org.mozilla.fenix.GleanMetrics.HomeMenu as HomeMenuMetrics
  * @param view The [View] to attach the snackbar to.
  * @param context An Android [Context].
  * @param lifecycleOwner [LifecycleOwner] for the view.
- * @param homeActivity [HomeActivity] used to open URLs in a new tab.
+ * @param fenixActivity [FenixActivity] used to open URLs in a new tab.
  * @param navController [NavController] used for navigation.
  * @param menuButton The [MenuButton] that will be used to create a menu when the button is
  * clicked.
@@ -53,7 +53,7 @@ class HomeMenuView(
     private val view: View,
     private val context: Context,
     private val lifecycleOwner: LifecycleOwner,
-    private val homeActivity: HomeActivity,
+    private val fenixActivity: FenixActivity,
     private val navController: NavController,
     private val menuButton: WeakReference<MenuButton>,
     private val fxaEntrypoint: FxAEntryPoint = FenixFxAEntryPoint.HomeMenu,
@@ -139,7 +139,7 @@ class HomeMenuView(
                 )
             }
             HomeMenu.Item.ManageAccountAndDevices -> {
-                homeActivity.openToBrowserAndLoad(
+                fenixActivity.openToBrowserAndLoad(
                     searchTermOrURL =
                     if (context.settings().allowDomesticChinaFxaServer) {
                         FxaServer.China.contentUrl() + "/settings"
@@ -170,7 +170,7 @@ class HomeMenuView(
             }
             HomeMenu.Item.Help -> {
                 HomeMenuMetrics.helpTapped.record(NoExtras())
-                homeActivity.openToBrowserAndLoad(
+                fenixActivity.openToBrowserAndLoad(
                     searchTermOrURL = SupportUtils.getSumoURLForTopic(
                         context = context,
                         topic = SupportUtils.SumoTopic.HELP,
@@ -183,7 +183,7 @@ class HomeMenuView(
                 WhatsNew.userViewedWhatsNew(context)
                 Events.whatsNewTapped.record(NoExtras())
 
-                homeActivity.openToBrowserAndLoad(
+                fenixActivity.openToBrowserAndLoad(
                     searchTermOrURL = SupportUtils.WHATS_NEW_URL,
                     newTab = true,
                     from = BrowserDirection.FromHome,
@@ -194,7 +194,7 @@ class HomeMenuView(
                 // browsing data on quit" is activated). After the deletion is over, the snackbar
                 // is dismissed.
                 deleteAndQuit(
-                    activity = homeActivity,
+                    activity = fenixActivity,
                     coroutineScope = lifecycleOwner.lifecycleScope,
                     snackbar = FenixSnackbar.make(
                         view = view,

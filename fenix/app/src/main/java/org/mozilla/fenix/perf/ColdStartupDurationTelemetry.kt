@@ -11,7 +11,7 @@ import androidx.core.view.doOnPreDraw
 import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.utils.SafeIntent
 import org.mozilla.fenix.GleanMetrics.PerfStartup
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import java.util.concurrent.TimeUnit
 
 private val logger = Logger("ColdStartupDuration")
@@ -42,7 +42,7 @@ class ColdStartupDurationTelemetry {
         rootContainer.doOnPreDraw {
             // This block takes 0ms on a Moto G5: it doesn't seem long enough to optimize.
             val firstFrameNanos = SystemClock.elapsedRealtimeNanos()
-            if (startupStateProvider.isColdStartForStartedActivity(HomeActivity::class.java)) {
+            if (startupStateProvider.isColdStartForStartedActivity(FenixActivity::class.java)) {
                 visualCompletenessQueue.queue.runIfReadyOrQueue {
                     recordColdStartupTelemetry(safeIntent, firstFrameNanos)
                 }

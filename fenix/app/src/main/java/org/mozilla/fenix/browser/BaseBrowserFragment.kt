@@ -110,7 +110,7 @@ import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.GleanMetrics.MediaState
 import org.mozilla.fenix.GleanMetrics.PullToRefreshInBrowser
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.IntentReceiverActivity
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.OnBackLongPressedListener
@@ -257,7 +257,7 @@ abstract class BaseBrowserFragment :
 
         _binding = FragmentBrowserBinding.inflate(inflater, container, false)
 
-        val activity = activity as HomeActivity
+        val activity = activity as FenixActivity
         activity.themeManager.applyStatusBarTheme(activity)
         val originalContext = ActivityContextWrapper.getOriginalContext(activity)
         binding.engineView.setActivityContext(originalContext)
@@ -331,7 +331,7 @@ abstract class BaseBrowserFragment :
     internal open fun initializeUI(view: View, tab: SessionState) {
         val context = requireContext()
         val store = context.components.core.store
-        val activity = requireActivity() as HomeActivity
+        val activity = requireActivity() as FenixActivity
 
         val toolbarHeight = resources.getDimensionPixelSize(R.dimen.browser_toolbar_height)
 
@@ -346,7 +346,7 @@ abstract class BaseBrowserFragment :
 
         val openInFenixIntent = Intent(context, IntentReceiverActivity::class.java).apply {
             action = Intent.ACTION_VIEW
-            putExtra(HomeActivity.OPEN_TO_BROWSER, true)
+            putExtra(FenixActivity.OPEN_TO_BROWSER, true)
         }
 
         val readerMenuController = DefaultReaderModeController(
@@ -1137,7 +1137,7 @@ abstract class BaseBrowserFragment :
 
     @VisibleForTesting
     internal fun observeRestoreComplete(store: BrowserStore, navController: NavController) {
-        val activity = activity as HomeActivity
+        val activity = activity as FenixActivity
         consumeFlow(store) { flow ->
             flow.map { state -> state.restoreComplete }
                 .distinctUntilChanged()
@@ -1392,7 +1392,7 @@ abstract class BaseBrowserFragment :
     @VisibleForTesting
     internal fun updateThemeForSession(session: SessionState) {
         val sessionMode = BrowsingMode.fromBoolean(session.content.private)
-        (activity as HomeActivity).browsingModeManager.mode = sessionMode
+        (activity as FenixActivity).browsingModeManager.mode = sessionMode
     }
 
     @VisibleForTesting
@@ -1517,7 +1517,7 @@ abstract class BaseBrowserFragment :
         } else {
             activity?.exitImmersiveMode()
             (view as? SwipeGestureLayout)?.isSwipeEnabled = true
-            (activity as? HomeActivity)?.let { activity ->
+            (activity as? FenixActivity)?.let { activity ->
                 activity.themeManager.applyStatusBarTheme(activity)
             }
             if (webAppToolbarShouldBeVisible) {

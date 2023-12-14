@@ -10,7 +10,7 @@ import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.support.ktx.kotlin.isUrl
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.GleanMetrics.Events
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.browser.BrowserAnimator
 import org.mozilla.fenix.components.metrics.MetricsUtils
@@ -41,7 +41,7 @@ interface ToolbarController {
  * The default implementation of [ToolbarController].
  */
 class DefaultToolbarController(
-    private val activity: HomeActivity,
+    private val activity: FenixActivity,
     private val store: BrowserStore,
     private val navController: NavController,
 ) : ToolbarController {

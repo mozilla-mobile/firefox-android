@@ -22,7 +22,7 @@ import androidx.annotation.VisibleForTesting
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.graphics.drawable.toBitmap
 import org.mozilla.fenix.GleanMetrics.Metrics
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.IntentReceiverActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.settings
@@ -93,7 +93,7 @@ class SearchWidgetProvider : AppWidgetProvider() {
                 val createTextSearchIntentFlags = IntentUtils.defaultIntentPendingFlags or
                     PendingIntent.FLAG_UPDATE_CURRENT
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                intent.putExtra(HomeActivity.OPEN_TO_SEARCH, StartSearchIntentProcessor.SEARCH_WIDGET)
+                intent.putExtra(FenixActivity.OPEN_TO_SEARCH, StartSearchIntentProcessor.SEARCH_WIDGET)
                 PendingIntent.getActivity(
                     context,
                     REQUEST_CODE_NEW_TAB,

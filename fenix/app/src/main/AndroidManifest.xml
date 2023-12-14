@@ -107,7 +107,7 @@
         </activity-alias>
 
         <activity
-            android:name=".HomeActivity"
+            android:name=".FenixActivity"
             android:theme="@style/SplashScreen"
             android:exported="true"
             android:configChanges="keyboard|keyboardHidden|mcc|mnc|orientation|screenSize|layoutDirection|smallestScreenSize|screenLayout"

@@ -8,7 +8,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import mozilla.components.support.ktx.android.content.getColorFromAttr
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.ext.components
@@ -33,7 +33,7 @@ abstract class LibraryPageFragment<T> : Fragment() {
                 }
         }
 
-        (activity as HomeActivity).browsingModeManager.mode = BrowsingMode.fromBoolean(private)
+        (activity as FenixActivity).browsingModeManager.mode = BrowsingMode.fromBoolean(private)
     }
 
     override fun onDetach() {

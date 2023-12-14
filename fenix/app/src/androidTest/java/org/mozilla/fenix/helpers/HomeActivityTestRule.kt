@@ -13,16 +13,16 @@ import androidx.test.espresso.intent.rule.IntentsTestRule
 import androidx.test.rule.ActivityTestRule
 import androidx.test.uiautomator.UiSelector
 import org.junit.rules.TestRule
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.helpers.FeatureSettingsHelper.Companion.settings
 import org.mozilla.fenix.helpers.TestHelper.appContext
 import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.onboarding.FenixOnboarding
 
-typealias HomeActivityComposeTestRule = AndroidComposeTestRule<out TestRule, HomeActivity>
+typealias HomeActivityComposeTestRule = AndroidComposeTestRule<out TestRule, FenixActivity>
 
 /**
- * A [org.junit.Rule] to handle shared test set up for tests on [HomeActivity].
+ * A [org.junit.Rule] to handle shared test set up for tests on [FenixActivity].
  *
  * @param initialTouchMode See [ActivityTestRule]
  * @param launchActivity See [ActivityTestRule]
@@ -32,7 +32,7 @@ class HomeActivityTestRule(
     initialTouchMode: Boolean = false,
     launchActivity: Boolean = true,
     private val skipOnboarding: Boolean = false,
-) : ActivityTestRule<HomeActivity>(HomeActivity::class.java, initialTouchMode, launchActivity),
+) : ActivityTestRule<FenixActivity>(FenixActivity::class.java, initialTouchMode, launchActivity),
     FeatureSettingsHelper by FeatureSettingsHelperDelegate() {
 
     // Using a secondary constructor allows us to easily delegate the settings to FeatureSettingsHelperDelegate.
@@ -131,7 +131,7 @@ class HomeActivityTestRule(
 }
 
 /**
- * A [org.junit.Rule] to handle shared test set up for tests on [HomeActivity]. This adds
+ * A [org.junit.Rule] to handle shared test set up for tests on [FenixActivity]. This adds
  * functionality for using the Espresso-intents api, and extends from ActivityTestRule.
  *
  * @param initialTouchMode See [IntentsTestRule]
@@ -142,7 +142,7 @@ class HomeActivityIntentTestRule internal constructor(
     initialTouchMode: Boolean = false,
     launchActivity: Boolean = true,
     private val skipOnboarding: Boolean = false,
-) : IntentsTestRule<HomeActivity>(HomeActivity::class.java, initialTouchMode, launchActivity),
+) : IntentsTestRule<FenixActivity>(FenixActivity::class.java, initialTouchMode, launchActivity),
     FeatureSettingsHelper by FeatureSettingsHelperDelegate() {
     // Using a secondary constructor allows us to easily delegate the settings to FeatureSettingsHelperDelegate.
     // Otherwise if wanting to use the same names we would have to override these settings in the primary

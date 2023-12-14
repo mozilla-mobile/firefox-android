@@ -12,7 +12,7 @@ import mozilla.components.browser.state.state.selectedOrDefaultSearchEngine
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.feature.search.ext.waitForSelectedOrDefaultSearchEngine
 import org.mozilla.fenix.BrowserDirection
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.components.metrics.MetricsUtils
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.openToBrowserAndLoad
@@ -23,19 +23,19 @@ import org.mozilla.fenix.widget.VoiceSearchActivity.Companion.SPEECH_PROCESSING
  * Once the search is complete then a new search should be started.
  */
 class SpeechProcessingIntentProcessor(
-    private val activity: HomeActivity,
+    private val activity: FenixActivity,
     private val store: BrowserStore,
 ) : HomeIntentProcessor {
 
     override fun process(intent: Intent, navController: NavController, out: Intent): Boolean {
         if (
             !intent.hasExtra(SPEECH_PROCESSING) ||
-            intent.extras?.getBoolean(HomeActivity.OPEN_TO_BROWSER_AND_LOAD) != true
+            intent.extras?.getBoolean(FenixActivity.OPEN_TO_BROWSER_AND_LOAD) != true
         ) {
             return false
         }
 
-        out.putExtra(HomeActivity.OPEN_TO_BROWSER_AND_LOAD, false)
+        out.putExtra(FenixActivity.OPEN_TO_BROWSER_AND_LOAD, false)
 
         store.waitForSelectedOrDefaultSearchEngine { searchEngine ->
             if (searchEngine != null) {

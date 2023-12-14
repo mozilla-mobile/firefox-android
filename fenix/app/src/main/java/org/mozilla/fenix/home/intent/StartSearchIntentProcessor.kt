@@ -9,7 +9,7 @@ import androidx.navigation.NavController
 import androidx.navigation.navOptions
 import mozilla.components.service.glean.private.NoExtras
 import org.mozilla.fenix.GleanMetrics.SearchWidget
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.metrics.MetricsUtils
@@ -22,7 +22,7 @@ import org.mozilla.fenix.ext.nav
 class StartSearchIntentProcessor : HomeIntentProcessor {
 
     override fun process(intent: Intent, navController: NavController, out: Intent): Boolean {
-        val event = intent.extras?.getString(HomeActivity.OPEN_TO_SEARCH)
+        val event = intent.extras?.getString(FenixActivity.OPEN_TO_SEARCH)
         return if (event != null) {
             val source = when (event) {
                 SEARCH_WIDGET -> {
@@ -38,7 +38,7 @@ class StartSearchIntentProcessor : HomeIntentProcessor {
                 else -> null
             }
 
-            out.removeExtra(HomeActivity.OPEN_TO_SEARCH)
+            out.removeExtra(FenixActivity.OPEN_TO_SEARCH)
 
             val directions = source?.let {
                 NavGraphDirections.actionGlobalSearchDialog(

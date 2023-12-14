@@ -19,7 +19,7 @@ import mozilla.components.feature.addons.ui.showInformationDialog
 import mozilla.components.feature.addons.ui.translateName
 import mozilla.components.feature.addons.update.DefaultAddonUpdater.UpdateAttemptStorage
 import org.mozilla.fenix.BrowserDirection
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.FragmentAddOnDetailsBinding
 import org.mozilla.fenix.ext.showToolbar
@@ -47,7 +47,7 @@ class AddonDetailsFragment : Fragment(R.layout.fragment_add_on_details), AddonDe
     }
 
     override fun openWebsite(url: Uri) {
-        (activity as HomeActivity).openToBrowserAndLoad(
+        (activity as FenixActivity).openToBrowserAndLoad(
             searchTermOrURL = url.toString(),
             newTab = true,
             from = BrowserDirection.FromAddonDetailsFragment,

@@ -16,7 +16,7 @@ import mozilla.components.support.base.log.logger.Logger
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.GlobalDirections
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.ext.alreadyOnDestination
 import org.mozilla.fenix.ext.openSetDefaultBrowserOption
@@ -26,7 +26,7 @@ import org.mozilla.fenix.openToBrowserAndLoad
  * Deep links in the form of `fenix://host` open different parts of the app.
  */
 class HomeDeepLinkIntentProcessor(
-    private val activity: HomeActivity,
+    private val activity: FenixActivity,
 ) : HomeIntentProcessor {
     private val logger = Logger("DeepLinkIntentProcessor")
 

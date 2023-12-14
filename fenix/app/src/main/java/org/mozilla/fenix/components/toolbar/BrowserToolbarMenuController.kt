@@ -34,7 +34,7 @@ import org.mozilla.fenix.GleanMetrics.AppMenu
 import org.mozilla.fenix.GleanMetrics.Collections
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.ReaderMode
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BrowserAnimator
@@ -63,7 +63,7 @@ interface BrowserToolbarMenuController {
 @Suppress("LargeClass", "ForbiddenComment", "LongParameterList")
 class DefaultBrowserToolbarMenuController(
     private val store: BrowserStore,
-    private val activity: HomeActivity,
+    private val activity: FenixActivity,
     private val navController: NavController,
     private val settings: Settings,
     private val readerModeController: ReaderModeController,

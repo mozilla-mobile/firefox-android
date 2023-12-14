@@ -12,7 +12,7 @@ import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.feature.privatemode.notification.AbstractPrivateNotificationService
 import mozilla.components.support.base.android.NotificationsDelegate
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import java.util.Locale
@@ -73,15 +73,15 @@ class PrivateNotificationService : AbstractPrivateNotificationService() {
         // If the app is in normal mode there's no reason to direct the user away to
         // private mode as all private tabs have been deleted.
         if (inPrivateMode) {
-            val homeScreenIntent = Intent(this, HomeActivity::class.java).apply {
+            val homeScreenIntent = Intent(this, FenixActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                putExtra(HomeActivity.PRIVATE_BROWSING_MODE, true)
+                putExtra(FenixActivity.PRIVATE_BROWSING_MODE, true)
             }
 
             if (VisibilityLifecycleCallback.finishAndRemoveTaskIfInBackground(this)) {
                 // Set start mode to be in background (recents screen)
                 homeScreenIntent.apply {
-                    putExtra(HomeActivity.START_IN_RECENTS_SCREEN, true)
+                    putExtra(FenixActivity.START_IN_RECENTS_SCREEN, true)
                 }
             }
 

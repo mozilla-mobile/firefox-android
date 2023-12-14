@@ -33,7 +33,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.GleanMetrics.GleanBuildInfo
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.MockWebServerHelper
@@ -74,7 +74,7 @@ class BaselinePingTest {
     private lateinit var mDevice: UiDevice
 
     @get:Rule
-    val activityRule: ActivityTestRule<HomeActivity> = HomeActivityTestRule()
+    val activityRule: ActivityTestRule<FenixActivity> = HomeActivityTestRule()
 
     @get:Rule
     val gleanRule = GleanTestLocalServer(ApplicationProvider.getApplicationContext(), server.port)

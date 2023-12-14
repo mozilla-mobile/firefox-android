@@ -14,7 +14,7 @@ import androidx.preference.SwitchPreference
 import mozilla.components.browser.state.state.selectedOrDefaultSearchEngine
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import org.mozilla.fenix.BrowserDirection
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getPreferenceKey
@@ -167,7 +167,7 @@ class SearchEngineFragment : PreferenceFragmentCompat() {
                 }
             }
             getPreferenceKey(R.string.pref_key_learn_about_fx_suggest) -> {
-                (activity as HomeActivity).openToBrowserAndLoad(
+                (activity as FenixActivity).openToBrowserAndLoad(
                     searchTermOrURL = SupportUtils.getGenericSumoURLForTopic(
                         SupportUtils.SumoTopic.FX_SUGGEST,
                     ),

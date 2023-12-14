@@ -41,7 +41,7 @@ import mozilla.components.support.ktx.kotlin.toShortUrl
 import mozilla.components.ui.widgets.withCenterAlignedButtons
 import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.BrowserDirection
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.NavHostActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.addons.showSnackBar
@@ -318,7 +318,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler, 
                 (selectedItem as? History.Regular)?.url ?: (selectedItem as? History.Metadata)?.url
             }
 
-            (activity as HomeActivity).apply {
+            (activity as FenixActivity).apply {
                 browsingModeManager.mode = BrowsingMode.Private
                 supportActionBar?.hide()
             }
@@ -389,11 +389,11 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler, 
             GleanHistory.OpenedItemExtra(
                 isRemote = item.isRemote,
                 timeGroup = item.historyTimeGroup.toString(),
-                isPrivate = (activity as HomeActivity).browsingModeManager.mode == BrowsingMode.Private,
+                isPrivate = (activity as FenixActivity).browsingModeManager.mode == BrowsingMode.Private,
             ),
         )
 
-        (activity as HomeActivity).openToBrowserAndLoad(
+        (activity as FenixActivity).openToBrowserAndLoad(
             searchTermOrURL = item.url,
             newTab = true,
             from = BrowserDirection.FromHistory,

@@ -20,7 +20,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.BrowserDirection
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.helpers.perf.TestStrictModeManager
@@ -29,7 +29,7 @@ import org.mozilla.fenix.widget.VoiceSearchActivity.Companion.SPEECH_PROCESSING
 @RunWith(FenixRobolectricTestRunner::class)
 class SpeechProcessingIntentProcessorTest {
 
-    private val activity: HomeActivity = mockk(relaxed = true)
+    private val activity: FenixActivity = mockk(relaxed = true)
     private val navController: NavController = mockk(relaxed = true)
     private val out: Intent = mockk(relaxed = true)
 
@@ -71,7 +71,7 @@ class SpeechProcessingIntentProcessorTest {
     @Test
     fun `do not process when open extra is false`() {
         val intent = Intent().apply {
-            putExtra(HomeActivity.OPEN_TO_BROWSER_AND_LOAD, false)
+            putExtra(FenixActivity.OPEN_TO_BROWSER_AND_LOAD, false)
         }
         val processor = SpeechProcessingIntentProcessor(activity, store)
         processor.process(intent, navController, out)
@@ -85,7 +85,7 @@ class SpeechProcessingIntentProcessorTest {
     fun `reads the speech processing extra`() {
         every { testContext.components.strictMode } returns TestStrictModeManager()
         val intent = Intent().apply {
-            putExtra(HomeActivity.OPEN_TO_BROWSER_AND_LOAD, true)
+            putExtra(FenixActivity.OPEN_TO_BROWSER_AND_LOAD, true)
             putExtra(SPEECH_PROCESSING, "hello world")
         }
 

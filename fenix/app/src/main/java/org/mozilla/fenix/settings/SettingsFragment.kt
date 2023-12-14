@@ -47,7 +47,7 @@ import org.mozilla.fenix.GleanMetrics.Addons
 import org.mozilla.fenix.GleanMetrics.CookieBanners
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.TrackingProtection
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.accounts.FenixFxAEntryPoint
 import org.mozilla.fenix.databinding.AmoCollectionOverrideDialogBinding
@@ -310,7 +310,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 SettingsFragmentDirections.actionSettingsFragmentToSyncDebugFragment()
             }
             resources.getString(R.string.pref_key_help) -> {
-                (activity as HomeActivity).openToBrowserAndLoad(
+                (activity as FenixActivity).openToBrowserAndLoad(
                     searchTermOrURL = SupportUtils.getSumoURLForTopic(
                         requireContext(),
                         SupportUtils.SumoTopic.HELP,
@@ -326,7 +326,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 } catch (e: ActivityNotFoundException) {
                     // Device without the play store installed.
                     // Opening the play store website.
-                    (activity as HomeActivity).openToBrowserAndLoad(
+                    (activity as FenixActivity).openToBrowserAndLoad(
                         searchTermOrURL = SupportUtils.FENIX_PLAY_STORE_URL,
                         newTab = true,
                         from = BrowserDirection.FromSettings,

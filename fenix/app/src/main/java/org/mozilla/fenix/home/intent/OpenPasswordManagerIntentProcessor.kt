@@ -6,7 +6,7 @@ package org.mozilla.fenix.home.intent
 
 import android.content.Intent
 import androidx.navigation.NavController
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.ext.nav
 
@@ -16,8 +16,8 @@ import org.mozilla.fenix.ext.nav
 class OpenPasswordManagerIntentProcessor : HomeIntentProcessor {
 
     override fun process(intent: Intent, navController: NavController, out: Intent): Boolean {
-        return if (intent.extras?.getBoolean(HomeActivity.OPEN_PASSWORD_MANAGER) == true) {
-            out.removeExtra(HomeActivity.OPEN_PASSWORD_MANAGER)
+        return if (intent.extras?.getBoolean(FenixActivity.OPEN_PASSWORD_MANAGER) == true) {
+            out.removeExtra(FenixActivity.OPEN_PASSWORD_MANAGER)
 
             val directions = NavGraphDirections.actionGlobalSavedLoginsAuthFragment()
             navController.nav(null, directions)

@@ -36,7 +36,7 @@ import mozilla.components.support.ktx.android.content.getColorFromAttr
 import mozilla.components.support.ktx.android.net.sameHostWithoutMobileSubdomainAs
 import mozilla.components.support.ktx.kotlin.tryGetHostFromUrl
 import mozilla.components.support.ktx.kotlin.urlContainsQueryParameters
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.Components
@@ -53,7 +53,7 @@ import org.mozilla.fenix.search.SearchFragmentState
  */
 @Suppress("LargeClass")
 class AwesomeBarView(
-    private val activity: HomeActivity,
+    private val activity: FenixActivity,
     val interactor: AwesomeBarInteractor,
     val view: AwesomeBarWrapper,
     private val fromHomeFragment: Boolean,

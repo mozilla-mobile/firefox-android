@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
 import androidx.lifecycle.LifecycleOwner
 import mozilla.components.lib.state.ext.observeAsComposableState
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.components.components
 import org.mozilla.fenix.compose.ComposeViewHolder
 import org.mozilla.fenix.home.sessioncontrol.TopSiteInteractor
@@ -52,7 +52,7 @@ class TopSitesViewHolder(
                 onSettingsClicked = interactor::onSettingsClicked,
                 onSponsorPrivacyClicked = interactor::onSponsorPrivacyClicked,
                 onTopSitesItemBound = {
-                    StartupTimeline.onTopSitesItemBound(activity = composeView.context as HomeActivity)
+                    StartupTimeline.onTopSitesItemBound(activity = composeView.context as FenixActivity)
                 },
             )
         }

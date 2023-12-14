@@ -13,7 +13,7 @@ import mozilla.components.browser.state.state.selectedOrDefaultSearchEngine
 import mozilla.components.lib.state.Action
 import mozilla.components.lib.state.State
 import mozilla.components.lib.state.Store
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.components.metrics.MetricsUtils
@@ -143,7 +143,7 @@ data class SearchFragmentState(
  */
 @Suppress("LongParameterList")
 fun createInitialSearchFragmentState(
-    activity: HomeActivity,
+    activity: FenixActivity,
     components: Components,
     tabId: String?,
     pastedText: String?,
