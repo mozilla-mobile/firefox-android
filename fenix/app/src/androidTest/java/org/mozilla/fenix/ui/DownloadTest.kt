@@ -137,7 +137,7 @@ class DownloadTest {
     @Test
     fun pauseResumeCancelDownloadTest() {
         downloadRobot {
-            openPageAndDownloadFile(url = downloadTestPage.toUri(), downloadFile = "1GB.zip")
+            openPageAndDownloadFile(url = downloadTestPage.toUri(), downloadFile = "3GB.zip")
         }
         mDevice.openNotification()
         notificationShade {
@@ -147,7 +147,7 @@ class DownloadTest {
             verifySystemNotificationExists("Download paused")
             clickDownloadNotificationControlButton("RESUME")
             clickDownloadNotificationControlButton("CANCEL")
-            verifySystemNotificationDoesNotExist("1GB.zip")
+            verifySystemNotificationDoesNotExist("3GB.zip")
             mDevice.pressBack()
         }
         browserScreen {
@@ -260,11 +260,10 @@ class DownloadTest {
     }
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/457112
-    @Ignore("Failing: https://bugzilla.mozilla.org/show_bug.cgi?id=1840994")
     @Test
     fun systemNotificationCantBeDismissedWhileInProgressTest() {
         downloadRobot {
-            openPageAndDownloadFile(url = downloadTestPage.toUri(), downloadFile = "1GB.zip")
+            openPageAndDownloadFile(url = downloadTestPage.toUri(), downloadFile = "3GB.zip")
         }
         browserScreen {
         }.openNotificationShade {
@@ -306,7 +305,7 @@ class DownloadTest {
         homeScreen {
         }.togglePrivateBrowsingMode()
         downloadRobot {
-            openPageAndDownloadFile(url = downloadTestPage.toUri(), downloadFile = "1GB.zip")
+            openPageAndDownloadFile(url = downloadTestPage.toUri(), downloadFile = "3GB.zip")
         }
         browserScreen {
         }.openTabDrawer {
@@ -326,7 +325,7 @@ class DownloadTest {
         homeScreen {
         }.togglePrivateBrowsingMode()
         downloadRobot {
-            openPageAndDownloadFile(url = downloadTestPage.toUri(), downloadFile = "1GB.zip")
+            openPageAndDownloadFile(url = downloadTestPage.toUri(), downloadFile = "3GB.zip")
         }
         browserScreen {
         }.openTabDrawer {
@@ -365,10 +364,9 @@ class DownloadTest {
     }
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/244125
-    @Ignore("Failing: Bug https://bugzilla.mozilla.org/show_bug.cgi?id=1813521")
     @Test
     fun restartDownloadFromAppNotificationAfterConnectionIsInterruptedTest() {
-        downloadFile = "1GB.zip"
+        downloadFile = "3GB.zip"
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(downloadTestPage.toUri()) {
