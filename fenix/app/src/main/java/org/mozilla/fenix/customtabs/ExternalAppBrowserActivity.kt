@@ -22,7 +22,6 @@ const val EXTRA_IS_SANDBOX_CUSTOM_TAB = "org.mozilla.fenix.customtabs.EXTRA_IS_S
  * Activity that holds the [ExternalAppBrowserFragment] that is launched within an external app,
  * such as custom tabs and progressive web apps.
  */
-@Suppress("TooManyFunctions")
 open class ExternalAppBrowserActivity : FenixActivity() {
     override fun onResume() {
         super.onResume()
@@ -52,19 +51,19 @@ open class ExternalAppBrowserActivity : FenixActivity() {
         }
     }
 
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    internal fun hasExternalTab(): Boolean {
+    @VisibleForTesting
+    fun hasExternalTab(): Boolean {
         return getExternalTab() != null
     }
 
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    internal fun getExternalTab(): SessionState? {
+    @VisibleForTesting
+    fun getExternalTab(): SessionState? {
         val id = getExternalTabId() ?: return null
         return components.core.store.state.findCustomTab(id)
     }
 
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    internal fun getExternalTabId(): String? {
+    @VisibleForTesting
+    fun getExternalTabId(): String? {
         return getIntentSessionId(SafeIntent(intent))
     }
 

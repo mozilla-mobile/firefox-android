@@ -528,7 +528,7 @@ open class FenixActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         components.core.store.dispatch(SearchAction.RefreshSearchEnginesAction)
     }
 
-    override fun onStart() {
+    final override fun onStart() {
         // DO NOT MOVE ANYTHING ABOVE THIS getProfilerTime CALL.
         val startProfilerTime = components.core.engine.profiler?.getProfilerTime()
 
@@ -548,7 +548,7 @@ open class FenixActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         ) // DO NOT MOVE ANYTHING BELOW THIS addMarker CALL.
     }
 
-    override fun onStop() {
+    final override fun onStop() {
         super.onStop()
 
         // Diagnostic breadcrumb for "Display already aquired" crash:
@@ -624,7 +624,7 @@ open class FenixActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         stopMediaSession()
     }
 
-    override fun onConfigurationChanged(newConfig: Configuration) {
+    final override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
 
         // Diagnostic breadcrumb for "Display already aquired" crash:
@@ -634,7 +634,7 @@ open class FenixActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         )
     }
 
-    override fun recreate() {
+    final override fun recreate() {
         // Diagnostic breadcrumb for "Display already aquired" crash:
         // https://github.com/mozilla-mobile/android-components/issues/7960
         breadcrumb(
@@ -714,12 +714,12 @@ open class FenixActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         else -> super.onCreateView(parent, name, context, attrs)
     }
 
-    override fun onActionModeStarted(mode: ActionMode?) {
+    final override fun onActionModeStarted(mode: ActionMode?) {
         actionMode = mode
         super.onActionModeStarted(mode)
     }
 
-    override fun onActionModeFinished(mode: ActionMode?) {
+    final override fun onActionModeFinished(mode: ActionMode?) {
         actionMode = null
         super.onActionModeFinished(mode)
     }
@@ -786,7 +786,7 @@ open class FenixActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         return false
     }
 
-    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+    final override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
         ProfilerMarkers.addForDispatchTouchEvent(components.core.engine.profiler, ev)
         return super.dispatchTouchEvent(ev)
     }
@@ -847,7 +847,8 @@ open class FenixActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
      * private mode directly before the content view is created. Returns the mode set by the intent
      * otherwise falls back to the last known mode.
      */
-    internal fun getModeFromIntentOrLastKnown(intent: Intent?): BrowsingMode {
+    @VisibleForTesting
+    fun getModeFromIntentOrLastKnown(intent: Intent?): BrowsingMode {
         intent?.toSafeIntent()?.let {
             if (it.hasExtra(PRIVATE_BROWSING_MODE)) {
                 val startPrivateMode = it.getBooleanExtra(PRIVATE_BROWSING_MODE, false)
@@ -899,7 +900,7 @@ open class FenixActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
      * Returns the [supportActionBar], inflating it if necessary.
      * Everyone should call this instead of supportActionBar.
      */
-    override fun getSupportActionBarAndInflateIfNecessary(): ActionBar {
+    final override fun getSupportActionBarAndInflateIfNecessary(): ActionBar {
         if (!isToolbarInflated) {
             navigationToolbar = binding.navigationToolbarStub.inflate() as Toolbar
 
@@ -914,7 +915,7 @@ open class FenixActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     }
 
     @Suppress("SpreadOperator")
-    fun setupNavigationToolbar(vararg topLevelDestinationIds: Int) {
+    private fun setupNavigationToolbar(vararg topLevelDestinationIds: Int) {
         NavigationUI.setupWithNavController(
             navigationToolbar,
             navHost.navController,
@@ -926,7 +927,8 @@ open class FenixActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         }
     }
 
-    internal fun navigateToBrowserOnColdStart() {
+    @VisibleForTesting
+    fun navigateToBrowserOnColdStart() {
         // Normal tabs + cold start -> Should go back to browser if we had any tabs open when we left last
         // except for PBM + Cold Start there won't be any tabs since they're evicted so we never will navigate
         if (settings().shouldReturnToBrowser && !browsingModeManager.mode.isPrivate) {
@@ -939,13 +941,13 @@ open class FenixActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         navHost.navController.navigate(NavGraphDirections.actionStartupHome())
     }
 
-    override fun attachBaseContext(base: Context) {
+    final override fun attachBaseContext(base: Context) {
         base.components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
             super.attachBaseContext(base)
         }
     }
 
-    override fun getSystemService(name: String): Any? {
+    final override fun getSystemService(name: String): Any? {
         // Issue #17759 had a crash with the PerformanceInflater.kt on Android 5.0 and 5.1
         // when using the TimePicker. Since the inflater was created for performance monitoring
         // purposes and that we test on new android versions, this means that any difference in
@@ -959,7 +961,7 @@ open class FenixActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         return super.getSystemService(name)
     }
 
-    protected open fun createBrowsingModeManager(initialMode: BrowsingMode): BrowsingModeManager {
+    private fun createBrowsingModeManager(initialMode: BrowsingMode): BrowsingModeManager {
         return DefaultBrowsingModeManager(initialMode, components.settings) { newMode ->
             updateSecureWindowFlags(newMode)
             themeManager.currentTheme = newMode
@@ -976,7 +978,7 @@ open class FenixActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         }
     }
 
-    protected open fun createThemeManager(): ThemeManager {
+    private fun createThemeManager(): ThemeManager {
         return DefaultThemeManager(browsingModeManager.mode, this)
     }
 
@@ -1014,7 +1016,7 @@ open class FenixActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     }
 
     @VisibleForTesting
-    internal fun isActivityColdStarted(startingIntent: Intent, activityIcicle: Bundle?): Boolean {
+    fun isActivityColdStarted(startingIntent: Intent, activityIcicle: Bundle?): Boolean {
         // First time opening this activity in the task.
         // Cold start / start from Recents after back press.
         return activityIcicle == null &&
@@ -1027,6 +1029,7 @@ open class FenixActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
      *  Indicates if the user should be redirected to the [BrowserFragment] or to the [HomeFragment],
      *  links from an external apps should always opened in the [BrowserFragment].
      */
+    @VisibleForTesting
     fun shouldStartOnHome(intent: Intent? = this.intent): Boolean {
         return components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
             // We only want to open on home when users tap the app,
@@ -1046,7 +1049,7 @@ open class FenixActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     }
 
     @VisibleForTesting
-    internal fun getSettings(): Settings = settings()
+    fun getSettings(): Settings = settings()
 
     private fun shouldNavigateToBrowserOnColdStart(savedInstanceState: Bundle?): Boolean {
         return isActivityColdStarted(intent, savedInstanceState) &&
