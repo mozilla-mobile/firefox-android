@@ -9,13 +9,12 @@ import android.net.Uri
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.annotation.VisibleForTesting
-import androidx.navigation.NavDestination
 import mozilla.components.browser.state.selector.findCustomTab
 import mozilla.components.browser.state.state.SessionState
-import mozilla.components.feature.intent.ext.getSessionId
 import mozilla.components.support.utils.SafeIntent
 import org.mozilla.fenix.FenixActivity
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.getIntentSessionId
 
 const val EXTRA_IS_SANDBOX_CUSTOM_TAB = "org.mozilla.fenix.customtabs.EXTRA_IS_SANDBOX_CUSTOM_TAB"
 
@@ -37,15 +36,6 @@ open class ExternalAppBrowserActivity : FenixActivity() {
             finishAndRemoveTask()
         }
     }
-
-    final override fun getBreadcrumbMessage(destination: NavDestination): String {
-        val fragmentName = resources.getResourceEntryName(destination.id)
-        return "Changing to fragment $fragmentName, isCustomTab: true"
-    }
-
-    final override fun getIntentSource(intent: SafeIntent) = "CUSTOM_TAB"
-
-    final override fun getIntentSessionId(intent: SafeIntent) = intent.getSessionId()
 
     override fun onDestroy() {
         super.onDestroy()

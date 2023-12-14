@@ -28,13 +28,11 @@ import android.view.WindowManager.LayoutParams.FLAG_SECURE
 import androidx.annotation.CallSuper
 import androidx.annotation.RequiresApi
 import androidx.annotation.VisibleForTesting
-import androidx.annotation.VisibleForTesting.Companion.PROTECTED
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
@@ -844,20 +842,6 @@ open class FenixActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         super.onUserLeaveHint()
     }
 
-    protected open fun getBreadcrumbMessage(destination: NavDestination): String {
-        val fragmentName = resources.getResourceEntryName(destination.id)
-        return "Changing to fragment $fragmentName, isCustomTab: false"
-    }
-
-    @VisibleForTesting(otherwise = PROTECTED)
-    internal open fun getIntentSource(intent: SafeIntent): String? {
-        return when {
-            intent.isLauncherIntent -> APP_ICON
-            intent.action == Intent.ACTION_VIEW -> "LINK"
-            else -> null
-        }
-    }
-
     /**
      * External sources such as 3rd party links and shortcuts use this function to enter
      * private mode directly before the content view is created. Returns the mode set by the intent
@@ -940,16 +924,6 @@ open class FenixActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         navigationToolbar.setNavigationOnClickListener {
             onBackPressed()
         }
-    }
-
-    protected open fun getIntentSessionId(intent: SafeIntent): String? = null
-
-    internal fun handleRequestDesktopMode(tabId: String) {
-        components.useCases.sessionUseCases.requestDesktopSite(true, tabId)
-        components.core.store.dispatch(ContentAction.UpdateDesktopModeAction(tabId, true))
-
-        // Reset preference value after opening the tab in desktop mode
-        settings().openNextTabInDesktopMode = false
     }
 
     internal fun navigateToBrowserOnColdStart() {
