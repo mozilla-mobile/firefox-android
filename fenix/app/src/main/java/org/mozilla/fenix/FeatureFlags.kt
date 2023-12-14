@@ -77,5 +77,15 @@ object FeatureFlags {
     /**
      * Enable Meta attribution.
      */
-    val metaAttributionEnabled = Config.channel.isNightlyOrDebug
+    const val metaAttributionEnabled = true
+
+    /**
+     * Enable Toolbar Redesign components and behaviors ready for Nightly.
+     */
+    val completeToolbarRedesignEnabled = Config.channel.isNightlyOrDebug
+
+    /**
+     * Enable Toolbar Redesign partial components and behaviors.
+     */
+    val incompleteToolbarRedesignEnabled = Config.channel.isDebug
 }

@@ -21,18 +21,19 @@ object Versions {
 
     const val junit = "4.13.2"
     const val robolectric = "4.11.1"
-    const val mockito = "5.7.0"
+    const val mockito = "5.8.0"
     const val maven_ant_tasks = "2.1.3"
     const val jacoco = "0.8.11"
     const val okhttp = "4.11.0"
+    const val okio = "3.6.0"
     const val coil = "2.4.0"
 
-    const val android_gradle_plugin = "7.4.2"
+    const val android_gradle_plugin = "8.0.2"
 
     // This has to be synced to the gradlew plugin version. See
     // http://googlesamples.github.io/android-custom-lint-rules/api-guide/example.md.html#example:samplelintcheckgithubproject/lintversion?
-    const val lint = "30.4.2"
-    const val detekt = "1.23.3"
+    const val lint = "31.0.2"
+    const val detekt = "1.23.4"
     const val ktlint = "0.49.1"
 
     const val sentry = "6.34.0"
@@ -43,7 +44,7 @@ object Versions {
     const val leakcanary = "2.12"
 
     // DO NOT MODIFY MANUALLY. This is auto-updated along with GeckoView.
-    const val mozilla_glean = "55.0.0"
+    const val mozilla_glean = "56.0.0"
 
     const val material = "1.9.0"
     const val ksp = "1.0.11"
@@ -56,7 +57,7 @@ object Versions {
 
     object AndroidX {
         const val activityCompose = "1.7.2"
-        const val annotation = "1.7.0"
+        const val annotation = "1.7.1"
         const val appcompat = "1.6.1"
         const val autofill = "1.1.0"
         const val browser = "1.7.0"
@@ -79,7 +80,7 @@ object Versions {
         const val palette = "1.0.0"
         const val preferences = "1.2.1"
         const val lifecycle = "2.6.2"
-        const val media = "1.6.0"
+        const val media = "1.7.0"
         const val navigation = "2.5.3"
         const val work = "2.7.1"
         const val arch = "2.2.0"
@@ -90,7 +91,7 @@ object Versions {
     }
 
     object Firebase {
-        const val messaging = "23.3.0"
+        const val messaging = "23.3.1"
     }
 }
 
@@ -200,6 +201,7 @@ object ComponentsDependencies {
 
     const val thirdparty_okhttp = "com.squareup.okhttp3:okhttp:${Versions.okhttp}"
     const val thirdparty_okhttp_urlconnection = "com.squareup.okhttp3:okhttp-urlconnection:${Versions.okhttp}"
+    const val thirdparty_okio = "com.squareup.okio:okio:${Versions.okio}"
     const val thirdparty_sentry = "io.sentry:sentry-android:${Versions.sentry}"
     const val thirdparty_zxing = "com.google.zxing:core:${Versions.zxing}"
     const val thirdparty_disklrucache = "com.jakewharton:disklrucache:${Versions.disklrucache}"

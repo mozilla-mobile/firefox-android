@@ -11,6 +11,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.mozilla.fenix.shopping.ProductAnalysisTestData
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent.HighlightsInfo
+import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState.Progress
 
 class ReviewQualityCheckStateTest {
 
@@ -223,5 +224,24 @@ class ReviewQualityCheckStateTest {
 
         assertTrue(analysis.highlightsInfo!!.showMoreButtonVisible)
         assertFalse(analysis.highlightsInfo!!.highlightsFadeVisible)
+    }
+
+    @Test
+    fun `WHEN progress has a positive value THEN normalized progress should match`() {
+        val progress = Progress(61.6f)
+        assertEquals(0.616f, progress.normalizedProgress)
+    }
+
+    @Test
+    fun `WHEN no analysis is present with progress THEN normalized progress should match and progress bar is visible`() {
+        val analysis = ProductAnalysisTestData.noAnalysisPresent(progress = 61.6f)
+        assertTrue(analysis.isProgressBarVisible)
+        assertEquals(0.616f, analysis.progress.normalizedProgress)
+    }
+
+    @Test
+    fun `WHEN no analysis is present with negative progress THEN progress bar is not visible`() {
+        val analysis = ProductAnalysisTestData.noAnalysisPresent(progress = -1f)
+        assertFalse(analysis.isProgressBarVisible)
     }
 }
