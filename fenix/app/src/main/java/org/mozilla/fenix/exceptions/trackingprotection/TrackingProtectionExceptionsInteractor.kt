@@ -9,6 +9,7 @@ import mozilla.components.feature.session.TrackingProtectionUseCases
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.exceptions.ExceptionsInteractor
+import org.mozilla.fenix.openToBrowserAndLoad
 import org.mozilla.fenix.settings.SupportUtils
 
 interface TrackingProtectionExceptionsInteractor : ExceptionsInteractor<TrackingProtectionException> {

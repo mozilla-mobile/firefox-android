@@ -15,6 +15,7 @@ import org.mozilla.fenix.GleanMetrics.Pocket
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.appstate.AppAction
+import org.mozilla.fenix.openToBrowserAndLoad
 
 /**
  * Contract for how all user interactions with the Pocket stories feature are to be handled.

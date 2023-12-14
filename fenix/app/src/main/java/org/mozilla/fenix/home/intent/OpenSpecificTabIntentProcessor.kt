@@ -11,6 +11,7 @@ import mozilla.components.feature.media.service.AbstractMediaSessionService
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.openToBrowser
 
 /**
  * When the media notification is clicked we need to switch to the tab where the audio/video is

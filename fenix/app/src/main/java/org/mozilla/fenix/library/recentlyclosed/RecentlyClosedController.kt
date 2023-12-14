@@ -20,6 +20,7 @@ import org.mozilla.fenix.GleanMetrics.RecentlyClosedTabs
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
+import org.mozilla.fenix.openToBrowser
 
 @Suppress("TooManyFunctions")
 interface RecentlyClosedController {

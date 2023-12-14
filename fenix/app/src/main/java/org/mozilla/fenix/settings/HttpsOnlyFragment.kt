@@ -22,6 +22,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.SettingsHttpsOnlyBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.openToBrowserAndLoad
 
 /**
  * Lets the user customize HTTPS-only mode.

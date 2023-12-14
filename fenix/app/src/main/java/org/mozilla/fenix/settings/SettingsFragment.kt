@@ -60,6 +60,7 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.nimbus.FxNimbus
+import org.mozilla.fenix.openToBrowserAndLoad
 import org.mozilla.fenix.perf.ProfilerViewModel
 import org.mozilla.fenix.settings.account.AccountUiView
 import org.mozilla.fenix.utils.Settings

@@ -20,6 +20,7 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.openToBrowserAndLoad
 import org.mozilla.fenix.trackingprotection.TrackingProtectionMode
 import org.mozilla.fenix.utils.view.addToRadioGroup
 

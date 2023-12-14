@@ -28,6 +28,7 @@ import org.mozilla.fenix.components.accounts.AccountState
 import org.mozilla.fenix.components.accounts.FenixFxAEntryPoint
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.openToBrowserAndLoad
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.settings.deletebrowsingdata.deleteAndQuit
 import org.mozilla.fenix.theme.ThemeManager

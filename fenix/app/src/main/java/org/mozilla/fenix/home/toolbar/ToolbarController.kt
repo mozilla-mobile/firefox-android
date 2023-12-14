@@ -15,6 +15,7 @@ import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.browser.BrowserAnimator
 import org.mozilla.fenix.components.metrics.MetricsUtils
 import org.mozilla.fenix.ext.nav
+import org.mozilla.fenix.openToBrowserAndLoad
 
 /**
  * An interface that handles the view manipulation of the home screen toolbar.

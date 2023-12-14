@@ -46,6 +46,7 @@ import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.databinding.FragmentTrackingProtectionBinding
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.requireComponents
+import org.mozilla.fenix.openToBrowserAndLoad
 import org.mozilla.fenix.settings.SupportUtils
 
 @Suppress("TooManyFunctions")

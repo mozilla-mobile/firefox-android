@@ -43,6 +43,7 @@ import org.mozilla.fenix.ext.DEFAULT_ACTIVE_DAYS
 import org.mozilla.fenix.ext.potentialInactiveTabs
 import org.mozilla.fenix.home.HomeFragment
 import org.mozilla.fenix.library.bookmarks.BookmarksSharedViewModel
+import org.mozilla.fenix.openToBrowserAndLoad
 import org.mozilla.fenix.tabstray.browser.InactiveTabsController
 import org.mozilla.fenix.tabstray.browser.TabsTrayFabController
 import org.mozilla.fenix.tabstray.ext.getTabSessionState

@@ -28,6 +28,7 @@ import org.mozilla.fenix.ext.bookmarkStorage
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.navigateSafe
+import org.mozilla.fenix.openToBrowserAndLoad
 
 @VisibleForTesting
 internal const val WARN_OPEN_ALL_SIZE = 15

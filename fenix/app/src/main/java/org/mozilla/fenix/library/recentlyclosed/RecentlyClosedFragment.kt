@@ -34,6 +34,7 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.setTextColor
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.library.LibraryPageFragment
+import org.mozilla.fenix.openToBrowserAndLoad
 
 @Suppress("TooManyFunctions")
 class RecentlyClosedFragment :

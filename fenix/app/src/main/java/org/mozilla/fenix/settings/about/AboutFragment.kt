@@ -25,6 +25,7 @@ import org.mozilla.fenix.crashes.CrashListActivity
 import org.mozilla.fenix.databinding.FragmentAboutBinding
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.openToBrowserAndLoad
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.settings.about.AboutItemType.LICENSING_INFO
 import org.mozilla.fenix.settings.about.AboutItemType.PRIVACY_NOTICE

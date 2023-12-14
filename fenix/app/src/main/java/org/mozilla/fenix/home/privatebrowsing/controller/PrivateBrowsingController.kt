@@ -14,6 +14,7 @@ import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.privatebrowsing.interactor.PrivateBrowsingInteractor
+import org.mozilla.fenix.openToBrowserAndLoad
 import org.mozilla.fenix.settings.SupportUtils
 
 /**

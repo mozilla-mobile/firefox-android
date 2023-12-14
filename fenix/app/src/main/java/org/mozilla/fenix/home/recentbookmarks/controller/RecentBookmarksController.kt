@@ -19,6 +19,7 @@ import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.home.HomeFragmentDirections
 import org.mozilla.fenix.home.recentbookmarks.RecentBookmark
 import org.mozilla.fenix.home.recentbookmarks.interactor.RecentBookmarksInteractor
+import org.mozilla.fenix.openToBrowserAndLoad
 
 /**
  * An interface that handles the view manipulation of the recently saved bookmarks on the

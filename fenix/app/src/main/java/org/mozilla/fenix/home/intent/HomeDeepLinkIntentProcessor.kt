@@ -20,6 +20,7 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.ext.alreadyOnDestination
 import org.mozilla.fenix.ext.openSetDefaultBrowserOption
+import org.mozilla.fenix.openToBrowserAndLoad
 
 /**
  * Deep links in the form of `fenix://host` open different parts of the app.

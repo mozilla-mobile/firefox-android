@@ -62,6 +62,7 @@ import org.mozilla.fenix.library.history.state.HistorySyncMiddleware
 import org.mozilla.fenix.library.history.state.HistoryTelemetryMiddleware
 import org.mozilla.fenix.library.history.state.bindings.MenuBinding
 import org.mozilla.fenix.library.history.state.bindings.PendingDeletionBinding
+import org.mozilla.fenix.openToBrowserAndLoad
 import org.mozilla.fenix.tabstray.Page
 import org.mozilla.fenix.utils.allowUndo
 import org.mozilla.fenix.GleanMetrics.History as GleanHistory

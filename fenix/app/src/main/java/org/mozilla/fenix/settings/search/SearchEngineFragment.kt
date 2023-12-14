@@ -21,6 +21,7 @@ import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.navigateWithBreadcrumb
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.openToBrowserAndLoad
 import org.mozilla.fenix.settings.SharedPreferenceUpdater
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.settings.requirePreference

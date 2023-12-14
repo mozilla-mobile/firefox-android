@@ -25,6 +25,7 @@ import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.databinding.FragmentSaveSearchEngineBinding
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.openToBrowserAndLoad
 import org.mozilla.fenix.settings.SupportUtils
 
 /**

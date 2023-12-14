@@ -34,6 +34,7 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.redirectToReAuth
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.openToBrowserAndLoad
 import org.mozilla.fenix.settings.logins.LoginsAction
 import org.mozilla.fenix.settings.logins.LoginsFragmentStore
 import org.mozilla.fenix.settings.logins.SavedLoginsSortingStrategyMenu

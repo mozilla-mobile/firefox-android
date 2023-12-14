@@ -15,6 +15,7 @@ import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.components.metrics.MetricsUtils
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.openToBrowserAndLoad
 import org.mozilla.fenix.widget.VoiceSearchActivity.Companion.SPEECH_PROCESSING
 
 /**

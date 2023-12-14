@@ -10,6 +10,7 @@ import org.mozilla.experiments.nimbus.NimbusInterface
 import org.mozilla.experiments.nimbus.internal.EnrolledExperiment
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.openToBrowserAndLoad
 import kotlin.system.exitProcess
 
 interface StudiesInteractor {

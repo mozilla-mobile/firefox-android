@@ -91,6 +91,7 @@ import org.mozilla.fenix.ext.registerForActivityResult
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.secure
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.openToBrowserAndLoad
 import org.mozilla.fenix.search.awesomebar.AwesomeBarView
 import org.mozilla.fenix.search.awesomebar.toSearchProviderState
 import org.mozilla.fenix.search.ext.searchEngineShortcuts

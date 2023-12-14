@@ -18,6 +18,7 @@ import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.onboarding.ReEngagementNotificationWorker
 import org.mozilla.fenix.onboarding.ReEngagementNotificationWorker.Companion.isReEngagementNotificationIntent
+import org.mozilla.fenix.openToBrowserAndLoad
 import org.mozilla.fenix.utils.Settings
 
 /**

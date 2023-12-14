@@ -10,6 +10,7 @@ import mozilla.components.support.utils.SafeIntent
 import mozilla.components.support.utils.toSafeIntent
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.openToBrowser
 
 /**
  * The [org.mozilla.fenix.IntentReceiverActivity] may set the [HomeActivity.OPEN_TO_BROWSER] flag

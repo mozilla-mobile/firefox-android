@@ -32,6 +32,8 @@ import org.mozilla.fenix.ext.application
 import org.mozilla.fenix.ext.navigateSafe
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.telemetryName
+import org.mozilla.fenix.openToBrowser
+import org.mozilla.fenix.openToBrowserAndLoad
 import org.mozilla.fenix.search.awesomebar.AwesomeBarView.Companion.GOOGLE_SEARCH_ENGINE_NAME
 import org.mozilla.fenix.search.toolbar.SearchSelectorInteractor
 import org.mozilla.fenix.search.toolbar.SearchSelectorMenu

@@ -23,6 +23,7 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.FragmentAddOnDetailsBinding
 import org.mozilla.fenix.ext.showToolbar
+import org.mozilla.fenix.openToBrowserAndLoad
 
 /**
  * A fragment to show the details of an add-on.
