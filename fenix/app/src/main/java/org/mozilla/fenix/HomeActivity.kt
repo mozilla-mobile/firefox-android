@@ -691,8 +691,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         startupPathProvider.onIntentReceived(intent)
     }
 
-    open fun handleNewIntent(intent: Intent) {
-        // Diagnostic breadcrumb for "Display already aquired" crash:
+    private fun handleNewIntent(intent: Intent) {
+        // Diagnostic breadcrumb for "Display already acquired" crash:
         // https://github.com/mozilla-mobile/android-components/issues/7960
         breadcrumb(
             message = "onNewIntent()",
@@ -1186,7 +1186,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         settings().openNextTabInDesktopMode = false
     }
 
-    open fun navigateToBrowserOnColdStart() {
+    private fun navigateToBrowserOnColdStart() {
         // Normal tabs + cold start -> Should go back to browser if we had any tabs open when we left last
         // except for PBM + Cold Start there won't be any tabs since they're evicted so we never will navigate
         if (settings().shouldReturnToBrowser && !browsingModeManager.mode.isPrivate) {
@@ -1195,7 +1195,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         }
     }
 
-    open fun navigateToHome() {
+    private fun navigateToHome() {
         navHost.navController.navigate(NavGraphDirections.actionStartupHome())
     }
 

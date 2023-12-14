@@ -5,7 +5,6 @@
 package org.mozilla.fenix.customtabs
 
 import android.app.assist.AssistContent
-import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -53,18 +52,6 @@ open class ExternalAppBrowserActivity : HomeActivity() {
     final override fun getIntentSource(intent: SafeIntent) = "CUSTOM_TAB"
 
     final override fun getIntentSessionId(intent: SafeIntent) = intent.getSessionId()
-
-    override fun navigateToBrowserOnColdStart() {
-        // No-op for external app
-    }
-
-    override fun navigateToHome() {
-        // No-op for external app
-    }
-
-    override fun handleNewIntent(intent: Intent) {
-        // No-op for external app
-    }
 
     override fun getNavDirections(
         from: BrowserDirection,
