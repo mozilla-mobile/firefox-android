@@ -12,7 +12,7 @@
         <item name="postSplashScreenTheme">@style/NormalTheme</item>
     </style>
 
-    <style name="NormalThemeBase" parent="Theme.MaterialComponents.DayNight.NoActionBar.Bridge">
+    <style name="NormalThemeBase" parent="Theme.Material3.DynamicColors.DayNight.NoActionBar">
         <!-- Android system styling -->
         <item name="searchViewStyle">@style/SearchViewStyle</item>
         <item name="autoCompleteTextViewStyle">@style/AutoCompleteTextViewStyle</item>
@@ -205,7 +205,7 @@
 
     <style name="DialogStyleNormal" parent="DialogStyleLight"/>
 
-    <style name="PrivateThemeBase" parent="Theme.MaterialComponents.NoActionBar.Bridge">
+    <style name="PrivateThemeBase" parent="Theme.Material3.DynamicColors.Dark.NoActionBar">
         <!-- Android system styling -->
         <item name="searchViewStyle">@style/SearchViewStyle</item>
         <item name="autoCompleteTextViewStyle">@style/AutoCompleteTextViewStyle</item>
