@@ -9,6 +9,8 @@ import android.view.Gravity
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import mozilla.components.browser.toolbar.behavior.BrowserToolbarBehavior
+import mozilla.components.browser.toolbar.behavior.ToolbarPosition
 import org.mozilla.fenix.theme.FirefoxTheme
 
 /**
@@ -39,9 +41,14 @@ class NavigationBarView(
             CoordinatorLayout.LayoutParams.WRAP_CONTENT,
         ).apply {
             gravity = Gravity.BOTTOM
+
+            behavior = BrowserToolbarBehavior(container.context, null, ToolbarPosition.BOTTOM).apply {
+                enableScrolling()
+            }
         }
 
         composeView.layoutParams = layoutParams
         container.addView(composeView)
     }
+
 }

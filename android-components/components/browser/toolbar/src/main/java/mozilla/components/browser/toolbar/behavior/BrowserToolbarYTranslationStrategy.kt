@@ -5,9 +5,10 @@
 package mozilla.components.browser.toolbar.behavior
 
 import android.animation.ValueAnimator
+import android.view.View
 import android.view.animation.DecelerateInterpolator
 import androidx.annotation.VisibleForTesting
-import mozilla.components.browser.toolbar.BrowserToolbar
+//import mozilla.components.browser.toolbar.BrowserToolbar
 import kotlin.math.max
 import kotlin.math.min
 
@@ -28,38 +29,38 @@ internal abstract class BrowserToolbarYTranslationStrategy {
      * Snap the [BrowserToolbar] to be collapsed or expanded, depending on whatever state is closer
      * over a short amount of time.
      */
-    abstract fun snapWithAnimation(toolbar: BrowserToolbar)
+    abstract fun snapWithAnimation(toolbar: View)
 
     /**
      * Snap the [BrowserToolbar] to be collapsed or expanded, depending on whatever state is closer immediately.
      */
-    abstract fun snapImmediately(toolbar: BrowserToolbar?)
+    abstract fun snapImmediately(toolbar: View?)
 
     /**
      * Translate the [BrowserToolbar] to it's full visible height.
      */
-    abstract fun expandWithAnimation(toolbar: BrowserToolbar)
+    abstract fun expandWithAnimation(toolbar: View)
 
     /**
      * Force expanding the [BrowserToolbar] depending on the [distance] value that should be translated
      * cancelling any other translation already in progress.
      */
-    abstract fun forceExpandWithAnimation(toolbar: BrowserToolbar, distance: Float)
+    abstract fun forceExpandWithAnimation(toolbar: View, distance: Float)
 
     /**
      * Translate the [BrowserToolbar] to it's full 0 visible height.
      */
-    abstract fun collapseWithAnimation(toolbar: BrowserToolbar)
+    abstract fun collapseWithAnimation(toolbar: View)
 
     /**
      * Translate [toolbar] immediately to the specified [distance] amount (positive or negative).
      */
-    abstract fun translate(toolbar: BrowserToolbar, distance: Float)
+    abstract fun translate(toolbar: View, distance: Float)
 
     /**
      * Translate [toolbar] to the indicated [targetTranslationY] vaue over a short amount of time.
      */
-    open fun animateToTranslationY(toolbar: BrowserToolbar, targetTranslationY: Float) = with(animator) {
+    open fun animateToTranslationY(toolbar: View, targetTranslationY: Float) = with(animator) {
         addUpdateListener { toolbar.translationY = it.animatedValue as Float }
         setFloatValues(toolbar.translationY, targetTranslationY)
         start()
@@ -79,7 +80,7 @@ internal class BottomToolbarBehaviorStrategy : BrowserToolbarYTranslationStrateg
     @VisibleForTesting
     internal var wasLastExpanding = false
 
-    override fun snapWithAnimation(toolbar: BrowserToolbar) {
+    override fun snapWithAnimation(toolbar: View) {
         if (toolbar.translationY >= (toolbar.height / 2f)) {
             collapseWithAnimation(toolbar)
         } else {
@@ -87,7 +88,7 @@ internal class BottomToolbarBehaviorStrategy : BrowserToolbarYTranslationStrateg
         }
     }
 
-    override fun snapImmediately(toolbar: BrowserToolbar?) {
+    override fun snapImmediately(toolbar: View?) {
         if (animator.isStarted) {
             animator.end()
         } else {
@@ -101,11 +102,11 @@ internal class BottomToolbarBehaviorStrategy : BrowserToolbarYTranslationStrateg
         }
     }
 
-    override fun expandWithAnimation(toolbar: BrowserToolbar) {
+    override fun expandWithAnimation(toolbar: View) {
         animateToTranslationY(toolbar, 0f)
     }
 
-    override fun forceExpandWithAnimation(toolbar: BrowserToolbar, distance: Float) {
+    override fun forceExpandWithAnimation(toolbar: View, distance: Float) {
         val shouldExpandToolbar = distance < 0
         val isToolbarExpanded = toolbar.translationY == 0f
         if (shouldExpandToolbar && !isToolbarExpanded && !wasLastExpanding) {
@@ -114,16 +115,16 @@ internal class BottomToolbarBehaviorStrategy : BrowserToolbarYTranslationStrateg
         }
     }
 
-    override fun collapseWithAnimation(toolbar: BrowserToolbar) {
+    override fun collapseWithAnimation(toolbar: View) {
         animateToTranslationY(toolbar, toolbar.height.toFloat())
     }
 
-    override fun translate(toolbar: BrowserToolbar, distance: Float) {
+    override fun translate(toolbar: View, distance: Float) {
         toolbar.translationY =
             max(0f, min(toolbar.height.toFloat(), toolbar.translationY + distance))
     }
 
-    override fun animateToTranslationY(toolbar: BrowserToolbar, targetTranslationY: Float) {
+    override fun animateToTranslationY(toolbar: View, targetTranslationY: Float) {
         wasLastExpanding = targetTranslationY <= toolbar.translationY
         super.animateToTranslationY(toolbar, targetTranslationY)
     }
@@ -137,7 +138,7 @@ internal class TopToolbarBehaviorStrategy : BrowserToolbarYTranslationStrategy()
     @VisibleForTesting
     internal var wasLastExpanding = false
 
-    override fun snapWithAnimation(toolbar: BrowserToolbar) {
+    override fun snapWithAnimation(toolbar: View) {
         if (toolbar.translationY >= -(toolbar.height / 2f)) {
             expandWithAnimation(toolbar)
         } else {
@@ -145,7 +146,7 @@ internal class TopToolbarBehaviorStrategy : BrowserToolbarYTranslationStrategy()
         }
     }
 
-    override fun snapImmediately(toolbar: BrowserToolbar?) {
+    override fun snapImmediately(toolbar: View?) {
         if (animator.isStarted) {
             animator.end()
         } else {
@@ -159,11 +160,11 @@ internal class TopToolbarBehaviorStrategy : BrowserToolbarYTranslationStrategy()
         }
     }
 
-    override fun expandWithAnimation(toolbar: BrowserToolbar) {
+    override fun expandWithAnimation(toolbar: View) {
         animateToTranslationY(toolbar, 0f)
     }
 
-    override fun forceExpandWithAnimation(toolbar: BrowserToolbar, distance: Float) {
+    override fun forceExpandWithAnimation(toolbar: View, distance: Float) {
         val isExpandingInProgress = animator.isStarted && wasLastExpanding
         val shouldExpandToolbar = distance < 0
         val isToolbarExpanded = toolbar.translationY == 0f
@@ -173,16 +174,16 @@ internal class TopToolbarBehaviorStrategy : BrowserToolbarYTranslationStrategy()
         }
     }
 
-    override fun collapseWithAnimation(toolbar: BrowserToolbar) {
+    override fun collapseWithAnimation(toolbar: View) {
         animateToTranslationY(toolbar, -toolbar.height.toFloat())
     }
 
-    override fun translate(toolbar: BrowserToolbar, distance: Float) {
+    override fun translate(toolbar: View, distance: Float) {
         toolbar.translationY =
             min(0f, max(-toolbar.height.toFloat(), toolbar.translationY - distance))
     }
 
-    override fun animateToTranslationY(toolbar: BrowserToolbar, targetTranslationY: Float) {
+    override fun animateToTranslationY(toolbar: View, targetTranslationY: Float) {
         wasLastExpanding = targetTranslationY >= toolbar.translationY
         super.animateToTranslationY(toolbar, targetTranslationY)
     }

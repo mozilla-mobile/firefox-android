@@ -39,7 +39,7 @@ class BrowserToolbarBehavior(
     attrs: AttributeSet?,
     private val toolbarPosition: ToolbarPosition,
     private val crashReporting: CrashReporting? = null,
-) : CoordinatorLayout.Behavior<BrowserToolbar>(context, attrs) {
+) : CoordinatorLayout.Behavior<View>(context, attrs) {
     // This implementation is heavily based on this blog article:
     // https://android.jlelse.eu/scroll-your-bottom-navigation-view-away-with-10-lines-of-code-346f1ed40e9e
 
@@ -62,7 +62,7 @@ class BrowserToolbarBehavior(
      * Reference to the actual [BrowserToolbar] that we'll animate.
      */
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    internal var browserToolbar: BrowserToolbar? = null
+    internal var browserToolbar: View? = null
 
     /**
      * Depending on how user's touch was consumed by EngineView / current website,
@@ -90,7 +90,7 @@ class BrowserToolbarBehavior(
 
     override fun onStartNestedScroll(
         coordinatorLayout: CoordinatorLayout,
-        child: BrowserToolbar,
+        child: View,
         directTargetChild: View,
         target: View,
         axes: Int,
@@ -105,7 +105,7 @@ class BrowserToolbarBehavior(
 
     override fun onStopNestedScroll(
         coordinatorLayout: CoordinatorLayout,
-        child: BrowserToolbar,
+        child: View,
         target: View,
         type: Int,
     ) {
@@ -116,7 +116,7 @@ class BrowserToolbarBehavior(
 
     override fun onInterceptTouchEvent(
         parent: CoordinatorLayout,
-        child: BrowserToolbar,
+        child: View,
         ev: MotionEvent,
     ): Boolean {
         if (browserToolbar != null) {
@@ -127,7 +127,7 @@ class BrowserToolbarBehavior(
 
     override fun onLayoutChild(
         parent: CoordinatorLayout,
-        child: BrowserToolbar,
+        child: View,
         layoutDirection: Int,
     ): Boolean {
         browserToolbar = child
@@ -211,7 +211,7 @@ class BrowserToolbarBehavior(
         )
 
     @VisibleForTesting
-    internal fun startNestedScroll(axes: Int, type: Int, toolbar: BrowserToolbar): Boolean {
+    internal fun startNestedScroll(axes: Int, type: Int, toolbar: View): Boolean {
         return if (shouldScroll && axes == ViewCompat.SCROLL_AXIS_VERTICAL) {
             startedScroll = true
             shouldSnapAfterScroll = type == ViewCompat.TYPE_TOUCH
@@ -229,7 +229,7 @@ class BrowserToolbarBehavior(
     }
 
     @VisibleForTesting
-    internal fun stopNestedScroll(type: Int, toolbar: BrowserToolbar) {
+    internal fun stopNestedScroll(type: Int, toolbar: View) {
         startedScroll = false
         if (shouldSnapAfterScroll || type == ViewCompat.TYPE_NON_TOUCH) {
             yTranslator.snapWithAnimation(toolbar)

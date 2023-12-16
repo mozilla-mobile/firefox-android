@@ -4,8 +4,9 @@
 
 package mozilla.components.browser.toolbar.behavior
 
+import android.view.View
 import androidx.annotation.VisibleForTesting
-import mozilla.components.browser.toolbar.BrowserToolbar
+//import mozilla.components.browser.toolbar.BrowserToolbar
 
 /**
  * Helper class with methods for translating on the Y axis a top / bottom [BottomToolbar].
@@ -23,28 +24,28 @@ class BrowserToolbarYTranslator(toolbarPosition: ToolbarPosition) {
      * Snap the [BrowserToolbar] to be collapsed or expanded, depending on whatever state is closer
      * over a short amount of time.
      */
-    internal fun snapWithAnimation(toolbar: BrowserToolbar) {
+    internal fun snapWithAnimation(toolbar: View) {
         strategy.snapWithAnimation(toolbar)
     }
 
     /**
      * Snap the [BrowserToolbar] to be collapsed or expanded, depending on whatever state is closer immediately.
      */
-    fun snapImmediately(toolbar: BrowserToolbar?) {
+    fun snapImmediately(toolbar: View?) {
         strategy.snapImmediately(toolbar)
     }
 
     /**
      * Translate the [BrowserToolbar] to it's full visible height over a short amount of time.
      */
-    internal fun expandWithAnimation(toolbar: BrowserToolbar) {
+    internal fun expandWithAnimation(toolbar: View) {
         strategy.expandWithAnimation(toolbar)
     }
 
     /**
      * Translate the [BrowserToolbar] to be hidden from view over a short amount of time.
      */
-    internal fun collapseWithAnimation(toolbar: BrowserToolbar) {
+    internal fun collapseWithAnimation(toolbar: View) {
         strategy.collapseWithAnimation(toolbar)
     }
 
@@ -52,14 +53,14 @@ class BrowserToolbarYTranslator(toolbarPosition: ToolbarPosition) {
      * Force expanding the [BrowserToolbar] depending on the [distance] value that should be translated
      * cancelling any other translation already in progress.
      */
-    fun forceExpandIfNotAlready(toolbar: BrowserToolbar, distance: Float) {
+    fun forceExpandIfNotAlready(toolbar: View, distance: Float) {
         strategy.forceExpandWithAnimation(toolbar, distance)
     }
 
     /**
      * Translate [toolbar] immediately to the specified [distance] amount (positive or negative).
      */
-    fun translate(toolbar: BrowserToolbar, distance: Float) {
+    fun translate(toolbar: View, distance: Float) {
         strategy.translate(toolbar, distance)
     }
 
