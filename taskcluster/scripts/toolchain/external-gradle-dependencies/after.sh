@@ -21,6 +21,9 @@ BAD_DOWNLOADS_FILE="$WORKSPACE/bad_downloads.txt"
 BAD_DOWNLOADS_EXIT_CODE=17
 
 
+ls -lR ${GRADLE_USER_HOME}
+ls -lR ${NEXUS_STORAGE_DIR}
+
 function _package_artifacts_downloaded_by_nexus() {
     pushd "$WORKSPACE"
 
