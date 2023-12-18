@@ -25,8 +25,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import org.mozilla.fenix.R
 import org.mozilla.fenix.compose.annotation.LightDarkPreview
+import org.mozilla.fenix.home.HomeMenuView
 import org.mozilla.fenix.theme.FirefoxTheme
 import org.mozilla.fenix.theme.Theme
 
@@ -36,7 +38,10 @@ import org.mozilla.fenix.theme.Theme
  * @param actionItems A list of [ActionItem] used to populate the bar.
  */
 @Composable
-fun NavigationBar(actionItems: List<ActionItem>) {
+fun NavigationBar(
+    actionItems: List<ActionItem>,
+    menuView: HomeMenuView? = null
+) {
     Box(
         modifier = Modifier
             .background(FirefoxTheme.colors.layer1)
@@ -66,6 +71,27 @@ fun NavigationBar(actionItems: List<ActionItem>) {
                     ItemType.TAB_COUNTER -> {
                         IconButton(onClick = {}) {
                             TabsIcon(item = it, tabsCount = 0)
+                        }
+                    }
+
+                    ItemType.MENU -> {
+                        menuView?.let {
+                            IconButton(onClick = {}) {
+                                AndroidView(
+                                    factory = { _ ->
+                                        menuView.build()
+                                        menuView.getMenuButton()!!
+                                    },
+                                )
+                            }
+                        } ?: run {
+                            IconButton(onClick = {}) {
+                                Icon(
+                                    painter = painterResource(it.iconId),
+                                    stringResource(id = it.descriptionResourceId),
+                                    tint = FirefoxTheme.colors.iconPrimary,
+                                )
+                            }
                         }
                     }
                 }
@@ -113,7 +139,7 @@ data class ActionItem(
  * [TAB_COUNTER] - Represents a specialized item used to display a count, such as the number of open tabs in a browser.
  */
 enum class ItemType {
-    STANDARD, TAB_COUNTER
+    STANDARD, TAB_COUNTER, MENU
 }
 
 /**
@@ -125,9 +151,10 @@ object StandardNavigationItems {
         descriptionResourceId = R.string.browser_toolbar_home,
     )
 
-    val settings = ActionItem(
+    val menu = ActionItem(
         iconId = R.drawable.mozac_ic_ellipsis_vertical_24,
         descriptionResourceId = R.string.mozac_browser_menu_button,
+        type = ItemType.MENU
     )
 
     val back = ActionItem(
@@ -146,7 +173,7 @@ object StandardNavigationItems {
         type = ItemType.TAB_COUNTER,
     )
 
-    val defaultItems = listOf(back, forward, home, tabs, settings)
+    val defaultItems = listOf(back, forward, home, tabs, menu)
 }
 
 @LightDarkPreview

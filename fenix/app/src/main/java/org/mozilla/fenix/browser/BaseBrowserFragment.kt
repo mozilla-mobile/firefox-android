@@ -42,6 +42,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.appservices.places.uniffi.PlacesApiException
+import mozilla.components.browser.menu.view.MenuButton
 import mozilla.components.browser.state.action.ContentAction
 import mozilla.components.browser.state.selector.findCustomTab
 import mozilla.components.browser.state.selector.findCustomTabOrSelectedTab
@@ -150,6 +151,7 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.secure
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.home.HomeMenuView
 import org.mozilla.fenix.home.HomeScreenViewModel
 import org.mozilla.fenix.home.SharedViewModel
 import org.mozilla.fenix.library.bookmarks.BookmarksSharedViewModel
@@ -439,9 +441,19 @@ abstract class BaseBrowserFragment :
         )
 
         if (IncompleteRedesignToolbarFeature(context.settings()).isEnabled) {
+            val homeMenuView = HomeMenuView(
+                view = view,
+                context = view.context,
+                lifecycleOwner = viewLifecycleOwner,
+                homeActivity = activity,
+                navController = findNavController(),
+                menuButton = WeakReference(MenuButton(view.context)),
+            )
+
             NavigationBarView(
                 context = context,
                 container = binding.browserLayout,
+                menuView = homeMenuView,
             )
         }
 

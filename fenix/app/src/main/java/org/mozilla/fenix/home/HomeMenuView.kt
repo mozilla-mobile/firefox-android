@@ -78,6 +78,10 @@ class HomeMenuView(
         )
     }
 
+    fun getMenuButton() : MenuButton? {
+        return menuButton.get()
+    }
+
     /**
      * Dismisses the menu.
      */

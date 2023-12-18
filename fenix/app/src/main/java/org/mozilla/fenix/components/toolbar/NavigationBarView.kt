@@ -11,6 +11,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import mozilla.components.browser.toolbar.behavior.BrowserToolbarBehavior
 import mozilla.components.browser.toolbar.behavior.ToolbarPosition
+import org.mozilla.fenix.home.HomeMenuView
 import org.mozilla.fenix.theme.FirefoxTheme
 
 /**
@@ -24,6 +25,7 @@ import org.mozilla.fenix.theme.FirefoxTheme
 class NavigationBarView(
     context: Context,
     container: ViewGroup,
+    menuView: HomeMenuView,
     navigationItems: List<ActionItem> = StandardNavigationItems.defaultItems,
 ) {
 
@@ -31,7 +33,10 @@ class NavigationBarView(
         val composeView = ComposeView(context).apply {
             setContent {
                 FirefoxTheme {
-                    NavigationBar(navigationItems)
+                    NavigationBar(
+                        actionItems = navigationItems,
+                        menuView = menuView,
+                    )
                 }
             }
         }
