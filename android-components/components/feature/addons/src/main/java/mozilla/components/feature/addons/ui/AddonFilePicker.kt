@@ -19,12 +19,10 @@ import mozilla.components.support.ktx.android.net.toFileUri
 /**
  * Allows to launch a file picker to select an add-on file.
  * @param context the application context
- * @param onInstallationFailed (optional) callback invoked if there was an error installing the add-on.
  */
 class AddonFilePicker(
     val context: Context,
     private val addonManager: AddonManager,
-    private val onInstallationFailed: (() -> Unit) = { },
 ) {
     internal lateinit var activityLauncher: ActivityResultLauncher<Array<String>>
     private val logger = Logger("AddonFilePicker")
@@ -59,7 +57,6 @@ class AddonFilePicker(
                 logger.info("Add-on from $fileUri installed successfully")
             }
             val onError: ((Throwable) -> Unit) = { throwable ->
-                onInstallationFailed()
                 logger.error("Unable to install add-on from $fileUri", throwable)
             }
             addonManager.installAddon(

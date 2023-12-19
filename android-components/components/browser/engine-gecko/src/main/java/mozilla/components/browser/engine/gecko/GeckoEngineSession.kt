@@ -40,6 +40,7 @@ import mozilla.components.concept.engine.request.RequestInterceptor
 import mozilla.components.concept.engine.request.RequestInterceptor.InterceptionResponse
 import mozilla.components.concept.engine.shopping.Highlight
 import mozilla.components.concept.engine.shopping.ProductAnalysis
+import mozilla.components.concept.engine.shopping.ProductAnalysisStatus
 import mozilla.components.concept.engine.shopping.ProductRecommendation
 import mozilla.components.concept.engine.translate.TranslationOperation
 import mozilla.components.concept.engine.translate.TranslationOptions
@@ -803,10 +804,10 @@ class GeckoEngineSession(
      */
     override fun requestAnalysisStatus(
         url: String,
-        onResult: (String) -> Unit,
+        onResult: (ProductAnalysisStatus) -> Unit,
         onException: (Throwable) -> Unit,
     ) {
-        geckoSession.requestAnalysisCreationStatus(url).then({
+        geckoSession.requestAnalysisStatus(url).then({
                 response ->
             val errorMessage = "Invalid value: unable to request analysis status from Gecko Engine."
             if (response == null) {
@@ -816,8 +817,12 @@ class GeckoEngineSession(
                 )
                 return@then GeckoResult()
             }
-            onResult(response)
-            GeckoResult<String>()
+            val analysisStatusResult = ProductAnalysisStatus(
+                response.status,
+                response.progress,
+            )
+            onResult(analysisStatusResult)
+            GeckoResult<ProductAnalysisStatus>()
         }, {
                 throwable ->
             logger.error("Request for product analysis status failed.", throwable)
@@ -1750,7 +1755,7 @@ class GeckoEngineSession(
         internal const val ABOUT_BLANK = "about:blank"
         internal const val JS_SCHEME = "javascript"
         internal val BLOCKED_SCHEMES =
-            listOf("content", "file", "resource", JS_SCHEME) // See 1684761 and 1684947
+            listOf("file", "resource", JS_SCHEME) // See 1684761 and 1684947
 
         /**
          * Provides an ErrorType corresponding to the error code provided.
