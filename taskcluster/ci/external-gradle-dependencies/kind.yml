@@ -63,9 +63,6 @@ tasks:
                 - ktlint
                 - detekt
                 - githubLintDetektDetails
-            resources:
-                # TODO: Make focus lint tasks use their own gradle deps tasks
-                - focus-android/plugins/focusdependencies/src/main/java/FocusDependenciesPlugin.kt
 
     lint-fenix:
         treeherder:
@@ -80,8 +77,6 @@ tasks:
                 - githubLintDetektDetails
                 - mozilla-detekt-rules:test
                 - mozilla-lint-rules:test
-            resources:
-                - fenix/plugins/fenixdependencies/src/main/java/FenixDependenciesPlugin.kt
 
     test-components:
         attributes:
