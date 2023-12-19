@@ -130,6 +130,7 @@ import org.mozilla.fenix.components.toolbar.DefaultBrowserToolbarMenuController
 import org.mozilla.fenix.components.toolbar.IncompleteRedesignToolbarFeature
 import org.mozilla.fenix.components.toolbar.NavigationBarView
 import org.mozilla.fenix.components.toolbar.ToolbarIntegration
+import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.components.toolbar.interactor.BrowserToolbarInteractor
 import org.mozilla.fenix.components.toolbar.interactor.DefaultBrowserToolbarInteractor
 import org.mozilla.fenix.crashes.CrashContentIntegration
@@ -450,10 +451,18 @@ abstract class BaseBrowserFragment :
                 menuButton = WeakReference(MenuButton(view.context)),
             )
 
+            val toolbarView = if (context.components.settings.toolbarPosition == ToolbarPosition.BOTTOM) {
+                binding.browserLayout.removeView(browserToolbarView.getToolbarView())
+                browserToolbarView.getToolbarView()
+            } else {
+                null
+            }
+
             NavigationBarView(
                 context = context,
                 container = binding.browserLayout,
                 menuView = homeMenuView,
+                toolbarView = toolbarView
             )
         }
 

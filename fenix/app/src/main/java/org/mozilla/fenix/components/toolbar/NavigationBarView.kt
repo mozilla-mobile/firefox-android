@@ -6,8 +6,12 @@ package org.mozilla.fenix.components.toolbar
 
 import android.content.Context
 import android.view.Gravity
+import android.view.View
 import android.view.ViewGroup
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material.Divider
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import mozilla.components.browser.toolbar.behavior.BrowserToolbarBehavior
 import mozilla.components.browser.toolbar.behavior.ToolbarPosition
@@ -26,6 +30,7 @@ class NavigationBarView(
     context: Context,
     container: ViewGroup,
     menuView: HomeMenuView,
+    toolbarView: View? = null,
     navigationItems: List<ActionItem> = StandardNavigationItems.defaultItems,
 ) {
 
@@ -33,10 +38,18 @@ class NavigationBarView(
         val composeView = ComposeView(context).apply {
             setContent {
                 FirefoxTheme {
-                    NavigationBar(
-                        actionItems = navigationItems,
-                        menuView = menuView,
-                    )
+                    Column {
+                        if (toolbarView != null) {
+                            AndroidView(factory = { _ -> toolbarView })
+                        } else {
+                            Divider(color = FirefoxTheme.colors.borderPrimary)
+                        }
+
+                        NavigationBar(
+                            actionItems = navigationItems,
+                            menuView = menuView,
+                        )
+                    }
                 }
             }
         }

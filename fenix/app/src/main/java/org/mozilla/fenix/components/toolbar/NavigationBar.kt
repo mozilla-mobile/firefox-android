@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
@@ -40,7 +39,7 @@ import org.mozilla.fenix.theme.Theme
 @Composable
 fun NavigationBar(
     actionItems: List<ActionItem>,
-    menuView: HomeMenuView? = null
+    menuView: HomeMenuView? = null,
 ) {
     Box(
         modifier = Modifier
@@ -48,8 +47,6 @@ fun NavigationBar(
             .height(48.dp)
             .fillMaxWidth(),
     ) {
-        Divider(color = FirefoxTheme.colors.borderPrimary)
-
         Row(
             modifier = Modifier
                 .align(Alignment.Center)

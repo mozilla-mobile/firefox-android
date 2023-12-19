@@ -268,4 +268,8 @@ class BrowserToolbarView(
             view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
         }
     }
+
+    fun getToolbarView() : View {
+        return view
+    }
 }
