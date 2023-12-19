@@ -435,6 +435,7 @@ class HomeFragment : Fragment() {
                 homeActivity = activity,
                 navController = findNavController(),
                 menuButton = WeakReference(MenuButton(requireContext())),
+                fragmentNavId = R.id.homeFragment,
             )
 
             val toolbarView = if (requireContext().components.settings.toolbarPosition == ToolbarPosition.BOTTOM) {
@@ -587,6 +588,7 @@ class HomeFragment : Fragment() {
             homeActivity = activity as HomeActivity,
             navController = findNavController(),
             menuButton = WeakReference(binding.menuButton),
+            fragmentNavId = R.id.homeFragment,
         ).also { it.build() }
 
         tabCounterView = TabCounterView(

@@ -56,6 +56,7 @@ class HomeMenuView(
     private val navController: NavController,
     private val menuButton: WeakReference<MenuButton>,
     private val fxaEntrypoint: FxAEntryPoint = FenixFxAEntryPoint.HomeMenu,
+    private val fragmentNavId: Int,
 ) {
 
     /**
@@ -100,7 +101,7 @@ class HomeMenuView(
                 HomeMenuMetrics.settingsItemClicked.record(NoExtras())
 
                 navController.nav(
-                    R.id.homeFragment,
+                    fragmentNavId,
                     HomeFragmentDirections.actionGlobalSettingsFragment(),
                 )
             }
@@ -108,13 +109,13 @@ class HomeMenuView(
                 HomeScreen.customizeHomeClicked.record(NoExtras())
 
                 navController.nav(
-                    R.id.homeFragment,
+                    fragmentNavId,
                     HomeFragmentDirections.actionGlobalHomeSettingsFragment(),
                 )
             }
             is HomeMenu.Item.SyncAccount -> {
                 navController.nav(
-                    R.id.homeFragment,
+                    fragmentNavId,
                     when (item.accountState) {
                         AccountState.AUTHENTICATED ->
                             HomeFragmentDirections.actionGlobalAccountSettingsFragment()
@@ -143,19 +144,19 @@ class HomeMenuView(
             }
             HomeMenu.Item.Bookmarks -> {
                 navController.nav(
-                    R.id.homeFragment,
+                    fragmentNavId,
                     HomeFragmentDirections.actionGlobalBookmarkFragment(BookmarkRoot.Mobile.id),
                 )
             }
             HomeMenu.Item.History -> {
                 navController.nav(
-                    R.id.homeFragment,
+                    fragmentNavId,
                     HomeFragmentDirections.actionGlobalHistoryFragment(),
                 )
             }
             HomeMenu.Item.Downloads -> {
                 navController.nav(
-                    R.id.homeFragment,
+                    fragmentNavId,
                     HomeFragmentDirections.actionGlobalDownloadsFragment(),
                 )
             }
@@ -195,7 +196,7 @@ class HomeMenuView(
             }
             HomeMenu.Item.ReconnectSync -> {
                 navController.nav(
-                    R.id.homeFragment,
+                    fragmentNavId,
                     HomeFragmentDirections.actionGlobalAccountProblemFragment(
                         entrypoint = fxaEntrypoint as FenixFxAEntryPoint,
                     ),
@@ -203,7 +204,7 @@ class HomeMenuView(
             }
             HomeMenu.Item.Extensions -> {
                 navController.nav(
-                    R.id.homeFragment,
+                    fragmentNavId,
                     HomeFragmentDirections.actionGlobalAddonsManagementFragment(),
                 )
             }

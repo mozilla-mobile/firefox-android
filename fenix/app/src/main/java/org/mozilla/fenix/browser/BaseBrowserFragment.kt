@@ -449,6 +449,7 @@ abstract class BaseBrowserFragment :
                 homeActivity = activity,
                 navController = findNavController(),
                 menuButton = WeakReference(MenuButton(view.context)),
+                fragmentNavId = R.id.browserFragment,
             )
 
             val toolbarView = if (context.components.settings.toolbarPosition == ToolbarPosition.BOTTOM) {
