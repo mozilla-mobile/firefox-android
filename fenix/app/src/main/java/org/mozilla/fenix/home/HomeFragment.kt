@@ -437,11 +437,19 @@ class HomeFragment : Fragment() {
                 menuButton = WeakReference(MenuButton(requireContext())),
             )
 
+            val toolbarView = if (requireContext().components.settings.toolbarPosition == ToolbarPosition.BOTTOM) {
+                val toolbar = binding.toolbarLayout
+                binding.root.removeView(toolbar)
+                toolbar
+            } else {
+                null
+            }
 
             NavigationBarView(
                 context = requireContext(),
                 container = binding.homeLayout,
                 menuView = homeMenuView,
+                toolbarView = toolbarView,
             )
         }
 
