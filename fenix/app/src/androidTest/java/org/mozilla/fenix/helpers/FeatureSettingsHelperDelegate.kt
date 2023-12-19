@@ -29,6 +29,7 @@ class FeatureSettingsHelperDelegate() : FeatureSettingsHelper {
         isJumpBackInCFREnabled = settings.shouldShowJumpBackInCFR,
         isRecentTabsFeatureEnabled = settings.showRecentTabsFeature,
         isRecentlyVisitedFeatureEnabled = settings.historyMetadataUIFeature,
+        isRecentBookmarksFeatureEnabled = settings.showRecentBookmarksFeature,
         isPWAsPromptEnabled = !settings.userKnowsAboutPwas,
         isTCPCFREnabled = settings.shouldShowTotalCookieProtectionCFR,
         isWallpaperOnboardingEnabled = settings.showWallpaperOnboarding,
@@ -60,6 +61,7 @@ class FeatureSettingsHelperDelegate() : FeatureSettingsHelper {
     override var isWallpaperOnboardingEnabled: Boolean by updatedFeatureFlags::isWallpaperOnboardingEnabled
     override var isRecentTabsFeatureEnabled: Boolean by updatedFeatureFlags::isRecentTabsFeatureEnabled
     override var isRecentlyVisitedFeatureEnabled: Boolean by updatedFeatureFlags::isRecentlyVisitedFeatureEnabled
+    override var isRecentBookmarksFeatureEnabled: Boolean by updatedFeatureFlags::isRecentBookmarksFeatureEnabled
     override var isPWAsPromptEnabled: Boolean by updatedFeatureFlags::isPWAsPromptEnabled
     override var isTCPCFREnabled: Boolean by updatedFeatureFlags::isTCPCFREnabled
     override var isOpenInAppBannerEnabled: Boolean by updatedFeatureFlags::isOpenInAppBannerEnabled
@@ -84,6 +86,7 @@ class FeatureSettingsHelperDelegate() : FeatureSettingsHelper {
         settings.shouldShowJumpBackInCFR = featureFlags.isJumpBackInCFREnabled
         settings.showRecentTabsFeature = featureFlags.isRecentTabsFeatureEnabled
         settings.historyMetadataUIFeature = featureFlags.isRecentlyVisitedFeatureEnabled
+        settings.showRecentBookmarksFeature = featureFlags.isRecentBookmarksFeatureEnabled
         settings.userKnowsAboutPwas = !featureFlags.isPWAsPromptEnabled
         settings.shouldShowTotalCookieProtectionCFR = featureFlags.isTCPCFREnabled
         settings.showWallpaperOnboarding = featureFlags.isWallpaperOnboardingEnabled
@@ -102,6 +105,7 @@ private data class FeatureFlags(
     var isJumpBackInCFREnabled: Boolean,
     var isRecentTabsFeatureEnabled: Boolean,
     var isRecentlyVisitedFeatureEnabled: Boolean,
+    var isRecentBookmarksFeatureEnabled: Boolean,
     var isPWAsPromptEnabled: Boolean,
     var isTCPCFREnabled: Boolean,
     var isWallpaperOnboardingEnabled: Boolean,

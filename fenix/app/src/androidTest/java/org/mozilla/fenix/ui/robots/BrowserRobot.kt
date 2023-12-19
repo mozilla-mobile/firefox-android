@@ -62,6 +62,7 @@ import org.mozilla.fenix.helpers.TestHelper.appName
 import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.TestHelper.waitForObjects
+import org.mozilla.fenix.helpers.click
 import org.mozilla.fenix.helpers.ext.waitNotNull
 import org.mozilla.fenix.tabstray.TabsTrayTestTag
 import org.mozilla.fenix.utils.Settings
@@ -959,7 +960,9 @@ class BrowserRobot {
 
         fun openComposeTabDrawer(composeTestRule: HomeActivityComposeTestRule, interact: ComposeTabDrawerRobot.() -> Unit): ComposeTabDrawerRobot.Transition {
             for (i in 1..RETRY_COUNT) {
+                Log.i(TAG, "openComposeTabDrawer: For loop i = $i")
                 try {
+                    Log.i(TAG, "openComposeTabDrawer: Try block")
                     mDevice.waitForObjects(
                         mDevice.findObject(
                             UiSelector()
@@ -967,10 +970,13 @@ class BrowserRobot {
                         ),
                         waitingTime,
                     )
+                    Log.i(TAG, "openComposeTabDrawer: Waited for tab counter icon")
 
                     tabsCounter().click()
+                    Log.i(TAG, "openComposeTabDrawer: Clicked the tab counter button")
 
                     composeTestRule.onNodeWithTag(TabsTrayTestTag.tabsTray).assertExists()
+                    Log.i(TAG, "openComposeTabDrawer: Verified the tabs tray is open")
 
                     break
                 } catch (e: AssertionError) {
@@ -1203,8 +1209,7 @@ fun homeScreenButton() = onView(withContentDescription(R.string.browser_toolbar_
 
 private fun threeDotButton() = onView(withContentDescription("Menu"))
 
-private fun tabsCounter() =
-    mDevice.findObject(By.res("$packageName:id/counter_root"))
+private fun tabsCounter() = onView(withId(R.id.mozac_browser_toolbar_browser_actions))
 
 private fun progressBar() =
     itemWithResId("$packageName:id/mozac_browser_toolbar_progress")

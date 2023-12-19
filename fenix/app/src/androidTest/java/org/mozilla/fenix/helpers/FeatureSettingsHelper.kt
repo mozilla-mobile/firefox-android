@@ -46,6 +46,11 @@ interface FeatureSettingsHelper {
     var isRecentlyVisitedFeatureEnabled: Boolean
 
     /**
+     * Whether the "Recently saved" homescreen section is enabled or not.
+     */
+    var isRecentBookmarksFeatureEnabled: Boolean
+
+    /**
      * Whether the onboarding dialog for PWAs should be shown or not.
      * It can show the first time a website that can be installed as a PWA is accessed.
      */

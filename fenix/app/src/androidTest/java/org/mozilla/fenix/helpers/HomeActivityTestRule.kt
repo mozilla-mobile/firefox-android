@@ -48,6 +48,7 @@ class HomeActivityTestRule(
         isJumpBackInCFREnabled: Boolean = settings.shouldShowJumpBackInCFR,
         isRecentTabsFeatureEnabled: Boolean = settings.showRecentTabsFeature,
         isRecentlyVisitedFeatureEnabled: Boolean = settings.historyMetadataUIFeature,
+        isRecentBookmarksFeatureEnabled: Boolean = settings.showRecentBookmarksFeature,
         isPWAsPromptEnabled: Boolean = !settings.userKnowsAboutPwas,
         isTCPCFREnabled: Boolean = settings.shouldShowTotalCookieProtectionCFR,
         isWallpaperOnboardingEnabled: Boolean = settings.showWallpaperOnboarding,
@@ -62,6 +63,7 @@ class HomeActivityTestRule(
         this.isJumpBackInCFREnabled = isJumpBackInCFREnabled
         this.isRecentTabsFeatureEnabled = isRecentTabsFeatureEnabled
         this.isRecentlyVisitedFeatureEnabled = isRecentlyVisitedFeatureEnabled
+        this.isRecentBookmarksFeatureEnabled = isRecentBookmarksFeatureEnabled
         this.isPWAsPromptEnabled = isPWAsPromptEnabled
         this.isTCPCFREnabled = isTCPCFREnabled
         this.isWallpaperOnboardingEnabled = isWallpaperOnboardingEnabled
@@ -157,6 +159,7 @@ class HomeActivityIntentTestRule internal constructor(
         isJumpBackInCFREnabled: Boolean = settings.shouldShowJumpBackInCFR,
         isRecentTabsFeatureEnabled: Boolean = settings.showRecentTabsFeature,
         isRecentlyVisitedFeatureEnabled: Boolean = settings.historyMetadataUIFeature,
+        isRecentBookmarksFeatureEnabled: Boolean = settings.showRecentBookmarksFeature,
         isPWAsPromptEnabled: Boolean = !settings.userKnowsAboutPwas,
         isTCPCFREnabled: Boolean = settings.shouldShowTotalCookieProtectionCFR,
         isWallpaperOnboardingEnabled: Boolean = settings.showWallpaperOnboarding,
@@ -171,6 +174,7 @@ class HomeActivityIntentTestRule internal constructor(
         this.isJumpBackInCFREnabled = isJumpBackInCFREnabled
         this.isRecentTabsFeatureEnabled = isRecentTabsFeatureEnabled
         this.isRecentlyVisitedFeatureEnabled = isRecentlyVisitedFeatureEnabled
+        this.isRecentBookmarksFeatureEnabled = isRecentBookmarksFeatureEnabled
         this.isPWAsPromptEnabled = isPWAsPromptEnabled
         this.isTCPCFREnabled = isTCPCFREnabled
         this.isWallpaperOnboardingEnabled = isWallpaperOnboardingEnabled
@@ -235,6 +239,7 @@ class HomeActivityIntentTestRule internal constructor(
         isJumpBackInCFREnabled = settings.shouldShowJumpBackInCFR
         isRecentTabsFeatureEnabled = settings.showRecentTabsFeature
         isRecentlyVisitedFeatureEnabled = settings.historyMetadataUIFeature
+        isRecentBookmarksFeatureEnabled = settings.showRecentBookmarksFeature
         isPWAsPromptEnabled = !settings.userKnowsAboutPwas
         isTCPCFREnabled = settings.shouldShowTotalCookieProtectionCFR
         isWallpaperOnboardingEnabled = settings.showWallpaperOnboarding
