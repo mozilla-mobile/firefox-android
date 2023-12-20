@@ -86,8 +86,8 @@ import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.PrivateShortcutCreateManager
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.appstate.AppAction
+import org.mozilla.fenix.components.toolbar.BottomToolbarContainerView
 import org.mozilla.fenix.components.toolbar.IncompleteRedesignToolbarFeature
-import org.mozilla.fenix.components.toolbar.NavigationBarView
 import org.mozilla.fenix.components.toolbar.ToolbarPosition
 import org.mozilla.fenix.databinding.FragmentHomeBinding
 import org.mozilla.fenix.ext.components
@@ -427,9 +427,20 @@ class HomeFragment : Fragment() {
         )
 
         if (IncompleteRedesignToolbarFeature(requireContext().settings()).isEnabled) {
-            NavigationBarView(
+            val toolbarView = if (requireContext().components.settings.toolbarPosition == ToolbarPosition.BOTTOM) {
+                val toolbar = binding.toolbarLayout
+                // Should refactor this so there is no added view to remove to begin with
+                // https://bugzilla.mozilla.org/show_bug.cgi?id=1870976
+                binding.root.removeView(toolbar)
+                toolbar
+            } else {
+                null
+            }
+
+            BottomToolbarContainerView(
                 context = requireContext(),
                 container = binding.homeLayout,
+                androidToolbarView = toolbarView,
             )
         }
 
