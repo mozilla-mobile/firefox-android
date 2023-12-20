@@ -10,6 +10,7 @@ import androidx.preference.Preference
 import androidx.preference.Preference.OnPreferenceClickListener
 import androidx.preference.PreferenceFragmentCompat
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 import kotlin.system.exitProcess
@@ -53,6 +54,24 @@ class SyncDebugFragment : PreferenceFragmentCompat() {
                 // Copied from StudiesView. This feels like a dramatic way to
                 // quit, is there a better way?
                 exitProcess(0)
+            }
+        }
+        requirePreference<Preference>(R.string.pref_key_sync_debug_network_error).let { pref ->
+            pref.onPreferenceClickListener = OnPreferenceClickListener {
+                requireComponents.backgroundServices.accountManager.simulateNetworkError()
+                true
+            }
+        }
+        requirePreference<Preference>(R.string.pref_key_sync_debug_temporary_auth_error).let { pref ->
+            pref.onPreferenceClickListener = OnPreferenceClickListener {
+                requireComponents.backgroundServices.accountManager.simulateTemporaryAuthTokenIssue()
+                true
+            }
+        }
+        requirePreference<Preference>(R.string.pref_key_sync_debug_permanent_auth_error).let { pref ->
+            pref.onPreferenceClickListener = OnPreferenceClickListener {
+                requireComponents.backgroundServices.accountManager.simulatePermanentAuthTokenIssue()
+                true
             }
         }
         updateMenu()

@@ -25,4 +25,13 @@
         android:summary="@string/preferences_sync_debug_quit_button_summary"
         android:icon="@drawable/ic_close"
         app:isPreferenceVisible="false" />
+    <androidx.preference.Preference
+        android:key="@string/pref_key_sync_debug_network_error"
+        android:title="@string/preferences_sync_debug_network_error_button_title" />
+    <androidx.preference.Preference
+        android:key="@string/pref_key_sync_debug_temporary_auth_error"
+        android:title="@string/preferences_sync_debug_temporary_auth_error_button_title" />
+    <androidx.preference.Preference
+        android:key="@string/pref_key_sync_debug_permanent_auth_error"
+        android:title="@string/preferences_sync_debug_permanent_auth_error_button_title" />
 </PreferenceScreen>
