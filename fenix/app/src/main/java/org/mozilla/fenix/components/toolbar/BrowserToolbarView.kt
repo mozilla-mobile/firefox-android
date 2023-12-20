@@ -53,8 +53,7 @@ class BrowserToolbarView(
     private val layout = LayoutInflater.from(context)
         .inflate(toolbarLayout, container, true)
 
-    @VisibleForTesting
-    internal var view: BrowserToolbar = layout
+    var view: BrowserToolbar = layout
         .findViewById(R.id.toolbar)
 
     val toolbarIntegration: ToolbarIntegration
