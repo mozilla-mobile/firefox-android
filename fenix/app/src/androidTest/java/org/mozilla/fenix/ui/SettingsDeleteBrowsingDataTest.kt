@@ -7,7 +7,6 @@ package org.mozilla.fenix.ui
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.R
@@ -37,7 +36,17 @@ class SettingsDeleteBrowsingDataTest {
     private lateinit var mockWebServer: MockWebServer
 
     @get:Rule
-    val activityTestRule = HomeActivityIntentTestRule.withDefaultSettingsOverrides(skipOnboarding = true)
+    val activityTestRule = HomeActivityIntentTestRule(
+        skipOnboarding = true,
+        isJumpBackInCFREnabled = false,
+        isRecentTabsFeatureEnabled = false,
+        isRecentlyVisitedFeatureEnabled = false,
+        isPocketEnabled = false,
+        isPWAsPromptEnabled = false,
+        isTCPCFREnabled = false,
+        isWallpaperOnboardingEnabled = false,
+        isOpenInAppBannerEnabled = false,
+    )
 
     @Before
     fun setUp() {
@@ -237,10 +246,9 @@ class SettingsDeleteBrowsingDataTest {
     }
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/416042
-    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1807268")
     @SmokeTest
     @Test
-    fun deleteCachedFilesTest() {
+        fun deleteCachedFilesTest() {
         val pocketTopArticles = getStringResource(R.string.pocket_pinned_top_articles)
 
         homeScreen {
