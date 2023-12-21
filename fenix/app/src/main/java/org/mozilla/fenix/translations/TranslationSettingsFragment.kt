@@ -34,18 +34,34 @@ class TranslationSettingsFragment : Fragment(), UserInteractionHandler {
             FirefoxTheme {
                 TranslationSettings(
                     translationSwitchList = getTranslationSettingsSwitchList(),
-                    onAutomaticTranslationClicked = {},
-                    onDownloadLanguageClicked = {},
-                    onNeverTranslationClicked = {},
+                    onAutomaticTranslationClicked = {
+                        findNavController().navigate(
+                            TranslationSettingsFragmentDirections
+                                .actionTranslationSettingsFragmentToAutomaticTranslationPreferenceFragment(),
+                        )
+                    },
+                    onNeverTranslationClicked = {
+                        findNavController().navigate(
+                            TranslationSettingsFragmentDirections
+                                .actionTranslationSettingsFragmentToNeverTranslateSitePreferenceFragment(),
+                        )
+                    },
+                    onDownloadLanguageClicked = {
+                        findNavController().navigate(
+                            TranslationSettingsFragmentDirections
+                                .actionTranslationSettingsFragmentToDownloadLanguagesPreferenceFragment(),
+                        )
+                    },
                 )
             }
         }
     }
 
     override fun onBackPressed(): Boolean {
-        findNavController().popBackStack()
         findNavController().navigate(
-            TranslationsDialogFragmentDirections.actionGlobalToTranslationOptionsDialogFragment(),
+            TranslationSettingsFragmentDirections.actionTranslationSettingsFragmentToTranslationsDialogFragment(
+                TranslationsDialogAccessPoint.TranslationsOptions,
+            ),
         )
         return true
     }

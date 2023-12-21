@@ -6,8 +6,7 @@ package org.mozilla.fenix.shopping.store
 
 import androidx.compose.runtime.Immutable
 import mozilla.components.lib.state.State
-import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.HighlightType
-import java.util.SortedMap
+import java.text.NumberFormat
 
 private const val NUMBER_OF_HIGHLIGHTS_FOR_COMPACT_MODE = 2
 
@@ -43,16 +42,20 @@ sealed interface ReviewQualityCheckState : State {
      * @property productRecommendationsPreference User preference whether to show product
      * recommendations. True if product recommendations should be shown. Null indicates that product
      * recommendations are disabled.
+     * @property productRecommendationsExposure Whether product recommendations exposure is enabled.
      * @property productVendor The vendor of the product.
      * @property isSettingsExpanded Whether or not the settings card is expanded.
      * @property isInfoExpanded Whether or not the info card is expanded.
+     * @property isHighlightsExpanded Whether or not the highlights card is expanded.
      */
     data class OptedIn(
         val productReviewState: ProductReviewState = ProductReviewState.Loading,
         val productRecommendationsPreference: Boolean?,
+        val productRecommendationsExposure: Boolean,
         val productVendor: ProductVendor,
         val isSettingsExpanded: Boolean = false,
         val isInfoExpanded: Boolean = false,
+        val isHighlightsExpanded: Boolean = false,
     ) : ReviewQualityCheckState {
 
         /**
@@ -87,14 +90,38 @@ sealed interface ReviewQualityCheckState : State {
                  * Denotes a generic error has occurred.
                  */
                 object GenericError : Error
+
+                /**
+                 * Denotes a product is not available.
+                 */
+                object ProductNotAvailable : Error
+
+                /**
+                 * Denotes current user reported a product is back in stock.
+                 */
+                object ThanksForReporting : Error
+
+                /**
+                 * Denotes another user has already reported the product is back in stock.
+                 */
+                object ProductAlreadyReported : Error
             }
 
             /**
              * Denotes no analysis is present for the product the user is browsing.
+             *
+             * @property progress The [Progress] of the analysis, ranges from 0-100.
+             * Default value is -1, which means analysis is not in progress.
              */
             data class NoAnalysisPresent(
-                val isReanalyzing: Boolean = false,
-            ) : ProductReviewState
+                val progress: Progress = Progress(-1f),
+            ) : ProductReviewState {
+
+                /**
+                 * Whether or not the progress bar is visible.
+                 */
+                val isProgressBarVisible: Boolean = progress.value != -1f
+            }
 
             /**
              * Denotes the state where analysis of the product is fetched and present.
@@ -104,38 +131,95 @@ sealed interface ReviewQualityCheckState : State {
              * @property analysisStatus The status of the product analysis.
              * @property adjustedRating The adjusted rating taking review quality into consideration.
              * @property productUrl The url of the product the user is browsing.
-             * @property highlights Optional highlights based on recent reviews of the product.
+             * @property highlightsInfo Optional highlights based on recent reviews of the product.
              * @property recommendedProductState The state of the recommended product.
              */
-            @Immutable
             data class AnalysisPresent(
                 val productId: String,
                 val reviewGrade: Grade?,
                 val analysisStatus: AnalysisStatus,
                 val adjustedRating: Float?,
                 val productUrl: String,
-                val highlights: SortedMap<HighlightType, List<String>>?,
+                val highlightsInfo: HighlightsInfo?,
                 val recommendedProductState: RecommendedProductState = RecommendedProductState.Initial,
             ) : ProductReviewState {
                 init {
-                    require(!(highlights == null && reviewGrade == null && adjustedRating == null)) {
+                    require(!(highlightsInfo == null && reviewGrade == null && adjustedRating == null)) {
                         "AnalysisPresent state should only be created when at least one of " +
                             "reviewGrade, adjustedRating or highlights is not null"
                     }
                 }
 
-                val showMoreButtonVisible: Boolean =
-                    highlights != null && highlights != highlights.forCompactMode()
+                /**
+                 * Container for highlights and it's derived properties
+                 *
+                 * @property highlights highlights based on recent reviews of the product.
+                 */
+                @Immutable
+                data class HighlightsInfo(
+                    val highlights: Map<HighlightType, List<String>>,
+                ) {
 
-                val highlightsFadeVisible: Boolean =
-                    highlights != null && showMoreButtonVisible &&
-                        highlights.forCompactMode().entries.first().value.size > 1
+                    /**
+                     * Highlights to display in compact mode that contains first 2 highlights of the
+                     * first highlight type.
+                     */
+                    val highlightsForCompactMode: Map<HighlightType, List<String>> =
+                        highlights.entries.first().let { entry ->
+                            mapOf(
+                                entry.key to entry.value.take(NUMBER_OF_HIGHLIGHTS_FOR_COMPACT_MODE),
+                            )
+                        }
+
+                    val showMoreButtonVisible: Boolean = highlights != highlightsForCompactMode
+
+                    val highlightsFadeVisible: Boolean =
+                        showMoreButtonVisible && highlightsForCompactMode.entries.first().value.size > 1
+                }
 
                 /**
-                 * The status of the product analysis.
+                 * The state of the product analysis.
                  */
-                enum class AnalysisStatus {
-                    NEEDS_ANALYSIS, REANALYZING, UP_TO_DATE
+                sealed interface AnalysisStatus {
+                    /**
+                     * Denotes reanalysis is in progress.
+                     *
+                     * @property progress The [Progress] of the analysis, ranges from 0-100.
+                     */
+                    data class Reanalyzing(val progress: Progress) : AnalysisStatus
+
+                    /**
+                     * Denotes a product needs analysis.
+                     */
+                    object NeedsAnalysis : AnalysisStatus
+
+                    /**
+                     * Denotes a product analysis is up to date.
+                     */
+                    object UpToDate : AnalysisStatus
+                }
+            }
+
+            /**
+             * Progress of the analysis, ranges from 0-100.
+             *
+             * @property value The value of the progress.
+             */
+            data class Progress(val value: Float) {
+                /**
+                 * Normalized progress, ranges from 0-1.
+                 */
+                val normalizedProgress: Float = value / 100f
+
+                /**
+                 * Percentage formatted progress ranging from 0-100%.
+                 */
+                val formattedProgress: String = FORMATTER.format(normalizedProgress)
+
+                companion object {
+                    private val FORMATTER = NumberFormat.getPercentInstance().apply {
+                        maximumFractionDigits = 0
+                    }
                 }
             }
         }
@@ -201,12 +285,3 @@ sealed interface ReviewQualityCheckState : State {
             this
         }
 }
-
-/**
- * Highlights to display in compact mode that contains first 2 highlights of the first
- * highlight type.
- */
-fun Map<HighlightType, List<String>>.forCompactMode(): Map<HighlightType, List<String>> =
-    entries.first().let { entry ->
-        mapOf(entry.key to entry.value.take(NUMBER_OF_HIGHLIGHTS_FOR_COMPACT_MODE))
-    }

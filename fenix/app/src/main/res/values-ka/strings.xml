@@ -202,6 +202,8 @@
     <string name="browser_menu_library">ბიბლიოთეკა</string>
     <!-- Browser menu toggle that requests a desktop site -->
     <string name="browser_menu_desktop_site">სრული საიტი</string>
+    <!-- Browser menu button that reopens a private tab as a regular tab -->
+    <string name="browser_menu_open_in_regular_tab">გახსნა ჩვეულებრივ ჩანართში</string>
     <!-- Browser menu toggle that adds a shortcut to the site on the device home screen. -->
     <string name="browser_menu_add_to_homescreen">ეკრანზე დამატება</string>
     <!-- Browser menu toggle that installs a Progressive Web App shortcut to the site on the device home screen. -->
@@ -258,7 +260,7 @@
     <!-- Button in the search view that lets a user search by scanning a QR code -->
     <string name="search_scan_button">წაკითხვა</string>
     <!-- Button in the search view that lets a user change their search engine -->
-    <string name="search_engine_button">საძიებო სისტემა</string>
+    <string name="search_engine_button" moz:RemovedIn="121" tools:ignore="UnusedResources">საძიებო სისტემა</string>
     <!-- Button in the search view when shortcuts are displayed that takes a user to the search engine settings -->
     <string name="search_shortcuts_engine_settings">საძიებო სისტემის პარამეტრები</string>
     <!-- Button in the search view that lets a user navigate to the site in their clipboard -->
@@ -456,16 +458,20 @@
     <string name="preferences_https_only_title">მხოლოდ-HTTPS-რეჟიმი</string>
 
     <!-- Preference for removing cookie/consent banners from sites automatically. See reduce_cookie_banner_summary for additional context. -->
-    <string name="preferences_cookie_banner_reduction">ფუნთუშის მოთხოვნების შემცირება</string>
+    <string name="preferences_cookie_banner_reduction" moz:RemovedIn="121" tools:ignore="UnusedResources">ფუნთუშის მოთხოვნების შემცირება</string>
+    <!-- Label for cookie banner section in quick settings panel. -->
+    <string name="cookie_banner_blocker">ფუნთუშის მოთხოვნების შემზღუდავი</string>
+    <!-- Preference for removing cookie/consent banners from sites automatically in private mode. See reduce_cookie_banner_summary for additional context. -->
+    <string name="preferences_cookie_banner_reduction_private_mode">ფუნთუშის მოთხოვნების შეზღუდვა პირადი თვალიერებისას</string>
     <!-- Preference for rejecting or removing as many cookie/consent banners as possible on sites. See reduce_cookie_banner_summary for additional context. -->
-    <string name="reduce_cookie_banner_option">ფუნთუშის მოთხოვნების შემცირება</string>
+    <string name="reduce_cookie_banner_option" moz:RemovedIn="121" tools:ignore="UnusedResources">ფუნთუშის მოთხოვნების შემცირება</string>
     <!-- Summary of cookie banner handling preference if the setting disabled is set to off -->
-    <string name="reduce_cookie_banner_option_off">გამორთ.</string>
+    <string name="reduce_cookie_banner_option_off" moz:RemovedIn="121" tools:ignore="UnusedResources">გამორთ.</string>
     <!-- Summary of cookie banner handling preference if the setting enabled is set to on -->
-    <string name="reduce_cookie_banner_option_on">ჩართ.</string>
+    <string name="reduce_cookie_banner_option_on" moz:RemovedIn="121" tools:ignore="UnusedResources">ჩართ.</string>
 
     <!-- Summary for the preference for rejecting all cookies whenever possible. The first parameter is the application name -->
-    <string name="reduce_cookie_banner_summary_1">%1$s თავად ეცდება უარყოს ფუნთუშების მოთხოვნები საიტებზე და მოაცილოს აბრები.</string>
+    <string name="reduce_cookie_banner_summary_1" moz:RemovedIn="121" tools:ignore="UnusedResources">%1$s თავად ეცდება უარყოს ფუნთუშების მოთხოვნები საიტებზე და მოაცილოს აბრები.</string>
     <!-- Text for indicating cookie banner handling is off this site, this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_off_for_site">გამორთ. ამ საიტზე</string>
     <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
@@ -483,27 +489,40 @@
     <!-- Text for indicating cookie banner handling is currently not supported for this site, this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_unsupported_site">ეს საიტი ჯერ არაა მხარდაჭერილი</string>
     <!-- Title text for a detail explanation indicating cookie banner handling is on this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
-    <string name="reduce_cookie_banner_details_panel_title_on_for_site">ჩაირთოს ფუნთუშის მოთხოვნების შემცირება საიტზე %1$s?</string>
+    <string name="reduce_cookie_banner_details_panel_title_on_for_site" moz:RemovedIn="121" tools:ignore="UnusedResources">ჩაირთოს ფუნთუშის მოთხოვნების შემცირება საიტზე %1$s?</string>
+    <!-- Title text for a detail explanation indicating cookie banner handling is on this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
+    <string name="reduce_cookie_banner_details_panel_title_on_for_site_1">შეიზღუდოს ფუნთუშის მოთხოვნები საიტზე %1$s?</string>
     <!-- Title text for a detail explanation indicating cookie banner handling is off this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
-    <string name="reduce_cookie_banner_details_panel_title_off_for_site">გამოირთოს ფუნთუშის მოთხოვნების შემცირება საიტზე %1$s?</string>
+    <string name="reduce_cookie_banner_details_panel_title_off_for_site" moz:RemovedIn="121" tools:ignore="UnusedResources">გამოირთოს ფუნთუშის მოთხოვნების შემცირება საიტზე %1$s?</string>
+    <!-- Title text for a detail explanation indicating cookie banner handling is off this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
+    <string name="reduce_cookie_banner_details_panel_title_off_for_site_1">აღარ შეიზღუდოს ფუნთუშის მოთხოვნები საიტზე %1$s?</string>
     <!-- Title text for a detail explanation indicating cookie banner reducer didn't work for the current site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name-->
     <string name="reduce_cookie_banner_details_panel_title_unsupported_site_request_2">%1$s ვერ ახერხებს ამ საიტზე ფუნთუშების ნებართვების არიდებას. შეგიძლიათ მოითხოვოთ, რომ მხარდაჭერილ საიტებში დაემატოს სამომავლოდ.</string>
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
-    <string name="reduce_cookie_banner_details_panel_description_off_for_site">%1$s გაასუფთავებს ამ საიტის ფუნთუშებს და განაახლებს გვერდს. ყველა ფუნთუშის წაშლით შეიძლება გამოხვიდეთ ანგარიშებიდან და დაცარიელდეს საყიდლების კალათა.</string>
+    <string name="reduce_cookie_banner_details_panel_description_off_for_site" moz:RemovedIn="121" tools:ignore="UnusedResources">%1$s გაასუფთავებს ამ საიტის ფუნთუშებს და განაახლებს გვერდს. ყველა ფუნთუშის წაშლით შეიძლება გამოხვიდეთ ანგარიშებიდან და დაცარიელდეს საყიდლების კალათა.</string>
 
+    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
+    <string name="reduce_cookie_banner_details_panel_description_off_for_site_1">გამორთვის შედეგად %1$s გაასუფთავებს ფუნთუშებს საიტის ახლიდან ჩატვირთვით. ამის გამო შესაძლოა, გამოხვიდეთ ანგარიშიდან ან დაცარიელდეს თქვენი საყიდლების კალათა.</string>
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
-    <string name="reduce_cookie_banner_details_panel_description_on_for_site_2">%1$s ეცდება თავადვე უარყოს ფუნთუშების არჩევის ყველა მოთხოვნა მხარდაჭერილ საიტებზე.</string>
+    <string name="reduce_cookie_banner_details_panel_description_on_for_site_2" moz:RemovedIn="121" tools:ignore="UnusedResources">%1$s ეცდება თავადვე უარყოს ფუნთუშების არჩევის ყველა მოთხოვნა მხარდაჭერილ საიტებზე.</string>
+    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
+    <string name="reduce_cookie_banner_details_panel_description_on_for_site_3">ჩართვის შედეგად %1$s ეცდება თავადვე უარყოს ფუნთუშის მოთხოვნები ამ საიტზე.</string>
     <!-- Title text for the cookie banner re-engagement dialog. The first parameter is the application name. -->
-    <string name="reduce_cookie_banner_dialog_title" moz:RemovedIn="120" tools:ignore="UnusedResources">გსურთ, რომ %1$s თავადვე უარყოფდეს ფუნთუშის მოთხოვნებს?</string>
+    <string name="reduce_cookie_banner_dialog_title" moz:RemovedIn="121" tools:ignore="UnusedResources">გსურთ, რომ %1$s თავადვე უარყოფდეს ფუნთუშის მოთხოვნებს?</string>
     <!-- Body text for the cookie banner re-engagement dialog use. The first parameter is the application name. -->
-    <string name="reduce_cookie_banner_dialog_body" moz:RemovedIn="120" tools:ignore="UnusedResources">%1$s ეცდება თავადვე უარყოს ფუნთუშების მოთხოვნების უმეტესობა.</string>
+    <string name="reduce_cookie_banner_dialog_body" moz:RemovedIn="121" tools:ignore="UnusedResources">%1$s ეცდება თავადვე უარყოს ფუნთუშების მოთხოვნების უმეტესობა.</string>
     <!-- Remind me later text button for the onboarding dialog -->
-    <string name="reduce_cookie_banner_dialog_not_now_button" moz:RemovedIn="120" tools:ignore="UnusedResources">ახლა არა</string>
+    <string name="reduce_cookie_banner_dialog_not_now_button" moz:RemovedIn="121" tools:ignore="UnusedResources">ახლა არა</string>
     <!-- Snack text for the cookie banner dialog, after user hit the dismiss banner button -->
-    <string name="reduce_cookie_banner_dialog_snackbar_text" moz:RemovedIn="120" tools:ignore="UnusedResources">უფრო იშვიათად იხილავთ ფუნთუშის მოთხოვნებს</string>
+    <string name="reduce_cookie_banner_dialog_snackbar_text" moz:RemovedIn="121" tools:ignore="UnusedResources">უფრო იშვიათად იხილავთ ფუნთუშის მოთხოვნებს</string>
 
     <!-- Change setting text button, for the cookie banner re-engagement dialog -->
-    <string name="reduce_cookie_banner_dialog_change_setting_button" moz:RemovedIn="120" tools:ignore="UnusedResources">ნებართვა</string>
+    <string name="reduce_cookie_banner_dialog_change_setting_button" moz:RemovedIn="121" tools:ignore="UnusedResources">ნებართვა</string>
+
+    <!--Title for the cookie banner re-engagement CFR, the placeholder is replaced with app name -->
+    <string name="cookie_banner_cfr_title">%1$s ახლახან დაგეხმარათ ფუნთუშების არიდებაში</string>
+    <!--Message for the cookie banner re-engagement CFR -->
+    <string name="cookie_banner_cfr_message">ნაკლები ხელის შემშლელი და მეთვალყურე შიგთავსი საიტზე.</string>
 
     <!-- Description of the preference to enable "HTTPS-Only" mode. -->
     <string name="preferences_https_only_summary">თავადვე შეეცდება დაუკავშირდეს საიტებს დაშიფრული HTTPS-ოქმით მეტი უსაფრთხოებისთვის.</string>
@@ -614,6 +633,8 @@
     <!-- Preference for add_ons -->
     <string name="preferences_addons">დამატებები</string>
 
+    <!-- Preference for installing a local add-on -->
+    <string name="preferences_install_local_addon">დამატების ჩადგმა ფაილიდან</string>
     <!-- Preference for notifications -->
     <string name="preferences_notifications">შეტყობინებები</string>
 
@@ -2206,7 +2227,9 @@
     <!-- Text for learn more caption presenting a link with information about review quality. First parameter is for clickable text defined in review_quality_check_info_learn_more_link. -->
     <string name="review_quality_check_info_learn_more">უკეთ გაიცანით %s.</string>
     <!-- Clickable text that links to review quality check SuMo page. First parameter is the Fakespot product name. In the phrase "Fakespot by Mozilla", "by" can be localized. Does not need to stay by. -->
-    <string name="review_quality_check_info_learn_more_link">როგორ განსაზღვრავს Mozilla-ს %s მიმოხილვის ხარისხს</string>
+    <string name="review_quality_check_info_learn_more_link" moz:RemovedIn="121" tools:ignore="UnusedResources">როგორ განსაზღვრავს Mozilla-ს %s მიმოხილვის ხარისხს</string>
+    <!-- Clickable text that links to review quality check SuMo page. First parameter is the Fakespot product name. -->
+    <string name="review_quality_check_info_learn_more_link_2">როგორ განსაზღვრავს %s მიმოხილვის ხარისხს</string>
     <!-- Text for title of settings section. -->
     <string name="review_quality_check_settings_title">პარამეტრები</string>
     <!-- Text for label for switch preference to show recommended products from review quality check settings section. -->
@@ -2224,8 +2247,6 @@
     <string name="review_quality_check_ad_title" tools:ignore="UnusedResources">სხვა მსგავსი</string>
     <!-- Caption for recommended product section indicating this is an ad by Fakespot. First parameter is the Fakespot product name. -->
     <string name="review_quality_check_ad_caption" tools:ignore="UnusedResources">რეკლამა – %s</string>
-    <!-- Caption for review quality check panel. First parameter is for clickable text defined in review_quality_check_powered_by_link. -->
-    <string name="review_quality_check_powered_by" tools:ignore="UnusedResources" moz:RemovedIn="119">მიმოხილვის შემმოწმებლის უზრუნველმყოფია %s.</string>
     <!-- Caption for review quality check panel. First parameter is for clickable text defined in review_quality_check_powered_by_link. -->
     <string name="review_quality_check_powered_by_2">მიმოხილვის შემმოწმებლის უზრუნველმყოფია %s</string>
     <!-- Clickable text that links to Fakespot.com. First parameter is the Fakespot product name. In the phrase "Fakespot by Mozilla", "by" can be localized. Does not need to stay by. -->
@@ -2287,17 +2308,25 @@
     <string name="review_quality_check_contextual_onboarding_title">გამოცადეთ ჩვენი საიმედო მეგზური საყიდლების მიმოხილვებისთვის</string>
     <!-- Description for review quality check contextual onboarding card. The first and last two parameters are for retailer names (e.g. Amazon, Walmart). The second parameter is for the name of the application (e.g. Firefox). -->
     <string name="review_quality_check_contextual_onboarding_description">გადაამოწმეთ შეძენამდე, თუ რამდენად სანდოა გასაყიდი ნაწარმის მიმოხილვები საიტზე %1$s. მიმოხილვის შემმოწმებელი საცდელი შესაძლებლობაა %2$s-სგან და პირდაპირ ბრაუზერშივეა ჩაშენებული. მხარდაჭერილია %3$s და აგრეთვე %4$s.</string>
+    <!-- Description for review quality check contextual onboarding card. The first parameters is for retailer name (e.g. Amazon). The second parameter is for the name of the application (e.g. Firefox). -->
+    <string name="review_quality_check_contextual_onboarding_description_one_vendor">გადაამოწმეთ შეძენამდე, თუ რამდენად სანდოა გასაყიდი ნაწარმის მიმოხილვები საიტზე %1$s. მიმოხილვის შემმოწმებელი საცდელი შესაძლებლობაა %2$s-სგან და პირდაპირ ბრაუზერშივეა ჩაშენებული.</string>
     <!-- Paragraph presenting review quality check feature. First parameter is the Fakespot product name. Second parameter is for clickable text defined in review_quality_check_contextual_onboarding_learn_more_link. In the phrase "Fakespot by Mozilla", "by" can be localized. Does not need to stay by. -->
-    <string name="review_quality_check_contextual_onboarding_learn_more">Mozilla-ს %1$s-ის ძლევამოსილებით ჩვენ დაგეხმარებით მიკერძოებული და ყალბი მიმოხილვების თავიდან აცილებაში. ჩვენი AI-მოდელი მუდმივად იხვეწება საყიდლების შეძენისას თქვენს დასაცავად. %2$s</string>
+    <string name="review_quality_check_contextual_onboarding_learn_more">Mozilla-ს %1$s-ის ძლევამოსილებით ჩვენ დაგეხმარებით მიკერძოებული და ყალბი მიმოხილვების თავიდან აცილებაში. ჩვენი AI-მოდელი მუდმივად იხვეწება თქვენს დასაცავად საყიდლების შეძენისას. %2$s</string>
     <!-- Clickable text from the contextual onboarding card that links to review quality check support article. -->
     <string name="review_quality_check_contextual_onboarding_learn_more_link">ვრცლად</string>
 
     <!-- Caption text to be displayed in review quality check contextual onboarding card above the opt-in button. First parameter is the Fakespot product name. Following parameters are for clickable texts defined in review_quality_check_contextual_onboarding_privacy_policy and review_quality_check_contextual_onboarding_terms_use. In the phrase "Fakespot by Mozilla", "by" can be localized. Does not need to stay by. -->
-    <string name="review_quality_check_contextual_onboarding_caption">თუ მიუთითებთ „დიახ, მოისინჯოს“, ესე იგი თქვენთვის მისაღებია Mozilla-ს %1$s-ის %2$s და %3$s.</string>
+    <string name="review_quality_check_contextual_onboarding_caption" moz:RemovedIn="121" tools:ignore="UnusedResources">თუ მიუთითებთ „დიახ, მოისინჯოს“, ესე იგი თქვენთვის მისაღებია Mozilla-ს %1$s-ის %2$s და %3$s.</string>
+    <!-- Caption text to be displayed in review quality check contextual onboarding card above the opt-in button. Parameter is the Fakespot product name. After the colon, what appears are two links, each on their own line. The first link is to a Privacy policy (review_quality_check_contextual_onboarding_privacy_policy_2). The second link is to Terms of use (review_quality_check_contextual_onboarding_terms_use_2). -->
+    <string name="review_quality_check_contextual_onboarding_caption_2">თუ მიუთითებთ „დიახ, მოისინჯოს“, ესე იგი თქვენთვის მისაღებია %1$s:</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot privacy policy. -->
-    <string name="review_quality_check_contextual_onboarding_privacy_policy">პირადულობის დებულება</string>
+    <string name="review_quality_check_contextual_onboarding_privacy_policy" moz:RemovedIn="121" tools:ignore="UnusedResources">პირადულობის დებულება</string>
+    <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot privacy policy. -->
+    <string name="review_quality_check_contextual_onboarding_privacy_policy_2">პირადულობის დებულება</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot terms of use. -->
-    <string name="review_quality_check_contextual_onboarding_terms_use">გამოყენების პირობები</string>
+    <string name="review_quality_check_contextual_onboarding_terms_use" moz:RemovedIn="121" tools:ignore="UnusedResources">გამოყენების პირობები</string>
+    <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot terms of use. -->
+    <string name="review_quality_check_contextual_onboarding_terms_use_2">გამოყენების პირობები</string>
     <!-- Text for opt-in button from the review quality check contextual onboarding card. -->
     <string name="review_quality_check_contextual_onboarding_primary_button_text">დიახ, მოისინჯოს</string>
     <!-- Text for opt-out button from the review quality check contextual onboarding card. -->
@@ -2331,7 +2360,7 @@
     <!-- Text for highlights card packaging and appearance category header. Reviews shown under this header should refer the product's packaging and appearance. -->
     <string name="review_quality_check_highlights_type_packaging_appearance">შეფუთვა და იერსახე</string>
     <!-- Text for highlights card competitiveness category header. Reviews shown under this header should refer the product's competitiveness. -->
-    <string name="review_quality_check_highlights_type_competitiveness">მეტოქეებთან შედარებით</string>
+    <string name="review_quality_check_highlights_type_competitiveness">მეტოქეებთან შედარება</string>
 
     <!-- Accessibility services actions labels. These will be appended to accessibility actions like "Double tap to.." but not by or applications but by services like Talkback. -->
     <!-- Action label for elements that can be collapsed if interacting with them. Talkback will append this to say "Double tap to collapse". -->
@@ -2348,4 +2377,6 @@
     <string name="a11y_action_label_read_article">სტატიის წაკითხვა</string>
     <!-- Action label for links to the Firefox Pocket website. Talkback will append this to say "Double tap to open link to learn more". -->
     <string name="a11y_action_label_pocket_learn_more">ვრცლად იხილეთ ბმულზე</string>
+    <!-- Content description for headings announced by accessibility service. The first parameter is the text of the heading. Talkback will announce the first parameter and then speak the word "Heading" indicating to the user that this text is a heading for a section. -->
+    <string name="a11y_heading">%s, სათაური</string>
 </resources>

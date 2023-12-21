@@ -17,6 +17,7 @@ import org.mozilla.fenix.helpers.AppAndSystemHelper.registerAndCleanupIdlingReso
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.RecyclerViewIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper.getEnhancedTrackingProtectionAsset
+import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.helpers.TestHelper.verifySnackBarText
 import org.mozilla.fenix.helpers.TestHelper.waitUntilSnackbarGone
 import org.mozilla.fenix.ui.robots.addonsMenu
@@ -80,6 +81,7 @@ class SettingsAddonsTest {
                 ) {
                     clickInstallAddon(addonName)
                 }
+                verifyAddonDownloadOverlay()
                 verifyAddonPermissionPrompt(addonName)
                 cancelInstallAddon()
                 clickInstallAddon(addonName)
@@ -112,8 +114,10 @@ class SettingsAddonsTest {
         }
     }
 
+    // TODO: Harden to dynamically install addons from position
+    //   in list of detected addons on screen instead of hard-coded values.
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/561600
-    // Installs 3 add-on and checks that the app doesn't crash while navigating the app
+    // Installs 2 add-on and checks that the app doesn't crash while navigating the app
     @SmokeTest
     @Test
     fun noCrashWithAddonInstalledTest() {
@@ -121,16 +125,13 @@ class SettingsAddonsTest {
         activityTestRule.activity.settings().setStrictETP()
 
         val uBlockAddon = "uBlock Origin"
-        val tampermonkeyAddon = "Tampermonkey"
-        val privacyBadgerAddon = "Privacy Badger"
+        val darkReaderAddon = "Dark Reader"
         val trackingProtectionPage = getEnhancedTrackingProtectionAsset(mockWebServer)
 
         addonsMenu {
             installAddon(uBlockAddon, activityTestRule)
             closeAddonInstallCompletePrompt()
-            installAddon(tampermonkeyAddon, activityTestRule)
-            closeAddonInstallCompletePrompt()
-            installAddon(privacyBadgerAddon, activityTestRule)
+            installAddon(darkReaderAddon, activityTestRule)
             closeAddonInstallCompletePrompt()
         }.goBack {
         }.openNavigationToolbar {
@@ -148,6 +149,7 @@ class SettingsAddonsTest {
     @SmokeTest
     @Test
     fun verifyUBlockWorksInPrivateModeTest() {
+        TestHelper.appContext.settings().shouldShowCookieBannersCFR = false
         val addonName = "uBlock Origin"
 
         addonsMenu {

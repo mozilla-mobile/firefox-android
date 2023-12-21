@@ -23,9 +23,7 @@ import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.IdlingResource
-import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.Intents.intended
-import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.intent.matcher.IntentMatchers.toPackage
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.ActivityTestRule
@@ -40,7 +38,10 @@ import org.junit.Assert.assertEquals
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.customtabs.ExternalAppBrowserActivity
+import org.mozilla.fenix.helpers.Constants.PackageName.PIXEL_LAUNCHER
 import org.mozilla.fenix.helpers.Constants.PackageName.YOUTUBE_APP
+import org.mozilla.fenix.helpers.Constants.TAG
+import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
 import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.ext.waitNotNull
 import org.mozilla.fenix.helpers.idlingresource.NetworkConnectionIdlingResource
@@ -87,13 +88,16 @@ object AppAndSystemHelper {
 
         // Check if the downloads folder exists
         if (downloadsFolder.exists() && downloadsFolder.isDirectory) {
+            Log.i(TAG, "clearDownloadsFolder: Verified that \"DOWNLOADS\" folder exists")
             val files = downloadsFolder.listFiles()
 
             // Check if the folder is not empty
             if (files != null && files.isNotEmpty()) {
+                Log.i(TAG, "clearDownloadsFolder: Verified that \"DOWNLOADS\" folder is not empty")
                 // Delete all files in the folder
                 for (file in files) {
                     file.delete()
+                    Log.i(TAG, "clearDownloadsFolder: Deleted $file from \"DOWNLOADS\" folder")
                 }
             }
         }
@@ -105,25 +109,27 @@ object AppAndSystemHelper {
 
         when (enabled) {
             true -> {
-                TestHelper.mDevice.executeShellCommand("svc data enable")
-                TestHelper.mDevice.executeShellCommand("svc wifi enable")
+                mDevice.executeShellCommand("svc data enable")
+                mDevice.executeShellCommand("svc wifi enable")
 
                 // Wait for network connection to be completely enabled
                 IdlingRegistry.getInstance().register(networkConnectedIdlingResource)
                 Espresso.onIdle {
                     IdlingRegistry.getInstance().unregister(networkConnectedIdlingResource)
                 }
+                Log.i(TAG, "setNetworkEnabled: Network connection was enabled")
             }
 
             false -> {
-                TestHelper.mDevice.executeShellCommand("svc data disable")
-                TestHelper.mDevice.executeShellCommand("svc wifi disable")
+                mDevice.executeShellCommand("svc data disable")
+                mDevice.executeShellCommand("svc wifi disable")
 
                 // Wait for network connection to be completely disabled
                 IdlingRegistry.getInstance().register(networkDisconnectedIdlingResource)
                 Espresso.onIdle {
                     IdlingRegistry.getInstance().unregister(networkDisconnectedIdlingResource)
                 }
+                Log.i(TAG, "setNetworkEnabled: Network connection was disabled")
             }
         }
     }
@@ -132,23 +138,28 @@ object AppAndSystemHelper {
         return try {
             val packageManager = InstrumentationRegistry.getInstrumentation().context.packageManager
             packageManager.getApplicationInfo(packageName, 0).enabled
-        } catch (exception: PackageManager.NameNotFoundException) {
+        } catch (e: PackageManager.NameNotFoundException) {
+            Log.i(TAG, "isPackageInstalled: Catch block - ${e.message}")
             false
         }
     }
 
     fun assertExternalAppOpens(appPackageName: String) {
         if (isPackageInstalled(appPackageName)) {
+            Log.i(TAG, "assertExternalAppOpens: $appPackageName is installed on device")
             try {
-                Intents.intended(IntentMatchers.toPackage(appPackageName))
+                Log.i(TAG, "assertExternalAppOpens: Try block")
+                intended(toPackage(appPackageName))
+                Log.i(TAG, "assertExternalAppOpens: Matched intent to $appPackageName")
             } catch (e: AssertionFailedError) {
-                e.printStackTrace()
+                Log.i(TAG, "assertExternalAppOpens: Catch block - ${e.message}")
             }
         } else {
-            TestHelper.mDevice.waitNotNull(
+            mDevice.waitNotNull(
                 Until.findObject(By.text("Could not open file")),
                 TestAssetHelper.waitingTime,
             )
+            Log.i(TAG, "assertExternalAppOpens: Verified \"Could not open file\" message")
         }
     }
 
@@ -286,12 +297,14 @@ object AppAndSystemHelper {
         )
     }
 
-    fun bringAppToForeground() {
-        mDevice.pressRecentApps()
-        mDevice.findObject(UiSelector().resourceId("${TestHelper.packageName}:id/container")).waitForExists(
-            TestAssetHelper.waitingTime,
-        )
-    }
+    /**
+     * Brings the app to foregorund by clicking it in the recent apps tray.
+     * The package name is related to the home screen experience for the Pixel phones produced by Google.
+     * The recent apps tray on API 30 will always display only 2 apps, even if previously were opened more.
+     * The index of the most recent opened app will always have index 2, meaning that the previously opened app will have index 1.
+     */
+    fun bringAppToForeground() =
+        mDevice.findObject(UiSelector().index(2).packageName(PIXEL_LAUNCHER)).clickAndWaitForNewWindow(waitingTimeShort)
 
     fun verifyKeyboardVisibility(isExpectedToBeVisible: Boolean = true) {
         mDevice.waitForIdle()

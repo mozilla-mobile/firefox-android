@@ -8,6 +8,9 @@ import org.mozilla.fenix.helpers.DataGenerationHelper.getSponsoredShortcutTitle
 
 object Constants {
 
+    // Tag used for logging
+    const val TAG = "MozUITestLog"
+
     // Device or AVD requires a Google Services Android OS installation
     object PackageName {
         const val GOOGLE_PLAY_SERVICES = "com.android.vending"
@@ -19,6 +22,7 @@ object Constants {
         const val PHONE_APP = "com.android.dialer"
         const val ANDROID_SETTINGS = "com.android.settings"
         const val PRINT_SPOOLER = "com.android.printspooler"
+        const val PIXEL_LAUNCHER = "com.google.android.apps.nexuslauncher"
     }
 
     const val SPEECH_RECOGNITION = "android.speech.action.RECOGNIZE_SPEECH"

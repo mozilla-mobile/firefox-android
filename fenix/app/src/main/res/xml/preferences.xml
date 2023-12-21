@@ -102,11 +102,11 @@
             app:iconSpaceReserved="false"
             android:title="@string/preferences_https_only_title" />
 
-        <androidx.preference.Preference
-            android:key="@string/pref_key_cookie_banner_settings"
+        <org.mozilla.fenix.settings.cookiebannerhandling.CustomCBHSwitchPreference
+            android:key="@string/pref_key_cookie_banner_private_mode"
             app:iconSpaceReserved="false"
-            android:title="@string/preferences_cookie_banner_reduction"
-            app:isPreferenceVisible="false" />
+            app:isPreferenceVisible="false"
+            android:title="@string/preferences_cookie_banner_reduction_private_mode" />
 
         <androidx.preference.Preference
             android:key="@string/pref_key_tracking_protection_settings"
@@ -148,6 +148,12 @@
             android:key="@string/pref_key_addons"
             app:iconSpaceReserved="false"
             android:title="@string/preferences_addons" />
+
+        <androidx.preference.Preference
+            android:key="@string/pref_key_install_local_addon"
+            app:iconSpaceReserved="false"
+            app:isPreferenceVisible="false"
+            android:title="@string/preferences_install_local_addon" />
 
         <androidx.preference.Preference
             android:key="@string/pref_key_override_amo_collection"

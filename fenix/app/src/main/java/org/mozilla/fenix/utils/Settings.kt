@@ -616,17 +616,22 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = true,
     )
 
-    var shouldUseCookieBanner by lazyFeatureFlagPreference(
-        appContext.getPreferenceKey(R.string.pref_key_cookie_banner_v1),
-        featureFlag = true,
-        default = { cookieBannersSection[CookieBannersSection.FEATURE_SETTING_VALUE] == 1 },
+    var shouldEnableGlobalPrivacyControl by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_privacy_enable_global_privacy_control),
+        false,
     )
 
     var shouldUseCookieBannerPrivateMode by lazyFeatureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_cookie_banner_private_mode),
         featureFlag = true,
-        default = { cookieBannersSection[CookieBannersSection.FEATURE_SETTING_VALUE_PBM] == 1 },
+        default = { shouldUseCookieBannerPrivateModeDefaultValue },
     )
+
+    val shouldUseCookieBannerPrivateModeDefaultValue: Boolean
+        get() = cookieBannersSection[CookieBannersSection.FEATURE_SETTING_VALUE_PBM] == 1
+
+    val shouldUseCookieBanner: Boolean
+        get() = cookieBannersSection[CookieBannersSection.FEATURE_SETTING_VALUE] == 1
 
     val shouldShowCookieBannerUI: Boolean
         get() = cookieBannersSection[CookieBannersSection.FEATURE_UI] == 1
@@ -779,6 +784,15 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         appContext.getPreferenceKey(R.string.pref_key_should_show_erase_action_popup),
         featureFlag = true,
         default = { feltPrivateBrowsingEnabled },
+    )
+
+    /**
+     * Indicates if the cookie banners CRF should be shown.
+     */
+    var shouldShowCookieBannersCFR by lazyFeatureFlagPreference(
+        appContext.getPreferenceKey(R.string.pref_key_should_show_cookie_banners_action_popup),
+        featureFlag = true,
+        default = { shouldShowCookieBannerUI },
     )
 
     val blockCookiesSelectionInCustomTrackingProtection by stringPreference(
@@ -1678,13 +1692,13 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     /**
-     * Returns whether juno onboarding should be shown to the user.
+     * Returns whether onboarding should be shown to the user.
      *
      * @param hasUserBeenOnboarded Boolean to indicate whether the user has been onboarded.
      * @param isLauncherIntent Boolean to indicate whether the app was launched on tapping on the
      * app icon.
      */
-    fun shouldShowJunoOnboarding(hasUserBeenOnboarded: Boolean, isLauncherIntent: Boolean): Boolean {
+    fun shouldShowOnboarding(hasUserBeenOnboarded: Boolean, isLauncherIntent: Boolean): Boolean {
         return if (!hasUserBeenOnboarded && isLauncherIntent) {
             FxNimbus.features.junoOnboarding.recordExposure()
             true
@@ -1693,11 +1707,14 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         }
     }
 
-    val feltPrivateBrowsingEnabled: Boolean
-        get() {
+    val feltPrivateBrowsingEnabled by lazyFeatureFlagPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_should_enable_felt_privacy),
+        featureFlag = true,
+        default = {
             FxNimbus.features.privateBrowsing.recordExposure()
-            return FxNimbus.features.privateBrowsing.value().feltPrivacyEnabled
-        }
+            FxNimbus.features.privateBrowsing.value().feltPrivacyEnabled
+        },
+    )
 
     /**
      * Indicates if the review quality check feature is enabled by the user.
@@ -1858,6 +1875,14 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     /**
+     * Font List Telemetry Ping Sent
+     */
+    var numFontListSent by intPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_num_font_list_sent),
+        default = 0,
+    )
+
+    /**
      * Indicates how many days in the first week user opened the app.
      */
     val growthEarlyUseCount = counterPreference(
@@ -1921,5 +1946,25 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         key = appContext.getPreferenceKey(R.string.pref_key_show_nonsponsored_suggestions),
         default = { enableFxSuggest },
         featureFlag = FeatureFlags.fxSuggest,
+    )
+
+    /**
+     * Indicates if the user is shown new redesigned Toolbar UI.
+     */
+    var enableRedesignToolbar by lazyFeatureFlagPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_toolbar_use_redesign),
+        default = { FeatureFlags.completeToolbarRedesignEnabled },
+        featureFlag = FeatureFlags.completeToolbarRedesignEnabled,
+    )
+
+    /**
+     * Indicates if the user is shown incomplete new redesigned Toolbar UI components and behaviors.
+     *
+     * DEV ONLY
+     */
+    var enableIncompleteToolbarRedesign by lazyFeatureFlagPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_toolbar_use_redesign_incomplete),
+        default = { false },
+        featureFlag = FeatureFlags.incompleteToolbarRedesignEnabled,
     )
 }

@@ -13,6 +13,7 @@ import mozilla.components.concept.engine.history.HistoryItem
 import mozilla.components.concept.engine.mediasession.MediaSession
 import mozilla.components.concept.engine.permission.PermissionRequest
 import mozilla.components.concept.engine.shopping.ProductAnalysis
+import mozilla.components.concept.engine.shopping.ProductAnalysisStatus
 import mozilla.components.concept.engine.shopping.ProductRecommendation
 import mozilla.components.concept.engine.translate.TranslationOptions
 import mozilla.components.concept.engine.window.WindowRequest
@@ -902,10 +903,15 @@ class EngineSessionTest {
     fun `TrackingSessionPolicies retain all expected fields during privacy transformations`() {
         val strict = TrackingProtectionPolicy.strict()
         val default = TrackingProtectionPolicy.recommended()
-        val custom = TrackingProtectionPolicy.select(
+        val customNormal = TrackingProtectionPolicy.select(
             trackingCategories = emptyArray(),
             cookiePolicy = CookiePolicy.ACCEPT_ONLY_FIRST_PARTY,
             strictSocialTrackingProtection = true,
+        )
+        val customPrivate = TrackingProtectionPolicy.select(
+            trackingCategories = emptyArray(),
+            cookiePolicy = CookiePolicy.ACCEPT_ONLY_FIRST_PARTY,
+            strictSocialTrackingProtection = false,
         )
         val changedFields = listOf("useForPrivateSessions", "useForRegularSessions")
 
@@ -923,11 +929,12 @@ class EngineSessionTest {
         listOf(
             strict,
             default,
-            custom,
+            customNormal,
         ).forEach {
-            checkSavedFields(it, it.forPrivateSessionsOnly())
             checkSavedFields(it, it.forRegularSessionsOnly())
         }
+
+        checkSavedFields(customPrivate, customPrivate.forPrivateSessionsOnly())
     }
 
     @Test
@@ -1028,7 +1035,7 @@ open class DummyEngineSession : EngineSession() {
 
     override fun requestAnalysisStatus(
         url: String,
-        onResult: (String) -> Unit,
+        onResult: (ProductAnalysisStatus) -> Unit,
         onException: (Throwable) -> Unit,
     ) {}
 
@@ -1044,6 +1051,12 @@ open class DummyEngineSession : EngineSession() {
         onException: (Throwable) -> Unit,
     ) {}
 
+    override fun reportBackInStock(
+        url: String,
+        onResult: (String) -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {}
+
     override fun requestTranslate(
         fromLanguage: String,
         toLanguage: String,
@@ -1051,6 +1064,17 @@ open class DummyEngineSession : EngineSession() {
     ) {}
 
     override fun requestTranslationRestore() {}
+
+    override fun getNeverTranslateSiteSetting(
+        onResult: (Boolean) -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {}
+
+    override fun setNeverTranslateSiteSetting(
+        setting: Boolean,
+        onResult: () -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {}
 
     override fun findAll(text: String) {}
 

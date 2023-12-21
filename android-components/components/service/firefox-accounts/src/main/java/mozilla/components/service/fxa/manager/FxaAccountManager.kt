@@ -13,6 +13,7 @@ import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.withContext
 import mozilla.appservices.syncmanager.DeviceSettings
+import mozilla.components.concept.base.crash.Breadcrumb
 import mozilla.components.concept.base.crash.CrashReporting
 import mozilla.components.concept.sync.AccountEventsObserver
 import mozilla.components.concept.sync.AccountObserver
@@ -30,6 +31,7 @@ import mozilla.components.service.fxa.AccountOnDisk
 import mozilla.components.service.fxa.AccountStorage
 import mozilla.components.service.fxa.FxaAuthData
 import mozilla.components.service.fxa.FxaDeviceSettingsCache
+import mozilla.components.service.fxa.FxaSyncScopedKeyMissingException
 import mozilla.components.service.fxa.Result
 import mozilla.components.service.fxa.SecureAbove22AccountStorage
 import mozilla.components.service.fxa.ServerConfig
@@ -56,6 +58,7 @@ import mozilla.components.support.base.utils.NamedThreadFactory
 import java.io.Closeable
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.Executors
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.coroutines.CoroutineContext
 
 // Necessary to fetch a profile.
@@ -126,6 +129,19 @@ open class FxaAccountManager(
 
     @Volatile
     private var latestAuthState: String? = null
+
+    // Used to detect multiple auth recovery attempts at once
+    // (https://bugzilla.mozilla.org/show_bug.cgi?id=1864994)
+    private var authRecoveryScheduled = AtomicBoolean(false)
+    private fun checkForMultipleRequiveryCalls() {
+        val alreadyScheduled = authRecoveryScheduled.getAndSet(true)
+        if (alreadyScheduled) {
+            crashReporter?.recordCrashBreadcrumb(Breadcrumb("multiple fxa recoveries scheduled at once"))
+        }
+    }
+    private fun finishedAuthRecovery() {
+        authRecoveryScheduled.set(false)
+    }
 
     private val oauthObservers = object : Observable<OAuthObserver> by ObserverRegistry() {}
 
@@ -449,10 +465,13 @@ open class FxaAccountManager(
     internal suspend fun encounteredAuthError(
         operation: String,
         errorCountWithinTheTimeWindow: Int = 1,
-    ) = withContext(coroutineContext) {
-        processQueue(
-            Event.Account.AuthenticationError(operation, errorCountWithinTheTimeWindow),
-        )
+    ) {
+        checkForMultipleRequiveryCalls()
+        return withContext(coroutineContext) {
+            processQueue(
+                Event.Account.AuthenticationError(operation, errorCountWithinTheTimeWindow),
+            )
+        }
     }
 
     /**
@@ -495,6 +514,9 @@ open class FxaAccountManager(
             Event.Progress.FailedToCompleteAuth -> {
                 notifyObservers { onFlowError(AuthFlowError.FailedToCompleteAuth) }
             }
+            Event.Progress.FailedToRecoverFromAuthenticationProblem -> {
+                finishedAuthRecovery()
+            }
             else -> Unit
         }
         AccountState.Authenticated -> when (via) {
@@ -504,6 +526,7 @@ open class FxaAccountManager(
                 Unit
             }
             Event.Progress.RecoveredFromAuthenticationProblem -> {
+                finishedAuthRecovery()
                 notifyObservers { onAuthenticated(account, AuthType.Recovered) }
                 refreshProfile(ignoreCache = true)
                 Unit
@@ -596,6 +619,7 @@ open class FxaAccountManager(
                         }
                     }
                     ServiceResult.AuthError -> {
+                        checkForMultipleRequiveryCalls()
                         Event.Account.AuthenticationError("finalizeDevice")
                     }
                     ServiceResult.OtherError -> {
@@ -733,7 +757,23 @@ open class FxaAccountManager(
             return
         }
 
-        val accessToken = account.getAccessToken(SCOPE_SYNC)
+        val accessToken = try {
+            account.getAccessToken(SCOPE_SYNC)
+        } catch (e: FxaSyncScopedKeyMissingException) {
+            // We received an access token, but no sync key which means we can't really use the
+            // connected FxA account.  Throw an exception so that the account transitions to the
+            // `AuthenticationProblem` state.  Things should be fixed when the user re-logs in.
+            //
+            // This used to be thrown when the android-components code noticed the issue in
+            // `asSyncAuthInfo()`.  However, the application-services code now also checks for this
+            // and throws its own error.  To keep the flow above this the same, we catch the
+            // app-services exception and throw the android-components one.
+            //
+            // Eventually, we should remove AccessTokenUnexpectedlyWithoutKey and have the higher
+            // functions catch `FxaSyncScopedKeyMissingException` directly
+            // (https://bugzilla.mozilla.org/show_bug.cgi?id=1869862)
+            throw AccessTokenUnexpectedlyWithoutKey()
+        }
         val tokenServerUrl = if (accessToken != null) {
             // Only try to get the endpoint if we have an access token.
             account.getTokenServerEndpointURL()

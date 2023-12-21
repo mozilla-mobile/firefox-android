@@ -46,6 +46,7 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.browser.state.action.ContentAction
@@ -98,7 +99,10 @@ import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
 import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.metrics.BreadcrumbsRecorder
 import org.mozilla.fenix.components.metrics.GrowthDataWorker
+import org.mozilla.fenix.components.metrics.fonts.FontEnumerationWorker
 import org.mozilla.fenix.databinding.ActivityHomeBinding
+import org.mozilla.fenix.debugsettings.data.DefaultDebugSettingsRepository
+import org.mozilla.fenix.debugsettings.ui.DebugOverlay
 import org.mozilla.fenix.exceptions.trackingprotection.TrackingProtectionExceptionsFragmentDirections
 import org.mozilla.fenix.experiments.ResearchSurfaceDialogFragment
 import org.mozilla.fenix.ext.alreadyOnDestination
@@ -140,7 +144,6 @@ import org.mozilla.fenix.perf.StartupTimeline
 import org.mozilla.fenix.perf.StartupTypeTelemetry
 import org.mozilla.fenix.search.SearchDialogFragmentDirections
 import org.mozilla.fenix.session.PrivateNotificationService
-import org.mozilla.fenix.settings.CookieBannersFragmentDirections
 import org.mozilla.fenix.settings.HttpsOnlyFragmentDirections
 import org.mozilla.fenix.settings.SettingsFragmentDirections
 import org.mozilla.fenix.settings.TrackingProtectionFragmentDirections
@@ -158,6 +161,8 @@ import org.mozilla.fenix.tabhistory.TabHistoryDialogFragment
 import org.mozilla.fenix.tabstray.TabsTrayFragment
 import org.mozilla.fenix.tabstray.TabsTrayFragmentDirections
 import org.mozilla.fenix.theme.DefaultThemeManager
+import org.mozilla.fenix.theme.FirefoxTheme
+import org.mozilla.fenix.theme.Theme
 import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.trackingprotection.TrackingProtectionPanelDialogFragmentDirections
 import org.mozilla.fenix.utils.Settings
@@ -278,6 +283,36 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         window.decorView.layoutDirection = TextUtils.getLayoutDirectionFromLocale(Locale.getDefault())
 
         binding = ActivityHomeBinding.inflate(layoutInflater)
+
+        if (Config.channel.isNightlyOrDebug) {
+            lifecycleScope.launch {
+                val debugSettingsRepository = DefaultDebugSettingsRepository(
+                    context = this@HomeActivity,
+                    writeScope = this,
+                )
+
+                debugSettingsRepository.debugDrawerEnabled
+                    .distinctUntilChanged()
+                    .collect { enabled ->
+                        with(binding.debugOverlay) {
+                            if (enabled) {
+                                visibility = View.VISIBLE
+
+                                setContent {
+                                    FirefoxTheme(theme = Theme.getTheme(allowPrivateTheme = false)) {
+                                        DebugOverlay()
+                                    }
+                                }
+                            } else {
+                                setContent {}
+
+                                visibility = View.GONE
+                            }
+                        }
+                    }
+            }
+        }
+
         setContentView(binding.root)
         ProfilerMarkers.addListenerForOnGlobalLayout(components.core.engine, this, binding.root)
 
@@ -295,14 +330,14 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             it.start()
         }
 
-        if (settings().shouldShowJunoOnboarding(
+        if (settings().shouldShowOnboarding(
                 hasUserBeenOnboarded = components.fenixOnboarding.userHasBeenOnboarded(),
                 isLauncherIntent = intent.toSafeIntent().isLauncherIntent,
             )
         ) {
             // Unless activity is recreated due to config change, navigate to onboarding
             if (savedInstanceState == null) {
-                navHost.navController.navigate(NavGraphDirections.actionGlobalJunoOnboarding())
+                navHost.navController.navigate(NavGraphDirections.actionGlobalOnboarding())
             }
         } else {
             lifecycleScope.launch(IO) {
@@ -522,6 +557,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             }
 
             GrowthDataWorker.sendActivatedSignalIfNeeded(applicationContext)
+            FontEnumerationWorker.sendActivatedSignalIfNeeded(applicationContext)
             ReEngagementNotificationWorker.setReEngagementNotificationIfNeeded(applicationContext)
             MessageNotificationWorker.setMessageNotificationWorker(applicationContext)
         }
@@ -571,17 +607,15 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             components.core.store.state.getNormalOrPrivateTabs(private = false).isNotEmpty()
 
         lifecycleScope.launch(IO) {
-            components.core.bookmarksStorage.getTree(BookmarkRoot.Root.id, true)?.let {
-                val desktopRootNode = DesktopFolders(
-                    applicationContext,
-                    showMobileRoot = false,
-                ).withOptionalDesktopFolders(it)
-                settings().desktopBookmarksSize = desktopRootNode.count()
-            }
+            val desktopFolders = DesktopFolders(
+                applicationContext,
+                showMobileRoot = false,
+            )
+            settings().desktopBookmarksSize = desktopFolders.count()
 
-            components.core.bookmarksStorage.getTree(BookmarkRoot.Mobile.id, true)?.let {
-                settings().mobileBookmarksSize = it.count()
-            }
+            settings().mobileBookmarksSize = components.core.bookmarksStorage.countBookmarksInTrees(
+                listOf(BookmarkRoot.Mobile.id),
+            ).toInt()
         }
 
         super.onPause()
@@ -1022,8 +1056,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             HistoryMetadataGroupFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromTrackingProtectionExceptions ->
             TrackingProtectionExceptionsFragmentDirections.actionGlobalBrowser(customTabSessionId)
-        BrowserDirection.FromCookieBanner ->
-            CookieBannersFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromHttpsOnlyMode ->
             HttpsOnlyFragmentDirections.actionGlobalBrowser(customTabSessionId)
         BrowserDirection.FromAbout ->

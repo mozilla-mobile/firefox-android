@@ -80,6 +80,8 @@ class EnhancedTrackingProtectionTest {
             verifyEnhancedTrackingProtectionLevelSelected("Standard (default)", true)
             verifyStandardOptionDescription()
             verifyStrictOptionDescription()
+            verifyGPCTextWithSwitchWidget()
+            verifyGPCSwitchEnabled(false)
             selectTrackingProtectionOption("Custom")
             verifyCustomTrackingProtectionSettings()
             scrollToElementByText("Standard (default)")
@@ -351,8 +353,6 @@ class EnhancedTrackingProtectionTest {
         enhancedTrackingProtection {
         }.openEnhancedTrackingProtectionSheet {
         }.openDetails {
-            verifyCrossSiteCookiesBlocked(true)
-            navigateBackToDetails()
             verifyCryptominersBlocked(true)
             navigateBackToDetails()
             verifyFingerprintersBlocked(true)

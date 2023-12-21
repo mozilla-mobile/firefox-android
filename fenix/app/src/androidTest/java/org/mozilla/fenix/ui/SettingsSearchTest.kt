@@ -321,7 +321,6 @@ class SettingsSearchTest {
     }
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2203312
-    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1848623")
     @Test
     fun verifyErrorMessagesForInvalidSearchEngineUrlsTest() {
         val customSearchEngine = object {
@@ -420,7 +419,6 @@ class SettingsSearchTest {
     // Test running on beta/release builds in CI:
     // caution when making changes to it, so they don't block the builds
     // Goes through the settings and changes the search suggestion toggle, then verifies it changes.
-    @Ignore("Failing, see: https://github.com/mozilla-mobile/fenix/issues/23817")
     @SmokeTest
     @Test
     fun verifyShowSearchSuggestionsToggleTest() {

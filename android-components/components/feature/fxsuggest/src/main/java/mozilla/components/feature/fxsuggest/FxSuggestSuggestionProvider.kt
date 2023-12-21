@@ -48,10 +48,14 @@ class FxSuggestSuggestionProvider(
             emptyList()
         } else {
             val providers = buildList() {
-                if (includeSponsoredSuggestions) {
+                val availableSuggestionTypes = FxSuggestNimbus.features
+                    .awesomebarSuggestionProvider
+                    .value()
+                    .availableSuggestionTypes
+                if (includeSponsoredSuggestions && availableSuggestionTypes[SuggestionType.AMP] == true) {
                     add(SuggestionProvider.AMP)
                 }
-                if (includeNonSponsoredSuggestions) {
+                if (includeNonSponsoredSuggestions && availableSuggestionTypes[SuggestionType.WIKIPEDIA] == true) {
                     add(SuggestionProvider.WIKIPEDIA)
                 }
             }
@@ -123,6 +127,7 @@ class FxSuggestSuggestionProvider(
                 onSuggestionClicked = {
                     loadUrlUseCase.invoke(details.url)
                 },
+                score = Int.MIN_VALUE,
                 metadata = buildMap {
                     details.clickInfo?.let { put(MetadataKeys.CLICK_INFO, it) }
                     details.impressionInfo?.let { put(MetadataKeys.IMPRESSION_INFO, it) }

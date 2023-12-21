@@ -109,6 +109,11 @@ open class ApkSizeTask : DefaultTask() {
             suite.put("alertChangeType", "absolute")
             suite.put("alertThreshold", 1024 * 1024)
 
+            // Debug variants do not have alerts
+            if (variantName?.contains("debug", ignoreCase = true) == true) {
+                suite.put("shouldAlert", false)
+            }
+
             val subtests = JSONArray()
             apkSize.forEach { (apk, size) ->
                 val subtest = JSONObject()

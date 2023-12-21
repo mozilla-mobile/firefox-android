@@ -210,6 +210,8 @@
 
     <!-- Browser menu toggle that requests a desktop site -->
     <string name="browser_menu_desktop_site">Барои компютери мизи корӣ</string>
+    <!-- Browser menu button that reopens a private tab as a regular tab -->
+    <string name="browser_menu_open_in_regular_tab">Кушодан дар варақаи одӣ</string>
     <!-- Browser menu toggle that adds a shortcut to the site on the device home screen. -->
     <string name="browser_menu_add_to_homescreen">Илова кардан ба экрани асосӣ</string>
     <!-- Browser menu toggle that installs a Progressive Web App shortcut to the site on the device home screen. -->
@@ -461,16 +463,20 @@
     <string name="preferences_https_only_title">Реҷаи «Танҳо HTTPS»</string>
 
     <!-- Preference for removing cookie/consent banners from sites automatically. See reduce_cookie_banner_summary for additional context. -->
-    <string name="preferences_cookie_banner_reduction">Маҳдудкунии баннери куки</string>
+    <string name="preferences_cookie_banner_reduction" moz:RemovedIn="121" tools:ignore="UnusedResources">Маҳдудкунии баннери куки</string>
+    <!-- Label for cookie banner section in quick settings panel. -->
+    <string name="cookie_banner_blocker">Манъкунандаи баннери куки</string>
+    <!-- Preference for removing cookie/consent banners from sites automatically in private mode. See reduce_cookie_banner_summary for additional context. -->
+    <string name="preferences_cookie_banner_reduction_private_mode">Манъкунандаи баннери куки дар тамошокунии хусусӣ</string>
     <!-- Preference for rejecting or removing as many cookie/consent banners as possible on sites. See reduce_cookie_banner_summary for additional context. -->
-    <string name="reduce_cookie_banner_option">Маҳдуд кардани баннерҳои куки</string>
+    <string name="reduce_cookie_banner_option" moz:RemovedIn="121" tools:ignore="UnusedResources">Маҳдуд кардани баннерҳои куки</string>
     <!-- Summary of cookie banner handling preference if the setting disabled is set to off -->
-    <string name="reduce_cookie_banner_option_off">Ғайрифаъол</string>
+    <string name="reduce_cookie_banner_option_off" moz:RemovedIn="121" tools:ignore="UnusedResources">Ғайрифаъол</string>
     <!-- Summary of cookie banner handling preference if the setting enabled is set to on -->
-    <string name="reduce_cookie_banner_option_on">Фаъол</string>
+    <string name="reduce_cookie_banner_option_on" moz:RemovedIn="121" tools:ignore="UnusedResources">Фаъол</string>
 
     <!-- Summary for the preference for rejecting all cookies whenever possible. The first parameter is the application name -->
-    <string name="reduce_cookie_banner_summary_1">«%1$s» ба таври худкор кушиш мекунад, ки дархостҳои кукиҳоро дар баннерҳои кукиҳо рад кунад.</string>
+    <string name="reduce_cookie_banner_summary_1" moz:RemovedIn="121" tools:ignore="UnusedResources">«%1$s» ба таври худкор кушиш мекунад, ки дархостҳои кукиҳоро дар баннерҳои кукиҳо рад кунад.</string>
     <!-- Text for indicating cookie banner handling is off this site, this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_off_for_site">Барои ин сомона хомӯш аст</string>
     <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner details view. -->
@@ -488,17 +494,25 @@
     <!-- Text for indicating cookie banner handling is currently not supported for this site, this is shown as part of the protections panel with the tracking protection toggle -->
     <string name="reduce_cookie_banner_unsupported_site">Ин сомона дар айни замон дастгирӣ намешавад</string>
     <!-- Title text for a detail explanation indicating cookie banner handling is on this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
-    <string name="reduce_cookie_banner_details_panel_title_on_for_site">«Маҳдудкунии баннери куки»-ро барои %1$s фаъол месозед?</string>
+    <string name="reduce_cookie_banner_details_panel_title_on_for_site" moz:RemovedIn="121" tools:ignore="UnusedResources">«Маҳдудкунии баннери куки»-ро барои %1$s фаъол месозед?</string>
+    <!-- Title text for a detail explanation indicating cookie banner handling is on this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
+    <string name="reduce_cookie_banner_details_panel_title_on_for_site_1">Манъкунандаи баннери кукиро барои %1$s фаъол мекунед?</string>
     <!-- Title text for a detail explanation indicating cookie banner handling is off this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
-    <string name="reduce_cookie_banner_details_panel_title_off_for_site">«Маҳдудкунии баннери куки»-ро барои %1$s хомӯш месозед?</string>
+    <string name="reduce_cookie_banner_details_panel_title_off_for_site" moz:RemovedIn="121" tools:ignore="UnusedResources">«Маҳдудкунии баннери куки»-ро барои %1$s хомӯш месозед?</string>
 
+    <!-- Title text for a detail explanation indicating cookie banner handling is off this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
+    <string name="reduce_cookie_banner_details_panel_title_off_for_site_1">Манъкунандаи баннери кукиро барои %1$s хомӯш мекунед?</string>
     <!-- Title text for a detail explanation indicating cookie banner reducer didn't work for the current site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name-->
     <string name="reduce_cookie_banner_details_panel_title_unsupported_site_request_2">«%1$s» наметавонад, ки дархостҳои кукиро барои ин сомона ба таври худкор рад кунад. Шумо метавонед барои дастгирӣ кардани ин сомона дар оянда дархостеро фиристонед.</string>
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
-    <string name="reduce_cookie_banner_details_panel_description_off_for_site">%1$s кукиҳои ин сомонаро тоза мекунад ва саҳифаро аз нав бор мекунад. Амали тозакунии ҳамаи кукиҳо метавонад шуморо аз сомона хориҷ кунад ва сабадҳои харидории шуморо холӣ намояд.</string>
+    <string name="reduce_cookie_banner_details_panel_description_off_for_site" moz:RemovedIn="121" tools:ignore="UnusedResources">%1$s кукиҳои ин сомонаро тоза мекунад ва саҳифаро аз нав бор мекунад. Амали тозакунии ҳамаи кукиҳо метавонад шуморо аз сомона хориҷ кунад ва сабадҳои харидории шуморо холӣ намояд.</string>
 
+    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
+    <string name="reduce_cookie_banner_details_panel_description_off_for_site_1">Хомӯш кунед ва «%1$s» кукиҳоро тоза намуда, ин сомонаро аз нав бор мекунад. Ин амал метавонад шуморо аз сомона хориҷ кунад ва сабадҳои харидории шуморо холӣ намояд.</string>
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
-    <string name="reduce_cookie_banner_details_panel_description_on_for_site_2">«%1$s» кӯшиш мекунад, ки ҳамаи дархостҳои кукиҳоро дар сомонаҳои дастгиришаванда ба таври худкор рад кунад.</string>
+    <string name="reduce_cookie_banner_details_panel_description_on_for_site_2" moz:RemovedIn="121" tools:ignore="UnusedResources">«%1$s» кӯшиш мекунад, ки ҳамаи дархостҳои кукиҳоро дар сомонаҳои дастгиришаванда ба таври худкор рад кунад.</string>
+    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
+    <string name="reduce_cookie_banner_details_panel_description_on_for_site_3">Фаъол созед, ва «%1$s» кӯшиш мекунад, ки ҳамаи баннерҳои кукиро дар ин сомона ба таври худкор рад кунад.</string>
     <!-- Title text for the cookie banner re-engagement dialog. The first parameter is the application name. -->
     <string name="reduce_cookie_banner_dialog_title" moz:RemovedIn="121" tools:ignore="UnusedResources">Ба «%1$s» иҷозат медиҳед, ки баннерҳои кукиро рад кунад?</string>
     <!-- Body text for the cookie banner re-engagement dialog use. The first parameter is the application name. -->
@@ -510,6 +524,11 @@
 
     <!-- Change setting text button, for the cookie banner re-engagement dialog -->
     <string name="reduce_cookie_banner_dialog_change_setting_button" moz:RemovedIn="121" tools:ignore="UnusedResources">Иҷозат додан</string>
+
+    <!--Title for the cookie banner re-engagement CFR, the placeholder is replaced with app name -->
+    <string name="cookie_banner_cfr_title">«%1$s» дар ҳоли ҳозир барои шумо кукиҳоро рад кард</string>
+    <!--Message for the cookie banner re-engagement CFR -->
+    <string name="cookie_banner_cfr_message">Камтар ҳалалҳо ва камтар кукиҳое, ки шуморо дар ин сомона пайгирӣ мекунанд.</string>
 
     <!-- Description of the preference to enable "HTTPS-Only" mode. -->
     <string name="preferences_https_only_summary">Ба таври худкор кӯшиш мекунад, ки ба сомонаҳо бо истифода аз протоколи рамзгузории HTTPS барои баланд бардоштани амният пайваст шавад.</string>
@@ -618,6 +637,8 @@
 
     <!-- Preference for add_ons -->
     <string name="preferences_addons">Ҷузъҳои иловагӣ</string>
+    <!-- Preference for installing a local add-on -->
+    <string name="preferences_install_local_addon">Насб кардани ҷузъи иловагӣ аз файл</string>
     <!-- Preference for notifications -->
     <string name="preferences_notifications">Огоҳномаҳо</string>
 
@@ -2238,8 +2259,6 @@
     <!-- Caption for recommended product section indicating this is an ad by Fakespot. First parameter is the Fakespot product name. -->
     <string name="review_quality_check_ad_caption" tools:ignore="UnusedResources">Реклама аз ҷониби «%s»</string>
     <!-- Caption for review quality check panel. First parameter is for clickable text defined in review_quality_check_powered_by_link. -->
-    <string name="review_quality_check_powered_by" tools:ignore="UnusedResources" moz:RemovedIn="119">Абзори тафтиши тақризҳо аз ҷониби «%s» таҳия карда шудааст.</string>
-    <!-- Caption for review quality check panel. First parameter is for clickable text defined in review_quality_check_powered_by_link. -->
     <string name="review_quality_check_powered_by_2">Абзори тафтиши тақризҳо аз ҷониби «%s» таҳия карда шудааст</string>
     <!-- Clickable text that links to Fakespot.com. First parameter is the Fakespot product name. In the phrase "Fakespot by Mozilla", "by" can be localized. Does not need to stay by. -->
     <string name="review_quality_check_powered_by_link" tools:ignore="UnusedResources">«%s» аз ҷониби «Mozilla»</string>
@@ -2299,6 +2318,8 @@
     <string name="review_quality_check_contextual_onboarding_title">Дастури моро дар бораи эътимоднокӣ нисбат ба тақризҳои маҳсулот озмоед</string>
     <!-- Description for review quality check contextual onboarding card. The first and last two parameters are for retailer names (e.g. Amazon, Walmart). The second parameter is for the name of the application (e.g. Firefox). -->
     <string name="review_quality_check_contextual_onboarding_description">Пеш аз хариди маҳсул, дар «%1$s» аз назар гузаронед, ки то чӣ андоза тақризҳо дар бораи ин маҳсул боэътимод мебошанд. Абзори тафтиши тақризҳо ҳамчун хусусияти озмоишӣ аз тарафи «%2$s» ба браузер дарунсохт карда шудааст. Ин хусусият ҳам дар «%3$s» ва ҳам дар «%4$s» кор мекунад.</string>
+    <!-- Description for review quality check contextual onboarding card. The first parameters is for retailer name (e.g. Amazon). The second parameter is for the name of the application (e.g. Firefox). -->
+    <string name="review_quality_check_contextual_onboarding_description_one_vendor">Пеш аз хариди маҳсул, дар «%1$s» аз назар гузаронед, ки то чӣ андоза тақризҳо дар бораи ин маҳсул боэътимод мебошанд. Абзори тафтиши тақризҳо ҳамчун хусусияти озмоишӣ аз тарафи «%2$s» ба браузер дарунсохт карда шудааст.</string>
     <!-- Paragraph presenting review quality check feature. First parameter is the Fakespot product name. Second parameter is for clickable text defined in review_quality_check_contextual_onboarding_learn_more_link. In the phrase "Fakespot by Mozilla", "by" can be localized. Does not need to stay by. -->
     <string name="review_quality_check_contextual_onboarding_learn_more">Бо истифода аз «%1$s» аз ҷониби «Mozilla», мо ба шумо барои истисно кардани тақризҳои ғаразнок ва ғайримуқаррарӣ кумак мекунем. Намунаи зеҳни сунъии (AI)-ии мо барои муҳофизат кардани раванди харидории шумо доим такмил дода мешавад. %2$s</string>
     <!-- Clickable text from the contextual onboarding card that links to review quality check support article. -->
@@ -2365,4 +2386,6 @@
     <string name="a11y_action_label_read_article">мақоларо хонед</string>
     <!-- Action label for links to the Firefox Pocket website. Talkback will append this to say "Double tap to open link to learn more". -->
     <string name="a11y_action_label_pocket_learn_more">барои маълумоти бештар пайвандро кушоед</string>
+    <!-- Content description for headings announced by accessibility service. The first parameter is the text of the heading. Talkback will announce the first parameter and then speak the word "Heading" indicating to the user that this text is a heading for a section. -->
+    <string name="a11y_heading">%s, Сарлавҳа</string>
 </resources>

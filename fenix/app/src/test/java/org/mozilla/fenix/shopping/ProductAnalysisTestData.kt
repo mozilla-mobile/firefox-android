@@ -7,9 +7,10 @@ package org.mozilla.fenix.shopping
 import mozilla.components.concept.engine.shopping.Highlight
 import mozilla.components.concept.engine.shopping.ProductAnalysis
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState
+import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent.AnalysisStatus
+import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent.HighlightsInfo
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.RecommendedProductState
-import java.util.SortedMap
 
 object ProductAnalysisTestData {
 
@@ -20,6 +21,7 @@ object ProductAnalysisTestData {
         adjustedRating: Double? = 4.5,
         needsAnalysis: Boolean = false,
         pageNotSupported: Boolean = false,
+        notEnoughReviews: Boolean = false,
         lastAnalysisTime: Long = 0L,
         deletedProductReported: Boolean = false,
         deletedProduct: Boolean = false,
@@ -31,6 +33,7 @@ object ProductAnalysisTestData {
         adjustedRating = adjustedRating,
         needsAnalysis = needsAnalysis,
         pageNotSupported = pageNotSupported,
+        notEnoughReviews = notEnoughReviews,
         lastAnalysisTime = lastAnalysisTime,
         deletedProductReported = deletedProductReported,
         deletedProduct = deletedProduct,
@@ -42,17 +45,24 @@ object ProductAnalysisTestData {
         productUrl: String = "https://test.com",
         reviewGrade: ReviewQualityCheckState.Grade? = ReviewQualityCheckState.Grade.A,
         adjustedRating: Float? = 4.5f,
-        analysisStatus: AnalysisStatus = AnalysisStatus.UP_TO_DATE,
-        highlights: SortedMap<ReviewQualityCheckState.HighlightType, List<String>>? = null,
+        analysisStatus: AnalysisStatus = AnalysisStatus.UpToDate,
+        highlightsInfo: HighlightsInfo? = null,
         recommendedProductState: RecommendedProductState = RecommendedProductState.Initial,
-    ): ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent =
-        ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent(
+    ): ProductReviewState.AnalysisPresent =
+        ProductReviewState.AnalysisPresent(
             productId = productId,
             productUrl = productUrl,
             reviewGrade = reviewGrade,
             adjustedRating = adjustedRating,
             analysisStatus = analysisStatus,
-            highlights = highlights,
+            highlightsInfo = highlightsInfo,
             recommendedProductState = recommendedProductState,
+        )
+
+    fun noAnalysisPresent(
+        progress: Float = -1f,
+    ): ProductReviewState.NoAnalysisPresent =
+        ProductReviewState.NoAnalysisPresent(
+            progress = ProductReviewState.Progress(progress),
         )
 }

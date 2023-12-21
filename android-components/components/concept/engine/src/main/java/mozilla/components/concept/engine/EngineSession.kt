@@ -16,7 +16,9 @@ import mozilla.components.concept.engine.mediasession.MediaSession
 import mozilla.components.concept.engine.permission.PermissionRequest
 import mozilla.components.concept.engine.prompt.PromptRequest
 import mozilla.components.concept.engine.shopping.ProductAnalysis
+import mozilla.components.concept.engine.shopping.ProductAnalysisStatus
 import mozilla.components.concept.engine.shopping.ProductRecommendation
+import mozilla.components.concept.engine.translate.TranslationEngineState
 import mozilla.components.concept.engine.translate.TranslationOperation
 import mozilla.components.concept.engine.translate.TranslationOptions
 import mozilla.components.concept.engine.window.WindowRequest
@@ -333,6 +335,30 @@ abstract class EngineSession(
         fun onCheckForFormDataException(throwable: Throwable) = Unit
 
         /**
+         * Event to indicate that the translations engine expects that the user will likely
+         * request page translation.
+         *
+         * The usual use case is to show a prominent translations UI entrypoint on the toolbar.
+         */
+        fun onTranslateExpected() = Unit
+
+        /**
+         * Event to indicate that the translations engine suggests notifying the user that
+         * translations are available or else offering to translate.
+         *
+         * The usual use case is to show a popup or UI notification that translations are available.
+         */
+        fun onTranslateOffer() = Unit
+
+        /**
+         * Event to indicate the translations state. Translations state change
+         * occurs generally during navigation and after translation operations are requested.
+         *
+         * @param state The translations state.
+         */
+        fun onTranslateStateChange(state: TranslationEngineState) = Unit
+
+        /**
          * Event to indicate that the translation operation completed successfully.
          *
          * @param operation The operation that the translation engine completed.
@@ -492,6 +518,11 @@ abstract class EngineSession(
             MOZILLA_SOCIAL(1 shl 8),
 
             /**
+             * Blocks email trackers.
+             */
+            EMAIL(1 shl 9),
+
+            /**
              * Blocks content like scripts and sub-resources.
              */
             SCRIPTS_AND_SUB_RESOURCES(1 shl 31),
@@ -502,9 +533,9 @@ abstract class EngineSession(
             ),
 
             /**
-             * Combining the [RECOMMENDED] categories plus [SCRIPTS_AND_SUB_RESOURCES].
+             * Combining the [RECOMMENDED] categories plus [SCRIPTS_AND_SUB_RESOURCES] & getAntiTracking[EMAIL].
              */
-            STRICT(RECOMMENDED.id + SCRIPTS_AND_SUB_RESOURCES.id),
+            STRICT(RECOMMENDED.id + SCRIPTS_AND_SUB_RESOURCES.id + EMAIL.id),
         }
 
         companion object {
@@ -662,7 +693,7 @@ abstract class EngineSession(
             useForRegularSessions = false,
             cookiePolicy = cookiePolicy,
             cookiePolicyPrivateMode = cookiePolicyPrivateMode,
-            strictSocialTrackingProtection = strictSocialTrackingProtection,
+            strictSocialTrackingProtection = false,
             cookiePurging = cookiePurging,
         )
 
@@ -909,7 +940,7 @@ abstract class EngineSession(
      */
     abstract fun requestAnalysisStatus(
         url: String,
-        onResult: (String) -> Unit,
+        onResult: (ProductAnalysisStatus) -> Unit,
         onException: (Throwable) -> Unit,
     )
 
@@ -938,6 +969,18 @@ abstract class EngineSession(
     )
 
     /**
+     * Reports when a product is back in stock.
+     *
+     * @param onResult callback invoked if the engine API returns a valid response.
+     * @param onException callback invoked if there was an error getting the response.
+     */
+    abstract fun reportBackInStock(
+        url: String,
+        onResult: (String) -> Unit,
+        onException: (Throwable) -> Unit,
+    )
+
+    /**
      * Requests the [EngineSession] to translate the current session's contents.
      *
      * @param fromLanguage The BCP 47 language tag that the page should be translated from.
@@ -955,6 +998,26 @@ abstract class EngineSession(
      * Will be a no-op on the Gecko side if the page is not translated.
      */
     abstract fun requestTranslationRestore()
+
+    /**
+     * Requests the [EngineSession] retrieve the current site's never translate preference.
+     */
+    abstract fun getNeverTranslateSiteSetting(
+        onResult: (Boolean) -> Unit,
+        onException: (Throwable) -> Unit,
+    )
+
+    /**
+     * Requests the [EngineSession] to set the current site's never translate preference.
+     *
+     * @param setting True if the site should never be translated. False if the site should be
+     * translated.
+     */
+    abstract fun setNeverTranslateSiteSetting(
+        setting: Boolean,
+        onResult: () -> Unit,
+        onException: (Throwable) -> Unit,
+    )
 
     /**
      * Finds and highlights all occurrences of the provided String and highlights them asynchronously.
