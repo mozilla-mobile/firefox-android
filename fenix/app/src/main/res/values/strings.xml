@@ -2290,11 +2290,11 @@
     <string name="download_languages_header_learn_more_preference">Learn more</string>
     <!-- The subhead of the download language preference screen will appear above the pivot language. -->
     <string name="download_languages_available_languages_preference">Available languages</string>
-    <!-- A text in parenthesis that will appear next to the pivot language -->
+    <!-- Text that will appear beside a core or pivot language package name to show that the language is necessary for the translation feature to function. -->
     <string name="download_languages_default_system_language_require_preference">required</string>
     <!-- The subhead of the download language preference screen will appear above the items that were not downloaded. -->
     <string name="download_language_header_preference">Download Languages</string>
-    <!-- All languages list item. When the user presses this item, he can download or delete all languages. -->
+    <!-- All languages list item. When the user presses this item, they can download or delete all languages. -->
     <string name="download_language_all_languages_item_preference">All languages</string>
     <!-- Content description (not visible, for screen readers etc.): For a language list item that was downloaded, the user can now delete it. -->
     <string name="download_languages_item_content_description_downloaded_state">Delete</string>
@@ -2304,4 +2304,18 @@
     <string name="download_languages_item_content_description_not_downloaded_state">Download</string>
     <!-- Content description (not visible, for screen readers etc.): For a language list item that is selected. -->
     <string name="download_languages_item_content_description_selected_state">Selected</string>
+
+    <!-- Debug drawer -->
+    <!-- The title of the Tab Tools feature in the Debug Drawer. -->
+    <string name="debug_drawer_tab_tools_title" tools:ignore="UnusedResources">Tab Tools</string>
+    <!-- The title of the tab count section in Tab Tools. -->
+    <string name="debug_drawer_tab_tools_tab_count_title">Tab count</string>
+    <!-- The active tab count category in the tab count section in Tab Tools. -->
+    <string name="debug_drawer_tab_tools_tab_count_normal">Active</string>
+    <!-- The inactive tab count category in the tab count section in Tab Tools. -->
+    <string name="debug_drawer_tab_tools_tab_count_inactive">Inactive</string>
+    <!-- The private tab count category in the tab count section in Tab Tools. -->
+    <string name="debug_drawer_tab_tools_tab_count_private">Private</string>
+    <!-- The total tab count category in the tab count section in Tab Tools. -->
+    <string name="debug_drawer_tab_tools_tab_count_total">Total</string>
 </resources>
