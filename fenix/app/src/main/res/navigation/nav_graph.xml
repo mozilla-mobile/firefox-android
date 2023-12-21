@@ -794,6 +794,14 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
+
+        <action
+            android:id="@+id/action_secretSettingsFragment_to_debugAddTabs"
+            app:destination="@id/debugAddTabSettings"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/secretInfoSettingsFragment"
@@ -819,6 +827,10 @@
         android:id="@+id/sponsoredStoriesSettings"
         android:name="org.mozilla.fenix.settings.SponsoredStoriesSettingsFragment"
         android:label="@string/preferences_debug_settings_custom_sponsored_stories_parameters" />
+    <fragment
+        android:id="@+id/debugAddTabSettings"
+        android:name="org.mozilla.fenix.settings.DebugAddTabsSettingsFragment"
+        android:label="@string/preferences_debug_settings_add_tabs" />
     <fragment
         android:id="@+id/trackingProtectionFragment"
         android:name="org.mozilla.fenix.settings.TrackingProtectionFragment">

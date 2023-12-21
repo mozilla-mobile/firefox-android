@@ -46,6 +46,8 @@
     <string name="preferences_debug_settings_custom_glean_server_url" translatable="false">Custom Glean server URL (requires restart)</string>
     <!-- Label for custom Pocket sponsored stories settings -->
     <string name="preferences_debug_settings_custom_sponsored_stories_parameters" translatable="false">Pocket sponsored stories</string>
+    <!-- Label for debug add tabs settings -->
+    <string name="preferences_debug_settings_add_tabs" translatable="false">Add Tabs</string>
     <!-- Label for custom Pocket sponsored stories site enabled setting -->
     <string name="preferences_debug_settings_custom_sponsored_stories_parameters_enabled" translatable="false">Enable custom Pocket sponsored stories parameters (requires restart)</string>
     <!-- Label for custom Pocket sponsored stories site id setting -->
@@ -86,6 +88,9 @@
     <!-- Secret debug info strings -->
     <string name="debug_info_region_home" translatable="false">Home region</string>
     <string name="debug_info_region_current" translatable="false">Current region</string>
+
+    <!-- Secret debug tabs strings -->
+    <string name="debug_add_tabs_count" translatable="false">Current Tab Count</string>   //FIXME: placement
 
     <!-- Profiler settings -->
     <string name="preferences_start_profiler">Start Profiler</string>

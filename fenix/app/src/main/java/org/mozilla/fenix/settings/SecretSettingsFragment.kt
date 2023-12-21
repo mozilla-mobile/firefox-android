@@ -128,6 +128,10 @@ class SecretSettingsFragment : PreferenceFragmentCompat() {
         requirePreference<Preference>(R.string.pref_key_custom_sponsored_stories_parameters).apply {
             isVisible = Config.channel.isNightlyOrDebug
         }
+
+        requirePreference<Preference>(R.string.pref_key_debug_add_tabs).apply {
+            isVisible = Config.channel.isDebug
+        }
     }
 
     override fun onPreferenceTreeClick(preference: Preference): Boolean {
@@ -136,6 +140,11 @@ class SecretSettingsFragment : PreferenceFragmentCompat() {
                 findNavController().nav(
                     R.id.secretSettingsPreference,
                     SecretSettingsFragmentDirections.actionSecretSettingsFragmentToSponsoredStoriesSettings(),
+                )
+            getString(R.string.pref_key_debug_add_tabs) ->
+                findNavController().nav(
+                    R.id.secretSettingsPreference,
+                    SecretSettingsFragmentDirections.actionSecretSettingsFragmentToDebugAddTabs()
                 )
         }
         return super.onPreferenceTreeClick(preference)
