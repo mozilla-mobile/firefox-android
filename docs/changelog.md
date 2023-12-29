@@ -13,6 +13,9 @@ permalink: /changelog/
 * **feature-customtabs**
  * Sharing a URL from a custom tab always uses the current url of the session. [bug #1831803](https://bugzilla.mozilla.org/show_bug.cgi?id=1831803)
 
+* **support-base**
+* Update `Log.log` api param to use a String product lambda instead of a String to allow conditional evaluation of the log message only when it will be logged. [bug $1872359](https://bugzilla.mozilla.org/show_bug.cgi?id=1872359)
+
 # 122.0
 * [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v121..releases_v122)
 * [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/releases_v122/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)

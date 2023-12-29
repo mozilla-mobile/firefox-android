@@ -117,7 +117,13 @@ fun Context.share(text: String, subject: String = getString(R.string.mozac_suppo
         )
         true
     } catch (e: ActivityNotFoundException) {
-        Log.log(Log.Priority.WARN, message = "No activity to share to found", throwable = e, tag = "Reference-Browser")
+        Log.log(
+            priority = Log.Priority.WARN,
+            tag = "Reference-Browser",
+            throwable = e,
+        ) {
+            "No activity to share to found"
+        }
         false
     }
 }
@@ -165,7 +171,13 @@ fun Context.shareMedia(
         startActivity(shareIntent)
         true
     } catch (error: ActivityNotFoundException) {
-        Log.log(Log.Priority.WARN, message = "No activity to share to found", throwable = error, tag = "shareMedia")
+        Log.log(
+            priority = Log.Priority.WARN,
+            tag = "shareMedia",
+            throwable = error,
+        ) {
+            "No activity to share to found"
+        }
 
         false
     }

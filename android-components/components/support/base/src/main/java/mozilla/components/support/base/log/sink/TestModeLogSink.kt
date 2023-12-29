@@ -11,6 +11,8 @@ import mozilla.components.support.base.log.Log
  */
 internal class TestModeLogSink : LogSink {
 
+    override fun isLoggable(priority: Log.Priority): Boolean = isInTestMode
+
     override fun log(priority: Log.Priority, tag: String?, throwable: Throwable?, message: String) {
         val printMessage = buildString {
             append("${priority.name[0]} ")
@@ -21,5 +23,9 @@ internal class TestModeLogSink : LogSink {
         }
         println(printMessage)
         throwable?.printStackTrace()
+    }
+
+    companion object {
+        internal val isInTestMode: Boolean = System.getProperty("logging.test-mode") == "true"
     }
 }

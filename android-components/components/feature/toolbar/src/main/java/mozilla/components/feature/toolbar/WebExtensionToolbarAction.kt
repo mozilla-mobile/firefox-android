@@ -85,8 +85,7 @@ open class WebExtensionToolbarAction(
                     Log.Priority.ERROR,
                     "mozac-webextensions",
                     throwable,
-                    "Failed to load browser action icon, falling back to default.",
-                )
+                ) { "Failed to load browser action icon, falling back to default." }
             }
         }
 

@@ -17,7 +17,12 @@ private const val MAX_TAG_LENGTH = 23
  */
 class AndroidLogSink(
     private val defaultTag: String = "App",
+    private val minPriority: Log.Priority = Log.Priority.DEBUG,
 ) : LogSink {
+
+    override fun isLoggable(priority: Log.Priority): Boolean =
+        priority.value >= minPriority.value
+
     /**
      * Low-level logging call.
      */

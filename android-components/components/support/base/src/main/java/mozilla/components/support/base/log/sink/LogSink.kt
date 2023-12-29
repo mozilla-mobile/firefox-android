@@ -25,4 +25,12 @@ interface LogSink {
         throwable: Throwable? = null,
         message: String,
     )
+
+    /**
+     * Returns true if the provided [priority] or the log message in general is loggable.
+     * This is used to avoid expensive log message creation. Return false by default.
+     *
+     * @param priority The [Log.Priority] of the log message.
+     */
+    fun isLoggable(priority: Log.Priority): Boolean
 }

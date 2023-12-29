@@ -7,7 +7,9 @@ package mozilla.components.support.base.log.fake
 import mozilla.components.support.base.log.Log
 import mozilla.components.support.base.log.sink.LogSink
 
-class FakeLogSink : LogSink {
+class FakeLogSink(
+    private val isLoggable: Boolean = true,
+) : LogSink {
 
     val logs = mutableListOf<Entry>()
 
@@ -17,6 +19,10 @@ class FakeLogSink : LogSink {
         val throwable: Throwable?,
         val message: String,
     )
+
+    override fun isLoggable(priority: Log.Priority): Boolean {
+        return isLoggable
+    }
 
     override fun log(priority: Log.Priority, tag: String?, throwable: Throwable?, message: String) {
         logs.add(Entry(priority, tag, throwable, message))

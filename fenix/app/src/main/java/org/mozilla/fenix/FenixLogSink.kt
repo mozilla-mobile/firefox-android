@@ -25,10 +25,9 @@ class FenixLogSink(
         throwable: Throwable?,
         message: String,
     ) {
-        if (priority == Log.Priority.DEBUG && !logsDebug) {
-            return
-        }
-
         androidLogSink.log(priority, tag, throwable, message)
     }
+
+    override fun isLoggable(priority: Log.Priority): Boolean =
+        androidLogSink.isLoggable(priority) && (priority != Log.Priority.DEBUG || logsDebug)
 }

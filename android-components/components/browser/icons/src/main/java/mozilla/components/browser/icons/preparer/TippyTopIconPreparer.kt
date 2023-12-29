@@ -82,8 +82,7 @@ private fun parseList(assetManager: AssetManager): Map<String, String> = try {
     Log.log(
         priority = Log.Priority.ERROR,
         tag = "TippyTopIconPreparer",
-        message = "Could not load tippy top list from assets",
         throwable = e,
-    )
+    ) { "Could not load tippy top list from assets" }
     emptyMap()
 }

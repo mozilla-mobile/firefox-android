@@ -24,9 +24,7 @@ object Log {
      */
     var logLevel: Priority = Priority.DEBUG
 
-    private val testMode: Boolean = System.getProperty("logging.test-mode") == "true"
-
-    private val sinks = if (testMode) {
+    private val sinks = if (TestModeLogSink.isInTestMode) {
         mutableListOf<LogSink>(TestModeLogSink())
     } else {
         mutableListOf()
@@ -42,24 +40,29 @@ object Log {
     }
 
     /**
-     * Low-level logging call.
+     * Function to log a message.
      *
-     * @param priority The priority/type of this log message. By default DEBUG is used.
+     * @param priority The priority of this log message. Defaults to [Priority.DEBUG].
      * @param tag Used to identify the source of a log message. It usually identifies the class
-     *            where the log call occurs.
-     * @param throwable An exception to log.
-     * @param message A message to be logged.
+     * where the log call occurs.
+     * @param throwable An optional exception to log.
+     * @param message A lambda that produces the message to be logged.
      */
     fun log(
         priority: Priority = Priority.DEBUG,
         tag: String? = null,
         throwable: Throwable? = null,
-        message: String,
+        message: () -> String,
     ) {
         if (priority.value >= logLevel.value) {
             synchronized(sinks) {
-                sinks.forEach { sink ->
-                    sink.log(priority, tag, throwable, message)
+                if (sinks.any { it.isLoggable(priority) }) {
+                    val messageToLog = message()
+                    sinks.forEach { sink ->
+                        if (sink.isLoggable(priority)) {
+                            sink.log(priority, tag, throwable, messageToLog)
+                        }
+                    }
                 }
             }
         }

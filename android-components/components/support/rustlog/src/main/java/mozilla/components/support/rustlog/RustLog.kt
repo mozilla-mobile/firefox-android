@@ -47,7 +47,7 @@ object RustLog {
      * These trace level logs* may contain the personal information of users
      * but can be very helpful for tracking down bugs.
      *
-     * @param level The maximum (inclusive) level to include logs at.
+     * @param priority The maximum (inclusive) level to include logs at.
      * @param includePII If `level` is [Log.Priority.DEBUG], allow
      *     debug logs to contain PII.
      */
@@ -59,7 +59,7 @@ object RustLog {
 @VisibleForTesting
 internal class ForwardOnLog : AppServicesLogger {
     override fun log(record: Record) {
-        Log.log(record.level.asLogPriority(), record.target, null, record.message)
+        Log.log(record.level.asLogPriority(), record.target, null) { record.message }
     }
 }
 

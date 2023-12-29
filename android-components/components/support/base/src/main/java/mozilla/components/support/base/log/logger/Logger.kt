@@ -19,28 +19,28 @@ class Logger(
      * Send a DEBUG log message.
      */
     fun debug(message: String, throwable: Throwable? = null) {
-        Log.log(Log.Priority.DEBUG, tag = tag, message = message, throwable = throwable)
+        Log.log(priority = Log.Priority.DEBUG, tag = tag, throwable = throwable) { message }
     }
 
     /**
      * Send a INFO log message.
      */
     fun info(message: String, throwable: Throwable? = null) {
-        Log.log(Log.Priority.INFO, tag = tag, message = message, throwable = throwable)
+        Log.log(Log.Priority.INFO, tag = tag, throwable = throwable) { message }
     }
 
     /**
      * Send a WARN log message.
      */
     fun warn(message: String, throwable: Throwable? = null) {
-        Log.log(Log.Priority.WARN, tag = tag, message = message, throwable = throwable)
+        Log.log(Log.Priority.WARN, tag = tag, throwable = throwable) { message }
     }
 
     /**
      * Send a ERROR log message.
      */
     fun error(message: String, throwable: Throwable? = null) {
-        Log.log(Log.Priority.ERROR, tag = tag, message = message, throwable = throwable)
+        Log.log(Log.Priority.ERROR, tag = tag, throwable = throwable) { message }
     }
 
     /**

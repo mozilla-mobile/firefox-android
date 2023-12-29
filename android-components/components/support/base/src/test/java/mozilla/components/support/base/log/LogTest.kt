@@ -21,7 +21,7 @@ class LogTest {
 
         val exception = RuntimeException()
 
-        Log.log(Log.Priority.DEBUG, "Tag", exception, "Hello World!")
+        Log.log(Log.Priority.DEBUG, "Tag", exception) { "Hello World!" }
 
         assertEquals(
             FakeLogSink.Entry(
@@ -42,7 +42,7 @@ class LogTest {
         val exception = RuntimeException()
 
         Log.logLevel = Log.Priority.INFO
-        Log.log(Log.Priority.DEBUG, "Tag", exception, "Hello World!")
+        Log.log(Log.Priority.DEBUG, "Tag", exception) { "Hello World!" }
 
         assertTrue(sink.logs.isEmpty())
     }
@@ -55,7 +55,7 @@ class LogTest {
         val exception = RuntimeException()
 
         Log.logLevel = Log.Priority.WARN
-        Log.log(Log.Priority.WARN, "Tag", exception, "Hello World!")
+        Log.log(Log.Priority.WARN, "Tag", exception) { "Hello World!" }
 
         assertEquals(
             FakeLogSink.Entry(
@@ -76,7 +76,7 @@ class LogTest {
         val exception = RuntimeException()
 
         Log.logLevel = Log.Priority.WARN
-        Log.log(Log.Priority.ERROR, "Tag", exception, "Hello World!")
+        Log.log(Log.Priority.ERROR, "Tag", exception) { "Hello World!" }
 
         assertEquals(
             FakeLogSink.Entry(
@@ -87,5 +87,32 @@ class LogTest {
             ),
             sink.logs.first(),
         )
+    }
+
+    @Test
+    fun `when not loggable, the message lambda isn't invoked`() {
+        Log.reset()
+        val sink = FakeLogSink(isLoggable = false)
+        Log.addSink(sink)
+
+        var count = 0
+
+        Log.log(tag = "LogTest") { "Increase it ${++count}" }
+
+        assertEquals(0, count)
+    }
+
+    @Test
+    fun `when loggable, the message lambda is invoked at most once`() {
+        Log.reset()
+        repeat(10) {
+            Log.addSink(FakeLogSink(isLoggable = true))
+        }
+
+        var count = 0
+
+        Log.log(tag = "LogTest") { "Increase it ${++count}" }
+
+        assertEquals(1, count)
     }
 }

@@ -77,8 +77,7 @@ open class MainActivity : AppCompatActivity(), LoginFragment.OnLoginCompleteList
                         Log.log(
                             Log.Priority.ERROR,
                             tag = "mozac-samples-fxa",
-                            message = "Pairing flow failed for $pairingUrl",
-                        )
+                        ) { "Pairing flow failed for $pairingUrl" }
                         return@launch
                     }
                     openWebView(url.url)
