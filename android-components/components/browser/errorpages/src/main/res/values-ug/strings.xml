@@ -84,6 +84,17 @@
     <!-- The document title and heading of the error page shown when a website takes too long to load. -->
     <string name="mozac_browser_errorpages_net_timeout_title">ۋاقتىدا ئۇلىنالمىدى</string>
 
+    <!-- The error message shown when a website took long to load. -->
+    <string name="mozac_browser_errorpages_net_timeout_message"><![CDATA[
+      <p>ئىلتىماس قىلىنغان تور بېكەت ئۇلىنىش تەلىپىگە جاۋاب قايتۇرمىغاچقا توركۆرگۈ جاۋاب كۈتۈشنى توختاتتى.</p>
+      <ul>
+        <li> تور بېكەتنىڭ زىيارەتچىسى زىيادە كۆپ بولۇپ مۇلازىمېتىردا توسۇلۇش يۈز بەرگەن بولۇشى مۇمكىنمۇ؟ سەل تۇرۇپ قايتا سىناڭ.</li>
+        <li> باشقا تور بېكەتلەرنىمۇ كۆرەلمەيۋاتامسىز؟ ئۈسكۈنىنىڭ تور ئۇلىنىشىنى تەكشۈرۈڭ. </li>
+        <li> ئۈسكۈنىڭىز ياكى تورىڭىز مۇداپىئە تام ياكى ۋاكالەتچى تەرىپىدىن قوغدىلامدۇ؟ خاتا تەڭشەكلەر تور زىيارىتىگە دەخلى قىلىدۇ.</li>
+        <li> يەنىلا ھەل بولمىدىمۇ؟ تور باشقۇرغۇچى ياكى ئىنتېرنېت مۇلازىمىتى تەمىنلىگۈچى بىلەن ئالاقىلىشىپ ياردەم سوراڭ.</li>
+      </ul>
+       ]]></string>
+
     <!-- The document title and heading of the error page shown when a website could not be reached. -->
     <string name="mozac_browser_errorpages_connection_failure_title">ئۇلىنالمىدى</string>
 
@@ -136,11 +147,33 @@
     <!-- The document title and heading of the error page shown when a file cannot be loaded because of a detected data corruption. -->
     <string name="mozac_browser_errorpages_corrupted_content_title">بۇزۇلغان مەزمۇن خاتالىقى</string>
 
+    <!-- The error message shown when shown when a file cannot be loaded because of a detected data corruption. -->
+    <string name="mozac_browser_errorpages_corrupted_content_message"><![CDATA[
+      <p> سىز كۆرمەكچى بولغان بەتنى كۆرسەتكىلى بولمايدۇ چۈنكى سانلىق مەلۇمات يوللاشتا خاتالىق بايقالدى.</p>
+      <ul>
+        <li> توربېكەت ئىگىلىرى بىلەن ئالاقىلىشىپ ئۇلارغا بۇ مەسىلىنى ئۇقتۇرۇڭ.</li>
+      </ul>
+    ]]></string>
+
     <!-- The document title and heading of an error page. -->
     <string name="mozac_browser_errorpages_content_crashed_title">مەزمۇن بۇزۇلغان</string>
 
+    <string name="mozac_browser_errorpages_content_crashed_message"><![CDATA[
+      <p> سىز كۆرمەكچى بولغان بەتنى كۆرسەتكىلى بولمايدۇ چۈنكى سانلىق مەلۇمات يوللاشتا خاتالىق بايقالدى.</p>
+      <ul>
+        <li> توربېكەت ئىگىلىرى بىلەن ئالاقىلىشىپ ئۇلارغا بۇ مەسىلىنى ئۇقتۇرۇڭ.</li>
+      </ul>
+    ]]></string>
+
     <!-- The document title and heading of an error page. -->
     <string name="mozac_browser_errorpages_invalid_content_encoding_title">مەزمۇن كودلاش خاتالىقى</string>
+
+    <string name="mozac_browser_errorpages_invalid_content_encoding_message"><![CDATA[
+      <p> سىز كۆرمەكچى بولغان بەتنى كۆرسەتكىلى بولمايدۇ ، چۈنكى ئۇ ئىناۋەتسىز ياكى قوللىمايدىغان پىرىسلاش شەكلىنى قوللىنىدۇ. </p>
+      <ul>
+        <li> توربېكەت ئىگىلىرى بىلەن ئالاقىلىشىپ ، ئۇلارغا بۇ مەسىلىنى ئۇقتۇرۇڭ. </li>
+      </ul>
+    ]]></string>
 
     <!-- The document title and heading of an error page. -->
     <string name="mozac_browser_errorpages_unknown_host_title">ئادرېس تېپىلمىدى</string>
@@ -175,6 +208,14 @@
     <!-- The document title and heading of an error page. -->
     <string name="mozac_browser_errorpages_file_not_found_title">ھۆججەت تېپىلمىدى</string>
 
+    <string name="mozac_browser_errorpages_file_not_found_message"><![CDATA[
+      <ul>
+        <li> بۇ تۈر نامى ئۆزگەرتىلگەن، ئۆچۈرۈلگەن ياكى كۆچۈرۈلگەنمۇ؟ </li>
+        <li> ئادرېسنىڭ ئىملاسىدا ياكى چوڭ-كىچىك يېزىلىشى ياكى باشقا يېزىق خاتالىقى بارمۇ؟ </li>
+        <li> تەلەپ قىلىنغان تۈرنى زىيارەت قىلىش ئۈچۈن يېتەرلىك ھوقۇقىڭىز بارمۇ؟ </li>
+      </ul>
+    ]]></string>
+
     <!-- The document title and heading of an error page. -->
     <string name="mozac_browser_errorpages_file_access_denied_title">ھۆججەتنى زىيارەت قىلىش رەت قىلىندى</string>
 
@@ -200,8 +241,18 @@
     <!-- The document title and heading of an error page. -->
     <string name="mozac_browser_errorpages_safe_browsing_unwanted_uri_title">كېرەكسىز بېكەت مەسىلىسى</string>
 
+    <!-- The %1$s will be replaced by the malicious website URL-->
+    <string name="mozac_browser_errorpages_safe_browsing_unwanted_uri_message"><![CDATA[
+      <p>%1$s دىكى تور بېكەتنىڭ لۈكچەك يۇمتاللارغا مۇلازىمەت قىلىدىغانلىقى مەلۇم بولدى ۋە بىخەتەرلىك مايىللىقىڭىزغا ئاساسەن توسۇۋېتىلدى. </p>
+    ]]></string>
+
     <!-- The document title and heading of an error page. -->
     <string name="mozac_browser_errorpages_safe_harmful_uri_title">زىيانلىق تور بېكەت مەسىلىسى</string>
+
+    <!-- The %1$s will be replaced by the malicious website URL-->
+    <string name="mozac_browser_errorpages_safe_harmful_uri_message"><![CDATA[
+      <p>%1$s دىكى تور بېكەتنىڭ يۇشۇرۇن زىيانلىق تور بېكەت ئىكەنلىكى مەلۇم قىلىنغانلىقى ئۈچۈن بىخەتەرلىك مايىللىقىڭىزغا ئاساسەن توسۇۋېتىلدى. </p>
+    ]]></string>
 
     <!-- The document title and heading of an error page. -->
     <string name="mozac_browser_errorpages_safe_phishing_uri_title">ئالدامچىلىق تور بېكىتى مەسىلىسى</string>
