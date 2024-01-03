@@ -79,6 +79,7 @@
     <string name="pref_key_hidden_engines_restored" translatable="false">pref_key_hidden_engines_restored</string>
     <string name="pref_key_enable_fxsuggest" translatable="false">pref_key_fxsuggest_enabled</string>
     <string name="pref_key_enable_debug_drawer" translatable="false">pref_key_enable_debug_drawer</string>
+    <string name="pref_key_show_first_time_translation" translatable="false">pref_key_show_first_time_translation</string>
 
     <!-- Data Choices -->
     <string name="pref_key_telemetry" translatable="false">pref_key_telemetry</string>
@@ -119,7 +120,7 @@
     <string name="pref_key_show_sponsored_suggestions" translatable="false">pref_key_show_sponsored_suggestions</string>
     <string name="pref_key_show_nonsponsored_suggestions" translatable="false">pref_key_show_nonsponsored_suggestions</string>
     <string name="pref_key_learn_about_fx_suggest" translatable="false">pref_key_learn_about_fx_suggest</string>
-    
+
     <!-- Site Permissions Settings -->
     <string name="pref_key_site_permissions_description" translatable="false">pref_key_site_permissions_description</string>
     <string name="pref_key_show_site_exceptions" translatable="false">pref_key_show_site_exceptions</string>
@@ -386,4 +387,7 @@
     <string name="pref_key_should_show_review_quality_opt_in_time">pref_key_should_show_review_quality_opt_in_time</string>
     <string name="pref_key_should_show_review_quality_cfr_displayed_time">pref_key_should_show_review_quality_cfr_displayed_time</string>
     <string name="pref_key_review_quality_cfr_shown_counter">pref_key_review_quality_cfr_shown_counter</string>
+
+    <!--Translations -->
+    <string name="pref_key_ignore_translations_data_saver_warning" translatable="false">pref_key_ignore_translations_data_saver_warning</string>
 </resources>
