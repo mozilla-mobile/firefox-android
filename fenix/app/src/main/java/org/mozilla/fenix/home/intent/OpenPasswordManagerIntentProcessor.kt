@@ -19,7 +19,8 @@ class OpenPasswordManagerIntentProcessor : HomeIntentProcessor {
         return if (intent.extras?.getBoolean(HomeActivity.OPEN_PASSWORD_MANAGER) == true) {
             out.removeExtra(HomeActivity.OPEN_PASSWORD_MANAGER)
 
-            val directions = NavGraphDirections.actionGlobalSavedLoginsAuthFragment()
+            val directions =
+                NavGraphDirections.actionGlobalSavedLoginsAuthFragment(openedFromHomeShortcut = true)
             navController.nav(null, directions)
             true
         } else {

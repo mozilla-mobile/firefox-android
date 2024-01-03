@@ -16,6 +16,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.getSystemService
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
@@ -53,6 +54,14 @@ class SavedLoginsAuthFragment : PreferenceFragmentCompat() {
 
         startForResult = registerForActivityResult {
             navigateToSavedLoginsFragment()
+        }
+
+        /**
+         * Handles authentication and then navigates to saved logins afterwards.
+         */
+        val args by navArgs<SavedLoginsAuthFragmentArgs>()
+        if (args.openedFromHomeShortcut) {
+            verifyCredentialsOrShowSetupWarning(requireContext())
         }
     }
 
