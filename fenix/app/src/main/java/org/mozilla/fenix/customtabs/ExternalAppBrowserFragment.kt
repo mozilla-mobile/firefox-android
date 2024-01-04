@@ -211,9 +211,4 @@ class ExternalAppBrowserFragment : BaseBrowserFragment() {
         view,
         FenixSnackbarDelegate(view),
     )
-
-    companion object {
-        // We only care about millisecond precision for telemetry events
-        internal const val MS_PRECISION = 1_000_000L
-    }
 }

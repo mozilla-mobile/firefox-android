@@ -72,11 +72,6 @@
         private mode in our new Total Private Browsing mode.
         The first parameter is the name of the app defined in app_name (for example: Firefox Nightly)
         The second parameter is the clickable link text in felt_privacy_info_card_subtitle_link_text -->
-    <string name="felt_privacy_info_card_subtitle" moz:removedIn="120" tools:ignore="UnusedResources">%1$s изтрива бисквитките, историята и данни от разглеждането, когато затворите всички поверителни прозорци. %2$s</string>
-    <!-- Explanation for private browsing displayed to users on home view when they first enable
-        private mode in our new Total Private Browsing mode.
-        The first parameter is the name of the app defined in app_name (for example: Firefox Nightly)
-        The second parameter is the clickable link text in felt_privacy_info_card_subtitle_link_text -->
     <string name="felt_privacy_info_card_subtitle_2">%1$s изтрива бисквитките, историята и данни от разглеждането, когато затворите всички поверителни раздели. %2$s</string>
     <!-- Clickable portion of the explanation for private browsing that links the user to our
         about privacy page.
@@ -159,6 +154,8 @@
     <!-- Button text for showing all the tabs in the tabs tray -->
     <string name="recent_tabs_show_all">Показване на всички</string>
 
+    <!-- Content description for the button which navigates the user to show all recent tabs in the tabs tray. -->
+    <string name="recent_tabs_show_all_content_description_2">Бутон за показване на всички скорошни раздели</string>
     <!-- Text for button in synced tab card that opens synced tabs tray -->
     <string name="recent_tabs_see_all_synced_tabs_button_text">Всички синхронизирани раздели</string>
     <!-- Accessibility description for device icon used for recent synced tab -->
@@ -206,6 +203,8 @@
     <string name="browser_menu_library">Библиотека</string>
     <!-- Browser menu toggle that requests a desktop site -->
     <string name="browser_menu_desktop_site">Настолна версия</string>
+    <!-- Browser menu button that reopens a private tab as a regular tab -->
+    <string name="browser_menu_open_in_regular_tab">Отваряне в обикновен раздел</string>
     <!-- Browser menu toggle that adds a shortcut to the site on the device home screen. -->
     <string name="browser_menu_add_to_homescreen">Добавяне към екрана</string>
     <!-- Browser menu toggle that installs a Progressive Web App shortcut to the site on the device home screen. -->
@@ -288,9 +287,22 @@
     <!-- Menu option in the search selector menu to open the search settings -->
     <string name="search_settings_menu_item">Настройки на търсене</string>
 
+    <!-- Header text for the search selector menu -->
+    <string name="search_header_menu_item_2">Търсене в:</string>
     <!-- Content description (not visible, for screen readers etc.): Search engine icon. The first parameter is the search engine name (for example: DuckDuckGo). -->
     <string name="search_engine_icon_content_description" tools:ignore="UnusedResources">Търсеща машина от %s</string>
 
+    <!-- Home onboarding -->
+    <!-- Onboarding home screen popup dialog, shown on top of the Jump back in section. -->
+    <string name="onboarding_home_screen_jump_back_contextual_hint_2">Запознайте се с вашата персонализирана начална страница. Тук ще се покажат последните раздели, отметки и резултати от търсене.</string>
+    <!-- Home onboarding dialog welcome screen title text. -->
+    <string name="onboarding_home_welcome_title_2">Добре дошли в един по-личен интернет</string>
+    <!-- Home onboarding dialog welcome screen description text. -->
+    <string name="onboarding_home_welcome_description">По-шарен. С по-добра поверителност. Със същия ангажимент към хората, вместо към печалбата.</string>
+    <!-- Home onboarding dialog sign into sync screen title text. -->
+    <string name="onboarding_home_sync_title_3">Превключването на екрани е по-лесно от всякога</string>
+    <!-- Home onboarding dialog sign into sync screen description text. -->
+    <string name="onboarding_home_sync_description">Продължете с разделите от други устройства, откъдето бяхте преди. Те вече са на началната ви страница.</string>
     <!-- Text for the button to continue the onboarding on the home onboarding dialog. -->
     <string name="onboarding_home_get_started_button">Въведение</string>
 
@@ -298,14 +310,28 @@
     <string name="onboarding_home_sign_in_button">Вписване</string>
     <!-- Text for the button to skip the onboarding on the home onboarding dialog. -->
     <string name="onboarding_home_skip_button">Пропускане</string>
+    <!-- Onboarding home screen sync popup dialog message, shown on top of Recent Synced Tabs in the Jump back in section. -->
+    <string name="sync_cfr_message">Вашите раздели се синхронизират! Продължете откъдето сте спрели на другото си устройство.</string>
     <!-- Content description (not visible, for screen readers etc.): Close button for the home onboarding dialog -->
     <string name="onboarding_home_content_description_close_button">Затваряне</string>
 
+    <!-- Notification pre-permission dialog -->
+    <!-- Enable notification pre permission dialog title
+        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
+    <string name="onboarding_home_enable_notifications_title">Известията ви помагат да правите повече с %s</string>
+    <!-- Enable notification pre permission dialog description with rationale
+        The first parameter is the name of the app defined in app_name (for example: Fenix) -->
+    <string name="onboarding_home_enable_notifications_description">Синхронизирайте вашите раздели между устройствата, управлявайте изтеглянията, получавайте съвети как да се възползвате максимално от защитата на поверителността на %s и много други.</string>
     <!-- Text for the button to request notification permission on the device -->
     <string name="onboarding_home_enable_notifications_positive_button">Продължаване</string>
     <!-- Text for the button to not request notification permission on the device and dismiss the dialog -->
     <string name="onboarding_home_enable_notifications_negative_button">Не сега</string>
 
+    <!-- Juno first user onboarding flow experiment, strings are marked unused as they are only referenced by Nimbus experiments. -->
+    <!-- Title for set firefox as default browser screen used by Nimbus experiments. -->
+    <string name="juno_onboarding_default_browser_title_nimbus_2">Обичаме да ви пазим в безопасност</string>
+    <!-- Description for set firefox as default browser screen used by Nimbus experiments. -->
+    <string name="juno_onboarding_default_browser_description_nimbus_2">Нашият четец,  разработван от организация  с нестопанска цел ви помага да не бъдете следени тайно в мрежата.\n\nНаучете повече в нашето съобщение за поверителност.</string>
     <!-- Text for the link to the privacy notice webpage for set as firefox default browser screen.
     This is part of the string with the key "juno_onboarding_default_browser_description". -->
     <string name="juno_onboarding_default_browser_description_link_text" tools:ignore="UnusedResources">политика на поверителност</string>
@@ -313,14 +339,34 @@
     <string name="juno_onboarding_default_browser_positive_button" tools:ignore="UnusedResources">Задаване като четец по подразбиране</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
     <string name="juno_onboarding_default_browser_negative_button" tools:ignore="UnusedResources">Не сега</string>
+    <!-- Title for sign in to sync screen. -->
+    <string name="juno_onboarding_sign_in_title_2">Шифровайте връзката си и когато сменяте устройствата</string>
+    <!-- Description for sign in to sync screen. Nimbus experiments do not support string placeholders.
+     Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_sign_in_description_2">Когато сте влезли и сте синхронизирани, вие сте в по-голяма безопасност. Firefox криптира вашите пароли, отметки и др.</string>
     <!-- Text for the button to sign in to sync on the device -->
     <string name="juno_onboarding_sign_in_positive_button" tools:ignore="UnusedResources">Вписване</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
     <string name="juno_onboarding_sign_in_negative_button" tools:ignore="UnusedResources">Не сега</string>
+    <!-- Title for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_enable_notifications_title_nimbus_2">Известията ви помагат да сте в по-голяма безопасност с Firefox</string>
+    <!-- Description for enable notification permission screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+       Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_enable_notifications_description_nimbus_2">Защитено изпращане на раздели между вашите устройства и откриване на други функции за поверителност във Firefox.</string>
     <!-- Text for the button to request notification permission on the device -->
     <string name="juno_onboarding_enable_notifications_positive_button" tools:ignore="UnusedResources">Включване на известията</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
     <string name="juno_onboarding_enable_notifications_negative_button" tools:ignore="UnusedResources">Не сега</string>
+    <!-- Title for add search widget screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_add_search_widget_title" tools:ignore="UnusedResources">Опитване на приспособлението за търсене на Firefox</string>
+    <!-- Description for add search widget screen used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_add_search_widget_description" tools:ignore="UnusedResources">С Firefox на началния екран ще имате лесен достъп до водещия браузър за защита на личните данни, който блокира проследяващи устройства за различни сайтове.</string>
+    <!-- Text for the button to add search widget on the device used by Nimbus experiments. Nimbus experiments do not support string placeholders.
+        Note: The word "Firefox" should NOT be translated -->
+    <string name="juno_onboarding_add_search_widget_positive_button" tools:ignore="UnusedResources">Добавяне на джаджа за Firefox</string>
     <!-- Text for the button to dismiss the screen and move on with the flow -->
     <string name="juno_onboarding_add_search_widget_negative_button" tools:ignore="UnusedResources">Не сега</string>
 
@@ -345,15 +391,25 @@
     <!-- Preference category for settings related to changing the default search engine -->
     <string name="preferences_category_select_default_search_engine">Изберете</string>
     <!-- Preference for settings related to managing search shortcuts for the quick search menu -->
-    <string name="preferences_manage_search_shortcuts" moz:removedIn="120" tools:ignore="UnusedResources">Преки пътища за търсене</string>
+    <string name="preferences_manage_search_shortcuts_2">Управляване на алтернативни търсачки</string>
+    <!-- Summary for preference for settings related to managing search shortcuts for the quick search menu -->
+    <string name="preferences_manage_search_shortcuts_summary">Редактиране на търсачки, видими в менюто за търсене</string>
+    <!-- Preference category for settings related to managing search shortcuts for the quick search menu -->
+    <string name="preferences_category_engines_in_search_menu">Търсачки в менюто за търсене</string>
     <!-- Preference for settings related to changing the default search engine -->
     <string name="preferences_default_search_engine">Стандартна търсеща машина</string>
     <!-- Preference for settings related to Search -->
     <string name="preferences_search">Търсене</string>
     <!-- Preference for settings related to Search engines -->
     <string name="preferences_search_engines">Търсещи машини</string>
-    <!-- Preference for settings related to Search address bar -->
-    <string name="preferences_search_address_bar" moz:removedIn="120" tools:ignore="UnusedResources">Адресна лента</string>
+    <!-- Preference for settings related to Search engines suggestions-->
+    <string name="preferences_search_engines_suggestions">Предложения от търсачките</string>
+    <!-- Preference Category for settings related to Search address bar -->
+    <string name="preferences_settings_address_bar">Предпочитания за адресника</string>
+    <!-- Preference Category for settings to Firefox Suggest -->
+    <string name="preference_search_address_bar_fx_suggest">Адресник - Firefox Suggest</string>
+    <!-- Preference link to Learn more about Firefox Suggest -->
+    <string name="preference_search_learn_about_fx_suggest">Научете повече за Firefox Suggest</string>
     <!-- Preference link to rating Fenix on the Play Store -->
     <string name="preferences_rate">Оценете в Google Play</string>
     <!-- Preference linking to about page for Fenix
@@ -384,6 +440,12 @@
 
     <!-- Preference for removing cookie/consent banners from sites automatically. See reduce_cookie_banner_summary for additional context. -->
     <string name="preferences_cookie_banner_reduction" moz:RemovedIn="121" tools:ignore="UnusedResources">Намаляване на банерите за бисквитки</string>
+    <!-- Label for cookie banner section in quick settings panel. -->
+    <string name="cookie_banner_blocker">Блокиране на банери за бисквитки</string>
+    <!-- Preference for removing cookie/consent banners from sites automatically in private mode. See reduce_cookie_banner_summary for additional context. -->
+    <string name="preferences_cookie_banner_reduction_private_mode">Блокиране на банери за бисквитки при поверително сърфиране</string>
+    <!-- Preference for rejecting or removing as many cookie/consent banners as possible on sites. See reduce_cookie_banner_summary for additional context. -->
+    <string name="reduce_cookie_banner_option" moz:RemovedIn="121" tools:ignore="UnusedResources">Намаляване на банерите за бисквитки</string>
     <!-- Summary of cookie banner handling preference if the setting disabled is set to off -->
     <string name="reduce_cookie_banner_option_off" moz:RemovedIn="121" tools:ignore="UnusedResources">Изключено</string>
     <!-- Summary of cookie banner handling preference if the setting enabled is set to on -->
@@ -411,18 +473,51 @@
     <!-- Title text for a detail explanation indicating cookie banner handling is off this site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is a shortened URL of the current site-->
     <string name="reduce_cookie_banner_details_panel_title_off_for_site" moz:RemovedIn="121" tools:ignore="UnusedResources">Изключване на намаляването на банерите за бисквитки за %1$s?</string>
 
+    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
+    <string name="reduce_cookie_banner_details_panel_description_on_for_site_2" moz:RemovedIn="121" tools:ignore="UnusedResources">%1$s се опитва автоматично да отхвърли всички заявки за бисквитки на поддържаните сайтове.</string>
+    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
+    <string name="reduce_cookie_banner_details_panel_description_on_for_site_3">Включете и %1$s ще се опита автоматично да откаже всички банери за бисквитки на този сайт.</string>
+    <!-- Title text for the cookie banner re-engagement dialog. The first parameter is the application name. -->
+    <string name="reduce_cookie_banner_dialog_title" moz:RemovedIn="121" tools:ignore="UnusedResources">Да се разреши ли на %1$s да отхвърля банери за бисквитки?</string>
+    <!-- Body text for the cookie banner re-engagement dialog use. The first parameter is the application name. -->
+    <string name="reduce_cookie_banner_dialog_body" moz:RemovedIn="121" tools:ignore="UnusedResources">%1$s може автоматично да отхвърли много заявки за банери за бисквитки.</string>
+    <!-- Remind me later text button for the onboarding dialog -->
+    <string name="reduce_cookie_banner_dialog_not_now_button" moz:RemovedIn="121" tools:ignore="UnusedResources">Не сега</string>
+    <!-- Snack text for the cookie banner dialog, after user hit the dismiss banner button -->
+    <string name="reduce_cookie_banner_dialog_snackbar_text" moz:RemovedIn="121" tools:ignore="UnusedResources">Ще виждате по-малко заявки за бисквитки</string>
+    <!-- Change setting text button, for the cookie banner re-engagement dialog -->
+    <string name="reduce_cookie_banner_dialog_change_setting_button" moz:RemovedIn="121" tools:ignore="UnusedResources">Разрешаване</string>
+    <!--Title for the cookie banner re-engagement CFR, the placeholder is replaced with app name -->
+    <string name="cookie_banner_cfr_title">%1$s току-що отказа бисквитки вместо вас</string>
+    <!--Message for the cookie banner re-engagement CFR -->
+    <string name="cookie_banner_cfr_message">По-малко разсейване, по-малко бисквитки, които ви проследяват на този сайт.</string>
+
+    <!-- Description of the preference to enable "HTTPS-Only" mode. -->
+    <string name="preferences_https_only_summary">Автоматично се опитва да се свърже със сайтове, използвайки HTTPS протокол за криптиране за повишена сигурност.</string>
     <!-- Summary of https only preference if https only is set to off -->
     <string name="preferences_https_only_off">Изключено</string>
+    <!-- Summary of https only preference if https only is set to on in all tabs -->
+    <string name="preferences_https_only_on_all">Във всички раздели</string>
+    <!-- Summary of https only preference if https only is set to on in private tabs only -->
+    <string name="preferences_https_only_on_private">Само в поверителни раздели</string>
     <!-- Text displayed that links to website containing documentation about "HTTPS-Only" mode -->
     <string name="preferences_http_only_learn_more">Научете повече</string>
+    <!-- Option for the https only setting -->
+    <string name="preferences_https_only_in_all_tabs">Активиране във всички раздели</string>
+    <!-- Option for the https only setting -->
+    <string name="preferences_https_only_in_private_tabs">Включване само в частни раздели</string>
+    <!-- Title shown in the error page for when trying to access a http website while https only mode is enabled. -->
+    <string name="errorpage_httpsonly_title">Сигурният сайт не е наличен</string>
+    <!-- Message shown in the error page for when trying to access a http website while https only mode is enabled. The message has two paragraphs. This is the first. -->
+    <string name="errorpage_httpsonly_message_title">Най-вероятно страницата не се поддържа под HTTPS.</string>
+    <!-- Message shown in the error page for when trying to access a http website while https only mode is enabled. The message has two paragraphs. This is the second. -->
+    <string name="errorpage_httpsonly_message_summary">Въпреки това е възможно също да е замесен нападател. Ако продължите към уебсайта, не трябва да въвеждате чувствителна информация. Ако продължите, режимът само HTTPS ще бъде изключен временно за сайта.</string>
     <!-- Preference for accessibility -->
     <string name="preferences_accessibility">Достъпност</string>
-    <!-- Preference to override the Firefox Account server -->
-    <string name="preferences_override_fxa_server" moz:RemovedIn="120" tools:ignore="UnusedResources">Личен сървър за Firefox Account</string>
+    <!-- Preference to override the Mozilla account server -->
+    <string name="preferences_override_account_server">Персонализиран сървър за профили на Mozilla</string>
     <!-- Preference to override the Sync token server -->
     <string name="preferences_override_sync_tokenserver">Личен сървър за Sync</string>
-    <!-- Toast shown after updating the FxA/Sync server override preferences -->
-    <string name="toast_override_fxa_sync_server_done" moz:RemovedIn="120" tools:ignore="UnusedResources">Сървърът на Firefox Account/Sync е променен. Излизане от приложението за прилагане на промените…</string>
     <!-- Preference category for account information -->
     <string name="preferences_category_account">Профил</string>
     <!-- Preference for changing where the toolbar is positioned -->
@@ -435,8 +530,6 @@
     <string name="preferences_gestures">Жестове</string>
     <!-- Preference for settings related to visual options -->
     <string name="preferences_customize">Външен вид</string>
-    <!-- Preference shown instead of account display name while account profile information isn't available yet. -->
-    <string name="preferences_account_default_name" moz:RemovedIn="120" tools:ignore="UnusedResources">Firefox Account</string>
     <!-- Preference text for account title when there was an error syncing FxA -->
     <string name="preferences_account_sync_error">Свържете повторно, за да бъде възобновено синхронизирането</string>
     <!-- Preference for language -->
@@ -447,8 +540,6 @@
     <string name="preferences_data_collection">Събирани данни</string>
     <!-- Preference for developers -->
     <string name="preferences_remote_debugging">Отдалечено отстраняване на дефекти през USB</string>
-    <!-- Preference title for switch preference to show search engines -->
-    <string name="preferences_show_search_engines" moz:RemovedIn="120" tools:ignore="UnusedResources">Показване на търсещи машини</string>
     <!-- Preference title for switch preference to show search suggestions -->
     <string name="preferences_show_search_suggestions">Показване на предложения</string>
     <!-- Preference title for switch preference to show voice search button -->
@@ -531,12 +622,6 @@
     <string name="wallpaper_learn_more">Научете повече</string>
     <!-- Text for classic wallpapers title. The first parameter is the Firefox name. -->
     <string name="wallpaper_classic_title">Класически %s</string>
-
-    <!-- Add-on Installation from AMO-->
-    <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is not supported -->
-    <string name="addon_not_supported_error" moz:removedIn="120" tools:ignore="UnusedResources">Добавката не се поддържа</string>
-    <!-- Error displayed when user attempts to install an add-on from AMO (addons.mozilla.org) that is already installed -->
-    <string name="addon_already_installed" moz:removedIn="120" tools:ignore="UnusedResources">Добавката вече е инсталирана</string>
 
     <!-- The first parameter is the application name. This is a message shown to the user when too many errors have occurred with the addons process and they have been disabled. The user can decide if they would like to continue trying to start add-ons or if they'd rather continue without them. -->
     <string name="addon_process_crash_dialog_message" tools:ignore="UnusedResources">Една или повече добавки са спрели да работят, като намаляват стабилността на системата. %1$s направи опит да ги рестартира, но без успех.\n\nТези добавки няма да работят в текущата сесия.\n\nПремахването или изключването на добавки може да реши този проблем.</string>
@@ -1715,28 +1800,18 @@
     <string name="search_engine_add_custom_search_engine_button_content_description">Добавяне на търсеща машина</string>
     <!-- Title of the Edit search engine screen -->
     <string name="search_engine_edit_custom_search_engine_title">Промяна на търсеща машина</string>
-    <!-- Content description (not visible, for screen readers etc.): Title for the button to add a search engine in the action bar -->
-    <string name="search_engine_add_button_content_description" moz:RemovedIn="120" tools:ignore="UnusedResources">Добавяне</string>
-    <!-- Content description (not visible, for screen readers etc.): Title for the button to save a search engine in the action bar -->
-    <string name="search_engine_add_custom_search_engine_edit_button_content_description" moz:RemovedIn="120" tools:ignore="UnusedResources">Запазване</string>
 
     <!-- Text for the menu button to edit a search engine -->
     <string name="search_engine_edit">Променяне</string>
     <!-- Text for the menu button to delete a search engine -->
     <string name="search_engine_delete">Премахване</string>
 
-    <!-- Text for the button to create a custom search engine on the Add search engine screen -->
-    <string name="search_add_custom_engine_label_other" moz:RemovedIn="120" tools:ignore="UnusedResources">Друга</string>
     <!-- Label for the TextField in which user enters custom search engine name -->
     <string name="search_add_custom_engine_name_label">Наименование</string>
-    <!-- Placeholder text shown in the Search Engine Name TextField before a user enters text -->
-    <string name="search_add_custom_engine_name_hint" moz:RemovedIn="120" tools:ignore="UnusedResources">Име</string>
     <!-- Placeholder text shown in the Search Engine Name text field before a user enters text -->
     <string name="search_add_custom_engine_name_hint_2">Име на търсеща машина</string>
     <!-- Label for the TextField in which user enters custom search engine URL -->
     <string name="search_add_custom_engine_url_label">Адрес на низа за търсене</string>
-    <!-- Placeholder text shown in the Search String TextField before a user enters text -->
-    <string name="search_add_custom_engine_search_string_hint" moz:RemovedIn="120" tools:ignore="UnusedResources">Низ за търсене, който да се използва</string>
     <!-- Placeholder text shown in the Search String TextField before a user enters text -->
     <string name="search_add_custom_engine_search_string_hint_2">Адресът, който да бъде използван при търсене</string>
     <!-- Description text for the Search String TextField. The %s is part of the string -->
@@ -1911,5 +1986,7 @@
 
     <!-- Text for button from warning card informing the user that the current analysis is outdated. Clicking this should trigger the product's re-analysis. -->
     <string name="review_quality_check_outdated_analysis_warning_action" tools:ignore="UnusedResources">Проверяване</string>
+
+    <!-- Translations feature-->
 
     </resources>
