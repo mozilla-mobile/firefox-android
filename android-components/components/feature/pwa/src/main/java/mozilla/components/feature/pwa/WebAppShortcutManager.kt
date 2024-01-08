@@ -237,15 +237,6 @@ class WebAppShortcutManager(
     }
 
     /**
-     * Updates the usedAt timestamp of the web app this url is associated with.
-     *
-     * @param manifest the manifest to update
-     */
-    suspend fun reportWebAppUsed(manifest: WebAppManifest): Unit? {
-        return storage.updateManifestUsedAt(manifest)
-    }
-
-    /**
      * Possible install states of a Web App.
      */
     enum class WebAppInstallState {
