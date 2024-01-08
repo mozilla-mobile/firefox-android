@@ -66,6 +66,7 @@ import org.mozilla.fenix.helpers.ext.waitNotNull
 import org.mozilla.fenix.tabstray.TabsTrayTestTag
 import org.mozilla.fenix.utils.Settings
 import java.time.LocalDate
+import org.mozilla.fenix.helpers.click
 
 class BrowserRobot {
     private lateinit var sessionLoadedIdlingResource: SessionLoadedIdlingResource
@@ -1192,6 +1193,14 @@ class BrowserRobot {
             BrowserRobot().interact()
             return Transition()
         }
+
+        fun clickReviewCheckerButton(interact: FakeSpotRobot.() -> Unit): FakeSpotRobot.Transition {
+            reviewCheckerButton.waitForExists(waitingTimeLong)
+            reviewCheckerButton.click()
+
+            FakeSpotRobot().interact()
+            return FakeSpotRobot.Transition()
+        }
     }
 }
 
@@ -1207,6 +1216,8 @@ private fun searchBar() = itemWithResId("$packageName:id/mozac_browser_toolbar_u
 fun homeScreenButton() = onView(withContentDescription(R.string.browser_toolbar_home))
 
 private fun threeDotButton() = onView(withContentDescription("Menu"))
+
+private val reviewCheckerButton = itemWithDescription("Open review checker")
 
 private fun tabsCounter() =
     mDevice.findObject(By.res("$packageName:id/counter_root"))
