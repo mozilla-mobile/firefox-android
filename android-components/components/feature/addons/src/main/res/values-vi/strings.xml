@@ -75,7 +75,7 @@
     <!-- The author of an add-on. -->
     <string name="mozac_feature_addons_author">Tác giả</string>
     <!-- The authors of an add-on. -->
-    <string name="mozac_feature_addons_authors" moz:removedIn="120" tools:ignore="UnusedResources">Tác giả</string>
+    <string name="mozac_feature_addons_authors" moz:removedIn="123" tools:ignore="UnusedResources">Tác giả</string>
     <!-- The last date that the add-on was updated. -->
     <string name="mozac_feature_addons_last_updated">Cập nhật lần cuối</string>
     <!-- The developer website (Homepage) of the add-on. -->
@@ -85,7 +85,7 @@
     <!-- The rating of the add-on. -->
     <string name="mozac_feature_addons_rating">Xếp hạng</string>
     <!-- A link that points to the detail page of the add-on. -->
-    <string name="mozac_feature_addons_more_info_link">Thông tin thêm về tiện ích</string>
+    <string name="mozac_feature_addons_more_info_link">Thông tin thêm về tiện ích này</string>
     <!-- The settings of the add-on. -->
     <string name="mozac_feature_addons_settings">Cài đặt</string>
     <!-- Indicates the add-on is enabled. -->
@@ -95,7 +95,7 @@
     <!-- Indicates the add-on is allowed in private browsing mode. -->
     <string name="mozac_feature_addons_settings_allow_in_private_browsing">Cho phép trong duyệt web riêng tư</string>
     <!-- Indicates the add-on is allowed in private browsing mode. -->
-    <string name="mozac_feature_addons_settings_run_in_private_browsing">Chạy trong duyệt web riêng tư</string>
+    <string name="mozac_feature_addons_settings_run_in_private_browsing">Cho phép trong thẻ riêng tư</string>
     <!-- Indicates the add-on is enabled. -->
     <string name="mozac_feature_addons_enabled">Đã bật</string>
     <!-- Indicates the add-on is disabled. -->
@@ -114,8 +114,10 @@
     <string name="mozac_feature_addons_details">Chi tiết</string>
     <!-- Displays a page with all the permissions of an add-on. -->
     <string name="mozac_feature_addons_permissions">Quyền hạn</string>
-    <!-- This is button that remove (uninstall an add-on). -->
+    <!-- This is a button to remove (i.e. uninstall) an add-on. -->
     <string name="mozac_feature_addons_remove">Xóa</string>
+    <!-- This is a button to report an add-on. -->
+    <string name="mozac_feature_addons_report">Báo cáo</string>
     <!-- This is the title of a dialog that asks the users if they to install or not an add-on. %1$s is the add-on name. -->
     <string name="mozac_feature_addons_permissions_dialog_title">Thêm %1$s?</string>
     <!-- This is the title of a dialog that asks the users to grant optional permissions. %1$s is the add-on name. -->
@@ -125,7 +127,7 @@
     <!-- This is the subtitle of a dialog that asks the users to grant optional permissions, the subtitle lists the permissions that this add-on requests, the permissions will dynamically be listed after the ":". -->
     <string name="mozac_feature_addons_optional_permissions_dialog_subtitle">Tiện ích này muốn:</string>
     <!-- This is a button to add (install) an add-on . -->
-    <string name="mozac_feature_addons_permissions_dialog_add">Thêm</string>
+    <string name="mozac_feature_addons_permissions_dialog_add">Cài đặt</string>
     <!-- This is a button to allow the optional permissions requested by an add-on . -->
     <string name="mozac_feature_addons_permissions_dialog_allow">Cho phép</string>
     <!-- This is a button to deny the optional permissions requested by an add-on . -->
@@ -141,7 +143,7 @@
     <!-- Accessibility content description for the amount of stars that add-on has, where %1$.02f will be the amount of stars and / separator and 5 the maximum number of stars e.g (2/5, 4.5/5 or 5/5)  . -->
     <string name="mozac_feature_addons_rating_content_description">%1$.02f/5</string>
     <!-- This is the title of page where all the add-ons are listed-->
-    <string name="mozac_feature_addons_addons">Tiện ích</string>
+    <string name="mozac_feature_addons_addons">Tiện ích mở rộng</string>
     <!-- Label for add-ons sub menu item for add-ons manager-->
     <string name="mozac_feature_addons_addons_manager">Quản lí tiện ích</string>
     <!-- The title of the "crash" notification in the add-ons manager -->
@@ -159,7 +161,7 @@
     <!-- The tile of the notification, this will be shown to the user when an add-on needs new permissions, to be updated. %1$s is the name of the add-ons-->
     <string name="mozac_feature_addons_updater_notification_title">%1$s có bản cập nhật mới</string>
     <!-- The content of the notification, this will be shown when an add-on needs new permissions, to be updated. %1$d is the amount of new permissions-->
-    <string name="mozac_feature_addons_updater_notification_content" tools:ignore="PluralsCandidate">Quyền mới %1$d được yêu cầu</string>
+    <string name="mozac_feature_addons_updater_notification_content" tools:ignore="PluralsCandidate">%1$d quyền mới cần được cấp</string>
     <!-- The content of the notification displayed when an add-on needs a new permission-->
     <string name="mozac_feature_addons_updater_notification_content_singular">Yêu cầu quyền mới</string>
     <!-- Name of the "notification channel" used for displaying a notification for updating an add-on. See https://developer.android.com/training/notify-user/channels -->
@@ -202,8 +204,6 @@
     <string name="mozac_feature_addons_failed_to_install_incompatible_error">Không thể cài đặt %1$s vì nó không tương thích với %2$s %3$s.</string>
     <!-- Text shown when attempting to install a blocklisted add-on. %1$s is the add-on name. -->
     <string name="mozac_feature_addons_blocklisted_1">Không thể cài đặt %1$s vì nó có nguy cơ cao gây ra sự cố về tính ổn định hoặc bảo mật.</string>
-    <!-- Text shown when attempting to install a blocklisted add-on. %1$s is the add-on name. -->
-    <string name="mozac_feature_addons_blocklisted" moz:removedIn="119" tools:ignore="UnusedResources">Không thể cài đặt %1$s vì nó có khả năng gây ra các vấn đề về bảo mật và tính ổn định</string>
     <!-- Text shown after successfully enabled an add-on. %1$s is the add-on name. -->
     <string name="mozac_feature_addons_successfully_enabled">Đã bật thành công %1$s</string>
     <!-- Text shown after failed to enable an add-on. %1$s is the add-on name. -->

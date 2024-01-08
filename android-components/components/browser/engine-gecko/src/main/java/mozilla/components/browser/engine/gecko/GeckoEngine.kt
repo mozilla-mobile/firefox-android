@@ -19,6 +19,7 @@ import mozilla.components.browser.engine.gecko.mediaquery.from
 import mozilla.components.browser.engine.gecko.mediaquery.toGeckoValue
 import mozilla.components.browser.engine.gecko.profiler.Profiler
 import mozilla.components.browser.engine.gecko.serviceworker.GeckoServiceWorkerDelegate
+import mozilla.components.browser.engine.gecko.translate.GeckoTranslationUtils.intoTranslationError
 import mozilla.components.browser.engine.gecko.util.SpeculativeSessionFactory
 import mozilla.components.browser.engine.gecko.webextension.GeckoWebExtension
 import mozilla.components.browser.engine.gecko.webextension.GeckoWebExtensionException
@@ -46,12 +47,14 @@ import mozilla.components.concept.engine.translate.Language
 import mozilla.components.concept.engine.translate.LanguageModel
 import mozilla.components.concept.engine.translate.LanguageSetting
 import mozilla.components.concept.engine.translate.ModelManagementOptions
+import mozilla.components.concept.engine.translate.TranslationError
 import mozilla.components.concept.engine.translate.TranslationSupport
 import mozilla.components.concept.engine.translate.TranslationsRuntime
 import mozilla.components.concept.engine.utils.EngineVersion
 import mozilla.components.concept.engine.webextension.Action
 import mozilla.components.concept.engine.webextension.ActionHandler
 import mozilla.components.concept.engine.webextension.EnableSource
+import mozilla.components.concept.engine.webextension.InstallationMethod
 import mozilla.components.concept.engine.webextension.TabHandler
 import mozilla.components.concept.engine.webextension.WebExtension
 import mozilla.components.concept.engine.webextension.WebExtensionDelegate
@@ -256,12 +259,16 @@ class GeckoEngine(
      */
     override fun installWebExtension(
         url: String,
+        installationMethod: InstallationMethod?,
         onSuccess: ((WebExtension) -> Unit),
         onError: ((Throwable) -> Unit),
     ): CancellableOperation {
         require(!url.isResourceUrl()) { "url shouldn't be a resource url" }
 
-        val geckoResult = runtime.webExtensionController.install(url).apply {
+        val geckoResult = runtime.webExtensionController.install(
+            url,
+            installationMethod?.toGeckoInstallationMethod(),
+        ).apply {
             then(
                 {
                     onExtensionInstalled(it!!, onSuccess)
@@ -647,7 +654,7 @@ class GeckoEngine(
     ) {
         val flags = data.types.toLong()
         if (host != null) {
-            runtime.storageController.clearDataFromHost(host, flags)
+            runtime.storageController.clearDataFromBaseDomain(host, flags)
         } else {
             runtime.storageController.clearData(flags)
         }.then(
@@ -664,16 +671,6 @@ class GeckoEngine(
     }
 
     /**
-     * Convenience method for handling unexpected null returns from GeckoView.
-     *
-     * @return A standard throwable for unexpected null values.
-     */
-    private fun translationsUnexpectedNull(): Throwable {
-        val errorMessage = "Unexpectedly returned a null value."
-        return IllegalStateException(errorMessage)
-    }
-
-    /**
      * See [Engine.isTranslationsEngineSupported].
      */
     override fun isTranslationsEngineSupported(
@@ -685,12 +682,12 @@ class GeckoEngine(
                 if (it != null) {
                     onSuccess(it)
                 } else {
-                    onError(translationsUnexpectedNull())
+                    onError(TranslationError.UnexpectedNull())
                 }
                 GeckoResult<Void>()
             },
             { throwable ->
-                onError(throwable)
+                onError(throwable.intoTranslationError())
                 GeckoResult<Void>()
             },
         )
@@ -710,12 +707,12 @@ class GeckoEngine(
                 if (it != null) {
                     onSuccess(it)
                 } else {
-                    onError(translationsUnexpectedNull())
+                    onError(TranslationError.UnexpectedNull())
                 }
                 GeckoResult<Void>()
             },
             { throwable ->
-                onError(throwable)
+                onError(throwable.intoTranslationError())
                 GeckoResult<Void>()
             },
         )
@@ -742,12 +739,12 @@ class GeckoEngine(
                     }
                     onSuccess(listOfModels)
                 } else {
-                    onError(translationsUnexpectedNull())
+                    onError(TranslationError.UnexpectedNull())
                 }
                 GeckoResult<Void>()
             },
             { throwable ->
-                onError(throwable)
+                onError(throwable.intoTranslationError())
                 GeckoResult<Void>()
             },
         )
@@ -780,12 +777,12 @@ class GeckoEngine(
 
                     onSuccess(TranslationSupport(listOfFromLanguages, listOfToLanguages))
                 } else {
-                    onError(translationsUnexpectedNull())
+                    onError(TranslationError.UnexpectedNull())
                 }
                 GeckoResult<Void>()
             },
             { throwable ->
-                onError(throwable)
+                onError(throwable.intoTranslationError())
                 GeckoResult<Void>()
             },
         )
@@ -812,7 +809,7 @@ class GeckoEngine(
                 GeckoResult<Void>()
             },
             { throwable ->
-                onError(throwable)
+                onError(throwable.intoTranslationError())
                 GeckoResult<Void>()
             },
         )
@@ -830,13 +827,13 @@ class GeckoEngine(
                 if (it != null) {
                     onSuccess(it)
                 } else {
-                    onError(translationsUnexpectedNull())
+                    onError(TranslationError.UnexpectedNull())
                 }
 
                 GeckoResult<Void>()
             },
             { throwable ->
-                onError(throwable)
+                onError(throwable.intoTranslationError())
                 GeckoResult<Void>()
             },
         )
@@ -870,16 +867,16 @@ class GeckoEngine(
                     try {
                         onSuccess(LanguageSetting.fromValue(it))
                     } catch (e: IllegalArgumentException) {
-                        onError(e)
+                        onError(e.intoTranslationError())
                     }
                 } else {
-                    onError(translationsUnexpectedNull())
+                    onError(TranslationError.UnexpectedNull())
                 }
 
                 GeckoResult<Void>()
             },
             { throwable ->
-                onError(throwable)
+                onError(throwable.intoTranslationError())
                 GeckoResult<Void>()
             },
         )
@@ -900,7 +897,7 @@ class GeckoEngine(
                 GeckoResult<Void>()
             },
             { throwable ->
-                onError(throwable)
+                onError(throwable.intoTranslationError())
                 GeckoResult<Void>()
             },
         )
@@ -923,15 +920,63 @@ class GeckoEngine(
                         }
                         onSuccess(result)
                     } catch (e: IllegalArgumentException) {
-                        onError(e)
+                        onError(e.intoTranslationError())
                     }
                 } else {
-                    onError(translationsUnexpectedNull())
+                    onError(TranslationError.UnexpectedNull())
                 }
                 GeckoResult<Void>()
             },
             { throwable ->
-                onError(throwable)
+                onError(throwable.intoTranslationError())
+                GeckoResult<Void>()
+            },
+        )
+    }
+
+    /**
+     * See [Engine.getNeverTranslateSiteList].
+     */
+    override fun getNeverTranslateSiteList(
+        onSuccess: (List<String>) -> Unit,
+        onError: (Throwable) -> Unit,
+    ) {
+        TranslationsController.RuntimeTranslation.getNeverTranslateSiteList().then(
+            {
+                if (it != null) {
+                    try {
+                        onSuccess(it)
+                    } catch (e: IllegalArgumentException) {
+                        onError(e.intoTranslationError())
+                    }
+                } else {
+                    onError(TranslationError.UnexpectedNull())
+                }
+                GeckoResult<Void>()
+            },
+            { throwable ->
+                onError(throwable.intoTranslationError())
+                GeckoResult<Void>()
+            },
+        )
+    }
+
+    /**
+     * See [Engine.setNeverTranslateSpecifiedSite].
+     */
+    override fun setNeverTranslateSpecifiedSite(
+        origin: String,
+        setting: Boolean,
+        onSuccess: () -> Unit,
+        onError: (Throwable) -> Unit,
+    ) {
+        TranslationsController.RuntimeTranslation.setNeverTranslateSpecifiedSite(setting, origin).then(
+            {
+                onSuccess()
+                GeckoResult<Void>()
+            },
+            { throwable ->
+                onError(throwable.intoTranslationError())
                 GeckoResult<Void>()
             },
         )
@@ -1030,6 +1075,16 @@ class GeckoEngine(
                 with(runtime.settings.contentBlocking) {
                     if (this.cookieBannerModePrivateBrowsing != value.mode) {
                         this.cookieBannerModePrivateBrowsing = value.mode
+                    }
+                }
+                field = value
+            }
+
+        override var emailTrackerBlockingPrivateBrowsing: Boolean = false
+            set(value) {
+                with(runtime.settings.contentBlocking) {
+                    if (this.emailTrackerBlockingPrivateBrowsingEnabled != value) {
+                        this.setEmailTrackerBlockingPrivateBrowsing(value)
                     }
                 }
                 field = value
@@ -1193,6 +1248,9 @@ class GeckoEngine(
                     Engine.HttpsOnlyMode.ENABLED -> GeckoRuntimeSettings.HTTPS_ONLY
                 }
             }
+        override var globalPrivacyControlEnabled: Boolean
+            get() = runtime.settings.globalPrivacyControl
+            set(value) { runtime.settings.setGlobalPrivacyControl(value) }
     }.apply {
         defaultSettings?.let {
             this.javascriptEnabled = it.javascriptEnabled
@@ -1217,6 +1275,8 @@ class GeckoEngine(
             this.cookieBannerHandlingDetectOnlyMode = it.cookieBannerHandlingDetectOnlyMode
             this.cookieBannerHandlingGlobalRules = it.cookieBannerHandlingGlobalRules
             this.cookieBannerHandlingGlobalRulesSubFrames = it.cookieBannerHandlingGlobalRulesSubFrames
+            this.globalPrivacyControlEnabled = it.globalPrivacyControlEnabled
+            this.emailTrackerBlockingPrivateBrowsing = it.emailTrackerBlockingPrivateBrowsing
         }
     }
 
@@ -1366,5 +1426,13 @@ internal fun ContentBlockingController.LogEntry.BlockingData.getBlockedCategory(
         Event.BLOCKED_SOCIALTRACKING_CONTENT, Event.COOKIES_BLOCKED_SOCIALTRACKER -> TrackingCategory.MOZILLA_SOCIAL
         Event.BLOCKED_TRACKING_CONTENT -> TrackingCategory.SCRIPTS_AND_SUB_RESOURCES
         else -> TrackingCategory.NONE
+    }
+}
+
+internal fun InstallationMethod.toGeckoInstallationMethod(): String? {
+    return when (this) {
+        InstallationMethod.MANAGER -> WebExtensionController.INSTALLATION_METHOD_MANAGER
+        InstallationMethod.FROM_FILE -> WebExtensionController.INSTALLATION_METHOD_FROM_FILE
+        else -> null
     }
 }
