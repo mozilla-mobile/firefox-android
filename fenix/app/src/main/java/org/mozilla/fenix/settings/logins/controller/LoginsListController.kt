@@ -33,6 +33,7 @@ class LoginsListController(
         from: BrowserDirection,
     ) -> Unit,
     private val settings: Settings,
+    private val addLoginCallback: () -> Unit,
 ) {
 
     fun handleItemClicked(item: SavedLogin) {
@@ -45,6 +46,7 @@ class LoginsListController(
     }
 
     fun handleAddLoginClicked() {
+        addLoginCallback.invoke()
         Logins.managementAddTapped.record(NoExtras())
         navController.navigate(
             SavedLoginsFragmentDirections.actionSavedLoginsFragmentToAddLoginFragment(),
