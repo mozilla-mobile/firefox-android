@@ -1414,6 +1414,34 @@ const AVAILABLE_UA_OVERRIDES = [
       },
     },
   },
+  {
+    /*
+     * Bug 1873601 - UA override for Google Search' index page
+     * WebCompat issue #131916 - https://webcompat.com/issues/131916
+     *
+     * Ongoing incident, where the index page of Google Search is empty for
+     * any Firefox for Android UA string with Version >= 65. Search result
+     * pages work fine, so this only overrides the UA for the index page.
+     */
+    id: "bug1873601",
+    platform: "android",
+    domain: "google.com",
+    bug: "1873601",
+    config: {
+      matches: [
+        InterventionHelpers.matchPatternsForGoogle(
+          "*://www.google.",
+          "/webhp*"
+        ),
+        InterventionHelpers.matchPatternsForGoogle("*://www.google.", "/?*"),
+        InterventionHelpers.matchPatternsForGoogle("*://www.google.", "/"),
+        InterventionHelpers.matchPatternsForGoogle("*://www.google.", "/#*"),
+      ].flat(),
+      uaTransformer: originalUA => {
+        return "User-Agent: Mozilla/5.0 (Android 10; Mobile; rv:64.0) Gecko/64.0 Firefox/64.0";
+      },
+    },
+  },
 ];
 
 module.exports = AVAILABLE_UA_OVERRIDES;
