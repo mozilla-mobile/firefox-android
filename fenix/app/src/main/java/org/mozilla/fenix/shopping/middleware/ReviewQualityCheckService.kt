@@ -49,14 +49,11 @@ interface ReviewQualityCheckService {
     suspend fun productRecommendation(shouldRecordAvailableTelemetry: Boolean): ProductRecommendation?
 
     /**
-     * Sends a click attribution event for a given product aid.
+     * Reports that a product is back in stock.
+     *
+     * @return [ReportBackInStockStatusDto] if the request succeeds, null otherwise.
      */
-    suspend fun recordRecommendedProductClick(productAid: String)
-
-    /**
-     * Sends an impression attribution event for a given product aid.
-     */
-    suspend fun recordRecommendedProductImpression(productAid: String)
+    suspend fun reportBackInStock(): ReportBackInStockStatusDto?
 }
 
 /**
@@ -163,33 +160,17 @@ class DefaultReviewQualityCheckService(
             }
         }
 
-    override suspend fun recordRecommendedProductClick(productAid: String) =
-        withContext(Dispatchers.Main) {
-            suspendCoroutine { continuation ->
-                browserStore.state.selectedTab?.engineState?.engineSession?.sendClickAttributionEvent(
-                    aid = productAid,
+    override suspend fun reportBackInStock(): ReportBackInStockStatusDto? = withContext(Dispatchers.Main) {
+        suspendCoroutine { continuation ->
+            browserStore.state.selectedTab?.let { tab ->
+                tab.engineState.engineSession?.reportBackInStock(
+                    url = tab.content.url,
                     onResult = {
-                        continuation.resume(Unit)
+                        continuation.resume(it.asEnumOrDefault<ReportBackInStockStatusDto>())
                     },
                     onException = {
-                        logger.error("Error sending click attribution event", it)
-                        continuation.resume(Unit)
-                    },
-                )
-            }
-        }
-
-    override suspend fun recordRecommendedProductImpression(productAid: String) {
-        withContext(Dispatchers.Main) {
-            suspendCoroutine { continuation ->
-                browserStore.state.selectedTab?.engineState?.engineSession?.sendImpressionAttributionEvent(
-                    aid = productAid,
-                    onResult = {
-                        continuation.resume(Unit)
-                    },
-                    onException = {
-                        logger.error("Error sending impression attribution event", it)
-                        continuation.resume(Unit)
+                        logger.error("Error reporting product back in stock", it)
+                        continuation.resume(null)
                     },
                 )
             }
@@ -232,3 +213,23 @@ data class AnalysisStatusProgressDto(
     val status: AnalysisStatusDto,
     val progress: Double,
 )
+
+/**
+ * Enum that represents the status returned from reporting a product is back in stock.
+ */
+enum class ReportBackInStockStatusDto {
+    /**
+     * Report created.
+     */
+    REPORT_CREATED,
+
+    /**
+     * Product is already reported to be back in stock.
+     */
+    ALREADY_REPORTED,
+
+    /**
+     * Product was not actually marked as deleted.
+     */
+    NOT_DELETED,
+}

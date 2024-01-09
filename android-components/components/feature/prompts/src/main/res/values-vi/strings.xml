@@ -5,11 +5,11 @@
     <!-- Text for confirmation for a negative action in dialog.  -->
     <string name="mozac_feature_prompts_cancel">Hủy bỏ</string>
     <!-- When a page shows many dialogs, this checkbox will appear for letting the user choose to prevent showing more dialogs. -->
-    <string name="mozac_feature_prompts_no_more_dialogs">Không cho trang này tạo các hộp thoại phụ</string>
+    <string name="mozac_feature_prompts_no_more_dialogs">Ngăn trang này tạo ra các hộp thoại bổ sung</string>
     <!-- Text for a positive button, when an user selects a date in date/time picker. -->
     <string name="mozac_feature_prompts_set_date">Thiết lập</string>
     <!-- Text for a button that clears the selected input in the date/time picker. -->
-    <string name="mozac_feature_prompts_clear">Xóa trắng</string>
+    <string name="mozac_feature_prompts_clear">Xóa</string>
     <!-- Text for the title of an authentication dialog. -->
     <string name="mozac_feature_prompt_sign_in">Đăng nhập</string>
     <!-- Text for username field in an authentication dialog. -->
@@ -25,7 +25,7 @@
     <!-- Positive confirmation that we should save the new or updated login -->
     <string name="mozac_feature_prompt_save_confirmation">Lưu</string>
     <!-- Negative confirmation that we should not save the updated login -->
-    <string name="mozac_feature_prompt_dont_update">Không cập nhật</string>
+    <string name="mozac_feature_prompt_dont_update">Đừng cập nhật</string>
     <!-- Positive confirmation that we should save the updated login -->
     <string name="mozac_feature_prompt_update_confirmation">Cập nhật</string>
     <!-- Error text displayed underneath the password field when it is in an error case -->
@@ -42,7 +42,7 @@
     <!-- For more info take a look here https://developer.mozilla.org/en-US/docs/Web/API/Window/prompt -->
     <string name="mozac_feature_prompts_content_description_input_label">Nhãn để nhập trường văn bản</string>
     <!-- Title of a color picker dialog, this text is shown above a color picker. -->
-    <string name="mozac_feature_prompts_choose_a_color">Chọn màu</string>
+    <string name="mozac_feature_prompts_choose_a_color">Chọn một màu</string>
     <!-- Text of a confirm button in dialog requesting to open a new window. -->
     <string name="mozac_feature_prompts_allow">Cho phép</string>
     <!-- Text of a negative button in dialog requesting to open a new window. -->
@@ -131,8 +131,6 @@
     <string name="mozac_feature_prompts_account_picture">Ảnh tài khoản</string>
     <!-- Title of the Identity Credential provider dialog chooser. -->
     <string name="mozac_feature_prompts_identity_credentials_choose_provider">Chọn một nhà cung cấp đăng nhập</string>
-    <!-- Title of an account picker dialog for identity credentials. -->
-    <string name="mozac_feature_prompts_identity_credentials_choose_account" moz:removedIn="119" tools:ignore="UnusedResources">Chọn một tài khoản</string>
     <!-- Title of an account picker dialog for identity credentials. The %1$s will be replaced with the name of the provider -->
     <string name="mozac_feature_prompts_identity_credentials_choose_account_for_provider">Đăng nhập bằng tài khoản %1$s</string>
     <!-- Title of the Identity Credential privacy policy dialog title. The %1$s will be replaced with the name of the provider. -->
