@@ -4,8 +4,6 @@
 
 package org.mozilla.fenix.tabhistory
 
-import androidx.navigation.NavController
-import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
 import mozilla.components.browser.state.store.BrowserStore
@@ -15,7 +13,6 @@ import org.junit.Test
 
 class TabHistoryControllerTest {
 
-    private lateinit var navController: NavController
     private lateinit var goToHistoryIndexUseCase: SessionUseCases.GoToHistoryIndexUseCase
     private lateinit var currentItem: TabHistoryItem
     private lateinit var store: BrowserStore
@@ -23,25 +20,21 @@ class TabHistoryControllerTest {
     @Before
     fun setUp() {
         store = BrowserStore()
-        navController = mockk(relaxed = true)
         goToHistoryIndexUseCase = spyk(SessionUseCases(store).goToHistoryIndex)
         currentItem = TabHistoryItem(
             index = 0,
             title = "",
             url = "",
-            isSelected = true,
         )
     }
 
     @Test
     fun handleGoToHistoryIndexNormalBrowsing() {
         val controller = DefaultTabHistoryController(
-            navController = navController,
             goToHistoryIndexUseCase = goToHistoryIndexUseCase,
         )
 
         controller.handleGoToHistoryItem(currentItem)
-        verify { navController.navigateUp() }
         verify { goToHistoryIndexUseCase.invoke(currentItem.index) }
     }
 
@@ -49,13 +42,11 @@ class TabHistoryControllerTest {
     fun handleGoToHistoryIndexCustomTab() {
         val customTabId = "customTabId"
         val customTabController = DefaultTabHistoryController(
-            navController = navController,
             goToHistoryIndexUseCase = goToHistoryIndexUseCase,
             customTabId = customTabId,
         )
 
         customTabController.handleGoToHistoryItem(currentItem)
-        verify { navController.navigateUp() }
         verify { goToHistoryIndexUseCase.invoke(currentItem.index, customTabId) }
     }
 }
