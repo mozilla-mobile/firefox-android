@@ -53,7 +53,6 @@
     <string name="menu_remove_from_shortcuts">Hiqe nga Shkurtoret</string>
 
     <!-- Menu item: Shows information about features and changes that are new to this version -->
-    <string name="menu_whats_new" moz:RemovedIn="116" tools:ignore="UnusedResources">Ç’ka të Re</string>
     <string name="menu_settings">Rregullime</string>
     <string name="menu_about">Rreth</string>
     <string name="menu_help">Ndihmë</string>
@@ -152,7 +151,7 @@
     <string name="preference_privacy_and_security_header">Privatësi &amp; Siguri</string>
 
     <!-- Preference summary for settings related to privacy and security -->
-    <string name="preference_privacy_and_security_summary">Gjurmim, cookies, zgjedhje mbi të dhënat</string>
+    <string name="preference_privacy_and_security_summary">Gjurmim, “cookies”, zgjedhje mbi të dhënat</string>
 
     <!-- Preference category description for settings related to search, set default
     and autocomplete are settings a user can find and change inside the "search" settings screen -->
@@ -243,7 +242,7 @@
     <string name="add_custom_autocomplete_label">Shtoni lidhje për vetëplotësim</string>
 
     <!-- Preference category for settings about cookies and site data -->
-    <string name="preference_category_cookies">Cookies dhe të Dhëna Sajtesh</string>
+    <string name="preference_category_cookies">“Cookies” dhe të Dhëna Sajtesh</string>
 
     <!-- Preference category for settings about data choices -->
     <string name="preference_category_data_choices">Zgjedhje Mbi të Dhënat</string>
@@ -303,7 +302,7 @@
     <string name="preference_privacy_should_block_cookies_third_party_tracker_cookies_option">Blloko vetëm cookie-t nga palë gjurmuese të treta</string>
     <string name="preference_privacy_should_block_cookies_third_party_only_option">Blloko vetëm cookie-t nga palë të treta</string>
 
-    <string name="preference_privacy_should_block_cookies_cross_site_option">Blloko cookies nga sajti në sajt</string>
+    <string name="preference_privacy_should_block_cookies_cross_site_option">Blloko “cookies” palësh të treta</string>
     <string name="preference_privacy_should_block_cookies_yes_option2">Po, ju lutem</string>
 
     <!-- Preference Title: Biometrics can be used to unlock Focus if the previous session's data was not erased by the user. -->
@@ -339,7 +338,7 @@
      "default apps" settings screen or if not supported by this Android version to a SUMO page describing
      how to set Focus as a default browser.
       %1$s will be replaced by the app name (e.g. Firefox Focus) -->
-    <string name="preference_default_browser2">Bëje %1$s-in shfletuesin parazgjedhje</string>
+    <string name="preference_default_browser2">Bëje %1$s-un shfletuesin parazgjedhje</string>
 
     <string name="preference_category_mozilla">Mozilla</string>
     <string name="preference_mozilla_telemetry2">Dërgo të dhëna përdorimi</string>
@@ -348,10 +347,10 @@
     <string name="preference_mozilla_telemetry_summary">Mësoni më tepër</string>
 
     <!-- %1$s will be replaced with the name of the app (e.g. Firefox Focus) -->
-    <string name="preference_mozilla_telemetry_summary2">Mozilla rreket të grumbullojë vetëm sa na duhen për të ofruar dhe përmirësuar %1$s-in për këdo.</string>
+    <string name="preference_mozilla_telemetry_summary2">Mozilla rreket të grumbullojë vetëm sa na duhen për të ofruar dhe përmirësuar %1$s-un për këdo.</string>
 
     <!-- In-app link (in settings) to Focus privacy notice. -->
-    <string name="preference_privacy_notice">Shënim Mbi Privatësinë</string>
+    <string name="preference_privacy_notice">Shënim Privatësie</string>
 
     <!-- In-app link (in settings) to Focus licensing information. -->
     <string name="preference_licensing_info">Hollësi licencimi</string>
@@ -363,7 +362,7 @@
     <string name="open_source_licenses_title">%s | Biblioteka OSS</string>
 
     <!-- Item in Preferences that shows the about page. Parameter 1 is the app name, i.e. Firefox Focus/Firefox Klar. -->
-    <string name="preference_about">Mbi %1$s-in</string>
+    <string name="preference_about">Mbi %1$s-un</string>
 
     <!-- Header for the list of installed search engines -->
     <string name="preference_search_installed_search_engines">Motorë të instaluar</string>
@@ -468,12 +467,12 @@
     <string name="external_app_prompt_title">Hape lidhjen me një aplikacion tjetër</string>
     <!-- This string is shown when the user has clicked a link that needs to be opened in a different app.
          Argument 2 is the external app name, argument 1 is our name (i.e. Firefox Focus, or Firefox Klar). -->
-    <string name="external_app_prompt">Mund të lini %1$s-in ta hapë këtë lidhje me %2$s.</string>
+    <string name="external_app_prompt">Mund të lini %1$s-un ta hapë këtë lidhje me %2$s.</string>
     <!-- This text is the title of a dialog shown if no app could be found for a custom link protocol. -->
     <string name="external_app_prompt_no_app_title">Gjeni një aplikacion që mund të hapë lidhjen</string>
     <!-- This text is shown in a dialog if no app could be found for a custom link protocol. %1$s is the name of the app (i.e. Firefox Focus) and %2$s is the name of
          the app store installed on the device (usually that's Google Play). -->
-    <string name="external_app_prompt_no_app">Asnjë nga aplikacionet në pajisjen tuaj s’është në gjendje të hapë këtë lidhje. Mund të lini %1$s-in të kërkojë në %2$s për një aplikacion që mundet.</string>
+    <string name="external_app_prompt_no_app">Asnjë nga aplikacionet në pajisjen tuaj s’është në gjendje të hapë këtë lidhje. Mund të lini %1$s-un të kërkojë në %2$s për një aplikacion që mundet.</string>
     <!-- This label is shown above a list of apps that can be used to open a given link -->
     <string name="external_multiple_apps_matched_exit">Të dilet nga Shfletimi Privat?</string>
 
@@ -536,7 +535,7 @@
 
     <!-- New Onboarding flow second screen subtitle two the one that appears under subtitle one -->
     <!-- %1$s will be replaced by the app short name(Focus) -->
-    <string name="onboarding_second_screen_subtitle_two">Bëjeni %1$s-in parazgjedhjen tuaj, që të mbroni të dhënat tuaja për çdo lidhje që hapni.</string>
+    <string name="onboarding_second_screen_subtitle_two">Bëjeni %1$s-un parazgjedhjen tuaj, që të mbroni të dhënat tuaja për çdo lidhje që hapni.</string>
 
     <!-- New Onboarding flow second screen make Focus default browser button label-->
     <string name="onboarding_second_screen_default_browser_button_text">Vëre si shfletuesin parazgjedhje</string>
@@ -548,7 +547,7 @@
     <!-- First run tour (Default browser): Title -->
     <string name="firstrun_defaultbrowser_title">Fuqizoni privatësinë tuaj</string>
     <!-- First run tour (Default browser): Text. -->
-    <string name="firstrun_defaultbrowser_text2">Kalojeni shfletimin privat një shkallë më sipër. Bllokoni reklama dhe lëndë tjetër që mund t’ju gjurmojë nga sajti në sajt dhe të ulë kohën e ngarkimit të faqeve.</string>
+    <string name="firstrun_defaultbrowser_text2">Kalojeni shfletimin privat një shkallë më sipër. Bllokoni reklama dhe lëndë tjetër që mund t’ju gjurmojë nga sajte në sajte dhe të ulë kohën e ngarkimit të faqeve.</string>
 
     <!-- First run tour (Search): Title -->
     <string name="firstrun_search_title">Kërkimi juaj, me mënyrën tuaj</string>
@@ -558,12 +557,12 @@
     <!-- First run tour (Shortcut): Title -->
     <string name="firstrun_shortcut_title">Shtoni shkurtore te skena juaj e kreut</string>
     <!-- First run tour (Shortcut): Text. %1$s will be replaced with the name of the app (e.g. Firefox Focus) -->
-    <string name="firstrun_shortcut_text">Rikthehuni shpejt te sajtet tuaj të parapëlqyer, me %1$s. Thjesht përzgjidhni \&quot;Shtoje te skena e Kreut\&quot;, që nga menuja e %1$s-it.</string>
+    <string name="firstrun_shortcut_text">Rikthehuni shpejt te sajtet tuaj të parapëlqyer, me %1$s. Thjesht përzgjidhni “Shtoje te skena e Kreut”, që nga menuja e %1$s-ut.</string>
 
     <!-- First run tour (Privacy): Title -->
     <string name="firstrun_privacy_title">Bëjeni zakon privatësinë</string>
     <!-- First run tour (Privacy): Text. %1$s will be replaced with the name of the app (e.g. Firefox Focus) -->
-    <string name="firstrun_privacy_text">Vëreni %1$s-in si shfletuesin tuaj parazgjedhje dhe përfitoni të mirat e shfletimit privat, kur hapni faqe në web që nga aplikacione të tjera.</string>
+    <string name="firstrun_privacy_text">Vëreni %1$s-un si shfletuesin tuaj parazgjedhje dhe përfitoni të mirat e shfletimit privat, kur hapni faqe në web që nga aplikacione të tjera.</string>
 
     <string name="firstrun_close_button">OK, e mora vesh!</string>
     <string name="firstrun_skip_button">Anashkaloje</string>
@@ -637,7 +636,7 @@
     %1$s will be replaced with the name of the app (e.g. Firefox Focus)
     %2$s will be replaced with a URL linking to the GPL
     %3$s will be replaced with a URL linking to the tracking protection wiki page (e.g. https://wiki.mozilla.org/Security/Tracking_protection#Lists) -->
-    <string name="your_rights_content5"><![CDATA[%1$s përdor gjithashtu një listë ndalimesh të furnizuar nga Disconnect, Inc., si vepra më vete dhe të pavarura, nën <a href="%2$s">GNU General Public License v3</a>, dhe të passhme prej <a href="%3$s">këtu</a>.]]></string>
+    <string name="your_rights_content5"><![CDATA[%1$s përdor gjithashtu një listë ndalimesh të furnizuar nga Disconnect, Inc., si vepra më vete dhe të pavarura, nën <a href="%2$s">GNU General Public License v3</a> dhe të passhme prej <a href="%3$s">këtu</a>.]]></string>
 
     <!-- Text shown in prompts for GeckoView -->
     <string name="gv_prompt_username_hint">Emër përdoruesi</string>
@@ -646,8 +645,8 @@
 
     <!-- Text shown in Security Information Popup -->
     <!-- Text to denote secure or insecure connection -->
-    <string name="security_popup_secure_connection">Lidhje e Sigurt</string>
-    <string name="security_popup_insecure_connection">Lidhje e Pasigurt</string>
+    <string name="security_popup_secure_connection">Lidhje e Siguruar</string>
+    <string name="security_popup_insecure_connection">Lidhje e Pasiguruar</string>
     <!-- %1$s will be replaced with organization that granted the SSL certificate -->
     <string name="security_popup_security_verified">Verifikuar nga: %1$s</string>
 
@@ -939,7 +938,7 @@
     <!-- Preference title for safe browsing which when enabled, blocks dangerous or deceptive webpages that may include phishing or malware -->
     <string name="preference_safe_browsing_title">Bllokoni sajte potencialisht të rrezikshëm dhe të rrejshëm</string>
     <!-- Preference summary for safe browsing which when enabled, blocks dangerous or deceptive webpages that may include phishing or malware -->
-    <string name="preference_safe_browsing_summary">Bllokoni sajte të raportuar si të rrejshëm dhe sulmesh, sajte malware-i, dhe sajte software-i të padëshiruar.</string>
+    <string name="preference_safe_browsing_summary">Bllokoni sajte të raportuar si të rrejshëm dhe sulmesh, sajte malware-i dhe sajte software-i të padëshiruar.</string>
 
     <!-- Title of the preference to enable "HTTPS-Only" mode -->
     <string name="preference_https_only_title">Mënyra Vetëm-HTTPS</string>
@@ -960,7 +959,7 @@
     <string name="preference_block_cookies_title">Blloko Cookie-t</string>
 
     <!-- Message for Preference screen for cookie blocking for exceptions tracking protection -->
-    <string name="preference_category_block_cookies">Do të donit të bllokoni cookie-t?</string>
+    <string name="preference_category_block_cookies">Doni të bllokohen cookie-t?</string>
 
     <!-- Title for the tab crash report screen-->
     <string name="tab_crash_report_title">Skeda u Vithis</string>
@@ -996,9 +995,9 @@
     <!-- Enhanced tracking protection preference description when the tracking protection is enabled for this site-->
     <string name="enhanced_tracking_protection_state_on">Për këtë sajt, mbrojtjet janë ON</string>
     <!-- Label that indicates a site is using a secure connection -->
-    <string name="secure_connection">Lidhja është e sigurt</string>
+    <string name="secure_connection">Lidhja është e siguruar</string>
     <!-- Label that indicates a site is using a insecure connection -->
-    <string name="insecure_connection">Lidhja s’është e sigurt</string>
+    <string name="insecure_connection">Lidhja s’është e siguruar</string>
 
     <!-- Title for the list of trackers enhanced tracking ptotection can block-->
     <string name="trackers_and_scripts">Gjurmues dhe Programthe për t’u Bllokuar</string>
@@ -1020,7 +1019,7 @@
 
     <!-- Text for context menu additional note.
     %1$s is a placeholder for the app name. -->
-    <string name="contextmenu_erased_images_note2">Figurat e ruajtura dhe ato të ndara me të tjerët &lt;b&gt;s’do të fshihen&lt;/b&gt;, kur të fshini historikun e %1$s-it</string>
+    <string name="contextmenu_erased_images_note2">Figurat e ruajtura dhe ato të ndara me të tjerët &lt;b&gt;s’do të fshihen&lt;/b&gt;, kur të fshini historikun e %1$s-ut</string>
 
     <!-- Theme Preferences -->
     <!-- Preference category for changing default theme to dark or light mode -->
@@ -1080,7 +1079,7 @@
     <string name="tool_tip_dismiss_button_content_description">Hidhe tej</string>
 
     <!-- CFR for Toolbar Delete Icon (Banner Info Message) -->
-    <string name="cfr_for_toolbar_delete_icon2">Prekni këtu, që të shpihet e gjitha në hedhurina — historik, cookies, gjithçka — dhe fillojani nga e para me një skedë të re.</string>
+    <string name="cfr_for_toolbar_delete_icon2">Prekni këtu, që të shpihet e gjitha në hedhurina — historik, “cookies”, gjithçka — dhe fillojani nga e para me një skedë të re.</string>
 
     <!-- Promote SearchWidget Dialog -->
 

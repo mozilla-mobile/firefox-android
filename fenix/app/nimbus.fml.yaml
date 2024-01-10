@@ -12,126 +12,8 @@ channels:
 includes:
   - onboarding.fml.yaml
   - pbm.fml.yaml
+  - messaging-fenix.fml.yaml
 import:
-  - path: ../../android-components/components/service/nimbus/messaging.fml.yaml
-    channel: release
-    features:
-      messaging:
-        - value:
-            triggers:
-              # Using attributes built into the Nimbus SDK
-              USER_RECENTLY_INSTALLED: days_since_install < 7
-              USER_RECENTLY_UPDATED: days_since_update < 7 && days_since_install != days_since_update
-              USER_TIER_ONE_COUNTRY: ('US' in locale || 'GB' in locale || 'CA' in locale || 'DE' in locale || 'FR' in locale)
-              USER_EN_SPEAKER: "'en' in locale"
-              USER_ES_SPEAKER: "'es' in locale"
-              USER_DE_SPEAKER: "'de' in locale"
-              USER_FR_SPEAKER: "'fr' in locale"
-              DEVICE_ANDROID: os == 'Android'
-              DEVICE_IOS: os == 'iOS'
-              ALWAYS: "true"
-              NEVER: "false"
-              DAY_1_AFTER_INSTALL: days_since_install == 1
-              DAY_2_AFTER_INSTALL: days_since_install == 2
-              DAY_3_AFTER_INSTALL: days_since_install == 3
-              DAY_4_AFTER_INSTALL: days_since_install == 4
-              DAY_5_AFTER_INSTALL: days_since_install == 5
-              MORE_THAN_24H_SINCE_INSTALLED_OR_UPDATED: days_since_update >= 1
-
-              # Using custom attributes for the browser
-              I_AM_DEFAULT_BROWSER: "is_default_browser"
-              I_AM_NOT_DEFAULT_BROWSER: "is_default_browser == false"
-              USER_ESTABLISHED_INSTALL: "number_of_app_launches >=4"
-
-              FUNNEL_PAID: "adjust_campaign != ''"
-              FUNNEL_ORGANIC: "adjust_campaign == ''"
-
-              # Using Glean events, specific to the browser
-              INACTIVE_1_DAY: "'app_launched'|eventLastSeen('Hours') >= 24"
-              INACTIVE_2_DAYS: "'app_launched'|eventLastSeen('Days', 0) >= 2"
-              INACTIVE_3_DAYS: "'app_launched'|eventLastSeen('Days', 0) >= 3"
-              INACTIVE_4_DAYS: "'app_launched'|eventLastSeen('Days', 0) >= 4"
-              INACTIVE_5_DAYS: "'app_launched'|eventLastSeen('Days', 0) >= 5"
-
-              # Has the user signed in the last 4 years
-              FXA_SIGNED_IN: "'sync_auth.sign_in'|eventLastSeen('Years', 0) <= 4"
-              FXA_NOT_SIGNED_IN: "'sync_auth.sign_in'|eventLastSeen('Years', 0) > 4"
-
-              # https://mozilla-hub.atlassian.net/wiki/spaces/FJT/pages/11469471/Core+Active
-              USER_INFREQUENT: "'app_launched'|eventCountNonZero('Days', 28) >= 1 && 'app_launched'|eventCountNonZero('Days', 28) < 7"
-              USER_CASUAL: "'app_launched'|eventCountNonZero('Days', 28) >= 7 && 'app_launched'|eventCountNonZero('Days', 28) < 14"
-              USER_REGULAR: "'app_launched'|eventCountNonZero('Days', 28) >= 14 && 'app_launched'|eventCountNonZero('Days', 28) < 21"
-              USER_CORE_ACTIVE: "'app_launched'|eventCountNonZero('Days', 28) >= 21"
-
-              LAUNCHED_ONCE_THIS_WEEK: "'app_launched'|eventSum('Days', 7) == 1"
-
-            actions:
-              ENABLE_PRIVATE_BROWSING: ://enable_private_browsing
-              INSTALL_SEARCH_WIDGET: ://install_search_widget
-              MAKE_DEFAULT_BROWSER: ://make_default_browser
-              VIEW_BOOKMARKS: ://urls_bookmarks
-              VIEW_COLLECTIONS: ://home_collections
-              VIEW_HISTORY: ://urls_history
-              VIEW_HOMESCREEN: ://home
-              OPEN_SETTINGS_ACCESSIBILITY: ://settings_accessibility
-              OPEN_SETTINGS_ADDON_MANAGER: ://settings_addon_manager
-              OPEN_SETTINGS_DELETE_BROWSING_DATA: ://settings_delete_browsing_data
-              OPEN_SETTINGS_LOGINS: ://settings_logins
-              OPEN_SETTINGS_NOTIFICATIONS: ://settings_notifications
-              OPEN_SETTINGS_PRIVACY: ://settings_privacy
-              OPEN_SETTINGS_SEARCH_ENGINE: ://settings_search_engine
-              OPEN_SETTINGS_TRACKING_PROTECTION: ://settings_tracking_protection
-              OPEN_SETTINGS_WALLPAPERS: ://settings_wallpapers
-              OPEN_SETTINGS: ://settings
-              TURN_ON_SYNC: ://turn_on_sync
-            styles:
-              DEFAULT:
-                priority: 50
-                max-display-count: 5
-              SURVEY:
-                priority: 55
-                max-display-count: 1
-              PERSISTENT:
-                priority: 50
-                max-display-count: 20
-              WARNING:
-                priority: 60
-                max-display-count: 10
-              URGENT:
-                priority: 100
-                max-display-count: 10
-              NOTIFICATION:
-                priority: 50
-                max-display-count: 1
-            messages:
-              default-browser:
-                text: default_browser_experiment_card_text
-                surface: homescreen
-                action: "MAKE_DEFAULT_BROWSER"
-                trigger: [ "I_AM_NOT_DEFAULT_BROWSER","USER_ESTABLISHED_INSTALL" ]
-                style: PERSISTENT
-                button-label: preferences_set_as_default_browser
-              default-browser-notification:
-                title: nimbus_notification_default_browser_title
-                text: nimbus_notification_default_browser_text
-                surface: notification
-                style: NOTIFICATION
-                trigger:
-                  - I_AM_NOT_DEFAULT_BROWSER
-                  - DAY_3_AFTER_INSTALL
-                action: MAKE_DEFAULT_BROWSER
-
-        - channel: developer
-          value:
-            styles:
-              DEFAULT:
-                priority: 50
-                max-display-count: 100
-              EXPIRES_QUICKLY:
-                priority: 100
-                max-display-count: 1
-            notification-config:
-              refresh-interval: 120 # minutes (2 hours)
   - path: ../../android-components/components/browser/engine-gecko/geckoview.fml.yaml
     channel: release
     features:
@@ -141,6 +23,15 @@ import:
           download-button: true,
           open-in-app-button: true
         }
+  - path: ../../android-components/components/feature/fxsuggest/fxsuggest.fml.yaml
+    channel: release
+    features:
+      awesomebar-suggestion-provider:
+        - value:
+            available-suggestion-types: {
+              "amp": true,
+              "wikipedia": true,
+            }
 
 features:
   toolbar:
@@ -232,7 +123,38 @@ features:
             "jump-back-in-cfr": true,
           }
         }
-
+  query-parameter-stripping:
+    description: Features for query parameter stripping.
+    variables:
+      sections-enabled:
+        description: "This property provides a lookup table of whether or not the given section should be enabled."
+        type: Map<QueryParameterStrippingSection, String>
+        default:
+          {
+            "query-parameter-stripping": "0",
+            "query-parameter-stripping-pmb": "0",
+            "query-parameter-stripping-allow-list": "",
+            "query-parameter-stripping-strip-list": "",
+          }
+    defaults:
+      - channel: developer
+        value: {
+          "sections-enabled": {
+            "query-parameter-stripping": "0",
+            "query-parameter-stripping-pmb": "0",
+            "query-parameter-stripping-allow-list": "",
+            "query-parameter-stripping-strip-list": "",
+          }
+        }
+      - channel: nightly
+        value: {
+          "sections-enabled": {
+            "query-parameter-stripping": "0",
+            "query-parameter-stripping-pmb": "0",
+            "query-parameter-stripping-allow-list": "",
+            "query-parameter-stripping-strip-list": "",
+          }
+        }
   cookie-banners:
     description: Features for cookie banner handling.
     variables:
@@ -243,7 +165,10 @@ features:
           {
             "feature-ui": 0,
             "feature-setting-value": 0,
-            "dialog-re-engage-time": 4
+            "feature-setting-value-pbm": 0,
+            "feature-setting-detect-only": 0,
+            "feature-setting-global-rules": 1,
+            "feature-setting-global-rules-sub-frames": 1,
           }
     defaults:
       - channel: developer
@@ -251,7 +176,10 @@ features:
           "sections-enabled": {
             "feature-ui": 1,
             "feature-setting-value": 0,
-            "dialog-re-engage-time": 4
+            "feature-setting-value-pbm": 1,
+            "feature-setting-detect-only": 0,
+            "feature-setting-global-rules": 1,
+            "feature-setting-global-rules-sub-frames": 1,
           }
         }
       - channel: nightly
@@ -259,7 +187,21 @@ features:
           "sections-enabled": {
             "feature-ui": 1,
             "feature-setting-value": 0,
-            "dialog-re-engage-time": 4
+            "feature-setting-value-pbm": 1,
+            "feature-setting-detect-only": 0,
+            "feature-setting-global-rules": 1,
+            "feature-setting-global-rules-sub-frames": 1,
+          }
+        }
+      - channel: beta
+        value: {
+          "sections-enabled": {
+            "feature-ui": 1,
+            "feature-setting-value": 0,
+            "feature-setting-value-pbm": 1,
+            "feature-setting-detect-only": 0,
+            "feature-setting-global-rules": 1,
+            "feature-setting-global-rules-sub-frames": 1,
           }
         }
   unified-search:
@@ -269,14 +211,6 @@ features:
         description: If true, the feature shows up in the search bar.
         type: Boolean
         default: true
-
-  extensions-process:
-    description: A feature to rollout the extensions process.
-    variables:
-      enabled:
-        description: If true, the extensions process is enabled.
-        type: Boolean
-        default: false
 
   growth-data:
     description: A feature measuring campaign growth data
@@ -326,6 +260,10 @@ features:
         description: "A map of metric base-identifiers to booleans representing the state of the 'enabled' flag for that metric."
         type: Map<String, Boolean>
         default: {}
+      enable-event-timestamps:
+        description: "Enables precise event timestamps for Glean events"
+        type: Boolean
+        default: false
 
   splash-screen:
     description: "A feature that extends splash screen duration, allowing additional data fetching time for the app's initial run."
@@ -346,10 +284,20 @@ features:
         description: if true, the shopping experience feature is shown to the user.
         type: Boolean
         default: false
+      product-recommendations:
+        description: if true, recommended products feature is enabled to be shown to the user based on their preference.
+        type: Boolean
+        default: false
+      product-recommendations-exposure:
+        description: if true, we want to record recommended products inventory for opted-in users, even if product recommendations are disabled.
+        type: Boolean
+        default: false
     defaults:
       - channel: developer
         value:
           enabled: true
+          product-recommendations: true
+          product-recommendations-exposure: true
 
   print:
     description: A feature for printing from the share or browser menu.
@@ -382,6 +330,47 @@ features:
         description: The channel Id param name with arg.
         type: Map<String, String>
         default: {}
+
+  fx-strong-password:
+    description: A feature that provides a generated strong password on sign up.
+    variables:
+      enabled:
+        description: >
+          When the feature is enabled and Firefox receives a Login event with an 
+          empty saved logins list, a suggested strong password prompt will be shown, 
+          allowing the user to use the generated password to fill in the password field 
+          for the new account that will be created. When the feature is disabled, 
+          there won't be any prompt displayed that would allow using a generated password.
+        type: Boolean
+        default: false
+    defaults:
+      - channel: developer
+        value:
+          enabled: true
+      - channel: nightly
+        value:
+          enabled: true
+
+  fx-suggest:
+    description: A feature that provides Firefox Suggest search suggestions.
+    variables:
+      enabled:
+        description: >
+          Whether the feature is enabled. When Firefox Suggest is enabled,
+          Firefox will download and store new search suggestions in the
+          background, and show additional Search settings to control which
+          suggestions appear in the awesomebar. When Firefox Suggest is
+          disabled, Firefox will not download new suggestions, and hide the
+          additional Search settings.
+        type: Boolean
+        default: false
+    defaults:
+      - channel: developer
+        value:
+          enabled: true
+      - channel: nightly
+        value:
+          enabled: true
 types:
   objects: {}
 
@@ -422,15 +411,43 @@ types:
       variants:
         feature-ui:
           description: An integer either 0 or 1 indicating if the UI for cookie banner handling should be visible,
-            0 to hide the UI and 1 to show the UI. The actual UI is composed by cookie banner section 
+            0 to hide the UI and 1 to show the UI. The actual UI is composed by cookie banner section
             in the settings page, the toolbar section and the re-engagement dialog.
         feature-setting-value:
           description: An integer either 0 or 1 indicating if cookie banner setting should be enabled or disabled,
              0 for setting the value to disabled, 1  for enabling the setting with the value reject_all.
-        dialog-re-engage-time:
-          description: An integer indicating the number of hours that needs to happen before
-            the re-engagement dialog shows again since the last seen, for example if set to 4
-            that means if the users has seen the dialog, it will see it 4 hours later.
+        feature-setting-value-pbm:
+          description: An integer either 0 or 1 indicating if cookie banner setting should be enabled or disabled,
+            0 for setting the value to disabled, 1  for enabling the setting with the value reject_all.
+        feature-setting-detect-only:
+          description: An integer either 0 or 1 indicating if cookie banner detect only mode
+            should be enabled or disabled. 0 for setting to be disabled, and 1 for enabling the setting.
+        feature-setting-global-rules:
+          description: An integer either 0 or 1 indicating if cookie banner global rules
+            should be enabled or disabled. 0 for setting to be disabled, and 1 for enabling the setting.
+        feature-setting-global-rules-sub-frames:
+          description: An integer either 0 or 1 indicating if cookie banner global rules sub-frames
+            should be enabled or disabled. 0 for setting to be disabled, and 1 for enabling the setting.
+
+    QueryParameterStrippingSection:
+      description: The identifiers for the options for the Query Parameter Stripping feature.
+      variants:
+        query-parameter-stripping:
+          description: An integer either 0 or 1 indicating if query parameter stripping
+            should be enabled or disabled in normal mode. 0 for setting to be disabled,
+            and 1 for enabling the setting.
+        query-parameter-stripping-pmb:
+          description: An integer either 0 or 1 indicating if query parameter stripping
+            should be enabled or disabled in private mode. 0 for setting to be disabled,
+            and 1 for enabling the setting.
+        query-parameter-stripping-allow-list:
+          description: An string separated by commas indicating the sites where should
+            from query stripping should be exempted.
+        query-parameter-stripping-strip-list:
+          description: An string separated by commas indicating the list of query params
+            to be stripped from URIs. This list will be merged with records
+            coming from RemoteSettings.
+
     OnboardingPanel:
       description: The types of onboarding panels in the onboarding page
       variants:

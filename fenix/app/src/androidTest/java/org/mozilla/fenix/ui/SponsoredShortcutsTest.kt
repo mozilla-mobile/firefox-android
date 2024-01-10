@@ -9,15 +9,14 @@ import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.Constants.defaultTopSitesList
+import org.mozilla.fenix.helpers.DataGenerationHelper.getSponsoredShortcutTitle
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
-import org.mozilla.fenix.helpers.TestHelper.getSponsoredShortcutTitle
 import org.mozilla.fenix.ui.robots.homeScreen
 
 /**
@@ -90,7 +89,6 @@ class SponsoredShortcutsTest {
     }
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1729335
-    @Ignore("Failing, see: https://github.com/mozilla-mobile/fenix/issues/25926")
     @Test
     fun openSponsorsAndYourPrivacyOptionTest() {
         homeScreen {
@@ -102,7 +100,6 @@ class SponsoredShortcutsTest {
     }
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1729336
-    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1807268")
     @Test
     fun openSponsoredShortcutsSettingsOptionTest() {
         homeScreen {

@@ -103,6 +103,7 @@ open class DefaultComponents(private val applicationContext: Context) {
     companion object {
         const val SAMPLE_BROWSER_PREFERENCES = "sample_browser_preferences"
         const val PREF_LAUNCH_EXTERNAL_APP = "sample_browser_launch_external_app"
+        const val PREF_GLOBAL_PRIVACY_CONTROL = "sample_browser_global_privacy_control"
     }
 
     val preferences: SharedPreferences =
@@ -133,6 +134,10 @@ open class DefaultComponents(private val applicationContext: Context) {
             supportMultipleWindows = true
             preferredColorScheme = PreferredColorScheme.Dark
             httpsOnlyMode = Engine.HttpsOnlyMode.ENABLED
+            globalPrivacyControlEnabled = applicationContext.components.preferences.getBoolean(
+                PREF_GLOBAL_PRIVACY_CONTROL,
+                false,
+            )
         }
     }
 
@@ -316,8 +321,27 @@ open class DefaultComponents(private val applicationContext: Context) {
             SimpleBrowserMenuItem("Save to PDF") {
                 sessionUseCases.saveToPdf.invoke()
             },
+
+            SimpleBrowserMenuItem("Translate (auto)") {
+                var detectedFrom =
+                    store.state.selectedTab?.translationsState?.translationEngineState
+                        ?.detectedLanguages?.documentLangTag
+                        ?: "en"
+                var detectedTo =
+                    store.state.selectedTab?.translationsState?.translationEngineState
+                        ?.detectedLanguages?.userPreferredLangTag
+                        ?: "en"
+                sessionUseCases.translate.invoke(
+                    fromLanguage = detectedFrom,
+                    toLanguage = detectedTo,
+                    options = null,
+                )
+            },
             SimpleBrowserMenuItem("Print") {
                 sessionUseCases.printContent.invoke()
+            },
+            SimpleBrowserMenuItem("Restore after Translate") {
+                sessionUseCases.translateRestore.invoke()
             },
             SimpleBrowserMenuItem("Restore after crash") {
                 sessionUseCases.crashRecovery.invoke()
@@ -372,6 +396,19 @@ open class DefaultComponents(private val applicationContext: Context) {
                 },
             ) { checked ->
                 preferences.edit().putBoolean(PREF_LAUNCH_EXTERNAL_APP, checked).apply()
+            },
+        )
+
+        items.add(
+            BrowserMenuCheckbox(
+                "Tell websites not to share and sell data",
+                {
+                    preferences.getBoolean(PREF_GLOBAL_PRIVACY_CONTROL, false)
+                },
+            ) { checked ->
+                preferences.edit().putBoolean(PREF_GLOBAL_PRIVACY_CONTROL, checked).apply()
+                engine.settings.globalPrivacyControlEnabled = checked
+                sessionUseCases.reload()
             },
         )
 

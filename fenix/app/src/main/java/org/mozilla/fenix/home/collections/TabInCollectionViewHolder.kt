@@ -51,11 +51,10 @@ class TabInCollectionViewHolder(
                     tab = tab,
                     isLastInCollection = tabInfo.value.isLastInCollection,
                     onClick = { interactor.onCollectionOpenTabClicked(tab) },
-                    onRemove = { wasSwiped ->
+                    onRemove = {
                         interactor.onCollectionRemoveTab(
                             collection = collection,
                             tab = tab,
-                            wasSwiped = wasSwiped,
                         )
                     },
                 )

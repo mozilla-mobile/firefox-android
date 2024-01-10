@@ -23,7 +23,7 @@ import mozilla.components.feature.addons.Addon
 import mozilla.components.feature.addons.AddonManager
 import mozilla.components.feature.addons.AddonManagerException
 import mozilla.components.feature.addons.ui.translateName
-import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.FragmentInstalledAddOnDetailsBinding
 import org.mozilla.fenix.ext.components
@@ -37,8 +37,11 @@ import org.mozilla.fenix.ext.showToolbar
 class InstalledAddonDetailsFragment : Fragment() {
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     internal lateinit var addon: Addon
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    internal val binding get() = _binding!!
+
     private var _binding: FragmentInstalledAddOnDetailsBinding? = null
-    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,13 +52,13 @@ class InstalledAddonDetailsFragment : Fragment() {
             addon = AddonDetailsFragmentArgs.fromBundle(requireNotNull(arguments)).addon
         }
 
-        _binding = FragmentInstalledAddOnDetailsBinding.inflate(
-            inflater,
-            container,
-            false,
+        setBindingAndBindUI(
+            FragmentInstalledAddOnDetailsBinding.inflate(
+                inflater,
+                container,
+                false,
+            ),
         )
-
-        bindUI()
 
         return binding.root
     }
@@ -75,6 +78,12 @@ class InstalledAddonDetailsFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    internal fun setBindingAndBindUI(binding: FragmentInstalledAddOnDetailsBinding) {
+        _binding = binding
+        bindUI()
     }
 
     private fun bindAddon() {
@@ -116,17 +125,35 @@ class InstalledAddonDetailsFragment : Fragment() {
         bindPermissions()
         bindAllowInPrivateBrowsingSwitch()
         bindRemoveButton()
+        bindReportButton()
     }
 
+    @VisibleForTesting
+    internal fun provideEnableSwitch() = binding.enableSwitch
+
+    @VisibleForTesting
+    internal fun providePrivateBrowsingSwitch() = binding.allowInPrivateBrowsingSwitch
+
+    @VisibleForTesting
     @SuppressWarnings("LongMethod")
-    private fun bindEnableSwitch() {
-        val switch = binding.enableSwitch
-        val privateBrowsingSwitch = binding.allowInPrivateBrowsingSwitch
+    internal fun bindEnableSwitch() {
+        val switch = provideEnableSwitch()
+        val privateBrowsingSwitch = providePrivateBrowsingSwitch()
         switch.setState(addon.isEnabled())
+        // When the ad-on is blocklisted or not correctly signed, we do not want to enable the toggle switch
+        // because users shouldn't be able to re-enable an add-on in this state.
+        if (
+            addon.isDisabledAsBlocklisted() ||
+            addon.isDisabledAsNotCorrectlySigned() ||
+            addon.isDisabledAsIncompatible()
+        ) {
+            switch.isEnabled = false
+            return
+        }
         switch.setOnCheckedChangeListener { v, isChecked ->
             val addonManager = v.context.components.addonManager
             switch.isClickable = false
-            binding.removeAddOn.isEnabled = false
+            disableButtons()
             if (isChecked) {
                 enableAddon(
                     addonManager,
@@ -138,7 +165,7 @@ class InstalledAddonDetailsFragment : Fragment() {
                             privateBrowsingSwitch.isChecked = it.isAllowedInPrivateBrowsing()
                             switch.setText(R.string.mozac_feature_addons_enabled)
                             binding.settings.isVisible = shouldSettingsBeVisible()
-                            binding.removeAddOn.isEnabled = true
+                            enableButtons()
                             context?.let {
                                 showSnackBar(
                                     binding.root,
@@ -153,7 +180,7 @@ class InstalledAddonDetailsFragment : Fragment() {
                     onError = {
                         runIfFragmentIsAttached {
                             switch.isClickable = true
-                            binding.removeAddOn.isEnabled = true
+                            enableButtons()
                             switch.setState(addon.isEnabled())
                             context?.let {
                                 showSnackBar(
@@ -177,7 +204,7 @@ class InstalledAddonDetailsFragment : Fragment() {
                             switch.isClickable = true
                             privateBrowsingSwitch.isVisible = it.isEnabled()
                             switch.setText(R.string.mozac_feature_addons_disabled)
-                            binding.removeAddOn.isEnabled = true
+                            enableButtons()
                             context?.let {
                                 showSnackBar(
                                     binding.root,
@@ -193,7 +220,7 @@ class InstalledAddonDetailsFragment : Fragment() {
                         runIfFragmentIsAttached {
                             switch.isClickable = true
                             privateBrowsingSwitch.isClickable = true
-                            binding.removeAddOn.isEnabled = true
+                            enableButtons()
                             switch.setState(addon.isEnabled())
                             context?.let {
                                 showSnackBar(
@@ -233,6 +260,23 @@ class InstalledAddonDetailsFragment : Fragment() {
         }
     }
 
+    private fun bindReportButton() {
+        binding.reportAddOn.setOnClickListener {
+            val shouldCreatePrivateSession = it.context.components.appStore.state.mode.isPrivate
+
+            it.context.components.useCases.tabsUseCases.selectOrAddTab(
+                url = "${BuildConfig.AMO_BASE_URL}/android/feedback/addon/${addon.id}/",
+                private = shouldCreatePrivateSession,
+                ignoreFragment = true,
+            )
+
+            // Send user to the newly open tab.
+            Navigation.findNavController(it).navigate(
+                InstalledAddonDetailsFragmentDirections.actionGlobalBrowser(null),
+            )
+        }
+    }
+
     private fun bindSettings() {
         binding.settings.apply {
             isVisible = shouldSettingsBeVisible()
@@ -241,7 +285,7 @@ class InstalledAddonDetailsFragment : Fragment() {
                 val directions = if (addon.installedState?.openOptionsPageInTab == true) {
                     val components = it.context.components
                     val shouldCreatePrivateSession =
-                        (activity as HomeActivity).browsingModeManager.mode.isPrivate
+                        components.appStore.state.mode.isPrivate
 
                     // If the addon settings page is already open in a tab, select that one
                     components.useCases.tabsUseCases.selectOrAddTab(
@@ -287,7 +331,7 @@ class InstalledAddonDetailsFragment : Fragment() {
         switch.setOnCheckedChangeListener { v, isChecked ->
             val addonManager = v.context.components.addonManager
             switch.isClickable = false
-            binding.removeAddOn.isEnabled = false
+            disableButtons()
             addonManager.setAddonAllowedInPrivateBrowsing(
                 addon,
                 isChecked,
@@ -295,19 +339,20 @@ class InstalledAddonDetailsFragment : Fragment() {
                     runIfFragmentIsAttached {
                         this.addon = it
                         switch.isClickable = true
-                        binding.removeAddOn.isEnabled = true
+                        enableButtons()
                     }
                 },
                 onError = {
                     runIfFragmentIsAttached {
                         switch.isChecked = addon.isAllowedInPrivateBrowsing()
                         switch.isClickable = true
-                        binding.removeAddOn.isEnabled = true
+                        enableButtons()
                     }
                 },
             )
         }
     }
+
     private fun bindRemoveButton() {
         binding.removeAddOn.setOnClickListener {
             setAllInteractiveViewsClickable(binding, false)
@@ -355,6 +400,17 @@ class InstalledAddonDetailsFragment : Fragment() {
         binding.details.isClickable = clickable
         binding.permissions.isClickable = clickable
         binding.removeAddOn.isClickable = clickable
+        binding.reportAddOn.isClickable = clickable
+    }
+
+    private fun enableButtons() {
+        binding.removeAddOn.isEnabled = true
+        binding.reportAddOn.isEnabled = true
+    }
+
+    private fun disableButtons() {
+        binding.removeAddOn.isEnabled = false
+        binding.reportAddOn.isEnabled = false
     }
 
     private fun SwitchMaterial.setState(checked: Boolean) {

@@ -69,9 +69,10 @@ class ComposeMediaNotificationTest {
         mockWebServer.shutdown()
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1347033
     @SmokeTest
     @Test
-    fun videoPlaybackSystemNotificationTest() {
+    fun verifyVideoPlaybackSystemNotificationTest() {
         val videoTestPage = TestAssetHelper.getVideoPageAsset(mockWebServer)
 
         navigationToolbar {
@@ -103,9 +104,10 @@ class ComposeMediaNotificationTest {
         mDevice.pressBack()
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2316010
     @SmokeTest
     @Test
-    fun audioPlaybackSystemNotificationTest() {
+    fun verifyAudioPlaybackSystemNotificationTest() {
         val audioTestPage = TestAssetHelper.getAudioPageAsset(mockWebServer)
 
         navigationToolbar {
@@ -137,6 +139,7 @@ class ComposeMediaNotificationTest {
         mDevice.pressBack()
     }
 
+    // TestRail: https://testrail.stage.mozaws.net/index.php?/cases/view/903595
     @Test
     fun mediaSystemNotificationInPrivateModeTest() {
         val audioTestPage = TestAssetHelper.getAudioPageAsset(mockWebServer)

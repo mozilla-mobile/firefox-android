@@ -44,6 +44,7 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -544,6 +545,7 @@ class PlacesHistoryStorageTest {
         assertEquals(0, visits.size)
     }
 
+    @Ignore("Disabled: https://bugzilla.mozilla.org/show_bug.cgi?id=1853687")
     @Test
     fun `store can delete by 'range'`() = runTestOnMain {
         history.recordVisit("http://www.mozilla.org/1", PageVisit(VisitType.TYPED))
@@ -640,15 +642,6 @@ class PlacesHistoryStorageTest {
 
         val workInfo = workManager.getWorkInfoById(request.id).get()
         assertThat(workInfo.state, `is`(WorkInfo.State.ENQUEUED))
-    }
-
-    @Test
-    fun `can run prune on the store`() = runTestOnMain {
-        // Empty.
-        history.prune()
-        history.recordVisit("http://www.mozilla.org/1", PageVisit(VisitType.TYPED))
-        // Non-empty.
-        history.prune()
     }
 
     @Test(expected = IllegalArgumentException::class)
@@ -907,7 +900,7 @@ class PlacesHistoryStorageTest {
             VisitObservation(
                 url = "https://www.youtube.com/watch?v=F7PQdCDiE44",
                 title = "DW next crisis",
-                visitType = mozilla.appservices.places.uniffi.VisitTransition.LINK,
+                visitType = mozilla.appservices.places.uniffi.VisitType.LINK,
             ),
         )
 
@@ -961,6 +954,7 @@ class PlacesHistoryStorageTest {
         }
     }
 
+    @Ignore("Disabled: https://bugzilla.mozilla.org/show_bug.cgi?id=1853687")
     @Test
     fun `get history metadata between`() = runTestOnMain {
         assertEquals(0, history.getHistoryMetadataBetween(-1, 0).size)
@@ -1030,7 +1024,7 @@ class PlacesHistoryStorageTest {
         )
         history.noteHistoryMetadataObservation(metaKey1, HistoryMetadataObservation.DocumentTypeObservation(DocumentType.Media))
         history.noteHistoryMetadataObservation(metaKey1, HistoryMetadataObservation.ViewTimeObservation(20000))
-
+        Thread.sleep(10)
         val afterMeta1 = System.currentTimeMillis()
 
         val metaKey2 = HistoryMetadataKey(
@@ -1041,6 +1035,7 @@ class PlacesHistoryStorageTest {
         history.noteHistoryMetadataObservation(metaKey2, HistoryMetadataObservation.DocumentTypeObservation(DocumentType.Regular))
         history.noteHistoryMetadataObservation(metaKey2, HistoryMetadataObservation.ViewTimeObservation(2000))
 
+        Thread.sleep(10)
         val afterMeta2 = System.currentTimeMillis()
 
         val metaKey3 = HistoryMetadataKey(

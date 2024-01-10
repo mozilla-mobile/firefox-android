@@ -14,7 +14,7 @@ import mozilla.components.support.test.mock
 import mozilla.components.support.test.robolectric.testContext
 import mozilla.components.support.test.whenever
 import mozilla.components.tooling.fetch.tests.FetchTestCases
-import okhttp3.Headers
+import okhttp3.Headers.Companion.toHeaders
 import okhttp3.mockwebserver.MockWebServer
 import okhttp3.mockwebserver.RecordedRequest
 import org.junit.Assert.assertEquals
@@ -285,6 +285,22 @@ class GeckoViewFetchUnitTestCases : FetchTestCases() {
     }
 
     @Test
+    fun get200WithReferrerUrl() {
+        mockResponse(200)
+
+        val request = mock<Request>()
+        whenever(request.url).thenReturn("https://mozilla.org")
+        whenever(request.method).thenReturn(Request.Method.GET)
+        whenever(request.referrerUrl).thenReturn("https://mozilla.org")
+        createNewClient().fetch(request)
+
+        val captor = ArgumentCaptor.forClass(WebRequest::class.java)
+
+        verify(geckoWebExecutor)!!.fetch(captor.capture(), eq(GeckoWebExecutor.FETCH_FLAGS_NONE))
+        assertEquals("https://mozilla.org", captor.value.referrer)
+    }
+
+    @Test
     fun toResponseMustReturn200ForDataUrls() {
         val builder = WebResponse.Builder("data:,Hello%2C%20World!").statusCode(0).build()
         assertEquals(Response.SUCCESS, builder.toResponse().status)
@@ -297,7 +313,7 @@ class GeckoViewFetchUnitTestCases : FetchTestCases() {
         whenever(request.method).thenReturn(method)
 
         headerMap?.let {
-            whenever(request.headers).thenReturn(Headers.of(headerMap))
+            whenever(request.headers).thenReturn(headerMap.toHeaders())
             whenever(request.getHeader(any())).thenAnswer { inv -> it[inv.getArgument(0)] }
         }
 

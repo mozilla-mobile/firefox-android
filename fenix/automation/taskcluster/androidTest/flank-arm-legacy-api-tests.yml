@@ -25,14 +25,12 @@ gcloud:
     - notPackage org.mozilla.fenix.experimentintegration
     - class org.mozilla.fenix.ui.MainMenuTest#goBackTest
     - class org.mozilla.fenix.ui.MainMenuTest#goForwardTest
-    - class org.mozilla.fenix.ui.HistoryTest#visitedUrlHistoryTest
-    - class org.mozilla.fenix.ui.MainMenuTest#openMainMenuSettingsItemTest
-    - class org.mozilla.fenix.ui.SettingsSearchTest#toggleSearchSuggestionsTest
+    - class org.mozilla.fenix.ui.HistoryTest#verifyHistoryMenuWithHistoryItemsTest
     - class org.mozilla.fenix.ui.CollectionTest#deleteCollectionTest
-    - class org.mozilla.fenix.ui.SmokeTest#noHistoryInPrivateBrowsingTest
+    - class org.mozilla.fenix.ui.HistoryTest#noHistoryInPrivateBrowsingTest
     - class org.mozilla.fenix.ui.TabbedBrowsingTest#openNewTabTest
     - class org.mozilla.fenix.ui.TabbedBrowsingTest#openNewPrivateTabTest
-    - class org.mozilla.fenix.ui.TopSitesTest#verifyOpenTopSiteNormalTab
+    - class org.mozilla.fenix.ui.TopSitesTest#openTopSiteInANewTabTest
     - class org.mozilla.fenix.ui.BookmarksTest#addBookmarkTest
 
   device:
@@ -42,8 +40,8 @@ gcloud:
     - model: Pixel2.arm
       version: 27
       locale: en_US
-    - model: blueline
-      version: 28
+    - model: redfin
+      version: 30
       locale: en_US
     - model: x1q
       version: 29

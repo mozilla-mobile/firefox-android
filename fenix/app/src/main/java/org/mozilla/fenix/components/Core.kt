@@ -40,6 +40,7 @@ import mozilla.components.concept.fetch.Client
 import mozilla.components.feature.awesomebar.provider.SessionAutocompleteProvider
 import mozilla.components.feature.customtabs.store.CustomTabsServiceStore
 import mozilla.components.feature.downloads.DownloadMiddleware
+import mozilla.components.feature.fxsuggest.facts.FxSuggestFactsMiddleware
 import mozilla.components.feature.logins.exceptions.LoginExceptionStorage
 import mozilla.components.feature.media.MediaSessionFeature
 import mozilla.components.feature.media.middleware.LastMediaAccessMiddleware
@@ -141,10 +142,13 @@ class Core(
                 R.color.fx_mobile_layer_color_1,
             ),
             httpsOnlyMode = context.settings().getHttpsOnlyMode(),
-            cookieBannerHandlingModePrivateBrowsing = context.settings().getCookieBannerHandling(),
+            globalPrivacyControlEnabled = context.settings().shouldEnableGlobalPrivacyControl,
             cookieBannerHandlingMode = context.settings().getCookieBannerHandling(),
-            cookieBannerHandlingDetectOnlyMode = context.settings()
-                .shouldShowCookieBannerReEngagementDialog(),
+            cookieBannerHandlingModePrivateBrowsing = context.settings().getCookieBannerHandlingPrivateMode(),
+            cookieBannerHandlingDetectOnlyMode = context.settings().shouldEnableCookieBannerDetectOnly,
+            cookieBannerHandlingGlobalRules = context.settings().shouldEnableCookieBannerGlobalRules,
+            cookieBannerHandlingGlobalRulesSubFrames = context.settings().shouldEnableCookieBannerGlobalRulesSubFrame,
+            emailTrackerBlockingPrivateBrowsing = true,
         )
 
         GeckoEngine(
@@ -281,16 +285,13 @@ class Core(
                 HistoryMetadataMiddleware(historyMetadataService),
                 SessionPrioritizationMiddleware(),
                 SaveToPDFMiddleware(context),
+                FxSuggestFactsMiddleware(),
             )
 
         BrowserStore(
             initialState = BrowserState(
                 search = SearchState(
-                    applicationSearchEngines = if (context.settings().showUnifiedSearchFeature) {
-                        applicationSearchEngines
-                    } else {
-                        emptyList()
-                    },
+                    applicationSearchEngines = applicationSearchEngines,
                 ),
             ),
             middleware = middlewareList + EngineMiddleware.create(

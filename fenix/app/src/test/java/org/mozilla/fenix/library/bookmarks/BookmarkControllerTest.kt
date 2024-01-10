@@ -42,10 +42,12 @@ import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
+import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.Services
+import org.mozilla.fenix.components.appstate.AppAction
+import org.mozilla.fenix.components.appstate.AppState
 import org.mozilla.fenix.ext.bookmarkStorage
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.utils.Settings
 
 @Suppress("TooManyFunctions", "LargeClass")
 class BookmarkControllerTest {
@@ -65,7 +67,8 @@ class BookmarkControllerTest {
     private val addNewTabUseCase: TabsUseCases.AddNewTabUseCase = mockk(relaxed = true)
     private val navBackStackEntry: NavBackStackEntry = mockk(relaxed = true)
     private val navDestination: NavDestination = mockk(relaxed = true)
-    private val settings: Settings = mockk(relaxed = true)
+
+    private lateinit var appStore: AppStore
 
     private val item =
         BookmarkNode(BookmarkNodeType.ITEM, "456", "123", 0u, "Mozilla", "http://mozilla.org", 0, null)
@@ -124,6 +127,7 @@ class BookmarkControllerTest {
         every { bookmarkStore.dispatch(any()) } returns mockk()
         every { sharedViewModel.selectedFolder = any() } just runs
         every { tabsUseCases.addTab } returns addNewTabUseCase
+        appStore = AppStore()
     }
 
     @Test
@@ -172,8 +176,8 @@ class BookmarkControllerTest {
 
     @Test
     fun `WHEN handleBookmarkTapped is called with private browsing THEN load the bookmark in new tab`() {
-        every { homeActivity.browsingModeManager.mode } returns BrowsingMode.Private
         val flags = EngineSession.LoadUrlFlags.select(EngineSession.LoadUrlFlags.ALLOW_JAVASCRIPT_URL)
+        appStore = AppStore(AppState(mode = BrowsingMode.Private))
 
         createController().handleBookmarkTapped(item)
 
@@ -185,22 +189,6 @@ class BookmarkControllerTest {
                 flags = flags,
             )
         }
-    }
-
-    @Test
-    fun `handleBookmarkTapped should respect browsing mode`() {
-        // if in normal mode, should be in normal mode
-        every { homeActivity.browsingModeManager.mode } returns BrowsingMode.Normal
-
-        val controller = createController()
-        controller.handleBookmarkTapped(item)
-        assertEquals(BrowsingMode.Normal, homeActivity.browsingModeManager.mode)
-
-        // if in private mode, should be in private mode
-        every { homeActivity.browsingModeManager.mode } returns BrowsingMode.Private
-
-        controller.handleBookmarkTapped(item)
-        assertEquals(BrowsingMode.Private, homeActivity.browsingModeManager.mode)
     }
 
     @Test
@@ -249,7 +237,7 @@ class BookmarkControllerTest {
 
         verify {
             navController.navigate(
-                BookmarkFragmentDirections.actionBookmarkFragmentToBookmarkSearchDialogFragment(),
+                BookmarkFragmentDirections.actionGlobalSearchDialog(sessionId = null),
             )
         }
     }
@@ -355,7 +343,7 @@ class BookmarkControllerTest {
         assertNotNull(openedToPrivateTabsPage)
         assertFalse(openedToPrivateTabsPage!!)
         verifyOrder {
-            homeActivity.browsingModeManager.mode = BrowsingMode.Normal
+            appStore.dispatch(AppAction.ModeChange(BrowsingMode.Normal))
             addNewTabUseCase.invoke(item.url!!, private = false)
         }
     }
@@ -375,7 +363,7 @@ class BookmarkControllerTest {
         assertNotNull(openedToPrivateTabsPage)
         assertTrue(openedToPrivateTabsPage!!)
         verifyOrder {
-            homeActivity.browsingModeManager.mode = BrowsingMode.Private
+            appStore.dispatch(AppAction.ModeChange(BrowsingMode.Private))
             addNewTabUseCase.invoke(item.url!!, private = true)
         }
     }
@@ -414,7 +402,7 @@ class BookmarkControllerTest {
             addNewTabUseCase.invoke(item.url!!, private = false)
             addNewTabUseCase.invoke(item.url!!, private = false)
             addNewTabUseCase.invoke(childItem.url!!, private = false)
-            homeActivity.browsingModeManager.mode = BrowsingMode.Normal
+            appStore.dispatch(AppAction.ModeChange(BrowsingMode.Normal))
         }
     }
 
@@ -452,7 +440,7 @@ class BookmarkControllerTest {
             addNewTabUseCase.invoke(item.url!!, private = true)
             addNewTabUseCase.invoke(item.url!!, private = true)
             addNewTabUseCase.invoke(childItem.url!!, private = true)
-            homeActivity.browsingModeManager.mode = BrowsingMode.Private
+            appStore.dispatch(AppAction.ModeChange(BrowsingMode.Private))
         }
     }
 
@@ -554,6 +542,7 @@ class BookmarkControllerTest {
             clipboardManager = clipboardManager,
             scope = scope,
             store = bookmarkStore,
+            appStore = appStore,
             sharedViewModel = sharedViewModel,
             tabsUseCases = tabsUseCases,
             loadBookmarkNode = loadBookmarkNode,
@@ -562,7 +551,6 @@ class BookmarkControllerTest {
             deleteBookmarkFolder = deleteBookmarkFolder,
             showTabTray = showTabTray,
             warnLargeOpenAll = warnLargeOpenAll,
-            settings = settings,
         )
     }
 }

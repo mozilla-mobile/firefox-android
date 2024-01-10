@@ -4,9 +4,6 @@
 
 package org.mozilla.fenix.search.toolbar
 
-import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
@@ -16,6 +13,7 @@ import mozilla.components.feature.toolbar.ToolbarAutocompleteFeature
 import mozilla.components.support.ktx.android.content.getColorFromAttr
 import mozilla.components.support.ktx.android.content.res.resolveAttribute
 import mozilla.components.support.ktx.android.view.hideKeyboard
+import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.search.SearchEngineSource
@@ -52,9 +50,7 @@ interface ToolbarInteractor : SearchSelectorInteractor {
 /**
  * View that contains and configures the BrowserToolbar to only be used in its editing mode.
  */
-@Suppress("LongParameterList")
 class ToolbarView(
-    private val context: Context,
     private val settings: Settings,
     private val components: Components,
     private val interactor: ToolbarInteractor,
@@ -121,6 +117,10 @@ class ToolbarView(
                         url = text
                         interactor.onTextChanged(text)
                     }
+
+                    override fun onInputCleared() {
+                        Events.browserToolbarInputCleared.record()
+                    }
                 },
             )
         }
@@ -146,33 +146,16 @@ class ToolbarView(
             interactor.onTextChanged(view.url.toString())
 
             // If search terms are displayed, move the cursor to the end instead of selecting all text.
-            if (settings.showUnifiedSearchFeature && searchState.searchTerms.isNotBlank()) {
+            if (searchState.searchTerms.isNotBlank()) {
                 view.editMode(cursorPlacement = Toolbar.CursorPlacement.END)
             } else {
                 view.editMode()
             }
+
             isInitialized = true
         }
 
         configureAutocomplete(searchState.searchEngineSource)
-
-        val searchEngine = searchState.searchEngineSource.searchEngine
-
-        if (!settings.showUnifiedSearchFeature && searchEngine != null) {
-            val iconSize =
-                context.resources.getDimensionPixelSize(R.dimen.preference_icon_drawable_size)
-
-            val scaledIcon = Bitmap.createScaledBitmap(
-                searchEngine.icon,
-                iconSize,
-                iconSize,
-                true,
-            )
-
-            val icon = BitmapDrawable(context.resources, scaledIcon)
-
-            view.edit.setIcon(icon, searchEngine.name)
-        }
     }
 
     private fun configureAutocomplete(searchEngineSource: SearchEngineSource) {
@@ -208,6 +191,10 @@ class ToolbarView(
                     listOfNotNull(
                         when (settings.shouldShowHistorySuggestions) {
                             true -> components.core.historyStorage
+                            false -> null
+                        },
+                        when (settings.shouldShowBookmarkSuggestions) {
+                            true -> components.core.bookmarksStorage
                             false -> null
                         },
                         components.core.domainsAutocompleteProvider,

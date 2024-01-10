@@ -38,11 +38,11 @@ abstract class ToolbarIntegration(
 
     val store = context.components.core.store
     private val toolbarPresenter: ToolbarPresenter = ToolbarPresenter(
-        toolbar,
-        store,
-        sessionId,
-        context.settings().showUnifiedSearchFeature,
-        ToolbarFeature.UrlRenderConfiguration(
+        toolbar = toolbar,
+        store = store,
+        customTabId = sessionId,
+        shouldDisplaySearchTerms = true,
+        urlRenderConfiguration = ToolbarFeature.UrlRenderConfiguration(
             context.components.publicSuffixList,
             ThemeManager.resolveAttribute(R.attr.textPrimary, context),
             renderStyle = renderStyle,
@@ -76,6 +76,7 @@ abstract class ToolbarIntegration(
     }
 }
 
+@Suppress("LongParameterList")
 class DefaultToolbarIntegration(
     context: Context,
     toolbar: BrowserToolbar,
@@ -101,6 +102,8 @@ class DefaultToolbarIntegration(
         toolbar = toolbar,
         isPrivate = isPrivate,
         sessionId = sessionId,
+        onShoppingCfrActionClicked = interactor::onShoppingCfrActionClicked,
+        onShoppingCfrDisplayed = interactor::onShoppingCfrDisplayed,
     )
 
     init {
@@ -135,6 +138,7 @@ class DefaultToolbarIntegration(
             },
             store = store,
             menu = tabCounterMenu,
+            showMaskInPrivateMode = context.settings().feltPrivateBrowsingEnabled,
         )
 
         val tabCount = if (isPrivate) {

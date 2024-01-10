@@ -6,7 +6,6 @@ package mozilla.components.feature.search.telemetry
 
 import androidx.annotation.VisibleForTesting
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.store.BrowserStore
@@ -43,13 +42,13 @@ abstract class BaseSearchTelemetry {
         store: BrowserStore,
         extensionInfo: ExtensionInfo,
     ) {
-        engine.installWebExtension(
+        engine.installBuiltInWebExtension(
             id = extensionInfo.id,
             url = extensionInfo.resourceUrl,
             onSuccess = { extension ->
                 store.flowScoped { flow -> subscribeToUpdates(flow, extension, extensionInfo) }
             },
-            onError = { _, throwable ->
+            onError = { throwable ->
                 Logger.error("Could not install ${extensionInfo.id} extension", throwable)
             },
         )

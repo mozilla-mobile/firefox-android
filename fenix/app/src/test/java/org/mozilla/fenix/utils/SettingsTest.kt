@@ -18,6 +18,7 @@ import mozilla.components.support.test.robolectric.testContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
+import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -827,24 +828,10 @@ class SettingsTest {
     }
 
     @Test
-    fun `GIVEN junoOnboarding is disabled THEN shouldShowJunoOnboarding returns false`() {
+    fun `GIVEN hasUserBeenOnboarded is false and isLauncherIntent is false THEN shouldShowOnboarding returns false`() {
         val settings = spyk(settings)
-        every { settings.junoOnboardingEnabled } returns false
 
-        val actual = settings.shouldShowJunoOnboarding(
-            hasUserBeenOnboarded = false,
-            isLauncherIntent = true,
-        )
-
-        assertFalse(actual)
-    }
-
-    @Test
-    fun `GIVEN junoOnboarding is enabled, hasUserBeenOnboarded is false and isLauncherIntent is false THEN shouldShowJunoOnboarding returns false`() {
-        val settings = spyk(settings)
-        every { settings.junoOnboardingEnabled } returns true
-
-        val actual = settings.shouldShowJunoOnboarding(
+        val actual = settings.shouldShowOnboarding(
             hasUserBeenOnboarded = false,
             isLauncherIntent = false,
         )
@@ -853,11 +840,10 @@ class SettingsTest {
     }
 
     @Test
-    fun `GIVEN junoOnboarding is enabled and hasUserBeenOnboarded is true THEN shouldShowJunoOnboarding returns false`() {
+    fun `GIVEN hasUserBeenOnboarded is true THEN shouldShowOnboarding returns false`() {
         val settings = spyk(settings)
-        every { settings.junoOnboardingEnabled } returns true
 
-        val actual = settings.shouldShowJunoOnboarding(
+        val actual = settings.shouldShowOnboarding(
             hasUserBeenOnboarded = true,
             isLauncherIntent = true,
         )
@@ -866,11 +852,10 @@ class SettingsTest {
     }
 
     @Test
-    fun `GIVEN junoOnboarding is enabled, hasUserBeenOnboarded is false and isLauncherIntent is true THEN shouldShowJunoOnboarding returns true`() {
+    fun `GIVEN hasUserBeenOnboarded is false and isLauncherIntent is true THEN shouldShowOnboarding returns true`() {
         val settings = spyk(settings)
-        every { settings.junoOnboardingEnabled } returns true
 
-        val actual = settings.shouldShowJunoOnboarding(
+        val actual = settings.shouldShowOnboarding(
             hasUserBeenOnboarded = false,
             isLauncherIntent = true,
         )
@@ -965,5 +950,58 @@ class SettingsTest {
 
         settings.openLinksInExternalApp = "pref_key_open_links_in_apps_never"
         assertEquals(settings.getOpenLinksInAppsString(), "Never")
+    }
+
+    @Test
+    fun `GIVEN a written integer value for pref_key_search_widget_installed WHEN reading searchWidgetInstalled THEN do not throw a ClassCastException`() {
+        val expectedInt = 5
+        val oldPrefKey = "pref_key_search_widget_installed"
+
+        settings.preferences.edit().putInt(oldPrefKey, expectedInt).apply()
+
+        try {
+            assertEquals(expectedInt, settings.preferences.getInt(oldPrefKey, 0))
+            assertFalse(settings.searchWidgetInstalled)
+        } catch (e: ClassCastException) {
+            fail("Unexpected ClassCastException")
+        }
+    }
+
+    @Test
+    fun `GIVEN previously stored pref_key_search_widget_installed value WHEN calling migrateSearchWidgetInstalledIfNeeded THEN migrate the value`() {
+        val expectedInt = 5
+        val oldPrefKey = "pref_key_search_widget_installed"
+
+        settings.preferences.edit().putInt(oldPrefKey, expectedInt).apply()
+
+        assertEquals(expectedInt, settings.preferences.getInt(oldPrefKey, 0))
+        assertFalse(settings.searchWidgetInstalled)
+
+        settings.migrateSearchWidgetInstalledPrefIfNeeded()
+
+        assertTrue(settings.searchWidgetInstalled)
+    }
+
+    @Test
+    fun `GIVEN none previously stored pref_key_search_widget_installed value WHEN calling migrateSearchWidgetInstalledIfNeeded THEN migration should not happen`() {
+        val oldPrefKey = "pref_key_search_widget_installed"
+        val expectedDefaultValue = 0
+        val storedValue = settings.preferences.getInt(oldPrefKey, expectedDefaultValue)
+
+        assertEquals(expectedDefaultValue, storedValue)
+
+        settings.migrateSearchWidgetInstalledPrefIfNeeded()
+
+        assertEquals(expectedDefaultValue, settings.preferences.getInt(oldPrefKey, expectedDefaultValue))
+        assertFalse(settings.searchWidgetInstalled)
+    }
+
+    @Test
+    fun `GIVEN previously stored pref_key_search_widget_installed value is Boolean WHEN calling migrateSearchWidgetInstalledIfNeeded THEN crash should not happen`() {
+        val oldPrefKey = "pref_key_search_widget_installed"
+        settings.preferences.edit().putBoolean(oldPrefKey, false).apply()
+
+        settings.migrateSearchWidgetInstalledPrefIfNeeded()
+        assertFalse(settings.searchWidgetInstalled)
     }
 }

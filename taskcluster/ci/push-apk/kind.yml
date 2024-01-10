@@ -8,7 +8,7 @@ transforms:
     - taskgraph.transforms.from_deps
     - android_taskgraph.transforms.upstream_artifacts
     - android_taskgraph.transforms.treeherder
-    - android_taskgraph.transforms.push_apk
+    - android_taskgraph.transforms.push_android_app
     - taskgraph.transforms.task
 
 kind-dependencies:
@@ -21,13 +21,9 @@ tasks:
         from-deps:
             with-attributes:
                 build-type:
-                    - focus-nightly
                     - focus-release
                     - klar-release
                     - focus-beta
-                    - fenix-nightly
-                    - fenix-release
-                    - fenix-beta
             group-by:
                 attribute: build-type
             copy-attributes: true
@@ -69,5 +65,5 @@ tasks:
         routes:
             by-level:
                 '3':
-                  - "notify.email.release-mgmt@mozilla.com.on-failed"
+                    - "notify.email.release-mgmt@mozilla.com.on-failed"
                 'default': []

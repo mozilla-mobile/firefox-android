@@ -48,13 +48,15 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BrowserAnimator
 import org.mozilla.fenix.browser.BrowserFragmentDirections
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
-import org.mozilla.fenix.browser.browsingmode.SimpleBrowsingModeManager
 import org.mozilla.fenix.browser.readermode.ReaderModeController
+import org.mozilla.fenix.components.AppStore
+import org.mozilla.fenix.components.appstate.AppState
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.home.HomeFragment
 import org.mozilla.fenix.home.HomeScreenViewModel
+import org.mozilla.fenix.utils.Settings
 
 @RunWith(FenixRobolectricTestRunner::class)
 class DefaultBrowserToolbarControllerTest {
@@ -91,6 +93,7 @@ class DefaultBrowserToolbarControllerTest {
     @RelaxedMockK
     private lateinit var homeViewModel: HomeScreenViewModel
 
+    private lateinit var appStore: AppStore
     private lateinit var store: BrowserStore
     private val captureMiddleware = CaptureActionsMiddleware<BrowserState, BrowserAction>()
 
@@ -125,6 +128,7 @@ class DefaultBrowserToolbarControllerTest {
             ),
             middleware = listOf(captureMiddleware),
         )
+        appStore = AppStore()
     }
 
     @After
@@ -312,29 +316,31 @@ class DefaultBrowserToolbarControllerTest {
 
     @Test
     fun handleToolbarNewTabPress() {
-        val browsingModeManager = SimpleBrowsingModeManager(BrowsingMode.Private)
+        appStore = AppStore(AppState(mode = BrowsingMode.Private))
         val item = TabCounterMenu.Item.NewTab
 
-        every { activity.browsingModeManager } returns browsingModeManager
         every { navController.navigate(BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = true)) } just Runs
 
         val controller = createController()
         controller.handleTabCounterItemInteraction(item)
-        assertEquals(BrowsingMode.Normal, browsingModeManager.mode)
+        appStore.waitUntilIdle()
+
+        assertEquals(BrowsingMode.Normal, appStore.state.mode)
         verify { navController.navigate(BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = true)) }
     }
 
     @Test
     fun handleToolbarNewPrivateTabPress() {
-        val browsingModeManager = SimpleBrowsingModeManager(BrowsingMode.Normal)
+        appStore = AppStore(AppState(mode = BrowsingMode.Normal))
         val item = TabCounterMenu.Item.NewPrivateTab
 
-        every { activity.browsingModeManager } returns browsingModeManager
         every { navController.navigate(BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = true)) } just Runs
 
         val controller = createController()
         controller.handleTabCounterItemInteraction(item)
-        assertEquals(BrowsingMode.Private, browsingModeManager.mode)
+        appStore.waitUntilIdle()
+
+        assertEquals(BrowsingMode.Private, appStore.state.mode)
         verify { navController.navigate(BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = true)) }
     }
 
@@ -369,12 +375,88 @@ class DefaultBrowserToolbarControllerTest {
 
     @Test
     fun handleEraseButtonClicked() {
+        assertNull(Events.browserToolbarEraseTapped.testGetValue())
         val controller = createController()
         controller.handleEraseButtonClick()
 
         verify {
             homeViewModel.sessionToDelete = HomeFragment.ALL_PRIVATE_TABS
             navController.navigate(BrowserFragmentDirections.actionGlobalHome())
+        }
+        assertNotNull(Events.browserToolbarEraseTapped.testGetValue())
+    }
+
+    @Test
+    fun handleShoppingCfrActionClick() {
+        val controller = createController()
+
+        controller.handleShoppingCfrActionClick()
+
+        verify {
+            navController.navigate(BrowserFragmentDirections.actionBrowserFragmentToReviewQualityCheckDialogFragment())
+        }
+    }
+
+    @Test
+    fun handleShoppingCfrDisplayedOnce() {
+        val controller = createController()
+        val mockSettings = mockk<Settings> {
+            every { reviewQualityCheckCfrDisplayTimeInMillis } returns System.currentTimeMillis()
+            every { reviewQualityCheckCfrDisplayTimeInMillis = any() } just Runs
+            every { reviewQualityCheckCFRClosedCounter } returns 1
+            every { reviewQualityCheckCFRClosedCounter = 2 } just Runs
+            every { shouldShowReviewQualityCheckCFR } returns true
+        }
+        every { activity.settings() } returns mockSettings
+
+        controller.handleShoppingCfrDisplayed()
+
+        verify(exactly = 0) { mockSettings.shouldShowReviewQualityCheckCFR = false }
+        verify { mockSettings.reviewQualityCheckCfrDisplayTimeInMillis = any() }
+    }
+
+    @Test
+    fun handleShoppingCfrDisplayedTwice() {
+        val controller = createController()
+        val mockSettings = mockk<Settings> {
+            every { reviewQualityCheckCfrDisplayTimeInMillis } returns System.currentTimeMillis()
+            every { reviewQualityCheckCfrDisplayTimeInMillis = any() } just Runs
+            every { reviewQualityCheckCFRClosedCounter } returns 2
+            every { reviewQualityCheckCFRClosedCounter = 3 } just Runs
+            every { shouldShowReviewQualityCheckCFR } returns true
+        }
+        every { activity.settings() } returns mockSettings
+
+        controller.handleShoppingCfrDisplayed()
+
+        verify(exactly = 0) { mockSettings.shouldShowReviewQualityCheckCFR = false }
+        verify { mockSettings.reviewQualityCheckCfrDisplayTimeInMillis = any() }
+    }
+
+    @Test
+    fun handleShoppingCfrDisplayedThreeTimes() {
+        val controller = createController()
+        val mockSettings = mockk<Settings> {
+            every { reviewQualityCheckCfrDisplayTimeInMillis } returns System.currentTimeMillis()
+            every { reviewQualityCheckCFRClosedCounter } returns 3
+            every { reviewQualityCheckCFRClosedCounter = 4 } just Runs
+            every { shouldShowReviewQualityCheckCFR } returns true
+            every { shouldShowReviewQualityCheckCFR = any() } just Runs
+        }
+        every { activity.settings() } returns mockSettings
+
+        controller.handleShoppingCfrDisplayed()
+
+        verify { mockSettings.shouldShowReviewQualityCheckCFR = false }
+        verify(exactly = 0) { mockSettings.reviewQualityCheckCfrDisplayTimeInMillis = any() }
+    }
+
+    fun handleTranslationsButtonClick() {
+        val controller = createController()
+        controller.handleTranslationsButtonClick()
+
+        verify {
+            navController.navigate(BrowserFragmentDirections.actionBrowserFragmentToTranslationsDialogFragment())
         }
     }
 
@@ -383,6 +465,7 @@ class DefaultBrowserToolbarControllerTest {
         customTabSessionId: String? = null,
     ) = DefaultBrowserToolbarController(
         store = store,
+        appStore = appStore,
         tabsUseCases = tabsUseCases,
         activity = activity,
         navController = navController,

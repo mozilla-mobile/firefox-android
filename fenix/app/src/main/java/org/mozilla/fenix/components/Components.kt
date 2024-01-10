@@ -19,6 +19,7 @@ import mozilla.components.feature.autofill.AutofillConfiguration
 import mozilla.components.lib.publicsuffixlist.PublicSuffixList
 import mozilla.components.support.base.android.NotificationsDelegate
 import mozilla.components.support.base.worker.Frequency
+import org.mozilla.fenix.BrowsingModePersistenceMiddleware
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.FeatureFlags
@@ -158,7 +159,7 @@ class Components(private val context: Context) {
         AddonManager(core.store, core.engine, addonsProvider, addonUpdater)
     }
 
-    val analytics by lazyMonitored { Analytics(context) }
+    val analytics by lazyMonitored { Analytics(context, performance.visualCompletenessQueue.queue) }
     val publicSuffixList by lazyMonitored { PublicSuffixList(context) }
     val clipboardHandler by lazyMonitored { ClipboardHandler(context) }
     val performance by lazyMonitored { PerformanceComponent() }
@@ -223,9 +224,14 @@ class Components(private val context: Context) {
                     messagingStorage = analytics.messagingStorage,
                 ),
                 MetricsMiddleware(metrics = analytics.metrics),
+                BrowsingModePersistenceMiddleware(
+                    settings = settings,
+                ),
             ),
         )
     }
+
+    val fxSuggest by lazyMonitored { FxSuggest(context, analytics.crashReporter) }
 }
 
 /**

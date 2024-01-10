@@ -71,7 +71,6 @@ class AddonsFragment : Fragment(), AddonsManagerAdapterDelegate {
 
         findPreviousInstallationDialogFragment()?.let { dialog ->
             dialog.onConfirmButtonClicked = onConfirmInstallationButtonClicked
-            dialog.addonsProvider = requireContext().components.addonsProvider
         }
     }
 
@@ -81,7 +80,6 @@ class AddonsFragment : Fragment(), AddonsManagerAdapterDelegate {
         scope.launch {
             try {
                 val context = requireContext()
-                val addonsProvider = context.components.addonsProvider
                 val addons = context.components.addonManager.getAddons()
 
                 val style = AddonsManagerAdapter.Style(
@@ -92,10 +90,10 @@ class AddonsFragment : Fragment(), AddonsManagerAdapterDelegate {
                 scope.launch(Dispatchers.Main) {
                     if (adapter == null) {
                         adapter = AddonsManagerAdapter(
-                            addonsProvider = addonsProvider,
                             addonsManagerDelegate = this@AddonsFragment,
                             addons = addons,
                             style = style,
+                            store = context.components.store,
                         )
                         recyclerView.adapter = adapter
                     } else {
@@ -173,10 +171,8 @@ class AddonsFragment : Fragment(), AddonsManagerAdapterDelegate {
         if (isInstallationInProgress) {
             return
         }
-        val addonsProvider = requireContext().components.addonsProvider
         val dialog = AddonInstallationDialogFragment.newInstance(
             addon = addon,
-            addonsProvider = addonsProvider,
             onConfirmButtonClicked = onConfirmInstallationButtonClicked,
         )
 
@@ -201,7 +197,7 @@ class AddonsFragment : Fragment(), AddonsManagerAdapterDelegate {
         isInstallationInProgress = true
 
         val installOperation = requireContext().components.addonManager.installAddon(
-            addon,
+            url = addon.downloadUrl,
             onSuccess = { installedAddon ->
                 context?.let {
                     adapter?.updateAddon(installedAddon)
@@ -210,7 +206,7 @@ class AddonsFragment : Fragment(), AddonsManagerAdapterDelegate {
                     showInstallationDialog(installedAddon)
                 }
             },
-            onError = { _, e ->
+            onError = { e ->
                 // No need to display an error message if installation was cancelled by the user.
                 if (e !is CancellationException) {
                     Toast.makeText(

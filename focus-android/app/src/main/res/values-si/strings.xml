@@ -13,7 +13,7 @@
     <string name="action_save">සුරකින්න</string>
 
     <!-- This text is shown in the URL bar when it's empty -->
-    <string name="urlbar_hint">සොයන්න හෝ ලිපිනය යොදන්න</string>
+    <string name="urlbar_hint">සොයන්න හෝ ලිපිනය ලියන්න</string>
 
     <string name="teaser">ස්වයංක්‍රීය පෞද්. පිරික්සීම.\nපිරික්සන්න. මකන්න. නැවතත්.</string>
 
@@ -54,7 +54,6 @@
     <string name="menu_remove_from_shortcuts">කෙටිමං වෙතින් ඉවත් කරන්න</string>
 
     <!-- Menu item: Shows information about features and changes that are new to this version -->
-    <string name="menu_whats_new" moz:RemovedIn="116" tools:ignore="UnusedResources">අළුත් දෑ</string>
     <string name="menu_settings">සැකසුම්</string>
     <string name="menu_about">පිළිබඳව</string>
     <string name="menu_help">උදව්</string>
@@ -943,7 +942,7 @@
     <!-- Title for the tab crash report screen-->
     <string name="tab_crash_report_title">පටිත්ත බිඳ වැටුණි</string>
     <!-- Headline for the tab crash report screen -->
-    <string name="tab_crash_report_headline">සමාවන්න. මෙම පටිත්ත සමඟ ගැටළුවක් තිබේ.</string>
+    <string name="tab_crash_report_headline">කණගාටුයි. මෙම පටිත්ත සමඟ ගැටලුවක් තිබේ.</string>
     <!-- Subtitle for the tab crash report screen -->
     <string name="tab_crash_report_description">පෞද්. අතිරික්සුවක් බැවින් සුරැකීමට හෝ මෙම පටිත්ත ප්‍රත්‍යර්පණය කළ නොහැකිය.</string>
     <!-- Label for button to close the tab-->
@@ -1020,8 +1019,8 @@
 
      <!-- The error message shown when a website has an invalid or expired SSL certificate. -->
     <string name="mozac_browser_errorpages_security_bad_cert_message"><![CDATA[
- මෙය සේවාදායකයේ වින්‍යාසයෙහි ගැටළුවක් විය හැකිය, හෝ යමෙක් සේවාදායකය ලෙස වංචනිකව පෙනී සිටීමට තැත් කරනවා විය හැකිය. <br/><br/>
- ඔබ පෙර දී මෙම සේවාදායකයට සාර්ථකව සම්බන්ධ වී ඇත්නම්, මෙය තාවකාලික දෝෂයක් විය හැකිය.
+ මෙය සේවාදායකයේ වින්‍යාසයෙහි ගැටලුවක් විය හැකිය, හෝ යමෙක් සේවාදායකය ලෙස වංචනිකව පෙනී සිටීමට තැත් කරනවා විය හැකිය. <br/><br/>
+ ඔබ කලින් මෙම සේවාදායකයට සාර්ථකව සම්බන්‍ධ වී ඇත්නම්, මෙය තාවකාලික දෝෂයක් විය හැකිය.
  ]]></string>
 
     <!-- The advanced certificate information shown when a website has an invalid SSL certificate. The %1$s will be replaced by the app name and %2$s will be replaced by website URL. It's only shown when a website has an invalid SSL certificate. -->

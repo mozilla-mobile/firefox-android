@@ -160,6 +160,11 @@ sealed class HistoryFragmentAction : Action {
     object BackPressed : HistoryFragmentAction()
 
     /**
+     * The search menu item has been clicked.
+     */
+    object SearchClicked : HistoryFragmentAction()
+
+    /**
      * Updates the empty state of [org.mozilla.fenix.library.history.HistoryView].
      */
     data class ChangeEmptyState(val isEmpty: Boolean) : HistoryFragmentAction()
@@ -177,9 +182,14 @@ sealed class HistoryFragmentAction : Action {
 }
 
 /**
- * The state for the History Screen
+ * The state for the History Screen.
+ *
  * @property items List of History to display
  * @property mode Current Mode of History
+ * @property pendingDeletionItems The set of [PendingDeletionHistory] marked for removal.
+ * @property isEmpty Whether or not the screen is empty.
+ * @property isDeletingItems Whether or not the history items are currently in the process of being
+ * deleted.
  */
 data class HistoryFragmentState(
     val items: List<History>,
@@ -281,6 +291,7 @@ private fun historyStateReducer(
         is HistoryFragmentAction.DeleteItems,
         is HistoryFragmentAction.DeleteTimeRange,
         is HistoryFragmentAction.EnterRecentlyClosed,
+        is HistoryFragmentAction.SearchClicked,
         -> state
     }
 }

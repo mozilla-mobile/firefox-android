@@ -546,18 +546,6 @@ class LoginsTest {
         val loginPage = "https://mozilla-mobile.github.io/testapp/v2.0/loginForm.html"
         val originWebsite = "mozilla-mobile.github.io"
 
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openLoginsAndPasswordSubMenu {
-        }.openSaveLoginsAndPasswordsOptions {
-            verifySaveLoginsOptionsView()
-            verifyAskToSaveRadioButton(true)
-            verifyNeverSaveSaveRadioButton(false)
-        }
-
-        exitMenu()
-
         navigationToolbar {
         }.enterURLAndEnterToBrowser(loginPage.toUri()) {
             setPageObjectText(itemWithResId("username"), "mozilla")
@@ -619,14 +607,12 @@ class LoginsTest {
             revealPassword()
             verifyPasswordSaved("firefox")
         }.goBackToSavedLogins {
-            clickSearchLoginButton()
             searchLogin("android")
             viewSavedLoginDetails(originWebsite)
             verifyLoginItemUsername("android")
             revealPassword()
             verifyPasswordSaved("firefox")
         }.goBackToSavedLogins {
-            clickSearchLoginButton()
             searchLogin("AnDrOiD")
             viewSavedLoginDetails(originWebsite)
             verifyLoginItemUsername("android")
@@ -666,14 +652,12 @@ class LoginsTest {
             revealPassword()
             verifyPasswordSaved("firefox")
         }.goBackToSavedLogins {
-            clickSearchLoginButton()
             searchLogin("mozilla")
             viewSavedLoginDetails(originWebsite)
             verifyLoginItemUsername("android")
             revealPassword()
             verifyPasswordSaved("firefox")
         }.goBackToSavedLogins {
-            clickSearchLoginButton()
             searchLogin("MoZiLlA")
             viewSavedLoginDetails(originWebsite)
             verifyLoginItemUsername("android")

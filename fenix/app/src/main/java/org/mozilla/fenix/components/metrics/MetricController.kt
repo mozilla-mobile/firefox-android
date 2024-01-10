@@ -16,6 +16,8 @@ import mozilla.components.feature.awesomebar.provider.HistoryStorageSuggestionPr
 import mozilla.components.feature.awesomebar.provider.SearchSuggestionProvider
 import mozilla.components.feature.awesomebar.provider.SessionSuggestionProvider
 import mozilla.components.feature.contextmenu.facts.ContextMenuFacts
+import mozilla.components.feature.fxsuggest.FxSuggestInteractionInfo
+import mozilla.components.feature.fxsuggest.facts.FxSuggestFacts
 import mozilla.components.feature.media.facts.MediaFacts
 import mozilla.components.feature.prompts.dialog.LoginDialogFacts
 import mozilla.components.feature.prompts.facts.AddressAutofillDialogFacts
@@ -46,17 +48,20 @@ import org.mozilla.fenix.GleanMetrics.ContextMenu
 import org.mozilla.fenix.GleanMetrics.ContextualMenu
 import org.mozilla.fenix.GleanMetrics.CreditCards
 import org.mozilla.fenix.GleanMetrics.Events
+import org.mozilla.fenix.GleanMetrics.FxSuggest
 import org.mozilla.fenix.GleanMetrics.LoginDialog
 import org.mozilla.fenix.GleanMetrics.Logins
 import org.mozilla.fenix.GleanMetrics.MediaNotification
 import org.mozilla.fenix.GleanMetrics.MediaState
 import org.mozilla.fenix.GleanMetrics.PerfAwesomebar
+import org.mozilla.fenix.GleanMetrics.Pings
 import org.mozilla.fenix.GleanMetrics.ProgressiveWebApp
 import org.mozilla.fenix.GleanMetrics.SitePermissions
 import org.mozilla.fenix.GleanMetrics.Sync
 import org.mozilla.fenix.GleanMetrics.SyncedTabs
 import org.mozilla.fenix.search.awesomebar.ShortcutsSuggestionProvider
 import org.mozilla.fenix.utils.Settings
+import java.util.UUID
 import mozilla.components.compose.browser.awesomebar.AwesomeBarFacts as ComposeAwesomeBarFacts
 
 interface MetricController {
@@ -236,6 +241,9 @@ internal class ReleaseMetricController(
                 AndroidAutofill.unlockCancelled.record(NoExtras())
             }
         }
+        Component.FEATURE_AUTOFILL to AutofillFacts.Items.AUTOFILL_LOGIN_PASSWORD_DETECTED -> {
+            Logins.passwordDetected.record(NoExtras())
+        }
         Component.FEATURE_SYNCEDTABS to SyncedTabsFacts.Items.SYNCED_TABS_SUGGESTION_CLICKED -> {
             SyncedTabs.syncedTabsSuggestionClicked.record(NoExtras())
         }
@@ -270,6 +278,108 @@ internal class ReleaseMetricController(
                 CONTEXT_MENU_SHARE -> ContextualMenu.shareTapped.record(NoExtras())
                 else -> Unit
             }
+        }
+
+        Component.FEATURE_FXSUGGEST to FxSuggestFacts.Items.AMP_SUGGESTION_CLICKED,
+        Component.FEATURE_FXSUGGEST to FxSuggestFacts.Items.WIKIPEDIA_SUGGESTION_CLICKED,
+        -> {
+            val clickInfo = metadata?.get(FxSuggestFacts.MetadataKeys.INTERACTION_INFO)
+
+            // Record an event for this click in the `events` ping. These events include the `client_id`.
+            when (clickInfo) {
+                is FxSuggestInteractionInfo.Amp -> {
+                    Awesomebar.sponsoredSuggestionClicked.record(
+                        Awesomebar.SponsoredSuggestionClickedExtra(
+                            provider = "amp",
+                        ),
+                    )
+                }
+                is FxSuggestInteractionInfo.Wikipedia -> {
+                    Awesomebar.nonSponsoredSuggestionClicked.record(
+                        Awesomebar.NonSponsoredSuggestionClickedExtra(
+                            provider = "wikipedia",
+                        ),
+                    )
+                }
+            }
+
+            // Submit a separate `fx-suggest` ping for this click. These pings do not include the `client_id`.
+            FxSuggest.pingType.set("fxsuggest-click")
+            FxSuggest.isClicked.set(true)
+            (metadata?.get(FxSuggestFacts.MetadataKeys.POSITION) as? Long)?.let {
+                FxSuggest.position.set(it)
+            }
+            when (clickInfo) {
+                is FxSuggestInteractionInfo.Amp -> {
+                    FxSuggest.blockId.set(clickInfo.blockId)
+                    FxSuggest.advertiser.set(clickInfo.advertiser)
+                    FxSuggest.reportingUrl.set(clickInfo.reportingUrl)
+                    FxSuggest.iabCategory.set(clickInfo.iabCategory)
+                    FxSuggest.contextId.set(UUID.fromString(clickInfo.contextId))
+                }
+                is FxSuggestInteractionInfo.Wikipedia -> {
+                    FxSuggest.advertiser.set("wikipedia")
+                    FxSuggest.contextId.set(UUID.fromString(clickInfo.contextId))
+                }
+            }
+            Pings.fxSuggest.submit()
+        }
+
+        Component.FEATURE_FXSUGGEST to FxSuggestFacts.Items.AMP_SUGGESTION_IMPRESSED,
+        Component.FEATURE_FXSUGGEST to FxSuggestFacts.Items.WIKIPEDIA_SUGGESTION_IMPRESSED,
+        -> {
+            val impressionInfo = metadata?.get(FxSuggestFacts.MetadataKeys.INTERACTION_INFO)
+            val engagementAbandoned = metadata?.get(FxSuggestFacts.MetadataKeys.ENGAGEMENT_ABANDONED) as? Boolean
+                ?: false
+
+            // Record an event for this impression in the `events` ping. These events include the `client_id`, and
+            // we record them for engaged and abandoned search sessions.
+            when (impressionInfo) {
+                is FxSuggestInteractionInfo.Amp -> {
+                    Awesomebar.sponsoredSuggestionImpressed.record(
+                        Awesomebar.SponsoredSuggestionImpressedExtra(
+                            provider = "amp",
+                            engagementAbandoned = engagementAbandoned,
+                        ),
+                    )
+                }
+                is FxSuggestInteractionInfo.Wikipedia -> {
+                    Awesomebar.nonSponsoredSuggestionImpressed.record(
+                        Awesomebar.NonSponsoredSuggestionImpressedExtra(
+                            provider = "wikipedia",
+                            engagementAbandoned = engagementAbandoned,
+                        ),
+                    )
+                }
+            }
+
+            // Submit a separate `fx-suggest` ping for this impression. These pings do not include the `client_id`,
+            // and we submit them for engaged search sessions only.
+            if (!engagementAbandoned) {
+                FxSuggest.pingType.set("fxsuggest-impression")
+                (metadata?.get(FxSuggestFacts.MetadataKeys.IS_CLICKED) as? Boolean)?.let {
+                    FxSuggest.isClicked.set(it)
+                }
+                (metadata?.get(FxSuggestFacts.MetadataKeys.POSITION) as? Long)?.let {
+                    FxSuggest.position.set(it)
+                }
+                when (impressionInfo) {
+                    is FxSuggestInteractionInfo.Amp -> {
+                        FxSuggest.blockId.set(impressionInfo.blockId)
+                        FxSuggest.advertiser.set(impressionInfo.advertiser)
+                        FxSuggest.reportingUrl.set(impressionInfo.reportingUrl)
+                        FxSuggest.iabCategory.set(impressionInfo.iabCategory)
+                        FxSuggest.contextId.set(UUID.fromString(impressionInfo.contextId))
+                    }
+                    is FxSuggestInteractionInfo.Wikipedia -> {
+                        FxSuggest.advertiser.set("wikipedia")
+                        FxSuggest.contextId.set(UUID.fromString(impressionInfo.contextId))
+                    }
+                }
+                Pings.fxSuggest.submit()
+            }
+
+            Unit
         }
 
         Component.FEATURE_PWA to ProgressiveWebAppFacts.Items.HOMESCREEN_ICON_TAP -> {

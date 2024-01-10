@@ -6,6 +6,7 @@ package org.mozilla.fenix.ui.robots
 
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
@@ -20,13 +21,14 @@ import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
 import org.hamcrest.Matchers.allOf
 import org.mozilla.fenix.R
-import org.mozilla.fenix.helpers.MatcherHelper.assertItemContainingTextExists
-import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithResIdAndTextExists
-import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithResIdExists
+import org.mozilla.fenix.helpers.Constants.TAG
+import org.mozilla.fenix.helpers.DataGenerationHelper.getStringResource
+import org.mozilla.fenix.helpers.MatcherHelper.assertUIObjectExists
 import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdContainingText
-import org.mozilla.fenix.helpers.TestHelper.getStringResource
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithText
+import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.ext.waitNotNull
@@ -52,7 +54,7 @@ class ShareOverlayRobot {
 
     // This function verifies the share layout when a single tab is shared - no tab info shown
     fun verifyShareTabLayout() {
-        assertItemWithResIdExists(
+        assertUIObjectExists(
             // Share layout
             itemWithResId("$packageName:id/sharingLayout"),
             // Send to device section
@@ -61,8 +63,6 @@ class ShareOverlayRobot {
             itemWithResId("$packageName:id/recentAppsContainer"),
             // All actions sections
             itemWithResId("$packageName:id/appsList"),
-        )
-        assertItemWithResIdAndTextExists(
             // Send to device header
             itemWithResIdContainingText(
                 "$packageName:id/accountHeaderText",
@@ -78,9 +78,6 @@ class ShareOverlayRobot {
                 "$packageName:id/apps_link_header",
                 getStringResource(R.string.share_link_all_apps_subheader),
             ),
-        )
-
-        assertItemContainingTextExists(
             // Save as PDF button
             itemContainingText(getStringResource(R.string.share_save_to_pdf)),
         )
@@ -135,9 +132,18 @@ class ShareOverlayRobot {
     class Transition {
         fun clickSaveAsPDF(interact: DownloadRobot.() -> Unit): DownloadRobot.Transition {
             itemContainingText("Save as PDF").click()
+            Log.i(TAG, "clickSaveAsPDF: Clicked \"SAVE AS PDF\" share overlay button")
 
             DownloadRobot().interact()
             return DownloadRobot.Transition()
+        }
+
+        fun clickPrintButton(interact: BrowserRobot.() -> Unit): BrowserRobot.Transition {
+            itemWithText("Print").waitForExists(TestAssetHelper.waitingTime)
+            itemWithText("Print").click()
+
+            BrowserRobot().interact()
+            return BrowserRobot.Transition()
         }
     }
 }

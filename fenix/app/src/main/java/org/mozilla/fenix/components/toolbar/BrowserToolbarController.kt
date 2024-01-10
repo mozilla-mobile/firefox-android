@@ -23,11 +23,13 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.BrowserAnimator
 import org.mozilla.fenix.browser.BrowserAnimator.Companion.getToolbarNavOptions
 import org.mozilla.fenix.browser.BrowserFragmentDirections
-import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.readermode.ReaderModeController
+import org.mozilla.fenix.components.AppStore
+import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.toolbar.interactor.BrowserToolbarInteractor
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
+import org.mozilla.fenix.ext.navigateSafe
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.HomeFragment
 import org.mozilla.fenix.home.HomeScreenViewModel
@@ -53,11 +55,29 @@ interface BrowserToolbarController {
      * @see [BrowserToolbarInteractor.onEraseButtonClicked]
      */
     fun handleEraseButtonClick()
+
+    /**
+     * @see [BrowserToolbarInteractor.onShoppingCfrActionClicked]
+     */
+    fun handleShoppingCfrActionClick()
+
+    /**
+     * @see [BrowserToolbarInteractor.onShoppingCfrDisplayed]
+     */
+    fun handleShoppingCfrDisplayed()
+
+    /**
+     * @see [BrowserToolbarInteractor.onTranslationsButtonClicked]
+     */
+    fun handleTranslationsButtonClick()
 }
+
+private const val MAX_DISPLAY_NUMBER_SHOPPING_CFR = 3
 
 @Suppress("LongParameterList")
 class DefaultBrowserToolbarController(
     private val store: BrowserStore,
+    private val appStore: AppStore,
     private val tabsUseCases: TabsUseCases,
     private val activity: HomeActivity,
     private val navController: NavController,
@@ -157,13 +177,13 @@ class DefaultBrowserToolbarController(
                 }
             }
             is TabCounterMenu.Item.NewTab -> {
-                activity.browsingModeManager.mode = BrowsingMode.Normal
+                appStore.dispatch(AppAction.ToolbarAction.NewTab)
                 navController.navigate(
                     BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = true),
                 )
             }
             is TabCounterMenu.Item.NewPrivateTab -> {
-                activity.browsingModeManager.mode = BrowsingMode.Private
+                appStore.dispatch(AppAction.ToolbarAction.NewPrivateTab)
                 navController.navigate(
                     BrowserFragmentDirections.actionGlobalHome(focusOnAddressBar = true),
                 )
@@ -187,13 +207,46 @@ class DefaultBrowserToolbarController(
     }
 
     override fun handleEraseButtonClick() {
+        Events.browserToolbarEraseTapped.record(NoExtras())
         homeViewModel.sessionToDelete = HomeFragment.ALL_PRIVATE_TABS
         val directions = BrowserFragmentDirections.actionGlobalHome()
         navController.navigate(directions)
     }
 
+    override fun handleShoppingCfrActionClick() {
+        navController.navigate(
+            BrowserFragmentDirections.actionBrowserFragmentToReviewQualityCheckDialogFragment(),
+        )
+    }
+
+    override fun handleShoppingCfrDisplayed() {
+        updateShoppingCfrSettings()
+    }
+
+    override fun handleTranslationsButtonClick() {
+        val directions =
+            BrowserFragmentDirections.actionBrowserFragmentToTranslationsDialogFragment()
+        navController.navigateSafe(R.id.browserFragment, directions)
+    }
+
     companion object {
         internal const val TELEMETRY_BROWSER_IDENTIFIER = "browserMenu"
+    }
+
+    /**
+     * Stop showing the CFR after being displayed three times with
+     * with at least 12 hrs in-between.
+     * As described in: https://bugzilla.mozilla.org/show_bug.cgi?id=1861173#c0
+     */
+    private fun updateShoppingCfrSettings() = with(activity.settings()) {
+        reviewQualityCheckCFRClosedCounter++
+        if (reviewQualityCheckCfrDisplayTimeInMillis != 0L &&
+            reviewQualityCheckCFRClosedCounter >= MAX_DISPLAY_NUMBER_SHOPPING_CFR
+        ) {
+            shouldShowReviewQualityCheckCFR = false
+        } else {
+            reviewQualityCheckCfrDisplayTimeInMillis = System.currentTimeMillis()
+        }
     }
 }
 

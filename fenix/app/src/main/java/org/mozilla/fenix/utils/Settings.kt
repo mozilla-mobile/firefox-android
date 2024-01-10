@@ -46,6 +46,11 @@ import org.mozilla.fenix.nimbus.CookieBannersSection
 import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.nimbus.HomeScreenSection
 import org.mozilla.fenix.nimbus.Mr2022Section
+import org.mozilla.fenix.nimbus.QueryParameterStrippingSection
+import org.mozilla.fenix.nimbus.QueryParameterStrippingSection.QUERY_PARAMETER_STRIPPING
+import org.mozilla.fenix.nimbus.QueryParameterStrippingSection.QUERY_PARAMETER_STRIPPING_ALLOW_LIST
+import org.mozilla.fenix.nimbus.QueryParameterStrippingSection.QUERY_PARAMETER_STRIPPING_PMB
+import org.mozilla.fenix.nimbus.QueryParameterStrippingSection.QUERY_PARAMETER_STRIPPING_STRIP_LIST
 import org.mozilla.fenix.settings.PhoneFeature
 import org.mozilla.fenix.settings.deletebrowsingdata.DeleteBrowsingDataOnQuitType
 import org.mozilla.fenix.settings.logins.SavedLoginsSortingStrategyMenu
@@ -61,6 +66,7 @@ private const val AUTOPLAY_USER_SETTING = "AUTOPLAY_USER_SETTING"
 
 /**
  * A simple wrapper for SharedPreferences that makes reading preference a little bit easier.
+ *
  * @param appContext Reference to application context.
  */
 @Suppress("LargeClass", "TooManyFunctions")
@@ -79,6 +85,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         const val FOUR_HOURS_MS = 60 * 60 * 4 * 1000L
         const val ONE_MINUTE_MS = 60 * 1000L
         const val ONE_HOUR_MS = 60 * ONE_MINUTE_MS
+        const val TWELVE_HOURS_MS = 60 * 60 * 12 * 1000L
         const val ONE_DAY_MS = 60 * 60 * 24 * 1000L
         const val TWO_DAYS_MS = 2 * ONE_DAY_MS
         const val THREE_DAYS_MS = 3 * ONE_DAY_MS
@@ -509,6 +516,14 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = true,
     )
 
+    /**
+     * Indicates if the user has completed successfully first translation.
+     */
+    var showFirstTimeTranslation: Boolean by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_show_first_time_translation),
+        default = true,
+    )
+
     @VisibleForTesting
     internal fun timeNowInMillis(): Long = System.currentTimeMillis()
 
@@ -609,55 +624,46 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = true,
     )
 
-    var shouldUseCookieBanner by lazyFeatureFlagPreference(
-        appContext.getPreferenceKey(R.string.pref_key_cookie_banner_v1),
+    var shouldEnableGlobalPrivacyControl by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_privacy_enable_global_privacy_control),
+        false,
+    )
+
+    var shouldUseCookieBannerPrivateMode by lazyFeatureFlagPreference(
+        appContext.getPreferenceKey(R.string.pref_key_cookie_banner_private_mode),
         featureFlag = true,
-        default = { cookieBannersSection[CookieBannersSection.FEATURE_SETTING_VALUE] == 1 },
+        default = { shouldUseCookieBannerPrivateModeDefaultValue },
     )
 
-    var userOptOutOfReEngageCookieBannerDialog by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_cookie_banner_re_engage_dialog_dismissed),
-        default = false,
-    )
+    val shouldUseCookieBannerPrivateModeDefaultValue: Boolean
+        get() = cookieBannersSection[CookieBannersSection.FEATURE_SETTING_VALUE_PBM] == 1
 
-    var lastInteractionWithReEngageCookieBannerDialogInMs by longPreference(
-        appContext.getPreferenceKey(
-            R.string.pref_key_cookie_banner_re_engage_dialog_last_interaction_in_ms,
-        ),
-        default = 0L,
-    )
-
-    var cookieBannerDetectedPreviously by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_cookie_banner_first_banner_detected),
-        default = false,
-    )
+    val shouldUseCookieBanner: Boolean
+        get() = cookieBannersSection[CookieBannersSection.FEATURE_SETTING_VALUE] == 1
 
     val shouldShowCookieBannerUI: Boolean
         get() = cookieBannersSection[CookieBannersSection.FEATURE_UI] == 1
 
-    /**
-     * Indicates after how many hours a cookie banner dialog should be shown again
-     */
-    @VisibleForTesting
-    internal val timerForCookieBannerDialog: Long
-        get() = 60 * 60 * 1000L *
-            (cookieBannersSection[CookieBannersSection.DIALOG_RE_ENGAGE_TIME] ?: 4)
+    val shouldEnableCookieBannerDetectOnly: Boolean
+        get() = cookieBannersSection[CookieBannersSection.FEATURE_SETTING_DETECT_ONLY] == 1
 
-    /**
-     * Indicates if we should should show the cookie banner dialog that invites the user to turn-on
-     * the setting.
-     */
-    fun shouldShowCookieBannerReEngagementDialog(): Boolean {
-        val shouldShowDialog =
-            shouldShowCookieBannerUI && cookieBannerReEngagementDialogShowsCount.underMaxCount() &&
-                !userOptOutOfReEngageCookieBannerDialog && !shouldUseCookieBanner
-        return if (shouldShowDialog) {
-            !cookieBannerDetectedPreviously ||
-                timeNowInMillis() - lastInteractionWithReEngageCookieBannerDialogInMs >= timerForCookieBannerDialog
-        } else {
-            false
-        }
-    }
+    val shouldEnableCookieBannerGlobalRules: Boolean
+        get() = cookieBannersSection[CookieBannersSection.FEATURE_SETTING_GLOBAL_RULES] == 1
+
+    val shouldEnableCookieBannerGlobalRulesSubFrame: Boolean
+        get() = cookieBannersSection[CookieBannersSection.FEATURE_SETTING_GLOBAL_RULES_SUB_FRAMES] == 1
+
+    val shouldEnableQueryParameterStripping: Boolean
+        get() = queryParameterStrippingSection[QUERY_PARAMETER_STRIPPING] == "1"
+
+    val shouldEnableQueryParameterStrippingPrivateBrowsing: Boolean
+        get() = queryParameterStrippingSection[QUERY_PARAMETER_STRIPPING_PMB] == "1"
+
+    val queryParameterStrippingAllowList: String
+        get() = queryParameterStrippingSection[QUERY_PARAMETER_STRIPPING_ALLOW_LIST].orEmpty()
+
+    val queryParameterStrippingStripList: String
+        get() = queryParameterStrippingSection[QUERY_PARAMETER_STRIPPING_STRIP_LIST].orEmpty()
 
     /**
      * Declared as a function for performance purposes. This could be declared as a variable using
@@ -786,6 +792,15 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         appContext.getPreferenceKey(R.string.pref_key_should_show_erase_action_popup),
         featureFlag = true,
         default = { feltPrivateBrowsingEnabled },
+    )
+
+    /**
+     * Indicates if the cookie banners CRF should be shown.
+     */
+    var shouldShowCookieBannersCFR by lazyFeatureFlagPreference(
+        appContext.getPreferenceKey(R.string.pref_key_should_show_cookie_banners_action_popup),
+        featureFlag = true,
+        default = { shouldShowCookieBannerUI },
     )
 
     val blockCookiesSelectionInCustomTrackingProtection by stringPreference(
@@ -1211,19 +1226,42 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = true,
     )
 
-    fun addSearchWidgetInstalled(count: Int) {
-        val key = appContext.getPreferenceKey(R.string.pref_key_search_widget_installed)
-        val newValue = preferences.getInt(key, 0) + count
+    /**
+     * Used in [SearchWidgetProvider] to update when the search widget
+     * exists on home screen or if it has been removed completely.
+     */
+    fun setSearchWidgetInstalled(installed: Boolean) {
+        val key = appContext.getPreferenceKey(R.string.pref_key_search_widget_installed_2)
         preferences.edit()
-            .putInt(key, newValue)
+            .putBoolean(key, installed)
             .apply()
     }
 
-    val searchWidgetInstalled: Boolean
-        get() = 0 < preferences.getInt(
-            appContext.getPreferenceKey(R.string.pref_key_search_widget_installed),
-            0,
-        )
+    /**
+     * In Bug 1853113, we changed the type of [searchWidgetInstalled] from int to boolean without
+     * changing the pref key, now we have to migrate users that were using the previous type int
+     * to the new one boolean. The migration will only happens if pref_key_search_widget_installed
+     * is detected.
+     */
+    fun migrateSearchWidgetInstalledPrefIfNeeded() {
+        val oldKey = "pref_key_search_widget_installed"
+        val installedCount = try {
+            preferences.getInt(oldKey, 0)
+        } catch (e: ClassCastException) {
+            0
+        }
+
+        if (installedCount > 0) {
+            setSearchWidgetInstalled(true)
+            preferences.edit()
+                .remove(oldKey).apply()
+        }
+    }
+
+    val searchWidgetInstalled by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_search_widget_installed_2),
+        default = false,
+    )
 
     fun incrementNumTimesPrivateModeOpened() = numTimesPrivateModeOpened.increment()
 
@@ -1474,6 +1512,10 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         get() =
             FxNimbus.features.cookieBanners.value().sectionsEnabled
 
+    private val queryParameterStrippingSection: Map<QueryParameterStrippingSection, String>
+        get() =
+            FxNimbus.features.queryParameterStripping.value().sectionsEnabled
+
     private val homescreenSections: Map<HomeScreenSection, Boolean>
         get() =
             FxNimbus.features.homescreen.value().sectionsEnabled
@@ -1658,30 +1700,29 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     /**
-     * Indicates if juno onboarding feature is enabled.
-     */
-    val junoOnboardingEnabled: Boolean
-        get() = FxNimbus.features.junoOnboarding.value().enabled
-
-    /**
-     * Returns whether juno onboarding should be shown to the user.
+     * Returns whether onboarding should be shown to the user.
+     *
+     * @param hasUserBeenOnboarded Boolean to indicate whether the user has been onboarded.
      * @param isLauncherIntent Boolean to indicate whether the app was launched on tapping on the
      * app icon.
      */
-    fun shouldShowJunoOnboarding(hasUserBeenOnboarded: Boolean, isLauncherIntent: Boolean): Boolean {
+    fun shouldShowOnboarding(hasUserBeenOnboarded: Boolean, isLauncherIntent: Boolean): Boolean {
         return if (!hasUserBeenOnboarded && isLauncherIntent) {
             FxNimbus.features.junoOnboarding.recordExposure()
-            junoOnboardingEnabled
+            true
         } else {
             false
         }
     }
 
-    val feltPrivateBrowsingEnabled: Boolean
-        get() {
+    val feltPrivateBrowsingEnabled by lazyFeatureFlagPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_should_enable_felt_privacy),
+        featureFlag = true,
+        default = {
             FxNimbus.features.privateBrowsing.recordExposure()
-            return FxNimbus.features.privateBrowsing.value().feltPrivacyEnabled
-        }
+            FxNimbus.features.privateBrowsing.value().feltPrivacyEnabled
+        },
+    )
 
     /**
      * Indicates if the review quality check feature is enabled by the user.
@@ -1708,11 +1749,28 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     /**
+     * Time in milliseconds when the user was first presented the review quality check feature CFR.
+     */
+    var reviewQualityCheckCfrDisplayTimeInMillis by longPreference(
+        appContext.getPreferenceKey(R.string.pref_key_should_show_review_quality_cfr_displayed_time),
+        default = 0L,
+    )
+
+    /**
      * Time in milliseconds since the user first opted in the review quality check feature.
      */
     var reviewQualityCheckOptInTimeInMillis by longPreference(
         appContext.getPreferenceKey(R.string.pref_key_should_show_review_quality_opt_in_time),
         default = 0L,
+    )
+
+    /**
+     * Counts how many times any Review Checker CFR was closed after being presented to the user.
+     * When closed 3 times, the CFR will not be shown anymore.
+     */
+    var reviewQualityCheckCFRClosedCounter by intPreference(
+        appContext.getPreferenceKey(R.string.pref_key_review_quality_cfr_shown_counter),
+        default = 0,
     )
 
     /**
@@ -1734,21 +1792,23 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     fun getCookieBannerHandling(): CookieBannerHandlingMode {
         return when (shouldUseCookieBanner) {
             true -> CookieBannerHandlingMode.REJECT_ALL
-            false -> if (shouldShowCookieBannerReEngagementDialog()) {
-                CookieBannerHandlingMode.REJECT_ALL
-            } else {
+            false -> {
                 CookieBannerHandlingMode.DISABLED
             }
         }
     }
 
     /**
-     *  Times that the cookie banner re-engagement dialog has been shown.
+     * Get the current mode for cookie banner handling
      */
-    val cookieBannerReEngagementDialogShowsCount = counterPreference(
-        appContext.getPreferenceKey(R.string.pref_key_cookie_banner_re_engagement_dialog_shows_counter),
-        maxCount = 2,
-    )
+    fun getCookieBannerHandlingPrivateMode(): CookieBannerHandlingMode {
+        return when (shouldUseCookieBannerPrivateMode) {
+            true -> CookieBannerHandlingMode.REJECT_ALL
+            false -> {
+                CookieBannerHandlingMode.DISABLED
+            }
+        }
+    }
 
     var setAsDefaultGrowthSent by booleanPreference(
         key = appContext.getPreferenceKey(R.string.pref_key_growth_set_as_default),
@@ -1807,11 +1867,11 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     /**
-     * Indicates if the shopping experience feature is enabled.
+     * Indicates if Firefox translations are enabled.
      */
-    val enableShoppingExperience by booleanPreference(
-        key = appContext.getPreferenceKey(R.string.pref_key_enable_shopping_experience),
-        default = FxNimbus.features.shoppingExperience.value().enabled,
+    var enableTranslations by booleanPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_enable_translations),
+        default = false,
     )
 
     /**
@@ -1820,6 +1880,14 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var growthUserActivatedSent by booleanPreference(
         key = appContext.getPreferenceKey(R.string.pref_key_growth_user_activated_sent),
         default = false,
+    )
+
+    /**
+     * Font List Telemetry Ping Sent
+     */
+    var numFontListSent by intPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_num_font_list_sent),
+        default = 0,
     )
 
     /**
@@ -1856,5 +1924,73 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var hiddenEnginesRestored: Boolean by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_hidden_engines_restored),
         default = false,
+    )
+
+    /**
+     * Indicates if Firefox Suggest is enabled.
+     */
+    var enableFxSuggest by lazyFeatureFlagPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_enable_fxsuggest),
+        default = { FxNimbus.features.fxSuggest.value().enabled },
+        featureFlag = FeatureFlags.fxSuggest,
+    )
+
+    /**
+     * Indicates if SuggestStrongPassword feature is enabled.
+     */
+    var enableSuggestStrongPassword by lazyFeatureFlagPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_enable_suggest_strong_password),
+        default = { FxNimbus.features.fxStrongPassword.value().enabled },
+        featureFlag = FeatureFlags.suggestStrongPassword,
+    )
+
+    /**
+     * Indicates if the user has chosen to show sponsored search suggestions in the awesomebar.
+     * The default value is computed lazily, and based on whether Firefox Suggest is enabled.
+     */
+    var showSponsoredSuggestions by lazyFeatureFlagPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_show_sponsored_suggestions),
+        default = { enableFxSuggest },
+        featureFlag = FeatureFlags.fxSuggest,
+    )
+
+    /**
+     * Indicates if the user has chosen to show search suggestions for web content in the
+     * awesomebar. The default value is computed lazily, and based on whether Firefox Suggest
+     * is enabled.
+     */
+    var showNonSponsoredSuggestions by lazyFeatureFlagPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_show_nonsponsored_suggestions),
+        default = { enableFxSuggest },
+        featureFlag = FeatureFlags.fxSuggest,
+    )
+
+    /**
+     * Indicates that the user does not want warned of a translations
+     * model download while in data saver mode and using mobile data.
+     */
+    var ignoreTranslationsDataSaverWarning by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_ignore_translations_data_saver_warning),
+        default = false,
+    )
+
+    /**
+     * Indicates if the user is shown new redesigned Toolbar UI.
+     */
+    var enableRedesignToolbar by lazyFeatureFlagPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_toolbar_use_redesign),
+        default = { FeatureFlags.completeToolbarRedesignEnabled },
+        featureFlag = FeatureFlags.completeToolbarRedesignEnabled,
+    )
+
+    /**
+     * Indicates if the user is shown incomplete new redesigned Toolbar UI components and behaviors.
+     *
+     * DEV ONLY
+     */
+    var enableIncompleteToolbarRedesign by lazyFeatureFlagPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_toolbar_use_redesign_incomplete),
+        default = { false },
+        featureFlag = FeatureFlags.incompleteToolbarRedesignEnabled,
     )
 }

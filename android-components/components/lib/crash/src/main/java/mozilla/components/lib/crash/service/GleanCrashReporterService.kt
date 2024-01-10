@@ -90,10 +90,12 @@ class GleanCrashReporterService(
             val startup: Boolean,
             val reason: Pings.crashReasonCodes,
             val cause: String = "os_fault",
+            val remoteType: String = "",
         ) : GleanCrashAction() {
             override fun submit() {
                 GleanCrash.uptime.setRawNanos(uptimeNanos)
                 GleanCrash.processType.set(processType)
+                GleanCrash.remoteType.set(remoteType)
                 GleanCrash.time.set(Date(timeMillis))
                 GleanCrash.startup.set(startup)
                 GleanCrash.cause.set(cause)
@@ -241,6 +243,7 @@ class GleanCrashReporterService(
             GleanCrashAction.Ping(
                 uptimeNanos = uptime(),
                 processType = "main",
+                remoteType = "",
                 timeMillis = crash.timestamp,
                 startup = false,
                 reason = Pings.crashReasonCodes.crash,
@@ -266,15 +269,35 @@ class GleanCrashReporterService(
                     ),
                 )
         }
+
+        // The `processType` property on a crash is a bit confusing because it does not map to the actual process types
+        // (like main, content, gpu, etc.). This property indicates what UI we should show to users given that "main"
+        // crashes essentially kill the app, "foreground child" crashes are likely tab crashes, and "background child"
+        // crashes are occurring in other processes (like GPU and extensions) for which users shouldn't notice anything
+        // (because there shouldn't be any noticeable impact in the app and the processes will be recreated
+        // automatically).
+        val processType = when (crash.processType) {
+            Crash.NativeCodeCrash.PROCESS_TYPE_MAIN -> "main"
+
+            Crash.NativeCodeCrash.PROCESS_TYPE_BACKGROUND_CHILD -> {
+                when (crash.remoteType) {
+                    // The extensions process is a content process as per:
+                    // https://firefox-source-docs.mozilla.org/dom/ipc/process_model.html#webextensions
+                    "extension" -> "content"
+
+                    else -> "utility"
+                }
+            }
+
+            Crash.NativeCodeCrash.PROCESS_TYPE_FOREGROUND_CHILD -> "content"
+
+            else -> "main"
+        }
         recordCrashAction(
             GleanCrashAction.Ping(
                 uptimeNanos = uptime(),
-                processType = when (crash.processType) {
-                    Crash.NativeCodeCrash.PROCESS_TYPE_MAIN -> "main"
-                    Crash.NativeCodeCrash.PROCESS_TYPE_BACKGROUND_CHILD -> "utility"
-                    Crash.NativeCodeCrash.PROCESS_TYPE_FOREGROUND_CHILD -> "content"
-                    else -> "main"
-                },
+                processType = processType,
+                remoteType = crash.remoteType ?: "",
                 timeMillis = crash.timestamp,
                 startup = false,
                 reason = Pings.crashReasonCodes.crash,

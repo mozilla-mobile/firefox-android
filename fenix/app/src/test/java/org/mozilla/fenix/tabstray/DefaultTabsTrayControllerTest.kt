@@ -57,17 +57,17 @@ import org.mozilla.fenix.GleanMetrics.TabsTray
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
-import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
-import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
 import org.mozilla.fenix.collections.CollectionsDialog
 import org.mozilla.fenix.collections.show
 import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.TabCollectionStorage
+import org.mozilla.fenix.components.appstate.AppState
 import org.mozilla.fenix.components.bookmarks.BookmarksUseCase
 import org.mozilla.fenix.ext.maxActiveTime
 import org.mozilla.fenix.ext.potentialInactiveTabs
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.home.HomeFragment
+import org.mozilla.fenix.library.bookmarks.BookmarksSharedViewModel
 import org.mozilla.fenix.utils.Settings
 import java.util.concurrent.TimeUnit
 
@@ -78,9 +78,6 @@ class DefaultTabsTrayControllerTest {
 
     @MockK(relaxed = true)
     private lateinit var browserStore: BrowserStore
-
-    @MockK(relaxed = true)
-    private lateinit var browsingModeManager: BrowsingModeManager
 
     @MockK(relaxed = true)
     private lateinit var navController: NavController
@@ -97,11 +94,13 @@ class DefaultTabsTrayControllerTest {
     @MockK(relaxed = true)
     private lateinit var activity: HomeActivity
 
-    private val appStore: AppStore = mockk(relaxed = true)
+    private lateinit var appStore: AppStore
     private val settings: Settings = mockk(relaxed = true)
 
     private val bookmarksUseCase: BookmarksUseCase = mockk(relaxed = true)
     private val collectionStorage: TabCollectionStorage = mockk(relaxed = true)
+
+    private val bookmarksSharedViewModel: BookmarksSharedViewModel = mockk(relaxed = true)
 
     private val coroutinesTestRule: MainCoroutineRule = MainCoroutineRule()
     private val testDispatcher = coroutinesTestRule.testDispatcher
@@ -114,6 +113,7 @@ class DefaultTabsTrayControllerTest {
     @Before
     fun setup() {
         MockKAnnotations.init(this)
+        appStore = AppStore()
     }
 
     @Test
@@ -139,6 +139,7 @@ class DefaultTabsTrayControllerTest {
                 Double.MAX_VALUE,
             )
         }
+        assertEquals(BrowsingMode.Private, appStore.state.mode)
     }
 
     @Test
@@ -146,6 +147,7 @@ class DefaultTabsTrayControllerTest {
         profiler = spyk(profiler) {
             every { getProfilerTime() } returns Double.MAX_VALUE
         }
+        appStore = AppStore(AppState(mode = BrowsingMode.Private))
 
         createController().handleNormalTabsFabClick()
 
@@ -939,13 +941,6 @@ class DefaultTabsTrayControllerTest {
                 tabs = listOf(normalTab, privateTab),
             ),
         )
-        browsingModeManager = spyk(
-            DefaultBrowsingModeManager(
-                _mode = BrowsingMode.Private,
-                settings = settings,
-                modeDidChange = mockk(relaxed = true),
-            ),
-        )
         val controller = spyk(createController())
 
         try {
@@ -954,14 +949,13 @@ class DefaultTabsTrayControllerTest {
             controller.handleTabSelected(privateTab, null)
 
             assertEquals(privateTab.id, browserStore.state.selectedTabId)
-            assertEquals(true, browsingModeManager.mode.isPrivate)
 
             controller.handleTabDeletion("privateTab")
             browserStore.dispatch(TabListAction.SelectTabAction(normalTab.id)).joinBlocking()
             controller.handleTabSelected(normalTab, null)
 
             assertEquals(normalTab.id, browserStore.state.selectedTabId)
-            assertEquals(false, browsingModeManager.mode.isPrivate)
+            assertEquals(false, appStore.state.mode.isPrivate)
         } finally {
             unmockkStatic("mozilla.components.browser.state.selector.SelectorsKt")
         }
@@ -1089,7 +1083,7 @@ class DefaultTabsTrayControllerTest {
             },
         ).handleBookmarkSelectedTabsClicked()
 
-        coVerify(exactly = 1) { bookmarksUseCase.addBookmark(any(), any(), any()) }
+        coVerify(exactly = 1) { bookmarksUseCase.addBookmark(any(), any(), any(), any()) }
         assertTrue(showBookmarkSnackbarInvoked)
 
         assertNotNull(TabsTray.bookmarkSelectedTabs.testGetValue())
@@ -1140,7 +1134,6 @@ class DefaultTabsTrayControllerTest {
             tabsTrayStore = trayStore,
             browserStore = browserStore,
             settings = settings,
-            browsingModeManager = browsingModeManager,
             navController = navController,
             navigateToHomeAndDeleteSession = navigateToHomeAndDeleteSession,
             profiler = profiler,
@@ -1155,6 +1148,7 @@ class DefaultTabsTrayControllerTest {
             showCancelledDownloadWarning = showCancelledDownloadWarning,
             showCollectionSnackbar = showCollectionSnackbar,
             showBookmarkSnackbar = showBookmarkSnackbar,
+            bookmarksSharedViewModel = bookmarksSharedViewModel,
         )
     }
 }

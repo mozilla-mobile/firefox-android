@@ -4,53 +4,58 @@
 
 package org.mozilla.fenix.shopping.middleware
 
-import mozilla.components.browser.engine.gecko.shopping.GeckoProductAnalysis
-import mozilla.components.browser.engine.gecko.shopping.Highlight
+import mozilla.components.concept.engine.shopping.Highlight
 import mozilla.components.concept.engine.shopping.ProductAnalysis
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.HighlightType
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState
+import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent.AnalysisStatus
+import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent.HighlightsInfo
 
 /**
  * Maps [ProductAnalysis] to [ProductReviewState].
  */
 fun ProductAnalysis?.toProductReviewState(): ProductReviewState =
-    if (this == null) {
-        ProductReviewState.Error
-    } else {
-        when (this) {
-            is GeckoProductAnalysis -> toProductReview()
-            else -> ProductReviewState.Error
-        }
-    }
+    this?.toProductReview() ?: ProductReviewState.Error.GenericError
 
-private fun GeckoProductAnalysis.toProductReview(): ProductReviewState =
-    if (productId == null) {
-        ProductReviewState.Error
+private fun ProductAnalysis.toProductReview(): ProductReviewState =
+    if (pageNotSupported) {
+        ProductReviewState.Error.UnsupportedProductTypeError
+    } else if (productId == null) {
+        if (needsAnalysis) {
+            ProductReviewState.NoAnalysisPresent()
+        } else {
+            ProductReviewState.Error.GenericError
+        }
+    } else if (deletedProductReported) {
+        ProductReviewState.Error.ProductAlreadyReported
+    } else if (deletedProduct) {
+        ProductReviewState.Error.ProductNotAvailable
+    } else if (notEnoughReviews && !needsAnalysis) {
+        ProductReviewState.Error.NotEnoughReviews
     } else {
-        val mappedRating = adjustedRating.toFloatOrNull()
-        val mappedGrade = grade?.toGrade()
+        val mappedRating = adjustedRating?.toFloat()
+        val mappedGrade = grade?.asEnumOrDefault<ReviewQualityCheckState.Grade>()
         val mappedHighlights = highlights?.toHighlights()?.toSortedMap()
 
         if (mappedGrade == null && mappedRating == null && mappedHighlights == null) {
-            ProductReviewState.NoAnalysisPresent
+            ProductReviewState.NoAnalysisPresent()
         } else {
             ProductReviewState.AnalysisPresent(
                 productId = productId!!,
                 reviewGrade = mappedGrade,
-                needsAnalysis = needsAnalysis,
+                analysisStatus = needsAnalysis.toAnalysisStatus(),
                 adjustedRating = mappedRating,
                 productUrl = analysisURL!!,
-                highlights = mappedHighlights,
+                highlightsInfo = mappedHighlights?.let { HighlightsInfo(it) },
             )
         }
     }
 
-private fun String.toGrade(): ReviewQualityCheckState.Grade? =
-    try {
-        ReviewQualityCheckState.Grade.valueOf(this)
-    } catch (e: IllegalArgumentException) {
-        null
+private fun Boolean.toAnalysisStatus(): AnalysisStatus =
+    when (this) {
+        true -> AnalysisStatus.NeedsAnalysis
+        false -> AnalysisStatus.UpToDate
     }
 
 private fun Highlight.toHighlights(): Map<HighlightType, List<String>>? =
@@ -67,16 +72,4 @@ private fun Highlight.highlightsForType(highlightType: HighlightType) =
         HighlightType.SHIPPING -> shipping
         HighlightType.PACKAGING_AND_APPEARANCE -> appearance
         HighlightType.COMPETITIVENESS -> competitiveness
-    }
-
-/**
- * GeckoView sets 0.0 as default instead of null for adjusted rating. This maps 0.0 to null making
- * it easier for the UI layer to decide whether to display a UI element based on the presence of
- * value.
- */
-private fun Double.toFloatOrNull(): Float? =
-    if (this == 0.0) {
-        null
-    } else {
-        toFloat()
     }

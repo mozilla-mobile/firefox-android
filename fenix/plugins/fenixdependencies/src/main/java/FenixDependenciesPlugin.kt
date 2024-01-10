@@ -19,7 +19,7 @@ object FenixVersions {
     const val fastlane = "2.1.1"
 
     const val androidx_activity = "1.7.2"
-    const val androidx_benchmark = "1.1.1"
+    const val androidx_benchmark = "1.2.2"
     const val androidx_profileinstaller = "1.3.1"
     const val androidx_legacy = "1.0.0"
     const val androidx_navigation = "2.5.3"
@@ -28,13 +28,11 @@ object FenixVersions {
     const val androidx_datastore = "1.0.0"
     const val google_accompanist = "0.30.1"
 
-    const val adjust = "4.33.0"
+    const val adjust = "4.35.1"
     const val installreferrer = "2.2"
 
     const val junit = "5.9.3"
-    const val mockk = "1.13.7"
-
-    const val mockwebserver = "4.11.0"
+    const val mockk = "1.13.8"
 
     const val google_ads_id_version = "16.0.0"
 
@@ -62,6 +60,7 @@ object FenixDependencies {
     const val androidx_navigation_ui = "androidx.navigation:navigation-ui:${FenixVersions.androidx_navigation}"
     const val androidx_transition = "androidx.transition:transition:${FenixVersions.androidx_transition}"
     const val androidx_datastore = "androidx.datastore:datastore:${FenixVersions.androidx_datastore}"
+    const val androidx_compose_navigation = "androidx.navigation:navigation-compose:${FenixVersions.androidx_navigation}"
 
     const val google_accompanist_drawablepainter = "com.google.accompanist:accompanist-drawablepainter:${FenixVersions.google_accompanist}"
 
@@ -92,8 +91,6 @@ object FenixDependencies {
     // Truth is unused
     // Test services is unused
     // --- END AndroidX test dependencies --- //
-
-    const val mockwebserver = "com.squareup.okhttp3:mockwebserver:${FenixVersions.mockwebserver}"
 
     const val google_ads_id = "com.google.android.gms:play-services-ads-identifier:${FenixVersions.google_ads_id_version}"
 

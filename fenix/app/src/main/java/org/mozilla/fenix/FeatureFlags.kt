@@ -50,7 +50,7 @@ object FeatureFlags {
     /**
      * Enables compose on the tabs tray items.
      */
-    val composeTabsTray = Config.channel.isNightlyOrDebug
+    val composeTabsTray = Config.channel.isNightlyOrDebug || Config.channel.isBeta
 
     /**
      * Enables compose on the top sites.
@@ -64,7 +64,33 @@ object FeatureFlags {
     const val unifiedSearchSettings = true
 
     /**
-     * Enables the lib-state HistoryFragment refactor
+     * Allows users to enable translations.
+     * Preference to fully enable translations is pref_key_enable_translations.
      */
-    val historyFragmentLibStateRefactor = Config.channel.isNightlyOrDebug
+    val translations = Config.channel.isDebug
+
+    /**
+     * Allows users to enable Firefox Suggest.
+     */
+    const val fxSuggest = true
+
+    /**
+     * Allows users to enable SuggestStrongPassword feature.
+     */
+    const val suggestStrongPassword = true
+
+    /**
+     * Enable Meta attribution.
+     */
+    const val metaAttributionEnabled = true
+
+    /**
+     * Enable Toolbar Redesign components and behaviors ready for Nightly.
+     */
+    val completeToolbarRedesignEnabled = Config.channel.isNightlyOrDebug
+
+    /**
+     * Enable Toolbar Redesign partial components and behaviors.
+     */
+    val incompleteToolbarRedesignEnabled = Config.channel.isDebug
 }

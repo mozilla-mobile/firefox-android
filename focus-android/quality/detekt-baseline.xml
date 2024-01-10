@@ -18,6 +18,21 @@
     <ID>MayBeConst:ManualAddSearchEnginePreference.kt$ManualAddSearchEnginePreference.Companion$private val SEARCH_ENGINE_NAME_KEY = "search-engine-name"</ID>
     <ID>MayBeConst:ManualAddSearchEnginePreference.kt$ManualAddSearchEnginePreference.Companion$private val SEARCH_QUERY_KEY = "search-query"</ID>
     <ID>MayBeConst:ManualAddSearchEnginePreference.kt$ManualAddSearchEnginePreference.Companion$private val SUPER_STATE_KEY = "super-state"</ID>
+    <ID>OutdatedDocumentation:AppAdapter.kt$AppAdapter : Adapter</ID>
+    <ID>OutdatedDocumentation:AppReviewUtils.kt$AppReviewUtils.Companion$fun addAppOpenings(context: Context)</ID>
+    <ID>OutdatedDocumentation:AppReviewUtils.kt$AppReviewUtils.Companion$fun showAppReview(activity: Activity)</ID>
+    <ID>OutdatedDocumentation:AppState.kt$AppState : State</ID>
+    <ID>OutdatedDocumentation:AppState.kt$Screen</ID>
+    <ID>OutdatedDocumentation:AppState.kt$Screen$Locked : Screen</ID>
+    <ID>OutdatedDocumentation:BlockedTrackersMiddleware.kt$BlockedTrackersMiddleware : Middleware</ID>
+    <ID>OutdatedDocumentation:DefaultTopSitesStorage.kt$DefaultTopSitesStorage : TopSitesStorageObservable</ID>
+    <ID>OutdatedDocumentation:FocusDialog.kt$@Suppress("LongParameterList") @Composable fun FocusDialog( dialogTitle: String, dialogTextComposable: @Composable (() -&gt; Unit)? = null, dialogText: String = "", onConfirmRequest: () -&gt; Unit, onDismissRequest: () -&gt; Unit, confirmButtonText: String = "null", dismissButtonText: String = "null", isConfirmButtonEnabled: Boolean = true, isDismissButtonEnabled: Boolean = true, isConfirmButtonVisible: Boolean = true, isDismissButtonVisible: Boolean = true, )</ID>
+    <ID>OutdatedDocumentation:HtmlLoader.kt$HtmlLoader$fun loadResourceFile( context: Context, @RawRes resourceID: Int, substitutionTable: Map&lt;String, String&gt;, ): String</ID>
+    <ID>OutdatedDocumentation:Language.kt$Language</ID>
+    <ID>OutdatedDocumentation:LanguageListItem.kt$LanguageListItem</ID>
+    <ID>OutdatedDocumentation:LanguageStorage.kt$LanguageStorage$fun saveCurrentLanguageInSharePref(languageTag: String)</ID>
+    <ID>OutdatedDocumentation:PrivateNotificationFeature.kt$PrivateNotificationFeature : LifecycleAwareFeature</ID>
+    <ID>OutdatedDocumentation:SitePermissionOptionsFragmentCompose.kt$@Composable fun OptionsPermissionList( optionsListItems: List&lt;SitePermissionOptionListItem&gt;, state: MutableState&lt;Int&gt;, permissionLabel: String?, goToPhoneSettings: () -&gt; Unit, componentPermissionBlockedByAndroidVisibility: Boolean, )</ID>
     <ID>UndocumentedPublicClass:AboutFragment.kt$AboutFragment : BaseSettingsLikeFragment</ID>
     <ID>UndocumentedPublicClass:AdvancedSettingsFragment.kt$AdvancedSettingsFragment : BaseSettingsFragmentOnSharedPreferenceChangeListener</ID>
     <ID>UndocumentedPublicClass:AppAction.kt$AppAction$NavigateUp : AppAction</ID>
@@ -182,8 +197,6 @@
     <ID>UndocumentedPublicClass:TabViewHolder.kt$TabViewHolder : ViewHolder</ID>
     <ID>UndocumentedPublicClass:TabsPopup.kt$TabsPopup : PopupWindow</ID>
     <ID>UndocumentedPublicClass:TelemetryMiddleware.kt$TelemetryMiddleware : Middleware</ID>
-    <ID>UndocumentedPublicClass:TelemetryWrapper.kt$TelemetryWrapper</ID>
-    <ID>UndocumentedPublicClass:TelemetryWrapper.kt$TelemetryWrapper$AutoCompleteEventSource</ID>
     <ID>UndocumentedPublicClass:ToolbarMenu.kt$ToolbarMenu</ID>
     <ID>UndocumentedPublicClass:ToolbarMenu.kt$ToolbarMenu$CustomTabItem</ID>
     <ID>UndocumentedPublicClass:ToolbarMenu.kt$ToolbarMenu$Item</ID>
@@ -374,76 +387,6 @@
     <ID>UndocumentedPublicFunction:SupportUtils.kt$SupportUtils$fun openDefaultBrowserSumoPage(context: Context)</ID>
     <ID>UndocumentedPublicFunction:SupportUtils.kt$SupportUtils$fun openUrlInCustomTab(activity: FragmentActivity, destinationUrl: String)</ID>
     <ID>UndocumentedPublicFunction:TabViewHolder.kt$TabViewHolder$fun bind( tab: TabSessionState, isCurrentSession: Boolean, selectSession: (TabSessionState) -&gt; Unit, closeSession: (TabSessionState) -&gt; Unit, )</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic @Suppress("LongMethod") fun init(context: Context)</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun addLoadToHistogram(url: String, newLoadTime: Long)</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun addSearchEngineLearnMoreEvent()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun addToHomescreenShortcutEvent()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun browseIntentEvent()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun cancelAddToHomescreenShortcutEvent()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun closeCustomTabEvent()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun closeTabButtonTapped(crashSubmitted: Boolean)</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun closeTabsTrayEvent()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun copyImageEvent()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun copyLinkEvent()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun crashReporterOpened()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun customTabActionButtonEvent()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun customTabMenuEvent()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun dayPassedSinceLastUpload(context: Context): Boolean</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun desktopRequestCheckEvent(shouldRequestDesktop: Boolean)</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun downloadDialogDownloadEvent(sentToDownload: Boolean)</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun eraseAndOpenNotificationActionEvent()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun eraseAndOpenShortcutEvent()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun eraseBackToAppEvent()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun eraseBackToHomeEvent()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun eraseEvent()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun eraseNotificationEvent()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun eraseShortcutEvent()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun eraseTaskRemoved()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun findInPageMenuEvent()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun finishFirstRunEvent()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun installFirefoxEvent()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun isTelemetryEnabled(context: Context): Boolean</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun makeDefaultBrowserSettings()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun menuAddSearchEngineEvent()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun menuReloadEvent()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun menuRemoveEnginesEvent()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun menuRestoreEnginesEvent()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun openExceptionsListSetting()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun openFirefoxEvent()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun openFromIconEvent()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun openHomescreenShortcutEvent()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun openLinkInFullBrowserFromCustomTabEvent()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun openLinkInNewTabEvent()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun openNotificationActionEvent()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun openSearchSettingsEvent()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun openSelectionEvent()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun openTabsTrayEvent()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun removeSearchEnginesEvent(selected: Int)</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun reportSiteIssueEvent()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun respondToSearchSuggestionPrompt(enable: Boolean)</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun resumeFromIconEvent()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun saveCustomSearchEngineEvent(success: Boolean)</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun saveImageEvent()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun setDefaultSearchEngineEvent(source: String)</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun settingsEvent(key: String, value: String)</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun shareEvent()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun shareImageEvent()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun shareIntentEvent(isSearch: Boolean)</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun shareLinkEvent()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun showFirstRunPageEvent(page: Int)</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun skipFirstRunEvent()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun startSession()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun stopMainActivity()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun stopSession()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun textSelectionIntentEvent()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$@JvmStatic fun urlBarEvent(isUrl: Boolean)</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$fun removeAllExceptionDomains(count: Int)</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$fun removeAutocompleteDomainsEvent(count: Int)</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$fun removeExceptionDomains(count: Int)</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$fun reorderAutocompleteDomainEvent(from: Int, to: Int)</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$fun saveAutocompleteDomainEvent(eventSource: AutoCompleteEventSource)</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$fun searchEnterEvent()</ID>
-    <ID>UndocumentedPublicFunction:TelemetryWrapper.kt$TelemetryWrapper$fun searchSelectEvent(isSearchSuggestion: Boolean)</ID>
     <ID>UndocumentedPublicFunction:Theme.kt$fun Resources.Theme.resolveAttribute(attribute: Int): Int</ID>
     <ID>UndocumentedPublicFunction:TopSitesOverlay.kt$@OptIn(DelicateCoroutinesApi::class) @Composable fun TopSitesOverlay(modifier: Modifier = Modifier)</ID>
     <ID>UndocumentedPublicFunction:TopSitesOverlay.kt$@OptIn(DelicateCoroutinesApi::class) fun removeTopSite(item: TopSite, components: Components)</ID>

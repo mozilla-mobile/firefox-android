@@ -25,6 +25,24 @@ typealias FxaPanicException = mozilla.appservices.fxaclient.FxaException.Panic
 typealias FxaUnauthorizedException = mozilla.appservices.fxaclient.FxaException.Authentication
 
 /**
+ * Thrown when we try opening paring link from a Firefox configured to use a different content server
+ */
+typealias FxaOriginMismatchException = mozilla.appservices.fxaclient.FxaException.OriginMismatch
+
+/**
+ * Thrown if the application attempts to complete an OAuth flow when no OAuth flow has been
+ * initiated. This may indicate a user who navigated directly to the OAuth `redirect_uri` for the
+ * application.
+ */
+typealias FxaNoExistingAuthFlow = mozilla.appservices.fxaclient.FxaException.NoExistingAuthFlow
+
+/**
+ * Thrown when a scoped key was missing in the server response when requesting the OLD_SYNC scope.
+ */
+typealias FxaSyncScopedKeyMissingException =
+    mozilla.appservices.fxaclient.FxaException.SyncScopedKeyMissingInServerResponse
+
+/**
  * Thrown when the Rust library hits an unexpected error that isn't a panic.
  * This may indicate library misuse, network errors, etc.
  */
@@ -38,7 +56,12 @@ fun FxaException.shouldPropagate(): Boolean {
         // Throw on panics
         is FxaPanicException -> true
         // Don't throw for recoverable errors.
-        is FxaNetworkException, is FxaUnauthorizedException, is FxaUnspecifiedException -> false
+        is FxaNetworkException,
+        is FxaUnauthorizedException,
+        is FxaUnspecifiedException,
+        is FxaOriginMismatchException,
+        is FxaNoExistingAuthFlow,
+        -> false
         // Throw on newly encountered exceptions.
         // If they're actually recoverable and you see them in crash reports, update this check.
         else -> true

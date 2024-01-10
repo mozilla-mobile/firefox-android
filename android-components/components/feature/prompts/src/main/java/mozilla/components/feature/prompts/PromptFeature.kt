@@ -76,12 +76,16 @@ import mozilla.components.feature.prompts.facts.emitPromptDisplayedFact
 import mozilla.components.feature.prompts.facts.emitSuccessfulAddressAutofillFormDetectedFact
 import mozilla.components.feature.prompts.facts.emitSuccessfulCreditCardAutofillFormDetectedFact
 import mozilla.components.feature.prompts.file.FilePicker
+import mozilla.components.feature.prompts.identitycredential.DialogColors
+import mozilla.components.feature.prompts.identitycredential.DialogColorsProvider
 import mozilla.components.feature.prompts.identitycredential.PrivacyPolicyDialogFragment
 import mozilla.components.feature.prompts.identitycredential.SelectAccountDialogFragment
 import mozilla.components.feature.prompts.identitycredential.SelectProviderDialogFragment
 import mozilla.components.feature.prompts.login.LoginDelegate
 import mozilla.components.feature.prompts.login.LoginExceptions
 import mozilla.components.feature.prompts.login.LoginPicker
+import mozilla.components.feature.prompts.login.StrongPasswordPromptViewListener
+import mozilla.components.feature.prompts.login.SuggestStrongPasswordDelegate
 import mozilla.components.feature.prompts.share.DefaultShareDelegate
 import mozilla.components.feature.prompts.share.ShareDelegate
 import mozilla.components.feature.session.SessionUseCases
@@ -129,10 +133,8 @@ internal const val FRAGMENT_TAG = "mozac_feature_prompt_dialog"
  * a dialog (fragment).
  * @property shareDelegate Delegate used to display share sheet.
  * @property exitFullscreenUsecase Usecase allowing to exit browser tabs' fullscreen mode.
- * @property loginStorageDelegate Delegate used to access login storage. If null,
- * 'save login'prompts will not be shown.
  * @property isSaveLoginEnabled A callback invoked when a login prompt is triggered. If false,
- * 'save login'prompts will not be shown.
+ * 'save login' prompts will not be shown.
  * @property isCreditCardAutofillEnabled A callback invoked when credit card fields are detected in the webpage.
  * If this resolves to `true` a prompt allowing the user to select the credit card details to be autocompleted
  * will be shown.
@@ -142,6 +144,11 @@ internal const val FRAGMENT_TAG = "mozac_feature_prompt_dialog"
  * @property loginExceptionStorage An implementation of [LoginExceptions] that saves and checks origins
  * the user does not want to see a save login dialog for.
  * @property loginDelegate Delegate for login picker.
+ * @property suggestStrongPasswordDelegate Delegate for strong password generator.
+ * @property isSuggestStrongPasswordEnabled Feature flag denoting whether the suggest strong password
+ * feature is enabled or not. If this resolves to 'false', the feature will be hidden.
+ * @property onSaveLoginWithStrongPassword A callback invoked to save a new login that uses the
+ * generated strong password
  * @property creditCardDelegate Delegate for credit card picker.
  * @property addressDelegate Delegate for address picker.
  * @property onNeedToRequestPermissions A callback invoked when permissions
@@ -154,6 +161,9 @@ class PromptFeature private constructor(
     private val store: BrowserStore,
     private var customTabId: String?,
     private val fragmentManager: FragmentManager,
+    private val identityCredentialColorsProvider: DialogColorsProvider = DialogColorsProvider {
+        DialogColors.default()
+    },
     private val tabsUseCases: TabsUseCases,
     private val shareDelegate: ShareDelegate,
     private val exitFullscreenUsecase: ExitFullScreenUseCase = SessionUseCases(store).exitFullscreen,
@@ -164,6 +174,10 @@ class PromptFeature private constructor(
     private val isAddressAutofillEnabled: () -> Boolean = { false },
     override val loginExceptionStorage: LoginExceptions? = null,
     private val loginDelegate: LoginDelegate = object : LoginDelegate {},
+    private val suggestStrongPasswordDelegate: SuggestStrongPasswordDelegate = object :
+        SuggestStrongPasswordDelegate {},
+    private val isSuggestStrongPasswordEnabled: Boolean = false,
+    private val onSaveLoginWithStrongPassword: (String, String) -> Unit = { _, _ -> },
     private val creditCardDelegate: CreditCardDelegate = object : CreditCardDelegate {},
     private val addressDelegate: AddressDelegate = DefaultAddressDelegate(),
     onNeedToRequestPermissions: OnNeedToRequestPermissions,
@@ -197,6 +211,7 @@ class PromptFeature private constructor(
         customTabId: String? = null,
         fragmentManager: FragmentManager,
         tabsUseCases: TabsUseCases,
+        identityCredentialColorsProvider: DialogColorsProvider = DialogColorsProvider { DialogColors.default() },
         shareDelegate: ShareDelegate = DefaultShareDelegate(),
         exitFullscreenUsecase: ExitFullScreenUseCase = SessionUseCases(store).exitFullscreen,
         creditCardValidationDelegate: CreditCardValidationDelegate? = null,
@@ -206,6 +221,10 @@ class PromptFeature private constructor(
         isAddressAutofillEnabled: () -> Boolean = { false },
         loginExceptionStorage: LoginExceptions? = null,
         loginDelegate: LoginDelegate = object : LoginDelegate {},
+        suggestStrongPasswordDelegate: SuggestStrongPasswordDelegate = object :
+            SuggestStrongPasswordDelegate {},
+        isSuggestStrongPasswordEnabled: Boolean = false,
+        onSaveLoginWithStrongPassword: (String, String) -> Unit = { _, _ -> },
         creditCardDelegate: CreditCardDelegate = object : CreditCardDelegate {},
         addressDelegate: AddressDelegate = DefaultAddressDelegate(),
         onNeedToRequestPermissions: OnNeedToRequestPermissions,
@@ -215,6 +234,7 @@ class PromptFeature private constructor(
         customTabId = customTabId,
         fragmentManager = fragmentManager,
         tabsUseCases = tabsUseCases,
+        identityCredentialColorsProvider = identityCredentialColorsProvider,
         shareDelegate = shareDelegate,
         exitFullscreenUsecase = exitFullscreenUsecase,
         creditCardValidationDelegate = creditCardValidationDelegate,
@@ -225,6 +245,9 @@ class PromptFeature private constructor(
         loginExceptionStorage = loginExceptionStorage,
         onNeedToRequestPermissions = onNeedToRequestPermissions,
         loginDelegate = loginDelegate,
+        suggestStrongPasswordDelegate = suggestStrongPasswordDelegate,
+        isSuggestStrongPasswordEnabled = isSuggestStrongPasswordEnabled,
+        onSaveLoginWithStrongPassword = onSaveLoginWithStrongPassword,
         creditCardDelegate = creditCardDelegate,
         addressDelegate = addressDelegate,
     )
@@ -244,6 +267,10 @@ class PromptFeature private constructor(
         isAddressAutofillEnabled: () -> Boolean = { false },
         loginExceptionStorage: LoginExceptions? = null,
         loginDelegate: LoginDelegate = object : LoginDelegate {},
+        suggestStrongPasswordDelegate: SuggestStrongPasswordDelegate = object :
+            SuggestStrongPasswordDelegate {},
+        isSuggestStrongPasswordEnabled: Boolean = false,
+        onSaveLoginWithStrongPassword: (String, String) -> Unit = { _, _ -> },
         creditCardDelegate: CreditCardDelegate = object : CreditCardDelegate {},
         addressDelegate: AddressDelegate = DefaultAddressDelegate(),
         onNeedToRequestPermissions: OnNeedToRequestPermissions,
@@ -263,6 +290,9 @@ class PromptFeature private constructor(
         loginExceptionStorage = loginExceptionStorage,
         onNeedToRequestPermissions = onNeedToRequestPermissions,
         loginDelegate = loginDelegate,
+        suggestStrongPasswordDelegate = suggestStrongPasswordDelegate,
+        isSuggestStrongPasswordEnabled = isSuggestStrongPasswordEnabled,
+        onSaveLoginWithStrongPassword = onSaveLoginWithStrongPassword,
         creditCardDelegate = creditCardDelegate,
         addressDelegate = addressDelegate,
     )
@@ -274,6 +304,14 @@ class PromptFeature private constructor(
         with(loginDelegate) {
             loginPickerView?.let {
                 LoginPicker(store, it, onManageLogins, customTabId)
+            }
+        }
+
+    @VisibleForTesting(otherwise = PRIVATE)
+    internal var strongPasswordPromptViewListener =
+        with(suggestStrongPasswordDelegate) {
+            strongPasswordPromptViewListenerView?.let {
+                StrongPasswordPromptViewListener(store, it, customTabId)
             }
         }
 
@@ -334,23 +372,31 @@ class PromptFeature private constructor(
                             when (activePromptRequest) {
                                 is SelectLoginPrompt -> {
                                     loginPicker?.dismissCurrentLoginSelect(activePromptRequest as SelectLoginPrompt)
+                                    strongPasswordPromptViewListener?.dismissCurrentSuggestStrongPassword(
+                                        activePromptRequest as SelectLoginPrompt,
+                                    )
                                 }
+
                                 is SaveLoginPrompt -> {
                                     (activePrompt?.get() as? SaveLoginDialogFragment)?.dismissAllowingStateLoss()
                                 }
+
                                 is SaveCreditCard -> {
                                     (activePrompt?.get() as? CreditCardSaveDialogFragment)?.dismissAllowingStateLoss()
                                 }
+
                                 is SelectCreditCard -> {
                                     creditCardPicker?.dismissSelectCreditCardRequest(
                                         activePromptRequest as SelectCreditCard,
                                     )
                                 }
+
                                 is SelectAddress -> {
                                     addressPicker?.dismissSelectAddressRequest(
                                         activePromptRequest as SelectAddress,
                                     )
                                 }
+
                                 is SingleChoice,
                                 is MultipleChoice,
                                 is MenuChoice,
@@ -364,6 +410,7 @@ class PromptFeature private constructor(
                                         }
                                     }
                                 }
+
                                 else -> {
                                     // no-op
                                 }
@@ -480,6 +527,7 @@ class PromptFeature private constructor(
      *
      * @param session The session which requested the dialog.
      */
+    @Suppress("NestedBlockDepth")
     @VisibleForTesting(otherwise = PRIVATE)
     internal fun onPromptRequested(session: SessionState) {
         // Some requests are handle with intents
@@ -493,6 +541,7 @@ class PromptFeature private constructor(
                     emitPromptDisplayedFact(promptName = "FilePrompt")
                     filePicker.handleFileRequest(promptRequest)
                 }
+
                 is Share -> handleShareRequest(promptRequest, session)
                 is SelectCreditCard -> {
                     emitSuccessfulCreditCardAutofillFormDetectedFact()
@@ -500,18 +549,33 @@ class PromptFeature private constructor(
                         creditCardPicker?.handleSelectCreditCardRequest(promptRequest)
                     }
                 }
+
                 is SelectLoginPrompt -> {
-                    emitPromptDisplayedFact(promptName = "SelectLoginPrompt")
-                    if (promptRequest.logins.isNotEmpty()) {
+                    if (promptRequest.logins.isEmpty()) {
+                        if (isSuggestStrongPasswordEnabled) {
+                            val currentUrl =
+                                store.state.findTabOrCustomTabOrSelectedTab(customTabId)?.content?.url
+                            if (currentUrl != null) {
+                                strongPasswordPromptViewListener?.handleSuggestStrongPasswordRequest(
+                                    promptRequest,
+                                    currentUrl,
+                                    onSaveLoginWithStrongPassword,
+                                )
+                            }
+                        }
+                    } else {
                         loginPicker?.handleSelectLoginRequest(promptRequest)
                     }
+                    emitPromptDisplayedFact(promptName = "SelectLoginPrompt")
                 }
+
                 is SelectAddress -> {
                     emitSuccessfulAddressAutofillFormDetectedFact()
                     if (isAddressAutofillEnabled() && promptRequest.addresses.isNotEmpty()) {
                         addressPicker?.handleSelectAddressRequest(promptRequest)
                     }
                 }
+
                 else -> handleDialogsRequest(promptRequest, session)
             }
         }
@@ -535,6 +599,7 @@ class PromptFeature private constructor(
                     promptAbuserDetector.userWantsMoreDialogs(!shouldNotShowMoreDialogs)
                     it.onDeny()
                 }
+
                 is Dismissible -> it.onDismiss()
                 else -> {
                     // no-op
@@ -562,6 +627,7 @@ class PromptFeature private constructor(
                     promptAbuserDetector.userWantsMoreDialogs(!shouldNotShowMoreDialogs)
                     it.onConfirm(!shouldNotShowMoreDialogs)
                 }
+
                 is SingleChoice -> it.onConfirm(value as Choice)
                 is MenuChoice -> it.onConfirm(value as Choice)
                 is BeforeUnload -> it.onLeave()
@@ -570,6 +636,7 @@ class PromptFeature private constructor(
                     promptAbuserDetector.userWantsMoreDialogs(!shouldNotShowMoreDialogs)
                     it.onAllow()
                 }
+
                 is MultipleChoice -> it.onConfirm(value as Array<Choice>)
 
                 is Authentication -> {
@@ -596,8 +663,10 @@ class PromptFeature private constructor(
                     when (buttonType) {
                         MultiButtonDialogFragment.ButtonType.POSITIVE ->
                             it.onConfirmPositiveButton(!isCheckBoxChecked)
+
                         MultiButtonDialogFragment.ButtonType.NEGATIVE ->
                             it.onConfirmNegativeButton(!isCheckBoxChecked)
+
                         MultiButtonDialogFragment.ButtonType.NEUTRAL ->
                             it.onConfirmNeutralButton(!isCheckBoxChecked)
                     }
@@ -838,6 +907,7 @@ class PromptFeature private constructor(
                     shouldDismissOnLoad = true,
                 )
             }
+
             is BeforeUnload -> {
                 val title =
                     container.getString(R.string.mozac_feature_prompt_before_unload_dialog_title)
@@ -861,15 +931,11 @@ class PromptFeature private constructor(
 
             is Confirm -> {
                 with(promptRequest) {
-                    val positiveButton = if (positiveButtonTitle.isEmpty()) {
+                    val positiveButton = positiveButtonTitle.ifEmpty {
                         container.getString(R.string.mozac_feature_prompts_ok)
-                    } else {
-                        positiveButtonTitle
                     }
-                    val negativeButton = if (negativeButtonTitle.isEmpty()) {
+                    val negativeButton = negativeButtonTitle.ifEmpty {
                         container.getString(R.string.mozac_feature_prompts_cancel)
-                    } else {
-                        negativeButtonTitle
                     }
 
                     MultiButtonDialogFragment.newInstance(
@@ -912,6 +978,7 @@ class PromptFeature private constructor(
                     promptRequestUID = promptRequest.uid,
                     shouldDismissOnLoad = true,
                     providers = promptRequest.providers,
+                    colorsProvider = identityCredentialColorsProvider,
                 )
             }
 
@@ -921,6 +988,8 @@ class PromptFeature private constructor(
                     promptRequestUID = promptRequest.uid,
                     shouldDismissOnLoad = true,
                     accounts = promptRequest.accounts,
+                    provider = promptRequest.provider,
+                    colorsProvider = identityCredentialColorsProvider,
                 )
             }
 
@@ -1014,6 +1083,7 @@ class PromptFeature private constructor(
             is PromptRequest.IdentityCredential.SelectAccount,
             is PromptRequest.IdentityCredential.PrivacyPolicy,
             -> true
+
             is Alert, is TextPrompt, is Confirm, is Repost, is Popup -> promptAbuserDetector.shouldShowMoreDialogs
         }
     }

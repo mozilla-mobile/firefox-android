@@ -6,8 +6,12 @@
 
 package org.mozilla.fenix.ui.robots
 
+import android.util.Log
+import androidx.compose.ui.test.ComposeTimeoutException
+import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertAny
 import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.onAllNodesWithTag
@@ -26,22 +30,26 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiSelector
 import org.hamcrest.CoreMatchers.allOf
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
+import org.mozilla.fenix.helpers.AppAndSystemHelper.grantSystemPermission
+import org.mozilla.fenix.helpers.AppAndSystemHelper.isPackageInstalled
 import org.mozilla.fenix.helpers.Constants
 import org.mozilla.fenix.helpers.Constants.LONG_CLICK_DURATION
 import org.mozilla.fenix.helpers.Constants.RETRY_COUNT
 import org.mozilla.fenix.helpers.Constants.SPEECH_RECOGNITION
-import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithResIdExists
+import org.mozilla.fenix.helpers.DataGenerationHelper.getStringResource
+import org.mozilla.fenix.helpers.MatcherHelper.assertItemTextContains
+import org.mozilla.fenix.helpers.MatcherHelper.assertItemTextEquals
+import org.mozilla.fenix.helpers.MatcherHelper.assertUIObjectExists
+import org.mozilla.fenix.helpers.MatcherHelper.assertUIObjectIsGone
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithDescription
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithText
 import org.mozilla.fenix.helpers.SessionLoadedIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
-import org.mozilla.fenix.helpers.TestHelper.getStringResource
-import org.mozilla.fenix.helpers.TestHelper.grantSystemPermission
-import org.mozilla.fenix.helpers.TestHelper.isPackageInstalled
+import org.mozilla.fenix.helpers.TestHelper.appName
 import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.TestHelper.waitForObjects
@@ -50,38 +58,19 @@ import org.mozilla.fenix.helpers.TestHelper.waitForObjects
  * Implementation of Robot Pattern for the search fragment.
  */
 class SearchRobot {
-    fun verifySearchView() =
-        assertTrue(
-            mDevice.findObject(
-                UiSelector().resourceId("$packageName:id/search_wrapper"),
-            ).waitForExists(waitingTime),
-        )
+    fun verifySearchView() = assertUIObjectExists(itemWithResId("$packageName:id/search_wrapper"))
 
     fun verifySearchToolbar(isDisplayed: Boolean) =
-        assertItemWithResIdExists(
+        assertUIObjectExists(
             itemWithResId("$packageName:id/mozac_browser_toolbar_edit_url_view"),
             exists = isDisplayed,
         )
 
-    fun verifyScanButtonVisibility(visible: Boolean = true) {
-        if (visible) {
-            assertTrue(
-                scanButton.waitForExists(waitingTime),
-            )
-        } else {
-            assertTrue(
-                scanButton.waitUntilGone(waitingTime),
-            )
-        }
-    }
+    fun verifyScanButtonVisibility(visible: Boolean = true) =
+        assertUIObjectExists(scanButton, exists = visible)
 
-    fun verifyVoiceSearchButtonVisibility(enabled: Boolean) {
-        if (enabled) {
-            assertTrue(voiceSearchButton.waitForExists(waitingTime))
-        } else {
-            assertFalse(voiceSearchButton.waitForExists(waitingTimeShort))
-        }
-    }
+    fun verifyVoiceSearchButtonVisibility(enabled: Boolean) =
+        assertUIObjectExists(voiceSearchButton, exists = enabled)
 
     // Device or AVD requires a Google Services Android OS installation
     fun startVoiceSearch() {
@@ -93,7 +82,13 @@ class SearchRobot {
         }
     }
 
-    fun verifySearchEngineSuggestionResults(rule: ComposeTestRule, vararg searchSuggestions: String, searchTerm: String) {
+    fun verifySearchEngineSuggestionResults(
+        rule: ComposeTestRule,
+        vararg searchSuggestions: String,
+        searchTerm: String,
+        shouldEditKeyword: Boolean = false,
+        numberOfDeletionSteps: Int = 0,
+    ) {
         rule.waitForIdle()
         for (i in 1..RETRY_COUNT) {
             try {
@@ -112,6 +107,9 @@ class SearchRobot {
                     homeScreen {
                     }.openSearch {
                         typeSearch(searchTerm)
+                        if (shouldEditKeyword) {
+                            deleteSearchKeywordCharacters(numberOfDeletionSteps = numberOfDeletionSteps)
+                        }
                     }
                 }
             }
@@ -129,36 +127,36 @@ class SearchRobot {
         }
     }
 
-    fun verifySearchSuggestionsCount(rule: ComposeTestRule, numberOfSuggestions: Int) =
-        rule.onAllNodesWithTag("mozac.awesomebar.suggestion").assertCountEquals(numberOfSuggestions)
+    @OptIn(ExperimentalTestApi::class)
+    fun verifySearchSuggestionsCount(rule: ComposeTestRule, numberOfSuggestions: Int, searchTerm: String) {
+        for (i in 1..RETRY_COUNT) {
+            try {
+                rule.waitUntilNodeCount(hasTestTag("mozac.awesomebar.suggestion"), numberOfSuggestions, waitingTime)
+                rule.onAllNodesWithTag("mozac.awesomebar.suggestion").assertCountEquals(numberOfSuggestions)
 
-    fun verifyAllowSuggestionsInPrivateModeDialog() {
-        assertTrue(
-            mDevice.findObject(
-                UiSelector().text(getStringResource(R.string.search_suggestions_onboarding_title)),
-            ).waitForExists(waitingTime),
-        )
-        assertTrue(
-            mDevice.findObject(
-                UiSelector().text(getStringResource(R.string.search_suggestions_onboarding_text)),
-            ).exists(),
-        )
-        assertTrue(
-            mDevice.findObject(
-                UiSelector().text("Learn more"),
-            ).exists(),
-        )
-        assertTrue(
-            mDevice.findObject(
-                UiSelector().text(getStringResource(R.string.search_suggestions_onboarding_allow_button)),
-            ).exists(),
-        )
-        assertTrue(
-            mDevice.findObject(
-                UiSelector().text(getStringResource(R.string.search_suggestions_onboarding_do_not_allow_button)),
-            ).exists(),
-        )
+                break
+            } catch (e: ComposeTimeoutException) {
+                if (i == RETRY_COUNT) {
+                    throw e
+                } else {
+                    mDevice.pressBack()
+                    homeScreen {
+                    }.openSearch {
+                        typeSearch(searchTerm)
+                    }
+                }
+            }
+        }
     }
+
+    fun verifyAllowSuggestionsInPrivateModeDialog() =
+        assertUIObjectExists(
+            itemWithText(getStringResource(R.string.search_suggestions_onboarding_title)),
+            itemWithText(getStringResource(R.string.search_suggestions_onboarding_text)),
+            itemWithText("Learn more"),
+            itemWithText(getStringResource(R.string.search_suggestions_onboarding_allow_button)),
+            itemWithText(getStringResource(R.string.search_suggestions_onboarding_do_not_allow_button)),
+        )
 
     fun denySuggestionsInPrivateMode() {
         mDevice.findObject(
@@ -172,37 +170,28 @@ class SearchRobot {
         ).click()
     }
 
-    fun verifySearchSelectorButton() {
-        assertTrue(searchSelectorButton.waitForExists(waitingTime))
-    }
+    fun verifySearchSelectorButton() = assertUIObjectExists(searchSelectorButton)
 
     fun clickSearchSelectorButton() {
         searchSelectorButton.waitForExists(waitingTime)
         searchSelectorButton.click()
     }
 
-    fun verifySearchEngineIcon(name: String) =
-        assertTrue(itemWithDescription(name).waitForExists(waitingTime))
+    fun verifySearchEngineIcon(name: String) = assertUIObjectExists(itemWithDescription(name))
 
     fun verifySearchBarPlaceholder(text: String) {
         browserToolbarEditView().waitForExists(waitingTime)
-        assertTrue(
-            browserToolbarEditView().text == text,
-        )
+        assertItemTextEquals(browserToolbarEditView(), expectedText = text)
     }
 
     fun verifySearchShortcutListContains(vararg searchEngineName: String, shouldExist: Boolean = true) {
         searchEngineName.forEach {
             if (shouldExist) {
-                assertTrue(
-                    searchShortcutList.getChild(UiSelector().text(it))
-                        .waitForExists(waitingTimeShort),
+                assertUIObjectExists(
+                    searchShortcutList.getChild(UiSelector().text(it)),
                 )
             } else {
-                assertTrue(
-                    searchShortcutList.getChild(UiSelector().text(it))
-                        .waitUntilGone(waitingTimeShort),
-                )
+                assertUIObjectIsGone(searchShortcutList.getChild(UiSelector().text(it)))
             }
         }
     }
@@ -282,7 +271,7 @@ class SearchRobot {
     }
 
     fun verifyTranslatedFocusedNavigationToolbar(toolbarHintString: String) =
-        assertTrue(browserToolbarEditView().text.contains(toolbarHintString))
+        assertItemTextContains(browserToolbarEditView(), itemText = toolbarHintString)
 
     fun verifyTypedToolbarText(expectedText: String) {
         mDevice.findObject(UiSelector().resourceId("$packageName:id/toolbar"))
@@ -301,25 +290,32 @@ class SearchRobot {
         onView(withId(R.id.toolbar))
             .check(
                 if (bottomPosition) {
-                    PositionAssertions.isCompletelyBelow(withId(R.id.pill_wrapper_divider))
+                    PositionAssertions.isCompletelyBelow(withId(R.id.keyboard_divider))
                 } else {
-                    PositionAssertions.isCompletelyAbove(withId(R.id.pill_wrapper_divider))
+                    PositionAssertions.isCompletelyAbove(withId(R.id.keyboard_divider))
                 },
             )
+    }
+
+    fun deleteSearchKeywordCharacters(numberOfDeletionSteps: Int) {
+        for (i in 1..numberOfDeletionSteps) {
+            mDevice.pressDelete()
+            Log.i(Constants.TAG, "deleteSearchKeywordCharacters: Pressed keyboard delete button $i times")
+            mDevice.waitForWindowUpdate(appName, waitingTimeShort)
+        }
     }
 
     class Transition {
         private lateinit var sessionLoadedIdlingResource: SessionLoadedIdlingResource
 
         fun dismissSearchBar(interact: HomeScreenRobot.() -> Unit): HomeScreenRobot.Transition {
-            mDevice.waitForIdle()
-            closeSoftKeyboard()
-            mDevice.pressBack()
             try {
-                assertTrue(searchWrapper().waitUntilGone(waitingTimeShort))
+                searchWrapper().waitForExists(waitingTime)
+                mDevice.pressBack()
+                assertUIObjectIsGone(searchWrapper())
             } catch (e: AssertionError) {
                 mDevice.pressBack()
-                assertTrue(searchWrapper().waitUntilGone(waitingTimeShort))
+                assertUIObjectIsGone(searchWrapper())
             }
 
             HomeScreenRobot().interact()
@@ -342,11 +338,7 @@ class SearchRobot {
             mDevice.pressEnter()
 
             runWithIdleRes(sessionLoadedIdlingResource) {
-                assertTrue(
-                    mDevice.findObject(
-                        UiSelector().resourceId("$packageName:id/browserLayout"),
-                    ).waitForExists(waitingTime),
-                )
+                assertUIObjectExists(itemWithResId("$packageName:id/browserLayout"))
             }
 
             BrowserRobot().interact()
