@@ -217,6 +217,8 @@
     <!-- Browser menu button that opens the find in page menu -->
     <string name="browser_menu_find_in_page">ਸਫ਼ੇ ‘ਚ ਲੱਭੋ</string>
 
+    <!-- Browser menu button that opens the translations dialog, which has options to translate the current browser page. -->
+    <string name="browser_menu_translations">ਸਫ਼ੇ ਦਾ ਉਲੱਥਾ ਕਰੋ</string>
     <!-- Browser menu button that saves the current tab to a collection -->
     <string name="browser_menu_save_to_collection_2">ਭੰਡਾਰ ‘ਚ ਸੰਭਾਲੋ</string>
     <!-- Browser menu button that open a share menu to share the current site -->
@@ -759,7 +761,7 @@
     <!-- Name of the "receive tabs" notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="fxa_received_tab_channel_name">ਮਿਲੀਆਂ ਟੈਬਾਂ</string>
     <!-- Description of the "receive tabs" notification channel. Displayed in the "App notifications" system settings for the app -->
-    <string name="fxa_received_tab_channel_description">ਹੋਰ ਫਾਇਰਫਾਕਸ ਡਿਵਾਈਸਾਂ ਤੋਂ ਮਿਲੀਆਂ ਟੈਬਾਂ ਲਈ ਸੂਚਨਾਵਾਂ ਹਨ।</string>
+    <string name="fxa_received_tab_channel_description">ਹੋਰ Firefox ਡਿਵਾਈਸਾਂ ਤੋਂ ਮਿਲੀਆਂ ਟੈਬਾਂ ਲਈ ਸੂਚਨਾਵਾਂ ਹਨ।</string>
     <!--  The body for these is the URL of the tab received  -->
     <string name="fxa_tab_received_notification_name">ਟੈਬ ਮਿਲੀ</string>
     <!-- %s is the device name -->
@@ -1324,7 +1326,7 @@
     <!-- An option to connect additional devices -->
     <string name="sync_connect_device">ਹੋਰ ਡਿਵਾਈਸ ਨਾਲ ਕਨੈਕਟ ਕਰੋ</string>
     <!-- The dialog text shown when additional devices are not available -->
-    <string name="sync_connect_device_dialog">ਟੈਬ ਭੇਜਣ ਲਈ, ਘੱਟੋ-ਘੱਟ ਹੋਰ ਡਿਵਾਈਸ ‘ਤੇ ਫਾਇਰਫਾਕਸ ਵਿੱਚ ਸਾਈਨ ਇਨ ਕਰੋ।</string>
+    <string name="sync_connect_device_dialog">ਟੈਬ ਭੇਜਣ ਲਈ, ਘੱਟੋ-ਘੱਟ ਹੋਰ ਡਿਵਾਈਸ ਉੱਤੇ Firefox ਵਿੱਚ ਸਾਈਨ ਇਨ ਕਰੋ।</string>
     <!-- Confirmation dialog button -->
     <string name="sync_confirmation_button">ਸਮਝ ਗਏ</string>
 
@@ -1522,7 +1524,7 @@
     <!-- Title of QR Pairing Fragment -->
     <string name="sync_scan_code">ਕੋਡ ਸਕੈਨ ਕਰੋ</string>
     <!-- Instructions on how to access pairing -->
-    <string name="sign_in_instructions"><![CDATA[ਆਪਣੇ ਕੰਪਿਊਟਰ ‘ਤੇ ਫਾਇਰਫਾਕਸ ਖੋਲ੍ਹੋ ਅਤੇ <b>https://firefox.com/pair</b> ‘ਤੇ ਜਾਓ]]></string>
+    <string name="sign_in_instructions"><![CDATA[ਆਪਣੇ ਕੰਪਿਊਟਰ ‘ਤੇ Firefox ਖੋਲ੍ਹੋ ਅਤੇ <b>https://firefox.com/pair</b> ‘ਤੇ ਜਾਓ]]></string>
     <!-- Text shown for sign in pairing when ready -->
     <string name="sign_in_ready_for_scan">ਸਕੈਨ ਕਰਨ ਲਈ ਤਿਆਰ</string>
     <!-- Text shown for settings option for sign with pairing -->
@@ -2051,7 +2053,7 @@
     <!-- Text displayed when user has disabled tab syncing in Firefox Sync Account -->
     <string name="synced_tabs_enable_tab_syncing">ਟੈਬ ਨੂੰ ਸਿੰਕ ਕਰਨਾ ਸਮਰੱਥ ਕਰੋ।</string>
     <!-- Text displayed when user has no tabs that have been synced -->
-    <string name="synced_tabs_no_tabs">ਤੁਹਾਡੇ ਹੋਰ ਡਿਵਾਈਸ ਉੱਤੇ ਫਾਇਰਫਾਕਸ ਵਿੱਚ ਕੋਈ ਵੀ ਖੋਲ੍ਹੀ ਹੋਈ ਟੈਬ ਨਹੀਂ ਹੈ।</string>
+    <string name="synced_tabs_no_tabs">ਤੁਹਾਡੇ ਹੋਰ ਡਿਵਾਈਸ ਉੱਤੇ Firefox ਵਿੱਚ ਕੋਈ ਵੀ ਖੋਲ੍ਹੀ ਹੋਈ ਟੈਬ ਨਹੀਂ ਹੈ।</string>
     <!-- Text displayed in the synced tabs screen when a user is not signed in to Firefox Sync describing Synced Tabs -->
     <string name="synced_tabs_sign_in_message">ਤੁਹਾਡੇ ਹੋਰ ਡਿਵਾਈਸਾਂ ਤੋਂ ਟੈਬਾਂ ਦੀ ਸੂਚੀ ਵੇਖੋ।</string>
     <!-- Text displayed on a button in the synced tabs screen to link users to sign in when a user is not signed in to Firefox Sync -->
@@ -2352,6 +2354,73 @@
 
     <!-- Translations feature-->
 
+    <!-- Translation request dialog -->
+    <!-- Title for the translation dialog that allows a user to translate the webpage. -->
+    <string name="translations_bottom_sheet_title">ਇਹ ਸਫ਼ੇ ਦਾ ਉਲੱਥਾ ਕਰਨਾ ਹੈ?</string>
+    <!-- Title for the translation dialog that allows a user to translate the webpage when a user uses the translation feature the first time. The first parameter is the name of the application, for example, "Fenix". -->
+    <string name="translations_bottom_sheet_title_first_time">%1$s ਵਿੱਚ ਪ੍ਰਾਈਵੇਟ ਉਲੱਥਾ ਅਜ਼ਮਾਓ</string>
+    <!-- Additional information on the translation dialog that appears when a user uses the translation feature the first time. The first parameter is clickable text with a link, for example, "Learn more". -->
+    <string name="translations_bottom_sheet_info_message">ਤੁਹਾਡੀ ਪਰਦੇਦਾਰੀ ਲਈ ਉਲੱਥਾ ਕਦੇ ਵੀ ਤੁਹਾਡੇ ਡਿਵਾਈਸ ਤੋਂ ਬਾਹਰ ਨਹੀਂ ਜਾਂਦਾ ਹੈ। ਨਵੀਆਂ ਭਾਸ਼ਾਵਾਂ ਅਤੇ ਸੁਧਾਰ ਛੇਤੀ ਆ ਰਹੇ ਹਨ! %1$s</string>
+    <!-- Text that links to additional information about the Firefox translations feature. -->
+    <string name="translations_bottom_sheet_info_message_learn_more">ਹੋਰ ਜਾਣੋ</string>
+    <!-- Label for the dropdown to select which language to translate from on the translations dialog. Usually the translate from language selected will be the same as the page language. -->
+    <string name="translations_bottom_sheet_translate_from">ਇਸ ਤੋਂ ਉਲੱਥਾ ਕਰੋ</string>
+    <!-- Label for the dropdown to select which language to translate to on the translations dialog. Usually the translate to language selected will be the user's preferred language. -->
+    <string name="translations_bottom_sheet_translate_to">ਇਸ ਵਿੱਚ ਉਲੱਥਾ ਕਰੋ</string>
+    <!-- Button text on the translations dialog to dismiss the dialog and return to the browser. -->
+    <string name="translations_bottom_sheet_negative_button">ਹਾਲੇ ਨਹੀਂ</string>
+    <!-- Button text on the translations dialog when a translation error appears, used to dismiss the dialog and return to the browser. -->
+    <string name="translations_bottom_sheet_negative_button_error">ਮੁਕੰਮਲ</string>
+    <!-- Button text on the translations dialog to begin a translation of the website. -->
+    <string name="translations_bottom_sheet_positive_button">ਉਲੱਥਾ ਕਰੋ</string>
+    <!-- Button text on the translations dialog when a translation error appears. -->
+    <string name="translations_bottom_sheet_positive_button_error">ਮੁੜ ਕੋਸ਼ਿਸ਼ ਕਰੋ</string>
+    <!-- Inactive button text on the translations dialog that indicates a translation is currently in progress. This button will be accompanied by a loading icon. -->
+    <string name="translations_bottom_sheet_translating_in_progress">ਉਲੱਥਾ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ</string>
+    <!-- Button content description (not visible, for screen readers etc.) for the translations dialog translate button that indicates a translation is currently in progress. -->
+    <string name="translations_bottom_sheet_translating_in_progress_content_description">ਉਲੱਥਾ ਜਾਰੀ ਹੈ</string>
+
+    <!-- The title of the warning card informs the user that a translation could not be completed. -->
+    <string name="translation_error_could_not_translate_warning_text">ਅਨੁਵਾਦ ਕਰਨ ਦੌਰਾਨ ਸਮੱਸਿਆ ਆਈ ਸੀ। ਬਾਅਦ ਵਿੱਚ ਮੁੜ ਕੋਸ਼ਿਸ਼ ਕਰੋ।</string>
+    <!-- The title of the warning card informs the user that the list of languages cannot be loaded. -->
+    <string name="translation_error_could_not_load_languages_warning_text">ਭਾਸ਼ਾਵਾਂ ਨੂੰ ਲੋਡ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਿਆ। ਆਪਣੇ ਇੰਟਰਨੈੱਟ ਕਨੈਕਸ਼ਨ ਦੀ ਜਾਂਚ ਕਰਕੇ ਫੇਰ ਕੋਸ਼ਿਸ਼ ਕਰੋ।</string>
+    <!-- The title of the warning card informs the user that a language is not supported. The first parameter is the name of the language that is not supported. -->
+    <string name="translation_error_language_not_supported_warning_text">ਅਫ਼ਸੋਸ ਅਸੀਂ ਹਾਲੇ %1$s ਲਈ ਸਹਾਇਕ ਨਹੀਂ ਹਾਂ।</string>
+    <!-- Button text on the warning card when a language is not supported. The link will take the user to a page to a support page about translations. -->
+    <string name="translation_error_language_not_supported_learn_more">ਹੋਰ ਜਾਣੋ</string>
+
+    <!-- Translations options dialog -->
+    <!-- Title of the translation options dialog that allows a user to set their translation options for the site the user is currently on. -->
+    <string name="translation_option_bottom_sheet_title">ਉਲੱਥੇ ਲਈ ਚੋਣਾਂ</string>
+    <!-- Toggle switch label that allows a user to set the setting if they would like the browser to always offer or suggest translations when available. -->
+    <string name="translation_option_bottom_sheet_always_translate">ਹਮੇਸ਼ਾਂ ਉਲੱਥਾ ਦੀ ਪੇਸ਼ਕਸ਼ ਕਰੋ</string>
+    <!-- Toggle switch label that allows a user to set if they would like a given language to automatically translate or not. The first parameter is the language name, for example, "Spanish". -->
+    <string name="translation_option_bottom_sheet_always_translate_in_language">ਹਮੇਸ਼ਾਂ %1$s ਲਈ ਉਲੱਥਾ ਕਰੋ</string>
+    <!-- Toggle switch label that allows a user to set if they would like to never be offered a translation of the given language. The first parameter is the language name, for example, "Spanish". -->
+    <string name="translation_option_bottom_sheet_never_translate_in_language">%1$s ਲਈ ਕਦੇ ਉਲੱਥਾ ਨਾ ਕਰੋ</string>
+    <!-- Toggle switch label that allows a user to set the setting if they would like the browser to never translate the site the user is currently visiting. -->
+    <string name="translation_option_bottom_sheet_never_translate_site">ਇਹ ਸਾਈਟ ਦਾ ਉਲੱਥਾ ਕਦੇ ਨਾ ਕਰੋ</string>
+    <!-- Button text for the button that will take the user to the translation settings dialog. -->
+    <string name="translation_option_bottom_sheet_translation_settings">ਉਲੱਥਾ ਸੈਟਿੰਗਾਂ</string>
+    <!-- Button text for the button that will take the user to a website to learn more about how translations works in the given app. The first parameter is the name of the application, for example, "Fenix". -->
+    <string name="translation_option_bottom_sheet_about_translations">%1$s ਵਿੱਚ ਉਲੱਥਾ ਬਾਰੇ</string>
+
+    <!-- Translation settings dialog -->
+    <!-- Title of the translation settings dialog that allows a user to set their preferred translation settings. -->
+    <string name="translation_settings_toolbar_title">ਉਲੱਥੇ</string>
+    <!-- Toggle switch label that indicates that the browser should signal or indicate when a translation is possible for any page. -->
+    <string name="translation_settings_offer_to_translate">ਜਦੋਂ ਵੀ ਸੰਭਵ ਹੋਵੇ ਤਾਂ ਉਲੱਥੇ ਦੀ ਪੇਸ਼ਕਸ਼ ਕਰੋ</string>
+    <!-- Toggle switch label that indicates that downloading files required for translating is permitted when using data saver mode in Android. -->
+    <string name="translation_settings_always_download">ਡਾਟਾ ਬਚਾਉਣ ਢੰਗ ਵਿੱਚ ਹਮੇਸ਼ਾਂ ਉਲੱਥਾ ਭਾਸ਼ਾਵਾਂ ਡਾਊਨਲੋਡ ਕਰੋ</string>
+    <!-- Section header text that begins the section of a list of different options the user may select to adjust their translation preferences. -->
+    <string name="translation_settings_translation_preference">ਉਲੱਥਾ ਪਸੰਦਾਂ</string>
+    <!-- Button text for the button that will take the user to the automatic translations settings dialog. On the automatic translations settings dialog, the user can set if translations should occur automatically for a given language. -->
+    <string name="translation_settings_automatic_translation">ਆਪਣੇ-ਆਪ ਉਲੱਥਾ</string>
+    <!-- Button text for the button that will take the user to the never translate these sites dialog. On the never translate these sites dialog, the user can set if translations should never occur on certain websites. -->
+    <string name="translation_settings_automatic_never_translate_sites">ਇਹ ਸਾਈਟਾਂ ਲਈ ਕਦੇ ਉਲੱਥਾ ਨਾ ਕਰੋ</string>
+    <!-- Button text for the button that will take the user to the download languages dialog. On the download languages dialog, the user can manage which languages they would like to download for translations. -->
+    <string name="translation_settings_download_language">ਭਾਸ਼ਾਵਾਂ ਨੂੰ ਡਾਊਨਲੋਡ ਕਰੋ</string>
+
     <!-- Automatic translation preference screen -->
     <!-- Title of the automatic translation preference screen that will appear on the toolbar.-->
     <string name="automatic_translation_toolbar_title_preference">ਆਪਣੇ-ਆਪ ਉਲੱਥਾ</string>
@@ -2400,6 +2469,10 @@
     <string name="download_languages_available_languages_preference">ਮੌਜੂਦ ਭਾਸ਼ਾਵਾਂ</string>
     <!-- Text that will appear beside a core or pivot language package name to show that the language is necessary for the translation feature to function. -->
     <string name="download_languages_default_system_language_require_preference">ਲੋੜੀਂਦਾ</string>
+    <!-- A text for download language preference item.
+    The first parameter is the language name, for example, "Spanish".
+    The second parameter is the language file size, for example, "(3.91 KB)" or, if the language package name is a pivot language, "(required)". -->
+    <string name="download_languages_language_item_preference">%1$s (%2$s)</string>
     <!-- The subhead of the download language preference screen will appear above the items that were not downloaded. -->
     <string name="download_language_header_preference">ਭਾਸ਼ਾਵਾਂ ਡਾਊਨਲੋਡ ਕਰੋ</string>
     <!-- All languages list item. When the user presses this item, they can download or delete all languages. -->
@@ -2412,4 +2485,62 @@
     <string name="download_languages_item_content_description_not_downloaded_state">ਡਾਊਨਲੋਡ</string>
     <!-- Content description (not visible, for screen readers etc.): For a language list item that is selected. -->
     <string name="download_languages_item_content_description_selected_state">ਚੁਣੀ</string>
+
+    <!-- Title for the dialog used by the translations feature to confirm deleting a language.
+    The dialog will be presented when the user requests deletion of a language.
+    The first parameter is the name of the language, for example, "Spanish" and the second parameter is the size in kilobytes or megabytes of the language file. -->
+    <string name="delete_language_file_dialog_title">%1$s (%2$s) ਨੂੰ ਹਟਾਉਣਾ ਹੈ?</string>
+    <!-- Additional information for the dialog used by the translations feature to confirm deleting a language. The first parameter is the name of the application, for example, "Fenix". -->
+    <string name="delete_language_file_dialog_message">ਜੇ ਤੁਸੀਂ ਇਹ ਭਾਸ਼ਾ ਨੂੰ ਹਟਾ ਦਿੱਤਾ ਤਾਂ ਜਦ ਵੀ ਤੁਸੀਂ ਉਲੱਥਾ ਕਰੋਗੇ ਤਾਂ %1$s ਤੁਹਾਡੀ ਕੈਸ਼ ਲਈ ਅਧੂਰੀ ਭਾਸ਼ਾ ਡਾਊਨਲੋਡ ਕਰੇਗਾ।</string>
+    <!-- Title for the dialog used by the translations feature to confirm deleting all languages file.
+    The dialog will be presented when the user requests deletion of all languages file.
+    The first parameter is the size in kilobytes or megabytes of the language file. -->
+    <string name="delete_language_all_languages_file_dialog_title">ਕੀ ਸਾਰੀਆਂ ਭਾਸ਼ਾਵਾਂ (%1$s) ਹਟਾਉਣੀਆਂ ਹਨ?</string>
+    <!-- Additional information for the dialog used by the translations feature to confirm deleting all languages file. The first parameter is the name of the application, for example, "Fenix". -->
+    <string name="delete_language_all_languages_file_dialog_message">ਜੇ ਤੁਸੀਂ ਸਾਰੀਆਂ ਭਾਸ਼ਾਵਾਂ ਨੂੰ ਹਟਾ ਦਿੱਤਾ ਤਾਂ ਜਦ ਵੀ ਤੁਸੀਂ ਉਲੱਥਾ ਕਰੋਗੇ ਤਾਂ %1$s ਤੁਹਾਡੀ ਕੈਸ਼ ਲਈ ਅਧੂਰੀਆਂ ਭਾਸ਼ਾਵਾਂ ਡਾਊਨਲੋਡ ਕਰੇਗਾ।</string>
+    <!-- Button text on the dialog used by the translations feature to confirm deleting a language. -->
+    <string name="delete_language_file_dialog_positive_button_text">ਹਟਾਓ</string>
+    <!-- Button text on the dialog used by the translations feature to cancel deleting a language. -->
+    <string name="delete_language_file_dialog_negative_button_text">ਰੱਦ ਕਰੋ</string>
+
+    <!-- Title for the data saving mode warning dialog used by the translations feature.
+    This dialog will be presented when the user attempts to download a language or perform
+    a translation without the necessary language files downloaded first when Android's data saver mode is enabled and the user is not using WiFi.
+    The first parameter is the size in kilobytes or megabytes of the language file.-->
+    <string name="download_language_file_dialog_title">ਡਾਟਾ ਬੱਚਤ ਢੰਗ (%1$s) ਵਿੱਚ ਹੋਣ ਦੇ ਦੌਰਾਨ ਡਾਊਨਲੋਡ ਕਰਨਾ ਹੈ?</string>
+
+    <!-- Additional information for the data saving mode warning dialog used by the translations feature. This text explains the reason a download is required for a translation. -->
+    <string name="download_language_file_dialog_message_all_languages">ਅਸੀਂ ਅਧੂਰੀਆਂ ਭਾਸ਼ਾਵਾਂ ਨੂੰ ਤੁਹਾਡੀ ਕੈਸ਼ ਲਈ ਡਾਊਨਲੋਡ ਕਰਦੇ ਹਾਂ ਤਾਂ ਕਿ ਉਲੱਥੇ ਨੂੰ ਪ੍ਰਾਈਵੇਟ ਰੱਖਿਆ ਜਾਵੇ।</string>
+    <!-- Checkbox label text on the data saving mode warning dialog used by the translations feature. This checkbox allows users to ignore the data usage warnings. -->
+    <string name="download_language_file_dialog_checkbox_text">ਡਾਟਾ ਬਚਾਉਣ ਢੰਗ ਵਿੱਚ ਹਮੇਸ਼ਾਂ ਡਾਊਨਲੋਡ ਕਰੋ</string>
+    <!-- Button text on the data saving mode warning dialog used by the translations feature to allow users to confirm they wish to continue and download the language file. -->
+    <string name="download_language_file_dialog_positive_button_text">ਡਾਊਨਲੋਡ ਕਰੋ</string>
+    <!-- Button text on the data saving mode warning dialog used by the translations feature to allow users to confirm they wish to continue and download the language file and perform a translation. -->
+    <string name="download_language_file_dialog_positive_button_text_all_languages">ਡਾਊਨਲੋਡ ਅਤੇ ਉਲੱਥਾ ਕਰੋ</string>
+    <!-- Button text on the data saving mode warning dialog used by the translations feature to allow users to cancel the action and not perform a download of the language file. -->
+    <string name="download_language_file_dialog_negative_button_text">ਰੱਦ ਕਰੋ</string>
+
+    <!-- Debug drawer -->
+    <!-- The title of the Tab Tools feature in the Debug Drawer. -->
+    <string name="debug_drawer_tab_tools_title" tools:ignore="UnusedResources">ਟੈਬ ਟੂਲ</string>
+    <!-- The title of the tab count section in Tab Tools. -->
+    <string name="debug_drawer_tab_tools_tab_count_title">ਟੈਬ ਗਿਣਤੀ</string>
+    <!-- The active tab count category in the tab count section in Tab Tools. -->
+    <string name="debug_drawer_tab_tools_tab_count_normal">ਸਰਗਰਮ</string>
+    <!-- The inactive tab count category in the tab count section in Tab Tools. -->
+    <string name="debug_drawer_tab_tools_tab_count_inactive">ਨਾ-ਸਰਗਰਮ</string>
+    <!-- The private tab count category in the tab count section in Tab Tools. -->
+    <string name="debug_drawer_tab_tools_tab_count_private">ਨਿੱਜੀ</string>
+    <!-- The total tab count category in the tab count section in Tab Tools. -->
+    <string name="debug_drawer_tab_tools_tab_count_total">ਕੁੱਲ</string>
+    <!-- The title of the tab creation tool section in Tab Tools. -->
+    <string name="debug_drawer_tab_tools_tab_creation_tool_title">ਟੈਬ ਬਣਾਉਣ ਵਾਲਾ ਟੂਲ</string>
+    <!-- The label of the text field in the tab creation tool. -->
+    <string name="debug_drawer_tab_tools_tab_creation_tool_text_field_label">bਣਾਉਣ ਲਈ ਟੈਬਾਂ ਦੀ ਗਿਣਤੀ</string>
+    <!-- The button text to add tabs to the active tab group in the tab creation tool. -->
+    <string name="debug_drawer_tab_tools_tab_creation_tool_button_text_active">ਸਰਗਰਮ ਟੈਬਾਂ ਵਿੱਚ ਜੋੜੋ</string>
+    <!-- The button text to add tabs to the inactive tab group in the tab creation tool. -->
+    <string name="debug_drawer_tab_tools_tab_creation_tool_button_text_inactive">ਨਾ-ਸਰਗਰਮ ਟੈਬਾਂ ਵਿੱਚ ਜੋੜੋ</string>
+    <!-- The button text to add tabs to the private tab group in the tab creation tool. -->
+    <string name="debug_drawer_tab_tools_tab_creation_tool_button_text_private">ਪ੍ਰਾਈਵੇਟ ਟੈਬਾਂ ਵਿੱਚ ਜੋੜੋ</string>
 </resources>

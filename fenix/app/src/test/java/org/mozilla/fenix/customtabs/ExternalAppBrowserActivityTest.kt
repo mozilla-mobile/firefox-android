@@ -27,8 +27,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.NavGraphDirections
-import org.mozilla.fenix.browser.browsingmode.BrowsingMode
-import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.utils.Settings
@@ -55,15 +53,12 @@ class ExternalAppBrowserActivityTest {
     @Test
     fun `navigateToBrowserOnColdStart does nothing for external app browser activity`() {
         val activity = spyk(ExternalAppBrowserActivity())
-        val browsingModeManager: BrowsingModeManager = mockk()
-        every { browsingModeManager.mode } returns BrowsingMode.Normal
 
         val settings: Settings = mockk()
         every { settings.shouldReturnToBrowser } returns true
         every { activity.components.settings.shouldReturnToBrowser } returns true
         every { activity.openToBrowser(any(), any()) } returns Unit
 
-        activity.browsingModeManager = browsingModeManager
         activity.navigateToBrowserOnColdStart()
 
         verify(exactly = 0) { activity.openToBrowser(BrowserDirection.FromGlobal, null) }

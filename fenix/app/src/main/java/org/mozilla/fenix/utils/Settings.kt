@@ -516,6 +516,14 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = true,
     )
 
+    /**
+     * Indicates if the user has completed successfully first translation.
+     */
+    var showFirstTimeTranslation: Boolean by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_show_first_time_translation),
+        default = true,
+    )
+
     @VisibleForTesting
     internal fun timeNowInMillis(): Long = System.currentTimeMillis()
 
@@ -1928,6 +1936,15 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     )
 
     /**
+     * Indicates if SuggestStrongPassword feature is enabled.
+     */
+    var enableSuggestStrongPassword by lazyFeatureFlagPreference(
+        key = appContext.getPreferenceKey(R.string.pref_key_enable_suggest_strong_password),
+        default = { FxNimbus.features.fxStrongPassword.value().enabled },
+        featureFlag = FeatureFlags.suggestStrongPassword,
+    )
+
+    /**
      * Indicates if the user has chosen to show sponsored search suggestions in the awesomebar.
      * The default value is computed lazily, and based on whether Firefox Suggest is enabled.
      */
@@ -1946,6 +1963,15 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         key = appContext.getPreferenceKey(R.string.pref_key_show_nonsponsored_suggestions),
         default = { enableFxSuggest },
         featureFlag = FeatureFlags.fxSuggest,
+    )
+
+    /**
+     * Indicates that the user does not want warned of a translations
+     * model download while in data saver mode and using mobile data.
+     */
+    var ignoreTranslationsDataSaverWarning by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_ignore_translations_data_saver_warning),
+        default = false,
     )
 
     /**

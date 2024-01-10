@@ -12,6 +12,7 @@ import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -31,9 +32,11 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.map
@@ -59,6 +62,7 @@ import mozilla.components.browser.thumbnails.BrowserThumbnails
 import mozilla.components.concept.base.crash.Breadcrumb
 import mozilla.components.concept.engine.permission.SitePermissions
 import mozilla.components.concept.engine.prompt.ShareData
+import mozilla.components.concept.storage.LoginEntry
 import mozilla.components.feature.accounts.FxaCapability
 import mozilla.components.feature.accounts.FxaWebChannelFeature
 import mozilla.components.feature.app.links.AppLinksFeature
@@ -79,6 +83,7 @@ import mozilla.components.feature.prompts.dialog.FullScreenNotificationDialog
 import mozilla.components.feature.prompts.identitycredential.DialogColors
 import mozilla.components.feature.prompts.identitycredential.DialogColorsProvider
 import mozilla.components.feature.prompts.login.LoginDelegate
+import mozilla.components.feature.prompts.login.SuggestStrongPasswordDelegate
 import mozilla.components.feature.prompts.share.ShareDelegate
 import mozilla.components.feature.readerview.ReaderViewFeature
 import mozilla.components.feature.search.SearchFeature
@@ -95,6 +100,8 @@ import mozilla.components.lib.state.ext.flowScoped
 import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.service.sync.autofill.DefaultCreditCardValidationDelegate
 import mozilla.components.service.sync.logins.DefaultLoginValidationDelegate
+import mozilla.components.service.sync.logins.LoginsApiException
+import mozilla.components.service.sync.logins.SyncableLoginsStorage
 import mozilla.components.support.base.feature.ActivityResultHandler
 import mozilla.components.support.base.feature.PermissionsFeature
 import mozilla.components.support.base.feature.UserInteractionHandler
@@ -108,6 +115,7 @@ import mozilla.components.support.locale.ActivityContextWrapper
 import mozilla.components.ui.widgets.withCenterAlignedButtons
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.FeatureFlags
+import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.MediaState
 import org.mozilla.fenix.GleanMetrics.PullToRefreshInBrowser
 import org.mozilla.fenix.HomeActivity
@@ -160,6 +168,7 @@ import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.utils.allowUndo
 import org.mozilla.fenix.wifi.SitePermissionsWifiIntegration
 import java.lang.ref.WeakReference
+import kotlin.coroutines.cancellation.CancellationException
 import mozilla.components.feature.session.behavior.ToolbarPosition as MozacToolbarPosition
 
 /**
@@ -352,11 +361,12 @@ abstract class BaseBrowserFragment :
         val readerMenuController = DefaultReaderModeController(
             readerViewFeature,
             binding.readerViewControlsBar,
-            isPrivate = activity.browsingModeManager.mode.isPrivate,
+            isPrivate = requireComponents.appStore.state.mode.isPrivate,
             onReaderModeChanged = { activity.finishActionMode() },
         )
         val browserToolbarController = DefaultBrowserToolbarController(
             store = store,
+            appStore = requireComponents.appStore,
             tabsUseCases = requireComponents.useCases.tabsUseCases,
             activity = activity,
             navController = findNavController(),
@@ -370,7 +380,7 @@ abstract class BaseBrowserFragment :
                 findNavController().nav(
                     R.id.browserFragment,
                     BrowserFragmentDirections.actionGlobalTabsTrayFragment(
-                        page = when (activity.browsingModeManager.mode) {
+                        page = when (requireComponents.appStore.state.mode) {
                             BrowsingMode.Normal -> Page.NormalTabs
                             BrowsingMode.Private -> Page.PrivateTabs
                         },
@@ -460,6 +470,7 @@ abstract class BaseBrowserFragment :
 
         browserToolbarView.view.display.setOnSiteSecurityClickedListener {
             showQuickSettingsDialog()
+            Events.browserToolbarSecurityIndicatorTapped.record()
         }
 
         contextMenuFeature.set(
@@ -730,6 +741,18 @@ abstract class BaseBrowserFragment :
                             findNavController().navigate(directions)
                         }
                     }
+                },
+                suggestStrongPasswordDelegate = object : SuggestStrongPasswordDelegate {
+                    override val strongPasswordPromptViewListenerView
+                        get() = binding.suggestStrongPasswordBar
+                },
+                isSuggestStrongPasswordEnabled = context.settings().enableSuggestStrongPassword,
+                onSaveLoginWithStrongPassword = { url, password ->
+                    handleOnSaveLoginWithGeneratedStrongPassword(
+                        passwordsStorage = context.components.core.passwordsStorage,
+                        url = url,
+                        password = password,
+                    )
                 },
                 creditCardDelegate = object : CreditCardDelegate {
                     override val creditCardPickerView
@@ -1137,7 +1160,6 @@ abstract class BaseBrowserFragment :
 
     @VisibleForTesting
     internal fun observeRestoreComplete(store: BrowserStore, navController: NavController) {
-        val activity = activity as HomeActivity
         consumeFlow(store) { flow ->
             flow.map { state -> state.restoreComplete }
                 .distinctUntilChanged()
@@ -1146,7 +1168,7 @@ abstract class BaseBrowserFragment :
                         // Once tab restoration is complete, if there are no tabs to show in the browser, go home
                         val tabs =
                             store.state.getNormalOrPrivateTabs(
-                                activity.browsingModeManager.mode.isPrivate,
+                                requireComponents.appStore.state.mode.isPrivate,
                             )
                         if (tabs.isEmpty() || store.state.selectedTabId == null) {
                             navController.popBackStack(R.id.homeFragment, false)
@@ -1192,10 +1214,6 @@ abstract class BaseBrowserFragment :
     }
 
     private fun handleTabSelected(selectedTab: TabSessionState) {
-        if (!this.isRemoving) {
-            updateThemeForSession(selectedTab)
-        }
-
         if (browserInitialized) {
             view?.let {
                 fullScreenChanged(false)
@@ -1384,15 +1402,6 @@ abstract class BaseBrowserFragment :
                 navToQuickSettingsSheet(tab, sitePermissions)
             }
         }
-    }
-
-    /**
-     * Set the activity normal/private theme to match the current session.
-     */
-    @VisibleForTesting
-    internal fun updateThemeForSession(session: SessionState) {
-        val sessionMode = BrowsingMode.fromBoolean(session.content.private)
-        (activity as HomeActivity).browsingModeManager.mode = sessionMode
     }
 
     @VisibleForTesting
@@ -1650,5 +1659,39 @@ abstract class BaseBrowserFragment :
         val isSameTab = downloadState.sessionId == getCurrentTab()?.id ?: false
 
         return isValidStatus && isSameTab
+    }
+
+    private fun handleOnSaveLoginWithGeneratedStrongPassword(
+        passwordsStorage: SyncableLoginsStorage,
+        url: String,
+        password: String,
+    ) {
+        val loginToSave = LoginEntry(
+            origin = url,
+            httpRealm = url,
+            username = "",
+            password = password,
+        )
+        var saveLoginJob: Deferred<Unit>? = null
+        lifecycleScope.launch(IO) {
+            saveLoginJob = async {
+                try {
+                    passwordsStorage.add(loginToSave)
+                } catch (loginException: LoginsApiException) {
+                    loginException.printStackTrace()
+                    Log.e(
+                        "Add new login",
+                        "Failed to add new login with generated password.",
+                        loginException,
+                    )
+                }
+                saveLoginJob?.await()
+            }
+            saveLoginJob?.invokeOnCompletion {
+                if (it is CancellationException) {
+                    saveLoginJob?.cancel()
+                }
+            }
+        }
     }
 }
