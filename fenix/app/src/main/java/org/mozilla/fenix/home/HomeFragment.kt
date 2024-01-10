@@ -51,6 +51,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import mozilla.components.browser.menu.view.MenuButton
 import mozilla.components.browser.state.selector.findTab
 import mozilla.components.browser.state.selector.normalTabs
 import mozilla.components.browser.state.selector.privateTabs
@@ -437,10 +438,21 @@ class HomeFragment : Fragment() {
                 null
             }
 
+            val menuButton = MenuButton(requireContext())
+            HomeMenuView(
+                view = binding.root,
+                context = requireContext(),
+                lifecycleOwner = viewLifecycleOwner,
+                homeActivity = activity,
+                navController = findNavController(),
+                menuButton = WeakReference(menuButton),
+            ).also { it.build() }
+
             BottomToolbarContainerView(
                 context = requireContext(),
                 container = binding.homeLayout,
                 androidToolbarView = toolbarView,
+                menuButton = menuButton,
             )
         }
 
