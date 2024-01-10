@@ -36,12 +36,12 @@ object Versions {
     const val detekt = "1.23.4"
     const val ktlint = "0.49.1"
 
-    const val sentry = "6.34.0"
+    const val sentry = "7.1.0"
 
     const val zxing = "3.5.2"
 
     const val disklrucache = "2.0.2"
-    const val leakcanary = "2.12"
+    const val leakcanary = "2.13"
 
     // DO NOT MODIFY MANUALLY. This is auto-updated along with GeckoView.
     const val mozilla_glean = "56.0.0"
@@ -57,7 +57,7 @@ object Versions {
 
     object AndroidX {
         const val activityCompose = "1.7.2"
-        const val annotation = "1.7.0"
+        const val annotation = "1.7.1"
         const val appcompat = "1.6.1"
         const val autofill = "1.1.0"
         const val browser = "1.7.0"
@@ -91,7 +91,7 @@ object Versions {
     }
 
     object Firebase {
-        const val messaging = "23.3.1"
+        const val messaging = "23.4.0"
     }
 }
 
