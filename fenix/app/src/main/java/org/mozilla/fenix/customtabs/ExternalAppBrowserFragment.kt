@@ -15,7 +15,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import mozilla.components.browser.state.state.SessionState
-import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.concept.engine.manifest.WebAppManifestParser
 import mozilla.components.concept.engine.manifest.getOrNull
 import mozilla.components.concept.engine.permission.SitePermissions
@@ -59,7 +58,6 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
         val customTabSessionId = customTabSessionId ?: return
         val activity = requireActivity()
         val components = activity.components
-        val toolbar = binding.root.findViewById<BrowserToolbar>(R.id.toolbar)
 
         val manifest =
             args.webAppManifest?.let { json -> WebAppManifestParser().parse(json).getOrNull() }
@@ -68,7 +66,7 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
             feature = CustomTabsIntegration(
                 store = requireComponents.core.store,
                 useCases = requireComponents.useCases.customTabsUseCases,
-                toolbar = toolbar,
+                toolbar = browserToolbar,
                 sessionId = customTabSessionId,
                 activity = activity,
                 onItemTapped = { browserToolbarInteractor.onBrowserToolbarMenuItemTapped(it) },
@@ -117,7 +115,7 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
                 }
             },
             owner = this,
-            view = toolbar,
+            view = browserToolbar,
         )
 
         if (manifest != null) {
