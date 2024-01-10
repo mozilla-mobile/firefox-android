@@ -54,7 +54,6 @@ import org.mozilla.focus.session.PrivateNotificationFeature
 import org.mozilla.focus.shortcut.HomeScreen
 import org.mozilla.focus.state.AppAction
 import org.mozilla.focus.state.Screen
-import org.mozilla.focus.telemetry.TelemetryWrapper
 import org.mozilla.focus.telemetry.startuptelemetry.StartupPathProvider
 import org.mozilla.focus.telemetry.startuptelemetry.StartupTypeTelemetry
 import org.mozilla.focus.utils.SupportUtils
@@ -140,7 +139,6 @@ open class MainActivity : LocaleAwareAppCompatActivity() {
 
         if (safeIntent.isLauncherIntent) {
             AppOpened.fromIcons.record(AppOpened.FromIconsExtra(AppOpenType.LAUNCH.type))
-            TelemetryWrapper.openFromIconEvent()
         }
 
         val launchCount = settings.getAppLaunchCount()
@@ -209,9 +207,6 @@ open class MainActivity : LocaleAwareAppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        if (TelemetryWrapper.isTelemetryEnabled(this)) {
-            TelemetryWrapper.startSession()
-        }
         checkBiometricStillValid()
     }
 
@@ -226,15 +221,10 @@ open class MainActivity : LocaleAwareAppCompatActivity() {
         urlInputFragment?.cancelAnimation()
 
         super.onPause()
-        if (TelemetryWrapper.isTelemetryEnabled(this)) {
-            TelemetryWrapper.stopSession()
-        }
     }
 
     override fun onStop() {
         super.onStop()
-
-        TelemetryWrapper.stopMainActivity()
     }
 
     override fun onNewIntent(unsafeIntent: Intent) {
@@ -268,8 +258,6 @@ open class MainActivity : LocaleAwareAppCompatActivity() {
 
         if (ACTION_OPEN == action) {
             Notifications.openButtonTapped.record(NoExtras())
-
-            TelemetryWrapper.openNotificationActionEvent()
         }
 
         if (ACTION_ERASE == action) {
@@ -278,8 +266,6 @@ open class MainActivity : LocaleAwareAppCompatActivity() {
 
         if (intent.isLauncherIntent) {
             AppOpened.fromIcons.record(AppOpened.FromIconsExtra(AppOpenType.RESUME.type))
-
-            TelemetryWrapper.resumeFromIconEvent()
         }
 
         super.onNewIntent(unsafeIntent)
@@ -323,19 +309,12 @@ open class MainActivity : LocaleAwareAppCompatActivity() {
     }
 
     private fun processEraseAction(intent: SafeIntent) {
-        val fromShortcut = intent.getBooleanExtra(EXTRA_SHORTCUT, false)
         val fromNotificationAction = intent.getBooleanExtra(EXTRA_NOTIFICATION, false)
 
         components.tabsUseCases.removeAllTabs()
 
         if (fromNotificationAction) {
             Notifications.eraseOpenButtonTapped.record(Notifications.EraseOpenButtonTappedExtra(tabCount))
-        }
-
-        if (fromShortcut) {
-            TelemetryWrapper.eraseShortcutEvent()
-        } else if (fromNotificationAction) {
-            TelemetryWrapper.eraseAndOpenNotificationActionEvent()
         }
     }
 
@@ -486,6 +465,5 @@ open class MainActivity : LocaleAwareAppCompatActivity() {
         const val ACTION_OPEN = "open"
 
         const val EXTRA_NOTIFICATION = "notification"
-        private const val EXTRA_SHORTCUT = "shortcut"
     }
 }
