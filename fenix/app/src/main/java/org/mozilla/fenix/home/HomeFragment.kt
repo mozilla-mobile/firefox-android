@@ -454,6 +454,7 @@ class HomeFragment : Fragment() {
                 container = binding.homeLayout,
                 androidToolbarView = toolbarView,
                 menuButton = menuButton,
+                browsingModeManager = browsingModeManager,
             )
         }
 

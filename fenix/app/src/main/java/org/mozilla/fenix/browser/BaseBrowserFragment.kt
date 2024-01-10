@@ -470,6 +470,7 @@ abstract class BaseBrowserFragment :
                 menuButton = MenuButton(requireContext()).apply {
                     menuBuilder = browserToolbarView.menuToolbar.menuBuilder
                 },
+                browsingModeManager = activity.browsingModeManager,
             )
         }
 
