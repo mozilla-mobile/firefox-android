@@ -406,6 +406,12 @@ class DefaultBrowserToolbarMenuController(
                         .show()
                 }
             }
+
+            ToolbarMenu.Item.Translate -> {
+                val directions =
+                    BrowserFragmentDirections.actionBrowserFragmentToTranslationsDialogFragment()
+                navController.navigateSafe(R.id.browserFragment, directions)
+            }
         }
     }
 
@@ -420,7 +426,7 @@ class DefaultBrowserToolbarMenuController(
         }
     }
 
-    @Suppress("ComplexMethod")
+    @Suppress("ComplexMethod", "LongMethod")
     private fun trackToolbarItemInteraction(item: ToolbarMenu.Item) {
         when (item) {
             is ToolbarMenu.Item.OpenInFenix ->
@@ -433,10 +439,19 @@ class DefaultBrowserToolbarMenuController(
                 Events.browserMenuAction.record(Events.BrowserMenuActionExtra("open_in_app"))
             is ToolbarMenu.Item.CustomizeReaderView ->
                 Events.browserMenuAction.record(Events.BrowserMenuActionExtra("reader_mode_appearance"))
-            is ToolbarMenu.Item.Back ->
-                Events.browserMenuAction.record(Events.BrowserMenuActionExtra("back"))
+            is ToolbarMenu.Item.Back -> {
+                if (item.viewHistory) {
+                    Events.browserMenuAction.record(Events.BrowserMenuActionExtra("back_long_press"))
+                } else {
+                    Events.browserMenuAction.record(Events.BrowserMenuActionExtra("back"))
+                }
+            }
             is ToolbarMenu.Item.Forward ->
-                Events.browserMenuAction.record(Events.BrowserMenuActionExtra("forward"))
+                if (item.viewHistory) {
+                    Events.browserMenuAction.record(Events.BrowserMenuActionExtra("forward_long_press"))
+                } else {
+                    Events.browserMenuAction.record(Events.BrowserMenuActionExtra("forward"))
+                }
             is ToolbarMenu.Item.Reload ->
                 Events.browserMenuAction.record(Events.BrowserMenuActionExtra("reload"))
             is ToolbarMenu.Item.Stop ->
@@ -483,6 +498,12 @@ class DefaultBrowserToolbarMenuController(
                 Events.browserMenuAction.record(Events.BrowserMenuActionExtra("set_default_browser"))
             is ToolbarMenu.Item.RemoveFromTopSites ->
                 Events.browserMenuAction.record(Events.BrowserMenuActionExtra("remove_from_top_sites"))
+
+            ToolbarMenu.Item.Translate -> Events.browserMenuAction.record(
+                Events.BrowserMenuActionExtra(
+                    "translate",
+                ),
+            )
         }
     }
 

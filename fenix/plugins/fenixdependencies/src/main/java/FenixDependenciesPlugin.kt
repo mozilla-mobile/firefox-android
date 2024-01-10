@@ -32,7 +32,7 @@ object FenixVersions {
     const val installreferrer = "2.2"
 
     const val junit = "5.9.3"
-    const val mockk = "1.13.7"
+    const val mockk = "1.13.8"
 
     const val google_ads_id_version = "16.0.0"
 
@@ -60,6 +60,7 @@ object FenixDependencies {
     const val androidx_navigation_ui = "androidx.navigation:navigation-ui:${FenixVersions.androidx_navigation}"
     const val androidx_transition = "androidx.transition:transition:${FenixVersions.androidx_transition}"
     const val androidx_datastore = "androidx.datastore:datastore:${FenixVersions.androidx_datastore}"
+    const val androidx_compose_navigation = "androidx.navigation:navigation-compose:${FenixVersions.androidx_navigation}"
 
     const val google_accompanist_drawablepainter = "com.google.accompanist:accompanist-drawablepainter:${FenixVersions.google_accompanist}"
 

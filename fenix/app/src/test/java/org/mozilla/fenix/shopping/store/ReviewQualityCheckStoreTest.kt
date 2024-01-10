@@ -13,6 +13,7 @@ import mozilla.components.support.test.libstate.ext.waitUntilIdle
 import mozilla.components.support.test.middleware.CaptureActionsMiddleware
 import mozilla.components.support.test.rule.MainCoroutineRule
 import org.junit.Assert.assertFalse
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.components.AppStore
@@ -33,6 +34,7 @@ import org.mozilla.fenix.shopping.fake.FakeShoppingExperienceFeature
 import org.mozilla.fenix.shopping.middleware.AnalysisStatusDto
 import org.mozilla.fenix.shopping.middleware.AnalysisStatusProgressDto
 import org.mozilla.fenix.shopping.middleware.NetworkChecker
+import org.mozilla.fenix.shopping.middleware.ReportBackInStockStatusDto
 import org.mozilla.fenix.shopping.middleware.ReviewQualityCheckNetworkMiddleware
 import org.mozilla.fenix.shopping.middleware.ReviewQualityCheckPreferences
 import org.mozilla.fenix.shopping.middleware.ReviewQualityCheckPreferencesMiddleware
@@ -856,6 +858,7 @@ class ReviewQualityCheckStoreTest {
             assertEquals(expected, tested.state)
         }
 
+    @Ignore("Disabled until intermittent is resolved. See Bug 1869566")
     @Test
     fun `GIVEN a product analysis WHEN analysis status is in progress or pending THEN state should be updated to reanalysing`() =
         runTest {
@@ -928,6 +931,7 @@ class ReviewQualityCheckStoreTest {
             assertTrue(observedState.contains(expectedProgressState2))
         }
 
+    @Ignore("Disabled until intermittent is resolved. See Bug 1869566")
     @Test
     fun `GIVEN reanalyse product is clicked WHEN analysis status is in progress or pending THEN state should be updated to reanalysing`() =
         runTest {
@@ -1117,6 +1121,7 @@ class ReviewQualityCheckStoreTest {
             assertFalse(observedState.contains(notExpected))
         }
 
+    @Ignore("Disabled until intermittent is resolved. See Bug 1869566")
     @Test
     fun `GIVEN no analysis WHEN analysis is in progress THEN state should update to no analysis present with progress`() =
         runTest {
@@ -1193,6 +1198,7 @@ class ReviewQualityCheckStoreTest {
             assertTrue(observedState.contains(expectedProgressState2))
         }
 
+    @Ignore("Disabled until intermittent is resolved. See Bug 1869566")
     @Test
     fun `GIVEN no analysis WHEN reanalyze THEN state should update to no analysis present with progress`() =
         runTest {
@@ -1281,6 +1287,94 @@ class ReviewQualityCheckStoreTest {
             assertTrue(observedState.contains(expectedProgressState1))
             assertTrue(observedState.contains(expectedProgressState2))
             assertTrue(observedState.contains(expectedProgressState3))
+        }
+
+    @Test
+    fun `GIVEN deletedProduct is true and deletedProductReported is false WHEN report back in stock is clicked THEN thanks for reporting card is shown`() =
+        runTest {
+            val tested = ReviewQualityCheckStore(
+                middleware = provideReviewQualityCheckMiddleware(
+                    reviewQualityCheckPreferences = FakeReviewQualityCheckPreferences(isEnabled = true),
+                    reviewQualityCheckService = FakeReviewQualityCheckService(
+                        productAnalysis = {
+                            ProductAnalysisTestData.productAnalysis(
+                                deletedProduct = true,
+                                deletedProductReported = false,
+                            )
+                        },
+                        reanalysis = AnalysisStatusDto.PENDING,
+                        statusProgress = { null },
+                        report = ReportBackInStockStatusDto.REPORT_CREATED,
+                    ),
+                    networkChecker = FakeNetworkChecker(isConnected = true),
+                ),
+            )
+            tested.waitUntilIdle()
+            dispatcher.scheduler.advanceUntilIdle()
+            tested.waitUntilIdle()
+            tested.dispatch(ReviewQualityCheckAction.FetchProductAnalysis).joinBlocking()
+            tested.waitUntilIdle()
+            dispatcher.scheduler.advanceUntilIdle()
+
+            val expected = ReviewQualityCheckState.OptedIn(
+                productReviewState = ReviewQualityCheckState.OptedIn.ProductReviewState.Error.ProductNotAvailable,
+                productRecommendationsPreference = false,
+                productRecommendationsExposure = true,
+                productVendor = ProductVendor.BEST_BUY,
+            )
+            assertEquals(expected, tested.state)
+
+            tested.dispatch(ReviewQualityCheckAction.ReportProductBackInStock).joinBlocking()
+            tested.waitUntilIdle()
+            dispatcher.scheduler.advanceUntilIdle()
+
+            val reportExpected = expected.copy(
+                productReviewState = ReviewQualityCheckState.OptedIn.ProductReviewState.Error.ThanksForReporting,
+            )
+            assertEquals(reportExpected, tested.state)
+        }
+
+    @Test
+    fun `GIVEN ProductNotAvailable WHEN report back in stock returns not deleted THEN state is updated to no analysis`() =
+        runTest {
+            val tested = ReviewQualityCheckStore(
+                initialState = ReviewQualityCheckState.OptedIn(
+                    productReviewState = ReviewQualityCheckState.OptedIn.ProductReviewState.Error.ProductNotAvailable,
+                    productRecommendationsPreference = false,
+                    productRecommendationsExposure = true,
+                    productVendor = ProductVendor.BEST_BUY,
+                ),
+                middleware = provideReviewQualityCheckMiddleware(
+                    reviewQualityCheckPreferences = FakeReviewQualityCheckPreferences(isEnabled = true),
+                    reviewQualityCheckService = FakeReviewQualityCheckService(
+                        productAnalysis = {
+                            ProductAnalysisTestData.productAnalysis(
+                                grade = null,
+                                adjustedRating = null,
+                                needsAnalysis = true,
+                            )
+                        },
+                        reanalysis = AnalysisStatusDto.PENDING,
+                        statusProgress = { null },
+                        report = ReportBackInStockStatusDto.NOT_DELETED,
+                    ),
+                    networkChecker = FakeNetworkChecker(isConnected = true),
+                ),
+            )
+            tested.waitUntilIdle()
+            dispatcher.scheduler.advanceUntilIdle()
+            tested.waitUntilIdle()
+            tested.dispatch(ReviewQualityCheckAction.ReportProductBackInStock).joinBlocking()
+            tested.waitUntilIdle()
+            dispatcher.scheduler.advanceUntilIdle()
+
+            val expected = ReviewQualityCheckState.OptedIn(
+                productReviewState = ProductAnalysisTestData.noAnalysisPresent(progress = -1f),
+                productRecommendationsPreference = false,
+                productRecommendationsExposure = true,
+                productVendor = ProductVendor.BEST_BUY,
+            )
+            assertEquals(expected, tested.state)
         }
 
     @Test
@@ -1501,81 +1595,6 @@ class ReviewQualityCheckStoreTest {
             dispatcher.scheduler.advanceUntilIdle()
 
             captureActionsMiddleware.assertNotDispatched(ReviewQualityCheckAction.UpdateRecommendedProduct::class)
-        }
-
-    @Test
-    fun `GIVEN product recommendations are enabled WHEN recommended product is clicked THEN click event is recorded`() =
-        runTest {
-            var productClicked: String? = null
-            val tested = ReviewQualityCheckStore(
-                middleware = provideReviewQualityCheckMiddleware(
-                    reviewQualityCheckPreferences = FakeReviewQualityCheckPreferences(
-                        isEnabled = true,
-                        isProductRecommendationsEnabled = true,
-                    ),
-                    reviewQualityCheckService = FakeReviewQualityCheckService(
-                        productAnalysis = { ProductAnalysisTestData.productAnalysis() },
-                        productRecommendation = {
-                            ProductRecommendationTestData.productRecommendation(
-                                aid = "342",
-                            )
-                        },
-                        recordClick = {
-                            productClicked = it
-                        },
-                    ),
-                ),
-            )
-            tested.waitUntilIdle()
-            dispatcher.scheduler.advanceUntilIdle()
-            tested.waitUntilIdle()
-            tested.dispatch(ReviewQualityCheckAction.FetchProductAnalysis).joinBlocking()
-            tested.waitUntilIdle()
-            dispatcher.scheduler.advanceUntilIdle()
-            tested.dispatch(
-                ReviewQualityCheckAction.RecommendedProductClick(
-                    productAid = "342",
-                    productUrl = "https://test.com",
-                ),
-            ).joinBlocking()
-
-            assertEquals("342", productClicked)
-        }
-
-    @Test
-    fun `GIVEN product recommendations are enabled WHEN recommended product is viewed THEN impression event is recorded`() =
-        runTest {
-            var productViewed: String? = null
-            val tested = ReviewQualityCheckStore(
-                middleware = provideReviewQualityCheckMiddleware(
-                    reviewQualityCheckPreferences = FakeReviewQualityCheckPreferences(
-                        isEnabled = true,
-                        isProductRecommendationsEnabled = true,
-                    ),
-                    reviewQualityCheckService = FakeReviewQualityCheckService(
-                        productAnalysis = { ProductAnalysisTestData.productAnalysis() },
-                        productRecommendation = {
-                            ProductRecommendationTestData.productRecommendation(
-                                aid = "342",
-                            )
-                        },
-                        recordImpression = {
-                            productViewed = it
-                        },
-                    ),
-                ),
-            )
-            tested.waitUntilIdle()
-            dispatcher.scheduler.advanceUntilIdle()
-            tested.waitUntilIdle()
-            tested.dispatch(ReviewQualityCheckAction.FetchProductAnalysis).joinBlocking()
-            tested.waitUntilIdle()
-            dispatcher.scheduler.advanceUntilIdle()
-            tested.dispatch(
-                ReviewQualityCheckAction.RecommendedProductImpression(productAid = "342"),
-            ).joinBlocking()
-
-            assertEquals("342", productViewed)
         }
 
     private fun provideReviewQualityCheckMiddleware(

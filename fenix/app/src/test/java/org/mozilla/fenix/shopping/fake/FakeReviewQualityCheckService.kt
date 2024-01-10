@@ -8,6 +8,7 @@ import mozilla.components.concept.engine.shopping.ProductAnalysis
 import mozilla.components.concept.engine.shopping.ProductRecommendation
 import org.mozilla.fenix.shopping.middleware.AnalysisStatusDto
 import org.mozilla.fenix.shopping.middleware.AnalysisStatusProgressDto
+import org.mozilla.fenix.shopping.middleware.ReportBackInStockStatusDto
 import org.mozilla.fenix.shopping.middleware.ReviewQualityCheckService
 
 class FakeReviewQualityCheckService(
@@ -15,8 +16,7 @@ class FakeReviewQualityCheckService(
     private val reanalysis: AnalysisStatusDto? = null,
     private val statusProgress: () -> AnalysisStatusProgressDto? = { null },
     private val productRecommendation: () -> ProductRecommendation? = { null },
-    private val recordClick: (String) -> Unit = {},
-    private val recordImpression: (String) -> Unit = {},
+    private val report: ReportBackInStockStatusDto? = null,
 ) : ReviewQualityCheckService {
 
     private var analysisCount = 0
@@ -37,11 +37,5 @@ class FakeReviewQualityCheckService(
         return productRecommendation.invoke()
     }
 
-    override suspend fun recordRecommendedProductClick(productAid: String) {
-        recordClick(productAid)
-    }
-
-    override suspend fun recordRecommendedProductImpression(productAid: String) {
-        recordImpression(productAid)
-    }
+    override suspend fun reportBackInStock(): ReportBackInStockStatusDto? = report
 }
