@@ -39,6 +39,7 @@ import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.toolbar.BrowserToolbarView
+import org.mozilla.fenix.components.toolbar.IncompleteRedesignToolbarFeature
 import org.mozilla.fenix.components.toolbar.ToolbarMenu
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
@@ -146,6 +147,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
 
         browserToolbarView.view.addPageAction(readerModeAction)
 
+        initSharePageAction(context)
         initTranslationsAction(context)
         initReviewQualityCheck(context, view)
 
@@ -210,6 +212,25 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
             owner = viewLifecycleOwner,
             view = binding.root,
         )
+    }
+
+    private fun initSharePageAction(context: Context) {
+        if (!IncompleteRedesignToolbarFeature(context.settings()).isEnabled) {
+            return
+        }
+
+        val sharePageAction =
+            BrowserToolbar.Button(
+                imageDrawable = AppCompatResources.getDrawable(
+                    context,
+                    R.drawable.mozac_ic_share_android_24,
+                )!!,
+                contentDescription = getString(R.string.browser_menu_share),
+                iconTintColorResource = ThemeManager.resolveAttribute(R.attr.textPrimary, context),
+                listener = { browserToolbarInteractor.onShareActionClicked() },
+            )
+
+        browserToolbarView.view.addPageAction(sharePageAction)
     }
 
     private fun initTranslationsAction(context: Context) {
