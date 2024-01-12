@@ -24,8 +24,8 @@ gcloud:
     - notPackage org.mozilla.fenix.experimentintegration
 
   device:
-    - model: Pixel2.arm
-      version: 30
+    - model: MediumPhone.arm
+      version: 33
       locale: en_US
 
 flank:
