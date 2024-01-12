@@ -227,7 +227,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             OpenBrowserIntentProcessor(this, ::getIntentSessionId),
             OpenSpecificTabIntentProcessor(this),
             OpenPasswordManagerIntentProcessor(),
-            ReEngagementIntentProcessor(this, settings(), components.appStore),
+            ReEngagementIntentProcessor(this, settings()),
         )
     }
 
@@ -999,6 +999,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
      * @param historyMetadata The [HistoryMetadataKey] of the new tab in case this tab
      * was opened from history.
      * @param additionalHeaders The extra headers to use when loading the URL.
+     * @param mode Optional [BrowsingMode] to open the tab in. If not provided,
+     * the current mode of [AppStore] will be used.
      */
     @Suppress("LongParameterList")
     fun openToBrowserAndLoad(
@@ -1012,6 +1014,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         requestDesktopMode: Boolean = false,
         historyMetadata: HistoryMetadataKey? = null,
         additionalHeaders: Map<String, String>? = null,
+        mode: BrowsingMode? = null,
     ) {
         openToBrowser(from, customTabSessionId)
         load(
@@ -1023,6 +1026,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             requestDesktopMode = requestDesktopMode,
             historyMetadata = historyMetadata,
             additionalHeaders = additionalHeaders,
+            mode = mode,
         )
     }
 
@@ -1110,6 +1114,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
      * @param historyMetadata The [HistoryMetadataKey] of the new tab in case this tab
      * was opened from history.
      * @param additionalHeaders The extra headers to use when loading the URL.
+     * @param mode Optional [BrowsingMode] to open the tab in. If not provided,
+     * the current mode of [AppStore] will be used.
      */
     private fun load(
         searchTermOrURL: String,
@@ -1120,11 +1126,11 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         requestDesktopMode: Boolean = false,
         historyMetadata: HistoryMetadataKey? = null,
         additionalHeaders: Map<String, String>? = null,
+        mode: BrowsingMode? = null,
     ) {
         val startTime = components.core.engine.profiler?.getProfilerTime()
-        val mode = components.appStore.state.mode
 
-        val private = when (mode) {
+        val private = when (mode ?: components.appStore.state.mode) {
             BrowsingMode.Private -> true
             BrowsingMode.Normal -> false
         }
@@ -1153,7 +1159,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             }
         } else {
             if (newTab) {
-                val searchUseCase = if (mode.isPrivate) {
+                val searchUseCase = if (private) {
                     components.useCases.searchUseCases.newPrivateTabSearch
                 } else {
                     components.useCases.searchUseCases.newTabSearch

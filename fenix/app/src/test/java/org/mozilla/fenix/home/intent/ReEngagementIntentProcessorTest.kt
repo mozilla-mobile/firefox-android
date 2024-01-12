@@ -42,7 +42,7 @@ class ReEngagementIntentProcessorTest {
         val navController: NavController = mockk()
         val out: Intent = mockk()
         val settings: Settings = mockk()
-        val result = ReEngagementIntentProcessor(mockk(), settings, mockk())
+        val result = ReEngagementIntentProcessor(mockk(), settings)
             .process(Intent(), navController, out)
 
         assertFalse(result)
@@ -56,18 +56,16 @@ class ReEngagementIntentProcessorTest {
         val out: Intent = mockk()
         val activity: HomeActivity = mockk(relaxed = true)
         val settings: Settings = mockk(relaxed = true)
-        val appStore: AppStore = mockk(relaxed = true)
 
         val intent = Intent().apply {
             putExtra("org.mozilla.fenix.re-engagement.intent", true)
         }
         every { activity.applicationContext } returns testContext
         every { settings.reEngagementNotificationType } returns ReEngagementNotificationWorker.NOTIFICATION_TYPE_A
-        every { appStore.dispatch(any()) } returns Job()
 
         assertNull(Events.reEngagementNotifTapped.testGetValue())
 
-        val result = ReEngagementIntentProcessor(activity, settings, appStore)
+        val result = ReEngagementIntentProcessor(activity, settings)
             .process(intent, navController, out)
 
         assert(result)
@@ -84,9 +82,9 @@ class ReEngagementIntentProcessorTest {
                 flags = EngineSession.LoadUrlFlags.external(),
                 requestDesktopMode = false,
                 historyMetadata = null,
+                mode = BrowsingMode.Private,
             )
         }
-        verify { appStore.dispatch(AppAction.OpenTabInBrowser(BrowsingMode.Private)) }
         verify { navController wasNot Called }
         verify { out wasNot Called }
     }
@@ -106,7 +104,7 @@ class ReEngagementIntentProcessorTest {
 
         assertNull(Events.reEngagementNotifTapped.testGetValue())
 
-        val result = ReEngagementIntentProcessor(activity, settings, mockk())
+        val result = ReEngagementIntentProcessor(activity, settings)
             .process(intent, navController, out)
 
         assert(result)

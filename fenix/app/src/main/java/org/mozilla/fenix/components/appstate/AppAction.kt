@@ -41,15 +41,6 @@ sealed class AppAction : Action {
     object Init : AppAction()
 
     /**
-     * NOTE: This action is not yet functional and will require https://bugzilla.mozilla.org/show_bug.cgi?id=1845409
-     * to be resolved. This is part of an ongoing lib-state refactor.
-     * Open a tab in the browser.
-     *
-     * @property mode Which [BrowsingMode] the tab should be opened in.
-     */
-    data class OpenTabInBrowser(val mode: BrowsingMode) : AppAction()
-
-    /**
      * The browsing [mode] has been loaded from a persistence layer.
      */
     data class BrowsingModeLoaded(val mode: BrowsingMode) : AppAction()
