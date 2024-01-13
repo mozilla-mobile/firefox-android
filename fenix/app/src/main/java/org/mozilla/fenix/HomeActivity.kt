@@ -24,7 +24,6 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
-import android.view.WindowManager.LayoutParams.FLAG_SECURE
 import androidx.annotation.CallSuper
 import androidx.annotation.IdRes
 import androidx.annotation.RequiresApi
@@ -94,16 +93,14 @@ import org.mozilla.fenix.addons.AddonPermissionsDetailsFragmentDirections
 import org.mozilla.fenix.addons.AddonsManagementFragmentDirections
 import org.mozilla.fenix.addons.ExtensionsProcessDisabledController
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
-import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
-import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
 import org.mozilla.fenix.components.appstate.AppAction
+import org.mozilla.fenix.components.appstate.bindings.BrowserStoreBinding
 import org.mozilla.fenix.components.metrics.BreadcrumbsRecorder
 import org.mozilla.fenix.components.metrics.GrowthDataWorker
 import org.mozilla.fenix.components.metrics.fonts.FontEnumerationWorker
 import org.mozilla.fenix.databinding.ActivityHomeBinding
 import org.mozilla.fenix.debugsettings.data.DefaultDebugSettingsRepository
-import org.mozilla.fenix.debugsettings.store.DebugDrawerStore
-import org.mozilla.fenix.debugsettings.ui.DebugOverlay
+import org.mozilla.fenix.debugsettings.ui.FenixOverlay
 import org.mozilla.fenix.exceptions.trackingprotection.TrackingProtectionExceptionsFragmentDirections
 import org.mozilla.fenix.experiments.ResearchSurfaceDialogFragment
 import org.mozilla.fenix.ext.alreadyOnDestination
@@ -162,9 +159,6 @@ import org.mozilla.fenix.tabhistory.TabHistoryDialogFragment
 import org.mozilla.fenix.tabstray.TabsTrayFragment
 import org.mozilla.fenix.tabstray.TabsTrayFragmentDirections
 import org.mozilla.fenix.theme.DefaultThemeManager
-import org.mozilla.fenix.theme.FirefoxTheme
-import org.mozilla.fenix.theme.Theme
-import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.trackingprotection.TrackingProtectionPanelDialogFragmentDirections
 import org.mozilla.fenix.translations.TranslationsDialogFragmentDirections
 import org.mozilla.fenix.utils.Settings
@@ -186,8 +180,9 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     protected val homeActivityInitTimeStampNanoSeconds = SystemClock.elapsedRealtimeNanos()
 
     private lateinit var binding: ActivityHomeBinding
-    lateinit var themeManager: ThemeManager
-    lateinit var browsingModeManager: BrowsingModeManager
+    val themeManager by lazy {
+        DefaultThemeManager(components.appStore.state.mode, this)
+    }
 
     private var isVisuallyComplete = false
 
@@ -224,14 +219,14 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
     private val externalSourceIntentProcessors by lazy {
         listOf(
-            HomeDeepLinkIntentProcessor(this),
+            HomeDeepLinkIntentProcessor(this, components.appStore),
             SpeechProcessingIntentProcessor(this, components.core.store),
             AssistIntentProcessor(),
             StartSearchIntentProcessor(),
             OpenBrowserIntentProcessor(this, ::getIntentSessionId),
             OpenSpecificTabIntentProcessor(this),
             OpenPasswordManagerIntentProcessor(),
-            ReEngagementIntentProcessor(this, settings()),
+            ReEngagementIntentProcessor(this, settings(), components.appStore),
         )
     }
 
@@ -258,12 +253,11 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
         maybeShowSplashScreen()
 
-        // There is disk read violations on some devices such as samsung and pixel for android 9/10
-        components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
-            // Theme setup should always be called before super.onCreate
-            setupThemeAndBrowsingMode(getModeFromIntentOrLastKnown(intent))
-            super.onCreate(savedInstanceState)
-        }
+        setModeFromIntent(intent)
+        // Theme setup should always be called before super.onCreate
+        themeManager.setActivityTheme(this)
+        themeManager.applyStatusBarTheme(this)
+        super.onCreate(savedInstanceState)
 
         // Checks if Activity is currently in PiP mode if launched from external intents, then exits it
         checkAndExitPiP()
@@ -301,11 +295,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
                                 visibility = View.VISIBLE
 
                                 setContent {
-                                    FirefoxTheme(theme = Theme.getTheme(allowPrivateTheme = false)) {
-                                        DebugOverlay(
-                                            debugDrawerStore = DebugDrawerStore(),
-                                        )
-                                    }
+                                    FenixOverlay()
                                 }
                             } else {
                                 setContent {}
@@ -398,6 +388,13 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             extensionsProcessDisabledPromptObserver,
             serviceWorkerSupport,
             webExtensionPromptFeature,
+            BrowserStoreBinding(components.core.store, components.appStore),
+            BrowsingModeBinding(
+                components.appStore,
+                themeManager,
+                { window },
+                components.settings,
+            ),
         )
 
         if (shouldAddToRecentsScreen(intent)) {
@@ -720,7 +717,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             ) + externalSourceIntentProcessors
         val intentHandled =
             intentProcessors.any { it.process(intent, navHost.navController, this.intent) }
-        browsingModeManager.mode = getModeFromIntentOrLastKnown(intent)
+        setModeFromIntent(intent)
 
         if (intentHandled) {
             supportFragmentManager
@@ -905,14 +902,18 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
      * private mode directly before the content view is created. Returns the mode set by the intent
      * otherwise falls back to the last known mode.
      */
-    internal fun getModeFromIntentOrLastKnown(intent: Intent?): BrowsingMode {
+    internal fun setModeFromIntent(intent: Intent?) {
         intent?.toSafeIntent()?.let {
             if (it.hasExtra(PRIVATE_BROWSING_MODE)) {
                 val startPrivateMode = it.getBooleanExtra(PRIVATE_BROWSING_MODE, false)
-                return BrowsingMode.fromBoolean(isPrivate = startPrivateMode)
+                // Since the mode is initially set from settings during AppAction.Init, this action
+                // will overwrite the state once the action is processed in the queue if called from
+                // onCreate.
+                if (startPrivateMode) {
+                    components.appStore.dispatch(AppAction.IntentAction.EnterPrivateBrowsing)
+                }
             }
         }
-        return settings().lastKnownMode
     }
 
     /**
@@ -926,14 +927,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             return it.getBooleanExtra(START_IN_RECENTS_SCREEN, false)
         }
         return false
-    }
-
-    private fun setupThemeAndBrowsingMode(mode: BrowsingMode) {
-        settings().lastKnownMode = mode
-        browsingModeManager = createBrowsingModeManager(mode)
-        themeManager = createThemeManager()
-        themeManager.setActivityTheme(this)
-        themeManager.applyStatusBarTheme(this)
     }
 
     // Stop active media when activity is destroyed.
@@ -1125,7 +1118,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         additionalHeaders: Map<String, String>? = null,
     ) {
         val startTime = components.core.engine.profiler?.getProfilerTime()
-        val mode = browsingModeManager.mode
+        val mode = components.appStore.state.mode
 
         val private = when (mode) {
             BrowsingMode.Private -> true
@@ -1201,7 +1194,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     open fun navigateToBrowserOnColdStart() {
         // Normal tabs + cold start -> Should go back to browser if we had any tabs open when we left last
         // except for PBM + Cold Start there won't be any tabs since they're evicted so we never will navigate
-        if (settings().shouldReturnToBrowser && !browsingModeManager.mode.isPrivate) {
+        if (settings().shouldReturnToBrowser && !components.appStore.state.mode.isPrivate) {
             // Navigate to home first (without rendering it) to add it to the back stack.
             openToBrowser(BrowserDirection.FromGlobal, null)
         }
@@ -1229,27 +1222,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             return inflater
         }
         return super.getSystemService(name)
-    }
-
-    protected open fun createBrowsingModeManager(initialMode: BrowsingMode): BrowsingModeManager {
-        return DefaultBrowsingModeManager(initialMode, components.settings) { newMode ->
-            updateSecureWindowFlags(newMode)
-            themeManager.currentTheme = newMode
-        }.also {
-            updateSecureWindowFlags(initialMode)
-        }
-    }
-
-    private fun updateSecureWindowFlags(mode: BrowsingMode = browsingModeManager.mode) {
-        if (mode == BrowsingMode.Private && !settings().allowScreenshotsInPrivateMode) {
-            window.addFlags(FLAG_SECURE)
-        } else {
-            window.clearFlags(FLAG_SECURE)
-        }
-    }
-
-    protected open fun createThemeManager(): ThemeManager {
-        return DefaultThemeManager(browsingModeManager.mode, this)
     }
 
     private fun openPopup(webExtensionState: WebExtensionState) {
