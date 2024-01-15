@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -28,6 +32,12 @@
         app:destination="@id/externalAppBrowserFragment"
         app:popUpTo="@id/homeFragment"
         app:popUpToInclusive="false" />
+
+    <action
+        android:id="@+id/action_global_onboarding"
+        app:destination="@id/onboardingFragment"
+        app:popUpTo="@id/startupFragment"
+        app:popUpToInclusive="true" />
 
     <action
         android:id="@+id/action_global_home_onboarding_dialog"
@@ -111,13 +121,7 @@
         app:destination="@id/bookmarkEditFragment" />
     <action
         android:id="@+id/action_global_addonsManagementFragment"
-        app:destination="@id/addons_management_graph">
-        <argument
-            android:name="installAddonId"
-            android:defaultValue="@null"
-            app:argType="string"
-            app:nullable="true" />
-    </action>
+        app:destination="@id/addons_management_graph" />
     <action
         android:id="@+id/action_global_trackingProtectionFragment"
         app:destination="@id/trackingProtectionFragment" />
@@ -160,7 +164,6 @@
     <action
         android:id="@+id/action_global_tabSettingsFragment"
         app:destination="@id/tabsSettingsFragment" />
-
     <dialog
         android:id="@+id/tabsTrayFragment"
         android:name="org.mozilla.fenix.tabstray.TabsTrayFragment">
@@ -184,6 +187,16 @@
     </fragment>
 
     <fragment
+        android:id="@+id/onboardingFragment"
+        android:name="org.mozilla.fenix.onboarding.OnboardingFragment">
+        <action
+            android:id="@+id/action_home"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/onboardingFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
         android:id="@+id/homeFragment"
         android:name="org.mozilla.fenix.home.HomeFragment"
         tools:layout="@layout/fragment_home">
@@ -196,9 +209,27 @@
             android:defaultValue="false"
             app:argType="boolean" />
     </fragment>
+
     <dialog
         android:id="@+id/homeOnboardingDialogFragment"
         android:name="org.mozilla.fenix.onboarding.HomeOnboardingDialogFragment" />
+
+    <dialog
+        android:id="@+id/researchSurfaceDialogFragment"
+        android:name="org.mozilla.fenix.experiments.ResearchSurfaceDialogFragment" >
+        <argument
+            android:name="KEY_MESSAGE_TEXT"
+            app:nullable="true"
+            app:argType="string" />
+        <argument
+            android:name="KEY_ACCEPT_BUTTON_TEXT"
+            app:nullable="true"
+            app:argType="string" />
+        <argument
+            android:name="KEY_DISMISS_BUTTON_TEXT"
+            app:nullable="true"
+            app:argType="string" />
+    </dialog>
 
     <dialog
         android:id="@+id/homeNotificationPermissionDialogFragment"
@@ -268,8 +299,11 @@
             android:id="@+id/action_browserFragment_to_quickSettingsSheetDialogFragment"
             app:destination="@id/quickSettingsSheetDialogFragment" />
         <action
-            android:id="@+id/action_browserFragment_to_cookieBannerDialogFragment"
-            app:destination="@id/cookieBannerDialogFragment" />
+            android:id="@+id/action_browserFragment_to_reviewQualityCheckDialogFragment"
+            app:destination="@id/reviewQualityCheckFragment" />
+        <action
+            android:id="@+id/action_browserFragment_to_translationsDialogFragment"
+            app:destination="@id/translations_graph" />
     </fragment>
 
     <fragment
@@ -284,6 +318,9 @@
             android:name="webAppManifest"
             app:argType="string"
             app:nullable="true" />
+        <argument
+            android:name="isSandboxCustomTab"
+            app:argType="boolean" />
     </fragment>
 
     <fragment
@@ -291,19 +328,7 @@
         android:name="org.mozilla.fenix.library.history.HistoryFragment"
         android:label="@string/library_history"
         tools:layout="@layout/fragment_history">
-
-        <action
-            android:id="@+id/action_global_history_search_dialog"
-            app:destination="@id/historySearchDialogFragment"
-            app:popUpTo="@id/historySearchDialogFragment"
-            app:popUpToInclusive="true" />
     </fragment>
-
-    <dialog
-        android:id="@+id/historySearchDialogFragment"
-        android:name="org.mozilla.fenix.library.history.HistorySearchDialogFragment"
-        tools:layout="@layout/fragment_history_search_dialog">
-    </dialog>
 
     <fragment
         android:id="@+id/historyMetadataGroupFragment"
@@ -338,18 +363,7 @@
         <action
             android:id="@+id/action_bookmarkFragment_to_bookmarkAddFolderFragment"
             app:destination="@id/bookmarkAddFolderFragment" />
-        <action
-            android:id="@+id/action_bookmarkFragment_to_bookmarkSearchDialogFragment"
-            app:destination="@id/bookmarkSearchDialogFragment"
-            app:popUpTo="@id/bookmarkSearchDialogFragment"
-            app:popUpToInclusive="true" />
     </fragment>
-
-    <dialog
-        android:id="@+id/bookmarkSearchDialogFragment"
-        android:name="org.mozilla.fenix.library.bookmarks.BookmarkSearchDialogFragment"
-        tools:layout="@layout/fragment_bookmark_search_dialog">
-    </dialog>
 
     <fragment
         android:id="@+id/bookmarkEditFragment"
@@ -400,13 +414,17 @@
             app:destination="@id/bookmarkSelectFolderFragment" />
     </fragment>
 
+    <dialog
+        android:id="@+id/reviewQualityCheckFragment"
+        android:name="org.mozilla.fenix.shopping.ReviewQualityCheckFragment"/>
+
     <fragment
         android:id="@+id/savedLoginsAuthFragment"
         android:name="org.mozilla.fenix.settings.logins.fragment.SavedLoginsAuthFragment"
         android:label="@string/preferences_passwords_logins_and_passwords">
         <action
             android:id="@+id/action_savedLoginsAuthFragment_to_loginsListFragment"
-            app:destination="@id/savedLoginsFragment"
+            app:destination="@id/savedLogins"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
@@ -435,72 +453,16 @@
     </fragment>
 
     <fragment
-        android:id="@+id/savedLoginsFragment"
-        android:name="org.mozilla.fenix.settings.logins.fragment.SavedLoginsFragment"
-        tools:layout="@layout/fragment_saved_logins">
-        <action
-            android:id="@+id/action_savedLoginsFragment_to_loginDetailFragment"
-            app:destination="@id/loginDetailFragment" />
-        <action
-            android:id="@+id/action_savedLoginsFragment_to_addLoginFragment"
-            app:destination="@id/addLoginFragment"
-            app:popUpTo="@id/addLoginFragment"
-            app:popUpToInclusive="true" />
-        <action
-            android:id="@+id/action_savedLoginsFragment_to_browserFragment"
-            app:destination="@id/browserFragment"
-            app:popUpTo="@id/settingsFragment"
-            app:popUpToInclusive="true" />
-    </fragment>
-
-    <fragment
         android:id="@+id/loginExceptionsFragment"
         android:name="org.mozilla.fenix.exceptions.login.LoginExceptionsFragment"
         android:label="@string/preferences_passwords_exceptions"
         tools:layout="@layout/fragment_exceptions" />
 
-    <fragment
-        android:id="@+id/loginDetailFragment"
-        android:name="org.mozilla.fenix.settings.logins.fragment.LoginDetailFragment"
-        tools:layout="@layout/fragment_login_detail">
-        <argument
-            android:name="savedLoginId"
-            app:argType="string"
-            app:nullable="false" />
-        <action
-            android:id="@+id/action_loginDetailFragment_to_editLoginFragment"
-            app:destination="@id/editLoginFragment"
-            app:popUpTo="@id/editLoginFragment"
-            app:popUpToInclusive="true" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/editLoginFragment"
-        android:name="org.mozilla.fenix.settings.logins.fragment.EditLoginFragment"
-        android:label="@string/edit"
-        tools:layout="@layout/fragment_edit_login">
-        <argument
-            android:name="savedLoginItem"
-            app:argType="org.mozilla.fenix.settings.logins.SavedLogin"
-            app:nullable="false" />
-        <action
-            android:id="@+id/action_editLoginFragment_to_loginDetailFragment"
-            app:destination="@id/loginDetailFragment"
-            app:popUpTo="@id/loginDetailFragment"
-            app:popUpToInclusive="true" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/addLoginFragment"
-        android:name="org.mozilla.fenix.settings.logins.fragment.AddLoginFragment"
-        android:label="@string/add_login"
-        tools:layout="@layout/fragment_add_login">
-        <action
-            android:id="@+id/action_addLoginFragment_to_savedLoginsFragment"
-            app:destination="@id/savedLoginsFragment"
+    <action
+            android:id="@+id/action_loginDetailFragment_to_savedLogins"
+            app:destination="@id/savedLogins"
             app:popUpTo="@id/savedLoginsFragment"
-            app:popUpToInclusive="true" />
-    </fragment>
+            app:popUpToInclusive="true"/>
 
     <fragment
         android:id="@+id/settingsFragment"
@@ -618,13 +580,6 @@
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
         <action
-            android:id="@+id/action_settingsFragment_to_cookieBannerFragment"
-            app:destination="@id/cookieBannerFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
-        <action
             android:id="@+id/action_settingsFragment_to_trackingProtectionFragment"
             app:destination="@id/trackingProtectionFragment"
             app:enterAnim="@anim/slide_in_right"
@@ -662,6 +617,13 @@
         <action
             android:id="@+id/action_settingsFragment_to_addonsFragment"
             app:destination="@id/addons_management_graph"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_settingsFragment_to_openLinksInAppsFragment"
+            app:destination="@id/openLinksInAppsFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
@@ -794,13 +756,20 @@
         <action
             android:id="@+id/action_turnOnSyncFragment_to_pairFragment"
             app:destination="@id/pairFragment" />
+        <argument
+            android:name="entrypoint"
+            app:argType="org.mozilla.fenix.components.accounts.FenixFxAEntryPoint" />
     </fragment>
 
     <fragment
         android:id="@+id/pairFragment"
         android:name="org.mozilla.fenix.settings.PairFragment"
         android:label="@string/preferences_sync_2"
-        tools:layout="@layout/fragment_pair" />
+        tools:layout="@layout/fragment_pair" >
+        <argument
+            android:name="entrypoint"
+            app:argType="org.mozilla.fenix.components.accounts.FenixFxAEntryPoint" />
+    </fragment>
 
     <fragment
         android:id="@+id/aboutFragment"
@@ -847,10 +816,6 @@
         android:name="org.mozilla.fenix.settings.HttpsOnlyFragment"
         android:label="@string/preferences_https_only_title" />
     <fragment
-        android:id="@+id/cookieBannerFragment"
-        android:name="org.mozilla.fenix.settings.CookieBannersFragment"
-        android:label="@string/preferences_cookie_banner_reduction" />
-    <fragment
         android:id="@+id/sponsoredStoriesSettings"
         android:name="org.mozilla.fenix.settings.SponsoredStoriesSettingsFragment"
         android:label="@string/preferences_debug_settings_custom_sponsored_stories_parameters" />
@@ -872,6 +837,9 @@
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
     </fragment>
+    <fragment
+        android:id="@+id/openLinksInAppsFragment"
+        android:name="org.mozilla.fenix.settings.OpenLinksInAppsFragment" />
     <fragment
         android:id="@+id/deleteBrowsingDataFragment"
         android:name="org.mozilla.fenix.settings.deletebrowsingdata.DeleteBrowsingDataFragment"
@@ -980,18 +948,18 @@
             android:name="isTrackingProtectionEnabled"
             app:argType="boolean" />
         <argument
-            android:name="isCookieHandlingEnabled"
-            app:argType="boolean" />
+            android:name="cookieBannerUIMode"
+            app:argType="org.mozilla.fenix.trackingprotection.CookieBannerUIMode" />
     </dialog>
-    <dialog
-        android:id="@+id/cookieBannerDialogFragment"
-        android:name="org.mozilla.fenix.settings.quicksettings.protections.cookiebanners.dialog.CookieBannerReEngagementDialog" />
     <fragment
         android:id="@+id/accountProblemFragment"
         android:name="org.mozilla.fenix.settings.account.AccountProblemFragment">
         <action
             android:id="@+id/action_accountProblemFragment_to_signOutFragment"
             app:destination="@id/signOutFragment" />
+        <argument
+            android:name="entrypoint"
+            app:argType="org.mozilla.fenix.components.accounts.FenixFxAEntryPoint" />
     </fragment>
     <dialog
         android:id="@+id/signOutFragment"
@@ -1011,8 +979,8 @@
             android:name="trackingProtectionEnabled"
             app:argType="boolean" />
         <argument
-            android:name="cookieBannerHandlingEnabled"
-            app:argType="boolean" />
+            android:name="cookieBannerUIMode"
+            app:argType="org.mozilla.fenix.trackingprotection.CookieBannerUIMode" />
         <argument
             android:name="gravity"
             android:defaultValue="80"
@@ -1066,8 +1034,8 @@
             android:name="trackingProtectionEnabled"
             app:argType="boolean" />
         <argument
-            android:name="cookieBannerHandlingEnabled"
-            app:argType="boolean" />
+            android:name="cookieBannerUIMode"
+            app:argType="org.mozilla.fenix.trackingprotection.CookieBannerUIMode" />
         <argument
             android:name="gravity"
             android:defaultValue="80"
@@ -1245,23 +1213,34 @@
             android:name="org.mozilla.fenix.settings.search.SearchEngineFragment"
             android:label="@string/preferences_search">
             <action
-                android:id="@+id/action_searchEngineFragment_to_addSearchEngineFragment"
-                app:destination="@+id/addSearchEngineFragment" />
+                android:id="@+id/action_searchEngineFragment_to_defaultEngineFragment"
+                app:destination="@+id/defaultEngineFragment" />
             <action
-                android:id="@+id/action_searchEngineFragment_to_editCustomSearchEngineFragment"
-                app:destination="@+id/editCustomSearchEngineFragment" />
+                android:id="@+id/action_searchEngineFragment_to_searchShortcutsFragment"
+                app:destination="@+id/searchShortcutsFragment" />
         </fragment>
         <fragment
-            android:id="@+id/addSearchEngineFragment"
-            android:name="org.mozilla.fenix.settings.search.AddSearchEngineFragment"
-            tools:layout="@layout/fragment_add_search_engine" />
+            android:id="@+id/defaultEngineFragment"
+            android:name="org.mozilla.fenix.settings.search.DefaultSearchEngineFragment">
+            <action
+                android:id="@+id/action_defaultEngineFragment_to_saveSearchEngineFragment"
+                app:destination="@+id/saveSearchEngineFragment" />
+        </fragment>
         <fragment
-            android:id="@+id/editCustomSearchEngineFragment"
-            android:name="org.mozilla.fenix.settings.search.EditCustomSearchEngineFragment"
-            tools:layout="@layout/fragment_add_search_engine">
+            android:id="@+id/searchShortcutsFragment"
+            android:name="org.mozilla.fenix.settings.search.SearchShortcutsFragment"
+            tools:layout="@layout/fragment_search_shortcuts">
+            <action
+                android:id="@+id/action_searchShortcutsFragment_to_saveSearchEngineFragment"
+                app:destination="@+id/saveSearchEngineFragment" />
+        </fragment>
+        <fragment
+            android:id="@+id/saveSearchEngineFragment"
+            android:name="org.mozilla.fenix.settings.search.SaveSearchEngineFragment">
             <argument
                 android:name="searchEngineIdentifier"
-                app:argType="string" />
+                app:argType="string"
+                app:nullable="true"/>
         </fragment>
     </navigation>
 
@@ -1378,5 +1357,151 @@
                 app:popEnterAnim="@anim/slide_in_left"
                 app:popExitAnim="@anim/slide_out_right" />
         </fragment>
+    </navigation>
+    <navigation
+        android:id="@+id/savedLogins"
+        app:startDestination="@id/savedLoginsFragment">
+        <fragment
+            android:id="@+id/savedLoginsFragment"
+            android:name="org.mozilla.fenix.settings.logins.fragment.SavedLoginsFragment"
+            tools:layout="@layout/fragment_saved_logins">
+            <action
+                android:id="@+id/action_savedLoginsFragment_to_loginDetailFragment"
+                app:destination="@id/loginDetailFragment" />
+            <action
+                android:id="@+id/action_savedLoginsFragment_to_addLoginFragment"
+                app:destination="@id/addLoginFragment"
+                app:popUpTo="@id/addLoginFragment"
+                app:popUpToInclusive="true" />
+            <action
+                android:id="@+id/action_savedLoginsFragment_to_browserFragment"
+                app:destination="@id/browserFragment"
+                app:popUpTo="@id/settingsFragment"
+                app:popUpToInclusive="true" />
+        </fragment>
+        <fragment
+            android:id="@+id/addLoginFragment"
+            android:name="org.mozilla.fenix.settings.logins.fragment.AddLoginFragment"
+            android:label="@string/add_login"
+            tools:layout="@layout/fragment_add_login">
+            <action
+                android:id="@+id/action_addLoginFragment_to_loginDetailFragment"
+                app:destination="@id/loginDetailFragment"
+                app:popUpTo="@id/savedLoginsFragment"
+                app:popUpToInclusive="false" />
+        </fragment>
+        <fragment
+            android:id="@+id/loginDetailFragment"
+            android:name="org.mozilla.fenix.settings.logins.fragment.LoginDetailFragment"
+            tools:layout="@layout/fragment_login_detail">
+            <argument
+                android:name="savedLoginId"
+                app:argType="string"
+                app:nullable="false" />
+            <action
+                android:id="@+id/action_loginDetailFragment_to_editLoginFragment"
+                app:destination="@id/editLoginFragment"
+                app:popUpTo="@id/editLoginFragment"
+                app:popUpToInclusive="true" />
+        </fragment>
+        <fragment
+            android:id="@+id/editLoginFragment"
+            android:name="org.mozilla.fenix.settings.logins.fragment.EditLoginFragment"
+            android:label="@string/edit"
+            tools:layout="@layout/fragment_edit_login">
+            <argument
+                android:name="savedLoginItem"
+                app:argType="org.mozilla.fenix.settings.logins.SavedLogin"
+                app:nullable="false" />
+            <action
+                android:id="@+id/action_editLoginFragment_to_loginDetailFragment"
+                app:destination="@id/loginDetailFragment"
+                app:popUpTo="@id/loginDetailFragment"
+                app:popUpToInclusive="true" />
+        </fragment>
+    </navigation>
+
+    <navigation
+        android:id="@+id/translations_graph"
+        app:startDestination="@id/translationsDialogFragment">
+        <dialog
+            android:id="@+id/translationsDialogFragment"
+            android:name="org.mozilla.fenix.translations.TranslationsDialogFragment">
+            <argument
+                android:name="translationsDialogAccessPoint"
+                android:defaultValue="Translations"
+                app:argType="org.mozilla.fenix.translations.TranslationsDialogAccessPoint" />
+            <action
+                android:id="@+id/action_translationsDialogFragment_to_translationSettingsFragment"
+                app:destination="@id/translationSettingsFragment" />
+        </dialog>
+        <fragment
+            android:id="@+id/translationSettingsFragment"
+            android:name="org.mozilla.fenix.translations.TranslationSettingsFragment">
+            <action
+                android:id="@+id/action_translationSettingsFragment_to_translationsDialogFragment"
+                app:destination="@id/translationsDialogFragment"
+                app:popUpTo="@id/translationSettingsFragment"
+                app:popUpToInclusive="true" />
+            <action
+                android:id="@+id/action_translationSettingsFragment_to_downloadLanguagesPreferenceFragment"
+                app:destination="@id/downloadLanguagesPreferenceFragment" />
+            <action
+                android:id="@+id/action_translationSettingsFragment_to_automaticTranslationPreferenceFragment"
+                app:destination="@id/automaticTranslationPreferenceFragment" />
+            <action
+                android:id="@+id/action_translationSettingsFragment_to_neverTranslateSitePreferenceFragment"
+                app:destination="@id/neverTranslateSitePreferenceFragment" />
+        </fragment>
+        <fragment
+            android:id="@+id/automaticTranslationPreferenceFragment"
+            android:name="org.mozilla.fenix.translations.preferences.automatic.AutomaticTranslationPreferenceFragment">
+            <action
+                android:id="@+id/action_automaticTranslationPreference_to_automaticTranslationOptionsPreference"
+                app:destination="@id/automaticTranslationOptionsPreferenceFragment" />
+        </fragment>
+        <fragment
+            android:id="@+id/automaticTranslationOptionsPreferenceFragment"
+            android:name="org.mozilla.fenix.translations.preferences.automatic.AutomaticTranslationOptionsPreferenceFragment">
+            <argument
+                android:name="selectedTranslationOptionPreference"
+                app:argType="org.mozilla.fenix.translations.preferences.automatic.AutomaticTranslationItemPreference" />
+        </fragment>
+        <fragment
+            android:id="@+id/neverTranslateSitePreferenceFragment"
+            android:name="org.mozilla.fenix.translations.preferences.nevertranslatesite.NeverTranslateSitePreferenceFragment">
+            <action
+                android:id="@+id/action_neverTranslateSitePreferenceFragment_to_neverTranslateSiteDialogPreferenceFragment"
+                app:destination="@id/neverTranslateSiteDialogPreferenceFragment" />
+        </fragment>
+        <dialog
+            android:id="@+id/neverTranslateSiteDialogPreferenceFragment"
+            android:name="org.mozilla.fenix.translations.preferences.nevertranslatesite.NeverTranslateSiteDialogPreferenceFragment">
+            <argument
+                android:name="websiteUrl"
+                app:argType="string" />
+        </dialog>
+        <fragment
+            android:id="@+id/downloadLanguagesPreferenceFragment"
+            android:name="org.mozilla.fenix.translations.preferences.downloadlanguages.DownloadLanguagesPreferenceFragment">
+            <action
+                android:id="@+id/action_downloadLanguagesPreference_to_downloadLanguagesDialogPreference"
+                app:destination="@id/downloadLanguagesDialogPreferenceFragment" />
+        </fragment>
+        <dialog
+            android:id="@+id/downloadLanguagesDialogPreferenceFragment"
+            android:name="org.mozilla.fenix.translations.preferences.downloadlanguages.LanguageDialogPreferenceFragment">
+            <argument
+                android:name="downloadLanguageItemStatePreference"
+                app:argType="org.mozilla.fenix.translations.preferences.downloadlanguages.DownloadLanguageItemStatePreference" />
+            <argument
+                android:name="languageNamePreference"
+                app:argType="string"
+                app:nullable="false" />
+            <argument
+                android:name="itemFileSizePreference"
+                app:argType="long"
+                app:nullable="false" />
+        </dialog>
     </navigation>
 </navigation>

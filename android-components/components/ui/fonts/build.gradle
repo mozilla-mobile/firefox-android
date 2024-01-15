@@ -3,12 +3,12 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion config.compileSdkVersion
-
     defaultConfig {
         minSdkVersion config.minSdkVersion
+        compileSdk config.compileSdkVersion
         targetSdkVersion config.targetSdkVersion
     }
 
@@ -18,6 +18,8 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    namespace 'mozilla.components.ui.fonts'
 }
 
 dependencies {

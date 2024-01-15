@@ -25,7 +25,7 @@
         android:scaleType="center"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/mozac_ic_back" />
+        app:srcCompat="@drawable/mozac_ic_back_24" />
 
     <ImageView
         android:id="@+id/site_favicon"
@@ -79,7 +79,7 @@
         android:gravity="center_vertical"
         android:paddingTop="8dp"
         android:paddingBottom="8dp"
-        app:drawableStartCompat="@drawable/mozac_ic_lock"
+        app:drawableStartCompat="@drawable/mozac_ic_lock_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@id/site_favicon"

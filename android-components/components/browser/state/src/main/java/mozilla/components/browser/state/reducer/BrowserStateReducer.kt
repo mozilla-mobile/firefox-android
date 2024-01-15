@@ -4,15 +4,19 @@
 
 package mozilla.components.browser.state.reducer
 
+import mozilla.components.browser.state.action.AppLifecycleAction
+import mozilla.components.browser.state.action.AwesomeBarAction
 import mozilla.components.browser.state.action.BrowserAction
 import mozilla.components.browser.state.action.ContainerAction
 import mozilla.components.browser.state.action.ContentAction
 import mozilla.components.browser.state.action.CookieBannerAction
+import mozilla.components.browser.state.action.CopyInternetResourceAction
 import mozilla.components.browser.state.action.CrashAction
 import mozilla.components.browser.state.action.CustomTabListAction
 import mozilla.components.browser.state.action.DebugAction
 import mozilla.components.browser.state.action.DownloadAction
 import mozilla.components.browser.state.action.EngineAction
+import mozilla.components.browser.state.action.ExtensionsProcessAction
 import mozilla.components.browser.state.action.HistoryMetadataAction
 import mozilla.components.browser.state.action.InitAction
 import mozilla.components.browser.state.action.LastAccessAction
@@ -27,6 +31,7 @@ import mozilla.components.browser.state.action.SystemAction
 import mozilla.components.browser.state.action.TabGroupAction
 import mozilla.components.browser.state.action.TabListAction
 import mozilla.components.browser.state.action.TrackingProtectionAction
+import mozilla.components.browser.state.action.TranslationsAction
 import mozilla.components.browser.state.action.UndoAction
 import mozilla.components.browser.state.action.WebExtensionAction
 import mozilla.components.browser.state.state.BrowserState
@@ -46,6 +51,7 @@ internal object BrowserStateReducer {
     fun reduce(state: BrowserState, action: BrowserAction): BrowserState {
         return when (action) {
             is InitAction -> state
+            is AppLifecycleAction -> state
             is RestoreCompleteAction -> state.copy(restoreComplete = true)
             is ContainerAction -> ContainerReducer.reduce(state, action)
             is RecentlyClosedAction -> RecentlyClosedReducer.reduce(state, action)
@@ -57,6 +63,7 @@ internal object BrowserStateReducer {
             is TabListAction -> TabListReducer.reduce(state, action)
             is TabGroupAction -> TabGroupReducer.reduce(state, action)
             is TrackingProtectionAction -> TrackingProtectionStateReducer.reduce(state, action)
+            is TranslationsAction -> TranslationsStateReducer.reduce(state, action)
             is CookieBannerAction -> CookieBannerStateReducer.reduce(state, action)
             is WebExtensionAction -> WebExtensionReducer.reduce(state, action)
             is MediaSessionAction -> MediaSessionReducer.reduce(state, action)
@@ -66,9 +73,12 @@ internal object BrowserStateReducer {
             is LastAccessAction -> LastAccessReducer.reduce(state, action)
             is UndoAction -> UndoReducer.reduce(state, action)
             is ShareInternetResourceAction -> ShareInternetResourceStateReducer.reduce(state, action)
+            is CopyInternetResourceAction -> CopyInternetResourceStateReducer.reduce(state, action)
             is LocaleAction -> LocaleStateReducer.reduce(state, action)
             is HistoryMetadataAction -> HistoryMetadataReducer.reduce(state, action)
             is DebugAction -> DebugReducer.reduce(state, action)
+            is ExtensionsProcessAction -> ExtensionsProcessStateReducer.reduce(state, action)
+            is AwesomeBarAction -> AwesomeBarStateReducer.reduce(state, action)
         }
     }
 }

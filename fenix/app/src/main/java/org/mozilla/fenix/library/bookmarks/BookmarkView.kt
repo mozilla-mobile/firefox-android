@@ -8,11 +8,13 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.navigation.NavController
+import androidx.recyclerview.widget.RecyclerView
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.support.base.feature.UserInteractionHandler
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.accounts.FenixFxAEntryPoint
 import org.mozilla.fenix.databinding.ComponentBookmarkBinding
 import org.mozilla.fenix.library.LibraryPageView
 import org.mozilla.fenix.selection.SelectionInteractor
@@ -136,11 +138,15 @@ class BookmarkView(
     private val bookmarkAdapter = BookmarkAdapter(binding.bookmarksEmptyView, interactor)
 
     init {
+        bookmarkAdapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+
         binding.bookmarkList.apply {
             adapter = bookmarkAdapter
         }
         binding.bookmarkFoldersSignIn.setOnClickListener {
-            navController.navigate(NavGraphDirections.actionGlobalTurnOnSync())
+            navController.navigate(
+                NavGraphDirections.actionGlobalTurnOnSync(entrypoint = FenixFxAEntryPoint.BookmarkView),
+            )
         }
         binding.swipeRefresh.setOnRefreshListener {
             interactor.onRequestSync()

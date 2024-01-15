@@ -44,20 +44,20 @@ object URLStringUtils {
 
     private val isURLLenient by lazy {
         // Be lenient about what is classified as potentially a URL.
-        // (\w+-+)*\w+(://[/]*|:|\.)(\w+-+)*\w+([\S&&[^\w-]]\S*)?
-        // -------                 -------
+        // (\w+-+)*[\w\[]+(://[/]*|:|\.)(\w+-+)*[\w\[:]+([\S&&[^\w-]]\S*)?
+        // --------                     --------
         // 0 or more pairs of consecutive word letters or dashes
-        //        ---                     ---
-        // followed by at least a single word letter.
-        // -----------             ----------
+        //         -------                      --------
+        // followed by at least a single word letter or [ipv6::] character.
+        // ---------------              ----------------
         // Combined, that means "w", "w-w", "w-w-w", etc match, but "w-", "w-w-", "w-w-w-" do not.
-        //          --------------
+        //                --------------
         // That surrounds :, :// or .
-        //                                                    -
+        //                                                               -
         // At the end, there may be an optional
-        //                                    ------------
+        //                                               ------------
         // non-word, non-- but still non-space character (e.g., ':', '/', '.', '?' but not 'a', '-', '\t')
-        //                                                ---
+        //                                                           ---
         // and 0 or more non-space characters.
         //
         // These are some (odd) examples of valid urls according to this pattern:
@@ -77,7 +77,7 @@ object URLStringUtils {
         // www.c-c-
         // 3-3
         Pattern.compile(
-            "^\\s*(\\w+-+)*\\w+(://[/]*|:|\\.)(\\w+-+)*\\w+([\\S&&[^\\w-]]\\S*)?\\s*$",
+            "^\\s*(\\w+-+)*[\\w\\[]+(://[/]*|:|\\.)(\\w+-+)*[\\w\\[:]+([\\S&&[^\\w-]]\\S*)?\\s*$",
             flags,
         )
     }
@@ -142,5 +142,26 @@ object URLStringUtils {
 
     private fun maybeStripTrailingSlash(url: CharSequence): CharSequence {
         return url.trimEnd('/')
+    }
+
+    /**
+     * Determines whether a string is http or https URL
+     */
+    fun isHttpOrHttps(url: String): Boolean {
+        return !TextUtils.isEmpty(url) && (url.startsWith("http:") || url.startsWith("https:"))
+    }
+
+    /**
+     * Determine whether a string is a valid search query URL.
+     */
+    fun isValidSearchQueryUrl(url: String): Boolean {
+        var trimmedUrl = url.trim { it <= ' ' }
+        if (!trimmedUrl.matches("^.+?://.+?".toRegex())) {
+            // UI hint url doesn't have http scheme, so add it if necessary
+            trimmedUrl = "http://$trimmedUrl"
+        }
+        val isNetworkUrl = isHttpOrHttps(trimmedUrl)
+        val containsToken = trimmedUrl.contains("%s")
+        return isNetworkUrl && containsToken
     }
 }

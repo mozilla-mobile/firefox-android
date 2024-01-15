@@ -11,20 +11,21 @@ import androidx.annotation.VisibleForTesting
 import androidx.fragment.app.FragmentManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.mapNotNull
 import mozilla.components.browser.state.action.ContentAction
 import mozilla.components.browser.state.selector.findTabOrCustomTabOrSelectedTab
 import mozilla.components.browser.state.state.SessionState
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.EngineSession
+import mozilla.components.concept.engine.EngineSession.LoadUrlFlags.Companion.EXTERNAL
+import mozilla.components.concept.engine.EngineSession.LoadUrlFlags.Companion.LOAD_FLAGS_BYPASS_LOAD_URI_DELEGATE
 import mozilla.components.feature.app.links.AppLinksUseCases.Companion.ENGINE_SUPPORTED_SCHEMES
 import mozilla.components.feature.app.links.RedirectDialogFragment.Companion.FRAGMENT_TAG
 import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.lib.state.ext.flowScoped
 import mozilla.components.support.base.feature.LifecycleAwareFeature
 import mozilla.components.support.ktx.android.content.appName
-import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 
 /**
  * This feature implements observer for handling redirects to external apps. The users are asked to
@@ -54,9 +55,10 @@ class AppLinksFeature(
     private val dialog: RedirectDialogFragment? = null,
     private val launchInApp: () -> Boolean = { false },
     private val useCases: AppLinksUseCases = AppLinksUseCases(context, launchInApp),
-    private val failedToLaunchAction: () -> Unit = {},
+    private val failedToLaunchAction: (fallbackUrl: String?) -> Unit = {},
     private val loadUrlUseCase: SessionUseCases.DefaultLoadUrlUseCase? = null,
     private val engineSupportedSchemes: Set<String> = ENGINE_SUPPORTED_SCHEMES,
+    private val shouldPrompt: () -> Boolean = { true },
 ) : LifecycleAwareFeature {
 
     private var scope: CoroutineScope? = null
@@ -67,7 +69,7 @@ class AppLinksFeature(
     override fun start() {
         scope = store.flowScoped { flow ->
             flow.mapNotNull { state -> state.findTabOrCustomTabOrSelectedTab(sessionId) }
-                .ifChanged {
+                .distinctUntilChangedBy {
                     it.content.appIntent
                 }
                 .collect { tab ->
@@ -94,6 +96,8 @@ class AppLinksFeature(
         }
 
         val doNotOpenApp = {
+            AppLinksInterceptor.addUserDoNotIntercept(url, appIntent)
+
             loadUrlIfSchemeSupported(tab, url)
         }
 
@@ -104,7 +108,10 @@ class AppLinksFeature(
             )
         }
 
-        if (fragmentManager == null) {
+        @Suppress("ComplexCondition")
+        if (isSameCallerAndApp(tab, appIntent) || (!tab.content.private && !shouldPrompt()) ||
+            fragmentManager == null
+        ) {
             doOpenApp()
             return
         }
@@ -149,7 +156,11 @@ class AppLinksFeature(
     internal fun loadUrlIfSchemeSupported(tab: SessionState, url: String) {
         val schemeSupported = engineSupportedSchemes.contains(Uri.parse(url).scheme)
         if (schemeSupported) {
-            loadUrlUseCase?.invoke(url, tab.id, EngineSession.LoadUrlFlags.none())
+            loadUrlUseCase?.invoke(
+                url = url,
+                sessionId = tab.id,
+                flags = EngineSession.LoadUrlFlags.select(EXTERNAL, LOAD_FLAGS_BYPASS_LOAD_URI_DELEGATE),
+            )
         }
     }
 
@@ -159,5 +170,16 @@ class AppLinksFeature(
 
     private fun findPreviousDialogFragment(): RedirectDialogFragment? {
         return fragmentManager?.findFragmentByTag(FRAGMENT_TAG) as? RedirectDialogFragment
+    }
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    internal fun isSameCallerAndApp(tab: SessionState, appIntent: Intent): Boolean {
+        return (tab.source as? SessionState.Source.External)?.let { externalSource ->
+            when (externalSource.caller?.packageId) {
+                null -> false
+                appIntent.component?.packageName -> true
+                else -> false
+            }
+        } ?: false
     }
 }

@@ -3,6 +3,7 @@ projects:
     upstream_dependencies:
     - browser-domains
     - browser-engine-gecko
+    - browser-errorpages
     - browser-icons
     - browser-menu
     - browser-menu2
@@ -17,6 +18,7 @@ projects:
     - concept-awesomebar
     - concept-base
     - concept-engine
+    - concept-fetch
     - concept-menu
     - concept-push
     - concept-storage
@@ -33,6 +35,7 @@ projects:
     - feature-customtabs
     - feature-downloads
     - feature-findinpage
+    - feature-fxsuggest
     - feature-intent
     - feature-logins
     - feature-media
@@ -75,6 +78,7 @@ projects:
     - support-images
     - support-ktx
     - support-locale
+    - support-remotesettings
     - support-rusterrors
     - support-rusthttp
     - support-rustlog
@@ -82,6 +86,7 @@ projects:
     - support-test-libstate
     - support-utils
     - support-webextensions
+    - ui-autocomplete
     - ui-colors
     - ui-icons
     - ui-tabcounter
@@ -131,6 +136,17 @@ variants:
     fileName: app-fenix-x86_64-beta-unsigned.apk
   build_type: beta
   name: fenixBeta
+- apks:
+  - abi: arm64-v8a
+    fileName: app-fenix-arm64-v8a-benchmark-unsigned.apk
+  - abi: armeabi-v7a
+    fileName: app-fenix-armeabi-v7a-benchmark-unsigned.apk
+  - abi: x86
+    fileName: app-fenix-x86-benchmark-unsigned.apk
+  - abi: x86_64
+    fileName: app-fenix-x86_64-benchmark-unsigned.apk
+  build_type: benchmark
+  name: fenixBenchmark
 - apks:
   - abi: noarch
     fileName: app-debug-androidTest.apk

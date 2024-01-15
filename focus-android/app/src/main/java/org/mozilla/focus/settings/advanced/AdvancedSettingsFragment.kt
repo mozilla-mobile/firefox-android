@@ -16,7 +16,6 @@ import org.mozilla.focus.ext.showToolbar
 import org.mozilla.focus.settings.BaseSettingsFragment
 import org.mozilla.focus.state.AppAction
 import org.mozilla.focus.state.Screen
-import org.mozilla.focus.telemetry.TelemetryWrapper
 import org.mozilla.focus.utils.AppConstants.isDevBuild
 
 class AdvancedSettingsFragment :
@@ -44,8 +43,7 @@ class AdvancedSettingsFragment :
         super.onPause()
     }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
-        TelemetryWrapper.settingsEvent(key, sharedPreferences.all[key].toString())
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String?) {
         when (key) {
             getString(R.string.pref_key_remote_debugging) -> {
                 requireComponents.engine.settings.remoteDebuggingEnabled =

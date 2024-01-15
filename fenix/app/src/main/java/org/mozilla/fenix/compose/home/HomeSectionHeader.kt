@@ -8,8 +8,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,7 +17,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -76,6 +75,7 @@ fun HomeSectionHeader(
  * Homepage header content.
  *
  * @param headerText The header string.
+ * @param textColor [Color] to apply to the text.
  * @param description The content description for the "Show all" button.
  * @param showAllTextColor [Color] for the "Show all" button.
  * @param onShowAllClick Invoked when "Show all" button is clicked.
@@ -104,18 +104,20 @@ private fun HomeSectionHeaderContent(
         )
 
         onShowAllClick?.let {
-            ClickableText(
-                text = AnnotatedString(text = stringResource(id = R.string.recent_tabs_show_all)),
-                modifier = Modifier.padding(start = 16.dp)
-                    .semantics {
-                        contentDescription = description
-                    },
-                style = TextStyle(
-                    color = showAllTextColor,
-                    fontSize = 14.sp,
-                ),
-                onClick = { onShowAllClick() },
-            )
+            TextButton(onClick = { onShowAllClick() }) {
+                Text(
+                    text = stringResource(id = R.string.recent_tabs_show_all),
+                    modifier = Modifier
+                        .padding(start = 16.dp)
+                        .semantics {
+                            contentDescription = description
+                        },
+                    style = TextStyle(
+                        color = showAllTextColor,
+                        fontSize = 14.sp,
+                    ),
+                )
+            }
         }
     }
 }

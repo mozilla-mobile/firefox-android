@@ -14,7 +14,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -28,6 +28,8 @@ import mozilla.components.feature.top.sites.TopSitesFeature
 import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.ktx.android.view.hideKeyboard
+import mozilla.components.support.ktx.util.URLStringUtils
+import mozilla.components.support.utils.StatusBarUtils
 import mozilla.components.support.utils.ThreadUtils
 import org.mozilla.focus.GleanMetrics.BrowserSearch
 import org.mozilla.focus.GleanMetrics.SearchBar
@@ -35,6 +37,7 @@ import org.mozilla.focus.GleanMetrics.SearchWidget
 import org.mozilla.focus.R
 import org.mozilla.focus.activity.MainActivity
 import org.mozilla.focus.databinding.FragmentUrlinputBinding
+import org.mozilla.focus.ext.components
 import org.mozilla.focus.ext.defaultSearchEngineName
 import org.mozilla.focus.ext.hasSearchTerms
 import org.mozilla.focus.ext.requireComponents
@@ -46,15 +49,12 @@ import org.mozilla.focus.searchsuggestions.SearchSuggestionsViewModel
 import org.mozilla.focus.searchsuggestions.ui.SearchSuggestionsFragment
 import org.mozilla.focus.state.AppAction
 import org.mozilla.focus.state.Screen
-import org.mozilla.focus.telemetry.TelemetryWrapper
 import org.mozilla.focus.topsites.DefaultTopSitesStorage.Companion.TOP_SITES_MAX_LIMIT
 import org.mozilla.focus.topsites.DefaultTopSitesView
 import org.mozilla.focus.topsites.TopSitesOverlay
 import org.mozilla.focus.ui.theme.FocusTheme
 import org.mozilla.focus.utils.OneShotOnPreDrawListener
-import org.mozilla.focus.utils.StatusBarUtils
 import org.mozilla.focus.utils.SupportUtils
-import org.mozilla.focus.utils.UrlUtils
 import org.mozilla.focus.utils.ViewUtils
 import kotlin.coroutines.CoroutineContext
 
@@ -113,7 +113,8 @@ class UrlInputFragment :
     private val customDomainsProvider = CustomDomainsProvider()
     private var _binding: FragmentUrlinputBinding? = null
     private val binding get() = _binding!!
-    private lateinit var searchSuggestionsViewModel: SearchSuggestionsViewModel
+
+    private val searchSuggestionsViewModel: SearchSuggestionsViewModel by activityViewModels()
 
     @Volatile
     private var isAnimating: Boolean = false
@@ -135,39 +136,6 @@ class UrlInputFragment :
         // Get session from session manager if there's a session UUID in the fragment's arguments
         arguments?.getString(ARGUMENT_SESSION_UUID)?.let { id ->
             tab = requireComponents.store.state.findTab(id)
-        }
-    }
-
-    @Suppress("DEPRECATION") // https://github.com/mozilla-mobile/focus-android/issues/4958
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        searchSuggestionsViewModel =
-            ViewModelProvider(this).get(SearchSuggestionsViewModel::class.java)
-
-        childFragmentManager.beginTransaction()
-            .replace(binding.searchViewContainer.id, SearchSuggestionsFragment.create())
-            .commit()
-
-        searchSuggestionsViewModel.selectedSearchSuggestion.observe(
-            viewLifecycleOwner,
-        ) {
-            val isSuggestion = searchSuggestionsViewModel.searchQuery.value != it
-            it?.let {
-                if (searchSuggestionsViewModel.alwaysSearch) {
-                    onSearch(it, isSuggestion = false, alwaysSearch = true)
-                } else {
-                    onSearch(it, isSuggestion)
-                }
-                searchSuggestionsViewModel.clearSearchSuggestion()
-            }
-        }
-
-        searchSuggestionsViewModel.autocompleteSuggestion.observe(viewLifecycleOwner) { text ->
-            if (text != null) {
-                searchSuggestionsViewModel.clearAutocompleteSuggestion()
-                binding.browserToolbar.setSearchTerms(text)
-            }
         }
     }
 
@@ -253,6 +221,31 @@ class UrlInputFragment :
 
     @Suppress("LongMethod")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        childFragmentManager.beginTransaction()
+            .replace(binding.searchViewContainer.id, SearchSuggestionsFragment.create())
+            .commit()
+
+        searchSuggestionsViewModel.selectedSearchSuggestion.observe(
+            viewLifecycleOwner,
+        ) {
+            val isSuggestion = searchSuggestionsViewModel.searchQuery.value != it
+            it?.let {
+                if (searchSuggestionsViewModel.alwaysSearch) {
+                    onSearch(it, isSuggestion = false, alwaysSearch = true)
+                } else {
+                    onSearch(it, isSuggestion)
+                }
+                searchSuggestionsViewModel.clearSearchSuggestion()
+            }
+        }
+
+        searchSuggestionsViewModel.autocompleteSuggestion.observe(viewLifecycleOwner) { text ->
+            if (text != null) {
+                searchSuggestionsViewModel.clearAutocompleteSuggestion()
+                binding.browserToolbar.setSearchTerms(text)
+            }
+        }
+
         binding.browserToolbar.private = true
 
         toolbarIntegration.set(
@@ -491,29 +484,6 @@ class UrlInputFragment :
                 },
             )
 
-        // We only need to animate the toolbar if we are an overlay.
-        /*
-        if (isOverlay) {
-            val screenLocation = IntArray(2)
-            //urlView?.getLocationOnScreen(screenLocation)
-
-            val leftDelta = requireArguments().getInt(ARGUMENT_X) - screenLocation[0] - urlView.paddingLeft
-
-            if (!reverse) {
-                //urlView?.pivotX = 0f
-                //urlView?.pivotY = 0f
-                //urlView?.translationX = leftDelta.toFloat()
-            }
-
-            if (urlView != null) {
-                // The URL moves from the right (at least if the lock is visible) to it's actual position
-                urlView.animate()
-                    .setDuration(ANIMATION_DURATION.toLong())
-                    .translationX((if (reverse) leftDelta else 0).toFloat())
-            }
-        }
-        */
-
         if (reverse) {
             binding.toolbarBottomBorder.isVisible = true
 
@@ -533,7 +503,7 @@ class UrlInputFragment :
         // this transaction is committed. To avoid this we commit while allowing a state loss here.
         // We do not save any state in this fragment (It's getting destroyed) so this should not be a problem.
 
-        requireComponents.appStore.dispatch(AppAction.FinishEdit(tab!!.id))
+        context?.components?.appStore?.dispatch(AppAction.FinishEdit(tab!!.id))
     }
 
     internal fun onCommit(input: String) {
@@ -542,14 +512,12 @@ class UrlInputFragment :
 
             ViewUtils.hideKeyboard(binding.browserToolbar)
 
-            val isUrl = UrlUtils.isUrl(input)
+            val isUrl = URLStringUtils.isURLLike(input)
             if (isUrl) {
-                openUrl(UrlUtils.normalize(input))
+                openUrl(URLStringUtils.toNormalizedURL(input))
             } else {
                 search(input)
             }
-
-            TelemetryWrapper.urlBarEvent(isUrl)
 
             if (isUrl) {
                 SearchBar.enteredUrl.record(NoExtras())
@@ -559,7 +527,6 @@ class UrlInputFragment :
                 SearchBar.performedSearch.record(
                     SearchBar.PerformedSearchExtra(defaultSearchEngineName),
                 )
-                TelemetryWrapper.searchEnterEvent()
                 BrowserSearch.searchCount["$defaultSearchEngineName.action"].add()
             }
         }
@@ -573,20 +540,18 @@ class UrlInputFragment :
 
     private fun onSearch(
         query: String,
-        isSuggestion: Boolean = false,
+        @Suppress("UNUSED_PARAMETER") isSuggestion: Boolean = false,
         alwaysSearch: Boolean = false,
     ) {
         if (alwaysSearch) {
             search(query)
         } else {
-            if (UrlUtils.isUrl(query)) {
-                openUrl(UrlUtils.normalize(query))
+            if (URLStringUtils.isURLLike(query)) {
+                openUrl(URLStringUtils.toNormalizedURL(query))
             } else {
                 search(query)
             }
         }
-
-        TelemetryWrapper.searchSelectEvent(isSuggestion)
 
         val defaultSearchEngineName = requireComponents.store.defaultSearchEngineName().lowercase()
         BrowserSearch.searchCount["$defaultSearchEngineName.suggestion"].add()
@@ -603,6 +568,8 @@ class UrlInputFragment :
                 source = SessionState.Source.Internal.UserEntered,
             )
         }
+
+        searchSuggestionsViewModel.setSearchQuery("")
     }
 
     private fun openUrl(url: String) {
@@ -628,6 +595,8 @@ class UrlInputFragment :
                 private = true,
             )
         }
+
+        searchSuggestionsViewModel.setSearchQuery("")
     }
 
     internal fun onStartEditing() {

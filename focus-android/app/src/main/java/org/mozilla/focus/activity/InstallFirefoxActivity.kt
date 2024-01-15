@@ -1,5 +1,4 @@
-/* -*- Mode: Java; c-basic-offset: 4; tab-width: 4; indent-tabs-mode: nil; -*-
- * This Source Code Form is subject to the terms of the Mozilla Public
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -16,7 +15,6 @@ import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.support.utils.Browsers
 import mozilla.components.support.utils.ext.resolveActivityCompat
 import org.mozilla.focus.GleanMetrics.OpenWith
-import org.mozilla.focus.telemetry.TelemetryWrapper
 import org.mozilla.focus.utils.AppConstants
 
 /**
@@ -90,8 +88,6 @@ class InstallFirefoxActivity : Activity() {
             }
 
             OpenWith.installFirefox.record(NoExtras())
-
-            TelemetryWrapper.installFirefoxEvent()
         }
     }
 }

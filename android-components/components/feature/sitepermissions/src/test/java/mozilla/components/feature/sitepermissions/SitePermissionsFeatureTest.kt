@@ -180,7 +180,7 @@ class SitePermissionsFeatureTest {
         // then
         verify(mockStore).dispatch(
             ContentAction.ConsumePermissionsRequest
-            ("sessionIdTest", mockPermissionRequest),
+                ("sessionIdTest", mockPermissionRequest),
         )
     }
 
@@ -192,7 +192,7 @@ class SitePermissionsFeatureTest {
         // then
         verify(mockStore).dispatch(
             ContentAction.ConsumePermissionsRequest
-            (selectedTab.id, mockPermissionRequest),
+                (selectedTab.id, mockPermissionRequest),
         )
     }
 
@@ -204,7 +204,7 @@ class SitePermissionsFeatureTest {
         // then
         verify(mockStore).dispatch(
             ContentAction.ConsumeAppPermissionsRequest
-            ("sessionIdTest", mockAppPermissionRequest),
+                ("sessionIdTest", mockAppPermissionRequest),
         )
     }
 
@@ -216,7 +216,7 @@ class SitePermissionsFeatureTest {
         // then
         verify(mockStore).dispatch(
             ContentAction.ConsumeAppPermissionsRequest
-            (selectedTab.id, mockAppPermissionRequest),
+                (selectedTab.id, mockAppPermissionRequest),
         )
     }
 
@@ -596,6 +596,24 @@ class SitePermissionsFeatureTest {
         }
 
         // then
+        verify(mockPermissionRequest).reject()
+        verify(sitePermissionFeature).consumePermissionRequest(mockPermissionRequest)
+    }
+
+    @Test
+    fun `GIVEN sessionId which does not match a selected or custom tab WHEN onContentPermissionRequested() THEN reject, consumePermissionRequest are called `() {
+        val mockPermissionRequest: PermissionRequest = mock {
+            whenever(permissions).thenReturn(listOf(ContentVideoCamera(id = "permission")))
+        }
+
+        doNothing().`when`(mockPermissionRequest).reject()
+
+        sitePermissionFeature.sessionId = null
+
+        runTestOnMain {
+            sitePermissionFeature.onContentPermissionRequested(mockPermissionRequest, URL)
+        }
+
         verify(mockPermissionRequest).reject()
         verify(sitePermissionFeature).consumePermissionRequest(mockPermissionRequest)
     }
@@ -1095,7 +1113,7 @@ class SitePermissionsFeatureTest {
             ),
             dialog.title,
         )
-        assertEquals(iconsR.drawable.mozac_ic_cookies, dialog.icon)
+        assertEquals(iconsR.drawable.mozac_ic_cookies_24, dialog.icon)
         assertEquals(permissionRequest.id, dialog.permissionRequestId)
         assertEquals(sitePermissionFeature, dialog.feature)
         assertEquals(false, dialog.shouldShowDoNotAskAgainCheckBox)

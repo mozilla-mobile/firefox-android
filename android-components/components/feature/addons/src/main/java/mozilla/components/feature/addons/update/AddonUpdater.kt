@@ -39,6 +39,7 @@ import mozilla.components.feature.addons.R
 import mozilla.components.feature.addons.update.db.UpdateAttemptsDatabase
 import mozilla.components.feature.addons.update.db.toEntity
 import mozilla.components.feature.addons.worker.shouldReport
+import mozilla.components.support.base.android.NotificationsDelegate
 import mozilla.components.support.base.ids.SharedIdsHelper
 import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.base.worker.Frequency
@@ -152,6 +153,7 @@ interface AddonUpdater {
 class DefaultAddonUpdater(
     private val applicationContext: Context,
     private val frequency: Frequency = Frequency(1, TimeUnit.DAYS),
+    private val notificationsDelegate: NotificationsDelegate,
 ) : AddonUpdater {
     private val logger = Logger("DefaultAddonUpdater")
 
@@ -210,15 +212,28 @@ class DefaultAddonUpdater(
         logger.info("onUpdatePermissionRequest $current")
 
         val shouldGrantWithoutPrompt = Addon.localizePermissions(newPermissions, applicationContext).isEmpty()
-        val shouldShowNotification =
+        val shouldNotPrompt =
             updateStatusStorage.isPreviouslyAllowed(applicationContext, updated.id) || shouldGrantWithoutPrompt
 
-        onPermissionsGranted(shouldShowNotification)
+        // When the extension update doesn't have new permissions that the user should grant with a prompt,
+        // we allow the update to continue.
+        //
+        // Otherwise, the permission request will first be user-cancelled because we return `false` below
+        // but we create an Android notification right after, which is responsible for prompting the user.
+        // When the user allows the new permissions in the Android notification, the extension update is
+        // triggered again and - since the permissions have been previously allowed - there is no new
+        // permissions that the user should grant and so we allow the update to continue. At this point,
+        // the extension is fully updated.
+        onPermissionsGranted(shouldNotPrompt)
 
-        if (!shouldShowNotification) {
-            createNotification(updated, newPermissions)
-        } else {
+        if (shouldNotPrompt) {
+            // Update has been completed at this point.
             updateStatusStorage.markAsUnallowed(applicationContext, updated.id)
+        } else {
+            // We create the Android notification here.
+            val notificationId = NotificationHandlerService.getNotificationId(applicationContext, updated.id)
+            val notification = createNotification(updated, newPermissions, notificationId)
+            notificationsDelegate.notify(notificationId = notificationId, notification = notification)
         }
     }
 
@@ -269,9 +284,8 @@ class DefaultAddonUpdater(
     internal fun createNotification(
         extension: WebExtension,
         newPermissions: List<String>,
+        notificationId: Int,
     ): Notification {
-        val notificationId = NotificationHandlerService.getNotificationId(applicationContext, extension.id)
-
         val channel = ChannelData(
             NOTIFICATION_CHANNEL_ID,
             R.string.mozac_feature_addons_updater_notification_channel,
@@ -282,7 +296,7 @@ class DefaultAddonUpdater(
 
         logger.info("Created update notification for add-on ${extension.id}")
         return NotificationCompat.Builder(applicationContext, channelId)
-            .setSmallIcon(iconsR.drawable.mozac_ic_extensions)
+            .setSmallIcon(iconsR.drawable.mozac_ic_extension_24)
             .setContentTitle(getNotificationTitle(extension))
             .setContentText(text)
             .setPriority(NotificationCompat.PRIORITY_MAX)
@@ -294,9 +308,7 @@ class DefaultAddonUpdater(
             .addAction(createAllowAction(extension, notificationId))
             .addAction(createDenyAction(extension, notificationId))
             .setAutoCancel(true)
-            .build().also {
-                NotificationManagerCompat.from(applicationContext).notify(notificationId, it)
-            }
+            .build()
     }
 
     private fun getNotificationTitle(extension: WebExtension): String {
@@ -359,7 +371,7 @@ class DefaultAddonUpdater(
             applicationContext.getString(R.string.mozac_feature_addons_updater_notification_allow_button)
 
         return NotificationCompat.Action.Builder(
-            iconsR.drawable.mozac_ic_extensions,
+            iconsR.drawable.mozac_ic_extension_24,
             allowText,
             allowPendingIntent,
         ).build()
@@ -379,7 +391,7 @@ class DefaultAddonUpdater(
             applicationContext.getString(R.string.mozac_feature_addons_updater_notification_deny_button)
 
         return NotificationCompat.Action.Builder(
-            iconsR.drawable.mozac_ic_extensions,
+            iconsR.drawable.mozac_ic_extension_24,
             denyText,
             denyPendingIntent,
         ).build()

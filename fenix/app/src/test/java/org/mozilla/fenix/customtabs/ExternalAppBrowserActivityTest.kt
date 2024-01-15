@@ -26,8 +26,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.BrowserDirection
-import org.mozilla.fenix.browser.browsingmode.BrowsingMode
-import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
+import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.utils.Settings
@@ -54,15 +53,12 @@ class ExternalAppBrowserActivityTest {
     @Test
     fun `navigateToBrowserOnColdStart does nothing for external app browser activity`() {
         val activity = spyk(ExternalAppBrowserActivity())
-        val browsingModeManager: BrowsingModeManager = mockk()
-        every { browsingModeManager.mode } returns BrowsingMode.Normal
 
         val settings: Settings = mockk()
         every { settings.shouldReturnToBrowser } returns true
         every { activity.components.settings.shouldReturnToBrowser } returns true
         every { activity.openToBrowser(any(), any()) } returns Unit
 
-        activity.browsingModeManager = browsingModeManager
         activity.navigateToBrowserOnColdStart()
 
         verify(exactly = 0) { activity.openToBrowser(BrowserDirection.FromGlobal, null) }
@@ -93,6 +89,7 @@ class ExternalAppBrowserActivityTest {
                     val bundle: Bundle = mockk()
                     every { bundle.getString(any()) } returns ""
                     every { intent.extras } returns bundle
+                    every { intent.getBooleanExtra(any(), any()) } returns false
                     return intent
                 }
             },
@@ -105,6 +102,76 @@ class ExternalAppBrowserActivityTest {
         directions = activity.getNavDirections(BrowserDirection.FromGlobal, null)
         assertNull(directions)
         verify { activity.finishAndRemoveTask() }
+    }
+
+    @Test
+    fun `GIVEN intent isSandboxCustomTab is true WHEN getNavDirections called THEN actionGlobalExternalAppBrowser isSandboxCustomTab is true`() {
+        val activity = spyk(
+            object : ExternalAppBrowserActivity() {
+                public override fun getNavDirections(
+                    from: BrowserDirection,
+                    customTabSessionId: String?,
+                ): NavDirections? {
+                    return super.getNavDirections(from, customTabSessionId)
+                }
+
+                override fun getIntent(): Intent {
+                    val intent: Intent = mockk()
+                    val bundle: Bundle = mockk()
+                    every { bundle.getString(any()) } returns ""
+                    every { intent.getBooleanExtra(any(), any()) } returns true
+                    every { intent.extras } returns bundle
+                    return intent
+                }
+            },
+        )
+
+        val customTabSessionId = "id"
+        val directions = activity.getNavDirections(BrowserDirection.FromGlobal, customTabSessionId)
+        assertNotNull(directions)
+        verify(exactly = 0) { activity.finishAndRemoveTask() }
+
+        val expected = NavGraphDirections.actionGlobalExternalAppBrowser(
+            activeSessionId = customTabSessionId,
+            webAppManifest = null,
+            isSandboxCustomTab = true,
+        )
+        assertEquals(expected, directions)
+    }
+
+    @Test
+    fun `GIVEN intent isSandboxCustomTab is false WHEN getNavDirections called THEN actionGlobalExternalAppBrowser isSandboxCustomTab is false`() {
+        val activity = spyk(
+            object : ExternalAppBrowserActivity() {
+                public override fun getNavDirections(
+                    from: BrowserDirection,
+                    customTabSessionId: String?,
+                ): NavDirections? {
+                    return super.getNavDirections(from, customTabSessionId)
+                }
+
+                override fun getIntent(): Intent {
+                    val intent: Intent = mockk()
+                    val bundle: Bundle = mockk()
+                    every { bundle.getString(any()) } returns ""
+                    every { intent.getBooleanExtra(any(), any()) } returns false
+                    every { intent.extras } returns bundle
+                    return intent
+                }
+            },
+        )
+
+        val customTabSessionId = "id"
+        val directions = activity.getNavDirections(BrowserDirection.FromGlobal, customTabSessionId)
+        assertNotNull(directions)
+        verify(exactly = 0) { activity.finishAndRemoveTask() }
+
+        val expected = NavGraphDirections.actionGlobalExternalAppBrowser(
+            activeSessionId = customTabSessionId,
+            webAppManifest = null,
+            isSandboxCustomTab = false,
+        )
+        assertEquals(expected, directions)
     }
 
     @Test

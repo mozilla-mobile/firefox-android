@@ -5,8 +5,8 @@
 package org.mozilla.fenix.components.toolbar
 
 import android.content.Intent
+import android.view.ViewGroup
 import androidx.navigation.NavController
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import io.mockk.MockKAnnotations
 import io.mockk.Runs
 import io.mockk.coEvery
@@ -71,6 +71,7 @@ import org.mozilla.fenix.collections.SaveCollectionStep
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.accounts.AccountState
+import org.mozilla.fenix.components.accounts.FenixFxAEntryPoint
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.directionsEq
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
@@ -87,7 +88,7 @@ class DefaultBrowserToolbarMenuControllerTest {
     @get:Rule
     val gleanTestRule = GleanTestRule(testContext)
 
-    @MockK private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    @MockK private lateinit var snackbarParent: ViewGroup
 
     @RelaxedMockK private lateinit var activity: HomeActivity
 
@@ -311,7 +312,7 @@ class DefaultBrowserToolbarMenuControllerTest {
         assertNotNull(Events.browserMenuAction.testGetValue())
         val snapshot = Events.browserMenuAction.testGetValue()!!
         assertEquals(1, snapshot.size)
-        assertEquals("back", snapshot.single().extra?.getValue("item"))
+        assertEquals("back_long_press", snapshot.single().extra?.getValue("item"))
         val directions = BrowserFragmentDirections.actionGlobalTabHistoryDialogFragment(null)
 
         verify { navController.navigate(directions) }
@@ -346,7 +347,7 @@ class DefaultBrowserToolbarMenuControllerTest {
         assertNotNull(Events.browserMenuAction.testGetValue())
         val snapshot = Events.browserMenuAction.testGetValue()!!
         assertEquals(1, snapshot.size)
-        assertEquals("forward", snapshot.single().extra?.getValue("item"))
+        assertEquals("forward_long_press", snapshot.single().extra?.getValue("item"))
 
         val directions = BrowserFragmentDirections.actionGlobalTabHistoryDialogFragment(null)
 
@@ -522,7 +523,7 @@ class DefaultBrowserToolbarMenuControllerTest {
 
         every { topSitesUseCase.addPinnedSites } returns addPinnedSiteUseCase
         every {
-            swipeRefreshLayout.context.getString(R.string.snackbar_added_to_shortcuts)
+            snackbarParent.context.getString(R.string.snackbar_added_to_shortcuts)
         } returns "Added to shortcuts!"
 
         val controller = createController(scope = this, store = browserStore)
@@ -550,7 +551,7 @@ class DefaultBrowserToolbarMenuControllerTest {
         coEvery { pinnedSiteStorage.getPinnedSites() } returns listOf(topSite)
         every { topSitesUseCase.removeTopSites } returns removePinnedSiteUseCase
         every {
-            swipeRefreshLayout.context.getString(R.string.snackbar_top_site_removed)
+            snackbarParent.context.getString(R.string.snackbar_top_site_removed)
         } returns snackbarMessage
 
         val controller = createController(scope = this, store = browserStore)
@@ -752,6 +753,21 @@ class DefaultBrowserToolbarMenuControllerTest {
     }
 
     @Test
+    fun `WHEN print menu item is pressed THEN request print`() = runTest {
+        val item = ToolbarMenu.Item.PrintContent
+
+        val controller = createController(scope = this, store = browserStore)
+        assertNull(Events.browserMenuAction.testGetValue())
+
+        controller.handleToolbarItemInteraction(item)
+
+        assertNotNull(Events.browserMenuAction.testGetValue())
+        val snapshot = Events.browserMenuAction.testGetValue()!!
+        assertEquals(1, snapshot.size)
+        assertEquals("print_content", snapshot.single().extra?.getValue("item"))
+    }
+
+    @Test
     fun `WHEN New Tab menu item is pressed THEN navigate to a new tab home`() = runTest {
         val item = ToolbarMenu.Item.NewTab
 
@@ -784,7 +800,9 @@ class DefaultBrowserToolbarMenuControllerTest {
     @Test
     fun `GIVEN account exists and the user is not signed in WHEN sign in to sync menu item is pressed THEN navigate to account problem fragment`() = runTest {
         val item = ToolbarMenu.Item.SyncAccount(AccountState.NEEDS_REAUTHENTICATION)
-        val accountProblemDirections = BrowserFragmentDirections.actionGlobalAccountProblemFragment()
+        val accountProblemDirections = BrowserFragmentDirections.actionGlobalAccountProblemFragment(
+            entrypoint = FenixFxAEntryPoint.BrowserToolbar,
+        )
         val controller = createController(scope = this, store = browserStore)
 
         controller.handleToolbarItemInteraction(item)
@@ -795,13 +813,33 @@ class DefaultBrowserToolbarMenuControllerTest {
     @Test
     fun `GIVEN account doesn't exist WHEN sign in to sync menu item is pressed THEN navigate to sign in`() = runTest {
         val item = ToolbarMenu.Item.SyncAccount(AccountState.NO_ACCOUNT)
-        val turnOnSyncDirections = BrowserFragmentDirections.actionGlobalTurnOnSync()
+        val turnOnSyncDirections = BrowserFragmentDirections.actionGlobalTurnOnSync(
+            entrypoint = FenixFxAEntryPoint.BrowserToolbar,
+        )
         val controller = createController(scope = this, store = browserStore)
 
         controller.handleToolbarItemInteraction(item)
 
         verify { navController.navigate(turnOnSyncDirections, null) }
     }
+
+    @Test
+    fun `WHEN the Translations menu item is pressed THEN navigate to translations flow`() =
+        runTest {
+            val item = ToolbarMenu.Item.Translate
+
+            val controller = createController(scope = this, store = browserStore)
+
+            controller.handleToolbarItemInteraction(item)
+
+            verify {
+                navController.navigate(
+                    directionsEq(
+                        BrowserFragmentDirections.actionBrowserFragmentToTranslationsDialogFragment(),
+                    ),
+                )
+            }
+        }
 
     @Suppress("LongParameterList")
     private fun createController(
@@ -821,7 +859,7 @@ class DefaultBrowserToolbarMenuControllerTest {
         customTabSessionId = customTabSessionId,
         openInFenixIntent = openInFenixIntent,
         scope = scope,
-        swipeRefresh = swipeRefreshLayout,
+        snackbarParent = snackbarParent,
         tabCollectionStorage = tabCollectionStorage,
         bookmarkTapped = bookmarkTapped,
         readerModeController = readerModeController,

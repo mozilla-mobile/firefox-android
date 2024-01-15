@@ -97,7 +97,7 @@
                 android:layout_height="0dp" />
 
             <TextView
-                android:id="@+id/users_count"
+                android:id="@+id/review_count"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="6dp"
@@ -105,6 +105,31 @@
                 android:layout_gravity="center_vertical"
                 tools:text="Reviews: 591,642" />
 
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/add_on_status_error"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                    android:id="@+id/add_on_status_error_message"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:textColor="@color/mozac_feature_addons_error_text_color"
+                    tools:text="@string/mozac_feature_addons_status_blocklisted" />
+
+            <TextView
+                android:id="@+id/add_on_status_error_learn_more_link"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textColor="?android:attr/textColorLink"
+                android:text="@string/mozac_feature_addons_status_learn_more" />
         </LinearLayout>
 
     </LinearLayout>
@@ -120,6 +145,6 @@
         android:layout_centerVertical="true"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/mozac_feature_addons_install_addon_content_description"
-        app:srcCompat="@drawable/mozac_ic_new"
+        app:srcCompat="@drawable/mozac_ic_plus_24"
         app:tint="?android:attr/textColorPrimary" />
 </RelativeLayout>

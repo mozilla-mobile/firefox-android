@@ -15,6 +15,7 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import mozilla.appservices.places.PlacesReaderConnection
 import mozilla.appservices.places.PlacesWriterConnection
+import mozilla.appservices.places.uniffi.InternalException
 import mozilla.appservices.places.uniffi.PlacesApiException
 import mozilla.appservices.places.uniffi.VisitObservation
 import mozilla.components.concept.storage.DocumentType
@@ -43,6 +44,7 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -543,6 +545,7 @@ class PlacesHistoryStorageTest {
         assertEquals(0, visits.size)
     }
 
+    @Ignore("Disabled: https://bugzilla.mozilla.org/show_bug.cgi?id=1853687")
     @Test
     fun `store can delete by 'range'`() = runTestOnMain {
         history.recordVisit("http://www.mozilla.org/1", PageVisit(VisitType.TYPED))
@@ -639,15 +642,6 @@ class PlacesHistoryStorageTest {
 
         val workInfo = workManager.getWorkInfoById(request.id).get()
         assertThat(workInfo.state, `is`(WorkInfo.State.ENQUEUED))
-    }
-
-    @Test
-    fun `can run prune on the store`() = runTestOnMain {
-        // Empty.
-        history.prune()
-        history.recordVisit("http://www.mozilla.org/1", PageVisit(VisitType.TYPED))
-        // Non-empty.
-        history.prune()
     }
 
     @Test(expected = IllegalArgumentException::class)
@@ -785,9 +779,49 @@ class PlacesHistoryStorageTest {
         assertTrue(result is SyncStatus.Error)
     }
 
-    @Test(expected = PlacesApiException::class)
+    @Test
+    fun `storage does not re-throw unexpected places exceptions`() = runTestOnMain {
+        val exception = PlacesApiException.UnexpectedPlacesException("unexpected exception")
+        val conn = object : Connection {
+            override fun reader(): PlacesReaderConnection {
+                fail()
+                return mock()
+            }
+
+            override fun newReader(): PlacesReaderConnection {
+                fail()
+                return mock()
+            }
+
+            override fun writer(): PlacesWriterConnection {
+                fail()
+                return mock()
+            }
+
+            override fun syncHistory(syncInfo: SyncAuthInfo) {
+                throw exception
+            }
+
+            override fun syncBookmarks(syncInfo: SyncAuthInfo) {
+                fail()
+            }
+
+            override fun close() {
+                fail()
+            }
+
+            override fun registerWithSyncManager() {
+                fail()
+            }
+        }
+        val storage = MockingPlacesHistoryStorage(conn)
+        val result = storage.sync(SyncAuthInfo("kid", "token", 123L, "key", "serverUrl"))
+        assertTrue(result is SyncStatus.Error)
+    }
+
+    @Test(expected = InternalException::class)
     fun `storage re-throws sync panics`() = runTestOnMain {
-        val exception = PlacesApiException.UnexpectedPlacesException("test panic")
+        val exception = InternalException("sync paniced")
         val conn = object : Connection {
             override fun reader(): PlacesReaderConnection {
                 fail()
@@ -866,7 +900,7 @@ class PlacesHistoryStorageTest {
             VisitObservation(
                 url = "https://www.youtube.com/watch?v=F7PQdCDiE44",
                 title = "DW next crisis",
-                visitType = mozilla.appservices.places.uniffi.VisitTransition.LINK,
+                visitType = mozilla.appservices.places.uniffi.VisitType.LINK,
             ),
         )
 
@@ -920,6 +954,7 @@ class PlacesHistoryStorageTest {
         }
     }
 
+    @Ignore("Disabled: https://bugzilla.mozilla.org/show_bug.cgi?id=1853687")
     @Test
     fun `get history metadata between`() = runTestOnMain {
         assertEquals(0, history.getHistoryMetadataBetween(-1, 0).size)
@@ -989,7 +1024,7 @@ class PlacesHistoryStorageTest {
         )
         history.noteHistoryMetadataObservation(metaKey1, HistoryMetadataObservation.DocumentTypeObservation(DocumentType.Media))
         history.noteHistoryMetadataObservation(metaKey1, HistoryMetadataObservation.ViewTimeObservation(20000))
-
+        Thread.sleep(10)
         val afterMeta1 = System.currentTimeMillis()
 
         val metaKey2 = HistoryMetadataKey(
@@ -1000,6 +1035,7 @@ class PlacesHistoryStorageTest {
         history.noteHistoryMetadataObservation(metaKey2, HistoryMetadataObservation.DocumentTypeObservation(DocumentType.Regular))
         history.noteHistoryMetadataObservation(metaKey2, HistoryMetadataObservation.ViewTimeObservation(2000))
 
+        Thread.sleep(10)
         val afterMeta2 = System.currentTimeMillis()
 
         val metaKey3 = HistoryMetadataKey(

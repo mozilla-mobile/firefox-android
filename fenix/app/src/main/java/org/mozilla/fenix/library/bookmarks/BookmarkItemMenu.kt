@@ -29,7 +29,6 @@ class BookmarkItemMenu(
         OpenAllInNewTabs,
         OpenAllInPrivateTabs,
         Delete,
-        ;
     }
 
     val menuController: MenuController by lazy { BrowserMenuController() }
@@ -37,7 +36,7 @@ class BookmarkItemMenu(
     @VisibleForTesting
     @SuppressWarnings("LongMethod")
     internal suspend fun menuItems(itemType: BookmarkNodeType, itemId: String): List<TextMenuCandidate> {
-        val hasAtLeastOneChild = !context.bookmarkStorage.getTree(itemId)?.children.isNullOrEmpty()
+        val hasAtLeastOneChild = !context.bookmarkStorage.getTree(itemId, false)?.children.isNullOrEmpty()
 
         return listOfNotNull(
             if (itemType != BookmarkNodeType.SEPARATOR) {

@@ -1,6 +1,8 @@
-<manifest
-        package="org.mozilla.fenix"
-        xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -24,6 +26,8 @@
     <application
             tools:replace="android:name"
             android:name="org.mozilla.fenix.DebugFenixApplication">
+
+        <activity android:name="androidx.activity.ComponentActivity" />
     </application>
 
 </manifest>

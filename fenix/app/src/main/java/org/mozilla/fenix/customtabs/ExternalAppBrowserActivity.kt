@@ -4,7 +4,11 @@
 
 package org.mozilla.fenix.customtabs
 
+import android.app.assist.AssistContent
 import android.content.Intent
+import android.net.Uri
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.annotation.VisibleForTesting
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDirections
@@ -19,6 +23,8 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.ext.components
 import java.security.InvalidParameterException
+
+const val EXTRA_IS_SANDBOX_CUSTOM_TAB = "org.mozilla.fenix.customtabs.EXTRA_IS_SANDBOX_CUSTOM_TAB"
 
 /**
  * Activity that holds the [ExternalAppBrowserFragment] that is launched within an external app,
@@ -77,6 +83,7 @@ open class ExternalAppBrowserActivity : HomeActivity() {
                 NavGraphDirections.actionGlobalExternalAppBrowser(
                     activeSessionId = customTabSessionId,
                     webAppManifest = manifest,
+                    isSandboxCustomTab = intent.getBooleanExtra(EXTRA_IS_SANDBOX_CUSTOM_TAB, false),
                 )
             else -> throw InvalidParameterException(
                 "Tried to navigate to ExternalAppBrowserFragment from $from",
@@ -113,5 +120,12 @@ open class ExternalAppBrowserActivity : HomeActivity() {
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     internal fun getExternalTabId(): String? {
         return getIntentSessionId(SafeIntent(intent))
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    override fun onProvideAssistContent(outContent: AssistContent?) {
+        super.onProvideAssistContent(outContent)
+        val currentTabUrl = getExternalTab()?.content?.url
+        outContent?.webUri = currentTabUrl?.let { Uri.parse(it) }
     }
 }

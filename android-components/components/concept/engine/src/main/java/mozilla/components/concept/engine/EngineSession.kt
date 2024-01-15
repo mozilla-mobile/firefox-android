@@ -15,6 +15,13 @@ import mozilla.components.concept.engine.media.RecordingDevice
 import mozilla.components.concept.engine.mediasession.MediaSession
 import mozilla.components.concept.engine.permission.PermissionRequest
 import mozilla.components.concept.engine.prompt.PromptRequest
+import mozilla.components.concept.engine.shopping.ProductAnalysis
+import mozilla.components.concept.engine.shopping.ProductAnalysisStatus
+import mozilla.components.concept.engine.shopping.ProductRecommendation
+import mozilla.components.concept.engine.translate.TranslationEngineState
+import mozilla.components.concept.engine.translate.TranslationError
+import mozilla.components.concept.engine.translate.TranslationOperation
+import mozilla.components.concept.engine.translate.TranslationOptions
 import mozilla.components.concept.engine.window.WindowRequest
 import mozilla.components.concept.fetch.Response
 import mozilla.components.support.base.observer.Observable
@@ -33,6 +40,14 @@ abstract class EngineSession(
      * Interface to be implemented by classes that want to observe this engine session.
      */
     interface Observer {
+        /**
+         * Event to indicate the scroll position of the content has changed.
+         *
+         * @param scrollX The new horizontal scroll position in pixels.
+         * @param scrollY The new vertical scroll position in pixels.
+         */
+        fun onScrollChange(scrollX: Int, scrollY: Int) = Unit
+
         fun onLocationChange(url: String) = Unit
         fun onTitleChange(title: String) = Unit
 
@@ -56,6 +71,11 @@ abstract class EngineSession(
         fun onTrackerBlocked(tracker: Tracker) = Unit
         fun onTrackerLoaded(tracker: Tracker) = Unit
         fun onNavigateBack() = Unit
+
+        /**
+         * Event to indicate a product URL is currently open.
+         */
+        fun onProductUrlChange(isProductUrl: Boolean) = Unit
 
         /**
          * Event to indicate that a url was loaded to this session.
@@ -247,6 +267,9 @@ abstract class EngineSession(
          * @param contentType The type of content to be downloaded.
          * @param cookie The cookie related to request.
          * @param userAgent The user agent of the engine.
+         * @param skipConfirmation Whether or not the confirmation dialog should be shown before the download begins.
+         * @param openInApp Whether or not the associated resource should be opened in a third party
+         * app after processed successfully.
          * @param isPrivate Indicates if the download was requested from a private session.
          * @param response A response object associated with this request, when provided can be
          * used instead of performing a manual a download.
@@ -260,6 +283,8 @@ abstract class EngineSession(
             cookie: String? = null,
             userAgent: String? = null,
             isPrivate: Boolean = false,
+            skipConfirmation: Boolean = false,
+            openInApp: Boolean = false,
             response: Response? = null,
         ) = Unit
 
@@ -279,6 +304,24 @@ abstract class EngineSession(
         fun onSaveToPdfException(throwable: Throwable) = Unit
 
         /**
+         * Event to indicate that printing finished.
+         */
+        fun onPrintFinish() = Unit
+
+        /**
+         * Event to indicate that an exception was thrown while preparing to print or save as pdf.
+         *
+         * @param isPrint true for a true print error or false for a Save as PDF error.
+         * @param throwable The exception throwable. Usually a GeckoPrintException.
+         */
+        fun onPrintException(isPrint: Boolean, throwable: Throwable) = Unit
+
+        /**
+         * Event to indicate that the PDF was successfully generated.
+         */
+        fun onSaveToPdfComplete() = Unit
+
+        /**
          * Event to indicate that this session needs to be checked for form data.
          *
          * @param containsFormData Indicates if the session has form data.
@@ -291,6 +334,48 @@ abstract class EngineSession(
          * @param throwable The throwable from the exception.
          */
         fun onCheckForFormDataException(throwable: Throwable) = Unit
+
+        /**
+         * Event to indicate that the translations engine expects that the user will likely
+         * request page translation.
+         *
+         * The usual use case is to show a prominent translations UI entrypoint on the toolbar.
+         */
+        fun onTranslateExpected() = Unit
+
+        /**
+         * Event to indicate that the translations engine suggests notifying the user that
+         * translations are available or else offering to translate.
+         *
+         * The usual use case is to show a popup or UI notification that translations are available.
+         */
+        fun onTranslateOffer() = Unit
+
+        /**
+         * Event to indicate the translations state. Translations state change
+         * occurs generally during navigation and after translation operations are requested.
+         *
+         * @param state The translations state.
+         */
+        fun onTranslateStateChange(state: TranslationEngineState) = Unit
+
+        /**
+         * Event to indicate that the translation operation completed successfully.
+         *
+         * @param operation The operation that the translation engine completed.
+         */
+        fun onTranslateComplete(operation: TranslationOperation) = Unit
+
+        /**
+         * Event to indicate that the translation operation was unsuccessful.
+         *
+         * @param operation The operation that the translation engine attempted.
+         * @param translationError The exception that occurred during the operation.
+         */
+        fun onTranslateException(
+            operation: TranslationOperation,
+            translationError: TranslationError,
+        ) = Unit
     }
 
     /**
@@ -437,6 +522,11 @@ abstract class EngineSession(
             MOZILLA_SOCIAL(1 shl 8),
 
             /**
+             * Blocks email trackers.
+             */
+            EMAIL(1 shl 9),
+
+            /**
              * Blocks content like scripts and sub-resources.
              */
             SCRIPTS_AND_SUB_RESOURCES(1 shl 31),
@@ -447,9 +537,9 @@ abstract class EngineSession(
             ),
 
             /**
-             * Combining the [RECOMMENDED] categories plus [SCRIPTS_AND_SUB_RESOURCES].
+             * Combining the [RECOMMENDED] categories plus [SCRIPTS_AND_SUB_RESOURCES] & getAntiTracking[EMAIL].
              */
-            STRICT(RECOMMENDED.id + SCRIPTS_AND_SUB_RESOURCES.id),
+            STRICT(RECOMMENDED.id + SCRIPTS_AND_SUB_RESOURCES.id + EMAIL.id),
         }
 
         companion object {
@@ -607,7 +697,7 @@ abstract class EngineSession(
             useForRegularSessions = false,
             cookiePolicy = cookiePolicy,
             cookiePolicyPrivateMode = cookiePolicyPrivateMode,
-            strictSocialTrackingProtection = strictSocialTrackingProtection,
+            strictSocialTrackingProtection = false,
             cookiePurging = cookiePurging,
         )
 
@@ -638,10 +728,12 @@ abstract class EngineSession(
             const val BYPASS_CLASSIFIER: Int = 1 shl 4
             const val LOAD_FLAGS_FORCE_ALLOW_DATA_URI: Int = 1 shl 5
             const val LOAD_FLAGS_REPLACE_HISTORY: Int = 1 shl 6
+            const val LOAD_FLAGS_BYPASS_LOAD_URI_DELEGATE: Int = 1 shl 7
+            const val ALLOW_ADDITIONAL_HEADERS: Int = 1 shl 15
             const val ALLOW_JAVASCRIPT_URL: Int = 1 shl 16
             internal const val ALL = BYPASS_CACHE + BYPASS_PROXY + EXTERNAL + ALLOW_POPUPS +
                 BYPASS_CLASSIFIER + LOAD_FLAGS_FORCE_ALLOW_DATA_URI + LOAD_FLAGS_REPLACE_HISTORY +
-                ALLOW_JAVASCRIPT_URL
+                LOAD_FLAGS_BYPASS_LOAD_URI_DELEGATE + ALLOW_ADDITIONAL_HEADERS + ALLOW_JAVASCRIPT_URL
 
             fun all() = LoadUrlFlags(ALL)
             fun none() = LoadUrlFlags(NONE)
@@ -722,6 +814,13 @@ abstract class EngineSession(
     abstract fun requestPdfToDownload()
 
     /**
+     * Requests the [EngineSession] to print the current session's contents.
+     *
+     * This will open the Android Print Spooler.
+     */
+    abstract fun requestPrintContent()
+
+    /**
      * Stops loading the current session.
      */
     abstract fun stopLoading()
@@ -778,6 +877,151 @@ abstract class EngineSession(
      * Enables/disables Desktop Mode with an optional ability to reload the session right after.
      */
     abstract fun toggleDesktopMode(enable: Boolean, reload: Boolean = false)
+
+    /**
+     * Checks if there is a rule for handling a cookie banner for the current website in the session.
+     *
+     * @param onSuccess callback invoked if the engine API returned a valid response. Please note
+     * that the response can be null - which can indicate a bug, a miscommunication
+     * or other unexpected failure.
+     * @param onError callback invoked if there was an error getting the response.
+     */
+    abstract fun hasCookieBannerRuleForSession(onResult: (Boolean) -> Unit, onException: (Throwable) -> Unit)
+
+    /**
+     * Checks if the current session is using a PDF viewer.
+     *
+     * @param onSuccess callback invoked if the engine API returned a valid response. Please note
+     * that the response can be null - which can indicate a bug, a miscommunication
+     * or other unexpected failure.
+     * @param onError callback invoked if there was an error getting the response.
+     */
+    abstract fun checkForPdfViewer(onResult: (Boolean) -> Unit, onException: (Throwable) -> Unit)
+
+    /**
+     * Requests product recommendations given a specific product url.
+     *
+     * @param onResult callback invoked if the engine API returned a valid response. Please note
+     * that the response can be null - which can indicate a bug, a miscommunication
+     * or other unexpected failure.
+     * @param onException callback invoked if there was an error getting the response.
+     */
+    abstract fun requestProductRecommendations(
+        url: String,
+        onResult: (List<ProductRecommendation>) -> Unit,
+        onException: (Throwable) -> Unit,
+    )
+
+    /**
+     * Requests the analysis results for a given product page URL.
+     *
+     * @param onResult callback invoked if the engine API returns a valid response.
+     * @param onException callback invoked if there was an error getting the response.
+     */
+    abstract fun requestProductAnalysis(
+        url: String,
+        onResult: (ProductAnalysis) -> Unit,
+        onException: (Throwable) -> Unit,
+    )
+
+    /**
+     * Requests the reanalysis of a product for a given product page URL.
+     *
+     * @param onResult callback invoked if the engine API returns a valid response.
+     * @param onException callback invoked if there was an error getting the response.
+     */
+    abstract fun reanalyzeProduct(
+        url: String,
+        onResult: (String) -> Unit,
+        onException: (Throwable) -> Unit,
+    )
+
+    /**
+     * Requests the status of a product analysis for a given product page URL.
+     *
+     * @param onResult callback invoked if the engine API returns a valid response.
+     * @param onException callback invoked if there was an error getting the response.
+     */
+    abstract fun requestAnalysisStatus(
+        url: String,
+        onResult: (ProductAnalysisStatus) -> Unit,
+        onException: (Throwable) -> Unit,
+    )
+
+    /**
+     * Sends a click attribution event for a given product aid.
+     *
+     * @param onResult callback invoked if the engine API returns a valid response.
+     * @param onException callback invoked if there was an error getting the response.
+     */
+    abstract fun sendClickAttributionEvent(
+        aid: String,
+        onResult: (Boolean) -> Unit,
+        onException: (Throwable) -> Unit,
+    )
+
+    /**
+     * Sends an impression attribution event for a given product aid.
+     *
+     * @param onResult callback invoked if the engine API returns a valid response.
+     * @param onException callback invoked if there was an error getting the response.
+     */
+    abstract fun sendImpressionAttributionEvent(
+        aid: String,
+        onResult: (Boolean) -> Unit,
+        onException: (Throwable) -> Unit,
+    )
+
+    /**
+     * Reports when a product is back in stock.
+     *
+     * @param onResult callback invoked if the engine API returns a valid response.
+     * @param onException callback invoked if there was an error getting the response.
+     */
+    abstract fun reportBackInStock(
+        url: String,
+        onResult: (String) -> Unit,
+        onException: (Throwable) -> Unit,
+    )
+
+    /**
+     * Requests the [EngineSession] to translate the current session's contents.
+     *
+     * @param fromLanguage The BCP 47 language tag that the page should be translated from.
+     * @param toLanguage The BCP 47 language tag that the page should be translated to.
+     * @param options Options for how the translation should be processed.
+     */
+    abstract fun requestTranslate(
+        fromLanguage: String,
+        toLanguage: String,
+        options: TranslationOptions?,
+    )
+
+    /**
+     * Requests the [EngineSession] to restore the current session's contents.
+     * Will be a no-op on the Gecko side if the page is not translated.
+     */
+    abstract fun requestTranslationRestore()
+
+    /**
+     * Requests the [EngineSession] retrieve the current site's never translate preference.
+     */
+    abstract fun getNeverTranslateSiteSetting(
+        onResult: (Boolean) -> Unit,
+        onException: (Throwable) -> Unit,
+    )
+
+    /**
+     * Requests the [EngineSession] to set the current site's never translate preference.
+     *
+     * @param setting True if the site should never be translated. False if the site should be
+     * translated.
+     */
+    abstract fun setNeverTranslateSiteSetting(
+        setting: Boolean,
+        onResult: () -> Unit,
+        onException: (Throwable) -> Unit,
+    )
 
     /**
      * Finds and highlights all occurrences of the provided String and highlights them asynchronously.
@@ -840,4 +1084,11 @@ abstract class EngineSession(
      * Returns the list of URL schemes that are blocked from loading.
      */
     open fun getBlockedSchemes(): List<String> = emptyList()
+
+    /**
+     * Set the display member in Web App Manifest for this session.
+     *
+     * @param displayMode the display mode value for this session.
+     */
+    open fun setDisplayMode(displayMode: WebAppManifest.DisplayMode) = Unit
 }

@@ -242,9 +242,6 @@ open class InlineAutocompleteEditText @JvmOverloads constructor(
         }
     }
 
-    private val isSonyKeyboard: Boolean
-        get() = INPUT_METHOD_SONY == getCurrentInputMethod()
-
     private val isAmazonEchoShowKeyboard: Boolean
         get() = INPUT_METHOD_AMAZON_ECHO_SHOW == getCurrentInputMethod()
 
@@ -290,12 +287,31 @@ open class InlineAutocompleteEditText @JvmOverloads constructor(
         resetAutocompleteState()
     }
 
+    /**
+     * Sets the text of the edit text.
+     * @param text The text to set.
+     * @param shouldAutoComplete If false, [TextChangeListener] the text watcher will be disabled for this set.
+     */
     fun setText(text: CharSequence?, shouldAutoComplete: Boolean = true) {
         val wasSettingAutoComplete = settingAutoComplete
 
         // Disable listeners in order to stop auto completion
         settingAutoComplete = !shouldAutoComplete
         setText(text, BufferType.EDITABLE)
+        settingAutoComplete = wasSettingAutoComplete
+    }
+
+    /**
+     * Appends the given text to the end of the current text.
+     * @param text The text to append.
+     * @param shouldAutoComplete If false, [TextChangeListener] text watcher will be disabled for this append.
+     */
+    fun appendText(text: CharSequence?, shouldAutoComplete: Boolean = true) {
+        val wasSettingAutoComplete = settingAutoComplete
+
+        // Disable listeners in order to stop auto completion
+        settingAutoComplete = !shouldAutoComplete
+        append(text)
         settingAutoComplete = wasSettingAutoComplete
     }
 
@@ -577,6 +593,15 @@ open class InlineAutocompleteEditText @JvmOverloads constructor(
                 return super.deleteSurroundingText(beforeLength, afterLength)
             }
 
+            // available on API level 24+
+            override fun deleteSurroundingTextInCodePoints(beforeLength: Int, afterLength: Int): Boolean {
+                if (removeAutocomplete(text)) {
+                    restartInput()
+                    return false
+                }
+                return super.deleteSurroundingTextInCodePoints(beforeLength, afterLength)
+            }
+
             /**
              * Optionally remove the current autocompletion depending on the new [text].
              *
@@ -604,9 +629,10 @@ open class InlineAutocompleteEditText @JvmOverloads constructor(
                     composingEnd - composingStart > text.length &&
                     removeAutocomplete(editable)
                 ) {
-                    // Make the IME aware that we interrupted the setComposingText call,
-                    // by having finishComposingText() send change notifications to the IME.
                     finishComposingText()
+                    // Make the IME aware that we interrupted the setComposingText call,
+                    // by calling restartInput()
+                    restartInput()
                     return true
                 }
                 return false
@@ -622,9 +648,6 @@ open class InlineAutocompleteEditText @JvmOverloads constructor(
 
             override fun setComposingText(text: CharSequence, newCursorPosition: Int): Boolean {
                 return if (removeAutocompleteOnComposing(text)) {
-                    if (isSonyKeyboard) {
-                        restartInput()
-                    }
                     false
                 } else {
                     super.setComposingText(text, newCursorPosition)
@@ -857,7 +880,6 @@ open class InlineAutocompleteEditText @JvmOverloads constructor(
         // However, it may be used by other Amazon keyboards. In theory, if they have the same IME
         // ID, they should have similar behavior.
         const val INPUT_METHOD_AMAZON_ECHO_SHOW = "com.amazon.bluestone.keyboard/.DictationIME"
-        const val INPUT_METHOD_SONY = "com.sonyericsson.textinput.uxp/.glue.InputMethodServiceGlue"
 
         /**
          * Get the portion of text that is not marked as autocomplete text.

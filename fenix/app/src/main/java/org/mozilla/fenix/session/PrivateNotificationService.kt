@@ -6,11 +6,13 @@ package org.mozilla.fenix.session
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.feature.privatemode.notification.AbstractPrivateNotificationService
+import mozilla.components.support.base.android.NotificationsDelegate
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
@@ -30,19 +32,26 @@ class PrivateNotificationService : AbstractPrivateNotificationService() {
 
     override val store: BrowserStore by lazy { components.core.store }
 
+    override val notificationsDelegate: NotificationsDelegate by lazy { components.notificationsDelegate }
+
     override fun NotificationCompat.Builder.buildNotification() {
         setSmallIcon(R.drawable.ic_private_browsing)
-        setContentTitle(
-            applicationContext.getString(
-                R.string.app_name_private_4,
-                getString(R.string.app_name),
-            ),
-        )
-        setContentText(
-            applicationContext.getString(
-                R.string.notification_pbm_delete_text_2,
-            ),
-        )
+
+        val contentTitle = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            applicationContext.getString(R.string.notification_erase_title_android_14)
+        } else {
+            applicationContext.getString(R.string.app_name_private_4, getString(R.string.app_name))
+        }
+
+        val contentText = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            getString(R.string.notification_erase_text_android_14)
+        } else {
+            getString(R.string.notification_pbm_delete_text_2)
+        }
+
+        setContentTitle(contentTitle)
+        setContentText(contentText)
+
         color = ContextCompat.getColor(
             this@PrivateNotificationService,
             R.color.pbm_notification_color,

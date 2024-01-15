@@ -27,6 +27,7 @@ import mozilla.appservices.sync15.SyncTelemetryPing
 import mozilla.appservices.syncmanager.ServiceStatus
 import mozilla.appservices.syncmanager.SyncEngineSelection
 import mozilla.appservices.syncmanager.SyncParams
+import mozilla.appservices.syncmanager.SyncTelemetry
 import mozilla.components.concept.storage.KeyProvider
 import mozilla.components.service.fxa.FxaDeviceSettingsCache
 import mozilla.components.service.fxa.SyncAuthInfoCache
@@ -37,7 +38,6 @@ import mozilla.components.service.fxa.manager.SyncEnginesStorage
 import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.base.observer.Observable
 import mozilla.components.support.base.observer.ObserverRegistry
-import mozilla.components.support.sync.telemetry.SyncTelemetry
 import java.io.Closeable
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
@@ -59,6 +59,12 @@ private const val KEY_DATA_STORES = "stores"
 private const val KEY_REASON = "reason"
 
 private const val SYNC_WORKER_BACKOFF_DELAY_MINUTES = 3L
+
+/**
+ * The Rust implemented SyncManager. Must be a singleton as it carries some state between
+ * syncs. Does no IO at creation time so is safe to call on any thread.
+ */
+val syncManager: RustSyncManager by lazy { RustSyncManager() }
 
 /**
  * A [SyncManager] implementation which uses WorkManager APIs to schedule sync tasks.
@@ -337,13 +343,14 @@ internal class WorkManagerSyncWorker(
 
     @Suppress("LongMethod", "ComplexMethod")
     private suspend fun doSync(syncableStores: Map<SyncEngine, LazyStoreWithKey>): Result {
-        val syncManager = RustSyncManager()
         val engineKeyProviders = mutableMapOf<SyncEngine, KeyProvider>()
 
         // We need to tell RustSyncManager which engines to sync.
         val enginesToSync = SyncEngineSelection.Some(syncableStores.map { it.key.nativeName })
 
         // We need to tell RustSyncManager about instances of supported stores ('places' and 'logins').
+        // NOTE: This need only be done once, not each sync - but the only impact is that
+        // it's slightly less efficient so refactoring might not be worthwhile.
         syncableStores.entries.forEach {
             // We're assuming all syncable stores live in Rust.
             // Currently `RustSyncManager` doesn't support non-Rust sync engines.
@@ -555,11 +562,17 @@ internal fun getSyncState(context: Context): String? {
         .getString(SYNC_STATE_KEY, null)
 }
 
-internal fun setLastSynced(context: Context, ts: Long) {
+/**
+ * Saves the lastSyncedTime to the shared preferences
+ *
+ * @param context the context
+ * @param lastSyncedTime - the last synced time in milliseconds
+ */
+fun setLastSynced(context: Context, lastSyncedTime: Long) {
     context
         .getSharedPreferences(SYNC_STATE_PREFS_KEY, Context.MODE_PRIVATE)
         .edit()
-        .putLong(SYNC_LAST_SYNCED_KEY, ts)
+        .putLong(SYNC_LAST_SYNCED_KEY, lastSyncedTime)
         .apply()
 }
 

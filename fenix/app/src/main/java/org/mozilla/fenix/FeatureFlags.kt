@@ -24,7 +24,7 @@ object FeatureFlags {
      * Pull-to-refresh allows you to pull the web content down far enough to have the page to
      * reload.
      */
-    val pullToRefreshEnabled = Config.channel.isNightlyOrDebug
+    const val pullToRefreshEnabled = true
 
     /**
      * Enables the Sync Addresses feature.
@@ -48,34 +48,49 @@ object FeatureFlags {
     }
 
     /**
-     * Enables the Unified Search feature.
-     */
-    val unifiedSearchFeature = Config.channel.isNightlyOrDebug
-
-    /**
      * Enables compose on the tabs tray items.
      */
-    val composeTabsTray = Config.channel.isDebug
+    val composeTabsTray = Config.channel.isNightlyOrDebug || Config.channel.isBeta
 
     /**
-     * Enables the wallpaper v2 enhancements.
+     * Enables compose on the top sites.
      */
-    const val wallpaperV2Enabled = true
+    const val composeTopSites = false
 
     /**
-     * Enables the save to PDF feature.
+     * Enables new search settings UI with two extra fragments, for managing the default engine
+     * and managing search shortcuts in the quick search menu.
      */
-    const val saveToPDF = true
+    const val unifiedSearchSettings = true
 
     /**
-     * Enables the notification pre permission prompt.
+     * Allows users to enable translations.
+     * Preference to fully enable translations is pref_key_enable_translations.
      */
-    const val notificationPrePermissionPromptEnabled = true
+    val translations = Config.channel.isDebug
 
     /**
-     * Enables storage maintenance feature.
-     *
-     * Feature flag tracking: https://github.com/mozilla-mobile/fenix/issues/27759
-     * */
-    val storageMaintenanceFeature = Config.channel.isNightlyOrDebug || Config.channel.isBeta
+     * Allows users to enable Firefox Suggest.
+     */
+    const val fxSuggest = true
+
+    /**
+     * Allows users to enable SuggestStrongPassword feature.
+     */
+    const val suggestStrongPassword = true
+
+    /**
+     * Enable Meta attribution.
+     */
+    const val metaAttributionEnabled = true
+
+    /**
+     * Enable Toolbar Redesign components and behaviors ready for Nightly.
+     */
+    val completeToolbarRedesignEnabled = Config.channel.isNightlyOrDebug
+
+    /**
+     * Enable Toolbar Redesign partial components and behaviors.
+     */
+    val incompleteToolbarRedesignEnabled = Config.channel.isDebug
 }

@@ -11,8 +11,7 @@ transforms:
     - taskgraph.transforms.task:transforms
 
 kind-dependencies:
-    - push-apk
-    - post-beetmover
+    - push-bundle
 
 task-defaults:
     name: notify-release-drivers-push

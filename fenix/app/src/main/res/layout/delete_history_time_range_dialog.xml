@@ -30,7 +30,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="24dp"
-        android:text="@string/delete_history_prompt_body"
+        android:text="@string/delete_history_prompt_body_2"
         android:textColor="?attr/textPrimary"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -49,7 +49,7 @@
         <RadioButton
             android:id="@+id/last_hour_button"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
+            android:layout_height="wrap_content"
             android:background="?android:attr/selectableItemBackground"
             android:ellipsize="end"
             android:buttonTint="?attr/textSecondary"
@@ -63,7 +63,7 @@
         <RadioButton
             android:id="@+id/today_and_yesterday_button"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
+            android:layout_height="wrap_content"
             android:background="?android:attr/selectableItemBackground"
             android:ellipsize="end"
             android:buttonTint="?attr/textSecondary"
@@ -77,7 +77,7 @@
         <RadioButton
             android:id="@+id/everything_button"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
+            android:layout_height="wrap_content"
             android:background="?android:attr/selectableItemBackground"
             android:ellipsize="end"
             android:buttonTint="?attr/textSecondary"

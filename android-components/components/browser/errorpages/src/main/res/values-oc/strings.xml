@@ -55,10 +55,6 @@
     <string name="mozac_browser_errorpages_security_bad_hsts_cert_advanced">Avançat…</string>
 
     <!-- The advanced certificate information shown when a website uses HSTS. The %1$s will be replaced by the website URL and %2$s will be replaced by the app name. It's only shown when a website uses HSTS. -->
-    <string moz:removedIn="104" name="mozac_browser_errorpages_security_bad_hsts_cert_techInfo" tools:ignore="UnusedResources"><![CDATA[
-<label> <b>%1$s</b> a una estrategia de seguretat HTTP Strict Transport Security (HSTS), valent a dire que <b>%2$s</b> pòt sonque s’i connectar amb una connexion securizada. Podètz pas apondre d’excepcion per consultar aqueste site.
-]]></string>
-    <!-- The advanced certificate information shown when a website uses HSTS. The %1$s will be replaced by the website URL and %2$s will be replaced by the app name. It's only shown when a website uses HSTS. -->
     <string name="mozac_browser_errorpages_security_bad_hsts_cert_techInfo2"><![CDATA[
 <label> <b>%1$s</b> a una estrategia de seguretat HTTP Strict Transport Security (HSTS), valent a dire que <b>%2$s</b> pòt sonque s’i connectar amb una connexion securizada. Podètz pas apondre d’excepcion per consultar aqueste site. </label>
 ]]></string>
@@ -108,7 +104,7 @@
     <string name="mozac_browser_errorpages_redirect_loop_message"><![CDATA[<p>Lo navegador a quitat d’esperar una responsa del site. Lo site crèa una redireccion d’un biais que fa qu’acabarà pas jamai.</p>
       <ul>
         <li>Avètz desactivat o blocat los cookies necessaris per aqueste site ?</li>
-        <li>Se lo problèma es pas resolgut en acceptant los cookies d’aqueste site, s’agís probablament d’un problèma de configuracion del servidor e non pas de vòstre ordenador.</li></ul>]]></string>
+        <li>Se lo problèma es pas resolgut en acceptant los cookies d’aqueste site, s’agís probablament d’un problèma de configuracion del servidor e non pas de vòstre aparelh.</li></ul>]]></string>
 
     <!-- The document title and heading of the error page shown when a website cannot be loaded because the browser is in offline mode. -->
     <string name="mozac_browser_errorpages_offline_title">Mòde fòra connexion</string>

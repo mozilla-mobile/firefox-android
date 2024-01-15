@@ -6,6 +6,7 @@ loader: taskgraph.loader.transform:loader
 
 transforms:
     - android_taskgraph.transforms.gradle_optimization:transforms
+    - android_taskgraph.transforms.test:transforms
     - taskgraph.transforms.job:transforms
     - taskgraph.transforms.task:transforms
 
@@ -18,8 +19,9 @@ task-defaults:
         build-type: debug
         code-review: true
         retrigger: true
+    include-pull-request-number: true
     optimization:
-        skip-unless-changed: [] # Paths are dynamically added by transforms
+        skip-unless-changed: []  # Paths are dynamically added by transforms
     worker-type: b-android
     worker:
         docker-image: {in-tree: ui-tests}
@@ -31,7 +33,6 @@ task-defaults:
               path: /builds/worker/artifacts
               type: directory
         retry-exit-status: [20]
-
     treeherder:
         kind: test
         tier: 2
@@ -41,23 +42,79 @@ task-defaults:
         dummy-secrets:
             - content: "faketoken"
               path: .adjust_token
+    routes:
+        - notify.slack-channel.G016BC5FUHJ.on-failed
+    scopes:
+        - queue:route:notify.slack-channel.G016BC5FUHJ.on-failed
+            - notify:slack-channel:G016BC5FUHJ
+    extra:
+        notify:
+            # slackText: 'https://firefox-ci-tc.services.mozilla.com/tasks/${status.taskId} | ${task.metadata.name} | ${task.metadata.source}'
+            slackBlocks: |
+                [
+                  {
+                    "type": "header",
+                    "text": {
+                      "type": "plain_text",
+                      "text": "firefox-android :firefox: ${task.metadata.name} :x:\n "
+                    }
+                  },
+                  {
+                    "type": "divider"
+                  },
+                  {
+                     "type": "section",
+                     "text": {
+                         "type": "mrkdwn",
+                         "text": "*Task*: <https://firefox-ci-tc.services.mozilla.com/tasks/${status.taskId}|Taskcluster>"
+                    }
+                  },
+                  {
+                    "type": "section",
+                    "text": {
+                      "type": "mrkdwn",
+                      "text": "*Owner*: ${task.metadata.owner}"
+                    }
+                  },
+                  {
+                    "type": "section",
+                    "text": {
+                      "type": "mrkdwn",
+                      "text": "*Source*: <${task.payload.env.MOBILE_BASE_REPOSITORY}/commit/${task.payload.env.MOBILE_HEAD_REV}|Commit> :github:"
+                    }
+                  },
+                  {
+                    "type": "divider"
+                  },
+                  {
+                    "type": "context",
+                    "elements": [
+                        {
+                            "type": "mrkdwn",
+                            "text": ":testops-notify: created by <https://mozilla-hub.atlassian.net/wiki/spaces/MTE/overview|Mobile Test Engineering>"
+                        }
+                    ]
+                  }
+                ]
 
 tasks:
     focus-arm-debug:
+        attributes:
+            shipping-product: focus
         description: 'Focus UI tests with firebase'
         run-on-tasks-for: [github-pull-request, github-push]
+        run-on-git-branches: ["^((?!releases[_/]).+)$"]
         run:
             secrets:
-                - name: project/mobile/focus-android/firebase
+                - name: project/mobile/firefox-android/focus-android/firebase
                   key: firebaseToken
                   path: .firebase_token.json
                   json: true
             pre-commands:
                 - ["cd", "focus-android"]
             commands:
-                - [wget, {artifact-reference: '<signed-apk-debug-apk/public/build/focus/arm64-v8a/target.apk>'}, '-O', app.apk]
-                # TODO: Use the same path as fenix
-                - [wget, {artifact-reference: '<signed-apk-android-test/public/build/app-focus-androidTest.apk>'}, '-O', android-test.apk]
+                - [wget, {artifact-reference: '<signed-apk-debug-apk/public/build/target.arm64-v8a.apk>'}, '-O', app.apk]
+                - [wget, {artifact-reference: '<signed-apk-android-test/public/build/target.noarch.apk>'}, '-O', android-test.apk]
                 - ['automation/taskcluster/androidTest/ui-test.sh', 'arm64-v8a', 'app.apk', 'android-test.apk', '50']
         dependencies:
             # key is arbitrary, the value corresponds to <kind name>-<build-name>
@@ -71,7 +128,8 @@ tasks:
                 GOOGLE_PROJECT: 'moz-focus-android'
     focus-arm-nightly:
         attributes:
-            build-type: nightly-firebase
+            build-type: focus-nightly-firebase
+            shipping-product: focus
         description: 'UI tests on Nightly with firebase'
         run-on-tasks-for: [github-push]
         run-on-git-branches: [main]
@@ -80,16 +138,15 @@ tasks:
             signed-apk-android-test: signing-apk-focus-android-test-nightly
         run:
             secrets:
-                - name: project/mobile/focus-android/firebase
+                - name: project/mobile/firefox-android/focus-android/firebase
                   key: firebaseToken
                   path: .firebase_token.json
                   json: true
             pre-commands:
                 - ["cd", "focus-android"]
             commands:
-                - [wget, {artifact-reference: '<signed-apk-debug-apk/public/build/focus/arm64-v8a/target.apk>'}, '-O', app.apk]
-                # TODO: Use the same path as fenix
-                - [wget, {artifact-reference: '<signed-apk-android-test/public/build/app-focus-androidTest.apk>'}, '-O', android-test.apk]
+                - [wget, {artifact-reference: '<signed-apk-debug-apk/public/build/target.arm64-v8a.apk>'}, '-O', app.apk]
+                - [wget, {artifact-reference: '<signed-apk-android-test/public/build/target.noarch.apk>'}, '-O', android-test.apk]
                 - ['automation/taskcluster/androidTest/ui-test.sh', 'arm-start-test', 'app.apk', 'android-test.apk', '1']
         treeherder:
             platform: 'focus-ui-test/opt'
@@ -99,63 +156,44 @@ tasks:
                 GOOGLE_PROJECT: 'moz-focus-android'
     focus-arm-beta:
         attributes:
-            build-type: nightly-firebase
+            build-type: focus-beta-firebase
+            shipping-product: focus
         description: 'UI tests on Beta with firebase'
         run-on-tasks-for: [github-push]
-        run-on-git-branches: [main, releases_v]
+        run-on-git-branches: [releases_v]
         dependencies:
             signed-apk-debug-apk: signing-apk-focus-beta-firebase
             signed-apk-android-test: signing-apk-focus-android-test-beta
         run:
             secrets:
-                - name: project/mobile/focus-android/firebase
+                - name: project/mobile/firefox-android/focus-android/firebase
                   key: firebaseToken
                   path: .firebase_token.json
+                  json: true
+                - name: project/mobile/ci/testrail
+                  key: testrailCredentials
+                  path: .testrail_credentials.json
                   json: true
             pre-commands:
                 - ["cd", "focus-android"]
             commands:
-                - [wget, {artifact-reference: '<signed-apk-debug-apk/public/build/focus/arm64-v8a/target.apk>'}, '-O', app.apk]
-                # TODO: Use the same path as fenix
-                - [wget, {artifact-reference: '<signed-apk-android-test/public/build/app-focus-androidTest.apk>'}, '-O', android-test.apk]
+                - [wget, {artifact-reference: '<signed-apk-debug-apk/public/build/target.arm64-v8a.apk>'}, '-O', app.apk]
+                - [wget, {artifact-reference: '<signed-apk-android-test/public/build/target.noarch.apk>'}, '-O', android-test.apk]
                 - ['automation/taskcluster/androidTest/ui-test.sh', 'arm-beta-tests', 'app.apk', 'android-test.apk', '1']
+                - [python3, automation/taskcluster/androidTest/testrail.py]
         treeherder:
             platform: 'focus-ui-test/opt'
             symbol: focus-beta(ui-test-arm-beta)
         worker:
             env:
                 GOOGLE_PROJECT: 'moz-focus-android'
-    fenix-arm-debug:
-        description: Test Fenix
-        run-on-tasks-for: [github-pull-request, github-push]
-        run-on-git-branches: ["^((?!releases[_/]).+)$"]
-        dependencies:
-            signed-apk-debug-apk: signing-apk-fenix-debug
-            signed-apk-android-test: signing-apk-fenix-android-test-debug
-        run:
-            secrets:
-                - name: project/mobile/fenix/firebase
-                  key: firebaseToken
-                  path: .firebase_token.json
-                  json: true
-            pre-commands:
-                - ["cd", "fenix"]
-            commands:
-                - [wget, {artifact-reference: '<signed-apk-debug-apk/public/build/fenix/arm64-v8a/target.apk>'}, '-O', app.apk]
-                - [wget, {artifact-reference: '<signed-apk-android-test/public/build/fenix/noarch/target.apk>'}, '-O', android-test.apk]
-                - [automation/taskcluster/androidTest/ui-test.sh, arm64-v8a, app.apk, android-test.apk, '100']
-        treeherder:
-            platform: 'fenix-ui-test/opt'
-            symbol: fenix-debug(ui-test-arm)
-        worker:
-            env:
-                GOOGLE_PROJECT: moz-fenix
-            retry-exit-status: [20]
+                PRODUCT_TYPE: Focus
+                RELEASE_TYPE: Beta
         routes:
-            - notify.slack-channel.G016BC5FUHJ.on-failed
+            - notify.slack-channel.G016BC5FUHJ.on-completed
         scopes:
-            - queue:route:notify.slack-channel.G016BC5FUHJ.on-failed
-            - notify:slack-channel:G016BC5FUHJ
+            - queue:route:notify.slack-channel.G016BC5FUHJ.on-completed
+                - notify:slack-channel:G016BC5FUHJ
         extra:
             notify:
                 # slackText: 'https://firefox-ci-tc.services.mozilla.com/tasks/${status.taskId} | ${task.metadata.name} | ${task.metadata.source}'
@@ -165,31 +203,24 @@ tasks:
                         "type": "header",
                         "text": {
                           "type": "plain_text",
-                          "text": "Fenix :firefox: ${task.metadata.name} :x:\n "
+                          "text": "firefox-android :tada: Testrail Release Milestone Creation :tada:\n "
                         }
                       },
                       {
                         "type": "divider"
                       },
                       {
-                         "type": "section",
-                         "text": {
-                             "type": "mrkdwn",
-                             "text": "*Task*: <https://firefox-ci-tc.services.mozilla.com/tasks/${status.taskId}|Taskcluster>"
+                        "type": "section",
+                        "text": {
+                          "type": "mrkdwn",
+                          "text": "*Testrail Release Milestone*: <https://testrail.stage.mozaws.net/index.php?/projects/overview/53|Milestone> :clown_face:"
                         }
                       },
                       {
                         "type": "section",
                         "text": {
-                          "type": "mrkdwn",
-                          "text": "*Owner*: ${task.metadata.owner}"
-                        }
-                      },
-                      {
-                        "type": "section",
-                        "text": {
-                          "type": "mrkdwn",
-                          "text": "*Source*: <${task.payload.env.MOBILE_BASE_REPOSITORY}/commit/${task.payload.env.MOBILE_HEAD_REV}|Commit> :github:"
+                            "type": "mrkdwn",
+                            "text": "*Testrail Release Milestone* has been created"
                         }
                       },
                       {
@@ -200,13 +231,41 @@ tasks:
                         "elements": [
                             {
                                 "type": "mrkdwn",
-                                "text": ":testops-notify: created by <https://mana.mozilla.org/wiki/x/P_zNBw|Mobile Test Engineering>"
+                                "text": ":testops-notify: created by <https://mozilla-hub.atlassian.net/wiki/spaces/MTE/overview|Mobile Test Engineering>"
                             }
                         ]
                       }
                     ]
+    fenix-arm-debug:
+        attributes:
+            shipping-product: fenix
+        description: Test Fenix
+        run-on-tasks-for: [github-pull-request, github-push]
+        run-on-git-branches: ["^((?!releases[_/]).+)$"]
+        dependencies:
+            signed-apk-debug-apk: signing-apk-fenix-debug
+            signed-apk-android-test: signing-apk-fenix-android-test-debug
+        run:
+            secrets:
+                - name: project/mobile/firefox-android/fenix/firebase
+                  key: firebaseToken
+                  path: .firebase_token.json
+                  json: true
+            pre-commands:
+                - ["cd", "fenix"]
+            commands:
+                - [wget, {artifact-reference: '<signed-apk-debug-apk/public/build/target.arm64-v8a.apk>'}, '-O', app.apk]
+                - [wget, {artifact-reference: '<signed-apk-android-test/public/build/target.noarch.apk>'}, '-O', android-test.apk]
+                - [automation/taskcluster/androidTest/ui-test.sh, arm64-v8a, app.apk, android-test.apk, '100']
+        treeherder:
+            platform: 'fenix-ui-test/opt'
+            symbol: fenix-debug(ui-test-arm)
+        worker:
+            env:
+                GOOGLE_PROJECT: moz-fenix
     screenshots-arm:
         attributes:
+            shipping-product: fenix
             screenshots: true
         description: Run UI screenshots tests to keep them up to date
         run-on-tasks-for: []
@@ -216,15 +275,15 @@ tasks:
             signed-apk-android-test: signing-apk-fenix-android-test-debug
         run:
             secrets:
-                - name: project/mobile/fenix/firebase
+                - name: project/mobile/firefox-android/fenix/firebase
                   key: firebaseToken
                   path: .firebase_token.json
                   json: true
             pre-commands:
                 - ["cd", "fenix"]
             commands:
-                - [wget, {artifact-reference: '<signed-apk-debug-apk/public/build/fenix/arm64-v8a/target.apk>'}, '-O', app.apk]
-                - [wget, {artifact-reference: '<signed-apk-android-test/public/build/fenix/noarch/target.apk>'}, '-O', android-test.apk]
+                - [wget, {artifact-reference: '<signed-apk-debug-apk/public/build/target.arm64-v8a.apk>'}, '-O', app.apk]
+                - [wget, {artifact-reference: '<signed-apk-android-test/public/build/target.noarch.apk>'}, '-O', android-test.apk]
                 - [automation/taskcluster/androidTest/ui-test.sh, arm-screenshots-tests, app.apk, android-test.apk, '1']
         treeherder:
             platform: 'fenix-ui-test/opt'
@@ -232,94 +291,46 @@ tasks:
         worker:
             env:
                 GOOGLE_PROJECT: moz-fenix
-            retry-exit-status: [20]
-        routes:
-            - notify.slack-channel.G016BC5FUHJ.on-failed
-        scopes:
-            - queue:route:notify.slack-channel.G016BC5FUHJ.on-failed
-            - notify:slack-channel:G016BC5FUHJ
-        extra:
-            notify:
-                # slackText: 'https://firefox-ci-tc.services.mozilla.com/tasks/${status.taskId} | ${task.metadata.name} | ${task.metadata.source}'
-                slackBlocks: |
-                    [
-                      {
-                        "type": "header",
-                        "text": {
-                          "type": "plain_text",
-                          "text": "Fenix :firefox: ${task.metadata.name} :x:\n "
-                        }
-                      },
-                      {
-                        "type": "divider"
-                      },
-                      {
-                         "type": "section",
-                         "text": {
-                             "type": "mrkdwn",
-                             "text": "*Task*: <https://firefox-ci-tc.services.mozilla.com/tasks/${status.taskId}|Taskcluster>"
-                        }
-                      },
-                      {
-                        "type": "section",
-                        "text": {
-                          "type": "mrkdwn",
-                          "text": "*Owner*: ${task.metadata.owner}"
-                        }
-                      },
-                      {
-                        "type": "section",
-                        "text": {
-                          "type": "mrkdwn",
-                          "text": "*Source*: <${task.payload.env.MOBILE_BASE_REPOSITORY}/commit/${task.payload.env.MOBILE_HEAD_REV}|Commit> :github:"
-                        }
-                      },
-                      {
-                        "type": "divider"
-                      },
-                      {
-                        "type": "context",
-                        "elements": [
-                            {
-                                "type": "mrkdwn",
-                                "text": ":testops-notify: created by <https://mana.mozilla.org/wiki/x/P_zNBw|Mobile Test Engineering>"
-                            }
-                        ]
-                      }
-                    ]
     fenix-arm-beta:
         attributes:
-            build-type: beta-firebase
+            build-type: fenix-beta-firebase
+            shipping-product: fenix
         description: Test Fenix
         run-on-tasks-for: [github-push]
-        run-on-git-branches: ["^releases[/_].+$"]
+        run-on-git-branches: [releases_v]
         dependencies:
             signed-apk-debug-apk: signing-apk-fenix-beta-firebase
             signed-apk-android-test: signing-apk-fenix-android-test-beta
         run:
             secrets:
-                - name: project/mobile/fenix/firebase
+                - name: project/mobile/firefox-android/fenix/firebase
                   key: firebaseToken
                   path: .firebase_token.json
+                  json: true
+                - name: project/mobile/ci/testrail
+                  key: testrailCredentials
+                  path: .testrail_credentials.json
                   json: true
             pre-commands:
                 - ["cd", "fenix"]
             commands:
-                - [wget, {artifact-reference: '<signed-apk-debug-apk/public/build/fenix/arm64-v8a/target.apk>'}, '-O', app.apk]
-                - [wget, {artifact-reference: '<signed-apk-android-test/public/build/fenix/noarch/target.apk>'}, '-O', android-test.apk]
+                - [wget, {artifact-reference: '<signed-apk-debug-apk/public/build/target.arm64-v8a.apk>'}, '-O', app.apk]
+                - [wget, {artifact-reference: '<signed-apk-android-test/public/build/target.noarch.apk>'}, '-O', android-test.apk]
                 - [automation/taskcluster/androidTest/ui-test.sh, arm-beta-tests, app.apk, android-test.apk, '2']
+                - [python3, automation/taskcluster/androidTest/testrail.py]
         treeherder:
             platform: 'fenix-ui-test/opt'
             symbol: fenix-beta(ui-test-arm-beta)
         worker:
             env:
                 GOOGLE_PROJECT: moz-fenix
-            retry-exit-status: [20]
+                PRODUCT_TYPE: Firefox
+                RELEASE_TYPE: Beta
         routes:
-            - notify.slack-channel.G016BC5FUHJ.on-failed
+            - notify.slack-channel.G016BC5FUHJ.on-completed
         scopes:
-            - queue:route:notify.slack-channel.G016BC5FUHJ.on-failed
-            - notify:slack-channel:G016BC5FUHJ
+            - queue:route:notify.slack-channel.G016BC5FUHJ.on-completed
+                - notify:slack-channel:G016BC5FUHJ
         extra:
             notify:
                 # slackText: 'https://firefox-ci-tc.services.mozilla.com/tasks/${status.taskId} | ${task.metadata.name} | ${task.metadata.source}'
@@ -329,31 +340,24 @@ tasks:
                         "type": "header",
                         "text": {
                           "type": "plain_text",
-                          "text": "Fenix :firefox: ${task.metadata.name} :x:\n "
+                          "text": "firefox-android :tada: Testrail Release Milestone Creation :tada:\n "
                         }
                       },
                       {
                         "type": "divider"
                       },
                       {
-                         "type": "section",
-                         "text": {
-                             "type": "mrkdwn",
-                             "text": "*Task*: <https://firefox-ci-tc.services.mozilla.com/tasks/${status.taskId}|Taskcluster>"
+                        "type": "section",
+                        "text": {
+                          "type": "mrkdwn",
+                          "text": "*Testrail Release Milestone*: <https://testrail.stage.mozaws.net/index.php?/projects/overview/53|Milestone> :clown_face:"
                         }
                       },
                       {
                         "type": "section",
                         "text": {
-                          "type": "mrkdwn",
-                          "text": "*Owner*: ${task.metadata.owner}"
-                        }
-                      },
-                      {
-                        "type": "section",
-                        "text": {
-                          "type": "mrkdwn",
-                          "text": "*Source*: <${task.payload.env.MOBILE_BASE_REPOSITORY}/commit/${task.payload.env.MOBILE_HEAD_REV}|Commit> :github:"
+                            "type": "mrkdwn",
+                            "text": "*Testrail Release Milestone* has been created"
                         }
                       },
                       {
@@ -364,30 +368,32 @@ tasks:
                         "elements": [
                             {
                                 "type": "mrkdwn",
-                                "text": ":testops-notify: created by <https://mana.mozilla.org/wiki/x/P_zNBw|Mobile Test Engineering>"
+                                "text": ":testops-notify: created by <https://mozilla-hub.atlassian.net/wiki/spaces/MTE/overview|Mobile Test Engineering>"
                             }
                         ]
                       }
                     ]
     fenix-arm-nightly:
         attributes:
-            build-type: nightly-firebase
+            build-type: fenix-nightly-firebase
+            shipping-product: fenix
         description: Test Fenix
         run-on-tasks-for: [github-push]
+        run-on-git-branches: [main]
         dependencies:
             signed-apk-debug-apk: signing-apk-fenix-nightly-firebase
             signed-apk-android-test: signing-apk-fenix-android-test-nightly
         run:
             secrets:
-                - name: project/mobile/fenix/firebase
+                - name: project/mobile/firefox-android/fenix/firebase
                   key: firebaseToken
                   path: .firebase_token.json
                   json: true
             pre-commands:
                 - ["cd", "fenix"]
             commands:
-                - [wget, {artifact-reference: '<signed-apk-debug-apk/public/build/fenix/arm64-v8a/target.apk>'}, '-O', app.apk]
-                - [wget, {artifact-reference: '<signed-apk-android-test/public/build/fenix/noarch/target.apk>'}, '-O', android-test.apk]
+                - [wget, {artifact-reference: '<signed-apk-debug-apk/public/build/target.arm64-v8a.apk>'}, '-O', app.apk]
+                - [wget, {artifact-reference: '<signed-apk-android-test/public/build/target.noarch.apk>'}, '-O', android-test.apk]
                 - [automation/taskcluster/androidTest/ui-test.sh, arm-start-test, app.apk, android-test.apk, '2']
         treeherder:
             platform: 'fenix-ui-test/opt'
@@ -395,81 +401,28 @@ tasks:
         worker:
             env:
                 GOOGLE_PROJECT: moz-fenix
-            retry-exit-status: [20]
-        routes:
-            - notify.slack-channel.G016BC5FUHJ.on-failed
-        scopes:
-            - queue:route:notify.slack-channel.G016BC5FUHJ.on-failed
-            - notify:slack-channel:G016BC5FUHJ
-        extra:
-            notify:
-                # slackText: 'https://firefox-ci-tc.services.mozilla.com/tasks/${status.taskId} | ${task.metadata.name} | ${task.metadata.source}'
-                slackBlocks: |
-                    [
-                      {
-                        "type": "header",
-                        "text": {
-                          "type": "plain_text",
-                          "text": "Fenix :firefox: ${task.metadata.name} :x:\n "
-                        }
-                      },
-                      {
-                        "type": "divider"
-                      },
-                      {
-                         "type": "section",
-                         "text": {
-                             "type": "mrkdwn",
-                             "text": "*Task*: <https://firefox-ci-tc.services.mozilla.com/tasks/${status.taskId}|Taskcluster>"
-                        }
-                      },
-                      {
-                        "type": "section",
-                        "text": {
-                          "type": "mrkdwn",
-                          "text": "*Owner*: ${task.metadata.owner}"
-                        }
-                      },
-                      {
-                        "type": "section",
-                        "text": {
-                          "type": "mrkdwn",
-                          "text": "*Source*: <${task.payload.env.MOBILE_BASE_REPOSITORY}/commit/${task.payload.env.MOBILE_HEAD_REV}|Commit> :github:"
-                        }
-                      },
-                      {
-                        "type": "divider"
-                      },
-                      {
-                        "type": "context",
-                        "elements": [
-                            {
-                                "type": "mrkdwn",
-                                "text": ":testops-notify: created by <https://mana.mozilla.org/wiki/x/P_zNBw|Mobile Test Engineering>"
-                            }
-                        ]
-                      }
-                    ]
     fenix-legacy-arm:
         attributes:
             legacy: true
-        description: Run select UI tests on older Android API on cron
-        run-on-tasks-for: []
+            shipping-product: fenix
+            code-review: false
+        description: Run select UI tests on legacy Android devices and API levels
+        run-on-tasks-for: [github-push]
         run-on-git-branches: [main]
         dependencies:
             signed-apk-debug-apk: signing-apk-fenix-debug
             signed-apk-android-test: signing-apk-fenix-android-test-debug
         run:
             secrets:
-                - name: project/mobile/fenix/firebase
+                - name: project/mobile/firefox-android/fenix/firebase
                   key: firebaseToken
                   path: .firebase_token.json
                   json: true
             pre-commands:
                 - ["cd", "fenix"]
             commands:
-                - [wget, {artifact-reference: '<signed-apk-debug-apk/public/build/fenix/arm64-v8a/target.apk>'}, '-O', app.apk]
-                - [wget, {artifact-reference: '<signed-apk-android-test/public/build/fenix/noarch/target.apk>'}, '-O', android-test.apk]
+                - [wget, {artifact-reference: '<signed-apk-debug-apk/public/build/target.arm64-v8a.apk>'}, '-O', app.apk]
+                - [wget, {artifact-reference: '<signed-apk-android-test/public/build/target.noarch.apk>'}, '-O', android-test.apk]
                 - [automation/taskcluster/androidTest/ui-test.sh, arm-legacy-api-tests, app.apk, android-test.apk, '50']
         treeherder:
             platform: 'fenix-ui-test/opt'
@@ -477,58 +430,30 @@ tasks:
         worker:
             env:
                 GOOGLE_PROJECT: moz-fenix
-            retry-exit-status: [20]
-        routes:
-            - notify.slack-channel.G016BC5FUHJ.on-failed
-        scopes:
-            - queue:route:notify.slack-channel.G016BC5FUHJ.on-failed
-            - notify:slack-channel:G016BC5FUHJ
-        extra:
-            notify:
-                # slackText: 'https://firefox-ci-tc.services.mozilla.com/tasks/${status.taskId} | ${task.metadata.name} | ${task.metadata.source}'
-                slackBlocks: |
-                    [
-                      {
-                        "type": "header",
-                        "text": {
-                          "type": "plain_text",
-                          "text": "Fenix :firefox: ${task.metadata.name} :x:\n "
-                        }
-                      },
-                      {
-                        "type": "divider"
-                      },
-                      {
-                         "type": "section",
-                         "text": {
-                             "type": "mrkdwn",
-                             "text": "*Task*: <https://firefox-ci-tc.services.mozilla.com/tasks/${status.taskId}|Taskcluster>"
-                        }
-                      },
-                      {
-                        "type": "section",
-                        "text": {
-                          "type": "mrkdwn",
-                          "text": "*Owner*: ${task.metadata.owner}"
-                        }
-                      },
-                      {
-                        "type": "section",
-                        "text": {
-                          "type": "mrkdwn",
-                          "text": "*Source*: <${task.payload.env.MOBILE_BASE_REPOSITORY}/commit/${task.payload.env.MOBILE_HEAD_REV}|Commit> :github:"
-                        }
-                      },
-                      {
-                        "type": "divider"
-                      },
-                      {
-                        "type": "context",
-                        "elements": [
-                            {
-                                "type": "mrkdwn",
-                                "text": ":testops-notify: created by <https://mana.mozilla.org/wiki/x/P_zNBw|Mobile Test Engineering>"
-                            }
-                        ]
-                      }
-                    ]
+
+    fenix-robo-arm-debug:
+        attributes:
+            shipping-product: fenix
+            code-review: false
+        description: Run Robo test on ARM devices
+        run-on-tasks-for: [github-push]
+        run-on-git-branches: [main]
+        dependencies:
+            signed-apk-debug-apk: signing-apk-fenix-debug
+        run:
+            secrets:
+                - name: project/mobile/firefox-android/fenix/firebase
+                  key: firebaseToken
+                  path: .firebase_token.json
+                  json: true
+            pre-commands:
+                - ["cd", "fenix"]
+            commands:
+                - [wget, {artifact-reference: '<signed-apk-debug-apk/public/build/target.arm64-v8a.apk>'}, '-O', app.apk]
+                - [automation/taskcluster/androidTest/robo-test.sh, arm-robo-test, app.apk]
+        treeherder:
+            platform: 'fenix-ui-test/opt'
+            symbol: fenix-debug(robo-arm)
+        worker:
+            env:
+                GOOGLE_PROJECT: moz-fenix

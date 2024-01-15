@@ -24,14 +24,17 @@ import androidx.core.view.isVisible
 import androidx.preference.PreferenceManager
 import mozilla.components.browser.state.selector.privateTabs
 import mozilla.components.concept.engine.EngineView
+import mozilla.components.feature.search.widget.BaseVoiceSearchActivity
 import mozilla.components.lib.auth.canUseBiometricFeature
 import mozilla.components.lib.crash.Crash
 import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.ktx.android.content.getColorFromAttr
-import mozilla.components.support.ktx.android.view.getWindowInsetsController
+import mozilla.components.support.ktx.android.view.createWindowInsetsController
 import mozilla.components.support.locale.LocaleAwareAppCompatActivity
 import mozilla.components.support.utils.SafeIntent
+import mozilla.components.support.utils.StatusBarUtils
+import org.mozilla.experiments.nimbus.initializeTooling
 import org.mozilla.focus.GleanMetrics.AppOpened
 import org.mozilla.focus.GleanMetrics.Notifications
 import org.mozilla.focus.R
@@ -51,10 +54,8 @@ import org.mozilla.focus.session.PrivateNotificationFeature
 import org.mozilla.focus.shortcut.HomeScreen
 import org.mozilla.focus.state.AppAction
 import org.mozilla.focus.state.Screen
-import org.mozilla.focus.telemetry.TelemetryWrapper
 import org.mozilla.focus.telemetry.startuptelemetry.StartupPathProvider
 import org.mozilla.focus.telemetry.startuptelemetry.StartupTypeTelemetry
-import org.mozilla.focus.utils.StatusBarUtils
 import org.mozilla.focus.utils.SupportUtils
 
 private const val REQUEST_TIME_OUT = 2000L
@@ -85,6 +86,7 @@ open class MainActivity : LocaleAwareAppCompatActivity() {
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        components.experiments.initializeTooling(applicationContext, intent)
         installSplashScreen()
 
         updateSecureWindowFlags()
@@ -137,7 +139,6 @@ open class MainActivity : LocaleAwareAppCompatActivity() {
 
         if (safeIntent.isLauncherIntent) {
             AppOpened.fromIcons.record(AppOpened.FromIconsExtra(AppOpenType.LAUNCH.type))
-            TelemetryWrapper.openFromIconEvent()
         }
 
         val launchCount = settings.getAppLaunchCount()
@@ -155,6 +156,8 @@ open class MainActivity : LocaleAwareAppCompatActivity() {
         ).also {
             it.start()
         }
+
+        components.notificationsDelegate.bindToActivity(this)
     }
 
     private fun requestNotificationPermission() {
@@ -204,9 +207,6 @@ open class MainActivity : LocaleAwareAppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        if (TelemetryWrapper.isTelemetryEnabled(this)) {
-            TelemetryWrapper.startSession()
-        }
         checkBiometricStillValid()
     }
 
@@ -221,15 +221,10 @@ open class MainActivity : LocaleAwareAppCompatActivity() {
         urlInputFragment?.cancelAnimation()
 
         super.onPause()
-        if (TelemetryWrapper.isTelemetryEnabled(this)) {
-            TelemetryWrapper.stopSession()
-        }
     }
 
     override fun onStop() {
         super.onStop()
-
-        TelemetryWrapper.stopMainActivity()
     }
 
     override fun onNewIntent(unsafeIntent: Intent) {
@@ -263,8 +258,6 @@ open class MainActivity : LocaleAwareAppCompatActivity() {
 
         if (ACTION_OPEN == action) {
             Notifications.openButtonTapped.record(NoExtras())
-
-            TelemetryWrapper.openNotificationActionEvent()
         }
 
         if (ACTION_ERASE == action) {
@@ -273,14 +266,16 @@ open class MainActivity : LocaleAwareAppCompatActivity() {
 
         if (intent.isLauncherIntent) {
             AppOpened.fromIcons.record(AppOpened.FromIconsExtra(AppOpenType.RESUME.type))
-
-            TelemetryWrapper.resumeFromIconEvent()
         }
 
         super.onNewIntent(unsafeIntent)
     }
 
     private fun handleAppRestoreFromBackground(intent: SafeIntent) {
+        if (!intent.extras?.getString(BaseVoiceSearchActivity.SPEECH_PROCESSING).isNullOrEmpty()) {
+            handleAppNavigation(intent)
+            return
+        }
         when (components.appStore.state.screen) {
             is Screen.Settings -> components.appStore.dispatch(
                 AppAction.OpenSettings(
@@ -314,19 +309,12 @@ open class MainActivity : LocaleAwareAppCompatActivity() {
     }
 
     private fun processEraseAction(intent: SafeIntent) {
-        val fromShortcut = intent.getBooleanExtra(EXTRA_SHORTCUT, false)
         val fromNotificationAction = intent.getBooleanExtra(EXTRA_NOTIFICATION, false)
 
         components.tabsUseCases.removeAllTabs()
 
         if (fromNotificationAction) {
             Notifications.eraseOpenButtonTapped.record(Notifications.EraseOpenButtonTappedExtra(tabCount))
-        }
-
-        if (fromShortcut) {
-            TelemetryWrapper.eraseShortcutEvent()
-        } else if (fromNotificationAction) {
-            TelemetryWrapper.eraseAndOpenNotificationActionEvent()
         }
     }
 
@@ -372,7 +360,7 @@ open class MainActivity : LocaleAwareAppCompatActivity() {
             return
         }
 
-        super.getOnBackPressedDispatcher().onBackPressed()
+        onBackPressedDispatcher.onBackPressed()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -402,14 +390,14 @@ open class MainActivity : LocaleAwareAppCompatActivity() {
     private fun updateLightSystemBars() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             window.statusBarColor = getColorFromAttr(android.R.attr.statusBarColor)
-            window.getWindowInsetsController().isAppearanceLightStatusBars = true
+            window.createWindowInsetsController().isAppearanceLightStatusBars = true
         } else {
             window.statusBarColor = Color.BLACK
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // API level can display handle light navigation bar color
-            window.getWindowInsetsController().isAppearanceLightNavigationBars = true
+            window.createWindowInsetsController().isAppearanceLightNavigationBars = true
             window.navigationBarColor = ContextCompat.getColor(this, android.R.color.transparent)
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -421,12 +409,12 @@ open class MainActivity : LocaleAwareAppCompatActivity() {
 
     private fun clearLightSystemBars() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            window.getWindowInsetsController().isAppearanceLightStatusBars = false
+            window.createWindowInsetsController().isAppearanceLightStatusBars = false
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // API level can display handle light navigation bar color
-            window.getWindowInsetsController().isAppearanceLightNavigationBars = false
+            window.createWindowInsetsController().isAppearanceLightNavigationBars = false
         }
     }
 
@@ -459,7 +447,12 @@ open class MainActivity : LocaleAwareAppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
-        privateNotificationFeature.stop()
+
+        if (this::privateNotificationFeature.isInitialized) {
+            privateNotificationFeature.stop()
+        }
+
+        components.notificationsDelegate.unBindActivity(this)
     }
 
     enum class AppOpenType(val type: String) {
@@ -472,6 +465,5 @@ open class MainActivity : LocaleAwareAppCompatActivity() {
         const val ACTION_OPEN = "open"
 
         const val EXTRA_NOTIFICATION = "notification"
-        private const val EXTRA_SHORTCUT = "shortcut"
     }
 }

@@ -4,6 +4,7 @@
 
 package mozilla.components.feature.awesomebar.provider
 
+import androidx.core.net.toUri
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -12,7 +13,7 @@ import mozilla.components.concept.storage.BookmarkInfo
 import mozilla.components.concept.storage.BookmarkNode
 import mozilla.components.concept.storage.BookmarkNodeType
 import mozilla.components.concept.storage.BookmarksStorage
-import mozilla.components.support.ktx.kotlin.tryGetHostFromUrl
+import mozilla.components.support.ktx.android.net.sameHostWithoutMobileSubdomainAs
 import mozilla.components.support.test.eq
 import mozilla.components.support.test.mock
 import mozilla.components.support.utils.StorageUtils.levenshteinDistance
@@ -34,7 +35,7 @@ import java.util.UUID
 @RunWith(AndroidJUnit4::class)
 class BookmarksStorageSuggestionProviderTest {
 
-    private val bookmarks = testableBookmarksStorage()
+    private val bookmarks = TestableBookmarksStorage()
 
     private val newItem = BookmarkNode(
         BookmarkNodeType.ITEM,
@@ -179,13 +180,15 @@ class BookmarksStorageSuggestionProviderTest {
         val provider = BookmarksStorageSuggestionProvider(
             bookmarksStorage = bookmarksSpy,
             loadUrlUseCase = mock(),
-            resultsHostFilter = "test",
+            resultsUriFilter = {
+                it.sameHostWithoutMobileSubdomainAs("https://www.test.com".toUri())
+            },
         )
 
         provider.onInputChanged("moz")
 
         verify(bookmarksSpy).searchBookmarks(
-            "test",
+            "moz",
             BOOKMARKS_SUGGESTION_LIMIT * BOOKMARKS_RESULTS_TO_FILTER_SCALE_FACTOR,
         )
     }
@@ -196,7 +199,9 @@ class BookmarksStorageSuggestionProviderTest {
         val provider = BookmarksStorageSuggestionProvider(
             bookmarksStorage = bookmarksSpy,
             loadUrlUseCase = mock(),
-            resultsHostFilter = "https://mozilla.com".tryGetHostFromUrl(),
+            resultsUriFilter = {
+                it.sameHostWithoutMobileSubdomainAs("https://mozilla.com".toUri())
+            },
         )
 
         bookmarks.addItem("Other", "https://mozilla.com/firefox", newItem.title!!, null)
@@ -211,7 +216,7 @@ class BookmarksStorageSuggestionProviderTest {
     }
 
     @SuppressWarnings
-    class testableBookmarksStorage : BookmarksStorage {
+    class TestableBookmarksStorage : BookmarksStorage {
         val bookmarkMap: HashMap<String, BookmarkNode> = hashMapOf()
 
         override suspend fun warmUp() {
@@ -266,6 +271,11 @@ class BookmarksStorageSuggestionProviderTest {
                     bookmarkMap[it.key]!!
                 }.take(limit).toList()
             }
+
+        override suspend fun countBookmarksInTrees(guids: List<String>): UInt {
+            // "Not needed for the test"
+            throw NotImplementedError()
+        }
 
         override suspend fun addItem(
             parentGuid: String,

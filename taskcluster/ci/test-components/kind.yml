@@ -33,7 +33,7 @@ task-defaults:
         pre-gradlew:
             - ["cd", "android-components"]
         secrets:
-            - name: project/mobile/firefox-android/firebase
+            - name: project/mobile/firefox-android/android-components/firebase
               key: firebaseToken
               path: .firebase_token.json
               json: true
@@ -43,9 +43,9 @@ task-defaults:
         - github-pull-request
         - github-push
     treeherder:
-            kind: test
-            platform: 'AC-ui-test/opt'
-            tier: 2
+        kind: test
+        platform: 'AC-ui-test/opt'
+        tier: 2
     worker-type: b-android-large
     worker:
         artifacts:

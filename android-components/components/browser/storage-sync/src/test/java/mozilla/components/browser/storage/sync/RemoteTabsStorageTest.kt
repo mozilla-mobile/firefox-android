@@ -8,8 +8,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import mozilla.appservices.remotetabs.ClientRemoteTabs
-import mozilla.appservices.remotetabs.DeviceType
 import mozilla.appservices.remotetabs.RemoteTab
+import mozilla.appservices.sync15.DeviceType
 import mozilla.components.concept.base.crash.CrashReporting
 import mozilla.components.support.test.any
 import mozilla.components.support.test.mock
@@ -24,7 +24,7 @@ import org.mockito.Mockito.spy
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
-import mozilla.appservices.remotetabs.InternalException as RemoteTabProviderException
+import mozilla.appservices.remotetabs.TabsApiException as RemoteTabProviderException
 import mozilla.appservices.remotetabs.TabsStore as RemoteTabsProvider
 
 @ExperimentalCoroutinesApi
@@ -150,7 +150,7 @@ class RemoteTabsStorageTest {
 
     @Test
     fun `exceptions from getAll are propagated to the crash reporter`() = runTest {
-        val throwable = RemoteTabProviderException("test")
+        val throwable = RemoteTabProviderException.UnexpectedTabsException("test")
         `when`(apiMock.getAll()).thenAnswer { throw throwable }
 
         remoteTabs.getAll()

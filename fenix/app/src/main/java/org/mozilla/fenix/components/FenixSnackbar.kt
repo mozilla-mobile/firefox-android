@@ -5,6 +5,7 @@
 package org.mozilla.fenix.components
 
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -54,6 +55,27 @@ class FenixSnackbar private constructor(
         }
     }
 
+    /**
+     * Set FenixSnackBar background.
+     */
+    fun setBackground(backgroundDrawable: Drawable?) = this.apply {
+        binding.snackbarLayout.background = backgroundDrawable
+    }
+
+    /**
+     * Set FenixSnackBar button text color.
+     */
+    fun setButtonTextColor(textColor: Int) = this.apply {
+        binding.snackbarBtn.setTextColor(textColor)
+    }
+
+    /**
+     * Set FenixSnackBarText text color.
+     */
+    fun setSnackBarTextColor(textColor: Int) = this.apply {
+        binding.snackbarText.setTextColor(textColor)
+    }
+
     fun setText(text: String) = this.apply {
         binding.snackbarText.text = text
     }
@@ -62,6 +84,11 @@ class FenixSnackbar private constructor(
         this.duration = duration
     }
 
+    /**
+     * Set snackBar button action
+     * @param text that should appear on snackBar button.
+     * @param action callback when user presses snackBar button.
+     */
     fun setAction(text: String, action: () -> Unit) = this.apply {
         binding.snackbarBtn.apply {
             setText(text)
@@ -76,7 +103,7 @@ class FenixSnackbar private constructor(
     companion object {
         const val LENGTH_LONG = Snackbar.LENGTH_LONG
         const val LENGTH_SHORT = Snackbar.LENGTH_SHORT
-        private const val LENGTH_ACCESSIBLE = 15000 /* 15 seconds in ms */
+        private const val LENGTH_ACCESSIBLE = 15000 // 15 seconds in ms
         const val LENGTH_INDEFINITE = Snackbar.LENGTH_INDEFINITE
 
         private const val minTextSize = 12

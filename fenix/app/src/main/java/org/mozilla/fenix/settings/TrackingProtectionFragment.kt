@@ -72,7 +72,7 @@ class TrackingProtectionFragment : PreferenceFragmentCompat() {
 
         // Tracking Protection Switch
         val preferenceTP =
-            requirePreference<SwitchPreference>(R.string.pref_key_tracking_protection)
+            requirePreference<FenixSwitchPreference>(R.string.pref_key_tracking_protection)
 
         preferenceTP.isChecked = requireContext().settings().shouldUseTrackingProtection
         preferenceTP.setOnPreferenceChangeListener<Boolean> { preference, trackingProtectionOn ->
@@ -90,20 +90,30 @@ class TrackingProtectionFragment : PreferenceFragmentCompat() {
         learnMorePreference.setOnPreferenceClickListener {
             (activity as HomeActivity).openToBrowserAndLoad(
                 searchTermOrURL = SupportUtils.getGenericSumoURLForTopic
-                (SupportUtils.SumoTopic.TRACKING_PROTECTION),
+                    (SupportUtils.SumoTopic.TRACKING_PROTECTION),
                 newTab = true,
                 from = BrowserDirection.FromTrackingProtection,
             )
             true
         }
         learnMorePreference.summary = getString(
-            R.string.preference_enhanced_tracking_protection_explanation,
+            R.string.preference_enhanced_tracking_protection_explanation_2,
             getString(R.string.app_name),
         )
 
         val preferenceExceptions =
             requirePreference<Preference>(R.string.pref_key_tracking_protection_exceptions)
         preferenceExceptions.onPreferenceClickListener = exceptionsClickListener
+
+        requirePreference<SwitchPreference>(R.string.pref_key_privacy_enable_global_privacy_control).apply {
+            onPreferenceChangeListener = object : SharedPreferenceUpdater() {
+                override fun onPreferenceChange(preference: Preference, newValue: Any?): Boolean {
+                    context.components.core.engine.settings.globalPrivacyControlEnabled = newValue as Boolean
+                    context.components.useCases.sessionUseCases.reload.invoke()
+                    return super.onPreferenceChange(preference, newValue)
+                }
+            }
+        }
     }
 
     private fun bindTrackingProtectionRadio(

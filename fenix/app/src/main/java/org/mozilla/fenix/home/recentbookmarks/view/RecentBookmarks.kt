@@ -5,7 +5,6 @@
 package org.mozilla.fenix.home.recentbookmarks.view
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -14,7 +13,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -24,8 +22,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -45,10 +41,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import mozilla.components.browser.icons.compose.Loader
 import mozilla.components.browser.icons.compose.Placeholder
-import mozilla.components.browser.icons.compose.WithIcon
 import mozilla.components.ui.colors.PhotonColors
 import org.mozilla.fenix.components.components
+import org.mozilla.fenix.compose.ContextualMenu
+import org.mozilla.fenix.compose.Favicon
 import org.mozilla.fenix.compose.Image
+import org.mozilla.fenix.compose.MenuItem
 import org.mozilla.fenix.compose.annotation.LightDarkPreview
 import org.mozilla.fenix.compose.inComposePreview
 import org.mozilla.fenix.home.recentbookmarks.RecentBookmark
@@ -151,11 +149,14 @@ private fun RecentBookmarkItem(
                 style = FirefoxTheme.typography.caption,
             )
 
-            RecentBookmarksMenu(
+            ContextualMenu(
                 showMenu = isMenuExpanded,
-                menuItems = menuItems,
-                recentBookmark = bookmark,
                 onDismissRequest = { isMenuExpanded = false },
+                menuItems = menuItems.map { item -> MenuItem(item.title) { item.onClick(bookmark) } },
+                modifier = Modifier.semantics {
+                    testTagsAsResourceId = true
+                    testTag = "recent.bookmark.menu"
+                },
             )
         }
     }
@@ -170,6 +171,11 @@ private fun RecentBookmarkImage(bookmark: RecentBookmark) {
                 modifier = imageModifier,
                 targetSize = imageWidth,
                 contentScale = ContentScale.Crop,
+                fallback = {
+                    if (!bookmark.url.isNullOrEmpty()) {
+                        FallbackBookmarkFaviconImage(url = bookmark.url)
+                    }
+                },
             )
         }
         !bookmark.url.isNullOrEmpty() && !inComposePreview -> {
@@ -178,26 +184,7 @@ private fun RecentBookmarkImage(bookmark: RecentBookmark) {
                     PlaceholderBookmarkImage()
                 }
 
-                WithIcon { icon ->
-                    Box(
-                        modifier = imageModifier.background(
-                            color = when (isSystemInDarkTheme()) {
-                                true -> PhotonColors.DarkGrey60
-                                false -> PhotonColors.LightGrey30
-                            },
-                        ),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Image(
-                            painter = icon.painter,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(36.dp)
-                                .clip(cardShape),
-                            contentScale = ContentScale.Crop,
-                        )
-                    }
-                }
+                FallbackBookmarkFaviconImage(bookmark.url)
             }
         }
         inComposePreview -> {
@@ -218,51 +205,17 @@ private fun PlaceholderBookmarkImage() {
     )
 }
 
-/**
- * Menu shown for a [RecentBookmark].
- *
- * @see [DropdownMenu]
- *
- * @param showMenu Whether this is currently open and visible to the user.
- * @param menuItems List of options shown.
- * @param recentBookmark The [RecentBookmark] for which this menu is shown.
- * @param onDismissRequest Called when the user chooses a menu option or requests to dismiss the menu.
- */
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
-private fun RecentBookmarksMenu(
-    showMenu: Boolean,
-    menuItems: List<RecentBookmarksMenuItem>,
-    recentBookmark: RecentBookmark,
-    onDismissRequest: () -> Unit,
+private fun FallbackBookmarkFaviconImage(
+    url: String,
 ) {
-    DropdownMenu(
-        expanded = showMenu,
-        onDismissRequest = { onDismissRequest() },
-        modifier = Modifier
-            .background(color = FirefoxTheme.colors.layer2)
-            .semantics {
-                testTagsAsResourceId = true
-                testTag = "recent.bookmark.menu"
-            },
+    Box(
+        modifier = imageModifier.background(
+            color = FirefoxTheme.colors.layer2,
+        ),
+        contentAlignment = Alignment.Center,
     ) {
-        for (item in menuItems) {
-            DropdownMenuItem(
-                onClick = {
-                    onDismissRequest()
-                    item.onClick(recentBookmark)
-                },
-            ) {
-                Text(
-                    text = item.title,
-                    color = FirefoxTheme.colors.textPrimary,
-                    maxLines = 1,
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .align(Alignment.CenterVertically),
-                )
-            }
-        }
+        Favicon(url = url, size = 36.dp)
     }
 }
 

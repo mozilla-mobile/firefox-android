@@ -102,9 +102,17 @@ function failure_check() {
     echo
     if [[ $exitcode -ne 0 ]]; then
         echo "FAILURE: UI test run failed, please check above URL"
+        TEST_STATUS="FAIL"
     else
-	      echo "All UI test(s) have passed!"
+	    echo "All UI test(s) have passed!"
+        TEST_STATUS="PASS"
     fi
+
+    {
+        echo "TEST_STATUS=${TEST_STATUS}"
+        echo "PRODUCT_TYPE=${PRODUCT_TYPE}"
+        echo "RELEASE_TYPE=${RELEASE_TYPE}"
+    } >> execution_metadata.env
 
     echo
     echo "RESULTS"
@@ -118,6 +126,10 @@ function failure_check() {
         --results "${RESULTS_DIR}" \
         --output-md "${ARTIFACT_DIR}/github/customCheckRunText.md" \
 	--device-type "${device_type}"
+
+    chmod +x $PATH_TEST/parse-ui-test-fromfile.py
+    $PATH_TEST/parse-ui-test-fromfile.py \
+        --results "${RESULTS_DIR}"
 }
 
 echo
@@ -138,7 +150,7 @@ set -o pipefail && $JAVA_BIN -jar $FLANK_BIN android run \
 	--app=$APK_APP --test=$APK_TEST \
 	--local-result-dir="${RESULTS_DIR}" \
 	--project=$GOOGLE_PROJECT \
-	--client-details=commit=${MOBILE_HEAD_REV:-None},pullRequest=${PULL_REQUEST_NUMBER:-None} \
+	--client-details=matrixLabel=${PULL_REQUEST_NUMBER:-None} \
 	| tee flank.log
 
 exitcode=$?

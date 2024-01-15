@@ -8,7 +8,6 @@ def libVcsUrl = properties.libVcsUrl
 def libLicense = properties.libLicense
 def libLicenseUrl = properties.libLicenseUrl
 
-// Must match the implementation in components/tooling/glean-gradle-plugin/build.gradle
 static def getLocalPublicationTimestamp() {
     def date = new Date()
     return date.format('yyyyMMddHHmmss')
@@ -27,9 +26,17 @@ static def getGitHash() {
 ext.configurePublish = { groupIdArg, artifactIdArg, descriptionArg ->
     apply plugin: 'maven-publish'
 
-    task sourcesJar(type: Jar) {
+    tasks.register('sourcesJar', Jar) {
         from android.sourceSets.main.java.srcDirs
-        classifier = 'sources'
+        archiveClassifier = 'sources'
+    }
+
+    android {
+        publishing {
+            singleVariant("release") {
+                withSourcesJar()
+            }
+        }
     }
 
     afterEvaluate {
@@ -37,8 +44,6 @@ ext.configurePublish = { groupIdArg, artifactIdArg, descriptionArg ->
             publications {
                 release(MavenPublication) {
                     from components.release
-
-                    artifact sourcesJar
 
                     groupId = groupIdArg
                     artifactId = artifactIdArg

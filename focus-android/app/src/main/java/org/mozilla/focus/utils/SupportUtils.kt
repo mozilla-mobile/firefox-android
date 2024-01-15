@@ -1,5 +1,4 @@
-/* -*- Mode: Java; c-basic-offset: 4; tab-width: 4; indent-tabs-mode: nil; -*-
- * This Source Code Form is subject to the terms of the Mozilla Public
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -48,13 +47,11 @@ object SupportUtils {
         AUTOCOMPLETE("autofill-domain-android"),
         TRACKERS("trackers"),
         USAGE_DATA("usage-data"),
-        WHATS_NEW_FOCUS("whats-new-firefox-focus-android"),
-        WHATS_NEW_KLAR("whats-new-firefox-klar-android"),
         SEARCH_SUGGESTIONS("search-suggestions-focus-android"),
         ALLOWLIST("focus-android-allowlist"),
         STUDIES("how-opt-out-studies-firefox-focus-android"),
         HTTPS_ONLY("https-only-prefs-focus"),
-        COOKIE_BANNER("auto-cookie-banner"),
+        COOKIE_BANNER("cookie-banner-reduction-firefox-focus-android"),
     }
 
     fun getGenericSumoURLForTopic(topic: SumoTopic): String {
@@ -63,9 +60,11 @@ object SupportUtils {
         return "https://support.mozilla.org/$langTag/kb/$escapedTopic"
     }
 
-    fun getSumoURLForTopic(context: Context, topic: SumoTopic): String {
+    /**
+     * Returns the SUMO URL for a specific topic
+     */
+    fun getSumoURLForTopic(appVersion: String, topic: SumoTopic): String {
         val escapedTopic = getEncodedTopicUTF8(topic.topicStr)
-        val appVersion = getAppVersion(context)
         val osTarget = "Android"
         val langTag = Locales.getLanguageTag(Locale.getDefault())
         return "https://support.mozilla.org/1/mobile/$appVersion/$osTarget/$langTag/$escapedTopic"
@@ -85,7 +84,10 @@ object SupportUtils {
         }
     }
 
-    private fun getAppVersion(context: Context): String {
+    /**
+     * Returns the version name of this package.
+     */
+    fun getAppVersion(context: Context): String {
         try {
             return context.packageManager.getPackageInfoCompat(context.packageName, 0).versionName
         } catch (e: PackageManager.NameNotFoundException) {
@@ -122,7 +124,7 @@ object SupportUtils {
         val openCustomTabActivityIntent =
             Intent(activity, CustomTabActivity::class.java).apply {
                 action = Intent.ACTION_VIEW
-                data = getSumoURLForTopic(activity, SumoTopic.ADD_SEARCH_ENGINE).toUri()
+                data = getSumoURLForTopic(getAppVersion(activity), SumoTopic.ADD_SEARCH_ENGINE).toUri()
                 putExtra(CustomTabActivity.CUSTOM_TAB_ID, tabId)
             }
 

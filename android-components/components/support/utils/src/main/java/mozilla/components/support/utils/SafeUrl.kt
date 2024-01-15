@@ -15,21 +15,22 @@ object SafeUrl {
      * from the front of [unsafeText].
      */
     fun stripUnsafeUrlSchemes(context: Context, unsafeText: CharSequence?): String? {
+        if (unsafeText.isNullOrBlank()) {
+            return null
+        }
+
         val urlSchemesBlocklist = context.resources.getStringArray(R.array.mozac_url_schemes_blocklist)
         var safeUrl = unsafeText.toString()
-        if (safeUrl.isEmpty()) {
-            return safeUrl
-        }
 
         @Suppress("ControlFlowWithEmptyBody", "EmptyWhileBlock")
         while (urlSchemesBlocklist.find {
-            if (safeUrl.startsWith(it, true)) {
-                safeUrl = safeUrl.replaceFirst(Regex(it, RegexOption.IGNORE_CASE), "")
-                true
-            } else {
-                false
-            }
-        } != null
+                if (safeUrl.startsWith(it, true)) {
+                    safeUrl = safeUrl.replaceFirst(Regex(it, RegexOption.IGNORE_CASE), "")
+                    true
+                } else {
+                    false
+                }
+            } != null
         ) {
         }
 

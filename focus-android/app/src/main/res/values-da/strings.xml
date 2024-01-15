@@ -352,7 +352,16 @@
     <string name="preference_mozilla_telemetry_summary2">Mozilla tilstræber kun at indsamle, hvad vi skal bruge for at kunne udbyde og forbedre %1$s for alle.</string>
 
     <!-- In-app link (in settings) to Focus privacy notice. -->
-    <string name="preference_privacy_notice">Privatlivspolitik</string>
+    <string name="preference_privacy_notice">Privatlivserklæring</string>
+
+    <!-- In-app link (in settings) to Focus licensing information. -->
+    <string name="preference_licensing_info">Licensinformation</string>
+
+    <!-- Link to Focus licensing information from other libraries that we use. -->
+    <string name="preference_libraries_we_use">Biblioteker, som vi bruger</string>
+
+    <!-- Open Source Licenses page title. The first parameter is the app name -->
+    <string name="open_source_licenses_title">%s | OSS-biblioteker</string>
 
     <!-- Item in Preferences that shows the about page. Parameter 1 is the app name, i.e. Firefox Focus/Firefox Klar. -->
     <string name="preference_about">Om %1$s</string>
@@ -483,7 +492,10 @@
 
 
 
-  <string name="error_hostLookup_title">Serveren blev ikke fundet</string>
+  <!-- Snackbar that will be displayed after a website has been added to shortcuts. -->
+    <string name="snackbar_added_to_shortcuts">Føjet til genveje!</string>
+
+    <string name="error_hostLookup_title">Serveren blev ikke fundet</string>
 
 
 
@@ -708,6 +720,9 @@
     <!-- Text for indicating cookie banner handling is on this site, this is shown as part of the protections panel with the tracking protection toggle. -->
     <string name="cookie_banner_exception_item_description_state_on">Slået TIL for dette websted</string>
 
+    <!-- Text for indicating cookie reducer is not supported on the current site, this is shown as part of the protections panel with the tracking protection toggle. -->
+    <string name="cookie_banner_exception_site_not_supported">Webstedet understøttes ikke i øjeblikket</string>
+
     <!-- Text for indicating cookie banner handling is off this site, this is shown as part of the protections panel with the tracking protection toggle. -->
     <string name="cookie_banner_exception_item_description_state_off">Slået FRA for dette websted</string>
 
@@ -730,18 +745,26 @@
     <string name="cookie_banner_exception_panel_description_state_on_for_site">%1$s vil rydde dette websteds cookies og genindlæse siden. Rydning af alle cookies kan logge dig ud eller tømme indkøbskurve.</string>
 
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The placeholder will be updated with the app name. -->
-    <string name="cookie_banner_exception_panel_description_state_off_for_site" moz:RemovedIn="111" tools:ignore="UnusedResources">%1$s kan forsøge at automatisk afvise cookie-anmodninger. Hvis dette ikke er muligt, kan %1$s acceptere alle cookies for at lukke banneret.</string>
-
-    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The placeholder will be updated with the app name. -->
     <string name="cookie_banner_exception_panel_description_state_off_for_site2">%1$s kan forsøge at afvise cookie-anmodninger automatisk.</string>
 
+    <!-- Long text for a detail explanation indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_description_site_is_not_supported">Dette websted understøttes i øjeblikket ikke af reduktion af cookie-bannere. Vil du anmode vores team om at gennemgå dette websted for at det kan understøttes i fremtiden?</string>
+
+    <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_site_is_not_supported_cancel_button">Annuller</string>
+
+    <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_site_is_not_supported_request_support_button">Anmod om understøttelse</string>
+
+    <!-- Label for the snackBar, after the user reports with success a website where cookie banner reducer did not work -->
+    <string name="cookie_banner_report_a_site_snackbar_label">Anmodning om understøttelse af websted indsendt.</string>
+
+    <!-- Label for cookie banner item from tracking protection, after the user reports with success a website where cookie banner reducer did not work -->
+    <string name="cookie_banner_the_site_was_reported">Anmodning om understøttelse af websted indsendt.</string>
+
     <!-- Contextual Feature Recommendation Popups -->
-    <!-- CFR for Cookie Banner (Banner Info Message). The placeholder will be updated with the app name. -->
-    <string name="cfr_for_cookie_banner" moz:RemovedIn="111" tools:ignore="UnusedResources">%1$s prøver på at afvise cookie-anmodninger for at lukke irriterende cookie-bannere.\n\nHåndter indstillinger for cookie-bannere i Indstillingerne.</string>
     <!-- CFR for Cookie Banner (Banner Info Message). %1$s will be replaced by the app name, %2$s will be an active link using the string cfr_cookie_banner_link as text. -->
     <string name="cfr_cookie_banner">%1$s prøver på at afvise cookie-anmodninger for at lukke irriterende cookie-bannere.\n\nHåndter indstillinger for cookie-bannere i %2$s.</string>
-    <!-- CFR for Cookie Banner (Banner Info Message). This text should be the same as the settings text from "cfr_for_cookie_banner". The text should be underlined and should redirect the user to the cookie banner settings screen. -->
-    <string name="cfr_for_cookie_banner_underline_settings" moz:RemovedIn="111" tools:ignore="UnusedResources">Indstillingerne</string>
     <!-- CFR for Cookie Banner (Banner Info Message). This string is used as text for a link in cfr_cookie_banner and takes the user to the app settings. -->
     <string name="cfr_cookie_banner_link">Indstillingerne</string>
 
@@ -1007,11 +1030,31 @@
 
 
     <!-- The title of the error page for websites that do not support HTTPS when HTTPS-Only is turned on  -->
-    <string name="errorpage_httpsonly_title">Det anmodede websted understøtter ikke HTTPS</string>
-    <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will get replaced with the name of the app (e.g. "Firefox Focus") -->
-    <string name="errorpage_httpsonly_message">%1$s forsøger som standard at oprette forbindelse via HTTPS for at øge sikkerhedsniveauet. Hvis du vil ændre denne indstilling eller vide mere om HTTPS, så skal du gå til Indstillinger &gt; Privatliv og sikkerhed &gt; Sikkerhed.</string>
+    <string name="errorpage_httpsonly_title2">Dette websted understøtter ikke HTTPS</string>
 
-    <!-- Sessions List -->
+    <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will get replaced with the name of the app (e.g. "Firefox Focus").
+        Contains a button that will redirect the user to Privacy & Security Screen-->
+    <string name="errorpage_httpsonly_message2"><![CDATA[%1$s prøver om muligt at benytte en HTTPS-forbindelse for mere sikkerhed.
+     <a href="%2$s">Læs mere</a> <br/><br/>
+     Skift denne indstilling i Indstillinger > Privatliv og sikkerhed > Sikkerhed.]]></string>
+
+    <!-- The document title and heading of the error page shown when a website has an invalid or expired SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_title">Forbindelsen er ikke sikker</string>
+
+    <!-- The error message shown when a website has an invalid or expired SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_message"><![CDATA[
+    Dette kan være et problem med serverens konfiguration, eller det kan betyde, at nogen forsøger at give sig ud for at være serveren. <br/><br/>
+    Hvis du har kunnet tilgå serveren tidligere, kan dette problem være midlertidigt.
+    ]]></string>
+
+    <!-- The advanced certificate information shown when a website has an invalid SSL certificate. The %1$s will be replaced by the app name and %2$s will be replaced by website URL. It's only shown when a website has an invalid SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_techInfo"><![CDATA[
+        <label>Nogen kan have lavet en falsk version af webstedet, og det kan være risikabelt at fortsætte.</label>
+        <br><br>
+        <label>%1$s stoler ikke på <b>%2$s</b>, fordi udstederen af webstedets certifikat er ukendt, fordi certifikatet er underskrevet af indehaveren selv, eller fordi serveren ikke sender de korrekte mellemliggende certifikater.</label>
+    ]]></string>
+
+     <!-- Sessions List -->
     <!-- Content description (not visible, for screen readers etc.): Button that closes a tab n the sessions list -->
     <string name="close_tab">Luk faneblad</string>
 

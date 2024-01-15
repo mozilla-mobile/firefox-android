@@ -13,12 +13,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.ComposeView
 import androidx.lifecycle.LifecycleOwner
 import mozilla.components.lib.state.ext.observeAsComposableState
+import mozilla.components.service.nimbus.messaging.Message
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.components
 import org.mozilla.fenix.compose.ComposeViewHolder
 import org.mozilla.fenix.compose.MessageCard
 import org.mozilla.fenix.compose.MessageCardColors
-import org.mozilla.fenix.gleanplumb.Message
 import org.mozilla.fenix.home.sessioncontrol.SessionControlInteractor
 import org.mozilla.fenix.theme.FirefoxTheme
 import org.mozilla.fenix.wallpapers.Wallpaper
@@ -27,7 +27,9 @@ import org.mozilla.fenix.wallpapers.WallpaperState
 /**
  * View holder for the Nimbus Message Card.
  *
- * @property interactor [SessionControlInteractor] which will have delegated to all user
+ * @param composeView [ComposeView] which will be populated with Jetpack Compose UI content.
+ * @param viewLifecycleOwner [LifecycleOwner] to which this Composable will be tied to.
+ * @param interactor [SessionControlInteractor] which will have delegated to all user
  * interactions.
  */
 class MessageCardViewHolder(

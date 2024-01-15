@@ -20,8 +20,8 @@ import org.mozilla.fenix.ext.components
  * A menu item for displaying account information. The item computes the label on every bind call,
  * to provide each menu with the latest account manager state.
  *
+ * @param textColorResource ID of color resource to tint the text.
  * @param imageResource ID of a drawable resource to be shown as icon.
- * @param textColorResource Optional ID of color resource to tint the text.
  * @param listener Callback to be invoked when this menu item is clicked.
  */
 class BrowserMenuSignIn(
@@ -45,7 +45,8 @@ class BrowserMenuSignIn(
      * Return the proper label for the sign in button.
      *
      * There are 3 states that the account state could be in:
-     * 1) If the user is signed in and the account information is known, display the account email.
+     * 1) If the user is signed in and the account information is known and a display name is set
+     * display the account display name else display the account email.
      * 2) The user is not signed in.
      * 3) Display an account info placeholder string if the user is signed in, but the account state
      * is unknown or being checked. Could by improved by using:
@@ -55,9 +56,10 @@ class BrowserMenuSignIn(
     internal fun getLabel(context: Context): String = with(context) {
         val isSignedIn = components.settings.signedInFxaAccount
         val email = components.backgroundServices.syncStore.state.account?.email
+        val displayName = components.backgroundServices.syncStore.state.account?.displayName
 
         if (isSignedIn) {
-            email ?: resources.getString(R.string.browser_menu_account_settings)
+            displayName ?: email ?: resources.getString(R.string.browser_menu_account_settings)
         } else {
             resources.getString(R.string.sync_menu_sync_and_save_data)
         }

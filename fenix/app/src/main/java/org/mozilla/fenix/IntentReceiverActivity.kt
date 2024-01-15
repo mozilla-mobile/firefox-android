@@ -15,6 +15,7 @@ import mozilla.components.feature.intent.ext.sanitize
 import mozilla.components.feature.intent.processing.IntentProcessor
 import mozilla.components.support.utils.EXTRA_ACTIVITY_REFERRER_CATEGORY
 import mozilla.components.support.utils.EXTRA_ACTIVITY_REFERRER_PACKAGE
+import mozilla.components.support.utils.INTENT_TYPE_PDF
 import mozilla.components.support.utils.ext.getApplicationInfoCompat
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.HomeActivity.Companion.PRIVATE_BROWSING_MODE
@@ -58,7 +59,12 @@ class IntentReceiverActivity : Activity() {
 
     fun processIntent(intent: Intent) {
         // Call process for side effects, short on the first that returns true
-        val private = settings().openLinksInAPrivateTab
+
+        var private = settings().openLinksInAPrivateTab
+        if (!private) {
+            // if PRIVATE_BROWSING_MODE is already set to true, honor that
+            private = intent.getBooleanExtra(PRIVATE_BROWSING_MODE, false)
+        }
         intent.putExtra(PRIVATE_BROWSING_MODE, private)
         if (private) {
             Events.openedLink.record(Events.OpenedLinkExtra("PRIVATE"))
@@ -67,6 +73,12 @@ class IntentReceiverActivity : Activity() {
         }
 
         addReferrerInformation(intent)
+
+        if (intent.type == INTENT_TYPE_PDF) {
+            val referrerIsFenix =
+                intent.getStringExtra(EXTRA_ACTIVITY_REFERRER_PACKAGE) == this.packageName
+            Events.openedExtPdf.record(Events.OpenedExtPdfExtra(referrerIsFenix))
+        }
 
         val processor = getIntentProcessors(private).firstOrNull { it.process(intent) }
         val intentProcessorType = components.intentProcessors.getType(processor)
@@ -109,6 +121,7 @@ class IntentReceiverActivity : Activity() {
             components.intentProcessors.fennecPageShortcutIntentProcessor +
             components.intentProcessors.externalDeepLinkIntentProcessor +
             components.intentProcessors.webNotificationsIntentProcessor +
+            components.intentProcessors.passwordManagerIntentProcessor +
             modeDependentProcessors +
             NewTabShortcutIntentProcessor()
     }

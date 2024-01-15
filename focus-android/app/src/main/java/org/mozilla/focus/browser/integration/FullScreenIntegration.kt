@@ -9,24 +9,26 @@ import android.os.Build
 import android.view.View
 import androidx.annotation.VisibleForTesting
 import androidx.core.view.isVisible
-import com.google.android.material.snackbar.Snackbar
+import androidx.fragment.app.FragmentManager
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.concept.engine.EngineView
+import mozilla.components.feature.prompts.dialog.FullScreenNotification
+import mozilla.components.feature.prompts.dialog.FullScreenNotificationDialog
 import mozilla.components.feature.session.FullScreenFeature
 import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.support.base.feature.LifecycleAwareFeature
 import mozilla.components.support.base.feature.UserInteractionHandler
-import mozilla.components.support.ktx.android.view.enterToImmersiveMode
+import mozilla.components.support.ktx.android.view.enterImmersiveMode
 import mozilla.components.support.ktx.android.view.exitImmersiveMode
 import org.mozilla.focus.R
 import org.mozilla.focus.ext.disableDynamicBehavior
 import org.mozilla.focus.ext.enableDynamicBehavior
 import org.mozilla.focus.ext.hide
 import org.mozilla.focus.ext.showAsFixed
-import org.mozilla.focus.utils.FocusSnackbarDelegate
 import org.mozilla.focus.utils.Settings
 
+@Suppress("LongParameterList")
 class FullScreenIntegration(
     val activity: Activity,
     val store: BrowserStore,
@@ -36,6 +38,7 @@ class FullScreenIntegration(
     private val toolbarView: BrowserToolbar,
     private val statusBar: View,
     private val engineView: EngineView,
+    private val parentFragmentManager: FragmentManager,
 ) : LifecycleAwareFeature, UserInteractionHandler {
     @VisibleForTesting
     internal var feature = FullScreenFeature(
@@ -55,16 +58,16 @@ class FullScreenIntegration(
     }
 
     @VisibleForTesting
-    internal fun fullScreenChanged(enabled: Boolean) {
+    internal fun fullScreenChanged(
+        enabled: Boolean,
+        fullScreenNotification: FullScreenNotification =
+            FullScreenNotificationDialog(R.layout.dialog_full_screen_notification),
+    ) {
         if (enabled) {
             enterBrowserFullscreen()
             statusBar.isVisible = false
 
-            FocusSnackbarDelegate(toolbarView).show(
-                toolbarView,
-                R.string.full_screen_notification,
-                Snackbar.LENGTH_SHORT,
-            )
+            fullScreenNotification.show(parentFragmentManager)
 
             switchToImmersiveMode()
         } else {
@@ -98,7 +101,7 @@ class FullScreenIntegration(
      */
     @VisibleForTesting
     internal fun switchToImmersiveMode() {
-        activity.enterToImmersiveMode()
+        activity.enterImmersiveMode()
     }
 
     /**

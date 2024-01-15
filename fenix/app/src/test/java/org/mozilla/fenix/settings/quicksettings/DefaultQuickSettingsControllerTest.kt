@@ -48,6 +48,7 @@ import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.settings.PhoneFeature
 import org.mozilla.fenix.settings.quicksettings.ext.shouldBeEnabled
 import org.mozilla.fenix.settings.toggle
+import org.mozilla.fenix.trackingprotection.CookieBannerUIMode
 import org.mozilla.fenix.utils.Settings
 
 @RunWith(FenixRobolectricTestRunner::class)
@@ -209,14 +210,14 @@ class DefaultQuickSettingsControllerTest {
         val autoplayValue = mockk<AutoplayValue.AllowAll>(relaxed = true)
 
         every { store.dispatch(any()) } returns mockk()
-        every { controller.handleAutoplayAdd(any()) } returns Unit
+        every { controller.handleAutoplayAdd(any(), any()) } returns Unit
 
         controller.sitePermissions = null
 
         controller.handleAutoplayChanged(autoplayValue)
 
         verify {
-            controller.handleAutoplayAdd(any())
+            controller.handleAutoplayAdd(any(), any())
             store.dispatch(any())
         }
     }
@@ -226,7 +227,7 @@ class DefaultQuickSettingsControllerTest {
         val autoplayValue = mockk<AutoplayValue.AllowAll>(relaxed = true)
 
         every { store.dispatch(any()) } returns mockk()
-        every { controller.handleAutoplayAdd(any()) } returns Unit
+        every { controller.handleAutoplayAdd(any(), any()) } returns Unit
         every { controller.handlePermissionsChange(any()) } returns Unit
         every { autoplayValue.updateSitePermissions(any()) } returns mockk()
 
@@ -295,11 +296,11 @@ class DefaultQuickSettingsControllerTest {
         runTestOnMain {
             val testPermissions = mockk<SitePermissions>()
 
-            controller.handleAutoplayAdd(testPermissions)
+            controller.handleAutoplayAdd(testPermissions, true)
             advanceUntilIdle()
 
             coVerifyOrder {
-                permissionStorage.add(testPermissions)
+                permissionStorage.add(testPermissions, true)
                 reload(tab.id)
             }
         }
@@ -366,7 +367,7 @@ class DefaultQuickSettingsControllerTest {
             websiteUrl = tab.content.url,
             sessionId = tab.id,
             isTrackingProtectionEnabled = isTrackingProtectionEnabled,
-            isCookieHandlingEnabled = isTrackingProtectionEnabled,
+            cookieBannerUIMode = CookieBannerUIMode.ENABLE,
         )
 
         every { store.state.protectionsState } returns state

@@ -14,6 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import mozilla.components.concept.storage.EncryptedLogin
 import mozilla.components.concept.storage.Login
 import mozilla.components.concept.storage.LoginEntry
 import mozilla.components.service.sync.logins.InvalidRecordException
@@ -48,6 +49,7 @@ open class SavedLoginsStorageController(
                 passwordsStorage.delete(loginId)
             }
             deleteLoginJob?.await()
+            deleteLoginFromState(loginId)
             withContext(Dispatchers.Main) {
                 navController.popBackStack(R.id.savedLoginsFragment, false)
             }
@@ -70,15 +72,20 @@ open class SavedLoginsStorageController(
 
     fun add(originText: String, usernameText: String, passwordText: String) {
         var saveLoginJob: Deferred<Unit>? = null
+        var id: String? = null
         lifecycleScope.launch(ioDispatcher) {
             saveLoginJob = async {
-                add(loginEntryForAdd(originText, usernameText, passwordText))
+                id = add(loginEntryForAdd(originText, usernameText, passwordText))
             }
             saveLoginJob?.await()
             withContext(Dispatchers.Main) {
-                val directions =
-                    AddLoginFragmentDirections.actionAddLoginFragmentToSavedLoginsFragment()
-                navController.navigate(directions)
+                if (id.isNullOrEmpty()) {
+                    navController.popBackStack(R.id.savedLoginsFragment, false)
+                } else {
+                    val directions =
+                        AddLoginFragmentDirections.actionAddLoginFragmentToLoginDetailFragment(id.toString())
+                    navController.navigate(directions)
+                }
             }
         }
         saveLoginJob?.invokeOnCompletion {
@@ -88,10 +95,11 @@ open class SavedLoginsStorageController(
         }
     }
 
-    private suspend fun add(loginEntryToSave: LoginEntry) {
+    private suspend fun add(loginEntryToSave: LoginEntry): String? {
+        var encryptedLogin: EncryptedLogin? = null
         try {
-            val encryptedLogin = passwordsStorage.add(loginEntryToSave)
-            syncAndUpdateList(passwordsStorage.decryptLogin(encryptedLogin))
+            encryptedLogin = passwordsStorage.add(loginEntryToSave)
+            addLoginToState(passwordsStorage.decryptLogin(encryptedLogin))
         } catch (loginException: LoginsApiException) {
             Log.e(
                 "Add new login",
@@ -99,6 +107,7 @@ open class SavedLoginsStorageController(
                 loginException,
             )
         }
+        return encryptedLogin?.guid
     }
 
     // Create a [LoginEntry] for the edit login dialog
@@ -141,7 +150,7 @@ open class SavedLoginsStorageController(
     private suspend fun save(guid: String, loginEntryToSave: LoginEntry) {
         try {
             val encryptedLogin = passwordsStorage.update(guid, loginEntryToSave)
-            syncAndUpdateList(passwordsStorage.decryptLogin(encryptedLogin))
+            updateLoginInState(guid, passwordsStorage.decryptLogin(encryptedLogin))
         } catch (loginException: LoginsApiException) {
             when (loginException) {
                 is NoSuchRecordException,
@@ -162,12 +171,23 @@ open class SavedLoginsStorageController(
         }
     }
 
-    private fun syncAndUpdateList(updatedLogin: Login) {
+    private fun addLoginToState(updatedLogin: Login) {
         val login = updatedLogin.mapToSavedLogin()
         loginsFragmentStore.dispatch(
-            LoginsAction.UpdateLoginsList(
-                listOf(login),
-            ),
+            LoginsAction.AddLogin(login),
+        )
+    }
+
+    private fun updateLoginInState(loginId: String, updatedLogin: Login) {
+        val login = updatedLogin.mapToSavedLogin()
+        loginsFragmentStore.dispatch(
+            LoginsAction.UpdateLogin(loginId, login),
+        )
+    }
+
+    private fun deleteLoginFromState(loginId: String) {
+        loginsFragmentStore.dispatch(
+            LoginsAction.DeleteLogin(loginId),
         )
     }
 

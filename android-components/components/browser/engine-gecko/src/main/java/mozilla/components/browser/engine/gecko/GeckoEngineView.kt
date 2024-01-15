@@ -12,6 +12,7 @@ import android.util.AttributeSet
 import android.widget.FrameLayout
 import androidx.annotation.VisibleForTesting
 import androidx.core.view.ViewCompat
+import mozilla.components.browser.engine.gecko.activity.GeckoViewActivityContextDelegate
 import mozilla.components.browser.engine.gecko.selection.GeckoSelectionActionDelegate
 import mozilla.components.concept.engine.EngineSession
 import mozilla.components.concept.engine.EngineView
@@ -20,6 +21,7 @@ import mozilla.components.concept.engine.selection.SelectionActionDelegate
 import org.mozilla.geckoview.BasicSelectionActionDelegate
 import org.mozilla.geckoview.GeckoResult
 import org.mozilla.geckoview.GeckoSession
+import java.lang.ref.WeakReference
 
 /**
  * Gecko-based EngineView implementation.
@@ -94,6 +96,27 @@ class GeckoEngineView @JvmOverloads constructor(
 
     init {
         addView(geckoView)
+
+        /**
+         * With the current design, we have a [NestedGeckoView] inside this
+         * [GeckoEngineView]. In our supported embedders, we wrap this with the
+         * AndroidX `SwipeRefreshLayout` to enable features like Pull-To-Refresh:
+         *
+         * ```
+         *  SwipeRefreshLayout
+         * └── GeckoEngineView
+         *    └── NestedGeckoView
+         * ```
+         *
+         * `SwipeRefreshLayout` only looks at the direct child to see if it has nested scrolling
+         * enabled. As we embed [NestedGeckoView] inside [GeckoEngineView], we change the hierarchy
+         * so that [NestedGeckoView] is no longer the direct child of `SwipeRefreshLayout`.
+         *
+         * To fix this we enable nested scrolling on the GeckoEngineView to emulate this
+         * information. This is required information for `View.requestDisallowInterceptTouchEvent`
+         * to work correctly in the [NestedGeckoView].
+         */
+        isNestedScrollingEnabled = true
     }
 
     /**
@@ -176,6 +199,10 @@ class GeckoEngineView @JvmOverloads constructor(
 
     override fun setDynamicToolbarMaxHeight(height: Int) {
         geckoView.setDynamicToolbarMaxHeight(height)
+    }
+
+    override fun setActivityContext(context: Context?) {
+        geckoView.activityContextDelegate = GeckoViewActivityContextDelegate(WeakReference(context))
     }
 
     @Suppress("TooGenericExceptionCaught")

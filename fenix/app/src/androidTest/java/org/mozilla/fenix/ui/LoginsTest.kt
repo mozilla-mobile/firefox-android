@@ -1,37 +1,55 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.ui
 
 import android.os.Build
 import android.view.autofill.AutofillManager
 import androidx.core.net.toUri
-import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.uiautomator.UiDevice
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
+import org.mozilla.fenix.helpers.MatcherHelper
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdAndText
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithText
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.helpers.TestHelper.exitMenu
+import org.mozilla.fenix.helpers.TestHelper.mDevice
+import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.TestHelper.restartApp
+import org.mozilla.fenix.helpers.TestHelper.scrollToElementByText
+import org.mozilla.fenix.helpers.TestHelper.verifySnackBarText
 import org.mozilla.fenix.ui.robots.browserScreen
+import org.mozilla.fenix.ui.robots.clearTextFieldItem
+import org.mozilla.fenix.ui.robots.clickPageObject
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
+import org.mozilla.fenix.ui.robots.setPageObjectText
 
+/**
+ * Tests for verifying:
+ * - the Logins and Passwords menu and sub-menus.
+ * - save login prompts.
+ * - saving logins based on the user's preferences.
+ */
 class LoginsTest {
-    private lateinit var mDevice: UiDevice
     private lateinit var mockWebServer: MockWebServer
 
     @get:Rule
-    val activityTestRule = HomeActivityIntentTestRule.withDefaultSettingsOverrides(skipOnboarding = true)
+    val activityTestRule =
+        HomeActivityIntentTestRule.withDefaultSettingsOverrides(skipOnboarding = true)
 
     @Before
     fun setUp() {
-        mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-
         mockWebServer = MockWebServer().apply {
             dispatcher = AndroidAssetDispatcher()
             start()
@@ -49,21 +67,84 @@ class LoginsTest {
         mockWebServer.shutdown()
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2092713
+    // Tests the Logins and passwords menu items and default values
+    @Test
+    fun loginsAndPasswordsSettingsItemsTest() {
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+            // Necessary to scroll a little bit for all screen sizes
+            scrollToElementByText("Logins and passwords")
+        }.openLoginsAndPasswordSubMenu {
+            verifyDefaultView()
+            verifyAutofillInFirefoxToggle(true)
+            verifyAutofillLoginsInOtherAppsToggle(false)
+        }
+    }
+
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/517816
+    // Tests only for initial state without signing in.
+    // For tests after signing in, see SyncIntegration test suite
+    @Test
+    fun verifySavedLoginsListTest() {
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+            // Necessary to scroll a little bit for all screen sizes
+            scrollToElementByText("Logins and passwords")
+        }.openLoginsAndPasswordSubMenu {
+            verifyDefaultView()
+        }.openSavedLogins {
+            verifySecurityPromptForLogins()
+            tapSetupLater()
+            // Verify that logins list is empty
+            verifyEmptySavedLoginsListView()
+        }
+    }
+
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2092925
+    @Test
+    fun verifySyncLoginsOptionsTest() {
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+            // Necessary to scroll a little bit for all screen sizes
+            scrollToElementByText("Logins and passwords")
+        }.openLoginsAndPasswordSubMenu {
+        }.openSyncLogins {
+            verifyReadyToScanOption()
+            verifyUseEmailOption()
+        }
+    }
+
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/523839
     @Test
     fun saveLoginFromPromptTest() {
         val saveLoginTest =
             TestAssetHelper.getSaveLoginAsset(mockWebServer)
 
+        homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openLoginsAndPasswordSubMenu {
+        }.openSaveLoginsAndPasswordsOptions {
+            verifySaveLoginsOptionsView()
+        }
+
+        exitMenu()
+
         navigationToolbar {
         }.enterURLAndEnterToBrowser(saveLoginTest.url) {
             clickSubmitLoginButton()
+            verifySaveLoginPromptIsDisplayed()
             // Click save to save the login
-            saveLoginFromPrompt("Save")
+            clickPageObject(itemWithText("Save"))
         }
         browserScreen {
         }.openThreeDotMenu {
         }.openSettings {
-            TestHelper.scrollToElementByText("Logins and passwords")
+            scrollToElementByText("Logins and passwords")
         }.openLoginsAndPasswordSubMenu {
             verifyDefaultView()
         }.openSavedLogins {
@@ -74,9 +155,9 @@ class LoginsTest {
         }
     }
 
-    @SmokeTest
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/960412
     @Test
-    fun openWebsiteForSavedLoginTest() {
+    fun openLoginWebsiteInBrowserTest() {
         val loginPage = "https://mozilla-mobile.github.io/testapp/loginForm"
         val originWebsite = "mozilla-mobile.github.io"
         val userName = "test"
@@ -84,8 +165,12 @@ class LoginsTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(loginPage.toUri()) {
-            fillAndSubmitLoginCredentials(userName, password)
-            saveLoginFromPrompt("Save")
+            setPageObjectText(itemWithResId("username"), userName)
+            setPageObjectText(itemWithResId("password"), password)
+            clickPageObject(itemWithResId("submit"))
+            verifySaveLoginPromptIsDisplayed()
+            clickPageObject(itemWithText("Save"))
+            mDevice.waitForIdle()
         }.openThreeDotMenu {
         }.openSettings {
         }.openLoginsAndPasswordSubMenu {
@@ -98,6 +183,7 @@ class LoginsTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/517817
     @Test
     fun neverSaveLoginFromPromptTest() {
         val saveLoginTest = TestAssetHelper.getSaveLoginAsset(mockWebServer)
@@ -106,7 +192,8 @@ class LoginsTest {
         }.enterURLAndEnterToBrowser(saveLoginTest.url) {
             clickSubmitLoginButton()
             // Don't save the login, add to exceptions
-            saveLoginFromPrompt("Never save")
+            clickPageObject(itemWithText("Never save"))
+            mDevice.waitForIdle()
         }.openThreeDotMenu {
         }.openSettings {
         }.openLoginsAndPasswordSubMenu {
@@ -115,6 +202,7 @@ class LoginsTest {
             verifySecurityPromptForLogins()
             tapSetupLater()
             // Verify that the login list is empty
+            verifyEmptySavedLoginsListView()
             verifyNotSavedLoginFromPrompt()
         }.goBack {
         }.openLoginExceptions {
@@ -123,27 +211,30 @@ class LoginsTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1508171
     @SmokeTest
     @Test
-    fun updateSavedLoginTest() {
+    fun verifyUpdatedLoginIsSavedTest() {
         val saveLoginTest =
             TestAssetHelper.getSaveLoginAsset(mockWebServer)
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(saveLoginTest.url) {
             clickSubmitLoginButton()
+            verifySaveLoginPromptIsDisplayed()
             // Click Save to save the login
-            saveLoginFromPrompt("Save")
+            clickPageObject(itemWithText("Save"))
         }.openNavigationToolbar {
         }.enterURLAndEnterToBrowser(saveLoginTest.url) {
             enterPassword("test")
+            mDevice.waitForIdle()
             clickSubmitLoginButton()
-            verifyUpdateLoginPromptIsShown()
+            verifySaveLoginPromptIsDisplayed()
             // Click Update to change the saved password
-            saveLoginFromPrompt("Update")
+            clickPageObject(itemWithText("Update"))
         }.openThreeDotMenu {
         }.openSettings {
-            TestHelper.scrollToElementByText("Logins and passwords")
+            scrollToElementByText("Logins and passwords")
         }.openLoginsAndPasswordSubMenu {
         }.openSavedLogins {
             verifySecurityPromptForLogins()
@@ -156,27 +247,44 @@ class LoginsTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1049971
     @SmokeTest
     @Test
     fun verifyMultipleLoginsSelectionsTest() {
         val loginPage = "https://mozilla-mobile.github.io/testapp/v2.0/loginForm.html"
+        val firstUser = "mozilla"
+        val firstPass = "firefox"
+        val secondUser = "fenix"
+        val secondPass = "pass"
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(loginPage.toUri()) {
-            fillAndSubmitLoginCredentials("mozilla", "firefox")
-            saveLoginFromPrompt("Save")
-            fillAndSubmitLoginCredentials("firefox", "mozilla")
-            saveLoginFromPrompt("Save")
-            clearUserNameLoginCredential()
+            setPageObjectText(itemWithResId("username"), firstUser)
+            setPageObjectText(itemWithResId("password"), firstPass)
+            clickPageObject(itemWithResId("submit"))
+            verifySaveLoginPromptIsDisplayed()
+            clickPageObject(itemWithText("Save"))
+            setPageObjectText(itemWithResId("username"), secondUser)
+            setPageObjectText(itemWithResId("password"), secondPass)
+            clickPageObject(itemWithResId("submit"))
+            verifySaveLoginPromptIsDisplayed()
+            clickPageObject(itemWithText("Save"))
+            clearTextFieldItem(itemWithResId("username"))
             clickSuggestedLoginsButton()
-            verifySuggestedUserName("firefox")
-            verifySuggestedUserName("mozilla")
-            clickLoginSuggestion("mozilla")
-            clickShowPasswordButton()
-            verifyPrefilledLoginCredentials("mozilla", "firefox", true)
+            verifySuggestedUserName(firstUser)
+            verifySuggestedUserName(secondUser)
+            clickPageObject(
+                itemWithResIdAndText(
+                    "$packageName:id/username",
+                    firstUser,
+                ),
+            )
+            clickPageObject(itemWithResId("togglePassword"))
+            verifyPrefilledLoginCredentials(firstUser, firstPass, true)
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/875849
     @Test
     fun verifyEditLoginsViewTest() {
         val loginPage = "https://mozilla-mobile.github.io/testapp/loginForm"
@@ -184,8 +292,12 @@ class LoginsTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(loginPage.toUri()) {
-            fillAndSubmitLoginCredentials("mozilla", "firefox")
-            saveLoginFromPrompt("Save")
+            setPageObjectText(itemWithResId("username"), "mozilla")
+            setPageObjectText(itemWithResId("password"), "firefox")
+            clickPageObject(itemWithResId("submit"))
+            verifySaveLoginPromptIsDisplayed()
+            clickPageObject(itemWithText("Save"))
+            mDevice.waitForIdle()
         }.openThreeDotMenu {
         }.openSettings {
         }.openLoginsAndPasswordSubMenu {
@@ -201,6 +313,7 @@ class LoginsTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/875851
     @Test
     fun verifyEditedLoginsAreSavedTest() {
         val loginPage = "https://mozilla-mobile.github.io/testapp/v2.0/loginForm.html"
@@ -208,8 +321,12 @@ class LoginsTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(loginPage.toUri()) {
-            fillAndSubmitLoginCredentials("mozilla", "firefox")
-            saveLoginFromPrompt("Save")
+            setPageObjectText(itemWithResId("username"), "mozilla")
+            setPageObjectText(itemWithResId("password"), "firefox")
+            clickPageObject(itemWithResId("submit"))
+            verifySaveLoginPromptIsDisplayed()
+            clickPageObject(itemWithText("Save"))
+            mDevice.waitForIdle()
         }.openThreeDotMenu {
         }.openSettings {
         }.openLoginsAndPasswordSubMenu {
@@ -229,20 +346,25 @@ class LoginsTest {
         }.openThreeDotMenu {
         }.refreshPage {
             waitForPageToLoad()
-            clickShowPasswordButton()
+            clickPageObject(itemWithResId("togglePassword"))
             verifyPrefilledLoginCredentials("android", "fenix", true)
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2266452
     @Test
-    fun verifyLoginWithNoUserNameCanBeSavedTest() {
+    fun verifyLoginWithNoUserNameCanNotBeSavedTest() {
         val loginPage = "https://mozilla-mobile.github.io/testapp/loginForm"
         val originWebsite = "mozilla-mobile.github.io"
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(loginPage.toUri()) {
-            fillAndSubmitLoginCredentials("mozilla", "firefox")
-            saveLoginFromPrompt("Save")
+            setPageObjectText(itemWithResId("username"), "mozilla")
+            setPageObjectText(itemWithResId("password"), "firefox")
+            clickPageObject(itemWithResId("submit"))
+            verifySaveLoginPromptIsDisplayed()
+            clickPageObject(itemWithText("Save"))
+            mDevice.waitForIdle()
         }.openThreeDotMenu {
         }.openSettings {
         }.openLoginsAndPasswordSubMenu {
@@ -252,10 +374,14 @@ class LoginsTest {
             clickThreeDotButton(activityTestRule)
             clickEditLoginButton()
             clickClearUserNameButton()
-            saveEditedLogin()
+            verifyUserNameRequiredErrorMessage()
+            verifySaveLoginButtonIsEnabled(false)
+            clickGoBackButton()
+            verifyLoginItemUsername("mozilla")
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2266453
     @Test
     fun verifyLoginWithoutPasswordCanNotBeSavedTest() {
         val loginPage = "https://mozilla-mobile.github.io/testapp/loginForm"
@@ -263,8 +389,12 @@ class LoginsTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(loginPage.toUri()) {
-            fillAndSubmitLoginCredentials("mozilla", "firefox")
-            saveLoginFromPrompt("Save")
+            setPageObjectText(itemWithResId("username"), "mozilla")
+            setPageObjectText(itemWithResId("password"), "firefox")
+            clickPageObject(itemWithResId("submit"))
+            verifySaveLoginPromptIsDisplayed()
+            clickPageObject(itemWithText("Save"))
+            mDevice.waitForIdle()
         }.openThreeDotMenu {
         }.openSettings {
         }.openLoginsAndPasswordSubMenu {
@@ -275,12 +405,14 @@ class LoginsTest {
             clickEditLoginButton()
             clickClearPasswordButton()
             verifyPasswordRequiredErrorMessage()
-            saveEditedLogin()
+            verifySaveLoginButtonIsEnabled(false)
+            clickGoBackButton()
             revealPassword()
             verifyPasswordSaved("firefox")
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/876531
     @Test
     fun verifyEditModeDismissalDoesNotSaveLoginCredentialsTest() {
         val loginPage = "https://mozilla-mobile.github.io/testapp/loginForm"
@@ -288,8 +420,12 @@ class LoginsTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(loginPage.toUri()) {
-            fillAndSubmitLoginCredentials("mozilla", "firefox")
-            saveLoginFromPrompt("Save")
+            setPageObjectText(itemWithResId("username"), "mozilla")
+            setPageObjectText(itemWithResId("password"), "firefox")
+            clickPageObject(itemWithResId("submit"))
+            verifySaveLoginPromptIsDisplayed()
+            clickPageObject(itemWithText("Save"))
+            mDevice.waitForIdle()
         }.openThreeDotMenu {
         }.openSettings {
         }.openLoginsAndPasswordSubMenu {
@@ -307,6 +443,7 @@ class LoginsTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/876532
     @Test
     fun verifyDeleteLoginButtonTest() {
         val loginPage = TestAssetHelper.getSaveLoginAsset(mockWebServer)
@@ -314,7 +451,8 @@ class LoginsTest {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(loginPage.url) {
             clickSubmitLoginButton()
-            saveLoginFromPrompt("Save")
+            clickPageObject(itemWithText("Save"))
+            mDevice.waitForIdle()
         }.openThreeDotMenu {
         }.openSettings {
         }.openLoginsAndPasswordSubMenu {
@@ -331,11 +469,13 @@ class LoginsTest {
             clickDeleteLoginButton()
             verifyLoginDeletionPrompt()
             clickConfirmDeleteLogin()
-            // The account remains displayed, see: https://github.com/mozilla-mobile/fenix/issues/23212
+            // The account remains displayed, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1812431
             // verifyNotSavedLoginFromPrompt()
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/517818
+    @SmokeTest
     @Test
     fun verifyNeverSaveLoginOptionTest() {
         val loginPage = TestAssetHelper.getSaveLoginAsset(mockWebServer)
@@ -358,14 +498,18 @@ class LoginsTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/517819
     @Test
     fun verifyAutofillToggleTest() {
         val loginPage = "https://mozilla-mobile.github.io/testapp/v2.0/loginForm.html"
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(loginPage.toUri()) {
-            fillAndSubmitLoginCredentials("mozilla", "firefox")
-            saveLoginFromPrompt("Save")
+            setPageObjectText(itemWithResId("username"), "mozilla")
+            setPageObjectText(itemWithResId("password"), "firefox")
+            clickPageObject(itemWithResId("submit"))
+            verifySaveLoginPromptIsDisplayed()
+            clickPageObject(itemWithText("Save"))
         }.openTabDrawer {
             closeTab()
         }
@@ -381,9 +525,9 @@ class LoginsTest {
         }.openThreeDotMenu {
         }.openSettings {
         }.openLoginsAndPasswordSubMenu {
-            verifyAutofillToggle(true)
-            clickAutofillOption()
-            verifyAutofillToggle(false)
+            verifyAutofillInFirefoxToggle(true)
+            clickAutofillInFirefoxOption()
+            verifyAutofillInFirefoxToggle(false)
         }.goBack {
         }
 
@@ -395,37 +539,32 @@ class LoginsTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/593768
+    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1812995")
     @Test
-    fun verifyLoginIsNotUpdatedTest() {
+    fun doNotSaveOptionWillNotUpdateALoginTest() {
         val loginPage = "https://mozilla-mobile.github.io/testapp/v2.0/loginForm.html"
         val originWebsite = "mozilla-mobile.github.io"
 
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openLoginsAndPasswordSubMenu {
-        }.openSaveLoginsAndPasswordsOptions {
-            verifySaveLoginsOptionsView()
-            verifyAskToSaveRadioButton(true)
-            verifyNeverSaveSaveRadioButton(false)
-        }
-
-        exitMenu()
-
         navigationToolbar {
         }.enterURLAndEnterToBrowser(loginPage.toUri()) {
-            fillAndSubmitLoginCredentials("mozilla", "firefox")
-            saveLoginFromPrompt("Save")
+            setPageObjectText(itemWithResId("username"), "mozilla")
+            setPageObjectText(itemWithResId("password"), "firefox")
+            clickPageObject(itemWithResId("submit"))
+            verifySaveLoginPromptIsDisplayed()
+            clickPageObject(itemWithText("Save"))
         }.openTabDrawer {
             closeTab()
         }
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(loginPage.toUri()) {
-            clickShowPasswordButton()
-            fillAndSubmitLoginCredentials("mozilla", "fenix")
-            verifyUpdateLoginPromptIsShown()
-            saveLoginFromPrompt("Don’t update")
+            clickPageObject(itemWithResId("togglePassword"))
+            setPageObjectText(itemWithResId("username"), "mozilla")
+            setPageObjectText(itemWithResId("password"), "fenix")
+            clickPageObject(itemWithResId("submit"))
+            verifySaveLoginPromptIsDisplayed()
+            clickPageObject(itemWithText("Don’t update"))
         }.openThreeDotMenu {
         }.openSettings {
         }.openLoginsAndPasswordSubMenu {
@@ -437,8 +576,9 @@ class LoginsTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2090455
     @Test
-    fun verifySearchLoginsTest() {
+    fun searchLoginsByUsernameTest() {
         val firstLoginPage = TestAssetHelper.getSaveLoginAsset(mockWebServer)
         val secondLoginPage = "https://mozilla-mobile.github.io/testapp/v2.0/loginForm.html"
         val originWebsite = "mozilla-mobile.github.io"
@@ -446,25 +586,87 @@ class LoginsTest {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(firstLoginPage.url) {
             clickSubmitLoginButton()
-            saveLoginFromPrompt("Save")
+            verifySaveLoginPromptIsDisplayed()
+            clickPageObject(itemWithText("Save"))
         }.openNavigationToolbar {
         }.enterURLAndEnterToBrowser(secondLoginPage.toUri()) {
-            fillAndSubmitLoginCredentials("mozilla", "firefox")
-            saveLoginFromPrompt("Save")
+            setPageObjectText(itemWithResId("username"), "android")
+            setPageObjectText(itemWithResId("password"), "firefox")
+            clickPageObject(itemWithResId("submit"))
+            verifySaveLoginPromptIsDisplayed()
+            clickPageObject(itemWithText("Save"))
         }.openThreeDotMenu {
         }.openSettings {
         }.openLoginsAndPasswordSubMenu {
         }.openSavedLogins {
             tapSetupLater()
             clickSearchLoginButton()
-            searchLogin("mozilla")
+            searchLogin("ANDROID")
             viewSavedLoginDetails(originWebsite)
-            verifyLoginItemUsername("mozilla")
+            verifyLoginItemUsername("android")
+            revealPassword()
+            verifyPasswordSaved("firefox")
+        }.goBackToSavedLogins {
+            searchLogin("android")
+            viewSavedLoginDetails(originWebsite)
+            verifyLoginItemUsername("android")
+            revealPassword()
+            verifyPasswordSaved("firefox")
+        }.goBackToSavedLogins {
+            searchLogin("AnDrOiD")
+            viewSavedLoginDetails(originWebsite)
+            verifyLoginItemUsername("android")
             revealPassword()
             verifyPasswordSaved("firefox")
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/608834
+    @Test
+    fun searchLoginsByUrlTest() {
+        val firstLoginPage = TestAssetHelper.getSaveLoginAsset(mockWebServer)
+        val secondLoginPage = "https://mozilla-mobile.github.io/testapp/v2.0/loginForm.html"
+        val originWebsite = "mozilla-mobile.github.io"
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(firstLoginPage.url) {
+            clickSubmitLoginButton()
+            verifySaveLoginPromptIsDisplayed()
+            clickPageObject(itemWithText("Save"))
+        }.openNavigationToolbar {
+        }.enterURLAndEnterToBrowser(secondLoginPage.toUri()) {
+            setPageObjectText(itemWithResId("username"), "android")
+            setPageObjectText(itemWithResId("password"), "firefox")
+            clickPageObject(itemWithResId("submit"))
+            verifySaveLoginPromptIsDisplayed()
+            clickPageObject(itemWithText("Save"))
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openLoginsAndPasswordSubMenu {
+        }.openSavedLogins {
+            tapSetupLater()
+            clickSearchLoginButton()
+            searchLogin("MOZILLA")
+            viewSavedLoginDetails(originWebsite)
+            verifyLoginItemUsername("android")
+            revealPassword()
+            verifyPasswordSaved("firefox")
+        }.goBackToSavedLogins {
+            searchLogin("mozilla")
+            viewSavedLoginDetails(originWebsite)
+            verifyLoginItemUsername("android")
+            revealPassword()
+            verifyPasswordSaved("firefox")
+        }.goBackToSavedLogins {
+            searchLogin("MoZiLlA")
+            viewSavedLoginDetails(originWebsite)
+            verifyLoginItemUsername("android")
+            revealPassword()
+            verifyPasswordSaved("firefox")
+        }
+    }
+
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2266441
     @Test
     fun verifyLastUsedLoginSortingOptionTest() {
         val firstLoginPage = TestAssetHelper.getSaveLoginAsset(mockWebServer)
@@ -474,11 +676,15 @@ class LoginsTest {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(firstLoginPage.url) {
             clickSubmitLoginButton()
-            saveLoginFromPrompt("Save")
+            verifySaveLoginPromptIsDisplayed()
+            clickPageObject(itemWithText("Save"))
         }.openNavigationToolbar {
         }.enterURLAndEnterToBrowser(secondLoginPage.toUri()) {
-            fillAndSubmitLoginCredentials("mozilla", "firefox")
-            saveLoginFromPrompt("Save")
+            setPageObjectText(itemWithResId("username"), "mozilla")
+            setPageObjectText(itemWithResId("password"), "firefox")
+            clickPageObject(itemWithResId("submit"))
+            verifySaveLoginPromptIsDisplayed()
+            clickPageObject(itemWithText("Save"))
         }.openThreeDotMenu {
         }.openSettings {
         }.openLoginsAndPasswordSubMenu {
@@ -487,12 +693,12 @@ class LoginsTest {
             clickSavedLoginsChevronIcon()
             verifyLoginsSortingOptions()
             clickLastUsedSortingOption()
-            verifySortedLogin(activityTestRule, 0, originWebsite)
-            verifySortedLogin(activityTestRule, 1, firstLoginPage.url.authority.toString())
+            verifySortedLogin(0, originWebsite)
+            verifySortedLogin(1, firstLoginPage.url.authority.toString())
         }.goBack {
         }.openSavedLogins {
-            verifySortedLogin(activityTestRule, 0, originWebsite)
-            verifySortedLogin(activityTestRule, 1, firstLoginPage.url.authority.toString())
+            verifySortedLogin(0, originWebsite)
+            verifySortedLogin(1, firstLoginPage.url.authority.toString())
         }
 
         restartApp(activityTestRule)
@@ -502,11 +708,12 @@ class LoginsTest {
         }.openSettings {
         }.openLoginsAndPasswordSubMenu {
         }.openSavedLogins {
-            verifySortedLogin(activityTestRule, 0, originWebsite)
-            verifySortedLogin(activityTestRule, 1, firstLoginPage.url.authority.toString())
+            verifySortedLogin(0, originWebsite)
+            verifySortedLogin(1, firstLoginPage.url.authority.toString())
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2266442
     @Test
     fun verifyAlphabeticalLoginSortingOptionTest() {
         val firstLoginPage = TestAssetHelper.getSaveLoginAsset(mockWebServer)
@@ -516,22 +723,27 @@ class LoginsTest {
         navigationToolbar {
         }.enterURLAndEnterToBrowser(firstLoginPage.url) {
             clickSubmitLoginButton()
-            saveLoginFromPrompt("Save")
+            verifySaveLoginPromptIsDisplayed()
+            clickPageObject(itemWithText("Save"))
         }.openNavigationToolbar {
         }.enterURLAndEnterToBrowser(secondLoginPage.toUri()) {
-            fillAndSubmitLoginCredentials("mozilla", "firefox")
-            saveLoginFromPrompt("Save")
+            setPageObjectText(itemWithResId("username"), "mozilla")
+            setPageObjectText(itemWithResId("password"), "firefox")
+            clickPageObject(itemWithResId("submit"))
+            verifySaveLoginPromptIsDisplayed()
+            clickPageObject(itemWithText("Save"))
+            mDevice.waitForIdle()
         }.openThreeDotMenu {
         }.openSettings {
         }.openLoginsAndPasswordSubMenu {
         }.openSavedLogins {
             tapSetupLater()
-            verifySortedLogin(activityTestRule, 0, firstLoginPage.url.authority.toString())
-            verifySortedLogin(activityTestRule, 1, originWebsite)
+            verifySortedLogin(0, firstLoginPage.url.authority.toString())
+            verifySortedLogin(1, originWebsite)
         }.goBack {
         }.openSavedLogins {
-            verifySortedLogin(activityTestRule, 0, firstLoginPage.url.authority.toString())
-            verifySortedLogin(activityTestRule, 1, originWebsite)
+            verifySortedLogin(0, firstLoginPage.url.authority.toString())
+            verifySortedLogin(1, originWebsite)
         }
 
         restartApp(activityTestRule)
@@ -541,11 +753,12 @@ class LoginsTest {
         }.openSettings {
         }.openLoginsAndPasswordSubMenu {
         }.openSavedLogins {
-            verifySortedLogin(activityTestRule, 0, firstLoginPage.url.authority.toString())
-            verifySortedLogin(activityTestRule, 1, originWebsite)
+            verifySortedLogin(0, firstLoginPage.url.authority.toString())
+            verifySortedLogin(1, originWebsite)
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1518435
     @Test
     fun verifyAddLoginManuallyTest() {
         val loginPage = "https://mozilla-mobile.github.io/testapp/v2.0/loginForm.html"
@@ -575,12 +788,35 @@ class LoginsTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(loginPage.toUri()) {
-            clickUsernameTextField()
+            clickPageObject(MatcherHelper.itemWithResId("username"))
             clickSuggestedLoginsButton()
             verifySuggestedUserName("mozilla")
-            clickLoginSuggestion("mozilla")
-            clickShowPasswordButton()
+            clickPageObject(itemWithResIdAndText("$packageName:id/username", "mozilla"))
+            clickPageObject(itemWithResId("togglePassword"))
             verifyPrefilledLoginCredentials("mozilla", "firefox", true)
+        }
+    }
+
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2068215
+    @Test
+    fun verifyCopyLoginCredentialsToClipboardTest() {
+        val firstLoginPage = TestAssetHelper.getSaveLoginAsset(mockWebServer)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(firstLoginPage.url) {
+            clickSubmitLoginButton()
+            verifySaveLoginPromptIsDisplayed()
+            clickPageObject(itemWithText("Save"))
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.openLoginsAndPasswordSubMenu {
+        }.openSavedLogins {
+            tapSetupLater()
+            viewSavedLoginDetails("test@example.com")
+            clickCopyUserNameButton()
+            verifySnackBarText("Username copied to clipboard")
+            clickCopyPasswordButton()
+            verifySnackBarText("Password copied to clipboard")
         }
     }
 }

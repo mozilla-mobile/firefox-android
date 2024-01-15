@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Mozilla Android Components - Web Compatibility Interventions",
   "description": "Urgent post-release fixes for web compatibility.",
-  "version": "111.0.0",
+  "version": "123.0.0",
   "browser_specific_settings": {
     "gecko": {
       "id": "webcompat@mozilla.org",
@@ -16,6 +16,11 @@
       "parent": {
         "scopes": ["addon_parent"],
         "script": "experiment-apis/aboutConfigPrefs.js",
+        "paths": [["aboutConfigPrefs"]]
+      },
+      "child": {
+        "scopes": ["addon_child"],
+        "script": "experiment-apis/aboutConfigPrefsChild.js",
         "paths": [["aboutConfigPrefs"]]
       }
     },
@@ -61,10 +66,11 @@
     }
   },
 
-  "content_security_policy": "script-src 'self' 'sha256-MmZkN2QaIHhfRWPZ8TVRjijTn5Ci1iEabtTEWrt9CCo='; default-src 'self'; base-uri moz-extension://*; object-src 'none'",
+  "content_security_policy": "script-src 'self' 'sha256-PeZc2H1vv7M8NXqlFyNbN4y4oM6wXmYEbf73m+Aqpak='; default-src 'self'; base-uri moz-extension://*; object-src 'none'",
 
   "permissions": [
     "mozillaAddons",
+    "scripting",
     "tabs",
     "webNavigation",
     "webRequest",
@@ -142,8 +148,10 @@
     "shims/private-browsing-web-api-fixes.js",
     "shims/rambler-authenticator.js",
     "shims/rich-relevance.js",
+    "shims/salesforce.js",
     "shims/spotify-embed.js",
     "shims/tracking-pixel.png",
+    "shims/tsn-ca.js",
     "shims/vast2.xml",
     "shims/vast3.xml",
     "shims/vidible.js",

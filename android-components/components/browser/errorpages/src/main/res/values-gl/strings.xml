@@ -1,13 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <!-- The default document title of an error page (i.e., the contents of the `<title>` tag). -->
-    <string name="mozac_browser_errorpages_page_title">Produciuse un problema ao cargar a páxina</string>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:moz="http://mozac.org/tools">
 
     <!-- The button that appears at the bottom of an error page. -->
     <string name="mozac_browser_errorpages_page_refresh">Tentar de novo</string>
-
-    <!-- The button that appears at the bottom of an error page. -->
-    <string name="mozac_browser_errorpages_page_go_back">Retroceder</string>
 
     <!-- The document title and heading of an error page shown when a website cannot be loaded for an unknown reason. -->
     <string name="mozac_browser_errorpages_generic_title">Non é posíbel rematar a solicitude</string>
@@ -48,6 +43,28 @@
     <string name="mozac_browser_errorpages_security_bad_cert_back">Retroceder (recomendado)</string>
     <!-- The text shown inside the advanced options button used to bypass the invalid SSL certificate. It's only shown if the user has expanded the advanced options. -->
     <string name="mozac_browser_errorpages_security_bad_cert_accept_temporary">Aceptar o risco e continuar</string>
+
+    <!-- The document title and heading of the error page shown when a website uses HSTS. -->
+    <string name="mozac_browser_errorpages_security_bad_hsts_cert_title">Este sitio web require unha conexión segura.</string>
+
+    <!-- The error message shown when a website uses HSTS. -->
+    <string name="mozac_browser_errorpages_security_bad_hsts_cert_message"><![CDATA[
+      <ul>
+         <li>A páxina que está tentando ver non se pode mostrar porque este sitio web require unha conexión segura.</li>
+         <li>O máis probable é que o problema estea relacionado co sitio web e non pode facer nada para resolvelo.</li>
+         <li>Pode notificarlle o problema ao administrador do sitio web.</li>
+      </ul>
+    ]]></string>
+
+    <!-- The text shown inside the advanced button used to expand the advanced options. It's only shown when a website uses HSTS. -->
+    <string name="mozac_browser_errorpages_security_bad_hsts_cert_advanced">Avanzadas…</string>
+
+    <!-- The advanced certificate information shown when a website uses HSTS. The %1$s will be replaced by the website URL and %2$s will be replaced by the app name. It's only shown when a website uses HSTS. -->
+    <string name="mozac_browser_errorpages_security_bad_hsts_cert_techInfo2"><![CDATA[
+        <label> <b>%1$s</b> ten unha política de seguranza chamada HTTP Strict Transport Security (HSTS), o que significa que <b>%2$s</b> só se pode conectar a ela de forma segura. Non pode engadir unha excepción para visitar este sitio. </label>
+    ]]></string>
+    <!-- The text shown inside the advanced options button used to go back. It's only shown if the user has expanded the advanced options. -->
+    <string name="mozac_browser_errorpages_security_bad_hsts_cert_back">Retroceder</string>
 
     <!-- The document title and heading of the error page shown when the user's network connection is interrupted while connecting to a website. -->
     <string name="mozac_browser_errorpages_net_interrupt_title">Interrompeuse a conexión</string>
@@ -281,4 +298,11 @@ atopalo.</p>
     <string name="mozac_browser_errorpages_safe_phishing_uri_message"><![CDATA[
       <p>Esta páxina web en %1$s ten sido denunciada sitio enganoso e foi bloqueado segundo as súas preferencias de seguranza.</p>
     ]]></string>
+
+    <!-- The title of the error page for websites that do not support HTTPS when HTTPS-Only is turned on -->
+    <string name="mozac_browser_errorpages_httpsonly_title">Sitio seguro non dispoñíbel</string>
+    <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will be replaced with the URL of the website. -->
+    <string name="mozac_browser_errorpages_httpsonly_message"><![CDATA[Vostede activou o modo con só HTTPS para mellorar a seguranza mais non hai unha versión con HTTPS de <em>%1$s</em> dispoñíbel.]]></string>
+    <!-- Button on error page for websites that do not support HTTPS when HTTPS-Only is turned on. Clicking the button allows the user to nevertheless load the website using HTTP. -->
+    <string name="mozac_browser_errorpages_httpsonly_button">Continuar ao sitio con HTTP</string>
 </resources>

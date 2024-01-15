@@ -26,7 +26,7 @@ import org.mozilla.fenix.ext.loadIntoView
 class WebsiteInfoView(
     container: ViewGroup,
     private val icons: BrowserIcons = container.context.components.core.icons,
-    val interactor: WebSiteInfoInteractor,
+    private val interactor: WebSiteInfoInteractor,
 ) {
     val binding = QuicksettingsWebsiteInfoBinding.inflate(
         LayoutInflater.from(container.context),
@@ -57,7 +57,7 @@ class WebsiteInfoView(
 
     @VisibleForTesting
     internal fun bindConnectionDetailsListener() {
-        binding.securityInfo.setOnClickListener {
+        binding.securityInfoContainer.setOnClickListener {
             interactor.onConnectionDetailsClicked()
         }
     }

@@ -16,6 +16,9 @@
     <!-- Option in a dialog for requesting a camera permission, this option will give access to
          back facing camera-->
     <string name="mozac_feature_sitepermissions_back_facing_camera2">Càmera posteriore</string>
+    <!-- Option in a dialog for requesting a camera permission, this option will give access to
+     front facing camera-->
+    <string name="mozac_feature_sitepermissions_selfie_camera2">Càmera anteriore</string>
     <!-- Text for a positive button in a permission request dialog, this button will give
         access to this permission-->
     <string name="mozac_feature_sitepermissions_allow">Permite</string>
@@ -30,6 +33,8 @@
     <string name="mozac_feature_sitepermissions_never_allow">Mai</string>
     <!-- Title of a dialog to require to save data in persistent storage. %1$s will be replaced with the URL of the current page -->
     <string name="mozac_feature_sitepermissions_persistent_storage_title">Boles permìtere a %1$s de cunservare datos in s’archiviatzione permanente?</string>
+    <!-- Title of a dialog to use EME. %1$s will be replaced with the URL of the current page -->
+    <string name="mozac_feature_sitepermissions_media_key_system_access_title">Boles permìtere a %1$s de reprodùere cuntenutos protetos dae DRM?</string>
     <!-- Title of a dialog to use cross origin storage permission. %1$s is the name of the site URL (www.site1.example) trying to track the user's activity.
      %2$s is the name of the site URL (www.site2.example) that the user is visiting.  This is the same domain name displayed in the address bar -->
     <string name="mozac_feature_sitepermissions_storage_access_title">Boles permìtere a %1$s de impreare is testimòngios suos in %2$s?</string>

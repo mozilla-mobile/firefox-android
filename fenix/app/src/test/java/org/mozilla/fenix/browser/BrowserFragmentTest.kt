@@ -29,14 +29,18 @@ import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.browser.toolbar.BrowserToolbar
 import mozilla.components.support.test.ext.joinBlocking
 import mozilla.components.support.test.rule.MainCoroutineRule
+import org.junit.After
+import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.FenixApplication
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.toolbar.BrowserToolbarView
 import org.mozilla.fenix.components.toolbar.ToolbarIntegration
 import org.mozilla.fenix.ext.application
@@ -51,6 +55,7 @@ import org.mozilla.fenix.utils.Settings
 class BrowserFragmentTest {
 
     private lateinit var store: BrowserStore
+    private lateinit var appStore: AppStore
     private lateinit var testTab: TabSessionState
     private lateinit var browserFragment: BrowserFragment
     private lateinit var view: View
@@ -82,7 +87,7 @@ class BrowserFragmentTest {
         every { browserFragment.browserToolbarView } returns mockk(relaxed = true)
         every { browserFragment.activity } returns homeActivity
         every { browserFragment.lifecycle } returns lifecycleOwner.lifecycle
-        every { browserFragment.onboarding } returns onboarding
+        every { context.components.fenixOnboarding } returns onboarding
 
         every { browserFragment.requireContext() } returns context
         every { browserFragment.initializeUI(any(), any()) } returns mockk()
@@ -92,24 +97,15 @@ class BrowserFragmentTest {
         testTab = createTab(url = "https://mozilla.org")
         store = BrowserStore()
         every { context.components.core.store } returns store
+        appStore = AppStore()
+        every { context.components.appStore } returns appStore
+
+        mockkObject(FeatureFlags)
     }
 
-    @Test
-    fun `GIVEN fragment is added WHEN selected tab changes THEN theme is updated`() {
-        browserFragment.observeTabSelection(store)
-        verify(exactly = 0) { browserFragment.updateThemeForSession(testTab) }
-
-        addAndSelectTab(testTab)
-        verify(exactly = 1) { browserFragment.updateThemeForSession(testTab) }
-    }
-
-    @Test
-    fun `GIVEN fragment is removing WHEN selected tab changes THEN theme is not updated`() {
-        every { browserFragment.isRemoving } returns true
-        browserFragment.observeTabSelection(store)
-
-        addAndSelectTab(testTab)
-        verify(exactly = 0) { browserFragment.updateThemeForSession(testTab) }
+    @After
+    fun tearDown() {
+        unmockkObject(FeatureFlags)
     }
 
     @Test
@@ -258,17 +254,17 @@ class BrowserFragmentTest {
     @Test
     fun `WHEN isPullToRefreshEnabledInBrowser is disabled THEN pull down refresh is disabled`() {
         every { context.settings().isPullToRefreshEnabledInBrowser } returns true
-        assert(browserFragment.shouldPullToRefreshBeEnabled(false))
+        assertTrue(browserFragment.shouldPullToRefreshBeEnabled(false))
 
         every { context.settings().isPullToRefreshEnabledInBrowser } returns false
-        assert(!browserFragment.shouldPullToRefreshBeEnabled(false))
+        assertTrue(!browserFragment.shouldPullToRefreshBeEnabled(false))
     }
 
     @Test
     fun `WHEN in fullscreen THEN pull down refresh is disabled`() {
         every { context.settings().isPullToRefreshEnabledInBrowser } returns true
-        assert(browserFragment.shouldPullToRefreshBeEnabled(false))
-        assert(!browserFragment.shouldPullToRefreshBeEnabled(true))
+        assertTrue(browserFragment.shouldPullToRefreshBeEnabled(false))
+        assertTrue(!browserFragment.shouldPullToRefreshBeEnabled(true))
     }
 
     @Test
@@ -419,11 +415,9 @@ class BrowserFragmentTest {
     }
 
     internal class MockedLifecycleOwner(initialState: Lifecycle.State) : LifecycleOwner {
-        val lifecycleRegistry = LifecycleRegistry(this).apply {
+        override val lifecycle: Lifecycle = LifecycleRegistry(this).apply {
             currentState = initialState
         }
-
-        override fun getLifecycle(): Lifecycle = lifecycleRegistry
     }
 
     @Test

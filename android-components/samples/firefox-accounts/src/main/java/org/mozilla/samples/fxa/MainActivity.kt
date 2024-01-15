@@ -18,12 +18,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import mozilla.appservices.fxaclient.FxaConfig
+import mozilla.appservices.fxaclient.FxaServer
 import mozilla.components.concept.sync.Profile
 import mozilla.components.feature.qr.QrFeature
 import mozilla.components.lib.fetch.httpurlconnection.HttpURLConnectionClient
 import mozilla.components.service.fxa.FirefoxAccount
 import mozilla.components.service.fxa.FxaException
-import mozilla.components.service.fxa.ServerConfig
 import mozilla.components.support.base.log.Log
 import mozilla.components.support.base.log.sink.AndroidLogSink
 import mozilla.components.support.rusthttp.RustHttpConfig
@@ -71,7 +72,7 @@ open class MainActivity : AppCompatActivity(), LoginFragment.OnLoginCompleteList
             },
             onScanResult = { pairingUrl ->
                 launch {
-                    val url = account.beginPairingFlow(pairingUrl, scopes)
+                    val url = account.beginPairingFlow(pairingUrl, scopes, SampleFxAEntryPoint.HomeMenu)
                     if (url == null) {
                         Log.log(
                             Log.Priority.ERROR,
@@ -90,7 +91,7 @@ open class MainActivity : AppCompatActivity(), LoginFragment.OnLoginCompleteList
 
         findViewById<View>(R.id.buttonCustomTabs).setOnClickListener {
             launch {
-                account.beginOAuthFlow(scopes)?.let {
+                account.beginOAuthFlow(scopes, SampleFxAEntryPoint.HomeMenu)?.let {
                     openTab(it.url)
                 }
             }
@@ -98,7 +99,7 @@ open class MainActivity : AppCompatActivity(), LoginFragment.OnLoginCompleteList
 
         findViewById<View>(R.id.buttonWebView).setOnClickListener {
             launch {
-                account.beginOAuthFlow(scopes)?.let {
+                account.beginOAuthFlow(scopes, SampleFxAEntryPoint.HomeMenu)?.let {
                     openWebView(it.url)
                 }
             }
@@ -129,7 +130,7 @@ open class MainActivity : AppCompatActivity(), LoginFragment.OnLoginCompleteList
             return it
         }
 
-        val config = ServerConfig(CONFIG_URL, CLIENT_ID, REDIRECT_URL)
+        val config = FxaConfig(FxaServer.Custom(CONFIG_URL), CLIENT_ID, REDIRECT_URL)
         return FirefoxAccount(config)
     }
 
@@ -213,7 +214,7 @@ open class MainActivity : AppCompatActivity(), LoginFragment.OnLoginCompleteList
 
     override fun onBackPressed() {
         if (!qrFeature.onBackPressed()) {
-            super.getOnBackPressedDispatcher().onBackPressed()
+            onBackPressedDispatcher.onBackPressed()
         }
     }
 }

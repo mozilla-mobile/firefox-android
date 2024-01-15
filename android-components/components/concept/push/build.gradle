@@ -10,10 +10,9 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion config.compileSdkVersion
-
     defaultConfig {
         minSdkVersion config.minSdkVersion
+        compileSdk config.compileSdkVersion
         targetSdkVersion config.targetSdkVersion
     }
 
@@ -23,16 +22,15 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    namespace 'mozilla.components.concept.push'
 }
 
 dependencies {
-    implementation Dependencies.kotlin_stdlib
-
     implementation project(':support-base')
 
     testImplementation project(':support-test')
-    testImplementation Dependencies.testing_junit
-    testImplementation Dependencies.testing_mockito
+    testImplementation ComponentsDependencies.testing_junit
 }
 
 apply from: '../../../android-lint.gradle'

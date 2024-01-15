@@ -8,11 +8,13 @@ import mozilla.components.browser.state.action.CrashAction
 import mozilla.components.browser.state.action.EngineAction
 import mozilla.components.browser.state.action.LastAccessAction
 import mozilla.components.browser.state.action.TabListAction
+import mozilla.components.browser.state.action.TranslationsAction
 import mozilla.components.browser.state.selector.findTabOrCustomTab
 import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.state.state.createTab
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.EngineSession.LoadUrlFlags
+import mozilla.components.concept.engine.translate.TranslationOptions
 
 /**
  * Contains use cases related to the session feature.
@@ -432,6 +434,89 @@ class SessionUseCases(
         }
     }
 
+    /**
+     * A use case for requesting a given tab to print it's content.
+     */
+    class PrintContentUseCase internal constructor(
+        private val store: BrowserStore,
+    ) {
+        /**
+         * Request that Android print the current [tabId].
+         *
+         * The same caveats in the [SaveToPdfUseCase] apply here because the Engine makes a PDF prior
+         * to sending the print request on to the Android print spooler. This means the session should
+         * have been painted first to successfully make a PDF.
+         *
+         * ⚠️ Make sure to have a middleware that handles the [EngineAction.PrintContentExceptionAction]`
+         * to handle print errors. Handling [EngineAction.PrintContentCompletedAction] is only necessary for
+         * telemetry or if any extra actions need to be completed.
+         *
+         */
+        operator fun invoke(
+            tabId: String? = store.state.selectedTabId,
+        ) {
+            if (tabId == null) {
+                return
+            }
+
+            store.dispatch(EngineAction.PrintContentAction(tabId))
+        }
+    }
+
+    /**
+     * A use case for requesting a given tab's content to be translated.
+     */
+    class TranslateUseCase internal constructor(
+        private val store: BrowserStore,
+    ) {
+        /**
+         * Request that Android translate the content of the current [tabId].
+         *
+         * Typically, a session is required to have been painted on the screen (by
+         * being the selected tab) for a translation to occur successfully.
+         *
+         * @param tabId The [tabId] associated with the request.
+         * @param fromLanguage The BCP 47 language tag that the page should be translated from.
+         * @param toLanguage The BCP 47 language tag that the page should be translated to.
+         * @param options Options for how the translation should be processed.
+         */
+        operator fun invoke(
+            tabId: String? = store.state.selectedTabId,
+            fromLanguage: String,
+            toLanguage: String,
+            options: TranslationOptions?,
+        ) {
+            if (tabId == null) {
+                return
+            }
+            store.dispatch(TranslationsAction.TranslateAction(tabId, fromLanguage, toLanguage, options))
+        }
+    }
+
+    /**
+     * A use case for requesting a given tab's content be restored after a translation.
+     */
+    class TranslateRestoreUseCase internal constructor(
+        private val store: BrowserStore,
+    ) {
+        /**
+         * Request that the translations engine restore the translated content of the current
+         * [tabId] back to the original.
+         *
+         * Will be a no-op, if there is nothing to restore.
+         *
+         * @param tabId The [tabId] associated with the request.
+         */
+        operator fun invoke(
+            tabId: String? = store.state.selectedTabId,
+        ) {
+            if (tabId == null) {
+                return
+            }
+            store.dispatch(TranslationsAction.TranslateRestoreAction(tabId))
+        }
+    }
+
     val loadUrl: DefaultLoadUrlUseCase by lazy { DefaultLoadUrlUseCase(store, onNoTab) }
     val loadData: LoadDataUseCase by lazy { LoadDataUseCase(store, onNoTab) }
     val reload: ReloadUrlUseCase by lazy { ReloadUrlUseCase(store) }
@@ -442,6 +527,9 @@ class SessionUseCases(
     val requestDesktopSite: RequestDesktopSiteUseCase by lazy { RequestDesktopSiteUseCase(store) }
     val exitFullscreen: ExitFullScreenUseCase by lazy { ExitFullScreenUseCase(store) }
     val saveToPdf: SaveToPdfUseCase by lazy { SaveToPdfUseCase(store) }
+    val printContent: PrintContentUseCase by lazy { PrintContentUseCase(store) }
+    val translate: TranslateUseCase by lazy { TranslateUseCase(store) }
+    val translateRestore: TranslateRestoreUseCase by lazy { TranslateRestoreUseCase(store) }
     val crashRecovery: CrashRecoveryUseCase by lazy { CrashRecoveryUseCase(store) }
     val purgeHistory: PurgeHistoryUseCase by lazy { PurgeHistoryUseCase(store) }
     val updateLastAccess: UpdateLastAccessUseCase by lazy { UpdateLastAccessUseCase(store) }

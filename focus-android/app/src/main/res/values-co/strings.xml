@@ -53,7 +53,6 @@
     <string name="menu_remove_from_shortcuts">Caccià da l’accurtatoghji</string>
 
     <!-- Menu item: Shows information about features and changes that are new to this version -->
-    <string name="menu_whats_new">Ciò chì hè novu</string>
     <string name="menu_settings">Preferenze</string>
     <string name="menu_about">Apprupositu</string>
     <string name="menu_help">Aiutu</string>
@@ -184,7 +183,7 @@
     <string name="preference_category_search">Ricerca</string>
 
     <!-- Title of "switch" preference that enables/disables search suggestions -->
-    <string name="preference_show_search_suggestions">Ottene sugestioni di ricerca</string>
+    <string name="preference_show_search_suggestions">Ottene suggestioni di ricerca</string>
     <!-- Description of the preference that enables/disables search suggestions
         %1$s will be replaced by the app name (e.g. Firefox Focus) -->
     <string name="preference_show_search_suggestions_summary">%1$s manderà à u vostru mutore di ricerca ciò chì voi stampittate in a barra d’indirizzu</string>
@@ -353,6 +352,15 @@
     <!-- In-app link (in settings) to Focus privacy notice. -->
     <string name="preference_privacy_notice">Pulitica di cunfidenzialità</string>
 
+    <!-- In-app link (in settings) to Focus licensing information. -->
+    <string name="preference_licensing_info">Infurmazione di licenza</string>
+
+    <!-- Link to Focus licensing information from other libraries that we use. -->
+    <string name="preference_libraries_we_use">Bibliuteche impiegate</string>
+
+    <!-- Open Source Licenses page title. The first parameter is the app name -->
+    <string name="open_source_licenses_title">%s | Bibliuteche di fonte aperta</string>
+
     <!-- Item in Preferences that shows the about page. Parameter 1 is the app name, i.e. Firefox Focus/Firefox Klar. -->
     <string name="preference_about">Apprupositu di %1$s</string>
 
@@ -482,7 +490,10 @@
 
 
 
-  <string name="error_hostLookup_title">Indirizzu intruvevule</string>
+  <!-- Snackbar that will be displayed after a website has been added to shortcuts. -->
+    <string name="snackbar_added_to_shortcuts">Aghjuntu à l’accurtatoghji !</string>
+
+    <string name="error_hostLookup_title">Indirizzu intruvevule</string>
 
 
 
@@ -707,6 +718,9 @@
     <!-- Text for indicating cookie banner handling is on this site, this is shown as part of the protections panel with the tracking protection toggle. -->
     <string name="cookie_banner_exception_item_description_state_on">ATTIVATA per stu situ</string>
 
+    <!-- Text for indicating cookie reducer is not supported on the current site, this is shown as part of the protections panel with the tracking protection toggle. -->
+    <string name="cookie_banner_exception_site_not_supported">Attualmente u situ ùn hè micca accettatu</string>
+
     <!-- Text for indicating cookie banner handling is off this site, this is shown as part of the protections panel with the tracking protection toggle. -->
     <string name="cookie_banner_exception_item_description_state_off">DISATTIVATA per stu situ</string>
 
@@ -729,18 +743,26 @@
     <string name="cookie_banner_exception_panel_description_state_on_for_site">%1$s squasserà i canistrelli di stu situ è attualizerà a pagina. A squassatura di tutti i canistrelli puderia discunnettevi o viutà e sporte di comprera.</string>
 
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The placeholder will be updated with the app name. -->
-    <string name="cookie_banner_exception_panel_description_state_off_for_site" moz:RemovedIn="111" tools:ignore="UnusedResources">%1$s pò pruvà di righjittà autumaticamente e dumande di canistrelli. S’è alcuna ozzione di righjettu ùn hè micca dispunibule, %1$s pò accettà tutti i canistrelli per chjode a striscia.</string>
-
-    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The placeholder will be updated with the app name. -->
     <string name="cookie_banner_exception_panel_description_state_off_for_site2">%1$s pò pruvà di righjittà autumaticamente e dumande di canistrelli.</string>
 
+    <!-- Long text for a detail explanation indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_description_site_is_not_supported">Ora, stu situ ùn hè micca accettatu da a riduzzione di e striscie di cannistrelli. Vulete fà una dumanda à a nostra squadra per verificà stu situ web è accettallu in u futuru ?</string>
+
+    <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_site_is_not_supported_cancel_button">Abbandunà</string>
+
+    <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_site_is_not_supported_request_support_button">Richiede ch’ellu sia accettatu</string>
+
+    <!-- Label for the snackBar, after the user reports with success a website where cookie banner reducer did not work -->
+    <string name="cookie_banner_report_a_site_snackbar_label">A dumanda per chì u situ sia accettatu hè stata mandata.</string>
+
+    <!-- Label for cookie banner item from tracking protection, after the user reports with success a website where cookie banner reducer did not work -->
+    <string name="cookie_banner_the_site_was_reported">A dumanda per chì u situ sia accettatu hè stata mandata.</string>
+
     <!-- Contextual Feature Recommendation Popups -->
-    <!-- CFR for Cookie Banner (Banner Info Message). The placeholder will be updated with the app name. -->
-    <string name="cfr_for_cookie_banner" moz:RemovedIn="111" tools:ignore="UnusedResources">%1$s prova di righjittà e dumande di canistrelli per chjode e striscie strazievule di canistrelli.\n\nSceglie i parametri per e striscie di canistrelli in e preferenze.</string>
     <!-- CFR for Cookie Banner (Banner Info Message). %1$s will be replaced by the app name, %2$s will be an active link using the string cfr_cookie_banner_link as text. -->
     <string name="cfr_cookie_banner">%1$s prova di righjittà e dumande di canistrelli per chjode e striscie strazievule di canistrelli.\n\nSceglie i parametri per e striscie di canistrelli in e %2$s.</string>
-    <!-- CFR for Cookie Banner (Banner Info Message). This text should be the same as the settings text from "cfr_for_cookie_banner". The text should be underlined and should redirect the user to the cookie banner settings screen. -->
-    <string name="cfr_for_cookie_banner_underline_settings" moz:RemovedIn="111" tools:ignore="UnusedResources">preferenze</string>
     <!-- CFR for Cookie Banner (Banner Info Message). This string is used as text for a link in cfr_cookie_banner and takes the user to the app settings. -->
     <string name="cfr_cookie_banner_link">preferenze</string>
 
@@ -850,11 +872,11 @@
     <string name="biometric_auth_moved_too_quickly">U ditu hà mossu troppu prestu. Pruvà torna.</string>
 
     <!-- Title for the prompt to enable search suggestions -->
-    <string name="enable_search_suggestion_title2">Affissà e sugestioni di ricerca ?</string>
+    <string name="enable_search_suggestion_title2">Affissà e suggestioni di ricerca ?</string>
 
     <!-- Description for the prompt to enable search suggestions
         %1$s will be replaced by the app name (e.g. Firefox Focus) -->
-    <string name="enable_search_suggestion_description">Per ottene sugestioni di ricerca, %1$s hà bisognu di mandà à u mutore di ricerca ciò chì vo stampittate in a barra d’indirizzu.</string>
+    <string name="enable_search_suggestion_description">Per ottene suggestioni di ricerca, %1$s hà bisognu di mandà à u mutore di ricerca ciò chì vo stampittate in a barra d’indirizzu.</string>
 
     <!-- Label used for the "NO button" for the prompt to enable search suggestions -->
     <string name="enable_search_suggestions_no">Nò</string>
@@ -863,7 +885,7 @@
     <string name="enable_search_suggestions_yes">Sì</string>
 
     <!-- Message displayed when using a search engine that doesn't provide suggestions -->
-    <string name="no_suggestions_message">Certi mutori di ricerca ùn ponu affissà sugestioni.</string>
+    <string name="no_suggestions_message">Certi mutori di ricerca ùn ponu affissà suggestioni.</string>
 
     <!-- Button to dismiss the message displayed  when using a search engine that doesn't provide suggestions-->
     <string name="dismiss_no_suggestions_prompt_button">Ignurà</string>
@@ -1010,12 +1032,31 @@
 
 
     <!-- The title of the error page for websites that do not support HTTPS when HTTPS-Only is turned on  -->
-    <string name="errorpage_httpsonly_title">U situ richiestu ùn permette micca u modu HTTPS</string>
+    <string name="errorpage_httpsonly_title2">Stu situ ùn permette micca u modu HTTPS</string>
 
-    <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will get replaced with the name of the app (e.g. "Firefox Focus") -->
-    <string name="errorpage_httpsonly_message">Per aumentà a sicurità, l’ozzione predefinita di %1$s hè di fà un tentativu autumaticu di cunnessione impieghendu HTTPS. Per cambià sta definizione, o per sapene di più, andate in Preferenze &gt; Vita privata è sicurità &gt; Sicurità.</string>
+    <!-- The text of the error page for websites that do not support HTTPS when HTTPS-Only is turned on. %1$s will get replaced with the name of the app (e.g. "Firefox Focus").
+        Contains a button that will redirect the user to Privacy & Security Screen-->
+    <string name="errorpage_httpsonly_message2"><![CDATA[Per una sicurità più forte, %1$s prova d’impiegà una cunnessione HTTPS quand’ella hè pussibule.
+     <a href="%2$s">Per sapene di più</a> <br/><br/>
+     Cambiate sta definizione in Preferenze > Vita privata è sicurità > Sicurità.]]></string>
 
-    <!-- Sessions List -->
+    <!-- The document title and heading of the error page shown when a website has an invalid or expired SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_title">Cunnessione micca assicurata</string>
+
+     <!-- The error message shown when a website has an invalid or expired SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_message"><![CDATA[
+    Stu penseru pò pruvene da a cunfigurazione di u servitore, osinnò ghjè qualchissia forse chì prova d’impatruniscesi di u servitore. <br/><br/>
+    S’è vo avete dighjà riesciutu à cunnettevi à stu servitore, u sbagliu pò esse timpurariu.
+    ]]></string>
+
+     <!-- The advanced certificate information shown when a website has an invalid SSL certificate. The %1$s will be replaced by the app name and %2$s will be replaced by website URL. It's only shown when a website has an invalid SSL certificate. -->
+    <string name="mozac_browser_errorpages_security_bad_cert_techInfo"><![CDATA[
+        <label>Qualchissia puderia pruvà d’impatruniscesi di u situ web è cuntinuà puderia esse periculosu.</label>
+        <br><br>
+        <label>%1$s ùn hà micca fidanza in <b>%2$s</b> perchè l’emettore di u so certificatu hè scunnisciutu, u certificatu hè firmatu daperellu, o ancu u servitore ùn manda micca certificati intermediarii curretti.</label>
+    ]]></string>
+
+     <!-- Sessions List -->
     <!-- Content description (not visible, for screen readers etc.): Button that closes a tab n the sessions list -->
     <string name="close_tab">Chjode l’unghjetta</string>
 

@@ -5,7 +5,7 @@
 loader: taskgraph.loader.transform:loader
 
 transforms:
-    - android_taskgraph.transforms.build_apk:transforms
+    - android_taskgraph.transforms.build_android_app:transforms
     - android_taskgraph.transforms.gradle_optimization:transforms
     - taskgraph.transforms.job:transforms
     - taskgraph.transforms.task:transforms
@@ -17,44 +17,23 @@ kind-dependencies:
 task-defaults:
     apk-artifact-template:
         type: file
-        name: 'public/build/{gradle_build}/{abi}/target.apk'
+        name: 'public/build/target.{abi}.apk'
         github-name: '{gradle_build}-{version}-{abi}.apk'
         path: '/builds/worker/checkouts/vcs/{source_project_name}/app/build/outputs/apk/{gradle_build}/{gradle_build_type}/{fileName}'
-    fetches:
-        toolchain:
-            - android-sdk-linux
-        external-gradle-dependencies:
-            - external-gradle-dependencies.tar.xz
-    optimization:
-        by-tasks-for:
-            github-pu(sh|ll-request.*):
-                skip-unless-changed: [] # Paths are dynamically added by transforms
-            default: {}
-    run:
-        using: gradlew
-        use-caches: false
-        workdir: '/builds/worker'
-    run-on-tasks-for: []
-    treeherder:
-        kind: build
-        symbol: B
-        platform: focus-android-all/opt
-        tier: 1
-    worker-type: b-android-large
-    worker:
-        docker-image: {in-tree: base}
-        max-run-time: 7200
-        chain-of-trust: true
 
 
 tasks:
     focus-debug:
         attributes:
             code-review: true
+            shipping-product: focus
         dependencies:
             external-gradle-dependencies: external-gradle-dependencies-focus
         description: 'Focus debug build from source code'
-        run-on-tasks-for: [github-pull-request, github-push]
+        run-on-tasks-for:
+            - github-pull-request
+            - github-pull-request-untrusted
+            - github-push
         run:
             gradle-build-type: debug
             gradle-build-name: focusDebug
@@ -62,14 +41,19 @@ tasks:
         source-project-name: "focus-android"
         treeherder:
             symbol: focus-debug(Bf)
+            platform: focus-android-all/opt
 
     klar-debug:
         attributes:
             code-review: true
+            shipping-product: focus
         dependencies:
             external-gradle-dependencies: external-gradle-dependencies-focus
         description: 'Klar debug build from source code'
-        run-on-tasks-for: [github-pull-request, github-push]
+        run-on-tasks-for:
+            - github-pull-request
+            - github-pull-request-untrusted
+            - github-push
         run:
             gradle-build-type: debug
             gradle-build-name: klarDebug
@@ -77,18 +61,26 @@ tasks:
         source-project-name: "focus-android"
         treeherder:
             symbol: focus-debug(Bkl)
+            platform: focus-android-all/opt
 
     fenix-debug:
         attributes:
             code-review: true
+            shipping-product: fenix
         dependencies:
             external-gradle-dependencies: external-gradle-dependencies-fenix
         description: 'Fenix debug build from source code'
-        run-on-tasks-for: [github-pull-request, github-push]
+        run-on-tasks-for:
+            - github-pull-request
+            - github-pull-request-untrusted
+            - github-push
         run:
             gradle-build-type: debug
             gradle-build-name: fenixDebug
             gradle-build: fenix
+            gradle-extra-options:
+                - -PdisableLeakCanary
+            track-apk-size: true
         source-project-name: "fenix"
         treeherder:
             symbol: fenix-debug(Bf)
@@ -100,9 +92,9 @@ tasks:
             # inherit this attribute via the multi_dep loader
         attributes:
             release-type: release
+            shipping-product: focus
         dependencies:
             external-gradle-dependencies: external-gradle-dependencies-focus
-        run-on-tasks-for: []
         include-shippable-secrets: true
         include-release-version: true
         run:
@@ -113,14 +105,15 @@ tasks:
         source-project-name: "focus-android"
         treeherder:
             symbol: focus-release(Bf)
+            platform: focus-android-all/opt
 
     klar-release:
         description: 'Release Klar build'
         attributes:
             release-type: release
+            shipping-product: focus
         dependencies:
             external-gradle-dependencies: external-gradle-dependencies-focus
-        run-on-tasks-for: []
         include-shippable-secrets: true
         include-release-version: true
         run:
@@ -131,20 +124,22 @@ tasks:
         source-project-name: "focus-android"
         treeherder:
             symbol: focus-release(Bkl)
+            platform: focus-android-all/opt
 
     fenix-release:
         description: 'Release Fenix build'
         attributes:
             release-type: release
+            shipping-product: fenix
         dependencies:
             external-gradle-dependencies: external-gradle-dependencies-fenix
-        run-on-tasks-for: []
         include-shippable-secrets: true
         include-release-version: true
         run:
             gradle-build-type: release
             gradle-build-name: fenixRelease
             gradle-build: fenix
+            track-apk-size: true
         shipping-phase: promote
         source-project-name: "fenix"
         treeherder:
@@ -157,10 +152,11 @@ tasks:
             # any tasks that have this as a primary dependency will
             # inherit this attribute via the multi_dep loader
             nightly-task: true
+            shipping-product: focus
         dependencies:
             external-gradle-dependencies: external-gradle-dependencies-focus
-        run-on-tasks-for: []
         include-shippable-secrets: true
+        include-nightly-version: true
         run:
             gradle-build-type: nightly
             gradle-build-name: focusNightly
@@ -168,6 +164,7 @@ tasks:
         source-project-name: "focus-android"
         treeherder:
             symbol: focus-nightly(B)
+            platform: focus-android-all/opt
 
     fenix-nightly:
         description: 'Nightly fenix build'
@@ -175,15 +172,17 @@ tasks:
             # any tasks that have this as a primary dependency will
             # inherit this attribute via the multi_dep loader
             nightly-task: true
+            shipping-product: fenix
         dependencies:
             external-gradle-dependencies: external-gradle-dependencies-fenix
-        run-on-tasks-for: []
         include-shippable-secrets: true
+        include-nightly-version: true
         source-project-name: "fenix"
         run:
             gradle-build-type: nightly
             gradle-build-name: fenixNightly
             gradle-build: fenix
+            track-apk-size: true
         treeherder:
             symbol: fenix-nightly(B)
             platform: fenix-android-all/opt
@@ -192,9 +191,9 @@ tasks:
         description: 'Beta focus build'
         attributes:
             release-type: beta
+            shipping-product: focus
         dependencies:
             external-gradle-dependencies: external-gradle-dependencies-focus
-        run-on-tasks-for: []
         include-shippable-secrets: true
         include-release-version: true
         run:
@@ -205,20 +204,22 @@ tasks:
         source-project-name: "focus-android"
         treeherder:
             symbol: focus-beta(B)
+            platform: focus-android-all/opt
 
     fenix-beta:
         description: 'Beta fenix build'
         attributes:
             release-type: beta
+            shipping-product: fenix
         dependencies:
             external-gradle-dependencies: external-gradle-dependencies-fenix
-        run-on-tasks-for: []
         include-shippable-secrets: true
         include-release-version: true
         run:
             gradle-build-type: beta
             gradle-build-name: fenixBeta
             gradle-build: fenix
+            track-apk-size: true
         shipping-phase: promote
         source-project-name: "fenix"
         treeherder:
@@ -226,6 +227,8 @@ tasks:
             platform: fenix-android-all/opt
 
     focus-nightly-firebase:
+        attributes:
+            shipping-product: focus
         description: 'Focus Nightly build for UI tests'
         dependencies:
             external-gradle-dependencies: external-gradle-dependencies-focus
@@ -240,8 +243,11 @@ tasks:
         source-project-name: "focus-android"
         treeherder:
             symbol: focus-nightly(Bf)
+            platform: focus-android-all/opt
 
     fenix-nightly-firebase:
+        attributes:
+            shipping-product: fenix
         description: 'Fenix Nightly build for UI tests'
         dependencies:
             external-gradle-dependencies: external-gradle-dependencies-fenix
@@ -259,6 +265,8 @@ tasks:
             platform: fenix-android-all/opt
 
     focus-beta-firebase:
+        attributes:
+            shipping-product: focus
         description: 'Focus Beta build for UI tests'
         dependencies:
             external-gradle-dependencies: external-gradle-dependencies-focus
@@ -273,8 +281,11 @@ tasks:
         source-project-name: "focus-android"
         treeherder:
             symbol: focus-beta(Bf)
+            platform: focus-android-all/opt
 
     fenix-beta-firebase:
+        attributes:
+            shipping-product: fenix
         description: 'Fenix Beta build for UI tests'
         dependencies:
             external-gradle-dependencies: external-gradle-dependencies-fenix
@@ -292,32 +303,39 @@ tasks:
             platform: fenix-android-all/opt
 
     focus-android-test-debug:
-        description: 'Focus Android Test for debugging'
         attributes:
             code-review: true
+            shipping-product: focus
+        description: 'Focus Android Test for debugging'
         dependencies:
             external-gradle-dependencies: external-gradle-dependencies-focus
-        run-on-tasks-for: [github-pull-request, github-push]
+        run-on-tasks-for:
+            - github-pull-request
+            - github-pull-request-untrusted
+            - github-push
         run:
             gradle-build-type: androidTest
             gradle-build-name: androidTest
             gradle-build: focus
         source-project-name: "focus-android"
         apk-artifact-template:
-            # we override this with a generic name to make the signing kind cleaner
-            name: 'public/build/app-focus-androidTest.apk'
             # this path is determined by the gradle build configs
             path: '/builds/worker/checkouts/vcs/focus-android/app/build/outputs/apk/androidTest/focus/debug/app-focus-debug-androidTest.apk'
         treeherder:
             symbol: focus-debug(Bat)
+            platform: focus-android-all/opt
 
     fenix-android-test-debug:
+        attributes:
+            code-review: true
+            shipping-product: fenix
         description: 'Fenix Debug Android Test for debugging'
         dependencies:
             external-gradle-dependencies: external-gradle-dependencies-fenix
-        attributes:
-            code-review: true
-        run-on-tasks-for: [github-pull-request, github-push]
+        run-on-tasks-for:
+            - github-pull-request
+            - github-pull-request-untrusted
+            - github-push
         run:
             gradle-build-type: androidTest
             gradle-build-name: androidTest
@@ -339,6 +357,8 @@ tasks:
     # nightly means we need an androidTest APK with the same signature.
 
     focus-android-test-nightly:
+        attributes:
+            shipping-product: focus
         description: 'Focus Nightly Android Test for debugging'
         dependencies:
             external-gradle-dependencies: external-gradle-dependencies-focus
@@ -351,10 +371,10 @@ tasks:
             test-build-type: nightly
         source-project-name: "focus-android"
         apk-artifact-template:
-            name: 'public/build/app-focus-androidTest.apk'
             path: '/builds/worker/checkouts/vcs/focus-android/app/build/outputs/apk/androidTest/focus/nightly/app-focus-nightly-androidTest.apk'
         treeherder:
             symbol: focus-nightly(Bat)
+            platform: focus-android-all/opt
 
     # android-test-nightly and android-test-beta, while still being debug builds, are meant to be signed
     # with the nightly/beta key. The Firebase testing infrastructure requires both the androidTest APK
@@ -364,11 +384,12 @@ tasks:
     # TODO: See if we can tweak the signing kind to make 2 signing jobs out of a single `android-test`
     # job.
     fenix-android-test-nightly:
+        attributes:
+            nightly: true
+            shipping-product: fenix
         description: 'Fenix Nightly Android Test for debugging'
         dependencies:
             external-gradle-dependencies: external-gradle-dependencies-fenix
-        attributes:
-            nightly: true
         apk-artifact-template:
             # 3 differences here:
             #  * "androidTest/" is added
@@ -388,6 +409,8 @@ tasks:
             platform: fenix-android-all/opt
 
     focus-android-test-beta:
+        attributes:
+            shipping-product: focus
         description: 'Focus Beta Android Test for debugging'
         dependencies:
             external-gradle-dependencies: external-gradle-dependencies-focus
@@ -400,12 +423,14 @@ tasks:
             test-build-type: beta
         source-project-name: "focus-android"
         apk-artifact-template:
-            name: 'public/build/app-focus-androidTest.apk'
             path: '/builds/worker/checkouts/vcs/focus-android/app/build/outputs/apk/androidTest/focus/beta/app-focus-beta-androidTest.apk'
         treeherder:
             symbol: focus-beta(Bat)
+            platform: focus-android-all/opt
 
     fenix-android-test-beta:
+        attributes:
+            shipping-product: fenix
         description: 'Fenix Beta Android Test for debugging'
         dependencies:
             external-gradle-dependencies: external-gradle-dependencies-fenix
@@ -428,6 +453,8 @@ tasks:
             platform: fenix-android-all/opt
 
     fenix-android-test-mozillaonline:
+        attributes:
+            shipping-product: fenix
         description: 'Fenix Android Test mozillaonline'
         dependencies:
             external-gradle-dependencies: external-gradle-dependencies-fenix
@@ -445,7 +472,7 @@ tasks:
             gradle-extra-options:
                 - -PmozillaOnline
             test-build-type: beta
-        run-on-tasks-for: [github-push] # We want this on push so that we detect problem before triggering a new beta
+        run-on-tasks-for: []  # bug 1851826
         source-project-name: "fenix"
         treeherder:
             symbol: fenix-beta(Bat-mo)
@@ -457,6 +484,7 @@ tasks:
             external-gradle-dependencies: external-gradle-dependencies-fenix
         attributes:
             nightly: false
+            shipping-product: fenix
         run-on-tasks-for: [github-push]
         include-nightly-version: true
         include-shippable-secrets: true
@@ -476,17 +504,18 @@ tasks:
         apk-artifact-template:
             github-name: 'fenix-mozillaonline-{version}-{abi}.apk'
         attributes:
-            release-type: beta
+            # release-type: beta  # bug 1851826
             shipping_phase: promote
+            shipping-product: fenix
         include-release-version: true
         include-shippable-secrets: true
-        filter-incomplete-translations: true
         run:
             gradle-build-type: beta
             gradle-build-name: fenixBeta
             gradle-build: fenix
             gradle-extra-options:
                 - -PmozillaOnline
+        run-on-tasks-for: []  # bug 1851826
         source-project-name: "fenix"
         treeherder:
             symbol: fenix-beta(Bmo)
@@ -499,17 +528,18 @@ tasks:
         apk-artifact-template:
             github-name: 'fenix-mozillaonline-{version}-{abi}.apk'
         attributes:
-            release-type: release
+            # release-type: release  # bug 1851826
             shipping_phase: promote
+            shipping-product: fenix
         include-release-version: true
         include-shippable-secrets: true
-        filter-incomplete-translations: true
         run:
             gradle-build-type: release
             gradle-build-name: fenixRelease
             gradle-build: fenix
             gradle-extra-options:
                 - -PmozillaOnline
+        run-on-tasks-for: []  # bug 1851826
         source-project-name: "fenix"
         treeherder:
             symbol: fenix-release(Bmo)

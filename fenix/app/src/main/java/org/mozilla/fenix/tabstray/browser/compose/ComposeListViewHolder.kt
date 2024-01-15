@@ -15,8 +15,8 @@ import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.tabstray.TabsTray
 import mozilla.components.browser.tabstray.TabsTrayStyling
 import mozilla.components.lib.state.ext.observeAsComposableState
+import org.mozilla.fenix.components.components
 import org.mozilla.fenix.compose.tabstray.TabListItem
-import org.mozilla.fenix.selection.SelectionHolder
 import org.mozilla.fenix.tabstray.TabsTrayInteractor
 import org.mozilla.fenix.tabstray.TabsTrayState
 import org.mozilla.fenix.tabstray.TabsTrayStore
@@ -26,8 +26,6 @@ import org.mozilla.fenix.tabstray.TabsTrayStore
  *
  * @param interactor [TabsTrayInteractor] handling tabs interactions in a tab tray.
  * @param tabsTrayStore [TabsTrayStore] containing the complete state of tabs tray and methods to update that.
- * @param selectionHolder [SelectionHolder]<[TabSessionState]> for helping with selecting
- * any number of displayed [TabSessionState]s.
  * @param composeItemView that displays a "tab".
  * @param featureName [String] representing the name of the feature displaying tabs. Used in telemetry reporting.
  * @param viewLifecycleOwner [LifecycleOwner] to which this Composable will be tied to.
@@ -35,7 +33,6 @@ import org.mozilla.fenix.tabstray.TabsTrayStore
 class ComposeListViewHolder(
     private val interactor: TabsTrayInteractor,
     private val tabsTrayStore: TabsTrayStore,
-    private val selectionHolder: SelectionHolder<TabSessionState>? = null,
     composeItemView: ComposeView,
     private val featureName: String,
     viewLifecycleOwner: LifecycleOwner,
@@ -72,17 +69,7 @@ class ComposeListViewHolder(
     }
 
     private fun onClick(tab: TabSessionState) {
-        val holder = selectionHolder
-        if (holder != null) {
-            interactor.onMultiSelectClicked(tab, holder, featureName)
-        } else {
-            interactor.onTabSelected(tab, featureName)
-        }
-    }
-
-    private fun onLongClick(tab: TabSessionState) {
-        val holder = selectionHolder ?: return
-        interactor.onTabLongClicked(tab, holder)
+        interactor.onTabSelected(tab, featureName)
     }
 
     @Composable
@@ -96,13 +83,14 @@ class ComposeListViewHolder(
 
         TabListItem(
             tab = tab,
+            thumbnailSize = 108,
+            storage = components.core.thumbnailStorage,
             isSelected = isSelectedTabState,
             multiSelectionEnabled = multiSelectionEnabled,
             multiSelectionSelected = multiSelectionSelected,
             onCloseClick = ::onCloseClicked,
             onMediaClick = interactor::onMediaClicked,
             onClick = ::onClick,
-            onLongClick = ::onLongClick,
         )
     }
 

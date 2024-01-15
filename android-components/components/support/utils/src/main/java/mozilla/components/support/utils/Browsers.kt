@@ -118,6 +118,11 @@ class Browsers private constructor(
     val defaultBrowser: ActivityInfo? = findDefault(context, context.packageManager, uri)
 
     /**
+     * The [ActivityInfo] of the installed Firefox, including Focus, browser (or null if none could be found).
+     */
+    val mozillaBrandedBrowser: ActivityInfo? = findMozillaBrandedBrowser()
+
+    /**
      * The [ActivityInfo] of the installed Firefox browser (or null if none could be found).
      *
      * If multiple Firefox browsers are installed then this will
@@ -154,7 +159,7 @@ class Browsers private constructor(
     val hasThirdPartyDefaultBrowser: Boolean = (
         defaultBrowser != null &&
             defaultBrowser.packageName != KnownBrowser.FIREFOX.packageName &&
-            !(firefoxBrandedBrowser != null && defaultBrowser.packageName == firefoxBrandedBrowser.packageName) &&
+            !(mozillaBrandedBrowser != null && defaultBrowser.packageName == mozillaBrandedBrowser.packageName) &&
             defaultBrowser.packageName != packageName
         )
 
@@ -190,11 +195,18 @@ class Browsers private constructor(
     }
 
     /**
+     * Does this device have browser with [packageName] installed?
+     */
+    fun isInstalled(packageName: String): Boolean {
+        return browsers.containsKey(packageName)
+    }
+
+    /**
      * Is **this** application the default browser?
      */
     val isDefaultBrowser: Boolean = defaultBrowser != null && packageName == defaultBrowser.packageName
 
-    private fun findFirefoxBrandedBrowser(): ActivityInfo? {
+    private fun findMozillaBrandedBrowser(): ActivityInfo? {
         return when {
             browsers.containsKey(KnownBrowser.FIREFOX.packageName) ->
                 browsers[KnownBrowser.FIREFOX.packageName]
@@ -222,6 +234,27 @@ class Browsers private constructor(
 
             browsers.containsKey(KnownBrowser.FIREFOX_FOCUS_NIGHTLY.packageName) ->
                 browsers[KnownBrowser.FIREFOX_FOCUS_NIGHTLY.packageName]
+            else -> null
+        }
+    }
+
+    private fun findFirefoxBrandedBrowser(): ActivityInfo? {
+        return when {
+            browsers.containsKey(KnownBrowser.FIREFOX.packageName) ->
+                browsers[KnownBrowser.FIREFOX.packageName]
+
+            browsers.containsKey(KnownBrowser.FIREFOX_BETA.packageName) ->
+                browsers[KnownBrowser.FIREFOX_BETA.packageName]
+
+            browsers.containsKey(KnownBrowser.FIREFOX_AURORA.packageName) ->
+                browsers[KnownBrowser.FIREFOX_AURORA.packageName]
+
+            browsers.containsKey(KnownBrowser.FIREFOX_NIGHTLY.packageName) ->
+                browsers[KnownBrowser.FIREFOX_NIGHTLY.packageName]
+
+            browsers.containsKey(KnownBrowser.FIREFOX_FDROID.packageName) ->
+                browsers[KnownBrowser.FIREFOX_FDROID.packageName]
+
             else -> null
         }
     }

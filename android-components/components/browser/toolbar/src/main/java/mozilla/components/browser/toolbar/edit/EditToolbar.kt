@@ -30,7 +30,6 @@ import mozilla.components.concept.toolbar.AutocompleteDelegate
 import mozilla.components.concept.toolbar.Toolbar
 import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.base.utils.NamedThreadFactory
-import mozilla.components.support.ktx.android.view.showKeyboard
 import mozilla.components.ui.autocomplete.InlineAutocompleteEditText
 import java.util.concurrent.Executors
 import mozilla.components.ui.colors.R as colorsR
@@ -215,8 +214,9 @@ class EditToolbar internal constructor(
      */
     fun focus() {
         views.url.run {
-            showKeyboard()
-            requestFocus()
+            if (!hasFocus()) {
+                requestFocus()
+            }
         }
     }
 
@@ -264,13 +264,23 @@ class EditToolbar internal constructor(
      * Updates the text of the URL input field. Note: this does *not* affect the value of url itself
      * and is only a visual change
      */
-    fun updateUrl(url: String, shouldAutoComplete: Boolean = false, shouldHighlight: Boolean = false) {
-        views.url.setText(url, shouldAutoComplete)
+    fun updateUrl(
+        url: String,
+        shouldAutoComplete: Boolean = false,
+        shouldHighlight: Boolean = false,
+        shouldAppend: Boolean = false,
+    ): String {
+        if (shouldAppend) {
+            views.url.appendText(url, shouldAutoComplete)
+        } else {
+            views.url.setText(url, shouldAutoComplete)
+        }
         views.clear.isVisible = url.isNotBlank()
 
         if (shouldHighlight) {
-            views.url.setSelection(0, url.length)
+            views.url.setSelection(views.url.text.length - url.length, views.url.text.length)
         }
+        return views.url.text.toString()
     }
 
     /**
@@ -317,6 +327,7 @@ class EditToolbar internal constructor(
     private fun onClear() {
         // We set text to an empty string instead of using clear to avoid #3612.
         views.url.setText("")
+        editListener?.onInputCleared()
     }
 
     private fun setUrlGoneMargin(anchor: Int, dimen: Int) {

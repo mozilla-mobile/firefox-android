@@ -75,8 +75,8 @@ class ReaderViewFeatureTest {
         readerViewFeature.start()
 
         val onSuccess = argumentCaptor<((WebExtension) -> Unit)>()
-        val onError = argumentCaptor<((String, Throwable) -> Unit)>()
-        verify(engine, times(1)).installWebExtension(
+        val onError = argumentCaptor<((Throwable) -> Unit)>()
+        verify(engine, times(1)).installBuiltInWebExtension(
             eq(ReaderViewFeature.READER_VIEW_EXTENSION_ID),
             eq(ReaderViewFeature.READER_VIEW_EXTENSION_URL),
             onSuccess.capture(),
@@ -87,7 +87,7 @@ class ReaderViewFeatureTest {
 
         // Already installed, should not try to install again.
         readerViewFeature.start()
-        verify(engine, times(1)).installWebExtension(
+        verify(engine, times(1)).installBuiltInWebExtension(
             eq(ReaderViewFeature.READER_VIEW_EXTENSION_ID),
             eq(ReaderViewFeature.READER_VIEW_EXTENSION_URL),
             any(),
@@ -124,8 +124,8 @@ class ReaderViewFeatureTest {
         readerViewFeature.start()
 
         val onSuccess = argumentCaptor<((WebExtension) -> Unit)>()
-        val onError = argumentCaptor<((String, Throwable) -> Unit)>()
-        verify(engine, times(1)).installWebExtension(
+        val onError = argumentCaptor<((Throwable) -> Unit)>()
+        verify(engine, times(1)).installBuiltInWebExtension(
             eq(ReaderViewFeature.READER_VIEW_EXTENSION_ID),
             eq(ReaderViewFeature.READER_VIEW_EXTENSION_URL),
             onSuccess.capture(),
@@ -223,7 +223,7 @@ class ReaderViewFeatureTest {
         val engine: Engine = mock()
         val tab = createTab("https://www.mozilla.org", id = "test-tab")
         val store = BrowserStore(initialState = BrowserState(tabs = listOf(tab)))
-        val readerViewFeature = spy(ReaderViewFeature(testContext, engine, store, mock(), onReaderViewStatusChange))
+        val readerViewFeature = spy(ReaderViewFeature(testContext, engine, store, mock(), { "test-uuid" }, onReaderViewStatusChange))
         readerViewFeature.start()
         assertTrue(readerViewStatusChanges.isEmpty())
 
@@ -253,11 +253,37 @@ class ReaderViewFeatureTest {
     fun `show reader view sends message to web extension`() {
         val port = mock<Port>()
         val message = argumentCaptor<JSONObject>()
-        val readerViewFeature = prepareFeatureForTest(port)
+        val readerViewFeature = prepareFeatureForTest(port, createUUID = { "test-uuid" })
 
         readerViewFeature.showReaderView()
         verify(port).postMessage(message.capture())
-        assertEquals(ReaderViewFeature.ACTION_SHOW, message.value[ReaderViewFeature.ACTION_MESSAGE_KEY])
+        assertEquals(ReaderViewFeature.ACTION_CACHE_PAGE, message.value[ReaderViewFeature.ACTION_MESSAGE_KEY])
+        assertEquals("test-uuid", message.value[ReaderViewFeature.ACTION_VALUE_ID])
+    }
+
+    @Test
+    fun `show reader view dispatches LoadUrlAction and UpdateReaderActiveAction`() {
+        val engine: Engine = mock()
+        val engineSession: EngineSession = mock()
+        val tab = createTab(
+            url = "https://www.mozilla.org",
+            id = "test-tab",
+            engineSession = engineSession,
+        )
+        val store = spy(
+            BrowserStore(
+                initialState = BrowserState(
+                    tabs = listOf(tab),
+                    selectedTabId = tab.id,
+                ),
+            ),
+        )
+
+        val readerViewFeature = ReaderViewFeature(testContext, engine, store, mock(), { "bbbbf5ce-3b0f-4f74-8a1f-986d89bffea7" })
+        readerViewFeature.readerBaseUrl = "moz-extension://012345/"
+        readerViewFeature.showReaderView()
+        verify(store).dispatch(EngineAction.LoadUrlAction(tab.id, "moz-extension://012345/readerview.html?url=https%3A%2F%2Fwww.mozilla.org&id=bbbbf5ce-3b0f-4f74-8a1f-986d89bffea7&colorScheme=light"))
+        verify(store).dispatch(ReaderAction.UpdateReaderActiveAction(tab.id, true))
     }
 
     @Test
@@ -275,28 +301,16 @@ class ReaderViewFeatureTest {
             ReaderViewFeature.ColorScheme.LIGHT.name.lowercase(Locale.ROOT),
             config[ReaderViewFeature.ACTION_VALUE_SHOW_COLOR_SCHEME],
         )
+        assertFalse(config.has(ReaderViewFeature.ACTION_VALUE_SCROLLY))
     }
 
     @Test
-    fun `show reader view updates state`() {
-        val engine: Engine = mock()
-        val engineSession: EngineSession = mock()
-        val tab = createTab(
-            url = "https://www.mozilla.org",
-            id = "test-tab",
-            engineSession = engineSession,
-        )
-        val store = spy(
-            BrowserStore(
-                initialState = BrowserState(
-                    tabs = listOf(tab),
-                    selectedTabId = tab.id,
-                ),
-            ),
-        )
-        val readerViewFeature = ReaderViewFeature(testContext, engine, store, mock())
-        readerViewFeature.showReaderView()
-        verify(store).dispatch(ReaderAction.UpdateReaderActiveAction(tab.id, true))
+    fun `pass scrollY for showing reader view`() {
+        val message = ReaderViewFeature.createShowReaderMessage(null, 1234)
+        assertEquals(ReaderViewFeature.ACTION_SHOW, message[ReaderViewFeature.ACTION_MESSAGE_KEY])
+        val config = message[ReaderViewFeature.ACTION_VALUE] as JSONObject?
+        assertNotNull(config)
+        assertEquals(1234, config!![ReaderViewFeature.ACTION_VALUE_SCROLLY])
     }
 
     @Test
@@ -566,6 +580,7 @@ class ReaderViewFeatureTest {
         tab: TabSessionState = createTab("https://www.mozilla.org", id = "test-tab"),
         engineSession: EngineSession = mock(),
         controller: WebExtensionController? = null,
+        createUUID: UUIDCreator = { "" },
     ): ReaderViewFeature {
         val engine: Engine = mock()
 
@@ -584,7 +599,7 @@ class ReaderViewFeatureTest {
         }
         WebExtensionController.installedExtensions[ReaderViewFeature.READER_VIEW_EXTENSION_ID] = ext
 
-        val feature = ReaderViewFeature(testContext, engine, store, mock())
+        val feature = ReaderViewFeature(testContext, engine, store, mock(), createUUID)
         if (controller != null) {
             feature.extensionController = controller
         }

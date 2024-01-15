@@ -4,7 +4,6 @@
 
 package mozilla.components.feature.prompts.address
 
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.ContentState
 import mozilla.components.browser.state.state.CustomTabSessionState
@@ -23,10 +22,8 @@ import mozilla.components.support.test.whenever
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.mockito.Mockito.verify
 
-@RunWith(AndroidJUnit4::class)
 class AddressPickerTest {
 
     private lateinit var store: BrowserStore
@@ -114,7 +111,7 @@ class AddressPickerTest {
     @Test
     fun `GIVEN a custom tab and a prompt request WHEN handleSelectAddressRequest is called THEN the prompt is shown with the provided addresses`() {
         val customTabContent: ContentState = mock()
-        val customTab = CustomTabSessionState("custom-tab", customTabContent, mock(), mock())
+        val customTab = CustomTabSessionState(id = "custom-tab", content = customTabContent, trackingProtection = mock(), config = mock())
         whenever(customTabContent.promptRequests).thenReturn(listOf(promptRequest))
         whenever(state.customTabs).thenReturn(listOf(customTab))
 

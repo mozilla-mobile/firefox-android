@@ -5,7 +5,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
-def generatedSrcDir = new File(buildDir, "generated/components/src/main/java")
+def generatedSrcDir = new File(layout.buildDirectory.get().asFile, "generated/components/src/main/java")
 
 // This gitHash functionality is duplicated in publish.gradle.
 def getGitHash = { ->
@@ -18,15 +18,14 @@ def getGitHash = { ->
 }
 
 android {
-    compileSdkVersion config.compileSdkVersion
-
     defaultConfig {
         minSdkVersion config.minSdkVersion
+        compileSdk config.compileSdkVersion
         targetSdkVersion config.targetSdkVersion
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        def appServicesVersion = Versions.mozilla_appservices
+        def appServicesVersion = ApplicationServicesConfig.version
         if (gradle.hasProperty("localProperties.branchBuild.application-services.version")) {
             appServicesVersion = gradle["localProperties.branchBuild.application-services.version"]
         }
@@ -56,25 +55,27 @@ android {
 
     buildFeatures {
         viewBinding true
+        buildConfig true
     }
+
+    namespace 'mozilla.components.support.base'
+
 }
 
 dependencies {
-    implementation Dependencies.kotlin_stdlib
-    implementation Dependencies.kotlin_coroutines
-    implementation Dependencies.androidx_lifecycle_viewmodel
+    implementation ComponentsDependencies.kotlin_coroutines
+    implementation ComponentsDependencies.androidx_lifecycle_viewmodel
 
     api project(":concept-base")
     // We expose the app-compat as API so that consumers get access to the Lifecycle classes automatically
-    api Dependencies.androidx_appcompat
+    api ComponentsDependencies.androidx_appcompat
 
     testImplementation project(':support-test')
 
-    testImplementation Dependencies.testing_coroutines
-    testImplementation Dependencies.androidx_test_core
-    testImplementation Dependencies.androidx_test_junit
-    testImplementation Dependencies.testing_robolectric
-    testImplementation Dependencies.testing_mockito
+    testImplementation ComponentsDependencies.testing_coroutines
+    testImplementation ComponentsDependencies.androidx_test_core
+    testImplementation ComponentsDependencies.androidx_test_junit
+    testImplementation ComponentsDependencies.testing_robolectric
 }
 
 

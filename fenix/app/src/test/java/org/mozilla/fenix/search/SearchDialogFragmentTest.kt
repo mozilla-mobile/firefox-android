@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.search
 
+import android.view.WindowManager.LayoutParams
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
@@ -14,28 +15,37 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import io.mockk.spyk
 import io.mockk.unmockkStatic
 import io.mockk.verify
 import mozilla.components.browser.state.search.SearchEngine
 import mozilla.components.browser.state.state.SearchState
-import mozilla.components.browser.state.state.searchEngines
-import mozilla.components.browser.state.state.selectedOrDefaultSearchEngine
+import mozilla.components.support.test.robolectric.testContext
 import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertSame
 import org.junit.Before
 import org.junit.Test
-import org.mozilla.fenix.components.Components
-import org.mozilla.fenix.ext.requireComponents
+import org.junit.runner.RunWith
+import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.browser.browsingmode.BrowsingMode
+import org.mozilla.fenix.components.AppStore
+import org.mozilla.fenix.components.appstate.AppState
+import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 
+@RunWith(FenixRobolectricTestRunner::class)
 internal class SearchDialogFragmentTest {
     private val navController: NavController = mockk()
     private val fragment = SearchDialogFragment()
+    private var appStore: AppStore = AppStore()
 
     @Before
     fun setup() {
         mockkStatic("androidx.navigation.fragment.FragmentKt")
         every { any<Fragment>().findNavController() } returns navController
+        every { testContext.components.appStore } returns appStore
     }
 
     @After
@@ -91,58 +101,53 @@ internal class SearchDialogFragmentTest {
 
     @Test
     fun `GIVEN the default search engine is currently selected WHEN checking the need to update the current search engine THEN don't to anything`() {
-        fragment.interactor = mockk()
+        val searchDialogFragment = spyk(fragment)
+        val interactor = spyk(SearchDialogInteractor(mockk()))
+
+        every { searchDialogFragment.interactor } returns interactor
+
         val defaultSearchEngine: SearchEngine = mockk {
             every { id } returns "default"
         }
         val otherSearchEngine: SearchEngine = mockk {
             every { id } returns "other"
         }
-        val components: Components = mockk {
-            every { core.store.state.search } returns mockk(relaxed = true) {
-                every { searchEngines } returns listOf(otherSearchEngine, defaultSearchEngine)
-            }
-        }
-        mockkStatic(
-            "org.mozilla.fenix.ext.FragmentKt",
-            "mozilla.components.browser.state.state.SearchStateKt",
-        ) {
-            every { any<Fragment>().requireComponents } returns components
-            every { any<SearchState>().selectedOrDefaultSearchEngine } returns defaultSearchEngine
 
-            fragment.maybeSelectShortcutEngine(defaultSearchEngine.id)
+        every { searchDialogFragment.requireContext() } returns testContext
+        every { testContext.components.core.store.state.search } returns SearchState(
+            regionSearchEngines = listOf(defaultSearchEngine, otherSearchEngine),
+            userSelectedSearchEngineId = "default",
+        )
 
-            verify { fragment.interactor wasNot Called }
-        }
+        searchDialogFragment.maybeSelectShortcutEngine(defaultSearchEngine.id)
+
+        verify { interactor wasNot Called }
     }
 
     @Test
     fun `GIVEN the default search engine is not currently selected WHEN checking the need to update the current search engine THEN update it to the current engine`() {
-        fragment.interactor = mockk {
-            every { onSearchShortcutEngineSelected(any()) } just Runs
-        }
+        val searchDialogFragment = spyk(fragment)
+        val interactor = spyk(SearchDialogInteractor(mockk()))
+
+        every { searchDialogFragment.interactor } returns interactor
+        every { interactor.onSearchShortcutEngineSelected(any()) } just Runs
+
         val defaultSearchEngine: SearchEngine = mockk {
             every { id } returns "default"
         }
         val otherSearchEngine: SearchEngine = mockk {
             every { id } returns "other"
         }
-        val components: Components = mockk {
-            every { core.store.state.search } returns mockk(relaxed = true) {
-                every { searchEngines } returns listOf(otherSearchEngine, defaultSearchEngine)
-            }
-        }
-        mockkStatic(
-            "org.mozilla.fenix.ext.FragmentKt",
-            "mozilla.components.browser.state.state.SearchStateKt",
-        ) {
-            every { any<Fragment>().requireComponents } returns components
-            every { any<SearchState>().selectedOrDefaultSearchEngine } returns defaultSearchEngine
 
-            fragment.maybeSelectShortcutEngine(otherSearchEngine.id)
+        every { searchDialogFragment.requireContext() } returns testContext
+        every { testContext.components.core.store.state.search } returns SearchState(
+            regionSearchEngines = listOf(defaultSearchEngine, otherSearchEngine),
+            userSelectedSearchEngineId = "default",
+        )
 
-            verify { fragment.interactor.onSearchShortcutEngineSelected(otherSearchEngine) }
-        }
+        searchDialogFragment.maybeSelectShortcutEngine(otherSearchEngine.id)
+
+        verify { interactor.onSearchShortcutEngineSelected(any()) }
     }
 
     @Test
@@ -152,6 +157,45 @@ internal class SearchDialogFragmentTest {
         fragment.maybeSelectShortcutEngine(null)
 
         verify { fragment.interactor wasNot Called }
+    }
+
+    @Test
+    fun `GIVEN app is in private mode WHEN search dialog is created THEN the dialog is secure`() {
+        appStore = AppStore(AppState(mode = BrowsingMode.Private))
+        val activity: HomeActivity = mockk(relaxed = true)
+        val fragment = spyk(SearchDialogFragment())
+        val layoutParams = LayoutParams()
+        layoutParams.flags = LayoutParams.FLAG_SECURE
+
+        every { activity.window } returns mockk(relaxed = true) {
+            every { attributes } returns LayoutParams().apply { flags = LayoutParams.FLAG_SECURE }
+        }
+        every { fragment.requireActivity() } returns activity
+        every { fragment.requireContext() } returns testContext
+        every { testContext.components.appStore } returns appStore
+
+        val dialog = fragment.onCreateDialog(null)
+
+        assertEquals(LayoutParams.FLAG_SECURE, dialog.window?.attributes?.flags!! and LayoutParams.FLAG_SECURE)
+    }
+
+    @Test
+    fun `GIVEN app is in normal mode WHEN search dialog is created THEN the dialog is not secure`() {
+        val activity: HomeActivity = mockk(relaxed = true)
+        appStore = AppStore(AppState(mode = BrowsingMode.Normal))
+        val fragment = spyk(SearchDialogFragment())
+        val layoutParams = LayoutParams()
+        layoutParams.flags = LayoutParams.FLAG_SECURE
+
+        every { activity.window } returns mockk(relaxed = true) {
+            every { attributes } returns LayoutParams().apply { flags = LayoutParams.FLAG_SECURE }
+        }
+        every { fragment.requireActivity() } returns activity
+        every { fragment.requireContext() } returns testContext
+
+        val dialog = fragment.onCreateDialog(null)
+
+        assertEquals(0, dialog.window?.attributes?.flags!! and LayoutParams.FLAG_SECURE)
     }
 }
 

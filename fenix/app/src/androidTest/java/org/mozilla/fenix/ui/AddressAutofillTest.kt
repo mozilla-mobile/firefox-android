@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.ui
 
 import okhttp3.mockwebserver.MockWebServer
@@ -8,13 +12,48 @@ import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdContainingText
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper.exitMenu
+import org.mozilla.fenix.helpers.TestHelper.packageName
+import org.mozilla.fenix.ui.robots.autofillScreen
+import org.mozilla.fenix.ui.robots.clickPageObject
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
 
 class AddressAutofillTest {
     private lateinit var mockWebServer: MockWebServer
+
+    object FirstAddressAutofillDetails {
+        var navigateToAutofillSettings = true
+        var isAddressAutofillEnabled = true
+        var userHasSavedAddress = false
+        var firstName = "Mozilla"
+        var middleName = "Fenix"
+        var lastName = "Firefox"
+        var streetAddress = "Harrison Street"
+        var city = "San Francisco"
+        var state = "Alaska"
+        var zipCode = "94105"
+        var country = "United States"
+        var phoneNumber = "555-5555"
+        var emailAddress = "foo@bar.com"
+    }
+
+    object SecondAddressAutofillDetails {
+        var navigateToAutofillSettings = false
+        var firstName = "Android"
+        var middleName = "Test"
+        var lastName = "Name"
+        var streetAddress = "Fort Street"
+        var city = "San Jose"
+        var state = "Arizona"
+        var zipCode = "95141"
+        var country = "United States"
+        var phoneNumber = "777-7777"
+        var emailAddress = "fuu@bar.org"
+    }
 
     @get:Rule
     val activityIntentTestRule = HomeActivityIntentTestRule.withDefaultSettingsOverrides()
@@ -32,60 +71,65 @@ class AddressAutofillTest {
         mockWebServer.shutdown()
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1836845
     @SmokeTest
     @Test
     fun verifyAddressAutofillTest() {
         val addressFormPage =
             TestAssetHelper.getAddressFormAsset(mockWebServer)
 
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openAutofillSubMenu {
-            clickAddAddressButton()
+        autofillScreen {
             fillAndSaveAddress(
-                "Mozilla",
-                "Fenix",
-                "Firefox",
-                "Harrison Street",
-                "San Francisco",
-                "Alaska",
-                "94105",
-                "United States",
-                "555-5555",
-                "foo@bar.com",
+                navigateToAutofillSettings = FirstAddressAutofillDetails.navigateToAutofillSettings,
+                isAddressAutofillEnabled = FirstAddressAutofillDetails.isAddressAutofillEnabled,
+                userHasSavedAddress = FirstAddressAutofillDetails.userHasSavedAddress,
+                firstName = FirstAddressAutofillDetails.firstName,
+                middleName = FirstAddressAutofillDetails.middleName,
+                lastName = FirstAddressAutofillDetails.lastName,
+                streetAddress = FirstAddressAutofillDetails.streetAddress,
+                city = FirstAddressAutofillDetails.city,
+                state = FirstAddressAutofillDetails.state,
+                zipCode = FirstAddressAutofillDetails.zipCode,
+                country = FirstAddressAutofillDetails.country,
+                phoneNumber = FirstAddressAutofillDetails.phoneNumber,
+                emailAddress = FirstAddressAutofillDetails.emailAddress,
             )
         }.goBack {
         }.goBack {
         }
         navigationToolbar {
         }.enterURLAndEnterToBrowser(addressFormPage.url) {
-            clickStreetAddressTextBox()
+            clickPageObject(itemWithResId("streetAddress"))
             clickSelectAddressButton()
-            clickAddressSuggestion("Harrison Street")
+            clickPageObject(
+                itemWithResIdContainingText(
+                    "$packageName:id/address_name",
+                    "Harrison Street",
+                ),
+            )
             verifyAutofilledAddress("Harrison Street")
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1836856
     @SmokeTest
     @Test
     fun deleteSavedAddressTest() {
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openAutofillSubMenu {
-            clickAddAddressButton()
+        autofillScreen {
             fillAndSaveAddress(
-                "Mozilla",
-                "Fenix",
-                "Firefox",
-                "Harrison Street",
-                "San Francisco",
-                "Alaska",
-                "94105",
-                "United States",
-                "555-5555",
-                "foo@bar.com",
+                navigateToAutofillSettings = FirstAddressAutofillDetails.navigateToAutofillSettings,
+                isAddressAutofillEnabled = FirstAddressAutofillDetails.isAddressAutofillEnabled,
+                userHasSavedAddress = FirstAddressAutofillDetails.userHasSavedAddress,
+                firstName = FirstAddressAutofillDetails.firstName,
+                middleName = FirstAddressAutofillDetails.middleName,
+                lastName = FirstAddressAutofillDetails.lastName,
+                streetAddress = FirstAddressAutofillDetails.streetAddress,
+                city = FirstAddressAutofillDetails.city,
+                state = FirstAddressAutofillDetails.state,
+                zipCode = FirstAddressAutofillDetails.zipCode,
+                country = FirstAddressAutofillDetails.country,
+                phoneNumber = FirstAddressAutofillDetails.phoneNumber,
+                emailAddress = FirstAddressAutofillDetails.emailAddress,
             )
             clickManageAddressesButton()
             clickSavedAddress("Mozilla")
@@ -97,6 +141,7 @@ class AddressAutofillTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1836840
     @Test
     fun verifyAddAddressViewTest() {
         homeScreen {
@@ -110,24 +155,24 @@ class AddressAutofillTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1836841
     @Test
     fun verifyEditAddressViewTest() {
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openAutofillSubMenu {
-            clickAddAddressButton()
+        autofillScreen {
             fillAndSaveAddress(
-                "Mozilla",
-                "Fenix",
-                "Firefox",
-                "Harrison Street",
-                "San Francisco",
-                "Alaska",
-                "94105",
-                "United States",
-                "555-5555",
-                "foo@bar.com",
+                navigateToAutofillSettings = FirstAddressAutofillDetails.navigateToAutofillSettings,
+                isAddressAutofillEnabled = FirstAddressAutofillDetails.isAddressAutofillEnabled,
+                userHasSavedAddress = FirstAddressAutofillDetails.userHasSavedAddress,
+                firstName = FirstAddressAutofillDetails.firstName,
+                middleName = FirstAddressAutofillDetails.middleName,
+                lastName = FirstAddressAutofillDetails.lastName,
+                streetAddress = FirstAddressAutofillDetails.streetAddress,
+                city = FirstAddressAutofillDetails.city,
+                state = FirstAddressAutofillDetails.state,
+                zipCode = FirstAddressAutofillDetails.zipCode,
+                country = FirstAddressAutofillDetails.country,
+                phoneNumber = FirstAddressAutofillDetails.phoneNumber,
+                emailAddress = FirstAddressAutofillDetails.emailAddress,
             )
             clickManageAddressesButton()
             clickSavedAddress("Mozilla")
@@ -135,28 +180,27 @@ class AddressAutofillTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1836839
     @Test
     fun verifyAddressAutofillToggleTest() {
         val addressFormPage =
             TestAssetHelper.getAddressFormAsset(mockWebServer)
 
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openAutofillSubMenu {
-            verifyAddressAutofillSection(true, false)
-            clickAddAddressButton()
+        autofillScreen {
             fillAndSaveAddress(
-                "Mozilla",
-                "Fenix",
-                "Firefox",
-                "Harrison Street",
-                "San Francisco",
-                "Alaska",
-                "94105",
-                "United States",
-                "555-5555",
-                "foo@bar.com",
+                navigateToAutofillSettings = FirstAddressAutofillDetails.navigateToAutofillSettings,
+                isAddressAutofillEnabled = FirstAddressAutofillDetails.isAddressAutofillEnabled,
+                userHasSavedAddress = FirstAddressAutofillDetails.userHasSavedAddress,
+                firstName = FirstAddressAutofillDetails.firstName,
+                middleName = FirstAddressAutofillDetails.middleName,
+                lastName = FirstAddressAutofillDetails.lastName,
+                streetAddress = FirstAddressAutofillDetails.streetAddress,
+                city = FirstAddressAutofillDetails.city,
+                state = FirstAddressAutofillDetails.state,
+                zipCode = FirstAddressAutofillDetails.zipCode,
+                country = FirstAddressAutofillDetails.country,
+                phoneNumber = FirstAddressAutofillDetails.phoneNumber,
+                emailAddress = FirstAddressAutofillDetails.emailAddress,
             )
         }
 
@@ -164,7 +208,7 @@ class AddressAutofillTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(addressFormPage.url) {
-            clickStreetAddressTextBox()
+            clickPageObject(itemWithResId("streetAddress"))
             verifySelectAddressButtonExists(true)
         }.openThreeDotMenu {
         }.openSettings {
@@ -177,33 +221,32 @@ class AddressAutofillTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(addressFormPage.url) {
-            clickStreetAddressTextBox()
+            clickPageObject(itemWithResId("streetAddress"))
             verifySelectAddressButtonExists(false)
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1836847
     @Test
     fun verifyManageAddressesPromptOptionTest() {
         val addressFormPage =
             TestAssetHelper.getAddressFormAsset(mockWebServer)
 
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openAutofillSubMenu {
-            verifyAddressAutofillSection(true, false)
-            clickAddAddressButton()
+        autofillScreen {
             fillAndSaveAddress(
-                "Mozilla",
-                "Fenix",
-                "Firefox",
-                "Harrison Street",
-                "San Francisco",
-                "Alaska",
-                "94105",
-                "United States",
-                "555-5555",
-                "foo@bar.com",
+                navigateToAutofillSettings = FirstAddressAutofillDetails.navigateToAutofillSettings,
+                isAddressAutofillEnabled = FirstAddressAutofillDetails.isAddressAutofillEnabled,
+                userHasSavedAddress = FirstAddressAutofillDetails.userHasSavedAddress,
+                firstName = FirstAddressAutofillDetails.firstName,
+                middleName = FirstAddressAutofillDetails.middleName,
+                lastName = FirstAddressAutofillDetails.lastName,
+                streetAddress = FirstAddressAutofillDetails.streetAddress,
+                city = FirstAddressAutofillDetails.city,
+                state = FirstAddressAutofillDetails.state,
+                zipCode = FirstAddressAutofillDetails.zipCode,
+                country = FirstAddressAutofillDetails.country,
+                phoneNumber = FirstAddressAutofillDetails.phoneNumber,
+                emailAddress = FirstAddressAutofillDetails.emailAddress,
             )
         }
 
@@ -211,7 +254,7 @@ class AddressAutofillTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(addressFormPage.url) {
-            clickStreetAddressTextBox()
+            clickPageObject(itemWithResId("streetAddress"))
             clickSelectAddressButton()
         }.clickManageAddressButton {
             verifyAutofillToolbarTitle()
@@ -220,42 +263,42 @@ class AddressAutofillTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1836849
     @Test
-    fun verifyAddressAutofillSelectionTest() {
+    fun verifyMultipleAddressesSelectionTest() {
         val addressFormPage =
             TestAssetHelper.getAddressFormAsset(mockWebServer)
 
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openAutofillSubMenu {
-            verifyAddressAutofillSection(true, false)
-            clickAddAddressButton()
+        autofillScreen {
             fillAndSaveAddress(
-                "Mozilla",
-                "Fenix",
-                "Firefox",
-                "Harrison Street",
-                "San Francisco",
-                "Alaska",
-                "94105",
-                "United States",
-                "555-5555",
-                "foo@bar.com",
+                navigateToAutofillSettings = FirstAddressAutofillDetails.navigateToAutofillSettings,
+                isAddressAutofillEnabled = FirstAddressAutofillDetails.isAddressAutofillEnabled,
+                userHasSavedAddress = FirstAddressAutofillDetails.userHasSavedAddress,
+                firstName = FirstAddressAutofillDetails.firstName,
+                middleName = FirstAddressAutofillDetails.middleName,
+                lastName = FirstAddressAutofillDetails.lastName,
+                streetAddress = FirstAddressAutofillDetails.streetAddress,
+                city = FirstAddressAutofillDetails.city,
+                state = FirstAddressAutofillDetails.state,
+                zipCode = FirstAddressAutofillDetails.zipCode,
+                country = FirstAddressAutofillDetails.country,
+                phoneNumber = FirstAddressAutofillDetails.phoneNumber,
+                emailAddress = FirstAddressAutofillDetails.emailAddress,
             )
             clickManageAddressesButton()
             clickAddAddressButton()
             fillAndSaveAddress(
-                "Android",
-                "Test",
-                "Name",
-                "Fort Street",
-                "San Jose",
-                "Arizona",
-                "95141",
-                "United States",
-                "777-7777",
-                "fuu@bar.org",
+                navigateToAutofillSettings = SecondAddressAutofillDetails.navigateToAutofillSettings,
+                firstName = SecondAddressAutofillDetails.firstName,
+                middleName = SecondAddressAutofillDetails.middleName,
+                lastName = SecondAddressAutofillDetails.lastName,
+                streetAddress = SecondAddressAutofillDetails.streetAddress,
+                city = SecondAddressAutofillDetails.city,
+                state = SecondAddressAutofillDetails.state,
+                zipCode = SecondAddressAutofillDetails.zipCode,
+                country = SecondAddressAutofillDetails.country,
+                phoneNumber = SecondAddressAutofillDetails.phoneNumber,
+                emailAddress = SecondAddressAutofillDetails.emailAddress,
             )
             verifyManageAddressesToolbarTitle()
         }
@@ -264,56 +307,67 @@ class AddressAutofillTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(addressFormPage.url) {
-            clickStreetAddressTextBox()
+            clickPageObject(itemWithResId("streetAddress"))
             clickSelectAddressButton()
-            clickAddressSuggestion("Harrison Street")
+            clickPageObject(
+                itemWithResIdContainingText(
+                    "$packageName:id/address_name",
+                    "Harrison Street",
+                ),
+            )
             verifyAutofilledAddress("Harrison Street")
             clearAddressForm()
-            clickStreetAddressTextBox()
+            clickPageObject(itemWithResId("streetAddress"))
             clickSelectAddressButton()
-            clickAddressSuggestion("Fort Street")
+            clickPageObject(
+                itemWithResIdContainingText(
+                    "$packageName:id/address_name",
+                    "Fort Street",
+                ),
+            )
             verifyAutofilledAddress("Fort Street")
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1836850
     @Test
     fun verifySavedAddressCanBeEditedTest() {
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openAutofillSubMenu {
-            verifyAddressAutofillSection(true, false)
-            clickAddAddressButton()
+        autofillScreen {
             fillAndSaveAddress(
-                "Mozilla",
-                "Fenix",
-                "Firefox",
-                "Harrison Street",
-                "San Francisco",
-                "Alaska",
-                "94105",
-                "United States",
-                "555-5555",
-                "foo@bar.com",
+                navigateToAutofillSettings = FirstAddressAutofillDetails.navigateToAutofillSettings,
+                isAddressAutofillEnabled = FirstAddressAutofillDetails.isAddressAutofillEnabled,
+                userHasSavedAddress = FirstAddressAutofillDetails.userHasSavedAddress,
+                firstName = FirstAddressAutofillDetails.firstName,
+                middleName = FirstAddressAutofillDetails.middleName,
+                lastName = FirstAddressAutofillDetails.lastName,
+                streetAddress = FirstAddressAutofillDetails.streetAddress,
+                city = FirstAddressAutofillDetails.city,
+                state = FirstAddressAutofillDetails.state,
+                zipCode = FirstAddressAutofillDetails.zipCode,
+                country = FirstAddressAutofillDetails.country,
+                phoneNumber = FirstAddressAutofillDetails.phoneNumber,
+                emailAddress = FirstAddressAutofillDetails.emailAddress,
             )
             clickManageAddressesButton()
             clickSavedAddress("Mozilla")
             fillAndSaveAddress(
-                "Android",
-                "Test",
-                "Name",
-                "Fort Street",
-                "San Jose",
-                "Arizona",
-                "95141",
-                "United States",
-                "777-7777",
-                "fuu@bar.org",
+                navigateToAutofillSettings = SecondAddressAutofillDetails.navigateToAutofillSettings,
+                firstName = SecondAddressAutofillDetails.firstName,
+                middleName = SecondAddressAutofillDetails.middleName,
+                lastName = SecondAddressAutofillDetails.lastName,
+                streetAddress = SecondAddressAutofillDetails.streetAddress,
+                city = SecondAddressAutofillDetails.city,
+                state = SecondAddressAutofillDetails.state,
+                zipCode = SecondAddressAutofillDetails.zipCode,
+                country = SecondAddressAutofillDetails.country,
+                phoneNumber = SecondAddressAutofillDetails.phoneNumber,
+                emailAddress = SecondAddressAutofillDetails.emailAddress,
             )
             verifyManageAddressesToolbarTitle()
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1836848
     @Test
     fun verifyStateFieldUpdatesInAccordanceWithCountryFieldTest() {
         homeScreen {
@@ -330,27 +384,27 @@ class AddressAutofillTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1836858
     @Test
     fun verifyFormFieldCanBeFilledManuallyTest() {
         val addressFormPage =
             TestAssetHelper.getAddressFormAsset(mockWebServer)
 
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openAutofillSubMenu {
-            clickAddAddressButton()
+        autofillScreen {
             fillAndSaveAddress(
-                "Mozilla",
-                "Fenix",
-                "Firefox",
-                "Harrison Street",
-                "San Francisco",
-                "Alaska",
-                "94105",
-                "United States",
-                "555-5555",
-                "foo@bar.com",
+                navigateToAutofillSettings = FirstAddressAutofillDetails.navigateToAutofillSettings,
+                isAddressAutofillEnabled = FirstAddressAutofillDetails.isAddressAutofillEnabled,
+                userHasSavedAddress = FirstAddressAutofillDetails.userHasSavedAddress,
+                firstName = FirstAddressAutofillDetails.firstName,
+                middleName = FirstAddressAutofillDetails.middleName,
+                lastName = FirstAddressAutofillDetails.lastName,
+                streetAddress = FirstAddressAutofillDetails.streetAddress,
+                city = FirstAddressAutofillDetails.city,
+                state = FirstAddressAutofillDetails.state,
+                zipCode = FirstAddressAutofillDetails.zipCode,
+                country = FirstAddressAutofillDetails.country,
+                phoneNumber = FirstAddressAutofillDetails.phoneNumber,
+                emailAddress = FirstAddressAutofillDetails.emailAddress,
             )
         }
 
@@ -358,34 +412,38 @@ class AddressAutofillTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(addressFormPage.url) {
-            clickStreetAddressTextBox()
+            clickPageObject(itemWithResId("streetAddress"))
             clickSelectAddressButton()
-            clickAddressSuggestion("Harrison Street")
+            clickPageObject(
+                itemWithResIdContainingText(
+                    "$packageName:id/address_name",
+                    "Harrison Street",
+                ),
+            )
             verifyAutofilledAddress("Harrison Street")
             setTextForApartmentTextBox("Ap. 07")
             verifyManuallyFilledAddress("Ap. 07")
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1836838
     @Test
     fun verifyAutofillAddressSectionTest() {
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openAutofillSubMenu {
-            verifyAddressAutofillSection(true, false)
-            clickAddAddressButton()
+        autofillScreen {
             fillAndSaveAddress(
-                "Mozilla",
-                "Fenix",
-                "Firefox",
-                "Harrison Street",
-                "San Francisco",
-                "Alaska",
-                "94105",
-                "United States",
-                "555-5555",
-                "foo@bar.com",
+                navigateToAutofillSettings = FirstAddressAutofillDetails.navigateToAutofillSettings,
+                isAddressAutofillEnabled = FirstAddressAutofillDetails.isAddressAutofillEnabled,
+                userHasSavedAddress = FirstAddressAutofillDetails.userHasSavedAddress,
+                firstName = FirstAddressAutofillDetails.firstName,
+                middleName = FirstAddressAutofillDetails.middleName,
+                lastName = FirstAddressAutofillDetails.lastName,
+                streetAddress = FirstAddressAutofillDetails.streetAddress,
+                city = FirstAddressAutofillDetails.city,
+                state = FirstAddressAutofillDetails.state,
+                zipCode = FirstAddressAutofillDetails.zipCode,
+                country = FirstAddressAutofillDetails.country,
+                phoneNumber = FirstAddressAutofillDetails.phoneNumber,
+                emailAddress = FirstAddressAutofillDetails.emailAddress,
             )
             verifyAddressAutofillSection(true, true)
             clickManageAddressesButton()

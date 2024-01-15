@@ -6,10 +6,9 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion config.compileSdkVersion
-
     defaultConfig {
         minSdkVersion config.minSdkVersion
+        compileSdk config.compileSdkVersion
         targetSdkVersion config.targetSdkVersion
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -22,24 +21,23 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    namespace 'mozilla.components.lib.crash.sentry'
 }
 
 dependencies {
-    implementation Dependencies.kotlin_stdlib
-
     implementation project(':support-base')
     implementation project(':support-ktx')
     implementation project(':support-utils')
     implementation project(':lib-crash')
 
-    implementation Dependencies.thirdparty_sentry_latest
-    testImplementation Dependencies.thirdparty_sentry_latest
+    implementation ComponentsDependencies.thirdparty_sentry
+    testImplementation ComponentsDependencies.thirdparty_sentry
 
     testImplementation project(':support-test')
-    testImplementation Dependencies.androidx_test_core
-    testImplementation Dependencies.androidx_test_junit
-    testImplementation Dependencies.testing_robolectric
-    testImplementation Dependencies.testing_mockito
+    testImplementation ComponentsDependencies.androidx_test_core
+    testImplementation ComponentsDependencies.androidx_test_junit
+    testImplementation ComponentsDependencies.testing_robolectric
 }
 
 apply from: '../../../android-lint.gradle'

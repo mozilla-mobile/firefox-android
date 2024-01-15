@@ -33,7 +33,7 @@ private val mainLooper = Looper.getMainLooper()
  * Manages strict mode settings for the application.
  */
 open class StrictModeManager(
-    config: Config,
+    private val config: Config,
 
     // Ideally, we'd pass in a more specific value but there is a circular dependency: StrictMode
     // is passed into Core but we'd need to pass in Core here. Instead, we take components and later
@@ -112,6 +112,14 @@ open class StrictModeManager(
      */
     open fun <R> resetAfter(policy: StrictMode.ThreadPolicy, functionBlock: () -> R): R {
         fun instrumentedFunctionBlock(): R {
+            // For Mozilla Online builds, we decided not to add a profile marker because we need to
+            // prevent early initialization of the engine. These markers also have no distinct
+            // meaning to the Mozilla Online build variant.
+            // See: https://bugzilla.mozilla.org/show_bug.cgi?id=1825028
+            if (config.channel.isMozillaOnline) {
+                return functionBlock()
+            }
+
             val startProfilerTime = components.core.engine.profiler?.getProfilerTime()
 
             val returnValue = functionBlock()
@@ -168,7 +176,8 @@ open class StrictModeManager(
  * To add a new manufacturer to the list, log "Build.MANUFACTURER" from the device to get the
  * exact name of the manufacturer.
  */
-private fun isInStrictModeExceptionList() = ManufacturerCodes.isHuawei || ManufacturerCodes.isOnePlus
+private fun isInStrictModeExceptionList() =
+    ManufacturerCodes.isHuawei || ManufacturerCodes.isOnePlus || ManufacturerCodes.isOppo
 
 private fun StrictMode.ThreadPolicy.Builder.penaltyDeathWithIgnores(): StrictMode.ThreadPolicy.Builder {
     // This workaround was added before we realized we can ignored based on violation contents

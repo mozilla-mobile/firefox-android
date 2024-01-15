@@ -3,20 +3,326 @@ layout: page
 title: Changelog
 permalink: /changelog/
 ---
-# 112.0.0 (In Development)
-* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/v111.0.0...main)
+
+# 123.0 (In Development)
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v122..main)
 * [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
 * [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/Gecko.kt)
 * [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/.config.yml)
 
-# 111.0.0
-* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/v110.0.0...v111.0.0)
-* [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/v111.0.0/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
-* [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/v111.0.0/android-components/plugins/dependencies/src/main/java/Gecko.kt)
-* [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/v111.0.0/android-components/.config.yml)
+* **feature-customtabs**
+ * Sharing a URL from a custom tab always uses the current url of the session. [bug #1831803](https://bugzilla.mozilla.org/show_bug.cgi?id=1831803)
+
+# 122.0
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v121..releases_v122)
+* [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/releases_v122/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
+* [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/releases_v122/android-components/plugins/dependencies/src/main/java/Gecko.kt)
+* [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/releases_v122/android-components/.config.yml)
+
+* **concept-engine**
+  * Add `reportBackInStock` API to `EngineSession` to allow reporting a shopping product is back in stock. [Bug 1858947](https://bugzilla.mozilla.org/show_bug.cgi?id=1858947)
+  * Add `emailTrackerBlockingPrivateBrowsing` API to `Settings` to toggle Email Tracker Blocking in Private Browsing Mode [Bug 1866927](https://bugzilla.mozilla.org/show_bug.cgi?id=1866927)
+
+* **feature-media**
+  * Added `FOREGROUND_SERVICE_MEDIA_PLAYBACK` permission to the `AndroidManifest.xml`.
+
+* **support-utils**
+  * Recognize IPv6 literals in the address bar. [Bug 1803465](https://bugzilla.mozilla.org/show_bug.cgi?id=1803465)
+
+* **browser-engine-gecko**
+  * Enable nested scrolling on `GeckoEngineView` as required by `NestedGeckoView`. [Bug 1847305](https://bugzilla.mozilla.org/show_bug.cgi?id=1847305)
+  * `NestedGeckoView` now disallows touch interception until we receive a response from `GeckoView#onTouchEventForDetailResult`. [Bug 1847305](https://bugzilla.mozilla.org/show_bug.cgi?id=1847305)
+  * Add `globalPrivacyControlEnabled` setting to allow enabling Global Privacy Control in normal browsing. This is always enabled in private browsing. [Bug 1865357](https://bugzilla.mozilla.org/show_bug.cgi?id=1865357)
+  * Adds support to toggle Email Tracker Blocking in Private Mode with new `emailTrackerBlockingPrivateBrowsing` API [Bug 1866927](https://bugzilla.mozilla.org/show_bug.cgi?id=1866927)
+
+* **samples-browser**
+  * Use `VerticalSwipeRefreshLayout` from AndroidComponents instead of AndroidX `SwipeRefreshLayout` to represent better Fenix behavior
+
+* **places-bookmark-storage**:
+  * Added `countBookmarksInTrees` to more efficiently determine how many bookmarks exist under part or parts of a bookmarks tree, which
+    is taken advantage of by `DesktopFolders`.
+
+* **support-base**
+  * Make `message` param non optional for the Logging APIs. [Bug 1867606](https://bugzilla.mozilla.org/show_bug.cgi?id=1867606)
+
+# 121.0
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v120..releases_v121)
+* [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/releases_v121/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
+* [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/releases_v121/android-components/plugins/dependencies/src/main/java/Gecko.kt)
+* [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/releases_v121/android-components/.config.yml)
+
+* **browser-state**:
+  * Added `TranslationsState` to track translation and translation restoration status. [Bug 1844523](https://bugzilla.mozilla.org/show_bug.cgi?id=1844523)
+
+* **browser-engine-gecko**:
+  * Added support for translating and restoring a translated page on the engine. [Bug 1844523](https://bugzilla.mozilla.org/show_bug.cgi?id=1844523)
+
+* **service-location**
+  * Added a cache lifetime to `MozillaLocationService`. [Bug 1855562](https://bugzilla.mozilla.org/show_bug.cgi?id=1855562)
+
+* **feature-search**
+  * `RegionManager` now uses the cached result from it's `LocationService`. [Bug 1854988](https://bugzilla.mozilla.org/show_bug.cgi?id=1854988)
+
+# 120.0
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v119..releases_v120)
+* [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/releases_v120/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
+* [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/releases_v120/android-components/plugins/dependencies/src/main/java/Gecko.kt)
+* [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/releases_v120/android-components/.config.yml)
+
+* **feature-tabs**
+  * Adds parameter to `TabCounterToolbarButton` to show the mask while in private browsing mode.
+
+* **feature-readerview**
+  * Adds `UUIDCreator` to `ReaderViewFeature` to create UUIDs for cache keys.
+  * Moves the implementation of presenting Reader Mode from the content scripts to `ReaderViewFeature`
+
+* **browser-state**
+  * `SessionState.isProductUrl` is not affected for private tabs as shopping mode is disabled in private tabs. [Bug 1847063](https://bugzilla.mozilla.org/show_bug.cgi?id=1847063)
+  * `SessionState.isProductUrl` has been moved to `ContentState.isProductUrl`. [Bug 1857287](https://bugzilla.mozilla.org/show_bug.cgi?id=1857287)
+
+# 119.0
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v118..releases_v119)
+* [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/releases_v119/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
+* [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/releases_v119/android-components/plugins/dependencies/src/main/java/Gecko.kt)
+* [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/releases_v119/android-components/.config.yml)
+
+* **feature-tabs**
+  * Removed deprecated `TabsUseCases.AddNewPrivateTabUseCase`. [Bug 1853070](https://bugzilla.mozilla.org/show_bug.cgi?id=1853070)
+
+* **lib-crash-sentry**
+  * `SentryService.initIfNeeded` is now public. [bug #1851676](https://bugzilla.mozilla.org/show_bug.cgi?id=1851676)
+
+* **feature-downloads**
+  * Added a custom permission `${applicationId}.permission.RECEIVE_DOWNLOAD_BROADCAST` that needs to be used by apps in order to receive download related broadcasts
+
+* **ui-tabcounter**
+  * Adds a mask overlay to the tabcounter that can be shown with `toggleCounterMask`.
+
+* **feature-push**
+  * We will no longer report `RecordNotFoundException` to the `CrashReporter` as it's largely a (web) application side reason why these messages are still trying to be delivered.
+
+* **feature-awesomebar**
+  * Search engine suggestions will only be displayed if the user inputs at least 2 characters and matches the starting characters of the search engine name. [Bug 1851012](https://bugzilla.mozilla.org/show_bug.cgi?id=1851012)
+
+* **logins-storage**
+  * Removed SQLCipher logins migration path for users from v95 and below
+  * ⚠️ **This will cause a loss to existing logins if**:
+    * User is using the logins feature and has a version of v95 or below
+    * User is NOT syncing their logins with another device
+    * User plans to upgrade from v95 to v119 or above
+
+* **support-webextensions**
+  * ⚠️ **This is a breaking change**: Renamed `WebExtensionPopupFeature` to `WebExtensionPopupObserver` [bug #1852335](https://bugzilla.mozilla.org/show_bug.cgi?id=1852335)
+  * Added `ExtensionProcessDisabledPopupObserver` to display to the user a dialog when the extensions process spawning has been disabled. [bug #1846979](https://bugzilla.mozilla.org/show_bug.cgi?id=1846979)
+
+* **concept-engine**
+  * 🌟️️ Add `reanalyzeProduct` API to `EngineSession` to allow reanalyzing product from the engine. See more on [Bug 1853309](https://bugzilla.mozilla.org/show_bug.cgi?id=1853309).
+  * 🌟️️ Add `requestAnalysisStatus` API to `EngineSession` to allow request product analysis status from the engine. See more on [Bug 1853309](https://bugzilla.mozilla.org/show_bug.cgi?id=1853309).
+  * 🌟️️ Add `sendClickAttributionEvent` and `sendImpressionAttributionEvent` API to `EngineSession` to allow sending attribution events. See more on [Bug 1853309](https://bugzilla.mozilla.org/show_bug.cgi?id=1853309).
+
+* **support-ktx**
+  * ⚠️ **This is a breaking change**: the `enterToImmersiveMode()` in `Activity.kt` has been renamed to `enterImmersiveMode()`.
+  * ⚠️ **This is a breaking change**: the `getWindowInsetsController()` in `Window.kt` has been renamed to `createWindowInsetsController()`.
+
+# 118.0
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v117..releases_v118)
+* [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/releases_v118/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
+* [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/releases_v118/android-components/plugins/dependencies/src/main/java/Gecko.kt)
+* [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/releases_v118/android-components/.config.yml)
+
+* **browser-state**
+  🌟️️ Add `isProductUrl` to `SessionState` instance to indicate whether or not a product page of a given session state is being displayed. See more on [Bug 1842638](https://bugzilla.mozilla.org/show_bug.cgi?id=1842638).
+
+* **concept-engine**
+  * 🌟️️ Add `requestProductAnalysis` API to `EngineSession` to allow request product analysis result from the engine. See more on [Bug 1840692](https://bugzilla.mozilla.org/show_bug.cgi?id=1840692).
+  * 🌟️️ Add `requestProductRecommendations` API to `EngineSession` to allow request product recommendations from the engine. See more on [Bug 1840693](https://bugzilla.mozilla.org/show_bug.cgi?id=1840693).
+
+* **feature-addons**
+  * ⚠️ **This is a breaking change**: the method `getAvailableAddons()` in `AddonsProvider` has been renamed to `getFeaturedAddons()`.
+  * ⚠️ **This is a breaking change**: the `AddonCollectionProvider` has been renamed to `AMOAddonsProvider`.
+  * ⚠️ **This is a breaking change**: add new method `getAddonIconBitmap()` to `AddonsProvider`.
+  * ⚠️ **This is a breaking change**: added `getAddonsByGUIDs()` method to `AddonsProvider`.
+
+* **support-ktx**
+  * 🌟`Activity.enterToImmersiveMode()` now extends the full screen view into the notch area. See more on [Bug 1849009](https://bugzilla.mozilla.org/show_bug.cgi?id=1849009)
+
+* **browser-engine-gecko**:
+ * Implemented new `NimbusExperimentDelegate` to allow GeckoView to send and receive Nimbus experiment information. [Bug 1843592](https://bugzilla.mozilla.org/show_bug.cgi?id=1843592)
+  * Removed deprecated `ContentDelegate.onGetNimbusFeature`. Please use `ExperimentDelegate.onGetExperimentFeature`. [Bug 1843592](https://bugzilla.mozilla.org/show_bug.cgi?id=1843592)
+
+# 117.0
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v116..releases_v117)
+* [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/releases_v117/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
+* [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/releases_v117/android-components/plugins/dependencies/src/main/java/Gecko.kt)
+* [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/releases_v117/android-components/.config.yml)
+
+* **service-nimbus**
+  * Add `allow-coenrollment` to the `messaging` feature, making it possible to enroll in multiple experiments involving messaging.
+    * Modified the mechanism that ties a message back to experiment, to make sure we record exposure events correctly.
+
+* **ui-icons**:
+  * Renamed icons to align with the naming used in the Acorn design system for Firefox. [Bug 1840210](https://bugzilla.mozilla.org/show_bug.cgi?id=1840210)
+    * Rename mozac_ic_storage to mozac_ic_storage_24.
+    * Rename mozac_ic_shield_disabled to mozac_ic_shield_slash_24
+    * Rename mozac_ic_settings to mozac_ic_settings_24
+    * Rename mozac_ic_pin_filled_2 to mozac_ic_pin_fill_24
+    * Rename mozac_ic_warning to mozac_ic_warning_fill_24
+    * Rename mozac_ic_shield to mozac_ic_shield_24
+    * Rename mozac_ic_video to mozac_ic_camera_24
+    * Rename mozac_ic_share to mozac_ic_share_android_24
+    * Rename mozac_ic_search to mozac_ic_search_24
+    * Rename mozac_ic_refresh to mozac_ic_arrow_clockwise_24
+    * Rename mozac_ic_reader_mode to mozac_ic_reader_view_24
+    * Rename mozac_ic_quit to mozac_ic_cross_circle_24
+    * Rename mozac_ic_private_browsing to mozac_ic_private_mode_24
+    * Rename mozac_ic_pin_remove to mozac_ic_pin_slash_24
+    * Rename mozac_ic_pin to mozac_ic_pin_24
+    * Rename mozac_ic_password_reveal to mozac_ic_eye_24
+    * Rename mozac_ic_password_hide to mozac_ic_eye_slash_24
+    * Rename mozac_ic_notification to mozac_ic_notification_24
+    * Rename mozac_ic_new to mozac_ic_plus_24
+    * Rename mozac_ic_microphone to mozac_ic_microphone_24
+    * Rename mozac_ic_menu to mozac_ic_ellipsis_vertical_24
+    * Rename mozac_ic_login to mozac_ic_login_24
+    * Rename mozac_ic_lock to mozac_ic_lock_24
+    * Rename mozac_ic_location to mozac_ic_location_24
+    * Rename mozac_ic_close_20 to mozac_ic_cross_20
+    * Rename mozac_ic_link to mozac_ic_link_24
+    * Rename mozac_ic_information to mozac_ic_information_24
+    * Rename mozac_ic_info to mozac_ic_information_fill_24
+    * Rename mozac_ic_home to mozac_ic_home_24
+    * Rename mozac_ic_help to mozac_ic_help_circle_24
+    * Rename mozac_ic_globe to mozac_ic_globe_24
+    * Rename mozac_ic_forward to mozac_ic_forward_24
+    * Rename mozac_ic_fingerprint to mozac_ic_fingerprinter_24
+    * Rename mozac_ic_extensions to mozac_ic_extension_24
+    * Rename mozac_ic_edit_suggestion to mozac_ic_append_up_24
+    * Rename mozac_ic_download to mozac_ic_download_24
+    * Rename mozac_ic_device_mobile to mozac_ic_device_mobile_24
+    * Rename mozac_ic_device_desktop to mozac_ic_device_desktop_24
+    * Rename mozac_ic_delete to mozac_ic_delete_24
+    * Rename mozac_ic_clear to mozac_ic_cross_circle_fill_24
+    * Rename mozac_ic_back to mozac_ic_back_24
+    * Rename mozac_ic_autoplay_blocked to mozac_ic_autoplay_slash_24
+    * Rename mozac_ic_check to mozac_ic_checkmark_24
+    * Rename mozac_ic_arrowhead_up to mozac_ic_chevron_up_24
+    * Rename mozac_ic_arrowhead_right to mozac_ic_chevron_right_24
+    * Rename mozac_ic_arrowhead_down to mozac_ic_chevron_down_24
+    * Rename mozac_ic_close to mozac_ic_cross_24
+    * Rename mozac_ic_add_to_homescreen to mozac_ic_add_to_homescreen_24
+    * Rename mozac_ic_cookies to mozac_ic_cookies_24
+    * Rename mozac_ic_sync to mozac_ic_sync_24
+
+# 116.0
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v115..releases_v116)
+* [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/releases_v116/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
+* [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/releases_v116/android-components/plugins/dependencies/src/main/java/Gecko.kt)
+* [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/releases_v116/android-components/.config.yml)
+
+* **support-base**
+  * Adds `NotificationManangerCompat` extension functions `areNotificationsEnabledSafe()` and  `isNotificationChannelEnabled()`.
+  * Removes deprecated `BackHandler`, use `UserInteractionHandler` instead.
+
+* **feature-pwa**
+  * Adds `WebAppContentFeature` to set the "display" mode from the web app manifest on the `EngineSession`.
+* **browser-engine-gecko**:
+  * Added support for Printing on the Engine.
+  * Add support for `checkForPdfViewer` API for checking whether a PDF viewer is loaded on the current session or not.
+* **concept-engine**:
+  * Added new `requestPrintContent` API in `Engine`. This is currently only supported in the Gecko Engine.
+* **share**:
+  * Added 'Print' as an option on the share menu
+* **browser-menu**:
+  * Added 'Print' as an option on the toolbar menu
+
+* **support-ktx**
+  * Removes ifChanged Flow extension functions in favour of `distintUntilChanged` and `distintUntilChangedBy`in `kotlin.coroutines.flow`.
+
+* **lib-crash**
+  * [Bug 1839697](https://bugzilla.mozilla.org/show_bug.cgi?id=1839697). Report Java exceptions in
+    the GleanCrashReporterService.
+
+# 115.0
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v114..releases_v115)
+* [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/releases_v115/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
+* [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/releases_v115/android-components/plugins/dependencies/src/main/java/Gecko.kt)
+* [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/releases_v115/android-components/.config.yml)
+
+* **lib-crash**
+  * Log exceptions that crash the `CrashReporter` to avoid silent failurs. See [Bug 1826591](https://bugzilla.mozilla.org/show_bug.cgi?id=1826591).
+
+* **crash-sentry**
+  * Sends exceptions with an attached `Mechanism` to signal to Sentry that it was an uncaught exception. See [Bug 1835107](https://bugzilla.mozilla.org/show_bug.cgi?id=1835107)
+
+* **concept-sync**
+  *  Bug Fixed [Bug 1804274]((https://bugzilla.mozilla.org/show_bug.cgi?id=1804274)) Passes an entrypoint url parameter to FxA when logging-in, that represents the context which the app launches the Firefox Accounts web channel.
+
+* **feature-push**
+  * Refactored [Bug 1829982]( https://bugzilla.mozilla.org/show_bug.cgi?id=1829982) Refactors push to remove the RustConnection layer, and instead use the underlying Rust layer directly.
+
+# 114.0
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v113..releases_v114)
+* [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/releases_v114/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
+* [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/releases_v114/android-components/plugins/dependencies/src/main/java/Gecko.kt)
+* [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/releases_v114/android-components/.config.yml)
+
+* * **browser-state**
+  * 🌟 Added `DownloadState`.`openInApp` to indicate whether or not the file associated with the download should be opened in a third party app after downloaded successfully, for more information see [Bug 1829371](https://bugzilla.mozilla.org/show_bug.cgi?id=1829371) and [Bug 1829372](https://bugzilla.mozilla.org/show_bug.cgi?id=1829372).
+
+# 113.0.0
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v112..releases_v113)
+* [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/releases_v113/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
+* [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/releases_v113/android-components/plugins/dependencies/src/main/java/Gecko.kt)
+* [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/releases_v113/android-components/.config.yml)
 
 * **compose-cfr**
-  * 🚒 Bug fixed [bug #1809592](https://bugzilla.mozilla.org/show_bug.cgi?id=1809592). Improve screen alignment for Contextual Feature Recommendation popups.
+  * 🚒 Bug fixed [Bug 1819950](https://bugzilla.mozilla.org/show_bug.cgi?id=1819950). Ensure CFRs are automatically dismissed on screen rotation on all Android versions.
+
+* **concept-sync**, **service-firefox-accounts**
+  * Removed unused `AccountSharing` from sync and accounts.
+
+* **support-license**
+  * 🆕 New component to display generated license information.
+
+# 112.0
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v111...releases_v112)
+* [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/releases_v112/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
+* [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/releases_v112/android-components/plugins/dependencies/src/main/java/Gecko.kt)
+* [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/releases_v112/android-components/.config.yml)
+
+* **service-pocket**
+  * 🌟 ⚠️ **This is a breaking change**: Use `id` instead of `flight_id` to identify a Pocket sponsored story. [Bug 1820967](https://bugzilla.mozilla.org/show_bug.cgi?id=1820967).
+
+* **feature-prompts**:
+  * 🚒 Bug fixed [Bug 1819254](https://bugzilla.mozilla.org/show_bug.cgi?id=1819254). Don't exit fullscreen for user input prompts.
+
+* **service-contile**
+  * ⚠️ **This is a breaking change**: Added support for sponsored tiles maximum age specified by the server when a Contile outage is detected. `maxCacheAgeInMinutes` changed to `maxCacheAgeInSeconds`. [Bug 1811175](https://bugzilla.mozilla.org/show_bug.cgi?id=1811175)
+
+* **tooling-glean-gradle:**
+  * ⚠️ **This is a breaking change**: This wrapper of the Glean plugin is no longer needed and has been removed. Consuming applications can directly depend on the [Glean Gradle plugin](https://github.com/mozilla/glean/tree/main/gradle-plugin/).
+
+* **lib-crash-sentry-legacy**
+  * ⚠️ **This is a breaking change**: This component has been removed. Consumers should use the newer `lib-crash-sentry` component instead.
+
+* **lib-crash**
+  * 🚒 Bug fixed [Bug 1822148](https://bugzilla.mozilla.org/show_bug.cgi?id=1822148). Ensure proguard rules retain serialization classes.
+
+* **browser-engine-gecko**:
+  * Add support for `hasCookieBannerRuleForSession` API for checking whether a cookie banner from the current website in the session can be handled.
+
+* **concept-engine**:
+  * Add new `hasCookieBannerRuleForSession` API in `Engine`. This is currently only supported in the Gecko Engine.
+
+
+# 111.0
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v110...releases_v111)
+* [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/releases_v111/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
+* [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/releases_v111/android-components/plugins/dependencies/src/main/java/Gecko.kt)
+* [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/releases_v111/android-components/.config.yml)
+
+* **compose-cfr**
+  * 🚒 Bug fixed [Bug 1809592](https://bugzilla.mozilla.org/show_bug.cgi?id=1809592). Improve screen alignment for Contextual Feature Recommendation popups.
 
 * **service-pocket**
   * 🌟 Added `country` and `city` parameters to Pocket sponsored stories fetch request. These can be overwritten using `PocketStoriesConfig`, allowing clients to specify a location and receive sponsored stories when outside countries where Pocket is enabled based on IP location. [Bug 1811537](https://bugzilla.mozilla.org/show_bug.cgi?id=1811537).
@@ -27,16 +333,16 @@ permalink: /changelog/
 * **browser-storage-sync**:
 * **feature-awesomebar**
 * **feature-syncedtabs**
-  * 🆕 [Bug #1800268](https://bugzilla.mozilla.org/show_bug.cgi?id=1800268) New autocomplete providers for bookmarks, local tabs or synced tabs that can be set for `ToolbarAutocompleteFeature`.
+  * 🆕 [Bug 1800268](https://bugzilla.mozilla.org/show_bug.cgi?id=1800268) New autocomplete providers for bookmarks, local tabs or synced tabs that can be set for `ToolbarAutocompleteFeature`.
 
 * **feature-toolbar**
-  * ⚠️ [Bug #1800268](https://bugzilla.mozilla.org/show_bug.cgi?id=1800268) **This is a breaking change**: `ToolbarAutocompleteFeature` has a new API for updating at any time `AutocompleteProvider` (add or remove any of them) individually or in bulk. This change allows supporting any instance and any number of autocomplete providers and optionally query for new autocomplete results when providers change.
+  * ⚠️ [Bug 1800268](https://bugzilla.mozilla.org/show_bug.cgi?id=1800268) **This is a breaking change**: `ToolbarAutocompleteFeature` has a new API for updating at any time `AutocompleteProvider` (add or remove any of them) individually or in bulk. This change allows supporting any instance and any number of autocomplete providers and optionally query for new autocomplete results when providers change.
 
 * **feature-awesomebar**
-  * 🆕 [Bug #1800268](https://bugzilla.mozilla.org/show_bug.cgi?id=1800268) A new optional lambda `resultsHostFilter` has been added to the constructors of some AwesomeBar suggestions providers. This will allow for external url filtering of the provided suggestions.
+  * 🆕 [Bug 1800268](https://bugzilla.mozilla.org/show_bug.cgi?id=1800268) A new optional lambda `resultsHostFilter` has been added to the constructors of some AwesomeBar suggestions providers. This will allow for external url filtering of the provided suggestions.
 
 * **feature-awesomebar**
-  * 🆕 New `SearchTermSuggestionsProvider` that will show by default up to 2 search suggestions based on past searches the user has done with the current search engine. These suggestions will appear between the search action ones and the search suggestion ones. [bug #1804258](https://bugzilla.mozilla.org/show_bug.cgi?id=1804258).
+  * 🆕 New `SearchTermSuggestionsProvider` that will show by default up to 2 search suggestions based on past searches the user has done with the current search engine. These suggestions will appear between the search action ones and the search suggestion ones. [Bug 1804258](https://bugzilla.mozilla.org/show_bug.cgi?id=1804258).
 
 * **feature-downloads**:
   * 🌟️ `DownloadsFeature` now allows passing a download dialog delegate for 1st party downloads through a new `customDownloadDialog` parameter. [Bug 1812518](https://bugzilla.mozilla.org/show_bug.cgi?id=1812518)
@@ -62,11 +368,14 @@ permalink: /changelog/
   * 🚒 Bug fixed [Bug 1802620](https://bugzilla.mozilla.org/show_bug.cgi?id=1802620). Handles `ForegroundServiceStartNotAllowedException`.
   * 🚒 Bug fixed [Bug 1813416](https://bugzilla.mozilla.org/show_bug.cgi?id=1813416). Clear `FLAG_KEEP_SCREEN_ON` when playing media is finished.
 
-# 110.0.0
-* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/v109.0.0...v110.0.0)
-* [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/v110.0.0/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
-* [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/v110.0.0/android-components/plugins/dependencies/src/main/java/Gecko.kt)
-* [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/v110.0.0/android-components/.config.yml)
+* **lib-crash**
+  * 🌟 Added support for Glean crash pings in the `GleanCrashReporterService`. [Bug 1810951](https://bugzilla.mozilla.org/show_bug.cgi?id=1810951)
+
+# 110.0
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v109...releases_v110)
+* [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/releases_v110/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
+* [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/releases_v110/android-components/plugins/dependencies/src/main/java/Gecko.kt)
+* [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/releases_v110/android-components/.config.yml)
 
 * **support-telemetry-sync**
   * 🚒 Bug fixed [Bug 1804996](https://bugzilla.mozilla.org/show_bug.cgi?id=1804996). Removed fpsa, ftas, ftsa and ffos DDG type tags and replaced them with fpas.
@@ -109,10 +418,10 @@ permalink: /changelog/
   * 🆕 Added `GeckoCookieBannersStorage.addPersistentExceptionInPrivateMode` to allow to add persistent cookie banner exceptions in private browsing [Bug 1797605](https://bugzilla.mozilla.org/show_bug.cgi?id=1806924).
 
 # 109.0.0
-* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/v108.0.0...v109.0.0)
-* [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/v109.0.0/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
-* [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/v109.0.0/android-components/plugins/dependencies/src/main/java/Gecko.kt)
-* [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/v109.0.0/android-components/.config.yml)
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v108...releases_v109)
+* [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/releases_v109/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
+* [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/releases_v109/android-components/plugins/dependencies/src/main/java/Gecko.kt)
+* [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/releases_v109/android-components/.config.yml)
 
 * **support-ktx, feature-contextmenu**
   * 🚒 Bug fixed [Bug 1798873](https://bugzilla.mozilla.org/show_bug.cgi?id=1798873) Added a way to exclude current app from share targets. Used when sharing text.
@@ -432,7 +741,7 @@ permalink: /changelog/
 
 * **browser-storage-sync**
   * ⚠️ **This is a breaking change**: When constructing a `RemoteTabsStorage` object you must now a `Context` which is used to determine the location of the sqlite database which is used to persist the remote tabs [#11799](https://github.com/mozilla-mobile/android-components/pull/11799).
-  * Fixed a low frequency crasher that might occur when the app attempts to delete all history. [#12112](https://github.com/mozilla-mobile/android-components/pull/12112)
+  * Fixed a low frequency crash that might occur when the app attempts to delete all history. [#12112](https://github.com/mozilla-mobile/android-components/pull/12112)
 
 * **feature-syncedtabs**
   * ⚠️ **This is a breaking change**: When constructing a `SyncedTabsStorage`, the `tabsStorage: RemoteTabsStorage` parameter is no longer optional so must be supplied [#11799](https://github.com/mozilla-mobile/android-components/pull/11799).
@@ -835,7 +1144,7 @@ permalink: /changelog/
   * Added handling of biometric authentication for a credit card selection prompt request. [#10369](https://github.com/mozilla-mobile/android-components/pull/10369)
 
 * **concept-engine**
-  * 🌟️ `getBlockedSchemes()` now exposes the list of url shemes that the engine won't load.
+  * 🌟️ `getBlockedSchemes()` now exposes the list of url schemes that the engine won't load.
   * Adds a new `CreditCard` data class which is a parallel of GeckoView's `Autocomplete.CreditCard`. [#10205](https://github.com/mozilla-mobile/android-components/issues/10205)
   * Adds a new `SelectCreditCard` in `PromptRequest` to display a prompt for selecting a credit card to autocomplete. [#10205](https://github.com/mozilla-mobile/android-components/issues/10205)
 
@@ -2326,7 +2635,7 @@ permalink: /changelog/
   *  ⚠️ **This is a breaking change**: Refactored component to use `browser-state` instead of `browser-session`. The `FxaWebChannelFeature`  now requires a `BrowserStore` instance instead of a `SessionManager`.
 
 * **lib-push-fcm**, **lib-push-adm**, **concept-push**
-  * Allow nullable encoding values in push messsages. If they are null, we attempt to use `aes128gcm` for encoding.
+  * Allow nullable encoding values in push messages. If they are null, we attempt to use `aes128gcm` for encoding.
 
 * **browser-toolbar**
   * It will only be animated for vertical scrolls inside the EngineView. Not for horizontal scrolls. Not for zoom gestures.
@@ -4237,7 +4546,7 @@ permalink: /changelog/
 
   ```kotlin
   import mozilla.components.support.rusthttp.RustHttpConfig
-  // Note: other implementions of `Client` from concept-fetch are fine as well.
+  // Note: other implementations of `Client` from concept-fetch are fine as well.
   import mozilla.components.lib.fetch.httpurlconnection.HttpURLConnectionClient
   // some point before calling rust code that makes HTTP requests.
   RustHttpConfig.setClient(lazy { HttpURLConnectionClient() })
@@ -4270,7 +4579,7 @@ permalink: /changelog/
   * Added custom notification icon for `FetchDownloadManager`.
 
 * **feature-app-links**
-  * Added whitelist for schemes of URLs to open with an external app. This defaults to `mailto`, `market`, `sms` and `tel`.
+  * Added allow-list for schemes of URLs to open with an external app. This defaults to `mailto`, `market`, `sms` and `tel`.
 
 * **feature-accounts**
   * ⚠️ **This is a breaking change**: Public API for interacting with `FxaAccountManager` and sync changes

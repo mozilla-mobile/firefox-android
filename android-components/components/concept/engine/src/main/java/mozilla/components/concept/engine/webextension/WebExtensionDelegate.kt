@@ -42,6 +42,13 @@ interface WebExtensionDelegate {
     fun onDisabled(extension: WebExtension) = Unit
 
     /**
+     * Invoked when a web extension was started successfully.
+     *
+     * @param extension The extension that has completed its startup.
+     */
+    fun onReady(extension: WebExtension) = Unit
+
+    /**
      * Invoked when a web extension in private browsing allowed is set.
      *
      * @param extension the modified [WebExtension] instance.
@@ -101,10 +108,26 @@ interface WebExtensionDelegate {
      *
      * @param extension the extension being installed. The required permissions can be
      * accessed using [WebExtension.getMetadata] and [Metadata.permissions].
+     * @param onPermissionsGranted A callback to indicate whether the user has granted the [extension] permissions
      * @return whether or not installation should process i.e. the permissions have been
      * granted.
      */
-    fun onInstallPermissionRequest(extension: WebExtension): Boolean = false
+    fun onInstallPermissionRequest(
+        extension: WebExtension,
+        onPermissionsGranted: ((Boolean) -> Unit),
+    ) = Unit
+
+    /**
+     * Invoked whenever the installation of a [WebExtension] failed.
+     *
+     * @param extension extension the extension that failed to be installed. It can be null when the
+     * extension couldn't be downloaded or the extension couldn't be parsed for example.
+     * @param exception the reason why the installation failed.
+     */
+    fun onInstallationFailedRequest(
+        extension: WebExtension?,
+        exception: WebExtensionInstallException,
+    ) = Unit
 
     /**
      * Invoked when a web extension has changed its permissions while trying to update to a
@@ -125,10 +148,30 @@ interface WebExtensionDelegate {
     ) = Unit
 
     /**
+     * Invoked when a web extension requests optional permissions. This requires user interaction since the
+     * user needs to grant or revoke these optional permissions.
+     *
+     * @param extension The [WebExtension].
+     * @param permissions The list of all the optional permissions.
+     * @param onPermissionsGranted A callback to indicate if the optional permissions have been granted or not.
+     */
+    fun onOptionalPermissionsRequest(
+        extension: WebExtension,
+        permissions: List<String>,
+        onPermissionsGranted: ((Boolean) -> Unit),
+    ) = Unit
+
+    /**
      * Invoked when the list of installed extensions has been updated in the engine
      * (the web extension runtime). This happens as a result of debugging tools (e.g
      * web-ext) installing temporary extensions. It does not happen in the regular flow
      * of installing / uninstalling extensions by the user.
      */
     fun onExtensionListUpdated() = Unit
+
+    /**
+     * Invoked when the extension process spawning has been disabled. This can occur because
+     * it has been killed or crashed too many times. A client should determine what to do next.
+     */
+    fun onDisabledExtensionProcessSpawning() = Unit
 }

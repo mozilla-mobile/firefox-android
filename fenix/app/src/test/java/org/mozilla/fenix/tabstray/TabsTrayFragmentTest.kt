@@ -100,6 +100,7 @@ class TabsTrayFragmentTest {
             every { fragment.context } returns testContext // needed for getString()
             every { any<CoroutineScope>().allowUndo(any(), any(), any(), any(), any(), any(), any(), any()) } just Runs
             every { fragment.requireView() } returns view
+            every { testContext.settings().enableTabsTrayToCompose } returns false
 
             fragment.showUndoSnackbarForTab(true)
 
@@ -131,6 +132,7 @@ class TabsTrayFragmentTest {
             every { fragment.context } returns testContext // needed for getString()
             every { any<CoroutineScope>().allowUndo(any(), any(), any(), any(), any(), any(), any(), any()) } just Runs
             every { fragment.requireView() } returns view
+            every { testContext.settings().enableTabsTrayToCompose } returns false
 
             fragment.showUndoSnackbarForTab(true)
 
@@ -163,6 +165,7 @@ class TabsTrayFragmentTest {
             every { fragment.context } returns testContext // needed for getString()
             every { any<CoroutineScope>().allowUndo(any(), any(), any(), any(), any(), any(), any(), any()) } just Runs
             every { fragment.requireView() } returns view
+            every { testContext.settings().enableTabsTrayToCompose } returns false
 
             fragment.showUndoSnackbarForTab(false)
 
@@ -194,6 +197,7 @@ class TabsTrayFragmentTest {
             every { fragment.context } returns testContext // needed for getString()
             every { any<CoroutineScope>().allowUndo(any(), any(), any(), any(), any(), any(), any(), any()) } just Runs
             every { fragment.requireView() } returns view
+            every { testContext.settings().enableTabsTrayToCompose } returns false
 
             fragment.showUndoSnackbarForTab(false)
 
@@ -287,6 +291,8 @@ class TabsTrayFragmentTest {
     fun `WHEN setupBackgroundDismissalListener is called THEN it sets a click listener for tray's tabLayout and handle`() {
         var clickCount = 0
         val callback: (View) -> Unit = { clickCount++ }
+        every { fragment.context } returns testContext
+        every { testContext.settings().enableTabsTrayToCompose } returns false
 
         fragment.setupBackgroundDismissalListener(callback)
 
@@ -337,6 +343,9 @@ class TabsTrayFragmentTest {
             every { getTabAt(any()) } returns tab
         }
 
+        every { fragment.context } returns testContext
+        every { testContext.settings().enableTabsTrayToCompose } returns false
+
         mockkStatic(ViewBindings::class) {
             every { ViewBindings.findChildViewById<View>(tabsTrayBinding.root, tabsTrayBinding.tabsTray.id) } returns tabsTray
             every { ViewBindings.findChildViewById<View>(tabsTrayBinding.root, tabsTrayBinding.tabLayout.id) } returns tabLayout
@@ -354,10 +363,12 @@ class TabsTrayFragmentTest {
     @Test
     fun `WHEN dismissTabsTray is called THEN it dismisses the tray`() {
         every { fragment.dismissAllowingStateLoss() } just Runs
+        mockkStatic("org.mozilla.fenix.ext.ContextKt") {
+            every { any<Context>().components } returns mockk(relaxed = true)
+            fragment.dismissTabsTray()
 
-        fragment.dismissTabsTray()
-
-        verify { fragment.dismissAllowingStateLoss() }
+            verify { fragment.dismissAllowingStateLoss() }
+        }
     }
 
     @Test

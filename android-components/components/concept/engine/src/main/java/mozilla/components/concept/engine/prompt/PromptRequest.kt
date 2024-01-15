@@ -9,6 +9,8 @@ import android.net.Uri
 import mozilla.components.concept.engine.prompt.PromptRequest.Authentication.Level
 import mozilla.components.concept.engine.prompt.PromptRequest.Authentication.Method
 import mozilla.components.concept.engine.prompt.PromptRequest.TimeSelection.Type
+import mozilla.components.concept.identitycredential.Account
+import mozilla.components.concept.identitycredential.Provider
 import mozilla.components.concept.storage.Address
 import mozilla.components.concept.storage.CreditCardEntry
 import mozilla.components.concept.storage.Login
@@ -106,6 +108,60 @@ sealed class PromptRequest(
     ) : PromptRequest(shouldDismissOnLoad = false), Dismissible
 
     /**
+     * Value type that represents Identity Credential request prompts.
+     * @property onDismiss callback to let the page know the user dismissed the dialog.
+     */
+    sealed class IdentityCredential(
+        override val onDismiss: () -> Unit,
+    ) : PromptRequest(shouldDismissOnLoad = false), Dismissible {
+        /**
+         * Value type that represents Identity Credential request for selecting a [Provider] prompt.
+         * @property providers A list of providers which the user could select from.
+         * @property onConfirm callback to let the page know the user selected a provider.
+         * @property onDismiss callback to let the page know the user dismissed the dialog.
+         */
+        data class SelectProvider(
+            val providers: List<Provider>,
+            val onConfirm: (Provider) -> Unit,
+            override val onDismiss: () -> Unit,
+        ) : IdentityCredential(onDismiss), Dismissible
+
+        /**
+         * Value type that represents Identity Credential request for selecting an [Account] prompt.
+         * @property accounts A list of accounts which the user could select from.
+         * @property providerName The name of the provider that will be used for the login
+         * @property onConfirm callback to let the page know the user selected an account.
+         * @property onDismiss callback to let the page know the user dismissed the dialog.
+         */
+        data class SelectAccount(
+            val accounts: List<Account>,
+            val provider: Provider,
+            val onConfirm: (Account) -> Unit,
+            override val onDismiss: () -> Unit,
+        ) : IdentityCredential(onDismiss), Dismissible
+
+        /**
+         * Value type that represents Identity Credential request for a privacy policy prompt.
+         * @property privacyPolicyUrl A The URL where the policy for using this provider is hosted.
+         * @property termsOfServiceUrl The URL where the terms of service for using this provider are.
+         * @property providerDomain The domain of the provider.
+         * @property host The host of the provider.
+         * @property icon A base64 string for given icon for the provider; may be null.
+         * @property onConfirm callback to let the page know the user have confirmed or not the privacy policy.
+         * @property onDismiss callback to let the page know the user dismissed the dialog.
+         */
+        data class PrivacyPolicy(
+            val privacyPolicyUrl: String,
+            val termsOfServiceUrl: String,
+            val providerDomain: String,
+            val host: String,
+            val icon: String?,
+            val onConfirm: (Boolean) -> Unit,
+            override val onDismiss: () -> Unit,
+        ) : IdentityCredential(onDismiss), Dismissible
+    }
+
+    /**
      * Value type that represents a request for a select credit card prompt.
      * @property creditCards a list of [CreditCardEntry]s to select from.
      * @property onConfirm callback that is called when the user confirms the credit card selection.
@@ -134,11 +190,13 @@ sealed class PromptRequest(
     /**
      * Value type that represents a request for a select login prompt.
      * @property logins a list of logins that are associated with the current domain.
+     * @property generatedPassword the suggested strong password that was generated.
      * @property onConfirm callback that is called when the user wants to save the login.
      * @property onDismiss callback to let the page know the user dismissed the dialog.
      */
     data class SelectLoginPrompt(
         val logins: List<Login>,
+        val generatedPassword: String?,
         val onConfirm: (Login) -> Unit,
         override val onDismiss: () -> Unit,
     ) : PromptRequest(), Dismissible

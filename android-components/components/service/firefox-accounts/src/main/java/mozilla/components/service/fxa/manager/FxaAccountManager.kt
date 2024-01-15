@@ -13,6 +13,7 @@ import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.withContext
 import mozilla.appservices.syncmanager.DeviceSettings
+import mozilla.components.concept.base.crash.Breadcrumb
 import mozilla.components.concept.base.crash.CrashReporting
 import mozilla.components.concept.sync.AccountEventsObserver
 import mozilla.components.concept.sync.AccountObserver
@@ -20,7 +21,7 @@ import mozilla.components.concept.sync.AuthFlowError
 import mozilla.components.concept.sync.AuthFlowUrl
 import mozilla.components.concept.sync.AuthType
 import mozilla.components.concept.sync.DeviceConfig
-import mozilla.components.concept.sync.InFlightMigrationState
+import mozilla.components.concept.sync.FxAEntryPoint
 import mozilla.components.concept.sync.OAuthAccount
 import mozilla.components.concept.sync.Profile
 import mozilla.components.concept.sync.ServiceResult
@@ -30,6 +31,7 @@ import mozilla.components.service.fxa.AccountOnDisk
 import mozilla.components.service.fxa.AccountStorage
 import mozilla.components.service.fxa.FxaAuthData
 import mozilla.components.service.fxa.FxaDeviceSettingsCache
+import mozilla.components.service.fxa.FxaSyncScopedKeyMissingException
 import mozilla.components.service.fxa.Result
 import mozilla.components.service.fxa.SecureAbove22AccountStorage
 import mozilla.components.service.fxa.ServerConfig
@@ -40,9 +42,8 @@ import mozilla.components.service.fxa.SyncConfig
 import mozilla.components.service.fxa.SyncEngine
 import mozilla.components.service.fxa.asAuthFlowUrl
 import mozilla.components.service.fxa.asSyncAuthInfo
-import mozilla.components.service.fxa.intoSyncType
-import mozilla.components.service.fxa.sharing.AccountSharing
-import mozilla.components.service.fxa.sharing.ShareableAccount
+import mozilla.components.service.fxa.emitSyncFailedFact
+import mozilla.components.service.fxa.into
 import mozilla.components.service.fxa.sync.SyncManager
 import mozilla.components.service.fxa.sync.SyncReason
 import mozilla.components.service.fxa.sync.SyncStatusObserver
@@ -54,12 +55,10 @@ import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.base.observer.Observable
 import mozilla.components.support.base.observer.ObserverRegistry
 import mozilla.components.support.base.utils.NamedThreadFactory
-import org.json.JSONObject
 import java.io.Closeable
-import java.lang.Exception
-import java.lang.IllegalArgumentException
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.Executors
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.coroutines.CoroutineContext
 
 // Necessary to fetch a profile.
@@ -81,31 +80,6 @@ const val AUTH_CHECK_CIRCUIT_BREAKER_COUNT = 10
 // due to long period of inactivity will trigger a few 401s, and that shouldn't be a cause for concern.
 
 const val MAX_NETWORK_RETRIES = 3
-
-/**
- * Describes a result of running [FxaAccountManager.migrateFromAccount].
- */
-enum class MigrationResult {
-    /**
-     * Sign-in failed due to an intermittent problem (such as a network failure). A retry attempt will
-     * be performed automatically during account manager initialization, or as a side-effect of certain
-     * user actions (e.g. triggering a sync).
-     *
-     * Applications may treat this account as "authenticated" after seeing this result.
-     */
-    WillRetry,
-
-    /**
-     * Sign-in succeeded with no issues.
-     * Applications may treat this account as "authenticated" after seeing this result.
-     */
-    Success,
-
-    /**
-     * Sign-in failed due to non-recoverable issues.
-     */
-    Failure,
-}
 
 /**
  * An account manager which encapsulates various internal details of an account lifecycle and provides
@@ -155,6 +129,19 @@ open class FxaAccountManager(
 
     @Volatile
     private var latestAuthState: String? = null
+
+    // Used to detect multiple auth recovery attempts at once
+    // (https://bugzilla.mozilla.org/show_bug.cgi?id=1864994)
+    private var authRecoveryScheduled = AtomicBoolean(false)
+    private fun checkForMultipleRequiveryCalls() {
+        val alreadyScheduled = authRecoveryScheduled.getAndSet(true)
+        if (alreadyScheduled) {
+            crashReporter?.recordCrashBreadcrumb(Breadcrumb("multiple fxa recoveries scheduled at once"))
+        }
+    }
+    private fun finishedAuthRecovery() {
+        authRecoveryScheduled.set(false)
+    }
 
     private val oauthObservers = object : Observable<OAuthObserver> by ObserverRegistry() {}
 
@@ -225,39 +212,6 @@ open class FxaAccountManager(
     }
 
     /**
-     * Queries trusted FxA Auth providers available on the device, returning a list of [ShareableAccount]
-     * in an order of preference. Any of the returned [ShareableAccount] may be used with
-     * [migrateFromAccount] to sign-in into an FxA account without any required user input.
-     */
-    fun shareableAccounts(context: Context): List<ShareableAccount> {
-        return AccountSharing.queryShareableAccounts(context)
-    }
-
-    /**
-     * Uses a provided [fromAccount] to sign-in into a corresponding FxA account without any required
-     * user input. Once sign-in completes, any registered [AccountObserver.onAuthenticated] listeners
-     * will be notified and [authenticatedAccount] will refer to the new account.
-     * This may fail in case of network errors, or if provided credentials are not valid.
-     * @param reuseSessionToken Whether or not to reuse existing session token (which is part of the [ShareableAccount].
-     * @return A deferred boolean flag indicating success (if true) of the sign-in operation.
-     */
-    suspend fun migrateFromAccount(
-        fromAccount: ShareableAccount,
-        reuseSessionToken: Boolean = false,
-    ): MigrationResult = withContext(coroutineContext) {
-        processQueue(Event.Account.MigrateFromAccount(fromAccount, reuseSessionToken))
-
-        when (val s = state) {
-            is State.Idle -> when (s.accountState) {
-                AccountState.Authenticated -> MigrationResult.Success
-                AccountState.IncompleteMigration -> MigrationResult.WillRetry
-                else -> MigrationResult.Failure
-            }
-            else -> MigrationResult.Failure
-        }
-    }
-
-    /**
      * @return A list of currently supported [SyncEngine]s. `null` if sync isn't configured.
      */
     fun supportedSyncEngines(): Set<SyncEngine>? {
@@ -300,12 +254,6 @@ open class FxaAccountManager(
             // Can't sync while we're still doing stuff.
             is State.Active -> Unit
             is State.Idle -> when (s.accountState) {
-                // If we're in an incomplete migration state, try to complete it.
-                // This is one of our trigger points for retrying - when a user asks us to sync.
-                // Another trigger point is the startup flow of the account manager itself.
-                AccountState.IncompleteMigration -> {
-                    processQueue(Event.Account.RetryMigration)
-                }
                 // All good, request a sync.
                 AccountState.Authenticated -> {
                     // Make sure auth cache is populated before we try to sync.
@@ -358,7 +306,6 @@ open class FxaAccountManager(
     fun authenticatedAccount(): OAuthAccount? = when (val s = state) {
         is State.Idle -> when (s.accountState) {
             AccountState.Authenticated,
-            AccountState.IncompleteMigration,
             AccountState.AuthenticationProblem,
             -> account
             else -> null
@@ -412,9 +359,14 @@ open class FxaAccountManager(
      * Begins an authentication process. Should be finalized by calling [finishAuthentication] once
      * user successfully goes through the authentication at the returned url.
      * @param pairingUrl Optional pairing URL in case a pairing flow is being initiated.
+     * @param entrypoint an enum representing the feature entrypoint requesting the URL.
+     * the entrypoint is used in telemetry.
      * @return An authentication url which is to be presented to the user.
      */
-    suspend fun beginAuthentication(pairingUrl: String? = null): String? = withContext(coroutineContext) {
+    suspend fun beginAuthentication(
+        pairingUrl: String? = null,
+        entrypoint: FxAEntryPoint,
+    ): String? = withContext(coroutineContext) {
         // It's possible that at this point authentication is considered to be "in-progress".
         // For example, if user started authentication flow, but cancelled it (closing a custom tab)
         // without finishing.
@@ -422,9 +374,9 @@ open class FxaAccountManager(
         processQueue(Event.Progress.CancelAuth)
 
         val event = if (pairingUrl != null) {
-            Event.Account.BeginPairingFlow(pairingUrl)
+            Event.Account.BeginPairingFlow(pairingUrl, entrypoint)
         } else {
-            Event.Account.BeginEmailFlow
+            Event.Account.BeginEmailFlow(entrypoint)
         }
 
         // 'deferredAuthUrl' will be set as the state machine reacts to the 'event'.
@@ -513,10 +465,13 @@ open class FxaAccountManager(
     internal suspend fun encounteredAuthError(
         operation: String,
         errorCountWithinTheTimeWindow: Int = 1,
-    ) = withContext(coroutineContext) {
-        processQueue(
-            Event.Account.AuthenticationError(operation, errorCountWithinTheTimeWindow),
-        )
+    ) {
+        checkForMultipleRequiveryCalls()
+        return withContext(coroutineContext) {
+            processQueue(
+                Event.Account.AuthenticationError(operation, errorCountWithinTheTimeWindow),
+            )
+        }
     }
 
     /**
@@ -559,14 +514,10 @@ open class FxaAccountManager(
             Event.Progress.FailedToCompleteAuth -> {
                 notifyObservers { onFlowError(AuthFlowError.FailedToCompleteAuth) }
             }
-            is Event.Progress.FailedToCompleteMigration -> {
-                notifyObservers { onFlowError(AuthFlowError.FailedToMigrate) }
+            Event.Progress.FailedToRecoverFromAuthenticationProblem -> {
+                finishedAuthRecovery()
             }
             else -> Unit
-        }
-        AccountState.IncompleteMigration -> {
-            via as Event.Progress.IncompleteMigration
-            Unit
         }
         AccountState.Authenticated -> when (via) {
             is Event.Progress.CompletedAuthentication -> {
@@ -575,6 +526,7 @@ open class FxaAccountManager(
                 Unit
             }
             Event.Progress.RecoveredFromAuthenticationProblem -> {
+                finishedAuthRecovery()
                 notifyObservers { onAuthenticated(account, AuthType.Recovered) }
                 refreshProfile(ignoreCache = true)
                 Unit
@@ -602,11 +554,7 @@ open class FxaAccountManager(
             when (accountOnDisk) {
                 is AccountOnDisk.New -> Event.Progress.AccountNotFound
                 is AccountOnDisk.Restored -> {
-                    when (account.isInMigrationState()) {
-                        null -> Event.Progress.AccountRestored
-                        InFlightMigrationState.REUSE_SESSION_TOKEN -> Event.Progress.IncompleteMigration(true)
-                        InFlightMigrationState.COPY_SESSION_TOKEN -> Event.Progress.IncompleteMigration(false)
-                    }
+                    Event.Progress.AccountRestored
                 }
             }
         }
@@ -615,14 +563,24 @@ open class FxaAccountManager(
             Event.Progress.LoggedOut
         }
         ProgressState.BeginningAuthentication -> when (via) {
-            is Event.Account.BeginPairingFlow, Event.Account.BeginEmailFlow -> {
+            is Event.Account.BeginPairingFlow, is Event.Account.BeginEmailFlow -> {
                 val pairingUrl = if (via is Event.Account.BeginPairingFlow) {
                     via.pairingUrl
                 } else {
                     null
                 }
+                val entrypoint = if (via is Event.Account.BeginEmailFlow) {
+                    via.entrypoint
+                } else if (via is Event.Account.BeginPairingFlow) {
+                    via.entrypoint
+                } else {
+                    // This should be impossible, both `BeginPairingFlow` and `BeginEmailFlow`
+                    // have a required `entrypoint` and we are matching against only instances
+                    // of those data classes.
+                    throw IllegalStateException("BeginningAuthentication with a flow that is neither email nor pairing")
+                }
                 val result = withRetries(logger, MAX_NETWORK_RETRIES) {
-                    pairingUrl.asAuthFlowUrl(account, scopes)
+                    pairingUrl.asAuthFlowUrl(account, scopes, entrypoint = entrypoint)
                 }
                 when (result) {
                     is Result.Success -> {
@@ -661,6 +619,7 @@ open class FxaAccountManager(
                         }
                     }
                     ServiceResult.AuthError -> {
+                        checkForMultipleRequiveryCalls()
                         Event.Account.AuthenticationError("finalizeDevice")
                     }
                     ServiceResult.OtherError -> {
@@ -688,49 +647,6 @@ open class FxaAccountManager(
                     } else {
                         Event.Progress.FailedToCompleteAuth
                     }
-                }
-            }
-            is Event.Progress.Migrated -> {
-                val authType = when (via.reusedSessionToken) {
-                    true -> AuthType.MigratedReuse
-                    false -> AuthType.MigratedCopy
-                }
-                when (withRetries(logger, MAX_NETWORK_RETRIES) { finalizeDevice(authType) }) {
-                    is Result.Success -> {
-                        if (authenticationSideEffects("CompletingAuthentication:Migrated")) {
-                            Event.Progress.CompletedAuthentication(authType)
-                        } else {
-                            Event.Progress.FailedToCompleteAuth
-                        }
-                    }
-                    Result.Failure -> {
-                        resetAccount()
-                        Event.Progress.FailedToCompleteMigration
-                    }
-                }
-            }
-            else -> null
-        }
-        ProgressState.MigratingAccount -> when (via) {
-            Event.Account.RetryMigration -> {
-                val migrationState = account.isInMigrationState()
-                if (migrationState == null) {
-                    // Expected to see ourselves in a migration state, but we weren't.
-                    Event.Progress.FailedToCompleteMigration
-                } else {
-                    tryToMigrate(migrationState.reuseSessionToken) {
-                        account.retryMigrateFromSessionToken()
-                    }
-                }
-            }
-            is Event.Account.MigrateFromAccount -> {
-                tryToMigrate(via.reuseSessionToken) {
-                    account.migrateFromAccount(via.account.authInfo, via.reuseSessionToken)
-                }
-            }
-            is Event.Progress.IncompleteMigration -> {
-                tryToMigrate(via.reuseSessionToken) {
-                    account.retryMigrateFromSessionToken()
                 }
             }
             else -> null
@@ -812,24 +728,6 @@ open class FxaAccountManager(
         is State.Active -> internalStateSideEffects(forState, via)
     }
 
-    private suspend fun tryToMigrate(
-        reuseSessionToken: Boolean,
-        migrationBlock: suspend () -> JSONObject?,
-    ): Event.Progress {
-        return if (migrationBlock() != null) {
-            Event.Progress.Migrated(reuseSessionToken)
-        } else {
-            // null json means 'migrationBlock' call above failed. We expect account to be still
-            // in a migrating state, and if it isn't declare this migration a failure.
-            if (account.isInMigrationState() == null) {
-                resetAccount()
-                Event.Progress.FailedToCompleteMigration
-            } else {
-                Event.Progress.IncompleteMigration(reuseSessionToken)
-            }
-        }
-    }
-
     private suspend fun resetAccount() {
         // Clean up internal account state and destroy the current FxA device record (if one exists).
         // This can fail (network issues, auth problems, etc), but nothing we can do at this point.
@@ -859,7 +757,23 @@ open class FxaAccountManager(
             return
         }
 
-        val accessToken = account.getAccessToken(SCOPE_SYNC)
+        val accessToken = try {
+            account.getAccessToken(SCOPE_SYNC)
+        } catch (e: FxaSyncScopedKeyMissingException) {
+            // We received an access token, but no sync key which means we can't really use the
+            // connected FxA account.  Throw an exception so that the account transitions to the
+            // `AuthenticationProblem` state.  Things should be fixed when the user re-logs in.
+            //
+            // This used to be thrown when the android-components code noticed the issue in
+            // `asSyncAuthInfo()`.  However, the application-services code now also checks for this
+            // and throws its own error.  To keep the flow above this the same, we catch the
+            // app-services exception and throw the android-components one.
+            //
+            // Eventually, we should remove AccessTokenUnexpectedlyWithoutKey and have the higher
+            // functions catch `FxaSyncScopedKeyMissingException` directly
+            // (https://bugzilla.mozilla.org/show_bug.cgi?id=1869862)
+            throw AccessTokenUnexpectedlyWithoutKey()
+        }
         val tokenServerUrl = if (accessToken != null) {
             // Only try to get the endpoint if we have an access token.
             account.getTokenServerEndpointURL()
@@ -930,7 +844,7 @@ open class FxaAccountManager(
             DeviceSettings(
                 fxaDeviceId = account.getCurrentDeviceId()!!,
                 name = deviceConfig.name,
-                kind = deviceConfig.type.intoSyncType(),
+                kind = deviceConfig.type.into(),
             ),
         )
         return true
@@ -985,6 +899,7 @@ open class FxaAccountManager(
         }
 
         override fun onAuthenticationProblems() {
+            emitSyncFailedFact()
             syncManager.stop()
         }
     }

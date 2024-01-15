@@ -7,16 +7,22 @@ package org.mozilla.fenix.ui.robots
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.Visibility
+import androidx.test.espresso.matcher.ViewMatchers.hasSibling
+import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.uiautomator.UiSelector
-import junit.framework.TestCase.assertTrue
 import org.hamcrest.CoreMatchers.allOf
+import org.hamcrest.CoreMatchers.containsString
 import org.mozilla.fenix.R
+import org.mozilla.fenix.helpers.MatcherHelper.assertUIObjectExists
+import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithText
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
 import org.mozilla.fenix.helpers.TestHelper.mDevice
+import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.click
 
 /**
@@ -26,15 +32,23 @@ class SettingsSubMenuEnhancedTrackingProtectionExceptionsRobot {
 
     fun verifyNavigationToolBarHeader() = assertNavigationToolBarHeader()
 
-    fun verifyDefault() = assertExceptionDefault()
+    fun verifyTPExceptionsDefaultView() {
+        assertUIObjectExists(
+            itemWithText("Exceptions let you disable tracking protection for selected sites."),
+        )
+        learnMoreLink.check(matches(isDisplayed()))
+    }
 
-    fun verifyExceptionLearnMoreText() = assertExceptionLearnMoreText()
+    fun openExceptionsLearnMoreLink() = learnMoreLink.click()
 
-    fun verifyListedURL(url: String) = assertExceptionURL(url)
+    fun removeOneSiteException(siteHost: String) {
+        exceptionsList.waitForExists(waitingTime)
+        removeSiteExceptionButton(siteHost).click()
+    }
 
-    fun verifyEnhancedTrackingProtectionProtectionExceptionsSubMenuItems() {
-        verifyDefault()
-        verifyExceptionLearnMoreText()
+    fun verifySiteExceptionExists(siteUrl: String, shouldExist: Boolean) {
+        exceptionsList.waitForExists(waitingTime)
+        assertUIObjectExists(itemContainingText(siteUrl), exists = shouldExist)
     }
 
     class Transition {
@@ -46,7 +60,7 @@ class SettingsSubMenuEnhancedTrackingProtectionExceptionsRobot {
         }
 
         fun disableExceptions(interact: SettingsSubMenuEnhancedTrackingProtectionExceptionsRobot.() -> Unit): Transition {
-            disableExceptionsButton().click()
+            disableAllExceptionsButton().click()
 
             SettingsSubMenuEnhancedTrackingProtectionExceptionsRobot().interact()
             return Transition()
@@ -62,26 +76,18 @@ private fun assertNavigationToolBarHeader() {
         .check((matches(withEffectiveVisibility(Visibility.VISIBLE))))
 }
 
-private fun assertExceptionDefault() =
-    assertTrue(
-        mDevice.findObject(
-            UiSelector().text("Exceptions let you disable tracking protection for selected sites."),
-        ).waitForExists(waitingTime),
-    )
+private val learnMoreLink = onView(withText("Learn more"))
 
-private fun assertExceptionLearnMoreText() =
-    assertTrue(
-        mDevice.findObject(
-            UiSelector().text("Learn more"),
-        ).waitForExists(waitingTime),
-    )
-
-private fun assertExceptionURL(url: String) =
-    assertTrue(
-        mDevice.findObject(
-            UiSelector().textContains(url.replace("http://", "https://")),
-        ).waitForExists(waitingTime),
-    )
-
-private fun disableExceptionsButton() =
+private fun disableAllExceptionsButton() =
     onView(withId(R.id.removeAllExceptions)).click()
+
+private fun removeSiteExceptionButton(siteHost: String) =
+    onView(
+        allOf(
+            withContentDescription("Delete"),
+            hasSibling(withText(containsString(siteHost))),
+        ),
+    )
+
+private val exceptionsList =
+    mDevice.findObject(UiSelector().resourceId("$packageName:id/exceptions_list"))

@@ -8,6 +8,7 @@ import mozilla.components.browser.engine.gecko.GeckoEngine
 import mozilla.components.browser.engine.gecko.fetch.GeckoViewFetchClient
 import mozilla.components.browser.engine.gecko.glean.GeckoAdapter
 import mozilla.components.concept.engine.Engine
+import mozilla.components.experiment.NimbusExperimentDelegate
 import mozilla.components.feature.webcompat.WebCompatFeature
 import mozilla.components.feature.webcompat.reporter.WebCompatReporterFeature
 import mozilla.components.lib.crash.handler.CrashHandlerService
@@ -23,19 +24,20 @@ class Components(private val applicationContext: Context) : DefaultComponents(ap
         // Allow for exfiltrating Gecko metrics through the Glean SDK.
         val builder = GeckoRuntimeSettings.Builder().aboutConfigEnabled(true)
         builder.telemetryDelegate(GeckoAdapter())
+        builder.experimentDelegate(NimbusExperimentDelegate())
         builder.crashHandler(CrashHandlerService::class.java)
         GeckoRuntime.create(applicationContext, builder.build())
     }
 
     override val engine: Engine by lazy {
         GeckoEngine(applicationContext, engineSettings, runtime).also {
-            it.installWebExtension("borderify@mozac.org", "resource://android/assets/extensions/borderify/") {
-                    ext, throwable ->
-                Log.log(Log.Priority.ERROR, "SampleBrowser", throwable, "Failed to install $ext")
+            it.installBuiltInWebExtension("borderify@mozac.org", "resource://android/assets/extensions/borderify/") {
+                    throwable ->
+                Log.log(Log.Priority.ERROR, "SampleBrowser", throwable, "Failed to install borderify")
             }
-            it.installWebExtension("testext@mozac.org", "resource://android/assets/extensions/test/") {
-                    ext, throwable ->
-                Log.log(Log.Priority.ERROR, "SampleBrowser", throwable, "Failed to install $ext")
+            it.installBuiltInWebExtension("testext@mozac.org", "resource://android/assets/extensions/test/") {
+                    throwable ->
+                Log.log(Log.Priority.ERROR, "SampleBrowser", throwable, "Failed to install testext")
             }
             WebCompatFeature.install(it)
             WebCompatReporterFeature.install(it)

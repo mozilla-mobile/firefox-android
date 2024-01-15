@@ -24,11 +24,11 @@ import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
+import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.ext.bookmarkStorage
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.navigateSafe
-import org.mozilla.fenix.utils.Settings
 
 @VisibleForTesting
 internal const val WARN_OPEN_ALL_SIZE = 15
@@ -78,15 +78,15 @@ class DefaultBookmarkController(
     private val clipboardManager: ClipboardManager?,
     private val scope: CoroutineScope,
     private val store: BookmarkFragmentStore,
+    private val appStore: AppStore,
     private val sharedViewModel: BookmarksSharedViewModel,
     private val tabsUseCases: TabsUseCases?,
     private val loadBookmarkNode: suspend (String, Boolean) -> BookmarkNode?,
     private val showSnackbar: (String) -> Unit,
     private val deleteBookmarkNodes: (Set<BookmarkNode>, BookmarkRemoveType) -> Unit,
     private val deleteBookmarkFolder: (Set<BookmarkNode>) -> Unit,
-    private val showTabTray: () -> Unit,
+    private val showTabTray: (Boolean) -> Unit,
     private val warnLargeOpenAll: (Int, () -> Unit) -> Unit,
-    private val settings: Settings,
 ) : BookmarkController {
 
     private val resources: Resources = activity.resources
@@ -99,13 +99,11 @@ class DefaultBookmarkController(
     override fun handleBookmarkTapped(item: BookmarkNode) {
         val fromHomeFragment =
             navController.previousBackStackEntry?.destination?.id == R.id.homeFragment
-        val isPrivate = activity.browsingModeManager.mode == BrowsingMode.Private
         val flags = EngineSession.LoadUrlFlags.select(EngineSession.LoadUrlFlags.ALLOW_JAVASCRIPT_URL)
         openInNewTabAndShow(
             item.url!!,
-            isPrivate || fromHomeFragment,
+            appStore.state.mode.isPrivate || fromHomeFragment,
             BrowserDirection.FromBookmarks,
-            activity.browsingModeManager.mode,
             flags,
         )
     }
@@ -163,7 +161,7 @@ class DefaultBookmarkController(
 
     override fun handleOpeningBookmark(item: BookmarkNode, mode: BrowsingMode) {
         openInNewTab(item.url!!, mode)
-        showTabTray()
+        showTabTray(mode.isPrivate)
     }
 
     private fun extractURLsFromTree(node: BookmarkNode): MutableList<String> {
@@ -197,9 +195,7 @@ class DefaultBookmarkController(
                         startLoading = load,
                     )
                 }
-                activity.browsingModeManager.mode =
-                    BrowsingMode.fromBoolean(mode == BrowsingMode.Private)
-                showTabTray()
+                showTabTray(mode.isPrivate)
             }
 
             // Warn user if more than maximum number of bookmarks are being opened
@@ -256,33 +252,25 @@ class DefaultBookmarkController(
     }
 
     override fun handleSearch() {
-        val directions = if (settings.showUnifiedSearchFeature) {
-            BookmarkFragmentDirections.actionGlobalSearchDialog(sessionId = null)
-        } else {
-            BookmarkFragmentDirections.actionBookmarkFragmentToBookmarkSearchDialogFragment()
-        }
-
-        navController.navigateSafe(R.id.bookmarkFragment, directions)
+        navController.navigateSafe(
+            R.id.bookmarkFragment,
+            BookmarkFragmentDirections.actionGlobalSearchDialog(sessionId = null),
+        )
     }
 
     private fun openInNewTabAndShow(
         searchTermOrURL: String,
         newTab: Boolean,
         from: BrowserDirection,
-        mode: BrowsingMode,
         flags: EngineSession.LoadUrlFlags = EngineSession.LoadUrlFlags.none(),
     ) {
-        with(activity) {
-            browsingModeManager.mode = mode
-            openToBrowserAndLoad(searchTermOrURL, newTab, from, flags = flags)
-        }
+        activity.openToBrowserAndLoad(searchTermOrURL, newTab, from, flags = flags)
     }
 
     private fun openInNewTab(
         url: String,
         mode: BrowsingMode,
     ) {
-        activity.browsingModeManager.mode = BrowsingMode.fromBoolean(mode == BrowsingMode.Private)
         tabsUseCases?.addTab?.invoke(url, private = (mode == BrowsingMode.Private))
     }
 

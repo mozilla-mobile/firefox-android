@@ -17,7 +17,7 @@ import org.mozilla.fenix.utils.Settings
 /**
  * Helper for querying the status and modifying various features and settings in the application.
  */
-class FeatureSettingsHelperDelegate : FeatureSettingsHelper {
+class FeatureSettingsHelperDelegate() : FeatureSettingsHelper {
     /**
      * The current feature flags used inside the app before the tests start.
      * These will be restored when the tests end.
@@ -33,8 +33,11 @@ class FeatureSettingsHelperDelegate : FeatureSettingsHelper {
         isTCPCFREnabled = settings.shouldShowTotalCookieProtectionCFR,
         isWallpaperOnboardingEnabled = settings.showWallpaperOnboarding,
         isDeleteSitePermissionsEnabled = settings.deleteSitePermissions,
-        isCookieBannerReductionDialogEnabled = !settings.userOptOutOfReEngageCookieBannerDialog,
+        isOpenInAppBannerEnabled = settings.shouldShowOpenInAppBanner,
         etpPolicy = getETPPolicy(settings),
+        tabsTrayRewriteEnabled = settings.enableTabsTrayToCompose,
+        composeTopSitesEnabled = settings.enableComposeTopSites,
+        translationsEnabled = settings.enableTranslations,
     )
 
     /**
@@ -52,6 +55,7 @@ class FeatureSettingsHelperDelegate : FeatureSettingsHelper {
                 false -> 0
             }
         }
+
     override var isPocketEnabled: Boolean by updatedFeatureFlags::isPocketEnabled
     override var isJumpBackInCFREnabled: Boolean by updatedFeatureFlags::isJumpBackInCFREnabled
     override var isWallpaperOnboardingEnabled: Boolean by updatedFeatureFlags::isWallpaperOnboardingEnabled
@@ -59,8 +63,11 @@ class FeatureSettingsHelperDelegate : FeatureSettingsHelper {
     override var isRecentlyVisitedFeatureEnabled: Boolean by updatedFeatureFlags::isRecentlyVisitedFeatureEnabled
     override var isPWAsPromptEnabled: Boolean by updatedFeatureFlags::isPWAsPromptEnabled
     override var isTCPCFREnabled: Boolean by updatedFeatureFlags::isTCPCFREnabled
-    override var isCookieBannerReductionDialogEnabled: Boolean by updatedFeatureFlags::isCookieBannerReductionDialogEnabled
+    override var isOpenInAppBannerEnabled: Boolean by updatedFeatureFlags::isOpenInAppBannerEnabled
     override var etpPolicy: ETPPolicy by updatedFeatureFlags::etpPolicy
+    override var tabsTrayRewriteEnabled: Boolean by updatedFeatureFlags::tabsTrayRewriteEnabled
+    override var composeTopSitesEnabled: Boolean by updatedFeatureFlags::composeTopSitesEnabled
+    override var isTranslationsEnabled: Boolean by updatedFeatureFlags::translationsEnabled
 
     override fun applyFlagUpdates() {
         applyFeatureFlags(updatedFeatureFlags)
@@ -83,7 +90,10 @@ class FeatureSettingsHelperDelegate : FeatureSettingsHelper {
         settings.shouldShowTotalCookieProtectionCFR = featureFlags.isTCPCFREnabled
         settings.showWallpaperOnboarding = featureFlags.isWallpaperOnboardingEnabled
         settings.deleteSitePermissions = featureFlags.isDeleteSitePermissionsEnabled
-        settings.userOptOutOfReEngageCookieBannerDialog = !featureFlags.isCookieBannerReductionDialogEnabled
+        settings.shouldShowOpenInAppBanner = featureFlags.isOpenInAppBannerEnabled
+        settings.enableTabsTrayToCompose = featureFlags.tabsTrayRewriteEnabled
+        settings.enableComposeTopSites = featureFlags.composeTopSitesEnabled
+        settings.enableTranslations = featureFlags.translationsEnabled
         setETPPolicy(featureFlags.etpPolicy)
     }
 }
@@ -99,8 +109,11 @@ private data class FeatureFlags(
     var isTCPCFREnabled: Boolean,
     var isWallpaperOnboardingEnabled: Boolean,
     var isDeleteSitePermissionsEnabled: Boolean,
-    var isCookieBannerReductionDialogEnabled: Boolean,
+    var isOpenInAppBannerEnabled: Boolean,
     var etpPolicy: ETPPolicy,
+    var tabsTrayRewriteEnabled: Boolean,
+    var composeTopSitesEnabled: Boolean,
+    var translationsEnabled: Boolean,
 )
 
 internal fun getETPPolicy(settings: Settings): ETPPolicy {

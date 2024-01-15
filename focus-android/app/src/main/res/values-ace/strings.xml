@@ -53,7 +53,6 @@
     <string name="menu_remove_from_shortcuts">Böh nibak röt koh</string>
 
     <!-- Menu item: Shows information about features and changes that are new to this version -->
-    <string name="menu_whats_new">Pue Nyang Barô</string>
     <string name="menu_settings">Atô</string>
     <string name="menu_about">Bhaih</string>
     <string name="menu_help">Beunantu</string>
@@ -352,8 +351,20 @@
     <!-- A link to SUMO at the end of the summary (preference_mozilla_telemetry_summary2) of the "Send anonymous usage data" setting. -->
     <string name="preference_mozilla_telemetry_summary">Meurunoë lom</string>
 
+    <!-- %1$s will be replaced with the name of the app (e.g. Firefox Focus) -->
+    <string name="preference_mozilla_telemetry_summary2">Mozilla geuôseuha keu geupeusaho nyang geupeureulèe mantöng keu geuseudiya dan geupeujroh %1$s keu bandum ureueng.</string>
+
     <!-- In-app link (in settings) to Focus privacy notice. -->
     <string name="preference_privacy_notice">Reusam Privasi</string>
+
+    <!-- In-app link (in settings) to Focus licensing information. -->
+    <string name="preference_licensing_info">Keutrangan lisènsi</string>
+
+    <!-- Link to Focus licensing information from other libraries that we use. -->
+    <string name="preference_libraries_we_use">Pustaka nyang meungui</string>
+
+    <!-- Open Source Licenses page title. The first parameter is the app name -->
+    <string name="open_source_licenses_title">%s | Pustaka OSS</string>
 
     <!-- Item in Preferences that shows the about page. Parameter 1 is the app name, i.e. Firefox Focus/Firefox Klar. -->
     <string name="preference_about">Bhaih %1$s</string>
@@ -393,7 +404,11 @@
 
     <string name="search_add_error_empty_name">Peutamong nan meusén mita</string>
 
+    <string name="search_add_error_duplicate_name">Meusén mita nyang teupasang ka geungui nan nyan.</string>
+
     <string name="search_add_error_empty_search">Peutamong string mita</string>
+
+    <string name="search_add_error_format">Neuparéksa meunyo string meunita ka pah ngön beuntuk Miseue</string>
 
     <!-- Content description (not visible, for screen readers etc.): Clear text in URL bar -->
     <string name="content_description_clear_input">Peugléh teunamong</string>
@@ -427,6 +442,10 @@
     <!-- Content description (not visible, for screen readers etc.): "Three dot" menu button. -->
     <string name="content_description_menu">Peuniléh laén</string>
 
+    <!-- Content description (not visible, for screen readers etc.): "Three dot" menu button used
+    on home screen-->
+    <string name="indicator_content_description_menu">Tombol peuniléh laén</string>
+
     <!-- Content description (not visible, for screen readers etc.): Navigate forward (browsing history) -->
     <string name="content_description_forward">Jak u keue</string>
 
@@ -454,11 +473,27 @@
 
     <string name="external_app_prompt_title">Peuhah link lam aplikasi laén</string>
 
+    <!-- This string is shown when the user has clicked a link that needs to be opened in a different app.
+         Argument 2 is the external app name, argument 1 is our name (i.e. Firefox Focus, or Firefox Klar). -->
+    <string name="external_app_prompt">Droeneuh jeuet neutinggai %1$s keu neupeuhah peunawôt nyoe bak %2$s.</string>
+    <!-- This text is the title of a dialog shown if no app could be found for a custom link protocol. -->
+    <string name="external_app_prompt_no_app_title">Mita saboh app nyang jeuet peuhah link</string>
+
+    <!-- This text is shown in a dialog if no app could be found for a custom link protocol. %1$s is the name of the app (i.e. Firefox Focus) and %2$s is the name of
+         the app store installed on the device (usually that's Google Play). -->
+    <string name="external_app_prompt_no_app">Hana meu sabôh app lam peukakah droeneuh nyang jeuet peuhah link nyoe. Droeneu jeuet neutinggai %1$s keu jak mita %2$s keu app nyang jeuet.</string>
+
+    <!-- This label is shown above a list of apps that can be used to open a given link -->
+    <string name="external_multiple_apps_matched_exit">Teubiet Pumeuhah Rahsia?</string>
+
     <!-- Snackbar that will be displayed after a download has completed. %1$s will be replaced with the file name. -->
     <string name="download_snackbar_finished">%1$s seuleusoe</string>
 
     <!-- Snackbar action to immediately open the successfully downloaded file. -->
     <string name="download_snackbar_open">Peuhah</string>
+
+    <!-- Snackbar that will be displayed after a website has been added to shortcuts. -->
+    <string name="snackbar_added_to_shortcuts">Geutamah u röt koh!</string>
 
     <string name="error_hostLookup_title">Server hana geuteumeung</string>
 
@@ -475,8 +510,24 @@
     <!-- New Onboarding flow first screen button label-->
     <string name="onboarding_first_screen_button_text">Puphôn</string>
 
+    <!-- Onboarding second screen: Title -->
+    <!-- %1$s will be replaced by the app short name(Focus) -->
+    <string name="onboarding_second_screen_title">%1$s kön lagèe browser laén</string>
+
+    <!-- New Onboarding flow second screen make Focus default browser button label-->
+    <string name="onboarding_second_screen_default_browser_button_text">Peujeuet sibagoe browser teutap</string>
+
     <!-- New Onboarding flow second screen skip onboarding button label-->
     <string name="onboarding_second_screen_skip_button_text">Lingkeue</string>
+
+    <!-- First run tour (Default browser): Title -->
+    <string name="firstrun_defaultbrowser_title">Peuköng privasi droeneuh</string>
+
+    <!-- First run tour (Search): Title -->
+    <string name="firstrun_search_title">Hasé mita droeneuh, kri droeneuh</string>
+
+    <!-- First run tour (Privacy): Title -->
+    <string name="firstrun_privacy_title">Peujeuet privasi jeuet keu reusam</string>
 
     <string name="firstrun_close_button">Göt, lôn muphôm!</string>
     <string name="firstrun_skip_button">Lingkeue</string>
@@ -495,6 +546,14 @@
 
     <!-- Label of the action that will close the dialog and not add anything to the home screen (shown in the confirmation dialog). -->
     <string name="dialog_addtohomescreen_action_no">HAN</string>
+
+    <!-- The user visible name of the "notification channel" (Android 8+ feature) for the ongoing notification shown while a browsing session is active.
+    The recommended maximum length is 40 characters; the value may be truncated if it is too long.
+
+    * To understand what notification channels are, see: https://www.androidcentral.com/notification-channels
+    * To see how this string will look like in Android's UI, see: https://github.com/mozilla-mobile/focus-android/issues/863#issuecomment-324105723
+    -->
+    <string name="notification_browsing_session_channel_name">Sesi pumeuhah rahsia</string>
 
     <!-- Label for a button in the "tabs tray" to erase the browsing history (closes all tabs and removes associated data). -->
     <string name="tabs_tray_action_erase">Sampôh riwayat pumeuhah</string>
@@ -581,22 +640,93 @@
     <!-- Text for indicating cookie banner handling is off this site, this is shown as part of the protections panel with the tracking protection toggle. -->
     <string name="cookie_banner_exception_item_description_state_off">LEN keu situh nyoe</string>
 
+    <!-- Preference for removing cookie/consent banners from sites automatically, this is shown when the user enters in details after he clicks on the item from protection panel. -->
+    <string name="cookie_banner_exception_panel_switch_title">Peukureueng Spanduk Kuki</string>
+
     <!-- Text for indicating cookie banner handling is off this site, this is shown when the user enters in details after he clicks on the item from protection panel. -->
     <string name="cookie_banner_exception_panel_switch_state_off">LEN keu situh nyoe</string>
 
     <!-- Text for indicating cookie banner handling is on this site, this is shown when the user enters in details after he clicks on the item from protection panel. -->
     <string name="cookie_banner_exception_panel_switch_state_on">HU keu situh nyoe</string>
 
-    <!-- CFR for Cookie Banner (Banner Info Message). This text should be the same as the settings text from "cfr_for_cookie_banner". The text should be underlined and should redirect the user to the cookie banner settings screen. -->
-    <string name="cfr_for_cookie_banner_underline_settings" moz:RemovedIn="111" tools:ignore="UnusedResources">atô</string>
+    <!-- Text for cancel button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_site_is_not_supported_cancel_button">Bateue</string>
+
+    <!-- Text for request support button indicating that cookie banner reduction is not supported for the current site, this is shown as part of the cookie banner panel in the toolbar. -->
+    <string name="cookie_banner_exception_panel_site_is_not_supported_request_support_button">Lakèe dukôngan</string>
+
     <!-- CFR for Cookie Banner (Banner Info Message). This string is used as text for a link in cfr_cookie_banner and takes the user to the app settings. -->
     <string name="cfr_cookie_banner_link">atô</string>
 
     <!-- Preference for autoplay -->
     <string name="preference_autoplay">Puta Keudroe</string>
 
+    <!-- Heading for the instructions to allow a permission -->
+    <string name="phone_feature_blocked_intro">Keu peuidin:</string>
+
+    <!-- First step for the allowing a permission -->
+    <string name="phone_feature_blocked_step_settings">1. Jak u Atô Android</string>
+
+    <!-- Second step for the allowing a permission -->
+    <string name="phone_feature_blocked_step_permissions"><![CDATA[2. Thèp <b>Idin</b>]]></string>
+
     <!-- Button label that take the user to the Android App setting -->
     <string name="phone_feature_go_to_settings">Atô</string>
+
+    <!-- Third step for allowing a permission. The placeholder will be updated by, for example, "Camera" -->
+    <string name="phone_feature_blocked_step_feature"><![CDATA[3. Pinah <b>%1$s</b> jeuet ON]]></string>
+
+    <!-- Preference for altering the camera access for all websites -->
+    <string name="preference_phone_feature_camera">Kamèra</string>
+
+    <!-- Preference for altering the microphone access for all websites -->
+    <string name="preference_phone_feature_microphone">Mikrofon</string>
+
+    <!-- Preference for altering the location access for all websites -->
+    <string name="preference_phone_feature_location">Neuduek</string>
+
+    <!-- Preference for altering the notification access for all websites -->
+    <string name="preference_phone_feature_notification">Bri thèe</string>
+
+    <!-- Label that indicates that a permission must be asked always -->
+    <string name="preference_option_phone_feature_ask_to_allow">Lakèe idin</string>
+
+    <!-- Label that indicates that a permission must be blocked -->
+    <string name="preference_option_phone_feature_blocked">Geutham</string>
+
+    <!-- Label that indicates that a permission must be allowed -->
+    <string name="preference_option_phone_feature_allowed">Geupeuidin</string>
+
+    <!--Label that indicates a permission is by the Android OS-->
+    <string name="phone_feature_blocked_by_android">Geutham lé Android</string>
+
+    <!-- Preference for allow autoplay audio and video-->
+    <string name="preference_allow_audio_video_autoplay">Peuidin su ngön video</string>
+
+    <!-- Preference summary for block autoplay audio only-->
+    <string name="preference_block_autoplay_audio_only_summary">Geupeusaran</string>
+
+    <!-- Preference for block autoplay audio and video-->
+    <string name="preference_block_autoplay_audio_video">Tham audio ngön video</string>
+
+    <!-- Preference for studies -->
+    <string name="preference_studies">Beuet</string>
+
+    <!-- Title of the remove studies button -->
+    <string name="studies_remove">Sampôh</string>
+
+    <!-- Title of the active section on the studies list -->
+    <string name="studies_active">Aktif</string>
+
+    <!-- Title of the completed section on the studies list -->
+    <string name="studies_completed">Seuleusoe</string>
+
+    <!-- Text Button for show biometric prompt -->
+    <string name="show_biometric_button_text">Peuhah</string>
+
+    <!-- Button for the fingerprint authentication dialog box that is shown to the user when sharing a link to the app
+    while the user has biometric authentication enabled. When pressed, the user's previous session is cleared, and the shared link is opened. -->
+    <string name="biometric_auth_open_link_new_session">Peuhah peunawôt bak Sèsi Barô</string>
 
     <!-- Label used for the "NO button" for the prompt to enable search suggestions -->
     <string name="enable_search_suggestions_no">H‘an</string>
@@ -609,10 +739,18 @@
 
     <!-- Tips displayed on the home view -->
 
+    <!-- Label for the button in the snackbar that switches to the newly opened tab -->
+    <string name="open_new_tab_snackbar">Gantoe</string>
+
+    <!-- Preference for exceptions tracking protection -->
+    <string name="preference_exceptions">Keucuwali</string>
     <!-- Menu item to remove existing exceptions. -->
     <string name="preference_exceptions_menu_remove">Sampôh</string>
     <!-- Button to remove all websites from the exception list -->
     <string name="preference_exceptions_remove_all_button_label">Sampôh bandum situs</string>
+
+    <!-- Title for Preference screen for cookie blocking for exceptions tracking protection -->
+    <string name="preference_block_cookies_title">Tham Kuki</string>
 
     <!-- Label for button to close the tab-->
     <string name="tab_crash_report_close_tab_button_label">Tôp Tab</string>

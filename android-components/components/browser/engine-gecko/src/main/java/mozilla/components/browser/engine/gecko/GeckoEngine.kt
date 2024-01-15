@@ -19,6 +19,7 @@ import mozilla.components.browser.engine.gecko.mediaquery.from
 import mozilla.components.browser.engine.gecko.mediaquery.toGeckoValue
 import mozilla.components.browser.engine.gecko.profiler.Profiler
 import mozilla.components.browser.engine.gecko.serviceworker.GeckoServiceWorkerDelegate
+import mozilla.components.browser.engine.gecko.translate.GeckoTranslationUtils.intoTranslationError
 import mozilla.components.browser.engine.gecko.util.SpeculativeSessionFactory
 import mozilla.components.browser.engine.gecko.webextension.GeckoWebExtension
 import mozilla.components.browser.engine.gecko.webextension.GeckoWebExtensionException
@@ -42,13 +43,22 @@ import mozilla.components.concept.engine.content.blocking.TrackingProtectionExce
 import mozilla.components.concept.engine.history.HistoryTrackingDelegate
 import mozilla.components.concept.engine.mediaquery.PreferredColorScheme
 import mozilla.components.concept.engine.serviceworker.ServiceWorkerDelegate
+import mozilla.components.concept.engine.translate.Language
+import mozilla.components.concept.engine.translate.LanguageModel
+import mozilla.components.concept.engine.translate.LanguageSetting
+import mozilla.components.concept.engine.translate.ModelManagementOptions
+import mozilla.components.concept.engine.translate.TranslationError
+import mozilla.components.concept.engine.translate.TranslationSupport
+import mozilla.components.concept.engine.translate.TranslationsRuntime
 import mozilla.components.concept.engine.utils.EngineVersion
 import mozilla.components.concept.engine.webextension.Action
 import mozilla.components.concept.engine.webextension.ActionHandler
 import mozilla.components.concept.engine.webextension.EnableSource
+import mozilla.components.concept.engine.webextension.InstallationMethod
 import mozilla.components.concept.engine.webextension.TabHandler
 import mozilla.components.concept.engine.webextension.WebExtension
 import mozilla.components.concept.engine.webextension.WebExtensionDelegate
+import mozilla.components.concept.engine.webextension.WebExtensionInstallException
 import mozilla.components.concept.engine.webextension.WebExtensionRuntime
 import mozilla.components.concept.engine.webnotifications.WebNotificationDelegate
 import mozilla.components.concept.engine.webpush.WebPushDelegate
@@ -65,6 +75,7 @@ import org.mozilla.geckoview.GeckoRuntime
 import org.mozilla.geckoview.GeckoRuntimeSettings
 import org.mozilla.geckoview.GeckoSession
 import org.mozilla.geckoview.GeckoWebExecutor
+import org.mozilla.geckoview.TranslationsController
 import org.mozilla.geckoview.WebExtensionController
 import org.mozilla.geckoview.WebNotification
 import java.lang.ref.WeakReference
@@ -80,7 +91,7 @@ class GeckoEngine(
     executorProvider: () -> GeckoWebExecutor = { GeckoWebExecutor(runtime) },
     override val trackingProtectionExceptionStore: TrackingProtectionExceptionStorage =
         GeckoTrackingProtectionExceptionStorage(runtime),
-) : Engine, WebExtensionRuntime {
+) : Engine, WebExtensionRuntime, TranslationsRuntime {
     private val executor by lazy { executorProvider.invoke() }
     private val localeUpdater = LocaleSettingUpdater(context, runtime)
 
@@ -218,48 +229,56 @@ class GeckoEngine(
     }
 
     /**
-     * See [Engine.installWebExtension].
+     * See [Engine.installBuiltInWebExtension].
      */
-    override fun installWebExtension(
+    override fun installBuiltInWebExtension(
         id: String,
         url: String,
         onSuccess: ((WebExtension) -> Unit),
-        onError: ((String, Throwable) -> Unit),
+        onError: ((Throwable) -> Unit),
     ): CancellableOperation {
-        val onInstallSuccess: ((org.mozilla.geckoview.WebExtension) -> Unit) = {
-            val installedExtension = GeckoWebExtension(it, runtime)
-            webExtensionDelegate?.onInstalled(installedExtension)
-            installedExtension.registerActionHandler(webExtensionActionHandler)
-            installedExtension.registerTabHandler(webExtensionTabHandler, defaultSettings)
-            onSuccess(installedExtension)
-        }
+        require(url.isResourceUrl()) { "url should be a resource url" }
 
-        val geckoResult = if (url.isResourceUrl()) {
-            runtime.webExtensionController.ensureBuiltIn(url, id).apply {
-                then(
-                    {
-                        onInstallSuccess(it!!)
-                        GeckoResult<Void>()
-                    },
-                    { throwable ->
-                        onError(id, throwable)
-                        GeckoResult<Void>()
-                    },
-                )
-            }
-        } else {
-            runtime.webExtensionController.install(url).apply {
-                then(
-                    {
-                        onInstallSuccess(it!!)
-                        GeckoResult<Void>()
-                    },
-                    { throwable ->
-                        onError(id, throwable)
-                        GeckoResult<Void>()
-                    },
-                )
-            }
+        val geckoResult = runtime.webExtensionController.ensureBuiltIn(url, id).apply {
+            then(
+                {
+                    onExtensionInstalled(it!!, onSuccess)
+                    GeckoResult<Void>()
+                },
+                { throwable ->
+                    onError(GeckoWebExtensionException.createWebExtensionException(throwable))
+                    GeckoResult<Void>()
+                },
+            )
+        }
+        return geckoResult.asCancellableOperation()
+    }
+
+    /**
+     * See [Engine.installWebExtension].
+     */
+    override fun installWebExtension(
+        url: String,
+        installationMethod: InstallationMethod?,
+        onSuccess: ((WebExtension) -> Unit),
+        onError: ((Throwable) -> Unit),
+    ): CancellableOperation {
+        require(!url.isResourceUrl()) { "url shouldn't be a resource url" }
+
+        val geckoResult = runtime.webExtensionController.install(
+            url,
+            installationMethod?.toGeckoInstallationMethod(),
+        ).apply {
+            then(
+                {
+                    onExtensionInstalled(it!!, onSuccess)
+                    GeckoResult<Void>()
+                },
+                { throwable ->
+                    onError(GeckoWebExtensionException.createWebExtensionException(throwable))
+                    GeckoResult<Void>()
+                },
+            )
         }
         return geckoResult.asCancellableOperation()
     }
@@ -274,7 +293,6 @@ class GeckoEngine(
     ) {
         runtime.webExtensionController.uninstall((ext as GeckoWebExtension).nativeExtension).then(
             {
-                webExtensionDelegate?.onUninstalled(ext)
                 onSuccess()
                 GeckoResult<Void>()
             },
@@ -323,13 +341,15 @@ class GeckoEngine(
         this.webExtensionDelegate = webExtensionDelegate
 
         val promptDelegate = object : WebExtensionController.PromptDelegate {
-            override fun onInstallPrompt(ext: org.mozilla.geckoview.WebExtension): GeckoResult<AllowOrDeny>? {
+            override fun onInstallPrompt(ext: org.mozilla.geckoview.WebExtension): GeckoResult<AllowOrDeny> {
                 val extension = GeckoWebExtension(ext, runtime)
-                return if (webExtensionDelegate.onInstallPermissionRequest(extension)) {
-                    GeckoResult.allow()
-                } else {
-                    GeckoResult.deny()
+                val result = GeckoResult<AllowOrDeny>()
+
+                webExtensionDelegate.onInstallPermissionRequest(extension) { allow ->
+                    if (allow) result.complete(AllowOrDeny.ALLOW) else result.complete(AllowOrDeny.DENY)
                 }
+
+                return result
             }
 
             override fun onUpdatePrompt(
@@ -343,8 +363,22 @@ class GeckoEngine(
                     GeckoWebExtension(current, runtime),
                     GeckoWebExtension(updated, runtime),
                     newPermissions.toList() + newOrigins.toList(),
-                ) {
-                        allow ->
+                ) { allow ->
+                    if (allow) result.complete(AllowOrDeny.ALLOW) else result.complete(AllowOrDeny.DENY)
+                }
+                return result
+            }
+
+            override fun onOptionalPrompt(
+                extension: org.mozilla.geckoview.WebExtension,
+                permissions: Array<out String>,
+                origins: Array<out String>,
+            ): GeckoResult<AllowOrDeny>? {
+                val result = GeckoResult<AllowOrDeny>()
+                webExtensionDelegate.onOptionalPermissionsRequest(
+                    GeckoWebExtension(extension, runtime),
+                    permissions.toList() + origins.toList(),
+                ) { allow ->
                     if (allow) result.complete(AllowOrDeny.ALLOW) else result.complete(AllowOrDeny.DENY)
                 }
                 return result
@@ -357,8 +391,53 @@ class GeckoEngine(
             }
         }
 
-        runtime.webExtensionController.promptDelegate = promptDelegate
+        val addonManagerDelegate = object : WebExtensionController.AddonManagerDelegate {
+            override fun onDisabled(extension: org.mozilla.geckoview.WebExtension) {
+                webExtensionDelegate.onDisabled(GeckoWebExtension(extension, runtime))
+            }
+
+            override fun onEnabled(extension: org.mozilla.geckoview.WebExtension) {
+                webExtensionDelegate.onEnabled(GeckoWebExtension(extension, runtime))
+            }
+
+            override fun onReady(extension: org.mozilla.geckoview.WebExtension) {
+                webExtensionDelegate.onReady(GeckoWebExtension(extension, runtime))
+            }
+
+            override fun onUninstalled(extension: org.mozilla.geckoview.WebExtension) {
+                webExtensionDelegate.onUninstalled(GeckoWebExtension(extension, runtime))
+            }
+
+            override fun onInstalled(extension: org.mozilla.geckoview.WebExtension) {
+                val installedExtension = GeckoWebExtension(extension, runtime)
+                webExtensionDelegate.onInstalled(installedExtension)
+                installedExtension.registerActionHandler(webExtensionActionHandler)
+                installedExtension.registerTabHandler(webExtensionTabHandler, defaultSettings)
+            }
+
+            override fun onInstallationFailed(
+                extension: org.mozilla.geckoview.WebExtension?,
+                installException: org.mozilla.geckoview.WebExtension.InstallException,
+            ) {
+                val exception =
+                    GeckoWebExtensionException.createWebExtensionException(installException)
+                webExtensionDelegate.onInstallationFailedRequest(
+                    extension.toSafeWebExtension(),
+                    exception as WebExtensionInstallException,
+                )
+            }
+        }
+
+        val extensionProcessDelegate = object : WebExtensionController.ExtensionProcessDelegate {
+            override fun onDisabledProcessSpawning() {
+                webExtensionDelegate.onDisabledExtensionProcessSpawning()
+            }
+        }
+
+        runtime.webExtensionController.setPromptDelegate(promptDelegate)
         runtime.webExtensionController.setDebuggerDelegate(debuggerDelegate)
+        runtime.webExtensionController.setAddonManagerDelegate(addonManagerDelegate)
+        runtime.webExtensionController.setExtensionProcessDelegate(extensionProcessDelegate)
     }
 
     /**
@@ -399,7 +478,6 @@ class GeckoEngine(
         runtime.webExtensionController.enable((extension as GeckoWebExtension).nativeExtension, source.id).then(
             {
                 val enabledExtension = GeckoWebExtension(it!!, runtime)
-                webExtensionDelegate?.onEnabled(enabledExtension)
                 onSuccess(enabledExtension)
                 GeckoResult<Void>()
             },
@@ -422,7 +500,6 @@ class GeckoEngine(
         runtime.webExtensionController.disable((extension as GeckoWebExtension).nativeExtension, source.id).then(
             {
                 val disabledExtension = GeckoWebExtension(it!!, runtime)
-                webExtensionDelegate?.onDisabled(disabledExtension)
                 onSuccess(disabledExtension)
                 GeckoResult<Void>()
             },
@@ -446,10 +523,19 @@ class GeckoEngine(
             (extension as GeckoWebExtension).nativeExtension,
             allowed,
         ).then(
-            {
-                val ext = GeckoWebExtension(it!!, runtime)
-                webExtensionDelegate?.onAllowedInPrivateBrowsingChanged(ext)
-                onSuccess(ext)
+            { geckoExtension ->
+                if (geckoExtension == null) {
+                    onError(
+                        Exception(
+                            "Gecko extension was not returned after trying to" +
+                                " setAllowedInPrivateBrowsing with value $allowed",
+                        ),
+                    )
+                } else {
+                    val ext = GeckoWebExtension(geckoExtension, runtime)
+                    webExtensionDelegate?.onAllowedInPrivateBrowsingChanged(ext)
+                    onSuccess(ext)
+                }
                 GeckoResult<Void>()
             },
             { throwable ->
@@ -457,6 +543,20 @@ class GeckoEngine(
                 GeckoResult<Void>()
             },
         )
+    }
+
+    /**
+     * See [Engine.enableExtensionProcessSpawning].
+     */
+    override fun enableExtensionProcessSpawning() {
+        runtime.webExtensionController.enableExtensionProcessSpawning()
+    }
+
+    /**
+     * See [Engine.disableExtensionProcessSpawning].
+     */
+    override fun disableExtensionProcessSpawning() {
+        runtime.webExtensionController.disableExtensionProcessSpawning()
     }
 
     /**
@@ -554,7 +654,7 @@ class GeckoEngine(
     ) {
         val flags = data.types.toLong()
         if (host != null) {
-            runtime.storageController.clearDataFromHost(host, flags)
+            runtime.storageController.clearDataFromBaseDomain(host, flags)
         } else {
             runtime.storageController.clearData(flags)
         }.then(
@@ -565,6 +665,318 @@ class GeckoEngine(
             {
                     throwable ->
                 onError(throwable)
+                GeckoResult<Void>()
+            },
+        )
+    }
+
+    /**
+     * See [Engine.isTranslationsEngineSupported].
+     */
+    override fun isTranslationsEngineSupported(
+        onSuccess: (Boolean) -> Unit,
+        onError: (Throwable) -> Unit,
+    ) {
+        TranslationsController.RuntimeTranslation.isTranslationsEngineSupported().then(
+            {
+                if (it != null) {
+                    onSuccess(it)
+                } else {
+                    onError(TranslationError.UnexpectedNull())
+                }
+                GeckoResult<Void>()
+            },
+            { throwable ->
+                onError(throwable.intoTranslationError())
+                GeckoResult<Void>()
+            },
+        )
+    }
+
+    /**
+     * See [Engine.getTranslationsPairDownloadSize].
+     */
+    override fun getTranslationsPairDownloadSize(
+        fromLanguage: String,
+        toLanguage: String,
+        onSuccess: (Long) -> Unit,
+        onError: (Throwable) -> Unit,
+    ) {
+        TranslationsController.RuntimeTranslation.checkPairDownloadSize(fromLanguage, toLanguage).then(
+            {
+                if (it != null) {
+                    onSuccess(it)
+                } else {
+                    onError(TranslationError.UnexpectedNull())
+                }
+                GeckoResult<Void>()
+            },
+            { throwable ->
+                onError(throwable.intoTranslationError())
+                GeckoResult<Void>()
+            },
+        )
+    }
+
+    /**
+     * See [Engine.getTranslationsModelDownloadStates].
+     */
+    override fun getTranslationsModelDownloadStates(
+        onSuccess: (List<LanguageModel>) -> Unit,
+        onError: (Throwable) -> Unit,
+    ) {
+        TranslationsController.RuntimeTranslation.listModelDownloadStates().then(
+            {
+                if (it != null) {
+                    var listOfModels = mutableListOf<LanguageModel>()
+                    for (each in it) {
+                        var language = each.language?.let {
+                                language ->
+                            Language(language.code, each.language?.localizedDisplayName)
+                        }
+                        var model = LanguageModel(language, each.isDownloaded, each.size)
+                        listOfModels.add(model)
+                    }
+                    onSuccess(listOfModels)
+                } else {
+                    onError(TranslationError.UnexpectedNull())
+                }
+                GeckoResult<Void>()
+            },
+            { throwable ->
+                onError(throwable.intoTranslationError())
+                GeckoResult<Void>()
+            },
+        )
+    }
+
+    /**
+     * See [Engine.getSupportedTranslationLanguages].
+     */
+    override fun getSupportedTranslationLanguages(
+        onSuccess: (TranslationSupport) -> Unit,
+        onError: (Throwable) -> Unit,
+    ) {
+        TranslationsController.RuntimeTranslation.listSupportedLanguages().then(
+            {
+                if (it != null) {
+                    var listOfFromLanguages = mutableListOf<Language>()
+                    var listOfToLanguages = mutableListOf<Language>()
+
+                    if (it.fromLanguages != null) {
+                        for (each in it.fromLanguages!!) {
+                            listOfFromLanguages.add(Language(each.code, each.localizedDisplayName))
+                        }
+                    }
+
+                    if (it.toLanguages != null) {
+                        for (each in it.toLanguages!!) {
+                            listOfToLanguages.add(Language(each.code, each.localizedDisplayName))
+                        }
+                    }
+
+                    onSuccess(TranslationSupport(listOfFromLanguages, listOfToLanguages))
+                } else {
+                    onError(TranslationError.UnexpectedNull())
+                }
+                GeckoResult<Void>()
+            },
+            { throwable ->
+                onError(throwable.intoTranslationError())
+                GeckoResult<Void>()
+            },
+        )
+    }
+
+    /**
+     * See [Engine.manageTranslationsLanguageModel].
+     */
+    override fun manageTranslationsLanguageModel(
+        options: ModelManagementOptions,
+        onSuccess: () -> Unit,
+        onError: (Throwable) -> Unit,
+    ) {
+        val geckoOptions =
+            TranslationsController.RuntimeTranslation.ModelManagementOptions.Builder()
+                .operation(options.operation.toString())
+                .operationLevel(options.operationLevel.toString())
+
+        options.languageToManage?.let { geckoOptions.languageToManage(it) }
+
+        TranslationsController.RuntimeTranslation.manageLanguageModel(geckoOptions.build()).then(
+            {
+                onSuccess()
+                GeckoResult<Void>()
+            },
+            { throwable ->
+                onError(throwable.intoTranslationError())
+                GeckoResult<Void>()
+            },
+        )
+    }
+
+    /**
+     * See [Engine.getUserPreferredLanguages].
+     */
+    override fun getUserPreferredLanguages(
+        onSuccess: (List<String>) -> Unit,
+        onError: (Throwable) -> Unit,
+    ) {
+        TranslationsController.RuntimeTranslation.preferredLanguages().then(
+            {
+                if (it != null) {
+                    onSuccess(it)
+                } else {
+                    onError(TranslationError.UnexpectedNull())
+                }
+
+                GeckoResult<Void>()
+            },
+            { throwable ->
+                onError(throwable.intoTranslationError())
+                GeckoResult<Void>()
+            },
+        )
+    }
+
+    /**
+     * See [Engine.getTranslationsOfferPopup].
+     */
+    override fun getTranslationsOfferPopup(): Boolean {
+        return runtime.settings.translationsOfferPopup
+    }
+
+    /**
+     * See [Engine.setTranslationsOfferPopup].
+     */
+    override fun setTranslationsOfferPopup(offer: Boolean) {
+        runtime.settings.translationsOfferPopup = offer
+    }
+
+    /**
+     * See [Engine.getLanguageSetting].
+     */
+    override fun getLanguageSetting(
+        languageCode: String,
+        onSuccess: (LanguageSetting) -> Unit,
+        onError: (Throwable) -> Unit,
+    ) {
+        TranslationsController.RuntimeTranslation.getLanguageSetting(languageCode).then(
+            {
+                if (it != null) {
+                    try {
+                        onSuccess(LanguageSetting.fromValue(it))
+                    } catch (e: IllegalArgumentException) {
+                        onError(e.intoTranslationError())
+                    }
+                } else {
+                    onError(TranslationError.UnexpectedNull())
+                }
+
+                GeckoResult<Void>()
+            },
+            { throwable ->
+                onError(throwable.intoTranslationError())
+                GeckoResult<Void>()
+            },
+        )
+    }
+
+    /**
+     * See [Engine.setLanguageSetting].
+     */
+    override fun setLanguageSetting(
+        languageCode: String,
+        languageSetting: LanguageSetting,
+        onSuccess: () -> Unit,
+        onError: (Throwable) -> Unit,
+    ) {
+        TranslationsController.RuntimeTranslation.setLanguageSettings(languageCode, languageSetting.toString()).then(
+            {
+                onSuccess()
+                GeckoResult<Void>()
+            },
+            { throwable ->
+                onError(throwable.intoTranslationError())
+                GeckoResult<Void>()
+            },
+        )
+    }
+
+    /**
+     * See [Engine.getLanguageSettings].
+     */
+    override fun getLanguageSettings(
+        onSuccess: (Map<String, LanguageSetting>) -> Unit,
+        onError: (Throwable) -> Unit,
+    ) {
+        TranslationsController.RuntimeTranslation.getLanguageSettings().then(
+            {
+                if (it != null) {
+                    try {
+                        val result = mutableMapOf<String, LanguageSetting>()
+                        it.forEach { item ->
+                            result[item.key] = LanguageSetting.fromValue(item.value)
+                        }
+                        onSuccess(result)
+                    } catch (e: IllegalArgumentException) {
+                        onError(e.intoTranslationError())
+                    }
+                } else {
+                    onError(TranslationError.UnexpectedNull())
+                }
+                GeckoResult<Void>()
+            },
+            { throwable ->
+                onError(throwable.intoTranslationError())
+                GeckoResult<Void>()
+            },
+        )
+    }
+
+    /**
+     * See [Engine.getNeverTranslateSiteList].
+     */
+    override fun getNeverTranslateSiteList(
+        onSuccess: (List<String>) -> Unit,
+        onError: (Throwable) -> Unit,
+    ) {
+        TranslationsController.RuntimeTranslation.getNeverTranslateSiteList().then(
+            {
+                if (it != null) {
+                    try {
+                        onSuccess(it)
+                    } catch (e: IllegalArgumentException) {
+                        onError(e.intoTranslationError())
+                    }
+                } else {
+                    onError(TranslationError.UnexpectedNull())
+                }
+                GeckoResult<Void>()
+            },
+            { throwable ->
+                onError(throwable.intoTranslationError())
+                GeckoResult<Void>()
+            },
+        )
+    }
+
+    /**
+     * See [Engine.setNeverTranslateSpecifiedSite].
+     */
+    override fun setNeverTranslateSpecifiedSite(
+        origin: String,
+        setting: Boolean,
+        onSuccess: () -> Unit,
+        onError: (Throwable) -> Unit,
+    ) {
+        TranslationsController.RuntimeTranslation.setNeverTranslateSpecifiedSite(setting, origin).then(
+            {
+                onSuccess()
+                GeckoResult<Void>()
+            },
+            { throwable ->
+                onError(throwable.intoTranslationError())
                 GeckoResult<Void>()
             },
         )
@@ -668,11 +1080,88 @@ class GeckoEngine(
                 field = value
             }
 
+        override var emailTrackerBlockingPrivateBrowsing: Boolean = false
+            set(value) {
+                with(runtime.settings.contentBlocking) {
+                    if (this.emailTrackerBlockingPrivateBrowsingEnabled != value) {
+                        this.setEmailTrackerBlockingPrivateBrowsing(value)
+                    }
+                }
+                field = value
+            }
+
         override var cookieBannerHandlingDetectOnlyMode: Boolean = false
             set(value) {
                 with(runtime.settings.contentBlocking) {
                     if (this.cookieBannerDetectOnlyMode != value) {
                         this.cookieBannerDetectOnlyMode = value
+                    }
+                }
+                field = value
+            }
+
+        override var cookieBannerHandlingGlobalRules: Boolean = false
+            set(value) {
+                with(runtime.settings.contentBlocking) {
+                    if (this.cookieBannerGlobalRulesEnabled != value) {
+                        this.cookieBannerGlobalRulesEnabled = value
+                    }
+                }
+                field = value
+            }
+
+        override var cookieBannerHandlingGlobalRulesSubFrames: Boolean = false
+            set(value) {
+                with(runtime.settings.contentBlocking) {
+                    if (this.cookieBannerGlobalRulesSubFramesEnabled != value) {
+                        this.cookieBannerGlobalRulesSubFramesEnabled = value
+                    }
+                }
+                field = value
+            }
+
+        override var queryParameterStripping: Boolean = false
+            set(value) {
+                with(runtime.settings.contentBlocking) {
+                    if (this.queryParameterStrippingEnabled != value) {
+                        this.queryParameterStrippingEnabled = value
+                    }
+                }
+                field = value
+            }
+
+        override var queryParameterStrippingPrivateBrowsing: Boolean = false
+            set(value) {
+                with(runtime.settings.contentBlocking) {
+                    if (this.queryParameterStrippingPrivateBrowsingEnabled != value) {
+                        this.queryParameterStrippingPrivateBrowsingEnabled = value
+                    }
+                }
+                field = value
+            }
+
+        @Suppress("SpreadOperator")
+        override var queryParameterStrippingAllowList: String = ""
+            set(value) {
+                with(runtime.settings.contentBlocking) {
+                    if (this.queryParameterStrippingAllowList.joinToString() != value) {
+                        this.setQueryParameterStrippingAllowList(
+                            *value.split(",")
+                                .toTypedArray(),
+                        )
+                    }
+                }
+                field = value
+            }
+
+        @Suppress("SpreadOperator")
+        override var queryParameterStrippingStripList: String = ""
+            set(value) {
+                with(runtime.settings.contentBlocking) {
+                    if (this.queryParameterStrippingStripList.joinToString() != value) {
+                        this.setQueryParameterStrippingStripList(
+                            *value.split(",").toTypedArray(),
+                        )
                     }
                 }
                 field = value
@@ -759,6 +1248,9 @@ class GeckoEngine(
                     Engine.HttpsOnlyMode.ENABLED -> GeckoRuntimeSettings.HTTPS_ONLY
                 }
             }
+        override var globalPrivacyControlEnabled: Boolean
+            get() = runtime.settings.globalPrivacyControl
+            set(value) { runtime.settings.setGlobalPrivacyControl(value) }
     }.apply {
         defaultSettings?.let {
             this.javascriptEnabled = it.javascriptEnabled
@@ -781,6 +1273,10 @@ class GeckoEngine(
             this.cookieBannerHandlingMode = it.cookieBannerHandlingMode
             this.cookieBannerHandlingModePrivateBrowsing = it.cookieBannerHandlingModePrivateBrowsing
             this.cookieBannerHandlingDetectOnlyMode = it.cookieBannerHandlingDetectOnlyMode
+            this.cookieBannerHandlingGlobalRules = it.cookieBannerHandlingGlobalRules
+            this.cookieBannerHandlingGlobalRulesSubFrames = it.cookieBannerHandlingGlobalRulesSubFrames
+            this.globalPrivacyControlEnabled = it.globalPrivacyControlEnabled
+            this.emailTrackerBlockingPrivateBrowsing = it.emailTrackerBlockingPrivateBrowsing
         }
     }
 
@@ -886,6 +1382,28 @@ class GeckoEngine(
             unBlockedBySmartBlock = this.blockingData.any { it.unBlockedBySmartBlock() },
         )
     }
+
+    internal fun org.mozilla.geckoview.WebExtension?.toSafeWebExtension(): GeckoWebExtension? {
+        return if (this != null) {
+            GeckoWebExtension(
+                this,
+                runtime,
+            )
+        } else {
+            null
+        }
+    }
+
+    private fun onExtensionInstalled(
+        ext: org.mozilla.geckoview.WebExtension,
+        onSuccess: ((WebExtension) -> Unit),
+    ) {
+        val installedExtension = GeckoWebExtension(ext, runtime)
+        webExtensionDelegate?.onInstalled(installedExtension)
+        installedExtension.registerActionHandler(webExtensionActionHandler)
+        installedExtension.registerTabHandler(webExtensionTabHandler, defaultSettings)
+        onSuccess(installedExtension)
+    }
 }
 
 internal fun ContentBlockingController.LogEntry.BlockingData.hasBlockedCookies(): Boolean {
@@ -908,5 +1426,13 @@ internal fun ContentBlockingController.LogEntry.BlockingData.getBlockedCategory(
         Event.BLOCKED_SOCIALTRACKING_CONTENT, Event.COOKIES_BLOCKED_SOCIALTRACKER -> TrackingCategory.MOZILLA_SOCIAL
         Event.BLOCKED_TRACKING_CONTENT -> TrackingCategory.SCRIPTS_AND_SUB_RESOURCES
         else -> TrackingCategory.NONE
+    }
+}
+
+internal fun InstallationMethod.toGeckoInstallationMethod(): String? {
+    return when (this) {
+        InstallationMethod.MANAGER -> WebExtensionController.INSTALLATION_METHOD_MANAGER
+        InstallationMethod.FROM_FILE -> WebExtensionController.INSTALLATION_METHOD_FROM_FILE
+        else -> null
     }
 }

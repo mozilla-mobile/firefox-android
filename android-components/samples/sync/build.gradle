@@ -6,11 +6,10 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion config.compileSdkVersion
-
     defaultConfig {
         applicationId "org.mozilla.samples.sync"
         minSdkVersion config.minSdkVersion
+        compileSdk config.compileSdkVersion
         targetSdkVersion config.targetSdkVersion
         versionCode 1
         versionName "1.0"
@@ -35,7 +34,10 @@ android {
 
     buildFeatures {
         viewBinding true
+        buildConfig true
     }
+
+    namespace 'org.mozilla.samples.sync'
 }
 
 dependencies {
@@ -50,7 +52,7 @@ dependencies {
     implementation project(':lib-fetch-httpurlconnection')
     implementation project(':lib-dataprotect')
 
-    implementation Dependencies.kotlin_reflect
-    implementation Dependencies.androidx_fragment
-    implementation Dependencies.androidx_recyclerview
+    implementation ComponentsDependencies.kotlin_reflect
+    implementation ComponentsDependencies.androidx_fragment
+    implementation ComponentsDependencies.androidx_recyclerview
 }

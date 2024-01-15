@@ -31,7 +31,6 @@ import org.mozilla.fenix.settings.about.AboutItemType.PRIVACY_NOTICE
 import org.mozilla.fenix.settings.about.AboutItemType.RIGHTS
 import org.mozilla.fenix.settings.about.AboutItemType.SUPPORT
 import org.mozilla.fenix.settings.about.AboutItemType.WHATS_NEW
-import org.mozilla.fenix.utils.Do
 import org.mozilla.fenix.whatsnew.WhatsNew
 import org.mozilla.geckoview.BuildConfig as GeckoViewBuildConfig
 
@@ -135,9 +134,10 @@ class AboutFragment : Fragment(), AboutPageListener {
             AboutPageItem(
                 AboutItem.ExternalLink(
                     WHATS_NEW,
-                    SupportUtils.getWhatsNewUrl(context),
+                    SupportUtils.WHATS_NEW_URL,
                 ),
-                getString(R.string.about_whats_new, getString(R.string.app_name)),
+                // Note: Fenix only has release notes for 'Release' versions, NOT 'Beta' & 'Nightly'.
+                getString(R.string.about_whats_new, getString(R.string.firefox)),
             ),
             AboutPageItem(
                 AboutItem.ExternalLink(
@@ -189,7 +189,7 @@ class AboutFragment : Fragment(), AboutPageListener {
     }
 
     override fun onAboutItemClicked(item: AboutItem) {
-        Do exhaustive when (item) {
+        when (item) {
             is AboutItem.ExternalLink -> {
                 when (item.type) {
                     WHATS_NEW -> {

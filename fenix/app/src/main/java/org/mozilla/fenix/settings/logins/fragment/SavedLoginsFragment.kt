@@ -13,11 +13,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.FrameLayout
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.os.bundleOf
 import androidx.core.view.MenuProvider
+import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -36,6 +40,7 @@ import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.settings.logins.LoginsAction
 import org.mozilla.fenix.settings.logins.LoginsFragmentStore
+import org.mozilla.fenix.settings.logins.LoginsListState
 import org.mozilla.fenix.settings.logins.SavedLoginsSortingStrategyMenu
 import org.mozilla.fenix.settings.logins.SortingStrategy
 import org.mozilla.fenix.settings.logins.controller.LoginsListController
@@ -56,6 +61,11 @@ class SavedLoginsFragment : SecureFragment(), MenuProvider {
     private lateinit var loginsListController: LoginsListController
     private lateinit var savedLoginsStorageController: SavedLoginsStorageController
 
+    private lateinit var loginState: LoginsListState
+    private var removedLoginGuid: String? = null
+    private var deletedGuid = mutableSetOf<String>()
+    private var searchQuery: LoginsListState? = null
+
     override fun onResume() {
         super.onResume()
         initToolbar()
@@ -69,17 +79,21 @@ class SavedLoginsFragment : SecureFragment(), MenuProvider {
         val view = inflater.inflate(R.layout.fragment_saved_logins, container, false)
         val binding = FragmentSavedLoginsBinding.bind(view)
 
-        savedLoginsStore = StoreProvider.get(this) {
-            LoginsFragmentStore(
-                createInitialLoginsListState(requireContext().settings()),
-            )
-        }
+        savedLoginsStore =
+            StoreProvider.get(findNavController().getBackStackEntry(R.id.savedLogins)) {
+                LoginsFragmentStore(
+                    createInitialLoginsListState(requireContext().settings()),
+                )
+            }
 
         loginsListController =
             LoginsListController(
                 loginsFragmentStore = savedLoginsStore,
                 navController = findNavController(),
                 browserNavigator = ::openToBrowserAndLoad,
+                addLoginCallback = {
+                    searchQuery = null
+                },
                 settings = requireContext().settings(),
             )
         savedLoginsStorageController =
@@ -106,9 +120,24 @@ class SavedLoginsFragment : SecureFragment(), MenuProvider {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        consumeFrom(savedLoginsStore) {
+        setFragmentResultListener(LoginDetailFragment.LOGIN_REQUEST_KEY) { _, bundle ->
+            removedLoginGuid = bundle.getString(LoginDetailFragment.LOGIN_BUNDLE_ARGS)
+            deletedGuid.add(removedLoginGuid.toString())
+        }
+        consumeFrom(savedLoginsStore) { loginsListState ->
             sortingStrategyMenu.updateMenu(savedLoginsStore.state.highlightedItem)
-            savedLoginsListView.update(it)
+            loginState = loginsListState
+            val currentList = loginState.filteredItems.toMutableList()
+
+            if (removedLoginGuid != null) {
+                val newList = currentList.filter { !deletedGuid.contains(it.guid) }
+
+                loginState = loginState.copy(
+                    loginList = newList,
+                    filteredItems = newList,
+                )
+            }
+            savedLoginsListView.update(loginState)
         }
     }
 
@@ -120,6 +149,13 @@ class SavedLoginsFragment : SecureFragment(), MenuProvider {
         searchView.queryHint = getString(R.string.preferences_passwords_saved_logins_search)
         searchView.maxWidth = Int.MAX_VALUE
 
+        if (searchQuery?.searchedForText?.isNotEmpty() == true) {
+            searchItem.expandActionView()
+            searchView.setQuery(searchQuery?.searchedForText, true)
+            searchView.clearFocus()
+            filterSavedLogins(searchQuery?.searchedForText)
+        }
+
         searchView.setOnQueryTextListener(
             object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
@@ -127,14 +163,31 @@ class SavedLoginsFragment : SecureFragment(), MenuProvider {
                 }
 
                 override fun onQueryTextChange(newText: String?): Boolean {
-                    savedLoginsStore.dispatch(
-                        LoginsAction.FilterLogins(
-                            newText,
-                        ),
-                    )
+                    if (newText?.isNotEmpty() == true) {
+                        searchQuery = savedLoginsStore.state.copy(
+                            searchedForText = newText,
+                        )
+                    }
+                    filterSavedLogins(newText)
                     return false
                 }
             },
+        )
+
+        val closeButton: ImageView = searchView.findViewById(R.id.search_close_btn) as ImageView
+        closeButton.setOnClickListener {
+            searchView.setQuery("", false)
+            searchQuery = savedLoginsStore.state.copy(
+                searchedForText = null,
+            )
+        }
+    }
+
+    private fun filterSavedLogins(query: String?) {
+        savedLoginsStore.dispatch(
+            LoginsAction.FilterLogins(
+                query,
+            ),
         )
     }
 
@@ -150,6 +203,11 @@ class SavedLoginsFragment : SecureFragment(), MenuProvider {
             .setDisplayShowTitleEnabled(true)
         sortingStrategyMenu.menuController.dismiss()
         sortLoginsMenuRoot.setOnClickListener(null)
+
+        setFragmentResult(
+            LoginDetailFragment.HAS_QUERY_KEY,
+            bundleOf(LoginDetailFragment.HAS_QUERY_BUNDLE to searchQuery?.searchedForText),
+        )
 
         redirectToReAuth(
             listOf(R.id.loginDetailFragment, R.id.addLoginFragment),

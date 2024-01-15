@@ -86,6 +86,7 @@ class SettingsTest {
             { settings.clearColor = Color.BLUE },
             { settings.enterpriseRootsEnabled },
             { settings.enterpriseRootsEnabled = false },
+            { settings.emailTrackerBlockingPrivateBrowsing },
         )
     }
 
@@ -128,6 +129,11 @@ class SettingsTest {
         assertFalse(settings.loginAutofillEnabled)
         assertNull(settings.clearColor)
         assertFalse(settings.enterpriseRootsEnabled)
+        assertFalse(settings.queryParameterStripping)
+        assertFalse(settings.queryParameterStrippingPrivateBrowsing)
+        assertFalse(settings.emailTrackerBlockingPrivateBrowsing)
+        assertEquals("", settings.queryParameterStrippingAllowList)
+        assertEquals("", settings.queryParameterStrippingStripList)
         assertEquals(EngineSession.CookieBannerHandlingMode.DISABLED, settings.cookieBannerHandlingMode)
         assertEquals(EngineSession.CookieBannerHandlingMode.DISABLED, settings.cookieBannerHandlingModePrivateBrowsing)
 
@@ -166,9 +172,15 @@ class SettingsTest {
             loginAutofillEnabled = true,
             clearColor = Color.BLUE,
             enterpriseRootsEnabled = true,
-            cookieBannerHandlingMode = EngineSession.CookieBannerHandlingMode.DISABLED,
+            queryParameterStripping = true,
+            queryParameterStrippingPrivateBrowsing = true,
+            queryParameterStrippingAllowList = "AllowList",
+            queryParameterStrippingStripList = "StripList",
             cookieBannerHandlingModePrivateBrowsing = EngineSession.CookieBannerHandlingMode.REJECT_ALL,
             cookieBannerHandlingDetectOnlyMode = true,
+            cookieBannerHandlingGlobalRules = true,
+            cookieBannerHandlingGlobalRulesSubFrames = true,
+            emailTrackerBlockingPrivateBrowsing = true,
         )
 
         assertFalse(defaultSettings.domStorageEnabled)
@@ -201,8 +213,15 @@ class SettingsTest {
         assertTrue(defaultSettings.forceUserScalableContent)
         assertEquals(Color.BLUE, defaultSettings.clearColor)
         assertTrue(defaultSettings.enterpriseRootsEnabled)
+        assertTrue(defaultSettings.queryParameterStripping)
+        assertTrue(defaultSettings.queryParameterStrippingPrivateBrowsing)
+        assertEquals("AllowList", defaultSettings.queryParameterStrippingAllowList)
+        assertEquals("StripList", defaultSettings.queryParameterStrippingStripList)
         assertEquals(EngineSession.CookieBannerHandlingMode.DISABLED, defaultSettings.cookieBannerHandlingMode)
         assertEquals(EngineSession.CookieBannerHandlingMode.REJECT_ALL, defaultSettings.cookieBannerHandlingModePrivateBrowsing)
         assertTrue(defaultSettings.cookieBannerHandlingDetectOnlyMode)
+        assertTrue(defaultSettings.cookieBannerHandlingGlobalRules)
+        assertTrue(defaultSettings.cookieBannerHandlingGlobalRulesSubFrames)
+        assertTrue(defaultSettings.emailTrackerBlockingPrivateBrowsing)
     }
 }

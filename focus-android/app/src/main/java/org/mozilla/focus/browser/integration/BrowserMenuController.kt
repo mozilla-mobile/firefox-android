@@ -21,7 +21,6 @@ import org.mozilla.focus.menu.ToolbarMenu
 import org.mozilla.focus.state.AppAction
 import org.mozilla.focus.state.AppStore
 import org.mozilla.focus.state.Screen
-import org.mozilla.focus.telemetry.TelemetryWrapper
 
 @Suppress("LongParameterList")
 class BrowserMenuController(
@@ -36,6 +35,7 @@ class BrowserMenuController(
     private val showFindInPageCallback: () -> Unit,
     private val openInCallback: () -> Unit,
     private val openInBrowser: () -> Unit,
+    private val showShortcutAddedSnackBar: () -> Unit,
 ) {
     @VisibleForTesting
     private val currentTab: SessionState?
@@ -57,8 +57,6 @@ class BrowserMenuController(
             )
             is ToolbarMenu.Item.Reload, ToolbarMenu.CustomTabItem.Reload -> {
                 sessionUseCases.reload(currentTabId)
-
-                TelemetryWrapper.menuReloadEvent()
             }
             is ToolbarMenu.Item.Stop, ToolbarMenu.CustomTabItem.Stop -> sessionUseCases.stopLoading(
                 currentTabId,
@@ -74,6 +72,7 @@ class BrowserMenuController(
                         )
                     }
                 }
+                showShortcutAddedSnackBar()
             }
             is ToolbarMenu.Item.RemoveFromShortcuts -> {
                 ioScope.launch {
@@ -95,7 +94,8 @@ class BrowserMenuController(
     }
 
     @Suppress("LongMethod")
-    private fun recordBrowserMenuTelemetry(item: ToolbarMenu.Item) {
+    @VisibleForTesting
+    internal fun recordBrowserMenuTelemetry(item: ToolbarMenu.Item) {
         when (item) {
             is ToolbarMenu.Item.Back -> BrowserMenu.navigationToolbarAction.record(
                 BrowserMenu.NavigationToolbarActionExtra("back"),
@@ -103,9 +103,11 @@ class BrowserMenuController(
             is ToolbarMenu.Item.Forward -> BrowserMenu.navigationToolbarAction.record(
                 BrowserMenu.NavigationToolbarActionExtra("forward"),
             )
-            is ToolbarMenu.Item.Reload -> BrowserMenu.navigationToolbarAction.record(
-                BrowserMenu.NavigationToolbarActionExtra("reload"),
-            )
+            is ToolbarMenu.Item.Reload -> {
+                BrowserMenu.navigationToolbarAction.record(
+                    BrowserMenu.NavigationToolbarActionExtra("reload"),
+                )
+            }
             is ToolbarMenu.Item.Stop -> BrowserMenu.navigationToolbarAction.record(
                 BrowserMenu.NavigationToolbarActionExtra("stop"),
             )
@@ -130,8 +132,6 @@ class BrowserMenuController(
                         BrowserMenu.BrowserMenuActionExtra("desktop_view_off"),
                     )
                 }
-
-                TelemetryWrapper.desktopRequestCheckEvent(item.isChecked)
             }
             is ToolbarMenu.Item.AddToHomeScreen -> BrowserMenu.browserMenuAction.record(
                 BrowserMenu.BrowserMenuActionExtra("add_to_home_screen"),
@@ -155,9 +155,11 @@ class BrowserMenuController(
                 CustomTabsToolbar.NavigationToolbarActionExtra("stop"),
             )
 
-            ToolbarMenu.CustomTabItem.Reload -> CustomTabsToolbar.navigationToolbarAction.record(
-                CustomTabsToolbar.NavigationToolbarActionExtra("reload"),
-            )
+            ToolbarMenu.CustomTabItem.Reload -> {
+                CustomTabsToolbar.navigationToolbarAction.record(
+                    CustomTabsToolbar.NavigationToolbarActionExtra("reload"),
+                )
+            }
 
             ToolbarMenu.CustomTabItem.AddToHomeScreen -> CustomTabsToolbar.browserMenuAction.record(
                 CustomTabsToolbar.BrowserMenuActionExtra("add_to_home_screen"),

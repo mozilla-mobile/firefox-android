@@ -155,7 +155,7 @@ class StoreExtensionsKtTest {
 
         val channel = store.channel(owner)
 
-        val job = GlobalScope.launch {
+        val job = launch {
             channel.consumeEach { state ->
                 receivedValue = state.counter
                 latch.countDown()
@@ -568,5 +568,5 @@ internal class MockedLifecycleOwner(initialState: Lifecycle.State) : LifecycleOw
         currentState = initialState
     }
 
-    override fun getLifecycle(): Lifecycle = lifecycleRegistry
+    override val lifecycle: Lifecycle = lifecycleRegistry
 }

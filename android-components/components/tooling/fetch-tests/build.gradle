@@ -6,10 +6,9 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion config.compileSdkVersion
-
     defaultConfig {
         minSdkVersion config.minSdkVersion
+        compileSdk config.compileSdkVersion
         targetSdkVersion config.targetSdkVersion
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -22,17 +21,18 @@ android {
         }
     }
 
-    lintOptions {
+    lint {
         lintConfig file("lint.xml")
     }
+
+    namespace 'mozilla.components.tooling.fetch.tests'
+
 }
 
 dependencies {
     implementation project(':concept-fetch')
 
-    implementation Dependencies.kotlin_stdlib
-
-    implementation Dependencies.testing_mockwebserver
-    implementation Dependencies.testing_junit
-    implementation Dependencies.kotlin_coroutines
+    implementation ComponentsDependencies.testing_mockwebserver
+    implementation ComponentsDependencies.testing_junit
+    implementation ComponentsDependencies.kotlin_coroutines
 }

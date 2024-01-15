@@ -2,8 +2,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-@file:SuppressWarnings("MaxLineLength")
-
 package mozilla.components.support.utils
 
 import android.webkit.URLUtil
@@ -30,14 +28,16 @@ class WebURLFinder {
         this.candidates = candidateWebURLs(string)
     }
 
-    /* package-private */ internal constructor(string: String?, explicitUnicode: Boolean) {
+    // package-private
+    internal constructor(string: String?, explicitUnicode: Boolean) {
         if (string == null) {
             throw IllegalArgumentException("strings must not be null")
         }
         this.candidates = candidateWebURLs(string, explicitUnicode)
     }
 
-    /* package-private */ internal constructor(strings: List<String>?, explicitUnicode: Boolean) {
+    // package-private
+    internal constructor(strings: List<String>?, explicitUnicode: Boolean) {
         if (strings == null) {
             throw IllegalArgumentException("strings must not be null")
         }
@@ -75,7 +75,8 @@ class WebURLFinder {
     companion object {
         // Taken from mozilla.components.support.ktx.util.URLStringUtils. See documentation
         // there for a complete description.
-        private const val autolinkWebUrlPattern = "(\\w+-)*\\w+(://[/]*|:|\\.)(\\w+-)*\\w+([\\S&&[^\\w-]]\\S*)?"
+        private const val autolinkWebUrlPattern =
+            "(\\w+-+)*[\\w\\[]+(://[/]*|:|\\.)(\\w+-+)*[\\w\\[:]+([\\S&&[^\\w-]]\\S*)?"
 
         private val autolinkWebUrl by lazy {
             Pattern.compile(autolinkWebUrlPattern, 0)
@@ -96,25 +97,26 @@ class WebURLFinder {
         }
 
         /**
-         * Check if string is a Web URL.
+         * Checks if the given [String] is a valid web URL.
          *
+         * Valid URI schemes: 'http:', 'https:', 'about:', 'data:'.
          *
-         * A Web URL is a URI that is not a `file:` or
-         * `javascript:` scheme.
+         * Invalid URI schemes: 'file:', 'javascript:', 'content:'.
          *
-         * @param string to check.
-         * @return `true` if `string` is a Web URL.
+         * @return True if the [String] is a valid web URL.
          */
         @SuppressWarnings("TooGenericExceptionCaught")
-        fun isWebURL(string: String): Boolean {
-            try {
-                URI(string)
-            } catch (e: Exception) {
-                return false
-            }
+        fun String.isValidWebURL() = try {
+            URI(this)
 
-            return !(URLUtil.isFileUrl(string.lowercase(Locale.ROOT)) || URLUtil.isJavaScriptUrl(string.lowercase(Locale.ROOT)))
+            val safeUri = lowercase(Locale.ROOT)
+            !safeUri.isInvalidUriScheme()
+        } catch (e: Exception) {
+            false
         }
+
+        private fun String.isInvalidUriScheme() =
+            URLUtil.isFileUrl(this) || URLUtil.isJavaScriptUrl(this) || URLUtil.isContentUrl(this)
 
         private fun candidateWebURLs(strings: Collection<String?>, explicitUnicode: Boolean = false): List<String> {
             val candidates = mutableListOf<String>()
@@ -142,7 +144,7 @@ class WebURLFinder {
 
             while (matcher.find()) {
                 // Remove URLs with bad schemes.
-                if (!isWebURL(matcher.group())) {
+                if (!matcher.group().isValidWebURL()) {
                     continue
                 }
 

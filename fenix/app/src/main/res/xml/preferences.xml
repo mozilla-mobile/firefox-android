@@ -102,11 +102,11 @@
             app:iconSpaceReserved="false"
             android:title="@string/preferences_https_only_title" />
 
-        <androidx.preference.Preference
-            android:key="@string/pref_key_cookie_banner_settings"
+        <org.mozilla.fenix.settings.cookiebannerhandling.CustomCBHSwitchPreference
+            android:key="@string/pref_key_cookie_banner_private_mode"
             app:iconSpaceReserved="false"
-            android:title="@string/preferences_cookie_banner_reduction"
-            app:isPreferenceVisible="false" />
+            app:isPreferenceVisible="false"
+            android:title="@string/preferences_cookie_banner_reduction_private_mode" />
 
         <androidx.preference.Preference
             android:key="@string/pref_key_tracking_protection_settings"
@@ -150,15 +150,20 @@
             android:title="@string/preferences_addons" />
 
         <androidx.preference.Preference
+            android:key="@string/pref_key_install_local_addon"
+            app:iconSpaceReserved="false"
+            app:isPreferenceVisible="false"
+            android:title="@string/preferences_install_local_addon" />
+
+        <androidx.preference.Preference
             android:key="@string/pref_key_override_amo_collection"
             app:iconSpaceReserved="false"
             android:title="@string/preferences_customize_amo_collection" />
 
-        <androidx.preference.SwitchPreference
-            android:defaultValue="false"
-            android:key="@string/pref_key_open_links_in_external_app"
-            app:iconSpaceReserved="false"
-            android:title="@string/preferences_open_links_in_apps" />
+        <androidx.preference.Preference
+            android:key="@string/pref_key_open_links_in_apps"
+            android:title="@string/preferences_open_links_in_apps"
+            app:iconSpaceReserved="false" />
 
         <androidx.preference.SwitchPreference
             android:defaultValue="false"
@@ -167,7 +172,6 @@
             android:title="@string/preferences_external_download_manager" />
 
         <androidx.preference.SwitchPreference
-            android:defaultValue="true"
             android:key="@string/pref_key_leakcanary"
             android:title="@string/preference_leakcanary"
             app:iconSpaceReserved="false"
@@ -178,6 +182,12 @@
             android:title="@string/preferences_remote_debugging"
             app:iconSpaceReserved="false"
             android:defaultValue="false" />
+
+        <androidx.preference.SwitchPreference
+            android:defaultValue="false"
+            android:key="@string/pref_key_enable_gecko_logs"
+            app:iconSpaceReserved="false"
+            android:title="@string/preferences_enable_gecko_logs" />
     </PreferenceCategory>
 
     <androidx.preference.PreferenceCategory

@@ -8,6 +8,7 @@ import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.app.Activity
 import android.app.ActivityManager
 import android.content.ActivityNotFoundException
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.Intent.ACTION_SEND
@@ -19,6 +20,7 @@ import android.content.Intent.EXTRA_TITLE
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.hardware.camera2.CameraManager
+import android.net.Uri
 import android.os.Build
 import androidx.core.content.FileProvider
 import androidx.core.content.getSystemService
@@ -35,7 +37,6 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.doReturn
@@ -150,7 +151,6 @@ class ContextTest {
     }
 
     @Test
-    @Ignore("Robolectric does not support API level >=29")
     @Config(shadows = [ShadowFileProvider::class], sdk = [Build.VERSION_CODES.Q])
     fun `shareMedia will show a thumbnail starting with Android 10`() {
         val context = spy(testContext)
@@ -179,6 +179,23 @@ class ContextTest {
         // verify all the properties we set for the share Intent
         val chooserIntent = argCaptor.value
         assertNull(chooserIntent.clipData)
+    }
+
+    @Test
+    @Config(shadows = [ShadowFileProvider::class])
+    fun `copyImage will copy the file URI to the clipboard & invoke the confirmation action`() {
+        val context = spy(testContext)
+        val confirmationAction = mock<() -> Unit>()
+
+        context.copyImage("filePath", confirmationAction)
+
+        val clipboardManager =
+            testContext.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        assertEquals(
+            ShadowFileProvider.FAKE_URI_RESULT,
+            clipboardManager.primaryClip!!.getItemAt(0).uri,
+        )
+        verify(confirmationAction).invoke()
     }
 
     @Test
@@ -274,7 +291,7 @@ class ContextTest {
 
 @Implements(FileProvider::class)
 object ShadowFileProvider {
-    val FAKE_URI_RESULT = "fakeUri".toUri()
+    val FAKE_URI_RESULT: Uri = "fakeUri".toUri()
 
     @Implementation
     @JvmStatic

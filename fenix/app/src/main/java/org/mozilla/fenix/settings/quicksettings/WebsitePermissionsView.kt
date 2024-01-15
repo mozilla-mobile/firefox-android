@@ -66,7 +66,7 @@ interface WebsitePermissionInteractor {
  */
 class WebsitePermissionsView(
     containerView: ViewGroup,
-    val interactor: WebsitePermissionInteractor,
+    private val interactor: WebsitePermissionInteractor,
 ) {
     private val context = containerView.context
 

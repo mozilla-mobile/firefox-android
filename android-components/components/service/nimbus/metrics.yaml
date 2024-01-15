@@ -9,97 +9,102 @@
 
 $schema: moz://mozilla.org/schemas/glean/metrics/2-0-0
 
-nimbus_events:
-  enrollment:
+messaging:
+  message_shown:
     type: event
-    description: >
-      Recorded when a user has met the conditions and is first bucketed into an
-      experiment (i.e. targeting matched and they were randomized into a bucket
-      and branch of the experiment). Expected a maximum of once per experiment
-      per user.
+    description: |
+      A message was shown to the user.
     extra_keys:
-      experiment:
-        description: The slug/unique identifier of the experiment
-      branch:
-        description: The branch slug/identifier that was randomly chosen
-      enrollment_id:
-        description: A unique identifier generated at enrollment time
+      message_key:
+        description: The id of the message
+        type: string
     bugs:
-      - https://jira.mozilla.com/browse/SDK-61
+      - https://github.com/mozilla-mobile/fenix/issues/24224
     data_reviews:
-      - https://github.com/mozilla-mobile/android-components/pull/9168#issuecomment-743461975
-    data_sensitivity:
-      - technical
+      - https://github.com/mozilla-mobile/fenix/pull/24426
+      - https://github.com/mozilla-mobile/firefox-android/pull/1101
     notification_emails:
-      - tlong@mozilla.com
-      - telemetry-team@mozilla.com
+      - android-probes@mozilla.com
+      - cgordon@mozilla.com
+    data_sensitivity:
+      - interaction
     expires: never
-  unenrollment:
+  message_dismissed:
     type: event
-    description: >
-      Recorded when either telemetry is disabled, or the experiment has run
-      for its designed duration (i.e. it is no longer present in the Nimbus
-      Remote Settings collection)
+    description: |
+      A message was dismissed by the user.
     extra_keys:
-      experiment:
-        description: The slug/unique identifier of the experiment
-      branch:
-        description: The branch slug/identifier that was randomly chosen
-      enrollment_id:
-        description: A unique identifier generated at enrollment time
+      message_key:
+        description: The id of the message
+        type: string
     bugs:
-      - https://jira.mozilla.com/browse/SDK-126
+      - https://github.com/mozilla-mobile/fenix/issues/24224
     data_reviews:
-      - https://github.com/mozilla-mobile/android-components/pull/9168#issuecomment-743461975
-    data_sensitivity:
-      - technical
+      - https://github.com/mozilla-mobile/fenix/issues/24224
+      - https://github.com/mozilla-mobile/firefox-android/pull/1101
     notification_emails:
-      - tlong@mozilla.com
-      - telemetry-team@mozilla.com
+      - android-probes@mozilla.com
+      - cgordon@mozilla.com
+    data_sensitivity:
+      - interaction
     expires: never
-  disqualification:
+  message_clicked:
     type: event
-    description: >
-      Recorded when a user becomes ineligible to continue receiving the
-      treatment for an enrolled experiment, for reasons such as the user
-      opting out of the experiment or no longer matching targeting for the
-      experiment.
+    description: |
+      A message was clicked by the user.
     extra_keys:
-      experiment:
-        description: The slug/unique identifier of the experiment
-      branch:
-        description: The branch slug/identifier that was randomly chosen
-      enrollment_id:
-        description: A unique identifier generated at enrollment time
+      message_key:
+        description: The id of the message
+        type: string
+      action_uuid:
+        description: The uuid of the action
+        type: string
     bugs:
-      - https://jira.mozilla.com/browse/SDK-126
+      - https://github.com/mozilla-mobile/fenix/issues/24224
     data_reviews:
-      - https://github.com/mozilla-mobile/android-components/pull/9168#issuecomment-743461975
-    data_sensitivity:
-      - technical
+      - https://github.com/mozilla-mobile/fenix/issues/24224
+      - https://github.com/mozilla-mobile/firefox-android/pull/1101
     notification_emails:
-      - tlong@mozilla.com
-      - telemetry-team@mozilla.com
+      - android-probes@mozilla.com
+      - cgordon@mozilla.com
+    data_sensitivity:
+      - interaction
     expires: never
-  exposure:
+  message_expired:
     type: event
-    description: >
-      Recorded when a user actually observes an experimental treatment, or
-      would have observed an experimental treatment if they had been in a
-      branch that would have shown one.
+    description: |
+      A message maxDisplayCount has been surpassed.
     extra_keys:
-      experiment:
-        description: The slug/unique identifier of the experiment
-      branch:
-        description: The branch slug/identifier that was randomly chosen
-      enrollment_id:
-        description: A unique identifier generated at enrollment time
+      message_key:
+        description: The id of the message
+        type: string
     bugs:
-      - https://jira.mozilla.com/browse/SDK-65
+      - https://github.com/mozilla-mobile/fenix/issues/24224
     data_reviews:
-      - https://github.com/mozilla-mobile/android-components/pull/9168#issuecomment-743461975
-    data_sensitivity:
-      - technical
+      - https://github.com/mozilla-mobile/fenix/issues/24224
+      - https://github.com/mozilla-mobile/firefox-android/pull/1101
     notification_emails:
-      - tlong@mozilla.com, telemetry-team@mozilla.com
+      - android-probes@mozilla.com
+      - cgordon@mozilla.com
+    data_sensitivity:
+      - interaction
+    expires: never
+  malformed:
+    type: event
+    description: |
+      A message was malformed.
+    extra_keys:
+      message_key:
+        description: The id of the message
+        type: string
+    bugs:
+      - https://github.com/mozilla-mobile/fenix/issues/24224
+    data_reviews:
+      - https://github.com/mozilla-mobile/fenix/issues/24224
+      - https://github.com/mozilla-mobile/firefox-android/pull/1101
+    notification_emails:
+      - android-probes@mozilla.com
+      - cgordon@mozilla.com
+    data_sensitivity:
+      - interaction
     expires: never

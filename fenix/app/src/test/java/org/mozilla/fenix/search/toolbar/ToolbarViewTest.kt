@@ -18,16 +18,17 @@ import io.mockk.spyk
 import io.mockk.verify
 import mozilla.components.browser.domains.autocomplete.BaseDomainAutocompleteProvider
 import mozilla.components.browser.state.search.SearchEngine
+import mozilla.components.browser.state.state.SearchState
+import mozilla.components.browser.state.state.searchEngines
 import mozilla.components.browser.storage.sync.PlacesBookmarksStorage
 import mozilla.components.browser.storage.sync.PlacesHistoryStorage
 import mozilla.components.browser.toolbar.BrowserToolbar
-import mozilla.components.browser.toolbar.edit.EditToolbar
-import mozilla.components.concept.engine.Engine
 import mozilla.components.concept.toolbar.Toolbar
 import mozilla.components.feature.awesomebar.provider.SessionAutocompleteProvider
 import mozilla.components.feature.syncedtabs.SyncedTabsAutocompleteProvider
 import mozilla.components.feature.toolbar.ToolbarAutocompleteFeature
 import mozilla.components.support.test.robolectric.testContext
+import mozilla.components.ui.autocomplete.InlineAutocompleteEditText
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -39,9 +40,12 @@ import org.junit.runner.RunWith
 import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.Components
+import org.mozilla.fenix.components.Core
 import org.mozilla.fenix.components.metrics.MetricsUtils
+import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
+import org.mozilla.fenix.search.SearchDialogFragment
 import org.mozilla.fenix.search.SearchEngineSource
 import org.mozilla.fenix.search.SearchFragmentState
 import org.mozilla.fenix.utils.Settings
@@ -52,7 +56,6 @@ class ToolbarViewTest {
     @MockK(relaxed = true)
     private lateinit var interactor: ToolbarInteractor
 
-    @MockK private lateinit var engine: Engine
     private lateinit var context: Context
     private lateinit var toolbar: BrowserToolbar
     private val defaultState: SearchFragmentState = SearchFragmentState(
@@ -84,6 +87,8 @@ class ToolbarViewTest {
         showAllSyncedTabsSuggestions = false,
         showSessionSuggestionsForCurrentEngine = false,
         showAllSessionSuggestions = false,
+        showSponsoredSuggestions = false,
+        showNonSponsoredSuggestions = false,
         searchAccessPoint = MetricsUtils.Source.NONE,
     )
 
@@ -140,6 +145,7 @@ class ToolbarViewTest {
     fun `GIVEN search term is set WHEN switching to edit mode THEN the cursor is set at the end of the search term`() {
         every { context.settings().showUnifiedSearchFeature } returns true
         every { context.settings().shouldShowHistorySuggestions } returns true
+        every { context.settings().shouldShowBookmarkSuggestions } returns true
         val view = buildToolbarView(false)
         mockkObject(FeatureFlags)
 
@@ -154,6 +160,7 @@ class ToolbarViewTest {
     fun `GIVEN no search term is set WHEN switching to edit mode THEN the cursor is set at the end of the search term`() {
         every { context.settings().showUnifiedSearchFeature } returns true
         every { context.settings().shouldShowHistorySuggestions } returns true
+        every { context.settings().shouldShowBookmarkSuggestions } returns true
         val view = buildToolbarView(false)
         mockkObject(FeatureFlags)
 
@@ -198,75 +205,223 @@ class ToolbarViewTest {
     }
 
     @Test
-    fun `searchEngine name and icon get set on update`() {
-        val editToolbar: EditToolbar = mockk(relaxed = true)
-        every { toolbar.edit } returns editToolbar
-
+    fun `WHEN the default general search engine is selected THEN show text for default engine`() {
         val toolbarView = buildToolbarView(false)
-        toolbarView.update(defaultState)
+        val defaultEngine = buildSearchEngine(SearchEngine.Type.BUNDLED, true)
+        val fragment = spyk(SearchDialogFragment())
+        fragment.inlineAutocompleteEditText = InlineAutocompleteEditText(context)
+        val searchState = mockk<SearchState>()
+        val expectedHint = context.getString(R.string.search_hint)
+        val expectedContentDescription = defaultEngine.name + ", " + context.getString(R.string.search_hint)
 
-        verify { editToolbar.setIcon(any(), "Search Engine") }
+        every { fragment.requireContext().getString(R.string.search_hint) } returns expectedHint
+        every { searchState.userSelectedSearchEngineId } returns defaultEngine.id
+        every { searchState.searchEngines } returns listOf(defaultEngine)
+        every { fragment.toolbarView } returns toolbarView
+        every { fragment.requireComponents.core.store.state.search } returns searchState
+
+        fragment.updateToolbarContentDescription(defaultEngine, true)
+
+        assertEquals(expectedHint, fragment.inlineAutocompleteEditText.hint)
+        assertEquals(expectedContentDescription, toolbarView.view.contentDescription)
     }
 
     @Test
-    fun `GIVEN a general search engine is default WHEN a topic specific engine is selected THEN the hint changes`() {
+    fun `WHEN a general search engine is selected THEN show hint for general engine`() {
+        val toolbarView = buildToolbarView(false)
+        val generalEngine = buildSearchEngine(SearchEngine.Type.BUNDLED, true)
+        val fragment = spyk(SearchDialogFragment())
+        fragment.inlineAutocompleteEditText = InlineAutocompleteEditText(context)
+        val searchState = mockk<SearchState>()
+        val expectedHint = context.getString(R.string.search_hint_general_engine)
+        val expectedContentDescription = generalEngine.name + ", " + context.getString(R.string.search_hint_general_engine)
+
+        every { fragment.requireContext().getString(R.string.search_hint_general_engine) } returns expectedHint
+        every { searchState.userSelectedSearchEngineId } returns generalEngine.id
+        every { searchState.searchEngines } returns listOf(generalEngine)
+        every { fragment.toolbarView } returns toolbarView
+        every { fragment.requireComponents.core.store.state.search } returns searchState
+
+        fragment.updateToolbarContentDescription(generalEngine, false)
+
+        assertEquals(expectedHint, fragment.inlineAutocompleteEditText.hint)
+        assertEquals(expectedContentDescription, toolbarView.view.contentDescription)
+    }
+
+    @Test
+    fun `WHEN a topic specific search engine is selected THEN show hint for topic specific engine`() {
+        val toolbarView = buildToolbarView(false)
         val topicSpecificEngine = buildSearchEngine(SearchEngine.Type.BUNDLED, false)
-        val toolbarView = buildToolbarView(false)
-        toolbarView.update(defaultState)
-        assertEquals(context.getString(R.string.search_hint), toolbarView.view.edit.hint)
+        val fragment = spyk(SearchDialogFragment())
+        fragment.inlineAutocompleteEditText = InlineAutocompleteEditText(context)
+        val searchState = mockk<SearchState>()
+        val expectedHint = context.getString(R.string.application_search_hint)
+        val expectedContentDescription = topicSpecificEngine.name + ", " + context.getString(R.string.application_search_hint)
 
-        toolbarView.update(defaultState.copy(searchEngineSource = SearchEngineSource.Default(topicSpecificEngine)))
+        every { fragment.requireContext().getString(R.string.application_search_hint) } returns expectedHint
+        every { searchState.userSelectedSearchEngineId } returns topicSpecificEngine.id
+        every { searchState.searchEngines } returns listOf(topicSpecificEngine)
+        every { fragment.toolbarView } returns toolbarView
+        every { fragment.requireComponents.core.store.state.search } returns searchState
 
-        assertEquals(context.getString(R.string.application_search_hint), toolbarView.view.edit.hint)
+        fragment.updateToolbarContentDescription(topicSpecificEngine, false)
+
+        assertEquals(expectedHint, fragment.inlineAutocompleteEditText.hint)
+        assertEquals(expectedContentDescription, toolbarView.view.contentDescription)
     }
 
     @Test
-    fun `GIVEN a topic specific engine is default WHEN a general engine is selected THEN the hint changes`() {
-        val topicSpecificEngine = buildSearchEngine(SearchEngine.Type.BUNDLED, false)
+    fun `WHEN the default additional general search engine is selected THEN show hint for default engine`() {
         val toolbarView = buildToolbarView(false)
-        toolbarView.update(defaultState.copy(searchEngineSource = SearchEngineSource.Default(topicSpecificEngine)))
-        assertEquals(context.getString(R.string.application_search_hint), toolbarView.view.edit.hint)
+        val defaultEngine = buildSearchEngine(SearchEngine.Type.BUNDLED_ADDITIONAL, true)
+        val fragment = spyk(SearchDialogFragment())
+        fragment.inlineAutocompleteEditText = InlineAutocompleteEditText(context)
+        val searchState = mockk<SearchState>()
+        val expectedHint = context.getString(R.string.search_hint)
+        val expectedContentDescription = defaultEngine.name + ", " + context.getString(R.string.search_hint)
 
-        toolbarView.update(defaultState)
+        every { fragment.requireContext().getString(R.string.search_hint) } returns expectedHint
+        every { searchState.userSelectedSearchEngineId } returns defaultEngine.id
+        every { searchState.searchEngines } returns listOf(defaultEngine)
+        every { fragment.toolbarView } returns toolbarView
+        every { fragment.requireComponents.core.store.state.search } returns searchState
 
-        assertEquals(context.getString(R.string.search_hint), toolbarView.view.edit.hint)
+        fragment.updateToolbarContentDescription(defaultEngine, true)
+
+        assertEquals(expectedHint, fragment.inlineAutocompleteEditText.hint)
+        assertEquals(expectedContentDescription, toolbarView.view.contentDescription)
     }
 
     @Test
-    fun `GIVEN a topic specific engine is default WHEN a custom engine is selected THEN the hint changes`() {
-        val topicSpecificEngine = buildSearchEngine(SearchEngine.Type.BUNDLED, false)
+    fun `WHEN a general additional search engine is selected THEN show hint for general engine`() {
+        val toolbarView = buildToolbarView(false)
+        val generalEngine = buildSearchEngine(SearchEngine.Type.BUNDLED_ADDITIONAL, true)
+        val fragment = spyk(SearchDialogFragment())
+        fragment.inlineAutocompleteEditText = InlineAutocompleteEditText(context)
+        val searchState = mockk<SearchState>()
+        val expectedHint = context.getString(R.string.search_hint_general_engine)
+        val expectedContentDescription = generalEngine.name + ", " + context.getString(R.string.search_hint_general_engine)
+
+        every { fragment.requireContext().getString(R.string.search_hint_general_engine) } returns expectedHint
+        every { searchState.userSelectedSearchEngineId } returns generalEngine.id
+        every { searchState.searchEngines } returns listOf(generalEngine)
+        every { fragment.toolbarView } returns toolbarView
+        every { fragment.requireComponents.core.store.state.search } returns searchState
+
+        fragment.updateToolbarContentDescription(generalEngine, false)
+
+        assertEquals(expectedHint, fragment.inlineAutocompleteEditText.hint)
+        assertEquals(expectedContentDescription, toolbarView.view.contentDescription)
+    }
+
+    @Test
+    fun `WHEN the default custom search engine is selected THEN show hint for default engine`() {
+        val toolbarView = buildToolbarView(false)
         val customEngine = buildSearchEngine(SearchEngine.Type.CUSTOM, true)
-        val toolbarView = buildToolbarView(false)
-        toolbarView.update(defaultState.copy(searchEngineSource = SearchEngineSource.Default(topicSpecificEngine)))
-        assertEquals(context.getString(R.string.application_search_hint), toolbarView.view.edit.hint)
+        val fragment = spyk(SearchDialogFragment())
+        fragment.inlineAutocompleteEditText = InlineAutocompleteEditText(context)
+        val searchState = mockk<SearchState>()
+        val expectedHint = context.getString(R.string.search_hint)
+        val expectedContentDescription = customEngine.name + ", " + context.getString(R.string.search_hint)
 
-        toolbarView.update(defaultState.copy(searchEngineSource = SearchEngineSource.Default(customEngine)))
+        every { fragment.requireContext().getString(R.string.search_hint) } returns expectedHint
+        every { searchState.userSelectedSearchEngineId } returns customEngine.id
+        every { searchState.searchEngines } returns listOf(customEngine)
+        every { fragment.toolbarView } returns toolbarView
+        every { fragment.requireComponents.core.store.state.search } returns searchState
 
-        assertEquals(context.getString(R.string.search_hint), toolbarView.view.edit.hint)
+        fragment.updateToolbarContentDescription(customEngine, true)
+
+        assertEquals(expectedHint, fragment.inlineAutocompleteEditText.hint)
+        assertEquals(expectedContentDescription, toolbarView.view.contentDescription)
     }
 
     @Test
-    fun `GIVEN a general engine is default WHEN a custom engine is selected THEN the hint does not change`() {
-        val customEngine = buildSearchEngine(SearchEngine.Type.CUSTOM, true)
+    fun `WHEN a custom search engine is selected THEN show hint for general engine`() {
         val toolbarView = buildToolbarView(false)
-        toolbarView.update(defaultState)
-        assertEquals(context.getString(R.string.search_hint), toolbarView.view.edit.hint)
+        val customEngine = buildSearchEngine(SearchEngine.Type.CUSTOM, true)
+        val fragment = spyk(SearchDialogFragment())
+        fragment.inlineAutocompleteEditText = InlineAutocompleteEditText(context)
+        val searchState = mockk<SearchState>()
+        val expectedHint = context.getString(R.string.search_hint_general_engine)
+        val expectedContentDescription = customEngine.name + ", " + context.getString(R.string.search_hint_general_engine)
 
-        toolbarView.update(defaultState.copy(searchEngineSource = SearchEngineSource.Default(customEngine)))
+        every { fragment.requireContext().getString(R.string.search_hint_general_engine) } returns expectedHint
+        every { searchState.userSelectedSearchEngineId } returns customEngine.id
+        every { searchState.searchEngines } returns listOf(customEngine)
+        every { fragment.toolbarView } returns toolbarView
+        every { fragment.requireComponents.core.store.state.search } returns searchState
 
-        assertEquals(context.getString(R.string.search_hint), toolbarView.view.edit.hint)
+        fragment.updateToolbarContentDescription(customEngine, false)
+
+        assertEquals(expectedHint, fragment.inlineAutocompleteEditText.hint)
+        assertEquals(expectedContentDescription, toolbarView.view.contentDescription)
     }
 
     @Test
-    fun `GIVEN a custom engine is default WHEN a general engine is selected THEN the hint does not change`() {
-        val customEngine = buildSearchEngine(SearchEngine.Type.CUSTOM, true)
+    fun `WHEN history is selected as engine THEN show hint specific for history`() {
         val toolbarView = buildToolbarView(false)
-        toolbarView.update(defaultState.copy(searchEngineSource = SearchEngineSource.Default(customEngine)))
-        assertEquals(context.getString(R.string.search_hint), toolbarView.view.edit.hint)
+        val historyEngine = buildSearchEngine(SearchEngine.Type.APPLICATION, false, Core.HISTORY_SEARCH_ENGINE_ID)
+        val fragment = spyk(SearchDialogFragment())
+        fragment.inlineAutocompleteEditText = InlineAutocompleteEditText(context)
+        val searchState = mockk<SearchState>()
+        val expectedHint = context.getString(R.string.history_search_hint)
+        val expectedContentDescription = historyEngine.name + ", " + context.getString(R.string.history_search_hint)
 
-        toolbarView.update(defaultState)
+        every { fragment.requireContext().getString(R.string.history_search_hint) } returns expectedHint
+        every { searchState.userSelectedSearchEngineId } returns historyEngine.id
+        every { searchState.searchEngines } returns listOf(historyEngine)
+        every { fragment.toolbarView } returns toolbarView
+        every { fragment.requireComponents.core.store.state.search } returns searchState
 
-        assertEquals(context.getString(R.string.search_hint), toolbarView.view.edit.hint)
+        fragment.updateToolbarContentDescription(historyEngine, false)
+
+        assertEquals(expectedHint, fragment.inlineAutocompleteEditText.hint)
+        assertEquals(expectedContentDescription, toolbarView.view.contentDescription)
+    }
+
+    @Test
+    fun `WHEN bookmarks is selected as engine THEN show hint specific for bookmarks`() {
+        val toolbarView = buildToolbarView(false)
+        val bookmarksEngine = buildSearchEngine(SearchEngine.Type.APPLICATION, false, Core.BOOKMARKS_SEARCH_ENGINE_ID)
+        val fragment = spyk(SearchDialogFragment())
+        fragment.inlineAutocompleteEditText = InlineAutocompleteEditText(context)
+        val searchState = mockk<SearchState>()
+        val expectedHint = context.getString(R.string.bookmark_search_hint)
+        val expectedContentDescription = bookmarksEngine.name + ", " + context.getString(R.string.bookmark_search_hint)
+
+        every { fragment.requireContext().getString(R.string.bookmark_search_hint) } returns expectedHint
+        every { searchState.userSelectedSearchEngineId } returns bookmarksEngine.id
+        every { searchState.searchEngines } returns listOf(bookmarksEngine)
+        every { fragment.toolbarView } returns toolbarView
+        every { fragment.requireComponents.core.store.state.search } returns searchState
+
+        fragment.updateToolbarContentDescription(bookmarksEngine, false)
+
+        assertEquals(expectedHint, fragment.inlineAutocompleteEditText.hint)
+        assertEquals(expectedContentDescription, toolbarView.view.contentDescription)
+    }
+
+    @Test
+    fun `WHEN tabs is selected as engine THEN show hint specific for tabs`() {
+        val toolbarView = buildToolbarView(false)
+        val tabsEngine = buildSearchEngine(SearchEngine.Type.APPLICATION, false, Core.TABS_SEARCH_ENGINE_ID)
+        val fragment = spyk(SearchDialogFragment())
+        fragment.inlineAutocompleteEditText = InlineAutocompleteEditText(context)
+        val searchState = mockk<SearchState>()
+        val expectedHint = context.getString(R.string.tab_search_hint)
+        val expectedContentDescription = tabsEngine.name + ", " + context.getString(R.string.tab_search_hint)
+
+        every { fragment.requireContext().getString(R.string.tab_search_hint) } returns expectedHint
+        every { searchState.userSelectedSearchEngineId } returns tabsEngine.id
+        every { searchState.searchEngines } returns listOf(tabsEngine)
+        every { fragment.toolbarView } returns toolbarView
+        every { fragment.requireComponents.core.store.state.search } returns searchState
+
+        fragment.updateToolbarContentDescription(tabsEngine, false)
+
+        assertEquals(expectedHint, fragment.inlineAutocompleteEditText.hint)
+        assertEquals(expectedContentDescription, toolbarView.view.contentDescription)
     }
 
     @Test
@@ -623,12 +778,79 @@ class ToolbarViewTest {
         }
     }
 
+    @Test
+    fun `GIVEN show bookmark suggestions and unified search are both enabled WHEN the toolbar view is initialized THEN add bookmark storage to autocomplete providers`() {
+        mockkConstructor(ToolbarAutocompleteFeature::class) {
+            val historyProvider: PlacesHistoryStorage = mockk(relaxed = true)
+            val bookmarksStorage: PlacesBookmarksStorage = mockk(relaxed = true)
+            val domainsProvider: BaseDomainAutocompleteProvider = mockk(relaxed = true)
+            val components: Components = mockk(relaxed = true) {
+                every { core.historyStorage } returns historyProvider
+                every { core.domainsAutocompleteProvider } returns domainsProvider
+                every { core.bookmarksStorage } returns bookmarksStorage
+            }
+
+            val settings: Settings = mockk(relaxed = true) {
+                every { showUnifiedSearchFeature } returns true
+                every { shouldShowHistorySuggestions } returns true
+                every { shouldShowBookmarkSuggestions } returns true
+            }
+            val toolbarView = buildToolbarView(
+                isPrivate = false,
+                settings = settings,
+                components = components,
+            )
+
+            toolbarView.update(defaultState)
+
+            verify {
+                toolbarView.autocompleteFeature.updateAutocompleteProviders(
+                    providers = listOf(historyProvider, bookmarksStorage, domainsProvider),
+                    refreshAutocomplete = true,
+                )
+            }
+        }
+    }
+
+    @Test
+    fun `GIVEN show bookmark suggestions is disabled and unified search is enabled WHEN the toolbar view is initialized THEN don't add bookmark storage to autocomplete providers`() {
+        mockkConstructor(ToolbarAutocompleteFeature::class) {
+            val historyProvider: PlacesHistoryStorage = mockk(relaxed = true)
+            val bookmarksStorage: PlacesBookmarksStorage = mockk(relaxed = true)
+            val domainsProvider: BaseDomainAutocompleteProvider = mockk(relaxed = true)
+            val components: Components = mockk(relaxed = true) {
+                every { core.historyStorage } returns historyProvider
+                every { core.domainsAutocompleteProvider } returns domainsProvider
+                every { core.bookmarksStorage } returns bookmarksStorage
+            }
+
+            val settings: Settings = mockk(relaxed = true) {
+                every { showUnifiedSearchFeature } returns true
+                every { shouldShowHistorySuggestions } returns true
+                every { shouldShowBookmarkSuggestions } returns false
+            }
+            val toolbarView = buildToolbarView(
+                isPrivate = false,
+                settings = settings,
+                components = components,
+            )
+
+            toolbarView.update(defaultState)
+
+            verify {
+                toolbarView.autocompleteFeature.updateAutocompleteProviders(
+                    providers = listOf(historyProvider, domainsProvider),
+                    refreshAutocomplete = true,
+                )
+            }
+        }
+    }
+
     private fun buildToolbarView(
         isPrivate: Boolean,
         settings: Settings = context.settings(),
         components: Components = mockk(relaxed = true),
     ) = ToolbarView(
-        context = context,
         settings = settings,
         components = components,
         interactor = interactor,
@@ -637,9 +859,13 @@ class ToolbarViewTest {
         fromHomeFragment = false,
     )
 
-    private fun buildSearchEngine(type: SearchEngine.Type, isGeneral: Boolean) = SearchEngine(
-        id = UUID.randomUUID().toString(),
-        name = "General",
+    private fun buildSearchEngine(
+        type: SearchEngine.Type,
+        isGeneral: Boolean,
+        id: String = UUID.randomUUID().toString(),
+    ) = SearchEngine(
+        id = id,
+        name = UUID.randomUUID().toString(),
         icon = testContext.getDrawable(R.drawable.ic_search)!!.toBitmap(),
         type = type,
         isGeneral = isGeneral,

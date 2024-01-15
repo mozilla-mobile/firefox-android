@@ -8,7 +8,7 @@
 
 let availablePatches;
 
-const portToAddon = (function() {
+const portToAddon = (function () {
   let port;
 
   function connect() {
@@ -31,7 +31,7 @@ const portToAddon = (function() {
   return { send };
 })();
 
-const $ = function(sel) {
+const $ = function (sel) {
   return document.querySelector(sel);
 };
 
@@ -75,8 +75,10 @@ Promise.all([
   redraw();
 });
 
-function onMessageFromAddon(msg) {
+async function onMessageFromAddon(msg) {
   const alsoShowHidden = location.hash === "#all";
+
+  await DOMContentLoadedPromise;
 
   if ("interventionsChanged" in msg) {
     redrawTable($("#interventions"), msg.interventionsChanged, alsoShowHidden);

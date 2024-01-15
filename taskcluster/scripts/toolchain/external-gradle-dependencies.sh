@@ -16,21 +16,18 @@ REPO_ROOT_DIR="$(get_abs_path $CURRENT_DIR/../../../..)"
 ANDROID_COMPONENTS_DIR="$REPO_ROOT_DIR/android-components"
 WORKING_DIR="$REPO_ROOT_DIR/$1"
 shift
-GRADLE_REGULAR_COMMANDS=""
-GRADLE_TEST_COMMANDS=""
+GRADLE_COMMANDS="$@"
 
-for argv in "$@"; do
-    if [[ $argv = *test* ]]; then
-      GRADLE_TEST_COMMANDS="$GRADLE_TEST_COMMANDS $argv"
-    else
-      GRADLE_REGULAR_COMMANDS="$GRADLE_REGULAR_COMMANDS $argv"
-    fi
-done
-
-
+: WORKSPACE ${WORKSPACE:=/builds/worker/workspace}
 NEXUS_PREFIX='http://localhost:8081/nexus/content/repositories'
 REPOS="-PgoogleRepo=$NEXUS_PREFIX/google/ -PcentralRepo=$NEXUS_PREFIX/central/"
-GRADLE_ARGS="--parallel $REPOS -Pcoverage"
+GRADLE_ARGS="$REPOS -Pcoverage"
+
+# override the default org.gradle.jvmargs to add more heap space
+GRADLE_USER_HOME="${WORKSPACE}/gradle-home"
+mkdir -p "${GRADLE_USER_HOME}"
+export GRADLE_USER_HOME
+echo "org.gradle.jvmargs=-Xmx16g -Xms2g -XX:MaxMetaspaceSize=6g -XX:+HeapDumpOnOutOfMemoryError -XX:+UseParallelGC" > "${GRADLE_USER_HOME}/gradle.properties"
 
 pushd "$WORKING_DIR"
 
@@ -40,7 +37,7 @@ pushd "$WORKING_DIR"
 # the Miniconda Python environment and doesn't have (almost) any other transitive dependencies.
 # If that happens concurrently with other tasks then this seems to fail quite often. So let's do it
 # here first and also not use the "--parallel` flag.
-./gradlew $REPOS support-sync-telemetry:assemble
+./gradlew $REPOS service-nimbus:assemble
 
 # Plugins aren't automatically built. That's why we build them one by one here
 if [[ $WORKING_DIR == ${ANDROID_COMPONENTS_DIR}* ]]; then
@@ -51,8 +48,7 @@ if [[ $WORKING_DIR == ${ANDROID_COMPONENTS_DIR}* ]]; then
   done
 fi
 
-./gradlew $GRADLE_ARGS $GRADLE_REGULAR_COMMANDS
-set +e; ./gradlew $GRADLE_ARGS $GRADLE_TEST_COMMANDS; set -e
+./gradlew $GRADLE_ARGS $GRADLE_COMMANDS
 
 . "$REPO_ROOT_DIR/taskcluster/scripts/toolchain/external-gradle-dependencies/after.sh"
 

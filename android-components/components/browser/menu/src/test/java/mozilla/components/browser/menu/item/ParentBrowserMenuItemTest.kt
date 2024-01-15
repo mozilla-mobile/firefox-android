@@ -77,8 +77,9 @@ class ParentBrowserMenuItemTest {
     @Test
     fun `onBackPressed after sub menu is shown will dismiss the sub menu`() {
         val backPressMenuItem = BackPressMenuItem(
+            contentDescription = "Navigate up",
             label = "back",
-            imageResource = iconsR.drawable.mozac_ic_back,
+            imageResource = iconsR.drawable.mozac_ic_back_24,
         )
         val backPressView = LayoutInflater.from(testContext).inflate(backPressMenuItem.getLayoutResource(), null)
         val subMenuItem = SimpleBrowserMenuItem("test")
@@ -109,8 +110,9 @@ class ParentBrowserMenuItemTest {
     @Test
     fun `menu item image text item can be converted to candidate`() {
         val backPressMenuItem = BackPressMenuItem(
+            contentDescription = "Navigate up",
             label = "back",
-            imageResource = iconsR.drawable.mozac_ic_back,
+            imageResource = iconsR.drawable.mozac_ic_back_24,
         )
         val subMenuItem = SimpleBrowserMenuItem("test")
         val subMenuAdapter = BrowserMenuAdapter(testContext, listOf(backPressMenuItem, subMenuItem))

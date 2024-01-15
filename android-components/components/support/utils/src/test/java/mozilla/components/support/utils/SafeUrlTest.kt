@@ -6,15 +6,28 @@ package mozilla.components.support.utils
 
 import android.content.Context
 import android.content.res.Resources
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import mozilla.components.support.test.mock
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.mockito.Mockito.doReturn
 
-@RunWith(AndroidJUnit4::class)
 class SafeUrlTest {
+    @Test
+    fun `WHEN unsafeText is null THEN stripUnsafeUrlSchemes returns null`() {
+        assertNull(SafeUrl.stripUnsafeUrlSchemes(mock(), null))
+    }
+
+    @Test
+    fun `WHEN unsafeText is empty THEN stripUnsafeUrlSchemes returns null`() {
+        assertNull(SafeUrl.stripUnsafeUrlSchemes(mock(), ""))
+    }
+
+    @Test
+    fun `WHEN unsafeText is whitespace THEN stripUnsafeUrlSchemes returns null`() {
+        assertNull(SafeUrl.stripUnsafeUrlSchemes(mock(), " "))
+    }
+
     @Test
     fun `WHEN schemes blocklist is empty THEN stripUnsafeUrlSchemes should return the initial String`() {
         val resources = mock<Resources>()

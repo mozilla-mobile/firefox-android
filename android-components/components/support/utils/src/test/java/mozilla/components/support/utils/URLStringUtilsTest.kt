@@ -35,6 +35,14 @@ class URLStringUtilsTest {
         assertEquals(expectedUrl, toNormalizedURL("  http://mozilla.org  "))
         assertEquals(expectedUrl, toNormalizedURL("mozilla.org"))
         assertEquals(expectedUrl, toNormalizedURL("HTTP://mozilla.org"))
+        assertEquals("file:///mnt/sdcard/", toNormalizedURL("file:///mnt/sdcard/"))
+        assertEquals("http://mozilla.org", toNormalizedURL(" http://mozilla.org"))
+        assertEquals("http://localhost", toNormalizedURL("localhost"))
+
+        assertEquals(
+            "https://www.mozilla.org/en-US/internet-health/",
+            toNormalizedURL("https://www.mozilla.org/en-US/internet-health/"),
+        )
     }
 
     @Test
@@ -79,6 +87,56 @@ class URLStringUtilsTest {
         assertFalse(isURLLike("http://www-.com"))
         assertFalse(isURLLike("www.c-c-  "))
         assertFalse(isURLLike("3-3 "))
+
+        // Valid IPv6 literals correctly recognized as valid.
+        val validIPv6Literals = listOf(
+            "[::]",
+            "[::1]",
+            "[1::]",
+            "[1:2:3:4:5:6:7:8]",
+            "[2001:db8::1.2.3.4]",
+            "[::1]:8080",
+        )
+
+        validIPv6Literals.forEach { url ->
+            assertTrue(isURLLike(url))
+            assertTrue(isURLLike("$url/"))
+            assertTrue(isURLLike("https://$url"))
+            assertTrue(isURLLike("https://$url/"))
+            assertTrue(isURLLike("https:$url"))
+            assertTrue(isURLLike("https:$url/"))
+            assertTrue(isURLLike("http://$url"))
+            assertTrue(isURLLike("http://$url/"))
+            assertTrue(isURLLike("http:$url"))
+            assertTrue(isURLLike("http:$url/"))
+        }
+
+        // Invalid IPv6 literals correctly recognized as invalid.
+        assertFalse(isURLLike("::1"))
+        assertFalse(isURLLike(":::"))
+        assertFalse(isURLLike("[[http://]]"))
+        assertFalse(isURLLike("[[["))
+        assertFalse(isURLLike("[[[:"))
+        assertFalse(isURLLike("[[[:/"))
+        assertFalse(isURLLike("http://]]]"))
+
+        // Invalid IPv6 literals correctly recognized as something else.
+        assertTrue(isURLLike("fe80::"))
+        assertTrue(isURLLike("x:["))
+
+        // Invalid IPv6 literals incorrectly recognized as valid.
+        // We allow these for now, until bug 1685152 is fixed.
+        assertTrue(isURLLike("[:::"))
+        assertTrue(isURLLike("http://[::"))
+        assertTrue(isURLLike("http://[::/path"))
+        assertTrue(isURLLike("http://[::?query"))
+        assertTrue(isURLLike("[[http://banana]]"))
+        assertTrue(isURLLike("http://[[["))
+        assertTrue(isURLLike("[[[::"))
+        assertTrue(isURLLike("[[[::/"))
+        assertTrue(isURLLike("http://[1.2.3]"))
+        assertTrue(isURLLike("https://[1:2:3:4:5:6:7]/"))
+        assertTrue(isURLLike("https://[1:2:3:4:5:6:7:8:9]/"))
 
         // Examples from issues
         assertTrue(isURLLike("https://abc--cba.com/")) // #7096
@@ -197,6 +255,28 @@ class URLStringUtilsTest {
         assertEquals("", URLStringUtils.toDisplayUrl(""))
 
         assertEquals("  ", URLStringUtils.toDisplayUrl("  "))
+    }
+
+    @Test
+    fun isHttpOrHttpsUrl() {
+        assertFalse(URLStringUtils.isHttpOrHttps(""))
+        assertFalse(URLStringUtils.isHttpOrHttps("     "))
+        assertFalse(URLStringUtils.isHttpOrHttps("mozilla.org"))
+        assertFalse(URLStringUtils.isHttpOrHttps("httpstrf://example.org"))
+        assertTrue(URLStringUtils.isHttpOrHttps("https://www.mozilla.org"))
+        assertTrue(URLStringUtils.isHttpOrHttps("http://example.org"))
+        assertTrue(URLStringUtils.isHttpOrHttps("http://192.168.0.1"))
+    }
+
+    @Test
+    fun isValidSearchQueryUrl() {
+        assertTrue(URLStringUtils.isValidSearchQueryUrl("https://example.com/search/?q=%s"))
+        assertTrue(URLStringUtils.isValidSearchQueryUrl("http://example.com/search/?q=%s"))
+        assertTrue(URLStringUtils.isValidSearchQueryUrl("http-test-site.com/search/?q=%s"))
+        assertFalse(URLStringUtils.isValidSearchQueryUrl("httpss://example.com/search/?q=%s"))
+        assertTrue(URLStringUtils.isValidSearchQueryUrl("example.com/search/?q=%s"))
+        assertTrue(URLStringUtils.isValidSearchQueryUrl(" example.com/search/?q=%s "))
+        assertFalse(URLStringUtils.isValidSearchQueryUrl("htps://example.com/search/?q=%s"))
     }
 }
 

@@ -27,9 +27,13 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import mozilla.components.browser.state.selector.findTabOrCustomTab
@@ -44,7 +48,7 @@ import mozilla.components.feature.contextmenu.ContextMenuFeature
 import mozilla.components.feature.downloads.AbstractFetchDownloadService
 import mozilla.components.feature.downloads.DownloadsFeature
 import mozilla.components.feature.downloads.manager.FetchDownloadManager
-import mozilla.components.feature.downloads.share.ShareDownloadFeature
+import mozilla.components.feature.downloads.temporary.ShareDownloadFeature
 import mozilla.components.feature.media.fullscreen.MediaSessionFullscreenFeature
 import mozilla.components.feature.prompts.PromptFeature
 import mozilla.components.feature.session.PictureInPictureFeature
@@ -54,11 +58,14 @@ import mozilla.components.feature.tabs.WindowFeature
 import mozilla.components.feature.top.sites.TopSitesConfig
 import mozilla.components.feature.top.sites.TopSitesFeature
 import mozilla.components.lib.crash.Crash
+import mozilla.components.lib.state.ext.flowScoped
 import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.ktx.android.view.exitImmersiveMode
+import mozilla.components.support.locale.ActivityContextWrapper
 import mozilla.components.support.utils.Browsers
+import mozilla.components.support.utils.StatusBarUtils
 import mozilla.components.support.utils.ext.requestInPlacePermissions
 import org.mozilla.focus.GleanMetrics.Browser
 import org.mozilla.focus.GleanMetrics.CookieBanner
@@ -74,11 +81,12 @@ import org.mozilla.focus.browser.integration.BrowserToolbarIntegration
 import org.mozilla.focus.browser.integration.FindInPageIntegration
 import org.mozilla.focus.browser.integration.FullScreenIntegration
 import org.mozilla.focus.contextmenu.ContextMenuCandidates
-import org.mozilla.focus.cookiebannerexception.CookieBannerExceptionDetailsPanel
-import org.mozilla.focus.cookiebannerexception.CookieBannerExceptionMiddleware
-import org.mozilla.focus.cookiebannerexception.CookieBannerExceptionState
-import org.mozilla.focus.cookiebannerexception.CookieBannerExceptionStore
-import org.mozilla.focus.cookiebannerexception.DefaultCookieBannerExceptionInteractor
+import org.mozilla.focus.cookiebannerreducer.CookieBannerReducerAction
+import org.mozilla.focus.cookiebannerreducer.CookieBannerReducerDetailsPanel
+import org.mozilla.focus.cookiebannerreducer.CookieBannerReducerMiddleware
+import org.mozilla.focus.cookiebannerreducer.CookieBannerReducerState
+import org.mozilla.focus.cookiebannerreducer.CookieBannerReducerStore
+import org.mozilla.focus.cookiebannerreducer.DefaultCookieBannerReducerInteractor
 import org.mozilla.focus.databinding.FragmentBrowserBinding
 import org.mozilla.focus.downloads.DownloadService
 import org.mozilla.focus.engine.EngineSharedPreferencesListener
@@ -99,13 +107,12 @@ import org.mozilla.focus.settings.permissions.permissionoptions.SitePermissionOp
 import org.mozilla.focus.settings.privacy.ConnectionDetailsPanel
 import org.mozilla.focus.settings.privacy.TrackingProtectionPanel
 import org.mozilla.focus.state.AppAction
-import org.mozilla.focus.telemetry.TelemetryWrapper
 import org.mozilla.focus.topsites.DefaultTopSitesStorage.Companion.TOP_SITES_MAX_LIMIT
 import org.mozilla.focus.topsites.DefaultTopSitesView
 import org.mozilla.focus.utils.FocusSnackbar
 import org.mozilla.focus.utils.FocusSnackbarDelegate
 import org.mozilla.focus.utils.IntentUtils
-import org.mozilla.focus.utils.StatusBarUtils
+import org.mozilla.focus.utils.ViewUtils
 import java.net.URLEncoder
 
 /**
@@ -133,15 +140,17 @@ class BrowserFragment :
     private val appLinksFeature = ViewBoundFeatureWrapper<AppLinksFeature>()
     private val topSitesFeature = ViewBoundFeatureWrapper<TopSitesFeature>()
     private var sitePermissionsFeature = ViewBoundFeatureWrapper<SitePermissionsFeature>()
-    private var fullScreenMediaSessionFeature = ViewBoundFeatureWrapper<MediaSessionFullscreenFeature>()
+    private var fullScreenMediaSessionFeature =
+        ViewBoundFeatureWrapper<MediaSessionFullscreenFeature>()
 
     private val toolbarIntegration = ViewBoundFeatureWrapper<BrowserToolbarIntegration>()
 
     private var trackingProtectionPanel: TrackingProtectionPanel? = null
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<Array<String>>
-    private lateinit var cookieBannerExceptionStore: CookieBannerExceptionStore
-    private lateinit var defaultCookieBannerInteractor: DefaultCookieBannerExceptionInteractor
+    private lateinit var cookieBannerReducerStore: CookieBannerReducerStore
+    private lateinit var defaultCookieBannerInteractor: DefaultCookieBannerReducerInteractor
     private var tabsPopup: TabsPopup? = null
+    private var siteNotSupportedSnackBarScope: CoroutineScope? = null
 
     /**
      * The ID of the tab associated with this fragment.
@@ -179,20 +188,49 @@ class BrowserFragment :
                     grandResults.toIntArray(),
                 )
             }
-        cookieBannerExceptionStore = CookieBannerExceptionStore(
-            CookieBannerExceptionState(),
+    }
+
+    /**
+     * Initialize CookieBannerStore ,Interactor and report site snackBar
+     * when tacking protection panel is shown.
+     */
+    fun initCookieBanner() {
+        cookieBannerReducerStore = CookieBannerReducerStore(
+            CookieBannerReducerState(),
             listOf(
-                CookieBannerExceptionMiddleware(
+                CookieBannerReducerMiddleware(
                     ioScope = this.lifecycleScope + Dispatchers.IO,
                     cookieBannersStorage = requireContext().components.cookieBannerStorage,
                     appContext = requireContext(),
-                    uri = tab.content.url,
+                    currentTab = tab,
                 ),
             ),
         )
-        defaultCookieBannerInteractor = DefaultCookieBannerExceptionInteractor(
-            store = cookieBannerExceptionStore,
+        defaultCookieBannerInteractor = DefaultCookieBannerReducerInteractor(
+            store = cookieBannerReducerStore,
         )
+        updateCookieBannerSiteToReportSnackBar()
+    }
+
+    private fun updateCookieBannerSiteToReportSnackBar() {
+        siteNotSupportedSnackBarScope = cookieBannerReducerStore.flowScoped { flow ->
+            flow.mapNotNull { state -> state.showSnackBarForSiteToReport }
+                .distinctUntilChanged()
+                .collect { showSnackBarForSiteToReport ->
+                    if (showSnackBarForSiteToReport) {
+                        ViewUtils.showBrandedSnackbar(
+                            view,
+                            R.string.cookie_banner_report_a_site_snackbar_label,
+                            0,
+                        )
+                        cookieBannerReducerStore.dispatch(
+                            CookieBannerReducerAction.ShowSnackBarForSiteToReport(
+                                false,
+                            ),
+                        )
+                    }
+                }
+        }
     }
 
     @Suppress("LongMethod", "ComplexMethod")
@@ -200,6 +238,9 @@ class BrowserFragment :
         _binding = FragmentBrowserBinding.inflate(inflater, container, false)
 
         requireContext().accessibilityManager.addAccessibilityStateChangeListener(this)
+
+        val originalContext = ActivityContextWrapper.getOriginalContext(requireActivity())
+        binding.engineView.setActivityContext(originalContext)
 
         return binding.root
     }
@@ -213,6 +254,7 @@ class BrowserFragment :
             FindInPageIntegration(
                 components.store,
                 binding.findInPage,
+                binding.browserToolbar,
                 binding.engineView,
             ),
             this,
@@ -229,6 +271,7 @@ class BrowserFragment :
                 binding.browserToolbar,
                 binding.statusBarBackground,
                 binding.engineView,
+                parentFragmentManager,
             ),
             this,
             view,
@@ -278,6 +321,7 @@ class BrowserFragment :
             PromptFeature(
                 fragment = this,
                 store = components.store,
+                tabsUseCases = components.tabsUseCases,
                 customTabId = tryGetCustomTabId(),
                 fragmentManager = parentFragmentManager,
                 onNeedToRequestPermissions = { permissions ->
@@ -309,6 +353,7 @@ class BrowserFragment :
                     requireContext().applicationContext,
                     components.store,
                     DownloadService::class,
+                    notificationsDelegate = components.notificationsDelegate,
                 ),
                 onNeedToRequestPermissions = { permissions ->
                     requestInPlacePermissions(REQUEST_KEY_DOWNLOAD_PERMISSIONS, permissions) { result ->
@@ -350,6 +395,15 @@ class BrowserFragment :
                 fragmentManager = parentFragmentManager,
                 launchInApp = { requireContext().settings.openLinksInExternalApp },
                 loadUrlUseCase = requireContext().components.sessionUseCases.loadUrl,
+                failedToLaunchAction = { fallbackUrl ->
+                    fallbackUrl?.let {
+                        val appLinksUseCases = components.appLinksUseCases
+                        val getRedirect = appLinksUseCases.appLinkRedirect
+                        val redirect = getRedirect.invoke(fallbackUrl)
+                        redirect.appIntent?.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        appLinksUseCases.openAppLink.invoke(redirect.appIntent)
+                    }
+                },
             ),
             owner = this,
             view = view,
@@ -432,12 +486,18 @@ class BrowserFragment :
         }
     }
 
-    override fun onAccessibilityStateChanged(enabled: Boolean) = when (enabled) {
-        false -> binding.browserToolbar.enableDynamicBehavior(requireContext(), binding.engineView)
-        true -> {
-            with(binding.browserToolbar) {
-                disableDynamicBehavior(binding.engineView)
-                showAsFixed(requireContext(), binding.engineView)
+    override fun onAccessibilityStateChanged(enabled: Boolean) {
+        when (enabled) {
+            // using _binding, because this might be called before onCreateView.
+            false -> _binding?.browserToolbar?.enableDynamicBehavior(
+                requireContext(),
+                binding.engineView,
+            )
+            true -> {
+                _binding?.browserToolbar?.let {
+                    it.disableDynamicBehavior(binding.engineView)
+                    it.showAsFixed(requireContext(), binding.engineView)
+                }
             }
         }
     }
@@ -472,6 +532,7 @@ class BrowserFragment :
             ::showFindInPageBar,
             ::openSelectBrowser,
             ::openInBrowser,
+            ::showShortcutAddedSnackBar,
         )
 
         if (tab.ifCustomTab()?.config == null) {
@@ -505,6 +566,12 @@ class BrowserFragment :
         )
     }
 
+    private fun showShortcutAddedSnackBar() {
+        FocusSnackbar.make(requireView())
+            .setText(requireContext().getString(R.string.snackbar_added_to_shortcuts))
+            .show()
+    }
+
     private fun initialiseNormalBrowserUi() {
         if (!requireContext().settings.isAccessibilityEnabled()) {
             binding.browserToolbar.enableDynamicBehavior(requireContext(), binding.engineView)
@@ -523,7 +590,10 @@ class BrowserFragment :
 
     override fun onDestroyView() {
         super.onDestroyView()
+
         requireContext().accessibilityManager.removeAccessibilityStateChangeListener(this)
+        binding.engineView.setActivityContext(null)
+
         _binding = null
     }
 
@@ -608,8 +678,6 @@ class BrowserFragment :
             DownloadState.Status.COMPLETED -> {
                 Downloads.downloadCompleted.record(NoExtras())
 
-                TelemetryWrapper.downloadDialogDownloadEvent(sentToDownload = true)
-
                 showDownloadCompletedSnackbar(state, extension)
             }
 
@@ -641,9 +709,9 @@ class BrowserFragment :
             ),
         )
 
-        snackbar.setAction(getString(R.string.download_snackbar_open)) {
+        snackbar.setAction(getString(R.string.download_snackbar_open)) { context ->
             val opened = AbstractFetchDownloadService.openFile(
-                applicationContext = requireContext().applicationContext,
+                applicationContext = context.applicationContext,
                 download = state,
             )
 
@@ -712,6 +780,13 @@ class BrowserFragment :
         if (tab.isCustomTab()) {
             view?.isVisible = true
         }
+
+        context?.settings?.openLinksInExternalApp?.let { openLinksInExternalApp ->
+            val isCustomTab = tab.isCustomTab()
+            components?.appLinksInterceptor?.updateLaunchInApp {
+                openLinksInExternalApp || isCustomTab
+            }
+        }
     }
 
     private fun updateEngineColorScheme() {
@@ -726,6 +801,7 @@ class BrowserFragment :
         super.onStop()
         tabsPopup?.dismiss()
         trackingProtectionPanel?.hide()
+        siteNotSupportedSnackBarScope?.cancel()
     }
 
     override fun onHomePressed() = pictureInPictureFeature?.onHomePressed() ?: false
@@ -746,7 +822,6 @@ class BrowserFragment :
                 Browser.backButtonPressed.record(
                     Browser.BackButtonPressedExtra("erase_to_external_app"),
                 )
-                TelemetryWrapper.eraseBackToAppEvent()
 
                 // This session has been started from a VIEW intent. Go back to the previous app
                 // immediately and erase the current browsing session.
@@ -766,8 +841,6 @@ class BrowserFragment :
                 Browser.backButtonPressed.record(
                     Browser.BackButtonPressedExtra("erase_to_home"),
                 )
-
-                TelemetryWrapper.eraseBackToHomeEvent()
 
                 erase()
             }
@@ -795,8 +868,6 @@ class BrowserFragment :
         if (title.isNotEmpty()) {
             shareIntent.putExtra(Intent.EXTRA_SUBJECT, title)
         }
-
-        TelemetryWrapper.shareEvent()
         startActivity(
             IntentUtils.getIntentChooser(
                 context = requireContext(),
@@ -809,8 +880,6 @@ class BrowserFragment :
     private fun openInBrowser() {
         // Release the session from this view so that it can immediately be rendered by a different view
         sessionFeature.get()?.release()
-
-        TelemetryWrapper.openFullBrowser()
 
         requireComponents.customTabsUseCases.migrate(tab.id)
 
@@ -843,13 +912,10 @@ class BrowserFragment :
         }
 
         TabCount.sessionButtonTapped.record(TabCount.SessionButtonTappedExtra(openedTabs))
-
-        TelemetryWrapper.openTabsTrayEvent()
     }
 
     private fun showFindInPageBar() {
         findInPageIntegration.get()?.show(tab)
-        TelemetryWrapper.findInPageMenuEvent()
     }
 
     private fun openSelectBrowser() {
@@ -871,8 +937,6 @@ class BrowserFragment :
         fragment.show(requireFragmentManager(), OpenWithFragment.FRAGMENT_TAG)
 
         OpenWith.listDisplayed.record(OpenWith.ListDisplayedExtra(apps.size))
-
-        TelemetryWrapper.openSelectionEvent()
     }
 
     internal fun closeCustomTab() {
@@ -895,7 +959,7 @@ class BrowserFragment :
         trackingProtectionPanel = TrackingProtectionPanel(
             context = requireContext(),
             lifecycleOwner = this,
-            cookieBannerExceptionStore = cookieBannerExceptionStore,
+            cookieBannerReducerStore = cookieBannerReducerStore,
             tabUrl = tab.content.url,
             isTrackingProtectionOn = tab.trackingProtection.ignoredOnTrackingProtection.not(),
             isConnectionSecure = tab.content.securityInfo.secure,
@@ -913,7 +977,7 @@ class BrowserFragment :
             },
             showConnectionInfo = ::showConnectionInfo,
             showCookieBannerExceptionsDetailsPanel = ::showCookieBannerExceptionDetailsPanel,
-        ).also { currentEtp -> currentEtp.show() }
+        ).also { currentEtp -> context?.let { currentEtp.show() } }
     }
 
     private fun reloadCurrentTab() {
@@ -921,9 +985,9 @@ class BrowserFragment :
     }
 
     private fun showCookieBannerExceptionDetailsPanel() {
-        val cookieBannerExceptionDetailsPanel = CookieBannerExceptionDetailsPanel(
+        val cookieBannerExceptionDetailsPanel = CookieBannerReducerDetailsPanel(
             context = requireContext(),
-            cookieBannerExceptionStore = cookieBannerExceptionStore,
+            cookieBannerReducerStore = cookieBannerReducerStore,
             ioScope = viewLifecycleOwner.lifecycleScope + Dispatchers.IO,
             tabUrl = tab.content.url,
             goBack = { trackingProtectionPanel?.show() },

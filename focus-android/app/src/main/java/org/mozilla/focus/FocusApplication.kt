@@ -1,5 +1,4 @@
-/* -*- Mode: Java; c-basic-offset: 4; tab-width: 20; indent-tabs-mode: nil; -*-
- * This Source Code Form is subject to the terms of the Mozilla Public
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -36,7 +35,6 @@ import org.mozilla.focus.nimbus.FocusNimbus
 import org.mozilla.focus.session.VisibilityLifeCycleCallback
 import org.mozilla.focus.telemetry.FactsProcessor
 import org.mozilla.focus.telemetry.ProfilerMarkerFactProcessor
-import org.mozilla.focus.telemetry.TelemetryWrapper
 import org.mozilla.focus.utils.AdjustHelper
 import org.mozilla.focus.utils.AppConstants
 import kotlin.coroutines.CoroutineContext
@@ -70,7 +68,6 @@ open class FocusApplication : LocaleAwareApplication(), Provider, CoroutineScope
             setTheme(this)
             components.engine.warmUp()
 
-            TelemetryWrapper.init(this)
             components.metrics.initialize(this)
             FactsProcessor.initialize()
             finishSetupMegazord()
@@ -96,6 +93,11 @@ open class FocusApplication : LocaleAwareApplication(), Provider, CoroutineScope
 
             ProcessLifecycleOwner.get().lifecycle.addObserver(lockObserver)
         }
+    }
+
+    override fun onConfigurationChanged(config: android.content.res.Configuration) {
+        applicationContext.resources.configuration.uiMode = config.uiMode
+        super.onConfigurationChanged(config)
     }
 
     protected open fun setupLeakCanary() {
@@ -135,11 +137,7 @@ open class FocusApplication : LocaleAwareApplication(), Provider, CoroutineScope
 
         // ... but RustHttpConfig.setClient() and RustLog.enable() can be called later.
 
-        // Once application-services has switched to using the new
-        // error reporting system, RustLog shouldn't input a CrashReporter
-        // anymore.
-        // (https://github.com/mozilla/application-services/issues/4981).
-        RustLog.enable(components.crashReporter)
+        RustLog.enable()
     }
 
     @OptIn(DelicateCoroutinesApi::class) // GlobalScope usage

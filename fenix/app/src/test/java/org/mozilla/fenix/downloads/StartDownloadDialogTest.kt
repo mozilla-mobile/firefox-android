@@ -6,21 +6,16 @@ package org.mozilla.fenix.downloads
 
 import android.app.Activity
 import android.content.Context
-import android.graphics.Color
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import androidx.core.view.isVisible
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
-import io.mockk.verify
-import mozilla.components.support.ktx.android.view.setNavigationBarTheme
-import mozilla.components.support.ktx.android.view.setStatusBarTheme
 import mozilla.components.support.test.robolectric.testContext
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -30,6 +25,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.StartDownloadDialogLayoutBinding
+import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.utils.Settings
@@ -37,20 +33,6 @@ import org.robolectric.Robolectric
 
 @RunWith(FenixRobolectricTestRunner::class)
 class StartDownloadDialogTest {
-    @Test
-    fun `WHEN the dialog is instantiated THEN cache the navigation and status bar colors`() {
-        val navigationBarColor = Color.RED
-        val statusBarColor = Color.BLUE
-        val activity: Activity = mockk {
-            every { window.navigationBarColor } returns navigationBarColor
-            every { window.statusBarColor } returns statusBarColor
-        }
-        val dialog = TestDownloadDialog(activity)
-
-        assertEquals(navigationBarColor, dialog.initialNavigationBarColor)
-        assertEquals(statusBarColor, dialog.initialStatusBarColor)
-    }
-
     @Test
     fun `WHEN the view is to be shown THEN set the scrim and other window customization bind the download values`() {
         val activity = Robolectric.buildActivity(Activity::class.java).create().get()
@@ -63,6 +45,7 @@ class StartDownloadDialogTest {
 
         mockkStatic("mozilla.components.support.ktx.android.view.WindowKt", "org.mozilla.fenix.ext.ContextKt") {
             every { any<Context>().settings() } returns mockk(relaxed = true)
+            every { any<Context>().components } returns mockk(relaxed = true)
             val fluentDialog = dialog.show(dialogContainer)
 
             val scrim = dialogParent.children.first { it.id == R.id.scrim }
@@ -78,10 +61,6 @@ class StartDownloadDialogTest {
                 dialogContainer.elevation,
             )
             assertTrue(dialogContainer.isVisible)
-            verify {
-                activity.window.setNavigationBarTheme(ContextCompat.getColor(activity, R.color.material_scrim_color))
-                activity.window.setStatusBarTheme(ContextCompat.getColor(activity, R.color.material_scrim_color))
-            }
             assertEquals(dialog, fluentDialog)
         }
     }
@@ -89,13 +68,16 @@ class StartDownloadDialogTest {
     @Test
     fun `GIVEN a dismiss callback WHEN the dialog is dismissed THEN the callback is informed`() {
         var wasDismissCalled = false
-        val dialog = TestDownloadDialog(mockk(relaxed = true))
+        val activity = Robolectric.buildActivity(Activity::class.java).create().get()
+        val dialog = TestDownloadDialog(activity)
+        mockkStatic("org.mozilla.fenix.ext.ContextKt") {
+            every { any<Context>().components } returns mockk(relaxed = true)
+            val fluentDialog = dialog.onDismiss { wasDismissCalled = true }
+            dialog.onDismiss()
 
-        val fluentDialog = dialog.onDismiss { wasDismissCalled = true }
-        dialog.onDismiss()
-
-        assertTrue(wasDismissCalled)
-        assertEquals(dialog, fluentDialog)
+            assertTrue(wasDismissCalled)
+            assertEquals(dialog, fluentDialog)
+        }
     }
 
     @Test
@@ -109,6 +91,7 @@ class StartDownloadDialogTest {
         val dialog = TestDownloadDialog(activity)
         mockkStatic("mozilla.components.support.ktx.android.view.WindowKt", "org.mozilla.fenix.ext.ContextKt") {
             every { any<Context>().settings() } returns mockk(relaxed = true)
+            every { any<Context>().components } returns mockk(relaxed = true)
             dialog.show(dialogContainer)
             dialog.binding = StartDownloadDialogLayoutBinding
                 .inflate(LayoutInflater.from(activity), dialogContainer, true)
@@ -119,10 +102,6 @@ class StartDownloadDialogTest {
             assertTrue(dialogParent.childCount == 1)
             assertTrue(dialogContainer.childCount == 0)
             assertFalse(dialogContainer.isVisible)
-            verify {
-                activity.window.setNavigationBarTheme(dialog.initialNavigationBarColor)
-                activity.window.setStatusBarTheme(dialog.initialStatusBarColor)
-            }
         }
     }
 
@@ -188,6 +167,7 @@ class StartDownloadDialogTest {
                 every { accessibilityServicesEnabled } returns false
             }
             every { any<Context>().settings() } returns settings
+            every { any<Context>().components } returns mockk(relaxed = true)
             dialog.show(dialogContainer)
             assertEquals(2, dialogParent.children.count { it.isImportantForAccessibility })
 
@@ -216,6 +196,7 @@ class StartDownloadDialogTest {
                 every { accessibilityServicesEnabled } returns true
             }
             every { any<Context>().settings() } returns settings
+            every { any<Context>().components } returns mockk(relaxed = true)
             val dialog = TestDownloadDialog(activity)
             dialog.show(dialogContainer)
             dialog.binding = StartDownloadDialogLayoutBinding

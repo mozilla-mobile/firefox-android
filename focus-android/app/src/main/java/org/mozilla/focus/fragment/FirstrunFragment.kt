@@ -1,7 +1,7 @@
-/* -*- Mode: Java; c-basic-offset: 4; tab-width: 20; indent-tabs-mode: nil; -*-
- * This Source Code Form is subject to the terms of the Mozilla Public
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.focus.fragment
 
 import android.content.Context
@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
+import mozilla.components.support.utils.StatusBarUtils
 import org.mozilla.focus.GleanMetrics.Onboarding
 import org.mozilla.focus.R
 import org.mozilla.focus.databinding.FragmentFirstrunBinding
@@ -19,8 +20,6 @@ import org.mozilla.focus.ext.requireComponents
 import org.mozilla.focus.ext.settings
 import org.mozilla.focus.firstrun.FirstrunPagerAdapter
 import org.mozilla.focus.state.AppAction
-import org.mozilla.focus.telemetry.TelemetryWrapper
-import org.mozilla.focus.utils.StatusBarUtils
 import kotlin.math.abs
 
 class FirstrunFragment : Fragment(), View.OnClickListener {
@@ -39,7 +38,6 @@ class FirstrunFragment : Fragment(), View.OnClickListener {
         // We will send a telemetry event whenever a new firstrun page is shown. However this page
         // listener won't fire for the initial page we are showing. So we are going to firing here.
         Onboarding.pageDisplayed.record(Onboarding.PageDisplayedExtra(0))
-        TelemetryWrapper.showFirstRunPageEvent(0)
     }
 
     override fun onCreateView(
@@ -69,15 +67,11 @@ class FirstrunFragment : Fragment(), View.OnClickListener {
             R.id.skip -> {
                 finishFirstrun()
                 Onboarding.skipButtonTapped.record(Onboarding.SkipButtonTappedExtra(currentItem))
-
-                TelemetryWrapper.skipFirstRunEvent()
             }
 
             R.id.finish -> {
                 finishFirstrun()
                 Onboarding.finishButtonTapped.record(Onboarding.FinishButtonTappedExtra(currentItem))
-
-                TelemetryWrapper.finishFirstRunEvent()
             }
 
             else -> throw IllegalArgumentException("Unknown view")
@@ -101,7 +95,6 @@ class FirstrunFragment : Fragment(), View.OnClickListener {
                 object : ViewPager.OnPageChangeListener {
                     override fun onPageSelected(position: Int) {
                         Onboarding.pageDisplayed.record(Onboarding.PageDisplayedExtra(0))
-                        TelemetryWrapper.showFirstRunPageEvent(position)
 
                         contentDescription =
                             firstRunPagerAdapter.getPageAccessibilityDescription(position)

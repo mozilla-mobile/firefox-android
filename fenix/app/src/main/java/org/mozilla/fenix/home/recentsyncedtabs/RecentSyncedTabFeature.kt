@@ -6,6 +6,7 @@ package org.mozilla.fenix.home.recentsyncedtabs
 
 import android.content.Context
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import mozilla.components.browser.storage.sync.Tab
@@ -23,7 +24,6 @@ import mozilla.components.service.fxa.store.SyncStore
 import mozilla.components.service.fxa.sync.SyncReason
 import mozilla.components.support.base.feature.LifecycleAwareFeature
 import mozilla.components.support.ktx.kotlin.tryGetHostFromUrl
-import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifChanged
 import mozilla.telemetry.glean.GleanTimerId
 import org.mozilla.fenix.GleanMetrics.RecentSyncedTabs
 import org.mozilla.fenix.components.AppStore
@@ -33,12 +33,13 @@ import java.util.concurrent.TimeUnit
 /**
  * Delegate to handle layout updates and dispatch actions related to the recent synced tab.
  *
- * @property appStore Store to dispatch actions to when synced tabs are updated or errors encountered.
- * @property syncStore Store to observe for changes to Sync and account status.
- * @property storage Storage layer for synced tabs.
- * @property accountManager Account manager to initiate Syncs and refresh devices.
- * @property historyStorage Storage for searching history for preview image URLs matching synced tab.
- * @property coroutineScope The scope to collect Sync state Flow updates in.
+ * @param context An Android [Context].
+ * @param appStore Store to dispatch actions to when synced tabs are updated or errors encountered.
+ * @param syncStore Store to observe for changes to Sync and account status.
+ * @param storage Storage layer for synced tabs.
+ * @param accountManager Account manager to initiate Syncs and refresh devices.
+ * @param historyStorage Storage for searching history for preview image URLs matching synced tab.
+ * @param coroutineScope The scope to collect Sync state Flow updates in.
  */
 @Suppress("LongParameterList")
 class RecentSyncedTabFeature(
@@ -63,7 +64,7 @@ class RecentSyncedTabFeature(
 
     private fun collectAccountUpdates() {
         syncStore.flow()
-            .ifChanged { state ->
+            .distinctUntilChangedBy { state ->
                 state.account != null
             }.onEach { state ->
                 if (state.account != null) {
@@ -82,7 +83,7 @@ class RecentSyncedTabFeature(
 
     private fun collectStatusUpdates() {
         syncStore.flow()
-            .ifChanged { state ->
+            .distinctUntilChangedBy { state ->
                 state.status
             }.onEach { state ->
                 when (state.status) {
@@ -154,7 +155,7 @@ class RecentSyncedTabFeature(
                 AppAction.RecentSyncedTabStateChange(RecentSyncedTabState.None),
             )
         } else {
-            recordMetrics(syncedTabs.first(), lastSyncedTabs?.first(), syncStartId)
+            recordMetrics(syncedTabs.first(), lastSyncedTabs?.first())
             appStore.dispatch(
                 AppAction.RecentSyncedTabStateChange(RecentSyncedTabState.Success(syncedTabs)),
             )
@@ -171,10 +172,12 @@ class RecentSyncedTabFeature(
     private fun recordMetrics(
         tab: RecentSyncedTab,
         lastSyncedTab: RecentSyncedTab?,
-        syncStartId: GleanTimerId?,
     ) {
         RecentSyncedTabs.recentSyncedTabShown[tab.deviceType.name.lowercase()].add()
-        syncStartId?.let { RecentSyncedTabs.recentSyncedTabTimeToLoad.stopAndAccumulate(it) }
+        syncStartId?.let {
+            RecentSyncedTabs.recentSyncedTabTimeToLoad.stopAndAccumulate(it)
+            syncStartId = null
+        }
         if (tab == lastSyncedTab) {
             RecentSyncedTabs.latestSyncedTabIsStale.add()
         }
@@ -222,10 +225,11 @@ sealed class RecentSyncedTabState {
 /**
  * A tab that was recently viewed on a synced device.
  *
- * @param deviceDisplayName The device the tab was viewed on.
- * @param title The title of the tab.
- * @param url The url of the tab.
- * @param previewImageUrl The url used to retrieve the preview image of the tab.
+ * @property deviceDisplayName The device the tab was viewed on.
+ * @property deviceType The type of a device the tab was viewed on - mobile, desktop.
+ * @property title The title of the tab.
+ * @property url The url of the tab.
+ * @property previewImageUrl The url used to retrieve the preview image of the tab.
  */
 data class RecentSyncedTab(
     val deviceDisplayName: String,
@@ -238,8 +242,8 @@ data class RecentSyncedTab(
 /**
  * Class representing a tab from a synced device.
  *
- * @param device The synced [Device].
- * @param tab The tab from the synced device.
+ * @property device The synced [Device].
+ * @property tab The tab from the synced device.
  */
 private data class SyncedDeviceTab(
     val device: Device,

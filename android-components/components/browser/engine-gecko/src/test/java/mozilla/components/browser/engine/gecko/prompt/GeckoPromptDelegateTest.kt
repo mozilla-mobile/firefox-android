@@ -14,6 +14,7 @@ import mozilla.components.browser.engine.gecko.ext.toLoginEntry
 import mozilla.components.concept.engine.EngineSession
 import mozilla.components.concept.engine.prompt.Choice
 import mozilla.components.concept.engine.prompt.PromptRequest
+import mozilla.components.concept.engine.prompt.PromptRequest.IdentityCredential
 import mozilla.components.concept.engine.prompt.PromptRequest.MultipleChoice
 import mozilla.components.concept.engine.prompt.PromptRequest.SingleChoice
 import mozilla.components.concept.storage.Address
@@ -56,7 +57,6 @@ import org.mozilla.geckoview.GeckoSession.PromptDelegate.FilePrompt.Capture.ANY
 import org.mozilla.geckoview.GeckoSession.PromptDelegate.FilePrompt.Capture.NONE
 import org.mozilla.geckoview.GeckoSession.PromptDelegate.FilePrompt.Capture.USER
 import org.robolectric.Shadows.shadowOf
-import java.io.FileInputStream
 import java.security.InvalidParameterException
 import java.util.Calendar
 import java.util.Calendar.YEAR
@@ -704,14 +704,13 @@ class GeckoPromptDelegateTest {
         val mockUri: Uri = mock()
 
         doReturn(contentResolver).`when`(context).contentResolver
-        doReturn(mock<FileInputStream>()).`when`(contentResolver).openInputStream(any())
 
         var filePickerRequest: PromptRequest.File = mock()
 
         val promptDelegate = spy(GeckoPromptDelegate(mockSession))
 
         // Prevent the file from being copied
-        doReturn(0L).`when`(promptDelegate).copyFile(any(), any())
+        doReturn(mockUri).`when`(promptDelegate).toFileUri(any(), any())
 
         mockSession.register(
             object : EngineSession.Observer {
@@ -1181,6 +1180,168 @@ class GeckoPromptDelegateTest {
         promptDelegate.onAuthPrompt(mock(), geckoAuthPrompt(authOptions = authOptions))
 
         assertEquals(authRequest.level, AC_AUTH_LEVEL.NONE)
+    }
+
+    @Test
+    fun `WHEN onSelectIdentityCredentialProvider is called THEN SelectProvider prompt request must be provided with the correct callbacks`() {
+        val mockSession = GeckoEngineSession(runtime)
+        var selectProviderRequest: IdentityCredential.SelectProvider = mock()
+        var onConfirmWasCalled = false
+        var onDismissWasCalled = false
+
+        val promptDelegate = GeckoPromptDelegate(mockSession)
+        mockSession.register(
+            object : EngineSession.Observer {
+                override fun onPromptRequest(promptRequest: PromptRequest) {
+                    selectProviderRequest = promptRequest as IdentityCredential.SelectProvider
+                }
+            },
+        )
+
+        val geckoProvider = GECKO_PROMPT_PROVIDER_SELECTOR(0, "name", "icon", "domain")
+        val acProvider = geckoProvider.toProvider()
+        val geckoPrompt = geckoProviderSelectorPrompt(listOf(geckoProvider))
+        var geckoResult = promptDelegate.onSelectIdentityCredentialProvider(mock(), geckoPrompt)
+
+        geckoResult.accept {
+            onConfirmWasCalled = true
+        }
+
+        with(selectProviderRequest) {
+            // Verifying we are parsing the providers correctly.
+            assertEquals(acProvider, this.providers.first())
+
+            onConfirm(acProvider)
+
+            shadowOf(getMainLooper()).idle()
+            assertTrue(onConfirmWasCalled)
+            whenever(geckoPrompt.isComplete).thenReturn(true)
+
+            // Just making sure we are not completing the geckoResult twice.
+            onConfirmWasCalled = false
+            onConfirm(acProvider)
+            shadowOf(getMainLooper()).idle()
+            assertFalse(onConfirmWasCalled)
+        }
+
+        // Verifying we are handling the dismiss correctly.
+        geckoResult = promptDelegate.onSelectIdentityCredentialProvider(mock(), geckoProviderSelectorPrompt(listOf(geckoProvider)))
+        geckoResult.accept {
+            onDismissWasCalled = true
+        }
+
+        selectProviderRequest.onDismiss()
+        shadowOf(getMainLooper()).idle()
+        assertTrue(onDismissWasCalled)
+    }
+
+    @Test
+    fun `WHEN onSelectIdentityCredentialAccount is called THEN SelectAccount prompt request must be provided with the correct callbacks`() {
+        val mockSession = GeckoEngineSession(runtime)
+        var selectAccountRequest: IdentityCredential.SelectAccount = mock()
+        var onConfirmWasCalled = false
+        var onDismissWasCalled = false
+
+        val promptDelegate = GeckoPromptDelegate(mockSession)
+        mockSession.register(
+            object : EngineSession.Observer {
+                override fun onPromptRequest(promptRequest: PromptRequest) {
+                    selectAccountRequest = promptRequest as IdentityCredential.SelectAccount
+                }
+            },
+        )
+
+        val geckoAccount = GECKO_PROMPT_ACCOUNT_SELECTOR(0, "foo@mozilla.org", "foo", "icon")
+        val provider = GECKO_PROMPT_ACCOUNT_SELECTOR_PROVIDER("name", "domain", "favicon")
+        val acAccount = geckoAccount.toAccount()
+        val geckoPrompt = geckoAccountSelectorPrompt(listOf(geckoAccount), provider)
+        var geckoResult = promptDelegate.onSelectIdentityCredentialAccount(mock(), geckoPrompt)
+
+        geckoResult.accept {
+            onConfirmWasCalled = true
+        }
+
+        with(selectAccountRequest) {
+            // Verifying we are parsing the providers correctly.
+            assertEquals(acAccount, this.accounts.first())
+
+            onConfirm(acAccount)
+
+            shadowOf(getMainLooper()).idle()
+            assertTrue(onConfirmWasCalled)
+            whenever(geckoPrompt.isComplete).thenReturn(true)
+
+            // Just making sure we are not completing the geckoResult twice.
+            onConfirmWasCalled = false
+            onConfirm(acAccount)
+            shadowOf(getMainLooper()).idle()
+            assertFalse(onConfirmWasCalled)
+        }
+
+        // Verifying we are handling the dismiss correctly.
+        geckoResult = promptDelegate.onSelectIdentityCredentialAccount(mock(), geckoAccountSelectorPrompt(listOf(geckoAccount), provider))
+        geckoResult.accept {
+            onDismissWasCalled = true
+        }
+
+        selectAccountRequest.onDismiss()
+        shadowOf(getMainLooper()).idle()
+        assertTrue(onDismissWasCalled)
+    }
+
+    @Test
+    fun `WHEN onShowPrivacyPolicyIdentityCredential is called THEN the PrivacyPolicy prompt request must be provided with the correct callbacks`() {
+        val mockSession = GeckoEngineSession(runtime)
+        var privacyPolicyRequest: IdentityCredential.PrivacyPolicy = mock()
+        var onConfirmWasCalled = false
+        var onDismissWasCalled = false
+
+        val promptDelegate = GeckoPromptDelegate(mockSession)
+        mockSession.register(
+            object : EngineSession.Observer {
+                override fun onPromptRequest(promptRequest: PromptRequest) {
+                    privacyPolicyRequest = promptRequest as IdentityCredential.PrivacyPolicy
+                }
+            },
+        )
+
+        val geckoPrompt = geckoPrivacyPolicyPrompt()
+        var geckoResult = promptDelegate.onShowPrivacyPolicyIdentityCredential(mock(), geckoPrompt)
+
+        geckoResult.accept {
+            onConfirmWasCalled = true
+        }
+
+        with(privacyPolicyRequest) {
+            // Verifying we are parsing the providers correctly.
+            assertEquals(privacyPolicyUrl, "privacyPolicyUrl")
+            assertEquals(termsOfServiceUrl, "termsOfServiceUrl")
+            assertEquals(providerDomain, "providerDomain")
+            assertEquals(host, "host")
+            assertEquals(icon, "icon")
+
+            onConfirm(true)
+
+            shadowOf(getMainLooper()).idle()
+            assertTrue(onConfirmWasCalled)
+            whenever(geckoPrompt.isComplete).thenReturn(true)
+
+            // Just making sure we are not completing the geckoResult twice.
+            onConfirmWasCalled = false
+            onConfirm(true)
+            shadowOf(getMainLooper()).idle()
+            assertFalse(onConfirmWasCalled)
+        }
+
+        // Verifying we are handling the dismiss correctly.
+        geckoResult = promptDelegate.onShowPrivacyPolicyIdentityCredential(mock(), geckoPrivacyPolicyPrompt())
+        geckoResult.accept {
+            onDismissWasCalled = true
+        }
+
+        privacyPolicyRequest.onDismiss()
+        shadowOf(getMainLooper()).idle()
+        assertTrue(onDismissWasCalled)
     }
 
     @Test
@@ -1840,6 +2001,33 @@ class GeckoPromptDelegateTest {
         return prompt
     }
 
+    private fun geckoProviderSelectorPrompt(
+        providers: List<GECKO_PROMPT_PROVIDER_SELECTOR> = emptyList(),
+    ): GeckoSession.PromptDelegate.IdentityCredential.ProviderSelectorPrompt {
+        val prompt: GeckoSession.PromptDelegate.IdentityCredential.ProviderSelectorPrompt = mock()
+        ReflectionUtils.setField(prompt, "providers", providers.toTypedArray())
+        return prompt
+    }
+
+    private fun geckoAccountSelectorPrompt(
+        accounts: List<GECKO_PROMPT_ACCOUNT_SELECTOR> = emptyList(),
+        provider: GECKO_PROMPT_ACCOUNT_SELECTOR_PROVIDER,
+    ): GeckoSession.PromptDelegate.IdentityCredential.AccountSelectorPrompt {
+        val prompt: GeckoSession.PromptDelegate.IdentityCredential.AccountSelectorPrompt = mock()
+        ReflectionUtils.setField(prompt, "accounts", accounts.toTypedArray())
+        ReflectionUtils.setField(prompt, "provider", provider)
+        return prompt
+    }
+
+    private fun geckoPrivacyPolicyPrompt(): GeckoSession.PromptDelegate.IdentityCredential.PrivacyPolicyPrompt {
+        val prompt: GeckoSession.PromptDelegate.IdentityCredential.PrivacyPolicyPrompt = mock()
+        ReflectionUtils.setField(prompt, "privacyPolicyUrl", "privacyPolicyUrl")
+        ReflectionUtils.setField(prompt, "termsOfServiceUrl", "termsOfServiceUrl")
+        ReflectionUtils.setField(prompt, "providerDomain", "providerDomain")
+        ReflectionUtils.setField(prompt, "host", "host")
+        ReflectionUtils.setField(prompt, "icon", "icon")
+        return prompt
+    }
     private fun geckoTextPrompt(
         title: String = "title",
         message: String = "message",

@@ -8,13 +8,10 @@ import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.firebase.messaging.RemoteMessage
 import kotlinx.coroutines.Dispatchers
-import mozilla.components.concept.push.EncryptedPushMessage
 import mozilla.components.concept.push.PushProcessor
 import mozilla.components.support.test.any
-import mozilla.components.support.test.argumentCaptor
 import mozilla.components.support.test.mock
 import mozilla.components.support.test.robolectric.testContext
-import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -22,16 +19,13 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.never
 import org.mockito.Mockito.reset
+import org.mockito.Mockito.spy
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.verifyNoInteractions
 import org.mockito.Mockito.`when`
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.annotation.Config
-import org.robolectric.shadows.gms.Shadows
-import org.robolectric.shadows.gms.common.ShadowGoogleApiAvailability
 
 @RunWith(RobolectricTestRunner::class)
-@Config(shadows = [ShadowGoogleApiAvailability::class])
 class AbstractFirebasePushServiceTest {
 
     private val processor: PushProcessor = mock()
@@ -60,17 +54,10 @@ class AbstractFirebasePushServiceTest {
             "enc" to "salt",
             "cryptokey" to "dh256",
         )
-        val captor = argumentCaptor<EncryptedPushMessage>()
         `when`(remoteMessage.data).thenReturn(data)
         service.onMessageReceived(remoteMessage)
 
-        verify(processor).onMessageReceived(captor.capture())
-
-        assertEquals("1234", captor.value.channelId)
-        assertEquals("contents", captor.value.body)
-        assertEquals("encoding", captor.value.encoding)
-        assertEquals("salt", captor.value.salt)
-        assertEquals("dh256", captor.value.cryptoKey)
+        verify(processor).onMessageReceived(data)
     }
 
     @Test
@@ -79,17 +66,11 @@ class AbstractFirebasePushServiceTest {
         val data = mapOf(
             "chid" to "1234",
         )
-        val captor = argumentCaptor<EncryptedPushMessage>()
         `when`(remoteMessage.data).thenReturn(data)
         service.onMessageReceived(remoteMessage)
 
         verify(processor, never()).onError(any())
-        verify(processor).onMessageReceived(captor.capture())
-
-        assertEquals("1234", captor.value.channelId)
-        assertEquals("aes128gcm", captor.value.encoding)
-        assertEquals("", captor.value.salt)
-        assertEquals("", captor.value.cryptoKey)
+        verify(processor).onMessageReceived(data)
     }
 
     @Test
@@ -118,13 +99,14 @@ class AbstractFirebasePushServiceTest {
 
     @Test
     fun `service available reflects Google Play Services' availability`() {
-        val service = TestService()
+        val service = spy(TestService())
 
         // By default, service is unavailable.
         assertFalse(service.isServiceAvailable(testContext))
 
-        val shadowGoogleApiAvailability = Shadows.shadowOf(GoogleApiAvailability.getInstance())
-        shadowGoogleApiAvailability.setIsGooglePlayServicesAvailable(ConnectionResult.SUCCESS)
+        val googleApiAvailability = mock<GoogleApiAvailability>()
+        `when`(service.googleApiAvailability).thenReturn(googleApiAvailability)
+        `when`(googleApiAvailability.isGooglePlayServicesAvailable(testContext)).thenReturn(ConnectionResult.SUCCESS)
 
         assertTrue(service.isServiceAvailable(testContext))
     }

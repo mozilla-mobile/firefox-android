@@ -24,6 +24,10 @@ import mozilla.components.concept.engine.EngineSessionState
 import mozilla.components.concept.engine.Settings
 import mozilla.components.concept.engine.history.HistoryTrackingDelegate
 import mozilla.components.concept.engine.request.RequestInterceptor
+import mozilla.components.concept.engine.shopping.ProductAnalysis
+import mozilla.components.concept.engine.shopping.ProductAnalysisStatus
+import mozilla.components.concept.engine.shopping.ProductRecommendation
+import mozilla.components.concept.engine.translate.TranslationOptions
 import kotlin.reflect.KProperty
 
 internal val xRequestHeader = mapOf(
@@ -55,6 +59,7 @@ class SystemEngineSession(
     @Volatile internal var currentUrl = ""
 
     @Volatile internal var useWideViewPort: Boolean? = null // See [toggleDesktopMode]
+
     @Volatile internal var fullScreenCallback: WebChromeClient.CustomViewCallback? = null
 
     // This is public for FFTV which needs access to the WebView instance. We can mark it internal once
@@ -104,6 +109,10 @@ class SystemEngineSession(
 
     override fun requestPdfToDownload() {
         throw UnsupportedOperationException("PDF support is not available in this engine")
+    }
+
+    override fun requestPrintContent() {
+        throw UnsupportedOperationException("Print support is not available in this engine")
     }
 
     /**
@@ -403,6 +412,141 @@ class SystemEngineSession(
         if (reload) {
             webView.reload()
         }
+    }
+
+    /**
+     * Checks for if PDF Viewer is used.
+     */
+    override fun checkForPdfViewer(
+        onResult: (Boolean) -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {
+        throw UnsupportedOperationException("Checking for PDF viewer is not available in this engine")
+    }
+
+    /**
+     * /**
+     * See [EngineSession.requestProductRecommendations]
+     */
+     */
+    override fun requestProductRecommendations(
+        url: String,
+        onResult: (List<ProductRecommendation>) -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {
+        throw UnsupportedOperationException("Analysis of product reviews for shopping is not available in this engine")
+    }
+
+    /**
+     * See [EngineSession.requestProductAnalysis]
+     */
+    override fun requestProductAnalysis(
+        url: String,
+        onResult: (ProductAnalysis) -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {
+        throw UnsupportedOperationException("Analysis of product reviews for shopping is not available in this engine")
+    }
+
+    /**
+     * See [EngineSession.reanalyzeProduct]
+     */
+    override fun reanalyzeProduct(
+        url: String,
+        onResult: (String) -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {
+        throw UnsupportedOperationException("Reanalyzing product reviews for shopping is not available in this engine")
+    }
+
+    /**
+     * See [EngineSession.requestAnalysisStatus]
+     */
+    override fun requestAnalysisStatus(
+        url: String,
+        onResult: (ProductAnalysisStatus) -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {
+        throw UnsupportedOperationException("Requesting product analysis status is not available in this engine")
+    }
+
+    /**
+     * See [EngineSession.sendClickAttributionEvent]
+     */
+    override fun sendClickAttributionEvent(
+        aid: String,
+        onResult: (Boolean) -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {
+        throw UnsupportedOperationException("Sending click attribution event is not available in this engine")
+    }
+
+    /**
+     * See [EngineSession.requestAnalysisStatus]
+     */
+    override fun sendImpressionAttributionEvent(
+        aid: String,
+        onResult: (Boolean) -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {
+        throw UnsupportedOperationException("Sending impression attribution event is not available in this engine")
+    }
+
+    /**
+     * See [EngineSession.reportBackInStock]
+     */
+    override fun reportBackInStock(
+        url: String,
+        onResult: (String) -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {
+        throw UnsupportedOperationException("Reporting back in stock is not available in this engine")
+    }
+
+    /**
+     * See [EngineSession.requestTranslate]
+     */
+    override fun requestTranslate(
+        fromLanguage: String,
+        toLanguage: String,
+        options: TranslationOptions?,
+    ) {
+        throw UnsupportedOperationException("Translate support is not available in this engine")
+    }
+
+    /**
+     * See [EngineSession.requestTranslationRestore]
+     */
+    override fun requestTranslationRestore() {
+        throw UnsupportedOperationException("Translate restore support is not available in this engine")
+    }
+
+    /**
+     * See [EngineSession.getNeverTranslateSiteSetting]
+     */
+    override fun getNeverTranslateSiteSetting(
+        onResult: (Boolean) -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {
+        throw UnsupportedOperationException("Getting the site's translate setting is not available in this engine.")
+    }
+
+    /**
+     * See [EngineSession.setNeverTranslateSiteSetting]
+     */
+    override fun setNeverTranslateSiteSetting(
+        setting: Boolean,
+        onResult: () -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {
+        throw UnsupportedOperationException("Setting the site's translate setting is not available in this engine")
+    }
+
+    override fun hasCookieBannerRuleForSession(
+        onResult: (Boolean) -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {
+        throw UnsupportedOperationException("Cookie Banner handling is not available in this engine")
     }
 
     /**

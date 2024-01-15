@@ -38,7 +38,6 @@ import org.mozilla.focus.ext.showToolbar
 import org.mozilla.focus.settings.BaseSettingsLikeFragment
 import org.mozilla.focus.state.AppAction
 import org.mozilla.focus.state.Screen
-import org.mozilla.focus.telemetry.TelemetryWrapper
 import org.mozilla.focus.utils.ViewUtils
 import java.util.Collections
 import kotlin.coroutines.CoroutineContext
@@ -264,7 +263,6 @@ open class AutocompleteListFragment : BaseSettingsLikeFragment(), CoroutineScope
             launch(IO) {
                 CustomDomains.save(activity!!.applicationContext, domains)
                 Autocomplete.listOrderChanged.add()
-                TelemetryWrapper.reorderAutocompleteDomainEvent(from, to)
             }
         }
     }
@@ -305,7 +303,7 @@ open class AutocompleteListFragment : BaseSettingsLikeFragment(), CoroutineScope
                 fragment.activity?.invalidateOptionsMenu()
             }
 
-            handleView.isVisible = isSelectionMode
+            handleView.isVisible = !isSelectionMode
             handleView.setOnTouchListener { _, event ->
                 if (event.actionMasked == MotionEvent.ACTION_DOWN) {
                     itemTouchHelper.startDrag(this)
