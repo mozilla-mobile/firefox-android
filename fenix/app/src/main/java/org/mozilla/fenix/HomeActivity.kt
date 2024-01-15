@@ -1012,6 +1012,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         requestDesktopMode: Boolean = false,
         historyMetadata: HistoryMetadataKey? = null,
         additionalHeaders: Map<String, String>? = null,
+        mode: BrowsingMode? = null,
     ) {
         openToBrowser(from, customTabSessionId)
         load(
@@ -1023,6 +1024,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             requestDesktopMode = requestDesktopMode,
             historyMetadata = historyMetadata,
             additionalHeaders = additionalHeaders,
+            mode = mode,
         )
     }
 
@@ -1120,11 +1122,11 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         requestDesktopMode: Boolean = false,
         historyMetadata: HistoryMetadataKey? = null,
         additionalHeaders: Map<String, String>? = null,
+        mode: BrowsingMode? = null,
     ) {
         val startTime = components.core.engine.profiler?.getProfilerTime()
-        val mode = components.appStore.state.mode
 
-        val private = when (mode) {
+        val private = when (mode ?: components.appStore.state.mode) {
             BrowsingMode.Private -> true
             BrowsingMode.Normal -> false
         }
@@ -1153,7 +1155,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             }
         } else {
             if (newTab) {
-                val searchUseCase = if (mode.isPrivate) {
+                val searchUseCase = if (private) {
                     components.useCases.searchUseCases.newPrivateTabSearch
                 } else {
                     components.useCases.searchUseCases.newTabSearch

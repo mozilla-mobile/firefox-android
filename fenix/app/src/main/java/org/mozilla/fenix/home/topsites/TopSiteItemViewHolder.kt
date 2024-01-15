@@ -6,6 +6,7 @@ package org.mozilla.fenix.home.topsites
 
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.PopupWindow
@@ -52,7 +53,9 @@ class TopSiteItemViewHolder(
     private val binding = TopSiteItemBinding.bind(view)
 
     init {
+        Log.i("tighe", "init")
         itemView.setOnLongClickListener {
+            Log.i("tighe", "long click")
             interactor.onTopSiteLongClicked(topSite)
 
             val topSiteMenu = TopSiteItemMenu(

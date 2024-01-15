@@ -276,11 +276,11 @@ class DefaultSessionControlController(
             TopSites.openInPrivateTab.record(NoExtras())
         }
         with(activity) {
-            appStore.dispatch(AppAction.ModeChange(BrowsingMode.Private))
             openToBrowserAndLoad(
                 searchTermOrURL = topSite.url,
                 newTab = true,
                 from = BrowserDirection.FromHome,
+                mode = BrowsingMode.Private,
             )
         }
     }
