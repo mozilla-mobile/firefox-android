@@ -22,15 +22,18 @@ gcloud:
     - notPackage org.mozilla.fenix.screenshots
     - notPackage org.mozilla.fenix.syncintegration
     - notPackage org.mozilla.fenix.experimentintegration
+    - class org.mozilla.fenix.ui.NetworkTest#urlBarTest
 
   device:
-    - model: Pixel2.arm
+    - model: q2q
       version: 30
       locale: en_US
 
+  network-profile: GSM-poor
+
 flank:
   project: GOOGLE_PROJECT
-  max-test-shards: 100
+  max-test-shards: 1
   num-test-runs: 1
   output-style: compact
   full-junit-result: true
