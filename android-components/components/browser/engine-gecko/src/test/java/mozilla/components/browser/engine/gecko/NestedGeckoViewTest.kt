@@ -12,15 +12,17 @@ import android.view.MotionEvent.ACTION_CANCEL
 import android.view.MotionEvent.ACTION_DOWN
 import android.view.MotionEvent.ACTION_MOVE
 import android.view.MotionEvent.ACTION_UP
+import android.widget.FrameLayout
 import androidx.core.view.NestedScrollingChildHelper
 import androidx.core.view.ViewCompat.SCROLL_AXIS_VERTICAL
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import mozilla.components.concept.engine.INPUT_HANDLING_UNKNOWN
 import mozilla.components.support.test.any
 import mozilla.components.support.test.argumentCaptor
 import mozilla.components.support.test.mock
 import mozilla.components.support.test.mockMotionEvent
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -29,6 +31,8 @@ import org.mockito.Mockito.doReturn
 import org.mockito.Mockito.spy
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
+import org.mozilla.geckoview.GeckoResult
+import org.mozilla.geckoview.PanZoomController
 import org.mozilla.geckoview.PanZoomController.INPUT_RESULT_HANDLED
 import org.robolectric.Robolectric.buildActivity
 import org.robolectric.Shadows.shadowOf
@@ -136,25 +140,78 @@ class NestedGeckoViewTest {
     @Test
     fun `verify onTouchEvent when ACTION_UP or ACTION_CANCEL`() {
         val nestedWebView = spy(NestedGeckoView(context))
-        nestedWebView.inputResultDetail = nestedWebView.inputResultDetail.copy(INPUT_RESULT_HANDLED)
+        val initialInputResultDetail = nestedWebView.inputResultDetail.copy(INPUT_RESULT_HANDLED)
+        nestedWebView.inputResultDetail = initialInputResultDetail
         val mockChildHelper: NestedScrollingChildHelper = mock()
         nestedWebView.childHelper = mockChildHelper
         doReturn(true).`when`(nestedWebView).callSuperOnTouchEvent(any())
 
+        assertEquals(INPUT_RESULT_HANDLED, nestedWebView.inputResultDetail.inputResult)
         nestedWebView.onTouchEvent(mockMotionEvent(ACTION_UP))
         verify(mockChildHelper).stopNestedScroll()
-        // ACTION_UP should call "inputResultDetail.reset()". Test that call's effect.
-        assertTrue(nestedWebView.inputResultDetail.isTouchHandlingUnknown())
-        assertFalse(nestedWebView.inputResultDetail.isTouchHandledByBrowser())
+        // ACTION_UP should reset nestedWebView.inputResultDetail.
+        assertNotEquals(initialInputResultDetail, nestedWebView.inputResultDetail)
+        assertEquals(INPUT_HANDLING_UNKNOWN, nestedWebView.inputResultDetail.inputResult)
 
-        nestedWebView.inputResultDetail = nestedWebView.inputResultDetail.copy(INPUT_RESULT_HANDLED)
+        nestedWebView.inputResultDetail = initialInputResultDetail
+        assertEquals(INPUT_RESULT_HANDLED, nestedWebView.inputResultDetail.inputResult)
         nestedWebView.onTouchEvent(mockMotionEvent(ACTION_CANCEL))
         verify(mockChildHelper, times(2)).stopNestedScroll()
-        // ACTION_CANCEL should call "inputResultDetail.reset()". Test that call's effect.
-        assertTrue(nestedWebView.inputResultDetail.isTouchHandlingUnknown())
-        assertFalse(nestedWebView.inputResultDetail.isTouchHandledByBrowser())
+        // ACTION_CANCEL should reset nestedWebView.inputResultDetail.
+        assertNotEquals(initialInputResultDetail, nestedWebView.inputResultDetail)
+        assertEquals(INPUT_HANDLING_UNKNOWN, nestedWebView.inputResultDetail.inputResult)
 
         // onTouchEventForResult should be called only for ACTION_DOWN
         verify(nestedWebView, times(0)).updateInputResult(any())
+    }
+
+    @Test
+    fun `requestDisallowInterceptTouchEvent doesn't pass touch events to parents until engineView responds`() {
+        var viewParentInterceptCounter = 0
+        val result: GeckoResult<PanZoomController.InputResultDetail> = GeckoResult()
+        val nestedWebView = object : NestedGeckoView(context) {
+            init {
+                // We need to make the view a non-zero size so that the touch events hit it.
+                left = 0
+                top = 0
+                right = 5
+                bottom = 5
+            }
+
+            override fun onTouchEventForDetailResult(event: MotionEvent) = result
+        }
+        val viewParent = object : FrameLayout(context) {
+            override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
+                viewParentInterceptCounter++
+                return super.onInterceptTouchEvent(ev)
+            }
+        }.apply {
+            addView(nestedWebView)
+        }
+
+        // Down action enables requestDisallowInterceptTouchEvent (and starts a gesture).
+        viewParent.dispatchTouchEvent(mockMotionEvent(ACTION_DOWN))
+
+        // `onInterceptTouchEvent` will be triggered the first time because it's the first pass.
+        assertEquals(1, viewParentInterceptCounter)
+
+        // Move action assert that onInterceptTouchEvent calls continue to be ignored.
+        viewParent.dispatchTouchEvent(mockMotionEvent(ACTION_MOVE))
+
+        assertEquals(1, viewParentInterceptCounter)
+
+        // Simulate a response from the APZ GeckoEngineView API.
+        result.complete(mock())
+        shadowOf(getMainLooper()).idle()
+
+        // Move action no longer ignores onInterceptTouchEvent calls.
+        viewParent.dispatchTouchEvent(mockMotionEvent(ACTION_MOVE))
+
+        assertEquals(2, viewParentInterceptCounter)
+
+        // Complete the gesture by finishing with an up action.
+        viewParent.dispatchTouchEvent(mockMotionEvent(ACTION_UP))
+
+        assertEquals(3, viewParentInterceptCounter)
     }
 }

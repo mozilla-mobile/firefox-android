@@ -34,6 +34,7 @@ import mozilla.components.concept.engine.translate.ModelOperation
 import mozilla.components.concept.engine.translate.OperationLevel
 import mozilla.components.concept.engine.utils.EngineReleaseChannel
 import mozilla.components.concept.engine.webextension.Action
+import mozilla.components.concept.engine.webextension.InstallationMethod
 import mozilla.components.concept.engine.webextension.WebExtension
 import mozilla.components.concept.engine.webextension.WebExtensionDelegate
 import mozilla.components.concept.engine.webextension.WebExtensionException
@@ -83,12 +84,14 @@ import org.mozilla.geckoview.TranslationsController.RuntimeTranslation.LanguageM
 import org.mozilla.geckoview.TranslationsController.RuntimeTranslation.checkPairDownloadSize
 import org.mozilla.geckoview.TranslationsController.RuntimeTranslation.getLanguageSetting
 import org.mozilla.geckoview.TranslationsController.RuntimeTranslation.getLanguageSettings
+import org.mozilla.geckoview.TranslationsController.RuntimeTranslation.getNeverTranslateSiteList
 import org.mozilla.geckoview.TranslationsController.RuntimeTranslation.isTranslationsEngineSupported
 import org.mozilla.geckoview.TranslationsController.RuntimeTranslation.listModelDownloadStates
 import org.mozilla.geckoview.TranslationsController.RuntimeTranslation.listSupportedLanguages
 import org.mozilla.geckoview.TranslationsController.RuntimeTranslation.manageLanguageModel
 import org.mozilla.geckoview.TranslationsController.RuntimeTranslation.preferredLanguages
 import org.mozilla.geckoview.TranslationsController.RuntimeTranslation.setLanguageSettings
+import org.mozilla.geckoview.TranslationsController.RuntimeTranslation.setNeverTranslateSpecifiedSite
 import org.mozilla.geckoview.WebExtension.InstallException.ErrorCodes.ERROR_BLOCKLISTED
 import org.mozilla.geckoview.WebExtension.InstallException.ErrorCodes.ERROR_CORRUPT_FILE
 import org.mozilla.geckoview.WebExtension.InstallException.ErrorCodes.ERROR_FILE_ACCESS
@@ -316,6 +319,10 @@ class GeckoEngineTest {
             contentBlockingSettings.antiTrackingCategories,
         )
 
+        assertFalse(engine.settings.emailTrackerBlockingPrivateBrowsing)
+        engine.settings.emailTrackerBlockingPrivateBrowsing = true
+        assertTrue(engine.settings.emailTrackerBlockingPrivateBrowsing)
+
         val safeStrictBrowsingCategories = SafeBrowsingPolicy.RECOMMENDED.id
         assertEquals(safeStrictBrowsingCategories, contentBlockingSettings.safeBrowsingCategories)
 
@@ -338,6 +345,8 @@ class GeckoEngineTest {
         assertEquals(contentBlockingSettings.queryParameterStrippingPrivateBrowsingEnabled, engine.settings.queryParameterStrippingPrivateBrowsing)
         assertEquals(contentBlockingSettings.queryParameterStrippingAllowList[0], engine.settings.queryParameterStrippingAllowList)
         assertEquals(contentBlockingSettings.queryParameterStrippingStripList[0], engine.settings.queryParameterStrippingStripList)
+
+        assertEquals(contentBlockingSettings.emailTrackerBlockingPrivateBrowsingEnabled, engine.settings.emailTrackerBlockingPrivateBrowsing)
 
         try {
             engine.settings.domStorageEnabled
@@ -667,6 +676,26 @@ class GeckoEngineTest {
     }
 
     @Test
+    fun `emailTrackerBlockingPrivateBrowsing is only invoked with the value is changed`() {
+        val mockRuntime = mock<GeckoRuntime>()
+        val settings = spy(ContentBlocking.Settings.Builder().build())
+        whenever(mockRuntime.settings).thenReturn(mock())
+        whenever(mockRuntime.settings.contentBlocking).thenReturn(settings)
+
+        val engine = GeckoEngine(testContext, runtime = mockRuntime)
+
+        engine.settings.emailTrackerBlockingPrivateBrowsing = true
+
+        verify(mockRuntime.settings.contentBlocking).setEmailTrackerBlockingPrivateBrowsing(true)
+
+        reset(settings)
+
+        engine.settings.emailTrackerBlockingPrivateBrowsing = true
+
+        verify(mockRuntime.settings.contentBlocking, never()).setEmailTrackerBlockingPrivateBrowsing(true)
+    }
+
+    @Test
     fun `Cookie banner handling settings are aligned`() {
         assertEquals(ContentBlocking.CookieBannerMode.COOKIE_BANNER_MODE_DISABLED, EngineSession.CookieBannerHandlingMode.DISABLED.mode)
         assertEquals(ContentBlocking.CookieBannerMode.COOKIE_BANNER_MODE_REJECT, EngineSession.CookieBannerHandlingMode.REJECT_ALL.mode)
@@ -918,7 +947,7 @@ class GeckoEngineTest {
         var onErrorCalled = false
         val result = GeckoResult<GeckoWebExtension>()
 
-        whenever(extensionController.install(any())).thenReturn(result)
+        whenever(extensionController.install(any(), any())).thenReturn(result)
         engine.installWebExtension(
             extUrl,
             onSuccess = { onSuccessCalled = true },
@@ -929,7 +958,7 @@ class GeckoEngineTest {
         shadowOf(getMainLooper()).idle()
 
         val extCaptor = argumentCaptor<String>()
-        verify(extensionController).install(extCaptor.capture())
+        verify(extensionController).install(extCaptor.capture(), any())
         assertEquals(extUrl, extCaptor.value)
         assertTrue(onSuccessCalled)
         assertFalse(onErrorCalled)
@@ -977,7 +1006,7 @@ class GeckoEngineTest {
         val result = GeckoResult<GeckoWebExtension>()
 
         var throwable: Throwable? = null
-        whenever(extensionController.install(any())).thenReturn(result)
+        whenever(extensionController.install(any(), any())).thenReturn(result)
         engine.installWebExtension(extUrl) { e ->
             onErrorCalled = true
             throwable = e
@@ -988,6 +1017,96 @@ class GeckoEngineTest {
 
         assertTrue(onErrorCalled)
         assertTrue(throwable is GeckoWebExtensionException)
+    }
+
+    @Test
+    fun `install web extension with installation method manager`() {
+        val runtime = mock<GeckoRuntime>()
+        val extId = "test-webext"
+        val extUrl = "https://addons.mozilla.org/firefox/downloads/file/123/some_web_ext.xpi"
+
+        val extensionController: WebExtensionController = mock()
+        whenever(runtime.webExtensionController).thenReturn(extensionController)
+
+        val engine = GeckoEngine(context, runtime = runtime)
+        val result = GeckoResult<GeckoWebExtension>()
+
+        whenever(extensionController.install(any(), any())).thenReturn(result)
+
+        engine.installWebExtension(
+            extUrl,
+            InstallationMethod.MANAGER,
+        )
+
+        result.complete(mockNativeWebExtension(extId, extUrl))
+
+        shadowOf(getMainLooper()).idle()
+
+        val methodCaptor = argumentCaptor<String>()
+
+        verify(extensionController).install(any(), methodCaptor.capture())
+
+        assertEquals(WebExtensionController.INSTALLATION_METHOD_MANAGER, methodCaptor.value)
+    }
+
+    @Test
+    fun `install web extension with installation method file`() {
+        val runtime = mock<GeckoRuntime>()
+        val extId = "test-webext"
+        val extUrl = "https://addons.mozilla.org/firefox/downloads/file/123/some_web_ext.xpi"
+
+        val extensionController: WebExtensionController = mock()
+        whenever(runtime.webExtensionController).thenReturn(extensionController)
+
+        val engine = GeckoEngine(context, runtime = runtime)
+        val result = GeckoResult<GeckoWebExtension>()
+
+        whenever(extensionController.install(any(), any())).thenReturn(result)
+
+        engine.installWebExtension(
+            extUrl,
+            InstallationMethod.FROM_FILE,
+        )
+
+        result.complete(mockNativeWebExtension(extId, extUrl))
+
+        shadowOf(getMainLooper()).idle()
+
+        val methodCaptor = argumentCaptor<String>()
+
+        verify(extensionController).install(any(), methodCaptor.capture())
+
+        assertEquals(WebExtensionController.INSTALLATION_METHOD_FROM_FILE, methodCaptor.value)
+    }
+
+    @Test
+    fun `install web extension with null installation method`() {
+        val runtime = mock<GeckoRuntime>()
+        val extId = "test-webext"
+        val extUrl = "https://addons.mozilla.org/firefox/downloads/file/123/some_web_ext.xpi"
+
+        val extensionController: WebExtensionController = mock()
+        whenever(runtime.webExtensionController).thenReturn(extensionController)
+
+        val engine = GeckoEngine(context, runtime = runtime)
+        val result = GeckoResult<GeckoWebExtension>()
+
+        whenever(extensionController.install(any(), any())).thenReturn(result)
+
+        engine.installWebExtension(
+            extUrl,
+            null,
+        )
+
+        result.complete(mockNativeWebExtension(extId, extUrl))
+
+        shadowOf(getMainLooper()).idle()
+
+        val methodCaptor = argumentCaptor<String>()
+
+        verify(extensionController).install(any(), methodCaptor.capture())
+
+        assertNull(methodCaptor.value)
     }
 
     @Test(expected = IllegalArgumentException::class)
@@ -1114,7 +1233,7 @@ class GeckoEngineTest {
         val extId = "test-webext"
         val extUrl = "https://addons.mozilla.org/firefox/downloads/123/some_web_ext.xpi"
         val result = GeckoResult<GeckoWebExtension>()
-        whenever(webExtensionController.install(any())).thenReturn(result)
+        whenever(webExtensionController.install(any(), any())).thenReturn(result)
         engine.installWebExtension(extUrl)
         result.complete(mockNativeWebExtension(extId, extUrl))
 
@@ -1453,7 +1572,7 @@ class GeckoEngineTest {
         engine.registerWebExtensionDelegate(webExtensionsDelegate)
 
         val result = GeckoResult<GeckoWebExtension>()
-        whenever(extensionController.install(any())).thenReturn(result)
+        whenever(extensionController.install(any(), any())).thenReturn(result)
         engine.installWebExtension(extUrl)
         val extension = mockNativeWebExtension(extId, extUrl)
         result.complete(extension)
@@ -1489,7 +1608,7 @@ class GeckoEngineTest {
         engine.registerWebExtensionDelegate(webExtensionsDelegate)
 
         val result = GeckoResult<GeckoWebExtension>()
-        whenever(extensionController.install(any())).thenReturn(result)
+        whenever(extensionController.install(any(), any())).thenReturn(result)
         engine.installWebExtension(extUrl)
         val extension = mockNativeWebExtension(extId, extUrl)
         result.complete(extension)
@@ -1525,7 +1644,7 @@ class GeckoEngineTest {
         engine.registerWebExtensionDelegate(webExtensionsDelegate)
 
         val result = GeckoResult<GeckoWebExtension>()
-        whenever(extensionController.install(any())).thenReturn(result)
+        whenever(extensionController.install(any(), any())).thenReturn(result)
         engine.installWebExtension(extUrl)
         val extension = mockNativeWebExtension(extId, extUrl)
         result.complete(extension)
@@ -2096,7 +2215,7 @@ class GeckoEngineTest {
         val result = GeckoResult<Void>()
         whenever(runtime.storageController).thenReturn(storageController)
         whenever(
-            storageController.clearDataFromHost(
+            storageController.clearDataFromBaseDomain(
                 eq("mozilla.org"),
                 eq(Engine.BrowsingData.all().types.toLong()),
             ),
@@ -2123,7 +2242,7 @@ class GeckoEngineTest {
         val result = GeckoResult<Void>()
         whenever(runtime.storageController).thenReturn(storageController)
         whenever(
-            storageController.clearDataFromHost(
+            storageController.clearDataFromBaseDomain(
                 eq("mozilla.org"),
                 eq(Engine.BrowsingData.all().types.toLong()),
             ),
@@ -3197,6 +3316,142 @@ class GeckoEngineTest {
             assert(!onSuccessCalled) { "Should not successfully list language settings." }
             assert(onErrorCalled) { "An error should have occurred." }
         }
+    }
+
+    @Test
+    fun `WHEN getNeverTranslateSiteList is called successfully THEN onSuccess is called`() {
+        val runtime: GeckoRuntime = mock()
+        val engine = GeckoEngine(testContext, runtime = runtime)
+
+        var onSuccessCalled = false
+        var onErrorCalled = false
+
+        val geckoResult = GeckoResult<List<String>>()
+        val geckoResultValue = listOf("www.mozilla.org")
+
+        Mockito.mockStatic(TranslationsController.RuntimeTranslation::class.java, Mockito.CALLS_REAL_METHODS).use {
+                mocked ->
+            mocked.`when`<GeckoResult<List<String>>> { getNeverTranslateSiteList() }
+                .thenReturn(geckoResult)
+
+            engine.getNeverTranslateSiteList(
+                onSuccess = {
+                    onSuccessCalled = true
+                    assertTrue(it[0] == "www.mozilla.org")
+                },
+                onError = { onErrorCalled = true },
+            )
+
+            geckoResult.complete(geckoResultValue)
+            shadowOf(getMainLooper()).idle()
+
+            assert(onSuccessCalled) { "Should successfully list of never translate websites." }
+            assert(!onErrorCalled) { "An error should not have occurred." }
+        }
+    }
+
+    @Test
+    fun `WHEN getNeverTranslateSiteList is unsuccessful THEN onError is called`() {
+        val runtime: GeckoRuntime = mock()
+        val engine = GeckoEngine(testContext, runtime = runtime)
+
+        var onSuccessCalled = false
+        var onErrorCalled = false
+
+        val geckoResult = GeckoResult<List<String>>()
+
+        Mockito.mockStatic(TranslationsController.RuntimeTranslation::class.java, Mockito.CALLS_REAL_METHODS).use {
+                mocked ->
+            mocked.`when`<GeckoResult<List<String>>> { getNeverTranslateSiteList() }
+                .thenReturn(geckoResult)
+
+            engine.getNeverTranslateSiteList(
+                onSuccess = { onSuccessCalled = true },
+                onError = { onErrorCalled = true },
+            )
+
+            geckoResult.completeExceptionally(Exception())
+            shadowOf(getMainLooper()).idle()
+
+            assert(!onSuccessCalled) { "Should not successfully list never translate sites." }
+            assert(onErrorCalled) { "An error should have occurred." }
+        }
+    }
+
+    @Test
+    fun `WHEN setNeverTranslateSpecifiedSite is called successfully THEN onSuccess is called`() {
+        val runtime: GeckoRuntime = mock()
+        val engine = GeckoEngine(testContext, runtime = runtime)
+
+        var onSuccessCalled = false
+        var onErrorCalled = false
+
+        val geckoResult = GeckoResult<Void>()
+
+        Mockito.mockStatic(TranslationsController.RuntimeTranslation::class.java, Mockito.CALLS_REAL_METHODS).use {
+                mocked ->
+            mocked.`when`<GeckoResult<Void>> { setNeverTranslateSpecifiedSite(any(), any()) }
+                .thenReturn(geckoResult)
+
+            engine.setNeverTranslateSpecifiedSite(
+                "www.mozilla.org",
+                true,
+                onSuccess = { onSuccessCalled = true },
+                onError = { onErrorCalled = true },
+            )
+
+            geckoResult.complete(null)
+            shadowOf(getMainLooper()).idle()
+
+            assert(onSuccessCalled) { "Should successfully complete when setting the never translate site." }
+            assert(!onErrorCalled) { "An error should not have occurred." }
+        }
+    }
+
+    @Test
+    fun `WHEN setNeverTranslateSpecifiedSite is unsuccessful THEN onError is called`() {
+        val runtime: GeckoRuntime = mock()
+        val engine = GeckoEngine(testContext, runtime = runtime)
+
+        var onSuccessCalled = false
+        var onErrorCalled = false
+
+        val geckoResult = GeckoResult<List<String>>()
+
+        Mockito.mockStatic(TranslationsController.RuntimeTranslation::class.java, Mockito.CALLS_REAL_METHODS).use {
+                mocked ->
+            mocked.`when`<GeckoResult<List<String>>> { setNeverTranslateSpecifiedSite(any(), any()) }
+                .thenReturn(geckoResult)
+
+            engine.setNeverTranslateSpecifiedSite(
+                "www.mozilla.org",
+                true,
+                onSuccess = { onSuccessCalled = true },
+                onError = { onErrorCalled = true },
+            )
+
+            geckoResult.completeExceptionally(Exception())
+            shadowOf(getMainLooper()).idle()
+
+            assert(!onSuccessCalled) { "Should not successfully complete when setting the never translate site." }
+            assert(onErrorCalled) { "An error should have occurred." }
+        }
+    }
+
+    @Test
+    fun `WHEN Global Privacy Control value is set THEN setGlobalPrivacyControl is getting called on GeckoRuntime`() {
+        val mockRuntime = mock<GeckoRuntime>()
+        whenever(mockRuntime.settings).thenReturn(mock())
+
+        val engine = GeckoEngine(testContext, runtime = mockRuntime)
+
+        reset(mockRuntime.settings)
+        engine.settings.globalPrivacyControlEnabled = true
+        verify(mockRuntime.settings).setGlobalPrivacyControl(true)
+
+        reset(mockRuntime.settings)
+        engine.settings.globalPrivacyControlEnabled = false
+        verify(mockRuntime.settings).setGlobalPrivacyControl(false)
     }
 
     private fun createSocialTrackersLogEntryList(): List<ContentBlockingController.LogEntry> {

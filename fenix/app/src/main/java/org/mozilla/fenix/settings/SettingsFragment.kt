@@ -109,10 +109,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             updateFxAAllowDomesticChinaServerMenu = ::updateFxAAllowDomesticChinaServerMenu,
         )
 
-        addonFilePicker = AddonFilePicker(
-            requireContext(),
-            requireComponents.addonManager,
-        )
+        addonFilePicker = AddonFilePicker(requireContext(), requireComponents.addonManager)
         addonFilePicker.registerForResults(this)
 
         // It's important to update the account UI state in onCreate since that ensures we'll never
@@ -714,7 +711,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
     @VisibleForTesting
     internal fun setupInstallAddonFromFilePreference(settings: Settings) {
         with(requirePreference<Preference>(R.string.pref_key_install_local_addon)) {
-            isVisible = settings.showSecretDebugMenuThisSession
+            // Below Android 10, the OS doesn't seem to recognize
+            // the "application/x-xpinstall" mime type (for XPI files).
+            isVisible =
+                settings.showSecretDebugMenuThisSession && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
         }
     }
 

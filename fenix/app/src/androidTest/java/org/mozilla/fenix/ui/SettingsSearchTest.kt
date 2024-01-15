@@ -419,12 +419,15 @@ class SettingsSearchTest {
     // Test running on beta/release builds in CI:
     // caution when making changes to it, so they don't block the builds
     // Goes through the settings and changes the search suggestion toggle, then verifies it changes.
-    @Ignore("Failing, see: https://github.com/mozilla-mobile/fenix/issues/23817")
     @SmokeTest
     @Test
     fun verifyShowSearchSuggestionsToggleTest() {
         homeScreen {
         }.openSearch {
+            // The Google related suggestions aren't always displayed on cold run
+            // Bugzilla ticket: https://bugzilla.mozilla.org/show_bug.cgi?id=1813587
+            clickSearchSelectorButton()
+            selectTemporarySearchMethod("DuckDuckGo")
             typeSearch("mozilla ")
             verifySearchEngineSuggestionResults(
                 activityTestRule,
@@ -439,6 +442,10 @@ class SettingsSearchTest {
         }.goBack {
         }.goBack {
         }.openSearch {
+            // The Google related suggestions aren't always displayed on cold run
+            // Bugzilla ticket: https://bugzilla.mozilla.org/show_bug.cgi?id=1813587
+            clickSearchSelectorButton()
+            selectTemporarySearchMethod("DuckDuckGo")
             typeSearch("mozilla")
             verifySuggestionsAreNotDisplayed(activityTestRule, "mozilla firefox")
         }

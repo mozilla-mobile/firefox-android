@@ -26,6 +26,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.longClick
 import androidx.test.espresso.assertion.PositionAssertions.isCompletelyAbove
 import androidx.test.espresso.assertion.PositionAssertions.isPartiallyBelow
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -51,7 +52,6 @@ import org.junit.Assert
 import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.Constants.LISTS_MAXSWIPES
-import org.mozilla.fenix.helpers.Constants.LONG_CLICK_DURATION
 import org.mozilla.fenix.helpers.Constants.TAG
 import org.mozilla.fenix.helpers.DataGenerationHelper.getStringResource
 import org.mozilla.fenix.helpers.HomeActivityComposeTestRule
@@ -86,9 +86,9 @@ class HomeScreenRobot {
             " service provider, it makes it easier to keep what you do online private from anyone" +
             " else who uses this device."
 
-    fun verifyNavigationToolbar() = assertUIObjectExists(navigationToolbar)
+    fun verifyNavigationToolbar() = assertUIObjectExists(navigationToolbar())
 
-    fun verifyHomeScreen() = assertUIObjectExists(homeScreen)
+    fun verifyHomeScreen() = assertUIObjectExists(homeScreen())
 
     fun verifyPrivateBrowsingHomeScreenItems() {
         verifyHomeScreenAppBarItems()
@@ -97,19 +97,19 @@ class HomeScreenRobot {
     }
 
     fun verifyHomeScreenAppBarItems() =
-        assertUIObjectExists(homeScreen, privateBrowsingButton, homepageWordmark)
+        assertUIObjectExists(homeScreen(), privateBrowsingButton(), homepageWordmark())
 
     fun verifyNavigationToolbarItems(numberOfOpenTabs: String = "0") =
-        assertUIObjectExists(navigationToolbar, menuButton, tabCounter(numberOfOpenTabs))
+        assertUIObjectExists(navigationToolbar(), menuButton, tabCounter(numberOfOpenTabs))
 
-    fun verifyHomePrivateBrowsingButton() = assertUIObjectExists(privateBrowsingButton)
+    fun verifyHomePrivateBrowsingButton() = assertUIObjectExists(privateBrowsingButton())
     fun verifyHomeMenuButton() = assertUIObjectExists(menuButton)
     fun verifyTabButton() = assertTabButton()
     fun verifyCollectionsHeader() = assertCollectionsHeader()
     fun verifyNoCollectionsText() = assertNoCollectionsText()
     fun verifyHomeWordmark() {
         homeScreenList().scrollToBeginning(3)
-        assertUIObjectExists(homepageWordmark)
+        assertUIObjectExists(homepageWordmark())
     }
     fun verifyHomeComponent() = assertHomeComponent()
 
@@ -292,7 +292,7 @@ class HomeScreenRobot {
         mDevice.waitNotNull(findObject(By.text(expectedText)), waitingTime)
     }
 
-    fun clickFirefoxLogo() = homepageWordmark.click()
+    fun clickFirefoxLogo() = homepageWordmark().click()
 
     fun verifyThoughtProvokingStories(enabled: Boolean) {
         if (enabled) {
@@ -481,8 +481,8 @@ class HomeScreenRobot {
         }
 
         fun openSearch(interact: SearchRobot.() -> Unit): SearchRobot.Transition {
-            navigationToolbar.waitForExists(waitingTime)
-            navigationToolbar.click()
+            navigationToolbar().waitForExists(waitingTime)
+            navigationToolbar().click()
             mDevice.waitForIdle()
 
             SearchRobot().interact()
@@ -502,14 +502,14 @@ class HomeScreenRobot {
         fun togglePrivateBrowsingMode(switchPBModeOn: Boolean = true) {
             // Switch to private browsing homescreen
             if (switchPBModeOn && !isPrivateModeEnabled()) {
-                privateBrowsingButton.waitForExists(waitingTime)
-                privateBrowsingButton.click()
+                privateBrowsingButton().waitForExists(waitingTime)
+                privateBrowsingButton().click()
             }
 
             // Switch to normal browsing homescreen
             if (!switchPBModeOn && isPrivateModeEnabled()) {
-                privateBrowsingButton.waitForExists(waitingTime)
-                privateBrowsingButton.click()
+                privateBrowsingButton().waitForExists(waitingTime)
+                privateBrowsingButton().click()
             }
         }
 
@@ -521,7 +521,7 @@ class HomeScreenRobot {
                         waitingTime,
                     )
 
-                privateBrowsingButton.click()
+                privateBrowsingButton().click()
             }
 
             AddToHomeScreenRobot().interact()
@@ -535,7 +535,7 @@ class HomeScreenRobot {
         fun openNavigationToolbar(interact: NavigationToolbarRobot.() -> Unit): NavigationToolbarRobot.Transition {
             mDevice.findObject(UiSelector().resourceId("$packageName:id/toolbar"))
                 .waitForExists(waitingTime)
-            navigationToolbar.click()
+            navigationToolbar().click()
 
             NavigationToolbarRobot().interact()
             return NavigationToolbarRobot.Transition()
@@ -557,7 +557,8 @@ class HomeScreenRobot {
         }
 
         fun openContextMenuOnSponsoredShortcut(sponsoredShortcutTitle: String, interact: HomeScreenRobot.() -> Unit): Transition {
-            sponsoredShortcut(sponsoredShortcutTitle).click(LONG_CLICK_DURATION)
+            sponsoredShortcut(sponsoredShortcutTitle).perform(longClick())
+            Log.i(TAG, "openContextMenuOnSponsoredShortcut: Long clicked to open context menu for $sponsoredShortcutTitle sponsored shortcut")
 
             HomeScreenRobot().interact()
             return Transition()
@@ -631,8 +632,10 @@ class HomeScreenRobot {
         }
 
         fun clickSponsoredShortcutsSettingsButton(interact: SettingsSubMenuHomepageRobot.() -> Unit): SettingsSubMenuHomepageRobot.Transition {
+            Log.i(TAG, "clickSponsoredShortcutsSettingsButton: Looking for: ${sponsoredShortcutsSettingsButton.selector}")
             sponsoredShortcutsSettingsButton.waitForExists(waitingTime)
             sponsoredShortcutsSettingsButton.clickAndWaitForNewWindow(waitingTime)
+            Log.i(TAG, "clickSponsoredShortcutsSettingsButton: Clicked ${sponsoredShortcutsSettingsButton.selector} and waiting for $waitingTime for a new window")
 
             SettingsSubMenuHomepageRobot().interact()
             return SettingsSubMenuHomepageRobot.Transition()
@@ -939,18 +942,19 @@ private fun saveTabsToCollectionButton() = onView(withId(R.id.add_tabs_to_collec
 private fun tabsCounter() = onView(withId(R.id.tab_button))
 
 private fun sponsoredShortcut(sponsoredShortcutTitle: String) =
-    mDevice.findObject(
-        By
-            .res("$packageName:id/top_site_title")
-            .textContains(sponsoredShortcutTitle),
+    onView(
+        allOf(
+            withId(R.id.top_site_title),
+            withText(sponsoredShortcutTitle),
+        ),
     )
 
 private fun storyByTopicItem(composeTestRule: ComposeTestRule, position: Int) =
     composeTestRule.onNodeWithTag("pocket.categories").onChildAt(position - 1)
 
-private val homeScreen =
+private fun homeScreen() =
     itemWithResId("$packageName:id/homeLayout")
-private val privateBrowsingButton =
+private fun privateBrowsingButton() =
     itemWithResId("$packageName:id/privateBrowsingButton")
 
 private fun isPrivateModeEnabled(): Boolean =
@@ -959,10 +963,10 @@ private fun isPrivateModeEnabled(): Boolean =
         "Disable private browsing",
     ).exists()
 
-private val homepageWordmark =
+private fun homepageWordmark() =
     itemWithResId("$packageName:id/wordmark")
 
-private val navigationToolbar =
+private fun navigationToolbar() =
     itemWithResId("$packageName:id/toolbar")
 private val menuButton =
     itemWithResId("$packageName:id/menuButton")

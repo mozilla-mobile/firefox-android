@@ -75,9 +75,14 @@ object FeatureFlags {
     const val fxSuggest = true
 
     /**
+     * Allows users to enable SuggestStrongPassword feature.
+     */
+    const val suggestStrongPassword = true
+
+    /**
      * Enable Meta attribution.
      */
-    val metaAttributionEnabled = Config.channel.isNightlyOrDebug
+    const val metaAttributionEnabled = true
 
     /**
      * Enable Toolbar Redesign components and behaviors ready for Nightly.

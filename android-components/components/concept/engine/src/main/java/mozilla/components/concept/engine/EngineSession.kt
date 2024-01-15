@@ -19,6 +19,7 @@ import mozilla.components.concept.engine.shopping.ProductAnalysis
 import mozilla.components.concept.engine.shopping.ProductAnalysisStatus
 import mozilla.components.concept.engine.shopping.ProductRecommendation
 import mozilla.components.concept.engine.translate.TranslationEngineState
+import mozilla.components.concept.engine.translate.TranslationError
 import mozilla.components.concept.engine.translate.TranslationOperation
 import mozilla.components.concept.engine.translate.TranslationOptions
 import mozilla.components.concept.engine.window.WindowRequest
@@ -369,9 +370,12 @@ abstract class EngineSession(
          * Event to indicate that the translation operation was unsuccessful.
          *
          * @param operation The operation that the translation engine attempted.
-         * @param throwable The exception that occurred during the operation.
+         * @param translationError The exception that occurred during the operation.
          */
-        fun onTranslateException(operation: TranslationOperation, throwable: Throwable) = Unit
+        fun onTranslateException(
+            operation: TranslationOperation,
+            translationError: TranslationError,
+        ) = Unit
     }
 
     /**
@@ -969,6 +973,18 @@ abstract class EngineSession(
     )
 
     /**
+     * Reports when a product is back in stock.
+     *
+     * @param onResult callback invoked if the engine API returns a valid response.
+     * @param onException callback invoked if there was an error getting the response.
+     */
+    abstract fun reportBackInStock(
+        url: String,
+        onResult: (String) -> Unit,
+        onException: (Throwable) -> Unit,
+    )
+
+    /**
      * Requests the [EngineSession] to translate the current session's contents.
      *
      * @param fromLanguage The BCP 47 language tag that the page should be translated from.
@@ -997,6 +1013,9 @@ abstract class EngineSession(
 
     /**
      * Requests the [EngineSession] to set the current site's never translate preference.
+     *
+     * @param setting True if the site should never be translated. False if the site should be
+     * translated.
      */
     abstract fun setNeverTranslateSiteSetting(
         setting: Boolean,

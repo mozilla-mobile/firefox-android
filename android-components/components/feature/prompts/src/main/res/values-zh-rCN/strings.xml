@@ -27,7 +27,7 @@
     <!-- Negative confirmation that we should not save the new or updated login -->
     <string name="mozac_feature_prompt_dont_save">不保存</string>
     <!-- Negative confirmation that we should never save a login for this site -->
-    <string name="mozac_feature_prompt_never_save">总不保存</string>
+    <string name="mozac_feature_prompt_never_save">永不保存</string>
     <!-- Negative confirmation that we should not save a credit card for this site -->
     <string name="mozac_feature_prompt_not_now">暂时不要</string>
     <!-- Positive confirmation that we should save the new or updated login -->
@@ -104,6 +104,13 @@
     <!-- Header for the select login prompt to allow users to fill a form with a saved login -->
     <string name="mozac_feature_prompts_saved_logins">推荐的登录信息</string>
 
+    <!-- Content description for the suggest strong password prompt to allow users to fill a form with a suggested strong password -->
+    <string name="mozac_feature_prompts_suggest_strong_password_content_description">建议高强度密码</string>
+    <!-- Header for the suggest strong password prompt to allow users to fill a form with a suggested strong password -->
+    <string name="mozac_feature_prompts_suggest_strong_password">建议高强度密码</string>
+    <!-- Title for using the suggest strong password confirmation dialog. %1$s will be replaced with the generated password -->
+    <string name="mozac_feature_prompts_suggest_strong_password_message">使用高强度密码：%1$s</string>
+
     <!-- Strings shown in a dialog that appear when users try to refresh a certain kind of webpages -->
     <string name="mozac_feature_prompt_repost_title">重新发送数据至此网站？</string>
     <string name="mozac_feature_prompt_repost_message">刷新页面可能会再次执行最近的操作，例如重复付款或发表评论。</string>
@@ -124,7 +131,7 @@
     <!-- Text for the title of a save credit card dialog. -->
     <string name="mozac_feature_prompts_save_credit_card_prompt_title">安全地保存此卡片？</string>
     <!-- Text for the title of an update credit card dialog. -->
-    <string name="mozac_feature_prompts_update_credit_card_prompt_title">是否要更新卡片失效日期？</string>
+    <string name="mozac_feature_prompts_update_credit_card_prompt_title">是否要更新卡片有效期？</string>
     <!-- Subtitle text displayed under the title of the save credit card dialog. -->
     <string name="mozac_feature_prompts_save_credit_card_prompt_body">卡号将被加密，且不会保存安全码。</string>
 
@@ -143,8 +150,6 @@
     <string name="mozac_feature_prompts_account_picture">头像</string>
     <!-- Title of the Identity Credential provider dialog chooser. -->
     <string name="mozac_feature_prompts_identity_credentials_choose_provider">选择一个登录方式</string>
-    <!-- Title of an account picker dialog for identity credentials. -->
-    <string name="mozac_feature_prompts_identity_credentials_choose_account" moz:removedIn="119" tools:ignore="UnusedResources">选择账户</string>
     <!-- Title of an account picker dialog for identity credentials. The %1$s will be replaced with the name of the provider -->
     <string name="mozac_feature_prompts_identity_credentials_choose_account_for_provider">使用 %1$s 账户登录</string>
     <!-- Title of the Identity Credential privacy policy dialog title. The %1$s will be replaced with the name of the provider. -->
