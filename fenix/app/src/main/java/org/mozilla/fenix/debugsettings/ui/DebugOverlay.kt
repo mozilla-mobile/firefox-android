@@ -27,26 +27,38 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import org.mozilla.fenix.R
 import org.mozilla.fenix.compose.annotation.LightDarkPreview
 import org.mozilla.fenix.compose.button.FloatingActionButton
+import org.mozilla.fenix.debugsettings.store.DrawerStatus
 import org.mozilla.fenix.theme.FirefoxTheme
 
 /**
- * Overlay for presenting Fenix-wide debugging content.
+ * Overlay for presenting app-wide debugging content.
+ *
+ * @param navController [NavHostController] used to perform navigation actions.
+ * @param drawerStatus The [DrawerStatus] indicating the physical state of the drawer.
+ * @param onDrawerOpen Invoked when the drawer is opened.
+ * @param onDrawerClose Invoked when the drawer is closed.
+ * @param onBackButtonClick Invoked when the user taps on the back button in the app bar.
  */
 @Composable
-fun DebugOverlay() {
+fun DebugOverlay(
+    navController: NavHostController,
+    drawerStatus: DrawerStatus,
+    onDrawerOpen: () -> Unit,
+    onDrawerClose: () -> Unit,
+    onBackButtonClick: () -> Unit,
+) {
     val snackbarState = remember { SnackbarHostState() }
-    // The separate boolean in conjunction with `drawerState` is to allow the drawer animations
-    // to still occur even with the show/hide logic documented below.
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    var drawerEnabled by remember { mutableStateOf(false) }
 
-    LaunchedEffect(drawerEnabled) {
-        if (drawerEnabled) {
+    LaunchedEffect(drawerStatus) {
+        if (drawerStatus == DrawerStatus.Open) {
             drawerState.open()
         }
     }
@@ -56,7 +68,7 @@ fun DebugOverlay() {
             .distinctUntilChanged()
             .filter { it == DrawerValue.Closed }
             .collect {
-                drawerEnabled = false
+                onDrawerClose()
             }
     }
 
@@ -69,14 +81,14 @@ fun DebugOverlay() {
                 .align(Alignment.CenterStart)
                 .padding(start = 16.dp),
             onClick = {
-                drawerEnabled = true
+                onDrawerOpen()
             },
         )
 
         // ModalDrawer utilizes a Surface, which blocks ALL clicks behind it, preventing the app
         // from being interactable. This cannot be overridden in the Surface API, so we must hide
         // the entire drawer when it is closed.
-        if (drawerEnabled) {
+        if (drawerStatus == DrawerStatus.Open) {
             val currentLayoutDirection = LocalLayoutDirection.current
             val sheetLayoutDirection = when (currentLayoutDirection) {
                 LayoutDirection.Rtl -> LayoutDirection.Ltr
@@ -89,7 +101,10 @@ fun DebugOverlay() {
                 ModalDrawer(
                     drawerContent = {
                         CompositionLocalProvider(LocalLayoutDirection provides currentLayoutDirection) {
-                            DebugDrawer()
+                            DebugDrawer(
+                                navController = navController,
+                                onBackButtonClick = onBackButtonClick,
+                            )
                         }
                     },
                     drawerBackgroundColor = FirefoxTheme.colors.layer1,
@@ -115,9 +130,22 @@ fun DebugOverlay() {
 @Composable
 @LightDarkPreview
 private fun DebugOverlayPreview() {
+    val navController = rememberNavController()
+    var drawerStatus by remember { mutableStateOf(DrawerStatus.Closed) }
+
     FirefoxTheme {
-        Box(modifier = Modifier.fillMaxSize()) {
-            DebugOverlay()
-        }
+        DebugOverlay(
+            navController = navController,
+            drawerStatus = drawerStatus,
+            onDrawerOpen = {
+                drawerStatus = DrawerStatus.Open
+            },
+            onDrawerClose = {
+                drawerStatus = DrawerStatus.Closed
+            },
+            onBackButtonClick = {
+                navController.popBackStack()
+            },
+        )
     }
 }

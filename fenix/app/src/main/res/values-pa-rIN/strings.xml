@@ -217,6 +217,8 @@
     <!-- Browser menu button that opens the find in page menu -->
     <string name="browser_menu_find_in_page">ਸਫ਼ੇ ‘ਚ ਲੱਭੋ</string>
 
+    <!-- Browser menu button that opens the translations dialog, which has options to translate the current browser page. -->
+    <string name="browser_menu_translations">ਸਫ਼ੇ ਦਾ ਉਲੱਥਾ ਕਰੋ</string>
     <!-- Browser menu button that saves the current tab to a collection -->
     <string name="browser_menu_save_to_collection_2">ਭੰਡਾਰ ‘ਚ ਸੰਭਾਲੋ</string>
     <!-- Browser menu button that open a share menu to share the current site -->
@@ -759,7 +761,7 @@
     <!-- Name of the "receive tabs" notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="fxa_received_tab_channel_name">ਮਿਲੀਆਂ ਟੈਬਾਂ</string>
     <!-- Description of the "receive tabs" notification channel. Displayed in the "App notifications" system settings for the app -->
-    <string name="fxa_received_tab_channel_description">ਹੋਰ ਫਾਇਰਫਾਕਸ ਡਿਵਾਈਸਾਂ ਤੋਂ ਮਿਲੀਆਂ ਟੈਬਾਂ ਲਈ ਸੂਚਨਾਵਾਂ ਹਨ।</string>
+    <string name="fxa_received_tab_channel_description">ਹੋਰ Firefox ਡਿਵਾਈਸਾਂ ਤੋਂ ਮਿਲੀਆਂ ਟੈਬਾਂ ਲਈ ਸੂਚਨਾਵਾਂ ਹਨ।</string>
     <!--  The body for these is the URL of the tab received  -->
     <string name="fxa_tab_received_notification_name">ਟੈਬ ਮਿਲੀ</string>
     <!-- %s is the device name -->
@@ -1324,7 +1326,7 @@
     <!-- An option to connect additional devices -->
     <string name="sync_connect_device">ਹੋਰ ਡਿਵਾਈਸ ਨਾਲ ਕਨੈਕਟ ਕਰੋ</string>
     <!-- The dialog text shown when additional devices are not available -->
-    <string name="sync_connect_device_dialog">ਟੈਬ ਭੇਜਣ ਲਈ, ਘੱਟੋ-ਘੱਟ ਹੋਰ ਡਿਵਾਈਸ ‘ਤੇ ਫਾਇਰਫਾਕਸ ਵਿੱਚ ਸਾਈਨ ਇਨ ਕਰੋ।</string>
+    <string name="sync_connect_device_dialog">ਟੈਬ ਭੇਜਣ ਲਈ, ਘੱਟੋ-ਘੱਟ ਹੋਰ ਡਿਵਾਈਸ ਉੱਤੇ Firefox ਵਿੱਚ ਸਾਈਨ ਇਨ ਕਰੋ।</string>
     <!-- Confirmation dialog button -->
     <string name="sync_confirmation_button">ਸਮਝ ਗਏ</string>
 
@@ -1342,6 +1344,11 @@
     <!-- Notifications -->
     <!-- Text shown in the notification that pops up to remind the user that a private browsing session is active. -->
     <string name="notification_pbm_delete_text_2">ਨਿੱਜੀ ਟੈਬਾਂ ਬੰਦ ਕਰੋ</string>
+
+    <!-- Text shown in the notification that pops up to remind the user that a private browsing session is active for Android 14+ -->
+    <string name="notification_erase_title_android_14">ਪ੍ਰਾਈਵੇਟ ਟੈਬਾਂ ਨੂੰ ਬੰਦ ਕਰਨਾ ਹੈ?</string>
+    <string name="notification_erase_text_android_14">ਪ੍ਰਾਈਵੇਟ ਟੈਬਾਂ ਨੂੰ ਬੰਦ ਕਰਨ ਲਈ ਇਸ ਨੋਟੀਫਿਕੇਸ਼ਨ ਨੂੰ ਛੂਹੋ ਜਾਂ ਸਵਾਈਪ ਕਰੋ।</string>
+
     <!-- Name of the marketing notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="notification_marketing_channel_name">ਮਾਰਕੀਟਿੰਗ</string>
 
@@ -1522,7 +1529,7 @@
     <!-- Title of QR Pairing Fragment -->
     <string name="sync_scan_code">ਕੋਡ ਸਕੈਨ ਕਰੋ</string>
     <!-- Instructions on how to access pairing -->
-    <string name="sign_in_instructions"><![CDATA[ਆਪਣੇ ਕੰਪਿਊਟਰ ‘ਤੇ ਫਾਇਰਫਾਕਸ ਖੋਲ੍ਹੋ ਅਤੇ <b>https://firefox.com/pair</b> ‘ਤੇ ਜਾਓ]]></string>
+    <string name="sign_in_instructions"><![CDATA[ਆਪਣੇ ਕੰਪਿਊਟਰ ‘ਤੇ Firefox ਖੋਲ੍ਹੋ ਅਤੇ <b>https://firefox.com/pair</b> ‘ਤੇ ਜਾਓ]]></string>
     <!-- Text shown for sign in pairing when ready -->
     <string name="sign_in_ready_for_scan">ਸਕੈਨ ਕਰਨ ਲਈ ਤਿਆਰ</string>
     <!-- Text shown for settings option for sign with pairing -->
@@ -1709,7 +1716,7 @@
     <!-- Preference for autofilling saved logins in Firefox (in web content), %1$s will be replaced with the app name -->
     <string name="preferences_passwords_autofill2">%1$s ਵਿੱਚ ਆਪੇ ਭਰੋ</string>
     <!-- Description for the preference for autofilling saved logins in Firefox (in web content), %1$s will be replaced with the app name -->
-    <string name="preferences_passwords_autofill_description">%1$s ਵਰਤਣ ਦੌਰਾਨ ਵੈਬਸਾਈਟਾਂ ਵਿੱਚ ਵਰਤੋੰਕਾਰ-ਨਾਂ ਅਤੇ ਪਾਸਵਰਡ ਭਰੋ ਤੇ ਸੰਭਾਲੋ|</string>
+    <string name="preferences_passwords_autofill_description">%1$s ਨੂੰ ਵਰਤਣ ਦੌਰਾਨ ਵੈਬਸਾਈਟਾਂ ਵਿੱਚ ਵਰਤੋਂਕਾਰ-ਨਾਂ ਅਤੇ ਪਾਸਵਰਡ ਭਰੋ ਅਤੇ ਸੰਭਾਲੋ।</string>
     <!-- Preference for autofilling logins from Fenix in other apps (e.g. autofilling the Twitter app) -->
     <string name="preferences_android_autofill">ਹੋਰ ਐਪਾਂ ਵਿੱਚ ਆਪੇ ਭਰੋ</string>
 
@@ -2051,7 +2058,7 @@
     <!-- Text displayed when user has disabled tab syncing in Firefox Sync Account -->
     <string name="synced_tabs_enable_tab_syncing">ਟੈਬ ਨੂੰ ਸਿੰਕ ਕਰਨਾ ਸਮਰੱਥ ਕਰੋ।</string>
     <!-- Text displayed when user has no tabs that have been synced -->
-    <string name="synced_tabs_no_tabs">ਤੁਹਾਡੇ ਹੋਰ ਡਿਵਾਈਸ ਉੱਤੇ ਫਾਇਰਫਾਕਸ ਵਿੱਚ ਕੋਈ ਵੀ ਖੋਲ੍ਹੀ ਹੋਈ ਟੈਬ ਨਹੀਂ ਹੈ।</string>
+    <string name="synced_tabs_no_tabs">ਤੁਹਾਡੇ ਹੋਰ ਡਿਵਾਈਸ ਉੱਤੇ Firefox ਵਿੱਚ ਕੋਈ ਵੀ ਖੋਲ੍ਹੀ ਹੋਈ ਟੈਬ ਨਹੀਂ ਹੈ।</string>
     <!-- Text displayed in the synced tabs screen when a user is not signed in to Firefox Sync describing Synced Tabs -->
     <string name="synced_tabs_sign_in_message">ਤੁਹਾਡੇ ਹੋਰ ਡਿਵਾਈਸਾਂ ਤੋਂ ਟੈਬਾਂ ਦੀ ਸੂਚੀ ਵੇਖੋ।</string>
     <!-- Text displayed on a button in the synced tabs screen to link users to sign in when a user is not signed in to Firefox Sync -->
@@ -2282,17 +2289,17 @@
     <!-- Clickable text from the contextual onboarding card that links to review quality check support article. -->
     <string name="review_quality_check_contextual_onboarding_learn_more_link">ਹੋਰ ਜਾਣੋ</string>
     <!-- Caption text to be displayed in review quality check contextual onboarding card above the opt-in button. First parameter is the Fakespot product name. Following parameters are for clickable texts defined in review_quality_check_contextual_onboarding_privacy_policy and review_quality_check_contextual_onboarding_terms_use. In the phrase "Fakespot by Mozilla", "by" can be localized. Does not need to stay by. -->
-    <string name="review_quality_check_contextual_onboarding_caption" moz:RemovedIn="121" tools:ignore="UnusedResources">“ਹਾਂ, ਇਸ ਨੂੰ ਅਜ਼ਮਾਓ” ਚੁਣ ਕੇ ਤੁਸੀਂ Mozilla ਵਲੋਂ %1$s ਦੀ %2$s ਅਤੇ %3$s ਲਈ ਸਹਿਮਤ ਹੁੰਦੇ ਹੋ।</string>
+    <string name="review_quality_check_contextual_onboarding_caption">“ਹਾਂ, ਇਸ ਨੂੰ ਅਜ਼ਮਾਓ” ਚੁਣ ਕੇ ਤੁਸੀਂ Mozilla ਵਲੋਂ %1$s ਦੀ %2$s ਅਤੇ %3$s ਲਈ ਸਹਿਮਤ ਹੁੰਦੇ ਹੋ।</string>
     <!-- Caption text to be displayed in review quality check contextual onboarding card above the opt-in button. Parameter is the Fakespot product name. After the colon, what appears are two links, each on their own line. The first link is to a Privacy policy (review_quality_check_contextual_onboarding_privacy_policy_2). The second link is to Terms of use (review_quality_check_contextual_onboarding_terms_use_2). -->
-    <string name="review_quality_check_contextual_onboarding_caption_2">“ਹਾਂ, ਇਸ ਨੂੰ ਅਜ਼ਮਾਓ” ਨੂੰ ਚੁਣ ਕੇ ਤੁਸੀਂ %1$s ਤੋਂ ਹੇਠ ਦਿੱਤਿਆਂ ਨਾਲ ਸਹਿਮਤ ਹੁੰਦੇ ਹੋ:</string>
+    <string name="review_quality_check_contextual_onboarding_caption_2" moz:RemovedIn="123" tools:ignore="UnusedResources">“ਹਾਂ, ਇਸ ਨੂੰ ਅਜ਼ਮਾਓ” ਨੂੰ ਚੁਣ ਕੇ ਤੁਸੀਂ %1$s ਤੋਂ ਹੇਠ ਦਿੱਤਿਆਂ ਨਾਲ ਸਹਿਮਤ ਹੁੰਦੇ ਹੋ:</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot privacy policy. -->
-    <string name="review_quality_check_contextual_onboarding_privacy_policy" moz:RemovedIn="121" tools:ignore="UnusedResources">ਪਰਦੇਦਾਰੀ ਨੀਤੀ</string>
+    <string name="review_quality_check_contextual_onboarding_privacy_policy">ਪਰਦੇਦਾਰੀ ਨੀਤੀ</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot privacy policy. -->
-    <string name="review_quality_check_contextual_onboarding_privacy_policy_2">ਪਰਦੇਦਾਰੀ ਨੀਤੀ</string>
+    <string name="review_quality_check_contextual_onboarding_privacy_policy_2" moz:RemovedIn="123" tools:ignore="UnusedResources">ਪਰਦੇਦਾਰੀ ਨੀਤੀ</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot terms of use. -->
-    <string name="review_quality_check_contextual_onboarding_terms_use" moz:RemovedIn="121" tools:ignore="UnusedResources">ਵਰਤਣ ਲਈ ਸ਼ਰਤਾਂ</string>
+    <string name="review_quality_check_contextual_onboarding_terms_use">ਵਰਤਣ ਲਈ ਸ਼ਰਤਾਂ</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot terms of use. -->
-    <string name="review_quality_check_contextual_onboarding_terms_use_2">ਵਰਤਣ ਦੀ ਸ਼ਰਤਾਂ</string>
+    <string name="review_quality_check_contextual_onboarding_terms_use_2" moz:RemovedIn="123" tools:ignore="UnusedResources">ਵਰਤਣ ਦੀ ਸ਼ਰਤਾਂ</string>
     <!-- Text for opt-in button from the review quality check contextual onboarding card. -->
     <string name="review_quality_check_contextual_onboarding_primary_button_text">ਹਾਂ, ਇਸ ਨੂੰ ਅਜ਼ਮਾਓ</string>
     <!-- Text for opt-out button from the review quality check contextual onboarding card. -->
@@ -2350,6 +2357,11 @@
     <!-- Content description for headings announced by accessibility service. The first parameter is the text of the heading. Talkback will announce the first parameter and then speak the word "Heading" indicating to the user that this text is a heading for a section. -->
     <string name="a11y_heading">%s, ਹੈਡਿੰਗ</string>
 
+    <!-- Title for dialog displayed when trying to access links present in a text. -->
+    <string name="a11y_links_title">ਲਿੰਕ</string>
+    <!-- Additional content description for text bodies that contain urls. -->
+    <string name="a11y_links_available">ਲਿੰਕ ਮੌਜੂਦ ਹਨ</string>
+
     <!-- Translations feature-->
 
     <!-- Translation request dialog -->
@@ -2367,12 +2379,25 @@
     <string name="translations_bottom_sheet_translate_to">ਇਸ ਵਿੱਚ ਉਲੱਥਾ ਕਰੋ</string>
     <!-- Button text on the translations dialog to dismiss the dialog and return to the browser. -->
     <string name="translations_bottom_sheet_negative_button">ਹਾਲੇ ਨਹੀਂ</string>
+    <!-- Button text on the translations dialog when a translation error appears, used to dismiss the dialog and return to the browser. -->
+    <string name="translations_bottom_sheet_negative_button_error">ਮੁਕੰਮਲ</string>
     <!-- Button text on the translations dialog to begin a translation of the website. -->
     <string name="translations_bottom_sheet_positive_button">ਉਲੱਥਾ ਕਰੋ</string>
+    <!-- Button text on the translations dialog when a translation error appears. -->
+    <string name="translations_bottom_sheet_positive_button_error">ਮੁੜ ਕੋਸ਼ਿਸ਼ ਕਰੋ</string>
     <!-- Inactive button text on the translations dialog that indicates a translation is currently in progress. This button will be accompanied by a loading icon. -->
     <string name="translations_bottom_sheet_translating_in_progress">ਉਲੱਥਾ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ</string>
     <!-- Button content description (not visible, for screen readers etc.) for the translations dialog translate button that indicates a translation is currently in progress. -->
     <string name="translations_bottom_sheet_translating_in_progress_content_description">ਉਲੱਥਾ ਜਾਰੀ ਹੈ</string>
+
+    <!-- The title of the warning card informs the user that a translation could not be completed. -->
+    <string name="translation_error_could_not_translate_warning_text">ਅਨੁਵਾਦ ਕਰਨ ਦੌਰਾਨ ਸਮੱਸਿਆ ਆਈ ਸੀ। ਬਾਅਦ ਵਿੱਚ ਮੁੜ ਕੋਸ਼ਿਸ਼ ਕਰੋ।</string>
+    <!-- The title of the warning card informs the user that the list of languages cannot be loaded. -->
+    <string name="translation_error_could_not_load_languages_warning_text">ਭਾਸ਼ਾਵਾਂ ਨੂੰ ਲੋਡ ਨਹੀਂ ਕੀਤਾ ਜਾ ਸਕਿਆ। ਆਪਣੇ ਇੰਟਰਨੈੱਟ ਕਨੈਕਸ਼ਨ ਦੀ ਜਾਂਚ ਕਰਕੇ ਫੇਰ ਕੋਸ਼ਿਸ਼ ਕਰੋ।</string>
+    <!-- The title of the warning card informs the user that a language is not supported. The first parameter is the name of the language that is not supported. -->
+    <string name="translation_error_language_not_supported_warning_text">ਅਫ਼ਸੋਸ ਅਸੀਂ ਹਾਲੇ %1$s ਲਈ ਸਹਾਇਕ ਨਹੀਂ ਹਾਂ।</string>
+    <!-- Button text on the warning card when a language is not supported. The link will take the user to a page to a support page about translations. -->
+    <string name="translation_error_language_not_supported_learn_more">ਹੋਰ ਜਾਣੋ</string>
 
     <!-- Translations options dialog -->
     <!-- Title of the translation options dialog that allows a user to set their translation options for the site the user is currently on. -->
@@ -2506,8 +2531,12 @@
     <string name="download_language_file_dialog_negative_button_text">ਰੱਦ ਕਰੋ</string>
 
     <!-- Debug drawer -->
+    <!-- The user-facing title of the Debug Drawer feature. -->
+    <string name="debug_drawer_title">ਡੀਬੱਗ ਟੂਲ</string>
+    <!-- Content description (not visible, for screen readers etc.): Navigate back within the debug drawer. -->
+    <string name="debug_drawer_back_button_content_description">ਪਿੱਛੇ ਜਾਓ</string>
     <!-- The title of the Tab Tools feature in the Debug Drawer. -->
-    <string name="debug_drawer_tab_tools_title" tools:ignore="UnusedResources">ਟੈਬ ਟੂਲ</string>
+    <string name="debug_drawer_tab_tools_title">ਟੈਬ ਟੂਲ</string>
     <!-- The title of the tab count section in Tab Tools. -->
     <string name="debug_drawer_tab_tools_tab_count_title">ਟੈਬ ਗਿਣਤੀ</string>
     <!-- The active tab count category in the tab count section in Tab Tools. -->
@@ -2518,4 +2547,14 @@
     <string name="debug_drawer_tab_tools_tab_count_private">ਨਿੱਜੀ</string>
     <!-- The total tab count category in the tab count section in Tab Tools. -->
     <string name="debug_drawer_tab_tools_tab_count_total">ਕੁੱਲ</string>
+    <!-- The title of the tab creation tool section in Tab Tools. -->
+    <string name="debug_drawer_tab_tools_tab_creation_tool_title">ਟੈਬ ਬਣਾਉਣ ਵਾਲਾ ਟੂਲ</string>
+    <!-- The label of the text field in the tab creation tool. -->
+    <string name="debug_drawer_tab_tools_tab_creation_tool_text_field_label">bਣਾਉਣ ਲਈ ਟੈਬਾਂ ਦੀ ਗਿਣਤੀ</string>
+    <!-- The button text to add tabs to the active tab group in the tab creation tool. -->
+    <string name="debug_drawer_tab_tools_tab_creation_tool_button_text_active">ਸਰਗਰਮ ਟੈਬਾਂ ਵਿੱਚ ਜੋੜੋ</string>
+    <!-- The button text to add tabs to the inactive tab group in the tab creation tool. -->
+    <string name="debug_drawer_tab_tools_tab_creation_tool_button_text_inactive">ਨਾ-ਸਰਗਰਮ ਟੈਬਾਂ ਵਿੱਚ ਜੋੜੋ</string>
+    <!-- The button text to add tabs to the private tab group in the tab creation tool. -->
+    <string name="debug_drawer_tab_tools_tab_creation_tool_button_text_private">ਪ੍ਰਾਈਵੇਟ ਟੈਬਾਂ ਵਿੱਚ ਜੋੜੋ</string>
 </resources>
