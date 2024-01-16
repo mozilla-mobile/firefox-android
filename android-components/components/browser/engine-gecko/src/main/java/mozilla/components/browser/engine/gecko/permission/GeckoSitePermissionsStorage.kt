@@ -10,6 +10,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import mozilla.components.browser.engine.gecko.await
+import mozilla.components.concept.engine.Engine
+import mozilla.components.concept.engine.Engine.BrowsingData.Companion.PERMISSIONS
 import mozilla.components.concept.engine.permission.PermissionRequest
 import mozilla.components.concept.engine.permission.SitePermissions
 import mozilla.components.concept.engine.permission.SitePermissions.AutoplayStatus
@@ -34,7 +36,6 @@ import org.mozilla.geckoview.GeckoSession.PermissionDelegate.PERMISSION_PERSISTE
 import org.mozilla.geckoview.GeckoSession.PermissionDelegate.PERMISSION_STORAGE_ACCESS
 import org.mozilla.geckoview.GeckoSession.PermissionDelegate.PERMISSION_TRACKING
 import org.mozilla.geckoview.StorageController
-import org.mozilla.geckoview.StorageController.ClearFlags
 
 /**
  * A storage to save [SitePermissions] using GeckoView APIs.
@@ -340,13 +341,16 @@ class GeckoSitePermissionsStorage(
     @VisibleForTesting
     internal suspend fun clearGeckoCacheFor(origin: String) {
         withContext(mainScope.coroutineContext) {
-            geckoStorage.clearDataFromHost(origin, ClearFlags.PERMISSIONS).await()
+            geckoStorage.clearDataFromHost(
+                origin,
+                Engine.BrowsingData.select(PERMISSIONS).types.toLong(),
+            ).await()
         }
     }
 
     @VisibleForTesting
     internal fun clearAllPermissionsGeckoCache() {
-        geckoStorage.clearData(ClearFlags.PERMISSIONS)
+        geckoStorage.clearData(Engine.BrowsingData.select(PERMISSIONS).types.toLong())
     }
 
     @VisibleForTesting
