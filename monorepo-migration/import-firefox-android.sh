@@ -2,6 +2,11 @@
 
 set -ex
 
+if ! hg id >/dev/null 2>&1; then
+    echo >&2 This script should run from a mercurial gecko checkout
+    exit 1
+fi
+
 git clone https://github.com/mozilla-mobile/firefox-android tmp-firefox-android
 
 cd tmp-firefox-android
