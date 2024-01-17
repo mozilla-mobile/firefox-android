@@ -206,7 +206,14 @@ android {
 
             reset()
 
-            include "x86", "armeabi-v7a", "arm64-v8a", "x86_64"
+            // As gradle is unable to pick the right apk to install when multiple apks are generated
+            // while running benchmark tests or generating baseline profiles. To circumvent this,
+            // this flag is passed to make sure only one apk is generated so gradle can pick that one.
+            if (project.hasProperty("benchmarkTest")) {
+                include "arm64-v8a"
+            } else {
+                include "x86", "armeabi-v7a", "arm64-v8a", "x86_64"
+            }
         }
     }
 
@@ -636,12 +643,14 @@ dependencies {
     implementation FenixDependencies.androidx_navigation_ui
     implementation ComponentsDependencies.androidx_compose_navigation
     implementation ComponentsDependencies.androidx_recyclerview
+
     implementation ComponentsDependencies.androidx_lifecycle_common
     implementation ComponentsDependencies.androidx_lifecycle_livedata
     implementation ComponentsDependencies.androidx_lifecycle_process
     implementation ComponentsDependencies.androidx_lifecycle_runtime
-
     implementation ComponentsDependencies.androidx_lifecycle_viewmodel
+    implementation ComponentsDependencies.androidx_lifecycle_service
+
     implementation ComponentsDependencies.androidx_core
     implementation ComponentsDependencies.androidx_core_ktx
     implementation FenixDependencies.androidx_core_splashscreen
