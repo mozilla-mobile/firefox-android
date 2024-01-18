@@ -68,7 +68,7 @@ Where:
 *  **--repository_to_test_path** is the path where your local Fenix repository is.
 
 
-**Note**: Make sure your repository includes all the tokens (Sentry, Nimbus, … etc) that we include in our release builds, as not adding them could affect the test results, as we want the APKs to be the same [experience as normal users will have](https://wiki.mozilla.org/Performance/Fenix#How_to_measure_what_users_experience). Part of this is making sure you have [autosignReleaseWithDebugKey in your local.properties](https://github.com/mozilla-mobile/fenix#automatically-sign-release-builds).
+**Note**: Make sure your repository includes all the tokens (Sentry, Nimbus, … etc) that we include in our release builds, as not adding them could affect the test results, as we want the APKs to be the same [experience as normal users will have](https://wiki.mozilla.org/Performance/Fenix#How_to_measure_what_users_experience). Part of this is making sure you have [autosignReleaseWithDebugKey in your local.properties](../README.md#automatically-sign-release-builds).
 
 
 🕐 Be patient, as we will have to build an APK for each possible commit in the range and for this range there [are 19 commits](https://github.com/mozilla-mobile/fenix/compare/98455c01eeba7c63775f18817cd079f5d08b4513...2f7f5988fccad2cf2043eed4b6849b32a4c76048) then we will build 19 APKs, and run the performance test for each one.

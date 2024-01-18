@@ -4,7 +4,7 @@ Firefox for Android is Mozilla's new browser for Android devices. Powered by Gec
 
 Firefox for Android is the first step in building a better mobile browser: one that’s faster, more secure and more independent than any mobile Firefox browser before it. It will combine the speed, privacy, control, and easy-to-use features you have come to expect from Firefox.
 
-*Don't see what you're looking for? Check out our shared docs: https://github.com/mozilla-mobile/shared-docs.*
+*Don't see what you're looking for? Check out [our shared docs](../../docs/shared).*
 
 ## User support
 
@@ -16,13 +16,13 @@ Firefox for Android is the first step in building a better mobile browser: one t
 * Google Play: [Release](https://play.google.com/store/apps/details?id=org.mozilla.firefox)
 * Google Play: [Beta](https://play.google.com/store/apps/details?id=org.mozilla.firefox_beta)
 * Google Play: [Nightly](https://play.google.com/store/apps/details?id=org.mozilla.fenix)
-* Release APKs: https://github.com/mozilla-mobile/fenix/releases
+* Release APKs: https://github.com/mozilla-mobile/firefox-android/releases?q=Firefox
 * Nightly APKs: https://firefox-ci-tc.services.mozilla.com/tasks/index/mobile.v2.fenix.nightly.latest
 
 ## Contribute
 
-* [Contributing (Writing code, translating the app, testing the app)](https://github.com/mozilla-mobile/shared-docs/blob/master/android/CONTRIBUTING.md)
-* [List of good first issues for new contributors](https://github.com/mozilla-mobile/fenix/issues?utf8=%E2%9C%93&q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22+)
+* [Contributing (Writing code, translating the app, testing the app)](../../docs/shared/android/CONTRIBUTING.md)
+* [List of good first issues for new contributors](https://bugzilla.mozilla.org/buglist.cgi?product=Fenix&keywords=good-first-bug&resolution=---)
 * [Mozilla Community Participation Guidelines](https://www.mozilla.org/en-US/about/governance/policies/participation/)
 
 ## Communication

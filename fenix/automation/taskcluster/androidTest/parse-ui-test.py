@@ -63,7 +63,7 @@ def main():
     print("---\n")
     print("# References & Documentation\n")
     print(
-        "* [Automated UI Testing Documentation](https://github.com/mozilla-mobile/shared-docs/blob/main/android/ui-testing.md)\n"
+        "* [Automated UI Testing Documentation](https://github.com/mozilla-mobile/firefox-android/blob/main/docs/shared/android/ui-testing.md)\n"
     )
     print(
         "* Mobile Test Engineering on [Confluence](https://mozilla-hub.atlassian.net/wiki/spaces/MTE/overview) | [Slack](https://mozilla.slack.com/archives/C02KDDS9QM9) | [Alerts](https://mozilla.slack.com/archives/C0134KJ4JHL)\n"

@@ -87,7 +87,7 @@ if (file('local.properties').canRead()) {
     localProperties.load(file('local.properties').newDataInputStream())
     log('Loaded local.properties')
 } else {
-    log('Missing local.properties; see https://github.com/mozilla-mobile/fenix/blob/main/README.md#local-properties-helpers for instructions.')
+    log('Missing local.properties; see https://github.com/mozilla-mobile/firefox-android/blob/main/fenix/README.md#localproperties-helpers for instructions.')
 }
 
 if (localProperties != null) {

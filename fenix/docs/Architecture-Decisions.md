@@ -1,4 +1,4 @@
-For an overview of our current architecture, please see [this document](https://github.com/mozilla-mobile/fenix/blob/master/docs/architecture-overview.md)
+For an overview of our current architecture, please see [this document](architecture-overview.md)
 
 ---
 

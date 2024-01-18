@@ -20,13 +20,13 @@
 
 ## Procedure to follow when implementing a Glean telemetry event
 * A full example of adding an event with keys can be found [here](https://github.com/mozilla-mobile/android-components/pull/10837) (Android Components), [here](https://github.com/mozilla-mobile/fenix/pull/20909) (Fenix) and [here](https://github.com/mozilla/glean-annotations/pull/77) (Glean Annotation)
-1. Create an event in [metrics.yaml](https://github.com/mozilla-mobile/fenix/blob/master/app/metrics.yaml) and do a project rebuild to generate the event
-2. To add feature tags see steps [here](https://github.com/mozilla-mobile/fenix/wiki/Metric-Feature-Tags).
+1. Create an event in [metrics.yaml](../app/metrics.yaml) and do a project rebuild to generate the event
+2. To add feature tags see steps [here](Metric-Feature-Tags.md).
 5. Send the event from the proper place in the code with the appropriate generated method (e.g. `GeneratedClassMetrics.generatedEvent.record()`)
 6. Create pull requests
 7. Submit a data review ([example here](https://github.com/mozilla-mobile/fenix/pull/20909#issuecomment-902119039)).  There's also a [command-line tool for generating Data Review Requests](https://chuttenblog.wordpress.com/2021/09/07/this-week-in-glean-data-reviews-are-important-glean-parser-makes-them-easy/)
-8. Update the [metrics.yaml](https://github.com/mozilla-mobile/fenix/blob/master/app/metrics.yaml) with the data review
-9. For startup metrics, make sure to [manually test it](https://github.com/mozilla-mobile/fenix/wiki/Test-telemetry-pings)
+8. Update the [metrics.yaml](../app/metrics.yaml) with the data review
+9. For startup metrics, make sure to [manually test it](Test-telemetry-pings.md)
 
 ## Review
 See example [here](https://github.com/mozilla-mobile/fenix/pull/20909)
