@@ -211,6 +211,8 @@
     <string name="resync_button_content_description">סנכרון מחדש</string>
     <!-- Browser menu button that opens the find in page menu -->
     <string name="browser_menu_find_in_page">חיפוש בדף</string>
+    <!-- Browser menu button that opens the translations dialog, which has options to translate the current browser page. -->
+    <string name="browser_menu_translations">תרגום הדף</string>
     <!-- Browser menu button that saves the current tab to a collection -->
     <string name="browser_menu_save_to_collection_2">שמירה לאוסף</string>
     <!-- Browser menu button that open a share menu to share the current site -->
@@ -474,8 +476,14 @@
     <string name="reduce_cookie_banner_details_panel_title_off_for_site_1">להשבית חוסם כרזות עוגיות לאתר %1$s?</string>
     <!-- Title text for a detail explanation indicating cookie banner reducer didn't work for the current site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name-->
     <string name="reduce_cookie_banner_details_panel_title_unsupported_site_request_2">ל־%1$s אין אפשרות לדחות באופן אוטומטי בקשות עוגיות באתר הזה. אפשר לשלוח בקשה לתמוך באתר הזה בעתיד.</string>
+    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
+    <string name="reduce_cookie_banner_details_panel_description_off_for_site" moz:RemovedIn="121" tools:ignore="UnusedResources">‏%1$s ינקה את העוגיות של אתר זה וירענן את הדף. ניקוי כל העוגית עשוי לנתק את החשבון שלך מהאתר או לרוקן את עגלת הקניות שלך.</string>
+    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is off for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
+    <string name="reduce_cookie_banner_details_panel_description_off_for_site_1">כיבוי אפשרות זו תגרום לכך ש־%1$s ינקה עוגיות ויטען מחדש את אתר זה. פעולה זו עשויה לנתק את החשבון שלך מהאתר או לרוקן את עגלת הקניות שלך.</string>
     <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
     <string name="reduce_cookie_banner_details_panel_description_on_for_site_2" moz:RemovedIn="121" tools:ignore="UnusedResources">‏%1$s מנסה לדחות באופן אוטומטי את כל בקשות העוגיות באתרים נתמכים.</string>
+    <!-- Long text for a detail explanation indicating what will happen if cookie banner handling is on for a site, this is shown as part of the cookie banner panel in the toolbar. The first parameter is the application name -->
+    <string name="reduce_cookie_banner_details_panel_description_on_for_site_3">הפעלת אפשרות זו תגרום לכך ש־%1$s ינסה לסרב באופן אוטומטי לכל כרזות העוגיות באתר זה.</string>
     <!-- Title text for the cookie banner re-engagement dialog. The first parameter is the application name. -->
     <string name="reduce_cookie_banner_dialog_title" moz:RemovedIn="121" tools:ignore="UnusedResources">לאפשר ל־%1$s לדחות כרזות עוגיות?</string>
     <!-- Body text for the cookie banner re-engagement dialog use. The first parameter is the application name. -->
@@ -1318,6 +1326,10 @@
     <!-- Notifications -->
     <!-- Text shown in the notification that pops up to remind the user that a private browsing session is active. -->
     <string name="notification_pbm_delete_text_2">סגירת לשוניות פרטיות</string>
+
+    <!-- Text shown in the notification that pops up to remind the user that a private browsing session is active for Android 14+ -->
+    <string name="notification_erase_title_android_14">לסגור את הלשוניות הפרטיות?</string>
+    <string name="notification_erase_text_android_14">יש להקיש או להחליק על התרעה זו כדי לסגור את הלשוניות הפרטיות.</string>
 
     <!-- Name of the marketing notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="notification_marketing_channel_name">שיווק</string>
@@ -2261,17 +2273,17 @@
     <string name="review_quality_check_contextual_onboarding_learn_more_link">מידע נוסף</string>
 
     <!-- Caption text to be displayed in review quality check contextual onboarding card above the opt-in button. First parameter is the Fakespot product name. Following parameters are for clickable texts defined in review_quality_check_contextual_onboarding_privacy_policy and review_quality_check_contextual_onboarding_terms_use. In the phrase "Fakespot by Mozilla", "by" can be localized. Does not need to stay by. -->
-    <string name="review_quality_check_contextual_onboarding_caption" moz:RemovedIn="121" tools:ignore="UnusedResources">בחירה באפשרות ״כן, ארצה לנסות״ מהווה הסכמה ל%2$s ול%3$s של %1$s מאת Mozilla.</string>
+    <string name="review_quality_check_contextual_onboarding_caption">בחירה באפשרות ״כן, ארצה לנסות״ מהווה הסכמה ל%2$s ול%3$s של %1$s מאת Mozilla.</string>
     <!-- Caption text to be displayed in review quality check contextual onboarding card above the opt-in button. Parameter is the Fakespot product name. After the colon, what appears are two links, each on their own line. The first link is to a Privacy policy (review_quality_check_contextual_onboarding_privacy_policy_2). The second link is to Terms of use (review_quality_check_contextual_onboarding_terms_use_2). -->
-    <string name="review_quality_check_contextual_onboarding_caption_2">בחירה באפשרות ״כן, ארצה לנסות״ מהווה הסכמה לתנאים הבאים מאת %1$s:</string>
+    <string name="review_quality_check_contextual_onboarding_caption_2" moz:RemovedIn="123" tools:ignore="UnusedResources">בחירה באפשרות ״כן, ארצה לנסות״ מהווה הסכמה לתנאים הבאים מאת %1$s:</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot privacy policy. -->
-    <string name="review_quality_check_contextual_onboarding_privacy_policy" moz:RemovedIn="121" tools:ignore="UnusedResources">הצהרת הפרטיות</string>
+    <string name="review_quality_check_contextual_onboarding_privacy_policy">הצהרת הפרטיות</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot privacy policy. -->
-    <string name="review_quality_check_contextual_onboarding_privacy_policy_2">מדיניות הפרטיות</string>
+    <string name="review_quality_check_contextual_onboarding_privacy_policy_2" moz:RemovedIn="123" tools:ignore="UnusedResources">מדיניות הפרטיות</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot terms of use. -->
-    <string name="review_quality_check_contextual_onboarding_terms_use" moz:RemovedIn="121" tools:ignore="UnusedResources">תנאי השימוש</string>
+    <string name="review_quality_check_contextual_onboarding_terms_use">תנאי השימוש</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot terms of use. -->
-    <string name="review_quality_check_contextual_onboarding_terms_use_2">תנאי שימוש</string>
+    <string name="review_quality_check_contextual_onboarding_terms_use_2" moz:RemovedIn="123" tools:ignore="UnusedResources">תנאי שימוש</string>
     <!-- Text for opt-in button from the review quality check contextual onboarding card. -->
     <string name="review_quality_check_contextual_onboarding_primary_button_text">כן, ארצה לנסות</string>
     <!-- Text for opt-out button from the review quality check contextual onboarding card. -->
@@ -2328,6 +2340,11 @@
     <!-- Content description for headings announced by accessibility service. The first parameter is the text of the heading. Talkback will announce the first parameter and then speak the word "Heading" indicating to the user that this text is a heading for a section. -->
     <string name="a11y_heading">%s, כותרת</string>
 
+    <!-- Title for dialog displayed when trying to access links present in a text. -->
+    <string name="a11y_links_title">קישורים</string>
+    <!-- Additional content description for text bodies that contain urls. -->
+    <string name="a11y_links_available">קישורים זמינים</string>
+
     <!-- Translations feature-->
 
     <!-- Translation request dialog -->
@@ -2345,12 +2362,25 @@
     <string name="translations_bottom_sheet_translate_to">שפת יעד</string>
     <!-- Button text on the translations dialog to dismiss the dialog and return to the browser. -->
     <string name="translations_bottom_sheet_negative_button">לא כעת</string>
+    <!-- Button text on the translations dialog when a translation error appears, used to dismiss the dialog and return to the browser. -->
+    <string name="translations_bottom_sheet_negative_button_error">סיום</string>
     <!-- Button text on the translations dialog to begin a translation of the website. -->
     <string name="translations_bottom_sheet_positive_button">תרגום</string>
+    <!-- Button text on the translations dialog when a translation error appears. -->
+    <string name="translations_bottom_sheet_positive_button_error">ניסיון חוזר</string>
     <!-- Inactive button text on the translations dialog that indicates a translation is currently in progress. This button will be accompanied by a loading icon. -->
     <string name="translations_bottom_sheet_translating_in_progress">בתהליך תרגום</string>
     <!-- Button content description (not visible, for screen readers etc.) for the translations dialog translate button that indicates a translation is currently in progress. -->
     <string name="translations_bottom_sheet_translating_in_progress_content_description">התרגום בתהליך</string>
+
+    <!-- The title of the warning card informs the user that a translation could not be completed. -->
+    <string name="translation_error_could_not_translate_warning_text">אירעה שגיאה בתרגום. נא לנסות שוב.</string>
+    <!-- The title of the warning card informs the user that the list of languages cannot be loaded. -->
+    <string name="translation_error_could_not_load_languages_warning_text">לא ניתן היה לטעון שפות. נא לבדוק את חיבור האינטרנט שלך ולנסות שוב.</string>
+    <!-- The title of the warning card informs the user that a language is not supported. The first parameter is the name of the language that is not supported. -->
+    <string name="translation_error_language_not_supported_warning_text">איננו תומכים ב%1$s עדיין, עמך הסליחה.</string>
+    <!-- Button text on the warning card when a language is not supported. The link will take the user to a page to a support page about translations. -->
+    <string name="translation_error_language_not_supported_learn_more">מידע נוסף</string>
 
     <!-- Translations options dialog -->
     <!-- Title of the translation options dialog that allows a user to set their translation options for the site the user is currently on. -->
@@ -2483,8 +2513,12 @@
     <string name="download_language_file_dialog_negative_button_text">ביטול</string>
 
     <!-- Debug drawer -->
+    <!-- The user-facing title of the Debug Drawer feature. -->
+    <string name="debug_drawer_title">כלים לניפוי שגיאות</string>
+    <!-- Content description (not visible, for screen readers etc.): Navigate back within the debug drawer. -->
+    <string name="debug_drawer_back_button_content_description">ניווט אחורה</string>
     <!-- The title of the Tab Tools feature in the Debug Drawer. -->
-    <string name="debug_drawer_tab_tools_title" tools:ignore="UnusedResources">כלי לשוניות</string>
+    <string name="debug_drawer_tab_tools_title">כלי לשוניות</string>
     <!-- The title of the tab count section in Tab Tools. -->
     <string name="debug_drawer_tab_tools_tab_count_title">ספירת לשוניות</string>
     <!-- The active tab count category in the tab count section in Tab Tools. -->
@@ -2495,4 +2529,14 @@
     <string name="debug_drawer_tab_tools_tab_count_private">פרטי</string>
     <!-- The total tab count category in the tab count section in Tab Tools. -->
     <string name="debug_drawer_tab_tools_tab_count_total">סה״כ</string>
+    <!-- The title of the tab creation tool section in Tab Tools. -->
+    <string name="debug_drawer_tab_tools_tab_creation_tool_title">כלי ליצירת לשוניות</string>
+    <!-- The label of the text field in the tab creation tool. -->
+    <string name="debug_drawer_tab_tools_tab_creation_tool_text_field_label">כמות הלשוניות ליצירה</string>
+    <!-- The button text to add tabs to the active tab group in the tab creation tool. -->
+    <string name="debug_drawer_tab_tools_tab_creation_tool_button_text_active">הוספה ללשוניות פעילות</string>
+    <!-- The button text to add tabs to the inactive tab group in the tab creation tool. -->
+    <string name="debug_drawer_tab_tools_tab_creation_tool_button_text_inactive">הוספה ללשוניות לא פעילות</string>
+    <!-- The button text to add tabs to the private tab group in the tab creation tool. -->
+    <string name="debug_drawer_tab_tools_tab_creation_tool_button_text_private">הוספה ללשוניות פרטיות</string>
 </resources>

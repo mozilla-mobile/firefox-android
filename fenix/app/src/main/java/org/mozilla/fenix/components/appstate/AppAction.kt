@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.components.appstate
 
+import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.top.sites.TopSite
 import mozilla.components.lib.crash.Crash.NativeCodeCrash
@@ -31,6 +32,28 @@ import org.mozilla.fenix.wallpapers.Wallpaper
  * [Action] implementation related to [AppStore].
  */
 sealed class AppAction : Action {
+    /**
+     * [AppAction] dispatched to indicate that the store is initialized and
+     * ready to use. This action is dispatched automatically before any other
+     * action is processed. Its main purpose is to trigger initialization logic
+     * in middlewares. The action itself should have no effect on the [AppState].
+     */
+    object Init : AppAction()
+
+    /**
+     * NOTE: This action is not yet functional and will require https://bugzilla.mozilla.org/show_bug.cgi?id=1845409
+     * to be resolved. This is part of an ongoing lib-state refactor.
+     * Open a tab in the browser.
+     *
+     * @property mode Which [BrowsingMode] the tab should be opened in.
+     */
+    data class OpenTabInBrowser(val mode: BrowsingMode) : AppAction()
+
+    /**
+     * The browsing [mode] has been loaded from a persistence layer.
+     */
+    data class BrowsingModeLoaded(val mode: BrowsingMode) : AppAction()
+
     data class UpdateInactiveExpanded(val expanded: Boolean) : AppAction()
 
     /**
@@ -129,6 +152,11 @@ sealed class AppAction : Action {
     data class RemoveRecentSyncedTab(val syncedTab: RecentSyncedTab) : AppAction()
 
     /**
+     * Action indicating that the selected tab has been changed.
+     */
+    data class SelectedTabChanged(val tab: TabSessionState) : AppAction()
+
+    /**
      * [Action]s related to interactions with the Messaging Framework.
      */
     sealed class MessagingAction : AppAction() {
@@ -193,6 +221,11 @@ sealed class AppAction : Action {
             val wallpaper: Wallpaper,
             val imageState: Wallpaper.ImageFileState,
         ) : WallpaperAction()
+
+        /**
+         * App should be opened to the home screen in [BrowsingMode.Normal].
+         */
+        object OpenToHome : WallpaperAction()
     }
 
     /**
@@ -258,5 +291,45 @@ sealed class AppAction : Action {
         data class ProductRecommendationImpression(
             val key: ShoppingState.ProductRecommendationImpressionKey,
         ) : ShoppingAction()
+    }
+
+    /**
+     * Actions dispatched from the Toolbar that affect [AppState].
+     */
+    sealed class ToolbarAction : AppAction() {
+        /**
+         * Handles clicks for new tabs in [BrowsingMode.Normal] from the long-press menu of the Toolbar.
+         */
+        object NewTab : ToolbarAction()
+
+        /**
+         * Handles clicks for new tabs in [BrowsingMode.Private] from the long-press menu of the Toolbar.
+         */
+        object NewPrivateTab : ToolbarAction()
+    }
+
+    /**
+     * Actions dispatched from the Tabs Tray that affect [AppState].
+     */
+    sealed class TabsTrayAction : AppAction() {
+        /**
+         * Handles clicks for new tabs in [BrowsingMode.Normal] from the FAB of the Tabs Tray.
+         */
+        object NewTab : TabsTrayAction()
+
+        /**
+         Handles clicks for new tabs in [BrowsingMode.Private] from the FAB of the Tabs Tray.
+         */
+        object NewPrivateTab : TabsTrayAction()
+    }
+
+    /**
+     * Actions related to Intents.
+     */
+    sealed class IntentAction : AppAction() {
+        /**
+         * Private browsing mode should be entered.
+         */
+        object EnterPrivateBrowsing : IntentAction()
     }
 }

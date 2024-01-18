@@ -12,12 +12,15 @@ import androidx.compose.material.ModalDrawer
 import androidx.compose.material.Snackbar
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
+import androidx.compose.material.Text
 import androidx.compose.material.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,31 +28,37 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
-import mozilla.components.lib.state.ext.observeAsState
 import org.mozilla.fenix.R
 import org.mozilla.fenix.compose.annotation.LightDarkPreview
 import org.mozilla.fenix.compose.button.FloatingActionButton
-import org.mozilla.fenix.debugsettings.store.DebugDrawerAction
-import org.mozilla.fenix.debugsettings.store.DebugDrawerState
-import org.mozilla.fenix.debugsettings.store.DebugDrawerState.DrawerStatus
-import org.mozilla.fenix.debugsettings.store.DebugDrawerStore
+import org.mozilla.fenix.debugsettings.navigation.DebugDrawerDestination
+import org.mozilla.fenix.debugsettings.store.DrawerStatus
 import org.mozilla.fenix.theme.FirefoxTheme
 
 /**
- * Overlay for presenting Fenix-wide debugging content.
+ * Overlay for presenting app-wide debugging content.
  *
- * @param debugDrawerStore [DebugDrawerStore] used to listen for changes to [DebugDrawerState] and
- * dispatch any [DebugDrawerAction]s.
+ * @param navController [NavHostController] used to perform navigation actions.
+ * @param drawerStatus The [DrawerStatus] indicating the physical state of the drawer.
+ * @param debugDrawerDestinations The complete list of [DebugDrawerDestination]s used to populate
+ * the [DebugDrawer] with sub screens.
+ * @param onDrawerOpen Invoked when the drawer is opened.
+ * @param onDrawerClose Invoked when the drawer is closed.
+ * @param onDrawerBackButtonClick Invoked when the user taps on the back button in the app bar.
  */
 @Composable
 fun DebugOverlay(
-    debugDrawerStore: DebugDrawerStore,
+    navController: NavHostController,
+    drawerStatus: DrawerStatus,
+    debugDrawerDestinations: List<DebugDrawerDestination>,
+    onDrawerOpen: () -> Unit,
+    onDrawerClose: () -> Unit,
+    onDrawerBackButtonClick: () -> Unit,
 ) {
-    val drawerStatus by debugDrawerStore.observeAsState(initialValue = DrawerStatus.Closed) { state ->
-        state.drawerStatus
-    }
     val snackbarState = remember { SnackbarHostState() }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
@@ -64,7 +73,7 @@ fun DebugOverlay(
             .distinctUntilChanged()
             .filter { it == DrawerValue.Closed }
             .collect {
-                debugDrawerStore.dispatch(DebugDrawerAction.DrawerClosed)
+                onDrawerClose()
             }
     }
 
@@ -77,7 +86,7 @@ fun DebugOverlay(
                 .align(Alignment.CenterStart)
                 .padding(start = 16.dp),
             onClick = {
-                debugDrawerStore.dispatch(DebugDrawerAction.DrawerOpened)
+                onDrawerOpen()
             },
         )
 
@@ -97,7 +106,11 @@ fun DebugOverlay(
                 ModalDrawer(
                     drawerContent = {
                         CompositionLocalProvider(LocalLayoutDirection provides currentLayoutDirection) {
-                            DebugDrawer()
+                            DebugDrawer(
+                                navController = navController,
+                                destinations = debugDrawerDestinations,
+                                onBackButtonClick = onDrawerBackButtonClick,
+                            )
                         }
                     },
                     drawerBackgroundColor = FirefoxTheme.colors.layer1,
@@ -123,9 +136,41 @@ fun DebugOverlay(
 @Composable
 @LightDarkPreview
 private fun DebugOverlayPreview() {
+    val navController = rememberNavController()
+    var drawerStatus by remember { mutableStateOf(DrawerStatus.Closed) }
+    val destinations = remember {
+        List(size = 15) { index ->
+            DebugDrawerDestination(
+                route = "screen_$index",
+                title = R.string.debug_drawer_title,
+                onClick = {
+                    navController.navigate(route = "screen_$index")
+                },
+                content = {
+                    Text(
+                        text = "Tool $index",
+                        color = FirefoxTheme.colors.textPrimary,
+                        style = FirefoxTheme.typography.headline6,
+                    )
+                },
+            )
+        }
+    }
+
     FirefoxTheme {
         DebugOverlay(
-            debugDrawerStore = DebugDrawerStore(),
+            navController = navController,
+            drawerStatus = drawerStatus,
+            debugDrawerDestinations = destinations,
+            onDrawerOpen = {
+                drawerStatus = DrawerStatus.Open
+            },
+            onDrawerClose = {
+                drawerStatus = DrawerStatus.Closed
+            },
+            onDrawerBackButtonClick = {
+                navController.popBackStack()
+            },
         )
     }
 }
