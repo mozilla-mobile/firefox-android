@@ -48,11 +48,9 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.Core
 import org.mozilla.fenix.components.metrics.MetricsUtils
-import org.mozilla.fenix.ext.application
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.search.SearchDialogFragmentDirections.Companion.actionGlobalAddonsManagementFragment
 import org.mozilla.fenix.search.SearchDialogFragmentDirections.Companion.actionGlobalSearchEngineFragment
-import org.mozilla.fenix.search.awesomebar.AwesomeBarView.Companion.GOOGLE_SEARCH_ENGINE_NAME
 import org.mozilla.fenix.search.toolbar.SearchSelectorMenu
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.utils.Settings
@@ -90,7 +88,6 @@ class SearchDialogControllerTest {
         )
         every { store.state.tabId } returns "test-tab-id"
         every { store.state.searchEngineSource.searchEngine } returns searchEngine
-        every { searchEngine.name } returns ""
         every { searchEngine.type } returns SearchEngine.Type.BUNDLED
         every { navController.currentDestination } returns mockk {
             every { id } returns R.id.searchDialogFragment
@@ -121,8 +118,6 @@ class SearchDialogControllerTest {
                 from = BrowserDirection.FromSearchDialog,
                 engine = searchEngine,
                 forceSearch = false,
-                flags = EngineSession.LoadUrlFlags.none(),
-                additionalHeaders = null,
             )
         }
 
@@ -154,8 +149,6 @@ class SearchDialogControllerTest {
                 from = BrowserDirection.FromSearchDialog,
                 engine = searchEngine,
                 forceSearch = true,
-                flags = EngineSession.LoadUrlFlags.none(),
-                additionalHeaders = null,
             )
         }
 
@@ -167,70 +160,6 @@ class SearchDialogControllerTest {
         val snapshot = Events.enteredUrl.testGetValue()!!
         assertEquals(1, snapshot.size)
         assertEquals("false", snapshot.single().extra?.getValue("autocomplete"))
-    }
-
-    @Test
-    fun `GIVEN Google search engine is selected and device ram is above threshold WHEN url is committed THEN perform search`() {
-        val searchTerm = "coffee"
-        assertNull(Events.enteredUrl.testGetValue())
-
-        every { searchEngine.name } returns GOOGLE_SEARCH_ENGINE_NAME
-        every { store.state.defaultEngine } returns searchEngine
-        every { activity.applicationContext.application.isDeviceRamAboveThreshold } returns true
-
-        createController().handleUrlCommitted(searchTerm)
-
-        browserStore.waitUntilIdle()
-
-        verify {
-            activity.openToBrowserAndLoad(
-                searchTermOrURL = searchTerm,
-                newTab = false,
-                from = BrowserDirection.FromSearchDialog,
-                engine = searchEngine,
-                forceSearch = false,
-                flags = EngineSession.LoadUrlFlags.select(EngineSession.LoadUrlFlags.ALLOW_ADDITIONAL_HEADERS),
-                additionalHeaders = mapOf(
-                    "X-Search-Subdivision" to "1",
-                ),
-            )
-        }
-
-        middleware.assertLastAction(AwesomeBarAction.EngagementFinished::class) { action ->
-            assertFalse(action.abandoned)
-        }
-    }
-
-    @Test
-    fun `GIVEN Google search engine is selected and device ram is below threshold WHEN url is committed THEN perform search`() {
-        val searchTerm = "coffee"
-        assertNull(Events.enteredUrl.testGetValue())
-
-        every { searchEngine.name } returns GOOGLE_SEARCH_ENGINE_NAME
-        every { store.state.defaultEngine } returns searchEngine
-        every { activity.applicationContext.application.isDeviceRamAboveThreshold } returns false
-
-        createController().handleUrlCommitted(searchTerm)
-
-        browserStore.waitUntilIdle()
-
-        verify {
-            activity.openToBrowserAndLoad(
-                searchTermOrURL = searchTerm,
-                newTab = false,
-                from = BrowserDirection.FromSearchDialog,
-                engine = searchEngine,
-                forceSearch = false,
-                flags = EngineSession.LoadUrlFlags.select(EngineSession.LoadUrlFlags.ALLOW_ADDITIONAL_HEADERS),
-                additionalHeaders = mapOf(
-                    "X-Search-Subdivision" to "0",
-                ),
-            )
-        }
-
-        middleware.assertLastAction(AwesomeBarAction.EngagementFinished::class) { action ->
-            assertFalse(action.abandoned)
-        }
     }
 
     @Test
@@ -268,8 +197,6 @@ class SearchDialogControllerTest {
                 from = BrowserDirection.FromSearchDialog,
                 engine = searchEngine,
                 forceSearch = true,
-                flags = EngineSession.LoadUrlFlags.none(),
-                additionalHeaders = null,
             )
         }
 
@@ -358,8 +285,6 @@ class SearchDialogControllerTest {
                 newTab = false,
                 from = BrowserDirection.FromSearchDialog,
                 engine = searchEngine,
-                flags = EngineSession.LoadUrlFlags.none(),
-                additionalHeaders = null,
             )
         }
 
@@ -496,8 +421,6 @@ class SearchDialogControllerTest {
                 from = BrowserDirection.FromSearchDialog,
                 engine = searchEngine,
                 forceSearch = true,
-                flags = EngineSession.LoadUrlFlags.none(),
-                additionalHeaders = null,
             )
         }
 
