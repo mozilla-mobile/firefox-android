@@ -101,7 +101,7 @@ class SettingsSubMenuAutofillRobot {
     }
 
     fun verifyAddressesAutofillToggle(enabled: Boolean) {
-        onView(withText(R.string.preferences_addresses_save_and_autofill_addresses))
+        onView(withText(R.string.preferences_addresses_save_and_autofill_addresses_2))
             .check(
                 matches(
                     hasCousin(
@@ -120,7 +120,7 @@ class SettingsSubMenuAutofillRobot {
     }
 
     fun verifySaveAndAutofillCreditCardsToggle(enabled: Boolean) =
-        onView(withText(R.string.preferences_credit_cards_save_and_autofill_cards))
+        onView(withText(R.string.preferences_credit_cards_save_and_autofill_cards_2))
             .check(
                 matches(
                     hasCousin(
@@ -441,10 +441,10 @@ class SettingsSubMenuAutofillRobot {
     fun verifyEditCreditCardToolbarTitle() = assertUIObjectExists(editCreditCardToolbarTitle)
 
     fun verifyCreditCardNumberErrorMessage() =
-        assertUIObjectExists(itemContainingText(getStringResource(R.string.credit_cards_number_validation_error_message)))
+        assertUIObjectExists(itemContainingText(getStringResource(R.string.credit_cards_number_validation_error_message_2)))
 
     fun verifyNameOnCreditCardErrorMessage() =
-        assertUIObjectExists(itemContainingText(getStringResource(R.string.credit_cards_name_on_card_validation_error_message)))
+        assertUIObjectExists(itemContainingText(getStringResource(R.string.credit_cards_name_on_card_validation_error_message_2)))
 
     class Transition {
         fun goBack(interact: SettingsRobot.() -> Unit): SettingsRobot.Transition {
@@ -493,8 +493,8 @@ private val manageAddressesToolbarTitle =
             .childSelector(UiSelector().text(getStringResource(R.string.addresses_manage_addresses))),
     )
 
-private val saveAndAutofillAddressesOption = itemContainingText(getStringResource(R.string.preferences_addresses_save_and_autofill_addresses))
-private val saveAndAutofillAddressesSummary = itemContainingText(getStringResource(R.string.preferences_addresses_save_and_autofill_addresses_summary))
+private val saveAndAutofillAddressesOption = itemContainingText(getStringResource(R.string.preferences_addresses_save_and_autofill_addresses_2))
+private val saveAndAutofillAddressesSummary = itemContainingText(getStringResource(R.string.preferences_addresses_save_and_autofill_addresses_summary_2))
 private val addAddressButton = itemContainingText(getStringResource(R.string.preferences_addresses_add_address))
 private val manageAddressesButton =
     mDevice.findObject(
@@ -523,14 +523,14 @@ private val toolbarDeleteAddressButton = itemWithResId("$packageName:id/delete_a
 private val cancelDeleteAddressButton = onView(withId(android.R.id.button2)).inRoot(RootMatchers.isDialog())
 private val confirmDeleteAddressButton = onView(withId(android.R.id.button1)).inRoot(RootMatchers.isDialog())
 
-private val creditCardsSectionTitle = itemContainingText(getStringResource(R.string.preferences_credit_cards))
-private val saveAndAutofillCreditCardsOption = itemContainingText(getStringResource(R.string.preferences_credit_cards_save_and_autofill_cards))
-private val saveAndAutofillCreditCardsSummary = itemContainingText(getStringResource(R.string.preferences_credit_cards_save_and_autofill_cards_summary))
+private val creditCardsSectionTitle = itemContainingText(getStringResource(R.string.preferences_credit_cards_2))
+private val saveAndAutofillCreditCardsOption = itemContainingText(getStringResource(R.string.preferences_credit_cards_save_and_autofill_cards_2))
+private val saveAndAutofillCreditCardsSummary = itemContainingText(getStringResource(R.string.preferences_credit_cards_save_and_autofill_cards_summary_2))
 private val syncCreditCardsAcrossDevicesButton = itemContainingText(getStringResource(R.string.preferences_credit_cards_sync_cards_across_devices))
-private val addCreditCardButton = mDevice.findObject(UiSelector().textContains(getStringResource(R.string.preferences_credit_cards_add_credit_card)))
+private val addCreditCardButton = mDevice.findObject(UiSelector().textContains(getStringResource(R.string.preferences_credit_cards_add_credit_card_2)))
 private val savedCreditCardsToolbarTitle = itemContainingText(getStringResource(R.string.credit_cards_saved_cards))
 private val editCreditCardToolbarTitle = itemContainingText(getStringResource(R.string.credit_cards_edit_card))
-private val manageSavedCreditCardsButton = mDevice.findObject(UiSelector().textContains(getStringResource(R.string.preferences_credit_cards_manage_saved_cards)))
+private val manageSavedCreditCardsButton = mDevice.findObject(UiSelector().textContains(getStringResource(R.string.preferences_credit_cards_manage_saved_cards_2)))
 private val creditCardNumberTextInput = mDevice.findObject(UiSelector().resourceId("$packageName:id/card_number_input"))
 private val nameOnCreditCardTextInput = mDevice.findObject(UiSelector().resourceId("$packageName:id/name_on_card_input"))
 private val expiryMonthDropDown = mDevice.findObject(UiSelector().resourceId("$packageName:id/expiry_month_drop_down"))

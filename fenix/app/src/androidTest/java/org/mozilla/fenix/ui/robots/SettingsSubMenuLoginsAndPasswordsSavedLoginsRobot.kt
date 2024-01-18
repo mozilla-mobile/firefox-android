@@ -48,10 +48,10 @@ class SettingsSubMenuLoginsAndPasswordsSavedLoginsRobot {
         onView(withText(getStringResource(R.string.preferences_passwords_saved_logins_description_empty_text)))
             .check(matches(isDisplayed()))
 
-        onView(withText(R.string.preferences_passwords_saved_logins_description_empty_learn_more_link))
+        onView(withText(R.string.preferences_passwords_saved_logins_description_empty_learn_more_link_2))
             .check(matches(isDisplayed()))
 
-        onView(withText(R.string.preferences_logins_add_login))
+        onView(withText(R.string.preferences_logins_add_login_2))
             .check(matches(isDisplayed()))
     }
 
@@ -66,7 +66,7 @@ class SettingsSubMenuLoginsAndPasswordsSavedLoginsRobot {
     fun tapSetupLater() = onView(withText("Later")).perform(ViewActions.click())
 
     fun clickAddLoginButton() =
-        itemContainingText(getStringResource(R.string.preferences_logins_add_login)).click()
+        itemContainingText(getStringResource(R.string.preferences_logins_add_login_2)).click()
 
     fun verifyAddNewLoginView() {
         assertUIObjectExists(
@@ -87,7 +87,7 @@ class SettingsSubMenuLoginsAndPasswordsSavedLoginsRobot {
         assertUIObjectExists(itemContainingText(getStringResource(R.string.add_login_hostname_invalid_text_2)))
 
     fun verifyPasswordErrorMessage() =
-        assertUIObjectExists(itemContainingText(getStringResource(R.string.saved_login_password_required)))
+        assertUIObjectExists(itemContainingText(getStringResource(R.string.saved_login_password_required_2)))
 
     fun verifyPasswordClearButtonEnabled() =
         assertItemIsEnabledAndVisible(itemWithResId("$packageName:id/clearPasswordTextButton"))
@@ -141,7 +141,7 @@ class SettingsSubMenuLoginsAndPasswordsSavedLoginsRobot {
     fun clickDeleteLoginButton() = itemContainingText("Delete").click()
 
     fun verifyLoginDeletionPrompt() =
-        assertUIObjectExists(itemContainingText(getStringResource(R.string.login_deletion_confirmation)))
+        assertUIObjectExists(itemContainingText(getStringResource(R.string.login_deletion_confirmation_2)))
 
     fun clickConfirmDeleteLogin() =
         onView(withId(android.R.id.button1)).inRoot(RootMatchers.isDialog()).click()
@@ -171,10 +171,10 @@ class SettingsSubMenuLoginsAndPasswordsSavedLoginsRobot {
         onView(withId(R.id.passwordText)).check(matches(withText(password)))
 
     fun verifyUserNameRequiredErrorMessage() =
-        assertUIObjectExists(itemContainingText(getStringResource(R.string.saved_login_username_required)))
+        assertUIObjectExists(itemContainingText(getStringResource(R.string.saved_login_username_required_2)))
 
     fun verifyPasswordRequiredErrorMessage() =
-        assertUIObjectExists(itemContainingText(getStringResource(R.string.saved_login_password_required)))
+        assertUIObjectExists(itemContainingText(getStringResource(R.string.saved_login_password_required_2)))
 
     fun clickGoBackButton() = goBackButton().click()
 

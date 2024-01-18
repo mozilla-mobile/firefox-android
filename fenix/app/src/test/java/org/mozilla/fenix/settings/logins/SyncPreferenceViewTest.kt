@@ -65,7 +65,7 @@ class SyncPreferenceViewTest {
 
             every { getString(R.string.pref_key_sync_logins) } returns "pref_key_sync_logins"
             every { getString(R.string.preferences_passwords_sync_logins) } returns "Sync logins"
-            every { getString(R.string.preferences_passwords_sync_logins_across_devices) } returns "Sync logins across devices"
+            every { getString(R.string.preferences_passwords_sync_logins_across_devices_2) } returns "Sync logins across devices"
         }
 
         syncPreference = mockk {

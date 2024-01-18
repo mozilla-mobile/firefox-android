@@ -557,7 +557,7 @@ private fun assertEnhancedTrackingProtectionButton() {
 
 private fun assertLoginsAndPasswordsButton() {
     scrollToElementByText("Logins and passwords")
-    onView(withText(R.string.preferences_passwords_logins_and_passwords))
+    onView(withText(R.string.preferences_passwords_logins_and_passwords_2))
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 }
 

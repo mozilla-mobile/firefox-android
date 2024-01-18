@@ -280,7 +280,7 @@ class AccountSettingsFragment : PreferenceFragmentCompat() {
             AlertDialog.Builder(it).apply {
                 setTitle(getString(R.string.logins_warning_dialog_title))
                 setMessage(
-                    getString(R.string.logins_warning_dialog_message),
+                    getString(R.string.logins_warning_dialog_message_2),
                 )
 
                 setNegativeButton(getString(R.string.logins_warning_dialog_later)) { _: DialogInterface, _ ->
