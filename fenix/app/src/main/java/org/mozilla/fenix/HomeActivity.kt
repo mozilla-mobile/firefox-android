@@ -24,6 +24,7 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
+import android.view.WindowManager.LayoutParams.FLAG_SECURE
 import androidx.annotation.CallSuper
 import androidx.annotation.IdRes
 import androidx.annotation.RequiresApi
@@ -87,6 +88,8 @@ import org.mozilla.fenix.GleanMetrics.SplashScreen
 import org.mozilla.fenix.GleanMetrics.StartOnHome
 import org.mozilla.fenix.addons.ExtensionsProcessDisabledController
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
+import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
+import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
 import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.appstate.bindings.BrowserStoreBinding
 import org.mozilla.fenix.components.metrics.BreadcrumbsRecorder
@@ -158,9 +161,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     protected val homeActivityInitTimeStampNanoSeconds = SystemClock.elapsedRealtimeNanos()
 
     private lateinit var binding: ActivityHomeBinding
-    val themeManager by lazy {
-        createThemeManager()
-    }
+    lateinit var themeManager: ThemeManager
+    lateinit var browsingModeManager: BrowsingModeManager
 
     private var isVisuallyComplete = false
 
@@ -231,11 +233,12 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
         maybeShowSplashScreen()
 
-        setModeFromIntent(intent)
-        // Theme setup should always be called before super.onCreate
-        themeManager.setActivityTheme(this)
-        themeManager.applyStatusBarTheme(this)
-        super.onCreate(savedInstanceState)
+        // There is disk read violations on some devices such as samsung and pixel for android 9/10
+        components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
+            // Theme setup should always be called before super.onCreate
+            setupThemeAndBrowsingMode(getModeFromIntentOrLastKnown(intent))
+            super.onCreate(savedInstanceState)
+        }
 
         // Checks if Activity is currently in PiP mode if launched from external intents, then exits it
         checkAndExitPiP()
@@ -367,12 +370,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             serviceWorkerSupport,
             webExtensionPromptFeature,
             BrowserStoreBinding(components.core.store, components.appStore),
-            BrowsingModeBinding(
-                components.appStore,
-                themeManager,
-                { window },
-                components.settings,
-            ),
         )
 
         if (shouldAddToRecentsScreen(intent)) {
@@ -698,7 +695,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             ) + externalSourceIntentProcessors
         val intentHandled =
             intentProcessors.any { it.process(intent, navHost.navController, this.intent) }
-        setModeFromIntent(intent)
+        browsingModeManager.mode = getModeFromIntentOrLastKnown(intent)
 
         if (intentHandled) {
             supportFragmentManager
@@ -869,18 +866,14 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
      * private mode directly before the content view is created. Returns the mode set by the intent
      * otherwise falls back to the last known mode.
      */
-    internal fun setModeFromIntent(intent: Intent?) {
+    internal fun getModeFromIntentOrLastKnown(intent: Intent?): BrowsingMode {
         intent?.toSafeIntent()?.let {
             if (it.hasExtra(PRIVATE_BROWSING_MODE)) {
                 val startPrivateMode = it.getBooleanExtra(PRIVATE_BROWSING_MODE, false)
-                // Since the mode is initially set from settings during AppAction.Init, this action
-                // will overwrite the state once the action is processed in the queue if called from
-                // onCreate.
-                if (startPrivateMode) {
-                    components.appStore.dispatch(AppAction.IntentAction.EnterPrivateBrowsing)
-                }
+                return BrowsingMode.fromBoolean(isPrivate = startPrivateMode)
             }
         }
+        return settings().lastKnownMode
     }
 
     /**
@@ -894,6 +887,14 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             return it.getBooleanExtra(START_IN_RECENTS_SCREEN, false)
         }
         return false
+    }
+
+    private fun setupThemeAndBrowsingMode(mode: BrowsingMode) {
+        settings().lastKnownMode = mode
+        browsingModeManager = createBrowsingModeManager(mode)
+        themeManager = createThemeManager()
+        themeManager.setActivityTheme(this)
+        themeManager.applyStatusBarTheme(this)
     }
 
     // Stop active media when activity is destroyed.
@@ -1020,7 +1021,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         additionalHeaders: Map<String, String>? = null,
     ) {
         val startTime = components.core.engine.profiler?.getProfilerTime()
-        val mode = components.appStore.state.mode
+        val mode = browsingModeManager.mode
 
         val private = when (mode) {
             BrowsingMode.Private -> true
@@ -1096,7 +1097,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     open fun navigateToBrowserOnColdStart() {
         // Normal tabs + cold start -> Should go back to browser if we had any tabs open when we left last
         // except for PBM + Cold Start there won't be any tabs since they're evicted so we never will navigate
-        if (settings().shouldReturnToBrowser && !components.appStore.state.mode.isPrivate) {
+        if (settings().shouldReturnToBrowser && !browsingModeManager.mode.isPrivate) {
             // Navigate to home first (without rendering it) to add it to the back stack.
             openToBrowser(BrowserDirection.FromGlobal, null)
         }
@@ -1126,8 +1127,25 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         return super.getSystemService(name)
     }
 
+    protected open fun createBrowsingModeManager(initialMode: BrowsingMode): BrowsingModeManager {
+        return DefaultBrowsingModeManager(initialMode, components.settings) { newMode ->
+            updateSecureWindowFlags(newMode)
+            themeManager.currentTheme = newMode
+        }.also {
+            updateSecureWindowFlags(initialMode)
+        }
+    }
+
+    private fun updateSecureWindowFlags(mode: BrowsingMode = browsingModeManager.mode) {
+        if (mode == BrowsingMode.Private && !settings().allowScreenshotsInPrivateMode) {
+            window.addFlags(FLAG_SECURE)
+        } else {
+            window.clearFlags(FLAG_SECURE)
+        }
+    }
+
     protected open fun createThemeManager(): ThemeManager {
-        return DefaultThemeManager(components.appStore.state.mode, this)
+        return DefaultThemeManager(browsingModeManager.mode, this)
     }
 
     private fun openPopup(webExtensionState: WebExtensionState) {
