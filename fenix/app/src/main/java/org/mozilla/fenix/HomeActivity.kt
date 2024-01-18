@@ -296,7 +296,10 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
                                 visibility = View.VISIBLE
 
                                 setContent {
-                                    FenixOverlay()
+                                    FenixOverlay(
+                                        browserStore = components.core.store,
+                                        inactiveTabsEnabled = settings().inactiveTabsAreEnabled,
+                                    )
                                 }
                             } else {
                                 setContent {}
