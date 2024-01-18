@@ -141,7 +141,6 @@ data class SearchFragmentState(
 /**
  * Creates the initial state for the search fragment.
  */
-@Suppress("LongParameterList")
 fun createInitialSearchFragmentState(
     activity: HomeActivity,
     components: Components,

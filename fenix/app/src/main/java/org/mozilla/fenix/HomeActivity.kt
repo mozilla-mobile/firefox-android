@@ -34,6 +34,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
@@ -86,7 +87,8 @@ import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.Metrics
 import org.mozilla.fenix.GleanMetrics.SplashScreen
 import org.mozilla.fenix.GleanMetrics.StartOnHome
-import org.mozilla.fenix.addons.ExtensionsProcessDisabledController
+import org.mozilla.fenix.addons.ExtensionsProcessDisabledBackgroundController
+import org.mozilla.fenix.addons.ExtensionsProcessDisabledForegroundController
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
@@ -151,7 +153,7 @@ import java.util.Locale
  * - home screen
  * - browser screen
  */
-@SuppressWarnings("TooManyFunctions", "LargeClass", "LongParameterList", "LongMethod")
+@SuppressWarnings("TooManyFunctions", "LargeClass", "LongMethod")
 open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     // DO NOT MOVE ANYTHING ABOVE THIS, GETTING INIT TIME IS CRITICAL
     // we need to store startup timestamp for warm startup. we cant directly store
@@ -182,8 +184,15 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         )
     }
 
-    private val extensionsProcessDisabledPromptObserver by lazy {
-        ExtensionsProcessDisabledController(this@HomeActivity)
+    private val extensionsProcessDisabledForegroundController by lazy {
+        ExtensionsProcessDisabledForegroundController(this@HomeActivity)
+    }
+
+    private val extensionsProcessDisabledBackgroundController by lazy {
+        ExtensionsProcessDisabledBackgroundController(
+            browserStore = components.core.store,
+            appStore = components.appStore,
+        )
     }
 
     private val serviceWorkerSupport by lazy {
@@ -321,7 +330,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             // Unless the activity is recreated, navigate to home first (without rendering it)
             // to add it to the back stack.
             if (savedInstanceState == null) {
-                navigateToHome()
+                navigateToHome(navHost.navController)
             }
 
             if (!shouldStartOnHome() && shouldNavigateToBrowserOnColdStart(savedInstanceState)) {
@@ -365,7 +374,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
         lifecycle.addObservers(
             webExtensionPopupObserver,
-            extensionsProcessDisabledPromptObserver,
+            extensionsProcessDisabledForegroundController,
+            extensionsProcessDisabledBackgroundController,
             serviceWorkerSupport,
             webExtensionPromptFeature,
         )
@@ -672,7 +682,12 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         startupPathProvider.onIntentReceived(intent)
     }
 
-    open fun handleNewIntent(intent: Intent) {
+    @VisibleForTesting
+    internal fun handleNewIntent(intent: Intent) {
+        if (this is ExternalAppBrowserActivity) {
+            return
+        }
+
         // Diagnostic breadcrumb for "Display already aquired" crash:
         // https://github.com/mozilla-mobile/android-components/issues/7960
         breadcrumb(
@@ -960,7 +975,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
      * was opened from history.
      * @param additionalHeaders The extra headers to use when loading the URL.
      */
-    @Suppress("LongParameterList")
     fun openToBrowserAndLoad(
         searchTermOrURL: String,
         newTab: Boolean,
@@ -1092,7 +1106,12 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         settings().openNextTabInDesktopMode = false
     }
 
-    open fun navigateToBrowserOnColdStart() {
+    @VisibleForTesting
+    internal fun navigateToBrowserOnColdStart() {
+        if (this is ExternalAppBrowserActivity) {
+            return
+        }
+
         // Normal tabs + cold start -> Should go back to browser if we had any tabs open when we left last
         // except for PBM + Cold Start there won't be any tabs since they're evicted so we never will navigate
         if (settings().shouldReturnToBrowser && !browsingModeManager.mode.isPrivate) {
@@ -1101,8 +1120,13 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         }
     }
 
-    open fun navigateToHome() {
-        navHost.navController.navigate(NavGraphDirections.actionStartupHome())
+    @VisibleForTesting
+    internal fun navigateToHome(navController: NavController) {
+        if (this is ExternalAppBrowserActivity) {
+            return
+        }
+
+        navController.navigate(NavGraphDirections.actionStartupHome())
     }
 
     override fun attachBaseContext(base: Context) {
