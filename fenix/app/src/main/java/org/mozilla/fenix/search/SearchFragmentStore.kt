@@ -13,6 +13,7 @@ import mozilla.components.browser.state.state.selectedOrDefaultSearchEngine
 import mozilla.components.lib.state.Action
 import mozilla.components.lib.state.State
 import mozilla.components.lib.state.Store
+import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.Components
 import org.mozilla.fenix.components.metrics.MetricsUtils
@@ -142,6 +143,7 @@ data class SearchFragmentState(
  */
 @Suppress("LongParameterList")
 fun createInitialSearchFragmentState(
+    activity: HomeActivity,
     components: Components,
     tabId: String?,
     pastedText: String?,
@@ -165,7 +167,7 @@ fun createInitialSearchFragmentState(
         searchEngineSource = searchEngineSource,
         defaultEngine = null,
         showSearchSuggestions = shouldShowSearchSuggestions(
-            browsingMode = components.appStore.state.mode,
+            browsingMode = activity.browsingModeManager.mode,
             settings = settings,
         ),
         showSearchSuggestionsHint = false,
@@ -182,9 +184,9 @@ fun createInitialSearchFragmentState(
         showAllSyncedTabsSuggestions = settings.shouldShowSyncedTabsSuggestions,
         showSessionSuggestionsForCurrentEngine = false,
         showAllSessionSuggestions = true,
-        showSponsoredSuggestions = components.appStore.state.mode == BrowsingMode.Normal &&
+        showSponsoredSuggestions = activity.browsingModeManager.mode == BrowsingMode.Normal &&
             settings.enableFxSuggest && settings.showSponsoredSuggestions,
-        showNonSponsoredSuggestions = components.appStore.state.mode == BrowsingMode.Normal &&
+        showNonSponsoredSuggestions = activity.browsingModeManager.mode == BrowsingMode.Normal &&
             settings.enableFxSuggest && settings.showNonSponsoredSuggestions,
         tabId = tabId,
         pastedText = pastedText,
