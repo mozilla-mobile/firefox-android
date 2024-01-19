@@ -59,7 +59,7 @@ To make it easier to triage, we have these issue requirements:
 
 * Please do your best to search for duplicate issues before filing a new issue so we can keep our issue board clean.
 * Every issue should have **exactly** one bug/feature request described in it. Please do not file meta feedback list tickets as it is difficult to parse them and address their individual points.
-* Feature Requests are better when they’re open-ended instead of demanding a specific solution -ie  “I want an easier way to do X” instead of “add Y”
+* Feature Requests are better when they’re open-ended instead of demanding a specific solution - i.e. “I want an easier way to do X” instead of “add Y”
 * Issues are not the place to go off topic or debate. If you have questions, please join the [#fenix:mozilla.org channel](https://chat.mozilla.org/#/room/#fenix:mozilla.org).
 * Please always remember our [Community Participation Guidelines](https://www.mozilla.org/en-US/about/governance/policies/participation/)
 * Please do not tag specific team members to try to get your issue looked at faster. We have a triage process that will tag and label issues correctly in due time. If you think an issue is very severe, you can ask about it in Matrix.
@@ -94,7 +94,7 @@ Pre-requisites:
 ### Build Variants
 For general development, we recommend the **debug** build variant. Here's an explanation of each variant:
 
-- **debug**: the default for developers, similar to most other Android apps. It is debuggable, uses a Nightly GeckoView with debug symbols, adds tools like LeakCanary for troublingshooting, and does not strip unused code.
+- **debug**: the default for developers, similar to most other Android apps. It is debuggable, uses a Nightly GeckoView with debug symbols, adds tools like LeakCanary for troubleshooting, and does not strip unused code.
 - **nightly**: what we ship to the Firefox Nightly channel, using GeckoView Nightly.
 - **beta**: what we ship to the Firefox Beta channel, using GeckoView Beta. It is more stable than nightly.
 - **release**: what we ship as Firefox for Android, using GeckoView Release. It is the most stable.
