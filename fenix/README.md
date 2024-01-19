@@ -70,7 +70,7 @@ Please keep in mind that even though a feature you have in mind may seem like a 
 
 Pre-requisites:
 * Android SDK
-* To run command line tools, you'll need to configure Java: see [our how-to guide](https://github.com/mozilla-mobile/shared-docs/blob/master/android/configure_java.md).
+* To run command line tools, you'll need to configure Java: see [our how-to guide](https://github.com/mozilla-mobile/firefox-android/blob/main/docs/shared/android/configure_java.md).
 
 1. Clone or Download the repository:
 
