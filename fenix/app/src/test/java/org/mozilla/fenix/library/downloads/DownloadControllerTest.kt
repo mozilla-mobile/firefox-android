@@ -13,6 +13,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 
 class DownloadControllerTest {
     private val downloadItem = DownloadItem(
@@ -27,10 +28,12 @@ class DownloadControllerTest {
     private val store: DownloadFragmentStore = mockk(relaxed = true)
     private val state: DownloadFragmentState = mockk(relaxed = true)
 
-    private val openToFileManager: (DownloadItem) -> Unit = { item ->
+    private val openToFileManager: (DownloadItem, BrowsingMode?) -> Unit = { item, mode ->
         openToFileManagerCapturedItem = item
+        openToFileManagerCapturedMode = mode
     }
     private var openToFileManagerCapturedItem: DownloadItem? = null
+    private var openToFileManagerCapturedMode: BrowsingMode? = null
 
     private val invalidateOptionsMenu: () -> Unit = { wasInvalidateOptionsMenuCalled = true }
     private var wasInvalidateOptionsMenuCalled = false
@@ -55,13 +58,15 @@ class DownloadControllerTest {
         controller.handleOpen(downloadItem)
 
         assertEquals(downloadItem, openToFileManagerCapturedItem)
+        assertEquals(null, openToFileManagerCapturedMode)
     }
 
     @Test
-    fun onOpenItem() {
-        controller.handleOpen(downloadItem)
+    fun onOpenItemInNormalMode() {
+        controller.handleOpen(downloadItem, BrowsingMode.Normal)
 
         assertEquals(downloadItem, openToFileManagerCapturedItem)
+        assertEquals(BrowsingMode.Normal, openToFileManagerCapturedMode)
     }
 
     @Test
