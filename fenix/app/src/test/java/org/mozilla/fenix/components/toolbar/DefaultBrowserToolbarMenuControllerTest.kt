@@ -835,13 +835,14 @@ class DefaultBrowserToolbarMenuControllerTest {
             verify {
                 navController.navigate(
                     directionsEq(
-                        BrowserFragmentDirections.actionBrowserFragmentToTranslationsDialogFragment(),
+                        BrowserFragmentDirections.actionBrowserFragmentToTranslationsDialogFragment(
+                            sessionId = selectedTab.id,
+                        ),
                     ),
                 )
             }
         }
 
-    @Suppress("LongParameterList")
     private fun createController(
         scope: CoroutineScope,
         store: BrowserStore,
