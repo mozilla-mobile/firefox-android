@@ -28,6 +28,7 @@ import org.mozilla.fenix.ext.bookmarkStorage
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.navigateSafe
+import org.mozilla.fenix.ext.openToBrowserAndLoad
 
 @VisibleForTesting
 internal const val WARN_OPEN_ALL_SIZE = 15
@@ -269,7 +270,14 @@ class DefaultBookmarkController(
     ) {
         with(activity) {
             browsingModeManager.mode = mode
-            openToBrowserAndLoad(searchTermOrURL, newTab, from, flags = flags)
+            openToBrowserAndLoad(
+                navController = navHost.navController,
+                searchTermOrURL = searchTermOrURL,
+                newTab = newTab,
+                from = from,
+                flags = flags,
+                browsingMode = browsingModeManager.mode,
+            )
         }
     }
 

@@ -21,6 +21,7 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.SettingsHttpsOnlyBinding
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.openToBrowserAndLoad
 import org.mozilla.fenix.ext.settings
 
 /**
@@ -101,13 +102,17 @@ class HttpsOnlyFragment : Fragment() {
         val linkClickListener: ClickableSpan = object : ClickableSpan() {
             override fun onClick(view: View) {
                 view.setOnClickListener {
-                    (activity as HomeActivity).openToBrowserAndLoad(
-                        searchTermOrURL = SupportUtils.getGenericSumoURLForTopic(
-                            SupportUtils.SumoTopic.HTTPS_ONLY_MODE,
-                        ),
-                        newTab = true,
-                        from = BrowserDirection.FromHttpsOnlyMode,
-                    )
+                    with(activity as HomeActivity) {
+                        openToBrowserAndLoad(
+                            navController = navHost.navController,
+                            searchTermOrURL = SupportUtils.getGenericSumoURLForTopic(
+                                SupportUtils.SumoTopic.HTTPS_ONLY_MODE,
+                            ),
+                            newTab = true,
+                            from = BrowserDirection.FromHttpsOnlyMode,
+                            browsingMode = browsingModeManager.mode,
+                        )
+                    }
                 }
             }
         }

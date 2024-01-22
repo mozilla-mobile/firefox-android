@@ -4,12 +4,15 @@
 
 package org.mozilla.fenix.home.recentbookmarks
 
+import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavController
 import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import io.mockk.spyk
+import io.mockk.unmockkStatic
 import io.mockk.verify
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.browser.state.state.createTab
@@ -31,6 +34,7 @@ import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.GleanMetrics.RecentBookmarks
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ext.openToBrowserAndLoad
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.home.HomeFragmentDirections
 import org.mozilla.fenix.home.recentbookmarks.controller.DefaultRecentBookmarksController
@@ -53,7 +57,6 @@ class DefaultRecentBookmarksControllerTest {
 
     @Before
     fun setup() {
-        every { activity.openToBrowserAndLoad(any(), any(), any()) } just Runs
         every { browserStore.state.tabs }.returns(emptyList())
 
         controller = spyk(
@@ -72,17 +75,33 @@ class DefaultRecentBookmarksControllerTest {
         assertNull(RecentBookmarks.bookmarkClicked.testGetValue())
 
         val bookmark = RecentBookmark(title = null, url = "https://www.example.com")
-        controller.handleBookmarkClicked(bookmark)
 
-        verify {
+        mockkStatic(FragmentActivity::openToBrowserAndLoad)
+        every {
             activity.openToBrowserAndLoad(
+                navController = activity.navHost.navController,
                 searchTermOrURL = bookmark.url!!,
                 newTab = true,
                 flags = EngineSession.LoadUrlFlags.select(ALLOW_JAVASCRIPT_URL),
                 from = BrowserDirection.FromHome,
+                browsingMode = activity.browsingModeManager.mode,
+            )
+        } just Runs
+
+        controller.handleBookmarkClicked(bookmark)
+
+        verify {
+            activity.openToBrowserAndLoad(
+                navController = activity.navHost.navController,
+                searchTermOrURL = bookmark.url!!,
+                newTab = true,
+                flags = EngineSession.LoadUrlFlags.select(ALLOW_JAVASCRIPT_URL),
+                from = BrowserDirection.FromHome,
+                browsingMode = activity.browsingModeManager.mode,
             )
         }
         assertNotNull(RecentBookmarks.bookmarkClicked.testGetValue())
+        unmockkStatic(FragmentActivity::openToBrowserAndLoad)
     }
 
     @Test
@@ -93,17 +112,33 @@ class DefaultRecentBookmarksControllerTest {
         every { browserStore.state.tabs }.returns(listOf(testTab))
 
         val bookmark = RecentBookmark(title = null, url = "https://www.example.com")
-        controller.handleBookmarkClicked(bookmark)
 
-        verify {
+        mockkStatic(FragmentActivity::openToBrowserAndLoad)
+        every {
             activity.openToBrowserAndLoad(
+                navController = activity.navHost.navController,
                 searchTermOrURL = bookmark.url!!,
                 newTab = true,
                 flags = EngineSession.LoadUrlFlags.select(ALLOW_JAVASCRIPT_URL),
                 from = BrowserDirection.FromHome,
+                browsingMode = activity.browsingModeManager.mode,
+            )
+        } just Runs
+
+        controller.handleBookmarkClicked(bookmark)
+
+        verify {
+            activity.openToBrowserAndLoad(
+                navController = activity.navHost.navController,
+                searchTermOrURL = bookmark.url!!,
+                newTab = true,
+                flags = EngineSession.LoadUrlFlags.select(ALLOW_JAVASCRIPT_URL),
+                from = BrowserDirection.FromHome,
+                browsingMode = activity.browsingModeManager.mode,
             )
         }
         assertNotNull(RecentBookmarks.bookmarkClicked.testGetValue())
+        unmockkStatic(FragmentActivity::openToBrowserAndLoad)
     }
 
     @Test

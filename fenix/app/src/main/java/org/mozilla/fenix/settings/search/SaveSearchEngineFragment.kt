@@ -23,6 +23,7 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.databinding.FragmentSaveSearchEngineBinding
+import org.mozilla.fenix.ext.openToBrowserAndLoad
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.settings.SupportUtils
@@ -83,14 +84,18 @@ class SaveSearchEngineFragment : Fragment(R.layout.fragment_save_search_engine) 
         }
 
         val learnMoreListener: (View) -> Unit = {
-            (activity as HomeActivity).openToBrowserAndLoad(
-                searchTermOrURL = SupportUtils.getSumoURLForTopic(
-                    requireContext(),
-                    SupportUtils.SumoTopic.CUSTOM_SEARCH_ENGINES,
-                ),
-                newTab = true,
-                from = BrowserDirection.FromSaveSearchEngineFragment,
-            )
+            with(activity as HomeActivity) {
+                openToBrowserAndLoad(
+                    navController = navHost.navController,
+                    searchTermOrURL = SupportUtils.getSumoURLForTopic(
+                        requireContext(),
+                        SupportUtils.SumoTopic.CUSTOM_SEARCH_ENGINES,
+                    ),
+                    newTab = true,
+                    from = BrowserDirection.FromSaveSearchEngineFragment,
+                    browsingMode = browsingModeManager.mode,
+                )
+            }
         }
         binding.customSearchEnginesLearnMoreWrapper.setOnClickListener(learnMoreListener)
         binding.customSearchSuggestionsLearnMoreWrapper.setOnClickListener(learnMoreListener)

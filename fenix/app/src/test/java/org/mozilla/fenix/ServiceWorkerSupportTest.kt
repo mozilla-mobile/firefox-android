@@ -4,10 +4,12 @@
 
 package org.mozilla.fenix
 
+import androidx.fragment.app.FragmentActivity
 import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import io.mockk.verify
 import io.mockk.verifyOrder
 import mozilla.components.browser.engine.gecko.GeckoEngine
@@ -19,6 +21,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.openToBrowser
 
 class ServiceWorkerSupportTest {
     private lateinit var activity: HomeActivity
@@ -34,7 +37,13 @@ class ServiceWorkerSupportTest {
         addNewTabUseCase = mockk(relaxed = true)
         every { activity.components.core.engine } returns engine
         every { activity.components.useCases.tabsUseCases.addTab } returns addNewTabUseCase
-        every { activity.openToBrowser(BrowserDirection.FromHome) } just Runs
+        mockkStatic(FragmentActivity::openToBrowser)
+        every {
+            activity.openToBrowser(
+                navController = activity.navHost.navController,
+                from = BrowserDirection.FromHome,
+            )
+        } just Runs
     }
 
     @Test
@@ -57,7 +66,10 @@ class ServiceWorkerSupportTest {
         feature.addNewTab(engineSession)
 
         verifyOrder {
-            activity.openToBrowser(BrowserDirection.FromHome)
+            activity.openToBrowser(
+                navController = activity.navHost.navController,
+                from = BrowserDirection.FromHome,
+            )
 
             addNewTabUseCase(
                 url = "about:blank",

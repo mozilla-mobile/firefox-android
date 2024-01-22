@@ -19,6 +19,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.navigateWithBreadcrumb
+import org.mozilla.fenix.ext.openToBrowserAndLoad
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.settings.SharedPreferenceUpdater
@@ -166,13 +167,17 @@ class SearchEngineFragment : PreferenceFragmentCompat() {
                 }
             }
             getPreferenceKey(R.string.pref_key_learn_about_fx_suggest) -> {
-                (activity as HomeActivity).openToBrowserAndLoad(
-                    searchTermOrURL = SupportUtils.getGenericSumoURLForTopic(
-                        SupportUtils.SumoTopic.FX_SUGGEST,
-                    ),
-                    newTab = true,
-                    from = BrowserDirection.FromSearchEngineFragment,
-                )
+                with(activity as HomeActivity) {
+                    openToBrowserAndLoad(
+                        navController = navHost.navController,
+                        searchTermOrURL = SupportUtils.getGenericSumoURLForTopic(
+                            SupportUtils.SumoTopic.FX_SUGGEST,
+                        ),
+                        newTab = true,
+                        from = BrowserDirection.FromSearchEngineFragment,
+                        browsingMode = browsingModeManager.mode,
+                    )
+                }
             }
         }
 

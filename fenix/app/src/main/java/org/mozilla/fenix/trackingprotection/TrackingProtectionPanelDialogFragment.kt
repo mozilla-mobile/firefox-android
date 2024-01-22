@@ -45,6 +45,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.databinding.FragmentTrackingProtectionBinding
 import org.mozilla.fenix.ext.nav
+import org.mozilla.fenix.ext.openToBrowserAndLoad
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.settings.SupportUtils
 
@@ -155,13 +156,17 @@ class TrackingProtectionPanelDialogFragment : AppCompatDialogFragment(), UserInt
     }
 
     private fun handleLearnMoreClicked() {
-        (activity as HomeActivity).openToBrowserAndLoad(
-            searchTermOrURL = SupportUtils.getGenericSumoURLForTopic(
-                SupportUtils.SumoTopic.SMARTBLOCK,
-            ),
-            newTab = true,
-            from = BrowserDirection.FromTrackingProtectionDialog,
-        )
+        with(activity as HomeActivity) {
+            openToBrowserAndLoad(
+                navController = navHost.navController,
+                searchTermOrURL = SupportUtils.getGenericSumoURLForTopic(
+                    SupportUtils.SumoTopic.SMARTBLOCK,
+                ),
+                newTab = true,
+                from = BrowserDirection.FromTrackingProtectionDialog,
+                browsingMode = browsingModeManager.mode,
+            )
+        }
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {

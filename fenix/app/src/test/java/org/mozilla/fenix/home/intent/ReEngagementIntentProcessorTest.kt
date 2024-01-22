@@ -5,10 +5,15 @@
 package org.mozilla.fenix.home.intent
 
 import android.content.Intent
+import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavController
 import io.mockk.Called
+import io.mockk.Runs
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
 import io.mockk.verify
 import mozilla.components.concept.engine.EngineSession
 import mozilla.components.service.glean.testing.GleanTestRule
@@ -24,6 +29,7 @@ import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
+import org.mozilla.fenix.ext.openToBrowserAndLoad
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.onboarding.ReEngagementNotificationWorker
 import org.mozilla.fenix.utils.Settings
@@ -61,6 +67,22 @@ class ReEngagementIntentProcessorTest {
         every { activity.applicationContext } returns testContext
         every { activity.browsingModeManager } returns browsingModeManager
         every { settings.reEngagementNotificationType } returns ReEngagementNotificationWorker.NOTIFICATION_TYPE_A
+        mockkStatic(FragmentActivity::openToBrowserAndLoad)
+        every {
+            activity.openToBrowserAndLoad(
+                navController = activity.navHost.navController,
+                searchTermOrURL = ReEngagementNotificationWorker.NOTIFICATION_TARGET_URL,
+                newTab = true,
+                from = BrowserDirection.FromGlobal,
+                browsingMode = activity.browsingModeManager.mode,
+                customTabSessionId = null,
+                engine = null,
+                forceSearch = false,
+                flags = EngineSession.LoadUrlFlags.external(),
+                requestDesktopMode = false,
+                historyMetadata = null,
+            )
+        } just Runs
 
         assertNull(Events.reEngagementNotifTapped.testGetValue())
 
@@ -72,9 +94,11 @@ class ReEngagementIntentProcessorTest {
         assertNotNull(Events.reEngagementNotifTapped.testGetValue())
         verify {
             activity.openToBrowserAndLoad(
+                navController = activity.navHost.navController,
                 searchTermOrURL = ReEngagementNotificationWorker.NOTIFICATION_TARGET_URL,
                 newTab = true,
                 from = BrowserDirection.FromGlobal,
+                browsingMode = activity.browsingModeManager.mode,
                 customTabSessionId = null,
                 engine = null,
                 forceSearch = false,
@@ -85,6 +109,7 @@ class ReEngagementIntentProcessorTest {
         }
         verify { navController wasNot Called }
         verify { out wasNot Called }
+        unmockkStatic(FragmentActivity::openToBrowserAndLoad)
     }
 
     @Test

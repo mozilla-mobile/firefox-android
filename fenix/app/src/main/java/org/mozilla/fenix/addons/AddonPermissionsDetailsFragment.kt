@@ -14,6 +14,7 @@ import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.FragmentAddOnPermissionsBinding
+import org.mozilla.fenix.ext.openToBrowserAndLoad
 import org.mozilla.fenix.ext.showToolbar
 
 /**
@@ -39,10 +40,14 @@ class AddonPermissionsDetailsFragment :
     }
 
     override fun openWebsite(addonSiteUrl: Uri) {
-        (activity as HomeActivity).openToBrowserAndLoad(
-            searchTermOrURL = addonSiteUrl.toString(),
-            newTab = true,
-            from = BrowserDirection.FromAddonPermissionsDetailsFragment,
-        )
+        with(activity as HomeActivity) {
+            openToBrowserAndLoad(
+                navController = navHost.navController,
+                searchTermOrURL = addonSiteUrl.toString(),
+                newTab = true,
+                from = BrowserDirection.FromAddonPermissionsDetailsFragment,
+                browsingMode = browsingModeManager.mode,
+            )
+        }
     }
 }

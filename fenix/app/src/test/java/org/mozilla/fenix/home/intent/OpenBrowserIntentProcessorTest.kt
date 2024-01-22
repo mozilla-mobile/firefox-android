@@ -5,14 +5,21 @@
 package org.mozilla.fenix.home.intent
 
 import android.content.Intent
+import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavController
 import io.mockk.Called
+import io.mockk.Runs
+import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
 import io.mockk.verify
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.ext.openToBrowser
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 
 @RunWith(FenixRobolectricTestRunner::class)
@@ -47,14 +54,30 @@ class OpenBrowserIntentProcessorTest {
 
     @Test
     fun `process when open extra is true`() {
+        mockkStatic(FragmentActivity::openToBrowser)
+        every {
+            activity.openToBrowser(
+                navController = activity.navHost.navController,
+                from = BrowserDirection.FromGlobal,
+                customTabSessionId = "session-id",
+            )
+        } just Runs
+
         val intent = Intent().apply {
             putExtra(HomeActivity.OPEN_TO_BROWSER, true)
         }
         val processor = OpenBrowserIntentProcessor(activity) { "session-id" }
         processor.process(intent, navController, out)
 
-        verify { activity.openToBrowser(BrowserDirection.FromGlobal, "session-id") }
+        verify {
+            activity.openToBrowser(
+                navController = activity.navHost.navController,
+                from = BrowserDirection.FromGlobal,
+                customTabSessionId = "session-id",
+            )
+        }
         verify { navController wasNot Called }
         verify { out.putExtra(HomeActivity.OPEN_TO_BROWSER, false) }
+        unmockkStatic(FragmentActivity::openToBrowser)
     }
 }

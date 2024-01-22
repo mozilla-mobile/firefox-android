@@ -15,6 +15,7 @@ import org.mozilla.fenix.GleanMetrics.Pocket
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.appstate.AppAction
+import org.mozilla.fenix.ext.openToBrowserAndLoad
 
 /**
  * Contract for how all user interactions with the Pocket stories feature are to be handled.
@@ -149,7 +150,15 @@ internal class DefaultPocketStoriesController(
         storyClicked: PocketStory,
         storyPosition: Pair<Int, Int>,
     ) {
-        homeActivity.openToBrowserAndLoad(storyClicked.url, true, BrowserDirection.FromHome)
+        with(homeActivity) {
+            openToBrowserAndLoad(
+                navController = navHost.navController,
+                searchTermOrURL = storyClicked.url,
+                newTab = true,
+                from = BrowserDirection.FromHome,
+                browsingMode = browsingModeManager.mode,
+            )
+        }
 
         when (storyClicked) {
             is PocketRecommendedStory -> {
@@ -175,12 +184,28 @@ internal class DefaultPocketStoriesController(
     }
 
     override fun handleLearnMoreClicked(link: String) {
-        homeActivity.openToBrowserAndLoad(link, true, BrowserDirection.FromHome)
+        with(homeActivity) {
+            openToBrowserAndLoad(
+                navController = navHost.navController,
+                searchTermOrURL = link,
+                newTab = true,
+                from = BrowserDirection.FromHome,
+                browsingMode = browsingModeManager.mode,
+            )
+        }
         Pocket.homeRecsLearnMoreClicked.record(NoExtras())
     }
 
     override fun handleDiscoverMoreClicked(link: String) {
-        homeActivity.openToBrowserAndLoad(link, true, BrowserDirection.FromHome)
+        with(homeActivity) {
+            openToBrowserAndLoad(
+                navController = navHost.navController,
+                searchTermOrURL = link,
+                newTab = true,
+                from = BrowserDirection.FromHome,
+                browsingMode = browsingModeManager.mode,
+            )
+        }
         Pocket.homeRecsDiscoverClicked.record(NoExtras())
     }
 }

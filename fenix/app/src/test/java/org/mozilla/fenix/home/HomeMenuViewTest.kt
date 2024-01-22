@@ -5,11 +5,16 @@
 package org.mozilla.fenix.home
 
 import android.view.View
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
+import io.mockk.Runs
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import io.mockk.spyk
+import io.mockk.unmockkStatic
 import io.mockk.verify
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.browser.menu.view.MenuButton
@@ -30,6 +35,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.components.accounts.AccountState
 import org.mozilla.fenix.components.accounts.FenixFxAEntryPoint
 import org.mozilla.fenix.ext.nav
+import org.mozilla.fenix.ext.openToBrowserAndLoad
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.settings.SupportUtils
@@ -181,6 +187,21 @@ class HomeMenuViewTest {
 
     @Test
     fun `WHEN Help menu item is tapped THEN open the browser to the SUMO help page  and record metrics`() {
+        val supportUrl = SupportUtils.getSumoURLForTopic(
+            context = testContext,
+            topic = SupportUtils.SumoTopic.HELP,
+        )
+        mockkStatic(FragmentActivity::openToBrowserAndLoad)
+        every {
+            homeActivity.openToBrowserAndLoad(
+                navController = homeActivity.navHost.navController,
+                searchTermOrURL = supportUrl,
+                newTab = true,
+                from = BrowserDirection.FromHome,
+                browsingMode = homeActivity.browsingModeManager.mode,
+            )
+        } just Runs
+
         assertNull(HomeMenuMetrics.helpTapped.testGetValue())
 
         homeMenuView.onItemTapped(HomeMenu.Item.Help)
@@ -189,18 +210,30 @@ class HomeMenuViewTest {
 
         verify {
             homeActivity.openToBrowserAndLoad(
-                searchTermOrURL = SupportUtils.getSumoURLForTopic(
-                    context = testContext,
-                    topic = SupportUtils.SumoTopic.HELP,
-                ),
+                navController = homeActivity.navHost.navController,
+                searchTermOrURL = supportUrl,
                 newTab = true,
                 from = BrowserDirection.FromHome,
+                browsingMode = homeActivity.browsingModeManager.mode,
             )
         }
+        unmockkStatic(FragmentActivity::openToBrowserAndLoad)
     }
 
     @Test
     fun `WHEN Whats New menu item is tapped THEN open the browser to the SUMO whats new page and record metrics`() {
+        val supportUrl = SupportUtils.WHATS_NEW_URL
+        mockkStatic(FragmentActivity::openToBrowserAndLoad)
+        every {
+            homeActivity.openToBrowserAndLoad(
+                navController = homeActivity.navHost.navController,
+                searchTermOrURL = supportUrl,
+                newTab = true,
+                from = BrowserDirection.FromHome,
+                browsingMode = homeActivity.browsingModeManager.mode,
+            )
+        } just Runs
+
         assertNull(Events.whatsNewTapped.testGetValue())
 
         homeMenuView.onItemTapped(HomeMenu.Item.WhatsNew)
@@ -211,11 +244,14 @@ class HomeMenuViewTest {
             WhatsNew.userViewedWhatsNew(testContext)
 
             homeActivity.openToBrowserAndLoad(
-                searchTermOrURL = SupportUtils.WHATS_NEW_URL,
+                navController = homeActivity.navHost.navController,
+                searchTermOrURL = supportUrl,
                 newTab = true,
                 from = BrowserDirection.FromHome,
+                browsingMode = homeActivity.browsingModeManager.mode,
             )
         }
+        unmockkStatic(FragmentActivity::openToBrowserAndLoad)
     }
 
     @Test

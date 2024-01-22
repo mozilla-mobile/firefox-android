@@ -11,6 +11,7 @@ import mozilla.components.concept.engine.EngineSession
 import mozilla.components.concept.engine.EngineSession.LoadUrlFlags
 import mozilla.components.concept.engine.serviceworker.ServiceWorkerDelegate
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.openToBrowser
 
 /**
  * Fenix own version of the `ServiceWorkerSupportFeature` from Android-Components
@@ -33,7 +34,10 @@ class ServiceWorkerSupportFeature(
 
     override fun addNewTab(engineSession: EngineSession): Boolean {
         with(homeActivity) {
-            openToBrowser(BrowserDirection.FromHome)
+            openToBrowser(
+                navController = navHost.navController,
+                from = BrowserDirection.FromHome,
+            )
 
             components.useCases.tabsUseCases.addTab(
                 flags = LoadUrlFlags.external(),

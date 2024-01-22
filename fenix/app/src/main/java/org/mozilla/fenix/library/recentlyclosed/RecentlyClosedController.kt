@@ -20,6 +20,7 @@ import org.mozilla.fenix.GleanMetrics.RecentlyClosedTabs
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
+import org.mozilla.fenix.ext.openToBrowser
 
 @Suppress("TooManyFunctions")
 interface RecentlyClosedController {
@@ -114,9 +115,12 @@ class DefaultRecentlyClosedController(
                 RecentlyClosedAction.RemoveClosedTabAction(item),
             )
 
-            activity.openToBrowser(
-                from = BrowserDirection.FromRecentlyClosed,
-            )
+            with(activity) {
+                openToBrowser(
+                    navController = navHost.navController,
+                    from = BrowserDirection.FromRecentlyClosed,
+                )
+            }
         }
     }
 

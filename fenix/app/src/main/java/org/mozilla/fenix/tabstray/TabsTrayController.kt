@@ -40,6 +40,7 @@ import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.bookmarks.BookmarksUseCase
 import org.mozilla.fenix.ext.DEFAULT_ACTIVE_DAYS
+import org.mozilla.fenix.ext.openToBrowserAndLoad
 import org.mozilla.fenix.ext.potentialInactiveTabs
 import org.mozilla.fenix.home.HomeFragment
 import org.mozilla.fenix.library.bookmarks.BookmarksSharedViewModel
@@ -513,11 +514,15 @@ class DefaultTabsTrayController(
         Events.syncedTabOpened.record(NoExtras())
 
         dismissTray()
-        activity.openToBrowserAndLoad(
-            searchTermOrURL = tab.active().url,
-            newTab = true,
-            from = BrowserDirection.FromTabsTray,
-        )
+        with(activity) {
+            openToBrowserAndLoad(
+                navController = navHost.navController,
+                searchTermOrURL = tab.active().url,
+                newTab = true,
+                from = BrowserDirection.FromTabsTray,
+                browsingMode = browsingModeManager.mode,
+            )
+        }
     }
 
     override fun handleTabLongClick(tab: TabSessionState): Boolean {

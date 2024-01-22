@@ -9,10 +9,15 @@ import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.os.Build.VERSION_CODES.M
 import androidx.core.net.toUri
+import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavController
 import io.mockk.Called
+import io.mockk.Runs
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
 import io.mockk.verify
 import mozilla.appservices.places.BookmarkRoot
 import mozilla.components.concept.engine.EngineSession
@@ -27,6 +32,7 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.accounts.FenixFxAEntryPoint
+import org.mozilla.fenix.ext.openToBrowserAndLoad
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.settings.SupportUtils
 import org.robolectric.annotation.Config
@@ -212,18 +218,34 @@ class HomeDeepLinkIntentProcessorTest {
         verify { navController wasNot Called }
         verify { out wasNot Called }
 
+        val testUrl = "https://www.example.org/"
+        mockkStatic(FragmentActivity::openToBrowserAndLoad)
+        every {
+            activity.openToBrowserAndLoad(
+                navController = activity.navHost.navController,
+                searchTermOrURL = testUrl,
+                newTab = true,
+                from = BrowserDirection.FromGlobal,
+                browsingMode = activity.browsingModeManager.mode,
+                flags = EngineSession.LoadUrlFlags.external(),
+            )
+        } just Runs
+
         assertTrue(processorHome.process(testIntent("open?url=https%3A%2F%2Fwww.example.org%2F"), navController, out))
 
         verify {
             activity.openToBrowserAndLoad(
-                "https://www.example.org/",
+                navController = activity.navHost.navController,
+                testUrl,
                 newTab = true,
                 from = BrowserDirection.FromGlobal,
+                browsingMode = activity.browsingModeManager.mode,
                 flags = EngineSession.LoadUrlFlags.external(),
             )
         }
         verify { navController wasNot Called }
         verify { out wasNot Called }
+        unmockkStatic(FragmentActivity::openToBrowserAndLoad)
     }
 
     @Test
@@ -255,23 +277,37 @@ class HomeDeepLinkIntentProcessorTest {
         every { packageManager.getPackageInfo("org.mozilla.fenix", 0) } returns packageInfo
         packageInfo.versionName = "versionName"
 
-        assertTrue(processorHome.process(testIntent("make_default_browser"), navController, out))
-
         val searchTermOrURL = SupportUtils.getGenericSumoURLForTopic(
             topic = SupportUtils.SumoTopic.SET_AS_DEFAULT_BROWSER,
         )
-
-        verify {
+        mockkStatic(FragmentActivity::openToBrowserAndLoad)
+        every {
             activity.openToBrowserAndLoad(
+                navController = activity.navHost.navController,
                 searchTermOrURL = searchTermOrURL,
                 newTab = true,
                 from = BrowserDirection.FromGlobal,
+                browsingMode = activity.browsingModeManager.mode,
+                flags = EngineSession.LoadUrlFlags.external(),
+            )
+        } just Runs
+
+        assertTrue(processorHome.process(testIntent("make_default_browser"), navController, out))
+
+        verify {
+            activity.openToBrowserAndLoad(
+                navController = activity.navHost.navController,
+                searchTermOrURL = searchTermOrURL,
+                newTab = true,
+                from = BrowserDirection.FromGlobal,
+                browsingMode = activity.browsingModeManager.mode,
                 flags = EngineSession.LoadUrlFlags.external(),
             )
         }
 
         verify { navController wasNot Called }
         verify { out wasNot Called }
+        unmockkStatic(FragmentActivity::openToBrowserAndLoad)
     }
 
     @Test

@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.library.recentlyclosed
 
+import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import io.mockk.Runs
@@ -12,6 +13,8 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -32,11 +35,13 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.GleanMetrics.RecentlyClosedTabs
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.ext.directionsEq
+import org.mozilla.fenix.ext.openToBrowser
 import org.mozilla.fenix.ext.optionsEq
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 
@@ -246,6 +251,14 @@ class DefaultRecentlyClosedControllerTest {
 
     @Test
     fun handleRestore() = runTest {
+        mockkStatic(FragmentActivity::openToBrowser)
+        every {
+            activity.openToBrowser(
+                navController = activity.navHost.navController,
+                from = BrowserDirection.FromRecentlyClosed,
+            )
+        } just Runs
+
         val item: TabState = mockk(relaxed = true)
         assertNull(RecentlyClosedTabs.openTab.testGetValue())
 
@@ -256,6 +269,7 @@ class DefaultRecentlyClosedControllerTest {
         assertNotNull(RecentlyClosedTabs.openTab.testGetValue())
         assertEquals(1, RecentlyClosedTabs.openTab.testGetValue()!!.size)
         assertNull(RecentlyClosedTabs.openTab.testGetValue()!!.single().extra)
+        unmockkStatic(FragmentActivity::openToBrowser)
     }
 
     @Test

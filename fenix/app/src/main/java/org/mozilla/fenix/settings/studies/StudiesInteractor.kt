@@ -10,6 +10,7 @@ import org.mozilla.experiments.nimbus.NimbusInterface
 import org.mozilla.experiments.nimbus.internal.EnrolledExperiment
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.ext.openToBrowserAndLoad
 import kotlin.system.exitProcess
 
 interface StudiesInteractor {
@@ -29,11 +30,15 @@ class DefaultStudiesInteractor(
     private val experiments: NimbusApi,
 ) : StudiesInteractor {
     override fun openWebsite(url: String) {
-        homeActivity.openToBrowserAndLoad(
-            searchTermOrURL = url,
-            newTab = true,
-            from = BrowserDirection.FromStudiesFragment,
-        )
+        with(homeActivity) {
+            openToBrowserAndLoad(
+                navController = navHost.navController,
+                searchTermOrURL = url,
+                newTab = true,
+                from = BrowserDirection.FromStudiesFragment,
+                browsingMode = browsingModeManager.mode,
+            )
+        }
     }
 
     override fun removeStudy(experiment: EnrolledExperiment) {

@@ -183,9 +183,11 @@ private fun Activity.openDefaultBrowserSumoPage(
         )
     } else {
         (this as HomeActivity).openToBrowserAndLoad(
+            navController = navHost.navController,
             searchTermOrURL = sumoDefaultBrowserUrl,
             newTab = true,
             from = from,
+            browsingMode = browsingModeManager.mode,
             flags = flags,
         )
     }

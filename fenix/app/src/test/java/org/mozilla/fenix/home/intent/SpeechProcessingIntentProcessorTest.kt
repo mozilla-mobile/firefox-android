@@ -5,11 +5,16 @@
 package org.mozilla.fenix.home.intent
 
 import android.content.Intent
+import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavController
 import androidx.test.core.app.ApplicationProvider
 import io.mockk.Called
+import io.mockk.Runs
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
 import io.mockk.verify
 import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.SearchState
@@ -22,6 +27,7 @@ import org.junit.runner.RunWith
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.openToBrowserAndLoad
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.helpers.perf.TestStrictModeManager
 import org.mozilla.fenix.widget.VoiceSearchActivity.Companion.SPEECH_PROCESSING
@@ -84,6 +90,19 @@ class SpeechProcessingIntentProcessorTest {
     @Test
     fun `reads the speech processing extra`() {
         every { testContext.components.strictMode } returns TestStrictModeManager()
+        mockkStatic(FragmentActivity::openToBrowserAndLoad)
+        every {
+            activity.openToBrowserAndLoad(
+                navController = activity.navHost.navController,
+                searchTermOrURL = "hello world",
+                newTab = true,
+                from = BrowserDirection.FromGlobal,
+                browsingMode = activity.browsingModeManager.mode,
+                forceSearch = true,
+                engine = searchEngine,
+            )
+        } just Runs
+
         val intent = Intent().apply {
             putExtra(HomeActivity.OPEN_TO_BROWSER_AND_LOAD, true)
             putExtra(SPEECH_PROCESSING, "hello world")
@@ -94,12 +113,15 @@ class SpeechProcessingIntentProcessorTest {
 
         verify {
             activity.openToBrowserAndLoad(
+                navController = activity.navHost.navController,
                 searchTermOrURL = "hello world",
                 newTab = true,
                 from = BrowserDirection.FromGlobal,
+                browsingMode = activity.browsingModeManager.mode,
                 forceSearch = true,
                 engine = searchEngine,
             )
         }
+        unmockkStatic(FragmentActivity::openToBrowserAndLoad)
     }
 }

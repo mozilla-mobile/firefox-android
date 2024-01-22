@@ -15,6 +15,7 @@ import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.components.metrics.MetricsUtils
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.openToBrowserAndLoad
 import org.mozilla.fenix.widget.VoiceSearchActivity.Companion.SPEECH_PROCESSING
 
 /**
@@ -57,12 +58,16 @@ class SpeechProcessingIntentProcessor(
             )
         }
 
-        activity.openToBrowserAndLoad(
-            searchTermOrURL = text,
-            newTab = true,
-            from = BrowserDirection.FromGlobal,
-            engine = searchEngine,
-            forceSearch = true,
-        )
+        with(activity) {
+            openToBrowserAndLoad(
+                navController = navHost.navController,
+                searchTermOrURL = text,
+                newTab = true,
+                from = BrowserDirection.FromGlobal,
+                engine = searchEngine,
+                forceSearch = true,
+                browsingMode = browsingModeManager.mode,
+            )
+        }
     }
 }

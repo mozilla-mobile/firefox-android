@@ -87,6 +87,7 @@ import org.mozilla.fenix.databinding.SearchSuggestionsHintBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getRectWithScreenLocation
 import org.mozilla.fenix.ext.increaseTapArea
+import org.mozilla.fenix.ext.openToBrowserAndLoad
 import org.mozilla.fenix.ext.registerForActivityResult
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.secure
@@ -389,12 +390,15 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             } else {
                 view.hideKeyboard()
                 toolbarView.view.clearFocus()
-                (activity as HomeActivity)
-                    .openToBrowserAndLoad(
+                with(activity as HomeActivity) {
+                    openToBrowserAndLoad(
+                        navController = navHost.navController,
                         searchTermOrURL = clipboardUrl,
                         newTab = store.state.tabId == null,
                         from = BrowserDirection.FromSearchDialog,
+                        browsingMode = browsingModeManager.mode,
                     )
+                }
             }
             requireContext().components.clipboardHandler.text = null
         }
@@ -403,14 +407,17 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
             val searchSuggestionHintBinding = SearchSuggestionsHintBinding.bind(inflated)
 
             searchSuggestionHintBinding.learnMore.setOnClickListener {
-                (activity as HomeActivity)
-                    .openToBrowserAndLoad(
+                with(activity as HomeActivity) {
+                    openToBrowserAndLoad(
+                        navController = navHost.navController,
                         searchTermOrURL = SupportUtils.getGenericSumoURLForTopic(
                             SupportUtils.SumoTopic.SEARCH_SUGGESTION,
                         ),
                         newTab = store.state.tabId == null,
                         from = BrowserDirection.FromSearchDialog,
+                        browsingMode = browsingModeManager.mode,
                     )
+                }
             }
 
             searchSuggestionHintBinding.allow.setOnClickListener {
@@ -660,12 +667,16 @@ class SearchDialogFragment : AppCompatDialogFragment(), UserInteractionHandler {
                                 dialog.cancel()
                             }
                             setPositiveButton(R.string.qr_scanner_dialog_positive) { dialog: DialogInterface, _ ->
-                                (activity as? HomeActivity)?.openToBrowserAndLoad(
-                                    searchTermOrURL = normalizedUrl,
-                                    newTab = store.state.tabId == null,
-                                    from = BrowserDirection.FromSearchDialog,
-                                    flags = EngineSession.LoadUrlFlags.external(),
-                                )
+                                with(it as HomeActivity) {
+                                    openToBrowserAndLoad(
+                                        navController = navHost.navController,
+                                        searchTermOrURL = normalizedUrl,
+                                        newTab = store.state.tabId == null,
+                                        from = BrowserDirection.FromSearchDialog,
+                                        flags = EngineSession.LoadUrlFlags.external(),
+                                        browsingMode = browsingModeManager.mode,
+                                    )
+                                }
                                 dialog.dismiss()
                             }
                             create().withCenterAlignedButtons()

@@ -29,6 +29,8 @@ import org.mozilla.fenix.components.Core
 import org.mozilla.fenix.components.metrics.MetricsUtils
 import org.mozilla.fenix.crashes.CrashListActivity
 import org.mozilla.fenix.ext.navigateSafe
+import org.mozilla.fenix.ext.openToBrowser
+import org.mozilla.fenix.ext.openToBrowserAndLoad
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.telemetryName
 import org.mozilla.fenix.search.toolbar.SearchSelectorInteractor
@@ -113,14 +115,18 @@ class SearchDialogController(
         val searchEngine = fragmentStore.state.searchEngineSource.searchEngine
         val isDefaultEngine = searchEngine == fragmentStore.state.defaultEngine
 
-        activity.openToBrowserAndLoad(
-            searchTermOrURL = url,
-            newTab = fragmentStore.state.tabId == null,
-            from = BrowserDirection.FromSearchDialog,
-            engine = searchEngine,
-            forceSearch = !isDefaultEngine,
-            requestDesktopMode = fromHomeScreen && activity.settings().openNextTabInDesktopMode,
-        )
+        with(activity) {
+            openToBrowserAndLoad(
+                navController = navHost.navController,
+                searchTermOrURL = url,
+                newTab = fragmentStore.state.tabId == null,
+                from = BrowserDirection.FromSearchDialog,
+                browsingMode = browsingModeManager.mode,
+                engine = searchEngine,
+                forceSearch = !isDefaultEngine,
+                requestDesktopMode = fromHomeScreen && activity.settings().openNextTabInDesktopMode,
+            )
+        }
 
         if (url.isUrl() || searchEngine == null) {
             Events.enteredUrl.record(Events.EnteredUrlExtra(autocomplete = false))
@@ -169,12 +175,16 @@ class SearchDialogController(
     override fun handleUrlTapped(url: String, flags: LoadUrlFlags) {
         clearToolbarFocus()
 
-        activity.openToBrowserAndLoad(
-            searchTermOrURL = url,
-            newTab = fragmentStore.state.tabId == null,
-            from = BrowserDirection.FromSearchDialog,
-            flags = flags,
-        )
+        with(activity) {
+            openToBrowserAndLoad(
+                navController = navHost.navController,
+                searchTermOrURL = url,
+                newTab = fragmentStore.state.tabId == null,
+                from = BrowserDirection.FromSearchDialog,
+                browsingMode = browsingModeManager.mode,
+                flags = flags,
+            )
+        }
 
         Events.enteredUrl.record(Events.EnteredUrlExtra(autocomplete = false))
 
@@ -186,13 +196,17 @@ class SearchDialogController(
 
         val searchEngine = fragmentStore.state.searchEngineSource.searchEngine
 
-        activity.openToBrowserAndLoad(
-            searchTermOrURL = searchTerms,
-            newTab = fragmentStore.state.tabId == null,
-            from = BrowserDirection.FromSearchDialog,
-            engine = searchEngine,
-            forceSearch = true,
-        )
+        with(activity) {
+            openToBrowserAndLoad(
+                navController = navHost.navController,
+                searchTermOrURL = searchTerms,
+                newTab = fragmentStore.state.tabId == null,
+                from = BrowserDirection.FromSearchDialog,
+                browsingMode = browsingModeManager.mode,
+                engine = searchEngine,
+                forceSearch = true,
+            )
+        }
 
         val searchAccessPoint = when (fragmentStore.state.searchAccessPoint) {
             MetricsUtils.Source.NONE -> MetricsUtils.Source.SUGGESTION
@@ -259,9 +273,12 @@ class SearchDialogController(
 
         tabsUseCases.selectTab(tabId)
 
-        activity.openToBrowser(
-            from = BrowserDirection.FromSearchDialog,
-        )
+        with(activity) {
+            openToBrowser(
+                navController = navHost.navController,
+                from = BrowserDirection.FromSearchDialog,
+            )
+        }
 
         store.dispatch(AwesomeBarAction.EngagementFinished(abandoned = false))
     }

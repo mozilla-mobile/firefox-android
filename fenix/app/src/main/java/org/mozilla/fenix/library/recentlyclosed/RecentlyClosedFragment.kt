@@ -30,6 +30,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.databinding.FragmentRecentlyClosedTabsBinding
+import org.mozilla.fenix.ext.openToBrowserAndLoad
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.setTextColor
 import org.mozilla.fenix.ext.showToolbar
@@ -140,11 +141,15 @@ class RecentlyClosedFragment :
     private fun openItem(url: String, mode: BrowsingMode? = null) {
         mode?.let { (activity as HomeActivity).browsingModeManager.mode = it }
 
-        (activity as HomeActivity).openToBrowserAndLoad(
-            searchTermOrURL = url,
-            newTab = true,
-            from = BrowserDirection.FromRecentlyClosed,
-        )
+        with(activity as HomeActivity) {
+            openToBrowserAndLoad(
+                navController = navHost.navController,
+                searchTermOrURL = url,
+                newTab = true,
+                from = BrowserDirection.FromRecentlyClosed,
+                browsingMode = browsingModeManager.mode,
+            )
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

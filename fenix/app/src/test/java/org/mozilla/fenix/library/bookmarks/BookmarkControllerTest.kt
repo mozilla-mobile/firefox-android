@@ -6,6 +6,7 @@ package org.mozilla.fenix.library.bookmarks
 
 import android.content.ClipboardManager
 import android.content.Context
+import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
@@ -18,10 +19,12 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkConstructor
+import io.mockk.mockkStatic
 import io.mockk.runs
 import io.mockk.slot
 import io.mockk.spyk
 import io.mockk.unmockkConstructor
+import io.mockk.unmockkStatic
 import io.mockk.verify
 import io.mockk.verifyOrder
 import mozilla.appservices.places.BookmarkRoot
@@ -45,6 +48,7 @@ import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.Services
 import org.mozilla.fenix.ext.bookmarkStorage
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.openToBrowserAndLoad
 
 @Suppress("TooManyFunctions", "LargeClass")
 class BookmarkControllerTest {
@@ -136,69 +140,100 @@ class BookmarkControllerTest {
 
     @Test
     fun `WHEN handleBookmarkTapped is called with BrowserFragment THEN load the bookmark in current tab`() {
-        val flags = EngineSession.LoadUrlFlags.select(EngineSession.LoadUrlFlags.ALLOW_JAVASCRIPT_URL)
+        mockkStatic(FragmentActivity::openToBrowserAndLoad)
+
+        val flags =
+            EngineSession.LoadUrlFlags.select(EngineSession.LoadUrlFlags.ALLOW_JAVASCRIPT_URL)
+
+        every {
+            homeActivity.openToBrowserAndLoad(
+                navController = homeActivity.navHost.navController,
+                searchTermOrURL = item.url!!,
+                newTab = false,
+                from = BrowserDirection.FromBookmarks,
+                browsingMode = homeActivity.browsingModeManager.mode,
+                flags = flags,
+            )
+        } just Runs
 
         createController().handleBookmarkTapped(item)
 
         verify {
             homeActivity.openToBrowserAndLoad(
-                item.url!!,
-                false,
-                BrowserDirection.FromBookmarks,
+                navController = homeActivity.navHost.navController,
+                searchTermOrURL = item.url!!,
+                newTab = false,
+                from = BrowserDirection.FromBookmarks,
+                browsingMode = homeActivity.browsingModeManager.mode,
                 flags = flags,
             )
         }
+        unmockkStatic(FragmentActivity::openToBrowserAndLoad)
     }
 
     @Test
     fun `WHEN handleBookmarkTapped is called with HomeFragment THEN load the bookmark in new tab`() {
+        mockkStatic(FragmentActivity::openToBrowserAndLoad)
+
         val flags = EngineSession.LoadUrlFlags.select(EngineSession.LoadUrlFlags.ALLOW_JAVASCRIPT_URL)
 
+        every {
+            homeActivity.openToBrowserAndLoad(
+                navController = homeActivity.navHost.navController,
+                searchTermOrURL = item.url!!,
+                newTab = true,
+                from = BrowserDirection.FromBookmarks,
+                browsingMode = homeActivity.browsingModeManager.mode,
+                flags = flags,
+            )
+        } just Runs
         every { navDestination.id } returns R.id.homeFragment
 
         createController().handleBookmarkTapped(item)
 
         verify {
             homeActivity.openToBrowserAndLoad(
-                item.url!!,
-                true,
-                BrowserDirection.FromBookmarks,
+                navController = homeActivity.navHost.navController,
+                searchTermOrURL = item.url!!,
+                newTab = true,
+                from = BrowserDirection.FromBookmarks,
+                browsingMode = homeActivity.browsingModeManager.mode,
                 flags = flags,
             )
         }
+        unmockkStatic(FragmentActivity::openToBrowserAndLoad)
     }
 
     @Test
     fun `WHEN handleBookmarkTapped is called with private browsing THEN load the bookmark in new tab`() {
+        mockkStatic(FragmentActivity::openToBrowserAndLoad)
+
         every { homeActivity.browsingModeManager.mode } returns BrowsingMode.Private
         val flags = EngineSession.LoadUrlFlags.select(EngineSession.LoadUrlFlags.ALLOW_JAVASCRIPT_URL)
+        every {
+            homeActivity.openToBrowserAndLoad(
+                navController = homeActivity.navHost.navController,
+                searchTermOrURL = item.url!!,
+                newTab = true,
+                from = BrowserDirection.FromBookmarks,
+                browsingMode = BrowsingMode.Private,
+                flags = flags,
+            )
+        } just Runs
 
         createController().handleBookmarkTapped(item)
 
         verify {
             homeActivity.openToBrowserAndLoad(
-                item.url!!,
-                true,
-                BrowserDirection.FromBookmarks,
+                navController = homeActivity.navHost.navController,
+                searchTermOrURL = item.url!!,
+                newTab = true,
+                from = BrowserDirection.FromBookmarks,
+                browsingMode = BrowsingMode.Private,
                 flags = flags,
             )
         }
-    }
-
-    @Test
-    fun `handleBookmarkTapped should respect browsing mode`() {
-        // if in normal mode, should be in normal mode
-        every { homeActivity.browsingModeManager.mode } returns BrowsingMode.Normal
-
-        val controller = createController()
-        controller.handleBookmarkTapped(item)
-        assertEquals(BrowsingMode.Normal, homeActivity.browsingModeManager.mode)
-
-        // if in private mode, should be in private mode
-        every { homeActivity.browsingModeManager.mode } returns BrowsingMode.Private
-
-        controller.handleBookmarkTapped(item)
-        assertEquals(BrowsingMode.Private, homeActivity.browsingModeManager.mode)
+        unmockkStatic(FragmentActivity::openToBrowserAndLoad)
     }
 
     @Test
@@ -323,19 +358,34 @@ class BookmarkControllerTest {
 
     @Test
     fun `handleBookmarkTapped should open the bookmark`() {
+        mockkStatic(FragmentActivity::openToBrowserAndLoad)
+
         val flags =
             EngineSession.LoadUrlFlags.select(EngineSession.LoadUrlFlags.ALLOW_JAVASCRIPT_URL)
+        every {
+            homeActivity.openToBrowserAndLoad(
+                navController = homeActivity.navHost.navController,
+                searchTermOrURL = item.url!!,
+                newTab = false,
+                from = BrowserDirection.FromBookmarks,
+                browsingMode = homeActivity.browsingModeManager.mode,
+                flags = flags,
+            )
+        } just Runs
 
         createController().handleBookmarkTapped(item)
 
         verify {
             homeActivity.openToBrowserAndLoad(
-                item.url!!,
-                false,
-                BrowserDirection.FromBookmarks,
+                navController = homeActivity.navHost.navController,
+                searchTermOrURL = item.url!!,
+                newTab = false,
+                from = BrowserDirection.FromBookmarks,
+                browsingMode = homeActivity.browsingModeManager.mode,
                 flags = flags,
             )
         }
+        unmockkStatic(FragmentActivity::openToBrowserAndLoad)
     }
 
     @Test

@@ -15,6 +15,7 @@ import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.browser.BrowserAnimator
 import org.mozilla.fenix.components.metrics.MetricsUtils
 import org.mozilla.fenix.ext.nav
+import org.mozilla.fenix.ext.openToBrowserAndLoad
 
 /**
  * An interface that handles the view manipulation of the home screen toolbar.
@@ -47,12 +48,16 @@ class DefaultToolbarController(
     override fun handlePasteAndGo(clipboardText: String) {
         val searchEngine = store.state.search.selectedOrDefaultSearchEngine
 
-        activity.openToBrowserAndLoad(
-            searchTermOrURL = clipboardText,
-            newTab = true,
-            from = BrowserDirection.FromHome,
-            engine = searchEngine,
-        )
+        with(activity) {
+            openToBrowserAndLoad(
+                navController = navHost.navController,
+                searchTermOrURL = clipboardText,
+                newTab = true,
+                from = BrowserDirection.FromHome,
+                engine = searchEngine,
+                browsingMode = browsingModeManager.mode,
+            )
+        }
 
         if (clipboardText.isUrl() || searchEngine == null) {
             Events.enteredUrl.record(Events.EnteredUrlExtra(autocomplete = false))

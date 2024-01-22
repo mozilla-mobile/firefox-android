@@ -9,6 +9,7 @@ import mozilla.components.feature.session.TrackingProtectionUseCases
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.exceptions.ExceptionsInteractor
+import org.mozilla.fenix.ext.openToBrowserAndLoad
 import org.mozilla.fenix.settings.SupportUtils
 
 interface TrackingProtectionExceptionsInteractor : ExceptionsInteractor<TrackingProtectionException> {
@@ -25,13 +26,17 @@ class DefaultTrackingProtectionExceptionsInteractor(
 ) : TrackingProtectionExceptionsInteractor {
 
     override fun onLearnMore() {
-        activity.openToBrowserAndLoad(
-            searchTermOrURL = SupportUtils.getGenericSumoURLForTopic(
-                SupportUtils.SumoTopic.TRACKING_PROTECTION,
-            ),
-            newTab = true,
-            from = BrowserDirection.FromTrackingProtectionExceptions,
-        )
+        with(activity) {
+            openToBrowserAndLoad(
+                navController = navHost.navController,
+                searchTermOrURL = SupportUtils.getGenericSumoURLForTopic(
+                    SupportUtils.SumoTopic.TRACKING_PROTECTION,
+                ),
+                newTab = true,
+                from = BrowserDirection.FromTrackingProtectionExceptions,
+                browsingMode = browsingModeManager.mode,
+            )
+        }
     }
 
     override fun onDeleteAll() {

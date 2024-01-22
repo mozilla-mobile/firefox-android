@@ -13,6 +13,7 @@ import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.databinding.FragmentAddNewDeviceBinding
+import org.mozilla.fenix.ext.openToBrowserAndLoad
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.settings.SupportUtils
 
@@ -31,14 +32,18 @@ class AddNewDeviceFragment : Fragment(R.layout.fragment_add_new_device) {
 
         val binding = FragmentAddNewDeviceBinding.bind(view)
         binding.learnButton.setOnClickListener {
-            (activity as HomeActivity).openToBrowserAndLoad(
-                searchTermOrURL = SupportUtils.getSumoURLForTopic(
-                    requireContext(),
-                    SupportUtils.SumoTopic.SEND_TABS,
-                ),
-                newTab = true,
-                from = BrowserDirection.FromAddNewDeviceFragment,
-            )
+            with(activity as HomeActivity) {
+                openToBrowserAndLoad(
+                    navController = navHost.navController,
+                    searchTermOrURL = SupportUtils.getSumoURLForTopic(
+                        requireContext(),
+                        SupportUtils.SumoTopic.SEND_TABS,
+                    ),
+                    newTab = true,
+                    from = BrowserDirection.FromAddNewDeviceFragment,
+                    browsingMode = browsingModeManager.mode,
+                )
+            }
         }
 
         binding.connectButton.setOnClickListener {

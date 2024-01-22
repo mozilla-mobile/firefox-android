@@ -4,8 +4,12 @@
 
 package org.mozilla.fenix.exceptions.trackingprotection
 
+import androidx.fragment.app.FragmentActivity
+import io.mockk.Runs
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import io.mockk.verify
 import mozilla.components.browser.state.selector.findTab
 import mozilla.components.browser.state.state.BrowserState
@@ -27,6 +31,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.ext.openToBrowserAndLoad
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.settings.SupportUtils
 
@@ -95,16 +100,30 @@ class TrackingProtectionExceptionsInteractorTest {
 
     @Test
     fun onLearnMore() {
-        interactor.onLearnMore()
-
         val supportUrl = SupportUtils.getGenericSumoURLForTopic(
             SupportUtils.SumoTopic.TRACKING_PROTECTION,
         )
-        verify {
+
+        mockkStatic(FragmentActivity::openToBrowserAndLoad)
+        every {
             activity.openToBrowserAndLoad(
+                navController = activity.navHost.navController,
                 searchTermOrURL = supportUrl,
                 newTab = true,
                 from = BrowserDirection.FromTrackingProtectionExceptions,
+                browsingMode = activity.browsingModeManager.mode,
+            )
+        } just Runs
+
+        interactor.onLearnMore()
+
+        verify {
+            activity.openToBrowserAndLoad(
+                navController = activity.navHost.navController,
+                searchTermOrURL = supportUrl,
+                newTab = true,
+                from = BrowserDirection.FromTrackingProtectionExceptions,
+                browsingMode = activity.browsingModeManager.mode,
             )
         }
     }

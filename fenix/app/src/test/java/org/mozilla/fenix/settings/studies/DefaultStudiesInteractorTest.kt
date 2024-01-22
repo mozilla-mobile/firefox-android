@@ -4,11 +4,14 @@
 
 package org.mozilla.fenix.settings.studies
 
+import androidx.fragment.app.FragmentActivity
 import io.mockk.MockKAnnotations
+import io.mockk.Runs
 import io.mockk.every
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.just
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import io.mockk.runs
 import io.mockk.spyk
 import io.mockk.verify
@@ -18,6 +21,8 @@ import org.junit.Test
 import org.mozilla.experiments.nimbus.internal.EnrolledExperiment
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
+import org.mozilla.fenix.ext.openToBrowser
+import org.mozilla.fenix.ext.openToBrowserAndLoad
 
 class DefaultStudiesInteractorTest {
     @RelaxedMockK
@@ -37,10 +42,28 @@ class DefaultStudiesInteractorTest {
     @Test
     fun `WHEN calling openWebsite THEN delegate to the homeActivity`() {
         val url = ""
+
+        mockkStatic(FragmentActivity::openToBrowser)
+        every {
+            activity.openToBrowserAndLoad(
+                navController = activity.navHost.navController,
+                searchTermOrURL = url,
+                newTab = true,
+                from = BrowserDirection.FromStudiesFragment,
+                browsingMode = activity.browsingModeManager.mode,
+            )
+        } just Runs
+
         interactor.openWebsite(url)
 
         verify {
-            activity.openToBrowserAndLoad(url, true, BrowserDirection.FromStudiesFragment)
+            activity.openToBrowserAndLoad(
+                navController = activity.navHost.navController,
+                searchTermOrURL = url,
+                newTab = true,
+                from = BrowserDirection.FromStudiesFragment,
+                browsingMode = activity.browsingModeManager.mode,
+            )
         }
     }
 

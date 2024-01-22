@@ -6,10 +6,12 @@ package org.mozilla.fenix.customtabs
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavController
 import io.mockk.Called
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import io.mockk.spyk
 import io.mockk.verify
 import mozilla.components.browser.state.state.BrowserState
@@ -32,6 +34,7 @@ import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getIntentSource
 import org.mozilla.fenix.ext.getNavDirections
+import org.mozilla.fenix.ext.openToBrowser
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.utils.Settings
 
@@ -63,12 +66,18 @@ class ExternalAppBrowserActivityTest {
         val settings: Settings = mockk()
         every { settings.shouldReturnToBrowser } returns true
         every { activity.components.settings.shouldReturnToBrowser } returns true
+        mockkStatic(FragmentActivity::openToBrowser)
         every { activity.openToBrowser(any(), any()) } returns Unit
 
         activity.browsingModeManager = browsingModeManager
         activity.navigateToBrowserOnColdStart()
 
-        verify(exactly = 0) { activity.openToBrowser(BrowserDirection.FromGlobal, null) }
+        verify(exactly = 0) {
+            activity.openToBrowser(
+                navController = activity.navHost.navController,
+                from = BrowserDirection.FromGlobal,
+            )
+        }
     }
 
     @Test

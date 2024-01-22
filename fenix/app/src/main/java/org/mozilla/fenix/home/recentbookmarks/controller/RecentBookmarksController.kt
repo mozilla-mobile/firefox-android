@@ -16,6 +16,7 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.appstate.AppAction
+import org.mozilla.fenix.ext.openToBrowserAndLoad
 import org.mozilla.fenix.home.HomeFragmentDirections
 import org.mozilla.fenix.home.recentbookmarks.RecentBookmark
 import org.mozilla.fenix.home.recentbookmarks.interactor.RecentBookmarksInteractor
@@ -59,12 +60,16 @@ class DefaultRecentBookmarksController(
         }
 
         if (existingTabForBookmark == null) {
-            activity.openToBrowserAndLoad(
-                searchTermOrURL = bookmark.url!!,
-                newTab = true,
-                from = BrowserDirection.FromHome,
-                flags = EngineSession.LoadUrlFlags.select(ALLOW_JAVASCRIPT_URL),
-            )
+            with(activity) {
+                openToBrowserAndLoad(
+                    navController = navHost.navController,
+                    searchTermOrURL = bookmark.url!!,
+                    newTab = true,
+                    from = BrowserDirection.FromHome,
+                    flags = EngineSession.LoadUrlFlags.select(ALLOW_JAVASCRIPT_URL),
+                    browsingMode = browsingModeManager.mode,
+                )
+            }
         } else {
             selectTabUseCase.invoke(existingTabForBookmark.id)
             navController.navigate(R.id.browserFragment)

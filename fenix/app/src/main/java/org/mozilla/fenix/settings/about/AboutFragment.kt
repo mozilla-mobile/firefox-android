@@ -23,6 +23,7 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.crashes.CrashListActivity
 import org.mozilla.fenix.databinding.FragmentAboutBinding
+import org.mozilla.fenix.ext.openToBrowserAndLoad
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.settings.SupportUtils
@@ -176,11 +177,15 @@ class AboutFragment : Fragment(), AboutPageListener {
     }
 
     private fun openLinkInNormalTab(url: String) {
-        (activity as HomeActivity).openToBrowserAndLoad(
-            searchTermOrURL = url,
-            newTab = true,
-            from = BrowserDirection.FromAbout,
-        )
+        with(activity as HomeActivity) {
+            openToBrowserAndLoad(
+                navController = navHost.navController,
+                searchTermOrURL = url,
+                newTab = true,
+                from = BrowserDirection.FromAbout,
+                browsingMode = browsingModeManager.mode,
+            )
+        }
     }
 
     private fun openLibrariesPage() {

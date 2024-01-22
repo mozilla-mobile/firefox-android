@@ -18,6 +18,7 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
+import org.mozilla.fenix.ext.openToBrowserAndLoad
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.trackingprotection.TrackingProtectionMode
@@ -88,12 +89,16 @@ class TrackingProtectionFragment : PreferenceFragmentCompat() {
 
         val learnMorePreference = requirePreference<Preference>(R.string.pref_key_etp_learn_more)
         learnMorePreference.setOnPreferenceClickListener {
-            (activity as HomeActivity).openToBrowserAndLoad(
-                searchTermOrURL = SupportUtils.getGenericSumoURLForTopic
-                    (SupportUtils.SumoTopic.TRACKING_PROTECTION),
-                newTab = true,
-                from = BrowserDirection.FromTrackingProtection,
-            )
+            with(activity as HomeActivity) {
+                openToBrowserAndLoad(
+                    navController = navHost.navController,
+                    searchTermOrURL = SupportUtils.getGenericSumoURLForTopic
+                        (SupportUtils.SumoTopic.TRACKING_PROTECTION),
+                    newTab = true,
+                    from = BrowserDirection.FromTrackingProtection,
+                    browsingMode = browsingModeManager.mode,
+                )
+            }
             true
         }
         learnMorePreference.summary = getString(

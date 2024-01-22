@@ -11,6 +11,7 @@ import mozilla.components.feature.media.service.AbstractMediaSessionService
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.openToBrowser
 
 /**
  * When the media notification is clicked we need to switch to the tab where the audio/video is
@@ -32,7 +33,12 @@ class OpenSpecificTabIntentProcessor(
             val session = tabId?.let { browserStore.state.findTab(tabId) }
             if (session != null) {
                 activity.components.useCases.tabsUseCases.selectTab(tabId)
-                activity.openToBrowser(BrowserDirection.FromGlobal)
+                with(activity) {
+                    openToBrowser(
+                        navController = navHost.navController,
+                        from = BrowserDirection.FromGlobal,
+                    )
+                }
                 return true
             }
         }

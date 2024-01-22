@@ -26,6 +26,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ext.openToBrowserAndLoad
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.settings.SupportUtils
@@ -119,11 +120,15 @@ class TranslationsDialogFragment : BottomSheetDialogFragment() {
                                         translationsVisibility = false
                                     },
                                     onLearnMoreClicked = {
-                                        (requireActivity() as HomeActivity).openToBrowserAndLoad(
-                                            searchTermOrURL = learnMoreUrl,
-                                            newTab = true,
-                                            from = BrowserDirection.FromTranslationsDialogFragment,
-                                        )
+                                        with(requireActivity() as HomeActivity) {
+                                            openToBrowserAndLoad(
+                                                navController = navHost.navController,
+                                                searchTermOrURL = learnMoreUrl,
+                                                newTab = true,
+                                                from = BrowserDirection.FromTranslationsDialogFragment,
+                                                browsingMode = browsingModeManager.mode,
+                                            )
+                                        }
                                     },
                                     onTranslateButtonClick = {
                                         interactor.onTranslate(

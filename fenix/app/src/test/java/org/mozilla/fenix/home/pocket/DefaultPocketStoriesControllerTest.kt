@@ -4,10 +4,14 @@
 
 package org.mozilla.fenix.home.pocket
 
+import androidx.fragment.app.FragmentActivity
+import io.mockk.Runs
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.spyk
+import io.mockk.unmockkStatic
 import io.mockk.verify
 import io.mockk.verifyOrder
 import mozilla.components.service.pocket.PocketStory
@@ -16,10 +20,12 @@ import mozilla.components.service.pocket.PocketStory.PocketSponsoredStory
 import mozilla.components.service.pocket.ext.getCurrentFlightImpressions
 import mozilla.components.support.test.robolectric.testContext
 import mozilla.telemetry.glean.testing.GleanTestRule
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -30,6 +36,7 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.appstate.AppState
+import org.mozilla.fenix.ext.openToBrowserAndLoad
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 
 @RunWith(FenixRobolectricTestRunner::class) // For gleanTestRule
@@ -37,6 +44,16 @@ class DefaultPocketStoriesControllerTest {
 
     @get:Rule
     val gleanTestRule = GleanTestRule(testContext)
+
+    @Before
+    fun setup() {
+        mockkStatic(FragmentActivity::openToBrowserAndLoad)
+    }
+
+    @After
+    fun tearDown() {
+        unmockkStatic(FragmentActivity::openToBrowserAndLoad)
+    }
 
     @Test
     fun `GIVEN a category is selected WHEN that same category is clicked THEN deselect it and record telemetry`() {
@@ -233,9 +250,27 @@ class DefaultPocketStoriesControllerTest {
         val controller = DefaultPocketStoriesController(homeActivity, mockk())
         assertNull(Pocket.homeRecsStoryClicked.testGetValue())
 
+        every {
+            homeActivity.openToBrowserAndLoad(
+                navController = homeActivity.navHost.navController,
+                searchTermOrURL = story.url,
+                newTab = true,
+                from = BrowserDirection.FromHome,
+                browsingMode = homeActivity.browsingModeManager.mode,
+            )
+        } just Runs
+
         controller.handleStoryClicked(story, 1 to 2)
 
-        verify { homeActivity.openToBrowserAndLoad(story.url, true, BrowserDirection.FromHome) }
+        verify {
+            homeActivity.openToBrowserAndLoad(
+                navController = homeActivity.navHost.navController,
+                searchTermOrURL = story.url,
+                newTab = true,
+                from = BrowserDirection.FromHome,
+                browsingMode = homeActivity.browsingModeManager.mode,
+            )
+        }
 
         assertNotNull(Pocket.homeRecsStoryClicked.testGetValue())
         val event = Pocket.homeRecsStoryClicked.testGetValue()!!
@@ -265,6 +300,17 @@ class DefaultPocketStoriesControllerTest {
         val controller = DefaultPocketStoriesController(homeActivity, mockk())
         var wasPingSent = false
         assertNull(Pocket.homeRecsSpocClicked.testGetValue())
+
+        every {
+            homeActivity.openToBrowserAndLoad(
+                navController = homeActivity.navHost.navController,
+                searchTermOrURL = storyClicked.url,
+                newTab = true,
+                from = BrowserDirection.FromHome,
+                browsingMode = homeActivity.browsingModeManager.mode,
+            )
+        } just Runs
+
         mockkStatic("mozilla.components.service.pocket.ext.PocketStoryKt") {
             // Simulate that the story was already shown 2 times.
             every { storyClicked.getCurrentFlightImpressions() } returns listOf(2L, 3L)
@@ -277,7 +323,15 @@ class DefaultPocketStoriesControllerTest {
 
             controller.handleStoryClicked(storyClicked, 2 to 3)
 
-            verify { homeActivity.openToBrowserAndLoad(storyClicked.url, true, BrowserDirection.FromHome) }
+            verify {
+                homeActivity.openToBrowserAndLoad(
+                    navController = homeActivity.navHost.navController,
+                    searchTermOrURL = storyClicked.url,
+                    newTab = true,
+                    from = BrowserDirection.FromHome,
+                    browsingMode = homeActivity.browsingModeManager.mode,
+                )
+            }
             assertNotNull(Pocket.homeRecsSpocClicked.testGetValue())
             assertEquals(1, Pocket.homeRecsSpocClicked.testGetValue()!!.size)
             val data = Pocket.homeRecsSpocClicked.testGetValue()!!.single().extra
@@ -295,9 +349,27 @@ class DefaultPocketStoriesControllerTest {
         val controller = DefaultPocketStoriesController(homeActivity, mockk())
         assertNull(Pocket.homeRecsDiscoverClicked.testGetValue())
 
+        every {
+            homeActivity.openToBrowserAndLoad(
+                navController = homeActivity.navHost.navController,
+                searchTermOrURL = link,
+                newTab = true,
+                from = BrowserDirection.FromHome,
+                browsingMode = homeActivity.browsingModeManager.mode,
+            )
+        } just Runs
+
         controller.handleDiscoverMoreClicked(link)
 
-        verify { homeActivity.openToBrowserAndLoad(link, true, BrowserDirection.FromHome) }
+        verify {
+            homeActivity.openToBrowserAndLoad(
+                navController = homeActivity.navHost.navController,
+                searchTermOrURL = link,
+                newTab = true,
+                from = BrowserDirection.FromHome,
+                browsingMode = homeActivity.browsingModeManager.mode,
+            )
+        }
         assertNotNull(Pocket.homeRecsDiscoverClicked.testGetValue())
         assertEquals(1, Pocket.homeRecsDiscoverClicked.testGetValue()!!.size)
         assertNull(Pocket.homeRecsDiscoverClicked.testGetValue()!!.single().extra)
@@ -307,12 +379,30 @@ class DefaultPocketStoriesControllerTest {
     fun `WHEN learn more is clicked then open that using HomeActivity and record telemetry`() {
         val link = "https://www.mozilla.org/en-US/firefox/pocket/"
         val homeActivity: HomeActivity = mockk(relaxed = true)
+        every {
+            homeActivity.openToBrowserAndLoad(
+                navController = homeActivity.navHost.navController,
+                searchTermOrURL = link,
+                newTab = true,
+                from = BrowserDirection.FromHome,
+                browsingMode = homeActivity.browsingModeManager.mode,
+            )
+        } just Runs
+
         val controller = DefaultPocketStoriesController(homeActivity, mockk())
         assertNull(Pocket.homeRecsLearnMoreClicked.testGetValue())
 
         controller.handleLearnMoreClicked(link)
 
-        verify { homeActivity.openToBrowserAndLoad(link, true, BrowserDirection.FromHome) }
+        verify {
+            homeActivity.openToBrowserAndLoad(
+                navController = homeActivity.navHost.navController,
+                searchTermOrURL = link,
+                newTab = true,
+                from = BrowserDirection.FromHome,
+                browsingMode = homeActivity.browsingModeManager.mode,
+            )
+        }
         assertNotNull(Pocket.homeRecsLearnMoreClicked.testGetValue())
         assertNull(Pocket.homeRecsLearnMoreClicked.testGetValue()!!.single().extra)
     }
@@ -321,12 +411,27 @@ class DefaultPocketStoriesControllerTest {
     fun `WHEN a story is clicked THEN its link is opened`() {
         val story = PocketRecommendedStory("", "url", "", "", "", 0, 0)
         val homeActivity: HomeActivity = mockk(relaxed = true)
-        val controller = DefaultPocketStoriesController(homeActivity, mockk())
+        every {
+            homeActivity.openToBrowserAndLoad(
+                navController = homeActivity.navHost.navController,
+                searchTermOrURL = story.url,
+                newTab = true,
+                from = BrowserDirection.FromHome,
+                browsingMode = homeActivity.browsingModeManager.mode,
+            )
+        } just Runs
 
+        val controller = DefaultPocketStoriesController(homeActivity, mockk())
         controller.handleStoryClicked(story, 1 to 2)
 
         verifyOrder {
-            homeActivity.openToBrowserAndLoad(story.url, true, BrowserDirection.FromHome)
+            homeActivity.openToBrowserAndLoad(
+                navController = homeActivity.navHost.navController,
+                searchTermOrURL = story.url,
+                newTab = true,
+                from = BrowserDirection.FromHome,
+                browsingMode = homeActivity.browsingModeManager.mode,
+            )
         }
     }
 
@@ -334,12 +439,27 @@ class DefaultPocketStoriesControllerTest {
     fun `WHEN discover more is clicked THEN its link is opened`() {
         val link = "https://discoverMore.link"
         val homeActivity: HomeActivity = mockk(relaxed = true)
-        val controller = DefaultPocketStoriesController(homeActivity, mockk())
+        every {
+            homeActivity.openToBrowserAndLoad(
+                navController = homeActivity.navHost.navController,
+                searchTermOrURL = link,
+                newTab = true,
+                from = BrowserDirection.FromHome,
+                browsingMode = homeActivity.browsingModeManager.mode,
+            )
+        } just Runs
 
+        val controller = DefaultPocketStoriesController(homeActivity, mockk())
         controller.handleDiscoverMoreClicked(link)
 
         verifyOrder {
-            homeActivity.openToBrowserAndLoad(link, true, BrowserDirection.FromHome)
+            homeActivity.openToBrowserAndLoad(
+                navController = homeActivity.navHost.navController,
+                searchTermOrURL = link,
+                newTab = true,
+                from = BrowserDirection.FromHome,
+                browsingMode = homeActivity.browsingModeManager.mode,
+            )
         }
     }
 
@@ -347,12 +467,27 @@ class DefaultPocketStoriesControllerTest {
     fun `WHEN learn more link is clicked THEN that link is opened`() {
         val link = "https://learnMore.link"
         val homeActivity: HomeActivity = mockk(relaxed = true)
-        val controller = DefaultPocketStoriesController(homeActivity, mockk())
+        every {
+            homeActivity.openToBrowserAndLoad(
+                navController = homeActivity.navHost.navController,
+                searchTermOrURL = link,
+                newTab = true,
+                from = BrowserDirection.FromHome,
+                browsingMode = homeActivity.browsingModeManager.mode,
+            )
+        } just Runs
 
+        val controller = DefaultPocketStoriesController(homeActivity, mockk())
         controller.handleLearnMoreClicked(link)
 
         verifyOrder {
-            homeActivity.openToBrowserAndLoad(link, true, BrowserDirection.FromHome)
+            homeActivity.openToBrowserAndLoad(
+                navController = homeActivity.navHost.navController,
+                searchTermOrURL = link,
+                newTab = true,
+                from = BrowserDirection.FromHome,
+                browsingMode = homeActivity.browsingModeManager.mode,
+            )
         }
     }
 }

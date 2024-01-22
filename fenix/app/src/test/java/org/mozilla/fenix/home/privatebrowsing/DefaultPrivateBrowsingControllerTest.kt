@@ -4,11 +4,14 @@
 
 package org.mozilla.fenix.home.privatebrowsing
 
+import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavController
 import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
 import io.mockk.verify
 import mozilla.components.browser.state.action.TabListAction
 import mozilla.components.browser.state.state.createTab
@@ -25,6 +28,7 @@ import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.appstate.AppState
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.openToBrowserAndLoad
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.privatebrowsing.controller.DefaultPrivateBrowsingController
 import org.mozilla.fenix.utils.Settings
@@ -61,15 +65,29 @@ class DefaultPrivateBrowsingControllerTest {
     fun `WHEN private browsing learn more link is clicked THEN open support page in browser`() {
         val learnMoreURL = "https://support.mozilla.org/en-US/kb/common-myths-about-private-browsing?as=u&utm_source=inproduct"
 
+        mockkStatic(FragmentActivity::openToBrowserAndLoad)
+        every {
+            activity.openToBrowserAndLoad(
+                navController = activity.navHost.navController,
+                searchTermOrURL = learnMoreURL,
+                newTab = true,
+                from = BrowserDirection.FromHome,
+                browsingMode = activity.browsingModeManager.mode,
+            )
+        } just Runs
+
         controller.handleLearnMoreClicked()
 
         verify {
             activity.openToBrowserAndLoad(
+                navController = activity.navHost.navController,
                 searchTermOrURL = learnMoreURL,
                 newTab = true,
                 from = BrowserDirection.FromHome,
+                browsingMode = activity.browsingModeManager.mode,
             )
         }
+        unmockkStatic(FragmentActivity::openToBrowserAndLoad)
     }
 
     @Test

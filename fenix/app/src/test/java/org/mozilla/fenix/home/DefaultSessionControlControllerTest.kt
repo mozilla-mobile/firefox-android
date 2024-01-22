@@ -4,9 +4,12 @@
 
 package org.mozilla.fenix.home
 
+import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
+import io.mockk.Runs
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.spyk
@@ -34,6 +37,7 @@ import mozilla.components.service.nimbus.messaging.Message
 import mozilla.components.support.test.ext.joinBlocking
 import mozilla.components.support.test.robolectric.testContext
 import mozilla.components.support.test.rule.MainCoroutineRule
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -60,6 +64,8 @@ import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.appstate.AppState
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.openToBrowser
+import org.mozilla.fenix.ext.openToBrowserAndLoad
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.home.recentbookmarks.RecentBookmark
@@ -127,6 +133,8 @@ class DefaultSessionControlControllerTest {
 
     @Before
     fun setup() {
+        mockkStatic(FragmentActivity::openToBrowserAndLoad)
+
         store = BrowserStore(
             BrowserState(
                 search = SearchState(
@@ -153,6 +161,11 @@ class DefaultSessionControlControllerTest {
         every { activity.components.analytics } returns analytics
         every { activity.filesDir } returns filesDir
         every { filesDir.path } returns "/test"
+    }
+
+    @After
+    fun tearDown(){
+        unmockkStatic(FragmentActivity::openToBrowserAndLoad)
     }
 
     @Test
@@ -196,10 +209,21 @@ class DefaultSessionControlControllerTest {
 
     @Test
     fun `handleCollectionOpenTabClicked onFailure`() {
+        val testUrl = "https://mozilla.org"
         val tab = mockk<ComponentTab> {
-            every { url } returns "https://mozilla.org"
+            every { url } returns testUrl
             every { restore(filesDir, engine, restoreSessionId = false) } returns null
         }
+        every {
+            activity.openToBrowserAndLoad(
+                navController = activity.navHost.navController,
+                searchTermOrURL = testUrl,
+                newTab = true,
+                from = BrowserDirection.FromHome,
+                browsingMode = activity.browsingModeManager.mode,
+            )
+        } just Runs
+
         createController().handleCollectionOpenTabClicked(tab)
 
         assertNotNull(Collections.tabRestored.testGetValue())
@@ -209,9 +233,11 @@ class DefaultSessionControlControllerTest {
 
         verify {
             activity.openToBrowserAndLoad(
-                searchTermOrURL = "https://mozilla.org",
+                navController = activity.navHost.navController,
+                searchTermOrURL = testUrl,
                 newTab = true,
                 from = BrowserDirection.FromHome,
+                browsingMode = activity.browsingModeManager.mode,
             )
         }
     }
@@ -235,6 +261,12 @@ class DefaultSessionControlControllerTest {
         val tab = mockk<ComponentTab> {
             every { restore(filesDir, engine, restoreSessionId = false) } returns recoverableTab
         }
+        every {
+            activity.openToBrowser(
+                navController = activity.navHost.navController,
+                from = BrowserDirection.FromHome,
+            )
+        } just Runs
 
         val restoredTab = createTab(id = recoverableTab.state.id, url = recoverableTab.state.url)
         val otherTab = createTab(id = "otherTab", url = "https://mozilla.org")
@@ -249,7 +281,12 @@ class DefaultSessionControlControllerTest {
         assertEquals(1, recordedEvents.size)
         assertEquals(null, recordedEvents.single().extra)
 
-        verify { activity.openToBrowser(BrowserDirection.FromHome) }
+        verify {
+            activity.openToBrowser(
+                navController = activity.navHost.navController,
+                from = BrowserDirection.FromHome,
+            )
+        }
         verify { selectTabUseCase.selectTab.invoke(restoredTab.id) }
         verify { reloadUrlUseCase.reload.invoke(restoredTab.id) }
     }
@@ -273,6 +310,12 @@ class DefaultSessionControlControllerTest {
         val tab = mockk<ComponentTab> {
             every { restore(filesDir, engine, restoreSessionId = false) } returns recoverableTab
         }
+        every {
+            activity.openToBrowser(
+                navController = activity.navHost.navController,
+                from = BrowserDirection.FromHome,
+            )
+        } just Runs
 
         val restoredTab = createTab(id = recoverableTab.state.id, url = recoverableTab.state.url)
         store.dispatch(TabListAction.AddTabAction(restoredTab)).joinBlocking()
@@ -284,10 +327,16 @@ class DefaultSessionControlControllerTest {
         assertEquals(1, recordedEvents.size)
         assertEquals(null, recordedEvents.single().extra)
 
-        verify { activity.openToBrowser(BrowserDirection.FromHome) }
+        verify {
+            activity.openToBrowser(
+                navController = activity.navHost.navController,
+                from = BrowserDirection.FromHome,
+            )
+        }
         verify { selectTabUseCase.selectTab.invoke(restoredTab.id) }
         verify { reloadUrlUseCase.reload.invoke(restoredTab.id) }
     }
+
 
     @Test
     fun handleCollectionOpenTabsTapped() {
@@ -1230,6 +1279,19 @@ class DefaultSessionControlControllerTest {
 
     @Test
     fun `WHEN handleSponsorPrivacyClicked is called THEN navigate to the privacy webpage AND report the interaction`() {
+        val supportUrl =
+            SupportUtils.getGenericSumoURLForTopic(SupportUtils.SumoTopic.SPONSOR_PRIVACY)
+
+        every {
+            activity.openToBrowserAndLoad(
+                navController = activity.navHost.navController,
+                searchTermOrURL = supportUrl,
+                newTab = true,
+                from = BrowserDirection.FromHome,
+                browsingMode = activity.browsingModeManager.mode,
+            )
+        } just Runs
+
         createController().handleSponsorPrivacyClicked()
 
         assertNotNull(TopSites.contileSponsorsAndPrivacy.testGetValue())
@@ -1237,9 +1299,11 @@ class DefaultSessionControlControllerTest {
         assertNull(TopSites.contileSponsorsAndPrivacy.testGetValue()!!.single().extra)
         verify {
             activity.openToBrowserAndLoad(
-                searchTermOrURL = SupportUtils.getGenericSumoURLForTopic(SupportUtils.SumoTopic.SPONSOR_PRIVACY),
+                navController = activity.navHost.navController,
+                searchTermOrURL = supportUrl,
                 newTab = true,
                 from = BrowserDirection.FromHome,
+                browsingMode = activity.browsingModeManager.mode,
             )
         }
     }
@@ -1274,6 +1338,17 @@ class DefaultSessionControlControllerTest {
             impressionUrl = "",
             createdAt = 0,
         )
+
+        every {
+            activity.openToBrowserAndLoad(
+                navController = activity.navHost.navController,
+                searchTermOrURL = topSite.url,
+                newTab = true,
+                from = BrowserDirection.FromHome,
+                browsingMode = activity.browsingModeManager.mode,
+            )
+        } just Runs
+
         createController().handleOpenInPrivateTabClicked(topSite)
 
         assertNotNull(TopSites.openContileInPrivateTab.testGetValue())
@@ -1303,6 +1378,18 @@ class DefaultSessionControlControllerTest {
             createdAt = 0,
         )
         assertNull(TopSites.openInPrivateTab.testGetValue())
+
+        listOf(topSite1, topSite2, topSite3).forEach {
+            every {
+                activity.openToBrowserAndLoad(
+                    navController = activity.navHost.navController,
+                    searchTermOrURL = it.url,
+                    newTab = true,
+                    from = BrowserDirection.FromHome,
+                    browsingMode = activity.browsingModeManager.mode,
+                )
+            } just Runs
+        }
 
         controller.handleOpenInPrivateTabClicked(topSite1)
         controller.handleOpenInPrivateTabClicked(topSite2)

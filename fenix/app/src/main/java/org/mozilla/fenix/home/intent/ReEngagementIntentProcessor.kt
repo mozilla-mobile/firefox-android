@@ -16,6 +16,7 @@ import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.ext.nav
+import org.mozilla.fenix.ext.openToBrowserAndLoad
 import org.mozilla.fenix.onboarding.ReEngagementNotificationWorker
 import org.mozilla.fenix.onboarding.ReEngagementNotificationWorker.Companion.isReEngagementNotificationIntent
 import org.mozilla.fenix.utils.Settings
@@ -47,12 +48,16 @@ class ReEngagementIntentProcessor(
                     }
                     else -> {
                         activity.browsingModeManager.mode = BrowsingMode.Private
-                        activity.openToBrowserAndLoad(
-                            ReEngagementNotificationWorker.NOTIFICATION_TARGET_URL,
-                            newTab = true,
-                            from = BrowserDirection.FromGlobal,
-                            flags = EngineSession.LoadUrlFlags.external(),
-                        )
+                        with(activity) {
+                            openToBrowserAndLoad(
+                                navController = navHost.navController,
+                                searchTermOrURL = ReEngagementNotificationWorker.NOTIFICATION_TARGET_URL,
+                                newTab = true,
+                                from = BrowserDirection.FromGlobal,
+                                flags = EngineSession.LoadUrlFlags.external(),
+                                browsingMode = browsingModeManager.mode,
+                            )
+                        }
                     }
                 }
 

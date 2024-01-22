@@ -4,10 +4,12 @@
 
 package org.mozilla.fenix.tabstray
 
+import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import androidx.navigation.NavOptions
 import io.mockk.MockKAnnotations
+import io.mockk.Runs
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -65,6 +67,7 @@ import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.TabCollectionStorage
 import org.mozilla.fenix.components.bookmarks.BookmarksUseCase
 import org.mozilla.fenix.ext.maxActiveTime
+import org.mozilla.fenix.ext.openToBrowserAndLoad
 import org.mozilla.fenix.ext.potentialInactiveTabs
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.home.HomeFragment
@@ -546,8 +549,19 @@ class DefaultTabsTrayControllerTest {
         val entry = mockk<TabEntry>()
         assertNull(Events.syncedTabOpened.testGetValue())
 
+        val url = "https://mozilla.org"
         every { tab.active() }.answers { entry }
-        every { entry.url }.answers { "https://mozilla.org" }
+        every { entry.url }.answers { url }
+        mockkStatic(FragmentActivity::openToBrowserAndLoad)
+        every {
+            activity.openToBrowserAndLoad(
+                navController = activity.navHost.navController,
+                searchTermOrURL = url,
+                newTab = true,
+                from = BrowserDirection.FromTabsTray,
+                browsingMode = activity.browsingModeManager.mode,
+            )
+        } just Runs
 
         var dismissTabTrayInvoked = false
         createController(
@@ -561,9 +575,11 @@ class DefaultTabsTrayControllerTest {
 
         verify {
             activity.openToBrowserAndLoad(
-                searchTermOrURL = "https://mozilla.org",
+                navController = activity.navHost.navController,
+                searchTermOrURL = url,
                 newTab = true,
                 from = BrowserDirection.FromTabsTray,
+                browsingMode = activity.browsingModeManager.mode,
             )
         }
     }

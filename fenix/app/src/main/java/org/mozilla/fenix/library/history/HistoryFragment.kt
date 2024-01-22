@@ -52,6 +52,7 @@ import org.mozilla.fenix.databinding.FragmentHistoryBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getRootView
 import org.mozilla.fenix.ext.nav
+import org.mozilla.fenix.ext.openToBrowserAndLoad
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.setTextColor
@@ -392,11 +393,15 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler, 
             ),
         )
 
-        (activity as HomeActivity).openToBrowserAndLoad(
-            searchTermOrURL = item.url,
-            newTab = true,
-            from = BrowserDirection.FromHistory,
-        )
+        with(activity as HomeActivity) {
+            openToBrowserAndLoad(
+                navController = navHost.navController,
+                searchTermOrURL = item.url,
+                newTab = true,
+                from = BrowserDirection.FromHistory,
+                browsingMode = browsingModeManager.mode,
+            )
+        }
     }
 
     private fun share(data: List<ShareData>) {

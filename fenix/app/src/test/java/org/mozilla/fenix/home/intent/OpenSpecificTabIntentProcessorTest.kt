@@ -5,10 +5,15 @@
 package org.mozilla.fenix.home.intent
 
 import android.content.Intent
+import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavController
 import io.mockk.Called
+import io.mockk.Runs
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
 import io.mockk.verify
 import io.mockk.verifyOrder
 import mozilla.components.browser.state.state.BrowserState
@@ -24,6 +29,7 @@ import org.junit.runner.RunWith
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.openToBrowser
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 
 @RunWith(FenixRobolectricTestRunner::class)
@@ -76,7 +82,12 @@ class OpenSpecificTabIntentProcessorTest {
 
         assertFalse(processor.process(intent, navController, out))
 
-        verify(exactly = 0) { activity.openToBrowser(BrowserDirection.FromGlobal) }
+        verify(exactly = 0) {
+            activity.openToBrowser(
+                navController = activity.navHost.navController,
+                from = BrowserDirection.FromGlobal,
+            )
+        }
         verify { navController wasNot Called }
         verify { out wasNot Called }
     }
@@ -91,15 +102,26 @@ class OpenSpecificTabIntentProcessorTest {
         val tabUseCases: TabsUseCases = mockk(relaxed = true)
         every { activity.components.core.store } returns store
         every { activity.components.useCases.tabsUseCases } returns tabUseCases
+        mockkStatic(FragmentActivity::openToBrowser)
+        every {
+            activity.openToBrowser(
+                navController = activity.navHost.navController,
+                from = BrowserDirection.FromGlobal,
+            )
+        } just Runs
 
         assertTrue(processor.process(intent, navController, out))
 
         verifyOrder {
             tabUseCases.selectTab(TEST_SESSION_ID)
-            activity.openToBrowser(BrowserDirection.FromGlobal)
+            activity.openToBrowser(
+                navController = activity.navHost.navController,
+                from = BrowserDirection.FromGlobal,
+            )
         }
         verify { navController wasNot Called }
         verify { out wasNot Called }
+        unmockkStatic(FragmentActivity::openToBrowser)
     }
 
     companion object {

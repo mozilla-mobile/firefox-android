@@ -35,6 +35,7 @@ import org.mozilla.fenix.SecureFragment
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.databinding.FragmentSavedLoginsBinding
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.openToBrowserAndLoad
 import org.mozilla.fenix.ext.redirectToReAuth
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
@@ -221,7 +222,15 @@ class SavedLoginsFragment : SecureFragment(), MenuProvider {
         searchTermOrURL: String,
         newTab: Boolean,
         from: BrowserDirection,
-    ) = (activity as HomeActivity).openToBrowserAndLoad(searchTermOrURL, newTab, from)
+    ) = with(activity as HomeActivity) {
+        openToBrowserAndLoad(
+            navController = navHost.navController,
+            searchTermOrURL = searchTermOrURL,
+            newTab = newTab,
+            from = from,
+            browsingMode = browsingModeManager.mode,
+        )
+    }
 
     private fun initToolbar() {
         requireActivity().addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)

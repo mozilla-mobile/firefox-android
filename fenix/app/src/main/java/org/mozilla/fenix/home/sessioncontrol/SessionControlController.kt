@@ -48,7 +48,10 @@ import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.appstate.AppState
 import org.mozilla.fenix.components.metrics.MetricsUtils
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.handleRequestDesktopMode
 import org.mozilla.fenix.ext.nav
+import org.mozilla.fenix.ext.openToBrowser
+import org.mozilla.fenix.ext.openToBrowserAndLoad
 import org.mozilla.fenix.home.HomeFragment
 import org.mozilla.fenix.home.HomeFragmentDirections
 import org.mozilla.fenix.messaging.MessageController
@@ -211,16 +214,25 @@ class DefaultSessionControlController(
             engine,
             tab,
             onTabRestored = {
-                activity.openToBrowser(BrowserDirection.FromHome)
+                with(activity) {
+                    openToBrowser(
+                        navController = navHost.navController,
+                        from = BrowserDirection.FromHome,
+                    )
+                }
                 selectTabUseCase.invoke(it)
                 reloadUrlUseCase.invoke(it)
             },
             onFailure = {
-                activity.openToBrowserAndLoad(
-                    searchTermOrURL = tab.url,
-                    newTab = true,
-                    from = BrowserDirection.FromHome,
-                )
+                with(activity) {
+                    openToBrowserAndLoad(
+                        navController = navHost.navController,
+                        searchTermOrURL = tab.url,
+                        newTab = true,
+                        from = BrowserDirection.FromHome,
+                        browsingMode = browsingModeManager.mode,
+                    )
+                }
             },
         )
 
@@ -278,9 +290,11 @@ class DefaultSessionControlController(
         with(activity) {
             browsingModeManager.mode = BrowsingMode.Private
             openToBrowserAndLoad(
+                navController = navHost.navController,
                 searchTermOrURL = topSite.url,
                 newTab = true,
                 from = BrowserDirection.FromHome,
+                browsingMode = browsingModeManager.mode,
             )
         }
     }
@@ -424,11 +438,15 @@ class DefaultSessionControlController(
 
     override fun handleSponsorPrivacyClicked() {
         TopSites.contileSponsorsAndPrivacy.record(NoExtras())
-        activity.openToBrowserAndLoad(
-            searchTermOrURL = SupportUtils.getGenericSumoURLForTopic(SupportUtils.SumoTopic.SPONSOR_PRIVACY),
-            newTab = true,
-            from = BrowserDirection.FromHome,
-        )
+        with(activity) {
+            openToBrowserAndLoad(
+                navController = navHost.navController,
+                searchTermOrURL = SupportUtils.getGenericSumoURLForTopic(SupportUtils.SumoTopic.SPONSOR_PRIVACY),
+                newTab = true,
+                from = BrowserDirection.FromHome,
+                browsingMode = activity.browsingModeManager.mode,
+            )
+        }
     }
 
     override fun handleTopSiteLongClicked(topSite: TopSite) {

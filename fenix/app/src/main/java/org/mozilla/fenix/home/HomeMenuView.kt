@@ -27,6 +27,7 @@ import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.components.accounts.AccountState
 import org.mozilla.fenix.components.accounts.FenixFxAEntryPoint
 import org.mozilla.fenix.ext.nav
+import org.mozilla.fenix.ext.openToBrowserAndLoad
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.settings.deletebrowsingdata.deleteAndQuit
@@ -137,16 +138,20 @@ class HomeMenuView(
                 )
             }
             HomeMenu.Item.ManageAccountAndDevices -> {
-                homeActivity.openToBrowserAndLoad(
-                    searchTermOrURL =
-                    if (context.settings().allowDomesticChinaFxaServer) {
-                        FxaServer.China.contentUrl() + "/settings"
-                    } else {
-                        FxaServer.Release.contentUrl() + "/settings"
-                    },
-                    newTab = true,
-                    from = BrowserDirection.FromHome,
-                )
+                with(homeActivity) {
+                    openToBrowserAndLoad(
+                        navController = navHost.navController,
+                        searchTermOrURL =
+                        if (context.settings().allowDomesticChinaFxaServer) {
+                            FxaServer.China.contentUrl() + "/settings"
+                        } else {
+                            FxaServer.Release.contentUrl() + "/settings"
+                        },
+                        newTab = true,
+                        from = BrowserDirection.FromHome,
+                        browsingMode = browsingModeManager.mode,
+                    )
+                }
             }
             HomeMenu.Item.Bookmarks -> {
                 navController.nav(
@@ -168,24 +173,32 @@ class HomeMenuView(
             }
             HomeMenu.Item.Help -> {
                 HomeMenuMetrics.helpTapped.record(NoExtras())
-                homeActivity.openToBrowserAndLoad(
-                    searchTermOrURL = SupportUtils.getSumoURLForTopic(
-                        context = context,
-                        topic = SupportUtils.SumoTopic.HELP,
-                    ),
-                    newTab = true,
-                    from = BrowserDirection.FromHome,
-                )
+                with(homeActivity) {
+                    openToBrowserAndLoad(
+                        navController = navHost.navController,
+                        searchTermOrURL = SupportUtils.getSumoURLForTopic(
+                            context = context,
+                            topic = SupportUtils.SumoTopic.HELP,
+                        ),
+                        newTab = true,
+                        from = BrowserDirection.FromHome,
+                        browsingMode = browsingModeManager.mode,
+                    )
+                }
             }
             HomeMenu.Item.WhatsNew -> {
                 WhatsNew.userViewedWhatsNew(context)
                 Events.whatsNewTapped.record(NoExtras())
 
-                homeActivity.openToBrowserAndLoad(
-                    searchTermOrURL = SupportUtils.WHATS_NEW_URL,
-                    newTab = true,
-                    from = BrowserDirection.FromHome,
-                )
+                with(homeActivity) {
+                    openToBrowserAndLoad(
+                        navController = navHost.navController,
+                        searchTermOrURL = SupportUtils.WHATS_NEW_URL,
+                        newTab = true,
+                        from = BrowserDirection.FromHome,
+                        browsingMode = browsingModeManager.mode,
+                    )
+                }
             }
             HomeMenu.Item.Quit -> {
                 // We need to show the snackbar while the browsing data is deleting (if "Delete

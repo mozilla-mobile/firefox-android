@@ -38,6 +38,7 @@ import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.databinding.FragmentLoginDetailBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.increaseTapArea
+import org.mozilla.fenix.ext.openToBrowserAndLoad
 import org.mozilla.fenix.ext.redirectToReAuth
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
@@ -206,11 +207,15 @@ class LoginDetailFragment : SecureFragment(R.layout.fragment_login_detail), Menu
     }
 
     private fun navigateToBrowser(address: String) {
-        (activity as HomeActivity).openToBrowserAndLoad(
-            address,
-            newTab = true,
-            from = BrowserDirection.FromLoginDetailFragment,
-        )
+        with(activity as HomeActivity) {
+            openToBrowserAndLoad(
+                navController = navHost.navController,
+                searchTermOrURL = address,
+                newTab = true,
+                from = BrowserDirection.FromLoginDetailFragment,
+                browsingMode = browsingModeManager.mode,
+            )
+        }
     }
 
     private fun editLogin() {

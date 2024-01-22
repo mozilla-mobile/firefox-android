@@ -23,6 +23,7 @@ import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.FenixSnackbar
+import org.mozilla.fenix.ext.openToBrowserAndLoad
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
@@ -72,11 +73,15 @@ class WallpaperSettingsFragment : Fragment() {
                             }
                         },
                         onLearnMoreClick = { url, collectionName ->
-                            (activity as HomeActivity).openToBrowserAndLoad(
-                                searchTermOrURL = url,
-                                newTab = true,
-                                from = BrowserDirection.FromWallpaper,
-                            )
+                            with(activity as HomeActivity) {
+                                openToBrowserAndLoad(
+                                    navController = navHost.navController,
+                                    searchTermOrURL = url,
+                                    newTab = true,
+                                    from = BrowserDirection.FromWallpaper,
+                                    browsingMode = browsingModeManager.mode,
+                                )
+                            }
                             Wallpapers.learnMoreLinkClick.record(
                                 Wallpapers.LearnMoreLinkClickExtra(
                                     url = url,

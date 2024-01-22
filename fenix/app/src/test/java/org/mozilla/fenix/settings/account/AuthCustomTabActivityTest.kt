@@ -5,16 +5,19 @@
 package org.mozilla.fenix.settings.account
 
 import android.content.Intent
+import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavController
 import io.mockk.Called
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import io.mockk.spyk
 import io.mockk.verify
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.openToBrowser
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.utils.Settings
 
@@ -23,6 +26,7 @@ class AuthCustomTabActivityTest {
 
     @Test
     fun `navigateToBrowserOnColdStart does nothing for AuthCustomTabActivity`() {
+        mockkStatic(FragmentActivity::openToBrowser)
         val activity = spyk(AuthCustomTabActivity())
 
         val settings: Settings = mockk()
@@ -32,7 +36,12 @@ class AuthCustomTabActivityTest {
 
         activity.navigateToBrowserOnColdStart()
 
-        verify(exactly = 0) { activity.openToBrowser(BrowserDirection.FromGlobal) }
+        verify(exactly = 0) {
+            activity.openToBrowser(
+                navController = activity.navHost.navController,
+                from = BrowserDirection.FromGlobal,
+            )
+        }
     }
 
     @Test

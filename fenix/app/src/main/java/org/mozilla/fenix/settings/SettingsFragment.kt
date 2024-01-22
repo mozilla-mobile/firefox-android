@@ -56,6 +56,7 @@ import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.navigateToNotificationsSettings
 import org.mozilla.fenix.ext.openSetDefaultBrowserOption
+import org.mozilla.fenix.ext.openToBrowserAndLoad
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
@@ -309,14 +310,18 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 SettingsFragmentDirections.actionSettingsFragmentToSyncDebugFragment()
             }
             resources.getString(R.string.pref_key_help) -> {
-                (activity as HomeActivity).openToBrowserAndLoad(
-                    searchTermOrURL = SupportUtils.getSumoURLForTopic(
-                        requireContext(),
-                        SupportUtils.SumoTopic.HELP,
-                    ),
-                    newTab = true,
-                    from = BrowserDirection.FromSettings,
-                )
+                with(activity as HomeActivity) {
+                    openToBrowserAndLoad(
+                        navController = navHost.navController,
+                        searchTermOrURL = SupportUtils.getSumoURLForTopic(
+                            requireContext(),
+                            SupportUtils.SumoTopic.HELP,
+                        ),
+                        newTab = true,
+                        from = BrowserDirection.FromSettings,
+                        browsingMode = browsingModeManager.mode,
+                    )
+                }
                 null
             }
             resources.getString(R.string.pref_key_rate) -> {
@@ -325,11 +330,15 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 } catch (e: ActivityNotFoundException) {
                     // Device without the play store installed.
                     // Opening the play store website.
-                    (activity as HomeActivity).openToBrowserAndLoad(
-                        searchTermOrURL = SupportUtils.FENIX_PLAY_STORE_URL,
-                        newTab = true,
-                        from = BrowserDirection.FromSettings,
-                    )
+                    with(activity as HomeActivity) {
+                        openToBrowserAndLoad(
+                            navController = navHost.navController,
+                            searchTermOrURL = SupportUtils.FENIX_PLAY_STORE_URL,
+                            newTab = true,
+                            from = BrowserDirection.FromSettings,
+                            browsingMode = browsingModeManager.mode,
+                        )
+                    }
                 }
                 null
             }

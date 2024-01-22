@@ -5,6 +5,7 @@
 package org.mozilla.fenix.search
 
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import io.mockk.MockKAnnotations
@@ -14,6 +15,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkObject
+import io.mockk.mockkStatic
 import io.mockk.spyk
 import io.mockk.unmockkObject
 import io.mockk.verify
@@ -48,6 +50,8 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.Core
 import org.mozilla.fenix.components.metrics.MetricsUtils
+import org.mozilla.fenix.ext.openToBrowser
+import org.mozilla.fenix.ext.openToBrowserAndLoad
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.search.SearchDialogFragmentDirections.Companion.actionGlobalAddonsManagementFragment
 import org.mozilla.fenix.search.SearchDialogFragmentDirections.Companion.actionGlobalSearchEngineFragment
@@ -82,6 +86,7 @@ class SearchDialogControllerTest {
     fun setUp() {
         MockKAnnotations.init(this)
         mockkObject(MetricsUtils)
+        mockkStatic(FragmentActivity::openToBrowser, FragmentActivity::openToBrowserAndLoad)
         middleware = CaptureActionsMiddleware()
         browserStore = BrowserStore(
             middleware = listOf(middleware),
@@ -106,6 +111,17 @@ class SearchDialogControllerTest {
         assertNull(Events.enteredUrl.testGetValue())
 
         every { store.state.defaultEngine } returns searchEngine
+        every {
+            activity.openToBrowserAndLoad(
+                navController = activity.navHost.navController,
+                searchTermOrURL = url,
+                newTab = false,
+                from = BrowserDirection.FromSearchDialog,
+                browsingMode = activity.browsingModeManager.mode,
+                engine = searchEngine,
+                forceSearch = false,
+            )
+        } just Runs
 
         createController().handleUrlCommitted(url)
 
@@ -113,9 +129,11 @@ class SearchDialogControllerTest {
 
         verify {
             activity.openToBrowserAndLoad(
+                navController = activity.navHost.navController,
                 searchTermOrURL = url,
                 newTab = false,
                 from = BrowserDirection.FromSearchDialog,
+                browsingMode = activity.browsingModeManager.mode,
                 engine = searchEngine,
                 forceSearch = false,
             )
@@ -137,6 +155,17 @@ class SearchDialogControllerTest {
         assertNull(Events.enteredUrl.testGetValue())
 
         every { store.state.defaultEngine } returns mockk(relaxed = true)
+        every {
+            activity.openToBrowserAndLoad(
+                navController = activity.navHost.navController,
+                searchTermOrURL = url,
+                newTab = false,
+                from = BrowserDirection.FromSearchDialog,
+                browsingMode = activity.browsingModeManager.mode,
+                engine = searchEngine,
+                forceSearch = true,
+            )
+        } just Runs
 
         createController().handleUrlCommitted(url)
 
@@ -144,9 +173,11 @@ class SearchDialogControllerTest {
 
         verify {
             activity.openToBrowserAndLoad(
+                navController = activity.navHost.navController,
                 searchTermOrURL = url,
                 newTab = false,
                 from = BrowserDirection.FromSearchDialog,
+                browsingMode = activity.browsingModeManager.mode,
                 engine = searchEngine,
                 forceSearch = true,
             )
@@ -185,6 +216,17 @@ class SearchDialogControllerTest {
     @Test
     fun handleSearchCommitted() {
         val searchTerm = "Firefox"
+        every {
+            activity.openToBrowserAndLoad(
+                navController = activity.navHost.navController,
+                searchTermOrURL = searchTerm,
+                newTab = false,
+                from = BrowserDirection.FromSearchDialog,
+                browsingMode = activity.browsingModeManager.mode,
+                engine = searchEngine,
+                forceSearch = true,
+            )
+        } just Runs
 
         createController().handleUrlCommitted(searchTerm)
 
@@ -192,9 +234,11 @@ class SearchDialogControllerTest {
 
         verify {
             activity.openToBrowserAndLoad(
+                navController = activity.navHost.navController,
                 searchTermOrURL = searchTerm,
                 newTab = false,
                 from = BrowserDirection.FromSearchDialog,
+                browsingMode = activity.browsingModeManager.mode,
                 engine = searchEngine,
                 forceSearch = true,
             )
@@ -222,6 +266,7 @@ class SearchDialogControllerTest {
 
         verify(exactly = 0) {
             activity.openToBrowserAndLoad(
+                navController = activity.navHost.navController,
                 searchTermOrURL = any(),
                 newTab = any(),
                 from = any(),
@@ -274,6 +319,17 @@ class SearchDialogControllerTest {
         assertNull(Events.enteredUrl.testGetValue())
 
         every { store.state.defaultEngine } returns searchEngine
+        val expectedUrl = SupportUtils.getMozillaPageUrl(SupportUtils.MozillaPage.MANIFESTO)
+        every {
+            activity.openToBrowserAndLoad(
+                navController = activity.navHost.navController,
+                searchTermOrURL = expectedUrl,
+                newTab = false,
+                from = BrowserDirection.FromSearchDialog,
+                browsingMode = activity.browsingModeManager.mode,
+                engine = searchEngine,
+            )
+        } just Runs
 
         createController().handleUrlCommitted(url)
 
@@ -281,9 +337,11 @@ class SearchDialogControllerTest {
 
         verify {
             activity.openToBrowserAndLoad(
-                searchTermOrURL = SupportUtils.getMozillaPageUrl(SupportUtils.MozillaPage.MANIFESTO),
+                navController = activity.navHost.navController,
+                searchTermOrURL = expectedUrl,
                 newTab = false,
                 from = BrowserDirection.FromSearchDialog,
+                browsingMode = activity.browsingModeManager.mode,
                 engine = searchEngine,
             )
         }
@@ -381,6 +439,27 @@ class SearchDialogControllerTest {
         val flags = EngineSession.LoadUrlFlags.all()
         assertNull(Events.enteredUrl.testGetValue())
 
+        every {
+            activity.openToBrowserAndLoad(
+                navController = activity.navHost.navController,
+                searchTermOrURL = url,
+                newTab = false,
+                from = BrowserDirection.FromSearchDialog,
+                browsingMode = activity.browsingModeManager.mode,
+                flags = flags,
+            )
+        } returns Unit
+
+        every {
+            activity.openToBrowserAndLoad(
+                navController = activity.navHost.navController,
+                searchTermOrURL = url,
+                newTab = false,
+                from = BrowserDirection.FromSearchDialog,
+                browsingMode = activity.browsingModeManager.mode,
+            )
+        } just Runs
+
         createController().handleUrlTapped(url, flags)
         createController().handleUrlTapped(url)
 
@@ -388,9 +467,11 @@ class SearchDialogControllerTest {
 
         verify {
             activity.openToBrowserAndLoad(
+                navController = activity.navHost.navController,
                 searchTermOrURL = url,
                 newTab = false,
                 from = BrowserDirection.FromSearchDialog,
+                browsingMode = activity.browsingModeManager.mode,
                 flags = flags,
             )
         }
@@ -409,6 +490,17 @@ class SearchDialogControllerTest {
     @Test
     fun handleSearchTermsTapped() {
         val searchTerms = "fenix"
+        every {
+            activity.openToBrowserAndLoad(
+                navController = activity.navHost.navController,
+                searchTermOrURL = searchTerms,
+                newTab = false,
+                from = BrowserDirection.FromSearchDialog,
+                browsingMode = activity.browsingModeManager.mode,
+                engine = searchEngine,
+                forceSearch = true,
+            )
+        } just Runs
 
         createController().handleSearchTermsTapped(searchTerms)
 
@@ -416,9 +508,11 @@ class SearchDialogControllerTest {
 
         verify {
             activity.openToBrowserAndLoad(
+                navController = activity.navHost.navController,
                 searchTermOrURL = searchTerms,
                 newTab = false,
                 from = BrowserDirection.FromSearchDialog,
+                browsingMode = activity.browsingModeManager.mode,
                 engine = searchEngine,
                 forceSearch = true,
             )
@@ -568,6 +662,13 @@ class SearchDialogControllerTest {
 
     @Test
     fun handleExistingSessionSelected() {
+        every {
+            activity.openToBrowser(
+                navController = activity.navHost.navController,
+                from = BrowserDirection.FromSearchDialog,
+            )
+        } just Runs
+
         createController().handleExistingSessionSelected("selected")
 
         browserStore.waitUntilIdle()
@@ -576,7 +677,12 @@ class SearchDialogControllerTest {
             assertEquals("selected", action.tabId)
         }
 
-        verify { activity.openToBrowser(from = BrowserDirection.FromSearchDialog) }
+        verify {
+            activity.openToBrowser(
+                navController = activity.navHost.navController,
+                from = BrowserDirection.FromSearchDialog,
+            )
+        }
 
         middleware.assertLastAction(AwesomeBarAction.EngagementFinished::class) { action ->
             assertFalse(action.abandoned)
@@ -585,6 +691,13 @@ class SearchDialogControllerTest {
 
     @Test
     fun handleExistingSessionSelected_tabId() {
+        every {
+            activity.openToBrowser(
+                navController = activity.navHost.navController,
+                from = BrowserDirection.FromSearchDialog,
+            )
+        } just Runs
+
         createController().handleExistingSessionSelected("tab-id")
 
         browserStore.waitUntilIdle()
@@ -592,7 +705,12 @@ class SearchDialogControllerTest {
         middleware.assertFirstAction(TabListAction.SelectTabAction::class) { action ->
             assertEquals("tab-id", action.tabId)
         }
-        verify { activity.openToBrowser(from = BrowserDirection.FromSearchDialog) }
+        verify {
+            activity.openToBrowser(
+                navController = activity.navHost.navController,
+                from = BrowserDirection.FromSearchDialog,
+            )
+        }
 
         middleware.assertLastAction(AwesomeBarAction.EngagementFinished::class) { action ->
             assertFalse(action.abandoned)

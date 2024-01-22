@@ -4,11 +4,16 @@
 
 package org.mozilla.fenix.home.toolbar
 
+import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import androidx.navigation.NavOptions
+import io.mockk.Runs
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
 import io.mockk.verify
 import mozilla.components.browser.state.search.SearchEngine
 import mozilla.components.browser.state.state.BrowserState
@@ -27,6 +32,7 @@ import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.ext.openToBrowserAndLoad
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.utils.Settings
@@ -73,13 +79,28 @@ class DefaultToolbarControllerTest {
         assertNull(Events.performedSearch.testGetValue())
 
         var clipboardText = "text"
+
+        mockkStatic(FragmentActivity::openToBrowserAndLoad)
+        every {
+            activity.openToBrowserAndLoad(
+                navController = activity.navHost.navController,
+                searchTermOrURL = clipboardText,
+                newTab = true,
+                from = BrowserDirection.FromHome,
+                browsingMode = activity.browsingModeManager.mode,
+                engine = searchEngine,
+            )
+        } just Runs
+
         createController().handlePasteAndGo(clipboardText)
 
         verify {
             activity.openToBrowserAndLoad(
+                navController = activity.navHost.navController,
                 searchTermOrURL = clipboardText,
                 newTab = true,
                 from = BrowserDirection.FromHome,
+                browsingMode = activity.browsingModeManager.mode,
                 engine = searchEngine,
             )
         }
@@ -87,18 +108,33 @@ class DefaultToolbarControllerTest {
         assertNotNull(Events.performedSearch.testGetValue())
 
         clipboardText = "https://mozilla.org"
+
+        every {
+            activity.openToBrowserAndLoad(
+                navController = activity.navHost.navController,
+                searchTermOrURL = clipboardText,
+                newTab = true,
+                from = BrowserDirection.FromHome,
+                browsingMode = activity.browsingModeManager.mode,
+                engine = searchEngine,
+            )
+        } just Runs
+
         createController().handlePasteAndGo(clipboardText)
 
         verify {
             activity.openToBrowserAndLoad(
+                navController = activity.navHost.navController,
                 searchTermOrURL = clipboardText,
                 newTab = true,
                 from = BrowserDirection.FromHome,
+                browsingMode = activity.browsingModeManager.mode,
                 engine = searchEngine,
             )
         }
 
         assertNotNull(Events.enteredUrl.testGetValue())
+        unmockkStatic(FragmentActivity::openToBrowserAndLoad)
     }
 
     @Test

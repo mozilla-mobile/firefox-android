@@ -6,8 +6,12 @@ package org.mozilla.fenix
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.fragment.app.FragmentActivity
+import io.mockk.Runs
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import io.mockk.spyk
 import io.mockk.verify
 import mozilla.components.support.test.robolectric.testContext
@@ -25,6 +29,7 @@ import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getIntentSource
+import org.mozilla.fenix.ext.openToBrowser
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.helpers.perf.TestStrictModeManager
@@ -102,12 +107,25 @@ class HomeActivityTest {
         val settings: Settings = mockk()
         every { settings.shouldReturnToBrowser } returns true
         every { activity.components.settings.shouldReturnToBrowser } returns true
-        every { activity.openToBrowser(any(), any()) } returns Unit
 
-        activity.browsingModeManager = browsingModeManager
-        activity.navigateToBrowserOnColdStart()
+        mockkStatic(FragmentActivity::openToBrowser) {
+            every {
+                activity.openToBrowser(
+                    navController = activity.navHost.navController,
+                    from = BrowserDirection.FromGlobal,
+                )
+            } just Runs
 
-        verify(exactly = 1) { activity.openToBrowser(BrowserDirection.FromGlobal, null) }
+            activity.browsingModeManager = browsingModeManager
+            activity.navigateToBrowserOnColdStart()
+
+            verify(exactly = 1) {
+                activity.openToBrowser(
+                    navController = activity.navHost.navController,
+                    from = BrowserDirection.FromGlobal,
+                )
+            }
+        }
     }
 
     @Test
@@ -118,12 +136,16 @@ class HomeActivityTest {
         val settings: Settings = mockk()
         every { settings.shouldReturnToBrowser } returns true
         every { activity.components.settings.shouldReturnToBrowser } returns true
-        every { activity.openToBrowser(any(), any()) } returns Unit
 
         activity.browsingModeManager = browsingModeManager
         activity.navigateToBrowserOnColdStart()
 
-        verify(exactly = 0) { activity.openToBrowser(BrowserDirection.FromGlobal, null) }
+        verify(exactly = 0) {
+            activity.openToBrowser(
+                navController = activity.navHost.navController,
+                from = BrowserDirection.FromGlobal,
+            )
+        }
     }
 
     @Test
