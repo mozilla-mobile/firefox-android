@@ -327,13 +327,18 @@
     <string name="onboarding_home_enable_notifications_negative_button">Mai tard</string>
 
     <!-- Juno first user onboarding flow experiment, strings are marked unused as they are only referenced by Nimbus experiments. -->
+    <!-- Description for learning more about our privacy notice. -->
+    <string name="juno_onboarding_privacy_notice_text">Politica de confidencialitat de Firefox</string>
+    <!-- Text for the button to set firefox as default browser on the device -->
     <!-- Title for set firefox as default browser screen used by Nimbus experiments. -->
     <string name="juno_onboarding_default_browser_title_nimbus_2">Nos impòrta vòstra vida privada</string>
     <!-- Description for set firefox as default browser screen used by Nimbus experiments. -->
-    <string name="juno_onboarding_default_browser_description_nimbus_2">Nòstre navegador sostengut per una organizacion sens but lucratiu empacha las entrepresas de vos seguir secrètament sul Web.\n\nPer ne saber mai consultatz nòstra politica de confidencialitat.</string>
+    <string name="juno_onboarding_default_browser_description_nimbus_3">Nòstre navegador es sostengut per una organizacion sens tòca lucrativa empacha automaticament las entrepresas de vos pistar secrètament pel web.</string>
+    <!-- Description for set firefox as default browser screen used by Nimbus experiments. -->
+    <string name="juno_onboarding_default_browser_description_nimbus_2" moz:RemovedIn="124" tools:ignore="UnusedResources">Nòstre navegador sostengut per una organizacion sens but lucratiu empacha las entrepresas de vos seguir secrètament sul Web.\n\nPer ne saber mai consultatz nòstra politica de confidencialitat.</string>
     <!-- Text for the link to the privacy notice webpage for set as firefox default browser screen.
     This is part of the string with the key "juno_onboarding_default_browser_description". -->
-    <string name="juno_onboarding_default_browser_description_link_text" tools:ignore="UnusedResources">politica de confidencialitat</string>
+    <string name="juno_onboarding_default_browser_description_link_text" moz:RemovedIn="124" tools:ignore="UnusedResources">politica de confidencialitat</string>
     <!-- Text for the button to set firefox as default browser on the device -->
     <string name="juno_onboarding_default_browser_positive_button" tools:ignore="UnusedResources">Definir coma navegador per defaut</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
@@ -2204,12 +2209,20 @@ Exemple :\nhttps://suggestqueries.google.com/complete/search?client=firefox&amp
     <string name="review_quality_check_highlights_title">Elements essencials dels avises recents</string>
     <!-- Title for section explaining how we analyze the reliability of a product's reviews. -->
     <string name="review_quality_check_explanation_title">Coma determinam la qualitat d’un avís</string>
+    <!-- Paragraph explaining how we analyze the reliability of a product's reviews. First parameter is the Fakespot product name. In the phrase "Fakespot by Mozilla", "by" can be localized. Does not need to stay by. -->
+    <string name="review_quality_check_explanation_body_reliability">Utilizam una tecnologia d’IA de %s per Mozilla per verificar la fisabilitat des avises de produches. Vos ajudarà sonque a jutjar la qualitat dels avises non pas çò dels produches.</string>
     <!-- Paragraph explaining the grading system we use to classify the reliability of a product's reviews. -->
     <string name="review_quality_check_info_review_grade_header"><![CDATA[Assignam als avises una <b>notacion alfabetica</b> de A a F.]]></string>
     <!-- Description explaining grades A and B for review quality check adjusted grading. -->
     <string name="review_quality_check_info_grade_info_AB">Avises fisables. Pensam que los avises venon probablament de vertadièrs clients que daissèron d’avises sincèrs e objectius.</string>
     <!-- Description explaining grade C for review quality check adjusted grading. -->
     <string name="review_quality_check_info_grade_info_C">Pensam que los avises mesclan d’avises fisables e non fisables.</string>
+    <!-- Description explaining grades D and F for review quality check adjusted grading. -->
+    <string name="review_quality_check_info_grade_info_DF">Avises pas fisables. Pensam que los avises son probablament de falses o son biaissats.</string>
+    <!-- Paragraph explaining how a product's adjusted grading is calculated. -->
+    <string name="review_quality_check_explanation_body_adjusted_grading"><![CDATA[L’<b>evaluacion corregida</b> es basada suls avises que pensam que son fisables.]]></string>
+    <!-- Paragraph explaining product review highlights. First parameter is the name of the retailer (e.g. Amazon). -->
+    <string name="review_quality_check_explanation_body_highlights"><![CDATA[<b>Notables</b> venon dels avises de %s dels darrièrs 80 jorns que pensam que son fisables.]]></string>
     <!-- Text for learn more caption presenting a link with information about review quality. First parameter is for clickable text defined in review_quality_check_info_learn_more_link. -->
     <string name="review_quality_check_info_learn_more">Per ne saber mai sus %s.</string>
     <!-- Clickable text that links to review quality check SuMo page. First parameter is the Fakespot product name. In the phrase "Fakespot by Mozilla", "by" can be localized. Does not need to stay by. -->
@@ -2220,6 +2233,8 @@ Exemple :\nhttps://suggestqueries.google.com/complete/search?client=firefox&amp
     <string name="review_quality_check_settings_title">Paramètres</string>
     <!-- Text for label for switch preference to show recommended products from review quality check settings section. -->
     <string name="review_quality_check_settings_recommended_products">Afichar de publicitats dins lo verificador d’avises</string>
+    <!-- Description for switch preference to show recommended products from review quality check settings section. First parameter is for clickable text defined in review_quality_check_settings_recommended_products_learn_more.-->
+    <string name="review_quality_check_settings_recommended_products_description_2" tools:ignore="UnusedResources">Veiretz ocasionalament de publicitats per de produches pertinents. Fasèm sonque la reclama de produches amb avises fisables. %s</string>
     <!-- Clickable text that links to review quality check recommended products support article. -->
     <string name="review_quality_check_settings_recommended_products_learn_more" tools:ignore="UnusedResources">Ne saber mai</string>
     <!-- Text for turning sidebar off button from review quality check settings section. -->
@@ -2236,8 +2251,26 @@ Exemple :\nhttps://suggestqueries.google.com/complete/search?client=firefox&amp
     <string name="review_quality_check_outdated_analysis_warning_title" tools:ignore="UnusedResources">Informacions novèlas d’evaluar</string>
     <!-- Text for button from warning card informing the user that the current analysis is outdated. Clicking this should trigger the product's re-analysis. -->
     <string name="review_quality_check_outdated_analysis_warning_action" tools:ignore="UnusedResources">Verificar ara</string>
+    <!-- Title for warning card informing the user that the current product does not have enough reviews for a review analysis. -->
+    <string name="review_quality_check_no_reviews_warning_title">I a pas encara pro d’avises</string>
+    <!-- Text for body of warning card informing the user that the current product does not have enough reviews for a review analysis. -->
+    <string name="review_quality_check_no_reviews_warning_body">Quand aqueste produch aja mai d’avises, ne poirem verificar la qualitat.</string>
     <!-- Title for warning card informing the user that the current product is currently not available. -->
     <string name="review_quality_check_product_availability_warning_title">Lo produit es pas disponible</string>
+    <!-- Text for the body of warning card informing the user that the current product is currently not available. -->
+    <string name="review_quality_check_product_availability_warning_body">Se tornatz veire aqueste produch en estòc, senhalatz-lo e verificarem los avises.</string>
+    <!-- Clickable text for warning card informing the user that the current product is currently not available. Clicking this should inform the server that the product is available. -->
+    <string name="review_quality_check_product_availability_warning_action_2">Senhalar que’l produch es en estòc</string>
+    <!-- Title for warning card informing the user that the current product's re-analysis is still processing. -->
+    <string name="review_quality_check_reanalysis_in_progress_warning_title" moz:RemovedIn="122">Evaluacion de la qualitat dels avises</string>
+    <!-- Title for warning card informing the user that the current product's analysis is still processing. -->
+    <string name="review_quality_check_analysis_in_progress_warning_title" moz:RemovedIn="122">Evaluacion de la qualitat dels avises</string>
+    <!-- Title for warning card informing the user that the current product's analysis is still processing. The parameter is the percentage progress (0-100%) of the analysis process (e.g. 56%). -->
+    <string name="review_quality_check_analysis_in_progress_warning_title_2">Evaluacion de la qualitat dels avises (%s)</string>
+    <!-- Text for body of warning card informing the user that the current product's analysis is still processing. -->
+    <string name="review_quality_check_analysis_in_progress_warning_body">Aquò trigar unes 60 segondas.</string>
+    <!-- Title for info card displayed after the user reports a product is back in stock. -->
+    <string name="review_quality_check_analysis_requested_info_title">Mercés pel senhalament !</string>
     <!-- Title for info card displayed to the user when analysis finished updating. -->
     <string name="review_quality_check_analysis_updated_confirmation_title" tools:ignore="UnusedResources">Las analisis son a jorn</string>
     <!-- Text for the action button from info card displayed to the user when analysis finished updating. -->
