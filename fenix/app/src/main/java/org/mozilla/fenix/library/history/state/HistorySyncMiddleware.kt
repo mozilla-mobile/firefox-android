@@ -24,7 +24,6 @@ import org.mozilla.fenix.library.history.HistoryFragmentState
  */
 class HistorySyncMiddleware(
     private val accountManager: FxaAccountManager,
-    private val refreshView: () -> Unit,
     private val scope: CoroutineScope,
 ) : Middleware<HistoryFragmentState, HistoryFragmentAction> {
     override fun invoke(
@@ -41,7 +40,6 @@ class HistorySyncMiddleware(
                         debounce = true,
                         customEngineSubset = listOf(SyncEngine.History),
                     )
-                    refreshView()
                     context.store.dispatch(HistoryFragmentAction.FinishSync)
                 }
             }

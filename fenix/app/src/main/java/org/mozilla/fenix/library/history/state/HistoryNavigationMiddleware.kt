@@ -11,7 +11,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import mozilla.components.lib.state.Middleware
 import mozilla.components.lib.state.MiddlewareContext
+import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.R
+import org.mozilla.fenix.browser.readermode.BrowserNavigator
 import org.mozilla.fenix.ext.navigateSafe
 import org.mozilla.fenix.library.history.History
 import org.mozilla.fenix.library.history.HistoryFragmentAction
@@ -30,7 +32,7 @@ import org.mozilla.fenix.library.history.HistoryFragmentStore
  */
 class HistoryNavigationMiddleware(
     private val navController: NavController,
-    private val openToBrowser: (item: History.Regular) -> Unit,
+    private val browserNavigator: BrowserNavigator,
     private val onBackPressed: () -> Unit,
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.Main),
 ) : Middleware<HistoryFragmentState, HistoryFragmentAction> {
@@ -85,5 +87,13 @@ class HistoryNavigationMiddleware(
                 else -> Unit
             }
         }
+    }
+
+    private fun openToBrowser(item: History.Regular) {
+        browserNavigator.openToBrowserAndLoad(
+            searchTermOrURL = item.url,
+            newTab = true,
+            from = BrowserDirection.FromHistory,
+        )
     }
 }

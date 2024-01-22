@@ -49,6 +49,7 @@ import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.StoreProvider
 import org.mozilla.fenix.components.history.DefaultPagedHistoryProvider
 import org.mozilla.fenix.databinding.FragmentHistoryBinding
+import org.mozilla.fenix.ext.buildBrowserNavigator
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.getRootView
 import org.mozilla.fenix.ext.nav
@@ -60,6 +61,7 @@ import org.mozilla.fenix.library.history.state.HistoryNavigationMiddleware
 import org.mozilla.fenix.library.history.state.HistoryStorageMiddleware
 import org.mozilla.fenix.library.history.state.HistorySyncMiddleware
 import org.mozilla.fenix.library.history.state.HistoryTelemetryMiddleware
+import org.mozilla.fenix.library.history.state.HistoryUiEffectMiddleware
 import org.mozilla.fenix.library.history.state.bindings.MenuBinding
 import org.mozilla.fenix.library.history.state.bindings.PendingDeletionBinding
 import org.mozilla.fenix.tabstray.Page
@@ -112,7 +114,7 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler, 
                 middleware = listOf(
                     HistoryNavigationMiddleware(
                         navController = findNavController(),
-                        openToBrowser = ::openItem,
+                        browserNavigator = buildBrowserNavigator(),
                         onBackPressed = requireActivity().onBackPressedDispatcher::onBackPressed,
                     ),
                     HistoryTelemetryMiddleware(
@@ -120,8 +122,10 @@ class HistoryFragment : LibraryPageFragment<History>(), UserInteractionHandler, 
                     ),
                     HistorySyncMiddleware(
                         accountManager = requireContext().components.backgroundServices.accountManager,
-                        refreshView = { historyView.historyAdapter.refresh() },
                         scope = lifecycleScope,
+                    ),
+                    HistoryUiEffectMiddleware(
+                      refreshView = { historyView.historyAdapter.refresh() }
                     ),
                     HistoryStorageMiddleware(
                         appStore = requireContext().components.appStore,
