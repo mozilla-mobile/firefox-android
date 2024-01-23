@@ -57,7 +57,7 @@ import mozilla.components.ui.icons.R as iconsR
  * @property shareListener Invoked when the share button is pressed.
  * @property closeListener Invoked when the close button is pressed.
  */
-@Suppress("LargeClass", "LongParameterList")
+@Suppress("LargeClass")
 class CustomTabsToolbarFeature(
     private val store: BrowserStore,
     private val toolbar: BrowserToolbar,
@@ -299,7 +299,7 @@ class CustomTabsToolbarFeature(
     }
 
     companion object {
-        private const val ACTION_BUTTON_DRAWABLE_WIDTH_DP = 24
+        private const val ACTION_BUTTON_DRAWABLE_WIDTH_DP = 48
         private const val ACTION_BUTTON_DRAWABLE_HEIGHT_DP = 24
     }
 }
