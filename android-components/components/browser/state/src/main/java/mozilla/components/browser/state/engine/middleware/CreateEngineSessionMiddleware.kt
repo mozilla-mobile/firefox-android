@@ -36,7 +36,7 @@ internal class CreateEngineSessionMiddleware(
     ) {
         if (action is EngineAction.CreateEngineSessionAction) {
             val engineState = context.state.findTabOrCustomTab(action.tabId)?.engineState
-            if (engineState?.initializing == false && (engineState.engineSession == null || engineState.crashed)) {
+            if (engineState?.initializing == false && engineState.engineSession == null && !engineState.crashed) {
                 context.dispatch(EngineAction.UpdateEngineSessionInitializingAction(action.tabId, true))
                 createEngineSession(context.store, action)
             } else {
@@ -89,16 +89,19 @@ private fun getOrCreateEngineSession(
     val tab = store.state.findTabOrCustomTab(tabId)
     if (tab == null) {
         logger.warn("Requested engine session for tab. But tab does not exist. ($tabId)")
+        store.resetEngineSessionInitializingFlag(tabId)
         return null
     }
 
     if (tab.engineState.crashed) {
         logger.warn("Not creating engine session, since tab is crashed. Waiting for restore.")
+        store.resetEngineSessionInitializingFlag(tabId)
         return null
     }
 
     tab.engineState.engineSession?.let {
         logger.debug("Engine session already exists for tab $tabId")
+        store.resetEngineSessionInitializingFlag(tabId)
         return it
     }
 
@@ -131,4 +134,8 @@ private fun createEngineSession(
     )
 
     return engineSession
+}
+
+private fun Store<BrowserState, BrowserAction>.resetEngineSessionInitializingFlag(tabId: String) {
+    dispatch(EngineAction.UpdateEngineSessionInitializingAction(tabId, false))
 }
