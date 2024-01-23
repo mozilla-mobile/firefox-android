@@ -19,7 +19,6 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.FileProvider
 import androidx.core.content.getSystemService
 import androidx.core.net.toUri
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
@@ -123,7 +122,6 @@ class AbstractFetchDownloadServiceTest {
 
     private lateinit var notificationsDelegate: NotificationsDelegate
 
-    @Mock private lateinit var broadcastManager: LocalBroadcastManager
     private lateinit var service: AbstractFetchDownloadService
 
     private lateinit var shadowNotificationService: ShadowNotificationManager
@@ -143,7 +141,6 @@ class AbstractFetchDownloadServiceTest {
             },
         )
 
-        doReturn(broadcastManager).`when`(service).broadcastManager
         doReturn(testContext).`when`(service).context
         doNothing().`when`(service).useFileStream(any(), anyBoolean(), any())
         doReturn(true).`when`(notificationManagerCompat).areNotificationsEnabled()
@@ -256,7 +253,7 @@ class AbstractFetchDownloadServiceTest {
     }
 
     @Test
-    fun `WHEN handleRemovePrivateDownloadIntent with a privae download is called THEN removeDownloadJob must be called`() {
+    fun `WHEN handleRemovePrivateDownloadIntent with a private download is called THEN removeDownloadJob must be called`() {
         val downloadState = DownloadState(url = "mozilla.org/mozilla.txt", private = true)
         val downloadJobState = DownloadJobState(state = downloadState, status = COMPLETED)
         val browserStore = mock<BrowserStore>()
@@ -274,6 +271,7 @@ class AbstractFetchDownloadServiceTest {
 
         service.handleRemovePrivateDownloadIntent(downloadState)
 
+        verify(service).cancelDownloadJob(downloadJobState)
         verify(service).removeDownloadJob(downloadJobState)
         verify(browserStore).dispatch(DownloadAction.RemoveDownloadAction(downloadState.id))
     }

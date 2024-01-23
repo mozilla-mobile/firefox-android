@@ -34,34 +34,34 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import mozilla.components.feature.top.sites.TopSite
+import org.mozilla.fenix.GleanMetrics.Pings
 import org.mozilla.fenix.R
 import org.mozilla.fenix.compose.ContextualMenu
 import org.mozilla.fenix.compose.Favicon
 import org.mozilla.fenix.compose.MenuItem
 import org.mozilla.fenix.compose.PagerIndicator
 import org.mozilla.fenix.compose.annotation.LightDarkPreview
-import org.mozilla.fenix.ext.bitmapForUrl
-import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.theme.FirefoxTheme
 import org.mozilla.fenix.wallpapers.WallpaperState
 import kotlin.math.ceil
+import org.mozilla.fenix.GleanMetrics.TopSites as TopSitesMetrics
 
 private const val TOP_SITES_PER_PAGE = 8
 private const val TOP_SITES_PER_ROW = 4
@@ -84,10 +84,11 @@ private const val TOP_SITES_FAVICON_SIZE = 36
  * @param onSettingsClicked Invoked when the user clicks on the "Settings" menu item.
  * @param onSponsorPrivacyClicked Invoked when the user clicks on the "Our sponsors & your privacy"
  * menu item.
+ * @param onTopSitesItemBound Invoked during the composition of a top site item.
  */
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalComposeUiApi::class)
 @Composable
-@Suppress("LongParameterList")
+@Suppress("LongParameterList", "LongMethod")
 fun TopSites(
     topSites: List<TopSite>,
     topSiteColors: TopSiteColors = TopSiteColors.colors(),
@@ -98,23 +99,34 @@ fun TopSites(
     onRemoveTopSiteClicked: (topSite: TopSite) -> Unit,
     onSettingsClicked: () -> Unit,
     onSponsorPrivacyClicked: () -> Unit,
+    onTopSitesItemBound: () -> Unit,
 ) {
+    val pageCount = ceil((topSites.size.toDouble() / TOP_SITES_PER_PAGE)).toInt()
+
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .semantics {
+                testTagsAsResourceId = true
+            }
+            .testTag(TopSitesTestTag.topSites),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        val pagerState = rememberPagerState()
-        val pageCount = ceil((topSites.size.toDouble() / TOP_SITES_PER_PAGE)).toInt()
+        val pagerState = rememberPagerState(
+            pageCount = { pageCount },
+        )
 
         Box(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center,
         ) {
             HorizontalPager(
-                pageCount = pageCount,
                 state = pagerState,
             ) { page ->
-                Column {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
                     val topSitesWindows = topSites.windowed(
                         size = TOP_SITES_PER_PAGE,
                         step = TOP_SITES_PER_PAGE,
@@ -123,7 +135,7 @@ fun TopSites(
 
                     for (items in topSitesWindows) {
                         Row(modifier = Modifier.defaultMinSize(minWidth = TOP_SITES_ROW_WIDTH.dp)) {
-                            items.forEach { topSite ->
+                            items.forEachIndexed { position, topSite ->
                                 TopSiteItem(
                                     topSite = topSite,
                                     menuItems = getMenuItems(
@@ -134,9 +146,11 @@ fun TopSites(
                                         onSettingsClicked = onSettingsClicked,
                                         onSponsorPrivacyClicked = onSponsorPrivacyClicked,
                                     ),
+                                    position = position,
                                     topSiteColors = topSiteColors,
                                     onTopSiteClick = { item -> onTopSiteClick(item) },
                                     onTopSiteLongClick = onTopSiteLongClick,
+                                    onTopSitesItemBound = onTopSitesItemBound,
                                 )
                             }
                         }
@@ -147,12 +161,11 @@ fun TopSites(
             }
         }
 
-        if (pageCount > 1) {
+        if (pagerState.pageCount > 1) {
             Spacer(modifier = Modifier.height(8.dp))
 
             PagerIndicator(
                 pagerState = pagerState,
-                pageCount = pageCount,
                 modifier = Modifier.padding(horizontal = 16.dp),
                 spacing = 4.dp,
             )
@@ -220,22 +233,33 @@ data class TopSiteColors(
  *
  * @param topSite The [TopSite] to display.
  * @param menuItems List of [MenuItem]s to display in a top site dropdown menu.
+ * @param position The position of the top site.
  * @param topSiteColors The color set defined by [TopSiteColors] used to style a top site.
  * @param onTopSiteClick Invoked when the user clicks on a top site.
  * @param onTopSiteLongClick Invoked when the user long clicks on a top site.
+ * @param onTopSitesItemBound Invoked during the composition of a top site item.
  */
-@OptIn(ExperimentalFoundationApi::class)
+@Suppress("LongMethod")
+@OptIn(ExperimentalFoundationApi::class, ExperimentalComposeUiApi::class)
 @Composable
 private fun TopSiteItem(
     topSite: TopSite,
     menuItems: List<MenuItem>,
+    position: Int,
     topSiteColors: TopSiteColors,
     onTopSiteClick: (TopSite) -> Unit,
     onTopSiteLongClick: (TopSite) -> Unit,
+    onTopSitesItemBound: () -> Unit,
 ) {
     var menuExpanded by remember { mutableStateOf(false) }
 
-    Box {
+    Box(
+        modifier = Modifier
+            .semantics {
+                testTagsAsResourceId = true
+            }
+            .testTag(TopSitesTestTag.topSiteItemRoot),
+    ) {
         Column(
             modifier = Modifier
                 .combinedClickable(
@@ -274,6 +298,11 @@ private fun TopSiteItem(
                 }
 
                 Text(
+                    modifier = Modifier
+                        .semantics {
+                            testTagsAsResourceId = true
+                        }
+                        .testTag(TopSitesTestTag.topSiteTitle),
                     text = topSite.title ?: topSite.url,
                     color = topSiteColors.titleTextColor,
                     overflow = TextOverflow.Ellipsis,
@@ -296,10 +325,22 @@ private fun TopSiteItem(
         }
 
         ContextualMenu(
+            modifier = Modifier
+                .testTag(TopSitesTestTag.topSiteContextualMenu),
             menuItems = menuItems,
             showMenu = menuExpanded,
             onDismissRequest = { menuExpanded = false },
         )
+
+        if (topSite is TopSite.Provided) {
+            LaunchedEffect(topSite) {
+                submitTopSitesImpressionPing(topSite = topSite, position = position)
+            }
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        onTopSitesItemBound()
     }
 }
 
@@ -326,19 +367,10 @@ private fun TopSiteFaviconCard(
                 color = backgroundColor,
                 shape = RoundedCornerShape(4.dp),
             ) {
-                val drawableForUrl = getDrawableForUrl(topSite.url)
-                when {
-                    drawableForUrl != null -> {
-                        FaviconImage(painterResource(drawableForUrl))
-                    }
-
-                    topSite is TopSite.Provided -> {
-                        FaviconBitmap(topSite)
-                    }
-
-                    else -> {
-                        FaviconDefault(topSite.url)
-                    }
+                if (topSite is TopSite.Provided) {
+                    TopSiteFavicon(topSite.url, topSite.imageUrl)
+                } else {
+                    TopSiteFavicon(topSite.url)
                 }
             }
         }
@@ -356,51 +388,19 @@ private fun FaviconImage(painter: Painter) {
 }
 
 @Composable
-private fun FaviconBitmap(topSite: TopSite.Provided) {
-    var faviconBitmapUiState by remember { mutableStateOf<FaviconBitmapUiState>(FaviconBitmapUiState.Loading) }
-
-    val client = LocalContext.current.components.core.client
-
-    LaunchedEffect(topSite.imageUrl) {
-        val bitmapForUrl = client.bitmapForUrl(topSite.imageUrl)
-
-        faviconBitmapUiState = if (bitmapForUrl == null) {
-            FaviconBitmapUiState.Error
-        } else {
-            FaviconBitmapUiState.Data(bitmapForUrl.asImageBitmap())
-        }
-    }
-
-    when (val uiState = faviconBitmapUiState) {
-        is FaviconBitmapUiState.Loading, FaviconBitmapUiState.Error -> FaviconDefault(topSite.url)
-        is FaviconBitmapUiState.Data -> FaviconImage(BitmapPainter(uiState.imageBitmap))
-    }
-}
-
-private sealed class FaviconBitmapUiState {
-    data class Data(val imageBitmap: ImageBitmap) : FaviconBitmapUiState()
-    object Loading : FaviconBitmapUiState()
-    object Error : FaviconBitmapUiState()
-}
-
-@Composable
-private fun FaviconDefault(url: String) {
-    Favicon(url = url, size = TOP_SITES_FAVICON_SIZE.dp)
-}
-
-private fun getDrawableForUrl(url: String) =
+private fun TopSiteFavicon(url: String, imageUrl: String? = null) {
     when (url) {
-        SupportUtils.POCKET_TRENDING_URL -> R.drawable.ic_pocket
-        SupportUtils.BAIDU_URL -> R.drawable.ic_baidu
-        SupportUtils.JD_URL -> R.drawable.ic_jd
-        SupportUtils.PDD_URL -> R.drawable.ic_pdd
-        SupportUtils.TC_URL -> R.drawable.ic_tc
-        SupportUtils.MEITUAN_URL -> R.drawable.ic_meituan
-        else -> null
+        SupportUtils.POCKET_TRENDING_URL -> FaviconImage(painterResource(R.drawable.ic_pocket))
+        SupportUtils.BAIDU_URL -> FaviconImage(painterResource(R.drawable.ic_baidu))
+        SupportUtils.JD_URL -> FaviconImage(painterResource(R.drawable.ic_jd))
+        SupportUtils.PDD_URL -> FaviconImage(painterResource(R.drawable.ic_pdd))
+        SupportUtils.TC_URL -> FaviconImage(painterResource(R.drawable.ic_tc))
+        SupportUtils.MEITUAN_URL -> FaviconImage(painterResource(R.drawable.ic_meituan))
+        else -> Favicon(url = url, size = TOP_SITES_FAVICON_SIZE.dp, imageUrl = imageUrl)
     }
+}
 
 @Composable
-@Suppress("LongParameterList")
 private fun getMenuItems(
     topSite: TopSite,
     onOpenInPrivateTabClicked: (topSite: TopSite) -> Unit,
@@ -416,6 +416,7 @@ private fun getMenuItems(
     result.add(
         MenuItem(
             title = stringResource(id = R.string.bookmark_menu_open_in_private_tab_button),
+            testTag = TopSitesTestTag.openInPrivateTab,
             onClick = { onOpenInPrivateTabClicked(topSite) },
         ),
     )
@@ -424,6 +425,7 @@ private fun getMenuItems(
         result.add(
             MenuItem(
                 title = stringResource(id = R.string.rename_top_site),
+                testTag = TopSitesTestTag.rename,
                 onClick = { onRenameTopSiteClicked(topSite) },
             ),
         )
@@ -439,6 +441,7 @@ private fun getMenuItems(
                         R.string.delete_from_history
                     },
                 ),
+                testTag = TopSitesTestTag.remove,
                 onClick = { onRemoveTopSiteClicked(topSite) },
             ),
         )
@@ -448,6 +451,7 @@ private fun getMenuItems(
         result.add(
             MenuItem(
                 title = stringResource(id = R.string.delete_from_history),
+                testTag = TopSitesTestTag.remove,
                 onClick = { onRemoveTopSiteClicked(topSite) },
             ),
         )
@@ -472,6 +476,20 @@ private fun getMenuItems(
     }
 
     return result
+}
+
+private fun submitTopSitesImpressionPing(topSite: TopSite.Provided, position: Int) {
+    TopSitesMetrics.contileImpression.record(
+        TopSitesMetrics.ContileImpressionExtra(
+            position = position + 1,
+            source = "newtab",
+        ),
+    )
+
+    topSite.id?.let { TopSitesMetrics.contileTileId.set(it) }
+    topSite.title?.let { TopSitesMetrics.contileAdvertiser.set(it.lowercase()) }
+    TopSitesMetrics.contileReportingUrl.set(topSite.impressionUrl)
+    Pings.topsitesImpression.submit()
 }
 
 @Composable
@@ -533,6 +551,7 @@ private fun TopSitesPreview() {
                 onRemoveTopSiteClicked = {},
                 onSettingsClicked = {},
                 onSponsorPrivacyClicked = {},
+                onTopSitesItemBound = {},
             )
         }
     }

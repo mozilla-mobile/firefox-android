@@ -22,8 +22,9 @@ import org.mozilla.fenix.components.FindInPageIntegration.ToolbarInfo
 /**
  * BrowserFragment delegate to handle all layout updates needed to show or hide the find in page bar.
  *
- * @param store [BrowserStore]
+ * @param store The [BrowserStore] used to look up the current selected tab.
  * @param sessionId ID of the [store] session in which the query will be performed.
+ * @param view The [FindInPageBar] view to display.
  * @param engineView the browser in which the queries will be made and which needs to be better positioned
  * to suit the find in page bar.
  * @param toolbarInfo [ToolbarInfo] used to configure the [BrowserToolbar] while the find in page bar is shown.

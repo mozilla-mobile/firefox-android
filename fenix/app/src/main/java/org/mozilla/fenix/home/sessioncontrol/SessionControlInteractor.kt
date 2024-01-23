@@ -83,7 +83,7 @@ interface CollectionInteractor {
      * @param collection The collection of tabs that will be modified.
      * @param tab The tab to remove from the tab collection.
      */
-    fun onCollectionRemoveTab(collection: TabCollection, tab: Tab, wasSwiped: Boolean)
+    fun onCollectionRemoveTab(collection: TabCollection, tab: Tab)
 
     /**
      * Shares the tabs in the given tab collection. Called when a user clicks on the Collection
@@ -261,8 +261,8 @@ class SessionControlInteractor(
         controller.handleCollectionOpenTabsTapped(collection)
     }
 
-    override fun onCollectionRemoveTab(collection: TabCollection, tab: Tab, wasSwiped: Boolean) {
-        controller.handleCollectionRemoveTab(collection, tab, wasSwiped)
+    override fun onCollectionRemoveTab(collection: TabCollection, tab: Tab) {
+        controller.handleCollectionRemoveTab(collection, tab)
     }
 
     override fun onCollectionShareTabsClicked(collection: TabCollection) {
@@ -321,8 +321,8 @@ class SessionControlInteractor(
         privateBrowsingController.handleLearnMoreClicked()
     }
 
-    override fun onPrivateModeButtonClicked(newMode: BrowsingMode, userHasBeenOnboarded: Boolean) {
-        privateBrowsingController.handlePrivateModeButtonClicked(newMode, userHasBeenOnboarded)
+    override fun onPrivateModeButtonClicked(newMode: BrowsingMode) {
+        privateBrowsingController.handlePrivateModeButtonClicked(newMode)
     }
 
     override fun onPasteAndGo(clipboardText: String) {

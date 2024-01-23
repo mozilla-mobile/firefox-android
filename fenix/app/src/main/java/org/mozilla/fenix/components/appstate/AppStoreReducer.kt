@@ -9,6 +9,7 @@ import mozilla.components.service.pocket.PocketStory.PocketRecommendedStory
 import mozilla.components.service.pocket.PocketStory.PocketSponsoredStory
 import mozilla.components.service.pocket.ext.recordNewImpression
 import org.mozilla.fenix.components.AppStore
+import org.mozilla.fenix.components.appstate.shopping.ShoppingStateReducer
 import org.mozilla.fenix.ext.filterOutTab
 import org.mozilla.fenix.ext.getFilteredStories
 import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesSelectedCategory
@@ -227,6 +228,12 @@ internal object AppStoreReducer {
         is AppAction.AppLifecycleAction.PauseAction -> {
             state.copy(isForeground = false)
         }
+
+        is AppAction.UpdateStandardSnackbarErrorAction -> state.copy(
+            standardSnackbarError = action.standardSnackbarError,
+        )
+
+        is AppAction.ShoppingAction -> ShoppingStateReducer.reduce(state, action)
     }
 }
 

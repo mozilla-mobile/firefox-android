@@ -4,21 +4,17 @@
 
 package org.mozilla.fenix.customtabs
 
-import android.content.Intent
+import android.app.assist.AssistContent
+import android.net.Uri
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.annotation.VisibleForTesting
-import androidx.navigation.NavDestination
-import androidx.navigation.NavDirections
 import mozilla.components.browser.state.selector.findCustomTab
 import mozilla.components.browser.state.state.SessionState
-import mozilla.components.concept.engine.manifest.WebAppManifestParser
-import mozilla.components.feature.intent.ext.getSessionId
-import mozilla.components.feature.pwa.ext.getWebAppManifest
 import mozilla.components.support.utils.SafeIntent
-import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
-import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.ext.components
-import java.security.InvalidParameterException
+import org.mozilla.fenix.ext.getIntentSessionId
 
 const val EXTRA_IS_SANDBOX_CUSTOM_TAB = "org.mozilla.fenix.customtabs.EXTRA_IS_SANDBOX_CUSTOM_TAB"
 
@@ -38,52 +34,6 @@ open class ExternalAppBrowserActivity : HomeActivity() {
             // Without this the parent HomeActivity class may decide to show the browser UI and we
             // end up with multiple browsers (causing "display already acquired" crashes).
             finishAndRemoveTask()
-        }
-    }
-
-    final override fun getBreadcrumbMessage(destination: NavDestination): String {
-        val fragmentName = resources.getResourceEntryName(destination.id)
-        return "Changing to fragment $fragmentName, isCustomTab: true"
-    }
-
-    final override fun getIntentSource(intent: SafeIntent) = "CUSTOM_TAB"
-
-    final override fun getIntentSessionId(intent: SafeIntent) = intent.getSessionId()
-
-    override fun navigateToBrowserOnColdStart() {
-        // No-op for external app
-    }
-
-    override fun navigateToHome() {
-        // No-op for external app
-    }
-
-    override fun handleNewIntent(intent: Intent) {
-        // No-op for external app
-    }
-
-    override fun getNavDirections(
-        from: BrowserDirection,
-        customTabSessionId: String?,
-    ): NavDirections? {
-        if (customTabSessionId == null) {
-            finishAndRemoveTask()
-            return null
-        }
-
-        val manifest = intent
-            .getWebAppManifest()
-            ?.let { WebAppManifestParser().serialize(it).toString() }
-        return when (from) {
-            BrowserDirection.FromGlobal ->
-                NavGraphDirections.actionGlobalExternalAppBrowser(
-                    activeSessionId = customTabSessionId,
-                    webAppManifest = manifest,
-                    isSandboxCustomTab = intent.getBooleanExtra(EXTRA_IS_SANDBOX_CUSTOM_TAB, false),
-                )
-            else -> throw InvalidParameterException(
-                "Tried to navigate to ExternalAppBrowserFragment from $from",
-            )
         }
     }
 
@@ -116,5 +66,12 @@ open class ExternalAppBrowserActivity : HomeActivity() {
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     internal fun getExternalTabId(): String? {
         return getIntentSessionId(SafeIntent(intent))
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    override fun onProvideAssistContent(outContent: AssistContent?) {
+        super.onProvideAssistContent(outContent)
+        val currentTabUrl = getExternalTab()?.content?.url
+        outContent?.webUri = currentTabUrl?.let { Uri.parse(it) }
     }
 }

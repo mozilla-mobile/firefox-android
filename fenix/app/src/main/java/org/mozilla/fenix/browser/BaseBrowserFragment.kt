@@ -12,12 +12,12 @@ import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.accessibility.AccessibilityManager
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.CallSuper
 import androidx.annotation.VisibleForTesting
@@ -32,9 +32,11 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.map
@@ -60,9 +62,9 @@ import mozilla.components.browser.thumbnails.BrowserThumbnails
 import mozilla.components.concept.base.crash.Breadcrumb
 import mozilla.components.concept.engine.permission.SitePermissions
 import mozilla.components.concept.engine.prompt.ShareData
+import mozilla.components.concept.storage.LoginEntry
 import mozilla.components.feature.accounts.FxaCapability
 import mozilla.components.feature.accounts.FxaWebChannelFeature
-import mozilla.components.feature.addons.Addon
 import mozilla.components.feature.app.links.AppLinksFeature
 import mozilla.components.feature.contextmenu.ContextMenuCandidate
 import mozilla.components.feature.contextmenu.ContextMenuFeature
@@ -77,7 +79,11 @@ import mozilla.components.feature.prompts.PromptFeature
 import mozilla.components.feature.prompts.PromptFeature.Companion.PIN_REQUEST
 import mozilla.components.feature.prompts.address.AddressDelegate
 import mozilla.components.feature.prompts.creditcard.CreditCardDelegate
+import mozilla.components.feature.prompts.dialog.FullScreenNotificationDialog
+import mozilla.components.feature.prompts.identitycredential.DialogColors
+import mozilla.components.feature.prompts.identitycredential.DialogColorsProvider
 import mozilla.components.feature.prompts.login.LoginDelegate
+import mozilla.components.feature.prompts.login.SuggestStrongPasswordDelegate
 import mozilla.components.feature.prompts.share.ShareDelegate
 import mozilla.components.feature.readerview.ReaderViewFeature
 import mozilla.components.feature.search.SearchFeature
@@ -94,18 +100,22 @@ import mozilla.components.lib.state.ext.flowScoped
 import mozilla.components.service.glean.private.NoExtras
 import mozilla.components.service.sync.autofill.DefaultCreditCardValidationDelegate
 import mozilla.components.service.sync.logins.DefaultLoginValidationDelegate
+import mozilla.components.service.sync.logins.LoginsApiException
+import mozilla.components.service.sync.logins.SyncableLoginsStorage
 import mozilla.components.support.base.feature.ActivityResultHandler
 import mozilla.components.support.base.feature.PermissionsFeature
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
-import mozilla.components.support.ktx.android.view.enterToImmersiveMode
+import mozilla.components.support.ktx.android.view.enterImmersiveMode
 import mozilla.components.support.ktx.android.view.exitImmersiveMode
 import mozilla.components.support.ktx.android.view.hideKeyboard
 import mozilla.components.support.ktx.kotlin.getOrigin
 import mozilla.components.support.ktx.kotlinx.coroutines.flow.ifAnyChanged
 import mozilla.components.support.locale.ActivityContextWrapper
+import mozilla.components.ui.widgets.withCenterAlignedButtons
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.FeatureFlags
+import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.MediaState
 import org.mozilla.fenix.GleanMetrics.PullToRefreshInBrowser
 import org.mozilla.fenix.HomeActivity
@@ -137,18 +147,18 @@ import org.mozilla.fenix.downloads.ThirdPartyDownloadDialog
 import org.mozilla.fenix.ext.accessibilityManager
 import org.mozilla.fenix.ext.breadcrumb
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.ext.getFenixAddons
 import org.mozilla.fenix.ext.getPreferenceKey
 import org.mozilla.fenix.ext.hideToolbar
 import org.mozilla.fenix.ext.nav
+import org.mozilla.fenix.ext.navigateWithBreadcrumb
 import org.mozilla.fenix.ext.registerForActivityResult
 import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.secure
 import org.mozilla.fenix.ext.settings
-import org.mozilla.fenix.extension.WebExtensionPromptFeature
 import org.mozilla.fenix.home.HomeScreenViewModel
 import org.mozilla.fenix.home.SharedViewModel
+import org.mozilla.fenix.library.bookmarks.BookmarksSharedViewModel
 import org.mozilla.fenix.perf.MarkersFragmentLifecycleCallbacks
 import org.mozilla.fenix.settings.SupportUtils
 import org.mozilla.fenix.settings.biometric.BiometricPromptFeature
@@ -158,6 +168,7 @@ import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.utils.allowUndo
 import org.mozilla.fenix.wifi.SitePermissionsWifiIntegration
 import java.lang.ref.WeakReference
+import kotlin.coroutines.cancellation.CancellationException
 import mozilla.components.feature.session.behavior.ToolbarPosition as MozacToolbarPosition
 
 /**
@@ -208,7 +219,6 @@ abstract class BaseBrowserFragment :
     private val fullScreenFeature = ViewBoundFeatureWrapper<FullScreenFeature>()
     private val swipeRefreshFeature = ViewBoundFeatureWrapper<SwipeRefreshFeature>()
     private val webchannelIntegration = ViewBoundFeatureWrapper<FxaWebChannelFeature>()
-    private val webExtensionPromptFeature = ViewBoundFeatureWrapper<WebExtensionPromptFeature>()
     private val sitePermissionWifiIntegration =
         ViewBoundFeatureWrapper<SitePermissionsWifiIntegration>()
     private val secureWindowFeature = ViewBoundFeatureWrapper<SecureWindowFeature>()
@@ -230,6 +240,7 @@ abstract class BaseBrowserFragment :
 
     internal val sharedViewModel: SharedViewModel by activityViewModels()
     private val homeViewModel: HomeScreenViewModel by activityViewModels()
+    private val bookmarksSharedViewModel: BookmarksSharedViewModel by activityViewModels()
 
     private var currentStartDownloadDialog: StartDownloadDialog? = null
 
@@ -458,6 +469,7 @@ abstract class BaseBrowserFragment :
 
         browserToolbarView.view.display.setOnSiteSecurityClickedListener {
             showQuickSettingsDialog()
+            Events.browserToolbarSecurityIndicatorTapped.record()
         }
 
         contextMenuFeature.set(
@@ -669,12 +681,20 @@ abstract class BaseBrowserFragment :
             view = view,
         )
 
+        val colorsProvider = DialogColorsProvider {
+            DialogColors(
+                title = ThemeManager.resolveAttributeColor(attribute = R.attr.textPrimary),
+                description = ThemeManager.resolveAttributeColor(attribute = R.attr.textSecondary),
+            )
+        }
+
         promptsFeature.set(
             feature = PromptFeature(
                 activity = activity,
                 store = store,
                 customTabId = customTabSessionId,
                 fragmentManager = parentFragmentManager,
+                identityCredentialColorsProvider = colorsProvider,
                 tabsUseCases = requireComponents.useCases.tabsUseCases,
                 creditCardValidationDelegate = DefaultCreditCardValidationDelegate(
                     context.components.core.lazyAutofillStorage,
@@ -720,6 +740,18 @@ abstract class BaseBrowserFragment :
                             findNavController().navigate(directions)
                         }
                     }
+                },
+                suggestStrongPasswordDelegate = object : SuggestStrongPasswordDelegate {
+                    override val strongPasswordPromptViewListenerView
+                        get() = binding.suggestStrongPasswordBar
+                },
+                isSuggestStrongPasswordEnabled = context.settings().enableSuggestStrongPassword,
+                onSaveLoginWithStrongPassword = { url, password ->
+                    handleOnSaveLoginWithGeneratedStrongPassword(
+                        passwordsStorage = context.components.core.passwordsStorage,
+                        url = url,
+                        password = password,
+                    )
                 },
                 creditCardDelegate = object : CreditCardDelegate {
                     override val creditCardPickerView
@@ -912,18 +944,6 @@ abstract class BaseBrowserFragment :
             owner = this,
             view = view,
         )
-
-        webExtensionPromptFeature.set(
-            feature = WebExtensionPromptFeature(
-                store = requireComponents.core.store,
-                provideAddons = ::provideAddons,
-                context = requireContext(),
-                fragmentManager = parentFragmentManager,
-                view = view,
-            ),
-            owner = this,
-            view = view,
-        )
         initializeEngineView(toolbarHeight)
     }
 
@@ -999,7 +1019,7 @@ abstract class BaseBrowserFragment :
             }
 
             create()
-        }.show().secure(activity)
+        }.show().withCenterAlignedButtons().secure(activity)
 
         context.settings().incrementSecureWarningCount()
     }
@@ -1224,6 +1244,13 @@ abstract class BaseBrowserFragment :
             components.useCases.sessionUseCases.reload()
         }
         hideToolbar()
+
+        context?.settings()?.shouldOpenLinksInApp(customTabSessionId != null)
+            ?.let { openLinksInExternalApp ->
+                components.services.appLinksInterceptor.updateLaunchInApp {
+                    openLinksInExternalApp
+                }
+            }
     }
 
     @CallSuper
@@ -1411,7 +1438,7 @@ abstract class BaseBrowserFragment :
             // Save bookmark, then go to edit fragment
             try {
                 val guid = bookmarksStorage.addItem(
-                    BookmarkRoot.Mobile.id,
+                    bookmarksSharedViewModel.selectedFolder?.guid ?: BookmarkRoot.Mobile.id,
                     url = sessionUrl,
                     title = sessionTitle,
                     position = null,
@@ -1431,12 +1458,14 @@ abstract class BaseBrowserFragment :
                                     MetricsUtils.BookmarkAction.EDIT,
                                     TOAST_METRIC_SOURCE,
                                 )
-                                nav(
-                                    R.id.browserFragment,
-                                    BrowserFragmentDirections.actionGlobalBookmarkEditFragment(
+                                findNavController().navigateWithBreadcrumb(
+                                    directions = BrowserFragmentDirections.actionGlobalBookmarkEditFragment(
                                         guid,
                                         true,
                                     ),
+                                    navigateFrom = "BrowserFragment",
+                                    navigateTo = "ActionGlobalBookmarkEditFragment",
+                                    crashReporter = it.context.components.analytics.crashReporter,
                                 )
                             }
                             .show()
@@ -1488,10 +1517,12 @@ abstract class BaseBrowserFragment :
         if (inFullScreen) {
             // Close find in page bar if opened
             findInPageIntegration.onBackPressed()
-            Toast
-                .makeText(requireContext(), R.string.full_screen_notification, Toast.LENGTH_SHORT)
-                .show()
-            activity?.enterToImmersiveMode()
+
+            FullScreenNotificationDialog(R.layout.full_screen_notification_dialog).show(
+                parentFragmentManager,
+            )
+
+            activity?.enterImmersiveMode()
             (view as? SwipeGestureLayout)?.isSwipeEnabled = false
             browserToolbarView.collapse()
             browserToolbarView.view.isVisible = false
@@ -1643,12 +1674,37 @@ abstract class BaseBrowserFragment :
         return isValidStatus && isSameTab
     }
 
-    private suspend fun provideAddons(): List<Addon> {
-        return withContext(IO) {
-            // We deactivated the cache to get the most up-to-date list of add-ons to match against.
-            // as this will be used to install add-ons from AMO.
-            val addons = requireContext().components.addonManager.getFenixAddons(allowCache = false)
-            addons
+    private fun handleOnSaveLoginWithGeneratedStrongPassword(
+        passwordsStorage: SyncableLoginsStorage,
+        url: String,
+        password: String,
+    ) {
+        val loginToSave = LoginEntry(
+            origin = url,
+            httpRealm = url,
+            username = "",
+            password = password,
+        )
+        var saveLoginJob: Deferred<Unit>? = null
+        lifecycleScope.launch(IO) {
+            saveLoginJob = async {
+                try {
+                    passwordsStorage.add(loginToSave)
+                } catch (loginException: LoginsApiException) {
+                    loginException.printStackTrace()
+                    Log.e(
+                        "Add new login",
+                        "Failed to add new login with generated password.",
+                        loginException,
+                    )
+                }
+                saveLoginJob?.await()
+            }
+            saveLoginJob?.invokeOnCompletion {
+                if (it is CancellationException) {
+                    saveLoginJob?.cancel()
+                }
+            }
         }
     }
 }

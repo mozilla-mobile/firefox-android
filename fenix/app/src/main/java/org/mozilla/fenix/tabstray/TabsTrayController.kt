@@ -42,6 +42,7 @@ import org.mozilla.fenix.components.bookmarks.BookmarksUseCase
 import org.mozilla.fenix.ext.DEFAULT_ACTIVE_DAYS
 import org.mozilla.fenix.ext.potentialInactiveTabs
 import org.mozilla.fenix.home.HomeFragment
+import org.mozilla.fenix.library.bookmarks.BookmarksSharedViewModel
 import org.mozilla.fenix.tabstray.browser.InactiveTabsController
 import org.mozilla.fenix.tabstray.browser.TabsTrayFabController
 import org.mozilla.fenix.tabstray.ext.getTabSessionState
@@ -172,26 +173,28 @@ interface TabsTrayController : SyncedTabsController, InactiveTabsController, Tab
 /**
  * Default implementation of [TabsTrayController].
  *
- * @property activity [HomeActivity] used to perform top-level app actions.
- * @property appStore [AppStore] used to dispatch any [AppAction].
- * @property tabsTrayStore [TabsTrayStore] used to read/update the [TabsTrayState].
- * @property settings [Settings] used to update any user preferences.
- * @property browserStore [BrowserStore] used to read/update the current [BrowserState].
- * @property browsingModeManager [BrowsingModeManager] used to read/update the current [BrowsingMode].
- * @property navController [NavController] used to navigate away from the tabs tray.
- * @property navigateToHomeAndDeleteSession Lambda used to return to the Homescreen and delete the current session.
- * @property navigationInteractor [NavigationInteractor] used to perform navigation actions with side effects.
- * @property tabsUseCases Use case wrapper for interacting with tabs.
- * @property bookmarksUseCase Use case wrapper for interacting with bookmarks.
- * @property ioDispatcher [CoroutineContext] used to handle saving tabs as bookmarks.
- * @property collectionStorage Storage layer for interacting with collections.
- * @property selectTabPosition Lambda used to scroll the tabs tray to the desired position.
- * @property dismissTray Lambda used to dismiss/minimize the tabs tray.
- * @property showUndoSnackbarForTab Lambda used to display an UNDO Snackbar.
+ * @param activity [HomeActivity] used to perform top-level app actions.
+ * @param appStore [AppStore] used to dispatch any [AppAction].
+ * @param tabsTrayStore [TabsTrayStore] used to read/update the [TabsTrayState].
+ * @param browserStore [BrowserStore] used to read/update the current [BrowserState].
+ * @param settings [Settings] used to update any user preferences.
+ * @param browsingModeManager [BrowsingModeManager] used to read/update the current [BrowsingMode].
+ * @param navController [NavController] used to navigate away from the tabs tray.
+ * @param navigateToHomeAndDeleteSession Lambda used to return to the Homescreen and delete the current session.
+ * @param profiler [Profiler] used to add profiler markers.
+ * @param navigationInteractor [NavigationInteractor] used to perform navigation actions with side effects.
+ * @param tabsUseCases Use case wrapper for interacting with tabs.
+ * @param bookmarksUseCase Use case wrapper for interacting with bookmarks.
+ * @param ioDispatcher [CoroutineContext] used to handle saving tabs as bookmarks.
+ * @param collectionStorage Storage layer for interacting with collections.
+ * @param selectTabPosition Lambda used to scroll the tabs tray to the desired position.
+ * @param dismissTray Lambda used to dismiss/minimize the tabs tray.
+ * @param showUndoSnackbarForTab Lambda used to display an UNDO Snackbar.
  * @property showCancelledDownloadWarning Lambda used to display a cancelled download warning.
- * @property showBookmarkSnackbar Lambda used to display a snackbar upon saving tabs as bookmarks.
- * @property showCollectionSnackbar Lambda used to display a snackbar upon successfully saving tabs
+ * @param showBookmarkSnackbar Lambda used to display a snackbar upon saving tabs as bookmarks.
+ * @param showCollectionSnackbar Lambda used to display a snackbar upon successfully saving tabs
  * to a collection.
+ * @param bookmarksSharedViewModel [BookmarksSharedViewModel] used to get currently selected bookmark root.
  */
 @Suppress("TooManyFunctions", "LongParameterList")
 class DefaultTabsTrayController(
@@ -218,6 +221,7 @@ class DefaultTabsTrayController(
         tabSize: Int,
         isNewCollection: Boolean,
     ) -> Unit,
+    private val bookmarksSharedViewModel: BookmarksSharedViewModel,
 ) : TabsTrayController {
 
     override fun handleNormalTabsFabClick() {
@@ -404,7 +408,11 @@ class DefaultTabsTrayController(
             // if we leave the fragment, i.e. we still want the bookmarks to be added if the
             // tabs tray closes before the job is done.
             CoroutineScope(ioDispatcher).launch {
-                bookmarksUseCase.addBookmark(tab.content.url, tab.content.title)
+                bookmarksUseCase.addBookmark(
+                    tab.content.url,
+                    tab.content.title,
+                    parentGuid = bookmarksSharedViewModel.selectedFolder?.guid,
+                )
             }
         }
 

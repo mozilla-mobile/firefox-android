@@ -7,10 +7,9 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-parcelize'
 
 android {
-    compileSdkVersion config.compileSdkVersion
-
     defaultConfig {
         minSdkVersion config.minSdkVersion
+        compileSdk config.compileSdkVersion
         targetSdkVersion config.targetSdkVersion
 
         buildConfigField("String", "LIBRARY_VERSION", "\"" + config.componentsVersion + "\"")
@@ -23,6 +22,10 @@ android {
         }
     }
 
+    buildFeatures {
+        buildConfig true
+    }
+
     namespace 'mozilla.components.concept.base'
 }
 
@@ -33,7 +36,6 @@ dependencies {
 
     testImplementation ComponentsDependencies.androidx_test_junit
     testImplementation ComponentsDependencies.testing_robolectric
-    testImplementation ComponentsDependencies.testing_mockito
     testImplementation ComponentsDependencies.testing_mockwebserver
 
     testImplementation project(':support-test')

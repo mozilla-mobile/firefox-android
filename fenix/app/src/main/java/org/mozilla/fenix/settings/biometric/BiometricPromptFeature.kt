@@ -24,8 +24,8 @@ import org.mozilla.fenix.settings.biometric.ext.isHardwareAvailable
  *
  * @param context Android context.
  * @param fragment The fragment on which this feature will live.
- * @param onAuthSuccess A success callback.
  * @param onAuthFailure A failure callback if authentication failed.
+ * @param onAuthSuccess A success callback.
  */
 class BiometricPromptFeature(
     private val context: Context,

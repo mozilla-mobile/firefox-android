@@ -26,19 +26,14 @@ import org.mozilla.fenix.wallpapers.WallpaperState
  * View holder for [RecentlyVisitedItem]s.
  *
  * @param composeView [ComposeView] which will be populated with Jetpack Compose UI content.
- * @property interactor [RecentVisitsInteractor] which will have delegated to all user interactions.
+ * @param viewLifecycleOwner [LifecycleOwner] to which this Composable will be tied to.
+ * @param interactor [RecentVisitsInteractor] which will have delegated to all user interactions.
  */
 class RecentlyVisitedViewHolder(
     composeView: ComposeView,
     viewLifecycleOwner: LifecycleOwner,
     private val interactor: RecentVisitsInteractor,
 ) : ComposeViewHolder(composeView, viewLifecycleOwner) {
-
-    init {
-        val horizontalPadding =
-            composeView.resources.getDimensionPixelSize(R.dimen.home_item_horizontal_margin)
-        composeView.setPadding(horizontalPadding, 0, horizontalPadding, 0)
-    }
 
     @Composable
     override fun Content() {

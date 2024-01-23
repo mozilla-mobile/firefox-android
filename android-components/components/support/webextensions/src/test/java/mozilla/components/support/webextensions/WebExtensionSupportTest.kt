@@ -25,6 +25,7 @@ import mozilla.components.concept.engine.webextension.Metadata
 import mozilla.components.concept.engine.webextension.TabHandler
 import mozilla.components.concept.engine.webextension.WebExtension
 import mozilla.components.concept.engine.webextension.WebExtensionDelegate
+import mozilla.components.concept.engine.webextension.WebExtensionInstallException
 import mozilla.components.support.base.Component
 import mozilla.components.support.base.facts.processor.CollectionProcessor
 import mozilla.components.support.test.any
@@ -400,7 +401,7 @@ class WebExtensionSupportTest {
         )
         verify(store).dispatch(
             WebExtensionAction.UpdatePromptRequestWebExtensionAction(
-                WebExtensionPromptRequest.PostInstallation(ext),
+                WebExtensionPromptRequest.AfterInstallation.PostInstallation(ext),
             ),
         )
         assertEquals(ext, WebExtensionSupport.installedExtensions[ext.id])
@@ -452,7 +453,7 @@ class WebExtensionSupportTest {
 
         verify(store).dispatch(
             WebExtensionAction.UpdatePromptRequestWebExtensionAction(
-                WebExtensionPromptRequest.Permissions(ext, onPermissionsGranted),
+                WebExtensionPromptRequest.AfterInstallation.Permissions.Required(ext, onPermissionsGranted),
             ),
         )
     }
@@ -503,7 +504,56 @@ class WebExtensionSupportTest {
         delegateCaptor.value.onInstalled(ext)
         verify(store, times(0)).dispatch(
             WebExtensionAction.UpdatePromptRequestWebExtensionAction(
-                WebExtensionPromptRequest.PostInstallation(ext),
+                WebExtensionPromptRequest.AfterInstallation.PostInstallation(ext),
+            ),
+        )
+    }
+
+    @Test
+    fun `GIVEN already installed extension WHEN calling onInstalled THEN do not show the PostInstallation prompt`() {
+        val store = spy(BrowserStore())
+
+        val engine: Engine = mock()
+        val ext: WebExtension = mock()
+        whenever(ext.id).thenReturn("extensionId")
+
+        val delegateCaptor = argumentCaptor<WebExtensionDelegate>()
+        WebExtensionSupport.initialize(engine, store)
+        verify(engine).registerWebExtensionDelegate(delegateCaptor.capture())
+
+        // We simulate a first install...
+        delegateCaptor.value.onInstalled(ext)
+        // ... and then an update, which also calls `onInstalled()`.
+        delegateCaptor.value.onInstalled(ext)
+
+        verify(store, times(1)).dispatch(
+            WebExtensionAction.UpdatePromptRequestWebExtensionAction(
+                WebExtensionPromptRequest.AfterInstallation.PostInstallation(ext),
+            ),
+        )
+    }
+
+    @Test
+    fun `GIVEN extension WHEN calling onInstallationFailedRequest THEN show the installation prompt error`() {
+        val store = spy(BrowserStore())
+        val engine: Engine = mock()
+        val ext: WebExtension = mock()
+        val exception = WebExtensionInstallException.Blocklisted(throwable = Exception())
+
+        whenever(ext.id).thenReturn("extensionId")
+        whenever(ext.url).thenReturn("url")
+        whenever(ext.supportActions).thenReturn(true)
+        whenever(ext.isBuiltIn()).thenReturn(false)
+
+        val delegateCaptor = argumentCaptor<WebExtensionDelegate>()
+        WebExtensionSupport.initialize(engine, store)
+        verify(engine).registerWebExtensionDelegate(delegateCaptor.capture())
+
+        delegateCaptor.value.onInstallationFailedRequest(ext, exception)
+
+        verify(store, times(1)).dispatch(
+            WebExtensionAction.UpdatePromptRequestWebExtensionAction(
+                WebExtensionPromptRequest.BeforeInstallation.InstallationFailed(ext, exception),
             ),
         )
     }
@@ -859,6 +909,67 @@ class WebExtensionSupportTest {
     }
 
     @Test
+    fun `reacts to WebExtensionDelegate onReady by updating the extension details stored in the installedExtensions map`() {
+        val store = spy(BrowserStore())
+        val ext: WebExtension = mock()
+        whenever(ext.id).thenReturn("test")
+        whenever(ext.isEnabled()).thenReturn(true)
+        val extMeta: Metadata = mock()
+        whenever(ext.getMetadata()).thenReturn(extMeta)
+        val installedList = mutableListOf(ext)
+
+        val engine: Engine = mock()
+        val callbackCaptor = argumentCaptor<((List<WebExtension>) -> Unit)>()
+        whenever(engine.listInstalledWebExtensions(callbackCaptor.capture(), any())).thenAnswer {
+            callbackCaptor.value.invoke(installedList)
+        }
+
+        // Initialize WebExtensionSupport and expect the extension metadata
+        // to be the one coming from the first mock WebExtension instance.
+        WebExtensionSupport.initialize(engine, store)
+        assertEquals(1, WebExtensionSupport.installedExtensions.size)
+        assertEquals(ext, WebExtensionSupport.installedExtensions[ext.id])
+        assertEquals(extMeta, WebExtensionSupport.installedExtensions[ext.id]?.getMetadata())
+
+        val delegateCaptor = argumentCaptor<WebExtensionDelegate>()
+        verify(engine).registerWebExtensionDelegate(delegateCaptor.capture())
+
+        // Mock a call to the WebExtensionDelegate.onReady delegate and the
+        // extension and its metadata instances stored in the installExtensions
+        // map to have been updated as a side-effect of that.
+        val extOnceReady: WebExtension = mock()
+        whenever(extOnceReady.id).thenReturn("test")
+        whenever(extOnceReady.isEnabled()).thenReturn(true)
+        val extOnceReadyMeta: Metadata = mock()
+        whenever(extOnceReady.getMetadata()).thenReturn(extOnceReadyMeta)
+
+        delegateCaptor.value.onReady(extOnceReady)
+
+        assertEquals(1, WebExtensionSupport.installedExtensions.size)
+        assertEquals(extOnceReady, WebExtensionSupport.installedExtensions[ext.id])
+        assertEquals(extOnceReadyMeta, WebExtensionSupport.installedExtensions[ext.id]?.getMetadata())
+
+        store.waitUntilIdle()
+    }
+
+    @Test
+    fun `reacts to extensions process spawning disabled`() {
+        val store = BrowserStore()
+        val engine: Engine = mock()
+
+        assertFalse(store.state.showExtensionsProcessDisabledPrompt)
+        val delegateCaptor = argumentCaptor<WebExtensionDelegate>()
+        WebExtensionSupport.initialize(engine, store)
+
+        verify(engine).registerWebExtensionDelegate(delegateCaptor.capture())
+
+        delegateCaptor.value.onDisabledExtensionProcessSpawning()
+        store.waitUntilIdle()
+
+        assertTrue(store.state.showExtensionsProcessDisabledPrompt)
+    }
+
+    @Test
     fun `closes tabs from unsupported extensions`() {
         val store = BrowserStore(
             BrowserState(
@@ -941,5 +1052,24 @@ class WebExtensionSupportTest {
         verify(ext).registerTabHandler(eq(customTabEngineSession), tabHandlerCaptor.capture())
         verify(ext).registerActionHandler(eq(engineSession), actionHandlerCaptor.capture())
         verify(ext).registerTabHandler(eq(engineSession), tabHandlerCaptor.capture())
+    }
+
+    @Test
+    fun `reacts to optional permissions request`() {
+        val store = spy(BrowserStore())
+        val engine: Engine = mock()
+        val ext: WebExtension = mock()
+        val permissions = listOf("perm1", "perm2")
+        val onPermissionsGranted: ((Boolean) -> Unit) = mock()
+        val delegateCaptor = argumentCaptor<WebExtensionDelegate>()
+        WebExtensionSupport.initialize(engine, store)
+        verify(engine).registerWebExtensionDelegate(delegateCaptor.capture())
+
+        delegateCaptor.value.onOptionalPermissionsRequest(ext, permissions, onPermissionsGranted)
+        verify(store).dispatch(
+            WebExtensionAction.UpdatePromptRequestWebExtensionAction(
+                WebExtensionPromptRequest.AfterInstallation.Permissions.Optional(ext, permissions, onPermissionsGranted),
+            ),
+        )
     }
 }

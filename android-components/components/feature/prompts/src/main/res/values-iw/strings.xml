@@ -92,6 +92,13 @@
     <!-- Header for the select login prompt to allow users to fill a form with a saved login -->
     <string name="mozac_feature_prompts_saved_logins">כניסות מוצעות</string>
 
+    <!-- Content description for the suggest strong password prompt to allow users to fill a form with a suggested strong password -->
+    <string name="mozac_feature_prompts_suggest_strong_password_content_description">קבלת הצעה לססמה חזקה</string>
+    <!-- Header for the suggest strong password prompt to allow users to fill a form with a suggested strong password -->
+    <string name="mozac_feature_prompts_suggest_strong_password">קבלת הצעה לססמה חזקה</string>
+    <!-- Title for using the suggest strong password confirmation dialog. %1$s will be replaced with the generated password -->
+    <string name="mozac_feature_prompts_suggest_strong_password_message">שימוש בססמה חזקה: %1$s</string>
+
     <!-- Strings shown in a dialog that appear when users try to refresh a certain kind of webpages -->
     <string name="mozac_feature_prompt_repost_title">לשלוח את הנתונים לאתר הזה שוב?</string>
     <string name="mozac_feature_prompt_repost_message">רענון העמוד הזה עשוי להוביל לשכפול הפעולות האחרונות, כגון ביצוע תשלום או פרסום תגובה פעמיים.</string>
@@ -110,7 +117,7 @@
     <!-- Option in the expanded select credit card prompt that links to credit cards settings. -->
     <string name="mozac_feature_prompts_manage_credit_cards">ניהול כרטיסי אשראי</string>
     <!-- Text for the title of a save credit card dialog. -->
-    <string name="mozac_feature_prompts_save_credit_card_prompt_title">לשמור את הכרטיס הזה בצורה מאובטחת?</string>
+    <string name="mozac_feature_prompts_save_credit_card_prompt_title">לשמור את הכרטיס הזה באופן מאובטח?</string>
     <!-- Text for the title of an update credit card dialog. -->
     <string name="mozac_feature_prompts_update_credit_card_prompt_title">לעדכן את תאריך התפוגה של הכרטיס?</string>
     <!-- Subtitle text displayed under the title of the save credit card dialog. -->
@@ -129,12 +136,16 @@
     <!-- Federated Credential Management prompts -->
     <!--Content description for the Account picture in the Select Account FedCM prompt -->
     <string name="mozac_feature_prompts_account_picture">תמונת חשבון</string>
-    <!-- Title of the Identity Credential provider dialog choose. -->
+    <!-- Title of the Identity Credential provider dialog chooser. -->
     <string name="mozac_feature_prompts_identity_credentials_choose_provider">בחירת ספק התחברות</string>
-    <!-- Title of an account picker dialog for identity credentials. -->
-    <string name="mozac_feature_prompts_identity_credentials_choose_account">בחירת חשבון</string>
+    <!-- Title of an account picker dialog for identity credentials. The %1$s will be replaced with the name of the provider -->
+    <string name="mozac_feature_prompts_identity_credentials_choose_account_for_provider">כניסה עם חשבון %1$s</string>
     <!-- Title of the Identity Credential privacy policy dialog title. The %1$s will be replaced with the name of the provider. -->
     <string name="mozac_feature_prompts_identity_credentials_privacy_policy_title">שימוש ב־%1$s כספק התחברות</string>
     <!-- Title of the Identity Credential privacy policy dialog description. The %1$s will be replaced with the name of the provider, %2$s will be replaced with the account, %3$s will be replaced with the privacy policy url and  %4$s will be replaced with the terms of service. -->
     <string name="mozac_feature_prompts_identity_credentials_privacy_policy_description"><![CDATA[הכניסה ל־%1$s עם חשבון %2$s כפופה ל<a href="%3$s">מדיניות הפרטיות</a> ול<a href="%4$s">תנאי השימוש</a> שלהם]]></string>
+    <!-- Text for the positive button of the Identity Credential dialogs. -->
+    <string name="mozac_feature_prompts_identity_credentials_continue">המשך</string>
+    <!-- Text for the cancel button of the Identity Credential dialogs. -->
+    <string name="mozac_feature_prompts_identity_credentials_cancel">ביטול</string>
 </resources>

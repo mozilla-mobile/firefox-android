@@ -81,6 +81,12 @@ object TestAssetHelper {
         return TestAsset(url, "", "")
     }
 
+    fun getPdfFormAsset(server: MockWebServer): TestAsset {
+        val url = server.url("resources/pdfForm.pdf").toString().toUri()!!
+
+        return TestAsset(url, "", "")
+    }
+
     fun getSaveLoginAsset(server: MockWebServer): TestAsset {
         val url = server.url("pages/password.html").toString().toUri()!!
 
@@ -137,6 +143,12 @@ object TestAssetHelper {
 
     fun getStorageTestAsset(server: MockWebServer, pageAsset: String): TestAsset {
         val url = server.url("pages/$pageAsset").toString().toUri()!!
+
+        return TestAsset(url, "", "")
+    }
+
+    fun getGPCTestAsset(server: MockWebServer): TestAsset {
+        val url = server.url("pages/global_privacy_control.html").toString().toUri()!!
 
         return TestAsset(url, "", "")
     }

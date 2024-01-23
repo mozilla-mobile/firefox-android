@@ -45,6 +45,11 @@ import mozilla.components.concept.engine.mediasession.MediaSession
 import mozilla.components.concept.engine.permission.PermissionRequest
 import mozilla.components.concept.engine.prompt.PromptRequest
 import mozilla.components.concept.engine.search.SearchRequest
+import mozilla.components.concept.engine.translate.TranslationEngineState
+import mozilla.components.concept.engine.translate.TranslationError
+import mozilla.components.concept.engine.translate.TranslationOperation
+import mozilla.components.concept.engine.translate.TranslationOptions
+import mozilla.components.concept.engine.translate.TranslationSupport
 import mozilla.components.concept.engine.webextension.WebExtensionBrowserAction
 import mozilla.components.concept.engine.webextension.WebExtensionPageAction
 import mozilla.components.concept.engine.window.WindowRequest
@@ -71,6 +76,26 @@ object InitAction : BrowserAction()
  * [BrowserAction] to indicate that restoring [BrowserState] is complete.
  */
 object RestoreCompleteAction : BrowserAction()
+
+/**
+ * [BrowserAction] implementations to react to extensions process events.
+ */
+sealed class ExtensionsProcessAction : BrowserAction() {
+    /**
+     * [BrowserAction] to indicate when the crash prompt should be displayed to the user.
+     */
+    data class ShowPromptAction(val show: Boolean) : ExtensionsProcessAction()
+
+    /**
+     * [BrowserAction] to indicate that the process has been re-enabled by the user.
+     */
+    object EnabledAction : ExtensionsProcessAction()
+
+    /**
+     * [BrowserAction] to indicate that the process has been left disabled by the user.
+     */
+    object DisabledAction : ExtensionsProcessAction()
+}
 
 /**
  * [BrowserAction] implementations to react to system events.
@@ -425,11 +450,6 @@ sealed class ContentAction : BrowserAction() {
     data class RemoveIconAction(val sessionId: String) : ContentAction()
 
     /**
-     * Removes the thumbnail of the [ContentState] with the given [sessionId].
-     */
-    data class RemoveThumbnailAction(val sessionId: String) : ContentAction()
-
-    /**
      * Updates the URL of the [ContentState] with the given [sessionId].
      */
     data class UpdateUrlAction(val sessionId: String, val url: String) : ContentAction()
@@ -542,10 +562,14 @@ sealed class ContentAction : BrowserAction() {
         ContentAction()
 
     /**
-     * Updates the isSearch state of the [ContentState] with the given [sessionId].
+     * Updates the isSearch state and optionally the search engine name of the [ContentState] with
+     * the given [sessionId].
      */
-    data class UpdateIsSearchAction(val sessionId: String, val isSearch: Boolean) :
-        ContentAction()
+    data class UpdateIsSearchAction(
+        val sessionId: String,
+        val isSearch: Boolean,
+        val searchEngineName: String? = null,
+    ) : ContentAction()
 
     /**
      * Updates the [SecurityInfoState] of the [ContentState] with the given [sessionId].
@@ -808,6 +832,120 @@ sealed class ContentAction : BrowserAction() {
      * Indicates the given [tabId] was unable to be checked for form data.
      */
     data class CheckForFormDataExceptionAction(val tabId: String, val throwable: Throwable) : ContentAction()
+
+    /**
+     * Updates the [ContentState.isProductUrl] state for the non private tab with the given [tabId].
+     */
+    data class UpdateProductUrlStateAction(
+        val tabId: String,
+        val isProductUrl: Boolean,
+    ) : ContentAction()
+}
+
+/**
+ * [BrowserAction] implementations related to translating a web content page.
+ */
+sealed class TranslationsAction : BrowserAction() {
+    /**
+     * Indicates that the translations engine expects the user may want to translate the page on
+     * the given [tabId].
+     *
+     * For example, could be used to show toolbar UI that translations are an option.
+     *
+     * @property tabId The ID of the tab the [EngineSession] should be linked to.
+     */
+    data class TranslateExpectedAction(
+        override val tabId: String,
+    ) : TranslationsAction(), ActionWithTab
+
+    /**
+     * Indicates that the translations engine suggests the user should be notified of the ability to
+     * translate on the given [tabId].
+     *
+     * For example, could be used to show a reminder UI popup or a star beside the toolbar UI to strongly signal that
+     * translations are an option.
+     *
+     * @property tabId The ID of the tab the [EngineSession] should be linked to.
+     */
+    data class TranslateOfferAction(
+        override val tabId: String,
+    ) : TranslationsAction(), ActionWithTab
+
+    /**
+     * Indicates the translation state on the given [tabId].
+     *
+     * This provides the translations engine state.  Not to be confused with
+     * the browser engine state of the translations component.
+     *
+     * @property tabId The ID of the tab the [EngineSession] should be linked to.
+     * @property translationEngineState The state of the translation engine for the
+     * page.
+     */
+    data class TranslateStateChangeAction(
+        override val tabId: String,
+        val translationEngineState: TranslationEngineState,
+    ) : TranslationsAction(), ActionWithTab
+
+    /**
+     * Used to translate the page for a given [tabId].
+     *
+     * @property tabId The ID of the tab the [EngineSession] should be linked to.
+     * @property fromLanguage The BCP 47 language tag that the page should be translated from.
+     * @property toLanguage The BCP 47 language tag that the page should be translated to.
+     * @property options Options for how the translation should be processed.
+     */
+    data class TranslateAction(
+        override val tabId: String,
+        val fromLanguage: String,
+        val toLanguage: String,
+        val options: TranslationOptions?,
+    ) : TranslationsAction(), ActionWithTab
+
+    /**
+     * Indicates the given [tabId] should restore the original pre-translated content.
+     *
+     * @property tabId The ID of the tab the [EngineSession] should be linked to.
+     */
+    data class TranslateRestoreAction(
+        override val tabId: String,
+    ) : TranslationsAction(), ActionWithTab
+
+    /**
+     * Indicates the given [tabId] was successful in translating or restoring the page
+     * or acquiring a necessary resource.
+     *
+     * @property tabId The ID of the tab the [EngineSession] should be linked to.
+     * @property operation The translation operation that was successful.
+     */
+    data class TranslateSuccessAction(
+        override val tabId: String,
+        val operation: TranslationOperation,
+    ) : TranslationsAction(), ActionWithTab
+
+    /**
+     * Indicates the given [tabId] was unable to translate or restore the page or acquire a
+     * necessary resource.
+     *
+     * @property tabId The ID of the tab the [EngineSession] should be linked to.
+     * @property operation The translation operation that failed.
+     * @property translationError The error that occurred.
+     */
+    data class TranslateExceptionAction(
+        override val tabId: String,
+        val operation: TranslationOperation,
+        val translationError: TranslationError,
+    ) : TranslationsAction(), ActionWithTab
+
+    /**
+     * Sets the languages that are supported by the translations engine.
+     *
+     * @property tabId The ID of the tab the [EngineSession] that requested the list.
+     * @property supportedLanguages The languages the engine supports for translation.
+     */
+    data class TranslateSetLanguagesAction(
+        override val tabId: String,
+        val supportedLanguages: TranslationSupport?,
+    ) : TranslationsAction(), ActionWithTab
 }
 
 /**
@@ -1516,6 +1654,11 @@ sealed class SearchAction : BrowserAction() {
         val searchEngineId: String,
         val isEnabled: Boolean,
     ) : SearchAction()
+
+    /**
+     * Restores hidden engines from [SearchState.hiddenSearchEngines] back to [SearchState.regionSearchEngines]
+     */
+    object RestoreHiddenSearchEnginesAction : SearchAction()
 }
 
 /**

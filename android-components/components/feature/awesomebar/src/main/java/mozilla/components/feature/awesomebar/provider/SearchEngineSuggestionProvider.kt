@@ -24,7 +24,6 @@ import java.util.UUID
  * @property maxSuggestions the maximum number of suggestions to be provided
  * @property charactersThreshold the minimum typed characters used to match to a search engine name
  */
-@Suppress("LongParameterList")
 class SearchEngineSuggestionProvider(
     private val context: Context,
     private val searchEnginesList: List<SearchEngine>,
@@ -44,7 +43,7 @@ class SearchEngineSuggestionProvider(
         }
 
         val suggestions = searchEnginesList
-            .filter { it.name.contains(text, true) }.take(maxSuggestions)
+            .filter { it.name.startsWith(text, true) }.take(maxSuggestions)
 
         return if (suggestions.isNotEmpty()) {
             suggestions.into()
@@ -73,6 +72,6 @@ class SearchEngineSuggestionProvider(
 
     companion object {
         internal const val DEFAULT_MAX_SUGGESTIONS = 1
-        internal const val DEFAULT_CHARACTERS_THRESHOLD = 1
+        internal const val DEFAULT_CHARACTERS_THRESHOLD = 2
     }
 }

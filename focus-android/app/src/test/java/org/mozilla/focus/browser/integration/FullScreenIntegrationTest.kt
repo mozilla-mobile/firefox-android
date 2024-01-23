@@ -12,11 +12,11 @@ import android.view.WindowManager
 import androidx.core.view.isVisible
 import mozilla.components.browser.engine.gecko.GeckoEngineView
 import mozilla.components.browser.toolbar.BrowserToolbar
+import mozilla.components.feature.prompts.dialog.FullScreenNotification
 import mozilla.components.feature.session.FullScreenFeature
 import mozilla.components.support.test.any
 import mozilla.components.support.test.mock
 import mozilla.components.support.test.robolectric.testContext
-import org.junit.Assert.assertNotNull
 import org.junit.Test
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.runner.RunWith
@@ -26,7 +26,6 @@ import org.mockito.Mockito.never
 import org.mockito.Mockito.spy
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
-import org.mozilla.focus.R
 import org.mozilla.focus.ext.disableDynamicBehavior
 import org.mozilla.focus.ext.enableDynamicBehavior
 import org.mozilla.focus.ext.hide
@@ -34,7 +33,6 @@ import org.mozilla.focus.ext.showAsFixed
 import org.mozilla.focus.utils.Settings
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.shadows.ShadowToast
 
 @RunWith(RobolectricTestRunner::class)
 internal class FullScreenIntegrationTest {
@@ -45,6 +43,7 @@ internal class FullScreenIntegrationTest {
             mock(),
             mock(),
             null,
+            mock(),
             mock(),
             mock(),
             mock(),
@@ -71,6 +70,7 @@ internal class FullScreenIntegrationTest {
             mock(),
             mock(),
             mock(),
+            mock(),
         ).apply {
             this.feature = feature
         }
@@ -87,6 +87,7 @@ internal class FullScreenIntegrationTest {
             mock(),
             mock(),
             null,
+            mock(),
             mock(),
             mock(),
             mock(),
@@ -117,6 +118,7 @@ internal class FullScreenIntegrationTest {
             mock(),
             mock(),
             mock(),
+            mock(),
         )
 
         integration.viewportFitChanged(33)
@@ -130,12 +132,16 @@ internal class FullScreenIntegrationTest {
         val decorView: View = mock()
         val activityWindow: Window = mock()
         val activity: Activity = mock()
+        val layoutParams: WindowManager.LayoutParams = mock()
         doReturn(activityWindow).`when`(activity).window
         doReturn(decorView).`when`(activityWindow).decorView
+        doReturn(layoutParams).`when`(activityWindow).attributes
+
         val integration = FullScreenIntegration(
             activity,
             mock(),
             null,
+            mock(),
             mock(),
             mock(),
             mock(),
@@ -158,12 +164,15 @@ internal class FullScreenIntegrationTest {
         val decorView: View = mock()
         val activityWindow: Window = mock()
         val activity: Activity = mock()
+        val layoutParams: WindowManager.LayoutParams = mock()
         doReturn(activityWindow).`when`(activity).window
         doReturn(decorView).`when`(activityWindow).decorView
+        doReturn(layoutParams).`when`(activityWindow).attributes
         val integration = FullScreenIntegration(
             activity,
             mock(),
             null,
+            mock(),
             mock(),
             mock(),
             mock(),
@@ -195,6 +204,7 @@ internal class FullScreenIntegrationTest {
             toolbar,
             mock(),
             engineView,
+            mock(),
         )
 
         integration.enterBrowserFullscreen()
@@ -220,6 +230,7 @@ internal class FullScreenIntegrationTest {
             toolbar,
             mock(),
             engineView,
+            mock(),
         )
 
         integration.enterBrowserFullscreen()
@@ -250,6 +261,7 @@ internal class FullScreenIntegrationTest {
             toolbar,
             mock(),
             engineView,
+            mock(),
         )
 
         integration.exitBrowserFullscreen()
@@ -278,6 +290,7 @@ internal class FullScreenIntegrationTest {
             toolbar,
             mock(),
             engineView,
+            mock(),
         )
 
         integration.exitBrowserFullscreen()
@@ -308,21 +321,17 @@ internal class FullScreenIntegrationTest {
                 toolbar,
                 statusBar,
                 engineView,
+                mock(),
             ),
         )
 
-        integration.fullScreenChanged(true)
+        val fullScreenNotification = mock<FullScreenNotification>()
+        integration.fullScreenChanged(true, fullScreenNotification)
 
         verify(integration).enterBrowserFullscreen()
-        verify(integration).switchToImmersiveMode()
         verify(statusBar).isVisible = false
-
-        val toast = ShadowToast.getTextOfLatestToast()
-        assertNotNull(toast)
-        assertEquals(
-            testContext.getString(R.string.full_screen_notification),
-            toast,
-        )
+        verify(fullScreenNotification).show(any())
+        verify(integration).switchToImmersiveMode()
     }
 
     @Test
@@ -352,6 +361,7 @@ internal class FullScreenIntegrationTest {
                 toolbar,
                 statusBar,
                 engineView,
+                mock(),
             ),
         )
 

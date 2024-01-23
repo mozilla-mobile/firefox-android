@@ -22,7 +22,7 @@ import org.mozilla.fenix.databinding.TabPreviewBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.theme.ThemeManager
-import kotlin.math.max
+import kotlin.math.min
 
 class TabPreview @JvmOverloads constructor(
     context: Context,
@@ -66,13 +66,16 @@ class TabPreview @JvmOverloads constructor(
         }
     }
 
-    fun loadPreviewThumbnail(thumbnailId: String) {
+    /**
+     * Load a preview for a thumbnail.
+     */
+    fun loadPreviewThumbnail(thumbnailId: String, isPrivate: Boolean) {
         doOnNextLayout {
             val previewThumbnail = binding.previewThumbnail
-            val thumbnailSize = max(previewThumbnail.height, previewThumbnail.width)
+            val thumbnailSize = min(previewThumbnail.height, previewThumbnail.width)
             thumbnailLoader.loadIntoView(
                 previewThumbnail,
-                ImageLoadRequest(thumbnailId, thumbnailSize),
+                ImageLoadRequest(thumbnailId, thumbnailSize, isPrivate),
             )
         }
     }

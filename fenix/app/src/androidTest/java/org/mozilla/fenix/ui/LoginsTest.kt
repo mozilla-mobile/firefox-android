@@ -67,6 +67,7 @@ class LoginsTest {
         mockWebServer.shutdown()
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2092713
     // Tests the Logins and passwords menu items and default values
     @Test
     fun loginsAndPasswordsSettingsItemsTest() {
@@ -82,10 +83,11 @@ class LoginsTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/517816
     // Tests only for initial state without signing in.
     // For tests after signing in, see SyncIntegration test suite
     @Test
-    fun savedLoginsMenuItemsTest() {
+    fun verifySavedLoginsListTest() {
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
@@ -101,8 +103,9 @@ class LoginsTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2092925
     @Test
-    fun syncLoginsMenuItemsTest() {
+    fun verifySyncLoginsOptionsTest() {
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
@@ -115,8 +118,12 @@ class LoginsTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/523839
     @Test
-    fun saveLoginsAndPasswordsOptionsItemsTest() {
+    fun saveLoginFromPromptTest() {
+        val saveLoginTest =
+            TestAssetHelper.getSaveLoginAsset(mockWebServer)
+
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
@@ -124,12 +131,8 @@ class LoginsTest {
         }.openSaveLoginsAndPasswordsOptions {
             verifySaveLoginsOptionsView()
         }
-    }
 
-    @Test
-    fun saveLoginFromPromptTest() {
-        val saveLoginTest =
-            TestAssetHelper.getSaveLoginAsset(mockWebServer)
+        exitMenu()
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(saveLoginTest.url) {
@@ -152,9 +155,9 @@ class LoginsTest {
         }
     }
 
-    @SmokeTest
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/960412
     @Test
-    fun openWebsiteForSavedLoginTest() {
+    fun openLoginWebsiteInBrowserTest() {
         val loginPage = "https://mozilla-mobile.github.io/testapp/loginForm"
         val originWebsite = "mozilla-mobile.github.io"
         val userName = "test"
@@ -180,6 +183,7 @@ class LoginsTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/517817
     @Test
     fun neverSaveLoginFromPromptTest() {
         val saveLoginTest = TestAssetHelper.getSaveLoginAsset(mockWebServer)
@@ -207,9 +211,10 @@ class LoginsTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1508171
     @SmokeTest
     @Test
-    fun updateSavedLoginTest() {
+    fun verifyUpdatedLoginIsSavedTest() {
         val saveLoginTest =
             TestAssetHelper.getSaveLoginAsset(mockWebServer)
 
@@ -242,7 +247,7 @@ class LoginsTest {
         }
     }
 
-    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1816066")
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1049971
     @SmokeTest
     @Test
     fun verifyMultipleLoginsSelectionsTest() {
@@ -279,6 +284,7 @@ class LoginsTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/875849
     @Test
     fun verifyEditLoginsViewTest() {
         val loginPage = "https://mozilla-mobile.github.io/testapp/loginForm"
@@ -307,6 +313,7 @@ class LoginsTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/875851
     @Test
     fun verifyEditedLoginsAreSavedTest() {
         val loginPage = "https://mozilla-mobile.github.io/testapp/v2.0/loginForm.html"
@@ -344,6 +351,7 @@ class LoginsTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2266452
     @Test
     fun verifyLoginWithNoUserNameCanNotBeSavedTest() {
         val loginPage = "https://mozilla-mobile.github.io/testapp/loginForm"
@@ -373,6 +381,7 @@ class LoginsTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2266453
     @Test
     fun verifyLoginWithoutPasswordCanNotBeSavedTest() {
         val loginPage = "https://mozilla-mobile.github.io/testapp/loginForm"
@@ -403,6 +412,7 @@ class LoginsTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/876531
     @Test
     fun verifyEditModeDismissalDoesNotSaveLoginCredentialsTest() {
         val loginPage = "https://mozilla-mobile.github.io/testapp/loginForm"
@@ -433,6 +443,7 @@ class LoginsTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/876532
     @Test
     fun verifyDeleteLoginButtonTest() {
         val loginPage = TestAssetHelper.getSaveLoginAsset(mockWebServer)
@@ -463,6 +474,8 @@ class LoginsTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/517818
+    @SmokeTest
     @Test
     fun verifyNeverSaveLoginOptionTest() {
         val loginPage = TestAssetHelper.getSaveLoginAsset(mockWebServer)
@@ -485,6 +498,7 @@ class LoginsTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/517819
     @Test
     fun verifyAutofillToggleTest() {
         val loginPage = "https://mozilla-mobile.github.io/testapp/v2.0/loginForm.html"
@@ -525,23 +539,12 @@ class LoginsTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/593768
     @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1812995")
     @Test
-    fun verifyLoginIsNotUpdatedTest() {
+    fun doNotSaveOptionWillNotUpdateALoginTest() {
         val loginPage = "https://mozilla-mobile.github.io/testapp/v2.0/loginForm.html"
         val originWebsite = "mozilla-mobile.github.io"
-
-        homeScreen {
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openLoginsAndPasswordSubMenu {
-        }.openSaveLoginsAndPasswordsOptions {
-            verifySaveLoginsOptionsView()
-            verifyAskToSaveRadioButton(true)
-            verifyNeverSaveSaveRadioButton(false)
-        }
-
-        exitMenu()
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(loginPage.toUri()) {
@@ -573,6 +576,7 @@ class LoginsTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2090455
     @Test
     fun searchLoginsByUsernameTest() {
         val firstLoginPage = TestAssetHelper.getSaveLoginAsset(mockWebServer)
@@ -603,14 +607,12 @@ class LoginsTest {
             revealPassword()
             verifyPasswordSaved("firefox")
         }.goBackToSavedLogins {
-            clickSearchLoginButton()
             searchLogin("android")
             viewSavedLoginDetails(originWebsite)
             verifyLoginItemUsername("android")
             revealPassword()
             verifyPasswordSaved("firefox")
         }.goBackToSavedLogins {
-            clickSearchLoginButton()
             searchLogin("AnDrOiD")
             viewSavedLoginDetails(originWebsite)
             verifyLoginItemUsername("android")
@@ -619,6 +621,7 @@ class LoginsTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/608834
     @Test
     fun searchLoginsByUrlTest() {
         val firstLoginPage = TestAssetHelper.getSaveLoginAsset(mockWebServer)
@@ -649,14 +652,12 @@ class LoginsTest {
             revealPassword()
             verifyPasswordSaved("firefox")
         }.goBackToSavedLogins {
-            clickSearchLoginButton()
             searchLogin("mozilla")
             viewSavedLoginDetails(originWebsite)
             verifyLoginItemUsername("android")
             revealPassword()
             verifyPasswordSaved("firefox")
         }.goBackToSavedLogins {
-            clickSearchLoginButton()
             searchLogin("MoZiLlA")
             viewSavedLoginDetails(originWebsite)
             verifyLoginItemUsername("android")
@@ -665,7 +666,7 @@ class LoginsTest {
         }
     }
 
-    @Ignore("Failing, see: https://bugzilla.mozilla.org/show_bug.cgi?id=1815650")
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2266441
     @Test
     fun verifyLastUsedLoginSortingOptionTest() {
         val firstLoginPage = TestAssetHelper.getSaveLoginAsset(mockWebServer)
@@ -692,12 +693,12 @@ class LoginsTest {
             clickSavedLoginsChevronIcon()
             verifyLoginsSortingOptions()
             clickLastUsedSortingOption()
-            verifySortedLogin(activityTestRule, 0, originWebsite)
-            verifySortedLogin(activityTestRule, 1, firstLoginPage.url.authority.toString())
+            verifySortedLogin(0, originWebsite)
+            verifySortedLogin(1, firstLoginPage.url.authority.toString())
         }.goBack {
         }.openSavedLogins {
-            verifySortedLogin(activityTestRule, 0, originWebsite)
-            verifySortedLogin(activityTestRule, 1, firstLoginPage.url.authority.toString())
+            verifySortedLogin(0, originWebsite)
+            verifySortedLogin(1, firstLoginPage.url.authority.toString())
         }
 
         restartApp(activityTestRule)
@@ -707,11 +708,12 @@ class LoginsTest {
         }.openSettings {
         }.openLoginsAndPasswordSubMenu {
         }.openSavedLogins {
-            verifySortedLogin(activityTestRule, 0, originWebsite)
-            verifySortedLogin(activityTestRule, 1, firstLoginPage.url.authority.toString())
+            verifySortedLogin(0, originWebsite)
+            verifySortedLogin(1, firstLoginPage.url.authority.toString())
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2266442
     @Test
     fun verifyAlphabeticalLoginSortingOptionTest() {
         val firstLoginPage = TestAssetHelper.getSaveLoginAsset(mockWebServer)
@@ -736,12 +738,12 @@ class LoginsTest {
         }.openLoginsAndPasswordSubMenu {
         }.openSavedLogins {
             tapSetupLater()
-            verifySortedLogin(activityTestRule, 0, firstLoginPage.url.authority.toString())
-            verifySortedLogin(activityTestRule, 1, originWebsite)
+            verifySortedLogin(0, firstLoginPage.url.authority.toString())
+            verifySortedLogin(1, originWebsite)
         }.goBack {
         }.openSavedLogins {
-            verifySortedLogin(activityTestRule, 0, firstLoginPage.url.authority.toString())
-            verifySortedLogin(activityTestRule, 1, originWebsite)
+            verifySortedLogin(0, firstLoginPage.url.authority.toString())
+            verifySortedLogin(1, originWebsite)
         }
 
         restartApp(activityTestRule)
@@ -751,11 +753,12 @@ class LoginsTest {
         }.openSettings {
         }.openLoginsAndPasswordSubMenu {
         }.openSavedLogins {
-            verifySortedLogin(activityTestRule, 0, firstLoginPage.url.authority.toString())
-            verifySortedLogin(activityTestRule, 1, originWebsite)
+            verifySortedLogin(0, firstLoginPage.url.authority.toString())
+            verifySortedLogin(1, originWebsite)
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1518435
     @Test
     fun verifyAddLoginManuallyTest() {
         val loginPage = "https://mozilla-mobile.github.io/testapp/v2.0/loginForm.html"
@@ -794,8 +797,9 @@ class LoginsTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2068215
     @Test
-    fun verifyCopyUsernameTest() {
+    fun verifyCopyLoginCredentialsToClipboardTest() {
         val firstLoginPage = TestAssetHelper.getSaveLoginAsset(mockWebServer)
 
         navigationToolbar {
@@ -811,24 +815,6 @@ class LoginsTest {
             viewSavedLoginDetails("test@example.com")
             clickCopyUserNameButton()
             verifySnackBarText("Username copied to clipboard")
-        }
-    }
-
-    @Test
-    fun verifyCopyPasswordTest() {
-        val firstLoginPage = TestAssetHelper.getSaveLoginAsset(mockWebServer)
-
-        navigationToolbar {
-        }.enterURLAndEnterToBrowser(firstLoginPage.url) {
-            clickSubmitLoginButton()
-            verifySaveLoginPromptIsDisplayed()
-            clickPageObject(itemWithText("Save"))
-        }.openThreeDotMenu {
-        }.openSettings {
-        }.openLoginsAndPasswordSubMenu {
-        }.openSavedLogins {
-            tapSetupLater()
-            viewSavedLoginDetails("test@example.com")
             clickCopyPasswordButton()
             verifySnackBarText("Password copied to clipboard")
         }

@@ -6,7 +6,7 @@ package org.mozilla.fenix.customtabs
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.navigation.NavDirections
+import androidx.navigation.NavController
 import io.mockk.Called
 import io.mockk.every
 import io.mockk.mockk
@@ -30,6 +30,8 @@ import org.mozilla.fenix.NavGraphDirections
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.getIntentSource
+import org.mozilla.fenix.ext.getNavDirections
 import org.mozilla.fenix.helpers.FenixRobolectricTestRunner
 import org.mozilla.fenix.utils.Settings
 
@@ -70,6 +72,15 @@ class ExternalAppBrowserActivityTest {
     }
 
     @Test
+    fun `navigateToHome does nothing for external app browser activity`() {
+        val activity = spyk(ExternalAppBrowserActivity())
+        val navHostController: NavController = mockk()
+
+        activity.navigateToHome(navHostController)
+        verify { navHostController wasNot Called }
+    }
+
+    @Test
     fun `handleNewIntent does nothing for external app browser activity`() {
         val activity = spyk(ExternalAppBrowserActivity())
         val intent: Intent = mockk(relaxed = true)
@@ -82,13 +93,6 @@ class ExternalAppBrowserActivityTest {
     fun `getNavDirections finishes activity if session ID is null`() {
         val activity = spyk(
             object : ExternalAppBrowserActivity() {
-                public override fun getNavDirections(
-                    from: BrowserDirection,
-                    customTabSessionId: String?,
-                ): NavDirections? {
-                    return super.getNavDirections(from, customTabSessionId)
-                }
-
                 override fun getIntent(): Intent {
                     val intent: Intent = mockk()
                     val bundle: Bundle = mockk()
@@ -113,13 +117,6 @@ class ExternalAppBrowserActivityTest {
     fun `GIVEN intent isSandboxCustomTab is true WHEN getNavDirections called THEN actionGlobalExternalAppBrowser isSandboxCustomTab is true`() {
         val activity = spyk(
             object : ExternalAppBrowserActivity() {
-                public override fun getNavDirections(
-                    from: BrowserDirection,
-                    customTabSessionId: String?,
-                ): NavDirections? {
-                    return super.getNavDirections(from, customTabSessionId)
-                }
-
                 override fun getIntent(): Intent {
                     val intent: Intent = mockk()
                     val bundle: Bundle = mockk()
@@ -148,13 +145,6 @@ class ExternalAppBrowserActivityTest {
     fun `GIVEN intent isSandboxCustomTab is false WHEN getNavDirections called THEN actionGlobalExternalAppBrowser isSandboxCustomTab is false`() {
         val activity = spyk(
             object : ExternalAppBrowserActivity() {
-                public override fun getNavDirections(
-                    from: BrowserDirection,
-                    customTabSessionId: String?,
-                ): NavDirections? {
-                    return super.getNavDirections(from, customTabSessionId)
-                }
-
                 override fun getIntent(): Intent {
                     val intent: Intent = mockk()
                     val bundle: Bundle = mockk()

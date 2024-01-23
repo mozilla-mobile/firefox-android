@@ -17,6 +17,7 @@ import java.util.UUID
  * @property id the ID of this tab and session.
  * @property content the [ContentState] of this tab.
  * @property trackingProtection the [TrackingProtectionState] of this tab.
+ * @property translationsState the [TranslationsState] of this tab.
  * @property cookieBanner the [CookieBannerHandlingStatus] of this tab.
  * @property parentId the parent ID of this tab or null if this tab has no
  * parent. The parent tab is usually the tab that initiated opening this
@@ -36,6 +37,7 @@ data class TabSessionState(
     override val id: String = UUID.randomUUID().toString(),
     override val content: ContentState,
     override val trackingProtection: TrackingProtectionState = TrackingProtectionState(),
+    override val translationsState: TranslationsState = TranslationsState(),
     override val cookieBanner: CookieBannerHandlingStatus = CookieBannerHandlingStatus.NO_DETECTED,
     override val engineState: EngineState = EngineState(),
     override val extensionState: Map<String, WebExtensionState> = emptyMap(),
@@ -55,6 +57,7 @@ data class TabSessionState(
         id: String,
         content: ContentState,
         trackingProtection: TrackingProtectionState,
+        translationsState: TranslationsState,
         engineState: EngineState,
         extensionState: Map<String, WebExtensionState>,
         mediaSessionState: MediaSessionState?,
@@ -64,6 +67,7 @@ data class TabSessionState(
         id = id,
         content = content,
         trackingProtection = trackingProtection,
+        translationsState = translationsState,
         engineState = engineState,
         extensionState = extensionState,
         mediaSessionState = mediaSessionState,
@@ -75,7 +79,6 @@ data class TabSessionState(
 /**
  * Convenient function for creating a tab.
  */
-@Suppress("LongParameterList")
 fun createTab(
     url: String,
     private: Boolean = false,
@@ -91,6 +94,7 @@ fun createTab(
     lastMediaAccessState: LastMediaAccessState = LastMediaAccessState(),
     source: SessionState.Source = SessionState.Source.Internal.None,
     restored: Boolean = false,
+    isProductUrl: Boolean = false,
     engineSession: EngineSession? = null,
     engineSessionState: EngineSessionState? = null,
     crashed: Boolean = false,
@@ -99,6 +103,7 @@ fun createTab(
     webAppManifest: WebAppManifest? = null,
     searchTerms: String = "",
     initialLoadFlags: EngineSession.LoadUrlFlags = EngineSession.LoadUrlFlags.none(),
+    initialAdditionalHeaders: Map<String, String>? = null,
     previewImageUrl: String? = null,
     hasFormData: Boolean = false,
 ): TabSessionState {
@@ -112,6 +117,7 @@ fun createTab(
             searchTerms = searchTerms,
             previewImageUrl = previewImageUrl,
             hasFormData = hasFormData,
+            isProductUrl = isProductUrl,
         ),
         parentId = parentId ?: parent?.id,
         extensionState = extensions,
@@ -127,6 +133,7 @@ fun createTab(
             engineSessionState = engineSessionState,
             crashed = crashed,
             initialLoadFlags = initialLoadFlags,
+            initialAdditionalHeaders = initialAdditionalHeaders,
         ),
         mediaSessionState = mediaSessionState,
         historyMetadata = historyMetadata,

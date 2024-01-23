@@ -5,14 +5,20 @@
 package org.mozilla.fenix.settings
 
 import android.os.Bundle
+import androidx.core.content.edit
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.preference.EditTextPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.Config
+import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.R
+import org.mozilla.fenix.debugsettings.data.DefaultDebugSettingsRepository
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.settings
@@ -26,6 +32,11 @@ class SecretSettingsFragment : PreferenceFragmentCompat() {
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        val debugSettingsRepository = DefaultDebugSettingsRepository(
+            context = requireContext(),
+            writeScope = lifecycleScope,
+        )
+
         setPreferencesFromResource(R.xml.secret_settings_preferences, rootKey)
 
         requirePreference<SwitchPreference>(R.string.pref_key_allow_third_party_root_certs).apply {
@@ -46,14 +57,14 @@ class SecretSettingsFragment : PreferenceFragmentCompat() {
             onPreferenceChangeListener = SharedPreferenceUpdater()
         }
 
-        requirePreference<SwitchPreference>(R.string.pref_key_enable_task_continuity).apply {
-            isVisible = true
-            isChecked = context.settings().enableTaskContinuityEnhancements
+        requirePreference<SwitchPreference>(R.string.pref_key_toolbar_use_redesign_incomplete).apply {
+            isVisible = Config.channel.isDebug
+            isChecked = context.settings().enableIncompleteToolbarRedesign
             onPreferenceChangeListener = SharedPreferenceUpdater()
         }
 
         requirePreference<SwitchPreference>(R.string.pref_key_enable_tabs_tray_to_compose).apply {
-            isVisible = Config.channel.isNightlyOrDebug
+            isVisible = true
             isChecked = context.settings().enableTabsTrayToCompose
             onPreferenceChangeListener = SharedPreferenceUpdater()
         }
@@ -62,6 +73,51 @@ class SecretSettingsFragment : PreferenceFragmentCompat() {
             isVisible = Config.channel.isNightlyOrDebug
             isChecked = context.settings().enableComposeTopSites
             onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
+
+        requirePreference<SwitchPreference>(R.string.pref_key_enable_translations).apply {
+            isVisible = FeatureFlags.translations
+            isChecked = context.settings().enableTranslations
+            onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
+
+        requirePreference<SwitchPreference>(R.string.pref_key_enable_fxsuggest).apply {
+            isVisible = FeatureFlags.fxSuggest
+            isChecked = context.settings().enableFxSuggest
+            onPreferenceChangeListener = object : Preference.OnPreferenceChangeListener {
+                override fun onPreferenceChange(preference: Preference, newValue: Any?): Boolean {
+                    val newBooleanValue = newValue as? Boolean ?: return false
+                    val ingestionScheduler = requireContext().components.fxSuggest.ingestionScheduler
+                    if (newBooleanValue) {
+                        ingestionScheduler.startPeriodicIngestion()
+                    } else {
+                        ingestionScheduler.stopPeriodicIngestion()
+                    }
+                    requireContext().settings().preferences.edit {
+                        putBoolean(preference.key, newBooleanValue)
+                    }
+                    return true
+                }
+            }
+        }
+
+        requirePreference<SwitchPreference>(R.string.pref_key_should_enable_felt_privacy).apply {
+            isVisible = true
+            isChecked = context.settings().feltPrivateBrowsingEnabled
+            onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
+
+        lifecycleScope.launch {
+            // During initial development, this will only be available in Nightly or Debug builds.
+            requirePreference<SwitchPreference>(R.string.pref_key_enable_debug_drawer).apply {
+                isVisible = Config.channel.isNightlyOrDebug
+                isChecked = debugSettingsRepository.debugDrawerEnabled.first()
+                onPreferenceChangeListener =
+                    Preference.OnPreferenceChangeListener { _, newValue ->
+                        debugSettingsRepository.setDebugDrawerEnabled(enabled = newValue as Boolean)
+                        true
+                    }
+            }
         }
 
         // for performance reasons, this is only available in Nightly or Debug builds
@@ -74,8 +130,8 @@ class SecretSettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
-    override fun onPreferenceTreeClick(preference: Preference?): Boolean {
-        when (preference?.key) {
+    override fun onPreferenceTreeClick(preference: Preference): Boolean {
+        when (preference.key) {
             getString(R.string.pref_key_custom_sponsored_stories_parameters) ->
                 findNavController().nav(
                     R.id.secretSettingsPreference,

@@ -5,14 +5,12 @@
 package org.mozilla.fenix.ui
 
 import androidx.core.net.toUri
-import androidx.test.espresso.Espresso.pressBack
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
 import org.mozilla.fenix.helpers.TestHelper.exitMenu
-import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.clickPageObject
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
@@ -32,6 +30,7 @@ class SettingsHTTPSOnlyModeTest {
     @get:Rule
     val activityTestRule = HomeActivityIntentTestRule.withDefaultSettingsOverrides(skipOnboarding = true)
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1724825
     @Test
     fun httpsOnlyModeMenuItemsTest() {
         homeScreen {
@@ -58,6 +57,7 @@ class SettingsHTTPSOnlyModeTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1724827
     @SmokeTest
     @Test
     fun httpsOnlyModeEnabledInNormalBrowsingTest() {
@@ -93,8 +93,9 @@ class SettingsHTTPSOnlyModeTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2091057
     @Test
-    fun httpsOnlyModeExceptionPersistsForCurrentSession() {
+    fun httpsOnlyModeExceptionPersistsForCurrentSessionTest() {
         homeScreen {
         }.openThreeDotMenu {
         }.openSettings {
@@ -120,6 +121,7 @@ class SettingsHTTPSOnlyModeTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1724828
     @Test
     fun httpsOnlyModeEnabledOnlyInPrivateBrowsingTest() {
         homeScreen {
@@ -159,6 +161,7 @@ class SettingsHTTPSOnlyModeTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2091058
     @Test
     fun turnOffHttpsOnlyModeTest() {
         homeScreen {
@@ -177,13 +180,7 @@ class SettingsHTTPSOnlyModeTest {
             waitForPageToLoad()
         }.openNavigationToolbar {
             verifyUrl(httpsPageUrl)
-            pressBack()
-        }
-        browserScreen {
-        }.openTabDrawer {
-            closeTab()
-        }
-        homeScreen {
+        }.goBackToBrowserScreen {
         }.openThreeDotMenu {
         }.openSettings {
         }.openHttpsOnlyModeMenu {
@@ -198,7 +195,6 @@ class SettingsHTTPSOnlyModeTest {
             waitForPageToLoad()
         }.openNavigationToolbar {
             verifyUrl(httpPageUrl)
-            pressBack()
         }
     }
 }

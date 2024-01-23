@@ -32,6 +32,8 @@ import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.support.test.rule.MainCoroutineRule
 import mozilla.components.support.test.rule.runTestOnMain
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
@@ -43,7 +45,6 @@ import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.Services
 import org.mozilla.fenix.ext.bookmarkStorage
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.utils.Settings
 
 @Suppress("TooManyFunctions", "LargeClass")
 class BookmarkControllerTest {
@@ -63,7 +64,6 @@ class BookmarkControllerTest {
     private val addNewTabUseCase: TabsUseCases.AddNewTabUseCase = mockk(relaxed = true)
     private val navBackStackEntry: NavBackStackEntry = mockk(relaxed = true)
     private val navDestination: NavDestination = mockk(relaxed = true)
-    private val settings: Settings = mockk(relaxed = true)
 
     private val item =
         BookmarkNode(BookmarkNodeType.ITEM, "456", "123", 0u, "Mozilla", "http://mozilla.org", 0, null)
@@ -247,7 +247,7 @@ class BookmarkControllerTest {
 
         verify {
             navController.navigate(
-                BookmarkFragmentDirections.actionBookmarkFragmentToBookmarkSearchDialogFragment(),
+                BookmarkFragmentDirections.actionGlobalSearchDialog(sessionId = null),
             )
         }
     }
@@ -341,13 +341,17 @@ class BookmarkControllerTest {
     @Test
     fun `handleOpeningBookmark should open the bookmark a new 'Normal' tab`() {
         var showTabTrayInvoked = false
+        var openedToPrivateTabsPage: Boolean? = null
         createController(
-            showTabTray = {
+            showTabTray = { openToPrivateTabsPage ->
+                openedToPrivateTabsPage = openToPrivateTabsPage
                 showTabTrayInvoked = true
             },
         ).handleOpeningBookmark(item, BrowsingMode.Normal)
 
         assertTrue(showTabTrayInvoked)
+        assertNotNull(openedToPrivateTabsPage)
+        assertFalse(openedToPrivateTabsPage!!)
         verifyOrder {
             homeActivity.browsingModeManager.mode = BrowsingMode.Normal
             addNewTabUseCase.invoke(item.url!!, private = false)
@@ -357,13 +361,17 @@ class BookmarkControllerTest {
     @Test
     fun `handleOpeningBookmark should open the bookmark a new 'Private' tab`() {
         var showTabTrayInvoked = false
+        var openedToPrivateTabsPage: Boolean? = null
         createController(
-            showTabTray = {
+            showTabTray = { openToPrivateTabsPage ->
+                openedToPrivateTabsPage = openToPrivateTabsPage
                 showTabTrayInvoked = true
             },
         ).handleOpeningBookmark(item, BrowsingMode.Private)
 
         assertTrue(showTabTrayInvoked)
+        assertNotNull(openedToPrivateTabsPage)
+        assertTrue(openedToPrivateTabsPage!!)
         verifyOrder {
             homeActivity.browsingModeManager.mode = BrowsingMode.Private
             addNewTabUseCase.invoke(item.url!!, private = true)
@@ -373,8 +381,10 @@ class BookmarkControllerTest {
     @Test
     fun `WHEN handle opening folder bookmarks THEN all bookmarks in folder is opened in normal tabs`() {
         var showTabTrayInvoked = false
+        var tabsTrayOpenedToPrivateTabs: Boolean? = null
         createController(
-            showTabTray = {
+            showTabTray = { openToPrivateTabsPage ->
+                tabsTrayOpenedToPrivateTabs = openToPrivateTabsPage
                 showTabTrayInvoked = true
             },
             loadBookmarkNode = { guid: String, _: Boolean ->
@@ -396,6 +406,8 @@ class BookmarkControllerTest {
         ).handleOpeningFolderBookmarks(tree, BrowsingMode.Normal)
 
         assertTrue(showTabTrayInvoked)
+        assertNotNull(tabsTrayOpenedToPrivateTabs)
+        assertFalse(tabsTrayOpenedToPrivateTabs!!)
         verifyOrder {
             addNewTabUseCase.invoke(item.url!!, private = false)
             addNewTabUseCase.invoke(item.url!!, private = false)
@@ -407,8 +419,10 @@ class BookmarkControllerTest {
     @Test
     fun `WHEN handle opening folder bookmarks in private tabs THEN all bookmarks in folder is opened in private tabs`() {
         var showTabTrayInvoked = false
+        var tabsTrayOpenedToPrivateTabs: Boolean? = null
         createController(
-            showTabTray = {
+            showTabTray = { openToPrivateTabsPage ->
+                tabsTrayOpenedToPrivateTabs = openToPrivateTabsPage
                 showTabTrayInvoked = true
             },
             loadBookmarkNode = { guid: String, _: Boolean ->
@@ -430,6 +444,8 @@ class BookmarkControllerTest {
         ).handleOpeningFolderBookmarks(tree, BrowsingMode.Private)
 
         assertTrue(showTabTrayInvoked)
+        assertNotNull(tabsTrayOpenedToPrivateTabs)
+        assertTrue(tabsTrayOpenedToPrivateTabs!!)
         verifyOrder {
             addNewTabUseCase.invoke(item.url!!, private = true)
             addNewTabUseCase.invoke(item.url!!, private = true)
@@ -521,13 +537,12 @@ class BookmarkControllerTest {
         }
     }
 
-    @Suppress("LongParameterList")
     private fun createController(
         loadBookmarkNode: suspend (String, Boolean) -> BookmarkNode? = { _, _ -> null },
         showSnackbar: (String) -> Unit = { _ -> },
         deleteBookmarkNodes: (Set<BookmarkNode>, BookmarkRemoveType) -> Unit = { _, _ -> },
         deleteBookmarkFolder: (Set<BookmarkNode>) -> Unit = { _ -> },
-        showTabTray: () -> Unit = { },
+        showTabTray: (Boolean) -> Unit = { },
         warnLargeOpenAll: (Int, () -> Unit) -> Unit = { _: Int, _: () -> Unit -> },
     ): BookmarkController {
         return DefaultBookmarkController(
@@ -544,7 +559,6 @@ class BookmarkControllerTest {
             deleteBookmarkFolder = deleteBookmarkFolder,
             showTabTray = showTabTray,
             warnLargeOpenAll = warnLargeOpenAll,
-            settings = settings,
         )
     }
 }

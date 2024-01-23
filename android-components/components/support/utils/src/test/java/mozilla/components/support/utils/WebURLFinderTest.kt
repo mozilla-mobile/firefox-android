@@ -1,9 +1,11 @@
-/* Any copyright is dedicated to the Public Domain.
-   http://creativecommons.org/publicdomain/zero/1.0/ */
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package mozilla.components.support.utils
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import mozilla.components.support.utils.WebURLFinder.Companion.isWebURL
+import mozilla.components.support.utils.WebURLFinder.Companion.isValidWebURL
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -57,6 +59,11 @@ class WebURLFinderTest {
         )
         assertEquals("http://ß.de/", find("http://ß.de/ çnn.çơḿ"))
         assertEquals("htt-p://ß.de/", find("çnn.çơḿ htt-p://ß.de/"))
+        assertEquals(
+            "http://[2001:db8::1.2.3.4]:8080/inner#anchor&arg=1",
+            find("test.com http://[2001:db8::1.2.3.4]:8080/inner#anchor&arg=1"),
+        )
+        assertEquals("http://[::]", find("test.com http://[::]"))
     }
 
     @Test
@@ -66,6 +73,9 @@ class WebURLFinderTest {
         assertEquals("n-oscheme.com", find("n-oscheme.com example.com"))
         assertEquals("n-oscheme.com", find("----------n-oscheme.com "))
         assertEquals("n-oscheme.ç", find("----------n-oscheme.ç-----------------------"))
+
+        // We would ideally test "[::] example.com" here, but java.net.URI
+        // doesn't seem to accept IPv6 literals without a scheme.
     }
 
     @Test
@@ -98,12 +108,126 @@ class WebURLFinderTest {
     }
 
     @Test
-    fun testIsWebURL() {
-        assertTrue(isWebURL("http://test.com"))
-        assertFalse(isWebURL("#http#://test.com"))
-        assertFalse(isWebURL("file:///sdcard/download"))
-        assertFalse(isWebURL("filE:///sdcard/Download"))
-        assertFalse(isWebURL("javascript:alert('Hi')"))
-        assertFalse(isWebURL("JAVascript:alert('Hi')"))
+    fun testIsValidWebURL() {
+        assertTrue("http://test.com".isValidWebURL())
+        assertTrue("hTTp://test.com".isValidWebURL())
+        assertTrue("https://test.com".isValidWebURL())
+        assertTrue("htTPs://test.com".isValidWebURL())
+        assertTrue("about://test.com".isValidWebURL())
+        assertTrue("abOUTt://test.com".isValidWebURL())
+        assertTrue("data://test.com".isValidWebURL())
+        assertTrue("daAtA://test.com".isValidWebURL())
+        assertFalse("#http#://test.com".isValidWebURL())
+        assertFalse("file:///sdcard/download".isValidWebURL())
+        assertFalse("filE:///sdcard/Download".isValidWebURL())
+        assertFalse("javascript:alert('Hi')".isValidWebURL())
+        assertFalse("JAVascript:alert('Hi')".isValidWebURL())
+        assertFalse("JAVascript:alert('Hi')".isValidWebURL())
+        assertFalse("content://com.test.app/test".isValidWebURL())
+        assertFalse("coNTent://com.test.app/test".isValidWebURL())
+    }
+
+    @Test
+    fun isUrlLikeEmulated() {
+        // autolinkWebUrlPattern uses a copy of the regex from URLStringUtils,
+        // so here we emulate isURLLike() and copy its tests.
+        val isURLLike: (String) -> Boolean = {
+            find("random_text $it other_random_text") == it.trim()
+        }
+
+        assertFalse(isURLLike("inurl:mozilla.org advanced search"))
+        assertFalse(isURLLike("sf: help"))
+        assertFalse(isURLLike("mozilla./~"))
+        assertFalse(isURLLike("cnn.com politics"))
+
+        assertTrue(isURLLike("about:config"))
+        assertTrue(isURLLike("about:config:8000"))
+
+        // These cases differ from the original isUrlLike test because
+        // file:// is rejected by isInvalidUriScheme.
+        assertFalse(isURLLike("file:///home/user/myfile.html"))
+        assertFalse(isURLLike("file://////////////home//user/myfile.html"))
+        assertFalse(isURLLike("file://C:\\Users\\user\\myfile.html"))
+
+        assertTrue(isURLLike("http://192.168.255.255"))
+        assertTrue(isURLLike("link.unknown"))
+        assertTrue(isURLLike("3.14.2019"))
+        assertTrue(isURLLike("3-four.14.2019"))
+        assertTrue(isURLLike(" cnn.com "))
+        assertTrue(isURLLike(" cnn.com"))
+        assertTrue(isURLLike("cnn.com "))
+        assertTrue(isURLLike("mozilla.com/~userdir"))
+        assertTrue(isURLLike("my-domain.com"))
+        assertTrue(isURLLike("http://faß.de//"))
+        assertTrue(isURLLike("cnn.cơḿ"))
+        assertTrue(isURLLike("cnn.çơḿ"))
+
+        assertTrue(isURLLike("c-c.com"))
+        assertTrue(isURLLike("c-c-c-c.c-c-c"))
+        assertTrue(isURLLike("c-http://c.com"))
+        assertTrue(isURLLike("about-mozilla:mozilla"))
+        assertTrue(isURLLike("c-http.d-x"))
+        assertTrue(isURLLike("www.c.-"))
+        assertTrue(isURLLike("3-3.3"))
+        assertTrue(isURLLike("www.c-c.-"))
+
+        assertFalse(isURLLike(" -://x.com "))
+        assertFalse(isURLLike("  -x.com"))
+        assertFalse(isURLLike("http://www-.com"))
+        assertFalse(isURLLike("www.c-c-  "))
+        assertFalse(isURLLike("3-3 "))
+
+        val validIPv6Literals = listOf(
+            "[::]",
+            "[::1]",
+            "[1::]",
+            "[1:2:3:4:5:6:7:8]",
+            "[2001:db8::1.2.3.4]",
+            "[::1]:8080",
+        )
+
+        validIPv6Literals.forEach { url ->
+            // These cases differ from the original isUrlLike test because
+            // java.net.URI doesn't recognize bare IPv6 literals.
+            assertFalse(isURLLike(url))
+            assertFalse(isURLLike("$url/"))
+
+            assertTrue(isURLLike("https://$url"))
+            assertTrue(isURLLike("https://$url/"))
+            assertTrue(isURLLike("https:$url"))
+            assertTrue(isURLLike("https:$url/"))
+            assertTrue(isURLLike("http://$url"))
+            assertTrue(isURLLike("http://$url/"))
+            assertTrue(isURLLike("http:$url"))
+            assertTrue(isURLLike("http:$url/"))
+        }
+
+        assertFalse(isURLLike("::1"))
+        assertFalse(isURLLike(":::"))
+        assertFalse(isURLLike("[[http://]]"))
+        assertFalse(isURLLike("[[["))
+        assertFalse(isURLLike("[[[:"))
+        assertFalse(isURLLike("[[[:/"))
+        assertFalse(isURLLike("http://]]]"))
+
+        assertTrue(isURLLike("fe80::"))
+        assertTrue(isURLLike("x:["))
+
+        // These cases differ from the original isUrlLike test because
+        // the regex is just an approximation. When bug 1685152 is fixed,
+        // the original isURLLike will also return false.
+        assertFalse(isURLLike("[:::"))
+        assertFalse(isURLLike("http://[::"))
+        assertFalse(isURLLike("http://[::/path"))
+        assertFalse(isURLLike("http://[::?query"))
+        assertFalse(isURLLike("[[http://banana]]"))
+        assertFalse(isURLLike("http://[[["))
+        assertFalse(isURLLike("[[[::"))
+        assertFalse(isURLLike("[[[::/"))
+        assertFalse(isURLLike("http://[1.2.3]"))
+        assertFalse(isURLLike("https://[1:2:3:4:5:6:7]/"))
+        assertFalse(isURLLike("https://[1:2:3:4:5:6:7:8:9]/"))
+
+        assertTrue(isURLLike("https://abc--cba.com/"))
     }
 }

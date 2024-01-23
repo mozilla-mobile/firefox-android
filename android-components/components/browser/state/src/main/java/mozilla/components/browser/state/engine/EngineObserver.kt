@@ -14,6 +14,7 @@ import mozilla.components.browser.state.action.EngineAction
 import mozilla.components.browser.state.action.MediaSessionAction
 import mozilla.components.browser.state.action.ReaderAction
 import mozilla.components.browser.state.action.TrackingProtectionAction
+import mozilla.components.browser.state.action.TranslationsAction
 import mozilla.components.browser.state.selector.findTabOrCustomTab
 import mozilla.components.browser.state.state.AppIntentState
 import mozilla.components.browser.state.state.BrowserState
@@ -32,6 +33,9 @@ import mozilla.components.concept.engine.media.RecordingDevice
 import mozilla.components.concept.engine.mediasession.MediaSession
 import mozilla.components.concept.engine.permission.PermissionRequest
 import mozilla.components.concept.engine.prompt.PromptRequest
+import mozilla.components.concept.engine.translate.TranslationEngineState
+import mozilla.components.concept.engine.translate.TranslationError
+import mozilla.components.concept.engine.translate.TranslationOperation
 import mozilla.components.concept.engine.window.WindowRequest
 import mozilla.components.concept.fetch.Response
 import mozilla.components.lib.state.Store
@@ -162,6 +166,10 @@ internal class EngineObserver(
 
     override fun onCookieBannerChange(status: EngineSession.CookieBannerHandlingStatus) {
         store.dispatch(CookieBannerAction.UpdateStatusAction(tabId, status))
+    }
+
+    override fun onProductUrlChange(isProductUrl: Boolean) {
+        store.dispatch(ContentAction.UpdateProductUrlStateAction(tabId, isProductUrl))
     }
 
     override fun onLongPress(hitResult: HitResult) {
@@ -459,5 +467,25 @@ internal class EngineObserver(
 
     override fun onCheckForFormDataException(throwable: Throwable) {
         store.dispatch(ContentAction.CheckForFormDataExceptionAction(tabId, throwable))
+    }
+
+    override fun onTranslateExpected() {
+        store.dispatch(TranslationsAction.TranslateExpectedAction(tabId))
+    }
+
+    override fun onTranslateOffer() {
+        store.dispatch(TranslationsAction.TranslateOfferAction(tabId))
+    }
+
+    override fun onTranslateStateChange(state: TranslationEngineState) {
+        store.dispatch(TranslationsAction.TranslateStateChangeAction(tabId, state))
+    }
+
+    override fun onTranslateComplete(operation: TranslationOperation) {
+        store.dispatch(TranslationsAction.TranslateSuccessAction(tabId, operation))
+    }
+
+    override fun onTranslateException(operation: TranslationOperation, translationError: TranslationError) {
+        store.dispatch(TranslationsAction.TranslateExceptionAction(tabId, operation, translationError))
     }
 }

@@ -15,6 +15,7 @@ import mozilla.components.browser.state.state.TabSessionState
 import mozilla.components.browser.tabstray.TabsTray
 import mozilla.components.browser.tabstray.TabsTrayStyling
 import mozilla.components.lib.state.ext.observeAsComposableState
+import org.mozilla.fenix.components.components
 import org.mozilla.fenix.compose.tabstray.TabListItem
 import org.mozilla.fenix.tabstray.TabsTrayInteractor
 import org.mozilla.fenix.tabstray.TabsTrayState
@@ -71,10 +72,6 @@ class ComposeListViewHolder(
         interactor.onTabSelected(tab, featureName)
     }
 
-    private fun onLongClick(tab: TabSessionState) {
-        interactor.onTabLongClicked(tab)
-    }
-
     @Composable
     override fun Content(tab: TabSessionState) {
         val multiSelectionEnabled = tabsTrayStore.observeAsComposableState {
@@ -86,13 +83,14 @@ class ComposeListViewHolder(
 
         TabListItem(
             tab = tab,
+            thumbnailSize = 108,
+            storage = components.core.thumbnailStorage,
             isSelected = isSelectedTabState,
             multiSelectionEnabled = multiSelectionEnabled,
             multiSelectionSelected = multiSelectionSelected,
             onCloseClick = ::onCloseClicked,
             onMediaClick = interactor::onMediaClicked,
             onClick = ::onClick,
-            onLongClick = ::onLongClick,
         )
     }
 

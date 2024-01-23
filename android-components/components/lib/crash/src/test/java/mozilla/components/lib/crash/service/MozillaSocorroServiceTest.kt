@@ -44,7 +44,15 @@ class MozillaSocorroServiceTest {
         )
         doReturn("").`when`(service).sendReport(anyLong(), any(), any(), any(), anyBoolean(), anyBoolean(), any())
 
-        val crash = Crash.NativeCodeCrash(123, "", true, "", Crash.NativeCodeCrash.PROCESS_TYPE_FOREGROUND_CHILD, arrayListOf())
+        val crash = Crash.NativeCodeCrash(
+            123,
+            "",
+            true,
+            "",
+            Crash.NativeCodeCrash.PROCESS_TYPE_FOREGROUND_CHILD,
+            breadcrumbs = arrayListOf(),
+            remoteType = null,
+        )
         service.report(crash)
 
         verify(service).report(crash)
@@ -126,6 +134,7 @@ class MozillaSocorroServiceTest {
                 "extras.path",
                 processType = Crash.NativeCodeCrash.PROCESS_TYPE_MAIN,
                 breadcrumbs = arrayListOf(),
+                remoteType = null,
             )
             service.report(crash)
 
@@ -144,7 +153,7 @@ class MozillaSocorroServiceTest {
             assert(request.contains("name=Android_Device\r\n\r\nrobolectric"))
             assert(request.contains("name=CrashType\r\n\r\n$FATAL_NATIVE_CRASH_TYPE"))
             assert(request.contains("name=CrashTime\r\n\r\n123"))
-            assert(request.contains("name=useragent_locale\r\n\r\nen_US"))
+            assert(request.contains("name=useragent_locale\r\n\r\nen-US"))
 
             verify(service).report(crash)
             verify(service).sendReport(123456, null, "dump.path", "extras.path", true, true, crash.breadcrumbs)
@@ -180,6 +189,7 @@ class MozillaSocorroServiceTest {
                 "test/file/66dd8af2-643c-ca11-5178-e61c6819f827",
                 processType = Crash.NativeCodeCrash.PROCESS_TYPE_MAIN,
                 breadcrumbs = arrayListOf(),
+                remoteType = null,
             )
 
             doReturn(HashMap<String, String>()).`when`(service).readExtrasFromFile(any())
@@ -221,6 +231,7 @@ class MozillaSocorroServiceTest {
                 "test/file/test.extra",
                 processType = Crash.NativeCodeCrash.PROCESS_TYPE_MAIN,
                 breadcrumbs = arrayListOf(),
+                remoteType = null,
             )
 
             doReturn(HashMap<String, String>()).`when`(service).readExtrasFromFile(any())
@@ -262,6 +273,7 @@ class MozillaSocorroServiceTest {
                 "test/file/66dd8af2-643c-ca11-5178-e61c6819f827.extra",
                 processType = Crash.NativeCodeCrash.PROCESS_TYPE_MAIN,
                 breadcrumbs = arrayListOf(),
+                remoteType = null,
             )
 
             doReturn(HashMap<String, String>()).`when`(service).readExtrasFromFile(any())
@@ -310,6 +322,7 @@ class MozillaSocorroServiceTest {
                 "extras.path",
                 processType = Crash.NativeCodeCrash.PROCESS_TYPE_MAIN,
                 breadcrumbs = arrayListOf(),
+                remoteType = null,
             )
             service.report(crash)
 
@@ -332,7 +345,7 @@ class MozillaSocorroServiceTest {
             assert(request.contains("name=BuildID\r\n\r\ntest build id"))
             assert(request.contains("name=Version\r\n\r\n1.0.1"))
             assert(request.contains("name=ApplicationBuildID\r\n\r\n1000"))
-            assert(request.contains("name=useragent_locale\r\n\r\nen_US"))
+            assert(request.contains("name=useragent_locale\r\n\r\nen-US"))
             assert(request.contains("name=DistributionID\r\n\r\ntest distribution id"))
 
             verify(service).report(crash)
@@ -371,6 +384,7 @@ class MozillaSocorroServiceTest {
                 "extras.path",
                 processType = Crash.NativeCodeCrash.PROCESS_TYPE_FOREGROUND_CHILD,
                 breadcrumbs = arrayListOf(),
+                remoteType = null,
             )
             service.report(crash)
 
@@ -389,7 +403,7 @@ class MozillaSocorroServiceTest {
             assert(request.contains("name=Android_Device\r\n\r\nrobolectric"))
             assert(request.contains("name=CrashType\r\n\r\n$NON_FATAL_NATIVE_CRASH_TYPE"))
             assert(request.contains("name=CrashTime\r\n\r\n123"))
-            assert(request.contains("name=useragent_locale\r\n\r\nen_US"))
+            assert(request.contains("name=useragent_locale\r\n\r\nen-US"))
 
             verify(service).report(crash)
             verify(service).sendReport(123456, null, "dump.path", "extras.path", true, false, crash.breadcrumbs)
@@ -440,7 +454,7 @@ class MozillaSocorroServiceTest {
             assert(request.contains("name=Android_Device\r\n\r\nrobolectric"))
             assert(request.contains("name=CrashType\r\n\r\n$UNCAUGHT_EXCEPTION_TYPE"))
             assert(request.contains("name=CrashTime\r\n\r\n123"))
-            assert(request.contains("name=useragent_locale\r\n\r\nen_US"))
+            assert(request.contains("name=useragent_locale\r\n\r\nen-US"))
 
             verify(service).report(crash)
             verify(service).sendReport(123456, crash.throwable, null, null, false, true, crash.breadcrumbs)
@@ -495,7 +509,15 @@ class MozillaSocorroServiceTest {
                 ),
             )
 
-            val crash = Crash.NativeCodeCrash(123, null, true, null, Crash.NativeCodeCrash.PROCESS_TYPE_FOREGROUND_CHILD, arrayListOf())
+            val crash = Crash.NativeCodeCrash(
+                123,
+                null,
+                true,
+                null,
+                Crash.NativeCodeCrash.PROCESS_TYPE_FOREGROUND_CHILD,
+                breadcrumbs = arrayListOf(),
+                remoteType = null,
+            )
             service.report(crash)
             mockWebServer.shutdown()
 
@@ -659,6 +681,7 @@ class MozillaSocorroServiceTest {
                 "extras.path",
                 processType = Crash.NativeCodeCrash.PROCESS_TYPE_MAIN,
                 breadcrumbs = arrayListOf(),
+                remoteType = null,
             )
             val id = service.report(crash)
 

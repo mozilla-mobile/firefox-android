@@ -35,9 +35,6 @@ import org.mozilla.fenix.theme.FirefoxTheme
  * indicators to show progress, instead of just showing the current one as active.
  *
  * @param pagerState The state object of your [HorizontalPager] to be used to observe the list's state.
- * @param pageCount The size of indicators should be displayed, defaults to [PagerState.pageCount].
- * If you are implementing a looping pager with a much larger [PagerState.pageCount]
- * than indicators should displayed, e.g. [Int.MAX_VALUE], specify you real size in this param.
  * @param modifier The modifier to apply to this layout.
  * @param activeColor The color of the active page indicator, and the color of previous page
  * indicators in case [leaveTrail] is set to true.
@@ -49,7 +46,6 @@ import org.mozilla.fenix.theme.FirefoxTheme
 @Composable
 fun PagerIndicator(
     pagerState: PagerState,
-    pageCount: Int,
     modifier: Modifier = Modifier,
     activeColor: Color = FirefoxTheme.colors.indicatorActive,
     inactiveColor: Color = FirefoxTheme.colors.indicatorInactive,
@@ -68,7 +64,7 @@ fun PagerIndicator(
                 { it == pagerState.currentPage }
             }
 
-        repeat(pageCount) {
+        repeat(pagerState.pageCount) {
             Box(
                 modifier = Modifier
                     .size(6.dp)
@@ -104,8 +100,7 @@ private fun PagerIndicatorPreview() {
             Spacer(modifier = Modifier.height(8.dp))
 
             PagerIndicator(
-                pagerState = rememberPagerState(1),
-                pageCount = 3,
+                pagerState = rememberPagerState(1, pageCount = { 3 }),
                 activeColor = FirefoxTheme.colors.actionPrimary,
                 inactiveColor = FirefoxTheme.colors.actionSecondary,
                 modifier = Modifier.align(Alignment.CenterHorizontally),
@@ -122,8 +117,7 @@ private fun PagerIndicatorPreview() {
             Spacer(modifier = Modifier.height(8.dp))
 
             PagerIndicator(
-                pagerState = rememberPagerState(1),
-                pageCount = 3,
+                pagerState = rememberPagerState(1, pageCount = { 3 }),
                 activeColor = FirefoxTheme.colors.actionPrimary,
                 inactiveColor = FirefoxTheme.colors.actionSecondary,
                 leaveTrail = true,
@@ -141,8 +135,7 @@ private fun PagerIndicatorPreview() {
             Spacer(modifier = Modifier.height(8.dp))
 
             PagerIndicator(
-                pagerState = rememberPagerState(1),
-                pageCount = 3,
+                pagerState = rememberPagerState(1, pageCount = { 3 }),
                 modifier = Modifier.align(Alignment.CenterHorizontally),
             )
         }

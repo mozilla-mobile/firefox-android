@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import mozilla.components.browser.state.action.CustomTabListAction
 import mozilla.components.browser.state.action.EngineAction
+import mozilla.components.browser.state.action.ExtensionsProcessAction
 import mozilla.components.browser.state.action.TabListAction
 import mozilla.components.browser.state.action.WebExtensionAction
 import mozilla.components.browser.state.selector.allTabs
@@ -30,6 +31,7 @@ import mozilla.components.concept.engine.webextension.ActionHandler
 import mozilla.components.concept.engine.webextension.TabHandler
 import mozilla.components.concept.engine.webextension.WebExtension
 import mozilla.components.concept.engine.webextension.WebExtensionDelegate
+import mozilla.components.concept.engine.webextension.WebExtensionInstallException
 import mozilla.components.concept.engine.webextension.WebExtensionRuntime
 import mozilla.components.lib.state.ext.flowScoped
 import mozilla.components.support.base.log.logger.Logger
@@ -164,7 +166,6 @@ object WebExtensionSupport {
      * engine. Note that the UI (browser/page actions etc.) may not be initialized at this point.
      * System add-ons (built-in extensions) will not be passed along.
      */
-    @Suppress("LongParameterList")
     fun initialize(
         runtime: WebExtensionRuntime,
         store: BrowserStore,
@@ -227,16 +228,35 @@ object WebExtensionSupport {
                 }
 
                 override fun onInstalled(extension: WebExtension) {
-                    registerInstalledExtension(store, extension)
+                    logger.debug("onInstalled ${extension.id}")
                     // Built-in extensions are not installed by users, they are not aware of them
-                    // for this reason we don't show any UI related to built-in extensions.
-                    if (!extension.isBuiltIn()) {
+                    // for this reason we don't show any UI related to built-in extensions. Also,
+                    // when the add-on has already been installed, we don't need to show anything
+                    // either.
+                    val shouldDispatchAction = !installedExtensions.containsKey(extension.id) && !extension.isBuiltIn()
+                    registerInstalledExtension(store, extension)
+                    if (shouldDispatchAction) {
                         store.dispatch(
                             WebExtensionAction.UpdatePromptRequestWebExtensionAction(
-                                WebExtensionPromptRequest.PostInstallation(extension),
+                                WebExtensionPromptRequest.AfterInstallation.PostInstallation(extension),
                             ),
                         )
                     }
+                }
+
+                override fun onInstallationFailedRequest(
+                    extension: WebExtension?,
+                    exception: WebExtensionInstallException,
+                ) {
+                    logger.error("onInstallationFailedRequest ${extension?.id}", exception)
+                    store.dispatch(
+                        WebExtensionAction.UpdatePromptRequestWebExtensionAction(
+                            WebExtensionPromptRequest.BeforeInstallation.InstallationFailed(
+                                extension,
+                                exception,
+                            ),
+                        ),
+                    )
                 }
 
                 override fun onUninstalled(extension: WebExtension) {
@@ -252,6 +272,10 @@ object WebExtensionSupport {
                 override fun onDisabled(extension: WebExtension) {
                     installedExtensions[extension.id] = extension
                     store.dispatch(WebExtensionAction.UpdateWebExtensionEnabledAction(extension.id, false))
+                }
+
+                override fun onReady(extension: WebExtension) {
+                    installedExtensions[extension.id] = extension
                 }
 
                 override fun onAllowedInPrivateBrowsingChanged(extension: WebExtension) {
@@ -270,7 +294,10 @@ object WebExtensionSupport {
                 ) {
                     store.dispatch(
                         WebExtensionAction.UpdatePromptRequestWebExtensionAction(
-                            WebExtensionPromptRequest.Permissions(extension, onPermissionsGranted),
+                            WebExtensionPromptRequest.AfterInstallation.Permissions.Required(
+                                extension,
+                                onPermissionsGranted,
+                            ),
                         ),
                     )
                 }
@@ -289,10 +316,30 @@ object WebExtensionSupport {
                     )
                 }
 
+                override fun onOptionalPermissionsRequest(
+                    extension: WebExtension,
+                    permissions: List<String>,
+                    onPermissionsGranted: ((Boolean) -> Unit),
+                ) {
+                    store.dispatch(
+                        WebExtensionAction.UpdatePromptRequestWebExtensionAction(
+                            WebExtensionPromptRequest.AfterInstallation.Permissions.Optional(
+                                extension,
+                                permissions,
+                                onPermissionsGranted,
+                            ),
+                        ),
+                    )
+                }
+
                 override fun onExtensionListUpdated() {
                     installedExtensions.clear()
                     store.dispatch(WebExtensionAction.UninstallAllWebExtensionsAction)
                     registerInstalledExtensions(store, runtime)
+                }
+
+                override fun onDisabledExtensionProcessSpawning() {
+                    store.dispatch(ExtensionsProcessAction.ShowPromptAction(show = true))
                 }
             },
         )
@@ -431,7 +478,6 @@ object WebExtensionSupport {
         }
     }
 
-    @Suppress("LongParameterList")
     private fun openTab(
         store: BrowserStore,
         onNewTabOverride: ((WebExtension?, EngineSession, String) -> String)? = null,

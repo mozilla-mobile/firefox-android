@@ -30,6 +30,7 @@ interface TabsTrayInteractor :
     /**
      * Invoked when the user confirmed tab removal that would lead to cancelled private downloads.
      *
+     * @param tabId ID of the tab being removed.
      * @param source is the app feature from which the [TabSessionState] with [tabId] was closed.
      */
     fun onDeletePrivateTabWarningAccepted(tabId: String, source: String? = null)
@@ -109,7 +110,7 @@ interface TabsTrayInteractor :
 /**
  * Default implementation of [TabsTrayInteractor].
  *
- * @property controller [TabsTrayController] to which user actions can be delegated for app updates.
+ * @param controller [TabsTrayController] to which user actions can be delegated for app updates.
  */
 @Suppress("TooManyFunctions")
 class DefaultTabsTrayInteractor(

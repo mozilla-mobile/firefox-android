@@ -4,8 +4,6 @@
 
 package org.mozilla.fenix.ui.robots
 
-import androidx.appcompat.widget.AppCompatTextView
-import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu
 import androidx.test.espresso.action.ViewActions
@@ -19,22 +17,21 @@ import androidx.test.espresso.matcher.ViewMatchers.withHint
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.uiautomator.By
+import androidx.test.uiautomator.UiSelector
 import androidx.test.uiautomator.Until
 import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.containsString
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
+import org.mozilla.fenix.helpers.DataGenerationHelper.getStringResource
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
-import org.mozilla.fenix.helpers.MatcherHelper.assertItemContainingTextExists
 import org.mozilla.fenix.helpers.MatcherHelper.assertItemIsEnabledAndVisible
-import org.mozilla.fenix.helpers.MatcherHelper.assertItemWithResIdExists
+import org.mozilla.fenix.helpers.MatcherHelper.assertUIObjectExists
+import org.mozilla.fenix.helpers.MatcherHelper.checkedItemWithResId
 import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
+import org.mozilla.fenix.helpers.MatcherHelper.itemWithClassNameAndIndex
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTime
-import org.mozilla.fenix.helpers.TestHelper.getStringResource
 import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.click
@@ -72,25 +69,25 @@ class SettingsSubMenuLoginsAndPasswordsSavedLoginsRobot {
         itemContainingText(getStringResource(R.string.preferences_logins_add_login)).click()
 
     fun verifyAddNewLoginView() {
-        assertItemWithResIdExists(
+        assertUIObjectExists(
             siteHeader,
             siteTextInput,
             usernameHeader,
             usernameTextInput,
             passwordHeader,
             passwordTextInput,
+            siteDescription,
         )
-        assertItemContainingTextExists(siteDescription)
         siteTextInputHint.check(matches(withHint(R.string.add_login_hostname_hint_text)))
     }
 
     fun enterSiteCredential(website: String) = siteTextInput.setText(website)
 
     fun verifyHostnameErrorMessage() =
-        assertItemContainingTextExists(itemContainingText(getStringResource(R.string.add_login_hostname_invalid_text_2)))
+        assertUIObjectExists(itemContainingText(getStringResource(R.string.add_login_hostname_invalid_text_2)))
 
     fun verifyPasswordErrorMessage() =
-        assertItemContainingTextExists(itemContainingText(getStringResource(R.string.saved_login_password_required)))
+        assertUIObjectExists(itemContainingText(getStringResource(R.string.saved_login_password_required)))
 
     fun verifyPasswordClearButtonEnabled() =
         assertItemIsEnabledAndVisible(itemWithResId("$packageName:id/clearPasswordTextButton"))
@@ -103,27 +100,30 @@ class SettingsSubMenuLoginsAndPasswordsSavedLoginsRobot {
     fun clickSavedLoginsChevronIcon() = itemWithResId("$packageName:id/toolbar_chevron_icon").click()
 
     fun verifyLoginsSortingOptions() {
-        assertItemContainingTextExists(itemContainingText(getStringResource(R.string.saved_logins_sort_strategy_alphabetically)))
-        assertItemContainingTextExists(itemContainingText(getStringResource(R.string.saved_logins_sort_strategy_last_used)))
+        assertUIObjectExists(itemContainingText(getStringResource(R.string.saved_logins_sort_strategy_alphabetically)))
+        assertUIObjectExists(itemContainingText(getStringResource(R.string.saved_logins_sort_strategy_last_used)))
     }
 
     fun clickLastUsedSortingOption() =
         itemContainingText(getStringResource(R.string.saved_logins_sort_strategy_last_used)).click()
 
-    fun verifySortedLogin(testRule: HomeActivityIntentTestRule, position: Int, loginTitle: String) {
-        val list = testRule.activity.findViewById<RecyclerView>(R.id.saved_logins_list)
-        val item = list.layoutManager?.findViewByPosition(position)
-        val title = item?.findViewById<AppCompatTextView>(R.id.webAddressView)
-        assertEquals(loginTitle, title?.text)
-    }
+    fun verifySortedLogin(position: Int, loginTitle: String) =
+        assertUIObjectExists(
+            itemWithClassNameAndIndex(className = "android.view.ViewGroup", index = position)
+                .getChild(
+                    UiSelector()
+                        .resourceId("$packageName:id/webAddressView")
+                        .textContains(loginTitle),
+                ),
+        )
 
     fun searchLogin(searchTerm: String) =
-        itemContainingText(getStringResource(R.string.preferences_passwords_saved_logins_search)).setText(searchTerm)
+        itemWithResId("$packageName:id/search").setText(searchTerm)
 
     fun verifySavedLoginsSectionUsername(username: String) =
         mDevice.waitNotNull(Until.findObjects(By.text(username)))
 
-    fun verifyLoginItemUsername(username: String) = assertItemContainingTextExists(itemContainingText(username))
+    fun verifyLoginItemUsername(username: String) = assertUIObjectExists(itemContainingText(username))
 
     fun verifyNotSavedLoginFromPrompt() = onView(withText("test@example.com"))
         .check(ViewAssertions.doesNotExist())
@@ -141,7 +141,7 @@ class SettingsSubMenuLoginsAndPasswordsSavedLoginsRobot {
     fun clickDeleteLoginButton() = itemContainingText("Delete").click()
 
     fun verifyLoginDeletionPrompt() =
-        assertItemContainingTextExists(itemContainingText(getStringResource(R.string.login_deletion_confirmation)))
+        assertUIObjectExists(itemContainingText(getStringResource(R.string.login_deletion_confirmation)))
 
     fun clickConfirmDeleteLogin() =
         onView(withId(android.R.id.button1)).inRoot(RootMatchers.isDialog()).click()
@@ -159,13 +159,11 @@ class SettingsSubMenuLoginsAndPasswordsSavedLoginsRobot {
 
     fun saveEditedLogin() = itemWithResId("$packageName:id/save_login_button").click()
 
-    fun verifySaveLoginButtonIsEnabled(isEnabled: Boolean) {
-        if (isEnabled) {
-            assertTrue(itemWithResId("$packageName:id/save_login_button").isChecked)
-        } else {
-            assertFalse(itemWithResId("$packageName:id/save_login_button").isChecked)
-        }
-    }
+    fun verifySaveLoginButtonIsEnabled(isEnabled: Boolean) =
+        assertUIObjectExists(
+            checkedItemWithResId("$packageName:id/save_login_button", isChecked = true),
+            exists = isEnabled,
+        )
 
     fun revealPassword() = onView(withId(R.id.revealPasswordButton)).click()
 
@@ -173,10 +171,10 @@ class SettingsSubMenuLoginsAndPasswordsSavedLoginsRobot {
         onView(withId(R.id.passwordText)).check(matches(withText(password)))
 
     fun verifyUserNameRequiredErrorMessage() =
-        assertItemContainingTextExists(itemContainingText(getStringResource(R.string.saved_login_username_required)))
+        assertUIObjectExists(itemContainingText(getStringResource(R.string.saved_login_username_required)))
 
     fun verifyPasswordRequiredErrorMessage() =
-        assertItemContainingTextExists(itemContainingText(getStringResource(R.string.saved_login_password_required)))
+        assertUIObjectExists(itemContainingText(getStringResource(R.string.saved_login_password_required)))
 
     fun clickGoBackButton() = goBackButton().click()
 

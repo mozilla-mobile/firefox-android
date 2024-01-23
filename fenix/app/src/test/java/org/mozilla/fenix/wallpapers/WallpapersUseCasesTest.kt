@@ -1,5 +1,10 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.wallpapers
 
+import android.content.Context
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -489,6 +494,21 @@ class WallpapersUseCasesTest {
         verify { mockSettings.currentWallpaperTextColor = 321L }
         verify { appStore.dispatch(AppAction.WallpaperAction.UpdateCurrentWallpaper(wallpaper)) }
     }
+
+    @Test
+    fun `GIVEN the context WHEN bitmap is loaded THEN loadWallpaperFromDisk method is called with the correct context and wallpaper`() =
+        runTest {
+            val wallpaper: Wallpaper = mockk {
+                every { name } returns "test"
+            }
+            val context = mockk<Context>(relaxed = true)
+            val defaultLoadBitmapUseCase = spyk(WallpapersUseCases.DefaultLoadBitmapUseCase { mockFolder })
+            coEvery { defaultLoadBitmapUseCase.loadWallpaperFromDisk(context, wallpaper) } returns mockk()
+
+            defaultLoadBitmapUseCase.invoke(context, wallpaper)
+
+            coVerify { defaultLoadBitmapUseCase.loadWallpaperFromDisk(context, wallpaper) }
+        }
 
     private enum class TimeRelation {
         BEFORE,

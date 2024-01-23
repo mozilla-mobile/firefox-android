@@ -29,25 +29,26 @@ import androidx.compose.ui.unit.dp
 import mozilla.components.ui.colors.PhotonColors
 import org.mozilla.fenix.R
 import org.mozilla.fenix.compose.annotation.LightDarkPreview
+import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.Grade
 import org.mozilla.fenix.theme.FirefoxTheme
 
 private val height = 24.dp
 private val borderColor = Color(0x26000000)
-private val reviewGradeAColor = Color(0xFF10AD56)
-private val reviewGradeBColor = Color(0xFF007DEC)
-private val reviewGradeCColor = Color(0xFFF4A902)
-private val reviewGradeDColor = Color(0xFFF27313)
-private val reviewGradeFColor = Color(0xFFD51235)
-private val reviewGradeAColorExpanded = Color(0xFFDBF3E6)
-private val reviewGradeBColorExpanded = Color(0xFFD9ECFC)
-private val reviewGradeCColorExpanded = Color(0xFFFDF2D9)
-private val reviewGradeDColorExpanded = Color(0xFFFDEADC)
-private val reviewGradeFColorExpanded = Color(0xFFF9DBE1)
+private val reviewGradeAColor = PhotonColors.Green20
+private val reviewGradeBColor = PhotonColors.Blue10
+private val reviewGradeCColor = PhotonColors.Yellow20
+private val reviewGradeDColor = PhotonColors.Orange20
+private val reviewGradeFColor = PhotonColors.Red30
+private val reviewGradeAColorExpanded = Color(0xFFEEFFF9)
+private val reviewGradeBColorExpanded = Color(0xFFDEFAFF)
+private val reviewGradeCColorExpanded = Color(0xFFFFF9DA)
+private val reviewGradeDColorExpanded = Color(0xFFFDEEE2)
+private val reviewGradeFColorExpanded = Color(0xFFFFEFF0)
 
 /**
  * Review Grade of the product - A being the best and F being the worst.
  */
-enum class ReviewGrade(
+private enum class ReviewGrade(
     val stringResourceId: Int,
     val backgroundColor: Color,
     val expandedTextBackgroundColor: Color,
@@ -83,15 +84,15 @@ enum class ReviewGrade(
  * UI for displaying the review grade.
  *
  * @param modifier The modifier to be applied to the Composable.
- * @param reviewGrade The grade of the product.
+ * @param grade The grade of the product.
  */
 @Composable
 fun ReviewGradeCompact(
     modifier: Modifier = Modifier,
-    reviewGrade: ReviewGrade,
+    grade: Grade,
 ) {
     ReviewGradeLetter(
-        reviewGrade = reviewGrade,
+        reviewGrade = grade.toReviewGrade(),
         modifier = modifier.border(
             border = BorderStroke(
                 width = 1.dp,
@@ -106,13 +107,15 @@ fun ReviewGradeCompact(
  * UI for displaying the review grade with descriptive text.
  *
  * @param modifier The modifier to be applied to the Composable.
- * @param reviewGrade The grade of the product.
+ * @param grade The grade of the product.
  */
 @Composable
 fun ReviewGradeExpanded(
     modifier: Modifier = Modifier,
-    reviewGrade: ReviewGrade,
+    grade: Grade,
 ) {
+    val reviewGrade = grade.toReviewGrade()
+
     Row(
         modifier = modifier
             .background(
@@ -140,7 +143,7 @@ fun ReviewGradeExpanded(
         Text(
             text = stringResource(id = reviewGrade.stringResourceId),
             color = PhotonColors.DarkGrey90,
-            style = FirefoxTheme.typography.caption,
+            style = FirefoxTheme.typography.body2,
             modifier = Modifier.padding(horizontal = 8.dp),
         )
     }
@@ -166,11 +169,23 @@ private fun ReviewGradeLetter(
     ) {
         Text(
             text = reviewGrade.name,
-            color = PhotonColors.LightGrey05,
+            color = PhotonColors.Black,
             style = FirefoxTheme.typography.subtitle2,
         )
     }
 }
+
+/**
+ * Maps [Grade] to [ReviewGrade].
+ */
+private fun Grade.toReviewGrade(): ReviewGrade =
+    when (this) {
+        Grade.A -> ReviewGrade.A
+        Grade.B -> ReviewGrade.B
+        Grade.C -> ReviewGrade.C
+        Grade.D -> ReviewGrade.D
+        Grade.F -> ReviewGrade.F
+    }
 
 @Composable
 @LightDarkPreview
@@ -181,13 +196,13 @@ private fun ReviewGradePreview() {
                 .background(FirefoxTheme.colors.layer1)
                 .padding(16.dp),
         ) {
-            ReviewGrade.values().forEach {
+            Grade.values().forEach {
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(32.dp),
                 ) {
-                    ReviewGradeCompact(reviewGrade = it)
+                    ReviewGradeCompact(grade = it)
 
-                    ReviewGradeExpanded(reviewGrade = it)
+                    ReviewGradeExpanded(grade = it)
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))

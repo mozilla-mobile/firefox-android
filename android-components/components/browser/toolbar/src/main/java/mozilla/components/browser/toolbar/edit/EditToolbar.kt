@@ -7,6 +7,7 @@ package mozilla.components.browser.toolbar.edit
 import android.content.Context
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.view.KeyEvent
 import android.view.View
 import android.widget.ImageView
@@ -30,7 +31,6 @@ import mozilla.components.concept.toolbar.AutocompleteDelegate
 import mozilla.components.concept.toolbar.Toolbar
 import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.base.utils.NamedThreadFactory
-import mozilla.components.support.ktx.android.view.showKeyboard
 import mozilla.components.ui.autocomplete.InlineAutocompleteEditText
 import java.util.concurrent.Executors
 import mozilla.components.ui.colors.R as colorsR
@@ -215,8 +215,13 @@ class EditToolbar internal constructor(
      */
     fun focus() {
         views.url.run {
-            showKeyboard()
-            requestFocus()
+            if (!hasFocus()) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                    // On Android 14 this needs to be called before requestFocus() in order to receive focus.
+                    isFocusableInTouchMode = true
+                }
+                requestFocus()
+            }
         }
     }
 
@@ -327,6 +332,7 @@ class EditToolbar internal constructor(
     private fun onClear() {
         // We set text to an empty string instead of using clear to avoid #3612.
         views.url.setText("")
+        editListener?.onInputCleared()
     }
 
     private fun setUrlGoneMargin(anchor: Int, dimen: Int) {

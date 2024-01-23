@@ -28,7 +28,9 @@ import org.mozilla.fenix.browser.readermode.ReaderModeController
 import org.mozilla.fenix.components.toolbar.interactor.BrowserToolbarInteractor
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.nav
+import org.mozilla.fenix.ext.navigateSafe
 import org.mozilla.fenix.ext.settings
+import org.mozilla.fenix.home.HomeFragment
 import org.mozilla.fenix.home.HomeScreenViewModel
 
 /**
@@ -47,7 +49,29 @@ interface BrowserToolbarController {
      * @see [BrowserToolbarInteractor.onHomeButtonClicked]
      */
     fun handleHomeButtonClick()
+
+    /**
+     * @see [BrowserToolbarInteractor.onEraseButtonClicked]
+     */
+    fun handleEraseButtonClick()
+
+    /**
+     * @see [BrowserToolbarInteractor.onShoppingCfrActionClicked]
+     */
+    fun handleShoppingCfrActionClick()
+
+    /**
+     * @see [BrowserToolbarInteractor.onShoppingCfrDisplayed]
+     */
+    fun handleShoppingCfrDisplayed()
+
+    /**
+     * @see [BrowserToolbarInteractor.onTranslationsButtonClicked]
+     */
+    fun handleTranslationsButtonClick()
 }
+
+private const val MAX_DISPLAY_NUMBER_SHOPPING_CFR = 3
 
 @Suppress("LongParameterList")
 class DefaultBrowserToolbarController(
@@ -180,8 +204,49 @@ class DefaultBrowserToolbarController(
         }
     }
 
+    override fun handleEraseButtonClick() {
+        Events.browserToolbarEraseTapped.record(NoExtras())
+        homeViewModel.sessionToDelete = HomeFragment.ALL_PRIVATE_TABS
+        val directions = BrowserFragmentDirections.actionGlobalHome()
+        navController.navigate(directions)
+    }
+
+    override fun handleShoppingCfrActionClick() {
+        navController.navigate(
+            BrowserFragmentDirections.actionBrowserFragmentToReviewQualityCheckDialogFragment(),
+        )
+    }
+
+    override fun handleShoppingCfrDisplayed() {
+        updateShoppingCfrSettings()
+    }
+
+    override fun handleTranslationsButtonClick() {
+        val directions =
+            BrowserFragmentDirections.actionBrowserFragmentToTranslationsDialogFragment(
+                sessionId = currentSession?.id,
+            )
+        navController.navigateSafe(R.id.browserFragment, directions)
+    }
+
     companion object {
         internal const val TELEMETRY_BROWSER_IDENTIFIER = "browserMenu"
+    }
+
+    /**
+     * Stop showing the CFR after being displayed three times with
+     * with at least 12 hrs in-between.
+     * As described in: https://bugzilla.mozilla.org/show_bug.cgi?id=1861173#c0
+     */
+    private fun updateShoppingCfrSettings() = with(activity.settings()) {
+        reviewQualityCheckCFRClosedCounter++
+        if (reviewQualityCheckCfrDisplayTimeInMillis != 0L &&
+            reviewQualityCheckCFRClosedCounter >= MAX_DISPLAY_NUMBER_SHOPPING_CFR
+        ) {
+            shouldShowReviewQualityCheckCFR = false
+        } else {
+            reviewQualityCheckCfrDisplayTimeInMillis = System.currentTimeMillis()
+        }
     }
 }
 

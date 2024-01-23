@@ -4,26 +4,26 @@
 
 package org.mozilla.fenix.messaging
 
-import android.app.Activity
 import android.app.Notification
 import android.app.PendingIntent
-import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.IBinder
+import androidx.activity.ComponentActivity
+import androidx.lifecycle.LifecycleService
+import androidx.lifecycle.lifecycleScope
+import androidx.work.CoroutineWorker
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import androidx.work.Worker
 import androidx.work.WorkerParameters
+import kotlinx.coroutines.launch
 import mozilla.components.service.nimbus.messaging.FxNimbusMessaging
 import mozilla.components.service.nimbus.messaging.Message
 import mozilla.components.support.base.ids.SharedIdsHelper
 import mozilla.components.support.utils.BootUtils
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.onboarding.ensureMarketingChannelExists
-import org.mozilla.fenix.perf.runBlockingIncrement
 import org.mozilla.fenix.utils.IntentUtils
 import org.mozilla.fenix.utils.createBaseNotification
 import java.util.concurrent.TimeUnit
@@ -32,21 +32,21 @@ const val CLICKED_MESSAGE_ID = "clickedMessageId"
 const val DISMISSED_MESSAGE_ID = "dismissedMessageId"
 
 /**
- * Background [Worker] that polls Nimbus for available [Message]s at a given interval.
+ * Background [CoroutineWorker] that polls Nimbus for available [Message]s at a given interval.
  * A [Notification] will be created using the configuration of the next highest priority [Message]
  * if it has not already been displayed.
  */
 class MessageNotificationWorker(
     context: Context,
     workerParameters: WorkerParameters,
-) : Worker(context, workerParameters) {
+) : CoroutineWorker(context, workerParameters) {
 
     @SuppressWarnings("ReturnCount")
-    override fun doWork(): Result {
+    override suspend fun doWork(): Result {
         val context = applicationContext
 
         val messagingStorage = context.components.analytics.messagingStorage
-        val messages = runBlockingIncrement { messagingStorage.getMessages() }
+        val messages = messagingStorage.getMessages()
         val nextMessage =
             messagingStorage.getNextMessage(FenixMessageSurfaceId.NOTIFICATION, messages)
                 ?: return Result.success()
@@ -67,7 +67,7 @@ class MessageNotificationWorker(
                 currentBootUniqueIdentifier,
             )
 
-        runBlockingIncrement { nimbusMessagingController.onMessageDisplayed(updatedMessage) }
+        nimbusMessagingController.onMessageDisplayed(updatedMessage)
 
         context.components.notificationsDelegate.notify(
             MESSAGE_TAG,
@@ -137,7 +137,7 @@ class MessageNotificationWorker(
         private const val MESSAGE_WORK_NAME = "org.mozilla.fenix.message.work"
 
         /**
-         * Initialize the [Worker] to begin polling Nimbus.
+         * Initialize the [CoroutineWorker] to begin polling Nimbus.
          */
         fun setMessageNotificationWorker(context: Context) {
             val messaging = FxNimbusMessaging.features.messaging
@@ -170,28 +170,27 @@ class MessageNotificationWorker(
  * When a [Message] [Notification] is dismissed by the user record telemetry data and update the
  * [Message.metadata].
  *
- * This [Service] is only intended to be used by the [MessageNotificationWorker.createOnDismissPendingIntent] function.
+ * This Service is only intended to be used by the [MessageNotificationWorker.createOnDismissPendingIntent] function.
  */
-class NotificationDismissedService : Service() {
-
-    /**
-     * This service cannot be bound to.
-     */
-    override fun onBind(intent: Intent?): IBinder? = null
+class NotificationDismissedService : LifecycleService() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        super.onStartCommand(intent, flags, startId)
+
         if (intent != null) {
             val nimbusMessagingController =
                 FenixNimbusMessagingController(applicationContext.components.analytics.messagingStorage)
 
-            // Get the relevant message.
-            val message = intent.getStringExtra(DISMISSED_MESSAGE_ID)?.let { messageId ->
-                runBlockingIncrement { nimbusMessagingController.getMessage(messageId) }
-            }
+            lifecycleScope.launch {
+                // Get the relevant message.
+                val message = intent.getStringExtra(DISMISSED_MESSAGE_ID)?.let { messageId ->
+                    nimbusMessagingController.getMessage(messageId)
+                }
 
-            if (message != null) {
-                // Update message as 'dismissed'.
-                runBlockingIncrement { nimbusMessagingController.onMessageDismissed(message.metadata) }
+                if (message != null) {
+                    // Update message as 'dismissed'.
+                    nimbusMessagingController.onMessageDismissed(message.metadata)
+                }
             }
         }
 
@@ -203,9 +202,9 @@ class NotificationDismissedService : Service() {
  * When a [Message] [Notification] is clicked by the user record telemetry data and update the
  * [Message.metadata].
  *
- * This [Activity] is only intended to be used by the [MessageNotificationWorker.createOnClickPendingIntent] function.
+ * This Activity is only intended to be used by the [MessageNotificationWorker.createOnClickPendingIntent] function.
  */
-class NotificationClickedReceiverActivity : Activity() {
+class NotificationClickedReceiverActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -213,22 +212,24 @@ class NotificationClickedReceiverActivity : Activity() {
         val nimbusMessagingController =
             FenixNimbusMessagingController(components.analytics.messagingStorage)
 
-        // Get the relevant message.
-        val message = intent.getStringExtra(CLICKED_MESSAGE_ID)?.let { messageId ->
-            runBlockingIncrement { nimbusMessagingController.getMessage(messageId) }
-        }
+        lifecycleScope.launch {
+            // Get the relevant message.
+            val message = intent.getStringExtra(CLICKED_MESSAGE_ID)?.let { messageId ->
+                nimbusMessagingController.getMessage(messageId)
+            }
 
-        if (message != null) {
-            // Update message as 'clicked'.
-            runBlockingIncrement { nimbusMessagingController.onMessageClicked(message.metadata) }
+            if (message != null) {
+                // Update message as 'clicked'.
+                nimbusMessagingController.onMessageClicked(message.metadata)
 
-            // Create the intent.
-            val intent = nimbusMessagingController.getIntentForMessage(message)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                // Create the intent.
+                val intent = nimbusMessagingController.getIntentForMessage(message)
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
 
-            // Start the message intent.
-            startActivity(intent)
+                // Start the message intent.
+                startActivity(intent)
+            }
         }
 
         // End this activity.

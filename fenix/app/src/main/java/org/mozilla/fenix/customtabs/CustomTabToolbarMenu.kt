@@ -31,6 +31,8 @@ import java.util.Locale
 
 /**
  * Builds the toolbar object used with the 3-dot menu in the custom tab browser fragment.
+ *
+ * @param context An Android [Context].
  * @param store reference to the application's [BrowserStore].
  * @param sessionId ID of the open custom tab session.
  * @param shouldReverseItems If true, reverse the menu items.

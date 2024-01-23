@@ -36,7 +36,6 @@ internal val GENERAL_SEARCH_ENGINE_IDS = setOf(
     "qwant",
     "yahoo-jp",
     "seznam-cz",
-    "leit-is",
     "coccoc",
     "baidu",
 )
@@ -59,6 +58,7 @@ internal class SearchEngineReader(
         var suggestUrl: String? = null
         var name: String? = null
         var icon: Bitmap? = null
+        var inputEncoding: String? = null
 
         fun toSearchEngine() = SearchEngine(
             id = identifier,
@@ -67,6 +67,7 @@ internal class SearchEngineReader(
             type = type,
             resultUrls = resultsUrls,
             suggestUrl = suggestUrl,
+            inputEncoding = inputEncoding,
             isGeneral = isGeneralSearchEngine(identifier, type),
         )
 
@@ -127,6 +128,7 @@ internal class SearchEngineReader(
                 "ShortName" -> readShortName(parser, builder)
                 "Url" -> readUrl(parser, builder)
                 "Image" -> readImage(parser, builder)
+                "InputEncoding" -> readInputEncoding(parser, builder)
                 else -> skip(parser)
             }
         }
@@ -228,5 +230,14 @@ internal class SearchEngineReader(
         builder.icon = BitmapFactory.decodeByteArray(raw, 0, raw.size)
 
         parser.nextTag()
+    }
+
+    @Throws(IOException::class, XmlPullParserException::class)
+    private fun readInputEncoding(parser: XmlPullParser, builder: SearchEngineBuilder) {
+        parser.require(XmlPullParser.START_TAG, null, "InputEncoding")
+        if (parser.next() == XmlPullParser.TEXT) {
+            builder.inputEncoding = parser.text
+            parser.nextTag()
+        }
     }
 }

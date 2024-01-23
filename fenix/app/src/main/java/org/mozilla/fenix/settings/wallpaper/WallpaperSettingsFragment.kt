@@ -24,6 +24,7 @@ import org.mozilla.fenix.R
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.FenixSnackbar
 import org.mozilla.fenix.ext.requireComponents
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.showToolbar
 import org.mozilla.fenix.theme.FirefoxTheme
 import org.mozilla.fenix.wallpapers.Wallpaper
@@ -137,6 +138,8 @@ class WallpaperSettingsFragment : Fragment() {
             }
             else -> { /* noop */ }
         }
+
+        view.context.settings().showWallpaperOnboarding = false
     }
 
     override fun onResume() {

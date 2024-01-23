@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 package org.mozilla.fenix.ui
 
 import androidx.test.platform.app.InstrumentationRegistry
@@ -49,9 +53,10 @@ class TextSelectionTest {
         mockWebServer.shutdown()
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2326832
     @SmokeTest
     @Test
-    fun selectAllAndCopyTextTest() {
+    fun verifySelectAllTextOptionTest() {
         val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         navigationToolbar {
@@ -73,9 +78,9 @@ class TextSelectionTest {
         }
     }
 
-    @SmokeTest
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2326828
     @Test
-    fun copyTextTest() {
+    fun verifyCopyTextOptionTest() {
         val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         navigationToolbar {
@@ -94,9 +99,9 @@ class TextSelectionTest {
         }
     }
 
-    @SmokeTest
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2326829
     @Test
-    fun shareSelectedTextTest() {
+    fun verifyShareSelectedTextOptionTest() {
         val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         navigationToolbar {
@@ -107,9 +112,9 @@ class TextSelectionTest {
         }
     }
 
-    @SmokeTest
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2326830
     @Test
-    fun selectAndSearchTextTest() {
+    fun verifySearchTextOptionTest() {
         val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         navigationToolbar {
@@ -122,9 +127,10 @@ class TextSelectionTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2326831
     @SmokeTest
     @Test
-    fun privateSelectAndSearchTextTest() {
+    fun verifyPrivateSearchTextTest() {
         val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         homeScreen {
@@ -140,9 +146,9 @@ class TextSelectionTest {
         }
     }
 
-    @SmokeTest
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2326834
     @Test
-    fun selectAllAndCopyPDFTextTest() {
+    fun verifySelectAllPDFTextOptionTest() {
         val genericURL =
             TestAssetHelper.getGenericAsset(mockWebServer, 3)
 
@@ -164,9 +170,10 @@ class TextSelectionTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/243839
     @SmokeTest
     @Test
-    fun copyPDFTextTest() {
+    fun verifyCopyPDFTextOptionTest() {
         val genericURL =
             TestAssetHelper.getGenericAsset(mockWebServer, 3)
 
@@ -187,9 +194,9 @@ class TextSelectionTest {
         }
     }
 
-    @SmokeTest
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2326835
     @Test
-    fun shareSelectedPDFTextTest() {
+    fun verifyShareSelectedPDFTextOptionTest() {
         val genericURL =
             TestAssetHelper.getGenericAsset(mockWebServer, 3)
 
@@ -202,9 +209,10 @@ class TextSelectionTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2326836
     @SmokeTest
     @Test
-    fun selectAndSearchPDFTextTest() {
+    fun verifySearchPDFTextOptionTest() {
         val genericURL =
             TestAssetHelper.getGenericAsset(mockWebServer, 3)
 
@@ -218,9 +226,9 @@ class TextSelectionTest {
         }
     }
 
-    @SmokeTest
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2326837
     @Test
-    fun privateSelectAndSearchPDFTextTest() {
+    fun verifyPrivateSearchPDFTextOptionTest() {
         val genericURL =
             TestAssetHelper.getGenericAsset(mockWebServer, 3)
 
@@ -237,6 +245,7 @@ class TextSelectionTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2326813
     @Test
     fun verifyUrlBarTextSelectionOptionsTest() {
         val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
@@ -249,8 +258,9 @@ class TextSelectionTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2326814
     @Test
-    fun copyUrlBarTextTest() {
+    fun verifyCopyUrlBarTextSelectionOptionTest() {
         val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         navigationToolbar {
@@ -266,8 +276,9 @@ class TextSelectionTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2326815
     @Test
-    fun cutUrlBarTextTest() {
+    fun verifyCutUrlBarTextSelectionOptionTest() {
         val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         navigationToolbar {
@@ -282,8 +293,10 @@ class TextSelectionTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/243845
+    @SmokeTest
     @Test
-    fun shareUrlBarTextTest() {
+    fun verifyShareUrlBarTextSelectionOptionTest() {
         val genericURL = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         navigationToolbar {
@@ -297,6 +310,7 @@ class TextSelectionTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/414316
     @Test
     fun urlBarQuickActionsTest() {
         val firstWebsite = TestAssetHelper.getGenericAsset(mockWebServer, 1)

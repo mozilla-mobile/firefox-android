@@ -85,8 +85,8 @@ class SessionControlInteractorTest {
     fun onCollectionRemoveTab() {
         val collection: TabCollection = mockk(relaxed = true)
         val tab: Tab = mockk(relaxed = true)
-        interactor.onCollectionRemoveTab(collection, tab, false)
-        verify { controller.handleCollectionRemoveTab(collection, tab, false) }
+        interactor.onCollectionRemoveTab(collection, tab)
+        verify { controller.handleCollectionRemoveTab(collection, tab) }
     }
 
     @Test
@@ -204,10 +204,9 @@ class SessionControlInteractorTest {
     @Test
     fun `WHEN private mode button is clicked THEN the click is handled`() {
         val newMode = BrowsingMode.Private
-        val hasBeenOnboarded = true
 
-        interactor.onPrivateModeButtonClicked(newMode, hasBeenOnboarded)
-        verify { privateBrowsingController.handlePrivateModeButtonClicked(newMode, hasBeenOnboarded) }
+        interactor.onPrivateModeButtonClicked(newMode)
+        verify { privateBrowsingController.handlePrivateModeButtonClicked(newMode) }
     }
 
     @Test

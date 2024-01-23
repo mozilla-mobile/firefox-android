@@ -53,6 +53,9 @@ class NimbusMessagingStorage(
     private val customAttributes: JSONObject
         get() = attributeProvider?.getCustomAttributes(context) ?: JSONObject()
 
+    val helper: GleanPlumbMessageHelper
+        get() = gleanPlumb.createMessageHelper(customAttributes)
+
     /**
      * Returns the [Message] for the given [key] or returns null if none found.
      */
@@ -115,7 +118,7 @@ class NimbusMessagingStorage(
             surface,
             availableMessages,
             setOf(),
-            gleanPlumb.createMessageHelper(customAttributes),
+            helper,
             mutableMapOf(),
         )
 
@@ -132,11 +135,14 @@ class NimbusMessagingStorage(
             .filter { !excluded.contains(it.id) }
             .firstOrNull { isMessageEligible(it, helper, jexlCache) } ?: return null
 
-        // Check this isn't an experimental message. If not, we can go ahead and return it.
-        val slug = message.data.experiment ?: return message
-
-        // We know that it's experimental, and we know which experiment it came from.
-        messagingFeature.recordExperimentExposure(slug)
+        val slug = message.data.experiment
+        if (slug != null) {
+            // We know that it's experimental, and we know which experiment it came from.
+            messagingFeature.recordExperimentExposure(slug)
+        } else if (message.data.isControl) {
+            // It's not experimental, but it is a control. This is obviously malformed.
+            reportMalformedMessage(message.id)
+        }
 
         // If this is an experimental message, but not a placebo, then just return the message.
         if (!message.data.isControl) {

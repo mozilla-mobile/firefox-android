@@ -9,12 +9,11 @@ buildscript {
         }
 
         gradlePluginPortal()
+    }
 
-        dependencies {
-            classpath "org.mozilla.telemetry:glean-gradle-plugin:${Versions.mozilla_glean}"
-            classpath ComponentsDependencies.plugin_ksp
-            classpath ComponentsDependencies.plugin_serialization
-        }
+    dependencies {
+        classpath "org.mozilla.telemetry:glean-gradle-plugin:${Versions.mozilla_glean}"
+        classpath  ComponentsDependencies.plugin_serialization
     }
 }
 
@@ -28,10 +27,9 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlinx-serialization'
 
 android {
-    compileSdkVersion config.compileSdkVersion
-
     defaultConfig {
         minSdkVersion config.minSdkVersion
+        compileSdk config.compileSdkVersion
         targetSdkVersion config.targetSdkVersion
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -56,6 +54,7 @@ android {
 
     buildFeatures {
         viewBinding true
+        buildConfig true
     }
 
     namespace 'mozilla.components.lib.crash'
@@ -86,7 +85,6 @@ dependencies {
     testImplementation ComponentsDependencies.androidx_test_core
     testImplementation ComponentsDependencies.androidx_test_junit
     testImplementation ComponentsDependencies.testing_robolectric
-    testImplementation ComponentsDependencies.testing_mockito
     testImplementation ComponentsDependencies.testing_coroutines
     testImplementation ComponentsDependencies.testing_mockwebserver
     testImplementation ComponentsDependencies.mozilla_glean_forUnitTests

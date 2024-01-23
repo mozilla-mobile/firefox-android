@@ -15,6 +15,7 @@ import mozilla.components.support.utils.SafeIntent
  * @property id the unique id of the session.
  * @property content the [ContentState] of this session.
  * @property trackingProtection the [TrackingProtectionState] of this session.
+ * @property translationsState the [TranslationsState] of this session.
  * @property cookieBanner Indicates the state of cookie banner for this session.
  * @property engineState the [EngineState] of this session.
  * @property extensionState a map of extension id and web extension states
@@ -29,6 +30,7 @@ interface SessionState {
     val id: String
     val content: ContentState
     val trackingProtection: TrackingProtectionState
+    val translationsState: TranslationsState
     val cookieBanner: CookieBannerHandlingStatus
     val engineState: EngineState
     val extensionState: Map<String, WebExtensionState>
@@ -40,11 +42,11 @@ interface SessionState {
     /**
      * Copy the class and override some parameters.
      */
-    @Suppress("LongParameterList")
     fun createCopy(
         id: String = this.id,
         content: ContentState = this.content,
         trackingProtection: TrackingProtectionState = this.trackingProtection,
+        translationsState: TranslationsState = this.translationsState,
         engineState: EngineState = this.engineState,
         extensionState: Map<String, WebExtensionState> = this.extensionState,
         mediaSessionState: MediaSessionState? = this.mediaSessionState,
@@ -56,7 +58,7 @@ interface SessionState {
      * Represents the origin of a session to describe how and why it was created.
      * @param id A unique identifier, exists for serialization purposes.
      */
-    @Suppress("UNUSED_PARAMETER", "MagicNumber")
+    @Suppress("MagicNumber")
     sealed class Source(val id: Int) {
         companion object {
             /**

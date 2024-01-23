@@ -39,6 +39,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.semantics.testTagsAsResourceId
@@ -50,6 +52,7 @@ import mozilla.components.browser.icons.compose.Placeholder
 import mozilla.components.browser.icons.compose.WithIcon
 import mozilla.components.browser.state.state.ContentState
 import mozilla.components.browser.state.state.TabSessionState
+import mozilla.components.browser.thumbnails.storage.ThumbnailStorage
 import mozilla.components.support.ktx.kotlin.trimmed
 import mozilla.components.ui.colors.PhotonColors
 import org.mozilla.fenix.components.components
@@ -62,11 +65,14 @@ import org.mozilla.fenix.compose.inComposePreview
 import org.mozilla.fenix.home.recenttabs.RecentTab
 import org.mozilla.fenix.theme.FirefoxTheme
 
+private const val THUMBNAIL_SIZE = 108
+
 /**
  * A list of recent tabs to jump back to.
  *
  * @param recentTabs List of [RecentTab] to display.
  * @param menuItems List of [RecentTabMenuItem] shown long clicking a [RecentTab].
+ * @param storage [ThumbnailStorage] to obtain tab thumbnail bitmaps from.
  * @param backgroundColor The background [Color] of each item.
  * @param onRecentTabClick Invoked when the user clicks on a recent tab.
  */
@@ -75,6 +81,7 @@ import org.mozilla.fenix.theme.FirefoxTheme
 fun RecentTabs(
     recentTabs: List<RecentTab>,
     menuItems: List<RecentTabMenuItem>,
+    storage: ThumbnailStorage,
     backgroundColor: Color = FirefoxTheme.colors.layer2,
     onRecentTabClick: (String) -> Unit = {},
 ) {
@@ -92,6 +99,7 @@ fun RecentTabs(
                 is RecentTab.Tab -> {
                     RecentTabItem(
                         tab = tab,
+                        storage = storage,
                         menuItems = menuItems,
                         backgroundColor = backgroundColor,
                         onRecentTabClick = onRecentTabClick,
@@ -106,6 +114,8 @@ fun RecentTabs(
  * A recent tab item.
  *
  * @param tab [RecentTab.Tab] that was recently viewed.
+ * @param storage [ThumbnailStorage] to obtain tab thumbnail bitmaps from.
+ * @param menuItems List of [RecentTabMenuItem] to be shown in a menu.
  * @param backgroundColor The background [Color] of the item.
  * @param onRecentTabClick Invoked when the user clicks on a recent tab.
  */
@@ -117,6 +127,7 @@ fun RecentTabs(
 @Suppress("LongMethod")
 private fun RecentTabItem(
     tab: RecentTab.Tab,
+    storage: ThumbnailStorage,
     menuItems: List<RecentTabMenuItem>,
     backgroundColor: Color,
     onRecentTabClick: (String) -> Unit = {},
@@ -141,6 +152,7 @@ private fun RecentTabItem(
         ) {
             RecentTabImage(
                 tab = tab,
+                storage = storage,
                 modifier = Modifier
                     .size(108.dp, 80.dp)
                     .clip(RoundedCornerShape(8.dp)),
@@ -208,12 +220,14 @@ private fun RecentTabItem(
  * A recent tab image.
  *
  * @param tab [RecentTab] that was recently viewed.
+ * @param storage [ThumbnailStorage] to obtain tab thumbnail bitmaps from.
  * @param modifier [Modifier] used to draw the image content.
  * @param contentScale [ContentScale] used to draw image content.
  */
 @Composable
 fun RecentTabImage(
     tab: RecentTab.Tab,
+    storage: ThumbnailStorage,
     modifier: Modifier = Modifier,
     contentScale: ContentScale = ContentScale.FillWidth,
 ) {
@@ -224,12 +238,23 @@ fun RecentTabImage(
             Image(
                 url = previewImageUrl,
                 modifier = modifier,
-                targetSize = 108.dp,
+                targetSize = THUMBNAIL_SIZE.dp,
                 contentScale = ContentScale.Crop,
+                fallback = {
+                    TabThumbnail(
+                        tab = tab.state,
+                        size = LocalDensity.current.run { THUMBNAIL_SIZE.dp.toPx().toInt() },
+                        storage = storage,
+                        modifier = modifier,
+                        contentScale = contentScale,
+                    )
+                },
             )
         }
         else -> TabThumbnail(
             tab = tab.state,
+            size = LocalDensity.current.run { THUMBNAIL_SIZE.dp.toPx().toInt() },
+            storage = storage,
             modifier = modifier,
             contentScale = contentScale,
         )
@@ -320,6 +345,7 @@ private fun RecentTabsPreview() {
             recentTabs = listOf(
                 tab,
             ),
+            storage = ThumbnailStorage(LocalContext.current),
             menuItems = listOf(
                 RecentTabMenuItem(
                     title = "Menu item",

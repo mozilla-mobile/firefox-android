@@ -12,13 +12,15 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.mozilla.fenix.customannotations.SmokeTest
 import org.mozilla.fenix.helpers.AndroidAssetDispatcher
-import org.mozilla.fenix.helpers.Constants.POCKET_RECOMMENDED_STORIES_UTM_PARAM
 import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.RetryTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
+import org.mozilla.fenix.helpers.TestHelper
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
+import org.mozilla.fenix.ui.robots.searchScreen
 
 /**
  *  Tests for verifying the presence of home screen and first-run homescreen elements
@@ -30,7 +32,6 @@ import org.mozilla.fenix.ui.robots.navigationToolbar
 class HomeScreenTest {
     private lateinit var mDevice: UiDevice
     private lateinit var mockWebServer: MockWebServer
-    private lateinit var firstPocketStoryPublisher: String
 
     @get:Rule(order = 0)
     val activityTestRule =
@@ -55,10 +56,14 @@ class HomeScreenTest {
         mockWebServer.shutdown()
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/235396
     @Test
     fun homeScreenItemsTest() {
-        homeScreen {}.dismissOnboarding()
+        // Workaround to make sure the Pocket articles are populated before starting the test.
         homeScreen {
+        }.openThreeDotMenu {
+        }.openSettings {
+        }.goBack {
             verifyHomeWordmark()
             verifyHomePrivateBrowsingButton()
             verifyExistingTopSitesTabs("Wikipedia")
@@ -77,18 +82,20 @@ class HomeScreenTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/244199
     @Test
-    fun privateModeScreenItemsTest() {
-        homeScreen { }.dismissOnboarding()
+    fun privateBrowsingHomeScreenItemsTest() {
         homeScreen { }.togglePrivateBrowsingMode()
 
         homeScreen {
-            verifyPrivateBrowsingHomeScreen()
+            verifyPrivateBrowsingHomeScreenItems()
         }.openCommonMythsLink {
             verifyUrl("common-myths-about-private-browsing")
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1364362
+    @SmokeTest
     @Test
     fun verifyJumpBackInSectionTest() {
         activityTestRule.activityRule.applySettingsExceptions {
@@ -139,114 +146,16 @@ class HomeScreenTest {
         }
     }
 
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1569839
     @Test
-    fun verifyPocketHomepageStoriesTest() {
-        activityTestRule.activityRule.applySettingsExceptions {
-            it.isRecentTabsFeatureEnabled = false
-            it.isRecentlyVisitedFeatureEnabled = false
-        }
-
-        homeScreen {
-        }.dismissOnboarding()
-
-        homeScreen {
-            verifyThoughtProvokingStories(true)
-            scrollToPocketProvokingStories()
-            verifyPocketRecommendedStoriesItems()
-            // Sponsored Pocket stories are only advertised for a limited time.
-            // See also known issue https://bugzilla.mozilla.org/show_bug.cgi?id=1828629
-            // verifyPocketSponsoredStoriesItems(2, 8)
-            verifyDiscoverMoreStoriesButton()
-            verifyStoriesByTopic(true)
-            verifyPoweredByPocket()
-        }.openThreeDotMenu {
-        }.openCustomizeHome {
-            clickPocketButton()
-        }.goBackToHomeScreen {
-            verifyThoughtProvokingStories(false)
-            verifyStoriesByTopic(false)
-        }
-    }
-
-    @Test
-    fun openPocketStoryItemTest() {
-        activityTestRule.activityRule.applySettingsExceptions {
-            it.isRecentTabsFeatureEnabled = false
-            it.isRecentlyVisitedFeatureEnabled = false
-        }
-
-        homeScreen {
-        }.dismissOnboarding()
-
-        homeScreen {
-            verifyThoughtProvokingStories(true)
-            scrollToPocketProvokingStories()
-            firstPocketStoryPublisher = getProvokingStoryPublisher(1)
-        }.clickPocketStoryItem(firstPocketStoryPublisher, 1) {
-            verifyUrl(POCKET_RECOMMENDED_STORIES_UTM_PARAM)
-        }
-    }
-
-    @Test
-    fun openPocketDiscoverMoreTest() {
-        activityTestRule.activityRule.applySettingsExceptions {
-            it.isRecentTabsFeatureEnabled = false
-            it.isRecentlyVisitedFeatureEnabled = false
-        }
-
-        homeScreen {
-        }.dismissOnboarding()
-
-        homeScreen {
-            scrollToPocketProvokingStories()
-            verifyDiscoverMoreStoriesButton()
-        }.clickPocketDiscoverMoreButton {
-            verifyUrl("getpocket.com/explore")
-        }
-    }
-
-    @Test
-    fun selectStoriesByTopicItemTest() {
-        activityTestRule.activityRule.applySettingsExceptions {
-            it.isRecentTabsFeatureEnabled = false
-            it.isRecentlyVisitedFeatureEnabled = false
-        }
-
-        homeScreen {
-        }.dismissOnboarding()
-
-        homeScreen {
-            verifyStoriesByTopicItemState(activityTestRule, false, 1)
-            clickStoriesByTopicItem(activityTestRule, 1)
-            verifyStoriesByTopicItemState(activityTestRule, true, 1)
-        }
-    }
-
-    @Test
-    fun verifyPocketLearnMoreLinkTest() {
-        activityTestRule.activityRule.applySettingsExceptions {
-            it.isRecentTabsFeatureEnabled = false
-            it.isRecentlyVisitedFeatureEnabled = false
-        }
-
-        homeScreen {
-        }.dismissOnboarding()
-
-        homeScreen {
-            verifyPoweredByPocket()
-        }.clickPocketLearnMoreLink(activityTestRule) {
-            verifyUrl("mozilla.org/en-US/firefox/pocket")
-        }
-    }
-
-    @Test
-    fun verifyCustomizeHomepageTest() {
+    fun verifyCustomizeHomepageButtonTest() {
         val defaultWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(defaultWebPage.url) {
         }.goToHomescreen {
         }.openCustomizeHomepage {
+            clickShortcutsButton()
             clickJumpBackInButton()
             clickRecentBookmarksButton()
             clickRecentSearchesButton()
@@ -255,9 +164,43 @@ class HomeScreenTest {
             verifyCustomizeHomepageButton(false)
         }.openThreeDotMenu {
         }.openCustomizeHome {
-            clickJumpBackInButton()
+            clickShortcutsButton()
         }.goBackToHomeScreen {
             verifyCustomizeHomepageButton(true)
+        }
+    }
+
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/414970
+    @SmokeTest
+    @Test
+    fun addPrivateBrowsingShortcutFromHomeScreenCFRTest() {
+        homeScreen {
+        }.triggerPrivateBrowsingShortcutPrompt {
+            verifyNoThanksPrivateBrowsingShortcutButton(activityTestRule)
+            verifyAddPrivateBrowsingShortcutButton(activityTestRule)
+            clickAddPrivateBrowsingShortcutButton(activityTestRule)
+            clickAddAutomaticallyButton()
+        }.openHomeScreenShortcut("Private ${TestHelper.appName}") {}
+        searchScreen {
+            verifySearchView()
+        }.dismissSearchBar {
+            verifyCommonMythsLink()
+        }
+    }
+
+    // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1569867
+    @Test
+    fun verifyJumpBackInContextualHintTest() {
+        activityTestRule.activityRule.applySettingsExceptions {
+            it.isJumpBackInCFREnabled = true
+        }
+
+        val genericPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
+
+        navigationToolbar {
+        }.enterURLAndEnterToBrowser(genericPage.url) {
+        }.goToHomescreen {
+            verifyJumpBackInMessage(activityTestRule)
         }
     }
 }

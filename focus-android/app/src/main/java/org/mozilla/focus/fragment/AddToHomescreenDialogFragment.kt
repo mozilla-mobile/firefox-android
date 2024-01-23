@@ -1,5 +1,4 @@
-/* -*- Mode: Java; c-basic-offset: 4; tab-width: 4; indent-tabs-mode: nil; -*-
- * This Source Code Form is subject to the terms of the Mozilla Public
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
@@ -26,7 +25,6 @@ import org.mozilla.focus.R
 import org.mozilla.focus.ext.components
 import org.mozilla.focus.shortcut.HomeScreen
 import org.mozilla.focus.shortcut.IconGenerator
-import org.mozilla.focus.telemetry.TelemetryWrapper
 
 /**
  * Fragment displaying a dialog where a user can change the title for a homescreen shortcut
@@ -87,8 +85,6 @@ class AddToHomescreenDialogFragment : DialogFragment() {
         addToHomescreenDialogCancelButton.setOnClickListener {
             AddToHomeScreen.cancelButtonTapped.record(NoExtras())
 
-            TelemetryWrapper.cancelAddToHomescreenShortcutEvent()
-
             dismiss()
         }
 
@@ -108,8 +104,6 @@ class AddToHomescreenDialogFragment : DialogFragment() {
                     hasEditedTitle = hasEditedTitle,
                 ),
             )
-
-            TelemetryWrapper.addToHomescreenShortcutEvent()
 
             PreferenceManager.getDefaultSharedPreferences(requireContext()).edit()
                 .putBoolean(

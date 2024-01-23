@@ -53,7 +53,7 @@ output-reports:
 comments:
   active: true
   AbsentOrWrongFileLicense:
-    active: false
+    active: true # Enabled in https://bugzilla.mozilla.org/show_bug.cgi?id=1795140
     licenseTemplateFile: 'license.template'
     licenseTemplateIsRegex: false
   CommentOverPrivateFunction:
@@ -131,7 +131,7 @@ complexity:
     threshold: 75 # (Default: 60) Increased in https://github.com/mozilla-mobile/android-components/issues/6350
   LongParameterList:
     active: true
-    functionThreshold: 6
+    functionThreshold: 8 # (Default: 6) Increased in https://bugzilla.mozilla.org/show_bug.cgi?id=1872996
     constructorThreshold: 7
     ignoreDefaultParameters: true # Enabled in https://github.com/mozilla-mobile/android-components/issues/10835
     ignoreDataClasses: true
@@ -663,8 +663,6 @@ style:
     active: true
   OptionalUnit:
     active: false
-  OptionalWhenBraces:
-    active: false
   PreferToOverPairSyntax:
     active: false
   ProtectedMemberInFinalClass:
@@ -786,9 +784,3 @@ style:
     active: true
     excludeImports:
       - 'java.util.*'
-
-# Custom Rules
-
-mozilla-rules:
-  AbsentOrWrongFileLicense:
-    active: true

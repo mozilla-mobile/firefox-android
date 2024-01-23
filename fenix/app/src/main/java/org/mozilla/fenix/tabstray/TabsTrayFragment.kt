@@ -53,6 +53,7 @@ import org.mozilla.fenix.ext.requireComponents
 import org.mozilla.fenix.ext.runIfFragmentIsAttached
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.home.HomeScreenViewModel
+import org.mozilla.fenix.library.bookmarks.BookmarksSharedViewModel
 import org.mozilla.fenix.share.ShareFragment
 import org.mozilla.fenix.tabstray.browser.SelectionBannerBinding
 import org.mozilla.fenix.tabstray.browser.SelectionBannerBinding.VisibilityModifier
@@ -99,6 +100,7 @@ class TabsTrayFragment : AppCompatDialogFragment() {
     private val tabsFeature = ViewBoundFeatureWrapper<TabsFeature>()
     private val tabsTrayInactiveTabsOnboardingBinding = ViewBoundFeatureWrapper<TabsTrayInactiveTabsOnboardingBinding>()
     private val syncedTabsIntegration = ViewBoundFeatureWrapper<SyncedTabsIntegration>()
+    private val bookmarksSharedViewModel: BookmarksSharedViewModel by activityViewModels()
 
     @VisibleForTesting
     @Suppress("VariableNaming")
@@ -188,6 +190,7 @@ class TabsTrayFragment : AppCompatDialogFragment() {
             showCancelledDownloadWarning = ::showCancelledDownloadWarning,
             showCollectionSnackbar = ::showCollectionSnackbar,
             showBookmarkSnackbar = ::showBookmarkSnackbar,
+            bookmarksSharedViewModel = bookmarksSharedViewModel,
         )
 
         tabsTrayInteractor = DefaultTabsTrayInteractor(
@@ -240,9 +243,12 @@ class TabsTrayFragment : AppCompatDialogFragment() {
                         appStore = requireComponents.appStore,
                         browserStore = requireComponents.core.store,
                         tabsTrayStore = tabsTrayStore,
+                        storage = requireComponents.core.thumbnailStorage,
                         displayTabsInGrid = requireContext().settings().gridTabView,
                         isInDebugMode = Config.channel.isDebug ||
                             requireComponents.settings.showSecretDebugMenuThisSession,
+                        shouldShowTabAutoCloseBanner = requireContext().settings().shouldShowAutoCloseTabsBanner &&
+                            requireContext().settings().canShowCfr,
                         shouldShowInactiveTabsAutoCloseDialog =
                         requireContext().settings()::shouldShowInactiveTabsAutoCloseDialog,
                         onTabPageClick = { page ->
@@ -291,6 +297,17 @@ class TabsTrayFragment : AppCompatDialogFragment() {
                         onBookmarkSelectedTabsClick = tabsTrayInteractor::onBookmarkSelectedTabsClicked,
                         onForceSelectedTabsAsInactiveClick = tabsTrayInteractor::onForceSelectedTabsAsInactiveClicked,
                         onTabsTrayDismiss = ::onTabsTrayDismissed,
+                        onTabAutoCloseBannerViewOptionsClick = {
+                            navigationInteractor.onTabSettingsClicked()
+                            requireContext().settings().shouldShowAutoCloseTabsBanner = false
+                        },
+                        onTabAutoCloseBannerDismiss = {
+                            requireContext().settings().shouldShowAutoCloseTabsBanner = false
+                        },
+                        onTabAutoCloseBannerShown = {
+                            requireContext().settings().lastCfrShownTimeInMillis = System.currentTimeMillis()
+                        },
+                        onMove = tabsTrayInteractor::onTabsMove,
                     )
                 }
             }
@@ -299,6 +316,7 @@ class TabsTrayFragment : AppCompatDialogFragment() {
                 FirefoxTheme(theme = Theme.getTheme(allowPrivateTheme = false)) {
                     TabsTrayFab(
                         tabsTrayStore = tabsTrayStore,
+                        isSignedIn = requireContext().settings().signedInFxaAccount,
                         onNormalTabsFabClicked = tabsTrayInteractor::onNormalTabsFabClicked,
                         onPrivateTabsFabClicked = tabsTrayInteractor::onPrivateTabsFabClicked,
                         onSyncedTabsFabClicked = tabsTrayInteractor::onSyncedTabsFabClicked,
@@ -449,6 +467,7 @@ class TabsTrayFragment : AppCompatDialogFragment() {
                     store = tabsTrayStore,
                     actionButton = fabButtonBinding.newTabButton,
                     interactor = tabsTrayInteractor,
+                    isSignedIn = requireContext().settings().signedInFxaAccount,
                 ),
                 owner = this,
                 view = view,
@@ -623,7 +642,6 @@ class TabsTrayFragment : AppCompatDialogFragment() {
     }
 
     @VisibleForTesting
-    @Suppress("LongParameterList")
     internal fun setupPager(
         context: Context,
         lifecycleOwner: LifecycleOwner,

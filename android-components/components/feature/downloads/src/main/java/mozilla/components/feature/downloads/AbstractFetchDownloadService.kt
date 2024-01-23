@@ -34,9 +34,9 @@ import androidx.annotation.ColorRes
 import androidx.annotation.GuardedBy
 import androidx.annotation.VisibleForTesting
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
@@ -75,6 +75,7 @@ import mozilla.components.support.ktx.kotlin.ifNullOrEmpty
 import mozilla.components.support.ktx.kotlin.sanitizeURL
 import mozilla.components.support.ktx.kotlinx.coroutines.throttleLatest
 import mozilla.components.support.utils.DownloadUtils
+import mozilla.components.support.utils.ext.registerReceiverCompat
 import mozilla.components.support.utils.ext.stopForegroundCompat
 import java.io.File
 import java.io.FileOutputStream
@@ -99,9 +100,6 @@ abstract class AbstractFetchDownloadService : Service() {
     protected abstract val httpClient: Client
 
     protected open val style: Style = Style()
-
-    @VisibleForTesting
-    internal val broadcastManager by lazy { LocalBroadcastManager.getInstance(this) }
 
     @VisibleForTesting
     internal val context: Context get() = this
@@ -189,16 +187,7 @@ abstract class AbstractFetchDownloadService : Service() {
                     }
 
                     ACTION_CANCEL -> {
-                        removeNotification(context, currentDownloadJobState)
-                        currentDownloadJobState.lastNotificationUpdate = System.currentTimeMillis()
-                        setDownloadJobStatus(currentDownloadJobState, CANCELLED)
-                        currentDownloadJobState.job?.cancel()
-
-                        currentDownloadJobState.job = CoroutineScope(IO).launch {
-                            deleteDownloadingFile(currentDownloadJobState.state)
-                            currentDownloadJobState.downloadDeleted = true
-                        }
-
+                        cancelDownloadJob(currentDownloadJobState)
                         removeDownloadJob(currentDownloadJobState)
                         emitNotificationCancelFact()
                         logger.debug("ACTION_CANCEL for ${currentDownloadJobState.state.id}")
@@ -269,6 +258,7 @@ abstract class AbstractFetchDownloadService : Service() {
                 )
                 handleDownloadIntent(newDownloadState)
             }
+
             else -> {
                 handleDownloadIntent(download)
             }
@@ -281,6 +271,7 @@ abstract class AbstractFetchDownloadService : Service() {
     internal fun handleRemovePrivateDownloadIntent(download: DownloadState) {
         if (download.private) {
             downloadJobs[download.id]?.let {
+                cancelDownloadJob(it)
                 removeDownloadJob(it)
             }
             store.dispatch(DownloadAction.RemoveDownloadAction(download.id))
@@ -319,6 +310,23 @@ abstract class AbstractFetchDownloadService : Service() {
                 updateDownloadNotification()
                 if (downloadJobs.isEmpty()) cancel()
             }
+        }
+    }
+
+    @VisibleForTesting
+    internal fun cancelDownloadJob(
+        currentDownloadJobState: DownloadJobState,
+    ) {
+        currentDownloadJobState.lastNotificationUpdate = System.currentTimeMillis()
+        setDownloadJobStatus(
+            currentDownloadJobState,
+            CANCELLED,
+        )
+        currentDownloadJobState.job?.cancel()
+        currentDownloadJobState.job = CoroutineScope(IO).launch {
+            deleteDownloadingFile(currentDownloadJobState.state)
+            currentDownloadJobState.downloadDeleted =
+                true
         }
     }
 
@@ -528,7 +536,11 @@ abstract class AbstractFetchDownloadService : Service() {
             addAction(ACTION_OPEN)
         }
 
-        context.registerReceiver(broadcastReceiver, filter)
+        context.registerReceiverCompat(
+            broadcastReceiver,
+            filter,
+            ContextCompat.RECEIVER_NOT_EXPORTED,
+        )
     }
 
     @VisibleForTesting
@@ -701,6 +713,7 @@ abstract class AbstractFetchDownloadService : Service() {
             download.url.sanitizeURL(),
             headers = headers,
             private = download.private,
+            referrerUrl = download.referrerUrl,
         )
         // When resuming a download we need to use the httpClient as
         // download.response doesn't support adding headers.
@@ -838,8 +851,9 @@ abstract class AbstractFetchDownloadService : Service() {
         val intent = Intent(ACTION_DOWNLOAD_COMPLETE)
         intent.putExtra(EXTRA_DOWNLOAD_STATUS, getDownloadJobStatus(downloadState))
         intent.putExtra(EXTRA_DOWNLOAD_ID, downloadState.state.id)
+        intent.setPackage(context.packageName)
 
-        broadcastManager.sendBroadcast(intent)
+        context.sendBroadcast(intent, "${context.packageName}.permission.RECEIVE_DOWNLOAD_BROADCAST")
     }
 
     /**

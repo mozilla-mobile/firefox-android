@@ -36,6 +36,7 @@ import mozilla.components.feature.prompts.widget.MonthAndYearPicker
 import mozilla.components.feature.prompts.widget.TimePrecisionPicker
 import mozilla.components.support.utils.TimePicker.shouldShowSecondsPicker
 import mozilla.components.support.utils.ext.getSerializableCompat
+import mozilla.components.ui.widgets.withCenterAlignedButtons
 import java.util.Calendar
 import java.util.Date
 
@@ -125,6 +126,17 @@ internal class TimePickerDialogFragment :
         onClick(dialog, BUTTON_NEGATIVE)
     }
 
+    override fun onStart() {
+        super.onStart()
+
+        val alertDialog = dialog
+        if (alertDialog is AlertDialog) {
+            // We want to call the extension function after the show() call on the dialog,
+            // and the DialogFragment does that call during onStart().
+            alertDialog.withCenterAlignedButtons()
+        }
+    }
+
     // Create the appropriate time picker dialog for the given step value.
     private fun createTimePickerDialog(context: Context): AlertDialog {
         // Create the Android time picker dialog
@@ -149,9 +161,9 @@ internal class TimePickerDialogFragment :
                         context = requireContext(),
                         selectedTime = initialDate.toCalendar(),
                         maxTime = maximumDate?.toCalendar()
-                            ?: MonthAndYearPicker.getDefaultMaxDate(),
+                            ?: TimePrecisionPicker.getDefaultMaxTime(),
                         minTime = minimumDate?.toCalendar()
-                            ?: MonthAndYearPicker.getDefaultMinDate(),
+                            ?: TimePrecisionPicker.getDefaultMinTime(),
                         stepValue = stepValue,
                         timeSetListener = this,
                     ),
@@ -295,7 +307,6 @@ internal class TimePickerDialogFragment :
          *
          * @return a new instance of [TimePickerDialogFragment]
          */
-        @Suppress("LongParameterList")
         fun newInstance(
             sessionId: String,
             promptRequestUID: String,

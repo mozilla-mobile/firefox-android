@@ -12,7 +12,17 @@ interface ToolbarMenu {
     sealed class Item {
         object Settings : Item()
         data class RequestDesktop(val isChecked: Boolean) : Item()
+
+        /**
+         * Opens the current private tabs in a regular tab.
+         */
+        object OpenInRegularTab : Item()
         object FindInPage : Item()
+
+        /**
+         * Opens the translations flow.
+         */
+        object Translate : Item()
         object Share : Item()
         data class Back(val viewHistory: Boolean) : Item()
         data class Forward(val viewHistory: Boolean) : Item()

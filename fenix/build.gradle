@@ -1,6 +1,11 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
-import org.mozilla.fenix.gradle.tasks.GithubDetailsTask
+import io.gitlab.arturbosch.detekt.Detekt
+import io.gitlab.arturbosch.detekt.DetektCreateBaselineTask
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.nio.file.StandardCopyOption
 
 buildscript {
     // This logic is duplicated in the allprojects block: I don't know how to fix that.
@@ -86,6 +91,7 @@ buildscript {
     // intermediate variable which can pull from FenixDependenciesPlugin.kt and be used later.
     ext {
         detekt_plugin = Versions.detekt
+        ksp_plugin = Versions.ksp_plugin
         protobuf_plugin = FenixVersions.protobuf_plugin
         python_envs_plugin = Versions.python_envs_plugin
     }
@@ -93,6 +99,7 @@ buildscript {
 
 plugins {
     id("io.gitlab.arturbosch.detekt").version("$detekt_plugin")
+    id("com.google.devtools.ksp").version("$ksp_plugin")
 }
 
 allprojects {
@@ -162,17 +169,30 @@ allprojects {
         }
     }
 
-    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+    tasks.withType(KotlinCompile).configureEach {
         kotlinOptions.jvmTarget = "17"
         kotlinOptions.allWarningsAsErrors = true
         kotlinOptions.freeCompilerArgs += [
-            "-opt-in=kotlin.RequiresOptIn", "-Xjvm-default=all"
+            "-opt-in=kotlin.RequiresOptIn", "-Xjvm-default=all-compatibility"
         ]
     }
 }
 
+subprojects {
+    afterEvaluate {
+        if (it.hasProperty('android')) {
+            android {
+                compileOptions {
+                    sourceCompatibility JavaVersion.VERSION_17
+                    targetCompatibility JavaVersion.VERSION_17
+                }
+            }
+        }
+    }
+}
+
 tasks.register('clean', Delete) {
-    delete rootProject.buildDir
+    delete rootProject.layout.buildDirectory
 }
 
 detekt {
@@ -193,7 +213,7 @@ detekt {
     }
 }
 
-tasks.withType(io.gitlab.arturbosch.detekt.Detekt).configureEach() {
+tasks.withType(Detekt).configureEach() {
     autoCorrect = true
 
     exclude "**/test/**"
@@ -204,7 +224,7 @@ tasks.withType(io.gitlab.arturbosch.detekt.Detekt).configureEach() {
 }
 
 // Apply same path exclusions as for the main task
-tasks.withType(io.gitlab.arturbosch.detekt.DetektCreateBaselineTask).configureEach() {
+tasks.withType(DetektCreateBaselineTask).configureEach() {
     exclude "**/test/**"
     exclude "**/androidTest/**"
     exclude "**/build/**"
@@ -231,11 +251,11 @@ tasks.register('ktlint', JavaExec) {
     group = "verification"
     description = "Check Kotlin code style."
     classpath = configurations.ktlint
-    main = "com.pinterest.ktlint.Main"
+    mainClass.set("com.pinterest.ktlint.Main")
     args "app/src/**/*.kt", "!**/build/**/*.kt", "--baseline=ktlint-baseline.xml"
 }
 
-task ktlintFormat(type: JavaExec, group: "formatting") {
+tasks.register('ktlintFormat', JavaExec) {
     description = "Fix Kotlin code style deviations."
     classpath = configurations.ktlint
     mainClass.set("com.pinterest.ktlint.Main")
@@ -243,7 +263,7 @@ task ktlintFormat(type: JavaExec, group: "formatting") {
     jvmArgs("--add-opens", "java.base/java.lang=ALL-UNNAMED")
 }
 
-tasks.withType(io.gitlab.arturbosch.detekt.Detekt.class).configureEach {
+tasks.withType(Detekt.class).configureEach {
     exclude("**/resources/**")
     exclude("**/tmp/**")
 }
@@ -265,4 +285,19 @@ tasks.register("githubLintDetektDetails", GithubDetailsTask) {
 
 tasks.register("githubLintAndroidDetails", GithubDetailsTask) {
     text = "### [Android Lint Results Fenix]({reportsUrl}/lint-results-debug.html)"
+}
+
+// Task to copy generated baseline profile to the app module nightly variant.
+tasks.register("copyBaselineProfile", DefaultTask) {
+    doLast {
+        File profileFile = fileTree('benchmark/build/outputs') {
+            include '**/*baseline-prof.txt'
+        }.getSingleFile()
+        def destinationPath = Paths.get("app", "src", "nightly", "baselineProfiles", "baseline-prof.txt")
+        File destinationDir = destinationPath.toFile().parentFile
+        if (!destinationDir.exists()) {
+            destinationDir.mkdirs()
+        }
+        Files.copy(profileFile.toPath(), destinationPath, StandardCopyOption.REPLACE_EXISTING)
+    }
 }

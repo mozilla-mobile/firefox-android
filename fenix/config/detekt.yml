@@ -56,7 +56,7 @@ output-reports:
 comments:
   active: true
   AbsentOrWrongFileLicense:
-    active: false
+    active: true
     licenseTemplateFile: 'license.template'
     licenseTemplateIsRegex: false
   CommentOverPrivateFunction:
@@ -72,8 +72,8 @@ comments:
     active: false
     excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/androidUnitTest/**', '**/androidInstrumentedTest/**', '**/jsTest/**', '**/iosTest/**']
   OutdatedDocumentation:
-    active: false
-    matchTypeParameters: true
+    active: true # Enabled in https://bugzilla.mozilla.org/show_bug.cgi?id=1848527
+    matchTypeParameters: false # (Default: true) Disabled in https://bugzilla.mozilla.org/show_bug.cgi?id=1848527
     matchDeclarationsOrder: true
     allowParamOnConstructorProperties: false
   UndocumentedPublicClass:
@@ -134,7 +134,7 @@ complexity:
     threshold: 75 # (Default: 60) Increased in https://github.com/mozilla-mobile/android-components/issues/6350
   LongParameterList:
     active: true
-    functionThreshold: 6
+    functionThreshold: 8 # (Default: 6) Increased in https://bugzilla.mozilla.org/show_bug.cgi?id=1872996
     constructorThreshold: 7
     ignoreDefaultParameters: true # Enabled in https://github.com/mozilla-mobile/android-components/issues/10835
     ignoreDataClasses: true
@@ -665,8 +665,6 @@ style:
   OptionalAbstractKeyword:
     active: true
   OptionalUnit:
-    active: false
-  OptionalWhenBraces:
     active: false
   PreferToOverPairSyntax:
     active: false

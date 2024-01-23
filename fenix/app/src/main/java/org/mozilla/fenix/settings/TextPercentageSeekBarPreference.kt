@@ -303,8 +303,8 @@ class TextPercentageSeekBarPreference @JvmOverloads constructor(
         value = getPersistedInt((defaultValue as Int?)!!)
     }
 
-    override fun onGetDefaultValue(a: TypedArray?, index: Int): Any {
-        return a!!.getInt(index, 0)
+    override fun onGetDefaultValue(a: TypedArray, index: Int): Any {
+        return a.getInt(index, 0)
     }
 
     private fun setValueInternal(value: Int, notifyChanged: Boolean) {
@@ -407,7 +407,7 @@ class TextPercentageSeekBarPreference @JvmOverloads constructor(
         }
     }
 
-    override fun onSaveInstanceState(): Parcelable {
+    override fun onSaveInstanceState(): Parcelable? {
         val superState = super.onSaveInstanceState()
         if (isPersistent) {
             // No need to save instance state since it's persistent
@@ -415,11 +415,16 @@ class TextPercentageSeekBarPreference @JvmOverloads constructor(
         }
 
         // Save the instance state
-        val myState = SavedState(superState)
-        myState.mSeekBarValue = mSeekBarValue
-        myState.mMin = mMin
-        myState.mMax = mMax
-        return myState
+
+        return if (superState != null) {
+            val myState = SavedState(superState)
+            myState.mSeekBarValue = mSeekBarValue
+            myState.mMin = mMin
+            myState.mMax = mMax
+            myState
+        } else {
+            null
+        }
     }
 
     override fun onRestoreInstanceState(state: Parcelable?) {

@@ -17,6 +17,16 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.CAMERA" />
+
+    <!-- This is needed because the android.permission.CAMERA above automatically
+    adds a requirements for camera hardware and we don't want add those restrictions -->
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera.autofocus"
+        android:required="false" />
+
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
     <uses-permission android:name="android.permission.VIBRATE" />
@@ -43,7 +53,6 @@
     <application
         android:name=".FenixApplication"
         android:allowBackup="false"
-        android:extractNativeLibs="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
@@ -146,8 +155,6 @@
                     android:host="urls_bookmarks"/>
                 <data android:scheme="${deepLinkScheme}"
                     android:host="urls_history"/>
-                <data android:scheme="${deepLinkScheme}"
-                    android:host="test_deferred_deep_link"/>
             </intent-filter>
         </activity>
 
@@ -254,6 +261,14 @@
                 <data android:scheme="https" />
             </intent-filter>
 
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="application/pdf" />
+                <data android:scheme="content" />
+            </intent-filter>
+
             <meta-data
                 android:name="com.android.systemui.action_assist_icon"
                 android:resource="@mipmap/ic_launcher" />
@@ -325,6 +340,7 @@
 
         <service
             android:name=".downloads.DownloadService"
+            android:foregroundServiceType="dataSync"
             android:exported="false" />
 
         <receiver
@@ -338,8 +354,21 @@
                 android:resource="@xml/search_widget_info" />
         </receiver>
 
-        <service android:name=".session.PrivateNotificationService"
-                android:exported="false" />
+        <receiver android:name=".onboarding.WidgetPinnedReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="org.mozilla.fenix.onboarding.WidgetPinnedReceiver.widgetPinned"/>
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name=".session.PrivateNotificationService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="This foreground service allows users to easily remove private tabs from the notification" />
+        </service>
 
         <service
             android:name=".messaging.NotificationDismissedService"
