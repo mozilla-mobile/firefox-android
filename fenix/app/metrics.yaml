@@ -135,12 +135,12 @@ events:
         description: |
           A string containing the name of the item the user tapped. These items
           include:
-          add_to_homescreen, add_to_top_sites, addons_manager, back, bookmark,
-          bookmarks, desktop_view_off, desktop_view_on, downloads,
-          find_in_page, forward, history, new_tab, open_in_app, open_in_fenix,
-          quit, reader_mode_appearance, reload, remove_from_top_sites,
+          add_to_homescreen, add_to_top_sites, addons_manager, back, back_long_press,
+          bookmark, bookmarks, desktop_view_off, desktop_view_on, downloads,
+          find_in_page, forward, forward_long_press, history, new_tab, open_in_app, 
+          open_in_fenix, quit, reader_mode_appearance, reload, remove_from_top_sites,
           save_to_collection, set_default_browser, settings, share, stop,
-          sync_account, and print_content.
+          sync_account, translate and print_content.
         type: string
     bugs:
       - https://github.com/mozilla-mobile/fenix/issues/1024
@@ -376,6 +376,27 @@ events:
     metadata:
       tags:
         - PrivateBrowsing
+  opened_ext_pdf:
+    type: event
+    description: |
+      A user opened a PDF with Fenix from another app
+    extra_keys:
+      referrer_is_fenix:
+        description: |
+          If the PDF was opened from Fenix itself (for example from the Download notification)
+        type: boolean
+    bugs:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1871548
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-android/pull/4940
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+      - mcastelluccio@mozilla.com
+      - calixte@mozilla.com
+      - sylvestre@mozilla.com
+    expires: never
   synced_tab_opened:
     type: event
     description: |
@@ -454,6 +475,23 @@ events:
     notification_emails:
       - android-probes@mozilla.com
     expires: never
+  browser_toolbar_security_indicator_tapped:
+    type: event
+    description: |
+      An event that indicates that a user has tapped
+      the security indicator icon (at the start of the domain name).
+    bugs:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1869664
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-android/pull/5019#issuecomment-1876329933
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: never
+    metadata:
+      tags:
+        - Toolbar
   browser_toolbar_erase_tapped:
     type: event
     description: |
@@ -468,6 +506,71 @@ events:
     notification_emails:
       - android-probes@mozilla.com
     expires: never
+  browser_toolbar_input_cleared:
+    type: event
+    description: |
+      A user pressed the circle cross icon, clearing the input in the toolbar.
+    bugs:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1869664
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-android/pull/5019#issuecomment-1876329933
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: never
+    metadata:
+      tags:
+        - Toolbar
+  browser_toolbar_qr_scan_tapped:
+    type: event
+    description: |
+      An event that indicates that a user has tapped
+      QR scan button on browser toolbar.
+    bugs:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1862096
+    data_reviews:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1862096
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: never
+    metadata:
+      tags:
+        - Toolbar
+  browser_toolbar_qr_scan_completed:
+    type: event
+    description: |
+      An event that indicates that a QR code has been scanned successfully.
+    bugs:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1869664
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-android/pull/5019#issuecomment-1876329933
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: never
+    metadata:
+      tags:
+        - Toolbar
+  toolbar_tab_swipe:
+    type: event
+    description: |
+      A user swiped the toolbar to change the current tab.
+    bugs:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1862096
+    data_reviews:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1862096
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: never
+    metadata:
+      tags:
+        - Toolbar
   tab_view_changed:
     type: event
     description: |
@@ -740,6 +843,17 @@ events:
     metadata:
       tags:
         - Search
+  first_session_ping_cancelled:
+    type: event
+    description: |
+      First session ping cancelled because Adjust metrics were empty.
+    bugs:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1875514
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-android/pull/5223
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: never
 
 splash_screen:
   first_launch_extended:
@@ -958,82 +1072,10 @@ onboarding:
     metadata:
       tags:
         - Onboarding
-  notif_ppp_impression:
-    type: event
-    description: |
-      Notification pre permission prompt was shown to the user.
-    bugs:
-      - https://bugzilla.mozilla.org/show_bug.cgi?id=1810115
-    data_reviews:
-      - https://github.com/mozilla-mobile/fenix/pull/28529
-      - https://github.com/mozilla-mobile/firefox-android/pull/4039
-    data_sensitivity:
-      - interaction
-    notification_emails:
-      - android-probes@mozilla.com
-    expires: never
-    metadata:
-      tags:
-        - Notifications
-        - Onboarding
-  notif_ppp_close_click:
-    type: event
-    description: |
-      User clicked the close button on the notification pre permission prompt.
-    bugs:
-      - https://bugzilla.mozilla.org/show_bug.cgi?id=1810115
-    data_reviews:
-      - https://github.com/mozilla-mobile/fenix/pull/28529
-      - https://github.com/mozilla-mobile/firefox-android/pull/4039
-    data_sensitivity:
-      - interaction
-    notification_emails:
-      - android-probes@mozilla.com
-    expires: never
-    metadata:
-      tags:
-        - Notifications
-        - Onboarding
-  notif_ppp_positive_btn_click:
-    type: event
-    description: |
-      User clicked the positive button on notification pre permission prompt.
-    bugs:
-      - https://bugzilla.mozilla.org/show_bug.cgi?id=1810115
-    data_reviews:
-      - https://github.com/mozilla-mobile/fenix/pull/28529
-      - https://github.com/mozilla-mobile/firefox-android/pull/4039
-    data_sensitivity:
-      - interaction
-    notification_emails:
-      - android-probes@mozilla.com
-    expires: never
-    metadata:
-      tags:
-        - Notifications
-        - Onboarding
-  notif_ppp_negative_btn_click:
-    type: event
-    description: |
-      User clicked the negative button on notification pre permission prompt.
-    bugs:
-      - https://bugzilla.mozilla.org/show_bug.cgi?id=1810115
-    data_reviews:
-      - https://github.com/mozilla-mobile/fenix/pull/28529
-      - https://github.com/mozilla-mobile/firefox-android/pull/4039
-    data_sensitivity:
-      - interaction
-    notification_emails:
-      - android-probes@mozilla.com
-    expires: never
-    metadata:
-      tags:
-        - Notifications
-        - Onboarding
   set_to_default_card:
     type: event
     description: |
-      User viewed juno onboarding set to default card.
+      User viewed onboarding set to default card.
     extra_keys:
       element_type:
         type: string
@@ -1067,7 +1109,7 @@ onboarding:
   sign_in_card:
     type: event
     description: |
-      User viewed juno onboarding sign in card.
+      User viewed onboarding sign in card.
     extra_keys:
       element_type:
         type: string
@@ -1101,7 +1143,7 @@ onboarding:
   turn_on_notifications_card:
     type: event
     description: |
-      User viewed juno onboarding notification permission card.
+      User viewed onboarding notification permission card.
     extra_keys:
       element_type:
         type: string
@@ -1135,7 +1177,7 @@ onboarding:
   set_to_default:
     type: event
     description: |
-      User tapped on set to default button in juno onboarding.
+      User tapped on set to default button in onboarding.
     extra_keys:
       element_type:
         type: string
@@ -1169,7 +1211,7 @@ onboarding:
   skip_default:
     type: event
     description: |
-      User tapped on skip set to default button in juno onboarding.
+      User tapped on skip set to default button in onboarding.
     extra_keys:
       element_type:
         type: string
@@ -1203,7 +1245,7 @@ onboarding:
   sign_in:
     type: event
     description: |
-      User tapped on sign in button in juno onboarding.
+      User tapped on sign in button in onboarding.
     extra_keys:
       element_type:
         type: string
@@ -1237,7 +1279,7 @@ onboarding:
   skip_sign_in:
     type: event
     description: |
-      User tapped on skip sign in button in juno onboarding.
+      User tapped on skip sign in button in onboarding.
     extra_keys:
       element_type:
         type: string
@@ -1271,7 +1313,7 @@ onboarding:
   turn_on_notifications:
     type: event
     description: |
-      User tapped on turn on notifications button in juno onboarding.
+      User tapped on turn on notifications button in onboarding.
     extra_keys:
       element_type:
         type: string
@@ -1305,7 +1347,7 @@ onboarding:
   skip_turn_on_notifications:
     type: event
     description: |
-      User tapped on skip turn on notification button in juno onboarding.
+      User tapped on skip turn on notification button in onboarding.
     extra_keys:
       element_type:
         type: string
@@ -1339,7 +1381,7 @@ onboarding:
   add_search_widget_card:
     type: event
     description: |
-      User viewed juno onboarding add search widget card.
+      User viewed onboarding add search widget card.
     extra_keys:
       element_type:
         type: string
@@ -1373,7 +1415,7 @@ onboarding:
   add_search_widget:
     type: event
     description: |
-      User tapped on Add Firefox Widget in juno onboarding.
+      User tapped on Add Firefox Widget in onboarding.
     extra_keys:
       element_type:
         type: string
@@ -1407,7 +1449,7 @@ onboarding:
   skip_add_search_widget:
     type: event
     description: |
-      User tapped on skip add search widget button in juno onboarding.
+      User tapped on skip add search widget button in onboarding.
     extra_keys:
       element_type:
         type: string
@@ -1441,7 +1483,7 @@ onboarding:
   privacy_policy:
     type: event
     description: |
-      User tapped on privacy policy link in juno onboarding.
+      User tapped on privacy policy link in onboarding.
     extra_keys:
       element_type:
         type: string
@@ -1475,7 +1517,7 @@ onboarding:
   completed:
     type: event
     description: |
-      User completed the juno onboarding.
+      User completed onboarding.
     extra_keys:
       sequence_position:
         type: string
@@ -2630,7 +2672,7 @@ metrics:
     notification_emails:
       - android-probes@mozilla.com
       - tom@mozilla.com
-    expires: 122
+    expires: 124
 
 customize_home:
   most_visited_sites:
@@ -9107,6 +9149,104 @@ awesomebar:
     metadata:
       tags:
         - Search
+  sponsored_suggestion_clicked:
+    type: event
+    description: |
+      A sponsored suggestion in the awesomebar was clicked.
+    bugs:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1871156
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-android/pull/4914#issuecomment-1874271848
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+      - lina@mozilla.com
+      - ttran@mozilla.com
+      - najiang@mozilla.com
+    expires: never
+    extra_keys:
+      provider: &sponsored_suggestion_provider
+        description: |
+          The provider of the sponsored suggestion. Possible values: `amp` (for adMarketplace
+          suggestions).
+        type: string
+    metadata:
+      tags:
+        - Search
+  non_sponsored_suggestion_clicked:
+    type: event
+    description: |
+      A non-sponsored suggestion in the awesomebar was clicked.
+    bugs:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1871156
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-android/pull/4914#issuecomment-1874271848
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+      - lina@mozilla.com
+      - ttran@mozilla.com
+      - najiang@mozilla.com
+    expires: never
+    extra_keys:
+      provider: &non_sponsored_suggestion_provider
+        description: |
+          The provider of the non-sponsored suggestion. Possible values: `wikipedia`.
+        type: string
+    metadata:
+      tags:
+        - Search
+  sponsored_suggestion_impressed:
+    type: event
+    description: |
+      A sponsored suggestion was visible when the user finished interacting with the awesomebar.
+    bugs:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1871156
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-android/pull/4914#issuecomment-1874271848
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+      - lina@mozilla.com
+      - ttran@mozilla.com
+      - najiang@mozilla.com
+    expires: never
+    extra_keys:
+      provider: *sponsored_suggestion_provider
+      engagement_abandoned: &awesomebar_engagement_abandoned
+        description: |
+          If `true`, the user dismissed the awesomebar without navigating to a destination. If
+          `false`, the user finished engaging with the awesomebar by navigating to a destination,
+          like a URL, a search results page, or a suggestion.
+        type: boolean
+    metadata:
+      tags:
+        - Search
+  non_sponsored_suggestion_impressed:
+    type: event
+    description: |
+      A non-sponsored suggestion was visible when the user finished interacting with the awesomebar.
+    bugs:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1871156
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-android/pull/4914#issuecomment-1874271848
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+      - lina@mozilla.com
+      - ttran@mozilla.com
+      - najiang@mozilla.com
+    expires: never
+    extra_keys:
+      provider: *non_sponsored_suggestion_provider
+      engagement_abandoned: *awesomebar_engagement_abandoned
+    metadata:
+      tags:
+        - Search
 android_autofill:
   supported:
     type: boolean
@@ -10941,6 +11081,48 @@ shopping:
           are `enabled` and `disabled`.
     metadata:
       tags:
+        - Shopping
+  ads_exposure:
+    type: event
+    description: |
+      On a supported product page, the review checker showed analysis,
+      and the ads exposure pref was enabled, or review checker ads were enabled,
+      and when we tried to fetch an ad from the ad server, an ad was available.
+      Does not indicate whether the ad was actually shown.
+    send_in_pings:
+      - events
+    bugs:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1866992
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-android/pull/4622#issuecomment-1829905076
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: never
+    metadata:
+      tags:
+        - Shopping
+  surface_no_ads_available:
+    type: event
+    description: |
+      On a supported product page, the review checker
+      showed analysis, and review checker ads were enabled,
+      but when we tried to fetch an ad from the ad server,
+      no ad was available.
+    send_in_pings:
+      - events
+    bugs:
+      - https://bugzilla.mozilla.org/show_bug.cgi?id=1866992
+    data_reviews:
+      - https://github.com/mozilla-mobile/firefox-android/pull/4622#issuecomment-1829905076
+    data_sensitivity:
+      - interaction
+    notification_emails:
+      - android-probes@mozilla.com
+    expires: never
+    metadata:
+       tags:
         - Shopping
 
 shopping.settings:

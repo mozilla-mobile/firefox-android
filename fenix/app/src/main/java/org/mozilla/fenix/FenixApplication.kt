@@ -207,15 +207,15 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
             enableEventTimestamps = FxNimbus.features.glean.value().enableEventTimestamps,
         )
 
+        // Set the metric configuration from Nimbus.
+        Glean.setMetricsEnabledConfig(FxNimbus.features.glean.value().metricsEnabled)
+
         Glean.initialize(
             applicationContext = this,
             configuration = configuration.setCustomEndpointIfAvailable(customEndpoint),
             uploadEnabled = telemetryEnabled,
             buildInfo = GleanBuildInfo.buildInfo,
         )
-
-        // Set the metric configuration from Nimbus.
-        Glean.setMetricsEnabledConfig(FxNimbus.features.glean.value().metricsEnabled)
 
         // We avoid blocking the main thread on startup by setting startup metrics on the background thread.
         val store = components.core.store
@@ -374,9 +374,11 @@ open class FenixApplication : LocaleAwareApplication(), Provider {
                         // If Firefox Suggest is enabled, register a worker to periodically ingest
                         // new search suggestions. The worker requires us to have called
                         // `GlobalFxSuggestDependencyProvider.initialize`, which we did before
-                        // scheduling these tasks.
+                        // scheduling these tasks. When disabled we stop the periodic work.
                         if (settings().enableFxSuggest) {
                             components.fxSuggest.ingestionScheduler.startPeriodicIngestion()
+                        } else {
+                            components.fxSuggest.ingestionScheduler.stopPeriodicIngestion()
                         }
                     }
                 }

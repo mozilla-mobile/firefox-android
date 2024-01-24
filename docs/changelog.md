@@ -4,17 +4,58 @@ title: Changelog
 permalink: /changelog/
 ---
 
-# 122.0 (In Development)
-* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v121..main)
+# 124.0 (In Development)
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v123..main)
 * [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
 * [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/Gecko.kt)
 * [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/.config.yml)
+
+* **all components**
+  * All new usages of the `concept-fetch` component to make fetch requests now have conservative-mode off by default. Current features will continue to use conservative mode until individually updated.
+
+# 123.0
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v122..releases_v123)
+* [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/releases_v123/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
+* [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/releases_v123/android-components/plugins/dependencies/src/main/java/Gecko.kt)
+* [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/releases_v123/android-components/.config.yml)
+
+* **feature-customtabs**
+ * Sharing a URL from a custom tab always uses the current url of the session. [Bug 1831803](https://bugzilla.mozilla.org/show_bug.cgi?id=1831803)
+
+# 122.0
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v121..releases_v122)
+* [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/releases_v122/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
+* [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/releases_v122/android-components/plugins/dependencies/src/main/java/Gecko.kt)
+* [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/releases_v122/android-components/.config.yml)
+
+* **concept-engine**
+  * Add `reportBackInStock` API to `EngineSession` to allow reporting a shopping product is back in stock. [Bug 1858947](https://bugzilla.mozilla.org/show_bug.cgi?id=1858947)
+  * Add `emailTrackerBlockingPrivateBrowsing` API to `Settings` to toggle Email Tracker Blocking in Private Browsing Mode [Bug 1866927](https://bugzilla.mozilla.org/show_bug.cgi?id=1866927)
 
 * **feature-media**
   * Added `FOREGROUND_SERVICE_MEDIA_PLAYBACK` permission to the `AndroidManifest.xml`.
 
 * **support-utils**
   * Recognize IPv6 literals in the address bar. [Bug 1803465](https://bugzilla.mozilla.org/show_bug.cgi?id=1803465)
+
+* **browser-engine-gecko**
+  * Enable nested scrolling on `GeckoEngineView` as required by `NestedGeckoView`. [Bug 1847305](https://bugzilla.mozilla.org/show_bug.cgi?id=1847305)
+  * `NestedGeckoView` now disallows touch interception until we receive a response from `GeckoView#onTouchEventForDetailResult`. [Bug 1847305](https://bugzilla.mozilla.org/show_bug.cgi?id=1847305)
+  * Add `globalPrivacyControlEnabled` setting to allow enabling Global Privacy Control in normal browsing. This is always enabled in private browsing. [Bug 1865357](https://bugzilla.mozilla.org/show_bug.cgi?id=1865357)
+  * Adds support to toggle Email Tracker Blocking in Private Mode with new `emailTrackerBlockingPrivateBrowsing` API [Bug 1866927](https://bugzilla.mozilla.org/show_bug.cgi?id=1866927)
+
+* **samples-browser**
+  * Use `VerticalSwipeRefreshLayout` from AndroidComponents instead of AndroidX `SwipeRefreshLayout` to represent better Fenix behavior
+
+* **places-bookmark-storage**:
+  * Added `countBookmarksInTrees` to more efficiently determine how many bookmarks exist under part or parts of a bookmarks tree, which
+    is taken advantage of by `DesktopFolders`.
+
+* **support-base**
+  * Make `message` param non optional for the Logging APIs. [Bug 1867606](https://bugzilla.mozilla.org/show_bug.cgi?id=1867606)
+
+* **nimbus**
+  * Add `nimbus-is-ready` feature and call Nimbus' `recordIsReady` when the Nimbus API is ready [Bug 1875515](https://bugzilla.mozilla.org/show_bug.cgi?id=1875515).
 
 # 121.0
 * [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v120..releases_v121)
@@ -61,7 +102,7 @@ permalink: /changelog/
   * Removed deprecated `TabsUseCases.AddNewPrivateTabUseCase`. [Bug 1853070](https://bugzilla.mozilla.org/show_bug.cgi?id=1853070)
 
 * **lib-crash-sentry**
-  * `SentryService.initIfNeeded` is now public. [bug #1851676](https://bugzilla.mozilla.org/show_bug.cgi?id=1851676)
+  * `SentryService.initIfNeeded` is now public. [Bug 1851676](https://bugzilla.mozilla.org/show_bug.cgi?id=1851676)
 
 * **feature-downloads**
   * Added a custom permission `${applicationId}.permission.RECEIVE_DOWNLOAD_BROADCAST` that needs to be used by apps in order to receive download related broadcasts
@@ -83,8 +124,8 @@ permalink: /changelog/
     * User plans to upgrade from v95 to v119 or above
 
 * **support-webextensions**
-  * ⚠️ **This is a breaking change**: Renamed `WebExtensionPopupFeature` to `WebExtensionPopupObserver` [bug #1852335](https://bugzilla.mozilla.org/show_bug.cgi?id=1852335)
-  * Added `ExtensionProcessDisabledPopupObserver` to display to the user a dialog when the extensions process spawning has been disabled. [bug #1846979](https://bugzilla.mozilla.org/show_bug.cgi?id=1846979)
+  * ⚠️ **This is a breaking change**: Renamed `WebExtensionPopupFeature` to `WebExtensionPopupObserver` [Bug 1852335](https://bugzilla.mozilla.org/show_bug.cgi?id=1852335)
+  * Added `ExtensionProcessDisabledPopupObserver` to display to the user a dialog when the extensions process spawning has been disabled. [Bug 1846979](https://bugzilla.mozilla.org/show_bug.cgi?id=1846979)
 
 * **concept-engine**
   * 🌟️️ Add `reanalyzeProduct` API to `EngineSession` to allow reanalyzing product from the engine. See more on [Bug 1853309](https://bugzilla.mozilla.org/show_bug.cgi?id=1853309).
@@ -405,6 +446,7 @@ permalink: /changelog/
 
 * **All components**
   * ⚠️Increased `compileSdkVersion` to 33 (Android 13)
+
 * **feature-awesomebar**
   * `SearchSuggestionProvider` and `SearchActionProvider` now have a new parameter `suggestionsHeader`, to add title to suggestions.
 

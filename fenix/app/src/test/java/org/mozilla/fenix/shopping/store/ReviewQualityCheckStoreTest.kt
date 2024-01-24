@@ -13,6 +13,7 @@ import mozilla.components.support.test.libstate.ext.waitUntilIdle
 import mozilla.components.support.test.middleware.CaptureActionsMiddleware
 import mozilla.components.support.test.rule.MainCoroutineRule
 import org.junit.Assert.assertFalse
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.mozilla.fenix.components.AppStore
@@ -24,17 +25,22 @@ import org.mozilla.fenix.components.appstate.AppState
 import org.mozilla.fenix.components.appstate.shopping.ShoppingState
 import org.mozilla.fenix.shopping.ProductAnalysisTestData
 import org.mozilla.fenix.shopping.ProductRecommendationTestData
+import org.mozilla.fenix.shopping.ShoppingExperienceFeature
 import org.mozilla.fenix.shopping.fake.FakeNetworkChecker
 import org.mozilla.fenix.shopping.fake.FakeReviewQualityCheckPreferences
 import org.mozilla.fenix.shopping.fake.FakeReviewQualityCheckService
 import org.mozilla.fenix.shopping.fake.FakeReviewQualityCheckVendorsService
+import org.mozilla.fenix.shopping.fake.FakeShoppingExperienceFeature
 import org.mozilla.fenix.shopping.middleware.AnalysisStatusDto
+import org.mozilla.fenix.shopping.middleware.AnalysisStatusProgressDto
 import org.mozilla.fenix.shopping.middleware.NetworkChecker
+import org.mozilla.fenix.shopping.middleware.ReportBackInStockStatusDto
 import org.mozilla.fenix.shopping.middleware.ReviewQualityCheckNetworkMiddleware
 import org.mozilla.fenix.shopping.middleware.ReviewQualityCheckPreferences
 import org.mozilla.fenix.shopping.middleware.ReviewQualityCheckPreferencesMiddleware
 import org.mozilla.fenix.shopping.middleware.ReviewQualityCheckService
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState.AnalysisPresent.AnalysisStatus
+import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.OptedIn.ProductReviewState.Progress
 import org.mozilla.fenix.shopping.store.ReviewQualityCheckState.ProductVendor
 import java.util.Locale
 
@@ -98,6 +104,7 @@ class ReviewQualityCheckStoreTest {
 
             val expected = ReviewQualityCheckState.OptedIn(
                 productRecommendationsPreference = false,
+                productRecommendationsExposure = true,
                 productVendor = ProductVendor.BEST_BUY,
             )
             assertEquals(expected, tested.state)
@@ -142,6 +149,7 @@ class ReviewQualityCheckStoreTest {
 
             val expected = ReviewQualityCheckState.OptedIn(
                 productRecommendationsPreference = null,
+                productRecommendationsExposure = true,
                 productVendor = ProductVendor.BEST_BUY,
             )
             assertEquals(expected, tested.state)
@@ -171,6 +179,7 @@ class ReviewQualityCheckStoreTest {
 
             val expected = ReviewQualityCheckState.OptedIn(
                 productRecommendationsPreference = true,
+                productRecommendationsExposure = true,
                 productVendor = ProductVendor.BEST_BUY,
             )
             assertEquals(expected, tested.state)
@@ -187,7 +196,7 @@ class ReviewQualityCheckStoreTest {
                     ),
                     reviewQualityCheckService = FakeReviewQualityCheckService(
                         productAnalysis = { ProductAnalysisTestData.productAnalysis() },
-                        productRecommendation = ProductRecommendationTestData.productRecommendation(),
+                        productRecommendation = { ProductRecommendationTestData.productRecommendation() },
                     ),
                 ),
             )
@@ -202,12 +211,142 @@ class ReviewQualityCheckStoreTest {
 
             val expected = ReviewQualityCheckState.OptedIn(
                 productRecommendationsPreference = false,
+                productRecommendationsExposure = true,
                 productVendor = ProductVendor.BEST_BUY,
                 productReviewState = ProductAnalysisTestData.analysisPresent(
                     recommendedProductState = ReviewQualityCheckState.RecommendedProductState.Initial,
                 ),
             )
             assertEquals(expected, tested.state)
+        }
+
+    @Test
+    fun `GIVEN product recommendations are available WHEN the user turns product recommendations off THEN state should not contain product recommendation`() =
+        runTest {
+            setAndResetLocale {
+                var productRecommendationsFetchCounter = 0
+                val tested = ReviewQualityCheckStore(
+                    middleware = provideReviewQualityCheckMiddleware(
+                        reviewQualityCheckPreferences = FakeReviewQualityCheckPreferences(
+                            isEnabled = true,
+                            isProductRecommendationsEnabled = true,
+                        ),
+                        reviewQualityCheckService = FakeReviewQualityCheckService(
+                            productAnalysis = { ProductAnalysisTestData.productAnalysis() },
+                            productRecommendation = {
+                                productRecommendationsFetchCounter++
+                                ProductRecommendationTestData.productRecommendation()
+                            },
+                        ),
+                    ),
+                )
+                tested.waitUntilIdle()
+                dispatcher.scheduler.advanceUntilIdle()
+                tested.dispatch(ReviewQualityCheckAction.FetchProductAnalysis).joinBlocking()
+                tested.waitUntilIdle()
+                dispatcher.scheduler.advanceUntilIdle()
+
+                assertEquals(1, productRecommendationsFetchCounter)
+
+                tested.dispatch(ReviewQualityCheckAction.ToggleProductRecommendation).joinBlocking()
+                tested.waitUntilIdle()
+                dispatcher.scheduler.advanceUntilIdle()
+
+                val expected = ReviewQualityCheckState.OptedIn(
+                    productRecommendationsPreference = false,
+                    productRecommendationsExposure = true,
+                    productVendor = ProductVendor.BEST_BUY,
+                    productReviewState = ProductAnalysisTestData.analysisPresent(),
+                )
+                assertEquals(expected, tested.state)
+                assertEquals(1, productRecommendationsFetchCounter)
+            }
+        }
+
+    @Test
+    fun `GIVEN product recommendations are available WHEN the user turns product recommendations off and then back on THEN state should contain product recommendation`() =
+        runTest {
+            setAndResetLocale {
+                val tested = ReviewQualityCheckStore(
+                    middleware = provideReviewQualityCheckMiddleware(
+                        reviewQualityCheckPreferences = FakeReviewQualityCheckPreferences(
+                            isEnabled = true,
+                            isProductRecommendationsEnabled = true,
+                        ),
+                        reviewQualityCheckService = FakeReviewQualityCheckService(
+                            productAnalysis = { ProductAnalysisTestData.productAnalysis() },
+                            productRecommendation = { ProductRecommendationTestData.productRecommendation() },
+                        ),
+                        shoppingExperienceFeature = FakeShoppingExperienceFeature(
+                            productRecommendationsExposureEnabled = true,
+                        ),
+                    ),
+                )
+                tested.waitUntilIdle()
+                dispatcher.scheduler.advanceUntilIdle()
+                tested.dispatch(ReviewQualityCheckAction.FetchProductAnalysis).joinBlocking()
+                tested.waitUntilIdle()
+                dispatcher.scheduler.advanceUntilIdle()
+                tested.dispatch(ReviewQualityCheckAction.ToggleProductRecommendation).joinBlocking()
+                tested.waitUntilIdle()
+                dispatcher.scheduler.advanceUntilIdle()
+                tested.dispatch(ReviewQualityCheckAction.ToggleProductRecommendation).joinBlocking()
+                tested.waitUntilIdle()
+                dispatcher.scheduler.advanceUntilIdle()
+
+                val expected = ReviewQualityCheckState.OptedIn(
+                    productRecommendationsPreference = true,
+                    productRecommendationsExposure = true,
+                    productVendor = ProductVendor.BEST_BUY,
+                    productReviewState = ProductAnalysisTestData.analysisPresent(
+                        recommendedProductState = ProductRecommendationTestData.product(),
+                    ),
+                )
+                assertEquals(expected, tested.state)
+            }
+        }
+
+    @Test
+    fun `GIVEN product recommendations are available but analysis failed WHEN the user turns product recommendations on THEN recommendations should not be fetched`() =
+        runTest {
+            setAndResetLocale {
+                var productRecommendationsFetchCounter = 0
+                val tested = ReviewQualityCheckStore(
+                    middleware = provideReviewQualityCheckMiddleware(
+                        reviewQualityCheckPreferences = FakeReviewQualityCheckPreferences(
+                            isEnabled = true,
+                            isProductRecommendationsEnabled = false,
+                        ),
+                        reviewQualityCheckService = FakeReviewQualityCheckService(
+                            productAnalysis = { null },
+                            productRecommendation = {
+                                productRecommendationsFetchCounter++
+                                ProductRecommendationTestData.productRecommendation()
+                            },
+                        ),
+                    ),
+                )
+                tested.waitUntilIdle()
+                dispatcher.scheduler.advanceUntilIdle()
+                tested.dispatch(ReviewQualityCheckAction.FetchProductAnalysis).joinBlocking()
+                tested.waitUntilIdle()
+                dispatcher.scheduler.advanceUntilIdle()
+
+                assertEquals(0, productRecommendationsFetchCounter)
+
+                tested.dispatch(ReviewQualityCheckAction.ToggleProductRecommendation).joinBlocking()
+                tested.waitUntilIdle()
+                dispatcher.scheduler.advanceUntilIdle()
+
+                val expected = ReviewQualityCheckState.OptedIn(
+                    productRecommendationsPreference = true,
+                    productRecommendationsExposure = true,
+                    productVendor = ProductVendor.BEST_BUY,
+                    productReviewState = ReviewQualityCheckState.OptedIn.ProductReviewState.Error.GenericError,
+                )
+                assertEquals(expected, tested.state)
+                assertEquals(0, productRecommendationsFetchCounter)
+            }
         }
 
     @Test
@@ -245,6 +384,7 @@ class ReviewQualityCheckStoreTest {
 
             val expected = ReviewQualityCheckState.OptedIn(
                 productRecommendationsPreference = false,
+                productRecommendationsExposure = true,
                 productVendor = ProductVendor.BEST_BUY,
                 isHighlightsExpanded = false,
                 isSettingsExpanded = true,
@@ -278,6 +418,7 @@ class ReviewQualityCheckStoreTest {
 
             val expected = ReviewQualityCheckState.OptedIn(
                 productRecommendationsPreference = false,
+                productRecommendationsExposure = true,
                 productVendor = ProductVendor.BEST_BUY,
                 isSettingsExpanded = true,
             )
@@ -321,6 +462,7 @@ class ReviewQualityCheckStoreTest {
 
             val expected = ReviewQualityCheckState.OptedIn(
                 productRecommendationsPreference = false,
+                productRecommendationsExposure = true,
                 productVendor = ProductVendor.BEST_BUY,
                 isSettingsExpanded = false,
             )
@@ -355,6 +497,7 @@ class ReviewQualityCheckStoreTest {
 
             val expected = ReviewQualityCheckState.OptedIn(
                 productRecommendationsPreference = false,
+                productRecommendationsExposure = true,
                 productVendor = ProductVendor.BEST_BUY,
                 isInfoExpanded = true,
             )
@@ -398,6 +541,7 @@ class ReviewQualityCheckStoreTest {
 
             val expected = ReviewQualityCheckState.OptedIn(
                 productRecommendationsPreference = false,
+                productRecommendationsExposure = true,
                 productVendor = ProductVendor.BEST_BUY,
                 isInfoExpanded = false,
             )
@@ -433,6 +577,7 @@ class ReviewQualityCheckStoreTest {
 
             val expected = ReviewQualityCheckState.OptedIn(
                 productRecommendationsPreference = false,
+                productRecommendationsExposure = true,
                 productVendor = ProductVendor.BEST_BUY,
                 isHighlightsExpanded = true,
             )
@@ -477,6 +622,7 @@ class ReviewQualityCheckStoreTest {
 
             val expected = ReviewQualityCheckState.OptedIn(
                 productRecommendationsPreference = false,
+                productRecommendationsExposure = true,
                 productVendor = ProductVendor.BEST_BUY,
                 isHighlightsExpanded = false,
             )
@@ -508,6 +654,7 @@ class ReviewQualityCheckStoreTest {
             val expected = ReviewQualityCheckState.OptedIn(
                 productReviewState = ProductAnalysisTestData.analysisPresent(),
                 productRecommendationsPreference = false,
+                productRecommendationsExposure = true,
                 productVendor = ProductVendor.BEST_BUY,
             )
             assertEquals(expected, tested.state)
@@ -533,6 +680,7 @@ class ReviewQualityCheckStoreTest {
             val expected = ReviewQualityCheckState.OptedIn(
                 productReviewState = ReviewQualityCheckState.OptedIn.ProductReviewState.Error.GenericError,
                 productRecommendationsPreference = false,
+                productRecommendationsExposure = true,
                 productVendor = ProductVendor.BEST_BUY,
             )
             assertEquals(expected, tested.state)
@@ -558,6 +706,7 @@ class ReviewQualityCheckStoreTest {
             val expected = ReviewQualityCheckState.OptedIn(
                 productReviewState = ReviewQualityCheckState.OptedIn.ProductReviewState.Error.NetworkError,
                 productRecommendationsPreference = false,
+                productRecommendationsExposure = true,
                 productVendor = ProductVendor.BEST_BUY,
             )
             assertEquals(expected, tested.state)
@@ -585,6 +734,7 @@ class ReviewQualityCheckStoreTest {
             val expected = ReviewQualityCheckState.OptedIn(
                 productReviewState = ReviewQualityCheckState.OptedIn.ProductReviewState.Error.GenericError,
                 productRecommendationsPreference = false,
+                productRecommendationsExposure = true,
                 productVendor = ProductVendor.BEST_BUY,
             )
             assertEquals(expected, tested.state)
@@ -606,7 +756,7 @@ class ReviewQualityCheckStoreTest {
                     reviewQualityCheckPreferences = FakeReviewQualityCheckPreferences(isEnabled = true),
                     reviewQualityCheckService = FakeReviewQualityCheckService(
                         reanalysis = AnalysisStatusDto.PENDING,
-                        status = null,
+                        statusProgress = { null },
                         productAnalysis = { productAnalysisList[it] },
                     ),
                     networkChecker = FakeNetworkChecker(isConnected = true),
@@ -625,9 +775,10 @@ class ReviewQualityCheckStoreTest {
             val expected = ReviewQualityCheckState.OptedIn(
                 productReviewState = ProductAnalysisTestData.analysisPresent(
                     reviewGrade = ReviewQualityCheckState.Grade.B,
-                    analysisStatus = AnalysisStatus.NEEDS_ANALYSIS,
+                    analysisStatus = AnalysisStatus.NeedsAnalysis,
                 ),
                 productRecommendationsPreference = false,
+                productRecommendationsExposure = true,
                 productVendor = ProductVendor.BEST_BUY,
             )
             assertEquals(expected, tested.state)
@@ -642,7 +793,12 @@ class ReviewQualityCheckStoreTest {
                     reviewQualityCheckService = FakeReviewQualityCheckService(
                         productAnalysis = { ProductAnalysisTestData.productAnalysis() },
                         reanalysis = AnalysisStatusDto.PENDING,
-                        status = AnalysisStatusDto.COMPLETED,
+                        statusProgress = {
+                            AnalysisStatusProgressDto(
+                                status = AnalysisStatusDto.COMPLETED,
+                                progress = 100.0,
+                            )
+                        },
                     ),
                     networkChecker = FakeNetworkChecker(isConnected = true),
                 ),
@@ -657,6 +813,7 @@ class ReviewQualityCheckStoreTest {
             val expected = ReviewQualityCheckState.OptedIn(
                 productReviewState = ProductAnalysisTestData.analysisPresent(),
                 productRecommendationsPreference = false,
+                productRecommendationsExposure = true,
                 productVendor = ProductVendor.BEST_BUY,
             )
             assertEquals(expected, tested.state)
@@ -675,7 +832,12 @@ class ReviewQualityCheckStoreTest {
                             )
                         },
                         reanalysis = AnalysisStatusDto.PENDING,
-                        status = AnalysisStatusDto.COMPLETED,
+                        statusProgress = {
+                            AnalysisStatusProgressDto(
+                                status = AnalysisStatusDto.COMPLETED,
+                                progress = 100.0,
+                            )
+                        },
                     ),
                     networkChecker = FakeNetworkChecker(isConnected = true),
                 ),
@@ -690,29 +852,49 @@ class ReviewQualityCheckStoreTest {
             val expected = ReviewQualityCheckState.OptedIn(
                 productReviewState = ReviewQualityCheckState.OptedIn.ProductReviewState.Error.NotEnoughReviews,
                 productRecommendationsPreference = false,
+                productRecommendationsExposure = true,
                 productVendor = ProductVendor.BEST_BUY,
             )
             assertEquals(expected, tested.state)
         }
 
+    @Ignore("Disabled until intermittent is resolved. See Bug 1869566")
     @Test
-    fun `GIVEN that the product was being analysed earlier WHEN needsAnalysis is true THEN state should be restored to reanalysing`() =
+    fun `GIVEN a product analysis WHEN analysis status is in progress or pending THEN state should be updated to reanalysing`() =
         runTest {
+            val statusProgressResponses = listOf(
+                AnalysisStatusProgressDto(
+                    status = AnalysisStatusDto.IN_PROGRESS,
+                    progress = 50.0,
+                ),
+                AnalysisStatusProgressDto(
+                    status = AnalysisStatusDto.IN_PROGRESS,
+                    progress = 61.6,
+                ),
+                AnalysisStatusProgressDto(
+                    status = AnalysisStatusDto.IN_PROGRESS,
+                    progress = 92.52,
+                ),
+                AnalysisStatusProgressDto(
+                    status = AnalysisStatusDto.COMPLETED,
+                    progress = 100.0,
+                ),
+            )
+            var counter = 0
+
             val tested = ReviewQualityCheckStore(
                 middleware = provideReviewQualityCheckMiddleware(
                     reviewQualityCheckPreferences = FakeReviewQualityCheckPreferences(isEnabled = true),
                     reviewQualityCheckService = FakeReviewQualityCheckService(
                         productAnalysis = {
-                            ProductAnalysisTestData.productAnalysis(needsAnalysis = true)
+                            ProductAnalysisTestData.productAnalysis()
                         },
                         reanalysis = AnalysisStatusDto.PENDING,
-                        status = AnalysisStatusDto.COMPLETED,
-                        selectedTabUrl = "pdp",
+                        statusProgress = {
+                            statusProgressResponses[counter].also { counter++ }
+                        },
                     ),
                     networkChecker = FakeNetworkChecker(isConnected = true),
-                    appStore = AppStore(
-                        AppState(shoppingState = ShoppingState(productsInAnalysis = setOf("pdp"))),
-                    ),
                 ),
             )
 
@@ -728,21 +910,116 @@ class ReviewQualityCheckStoreTest {
             tested.waitUntilIdle()
             dispatcher.scheduler.advanceUntilIdle()
 
-            val expected = ReviewQualityCheckState.OptedIn(
+            val expectedProgressState1 = ReviewQualityCheckState.OptedIn(
                 productReviewState = ProductAnalysisTestData.analysisPresent(
-                    analysisStatus = AnalysisStatus.REANALYZING,
+                    analysisStatus = AnalysisStatus.Reanalyzing(Progress(61.6f)),
                 ),
                 productRecommendationsPreference = false,
+                productRecommendationsExposure = true,
                 productVendor = ProductVendor.BEST_BUY,
+            )
+
+            val expectedProgressState2 = expectedProgressState1.copy(
+                productReviewState = ProductAnalysisTestData.analysisPresent(
+                    analysisStatus = AnalysisStatus.Reanalyzing(Progress(92.52f)),
+                ),
             )
 
             // Since reanalyzing is an intermediate state and the tests completes to get to the final
             // state, this checks if the intermediate state is present in the observed state.
-            assertTrue(observedState.contains(expected))
+            assertTrue(observedState.contains(expectedProgressState1))
+            assertTrue(observedState.contains(expectedProgressState2))
+        }
+
+    @Ignore("Disabled until intermittent is resolved. See Bug 1869566")
+    @Test
+    fun `GIVEN reanalyse product is clicked WHEN analysis status is in progress or pending THEN state should be updated to reanalysing`() =
+        runTest {
+            val statusProgressResponses = listOf(
+                AnalysisStatusProgressDto(
+                    status = AnalysisStatusDto.OTHER,
+                    progress = 0.0,
+                ),
+                AnalysisStatusProgressDto(
+                    status = AnalysisStatusDto.IN_PROGRESS,
+                    progress = 30.0,
+                ),
+                AnalysisStatusProgressDto(
+                    status = AnalysisStatusDto.IN_PROGRESS,
+                    progress = 61.6,
+                ),
+                AnalysisStatusProgressDto(
+                    status = AnalysisStatusDto.IN_PROGRESS,
+                    progress = 92.52,
+                ),
+                AnalysisStatusProgressDto(
+                    status = AnalysisStatusDto.COMPLETED,
+                    progress = 100.0,
+                ),
+            )
+            var counter = 0
+
+            val tested = ReviewQualityCheckStore(
+                middleware = provideReviewQualityCheckMiddleware(
+                    reviewQualityCheckPreferences = FakeReviewQualityCheckPreferences(isEnabled = true),
+                    reviewQualityCheckService = FakeReviewQualityCheckService(
+                        productAnalysis = {
+                            ProductAnalysisTestData.productAnalysis()
+                        },
+                        reanalysis = AnalysisStatusDto.PENDING,
+                        statusProgress = {
+                            statusProgressResponses[counter].also { counter++ }
+                        },
+                    ),
+                    networkChecker = FakeNetworkChecker(isConnected = true),
+                ),
+            )
+
+            val observedState = mutableListOf<ReviewQualityCheckState>()
+            tested.observeForever {
+                observedState.add(it)
+            }
+
+            tested.waitUntilIdle()
+            dispatcher.scheduler.advanceUntilIdle()
+            tested.waitUntilIdle()
+            tested.dispatch(ReviewQualityCheckAction.FetchProductAnalysis).joinBlocking()
+            tested.waitUntilIdle()
+            dispatcher.scheduler.advanceUntilIdle()
+            tested.dispatch(ReviewQualityCheckAction.ReanalyzeProduct).joinBlocking()
+            tested.waitUntilIdle()
+            dispatcher.scheduler.advanceUntilIdle()
+
+            val expectedProgressState1 = ReviewQualityCheckState.OptedIn(
+                productReviewState = ProductAnalysisTestData.analysisPresent(
+                    analysisStatus = AnalysisStatus.Reanalyzing(Progress(30f)),
+                ),
+                productRecommendationsPreference = false,
+                productRecommendationsExposure = true,
+                productVendor = ProductVendor.BEST_BUY,
+            )
+
+            val expectedProgressState2 = expectedProgressState1.copy(
+                productReviewState = ProductAnalysisTestData.analysisPresent(
+                    analysisStatus = AnalysisStatus.Reanalyzing(Progress(61.6f)),
+                ),
+            )
+
+            val expectedProgressState3 = expectedProgressState1.copy(
+                productReviewState = ProductAnalysisTestData.analysisPresent(
+                    analysisStatus = AnalysisStatus.Reanalyzing(Progress(92.52f)),
+                ),
+            )
+
+            // Since reanalyzing is an intermediate state and the tests completes to get to the final
+            // state, this checks if the intermediate state is present in the observed state.
+            assertTrue(observedState.contains(expectedProgressState1))
+            assertTrue(observedState.contains(expectedProgressState2))
+            assertTrue(observedState.contains(expectedProgressState3))
         }
 
     @Test
-    fun `GIVEN that the product was not being analysed earlier WHEN needsAnalysis is true THEN state should display needs analysis as usual`() =
+    fun `GIVEN a product analysis WHEN analysis status is completed THEN state should display analysis as usual`() =
         runTest {
             val tested = ReviewQualityCheckStore(
                 middleware = provideReviewQualityCheckMiddleware(
@@ -751,18 +1028,15 @@ class ReviewQualityCheckStoreTest {
                         productAnalysis = {
                             ProductAnalysisTestData.productAnalysis(needsAnalysis = true)
                         },
-                        reanalysis = AnalysisStatusDto.PENDING,
-                        status = AnalysisStatusDto.COMPLETED,
-                        selectedTabUrl = "pdp",
+                        reanalysis = AnalysisStatusDto.COMPLETED,
+                        statusProgress = {
+                            AnalysisStatusProgressDto(
+                                status = AnalysisStatusDto.COMPLETED,
+                                progress = 100.0,
+                            )
+                        },
                     ),
                     networkChecker = FakeNetworkChecker(isConnected = true),
-                    appStore = AppStore(
-                        AppState(
-                            shoppingState = ShoppingState(
-                                productsInAnalysis = setOf("test", "another", "product"),
-                            ),
-                        ),
-                    ),
                 ),
             )
 
@@ -780,52 +1054,327 @@ class ReviewQualityCheckStoreTest {
 
             val expected = ReviewQualityCheckState.OptedIn(
                 productReviewState = ProductAnalysisTestData.analysisPresent(
-                    analysisStatus = AnalysisStatus.NEEDS_ANALYSIS,
+                    analysisStatus = AnalysisStatus.NeedsAnalysis,
                 ),
                 productRecommendationsPreference = false,
+                productRecommendationsExposure = true,
                 productVendor = ProductVendor.BEST_BUY,
             )
             assertEquals(expected, tested.state)
 
             val notExpected = ReviewQualityCheckState.OptedIn(
                 productReviewState = ProductAnalysisTestData.analysisPresent(
-                    analysisStatus = AnalysisStatus.REANALYZING,
+                    analysisStatus = AnalysisStatus.Reanalyzing(Progress(0f)),
                 ),
                 productRecommendationsPreference = false,
+                productRecommendationsExposure = true,
                 productVendor = ProductVendor.BEST_BUY,
             )
             assertFalse(observedState.contains(notExpected))
         }
 
     @Test
-    fun `WHEN reanalysis is triggered THEN shopping state should contain the url of the product being analyzed`() =
+    fun `GIVEN a product analysis WHEN analysis status fails THEN state should display analysis as usual`() =
         runTest {
-            val captureActionsMiddleware = CaptureActionsMiddleware<AppState, AppAction>()
-            val appStore = AppStore(middlewares = listOf(captureActionsMiddleware))
             val tested = ReviewQualityCheckStore(
                 middleware = provideReviewQualityCheckMiddleware(
                     reviewQualityCheckPreferences = FakeReviewQualityCheckPreferences(isEnabled = true),
                     reviewQualityCheckService = FakeReviewQualityCheckService(
-                        productAnalysis = { ProductAnalysisTestData.productAnalysis() },
-                        reanalysis = AnalysisStatusDto.PENDING,
-                        status = AnalysisStatusDto.COMPLETED,
-                        selectedTabUrl = "pdp",
+                        productAnalysis = {
+                            ProductAnalysisTestData.productAnalysis()
+                        },
+                        reanalysis = null,
+                        statusProgress = { null },
                     ),
                     networkChecker = FakeNetworkChecker(isConnected = true),
-                    appStore = appStore,
                 ),
             )
+
+            val observedState = mutableListOf<ReviewQualityCheckState>()
+            tested.observeForever {
+                observedState.add(it)
+            }
 
             tested.waitUntilIdle()
             dispatcher.scheduler.advanceUntilIdle()
             tested.waitUntilIdle()
+            tested.dispatch(ReviewQualityCheckAction.FetchProductAnalysis).joinBlocking()
+            tested.waitUntilIdle()
+            dispatcher.scheduler.advanceUntilIdle()
+
+            val expected = ReviewQualityCheckState.OptedIn(
+                productReviewState = ProductAnalysisTestData.analysisPresent(),
+                productRecommendationsPreference = false,
+                productRecommendationsExposure = true,
+                productVendor = ProductVendor.BEST_BUY,
+            )
+            assertEquals(expected, tested.state)
+
+            val notExpected = ReviewQualityCheckState.OptedIn(
+                productReviewState = ProductAnalysisTestData.analysisPresent(
+                    analysisStatus = AnalysisStatus.Reanalyzing(Progress(0f)),
+                ),
+                productRecommendationsPreference = false,
+                productRecommendationsExposure = true,
+                productVendor = ProductVendor.BEST_BUY,
+            )
+            assertFalse(observedState.contains(notExpected))
+        }
+
+    @Ignore("Disabled until intermittent is resolved. See Bug 1869566")
+    @Test
+    fun `GIVEN no analysis WHEN analysis is in progress THEN state should update to no analysis present with progress`() =
+        runTest {
+            val statusProgressResponses = listOf(
+                AnalysisStatusProgressDto(
+                    status = AnalysisStatusDto.IN_PROGRESS,
+                    progress = 30.0,
+                ),
+                AnalysisStatusProgressDto(
+                    status = AnalysisStatusDto.IN_PROGRESS,
+                    progress = 61.6,
+                ),
+                AnalysisStatusProgressDto(
+                    status = AnalysisStatusDto.IN_PROGRESS,
+                    progress = 92.52,
+                ),
+                AnalysisStatusProgressDto(
+                    status = AnalysisStatusDto.COMPLETED,
+                    progress = 100.0,
+                ),
+            )
+            var counter = 0
+
+            val tested = ReviewQualityCheckStore(
+                middleware = provideReviewQualityCheckMiddleware(
+                    reviewQualityCheckPreferences = FakeReviewQualityCheckPreferences(isEnabled = true),
+                    reviewQualityCheckService = FakeReviewQualityCheckService(
+                        productAnalysis = {
+                            ProductAnalysisTestData.productAnalysis(
+                                grade = null,
+                                adjustedRating = null,
+                                needsAnalysis = true,
+                            )
+                        },
+                        reanalysis = AnalysisStatusDto.PENDING,
+                        statusProgress = {
+                            statusProgressResponses[counter].also { counter++ }
+                        },
+                    ),
+                    networkChecker = FakeNetworkChecker(isConnected = true),
+                ),
+            )
+
+            val observedState = mutableListOf<ReviewQualityCheckState>()
+            tested.observeForever {
+                observedState.add(it)
+            }
+
+            tested.waitUntilIdle()
+            dispatcher.scheduler.advanceUntilIdle()
+            tested.waitUntilIdle()
+            tested.dispatch(ReviewQualityCheckAction.FetchProductAnalysis).joinBlocking()
+            tested.waitUntilIdle()
+            dispatcher.scheduler.advanceUntilIdle()
+
+            val expectedProgressState1 = ReviewQualityCheckState.OptedIn(
+                productReviewState = ProductAnalysisTestData.noAnalysisPresent(
+                    progress = 61.6f,
+                ),
+                productRecommendationsPreference = false,
+                productRecommendationsExposure = true,
+                productVendor = ProductVendor.BEST_BUY,
+            )
+
+            val expectedProgressState2 = expectedProgressState1.copy(
+                productReviewState = ProductAnalysisTestData.noAnalysisPresent(
+                    progress = 92.52f,
+                ),
+            )
+
+            // Since reanalyzing is an intermediate state and the tests completes to get to the final
+            // state, this checks if the intermediate state is present in the observed state.
+            assertTrue(observedState.contains(expectedProgressState1))
+            assertTrue(observedState.contains(expectedProgressState2))
+        }
+
+    @Ignore("Disabled until intermittent is resolved. See Bug 1869566")
+    @Test
+    fun `GIVEN no analysis WHEN reanalyze THEN state should update to no analysis present with progress`() =
+        runTest {
+            val statusProgressResponses = listOf(
+                AnalysisStatusProgressDto(
+                    status = AnalysisStatusDto.OTHER,
+                    progress = 0.0,
+                ),
+                AnalysisStatusProgressDto(
+                    status = AnalysisStatusDto.IN_PROGRESS,
+                    progress = 30.0,
+                ),
+                AnalysisStatusProgressDto(
+                    status = AnalysisStatusDto.IN_PROGRESS,
+                    progress = 61.6,
+                ),
+                AnalysisStatusProgressDto(
+                    status = AnalysisStatusDto.IN_PROGRESS,
+                    progress = 92.52,
+                ),
+                AnalysisStatusProgressDto(
+                    status = AnalysisStatusDto.COMPLETED,
+                    progress = 100.0,
+                ),
+            )
+            var counter = 0
+
+            val tested = ReviewQualityCheckStore(
+                middleware = provideReviewQualityCheckMiddleware(
+                    reviewQualityCheckPreferences = FakeReviewQualityCheckPreferences(isEnabled = true),
+                    reviewQualityCheckService = FakeReviewQualityCheckService(
+                        productAnalysis = {
+                            ProductAnalysisTestData.productAnalysis(
+                                grade = null,
+                                adjustedRating = null,
+                                needsAnalysis = true,
+                            )
+                        },
+                        reanalysis = AnalysisStatusDto.PENDING,
+                        statusProgress = {
+                            statusProgressResponses[counter].also { counter++ }
+                        },
+                    ),
+                    networkChecker = FakeNetworkChecker(isConnected = true),
+                ),
+            )
+
+            val observedState = mutableListOf<ReviewQualityCheckState>()
+            tested.observeForever {
+                observedState.add(it)
+            }
+
+            tested.waitUntilIdle()
+            dispatcher.scheduler.advanceUntilIdle()
+            tested.waitUntilIdle()
+            tested.dispatch(ReviewQualityCheckAction.FetchProductAnalysis).joinBlocking()
+            tested.waitUntilIdle()
+            dispatcher.scheduler.advanceUntilIdle()
             tested.dispatch(ReviewQualityCheckAction.ReanalyzeProduct).joinBlocking()
             tested.waitUntilIdle()
             dispatcher.scheduler.advanceUntilIdle()
 
-            captureActionsMiddleware.assertFirstAction(AppAction.ShoppingAction.AddToProductAnalysed::class) {
-                assertEquals("pdp", it.productPageUrl)
-            }
+            val expectedProgressState1 = ReviewQualityCheckState.OptedIn(
+                productReviewState = ProductAnalysisTestData.noAnalysisPresent(
+                    progress = 30f,
+                ),
+                productRecommendationsPreference = false,
+                productRecommendationsExposure = true,
+                productVendor = ProductVendor.BEST_BUY,
+            )
+
+            val expectedProgressState2 = expectedProgressState1.copy(
+                productReviewState = ProductAnalysisTestData.noAnalysisPresent(
+                    progress = 61.6f,
+                ),
+            )
+
+            val expectedProgressState3 = expectedProgressState1.copy(
+                productReviewState = ProductAnalysisTestData.noAnalysisPresent(
+                    progress = 92.52f,
+                ),
+            )
+
+            // Since reanalyzing is an intermediate state and the tests completes to get to the final
+            // state, this checks if the intermediate state is present in the observed state.
+            assertTrue(observedState.contains(expectedProgressState1))
+            assertTrue(observedState.contains(expectedProgressState2))
+            assertTrue(observedState.contains(expectedProgressState3))
+        }
+
+    @Test
+    fun `GIVEN deletedProduct is true and deletedProductReported is false WHEN report back in stock is clicked THEN thanks for reporting card is shown`() =
+        runTest {
+            val tested = ReviewQualityCheckStore(
+                middleware = provideReviewQualityCheckMiddleware(
+                    reviewQualityCheckPreferences = FakeReviewQualityCheckPreferences(isEnabled = true),
+                    reviewQualityCheckService = FakeReviewQualityCheckService(
+                        productAnalysis = {
+                            ProductAnalysisTestData.productAnalysis(
+                                deletedProduct = true,
+                                deletedProductReported = false,
+                            )
+                        },
+                        reanalysis = AnalysisStatusDto.PENDING,
+                        statusProgress = { null },
+                        report = ReportBackInStockStatusDto.REPORT_CREATED,
+                    ),
+                    networkChecker = FakeNetworkChecker(isConnected = true),
+                ),
+            )
+            tested.waitUntilIdle()
+            dispatcher.scheduler.advanceUntilIdle()
+            tested.waitUntilIdle()
+            tested.dispatch(ReviewQualityCheckAction.FetchProductAnalysis).joinBlocking()
+            tested.waitUntilIdle()
+            dispatcher.scheduler.advanceUntilIdle()
+
+            val expected = ReviewQualityCheckState.OptedIn(
+                productReviewState = ReviewQualityCheckState.OptedIn.ProductReviewState.Error.ProductNotAvailable,
+                productRecommendationsPreference = false,
+                productRecommendationsExposure = true,
+                productVendor = ProductVendor.BEST_BUY,
+            )
+            assertEquals(expected, tested.state)
+
+            tested.dispatch(ReviewQualityCheckAction.ReportProductBackInStock).joinBlocking()
+            tested.waitUntilIdle()
+            dispatcher.scheduler.advanceUntilIdle()
+
+            val reportExpected = expected.copy(
+                productReviewState = ReviewQualityCheckState.OptedIn.ProductReviewState.Error.ThanksForReporting,
+            )
+            assertEquals(reportExpected, tested.state)
+        }
+
+    @Test
+    fun `GIVEN ProductNotAvailable WHEN report back in stock returns not deleted THEN state is updated to no analysis`() =
+        runTest {
+            val tested = ReviewQualityCheckStore(
+                initialState = ReviewQualityCheckState.OptedIn(
+                    productReviewState = ReviewQualityCheckState.OptedIn.ProductReviewState.Error.ProductNotAvailable,
+                    productRecommendationsPreference = false,
+                    productRecommendationsExposure = true,
+                    productVendor = ProductVendor.BEST_BUY,
+                ),
+                middleware = provideReviewQualityCheckMiddleware(
+                    reviewQualityCheckPreferences = FakeReviewQualityCheckPreferences(isEnabled = true),
+                    reviewQualityCheckService = FakeReviewQualityCheckService(
+                        productAnalysis = {
+                            ProductAnalysisTestData.productAnalysis(
+                                grade = null,
+                                adjustedRating = null,
+                                needsAnalysis = true,
+                            )
+                        },
+                        reanalysis = AnalysisStatusDto.PENDING,
+                        statusProgress = { null },
+                        report = ReportBackInStockStatusDto.NOT_DELETED,
+                    ),
+                    networkChecker = FakeNetworkChecker(isConnected = true),
+                ),
+            )
+            tested.waitUntilIdle()
+            dispatcher.scheduler.advanceUntilIdle()
+            tested.waitUntilIdle()
+            tested.dispatch(ReviewQualityCheckAction.ReportProductBackInStock).joinBlocking()
+            tested.waitUntilIdle()
+            dispatcher.scheduler.advanceUntilIdle()
+
+            val expected = ReviewQualityCheckState.OptedIn(
+                productReviewState = ProductAnalysisTestData.noAnalysisPresent(progress = -1f),
+                productRecommendationsPreference = false,
+                productRecommendationsExposure = true,
+                productVendor = ProductVendor.BEST_BUY,
+            )
+            assertEquals(expected, tested.state)
         }
 
     @Test
@@ -840,7 +1389,7 @@ class ReviewQualityCheckStoreTest {
                         ),
                         reviewQualityCheckService = FakeReviewQualityCheckService(
                             productAnalysis = { ProductAnalysisTestData.productAnalysis() },
-                            productRecommendation = ProductRecommendationTestData.productRecommendation(),
+                            productRecommendation = { ProductRecommendationTestData.productRecommendation() },
                         ),
                     ),
                 )
@@ -856,9 +1405,135 @@ class ReviewQualityCheckStoreTest {
                         recommendedProductState = ProductRecommendationTestData.product(),
                     ),
                     productRecommendationsPreference = true,
+                    productRecommendationsExposure = true,
                     productVendor = ProductVendor.BEST_BUY,
                 )
                 assertEquals(expected, tested.state)
+            }
+        }
+
+    @Test
+    fun `GIVEN product recommendations are disabled WHEN a product analysis is fetched successfully and exposure is set to true THEN product recommendation should also be fetched`() =
+        runTest {
+            setAndResetLocale {
+                var productRecommendationFetched = false
+                val tested = ReviewQualityCheckStore(
+                    middleware = provideReviewQualityCheckMiddleware(
+                        reviewQualityCheckPreferences = FakeReviewQualityCheckPreferences(
+                            isEnabled = true,
+                            isProductRecommendationsEnabled = false,
+                        ),
+                        shoppingExperienceFeature = FakeShoppingExperienceFeature(
+                            productRecommendationsExposureEnabled = true,
+                        ),
+                        reviewQualityCheckService = FakeReviewQualityCheckService(
+                            productAnalysis = { ProductAnalysisTestData.productAnalysis() },
+                            productRecommendation = {
+                                productRecommendationFetched = true
+                                ProductRecommendationTestData.productRecommendation()
+                            },
+                        ),
+                    ),
+                )
+                tested.waitUntilIdle()
+                dispatcher.scheduler.advanceUntilIdle()
+                tested.waitUntilIdle()
+                tested.dispatch(ReviewQualityCheckAction.FetchProductAnalysis).joinBlocking()
+                tested.waitUntilIdle()
+                dispatcher.scheduler.advanceUntilIdle()
+
+                val expected = ReviewQualityCheckState.OptedIn(
+                    productReviewState = ProductAnalysisTestData.analysisPresent(),
+                    productRecommendationsPreference = false,
+                    productRecommendationsExposure = true,
+                    productVendor = ProductVendor.BEST_BUY,
+                )
+                assertEquals(expected, tested.state)
+                assertTrue(productRecommendationFetched)
+            }
+        }
+
+    @Test
+    fun `GIVEN product recommendations are disabled WHEN a product analysis is fetched successfully and exposure is set to false THEN product recommendation should not be fetched and displayed`() =
+        runTest {
+            setAndResetLocale {
+                var productRecommendationFetched = false
+                val tested = ReviewQualityCheckStore(
+                    middleware = provideReviewQualityCheckMiddleware(
+                        reviewQualityCheckPreferences = FakeReviewQualityCheckPreferences(
+                            isEnabled = true,
+                            isProductRecommendationsEnabled = false,
+                        ),
+                        shoppingExperienceFeature = FakeShoppingExperienceFeature(
+                            productRecommendationsExposureEnabled = false,
+                        ),
+                        reviewQualityCheckService = FakeReviewQualityCheckService(
+                            productAnalysis = { ProductAnalysisTestData.productAnalysis() },
+                            productRecommendation = {
+                                productRecommendationFetched = true
+                                ProductRecommendationTestData.productRecommendation()
+                            },
+                        ),
+                    ),
+                )
+                tested.waitUntilIdle()
+                dispatcher.scheduler.advanceUntilIdle()
+                tested.waitUntilIdle()
+                tested.dispatch(ReviewQualityCheckAction.FetchProductAnalysis).joinBlocking()
+                tested.waitUntilIdle()
+                dispatcher.scheduler.advanceUntilIdle()
+
+                val expected = ReviewQualityCheckState.OptedIn(
+                    productReviewState = ProductAnalysisTestData.analysisPresent(),
+                    productRecommendationsPreference = false,
+                    productRecommendationsExposure = false,
+                    productVendor = ProductVendor.BEST_BUY,
+                )
+                assertEquals(expected, tested.state)
+                assertFalse(productRecommendationFetched)
+            }
+        }
+
+    @Test
+    fun `GIVEN product recommendations are enabled WHEN a product analysis is fetched successfully and exposure is set to false THEN product recommendation should be fetched and displayed`() =
+        runTest {
+            setAndResetLocale {
+                var productRecommendationFetched = false
+                val tested = ReviewQualityCheckStore(
+                    middleware = provideReviewQualityCheckMiddleware(
+                        reviewQualityCheckPreferences = FakeReviewQualityCheckPreferences(
+                            isEnabled = true,
+                            isProductRecommendationsEnabled = true,
+                        ),
+                        shoppingExperienceFeature = FakeShoppingExperienceFeature(
+                            productRecommendationsExposureEnabled = false,
+                        ),
+                        reviewQualityCheckService = FakeReviewQualityCheckService(
+                            productAnalysis = { ProductAnalysisTestData.productAnalysis() },
+                            productRecommendation = {
+                                productRecommendationFetched = true
+                                ProductRecommendationTestData.productRecommendation()
+                            },
+                        ),
+                    ),
+                )
+                tested.waitUntilIdle()
+                dispatcher.scheduler.advanceUntilIdle()
+                tested.waitUntilIdle()
+                tested.dispatch(ReviewQualityCheckAction.FetchProductAnalysis).joinBlocking()
+                tested.waitUntilIdle()
+                dispatcher.scheduler.advanceUntilIdle()
+
+                val expected = ReviewQualityCheckState.OptedIn(
+                    productReviewState = ProductAnalysisTestData.analysisPresent(
+                        recommendedProductState = ProductRecommendationTestData.product(),
+                    ),
+                    productRecommendationsPreference = true,
+                    productRecommendationsExposure = false,
+                    productVendor = ProductVendor.BEST_BUY,
+                )
+                assertEquals(expected, tested.state)
+                assertTrue(productRecommendationFetched)
             }
         }
 
@@ -873,7 +1548,7 @@ class ReviewQualityCheckStoreTest {
                     ),
                     reviewQualityCheckService = FakeReviewQualityCheckService(
                         productAnalysis = { ProductAnalysisTestData.productAnalysis() },
-                        productRecommendation = null,
+                        productRecommendation = { null },
                     ),
                 ),
             )
@@ -889,6 +1564,7 @@ class ReviewQualityCheckStoreTest {
                     recommendedProductState = ReviewQualityCheckState.RecommendedProductState.Initial,
                 ),
                 productRecommendationsPreference = true,
+                productRecommendationsExposure = true,
                 productVendor = ProductVendor.BEST_BUY,
             )
             assertEquals(expected, tested.state)
@@ -897,7 +1573,8 @@ class ReviewQualityCheckStoreTest {
     @Test
     fun `GIVEN product recommendations are enabled WHEN product analysis fails THEN product recommendations should not be fetched`() =
         runTest {
-            val captureActionsMiddleware = CaptureActionsMiddleware<ReviewQualityCheckState, ReviewQualityCheckAction>()
+            val captureActionsMiddleware =
+                CaptureActionsMiddleware<ReviewQualityCheckState, ReviewQualityCheckAction>()
             val tested = ReviewQualityCheckStore(
                 middleware = provideReviewQualityCheckMiddleware(
                     reviewQualityCheckPreferences = FakeReviewQualityCheckPreferences(
@@ -906,7 +1583,7 @@ class ReviewQualityCheckStoreTest {
                     ),
                     reviewQualityCheckService = FakeReviewQualityCheckService(
                         productAnalysis = { null },
-                        productRecommendation = ProductRecommendationTestData.productRecommendation(),
+                        productRecommendation = { ProductRecommendationTestData.productRecommendation() },
                     ),
                 ) + captureActionsMiddleware,
             )
@@ -920,82 +1597,12 @@ class ReviewQualityCheckStoreTest {
             captureActionsMiddleware.assertNotDispatched(ReviewQualityCheckAction.UpdateRecommendedProduct::class)
         }
 
-    @Test
-    fun `GIVEN product recommendations are enabled WHEN recommended product is clicked THEN click event is recorded`() =
-        runTest {
-            var productClicked: String? = null
-            val tested = ReviewQualityCheckStore(
-                middleware = provideReviewQualityCheckMiddleware(
-                    reviewQualityCheckPreferences = FakeReviewQualityCheckPreferences(
-                        isEnabled = true,
-                        isProductRecommendationsEnabled = true,
-                    ),
-                    reviewQualityCheckService = FakeReviewQualityCheckService(
-                        productAnalysis = { ProductAnalysisTestData.productAnalysis() },
-                        productRecommendation = ProductRecommendationTestData.productRecommendation(
-                            aid = "342",
-                        ),
-                        recordClick = {
-                            productClicked = it
-                        },
-                    ),
-                ),
-            )
-            tested.waitUntilIdle()
-            dispatcher.scheduler.advanceUntilIdle()
-            tested.waitUntilIdle()
-            tested.dispatch(ReviewQualityCheckAction.FetchProductAnalysis).joinBlocking()
-            tested.waitUntilIdle()
-            dispatcher.scheduler.advanceUntilIdle()
-            tested.dispatch(
-                ReviewQualityCheckAction.RecommendedProductClick(
-                    productAid = "342",
-                    productUrl = "https://test.com",
-                ),
-            ).joinBlocking()
-
-            assertEquals("342", productClicked)
-        }
-
-    @Test
-    fun `GIVEN product recommendations are enabled WHEN recommended product is viewed THEN impression event is recorded`() =
-        runTest {
-            var productViewed: String? = null
-            val tested = ReviewQualityCheckStore(
-                middleware = provideReviewQualityCheckMiddleware(
-                    reviewQualityCheckPreferences = FakeReviewQualityCheckPreferences(
-                        isEnabled = true,
-                        isProductRecommendationsEnabled = true,
-                    ),
-                    reviewQualityCheckService = FakeReviewQualityCheckService(
-                        productAnalysis = { ProductAnalysisTestData.productAnalysis() },
-                        productRecommendation = ProductRecommendationTestData.productRecommendation(
-                            aid = "342",
-                        ),
-                        recordImpression = {
-                            productViewed = it
-                        },
-                    ),
-                ),
-            )
-            tested.waitUntilIdle()
-            dispatcher.scheduler.advanceUntilIdle()
-            tested.waitUntilIdle()
-            tested.dispatch(ReviewQualityCheckAction.FetchProductAnalysis).joinBlocking()
-            tested.waitUntilIdle()
-            dispatcher.scheduler.advanceUntilIdle()
-            tested.dispatch(
-                ReviewQualityCheckAction.RecommendedProductImpression(productAid = "342"),
-            ).joinBlocking()
-
-            assertEquals("342", productViewed)
-        }
-
     private fun provideReviewQualityCheckMiddleware(
         reviewQualityCheckPreferences: ReviewQualityCheckPreferences = FakeReviewQualityCheckPreferences(),
         reviewQualityCheckVendorsService: FakeReviewQualityCheckVendorsService = FakeReviewQualityCheckVendorsService(),
         reviewQualityCheckService: ReviewQualityCheckService = FakeReviewQualityCheckService(),
         networkChecker: NetworkChecker = FakeNetworkChecker(),
+        shoppingExperienceFeature: ShoppingExperienceFeature = FakeShoppingExperienceFeature(),
         appStore: AppStore = AppStore(),
     ): List<ReviewQualityCheckMiddleware> {
         return listOf(
@@ -1003,12 +1610,12 @@ class ReviewQualityCheckStoreTest {
                 reviewQualityCheckPreferences = reviewQualityCheckPreferences,
                 reviewQualityCheckVendorsService = reviewQualityCheckVendorsService,
                 appStore = appStore,
+                shoppingExperienceFeature = shoppingExperienceFeature,
                 scope = this.scope,
             ),
             ReviewQualityCheckNetworkMiddleware(
                 reviewQualityCheckService = reviewQualityCheckService,
                 networkChecker = networkChecker,
-                appStore = appStore,
                 scope = this.scope,
             ),
         )

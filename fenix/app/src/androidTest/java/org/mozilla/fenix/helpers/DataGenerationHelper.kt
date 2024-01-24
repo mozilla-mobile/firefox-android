@@ -22,6 +22,8 @@ import org.junit.Assert
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.utils.IntentUtils
+import java.time.LocalDate
+import java.time.LocalTime
 
 object DataGenerationHelper {
     val appContext: Context = InstrumentationRegistry.getInstrumentation().targetContext
@@ -73,6 +75,28 @@ object DataGenerationHelper {
         val clipData = ClipData.newPlainText("label", message)
 
         clipBoard.setPrimaryClip(clipData)
+    }
+
+    /**
+     * Constructs a date and time placeholder string for sponsored Fx suggest links.
+     * The format of the datetime is YYYYMMDDHH, where YYYY is the four-digit year,
+     * MM is the two-digit month, DD is the two-digit day, and HH is the two-digit hour.
+     * Single-digit months, days, and hours are padded with a leading zero to ensure
+     * the correct format. For example, a date and time of January 10, 2024, at 3 PM
+     * would be represented as "2024011015".
+     *
+     * @return A string representing the current date and time in the specified format.
+     */
+    fun getSponsoredFxSuggestPlaceHolder(): String {
+        val currentDate = LocalDate.now()
+        val currentTime = LocalTime.now()
+
+        val currentDay = currentDate.dayOfMonth.toString().padStart(2, '0')
+        val currentMonth = currentDate.monthValue.toString().padStart(2, '0')
+        val currentYear = currentDate.year.toString()
+        val currentHour = currentTime.hour.toString().padStart(2, '0')
+
+        return currentYear + currentMonth + currentDay + currentHour
     }
 
     /**

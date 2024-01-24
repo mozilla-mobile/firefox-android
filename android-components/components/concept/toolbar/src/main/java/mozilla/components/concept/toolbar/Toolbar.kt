@@ -247,6 +247,11 @@ interface Toolbar {
          * Fired whenever the user changes the text in the address bar.
          */
         fun onTextChanged(text: String) = Unit
+
+        /**
+         * Fired when user clears input by tapping the clear input button.
+         */
+        fun onInputCleared() = Unit
     }
 
     /**
@@ -276,7 +281,6 @@ interface Toolbar {
      * @param longClickListener Callback that will be invoked whenever the button is long-pressed.
      * @param listener Callback that will be invoked whenever the button is pressed
      */
-    @Suppress("LongParameterList")
     open class ActionButton(
         val imageDrawable: Drawable? = null,
         val contentDescription: String,

@@ -21,13 +21,12 @@ import mozilla.components.browser.engine.gecko.mediasession.GeckoMediaSessionDel
 import mozilla.components.browser.engine.gecko.permission.GeckoPermissionRequest
 import mozilla.components.browser.engine.gecko.prompt.GeckoPromptDelegate
 import mozilla.components.browser.engine.gecko.translate.GeckoTranslateSessionDelegate
+import mozilla.components.browser.engine.gecko.translate.GeckoTranslationUtils.intoTranslationError
 import mozilla.components.browser.engine.gecko.window.GeckoWindowRequest
 import mozilla.components.browser.errorpages.ErrorType
 import mozilla.components.concept.engine.EngineSession
 import mozilla.components.concept.engine.EngineSession.LoadUrlFlags.Companion.ALLOW_ADDITIONAL_HEADERS
 import mozilla.components.concept.engine.EngineSession.LoadUrlFlags.Companion.ALLOW_JAVASCRIPT_URL
-import mozilla.components.concept.engine.EngineSession.LoadUrlFlags.Companion.EXTERNAL
-import mozilla.components.concept.engine.EngineSession.LoadUrlFlags.Companion.LOAD_FLAGS_BYPASS_LOAD_URI_DELEGATE
 import mozilla.components.concept.engine.EngineSessionState
 import mozilla.components.concept.engine.HitResult
 import mozilla.components.concept.engine.Settings
@@ -40,7 +39,9 @@ import mozilla.components.concept.engine.request.RequestInterceptor
 import mozilla.components.concept.engine.request.RequestInterceptor.InterceptionResponse
 import mozilla.components.concept.engine.shopping.Highlight
 import mozilla.components.concept.engine.shopping.ProductAnalysis
+import mozilla.components.concept.engine.shopping.ProductAnalysisStatus
 import mozilla.components.concept.engine.shopping.ProductRecommendation
+import mozilla.components.concept.engine.translate.TranslationError
 import mozilla.components.concept.engine.translate.TranslationOperation
 import mozilla.components.concept.engine.translate.TranslationOptions
 import mozilla.components.concept.engine.window.WindowRequest
@@ -803,10 +804,10 @@ class GeckoEngineSession(
      */
     override fun requestAnalysisStatus(
         url: String,
-        onResult: (String) -> Unit,
+        onResult: (ProductAnalysisStatus) -> Unit,
         onException: (Throwable) -> Unit,
     ) {
-        geckoSession.requestAnalysisCreationStatus(url).then({
+        geckoSession.requestAnalysisStatus(url).then({
                 response ->
             val errorMessage = "Invalid value: unable to request analysis status from Gecko Engine."
             if (response == null) {
@@ -816,8 +817,12 @@ class GeckoEngineSession(
                 )
                 return@then GeckoResult()
             }
-            onResult(response)
-            GeckoResult<String>()
+            val analysisStatusResult = ProductAnalysisStatus(
+                response.status,
+                response.progress,
+            )
+            onResult(analysisStatusResult)
+            GeckoResult<ProductAnalysisStatus>()
         }, {
                 throwable ->
             logger.error("Request for product analysis status failed.", throwable)
@@ -883,12 +888,31 @@ class GeckoEngineSession(
     }
 
     /**
-     * Convenience method for the error when session translation is not available.
+     * See [EngineSession.reportBackInStock]
      */
-    private fun sessionTranslationNotAvailable(): Throwable {
-        val errorMessage = "A translation session coordinator is not available."
-        logger.error(errorMessage)
-        return IllegalStateException(errorMessage)
+    override fun reportBackInStock(
+        url: String,
+        onResult: (String) -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {
+        geckoSession.reportBackInStock(url).then({
+                response ->
+            val errorMessage = "Invalid value: unable to report back in stock from Gecko Engine."
+            if (response == null) {
+                logger.error(errorMessage)
+                onException(
+                    java.lang.IllegalStateException(errorMessage),
+                )
+                return@then GeckoResult()
+            }
+            onResult(response)
+            GeckoResult<String>()
+        }, {
+                throwable ->
+            logger.error("Request for reporting back in stock failed.", throwable)
+            onException(throwable)
+            GeckoResult()
+        })
     }
 
     /**
@@ -901,7 +925,10 @@ class GeckoEngineSession(
     ) {
         if (geckoSession.sessionTranslation == null) {
             notifyObservers {
-                onTranslateException(TranslationOperation.TRANSLATE, sessionTranslationNotAvailable())
+                onTranslateException(
+                    TranslationOperation.TRANSLATE,
+                    TranslationError.MissingSessionCoordinator(),
+                )
             }
             return
         }
@@ -922,7 +949,10 @@ class GeckoEngineSession(
                 throwable ->
             logger.error("Request for translation failed: ", throwable)
             notifyObservers {
-                onTranslateException(TranslationOperation.TRANSLATE, throwable)
+                onTranslateException(
+                    TranslationOperation.TRANSLATE,
+                    throwable.intoTranslationError(),
+                )
             }
             GeckoResult()
         })
@@ -934,7 +964,10 @@ class GeckoEngineSession(
     override fun requestTranslationRestore() {
         if (geckoSession.sessionTranslation == null) {
             notifyObservers {
-                onTranslateException(TranslationOperation.RESTORE, sessionTranslationNotAvailable())
+                onTranslateException(
+                    TranslationOperation.RESTORE,
+                    TranslationError.MissingSessionCoordinator(),
+                )
             }
             return
         }
@@ -948,8 +981,63 @@ class GeckoEngineSession(
                 throwable ->
             logger.error("Request for translation failed: ", throwable)
             notifyObservers {
-                onTranslateException(TranslationOperation.RESTORE, throwable)
+                onTranslateException(TranslationOperation.RESTORE, throwable.intoTranslationError())
             }
+            GeckoResult()
+        })
+    }
+
+    /**
+     * See [EngineSession.getNeverTranslateSiteSetting]
+     */
+    override fun getNeverTranslateSiteSetting(
+        onResult: (Boolean) -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {
+        if (geckoSession.sessionTranslation == null) {
+            onException(TranslationError.MissingSessionCoordinator())
+            return
+        }
+
+        geckoSession.sessionTranslation!!.neverTranslateSiteSetting.then({
+                response ->
+            if (response == null) {
+                logger.error("Did not receive a site setting response.")
+                onException(
+                    TranslationError.UnexpectedNull(),
+                )
+                return@then GeckoResult()
+            }
+            onResult(response)
+            GeckoResult<Boolean>()
+        }, {
+                throwable ->
+            logger.error("Request for site translation preference failed: ", throwable)
+            onException(throwable.intoTranslationError())
+            GeckoResult()
+        })
+    }
+
+    /**
+     * See [EngineSession.setNeverTranslateSiteSetting]
+     */
+    override fun setNeverTranslateSiteSetting(
+        setting: Boolean,
+        onResult: () -> Unit,
+        onException: (Throwable) -> Unit,
+    ) {
+        if (geckoSession.sessionTranslation == null) {
+            onException(TranslationError.MissingSessionCoordinator())
+            return
+        }
+
+        geckoSession.sessionTranslation!!.setNeverTranslateSiteSetting(setting).then({
+            onResult()
+            GeckoResult<Boolean>()
+        }, {
+                throwable ->
+            logger.error("Request for setting site translation preference failed: ", throwable)
+            onException(throwable.intoTranslationError())
             GeckoResult()
         })
     }
@@ -1132,7 +1220,8 @@ class GeckoEngineSession(
                         is InterceptionResponse.Content -> loadData(data, mimeType, encoding)
                         is InterceptionResponse.Url -> loadUrl(
                             url = url,
-                            flags = LoadUrlFlags.select(EXTERNAL, LOAD_FLAGS_BYPASS_LOAD_URI_DELEGATE),
+                            flags = flags,
+                            additionalHeaders = additionalHeaders,
                         )
                         is InterceptionResponse.AppIntent -> {
                             appRedirectUrl = lastLoadRequestUri
@@ -1694,7 +1783,7 @@ class GeckoEngineSession(
         internal const val ABOUT_BLANK = "about:blank"
         internal const val JS_SCHEME = "javascript"
         internal val BLOCKED_SCHEMES =
-            listOf("content", "file", "resource", JS_SCHEME) // See 1684761 and 1684947
+            listOf("file", "resource", JS_SCHEME) // See 1684761 and 1684947
 
         /**
          * Provides an ErrorType corresponding to the error code provided.

@@ -49,7 +49,9 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import mozilla.components.browser.state.selector.findTab
 import mozilla.components.browser.state.selector.normalTabs
@@ -119,7 +121,6 @@ import org.mozilla.fenix.messaging.FenixNimbusMessagingController
 import org.mozilla.fenix.messaging.MessagingFeature
 import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.perf.MarkersFragmentLifecycleCallbacks
-import org.mozilla.fenix.perf.runBlockingIncrement
 import org.mozilla.fenix.search.toolbar.DefaultSearchSelectorController
 import org.mozilla.fenix.search.toolbar.SearchSelectorMenu
 import org.mozilla.fenix.tabstray.TabsTrayAccessPoint
@@ -1007,17 +1008,18 @@ class HomeFragment : Fragment() {
                 lastAppliedWallpaperName = wallpaperName
             }
             else -> {
-                runBlockingIncrement {
+                viewLifecycleOwner.lifecycleScope.launch {
                     // loadBitmap does file lookups based on name, so we don't need a fully
                     // qualified type to load the image
                     val wallpaper = Wallpaper.Default.copy(name = wallpaperName)
                     val wallpaperImage =
-                        requireComponents.useCases.wallpaperUseCases.loadBitmap(wallpaper)
+                        context?.let { requireComponents.useCases.wallpaperUseCases.loadBitmap(it, wallpaper) }
                     wallpaperImage?.let {
                         it.scaleToBottomOfView(binding.wallpaperImageView)
                         binding.wallpaperImageView.isVisible = true
                         lastAppliedWallpaperName = wallpaperName
                     } ?: run {
+                        if (!isActive) return@run
                         with(binding.wallpaperImageView) {
                             isVisible = false
                             showSnackBar(
@@ -1051,11 +1053,15 @@ class HomeFragment : Fragment() {
     }
 
     private fun observeWallpaperUpdates() {
-        consumeFrom(requireComponents.appStore) {
-            val currentWallpaper = it.wallpaperState.currentWallpaper
-            if (currentWallpaper.name != lastAppliedWallpaperName) {
-                applyWallpaper(wallpaperName = currentWallpaper.name, orientationChange = false)
-            }
+        consumeFlow(requireComponents.appStore, viewLifecycleOwner) { flow ->
+            flow.filter { it.mode == BrowsingMode.Normal }
+                .map { it.wallpaperState.currentWallpaper }
+                .distinctUntilChanged()
+                .collect {
+                    if (it.name != lastAppliedWallpaperName) {
+                        applyWallpaper(wallpaperName = it.name, orientationChange = false)
+                    }
+                }
         }
     }
 

@@ -15,6 +15,7 @@ import mozilla.components.service.pocket.PocketStory.PocketSponsoredStory
 import org.mozilla.fenix.browser.StandardSnackbarError
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.components.AppStore
+import org.mozilla.fenix.components.appstate.shopping.ShoppingState
 import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesCategory
 import org.mozilla.fenix.home.pocket.PocketRecommendedStoriesSelectedCategory
 import org.mozilla.fenix.home.recentbookmarks.RecentBookmark
@@ -228,17 +229,6 @@ sealed class AppAction : Action {
         data class ShoppingSheetStateUpdated(val expanded: Boolean) : ShoppingAction()
 
         /**
-         * [ShoppingAction] used to add a product to a set of products that are being analysed.
-         */
-        data class AddToProductAnalysed(val productPageUrl: String) : ShoppingAction()
-
-        /**
-         * [ShoppingAction] used to remove a product from the set of products that are being
-         * analysed.
-         */
-        data class RemoveFromProductAnalysed(val productPageUrl: String) : ShoppingAction()
-
-        /**
          * [ShoppingAction] used to update the expansion state of the highlights card.
          */
         data class HighlightsCardExpanded(
@@ -260,6 +250,13 @@ sealed class AppAction : Action {
         data class SettingsCardExpanded(
             val productPageUrl: String,
             val expanded: Boolean,
+        ) : ShoppingAction()
+
+        /**
+         * [ShoppingAction] used to update the recorded product recommendation impressions set.
+         */
+        data class ProductRecommendationImpression(
+            val key: ShoppingState.ProductRecommendationImpressionKey,
         ) : ShoppingAction()
     }
 }

@@ -114,8 +114,10 @@
     <string name="mozac_feature_addons_details">Mba’emimi</string>
     <!-- Displays a page with all the permissions of an add-on. -->
     <string name="mozac_feature_addons_permissions">Ñemoneĩ</string>
-    <!-- This is button that remove (uninstall an add-on). -->
+    <!-- This is a button to remove (i.e. uninstall) an add-on. -->
     <string name="mozac_feature_addons_remove">Mboguete</string>
+    <!-- This is a button to report an add-on. -->
+    <string name="mozac_feature_addons_report">Momarandu</string>
     <!-- This is the title of a dialog that asks the users if they to install or not an add-on. %1$s is the add-on name. -->
     <string name="mozac_feature_addons_permissions_dialog_title">Mbojuaju %1$s?</string>
     <!-- This is the title of a dialog that asks the users to grant optional permissions. %1$s is the add-on name. -->
@@ -202,8 +204,6 @@
     <string name="mozac_feature_addons_failed_to_install_incompatible_error">%1$s ndaikatúi oñemohenda ndojokupytýi rupi %2$s %3$s ndive.</string>
     <!-- Text shown when attempting to install a blocklisted add-on. %1$s is the add-on name. -->
     <string name="mozac_feature_addons_blocklisted_1">%1$s ndaikatúi oñemohenda omoapañuãi rupi tuichaháicha tekopyta térã tekorosã</string>
-    <!-- Text shown when attempting to install a blocklisted add-on. %1$s is the add-on name. -->
-    <string name="mozac_feature_addons_blocklisted" moz:removedIn="119" tools:ignore="UnusedResources">%1$s ndaikatúi oñemohenda omoapañuãi kuaágui tekopyta térã tekorosãrã</string>
     <!-- Text shown after successfully enabled an add-on. %1$s is the add-on name. -->
     <string name="mozac_feature_addons_successfully_enabled">%1$s hendýma hekopete</string>
     <!-- Text shown after failed to enable an add-on. %1$s is the add-on name. -->
@@ -245,7 +245,7 @@
     <!-- Text shown in the dialog when add-on installation is completed. %1$s is the add-on name. -->
     <string name="mozac_feature_addons_installed_dialog_description">Embojuruja poravorãme</string>
     <!-- Confirmation button text for the dialog when add-on installation is completed. -->
-    <string name="mozac_feature_addons_installed_dialog_okay_button">Oĩma, aikumby</string>
+    <string name="mozac_feature_addons_installed_dialog_okay_button">Oĩma, aikũmby</string>
     <!-- "Learn more" link displayed below an add-on status message. -->
     <string name="mozac_feature_addons_status_learn_more">Eikuaave</string>
     <!-- Status message below an add-on in the add-ons manager when this add-on has been blocklisted. %1$s is the add-on name. -->

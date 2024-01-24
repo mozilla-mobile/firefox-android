@@ -27,7 +27,6 @@ import java.util.concurrent.TimeUnit
  * A [AwesomeBar.SuggestionProvider] implementation that provides a suggestion containing search engine suggestions (as
  * chips) from the passed in [SearchEngine].
  */
-@Suppress("LongParameterList")
 class SearchSuggestionProvider private constructor(
     internal val client: SearchSuggestionClient,
     private val searchUseCase: SearchUseCases.SearchUseCase,
@@ -268,6 +267,7 @@ class SearchSuggestionProvider private constructor(
 
                 val response = fetchClient.fetch(request)
                 if (!response.isSuccess) {
+                    response.close()
                     return null
                 }
 

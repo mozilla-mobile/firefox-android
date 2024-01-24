@@ -15,6 +15,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import mozilla.components.browser.engine.gecko.ext.geckoTrackingProtectionPermission
 import mozilla.components.browser.engine.gecko.ext.isExcludedForTrackingProtection
 import mozilla.components.browser.engine.gecko.permission.geckoContentPermission
+import mozilla.components.browser.engine.gecko.translate.GeckoTranslationUtils.intoTranslationError
 import mozilla.components.browser.errorpages.ErrorType
 import mozilla.components.concept.engine.DefaultSettings
 import mozilla.components.concept.engine.EngineSession
@@ -35,6 +36,7 @@ import mozilla.components.concept.engine.history.HistoryTrackingDelegate
 import mozilla.components.concept.engine.manifest.WebAppManifest
 import mozilla.components.concept.engine.permission.PermissionRequest
 import mozilla.components.concept.engine.request.RequestInterceptor
+import mozilla.components.concept.engine.translate.TranslationError
 import mozilla.components.concept.engine.translate.TranslationOperation
 import mozilla.components.concept.engine.window.WindowRequest
 import mozilla.components.concept.fetch.Headers
@@ -95,6 +97,7 @@ import org.mozilla.geckoview.GeckoSession.ProgressDelegate.SecurityInformation
 import org.mozilla.geckoview.GeckoSessionSettings
 import org.mozilla.geckoview.SessionFinder
 import org.mozilla.geckoview.TranslationsController
+import org.mozilla.geckoview.TranslationsController.TranslationsException
 import org.mozilla.geckoview.WebRequestError
 import org.mozilla.geckoview.WebRequestError.ERROR_CATEGORY_UNKNOWN
 import org.mozilla.geckoview.WebRequestError.ERROR_MALFORMED_URI
@@ -616,11 +619,6 @@ class GeckoEngineSessionTest {
         engineSession.loadUrl("FILE://test.txt")
         verify(geckoSession, never()).load(GeckoSession.Loader().uri("file://test.txt"))
         verify(geckoSession, never()).load(GeckoSession.Loader().uri("FILE://test.txt"))
-
-        engineSession.loadUrl("content://authority/path/id")
-        engineSession.loadUrl("CoNtEnT://authority/path/id")
-        verify(geckoSession, never()).load(GeckoSession.Loader().uri("content://authority/path/id"))
-        verify(geckoSession, never()).load(GeckoSession.Loader().uri("CoNtEnT://authority/path/id"))
 
         engineSession.loadUrl("resource://package/test.text")
         engineSession.loadUrl("RESOURCE://package/test.text")
@@ -2744,9 +2742,16 @@ class GeckoEngineSessionTest {
         var onExceptionCalled = false
 
         val mUrl = "https://m.example.com"
-        val geckoResult = GeckoResult<String?>()
-        geckoResult.complete("COMPLETED")
-        whenever(geckoSession.requestAnalysisCreationStatus(mUrl))
+        val geckoResult = GeckoResult<GeckoSession.AnalysisStatusResponse>()
+
+        val status = "in_progress"
+        val progress = 90.9
+        val analysisObject = GeckoSession.AnalysisStatusResponse.Builder(status)
+            .progress(progress)
+            .build()
+
+        geckoResult.complete(analysisObject)
+        whenever(geckoSession.requestAnalysisStatus(mUrl))
             .thenReturn(geckoResult)
 
         engineSession.requestAnalysisStatus(
@@ -2875,7 +2880,7 @@ class GeckoEngineSessionTest {
 
             override fun onTranslateException(
                 operation: TranslationOperation,
-                throwable: Throwable,
+                translationError: TranslationError,
             ) {
                 assert(false) { "We should not notify of a failure." }
             }
@@ -2906,7 +2911,7 @@ class GeckoEngineSessionTest {
             }
             override fun onTranslateException(
                 operation: TranslationOperation,
-                throwable: Throwable,
+                translationError: TranslationError,
             ) {
                 assert(false) { "We should not notify of a failure." }
             }
@@ -2938,7 +2943,7 @@ class GeckoEngineSessionTest {
 
             override fun onTranslateException(
                 operation: TranslationOperation,
-                throwable: Throwable,
+                translationError: TranslationError,
             ) {
                 assert(true) { "We should notify of a failure." }
             }
@@ -2969,7 +2974,7 @@ class GeckoEngineSessionTest {
             }
             override fun onTranslateException(
                 operation: TranslationOperation,
-                throwable: Throwable,
+                translationError: TranslationError,
             ) {
                 assert(true) { "We should notify of a failure." }
             }
@@ -2978,6 +2983,330 @@ class GeckoEngineSessionTest {
         engineSession.requestTranslationRestore()
 
         shadowOf(getMainLooper()).idle()
+    }
+
+    @Test
+    fun `WHEN session getNeverTranslateSiteSetting is successful THEN onResult should be called`() {
+        val engineSession = GeckoEngineSession(mock(), geckoSessionProvider = geckoSessionProvider)
+        val mockedGeckoController: TranslationsController.SessionTranslation = mock()
+
+        val geckoResult = GeckoResult<Boolean>()
+
+        whenever(geckoSession.sessionTranslation).thenReturn(mockedGeckoController)
+        whenever(geckoSession.sessionTranslation!!.neverTranslateSiteSetting).thenReturn(geckoResult)
+
+        var onResultCalled = false
+        var onExceptionCalled = false
+
+        engineSession.getNeverTranslateSiteSetting(
+            onResult = {
+                onResultCalled = true
+                assertTrue(it)
+            },
+            onException = { onExceptionCalled = true },
+        )
+
+        geckoResult.complete(true)
+        shadowOf(getMainLooper()).idle()
+
+        assertTrue(onResultCalled)
+        assertFalse(onExceptionCalled)
+    }
+
+    @Test
+    fun `WHEN session getNeverTranslateSiteSetting has an error THEN onException should be called`() {
+        val engineSession = GeckoEngineSession(mock(), geckoSessionProvider = geckoSessionProvider)
+        val mockedGeckoController: TranslationsController.SessionTranslation = mock()
+
+        val geckoResult = GeckoResult<Boolean>()
+
+        whenever(geckoSession.sessionTranslation).thenReturn(mockedGeckoController)
+        whenever(geckoSession.sessionTranslation!!.neverTranslateSiteSetting).thenReturn(geckoResult)
+
+        var onResultCalled = false
+        var onExceptionCalled = false
+
+        engineSession.getNeverTranslateSiteSetting(
+            onResult = { onResultCalled = true },
+            onException = { onExceptionCalled = true },
+        )
+
+        geckoResult.completeExceptionally(Exception())
+        shadowOf(getMainLooper()).idle()
+
+        assertFalse(onResultCalled)
+        assertTrue(onExceptionCalled)
+    }
+
+    @Test
+    fun `WHEN session setNeverTranslateSiteSetting is successful THEN onResult should be called`() {
+        val engineSession = GeckoEngineSession(mock(), geckoSessionProvider = geckoSessionProvider)
+        val mockedGeckoController: TranslationsController.SessionTranslation = mock()
+
+        val geckoResult = GeckoResult<Void>()
+
+        whenever(geckoSession.sessionTranslation).thenReturn(mockedGeckoController)
+        whenever(geckoSession.sessionTranslation!!.setNeverTranslateSiteSetting(any())).thenReturn(geckoResult)
+
+        var onResultCalled = false
+        var onExceptionCalled = false
+
+        engineSession.setNeverTranslateSiteSetting(
+            true,
+            onResult = { onResultCalled = true },
+            onException = { onExceptionCalled = true },
+        )
+
+        geckoResult.complete(null)
+        shadowOf(getMainLooper()).idle()
+
+        assertTrue(onResultCalled)
+        assertFalse(onExceptionCalled)
+    }
+
+    @Test
+    fun `WHEN session setNeverTranslateSiteSetting has an error THEN onException should be called`() {
+        val engineSession = GeckoEngineSession(mock(), geckoSessionProvider = geckoSessionProvider)
+        val mockedGeckoController: TranslationsController.SessionTranslation = mock()
+
+        val geckoResult = GeckoResult<Void>()
+
+        whenever(geckoSession.sessionTranslation).thenReturn(mockedGeckoController)
+        whenever(geckoSession.sessionTranslation!!.setNeverTranslateSiteSetting(any())).thenReturn(geckoResult)
+
+        var onResultCalled = false
+        var onExceptionCalled = false
+
+        engineSession.setNeverTranslateSiteSetting(
+            true,
+            onResult = { onResultCalled = true },
+            onException = { onExceptionCalled = true },
+        )
+
+        geckoResult.completeExceptionally(Exception())
+        shadowOf(getMainLooper()).idle()
+
+        assertFalse(onResultCalled)
+        assertTrue(onExceptionCalled)
+    }
+
+    @Test
+    fun `WHEN mapping a Gecko TranslationsException THEN it maps as expected to a TranslationError`() {
+        // Specifically defined unknown error thrown by the translations engine
+        val geckoUnknownError = TranslationsException(TranslationsException.ERROR_UNKNOWN)
+        val unknownError = geckoUnknownError.intoTranslationError()
+        assertTrue(
+            unknownError is TranslationError.UnknownError,
+        )
+        assertEquals(
+            (unknownError as TranslationError.UnknownError).cause,
+            geckoUnknownError,
+        )
+        assertEquals(
+            (unknownError as Throwable).cause,
+            geckoUnknownError,
+        )
+        assertEquals(
+            unknownError.errorName,
+            "unknown",
+        )
+        assertEquals(
+            unknownError.displayError,
+            false,
+        )
+
+        // Something really unexpected was thrown
+        val unexpectedUnknownError = Exception("Something very unexpected")
+        val unexpectedUnknown = unexpectedUnknownError.intoTranslationError()
+        assertTrue(
+            unexpectedUnknown is
+            TranslationError.UnknownError,
+        )
+        assertEquals(
+            (unexpectedUnknown as TranslationError.UnknownError).cause,
+            unexpectedUnknownError,
+        )
+        assertEquals(
+            unexpectedUnknown.errorName,
+            "unknown",
+        )
+        assertEquals(
+            unexpectedUnknown.displayError,
+            false,
+        )
+
+        // For manual use as a guard for when the API returns a null value and it shouldn't be
+        // possible
+        val unexpectedNullError = TranslationError.UnexpectedNull()
+        assertEquals(
+            unexpectedNullError.errorName,
+            "unexpected-null",
+        )
+        assertEquals(
+            unexpectedNullError.displayError,
+            false,
+        )
+
+        // For manual use as a guard for when the engine is missing a session coordinator
+        val missingCoordinator = TranslationError.MissingSessionCoordinator()
+        assertEquals(
+            missingCoordinator.errorName,
+            "missing-session-coordinator",
+        )
+        assertEquals(
+            missingCoordinator.displayError,
+            false,
+        )
+
+        val notSupported =
+            TranslationsException(TranslationsException.ERROR_ENGINE_NOT_SUPPORTED).intoTranslationError()
+        assertTrue(
+            notSupported is
+            TranslationError.EngineNotSupportedError,
+        )
+        assertEquals(
+            notSupported.errorName,
+            "engine-not-supported",
+        )
+        assertEquals(
+            notSupported.displayError,
+            false,
+        )
+
+        val couldNotTranslate =
+            TranslationsException(TranslationsException.ERROR_COULD_NOT_TRANSLATE).intoTranslationError()
+        assertTrue(
+            couldNotTranslate is
+            TranslationError.CouldNotTranslateError,
+        )
+        assertEquals(
+            couldNotTranslate.errorName,
+            "could-not-translate",
+        )
+        assertEquals(
+            couldNotTranslate.displayError,
+            true,
+        )
+
+        val couldNotRestore =
+            TranslationsException(TranslationsException.ERROR_COULD_NOT_RESTORE).intoTranslationError()
+        assertTrue(
+            couldNotRestore is
+            TranslationError.CouldNotRestoreError,
+        )
+        assertEquals(
+            couldNotRestore.errorName,
+            "could-not-restore",
+        )
+        assertEquals(
+            couldNotRestore.displayError,
+            false,
+        )
+
+        val couldNotLoadLanguages =
+            TranslationsException(TranslationsException.ERROR_COULD_NOT_LOAD_LANGUAGES).intoTranslationError()
+        assertTrue(
+            couldNotLoadLanguages is
+            TranslationError.CouldNotLoadLanguagesError,
+        )
+        assertEquals(
+            couldNotLoadLanguages.errorName,
+            "could-not-load-languages",
+        )
+        assertEquals(
+            couldNotLoadLanguages.displayError,
+            true,
+        )
+
+        val languageNotSupported =
+            TranslationsException(TranslationsException.ERROR_LANGUAGE_NOT_SUPPORTED).intoTranslationError()
+        assertTrue(
+            languageNotSupported is
+            TranslationError.LanguageNotSupportedError,
+        )
+        assertEquals(
+            languageNotSupported.errorName,
+            "language-not-supported",
+        )
+        assertEquals(
+            languageNotSupported.displayError,
+            true,
+        )
+
+        val couldNotRetrieve =
+            TranslationsException(TranslationsException.ERROR_MODEL_COULD_NOT_RETRIEVE).intoTranslationError()
+        assertTrue(
+            couldNotRetrieve is
+            TranslationError.ModelCouldNotRetrieveError,
+        )
+        assertEquals(
+            couldNotRetrieve.errorName,
+            "model-could-not-retrieve",
+        )
+        assertEquals(
+            couldNotRetrieve.displayError,
+            false,
+        )
+
+        val couldNotDelete =
+            TranslationsException(TranslationsException.ERROR_MODEL_COULD_NOT_DELETE).intoTranslationError()
+        assertTrue(
+            couldNotDelete is
+            TranslationError.ModelCouldNotDeleteError,
+        )
+        assertEquals(
+            couldNotDelete.errorName,
+            "model-could-not-delete",
+        )
+        assertEquals(
+            couldNotDelete.displayError,
+            false,
+        )
+
+        val couldNotDownload =
+            TranslationsException(TranslationsException.ERROR_MODEL_COULD_NOT_DOWNLOAD).intoTranslationError()
+        assertTrue(
+            couldNotDownload is
+            TranslationError.ModelCouldNotDownloadError,
+        )
+        assertEquals(
+            couldNotDownload.errorName,
+            "model-could-not-download",
+        )
+        assertEquals(
+            couldNotDelete.displayError,
+            false,
+        )
+
+        val languageRequired =
+            TranslationsException(TranslationsException.ERROR_MODEL_LANGUAGE_REQUIRED).intoTranslationError()
+        assertTrue(
+            languageRequired is
+            TranslationError.ModelLanguageRequiredError,
+        )
+        assertEquals(
+            languageRequired.errorName,
+            "model-language-required",
+        )
+        assertEquals(
+            languageRequired.displayError,
+            false,
+        )
+
+        val downloadRequired =
+            TranslationsException(TranslationsException.ERROR_MODEL_DOWNLOAD_REQUIRED).intoTranslationError()
+        assertTrue(
+            downloadRequired is
+            TranslationError.ModelDownloadRequiredError,
+        )
+        assertEquals(
+            downloadRequired.errorName,
+            "model-download-required",
+        )
+        assertEquals(
+            downloadRequired.displayError,
+            false,
+        )
     }
 
     @Test

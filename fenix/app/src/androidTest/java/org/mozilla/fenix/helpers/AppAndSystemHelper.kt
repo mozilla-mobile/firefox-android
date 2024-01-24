@@ -38,8 +38,10 @@ import org.junit.Assert.assertEquals
 import org.mozilla.fenix.Config
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.customtabs.ExternalAppBrowserActivity
+import org.mozilla.fenix.helpers.Constants.PackageName.PIXEL_LAUNCHER
 import org.mozilla.fenix.helpers.Constants.PackageName.YOUTUBE_APP
 import org.mozilla.fenix.helpers.Constants.TAG
+import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
 import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.ext.waitNotNull
 import org.mozilla.fenix.helpers.idlingresource.NetworkConnectionIdlingResource
@@ -247,6 +249,7 @@ object AppAndSystemHelper {
      * Runs on Debug variant as we don't want to adjust Release permission manifests
      * Runs the test in its testBlock.
      * Cleans up and sets the default locale after it's done.
+     * As a safety measure, always add the resetSystemLocaleToEnUS() method in the tearDown method of your Class.
      */
     fun runWithSystemLocaleChanged(locale: Locale, testRule: ActivityTestRule<HomeActivity>, testBlock: () -> Unit) {
         if (Config.channel.isDebug) {
@@ -273,6 +276,21 @@ object AppAndSystemHelper {
     }
 
     /**
+     * Resets the default language of the entire device back to EN-US.
+     * In case of a test instrumentation crash, the finally statement in the
+     * runWithSystemLocaleChanged(locale: Locale) method, will not be reached.
+     * Add this method inside the tearDown method of your test class, where the above method is used.
+     * Note: If set inside the ActivityTestRule's afterActivityFinished() method, this also won't work,
+     * as the methods inside it are not always executed: https://github.com/android/android-test/issues/498
+     */
+    fun resetSystemLocaleToEnUS() {
+        if (Locale.getDefault() != Locale.US) {
+            Log.i(TAG, "Resetting system locale to EN US")
+            setSystemLocale(Locale.US)
+        }
+    }
+
+    /**
      * Changes the default language of the entire device, not just the app.
      */
     fun setSystemLocale(locale: Locale) {
@@ -295,12 +313,14 @@ object AppAndSystemHelper {
         )
     }
 
-    fun bringAppToForeground() {
-        mDevice.pressRecentApps()
-        mDevice.findObject(UiSelector().resourceId("${TestHelper.packageName}:id/container")).waitForExists(
-            TestAssetHelper.waitingTime,
-        )
-    }
+    /**
+     * Brings the app to foregorund by clicking it in the recent apps tray.
+     * The package name is related to the home screen experience for the Pixel phones produced by Google.
+     * The recent apps tray on API 30 will always display only 2 apps, even if previously were opened more.
+     * The index of the most recent opened app will always have index 2, meaning that the previously opened app will have index 1.
+     */
+    fun bringAppToForeground() =
+        mDevice.findObject(UiSelector().index(2).packageName(PIXEL_LAUNCHER)).clickAndWaitForNewWindow(waitingTimeShort)
 
     fun verifyKeyboardVisibility(isExpectedToBeVisible: Boolean = true) {
         mDevice.waitForIdle()

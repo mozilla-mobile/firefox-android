@@ -17,6 +17,7 @@ import androidx.compose.ui.test.performClick
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.ViewInteraction
 import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.longClick
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.PickerActions
 import androidx.test.espresso.matcher.RootMatchers.isDialog
@@ -40,7 +41,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.mozilla.fenix.R
 import org.mozilla.fenix.ext.components
-import org.mozilla.fenix.helpers.Constants.LONG_CLICK_DURATION
 import org.mozilla.fenix.helpers.Constants.RETRY_COUNT
 import org.mozilla.fenix.helpers.Constants.TAG
 import org.mozilla.fenix.helpers.DataGenerationHelper.getStringResource
@@ -686,23 +686,28 @@ class BrowserRobot {
 
     fun verifyCookieBannerExists(exists: Boolean) {
         for (i in 1..RETRY_COUNT) {
+            Log.i(TAG, "verifyCookieBannerExists: For loop: $i")
             try {
-                assertUIObjectExists(cookieBanner(), exists = exists)
+                // Wait for the blocker to kick-in and make the cookie banner disappear
+                itemWithResId("CybotCookiebotDialog").waitUntilGone(waitingTime)
+                Log.i(TAG, "verifyCookieBannerExists: Waiting for window update")
+                // Assert that the blocker properly dismissed the cookie banner
+                assertUIObjectExists(itemWithResId("CybotCookiebotDialog"), exists = exists)
+
                 break
             } catch (e: AssertionError) {
                 if (i == RETRY_COUNT) {
                     throw e
-                } else {
-                    browserScreen {
-                    }.openThreeDotMenu {
-                    }.refreshPage {
-                        waitForPageToLoad()
-                    }
                 }
             }
         }
-        assertUIObjectExists(cookieBanner(), exists = exists)
     }
+
+    fun verifyCookieBannerBlockerCFRExists(exists: Boolean) =
+        assertUIObjectExists(
+            itemContainingText(getStringResource(R.string.cookie_banner_cfr_message)),
+            exists = exists,
+        )
 
     fun verifyOpenLinkInAnotherAppPrompt() {
         assertUIObjectExists(
@@ -841,7 +846,7 @@ class BrowserRobot {
         button.click()
     }
 
-    fun longClickToolbar() = mDevice.findObject(By.res("$packageName:id/mozac_browser_toolbar_url_view")).click(LONG_CLICK_DURATION)
+    fun longClickToolbar() = onView(withId(R.id.mozac_browser_toolbar_url_view)).perform(longClick())
 
     fun verifyDownloadPromptIsDismissed() =
         assertUIObjectExists(
@@ -1149,6 +1154,7 @@ class BrowserRobot {
                 "$packageName:id/action",
                 getStringResource(R.string.open_in_app_cfr_positive_button_text),
             ).clickAndWaitForNewWindow(waitingTime)
+            Log.i(TAG, "clickOpenLinksInAppsGoToSettingsCFRButton: Clicked \"Go to settings\" open links in apps CFR button")
 
             SettingsRobot().interact()
             return SettingsRobot.Transition()
@@ -1301,8 +1307,6 @@ fun clearTextFieldItem(item: UiObject) {
     item.waitForExists(waitingTime)
     item.clearTextField()
 }
-
-private fun cookieBanner() = itemWithResId("startsiden-gdpr-disclaimer")
 
 // Context menu items
 // Link URL

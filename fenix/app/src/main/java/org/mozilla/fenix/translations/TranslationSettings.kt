@@ -25,7 +25,7 @@ import org.mozilla.fenix.compose.list.TextListItem
 import org.mozilla.fenix.theme.FirefoxTheme
 
 /**
- * Firefox Translation settings fragment compose view.
+ * Translation Settings Fragment.
  *
  * @param translationSwitchList list of [TranslationSwitchItem]s to display.
  * @param onAutomaticTranslationClicked Invoked when the user clicks on the "Automatic Translation" button.
@@ -122,6 +122,7 @@ internal fun getTranslationSettingsSwitchList(): List<TranslationSwitchItem> {
                 textLabel = stringResource(R.string.translation_settings_offer_to_translate),
                 isChecked = true,
                 hasDivider = false,
+                isEnabled = true,
                 onStateChange = {},
             ),
         )
@@ -130,6 +131,7 @@ internal fun getTranslationSettingsSwitchList(): List<TranslationSwitchItem> {
                 textLabel = stringResource(R.string.translation_settings_always_download),
                 isChecked = false,
                 hasDivider = true,
+                isEnabled = true,
                 onStateChange = {},
             ),
         )
