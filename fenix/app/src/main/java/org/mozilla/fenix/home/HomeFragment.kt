@@ -157,6 +157,8 @@ class HomeFragment : Fragment() {
         )
     }
 
+    private val browsingModeManager get() = (activity as HomeActivity).browsingModeManager
+
     private val collectionStorageObserver = object : TabCollectionStorage.Observer {
         @SuppressLint("NotifyDataSetChanged")
         override fun onCollectionRenamed(tabCollection: TabCollection, title: String) {
@@ -247,6 +249,8 @@ class HomeFragment : Fragment() {
 
         val currentWallpaperName = requireContext().settings().currentWallpaperName
         applyWallpaper(wallpaperName = currentWallpaperName, orientationChange = false)
+
+        components.appStore.dispatch(AppAction.ModeChange(browsingModeManager.mode))
 
         lifecycleScope.launch(IO) {
             if (requireContext().settings().showPocketRecommendationsFeature) {
@@ -504,8 +508,16 @@ class HomeFragment : Fragment() {
      * doesn't get run right away which means that we won't draw on the first layout pass.
      */
     private fun updateSessionControlView() {
-        binding.root.consumeFrom(requireContext().components.appStore, viewLifecycleOwner) {
-            sessionControlView?.update(it, shouldReportMetrics = it.mode != BrowsingMode.Private)
+        if (browsingModeManager.mode == BrowsingMode.Private) {
+            binding.root.consumeFrom(requireContext().components.appStore, viewLifecycleOwner) {
+                sessionControlView?.update(it)
+            }
+        } else {
+            sessionControlView?.update(requireContext().components.appStore.state)
+
+            binding.root.consumeFrom(requireContext().components.appStore, viewLifecycleOwner) {
+                sessionControlView?.update(it, shouldReportMetrics = true)
+            }
         }
     }
 
@@ -533,7 +545,7 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         HomeScreen.homeScreenDisplayed.record(NoExtras())
         HomeScreen.homeScreenViewCount.add()
-        if (!requireComponents.appStore.state.mode.isPrivate) {
+        if (!browsingModeManager.mode.isPrivate) {
             HomeScreen.standardHomepageViewCount.add()
         }
 
@@ -551,24 +563,14 @@ class HomeFragment : Fragment() {
 
         tabCounterView = TabCounterView(
             context = requireContext(),
+            browsingModeManager = browsingModeManager,
             navController = findNavController(),
             tabCounter = binding.tabButton,
-            mode = requireComponents.appStore.state.mode,
-            onBrowsingModeChanged = { newMode ->
-                val action = when (newMode) {
-                    BrowsingMode.Normal -> AppAction.ToolbarAction.NewTab
-                    BrowsingMode.Private -> AppAction.ToolbarAction.NewPrivateTab
-                }
-                requireComponents.appStore.dispatch(action)
-            },
         )
 
         toolbarView?.build()
 
-        PrivateBrowsingButtonView(
-            button = binding.privateBrowsingButton,
-            mode = requireComponents.appStore.state.mode,
-        ) { newMode ->
+        PrivateBrowsingButtonView(binding.privateBrowsingButton, browsingModeManager) { newMode ->
             sessionControlInteractor.onPrivateModeButtonClicked(newMode)
             Homepage.privateModeIconTapped.record(mozilla.telemetry.glean.private.NoExtras())
         }
@@ -773,7 +775,7 @@ class HomeFragment : Fragment() {
             )
         }
 
-        if (requireComponents.appStore.state.mode.isPrivate &&
+        if (browsingModeManager.mode.isPrivate &&
             // We will be showing the search dialog and don't want to show the CFR while the dialog shows
             !bundleArgs.getBoolean(FOCUS_ON_ADDRESS_BAR) &&
             context.settings().shouldShowPrivateModeCfr
@@ -812,7 +814,7 @@ class HomeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        if (requireComponents.appStore.state.mode.isPrivate) {
+        if (browsingModeManager.mode == BrowsingMode.Private) {
             activity?.window?.setBackgroundDrawableResource(R.drawable.private_home_background_gradient)
         }
 
@@ -828,7 +830,7 @@ class HomeFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        if (requireComponents.appStore.state.mode.isPrivate) {
+        if (browsingModeManager.mode == BrowsingMode.Private) {
             activity?.window?.setBackgroundDrawable(
                 ColorDrawable(
                     ContextCompat.getColor(
@@ -982,7 +984,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun showCollectionsPlaceholder(browserState: BrowserState) {
-        val tabCount = if (requireComponents.appStore.state.mode.isPrivate) {
+        val tabCount = if (browsingModeManager.mode.isPrivate) {
             browserState.privateTabs.size
         } else {
             browserState.normalTabs.size
@@ -1011,7 +1013,7 @@ class HomeFragment : Fragment() {
                     // qualified type to load the image
                     val wallpaper = Wallpaper.Default.copy(name = wallpaperName)
                     val wallpaperImage =
-                        requireComponents.useCases.wallpaperUseCases.loadBitmap(wallpaper)
+                        context?.let { requireComponents.useCases.wallpaperUseCases.loadBitmap(it, wallpaper) }
                     wallpaperImage?.let {
                         it.scaleToBottomOfView(binding.wallpaperImageView)
                         binding.wallpaperImageView.isVisible = true

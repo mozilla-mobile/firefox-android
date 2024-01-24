@@ -140,7 +140,7 @@ class HomeScreenRobot {
             ).assertExists()
 
             it.onNodeWithText(
-                getStringResource(R.string.juno_onboarding_default_browser_description_nimbus_2),
+                getStringResource(R.string.juno_onboarding_default_browser_description_nimbus_3),
             ).assertExists()
 
             it.onNodeWithText(
@@ -215,7 +215,9 @@ class HomeScreenRobot {
     fun verifyCommonMythsLink() =
         assertUIObjectExists(itemContainingText(getStringResource(R.string.private_browsing_common_myths)))
 
-    fun verifyExistingTopSitesList() = assertExistingTopSitesList()
+    fun verifyExistingTopSitesList() =
+        assertUIObjectExists(itemWithResId("$packageName:id/top_sites_list"))
+
     fun verifyNotExistingTopSitesList(title: String) = assertNotExistingTopSitesList(title)
     fun verifySponsoredShortcutDoesNotExist(sponsoredShortcutTitle: String, position: Int) =
         assertUIObjectExists(
@@ -845,9 +847,6 @@ private fun assertHomeComponent() =
         .check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
 private fun threeDotButton() = onView(allOf(withId(R.id.menuButton)))
-
-private fun assertExistingTopSitesList() =
-    assertUIObjectExists(itemWithResId("$packageName:id/top_sites_list"))
 
 private fun assertExistingTopSitesTabs(title: String) {
     mDevice.findObject(

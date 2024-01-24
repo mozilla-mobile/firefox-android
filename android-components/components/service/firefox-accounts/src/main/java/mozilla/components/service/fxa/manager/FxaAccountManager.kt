@@ -95,7 +95,7 @@ const val MAX_NETWORK_RETRIES = 3
  * @param syncConfig Optional, initial sync behaviour configuration. Sync will be disabled if this is `null`.
  * @param applicationScopes A set of scopes which will be requested during account authentication.
  */
-@Suppress("TooManyFunctions", "LargeClass", "LongParameterList")
+@Suppress("TooManyFunctions", "LargeClass")
 open class FxaAccountManager(
     private val context: Context,
     @get:VisibleForTesting val serverConfig: ServerConfig,
@@ -634,10 +634,10 @@ open class FxaAccountManager(
                     }
                 }
                 val finalize = suspend {
-                    withRetries(logger, MAX_NETWORK_RETRIES) { finalizeDevice(via.authData.authType) }
+                    withServiceRetries(logger, MAX_NETWORK_RETRIES) { finalizeDevice(via.authData.authType) }
                 }
                 // If we can't 'complete', we won't run 'finalize' due to short-circuiting.
-                if (completeAuth() is Result.Failure || finalize() is Result.Failure) {
+                if (completeAuth() is Result.Failure || finalize() !is ServiceResult.Ok) {
                     resetAccount()
                     Event.Progress.FailedToCompleteAuth
                 } else {
