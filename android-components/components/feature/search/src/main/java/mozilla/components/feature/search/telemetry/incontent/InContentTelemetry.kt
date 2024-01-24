@@ -10,6 +10,7 @@ import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.Engine
 import mozilla.components.feature.search.telemetry.BaseSearchTelemetry
 import mozilla.components.feature.search.telemetry.ExtensionInfo
+import mozilla.components.feature.search.telemetry.SearchProviderModel
 import mozilla.components.feature.search.telemetry.getTrackKey
 import mozilla.components.support.base.facts.Fact
 import mozilla.components.support.ktx.android.org.json.toList
@@ -23,15 +24,23 @@ import org.json.JSONObject
  */
 class InContentTelemetry : BaseSearchTelemetry() {
 
-    override fun install(engine: Engine, store: BrowserStore) {
+    override suspend fun install(
+        engine: Engine,
+        store: BrowserStore,
+        providerList: List<SearchProviderModel>,
+    ) {
         val info = ExtensionInfo(
             id = SEARCH_EXTENSION_ID,
             resourceUrl = SEARCH_EXTENSION_RESOURCE_URL,
             messageId = SEARCH_MESSAGE_ID,
         )
         installWebExtension(engine, store, info)
+        setProviderList(providerList)
     }
 
+    /**
+     * Processes a message containing search-related information.
+     */
     override fun processMessage(message: JSONObject) {
         val cookies = message.getJSONArray(SEARCH_MESSAGE_LIST_KEY).toList<JSONObject>()
         trackPartnerUrlTypeMetric(message.getString(SEARCH_MESSAGE_SESSION_URL_KEY), cookies)
@@ -42,11 +51,10 @@ class InContentTelemetry : BaseSearchTelemetry() {
         val provider = getProviderForUrl(url) ?: return
         val uri = Uri.parse(url)
         val paramSet = uri.queryParameterNames
-
-        if (!paramSet.contains(provider.queryParam)) {
+        val containsQueryParam = provider.queryParamNames?.any { paramSet.contains(it) }
+        if (containsQueryParam == false) {
             return
         }
-
         emitFact(
             IN_CONTENT_SEARCH,
             getTrackKey(provider, uri, cookies),
