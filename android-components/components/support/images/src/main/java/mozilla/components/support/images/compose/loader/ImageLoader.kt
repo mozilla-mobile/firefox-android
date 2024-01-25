@@ -146,6 +146,7 @@ private fun fetch(
         redirect = Request.Redirect.FOLLOW,
         useCaches = true,
         private = private,
+        conservative = true,
     )
 
     return try {
@@ -153,6 +154,7 @@ private fun fetch(
         if (response.isSuccess) {
             response.body.useStream { it.readBytes() }
         } else {
+            response.close()
             null
         }
     } catch (e: IOException) {
