@@ -236,14 +236,6 @@ features:
         type: Int
         default: 0
 
-  pre-permission-notification-prompt:
-    description: A feature that shows the pre-permission notification prompt.
-    variables:
-      enabled:
-        description: if true, the pre-permission notification prompt is shown to the user.
-        type: Boolean
-        default: false
-
   onboarding:
     description: "A feature that configures the new user onboarding page.
     Note that onboarding is a **first run** feature, and should only be modified by first run experiments."
@@ -371,6 +363,17 @@ features:
       - channel: nightly
         value:
           enabled: true
+
+  nimbus-is-ready:
+    description: >
+      A feature that provides the number of Nimbus is_ready events to send
+      when Nimbus finishes launching.
+    variables:
+      event-count:
+        description: The number of events that should be sent.
+        type: Int
+        default: 1
+
 types:
   objects: {}
 

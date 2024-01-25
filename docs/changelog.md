@@ -4,14 +4,27 @@ title: Changelog
 permalink: /changelog/
 ---
 
-# 123.0 (In Development)
-* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v122..main)
+# 124.0 (In Development)
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v123..main)
 * [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
 * [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/Gecko.kt)
 * [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/.config.yml)
 
+* **feature-prompts**:
+  * Added `FileUploadsDirCleaner` deletes temporary stale uploaded files, see [Bug 1860472](https://bugzilla.mozilla.org/show_bug.cgi?id=1860472).
+  * ⚠️ **This is a breaking change**: `PromptFeature` now requires a `FileUploadsDirCleaner` to be constructed
+
+* **all components**
+  * All new usages of the `concept-fetch` component to make fetch requests now have conservative-mode off by default. Current features will continue to use conservative mode until individually updated.
+
+# 123.0
+* [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v122..releases_v123)
+* [Dependencies](https://github.com/mozilla-mobile/firefox-android/blob/releases_v123/android-components/plugins/dependencies/src/main/java/DependenciesPlugin.kt)
+* [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/releases_v123/android-components/plugins/dependencies/src/main/java/Gecko.kt)
+* [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/releases_v123/android-components/.config.yml)
+
 * **feature-customtabs**
- * Sharing a URL from a custom tab always uses the current url of the session. [bug #1831803](https://bugzilla.mozilla.org/show_bug.cgi?id=1831803)
+ * Sharing a URL from a custom tab always uses the current url of the session. [Bug 1831803](https://bugzilla.mozilla.org/show_bug.cgi?id=1831803)
 
 # 122.0
 * [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v121..releases_v122)
@@ -44,6 +57,9 @@ permalink: /changelog/
 
 * **support-base**
   * Make `message` param non optional for the Logging APIs. [Bug 1867606](https://bugzilla.mozilla.org/show_bug.cgi?id=1867606)
+
+* **nimbus**
+  * Add `nimbus-is-ready` feature and call Nimbus' `recordIsReady` when the Nimbus API is ready [Bug 1875515](https://bugzilla.mozilla.org/show_bug.cgi?id=1875515).
 
 # 121.0
 * [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v120..releases_v121)
@@ -90,7 +106,7 @@ permalink: /changelog/
   * Removed deprecated `TabsUseCases.AddNewPrivateTabUseCase`. [Bug 1853070](https://bugzilla.mozilla.org/show_bug.cgi?id=1853070)
 
 * **lib-crash-sentry**
-  * `SentryService.initIfNeeded` is now public. [bug #1851676](https://bugzilla.mozilla.org/show_bug.cgi?id=1851676)
+  * `SentryService.initIfNeeded` is now public. [Bug 1851676](https://bugzilla.mozilla.org/show_bug.cgi?id=1851676)
 
 * **feature-downloads**
   * Added a custom permission `${applicationId}.permission.RECEIVE_DOWNLOAD_BROADCAST` that needs to be used by apps in order to receive download related broadcasts
@@ -112,8 +128,8 @@ permalink: /changelog/
     * User plans to upgrade from v95 to v119 or above
 
 * **support-webextensions**
-  * ⚠️ **This is a breaking change**: Renamed `WebExtensionPopupFeature` to `WebExtensionPopupObserver` [bug #1852335](https://bugzilla.mozilla.org/show_bug.cgi?id=1852335)
-  * Added `ExtensionProcessDisabledPopupObserver` to display to the user a dialog when the extensions process spawning has been disabled. [bug #1846979](https://bugzilla.mozilla.org/show_bug.cgi?id=1846979)
+  * ⚠️ **This is a breaking change**: Renamed `WebExtensionPopupFeature` to `WebExtensionPopupObserver` [Bug 1852335](https://bugzilla.mozilla.org/show_bug.cgi?id=1852335)
+  * Added `ExtensionProcessDisabledPopupObserver` to display to the user a dialog when the extensions process spawning has been disabled. [Bug 1846979](https://bugzilla.mozilla.org/show_bug.cgi?id=1846979)
 
 * **concept-engine**
   * 🌟️️ Add `reanalyzeProduct` API to `EngineSession` to allow reanalyzing product from the engine. See more on [Bug 1853309](https://bugzilla.mozilla.org/show_bug.cgi?id=1853309).
@@ -434,6 +450,7 @@ permalink: /changelog/
 
 * **All components**
   * ⚠️Increased `compileSdkVersion` to 33 (Android 13)
+
 * **feature-awesomebar**
   * `SearchSuggestionProvider` and `SearchActionProvider` now have a new parameter `suggestionsHeader`, to add title to suggestions.
 
