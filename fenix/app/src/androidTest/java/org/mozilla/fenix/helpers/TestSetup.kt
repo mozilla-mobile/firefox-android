@@ -14,15 +14,17 @@ import org.mozilla.fenix.helpers.TestHelper.appContext
 import org.mozilla.fenix.ui.robots.notificationShade
 
 open class TestSetup {
-    val mockWebServer = MockWebServer().apply {
-        dispatcher = AndroidAssetDispatcher()
-    }
+    lateinit var mockWebServer: MockWebServer
+
     private val permissionStorage = PermissionStorage(appContext.applicationContext)
     private val historyStorage = PlacesHistoryStorage(appContext.applicationContext)
     private val bookmarksStorage = PlacesBookmarksStorage(appContext.applicationContext)
 
     @Before
     fun setUp() {
+        mockWebServer = MockWebServer().apply {
+            dispatcher = AndroidAssetDispatcher()
+        }
         Log.i(TAG, "TestSetup: Starting the @Before setup")
         // Shutdown old mockWebServer instance, in case it's running.
         Log.i(TAG, "Shutting down mockWebServer")
@@ -40,16 +42,18 @@ open class TestSetup {
             AppAndSystemHelper.setNetworkEnabled(true)
             // Unregister any remaining idling resources
             unregisterAllIdlingResources()
+            // add log check contents before and after
             permissionStorage.deleteAllSitePermissions()
             historyStorage.deleteEverything()
             val bookmarks = bookmarksStorage.getTree(BookmarkRoot.Mobile.id)?.children
             bookmarks?.forEach { bookmarksStorage.deleteNode(it.guid) }
         }
         // Start the mockWebServer
-        Log.i(TAG, "Starting mockWebServer")
         try {
+            Log.i(TAG, "Try starting mockWebServer")
             mockWebServer.start()
         } catch (e: Exception) {
+            Log.i(TAG, "Re-starting mockWebServer")
             mockWebServer.shutdown()
             mockWebServer.start()
         }

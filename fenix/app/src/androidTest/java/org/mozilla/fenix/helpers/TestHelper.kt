@@ -71,7 +71,9 @@ object TestHelper {
         with(activity) {
             updateCachedSettings()
             finishActivity()
+            Log.i(TAG, "restartApp: Finished activity")
             mDevice.waitForIdle()
+            Log.i(TAG, "restartApp: Launching activity")
             launchActivity(null)
         }
     }
@@ -80,9 +82,15 @@ object TestHelper {
         activity.activity.finishAndRemoveTask()
 
     fun relaunchCleanApp(activity: HomeActivityIntentTestRule) {
-        closeApp(activity)
-        Intents.release()
-        activity.launchActivity(null)
+        with(activity) {
+            Log.i(TAG, "relaunchCleanApp: Finished activity")
+            // closeApp(activity)
+            getActivity().finishAndRemoveTask()
+            Intents.release()
+            Log.i(TAG, "relaunchCleanApp: Launching activity")
+            //activity.launchActivity(null)
+            launchActivity(null)
+        }
     }
 
     fun waitUntilObjectIsFound(resourceName: String) {
