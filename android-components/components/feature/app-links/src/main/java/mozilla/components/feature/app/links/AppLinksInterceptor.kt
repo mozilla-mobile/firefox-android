@@ -49,7 +49,6 @@ private const val MAPS = "maps."
  * have registered to open.
  * @param launchFromInterceptor If {true} then the interceptor will launch the link in third-party apps if available.
  */
-@Suppress("LongParameterList")
 class AppLinksInterceptor(
     private val context: Context,
     private val interceptLinkClicks: Boolean = false,
@@ -113,7 +112,7 @@ class AppLinksInterceptor(
         val redirect = useCases.interceptedAppLinkRedirect(uri)
         val result = handleRedirect(redirect, uri)
 
-        if (inUserDoNotIntercept(uri, redirect.appIntent)) {
+        if (engineSupportedSchemes.contains(uriScheme) && inUserDoNotIntercept(uri, redirect.appIntent)) {
             return null
         }
 

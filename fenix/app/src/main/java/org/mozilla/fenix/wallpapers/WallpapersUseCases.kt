@@ -5,13 +5,14 @@
 package org.mozilla.fenix.wallpapers
 
 import android.content.Context
-import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import androidx.annotation.UiContext
 import androidx.annotation.VisibleForTesting
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import mozilla.components.concept.fetch.Client
+import mozilla.components.support.utils.ext.isLandscape
 import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.ext.settings
@@ -61,8 +62,7 @@ class WallpapersUseCases(
     // Use case for loading specific wallpaper bitmaps.
     val loadBitmap: LoadBitmapUseCase by lazy {
         DefaultLoadBitmapUseCase(
-            filesDir = context.filesDir,
-            getOrientation = { context.resources.configuration.orientation },
+            getFilesDir = { context.filesDir },
         )
     }
 
@@ -160,25 +160,27 @@ class WallpapersUseCases(
         /**
          * Load the bitmap for a [wallpaper], if available.
          *
+         * @param context The context used to get wallpaper orientation.
          * @param wallpaper The wallpaper to load a bitmap for.
          */
-        suspend operator fun invoke(wallpaper: Wallpaper): Bitmap?
+        suspend operator fun invoke(@UiContext context: Context, wallpaper: Wallpaper): Bitmap?
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     internal class DefaultLoadBitmapUseCase(
-        private val filesDir: File,
-        private val getOrientation: () -> Int,
+        private val getFilesDir: suspend () -> File,
     ) : LoadBitmapUseCase {
-        override suspend fun invoke(wallpaper: Wallpaper): Bitmap? =
-            loadWallpaperFromDisk(wallpaper)
+        override suspend fun invoke(@UiContext context: Context, wallpaper: Wallpaper): Bitmap? =
+            loadWallpaperFromDisk(context, wallpaper)
 
-        private suspend fun loadWallpaperFromDisk(
+        @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+        internal suspend fun loadWallpaperFromDisk(
+            @UiContext context: Context,
             wallpaper: Wallpaper,
         ): Bitmap? = Result.runCatching {
-            val path = wallpaper.getLocalPathFromContext()
+            val path = wallpaper.getLocalPathFromContext(context)
             withContext(Dispatchers.IO) {
-                val file = File(filesDir, path)
+                val file = File(getFilesDir(), path)
                 BitmapFactory.decodeStream(file.inputStream())
             }
         }.getOrNull()
@@ -187,17 +189,13 @@ class WallpapersUseCases(
          * Get the expected local path on disk for a wallpaper. This will differ depending
          * on orientation and app theme.
          */
-        private fun Wallpaper.getLocalPathFromContext(): String {
-            val orientation = if (isLandscape()) {
+        private fun Wallpaper.getLocalPathFromContext(@UiContext context: Context): String {
+            val orientation = if (context.isLandscape()) {
                 Wallpaper.ImageType.Landscape
             } else {
                 Wallpaper.ImageType.Portrait
             }
             return Wallpaper.getLocalPath(name, orientation)
-        }
-
-        private fun isLandscape(): Boolean {
-            return getOrientation() == Configuration.ORIENTATION_LANDSCAPE
         }
     }
 

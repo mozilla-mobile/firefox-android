@@ -211,6 +211,8 @@
     <string name="resync_button_content_description">Đồng bộ hóa lại</string>
     <!-- Browser menu button that opens the find in page menu -->
     <string name="browser_menu_find_in_page">Tìm trong trang</string>
+    <!-- Browser menu button that opens the translations dialog, which has options to translate the current browser page. -->
+    <string name="browser_menu_translations">Dịch trang</string>
     <!-- Browser menu button that saves the current tab to a collection -->
     <string name="browser_menu_save_to_collection_2">Lưu vào bộ sưu tập</string>
     <!-- Browser menu button that open a share menu to share the current site -->
@@ -324,14 +326,19 @@
     <string name="onboarding_home_enable_notifications_negative_button">Không phải bây giờ</string>
 
     <!-- Juno first user onboarding flow experiment, strings are marked unused as they are only referenced by Nimbus experiments. -->
+    <!-- Description for learning more about our privacy notice. -->
+    <string name="juno_onboarding_privacy_notice_text">Thông báo về quyền riêng tư Firefox</string>
+    <!-- Text for the button to set firefox as default browser on the device -->
     <!-- Title for set firefox as default browser screen used by Nimbus experiments. -->
     <string name="juno_onboarding_default_browser_title_nimbus_2">Chúng tôi thích giữ an toàn cho bạn</string>
     <!-- Description for set firefox as default browser screen used by Nimbus experiments. -->
-    <string name="juno_onboarding_default_browser_description_nimbus_2">Trình duyệt được tài trợ bởi tổ chức phi lợi nhuận của chúng tôi giúp ngăn các công ty bí mật theo dõi bạn trên web.\n\nTìm hiểu thêm về thông báo quyền riêng tư của chúng tôi.
+    <string name="juno_onboarding_default_browser_description_nimbus_3">Trình duyệt được hỗ trợ phi lợi nhuận của chúng tôi giúp ngăn các công ty bí mật theo dõi bạn trên web.</string>
+    <!-- Description for set firefox as default browser screen used by Nimbus experiments. -->
+    <string name="juno_onboarding_default_browser_description_nimbus_2" moz:RemovedIn="124" tools:ignore="UnusedResources">Trình duyệt được tài trợ bởi tổ chức phi lợi nhuận của chúng tôi giúp ngăn các công ty bí mật theo dõi bạn trên web.\n\nTìm hiểu thêm về thông báo quyền riêng tư của chúng tôi.
 </string>
     <!-- Text for the link to the privacy notice webpage for set as firefox default browser screen.
     This is part of the string with the key "juno_onboarding_default_browser_description". -->
-    <string name="juno_onboarding_default_browser_description_link_text" tools:ignore="UnusedResources">thông báo bảo mật</string>
+    <string name="juno_onboarding_default_browser_description_link_text" moz:RemovedIn="124" tools:ignore="UnusedResources">thông báo bảo mật</string>
     <!-- Text for the button to set firefox as default browser on the device -->
     <string name="juno_onboarding_default_browser_positive_button" tools:ignore="UnusedResources">Đặt làm trình duyệt mặc định</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
@@ -652,7 +659,7 @@
     <!-- Snackbar message for when wallpaper is selected -->
     <string name="wallpaper_updated_snackbar_message">Đã cập nhật hình nền!</string>
     <!-- Snackbar label for action to view selected wallpaper -->
-    <string name="wallpaper_updated_snackbar_action">Hiển thị</string>
+    <string name="wallpaper_updated_snackbar_action">Xem ngay</string>
     <!-- Snackbar message for when wallpaper couldn't be downloaded -->
     <string name="wallpaper_download_error_snackbar_message">Không thể tải xuống hình nền</string>
     <!-- Snackbar label for action to retry downloading the wallpaper -->
@@ -710,6 +717,8 @@
     <string name="preferences_sync_bookmarks">Dấu trang</string>
     <!-- Preference for syncing logins -->
     <string name="preferences_sync_logins">Đăng nhập</string>
+    <!-- Preference for syncing passwords -->
+    <string name="preferences_sync_logins_2" tools:ignore="UnusedResources">Mật khẩu</string>
     <!-- Preference for syncing tabs -->
     <string name="preferences_sync_tabs_2">Các thẻ đang mở</string>
     <!-- Preference for signing out -->
@@ -721,13 +730,13 @@
     <!-- Label indicating that sync is in progress -->
     <string name="sync_syncing_in_progress">Đang đồng bộ hóa…</string>
     <!-- Label summary indicating that sync failed. The first parameter is the date stamp showing last time it succeeded -->
-    <string name="sync_failed_summary">Đồng bộ hóa thất bại. Thành công lần cuối: %s</string>
+    <string name="sync_failed_summary">Đồng bộ hóa thất bại. Lần thành công gần nhất: %s</string>
     <!-- Label summary showing never synced -->
-    <string name="sync_failed_never_synced_summary">Đồng bộ hóa thất bại. Đồng bộ hóa lần cuối: không rõ</string>
+    <string name="sync_failed_never_synced_summary">Đồng bộ hóa thất bại. Lần đồng bộ gần nhất: không có</string>
     <!-- Label summary the date we last synced. The first parameter is date stamp showing last time synced -->
     <string name="sync_last_synced_summary">Đồng bộ hóa lần cuối: %s</string>
     <!-- Label summary showing never synced -->
-    <string name="sync_never_synced_summary">Đồng bộ hóa lần cuối: không rõ</string>
+    <string name="sync_never_synced_summary">Lần đồng bộ gần nhất: không có</string>
 
     <!-- Text for displaying the default device name.
         The first parameter is the application name, the second is the device manufacturer name
@@ -736,6 +745,8 @@
 
     <!-- Preference for syncing credit cards -->
     <string name="preferences_sync_credit_cards">Thẻ tín dụng</string>
+    <!-- Preference for syncing payment methods -->
+    <string name="preferences_sync_credit_cards_2" tools:ignore="UnusedResources">Phương thức thanh toán</string>
     <!-- Preference for syncing addresses -->
     <string name="preferences_sync_address">Địa chỉ</string>
 
@@ -855,7 +866,7 @@
     <!-- Option in library for Recently Closed Tabs -->
     <string name="library_recently_closed_tabs">Các thẻ đã đóng gần đây</string>
     <!-- Option in library to open Recently Closed Tabs page -->
-    <string name="recently_closed_show_full_history">Hiển thị toàn bộ lịch sử</string>
+    <string name="recently_closed_show_full_history">Hiện toàn bộ lịch sử</string>
     <!-- Text to show users they have multiple tabs saved in the Recently Closed Tabs section of history.
     %d is a placeholder for the number of tabs selected. -->
     <string name="recently_closed_tabs">%d thẻ</string>
@@ -1317,6 +1328,11 @@
     <!-- Notifications -->
     <!-- Text shown in the notification that pops up to remind the user that a private browsing session is active. -->
     <string name="notification_pbm_delete_text_2">Đóng các thẻ riêng tư</string>
+
+    <!-- Text shown in the notification that pops up to remind the user that a private browsing session is active for Android 14+ -->
+    <string name="notification_erase_title_android_14">Đóng các thẻ riêng tư?</string>
+    <string name="notification_erase_text_android_14">Nhấn hoặc vuốt thông báo này để đóng các thẻ riêng tư.</string>
+
     <!-- Name of the marketing notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="notification_marketing_channel_name">Tiếp thị</string>
 
@@ -1445,7 +1461,7 @@
     <!-- Title text of a delete browsing data dialog. -->
     <string name="delete_history_prompt_title">Khoảng thời gian để xóa</string>
     <!-- Body text of a delete browsing data dialog. -->
-    <string name="delete_history_prompt_body" moz:RemovedIn="130" tools:ignore="UnusedResources">Xóa lịch sử (bao gồm cả lịch sử được đồng bộ hóa từ các thiết bị khác), cookie và dữ liệu duyệt web khác.</string>
+    <string name="delete_history_prompt_body" moz:RemovedIn="130" tools:ignore="UnusedResources">Xóa lịch sử (bao gồm lịch sử đã đồng bộ hóa từ các thiết bị khác), cookie và dữ liệu duyệt web khác.</string>
     <!-- Body text of a delete browsing data dialog. -->
     <string name="delete_history_prompt_body_2">Xóa lịch sử (bao gồm lịch sử đã đồng bộ hóa từ thiết bị khác)</string>
     <!-- Radio button in the delete browsing data dialog to delete history items for the last hour. -->
@@ -1477,7 +1493,7 @@
 
     <!-- Onboarding -->
     <!-- text to display in the snackbar once account is signed-in -->
-    <string name="onboarding_firefox_account_sync_is_on">Đồng bộ hóa được bật</string>
+    <string name="onboarding_firefox_account_sync_is_on">Đồng bộ hóa đang bật</string>
 
     <!-- Onboarding theme -->
     <!-- Text shown in snackbar when multiple tabs have been sent to device -->
@@ -1499,7 +1515,7 @@
     <!-- Text shown for settings option for sign with email -->
     <string name="sign_in_with_email">Sử dụng email thay thế</string>
     <!-- Text shown for settings option for create new account text.'Firefox' intentionally hardcoded here.-->
-    <string name="sign_in_create_account_text"><![CDATA[Không có tài khoản? <u>Tạo một cái</u> để đồng bộ hóa Firefox giữa các thiết bị.]]></string>
+    <string name="sign_in_create_account_text"><![CDATA[Không có tài khoản? <u>Tạo ngay tài khoản mới</u> để đồng bộ hóa Firefox giữa các thiết bị.]]></string>
     <!-- Text shown in confirmation dialog to sign out of account. The first parameter is the name of the app (e.g. Firefox Preview) -->
     <string name="sign_out_confirmation_message_2">%s sẽ ngừng đồng bộ hóa với tài khoản của bạn, nhưng sẽ không xóa bất kỳ dữ liệu duyệt web nào của bạn trên thiết bị này.</string>
     <!-- Option to continue signing out of account shown in confirmation dialog to sign out of account -->
@@ -1544,7 +1560,7 @@
     <!-- Option for enhanced tracking protection for the custom protection settings for cookies-->
     <string name="preference_enhanced_tracking_protection_custom_cookies_1">Trình theo dõi chéo và truyền thông xã hội</string>
     <!-- Option for enhanced tracking protection for the custom protection settings for cookies-->
-    <string name="preference_enhanced_tracking_protection_custom_cookies_2">Cookie từ các trang không mong muốn</string>
+    <string name="preference_enhanced_tracking_protection_custom_cookies_2">Cookie từ các trang web chưa truy cập</string>
     <!-- Option for enhanced tracking protection for the custom protection settings for cookies-->
     <string name="preference_enhanced_tracking_protection_custom_cookies_3">Tất cả cookie của bên thứ ba (có thể làm hỏng các trang web)</string>
     <!-- Option for enhanced tracking protection for the custom protection settings for cookies-->
@@ -1588,7 +1604,7 @@
     <!-- Category of trackers (fingerprinters) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_fingerprinters_title">Vân tay</string>
     <!-- Description of fingerprinters that can be blocked by Enhanced Tracking Protection -->
-    <string name="etp_fingerprinters_description">Dừng dữ liệu nhận dạng duy nhất khỏi bị thu thập về thiết bị của bạn có thể được sử dụng cho mục đích theo dõi.</string>
+    <string name="etp_fingerprinters_description">Ngăn chặn việc thu thập dữ liệu nhận dạng duy nhất về thiết bị của bạn có thể được sử dụng cho mục đích theo dõi.</string>
     <!-- Category of trackers (tracking content) that can be blocked by Enhanced Tracking Protection -->
     <string name="etp_tracking_content_title">Trình theo dõi nội dung</string>
     <!-- Description of tracking content that can be blocked by Enhanced Tracking Protection -->
@@ -1667,8 +1683,12 @@
 
     <!-- Preference for managing the settings for logins and passwords in Fenix -->
     <string name="preferences_passwords_logins_and_passwords">Thông tin đăng nhập và mật khẩu</string>
+    <!-- Preference for managing the settings for logins and passwords in Fenix -->
+    <string name="preferences_passwords_logins_and_passwords_2" tools:ignore="UnusedResources">Mật khẩu</string>
     <!-- Preference for managing the saving of logins and passwords in Fenix -->
     <string name="preferences_passwords_save_logins">Lưu thông tin đăng nhập và mật khẩu</string>
+    <!-- Preference for managing the saving of logins and passwords in Fenix -->
+    <string name="preferences_passwords_save_logins_2" tools:ignore="UnusedResources">Lưu mật khẩu</string>
     <!-- Preference option for asking to save passwords in Fenix -->
     <string name="preferences_passwords_save_logins_ask_to_save">Yêu cầu để lưu</string>
     <!-- Preference option for never saving passwords in Fenix -->
@@ -1685,26 +1705,46 @@
     <!-- Preference option for adding a login -->
     <string name="preferences_logins_add_login">Thêm thông tin đăng nhập</string>
 
+    <!-- Preference option for adding a password -->
+    <string name="preferences_logins_add_login_2" tools:ignore="UnusedResources">Thêm mật khẩu</string>
+
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">Đồng bộ hóa thông tin đăng nhập</string>
+    <!-- Preference for syncing saved passwords in Fenix -->
+    <string name="preferences_passwords_sync_logins_2" tools:ignore="UnusedResources">Đồng bộ mật khẩu</string>
     <!-- Preference for syncing saved logins in Fenix, when not signed in-->
     <string name="preferences_passwords_sync_logins_across_devices">Đồng bộ hóa thông tin đăng nhập trên các thiết bị</string>
+    <!-- Preference for syncing saved passwords in Fenix, when not signed in-->
+    <string name="preferences_passwords_sync_logins_across_devices_2" tools:ignore="UnusedResources">Đồng bộ hóa mật khẩu giữa các thiết bị</string>
     <!-- Preference to access list of saved logins -->
     <string name="preferences_passwords_saved_logins">Thông tin đăng nhập đã lưu</string>
+    <!-- Preference to access list of saved passwords -->
+    <string name="preferences_passwords_saved_logins_2" tools:ignore="UnusedResources">Mật khẩu đã lưu</string>
     <!-- Description of empty list of saved passwords. Placeholder is replaced with app name.  -->
     <string name="preferences_passwords_saved_logins_description_empty_text">Thông tin đăng nhập bạn lưu hoặc đồng bộ hóa với %s sẽ hiển thị tại đây.</string>
+    <!-- Description of empty list of saved passwords. Placeholder is replaced with app name.  -->
+    <string name="preferences_passwords_saved_logins_description_empty_text_2" tools:ignore="UnusedResources">Mật khẩu bạn lưu hoặc đồng bộ hóa với %s sẽ được liệt kê ở đây. Tất cả mật khẩu bạn lưu đều được mã hóa.
+</string>
     <!-- Preference to access list of saved logins -->
     <string name="preferences_passwords_saved_logins_description_empty_learn_more_link">Tìm hiểu thêm về đồng bộ hóa.</string>
+    <!-- Clickable text for opening an external link for more information about Sync. -->
+    <string name="preferences_passwords_saved_logins_description_empty_learn_more_link_2" tools:ignore="UnusedResources">Tìm hiểu thêm về đồng bộ hoá</string>
     <!-- Preference to access list of login exceptions that we never save logins for -->
     <string name="preferences_passwords_exceptions">Ngoại lệ</string>
     <!-- Empty description of list of login exceptions that we never save logins for -->
     <string name="preferences_passwords_exceptions_description_empty">Thông tin đăng nhập và mật khẩu không được lưu sẽ được hiển thị ở đây.</string>
+    <!-- Empty description of list of login exceptions that we never save passwords for. Parameter will be replaced by app name. -->
+    <string name="preferences_passwords_exceptions_description_empty_2" tools:ignore="UnusedResources">%s sẽ không lưu mật khẩu cho các trang được liệt kê ở đây.</string>
     <!-- Description of list of login exceptions that we never save logins for -->
     <string name="preferences_passwords_exceptions_description">Thông tin đăng nhập và mật khẩu sẽ không được lưu cho các trang web này.</string>
+    <!-- Description of list of login exceptions that we never save passwords for. Parameter will be replaced by app name. -->
+    <string name="preferences_passwords_exceptions_description_2" tools:ignore="UnusedResources">%s sẽ không lưu mật khẩu cho các trang web này.</string>
     <!-- Text on button to remove all saved login exceptions -->
     <string name="preferences_passwords_exceptions_remove_all">Xóa tất cả ngoại lệ</string>
     <!-- Hint for search box in logins list -->
     <string name="preferences_passwords_saved_logins_search">Tìm thông tin đăng nhập</string>
+    <!-- Hint for search box in passwords list -->
+    <string name="preferences_passwords_saved_logins_search_2" tools:ignore="UnusedResources">Tìm kiếm mật khẩu</string>
     <!-- The header for the site that a login is for -->
     <string name="preferences_passwords_saved_logins_site">Trang</string>
     <!-- The header for the username for a login -->
@@ -1733,10 +1773,16 @@
     <string name="saved_login_hide_password">Ẩn mật khẩu</string>
     <!-- Message displayed in biometric prompt displayed for authentication before allowing users to view their logins -->
     <string name="logins_biometric_prompt_message">Mở khóa để xem thông tin đăng nhập đã lưu của bạn</string>
+    <!-- Message displayed in biometric prompt displayed for authentication before allowing users to view their passwords -->
+    <string name="logins_biometric_prompt_message_2" tools:ignore="UnusedResources">Mở khóa để xem mật khẩu đã lưu của bạn</string>
     <!-- Title of warning dialog if users have no device authentication set up -->
     <string name="logins_warning_dialog_title">Bảo mật thông tin đăng nhập và mật khẩu của bạn</string>
+    <!-- Title of warning dialog if users have no device authentication set up -->
+    <string name="logins_warning_dialog_title_2" tools:ignore="UnusedResources">Giữ mật khẩu đã lưu của bạn một cách an toàn</string>
     <!-- Message of warning dialog if users have no device authentication set up -->
     <string name="logins_warning_dialog_message">Thiết lập mẫu khóa thiết bị, mã PIN hoặc mật khẩu để bảo vệ thông tin đăng nhập và mật khẩu đã lưu của bạn khỏi bị truy cập nếu người khác lấy được thiết bị của bạn.</string>
+    <!-- Message of warning dialog if users have no device authentication set up -->
+    <string name="logins_warning_dialog_message_2" tools:ignore="UnusedResources">Đặt mật khẩu thiết bị dạng mẫu hình, mã PIN hoặc mật khẩu để bảo vệ mật khẩu đã lưu của bạn không bị truy cập nếu người khác lấy được thiết bị của bạn.</string>
     <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
     <string name="logins_warning_dialog_later">Để sau</string>
     <!-- Positive button to send users to set up a pin of warning dialog if users have no device authentication set up -->
@@ -1755,6 +1801,9 @@
     <!-- Content description (not visible, for screen readers etc.): Sort saved logins dropdown menu chevron icon -->
     <string name="saved_logins_menu_dropdown_chevron_icon_content_description">Sắp xếp menu đăng nhập</string>
 
+    <!-- Content description (not visible, for screen readers etc.) -->
+    <string name="saved_logins_menu_dropdown_chevron_icon_content_description_2" tools:ignore="UnusedResources">Menu sắp xếp mật khẩu</string>
+
     <!-- Autofill -->
     <!-- Preference and title for managing the autofill settings -->
     <string name="preferences_autofill">Tự động điền</string>
@@ -1762,10 +1811,16 @@
     <string name="preferences_addresses">Địa chỉ</string>
     <!-- Preference and title for managing the settings for credit cards -->
     <string name="preferences_credit_cards">Thẻ tín dụng</string>
+    <!-- Preference and title for managing the settings for payment methods -->
+    <string name="preferences_credit_cards_2" tools:ignore="UnusedResources">Phương thức thanh toán</string>
     <!-- Preference for saving and autofilling credit cards -->
     <string name="preferences_credit_cards_save_and_autofill_cards">Lưu và tự động điền thẻ tín dụng</string>
+    <!-- Preference for saving and autofilling credit cards -->
+    <string name="preferences_credit_cards_save_and_autofill_cards_2" tools:ignore="UnusedResources">Lưu và điền phương thức thanh toán</string>
     <!-- Preference summary for saving and autofilling credit card data -->
     <string name="preferences_credit_cards_save_and_autofill_cards_summary">Dữ liệu được mã hóa</string>
+    <!-- Preference summary for saving and autofilling payment method data. Parameter will be replaced by app name. -->
+    <string name="preferences_credit_cards_save_and_autofill_cards_summary_2" tools:ignore="UnusedResources">%s mã hóa tất cả các phương thức thanh toán bạn lưu</string>
     <!-- Preference option for syncing credit cards across devices. This is displayed when the user is not signed into sync -->
     <string name="preferences_credit_cards_sync_cards_across_devices">Đồng bộ thông tin thẻ tín dụng trên các thiết bị</string>
     <!-- Preference option for syncing credit cards across devices. This is displayed when the user is signed into sync -->
@@ -1773,16 +1828,25 @@
     <!-- Preference option for adding a credit card -->
     <string name="preferences_credit_cards_add_credit_card">Thêm thẻ tín dụng</string>
 
+    <!-- Preference option for adding a card -->
+    <string name="preferences_credit_cards_add_credit_card_2" tools:ignore="UnusedResources">Thêm thẻ</string>
     <!-- Preference option for managing saved credit cards -->
     <string name="preferences_credit_cards_manage_saved_cards">Quản lý thẻ tín dụng đã lưu</string>
+    <!-- Preference option for managing saved cards -->
+    <string name="preferences_credit_cards_manage_saved_cards_2" tools:ignore="UnusedResources">Quản lý thẻ tín dụng</string>
     <!-- Preference option for adding an address -->
     <string name="preferences_addresses_add_address">Thêm địa chỉ</string>
     <!-- Preference option for managing saved addresses -->
     <string name="preferences_addresses_manage_addresses">Quản lý địa chỉ</string>
     <!-- Preference for saving and autofilling addresses -->
     <string name="preferences_addresses_save_and_autofill_addresses">Lưu và tự động điền địa chỉ</string>
+    <!-- Preference for saving and filling addresses -->
+    <string name="preferences_addresses_save_and_autofill_addresses_2" tools:ignore="UnusedResources">Lưu và điền địa chỉ</string>
     <!-- Preference summary for saving and autofilling address data -->
     <string name="preferences_addresses_save_and_autofill_addresses_summary">Bao gồm thông tin như số, email và địa chỉ giao hàng</string>
+
+    <!-- Preference summary for saving and filling address data -->
+    <string name="preferences_addresses_save_and_autofill_addresses_summary_2" tools:ignore="UnusedResources">Bao gồm số điện thoại và địa chỉ email</string>
 
     <!-- Title of the "Add card" screen -->
     <string name="credit_cards_add_card">Thêm thẻ</string>
@@ -1804,6 +1868,8 @@
     <string name="credit_cards_delete_card_button">Xóa thẻ</string>
     <!-- The text for the confirmation message of "Delete card" dialog -->
     <string name="credit_cards_delete_dialog_confirmation">Bạn có chắc chắn muốn xóa thẻ tín dụng này không?</string>
+    <!-- The text for the confirmation message of "Delete card" dialog -->
+    <string name="credit_cards_delete_dialog_confirmation_2" tools:ignore="UnusedResources">Xoá thẻ?</string>
     <!-- The text for the positive button on "Delete card" dialog -->
     <string name="credit_cards_delete_dialog_button">Xóa</string>
     <!-- The title for the "Save" menu item for saving a credit card -->
@@ -1819,14 +1885,22 @@
     <!-- Error message for credit card number validation -->
     <string name="credit_cards_number_validation_error_message">Vui lòng nhập số thẻ tín dụng hợp lệ</string>
 
+    <!-- Error message for card number validation -->
+    <string name="credit_cards_number_validation_error_message_2" tools:ignore="UnusedResources">Nhập số thẻ hợp lệ</string>
     <!-- Error message for credit card name on card validation -->
     <string name="credit_cards_name_on_card_validation_error_message">Vui lòng điền vào trường này</string>
+    <!-- Error message for card name on card validation -->
+    <string name="credit_cards_name_on_card_validation_error_message_2" tools:ignore="UnusedResources">Thêm tên</string>
     <!-- Message displayed in biometric prompt displayed for authentication before allowing users to view their saved credit cards -->
     <string name="credit_cards_biometric_prompt_message">Mở khóa để xem các thẻ tín dụng đã lưu của bạn</string>
     <!-- Title of warning dialog if users have no device authentication set up -->
     <string name="credit_cards_warning_dialog_title">Bảo mật thẻ tín dụng của bạn</string>
+    <!-- Title of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_title_2" tools:ignore="UnusedResources">Giữ các phương thức thanh toán đã lưu của bạn một cách an toàn</string>
     <!-- Message of warning dialog if users have no device authentication set up -->
     <string name="credit_cards_warning_dialog_message">Thiết lập màn hình khóa thiết bị với mẫu hình, mã PIN hoặc mật khẩu để bảo vệ thẻ tín dụng đã lưu của bạn không bị truy cập nếu người khác có thiết bị của bạn.</string>
+    <!-- Message of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_message_2" tools:ignore="UnusedResources">Đặt mật khẩu thiết bị dạng mẫu hình, mã PIN hoặc mật khẩu để bảo vệ thẻ đã lưu của bạn không bị truy cập nếu người khác lấy đuọc thiết bị của bạn.</string>
     <!-- Positive button to send users to set up a pin of warning dialog if users have no device authentication set up -->
     <string name="credit_cards_warning_dialog_set_up_now">Thiết lập ngay</string>
     <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
@@ -1836,6 +1910,8 @@
     <!-- Message displayed in biometric prompt for authentication, before allowing users to use their stored credit card information -->
     <string name="credit_cards_biometric_prompt_unlock_message">Mở khóa để sử dụng thông tin thẻ tín dụng được lưu trữ</string>
 
+    <!-- Message displayed in biometric prompt for authentication, before allowing users to use their stored payment method information -->
+    <string name="credit_cards_biometric_prompt_unlock_message_2" tools:ignore="UnusedResources">Mở khóa để sử dụng các phương thức thanh toán đã lưu</string>
     <!-- Title of the "Add address" screen -->
     <string name="addresses_add_address">Thêm địa chỉ</string>
     <!-- Title of the "Edit address" screen -->
@@ -1873,6 +1949,8 @@
 
     <!-- The title for the "Delete address" confirmation dialog -->
     <string name="addressess_confirm_dialog_message">Bạn có chắc chắn muốn xóa địa chỉ này không?</string>
+    <!-- The title for the "Delete address" confirmation dialog -->
+    <string name="addressess_confirm_dialog_message_2" tools:ignore="UnusedResources">Xoá địa chỉ này?</string>
     <!-- The text for the positive button on "Delete address" dialog -->
     <string name="addressess_confirm_dialog_ok_button">Xóa</string>
     <!-- The text for the negative button on "Delete address" dialog -->
@@ -1971,30 +2049,52 @@
     <string name="login_menu_edit_button">Chỉnh sửa</string>
     <!-- Message in delete confirmation dialog for logins -->
     <string name="login_deletion_confirmation">Bạn có chắc chắn muốn xóa thông tin đăng nhập này không?</string>
+    <!-- Message in delete confirmation dialog for password -->
+    <string name="login_deletion_confirmation_2" tools:ignore="UnusedResources">Bạn có chắc chắn muốn xóa mật khẩu này?</string>
     <!-- Positive action of a dialog asking to delete  -->
     <string name="dialog_delete_positive">Xóa</string>
     <!-- Negative action of a dialog asking to delete login -->
     <string name="dialog_delete_negative">Hủy bỏ</string>
     <!--  The saved login options menu description. -->
     <string name="login_options_menu">Tùy chọn thông tin đăng nhập</string>
+    <!--  The saved password options menu description. -->
+    <string name="login_options_menu_2" tools:ignore="UnusedResources">Cài đặt mật khẩu</string>
     <!--  The editable text field for a login's web address. -->
     <string name="saved_login_hostname_description">Trường văn bản có thể chỉnh sửa cho địa chỉ web của thông tin đăng nhập.</string>
+    <!--  The editable text field for a password's website address. -->
+    <string name="saved_login_hostname_description_2" tools:ignore="UnusedResources">Trường văn bản có thể chỉnh sửa cho địa chỉ trang web của mật khẩu.</string>
     <!--  The editable text field for a login's username. -->
     <string name="saved_login_username_description">Trường văn bản có thể chỉnh sửa cho tên người dùng của thông tin đăng nhập.</string>
+    <!--  The editable text field for a password's username. -->
+    <string name="saved_login_username_description_2" tools:ignore="UnusedResources">Trường văn bản có thể chỉnh sửa cho tên người dùng của mật khẩu.</string>
     <!--  The editable text field for a login's password. -->
     <string name="saved_login_password_description">Trường văn bản có thể chỉnh sửa cho mật khẩu của thông tin đăng nhập.</string>
+    <!--  The editable text field for a login's password. -->
+    <string name="saved_login_password_description_2" tools:ignore="UnusedResources">Trường văn bản có thể chỉnh sửa cho mật khẩu.</string>
     <!--  The button description to save changes to an edited login. -->
     <string name="save_changes_to_login">Lưu các thay đổi vào thông tin đăng nhập.</string>
+    <!--  The button description to save changes to an edited password. -->
+    <string name="save_changes_to_login_2" tools:ignore="UnusedResources">Lưu thay đổi.</string>
     <!--  The page title for editing a saved login. -->
     <string name="edit">Chỉnh sửa</string>
+    <!--  The page title for editing a saved password. -->
+    <string name="edit_2" tools:ignore="UnusedResources">Chỉnh sửa mật khẩu</string>
     <!--  The page title for adding new login. -->
     <string name="add_login">Thêm thông tin đăng nhập mới</string>
+    <!--  The page title for adding new password. -->
+    <string name="add_login_2" tools:ignore="UnusedResources">Thêm mật khẩu</string>
     <!--  The error message in add/edit login view when password field is blank. -->
     <string name="saved_login_password_required">Yêu cầu mật khẩu</string>
+    <!--  Error text displayed underneath the password field when it is in an error case. -->
+    <string name="saved_login_password_required_2" tools:ignore="UnusedResources">Nhập mật khẩu</string>
     <!--  The error message in add login view when username field is blank. -->
     <string name="saved_login_username_required">Yêu cầu tên đăng nhập</string>
+    <!--  The error message in add login view when username field is blank. -->
+    <string name="saved_login_username_required_2" tools:ignore="UnusedResources">Nhập tên người dùng</string>
     <!--  The error message in add login view when hostname field is blank. -->
     <string name="saved_login_hostname_required" tools:ignore="UnusedResources">Yêu cầu tên máy chủ</string>
+    <!--  The error message in add login view when hostname field is blank. -->
+    <string name="saved_login_hostname_required_2" tools:ignore="UnusedResources">Nhập địa chỉ trang web</string>
     <!-- Voice search button content description  -->
     <string name="voice_search_content_description">Tìm kiếm bằng giọng nói</string>
     <!-- Voice search prompt description displayed after the user presses the voice search button -->
@@ -2016,7 +2116,7 @@
     <!-- Text displayed asking user to re-authenticate -->
     <string name="synced_tabs_reauth">Vui lòng xác thực lại.</string>
     <!-- Text displayed when user has disabled tab syncing in Firefox Sync Account -->
-    <string name="synced_tabs_enable_tab_syncing">Vui lòng kích hoạt đồng bộ hóa thẻ.</string>
+    <string name="synced_tabs_enable_tab_syncing">Vui lòng bật đồng bộ hóa thẻ.</string>
     <!-- Text displayed when user has no tabs that have been synced -->
     <string name="synced_tabs_no_tabs">Bạn không có bất kỳ thẻ nào mở trong Firefox trên các thiết bị khác của bạn.</string>
     <!-- Text displayed in the synced tabs screen when a user is not signed in to Firefox Sync describing Synced Tabs -->
@@ -2170,7 +2270,7 @@
     <!-- Text for title of settings section. -->
     <string name="review_quality_check_settings_title">Cài đặt</string>
     <!-- Text for label for switch preference to show recommended products from review quality check settings section. -->
-    <string name="review_quality_check_settings_recommended_products">Hiển thị quảng cáo trong trình kiểm tra đánh giá</string>
+    <string name="review_quality_check_settings_recommended_products">Hiện quảng cáo trong bài kiểm tra đánh giá</string>
     <!-- Description for switch preference to show recommended products from review quality check settings section. First parameter is for clickable text defined in review_quality_check_settings_recommended_products_learn_more.-->
     <string name="review_quality_check_settings_recommended_products_description_2" tools:ignore="UnusedResources">Bạn sẽ thấy quảng cáo không thường xuyên cho các sản phẩm có liên quan. Chúng tôi chỉ quảng cáo những sản phẩm có đánh giá đáng tin cậy. %s</string>
     <!-- Clickable text that links to review quality check recommended products support article. -->
@@ -2248,17 +2348,17 @@
     <!-- Clickable text from the contextual onboarding card that links to review quality check support article. -->
     <string name="review_quality_check_contextual_onboarding_learn_more_link">Tìm hiểu thêm</string>
     <!-- Caption text to be displayed in review quality check contextual onboarding card above the opt-in button. First parameter is the Fakespot product name. Following parameters are for clickable texts defined in review_quality_check_contextual_onboarding_privacy_policy and review_quality_check_contextual_onboarding_terms_use. In the phrase "Fakespot by Mozilla", "by" can be localized. Does not need to stay by. -->
-    <string name="review_quality_check_contextual_onboarding_caption" moz:RemovedIn="121" tools:ignore="UnusedResources">Bằng cách chọn “Có, hãy thử nó” bạn đã đồng ý với %2$s và %3$s của %1$s bởi Mozilla.</string>
+    <string name="review_quality_check_contextual_onboarding_caption">Bằng cách chọn “Có, hãy thử nó” bạn đã đồng ý với %2$s và %3$s của %1$s bởi Mozilla.</string>
     <!-- Caption text to be displayed in review quality check contextual onboarding card above the opt-in button. Parameter is the Fakespot product name. After the colon, what appears are two links, each on their own line. The first link is to a Privacy policy (review_quality_check_contextual_onboarding_privacy_policy_2). The second link is to Terms of use (review_quality_check_contextual_onboarding_terms_use_2). -->
-    <string name="review_quality_check_contextual_onboarding_caption_2">Bằng cách chọn “Có, dùng thử nó”, bạn đồng ý với những điều sau từ %1$s:</string>
+    <string name="review_quality_check_contextual_onboarding_caption_2" moz:RemovedIn="123" tools:ignore="UnusedResources">Bằng cách chọn “Có, dùng thử nó”, bạn đồng ý với những điều sau từ %1$s:</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot privacy policy. -->
-    <string name="review_quality_check_contextual_onboarding_privacy_policy" moz:RemovedIn="121" tools:ignore="UnusedResources">chính sách riêng tư</string>
+    <string name="review_quality_check_contextual_onboarding_privacy_policy">chính sách riêng tư</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot privacy policy. -->
-    <string name="review_quality_check_contextual_onboarding_privacy_policy_2">Chính sách riêng tư</string>
+    <string name="review_quality_check_contextual_onboarding_privacy_policy_2" moz:RemovedIn="123" tools:ignore="UnusedResources">Chính sách riêng tư</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot terms of use. -->
-    <string name="review_quality_check_contextual_onboarding_terms_use" moz:RemovedIn="121" tools:ignore="UnusedResources">điều khoản sử dụng</string>
+    <string name="review_quality_check_contextual_onboarding_terms_use">điều khoản sử dụng</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot terms of use. -->
-    <string name="review_quality_check_contextual_onboarding_terms_use_2">Điều khoản sử dụng</string>
+    <string name="review_quality_check_contextual_onboarding_terms_use_2" moz:RemovedIn="123" tools:ignore="UnusedResources">Điều khoản sử dụng</string>
     <!-- Text for opt-in button from the review quality check contextual onboarding card. -->
     <string name="review_quality_check_contextual_onboarding_primary_button_text">Có, hãy thử nó</string>
     <!-- Text for opt-out button from the review quality check contextual onboarding card. -->
@@ -2316,6 +2416,11 @@
     <!-- Content description for headings announced by accessibility service. The first parameter is the text of the heading. Talkback will announce the first parameter and then speak the word "Heading" indicating to the user that this text is a heading for a section. -->
     <string name="a11y_heading">%s, Tiêu đề</string>
 
+    <!-- Title for dialog displayed when trying to access links present in a text. -->
+    <string name="a11y_links_title">Liên kết</string>
+    <!-- Additional content description for text bodies that contain urls. -->
+    <string name="a11y_links_available">Liên kết khả dụng</string>
+
     <!-- Translations feature-->
 
     <!-- Translation request dialog -->
@@ -2333,12 +2438,25 @@
     <string name="translations_bottom_sheet_translate_to">Dịch sang</string>
     <!-- Button text on the translations dialog to dismiss the dialog and return to the browser. -->
     <string name="translations_bottom_sheet_negative_button">Không phải bây giờ</string>
+    <!-- Button text on the translations dialog when a translation error appears, used to dismiss the dialog and return to the browser. -->
+    <string name="translations_bottom_sheet_negative_button_error">Xong</string>
     <!-- Button text on the translations dialog to begin a translation of the website. -->
     <string name="translations_bottom_sheet_positive_button">Dịch</string>
+    <!-- Button text on the translations dialog when a translation error appears. -->
+    <string name="translations_bottom_sheet_positive_button_error">Thử lại</string>
     <!-- Inactive button text on the translations dialog that indicates a translation is currently in progress. This button will be accompanied by a loading icon. -->
     <string name="translations_bottom_sheet_translating_in_progress">Đang dịch</string>
     <!-- Button content description (not visible, for screen readers etc.) for the translations dialog translate button that indicates a translation is currently in progress. -->
     <string name="translations_bottom_sheet_translating_in_progress_content_description">Đang dịch trang</string>
+
+    <!-- The title of the warning card informs the user that a translation could not be completed. -->
+    <string name="translation_error_could_not_translate_warning_text">Đã xảy ra sự cố khi dịch. Hãy thử lại.</string>
+    <!-- The title of the warning card informs the user that the list of languages cannot be loaded. -->
+    <string name="translation_error_could_not_load_languages_warning_text">Không thể tải ngôn ngữ. Hãy kiểm tra kết nối Internet của bạn và thử lại.</string>
+    <!-- The title of the warning card informs the user that a language is not supported. The first parameter is the name of the language that is not supported. -->
+    <string name="translation_error_language_not_supported_warning_text">Rất tiếc, chúng tôi chưa hỗ trợ %1$s.</string>
+    <!-- Button text on the warning card when a language is not supported. The link will take the user to a page to a support page about translations. -->
+    <string name="translation_error_language_not_supported_learn_more">Tìm hiểu thêm</string>
 
     <!-- Translations options dialog -->
     <!-- Title of the translation options dialog that allows a user to set their translation options for the site the user is currently on. -->
@@ -2351,6 +2469,10 @@
     <string name="translation_option_bottom_sheet_never_translate_in_language">Không bao giờ dịch %1$s</string>
     <!-- Toggle switch label that allows a user to set the setting if they would like the browser to never translate the site the user is currently visiting. -->
     <string name="translation_option_bottom_sheet_never_translate_site">Không bao giờ dịch trang này</string>
+    <!-- Toggle switch description that will appear under the "Never translate these sites" settings toggle switch to provide more information on how this setting interacts with other settings. -->
+    <string name="translation_option_bottom_sheet_switch_never_translate_site_description">Ghi đè tất cả các cài đặt khác</string>
+    <!-- Toggle switch description that will appear under the "Never translate" and "Always translate" toggle switch settings to provide more information on how these  settings interacts with other settings. -->
+    <string name="translation_option_bottom_sheet_switch_description">Ghi đè đề xuất dịch</string>
     <!-- Button text for the button that will take the user to the translation settings dialog. -->
     <string name="translation_option_bottom_sheet_translation_settings">Cài đặt dịch</string>
     <!-- Button text for the button that will take the user to a website to learn more about how translations works in the given app. The first parameter is the name of the application, for example, "Fenix". -->
@@ -2472,8 +2594,12 @@
     <string name="download_language_file_dialog_negative_button_text">Hủy bỏ</string>
 
     <!-- Debug drawer -->
+    <!-- The user-facing title of the Debug Drawer feature. -->
+    <string name="debug_drawer_title">Công cụ gỡ lỗi</string>
+    <!-- Content description (not visible, for screen readers etc.): Navigate back within the debug drawer. -->
+    <string name="debug_drawer_back_button_content_description">Điều hướng quay lại</string>
     <!-- The title of the Tab Tools feature in the Debug Drawer. -->
-    <string name="debug_drawer_tab_tools_title" tools:ignore="UnusedResources">Công cụ thẻ</string>
+    <string name="debug_drawer_tab_tools_title">Công cụ thẻ</string>
     <!-- The title of the tab count section in Tab Tools. -->
     <string name="debug_drawer_tab_tools_tab_count_title">Số lượng thẻ</string>
     <!-- The active tab count category in the tab count section in Tab Tools. -->
@@ -2484,4 +2610,14 @@
     <string name="debug_drawer_tab_tools_tab_count_private">Riêng tư</string>
     <!-- The total tab count category in the tab count section in Tab Tools. -->
     <string name="debug_drawer_tab_tools_tab_count_total">Tổng</string>
+    <!-- The title of the tab creation tool section in Tab Tools. -->
+    <string name="debug_drawer_tab_tools_tab_creation_tool_title">Công cụ tạo thẻ</string>
+    <!-- The label of the text field in the tab creation tool. -->
+    <string name="debug_drawer_tab_tools_tab_creation_tool_text_field_label">Số lượng thẻ cần tạo</string>
+    <!-- The button text to add tabs to the active tab group in the tab creation tool. -->
+    <string name="debug_drawer_tab_tools_tab_creation_tool_button_text_active">Thêm vào thẻ đang hoạt động</string>
+    <!-- The button text to add tabs to the inactive tab group in the tab creation tool. -->
+    <string name="debug_drawer_tab_tools_tab_creation_tool_button_text_inactive">Thêm vào thẻ không hoạt động</string>
+    <!-- The button text to add tabs to the private tab group in the tab creation tool. -->
+    <string name="debug_drawer_tab_tools_tab_creation_tool_button_text_private">Thêm vào thẻ riêng tư</string>
 </resources>
