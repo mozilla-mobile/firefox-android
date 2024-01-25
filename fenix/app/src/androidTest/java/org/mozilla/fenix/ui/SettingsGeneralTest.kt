@@ -30,30 +30,31 @@ import org.mozilla.fenix.ui.util.FRENCH_SYSTEM_LOCALE_OPTION
 import org.mozilla.fenix.ui.util.FR_SETTINGS
 import org.mozilla.fenix.ui.util.ROMANIAN_LANGUAGE_HEADER
 import java.util.Locale
+import org.mozilla.fenix.helpers.TestSetup
 
 /**
  *  Tests for verifying the General section of the Settings menu
  *
  */
-class SettingsGeneralTest {
-    private lateinit var mockWebServer: MockWebServer
+class SettingsGeneralTest: TestSetup() {
+  //  private lateinit var mockWebServer: MockWebServer
 
     @get:Rule
     val activityIntentTestRule = HomeActivityIntentTestRule.withDefaultSettingsOverrides()
 
-    @Before
-    fun setUp() {
-        mockWebServer = MockWebServer().apply {
-            dispatcher = AndroidAssetDispatcher()
-            start()
-        }
-    }
-
-    @After
-    fun tearDown() {
-        mockWebServer.shutdown()
-        AppAndSystemHelper.resetSystemLocaleToEnUS()
-    }
+//    @Before
+//    fun setUp() {
+//        mockWebServer = MockWebServer().apply {
+//            dispatcher = AndroidAssetDispatcher()
+//            start()
+//        }
+//    }
+//
+//    @After
+//    fun tearDown() {
+//        mockWebServer.shutdown()
+//        AppAndSystemHelper.resetSystemLocaleToEnUS()
+//    }
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2092697
     @Test
@@ -85,7 +86,7 @@ class SettingsGeneralTest {
     fun verifyFontSizingChangeTest() {
         // Goes through the settings and changes the default text on a webpage, then verifies if the text has changed.
         val fenixApp = activityIntentTestRule.activity.applicationContext as FenixApplication
-        val webpage = getLoremIpsumAsset(mockWebServer).url
+        val webpage = getLoremIpsumAsset(TestSetup().mockWebServer).url
 
         // This value will represent the text size percentage the webpage will scale to. The default value is 100%.
         val textSizePercentage = 180

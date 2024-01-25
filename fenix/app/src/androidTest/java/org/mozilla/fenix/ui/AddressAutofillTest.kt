@@ -17,13 +17,14 @@ import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdContainingText
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper.exitMenu
 import org.mozilla.fenix.helpers.TestHelper.packageName
+import org.mozilla.fenix.helpers.TestSetup
 import org.mozilla.fenix.ui.robots.autofillScreen
 import org.mozilla.fenix.ui.robots.clickPageObject
 import org.mozilla.fenix.ui.robots.homeScreen
 import org.mozilla.fenix.ui.robots.navigationToolbar
 
-class AddressAutofillTest {
-    private lateinit var mockWebServer: MockWebServer
+class AddressAutofillTest: TestSetup() {
+   // private lateinit var mockWebServer: MockWebServer
 
     object FirstAddressAutofillDetails {
         var navigateToAutofillSettings = true
@@ -58,18 +59,18 @@ class AddressAutofillTest {
     @get:Rule
     val activityIntentTestRule = HomeActivityIntentTestRule.withDefaultSettingsOverrides()
 
-    @Before
-    fun setUp() {
-        mockWebServer = MockWebServer().apply {
-            dispatcher = AndroidAssetDispatcher()
-            start()
-        }
-    }
-
-    @After
-    fun tearDown() {
-        mockWebServer.shutdown()
-    }
+//    @Before
+//    fun setUp() {
+//        mockWebServer = MockWebServer().apply {
+//            dispatcher = AndroidAssetDispatcher()
+//            start()
+//        }
+//    }
+//
+//    @After
+//    fun tearDown() {
+//        mockWebServer.shutdown()
+//    }
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/1836845
     @SmokeTest

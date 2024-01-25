@@ -17,7 +17,9 @@ import org.mozilla.fenix.helpers.AndroidAssetDispatcher
 import org.mozilla.fenix.helpers.HomeActivityIntentTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper.getGenericAsset
 import org.mozilla.fenix.helpers.TestHelper.clickSnackbarButton
+import org.mozilla.fenix.helpers.TestHelper.mDevice
 import org.mozilla.fenix.helpers.TestHelper.verifySnackBarText
+import org.mozilla.fenix.helpers.TestSetup
 import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.collectionRobot
 import org.mozilla.fenix.ui.robots.composeTabDrawer
@@ -29,9 +31,9 @@ import org.mozilla.fenix.ui.robots.navigationToolbar
  *
  */
 
-class ComposeCollectionTest {
-    private lateinit var mDevice: UiDevice
-    private lateinit var mockWebServer: MockWebServer
+class ComposeCollectionTest: TestSetup() {
+//    private lateinit var mDevice: UiDevice
+//    private lateinit var mockWebServer: MockWebServer
     private val firstCollectionName = "testcollection_1"
     private val secondCollectionName = "testcollection_2"
     private val collectionName = "First Collection"
@@ -51,19 +53,19 @@ class ComposeCollectionTest {
             ),
         ) { it.activity }
 
-    @Before
-    fun setUp() {
-        mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-        mockWebServer = MockWebServer().apply {
-            dispatcher = AndroidAssetDispatcher()
-            start()
-        }
-    }
-
-    @After
-    fun tearDown() {
-        mockWebServer.shutdown()
-    }
+//    @Before
+//    fun setUp() {
+//        mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+//        mockWebServer = MockWebServer().apply {
+//            dispatcher = AndroidAssetDispatcher()
+//            start()
+//        }
+//    }
+//
+//    @After
+//    fun tearDown() {
+//        mockWebServer.shutdown()
+//    }
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/353823
     @SmokeTest

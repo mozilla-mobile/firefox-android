@@ -20,6 +20,7 @@ import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.ui.robots.navigationToolbar
 import java.util.Locale
+import org.mozilla.fenix.helpers.TestSetup
 
 /**
  *  Tests for verifying basic functionality of browser navigation and page related interactions
@@ -31,9 +32,9 @@ import java.util.Locale
  *  - Find in page
  */
 
-class ComposeNavigationToolbarTest {
-    private lateinit var mDevice: UiDevice
-    private lateinit var mockWebServer: MockWebServer
+class ComposeNavigationToolbarTest:TestSetup() {
+//    private lateinit var mDevice: UiDevice
+//    private lateinit var mockWebServer: MockWebServer
 
     @get:Rule
     val composeTestRule =
@@ -43,28 +44,28 @@ class ComposeNavigationToolbarTest {
             ),
         ) { it.activity }
 
-    @Before
-    fun setUp() {
-        mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-        mockWebServer = MockWebServer().apply {
-            dispatcher = AndroidAssetDispatcher()
-            start()
-        }
-    }
-
-    @After
-    fun tearDown() {
-        mockWebServer.shutdown()
-        resetSystemLocaleToEnUS()
-    }
+//    @Before
+//    fun setUp() {
+//        mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+//        mockWebServer = MockWebServer().apply {
+//            dispatcher = AndroidAssetDispatcher()
+//            start()
+//        }
+//    }
+//
+//    @After
+//    fun tearDown() {
+//        mockWebServer.shutdown()
+//        resetSystemLocaleToEnUS()
+//    }
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/987326
     // Swipes the nav bar left/right to switch between tabs
     @SmokeTest
     @Test
     fun swipeToSwitchTabTest() {
-        val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-        val secondWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 2)
+        val firstWebPage = TestAssetHelper.getGenericAsset(TestSetup().mockWebServer, 1)
+        val secondWebPage = TestAssetHelper.getGenericAsset(TestSetup().mockWebServer, 2)
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(firstWebPage.url) {
@@ -82,8 +83,8 @@ class ComposeNavigationToolbarTest {
     // Because it requires changing system prefs, this test will run only on Debug builds
     @Test
     fun swipeToSwitchTabInRTLTest() {
-        val firstWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 1)
-        val secondWebPage = TestAssetHelper.getGenericAsset(mockWebServer, 2)
+        val firstWebPage = TestAssetHelper.getGenericAsset(TestSetup().mockWebServer, 1)
+        val secondWebPage = TestAssetHelper.getGenericAsset(TestSetup().mockWebServer, 2)
         val arabicLocale = Locale("ar", "AR")
 
         runWithSystemLocaleChanged(arabicLocale, composeTestRule.activityRule) {

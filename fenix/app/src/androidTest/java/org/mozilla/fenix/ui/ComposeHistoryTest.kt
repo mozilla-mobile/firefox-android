@@ -28,6 +28,8 @@ import org.mozilla.fenix.helpers.RecyclerViewIdlingResource
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper.exitMenu
 import org.mozilla.fenix.helpers.TestHelper.longTapSelectItem
+import org.mozilla.fenix.helpers.TestHelper.mDevice
+import org.mozilla.fenix.helpers.TestSetup
 import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.historyMenu
 import org.mozilla.fenix.ui.robots.homeScreen
@@ -38,41 +40,42 @@ import org.mozilla.fenix.ui.robots.navigationToolbar
  *  Tests for verifying basic functionality of history
  *
  */
-class ComposeHistoryTest {
-    private lateinit var mockWebServer: MockWebServer
-    private lateinit var mDevice: UiDevice
+class ComposeHistoryTest: TestSetup() {
+//    private lateinit var mockWebServer: MockWebServer
+//    private lateinit var mDevice: UiDevice
 
     @get:Rule
     val activityTestRule =
         AndroidComposeTestRule(
-            HomeActivityIntentTestRule.withDefaultSettingsOverrides(
+            HomeActivityIntentTestRule(
                 tabsTrayRewriteEnabled = true,
+                isJumpBackInCFREnabled = false,
             ),
         ) { it.activity }
 
-    @Before
-    fun setUp() {
-        InstrumentationRegistry.getInstrumentation().targetContext.settings()
-            .shouldShowJumpBackInCFR = false
-
-        mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-        mockWebServer = MockWebServer().apply {
-            dispatcher = AndroidAssetDispatcher()
-            start()
-        }
-    }
-
-    @After
-    fun tearDown() {
-        mockWebServer.shutdown()
-        // Clearing all history data after each test to avoid overlapping data
-        val applicationContext: Context = activityTestRule.activity.applicationContext
-        val historyStorage = PlacesHistoryStorage(applicationContext)
-
-        runBlocking {
-            historyStorage.deleteEverything()
-        }
-    }
+//    @Before
+//    fun setUp() {
+//        InstrumentationRegistry.getInstrumentation().targetContext.settings()
+//            .shouldShowJumpBackInCFR = false
+//
+//        mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+//        mockWebServer = MockWebServer().apply {
+//            dispatcher = AndroidAssetDispatcher()
+//            start()
+//        }
+//    }
+//
+//    @After
+//    fun tearDown() {
+//        mockWebServer.shutdown()
+//        // Clearing all history data after each test to avoid overlapping data
+//        val applicationContext: Context = activityTestRule.activity.applicationContext
+//        val historyStorage = PlacesHistoryStorage(applicationContext)
+//
+//        runBlocking {
+//            historyStorage.deleteEverything()
+//        }
+//    }
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/243285
     @Test

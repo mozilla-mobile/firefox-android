@@ -19,6 +19,7 @@ import org.mozilla.fenix.helpers.HomeActivityTestRule
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResId
 import org.mozilla.fenix.helpers.RetryTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper.getGenericAsset
+import org.mozilla.fenix.helpers.TestSetup
 import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.clickPageObject
 import org.mozilla.fenix.ui.robots.navigationToolbar
@@ -26,13 +27,13 @@ import org.mozilla.fenix.ui.robots.navigationToolbar
 /**
  * Tests that verify errors encountered while browsing websites: unsafe pages, connection errors, etc
  */
-class BrowsingErrorPagesTest {
+class BrowsingErrorPagesTest: TestSetup() {
     private val malwareWarning = getStringResource(R.string.mozac_browser_errorpages_safe_browsing_malware_uri_title)
     private val phishingWarning = getStringResource(R.string.mozac_browser_errorpages_safe_phishing_uri_title)
     private val unwantedSoftwareWarning =
         getStringResource(R.string.mozac_browser_errorpages_safe_browsing_unwanted_uri_title)
     private val harmfulSiteWarning = getStringResource(R.string.mozac_browser_errorpages_safe_harmful_uri_title)
-    private lateinit var mockWebServer: MockWebServer
+  //  private lateinit var mockWebServer: MockWebServer
 
     @get: Rule
     val mActivityTestRule = HomeActivityTestRule.withDefaultSettingsOverrides()
@@ -41,20 +42,20 @@ class BrowsingErrorPagesTest {
     @JvmField
     val retryTestRule = RetryTestRule(3)
 
-    @Before
-    fun setUp() {
-        mockWebServer = MockWebServer().apply {
-            dispatcher = AndroidAssetDispatcher()
-            start()
-        }
-    }
-
-    @After
-    fun tearDown() {
-        // Restoring network connection
-        setNetworkEnabled(true)
-        mockWebServer.shutdown()
-    }
+//    @Before
+//    fun setUp() {
+//        mockWebServer = MockWebServer().apply {
+//            dispatcher = AndroidAssetDispatcher()
+//            start()
+//        }
+//    }
+//
+//    @After
+//    fun tearDown() {
+//        // Restoring network connection
+//        setNetworkEnabled(true)
+//        mockWebServer.shutdown()
+//    }
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/2326774
     @SmokeTest

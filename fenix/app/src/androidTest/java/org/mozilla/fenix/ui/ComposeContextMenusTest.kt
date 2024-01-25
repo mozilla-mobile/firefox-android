@@ -23,6 +23,8 @@ import org.mozilla.fenix.helpers.MatcherHelper.itemWithText
 import org.mozilla.fenix.helpers.RetryTestRule
 import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper.clickSnackbarButton
+import org.mozilla.fenix.helpers.TestHelper.mDevice
+import org.mozilla.fenix.helpers.TestSetup
 import org.mozilla.fenix.ui.robots.clickContextMenuItem
 import org.mozilla.fenix.ui.robots.clickPageObject
 import org.mozilla.fenix.ui.robots.downloadRobot
@@ -44,9 +46,9 @@ import org.mozilla.fenix.ui.robots.shareOverlay
  *
  */
 
-class ComposeContextMenusTest {
-    private lateinit var mDevice: UiDevice
-    private lateinit var mockWebServer: MockWebServer
+class ComposeContextMenusTest: TestSetup() {
+//    private lateinit var mDevice: UiDevice
+//    private lateinit var mockWebServer: MockWebServer
 
     @get:Rule(order = 0)
     val composeTestRule =
@@ -60,20 +62,20 @@ class ComposeContextMenusTest {
     @JvmField
     val retryTestRule = RetryTestRule(3)
 
-    @Before
-    fun setUp() {
-        composeTestRule.activity.applicationContext.settings().shouldShowJumpBackInCFR = false
-        mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-        mockWebServer = MockWebServer().apply {
-            dispatcher = AndroidAssetDispatcher()
-            start()
-        }
-    }
-
-    @After
-    fun tearDown() {
-        mockWebServer.shutdown()
-    }
+//    @Before
+//    fun setUp() {
+//        composeTestRule.activity.applicationContext.settings().shouldShowJumpBackInCFR = false
+//        mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+//        mockWebServer = MockWebServer().apply {
+//            dispatcher = AndroidAssetDispatcher()
+//            start()
+//        }
+//    }
+//
+//    @After
+//    fun tearDown() {
+//        mockWebServer.shutdown()
+//    }
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/243837
     @Test

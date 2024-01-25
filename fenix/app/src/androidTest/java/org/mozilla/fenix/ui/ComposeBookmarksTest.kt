@@ -28,6 +28,8 @@ import org.mozilla.fenix.helpers.TestAssetHelper
 import org.mozilla.fenix.helpers.TestHelper.clickSnackbarButton
 import org.mozilla.fenix.helpers.TestHelper.exitMenu
 import org.mozilla.fenix.helpers.TestHelper.longTapSelectItem
+import org.mozilla.fenix.helpers.TestHelper.mDevice
+import org.mozilla.fenix.helpers.TestSetup
 import org.mozilla.fenix.ui.robots.bookmarksMenu
 import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.homeScreen
@@ -37,9 +39,9 @@ import org.mozilla.fenix.ui.robots.navigationToolbar
 /**
  *  Tests for verifying basic functionality of bookmarks
  */
-class ComposeBookmarksTest {
-    private lateinit var mockWebServer: MockWebServer
-    private lateinit var mDevice: UiDevice
+class ComposeBookmarksTest: TestSetup() {
+//    private lateinit var mockWebServer: MockWebServer
+//    private lateinit var mDevice: UiDevice
     private val bookmarksFolderName = "New Folder"
     private val testBookmark = object {
         var title: String = "Bookmark title"
@@ -58,25 +60,25 @@ class ComposeBookmarksTest {
     @JvmField
     val retryTestRule = RetryTestRule(3)
 
-    @Before
-    fun setUp() {
-        mDevice = UiDevice.getInstance(getInstrumentation())
-        mockWebServer = MockWebServer().apply {
-            dispatcher = AndroidAssetDispatcher()
-            start()
-        }
-    }
-
-    @After
-    fun tearDown() {
-        mockWebServer.shutdown()
-        // Clearing all bookmarks data after each test to avoid overlapping data
-        val bookmarksStorage = activityTestRule.activity?.bookmarkStorage
-        runBlocking {
-            val bookmarks = bookmarksStorage?.getTree(BookmarkRoot.Mobile.id)?.children
-            bookmarks?.forEach { bookmarksStorage.deleteNode(it.guid) }
-        }
-    }
+//    @Before
+//    fun setUp() {
+//        mDevice = UiDevice.getInstance(getInstrumentation())
+//        mockWebServer = MockWebServer().apply {
+//            dispatcher = AndroidAssetDispatcher()
+//            start()
+//        }
+//    }
+//
+//    @After
+//    fun tearDown() {
+//        mockWebServer.shutdown()
+//        // Clearing all bookmarks data after each test to avoid overlapping data
+//        val bookmarksStorage = activityTestRule.activity?.bookmarkStorage
+//        runBlocking {
+//            val bookmarks = bookmarksStorage?.getTree(BookmarkRoot.Mobile.id)?.children
+//            bookmarks?.forEach { bookmarksStorage.deleteNode(it.guid) }
+//        }
+//    }
 
     // TestRail link: https://testrail.stage.mozaws.net/index.php?/cases/view/522919
     @Test
