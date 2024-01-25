@@ -116,6 +116,7 @@ class TranslationsDialogFragment : BottomSheetDialogFragment() {
                                         )
                                     },
                                     onTranslateButtonClick = {},
+                                    onNotNowButtonClick = { dismiss() },
                                 )
                             }
                         }
@@ -142,7 +143,9 @@ class TranslationsDialogFragment : BottomSheetDialogFragment() {
                                     onTranslationSettingsClicked = {
                                         findNavController().navigate(
                                             TranslationsDialogFragmentDirections
-                                                .actionTranslationsDialogFragmentToTranslationSettingsFragment(),
+                                                .actionTranslationsDialogFragmentToTranslationSettingsFragment(
+                                                    sessionId = args.sessionId,
+                                                ),
                                         )
                                     },
                                 )

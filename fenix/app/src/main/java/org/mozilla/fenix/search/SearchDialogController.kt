@@ -25,15 +25,12 @@ import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.UnifiedSearch
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
-import org.mozilla.fenix.components.AppStore
 import org.mozilla.fenix.components.Core
 import org.mozilla.fenix.components.metrics.MetricsUtils
 import org.mozilla.fenix.crashes.CrashListActivity
-import org.mozilla.fenix.ext.application
 import org.mozilla.fenix.ext.navigateSafe
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.ext.telemetryName
-import org.mozilla.fenix.search.awesomebar.AwesomeBarView.Companion.GOOGLE_SEARCH_ENGINE_NAME
 import org.mozilla.fenix.search.toolbar.SearchSelectorInteractor
 import org.mozilla.fenix.search.toolbar.SearchSelectorMenu
 import org.mozilla.fenix.settings.SupportUtils
@@ -65,7 +62,6 @@ interface SearchController {
 class SearchDialogController(
     private val activity: HomeActivity,
     private val store: BrowserStore,
-    private val appStore: AppStore,
     private val tabsUseCases: TabsUseCases,
     private val fragmentStore: SearchFragmentStore,
     private val navController: NavController,
@@ -116,12 +112,6 @@ class SearchDialogController(
 
         val searchEngine = fragmentStore.state.searchEngineSource.searchEngine
         val isDefaultEngine = searchEngine == fragmentStore.state.defaultEngine
-        val additionalHeaders = getAdditionalHeaders(searchEngine)
-        val flags = if (additionalHeaders.isNullOrEmpty()) {
-            LoadUrlFlags.none()
-        } else {
-            LoadUrlFlags.select(LoadUrlFlags.ALLOW_ADDITIONAL_HEADERS)
-        }
 
         activity.openToBrowserAndLoad(
             searchTermOrURL = url,
@@ -129,9 +119,7 @@ class SearchDialogController(
             from = BrowserDirection.FromSearchDialog,
             engine = searchEngine,
             forceSearch = !isDefaultEngine,
-            flags = flags,
             requestDesktopMode = fromHomeScreen && activity.settings().openNextTabInDesktopMode,
-            additionalHeaders = additionalHeaders,
         )
 
         if (url.isUrl() || searchEngine == null) {
@@ -169,7 +157,7 @@ class SearchDialogController(
             fragmentStore.dispatch(
                 SearchFragmentAction.AllowSearchSuggestionsInPrivateModePrompt(
                     text.isNotEmpty() &&
-                        appStore.state.mode.isPrivate &&
+                        activity.browsingModeManager.mode.isPrivate &&
                         settings.shouldShowSearchSuggestions &&
                         !settings.shouldShowSearchSuggestionsInPrivate &&
                         !settings.showSearchSuggestionsInPrivateOnboardingFinished,
@@ -197,12 +185,6 @@ class SearchDialogController(
         clearToolbarFocus()
 
         val searchEngine = fragmentStore.state.searchEngineSource.searchEngine
-        val additionalHeaders = getAdditionalHeaders(searchEngine)
-        val flags = if (additionalHeaders.isNullOrEmpty()) {
-            LoadUrlFlags.none()
-        } else {
-            LoadUrlFlags.select(LoadUrlFlags.ALLOW_ADDITIONAL_HEADERS)
-        }
 
         activity.openToBrowserAndLoad(
             searchTermOrURL = searchTerms,
@@ -210,8 +192,6 @@ class SearchDialogController(
             from = BrowserDirection.FromSearchDialog,
             engine = searchEngine,
             forceSearch = true,
-            flags = flags,
-            additionalHeaders = additionalHeaders,
         )
 
         val searchAccessPoint = when (fragmentStore.state.searchAccessPoint) {
@@ -248,7 +228,7 @@ class SearchDialogController(
                 fragmentStore.dispatch(
                     SearchFragmentAction.SearchDefaultEngineSelected(
                         engine = searchEngine,
-                        browsingMode = appStore.state.mode,
+                        browsingMode = activity.browsingModeManager.mode,
                         settings = settings,
                     ),
                 )
@@ -257,7 +237,7 @@ class SearchDialogController(
                 fragmentStore.dispatch(
                     SearchFragmentAction.SearchShortcutEngineSelected(
                         engine = searchEngine,
-                        browsingMode = appStore.state.mode,
+                        browsingMode = activity.browsingModeManager.mode,
                         settings = settings,
                     ),
                 )
@@ -345,21 +325,5 @@ class SearchDialogController(
             }
             create().withCenterAlignedButtons()
         }
-    }
-
-    private fun getAdditionalHeaders(searchEngine: SearchEngine?): Map<String, String>? {
-        if (searchEngine?.name != GOOGLE_SEARCH_ENGINE_NAME) {
-            return null
-        }
-
-        val value = if (activity.applicationContext.application.isDeviceRamAboveThreshold) {
-            "1"
-        } else {
-            "0"
-        }
-
-        return mapOf(
-            "X-Search-Subdivision" to value,
-        )
     }
 }
