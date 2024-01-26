@@ -49,8 +49,18 @@ class ComposeBookmarksTest {
     @get:Rule(order = 0)
     val activityTestRule =
         AndroidComposeTestRule(
-            HomeActivityIntentTestRule.withDefaultSettingsOverrides(
+            HomeActivityIntentTestRule(
+                skipOnboarding = true,
                 tabsTrayRewriteEnabled = true,
+                isJumpBackInCFREnabled = false,
+                isRecentTabsFeatureEnabled = false,
+                isRecentlyVisitedFeatureEnabled = false,
+                isRecentBookmarksFeatureEnabled = false,
+                isPocketEnabled = false,
+                isPWAsPromptEnabled = false,
+                isTCPCFREnabled = false,
+                isWallpaperOnboardingEnabled = false,
+                isOpenInAppBannerEnabled = false,
             ),
         ) { it.activity }
 
@@ -264,7 +274,7 @@ class ComposeBookmarksTest {
             closeTab()
         }
 
-        browserScreen {
+        homeScreen {
         }.openThreeDotMenu {
         }.openBookmarks {
         }.openThreeDotMenu("root") {
@@ -303,7 +313,7 @@ class ComposeBookmarksTest {
             closeTab()
         }
 
-        browserScreen {
+        homeScreen {
         }.openThreeDotMenu {
         }.openBookmarks {
         }.openThreeDotMenu("root") {
