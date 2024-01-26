@@ -23,6 +23,12 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import mozilla.components.browser.state.action.TranslationsAction
+import mozilla.components.browser.state.selector.findTab
+import mozilla.components.browser.state.store.BrowserStore
+import mozilla.components.concept.engine.translate.initialFromLanguage
+import mozilla.components.concept.engine.translate.initialToLanguage
+import mozilla.components.lib.state.ext.observeAsComposableState
 import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
@@ -45,7 +51,7 @@ class TranslationsDialogFragment : BottomSheetDialogFragment() {
 
     private var behavior: BottomSheetBehavior<View>? = null
     private val args by navArgs<TranslationsDialogFragmentArgs>()
-    private lateinit var interactor: TranslationsInteractor
+    private val browserStore: BrowserStore by lazy { requireComponents.core.store }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
         super.onCreateDialog(savedInstanceState).apply {
@@ -63,18 +69,36 @@ class TranslationsDialogFragment : BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View = ComposeView(requireContext()).apply {
-        interactor = TranslationsInteractor(
-            translationsController = TranslationsController(
-                translationUseCase = requireComponents.useCases.sessionUseCases.translate,
-                browserStore = requireComponents.core.store,
-                tabId = args.sessionId,
-            ),
-        )
+        // Signalling user intention to translate
+        browserStore.dispatch(TranslationsAction.TranslateExpectedAction(args.sessionId))
 
         setContent {
+            val translationsState = browserStore.observeAsComposableState {
+                    state ->
+                state.findTab(args.sessionId)
+                    ?.translationsState
+            }.value
+
+            var fromSelected by remember {
+                mutableStateOf(
+                    translationsState?.translationEngineState
+                        ?.initialFromLanguage(translationsState.supportedLanguages?.fromLanguages),
+                )
+            }
+
+            var toSelected by remember {
+                mutableStateOf(
+                    translationsState?.translationEngineState
+                        ?.initialToLanguage(translationsState.supportedLanguages?.toLanguages),
+                )
+            }
+
             FirefoxTheme {
                 var translationsVisibility by remember {
-                    mutableStateOf(args.translationsDialogAccessPoint == TranslationsDialogAccessPoint.Translations)
+                    mutableStateOf(
+                        args.translationsDialogAccessPoint ==
+                            TranslationsDialogAccessPoint.Translations,
+                    )
                 }
 
                 var translationsHeightDp by remember {
@@ -115,6 +139,10 @@ class TranslationsDialogFragment : BottomSheetDialogFragment() {
                                 TranslationsDialog(
                                     learnMoreUrl = learnMoreUrl,
                                     showFirstTimeTranslation = context.settings().showFirstTimeTranslation,
+                                    translateFromLanguages = translationsState?.supportedLanguages?.fromLanguages,
+                                    translateToLanguages = translationsState?.supportedLanguages?.toLanguages,
+                                    initialFrom = fromSelected,
+                                    initialTo = toSelected,
                                     onSettingClicked = {
                                         translationsVisibility = false
                                     },
@@ -126,14 +154,24 @@ class TranslationsDialogFragment : BottomSheetDialogFragment() {
                                         )
                                     },
                                     onTranslateButtonClick = {
-                                        interactor.onTranslate(
-                                            tabId = args.sessionId,
-                                            fromLanguage = null,
-                                            toLanguage = null,
-                                            null,
-                                        )
+                                        fromSelected?.code?.let { fromLanguage ->
+                                            toSelected?.code?.let { toLanguage ->
+                                                TranslationsAction.TranslateAction(
+                                                    tabId = args.sessionId,
+                                                    fromLanguage = fromLanguage,
+                                                    toLanguage = toLanguage,
+                                                    options = null,
+                                                )
+                                            }
+                                        }?.let {
+                                            browserStore.dispatch(
+                                                it,
+                                            )
+                                        }
                                     },
                                     onNotNowButtonClick = { dismiss() },
+                                    onFromSelected = { fromSelected = it },
+                                    onToSelected = { toSelected = it },
                                 )
                             }
                         }
