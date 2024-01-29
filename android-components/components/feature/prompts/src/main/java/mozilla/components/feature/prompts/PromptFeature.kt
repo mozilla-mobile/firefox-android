@@ -76,6 +76,7 @@ import mozilla.components.feature.prompts.facts.emitPromptDisplayedFact
 import mozilla.components.feature.prompts.facts.emitSuccessfulAddressAutofillFormDetectedFact
 import mozilla.components.feature.prompts.facts.emitSuccessfulCreditCardAutofillFormDetectedFact
 import mozilla.components.feature.prompts.file.FilePicker
+import mozilla.components.feature.prompts.file.FileUploadsDirCleaner
 import mozilla.components.feature.prompts.identitycredential.DialogColors
 import mozilla.components.feature.prompts.identitycredential.DialogColorsProvider
 import mozilla.components.feature.prompts.identitycredential.PrivacyPolicyDialogFragment
@@ -84,6 +85,8 @@ import mozilla.components.feature.prompts.identitycredential.SelectProviderDialo
 import mozilla.components.feature.prompts.login.LoginDelegate
 import mozilla.components.feature.prompts.login.LoginExceptions
 import mozilla.components.feature.prompts.login.LoginPicker
+import mozilla.components.feature.prompts.login.StrongPasswordPromptViewListener
+import mozilla.components.feature.prompts.login.SuggestStrongPasswordDelegate
 import mozilla.components.feature.prompts.share.DefaultShareDelegate
 import mozilla.components.feature.prompts.share.ShareDelegate
 import mozilla.components.feature.session.SessionUseCases
@@ -131,10 +134,8 @@ internal const val FRAGMENT_TAG = "mozac_feature_prompt_dialog"
  * a dialog (fragment).
  * @property shareDelegate Delegate used to display share sheet.
  * @property exitFullscreenUsecase Usecase allowing to exit browser tabs' fullscreen mode.
- * @property loginStorageDelegate Delegate used to access login storage. If null,
- * 'save login'prompts will not be shown.
  * @property isSaveLoginEnabled A callback invoked when a login prompt is triggered. If false,
- * 'save login'prompts will not be shown.
+ * 'save login' prompts will not be shown.
  * @property isCreditCardAutofillEnabled A callback invoked when credit card fields are detected in the webpage.
  * If this resolves to `true` a prompt allowing the user to select the credit card details to be autocompleted
  * will be shown.
@@ -144,8 +145,14 @@ internal const val FRAGMENT_TAG = "mozac_feature_prompt_dialog"
  * @property loginExceptionStorage An implementation of [LoginExceptions] that saves and checks origins
  * the user does not want to see a save login dialog for.
  * @property loginDelegate Delegate for login picker.
+ * @property suggestStrongPasswordDelegate Delegate for strong password generator.
+ * @property isSuggestStrongPasswordEnabled Feature flag denoting whether the suggest strong password
+ * feature is enabled or not. If this resolves to 'false', the feature will be hidden.
+ * @property onSaveLoginWithStrongPassword A callback invoked to save a new login that uses the
+ * generated strong password
  * @property creditCardDelegate Delegate for credit card picker.
  * @property addressDelegate Delegate for address picker.
+ * @property fileUploadsDirCleaner a [FileUploadsDirCleaner] to clean up temporary file uploads.
  * @property onNeedToRequestPermissions A callback invoked when permissions
  * need to be requested before a prompt (e.g. a file picker) can be displayed.
  * Once the request is completed, [onPermissionsResult] needs to be invoked.
@@ -169,8 +176,13 @@ class PromptFeature private constructor(
     private val isAddressAutofillEnabled: () -> Boolean = { false },
     override val loginExceptionStorage: LoginExceptions? = null,
     private val loginDelegate: LoginDelegate = object : LoginDelegate {},
+    private val suggestStrongPasswordDelegate: SuggestStrongPasswordDelegate = object :
+        SuggestStrongPasswordDelegate {},
+    private val isSuggestStrongPasswordEnabled: Boolean = false,
+    private val onSaveLoginWithStrongPassword: (String, String) -> Unit = { _, _ -> },
     private val creditCardDelegate: CreditCardDelegate = object : CreditCardDelegate {},
     private val addressDelegate: AddressDelegate = DefaultAddressDelegate(),
+    private val fileUploadsDirCleaner: FileUploadsDirCleaner,
     onNeedToRequestPermissions: OnNeedToRequestPermissions,
 ) : LifecycleAwareFeature,
     PermissionsFeature,
@@ -212,8 +224,13 @@ class PromptFeature private constructor(
         isAddressAutofillEnabled: () -> Boolean = { false },
         loginExceptionStorage: LoginExceptions? = null,
         loginDelegate: LoginDelegate = object : LoginDelegate {},
+        suggestStrongPasswordDelegate: SuggestStrongPasswordDelegate = object :
+            SuggestStrongPasswordDelegate {},
+        isSuggestStrongPasswordEnabled: Boolean = false,
+        onSaveLoginWithStrongPassword: (String, String) -> Unit = { _, _ -> },
         creditCardDelegate: CreditCardDelegate = object : CreditCardDelegate {},
         addressDelegate: AddressDelegate = DefaultAddressDelegate(),
+        fileUploadsDirCleaner: FileUploadsDirCleaner,
         onNeedToRequestPermissions: OnNeedToRequestPermissions,
     ) : this(
         container = PromptContainer.Activity(activity),
@@ -230,8 +247,12 @@ class PromptFeature private constructor(
         isCreditCardAutofillEnabled = isCreditCardAutofillEnabled,
         isAddressAutofillEnabled = isAddressAutofillEnabled,
         loginExceptionStorage = loginExceptionStorage,
+        fileUploadsDirCleaner = fileUploadsDirCleaner,
         onNeedToRequestPermissions = onNeedToRequestPermissions,
         loginDelegate = loginDelegate,
+        suggestStrongPasswordDelegate = suggestStrongPasswordDelegate,
+        isSuggestStrongPasswordEnabled = isSuggestStrongPasswordEnabled,
+        onSaveLoginWithStrongPassword = onSaveLoginWithStrongPassword,
         creditCardDelegate = creditCardDelegate,
         addressDelegate = addressDelegate,
     )
@@ -251,8 +272,13 @@ class PromptFeature private constructor(
         isAddressAutofillEnabled: () -> Boolean = { false },
         loginExceptionStorage: LoginExceptions? = null,
         loginDelegate: LoginDelegate = object : LoginDelegate {},
+        suggestStrongPasswordDelegate: SuggestStrongPasswordDelegate = object :
+            SuggestStrongPasswordDelegate {},
+        isSuggestStrongPasswordEnabled: Boolean = false,
+        onSaveLoginWithStrongPassword: (String, String) -> Unit = { _, _ -> },
         creditCardDelegate: CreditCardDelegate = object : CreditCardDelegate {},
         addressDelegate: AddressDelegate = DefaultAddressDelegate(),
+        fileUploadsDirCleaner: FileUploadsDirCleaner,
         onNeedToRequestPermissions: OnNeedToRequestPermissions,
     ) : this(
         container = PromptContainer.Fragment(fragment),
@@ -268,19 +294,32 @@ class PromptFeature private constructor(
         isCreditCardAutofillEnabled = isCreditCardAutofillEnabled,
         isAddressAutofillEnabled = isAddressAutofillEnabled,
         loginExceptionStorage = loginExceptionStorage,
+        fileUploadsDirCleaner = fileUploadsDirCleaner,
         onNeedToRequestPermissions = onNeedToRequestPermissions,
         loginDelegate = loginDelegate,
+        suggestStrongPasswordDelegate = suggestStrongPasswordDelegate,
+        isSuggestStrongPasswordEnabled = isSuggestStrongPasswordEnabled,
+        onSaveLoginWithStrongPassword = onSaveLoginWithStrongPassword,
         creditCardDelegate = creditCardDelegate,
         addressDelegate = addressDelegate,
     )
 
-    private val filePicker = FilePicker(container, store, customTabId, onNeedToRequestPermissions)
+    private val filePicker =
+        FilePicker(container, store, customTabId, fileUploadsDirCleaner, onNeedToRequestPermissions)
 
     @VisibleForTesting(otherwise = PRIVATE)
     internal var loginPicker =
         with(loginDelegate) {
             loginPickerView?.let {
                 LoginPicker(store, it, onManageLogins, customTabId)
+            }
+        }
+
+    @VisibleForTesting(otherwise = PRIVATE)
+    internal var strongPasswordPromptViewListener =
+        with(suggestStrongPasswordDelegate) {
+            strongPasswordPromptViewListenerView?.let {
+                StrongPasswordPromptViewListener(store, it, customTabId)
             }
         }
 
@@ -341,6 +380,9 @@ class PromptFeature private constructor(
                             when (activePromptRequest) {
                                 is SelectLoginPrompt -> {
                                     loginPicker?.dismissCurrentLoginSelect(activePromptRequest as SelectLoginPrompt)
+                                    strongPasswordPromptViewListener?.dismissCurrentSuggestStrongPassword(
+                                        activePromptRequest as SelectLoginPrompt,
+                                    )
                                 }
 
                                 is SaveLoginPrompt -> {
@@ -493,6 +535,7 @@ class PromptFeature private constructor(
      *
      * @param session The session which requested the dialog.
      */
+    @Suppress("NestedBlockDepth")
     @VisibleForTesting(otherwise = PRIVATE)
     internal fun onPromptRequested(session: SessionState) {
         // Some requests are handle with intents
@@ -516,10 +559,22 @@ class PromptFeature private constructor(
                 }
 
                 is SelectLoginPrompt -> {
-                    emitPromptDisplayedFact(promptName = "SelectLoginPrompt")
-                    if (promptRequest.logins.isNotEmpty()) {
+                    if (promptRequest.logins.isEmpty()) {
+                        if (isSuggestStrongPasswordEnabled) {
+                            val currentUrl =
+                                store.state.findTabOrCustomTabOrSelectedTab(customTabId)?.content?.url
+                            if (currentUrl != null) {
+                                strongPasswordPromptViewListener?.handleSuggestStrongPasswordRequest(
+                                    promptRequest,
+                                    currentUrl,
+                                    onSaveLoginWithStrongPassword,
+                                )
+                            }
+                        }
+                    } else {
                         loginPicker?.handleSelectLoginRequest(promptRequest)
                     }
+                    emitPromptDisplayedFact(promptName = "SelectLoginPrompt")
                 }
 
                 is SelectAddress -> {
@@ -884,15 +939,11 @@ class PromptFeature private constructor(
 
             is Confirm -> {
                 with(promptRequest) {
-                    val positiveButton = if (positiveButtonTitle.isEmpty()) {
+                    val positiveButton = positiveButtonTitle.ifEmpty {
                         container.getString(R.string.mozac_feature_prompts_ok)
-                    } else {
-                        positiveButtonTitle
                     }
-                    val negativeButton = if (negativeButtonTitle.isEmpty()) {
+                    val negativeButton = negativeButtonTitle.ifEmpty {
                         container.getString(R.string.mozac_feature_prompts_cancel)
-                    } else {
-                        negativeButtonTitle
                     }
 
                     MultiButtonDialogFragment.newInstance(

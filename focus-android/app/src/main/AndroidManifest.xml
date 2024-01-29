@@ -52,6 +52,7 @@
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
 
     <application
         android:allowBackup="false"
@@ -99,7 +100,7 @@
         <activity android:name=".activity.MainActivity"
             android:launchMode="singleTask"
             android:exported="true"
-            android:windowSoftInputMode="adjustResize|stateAlwaysHidden"
+            android:windowSoftInputMode="adjustResize"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
             android:resizeableActivity="true"
             android:supportsPictureInPicture="true"
@@ -176,15 +177,23 @@
             </intent-filter>
         </service>
 
-        <service android:name=".downloads.DownloadService"
-            android:exported="false" />
+        <service
+            android:name=".downloads.DownloadService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
 
         <service android:name=".media.MediaSessionService"
             android:foregroundServiceType="mediaPlayback"
             android:exported="false" />
 
-        <service android:name=".session.SessionNotificationService"
-            android:exported="false" />
+        <service
+            android:name=".session.SessionNotificationService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="This foreground service allows users to easily remove private tabs from the notification" />
+        </service>
 
         <meta-data android:name="android.webkit.WebView.MetricsOptOut"
                    android:value="true" />

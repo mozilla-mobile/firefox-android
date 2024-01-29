@@ -14,7 +14,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.StrictMode
-import android.os.SystemClock
 import android.text.TextUtils
 import android.text.format.DateUtils
 import android.util.AttributeSet
@@ -29,14 +28,11 @@ import androidx.annotation.CallSuper
 import androidx.annotation.IdRes
 import androidx.annotation.RequiresApi
 import androidx.annotation.VisibleForTesting
-import androidx.annotation.VisibleForTesting.Companion.PROTECTED
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.widget.Toolbar
-import androidx.core.app.NotificationManagerCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavDestination
-import androidx.navigation.NavDirections
+import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
@@ -65,7 +61,6 @@ import mozilla.components.feature.media.ext.findActiveMediaTab
 import mozilla.components.feature.privatemode.notification.PrivateNotificationFeature
 import mozilla.components.feature.search.BrowserStoreSearchAdapter
 import mozilla.components.service.fxa.sync.SyncReason
-import mozilla.components.support.base.ext.areNotificationsEnabledSafe
 import mozilla.components.support.base.feature.ActivityResultHandler
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.log.logger.Logger
@@ -89,10 +84,8 @@ import org.mozilla.fenix.GleanMetrics.Events
 import org.mozilla.fenix.GleanMetrics.Metrics
 import org.mozilla.fenix.GleanMetrics.SplashScreen
 import org.mozilla.fenix.GleanMetrics.StartOnHome
-import org.mozilla.fenix.addons.AddonDetailsFragmentDirections
-import org.mozilla.fenix.addons.AddonPermissionsDetailsFragmentDirections
-import org.mozilla.fenix.addons.AddonsManagementFragmentDirections
-import org.mozilla.fenix.addons.ExtensionsProcessDisabledController
+import org.mozilla.fenix.addons.ExtensionsProcessDisabledBackgroundController
+import org.mozilla.fenix.addons.ExtensionsProcessDisabledForegroundController
 import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.browser.browsingmode.BrowsingModeManager
 import org.mozilla.fenix.browser.browsingmode.DefaultBrowsingModeManager
@@ -100,21 +93,23 @@ import org.mozilla.fenix.components.appstate.AppAction
 import org.mozilla.fenix.components.metrics.BreadcrumbsRecorder
 import org.mozilla.fenix.components.metrics.GrowthDataWorker
 import org.mozilla.fenix.components.metrics.fonts.FontEnumerationWorker
+import org.mozilla.fenix.customtabs.ExternalAppBrowserActivity
 import org.mozilla.fenix.databinding.ActivityHomeBinding
 import org.mozilla.fenix.debugsettings.data.DefaultDebugSettingsRepository
-import org.mozilla.fenix.debugsettings.store.DebugDrawerStore
-import org.mozilla.fenix.debugsettings.ui.DebugOverlay
-import org.mozilla.fenix.exceptions.trackingprotection.TrackingProtectionExceptionsFragmentDirections
+import org.mozilla.fenix.debugsettings.ui.FenixOverlay
 import org.mozilla.fenix.experiments.ResearchSurfaceDialogFragment
 import org.mozilla.fenix.ext.alreadyOnDestination
 import org.mozilla.fenix.ext.breadcrumb
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.getBreadcrumbMessage
+import org.mozilla.fenix.ext.getIntentSessionId
+import org.mozilla.fenix.ext.getIntentSource
+import org.mozilla.fenix.ext.getNavDirections
 import org.mozilla.fenix.ext.hasTopDestination
 import org.mozilla.fenix.ext.nav
 import org.mozilla.fenix.ext.setNavigationIcon
 import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.extension.WebExtensionPromptFeature
-import org.mozilla.fenix.home.HomeFragmentDirections
 import org.mozilla.fenix.home.intent.AssistIntentProcessor
 import org.mozilla.fenix.home.intent.CrashReporterIntentProcessor
 import org.mozilla.fenix.home.intent.HomeDeepLinkIntentProcessor
@@ -124,17 +119,12 @@ import org.mozilla.fenix.home.intent.OpenSpecificTabIntentProcessor
 import org.mozilla.fenix.home.intent.ReEngagementIntentProcessor
 import org.mozilla.fenix.home.intent.SpeechProcessingIntentProcessor
 import org.mozilla.fenix.home.intent.StartSearchIntentProcessor
-import org.mozilla.fenix.library.bookmarks.BookmarkFragmentDirections
 import org.mozilla.fenix.library.bookmarks.DesktopFolders
-import org.mozilla.fenix.library.history.HistoryFragmentDirections
-import org.mozilla.fenix.library.historymetadata.HistoryMetadataGroupFragmentDirections
-import org.mozilla.fenix.library.recentlyclosed.RecentlyClosedFragmentDirections
 import org.mozilla.fenix.messaging.FenixMessageSurfaceId
 import org.mozilla.fenix.messaging.FenixNimbusMessagingController
 import org.mozilla.fenix.messaging.MessageNotificationWorker
 import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.onboarding.ReEngagementNotificationWorker
-import org.mozilla.fenix.onboarding.ensureMarketingChannelExists
 import org.mozilla.fenix.perf.MarkersActivityLifecycleCallbacks
 import org.mozilla.fenix.perf.MarkersFragmentLifecycleCallbacks
 import org.mozilla.fenix.perf.Performance
@@ -143,30 +133,12 @@ import org.mozilla.fenix.perf.ProfilerMarkers
 import org.mozilla.fenix.perf.StartupPathProvider
 import org.mozilla.fenix.perf.StartupTimeline
 import org.mozilla.fenix.perf.StartupTypeTelemetry
-import org.mozilla.fenix.search.SearchDialogFragmentDirections
 import org.mozilla.fenix.session.PrivateNotificationService
-import org.mozilla.fenix.settings.HttpsOnlyFragmentDirections
-import org.mozilla.fenix.settings.SettingsFragmentDirections
-import org.mozilla.fenix.settings.TrackingProtectionFragmentDirections
-import org.mozilla.fenix.settings.about.AboutFragmentDirections
-import org.mozilla.fenix.settings.logins.fragment.LoginDetailFragmentDirections
-import org.mozilla.fenix.settings.logins.fragment.SavedLoginsAuthFragmentDirections
-import org.mozilla.fenix.settings.search.SaveSearchEngineFragmentDirections
-import org.mozilla.fenix.settings.search.SearchEngineFragmentDirections
-import org.mozilla.fenix.settings.studies.StudiesFragmentDirections
-import org.mozilla.fenix.settings.wallpaper.WallpaperSettingsFragmentDirections
-import org.mozilla.fenix.share.AddNewDeviceFragmentDirections
-import org.mozilla.fenix.shopping.ReviewQualityCheckFragmentDirections
 import org.mozilla.fenix.shortcut.NewTabShortcutIntentProcessor.Companion.ACTION_OPEN_PRIVATE_TAB
 import org.mozilla.fenix.tabhistory.TabHistoryDialogFragment
 import org.mozilla.fenix.tabstray.TabsTrayFragment
-import org.mozilla.fenix.tabstray.TabsTrayFragmentDirections
 import org.mozilla.fenix.theme.DefaultThemeManager
-import org.mozilla.fenix.theme.FirefoxTheme
-import org.mozilla.fenix.theme.Theme
 import org.mozilla.fenix.theme.ThemeManager
-import org.mozilla.fenix.trackingprotection.TrackingProtectionPanelDialogFragmentDirections
-import org.mozilla.fenix.translations.TranslationsDialogFragmentDirections
 import org.mozilla.fenix.utils.Settings
 import java.lang.ref.WeakReference
 import java.util.Locale
@@ -177,14 +149,8 @@ import java.util.Locale
  * - home screen
  * - browser screen
  */
-@SuppressWarnings("TooManyFunctions", "LargeClass", "LongParameterList", "LongMethod")
+@SuppressWarnings("TooManyFunctions", "LargeClass", "LongMethod")
 open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
-    // DO NOT MOVE ANYTHING ABOVE THIS, GETTING INIT TIME IS CRITICAL
-    // we need to store startup timestamp for warm startup. we cant directly store
-    // inside AppStartupTelemetry since that class lives inside components and
-    // components requires context to access.
-    protected val homeActivityInitTimeStampNanoSeconds = SystemClock.elapsedRealtimeNanos()
-
     private lateinit var binding: ActivityHomeBinding
     lateinit var themeManager: ThemeManager
     lateinit var browsingModeManager: BrowsingModeManager
@@ -208,8 +174,15 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         )
     }
 
-    private val extensionsProcessDisabledPromptObserver by lazy {
-        ExtensionsProcessDisabledController(this@HomeActivity)
+    private val extensionsProcessDisabledForegroundController by lazy {
+        ExtensionsProcessDisabledForegroundController(this@HomeActivity)
+    }
+
+    private val extensionsProcessDisabledBackgroundController by lazy {
+        ExtensionsProcessDisabledBackgroundController(
+            browserStore = components.core.store,
+            appStore = components.appStore,
+        )
     }
 
     private val serviceWorkerSupport by lazy {
@@ -286,35 +259,32 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
         binding = ActivityHomeBinding.inflate(layoutInflater)
 
-        if (Config.channel.isNightlyOrDebug) {
-            lifecycleScope.launch {
-                val debugSettingsRepository = DefaultDebugSettingsRepository(
-                    context = this@HomeActivity,
-                    writeScope = this,
-                )
+        lifecycleScope.launch {
+            val debugSettingsRepository = DefaultDebugSettingsRepository(
+                context = this@HomeActivity,
+                writeScope = this,
+            )
 
-                debugSettingsRepository.debugDrawerEnabled
-                    .distinctUntilChanged()
-                    .collect { enabled ->
-                        with(binding.debugOverlay) {
-                            if (enabled) {
-                                visibility = View.VISIBLE
+            debugSettingsRepository.debugDrawerEnabled
+                .distinctUntilChanged()
+                .collect { enabled ->
+                    with(binding.debugOverlay) {
+                        if (enabled) {
+                            visibility = View.VISIBLE
 
-                                setContent {
-                                    FirefoxTheme(theme = Theme.getTheme(allowPrivateTheme = false)) {
-                                        DebugOverlay(
-                                            debugDrawerStore = DebugDrawerStore(),
-                                        )
-                                    }
-                                }
-                            } else {
-                                setContent {}
-
-                                visibility = View.GONE
+                            setContent {
+                                FenixOverlay(
+                                    browserStore = components.core.store,
+                                    inactiveTabsEnabled = settings().inactiveTabsAreEnabled,
+                                )
                             }
+                        } else {
+                            setContent {}
+
+                            visibility = View.GONE
                         }
                     }
-            }
+                }
         }
 
         setContentView(binding.root)
@@ -351,7 +321,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             // Unless the activity is recreated, navigate to home first (without rendering it)
             // to add it to the back stack.
             if (savedInstanceState == null) {
-                navigateToHome()
+                navigateToHome(navHost.navController)
             }
 
             if (!shouldStartOnHome() && shouldNavigateToBrowserOnColdStart(savedInstanceState)) {
@@ -363,8 +333,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             if (settings().showHomeOnboardingDialog && components.fenixOnboarding.userHasBeenOnboarded()) {
                 navHost.navController.navigate(NavGraphDirections.actionGlobalHomeOnboardingDialog())
             }
-
-            showNotificationPermissionPromptIfRequired()
         }
 
         Performance.processIntentIfPerformanceTest(intent, this)
@@ -395,7 +363,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
         lifecycle.addObservers(
             webExtensionPopupObserver,
-            extensionsProcessDisabledPromptObserver,
+            extensionsProcessDisabledForegroundController,
+            extensionsProcessDisabledBackgroundController,
             serviceWorkerSupport,
             webExtensionPromptFeature,
         )
@@ -458,30 +427,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         components.notificationsDelegate.bindToActivity(this)
 
         StartupTimeline.onActivityCreateEndHome(this) // DO NOT MOVE ANYTHING BELOW HERE.
-    }
-
-    /**
-     * On Android 13 or above, prompt the user for notification permission at the start.
-     * Show the pre permission dialog to the user once if the notification are not enabled.
-     */
-    private fun showNotificationPermissionPromptIfRequired() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-            !NotificationManagerCompat.from(applicationContext).areNotificationsEnabledSafe() &&
-            settings().numberOfAppLaunches <= 1
-        ) {
-            // Recording the exposure event here to capture all users who met all criteria to receive
-            // the pre permission notification prompt
-            FxNimbus.features.prePermissionNotificationPrompt.recordExposure()
-
-            if (settings().notificationPrePermissionPromptEnabled) {
-                if (!settings().isNotificationPrePermissionShown) {
-                    navHost.navController.navigate(NavGraphDirections.actionGlobalHomeNotificationPermissionDialog())
-                }
-            } else {
-                // This will trigger the notification permission system dialog as app targets sdk 32.
-                ensureMarketingChannelExists(applicationContext)
-            }
-        }
     }
 
     private fun maybeShowSplashScreen() {
@@ -572,7 +517,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         components.core.store.dispatch(SearchAction.RefreshSearchEnginesAction)
     }
 
-    override fun onStart() {
+    final override fun onStart() {
         // DO NOT MOVE ANYTHING ABOVE THIS getProfilerTime CALL.
         val startProfilerTime = components.core.engine.profiler?.getProfilerTime()
 
@@ -592,7 +537,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         ) // DO NOT MOVE ANYTHING BELOW THIS addMarker CALL.
     }
 
-    override fun onStop() {
+    final override fun onStop() {
         super.onStop()
 
         // Diagnostic breadcrumb for "Display already aquired" crash:
@@ -648,6 +593,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         outContent?.webUri = currentTabUrl?.let { Uri.parse(it) }
     }
 
+    @CallSuper
     override fun onDestroy() {
         super.onDestroy()
 
@@ -665,10 +611,13 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         components.core.pocketStoriesService.stopPeriodicSponsoredStoriesRefresh()
         privateNotificationObserver?.stop()
         components.notificationsDelegate.unBindActivity(this)
-        stopMediaSession()
+
+        if (this !is ExternalAppBrowserActivity) {
+            stopMediaSession()
+        }
     }
 
-    override fun onConfigurationChanged(newConfig: Configuration) {
+    final override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
 
         // Diagnostic breadcrumb for "Display already aquired" crash:
@@ -678,7 +627,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         )
     }
 
-    override fun recreate() {
+    final override fun recreate() {
         // Diagnostic breadcrumb for "Display already aquired" crash:
         // https://github.com/mozilla-mobile/android-components/issues/7960
         breadcrumb(
@@ -699,7 +648,12 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         startupPathProvider.onIntentReceived(intent)
     }
 
-    open fun handleNewIntent(intent: Intent) {
+    @VisibleForTesting
+    internal fun handleNewIntent(intent: Intent) {
+        if (this is ExternalAppBrowserActivity) {
+            return
+        }
+
         // Diagnostic breadcrumb for "Display already aquired" crash:
         // https://github.com/mozilla-mobile/android-components/issues/7960
         breadcrumb(
@@ -758,12 +712,12 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         else -> super.onCreateView(parent, name, context, attrs)
     }
 
-    override fun onActionModeStarted(mode: ActionMode?) {
+    final override fun onActionModeStarted(mode: ActionMode?) {
         actionMode = mode
         super.onActionModeStarted(mode)
     }
 
-    override fun onActionModeFinished(mode: ActionMode?) {
+    final override fun onActionModeFinished(mode: ActionMode?) {
         actionMode = null
         super.onActionModeFinished(mode)
     }
@@ -830,7 +784,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         return false
     }
 
-    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+    final override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
         ProfilerMarkers.addForDispatchTouchEvent(components.core.engine.profiler, ev)
         return super.dispatchTouchEvent(ev)
     }
@@ -886,25 +840,12 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         super.onUserLeaveHint()
     }
 
-    protected open fun getBreadcrumbMessage(destination: NavDestination): String {
-        val fragmentName = resources.getResourceEntryName(destination.id)
-        return "Changing to fragment $fragmentName, isCustomTab: false"
-    }
-
-    @VisibleForTesting(otherwise = PROTECTED)
-    internal open fun getIntentSource(intent: SafeIntent): String? {
-        return when {
-            intent.isLauncherIntent -> APP_ICON
-            intent.action == Intent.ACTION_VIEW -> "LINK"
-            else -> null
-        }
-    }
-
     /**
      * External sources such as 3rd party links and shortcuts use this function to enter
      * private mode directly before the content view is created. Returns the mode set by the intent
      * otherwise falls back to the last known mode.
      */
+    @VisibleForTesting
     internal fun getModeFromIntentOrLastKnown(intent: Intent?): BrowsingMode {
         intent?.toSafeIntent()?.let {
             if (it.hasExtra(PRIVATE_BROWSING_MODE)) {
@@ -957,7 +898,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
      * Returns the [supportActionBar], inflating it if necessary.
      * Everyone should call this instead of supportActionBar.
      */
-    override fun getSupportActionBarAndInflateIfNecessary(): ActionBar {
+    final override fun getSupportActionBarAndInflateIfNecessary(): ActionBar {
         if (!isToolbarInflated) {
             navigationToolbar = binding.navigationToolbarStub.inflate() as Toolbar
 
@@ -972,7 +913,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     }
 
     @Suppress("SpreadOperator")
-    fun setupNavigationToolbar(vararg topLevelDestinationIds: Int) {
+    private fun setupNavigationToolbar(vararg topLevelDestinationIds: Int) {
         NavigationUI.setupWithNavController(
             navigationToolbar,
             navHost.navController,
@@ -983,8 +924,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             onBackPressed()
         }
     }
-
-    protected open fun getIntentSessionId(intent: SafeIntent): String? = null
 
     /**
      * Navigates to the browser fragment and loads a URL or performs a search (depending on the
@@ -1003,7 +942,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
      * was opened from history.
      * @param additionalHeaders The extra headers to use when loading the URL.
      */
-    @Suppress("LongParameterList")
     fun openToBrowserAndLoad(
         searchTermOrURL: String,
         newTab: Boolean,
@@ -1036,69 +974,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         if (directions != null) {
             navHost.navController.nav(fragmentId, directions)
         }
-    }
-
-    protected open fun getNavDirections(
-        from: BrowserDirection,
-        customTabSessionId: String?,
-    ): NavDirections? = when (from) {
-        BrowserDirection.FromGlobal ->
-            NavGraphDirections.actionGlobalBrowser(customTabSessionId)
-        BrowserDirection.FromHome ->
-            HomeFragmentDirections.actionGlobalBrowser(customTabSessionId)
-        BrowserDirection.FromWallpaper ->
-            WallpaperSettingsFragmentDirections.actionGlobalBrowser(customTabSessionId)
-        BrowserDirection.FromSearchDialog ->
-            SearchDialogFragmentDirections.actionGlobalBrowser(customTabSessionId)
-        BrowserDirection.FromSettings ->
-            SettingsFragmentDirections.actionGlobalBrowser(customTabSessionId)
-        BrowserDirection.FromBookmarks ->
-            BookmarkFragmentDirections.actionGlobalBrowser(customTabSessionId)
-        BrowserDirection.FromHistory ->
-            HistoryFragmentDirections.actionGlobalBrowser(customTabSessionId)
-        BrowserDirection.FromHistoryMetadataGroup ->
-            HistoryMetadataGroupFragmentDirections.actionGlobalBrowser(customTabSessionId)
-        BrowserDirection.FromTrackingProtectionExceptions ->
-            TrackingProtectionExceptionsFragmentDirections.actionGlobalBrowser(customTabSessionId)
-        BrowserDirection.FromHttpsOnlyMode ->
-            HttpsOnlyFragmentDirections.actionGlobalBrowser(customTabSessionId)
-        BrowserDirection.FromAbout ->
-            AboutFragmentDirections.actionGlobalBrowser(customTabSessionId)
-        BrowserDirection.FromTrackingProtection ->
-            TrackingProtectionFragmentDirections.actionGlobalBrowser(customTabSessionId)
-        BrowserDirection.FromTrackingProtectionDialog ->
-            TrackingProtectionPanelDialogFragmentDirections.actionGlobalBrowser(customTabSessionId)
-        BrowserDirection.FromSavedLoginsFragment ->
-            SavedLoginsAuthFragmentDirections.actionGlobalBrowser(customTabSessionId)
-        BrowserDirection.FromAddNewDeviceFragment ->
-            AddNewDeviceFragmentDirections.actionGlobalBrowser(customTabSessionId)
-        BrowserDirection.FromSearchEngineFragment ->
-            SearchEngineFragmentDirections.actionGlobalBrowser(customTabSessionId)
-        BrowserDirection.FromSaveSearchEngineFragment ->
-            SaveSearchEngineFragmentDirections.actionGlobalBrowser(customTabSessionId)
-        BrowserDirection.FromAddonDetailsFragment ->
-            AddonDetailsFragmentDirections.actionGlobalBrowser(customTabSessionId)
-        BrowserDirection.FromAddonPermissionsDetailsFragment ->
-            AddonPermissionsDetailsFragmentDirections.actionGlobalBrowser(customTabSessionId)
-        BrowserDirection.FromLoginDetailFragment ->
-            LoginDetailFragmentDirections.actionGlobalBrowser(customTabSessionId)
-        BrowserDirection.FromTabsTray ->
-            TabsTrayFragmentDirections.actionGlobalBrowser(customTabSessionId)
-        BrowserDirection.FromRecentlyClosed ->
-            RecentlyClosedFragmentDirections.actionGlobalBrowser(customTabSessionId)
-        BrowserDirection.FromStudiesFragment -> StudiesFragmentDirections.actionGlobalBrowser(
-            customTabSessionId,
-        )
-        BrowserDirection.FromReviewQualityCheck -> ReviewQualityCheckFragmentDirections.actionGlobalBrowser(
-            customTabSessionId,
-        )
-        BrowserDirection.FromAddonsManagementFragment -> AddonsManagementFragmentDirections.actionGlobalBrowser(
-            customTabSessionId,
-        )
-
-        BrowserDirection.FromTranslationsDialogFragment -> TranslationsDialogFragmentDirections.actionGlobalBrowser(
-            customTabSessionId,
-        )
     }
 
     /**
@@ -1198,7 +1073,12 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         settings().openNextTabInDesktopMode = false
     }
 
-    open fun navigateToBrowserOnColdStart() {
+    @VisibleForTesting
+    internal fun navigateToBrowserOnColdStart() {
+        if (this is ExternalAppBrowserActivity) {
+            return
+        }
+
         // Normal tabs + cold start -> Should go back to browser if we had any tabs open when we left last
         // except for PBM + Cold Start there won't be any tabs since they're evicted so we never will navigate
         if (settings().shouldReturnToBrowser && !browsingModeManager.mode.isPrivate) {
@@ -1207,17 +1087,22 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         }
     }
 
-    open fun navigateToHome() {
-        navHost.navController.navigate(NavGraphDirections.actionStartupHome())
+    @VisibleForTesting
+    internal fun navigateToHome(navController: NavController) {
+        if (this is ExternalAppBrowserActivity) {
+            return
+        }
+
+        navController.navigate(NavGraphDirections.actionStartupHome())
     }
 
-    override fun attachBaseContext(base: Context) {
+    final override fun attachBaseContext(base: Context) {
         base.components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
             super.attachBaseContext(base)
         }
     }
 
-    override fun getSystemService(name: String): Any? {
+    final override fun getSystemService(name: String): Any? {
         // Issue #17759 had a crash with the PerformanceInflater.kt on Android 5.0 and 5.1
         // when using the TimePicker. Since the inflater was created for performance monitoring
         // purposes and that we test on new android versions, this means that any difference in
@@ -1231,7 +1116,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         return super.getSystemService(name)
     }
 
-    protected open fun createBrowsingModeManager(initialMode: BrowsingMode): BrowsingModeManager {
+    private fun createBrowsingModeManager(initialMode: BrowsingMode): BrowsingModeManager {
         return DefaultBrowsingModeManager(initialMode, components.settings) { newMode ->
             updateSecureWindowFlags(newMode)
             themeManager.currentTheme = newMode
@@ -1248,7 +1133,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         }
     }
 
-    protected open fun createThemeManager(): ThemeManager {
+    private fun createThemeManager(): ThemeManager {
         return DefaultThemeManager(browsingModeManager.mode, this)
     }
 
@@ -1299,7 +1184,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
      *  Indicates if the user should be redirected to the [BrowserFragment] or to the [HomeFragment],
      *  links from an external apps should always opened in the [BrowserFragment].
      */
-    fun shouldStartOnHome(intent: Intent? = this.intent): Boolean {
+    @VisibleForTesting
+    internal fun shouldStartOnHome(intent: Intent? = this.intent): Boolean {
         return components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
             // We only want to open on home when users tap the app,
             // we want to ignore other cases when the app gets open by users clicking on links.
@@ -1379,6 +1265,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
         // PWA must have been used within last 30 days to be considered "recently used" for the
         // telemetry purposes.
-        const val PWA_RECENTLY_USED_THRESHOLD = DateUtils.DAY_IN_MILLIS * 30L
+        private const val PWA_RECENTLY_USED_THRESHOLD = DateUtils.DAY_IN_MILLIS * 30L
     }
 }

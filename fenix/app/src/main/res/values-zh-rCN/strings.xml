@@ -95,7 +95,7 @@
     <!-- Text for the info message. The first parameter is the name of the application.-->
     <string name="open_in_app_cfr_info_message_2">您可以将 %1$s 设为链接的打开方式。</string>
     <!-- Text for the positive action button -->
-    <string name="open_in_app_cfr_positive_button_text">转至设置</string>
+    <string name="open_in_app_cfr_positive_button_text">前往设置</string>
     <!-- Text for the negative action button -->
     <string name="open_in_app_cfr_negative_button_text">知道了</string>
 
@@ -112,9 +112,9 @@
 
 
     <!-- Text for the info dialog when camera permissions have been denied but user tries to access a camera feature. -->
-    <string name="camera_permissions_needed_message">需要访问相机。转到 Android 设置，点按权限，然后点按允许。</string>
+    <string name="camera_permissions_needed_message">需要访问相机。请前往 Android 设置，点按“权限”，然后点按“允许”。</string>
     <!-- Text for the positive action button to go to Android Settings to grant permissions. -->
-    <string name="camera_permissions_needed_positive_button_text">转至设置</string>
+    <string name="camera_permissions_needed_positive_button_text">前往设置</string>
     <!-- Text for the negative action button to dismiss the dialog. -->
     <string name="camera_permissions_needed_negative_button_text">知道了</string>
 
@@ -216,6 +216,8 @@
     <string name="resync_button_content_description">重新同步</string>
     <!-- Browser menu button that opens the find in page menu -->
     <string name="browser_menu_find_in_page">在页面中查找</string>
+    <!-- Browser menu button that opens the translations dialog, which has options to translate the current browser page. -->
+    <string name="browser_menu_translations">翻译页面</string>
     <!-- Browser menu button that saves the current tab to a collection -->
     <string name="browser_menu_save_to_collection_2">保存到收藏集</string>
     <!-- Browser menu button that open a share menu to share the current site -->
@@ -334,14 +336,14 @@
     <!-- Text for the button to not request notification permission on the device and dismiss the dialog -->
     <string name="onboarding_home_enable_notifications_negative_button">暂时不要</string>
 
-    <!-- Juno first user onboarding flow experiment, strings are marked unused as they are only referenced by Nimbus experiments. -->
+    <!-- Text for the button to set firefox as default browser on the device -->
     <!-- Title for set firefox as default browser screen used by Nimbus experiments. -->
     <string name="juno_onboarding_default_browser_title_nimbus_2">我们乐于为您护航</string>
     <!-- Description for set firefox as default browser screen used by Nimbus experiments. -->
-    <string name="juno_onboarding_default_browser_description_nimbus_2">这款由非营利组织支持的浏览器会自动阻止大公司在网上偷偷跟踪您。\n\n请阅读我们的隐私声明详细了解。</string>
+    <string name="juno_onboarding_default_browser_description_nimbus_2" moz:RemovedIn="124" tools:ignore="UnusedResources">这款由非营利组织支持的浏览器会自动阻止大公司在网上偷偷跟踪您。\n\n请阅读我们的隐私声明详细了解。</string>
     <!-- Text for the link to the privacy notice webpage for set as firefox default browser screen.
     This is part of the string with the key "juno_onboarding_default_browser_description". -->
-    <string name="juno_onboarding_default_browser_description_link_text" tools:ignore="UnusedResources">隐私声明</string>
+    <string name="juno_onboarding_default_browser_description_link_text" moz:RemovedIn="124" tools:ignore="UnusedResources">隐私声明</string>
     <!-- Text for the button to set firefox as default browser on the device -->
     <string name="juno_onboarding_default_browser_positive_button" tools:ignore="UnusedResources">设为默认浏览器</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
@@ -1160,7 +1162,7 @@
 
     <!-- Site Permissions -->
     <!-- Button label that take the user to the Android App setting -->
-    <string name="phone_feature_go_to_settings">转至设置</string>
+    <string name="phone_feature_go_to_settings">前往设置</string>
 
     <!-- Content description (not visible, for screen readers etc.): Quick settings sheet
         to give users access to site specific information / settings. For example:
@@ -1364,6 +1366,11 @@
     <!-- Notifications -->
     <!-- Text shown in the notification that pops up to remind the user that a private browsing session is active. -->
     <string name="notification_pbm_delete_text_2">关闭隐私标签页</string>
+
+    <!-- Text shown in the notification that pops up to remind the user that a private browsing session is active for Android 14+ -->
+    <string name="notification_erase_title_android_14">要关闭隐私标签页吗？</string>
+    <string name="notification_erase_text_android_14">点按或轻扫此通知，即可关闭隐私标签页。</string>
+
     <!-- Name of the marketing notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="notification_marketing_channel_name">市场营销</string>
 
@@ -2319,17 +2326,17 @@
     <string name="review_quality_check_contextual_onboarding_learn_more_link">详细了解</string>
 
     <!-- Caption text to be displayed in review quality check contextual onboarding card above the opt-in button. First parameter is the Fakespot product name. Following parameters are for clickable texts defined in review_quality_check_contextual_onboarding_privacy_policy and review_quality_check_contextual_onboarding_terms_use. In the phrase "Fakespot by Mozilla", "by" can be localized. Does not need to stay by. -->
-    <string name="review_quality_check_contextual_onboarding_caption" moz:RemovedIn="121" tools:ignore="UnusedResources">选择“试试看”，即代表您同意由 Mozilla 支持的 %1$s 的%2$s和%3$s。</string>
+    <string name="review_quality_check_contextual_onboarding_caption">选择“试试看”，即代表您同意由 Mozilla 支持的 %1$s 的%2$s和%3$s。</string>
     <!-- Caption text to be displayed in review quality check contextual onboarding card above the opt-in button. Parameter is the Fakespot product name. After the colon, what appears are two links, each on their own line. The first link is to a Privacy policy (review_quality_check_contextual_onboarding_privacy_policy_2). The second link is to Terms of use (review_quality_check_contextual_onboarding_terms_use_2). -->
-    <string name="review_quality_check_contextual_onboarding_caption_2">选择“试试看”，即代表您同意 %1$s 的：</string>
+    <string name="review_quality_check_contextual_onboarding_caption_2" moz:RemovedIn="123" tools:ignore="UnusedResources">选择“试试看”，即代表您同意 %1$s 的：</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot privacy policy. -->
-    <string name="review_quality_check_contextual_onboarding_privacy_policy" moz:RemovedIn="121" tools:ignore="UnusedResources">隐私政策</string>
+    <string name="review_quality_check_contextual_onboarding_privacy_policy">隐私政策</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot privacy policy. -->
-    <string name="review_quality_check_contextual_onboarding_privacy_policy_2">隐私政策</string>
+    <string name="review_quality_check_contextual_onboarding_privacy_policy_2" moz:RemovedIn="123" tools:ignore="UnusedResources">隐私政策</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot terms of use. -->
-    <string name="review_quality_check_contextual_onboarding_terms_use" moz:RemovedIn="121" tools:ignore="UnusedResources">使用条款</string>
+    <string name="review_quality_check_contextual_onboarding_terms_use">使用条款</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot terms of use. -->
-    <string name="review_quality_check_contextual_onboarding_terms_use_2">使用条款</string>
+    <string name="review_quality_check_contextual_onboarding_terms_use_2" moz:RemovedIn="123" tools:ignore="UnusedResources">使用条款</string>
     <!-- Text for opt-in button from the review quality check contextual onboarding card. -->
     <string name="review_quality_check_contextual_onboarding_primary_button_text">试试看</string>
     <!-- Text for opt-out button from the review quality check contextual onboarding card. -->
@@ -2387,7 +2394,80 @@
     <!-- Content description for headings announced by accessibility service. The first parameter is the text of the heading. Talkback will announce the first parameter and then speak the word "Heading" indicating to the user that this text is a heading for a section. -->
     <string name="a11y_heading">%s，标题</string>
 
+    <!-- Title for dialog displayed when trying to access links present in a text. -->
+    <string name="a11y_links_title">链接</string>
+    <!-- Additional content description for text bodies that contain urls. -->
+    <string name="a11y_links_available">链接可用</string>
+
     <!-- Translations feature-->
+
+    <!-- Translation request dialog -->
+    <!-- Title for the translation dialog that allows a user to translate the webpage. -->
+    <string name="translations_bottom_sheet_title">要翻译此页面吗？</string>
+    <!-- Title for the translation dialog that allows a user to translate the webpage when a user uses the translation feature the first time. The first parameter is the name of the application, for example, "Fenix". -->
+    <string name="translations_bottom_sheet_title_first_time">试用 %1$s 注重隐私的翻译功能</string>
+
+    <!-- Additional information on the translation dialog that appears when a user uses the translation feature the first time. The first parameter is clickable text with a link, for example, "Learn more". -->
+    <string name="translations_bottom_sheet_info_message">为保护隐私，翻译过程只会在本地进行。我们很快会支持更多语言并带来改进！%1$s</string>
+    <!-- Text that links to additional information about the Firefox translations feature. -->
+    <string name="translations_bottom_sheet_info_message_learn_more">详细了解</string>
+    <!-- Label for the dropdown to select which language to translate from on the translations dialog. Usually the translate from language selected will be the same as the page language. -->
+    <string name="translations_bottom_sheet_translate_from">原始语言：</string>
+    <!-- Label for the dropdown to select which language to translate to on the translations dialog. Usually the translate to language selected will be the user's preferred language. -->
+    <string name="translations_bottom_sheet_translate_to">目标语言：</string>
+    <!-- Button text on the translations dialog to dismiss the dialog and return to the browser. -->
+    <string name="translations_bottom_sheet_negative_button">暂时不要</string>
+    <!-- Button text on the translations dialog when a translation error appears, used to dismiss the dialog and return to the browser. -->
+    <string name="translations_bottom_sheet_negative_button_error">完成</string>
+    <!-- Button text on the translations dialog to begin a translation of the website. -->
+    <string name="translations_bottom_sheet_positive_button">翻译</string>
+    <!-- Button text on the translations dialog when a translation error appears. -->
+    <string name="translations_bottom_sheet_positive_button_error">重试</string>
+    <!-- Inactive button text on the translations dialog that indicates a translation is currently in progress. This button will be accompanied by a loading icon. -->
+    <string name="translations_bottom_sheet_translating_in_progress">正在翻译</string>
+    <!-- Button content description (not visible, for screen readers etc.) for the translations dialog translate button that indicates a translation is currently in progress. -->
+    <string name="translations_bottom_sheet_translating_in_progress_content_description">正在翻译</string>
+
+    <!-- The title of the warning card informs the user that a translation could not be completed. -->
+    <string name="translation_error_could_not_translate_warning_text">翻译时遇到问题，请重试。</string>
+    <!-- The title of the warning card informs the user that the list of languages cannot be loaded. -->
+    <string name="translation_error_could_not_load_languages_warning_text">无法加载语言包。请检查互联网连接，然后重试。</string>
+    <!-- The title of the warning card informs the user that a language is not supported. The first parameter is the name of the language that is not supported. -->
+    <string name="translation_error_language_not_supported_warning_text">抱歉，我们尚未支持%1$s。</string>
+    <!-- Button text on the warning card when a language is not supported. The link will take the user to a page to a support page about translations. -->
+    <string name="translation_error_language_not_supported_learn_more">详细了解</string>
+
+    <!-- Translations options dialog -->
+    <!-- Title of the translation options dialog that allows a user to set their translation options for the site the user is currently on. -->
+    <string name="translation_option_bottom_sheet_title">翻译设置</string>
+    <!-- Toggle switch label that allows a user to set the setting if they would like the browser to always offer or suggest translations when available. -->
+    <string name="translation_option_bottom_sheet_always_translate">始终询问是否翻译</string>
+    <!-- Toggle switch label that allows a user to set if they would like a given language to automatically translate or not. The first parameter is the language name, for example, "Spanish". -->
+    <string name="translation_option_bottom_sheet_always_translate_in_language">始终翻译%1$s</string>
+    <!-- Toggle switch label that allows a user to set if they would like to never be offered a translation of the given language. The first parameter is the language name, for example, "Spanish". -->
+    <string name="translation_option_bottom_sheet_never_translate_in_language">永不翻译%1$s</string>
+    <!-- Toggle switch label that allows a user to set the setting if they would like the browser to never translate the site the user is currently visiting. -->
+    <string name="translation_option_bottom_sheet_never_translate_site">永不翻译此网站</string>
+    <!-- Button text for the button that will take the user to the translation settings dialog. -->
+    <string name="translation_option_bottom_sheet_translation_settings">翻译设置</string>
+    <!-- Button text for the button that will take the user to a website to learn more about how translations works in the given app. The first parameter is the name of the application, for example, "Fenix". -->
+    <string name="translation_option_bottom_sheet_about_translations">关于 %1$s 提供的翻译</string>
+
+    <!-- Translation settings dialog -->
+    <!-- Title of the translation settings dialog that allows a user to set their preferred translation settings. -->
+    <string name="translation_settings_toolbar_title">翻译</string>
+    <!-- Toggle switch label that indicates that the browser should signal or indicate when a translation is possible for any page. -->
+    <string name="translation_settings_offer_to_translate">在翻译可用时询问是否翻译</string>
+    <!-- Toggle switch label that indicates that downloading files required for translating is permitted when using data saver mode in Android. -->
+    <string name="translation_settings_always_download">始终允许在流量节省模式开启时下载语言包</string>
+    <!-- Section header text that begins the section of a list of different options the user may select to adjust their translation preferences. -->
+    <string name="translation_settings_translation_preference">翻译首选项</string>
+    <!-- Button text for the button that will take the user to the automatic translations settings dialog. On the automatic translations settings dialog, the user can set if translations should occur automatically for a given language. -->
+    <string name="translation_settings_automatic_translation">自动翻译</string>
+    <!-- Button text for the button that will take the user to the never translate these sites dialog. On the never translate these sites dialog, the user can set if translations should never occur on certain websites. -->
+    <string name="translation_settings_automatic_never_translate_sites">永不翻译这些网站</string>
+    <!-- Button text for the button that will take the user to the download languages dialog. On the download languages dialog, the user can manage which languages they would like to download for translations. -->
+    <string name="translation_settings_download_language">下载语言包</string>
 
     <!-- Automatic translation preference screen -->
     <!-- Title of the automatic translation preference screen that will appear on the toolbar.-->
@@ -2437,6 +2517,10 @@
     <string name="download_languages_available_languages_preference">可用语言</string>
     <!-- Text that will appear beside a core or pivot language package name to show that the language is necessary for the translation feature to function. -->
     <string name="download_languages_default_system_language_require_preference">必选</string>
+    <!-- A text for download language preference item.
+    The first parameter is the language name, for example, "Spanish".
+    The second parameter is the language file size, for example, "(3.91 KB)" or, if the language package name is a pivot language, "(required)". -->
+    <string name="download_languages_language_item_preference">%1$s（%2$s）</string>
     <!-- The subhead of the download language preference screen will appear above the items that were not downloaded. -->
     <string name="download_language_header_preference">下载语言包</string>
     <!-- All languages list item. When the user presses this item, they can download or delete all languages. -->
@@ -2450,4 +2534,64 @@
     <!-- Content description (not visible, for screen readers etc.): For a language list item that is selected. -->
     <string name="download_languages_item_content_description_selected_state">已选中</string>
 
-    </resources>
+    <!-- Title for the dialog used by the translations feature to confirm deleting a language.
+    The dialog will be presented when the user requests deletion of a language.
+    The first parameter is the name of the language, for example, "Spanish" and the second parameter is the size in kilobytes or megabytes of the language file. -->
+    <string name="delete_language_file_dialog_title">确定删除%1$s（%2$s）吗？</string>
+    <!-- Additional information for the dialog used by the translations feature to confirm deleting a language. The first parameter is the name of the application, for example, "Fenix". -->
+    <string name="delete_language_file_dialog_message">若删除此语言，%1$s 将在翻译时下载并缓存语言包中部分内容。</string>
+    <!-- Title for the dialog used by the translations feature to confirm deleting all languages file.
+    The dialog will be presented when the user requests deletion of all languages file.
+    The first parameter is the size in kilobytes or megabytes of the language file. -->
+    <string name="delete_language_all_languages_file_dialog_title">确定删除所有语言（%1$s）吗？</string>
+    <!-- Additional information for the dialog used by the translations feature to confirm deleting all languages file. The first parameter is the name of the application, for example, "Fenix". -->
+    <string name="delete_language_all_languages_file_dialog_message">若删除所有语言，%1$s 将在翻译时下载并缓存语言包中部分内容。</string>
+    <!-- Button text on the dialog used by the translations feature to confirm deleting a language. -->
+    <string name="delete_language_file_dialog_positive_button_text">删除</string>
+    <!-- Button text on the dialog used by the translations feature to cancel deleting a language. -->
+    <string name="delete_language_file_dialog_negative_button_text">取消</string>
+
+    <!-- Title for the data saving mode warning dialog used by the translations feature.
+    This dialog will be presented when the user attempts to download a language or perform
+    a translation without the necessary language files downloaded first when Android's data saver mode is enabled and the user is not using WiFi.
+    The first parameter is the size in kilobytes or megabytes of the language file.-->
+    <string name="download_language_file_dialog_title">要在流量节省模式开启时下载吗（%1$s）？</string>
+    <!-- Additional information for the data saving mode warning dialog used by the translations feature. This text explains the reason a download is required for a translation. -->
+    <string name="download_language_file_dialog_message_all_languages">我们会下载并缓存语言包中部分内容，以保护翻译过程私密。</string>
+    <!-- Checkbox label text on the data saving mode warning dialog used by the translations feature. This checkbox allows users to ignore the data usage warnings. -->
+    <string name="download_language_file_dialog_checkbox_text">始终允许在流量节省模式开启时下载</string>
+    <!-- Button text on the data saving mode warning dialog used by the translations feature to allow users to confirm they wish to continue and download the language file. -->
+    <string name="download_language_file_dialog_positive_button_text">下载</string>
+    <!-- Button text on the data saving mode warning dialog used by the translations feature to allow users to confirm they wish to continue and download the language file and perform a translation. -->
+    <string name="download_language_file_dialog_positive_button_text_all_languages">下载并翻译</string>
+    <!-- Button text on the data saving mode warning dialog used by the translations feature to allow users to cancel the action and not perform a download of the language file. -->
+    <string name="download_language_file_dialog_negative_button_text">取消</string>
+
+    <!-- Debug drawer -->
+    <!-- The user-facing title of the Debug Drawer feature. -->
+    <string name="debug_drawer_title">调试工具</string>
+    <!-- Content description (not visible, for screen readers etc.): Navigate back within the debug drawer. -->
+    <string name="debug_drawer_back_button_content_description">向前导航</string>
+    <!-- The title of the Tab Tools feature in the Debug Drawer. -->
+    <string name="debug_drawer_tab_tools_title">标签页工具</string>
+    <!-- The title of the tab count section in Tab Tools. -->
+    <string name="debug_drawer_tab_tools_tab_count_title">标签页数量</string>
+    <!-- The active tab count category in the tab count section in Tab Tools. -->
+    <string name="debug_drawer_tab_tools_tab_count_normal">活跃</string>
+    <!-- The inactive tab count category in the tab count section in Tab Tools. -->
+    <string name="debug_drawer_tab_tools_tab_count_inactive">休眠</string>
+    <!-- The private tab count category in the tab count section in Tab Tools. -->
+    <string name="debug_drawer_tab_tools_tab_count_private">隐私</string>
+    <!-- The total tab count category in the tab count section in Tab Tools. -->
+    <string name="debug_drawer_tab_tools_tab_count_total">总数</string>
+    <!-- The title of the tab creation tool section in Tab Tools. -->
+    <string name="debug_drawer_tab_tools_tab_creation_tool_title">标签页创建工具</string>
+    <!-- The label of the text field in the tab creation tool. -->
+    <string name="debug_drawer_tab_tools_tab_creation_tool_text_field_label">要创建的标签页数量</string>
+    <!-- The button text to add tabs to the active tab group in the tab creation tool. -->
+    <string name="debug_drawer_tab_tools_tab_creation_tool_button_text_active">添加到活跃标签页</string>
+    <!-- The button text to add tabs to the inactive tab group in the tab creation tool. -->
+    <string name="debug_drawer_tab_tools_tab_creation_tool_button_text_inactive">添加到休眠标签页</string>
+    <!-- The button text to add tabs to the private tab group in the tab creation tool. -->
+    <string name="debug_drawer_tab_tools_tab_creation_tool_button_text_private">添加到隐私标签页</string>
+</resources>

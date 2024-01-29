@@ -53,6 +53,7 @@ class AppLinksInterceptorTest {
         mockOpenRedirect = mock()
         whenever(mockUseCases.interceptedAppLinkRedirect).thenReturn(mockGetRedirect)
         whenever(mockUseCases.openAppLink).thenReturn(mockOpenRedirect)
+        userDoNotInterceptCache.clear()
 
         val webRedirect = AppLinkRedirect(null, webUrl, null)
         val appRedirect = AppLinkRedirect(Intent.parseUri(intentUrl, 0), null, null)
@@ -464,7 +465,7 @@ class AppLinksInterceptorTest {
         )
 
         val testRedirect = AppLinkRedirect(Intent.parseUri(intentUrl, 0), fallbackUrl, null)
-        val response = appLinksInterceptor.handleRedirect(testRedirect, intentUrl)
+        val response = appLinksInterceptor.handleRedirect(testRedirect, intentUrl, true)
         assert(response is RequestInterceptor.InterceptionResponse.Url)
     }
 
@@ -494,7 +495,7 @@ class AppLinksInterceptorTest {
         )
 
         val testRedirect = AppLinkRedirect(Intent.parseUri(intentUrl, 0), fallbackUrl, null)
-        val response = appLinksInterceptor.handleRedirect(testRedirect, intentUrl)
+        val response = appLinksInterceptor.handleRedirect(testRedirect, intentUrl, true)
         assert(response is RequestInterceptor.InterceptionResponse.AppIntent)
     }
 
@@ -509,7 +510,7 @@ class AppLinksInterceptorTest {
         )
 
         val testRedirect = AppLinkRedirect(null, fallbackUrl, Intent.parseUri(marketplaceUrl, 0))
-        val response = appLinksInterceptor.handleRedirect(testRedirect, webUrl)
+        val response = appLinksInterceptor.handleRedirect(testRedirect, webUrl, true)
         assert(response is RequestInterceptor.InterceptionResponse.AppIntent)
     }
 
@@ -524,7 +525,7 @@ class AppLinksInterceptorTest {
         )
 
         val testRedirect = AppLinkRedirect(null, fallbackUrl, null)
-        val response = appLinksInterceptor.handleRedirect(testRedirect, webUrl)
+        val response = appLinksInterceptor.handleRedirect(testRedirect, webUrl, true)
         assert(response is RequestInterceptor.InterceptionResponse.Url)
     }
 
@@ -563,6 +564,45 @@ class AppLinksInterceptorTest {
 
         response = appLinksInterceptor.onLoadRequest(mockEngineSession, webUrlWithAppLink, null, true, false, false, false, false)
         assertNull(response)
+    }
+
+    @Test
+    fun `WHEN request is in user do not intercept cache but there is a fallback THEN fallback is used`() {
+        appLinksInterceptor = AppLinksInterceptor(
+            context = mockContext,
+            interceptLinkClicks = true,
+            launchInApp = { false },
+            useCases = mockUseCases,
+            launchFromInterceptor = true,
+        )
+
+        addUserDoNotIntercept(intentUrl, null)
+        val testRedirect = AppLinkRedirect(Intent.parseUri(intentUrl, 0), fallbackUrl, null)
+        val response = appLinksInterceptor.handleRedirect(testRedirect, intentUrl, true)
+        assert(response is RequestInterceptor.InterceptionResponse.Url)
+    }
+
+    @Test
+    fun `WHEN request is in user do not intercept cache but engine doesn't support scheme THEN request is intercepted`() {
+        val engineSession: EngineSession = mock()
+        val supportedScheme = "supported"
+        val notSupportedScheme = "not_supported"
+        val blocklistedScheme = "blocklisted"
+        val feature = AppLinksInterceptor(
+            context = mockContext,
+            interceptLinkClicks = false,
+            engineSupportedSchemes = setOf(supportedScheme),
+            alwaysDeniedSchemes = setOf(blocklistedScheme),
+            launchInApp = { true },
+            useCases = mockUseCases,
+        )
+
+        val notSupportedUrl = "$notSupportedScheme://example.com"
+        addUserDoNotIntercept(notSupportedUrl, null)
+        val notSupportedRedirect = AppLinkRedirect(Intent.parseUri(notSupportedUrl, 0), null, null)
+        whenever(mockGetRedirect.invoke(notSupportedUrl)).thenReturn(notSupportedRedirect)
+        val response = feature.onLoadRequest(engineSession, notSupportedUrl, null, false, false, false, false, false)
+        assert(response is RequestInterceptor.InterceptionResponse.AppIntent)
     }
 
     @Test

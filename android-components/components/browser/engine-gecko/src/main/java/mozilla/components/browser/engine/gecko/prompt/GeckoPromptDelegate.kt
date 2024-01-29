@@ -16,6 +16,7 @@ import mozilla.components.browser.engine.gecko.ext.toCreditCardEntry
 import mozilla.components.browser.engine.gecko.ext.toLoginEntry
 import mozilla.components.concept.engine.prompt.Choice
 import mozilla.components.concept.engine.prompt.PromptRequest
+import mozilla.components.concept.engine.prompt.PromptRequest.File.Companion.DEFAULT_UPLOADS_DIR_NAME
 import mozilla.components.concept.engine.prompt.PromptRequest.MenuChoice
 import mozilla.components.concept.engine.prompt.PromptRequest.MultipleChoice
 import mozilla.components.concept.engine.prompt.PromptRequest.SingleChoice
@@ -46,7 +47,6 @@ import org.mozilla.geckoview.GeckoSession.PromptDelegate.IdentityCredential.Acco
 import org.mozilla.geckoview.GeckoSession.PromptDelegate.IdentityCredential.PrivacyPolicyPrompt
 import org.mozilla.geckoview.GeckoSession.PromptDelegate.IdentityCredential.ProviderSelectorPrompt
 import org.mozilla.geckoview.GeckoSession.PromptDelegate.PromptResponse
-import java.io.File
 import java.security.InvalidParameterException
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -286,6 +286,13 @@ internal class GeckoPromptDelegate(private val geckoEngineSession: GeckoEngineSe
         session: GeckoSession,
         prompt: AutocompleteRequest<Autocomplete.LoginSelectOption>,
     ): GeckoResult<PromptResponse>? {
+        val promptOptions = prompt.options
+        val generatedPassword =
+            if (promptOptions.isNotEmpty() && promptOptions.first().hint == Autocomplete.SelectOption.Hint.GENERATED) {
+                promptOptions.first().value.password
+            } else {
+                null
+            }
         val geckoResult = GeckoResult<PromptResponse>()
         val onConfirmSelect: (Login) -> Unit = { login ->
             if (!prompt.isComplete) {
@@ -297,7 +304,7 @@ internal class GeckoPromptDelegate(private val geckoEngineSession: GeckoEngineSe
         }
 
         // `guid` plus exactly one of `httpRealm` and `formSubmitURL` must be present to be a valid login entry.
-        val loginList = prompt.options.filter { option ->
+        val loginList = promptOptions.filter { option ->
             option.value.guid != null && (option.value.formActionOrigin != null || option.value.httpRealm != null)
         }.map { option ->
             Login(
@@ -314,6 +321,7 @@ internal class GeckoPromptDelegate(private val geckoEngineSession: GeckoEngineSe
             onPromptRequest(
                 PromptRequest.SelectLoginPrompt(
                     logins = loginList,
+                    generatedPassword = generatedPassword,
                     onConfirm = onConfirmSelect,
                     onDismiss = onDismiss,
                 ),
@@ -862,7 +870,7 @@ internal class GeckoPromptDelegate(private val geckoEngineSession: GeckoEngineSe
 
     @VisibleForTesting
     internal fun toFileUri(uri: Uri, context: Context): Uri {
-        return uri.toFileUri(context, dirToCopy = "/uploads")
+        return uri.toFileUri(context, dirToCopy = DEFAULT_UPLOADS_DIR_NAME)
     }
 }
 

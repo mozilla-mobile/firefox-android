@@ -211,6 +211,8 @@
     <string name="resync_button_content_description">Կրկնահամաժամեցում</string>
     <!-- Browser menu button that opens the find in page menu -->
     <string name="browser_menu_find_in_page">Գտնել էջում</string>
+    <!-- Browser menu button that opens the translations dialog, which has options to translate the current browser page. -->
+    <string name="browser_menu_translations">Թարգմանել էջը</string>
     <!-- Browser menu button that saves the current tab to a collection -->
     <string name="browser_menu_save_to_collection_2">Պահպանել հավաքածուում</string>
     <!-- Browser menu button that open a share menu to share the current site -->
@@ -323,13 +325,18 @@
     <string name="onboarding_home_enable_notifications_negative_button">Ոչ հիմա</string>
 
     <!-- Juno first user onboarding flow experiment, strings are marked unused as they are only referenced by Nimbus experiments. -->
+    <!-- Description for learning more about our privacy notice. -->
+    <string name="juno_onboarding_privacy_notice_text">Firefox֊ի գաղտնիության ծանուցում</string>
+    <!-- Text for the button to set firefox as default browser on the device -->
     <!-- Title for set firefox as default browser screen used by Nimbus experiments. -->
     <string name="juno_onboarding_default_browser_title_nimbus_2">Մենք սիրում ենք ձեզ ապահով պահել</string>
     <!-- Description for set firefox as default browser screen used by Nimbus experiments. -->
-    <string name="juno_onboarding_default_browser_description_nimbus_2">Մեր շահույթ չհետապնդող զննարկիչը օգնում է դադարեցնել ընկերություններին գաղտնի հետևել ձեզ համացանցում:\n\nԻմացեք ավելին մեր գաղտնիության ծանուցման մեջ:</string>
+    <string name="juno_onboarding_default_browser_description_nimbus_3">Մեր շահույթ չհետապնդող զննարկիչն օգնում է դադարեցնել ընկերությունների կողմից համացանցում ձեզ գաղտնի հետևելը:</string>
+    <!-- Description for set firefox as default browser screen used by Nimbus experiments. -->
+    <string name="juno_onboarding_default_browser_description_nimbus_2" moz:RemovedIn="124" tools:ignore="UnusedResources">Մեր շահույթ չհետապնդող զննարկիչը օգնում է դադարեցնել ընկերություններին գաղտնի հետևել ձեզ համացանցում:\n\nԻմացեք ավելին մեր գաղտնիության ծանուցման մեջ:</string>
     <!-- Text for the link to the privacy notice webpage for set as firefox default browser screen.
     This is part of the string with the key "juno_onboarding_default_browser_description". -->
-    <string name="juno_onboarding_default_browser_description_link_text" tools:ignore="UnusedResources">գաղտնիության ծանուցում</string>
+    <string name="juno_onboarding_default_browser_description_link_text" moz:RemovedIn="124" tools:ignore="UnusedResources">գաղտնիության ծանուցում</string>
     <!-- Text for the button to set firefox as default browser on the device -->
     <string name="juno_onboarding_default_browser_positive_button" tools:ignore="UnusedResources">Կայել որպես սկզբնադիր դիտարկիչ</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
@@ -709,6 +716,8 @@
     <string name="preferences_sync_bookmarks">Էջանիշեր</string>
     <!-- Preference for syncing logins -->
     <string name="preferences_sync_logins">Մուտքանուններ</string>
+    <!-- Preference for syncing passwords -->
+    <string name="preferences_sync_logins_2" tools:ignore="UnusedResources">Գաղտնաբառեր</string>
     <!-- Preference for syncing tabs -->
     <string name="preferences_sync_tabs_2">Բացել ներդիրներ</string>
     <!-- Preference for signing out -->
@@ -735,6 +744,8 @@
 
     <!-- Preference for syncing credit cards -->
     <string name="preferences_sync_credit_cards">Բանկային քարտեր</string>
+    <!-- Preference for syncing payment methods -->
+    <string name="preferences_sync_credit_cards_2" tools:ignore="UnusedResources">Վճարամիջոցներ</string>
     <!-- Preference for syncing addresses -->
     <string name="preferences_sync_address">Հասցեներ</string>
 
@@ -1319,6 +1330,10 @@
     <!-- Text shown in the notification that pops up to remind the user that a private browsing session is active. -->
     <string name="notification_pbm_delete_text_2">Փակել գաղտնի ներդիրները</string>
 
+    <!-- Text shown in the notification that pops up to remind the user that a private browsing session is active for Android 14+ -->
+    <string name="notification_erase_title_android_14">Փակե՞լ գաղտնի ներդիրները</string>
+    <string name="notification_erase_text_android_14">Հպեք կամ սահեցրեք այս ծանուցումը՝ մասնավոր ներդիրները փակելու համար:</string>
+
     <!-- Name of the marketing notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="notification_marketing_channel_name">Մարկեթինգ</string>
 
@@ -1673,8 +1688,12 @@
 
     <!-- Preference for managing the settings for logins and passwords in Fenix -->
     <string name="preferences_passwords_logins_and_passwords">Մուտքանուններ և գաղտնաբառեր</string>
+    <!-- Preference for managing the settings for logins and passwords in Fenix -->
+    <string name="preferences_passwords_logins_and_passwords_2" tools:ignore="UnusedResources">Գաղտնաբառեր</string>
     <!-- Preference for managing the saving of logins and passwords in Fenix -->
     <string name="preferences_passwords_save_logins">Պահպանել մուտքանունները և գաղտնաբառերը</string>
+    <!-- Preference for managing the saving of logins and passwords in Fenix -->
+    <string name="preferences_passwords_save_logins_2" tools:ignore="UnusedResources">Պահել գաղտնաբառերը</string>
     <!-- Preference option for asking to save passwords in Fenix -->
     <string name="preferences_passwords_save_logins_ask_to_save">Հարցնել պահպանելիս</string>
     <!-- Preference option for never saving passwords in Fenix -->
@@ -1691,26 +1710,45 @@
     <!-- Preference option for adding a login -->
     <string name="preferences_logins_add_login">Ավելացնել մուտքագրում</string>
 
+    <!-- Preference option for adding a password -->
+    <string name="preferences_logins_add_login_2" tools:ignore="UnusedResources">Հավելել գաղտնաբառ</string>
+
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">Համաժամեցնել մուտքանունները</string>
+    <!-- Preference for syncing saved passwords in Fenix -->
+    <string name="preferences_passwords_sync_logins_2" tools:ignore="UnusedResources">Համաժամեցնել գաղտնաբառերը</string>
     <!-- Preference for syncing saved logins in Fenix, when not signed in-->
     <string name="preferences_passwords_sync_logins_across_devices">Համաժամեցնել մուտքագրումները սարքերի միջև</string>
+    <!-- Preference for syncing saved passwords in Fenix, when not signed in-->
+    <string name="preferences_passwords_sync_logins_across_devices_2" tools:ignore="UnusedResources">Համաժամեցնել գաղտնաբառերը սարքերի միջև</string>
     <!-- Preference to access list of saved logins -->
     <string name="preferences_passwords_saved_logins">Պահպանված մուտքանուններ</string>
+    <!-- Preference to access list of saved passwords -->
+    <string name="preferences_passwords_saved_logins_2" tools:ignore="UnusedResources">Պահված գաղտնաբառեր</string>
     <!-- Description of empty list of saved passwords. Placeholder is replaced with app name.  -->
     <string name="preferences_passwords_saved_logins_description_empty_text">%s-ի հետ ձեր պահպանած կամ համաժամեցրած մուտքագրումները կցուցադրվեն այստեղ:</string>
+    <!-- Description of empty list of saved passwords. Placeholder is replaced with app name.  -->
+    <string name="preferences_passwords_saved_logins_description_empty_text_2" tools:ignore="UnusedResources">Այն գաղտնաբառերը, որոնք դուք պահում կամ համաժամացնում եք %s-ի հետ, կցուցադրվեն այստեղ: Ձեր պահած բոլոր գաղտնաբառերը գաղտնագրված են:</string>
     <!-- Preference to access list of saved logins -->
     <string name="preferences_passwords_saved_logins_description_empty_learn_more_link">Իմանալ ավելին համաժամեցման մասին:</string>
+    <!-- Clickable text for opening an external link for more information about Sync. -->
+    <string name="preferences_passwords_saved_logins_description_empty_learn_more_link_2" tools:ignore="UnusedResources">Իմանալ ավելին Սինքի մասին</string>
     <!-- Preference to access list of login exceptions that we never save logins for -->
     <string name="preferences_passwords_exceptions">Բացառություններ</string>
     <!-- Empty description of list of login exceptions that we never save logins for -->
     <string name="preferences_passwords_exceptions_description_empty">Մուտքանունները և գաղտնաբառերը, որոնք չեն պահպանվել, կցուցադրվեն այստեղ:</string>
+    <!-- Empty description of list of login exceptions that we never save passwords for. Parameter will be replaced by app name. -->
+    <string name="preferences_passwords_exceptions_description_empty_2" tools:ignore="UnusedResources">%s-ը չի պահի այստեղ թվարկված կայքերի գաղտնաբառերը:</string>
     <!-- Description of list of login exceptions that we never save logins for -->
     <string name="preferences_passwords_exceptions_description">Մուտքանունները և գաղտնաբառերը չեն պահպանվի այս կայքերի համար:</string>
+    <!-- Description of list of login exceptions that we never save passwords for. Parameter will be replaced by app name. -->
+    <string name="preferences_passwords_exceptions_description_2" tools:ignore="UnusedResources">%s-ը չի պահի այս կայքերի գաղտնաբառերը:</string>
     <!-- Text on button to remove all saved login exceptions -->
     <string name="preferences_passwords_exceptions_remove_all">Ջնջել բոլոր բացառությունները</string>
     <!-- Hint for search box in logins list -->
     <string name="preferences_passwords_saved_logins_search">Որոնել մուտքանուններ</string>
+    <!-- Hint for search box in passwords list -->
+    <string name="preferences_passwords_saved_logins_search_2" tools:ignore="UnusedResources">Որոնել գաղտնաբառեր</string>
     <!-- The header for the site that a login is for -->
     <string name="preferences_passwords_saved_logins_site">Կայք</string>
 
@@ -1740,10 +1778,16 @@
     <string name="saved_login_hide_password">Թաքցնել գաղտնաբառը</string>
     <!-- Message displayed in biometric prompt displayed for authentication before allowing users to view their logins -->
     <string name="logins_biometric_prompt_message">Ապակողպեք՝ դիտելու համար պահպանված մուտքանունները</string>
+    <!-- Message displayed in biometric prompt displayed for authentication before allowing users to view their passwords -->
+    <string name="logins_biometric_prompt_message_2" tools:ignore="UnusedResources">Ապակողպեք՝ դիտելու համար պահված գաղտնաբառերը</string>
     <!-- Title of warning dialog if users have no device authentication set up -->
     <string name="logins_warning_dialog_title">Անվտանգ դարձրեք ձեր մուտքանունները և գաղտնաբառերը</string>
+    <!-- Title of warning dialog if users have no device authentication set up -->
+    <string name="logins_warning_dialog_title_2" tools:ignore="UnusedResources">Անվտանգ դարձրեք ձեր պահված գաղտնաբառերը</string>
     <!-- Message of warning dialog if users have no device authentication set up -->
     <string name="logins_warning_dialog_message">Ստեղծեք սարքի կողպեքի նմուշ, PIN կամ գաղտնաբառ՝ ձեր պահպանված մուտքանունները և գաղտնաբառերը մուտք գործելուց պաշտպանելու համար, եթե ձեր սարքը ուրիշի ձեռքն ընկնի:</string>
+    <!-- Message of warning dialog if users have no device authentication set up -->
+    <string name="logins_warning_dialog_message_2" tools:ignore="UnusedResources">Տեղակայեք սարքի կողպման նախշ, PIN կամ գաղտնաբառ՝ պաշտպանելու պահված գաղտնաբառերն այն դեպքում, եթե որևէ մեկը ևս մուտք ունենա Ձեր սարքին:</string>
     <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
     <string name="logins_warning_dialog_later">Հետո</string>
     <!-- Positive button to send users to set up a pin of warning dialog if users have no device authentication set up -->
@@ -1763,6 +1807,9 @@
     <!-- Content description (not visible, for screen readers etc.): Sort saved logins dropdown menu chevron icon -->
     <string name="saved_logins_menu_dropdown_chevron_icon_content_description">Տեսակավորել մուտագրումների ցանկը</string>
 
+    <!-- Content description (not visible, for screen readers etc.) -->
+    <string name="saved_logins_menu_dropdown_chevron_icon_content_description_2" tools:ignore="UnusedResources">Տեսակավորել գաղտնաբառերի ցանկը</string>
+
     <!-- Autofill -->
     <!-- Preference and title for managing the autofill settings -->
     <string name="preferences_autofill">Ինքնալցում</string>
@@ -1770,26 +1817,41 @@
     <string name="preferences_addresses">Հասցեներ</string>
     <!-- Preference and title for managing the settings for credit cards -->
     <string name="preferences_credit_cards">Բանկային քարտեր</string>
+    <!-- Preference and title for managing the settings for payment methods -->
+    <string name="preferences_credit_cards_2" tools:ignore="UnusedResources">Վճարամիջոցներ</string>
     <!-- Preference for saving and autofilling credit cards -->
     <string name="preferences_credit_cards_save_and_autofill_cards">Պահել և ինքնալրացնել քարտերը</string>
+    <!-- Preference for saving and autofilling credit cards -->
+    <string name="preferences_credit_cards_save_and_autofill_cards_2" tools:ignore="UnusedResources">Պահել և լրացնել վճարամիջոցները</string>
     <!-- Preference summary for saving and autofilling credit card data -->
     <string name="preferences_credit_cards_save_and_autofill_cards_summary">Տվյալները գաղտնագրված են</string>
+    <!-- Preference summary for saving and autofilling payment method data. Parameter will be replaced by app name. -->
+    <string name="preferences_credit_cards_save_and_autofill_cards_summary_2" tools:ignore="UnusedResources">%s-ը գաղտնագրում է ձեր պահած  բոլոր վճարամիջոցները</string>
     <!-- Preference option for syncing credit cards across devices. This is displayed when the user is not signed into sync -->
     <string name="preferences_credit_cards_sync_cards_across_devices">Համաժամեցնել քարտերը սարքերի միջև</string>
     <!-- Preference option for syncing credit cards across devices. This is displayed when the user is signed into sync -->
     <string name="preferences_credit_cards_sync_cards">Համաժամեցնել քարտերը</string>
     <!-- Preference option for adding a credit card -->
     <string name="preferences_credit_cards_add_credit_card">Ավելացնել բանկային քարտ</string>
+    <!-- Preference option for adding a card -->
+    <string name="preferences_credit_cards_add_credit_card_2" tools:ignore="UnusedResources">Հավելել քարտ</string>
     <!-- Preference option for managing saved credit cards -->
     <string name="preferences_credit_cards_manage_saved_cards">Կառավարել պահված քարտերը</string>
+    <!-- Preference option for managing saved cards -->
+    <string name="preferences_credit_cards_manage_saved_cards_2" tools:ignore="UnusedResources">Կառավարել քարտերը</string>
     <!-- Preference option for adding an address -->
     <string name="preferences_addresses_add_address">Ավելացնել հասցե</string>
     <!-- Preference option for managing saved addresses -->
     <string name="preferences_addresses_manage_addresses">Կառավարեք հասցեները</string>
     <!-- Preference for saving and autofilling addresses -->
     <string name="preferences_addresses_save_and_autofill_addresses">Պահել և ինքնալրացնել քարտերը</string>
+    <!-- Preference for saving and filling addresses -->
+    <string name="preferences_addresses_save_and_autofill_addresses_2" tools:ignore="UnusedResources">Պահել և լրացնել հասցեները</string>
     <!-- Preference summary for saving and autofilling address data -->
     <string name="preferences_addresses_save_and_autofill_addresses_summary">Ներառել տեղեկություններ, ինչպիսիք են համարները, էլ.փոստը և առաքման հասցեները</string>
+
+    <!-- Preference summary for saving and filling address data -->
+    <string name="preferences_addresses_save_and_autofill_addresses_summary_2" tools:ignore="UnusedResources">Ներառում է հեռախոսահամարներ և էլ. փոստի հասցեներ</string>
 
     <!-- Title of the "Add card" screen -->
     <string name="credit_cards_add_card">Ավելացնել քարտ</string>
@@ -1811,6 +1873,8 @@
     <string name="credit_cards_delete_card_button">Ջնջել քարտը</string>
     <!-- The text for the confirmation message of "Delete card" dialog -->
     <string name="credit_cards_delete_dialog_confirmation">Համոզվա՞ծ եք, որ ցանկանում եք ջնջել այս բանկային քարտը:</string>
+    <!-- The text for the confirmation message of "Delete card" dialog -->
+    <string name="credit_cards_delete_dialog_confirmation_2" tools:ignore="UnusedResources">Ջնջե՞լ քարտը</string>
     <!-- The text for the positive button on "Delete card" dialog -->
     <string name="credit_cards_delete_dialog_button">Ջնջել</string>
     <!-- The title for the "Save" menu item for saving a credit card -->
@@ -1826,14 +1890,22 @@
     <!-- Error message for credit card number validation -->
     <string name="credit_cards_number_validation_error_message">Մուտքագրեք բանկային վավեր քարտի համար</string>
 
+    <!-- Error message for card number validation -->
+    <string name="credit_cards_number_validation_error_message_2" tools:ignore="UnusedResources">Մուտքագրեք ճիշտ քարտի համար</string>
     <!-- Error message for credit card name on card validation -->
     <string name="credit_cards_name_on_card_validation_error_message">Լրացրեք այս դաշտը</string>
+    <!-- Error message for card name on card validation -->
+    <string name="credit_cards_name_on_card_validation_error_message_2" tools:ignore="UnusedResources">Հավելել անուն</string>
     <!-- Message displayed in biometric prompt displayed for authentication before allowing users to view their saved credit cards -->
     <string name="credit_cards_biometric_prompt_message">Ապակողպեք՝ դիտելու համար պահպանված քարտերը</string>
     <!-- Title of warning dialog if users have no device authentication set up -->
     <string name="credit_cards_warning_dialog_title">Անվտանգ դարձրեք ձեր բանկային քարտերը</string>
+    <!-- Title of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_title_2" tools:ignore="UnusedResources">Անվտանգ դարձրեք ձեր պահած վճարամիջոցները</string>
     <!-- Message of warning dialog if users have no device authentication set up -->
     <string name="credit_cards_warning_dialog_message">Տեղակայեք սարքի կողպման նախշ, PIN կամ գաղտնաբառ՝ պաշտպանելու պահված բանկային քարտերը այն դեպքում, եթե որևէ մեկը ևս մուտք ունի Ձեր սարքին:</string>
+    <!-- Message of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_message_2" tools:ignore="UnusedResources">Տեղակայեք սարքի կողպման նախշ, PIN կամ գաղտնաբառ՝ պաշտպանելու ձեր քարտերն այն դեպքում, եթե որևէ մեկը ևս մուտք ունենա Ձեր սարքին:</string>
     <!-- Positive button to send users to set up a pin of warning dialog if users have no device authentication set up -->
     <string name="credit_cards_warning_dialog_set_up_now">Տեղակայել հիմա</string>
     <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
@@ -1843,6 +1915,8 @@
     <!-- Message displayed in biometric prompt for authentication, before allowing users to use their stored credit card information -->
     <string name="credit_cards_biometric_prompt_unlock_message">Ապակողպեք՝ օգտագործելու համար բանկային քարտերի պահված տեղեկությունները</string>
 
+    <!-- Message displayed in biometric prompt for authentication, before allowing users to use their stored payment method information -->
+    <string name="credit_cards_biometric_prompt_unlock_message_2" tools:ignore="UnusedResources">Ապակողպեք՝ պահված վճարամիջոցն օգտագործելու համար</string>
     <!-- Title of the "Add address" screen -->
     <string name="addresses_add_address">Ավելացնել հասցե</string>
     <!-- Title of the "Edit address" screen -->
@@ -1879,6 +1953,8 @@
     <string name="addressess_delete_address_button">Ջնջել հասցեն</string>
     <!-- The title for the "Delete address" confirmation dialog -->
     <string name="addressess_confirm_dialog_message">Ջնջե՞լ այս հասցեն:</string>
+    <!-- The title for the "Delete address" confirmation dialog -->
+    <string name="addressess_confirm_dialog_message_2" tools:ignore="UnusedResources">Ջնջե՞լ այս հասցեն:</string>
     <!-- The text for the positive button on "Delete address" dialog -->
     <string name="addressess_confirm_dialog_ok_button">Ջնջել</string>
     <!-- The text for the negative button on "Delete address" dialog -->
@@ -1976,30 +2052,52 @@
     <string name="login_menu_edit_button">Խմբագրել</string>
     <!-- Message in delete confirmation dialog for logins -->
     <string name="login_deletion_confirmation">Համոզվա՞ծ եք, որ ցանկանում եք ջնջել այս մուտքանունը:</string>
+    <!-- Message in delete confirmation dialog for password -->
+    <string name="login_deletion_confirmation_2" tools:ignore="UnusedResources">Համոզվա՞ծ եք, որ ցանկանում եք ջնջել այս գաղտնաբառը:</string>
     <!-- Positive action of a dialog asking to delete  -->
     <string name="dialog_delete_positive">Ջնջել</string>
     <!-- Negative action of a dialog asking to delete login -->
     <string name="dialog_delete_negative">Չեղարկել</string>
     <!--  The saved login options menu description. -->
     <string name="login_options_menu">Մուտքի ընտրանքներ</string>
+    <!--  The saved password options menu description. -->
+    <string name="login_options_menu_2" tools:ignore="UnusedResources">Գաղտնաբառի ընտրանքներ</string>
     <!--  The editable text field for a login's web address. -->
     <string name="saved_login_hostname_description">Խմբագրելի տեքստի դաշտը մուտքի վեբ հասցեի համար:</string>
+    <!--  The editable text field for a password's website address. -->
+    <string name="saved_login_hostname_description_2" tools:ignore="UnusedResources">Խմբագրելի տեքստի դաշտ գաղտնաբառի վեբ հասցեի համար:</string>
     <!--  The editable text field for a login's username. -->
     <string name="saved_login_username_description">Խմբագրելի տեքստի դաշտը մուտք գործողի համար:</string>
+    <!--  The editable text field for a password's username. -->
+    <string name="saved_login_username_description_2" tools:ignore="UnusedResources">Խմբագրելի տեքստի դաշտ գաղտնաբառի օգտվողի համար:</string>
     <!--  The editable text field for a login's password. -->
     <string name="saved_login_password_description">Խմբագրելի տեքստի դաշտը մուտքի գաղտնաբառի համար:</string>
+    <!--  The editable text field for a login's password. -->
+    <string name="saved_login_password_description_2" tools:ignore="UnusedResources">Խմբագրելի տեքստի դաշտ գաղտնաբառի համար:</string>
     <!--  The button description to save changes to an edited login. -->
     <string name="save_changes_to_login">Պահպանել փոփոխությունները մուտքագրման համար:</string>
+    <!--  The button description to save changes to an edited password. -->
+    <string name="save_changes_to_login_2" tools:ignore="UnusedResources">Պահել փոփոխությունները:</string>
     <!--  The page title for editing a saved login. -->
     <string name="edit">Խմբագրել</string>
+    <!--  The page title for editing a saved password. -->
+    <string name="edit_2" tools:ignore="UnusedResources">Խմբագրել գաղտնաբառը</string>
     <!--  The page title for adding new login. -->
     <string name="add_login">Հավելել նոր մուտքագրում</string>
+    <!--  The page title for adding new password. -->
+    <string name="add_login_2" tools:ignore="UnusedResources">Հավելել գաղտնաբառ</string>
     <!--  The error message in add/edit login view when password field is blank. -->
     <string name="saved_login_password_required">Գաղտնաբառ է պահանջվում</string>
+    <!--  Error text displayed underneath the password field when it is in an error case. -->
+    <string name="saved_login_password_required_2" tools:ignore="UnusedResources">Մուտքագրեք գաղտնաբառ</string>
     <!--  The error message in add login view when username field is blank. -->
     <string name="saved_login_username_required">Օգտվողի անունը պարտադիր է</string>
+    <!--  The error message in add login view when username field is blank. -->
+    <string name="saved_login_username_required_2" tools:ignore="UnusedResources">Մուտքագրեք օգտվողի անունը</string>
     <!--  The error message in add login view when hostname field is blank. -->
     <string name="saved_login_hostname_required" tools:ignore="UnusedResources">Հոսթի անունը պարտադիր է</string>
+    <!--  The error message in add login view when hostname field is blank. -->
+    <string name="saved_login_hostname_required_2" tools:ignore="UnusedResources">Մուտքագրել վեբ հասցեն</string>
     <!-- Voice search button content description  -->
     <string name="voice_search_content_description">Ձայնային որոնում</string>
     <!-- Voice search prompt description displayed after the user presses the voice search button -->
@@ -2256,17 +2354,17 @@
     <string name="review_quality_check_contextual_onboarding_learn_more_link">Իմանալ ավելին</string>
 
     <!-- Caption text to be displayed in review quality check contextual onboarding card above the opt-in button. First parameter is the Fakespot product name. Following parameters are for clickable texts defined in review_quality_check_contextual_onboarding_privacy_policy and review_quality_check_contextual_onboarding_terms_use. In the phrase "Fakespot by Mozilla", "by" can be localized. Does not need to stay by. -->
-    <string name="review_quality_check_contextual_onboarding_caption" moz:RemovedIn="121" tools:ignore="UnusedResources">Ընտրելով «Այո, փորձիր»՝ դուք համաձայնում եք %1$s-ը Mozilla-ի կողմիցի %2$s-ին և %3$s-ին:</string>
+    <string name="review_quality_check_contextual_onboarding_caption">Ընտրելով «Այո, փորձիր»՝ դուք համաձայնում եք %1$s-ը Mozilla-ի կողմիցի %2$s-ին և %3$s-ին:</string>
     <!-- Caption text to be displayed in review quality check contextual onboarding card above the opt-in button. Parameter is the Fakespot product name. After the colon, what appears are two links, each on their own line. The first link is to a Privacy policy (review_quality_check_contextual_onboarding_privacy_policy_2). The second link is to Terms of use (review_quality_check_contextual_onboarding_terms_use_2). -->
-    <string name="review_quality_check_contextual_onboarding_caption_2">Ընտրելով «Այո, փորձիր»՝ դուք ընդունում եք %1$s-ը.</string>
+    <string name="review_quality_check_contextual_onboarding_caption_2" moz:RemovedIn="123" tools:ignore="UnusedResources">Ընտրելով «Այո, փորձիր»՝ դուք ընդունում եք %1$s-ը.</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot privacy policy. -->
-    <string name="review_quality_check_contextual_onboarding_privacy_policy" moz:RemovedIn="121" tools:ignore="UnusedResources">գաղտնիության դրույթներ</string>
+    <string name="review_quality_check_contextual_onboarding_privacy_policy">գաղտնիության դրույթներ</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot privacy policy. -->
-    <string name="review_quality_check_contextual_onboarding_privacy_policy_2">Գաղտնիության դրույթներ</string>
+    <string name="review_quality_check_contextual_onboarding_privacy_policy_2" moz:RemovedIn="123" tools:ignore="UnusedResources">Գաղտնիության դրույթներ</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot terms of use. -->
-    <string name="review_quality_check_contextual_onboarding_terms_use" moz:RemovedIn="121" tools:ignore="UnusedResources">օգտվելու կանոններ</string>
+    <string name="review_quality_check_contextual_onboarding_terms_use">օգտվելու կանոններ</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot terms of use. -->
-    <string name="review_quality_check_contextual_onboarding_terms_use_2">Օգտագործման պայմաններ</string>
+    <string name="review_quality_check_contextual_onboarding_terms_use_2" moz:RemovedIn="123" tools:ignore="UnusedResources">Օգտագործման պայմաններ</string>
     <!-- Text for opt-in button from the review quality check contextual onboarding card. -->
     <string name="review_quality_check_contextual_onboarding_primary_button_text">Այո, փորձիր</string>
     <!-- Text for opt-out button from the review quality check contextual onboarding card. -->
@@ -2323,6 +2421,11 @@
     <!-- Content description for headings announced by accessibility service. The first parameter is the text of the heading. Talkback will announce the first parameter and then speak the word "Heading" indicating to the user that this text is a heading for a section. -->
     <string name="a11y_heading">%s, վերնագիր</string>
 
+    <!-- Title for dialog displayed when trying to access links present in a text. -->
+    <string name="a11y_links_title">Հղումներ</string>
+    <!-- Additional content description for text bodies that contain urls. -->
+    <string name="a11y_links_available">Հղումներ են մատչելի</string>
+
     <!-- Translations feature-->
 
     <!-- Translation request dialog -->
@@ -2340,12 +2443,25 @@
     <string name="translations_bottom_sheet_translate_to">Թարգմանել հետևյալով՝</string>
     <!-- Button text on the translations dialog to dismiss the dialog and return to the browser. -->
     <string name="translations_bottom_sheet_negative_button">Ոչ հիմա</string>
+    <!-- Button text on the translations dialog when a translation error appears, used to dismiss the dialog and return to the browser. -->
+    <string name="translations_bottom_sheet_negative_button_error">Պատրաստ է</string>
     <!-- Button text on the translations dialog to begin a translation of the website. -->
     <string name="translations_bottom_sheet_positive_button">Թարգմանել</string>
+    <!-- Button text on the translations dialog when a translation error appears. -->
+    <string name="translations_bottom_sheet_positive_button_error">Կրկին փորձել</string>
     <!-- Inactive button text on the translations dialog that indicates a translation is currently in progress. This button will be accompanied by a loading icon. -->
     <string name="translations_bottom_sheet_translating_in_progress">Թարգմանում է</string>
     <!-- Button content description (not visible, for screen readers etc.) for the translations dialog translate button that indicates a translation is currently in progress. -->
     <string name="translations_bottom_sheet_translating_in_progress_content_description">Թարգմանությունն ընթացքի մեջ է</string>
+
+    <!-- The title of the warning card informs the user that a translation could not be completed. -->
+    <string name="translation_error_could_not_translate_warning_text">Թարգմանության հետ կապված խնդիր։ Կրկին փորձեք;</string>
+    <!-- The title of the warning card informs the user that the list of languages cannot be loaded. -->
+    <string name="translation_error_could_not_load_languages_warning_text">Չհաջողվեց բեռնել լեզուները: Ստուգեք համացանցային կապակցումը և նորից փորձեք:</string>
+    <!-- The title of the warning card informs the user that a language is not supported. The first parameter is the name of the language that is not supported. -->
+    <string name="translation_error_language_not_supported_warning_text">Մենք դեռ չենք աջակցում %1$s-ը:</string>
+    <!-- Button text on the warning card when a language is not supported. The link will take the user to a page to a support page about translations. -->
+    <string name="translation_error_language_not_supported_learn_more">Իմանալ ավելին</string>
 
     <!-- Translations options dialog -->
     <!-- Title of the translation options dialog that allows a user to set their translation options for the site the user is currently on. -->
@@ -2358,6 +2474,10 @@
     <string name="translation_option_bottom_sheet_never_translate_in_language">Երբեք չթարգմանել %1$s-ը</string>
     <!-- Toggle switch label that allows a user to set the setting if they would like the browser to never translate the site the user is currently visiting. -->
     <string name="translation_option_bottom_sheet_never_translate_site">Երբեք չթարգմանել այս կայքը</string>
+    <!-- Toggle switch description that will appear under the "Never translate these sites" settings toggle switch to provide more information on how this setting interacts with other settings. -->
+    <string name="translation_option_bottom_sheet_switch_never_translate_site_description">Անտեսում է բոլոր մյուս կարգավորումները</string>
+    <!-- Toggle switch description that will appear under the "Never translate" and "Always translate" toggle switch settings to provide more information on how these  settings interacts with other settings. -->
+    <string name="translation_option_bottom_sheet_switch_description">Անտեսում է թարգմանելու առաջարկները</string>
     <!-- Button text for the button that will take the user to the translation settings dialog. -->
     <string name="translation_option_bottom_sheet_translation_settings">Թարգմանության կարգավորումներ</string>
     <!-- Button text for the button that will take the user to a website to learn more about how translations works in the given app. The first parameter is the name of the application, for example, "Fenix". -->
@@ -2477,8 +2597,12 @@
     <string name="download_language_file_dialog_negative_button_text">Չեղարկել</string>
 
     <!-- Debug drawer -->
+    <!-- The user-facing title of the Debug Drawer feature. -->
+    <string name="debug_drawer_title">Վրիպազերծման գործիքներ</string>
+    <!-- Content description (not visible, for screen readers etc.): Navigate back within the debug drawer. -->
+    <string name="debug_drawer_back_button_content_description">Նավարկել հետ</string>
     <!-- The title of the Tab Tools feature in the Debug Drawer. -->
-    <string name="debug_drawer_tab_tools_title" tools:ignore="UnusedResources">Ներդիրի գործիքներ</string>
+    <string name="debug_drawer_tab_tools_title">Ներդիրի գործիքներ</string>
     <!-- The title of the tab count section in Tab Tools. -->
     <string name="debug_drawer_tab_tools_tab_count_title">Ներդիրների քանակը</string>
     <!-- The active tab count category in the tab count section in Tab Tools. -->
@@ -2489,4 +2613,14 @@
     <string name="debug_drawer_tab_tools_tab_count_private">Մասնավոր</string>
     <!-- The total tab count category in the tab count section in Tab Tools. -->
     <string name="debug_drawer_tab_tools_tab_count_total">Ընդամենը</string>
+    <!-- The title of the tab creation tool section in Tab Tools. -->
+    <string name="debug_drawer_tab_tools_tab_creation_tool_title">Ներդիրների ստեղծման գործիք</string>
+    <!-- The label of the text field in the tab creation tool. -->
+    <string name="debug_drawer_tab_tools_tab_creation_tool_text_field_label">Ներդիրների քանակ ստեղծելու համար</string>
+    <!-- The button text to add tabs to the active tab group in the tab creation tool. -->
+    <string name="debug_drawer_tab_tools_tab_creation_tool_button_text_active">Հավելել ակտիվ ներդիրներին</string>
+    <!-- The button text to add tabs to the inactive tab group in the tab creation tool. -->
+    <string name="debug_drawer_tab_tools_tab_creation_tool_button_text_inactive">Հավելել ոչ ակտիվ ներդիրներին</string>
+    <!-- The button text to add tabs to the private tab group in the tab creation tool. -->
+    <string name="debug_drawer_tab_tools_tab_creation_tool_button_text_private">Հավելել մասնավոր ներդիրներին</string>
 </resources>

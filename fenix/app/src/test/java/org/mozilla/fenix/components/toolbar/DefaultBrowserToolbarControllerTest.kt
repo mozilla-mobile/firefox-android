@@ -451,7 +451,11 @@ class DefaultBrowserToolbarControllerTest {
         controller.handleTranslationsButtonClick()
 
         verify {
-            navController.navigate(BrowserFragmentDirections.actionBrowserFragmentToTranslationsDialogFragment())
+            navController.navigate(
+                BrowserFragmentDirections.actionBrowserFragmentToTranslationsDialogFragment(
+                    sessionId = "1",
+                ),
+            )
         }
     }
 

@@ -21,7 +21,7 @@ object Versions {
 
     const val junit = "4.13.2"
     const val robolectric = "4.11.1"
-    const val mockito = "5.8.0"
+    const val mockito = "5.10.0"
     const val maven_ant_tasks = "2.1.3"
     const val jacoco = "0.8.11"
     const val okhttp = "4.11.0"
@@ -36,7 +36,7 @@ object Versions {
     const val detekt = "1.23.4"
     const val ktlint = "0.49.1"
 
-    const val sentry = "6.34.0"
+    const val sentry = "7.2.0"
 
     const val zxing = "3.5.2"
 
@@ -44,7 +44,7 @@ object Versions {
     const val leakcanary = "2.13"
 
     // DO NOT MODIFY MANUALLY. This is auto-updated along with GeckoView.
-    const val mozilla_glean = "56.0.0"
+    const val mozilla_glean = "56.1.0"
 
     const val material = "1.9.0"
     const val ksp = "1.0.11"
@@ -79,7 +79,7 @@ object Versions {
         const val paging = "3.2.1"
         const val palette = "1.0.0"
         const val preferences = "1.2.1"
-        const val lifecycle = "2.6.2"
+        const val lifecycle = "2.7.0"
         const val media = "1.7.0"
         const val navigation = "2.5.3"
         const val work = "2.7.1"
@@ -91,7 +91,7 @@ object Versions {
     }
 
     object Firebase {
-        const val messaging = "23.3.1"
+        const val messaging = "23.4.0"
     }
 }
 
@@ -140,6 +140,7 @@ object ComponentsDependencies {
     const val androidx_lifecycle_livedata = "androidx.lifecycle:lifecycle-livedata-ktx:${Versions.AndroidX.lifecycle}"
     const val androidx_lifecycle_process = "androidx.lifecycle:lifecycle-process:${Versions.AndroidX.lifecycle}"
     const val androidx_lifecycle_runtime = "androidx.lifecycle:lifecycle-runtime-ktx:${Versions.AndroidX.lifecycle}"
+    const val androidx_lifecycle_service = "androidx.lifecycle:lifecycle-service:${Versions.AndroidX.lifecycle}"
     const val androidx_lifecycle_viewmodel = "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.AndroidX.lifecycle}"
     const val androidx_media = "androidx.media:media:${Versions.AndroidX.media}"
     const val androidx_paging = "androidx.paging:paging-runtime:${Versions.AndroidX.paging}"

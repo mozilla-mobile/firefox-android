@@ -213,6 +213,8 @@
     <string name="resync_button_content_description">Synchronizovať znova</string>
     <!-- Browser menu button that opens the find in page menu -->
     <string name="browser_menu_find_in_page">Hľadať na stránke</string>
+    <!-- Browser menu button that opens the translations dialog, which has options to translate the current browser page. -->
+    <string name="browser_menu_translations">Preložiť stránku</string>
     <!-- Browser menu button that saves the current tab to a collection -->
     <string name="browser_menu_save_to_collection_2">Uložiť do kolekcie</string>
     <!-- Browser menu button that open a share menu to share the current site -->
@@ -331,13 +333,18 @@
     <string name="onboarding_home_enable_notifications_negative_button">Teraz nie</string>
 
     <!-- Juno first user onboarding flow experiment, strings are marked unused as they are only referenced by Nimbus experiments. -->
+    <!-- Description for learning more about our privacy notice. -->
+    <string name="juno_onboarding_privacy_notice_text">Vyhlásenie o ochrane osobných údajov Firefoxu</string>
+    <!-- Text for the button to set firefox as default browser on the device -->
     <!-- Title for set firefox as default browser screen used by Nimbus experiments. -->
     <string name="juno_onboarding_default_browser_title_nimbus_2">Radi vás držíme v bezpečí</string>
     <!-- Description for set firefox as default browser screen used by Nimbus experiments. -->
-    <string name="juno_onboarding_default_browser_description_nimbus_2">Náš neziskový prehliadač pomáha zabrániť spoločnostiam, aby vás tajne sledovali na webe.\n\nĎalšie informácie nájdete v našom Vyhlásení o ochrane osobných údajov.</string>
+    <string name="juno_onboarding_default_browser_description_nimbus_3">Náš neziskový prehliadač pomáha zabrániť spoločnostiam, aby vás tajne sledovali na webe.</string>
+    <!-- Description for set firefox as default browser screen used by Nimbus experiments. -->
+    <string name="juno_onboarding_default_browser_description_nimbus_2" moz:RemovedIn="124" tools:ignore="UnusedResources">Náš neziskový prehliadač pomáha zabrániť spoločnostiam, aby vás tajne sledovali na webe.\n\nĎalšie informácie nájdete v našom Vyhlásení o ochrane osobných údajov.</string>
     <!-- Text for the link to the privacy notice webpage for set as firefox default browser screen.
     This is part of the string with the key "juno_onboarding_default_browser_description". -->
-    <string name="juno_onboarding_default_browser_description_link_text" tools:ignore="UnusedResources">Vyhlásení o ochrane osobných údajov</string>
+    <string name="juno_onboarding_default_browser_description_link_text" moz:RemovedIn="124" tools:ignore="UnusedResources">Vyhlásení o ochrane osobných údajov</string>
     <!-- Text for the button to set firefox as default browser on the device -->
     <string name="juno_onboarding_default_browser_positive_button" tools:ignore="UnusedResources">Nastaviť ako predvolený prehliadač</string>
     <!-- Text for the button dismiss the screen and move on with the flow -->
@@ -395,9 +402,9 @@
     <!-- Preference category for settings related to changing the default search engine -->
     <string name="preferences_category_select_default_search_engine">Zvoľte vyhľadávač</string>
     <!-- Preference for settings related to managing search shortcuts for the quick search menu -->
-    <string name="preferences_manage_search_shortcuts_2">Spravovať alternatívne vyhľadávacie moduly</string>
+    <string name="preferences_manage_search_shortcuts_2">Spravovať alternatívne vyhľadávače</string>
     <!-- Summary for preference for settings related to managing search shortcuts for the quick search menu -->
-    <string name="preferences_manage_search_shortcuts_summary">Upraviť vyhľadávače viditeľné v ponuke vyhľadávania</string>
+    <string name="preferences_manage_search_shortcuts_summary">Upravte si vyhľadávače viditeľné v ponuke vyhľadávania</string>
     <!-- Preference category for settings related to managing search shortcuts for the quick search menu -->
     <string name="preferences_category_engines_in_search_menu">Vyhľadávače viditeľné v ponuke vyhľadávania</string>
     <!-- Preference for settings related to changing the default search engine -->
@@ -567,7 +574,7 @@
     <!-- Preference title for switch preference to show search suggestions -->
     <string name="preferences_show_search_suggestions">Zobrazovať návrhy vyhľadávania</string>
     <!-- Preference title for switch preference to show voice search button -->
-    <string name="preferences_show_voice_search">Zobraziť hlasové vyhľadávanie</string>
+    <string name="preferences_show_voice_search">Zobrazovať hlasové vyhľadávanie</string>
     <!-- Preference title for switch preference to show search suggestions also in private mode -->
     <string name="preferences_show_search_suggestions_in_private">Zobrazovať v súkromnom prehliadaní</string>
     <!-- Preference title for switch preference to show a clipboard suggestion when searching -->
@@ -722,6 +729,8 @@
     <string name="preferences_sync_bookmarks">Záložky</string>
     <!-- Preference for syncing logins -->
     <string name="preferences_sync_logins">Prihlasovacie údaje</string>
+    <!-- Preference for syncing passwords -->
+    <string name="preferences_sync_logins_2" tools:ignore="UnusedResources">Heslá</string>
     <!-- Preference for syncing tabs -->
     <string name="preferences_sync_tabs_2">Otvorené karty</string>
     <!-- Preference for signing out -->
@@ -748,6 +757,8 @@
 
     <!-- Preference for syncing credit cards -->
     <string name="preferences_sync_credit_cards">Platobné karty</string>
+    <!-- Preference for syncing payment methods -->
+    <string name="preferences_sync_credit_cards_2" tools:ignore="UnusedResources">Spôsoby platby</string>
     <!-- Preference for syncing addresses -->
     <string name="preferences_sync_address">Adresy</string>
 
@@ -1335,6 +1346,12 @@
     <!-- Notifications -->
     <!-- Text shown in the notification that pops up to remind the user that a private browsing session is active. -->
     <string name="notification_pbm_delete_text_2">Zavrieť súkromné karty</string>
+
+    <!-- Text shown in the notification that pops up to remind the user that a private browsing session is active for Android 14+ -->
+    <string name="notification_erase_title_android_14">Chcete zatvoriť súkromné karty?</string>
+
+    <string name="notification_erase_text_android_14">Ťuknutím alebo potiahnutím tohto upozornenia zatvoríte súkromné karty.</string>
+
     <!-- Name of the marketing notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="notification_marketing_channel_name">Marketing</string>
 
@@ -1688,8 +1705,12 @@
 
     <!-- Preference for managing the settings for logins and passwords in Fenix -->
     <string name="preferences_passwords_logins_and_passwords">Prihlasovacie údaje</string>
+    <!-- Preference for managing the settings for logins and passwords in Fenix -->
+    <string name="preferences_passwords_logins_and_passwords_2" tools:ignore="UnusedResources">Heslá</string>
     <!-- Preference for managing the saving of logins and passwords in Fenix -->
     <string name="preferences_passwords_save_logins">Ukladanie prihlasovacích údajov</string>
+    <!-- Preference for managing the saving of logins and passwords in Fenix -->
+    <string name="preferences_passwords_save_logins_2" tools:ignore="UnusedResources">Ukladanie hesiel</string>
     <!-- Preference option for asking to save passwords in Fenix -->
     <string name="preferences_passwords_save_logins_ask_to_save">Pred uložením sa opýtať</string>
     <!-- Preference option for never saving passwords in Fenix -->
@@ -1706,26 +1727,45 @@
     <!-- Preference option for adding a login -->
     <string name="preferences_logins_add_login">Pridať prihlasovacie údaje</string>
 
+    <!-- Preference option for adding a password -->
+    <string name="preferences_logins_add_login_2" tools:ignore="UnusedResources">Pridať heslo</string>
+
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">Synchronizácia prihlasovacích údajov</string>
+    <!-- Preference for syncing saved passwords in Fenix -->
+    <string name="preferences_passwords_sync_logins_2" tools:ignore="UnusedResources">Synchronizácia hesiel</string>
     <!-- Preference for syncing saved logins in Fenix, when not signed in-->
     <string name="preferences_passwords_sync_logins_across_devices">Synchronizovať prihlasovacie údaje medzi zariadeniami</string>
+    <!-- Preference for syncing saved passwords in Fenix, when not signed in-->
+    <string name="preferences_passwords_sync_logins_across_devices_2" tools:ignore="UnusedResources">Synchronizovať heslá naprieč zariadeniami</string>
     <!-- Preference to access list of saved logins -->
     <string name="preferences_passwords_saved_logins">Uložené prihlasovacie údaje</string>
+    <!-- Preference to access list of saved passwords -->
+    <string name="preferences_passwords_saved_logins_2" tools:ignore="UnusedResources">Uložené heslá</string>
     <!-- Description of empty list of saved passwords. Placeholder is replaced with app name.  -->
     <string name="preferences_passwords_saved_logins_description_empty_text">Uložené alebo synchronizované údaje v aplikácii %s sa zobrazia tu.</string>
+    <!-- Description of empty list of saved passwords. Placeholder is replaced with app name.  -->
+    <string name="preferences_passwords_saved_logins_description_empty_text_2" tools:ignore="UnusedResources">Heslá, ktoré uložíte alebo synchronizujete do %su budú zobrazené tu. Všetky heslá sú šifrované.</string>
     <!-- Preference to access list of saved logins -->
     <string name="preferences_passwords_saved_logins_description_empty_learn_more_link">Ďalšie informácie o službe Sync.</string>
+    <!-- Clickable text for opening an external link for more information about Sync. -->
+    <string name="preferences_passwords_saved_logins_description_empty_learn_more_link_2" tools:ignore="UnusedResources">Ďalšie informácie o synchronizácii</string>
     <!-- Preference to access list of login exceptions that we never save logins for -->
     <string name="preferences_passwords_exceptions">Výnimky</string>
     <!-- Empty description of list of login exceptions that we never save logins for -->
     <string name="preferences_passwords_exceptions_description_empty">Tu sa zobrazia prihlasovacie údaje, ktoré sa nebudú ukladať.</string>
+    <!-- Empty description of list of login exceptions that we never save passwords for. Parameter will be replaced by app name. -->
+    <string name="preferences_passwords_exceptions_description_empty_2" tools:ignore="UnusedResources">%s nebude ukladať heslá pre tu uvedené stránky.</string>
     <!-- Description of list of login exceptions that we never save logins for -->
     <string name="preferences_passwords_exceptions_description">Pre nasledujúce stránky sa nebudú ukladať prihlasovacie údaje.</string>
+    <!-- Description of list of login exceptions that we never save passwords for. Parameter will be replaced by app name. -->
+    <string name="preferences_passwords_exceptions_description_2" tools:ignore="UnusedResources">%s nebude ukladať heslá pre tieto stránky.</string>
     <!-- Text on button to remove all saved login exceptions -->
     <string name="preferences_passwords_exceptions_remove_all">Odstrániť všetky výnimky</string>
     <!-- Hint for search box in logins list -->
     <string name="preferences_passwords_saved_logins_search">Hľadať</string>
+    <!-- Hint for search box in passwords list -->
+    <string name="preferences_passwords_saved_logins_search_2" tools:ignore="UnusedResources">Hľadať v heslách</string>
     <!-- The header for the site that a login is for -->
     <string name="preferences_passwords_saved_logins_site">Stránka</string>
     <!-- The header for the username for a login -->
@@ -1754,10 +1794,16 @@
     <string name="saved_login_hide_password">Skryť heslo</string>
     <!-- Message displayed in biometric prompt displayed for authentication before allowing users to view their logins -->
     <string name="logins_biometric_prompt_message">Pre zobrazenie prihlasovacích údajov odomknite zariadenie</string>
+    <!-- Message displayed in biometric prompt displayed for authentication before allowing users to view their passwords -->
+    <string name="logins_biometric_prompt_message_2" tools:ignore="UnusedResources">Ak chcete zobraziť uložené heslá, odomknite zariadenie</string>
     <!-- Title of warning dialog if users have no device authentication set up -->
     <string name="logins_warning_dialog_title">Zabezpečte svoje prihlasovacie údaje</string>
+    <!-- Title of warning dialog if users have no device authentication set up -->
+    <string name="logins_warning_dialog_title_2" tools:ignore="UnusedResources">Zabezpečte svoje heslá</string>
     <!-- Message of warning dialog if users have no device authentication set up -->
     <string name="logins_warning_dialog_message">Nastavte si vzor, kód alebo heslo, ktorým ochránite svoje uložené prihlasovacie údaje v prípade, že vaše zariadenie bude používať niekto iný.</string>
+    <!-- Message of warning dialog if users have no device authentication set up -->
+    <string name="logins_warning_dialog_message_2" tools:ignore="UnusedResources">Nastavte si vzor, kód alebo heslo, ktorým ochránite svoje uložené heslá v prípade, že vaše zariadenie bude používať niekto iný.</string>
     <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
     <string name="logins_warning_dialog_later">Neskôr</string>
     <!-- Positive button to send users to set up a pin of warning dialog if users have no device authentication set up -->
@@ -1776,6 +1822,9 @@
     <!-- Content description (not visible, for screen readers etc.): Sort saved logins dropdown menu chevron icon -->
     <string name="saved_logins_menu_dropdown_chevron_icon_content_description">Zoradiť ponuku prihlasovacích údajov</string>
 
+    <!-- Content description (not visible, for screen readers etc.) -->
+    <string name="saved_logins_menu_dropdown_chevron_icon_content_description_2" tools:ignore="UnusedResources">Ponuka pre zoradenie hesiel</string>
+
     <!-- Autofill -->
     <!-- Preference and title for managing the autofill settings -->
     <string name="preferences_autofill">Automatické dopĺňanie</string>
@@ -1783,10 +1832,16 @@
     <string name="preferences_addresses">Adresy</string>
     <!-- Preference and title for managing the settings for credit cards -->
     <string name="preferences_credit_cards">Platobné karty</string>
+    <!-- Preference and title for managing the settings for payment methods -->
+    <string name="preferences_credit_cards_2" tools:ignore="UnusedResources">Spôsoby platby</string>
     <!-- Preference for saving and autofilling credit cards -->
     <string name="preferences_credit_cards_save_and_autofill_cards">Ukladať a automaticky dopĺňať údaje o platobných kartách</string>
+    <!-- Preference for saving and autofilling credit cards -->
+    <string name="preferences_credit_cards_save_and_autofill_cards_2" tools:ignore="UnusedResources">Ukladať a dopĺňať spôsoby platby</string>
     <!-- Preference summary for saving and autofilling credit card data -->
     <string name="preferences_credit_cards_save_and_autofill_cards_summary">Údaje sú šifrované</string>
+    <!-- Preference summary for saving and autofilling payment method data. Parameter will be replaced by app name. -->
+    <string name="preferences_credit_cards_save_and_autofill_cards_summary_2" tools:ignore="UnusedResources">%s zašifruje všetky spôsoby platby, ktoré uložíte</string>
     <!-- Preference option for syncing credit cards across devices. This is displayed when the user is not signed into sync -->
     <string name="preferences_credit_cards_sync_cards_across_devices">Synchronizovať platobné karty naprieč zariadeniami</string>
     <!-- Preference option for syncing credit cards across devices. This is displayed when the user is signed into sync -->
@@ -1794,16 +1849,25 @@
     <!-- Preference option for adding a credit card -->
     <string name="preferences_credit_cards_add_credit_card">Pridať platobnú kartu</string>
 
+    <!-- Preference option for adding a card -->
+    <string name="preferences_credit_cards_add_credit_card_2" tools:ignore="UnusedResources">Pridať kartu</string>
     <!-- Preference option for managing saved credit cards -->
     <string name="preferences_credit_cards_manage_saved_cards">Spravovať uložené karty</string>
+    <!-- Preference option for managing saved cards -->
+    <string name="preferences_credit_cards_manage_saved_cards_2" tools:ignore="UnusedResources">Spravovať karty</string>
     <!-- Preference option for adding an address -->
     <string name="preferences_addresses_add_address">Pridať adresu</string>
     <!-- Preference option for managing saved addresses -->
     <string name="preferences_addresses_manage_addresses">Spravovať adresy</string>
     <!-- Preference for saving and autofilling addresses -->
     <string name="preferences_addresses_save_and_autofill_addresses">Ukladať a automaticky dopĺňať adresy</string>
+    <!-- Preference for saving and filling addresses -->
+    <string name="preferences_addresses_save_and_autofill_addresses_2" tools:ignore="UnusedResources">Ukladať a dopĺňať adresy</string>
     <!-- Preference summary for saving and autofilling address data -->
     <string name="preferences_addresses_save_and_autofill_addresses_summary">Zahŕňa informácie ako sú čísla, e‑mailové adresy a dodacie adresy</string>
+
+    <!-- Preference summary for saving and filling address data -->
+    <string name="preferences_addresses_save_and_autofill_addresses_summary_2" tools:ignore="UnusedResources">Zahŕňa telefónne čísla a e‑mailové adresy</string>
 
     <!-- Title of the "Add card" screen -->
     <string name="credit_cards_add_card">Pridať kartu</string>
@@ -1825,6 +1889,8 @@
     <string name="credit_cards_delete_card_button">Odstrániť kartu</string>
     <!-- The text for the confirmation message of "Delete card" dialog -->
     <string name="credit_cards_delete_dialog_confirmation">Naozaj chcete odstrániť túto kreditnú kartu?</string>
+    <!-- The text for the confirmation message of "Delete card" dialog -->
+    <string name="credit_cards_delete_dialog_confirmation_2" tools:ignore="UnusedResources">Odstrániť kartu?</string>
     <!-- The text for the positive button on "Delete card" dialog -->
     <string name="credit_cards_delete_dialog_button">Odstrániť</string>
     <!-- The title for the "Save" menu item for saving a credit card -->
@@ -1839,14 +1905,22 @@
     <!-- Error message for credit card number validation -->
     <string name="credit_cards_number_validation_error_message">Prosím, zadajte platné číslo platobnej karty</string>
 
+    <!-- Error message for card number validation -->
+    <string name="credit_cards_number_validation_error_message_2" tools:ignore="UnusedResources">Zadajte platné číslo karty</string>
     <!-- Error message for credit card name on card validation -->
     <string name="credit_cards_name_on_card_validation_error_message">Vyplňte toto pole</string>
+    <!-- Error message for card name on card validation -->
+    <string name="credit_cards_name_on_card_validation_error_message_2" tools:ignore="UnusedResources">Zadajte meno</string>
     <!-- Message displayed in biometric prompt displayed for authentication before allowing users to view their saved credit cards -->
     <string name="credit_cards_biometric_prompt_message">Odomknutím zobrazíte svoje uložené kreditné karty</string>
     <!-- Title of warning dialog if users have no device authentication set up -->
     <string name="credit_cards_warning_dialog_title">Zabezpečte svoje kreditné karty</string>
+    <!-- Title of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_title_2" tools:ignore="UnusedResources">Zabezpečte svoje uložené spôsoby platby</string>
     <!-- Message of warning dialog if users have no device authentication set up -->
     <string name="credit_cards_warning_dialog_message">Nastavte si vzor, kód alebo heslo, ktorým ochránite svoje uložené kreditné karty v prípade, že vaše zariadenie bude používať niekto iný.</string>
+    <!-- Message of warning dialog if users have no device authentication set up -->
+    <string name="credit_cards_warning_dialog_message_2" tools:ignore="UnusedResources">Nastavte si vzor, kód alebo heslo, ktorým ochránite svoje uložené karty v prípade, že vaše zariadenie bude používať niekto iný.</string>
     <!-- Positive button to send users to set up a pin of warning dialog if users have no device authentication set up -->
     <string name="credit_cards_warning_dialog_set_up_now">Nastaviť teraz</string>
     <!-- Negative button to ignore warning dialog if users have no device authentication set up -->
@@ -1856,6 +1930,8 @@
     <!-- Message displayed in biometric prompt for authentication, before allowing users to use their stored credit card information -->
     <string name="credit_cards_biometric_prompt_unlock_message">Odomknutím použijete uložené informácie o kreditnej karte</string>
 
+    <!-- Message displayed in biometric prompt for authentication, before allowing users to use their stored payment method information -->
+    <string name="credit_cards_biometric_prompt_unlock_message_2" tools:ignore="UnusedResources">Ak chcete použiť uložené spôsoby platby, odomknite zariadenie</string>
     <!-- Title of the "Add address" screen -->
     <string name="addresses_add_address">Pridať adresu</string>
     <!-- Title of the "Edit address" screen -->
@@ -1893,6 +1969,8 @@
 
     <!-- The title for the "Delete address" confirmation dialog -->
     <string name="addressess_confirm_dialog_message">Naozaj chcete odstrániť túto adresu?</string>
+    <!-- The title for the "Delete address" confirmation dialog -->
+    <string name="addressess_confirm_dialog_message_2" tools:ignore="UnusedResources">Chcete odstrániť túto adresu?</string>
     <!-- The text for the positive button on "Delete address" dialog -->
     <string name="addressess_confirm_dialog_ok_button">Odstrániť</string>
     <!-- The text for the negative button on "Delete address" dialog -->
@@ -1991,30 +2069,52 @@
     <string name="login_menu_edit_button">Upraviť</string>
     <!-- Message in delete confirmation dialog for logins -->
     <string name="login_deletion_confirmation">Naozaj chcete odstrániť tieto prihlasovacie údaje?</string>
+    <!-- Message in delete confirmation dialog for password -->
+    <string name="login_deletion_confirmation_2" tools:ignore="UnusedResources">Naozaj chcete odstrániť toto heslo?</string>
     <!-- Positive action of a dialog asking to delete  -->
     <string name="dialog_delete_positive">Odstrániť</string>
     <!-- Negative action of a dialog asking to delete login -->
     <string name="dialog_delete_negative">Zrušiť</string>
     <!--  The saved login options menu description. -->
     <string name="login_options_menu">Možnosti prihlásenia</string>
+    <!--  The saved password options menu description. -->
+    <string name="login_options_menu_2" tools:ignore="UnusedResources">Možnosti hesiel</string>
     <!--  The editable text field for a login's web address. -->
     <string name="saved_login_hostname_description">Upraviteľné textové pole pre webovú adresu.</string>
+    <!--  The editable text field for a password's website address. -->
+    <string name="saved_login_hostname_description_2" tools:ignore="UnusedResources">Upraviteľné textové pole pre webovú stránku, kde používate toto heslo.</string>
     <!--  The editable text field for a login's username. -->
     <string name="saved_login_username_description">Upraviteľné textové pole pre používateľské meno.</string>
+    <!--  The editable text field for a password's username. -->
+    <string name="saved_login_username_description_2" tools:ignore="UnusedResources">Upraviteľné textové pole pre používateľské meno, ktoré používate s týmto heslom.</string>
     <!--  The editable text field for a login's password. -->
     <string name="saved_login_password_description">Upraviteľné textové pole pre heslo.</string>
+    <!--  The editable text field for a login's password. -->
+    <string name="saved_login_password_description_2" tools:ignore="UnusedResources">Upraviteľné textové pole pre heslo.</string>
     <!--  The button description to save changes to an edited login. -->
     <string name="save_changes_to_login">Uložiť zmeny prihlasovacích údajov.</string>
+    <!--  The button description to save changes to an edited password. -->
+    <string name="save_changes_to_login_2" tools:ignore="UnusedResources">Uložiť zmeny</string>
     <!--  The page title for editing a saved login. -->
     <string name="edit">Upraviť</string>
+    <!--  The page title for editing a saved password. -->
+    <string name="edit_2" tools:ignore="UnusedResources">Upraviť heslo</string>
     <!--  The page title for adding new login. -->
     <string name="add_login">Pridať nové prihlasovacie údaje</string>
+    <!--  The page title for adding new password. -->
+    <string name="add_login_2" tools:ignore="UnusedResources">Pridať heslo</string>
     <!--  The error message in add/edit login view when password field is blank. -->
     <string name="saved_login_password_required">Vyžaduje sa heslo</string>
+    <!--  Error text displayed underneath the password field when it is in an error case. -->
+    <string name="saved_login_password_required_2" tools:ignore="UnusedResources">Zadajte heslo</string>
     <!--  The error message in add login view when username field is blank. -->
     <string name="saved_login_username_required">Vyžaduje sa používateľské meno</string>
+    <!--  The error message in add login view when username field is blank. -->
+    <string name="saved_login_username_required_2" tools:ignore="UnusedResources">Zadajte používateľské meno</string>
     <!--  The error message in add login view when hostname field is blank. -->
     <string name="saved_login_hostname_required" tools:ignore="UnusedResources">Vyžaduje sa názov hostiteľa</string>
+    <!--  The error message in add login view when hostname field is blank. -->
+    <string name="saved_login_hostname_required_2" tools:ignore="UnusedResources">Zadajte webovú stránku</string>
     <!-- Voice search button content description  -->
     <string name="voice_search_content_description">Hlasové vyhľadávanie</string>
     <!-- Voice search prompt description displayed after the user presses the voice search button -->
@@ -2270,17 +2370,17 @@
     <!-- Clickable text from the contextual onboarding card that links to review quality check support article. -->
     <string name="review_quality_check_contextual_onboarding_learn_more_link">Ďalšie informácie</string>
     <!-- Caption text to be displayed in review quality check contextual onboarding card above the opt-in button. First parameter is the Fakespot product name. Following parameters are for clickable texts defined in review_quality_check_contextual_onboarding_privacy_policy and review_quality_check_contextual_onboarding_terms_use. In the phrase "Fakespot by Mozilla", "by" can be localized. Does not need to stay by. -->
-    <string name="review_quality_check_contextual_onboarding_caption" moz:RemovedIn="121" tools:ignore="UnusedResources">Výberom možnosti “Áno, vyskúšať” vyjadrujete súhlas s %1$s a %2$s služby %3$s od Mozilly.</string>
+    <string name="review_quality_check_contextual_onboarding_caption">Výberom možnosti “Áno, vyskúšať” vyjadrujete súhlas s %1$s a %2$s služby %3$s od Mozilly.</string>
     <!-- Caption text to be displayed in review quality check contextual onboarding card above the opt-in button. Parameter is the Fakespot product name. After the colon, what appears are two links, each on their own line. The first link is to a Privacy policy (review_quality_check_contextual_onboarding_privacy_policy_2). The second link is to Terms of use (review_quality_check_contextual_onboarding_terms_use_2). -->
-    <string name="review_quality_check_contextual_onboarding_caption_2">Zvolením možnosti „Áno, vyskúšať“ vyjadrujete súhlas s nasledujúcim dokumentami od %1$s:</string>
+    <string name="review_quality_check_contextual_onboarding_caption_2" moz:RemovedIn="123" tools:ignore="UnusedResources">Zvolením možnosti „Áno, vyskúšať“ vyjadrujete súhlas s nasledujúcim dokumentami od %1$s:</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot privacy policy. -->
-    <string name="review_quality_check_contextual_onboarding_privacy_policy" moz:RemovedIn="121" tools:ignore="UnusedResources">Zásadami ochrany osobných údajov</string>
+    <string name="review_quality_check_contextual_onboarding_privacy_policy">Zásadami ochrany osobných údajov</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot privacy policy. -->
-    <string name="review_quality_check_contextual_onboarding_privacy_policy_2">Zásady ochrany osobných údajov</string>
+    <string name="review_quality_check_contextual_onboarding_privacy_policy_2" moz:RemovedIn="123" tools:ignore="UnusedResources">Zásady ochrany osobných údajov</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot terms of use. -->
-    <string name="review_quality_check_contextual_onboarding_terms_use" moz:RemovedIn="121" tools:ignore="UnusedResources">Podmienkami používania</string>
+    <string name="review_quality_check_contextual_onboarding_terms_use">Podmienkami používania</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot terms of use. -->
-    <string name="review_quality_check_contextual_onboarding_terms_use_2">Podmienky používania</string>
+    <string name="review_quality_check_contextual_onboarding_terms_use_2" moz:RemovedIn="123" tools:ignore="UnusedResources">Podmienky používania</string>
     <!-- Text for opt-in button from the review quality check contextual onboarding card. -->
     <string name="review_quality_check_contextual_onboarding_primary_button_text">Áno, vyskúšať</string>
     <!-- Text for opt-out button from the review quality check contextual onboarding card. -->
@@ -2337,7 +2437,83 @@
     <!-- Content description for headings announced by accessibility service. The first parameter is the text of the heading. Talkback will announce the first parameter and then speak the word "Heading" indicating to the user that this text is a heading for a section. -->
     <string name="a11y_heading">%s, nadpis</string>
 
+    <!-- Title for dialog displayed when trying to access links present in a text. -->
+    <string name="a11y_links_title">Odkazy</string>
+    <!-- Additional content description for text bodies that contain urls. -->
+    <string name="a11y_links_available">Dostupné odkazy</string>
+
     <!-- Translations feature-->
+
+    <!-- Translation request dialog -->
+    <!-- Title for the translation dialog that allows a user to translate the webpage. -->
+    <string name="translations_bottom_sheet_title">Preložiť túto stránku?</string>
+    <!-- Title for the translation dialog that allows a user to translate the webpage when a user uses the translation feature the first time. The first parameter is the name of the application, for example, "Fenix". -->
+    <string name="translations_bottom_sheet_title_first_time">Vyskúšajte súkromné preklady v aplikácii %1$s</string>
+    <!-- Additional information on the translation dialog that appears when a user uses the translation feature the first time. The first parameter is clickable text with a link, for example, "Learn more". -->
+    <string name="translations_bottom_sheet_info_message">Na ochranu vášho súkromia preklady nikdy neopustia vaše zariadenie. Nové jazyky a vylepšenia už čoskoro! %1$s</string>
+    <!-- Text that links to additional information about the Firefox translations feature. -->
+    <string name="translations_bottom_sheet_info_message_learn_more">Ďalšie informácie</string>
+    <!-- Label for the dropdown to select which language to translate from on the translations dialog. Usually the translate from language selected will be the same as the page language. -->
+    <string name="translations_bottom_sheet_translate_from">Preložiť z jazyka</string>
+    <!-- Label for the dropdown to select which language to translate to on the translations dialog. Usually the translate to language selected will be the user's preferred language. -->
+    <string name="translations_bottom_sheet_translate_to">Preložiť do jazyka</string>
+    <!-- Button text on the translations dialog to dismiss the dialog and return to the browser. -->
+    <string name="translations_bottom_sheet_negative_button">Teraz nie</string>
+    <!-- Button text on the translations dialog when a translation error appears, used to dismiss the dialog and return to the browser. -->
+    <string name="translations_bottom_sheet_negative_button_error">Hotovo</string>
+    <!-- Button text on the translations dialog to begin a translation of the website. -->
+    <string name="translations_bottom_sheet_positive_button">Preložiť</string>
+    <!-- Button text on the translations dialog when a translation error appears. -->
+    <string name="translations_bottom_sheet_positive_button_error">Skúste to znova</string>
+    <!-- Inactive button text on the translations dialog that indicates a translation is currently in progress. This button will be accompanied by a loading icon. -->
+    <string name="translations_bottom_sheet_translating_in_progress">Prebieha preklad</string>
+    <!-- Button content description (not visible, for screen readers etc.) for the translations dialog translate button that indicates a translation is currently in progress. -->
+    <string name="translations_bottom_sheet_translating_in_progress_content_description">Práve prebieha preklad</string>
+
+    <!-- The title of the warning card informs the user that a translation could not be completed. -->
+    <string name="translation_error_could_not_translate_warning_text">Pri preklade sa vyskytol problém. Prosím skúste to znova.</string>
+    <!-- The title of the warning card informs the user that the list of languages cannot be loaded. -->
+    <string name="translation_error_could_not_load_languages_warning_text">Nepodarilo sa načítať jazyky. Skontrolujte svoje internetové pripojenie a skúste to znova.</string>
+    <!-- The title of the warning card informs the user that a language is not supported. The first parameter is the name of the language that is not supported. -->
+    <string name="translation_error_language_not_supported_warning_text">Ľutujeme, jazyk %1$s zatiaľ nepodporujeme.</string>
+    <!-- Button text on the warning card when a language is not supported. The link will take the user to a page to a support page about translations. -->
+    <string name="translation_error_language_not_supported_learn_more">Ďalšie informácie</string>
+
+    <!-- Translations options dialog -->
+    <!-- Title of the translation options dialog that allows a user to set their translation options for the site the user is currently on. -->
+    <string name="translation_option_bottom_sheet_title">Nastavenia prekladov</string>
+    <!-- Toggle switch label that allows a user to set the setting if they would like the browser to always offer or suggest translations when available. -->
+    <string name="translation_option_bottom_sheet_always_translate">Vždy ponúkať preklad</string>
+    <!-- Toggle switch label that allows a user to set if they would like a given language to automatically translate or not. The first parameter is the language name, for example, "Spanish". -->
+    <string name="translation_option_bottom_sheet_always_translate_in_language">Vždy prekladať jazyk %1$s</string>
+    <!-- Toggle switch label that allows a user to set if they would like to never be offered a translation of the given language. The first parameter is the language name, for example, "Spanish". -->
+    <string name="translation_option_bottom_sheet_never_translate_in_language">Nikdy neprekladať z jazyka %1$s</string>
+    <!-- Toggle switch label that allows a user to set the setting if they would like the browser to never translate the site the user is currently visiting. -->
+    <string name="translation_option_bottom_sheet_never_translate_site">Nikdy neprekladať túto stránku</string>
+    <!-- Toggle switch description that will appear under the "Never translate these sites" settings toggle switch to provide more information on how this setting interacts with other settings. -->
+    <string name="translation_option_bottom_sheet_switch_never_translate_site_description">Prepíše všetky ostatné nastavenia</string>
+    <!-- Toggle switch description that will appear under the "Never translate" and "Always translate" toggle switch settings to provide more information on how these  settings interacts with other settings. -->
+    <string name="translation_option_bottom_sheet_switch_description">Prepíše ponuky na preklad</string>
+    <!-- Button text for the button that will take the user to the translation settings dialog. -->
+    <string name="translation_option_bottom_sheet_translation_settings">Nastavenia prekladu</string>
+    <!-- Button text for the button that will take the user to a website to learn more about how translations works in the given app. The first parameter is the name of the application, for example, "Fenix". -->
+    <string name="translation_option_bottom_sheet_about_translations">Informácie o prekladoch v aplikácii %1$s</string>
+
+    <!-- Translation settings dialog -->
+    <!-- Title of the translation settings dialog that allows a user to set their preferred translation settings. -->
+    <string name="translation_settings_toolbar_title">Preklady</string>
+    <!-- Toggle switch label that indicates that the browser should signal or indicate when a translation is possible for any page. -->
+    <string name="translation_settings_offer_to_translate">Ak je to možné, ponúknuť preklad</string>
+    <!-- Toggle switch label that indicates that downloading files required for translating is permitted when using data saver mode in Android. -->
+    <string name="translation_settings_always_download">Vždy sťahovať jazyky v režime šetrenia dát</string>
+    <!-- Section header text that begins the section of a list of different options the user may select to adjust their translation preferences. -->
+    <string name="translation_settings_translation_preference">Nastavenia prekladania obsahu</string>
+    <!-- Button text for the button that will take the user to the automatic translations settings dialog. On the automatic translations settings dialog, the user can set if translations should occur automatically for a given language. -->
+    <string name="translation_settings_automatic_translation">Automatický preklad</string>
+    <!-- Button text for the button that will take the user to the never translate these sites dialog. On the never translate these sites dialog, the user can set if translations should never occur on certain websites. -->
+    <string name="translation_settings_automatic_never_translate_sites">Nikdy neprekladať tieto stránky</string>
+    <!-- Button text for the button that will take the user to the download languages dialog. On the download languages dialog, the user can manage which languages they would like to download for translations. -->
+    <string name="translation_settings_download_language">Stiahnuť jazyky</string>
 
     <!-- Automatic translation preference screen -->
     <!-- Title of the automatic translation preference screen that will appear on the toolbar.-->
@@ -2388,6 +2564,10 @@
     <string name="download_languages_available_languages_preference">Dostupné jazyky</string>
     <!-- Text that will appear beside a core or pivot language package name to show that the language is necessary for the translation feature to function. -->
     <string name="download_languages_default_system_language_require_preference">vyžadovaný</string>
+    <!-- A text for download language preference item.
+    The first parameter is the language name, for example, "Spanish".
+    The second parameter is the language file size, for example, "(3.91 KB)" or, if the language package name is a pivot language, "(required)". -->
+    <string name="download_languages_language_item_preference">%1$s (%2$s)</string>
     <!-- The subhead of the download language preference screen will appear above the items that were not downloaded. -->
     <string name="download_language_header_preference">Stiahnite si jazyky</string>
     <!-- All languages list item. When the user presses this item, they can download or delete all languages. -->
@@ -2400,4 +2580,65 @@
     <string name="download_languages_item_content_description_not_downloaded_state">Stiahnuť</string>
     <!-- Content description (not visible, for screen readers etc.): For a language list item that is selected. -->
     <string name="download_languages_item_content_description_selected_state">Zvolený</string>
+
+    <!-- Title for the dialog used by the translations feature to confirm deleting a language.
+    The dialog will be presented when the user requests deletion of a language.
+    The first parameter is the name of the language, for example, "Spanish" and the second parameter is the size in kilobytes or megabytes of the language file. -->
+    <string name="delete_language_file_dialog_title">Odstrániť %1$s (%2$s)?</string>
+    <!-- Additional information for the dialog used by the translations feature to confirm deleting a language. The first parameter is the name of the application, for example, "Fenix". -->
+    <string name="delete_language_file_dialog_message">Ak tento jazyk odstránite, %1$s počas prekladania stiahne do vyrovnávacej pamäte len čiastočné údaje pre daný jazyk.</string>
+    <!-- Title for the dialog used by the translations feature to confirm deleting all languages file.
+    The dialog will be presented when the user requests deletion of all languages file.
+    The first parameter is the size in kilobytes or megabytes of the language file. -->
+    <string name="delete_language_all_languages_file_dialog_title">Odstrániť všetky jazyky (%1$s)?</string>
+    <!-- Additional information for the dialog used by the translations feature to confirm deleting all languages file. The first parameter is the name of the application, for example, "Fenix". -->
+    <string name="delete_language_all_languages_file_dialog_message">Ak odstránite všetky jazyky, %1$s počas prekladania stiahne do vyrovnávacej pamäte len čiastočné údaje daných jazykov.</string>
+    <!-- Button text on the dialog used by the translations feature to confirm deleting a language. -->
+    <string name="delete_language_file_dialog_positive_button_text">Odstrániť</string>
+    <!-- Button text on the dialog used by the translations feature to cancel deleting a language. -->
+    <string name="delete_language_file_dialog_negative_button_text">Zrušiť</string>
+
+    <!-- Title for the data saving mode warning dialog used by the translations feature.
+    This dialog will be presented when the user attempts to download a language or perform
+    a translation without the necessary language files downloaded first when Android's data saver mode is enabled and the user is not using WiFi.
+    The first parameter is the size in kilobytes or megabytes of the language file.-->
+    <string name="download_language_file_dialog_title">Stiahnuť potrebné jazykové údaje v režime šetrenia dát (%1$s)?</string>
+    <!-- Additional information for the data saving mode warning dialog used by the translations feature. This text explains the reason a download is required for a translation. -->
+    <string name="download_language_file_dialog_message_all_languages">Aby boli preklady súkromné, sťahujeme čiastočné údaje pre jazyky do vašej vyrovnávacej pamäte.</string>
+    <!-- Checkbox label text on the data saving mode warning dialog used by the translations feature. This checkbox allows users to ignore the data usage warnings. -->
+    <string name="download_language_file_dialog_checkbox_text">Vždy sťahovať v režime šetrenia dát</string>
+    <!-- Button text on the data saving mode warning dialog used by the translations feature to allow users to confirm they wish to continue and download the language file. -->
+    <string name="download_language_file_dialog_positive_button_text">Stiahnuť</string>
+    <!-- Button text on the data saving mode warning dialog used by the translations feature to allow users to confirm they wish to continue and download the language file and perform a translation. -->
+    <string name="download_language_file_dialog_positive_button_text_all_languages">Stiahnuť jazyk a preložiť</string>
+    <!-- Button text on the data saving mode warning dialog used by the translations feature to allow users to cancel the action and not perform a download of the language file. -->
+    <string name="download_language_file_dialog_negative_button_text">Zrušiť</string>
+
+    <!-- Debug drawer -->
+    <!-- The user-facing title of the Debug Drawer feature. -->
+    <string name="debug_drawer_title">Nástroje na ladenie</string>
+    <!-- Content description (not visible, for screen readers etc.): Navigate back within the debug drawer. -->
+    <string name="debug_drawer_back_button_content_description">Prejsť dozadu</string>
+    <!-- The title of the Tab Tools feature in the Debug Drawer. -->
+    <string name="debug_drawer_tab_tools_title">Nástroje pre karty</string>
+    <!-- The title of the tab count section in Tab Tools. -->
+    <string name="debug_drawer_tab_tools_tab_count_title">Počet kariet</string>
+    <!-- The active tab count category in the tab count section in Tab Tools. -->
+    <string name="debug_drawer_tab_tools_tab_count_normal">Aktívne</string>
+    <!-- The inactive tab count category in the tab count section in Tab Tools. -->
+    <string name="debug_drawer_tab_tools_tab_count_inactive">Neaktívne</string>
+    <!-- The private tab count category in the tab count section in Tab Tools. -->
+    <string name="debug_drawer_tab_tools_tab_count_private">Súkromné</string>
+    <!-- The total tab count category in the tab count section in Tab Tools. -->
+    <string name="debug_drawer_tab_tools_tab_count_total">Celkovo</string>
+    <!-- The title of the tab creation tool section in Tab Tools. -->
+    <string name="debug_drawer_tab_tools_tab_creation_tool_title">Nástroj na vytváranie kariet</string>
+    <!-- The label of the text field in the tab creation tool. -->
+    <string name="debug_drawer_tab_tools_tab_creation_tool_text_field_label">Počet kariet, ktorý chcete vytvoriť</string>
+    <!-- The button text to add tabs to the active tab group in the tab creation tool. -->
+    <string name="debug_drawer_tab_tools_tab_creation_tool_button_text_active">Pridať medzi aktívne karty</string>
+    <!-- The button text to add tabs to the inactive tab group in the tab creation tool. -->
+    <string name="debug_drawer_tab_tools_tab_creation_tool_button_text_inactive">Pridať medzi neaktívne karty</string>
+    <!-- The button text to add tabs to the private tab group in the tab creation tool. -->
+    <string name="debug_drawer_tab_tools_tab_creation_tool_button_text_private">Pridať medzi súkromné karty</string>
 </resources>

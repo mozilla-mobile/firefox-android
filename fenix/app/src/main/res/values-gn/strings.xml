@@ -215,6 +215,8 @@
     <string name="resync_button_content_description">Mbojuajujey</string>
     <!-- Browser menu button that opens the find in page menu -->
     <string name="browser_menu_find_in_page">Eheka kuatiaroguépe</string>
+    <!-- Browser menu button that opens the translations dialog, which has options to translate the current browser page. -->
+    <string name="browser_menu_translations">Emoñe’ẽasa kuatiarogue</string>
     <!-- Browser menu button that saves the current tab to a collection -->
     <string name="browser_menu_save_to_collection_2">Eñongatu mbyatyhápe</string>
     <!-- Browser menu button that open a share menu to share the current site -->
@@ -328,13 +330,18 @@
     <string name="onboarding_home_enable_notifications_negative_button">Ani ko’ág̃a</string>
 
     <!-- Juno first user onboarding flow experiment, strings are marked unused as they are only referenced by Nimbus experiments. -->
+    <!-- Description for learning more about our privacy notice. -->
+    <string name="juno_onboarding_privacy_notice_text">Firefox marandu’i ñemigua</string>
+    <!-- Text for the button to set firefox as default browser on the device -->
     <!-- Title for set firefox as default browser screen used by Nimbus experiments. -->
     <string name="juno_onboarding_default_browser_title_nimbus_2">Rovy’ã eimére tekorosãme</string>
     <!-- Description for set firefox as default browser screen used by Nimbus experiments. -->
-    <string name="juno_onboarding_default_browser_description_nimbus_2">Ore kundahára ojeykekóva viru rehegua’ỹva oipytyvõ mba’apohaguasukuéra nde rapykuehóvo ñemihápe ñandutípe.\n\nEikuaavéta ore marandu’i ñemiguápe.</string>
+    <string name="juno_onboarding_default_browser_description_nimbus_3">Ore kundahára oykeko atyguasu viru’ỹgua oipytyvõ omboykévo umi mba’apohaguasu ani nde rapykueho ñanduti rupive.</string>
+    <!-- Description for set firefox as default browser screen used by Nimbus experiments. -->
+    <string name="juno_onboarding_default_browser_description_nimbus_2" moz:RemovedIn="124" tools:ignore="UnusedResources">Ore kundahára ojeykekóva viru rehegua’ỹva oipytyvõ mba’apohaguasukuéra nde rapykuehóvo ñemihápe ñandutípe.\n\nEikuaavéta ore marandu’i ñemiguápe.</string>
     <!-- Text for the link to the privacy notice webpage for set as firefox default browser screen.
     This is part of the string with the key "juno_onboarding_default_browser_description". -->
-    <string name="juno_onboarding_default_browser_description_link_text" tools:ignore="UnusedResources">marandu’i ñemiguáva</string>
+    <string name="juno_onboarding_default_browser_description_link_text" moz:RemovedIn="124" tools:ignore="UnusedResources">marandu’i ñemiguáva</string>
 
     <!-- Text for the button to set firefox as default browser on the device -->
     <string name="juno_onboarding_default_browser_positive_button" tools:ignore="UnusedResources">Ejapo kundahára ijypyguávarõ</string>
@@ -724,6 +731,8 @@
     <string name="preferences_sync_bookmarks">Techaukaha</string>
     <!-- Preference for syncing logins -->
     <string name="preferences_sync_logins">Tembiapo ñepyrũ</string>
+    <!-- Preference for syncing passwords -->
+    <string name="preferences_sync_logins_2" tools:ignore="UnusedResources">Ñe’ẽñemi</string>
     <!-- Preference for syncing tabs -->
     <string name="preferences_sync_tabs_2">Tendayke ijurujáva</string>
     <!-- Preference for signing out -->
@@ -750,6 +759,8 @@
 
     <!-- Preference for syncing credit cards -->
     <string name="preferences_sync_credit_cards">Kuatia’atã ñemurã</string>
+    <!-- Preference for syncing payment methods -->
+    <string name="preferences_sync_credit_cards_2" tools:ignore="UnusedResources">Mba’éicha ehepyme’ẽta</string>
     <!-- Preference for syncing addresses -->
     <string name="preferences_sync_address">Kundaharape</string>
 
@@ -1348,6 +1359,10 @@
     <!-- Text shown in the notification that pops up to remind the user that a private browsing session is active. -->
     <string name="notification_pbm_delete_text_2">Emboty tendayke ñemigua</string>
 
+    <!-- Text shown in the notification that pops up to remind the user that a private browsing session is active for Android 14+ -->
+    <string name="notification_erase_title_android_14">¿Emboty tendayke ñemigua?</string>
+    <string name="notification_erase_text_android_14">Eikutu ha embosyryry ko marandu’i emboty hag̃ua umi tendayke ñemigua.</string>
+
     <!-- Name of the marketing notification channel. Displayed in the "App notifications" system settings for the app -->
     <string name="notification_marketing_channel_name">Jehepyme’ẽrã</string>
 
@@ -1714,8 +1729,12 @@
 
     <!-- Preference for managing the settings for logins and passwords in Fenix -->
     <string name="preferences_passwords_logins_and_passwords">Tembiapo ñepyrũ ha ñe’ẽñemi</string>
+    <!-- Preference for managing the settings for logins and passwords in Fenix -->
+    <string name="preferences_passwords_logins_and_passwords_2" tools:ignore="UnusedResources">Ñe’ẽñemi</string>
     <!-- Preference for managing the saving of logins and passwords in Fenix -->
     <string name="preferences_passwords_save_logins">Eñongatu tembiapo ñepyrũ ha ñe’ẽñemi</string>
+    <!-- Preference for managing the saving of logins and passwords in Fenix -->
+    <string name="preferences_passwords_save_logins_2" tools:ignore="UnusedResources">Eñongatu ñe’ẽñemi</string>
     <!-- Preference option for asking to save passwords in Fenix -->
     <string name="preferences_passwords_save_logins_ask_to_save">Ejerure ñemoneĩ eñongatu hag̃ua</string>
     <!-- Preference option for never saving passwords in Fenix -->
@@ -1734,16 +1753,25 @@
     <!-- Preference option for adding a login -->
     <string name="preferences_logins_add_login">Embojuaju jeike</string>
 
+    <!-- Preference option for adding a password -->
+    <string name="preferences_logins_add_login_2" tools:ignore="UnusedResources">Embojuaju ñe’ẽñemi</string>
+
     <!-- Preference for syncing saved logins in Fenix -->
     <string name="preferences_passwords_sync_logins">Embojuehe tembiapo ñepyrũ</string>
+    <!-- Preference for syncing saved passwords in Fenix -->
+    <string name="preferences_passwords_sync_logins_2" tools:ignore="UnusedResources">Embojuehe ñe’ẽñemi</string>
     <!-- Preference for syncing saved logins in Fenix, when not signed in-->
     <string name="preferences_passwords_sync_logins_across_devices">Embojuehe tembiapo ñepyrũ mba’e’oka pa’ũme</string>
     <!-- Preference to access list of saved logins -->
     <string name="preferences_passwords_saved_logins">Tembiapo ñepyrũ ñongatupyre</string>
+    <!-- Preference to access list of saved passwords -->
+    <string name="preferences_passwords_saved_logins_2" tools:ignore="UnusedResources">Ñe’ẽñemi ñongatupyre</string>
     <!-- Description of empty list of saved passwords. Placeholder is replaced with app name.  -->
     <string name="preferences_passwords_saved_logins_description_empty_text">Ko’ápe ojehecháta tembiapo ñepyrũ eñongatu térã embojuehéva %s ndive.</string>
     <!-- Preference to access list of saved logins -->
     <string name="preferences_passwords_saved_logins_description_empty_learn_more_link">Eikuaave Sync rehegua</string>
+    <!-- Clickable text for opening an external link for more information about Sync. -->
+    <string name="preferences_passwords_saved_logins_description_empty_learn_more_link_2" tools:ignore="UnusedResources">Eikuaave ñembojuehe rehegua</string>
     <!-- Preference to access list of login exceptions that we never save logins for -->
     <string name="preferences_passwords_exceptions">Oĩ’ỹva</string>
     <!-- Empty description of list of login exceptions that we never save logins for -->
@@ -1754,6 +1782,8 @@
     <string name="preferences_passwords_exceptions_remove_all">Emboguete opaite oĩ’ỹva</string>
     <!-- Hint for search box in logins list -->
     <string name="preferences_passwords_saved_logins_search">Eheka tembiapo ñepyrũ</string>
+    <!-- Hint for search box in passwords list -->
+    <string name="preferences_passwords_saved_logins_search_2" tools:ignore="UnusedResources">Eheka ñe’ẽñemi</string>
     <!-- The header for the site that a login is for -->
     <string name="preferences_passwords_saved_logins_site">Tenda</string>
     <!-- The header for the username for a login -->
@@ -1806,6 +1836,9 @@
     <!-- Content description (not visible, for screen readers etc.): Sort saved logins dropdown menu chevron icon -->
     <string name="saved_logins_menu_dropdown_chevron_icon_content_description">Emoĩporã poravorã tembiapo ñepyrũgua</string>
 
+    <!-- Content description (not visible, for screen readers etc.) -->
+    <string name="saved_logins_menu_dropdown_chevron_icon_content_description_2" tools:ignore="UnusedResources">Emoĩporã ñe’ẽñemi poravorã</string>
+
     <!-- Autofill -->
     <!-- Preference and title for managing the autofill settings -->
     <string name="preferences_autofill">Myanyhẽ jehegui</string>
@@ -1813,9 +1846,13 @@
     <string name="preferences_addresses">Kundaharape</string>
     <!-- Preference and title for managing the settings for credit cards -->
     <string name="preferences_credit_cards">Kuatia’atã ñemurã</string>
+    <!-- Preference and title for managing the settings for payment methods -->
+    <string name="preferences_credit_cards_2" tools:ignore="UnusedResources">Mba’éicha ehepyme’ẽta</string>
     <!-- Preference for saving and autofilling credit cards -->
     <string name="preferences_credit_cards_save_and_autofill_cards">Eñongatu ha emyanyhẽ kuatia’atã</string>
 
+    <!-- Preference for saving and autofilling credit cards -->
+    <string name="preferences_credit_cards_save_and_autofill_cards_2" tools:ignore="UnusedResources">Eñongatu ha emyanyhẽ mba’éicha ehepyme’ẽta</string>
     <!-- Preference summary for saving and autofilling credit card data -->
     <string name="preferences_credit_cards_save_and_autofill_cards_summary">Mba’ekuaarã ipapapypa</string>
     <!-- Preference option for syncing credit cards across devices. This is displayed when the user is not signed into sync -->
@@ -1825,8 +1862,12 @@
     <!-- Preference option for adding a credit card -->
     <string name="preferences_credit_cards_add_credit_card">Embojuaju kuatia’atã ñemurã</string>
 
+    <!-- Preference option for adding a card -->
+    <string name="preferences_credit_cards_add_credit_card_2" tools:ignore="UnusedResources">Embojuaju kuatia’atã</string>
     <!-- Preference option for managing saved credit cards -->
     <string name="preferences_credit_cards_manage_saved_cards">Eñangareko kuatia’atã ñongatupyrére</string>
+    <!-- Preference option for managing saved cards -->
+    <string name="preferences_credit_cards_manage_saved_cards_2" tools:ignore="UnusedResources">Eñangareko kuatia’atã</string>
     <!-- Preference option for adding an address -->
     <string name="preferences_addresses_add_address">Embojuaju kundaharape</string>
     <!-- Preference option for managing saved addresses -->
@@ -1834,6 +1875,8 @@
     <!-- Preference for saving and autofilling addresses -->
     <string name="preferences_addresses_save_and_autofill_addresses">Eñongatu ha emyanyhẽ kundaharape</string>
 
+    <!-- Preference for saving and filling addresses -->
+    <string name="preferences_addresses_save_and_autofill_addresses_2" tools:ignore="UnusedResources">Eñongatu ha emyanyhẽ kundaharape</string>
     <!-- Preference summary for saving and autofilling address data -->
     <string name="preferences_addresses_save_and_autofill_addresses_summary">Emoĩ marandu ipapapy, ñanduti veve ha kundaharape ñemondorãva</string>
 
@@ -1857,6 +1900,8 @@
     <string name="credit_cards_delete_card_button">Emboguete kuatia’atã</string>
     <!-- The text for the confirmation message of "Delete card" dialog -->
     <string name="credit_cards_delete_dialog_confirmation">¿Emboguesépa añetehápe ko kuatia’atã ñemurã?</string>
+    <!-- The text for the confirmation message of "Delete card" dialog -->
+    <string name="credit_cards_delete_dialog_confirmation_2" tools:ignore="UnusedResources">¿Emboguete kuatia’atã?</string>
     <!-- The text for the positive button on "Delete card" dialog -->
     <string name="credit_cards_delete_dialog_button">Mboguete</string>
     <!-- The title for the "Save" menu item for saving a credit card -->
@@ -1874,6 +1919,8 @@
 
     <!-- Error message for credit card name on card validation -->
     <string name="credit_cards_name_on_card_validation_error_message">Ikatúpiko emyanyhẽ ko kora</string>
+    <!-- Error message for card name on card validation -->
+    <string name="credit_cards_name_on_card_validation_error_message_2" tools:ignore="UnusedResources">Embojuaju téra</string>
     <!-- Message displayed in biometric prompt displayed for authentication before allowing users to view their saved credit cards -->
     <string name="credit_cards_biometric_prompt_message">Embojuruja ehecha hag̃ua kuatia’atã ñongatupyre</string>
     <!-- Title of warning dialog if users have no device authentication set up -->
@@ -2033,6 +2080,8 @@
     <string name="dialog_delete_negative">Heja</string>
     <!--  The saved login options menu description. -->
     <string name="login_options_menu">Jeporavorã tembiapo ñepyrũgua</string>
+    <!--  The saved password options menu description. -->
+    <string name="login_options_menu_2" tools:ignore="UnusedResources">Ñe’ẽñemi jeporavorã</string>
     <!--  The editable text field for a login's web address. -->
     <string name="saved_login_hostname_description">Moñe’ẽha kora isako’ikuaáava ñanduti kundaharape rembiapo ñepyrũme.</string>
     <!--  The editable text field for a login's username. -->
@@ -2041,14 +2090,24 @@
     <string name="saved_login_password_description">Moñe’ẽha kora isako’ikuaáava ñe’ẽñemi rembiapo ñepyrũme.</string>
     <!--  The button description to save changes to an edited login. -->
     <string name="save_changes_to_login">Eñongatu moambue tembiapo ñepyrũme.</string>
+    <!--  The button description to save changes to an edited password. -->
+    <string name="save_changes_to_login_2" tools:ignore="UnusedResources">Moambue ñongatu.</string>
     <!--  The page title for editing a saved login. -->
     <string name="edit">Mbosako’i</string>
+    <!--  The page title for editing a saved password. -->
+    <string name="edit_2" tools:ignore="UnusedResources">Embosako’i ñe’ẽñemi</string>
     <!--  The page title for adding new login. -->
     <string name="add_login">Embojuaju terarenda pyahu</string>
+    <!--  The page title for adding new password. -->
+    <string name="add_login_2" tools:ignore="UnusedResources">Embojuaju ñe’ẽñemi</string>
     <!--  The error message in add/edit login view when password field is blank. -->
     <string name="saved_login_password_required">Tekotevẽ ñe’ẽñemi</string>
+    <!--  Error text displayed underneath the password field when it is in an error case. -->
+    <string name="saved_login_password_required_2" tools:ignore="UnusedResources">Emoinge ñe’ẽñemi</string>
     <!--  The error message in add login view when username field is blank. -->
     <string name="saved_login_username_required">Poruhára réra jerurepyre</string>
+    <!--  The error message in add login view when username field is blank. -->
+    <string name="saved_login_username_required_2" tools:ignore="UnusedResources">Ehai poruhára réra</string>
     <!--  The error message in add login view when hostname field is blank. -->
     <string name="saved_login_hostname_required" tools:ignore="UnusedResources">Mohendahavusu réra jerurepyre</string>
     <!-- Voice search button content description  -->
@@ -2308,17 +2367,17 @@
     <!-- Clickable text from the contextual onboarding card that links to review quality check support article. -->
     <string name="review_quality_check_contextual_onboarding_learn_more_link">Eikuaave</string>
     <!-- Caption text to be displayed in review quality check contextual onboarding card above the opt-in button. First parameter is the Fakespot product name. Following parameters are for clickable texts defined in review_quality_check_contextual_onboarding_privacy_policy and review_quality_check_contextual_onboarding_terms_use. In the phrase "Fakespot by Mozilla", "by" can be localized. Does not need to stay by. -->
-    <string name="review_quality_check_contextual_onboarding_caption" moz:RemovedIn="121" tools:ignore="UnusedResources">Eiporavóvo “Héẽ, eiporu”, emoneĩ %1$s %2$s-gua ha %3$s Mozilla mba’e.</string>
+    <string name="review_quality_check_contextual_onboarding_caption">Eiporavóvo “Héẽ, eiporu”, emoneĩ %1$s %2$s-gua ha %3$s Mozilla mba’e.</string>
     <!-- Caption text to be displayed in review quality check contextual onboarding card above the opt-in button. Parameter is the Fakespot product name. After the colon, what appears are two links, each on their own line. The first link is to a Privacy policy (review_quality_check_contextual_onboarding_privacy_policy_2). The second link is to Terms of use (review_quality_check_contextual_onboarding_terms_use_2). -->
-    <string name="review_quality_check_contextual_onboarding_caption_2">Eiporavóvo “H’éẽ, eiporu”, emoneĩ upeigua %1$s mba’áva:</string>
+    <string name="review_quality_check_contextual_onboarding_caption_2" moz:RemovedIn="123" tools:ignore="UnusedResources">Eiporavóvo “H’éẽ, eiporu”, emoneĩ upeigua %1$s mba’áva:</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot privacy policy. -->
-    <string name="review_quality_check_contextual_onboarding_privacy_policy" moz:RemovedIn="121" tools:ignore="UnusedResources">temiñemi porureko</string>
+    <string name="review_quality_check_contextual_onboarding_privacy_policy">temiñemi porureko</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot privacy policy. -->
-    <string name="review_quality_check_contextual_onboarding_privacy_policy_2">Temiñemi porureko</string>
+    <string name="review_quality_check_contextual_onboarding_privacy_policy_2" moz:RemovedIn="123" tools:ignore="UnusedResources">Temiñemi porureko</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot terms of use. -->
-    <string name="review_quality_check_contextual_onboarding_terms_use" moz:RemovedIn="121" tools:ignore="UnusedResources">temiñemi jeporurã</string>
+    <string name="review_quality_check_contextual_onboarding_terms_use">temiñemi jeporurã</string>
     <!-- Clickable text from the review quality check contextual onboarding card that links to Fakespot terms of use. -->
-    <string name="review_quality_check_contextual_onboarding_terms_use_2">Jeporurã reko</string>
+    <string name="review_quality_check_contextual_onboarding_terms_use_2" moz:RemovedIn="123" tools:ignore="UnusedResources">Jeporurã reko</string>
     <!-- Text for opt-in button from the review quality check contextual onboarding card. -->
     <string name="review_quality_check_contextual_onboarding_primary_button_text">Héẽ, eiporu</string>
     <!-- Text for opt-out button from the review quality check contextual onboarding card. -->
@@ -2376,6 +2435,11 @@
     <!-- Content description for headings announced by accessibility service. The first parameter is the text of the heading. Talkback will announce the first parameter and then speak the word "Heading" indicating to the user that this text is a heading for a section. -->
     <string name="a11y_heading">%s, Moakãha</string>
 
+    <!-- Title for dialog displayed when trying to access links present in a text. -->
+    <string name="a11y_links_title">Joajuhakuéra</string>
+    <!-- Additional content description for text bodies that contain urls. -->
+    <string name="a11y_links_available">Juajuhakuéra eiporukuaáva</string>
+
     <!-- Translations feature-->
 
     <!-- Translation request dialog -->
@@ -2393,12 +2457,25 @@
     <string name="translations_bottom_sheet_translate_to">Emoñe’ẽasa pe</string>
     <!-- Button text on the translations dialog to dismiss the dialog and return to the browser. -->
     <string name="translations_bottom_sheet_negative_button">Ani ko’ág̃a</string>
+    <!-- Button text on the translations dialog when a translation error appears, used to dismiss the dialog and return to the browser. -->
+    <string name="translations_bottom_sheet_negative_button_error">Oĩma</string>
     <!-- Button text on the translations dialog to begin a translation of the website. -->
     <string name="translations_bottom_sheet_positive_button">Moñe’ẽasa</string>
+    <!-- Button text on the translations dialog when a translation error appears. -->
+    <string name="translations_bottom_sheet_positive_button_error">Eha’ãjey</string>
     <!-- Inactive button text on the translations dialog that indicates a translation is currently in progress. This button will be accompanied by a loading icon. -->
     <string name="translations_bottom_sheet_translating_in_progress">Amoñe’ẽasahína</string>
     <!-- Button content description (not visible, for screen readers etc.) for the translations dialog translate button that indicates a translation is currently in progress. -->
     <string name="translations_bottom_sheet_translating_in_progress_content_description">Ñe’ẽasa oñemboguatáva</string>
+
+    <!-- The title of the warning card informs the user that a translation could not be completed. -->
+    <string name="translation_error_could_not_translate_warning_text">Iñapañuãi emoñe’ẽasakuévo. Eha’ãjey ag̃amieve.</string>
+    <!-- The title of the warning card informs the user that the list of languages cannot be loaded. -->
+    <string name="translation_error_could_not_load_languages_warning_text">Nahenyhẽkuaái ñe’ẽnguéra. Ehechajey oikópa ne ñanduti ha eha’ãjey ag̃ave.</string>
+    <!-- The title of the warning card informs the user that a language is not supported. The first parameter is the name of the language that is not supported. -->
+    <string name="translation_error_language_not_supported_warning_text">Rombyasy, noroykekói gueteri %1$s.</string>
+    <!-- Button text on the warning card when a language is not supported. The link will take the user to a page to a support page about translations. -->
+    <string name="translation_error_language_not_supported_learn_more">Kuaave</string>
 
     <!-- Translations options dialog -->
     <!-- Title of the translation options dialog that allows a user to set their translation options for the site the user is currently on. -->
@@ -2534,8 +2611,12 @@
     <string name="download_language_file_dialog_negative_button_text">Heja</string>
 
     <!-- Debug drawer -->
+    <!-- The user-facing title of the Debug Drawer feature. -->
+    <string name="debug_drawer_title">Temiporu mopotĩha</string>
+    <!-- Content description (not visible, for screen readers etc.): Navigate back within the debug drawer. -->
+    <string name="debug_drawer_back_button_content_description">Eikundaha tapykuévo</string>
     <!-- The title of the Tab Tools feature in the Debug Drawer. -->
-    <string name="debug_drawer_tab_tools_title" tools:ignore="UnusedResources">Tendayke rembiporu</string>
+    <string name="debug_drawer_tab_tools_title">Tendayke rembiporu</string>
     <!-- The title of the tab count section in Tab Tools. -->
     <string name="debug_drawer_tab_tools_tab_count_title">Tendayke papapy</string>
     <!-- The active tab count category in the tab count section in Tab Tools. -->
@@ -2546,4 +2627,14 @@
     <string name="debug_drawer_tab_tools_tab_count_private">Ñemigua</string>
     <!-- The total tab count category in the tab count section in Tab Tools. -->
     <string name="debug_drawer_tab_tools_tab_count_total">Opavavete</string>
+    <!-- The title of the tab creation tool section in Tab Tools. -->
+    <string name="debug_drawer_tab_tools_tab_creation_tool_title">Tembiporu tendayke moheñoiha</string>
+    <!-- The label of the text field in the tab creation tool. -->
+    <string name="debug_drawer_tab_tools_tab_creation_tool_text_field_label">Mboýpa emoheñóita tendayke</string>
+    <!-- The button text to add tabs to the active tab group in the tab creation tool. -->
+    <string name="debug_drawer_tab_tools_tab_creation_tool_button_text_active">Embojuaju tendayke oikóva</string>
+    <!-- The button text to add tabs to the inactive tab group in the tab creation tool. -->
+    <string name="debug_drawer_tab_tools_tab_creation_tool_button_text_inactive">Embojuaju tendayke ojeporu’ỹva</string>
+    <!-- The button text to add tabs to the private tab group in the tab creation tool. -->
+    <string name="debug_drawer_tab_tools_tab_creation_tool_button_text_private">Embojuaju tendayke ñemiguáva</string>
 </resources>
