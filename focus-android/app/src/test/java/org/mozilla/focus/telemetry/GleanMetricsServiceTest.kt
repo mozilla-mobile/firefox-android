@@ -5,8 +5,10 @@
 package org.mozilla.focus.telemetry
 
 import android.content.Context
+import kotlinx.coroutines.runBlocking
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.concept.engine.Engine
+import mozilla.components.feature.search.telemetry.SearchProviderModel
 import mozilla.components.feature.search.telemetry.ads.AdsTelemetry
 import mozilla.components.feature.search.telemetry.incontent.InContentTelemetry
 import org.junit.Test
@@ -23,15 +25,18 @@ class GleanMetricsServiceTest {
         val engine = mock(Engine::class.java)
         val adsExtension = mock(AdsTelemetry::class.java)
         val searchExtension = mock(InContentTelemetry::class.java)
+        val providerList: List<SearchProviderModel> = mock()
         doReturn(engine).`when`(components).engine
         doReturn(store).`when`(components).store
         doReturn(adsExtension).`when`(components).adsTelemetry
         doReturn(searchExtension).`when`(components).searchTelemetry
         val glean = GleanMetricsService(mock(Context::class.java))
 
-        glean.installSearchTelemetryExtensions(components)
+        runBlocking {
+            glean.installSearchTelemetryExtensions(components, providerList)
 
-        verify(adsExtension).install(engine, store)
-        verify(searchExtension).install(engine, store)
+            verify(adsExtension).install(engine, store, providerList)
+            verify(searchExtension).install(engine, store, providerList)
+        }
     }
 }

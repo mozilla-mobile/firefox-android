@@ -14,7 +14,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.StrictMode
-import android.os.SystemClock
 import android.text.TextUtils
 import android.text.format.DateUtils
 import android.util.AttributeSet
@@ -31,7 +30,6 @@ import androidx.annotation.RequiresApi
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.widget.Toolbar
-import androidx.core.app.NotificationManagerCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -63,7 +61,6 @@ import mozilla.components.feature.media.ext.findActiveMediaTab
 import mozilla.components.feature.privatemode.notification.PrivateNotificationFeature
 import mozilla.components.feature.search.BrowserStoreSearchAdapter
 import mozilla.components.service.fxa.sync.SyncReason
-import mozilla.components.support.base.ext.areNotificationsEnabledSafe
 import mozilla.components.support.base.feature.ActivityResultHandler
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.log.logger.Logger
@@ -128,7 +125,6 @@ import org.mozilla.fenix.messaging.FenixNimbusMessagingController
 import org.mozilla.fenix.messaging.MessageNotificationWorker
 import org.mozilla.fenix.nimbus.FxNimbus
 import org.mozilla.fenix.onboarding.ReEngagementNotificationWorker
-import org.mozilla.fenix.onboarding.ensureMarketingChannelExists
 import org.mozilla.fenix.perf.MarkersActivityLifecycleCallbacks
 import org.mozilla.fenix.perf.MarkersFragmentLifecycleCallbacks
 import org.mozilla.fenix.perf.Performance
@@ -155,12 +151,6 @@ import java.util.Locale
  */
 @SuppressWarnings("TooManyFunctions", "LargeClass", "LongMethod")
 open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
-    // DO NOT MOVE ANYTHING ABOVE THIS, GETTING INIT TIME IS CRITICAL
-    // we need to store startup timestamp for warm startup. we cant directly store
-    // inside AppStartupTelemetry since that class lives inside components and
-    // components requires context to access.
-    protected val homeActivityInitTimeStampNanoSeconds = SystemClock.elapsedRealtimeNanos()
-
     private lateinit var binding: ActivityHomeBinding
     lateinit var themeManager: ThemeManager
     lateinit var browsingModeManager: BrowsingModeManager
@@ -269,34 +259,32 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
         binding = ActivityHomeBinding.inflate(layoutInflater)
 
-        if (Config.channel.isNightlyOrDebug) {
-            lifecycleScope.launch {
-                val debugSettingsRepository = DefaultDebugSettingsRepository(
-                    context = this@HomeActivity,
-                    writeScope = this,
-                )
+        lifecycleScope.launch {
+            val debugSettingsRepository = DefaultDebugSettingsRepository(
+                context = this@HomeActivity,
+                writeScope = this,
+            )
 
-                debugSettingsRepository.debugDrawerEnabled
-                    .distinctUntilChanged()
-                    .collect { enabled ->
-                        with(binding.debugOverlay) {
-                            if (enabled) {
-                                visibility = View.VISIBLE
+            debugSettingsRepository.debugDrawerEnabled
+                .distinctUntilChanged()
+                .collect { enabled ->
+                    with(binding.debugOverlay) {
+                        if (enabled) {
+                            visibility = View.VISIBLE
 
-                                setContent {
-                                    FenixOverlay(
-                                        browserStore = components.core.store,
-                                        inactiveTabsEnabled = settings().inactiveTabsAreEnabled,
-                                    )
-                                }
-                            } else {
-                                setContent {}
-
-                                visibility = View.GONE
+                            setContent {
+                                FenixOverlay(
+                                    browserStore = components.core.store,
+                                    inactiveTabsEnabled = settings().inactiveTabsAreEnabled,
+                                )
                             }
+                        } else {
+                            setContent {}
+
+                            visibility = View.GONE
                         }
                     }
-            }
+                }
         }
 
         setContentView(binding.root)
@@ -345,8 +333,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
             if (settings().showHomeOnboardingDialog && components.fenixOnboarding.userHasBeenOnboarded()) {
                 navHost.navController.navigate(NavGraphDirections.actionGlobalHomeOnboardingDialog())
             }
-
-            showNotificationPermissionPromptIfRequired()
         }
 
         Performance.processIntentIfPerformanceTest(intent, this)
@@ -443,30 +429,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         StartupTimeline.onActivityCreateEndHome(this) // DO NOT MOVE ANYTHING BELOW HERE.
     }
 
-    /**
-     * On Android 13 or above, prompt the user for notification permission at the start.
-     * Show the pre permission dialog to the user once if the notification are not enabled.
-     */
-    private fun showNotificationPermissionPromptIfRequired() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-            !NotificationManagerCompat.from(applicationContext).areNotificationsEnabledSafe() &&
-            settings().numberOfAppLaunches <= 1
-        ) {
-            // Recording the exposure event here to capture all users who met all criteria to receive
-            // the pre permission notification prompt
-            FxNimbus.features.prePermissionNotificationPrompt.recordExposure()
-
-            if (settings().notificationPrePermissionPromptEnabled) {
-                if (!settings().isNotificationPrePermissionShown) {
-                    navHost.navController.navigate(NavGraphDirections.actionGlobalHomeNotificationPermissionDialog())
-                }
-            } else {
-                // This will trigger the notification permission system dialog as app targets sdk 32.
-                ensureMarketingChannelExists(applicationContext)
-            }
-        }
-    }
-
     private fun maybeShowSplashScreen() {
         if (components.settings.isFirstSplashScreenShown) {
             return
@@ -555,7 +517,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         components.core.store.dispatch(SearchAction.RefreshSearchEnginesAction)
     }
 
-    override fun onStart() {
+    final override fun onStart() {
         // DO NOT MOVE ANYTHING ABOVE THIS getProfilerTime CALL.
         val startProfilerTime = components.core.engine.profiler?.getProfilerTime()
 
@@ -575,7 +537,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         ) // DO NOT MOVE ANYTHING BELOW THIS addMarker CALL.
     }
 
-    override fun onStop() {
+    final override fun onStop() {
         super.onStop()
 
         // Diagnostic breadcrumb for "Display already aquired" crash:
@@ -631,6 +593,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         outContent?.webUri = currentTabUrl?.let { Uri.parse(it) }
     }
 
+    @CallSuper
     override fun onDestroy() {
         super.onDestroy()
 
@@ -654,7 +617,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         }
     }
 
-    override fun onConfigurationChanged(newConfig: Configuration) {
+    final override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
 
         // Diagnostic breadcrumb for "Display already aquired" crash:
@@ -664,7 +627,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         )
     }
 
-    override fun recreate() {
+    final override fun recreate() {
         // Diagnostic breadcrumb for "Display already aquired" crash:
         // https://github.com/mozilla-mobile/android-components/issues/7960
         breadcrumb(
@@ -749,12 +712,12 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         else -> super.onCreateView(parent, name, context, attrs)
     }
 
-    override fun onActionModeStarted(mode: ActionMode?) {
+    final override fun onActionModeStarted(mode: ActionMode?) {
         actionMode = mode
         super.onActionModeStarted(mode)
     }
 
-    override fun onActionModeFinished(mode: ActionMode?) {
+    final override fun onActionModeFinished(mode: ActionMode?) {
         actionMode = null
         super.onActionModeFinished(mode)
     }
@@ -821,7 +784,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         return false
     }
 
-    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+    final override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
         ProfilerMarkers.addForDispatchTouchEvent(components.core.engine.profiler, ev)
         return super.dispatchTouchEvent(ev)
     }
@@ -882,6 +845,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
      * private mode directly before the content view is created. Returns the mode set by the intent
      * otherwise falls back to the last known mode.
      */
+    @VisibleForTesting
     internal fun getModeFromIntentOrLastKnown(intent: Intent?): BrowsingMode {
         intent?.toSafeIntent()?.let {
             if (it.hasExtra(PRIVATE_BROWSING_MODE)) {
@@ -934,7 +898,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
      * Returns the [supportActionBar], inflating it if necessary.
      * Everyone should call this instead of supportActionBar.
      */
-    override fun getSupportActionBarAndInflateIfNecessary(): ActionBar {
+    final override fun getSupportActionBarAndInflateIfNecessary(): ActionBar {
         if (!isToolbarInflated) {
             navigationToolbar = binding.navigationToolbarStub.inflate() as Toolbar
 
@@ -949,7 +913,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
     }
 
     @Suppress("SpreadOperator")
-    fun setupNavigationToolbar(vararg topLevelDestinationIds: Int) {
+    private fun setupNavigationToolbar(vararg topLevelDestinationIds: Int) {
         NavigationUI.setupWithNavController(
             navigationToolbar,
             navHost.navController,
@@ -1132,13 +1096,13 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         navController.navigate(NavGraphDirections.actionStartupHome())
     }
 
-    override fun attachBaseContext(base: Context) {
+    final override fun attachBaseContext(base: Context) {
         base.components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
             super.attachBaseContext(base)
         }
     }
 
-    override fun getSystemService(name: String): Any? {
+    final override fun getSystemService(name: String): Any? {
         // Issue #17759 had a crash with the PerformanceInflater.kt on Android 5.0 and 5.1
         // when using the TimePicker. Since the inflater was created for performance monitoring
         // purposes and that we test on new android versions, this means that any difference in
@@ -1152,7 +1116,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         return super.getSystemService(name)
     }
 
-    protected open fun createBrowsingModeManager(initialMode: BrowsingMode): BrowsingModeManager {
+    private fun createBrowsingModeManager(initialMode: BrowsingMode): BrowsingModeManager {
         return DefaultBrowsingModeManager(initialMode, components.settings) { newMode ->
             updateSecureWindowFlags(newMode)
             themeManager.currentTheme = newMode
@@ -1169,7 +1133,7 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
         }
     }
 
-    protected open fun createThemeManager(): ThemeManager {
+    private fun createThemeManager(): ThemeManager {
         return DefaultThemeManager(browsingModeManager.mode, this)
     }
 
@@ -1220,7 +1184,8 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
      *  Indicates if the user should be redirected to the [BrowserFragment] or to the [HomeFragment],
      *  links from an external apps should always opened in the [BrowserFragment].
      */
-    fun shouldStartOnHome(intent: Intent? = this.intent): Boolean {
+    @VisibleForTesting
+    internal fun shouldStartOnHome(intent: Intent? = this.intent): Boolean {
         return components.strictMode.resetAfter(StrictMode.allowThreadDiskReads()) {
             // We only want to open on home when users tap the app,
             // we want to ignore other cases when the app gets open by users clicking on links.
@@ -1300,6 +1265,6 @@ open class HomeActivity : LocaleAwareAppCompatActivity(), NavHostActivity {
 
         // PWA must have been used within last 30 days to be considered "recently used" for the
         // telemetry purposes.
-        const val PWA_RECENTLY_USED_THRESHOLD = DateUtils.DAY_IN_MILLIS * 30L
+        private const val PWA_RECENTLY_USED_THRESHOLD = DateUtils.DAY_IN_MILLIS * 30L
     }
 }

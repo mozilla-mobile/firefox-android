@@ -21,7 +21,7 @@ object Versions {
 
     const val junit = "4.13.2"
     const val robolectric = "4.11.1"
-    const val mockito = "5.9.0"
+    const val mockito = "5.10.0"
     const val maven_ant_tasks = "2.1.3"
     const val jacoco = "0.8.11"
     const val okhttp = "4.11.0"
@@ -44,7 +44,7 @@ object Versions {
     const val leakcanary = "2.13"
 
     // DO NOT MODIFY MANUALLY. This is auto-updated along with GeckoView.
-    const val mozilla_glean = "56.0.0"
+    const val mozilla_glean = "56.1.0"
 
     const val material = "1.9.0"
     const val ksp = "1.0.11"
