@@ -3731,17 +3731,6 @@
         <error line="349" column="1" source="standard:max-line-length" />
         <error line="378" column="1" source="standard:max-line-length" />
         <error line="487" column="1" source="standard:max-line-length" />
-        <error line="548" column="1" source="standard:max-line-length" />
-        <error line="548" column="44" source="standard:parameter-list-wrapping" />
-        <error line="548" column="66" source="standard:parameter-list-wrapping" />
-        <error line="548" column="110" source="standard:parameter-list-wrapping" />
-        <error line="548" column="123" source="standard:parameter-list-wrapping" />
-        <error line="556" column="1" source="standard:max-line-length" />
-        <error line="556" column="42" source="standard:parameter-list-wrapping" />
-        <error line="556" column="64" source="standard:parameter-list-wrapping" />
-        <error line="556" column="108" source="standard:parameter-list-wrapping" />
-        <error line="556" column="123" source="standard:parameter-list-wrapping" />
-        <error line="556" column="149" source="standard:parameter-list-wrapping" />
     </file>
     <file name="components/feature/toolbar/src/test/java/mozilla/components/feature/toolbar/ToolbarBehaviorControllerTest.kt">
         <error line="148" column="1" source="standard:max-line-length" />

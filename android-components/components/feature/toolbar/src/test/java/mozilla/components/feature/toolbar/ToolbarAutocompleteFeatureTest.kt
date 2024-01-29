@@ -545,7 +545,11 @@ class ToolbarAutocompleteFeatureTest {
     }
 
     @Suppress("SameParameterValue")
-    private fun verifyNoAutocompleteResult(toolbar: TestToolbar, autocompleteDelegate: AutocompleteDelegate, query: String) = runTest {
+    private fun verifyNoAutocompleteResult(
+        toolbar: TestToolbar,
+        autocompleteDelegate: AutocompleteDelegate,
+        query: String,
+    ) = runTest {
         toolbar.autocompleteFilter!!(query, autocompleteDelegate)
 
         verify(autocompleteDelegate, never()).applyAutocompleteResult(any(), any())
@@ -553,7 +557,12 @@ class ToolbarAutocompleteFeatureTest {
         reset(autocompleteDelegate)
     }
 
-    private fun verifyAutocompleteResult(toolbar: TestToolbar, autocompleteDelegate: AutocompleteDelegate, query: String, result: AutocompleteResult) = runTest {
+    private fun verifyAutocompleteResult(
+        toolbar: TestToolbar,
+        autocompleteDelegate: AutocompleteDelegate,
+        query: String,
+        result: AutocompleteResult,
+    ) = runTest {
         toolbar.autocompleteFilter!!.invoke(query, autocompleteDelegate)
 
         verify(autocompleteDelegate, times(1)).applyAutocompleteResult(eq(result), any())
