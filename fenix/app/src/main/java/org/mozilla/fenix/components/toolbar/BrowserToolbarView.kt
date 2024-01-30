@@ -28,6 +28,7 @@ import org.mozilla.fenix.customtabs.CustomTabToolbarIntegration
 import org.mozilla.fenix.customtabs.CustomTabToolbarMenu
 import org.mozilla.fenix.ext.bookmarkStorage
 import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.settings
 import org.mozilla.fenix.theme.ThemeManager
 import org.mozilla.fenix.utils.Settings
 import org.mozilla.fenix.utils.ToolbarPopupWindow
@@ -171,6 +172,8 @@ class BrowserToolbarView(
                     isPrivate = customTabSession.content.private,
                 )
             } else {
+                val isNavBarEnabled = IncompleteRedesignToolbarFeature(context.settings()).isEnabled
+
                 DefaultToolbarIntegration(
                     this,
                     view,
@@ -178,6 +181,7 @@ class BrowserToolbarView(
                     lifecycleOwner,
                     sessionId = null,
                     isPrivate = components.core.store.state.selectedTab?.content?.private ?: false,
+                    isNavBarEnabled = isNavBarEnabled,
                     interactor = interactor,
                 )
             }
