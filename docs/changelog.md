@@ -10,8 +10,16 @@ permalink: /changelog/
 * [Gecko](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/plugins/dependencies/src/main/java/Gecko.kt)
 * [Configuration](https://github.com/mozilla-mobile/firefox-android/blob/main/android-components/.config.yml)
 
+* **feature-prompts**:
+  * Added `FileUploadsDirCleaner` deletes temporary stale uploaded files, see [Bug 1860472](https://bugzilla.mozilla.org/show_bug.cgi?id=1860472).
+  * ⚠️ **This is a breaking change**: `PromptFeature` now requires a `FileUploadsDirCleaner` to be constructed
+
 * **all components**
   * All new usages of the `concept-fetch` component to make fetch requests now have conservative-mode off by default. Current features will continue to use conservative mode until individually updated.
+  
+* **browser-toolbar**
+  * Add `showMenuButton` and `hideMenuButton` API to `BrowserToolbar` and `DisplayToolbar` to allow hiding and showing of the menu button in
+  the `BrowserToolbar` [Bug 1864760](https://bugzilla.mozilla.org/show_bug.cgi?id=1864760)
 
 # 123.0
 * [Commits](https://github.com/mozilla-mobile/firefox-android/compare/releases_v122..releases_v123)
@@ -131,6 +139,7 @@ permalink: /changelog/
   * 🌟️️ Add `reanalyzeProduct` API to `EngineSession` to allow reanalyzing product from the engine. See more on [Bug 1853309](https://bugzilla.mozilla.org/show_bug.cgi?id=1853309).
   * 🌟️️ Add `requestAnalysisStatus` API to `EngineSession` to allow request product analysis status from the engine. See more on [Bug 1853309](https://bugzilla.mozilla.org/show_bug.cgi?id=1853309).
   * 🌟️️ Add `sendClickAttributionEvent` and `sendImpressionAttributionEvent` API to `EngineSession` to allow sending attribution events. See more on [Bug 1853309](https://bugzilla.mozilla.org/show_bug.cgi?id=1853309).
+  * 🌟️️ Add `sendPlacementAttributionEvent` API to `EngineSession` to allow sending placement attribution events. See more on [Bug 1875106](https://bugzilla.mozilla.org/show_bug.cgi?id=1875106).
 
 * **support-ktx**
   * ⚠️ **This is a breaking change**: the `enterToImmersiveMode()` in `Activity.kt` has been renamed to `enterImmersiveMode()`.
