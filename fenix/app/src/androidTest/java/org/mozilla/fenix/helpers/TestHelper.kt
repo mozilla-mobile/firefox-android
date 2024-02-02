@@ -8,7 +8,9 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import android.view.View
-import androidx.test.core.app.launchActivity
+import androidx.compose.ui.test.SemanticsNodeInteraction
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.printToString
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.longClick
 import androidx.test.espresso.assertion.ViewAssertions
@@ -34,6 +36,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.Constants.TAG
+import org.mozilla.fenix.helpers.MatcherHelper.assertComposeItemExists
 import org.mozilla.fenix.helpers.MatcherHelper.assertUIObjectExists
 import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdAndText
@@ -148,6 +151,19 @@ object TestHelper {
         Log.i(TAG, "mozClick: Trying to click ${this.selector}")
         click()
         Log.i(TAG, "mozClick: Clicked ${this.selector}")
+
+        return this
+    }
+
+    fun SemanticsNodeInteraction.mozClick(): SemanticsNodeInteraction {
+        assertComposeItemExists(this)
+        // Storing the value of the compose item we want to click in a variable, because the printToString method also does an assertion
+        // After performing the click there's a high chance the compose item we performed the action on will not be displayed anymore
+        // It will cause unrelated failures when trying to log the success of the click action
+        val composeItemToClick = this.printToString()
+        Log.i(TAG, "mozClick: Trying to click $composeItemToClick compose item")
+        performClick()
+        Log.i(TAG, "mozClick: Clicked $composeItemToClick compose item")
 
         return this
     }

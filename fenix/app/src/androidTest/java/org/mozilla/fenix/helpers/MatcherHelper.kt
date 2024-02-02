@@ -5,6 +5,8 @@
 package org.mozilla.fenix.helpers
 
 import android.util.Log
+import androidx.compose.ui.test.SemanticsNodeInteraction
+import androidx.compose.ui.test.printToString
 import androidx.test.uiautomator.UiObject
 import androidx.test.uiautomator.UiSelector
 import org.junit.Assert.assertFalse
@@ -103,6 +105,23 @@ object MatcherHelper {
                 Log.i(TAG, "assertUIObjectExists: Trying to verify ${appItem.selector} does not exist")
                 assertFalse("${appItem.selector} exists", appItem.waitForExists(waitingTimeShort))
                 Log.i(TAG, "assertUIObjectExists: Verified ${appItem.selector} does not exist")
+            }
+        }
+    }
+
+    fun assertComposeItemExists(
+        vararg composeItems: SemanticsNodeInteraction,
+        exists: Boolean = true,
+    ) {
+        for (composeItem in composeItems) {
+            if (exists) {
+                Log.i(TAG, "assertComposeItemExists: Trying to verify compose item ${composeItem.printToString()} exists")
+                composeItem.assertExists()
+                Log.i(TAG, "assertComposeItemExists: Compose item ${composeItem.printToString()} exists")
+            } else {
+                Log.i(TAG, "assertComposeItemExists: Trying to verify compose item ${composeItem.printToString()} does not exist")
+                composeItem.assertDoesNotExist()
+                Log.i(TAG, "assertComposeItemExists: Compose item ${composeItem.printToString()} does not exist")
             }
         }
     }
