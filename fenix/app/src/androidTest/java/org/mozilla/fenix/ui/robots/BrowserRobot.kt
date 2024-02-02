@@ -57,6 +57,7 @@ import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeLong
 import org.mozilla.fenix.helpers.TestAssetHelper.waitingTimeShort
 import org.mozilla.fenix.helpers.TestHelper.appName
 import org.mozilla.fenix.helpers.TestHelper.mDevice
+import org.mozilla.fenix.helpers.TestHelper.mozClick
 import org.mozilla.fenix.helpers.TestHelper.packageName
 import org.mozilla.fenix.helpers.TestHelper.waitForObjects
 import org.mozilla.fenix.helpers.ext.waitNotNull
@@ -843,7 +844,7 @@ class BrowserRobot {
         itemWithResIdContainingText(
             "$packageName:id/dismiss",
             getStringResource(R.string.open_in_app_cfr_negative_button_text),
-        ).click()
+        ).mozClick()
         Log.i(TAG, "clickOpenLinksInAppsDismissCFRButton: Clicked open links in apps banner \"Dismiss\" button")
     }
 

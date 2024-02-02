@@ -142,4 +142,13 @@ object TestHelper {
         assertFalse("Light theme not selected", expected)
 
     fun verifyDarkThemeApplied(expected: Boolean) = assertTrue("Dark theme not selected", expected)
+
+    fun UiObject.mozClick(): UiObject {
+        assertUIObjectExists(this)
+        Log.i(TAG, "mozClick: Trying to click ${this.selector}")
+        click()
+        Log.i(TAG, "mozClick: Clicked ${this.selector}")
+
+        return this
+    }
 }

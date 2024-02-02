@@ -96,9 +96,11 @@ object MatcherHelper {
     ) {
         for (appItem in appItems) {
             if (exists) {
+                Log.i(TAG, "assertUIObjectExists: Trying to verify ${appItem.selector} exists")
                 assertTrue("${appItem.selector} does not exist", appItem.waitForExists(waitingTime))
                 Log.i(TAG, "assertUIObjectExists: Verified ${appItem.selector} exists")
             } else {
+                Log.i(TAG, "assertUIObjectExists: Trying to verify ${appItem.selector} does not exist")
                 assertFalse("${appItem.selector} exists", appItem.waitForExists(waitingTimeShort))
                 Log.i(TAG, "assertUIObjectExists: Verified ${appItem.selector} does not exist")
             }
