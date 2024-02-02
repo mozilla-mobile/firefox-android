@@ -945,8 +945,7 @@ class BrowserRobot {
         fun openThreeDotMenu(interact: ThreeDotMenuMainRobot.() -> Unit): ThreeDotMenuMainRobot.Transition {
             mDevice.waitForIdle(waitingTime)
             Log.i(TAG, "openThreeDotMenu: Device was idle for $waitingTime ms")
-            threeDotButton().perform(click())
-            Log.i(TAG, "openThreeDotMenu: Clicked the main menu button")
+            threeDotButton().mozClick()
 
             ThreeDotMenuMainRobot().interact()
             return ThreeDotMenuMainRobot.Transition()

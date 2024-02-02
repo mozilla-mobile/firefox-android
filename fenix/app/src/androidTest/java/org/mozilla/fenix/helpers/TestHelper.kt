@@ -12,6 +12,8 @@ import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.printToString
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.ViewInteraction
+import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.longClick
 import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.intent.Intents
@@ -37,6 +39,7 @@ import org.junit.Assert.assertTrue
 import org.mozilla.fenix.R
 import org.mozilla.fenix.helpers.Constants.TAG
 import org.mozilla.fenix.helpers.MatcherHelper.assertComposeItemExists
+import org.mozilla.fenix.helpers.MatcherHelper.assertEspressoItemIsDisplayed
 import org.mozilla.fenix.helpers.MatcherHelper.assertUIObjectExists
 import org.mozilla.fenix.helpers.MatcherHelper.itemContainingText
 import org.mozilla.fenix.helpers.MatcherHelper.itemWithResIdAndText
@@ -164,6 +167,15 @@ object TestHelper {
         Log.i(TAG, "mozClick: Trying to click $composeItemToClick compose item")
         performClick()
         Log.i(TAG, "mozClick: Clicked $composeItemToClick compose item")
+
+        return this
+    }
+
+    fun ViewInteraction.mozClick(): ViewInteraction {
+        assertEspressoItemIsDisplayed(this)
+        Log.i(TAG, "mozClick: Trying to click $this espresso item")
+        perform(ViewActions.click())
+        Log.i(TAG, "mozClick: Clicked $this espresso item")
 
         return this
     }
