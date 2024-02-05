@@ -187,7 +187,16 @@ abstract class AbstractFetchDownloadService : Service() {
                     }
 
                     ACTION_CANCEL -> {
-                        cancelDownloadJob(currentDownloadJobState)
+                        removeNotification(context, currentDownloadJobState)
+                        currentDownloadJobState.lastNotificationUpdate = System.currentTimeMillis()
+                        setDownloadJobStatus(currentDownloadJobState, CANCELLED)
+                        currentDownloadJobState.job?.cancel()
+
+                        currentDownloadJobState.job = CoroutineScope(IO).launch {
+                            deleteDownloadingFile(currentDownloadJobState.state)
+                            currentDownloadJobState.downloadDeleted = true
+                        }
+
                         removeDownloadJob(currentDownloadJobState)
                         emitNotificationCancelFact()
                         logger.debug("ACTION_CANCEL for ${currentDownloadJobState.state.id}")
@@ -258,7 +267,6 @@ abstract class AbstractFetchDownloadService : Service() {
                 )
                 handleDownloadIntent(newDownloadState)
             }
-
             else -> {
                 handleDownloadIntent(download)
             }
@@ -271,7 +279,6 @@ abstract class AbstractFetchDownloadService : Service() {
     internal fun handleRemovePrivateDownloadIntent(download: DownloadState) {
         if (download.private) {
             downloadJobs[download.id]?.let {
-                cancelDownloadJob(it)
                 removeDownloadJob(it)
             }
             store.dispatch(DownloadAction.RemoveDownloadAction(download.id))
@@ -310,23 +317,6 @@ abstract class AbstractFetchDownloadService : Service() {
                 updateDownloadNotification()
                 if (downloadJobs.isEmpty()) cancel()
             }
-        }
-    }
-
-    @VisibleForTesting
-    internal fun cancelDownloadJob(
-        currentDownloadJobState: DownloadJobState,
-    ) {
-        currentDownloadJobState.lastNotificationUpdate = System.currentTimeMillis()
-        setDownloadJobStatus(
-            currentDownloadJobState,
-            CANCELLED,
-        )
-        currentDownloadJobState.job?.cancel()
-        currentDownloadJobState.job = CoroutineScope(IO).launch {
-            deleteDownloadingFile(currentDownloadJobState.state)
-            currentDownloadJobState.downloadDeleted =
-                true
         }
     }
 
