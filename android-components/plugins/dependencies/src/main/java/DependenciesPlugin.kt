@@ -21,19 +21,19 @@ object Versions {
 
     const val junit = "4.13.2"
     const val robolectric = "4.11.1"
-    const val mockito = "5.9.0"
+    const val mockito = "5.10.0"
     const val maven_ant_tasks = "2.1.3"
     const val jacoco = "0.8.11"
     const val okhttp = "4.11.0"
     const val okio = "3.6.0"
     const val coil = "2.4.0"
 
-    const val android_gradle_plugin = "8.0.2"
+    const val android_gradle_plugin = "8.2.2"
 
     // This has to be synced to the gradlew plugin version. See
     // http://googlesamples.github.io/android-custom-lint-rules/api-guide/example.md.html#example:samplelintcheckgithubproject/lintversion?
-    const val lint = "31.0.2"
-    const val detekt = "1.23.4"
+    const val lint = "31.2.2"
+    const val detekt = "1.23.5"
     const val ktlint = "0.49.1"
 
     const val sentry = "7.2.0"

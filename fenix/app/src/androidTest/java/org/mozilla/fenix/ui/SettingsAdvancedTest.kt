@@ -38,7 +38,6 @@ class SettingsAdvancedTest {
     private val youTubeFullLink = itemContainingText("Youtube full link")
     private val playStoreLink = itemContainingText("Playstore link")
     private val playStoreUrl = "play.google.com"
-    private val youTubePage = "vnd.youtube://".toUri()
 
     @get:Rule
     val activityIntentTestRule = HomeActivityIntentTestRule.withDefaultSettingsOverrides()
@@ -159,11 +158,10 @@ class SettingsAdvancedTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(externalLinksPage.url) {
-            clickPageObject(youTubeFullLink)
+            clickPageObject(youTubeSchemaLink)
             verifyOpenLinkInAnotherAppPrompt()
             clickPageObject(itemWithResIdAndText("android:id/button2", "CANCEL"))
-            waitForPageToLoad()
-            verifyUrl("youtube")
+            verifyUrl(externalLinksPage.url.toString())
         }
     }
 
@@ -226,14 +224,13 @@ class SettingsAdvancedTest {
 
         navigationToolbar {
         }.enterURLAndEnterToBrowser(externalLinksPage.url) {
-            clickPageObject(youTubeFullLink)
+            clickPageObject(youTubeSchemaLink)
             verifyPrivateBrowsingOpenLinkInAnotherAppPrompt(
                 url = "youtube",
-                pageObject = youTubeFullLink,
+                pageObject = youTubeSchemaLink,
             )
             clickPageObject(itemWithResIdAndText("android:id/button2", "CANCEL"))
-            waitForPageToLoad()
-            verifyUrl("youtube")
+            verifyUrl(externalLinksPage.url.toString())
         }
     }
 
@@ -311,7 +308,7 @@ class SettingsAdvancedTest {
         }
 
         navigationToolbar {
-        }.enterURLAndEnterToBrowser(youTubePage) {
+        }.enterURLAndEnterToBrowser("https://m.youtube.com/".toUri()) {
             waitForPageToLoad()
             verifyOpenLinksInAppsCFRExists(true)
             clickOpenLinksInAppsDismissCFRButton()

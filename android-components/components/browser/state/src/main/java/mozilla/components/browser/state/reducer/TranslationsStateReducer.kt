@@ -30,17 +30,24 @@ internal object TranslationsStateReducer {
         }
 
         is TranslationsAction.TranslateStateChangeAction -> {
-            if (action.translationEngineState.requestedTranslationPair != null) {
+            if (action.translationEngineState.requestedTranslationPair == null ||
+                action.translationEngineState.requestedTranslationPair?.fromLanguage == null ||
+                action.translationEngineState.requestedTranslationPair?.toLanguage == null
+            ) {
+                state.copyWithTranslationsState(action.tabId) {
+                    it.copy(
+                        isTranslated = false,
+                        translationEngineState = action.translationEngineState,
+                    )
+                }
+            } else {
                 state.copyWithTranslationsState(action.tabId) {
                     it.copy(
                         isTranslated = true,
+                        translationError = null,
+                        translationEngineState = action.translationEngineState,
                     )
                 }
-            }
-            state.copyWithTranslationsState(action.tabId) {
-                it.copy(
-                    translationEngineState = action.translationEngineState,
-                )
             }
         }
 
@@ -77,11 +84,23 @@ internal object TranslationsStateReducer {
                 }
 
                 TranslationOperation.FETCH_LANGUAGES -> {
-                    // Generally expect [TranslationsAction.TranslateSetLanguagesAction] to be used
-                    // as the success condition since the updated value is needed.
+                    // Reset the error state, and then generally expect
+                    // [TranslationsAction.TranslateSetLanguagesAction] to update state in the
+                    // success case.
                     state.copyWithTranslationsState(action.tabId) {
                         it.copy(
                             translationError = null,
+                        )
+                    }
+                }
+
+                TranslationOperation.FETCH_PAGE_SETTINGS -> {
+                    // Reset the error state, and then generally expect
+                    // [TranslationsAction.SetPageSettingsAction] to update state in the
+                    // success case.
+                    state.copyWithTranslationsState(action.tabId) {
+                        it.copy(
+                            settingsError = null,
                         )
                     }
                 }
@@ -116,6 +135,15 @@ internal object TranslationsStateReducer {
                         )
                     }
                 }
+
+                TranslationOperation.FETCH_PAGE_SETTINGS -> {
+                    state.copyWithTranslationsState(action.tabId) {
+                        it.copy(
+                            pageSettings = null,
+                            settingsError = action.translationError,
+                        )
+                    }
+                }
             }
         }
 
@@ -124,6 +152,20 @@ internal object TranslationsStateReducer {
                 it.copy(
                     supportedLanguages = action.supportedLanguages,
                     translationError = null,
+                )
+            }
+
+        is TranslationsAction.SetPageSettingsAction ->
+            state.copyWithTranslationsState(action.tabId) {
+                it.copy(
+                    pageSettings = action.pageSettings,
+                )
+            }
+
+        is TranslationsAction.OperationRequestedAction ->
+            state.copyWithTranslationsState(action.tabId) {
+                it.copy(
+                    pageSettings = null,
                 )
             }
     }

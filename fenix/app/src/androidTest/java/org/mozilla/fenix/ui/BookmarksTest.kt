@@ -32,6 +32,7 @@ import org.mozilla.fenix.helpers.TestHelper.appContext
 import org.mozilla.fenix.helpers.TestHelper.clickSnackbarButton
 import org.mozilla.fenix.helpers.TestHelper.longTapSelectItem
 import org.mozilla.fenix.helpers.TestHelper.restartApp
+import org.mozilla.fenix.helpers.TestHelper.verifySnackBarText
 import org.mozilla.fenix.ui.robots.bookmarksMenu
 import org.mozilla.fenix.ui.robots.browserScreen
 import org.mozilla.fenix.ui.robots.homeScreen
@@ -137,7 +138,7 @@ class BookmarksTest {
             clickAddFolderButton()
             addNewFolderName(bookmarksFolderName)
             navigateUp()
-            verifyKeyboardHidden()
+            verifyKeyboardHidden(isExpectedToBeVisible = false)
             verifyBookmarkFolderIsNotCreated(bookmarksFolderName)
         }
     }
@@ -209,7 +210,7 @@ class BookmarksTest {
             ) {}
         }.openThreeDotMenu(defaultWebPage.title) {
         }.clickCopy {
-            verifyCopySnackBarText()
+            verifySnackBarText(expectedText = "URL copied")
             navigateUp()
         }
 
@@ -496,7 +497,7 @@ class BookmarksTest {
         }
 
         bookmarksMenu {
-            verifyDeleteMultipleBookmarksSnackBar()
+            verifySnackBarText(expectedText = "Bookmarks deleted")
             clickUndoDeleteButton()
             verifyBookmarkedURL(firstWebPage.url.toString())
             verifyBookmarkedURL(secondWebPage.url.toString())
@@ -514,7 +515,7 @@ class BookmarksTest {
         }
 
         bookmarksMenu {
-            verifyDeleteMultipleBookmarksSnackBar()
+            verifySnackBarText(expectedText = "Bookmarks deleted")
         }
     }
 
@@ -602,7 +603,7 @@ class BookmarksTest {
                 RecyclerViewIdlingResource(activityTestRule.activity.findViewById(R.id.bookmark_list)),
             ) {
                 longTapDesktopFolder("Desktop Bookmarks")
-                verifySelectDefaultFolderSnackBarText()
+                verifySnackBarText(expectedText = "Can’t edit default folders")
             }
         }
     }
@@ -625,7 +626,7 @@ class BookmarksTest {
             cancelDeletion()
             clickDeleteInEditModeButton()
             confirmDeletion()
-            verifyDeleteSnackBarText()
+            verifySnackBarText(expectedText = "Deleted")
             verifyBookmarkIsDeleted("Test_Page_1")
         }
     }
@@ -786,13 +787,13 @@ class BookmarksTest {
         }.openThreeDotMenu("My Folder") {
         }.clickDelete {
             confirmDeletion()
-            verifyDeleteSnackBarText()
+            verifySnackBarText(expectedText = "Deleted")
             clickUndoDeleteButton()
             verifyFolderTitle("My Folder")
         }.openThreeDotMenu("My Folder") {
         }.clickDelete {
             confirmDeletion()
-            verifyDeleteSnackBarText()
+            verifySnackBarText(expectedText = "Deleted")
             verifyBookmarkIsDeleted("My Folder")
             verifyBookmarkIsDeleted("My Folder 2")
             verifyBookmarkIsDeleted("Test_Page_1")
