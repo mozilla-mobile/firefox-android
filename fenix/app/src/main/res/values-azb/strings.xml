@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:moz="http://mozac.org/tools">
+    <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
+    <string name="app_name_private_5">گیزلی %s</string>
+    <!-- App name for private browsing mode. The first parameter is the name of the app defined in app_name (for example: Fenix)-->
+    <string name="app_name_private_4">%s (گیزلی)</string>
+
+
+    <!-- Home Fragment -->
+    <!-- Content description (not visible, for screen readers etc.): "Three dot" menu button. -->
+    <string name="content_description_menu">داها چوخ سئچه‌نک</string>
+    <!-- Content description (not visible, for screen readers etc.): "Private Browsing" menu button. -->
+    <string name="content_description_private_browsing_button">گیزلی مورورو گوجلندیر</string>
+
+
+    <!-- Content description (not visible, for screen readers etc.): "Private Browsing" menu button. -->
+    <string name="content_description_disable_private_browsing_button">گیزلی مورورو گوجدن سال</string>
+
+
+    <!-- Placeholder text shown in the search bar before a user enters text for the default engine -->
+    <string name="search_hint">آختارین یا آدرسی گیرین</string>
+    <!-- Placeholder text shown in the search bar before a user enters text for a general engine -->
+    <string name="search_hint_general_engine">وب‌ده آختارین</string>
+
+
+    <!-- Placeholder text shown in search bar when using history search -->
+    <string name="history_search_hint">مورور گئچمیشینده آختار</string>
+    <!-- Placeholder text shown in search bar when using bookmarks search -->
+    <string name="bookmark_search_hint">بوکمارک‌دا آختار</string>
+    <!-- Placeholder text shown in search bar when using tabs search -->
+    <string name="tab_search_hint">تاغ‌لاردا آختار</string>
+
+
+    <!-- Placeholder text shown in the search bar when using application search engines -->
+    <string name="application_search_hint">آختاریش شرطلرینی گیر</string>
+    <!-- No Open Tabs Message Description -->
+    <string name="no_open_tabs_description">آچیق تاغ‌لاریز بوردا گؤستریله‌جک</string>
+    <!-- No Private Tabs Message Description -->
+    <string name="no_private_tabs_description">سیزین گیزلی تاغ‌لاریز بوردا گؤستریله‌جک</string>
+
+
+    <!-- Tab tray multi select title in app bar. The first parameter is the number of tabs selected -->
+    <string name="tab_tray_multi_select_title">%1$d سئچیلیدی</string>
+    <!-- Label of button in create collection dialog for creating a new collection  -->
+    <string name="tab_tray_add_new_collection">یئنی مجموعه اکله</string>
+    <!-- Label of editable text in create collection dialog for naming a new collection  -->
+    <string name="tab_tray_add_new_collection_name">آد</string>
+
+
+    <!-- Label of button in save to collection dialog for selecting a current collection  -->
+    <string name="tab_tray_select_collection">مجموعه سئچین</string>
+    <!-- Content description for close button while in multiselect mode in tab tray -->
+    <string name="tab_tray_close_multiselect_content_description">چوخ‌سئچیم مودوندان چیخ</string>
+    <!-- Content description for save to collection button while in multiselect mode in tab tray -->
+    <string name="tab_tray_collection_button_multiselect_content_description">سئچیلن تاغلاری مجموعه‌ده ساخلا</string>
+    <!-- Content description on checkmark while tab is selected in multiselect mode in tab tray -->
+    <string name="tab_tray_multiselect_selected_content_description">سئچیلدی</string>
+
+    <!-- Home - Recently saved bookmarks -->
+    <!-- Title for the home screen section with recently saved bookmarks. -->
+    <string name="recently_saved_title">سون ساخلانان‌لار</string>
+
+
+    <!-- Translations feature-->
+
+    </resources>
