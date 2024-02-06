@@ -18,6 +18,11 @@ object SearchStringValidator {
     private const val QUERY_PARAM = "1"
 
     fun isSearchStringValid(client: Client, searchString: String): Result {
+        val isExtensionSearchString = searchString.startsWith("moz-extension://") &&
+                searchString.endsWith("%s")
+        if (isExtensionSearchString) {
+            return Result.Success
+        }
         val request = createRequest(searchString)
         val response = try {
             client.fetch(request)
